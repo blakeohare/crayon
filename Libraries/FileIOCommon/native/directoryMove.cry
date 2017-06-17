@@ -1,16 +1,16 @@
 /*
-	Move a directory
-	
-	arg 1: disk host object
-	arg 2: well-formed and sandboxed path of where the directory currently is
-	arg 3: well-formed and sandboxed path of where to move the directory to
+    Move a directory
+
+    arg 1: disk host object
+    arg 2: well-formed and sandboxed path of where the directory currently is
+    arg 3: well-formed and sandboxed path of where to move the directory to
 */
 
 import inline "FrameworkFunctions/3_arg.cry";
 
 int1 = $_lib_fileiocommon_directoryMove(
-	lib_fileiocommon_getDiskObject(arg1),
-	$_cast('string', Value$arg2.internalValue),
-	$_cast('string', Value$arg3.internalValue));
+    lib_fileiocommon_getDiskObject(arg1),
+    $_cast('string', Value$arg2.internalValue),
+    $_cast('string', Value$arg3.internalValue));
 
 output = buildInteger(int1);

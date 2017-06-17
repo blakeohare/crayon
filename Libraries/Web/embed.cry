@@ -1,8 +1,8 @@
 ﻿namespace Web {
-	function launchBrowser(url) {
-		if (url.startsWith('http://') || url.startsWith('https://')) {
-			return $$lib_web_launch_browser(url);
-		}
-		Core.fail("Can only open URLs beginning with 'http://' or 'https://'.");
-	}
+    function launchBrowser(url) {
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+            return $$lib_web_launch_browser(url);
+        }
+        Core.fail("Can only open URLs beginning with 'http://' or 'https://'.");
+    }
 }

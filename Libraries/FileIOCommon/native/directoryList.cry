@@ -1,28 +1,28 @@
 /*
-	List the files in a directory
-	
-	arg 1: disk host object
-	arg 2: well-formed and sandboxed path
-	arg 3: boolean
-		true -> include the full path
-		false -> include just the file name
-	arg 4: value list. Add files to this list.
+    List the files in a directory
+
+    arg 1: disk host object
+    arg 2: well-formed and sandboxed path
+    arg 3: boolean
+        true -> include the full path
+        false -> include just the file name
+    arg 4: value list. Add files to this list.
 */
 
 import inline "FrameworkFunctions/4_arg.cry";
 
 stringList1 = $_new_list('string');
 int1 = $_lib_fileiocommon_directoryList(
-	lib_fileiocommon_getDiskObject(arg1),
-	$_cast('string', Value$arg2.internalValue),
-	$_cast('bool', Value$arg3.internalValue),
-	stringList1);
+    lib_fileiocommon_getDiskObject(arg1),
+    $_cast('string', Value$arg2.internalValue),
+    $_cast('bool', Value$arg3.internalValue),
+    stringList1);
 
 if (int1 == 0) {
-	list1 = $_cast('List<Value>', Value$arg4.internalValue);
-	for (i = 0; i < $_list_length(stringList1); i += 1) {
-		$_list_push(list1, buildString($_list_get(stringList1, i)));
-	}
+    list1 = $_cast('List<Value>', Value$arg4.internalValue);
+    for (i = 0; i < $_list_length(stringList1); i += 1) {
+        $_list_push(list1, buildString($_list_get(stringList1, i)));
+    }
 }
 
 output = buildInteger(int1);

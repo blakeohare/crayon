@@ -1,94 +1,94 @@
 ﻿import FileIOCommon;
 
 /*
-	Please this keep this in sync with the UserData library.
+    Please this keep this in sync with the UserData library.
 */
 
 namespace FileIO {
-	
-	// It's okay to duplicate this across other libraries that also use FileIOCommon. 
-	// Wasteful enums do not affect the size of the output.
-	enum TextEncoding {
-		UTF8 = FileIOCommon.FiocFileFormat.TEXT_UTF8,
-		UTF8_BOM = FileIOCommon.FiocFileFormat.TEXT_UTF8_BOM,
-		UTF16 = FileIOCommon.FiocFileFormat.TEXT_UTF16,
-		UTF32 = FileIOCommon.FiocFileFormat.TEXT_UTF32,
-		ASCII = FileIOCommon.FiocFileFormat.TEXT_ISO_8859,
-	}
-	
-	class _FileIOHelper {
-		static field FIOC = new FileIOCommon.FiocHelper('\\', null, false);
-	}
-	
-	function pathJoin(parts) {
-		return _FileIOHelper.FIOC.pathJoin(parts);
-	}
-	
-	function pathExists(path) {
-		return _FileIOHelper.FIOC.pathExists(path);
-	}
-	
-	function fileExists(path) {
-		return _FileIOHelper.FIOC.fileExists(path);
-	}
-	
-	function directoryExists(path) {
-		return _FileIOHelper.FIOC.directoryExists(path);
-	}
-	
-	function getPathInfo(path) {
-		return _FileIOHelper.FIOC.getPathInfoObj(path);
-	}
-	
-	function fileWriteText(path, content, encoding = FileIO.TextEncoding.UTF8) {
-		return _FileIOHelper.FIOC.fileWriteText(path, content, encoding);
-	}
-	
-	function fileReadText(path) {
-		return _FileIOHelper.FIOC.fileReadText(path);
-	}
-	
-	function fileReadLines(path) {
-		return _FileIOHelper.FIOC.fileReadLines(path);
-	}
-	
-	function fileWriteBytes(path, bytes) {
-		return _FileIOHelper.FIOC.fileWriteBytes(path, bytes);
-	}
-	
-	function fileReadBytes(path) {
-		return _FileIOHelper.FIOC.fileReadBytes(path);
-	}
-	
-	function fileDelete(path) {
-		return _FileIOHelper.FIOC.fileDelete(path);
-	}
-	
-	function fileMove(pathFrom, pathTo, allowOverwrite = false) {
-		return _FileIOHelper.FIOC.fileMoveOrCopy(pathFrom, pathTo, false, allowOverwrite);
-	}
-	
-	function fileCopy(pathFrom, pathTo, allowOverwrite = false) {
-		return _FileIOHelper.FIOC.fileMoveOrCopy(pathFrom, pathTo, true, allowOverwrite);
-	}
-	
-	function directoryList(path, includeFullPath = false) {
-		return _FileIOHelper.FIOC.directoryList(path, includeFullPath);
-	}
-	
-	function directoryCreate(path, makeParents = false) {
-		return _FileIOHelper.FIOC.directoryCreate(path, makeParents);
-	}
-	
-	function directoryDelete(path) {
-		return _FileIOHelper.FIOC.directoryDelete(path);
-	}
-	
-	function directoryMove(pathFrom, pathTo) {
-		return _FileIOHelper.FIOC.directoryMove(pathFrom, pathTo);
-	}
-	
-	function currentDirectory() {
-		return _FileIOHelper.FIOC.currentDirectoryString;
-	}
+
+    // It's okay to duplicate this across other libraries that also use FileIOCommon.
+    // Wasteful enums do not affect the size of the output.
+    enum TextEncoding {
+        UTF8 = FileIOCommon.FiocFileFormat.TEXT_UTF8,
+        UTF8_BOM = FileIOCommon.FiocFileFormat.TEXT_UTF8_BOM,
+        UTF16 = FileIOCommon.FiocFileFormat.TEXT_UTF16,
+        UTF32 = FileIOCommon.FiocFileFormat.TEXT_UTF32,
+        ASCII = FileIOCommon.FiocFileFormat.TEXT_ISO_8859,
+    }
+
+    class _FileIOHelper {
+        static field FIOC = new FileIOCommon.FiocHelper('\\', null, false);
+    }
+
+    function pathJoin(parts) {
+        return _FileIOHelper.FIOC.pathJoin(parts);
+    }
+
+    function pathExists(path) {
+        return _FileIOHelper.FIOC.pathExists(path);
+    }
+
+    function fileExists(path) {
+        return _FileIOHelper.FIOC.fileExists(path);
+    }
+
+    function directoryExists(path) {
+        return _FileIOHelper.FIOC.directoryExists(path);
+    }
+
+    function getPathInfo(path) {
+        return _FileIOHelper.FIOC.getPathInfoObj(path);
+    }
+
+    function fileWriteText(path, content, encoding = FileIO.TextEncoding.UTF8) {
+        return _FileIOHelper.FIOC.fileWriteText(path, content, encoding);
+    }
+
+    function fileReadText(path) {
+        return _FileIOHelper.FIOC.fileReadText(path);
+    }
+
+    function fileReadLines(path) {
+        return _FileIOHelper.FIOC.fileReadLines(path);
+    }
+
+    function fileWriteBytes(path, bytes) {
+        return _FileIOHelper.FIOC.fileWriteBytes(path, bytes);
+    }
+
+    function fileReadBytes(path) {
+        return _FileIOHelper.FIOC.fileReadBytes(path);
+    }
+
+    function fileDelete(path) {
+        return _FileIOHelper.FIOC.fileDelete(path);
+    }
+
+    function fileMove(pathFrom, pathTo, allowOverwrite = false) {
+        return _FileIOHelper.FIOC.fileMoveOrCopy(pathFrom, pathTo, false, allowOverwrite);
+    }
+
+    function fileCopy(pathFrom, pathTo, allowOverwrite = false) {
+        return _FileIOHelper.FIOC.fileMoveOrCopy(pathFrom, pathTo, true, allowOverwrite);
+    }
+
+    function directoryList(path, includeFullPath = false) {
+        return _FileIOHelper.FIOC.directoryList(path, includeFullPath);
+    }
+
+    function directoryCreate(path, makeParents = false) {
+        return _FileIOHelper.FIOC.directoryCreate(path, makeParents);
+    }
+
+    function directoryDelete(path) {
+        return _FileIOHelper.FIOC.directoryDelete(path);
+    }
+
+    function directoryMove(pathFrom, pathTo) {
+        return _FileIOHelper.FIOC.directoryMove(pathFrom, pathTo);
+    }
+
+    function currentDirectory() {
+        return _FileIOHelper.FIOC.currentDirectoryString;
+    }
 }

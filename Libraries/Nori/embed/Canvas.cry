@@ -1,15 +1,15 @@
 namespace Nori {
 
-	class Canvas : Panel {
-		constructor() : base() { }
-		
-		function renderCalculateSize(
-			isHorizontal,
-			availableSizePixels,
-			defaultAlign,
-			forcedAlign) {
-			
-			Core.fail("TODO: implement me.");
-		}
-	}
+    class Canvas : Panel {
+        constructor() : base() { }
+
+        function renderCalculateSize(
+            isHorizontal,
+            availableSizePixels,
+            defaultAlign,
+            forcedAlign) {
+
+            Core.fail("TODO: implement me.");
+        }
+    }
 }

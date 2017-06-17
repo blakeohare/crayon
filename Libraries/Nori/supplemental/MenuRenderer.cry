@@ -1,47 +1,46 @@
-
 /*
-	menu items are indicated by a list of Crayon values
-	menuItem[0] -> true (is a menu item)
-	menuItem[1] -> text
-	menuItem[2] -> is enabled?
-	menuItem[3] -> has a checkbox?
-	menuItem[4] -> shortcut text
-	menuItem[5] -> children menu items or null
-	
-	These are all Value Lists and Value primitives. This function needs to convert them into 
-	object arrays and platform primitives for easier consumption by platform code.
+    menu items are indicated by a list of Crayon values
+    menuItem[0] -> true (is a menu item)
+    menuItem[1] -> text
+    menuItem[2] -> is enabled?
+    menuItem[3] -> has a checkbox?
+    menuItem[4] -> shortcut text
+    menuItem[5] -> children menu items or null
+
+    These are all Value Lists and Value primitives. This function needs to convert them into
+    object arrays and platform primitives for easier consumption by platform code.
 */
 function @type('Array<object>') libNoriUnwrapMenus(@type('Value') menuBarList) {
-	
-	@type('List<Value>') items = $_cast('List<Value>', Value$menuBarList.internalValue);
-	@type('int') length = $_list_length(items);
-	@type('Array<object>') output = $_new_array('object', length);
-	
-	for (@type('int') i = 0; i < length; i += 1) {
-		@type('Value') item = $_array_get(items, i);
-		$_array_set(output, i, libNoriUnwrapMenuItem(item));
-	}
-	
-	return output;
+
+    @type('List<Value>') items = $_cast('List<Value>', Value$menuBarList.internalValue);
+    @type('int') length = $_list_length(items);
+    @type('Array<object>') output = $_new_array('object', length);
+
+    for (@type('int') i = 0; i < length; i += 1) {
+        @type('Value') item = $_array_get(items, i);
+        $_array_set(output, i, libNoriUnwrapMenuItem(item));
+    }
+
+    return output;
 }
 
 function @type('Array<object>') libNoriUnwrapMenuItem(@type('Value') menuItemDescriptorArray) {
-	@type('List<Value>') menu = $_cast('List<Value>', Value$menuItemDescriptorArray.internalValue);
-	@type('Value') value = $_list_get(menu, 0);
-	@type('Array<object>') output = null;
-	
-	if ($_cast('bool', Value$value.internalValue)) {
-		output = $_new_array('object', 7);
-		for (@type('int') i = 0; i < 6; i += 1) {
-			value = $_list_get(menu, i);
-			$_array_set(output, i, Value$value.internalValue);
-		}
-		value = $_list_get(menu, 6);
-		if (Value$value.type == Types.NULL) $_array_set(output, 6, null);
-		else $_array_set(output, 6, libNoriUnwrapMenus(value));
-	} else {
-		output = $_new_array('object', 1);
-		$_array_set(output, 0, false);
-	}
-	return output;
+    @type('List<Value>') menu = $_cast('List<Value>', Value$menuItemDescriptorArray.internalValue);
+    @type('Value') value = $_list_get(menu, 0);
+    @type('Array<object>') output = null;
+
+    if ($_cast('bool', Value$value.internalValue)) {
+        output = $_new_array('object', 7);
+        for (@type('int') i = 0; i < 6; i += 1) {
+            value = $_list_get(menu, i);
+            $_array_set(output, i, Value$value.internalValue);
+        }
+        value = $_list_get(menu, 6);
+        if (Value$value.type == Types.NULL) $_array_set(output, 6, null);
+        else $_array_set(output, 6, libNoriUnwrapMenus(value));
+    } else {
+        output = $_new_array('object', 1);
+        $_array_set(output, 0, false);
+    }
+    return output;
 }

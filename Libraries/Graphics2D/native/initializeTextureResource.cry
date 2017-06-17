@@ -1,20 +1,20 @@
 /*
-	arg 1: GraphicsTextureResource object instance
-	arg 2: true if arg3 is a NativeImageData object. false if it is another GraphicsTextureResource
-	arg 3: NativeImageData object that represents an atlas (but possibly an atlas of 1)
-	
-	This populates the native data of the texture resource.
-	nativeData[0] -> boolean if this is GL-based
-	nativeData[1] -> boolean if the texture is loaded. Always starts with false since textures are cached.
-	nativeData[2] -> texture ID. Set this to -1.
-	nativeData[3] -> native bitmap resource. Get this from the NativeImageData in arg2
-	nativeData[4] -> atlas width
-	nativeData[5] -> atlas height
-	
-	NativeImageData's nativeData is basically used for most of this, which looks like...
-		nativeData[0] -> bitmap
-		nativeData[1] -> width
-		nativeData[2] -> height
+    arg 1: GraphicsTextureResource object instance
+    arg 2: true if arg3 is a NativeImageData object. false if it is another GraphicsTextureResource
+    arg 3: NativeImageData object that represents an atlas (but possibly an atlas of 1)
+
+    This populates the native data of the texture resource.
+    nativeData[0] -> boolean if this is GL-based
+    nativeData[1] -> boolean if the texture is loaded. Always starts with false since textures are cached.
+    nativeData[2] -> texture ID. Set this to -1.
+    nativeData[3] -> native bitmap resource. Get this from the NativeImageData in arg2
+    nativeData[4] -> atlas width
+    nativeData[5] -> atlas height
+
+    NativeImageData's nativeData is basically used for most of this, which looks like...
+        nativeData[0] -> bitmap
+        nativeData[1] -> width
+        nativeData[2] -> height
 */
 import inline "FrameworkFunctions/3_arg.cry";
 
@@ -24,17 +24,17 @@ ObjectInstance$objInstance1.nativeData = objArray1;
 objInstance1 = $_cast('ObjectInstance', Value$arg3.internalValue);
 objArray2 = ObjectInstance$objInstance1.nativeData;
 if ($_cast('bool', Value$arg2.internalValue)) {
-	$_array_set(objArray1, 0, %%%IS_OPEN_GL_BASED%%%);
-	$_array_set(objArray1, 1, false);
-	$_array_set(objArray1, 2, -1);
-	$_array_set(objArray1, 3, $_array_get(objArray2, 0));
-	$_array_set(objArray1, 4, $_array_get(objArray2, 1));
-	$_array_set(objArray1, 5, $_array_get(objArray2, 2));
+    $_array_set(objArray1, 0, %%%IS_OPEN_GL_BASED%%%);
+    $_array_set(objArray1, 1, false);
+    $_array_set(objArray1, 2, -1);
+    $_array_set(objArray1, 3, $_array_get(objArray2, 0));
+    $_array_set(objArray1, 4, $_array_get(objArray2, 1));
+    $_array_set(objArray1, 5, $_array_get(objArray2, 2));
 } else {
-	$_array_set(objArray1, 0, false);
-	$_array_set(objArray1, 1, true);
-	$_array_set(objArray1, 2, -1);
-	$_array_set(objArray1, 3, $_array_get(objArray2, 3));
-	$_array_set(objArray1, 4, $_array_get(objArray2, 4));
-	$_array_set(objArray1, 5, $_array_get(objArray2, 5));
+    $_array_set(objArray1, 0, false);
+    $_array_set(objArray1, 1, true);
+    $_array_set(objArray1, 2, -1);
+    $_array_set(objArray1, 3, $_array_get(objArray2, 3));
+    $_array_set(objArray1, 4, $_array_get(objArray2, 4));
+    $_array_set(objArray1, 5, $_array_get(objArray2, 5));
 }

@@ -1,6 +1,6 @@
 /*
-	arg 1: window instance
-	arg 2: structured list instance with all the menu information
+    arg 1: window instance
+    arg 2: structured list instance with all the menu information
 */
 import inline "FrameworkFunctions/2_arg.cry";
 

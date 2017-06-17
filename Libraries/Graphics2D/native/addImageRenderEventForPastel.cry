@@ -1,38 +1,38 @@
 // There are 13 args. But not all are used. So don't pop them all.
 
 /*
-	valueStack[n + 0] -> Draw queue wrapper object.
-		nativeData[0] -> event queue
-		nativeData[1] -> event queue length
-		nativeData[2] -> image queue
-		nativeData[3] -> image queue length
-		
-	valueStack[n + 1] -> GrahpicsTexture instance
-	
-	valueStack[n + 2] -> BIT MASK
-	
-	valueStack[n + 3 to 12] -> Copy these directly to the event queue
-	
-	GraphicsTexture's nativeData:
-		data[0] -> GraphicsTextureResource's native data
-		
-		floats:
-		data[1] -> texture left
-		data[2] -> texture top
-		data[3] -> texture right
-		data[4] -> texture bottom
-		
-		ints:
-		data[5] -> pixel width
-		data[6] -> pixel height
-	
-	GraphicsTextureResource's nativeData:
-		data[0] -> bool: is GL based?
-		data[1] -> bool: is texture loaded?
-		data[2] -> int: GL texture ID
-		data[3] -> image resource
-		data[4] -> pixel width
-		data[5] -> pixel height
+    valueStack[n + 0] -> Draw queue wrapper object.
+        nativeData[0] -> event queue
+        nativeData[1] -> event queue length
+        nativeData[2] -> image queue
+        nativeData[3] -> image queue length
+
+    valueStack[n + 1] -> GrahpicsTexture instance
+
+    valueStack[n + 2] -> BIT MASK
+
+    valueStack[n + 3 to 12] -> Copy these directly to the event queue
+
+    GraphicsTexture's nativeData:
+        data[0] -> GraphicsTextureResource's native data
+
+        floats:
+        data[1] -> texture left
+        data[2] -> texture top
+        data[3] -> texture right
+        data[4] -> texture bottom
+
+        ints:
+        data[5] -> pixel width
+        data[6] -> pixel height
+
+    GraphicsTextureResource's nativeData:
+        data[0] -> bool: is GL based?
+        data[1] -> bool: is texture loaded?
+        data[2] -> int: GL texture ID
+        data[3] -> image resource
+        data[4] -> pixel width
+        data[5] -> pixel height
 */
 import inline "FrameworkFunctions/13_arg.cry";
 
@@ -43,30 +43,30 @@ objArray1 = ObjectInstance$objInstance1.nativeData;
 intArray1 = $_cast('Array<int>', $_array_get(objArray1, 0)); // event queue
 len = $_cast('int', $_array_get(objArray1, 1)); // event queue virtual length
 if (len >= $_array_length(intArray1)) {
-	intArray2 = $_new_array('int', len * 2 + 16);
-	for (i = 0; i < len; i += 1) {
-		$_array_set(intArray2, i, $_array_get(intArray1, i));
-	}
-	intArray1 = intArray2;
-	$_array_set(objArray1, 0, intArray1);
+    intArray2 = $_new_array('int', len * 2 + 16);
+    for (i = 0; i < len; i += 1) {
+        $_array_set(intArray2, i, $_array_get(intArray1, i));
+    }
+    intArray1 = intArray2;
+    $_array_set(objArray1, 0, intArray1);
 }
 $_array_set(objArray1, 1, len + 16);
 
 // Do the same with the image queue. Image queue is not created by the native data int writer, so it may be null.
 objArrayArray1 = $_cast('Array<Array<object>>', $_array_get(objArray1, 2)); // image queue
 if (objArrayArray1 == null) {
-	int1 = 0;
-	objArrayArray1 = $_new_array('Array<object>', 0);
+    int1 = 0;
+    objArrayArray1 = $_new_array('Array<object>', 0);
 } else {
-	int1 = $_cast('int', $_array_get(objArray1, 3));
+    int1 = $_cast('int', $_array_get(objArray1, 3));
 }
 if (int1 >= $_array_length(objArrayArray1)) {
-	objArrayArray2 = $_new_array('Array<object>', int1 * 2 + 16);
-	for (i = 0; i < int1; i += 1) {
-		$_array_set(objArrayArray2, i, $_array_get(objArrayArray1, i));
-	}
-	objArrayArray1 = objArrayArray2;
-	$_array_set(objArray1, 2, objArrayArray1);
+    objArrayArray2 = $_new_array('Array<object>', int1 * 2 + 16);
+    for (i = 0; i < int1; i += 1) {
+        $_array_set(objArrayArray2, i, $_array_get(objArrayArray1, i));
+    }
+    objArrayArray1 = objArrayArray2;
+    $_array_set(objArray1, 2, objArrayArray1);
 }
 $_array_set(objArray1, 3, int1 + 1);
 
@@ -88,97 +88,97 @@ $_array_set(intArray1, len + 1, int1);
 
 // rotation
 if ((int1 & 4) != 0) {
-	value = arg12; // $_array_get(valueStack, valueStackSize + 11);
-	if (Value$value.type == Types.FLOAT) float1 = $_cast('double', Value$value.internalValue);
-	else if (Value$value.type == Types.INTEGER) float1 = $_cast('int', Value$value.internalValue) + 0.0;
-	else bool1 = false;
-	int2 = $_int(canonicalizeAngle(float1) * 1048576);
-	$_array_set(intArray1, len | 10, int2);
+    value = arg12; // $_array_get(valueStack, valueStackSize + 11);
+    if (Value$value.type == Types.FLOAT) float1 = $_cast('double', Value$value.internalValue);
+    else if (Value$value.type == Types.INTEGER) float1 = $_cast('int', Value$value.internalValue) + 0.0;
+    else bool1 = false;
+    int2 = $_int(canonicalizeAngle(float1) * 1048576);
+    $_array_set(intArray1, len | 10, int2);
 }
 
 // alpha
 if (bool1 && (int1 & 8) != 0) {
-	value = arg13; //$_array_get(valueStack, valueStackSize + 12);
-	if (Value$value.type == Types.INTEGER) int2 = $_cast('int', Value$value.internalValue);
-	else if (Value$value.type == Types.FLOAT) {
-		float1 = $_cast('double', Value$value.internalValue);
-		int2 = $_int(float1 + .5);
-	} else {
-		bool1 = false;
-	}
-	
-	if (int2 > 254) {
-		// alpha is 255? unset the alpha bit.
-		$_array_set(intArray1, len | 1, int1 - 8);
-	} else if (int2 < 0) {
-		bool2 = true;
-	} else {
-		$_array_set(intArray1, len | 11, int2);
-	}
+    value = arg13; //$_array_get(valueStack, valueStackSize + 12);
+    if (Value$value.type == Types.INTEGER) int2 = $_cast('int', Value$value.internalValue);
+    else if (Value$value.type == Types.FLOAT) {
+        float1 = $_cast('double', Value$value.internalValue);
+        int2 = $_int(float1 + .5);
+    } else {
+        bool1 = false;
+    }
+
+    if (int2 > 254) {
+        // alpha is 255? unset the alpha bit.
+        $_array_set(intArray1, len | 1, int1 - 8);
+    } else if (int2 < 0) {
+        bool2 = true;
+    } else {
+        $_array_set(intArray1, len | 11, int2);
+    }
 }
 
 // copy all the numbers
 for (i = 0; i < 8; i += 1) {
-	// just blindly copy the rest of the numbers rounding floats to ints
-	value = $_array_get(args, 3 + i);
-	if (Value$value.type == Types.INTEGER) {
-		int2 = $_cast('int', Value$value.internalValue);
-	} else if (Value$value.type == Types.FLOAT) {
-		float1 = $_cast('double', Value$value.internalValue);
-		int2 = $_int(float1 + .5);
-	} else {
-		bool1 = false;
-		i = 9;
-	}
-	
-	$_array_set(intArray1, len + 2 + i, int2);
+    // just blindly copy the rest of the numbers rounding floats to ints
+    value = $_array_get(args, 3 + i);
+    if (Value$value.type == Types.INTEGER) {
+        int2 = $_cast('int', Value$value.internalValue);
+    } else if (Value$value.type == Types.FLOAT) {
+        float1 = $_cast('double', Value$value.internalValue);
+        int2 = $_int(float1 + .5);
+    } else {
+        bool1 = false;
+        i = 9;
+    }
+
+    $_array_set(intArray1, len + 2 + i, int2);
 }
 
 // stretching
 if ((int1 & 2) != 0) {
-	// target width
-	int2 = $_array_get(intArray1, len + 6);
-	if (int2 < 0) bool1 = false;
-	else if (int2 == 0) bool2 = true;
-	
-	// target height
-	int2 = $_array_get(intArray1, len + 7);
-	if (int2 < 0) bool1 = false;
-	else if (int2 == 0) bool2 = true;
+    // target width
+    int2 = $_array_get(intArray1, len + 6);
+    if (int2 < 0) bool1 = false;
+    else if (int2 == 0) bool2 = true;
+
+    // target height
+    int2 = $_array_get(intArray1, len + 7);
+    if (int2 < 0) bool1 = false;
+    else if (int2 == 0) bool2 = true;
 }
 
 // slicing
 if ((int1 & 1) != 0) {
-	int1 = $_cast('int', $_array_get(objArray1, 5)); // image width
-	int2 = $_array_get(intArray1, len + 2); // source x
-	int3 = $_array_get(intArray1, len + 4); // desired width
-	if (int2 < 0 || int2 + int3 > int1 || int3 < 0) {
-		bool1 = false;
-	}
-	if (int3 == 0) bool2 = true;
-	
-	if (bool1) {
-		int1 = $_cast('int', $_array_get(objArray1, 6)); // image height
-		int2 = $_array_get(intArray1, len + 3); // source y
-		int3 = $_array_get(intArray1, len + 5); // desired height
-		if (int2 < 0 || int2 + int3 > int1 || int3 < 0) {
-			bool1 = false;
-		}
-		if (int3 == 0) bool2 = true;
-	}
+    int1 = $_cast('int', $_array_get(objArray1, 5)); // image width
+    int2 = $_array_get(intArray1, len + 2); // source x
+    int3 = $_array_get(intArray1, len + 4); // desired width
+    if (int2 < 0 || int2 + int3 > int1 || int3 < 0) {
+        bool1 = false;
+    }
+    if (int3 == 0) bool2 = true;
+
+    if (bool1) {
+        int1 = $_cast('int', $_array_get(objArray1, 6)); // image height
+        int2 = $_array_get(intArray1, len + 3); // source y
+        int3 = $_array_get(intArray1, len + 5); // desired height
+        if (int2 < 0 || int2 + int3 > int1 || int3 < 0) {
+            bool1 = false;
+        }
+        if (int3 == 0) bool2 = true;
+    }
 }
 
 if (bool1) {
-	if (bool2) {
-		// noop (asked for 0 width or height, off-screen, 0 alpha, etc.
-		objArray1 = ObjectInstance$objInstance1.nativeData;
-		$_array_set(objArray1, 1, $_cast('int', $_array_get(objArray1, 1)) - 16);
-		$_array_set(objArray1, 3, $_cast('int', $_array_get(objArray1, 3)) - 1);
-	}
-	output = VALUE_TRUE;
+    if (bool2) {
+        // noop (asked for 0 width or height, off-screen, 0 alpha, etc.
+        objArray1 = ObjectInstance$objInstance1.nativeData;
+        $_array_set(objArray1, 1, $_cast('int', $_array_get(objArray1, 1)) - 16);
+        $_array_set(objArray1, 3, $_cast('int', $_array_get(objArray1, 3)) - 1);
+    }
+    output = VALUE_TRUE;
 } else {
-	// TODO: this is okay for now since this will cause a crash.
-	// however when exceptions become a thing, both queue lengths must be rolled back 
-	// so that if the exception is caught it won't render invalid data.
-	output = VALUE_FALSE;
+    // TODO: this is okay for now since this will cause a crash.
+    // however when exceptions become a thing, both queue lengths must be rolled back
+    // so that if the exception is caught it won't render invalid data.
+    output = VALUE_FALSE;
 }

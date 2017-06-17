@@ -1,10 +1,10 @@
 /*
-	Does the thread need to yield to the OS/platform in order for images to load?
-	So far this is only true for JavaScript.
+    Does the thread need to yield to the OS/platform in order for images to load?
+    So far this is only true for JavaScript.
 */
 
 if (%%%IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM%%%) {
-	output = VALUE_TRUE;
+    output = VALUE_TRUE;
 } else {
-	output = VALUE_FALSE;
+    output = VALUE_FALSE;
 }

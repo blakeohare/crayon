@@ -1,199 +1,199 @@
 namespace Nori {
-	enum DockDirection {
-		TOP = 0,
-		BOTTOM = 1,
-		LEFT = 2,
-		RIGHT = 3,
-	}
-	
-	class DockPanel : Panel {
-		constructor() : base() { }
-		
-		static function setDirection(element, direction) {
-			element.fauxNativeData['dock'] = direction;
-		}
-		
-		function renderCalculateSize(
-			isHorizontal,
-			availableSizePixels,
-			defaultAlign,
-			forcedAlign) {
-			
-			nativeData = this.fauxNativeData;
-			align = forcedAlign ?? nativeData.get(isHorizontal ? 'align-x' : 'align-y') ?? defaultAlign;
-			leadingMargin = nativeData.get(isHorizontal ? 'margin-left' : 'margin-top', 0);
-			trailingMargin = nativeData.get(isHorizontal ? 'margin-right' : 'margin-bottom', 0);
-			suggestedSize = nativeData.get(isHorizontal ? 'suggested-width' : 'suggested-height', null);
-			
-			/*
-				If a dimension has a set width, allocate (and trim off) size
-				as you iterate through the children.
-				
-				If a dimension has no set width, determine the width by invoking
-				the allocator on the children in reverse order and add to the suggested
-				width as you go.
-			*/
-			
-			length = this.children.length;
-			
-			if (availableSizePixels == null) {
-				
-				// start from the end with the last element positioned at 0,0
-				// as you move outward, offset all the render offsets such that they 
-				// are relative to that element.
-				// At the end, when you know how far out the edges are from the last element,
-				// iterate back through and offset them all again with the new offset such that
-				// the top left corner of the dock panel is at (0, 0) and everything is relative to that.
-				
-				child = this.children[length - 1];
-				childNativeData = child.fauxNativeData;
-				child.renderCalculateSize(isHorizontal, null, null, 0); // alignment param ignored.
-				if (isHorizontal) {
-					coordLeft = 0;
-					coordRight = childNativeData['render-outer-width'];
-					for (i = length - 2; i >= 0; --i) {
-						child = this.children[i];
-						switch (childNativeData.get('dock', DockDirection.TOP)) {
-							case DockDirection.TOP:
-							case DockDirection.BOTTOM:
-								child.renderCalculateSize(true, coordRight - coordLeft, null, Alignment.STRETCH);
-								break;
-							case DockDirection.LEFT:
-								child.renderCalculateSize(true, null, Alignment.LEADING, Alignment.LEADING);
-								childNativeData = child.fauxNativeData;
-								width = childNativeData['render-outer-width'];
-								coordLeft -= width;
-								childNativeData['render-outer-left'] += coordLeft;
-								break;
-							case DockDirection.RIGHT:
-								child.renderCalculateSize(true, null, Alignment.TRAILING, Alignment.TRAILING);
-								childNativeData = child.fauxNativeData;
-								width = childNativeData['render-outer-width'];
-								childNativeData['render-outer-x'] += coordRight;
-								coordRight += width;
-								break;
-						}
-					}
-					width = coordRight - coordLeft;
-					outerWidth = width + leadingMargin + trailingMargin;
-					offset = -coordLeft + leadingMargin;
-					for (child : this.children) {
-						child.fauxNativeData['render-outer-x'] += offset;
-					}
-					nativeData['render-inner-width'] = width;
-					nativeData['render-outer-width'] = outerWidth;
-					nativeData['render-outer-x'] = 0;
-					nativeData['render-margin-left'] = leadingMargin;
-				} else {
-					coordTop = 0;
-					coordBottom = childNativeData['render-outer-height'];
-					for (i = length - 2; i >= 0; --i) {
-						child = this.children[i];
-						switch (childNativeData.get('dock', DockDirection.TOP)) {
-							case DockDirection.LEFT:
-							case DockDirection.RIGHT:
-								child.renderCalculateSize(false, coordBottom - coordTop, null, Alignment.STRETCH);
-								break;
-							case DockDirection.TOP:
-								child.renderCalculateSize(false, null, Alignment.LEADING, Alignment.LEADING);
-								childNativeData = child.fauxNativeData;
-								height = childNativeData['render-outer-height'];
-								coordTop -= height;
-								childNativeData['render-outer-y'] += coordTop;
-								break;
-							case DockDirection.BOTTOM:
-								child.renderCalculateSize(false, null, Alignment.TRAILING, Alignment.TRAILING);
-								childNativeData = child.fauxNativeData;
-								height = childNativeData['render-outer-height'];
-								childNativeData['render-outer-y'] += coordBottom;
-								coordBottom += height;
-								break;
-						}
-					}
-					height = coordBottom - coordTop;
-					outerHeight = height + leadingMargin + trailingMargin;
-					offset = -coordTop + leadingMargin;
-					for (child : this.children) {
-						child.fauxNativeData['render-outer-y'] += offset;
-					}
-					nativeData['render-inner-height'] = height;
-					nativeData['render-outer-height'] = outerHeight;
-					nativeData['render-outer-y'] = 0;
-					nativeData['render-margin-top'] = leadingMargin;
-				}
-			} else {
-				length = this.children.length;
-				offset = leadingMargin;
-				remainingAvailableSize = availableSizePixels - leadingMargin - trailingMargin;
-				innerWidth = remainingAvailableSize;
-				if (isHorizontal) {
-					for (i = 0; i < length - 1; ++i) {
-						child = this.children[i];
-						childNativeData = child.fauxNativeData;
-						switch (childNativeData.get('dock', DockDirection.TOP)) {
-							case DockDirection.TOP:
-							case DockDirection.BOTTOM:
-								child.renderCalculateSize(true, remainingAvailableSize, null, Alignment.STRETCH);
-								childNativeData['render-outer-x'] = offset;
-								break;
-							case DockDirection.LEFT:
-								child.renderCalculateSize(true, null, null, Alignment.LEADING);
-								childNativeData['render-outer-x'] = offset;
-								width = childNativeData['render-outer-width'];
-								offset += width;
-								remainingAvailableSize -= width;
-								break;
-							case DockDirection.RIGHT:
-								child.renderCalculateSize(true, null, null, Alignment.TRAILING);
-								width = childNativeData['render-outer-width'];
-								remainingAvailableSize -= width;
-								childNativeData['render-outer-x'] = offset + remainingAvailableSize;
-								break;
-						}
-					}
-					child = this.children[-1];
-					child.renderCalculateSize(true, remainingAvailableSize, null, Alignment.STRETCH);
-					child.fauxNativeData['render-outer-x'] = offset;
-					
-					nativeData['render-inner-width'] = innerWidth;
-					nativeData['render-outer-width'] = availableSizePixels;
-					nativeData['render-outer-x'] = 0;
-					nativeData['render-margin-left'] = leadingMargin;
-				} else {
-					for (i = 0; i < length - 1; ++i) {
-						child = this.children[i];
-						childNativeData = child.fauxNativeData;
-						switch (childNativeData.get('dock', DockDirection.TOP)) {
-							case DockDirection.LEFT:
-							case DockDirection.RIGHT:
-								child.renderCalculateSize(false, remainingAvailableSize, null, Alignment.STRETCH);
-								childNativeData['render-outer-y'] = offset;
-								break;
-							case DockDirection.TOP:
-								child.renderCalculateSize(false, null, null, Alignment.LEADING);
-								childNativeData['render-outer-y'] = offset;
-								height = childNativeData['render-outer-height'];
-								offset += height;
-								remainingAvailableSize -= height;
-								break;
-							case DockDirection.BOTTOM:
-								child.renderCalculateSize(false, null, null, Alignment.TRAILING);
-								height = childNativeData['render-outer-height'];
-								remainingAvailableSize -= height;
-								childNativeData['render-outer-y'] = offset + remainingAvailableSize;
-								break;
-						}
-					}
-					child = this.children[-1];
-					child.renderCalculateSize(false, remainingAvailableSize, null, Alignment.STRETCH);
-					child.fauxNativeData['render-outer-y'] = offset;
-					
-					nativeData['render-inner-height'] = innerWidth;
-					nativeData['render-outer-height'] = availableSizePixels;
-					nativeData['render-outer-y'] = 0;
-					nativeData['render-margin-top'] = leadingMargin;
-				}
-			}
-		}
-	}
+    enum DockDirection {
+        TOP = 0,
+        BOTTOM = 1,
+        LEFT = 2,
+        RIGHT = 3,
+    }
+
+    class DockPanel : Panel {
+        constructor() : base() { }
+
+        static function setDirection(element, direction) {
+            element.fauxNativeData['dock'] = direction;
+        }
+
+        function renderCalculateSize(
+            isHorizontal,
+            availableSizePixels,
+            defaultAlign,
+            forcedAlign) {
+
+            nativeData = this.fauxNativeData;
+            align = forcedAlign ?? nativeData.get(isHorizontal ? 'align-x' : 'align-y') ?? defaultAlign;
+            leadingMargin = nativeData.get(isHorizontal ? 'margin-left' : 'margin-top', 0);
+            trailingMargin = nativeData.get(isHorizontal ? 'margin-right' : 'margin-bottom', 0);
+            suggestedSize = nativeData.get(isHorizontal ? 'suggested-width' : 'suggested-height', null);
+
+            /*
+                If a dimension has a set width, allocate (and trim off) size
+                as you iterate through the children.
+
+                If a dimension has no set width, determine the width by invoking
+                the allocator on the children in reverse order and add to the suggested
+                width as you go.
+            */
+
+            length = this.children.length;
+
+            if (availableSizePixels == null) {
+
+                // start from the end with the last element positioned at 0,0
+                // as you move outward, offset all the render offsets such that they
+                // are relative to that element.
+                // At the end, when you know how far out the edges are from the last element,
+                // iterate back through and offset them all again with the new offset such that
+                // the top left corner of the dock panel is at (0, 0) and everything is relative to that.
+
+                child = this.children[length - 1];
+                childNativeData = child.fauxNativeData;
+                child.renderCalculateSize(isHorizontal, null, null, 0); // alignment param ignored.
+                if (isHorizontal) {
+                    coordLeft = 0;
+                    coordRight = childNativeData['render-outer-width'];
+                    for (i = length - 2; i >= 0; --i) {
+                        child = this.children[i];
+                        switch (childNativeData.get('dock', DockDirection.TOP)) {
+                            case DockDirection.TOP:
+                            case DockDirection.BOTTOM:
+                                child.renderCalculateSize(true, coordRight - coordLeft, null, Alignment.STRETCH);
+                                break;
+                            case DockDirection.LEFT:
+                                child.renderCalculateSize(true, null, Alignment.LEADING, Alignment.LEADING);
+                                childNativeData = child.fauxNativeData;
+                                width = childNativeData['render-outer-width'];
+                                coordLeft -= width;
+                                childNativeData['render-outer-left'] += coordLeft;
+                                break;
+                            case DockDirection.RIGHT:
+                                child.renderCalculateSize(true, null, Alignment.TRAILING, Alignment.TRAILING);
+                                childNativeData = child.fauxNativeData;
+                                width = childNativeData['render-outer-width'];
+                                childNativeData['render-outer-x'] += coordRight;
+                                coordRight += width;
+                                break;
+                        }
+                    }
+                    width = coordRight - coordLeft;
+                    outerWidth = width + leadingMargin + trailingMargin;
+                    offset = -coordLeft + leadingMargin;
+                    for (child : this.children) {
+                        child.fauxNativeData['render-outer-x'] += offset;
+                    }
+                    nativeData['render-inner-width'] = width;
+                    nativeData['render-outer-width'] = outerWidth;
+                    nativeData['render-outer-x'] = 0;
+                    nativeData['render-margin-left'] = leadingMargin;
+                } else {
+                    coordTop = 0;
+                    coordBottom = childNativeData['render-outer-height'];
+                    for (i = length - 2; i >= 0; --i) {
+                        child = this.children[i];
+                        switch (childNativeData.get('dock', DockDirection.TOP)) {
+                            case DockDirection.LEFT:
+                            case DockDirection.RIGHT:
+                                child.renderCalculateSize(false, coordBottom - coordTop, null, Alignment.STRETCH);
+                                break;
+                            case DockDirection.TOP:
+                                child.renderCalculateSize(false, null, Alignment.LEADING, Alignment.LEADING);
+                                childNativeData = child.fauxNativeData;
+                                height = childNativeData['render-outer-height'];
+                                coordTop -= height;
+                                childNativeData['render-outer-y'] += coordTop;
+                                break;
+                            case DockDirection.BOTTOM:
+                                child.renderCalculateSize(false, null, Alignment.TRAILING, Alignment.TRAILING);
+                                childNativeData = child.fauxNativeData;
+                                height = childNativeData['render-outer-height'];
+                                childNativeData['render-outer-y'] += coordBottom;
+                                coordBottom += height;
+                                break;
+                        }
+                    }
+                    height = coordBottom - coordTop;
+                    outerHeight = height + leadingMargin + trailingMargin;
+                    offset = -coordTop + leadingMargin;
+                    for (child : this.children) {
+                        child.fauxNativeData['render-outer-y'] += offset;
+                    }
+                    nativeData['render-inner-height'] = height;
+                    nativeData['render-outer-height'] = outerHeight;
+                    nativeData['render-outer-y'] = 0;
+                    nativeData['render-margin-top'] = leadingMargin;
+                }
+            } else {
+                length = this.children.length;
+                offset = leadingMargin;
+                remainingAvailableSize = availableSizePixels - leadingMargin - trailingMargin;
+                innerWidth = remainingAvailableSize;
+                if (isHorizontal) {
+                    for (i = 0; i < length - 1; ++i) {
+                        child = this.children[i];
+                        childNativeData = child.fauxNativeData;
+                        switch (childNativeData.get('dock', DockDirection.TOP)) {
+                            case DockDirection.TOP:
+                            case DockDirection.BOTTOM:
+                                child.renderCalculateSize(true, remainingAvailableSize, null, Alignment.STRETCH);
+                                childNativeData['render-outer-x'] = offset;
+                                break;
+                            case DockDirection.LEFT:
+                                child.renderCalculateSize(true, null, null, Alignment.LEADING);
+                                childNativeData['render-outer-x'] = offset;
+                                width = childNativeData['render-outer-width'];
+                                offset += width;
+                                remainingAvailableSize -= width;
+                                break;
+                            case DockDirection.RIGHT:
+                                child.renderCalculateSize(true, null, null, Alignment.TRAILING);
+                                width = childNativeData['render-outer-width'];
+                                remainingAvailableSize -= width;
+                                childNativeData['render-outer-x'] = offset + remainingAvailableSize;
+                                break;
+                        }
+                    }
+                    child = this.children[-1];
+                    child.renderCalculateSize(true, remainingAvailableSize, null, Alignment.STRETCH);
+                    child.fauxNativeData['render-outer-x'] = offset;
+
+                    nativeData['render-inner-width'] = innerWidth;
+                    nativeData['render-outer-width'] = availableSizePixels;
+                    nativeData['render-outer-x'] = 0;
+                    nativeData['render-margin-left'] = leadingMargin;
+                } else {
+                    for (i = 0; i < length - 1; ++i) {
+                        child = this.children[i];
+                        childNativeData = child.fauxNativeData;
+                        switch (childNativeData.get('dock', DockDirection.TOP)) {
+                            case DockDirection.LEFT:
+                            case DockDirection.RIGHT:
+                                child.renderCalculateSize(false, remainingAvailableSize, null, Alignment.STRETCH);
+                                childNativeData['render-outer-y'] = offset;
+                                break;
+                            case DockDirection.TOP:
+                                child.renderCalculateSize(false, null, null, Alignment.LEADING);
+                                childNativeData['render-outer-y'] = offset;
+                                height = childNativeData['render-outer-height'];
+                                offset += height;
+                                remainingAvailableSize -= height;
+                                break;
+                            case DockDirection.BOTTOM:
+                                child.renderCalculateSize(false, null, null, Alignment.TRAILING);
+                                height = childNativeData['render-outer-height'];
+                                remainingAvailableSize -= height;
+                                childNativeData['render-outer-y'] = offset + remainingAvailableSize;
+                                break;
+                        }
+                    }
+                    child = this.children[-1];
+                    child.renderCalculateSize(false, remainingAvailableSize, null, Alignment.STRETCH);
+                    child.fauxNativeData['render-outer-y'] = offset;
+
+                    nativeData['render-inner-height'] = innerWidth;
+                    nativeData['render-outer-height'] = availableSizePixels;
+                    nativeData['render-outer-y'] = 0;
+                    nativeData['render-margin-top'] = leadingMargin;
+                }
+            }
+        }
+    }
 }

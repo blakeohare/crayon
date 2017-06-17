@@ -2,387 +2,387 @@
 import Game;
 
 namespace Audio {
-	
-	enum _MusicState {
-		NOT_PLAYING = 1,
-		TRANSITION_IN = 2,
-		PLAYING_NORMAL = 3,
-		PLAYING_LOOPING = 4,
-		TRANSITION_OUT = 5,
-	}
 
-	class MusicNotFoundException : Exception {
-		constructor(m) : base(m) { }
-	}
+    enum _MusicState {
+        NOT_PLAYING = 1,
+        TRANSITION_IN = 2,
+        PLAYING_NORMAL = 3,
+        PLAYING_LOOPING = 4,
+        TRANSITION_OUT = 5,
+    }
 
-	/*
-		nativeData[0] -> native music object, if necessary. Some platforms just do everything by path.
-	*/
-	class Music {
+    class MusicNotFoundException : Exception {
+        constructor(m) : base(m) { }
+    }
 
-		static field _isSupported = $$lib_audio_is_supported();
+    /*
+        nativeData[0] -> native music object, if necessary. Some platforms just do everything by path.
+    */
+    class Music {
 
-		field _isResource;
-		field _path;
+        static field _isSupported = $$lib_audio_is_supported();
 
-		// TODO: private constructors
-		constructor() {
-			// Initialized by factory methods.
-		}
+        field _isResource;
+        field _path;
 
-		static function _convertPath(path) {
-			fileinfo = $$lib_audio_getAudioResourcePath(path + '');
-			if (fileinfo == null) {
-				Core.assert(false, "Audio resource not found.");
-			} else if (!fileinfo[0]) {
-				Core.assert(false, "Resource is not an audio file.");
-			}
-			return fileinfo[1];
-		}
+        // TODO: private constructors
+        constructor() {
+            // Initialized by factory methods.
+        }
 
-		static function loadFromResource(path) {
-			if (!Music._isSupported) return null;
+        static function _convertPath(path) {
+            fileinfo = $$lib_audio_getAudioResourcePath(path + '');
+            if (fileinfo == null) {
+                Core.assert(false, "Audio resource not found.");
+            } else if (!fileinfo[0]) {
+                Core.assert(false, "Resource is not an audio file.");
+            }
+            return fileinfo[1];
+        }
 
-			path = Music._convertPath(path);
+        static function loadFromResource(path) {
+            if (!Music._isSupported) return null;
 
-			music = new Music();
-			music._isResource = true;
-			music._path = path;
-			if (!$$lib_audio_music_load_from_resource(music, path)) {
-				Core.assert(false, "Music resource not found.");
-			}
-			return music;
-		}
+            path = Music._convertPath(path);
 
-		static field currentState = _MusicState.NOT_PLAYING;
-		static field currentMusic = null;
-		static field currentIsLoop = false;
-		static field currentInTransitionDuration = null;
-		static field currentOutTransitionDuration = null;
-		static field currentTransitionStart = null;
+            music = new Music();
+            music._isResource = true;
+            music._path = path;
+            if (!$$lib_audio_music_load_from_resource(music, path)) {
+                Core.assert(false, "Music resource not found.");
+            }
+            return music;
+        }
 
-		static field enqueuedMusic = null;
-		static field enqueuedIsLoop = null;
-		static field enqueuedInTransitionDuration = null;
+        static field currentState = _MusicState.NOT_PLAYING;
+        static field currentMusic = null;
+        static field currentIsLoop = false;
+        static field currentInTransitionDuration = null;
+        static field currentOutTransitionDuration = null;
+        static field currentTransitionStart = null;
 
-		static field mainVolume = 1.0; // overall volume
-		static field compositeVolume = 1.0; // volume with fades and song normalization applied
-		static field fadeVolume = 1.0;
+        static field enqueuedMusic = null;
+        static field enqueuedIsLoop = null;
+        static field enqueuedInTransitionDuration = null;
 
-		static constructor() {
-			Game.GameWindow._frameEndHandlers.add(Music._gameWindowFrameEndHandler);
-		}
+        static field mainVolume = 1.0; // overall volume
+        static field compositeVolume = 1.0; // volume with fades and song normalization applied
+        static field fadeVolume = 1.0;
 
-		static function _gameWindowFrameEndHandler() {
-			switch (Music.currentState) {
-				case _MusicState.NOT_PLAYING:
-					// nothing to do
-					break;
+        static constructor() {
+            Game.GameWindow._frameEndHandlers.add(Music._gameWindowFrameEndHandler);
+        }
 
-				case _MusicState.TRANSITION_IN:
-					dt = Core.currentTime() - Music.currentTransitionStart;
-					if (dt >= Music.currentInTransitionDuration) {
-						Music.fadeVolume = 1.0;
-						Music.currentState = Music.currentIsLoop ? _MusicState.PLAYING_LOOPING : _MusicState.PLAYING_NORMAL;
-					} else {
-						Music.fadeVolume = 1.0 * dt / Music.currentInTransitionDuration;
-					}
-					break;
+        static function _gameWindowFrameEndHandler() {
+            switch (Music.currentState) {
+                case _MusicState.NOT_PLAYING:
+                    // nothing to do
+                    break;
 
-				case _MusicState.PLAYING_NORMAL:
-					if (!$$lib_audio_music_is_playing()) {
-						// Rather than just mark this as no longer playing, pretend that it's a transition out that's already done.
-						// This will either mark it as NOT_PLAYING or will automatically pop the queue and start the next song.
-						// Otherwise enqueuing a song during a non-looping song and if the song just happens to end while it's still fading
-						// the next song won't get triggered and that will make users cry.
-						Music.currentState = _MusicState.TRANSITION_OUT;
-						Music.currentTransitionStart = 0;
-						Music.currentOutTransitionDuration = 1.0;
-					}
-					break;
+                case _MusicState.TRANSITION_IN:
+                    dt = Core.currentTime() - Music.currentTransitionStart;
+                    if (dt >= Music.currentInTransitionDuration) {
+                        Music.fadeVolume = 1.0;
+                        Music.currentState = Music.currentIsLoop ? _MusicState.PLAYING_LOOPING : _MusicState.PLAYING_NORMAL;
+                    } else {
+                        Music.fadeVolume = 1.0 * dt / Music.currentInTransitionDuration;
+                    }
+                    break;
 
-				case _MusicState.PLAYING_LOOPING:
-					// carry on.
-					break;
+                case _MusicState.PLAYING_NORMAL:
+                    if (!$$lib_audio_music_is_playing()) {
+                        // Rather than just mark this as no longer playing, pretend that it's a transition out that's already done.
+                        // This will either mark it as NOT_PLAYING or will automatically pop the queue and start the next song.
+                        // Otherwise enqueuing a song during a non-looping song and if the song just happens to end while it's still fading
+                        // the next song won't get triggered and that will make users cry.
+                        Music.currentState = _MusicState.TRANSITION_OUT;
+                        Music.currentTransitionStart = 0;
+                        Music.currentOutTransitionDuration = 1.0;
+                    }
+                    break;
 
-				case _MusicState.TRANSITION_OUT:
-					dt = Core.currentTime() - Music.currentTransitionStart;
-					if (dt == null || dt >= Music.currentOutTransitionDuration) {
-						Music.fadeVolume = 0.0;
-						// music fade complete. 
-						if (Music.enqueuedMusic == null) {
-							Music.currentState = _MusicState.NOT_PLAYING;
-							Music.currentMusic = null;
-							$$lib_audio_music_stop();
-						} else {
-							Music.currentMusic = Music.enqueuedMusic;
-							Music.currentIsLoop = Music.enqueuedIsLoop;
-							if (Music.enqueuedInTransitionDuration == null) {
-								found = $$lib_audio_music_play(
-									Music.currentMusic,
-									Music.currentMusic._isResource,
-									Music.currentMusic._path,
-									Music.mainVolume,
-									Music.currentIsLoop);
-								if (!found) throw new Audio.MusicNotFoundException("Music file not found: " + Music.currentMusic._path);
-								
-								Music.currentState = Music.currentIsLoop
-									? _MusicState.PLAYING_LOOPING
-									: _MusicState.PLAYING_NORMAL;
-								Music.currentInTransitionDuration = null;
-								Music.fadeVolume = 1.0;
-							} else {
-								$$lib_audio_music_play(
-									Music.currentMusic,
-									Music.currentMusic._isResource,
-									Music.currentMusic._path,
-									0.0,
-									Music.currentIsLoop);
-								Music.currentState = _MusicState.TRANSITION_IN;
-								Music.currentInTransitionDuration = Music.enqueuedInTransitionDuration;
-								Music.currentTransitionStart = Core.currentTime();
-							}
-							Music.enqueuedMusic = null;
-						}
-					} else {
-						Music.fadeVolume = 1.0 - dt / Music.currentOutTransitionDuration;
-					}
-					break;
-			}
+                case _MusicState.PLAYING_LOOPING:
+                    // carry on.
+                    break;
 
-			v = Math.ensureRange(Music.fadeVolume * Music.mainVolume, 0.0, 1.0);
-			diff = Math.abs(v - Music.compositeVolume);
-			if (diff > 0.00001) {
-				Music.compositeVolume = v;
-				$$lib_audio_music_set_volume(v);
-			}
-		}
+                case _MusicState.TRANSITION_OUT:
+                    dt = Core.currentTime() - Music.currentTransitionStart;
+                    if (dt == null || dt >= Music.currentOutTransitionDuration) {
+                        Music.fadeVolume = 0.0;
+                        // music fade complete.
+                        if (Music.enqueuedMusic == null) {
+                            Music.currentState = _MusicState.NOT_PLAYING;
+                            Music.currentMusic = null;
+                            $$lib_audio_music_stop();
+                        } else {
+                            Music.currentMusic = Music.enqueuedMusic;
+                            Music.currentIsLoop = Music.enqueuedIsLoop;
+                            if (Music.enqueuedInTransitionDuration == null) {
+                                found = $$lib_audio_music_play(
+                                    Music.currentMusic,
+                                    Music.currentMusic._isResource,
+                                    Music.currentMusic._path,
+                                    Music.mainVolume,
+                                    Music.currentIsLoop);
+                                if (!found) throw new Audio.MusicNotFoundException("Music file not found: " + Music.currentMusic._path);
 
-		static function getCurrent() {
-			return Music.currentMusic;
-		}
+                                Music.currentState = Music.currentIsLoop
+                                    ? _MusicState.PLAYING_LOOPING
+                                    : _MusicState.PLAYING_NORMAL;
+                                Music.currentInTransitionDuration = null;
+                                Music.fadeVolume = 1.0;
+                            } else {
+                                $$lib_audio_music_play(
+                                    Music.currentMusic,
+                                    Music.currentMusic._isResource,
+                                    Music.currentMusic._path,
+                                    0.0,
+                                    Music.currentIsLoop);
+                                Music.currentState = _MusicState.TRANSITION_IN;
+                                Music.currentInTransitionDuration = Music.enqueuedInTransitionDuration;
+                                Music.currentTransitionStart = Core.currentTime();
+                            }
+                            Music.enqueuedMusic = null;
+                        }
+                    } else {
+                        Music.fadeVolume = 1.0 - dt / Music.currentOutTransitionDuration;
+                    }
+                    break;
+            }
 
-		function fadeOutAndIn(loop = true, outTransition = 2.0, inTransition = 2.0) {
-			Music._transition(this, loop, outTransition, inTransition);
-		}
+            v = Math.ensureRange(Music.fadeVolume * Music.mainVolume, 0.0, 1.0);
+            diff = Math.abs(v - Music.compositeVolume);
+            if (diff > 0.00001) {
+                Music.compositeVolume = v;
+                $$lib_audio_music_set_volume(v);
+            }
+        }
 
-		function fadeOutAndPlay(loop = true, outTransition = 2.0) {
-			Music._transition(this, loop, outTransition, null);
-		}
+        static function getCurrent() {
+            return Music.currentMusic;
+        }
 
-		function play(loop = true) {
-			Music._transition(this, loop, null, null);
-		}
+        function fadeOutAndIn(loop = true, outTransition = 2.0, inTransition = 2.0) {
+            Music._transition(this, loop, outTransition, inTransition);
+        }
 
-		function fadeOut(duration = 2.0) {
-			if (Music.currentMusic == this) {
-				Music.fadeOutCurrent(duration);
-			}
-		}
+        function fadeOutAndPlay(loop = true, outTransition = 2.0) {
+            Music._transition(this, loop, outTransition, null);
+        }
 
-		static function fadeOutCurrent(duration = 2.0) {
-			Music._transition(null, false, duration, null);
-		}
+        function play(loop = true) {
+            Music._transition(this, loop, null, null);
+        }
 
-		static function stop() {
-			Music._transition(null, false, null, null);
-		}
+        function fadeOut(duration = 2.0) {
+            if (Music.currentMusic == this) {
+                Music.fadeOutCurrent(duration);
+            }
+        }
 
-		function fadeIn(loop = true, duration = 2.0) {
-			Music._transition(this, loop, null, duration);
-		}
+        static function fadeOutCurrent(duration = 2.0) {
+            Music._transition(null, false, duration, null);
+        }
 
-		/*
-			music can be null to indicate a top
-			outTransition can be null to indicate instant end
-			inTransition can be null to indicate instant start
-		*/
-		static function _transition(music, loop, outTransitionDuration, inTransitionDuration) {
-			if (inTransitionDuration == null || inTransitionDuration < 0.01) inTransitionDuration = null;
-			if (outTransitionDuration == null || outTransitionDuration < 0.01) outTransitionDuration = null;
-			if (music == Music.currentMusic) return;
-			loop = loop == true;
+        static function stop() {
+            Music._transition(null, false, null, null);
+        }
 
-			if (outTransitionDuration == null) {
-				// instantaneous transitions
-				if (music == null) {
-					$$lib_audio_music_stop();
-					Music.currentMusic = null;
-					Music.currentState = _MusicState.NOT_PLAYING;
-				} else {
-					Music.currentMusic = music;
-					Music.currentIsLoop = loop;
-					if (inTransitionDuration == null) {
-						Music.currentState = loop ? _MusicState.PLAYING_LOOPING : _MusicState.PLAYING_NORMAL;
-						Music.fadeVolume = 1.0;
-						$$lib_audio_music_play(music, music._isResource, music._path, Music.mainVolume, loop);
-					} else {
-						Music.currentState = _MusicState.TRANSITION_IN;
-						Music.fadeVolume = 0.0;
-						Music.currentTransitionStart = Core.currentTime();
-						Music.currentInTransitionDuration = inTransitionDuration;
-						$$lib_audio_music_play(music, music._isResource, music._path, 0.0, loop);
-					}
-				}
-			} else {
-				// fade out. save transition information for the end-frame worker.
-				Music.currentState = _MusicState.TRANSITION_OUT;
-				Music.currentTransitionStart = Core.currentTime();
-				Music.currentOutTransitionDuration = outTransitionDuration;
-				Music.enqueuedMusic = music;
-				Music.enqueuedInTransitionDuration = inTransitionDuration;
-				Music.enqueuedIsLoop = loop;
-			}
-		}
-	}
+        function fadeIn(loop = true, duration = 2.0) {
+            Music._transition(this, loop, null, duration);
+        }
 
-	enum SoundPlayState {
-		PLAYING = 1,
-		PAUSED = 2,
-		STOPPED = 3,
-	}
+        /*
+            music can be null to indicate a top
+            outTransition can be null to indicate instant end
+            inTransition can be null to indicate instant start
+        */
+        static function _transition(music, loop, outTransitionDuration, inTransitionDuration) {
+            if (inTransitionDuration == null || inTransitionDuration < 0.01) inTransitionDuration = null;
+            if (outTransitionDuration == null || outTransitionDuration < 0.01) outTransitionDuration = null;
+            if (music == Music.currentMusic) return;
+            loop = loop == true;
 
-	/*
-		nativeData[0] -> mixer channel identifier or whatever is necessary to identify this particular playing instance.
-	*/
-	class Sound {
-		field _soundResource;
-		field _id;
+            if (outTransitionDuration == null) {
+                // instantaneous transitions
+                if (music == null) {
+                    $$lib_audio_music_stop();
+                    Music.currentMusic = null;
+                    Music.currentState = _MusicState.NOT_PLAYING;
+                } else {
+                    Music.currentMusic = music;
+                    Music.currentIsLoop = loop;
+                    if (inTransitionDuration == null) {
+                        Music.currentState = loop ? _MusicState.PLAYING_LOOPING : _MusicState.PLAYING_NORMAL;
+                        Music.fadeVolume = 1.0;
+                        $$lib_audio_music_play(music, music._isResource, music._path, Music.mainVolume, loop);
+                    } else {
+                        Music.currentState = _MusicState.TRANSITION_IN;
+                        Music.fadeVolume = 0.0;
+                        Music.currentTransitionStart = Core.currentTime();
+                        Music.currentInTransitionDuration = inTransitionDuration;
+                        $$lib_audio_music_play(music, music._isResource, music._path, 0.0, loop);
+                    }
+                }
+            } else {
+                // fade out. save transition information for the end-frame worker.
+                Music.currentState = _MusicState.TRANSITION_OUT;
+                Music.currentTransitionStart = Core.currentTime();
+                Music.currentOutTransitionDuration = outTransitionDuration;
+                Music.enqueuedMusic = music;
+                Music.enqueuedInTransitionDuration = inTransitionDuration;
+                Music.enqueuedIsLoop = loop;
+            }
+        }
+    }
 
-		field _isStopped = false; // set to stopped to indicate the sound should never be resumable again.
-		field _volume;
-		field _pan;
+    enum SoundPlayState {
+        PLAYING = 1,
+        PAUSED = 2,
+        STOPPED = 3,
+    }
 
-		// constructs and fires event
-		constructor(resource, volume, pan) {
-			this._soundResource = resource;
-			this._id = resource._id;
-			this._volume = volume;
-			this._pan = pan;
+    /*
+        nativeData[0] -> mixer channel identifier or whatever is necessary to identify this particular playing instance.
+    */
+    class Sound {
+        field _soundResource;
+        field _id;
 
-			// This call will set the native data.
-			// Also, it'll just mark the sound as stopped if there's an error. 
-			// TODO: maybe a better indicator of an error playing the sound.
-			this._isStopped = $$lib_audio_sfx_play(this, resource, volume, pan) == 1;
-		}
+        field _isStopped = false; // set to stopped to indicate the sound should never be resumable again.
+        field _volume;
+        field _pan;
 
-		function getState() {
-			// ensures that it also returns STOPPED if the channel is playing a different sound.
-			t = $$lib_audio_sfx_get_state(this, this._soundResource, this._id);
-			if (t == SoundPlayState.STOPPED) this._isStopped = true;
-			return t;
-		}
+        // constructs and fires event
+        constructor(resource, volume, pan) {
+            this._soundResource = resource;
+            this._id = resource._id;
+            this._volume = volume;
+            this._pan = pan;
 
-		function resume() {
-			if (this.getState() == SoundPlayState.PAUSED) {
-				$$lib_audio_sfx_resume(this, this._soundResource, this._volume, this._pan);
-			}
-		}
+            // This call will set the native data.
+            // Also, it'll just mark the sound as stopped if there's an error.
+            // TODO: maybe a better indicator of an error playing the sound.
+            this._isStopped = $$lib_audio_sfx_play(this, resource, volume, pan) == 1;
+        }
 
-		function stop() {
-			t = this.getState();
-			if (t != SoundPlayState.STOPPED) {
-				$$lib_audio_sfx_stop(this, this._soundResource, this._id, t, true);
-			}
-		}
+        function getState() {
+            // ensures that it also returns STOPPED if the channel is playing a different sound.
+            t = $$lib_audio_sfx_get_state(this, this._soundResource, this._id);
+            if (t == SoundPlayState.STOPPED) this._isStopped = true;
+            return t;
+        }
 
-		function pause() {
-			if (this.getState() == SoundPlayState.PLAYING) {
-				$$lib_audio_sfx_stop(this, this._soundResource, this._id, SoundPlayState.PLAYING, false);
-			}
-		}
-		
-		function getResource() {
-			return this._soundResource;
-		}
+        function resume() {
+            if (this.getState() == SoundPlayState.PAUSED) {
+                $$lib_audio_sfx_resume(this, this._soundResource, this._volume, this._pan);
+            }
+        }
 
-		/*
-			-1.0 -> left speaker only
-			1.0 -> right speaker only
-			0.0 -> balanced
-		*/
-		function setPan(value) {
-			this._pan = Math.ensureRange(value, -1.0, 1.0) + 0.0;
-			$$lib_audio_sfx_set_pan(this, this._soundResource, this._pan);
-		}
+        function stop() {
+            t = this.getState();
+            if (t != SoundPlayState.STOPPED) {
+                $$lib_audio_sfx_stop(this, this._soundResource, this._id, t, true);
+            }
+        }
 
-		function getPan() { return this._pan; }
-		
-		/*
-			ratio from 0.0 to 1.0
-		*/
-		function setVolume(ratio) {
-			this._volume = Math.ensureRange(ratio, 0.0, 1.0) + 0.0;
-			$$lib_audio_sfx_set_volume(this, this._soundResource, this._volume);
-		}
+        function pause() {
+            if (this.getState() == SoundPlayState.PLAYING) {
+                $$lib_audio_sfx_stop(this, this._soundResource, this._id, SoundPlayState.PLAYING, false);
+            }
+        }
 
-		function getVolume() { return this._volume; }
-	}
+        function getResource() {
+            return this._soundResource;
+        }
 
-	/*
-		native_data[0] -> actual native instance of the sound.
-	*/
-	class SoundResource {
+        /*
+            -1.0 -> left speaker only
+            1.0 -> right speaker only
+            0.0 -> balanced
+        */
+        function setPan(value) {
+            this._pan = Math.ensureRange(value, -1.0, 1.0) + 0.0;
+            $$lib_audio_sfx_set_pan(this, this._soundResource, this._pan);
+        }
 
-		static field _cache = {};
+        function getPan() { return this._pan; }
 
-		static field _resID = 0;
+        /*
+            ratio from 0.0 to 1.0
+        */
+        function setVolume(ratio) {
+            this._volume = Math.ensureRange(ratio, 0.0, 1.0) + 0.0;
+            $$lib_audio_sfx_set_volume(this, this._soundResource, this._volume);
+        }
 
-		field _v = 1.0; // volume
-		field _p; // path
-		field _e; // is embedded resource
-		field _c = []; // playing channels
-		
-		field _id; // unique ID for this particular resource
+        function getVolume() { return this._volume; }
+    }
 
-		@private
-		constructor() {
-			this._id = SoundResource._resID++;
-		}
+    /*
+        native_data[0] -> actual native instance of the sound.
+    */
+    class SoundResource {
 
-		function setDefaultVolume(r) {
-			this._v = Math.ensureRange(r, 0.0, 1.0) + 0.0;
-		}
+        static field _cache = {};
 
-		function getDefaultVolume() {
-			return this._v;
-		}
+        static field _resID = 0;
 
-		static function loadFromFile(path) {
-			if (!Music._isSupported) return null;
+        field _v = 1.0; // volume
+        field _p; // path
+        field _e; // is embedded resource
+        field _c = []; // playing channels
 
-			s = new SoundResource();
-			$$lib_audio_sfx_load_from_file(s, path);
-			s._p = path;
-			s._e = false;
-			return s;
-		}
+        field _id; // unique ID for this particular resource
 
-		static function loadFromResource(path, useCache = true) {
-			if (!Music._isSupported) return null;
+        @private
+        constructor() {
+            this._id = SoundResource._resID++;
+        }
 
-			s = null;
-			path += ''; // ensure string
-			if (useCache) {
-				s = SoundResource._cache.get(path);
-			}
-			if (s == null) {
-				path = Music._convertPath(path);
-				s = new SoundResource();
-				$$lib_audio_sfx_load_from_resource(s, path);
-				s._p = path;
-				s._e = true;
-				if (useCache) {
-					SoundResource._cache[path] = s;
-				}
-			}
-			return s;
-		}
+        function setDefaultVolume(r) {
+            this._v = Math.ensureRange(r, 0.0, 1.0) + 0.0;
+        }
 
-		function play(pan = 0.0) {
-			c = new Sound(this, this._v, pan);
-			this._c.add(c);
-			return c;
-		}
-	}
+        function getDefaultVolume() {
+            return this._v;
+        }
+
+        static function loadFromFile(path) {
+            if (!Music._isSupported) return null;
+
+            s = new SoundResource();
+            $$lib_audio_sfx_load_from_file(s, path);
+            s._p = path;
+            s._e = false;
+            return s;
+        }
+
+        static function loadFromResource(path, useCache = true) {
+            if (!Music._isSupported) return null;
+
+            s = null;
+            path += ''; // ensure string
+            if (useCache) {
+                s = SoundResource._cache.get(path);
+            }
+            if (s == null) {
+                path = Music._convertPath(path);
+                s = new SoundResource();
+                $$lib_audio_sfx_load_from_resource(s, path);
+                s._p = path;
+                s._e = true;
+                if (useCache) {
+                    SoundResource._cache[path] = s;
+                }
+            }
+            return s;
+        }
+
+        function play(pan = 0.0) {
+            c = new Sound(this, this._v, pan);
+            this._c.add(c);
+            return c;
+        }
+    }
 }

@@ -1,11 +1,11 @@
 /*
-	Checks to see if the loader is done. 
-	Possibly uses a mutex.
-	Possibly copies the information over if the platform requires it.
-	
-	arg 1: loader object instance
-	arg 2: native image data object instance
-	arg 3: single-item list for boolean value output
+    Checks to see if the loader is done.
+    Possibly uses a mutex.
+    Possibly copies the information over if the platform requires it.
+
+    arg 1: loader object instance
+    arg 2: native image data object instance
+    arg 3: single-item list for boolean value output
 */
 
 import inline "FrameworkFunctions/3_arg.cry";
@@ -15,6 +15,6 @@ objInstance2 = $_cast('ObjectInstance', Value$arg2.internalValue);
 list1 = $_cast('List<Value>', Value$arg3.internalValue);
 
 $_lib_imageresources_checkLoaderIsDone(
-	ObjectInstance$objInstance1.nativeData,
-	ObjectInstance$objInstance2.nativeData,
-	list1);
+    ObjectInstance$objInstance1.nativeData,
+    ObjectInstance$objInstance2.nativeData,
+    list1);

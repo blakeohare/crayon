@@ -2,32 +2,32 @@
 
 /*
 
-	Converts some numbers indicating a line and some width into quadrilateral corner coordinates.
-	The line is never perfectly horizontal or vertical so inverting the slope is always safe.
-	
-	arg 1: object instance with the drawing queue
-	
-	Before:
-		queue[n + 1] -> start X
-		queue[n + 2] -> start Y
-		queue[n + 3] -> end X
-		queue[n + 4] -> end Y
-		queue[n + 5] -> stroke width
-		queue[n + 6] -> 0
-		queue[n + 7] -> 0
-		queue[n + 8] -> 0
-	
-	After:
-		Quadrilateral ABCD
-		queue[n + 1] -> AX
-		queue[n + 2] -> AY
-		queue[n + 3] -> BX
-		queue[n + 4] -> BY
-		queue[n + 5] -> CX
-		queue[n + 6] -> CY
-		queue[n + 7] -> DX
-		queue[n + 8] -> DY
-	
+    Converts some numbers indicating a line and some width into quadrilateral corner coordinates.
+    The line is never perfectly horizontal or vertical so inverting the slope is always safe.
+
+    arg 1: object instance with the drawing queue
+
+    Before:
+        queue[n + 1] -> start X
+        queue[n + 2] -> start Y
+        queue[n + 3] -> end X
+        queue[n + 4] -> end Y
+        queue[n + 5] -> stroke width
+        queue[n + 6] -> 0
+        queue[n + 7] -> 0
+        queue[n + 8] -> 0
+
+    After:
+        Quadrilateral ABCD
+        queue[n + 1] -> AX
+        queue[n + 2] -> AY
+        queue[n + 3] -> BX
+        queue[n + 4] -> BY
+        queue[n + 5] -> CX
+        queue[n + 6] -> CY
+        queue[n + 7] -> DX
+        queue[n + 8] -> DY
+
 */
 import inline "FrameworkFunctions/1_arg.cry";
 
@@ -50,8 +50,8 @@ if (float1 < .5) float1 = 1.0; // just above sqrt(2) / 2
 
 // yOffset = (stroke radius) / sqrt(slope ** 2 + 1)
 float2 = $_unsafe_float_division(
-	float1,
-	$_force_parens($_math_pow(float3 * float3 + 1, .5)));
+    float1,
+    $_force_parens($_math_pow(float3 * float3 + 1, .5)));
 
 // xOffset = -yOffset * slope
 float1 = -float2 * float3;

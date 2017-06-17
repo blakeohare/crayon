@@ -1,240 +1,240 @@
 namespace Core {
-	const CRAYON_VERSION = "0.2.0";
+    const CRAYON_VERSION = "0.2.0";
 
-	enum Type {
-		NULL = 0,
-		BOOLEAN = 1,
-		INTEGER = 2,
-		FLOAT = 3,
-		STRING = 4,
-		LIST = 5,
-		DICTIONARY = 6,
-		OBJECT = 7,
-		FUNCTION = 8,
-		CLASS = 9,
-	}
-	
-	function assert(condition, message = null) {
-		return $$$('assert', condition, message, true);
-	}
-	
-	function fail(message) {
-		return $$$('assert', false, message, false);
-	}
+    enum Type {
+        NULL = 0,
+        BOOLEAN = 1,
+        INTEGER = 2,
+        FLOAT = 3,
+        STRING = 4,
+        LIST = 5,
+        DICTIONARY = 6,
+        OBJECT = 7,
+        FUNCTION = 8,
+        CLASS = 9,
+    }
 
-	function chr(value) {
-		return $$$('chr', value);
-	}
+    function assert(condition, message = null) {
+        return $$$('assert', condition, message, true);
+    }
 
-	function currentTime() {
-		return $$$('currentTime');
-	}
+    function fail(message) {
+        return $$$('assert', false, message, false);
+    }
 
-	function ord(value) {
-		return $$$('ord', value);
-	}
+    function chr(value) {
+        return $$$('chr', value);
+    }
 
-	function parseFloat(value) {
-		return $$$('parseFloat', value);
-	}
+    function currentTime() {
+        return $$$('currentTime');
+    }
 
-	function parseInt(value) {
-		return $$$('parseInt', value);
-	}
+    function ord(value) {
+        return $$$('ord', value);
+    }
 
-	function print(value) {
-		return $$$('print', value);
-	}
+    function parseFloat(value) {
+        return $$$('parseFloat', value);
+    }
 
-	function sleep(seconds) {
-		Core.assert(
-			$$$('typeis', seconds, Core.Type.INTEGER, Core.Type.FLOAT) &&
-			seconds >= 0, "Invalid argument.");
-		return $$$('sleep', seconds);
-	}
+    function parseInt(value) {
+        return $$$('parseInt', value);
+    }
 
-	function typeof(value) {
-		return $$$('typeof',value);
-	}
+    function print(value) {
+        return $$$('print', value);
+    }
 
-	function isString(value) {
-		return $$$('typeis', value, Core.Type.STRING);
-	}
+    function sleep(seconds) {
+        Core.assert(
+            $$$('typeis', seconds, Core.Type.INTEGER, Core.Type.FLOAT) &&
+            seconds >= 0, "Invalid argument.");
+        return $$$('sleep', seconds);
+    }
 
-	function isNumber(value) {
-		return $$$('typeis', value, Core.Type.INTEGER, Core.Type.FLOAT);
-	}
+    function typeof(value) {
+        return $$$('typeof',value);
+    }
 
-	function _LIB_CORE_list_sort_by_key(fp, list) {
-		if (list.length > 1) {
-			$$$('sortList', list, _LIB_CORE_list_map(fp, list));
-		}
-	}
+    function isString(value) {
+        return $$$('typeis', value, Core.Type.STRING);
+    }
 
-	function _LIB_CORE_list_map(fp, list) {
-		output = [];
-		for (t : list) {
-			output.add(fp(t));
-		}
-		return output;
-	}
+    function isNumber(value) {
+        return $$$('typeis', value, Core.Type.INTEGER, Core.Type.FLOAT);
+    }
 
-	function _LIB_CORE_list_filter(fp, list) {
-		output = [];
-		for (t : list) {
-			b = fp(t);
-			if (!$$$('typeis', b, Core.Type.BOOLEAN)) {
-				Core.fail("Filter function returned a non-boolean value.");
-			}
-			if (b) { 
-				output.add(t);
-			}
-		}
-		return output;
-	}
-	
-	function getCurrentExecutionToken() {
-		return $$$('execId');
-	}
-	
-	function getExecutionIterationCounter() {
-		return $$$('execCounter');
-	}
-	
-	function getProjectId() {
-		return $$$('projectId');
-	}
-	
-	// Interanlly called by fp.invoke(args)
-	function _LIB_CORE_invoke(fp, args) {
-		// MAGIC ALERT: There is a special compiler hack that checks specifically for this line (based on parent 
-		// function name) and compiles this function invocation with a special flag to treat the args list as
-		// individually passed arguments.
-		return fp(args);
-	}
-	
-	enum _LIB_CORE_ExType {
-		// These must be kept in sync with CoreExceptionTypes in Constants.cry in the interpreter.
-		FATAL = 0,
-		GENERIC_EXCEPTION = 1,
-		ASSERTION_FAILED = 2,
-		DIVISION_BY_ZERO = 3,
-		INDEX_OUT_OF_RANGE = 4,
-		INVALID_ARGUMENT = 5,
-		INVALID_ASSIGNMENT = 6,
-		INVALID_INVOCATION = 7,
-		INVALID_KEY = 8,
-		KEY_NOT_FOUND = 9,
-		NULL_REFERENCE = 10,
-		UNASSIGNED_VARIABLE = 11,
-		UNKNOWN_FIELD = 12,
-		UNSUPPORTED_OPERATION = 13,
-	}
-	
-	/*
-		When there are VM-generated exceptions (as opposed to exceptions thrown directly from code with the 
-		throw keyword) the easiest way to go about this is to simply treat it as a function invocation to this 
-		particular function which itself just uses the throw keyword.
-	*/
-	function _LIB_CORE_generateException(type, message) {
-		switch (type) {
-			case _LIB_CORE_ExType.FATAL: throw new FatalException(message);
-			case _LIB_CORE_ExType.ASSERTION_FAILED: throw new AssertionFailedException(message);
-			case _LIB_CORE_ExType.DIVISION_BY_ZERO: throw new DivisionByZeroException(message);
-			case _LIB_CORE_ExType.INDEX_OUT_OF_RANGE: throw new IndexOutOfRangeException(message);
-			case _LIB_CORE_ExType.INVALID_ARGUMENT: throw new InvalidArgumentException(message);
-			case _LIB_CORE_ExType.INVALID_ASSIGNMENT: throw new InvalidAssignmentException(message);
-			case _LIB_CORE_ExType.INVALID_INVOCATION: throw new InvalidInvocationException(message);
-			case _LIB_CORE_ExType.INVALID_KEY: throw new InvalidKeyException(message);
-			case _LIB_CORE_ExType.KEY_NOT_FOUND: throw new KeyNotFoundException(message);
-			case _LIB_CORE_ExType.NULL_REFERENCE: throw new NullReferenceException(message);
-			case _LIB_CORE_ExType.UNASSIGNED_VARIABLE: throw new UnassignedVariableException(message);
-			case _LIB_CORE_ExType.UNKNOWN_FIELD: throw new UnknownFieldException(message);
-			case _LIB_CORE_ExType.UNSUPPORTED_OPERATION: throw new UnsupportedOperationException(message);
-			default: throw new Exception(message);
-		}
-	}
-	
-	// A simple dummy object.
-	// The VM supports attaching native data to any object instance, and so this generally serves as 
-	// the canonical object to use for that purpose.
-	class Object { }
-	
-	class Exception {
-		/*
-			nativeData[0] -> (boolean) is fatal exception?
-			nativeData[1] -> (List<int>) list of PC's this exception bubbles through
-				PC trace is only set when throw is invoked.
-		*/
-		
-		// Do not re-order these.
-		// .message field position within the class is assumed at compile time.
-		field cause;
-		field message;
-		
-		constructor(message = null, cause = null) {
-			$$$('allocNativeData', this, 2);
-			$$$('setNativeData', this, 0, false); // is fatal?
-			this.message = message;
-			this.cause = cause;
-		}
-		
-		function getTrace() {
-			return $$$('getExceptionTrace', this);
-		}
-	}
-	
-	class FatalException : Exception {
-		constructor(m = null, c = null) : base(m, c) {
-			$$$('setNativeData', this, 0, true); // is fatal?
-		}
-	}
+    function _LIB_CORE_list_sort_by_key(fp, list) {
+        if (list.length > 1) {
+            $$$('sortList', list, _LIB_CORE_list_map(fp, list));
+        }
+    }
 
-	class AssertionFailedException : Exception { constructor(m = null, c = null) : base(m, c) { } }
-	class DivisionByZeroException : Exception { constructor(m = null, c = null) : base(m, c) { } }
-	class IndexOutOfRangeException : Exception { constructor(m = null, c = null) : base(m, c) { } }
-	class InvalidArgumentException : Exception { constructor(m = null, c = null) : base(m, c) { } }
-	class InvalidAssignmentException : Exception { constructor(m = null, c = null) : base(m, c) { } }
-	class InvalidInvocationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
-	class InvalidKeyException : Exception { constructor(m = null, c = null) : base(m, c) { } }
-	class InvalidOperationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
-	class KeyNotFoundException : Exception { constructor(m = null, c = null) : base(m, c) { } }
-	class NotImplementedException : Exception { constructor(m = null, c = null) : base(m, c) { } }
-	class NullReferenceException : Exception { constructor(m = null, c = null) : base(m, c) { } }
-	class UnassignedVariableException : Exception { constructor(m = null, c = null) : base(m, c) { } }
-	class UnknownFieldException : Exception { constructor(m = null, c = null) : base(m, c) { } }
-	class UnsupportedOperationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+    function _LIB_CORE_list_map(fp, list) {
+        output = [];
+        for (t : list) {
+            output.add(fp(t));
+        }
+        return output;
+    }
 
-	namespace Reflection {
-	
-		function getClassFromInstance(instance) {
-			// TODO: document what happens when instance is not an instance.
-			return $$$('reflectGetClass', instance);
-		}
-		
-		function getClasses(commonBaseClass = null) {
-			output = $$$('reflectAllClasses');
-			if (commonBaseClass != null) {
-				filtered = [];
-				for (c : output) {
-					if (c.isA(commonBaseClass)) {
-						filtered.add(c);
-					}
-				}
-				return filtered;
-			}
-			return output;
-		}
-		
-		function getMethods(instanceOrClass) {
-			switch (Core.typeof(instanceOrClass)) {
-				// TODO: verify that static methods are returned only from class inputs.
-				case Core.Type.OBJECT:
-				case Core.Type.CLASS:
-					return $$$('reflectGetMethods', instanceOrClass);
-				default:
-					throw new Core.InvalidArgumentException("Can only get methods from an instance or class reference.");
-			}
-		}
-	}
+    function _LIB_CORE_list_filter(fp, list) {
+        output = [];
+        for (t : list) {
+            b = fp(t);
+            if (!$$$('typeis', b, Core.Type.BOOLEAN)) {
+                Core.fail("Filter function returned a non-boolean value.");
+            }
+            if (b) {
+                output.add(t);
+            }
+        }
+        return output;
+    }
+
+    function getCurrentExecutionToken() {
+        return $$$('execId');
+    }
+
+    function getExecutionIterationCounter() {
+        return $$$('execCounter');
+    }
+
+    function getProjectId() {
+        return $$$('projectId');
+    }
+
+    // Interanlly called by fp.invoke(args)
+    function _LIB_CORE_invoke(fp, args) {
+        // MAGIC ALERT: There is a special compiler hack that checks specifically for this line (based on parent
+        // function name) and compiles this function invocation with a special flag to treat the args list as
+        // individually passed arguments.
+        return fp(args);
+    }
+
+    enum _LIB_CORE_ExType {
+        // These must be kept in sync with CoreExceptionTypes in Constants.cry in the interpreter.
+        FATAL = 0,
+        GENERIC_EXCEPTION = 1,
+        ASSERTION_FAILED = 2,
+        DIVISION_BY_ZERO = 3,
+        INDEX_OUT_OF_RANGE = 4,
+        INVALID_ARGUMENT = 5,
+        INVALID_ASSIGNMENT = 6,
+        INVALID_INVOCATION = 7,
+        INVALID_KEY = 8,
+        KEY_NOT_FOUND = 9,
+        NULL_REFERENCE = 10,
+        UNASSIGNED_VARIABLE = 11,
+        UNKNOWN_FIELD = 12,
+        UNSUPPORTED_OPERATION = 13,
+    }
+
+    /*
+        When there are VM-generated exceptions (as opposed to exceptions thrown directly from code with the
+        throw keyword) the easiest way to go about this is to simply treat it as a function invocation to this
+        particular function which itself just uses the throw keyword.
+    */
+    function _LIB_CORE_generateException(type, message) {
+        switch (type) {
+            case _LIB_CORE_ExType.FATAL: throw new FatalException(message);
+            case _LIB_CORE_ExType.ASSERTION_FAILED: throw new AssertionFailedException(message);
+            case _LIB_CORE_ExType.DIVISION_BY_ZERO: throw new DivisionByZeroException(message);
+            case _LIB_CORE_ExType.INDEX_OUT_OF_RANGE: throw new IndexOutOfRangeException(message);
+            case _LIB_CORE_ExType.INVALID_ARGUMENT: throw new InvalidArgumentException(message);
+            case _LIB_CORE_ExType.INVALID_ASSIGNMENT: throw new InvalidAssignmentException(message);
+            case _LIB_CORE_ExType.INVALID_INVOCATION: throw new InvalidInvocationException(message);
+            case _LIB_CORE_ExType.INVALID_KEY: throw new InvalidKeyException(message);
+            case _LIB_CORE_ExType.KEY_NOT_FOUND: throw new KeyNotFoundException(message);
+            case _LIB_CORE_ExType.NULL_REFERENCE: throw new NullReferenceException(message);
+            case _LIB_CORE_ExType.UNASSIGNED_VARIABLE: throw new UnassignedVariableException(message);
+            case _LIB_CORE_ExType.UNKNOWN_FIELD: throw new UnknownFieldException(message);
+            case _LIB_CORE_ExType.UNSUPPORTED_OPERATION: throw new UnsupportedOperationException(message);
+            default: throw new Exception(message);
+        }
+    }
+
+    // A simple dummy object.
+    // The VM supports attaching native data to any object instance, and so this generally serves as
+    // the canonical object to use for that purpose.
+    class Object { }
+
+    class Exception {
+        /*
+            nativeData[0] -> (boolean) is fatal exception?
+            nativeData[1] -> (List<int>) list of PC's this exception bubbles through
+                PC trace is only set when throw is invoked.
+        */
+
+        // Do not re-order these.
+        // .message field position within the class is assumed at compile time.
+        field cause;
+        field message;
+
+        constructor(message = null, cause = null) {
+            $$$('allocNativeData', this, 2);
+            $$$('setNativeData', this, 0, false); // is fatal?
+            this.message = message;
+            this.cause = cause;
+        }
+
+        function getTrace() {
+            return $$$('getExceptionTrace', this);
+        }
+    }
+
+    class FatalException : Exception {
+        constructor(m = null, c = null) : base(m, c) {
+            $$$('setNativeData', this, 0, true); // is fatal?
+        }
+    }
+
+    class AssertionFailedException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+    class DivisionByZeroException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+    class IndexOutOfRangeException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+    class InvalidArgumentException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+    class InvalidAssignmentException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+    class InvalidInvocationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+    class InvalidKeyException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+    class InvalidOperationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+    class KeyNotFoundException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+    class NotImplementedException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+    class NullReferenceException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+    class UnassignedVariableException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+    class UnknownFieldException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+    class UnsupportedOperationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+
+    namespace Reflection {
+
+        function getClassFromInstance(instance) {
+            // TODO: document what happens when instance is not an instance.
+            return $$$('reflectGetClass', instance);
+        }
+
+        function getClasses(commonBaseClass = null) {
+            output = $$$('reflectAllClasses');
+            if (commonBaseClass != null) {
+                filtered = [];
+                for (c : output) {
+                    if (c.isA(commonBaseClass)) {
+                        filtered.add(c);
+                    }
+                }
+                return filtered;
+            }
+            return output;
+        }
+
+        function getMethods(instanceOrClass) {
+            switch (Core.typeof(instanceOrClass)) {
+                // TODO: verify that static methods are returned only from class inputs.
+                case Core.Type.OBJECT:
+                case Core.Type.CLASS:
+                    return $$$('reflectGetMethods', instanceOrClass);
+                default:
+                    throw new Core.InvalidArgumentException("Can only get methods from an instance or class reference.");
+            }
+        }
+    }
 }

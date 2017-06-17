@@ -1,94 +1,94 @@
 ﻿function @type('int') lib_audio_stop(@type('object') sound, @type('bool') reset) {
-	$_lib_audio_audioStop(sound);
-	return 0;
+    $_lib_audio_audioStop(sound);
+    return 0;
 }
 
 function @type('int') lib_audio_sfx_stop(
-		@type('object') channel,
-		@type('object') resource,
-		@type('int') resourceId,
-		@type('bool') isActivelyPlaying,
-		@type('bool') hardStop) {
-	$_lib_audio_sfxStop(channel, resource, resourceId, isActivelyPlaying, hardStop);
-	return 0;
+        @type('object') channel,
+        @type('object') resource,
+        @type('int') resourceId,
+        @type('bool') isActivelyPlaying,
+        @type('bool') hardStop) {
+    $_lib_audio_sfxStop(channel, resource, resourceId, isActivelyPlaying, hardStop);
+    return 0;
 }
 
 function @type('int') lib_audio_sfx_get_state(@type('object') channel, @type('object') sfxResource, @type('int') resourceId) {
-	return $_lib_audio_sfxGetState(channel, sfxResource, resourceId);
+    return $_lib_audio_sfxGetState(channel, sfxResource, resourceId);
 }
 
 function @type('int') lib_audio_sfx_set_pan(@type('object') channel, @type('object') sfxResource, @type('double') pan) {
-	return 0;
+    return 0;
 }
 
 function @type('int') lib_audio_sfx_set_volume(@type('object') channel, @type('object') sfxResource, @type('double') volume) {
-	return 0;
+    return 0;
 }
 
 function @type('int') lib_audio_sfx_unpause(@type('object') channel, @type('object') sfxResource, @type('double') volume, @type('double') pan) {
-	$_lib_audio_sfxResume(channel, sfxResource, volume, pan);
-	return 0;
+    $_lib_audio_sfxResume(channel, sfxResource, volume, pan);
+    return 0;
 }
 
 function @type('int') lib_audio_sfx_launch(
-		@type('object') sfxResource,
-		@type('Array<object>') channelNativeDataOut,
-		@type('double') volume,
-		@type('double') pan) {
+        @type('object') sfxResource,
+        @type('Array<object>') channelNativeDataOut,
+        @type('double') volume,
+        @type('double') pan) {
 
-	@type('object') channel = $_lib_audio_sfxPlay(sfxResource, volume, pan);
-	if (channel == null) {
-		return 0;
-	}
-	$_array_set(channelNativeDataOut, 0, channel);
-	return 1;
+    @type('object') channel = $_lib_audio_sfxPlay(sfxResource, volume, pan);
+    if (channel == null) {
+        return 0;
+    }
+    $_array_set(channelNativeDataOut, 0, channel);
+    return 1;
 }
 
 function @type('int') lib_audio_load_sfx_from_resource(@type('ObjectInstance') obj, @type('string') path) {
-	@type('object') sfx = $_lib_audio_readLocalSoundResource(path);
-	ObjectInstance$obj.nativeData = $_new_array('object', 1);
-	$_array_set(ObjectInstance$obj.nativeData, 0, sfx);
-	return 1;
+    @type('object') sfx = $_lib_audio_readLocalSoundResource(path);
+    ObjectInstance$obj.nativeData = $_new_array('object', 1);
+    $_array_set(ObjectInstance$obj.nativeData, 0, sfx);
+    return 1;
 }
 
 function @type('Value') lib_audio_is_music_playing() {
-	if ($_lib_audio_musicIsPlaying()) {
-		return VALUE_TRUE;
-	}
-	return VALUE_FALSE;
+    if ($_lib_audio_musicIsPlaying()) {
+        return VALUE_TRUE;
+    }
+    return VALUE_FALSE;
 }
 
 function @type('int') lib_audio_music_play(
-		@type('ObjectInstance') musicObject,
-		@type('bool') isResource,
-		@type('string') path,
-		@type('double') startingVolume,
-		@type('bool') isLoop) {
-	$_lib_audio_musicSetVolume(startingVolume);
+        @type('ObjectInstance') musicObject,
+        @type('bool') isResource,
+        @type('string') path,
+        @type('double') startingVolume,
+        @type('bool') isLoop) {
+    $_lib_audio_musicSetVolume(startingVolume);
 
-	@type('object') nativeObject = null;
-	if (ObjectInstance$musicObject.nativeData != null) {
-		nativeObject = $_array_get(ObjectInstance$musicObject.nativeData, 0);
-	}
+    @type('object') nativeObject = null;
+    if (ObjectInstance$musicObject.nativeData != null) {
+        nativeObject = $_array_get(ObjectInstance$musicObject.nativeData, 0);
+    }
 
-	if (isResource) {
-		$_lib_audio_musicPlayResource(nativeObject, path, isLoop);
-	} else {
-		if (!$_lib_audio_musicVerifyFileExists(path)) {
-			return -1;
-		}
-		$_lib_audio_musicPlayFile(nativeObject, path, isLoop);
-	}
+    if (isResource) {
+        $_lib_audio_musicPlayResource(nativeObject, path, isLoop);
+    } else {
+        if (!$_lib_audio_musicVerifyFileExists(path)) {
+            return -1;
+        }
+        $_lib_audio_musicPlayFile(nativeObject, path, isLoop);
+    }
 
-	return 0;
+    return 0;
 }
 
 function @type('bool') lib_audio_music_load_from_resource(@type('ObjectInstance') musicObj, @type('string') path) {
-	@type('object') nativeMusicObject = $_lib_audio_musicLoadFromResource(path);
-	if (nativeMusicObject != null) {
-		ObjectInstance$musicObj.nativeData = $_new_array('object', 1);
-		$_array_set(ObjectInstance$musicObj.nativeData, 0, nativeMusicObject);
-		return true;
-	}
-	return false;
+    @type('object') nativeMusicObject = $_lib_audio_musicLoadFromResource(path);
+    if (nativeMusicObject != null) {
+        ObjectInstance$musicObj.nativeData = $_new_array('object', 1);
+        $_array_set(ObjectInstance$musicObj.nativeData, 0, nativeMusicObject);
+        return true;
+    }
+    return false;
 }

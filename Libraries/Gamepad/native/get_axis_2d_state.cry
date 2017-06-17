@@ -1,18 +1,18 @@
 ﻿/*
-	args[0] -> GamepadDevice instance
-	args[1] -> hat index (integer)
-	args[2] -> value list of size 2 for X and Y out values
+    args[0] -> GamepadDevice instance
+    args[1] -> hat index (integer)
+    args[2] -> value list of size 2 for X and Y out values
 
-	outputs nothing
+    outputs nothing
 */
 import inline "FrameworkFunctions/3_arg.cry";
 
 if (%%%LIB_GAMEPAD_SUPPORTED%%%) {
-	objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
-	int1 = $_cast('int', Value$arg2.internalValue);
-	list1 = $_cast('List<Value>', Value$arg3.internalValue);
+    objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+    int1 = $_cast('int', Value$arg2.internalValue);
+    list1 = $_cast('List<Value>', Value$arg3.internalValue);
 
-	$_lib_gamepad_get_axis_2d_state($_array_get(ObjectInstance$objInstance1.nativeData, 0), int1, intOutParam);
-	$_list_set(list1, 0, buildInteger($_array_get(intOutParam, 0)));
-	$_list_set(list1, 1, buildInteger($_array_get(intOutParam, 1)));
+    $_lib_gamepad_get_axis_2d_state($_array_get(ObjectInstance$objInstance1.nativeData, 0), int1, intOutParam);
+    $_list_set(list1, 0, buildInteger($_array_get(intOutParam, 0)));
+    $_list_set(list1, 1, buildInteger($_array_get(intOutParam, 1)));
 }

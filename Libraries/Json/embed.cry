@@ -1,103 +1,103 @@
 ﻿namespace Json {
-	
-	class JsonException : Core.Exception {
-		constructor(message) : base(message) { }
-	}
-	
-	enum JsonSerializerFlag {
-		DEFAULT = 0,
-		
-		// TODO: implement pretty print
-		// PRETTY = 1, 
-		
-		OMIT_DICTIONARY_NULLS = 2,
-		
-		// TODO: implement big integers as strings
-		// BIG_INT_AS_STRINGS = 4,
-	}
-	
-	function parseJson(text) {
-		if (Core.typeof(text) != Core.Type.STRING) Core.fail("parseJson requires a string argument.");
-		return $$lib_json_parse(text);
-	}
-	
-	function serialize(object, flags = Json.JsonSerializerFlag.DEFAULT, depth = 64) {
-		builder = [];
-		Json._serializeImpl(object, flags, depth, builder);
-		return builder.join('');
-	}
-	// TODO: move this down to translated code.
-	
-	function _serializeImpl(object, flags, depth, sb) {
-		if (depth == 0) throw new Json.JsonException("Serialization depth exceed. Possible reference loop.");
-		switch (Core.typeof(object)) {
-			case Core.Type.NULL:
-				return sb.add('null');
-				
-			// The auto to-string for these types are good enough.
-			case Core.Type.BOOLEAN:
-			case Core.Type.INTEGER:
-			case Core.Type.FLOAT:
-				return sb.add('' + object);
-				
-				
-			case Core.Type.STRING:
-				sb.add('"');
-				length = object.length;
-				for (c : object) {
-					switch (c) {
-						case '"': sb.add('\\"'); break;
-						case '\\': sb.add('\\\\'); break;
-						// TODO: control characters
-						// TODO: unicode
-						default: sb.add(c); break;
-					}
-				}
-				return sb.add('"');
-				
-			case Core.Type.LIST:
-				length = object.length;
-				nextDepth = depth - 1;
-				if (length == 0) return '[]';
-				sb.add('[');
-				for (i = 0; i < length; ++i) {
-					if (i > 0) sb.add(',');
-					Json._serializeImpl(object[i], flags, nextDepth, sb);
-				}
-				return sb.add(']');
-				
-			case Core.Type.DICTIONARY:
-				omitNull = (flags & Json.JsonSerializerFlag.OMIT_DICTIONARY_NULLS) != 0;
-				length = object.length;
-				if (length == 0) return sb.add('{}');
-				
-				sb.add('{');
-				keys = object.keys();
-				// This depends on dictionaries only containing one type.
-				if (Core.typeof(keys[0]) != Core.Type.STRING) throw new Json.JsonException("Only string dictionaries can be used.");
-				keys.sort(); // deterministic predictable output
-				nextDepth = depth - 1;
-				first = true;
-				for (i = 0; i < length; ++i) {
-					key = keys[i];
-					value = object[key];
-					if (omitNull && value == null) {
-						continue;
-					}
-					if (first) {
-						first = false;
-					} else {
-						sb.add(",");
-					}
-					Json._serializeImpl(key, flags, nextDepth, sb);
-					sb.add(":");
-					Json._serializeImpl(value, flags, nextDepth, sb);
-				}
-				return sb.add('}');
-				
-			default:
-				// TODO: say which type.
-				throw new Json.JsonException("This type cannot be serialized to JSON.");
-		}
-	}
+
+    class JsonException : Core.Exception {
+        constructor(message) : base(message) { }
+    }
+
+    enum JsonSerializerFlag {
+        DEFAULT = 0,
+
+        // TODO: implement pretty print
+        // PRETTY = 1,
+
+        OMIT_DICTIONARY_NULLS = 2,
+
+        // TODO: implement big integers as strings
+        // BIG_INT_AS_STRINGS = 4,
+    }
+
+    function parseJson(text) {
+        if (Core.typeof(text) != Core.Type.STRING) Core.fail("parseJson requires a string argument.");
+        return $$lib_json_parse(text);
+    }
+
+    function serialize(object, flags = Json.JsonSerializerFlag.DEFAULT, depth = 64) {
+        builder = [];
+        Json._serializeImpl(object, flags, depth, builder);
+        return builder.join('');
+    }
+    // TODO: move this down to translated code.
+
+    function _serializeImpl(object, flags, depth, sb) {
+        if (depth == 0) throw new Json.JsonException("Serialization depth exceed. Possible reference loop.");
+        switch (Core.typeof(object)) {
+            case Core.Type.NULL:
+                return sb.add('null');
+
+            // The auto to-string for these types are good enough.
+            case Core.Type.BOOLEAN:
+            case Core.Type.INTEGER:
+            case Core.Type.FLOAT:
+                return sb.add('' + object);
+
+
+            case Core.Type.STRING:
+                sb.add('"');
+                length = object.length;
+                for (c : object) {
+                    switch (c) {
+                        case '"': sb.add('\\"'); break;
+                        case '\\': sb.add('\\\\'); break;
+                        // TODO: control characters
+                        // TODO: unicode
+                        default: sb.add(c); break;
+                    }
+                }
+                return sb.add('"');
+
+            case Core.Type.LIST:
+                length = object.length;
+                nextDepth = depth - 1;
+                if (length == 0) return '[]';
+                sb.add('[');
+                for (i = 0; i < length; ++i) {
+                    if (i > 0) sb.add(',');
+                    Json._serializeImpl(object[i], flags, nextDepth, sb);
+                }
+                return sb.add(']');
+
+            case Core.Type.DICTIONARY:
+                omitNull = (flags & Json.JsonSerializerFlag.OMIT_DICTIONARY_NULLS) != 0;
+                length = object.length;
+                if (length == 0) return sb.add('{}');
+
+                sb.add('{');
+                keys = object.keys();
+                // This depends on dictionaries only containing one type.
+                if (Core.typeof(keys[0]) != Core.Type.STRING) throw new Json.JsonException("Only string dictionaries can be used.");
+                keys.sort(); // deterministic predictable output
+                nextDepth = depth - 1;
+                first = true;
+                for (i = 0; i < length; ++i) {
+                    key = keys[i];
+                    value = object[key];
+                    if (omitNull && value == null) {
+                        continue;
+                    }
+                    if (first) {
+                        first = false;
+                    } else {
+                        sb.add(",");
+                    }
+                    Json._serializeImpl(key, flags, nextDepth, sb);
+                    sb.add(":");
+                    Json._serializeImpl(value, flags, nextDepth, sb);
+                }
+                return sb.add('}');
+
+            default:
+                // TODO: say which type.
+                throw new Json.JsonException("This type cannot be serialized to JSON.");
+        }
+    }
 }

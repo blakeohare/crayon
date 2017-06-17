@@ -1,6 +1,6 @@
 /*
-	arg 1: UI Box instance
-	arg 2: Value List of Element instances.
+    arg 1: UI Box instance
+    arg 2: Value List of Element instances.
 */
 import inline "FrameworkFunctions/2_arg.cry";
 
@@ -11,9 +11,9 @@ list1 = $_cast('List<Value>', Value$arg2.internalValue);
 len = $_list_length(list1);
 objArray1 = $_new_array('object', int1);
 for (i = 0; i < len; i += 1) {
-	value = $_list_get(list1, i);
-	objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
-	$_array_set(objArray1, i, $_array_get(ObjectInstance$objInstance1.nativeData, 0));
+    value = $_list_get(list1, i);
+    objInstance1 = $_cast('ObjectInstance', Value$value.internalValue);
+    $_array_set(objArray1, i, $_array_get(ObjectInstance$objInstance1.nativeData, 0));
 }
 
 $_lib_nori_removeElementsFromUiBox(object1, objArray1);

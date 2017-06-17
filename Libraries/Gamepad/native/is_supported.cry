@@ -1,7 +1,7 @@
 ﻿
 output = VALUE_FALSE;
 if (%%%LIB_GAMEPAD_SUPPORTED%%% &&
-	$_lib_gamepad_is_supported()) {
-	
-	output = VALUE_TRUE;
+    $_lib_gamepad_is_supported()) {
+
+    output = VALUE_TRUE;
 }

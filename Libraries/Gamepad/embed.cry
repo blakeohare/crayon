@@ -4,1401 +4,1401 @@ import Game;
 import Math;
 
 namespace Gamepad {
-	
-	// Button IDs for canonical (read: "XBox"/"PS") controllers.
-	// These are used by auto-configure.
-	enum ButtonId {
-		BUTTON_LEFT = 1,
-		BUTTON_RIGHT = 2,
-		BUTTON_UP = 3,
-		BUTTON_DOWN = 4,
-		DPAD = 5,
-		AXIS1 = 6,
-		AXIS2 = 7,
-		LEFT_TRIGGER = 8,
-		RIGHT_TRIGGER = 9,
-		LEFT_BUMPER = 10,
-		RIGHT_BUMPER = 11,
-		START = 12,
-		BACK = 13,
-		AXIS1_BUTTON = 14,
-		AXIS2_BUTTON = 15,
-	}
-    
-	enum XBoxButtonId {
-		X = ButtonId.BUTTON_LEFT,
-		B = ButtonId.BUTTON_RIGHT,
-		Y = ButtonId.BUTTON_UP,
-		A = ButtonId.BUTTON_DOWN,
-		DPAD = ButtonId.DPAD,
-		AXIS1 = ButtonId.AXIS1,
-		AXIS2 = ButtonId.AXIS2,
-		AXIS1_BUTTON = ButtonId.AXIS1_BUTTON,
-		AXIS2_BUTTON = ButtonId.AXIS2_BUTTON,
-		LEFT_TRIGGER = ButtonId.LEFT_TRIGGER,
-		RIGHT_TRIGGER = ButtonId.RIGHT_TRIGGER,
-		LEFT_BUMPER = ButtonId.LEFT_BUMPER,
-		RIGHT_BUMPER = ButtonId.RIGHT_BUMPER,
-		START = ButtonId.START,
-		BACK = ButtonId.BACK,
-	}
-
-	enum PsButtonId {
-		SQUARE = ButtonId.BUTTON_LEFT,
-		CIRCLE = ButtonId.BUTTON_RIGHT,
-		TRIANGLE = ButtonId.BUTTON_UP,
-		X = ButtonId.BUTTON_DOWN,
-		DPAD = ButtonId.DPAD,
-		AXIS1 = ButtonId.AXIS1,
-		AXIS2 = ButtonId.AXIS2,
-		LEFT_BUMPER2 = ButtonId.LEFT_TRIGGER,
-		RIGHT_BUMPER2 = ButtonId.RIGHT_TRIGGER,
-		LEFT_BUMPER1 = ButtonId.LEFT_BUMPER,
-		RIGHT_BUMPER1 = ButtonId.RIGHT_BUMPER,
-		START = ButtonId.START,
-		SELECT = ButtonId.BACK,
-	}
-
-	enum SnesButtonId {
-		Y = ButtonId.BUTTON_LEFT,
-		A = ButtonId.BUTTON_RIGHT,
-		X = ButtonId.BUTTON_UP,
-		B = ButtonId.BUTTON_DOWN,
-		DPAD = ButtonId.DPAD,
-		L = ButtonId.LEFT_BUMPER,
-		R = ButtonId.RIGHT_BUMPER,
-		START = ButtonId.START,
-		SELECT = ButtonId.BACK,
-	}
-
-	static class GamepadManager {
-		
-		static field _devices = null;
-		static field _isGamepadSupported = $$lib_gamepad_is_supported();
-		static field _platformRequiresRefresh = $$lib_gamepad_platform_requires_refresh();
-		static field _device_count_checked = false;
-		static field _device_by_id_ints = null;
-		static field _device_by_id_strings = null;
-
-		static constructor() {
-			GameWindow._eventPumpHandlers.add(GamepadManager._eventPump);
-		}
-
-		static function isGamepadSupported() {
-			return GamepadManager._isGamepadSupported;
-		}
-
-		static function platformRequiresRefresh() {
-			return GamepadManager._platformRequiresRefresh;
-		}
-
-		static function refreshDevices() {
-			if (GamepadManager._platformRequiresRefresh) {
-				devices = GamepadManager._devices;
-				if (devices == null) {
-					devices = [];
-					GamepadManager._devices = devices;
-				}
-
-				$$lib_gamepad_refresh_devices();
-				newCount = $$lib_gamepad_current_device_count();
-				while (newCount > devices.length) {
-					devices.add(new GamepadDevice(devices.length));
-				}
-			} else if (GamepadManager._devices == null) {
-				// For platforms that don't require a refresh, it's okay to ignore successive calls to this function.
-				devices = [];
-				deviceCount = $$lib_gamepad_current_device_count();
-				for (i = 0; i < deviceCount; ++i) {
-					devices.add(new GamepadDevice(i));
-				}
-				GamepadManager._devices = devices;
-			}
-		}
-
-		static function getDeviceCount() {
-			Core.assert(GamepadManager._devices != null, "Cannot get device count without calling refreshDevices.");
-			GamepadManager._device_count_checked = true;
-			return GamepadManager._devices.length;
-		}
-
-		static function getDeviceByIndex(index) {
-			Core.assert(GamepadManager._device_count_checked, "Cannot get device by index without checking device count.");
-			Core.assert(index >= 0 && index < GamepadManager._devices.length, "Device index out of range.");
-			return GamepadManager._devices[index];
-		}
-
-		static function getDeviceById(id) {
-			Core.assert(GamepadManager._devices != null, "Cannot get device by ID without initializing.");
-			sLookup = GamepadManager._device_by_id_strings;
-			iLookup = GamepadManager._device_by_id_ints;
-			if (sLookup == null) {
-				sLookup = {};
-				iLookup = {};
-				for (device : GamepadManager._devices) {
-					id = device._id;
-					if (id != null) {
-						if (Core.typeof(id) == Core.Type.INTEGER) {
-							iLookup[id] = device;
-						} else {
-							sLookup[id] = device;
-						}
-					}
-				}
-				GamepadManager._device_by_id_strings = sLookup;
-				GamepadManager._device_by_id_ints = iLookup;
-			}
-
-			t = Core.typeof(id);
-			if (t == Type.STRING) return sLookup.get(id);
-			if (t == Type.INTEGER) return iLookup.get(id);
-			return null;
-		}
-
-		/*
-			Config file format:
-			Each line is an entry.
-			Each line has columns delimited by a comma.
-			Columns:
-			- hardware fingerprint (which includes a axis/button/hat count)
-			- the number of mashables that are bound
-			the following values are repeated N times where N is the number above...
-			- mashy hardware ID
-			- + or - indicating which direction of the mashy (defaults to ignorable + for buttons)
-			- S or I indicating that the button ID is a string or integer
-			- button ID, hex encoded if it's a string
-			- 1 or 0 -> isDigital
-			- 1, 2, or 4 -> dimensionality
-			- 0 to 3 -> index in the binding
-		*/
-
-		static field _settingsCacheDeviceOrder = null;
-		static field _settingsCacheDeviceConfig = null;
-
-		// Returns the number of IDs that were successfully assigned.
-		// This can be called repeatedly
-		static function restoreSettingsFromUserData(deviceIdList) {
-			
-			if (Core.typeof(deviceIdList) != Core.Type.LIST) deviceIdList = [deviceIdList];
-			
-			if (!GamepadManager._isGamepadSupported) return 0;
-
-			// Read the file from disk and cache it to make successive or frequent reads
-			// not painful for performance.
-			if (GamepadManager._settingsCacheDeviceOrder == null) {
-				ordering = [];
-				config = {};
-				file = $$lib_gamepad_get_save_file_path();
-				if (file == null || !UserData.fileExists(file)) return 0;
-				for (line : UserData.fileReadText(file).split('\n')) {
-					cols = line.trim().split(',');
-					if (cols.length > 2) {
-						fingerprint = cols[0].trim();
-						mashablesCount = Core.parseInt(cols[1]);
-						
-						if (fingerprint.length > 0 &&
-							mashablesCount != null &&
-							mashablesCount == cols.length - 2) {
-							mashablesCount = mashablesCount / 7;
-							// row is valid-ish.
-							hardwareMashyLookup = {};
-							for (mashyIndex = 0; mashyIndex < mashablesCount; ++mashyIndex) {
-								iStart = mashyIndex * 7 + 2;
-								mashyId = cols[iStart];
-								attributes = cols[iStart + 1:iStart + 7];
-								hardwareMashyLookup[mashyId] = attributes;
-							}
-							ordering.add(fingerprint);
-							config[fingerprint] = hardwareMashyLookup;
-						}
-					}
-				}
-				GamepadManager._settingsCacheDeviceOrder = ordering;
-				GamepadManager._settingsCacheDeviceConfig = config;
-			}
-
-			GamepadManager.refreshDevices();
-			unassignedDevices = {};
-			availableIds = deviceIdList.clone(); // do not mutate incoming list.
-			count = 0;
-			for (device : GamepadManager._devices) {
-				// only modify devices that haven't been touched.
-				if (device._id == null) {
-					fingerprint = device._hardware_fingerprint;
-					unassignedDevices[fingerprint] = unassignedDevices.get(fingerprint) ?? [];
-					unassignedDevices[fingerprint].add(device);
-					count++;
-				}
-			}
-
-			if (count == 0) return 0;
-
-			devicesConfigured = 0;
-
-			for (fingerprint : GamepadManager._settingsCacheDeviceOrder) {
-				if (availableIds.length > 0) {
-					devicesWithFingerprint = unassignedDevices.get(fingerprint);
-					if (devicesWithFingerprint != null && devicesWithFingerprint.length > 0) {
-						device = devicesWithFingerprint[0];
-						playerId = availableIds[0];
-						config = GamepadManager._settingsCacheDeviceConfig[fingerprint];
-						configurationSuccesses = false;
-						for (mashyHardwareId : config.keys()) {
-							configlies = config[mashyHardwareId];
-							isPositive = configlies[0] == '+';
-							isButtonIdInteger = configlies[1] == 'I';
-							buttonId = isButtonIdInteger ? Core.parseInt(configlies[2]) : GamepadDevice._hexToString(configlies[2].trim().lower());
-							isDigital = configlies[3] == '1';
-							dimensionality = Core.parseInt(configlies[4]);
-							dimIndex = Core.parseInt(configlies[5]);
-							mashyIndex = device._mashy_fingerprint_to_index.get(mashyHardwareId);
-							
-							// Not the world's most perfect consistency check but should prevent corrupted data
-							// from bringing the game down.
-							if (mashyIndex != null &&
-								buttonId != null && dimensionality != null && dimIndex != null &&
-								(isButtonIdInteger || buttonId.length > 0) &&
-								(dimensionality == 1 || dimensionality == 2 || dimensionality == 4) &&
-								dimIndex >= 0 && dimIndex <= 3) {
-								
-								if (!configurationSuccesses) {
-									device._config_stack.add([{}, {}]);
-									configurationSuccesses = true;
-								}
-								bindingLookup = device._config_stack[-1][isButtonIdInteger ? 0 : 1];
-								binding = bindingLookup.get(buttonId);
-								if (binding == null) {
-									binding = [isDigital, dimensionality, null, null, null, null];
-									bindingLookup[buttonId] = binding;
-								}
-								
-								binding[2 + dimIndex] = mashyIndex * (isPositive ? 1 : -1);
-							}
-						}
-
-						if (configurationSuccesses) {
-							device.setId(playerId);
-							devicesConfigured++;
-							availableIds.remove(0);
-							devicesWithFingerprint.remove(0);
-						}
-					}
-				}
-			}
-			return devicesConfigured;
-		}
-
-		static function saveSettingsToUserData() {
-			// TODO: might be nice to introduce a dirty bit to indicate whether anything has actually changed since the last time
-			// this has been called.
-			GamepadManager._settingsCacheDeviceOrder = null; // clear the cache
-			GamepadManager._settingsCacheDeviceConfig = null;
-
-			file = $$lib_gamepad_get_save_file_path();
-			if (file == null) return;
-			exists = UserData.fileExists(file);
-			if (exists) return;
-
-			existingOrder = [];
-			deviceDataById = {};
-
-			if (exists) {
-				for (line : UserData.fileReadText(file).split('\n')) {
-					parts = line.split(':');
-					if (parts.length > 2) {
-						id = parts[0].trim();
-						bindings = Core.parseInt(parts[1].trim());
-						if (bindings != null && bindings > 0 && bindings.length * 7 == (parts.length - 2)) {
-							if (!deviceDataById.contains(id)) {
-							existingOrder.add(id);
-							}
-							// data might be totally bogus but weren't not making it worse
-							deviceDataById[id] = parts[2:];
-						}
-					}
-				}
-			}
-
-			if (GamepadManager._devices != null) {
-				for (device : GamepadManager._devices) {
-					if (device._config_stack.length > 0) {
-						config = device._config_stack[-1];
-						saved = [];
-						if (config[0].length > 0 || config[1].length > 0) {
-							for (lookup : config) {
-								for (buttonId : lookup.keys()) {
-									binding = lookup[buttonId];
-									for (i = 0; i < binding[1]; ++i) {
-										signedIndex = binding[2 + i];
-										if (signedIndex != null) {
-											mashy = device._hardware_mashies[Math.abs(signedIndex)];
-											isPositive = signedIndex > 0;
-											saved.add(
-												mashy[2], // mashy hardware ID
-												isPositive ? '+' : '-',
-												Core.typeof(buttonId) == Core.Type.INTEGER ? 'I' : 'S',
-												Core.typeof(buttonId) == Core.Type.INTEGER ? ('' + buttonId) : GamepadDevice._stringToHex(buttonId),
-												binding[0] ? '1' : '0', // isDigital
-												'' + binding[1], // dimensionality
-												'' + i); // 0 to 3 for index in the binding
-										}
-									}
-								}
-							}
-						}
-						if (saved.length > 0) {
-							id = device._hardware_fingerprint;
-							if (deviceDataById.contains(id)) {
-								for (i = 0; i < existingOrder.length; ++i) {
-									if (existingOrder[i] == id) {
-										existingOrder.remove(i);
-										break;
-									}
-								}
-							}
-							existingOrder.insert(0, id);
-							deviceDataById[id] = saved;
-						}
-					}
-				}
-			}
-
-			if (existingOrder.length > 0) {
-				lines = [];
-				for (id : existingOrder) {
-					data = deviceDataById[id];
-					data = [id, data.length] + data;
-					lines.add(data.join(','));
-				}
-				UserData.fileWriteText(file, lines.join('\n'));
-			}
-		}
-
-		static function clearAllIds() {
-			Core.assert(GamepadManager._devices != null, "Cannot clear IDs without initializing.");
-			for (d : GamepadManager._devices) {
-				d._id = null;
-			}
-		}
-
-		static function _eventPump(eventsOut) {
-			if (GamepadManager._devices != null) {
-				for (device : GamepadManager._devices) {
-					device._updatePass(eventsOut);
-				}
-			}
-		}
-
-		// TODO: Determine if a dead zone filter should be global or set on individual gamepads.
-	}
-
-	/*
-		nativeData[0] -> a pointer of some sort to the device
-	*/
-	class GamepadDevice {
-		field _index;
-		field _id = null;
-		field _name;
-		field _button_count;
-		field _axis_1d_count;
-		field _axis_2d_count;
-		field _axis_count;
-		field _hardware_fingerprint;
-		field _counter = 0; // incremented each hardware pass. Used to denote if a value was set this frame or a previous frame.
-
-		field _quickMashyLookupByStringId = {};
-		field _quickMashyLookupByIntegerId = {};
-		
-		/*
-			List of 5 items:
-			- type (0 -> button, 1 -> single dimensional axis, 2 -> 2-dimensional axis X, 3 -> 2-dimensional axis Y)
-			- index 
-			- mashy_fingerprint
-			- state
-			- time that the state last changed
-		*/
-		field _hardware_mashies = [];
-
-		// string to index reverse lookup of the above list, based on mashy_fingerprint
-		field _mashy_fingerprint_to_index = {};
-
-		/*
-			List of dictionary pairs mapping button ID's to where they come from. 
-			In each pair, the first item is integer mappings, and the second item is a string mapping.
-			
-			The value of each dictionary item is a list that looks like this:
-			[
-				isDigital (bool),
-				dimensionCount (ints 1, 2, or 4),
-				x- or - or button source,
-				x+ or + source,
-				y- source,
-				y+ source
-			]
-			These source values can either be null or a positive or negative integer.
-			Null means the value hasn't been bound yet.
-			The absolute value of the integer is the index in the _hardware_mashies list
-			If the value is negative, that means the negative value of the axis is used.
-		*/
-		field _config_stack = [];
-
-		constructor(index) {
-			this._index = index;
-			params = [
-				'', // name
-				0, // button count
-				0, // digital axis count
-				0, // analog axis count
-			];
-			$$lib_gamepad_initialize_device(index, this, params);
-			this._name = params[0];
-			this._button_count = params[1];
-			this._axis_1d_count = params[2];
-			this._axis_2d_count = params[3];
-			this._axis_count = this._axis_1d_count + this._axis_2d_count * 2;
-
-			// The index is stored as a positive or negative value which has special meaning.
-			// 0 messes that up.
-			hardware_sources = [null]; 
-
-			for (i = 0; i < this._button_count; ++i) {
-				hardware_sources.add([0, i, 'b:' + i, false, -1]);
-			}
-
-			for (i = 0; i < this._axis_1d_count; ++i) {
-				hardware_sources.add([1, i, 'a:' + i, 0.0, -1]);
-			}
-
-			for (i = 0; i < this._axis_2d_count; ++i) {
-				hardware_sources.add(
-					[2, i, 'h:' + i + ':x', 0, -1],
-					[3, i, 'h:' + i + ':y', 0, -1]);
-			}
-
-			this._hardware_mashies = hardware_sources;
-			this._mashy_fingerprint_to_index = {};
-			for (i = 1; i < this._hardware_mashies.length; ++i) {
-				this._mashy_fingerprint_to_index[hardware_sources[i][2]] = i;
-			}
-
-			this._hardware_fingerprint = [
-				GamepadDevice._stringToHex(this._name),
-				this._button_count,
-				this._axis_1d_count,
-				this._axis_2d_count].join('~');
-		}
-
-		static function _stringToHex(str) {
-			output = [];
-			h = '0123456789abcdef';
-			for (c : str) {
-				n = Core.ord(c) % 256;
-				output.add(h[n / 16], h[n % 16]);
-			}
-			return output.join('');
-		}
-
-		// Does best effort. Ignores invalid characters and keeps going. "abXXcd" will get treated as "abcd".
-		// Input is "mostly trusted" and so any invalid input is most likely the result of tampering and the user 
-		// is asking for trouble anyway.
-		static function _hexToString(encoded) {
-			encoded = encoded.trim().lower();
-			output = [];
-			h = '0123456789abcdef';
-			for (i = 0; i + 1 < encoded.length; i += 2) {
-				a = h.indexOf(encoded[i]);
-				b = h.indexOf(encoded[i + 1]);
-				if (a != -1 && b != -1) {
-					output.add(Core.chr(a * 16 + b));
-				}
-			}
-			return output.join('');
-		}
-
-		static field _hat_check_reusable = [0, 0];
-
-		field _buttonIdBySignedIndex = null;
-
-		function _getButtonIdBySignedIndex() {
-			if (this._buttonIdBySignedIndex == null) {
-				lookup = {};
-				this._buttonIdBySignedIndex = lookup;
-				if (this._config_stack.length > 0) {
-					for (button2binding : this._config_stack[-1]) {
-						for (buttonId : button2binding.keys()) {
-							binding = button2binding[buttonId];
-							for (i = 0; i < binding[1]; ++i) {
-								index = binding[i + 2];
-								lookup[index] = buttonId;
-							}
-						}
-					}
-				}
-			}
-			return this._buttonIdBySignedIndex;
-		}
-
-		static field _reusableButtonIds = [];
-
-		function _pushButtonIdsForAxis(index, oldValue, newValue, buttonLookup, buttonIds) {
-			if (oldValue >= 0 && newValue >= 0) {
-				buttonId = buttonLookup.get(index);
-				if (buttonId != null) buttonIds.add(buttonId);
-			} else if (oldValue <= 0 && newValue <= 0) {
-				buttonId = buttonLookup.get(-index);
-				if (buttonId != null) buttonIds.add(buttonId);
-			} else {
-				buttonId = buttonLookup.get(index);
-				if (buttonId != null) buttonIds.add(buttonId);
-				buttonId = buttonLookup.get(-index);
-				if (buttonId != null) buttonIds.add(buttonId);
-			}
-		}
-
-		function _updatePass(eventsOut) {
-			this._quickMashyLookupByStringId.clear();
-			this._quickMashyLookupByIntegerId.clear();
-			
-			$$lib_gamepad_poll_universe();
-			counter = this._counter++;
-			updated_indices = [];
-
-			buttonIdBySignedIndex = this._getButtonIdBySignedIndex();
-			buttonIds = GamepadDevice._reusableButtonIds;
-			buttonIds.clear();
-
-			for (i = 1; i < this._hardware_mashies.length; ++i) { // skip 0. it is a null placeholder.
-				mashy = this._hardware_mashies[i];
-				old_value = mashy[3];
-				switch (mashy[0]) {
-					case 0: // button
-						new_value = $$lib_gamepad_get_button_state(this, mashy[1]);
-						if (new_value != old_value) {
-							mashy[3] = new_value;
-							mashy[4] = counter;
-							updated_indices.add(i);
-							buttonId = buttonIdBySignedIndex.get(i);
-							if (buttonId != null) {
-								buttonIds.add(buttonId);
-							}
-						}
-						break;
-
-					case 1: // 1D analog axis
-						new_value = $$lib_gamepad_get_axis_1d_state(this, mashy[1]);
-						if (Math.abs(new_value - old_value) > 0.000001) {
-							mashy[3] = new_value;
-							mashy[4] = counter;
-							updated_indices.add(i);
-							this._pushButtonIdsForAxis(i, old_value, new_value, buttonIdBySignedIndex, buttonIds);
-						}
-						break;
-
-					case 2: // 2D digital axis X axis
-						// Querying the X axis will return a tuple of X, Y values.
-						// Since the config will always have the X and Y values at adjacent indices with the Y value next,
-						// go ahead and query both values and set them both.
-						$$lib_gamepad_get_axis_2d_state(this, mashy[1], GamepadDevice._hat_check_reusable);
-						if (GamepadDevice._hat_check_reusable[0] != mashy[3]) {
-							old_value = mashy[3];
-							new_value = GamepadDevice._hat_check_reusable[0];
-							mashy[3] = new_value;
-							mashy[4] = counter;
-							updated_indices.add(i);
-							this._pushButtonIdsForAxis(i, old_value, new_value, buttonIdBySignedIndex, buttonIds);
-						}
-						++i; // go ahead and do Y since we already queried the value from hardware.
-						mashy = this._hardware_mashies[i];
-						if (GamepadDevice._hat_check_reusable[1] != mashy[3]) {
-							old_value = mashy[3];
-							new_value = GamepadDevice._hat_check_reusable[1];
-							mashy[3] = new_value;
-							mashy[4] = counter;
-							updated_indices.add(i);
-							this._pushButtonIdsForAxis(i, old_value, new_value, buttonIdBySignedIndex, buttonIds);
-						}
-						break;
-
-					// case 3 will not occur, as i is incremented and handles 2D axes Y values in case 2
-				}
-			}
-
-			for (index : updated_indices) {
-				mashy = this._hardware_mashies[index];
-				switch (mashy[0]) {
-					case 0: t = GamepadMashyType.BUTTON; break;
-					default: t = GamepadMashyType.AXIS; break;
-				}
-				eventsOut.add(new GamepadRawHardwareEvent(this, t, mashy[1], mashy[3], mashy[2]));
-			}
-
-			if (this._config_stack.length > 0) {
-				config = this._config_stack[-1];
-				iConfig = config[0];
-				sConfig = config[1];
-				for (buttonId : buttonIds) {
-					if (Core.typeof(buttonId) == Core.Type.INTEGER) {
-						lookup = iConfig;
-						idLookup = this._quickMashyLookupByIntegerId;
-						currentIdLookup = this._currentStateMashyLookupByIntegerId;
-					} else {
-						lookup = sConfig;
-						idLookup = this._quickMashyLookupByStringId;
-						currentIdLookup = this._currentStateMashyLookupByStringId;
-					}
-					binding = lookup.get(buttonId);
-					isDigital = binding[0];
-					dim = binding[1];
-					switch (dim) {
-						case 1:
-							value = this._getValueForSignedIndex(binding[2], isDigital, isDigital, false);
-							eventsOut.add(new GamepadEvent(this, buttonId, value, null, null));
-							idLookup[buttonId] = value;
-							currentIdLookup[buttonId] = value;
-							break;
-
-						case 2:
-							valueNeg = this._getValueForSignedIndex(binding[2], isDigital, false, true);
-							valuePos = this._getValueForSignedIndex(binding[3], isDigital, false, true);
-							value = GamepadDevice._consolidateAxisValues(valueNeg, valuePos, isDigital);
-							eventsOut.add(new GamepadEvent(this, buttonId, value, null, null));
-							idLookup[buttonId] = value;
-							currentIdLookup[buttonId] = value;
-							break;
-
-						case 4:
-							xNeg = this._getValueForSignedIndex(binding[2], isDigital, false, true);
-							xPos = this._getValueForSignedIndex(binding[3], isDigital, false, true);
-							yNeg = this._getValueForSignedIndex(binding[4], isDigital, false, true);
-							yPos = this._getValueForSignedIndex(binding[5], isDigital, false, true);
-							
-							x = GamepadDevice._consolidateAxisValues(xNeg, xPos, isDigital);
-							y = GamepadDevice._consolidateAxisValues(yNeg, yPos, isDigital);
-							eventsOut.add(new GamepadEvent(this, buttonId, null, x, y));
-							vec = [x, y];
-							idLookup[buttonId] = vec;
-							currentIdLookup[buttonId] = vec;
-							break;
-					}
-				}
-			}
-		}
-
-		static function _consolidateAxisValues(neg, pos, isDigital) {
-			if (pos != null) return pos;
-			if (neg != null) return -neg;
-			return isDigital ? 0 : 0.0;
-		}
-
-		// Returns null, true, 1, or a float from 0 to 1
-		function _getValueForSignedIndex(signedIndex, isDigital, boolWanted, nullableFallback) {
-			if (signedIndex == null) return nullableFallback ? null : (boolWanted ? false : (isDigital ? 0 : 0.0));
-
-			index = Math.abs(signedIndex);
-			isNegative = signedIndex < 0;
-			mashy = this._hardware_mashies[index];
-			value = mashy[3];
-			switch (mashy[0]) {
-				case 0:
-					if (value) {
-						return boolWanted ? true : (isDigital ? 1 : 1.0);
-					}
-					return nullableFallback ? null : (boolWanted ? false : (isDigital ? 0 : 0.0));
-				case 1:
-				case 2:
-				case 3:
-					if (isNegative) value *= -1;
-					if (value > 0) {
-						if (boolWanted) {
-							return value > .5;
-						}
-						if (isDigital) {
-							return value > .5 ? 1 : 0;
-						}
-						return value;
-					}
-					if (nullableFallback) return null;
-					if (boolWanted) return false;
-					if (isDigital) return 0;
-					return 0.0;
-			}
-		}
-
-		function getId() {
-			return this._id;
-		}
-
-		function setId(id) {
-			if (id != null && Core.typeof(id) != Core.Type.STRING && Core.typeof(id) != Core.Type.INTEGER) {
-				Core.assert(false, "Invalid gamepad ID. Must be a string or integer.");
-			}
-
-			if (id != null) {
-				for (device : GamepadManager._devices) {
-					if (device._id == id) device._id = null;
-				}
-			}
-			this._id = id;
-		}
-
-		function clearId() { return this.setId(null); }
-
-		function _getStackTop() {
-			Core.assert(this._config_stack.length > 0, "Gamepad config stack is empty.");
-			return this._config_stack[-1];
-		}
-
-		function pushAutoConfigure() {
-			this.pushEmptyConfig();
-			buttons = this.getButtonCount();
-			axes = this.getAxisCount();
-			
-			sig = buttons + ':' + axes;
-			
-			isOpenTk = false;
-			switch ($$lib_gamepad_getPlatform()) {
-				case 1: // OpenTK
-					isOpenTk = true;
-					lookup = {
-						'10:7': {
-							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '+-'],
-							XBoxButtonId.AXIS2: ['analog', 4, 'axes', 4, 3, '-+', '-+'],
-							XBoxButtonId.DPAD: ['digital', 4, 'axes', 5, 6, '-+', '+-'],
-							XBoxButtonId.A: ['digital', 1, 'button', 0],
-							XBoxButtonId.B: ['digital', 1, 'button', 1],
-							XBoxButtonId.X: ['digital', 1, 'button', 2],
-							XBoxButtonId.Y: ['digital', 1, 'button', 3],
-							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
-							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
-							XBoxButtonId.BACK: ['digital', 1, 'button', 6],
-							XBoxButtonId.START: ['digital', 1, 'button', 7],
-							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 8],
-							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 9],
-							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'halfxis', 2, '-'],
-							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'halfxis', 2, '+'],
-						},
-						'12:6': {
-							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '+-'],
-							XBoxButtonId.AXIS2: ['analog', 4, 'axes', 2, 3, '+-', '-+'],
-							XBoxButtonId.DPAD: ['digital', 4, 'axes', 4, 5, '-+', '+-'],
-							XBoxButtonId.A: ['digital', 1, 'button', 1],
-							XBoxButtonId.B: ['digital', 1, 'button', 2],
-							XBoxButtonId.X: ['digital', 1, 'button', 0],
-							XBoxButtonId.Y: ['digital', 1, 'button', 3],
-							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
-							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
-							XBoxButtonId.BACK: ['digital', 1, 'button', 8],
-							XBoxButtonId.START: ['digital', 1, 'button', 9],
-							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 10],
-							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 11],
-							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', 6],
-							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', 7],
-						},
-					};
-					break;
-				case 2: // PyGame
-					// PyGame's hats are appended to the end of the axes list.
-					
-					isP880 = this.getName().contains('P880'); // an odd specimen of a gamepad
-					
-					lookup = {
-						'10:7': {
-							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '-+'],
-							XBoxButtonId.AXIS2: ['analog', 4, 'axes', 4, 3, '-+', '-+'],
-							XBoxButtonId.DPAD: ['digital', 4, 'axes', 5, 6, '-+', '+-'],
-							XBoxButtonId.A: ['digital', 1, 'button', 0],
-							XBoxButtonId.B: ['digital', 1, 'button', 1],
-							XBoxButtonId.X: ['digital', 1, 'button', 2],
-							XBoxButtonId.Y: ['digital', 1, 'button', 3],
-							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
-							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
-							XBoxButtonId.BACK: ['digital', 1, 'button', 6],
-							XBoxButtonId.START: ['digital', 1, 'button', 7],
-							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 8],
-							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 9],
-							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'halfxis', 2, '+'],
-							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'halfxis', 2, '-'],
-						},
-						'12:6': {
-							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '-+'],
-							XBoxButtonId.AXIS2: ['analog', 4, 'axes', isP880 ? 3 : 2, isP880 ? 2 : 3, '-+', '-+'],
-							XBoxButtonId.DPAD: ['digital', 4, 'axes', 4, 5, '-+', '+-'],
-							XBoxButtonId.A: ['digital', 1, 'button', isP880 ? 2 : 1],
-							XBoxButtonId.B: ['digital', 1, 'button', isP880 ? 3 : 2],
-							XBoxButtonId.X: ['digital', 1, 'button', isP880 ? 0 : 0],
-							XBoxButtonId.Y: ['digital', 1, 'button', isP880 ? 1 : 3],
-							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', isP880 ? 6 : 4],
-							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', isP880 ? 7 : 5],
-							XBoxButtonId.BACK: ['digital', 1, 'button', isP880 ? 11 : 8],
-							XBoxButtonId.START: ['digital', 1, 'button', isP880 ? 10 : 9],
-							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', isP880 ? 8 : 10],
-							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', isP880 ? 9 : 11],
-							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', isP880 ? 4 : 6],
-							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', isP880 ? 5 : 7],
-						},
-					};
-					break;
-				case 3: // JavaScript
-					isXbox = this.getName().contains('xinput');
-					lookup = {
-						'16:4': {
-							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '-+'],
-							XBoxButtonId.AXIS2: ['analog', 4, 'axes', 3, 2, '-+', '-+'],
-							XBoxButtonId.DPAD: ['digital', 4, 'button', 14, 'button', 15, 'button', 12, 'button', 13],
-							XBoxButtonId.A: ['digital', 1, 'button', 2],
-							XBoxButtonId.B: ['digital', 1, 'button', 3],
-							XBoxButtonId.X: ['digital', 1, 'button', 0],
-							XBoxButtonId.Y: ['digital', 1, 'button', 1],
-							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 6],
-							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 7],
-							XBoxButtonId.BACK: ['digital', 1, 'button', 11],
-							XBoxButtonId.START: ['digital', 1, 'button', 10],
-							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 8],
-							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 9],
-							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', 4],
-							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', 5],
-						},
-						'17:4': {
-							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '-+'],
-							XBoxButtonId.AXIS2: ['analog', 4, 'axes', 2, 3, '-+', '-+'],
-							XBoxButtonId.DPAD: isXbox
-								? ['digital', 4, 'button', 14, 'button', 15, 'button', 12, 'button', 13]
-								: ['digital', 4, 'button', 15, 'button', 16, 'button', 13, 'button', 14],
-							XBoxButtonId.A: ['digital', 1, 'button', isXbox ? 0 : 1],
-							XBoxButtonId.B: ['digital', 1, 'button', isXbox ? 1 : 2],
-							XBoxButtonId.X: ['digital', 1, 'button', isXbox ? 2 : 0],
-							XBoxButtonId.Y: ['digital', 1, 'button', 3],
-							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
-							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
-							XBoxButtonId.BACK: ['digital', 1, 'button', 8],
-							XBoxButtonId.START: ['digital', 1, 'button', 9],
-							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 10],
-							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 11],
-							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', 6],
-							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', 7],
-						},
-					};
-					
-					if ($$lib_gamepad_jsIsOsx() == 1) {
-						lookup['16:5'] = {
-							XBoxButtonId.AXIS1: ['analog', 4, 'axes', 1, 2, '-+', '-+'],
-							XBoxButtonId.AXIS2: ['analog', 4, 'axes', 3, 4, '-+', '-+'],
-							XBoxButtonId.DPAD: ['digital', 4, 'button', 14, 'button', 15, 'button', 12, 'button', 13],
-							XBoxButtonId.A: ['digital', 1, 'button', 1],
-							XBoxButtonId.B: ['digital', 1, 'button', 2],
-							XBoxButtonId.X: ['digital', 1, 'button', 0],
-							XBoxButtonId.Y: ['digital', 1, 'button', 3],
-							XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
-							XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
-							XBoxButtonId.BACK: ['digital', 1, 'button', 8],
-							XBoxButtonId.START: ['digital', 1, 'button', 9],
-							XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 10],
-							XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 11],
-							XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', 6],
-							XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', 7],
-						};
-					}
-					break;
-				default:
-					lookup = {}; // this line should never happen anyway.
-					break;
-			}
-			
-			// Add small configs
-			lookup['10:4'] = {
-				XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', isOpenTk ? '+-' : '-+'],
-				XBoxButtonId.AXIS2: ['analog', 4, 'axes', 2, 3, '+-', '-+'],
-				XBoxButtonId.A: ['digital', 1, 'button', 2],
-				XBoxButtonId.B: ['digital', 1, 'button', 1],
-				XBoxButtonId.X: ['digital', 1, 'button', 3],
-				XBoxButtonId.Y: ['digital', 1, 'button', 0],
-				XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
-				XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
-				XBoxButtonId.BACK: ['digital', 1, 'button', 8],
-				XBoxButtonId.START: ['digital', 1, 'button', 9],
-			};
-			lookup['10:2'] = {
-				XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', isOpenTk ? '+-' : '-+'],
-				XBoxButtonId.A: ['digital', 1, 'button', 2],
-				XBoxButtonId.B: ['digital', 1, 'button', 1],
-				XBoxButtonId.X: ['digital', 1, 'button', 3],
-				XBoxButtonId.Y: ['digital', 1, 'button', 0],
-				XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
-				XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
-				XBoxButtonId.BACK: ['digital', 1, 'button', 8],
-				XBoxButtonId.START: ['digital', 1, 'button', 9],
-			};
-			lookup['6:2'] = {
-				XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', isOpenTk ? '+-' : '-+'],
-				XBoxButtonId.A: ['digital', 1, 'button', 2],
-				XBoxButtonId.B: ['digital', 1, 'button', 1],
-				XBoxButtonId.X: ['digital', 1, 'button', 3],
-				XBoxButtonId.Y: ['digital', 1, 'button', 0],
-				XBoxButtonId.BACK: ['digital', 1, 'button', 4],
-				XBoxButtonId.START: ['digital', 1, 'button', 5],
-			};
-			// NES!
-			lookup['4:2'] = {
-				XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', isOpenTk ? '+-' : '-+'],
-				XBoxButtonId.A: ['digital', 1, 'button', 0],
-				XBoxButtonId.B: ['digital', 1, 'button', 1],
-				XBoxButtonId.BACK: ['digital', 1, 'button', 2],
-				XBoxButtonId.START: ['digital', 1, 'button', 3],
-			};
-			
-			config = lookup.get(sig);
-			if (config == null) {
-				// First find the "tightest" fit and use that configuration.
-				
-				bestConfigKey = null;
-				bestConfigDistance = null;
-				for (configKey : lookup.keys()) {
-					parts = configKey.split(':').map(Core.parseInt);
-					if (buttons >= parts[0] && axes >= parts[1]) {
-						distance = Math.abs(parts[0] - buttons) + Math.abs(parts[1] - axes) * 5; 
-						if (bestConfigDistance == null || bestConfigDistance > distance) {
-							bestConfigDistance = distance;
-							bestConfigKey = configKey;
-						}
-					}
-				}
-				
-				if (bestConfigKey == null) {
-					// If there is no tightest fit, then just fail silently.
-					// This particular gamepad is lacking basic functionality and an auto-configure would be missing many of the buttons.
-					config = {};
-				} else {
-					config = lookup[bestConfigKey];
-				}
-			}
-			
-			for (buttonId : config.keys()) {
-				t = config[buttonId];
-				isDigital = t[0] == 'digital';
-				dim = t[1];
-				buttonConfig = [];
-				index = 2;
-				while (buttonConfig.length < dim) {
-					switch (t[index++]) {
-						case 'button':
-							buttonIndex = t[index++];
-							buttonConfig.add(['b', buttonIndex]);
-							break;
-						case 'axes':
-							xAxisIndex = t[index++];
-							yAxisIndex = t[index++];
-							xDirNormal = t[index++] == '-+';
-							yDirNormal = t[index++] == '-+';
-							buttonConfig.add(['a', xAxisIndex, !xDirNormal]);
-							buttonConfig.add(['a', xAxisIndex, xDirNormal]);
-							buttonConfig.add(['a', yAxisIndex, !yDirNormal]);
-							buttonConfig.add(['a', yAxisIndex, yDirNormal]);
-							break;
-						case 'halfxis':
-							axisIndex = t[index++];
-							isPositive = t[index++] == '+';
-							buttonConfig.add(['a', axisIndex, isPositive]);
-							break;
-						default: return Core.fail("Unknown value");
-					}
-				}
-				
-				this.manualBindButton(buttonId, isDigital, buttonConfig);
-			}
-		}
-
-		function pushEmptyConfig() {
-			this._config_stack.add([{}, {}]);
-			this._buttonIdBySignedIndex = null;
-		}
-
-		function popConfig() {
-			this._getStackTop();
-			this._config_stack.pop();
-			this._buttonIdBySignedIndex = null;
-		}
-
-		function flattenConfigs() {
-			if (this._config_stack.length > 0) {
-				this._config_stack = [this._config_stack[-1]];
-			}
-		}
-
-		function clearBinding(buttonId) {
-			top = this._getStackTop();
-			lookup = (Core.typeof(buttonId) == Type.INTEGER) ? top[0] : top[1];
-			if (lookup.contains(buttonId)) {
-				lookup.remove(buttonId);
-				this._buttonIdBySignedIndex = null;
-			}
-		}
-
-		function clearBindings() {
-			t = this._getStackTop();
-			t[0].clear();
-			t[1].clear();
-			this._buttonIdBySignedIndex = null;
-		}
-
-		function getName() {
-			return this._name;
-		}
-
-		function getButtonCount() {
-			return this._button_count;
-		}
-
-		function getAxisCount() {
-			return this._axis_count;
-		}
-
-		function getButtonState(index) {
-			// TODO: more efficient integer assertion
-			if (floor(index) != index) Core.fail("index must be an integer.");
-
-			if (index >= 0 && index < this._button_count) {
-				return $$lib_gamepad_get_button_state(this, index);
-			}
-			Core.fail("Button index out of range.");
-		}
-
-		function getAxisState(index) {
-			// TODO: more efficient integer assertion
-			if (floor(index) != index) Core.fail("index must be an integer.");
-
-			if (index >= 0 && index < this._axis_count) {
-				if (index < this._axis_1d_count) {
-					return $$lib_gamepad_get_axis_1d_state(this, index);
-				}
-				index -= this._axis_1d_count;
-				$$lib_gamepad_get_axis_2d_state(this, index / 2, GamepadDevice._hat_check_reusable);
-				return GamepadDevice._hat_check_reusable[index % 2] * 1.0;
-			}
-			Core.fail("Digital Axis index out of range.");
-		}
-
-		function _getLookupForId(buttonId) {
-			top = this._getStackTop();
-			t = Core.typeof(buttonId);
-			if (t == Core.Type.INTEGER) return top[0];
-			if (t == Core.Type.STRING) return top[1];
-			Core.fail("Invalid button ID type.");
-		}
-
-		function _isHardwareMashyBoundAnywhere(index) {
-			for (lookup : this._config_stack[-1]) {
-				for (value : lookup.values()) {
-					for (i = 0; i < value[1]; ++i) {
-						if (value[2 + i] == index) {
-							return true;
-						}
-					}
-				}
-			}
-			return false;
-		}
-
-		/*
-			This is only used in the context of binding a button ID. If the button ID (and dimension) is already bound to something, ignore it.
-			Otherwise return the first hardware mashy thing that is currently in its non-default state.
-		*/
-		function _getIndexOfCurrentlyUnboundMashy(buttonId, dim) {
-			lookup = this._getLookupForId(buttonId);
-			currentBinding = lookup.get(buttonId);
-			if (currentBinding != null) {
-				if (currentBinding[1 + dim] != null) {
-					return null;
-				}
-			}
-
-			length = this._hardware_mashies.length;
-			for (i = 1; i < length; ++i) {
-				mashy = this._hardware_mashies[i];
-				switch (mashy[0]) {
-					case 0: // button
-						if (mashy[3]) {
-							if (!this._isHardwareMashyBoundAnywhere(i)) {
-								return i;
-							}
-						}
-						break;
-
-					case 1: // 1D axis
-						if (abs(mashy[3]) > .5) {
-							index = i * Math.sign(mashy[3]);
-							if (!this._isHardwareMashyBoundAnywhere(index)) {
-								return index;
-							}
-						}
-						break;
-
-					case 2: // 2D axis X
-					case 3: // 2D axis Y
-						if (mashy[3] != 0) {
-							index = i * Math.sign(mashy[3]);
-							if (!this._isHardwareMashyBoundAnywhere(index)) {
-								return index;
-							}
-						}
-						break;
-				}
-			}
-			return null;
-		}
-
-		function getChangedState(buttonId) {
-			lookup = Core.typeof(buttonId) == Core.Type.STRING
-				? this._quickMashyLookupByStringId
-				: this._quickMashyLookupByIntegerId;
-			return lookup.get(buttonId);
-		}
-		
-		field _currentStateMashyLookupByStringId = {};
-		field _currentStateMashyLookupByIntegerId = {};
-		function getCurrentState(buttonId) {
-			lookup = Core.typeof(buttonId) == Core.Type.STRING
-				? this._currentStateMashyLookupByStringId
-				: this._currentStateMashyLookupByIntegerId;
-			output = lookup.get(buttonId);
-			
-			return output;
-		}
-
-		function _getOrCreateBindingTuple(buttonId, isDigital, dimensions) {
-			lookup = this._getLookupForId(buttonId);
-			binding = lookup.get(buttonId);
-			if (binding == null) {
-				binding = [null] * 6;
-				lookup[buttonId] = binding;
-			}
-			binding[0] = isDigital;
-			binding[1] = dimensions;
-			this._buttonIdBySignedIndex = null;
-			return binding;
-		}
-
-		function _bindButton(buttonId, isDigital) {
-			index = this._getIndexOfCurrentlyUnboundMashy(buttonId, 1);
-			if (index != null) {
-				binding = this._getOrCreateBindingTuple(buttonId, isDigital, 1);
-				binding[2] = index;
-				return true;
-			}
-			return false;
-		}
-
-		function _bind1dAxis(buttonId, isPositive, isDigital) {
-			index = this._getIndexOfCurrentlyUnboundMashy(buttonId, 2);
-			if (index != null) {
-				binding = this._getOrCreateBindingTuple(buttonId, isDigital, 2);
-				binding[2 + (isPositive ? 1 : 0)] = index;
-				return true;
-			}
-			return false;
-		}
-
-		function _bind2dAxis(buttonId, isPositive, isX, isDigital) {
-			index = this._getIndexOfCurrentlyUnboundMashy(buttonId, 4);
-			if (index != null) {
-				binding = this._getOrCreateBindingTuple(buttonId, isDigital, 4);
-				binding[2 + (isPositive ? 1 : 0) + (isX ? 0 : 2)] = index;
-				return true;
-			}
-			return false;
-		}
-
-		function bindDigitalButton(buttonId) {
-			return this._bindButton(buttonId, true);
-		}
-
-		function bindDigitalAxis(buttonId, isPositive) {
-			return this._bind1dAxis(buttonId, isPositive == true, true);
-		}
-
-		function bindDigitalAxis2dX(buttonId, isPositive) {
-			return this._bind2dAxis(buttonId, isPositive == true, true, true);
-		}
-
-		function bindDigitalAxis2dY(buttonId, isPositive) {
-			return this._bind2dAxis(buttonId, isPositive == true, false, true);
-		}
-
-		function bindAnalogButton(buttonId) {
-			return this._bindButton(buttonId, false);
-		}
-
-		function bindAnalogAxis(buttonId, isPositive) {
-			return this._bind1dAxis(buttonId, isPositive == true, false);
-		}
-
-		function bindAnalogAxis2dX(buttonId, isPositive) {
-			return this._bind2dAxis(buttonId, isPositive == true, true, false);
-		}
-
-		function bindAnalogAxis2dY(buttonId, isPositive) {
-			return this._bind2dAxis(buttonId, isPositive == true, false, false);
-		}
-
-		/*
-			sources is a list of sources of size 1, 2, or 4 for a button, 1D axis or 2D axis respectively.
-			
-			Each source item is itself a list.
-			[
-				'a' or 'b',
-				index,
-				boolean for positive
-			]
-		*/
-		function manualBindButton(buttonId, isDigital, sources) {
-			length = sources.length;
-			switch (length) {
-				case 1:
-				case 2:
-				case 4:
-					binding = this._getOrCreateBindingTuple(buttonId, isDigital, length);
-					for (i = 0; i < length; ++i) {
-						source = sources[i];
-						index = this._getIndexForSource(source[0] == 'a', Math.floor(source[1]), source.length < 3 || source[2] == true);
-						binding[2 + i] = index;
-					}
-					break;
-				default:
-					return Core.fail("Sources list must have 1, 2, or 4 sources.");
-			}
-		}
-		
-		function _getIndexForSource(isAxis, index, isPositive) {
-			
-			if (isAxis) index += this._button_count;
-			index++;
-			return isPositive ? index : -index;
-		}
-		
-		function _freeAndGetIndex(hardwareId, isPositive) {
-			index = this._mashy_fingerprint_to_index.get(hardwareId);
-			if (index != null) {
-				if (isPositive) {
-					index *= -1;
-				}
-
-				config = this._getStackTop();
-				for (lookup : config) {
-					for (i = 2; i < 6; ++i) {
-						if (lookup[i] == index) {
-							lookup[i] = null;
-						}
-					}
-				}
-			}
-			return index;
-		}
-
-		function _bindButtonByHardwareId(hardwareId, buttonId, isDigital) {
-			index = this._freeAndGetIndex(hardwareId, true);
-			if (index != null) {
-				binding = this._getOrCreateBindingTuple(buttonId, isDigital, 1);
-				binding[2] = index;
-				return true;
-			}
-			return false;
-		}
-
-		function _bind1dAxisByHardwareId(hardwareId, buttonId, isDigital, isPositive) {
-			index = this._freeAndGetIndex(hardwareId * (isPositive ? 1 : -1), isPositive);
-			if (index != null) {
-				binding = this._getOrCreateBindingTuple(buttonId, isDigital, 2);
-				binding[2 + (isPositive ? 1 : 0)] = index;
-				return true;
-			}
-			return false;
-		}
-
-		function _bind2dAxisByHardwareId(hardwareId, buttonId, isDigital, isX, isPositive) {
-			index = this._freeAndGetIndex(hardwareId * (isPositive ? 1 : -1), isPositive);
-			if (index != null) {
-				binding = this._getOrCreateBindingTuple(buttonId, isDigital, 4);
-				binding[2 + (isPositive ? 1 : 0) + (isX ? 0 : 2)] = index;
-				return true;
-			}
-			return false;
-		}
-
-		function bindDigitalButtonByHardwareId(hardwareId, buttonId) {
-			return this._bindButtonByHardwareId(hardwareId, buttonId, true);
-		}
-
-		function bindAnalogButtonByHardwareId(hardwareId, buttonId) {
-			return this._bindButtonByHardwareId(hardwareId, buttonId, false);
-		}
-		
-		function bindDigitalAxisByHardwareId(hardwareId, buttonId, isPositive) {
-			return this._bind1dAxisByHardwareId(hardwareId, buttonId, true, isPositive == true);
-		}
-
-		function bindAnalogAxisByHardwareId(hardwareId, buttonId, isPositive) {
-			return this._bind1dAxisByHardwareId(hardwareId, buttonId, false, isPositive == true);
-		}
-
-		function bindDigitalAxis2dXByHardwareId(hardwareId, buttonId, isPositive) {
-			return this._bind2dAxisByHardwareId(hardwareId, buttonId, true, true, isPositive == true);
-		}
-
-		function bindAnalogAxis2dXByHardwareId(hardwareId, buttonId, isPositive) {
-			return this._bind2dAxisByHardwareId(hardwareId, buttonId, false, true, isPositive == true);
-		}
-
-		function bindDigitalAxis2dYByHardwareId(hardwareId, buttonId, isPositive) {
-			return this._bind2dAxisByHardwareId(hardwareId, buttonId, true, false, isPositive == true);
-		}
-
-		function bindAnalogAxis2dYByHardwareId(hardwareId, buttonId, isPositive) {
-			return this._bind2dAxisByHardwareId(hardwareId, buttonId, false, false, isPositive == true);
-		}
-	}
-
-	class GamepadEvent : Game.Event {
-		field device;
-		field deviceId;
-		field buttonId;
-		field value;
-		field x;
-		field y;
-
-		constructor(device, buttonId, value, x, y) : base(Game.EventType.GAMEPAD) {
-			this.device = device;
-			this.deviceId = device._id;
-			this.buttonId = buttonId;
-			this.value = value;
-			this.x = x;
-			this.y = y;
-		}
-	}
-
-	enum GamepadMashyType {
-		BUTTON = 1,
-		AXIS = 2,
-	}
-	class GamepadRawHardwareEvent : Game.Event {
-		field device;
-		field deviceId;
-		field mashyType;
-		field mashyIndex;
-		field value;
-		field isSignificant;
-		field hardwareFingerprint;
-
-		constructor(device, mashyType, mashyIndex, value, hardwareFingerprint) : base(Game.EventType.GAMEPAD_HARDWARE) {
-			this.device = device;
-			this.deviceId = device;
-			this.mashyType = mashyType;
-			this.mashyIndex = mashyIndex;
-			this.value = value;
-			if (mashyType == GamepadMashyType.AXIS) {
-				this.isSignificant = Math.abs(value) > .5;
-			} else {
-				this.isSignificant = true;
-			}
-			this.hardwareFingerprint = hardwareFingerprint;
-		}
-	}
+
+    // Button IDs for canonical (read: "XBox"/"PS") controllers.
+    // These are used by auto-configure.
+    enum ButtonId {
+        BUTTON_LEFT = 1,
+        BUTTON_RIGHT = 2,
+        BUTTON_UP = 3,
+        BUTTON_DOWN = 4,
+        DPAD = 5,
+        AXIS1 = 6,
+        AXIS2 = 7,
+        LEFT_TRIGGER = 8,
+        RIGHT_TRIGGER = 9,
+        LEFT_BUMPER = 10,
+        RIGHT_BUMPER = 11,
+        START = 12,
+        BACK = 13,
+        AXIS1_BUTTON = 14,
+        AXIS2_BUTTON = 15,
+    }
+
+    enum XBoxButtonId {
+        X = ButtonId.BUTTON_LEFT,
+        B = ButtonId.BUTTON_RIGHT,
+        Y = ButtonId.BUTTON_UP,
+        A = ButtonId.BUTTON_DOWN,
+        DPAD = ButtonId.DPAD,
+        AXIS1 = ButtonId.AXIS1,
+        AXIS2 = ButtonId.AXIS2,
+        AXIS1_BUTTON = ButtonId.AXIS1_BUTTON,
+        AXIS2_BUTTON = ButtonId.AXIS2_BUTTON,
+        LEFT_TRIGGER = ButtonId.LEFT_TRIGGER,
+        RIGHT_TRIGGER = ButtonId.RIGHT_TRIGGER,
+        LEFT_BUMPER = ButtonId.LEFT_BUMPER,
+        RIGHT_BUMPER = ButtonId.RIGHT_BUMPER,
+        START = ButtonId.START,
+        BACK = ButtonId.BACK,
+    }
+
+    enum PsButtonId {
+        SQUARE = ButtonId.BUTTON_LEFT,
+        CIRCLE = ButtonId.BUTTON_RIGHT,
+        TRIANGLE = ButtonId.BUTTON_UP,
+        X = ButtonId.BUTTON_DOWN,
+        DPAD = ButtonId.DPAD,
+        AXIS1 = ButtonId.AXIS1,
+        AXIS2 = ButtonId.AXIS2,
+        LEFT_BUMPER2 = ButtonId.LEFT_TRIGGER,
+        RIGHT_BUMPER2 = ButtonId.RIGHT_TRIGGER,
+        LEFT_BUMPER1 = ButtonId.LEFT_BUMPER,
+        RIGHT_BUMPER1 = ButtonId.RIGHT_BUMPER,
+        START = ButtonId.START,
+        SELECT = ButtonId.BACK,
+    }
+
+    enum SnesButtonId {
+        Y = ButtonId.BUTTON_LEFT,
+        A = ButtonId.BUTTON_RIGHT,
+        X = ButtonId.BUTTON_UP,
+        B = ButtonId.BUTTON_DOWN,
+        DPAD = ButtonId.DPAD,
+        L = ButtonId.LEFT_BUMPER,
+        R = ButtonId.RIGHT_BUMPER,
+        START = ButtonId.START,
+        SELECT = ButtonId.BACK,
+    }
+
+    static class GamepadManager {
+
+        static field _devices = null;
+        static field _isGamepadSupported = $$lib_gamepad_is_supported();
+        static field _platformRequiresRefresh = $$lib_gamepad_platform_requires_refresh();
+        static field _device_count_checked = false;
+        static field _device_by_id_ints = null;
+        static field _device_by_id_strings = null;
+
+        static constructor() {
+            GameWindow._eventPumpHandlers.add(GamepadManager._eventPump);
+        }
+
+        static function isGamepadSupported() {
+            return GamepadManager._isGamepadSupported;
+        }
+
+        static function platformRequiresRefresh() {
+            return GamepadManager._platformRequiresRefresh;
+        }
+
+        static function refreshDevices() {
+            if (GamepadManager._platformRequiresRefresh) {
+                devices = GamepadManager._devices;
+                if (devices == null) {
+                    devices = [];
+                    GamepadManager._devices = devices;
+                }
+
+                $$lib_gamepad_refresh_devices();
+                newCount = $$lib_gamepad_current_device_count();
+                while (newCount > devices.length) {
+                    devices.add(new GamepadDevice(devices.length));
+                }
+            } else if (GamepadManager._devices == null) {
+                // For platforms that don't require a refresh, it's okay to ignore successive calls to this function.
+                devices = [];
+                deviceCount = $$lib_gamepad_current_device_count();
+                for (i = 0; i < deviceCount; ++i) {
+                    devices.add(new GamepadDevice(i));
+                }
+                GamepadManager._devices = devices;
+            }
+        }
+
+        static function getDeviceCount() {
+            Core.assert(GamepadManager._devices != null, "Cannot get device count without calling refreshDevices.");
+            GamepadManager._device_count_checked = true;
+            return GamepadManager._devices.length;
+        }
+
+        static function getDeviceByIndex(index) {
+            Core.assert(GamepadManager._device_count_checked, "Cannot get device by index without checking device count.");
+            Core.assert(index >= 0 && index < GamepadManager._devices.length, "Device index out of range.");
+            return GamepadManager._devices[index];
+        }
+
+        static function getDeviceById(id) {
+            Core.assert(GamepadManager._devices != null, "Cannot get device by ID without initializing.");
+            sLookup = GamepadManager._device_by_id_strings;
+            iLookup = GamepadManager._device_by_id_ints;
+            if (sLookup == null) {
+                sLookup = {};
+                iLookup = {};
+                for (device : GamepadManager._devices) {
+                    id = device._id;
+                    if (id != null) {
+                        if (Core.typeof(id) == Core.Type.INTEGER) {
+                            iLookup[id] = device;
+                        } else {
+                            sLookup[id] = device;
+                        }
+                    }
+                }
+                GamepadManager._device_by_id_strings = sLookup;
+                GamepadManager._device_by_id_ints = iLookup;
+            }
+
+            t = Core.typeof(id);
+            if (t == Type.STRING) return sLookup.get(id);
+            if (t == Type.INTEGER) return iLookup.get(id);
+            return null;
+        }
+
+        /*
+            Config file format:
+            Each line is an entry.
+            Each line has columns delimited by a comma.
+            Columns:
+            - hardware fingerprint (which includes a axis/button/hat count)
+            - the number of mashables that are bound
+            the following values are repeated N times where N is the number above...
+            - mashy hardware ID
+            - + or - indicating which direction of the mashy (defaults to ignorable + for buttons)
+            - S or I indicating that the button ID is a string or integer
+            - button ID, hex encoded if it's a string
+            - 1 or 0 -> isDigital
+            - 1, 2, or 4 -> dimensionality
+            - 0 to 3 -> index in the binding
+        */
+
+        static field _settingsCacheDeviceOrder = null;
+        static field _settingsCacheDeviceConfig = null;
+
+        // Returns the number of IDs that were successfully assigned.
+        // This can be called repeatedly
+        static function restoreSettingsFromUserData(deviceIdList) {
+
+            if (Core.typeof(deviceIdList) != Core.Type.LIST) deviceIdList = [deviceIdList];
+
+            if (!GamepadManager._isGamepadSupported) return 0;
+
+            // Read the file from disk and cache it to make successive or frequent reads
+            // not painful for performance.
+            if (GamepadManager._settingsCacheDeviceOrder == null) {
+                ordering = [];
+                config = {};
+                file = $$lib_gamepad_get_save_file_path();
+                if (file == null || !UserData.fileExists(file)) return 0;
+                for (line : UserData.fileReadText(file).split('\n')) {
+                    cols = line.trim().split(',');
+                    if (cols.length > 2) {
+                        fingerprint = cols[0].trim();
+                        mashablesCount = Core.parseInt(cols[1]);
+
+                        if (fingerprint.length > 0 &&
+                            mashablesCount != null &&
+                            mashablesCount == cols.length - 2) {
+                            mashablesCount = mashablesCount / 7;
+                            // row is valid-ish.
+                            hardwareMashyLookup = {};
+                            for (mashyIndex = 0; mashyIndex < mashablesCount; ++mashyIndex) {
+                                iStart = mashyIndex * 7 + 2;
+                                mashyId = cols[iStart];
+                                attributes = cols[iStart + 1:iStart + 7];
+                                hardwareMashyLookup[mashyId] = attributes;
+                            }
+                            ordering.add(fingerprint);
+                            config[fingerprint] = hardwareMashyLookup;
+                        }
+                    }
+                }
+                GamepadManager._settingsCacheDeviceOrder = ordering;
+                GamepadManager._settingsCacheDeviceConfig = config;
+            }
+
+            GamepadManager.refreshDevices();
+            unassignedDevices = {};
+            availableIds = deviceIdList.clone(); // do not mutate incoming list.
+            count = 0;
+            for (device : GamepadManager._devices) {
+                // only modify devices that haven't been touched.
+                if (device._id == null) {
+                    fingerprint = device._hardware_fingerprint;
+                    unassignedDevices[fingerprint] = unassignedDevices.get(fingerprint) ?? [];
+                    unassignedDevices[fingerprint].add(device);
+                    count++;
+                }
+            }
+
+            if (count == 0) return 0;
+
+            devicesConfigured = 0;
+
+            for (fingerprint : GamepadManager._settingsCacheDeviceOrder) {
+                if (availableIds.length > 0) {
+                    devicesWithFingerprint = unassignedDevices.get(fingerprint);
+                    if (devicesWithFingerprint != null && devicesWithFingerprint.length > 0) {
+                        device = devicesWithFingerprint[0];
+                        playerId = availableIds[0];
+                        config = GamepadManager._settingsCacheDeviceConfig[fingerprint];
+                        configurationSuccesses = false;
+                        for (mashyHardwareId : config.keys()) {
+                            configlies = config[mashyHardwareId];
+                            isPositive = configlies[0] == '+';
+                            isButtonIdInteger = configlies[1] == 'I';
+                            buttonId = isButtonIdInteger ? Core.parseInt(configlies[2]) : GamepadDevice._hexToString(configlies[2].trim().lower());
+                            isDigital = configlies[3] == '1';
+                            dimensionality = Core.parseInt(configlies[4]);
+                            dimIndex = Core.parseInt(configlies[5]);
+                            mashyIndex = device._mashy_fingerprint_to_index.get(mashyHardwareId);
+
+                            // Not the world's most perfect consistency check but should prevent corrupted data
+                            // from bringing the game down.
+                            if (mashyIndex != null &&
+                                buttonId != null && dimensionality != null && dimIndex != null &&
+                                (isButtonIdInteger || buttonId.length > 0) &&
+                                (dimensionality == 1 || dimensionality == 2 || dimensionality == 4) &&
+                                dimIndex >= 0 && dimIndex <= 3) {
+
+                                if (!configurationSuccesses) {
+                                    device._config_stack.add([{}, {}]);
+                                    configurationSuccesses = true;
+                                }
+                                bindingLookup = device._config_stack[-1][isButtonIdInteger ? 0 : 1];
+                                binding = bindingLookup.get(buttonId);
+                                if (binding == null) {
+                                    binding = [isDigital, dimensionality, null, null, null, null];
+                                    bindingLookup[buttonId] = binding;
+                                }
+
+                                binding[2 + dimIndex] = mashyIndex * (isPositive ? 1 : -1);
+                            }
+                        }
+
+                        if (configurationSuccesses) {
+                            device.setId(playerId);
+                            devicesConfigured++;
+                            availableIds.remove(0);
+                            devicesWithFingerprint.remove(0);
+                        }
+                    }
+                }
+            }
+            return devicesConfigured;
+        }
+
+        static function saveSettingsToUserData() {
+            // TODO: might be nice to introduce a dirty bit to indicate whether anything has actually changed since the last time
+            // this has been called.
+            GamepadManager._settingsCacheDeviceOrder = null; // clear the cache
+            GamepadManager._settingsCacheDeviceConfig = null;
+
+            file = $$lib_gamepad_get_save_file_path();
+            if (file == null) return;
+            exists = UserData.fileExists(file);
+            if (exists) return;
+
+            existingOrder = [];
+            deviceDataById = {};
+
+            if (exists) {
+                for (line : UserData.fileReadText(file).split('\n')) {
+                    parts = line.split(':');
+                    if (parts.length > 2) {
+                        id = parts[0].trim();
+                        bindings = Core.parseInt(parts[1].trim());
+                        if (bindings != null && bindings > 0 && bindings.length * 7 == (parts.length - 2)) {
+                            if (!deviceDataById.contains(id)) {
+                            existingOrder.add(id);
+                            }
+                            // data might be totally bogus but weren't not making it worse
+                            deviceDataById[id] = parts[2:];
+                        }
+                    }
+                }
+            }
+
+            if (GamepadManager._devices != null) {
+                for (device : GamepadManager._devices) {
+                    if (device._config_stack.length > 0) {
+                        config = device._config_stack[-1];
+                        saved = [];
+                        if (config[0].length > 0 || config[1].length > 0) {
+                            for (lookup : config) {
+                                for (buttonId : lookup.keys()) {
+                                    binding = lookup[buttonId];
+                                    for (i = 0; i < binding[1]; ++i) {
+                                        signedIndex = binding[2 + i];
+                                        if (signedIndex != null) {
+                                            mashy = device._hardware_mashies[Math.abs(signedIndex)];
+                                            isPositive = signedIndex > 0;
+                                            saved.add(
+                                                mashy[2], // mashy hardware ID
+                                                isPositive ? '+' : '-',
+                                                Core.typeof(buttonId) == Core.Type.INTEGER ? 'I' : 'S',
+                                                Core.typeof(buttonId) == Core.Type.INTEGER ? ('' + buttonId) : GamepadDevice._stringToHex(buttonId),
+                                                binding[0] ? '1' : '0', // isDigital
+                                                '' + binding[1], // dimensionality
+                                                '' + i); // 0 to 3 for index in the binding
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (saved.length > 0) {
+                            id = device._hardware_fingerprint;
+                            if (deviceDataById.contains(id)) {
+                                for (i = 0; i < existingOrder.length; ++i) {
+                                    if (existingOrder[i] == id) {
+                                        existingOrder.remove(i);
+                                        break;
+                                    }
+                                }
+                            }
+                            existingOrder.insert(0, id);
+                            deviceDataById[id] = saved;
+                        }
+                    }
+                }
+            }
+
+            if (existingOrder.length > 0) {
+                lines = [];
+                for (id : existingOrder) {
+                    data = deviceDataById[id];
+                    data = [id, data.length] + data;
+                    lines.add(data.join(','));
+                }
+                UserData.fileWriteText(file, lines.join('\n'));
+            }
+        }
+
+        static function clearAllIds() {
+            Core.assert(GamepadManager._devices != null, "Cannot clear IDs without initializing.");
+            for (d : GamepadManager._devices) {
+                d._id = null;
+            }
+        }
+
+        static function _eventPump(eventsOut) {
+            if (GamepadManager._devices != null) {
+                for (device : GamepadManager._devices) {
+                    device._updatePass(eventsOut);
+                }
+            }
+        }
+
+        // TODO: Determine if a dead zone filter should be global or set on individual gamepads.
+    }
+
+    /*
+        nativeData[0] -> a pointer of some sort to the device
+    */
+    class GamepadDevice {
+        field _index;
+        field _id = null;
+        field _name;
+        field _button_count;
+        field _axis_1d_count;
+        field _axis_2d_count;
+        field _axis_count;
+        field _hardware_fingerprint;
+        field _counter = 0; // incremented each hardware pass. Used to denote if a value was set this frame or a previous frame.
+
+        field _quickMashyLookupByStringId = {};
+        field _quickMashyLookupByIntegerId = {};
+
+        /*
+            List of 5 items:
+            - type (0 -> button, 1 -> single dimensional axis, 2 -> 2-dimensional axis X, 3 -> 2-dimensional axis Y)
+            - index
+            - mashy_fingerprint
+            - state
+            - time that the state last changed
+        */
+        field _hardware_mashies = [];
+
+        // string to index reverse lookup of the above list, based on mashy_fingerprint
+        field _mashy_fingerprint_to_index = {};
+
+        /*
+            List of dictionary pairs mapping button ID's to where they come from.
+            In each pair, the first item is integer mappings, and the second item is a string mapping.
+
+            The value of each dictionary item is a list that looks like this:
+            [
+                isDigital (bool),
+                dimensionCount (ints 1, 2, or 4),
+                x- or - or button source,
+                x+ or + source,
+                y- source,
+                y+ source
+            ]
+            These source values can either be null or a positive or negative integer.
+            Null means the value hasn't been bound yet.
+            The absolute value of the integer is the index in the _hardware_mashies list
+            If the value is negative, that means the negative value of the axis is used.
+        */
+        field _config_stack = [];
+
+        constructor(index) {
+            this._index = index;
+            params = [
+                '', // name
+                0, // button count
+                0, // digital axis count
+                0, // analog axis count
+            ];
+            $$lib_gamepad_initialize_device(index, this, params);
+            this._name = params[0];
+            this._button_count = params[1];
+            this._axis_1d_count = params[2];
+            this._axis_2d_count = params[3];
+            this._axis_count = this._axis_1d_count + this._axis_2d_count * 2;
+
+            // The index is stored as a positive or negative value which has special meaning.
+            // 0 messes that up.
+            hardware_sources = [null];
+
+            for (i = 0; i < this._button_count; ++i) {
+                hardware_sources.add([0, i, 'b:' + i, false, -1]);
+            }
+
+            for (i = 0; i < this._axis_1d_count; ++i) {
+                hardware_sources.add([1, i, 'a:' + i, 0.0, -1]);
+            }
+
+            for (i = 0; i < this._axis_2d_count; ++i) {
+                hardware_sources.add(
+                    [2, i, 'h:' + i + ':x', 0, -1],
+                    [3, i, 'h:' + i + ':y', 0, -1]);
+            }
+
+            this._hardware_mashies = hardware_sources;
+            this._mashy_fingerprint_to_index = {};
+            for (i = 1; i < this._hardware_mashies.length; ++i) {
+                this._mashy_fingerprint_to_index[hardware_sources[i][2]] = i;
+            }
+
+            this._hardware_fingerprint = [
+                GamepadDevice._stringToHex(this._name),
+                this._button_count,
+                this._axis_1d_count,
+                this._axis_2d_count].join('~');
+        }
+
+        static function _stringToHex(str) {
+            output = [];
+            h = '0123456789abcdef';
+            for (c : str) {
+                n = Core.ord(c) % 256;
+                output.add(h[n / 16], h[n % 16]);
+            }
+            return output.join('');
+        }
+
+        // Does best effort. Ignores invalid characters and keeps going. "abXXcd" will get treated as "abcd".
+        // Input is "mostly trusted" and so any invalid input is most likely the result of tampering and the user
+        // is asking for trouble anyway.
+        static function _hexToString(encoded) {
+            encoded = encoded.trim().lower();
+            output = [];
+            h = '0123456789abcdef';
+            for (i = 0; i + 1 < encoded.length; i += 2) {
+                a = h.indexOf(encoded[i]);
+                b = h.indexOf(encoded[i + 1]);
+                if (a != -1 && b != -1) {
+                    output.add(Core.chr(a * 16 + b));
+                }
+            }
+            return output.join('');
+        }
+
+        static field _hat_check_reusable = [0, 0];
+
+        field _buttonIdBySignedIndex = null;
+
+        function _getButtonIdBySignedIndex() {
+            if (this._buttonIdBySignedIndex == null) {
+                lookup = {};
+                this._buttonIdBySignedIndex = lookup;
+                if (this._config_stack.length > 0) {
+                    for (button2binding : this._config_stack[-1]) {
+                        for (buttonId : button2binding.keys()) {
+                            binding = button2binding[buttonId];
+                            for (i = 0; i < binding[1]; ++i) {
+                                index = binding[i + 2];
+                                lookup[index] = buttonId;
+                            }
+                        }
+                    }
+                }
+            }
+            return this._buttonIdBySignedIndex;
+        }
+
+        static field _reusableButtonIds = [];
+
+        function _pushButtonIdsForAxis(index, oldValue, newValue, buttonLookup, buttonIds) {
+            if (oldValue >= 0 && newValue >= 0) {
+                buttonId = buttonLookup.get(index);
+                if (buttonId != null) buttonIds.add(buttonId);
+            } else if (oldValue <= 0 && newValue <= 0) {
+                buttonId = buttonLookup.get(-index);
+                if (buttonId != null) buttonIds.add(buttonId);
+            } else {
+                buttonId = buttonLookup.get(index);
+                if (buttonId != null) buttonIds.add(buttonId);
+                buttonId = buttonLookup.get(-index);
+                if (buttonId != null) buttonIds.add(buttonId);
+            }
+        }
+
+        function _updatePass(eventsOut) {
+            this._quickMashyLookupByStringId.clear();
+            this._quickMashyLookupByIntegerId.clear();
+
+            $$lib_gamepad_poll_universe();
+            counter = this._counter++;
+            updated_indices = [];
+
+            buttonIdBySignedIndex = this._getButtonIdBySignedIndex();
+            buttonIds = GamepadDevice._reusableButtonIds;
+            buttonIds.clear();
+
+            for (i = 1; i < this._hardware_mashies.length; ++i) { // skip 0. it is a null placeholder.
+                mashy = this._hardware_mashies[i];
+                old_value = mashy[3];
+                switch (mashy[0]) {
+                    case 0: // button
+                        new_value = $$lib_gamepad_get_button_state(this, mashy[1]);
+                        if (new_value != old_value) {
+                            mashy[3] = new_value;
+                            mashy[4] = counter;
+                            updated_indices.add(i);
+                            buttonId = buttonIdBySignedIndex.get(i);
+                            if (buttonId != null) {
+                                buttonIds.add(buttonId);
+                            }
+                        }
+                        break;
+
+                    case 1: // 1D analog axis
+                        new_value = $$lib_gamepad_get_axis_1d_state(this, mashy[1]);
+                        if (Math.abs(new_value - old_value) > 0.000001) {
+                            mashy[3] = new_value;
+                            mashy[4] = counter;
+                            updated_indices.add(i);
+                            this._pushButtonIdsForAxis(i, old_value, new_value, buttonIdBySignedIndex, buttonIds);
+                        }
+                        break;
+
+                    case 2: // 2D digital axis X axis
+                        // Querying the X axis will return a tuple of X, Y values.
+                        // Since the config will always have the X and Y values at adjacent indices with the Y value next,
+                        // go ahead and query both values and set them both.
+                        $$lib_gamepad_get_axis_2d_state(this, mashy[1], GamepadDevice._hat_check_reusable);
+                        if (GamepadDevice._hat_check_reusable[0] != mashy[3]) {
+                            old_value = mashy[3];
+                            new_value = GamepadDevice._hat_check_reusable[0];
+                            mashy[3] = new_value;
+                            mashy[4] = counter;
+                            updated_indices.add(i);
+                            this._pushButtonIdsForAxis(i, old_value, new_value, buttonIdBySignedIndex, buttonIds);
+                        }
+                        ++i; // go ahead and do Y since we already queried the value from hardware.
+                        mashy = this._hardware_mashies[i];
+                        if (GamepadDevice._hat_check_reusable[1] != mashy[3]) {
+                            old_value = mashy[3];
+                            new_value = GamepadDevice._hat_check_reusable[1];
+                            mashy[3] = new_value;
+                            mashy[4] = counter;
+                            updated_indices.add(i);
+                            this._pushButtonIdsForAxis(i, old_value, new_value, buttonIdBySignedIndex, buttonIds);
+                        }
+                        break;
+
+                    // case 3 will not occur, as i is incremented and handles 2D axes Y values in case 2
+                }
+            }
+
+            for (index : updated_indices) {
+                mashy = this._hardware_mashies[index];
+                switch (mashy[0]) {
+                    case 0: t = GamepadMashyType.BUTTON; break;
+                    default: t = GamepadMashyType.AXIS; break;
+                }
+                eventsOut.add(new GamepadRawHardwareEvent(this, t, mashy[1], mashy[3], mashy[2]));
+            }
+
+            if (this._config_stack.length > 0) {
+                config = this._config_stack[-1];
+                iConfig = config[0];
+                sConfig = config[1];
+                for (buttonId : buttonIds) {
+                    if (Core.typeof(buttonId) == Core.Type.INTEGER) {
+                        lookup = iConfig;
+                        idLookup = this._quickMashyLookupByIntegerId;
+                        currentIdLookup = this._currentStateMashyLookupByIntegerId;
+                    } else {
+                        lookup = sConfig;
+                        idLookup = this._quickMashyLookupByStringId;
+                        currentIdLookup = this._currentStateMashyLookupByStringId;
+                    }
+                    binding = lookup.get(buttonId);
+                    isDigital = binding[0];
+                    dim = binding[1];
+                    switch (dim) {
+                        case 1:
+                            value = this._getValueForSignedIndex(binding[2], isDigital, isDigital, false);
+                            eventsOut.add(new GamepadEvent(this, buttonId, value, null, null));
+                            idLookup[buttonId] = value;
+                            currentIdLookup[buttonId] = value;
+                            break;
+
+                        case 2:
+                            valueNeg = this._getValueForSignedIndex(binding[2], isDigital, false, true);
+                            valuePos = this._getValueForSignedIndex(binding[3], isDigital, false, true);
+                            value = GamepadDevice._consolidateAxisValues(valueNeg, valuePos, isDigital);
+                            eventsOut.add(new GamepadEvent(this, buttonId, value, null, null));
+                            idLookup[buttonId] = value;
+                            currentIdLookup[buttonId] = value;
+                            break;
+
+                        case 4:
+                            xNeg = this._getValueForSignedIndex(binding[2], isDigital, false, true);
+                            xPos = this._getValueForSignedIndex(binding[3], isDigital, false, true);
+                            yNeg = this._getValueForSignedIndex(binding[4], isDigital, false, true);
+                            yPos = this._getValueForSignedIndex(binding[5], isDigital, false, true);
+
+                            x = GamepadDevice._consolidateAxisValues(xNeg, xPos, isDigital);
+                            y = GamepadDevice._consolidateAxisValues(yNeg, yPos, isDigital);
+                            eventsOut.add(new GamepadEvent(this, buttonId, null, x, y));
+                            vec = [x, y];
+                            idLookup[buttonId] = vec;
+                            currentIdLookup[buttonId] = vec;
+                            break;
+                    }
+                }
+            }
+        }
+
+        static function _consolidateAxisValues(neg, pos, isDigital) {
+            if (pos != null) return pos;
+            if (neg != null) return -neg;
+            return isDigital ? 0 : 0.0;
+        }
+
+        // Returns null, true, 1, or a float from 0 to 1
+        function _getValueForSignedIndex(signedIndex, isDigital, boolWanted, nullableFallback) {
+            if (signedIndex == null) return nullableFallback ? null : (boolWanted ? false : (isDigital ? 0 : 0.0));
+
+            index = Math.abs(signedIndex);
+            isNegative = signedIndex < 0;
+            mashy = this._hardware_mashies[index];
+            value = mashy[3];
+            switch (mashy[0]) {
+                case 0:
+                    if (value) {
+                        return boolWanted ? true : (isDigital ? 1 : 1.0);
+                    }
+                    return nullableFallback ? null : (boolWanted ? false : (isDigital ? 0 : 0.0));
+                case 1:
+                case 2:
+                case 3:
+                    if (isNegative) value *= -1;
+                    if (value > 0) {
+                        if (boolWanted) {
+                            return value > .5;
+                        }
+                        if (isDigital) {
+                            return value > .5 ? 1 : 0;
+                        }
+                        return value;
+                    }
+                    if (nullableFallback) return null;
+                    if (boolWanted) return false;
+                    if (isDigital) return 0;
+                    return 0.0;
+            }
+        }
+
+        function getId() {
+            return this._id;
+        }
+
+        function setId(id) {
+            if (id != null && Core.typeof(id) != Core.Type.STRING && Core.typeof(id) != Core.Type.INTEGER) {
+                Core.assert(false, "Invalid gamepad ID. Must be a string or integer.");
+            }
+
+            if (id != null) {
+                for (device : GamepadManager._devices) {
+                    if (device._id == id) device._id = null;
+                }
+            }
+            this._id = id;
+        }
+
+        function clearId() { return this.setId(null); }
+
+        function _getStackTop() {
+            Core.assert(this._config_stack.length > 0, "Gamepad config stack is empty.");
+            return this._config_stack[-1];
+        }
+
+        function pushAutoConfigure() {
+            this.pushEmptyConfig();
+            buttons = this.getButtonCount();
+            axes = this.getAxisCount();
+
+            sig = buttons + ':' + axes;
+
+            isOpenTk = false;
+            switch ($$lib_gamepad_getPlatform()) {
+                case 1: // OpenTK
+                    isOpenTk = true;
+                    lookup = {
+                        '10:7': {
+                            XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '+-'],
+                            XBoxButtonId.AXIS2: ['analog', 4, 'axes', 4, 3, '-+', '-+'],
+                            XBoxButtonId.DPAD: ['digital', 4, 'axes', 5, 6, '-+', '+-'],
+                            XBoxButtonId.A: ['digital', 1, 'button', 0],
+                            XBoxButtonId.B: ['digital', 1, 'button', 1],
+                            XBoxButtonId.X: ['digital', 1, 'button', 2],
+                            XBoxButtonId.Y: ['digital', 1, 'button', 3],
+                            XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
+                            XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
+                            XBoxButtonId.BACK: ['digital', 1, 'button', 6],
+                            XBoxButtonId.START: ['digital', 1, 'button', 7],
+                            XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 8],
+                            XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 9],
+                            XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'halfxis', 2, '-'],
+                            XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'halfxis', 2, '+'],
+                        },
+                        '12:6': {
+                            XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '+-'],
+                            XBoxButtonId.AXIS2: ['analog', 4, 'axes', 2, 3, '+-', '-+'],
+                            XBoxButtonId.DPAD: ['digital', 4, 'axes', 4, 5, '-+', '+-'],
+                            XBoxButtonId.A: ['digital', 1, 'button', 1],
+                            XBoxButtonId.B: ['digital', 1, 'button', 2],
+                            XBoxButtonId.X: ['digital', 1, 'button', 0],
+                            XBoxButtonId.Y: ['digital', 1, 'button', 3],
+                            XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
+                            XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
+                            XBoxButtonId.BACK: ['digital', 1, 'button', 8],
+                            XBoxButtonId.START: ['digital', 1, 'button', 9],
+                            XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 10],
+                            XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 11],
+                            XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', 6],
+                            XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', 7],
+                        },
+                    };
+                    break;
+                case 2: // PyGame
+                    // PyGame's hats are appended to the end of the axes list.
+
+                    isP880 = this.getName().contains('P880'); // an odd specimen of a gamepad
+
+                    lookup = {
+                        '10:7': {
+                            XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '-+'],
+                            XBoxButtonId.AXIS2: ['analog', 4, 'axes', 4, 3, '-+', '-+'],
+                            XBoxButtonId.DPAD: ['digital', 4, 'axes', 5, 6, '-+', '+-'],
+                            XBoxButtonId.A: ['digital', 1, 'button', 0],
+                            XBoxButtonId.B: ['digital', 1, 'button', 1],
+                            XBoxButtonId.X: ['digital', 1, 'button', 2],
+                            XBoxButtonId.Y: ['digital', 1, 'button', 3],
+                            XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
+                            XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
+                            XBoxButtonId.BACK: ['digital', 1, 'button', 6],
+                            XBoxButtonId.START: ['digital', 1, 'button', 7],
+                            XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 8],
+                            XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 9],
+                            XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'halfxis', 2, '+'],
+                            XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'halfxis', 2, '-'],
+                        },
+                        '12:6': {
+                            XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '-+'],
+                            XBoxButtonId.AXIS2: ['analog', 4, 'axes', isP880 ? 3 : 2, isP880 ? 2 : 3, '-+', '-+'],
+                            XBoxButtonId.DPAD: ['digital', 4, 'axes', 4, 5, '-+', '+-'],
+                            XBoxButtonId.A: ['digital', 1, 'button', isP880 ? 2 : 1],
+                            XBoxButtonId.B: ['digital', 1, 'button', isP880 ? 3 : 2],
+                            XBoxButtonId.X: ['digital', 1, 'button', isP880 ? 0 : 0],
+                            XBoxButtonId.Y: ['digital', 1, 'button', isP880 ? 1 : 3],
+                            XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', isP880 ? 6 : 4],
+                            XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', isP880 ? 7 : 5],
+                            XBoxButtonId.BACK: ['digital', 1, 'button', isP880 ? 11 : 8],
+                            XBoxButtonId.START: ['digital', 1, 'button', isP880 ? 10 : 9],
+                            XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', isP880 ? 8 : 10],
+                            XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', isP880 ? 9 : 11],
+                            XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', isP880 ? 4 : 6],
+                            XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', isP880 ? 5 : 7],
+                        },
+                    };
+                    break;
+                case 3: // JavaScript
+                    isXbox = this.getName().contains('xinput');
+                    lookup = {
+                        '16:4': {
+                            XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '-+'],
+                            XBoxButtonId.AXIS2: ['analog', 4, 'axes', 3, 2, '-+', '-+'],
+                            XBoxButtonId.DPAD: ['digital', 4, 'button', 14, 'button', 15, 'button', 12, 'button', 13],
+                            XBoxButtonId.A: ['digital', 1, 'button', 2],
+                            XBoxButtonId.B: ['digital', 1, 'button', 3],
+                            XBoxButtonId.X: ['digital', 1, 'button', 0],
+                            XBoxButtonId.Y: ['digital', 1, 'button', 1],
+                            XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 6],
+                            XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 7],
+                            XBoxButtonId.BACK: ['digital', 1, 'button', 11],
+                            XBoxButtonId.START: ['digital', 1, 'button', 10],
+                            XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 8],
+                            XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 9],
+                            XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', 4],
+                            XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', 5],
+                        },
+                        '17:4': {
+                            XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', '-+'],
+                            XBoxButtonId.AXIS2: ['analog', 4, 'axes', 2, 3, '-+', '-+'],
+                            XBoxButtonId.DPAD: isXbox
+                                ? ['digital', 4, 'button', 14, 'button', 15, 'button', 12, 'button', 13]
+                                : ['digital', 4, 'button', 15, 'button', 16, 'button', 13, 'button', 14],
+                            XBoxButtonId.A: ['digital', 1, 'button', isXbox ? 0 : 1],
+                            XBoxButtonId.B: ['digital', 1, 'button', isXbox ? 1 : 2],
+                            XBoxButtonId.X: ['digital', 1, 'button', isXbox ? 2 : 0],
+                            XBoxButtonId.Y: ['digital', 1, 'button', 3],
+                            XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
+                            XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
+                            XBoxButtonId.BACK: ['digital', 1, 'button', 8],
+                            XBoxButtonId.START: ['digital', 1, 'button', 9],
+                            XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 10],
+                            XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 11],
+                            XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', 6],
+                            XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', 7],
+                        },
+                    };
+
+                    if ($$lib_gamepad_jsIsOsx() == 1) {
+                        lookup['16:5'] = {
+                            XBoxButtonId.AXIS1: ['analog', 4, 'axes', 1, 2, '-+', '-+'],
+                            XBoxButtonId.AXIS2: ['analog', 4, 'axes', 3, 4, '-+', '-+'],
+                            XBoxButtonId.DPAD: ['digital', 4, 'button', 14, 'button', 15, 'button', 12, 'button', 13],
+                            XBoxButtonId.A: ['digital', 1, 'button', 1],
+                            XBoxButtonId.B: ['digital', 1, 'button', 2],
+                            XBoxButtonId.X: ['digital', 1, 'button', 0],
+                            XBoxButtonId.Y: ['digital', 1, 'button', 3],
+                            XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
+                            XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
+                            XBoxButtonId.BACK: ['digital', 1, 'button', 8],
+                            XBoxButtonId.START: ['digital', 1, 'button', 9],
+                            XBoxButtonId.AXIS1_BUTTON: ['digital', 1, 'button', 10],
+                            XBoxButtonId.AXIS2_BUTTON: ['digital', 1, 'button', 11],
+                            XBoxButtonId.LEFT_TRIGGER: ['analog', 1, 'button', 6],
+                            XBoxButtonId.RIGHT_TRIGGER: ['analog', 1, 'button', 7],
+                        };
+                    }
+                    break;
+                default:
+                    lookup = {}; // this line should never happen anyway.
+                    break;
+            }
+
+            // Add small configs
+            lookup['10:4'] = {
+                XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', isOpenTk ? '+-' : '-+'],
+                XBoxButtonId.AXIS2: ['analog', 4, 'axes', 2, 3, '+-', '-+'],
+                XBoxButtonId.A: ['digital', 1, 'button', 2],
+                XBoxButtonId.B: ['digital', 1, 'button', 1],
+                XBoxButtonId.X: ['digital', 1, 'button', 3],
+                XBoxButtonId.Y: ['digital', 1, 'button', 0],
+                XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
+                XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
+                XBoxButtonId.BACK: ['digital', 1, 'button', 8],
+                XBoxButtonId.START: ['digital', 1, 'button', 9],
+            };
+            lookup['10:2'] = {
+                XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', isOpenTk ? '+-' : '-+'],
+                XBoxButtonId.A: ['digital', 1, 'button', 2],
+                XBoxButtonId.B: ['digital', 1, 'button', 1],
+                XBoxButtonId.X: ['digital', 1, 'button', 3],
+                XBoxButtonId.Y: ['digital', 1, 'button', 0],
+                XBoxButtonId.LEFT_BUMPER: ['digital', 1, 'button', 4],
+                XBoxButtonId.RIGHT_BUMPER: ['digital', 1, 'button', 5],
+                XBoxButtonId.BACK: ['digital', 1, 'button', 8],
+                XBoxButtonId.START: ['digital', 1, 'button', 9],
+            };
+            lookup['6:2'] = {
+                XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', isOpenTk ? '+-' : '-+'],
+                XBoxButtonId.A: ['digital', 1, 'button', 2],
+                XBoxButtonId.B: ['digital', 1, 'button', 1],
+                XBoxButtonId.X: ['digital', 1, 'button', 3],
+                XBoxButtonId.Y: ['digital', 1, 'button', 0],
+                XBoxButtonId.BACK: ['digital', 1, 'button', 4],
+                XBoxButtonId.START: ['digital', 1, 'button', 5],
+            };
+            // NES!
+            lookup['4:2'] = {
+                XBoxButtonId.AXIS1: ['analog', 4, 'axes', 0, 1, '-+', isOpenTk ? '+-' : '-+'],
+                XBoxButtonId.A: ['digital', 1, 'button', 0],
+                XBoxButtonId.B: ['digital', 1, 'button', 1],
+                XBoxButtonId.BACK: ['digital', 1, 'button', 2],
+                XBoxButtonId.START: ['digital', 1, 'button', 3],
+            };
+
+            config = lookup.get(sig);
+            if (config == null) {
+                // First find the "tightest" fit and use that configuration.
+
+                bestConfigKey = null;
+                bestConfigDistance = null;
+                for (configKey : lookup.keys()) {
+                    parts = configKey.split(':').map(Core.parseInt);
+                    if (buttons >= parts[0] && axes >= parts[1]) {
+                        distance = Math.abs(parts[0] - buttons) + Math.abs(parts[1] - axes) * 5;
+                        if (bestConfigDistance == null || bestConfigDistance > distance) {
+                            bestConfigDistance = distance;
+                            bestConfigKey = configKey;
+                        }
+                    }
+                }
+
+                if (bestConfigKey == null) {
+                    // If there is no tightest fit, then just fail silently.
+                    // This particular gamepad is lacking basic functionality and an auto-configure would be missing many of the buttons.
+                    config = {};
+                } else {
+                    config = lookup[bestConfigKey];
+                }
+            }
+
+            for (buttonId : config.keys()) {
+                t = config[buttonId];
+                isDigital = t[0] == 'digital';
+                dim = t[1];
+                buttonConfig = [];
+                index = 2;
+                while (buttonConfig.length < dim) {
+                    switch (t[index++]) {
+                        case 'button':
+                            buttonIndex = t[index++];
+                            buttonConfig.add(['b', buttonIndex]);
+                            break;
+                        case 'axes':
+                            xAxisIndex = t[index++];
+                            yAxisIndex = t[index++];
+                            xDirNormal = t[index++] == '-+';
+                            yDirNormal = t[index++] == '-+';
+                            buttonConfig.add(['a', xAxisIndex, !xDirNormal]);
+                            buttonConfig.add(['a', xAxisIndex, xDirNormal]);
+                            buttonConfig.add(['a', yAxisIndex, !yDirNormal]);
+                            buttonConfig.add(['a', yAxisIndex, yDirNormal]);
+                            break;
+                        case 'halfxis':
+                            axisIndex = t[index++];
+                            isPositive = t[index++] == '+';
+                            buttonConfig.add(['a', axisIndex, isPositive]);
+                            break;
+                        default: return Core.fail("Unknown value");
+                    }
+                }
+
+                this.manualBindButton(buttonId, isDigital, buttonConfig);
+            }
+        }
+
+        function pushEmptyConfig() {
+            this._config_stack.add([{}, {}]);
+            this._buttonIdBySignedIndex = null;
+        }
+
+        function popConfig() {
+            this._getStackTop();
+            this._config_stack.pop();
+            this._buttonIdBySignedIndex = null;
+        }
+
+        function flattenConfigs() {
+            if (this._config_stack.length > 0) {
+                this._config_stack = [this._config_stack[-1]];
+            }
+        }
+
+        function clearBinding(buttonId) {
+            top = this._getStackTop();
+            lookup = (Core.typeof(buttonId) == Type.INTEGER) ? top[0] : top[1];
+            if (lookup.contains(buttonId)) {
+                lookup.remove(buttonId);
+                this._buttonIdBySignedIndex = null;
+            }
+        }
+
+        function clearBindings() {
+            t = this._getStackTop();
+            t[0].clear();
+            t[1].clear();
+            this._buttonIdBySignedIndex = null;
+        }
+
+        function getName() {
+            return this._name;
+        }
+
+        function getButtonCount() {
+            return this._button_count;
+        }
+
+        function getAxisCount() {
+            return this._axis_count;
+        }
+
+        function getButtonState(index) {
+            // TODO: more efficient integer assertion
+            if (floor(index) != index) Core.fail("index must be an integer.");
+
+            if (index >= 0 && index < this._button_count) {
+                return $$lib_gamepad_get_button_state(this, index);
+            }
+            Core.fail("Button index out of range.");
+        }
+
+        function getAxisState(index) {
+            // TODO: more efficient integer assertion
+            if (floor(index) != index) Core.fail("index must be an integer.");
+
+            if (index >= 0 && index < this._axis_count) {
+                if (index < this._axis_1d_count) {
+                    return $$lib_gamepad_get_axis_1d_state(this, index);
+                }
+                index -= this._axis_1d_count;
+                $$lib_gamepad_get_axis_2d_state(this, index / 2, GamepadDevice._hat_check_reusable);
+                return GamepadDevice._hat_check_reusable[index % 2] * 1.0;
+            }
+            Core.fail("Digital Axis index out of range.");
+        }
+
+        function _getLookupForId(buttonId) {
+            top = this._getStackTop();
+            t = Core.typeof(buttonId);
+            if (t == Core.Type.INTEGER) return top[0];
+            if (t == Core.Type.STRING) return top[1];
+            Core.fail("Invalid button ID type.");
+        }
+
+        function _isHardwareMashyBoundAnywhere(index) {
+            for (lookup : this._config_stack[-1]) {
+                for (value : lookup.values()) {
+                    for (i = 0; i < value[1]; ++i) {
+                        if (value[2 + i] == index) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        /*
+            This is only used in the context of binding a button ID. If the button ID (and dimension) is already bound to something, ignore it.
+            Otherwise return the first hardware mashy thing that is currently in its non-default state.
+        */
+        function _getIndexOfCurrentlyUnboundMashy(buttonId, dim) {
+            lookup = this._getLookupForId(buttonId);
+            currentBinding = lookup.get(buttonId);
+            if (currentBinding != null) {
+                if (currentBinding[1 + dim] != null) {
+                    return null;
+                }
+            }
+
+            length = this._hardware_mashies.length;
+            for (i = 1; i < length; ++i) {
+                mashy = this._hardware_mashies[i];
+                switch (mashy[0]) {
+                    case 0: // button
+                        if (mashy[3]) {
+                            if (!this._isHardwareMashyBoundAnywhere(i)) {
+                                return i;
+                            }
+                        }
+                        break;
+
+                    case 1: // 1D axis
+                        if (abs(mashy[3]) > .5) {
+                            index = i * Math.sign(mashy[3]);
+                            if (!this._isHardwareMashyBoundAnywhere(index)) {
+                                return index;
+                            }
+                        }
+                        break;
+
+                    case 2: // 2D axis X
+                    case 3: // 2D axis Y
+                        if (mashy[3] != 0) {
+                            index = i * Math.sign(mashy[3]);
+                            if (!this._isHardwareMashyBoundAnywhere(index)) {
+                                return index;
+                            }
+                        }
+                        break;
+                }
+            }
+            return null;
+        }
+
+        function getChangedState(buttonId) {
+            lookup = Core.typeof(buttonId) == Core.Type.STRING
+                ? this._quickMashyLookupByStringId
+                : this._quickMashyLookupByIntegerId;
+            return lookup.get(buttonId);
+        }
+
+        field _currentStateMashyLookupByStringId = {};
+        field _currentStateMashyLookupByIntegerId = {};
+        function getCurrentState(buttonId) {
+            lookup = Core.typeof(buttonId) == Core.Type.STRING
+                ? this._currentStateMashyLookupByStringId
+                : this._currentStateMashyLookupByIntegerId;
+            output = lookup.get(buttonId);
+
+            return output;
+        }
+
+        function _getOrCreateBindingTuple(buttonId, isDigital, dimensions) {
+            lookup = this._getLookupForId(buttonId);
+            binding = lookup.get(buttonId);
+            if (binding == null) {
+                binding = [null] * 6;
+                lookup[buttonId] = binding;
+            }
+            binding[0] = isDigital;
+            binding[1] = dimensions;
+            this._buttonIdBySignedIndex = null;
+            return binding;
+        }
+
+        function _bindButton(buttonId, isDigital) {
+            index = this._getIndexOfCurrentlyUnboundMashy(buttonId, 1);
+            if (index != null) {
+                binding = this._getOrCreateBindingTuple(buttonId, isDigital, 1);
+                binding[2] = index;
+                return true;
+            }
+            return false;
+        }
+
+        function _bind1dAxis(buttonId, isPositive, isDigital) {
+            index = this._getIndexOfCurrentlyUnboundMashy(buttonId, 2);
+            if (index != null) {
+                binding = this._getOrCreateBindingTuple(buttonId, isDigital, 2);
+                binding[2 + (isPositive ? 1 : 0)] = index;
+                return true;
+            }
+            return false;
+        }
+
+        function _bind2dAxis(buttonId, isPositive, isX, isDigital) {
+            index = this._getIndexOfCurrentlyUnboundMashy(buttonId, 4);
+            if (index != null) {
+                binding = this._getOrCreateBindingTuple(buttonId, isDigital, 4);
+                binding[2 + (isPositive ? 1 : 0) + (isX ? 0 : 2)] = index;
+                return true;
+            }
+            return false;
+        }
+
+        function bindDigitalButton(buttonId) {
+            return this._bindButton(buttonId, true);
+        }
+
+        function bindDigitalAxis(buttonId, isPositive) {
+            return this._bind1dAxis(buttonId, isPositive == true, true);
+        }
+
+        function bindDigitalAxis2dX(buttonId, isPositive) {
+            return this._bind2dAxis(buttonId, isPositive == true, true, true);
+        }
+
+        function bindDigitalAxis2dY(buttonId, isPositive) {
+            return this._bind2dAxis(buttonId, isPositive == true, false, true);
+        }
+
+        function bindAnalogButton(buttonId) {
+            return this._bindButton(buttonId, false);
+        }
+
+        function bindAnalogAxis(buttonId, isPositive) {
+            return this._bind1dAxis(buttonId, isPositive == true, false);
+        }
+
+        function bindAnalogAxis2dX(buttonId, isPositive) {
+            return this._bind2dAxis(buttonId, isPositive == true, true, false);
+        }
+
+        function bindAnalogAxis2dY(buttonId, isPositive) {
+            return this._bind2dAxis(buttonId, isPositive == true, false, false);
+        }
+
+        /*
+            sources is a list of sources of size 1, 2, or 4 for a button, 1D axis or 2D axis respectively.
+
+            Each source item is itself a list.
+            [
+                'a' or 'b',
+                index,
+                boolean for positive
+            ]
+        */
+        function manualBindButton(buttonId, isDigital, sources) {
+            length = sources.length;
+            switch (length) {
+                case 1:
+                case 2:
+                case 4:
+                    binding = this._getOrCreateBindingTuple(buttonId, isDigital, length);
+                    for (i = 0; i < length; ++i) {
+                        source = sources[i];
+                        index = this._getIndexForSource(source[0] == 'a', Math.floor(source[1]), source.length < 3 || source[2] == true);
+                        binding[2 + i] = index;
+                    }
+                    break;
+                default:
+                    return Core.fail("Sources list must have 1, 2, or 4 sources.");
+            }
+        }
+
+        function _getIndexForSource(isAxis, index, isPositive) {
+
+            if (isAxis) index += this._button_count;
+            index++;
+            return isPositive ? index : -index;
+        }
+
+        function _freeAndGetIndex(hardwareId, isPositive) {
+            index = this._mashy_fingerprint_to_index.get(hardwareId);
+            if (index != null) {
+                if (isPositive) {
+                    index *= -1;
+                }
+
+                config = this._getStackTop();
+                for (lookup : config) {
+                    for (i = 2; i < 6; ++i) {
+                        if (lookup[i] == index) {
+                            lookup[i] = null;
+                        }
+                    }
+                }
+            }
+            return index;
+        }
+
+        function _bindButtonByHardwareId(hardwareId, buttonId, isDigital) {
+            index = this._freeAndGetIndex(hardwareId, true);
+            if (index != null) {
+                binding = this._getOrCreateBindingTuple(buttonId, isDigital, 1);
+                binding[2] = index;
+                return true;
+            }
+            return false;
+        }
+
+        function _bind1dAxisByHardwareId(hardwareId, buttonId, isDigital, isPositive) {
+            index = this._freeAndGetIndex(hardwareId * (isPositive ? 1 : -1), isPositive);
+            if (index != null) {
+                binding = this._getOrCreateBindingTuple(buttonId, isDigital, 2);
+                binding[2 + (isPositive ? 1 : 0)] = index;
+                return true;
+            }
+            return false;
+        }
+
+        function _bind2dAxisByHardwareId(hardwareId, buttonId, isDigital, isX, isPositive) {
+            index = this._freeAndGetIndex(hardwareId * (isPositive ? 1 : -1), isPositive);
+            if (index != null) {
+                binding = this._getOrCreateBindingTuple(buttonId, isDigital, 4);
+                binding[2 + (isPositive ? 1 : 0) + (isX ? 0 : 2)] = index;
+                return true;
+            }
+            return false;
+        }
+
+        function bindDigitalButtonByHardwareId(hardwareId, buttonId) {
+            return this._bindButtonByHardwareId(hardwareId, buttonId, true);
+        }
+
+        function bindAnalogButtonByHardwareId(hardwareId, buttonId) {
+            return this._bindButtonByHardwareId(hardwareId, buttonId, false);
+        }
+
+        function bindDigitalAxisByHardwareId(hardwareId, buttonId, isPositive) {
+            return this._bind1dAxisByHardwareId(hardwareId, buttonId, true, isPositive == true);
+        }
+
+        function bindAnalogAxisByHardwareId(hardwareId, buttonId, isPositive) {
+            return this._bind1dAxisByHardwareId(hardwareId, buttonId, false, isPositive == true);
+        }
+
+        function bindDigitalAxis2dXByHardwareId(hardwareId, buttonId, isPositive) {
+            return this._bind2dAxisByHardwareId(hardwareId, buttonId, true, true, isPositive == true);
+        }
+
+        function bindAnalogAxis2dXByHardwareId(hardwareId, buttonId, isPositive) {
+            return this._bind2dAxisByHardwareId(hardwareId, buttonId, false, true, isPositive == true);
+        }
+
+        function bindDigitalAxis2dYByHardwareId(hardwareId, buttonId, isPositive) {
+            return this._bind2dAxisByHardwareId(hardwareId, buttonId, true, false, isPositive == true);
+        }
+
+        function bindAnalogAxis2dYByHardwareId(hardwareId, buttonId, isPositive) {
+            return this._bind2dAxisByHardwareId(hardwareId, buttonId, false, false, isPositive == true);
+        }
+    }
+
+    class GamepadEvent : Game.Event {
+        field device;
+        field deviceId;
+        field buttonId;
+        field value;
+        field x;
+        field y;
+
+        constructor(device, buttonId, value, x, y) : base(Game.EventType.GAMEPAD) {
+            this.device = device;
+            this.deviceId = device._id;
+            this.buttonId = buttonId;
+            this.value = value;
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    enum GamepadMashyType {
+        BUTTON = 1,
+        AXIS = 2,
+    }
+    class GamepadRawHardwareEvent : Game.Event {
+        field device;
+        field deviceId;
+        field mashyType;
+        field mashyIndex;
+        field value;
+        field isSignificant;
+        field hardwareFingerprint;
+
+        constructor(device, mashyType, mashyIndex, value, hardwareFingerprint) : base(Game.EventType.GAMEPAD_HARDWARE) {
+            this.device = device;
+            this.deviceId = device;
+            this.mashyType = mashyType;
+            this.mashyIndex = mashyIndex;
+            this.value = value;
+            if (mashyType == GamepadMashyType.AXIS) {
+                this.isSignificant = Math.abs(value) > .5;
+            } else {
+                this.isSignificant = true;
+            }
+            this.hardwareFingerprint = hardwareFingerprint;
+        }
+    }
 }

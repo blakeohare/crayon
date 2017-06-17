@@ -1,35 +1,35 @@
 ﻿import Math;
 
 namespace Random {
-	function randomFloat() {
-		return $$lib_random_random_float();
-	}
+    function randomFloat() {
+        return $$lib_random_random_float();
+    }
 
-	// When one argument is provided, it is the max exclusive upper bound and the min is 0. 
-	function randomInt(minIncl, maxExcl = null) {
-		return (maxExcl == null)
-			? ($$lib_random_random_int(0, minIncl)
-				?? Random._randomIntErrorHelper("First argument must be a positive integer."))
-			: ($$lib_random_random_int(minIncl, maxExcl)
-				?? Random._randomIntErrorHelper("randomInt requires two integers, where the latter is larger."));
-	}
-	
-	function _randomIntErrorHelper(msg) {
-		throw new Core.InvalidArgumentException(msg);
-	}
+    // When one argument is provided, it is the max exclusive upper bound and the min is 0.
+    function randomInt(minIncl, maxExcl = null) {
+        return (maxExcl == null)
+            ? ($$lib_random_random_int(0, minIncl)
+                ?? Random._randomIntErrorHelper("First argument must be a positive integer."))
+            : ($$lib_random_random_int(minIncl, maxExcl)
+                ?? Random._randomIntErrorHelper("randomInt requires two integers, where the latter is larger."));
+    }
 
-	function randomBool() {
-		// could write this as $$lib_random_random_float() < .5, but this way it can get inlined.
-		// performance of this function may potentially be important to the user.
-		return $$lib_random_random_bool();
-	}
+    function _randomIntErrorHelper(msg) {
+        throw new Core.InvalidArgumentException(msg);
+    }
 
-	/*
-		Returns a boolean that's weighted
-		2 args: n in d chance that true is returned
-		1 arg: a float from 0 to 1 that indicates the ratio of trues.
-	*/
-	function randomChance(n, d = 1) {
-		return $$lib_random_random_float() * d < n;
-	}
+    function randomBool() {
+        // could write this as $$lib_random_random_float() < .5, but this way it can get inlined.
+        // performance of this function may potentially be important to the user.
+        return $$lib_random_random_bool();
+    }
+
+    /*
+        Returns a boolean that's weighted
+        2 args: n in d chance that true is returned
+        1 arg: a float from 0 to 1 that indicates the ratio of trues.
+    */
+    function randomChance(n, d = 1) {
+        return $$lib_random_random_float() * d < n;
+    }
 }

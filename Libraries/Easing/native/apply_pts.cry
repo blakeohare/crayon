@@ -8,13 +8,13 @@ len = $_list_length(list1);
 objArray1 = $_new_array('object', len);
 
 for (i = 0; i < len; i += 1) {
-	value = $_list_get(list1, i);
-	if (Value$value.type == Types.INTEGER) {
-		float1 = $_cast('int', Value$value.internalValue);
-	} else {
-		float1 = $_cast('double', Value$value.internalValue);
-	}
-	$_array_set(objArray1, i, float1);
+    value = $_list_get(list1, i);
+    if (Value$value.type == Types.INTEGER) {
+        float1 = $_cast('int', Value$value.internalValue);
+    } else {
+        float1 = $_cast('double', Value$value.internalValue);
+    }
+    $_array_set(objArray1, i, float1);
 }
 
 // Override just in case the user defined function begins or ends in a weird state.

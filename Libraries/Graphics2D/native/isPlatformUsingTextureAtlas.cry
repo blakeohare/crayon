@@ -1,5 +1,5 @@
 if (%%%LIB_GRAPHICS_USES_TEXTURE_ATLAS%%%) {
-	output = VALUE_TRUE;
+    output = VALUE_TRUE;
 } else {
-	output = VALUE_FALSE;
+    output = VALUE_FALSE;
 }

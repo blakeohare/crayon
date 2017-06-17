@@ -1,14 +1,14 @@
 /*
-	All arguments are within valid range before this function is invoked.
-	
-	arg 1: NativeImageData object, whose nativeData[0] bitmap must be modified.
-	arg 2: NativeImageData object, whose nativeData[0] bitmap must be copied onto arg 1's
-	arg 3: target left (int)
-	arg 4: target top (int)
-	arg 5: source left (int)
-	arg 6: source top (int)
-	arg 7: width (int)
-	arg 8: height (int)
+    All arguments are within valid range before this function is invoked.
+
+    arg 1: NativeImageData object, whose nativeData[0] bitmap must be modified.
+    arg 2: NativeImageData object, whose nativeData[0] bitmap must be copied onto arg 1's
+    arg 3: target left (int)
+    arg 4: target top (int)
+    arg 5: source left (int)
+    arg 6: source top (int)
+    arg 7: width (int)
+    arg 8: height (int)
 */
 
 import inline "FrameworkFunctions/8_arg.cry";
@@ -19,21 +19,21 @@ objInstance2 = $_cast('ObjectInstance', Value$arg2.internalValue);
 // If pixel edit sessions are not used, then the object1 arg is not used in the following blit command
 // and so not setting it will not have any adverse effects.
 if (%%%IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS%%%) {
-	objArray1 = ObjectInstance$objInstance1.nativeData;
-	object1 = $_array_get(objArray1, 3);
-	if (object1 == null) {
-		object1 = $_lib_imageresources_getPixelEditSession($_array_get(objArray1, 0)); 
-		$_array_set(objArray1, 3, object1);
-	}
+    objArray1 = ObjectInstance$objInstance1.nativeData;
+    object1 = $_array_get(objArray1, 3);
+    if (object1 == null) {
+        object1 = $_lib_imageresources_getPixelEditSession($_array_get(objArray1, 0));
+        $_array_set(objArray1, 3, object1);
+    }
 }
 
 $_lib_imageresources_blit(
-	$_array_get(ObjectInstance$objInstance1.nativeData, 0), // target bitmap
-	$_array_get(ObjectInstance$objInstance2.nativeData, 0), // source bitmap
-	$_cast('int', Value$arg3.internalValue), // target left
-	$_cast('int', Value$arg4.internalValue), // target top
-	$_cast('int', Value$arg5.internalValue), // source left
-	$_cast('int', Value$arg6.internalValue), // source top
-	$_cast('int', Value$arg7.internalValue), // width
-	$_cast('int', Value$arg8.internalValue), // height
-	object1); // pixel edit session
+    $_array_get(ObjectInstance$objInstance1.nativeData, 0), // target bitmap
+    $_array_get(ObjectInstance$objInstance2.nativeData, 0), // source bitmap
+    $_cast('int', Value$arg3.internalValue), // target left
+    $_cast('int', Value$arg4.internalValue), // target top
+    $_cast('int', Value$arg5.internalValue), // source left
+    $_cast('int', Value$arg6.internalValue), // source top
+    $_cast('int', Value$arg7.internalValue), // width
+    $_cast('int', Value$arg8.internalValue), // height
+    object1); // pixel edit session

@@ -1,14 +1,14 @@
 import Nori;
 
 namespace NoriXml {
-	function instantiate_Canvas() { return new Nori.Canvas(); }
-	function instantiate_DockPanel() { return new Nori.DockPanel(); }
-	function instantiate_Grid() { return new Nori.Grid(); }
-	function instantiate_MenuBar() { return new Nori.MenuBar(); }
-	function instantiate_MenuItem() { return new Nori.MenuItem(); }
-	function instantiate_MenuSeparator() { return new Nori.MenuSeparator(); }
-	function instantiate_Rectangle() { return new Nori.Rectangle(); }
-	function instantiate_StackPanel() { return new Nori.StackPanel(); }
-	function instantiate_TextArea() { return new Nori.TextArea(); }
-	function instantiate_Window() { return new Nori.Window(); }
+    function instantiate_Canvas() { return new Nori.Canvas(); }
+    function instantiate_DockPanel() { return new Nori.DockPanel(); }
+    function instantiate_Grid() { return new Nori.Grid(); }
+    function instantiate_MenuBar() { return new Nori.MenuBar(); }
+    function instantiate_MenuItem() { return new Nori.MenuItem(); }
+    function instantiate_MenuSeparator() { return new Nori.MenuSeparator(); }
+    function instantiate_Rectangle() { return new Nori.Rectangle(); }
+    function instantiate_StackPanel() { return new Nori.StackPanel(); }
+    function instantiate_TextArea() { return new Nori.TextArea(); }
+    function instantiate_Window() { return new Nori.Window(); }
 }

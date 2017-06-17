@@ -1,21 +1,21 @@
 /*
-	Start loading asynchronously if possible. For platforms where images cannot be loaded asynchronously,
-	or it is not practical to do so for embedded resources, simply load synchronously. 
-	
-	arg 1: NativeImageData object instance (blank. must fill in the nativeData for this)
-		nativeData[0] -> native bitmap resource
-		nativeData[1] -> width (int)
-		nativeData[2] -> height (int)
-	arg 2: Generated filename
-	arg 3: Loader object instance. Native data must be populated.
-		nativeData[0] -> reference to a loader
-		nativeData[1] -> image data once loaded
-		nativeData[2] -> status (integer)
-			0 -> still going
-			1 -> success
-			2 -> failed
-		nativeData[3] -> mutex (if necessary)
-		
+    Start loading asynchronously if possible. For platforms where images cannot be loaded asynchronously,
+    or it is not practical to do so for embedded resources, simply load synchronously.
+
+    arg 1: NativeImageData object instance (blank. must fill in the nativeData for this)
+        nativeData[0] -> native bitmap resource
+        nativeData[1] -> width (int)
+        nativeData[2] -> height (int)
+    arg 2: Generated filename
+    arg 3: Loader object instance. Native data must be populated.
+        nativeData[0] -> reference to a loader
+        nativeData[1] -> image data once loaded
+        nativeData[2] -> status (integer)
+            0 -> still going
+            1 -> success
+            2 -> failed
+        nativeData[3] -> mutex (if necessary)
+
 */
 
 import inline "FrameworkFunctions/3_arg.cry";
@@ -31,6 +31,6 @@ $_array_set(objArray2, 2, 0);
 ObjectInstance$objInstance2.nativeData = objArray2;
 
 $_lib_imageresources_loadAsync(
-	string1, // filename
-	objArray1, // native image data nativeData
-	objArray2); // image loader nativeData
+    string1, // filename
+    objArray1, // native image data nativeData
+    objArray2); // image loader nativeData
