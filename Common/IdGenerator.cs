@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Common
 {
-    public static class GuidHelper
+    public static class IdGenerator
     {
         private static readonly string CSHARP_UPPER = "HHHHHHHH-HHHH-HHHH-HHHH-HHHHHHHHHHHH";
         private static readonly string XCODE_PROJ = "HHHHHHHHHHHHHHHHHHHHHHHH";
@@ -56,7 +56,8 @@ namespace Common
 
                     default:
                         break;
-                }			}
+                }
+            }
 
             return new String(format);
         }

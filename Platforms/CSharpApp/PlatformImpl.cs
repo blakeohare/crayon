@@ -62,13 +62,13 @@ namespace CSharpApp
                 embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + audioFile.CanonicalFileName + "\"/>");
             }
 
-            string guidSeed = GuidHelper.GetRandomSeed();
+            string guidSeed = IdGenerator.GetRandomSeed();
 
             return Util.MergeDictionaries(
                 this.ParentPlatform.GenerateReplacementDictionary(options, resDb),
                 new Dictionary<string, string>() {
-                    { "PROJECT_GUID", GuidHelper.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED) ?? guidSeed, "project") },
-                    { "ASSEMBLY_GUID", GuidHelper.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED) ?? guidSeed, "assembly") },
+                    { "PROJECT_GUID", IdGenerator.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED) ?? guidSeed, "project") },
+                    { "ASSEMBLY_GUID", IdGenerator.GenerateCSharpGuid(options.GetStringOrNull(ExportOptionKey.GUID_SEED) ?? guidSeed, "assembly") },
                     { "EMBEDDED_RESOURCES", string.Join("\r\n", embeddedResources).Trim() },
                     { "CSHARP_APP_ICON", options.GetBool(ExportOptionKey.HAS_ICON) ? "<ApplicationIcon>icon.ico</ApplicationIcon>" : "" },
                 });
@@ -85,8 +85,8 @@ namespace CSharpApp
         {
             Dictionary<string, string> libraryProjectNameToGuid = new Dictionary<string, string>();
 
-            string runtimeProjectGuid = GuidHelper.GenerateCSharpGuid("runtime", "runtime-project");
-            string runtimeAssemblyGuid = GuidHelper.GenerateCSharpGuid("runtime", "runtime-assembly");
+            string runtimeProjectGuid = IdGenerator.GenerateCSharpGuid("runtime", "runtime-project");
+            string runtimeAssemblyGuid = IdGenerator.GenerateCSharpGuid("runtime", "runtime-assembly");
 
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             Dictionary<string, string> replacements = new Dictionary<string, string>()
@@ -117,9 +117,9 @@ namespace CSharpApp
                 if (this.GetLibraryCode(libBaseDir, library, dlls, output, libraryNativeInvocationTranslatorProviderForPlatform))
                 {
                     string name = library.Name;
-                    string projectGuid = GuidHelper.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-project");
+                    string projectGuid = IdGenerator.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-project");
                     replacements["PROJECT_GUID"] = projectGuid;
-                    replacements["ASSEMBLY_GUID"] = GuidHelper.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-assembly");
+                    replacements["ASSEMBLY_GUID"] = IdGenerator.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-assembly");
                     replacements["PROJECT_TITLE"] = library.Name;
                     replacements["LIBRARY_NAME"] = library.Name;
                     LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls, library.LibProjectNamesAndGuids);

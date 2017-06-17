@@ -7,10 +7,10 @@ namespace JavaScriptAppChrome
     {
         public static FileOutput Create(Dictionary<string, FileOutput> files, bool storeInMemory)
         {
-            string tmpNameSeed = GuidHelper.GetRandomSeed();
+            string tmpNameSeed = IdGenerator.GetRandomSeed();
             string tmpDirRoot = System.IO.Path.GetTempPath();
-            string tempDir = System.IO.Path.Combine(tmpDirRoot, GuidHelper.GenerateTempDirName(tmpNameSeed, "zip-intermediate-dir"));
-            string zipPath = System.IO.Path.Combine(tmpDirRoot, GuidHelper.GenerateTempDirName(tmpNameSeed, "zip-output") + ".zip");
+            string tempDir = System.IO.Path.Combine(tmpDirRoot, IdGenerator.GenerateTempDirName(tmpNameSeed, "zip-intermediate-dir"));
+            string zipPath = System.IO.Path.Combine(tmpDirRoot, IdGenerator.GenerateTempDirName(tmpNameSeed, "zip-output") + ".zip");
             new FileOutputExporter(tempDir).ExportFiles(files);
             System.IO.Compression.ZipFile.CreateFromDirectory(tempDir, zipPath);
             FileUtil.DirectoryDelete(tempDir);
