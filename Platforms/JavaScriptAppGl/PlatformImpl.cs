@@ -43,16 +43,29 @@ namespace JavaScriptAppGl
             Options options,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
+            return this.ExportProjectImpl(globals, structDefinitions, functionDefinitions, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform, this.Translator);
+        }
+
+        public Dictionary<string, FileOutput> ExportProjectImpl(
+            IList<VariableDeclaration> globals,
+            IList<StructDefinition> structDefinitions,
+            IList<FunctionDefinition> functionDefinitions,
+            IList<LibraryForExport> libraries,
+            ResourceDatabase resourceDatabase,
+            Options options,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform,
+            AbstractTranslator translatorOverride)
+        { 
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
             List<string> coreVmCode = new List<string>();
 
-            coreVmCode.Add(this.GenerateCodeForGlobalsDefinitions(this.Translator, globals));
+            coreVmCode.Add(this.GenerateCodeForGlobalsDefinitions(translatorOverride, globals));
 
             foreach (FunctionDefinition funcDef in functionDefinitions)
             {
-                coreVmCode.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
+                coreVmCode.Add(this.GenerateCodeForFunction(translatorOverride, funcDef));
             }
 
             string coreVm = string.Join("\r\n", coreVmCode);
@@ -70,14 +83,14 @@ namespace JavaScriptAppGl
                 {
                     List<string> libraryLines = new List<string>();
 
-                    this.Translator.CurrentLibraryFunctionTranslator =
+                    translatorOverride.CurrentLibraryFunctionTranslator =
                         libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
 
                     library.ManifestFunction.NameToken = Pastel.Token.CreateDummyToken("lib_" + library.Name.ToLower() + "_manifest");
-                    libraryLines.Add(this.GenerateCodeForFunction(this.Translator, library.ManifestFunction));
+                    libraryLines.Add(this.GenerateCodeForFunction(translatorOverride, library.ManifestFunction));
                     foreach (FunctionDefinition fnDef in library.Functions)
                     {
-                        libraryLines.Add(this.GenerateCodeForFunction(this.Translator, fnDef));
+                        libraryLines.Add(this.GenerateCodeForFunction(translatorOverride, fnDef));
                     }
                     libraryLines.Add("C$common$scrapeLibFuncNames('" + library.Name.ToLower() + "');");
                     libraryLines.Add("");

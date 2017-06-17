@@ -8,7 +8,7 @@ namespace JavaScriptAppChrome
 {
     public class PlatformImpl : Platform.AbstractPlatform
     {
-        public override string InheritsFrom { get { return "lang-javascript"; } }
+        public override string InheritsFrom { get { return "javascript-app-gl"; } }
         public override string Name { get { return "javascript-app-chrome"; } }
         public override string NL { get { return "\n"; } }
 
@@ -38,7 +38,7 @@ namespace JavaScriptAppChrome
             SystemBitmap largeIcon = iconFile.CloneToNewSize(128, 128);
 
             JavaScriptAppGl.PlatformImpl jsBasicPlatform = (JavaScriptAppGl.PlatformImpl)this.PlatformProvider.GetPlatform("javascript-app-gl");
-            Dictionary<string, FileOutput> files = jsBasicPlatform.ExportProject(globals, structDefinitions, functionDefinitions, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform);
+            Dictionary<string, FileOutput> files = jsBasicPlatform.ExportProjectImpl(globals, structDefinitions, functionDefinitions, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform, this.Translator);
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             replacements["JS_LIB_INCLUSIONS"] = jsBasicPlatform.GenerateJsLibInclusionHtml(files.Keys);
             this.CopyResourceAsText(files, "background.js", "Resources/BackgroundJs.txt", replacements);

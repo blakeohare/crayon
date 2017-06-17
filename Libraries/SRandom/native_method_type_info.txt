@@ -1,0 +1,4 @@
+
+// Will generate a random number with the given number of bytes and update the seed
+// the seed will be at index 0 of the buffer and the number itself will be index 1
+void _lib_srandom_getInteger(int seed, int bytes, Array<int> outputBuffer);

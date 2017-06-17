@@ -2,3 +2,6 @@ NAME: SRandom
 AUTHOR: Blake O'Hare
 DOCUMENTATION: http://crayonlang.org/docs/0.2.0/srandom
 DESCRIPTION: Library for generating seedable random numbers that generates consistent values for the same seed across different platforms.
+
+BOOL_FLAG: USE_NACL_ACCELERATION: false
+[javascript-app-chrome] BOOL_FLAG: USE_NACL_ACCELERATION: true
