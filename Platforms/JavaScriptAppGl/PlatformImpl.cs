@@ -55,7 +55,7 @@ namespace JavaScriptAppGl
             Options options,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform,
             AbstractTranslator translatorOverride)
-        { 
+        {
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 

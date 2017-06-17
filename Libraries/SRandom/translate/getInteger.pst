@@ -2,22 +2,15 @@
     args[0] -> integer pointer (integer in a list) to the active seed value.
 */
 Value lib_srandom_function_getInteger(Array<Value> args) {
-	List<Value> intPtr = (List<Value>)args[0].internalValue;
-    if (@ext_boolean("USE_NACL_ACCELERATION")) {
-		Native._lib_srandom_getInteger((int)intPtr[0].internalValue, 4, Core.IntBuffer16);
-		intPtr[0] = buildInteger(Core.IntBuffer16[0]);
-		buildInteger(Core.IntBuffer16[1]);
-		return buildInteger(0);
-    } else {
-		int value1 = (((int)intPtr[0].internalValue * 20077) + 12345) & 65535;
-		int value2 = ((value1 * 20077) + 12345) & 65535;
-		int value3 = ((value2 * 20077) + 12345) & 65535;
-		int value4 = ((value3 * 20077) + 12345) & 65535;
-		intPtr[0] = buildInteger(value4);
-		value1 = (value1 >> 8) & 255; // 8 bits
-		value2 = (value2 >> 8) & 255; // 8 bits
-		value3 = (value3 >> 8) & 255; // 8 bits
-		value4 = (value4 >> 8) & 127; // 7 bits
-		return buildInteger((value4 << 24) | (value3 << 16) | (value2 << 8) | value1);
-    }
+    List<Value> intPtr = (List<Value>)args[0].internalValue;
+    int value1 = (((int)intPtr[0].internalValue * 20077) + 12345) & 65535;
+    int value2 = ((value1 * 20077) + 12345) & 65535;
+    int value3 = ((value2 * 20077) + 12345) & 65535;
+    int value4 = ((value3 * 20077) + 12345) & 65535;
+    intPtr[0] = buildInteger(value4);
+    value1 = (value1 >> 8) & 255; // 8 bits
+    value2 = (value2 >> 8) & 255; // 8 bits
+    value3 = (value3 >> 8) & 255; // 8 bits
+    value4 = (value4 >> 8) & 127; // 7 bits
+    return buildInteger((value4 << 24) | (value3 << 16) | (value2 << 8) | value1);
 }
