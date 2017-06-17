@@ -8,11 +8,16 @@ namespace Common
     public static class GuidHelper
     {
         private static readonly string CSHARP_UPPER = "HHHHHHHH-HHHH-HHHH-HHHH-HHHHHHHHHHHH";
-        private static readonly string CSHARP_LOWER = "hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh";
         private static readonly string XCODE_PROJ = "HHHHHHHHHHHHHHHHHHHHHHHH";
+        private static readonly string TEMP_DIR = "crayon-HHHHHHHHHHHHHHHH";
 
         private static readonly string HEX_UPPER = "0123456789ABCDEF";
         private static readonly string HEX_LOWER = "0123456789abcdef";
+
+        public static string GenerateTempDirName(string seed, string salt)
+        {
+            return GenerateGuid(seed, salt + "-tmp-dir", TEMP_DIR.ToCharArray());
+        }
 
         public static string GenerateCSharpGuid(string seed, string salt)
         {

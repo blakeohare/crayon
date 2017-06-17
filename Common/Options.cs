@@ -23,6 +23,22 @@ namespace Common
             return this.options.TryGetValue(key, out output) && (bool)output;
         }
 
+        public int GetInteger(ExportOptionKey key)
+        {
+            return (int)this.options[key];
+        }
+
+        public int GetInteger(ExportOptionKey key, int defaultValue)
+        {
+            object output;
+            return this.options.TryGetValue(key, out output) ? (int)output : defaultValue;
+        }
+
+        public bool HasInteger(ExportOptionKey key)
+        {
+            return this.options.ContainsKey(key);
+        }
+
         public string GetStringOrNull(ExportOptionKey key)
         {
             object output;

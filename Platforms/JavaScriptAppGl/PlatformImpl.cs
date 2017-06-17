@@ -99,7 +99,7 @@ namespace JavaScriptAppGl
             }
 
             Dictionary<string, string> htmlReplacements = new Dictionary<string, string>(replacements);
-            replacements["JS_LIB_INCLUSIONS"] = this.GenerateJsLibInclusionHtml(librariesWithCode);
+            replacements["JS_LIB_INCLUSIONS"] = this.GenerateJsLibInclusionHtml(output.Keys);
             this.CopyResourceAsText(output, "index.html", "Resources/GameHostHtml.txt", replacements);
 
             this.CopyResourceAsText(output, "common.js", "Resources/Common.txt", replacements);
@@ -176,18 +176,18 @@ namespace JavaScriptAppGl
             return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(translator, globals);
         }
 
-        private string GenerateJsLibInclusionHtml(List<LibraryForExport> librariesWithCode)
+        public string GenerateJsLibInclusionHtml(ICollection<string> filesIncluded)
         {
-            string[] librariesIncluded = librariesWithCode.Select(lib => lib.Name.ToLower()).ToArray();
-            if (librariesIncluded.Length > 0)
+            string[] libraryPathsIncluded = filesIncluded.Where(s => s.StartsWith("libs/lib_")).OrderBy(s => s).ToArray();
+            if (libraryPathsIncluded.Length > 0)
             {
                 return
                     this.IndentCodeWithTabs(
-                        "<script type=\"text/javascript\" src=\"libs/lib_" +
+                        "<script type=\"text/javascript\" src=\"" +
                         string.Join(
-                            ".js\"></script>\n<script type=\"text/javascript\" src=\"libs/lib_",
-                            librariesIncluded) +
-                        ".js\"></script>",
+                            "\"></script>\n<script type=\"text/javascript\" src=\"",
+                            libraryPathsIncluded) +
+                        "\"></script>",
                     2);
             }
             return "";

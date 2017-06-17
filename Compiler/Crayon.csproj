@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Crayon</RootNamespace>
     <AssemblyName>Crayon</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -23,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -32,6 +34,7 @@
     <DefineConstants>RELEASE;TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -83,6 +86,10 @@
     <ProjectReference Include="..\Platforms\JavaScriptAppAndroid\JavaScriptAppAndroid.csproj">
       <Project>{90cacd18-603e-483f-a5f0-7e87f1c1f5a2}</Project>
       <Name>JavaScriptAppAndroid</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\JavaScriptAppChrome\JavaScriptAppChrome.csproj">
+      <Project>{f83233e0-fd87-4db6-9b6b-db828240f3d3}</Project>
+      <Name>JavaScriptAppChrome</Name>
     </ProjectReference>
     <ProjectReference Include="..\Platforms\JavaScriptAppGl\JavaScriptAppGl.csproj">
       <Project>{e2558b29-a032-40d0-90b0-1a9de368ec16}</Project>

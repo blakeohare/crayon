@@ -10,7 +10,7 @@ if (type == Types.LIST) {
     if (value2.type == Types.INTEGER) {
         i = ((int) value2.internalValue);
         list1 = ((List<Value>) root.internalValue);
-        if (i < 0) { 
+        if (i < 0) {
             i += list1.Size();
             if (i < 0) {
                 return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INDEX_OUT_OF_RANGE, "Index is out of range.");

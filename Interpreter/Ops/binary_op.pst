@@ -464,7 +464,7 @@ switch ((((leftValue.type * MAX_OP) + row[0]) * MAX_TYPE) + rightValue.type) {
         break;
 
     default:
-        if (row[0] == BinaryOps.ADDITION && 
+        if (row[0] == BinaryOps.ADDITION &&
             Core.ForceParens(leftValue.type == Types.STRING || rightValue.type == Types.STRING)) {
             value = new Value(Types.STRING, Core.StringConcatAll(valueToString(leftValue), valueToString(rightValue)));
         } else {

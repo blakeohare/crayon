@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaScriptAppIos", "..\Plat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaScriptAppAndroid", "..\Platforms\JavaScriptAppAndroid\JavaScriptAppAndroid.csproj", "{90CACD18-603E-483F-A5F0-7E87F1C1F5A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaScriptAppChrome", "..\Platforms\JavaScriptAppChrome\JavaScriptAppChrome.csproj", "{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -265,6 +267,18 @@ Global
 		{90CACD18-603E-483F-A5F0-7E87F1C1F5A2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{90CACD18-603E-483F-A5F0-7E87F1C1F5A2}.Release|x86.ActiveCfg = Release|Any CPU
 		{90CACD18-603E-483F-A5F0-7E87F1C1F5A2}.Release|x86.Build.0 = Release|Any CPU
+		{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}.Debug|x86.Build.0 = Debug|Any CPU
+		{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}.Release|x86.ActiveCfg = Release|Any CPU
+		{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -283,5 +297,6 @@ Global
 		{41DEBAC3-73C4-4F40-93AE-9FE02319276D} = {E0B05933-80B8-443B-BB91-E378C4F79C37}
 		{C1876949-86D6-405E-B717-AFC56C27E1C8} = {E0B05933-80B8-443B-BB91-E378C4F79C37}
 		{90CACD18-603E-483F-A5F0-7E87F1C1F5A2} = {E0B05933-80B8-443B-BB91-E378C4F79C37}
+		{F83233E0-FD87-4DB6-9B6B-DB828240F3D3} = {E0B05933-80B8-443B-BB91-E378C4F79C37}
 	EndGlobalSection
 EndGlobal
