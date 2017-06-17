@@ -273,6 +273,16 @@ namespace CSharpApp
                 output[baseDir + dll.HintPath] = dll.FileOutput;
             }
 
+            if (options.GetBool(ExportOptionKey.HAS_ICON))
+            {
+                string iconPath = options.GetString(ExportOptionKey.ICON_PATH);
+                output[baseDir + "icon.ico"] = new FileOutput()
+                {
+                    Type = FileOutputType.Image,
+                    Bitmap = new SystemBitmap(iconPath),
+                };
+            }
+            
             this.ExportProjectFiles(baseDir, output, replacements, new Dictionary<string, string>(), false);
 
             return output;

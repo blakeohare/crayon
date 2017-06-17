@@ -2,6 +2,12 @@
 
 namespace Common
 {
+    public enum ImageFormat
+    {
+        PNG,
+        JPEG,
+    }
+
     /**
      * Wraps a System.Drawing.Bitmap in Windows or a MonoMac.CoreGraphics Bitmap on a Mac.
      */
@@ -70,11 +76,41 @@ namespace Common
 
         public void Save(string path)
         {
+            if (path.ToLower().EndsWith(".ico"))
+            {
+                IconGenerator ico = new IconGenerator();
+                ico.AddImage(this);
+                System.IO.File.WriteAllBytes(path, ico.GenerateIconFile());
+            }
+            else
+            {
 #if WINDOWS
-            this.bitmap.Save(path);
+                this.bitmap.Save(path);
 #elif OSX
-            this.bitmap.WriteToPng(path);
+                this.bitmap.WriteToPng(path);
 #endif
+            }
+        }
+
+        private static string FormatToExtension(ImageFormat format)
+        {
+            switch (format)
+            {
+                case ImageFormat.PNG: return ".png";
+                case ImageFormat.JPEG: return ".jpg";
+                default: throw new System.Exception();
+            }
+        }
+
+        public byte[] SaveBytes(ImageFormat format)
+        {
+            // TODO: for Windows you can save a stream. Need to look into Cairo, but this may be the only way for OSX.
+            string seed = IdGenerator.GetRandomSeed();
+            string file = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "crayon-" + IdGenerator.Generate32HexDigits(seed, "image") + FormatToExtension(format));
+            this.Save(file);
+            byte[] bytes = System.IO.File.ReadAllBytes(file);
+            System.IO.File.Delete(file);
+            return bytes;
         }
 
         public Graphics MakeGraphics()

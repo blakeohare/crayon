@@ -7,12 +7,18 @@ namespace Common
 {
     public static class IdGenerator
     {
+        private static readonly string HEX_DIGITS_32 = "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh";
         private static readonly string CSHARP_UPPER = "HHHHHHHH-HHHH-HHHH-HHHH-HHHHHHHHHHHH";
         private static readonly string XCODE_PROJ = "HHHHHHHHHHHHHHHHHHHHHHHH";
         private static readonly string TEMP_DIR = "crayon-HHHHHHHHHHHHHHHH";
 
         private static readonly string HEX_UPPER = "0123456789ABCDEF";
         private static readonly string HEX_LOWER = "0123456789abcdef";
+
+        public static string Generate32HexDigits(string seed, string salt)
+        {
+            return GenerateGuid(seed, salt + "-random-hex", HEX_DIGITS_32.ToCharArray());
+        }
 
         public static string GenerateTempDirName(string seed, string salt)
         {
