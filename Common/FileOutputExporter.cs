@@ -69,7 +69,7 @@ namespace Common
         {
             if (isMove)
             {
-                FileUtil.MoveFile(originalAbsolutePath, path);
+                FileUtil.MoveFile(originalAbsolutePath, path, true);
             }
             else
             {

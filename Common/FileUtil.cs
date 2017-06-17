@@ -169,12 +169,16 @@ namespace Common
             }
         }
 
-        public static void MoveFile(string source, string dest)
+        public static void MoveFile(string source, string dest, bool overwriteOkay)
         {
             if (!IS_WINDOWS)
             {
                 source = source.Remove('\\', '/');
                 dest = dest.Replace('\\', '/');
+            }
+            if (overwriteOkay && System.IO.File.Exists(dest))
+            {
+                System.IO.File.Delete(dest);
             }
             System.IO.File.Move(source, dest);
         }
