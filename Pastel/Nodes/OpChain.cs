@@ -141,6 +141,12 @@ namespace Pastel.Nodes
                         this.ResolvedType = PType.BOOL;
                         break;
 
+                    case "int/int":
+                    case "int/double":
+                    case "double/int":
+                    case "double/double":
+                        throw new ParserException(this.Ops[i], "Due to varying platform behavior of / use Core.IntegerDivision(numerator, denominator) or Core.FloatDivision(numerator, denominator)");
+
                     default:
                         throw new ParserException(this.Ops[i], "The operator '" + this.Ops[i].Value + "' is not defined for types: " + this.ResolvedType + " and " + nextType + ".");
                 }
