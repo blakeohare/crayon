@@ -282,7 +282,7 @@ namespace CSharpApp
                     Bitmap = new SystemBitmap(iconPath),
                 };
             }
-            
+
             this.ExportProjectFiles(baseDir, output, replacements, new Dictionary<string, string>(), false);
 
             return output;

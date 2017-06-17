@@ -68,6 +68,7 @@ def main(args):
 		'Math',
 		'Random',
 		'Resources',
+		'SRandom',
 		'UserData',
 		'Web',
 		'Xml',
