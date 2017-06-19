@@ -19,6 +19,25 @@ function getAllXmlImpl(root, relativePath, output) {
 	}
 }
 
+function normalizePath(path) {
+	parts = path.replace('\\', '/').split('/');
+	output = [];
+	for (part : parts) {
+		if (part == '..') {
+			if (output.length > 0 && output[-1] != '..') {
+				output.pop();
+			} else {
+				output.add('..');
+			}
+		} else if (part == '.') {
+			// nothing
+		} else {
+			output.add(part);
+		}
+	}
+	return output.join('/');
+}
+
 function main() {
 	docsRoot = FileIO.currentDirectory();
 
@@ -27,10 +46,26 @@ function main() {
 	fullpaths = xmlFiles.keys();
 	fullpaths.sort();
 
+	inputPaths = [];
+	outputPaths = [];
 	for (file : fullpaths) {
-		relativePath = xmlFiles[file];
+		inputPaths.add(file);
+		outputPaths.add('htmlout/' + file[:-'.xml'.length] + '.html');
+	}
+
+	librariesDir = normalizePath(docsRoot + '/../Libraries');
+	for (libname : FileIO.directoryList(librariesDir)) {
+		docsFile = librariesDir + '/' + libname + '/docs.xml';
+		if (FileIO.fileExists(docsFile)) {
+			outputPaths.add('htmlout/libs/' + libname + '.html');
+			inputPaths.add(docsFile);
+		}
+	}
+
+	for (i = 0; i < inputPaths.length; ++i) {
+		file = inputPaths[i];
+		outputPath = outputPaths[i];
 		xml = FileIO.fileReadText(file);
-		outputPath = 'htmlout/' + relativePath[:-'.xml'.length] + '.html';
 		doc = Xml.parse(xml);
 		docTree = adaptXml(doc);
 		
