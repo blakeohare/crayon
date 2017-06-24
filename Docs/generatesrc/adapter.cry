@@ -150,6 +150,7 @@ function adaptClass(ns, element) {
 				break;
 			case 'field':
 				fld = adaptField(cls, child);
+				if (fld.name == null) throw new Exception("There's a field with no name in class: " + cls.name);
 				cls.fields.add(fld);
 				break;
 			default:

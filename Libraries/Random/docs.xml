@@ -1,5 +1,9 @@
 <library name="Random">
-	<description></description>
+	<description>
+		Library for generating random numbers. 
+		Generally uses the default-seeded random number generator from the underlying platform.
+		For seedable random numbers that generates the same numbers per seed regardless of export platform, use the SRandom library.
+	</description>
 	<namespace name="Random">
 		<function name="randomInt">
 			<arg name="minInclOrMax" type="int" description="Minimum number that randomInt will return."/>
