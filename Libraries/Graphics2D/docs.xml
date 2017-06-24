@@ -1,0 +1,257 @@
+<library name="Graphics2D">
+	<description>Library for drawing 2D graphics to the screen in a game environment, used in conjunction with the Game library.</description>
+	<namespace name="Graphics2D">
+		<class name="GraphicsTexture">
+			<description>Represents an image that can be drawn to the screen.</description>
+			<function name="load" static="true">
+				<arg name="imageResource" type="ImageResources.ImageResource" description="An image resource to convert to a texture."/>
+				<returns type="Graphics2D.GraphicsTexture" description="A texture object"/>
+				<description>
+					Loads a raw image resource into the graphics engine so that it can be drawn to the screen. 
+					What specifically happens under the hood depends on the platform implementation.
+					For some platforms the raw image resource and the graphics texture will wrap identical native platform objects (such as JavaScript, which uses a regular HTML Canvas as its underlying implementation for both an ImageResource and GraphicsTexture).
+					Other platforms make a distinction. For example, OpenGL-based platforms will use bitmap objects for the ImageResource, but the GraphicsTexture will be a handle to a GPU-loaded texture. 
+					These differences are abstracted away by the GraphicsTexture. 
+				</description>
+			</function>
+
+			<function name="draw">
+				<arg name="x" type="int" description="x coordinate on the screen to draw to"/>
+				<arg name="y" type="int" description="y coordinate on the screen to draw to"/>
+				<description>
+					Draws the texture to the screen at the given coordinates.
+					The image is positioned such that the top left corner is located at the (x, y) coordinates provided.
+				</description>
+			</function>
+
+			<function name="drawWithAlpha">
+				<arg name="x" type="int" description="x coordinate on the screen to draw to"/>
+				<arg name="y" type="int" description="y coordinate on the screen to draw to"/>
+				<arg name="alpha" type="int" description="alpha value applied to the blitted result (0 to 255)"/>
+				<description>
+					Draws the texture to the screen at the given coordinates and alpha value.
+					The image is positioned such that the top left corner is located at the (x, y) coordinates provided.
+					If the image contains per-pixel alpha values, those are compounded with the overall alpha.
+				</description>
+			</function>
+
+			<function name="drawRegion">
+				<arg name="x" type="int" description="x coordinate on the screen to draw to"/>
+				<arg name="y" type="int" description="y coordinate on the screen to draw to"/>
+				<arg name="sourceX" type="int" descriptino="x coordinate on the texture of the left side of the region to be drawn"/>
+				<arg name="sourceY" type="int" descriptino="y coordinate on the texture of the top side of the region to be drawn"/>
+				<arg name="sourceWidth" type="int" description="width of the region on the texture to be drawn"/>
+				<arg name="sourceHeight" type="int" description="height of the region on the texture to be drawn"/>
+				<description>
+					Draws a portion of an image to the screen.
+					The first x and y coordinates represent where on the screen to draw the image.
+					The next 4 coordinates define a rectangular region on this texture to draw from.
+				</description>
+			</function>
+
+			<function name="drawStretched">
+				<arg name="targetX" type="int" description="x coordinate on the screen to draw to"/>
+				<arg name="targetY" type="int" description="y coordinate on the screen to draw to"/>
+				<arg name="targetWidth" type="int" description="width on the screen that the drawn region should stretch or shrink to"/>
+				<arg name="targetHeight" type="int" description="height on the screen that the drawn region should stretch or shrink to"/>
+				<description>
+					Draws the entire texture to the given portion of the screen, stretching or shrinking it to fill that given region.
+				</description>
+			</function>
+
+			<function name="drawRegionStretched">
+				<arg name="targetX" type="int" description="x coordinate on the screen to draw to"/>
+				<arg name="targetY" type="int" description="y coordinate on the screen to draw to"/>
+				<arg name="targetWidth" type="int" description="width on the screen that the drawn region should stretch or shrink to"/>
+				<arg name="targetHeight" type="int" description="height on the screen that the drawn region should stretch or shrink to"/>
+				<arg name="sourceX" type="int" descriptino="x coordinate on the texture of the left side of the region to be drawn"/>
+				<arg name="sourceY" type="int" descriptino="y coordinate on the texture of the top side of the region to be drawn"/>
+				<arg name="sourceWidth" type="int" description="width of the region on the texture to be drawn"/>
+				<arg name="sourceHeight" type="int" description="height of the region on the texture to be drawn"/>
+				<description>
+					Draws a portion of an image to screen, stretching or shrinking it to fill a given region.
+					The first 4 coordinates define a region on the screen to draw to.
+					The last 4 coordinates define a region on the texture to sample the pixels from.
+				</description>
+			</function>
+
+			<function name="drawRegionStretchedWithAlpha">
+				<arg name="targetX" type="int" description="x coordinate on the screen to draw to"/>
+				<arg name="targetY" type="int" description="y coordinate on the screen to draw to"/>
+				<arg name="targetWidth" type="int" description="width on the screen that the drawn region should stretch or shrink to"/>
+				<arg name="targetHeight" type="int" description="height on the screen that the drawn region should stretch or shrink to"/>
+				<arg name="sourceX" type="int" descriptino="x coordinate on the texture of the left side of the region to be drawn"/>
+				<arg name="sourceY" type="int" descriptino="y coordinate on the texture of the top side of the region to be drawn"/>
+				<arg name="sourceWidth" type="int" description="width of the region on the texture to be drawn"/>
+				<arg name="sourceHeight" type="int" description="height of the region on the texture to be drawn"/>
+				<arg name="alpha" type="int" description="alpha value applied to the blitted result (0 to 255)"/>
+				<description>
+					Draws a portion of an image to screen, stretching or shrinking it to fill a given region and applies the given alpha.
+					The first 4 coordinates define a region on the screen to draw to.
+					The last 4 coordinates define a region on the texture to sample the pixels from.
+					If the image contains per-pixel alpha values, those are compounded with the overall alpha.
+				</description>
+			</function>
+
+			<function name="drawRotated">
+				<arg name="targetX" type="int" description="x coordinate on the screen to draw to"/>
+				<arg name="targetY" type="int" description="y coordinate on the screen to draw to"/>
+				<arg name="theta" type="float" description="angle to rotate the image (radians)" />
+				<description>
+					Draws an image to the screen and rotates it the given amount.
+					Increasing rotation values will rotate the image counter-clockwise.
+					The image is centered over the given x and y coordinates and rotates from the center.
+				</description>
+			</function>
+			
+			<function name="drawRotatedWithAlpha">
+				<arg name="targetX" type="int" description="x coordinate on the screen to draw to"/>
+				<arg name="targetY" type="int" description="y coordinate on the screen to draw to"/>
+				<arg name="theta" type="float" description="angle to rotate the image (radians)" />
+				<arg name="alpha" type="int" description="alpha value applied to the blitted result (0 to 255)"/>
+				<description>
+					Draws an image to the screen and rotates it the given amount and applies the given alpha.
+					Increasing rotation values will rotate the image counter-clockwise.
+					The image is centered over the given x and y coordinates and rotates from the center.
+					If the image contains per-pixel alpha values, those are compounded with the overall alpha.
+				</description>
+			</function>
+
+			<function name="drawWithOptions">
+				<arg name="targetX" type="int" description="x coordinate on the screen to draw to"/>
+				<arg name="targetY" type="int" description="y coordinate on the screen to draw to"/>
+				<arg name="targetWidth" type="int" description="width on the screen that the drawn region should stretch or shrink to"/>
+				<arg name="targetHeight" type="int" description="height on the screen that the drawn region should stretch or shrink to"/>
+				<arg name="sourceX" type="int" descriptino="x coordinate on the texture of the left side of the region to be drawn"/>
+				<arg name="sourceY" type="int" descriptino="y coordinate on the texture of the top side of the region to be drawn"/>
+				<arg name="sourceWidth" type="int" description="width of the region on the texture to be drawn"/>
+				<arg name="sourceHeight" type="int" description="height of the region on the texture to be drawn"/>
+				<arg name="theta" type="float" description="angle to rotate the image (radians)" />
+				<arg name="alpha" type="int" description="alpha value applied to the blitted result (0 to 255)"/>
+				<description>
+					Draws a portion of an image to screen, stretching or shrinking it to fill a given region and applies the given alpha.
+					The first 4 coordinates define a region on the screen to draw to.
+					The last 4 coordinates define a region on the texture to sample the pixels from.
+					Increasing rotation values will rotate the image counter-clockwise.
+					The rotation point is the center of the rectangle defined by the region denoted by the first 4 arguments.
+					If the image contains per-pixel alpha values, those are compounded with the overall alpha.
+				</description>
+			</function>
+
+			<function name="flip">
+				<arg name="flipHorizontal" type="boolean" description="true to flip the image horizontally"/>
+				<arg name="flipVertical" type="boolean" description="true to flip the image vertically"/>
+				<returns type="Graphics2D.GraphicsTexture" description="A flipped texture."/>
+				<description>
+					Generates a new GraphicsTexture object that has been flipped.
+					Passing in false for both arguments will return the original GraphicsTexture instance.
+				</description>
+			</function>
+
+			<function name="scale">
+				<arg name="newWidth" type="int" description="new width to stretch or shrink the image to" />
+				<arg name="newHeight" type="int" description="new height to stretch or shrink the image to" />
+				<returns type="Graphics2D.GraphicsTexture" description="A resized texture."/>
+				<description>
+					Generates a new GraphicsTexture object that has been scaled to a new size.
+					Passing in the current width and height of the texture will return the original GraphicsTexture instance.
+				</description>
+			</function>
+		</class>
+
+		<class name="Draw" static="true">
+
+			<description>
+				Static class containing utility functions to draw various shape primitives to the screen.
+			</description>
+
+			<function name="ellipse">
+				<arg name="left" type="int" description="x coordinate of the left side of the bounding box that the ellipse will fill."/>
+				<arg name="top" type="int" description="y coordinate of the top side of the bounding box that the ellipse will fill."/>
+				<arg name="width" type="int" description="width of the bounding box that the ellipse will fill."/>
+				<arg name="height" type="int" description="height of the bounding box that the ellipse will fill."/>
+				<arg name="red" type="int" description="red color value of the ellipse (0-255)."/>
+				<arg name="green" type="int" description="green color value of the ellipse (0-255)."/>
+				<arg name="blue" type="int" description="blue color value of the ellipse (0-255)."/>
+				<arg name="alpha" type="int" optiona="true" default="255" description="optional alpha value of the ellipse (0-255)."/>
+				<description>
+					Draws a solid color ellipse to the screen at the given coordinates with the the given color and alpha.
+				</description>
+			</function>
+
+			<function name="line">
+				<arg name="startX" type="int" description="x coordinate of the start of the line"/>
+				<arg name="startY" type="int" description="y coordinate of the start of the line"/>
+				<arg name="endX" type="int" description="x coordinate of the end of the line"/>
+				<arg name="endY" type="int" description="y coordinate of the end of the line"/>
+				<arg name="strokeWidth" type="int" description="thickness of the line"/>
+				<arg name="red" type="int" description="red color value of the line (0-255)."/>
+				<arg name="green" type="int" description="green color value of the line (0-255)."/>
+				<arg name="blue" type="int" description="blue color value of the line (0-255)."/>
+				<arg name="alpha" type="int" optiona="true" default="255" description="optional alpha value of the line (0-255)."/>
+				<description>
+					Draws a line to the screen between the two given coordinates, with the given color, alpha, and thickness.
+				</description>
+			</function>
+
+			<function name="rectangle">
+				<arg name="left" type="int" description="x coordinate of the left side of the bounding box that the rectangle will fill."/>
+				<arg name="top" type="int" description="y coordinate of the top side of the bounding box that the rectangle will fill."/>
+				<arg name="width" type="int" description="width of the bounding box that the rectangle will fill."/>
+				<arg name="height" type="int" description="height of the bounding box that the rectangle will fill."/>
+				<arg name="red" type="int" description="red color value of the retangle (0-255)."/>
+				<arg name="green" type="int" description="green color value of the rectangle (0-255)."/>
+				<arg name="blue" type="int" description="blue color value of the rectangle (0-255)."/>
+				<arg name="alpha" type="int" optiona="true" default="255" description="optional alpha value of the rectangle (0-255)."/>
+				<description>
+					Draws a solid color rectangle to the screen at the given coordinates with the the given color and alpha.
+				</description>
+			</function>
+
+			<function name="triangle">
+				<arg name="ax" type="int" description="x coordinate of the first triangle point."/>
+				<arg name="ay" type="int" description="y coordinate of the first triangle point."/>
+				<arg name="bx" type="int" description="x coordinate of the second triangle point."/>
+				<arg name="by" type="int" description="y coordinate of the second triangle point."/>
+				<arg name="cx" type="int" description="x coordinate of the third triangle point."/>
+				<arg name="cy" type="int" description="y coordinate of the third triangle point."/>
+				<arg name="red" type="int" description="red color value of the triangle (0-255)."/>
+				<arg name="green" type="int" description="green color value of the triangle (0-255)."/>
+				<arg name="blue" type="int" description="blue color value of the triangle (0-255)."/>
+				<arg name="alpha" type="int" optiona="true" default="255" description="optional alpha value of the triangle (0-255)."/>
+				<description>
+					Draws a solid color triangle to the screen at the given coordinates with the the given color and alpha.
+				</description>
+			</function>
+
+			<function name="quad">
+				<arg name="ax" type="int" description="x coordinate of the first quadrilateral point."/>
+				<arg name="ay" type="int" description="y coordinate of the first quadrilateral point."/>
+				<arg name="bx" type="int" description="x coordinate of the second quadrilateral point."/>
+				<arg name="by" type="int" description="y coordinate of the second quadrilateral point."/>
+				<arg name="cx" type="int" description="x coordinate of the third quadrilateral point."/>
+				<arg name="cy" type="int" description="y coordinate of the third quadrilateral point."/>
+				<arg name="dx" type="int" description="x coordinate of the fourth quadrilateral point."/>
+				<arg name="dy" type="int" description="y coordinate of the fourth quadrilateral point."/>
+				<arg name="red" type="int" description="red color value of the quadrilateral (0-255)."/>
+				<arg name="green" type="int" description="green color value of the quadrilateral (0-255)."/>
+				<arg name="blue" type="int" description="blue color value of the quadrilateral (0-255)."/>
+				<arg name="alpha" type="int" optiona="true" default="255" description="optional alpha value of the quadrilateral (0-255)."/>
+				<description>
+					Draws a solid color quadrilateral to the screen at the given coordinates with the the given color and alpha.
+					Quadrilateral edges must not cross each other, otherwise behavior is undefined and may vary depending on platform.
+				</description>
+			</function>
+
+			<function name="fill">
+				<arg name="red" type="int" description="red color value of the fill (0-255)."/>
+				<arg name="green" type="int" description="green color value of the fill (0-255)."/>
+				<arg name="blue" type="int" description="blue color value of the fill (0-255)."/>
+				<description>
+					Clears all drawn objects and fills the screen with a solid opaque color. 
+				</description>
+			</function>
+
+		</class>
+	</namespace>
+</library>
