@@ -9,16 +9,22 @@ function generateDocumentationHtml(docRoot) {
 		'<style>',
 		[
 			'body { font-family: "Helvetica", "Arial", sans-serif; }',
+			'h1 { font-size:20pt; font-weight:bold; }',
+			'h2 { font-size:16pt; font-weight:bold; }',
+			'h3 { font-size:12pt; font-weight:bold; }',
 			'.codefont { font-family: "Menlo", "Consolas", "Courier New", monospace; font-size:10pt; }',
 			'table.arguments { border-radius:8px; overflow:hidden; border-spacing:0px; border-collapse: separate; background-color:#eee; }',
 			'table.arguments thead { background-color:#ccc; font-weight:bold; text-align:left; }',
 			'table.arguments td, table.arguments th { padding:8px; }',
-			'td.argname { font-weight:bold; color:#0a8; }',
-			'table.arguments td.argtype { color:#444; padding-right:40px; }',
+			'table.arguments tbody tr { vertical-align:top; }',
+			'td.argname { color:#286; }',
+			'table.arguments td.argtype { color:#666; padding-right:40px; }',
 			'.codesnippet { background-color:#eee; border-radius:8px; padding:16px; margin-bottom:12px; }',
 			'.itembox { margin-bottom:40px; margin-left:30px;}',
 			'a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }',
 			'a.bookmark:hover { color:#08a; }',
+			'p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}',
+			'.keyword { font-weight:normal; }',
 		].join('\n'),
 		'</style>'];
 
@@ -144,13 +150,13 @@ function generateLibraryHtml(library, buffer) {
 			buffer.add('<div>');
 			
 			buffer.add('<h2>');
-			buffer.add(ns.name + '.' + cnst.name);
+			buffer.add('<span class="keyword">const</span> ' + cnst.name);
 			buffer.add('<a class="bookmark" name="' + cnst.getBookmark() + '" href="#' + cnst.getBookmark() + '">' + LINK_LABEL + '</a>');
 			buffer.add('</h2>');
 			
-			buffer.add('<div>');
+			buffer.add('<p class="description">');
 			buffer.add(cnst.description);
-			buffer.add('</div>');
+			buffer.add('</p>');
 
 			buffer.add('</div>');
 		}
@@ -168,26 +174,49 @@ function generateLibraryHtml(library, buffer) {
 		for (cls : ns.classes) {
 			buffer.add('<div>');
 			buffer.add('<h1>');
-			buffer.add(ns.name + '.' + cls.name);
+			buffer.add('<span class="keyword">class</span> ' + cls.name);
 			buffer.add('<a class="bookmark" name="' + cls.getBookmark() + '" href="#' + cls.getBookmark() + '">' + LINK_LABEL + '</a>');
 			buffer.add('</h1>');
 
-			buffer.add('<div>');
+			buffer.add('<div class="itembox">');
+			buffer.add('<p class="description">');
 			buffer.add(htmlSpecialChars(cls.description));
+			buffer.add('</p>');
 			buffer.add('</div>');
 
 			classVar = cls.name;
 			classVar = classVar[0].lower() + classVar[1:];
 
-			for (fi : cls.fields) {
-				buffer.add('<h2>');
-				buffer.add(classVar + '.' + fi.name);
-				buffer.add('<a class="bookmark" name="' + fi.getBookmark() + '" href="#' + fi.getBookmark() + '">' + LINK_LABEL + '</a>');
-				buffer.add('</h2>');
+			if (cls.fields.length > 0) {
+				buffer.add('<div class="itembox">');
+				buffer.add('<h2>Fields</h2>');
 
-				buffer.add('<div>');
-				buffer.add(htmlSpecialChars(fi.description));
-				buffer.add('</div>');
+				buffer.add('<div class="itembox">');
+				buffer.add('<table class="arguments">');
+				buffer.add('<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>');
+				buffer.add('<tbody>');
+
+				for (fi : cls.fields) {
+					buffer.add('<tr>');
+					buffer.add('<td class="codefont argname">');
+					buffer.add('.' + fi.name);
+					buffer.add('<a name="' + fi.getBookmark() + '"></a>');
+					buffer.add('</td>');
+					buffer.add('<td class="codefont argtype">');
+					buffer.add(formatType(fi.type));
+					buffer.add('</td>');
+					buffer.add('<td class="description">');
+					buffer.add('<p class="description">');
+					buffer.add(htmlSpecialChars(fi.description));
+					buffer.add('</p>');
+					buffer.add('</td>');
+					buffer.add('</tr>');
+				}
+
+				buffer.add('</tbody>');
+				buffer.add('</table>');
+				buffer.add('</div>'); // .itembox
+				buffer.add('</div>'); // .itembox
 			}
 
 			for (fn : cls.functions) {
@@ -227,12 +256,21 @@ function generateFunctionHtml(buffer, fn) {
 	buffer.add('<div>');
 
 	buffer.add('<h2>');
-	buffer.add(fn.getDisplayName());
+	if (fn.isConstructor()) {
+		buffer.add('<span class="keyword">new</span> ');
+		buffer.add(fn.parentClass.name);
+		fn.getArgsList(buffer);
+	} else {
+		buffer.add('<span class="keyword">function</span> ');
+		buffer.add(fn.name);
+		fn.getArgsList(buffer);
+	}
 	buffer.add('<a class="bookmark" name="' + fn.getBookmark() + '" href="#' + fn.getBookmark() + '">' + LINK_LABEL + '</a>');
 	buffer.add('</h2>');
 	
 	buffer.add('<div class="itembox">');
 
+	/*
 	buffer.add('<div class="codefont codesnippet">');
 	buffer.add(fn.getInvocationName());
 	buffer.add('(');
@@ -242,16 +280,17 @@ function generateFunctionHtml(buffer, fn) {
 	}
 	buffer.add(')');
 	buffer.add('</div>');
+	*/
 
-	buffer.add('<div>');
+	buffer.add('<p class="description">');
 	buffer.add(fn.description);
-	buffer.add('</div>');
+	buffer.add('</p>');
 	
 	if (fn.argNames.length > 0) {
 		buffer.add('<div>');
 		buffer.add("<h3>Arguments</h3>");
 		buffer.add('<table class="arguments">');
-		buffer.add('<thead><tr><th>Name</th><th>Type</th><th></th></thead>');
+		buffer.add('<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>');
 		buffer.add('<tbody>');
 		for (i = 0; i < fn.argNames.length; ++i) {
 			buffer.add('<tr>');
@@ -261,8 +300,10 @@ function generateFunctionHtml(buffer, fn) {
 			buffer.add('<td class="codefont argtype">');
 			buffer.add(formatType(fn.argTypes[i]));
 			buffer.add('</td>');
-			buffer.add('<td>');
+			buffer.add('<td class="description">');
+			buffer.add('<p class="description">');
 			buffer.add(fn.argDescriptions[i]);
+			buffer.add('</p>');
 			buffer.add('</td>');
 			buffer.add('</tr>');
 		}
@@ -273,9 +314,19 @@ function generateFunctionHtml(buffer, fn) {
 
 	if (fn.returnDescription != null) {
 		buffer.add('<div>');
-		buffer.add("<b>Returns</b> ");
-		buffer.add('(' + fn.returnType + '): ');
+		buffer.add("<h3>Return Value</h3> ");
+		buffer.add('<table class="arguments">');
+		buffer.add('<thead><tr><th>Type</th><th>Description</th></thead>');
+		buffer.add('<tbody>');
+		buffer.add('<tr><td class="codefont argtype">');
+		buffer.add(formatType(fn.returnType));
+		buffer.add('</td><td class="description">');
+		buffer.add('<p class="description">');
 		buffer.add(fn.returnDescription);
+		buffer.add('</p>');
+		buffer.add('</td></tr>');
+		buffer.add('</tbody>');
+		buffer.add('</table>');
 		buffer.add('</div>');
 	}
 

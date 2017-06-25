@@ -65,6 +65,29 @@ class Function { // or method
 		return this.name;
 	}
 
+	function getHeaderName() {
+		sb = [];
+		if (this.isConstructor()) {
+			sb.add('new ');
+			sb.add(this.parentClass.name);
+		} else {
+			sb.add('function ');
+			sb.add(this.name);
+		}
+		this.getArgsList(sb);
+
+		return sb.join('');
+	}
+
+	function getArgsList(buffer) {
+		buffer.add('(');
+		for (i = 0; i < this.argNames.length; ++i) {
+			if (i > 0) buffer.add(', ');
+			buffer.add(this.argNames[i]);
+		}
+		buffer.add(')');
+	}
+
 	function getDisplayName() {
 		sb = [];
 		if (this.isConstructor()) {
@@ -83,13 +106,7 @@ class Function { // or method
 			}
 			sb.add(this.name);
 		}
-
-		sb.add('(');
-		for (i = 0; i < this.argNames.length; ++i) {
-			if (i > 0) sb.add(', ');
-			sb.add(this.argNames[i]);
-		}
-		sb.add(')');
+		this.getArgsList(sb);
 		return sb.join();
 	}
 }

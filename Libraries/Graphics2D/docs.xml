@@ -3,6 +3,10 @@
 	<namespace name="Graphics2D">
 		<class name="GraphicsTexture">
 			<description>Represents an image that can be drawn to the screen.</description>
+
+			<field name="width" type="int" description="Width of the image in pixels."/>
+			<field name="height" type="int" description="Height of the image in pixels."/>
+
 			<function name="load" static="true">
 				<arg name="imageResource" type="ImageResources.ImageResource" description="An image resource to convert to a texture."/>
 				<returns type="Graphics2D.GraphicsTexture" description="A texture object"/>

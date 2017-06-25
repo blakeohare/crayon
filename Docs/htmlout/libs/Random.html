@@ -1,18 +1,24 @@
 <html><head><title>Documentation</title></head><body><style>body { font-family: "Helvetica", "Arial", sans-serif; }
+h1 { font-size:20pt; font-weight:bold; }
+h2 { font-size:16pt; font-weight:bold; }
+h3 { font-size:12pt; font-weight:bold; }
 .codefont { font-family: "Menlo", "Consolas", "Courier New", monospace; font-size:10pt; }
 table.arguments { border-radius:8px; overflow:hidden; border-spacing:0px; border-collapse: separate; background-color:#eee; }
 table.arguments thead { background-color:#ccc; font-weight:bold; text-align:left; }
 table.arguments td, table.arguments th { padding:8px; }
-td.argname { font-weight:bold; color:#0a8; }
-table.arguments td.argtype { color:#444; padding-right:40px; }
+table.arguments tbody tr { vertical-align:top; }
+td.argname { color:#286; }
+table.arguments td.argtype { color:#666; padding-right:40px; }
 .codesnippet { background-color:#eee; border-radius:8px; padding:16px; margin-bottom:12px; }
 .itembox { margin-bottom:40px; margin-left:30px;}
 a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
-a.bookmark:hover { color:#08a; }</style><h1>Random</h1><ul><li><span class="codefont">namespace</span> Random<ul><li><a href="#func-random-randombool"><span class="codefont">function</span> randomBool()</a></li><li><a href="#func-random-randomfloat"><span class="codefont">function</span> randomFloat()</a></li><li><a href="#func-random-randomint"><span class="codefont">function</span> randomInt(minInclOrMax, optionalMax)</a></li></ul></li></ul><div class="itembox"><div><h2>randomBool()<a class="bookmark" name="func-random-randombool" href="#func-random-randombool">[link]</a></h2><div class="itembox"><div class="codefont codesnippet">randomBool()</div><div>Generates a random boolean.</div><div><b>Returns</b> (boolean): A random boolean</div></div></div></div><div class="itembox"><div><h2>randomFloat()<a class="bookmark" name="func-random-randomfloat" href="#func-random-randomfloat">[link]</a></h2><div class="itembox"><div class="codefont codesnippet">randomFloat()</div><div> 
+a.bookmark:hover { color:#08a; }
+p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
+.keyword { font-weight:normal; }</style><h1>Random</h1><ul><li><span class="codefont">namespace</span> Random<ul><li><a href="#func-random-randombool"><span class="codefont">function</span> randomBool()</a></li><li><a href="#func-random-randomfloat"><span class="codefont">function</span> randomFloat()</a></li><li><a href="#func-random-randomint"><span class="codefont">function</span> randomInt(minInclOrMax, optionalMax)</a></li></ul></li></ul><div class="itembox"><div><h2><span class="keyword">function</span> randomBool()<a class="bookmark" name="func-random-randombool" href="#func-random-randombool">[link]</a></h2><div class="itembox"><p class="description">Generates a random boolean.</p><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">A random boolean</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> randomFloat()<a class="bookmark" name="func-random-randomfloat" href="#func-random-randomfloat">[link]</a></h2><div class="itembox"><p class="description"> 
 				Generates a random floating point decimal number from 0 up to (but not including) 1. 
-			</div></div></div></div><div class="itembox"><div><h2>randomInt(minInclOrMax, optionalMax)<a class="bookmark" name="func-random-randomint" href="#func-random-randomint">[link]</a></h2><div class="itembox"><div class="codefont codesnippet">randomInt(minInclOrMax, optionalMax)</div><div>
+			</p></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> randomInt(minInclOrMax, optionalMax)<a class="bookmark" name="func-random-randomint" href="#func-random-randomint">[link]</a></h2><div class="itembox"><p class="description">
 				Generates a random integer within the given range. 
 				There are two ways randomInt can be called. 
 				When called with one parameter, it will generate a random number from 0 up to the number you provide (exclusive) i.e. if you call randomInt(10), you will get numbers from 0 through 9, but not 10 itself. 
 				When called with two parameters, it will generate a random number from the first number (inclusive) to the second number (exclusive) i.e. if you call randomInt(5, 10), you will get numbers from 5 through 9, but not 10 itself (but it may be 5). 
-			</div><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th></th></thead><tbody><tr><td class="codefont argname">minInclOrMax</td><td class="codefont argtype">integer</td><td>Minimum number that randomInt will return.</td></tr><tr><td class="codefont argname">optionalMax</td><td class="codefont argtype">integer</td><td>Maximum number that randomInt will return.</td></tr></tbody></table></div><div><b>Returns</b> (int): A random integer</div></div></div></div></body></html>
+			</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argname">minInclOrMax</td><td class="codefont argtype">integer</td><td class="description"><p class="description">Minimum number that randomInt will return.</p></td></tr><tr><td class="codefont argname">optionalMax</td><td class="codefont argtype">integer</td><td class="description"><p class="description">Maximum number that randomInt will return.</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">integer</td><td class="description"><p class="description">A random integer</p></td></tr></tbody></table></div></div></div></div></body></html>
