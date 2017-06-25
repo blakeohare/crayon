@@ -34,6 +34,8 @@ class Function { // or method
 	field argNames = [];
 	field argTypes = [];
 	field argDescriptions = [];
+	field argIsOptional = [];
+	field hasAnyOptionalArgs = false;
 	field returnDescription;
 	field returnType;
 	field isStatic = false;

@@ -116,6 +116,9 @@ function adaptFunction(ns, cls, element) {
 				fn.argNames.add(child.attributes.get('name'));
 				fn.argTypes.add(child.attributes.get('type'));
 				fn.argDescriptions.add(child.attributes.get('description'));
+				isOptional = child.attributes.get('optional', 'false').lower() == "true";
+				fn.argIsOptional.add(isOptional);
+				fn.hasAnyOptionalArgs = isOptional || fn.hasAnyOptionalArgs;
 				break;
 			case 'returns':
 				fn.returnType = child.attributes.get('type');

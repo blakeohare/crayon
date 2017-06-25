@@ -15,10 +15,11 @@ function generateDocumentationHtml(docRoot) {
 			'.codefont { font-family: "Menlo", "Consolas", "Courier New", monospace; font-size:10pt; }',
 			'table.arguments { border-radius:8px; overflow:hidden; border-spacing:0px; border-collapse: separate; background-color:#eee; }',
 			'table.arguments thead { background-color:#ccc; font-weight:bold; text-align:left; }',
-			'table.arguments td, table.arguments th { padding:8px; }',
+			'table.arguments td, table.arguments th { padding:8px; padding-right:20px; }',
 			'table.arguments tbody tr { vertical-align:top; }',
 			'td.argname { color:#286; }',
-			'table.arguments td.argtype { color:#666; padding-right:40px; }',
+			'table.arguments td.argtype { color:#666; }',
+			'td.optional { color:#000; font-weight:bold; }',
 			'.codesnippet { background-color:#eee; border-radius:8px; padding:16px; margin-bottom:12px; }',
 			'.itembox { margin-bottom:40px; margin-left:30px;}',
 			'a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }',
@@ -234,22 +235,29 @@ function generateLibraryHtml(library, buffer) {
 
 }
 
-function formatType(typeKey) {
+function formatType(typeKey, usePlural = false) {
+	if (typeKey.contains('|')) {
+		output = [];
+		for (tk : typeKey.split('|')) {
+			output.add(formatType(tk));
+		}
+		return output.join(' <span style="font-weight:bold; color:#000;">or</span> ');
+	}
 	switch (typeKey) {
 		case 'int':
 		case 'integer':
-			return "integer";
+			return usePlural ? 'integers' : 'integer';
 
 		case 'bool':
 		case 'boolean':
-			return "boolean";
+			return usePlural ? "booleans" : "boolean";
 
 		case 'string':
-			return "string";
+			return usePlural ? "strings" : "string";
 
 		default:
 			if (typeKey.startsWith('list-of-')) {
-				return "List of " + typeKey['list-of-'.length:];
+				return "List of " + formatType(typeKey['list-of-'.length:], true);
 			}
 			return typeKey;
 	}
@@ -273,18 +281,6 @@ function generateFunctionHtml(buffer, fn) {
 	
 	buffer.add('<div class="itembox">');
 
-	/*
-	buffer.add('<div class="codefont codesnippet">');
-	buffer.add(fn.getInvocationName());
-	buffer.add('(');
-	for (i = 0; i < fn.argNames.length; ++i) {
-		if (i > 0) buffer.add(', ');
-		buffer.add(fn.argNames[i]);
-	}
-	buffer.add(')');
-	buffer.add('</div>');
-	*/
-
 	buffer.add('<p class="description">');
 	buffer.add(fn.description);
 	buffer.add('</p>');
@@ -293,7 +289,11 @@ function generateFunctionHtml(buffer, fn) {
 		buffer.add('<div>');
 		buffer.add("<h3>Arguments</h3>");
 		buffer.add('<table class="arguments">');
-		buffer.add('<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>');
+		buffer.add('<thead><tr><th>Name</th><th>Type</th>');
+		if (fn.hasAnyOptionalArgs) {
+			buffer.add('<th>Optional</th>');
+		}
+		buffer.add('<th>Description</th></tr></thead>');
 		buffer.add('<tbody>');
 		for (i = 0; i < fn.argNames.length; ++i) {
 			buffer.add('<tr>');
@@ -303,6 +303,15 @@ function generateFunctionHtml(buffer, fn) {
 			buffer.add('<td class="codefont argtype">');
 			buffer.add(formatType(fn.argTypes[i]));
 			buffer.add('</td>');
+
+			if (fn.hasAnyOptionalArgs) {
+				buffer.add('<td class="codefont optional">');
+				if (fn.argIsOptional[i]) {
+					buffer.add('Optional');
+				}
+				buffer.add('</td>');
+			}
+
 			buffer.add('<td class="description">');
 			buffer.add('<p class="description">');
 			buffer.add(fn.argDescriptions[i]);
