@@ -122,9 +122,13 @@ function generateLibraryHtml(library, buffer) {
 						buffer.add('<a href="#');
 						buffer.add(fn.getBookmark());
 						buffer.add('">');
-						buffer.add(spanCodeFont((fn.isStatic ? 'static ' : '') + 'function'));
-						buffer.add(' ');
-						buffer.add(htmlSpecialChars(fn.name));
+						if (fn.isConstructor()) {
+							buffer.add(spanCodeFont('constructor'));
+						} else {
+							buffer.add(spanCodeFont((fn.isStatic ? 'static ' : '') + 'function'));
+							buffer.add(' ');
+							buffer.add(htmlSpecialChars(fn.name));	
+						}
 						buffer.add('(');
 						for (i = 0; i < fn.argNames.length; ++i) {
 							if (i > 0) buffer.add(', ');
