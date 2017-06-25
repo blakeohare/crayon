@@ -1,0 +1,73 @@
+<library name="ImageEncoder">
+	<description>Library for converting ImageResource objects into various file format encodings.</description>
+	<namespace name="ImageEncoder">
+
+		<class name="PngEncoder">
+			<description>
+				Encodes an ImageResource into a list of bytes using the PNG format.
+			</description>
+
+			<function name="(constructor)">
+				<arg name="image" type="ImageResources.ImageResource" description="Image resource to encode."/>
+			</function>
+
+			<function name="encode">
+				<description>
+					Emits the PNG file as a byte array.
+				</description>
+				<returns type="list-of-int" description="List of bytes representing a PNG file"/>
+			</function>
+		</class>
+
+		<class name="JpegEncoder">
+			<description>
+				Encodes an ImageResource into a list of bytes using the JPEG format.
+			</description>
+
+			<function name="(constructor)">
+				<arg name="image" type="ImageResources.ImageResource" description="Image resource to encode."/>
+			</function>
+
+			<function name="encode">
+				<description>
+					Emits the JPEG file as a byte array.
+				</description>
+				<returns type="list-of-int" description="List of bytes representing a JPEG file"/>
+			</function>
+		</class>
+
+		<class name="IconEncoder">
+			<description>
+				Encodes an ImageResource or a series of ImageResources into a list of bytes using the ICO format.
+			</description>
+
+			<function name="(constructor)">
+				<description>
+					Creates a new Icon encoder. 
+					By default the icon encoder contains no images. As it supports multiple images at different resolutions, each must be added using addImage. 
+				</description>
+			</function>
+
+			<function name="addImage">
+				<arg name="imageResource" type="ImageResources.ImageResource" description="Image resource to add to the icon's images."/>
+				<description>
+					Adds an image to the icon file.
+					The image will be padded and/or resized to fit the most appropriate resolution for .ico formats.
+					Icon files support the following sizes: 16x16, 32x32, 64x64, 128x128, and 256x256.
+					When an image is added that does not adhere to one of those sizes, it is converted to the largest size that it can fit into by adding invisible padding (it will be centered).
+					If it is larger than 256x256, it will centered and cropped.
+					Only one image is supported per size bucket.
+					Images added that apply to an identical size buckets that a previous image was added to will be overwritten in the final output.
+				</description>
+			</function>
+
+			<function name="encode">
+				<description>
+					Emits the ICO file as a byte array.
+					Throws a Core.InvalidState exception if the IconEncoder instance contains no images.
+				</description>
+				<returns type="list-of-int" description="List of bytes representing an icon file"/>
+			</function>
+		</class>
+	</namespace>
+</library>
