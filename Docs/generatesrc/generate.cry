@@ -120,7 +120,7 @@ function generateLibraryHtml(library, buffer) {
 					for (fn : getSortedList(cls.functions)) {
 						buffer.add('<li>');
 						buffer.add('<a href="#');
-						buffer.add(ns.name.lower() + '-function-' + cls.name.lower() + '-' + fn.name.lower());
+						buffer.add(fn.getBookmark());
 						buffer.add('">');
 						buffer.add(spanCodeFont((fn.isStatic ? 'static ' : '') + 'function'));
 						buffer.add(' ');
@@ -163,7 +163,42 @@ function generateLibraryHtml(library, buffer) {
 		}
 		
 		for (en : ns.enums) {
-			
+			buffer.add('<div class="itembox">');
+			buffer.add('<h1>');
+			buffer.add('<span class="keyword">enum</span> ');
+			buffer.add(en.name);
+			buffer.add('<a class="bookmark" name="' + en.getBookmark() + '" href="#' + en.getBookmark() + '">' + LINK_LABEL + '</a>');
+			buffer.add('</h1>');
+
+			buffer.add('<p class="description">');
+			buffer.add(en.description);
+			buffer.add('</p>');
+
+
+			buffer.add('<div class="itembox">');
+			buffer.add('<table class="arguments">');
+			buffer.add('<thead><tr><th>Name</th><th>Description</th></thead>');
+			buffer.add('<tbody>');
+
+			for (i = 0; i < en.valueNames.length; ++i) {
+				buffer.add('<tr>');
+				buffer.add('<td class="codefont argname">');
+				buffer.add(en.valueNames[i]);
+				buffer.add('</td>');
+				buffer.add('<td class="description">');
+				buffer.add('<p class="description">');
+				d = en.valueDescriptions[i];
+				if (d != null) {
+					buffer.add(en.valueDescriptions[i]);
+				}
+				buffer.add('</p>');
+				buffer.add('</td>');
+				buffer.add('</tr>');
+			}
+
+			buffer.add('</tbody></table></div>');
+
+			buffer.add('</div>'); // itembox
 		}
 
 		for (fn : ns.functions) {
