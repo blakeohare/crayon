@@ -8,8 +8,15 @@ function generateDocumentationHtml(docRoot) {
 		'<body>',
 		'<style>',
 		[
-			'body { font-family: "Arial", sans-serif; }',
-			'.codefont { font-family: "Courier New", monospace; }',
+			'body { font-family: "Helvetica", "Arial", sans-serif; }',
+			'.codefont { font-family: "Menlo", "Consolas", "Courier New", monospace; font-size:10pt; }',
+			'table.arguments { border-radius:8px; overflow:hidden; border-spacing:0px; border-collapse: separate; background-color:#eee; }',
+			'table.arguments thead { background-color:#ccc; font-weight:bold; text-align:left; }',
+			'table.arguments td, table.arguments th { padding:8px; }',
+			'td.argname { font-weight:bold; color:#0a8; }',
+			'table.arguments td.argtype { color:#444; padding-right:40px; }',
+			'.codesnippet { background-color:#eee; border-radius:8px; padding:16px; margin-bottom:12px; }',
+			'.itembox { margin-bottom:20px; margin-left:30px;}',
 		].join('\n'),
 		'</style>'];
 
@@ -147,7 +154,9 @@ function generateLibraryHtml(library, buffer) {
 		}
 
 		for (fn : ns.functions) {
+			buffer.add('<div class="itembox">');
 			generateFunctionHtml(buffer, fn);
+			buffer.add('</div>');
 		}
 
 		for (cls : ns.classes) {
@@ -155,7 +164,7 @@ function generateLibraryHtml(library, buffer) {
 			buffer.add('<h1>');
 			buffer.add('<a name="');
 			buffer.add(cls.getBookmark());
-			buffer.add('</a>');
+			buffer.add('"></a>');
 			buffer.add(ns.name + '.' + cls.name);
 			buffer.add('</h1>');
 
@@ -178,13 +187,36 @@ function generateLibraryHtml(library, buffer) {
 			}
 
 			for (fn : cls.functions) {
+				buffer.add('<div class="itembox">');
 				generateFunctionHtml(buffer, fn);
+				buffer.add('</div>');
 			}
 
 			buffer.add('</div>');
 		}
 	}
 
+}
+
+function formatType(typeKey) {
+	switch (typeKey) {
+		case 'int':
+		case 'integer':
+			return "integer";
+
+		case 'bool':
+		case 'boolean':
+			return "boolean";
+
+		case 'string':
+			return "string";
+
+		default:
+			if (typeKey.startsWith('list-of-')) {
+				return "List of " + typeKey['list-of-'.length:];
+			}
+			return typeKey;
+	}
 }
 
 function generateFunctionHtml(buffer, fn) {
@@ -195,8 +227,10 @@ function generateFunctionHtml(buffer, fn) {
 	buffer.add(fn.getDisplayName());
 	buffer.add('</h2>');
 	
-	buffer.add('<div class="codesnippet">');
-	buffer.add(fn.name);
+	buffer.add('<div class="itembox">');
+
+	buffer.add('<div class="codefont codesnippet">');
+	buffer.add(fn.getInvocationName());
 	buffer.add('(');
 	for (i = 0; i < fn.argNames.length; ++i) {
 		if (i > 0) buffer.add(', ');
@@ -211,16 +245,25 @@ function generateFunctionHtml(buffer, fn) {
 	
 	if (fn.argNames.length > 0) {
 		buffer.add('<div>');
-		buffer.add("Args:");
-		buffer.add('<ul>');
+		buffer.add("<h3>Arguments</h3>");
+		buffer.add('<table class="arguments">');
+		buffer.add('<thead><tr><th>Name</th><th>Type</th><th></th></thead>');
+		buffer.add('<tbody>');
 		for (i = 0; i < fn.argNames.length; ++i) {
-			buffer.add('<li>');
-			buffer.add('<b>' + fn.argNames[i] + '</b> ');
-			buffer.add('(' + fn.argTypes[i] + '): ');
+			buffer.add('<tr>');
+			buffer.add('<td class="codefont argname">');
+			buffer.add(fn.argNames[i]);
+			buffer.add('</td>');
+			buffer.add('<td class="codefont argtype">');
+			buffer.add(formatType(fn.argTypes[i]));
+			buffer.add('</td>');
+			buffer.add('<td>');
 			buffer.add(fn.argDescriptions[i]);
-			buffer.add('</li>');
+			buffer.add('</td>');
+			buffer.add('</tr>');
 		}
-		buffer.add('</ul>');
+		buffer.add('</tbody>');
+		buffer.add('</table>');
 		buffer.add('</div>');
 	}
 
@@ -232,6 +275,7 @@ function generateFunctionHtml(buffer, fn) {
 		buffer.add('</div>');
 	}
 
+	buffer.add('</div>'); // itembox
 	buffer.add('</div>');
 }
 

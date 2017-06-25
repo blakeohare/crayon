@@ -43,6 +43,11 @@ class Function { // or method
 		this.parentClass = cls;
 	}
 
+	function isConstructor() {
+		// TODO: I don't like this convention.
+		return this.name == '(constructor)';
+	}
+
 	function getBookmark() {
 		return [
 			'func-',
@@ -53,19 +58,32 @@ class Function { // or method
 		].join();
 	}
 
+	function getInvocationName() {
+		if (this.isConstructor()) {
+			return 'new ' + this.parentClass.name;
+		}
+		return this.name;
+	}
+
 	function getDisplayName() {
 		sb = [];
-		if (this.parentClass != null) {
-			clsName = this.parentClass.name;
-			if (!this.isStatic) {
-				sb.add(clsName[0].lower());
-				sb.add(clsName[1:]);
-			} else {
-				sb.add(clsName);
+		if (this.isConstructor()) {
+			sb.add('new ');
+			sb.add(this.parentClass.name);
+		} else {
+			if (this.parentClass != null) {
+				clsName = this.parentClass.name;
+				if (!this.isStatic) {
+					sb.add(clsName[0].lower());
+					sb.add(clsName[1:]);
+				} else {
+					sb.add(clsName);
+				}
+				sb.add('.');
 			}
-			sb.add('.');
+			sb.add(this.name);
 		}
-		sb.add(this.name);
+
 		sb.add('(');
 		for (i = 0; i < this.argNames.length; ++i) {
 			if (i > 0) sb.add(', ');
