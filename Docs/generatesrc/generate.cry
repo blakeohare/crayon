@@ -180,6 +180,9 @@ function generateLibraryHtml(library, buffer) {
 
 			buffer.add('<div class="itembox">');
 			buffer.add('<p class="description">');
+			if (cls.description == null) {
+				throw new Exception("Class does not have a description: " + cls.name);
+			}
 			buffer.add(htmlSpecialChars(cls.description));
 			buffer.add('</p>');
 			buffer.add('</div>');
