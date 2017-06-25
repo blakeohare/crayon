@@ -1,0 +1,9 @@
+<html><head><title>Documentation</title></head><body><style>body { font-family: "Arial", sans-serif; }
+.codefont { font-family: "Courier New", monospace; }</style><h1>Random</h1><ul><li><span class="codefont">namespace</span> Random<ul><li><a href="#func-random-randombool"><span class="codefont">function</span> randomBool()</a></li><li><a href="#func-random-randomfloat"><span class="codefont">function</span> randomFloat()</a></li><li><a href="#func-random-randomint"><span class="codefont">function</span> randomInt(minInclOrMax, optionalMax)</a></li></ul></li></ul><div><h2><a name="func-random-randombool"></a>randomBool()</h2><div class="codesnippet">randomBool()</div><div>Generates a random boolean.</div><div><b>Returns</b> (boolean): A random boolean</div></div><div><h2><a name="func-random-randomfloat"></a>randomFloat()</h2><div class="codesnippet">randomFloat()</div><div> 
+				Generates a random floating point decimal number from 0 up to (but not including) 1. 
+			</div></div><div><h2><a name="func-random-randomint"></a>randomInt(minInclOrMax, optionalMax)</h2><div class="codesnippet">randomInt(minInclOrMax, optionalMax)</div><div>
+				Generates a random integer within the given range. 
+				There are two ways randomInt can be called. 
+				When called with one parameter, it will generate a random number from 0 up to the number you provide (exclusive) i.e. if you call randomInt(10), you will get numbers from 0 through 9, but not 10 itself. 
+				When called with two parameters, it will generate a random number from the first number (inclusive) to the second number (exclusive) i.e. if you call randomInt(5, 10), you will get numbers from 5 through 9, but not 10 itself (but it may be 5). 
+			</div><div>Args:<ul><li><b>minInclOrMax</b> (int): Minimum number that randomInt will return.</li><li><b>optionalMax</b> (int): Maximum number that randomInt will return.</li></ul></div><div><b>Returns</b> (int): A random integer</div></div></body></html>
