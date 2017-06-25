@@ -248,12 +248,19 @@ function formatType(typeKey, usePlural = false) {
 		case 'integer':
 			return usePlural ? 'integers' : 'integer';
 
+		case 'float':
+		case 'double':
+			return usePlural ? 'floats' : 'float';
+
 		case 'bool':
 		case 'boolean':
-			return usePlural ? "booleans" : "boolean";
+			return usePlural ? 'booleans' : 'boolean';
+
+		case 'function':
+			return usePlural ? 'functions' : 'function';
 
 		case 'string':
-			return usePlural ? "strings" : "string";
+			return usePlural ? 'strings' : 'string';
 
 		default:
 			if (typeKey.startsWith('list-of-')) {
