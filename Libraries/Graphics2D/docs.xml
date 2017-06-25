@@ -42,8 +42,8 @@
 			<function name="drawRegion">
 				<arg name="x" type="int" description="x coordinate on the screen to draw to"/>
 				<arg name="y" type="int" description="y coordinate on the screen to draw to"/>
-				<arg name="sourceX" type="int" descriptino="x coordinate on the texture of the left side of the region to be drawn"/>
-				<arg name="sourceY" type="int" descriptino="y coordinate on the texture of the top side of the region to be drawn"/>
+				<arg name="sourceX" type="int" description="x coordinate on the texture of the left side of the region to be drawn"/>
+				<arg name="sourceY" type="int" description="y coordinate on the texture of the top side of the region to be drawn"/>
 				<arg name="sourceWidth" type="int" description="width of the region on the texture to be drawn"/>
 				<arg name="sourceHeight" type="int" description="height of the region on the texture to be drawn"/>
 				<description>
@@ -68,8 +68,8 @@
 				<arg name="targetY" type="int" description="y coordinate on the screen to draw to"/>
 				<arg name="targetWidth" type="int" description="width on the screen that the drawn region should stretch or shrink to"/>
 				<arg name="targetHeight" type="int" description="height on the screen that the drawn region should stretch or shrink to"/>
-				<arg name="sourceX" type="int" descriptino="x coordinate on the texture of the left side of the region to be drawn"/>
-				<arg name="sourceY" type="int" descriptino="y coordinate on the texture of the top side of the region to be drawn"/>
+				<arg name="sourceX" type="int" description="x coordinate on the texture of the left side of the region to be drawn"/>
+				<arg name="sourceY" type="int" description="y coordinate on the texture of the top side of the region to be drawn"/>
 				<arg name="sourceWidth" type="int" description="width of the region on the texture to be drawn"/>
 				<arg name="sourceHeight" type="int" description="height of the region on the texture to be drawn"/>
 				<description>
@@ -84,8 +84,8 @@
 				<arg name="targetY" type="int" description="y coordinate on the screen to draw to"/>
 				<arg name="targetWidth" type="int" description="width on the screen that the drawn region should stretch or shrink to"/>
 				<arg name="targetHeight" type="int" description="height on the screen that the drawn region should stretch or shrink to"/>
-				<arg name="sourceX" type="int" descriptino="x coordinate on the texture of the left side of the region to be drawn"/>
-				<arg name="sourceY" type="int" descriptino="y coordinate on the texture of the top side of the region to be drawn"/>
+				<arg name="sourceX" type="int" description="x coordinate on the texture of the left side of the region to be drawn"/>
+				<arg name="sourceY" type="int" description="y coordinate on the texture of the top side of the region to be drawn"/>
 				<arg name="sourceWidth" type="int" description="width of the region on the texture to be drawn"/>
 				<arg name="sourceHeight" type="int" description="height of the region on the texture to be drawn"/>
 				<arg name="alpha" type="int" description="alpha value applied to the blitted result (0 to 255)"/>
@@ -126,8 +126,8 @@
 				<arg name="targetY" type="int" description="y coordinate on the screen to draw to"/>
 				<arg name="targetWidth" type="int" description="width on the screen that the drawn region should stretch or shrink to"/>
 				<arg name="targetHeight" type="int" description="height on the screen that the drawn region should stretch or shrink to"/>
-				<arg name="sourceX" type="int" descriptino="x coordinate on the texture of the left side of the region to be drawn"/>
-				<arg name="sourceY" type="int" descriptino="y coordinate on the texture of the top side of the region to be drawn"/>
+				<arg name="sourceX" type="int" description="x coordinate on the texture of the left side of the region to be drawn"/>
+				<arg name="sourceY" type="int" description="y coordinate on the texture of the top side of the region to be drawn"/>
 				<arg name="sourceWidth" type="int" description="width of the region on the texture to be drawn"/>
 				<arg name="sourceHeight" type="int" description="height of the region on the texture to be drawn"/>
 				<arg name="theta" type="float" description="angle to rotate the image (radians)" />
@@ -177,7 +177,7 @@
 				<arg name="red" type="int" description="red color value of the ellipse (0-255)."/>
 				<arg name="green" type="int" description="green color value of the ellipse (0-255)."/>
 				<arg name="blue" type="int" description="blue color value of the ellipse (0-255)."/>
-				<arg name="alpha" type="int" optiona="true" default="255" description="optional alpha value of the ellipse (0-255)."/>
+				<arg name="alpha" type="int" optional="true" description="optional alpha value of the ellipse (0-255). Default is 255."/>
 				<description>
 					Draws a solid color ellipse to the screen at the given coordinates with the the given color and alpha.
 				</description>
@@ -192,7 +192,7 @@
 				<arg name="red" type="int" description="red color value of the line (0-255)."/>
 				<arg name="green" type="int" description="green color value of the line (0-255)."/>
 				<arg name="blue" type="int" description="blue color value of the line (0-255)."/>
-				<arg name="alpha" type="int" optiona="true" default="255" description="optional alpha value of the line (0-255)."/>
+				<arg name="alpha" type="int" optional="true" description="optional alpha value of the line (0-255). Default is 255."/>
 				<description>
 					Draws a line to the screen between the two given coordinates, with the given color, alpha, and thickness.
 				</description>
@@ -206,7 +206,7 @@
 				<arg name="red" type="int" description="red color value of the retangle (0-255)."/>
 				<arg name="green" type="int" description="green color value of the rectangle (0-255)."/>
 				<arg name="blue" type="int" description="blue color value of the rectangle (0-255)."/>
-				<arg name="alpha" type="int" optiona="true" default="255" description="optional alpha value of the rectangle (0-255)."/>
+				<arg name="alpha" type="int" optional="true" description="optional alpha value of the rectangle (0-255). Default is 255."/>
 				<description>
 					Draws a solid color rectangle to the screen at the given coordinates with the the given color and alpha.
 				</description>
@@ -222,7 +222,7 @@
 				<arg name="red" type="int" description="red color value of the triangle (0-255)."/>
 				<arg name="green" type="int" description="green color value of the triangle (0-255)."/>
 				<arg name="blue" type="int" description="blue color value of the triangle (0-255)."/>
-				<arg name="alpha" type="int" optiona="true" default="255" description="optional alpha value of the triangle (0-255)."/>
+				<arg name="alpha" type="int" optional="true" description="optional alpha value of the triangle (0-255). Default is 255."/>
 				<description>
 					Draws a solid color triangle to the screen at the given coordinates with the the given color and alpha.
 				</description>
@@ -240,7 +240,7 @@
 				<arg name="red" type="int" description="red color value of the quadrilateral (0-255)."/>
 				<arg name="green" type="int" description="green color value of the quadrilateral (0-255)."/>
 				<arg name="blue" type="int" description="blue color value of the quadrilateral (0-255)."/>
-				<arg name="alpha" type="int" optiona="true" default="255" description="optional alpha value of the quadrilateral (0-255)."/>
+				<arg name="alpha" type="int" optional="true" description="optional alpha value of the quadrilateral (0-255). Default is 255."/>
 				<description>
 					Draws a solid color quadrilateral to the screen at the given coordinates with the the given color and alpha.
 					Quadrilateral edges must not cross each other, otherwise behavior is undefined and may vary depending on platform.

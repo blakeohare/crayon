@@ -114,6 +114,7 @@
 				</description>
 			</function>
 			<function name="getTrace">
+				<description>Returns a stack trace of where the exception was thrown.</description>
 				<returns type="list-of-string" description="The stack trace of this exception."/>
 			</function>
 		</class>

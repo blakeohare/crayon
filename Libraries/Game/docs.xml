@@ -89,7 +89,7 @@
 			<value name="Z" />
 		</enum>
 
-		<enum name="EventQuitType">
+		<enum name="EventQuitType" description="Enum for specifically describing how a quit event was generated.">
 			<value name="ALT_F4" description="Quit event type for when user presses Alt + F4."/>
 			<value name="CLOSE_BUTTON" description="Quit event when user presses the close button in the window chrome."/>
 			<value name="BACK_BUTTON" description="Quit event when user presses the hardware back button."/>

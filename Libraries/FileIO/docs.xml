@@ -3,6 +3,7 @@
 	<namespace name="FileIO">
 		
 		<enum name="TextEncoding">
+			<description>Available text encodings for files. Used by FileIO functions.</description>
 			<value name="UTF8" description="The UTF-8 encoding without a Byte-Order-Mark."/>
 			<value name="UTF8_BOM" description="The UTF-8 encoding with the Byte-Order-Mark."/>
 			<value name="UTF16" description="The UTF-16 encoding."/>
