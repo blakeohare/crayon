@@ -147,18 +147,37 @@ function generateLibraryHtml(library, buffer) {
 
 	for (ns : library.namespaces) {
 
-		for (cnst : ns.constants) {
-			buffer.add('<div>');
-			
-			buffer.add('<h2>');
-			buffer.add('<span class="keyword">const</span> ' + cnst.name);
-			buffer.add('<a class="bookmark" name="' + cnst.getBookmark() + '" href="#' + cnst.getBookmark() + '">' + LINK_LABEL + '</a>');
-			buffer.add('</h2>');
-			
-			buffer.add('<p class="description">');
-			buffer.add(cnst.description);
-			buffer.add('</p>');
+		if (ns.constants.length > 0) {
+			buffer.add('<div class="itembox">');
+			buffer.add('<h1>Constants</h1>');
+			buffer.add('<div class="itembox">');
 
+			buffer.add('<table class="arguments">');
+			buffer.add('<thead><tr><th>Name</th><th>Type</th><th>Value</th><th>Description</th></thead>');
+			buffer.add('<tbody>');
+
+			for (cnst : ns.constants) {
+				buffer.add('<tr>');
+				buffer.add('<td class="codefont argname">');
+				buffer.add(cnst.name);
+				buffer.add('</td>');
+				buffer.add('<td class="codefont argtype">');
+				buffer.add(formatType(cnst.type));
+				buffer.add('</td>');
+				buffer.add('<td class="codefont argtype">');
+				buffer.add(cnst.value);
+				buffer.add('</td>');
+				buffer.add('<td class="description">');
+				buffer.add('<p class="description">');
+				if (cnst.description != null) {
+					buffer.add(cnst.description);
+				}
+				buffer.add('</p>');
+				buffer.add('</td>');
+				buffer.add('</tr>');
+			}
+			buffer.add('</tbody></table>');
+			buffer.add('</div>');
 			buffer.add('</div>');
 		}
 		
@@ -189,7 +208,7 @@ function generateLibraryHtml(library, buffer) {
 				buffer.add('<p class="description">');
 				d = en.valueDescriptions[i];
 				if (d != null) {
-					buffer.add(en.valueDescriptions[i]);
+					buffer.add(d);
 				}
 				buffer.add('</p>');
 				buffer.add('</td>');

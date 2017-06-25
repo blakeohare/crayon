@@ -177,3 +177,24 @@ class Field {
 		].join();
 	}
 }
+
+class Constant {
+	field parentNamespace;
+	field name;
+	field type;
+	field value;
+	field description;
+
+	constructor(ns) {
+		this.parentNamespace = ns;
+	}
+
+	function getBookmark() {
+		return [
+			'constant-',
+			this.parentNamespace.getKey(),
+			'-',
+			this.name.lower()
+		].join();
+	}
+}

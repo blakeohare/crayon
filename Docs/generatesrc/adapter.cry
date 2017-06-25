@@ -49,6 +49,7 @@ function adaptLibraryNamespaceXml(lib, nsElement) {
 				ns.classes.add(adaptClass(ns, child));
 				break;
 			case 'constant':
+			case 'const':
 				ns.constants.add(adaptConstant(ns, child));
 				break;
 			default:
@@ -184,7 +185,24 @@ function adaptField(cls, element) {
 }
 
 function adaptConstant(ns, element) {
-	throw new Exception("Not implemented.");
+	cnst = new Constant(ns);
+	cnst.name = element.attributes.get('name');
+	cnst.type = element.attributes.get('type');
+	cnst.description = element.attributes.get('description');
+	cnst.value = element.attributes.get('value');
+	for (child : getAllXmlChildrenNodes(element)) {
+		switch (child.name) {
+			case 'name':
+				cnst.name = getTextContent(child);
+				break;
+			case 'description':
+				cnst.description = getTextContent(child);
+				break;
+			default:
+				throw new Exception("Unknown child of field element: '" + child.name + "'");
+		}
+	}
+	return cnst;
 }
 
 function getTextContent(xmlNode) {
