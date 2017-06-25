@@ -9,6 +9,7 @@
 
 			<function name="(constructor)">
 				<arg name="image" type="ImageResources.ImageResource" description="Image resource to encode."/>
+				<description>Creates a new PNG encoder</description>
 			</function>
 
 			<function name="encode">
@@ -26,6 +27,7 @@
 
 			<function name="(constructor)">
 				<arg name="image" type="ImageResources.ImageResource" description="Image resource to encode."/>
+				<description>Creates a new PNG encoder</description>
 			</function>
 
 			<function name="encode">
