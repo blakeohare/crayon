@@ -16,7 +16,9 @@ function generateDocumentationHtml(docRoot) {
 			'td.argname { font-weight:bold; color:#0a8; }',
 			'table.arguments td.argtype { color:#444; padding-right:40px; }',
 			'.codesnippet { background-color:#eee; border-radius:8px; padding:16px; margin-bottom:12px; }',
-			'.itembox { margin-bottom:20px; margin-left:30px;}',
+			'.itembox { margin-bottom:40px; margin-left:30px;}',
+			'a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }',
+			'a.bookmark:hover { color:#08a; }',
 		].join('\n'),
 		'</style>'];
 
@@ -28,6 +30,10 @@ function generateDocumentationHtml(docRoot) {
 	output.add('</body></html>');
 	return output.join('');
 }
+
+const LINK_LABEL = 
+	//'&#128279;';
+	'[link]';
 
 function spanCodeFont(str) {
 	return '<span class="codefont">' + htmlSpecialChars(str) + '</span>';
@@ -138,8 +144,8 @@ function generateLibraryHtml(library, buffer) {
 			buffer.add('<div>');
 			
 			buffer.add('<h2>');
-			buffer.add('<a name="' + cnst.getBookmark() + '"></a>');
 			buffer.add(ns.name + '.' + cnst.name);
+			buffer.add('<a class="bookmark" name="' + cnst.getBookmark() + '" href="#' + cnst.getBookmark() + '">' + LINK_LABEL + '</a>');
 			buffer.add('</h2>');
 			
 			buffer.add('<div>');
@@ -162,10 +168,8 @@ function generateLibraryHtml(library, buffer) {
 		for (cls : ns.classes) {
 			buffer.add('<div>');
 			buffer.add('<h1>');
-			buffer.add('<a name="');
-			buffer.add(cls.getBookmark());
-			buffer.add('"></a>');
 			buffer.add(ns.name + '.' + cls.name);
+			buffer.add('<a class="bookmark" name="' + cls.getBookmark() + '" href="#' + cls.getBookmark() + '">' + LINK_LABEL + '</a>');
 			buffer.add('</h1>');
 
 			buffer.add('<div>');
@@ -177,8 +181,8 @@ function generateLibraryHtml(library, buffer) {
 
 			for (fi : cls.fields) {
 				buffer.add('<h2>');
-				buffer.add('<a name="' + fi.getBookmark() + '"></a>');
 				buffer.add(classVar + '.' + fi.name);
+				buffer.add('<a class="bookmark" name="' + fi.getBookmark() + '" href="#' + fi.getBookmark() + '">' + LINK_LABEL + '</a>');
 				buffer.add('</h2>');
 
 				buffer.add('<div>');
@@ -223,8 +227,8 @@ function generateFunctionHtml(buffer, fn) {
 	buffer.add('<div>');
 
 	buffer.add('<h2>');
-	buffer.add('<a name="' + fn.getBookmark() + '"></a>');
 	buffer.add(fn.getDisplayName());
+	buffer.add('<a class="bookmark" name="' + fn.getBookmark() + '" href="#' + fn.getBookmark() + '">' + LINK_LABEL + '</a>');
 	buffer.add('</h2>');
 	
 	buffer.add('<div class="itembox">');
