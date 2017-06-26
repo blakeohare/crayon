@@ -49,6 +49,12 @@ function spanCodeFont(str) {
 function generateLibraryHtml(library, buffer) {
 	buffer.add('<h1>' + htmlSpecialChars(library.name) + '</h1>');
 
+	buffer.add('<div class="itembox">');
+	buffer.add('<p class="description">');
+	buffer.add(library.description);
+	buffer.add('</p>');
+	buffer.add('</div>');
+
 	library.namespaces.sort(sortByNameKeyFunction);
 
 	buffer.add('<ul>');
