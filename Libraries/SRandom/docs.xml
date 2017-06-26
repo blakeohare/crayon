@@ -1,0 +1,59 @@
+<library name="SRandom">
+	<description>
+		Library for generating random numbers that have platform-independent consistency per a given seed.
+	</description>
+
+	<namespace name="SRandom">
+		<class name="SRandom">
+			<description>
+				Contains a seeded random session.
+				Sessions seeded with the same value will generate the same random values.
+			</description>
+
+			<function name="(constructor)">
+				<description>Creates a new seeded random session</description>
+				<arg name="seed" type="string" description="An arbitrary string to use as a seed. This string is hashed."/>
+			</function>
+
+			<function name="getInteger">
+				<description>
+					Gets the next random integer.
+					If no bounds are given, this function will return a number from 0 through 2^31 - 1.
+					If one bound is provided, that will serve as the exclusive upper bound, and this function will return a number from 0 through max - 1.
+					If two bounds are provided, those will serve as the inclusive lower bound and exclusive upper bound, and this function will return a number from min through max - 1.
+				</description>
+				<arg name="bound1" type="int" optional="true" description="The exclusive maximum bound if this is the only number provided. If two numbers are provided, this is the minimum inclusive bound" />
+				<arg name="bound2" type="int" optional="true" description="The exlusive maximum bound, if provided. This number must be higher than the first number."/>
+				<returns type="int" description="a random integer"/>
+			</function>
+
+			<function name="getBoolean">
+				<description>
+					Gets a random boolean.
+				</description>
+				<returns type="bool" description="a random boolean"/>
+			</function>
+
+			<function name="getFloat">
+				<description>
+					Gets a random float in the range of 0.0 up to but not including 1.0. 
+				</description>
+				<returns type="float" description="a random float"/>
+			</function>
+
+			<function name="shuffle">
+				<description>
+					Shuffles a list randomly in place.
+					The list is modified and nothing is returned.
+				</description>
+				<arg name="list" type="list-of-any" description="Any list"/>
+			</function>
+
+			<function name="choice">
+				<description>Chooses an item randomly from a list.</description>
+				<arg name="list" type="list-of-any" description="Any lit"/>
+				<returns type="any" description="A random item from the list."/>
+			</function>
+		</class>
+	</namespace>
+</library>
