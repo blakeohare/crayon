@@ -205,16 +205,27 @@ function adaptConstant(ns, element) {
 	return cnst;
 }
 
-function getTextContent(xmlNode) {
-	text = [];
+function getTextContent(xmlNode, buffer = null) {
+	text = buffer ?? [];
 	for (child : xmlNode.children) {
 		if (child.type == Xml.NodeType.TEXT) {
 			text.add(child.value);
-		} else {
-			throw new Exception("TODO: text styling elements.");
+		} else if (child.type == Xml.NodeType.ELEMENT) {
+			switch (child.name) {
+				case 'ul':
+				case 'li':
+					text.add('<' + child.name + '>');
+					getTextContent(child, text);
+					text.add('</' + child.name + '>');
+					break;
+				default:
+					throw new Exception("Unknown html element in text content: '" + child.name + "'");
+			}
 		}
 	}
-	return text.join('');
+	if (buffer == null) {
+		return text.join('');
+	}
 }
 
 // throws if there's a stray text node.
