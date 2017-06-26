@@ -1,0 +1,36 @@
+<library name="Json">
+	<description>Library for parsing JSON.</description>
+	<namespace name="Json">
+		<class name="JsonException">
+			<description>An exception thrown upon a parsing or serializing error.</description>
+		</class>
+		
+		<enum name="JsonSerializerFlag">
+			<description>
+				Bitmasked enum options for the JSON serializer.
+			</description>
+			<value name="DEFAULT" description="Bitmask of 0. Indicates the absence of other option flags."/>
+			<value name="PRETTY" description="When enabled, includes whitespace in the output."/>
+			<value name="OMIT_DICTIONARY_NULLS" description="Dictionary keys that have null values will not be serialized."/>
+		</enum>
+
+		<function name="parseJson">
+			<description>
+				Parses the JSON string into a dictionary object.
+			</description>
+			<arg name="rawJsonString" type="string" description="Raw input text to parse."/>
+			<arg name="failSilently" type="boolean" optional="true" description="Default is false. If true, syntax errors will not cause an exception and null will be returned instead."/>
+			<returns type="dictionary" description="A structured JSON object in the form of a dictionary."/>
+		</function>
+
+		<function name="serialize">
+			<description>
+				Serializes a dictionary object into a JSON string.
+			</description>
+			<arg name="object" type="dictionary" description="Dictionary object to serialize into JSON."/>
+			<arg name="flags" type="Json.JsonSerializerFlag" optional="true" description="Bitmask of flags for special options. See JsonSerializerFlag for more information. Default value is JsonSerializerFlag.DEFAULT"/>
+			<arg name="depth" type="int" optional="true" description="To prevent infinite recursion, this is a maximum recursion depth. Default value is 64."/>
+			<returns type="string" description="A JSON string."/>
+		</function>
+	</namespace>
+</library>

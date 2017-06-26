@@ -34,6 +34,8 @@ class Function { // or method
 	field argNames = [];
 	field argTypes = [];
 	field argDescriptions = [];
+	field argIsOptional = [];
+	field hasAnyOptionalArgs = false;
 	field returnDescription;
 	field returnType;
 	field isStatic = false;
@@ -43,7 +45,19 @@ class Function { // or method
 		this.parentClass = cls;
 	}
 
+	function isConstructor() {
+		// TODO: I don't like this convention.
+		return this.name == '(constructor)';
+	}
+
 	function getBookmark() {
+		if (this.isConstructor()) {
+			return [
+				'constructor',
+				this.parentNamespace.getKey(),
+				this.parentClass.name.lower()
+			].join('-');
+		}
 		return [
 			'func-',
 			this.parentNamespace.getKey(),
@@ -53,25 +67,55 @@ class Function { // or method
 		].join();
 	}
 
+	function getInvocationName() {
+		if (this.isConstructor()) {
+			return 'new ' + this.parentClass.name;
+		}
+		return this.name;
+	}
+
+	function getHeaderName() {
+		sb = [];
+		if (this.isConstructor()) {
+			sb.add('new ');
+			sb.add(this.parentClass.name);
+		} else {
+			sb.add('function ');
+			sb.add(this.name);
+		}
+		this.getArgsList(sb);
+
+		return sb.join('');
+	}
+
+	function getArgsList(buffer) {
+		buffer.add('(');
+		for (i = 0; i < this.argNames.length; ++i) {
+			if (i > 0) buffer.add(', ');
+			buffer.add(this.argNames[i]);
+		}
+		buffer.add(')');
+	}
+
 	function getDisplayName() {
 		sb = [];
-		if (this.parentClass != null) {
-			clsName = this.parentClass.name;
-			if (!this.isStatic) {
-				sb.add(clsName[0].lower());
-				sb.add(clsName[1:]);
-			} else {
-				sb.add(clsName);
+		if (this.isConstructor()) {
+			sb.add('new ');
+			sb.add(this.parentClass.name);
+		} else {
+			if (this.parentClass != null) {
+				clsName = this.parentClass.name;
+				if (!this.isStatic) {
+					sb.add(clsName[0].lower());
+					sb.add(clsName[1:]);
+				} else {
+					sb.add(clsName);
+				}
+				sb.add('.');
 			}
-			sb.add('.');
+			sb.add(this.name);
 		}
-		sb.add(this.name);
-		sb.add('(');
-		for (i = 0; i < this.argNames.length; ++i) {
-			if (i > 0) sb.add(', ');
-			sb.add(this.argNames[i]);
-		}
-		sb.add(')');
+		this.getArgsList(sb);
 		return sb.join();
 	}
 }
@@ -135,6 +179,27 @@ class Field {
 			this.parentClass.parentNamespace.getKey(),
 			'-',
 			this.parentClass.name.lower(),
+			'-',
+			this.name.lower()
+		].join();
+	}
+}
+
+class Constant {
+	field parentNamespace;
+	field name;
+	field type;
+	field value;
+	field description;
+
+	constructor(ns) {
+		this.parentNamespace = ns;
+	}
+
+	function getBookmark() {
+		return [
+			'constant-',
+			this.parentNamespace.getKey(),
 			'-',
 			this.name.lower()
 		].join();

@@ -1,0 +1,29 @@
+<html><head><title>Documentation</title></head><body><style>body { font-family: "Helvetica", "Arial", sans-serif; }
+h1 { font-size:20pt; font-weight:bold; color:#247; }
+h2 { font-size:16pt; font-weight:bold; color:#247; }
+h3 { font-size:12pt; font-weight:bold; color:#247; }
+.codefont { font-family: "Menlo", "Consolas", "Courier New", monospace; font-size:10pt; }
+table.arguments { border-radius:8px; overflow:hidden; border-spacing:0px; border-collapse: separate; background-color:#eee; }
+table.arguments thead { background-color:#ccc; font-weight:bold; text-align:left; }
+table.arguments td, table.arguments th { padding:8px; padding-right:20px; }
+table.arguments tbody tr { vertical-align:top; }
+td.argname { color:#286; }
+table.arguments td.argtype { color:#666; }
+td.optional { color:#000; font-weight:bold; }
+.codesnippet { background-color:#eee; border-radius:8px; padding:16px; margin-bottom:12px; }
+.itembox { margin-bottom:40px; margin-left:30px;}
+a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
+a.bookmark:hover { color:#08a; }
+p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
+.keyword { font-weight:normal; }</style><h1>Random</h1><div class="itembox"><p class="description">
+		Library for generating random numbers. 
+		Generally uses the default-seeded random number generator from the underlying platform.
+		For seedable random numbers that generates the same numbers per seed regardless of export platform, use the SRandom library.
+	</p></div><ul><li><span class="codefont">namespace</span> Random<ul><li><a href="#func-random-randombool"><span class="codefont">function</span> randomBool()</a></li><li><a href="#func-random-randomfloat"><span class="codefont">function</span> randomFloat()</a></li><li><a href="#func-random-randomint"><span class="codefont">function</span> randomInt(minInclOrMax, optionalMax)</a></li></ul></li></ul><div class="itembox"><div><h2><span class="keyword">function</span> randomBool()<a class="bookmark" name="func-random-randombool" href="#func-random-randombool">[link]</a></h2><div class="itembox"><p class="description">Generates a random boolean.</p><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">A random boolean</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> randomFloat()<a class="bookmark" name="func-random-randomfloat" href="#func-random-randomfloat">[link]</a></h2><div class="itembox"><p class="description"> 
+				Generates a random floating point decimal number from 0 up to (but not including) 1. 
+			</p></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> randomInt(minInclOrMax, optionalMax)<a class="bookmark" name="func-random-randomint" href="#func-random-randomint">[link]</a></h2><div class="itembox"><p class="description">
+				Generates a random integer within the given range. 
+				There are two ways randomInt can be called. 
+				When called with one parameter, it will generate a random number from 0 up to the number you provide (exclusive) i.e. if you call randomInt(10), you will get numbers from 0 through 9, but not 10 itself. 
+				When called with two parameters, it will generate a random number from the first number (inclusive) to the second number (exclusive) i.e. if you call randomInt(5, 10), you will get numbers from 5 through 9, but not 10 itself (but it may be 5). 
+			</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">minInclOrMax</td><td class="codefont argtype">integer</td><td class="codefont optional"></td><td class="description"><p class="description">Minimum number that randomInt will return.</p></td></tr><tr><td class="codefont argname">optionalMax</td><td class="codefont argtype">integer</td><td class="codefont optional">Optional</td><td class="description"><p class="description">Maximum number that randomInt will return.</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">integer</td><td class="description"><p class="description">A random integer</p></td></tr></tbody></table></div></div></div></div></body></html>

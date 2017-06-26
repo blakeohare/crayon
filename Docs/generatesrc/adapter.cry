@@ -49,6 +49,7 @@ function adaptLibraryNamespaceXml(lib, nsElement) {
 				ns.classes.add(adaptClass(ns, child));
 				break;
 			case 'constant':
+			case 'const':
 				ns.constants.add(adaptConstant(ns, child));
 				break;
 			default:
@@ -116,6 +117,9 @@ function adaptFunction(ns, cls, element) {
 				fn.argNames.add(child.attributes.get('name'));
 				fn.argTypes.add(child.attributes.get('type'));
 				fn.argDescriptions.add(child.attributes.get('description'));
+				isOptional = child.attributes.get('optional', 'false').lower() == "true";
+				fn.argIsOptional.add(isOptional);
+				fn.hasAnyOptionalArgs = isOptional || fn.hasAnyOptionalArgs;
 				break;
 			case 'returns':
 				fn.returnType = child.attributes.get('type');
@@ -150,6 +154,7 @@ function adaptClass(ns, element) {
 				break;
 			case 'field':
 				fld = adaptField(cls, child);
+				if (fld.name == null) throw new Exception("There's a field with no name in class: " + cls.name);
 				cls.fields.add(fld);
 				break;
 			default:
@@ -180,19 +185,47 @@ function adaptField(cls, element) {
 }
 
 function adaptConstant(ns, element) {
-	throw new Exception("Not implemented.");
+	cnst = new Constant(ns);
+	cnst.name = element.attributes.get('name');
+	cnst.type = element.attributes.get('type');
+	cnst.description = element.attributes.get('description');
+	cnst.value = element.attributes.get('value');
+	for (child : getAllXmlChildrenNodes(element)) {
+		switch (child.name) {
+			case 'name':
+				cnst.name = getTextContent(child);
+				break;
+			case 'description':
+				cnst.description = getTextContent(child);
+				break;
+			default:
+				throw new Exception("Unknown child of field element: '" + child.name + "'");
+		}
+	}
+	return cnst;
 }
 
-function getTextContent(xmlNode) {
-	text = [];
+function getTextContent(xmlNode, buffer = null) {
+	text = buffer ?? [];
 	for (child : xmlNode.children) {
 		if (child.type == Xml.NodeType.TEXT) {
 			text.add(child.value);
-		} else {
-			throw new Exception("TODO: text styling elements.");
+		} else if (child.type == Xml.NodeType.ELEMENT) {
+			switch (child.name) {
+				case 'ul':
+				case 'li':
+					text.add('<' + child.name + '>');
+					getTextContent(child, text);
+					text.add('</' + child.name + '>');
+					break;
+				default:
+					throw new Exception("Unknown html element in text content: '" + child.name + "'");
+			}
 		}
 	}
-	return text.join('');
+	if (buffer == null) {
+		return text.join('');
+	}
 }
 
 // throws if there's a stray text node.
