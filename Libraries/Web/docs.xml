@@ -1,0 +1,11 @@
+<library name="Web">
+	<description>
+		Library for interacting with the local browser
+	</description>
+	<namespace name="Web">
+		<function name="launchBrowser">
+			<description>Launches the user's default browser (or creates a new tab) and points it to a URL.</description>
+			<arg name="url" type="string" description="URL to open the browser to."/>
+		</function>
+	</namespace>
+</library>
