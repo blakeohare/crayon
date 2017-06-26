@@ -1,0 +1,96 @@
+<library name="Easing">
+	<description>Provides easing functions for various predefined equations and customizable functions as well.</description>
+	<namespace name="Easing">
+		<class name="EasingFunction">
+			<description>
+				Embodies an easing equation.
+			</description>
+
+			<field name="LINEAR" type="Easing.EasingFunction">
+				<description>
+					An easing function that follows a linear progression. Defined by the function f(t) = t for t = 0 to 1.
+				</description>
+			</field>
+
+			<field name="QUADRATIC" type="Easing.EasingFunction">
+				<description>
+					An easing function that follows a quadratic progression. Defined by the function f(t) = t^2 for t = 0 to 1.
+				</description>
+			</field>
+
+			<field name="CUBIC" type="Easing.EasingFunction">
+				<description>
+					An easing function that follows a cubic progression. Defined by the function f(t) = t^3 for t = 0 to 1.
+				</description>
+			</field>
+
+			<field name="QUART" type="Easing.EasingFunction">
+				<description>
+					An easing function that follows a quartic progression. Defined by the function f(t) = t^4 for t = 0 to 1.
+				</description>
+			</field>
+
+			<field name="QUINT" type="Easing.EasingFunction">
+				<description>
+					An easing function that follows a quintic progression. Defined by the function f(t) = t^5 for t = 0 to 1.
+				</description>
+			</field>
+
+			<field name="CIRCLE" type="Easing.EasingFunction">
+				<description>
+					An easing function that follows a circular progression. Defined by the function f(t) = sqrt(1 - t^2) for t = 0 to 1.
+				</description>
+			</field>
+
+			<field name="SIN" type="Easing.EasingFunction">
+				<description>
+					An easing function that follows the shape of a sine curve. Defined by the function f(t) = 1 - cos(t * pi / 2) for t = 0 to 1.
+				</description>
+			</field>
+
+			<field name="ELASTIC" type="Easing.EasingFunction">
+				<description>
+					An easing function that follows an elastic behavior. Defined by a complicated function that can be seen in the source code.
+				</description>
+			</field>
+
+			<function name="(constructor)">
+				<description>
+					Creates a new EasingFunction instance based on a custom equation.
+					The function is sampled at even intervals to create a lookup table for optimal speed. 
+					This allows for fast run-time computations of easing for potentially complex equations.
+				</description>
+				<arg name="functionPointer" type="function" description="A function that takes in a float value from 0 to 1 and returns a value typically in the range of 0 to 1, although it can go out of that range e.g. to achieve springiness."/>
+				<arg name="intervals" type="int" optional="true" description="The number of intervals to sample the given function. Default value is 100."/>
+			</function>
+
+			<function name="easeIn">
+				<description>Interpolate two values by evaluating the easing function from 0 to 1</description>
+				<arg name="start" type="float" description="A starting value"/>
+				<arg name="end" type="float" description="An ending value"/>
+				<arg name="current" type="float" description="The current point in time"/>
+				<arg name="duration" type="float" description="The length of the interpolation timeline"/>
+				<arg name="useIntegers" type="bool" optional="true" description="If true, the output will be rounded to the closest integer. Default value is false."/>
+			</function>
+
+			<function name="easeOut">
+				<description>Interpolate two values by evaluating the easing function backwards from 1 to 0 and then transposing the output by subtracting it from 1.</description>
+				<arg name="start" type="float" description="A starting value"/>
+				<arg name="end" type="float" description="An ending value"/>
+				<arg name="current" type="float" description="The current point in time"/>
+				<arg name="duration" type="float" description="The length of the interpolation timeline"/>
+				<arg name="useIntegers" type="bool" optional="true" description="If true, the output will be rounded to the closest integer. Default value is false."/>
+			</function>
+
+			<function name="ease">
+				<description>Interpolates the value by using a compound function of the easeOut and easeIn functions.</description>
+				<arg name="start" type="float" description="A starting value"/>
+				<arg name="end" type="float" description="An ending value"/>
+				<arg name="current" type="float" description="The current point in time"/>
+				<arg name="duration" type="float" description="The length of the interpolation timeline"/>
+				<arg name="useIntegers" type="bool" optional="true" description="If true, the output will be rounded to the closest integer. Default value is false."/>
+			</function>
+
+		</class>
+	</namespace>
+</library>
