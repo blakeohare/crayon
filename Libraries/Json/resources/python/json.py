@@ -12,24 +12,24 @@ def lib_json_parse_json_thing(item):
   t = str(type(item))
   if "'bool'" in t:
     if item == True:
-      return VALUE_TRUE
-    return VALUE_FALSE
+      return v_VALUE_TRUE
+    return v_VALUE_FALSE
   if "'int'" in t or "'long'" in t:
     return v_buildInteger(item)
   if "'float'" in t:
-    return [%%%TYPE_ID_FLOAT%%%, item];
+    return v_buildFloat(item)
   if "'string'" in t or "'unicode'" in t:
-    return [%%%TYPE_ID_STRING%%%, str(item)]
+    return v_buildString(str(item))
   if "'list'" in t:
     output = []
     for o in item:
       output.append(lib_json_parse_json_thing(o))
-    return [%%%TYPE_ID_LIST%%%, output]
+    return v_buildList(output)
   if "'dict'" in t:
     keys = []
     values = []
     for key in item.keys():
       keys.append(key)
       values.append(lib_json_parse_json_thing(item[key]))
-    return v_buildDictionary(keys, values);
+    return v_buildDictionary(keys, values)
   return v_VALUE_NULL;

@@ -135,7 +135,10 @@ namespace PythonApp
 
             output["res/bytecode.txt"] = resourceDatabase.ByteCodeFile;
             output["res/resource_manifest.txt"] = resourceDatabase.ResourceManifestFile;
-            output["res/image_sheet_manifest.txt"] = resourceDatabase.ImageSheetManifestFile;
+            if (resourceDatabase.ImageSheetManifestFile != null)
+            {
+                output["res/image_sheet_manifest.txt"] = resourceDatabase.ImageSheetManifestFile;
+            }
 
             foreach (FileOutput image in resourceDatabase.ImageResources)
             {
