@@ -1,6 +1,15 @@
-package %%%PACKAGE%%%;
+package org.crayonlang.libraries.json;
 
 import java.util.ArrayList;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import org.crayonlang.interpreter.AwtTranslationHelper;
+import org.crayonlang.interpreter.Interpreter;
+import org.crayonlang.interpreter.ResourceReader;
+import org.crayonlang.interpreter.structs.*;
+import org.crayonlang.interpreter.TranslationHelper;
+import org.crayonlang.interpreter.VmGlobal;
 
 class JsonParser {
 
@@ -19,13 +28,13 @@ class JsonParser {
 	
 	private static Value convertJsonThing(Object thing) {
 		if (thing instanceof String) {
-			return CrayonWrapper.v_buildString((String) thing);
+			return Interpreter.v_buildString((String) thing);
 		} else if (thing instanceof Integer) {
-			return CrayonWrapper.v_buildInteger((Integer) thing);
+			return Interpreter.v_buildInteger((Integer) thing);
 		} else if (thing instanceof Double) {
-			return CrayonWrapper.v_buildFloat((Double) thing);
+			return Interpreter.v_buildFloat((Double) thing);
 		} else if (thing instanceof Boolean) {
-			return ((Boolean) thing) ? CrayonWrapper.v_VALUE_TRUE : CrayonWrapper.v_VALUE_FALSE;
+			return ((Boolean) thing) ? VmGlobal.VALUE_TRUE : VmGlobal.VALUE_FALSE;
 		} else if (thing instanceof org.json.JSONObject) {
 			return convertJsonToDictionary((org.json.JSONObject) thing);
 		} else if (thing instanceof org.json.JSONArray) {
@@ -41,7 +50,7 @@ class JsonParser {
 		for (int i = 0; i < keys.length; ++i) {
 			values[i] = convertJsonThing(obj.get(keys[i]));
 		}
-		return CrayonWrapper.v_buildDictionary(keys, values);
+		return Interpreter.v_buildDictionary(keys, values);
 	}
 	
 	private static Value convertJsonToList(org.json.JSONArray list) {
@@ -49,6 +58,6 @@ class JsonParser {
 		for (int i = 0; i < list.length(); ++i) {
 			items.add(convertJsonThing(list.get(i)));
 		}
-		return CrayonWrapper.v_buildList(items);
+		return Interpreter.v_buildList(items);
 	}
 }
