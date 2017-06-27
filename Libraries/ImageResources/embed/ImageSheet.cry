@@ -75,7 +75,7 @@ namespace ImageResources {
         }
 
         function getImage(resourcePath) {
-            if (!this._isLoaded) Core.fail("Cannot load image from sheet that is not finished loading.");
+            if (!this._isLoaded) throw new ImageResources.LoadFailedException("Cannot load image from sheet that is not finished loading.");
 
             // Convert the _loader object into a finalized sheet and GC the loader
             // if present.
@@ -86,7 +86,7 @@ namespace ImageResources {
 
             res = ImageResourceManifest.getFileInfo(resourcePath, true);
             if (res[1] != this._id) {
-                Core.fail("Image sheet '" + this._name + "' does not contain resource: '" + resourcePath + "'");
+                throw new ImageResources.ImageNotFoundException("Image sheet '" + this._name + "' does not contain resource: '{0}'", resourcePath);
             }
 
             img = this._chunks[res[2]];

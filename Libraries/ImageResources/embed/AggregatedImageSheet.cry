@@ -34,7 +34,7 @@ namespace ImageResources {
             sheet = this._sheetsById.get(res[1]);
             if (sheet == null) {
                 // TODO: show the ID's of the loaded ones?
-                Core.fail("Resource '" + resourcePath + "' is not included in this sheet.");
+                throw new ImageResources.ImageNotFoundException("Resource '{0}' is not included in this sheet.", resourcePath);
             }
 
             return sheet.getImage(resourcePath);

@@ -27,11 +27,11 @@ namespace ImageResources {
             }
 
             if (output == null) {
-                Core.fail("Resource '" + filename + "' does not exist.");
+                throw new ImageResources.ImageNotFoundException("Resource '{0}' does not exist.", filename);
             }
 
             if (sheetOnly && output[0] != ImgResourceType.SHEET) {
-                Core.fail("Resource '" + filename + "' is standalone and not included in an image sheet.");
+                throw new ImageResources.ImageNotFoundException("Resource '{0}' is standalone and not included in an image sheet.", filename);
             }
 
             return output;
@@ -39,9 +39,9 @@ namespace ImageResources {
 
         static function getSheetInfo(name) {
             ImageResourceManifest.ensureInitialized();
-            if (Core.typeof(name) != Core.Type.STRING) Core.fail("Image sheet ID must be a string");
+            if (Core.typeof(name) != Core.Type.STRING) throw new Core.InvalidArgumentException("Image sheet ID must be a string");
             id = ImageResourceManifest.sheetIdByName.get(name);
-            if (id == null) Core.fail("Image sheet with ID of '" + name + "' not found.");
+            if (id == null) throw new ImageResources.SheetNotFoundException("Image sheet with ID of '{0}' not found.", name);
             return ImageResourceManifest.sheetInfo[id];
         }
 

@@ -25,7 +25,7 @@ namespace ImageResources {
             nativeData[3] -> mutex (if the platform needs one)
         */
 
-        // TODO: private constructors.
+        @private
         constructor() { }
 
         /*
@@ -49,9 +49,9 @@ namespace ImageResources {
 
         function getImage() {
             if (this._output != null) return this._output;
-            if (!this._isDone) Core.fail("Loading is not finished.");
+            if (!this._isDone) throw new Core.InvalidOperationException("Loading is not finished.");
             if (this._nativeImage == null) {
-                Core.fail("Image has already been constructed.");
+                throw new Core.InvalidOperationException("Image has already been constructed.");
             }
             img = new ImageResource(this._nativeImage.width, this._nativeImage.height, false);
             img._nativeResource = this._nativeImage;
@@ -74,7 +74,7 @@ namespace ImageResources {
             status = ImageLoader.REUSABLE_IS_DONE_OUT[0];
             if (status > 0) {
                 this._isDone = true;
-                Core.assert(status == 1, "Error encountered while loading image.");
+                if(status != 1) throw new ImageResources.LoadFailedException("Error encountered while loading image.");
                 return true;
             }
 
@@ -152,7 +152,9 @@ namespace ImageResources {
                     filename,
                     statusOut);
             }
-            if (!statusOut[0]) Core.fail("Image load failed");
+            
+            // TODO: include filename in LoadFailedException. filename in this function can potentially be a generated name which is not useful.
+            if (!statusOut[0]) throw new ImageResources.LoadFailedException("Image load failed");
 
             image = new ImageResources.ImageResource(width, height, false);
             image._nativeResource = nativeImage;
@@ -161,8 +163,8 @@ namespace ImageResources {
 
         static function getGenName(filename) {
             info = ImageResourceManifest.getFileInfo(filename);
-            if (info == null) Core.fail("Image resource not found.");
-            if (info[0] == ImgResourceType.SHEET) Core.fail("Cannot load a member of an image sheet this way.");
+            if (info == null) throw new ImageResources.ImageNotFoundException("Image resource '{0}' not found.", filename);
+            if (info[0] == ImgResourceType.SHEET) throw new ImageResources.LoadFailedException("'" + filename + "' must be loaded as an ImageSheet.");
             return info;
         }
     }

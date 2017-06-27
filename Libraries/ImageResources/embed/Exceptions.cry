@@ -1,0 +1,25 @@
+namespace ImageResources {
+	class ImageNotFoundException : Core.Exception {
+		
+		field path;
+		
+		// TODO: actual string.format support. Till then...
+		constructor(template, path) : base(template.replace('{0}', path)) {
+			this.path = path;
+		}
+	}
+	
+	class SheetNotFoundException : Core.Exception {
+
+		field path;
+		
+		// TODO: string.format here as well...
+		constructor(template, path) : base(template.replace('{0}', path)) {
+			this.path = path;
+		}
+	}
+	
+	class LoadFailedException : Core.Exception {
+		constructor(msg) : base(msg) { }
+	}
+}

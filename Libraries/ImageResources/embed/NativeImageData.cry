@@ -111,11 +111,11 @@ namespace ImageResources {
         }
 
         function verifyUnlocked() {
-            if (this._locked) Core.fail("Image resource is locked and cannot be used.");
+            if (this._locked) throw new Core.InvalidOperationException("Image resource is locked and cannot be used.");
         }
 
         function verifyLocked() {
-            if (!this._locked) Core.fail("Image resource must be locked.");
+            if (!this._locked) throw new Core.InvalidOperationException("Image resource must be locked.");
         }
     }
 }
