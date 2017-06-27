@@ -157,5 +157,20 @@
 				</description>
 			</function>
 		</class>
+		
+		<class name="ImageNotFoundException">
+			<description>Exception thrown when an image path does not exist.</description>
+			<field name="path" type="string" description="Path of the image which was being attempted to load"/>
+		</class>
+		
+		<class name="SheetNotFoundException">
+			<description>Exception thrown when an image sheet with a given ID does not exist.</description>
+			<field name="id" type="string" description="ID of the image sheet that does not exist"/>
+		</class>
+		
+		<class name="LoadFailedException">
+			<description>Exception thrown when an image fails to load. The exception message field may contain more information.</description>
+		</class>
+		
 	</namespace>
 </library>

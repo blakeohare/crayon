@@ -11,11 +11,11 @@ namespace ImageResources {
 	
 	class SheetNotFoundException : Core.Exception {
 
-		field path;
+		field id;
 		
 		// TODO: string.format here as well...
-		constructor(template, path) : base(template.replace('{0}', path)) {
-			this.path = path;
+		constructor(template, id) : base(template.replace('{0}', id)) {
+			this.id = id;
 		}
 	}
 	
