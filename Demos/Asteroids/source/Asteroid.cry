@@ -1,6 +1,7 @@
 import Graphics2D;
 import Math;
 import Random;
+import Matrices;
 
 enum AsteroidSize {
     BIG,
@@ -48,14 +49,28 @@ class Asteroid {
     field radius;
     field angularVelocity;
     field angle;
+    field angleRateX;
+    field angleRateY;
+    field angleRateZ;
     field pointCount;
     field bumps;
     field dead = false;
+    field counter = 0;
 
     // When points are calculated for rendering, cache them in case they need to be
     // drawn again on the other side of the screen.
     field renderPointsX = [];
     field renderPointsY = [];
+
+    static field ICO_FRESH;
+    static field ICO_TRANSFORMED;
+    static field IDENTITY_MATRIX = Matrix.newIdentityMatrix(4);
+    static field TRANSFORM_MATRIX = new Matrix(4, 4);
+
+    static constructor() {
+        Asteroid.ICO_TRANSFORMED = Polyhedron.newIcosahedron();
+        Asteroid.ICO_FRESH = Polyhedron.newIcosahedron();
+    }
 
     constructor(x, y, size) {
         this.x = x + 0.0;
@@ -70,48 +85,55 @@ class Asteroid {
         this.angle = Random.randomFloat() * 2 * Math.PI;
         this.pointCount = Asteroid.SIZE_TO_POINT_COUNT[this.size];
         this.bumps = Asteroid.SIZE_TO_BUMPS[this.size];
+        defaultRate = 2 * Math.PI / 60 * .1; // one rotation per 10 seconds
+        this.angleRateX = defaultRate * (3 * Random.randomFloat() - 1.5);
+        this.angleRateY = defaultRate * (3 * Random.randomFloat() - 1.5);
+        this.angleRateZ = defaultRate * (3 * Random.randomFloat() - 1.5);
     }
 
     function update() {
         this.x = (this.x + this.vx) % GAME_WIDTH;
         this.y = (this.y + this.vy) % GAME_HEIGHT;
-        this.angle += this.angularVelocity;
+        this.counter++;
     }
 
     function render() {
-        this.renderPointsX.clear();
-        this.renderPointsY.clear();
-        for (i = 0; i < this.pointCount; ++i) {
-            a = this.angle + (Math.PI * 2 * i) / this.pointCount;
-            r = this.radius + 2 * Math.sin(this.angle + a * this.bumps);
-            this.renderPointsX.add(Math.floor(this.x + r * Math.cos(a)));
-            this.renderPointsY.add(Math.floor(this.y + r * Math.sin(a)));
+        transform = Asteroid.TRANSFORM_MATRIX.multiplyByScalar(0).addMatrix(Asteroid.IDENTITY_MATRIX);
+        Transforms.rotate(transform, 'x', this.angleRateX * this.counter);
+        Transforms.rotate(transform, 'y', this.angleRateY * this.counter);
+        Transforms.rotate(transform, 'z', this.angleRateZ * this.counter);
+        Transforms.scale(transform, this.radius * 1.05); // scale up so that it looks like a collision but isn't (which is less frustrating than the reverse)
+        Transforms.translate(transform, this.x, this.y, 0);
+
+        transform.multiplyByMatrix(Asteroid.ICO_FRESH.pointMatrix, Asteroid.ICO_TRANSFORMED.pointMatrix);
+        connectionsA = Asteroid.ICO_TRANSFORMED.connectionsA;
+        connectionsB = Asteroid.ICO_TRANSFORMED.connectionsB;
+        connectionsLength = connectionsA.length;
+        values = Asteroid.ICO_TRANSFORMED.pointMatrix.toVector(Bullet.pointScratchVector);
+        yOffset = Asteroid.ICO_FRESH.pointCount;
+
+        switch (this.size) {
+            case AsteroidSize.BIG:
+                r = 40;
+                g = 0;
+                b = 160;
+                break;
+            case AsteroidSize.MEDIUM:
+                r = 120;
+                g = 0;
+                b = 120;
+                break;
+            case AsteroidSize.SMALL:
+                r = 180;
+                g = 0;
+                b = 60;
+                break;
         }
 
-        offsetsX = [0];
-        offsetsY = [0];
-        if (this.x < GAME_WIDTH / 4) {
-            offsetsX.add(GAME_WIDTH);
-        } else if (this.x > GAME_WIDTH * 3 / 4) {
-            offsetsX.add(-GAME_WIDTH);
-        }
-
-        if (this.y < GAME_HEIGHT / 4) {
-            offsetsY.add(GAME_HEIGHT);
-        } else if (this.y > GAME_HEIGHT * 3 / 4) {
-            offsetsY.add(-GAME_HEIGHT);
-        }
-
-        for (ox : offsetsX) {
-            for (oy : offsetsY) {
-                for (i = 0; i < this.pointCount; ++i) {
-                    ax = this.renderPointsX[i] + ox;
-                    ay = this.renderPointsY[i] + oy;
-                    bx = this.renderPointsX[(i + 1) % this.pointCount] + ox;
-                    by = this.renderPointsY[(i + 1) % this.pointCount] + oy;
-                    Draw.line(ax, ay, bx, by, 1, 0, 255, 0);
-                }
-            }
+        for (i = 0; i < connectionsLength; ++i) {
+            pt1 = connectionsA[i];
+            pt2 = connectionsB[i];
+            Draw.line(values[pt1], values[pt1 + yOffset], values[pt2], values[pt2 + yOffset], 3, r, g, b);
         }
     }
 
