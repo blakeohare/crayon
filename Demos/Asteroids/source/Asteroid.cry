@@ -23,10 +23,10 @@ class Asteroid {
         AsteroidSize.SMALL: 3.3,
     };
 
-    static field SIZE_TO_ROTATION_SPEED = {
-        AsteroidSize.BIG: Math.PI * 2 / 150,
-        AsteroidSize.MEDIUM: Math.PI * 2 / 80,
-        AsteroidSize.SMALL: Math.PI * 2 / 40,
+    static field SIZE_TO_ROTATION_MULTIPLIER = {
+        AsteroidSize.BIG: .7,
+        AsteroidSize.MEDIUM: 3,
+        AsteroidSize.SMALL: 6,
     };
 
     static field SIZE_TO_POINT_COUNT = {
@@ -41,13 +41,18 @@ class Asteroid {
         AsteroidSize.SMALL: 6,
     };
 
+    static field SIZE_TO_GLOW = {
+        AsteroidSize.BIG: ImageLibrary.get('asteroid_big.png'),
+        AsteroidSize.MEDIUM: ImageLibrary.get('asteroid_medium.png'),
+        AsteroidSize.SMALL: ImageLibrary.get('asteroid_small.png'),
+    };
+
     field x;
     field y;
     field vx;
     field vy;
     field size;
     field radius;
-    field angularVelocity;
     field angle;
     field angleRateX;
     field angleRateY;
@@ -64,12 +69,19 @@ class Asteroid {
 
     static field ICO_FRESH;
     static field ICO_TRANSFORMED;
+    static field OCTA_FRESH;
+    static field OCTA_TRANSFORMED;
     static field IDENTITY_MATRIX = Matrix.newIdentityMatrix(4);
     static field TRANSFORM_MATRIX = new Matrix(4, 4);
+
+    field polyhedronFresh;
+    field polyhedronTransformed;
 
     static constructor() {
         Asteroid.ICO_TRANSFORMED = Polyhedron.newIcosahedron();
         Asteroid.ICO_FRESH = Polyhedron.newIcosahedron();
+        Asteroid.OCTA_TRANSFORMED = Polyhedron.newOctahedron();
+        Asteroid.OCTA_FRESH = Polyhedron.newOctahedron();
     }
 
     constructor(x, y, size) {
@@ -79,16 +91,19 @@ class Asteroid {
         this.radius = Asteroid.SIZE_TO_RADIUS[size];
         v = Asteroid.SIZE_TO_VELOCITY[size];
         ang = Random.randomFloat() * 2 * Math.PI;
-        this.angularVelocity = Asteroid.SIZE_TO_ROTATION_SPEED[size] * (Random.randomBool() ? 1 : -1);
         this.vx = v * Math.cos(ang);
         this.vy = v * Math.sin(ang);
         this.angle = Random.randomFloat() * 2 * Math.PI;
         this.pointCount = Asteroid.SIZE_TO_POINT_COUNT[this.size];
         this.bumps = Asteroid.SIZE_TO_BUMPS[this.size];
         defaultRate = 2 * Math.PI / 60 * .1; // one rotation per 10 seconds
+        defaultRate *= Asteroid.SIZE_TO_ROTATION_MULTIPLIER[this.size];
         this.angleRateX = defaultRate * (3 * Random.randomFloat() - 1.5);
         this.angleRateY = defaultRate * (3 * Random.randomFloat() - 1.5);
         this.angleRateZ = defaultRate * (3 * Random.randomFloat() - 1.5);
+
+        this.polyhedronFresh = this.size == AsteroidSize.SMALL ? Asteroid.OCTA_FRESH : Asteroid.ICO_FRESH;
+        this.polyhedronTransformed = this.size == AsteroidSize.SMALL ? Asteroid.OCTA_TRANSFORMED : Asteroid.ICO_TRANSFORMED;
     }
 
     function update() {
@@ -98,6 +113,11 @@ class Asteroid {
     }
 
     function render() {
+        glow = Asteroid.SIZE_TO_GLOW[this.size];
+        x = Math.floor(this.x) - glow.width / 2;
+        y = Math.floor(this.y) - glow.height / 2;
+        glow.draw(x, y);
+
         transform = Asteroid.TRANSFORM_MATRIX.multiplyByScalar(0).addMatrix(Asteroid.IDENTITY_MATRIX);
         Transforms.rotate(transform, 'x', this.angleRateX * this.counter);
         Transforms.rotate(transform, 'y', this.angleRateY * this.counter);
@@ -105,12 +125,12 @@ class Asteroid {
         Transforms.scale(transform, this.radius * 1.05); // scale up so that it looks like a collision but isn't (which is less frustrating than the reverse)
         Transforms.translate(transform, this.x, this.y, 0);
 
-        transform.multiplyByMatrix(Asteroid.ICO_FRESH.pointMatrix, Asteroid.ICO_TRANSFORMED.pointMatrix);
-        connectionsA = Asteroid.ICO_TRANSFORMED.connectionsA;
-        connectionsB = Asteroid.ICO_TRANSFORMED.connectionsB;
+        transform.multiplyByMatrix(this.polyhedronFresh.pointMatrix, this.polyhedronTransformed.pointMatrix);
+        connectionsA = this.polyhedronTransformed.connectionsA;
+        connectionsB = this.polyhedronTransformed.connectionsB;
         connectionsLength = connectionsA.length;
-        values = Asteroid.ICO_TRANSFORMED.pointMatrix.toVector(Bullet.pointScratchVector);
-        yOffset = Asteroid.ICO_FRESH.pointCount;
+        values = this.polyhedronTransformed.pointMatrix.toVector(Bullet.pointScratchVector);
+        yOffset = this.polyhedronTransformed.pointCount;
 
         switch (this.size) {
             case AsteroidSize.BIG:

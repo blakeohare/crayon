@@ -2,6 +2,7 @@ import Matrices;
 
 enum PolyhedronType {
     CUBE,
+    OCTAHEDRON,
     ICOSAHEDRON,
 
     CLONE,
@@ -45,6 +46,11 @@ class Polyhedron {
         return Polyhedron._polyhedraTemplate[6].clone();
     }
 
+    static function newOctahedron() {
+        if (Polyhedron._polyhedraTemplate == null) Polyhedron.initTemplates();
+        return Polyhedron._polyhedraTemplate[8].clone();
+    }
+
     static function newIcosahedron() {
         if (Polyhedron._polyhedraTemplate == null) Polyhedron.initTemplates();
         return Polyhedron._polyhedraTemplate[20].clone();
@@ -53,6 +59,7 @@ class Polyhedron {
     static function initTemplates() {
         Polyhedron._polyhedraTemplate = {
             6: new Polyhedron(PolyhedronType.CUBE),
+            8: new Polyhedron(PolyhedronType.OCTAHEDRON),
             20: new Polyhedron(PolyhedronType.ICOSAHEDRON),
         };
     }
@@ -76,6 +83,19 @@ class Polyhedron {
                 }
                 this.connectionsA = [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3];
                 this.connectionsB = [1, 2, 3, 0, 5, 6, 7, 4, 4, 5, 6, 7];
+                break;
+
+            case PolyhedronType.OCTAHEDRON:
+                pts = [];
+                a = [0, 0, 1];
+                b = [-1, 0, 0];
+                c = [0, 1, 0];
+                d = [1, 0, 0];
+                e = [0, -1, 0];
+                f = [0, 0, -1];
+                pts = [a, b, c, d, e, f];
+                this.connectionsA = [0, 0, 0, 0, 5, 5, 5, 5, 1, 2, 3, 4];
+                this.connectionsB = [1, 2, 3, 4, 1, 2, 3, 4, 2, 3, 4, 1];
                 break;
 
             case PolyhedronType.ICOSAHEDRON:
