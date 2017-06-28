@@ -152,7 +152,7 @@ namespace ImageResources {
                     filename,
                     statusOut);
             }
-            
+
             // TODO: include filename in LoadFailedException. filename in this function can potentially be a generated name which is not useful.
             if (!statusOut[0]) throw new ImageResources.LoadFailedException("Image load failed");
 
