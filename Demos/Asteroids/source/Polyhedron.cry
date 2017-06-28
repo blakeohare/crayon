@@ -1,0 +1,88 @@
+import Matrices;
+
+enum PolyhedronType {
+    CUBE,
+    ICOSAHEDRON,
+
+    CLONE,
+}
+
+const SQRT3 = 3 ** .5;
+
+class Polyhedron {
+
+    // A 4xN matrix containing all the points in this polyhedron
+    // Since this is for graphics, a 4th row that's just the value 1.0 is included in the bottom of the matrix.
+    field pointMatrix;
+
+    // Just a scratch list used for generating output without churning memory
+    field pointsList;
+
+    // Number of points.
+    field pointCount;
+
+    // Two lists of the same length containing indices of points.
+    // Each parallel pair of points indicates a line exists between the points at these indices.
+    field connectionsA;
+    field connectionsB;
+
+    function clone() {
+        output = new Polyhedron(PolyhedronType.CLONE);
+        newPointMatrix = new Matrix(this.pointCount, 4);
+        newPointMatrix.addMatrix(this.pointMatrix);
+        output.pointMatrix = newPointMatrix;
+        output.pointsList = this.pointsList.clone();
+        output.connectionsA = this.connectionsA.clone();
+        output.connectionsB = this.connectionsB.clone();
+        output.pointCount = this.pointCount;
+        return output;
+    }
+
+    static field _polyhedraTemplate = null;
+
+    static function newCube() {
+        if (Polyhedron._polyhedraTemplate == null) Polyhedron.initTemplates();
+
+        return Polyhedron._polyhedraTemplate[6].clone();
+    }
+
+    static function initTemplates() {
+        Polyhedron._polyhedraTemplate = {
+            6: new Polyhedron(PolyhedronType.CUBE),
+        };
+    }
+
+    @private
+    constructor(type) {
+        switch (type) {
+            case PolyhedronType.CLONE:
+                // this instance is initialized by cloning individual fields
+                // no need to regenerate
+                return;
+
+            case PolyhedronType.CUBE:
+
+                pts = [];
+                for (layer : [-SQRT3, SQRT3]) {
+                    pts.add([-SQRT3, -SQRT3, layer, 1]);
+                    pts.add([SQRT3, -SQRT3, layer, 1]);
+                    pts.add([SQRT3, SQRT3, layer, 1]);
+                    pts.add([-SQRT3, SQRT3, layer, 1]);
+                }
+                this.connectionsA = [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3];
+                this.connectionsB = [1, 2, 3, 0, 5, 6, 7, 4, 4, 5, 6, 7];
+                break;
+        }
+
+        this.pointCount = pts.length;
+        this.pointsList = [0.0] * (this.pointCount * 4);
+        this.pointMatrix = new Matrix(this.pointCount, 4);
+        for (i = 0; i < this.pointCount; ++i) {
+            for (j = 0; j < 3; ++j) {
+                this.pointMatrix.setValue(i, j, pts[i][j]);
+            }
+            this.pointMatrix.setValue(i, 3, 1.0);
+        }
+    }
+
+}

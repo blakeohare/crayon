@@ -1,26 +1,71 @@
 import Graphics2D;
 import Math;
+import Matrices;
+import Random;
 
 const BULLET_VELOCITY = 4;
-const BULLET_RADIUS = 4;
+const BULLET_RADIUS = 2;
 
 class Bullet {
+    // an untransformed cube
+    static field freshCube;
+
+    // a scratch cube
+    static field transformedCube;
+
+    static field scratchTransform1;
+    static field scratchTransform2;
+    static field pointScratchVector = [];
+
     field x;
     field y;
     field vx;
     field vy;
+    field counter = 0;
     field dead = false;
+    field rotateX = 0;
+    field rotateY = 0;
+    field rotateZ = 0;
+    field rotateXSpeed;
+    field rotateYSpeed;
+    field rotateZSpeed;
+    static field glow;
+
+    static constructor() {
+        Bullet.freshCube = Polyhedron.newCube();
+        Bullet.transformedCube = Bullet.freshCube.clone();
+        scale = Transforms.makeScaleMatrix(new Matrix(4, 4), BULLET_RADIUS * 2);
+        scale.multiplyByMatrix(Bullet.freshCube.pointMatrix, Bullet.transformedCube.pointMatrix);
+
+        t = Bullet.freshCube;
+        Bullet.freshCube = Bullet.transformedCube;
+        Bullet.transformedCube = t;
+
+        Bullet.scratchTransform1 = new Matrix(4, 4);
+        Bullet.scratchTransform2 = new Matrix(4, 4);
+
+        Bullet.glow = ImageLibrary.get('bullet_glow.png');
+    }
 
     constructor(x, y, angle) {
         this.x = x;
         this.y = y;
         this.vx = BULLET_VELOCITY * Math.cos(angle);
         this.vy = BULLET_VELOCITY * Math.sin(angle);
+        this.counter++;
+        this.rotateXSpeed = 2 * 3.14159 / (160 + Random.randomFloat() * 80 - 40);
+        this.rotateYSpeed = 2 * 3.14159 / (160 + Random.randomFloat() * 80 - 40);
+        this.rotateZSpeed = 2 * 3.14159 / (160 + Random.randomFloat() * 80 - 40);
     }
 
     function update() {
         this.x += this.vx;
         this.y += this.vy;
+        this.counter++;
+
+        this.rotateZ = this.counter * this.rotateXSpeed;
+        this.rotateX = this.counter * this.rotateYSpeed;
+        this.rotateZ = this.counter * this.rotateZSpeed;
 
         // remove bullet from scene if it goes off the edge, unlike other sprites which wrap.
         if (this.x < 0 || this.y < 0 || this.x > GAME_WIDTH || this.y > GAME_HEIGHT) {
@@ -29,8 +74,38 @@ class Bullet {
     }
 
     function render() {
+
+        x = Math.floor(this.x) - Bullet.glow.width / 2;
+        y = Math.floor(this.y) - Bullet.glow.height / 2;
+        Bullet.glow.draw(x, y);
+
         left = Math.floor(this.x - BULLET_RADIUS);
         top = Math.floor(this.y - BULLET_RADIUS);
-        Draw.rectangle(left, top, BULLET_RADIUS * 2, BULLET_RADIUS * 2, 100, 255, 100);
+
+        scratch1 = Bullet.scratchTransform1;
+        scratch2 = Bullet.scratchTransform2;
+        Transforms.makeRotateMatrix(scratch1, 'x', this.rotateX);
+        Transforms.makeRotateMatrix(scratch2, 'y', this.rotateY);
+        scratch1.multiplyByMatrix(scratch2);
+        Transforms.makeRotateMatrix(scratch2, 'z', this.rotateZ);
+        scratch1.multiplyByMatrix(scratch2);
+        Transforms.makeTranslateMatrix(scratch2, this.x, this.y, 0);
+        scratch2.multiplyByMatrix(scratch1);
+
+        scratch2.multiplyByMatrix(Bullet.freshCube.pointMatrix, Bullet.transformedCube.pointMatrix);
+
+        cube = Bullet.transformedCube;
+        connectionsA = cube.connectionsA;
+        connectionsB = cube.connectionsB;
+        length = connectionsA.length;
+        values = cube.pointMatrix.toVector(Bullet.pointScratchVector);
+        yOffset = cube.pointCount;
+        for (i = 0; i < length; ++i) {
+            pt1 = connectionsA[i];
+            pt2 = connectionsB[i];
+            Draw.line(values[pt1], values[pt1 + yOffset], values[pt2], values[pt2 + yOffset], 2, 255, 255, 255);
+        }
+
+        //Draw.rectangle(left, top, BULLET_RADIUS * 2, BULLET_RADIUS * 2, 100, 255, 100);
     }
 }

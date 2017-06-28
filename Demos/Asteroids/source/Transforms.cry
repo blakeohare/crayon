@@ -1,0 +1,57 @@
+import Matrices;
+import Math;
+
+class Transforms {
+    @private
+    constructor() {
+
+    }
+
+    static field identity = Matrix.newIdentityMatrix(4);
+
+    static function makeScaleMatrix(matrix, scale) {
+        return matrix
+            .multiplyByScalar(0.0)
+            .addMatrix(Transforms.identity)
+            .multiplyByScalar(scale)
+            .setValue(3, 3, 1.0);
+    }
+
+    static function makeTranslateMatrix(matrix, x, y, z) {
+        matrix
+            .multiplyByScalar(0.0)
+            .addMatrix(Transforms.identity)
+            .setValue(3, 0, x)
+            .setValue(3, 1, y)
+            .setValue(3, 2, z);
+    }
+
+    static function makeRotateMatrix(matrix, axis, theta) {
+        matrix
+            .multiplyByScalar(0.0)
+            .addMatrix(Transforms.identity);
+        c = Math.cos(theta);
+        s = Math.sin(theta);
+        switch (axis) {
+            case 'x':
+                return matrix
+                    .setValue(1, 1, c)
+                    .setValue(2, 1, s)
+                    .setValue(1, 2, -s)
+                    .setValue(2, 2, c);
+            case 'y':
+                return matrix
+                    .setValue(2, 2, c)
+                    .setValue(0, 2, s)
+                    .setValue(2, 0, -s)
+                    .setValue(0, 0, c);
+            case 'z':
+                return matrix
+                    .setValue(0, 0, c)
+                    .setValue(1, 0, s)
+                    .setValue(0, 1, -s)
+                    .setValue(1, 1, c);
+            default: throw new Core.InvalidArgumentException("Axis must be one of the following strings: 'x', 'y', or 'z'");
+        }
+    }
+}
