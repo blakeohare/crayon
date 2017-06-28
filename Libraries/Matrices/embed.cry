@@ -43,7 +43,7 @@
         }
 
         function addMatrix(other, output = null) {
-            return $$lib_matrices_addMatrix(this, other, output) ?? this.argError();
+            return $$lib_matrices_addMatrix(this, other, other is Matrices.Matrix, output, output is Matrices.Matrix) ?? this.argError();
         }
 
         function multiplyByMatrix(other, output = null) {
@@ -51,6 +51,9 @@
         }
 
         function toVector(output) {
+            while (output.length < this.width * this.height) {
+                output.add(0.0);
+            }
             output[0] = $$lib_matrices_getValue(this, 0, 0);
             return $$lib_matrices_toVector(this, output) ?? this.argError();
         }

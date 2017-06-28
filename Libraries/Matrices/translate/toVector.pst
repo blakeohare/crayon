@@ -26,5 +26,5 @@ Value lib_matrices_function_toVector(Array<Value> args) {
         else output[i] = new Value(Types.FLOAT, data[i]);
     }
 
-    return args[0];
+    return args[1];
 }
