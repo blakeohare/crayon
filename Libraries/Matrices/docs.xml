@@ -1,0 +1,6 @@
+<library name="Matricies">
+	<description>Library for performing operations on matrices.</description>
+	<namespace name="Matricies">
+		
+	</namespace>
+</library>
