@@ -1,11 +1,35 @@
 import Graphics2D;
+import Math;
 import Random;
+
+class Star {
+    field size;
+    field x;
+    field y;
+    constructor(size, x, y) {
+        this.size = size;
+        this.x = x;
+        this.y = y;
+    }
+
+    function update(dx, dy) {
+        this.x += dx * this.size;
+        this.y += dy * this.size;
+        if (this.x < 0) this.x += GAME_WIDTH;
+        else if (this.x >= GAME_WIDTH) this.x -= GAME_WIDTH;
+        if (this.y < 0) this.y += GAME_HEIGHT;
+        else if (this.y >= GAME_HEIGHT) this.y -= GAME_HEIGHT;
+    }
+}
 
 class PlayScene : AbstractScene {
 
     field player;
     field asteroids;
     field bullets;
+    field stars;
+
+    field starMovementVector;
 
     constructor(isDemoMode) : base() {
         if (!isDemoMode) {
@@ -14,6 +38,7 @@ class PlayScene : AbstractScene {
 
         this.asteroids = [];
         this.bullets = [];
+        this.stars = [];
 
         // Create 4 asteroids. If there is a player in this scene, check to make sure it
         // doesn't start out in a colliding position.
@@ -23,6 +48,15 @@ class PlayScene : AbstractScene {
             asteroid = new Asteroid(x, y, AsteroidSize.BIG);
             if (this.player == null || !asteroid.isPlayerCollision(this.player)) {
                 this.asteroids.add(asteroid);
+            }
+        }
+
+        direction = Random.randomFloat() * 2 * Math.PI;
+        this.starMovementVector = [Math.cos(direction), Math.sin(direction)];
+        for (starSize = 1; starSize <= 3; starSize++) {
+            for (i = 0; i < 12; ++i) {
+                star = new Star(starSize, Random.randomFloat() * GAME_WIDTH, Random.randomFloat() * GAME_HEIGHT);
+                this.stars.add(star);
             }
         }
     }
@@ -99,10 +133,20 @@ class PlayScene : AbstractScene {
             }
         }
         this.bullets = newBulletList;
+
+        starMoveX = this.starMovementVector[0];
+        starMoveY = this.starMovementVector[1];
+        for (star : this.stars) {
+            star.update(starMoveX, starMoveY);
+        }
     }
 
     function render() {
         Draw.fill(0, 0, 0);
+
+        for (star : this.stars) {
+            Draw.rectangle(star.x, star.y, star.size, star.size, 255, 255, 255);
+        }
 
         for (asteroid : this.asteroids) {
             asteroid.render();

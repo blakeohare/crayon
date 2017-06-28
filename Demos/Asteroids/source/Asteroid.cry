@@ -113,10 +113,6 @@ class Asteroid {
     }
 
     function render() {
-        glow = Asteroid.SIZE_TO_GLOW[this.size];
-        x = Math.floor(this.x) - glow.width / 2;
-        y = Math.floor(this.y) - glow.height / 2;
-        glow.draw(x, y);
 
         transform = Asteroid.TRANSFORM_MATRIX.multiplyByScalar(0).addMatrix(Asteroid.IDENTITY_MATRIX);
         Transforms.rotate(transform, 'x', this.angleRateX * this.counter);
@@ -150,10 +146,28 @@ class Asteroid {
                 break;
         }
 
-        for (i = 0; i < connectionsLength; ++i) {
-            pt1 = connectionsA[i];
-            pt2 = connectionsB[i];
-            Draw.line(values[pt1], values[pt1 + yOffset], values[pt2], values[pt2 + yOffset], 3, r, g, b);
+        glow = Asteroid.SIZE_TO_GLOW[this.size];
+        x = Math.floor(this.x) - glow.width / 2;
+        y = Math.floor(this.y) - glow.height / 2;
+
+        wrapAroundX = [0];
+        wrapAroundY = [0];
+        if (this.x < GAME_WIDTH / 4) wrapAroundX.add(GAME_WIDTH);
+        else if (this.x > 3 * GAME_WIDTH / 4) wrapAroundX.add(-GAME_WIDTH);
+        if (this.y < GAME_HEIGHT / 4) wrapAroundY.add(GAME_HEIGHT);
+        else if (this.y > 3 * GAME_HEIGHT / 4) wrapAroundY.add(-GAME_HEIGHT);
+
+
+        for (wx : wrapAroundX) {
+            for (wy : wrapAroundY) {
+                glow.draw(wx + x, wy + y);
+
+                for (i = 0; i < connectionsLength; ++i) {
+                    pt1 = connectionsA[i];
+                    pt2 = connectionsB[i];
+                    Draw.line(wx + values[pt1], wy + values[pt1 + yOffset], wx + values[pt2], wy + values[pt2 + yOffset], 3, r, g, b);
+                }
+            }
         }
     }
 
