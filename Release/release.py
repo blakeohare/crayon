@@ -66,6 +66,7 @@ def main(args):
 		'ImageWebResources',
 		'Json',
 		'Math',
+		'Matrices',
 		'Random',
 		'Resources',
 		'SRandom',
