@@ -1,0 +1,4 @@
+NAME: Graphics2DText
+AUTHOR: Blake O'Hare
+DOCUMENTATION: http://crayonlang.org/docs/0.2.0/graphics2dtext
+DESCRIPTION: Render text for Game and Graphics2D-based games

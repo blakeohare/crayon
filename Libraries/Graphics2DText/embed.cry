@@ -1,0 +1,307 @@
+﻿/*
+    On some level, some sort of font resource needs to be cached.
+    What is defined as a font resource varies from platform to platform
+    
+    For Python, it's the font face, size, style
+    
+    For Java, it's just the font
+    
+    For JavaScript, there's nothing. You pass the font name as a string to the draw context for each use
+    - although, for JS, the process for checking if a font is a little weird.
+
+    For OpenGL a collection of texture atlases are created.
+    - first each character is rendered at size 36 in individual images
+    - these characters are stored in a several layer cache
+    - each time a character is used it's moved to the top cache
+    - every minute or so each cache layer is demoted
+    - every once in a while a series of textures are created
+    - if there are less than 200 characters rendered by the font, no cache churning occurs
+    - each cache/texture system is keyed off font face, size, and style
+    - coloring is handled by the fragment shader
+    - note that rendering rapidly changing characters (of something like chinese) at size 72 could kill performance, but that's an edge case
+*/
+namespace Graphics2DText {
+
+    /*
+        Wraps a native font font instance.
+        Almost all platforms have some sort of notion of a font object.
+        What properties of a font constitutes a unique font object varies, though.
+        This class encompasses whatever that notion is.
+
+        nativeData[0] -> native font instance
+
+
+    */
+    class NativeFontInstance {
+
+        field key;
+
+        static field _nativeFontInstances = {};
+
+        @private
+        constructor(type, id, size, style, r, g, b) {
+            this.key = NativeFontInstance.getUniqueKey(type, id, size, r, g, b, style);
+            $$$('allocNativeData', 1);
+            output = [0] * 2;
+            $$lib_graphics2dtext_createNativeFont(this, type, id, size, r, g, b, style, output);
+            status = output[0];
+            switch (output[0]) {
+                case 0: break; // all is fine
+                case 1: throw new FontNotFoundException("Font not installed: '" + output[1] + "'");
+                case 2: throw new FontNotFoundException("Font resource not found: '" + output[1] + "'");
+                default: throw new Exception(); // this won't happen
+            }
+        }
+
+        static function get(type, id, size, style, r, g, b) {
+            key = NativeFontInstance.getUniqueKey(type, id, size, r, g, b, style);
+            nativeFont = NativeFontInstance._nativeFontInstances.get(key);
+            if (nativeFont == null) {
+                nativeFont = new NativeFontInstance(type, id, size, style, r, g, b);
+                NativeFontInstance._nativeFontInstances[key] = nativeFont;
+            }
+        }
+
+        static function getUniqueKey(type, id, size, r, g, b, style) {
+            output = []
+            $$lib_graphics2dtext_getNativeFontUniqueKey(output, face, clss, size, style, r, g, b);
+            return output.join('|');
+        }
+    }
+
+    class FontNotFoundException : Core.Exception { }
+
+    enum FontSourceType {
+        DEFAULT = 0,
+        RESOURCE = 1,
+        FILE = 2,
+        SYSTEM = 3,
+    }
+
+    enum FontClass {
+        Serif = 1,
+        SansSerif = 2,
+        Monospace = 3,
+    }
+
+    enum FontStyle {
+        NORMAL = 0,
+        BOLD = 1,
+        ITALIC = 2,
+        BOLD_ITALIC = 3, // bit mask of BOLD | ITALIC
+    }
+
+    class FontRenderer {
+        field font;
+        field size = 12;
+        field style = FontStyle.NORMAL;
+        field r = 255;
+        field g = 255;
+        field b = 255;
+
+        field _native = null;
+        field _settingsKey = null;
+        static field _textureCache = {};
+
+        function constructor(font) {
+            if (!(font is Graphics2DText.FontResource)) throw new InvalidArgumentException("Expected a FontResource instance");
+            this.font = font;
+        }
+
+        function setColor(r, g, b) {
+            // TODO: verify args
+            this.r = r;
+            this.g = g;
+            this.b = b;
+            this._native = null;
+            this._settingsKey = null;
+            return this;
+        }
+
+        function setSize(size) {
+            // TODO: verify args
+            this.size = size;
+            this._native = null;
+            this._settingsKey = null;
+            return this;
+        }
+
+        function setStyle(style) {
+            // TODO: verify args
+            this.style = style;
+            this._native = null;
+            this._settingsKey = null;
+            return this;
+        }
+
+        function render(text) {
+            if (this._native == null) {
+                this._native = NativeFontInstance.get(type, id, size, style, r, g, b);
+                this._settingsKey = [type, id, size, style, r, g, b].join(':');
+            }
+
+            textureKey = this._settingsKey + '\n' + text;
+            texture = FontRenderer._textureCache.get(textureKey);
+            if (texture == null) {
+                texture = new TextSurface();
+                output = [0, 0];
+                type, id, size, style, r, g, b
+                $$lib_graphics2dtext_renderText(
+                    output,
+                    texture,
+                    this._native,
+                    this.font._sourceType,
+                    this.font._source,
+                    this.size,
+                    this.style,
+                    this.r,
+                    this.g,
+                    this.b);
+                texture.width = output[0];
+                texture.height = output[1];
+                FontRenderer._textureCache[textureKey] = texture;
+            }
+
+            return texture;
+        }
+    }
+
+    class FontResource {
+        field _sourceType;
+        field _source;
+
+        @private
+        constructor(type id, sourceType) {
+            this._id = id;
+            this._source = source;
+        }
+
+        function getRenderer(size, style = FontStyle.NORMAL) {
+            return new FontRenderer(this, size, style);
+        }
+        
+        static field _cache = {};
+
+        static function _getKey(sourceType, source) {
+            return sourceType + source;
+        }
+
+        static function _get(sourceType, source) {
+            key = sourceType + source;
+            font = FontResource._cache.get(key);
+            if (font == null) {
+                font = new FontResource(sourceType, source);
+                FontResource._cache[key] = font;
+            }
+            return font;
+        }
+
+        static function fromResource(path) {
+            if (!$$lib_graphics2dtext_isResourceAvailable(path)) {
+                throw new FontNotFoundException("Font resource not found: '" + path + "'");
+            }
+            return FontResource._get(FontSourceType.RESOURCE, path);
+        }
+
+        static function fromDisk(path) {
+            throw new NotImplementedException();
+        }
+
+        static function fromSystem(name) {
+            if (!FontResource.isSystemFontPresent(name)) {
+                throw new FontNotFoundException("Font not installed: '" + path + "'");
+            }
+            return FontResource._get(FontSourceType.SYSTEM, name);
+        }
+
+        static function isSystemFontPresent(name) {
+            return $$lib_graphics2dtext_isSystemFontPresent(name);
+        }
+
+        static function getDefaultSerifFont() {
+            return FontResource._get(FontSourceType.DEFAULT, FontClass.SERIF);
+        }
+
+        static function getDefaultSansSerifFont() {
+            return FontResource._get(FontSourceType.DEFAULT, FontClass.SANS_SERIF);
+        }
+
+        static function getDefaultMonospaceFont() {
+            return FontResource._get(FontSourceType.DEFAULT, FontClass.MONOSPACE);
+        }
+    }
+
+    /*
+        Presents itself as something similar to a GraphicsTexture that can be drawn to the screen.
+        The actual implementation may vary depending on the platform.
+        It may either be a cached image or a set of drawing instructions.
+    */
+    class TextSurface {
+        field _glRenderer = null;
+        field width;
+        field height;
+
+        constructor() {
+            /*
+                for bitmap based platforms...
+                nativeData[0] -> a native image object such as a pygame.Surface
+                
+                for GL based platforms:
+                nativeData[0] -> an int[] of x coordinates
+                nativeData[1] -> an int[] of y coordinates
+                nativeData[2] -> a int[] of character codes
+                nativeData[3] -> red
+                nativeData[4] -> green
+                nativeData[5] -> blue
+            */
+        }
+
+        function draw(x, y) {
+            throw new NotImplementedException();
+        }
+
+        function drawWithAlpha(x, y) {
+            throw new NotImplementedException();
+        }
+    }
+
+    //////////////////////
+    // Below are all the classes required for GL rendering.
+    // Since there's so much bookkeeping, it's best to do this in high-level Crayon code.
+    // This is a waste of byte code for non-GL platforms, but that's okay.
+    //////////////////////
+
+    /*
+        A GL renderer juggles around some textures
+    */
+    class GLRenderer {
+        /*
+            nativeData[0] -> some sort of native font resource the system can use to generate
+                bitmaps that can be loaded as textures
+        */
+
+        field sheets = [];
+        field sheetByCharId = {};
+        field tileByChardId = {};
+    }
+
+    /*
+        nativeData[0] -> a bitmap instance
+    */
+    class GLTile {
+        field charId;
+        field width;
+        field height;
+        field currentTextureId;
+        field sheet;
+        field sheetX;
+        field sheetY;
+        field lastUsed;
+    }
+
+    class GLTextureSheet {
+        field id;
+        field tiles;
+        field tilesByCharId;
+    }
+}

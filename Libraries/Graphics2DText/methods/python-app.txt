@@ -1,0 +1,1 @@
+$_lib_graphics2dtext_loadFont: _foo([ARG:1])
