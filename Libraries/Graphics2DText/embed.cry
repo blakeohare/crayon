@@ -277,12 +277,45 @@ namespace Graphics2DText {
     class GLRenderer {
         /*
             nativeData[0] -> some sort of native font resource the system can use to generate
-                bitmaps that can be loaded as textures
+                bitmaps that can be loaded as textures.
+                This is a little more heavy duty than the NativeFontInstance as it contains 
+                size and style information too.
+            nativeData[1] -> a nullable int-to-int dictionary that maps char code ID's to texture ID's
+                set to null to invalidate and reconstruct
         */
 
         field sheets = [];
         field sheetByCharId = {};
         field tileByChardId = {};
+        static field unknownChars = [];
+
+        function render(textSurface) {
+            status = $$lib_graphics2dtext_renderTextSurface(textSurface, GLRenderer.unknownChars);
+            switch (status) {
+                case 0: // it worked splendidly
+                case 1: // some characters were unknown and need to be generated
+                    tiles = [];
+                    now = Core.currentTime();
+                    for (chardId in GLRenderer.unknownChars) {
+                        tile = new GLTile(this, charId);
+                        tile.lastUsed = now;
+                        tiles.add(tile);
+                    }
+                    GLRenderer.unknownChars.clear();
+                    // TODO: create a new texture
+                    break;
+            }
+        }
+
+        /*
+            If there are two or more textures that are less than or equal to 512 x 512, then trigger a reconsolidation
+            This is called once per frame.
+
+            // TODO: add this to a Game frame end callback
+        */
+        function consolidate() {
+            throw new NotImplementedException();
+        }
     }
 
     /*
@@ -297,11 +330,23 @@ namespace Graphics2DText {
         field sheetX;
         field sheetY;
         field lastUsed;
+        field renderer;
+
+        constructor(renderer, charId) {
+            this.charId = charId;
+            this.renderer = renderer;
+            $$$('allocNativeData', this, 1);
+            size = [0, 0];
+            $$lib_graphics2dtext_renderCharTile(renderer, this, charId, size);
+            this.width = size[0];
+            this.height = size[1];
+        }
     }
 
     class GLTextureSheet {
         field id;
         field tiles;
         field tilesByCharId;
+        field renderer;
     }
 }
