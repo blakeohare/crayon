@@ -1,11 +1,11 @@
 ﻿/*
     On some level, some sort of font resource needs to be cached.
     What is defined as a font resource varies from platform to platform
-    
+
     For Python, it's the font face, size, style
-    
+
     For Java, it's just the font
-    
+
     For JavaScript, there's nothing. You pass the font name as a string to the draw context for each use
     - although, for JS, the process for checking if a font is a little weird.
 
@@ -65,15 +65,15 @@ namespace Graphics2DText {
         static function getUniqueKey(type, id, size, r, g, b, style) {
             output = [];
             $$lib_graphics2dtext_getNativeFontUniqueKey(
-				// convert everything to strings
-				type + '', id + '', size + '', r + '', g + '', b + '', style + '',
-				output);
+                // convert everything to strings
+                type + '', id + '', size + '', r + '', g + '', b + '', style + '',
+                output);
             return output.join('|');
         }
     }
 
-    class FontNotFoundException : Core.Exception { 
-		constructor(m) : base (m, null) { }
+    class FontNotFoundException : Core.Exception {
+        constructor(m) : base (m, null) { }
     }
 
     enum FontSourceType {
@@ -142,19 +142,19 @@ namespace Graphics2DText {
         function render(text) {
             if (this._native == null) {
                 this._native = NativeFontInstance.get(
-					this.font._sourceType, this.font._sourceId, 
-					this.size, this.style, this.r, this.g, this.b);
-				
-				// don't recycle the native font key for this since the native key will
-				// drop attributes that aren't part of an allocated font face instance.
-				// We need all attributes in this key.
-                this._settingsKey = 
-					[
-						this.font._sourceType, this.font._source, 
-						this.size,
-						this.style, 
-						this.r, this.g, this.b
-					].join(':');
+                    this.font._sourceType, this.font._sourceId,
+                    this.size, this.style, this.r, this.g, this.b);
+
+                // don't recycle the native font key for this since the native key will
+                // drop attributes that aren't part of an allocated font face instance.
+                // We need all attributes in this key.
+                this._settingsKey =
+                    [
+                        this.font._sourceType, this.font._source,
+                        this.size,
+                        this.style,
+                        this.r, this.g, this.b
+                    ].join(':');
             }
 
             textureKey = this._settingsKey + '\n' + text;
@@ -195,7 +195,7 @@ namespace Graphics2DText {
         function getRenderer() {
             return new FontRenderer(this);
         }
-        
+
         static field _cache = {};
 
         static function _getKey(sourceType, source) {
@@ -261,7 +261,7 @@ namespace Graphics2DText {
             /*
                 for bitmap based platforms...
                 nativeData[0] -> a native image object such as a pygame.Surface
-                
+
                 for GL based platforms:
                 nativeData[0] -> an int[] of x coordinates
                 nativeData[1] -> an int[] of y coordinates
@@ -294,7 +294,7 @@ namespace Graphics2DText {
         /*
             nativeData[0] -> some sort of native font resource the system can use to generate
                 bitmaps that can be loaded as textures.
-                This is a little more heavy duty than the NativeFontInstance as it contains 
+                This is a little more heavy duty than the NativeFontInstance as it contains
                 size and style information too.
             nativeData[1] -> a nullable int-to-int dictionary that maps char code ID's to texture ID's
                 set to null to invalidate and reconstruct
