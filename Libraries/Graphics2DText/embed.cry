@@ -63,13 +63,18 @@ namespace Graphics2DText {
         }
 
         static function getUniqueKey(type, id, size, r, g, b, style) {
-            output = []
-            $$lib_graphics2dtext_getNativeFontUniqueKey(output, face, clss, size, style, r, g, b);
+            output = [];
+            $$lib_graphics2dtext_getNativeFontUniqueKey(
+				// convert everything to strings
+				type + '', id + '', size + '', r + '', g + '', b + '', style + '',
+				output);
             return output.join('|');
         }
     }
 
-    class FontNotFoundException : Core.Exception { }
+    class FontNotFoundException : Core.Exception { 
+		constructor(m) : base (m, null) { }
+    }
 
     enum FontSourceType {
         DEFAULT = 0,
@@ -79,9 +84,9 @@ namespace Graphics2DText {
     }
 
     enum FontClass {
-        Serif = 1,
-        SansSerif = 2,
-        Monospace = 3,
+        SERIF = 1,
+        SANS_SERIF = 2,
+        MONOSPACE = 3,
     }
 
     enum FontStyle {
@@ -103,7 +108,7 @@ namespace Graphics2DText {
         field _settingsKey = null;
         static field _textureCache = {};
 
-        function constructor(font) {
+        constructor(font) {
             if (!(font is Graphics2DText.FontResource)) throw new InvalidArgumentException("Expected a FontResource instance");
             this.font = font;
         }
@@ -136,8 +141,20 @@ namespace Graphics2DText {
 
         function render(text) {
             if (this._native == null) {
-                this._native = NativeFontInstance.get(type, id, size, style, r, g, b);
-                this._settingsKey = [type, id, size, style, r, g, b].join(':');
+                this._native = NativeFontInstance.get(
+					this.font._sourceType, this.font._sourceId, 
+					this.size, this.style, this.r, this.g, this.b);
+				
+				// don't recycle the native font key for this since the native key will
+				// drop attributes that aren't part of an allocated font face instance.
+				// We need all attributes in this key.
+                this._settingsKey = 
+					[
+						this.font._sourceType, this.font._source, 
+						this.size,
+						this.style, 
+						this.r, this.g, this.b
+					].join(':');
             }
 
             textureKey = this._settingsKey + '\n' + text;
@@ -145,7 +162,6 @@ namespace Graphics2DText {
             if (texture == null) {
                 texture = new TextSurface();
                 output = [0, 0];
-                type, id, size, style, r, g, b
                 $$lib_graphics2dtext_renderText(
                     output,
                     texture,
@@ -171,13 +187,13 @@ namespace Graphics2DText {
         field _source;
 
         @private
-        constructor(type id, sourceType) {
-            this._id = id;
+        constructor(source, sourceType) {
             this._source = source;
+            this._sourceType = sourceType;
         }
 
-        function getRenderer(size, style = FontStyle.NORMAL) {
-            return new FontRenderer(this, size, style);
+        function getRenderer() {
+            return new FontRenderer(this);
         }
         
         static field _cache = {};
@@ -209,7 +225,7 @@ namespace Graphics2DText {
 
         static function fromSystem(name) {
             if (!FontResource.isSystemFontPresent(name)) {
-                throw new FontNotFoundException("Font not installed: '" + path + "'");
+                throw new FontNotFoundException("Font not installed: '" + name + "'");
             }
             return FontResource._get(FontSourceType.SYSTEM, name);
         }
@@ -296,7 +312,7 @@ namespace Graphics2DText {
                 case 1: // some characters were unknown and need to be generated
                     tiles = [];
                     now = Core.currentTime();
-                    for (chardId in GLRenderer.unknownChars) {
+                    for (charId : GLRenderer.unknownChars) {
                         tile = new GLTile(this, charId);
                         tile.lastUsed = now;
                         tiles.add(tile);
