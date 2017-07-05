@@ -34,6 +34,6 @@
         output[1] -> name of the font (only if status 0 is not returned)
 
 */
-Value lib_grahics2dtext_function_createNativeFont(Array<Value> args) {
+Value lib_graphics2dtext_function_createNativeFont(Array<Value> args) {
     return VALUE_NULL;
 }

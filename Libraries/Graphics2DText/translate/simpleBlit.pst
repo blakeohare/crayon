@@ -9,6 +9,6 @@
     args[3] -> y
     args[4] -> alpha
 */
-Value lib_grahics2dtext_function_simpleBlit(Array<Value> args) {
+Value lib_graphics2dtext_function_simpleBlit(Array<Value> args) {
     return VALUE_NULL;
 }

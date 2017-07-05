@@ -14,6 +14,6 @@
         output[1] -> the height of the image
 
 */
-Value lib_grahics2dtext_function_glRenderCharTile(Array<Value> args) {
+Value lib_graphics2dtext_function_glRenderCharTile(Array<Value> args) {
     return VALUE_NULL;
 }

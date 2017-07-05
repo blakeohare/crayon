@@ -11,6 +11,6 @@
     Populates the renderer in args[0].nativeData[0]
 
 */
-Value lib_grahics2dtext_function_glGetBitmapTileRenderer(Array<Value> args) {
+Value lib_graphics2dtext_function_glGetBitmapTileRenderer(Array<Value> args) {
     return VALUE_NULL;
 }

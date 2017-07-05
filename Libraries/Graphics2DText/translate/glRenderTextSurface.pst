@@ -6,6 +6,6 @@
     0 -> OK
     1 -> nothing rendered. Some characters were unknown which were added to the char ID output list.
 */
-Value lib_grahics2dtext_function_glRenderTextSurface(Array<Value> args) {
+Value lib_graphics2dtext_function_glRenderTextSurface(Array<Value> args) {
     return VALUE_NULL;
 }

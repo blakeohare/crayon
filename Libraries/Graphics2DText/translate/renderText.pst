@@ -17,6 +17,6 @@
 
     no output, but the size must be applied the size out list
 */
-Value lib_grahics2dtext_function_renderText(Array<Value> args) {
+Value lib_graphics2dtext_function_renderText(Array<Value> args) {
     return VALUE_NULL;
 }
