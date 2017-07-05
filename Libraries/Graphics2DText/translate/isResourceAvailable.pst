@@ -1,5 +1,7 @@
 /*
+    args[0] -> resource path to font file
 
+    returns boolean
 */
 Value lib_grahics2dtext_function_isResourceAvailable(Array<Value> args) {
     return VALUE_NULL;

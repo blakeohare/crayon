@@ -1,0 +1,14 @@
+/*
+    Adds a blit to the Graphics2D.Draw._queue
+
+    args[0] -> TextSurface instance
+        nativeData[0] -> a bitmap of the rendered text
+    args[1] -> Graphics2D.Draw._queue
+        nativeData[0] -> ...
+    args[2] -> x
+    args[3] -> y
+    args[4] -> alpha
+*/
+Value lib_grahics2dtext_function_simpleBlit(Array<Value> args) {
+    return VALUE_NULL;
+}

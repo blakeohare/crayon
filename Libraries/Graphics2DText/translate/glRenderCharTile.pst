@@ -1,4 +1,17 @@
 /*
+    args[0] -> GLRenderer
+        nativeData[0] -> native tile renderer object
+    args[1] -> GLTile
+        nativeData[0] -> bitmap instance that can be blitted and consolidated
+        nativeData[1] -> pixel width
+        nativeData[2] -> pixel height
+
+        ... there are more nativeData values, but those are not populated here
+
+    args[2] -> character ID
+    args[3] -> output list for size information
+        output[0] -> the width of the image
+        output[1] -> the height of the image
 
 */
 Value lib_grahics2dtext_function_glRenderCharTile(Array<Value> args) {

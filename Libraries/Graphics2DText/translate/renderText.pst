@@ -1,5 +1,21 @@
 /*
+    This is only called for non-GL platforms
 
+    args[0] -> size out list (list of size two that the final size should be applied to
+    args[1] -> TextSurface instance with native data.
+        nativeData[0] -> apply the native platform bitmap (one that the platform can blit to the screen)
+    args[2] -> NativeFont instance with native data
+        nativeData[0] -> the native font
+    args[3] -> source type
+    args[4] -> source ID
+    args[5] -> font size
+    args[6] -> font style
+    args[7] -> red
+    args[8] -> green
+    args[9] -> blue
+    args[10] -> the text
+
+    no output, but the size must be applied the size out list
 */
 Value lib_grahics2dtext_function_renderText(Array<Value> args) {
     return VALUE_NULL;

@@ -1,4 +1,37 @@
 /*
+    args[0] -> NativeFontInstance (nativeData array already allocated)
+    args[1] -> type
+        FontSourceType:
+        0 -> default for style (serif, sans-serif, monospace)
+        1 -> resource
+        2 -> file
+        3 -> system installed font
+    args[2] -> id
+        This value varies depending on the type
+        for default, this is the enum value of FontClass
+            1 -> serif
+            2 -> sans serif
+            3 -> monosapce
+        for resource, this is the resource path
+        for file, this is the file path
+        for system font, this is just the name
+    args[3] -> size (float)
+    args[4] -> red
+    args[5] -> green
+    args[6] -> blue
+    args[7] -> style bitmask
+        0 -> normal
+        1 -> bold
+        2 -> italic
+        3 -> bold + italic (this will always be a valid bitmask)
+
+    args[8] -> output
+        a list of size two for output data
+        output[0] -> status code
+            0 -> OK
+            1 -> font not installed
+            2 -> font resource not found
+        output[1] -> name of the font (only if status 0 is not returned)
 
 */
 Value lib_grahics2dtext_function_createNativeFont(Array<Value> args) {

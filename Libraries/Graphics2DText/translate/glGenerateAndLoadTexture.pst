@@ -1,0 +1,11 @@
+/*
+    args[0] -> list of x coordinates
+    args[1] -> list of y coordinates
+    args[2] -> list of GLTile instances. Each has native data
+        nativeData[0] -> TODO: fill this in
+    args[3] -> total height of the rectangle packing result
+        you'll need to generate an image with a height that's a power of 2 above this value
+*/
+Value lib_grahics2dtext_function_glGenerateAndLoadTexture(Array<Value> args) {
+    return VALUE_NULL;
+}

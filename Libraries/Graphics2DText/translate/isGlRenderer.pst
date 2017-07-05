@@ -1,6 +1,9 @@
 /*
+    no args
 
+    returns boolean
 */
 Value lib_grahics2dtext_function_isGlRenderer(Array<Value> args) {
-    return VALUE_NULL;
+    // TODO: define a constnat in the manifest
+    return VALUE_FALSE;
 }

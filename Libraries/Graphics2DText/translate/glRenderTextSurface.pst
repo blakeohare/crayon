@@ -1,5 +1,10 @@
 /*
+    args[0] -> TextSurface
+    args[1] -> list of character IDs (Values of ints)
 
+    returns a status code
+    0 -> OK
+    1 -> nothing rendered. Some characters were unknown which were added to the char ID output list.
 */
 Value lib_grahics2dtext_function_glRenderTextSurface(Array<Value> args) {
     return VALUE_NULL;
