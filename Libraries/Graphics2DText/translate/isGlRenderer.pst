@@ -1,0 +1,6 @@
+/*
+
+*/
+Value lib_grahics2dtext_function_isGlRenderer(Array<Value> args) {
+    return VALUE_NULL;
+}

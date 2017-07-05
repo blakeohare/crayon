@@ -1,11 +1,14 @@
-﻿/*
+﻿import Graphics2D;
+import Math;
+
+/*
     On some level, some sort of font resource needs to be cached.
     What is defined as a font resource varies from platform to platform
-    
+
     For Python, it's the font face, size, style
-    
+
     For Java, it's just the font
-    
+
     For JavaScript, there's nothing. You pass the font name as a string to the draw context for each use
     - although, for JS, the process for checking if a font is a little weird.
 
@@ -19,20 +22,28 @@
     - each cache/texture system is keyed off font face, size, and style
     - coloring is handled by the fragment shader
     - note that rendering rapidly changing characters (of something like chinese) at size 72 could kill performance, but that's an edge case
+
 */
 namespace Graphics2DText {
 
     /*
+        This class is not exposed to the user.
+
         Wraps a native font font instance.
         Almost all platforms have some sort of notion of a font object.
         What properties of a font constitutes a unique font object varies, though.
         This class encompasses whatever that notion is.
 
-        nativeData[0] -> native font instance
+        nativeData[0] -> native font instance. This will be:
+            - JS -> a simple struct with the attributes in it
+            - PyGame -> a pygame.font.Font instance
+            - Java -> a java.awt.Font instance
+            - C# -> a font object
 
+        nativeData[1] -> A GLRenderer instance (only on GL-based platforms), not set otherwise)
 
     */
-    class NativeFontInstance {
+    class NativeFont {
 
         field key;
 
@@ -40,40 +51,48 @@ namespace Graphics2DText {
 
         @private
         constructor(type, id, size, style, r, g, b) {
-            this.key = NativeFontInstance.getUniqueKey(type, id, size, r, g, b, style);
+            // Native code must generate the key because some of these attributes will be dropped.
+            // For example, PyGame has a single font instance no matter what color, but a font instance changes
+            // depending on the size and style. Therefore r/g/b will be dropped, but the others must be part of
+            // the unique key.
+            this.key = NativeFont.getUniqueKey(type, id, size, r, g, b, style);
+
             $$$('allocNativeData', 1);
-            output = [0] * 2;
+            output = [0, 0];
+            // assigns native font instance to native data
             $$lib_graphics2dtext_createNativeFont(this, type, id, size, r, g, b, style, output);
+
             status = output[0];
+            msg = output[1];
             switch (output[0]) {
                 case 0: break; // all is fine
-                case 1: throw new FontNotFoundException("Font not installed: '" + output[1] + "'");
-                case 2: throw new FontNotFoundException("Font resource not found: '" + output[1] + "'");
+                case 1: throw new FontNotFoundException("Font not installed: '" + msg + "'");
+                case 2: throw new FontNotFoundException("Font resource not found: '" + msg + "'");
                 default: throw new Exception(); // this won't happen
             }
         }
 
         static function get(type, id, size, style, r, g, b) {
-            key = NativeFontInstance.getUniqueKey(type, id, size, r, g, b, style);
-            nativeFont = NativeFontInstance._nativeFontInstances.get(key);
+            key = NativeFont.getUniqueKey(type, id, size, r, g, b, style);
+            nativeFont = NativeFont._nativeFontInstances.get(key);
             if (nativeFont == null) {
-                nativeFont = new NativeFontInstance(type, id, size, style, r, g, b);
-                NativeFontInstance._nativeFontInstances[key] = nativeFont;
+                nativeFont = new NativeFont(type, id, size, style, r, g, b);
+                NativeFont._nativeFontInstances[key] = nativeFont;
             }
         }
 
         static function getUniqueKey(type, id, size, r, g, b, style) {
             output = [];
             $$lib_graphics2dtext_getNativeFontUniqueKey(
-				// convert everything to strings
-				type + '', id + '', size + '', r + '', g + '', b + '', style + '',
-				output);
+                // convert everything to strings
+                type + '', id + '', size + '', r + '', g + '', b + '', style + '',
+                output);
             return output.join('|');
         }
     }
 
-    class FontNotFoundException : Core.Exception { 
-		constructor(m) : base (m, null) { }
+    class FontNotFoundException : Core.Exception {
+        constructor(m) : base (m, null) { }
     }
 
     enum FontSourceType {
@@ -96,17 +115,32 @@ namespace Graphics2DText {
         BOLD_ITALIC = 3, // bit mask of BOLD | ITALIC
     }
 
+    /*
+        Renders a specific font face, style, size, and color.
+
+
+    */
     class FontRenderer {
-        field font;
+
+        field font; // a FontResource instance
+
         field size = 12;
         field style = FontStyle.NORMAL;
         field r = 255;
         field g = 255;
         field b = 255;
 
-        field _native = null;
-        field _settingsKey = null;
-        static field _textureCache = {};
+
+        // Both of these are cleared every time an attribute is updated.
+        // These are repopulated when you call render(text).
+        field _native = null; // NativeFont
+        field _settingsKey = null; // A string key that uniquely identifies text appearance encompasing all attributes. Used as part of the texture cache
+
+
+        static field _textureCache = {}; // A cache of previously rendered images so that drawing the same text in multiple frames is done quickly
+
+        // TODO: make the texture cache a layered dictionary where the first key is the the settings key and the secondary key is the text itself
+        // That will reduce memory churn of concatenating these two strings every time it's rendered.
 
         constructor(font) {
             if (!(font is Graphics2DText.FontResource)) throw new InvalidArgumentException("Expected a FontResource instance");
@@ -141,26 +175,26 @@ namespace Graphics2DText {
 
         function render(text) {
             if (this._native == null) {
-                this._native = NativeFontInstance.get(
-					this.font._sourceType, this.font._sourceId, 
-					this.size, this.style, this.r, this.g, this.b);
-				
-				// don't recycle the native font key for this since the native key will
-				// drop attributes that aren't part of an allocated font face instance.
-				// We need all attributes in this key.
-                this._settingsKey = 
-					[
-						this.font._sourceType, this.font._source, 
-						this.size,
-						this.style, 
-						this.r, this.g, this.b
-					].join(':');
+                this._native = NativeFont.get(
+                    this.font._sourceType, this.font._sourceId,
+                    this.size, this.style, this.r, this.g, this.b);
+
+                // don't recycle the native font key for this since the native key will
+                // drop attributes that aren't part of an allocated font face instance.
+                // We need all attributes in this key.
+                this._settingsKey =
+                    [
+                        this.font._sourceType, this.font._source,
+                        this.size,
+                        this.style,
+                        this.r, this.g, this.b
+                    ].join(':');
             }
 
             textureKey = this._settingsKey + '\n' + text;
             texture = FontRenderer._textureCache.get(textureKey);
             if (texture == null) {
-                texture = new TextSurface(this);
+                texture = new TextSurface(this, text + '');
                 FontRenderer._textureCache[textureKey] = texture;
             }
 
@@ -181,7 +215,7 @@ namespace Graphics2DText {
         function getRenderer() {
             return new FontRenderer(this);
         }
-        
+
         static field _cache = {};
 
         static function _getKey(sourceType, source) {
@@ -247,7 +281,7 @@ namespace Graphics2DText {
             /*
                 for bitmap based platforms:
                 nativeData[0] -> a native image object such as a pygame.Surface or JS canvas
-                
+
                 for GL based platforms:
                 nativeData[0] -> unused
                 nativeData[1] -> an int[] of x coordinates
@@ -257,12 +291,14 @@ namespace Graphics2DText {
                 nativeData[5] -> green
                 nativeData[6] -> blue
             */
-            
-            if ($$$lib_graphics2dtext_isGlRenderer()) {
-				$$$('allocNativeData', this, 7);
+
+            if ($$lib_graphics2dtext_isGlRenderer()) {
+                $$$('allocNativeData', this, 7);
+
+                throw new NotImplementedException();
             } else {
-				$$$('allocNativeData', this, 1);
-				
+                $$$('allocNativeData', this, 1);
+
                 sizeOut = [0, 0];
                 $$lib_graphics2dtext_renderText(
                     sizeOut,
@@ -279,19 +315,19 @@ namespace Graphics2DText {
                 this.width = sizeOut[0];
                 this.height = sizeOut[1];
             }
-            
+
         }
 
-		function _refreshGlRenderer() {
-			this._glRenderer
-		}
+        function _refreshGlRenderer() {
+            throw new Core.NotImplementedException();
+        }
 
         function draw(x, y) {
-            throw new NotImplementedException();
+            $$lib_graphics2dtext_simpleBlit(this, Graphics2D.Draw._queue, x, y, 255);
         }
 
-        function drawWithAlpha(x, y) {
-            throw new NotImplementedException();
+        function drawWithAlpha(x, y, alpha) {
+            $$lib_graphics2dtext_simpleBlit(this, Graphics2D.Draw._queue, x, y, alpha);
         }
     }
 
@@ -303,17 +339,19 @@ namespace Graphics2DText {
 
     /*
         A GL renderer juggles around some textures
-        
+
         A GL instance always stays alive.
         They are only created on a unique (font, style, size) basis
         They will unload their textures if unused and will essentially take up no space, so having a
-		lifetime tied to the life of the app is okay.
+        lifetime tied to the life of the app is okay.
+
+        nativeData[0] -> some native object that takes in a character code and generates a bitmap.
     */
     class GLRenderer {
         /*
             nativeData[0] -> some sort of native font resource the system can use to generate
                 bitmaps that can be loaded as textures.
-                This is a little more heavy duty than the NativeFontInstance as it contains 
+                This is a little more heavy duty than the NativeFont as it contains
                 size and style information too.
             nativeData[1] -> a nullable int-to-int dictionary that maps char code ID's to texture ID's
                 set to null to invalidate and reconstruct
@@ -321,48 +359,53 @@ namespace Graphics2DText {
 
         field sheets = [];
         field sheetByCharId = {};
-        field tileByChardId = {};
+        field tileByCharId = {};
         static field unknownChars = [];
 
-		@private
-		constructor() { }
-		
-		static function getRenderer(sourceType, sourceId, size, style) {
-			key = font
-		}
+        constructor(sourceType, sourceId, size, style) {
+            $$$('allocNativeData', this, 1);
+            $$lib_graphics2dtext_glGetBitmapTileRenderer(
+                this, sourceType, sourceId, size, style);
+        }
 
-		function ensureCharactersExistAndCalculateSize(text, sizeOut) {
-			width = 0;
-			height = 0;
-			newTiles = null;
-			for (c : text) {
-				if (c == ' ') c = 'v'; // use lowercase v for space allocation purposes
-				if (c == '\n') throw new NotImplementedException();
-				charId = Core.ord(c);
-				tile = tileByCharId.get(charId);
-				if (tile == null) {
-					retry = true;
-					tile = new GLTile(this, charId);
-					if (newTiles == null) newTiles = [];
-					newTiles.add(tile);
-				}
-				
-				height = Math.max(height, tile.height);
-				width = Math.max(width, tile.width);
-			}
-			
-			if (newTiles != null) {
-				// Just dump all of them into one new sheet.
-				// The consolidator will run at the end of the frame and make the packing better.
-				sheet = new GLTextureSheet(newTiles);
-				
-				// TODO: load textures
-				throw new NotImplementedException();
-			}
-			
-			sizeOut[0] = width;
-			sizeOut[1] = height;
-		}
+        function ensureCharactersExistAndCalculateSize(text, sizeOut) {
+            width = 0;
+            height = 0;
+            newTiles = null;
+            for (c : text) {
+                if (c == ' ') c = 'v'; // use lowercase v for space allocation purposes
+                if (c == '\n') throw new NotImplementedException();
+                charId = Core.ord(c);
+                tile = this.tileByCharId.get(charId);
+                if (tile == null) {
+                    retry = true;
+                    tile = new GLTile(this, charId);
+                    if (newTiles == null) newTiles = [];
+                    newTiles.add(tile);
+                }
+
+                height = Math.max(height, tile.height);
+                width = Math.max(width, tile.width);
+            }
+
+            if (newTiles != null) {
+                // Just dump all of them into new sheets.
+                // The consolidator will get triggered at the end of the frame and make the packing better.
+                sheets = GLTextureSheet.makeSheets(newTiles);
+                for (sheet : sheets) {
+                    this.sheets.add(sheet);
+                    for (tile : sheet.tiles) {
+                        this.sheetByCharId[tile.charId] = sheet;
+                        this.tileByCharId[tile.charId] = tile;
+                    }
+                }
+                // TODO: load textures
+                throw new NotImplementedException();
+            }
+
+            sizeOut[0] = width;
+            sizeOut[1] = height;
+        }
 
         function render(textSurface) {
             status = $$lib_graphics2dtext_glRenderTextSurface(textSurface, GLRenderer.unknownChars);
@@ -394,7 +437,19 @@ namespace Graphics2DText {
     }
 
     /*
-        nativeData[0] -> a bitmap instance
+        The following are attributes of the image and never change once allocated:
+        nativeData[0] -> A bitmap instance of the tile
+        nativeData[1] -> pixel width (int)
+        nativeData[2] -> pixel height (int)
+
+        The following are values added each time this is allocated to a texture
+        nativeData[3] -> GL texture ID#
+        nativeData[4] -> float left
+        nativeData[5] -> float top
+        nativeData[6] -> float right
+        nativeData[7] -> float bottom
+        nativeData[8] -> float width
+        nativeData[9] -> float height
     */
     class GLTile {
         field charId;
@@ -410,7 +465,7 @@ namespace Graphics2DText {
         constructor(renderer, charId) {
             this.charId = charId;
             this.renderer = renderer;
-            $$$('allocNativeData', this, 1);
+            $$$('allocNativeData', this, 10);
             size = [0, 0];
             $$lib_graphics2dtext_glRenderCharTile(renderer, this, charId, size);
             this.width = size[0];
@@ -418,10 +473,77 @@ namespace Graphics2DText {
         }
     }
 
+    /*
+        nativeData[0] -> bitmap instance (lifetime is very short, discarded once loaded)
+    */
     class GLTextureSheet {
-        field id;
-        field tiles;
-        field tilesByCharId;
-        field renderer;
+        field glTextureId = null;
+        field tiles = [];
+        field tilesByCharId = {};
+
+        constructor(rows) {
+            y = 0;
+            height = rows[0][0].height;
+            xs = [];
+            ys = [];
+            tiles = [];
+            for (row : rows) {
+                this.tiles.concat(row);
+                x = 0;
+                for (tile : row) {
+                    this.tilesByCharId[tile.charId] = tile;
+                    tile.sheetX = x;
+                    tile.sheetY = y;
+                    tile.sheet = this;
+                    tile.currentTextureId = null;
+                    xs.add(x);
+                    ys.add(y);
+                    tiles.add(tile);
+                    x += tile.width;
+                }
+                y += height;
+            }
+            // This will apply the properties to the individual tile's metadata
+            this.glTextureId = $$lib_graphics2dtext_glGenerateAndLoadTexture(xs, ys, tiles, y);
+        }
+
+        static function makeSheets(tiles) {
+            // A simple O(n) greedy packing algorithm
+            // Since sheets are on a per-size basis, all tiles will have the same height
+            // that makes things a little simpler.
+
+            sheets = [];
+            tilesLength = tiles.length;
+            tileIndex = 0;
+            if (tiles.length > 0) {
+                height = tiles[0].height;
+                rowCount = 1024 / height;
+                tiles.sort(GLTextureSheet.sortByWidthKeyFunction);
+                rows = [];
+                while (rows.length < rowCount && tileIndex < tilesLength) {
+                    row = [];
+                    rows.add(row);
+                    width = 0;
+                    // Fill the front of the row with as many large tiles as possible
+                    while (tileIndex < tilesLength && width + tiles[tileIndex].width < 1024) {
+                        tile = tiles[tileIndex++];
+                        row.add(tile);
+                        width += tile.width;
+                    }
+                    // once you run out of space, fill the row with as many small tiles as possible
+                    while (tileIndex < tilesLength && width + tiles[tilesLength - 1].width < 1024) {
+                        tile = tiles[--tilesLength];
+                        row.add(tile);
+                        width += tile.width;
+                    }
+                }
+                sheets.add(new GLTextureSheet(rows));
+            }
+            return sheets;
+        }
+
+        static function sortByWidthKeyFunction(tile) {
+            return tile.width;
+        }
     }
 }
