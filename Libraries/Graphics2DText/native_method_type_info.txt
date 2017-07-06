@@ -1,2 +1,22 @@
-// bool _foo();
 
+object _lib_graphics2dtext_createNativeFont(int fontType, int fontClass, string fontPath, int fontSize, int red, int green, int blue, bool isBold, bool isItalic);
+
+void _lib_graphics2dtext_getNativeFontUniqueKey(List<Value> output, Value type, Value id, Value size, Value red, Value green, Value blue, Value style);
+
+bool _lib_graphics2dtext_isFontResourceAvailable(string path);
+
+bool _lib_graphics2dtext_isSystemFontAvailable(string name);
+
+object _lib_graphics2dtext_renderTextToSurface(
+	Array<int> sizeOut, // arg 1
+	object nativeFont, // arg 2
+	int sourceType, // arg 3
+	int fontClass, // arg 4
+	string fontPath, // arg 5
+	int fontSize, // arg 6
+	bool isBold, // arg 7
+	bool isItalic, // arg 8
+	int red, // arg 9
+	int green, // arg 10
+	int blue, // arg 11
+	string text); // arg 12

@@ -1,5 +1,6 @@
 /*
-    args[0] -> NativeFontInstance (nativeData array already allocated)
+    args[0] -> NativeFont (nativeData array already allocated)
+		nativeData[0] -> fill this in with the native font object
     args[1] -> type
         FontSourceType:
         0 -> default for style (serif, sans-serif, monospace)
@@ -25,15 +26,38 @@
         2 -> italic
         3 -> bold + italic (this will always be a valid bitmask)
 
-    args[8] -> output
-        a list of size two for output data
-        output[0] -> status code
-            0 -> OK
-            1 -> font not installed
-            2 -> font resource not found
-        output[1] -> name of the font (only if status 0 is not returned)
+	output status code
+		0 -> OK
+		1 -> font not installed
+		2 -> font resource not found
 
 */
 Value lib_graphics2dtext_function_createNativeFont(Array<Value> args) {
-    return VALUE_NULL;
+	ObjectInstance nf = (ObjectInstance) args[0].internalValue;
+	Array<object> nfOut = nf.nativeData;
+	int fontType = (int) args[1].internalValue;
+	string fontPath = "";
+	if (fontType == 0) {
+		fontType = (int)args[2].internalValue;
+	} else {
+		fontPath = (string)args[2].internalValue;
+	}
+	int fontClass = 0;
+	int fontSize = (int) args[3].internalValue;
+	int red = (int)args[4].internalValue;
+	int green = (int)args[5].internalValue;
+	int blue = (int)args[6].internalValue;
+	int styleBitmask = (int)args[7].internalValue;
+	int isBold = styleBitmask & 1;
+	int isItalic = styleBitmask & 2;
+	
+	// TODO: just put all these inline so that the method swapper can trim a bunch of code
+	nfOut[0] = Native._lib_graphics2dtext_createNativeFont(fontType, fontClass, fontPath, fontSize, red, green, blue, isBold > 0, isItalic > 0);
+	
+	if (nfOut[0] == null) {
+		if (fontType == 3) return buildInteger(1);
+		return buildInteger(2);
+	}
+	
+    return buildInteger(0);
 }

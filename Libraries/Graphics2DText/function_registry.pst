@@ -1,5 +1,5 @@
 ﻿void lib_manifest_RegisterFunctions(object libRegData) {
-    Core.RegisterLibraryFunction(libRegData, "createNativeFont", 9);
+    Core.RegisterLibraryFunction(libRegData, "createNativeFont", 8);
     Core.RegisterLibraryFunction(libRegData, "getNativeFontUniqueKey", 8);
     Core.RegisterLibraryFunction(libRegData, "glGenerateAndLoadTexture", 4);
     Core.RegisterLibraryFunction(libRegData, "glGetBitmapTileRenderer", 5);

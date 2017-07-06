@@ -4,5 +4,5 @@
     returns boolean
 */
 Value lib_graphics2dtext_function_isResourceAvailable(Array<Value> args) {
-    return VALUE_NULL;
+	return buildBoolean(Native._lib_graphics2dtext_isFontResourceAvailable((string)args[0].internalValue));
 }

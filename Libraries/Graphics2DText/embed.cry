@@ -60,9 +60,8 @@ namespace Graphics2DText {
             $$$('allocNativeData', 1);
             output = [null];
             // assigns native font instance to native data
-            $$lib_graphics2dtext_createNativeFont(this, type, id, size, r, g, b, style, output);
-
-            status = output[0];
+            status = $$lib_graphics2dtext_createNativeFont(this, type, id, size, r, g, b, style);
+			print([type, id, size, r, g, b, style]);
             switch (status) {
                 case 0: break; // all is fine
                 case 1: throw new FontNotFoundException("Font not installed: '" + id + "'");
@@ -175,7 +174,7 @@ namespace Graphics2DText {
         function render(text) {
             if (this._native == null) {
                 this._native = NativeFont.get(
-                    this.font._sourceType, this.font._sourceId,
+                    this.font._sourceType, this.font._source,
                     this.size, this.style, this.r, this.g, this.b);
 
                 // don't recycle the native font key for this since the native key will
@@ -206,9 +205,9 @@ namespace Graphics2DText {
         field _source;
 
         @private
-        constructor(source, sourceType) {
-            this._source = source;
+        constructor(sourceType, source) {
             this._sourceType = sourceType;
+            this._source = source;
         }
 
         function getRenderer() {

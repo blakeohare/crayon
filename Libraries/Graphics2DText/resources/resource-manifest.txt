@@ -1,3 +1,5 @@
+
 BEGIN
-APPLICABLE-TO: python-app
+APPLICABLE-TO: lang-python
+EMBED_FILES: from=python
 END
