@@ -49,26 +49,6 @@ namespace Interpreter
 
         private static readonly UniversalBitmap DUMMY_BITMAP = new UniversalBitmap(1, 1);
 
-        public UniversalBitmap(System.Drawing.Font font, char c)
-        {
-            string text = "" + c;
-#if WINDOWS
-            DrawingSession session = DUMMY_BITMAP.GetActiveDrawingSession();
-            System.Drawing.Graphics graphics = (System.Drawing.Graphics)session.NativeSession;
-            System.Drawing.SizeF size = graphics.MeasureString(text, font);
-            session.Flush();
-            this.Width = (int)System.Math.Ceiling(size.Width);
-            this.Height = (int)System.Math.Ceiling(size.Height);
-            this.internalBitmap = new System.Drawing.Bitmap(this.Width, this.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            session = this.GetActiveDrawingSession();
-            graphics = (System.Drawing.Graphics)session.NativeSession;
-            graphics.DrawString(text, font, System.Drawing.Brushes.White, new System.Drawing.PointF(0, 0));
-            session.Flush();
-#elif OSX
-            throw new System.NotImplementedException();
-#endif
-        }
-
 #if OSX
         private static Cairo.ImageSurface GetCairoImageFromBytes(byte[] bytes)
         {
@@ -94,6 +74,50 @@ namespace Interpreter
 #elif OSX
             this.internalBitmap = new Cairo.ImageSurface(Cairo.Format.ARGB32, width, height);
 #endif
+        }
+
+        public UniversalBitmap(System.Drawing.Font font, char c)
+        {
+            string text = "" + c;
+#if WINDOWS
+            DrawingSession session = DUMMY_BITMAP.GetActiveDrawingSession();
+            System.Drawing.Graphics graphics = (System.Drawing.Graphics)session.NativeSession;
+            System.Drawing.SizeF size = graphics.MeasureString(text, font);
+            session.Flush();
+            this.Width = (int)System.Math.Ceiling(size.Width);
+            this.Height = (int)System.Math.Ceiling(size.Height);
+            this.internalBitmap = new System.Drawing.Bitmap(this.Width, this.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            session = this.GetActiveDrawingSession();
+            graphics = (System.Drawing.Graphics)session.NativeSession;
+            graphics.DrawString(text, font, System.Drawing.Brushes.White, new System.Drawing.PointF(0, 0));
+            session.Flush();
+
+            this.TextAntiAliasingCorrection();
+#elif OSX
+            throw new System.NotImplementedException();
+#endif
+        }
+
+        private void TextAntiAliasingCorrection()
+        {
+            // Drawing text leaves an anti-alias aura around the characters which is 100% opaque using a black background. This results in
+            // an ugly black border around letters that are drawn against non-black backgrounds.
+            // Because this is supposed to be RGB(255, 255, 255) with varying values of alpha, go through and set the alpha channel to the
+            // value in the red channel, and set all non-alpha channels to 255.
+            
+            BitLockSession bitlock = this.GetActiveBitLockSession();
+            byte[] pixels = bitlock.GetPixels();
+            int length = pixels.Length;
+            for (int i = 0; i < length; i += 4)
+            {
+                pixels[i | 3] = pixels[i | 1];
+                pixels[i] = 255;
+                pixels[i | 1] = 255;
+                pixels[i | 2] = 255;
+            }
+
+            bitlock.WritePixels(pixels);
+            bitlock.Free();
         }
 
         public DrawingSession GetActiveDrawingSession()
@@ -159,6 +183,18 @@ namespace Interpreter
 #elif OSX
                 return this.ptr;
 #endif
+            }
+
+            public byte[] GetPixels()
+            {
+                byte[] pixels = new byte[this.bmp.Width * this.bmp.Height * 4];
+                System.Runtime.InteropServices.Marshal.Copy(this.internalSession.Scan0, pixels, 0, pixels.Length);
+                return pixels;
+            }
+
+            public void WritePixels(byte[] pixels)
+            {
+                System.Runtime.InteropServices.Marshal.Copy(pixels, 0, this.internalSession.Scan0, this.internalSession.Stride * this.bmp.Height);
             }
 
             public void Free()
