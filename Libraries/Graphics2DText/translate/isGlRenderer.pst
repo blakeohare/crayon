@@ -4,6 +4,9 @@
     returns boolean
 */
 Value lib_graphics2dtext_function_isGlRenderer(Array<Value> args) {
-    // TODO: define a constnat in the manifest
-    return VALUE_FALSE;
+    if (@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
+		return VALUE_TRUE;
+    } else {
+		return VALUE_FALSE;
+    }
 }

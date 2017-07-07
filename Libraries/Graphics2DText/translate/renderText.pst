@@ -21,7 +21,7 @@ Value lib_graphics2dtext_function_renderText(Array<Value> args) {
     List<Value> sizeOut = (List<Value>)args[0].internalValue;
     ObjectInstance textSurface = (ObjectInstance)args[1].internalValue;
     Array<object> imageOut = textSurface.nativeData;
-    object nativeFont = ((ObjectInstance)args[2].internalValue).nativeData[0];
+    object nativeFont = Core.ForceParens((ObjectInstance)args[2].internalValue).nativeData[0];
     int sourceType = (int)args[3].internalValue;
     int fontClass = 0;
     string fontPath = "";

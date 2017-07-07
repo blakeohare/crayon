@@ -16,8 +16,8 @@
     TODO: add a way to create dummy images without being backed by real images, then blit a dummy image instead to expand the image queue
 */
 Value lib_graphics2dtext_function_simpleBlit(Array<Value> args) {
-	object nativeBlittableBitmap = ((ObjectInstance)args[0].internalValue).nativeData[0];
-	Array<object> drawQueueNativeData = ((ObjectInstance)args[1].internalValue).nativeData;
+	object nativeBlittableBitmap = Core.ForceParens((ObjectInstance)args[0].internalValue).nativeData[0];
+	Array<object> drawQueueNativeData = Core.ForceParens((ObjectInstance)args[1].internalValue).nativeData;
 	int alpha = (int) args[4].internalValue;
 	
 	Array<int> eventQueue = (Array<int>) drawQueueNativeData[0];
