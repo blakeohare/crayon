@@ -57,11 +57,10 @@ namespace Graphics2DText {
             // the unique key.
             this.key = NativeFont.getUniqueKey(type, id, size, r, g, b, style);
 
-            $$$('allocNativeData', 1);
+            $$$('allocNativeData', this, 1);
             output = [null];
             // assigns native font instance to native data
             status = $$lib_graphics2dtext_createNativeFont(this, type, id, size, r, g, b, style);
-			print([type, id, size, r, g, b, style]);
             switch (status) {
                 case 0: break; // all is fine
                 case 1: throw new FontNotFoundException("Font not installed: '" + id + "'");
@@ -77,6 +76,7 @@ namespace Graphics2DText {
                 nativeFont = new NativeFont(type, id, size, style, r, g, b);
                 NativeFont._nativeFontInstances[key] = nativeFont;
             }
+            return nativeFont;
         }
 
         static function getUniqueKey(type, id, size, r, g, b, style) {
@@ -176,6 +176,8 @@ namespace Graphics2DText {
                 this._native = NativeFont.get(
                     this.font._sourceType, this.font._source,
                     this.size, this.style, this.r, this.g, this.b);
+
+				Core.assert(this._native != null);
 
                 // don't recycle the native font key for this since the native key will
                 // drop attributes that aren't part of an allocated font face instance.
