@@ -20,3 +20,5 @@ object _lib_graphics2dtext_renderTextToSurface(
 	int green, // arg 10
 	int blue, // arg 11
 	string text); // arg 12
+
+object _lib_graphics2dtext_glRenderBitmapTile(object nativeFont, int charId, Array<int> sizeOut);

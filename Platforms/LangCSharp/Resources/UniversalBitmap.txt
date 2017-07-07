@@ -47,6 +47,11 @@ namespace Interpreter
 #endif
         }
 
+        public UniversalBitmap(System.Drawing.Font font, char c)
+        {
+            throw new System.NotImplementedException();
+        }
+
 #if OSX
         private static Cairo.ImageSurface GetCairoImageFromBytes(byte[] bytes)
         {

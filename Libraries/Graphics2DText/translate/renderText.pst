@@ -18,51 +18,53 @@
     no output, but the size must be applied the size out list
 */
 Value lib_graphics2dtext_function_renderText(Array<Value> args) {
-    List<Value> sizeOut = (List<Value>)args[0].internalValue;
-    ObjectInstance textSurface = (ObjectInstance)args[1].internalValue;
-    Array<object> imageOut = textSurface.nativeData;
-    object nativeFont = Core.ForceParens((ObjectInstance)args[2].internalValue).nativeData[0];
-    int sourceType = (int)args[3].internalValue;
-    int fontClass = 0;
-    string fontPath = "";
-    if (sourceType == 0) fontClass = (int)args[4].internalValue;
-    else fontPath = (string)args[4].internalValue;
-    int fontSize = (int)args[5].internalValue;
-    int fontStyle = (int)args[6].internalValue;
-    int isBold = fontStyle & 1;
-    int isItalic = fontStyle & 2;
-    int red = (int)args[7].internalValue;
-    int green = (int)args[8].internalValue;
-    int blue = (int)args[9].internalValue;
-    string text = (string)args[10].internalValue;
-    
-    // TODO: inline most of the above into this so that it can be trimmed.
-    object bmp = Native._lib_graphics2dtext_renderTextToSurface(
-		Core.IntBuffer16,
-		nativeFont,
-		sourceType,
-		fontClass,
-		fontPath,
-		fontSize,
-		isBold > 0,
-		isItalic > 0,
-		red,
-		green,
-		blue,
-		text);
-	
-	// Mimic the nativeData structure of GraphicsTexture and GraphicsTextureResource.
-	// This is super hacky.
-	// TODO: instantiate a dummy GraphicsTexture and GraphicsTextureResource and pass them in and populate it.
-	// Then you can just use the regular methods.	
-	Array<object> spoofedNativeData = new Array<object>(4);
-	spoofedNativeData[3] = bmp;
-	Array<object> spoofedNativeData2 = new Array<object>(1);
-	spoofedNativeData2[0] = spoofedNativeData;
-	imageOut[0] = spoofedNativeData2;
-	
-    sizeOut[0] = buildInteger(Core.IntBuffer16[0]);
-    sizeOut[1] = buildInteger(Core.IntBuffer16[1]);
+    if (!@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
+		List<Value> sizeOut = (List<Value>)args[0].internalValue;
+		ObjectInstance textSurface = (ObjectInstance)args[1].internalValue;
+		Array<object> imageOut = textSurface.nativeData;
+		object nativeFont = Core.ForceParens((ObjectInstance)args[2].internalValue).nativeData[0];
+		int sourceType = (int)args[3].internalValue;
+		int fontClass = 0;
+		string fontPath = "";
+		if (sourceType == 0) fontClass = (int)args[4].internalValue;
+		else fontPath = (string)args[4].internalValue;
+		int fontSize = (int)args[5].internalValue;
+		int fontStyle = (int)args[6].internalValue;
+		int isBold = fontStyle & 1;
+		int isItalic = fontStyle & 2;
+		int red = (int)args[7].internalValue;
+		int green = (int)args[8].internalValue;
+		int blue = (int)args[9].internalValue;
+		string text = (string)args[10].internalValue;
+		
+		// TODO: inline most of the above into this so that it can be trimmed.
+		object bmp = Native._lib_graphics2dtext_renderTextToSurface(
+			Core.IntBuffer16,
+			nativeFont,
+			sourceType,
+			fontClass,
+			fontPath,
+			fontSize,
+			isBold > 0,
+			isItalic > 0,
+			red,
+			green,
+			blue,
+			text);
+		
+		// Mimic the nativeData structure of GraphicsTexture and GraphicsTextureResource.
+		// This is super hacky.
+		// TODO: instantiate a dummy GraphicsTexture and GraphicsTextureResource and pass them in and populate it.
+		// Then you can just use the regular methods.	
+		Array<object> spoofedNativeData = new Array<object>(4);
+		spoofedNativeData[3] = bmp;
+		Array<object> spoofedNativeData2 = new Array<object>(1);
+		spoofedNativeData2[0] = spoofedNativeData;
+		imageOut[0] = spoofedNativeData2;
+		
+		sizeOut[0] = buildInteger(Core.IntBuffer16[0]);
+		sizeOut[1] = buildInteger(Core.IntBuffer16[1]);
+    }
     
     return VALUE_NULL;
 }

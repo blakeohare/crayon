@@ -51,4 +51,9 @@ internal static class Graphics2DTextHelper
 
         throw new NotImplementedException();
     }
+
+    public static Interpreter.UniversalBitmap RenderCharTile(object nativeFont, int charId, int[] sizeOut)
+    {
+        throw new NotImplementedException();
+    }
 }

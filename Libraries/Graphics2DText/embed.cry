@@ -40,8 +40,6 @@ namespace Graphics2DText {
             - Java -> a java.awt.Font instance
             - C# -> a font object
 
-        nativeData[1] -> A GLRenderer instance (only on GL-based platforms), not set otherwise)
-
     */
     class NativeFont {
 
@@ -128,12 +126,11 @@ namespace Graphics2DText {
         field g = 255;
         field b = 255;
 
-
-        // Both of these are cleared every time an attribute is updated.
+        // These are cleared every time an attribute is updated.
         // These are repopulated when you call render(text).
         field _native = null; // NativeFont
         field _settingsKey = null; // A string key that uniquely identifies text appearance encompasing all attributes. Used as part of the texture cache
-
+		field _glRenderer = null;
 
         static field _textureCache = {}; // A cache of previously rendered images so that drawing the same text in multiple frames is done quickly
 
@@ -177,8 +174,6 @@ namespace Graphics2DText {
                     this.font._sourceType, this.font._source,
                     this.size, this.style, this.r, this.g, this.b);
 
-				Core.assert(this._native != null);
-
                 // don't recycle the native font key for this since the native key will
                 // drop attributes that aren't part of an allocated font face instance.
                 // We need all attributes in this key.
@@ -189,6 +184,10 @@ namespace Graphics2DText {
                         this.style,
                         this.r, this.g, this.b
                     ].join(':');
+				
+				if ($$lib_graphics2dtext_isGlRenderer()) {
+					this._glRenderer = GLRenderer.get(this.font._sourceType, this.font._source, this.size, this.style, this._native);
+				}
             }
 
             textureKey = this._settingsKey + '\n' + text;
@@ -276,8 +275,11 @@ namespace Graphics2DText {
         field _glRenderer = null;
         field width;
         field height;
+        field text;
 
         constructor(fontRenderer, text) {
+			this.text = text;
+			
             /*
                 for bitmap based platforms:
                 nativeData[0] -> a native image object such as a pygame.Surface or JS canvas
@@ -287,19 +289,23 @@ namespace Graphics2DText {
                 nativeData[1] -> an int[] of x coordinates
                 nativeData[2] -> an int[] of y coordinates
                 nativeData[3] -> an int[] of character codes
-                nativeData[4] -> red
-                nativeData[5] -> green
-                nativeData[6] -> blue
+                nativeData[4] -> number of characters to render (array.length of the above 3 arrays)
+                nativeData[5] -> red
+                nativeData[6] -> green
+                nativeData[7] -> blue
             */
 
+            sizeOut = [0, 0];
             if ($$lib_graphics2dtext_isGlRenderer()) {
-                $$$('allocNativeData', this, 7);
-
-                throw new NotImplementedException();
+                $$$('allocNativeData', this, 8);
+				this._glRenderer = fontRenderer._glRenderer;
+				this._glRenderer.renderText(text, sizeOut, this);
+				$$$('setNativeData', this, 5, fontRenderer.red);
+				$$$('setNativeData', this, 6, fontRenderer.green);
+				$$$('setNativeData', this, 7, fontRenderer.blue);
             } else {
                 $$$('allocNativeData', this, 1);
 
-                sizeOut = [0, 0];
                 $$lib_graphics2dtext_renderText(
                     sizeOut,
                     this,
@@ -312,10 +318,9 @@ namespace Graphics2DText {
                     fontRenderer.g,
                     fontRenderer.b,
                     text);
-                this.width = sizeOut[0];
-                this.height = sizeOut[1];
             }
-
+			this.width = sizeOut[0];
+			this.height = sizeOut[1];
         }
 
         function _refreshGlRenderer() {
@@ -351,8 +356,7 @@ namespace Graphics2DText {
         /*
             nativeData[0] -> some sort of native font resource the system can use to generate
                 bitmaps that can be loaded as textures.
-                This is a little more heavy duty than the NativeFont as it contains
-                size and style information too.
+                If the nativeRenderer happens to only include face, style, and size, then this may possibly be the same instance.
             nativeData[1] -> a nullable int-to-int dictionary that maps char code ID's to texture ID's
                 set to null to invalidate and reconstruct
         */
@@ -360,32 +364,59 @@ namespace Graphics2DText {
         field sheets = [];
         field sheetByCharId = {};
         field tileByCharId = {};
+        field spaceWidth = null;
+        field nativeFont = null;
+        
+        static field glRenderers = {};
         static field unknownChars = [];
 
-        constructor(sourceType, sourceId, size, style) {
+		static function get(sourceType, sourceId, size, style, nativeFont) {
+			key = [sourceType, sourceId, size, style].join(':');
+			renderer = GLRenderer.glRenderers.get(key);
+			if (renderer == null) {
+				renderer = new GLRenderer(nativeFont);
+				GLRenderer.glRenderers[key] = renderer;
+			}
+			return renderer;
+		}
+
+		@private
+        constructor(nativeFont) {
+			this.nativeFont = nativeFont;
             $$$('allocNativeData', this, 1);
-            $$lib_graphics2dtext_glGetBitmapTileRenderer(
-                this, sourceType, sourceId, size, style);
+            $$$('setNativeData', this, 0, null);
         }
 
-        function ensureCharactersExistAndCalculateSize(text, sizeOut) {
+        function renderText(text, sizeOut, textSurfaceWithNativeData) {
             width = 0;
             height = 0;
             newTiles = null;
+            charIds = [];
+            xs = [];
+            ys = [];
             for (c : text) {
-                if (c == ' ') c = 'v'; // use lowercase v for space allocation purposes
-                if (c == '\n') throw new NotImplementedException();
                 charId = Core.ord(c);
-                tile = this.tileByCharId.get(charId);
-                if (tile == null) {
-                    retry = true;
-                    tile = new GLTile(this, charId);
-                    if (newTiles == null) newTiles = [];
-                    newTiles.add(tile);
+                if (c == ' ') {
+					if (this.spaceWidth == null) {
+						this.spaceWidth = (this.renderText('bdhknuvxy', sizeOut, textSurfaceWithNativeData).width + 4) / 9;
+					}
+					width += this.spaceWidth;
+				} else if (c == '\r' || c == '\n') {
+					throw new Core.NotImplementedException();
+                } else {
+					charIds.add(charId);
+					xs.add(width);
+					ys.add(0);
+					tile = this.tileByCharId.get(charId);
+					if (tile == null) {
+						retry = true;
+						tile = new GLTile(this, charId);
+						if (newTiles == null) newTiles = [];
+						newTiles.add(tile);
+					}
+					height = Math.max(height, tile.height);
+					width += tile.width;
                 }
-
-                height = Math.max(height, tile.height);
-                width = Math.max(width, tile.width);
             }
 
             if (newTiles != null) {
@@ -402,6 +433,11 @@ namespace Graphics2DText {
                 // TODO: load textures
                 throw new NotImplementedException();
             }
+            
+            $$lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 1, xs);
+            $$lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 2, ys);
+            $$lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 3, charIds);
+            $$$('setNativeData', textSurfaceWithNativeData, 4, charIds.length);
 
             sizeOut[0] = width;
             sizeOut[1] = height;
@@ -409,6 +445,8 @@ namespace Graphics2DText {
 
         function render(textSurface) {
             status = $$lib_graphics2dtext_glRenderTextSurface(textSurface, GLRenderer.unknownChars);
+            
+            throw new NotImplementedException();
             switch (status) {
                 case 0: // it worked splendidly
                 case 1: // some characters were unknown and need to be generated
@@ -467,7 +505,9 @@ namespace Graphics2DText {
             this.renderer = renderer;
             $$$('allocNativeData', this, 10);
             size = [0, 0];
-            $$lib_graphics2dtext_glRenderCharTile(renderer, this, charId, size);
+            if (!$$lib_graphics2dtext_glRenderCharTile(renderer.nativeFont, this, charId, size)) {
+				throw new InvalidArgumentException("Could not render character (" + charId + ")");
+            }
             this.width = size[0];
             this.height = size[1];
         }
@@ -505,6 +545,8 @@ namespace Graphics2DText {
             }
             // This will apply the properties to the individual tile's metadata
             this.glTextureId = $$lib_graphics2dtext_glGenerateAndLoadTexture(xs, ys, tiles, y);
+            
+            throw new NotImplementedException();
         }
 
         static function makeSheets(tiles) {

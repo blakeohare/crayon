@@ -1,12 +1,13 @@
 /*
-    args[0] -> GLRenderer
+    args[0] -> NativeFont
         nativeData[0] -> native tile renderer object
     args[1] -> GLTile
-        nativeData[0] -> bitmap instance that can be blitted and consolidated
-        nativeData[1] -> pixel width
-        nativeData[2] -> pixel height
+		Populate these values:
+			nativeData[0] -> bitmap instance that can be blitted and consolidated
+			nativeData[1] -> pixel width
+			nativeData[2] -> pixel height
 
-        ... there are more nativeData values, but those are not populated here
+        ... there are more nativeData values, but those are not populated here (they have to do with sheet membership)
 
     args[2] -> character ID
     args[3] -> output list for size information
@@ -15,5 +16,21 @@
 
 */
 Value lib_graphics2dtext_function_glRenderCharTile(Array<Value> args) {
-    return VALUE_NULL;
+	object nativeFont = Core.ForceParens((ObjectInstance) args[0].internalValue).nativeData[0];
+	Array<object> tileNativeData = Core.ForceParens((ObjectInstance) args[1].internalValue).nativeData;
+	int charId = (int) args[2].internalValue;
+	List<Value> sizeOut = (List<Value>) args[3].internalValue;
+	
+	object bmp = Native._lib_graphics2dtext_glRenderBitmapTile(nativeFont, charId, Core.IntBuffer16);
+	if (bmp == null) return VALUE_FALSE;
+	int width = Core.IntBuffer16[0];
+	int height = Core.IntBuffer16[1];
+	tileNativeData[0] = bmp;
+	tileNativeData[1] = width;
+	tileNativeData[2] = height;
+	
+	sizeOut[0] = buildInteger(width);
+	sizeOut[1] = buildInteger(height);
+	
+    return VALUE_TRUE;
 }
