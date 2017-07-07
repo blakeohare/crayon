@@ -80,7 +80,9 @@ internal static class Graphics2DTextHelper
             nativeData[5] = tileY;
             nativeData[6] = tileX + tileWidth;
             nativeData[7] = tileY + tileHeight;
-            nativeData[10] = output.Height;
+            
+            nativeData[10] = output.Width;
+            nativeData[11] = output.Height;
         }
         g.Flush();
         return output;

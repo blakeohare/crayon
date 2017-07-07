@@ -130,7 +130,7 @@ namespace Graphics2DText {
         // These are repopulated when you call render(text).
         field _native = null; // NativeFont
         field _settingsKey = null; // A string key that uniquely identifies text appearance encompasing all attributes. Used as part of the texture cache
-		field _glRenderer = null;
+        field _glRenderer = null;
 
         static field _textureCache = {}; // A cache of previously rendered images so that drawing the same text in multiple frames is done quickly
 
@@ -184,10 +184,10 @@ namespace Graphics2DText {
                         this.style,
                         this.red, this.green, this.blue
                     ].join(':');
-				
-				if ($$lib_graphics2dtext_isGlRenderer()) {
-					this._glRenderer = GLRenderer.get(this.font._sourceType, this.font._source, this.size, this.style, this._native);
-				}
+
+                if ($$lib_graphics2dtext_isGlRenderer()) {
+                    this._glRenderer = GLRenderer.get(this.font._sourceType, this.font._source, this.size, this.style, this._native);
+                }
             }
 
             textureKey = this._settingsKey + '\n' + text;
@@ -280,8 +280,8 @@ namespace Graphics2DText {
         field tiles = null;
 
         constructor(fontRenderer, text) {
-			this.text = text;
-			
+            this.text = text;
+
             /*
                 for bitmap based platforms:
                 nativeData[0] -> a native image object such as a pygame.Surface or JS canvas
@@ -299,14 +299,14 @@ namespace Graphics2DText {
 
             sizeOut = [0, 0];
             if ($$lib_graphics2dtext_isGlRenderer()) {
-				this.tiles = [];
+                this.tiles = [];
                 $$$('allocNativeData', this, 8);
-				this._glRenderer = fontRenderer._glRenderer;
-				this._glRenderer.renderText(text, sizeOut, this, this.tiles);
-				$$$('setNativeData', this, 5, fontRenderer.red);
-				$$$('setNativeData', this, 6, fontRenderer.green);
-				$$$('setNativeData', this, 7, fontRenderer.blue);
-				this._isGl = true;
+                this._glRenderer = fontRenderer._glRenderer;
+                this._glRenderer.renderText(text, sizeOut, this, this.tiles);
+                $$$('setNativeData', this, 5, fontRenderer.red);
+                $$$('setNativeData', this, 6, fontRenderer.green);
+                $$$('setNativeData', this, 7, fontRenderer.blue);
+                this._isGl = true;
             } else {
                 $$$('allocNativeData', this, 1);
 
@@ -323,8 +323,8 @@ namespace Graphics2DText {
                     fontRenderer.b,
                     text);
             }
-			this.width = sizeOut[0];
-			this.height = sizeOut[1];
+            this.width = sizeOut[0];
+            this.height = sizeOut[1];
         }
 
         function _refreshGlRenderer() {
@@ -332,15 +332,15 @@ namespace Graphics2DText {
         }
 
         function draw(x, y) {
-			return this.drawWithAlpha(x, y, 255);
+            return this.drawWithAlpha(x, y, 255);
         }
 
         function drawWithAlpha(x, y, alpha) {
-			if (this._isGl){
-				return $$lib_graphics2dtext_glRenderTextSurface(this, this.tiles, Graphics2D.Draw._queue, x, y, alpha);
-			} else {
-				Graphics2D.Draw.rectangle(0, 0, 1, 1, 0, 0, 0);
-				return $$lib_graphics2dtext_simpleBlit(this, Graphics2D.Draw._queue, x, y, alpha);
+            if (this._isGl){
+                return $$lib_graphics2dtext_glRenderTextSurface(this, this.tiles, Graphics2D.Draw._queue, x, y, alpha);
+            } else {
+                Graphics2D.Draw.rectangle(0, 0, 10, 10, 255, 0, 0);
+                return $$lib_graphics2dtext_simpleBlit(this, Graphics2D.Draw._queue, x, y, alpha);
             }
         }
     }
@@ -375,23 +375,23 @@ namespace Graphics2DText {
         field tileByCharId = {};
         field spaceWidth = null;
         field nativeFont = null;
-        
+
         static field glRenderers = {};
         static field unknownChars = [];
 
-		static function get(sourceType, sourceId, size, style, nativeFont) {
-			key = [sourceType, sourceId, size, style].join(':');
-			renderer = GLRenderer.glRenderers.get(key);
-			if (renderer == null) {
-				renderer = new GLRenderer(nativeFont);
-				GLRenderer.glRenderers[key] = renderer;
-			}
-			return renderer;
-		}
+        static function get(sourceType, sourceId, size, style, nativeFont) {
+            key = [sourceType, sourceId, size, style].join(':');
+            renderer = GLRenderer.glRenderers.get(key);
+            if (renderer == null) {
+                renderer = new GLRenderer(nativeFont);
+                GLRenderer.glRenderers[key] = renderer;
+            }
+            return renderer;
+        }
 
-		@private
+        @private
         constructor(nativeFont) {
-			this.nativeFont = nativeFont;
+            this.nativeFont = nativeFont;
             $$$('allocNativeData', this, 1);
             $$$('setNativeData', this, 0, null);
         }
@@ -406,27 +406,27 @@ namespace Graphics2DText {
             for (c : text) {
                 charId = Core.ord(c);
                 if (c == ' ') {
-					if (this.spaceWidth == null) {
-						this.renderText('bdhknuvxy', sizeOut, textSurfaceWithNativeData, []);
-						this.spaceWidth = (sizeOut[0] + 4) / 9;
-					}
-					width += this.spaceWidth;
-				} else if (c == '\r' || c == '\n') {
-					throw new Core.NotImplementedException();
+                    if (this.spaceWidth == null) {
+                        this.renderText('bdhknuvxy', sizeOut, textSurfaceWithNativeData, []);
+                        this.spaceWidth = (sizeOut[0] + 4) / 9;
+                    }
+                    width += this.spaceWidth;
+                } else if (c == '\r' || c == '\n') {
+                    throw new Core.NotImplementedException();
                 } else {
-					charIds.add(charId);
-					xs.add(width);
-					ys.add(0);
-					tile = this.tileByCharId.get(charId);
-					if (tile == null) {
-						retry = true;
-						tile = new GLTile(this, charId);
-						if (newTiles == null) newTiles = [];
-						newTiles.add(tile);
-					}
-					tileList.add(tile);
-					height = Math.max(height, tile.height);
-					width += tile.width;
+                    charIds.add(charId);
+                    xs.add(width);
+                    ys.add(0);
+                    tile = this.tileByCharId.get(charId);
+                    if (tile == null) {
+                        retry = true;
+                        tile = new GLTile(this, charId);
+                        if (newTiles == null) newTiles = [];
+                        newTiles.add(tile);
+                    }
+                    tileList.add(tile);
+                    height = Math.max(height, tile.height);
+                    width += tile.width;
                 }
             }
 
@@ -442,7 +442,7 @@ namespace Graphics2DText {
                     }
                 }
             }
-            
+
             $$lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 1, xs);
             $$lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 2, ys);
             $$lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 3, charIds);
@@ -471,13 +471,13 @@ namespace Graphics2DText {
 
         The following are values added each time this is allocated to a texture
         nativeData[3] -> GL texture ID#
-        nativeData[4] -> float left
-        nativeData[5] -> float top
-        nativeData[6] -> float right
-        nativeData[7] -> float bottom
-        nativeData[8] -> float width
-        nativeData[9] -> float height
-        nativeData[10] -> texture height (width is always 1024)
+        nativeData[4] -> texture region left
+        nativeData[5] -> texture region top
+        nativeData[6] -> textuure region right
+        nativeData[7] -> texture region bottom
+        ...
+        nativeData[10] -> full texture width (always 1024)
+        nativeData[11] -> full texture height
     */
     class GLTile {
         field charId;
@@ -493,10 +493,10 @@ namespace Graphics2DText {
         constructor(renderer, charId) {
             this.charId = charId;
             this.renderer = renderer;
-            $$$('allocNativeData', this, 11);
+            $$$('allocNativeData', this, 12);
             size = [0, 0];
             if (!$$lib_graphics2dtext_glRenderCharTile(renderer.nativeFont, this, charId, size)) {
-				throw new InvalidArgumentException("Could not render character (" + charId + ")");
+                throw new InvalidArgumentException("Could not render character (" + charId + ")");
             }
             this.width = size[0];
             this.height = size[1];

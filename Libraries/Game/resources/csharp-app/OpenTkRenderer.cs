@@ -53,16 +53,16 @@ namespace Interpreter.Libraries.Game
             int mask = 0;
             double textureWidth;
             double textureHeight;
-			double textureResourceWidth;
-			double textureResourceHeight;
+            double textureResourceWidth;
+            double textureResourceHeight;
             double textureLeft;
             double textureRight;
             double textureTop;
             double textureBottom;
-			double croppedLeft;
-			double croppedRight;
-			double croppedTop;
-			double croppedBottom;
+            double croppedLeft;
+            double croppedRight;
+            double croppedTop;
+            double croppedBottom;
             double slope = 0.0;
             double slopeScalingCoefficient = 0.0;
             double offsetXComp = 0.0;
@@ -416,60 +416,9 @@ namespace Interpreter.Libraries.Game
                         GL.End();
                         break;
 
-                    case 8:
-                        textureId = commands[i | 1];
-                        startX = commands[i | 2];
-                        startY = commands[i | 3];
-                        endX = commands[i | 4];
-                        endY = commands[i | 5];
-                        left = commands[i | 6];
-                        top = commands[i | 7];
-                        right = commands[i | 8];
-                        bottom = commands[i | 9];
-                        red = commands[i | 10];
-                        green = commands[i | 11];
-                        blue = commands[i | 12];
-                        alpha = commands[i | 13];
-                        height = commands[i | 14]; // texture height
-                        if (state == null ||
-                            state.commandType != 8 ||
-                            state.textureId != textureId ||
-                            state.r != red ||
-                            state.g != green ||
-                            state.b != blue ||
-                            state.a != alpha)
-                        {
-                            if (state != null)
-                            {
-                                state = null;
-                                GL.End();
-                            }
-                        }
-
-
-                        if (state == null)
-                        {
-                            state = new GlRenderState(8, 0, textureId, red, green, blue, alpha);
-                            GL.Enable(EnableCap.Texture2D);
-                            GL.Color4((byte)red, (byte)green, (byte)blue, (byte)alpha);
-                            GL.BindTexture(TextureTarget.Texture2D, textureId);
-                            GL.Begin(BeginMode.Quads);
-                        }
-                        
-                        GL.TexCoord2(left / 1024f, 1f * top / height);
-                        GL.Vertex2(startX * RW / VW, startY * RH / VH);
-                        GL.TexCoord2(right / 1024f, 1f * top / height);
-                        GL.Vertex2(endX * RW / VW, startY * RH / VH);
-                        GL.TexCoord2(right / 1024f, 1f * bottom / height);
-                        GL.Vertex2(endX * RW / VW, endY * RH / VH);
-                        GL.TexCoord2(left / 1024f, 1f * bottom / height);
-                        GL.Vertex2(startX * RW / VW, endY * RH / VH);
-
-                        break;
-
                     case 6:
                         textureNativeData = texturesNativeData[image_i++];
-						textureResourceNativeData = (object[])textureNativeData[0];
+                        textureResourceNativeData = (object[])textureNativeData[0];
 
                         if (!(bool)textureResourceNativeData[1])
                         {
@@ -496,17 +445,17 @@ namespace Interpreter.Libraries.Game
                             if (alpha < 0 || alpha > 255) alpha = alpha < 0 ? 0 : 255;
                         }
 
-						textureLeft = (double)textureNativeData[1];
-						textureTop = (double)textureNativeData[2];
-						textureRight = (double)textureNativeData[3];
-						textureBottom = (double)textureNativeData[4];
-						width = (int)textureNativeData[5];
-						height = (int)textureNativeData[6];
+                        textureLeft = (double)textureNativeData[1];
+                        textureTop = (double)textureNativeData[2];
+                        textureRight = (double)textureNativeData[3];
+                        textureBottom = (double)textureNativeData[4];
+                        width = (int)textureNativeData[5];
+                        height = (int)textureNativeData[6];
 
                         textureWidth = textureRight - textureLeft;
                         textureHeight = textureBottom - textureTop;
-						textureResourceWidth = (int)textureResourceNativeData[4];
-						textureResourceHeight = (int)textureResourceNativeData[5];
+                        textureResourceWidth = (int)textureResourceNativeData[4];
+                        textureResourceHeight = (int)textureResourceNativeData[5];
 
                         // slice
                         if ((mask & 1) != 0)
@@ -515,11 +464,11 @@ namespace Interpreter.Libraries.Game
                             ay = commands[i | 3];
                             cropWidth = commands[i | 4];
                             cropHeight = commands[i | 5];
-							
-							croppedLeft = textureLeft + textureWidth * ax / width;
-							croppedRight = textureLeft + textureWidth * (ax + cropWidth) / width;
-							croppedTop = textureTop + textureHeight * ay / height;
-							croppedBottom = textureTop + textureHeight * (ay + cropHeight) / height;
+
+                            croppedLeft = textureLeft + textureWidth * ax / width;
+                            croppedRight = textureLeft + textureWidth * (ax + cropWidth) / width;
+                            croppedTop = textureTop + textureHeight * ay / height;
+                            croppedBottom = textureTop + textureHeight * (ay + cropHeight) / height;
 
                             textureLeft = croppedLeft;
                             textureRight = croppedRight;
@@ -596,6 +545,61 @@ namespace Interpreter.Libraries.Game
                             GL.TexCoord2(textureLeft, textureBottom);
                             GL.Vertex2(startX * RW / VW, endY * RH / VH);
                         }
+                        break;
+
+                    // Extensible render event for libraries that manage their own GL textures.
+                    // For example, this is used by the Graphics2DText renderer.
+                    // Draws a colored axis-aligned quad with a texture ID and color tint.
+                    case 8:
+                        textureId = commands[i | 1];
+                        startX = commands[i | 2]; // screen left coordinate
+                        startY = commands[i | 3]; // screen top coordinate
+                        endX = commands[i | 4]; // screen right coordinate
+                        endY = commands[i | 5]; // screen bottom coordinate
+                        left = commands[i | 6]; // texture left
+                        top = commands[i | 7]; // texture top
+                        right = commands[i | 8]; // texture right
+                        bottom = commands[i | 9]; // texture bottom
+                        red = commands[i | 10];
+                        green = commands[i | 11];
+                        blue = commands[i | 12];
+                        alpha = commands[i | 13];
+                        width = commands[i | 14]; // texture width
+                        height = commands[i | 15]; // texture height
+                        if (state == null ||
+                            state.commandType != 8 ||
+                            state.textureId != textureId ||
+                            state.r != red ||
+                            state.g != green ||
+                            state.b != blue ||
+                            state.a != alpha)
+                        {
+                            if (state != null)
+                            {
+                                state = null;
+                                GL.End();
+                            }
+                        }
+
+
+                        if (state == null)
+                        {
+                            state = new GlRenderState(8, 0, textureId, red, green, blue, alpha);
+                            GL.Enable(EnableCap.Texture2D);
+                            GL.Color4((byte)red, (byte)green, (byte)blue, (byte)alpha);
+                            GL.BindTexture(TextureTarget.Texture2D, textureId);
+                            GL.Begin(BeginMode.Quads);
+                        }
+
+                        GL.TexCoord2(left / 1024f, 1f * top / height);
+                        GL.Vertex2(startX * RW / VW, startY * RH / VH);
+                        GL.TexCoord2(right / 1024f, 1f * top / height);
+                        GL.Vertex2(endX * RW / VW, startY * RH / VH);
+                        GL.TexCoord2(right / 1024f, 1f * bottom / height);
+                        GL.Vertex2(endX * RW / VW, endY * RH / VH);
+                        GL.TexCoord2(left / 1024f, 1f * bottom / height);
+                        GL.Vertex2(startX * RW / VW, endY * RH / VH);
+
                         break;
 
                     default:

@@ -18,7 +18,7 @@
         This is an empty list. Append all strings from applicable properties to this list.
 */
 Value lib_graphics2dtext_function_getNativeFontUniqueKey(Array<Value> args) {
-	List<Value> output = (List<Value>) args[7].internalValue;
-	Native._lib_graphics2dtext_getNativeFontUniqueKey(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+    List<Value> output = (List<Value>) args[7].internalValue;
+    Native._lib_graphics2dtext_getNativeFontUniqueKey(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
     return VALUE_NULL;
 }

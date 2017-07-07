@@ -546,14 +546,14 @@ int nextPowerOf2(int value) {
 }
 
 Array<int> reallocIntArray(Array<int> original, int requiredCapacity) {
-	int oldSize = original.Size();
-	int size = oldSize;
-	while (size < requiredCapacity) {
-		size *= 2;
-	}
-	Array<int> output = new Array<int>(size);
-	for (int i = 0; i < oldSize; i += 1) {
-		output[i] = original[i];
-	}
-	return output;
+    int oldSize = original.Size();
+    int size = oldSize;
+    while (size < requiredCapacity) {
+        size *= 2;
+    }
+    Array<int> output = new Array<int>(size);
+    for (int i = 0; i < oldSize; i += 1) {
+        output[i] = original[i];
+    }
+    return output;
 }
