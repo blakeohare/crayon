@@ -47,9 +47,26 @@ namespace Interpreter
 #endif
         }
 
+        private static readonly UniversalBitmap DUMMY_BITMAP = new UniversalBitmap(1, 1);
+
         public UniversalBitmap(System.Drawing.Font font, char c)
         {
+            string text = "" + c;
+#if WINDOWS
+            DrawingSession session = DUMMY_BITMAP.GetActiveDrawingSession();
+            System.Drawing.Graphics graphics = (System.Drawing.Graphics)session.NativeSession;
+            System.Drawing.SizeF size = graphics.MeasureString(text, font);
+            session.Flush();
+            this.Width = (int)System.Math.Ceiling(size.Width);
+            this.Height = (int)System.Math.Ceiling(size.Height);
+            this.internalBitmap = new System.Drawing.Bitmap(this.Width, this.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            session = this.GetActiveDrawingSession();
+            graphics = (System.Drawing.Graphics)session.NativeSession;
+            graphics.DrawString(text, font, System.Drawing.Brushes.White, new System.Drawing.PointF(0, 0));
+            session.Flush();
+#elif OSX
             throw new System.NotImplementedException();
+#endif
         }
 
 #if OSX
@@ -165,6 +182,18 @@ namespace Interpreter
 #elif OSX
             private readonly Cairo.Context context;
 #endif
+
+            public object NativeSession
+            {
+                get
+                {
+#if WINDOWS
+                    return this.internalSession;
+#elif OSX
+                    return this.context;
+#endif
+                }
+            }
 
             public DrawingSession(UniversalBitmap bmp)
             {

@@ -54,6 +54,9 @@ internal static class Graphics2DTextHelper
 
     public static Interpreter.UniversalBitmap RenderCharTile(object nativeFont, int charId, int[] sizeOut)
     {
-        throw new NotImplementedException();
+        Interpreter.UniversalBitmap bmp = new Interpreter.UniversalBitmap((System.Drawing.Font)nativeFont, (char)charId);
+        sizeOut[0] = bmp.Width;
+        sizeOut[1] = bmp.Height;
+        return bmp;
     }
 }
