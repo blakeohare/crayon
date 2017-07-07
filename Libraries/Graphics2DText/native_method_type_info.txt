@@ -22,3 +22,8 @@ object _lib_graphics2dtext_renderTextToSurface(
 	string text); // arg 12
 
 object _lib_graphics2dtext_glRenderBitmapTile(object nativeFont, int charId, Array<int> sizeOut);
+
+object _lib_graphics2dtext_generateTextureSheetAndAllocateRectangleInformation(
+	Array<Array<object>> nativeDatas, Array<int> coordinateInformation, int width, int height);
+
+int _lib_graphics2dtext_glLoadTexture(object bitmap);

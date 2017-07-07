@@ -16,21 +16,22 @@
 
 */
 Value lib_graphics2dtext_function_glRenderCharTile(Array<Value> args) {
-	object nativeFont = Core.ForceParens((ObjectInstance) args[0].internalValue).nativeData[0];
-	Array<object> tileNativeData = Core.ForceParens((ObjectInstance) args[1].internalValue).nativeData;
-	int charId = (int) args[2].internalValue;
-	List<Value> sizeOut = (List<Value>) args[3].internalValue;
-	
-	object bmp = Native._lib_graphics2dtext_glRenderBitmapTile(nativeFont, charId, Core.IntBuffer16);
-	if (bmp == null) return VALUE_FALSE;
-	int width = Core.IntBuffer16[0];
-	int height = Core.IntBuffer16[1];
-	tileNativeData[0] = bmp;
-	tileNativeData[1] = width;
-	tileNativeData[2] = height;
-	
-	sizeOut[0] = buildInteger(width);
-	sizeOut[1] = buildInteger(height);
-	
+	if (@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
+		object nativeFont = Core.ForceParens((ObjectInstance) args[0].internalValue).nativeData[0];
+		Array<object> tileNativeData = Core.ForceParens((ObjectInstance) args[1].internalValue).nativeData;
+		int charId = (int) args[2].internalValue;
+		List<Value> sizeOut = (List<Value>) args[3].internalValue;
+		
+		object bmp = Native._lib_graphics2dtext_glRenderBitmapTile(nativeFont, charId, Core.IntBuffer16);
+		if (bmp == null) return VALUE_FALSE;
+		int width = Core.IntBuffer16[0];
+		int height = Core.IntBuffer16[1];
+		tileNativeData[0] = bmp;
+		tileNativeData[1] = width;
+		tileNativeData[2] = height;
+		
+		sizeOut[0] = buildInteger(width);
+		sizeOut[1] = buildInteger(height);
+	}
     return VALUE_TRUE;
 }

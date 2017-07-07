@@ -59,4 +59,36 @@ internal static class Graphics2DTextHelper
         sizeOut[1] = bmp.Height;
         return bmp;
     }
+
+    public static Interpreter.UniversalBitmap GenerateTextureAndAllocateFloatInfo(object[][] nativeDatas, int[] coordinateInfo, int width, int height)
+    {
+        Interpreter.UniversalBitmap output = new Interpreter.UniversalBitmap(width, height);
+        Interpreter.UniversalBitmap.DrawingSession g = output.GetActiveDrawingSession();
+        int length = nativeDatas.Length;
+        int tileX, tileY, tileWidth, tileHeight;
+        object[] nativeData;
+        for (int i = 0; i < length; ++i)
+        {
+            nativeData = nativeDatas[i];
+            tileX = coordinateInfo[i * 4];
+            tileY = coordinateInfo[i * 4 + 1];
+            tileWidth = coordinateInfo[i * 4 + 2];
+            tileHeight = coordinateInfo[i * 4 + 3];
+
+            g.Draw((Interpreter.UniversalBitmap)nativeData[0], tileX, tileY, 0, 0, tileWidth, tileHeight);
+            nativeData[4] = tileX;
+            nativeData[5] = tileY;
+            nativeData[6] = tileX + tileWidth;
+            nativeData[7] = tileY + tileHeight;
+            nativeData[10] = output.Height;
+        }
+        g.Flush();
+        return output;
+    }
+
+    public static int LoadOpenGlTexture(object bitmapObj)
+    {
+        Interpreter.UniversalBitmap bitmap = (Interpreter.UniversalBitmap)bitmapObj;
+        return Interpreter.Libraries.Game.GlUtil.ForceLoadTexture(bitmap);
+    }
 }

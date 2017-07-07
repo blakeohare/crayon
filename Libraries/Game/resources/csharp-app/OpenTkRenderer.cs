@@ -9,8 +9,9 @@ namespace Interpreter.Libraries.Game
     {
         private class GlRenderState
         {
-            public GlRenderState(int mode, int textureId, int r, int g, int b, int a)
+            public GlRenderState(int commandType, int mode, int textureId, int r, int g, int b, int a)
             {
+                this.commandType = commandType;
                 this.mode = mode;
                 this.textureId = textureId;
                 this.r = r;
@@ -19,6 +20,7 @@ namespace Interpreter.Libraries.Game
                 this.a = a;
             }
 
+            public int commandType;
             public int mode;
             public int textureId;
             public int r;
@@ -108,11 +110,11 @@ namespace Interpreter.Libraries.Game
 
                         if (right >= 0 && left < VW && bottom > 0 && top < VH)
                         {
-                            if (state == null || state.mode != 1 || state.textureId != 0 || state.r != red || state.g != green || state.b != blue || state.a != alpha)
+                            if (state == null || state.commandType != 1 || state.mode != 1 || state.textureId != 0 || state.r != red || state.g != green || state.b != blue || state.a != alpha)
                             {
                                 if (state == null)
                                 {
-                                    state = new GlRenderState(0, 0, 0, 0, 0, 0);
+                                    state = new GlRenderState(1, 0, 0, 0, 0, 0, 0);
                                 }
                                 else
                                 {
@@ -284,11 +286,11 @@ namespace Interpreter.Libraries.Game
                             dx -= offsetXComp;
                             dy += offsetYComp;
                         }
-                        if (state == null || state.mode != 1 || state.textureId != 0 || state.r != red || state.g != green || state.b != blue || state.a != alpha)
+                        if (state == null || state.commandType != 3 || state.mode != 1 || state.textureId != 0 || state.r != red || state.g != green || state.b != blue || state.a != alpha)
                         {
                             if (state == null)
                             {
-                                state = new GlRenderState(0, 0, 0, 0, 0, 0);
+                                state = new GlRenderState(3, 0, 0, 0, 0, 0, 0);
                             }
                             else
                             {
@@ -414,6 +416,57 @@ namespace Interpreter.Libraries.Game
                         GL.End();
                         break;
 
+                    case 8:
+                        textureId = commands[i | 1];
+                        startX = commands[i | 2];
+                        startY = commands[i | 3];
+                        endX = commands[i | 4];
+                        endY = commands[i | 5];
+                        left = commands[i | 6];
+                        top = commands[i | 7];
+                        right = commands[i | 8];
+                        bottom = commands[i | 9];
+                        red = commands[i | 10];
+                        green = commands[i | 11];
+                        blue = commands[i | 12];
+                        alpha = commands[i | 13];
+                        height = commands[i | 14]; // texture height
+                        if (state == null ||
+                            state.commandType != 8 ||
+                            state.textureId != textureId ||
+                            state.r != red ||
+                            state.g != green ||
+                            state.b != blue ||
+                            state.a != alpha)
+                        {
+                            if (state != null)
+                            {
+                                state = null;
+                                GL.End();
+                            }
+                        }
+
+
+                        if (state == null)
+                        {
+                            state = new GlRenderState(8, 0, textureId, red, green, blue, alpha);
+                            GL.Enable(EnableCap.Texture2D);
+                            GL.Color4((byte)red, (byte)green, (byte)blue, (byte)alpha);
+                            GL.BindTexture(TextureTarget.Texture2D, textureId);
+                            GL.Begin(BeginMode.Quads);
+                        }
+                        
+                        GL.TexCoord2(left / 1024f, 1f * top / height);
+                        GL.Vertex2(startX * RW / VW, startY * RH / VH);
+                        GL.TexCoord2(right / 1024f, 1f * top / height);
+                        GL.Vertex2(endX * RW / VW, startY * RH / VH);
+                        GL.TexCoord2(right / 1024f, 1f * bottom / height);
+                        GL.Vertex2(endX * RW / VW, endY * RH / VH);
+                        GL.TexCoord2(left / 1024f, 1f * bottom / height);
+                        GL.Vertex2(startX * RW / VW, endY * RH / VH);
+
+                        break;
+
                     case 6:
                         textureNativeData = texturesNativeData[image_i++];
 						textureResourceNativeData = (object[])textureNativeData[0];
@@ -484,13 +537,14 @@ namespace Interpreter.Libraries.Game
                         }
 
                         if (state == null ||
+                            state.commandType != 6 ||
                             state.mode != 1 ||
                             state.a != alpha ||
                             state.textureId != textureId)
                         {
                             if (state == null)
                             {
-                                state = new GlRenderState(0, 0, 0, 0, 0, 0);
+                                state = new GlRenderState(6, 0, 0, 0, 0, 0, 0);
                             }
                             else
                             {
