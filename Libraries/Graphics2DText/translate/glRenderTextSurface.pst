@@ -11,12 +11,14 @@
         ...
         nativeData[1] -> pixel width
         nativeData[2] -> pixel height
-        nativeData[3] -> GL texture ID (already loaded)
-        nativeData[4] -> left
-        nativeData[5] -> top
-        nativeData[6] -> right
-        nativeData[7] -> bottom
-        ...
+        nativeData[3] -> left margin
+        nativeData[4] -> width
+        
+        nativeData[5] -> GL texture ID (already loaded)
+        nativeData[6] -> left
+        nativeData[7] -> top
+        nativeData[8] -> right
+        nativeData[9] -> bottom
         nativeData[10] -> texture height (width is always 1024)
     args[2] -> Graphics2D draw queue object
         nativeData[0] -> event list
@@ -57,17 +59,17 @@ Value lib_graphics2dtext_function_glRenderTextSurface(Array<Value> args) {
     for (int i = 0; i < charCount; i += 1) {
         tileNativeData = Core.ForceParens((ObjectInstance)tileValues[i].internalValue).nativeData;
         queue[index] = 8; // draw texture direct
-        queue[index | 1] = (int) tileNativeData[3]; // texture ID
+        queue[index | 1] = (int) tileNativeData[5]; // texture ID
         x = xs[i] + leftOffset;
         y = ys[i] + topOffset;
         queue[index | 2] = x;
         queue[index | 3] = y;
         queue[index | 4] = x + (int) tileNativeData[1]; // right on screen
         queue[index | 5] = y + (int) tileNativeData[2]; // bottom on screen
-        queue[index | 6] = (int) tileNativeData[4]; // texture left
-        queue[index | 7] = (int) tileNativeData[5]; // texture top
-        queue[index | 8] = (int) tileNativeData[6]; // texture right
-        queue[index | 9] = (int) tileNativeData[7]; // texture bottom
+        queue[index | 6] = (int) tileNativeData[6]; // texture left
+        queue[index | 7] = (int) tileNativeData[7]; // texture top
+        queue[index | 8] = (int) tileNativeData[8]; // texture right
+        queue[index | 9] = (int) tileNativeData[9]; // texture bottom
         queue[index | 10] = red;
         queue[index | 11] = green;
         queue[index | 12] = blue;

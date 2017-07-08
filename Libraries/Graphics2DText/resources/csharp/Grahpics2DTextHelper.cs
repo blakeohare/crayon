@@ -9,15 +9,16 @@ internal static class Graphics2DTextHelper
         if (isBold && isItalic) style = System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic;
         else if (isBold) style = System.Drawing.FontStyle.Bold;
         else if (isItalic) style = System.Drawing.FontStyle.Italic;
+        int adjustedSize = size * 7 / 5;
         System.Drawing.Font font;
         if (fontType == 1) // embedded font resource
         {
             // font ID is already converted into a canonical resource path
-            font = Interpreter.ResourceReader.ReadFontResource(fontId, size, style);
+            font = Interpreter.ResourceReader.ReadFontResource(fontId, adjustedSize, style);
         }
         else if (fontType == 3) // system font
         {
-            font = new System.Drawing.Font(fontId, size, style, System.Drawing.GraphicsUnit.Pixel);
+            font = new System.Drawing.Font(fontId, adjustedSize, style, System.Drawing.GraphicsUnit.Pixel);
         }
         else
         {
@@ -39,23 +40,13 @@ internal static class Graphics2DTextHelper
         return isAvailable;
     }
 
-    public static object RenderTextToSurface(
-        int[] sizeOut,
-        object fontObj,
-        int red,
-        int green,
-        int blue,
-        string text)
-    {
-
-        throw new NotImplementedException();
-    }
-
     public static Interpreter.UniversalBitmap RenderCharTile(object nativeFont, int charId, int[] sizeOut)
     {
         Interpreter.UniversalBitmap bmp = new Interpreter.UniversalBitmap((System.Drawing.Font)nativeFont, (char)charId);
         sizeOut[0] = bmp.Width;
         sizeOut[1] = bmp.Height;
+        sizeOut[2] = bmp.Width / 8;
+        sizeOut[3] = bmp.Width * 55 / 100;
         return bmp;
     }
 
@@ -75,10 +66,10 @@ internal static class Graphics2DTextHelper
             tileHeight = coordinateInfo[i * 4 + 3];
 
             g.Draw((Interpreter.UniversalBitmap)nativeData[0], tileX, tileY, 0, 0, tileWidth, tileHeight);
-            nativeData[4] = tileX;
-            nativeData[5] = tileY;
-            nativeData[6] = tileX + tileWidth;
-            nativeData[7] = tileY + tileHeight;
+            nativeData[6] = tileX;
+            nativeData[7] = tileY;
+            nativeData[8] = tileX + tileWidth;
+            nativeData[9] = tileY + tileHeight;
 
             nativeData[10] = output.Width;
             nativeData[11] = output.Height;

@@ -6,6 +6,8 @@
             nativeData[0] -> bitmap instance that can be blitted and consolidated
             nativeData[1] -> pixel width
             nativeData[2] -> pixel height
+            nativeData[3] -> effective left (location of left margin)
+            nativeData[4] -> effective width (distance to the right margin from the left margin)
 
         ... there are more nativeData values, but those are not populated here (they have to do with sheet membership)
 
@@ -26,12 +28,18 @@ Value lib_graphics2dtext_function_glRenderCharTile(Array<Value> args) {
         if (bmp == null) return VALUE_FALSE;
         int width = Core.IntBuffer16[0];
         int height = Core.IntBuffer16[1];
+        int effectiveLeft = Core.IntBuffer16[2];
+        int effectiveWidth = Core.IntBuffer16[3];
         tileNativeData[0] = bmp;
         tileNativeData[1] = width;
         tileNativeData[2] = height;
+        tileNativeData[3] = effectiveLeft;
+        tileNativeData[4] = effectiveWidth;
 
         sizeOut[0] = buildInteger(width);
         sizeOut[1] = buildInteger(height);
+        sizeOut[2] = buildInteger(effectiveLeft);
+        sizeOut[3] = buildInteger(effectiveWidth);
     }
     return VALUE_TRUE;
 }

@@ -8,12 +8,11 @@
         nativeData[2] -> bitmap height
 
         // The following native data needs to be filled in by this function
-        nativeData[3] -> GL Texture ID
-        nativeData[4] -> texture left
-        nativeData[5] -> texture top
-        nativeData[6] -> texture right
-        nativeData[7] -> texture bottom
-        ...
+        nativeData[5] -> GL Texture ID
+        nativeData[6] -> texture left
+        nativeData[7] -> texture top
+        nativeData[8] -> texture right
+        nativeData[9] -> texture bottom
         nativeData[10] -> full texture width (always 1024)
         nativeData[11] -> full texture height (some power of 2)
 
@@ -57,7 +56,7 @@ Value lib_graphics2dtext_function_glGenerateAndLoadTexture(Array<Value> args) {
 
         // go back through and re-assign the texture ID to the tile native datas.
         for (i = 0; i < tileCount; i += 1) {
-            tileNativeDatas[i][3] = textureId;
+            tileNativeDatas[i][5] = textureId;
         }
 
         return buildInteger(textureId);

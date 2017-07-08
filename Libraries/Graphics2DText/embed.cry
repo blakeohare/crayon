@@ -383,15 +383,16 @@ namespace Graphics2DText {
             key = [sourceType, sourceId, size, style].join(':');
             renderer = GLRenderer.glRenderers.get(key);
             if (renderer == null) {
-                renderer = new GLRenderer(nativeFont);
+                renderer = new GLRenderer(nativeFont, size);
                 GLRenderer.glRenderers[key] = renderer;
             }
             return renderer;
         }
 
         @private
-        constructor(nativeFont) {
+        constructor(nativeFont, size) {
             this.nativeFont = nativeFont;
+            this.spaceWidth = size * 3 / 10;
             $$$('allocNativeData', this, 1);
             $$$('setNativeData', this, 0, null);
         }
@@ -403,20 +404,15 @@ namespace Graphics2DText {
             charIds = [];
             xs = [];
             ys = [];
+            lastTile = null;
             for (c : text) {
                 charId = Core.ord(c);
                 if (c == ' ') {
-                    if (this.spaceWidth == null) {
-                        this.renderText('bdhknuvxy', sizeOut, textSurfaceWithNativeData, []);
-                        this.spaceWidth = (sizeOut[0] + 4) / 9;
-                    }
                     width += this.spaceWidth;
                 } else if (c == '\r' || c == '\n') {
                     throw new Core.NotImplementedException();
                 } else {
                     charIds.add(charId);
-                    xs.add(width);
-                    ys.add(0);
                     tile = this.tileByCharId.get(charId);
                     if (tile == null) {
                         retry = true;
@@ -424,11 +420,15 @@ namespace Graphics2DText {
                         if (newTiles == null) newTiles = [];
                         newTiles.add(tile);
                     }
+                    lastTile = tile;
+                    xs.add(width - tile.leftMargin);
+                    ys.add(0);
                     tileList.add(tile);
                     height = Math.max(height, tile.height);
-                    width += tile.width;
+                    width += tile.effectiveWidth;
                 }
             }
+            width += (lastTile.width - lastTile.effectiveWidth - tile.leftMargin) * 6 / 10;
 
             if (newTiles != null) {
                 // Just dump all of them into new sheets.
@@ -468,13 +468,15 @@ namespace Graphics2DText {
         nativeData[0] -> A bitmap instance of the tile
         nativeData[1] -> pixel width (int)
         nativeData[2] -> pixel height (int)
-
+		nativeData[3] -> left margin (int)
+		nativeData[4] -> effective width (int) (distance to right margin from left margin)
+		
         The following are values added each time this is allocated to a texture
-        nativeData[3] -> GL texture ID#
-        nativeData[4] -> texture region left
-        nativeData[5] -> texture region top
-        nativeData[6] -> textuure region right
-        nativeData[7] -> texture region bottom
+        nativeData[5] -> GL texture ID#
+        nativeData[6] -> texture region left
+        nativeData[7] -> texture region top
+        nativeData[8] -> textuure region right
+        nativeData[9] -> texture region bottom
         ...
         nativeData[10] -> full texture width (always 1024)
         nativeData[11] -> full texture height
@@ -489,17 +491,21 @@ namespace Graphics2DText {
         field sheetY;
         field lastUsed;
         field renderer;
+        field leftMargin;
+        field effectiveWidth;
 
         constructor(renderer, charId) {
             this.charId = charId;
             this.renderer = renderer;
             $$$('allocNativeData', this, 12);
-            size = [0, 0];
+            size = [0, 0, 0, 0];
             if (!$$lib_graphics2dtext_glRenderCharTile(renderer.nativeFont, this, charId, size)) {
                 throw new InvalidArgumentException("Could not render character (" + charId + ")");
             }
             this.width = size[0];
             this.height = size[1];
+            this.leftMargin = size[2];
+            this.effectiveWidth = size[3];
         }
     }
 
