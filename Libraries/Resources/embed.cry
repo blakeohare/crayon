@@ -6,7 +6,8 @@
         TEXT = 1,
         IMAGE = 2,
         SOUND = 3,
-        BINARY = 4,
+        FONT = 4,
+        BINARY = 5,
     }
 
     class LibResourcesNode {
