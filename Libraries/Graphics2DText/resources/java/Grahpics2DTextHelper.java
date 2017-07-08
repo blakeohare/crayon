@@ -56,14 +56,16 @@ final class Graphics2DTextHelper {
 		
 		Font font = (Font) fontObj;
 		FontMetrics fontMetrics = DUMMY_IMAGE.createGraphics().getFontMetrics(font);
-		int width = fontMetrics.stringWidth(text);
-		int height = fontMetrics.getHeight();
+		int baselineHeight = fontMetrics.getHeight();
+		int height = baselineHeight * 3 / 2;
+		int margin = height / 8;
+		int width = fontMetrics.stringWidth(text) + margin * 2;
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = image.createGraphics();
 		Color color = new Color(red, green, blue);
 		g.setColor(color);
 		g.setFont(font);
-		g.drawString(text, 0, height);
+		g.drawString(text, margin, baselineHeight);
 		sizeOut[0] = width;
 		sizeOut[1] = height;
 		return image;
