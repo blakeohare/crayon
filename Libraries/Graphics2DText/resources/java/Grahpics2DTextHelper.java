@@ -3,10 +3,12 @@ package org.crayonlang.libraries.graphics2dtext;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.font.TextAttribute;
 import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 import org.crayonlang.interpreter.structs.*;
 import org.crayonlang.interpreter.ResourceReader;
 
@@ -19,13 +21,22 @@ final class Graphics2DTextHelper {
 		if (isBold) style |= Font.BOLD;
 		if (isItalic) style |= Font.ITALIC;
 		
+		int adjustedSize = size * 3 / 2;
+		Font font;
 		if (fontType == 1) { // font embedded resource
-			return ResourceReader.getFontResource(fontId, size, style);
+			font = ResourceReader.getFontResource(fontId, adjustedSize, style);
 		} else if (fontType == 3) { // system font
-			return new Font(fontId, style, size);
+			font = new Font(fontId, style, adjustedSize);
 		} else {
 			throw new RuntimeException("Not implemented.");
 		}
+		
+		// adjust kerning
+		HashMap<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
+		attributes.put(TextAttribute.TRACKING, -0.05);
+		font = font.deriveFont(attributes);
+		
+		return font;
 	}
 	
 	public static void addAll(ArrayList<Value> values, Value... toAdd) {
@@ -58,8 +69,8 @@ final class Graphics2DTextHelper {
 		FontMetrics fontMetrics = DUMMY_IMAGE.createGraphics().getFontMetrics(font);
 		int baselineHeight = fontMetrics.getHeight();
 		int height = baselineHeight * 3 / 2;
-		int margin = height / 8;
-		int width = fontMetrics.stringWidth(text) + margin * 2;
+		int margin = height / 32;
+		int width = fontMetrics.stringWidth(text) + margin * 2 + 4;
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = image.createGraphics();
 		Color color = new Color(red, green, blue);
