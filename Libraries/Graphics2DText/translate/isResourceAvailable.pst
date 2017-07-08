@@ -5,10 +5,10 @@
 */
 Value lib_graphics2dtext_function_isResourceAvailable(Array<Value> args) {
 
-	string path = (string) args[0].internalValue;
-	Value res = resource_manager_getResourceOfType(path, "TTF");
-	if (res.type == Types.NULL) return VALUE_FALSE;
-	List<Value> resList = (List<Value>)res.internalValue;
-	if (!(bool) resList[0].internalValue) return VALUE_FALSE;
-	return VALUE_TRUE;
+    string path = (string) args[0].internalValue;
+    Value res = resource_manager_getResourceOfType(path, "TTF");
+    if (res.type == Types.NULL) return VALUE_FALSE;
+    List<Value> resList = (List<Value>)res.internalValue;
+    if (!(bool) resList[0].internalValue) return VALUE_FALSE;
+    return VALUE_TRUE;
 }

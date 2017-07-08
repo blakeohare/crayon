@@ -69,7 +69,7 @@ namespace Crayon
                                 AbsoluteInputPath = absolutePath,
                             });
                             break;
-                            
+
                         case ResourceDatabase.FileCategory.BINARY:
                             resDb.AudioResources.Add(new FileOutput()
                             {
