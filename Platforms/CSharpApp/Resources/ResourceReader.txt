@@ -8,7 +8,7 @@ namespace Interpreter
     {
         public static string ReadResourceTextFile(string path)
         {
-			// TODO: Remove one of these
+            // TODO: Remove one of these
             return ReadTextResource(path);
         }
 
@@ -40,6 +40,40 @@ namespace Interpreter
                 return null;
             }
             return new UniversalBitmap(data.ToArray());
+        }
+
+        private static Dictionary<string, System.Drawing.FontFamily> privateFonts = new Dictionary<string, System.Drawing.FontFamily>();
+
+        public static System.Drawing.Font ReadFontResource(string path, int size, System.Drawing.FontStyle style)
+        {
+            if (!privateFonts.ContainsKey(path))
+            {
+                byte[] bytes = ReadBytes("Resources/" + path).ToArray();
+                if (bytes != null)
+                {
+                    System.Drawing.Text.PrivateFontCollection fonts = new System.Drawing.Text.PrivateFontCollection();
+
+                    System.Runtime.InteropServices.GCHandle handle = System.Runtime.InteropServices.GCHandle.Alloc(bytes, System.Runtime.InteropServices.GCHandleType.Pinned);
+                    System.IntPtr pointer = handle.AddrOfPinnedObject();
+                    try
+                    {
+                        fonts.AddMemoryFont(pointer, bytes.Length);
+                    }
+                    finally
+                    {
+                        handle.Free();
+                    }
+
+                    privateFonts[path] = fonts.Families.FirstOrDefault();
+                }
+            }
+
+            if (privateFonts.ContainsKey(path))
+            {
+                return new System.Drawing.Font(privateFonts[path], size, style, System.Drawing.GraphicsUnit.Pixel);
+            }
+
+            return null;
         }
 
         public static byte[] ReadSoundResource(string path)

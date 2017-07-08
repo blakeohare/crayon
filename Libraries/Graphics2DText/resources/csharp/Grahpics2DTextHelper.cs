@@ -5,27 +5,26 @@ internal static class Graphics2DTextHelper
 {
     public static object CreateNativeFont(int fontType, int fontClass, string fontId, int size, bool isBold, bool isItalic)
     {
-        if (fontType == 3) // system font
+        System.Drawing.FontStyle style = System.Drawing.FontStyle.Regular;
+        if (isBold && isItalic) style = System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic;
+        else if (isBold) style = System.Drawing.FontStyle.Bold;
+        else if (isItalic) style = System.Drawing.FontStyle.Italic;
+        System.Drawing.Font font;
+        if (fontType == 1) // embedded font resource
         {
-            System.Drawing.FontStyle style = isBold && isItalic
-                ? (System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic)
-                : isBold
-                    ? System.Drawing.FontStyle.Bold
-                    : isItalic
-                        ? System.Drawing.FontStyle.Italic
-                        : System.Drawing.FontStyle.Regular;
-            System.Drawing.Font font = new System.Drawing.Font(fontId, size, style, System.Drawing.GraphicsUnit.Pixel);
-            return font;
+            // font ID is already converted into a canonical resource path
+            font = Interpreter.ResourceReader.ReadFontResource(fontId, size, style);
+        }
+        else if (fontType == 3) // system font
+        {
+            font = new System.Drawing.Font(fontId, size, style, System.Drawing.GraphicsUnit.Pixel);
         }
         else
         {
             throw new NotImplementedException("Not implemented.");
         }
-    }
 
-    public static bool IsFontResourceAvailable(string path)
-    {
-        throw new NotImplementedException();
+        return font;
     }
 
     private static readonly Dictionary<string, bool> systemFontCache = new Dictionary<string, bool>();
@@ -80,7 +79,7 @@ internal static class Graphics2DTextHelper
             nativeData[5] = tileY;
             nativeData[6] = tileX + tileWidth;
             nativeData[7] = tileY + tileHeight;
-            
+
             nativeData[10] = output.Width;
             nativeData[11] = output.Height;
         }

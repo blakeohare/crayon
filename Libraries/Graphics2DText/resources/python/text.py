@@ -10,9 +10,6 @@ def lib_graphics2dtext_createNativeFont(fontType, fontClass, fontPath, fontSize,
 	elif fontType == 3: # system
 		return pygame.font.SysFont(fontPath, fontSize, isBold, isItalic)
 
-def lib_graphics2dtext_isFontResourceAvailable(path):
-	pass
-
 def lib_graphics2dtext_name_canonicalizer(name):
 	output = []
 	a = ord('a')

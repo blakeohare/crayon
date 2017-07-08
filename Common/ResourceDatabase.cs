@@ -18,7 +18,6 @@ namespace Common
             { "jpeg", FileCategory.IMAGE },
             { "png", FileCategory.IMAGE },
 
-            { "fon", FileCategory.FONT },
             { "ttf", FileCategory.FONT },
 
             { "aac", FileCategory.IGNORE_AUDIO },
@@ -51,7 +50,6 @@ namespace Common
         public FileOutput ImageSheetManifestFile { get; set; }
 
         public Dictionary<string, FileOutput> ImageSheetFiles { get; set; }
-        public List<FileOutput> FontSheetFiles { get; set; }
 
         public List<FileOutput> AudioResources { get; set; }
         public List<FileOutput> ImageResources { get; set; }
@@ -81,7 +79,6 @@ namespace Common
             this.TextResources = new List<FileOutput>();
             this.FontResources = new List<FileOutput>();
             this.ImageSheetFiles = new Dictionary<string, FileOutput>();
-            this.FontSheetFiles = new List<FileOutput>();
         }
 
         // TODO: move into its own helper class in the ImageSheets namespace.
@@ -218,7 +215,15 @@ namespace Common
             foreach (FileOutput audioFile in this.AudioResources)
             {
                 audioFile.CanonicalFileName = "snd" + (i++) + ".ogg";
+                // TODO: swap the order of the original path and the canonical name
                 manifest.Add("SND," + audioFile.OriginalPath + "," + audioFile.CanonicalFileName);
+            }
+
+            i = 1;
+            foreach (FileOutput fontFile in this.FontResources)
+            {
+                fontFile.CanonicalFileName = "ttf" + (i++) + ".ttf";
+                manifest.Add("TTF," + fontFile.OriginalPath + "," + fontFile.CanonicalFileName);
             }
 
             this.ResourceManifestFile = new FileOutput()

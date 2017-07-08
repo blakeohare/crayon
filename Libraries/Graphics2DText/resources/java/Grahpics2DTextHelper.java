@@ -30,10 +30,6 @@ final class Graphics2DTextHelper {
 		}
 	}
 	
-	public static boolean isFontResourceAvailable(String path) {
-		throw new RuntimeException("Not implemented.");
-	}
-	
 	public static boolean isSystemFontAvailable(String name) {
 		String[] fontNames = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 		for (String fontName : fontNames) {

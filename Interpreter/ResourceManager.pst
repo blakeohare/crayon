@@ -26,9 +26,11 @@
                 intType = 2;
             } else if (Core.StringEquals("SND", type)) {
                 intType = 3;
+			} else if (Core.StringEquals("TTF", type)) {
+				intType = 4;
             } else {
                 // binary resource
-                intType = 4;
+                intType = 5;
             }
 
             // TODO: binary resources
