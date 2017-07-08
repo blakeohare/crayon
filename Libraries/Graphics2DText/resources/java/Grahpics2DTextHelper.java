@@ -8,16 +8,20 @@ import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import org.crayonlang.interpreter.structs.*;
+import org.crayonlang.interpreter.ResourceReader;
 
 final class Graphics2DTextHelper {
 	
 	private Graphics2DTextHelper() { }
 	
 	public static Object createNativeFont(int fontType, int fontClass, String fontId, int size, boolean isBold, boolean isItalic) {
-		if (fontType == 3) { // system font
-			int style = Font.PLAIN;
-			if (isBold) style |= Font.BOLD;
-			if (isItalic) style |= Font.ITALIC;
+		int style = Font.PLAIN;
+		if (isBold) style |= Font.BOLD;
+		if (isItalic) style |= Font.ITALIC;
+		
+		if (fontType == 1) { // font embedded resource
+			return ResourceReader.getFontResource(fontId, size, style);
+		} else if (fontType == 3) { // system font
 			return new Font(fontId, style, size);
 		} else {
 			throw new RuntimeException("Not implemented.");
