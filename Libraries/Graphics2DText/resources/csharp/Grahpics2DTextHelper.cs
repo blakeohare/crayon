@@ -45,8 +45,12 @@ internal static class Graphics2DTextHelper
         Interpreter.UniversalBitmap bmp = new Interpreter.UniversalBitmap((System.Drawing.Font)nativeFont, (char)charId);
         sizeOut[0] = bmp.Width;
         sizeOut[1] = bmp.Height;
-        sizeOut[2] = bmp.Width / 8;
-        sizeOut[3] = bmp.Width * 55 / 100;
+
+        double leftMarginRatio = bmp.IsCairo ? 0.0 : 0.125;
+        double widthRatio = bmp.IsCairo ? 1.0 : 0.55;
+        sizeOut[2] = (int)(bmp.Width * leftMarginRatio);
+        sizeOut[3] = (int)(bmp.Width * widthRatio);
+
         return bmp;
     }
 
