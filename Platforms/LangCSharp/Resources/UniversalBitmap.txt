@@ -47,7 +47,13 @@ namespace Interpreter
 #endif
         }
 
-        private static readonly UniversalBitmap DUMMY_BITMAP = new UniversalBitmap(1, 1);
+        private static readonly UniversalBitmap DUMMY_BITMAP =
+#if WINDOWS
+            new UniversalBitmap(1, 1);
+#elif OSX
+            // Need to do layout calculations with the Cairo bitmap
+            new UniversalBitmap(1024, 1024);
+#endif
 
 #if OSX
         private static Cairo.ImageSurface GetCairoImageFromBytes(byte[] bytes)
@@ -78,7 +84,7 @@ namespace Interpreter
 
         public UniversalBitmap(System.Drawing.Font font, char c)
         {
-            string text = "" + c;
+            string text = "" + c; 
 #if WINDOWS
             DrawingSession session = DUMMY_BITMAP.GetActiveDrawingSession();
             System.Drawing.Graphics graphics = (System.Drawing.Graphics)session.NativeSession;
@@ -94,10 +100,34 @@ namespace Interpreter
 
             this.TextAntiAliasingCorrection();
 #elif OSX
-            throw new System.NotImplementedException();
+            string fontName = font.Name;
+            double size = font.Size; 
+            Cairo.FontSlant slant = font.Italic ? Cairo.FontSlant.Italic : Cairo.FontSlant.Normal;
+            Cairo.FontWeight weight = font.Bold ? Cairo.FontWeight.Bold : Cairo.FontWeight.Normal;
+
+            DrawingSession session = DUMMY_BITMAP.GetActiveDrawingSession();
+            Cairo.Context ctx = (Cairo.Context)session.NativeSession;
+            ctx.SelectFontFace(fontName, slant, weight);
+            ctx.SetFontSize(size);
+            Cairo.TextExtents te = ctx.TextExtents(text);
+            session.Flush();
+
+            this.Width = (int)((te.Width) + .5);
+            this.Height = (int)((te.Height) + .5);
+            this.internalBitmap = new Cairo.ImageSurface(Cairo.Format.ARGB32, this.Width, this.Height);
+
+            session = this.GetActiveDrawingSession();
+            ctx = (Cairo.Context)session.NativeSession;
+            ctx.SelectFontFace(fontName, slant, weight);
+            ctx.SetFontSize(size);
+            ctx.SetSourceRGBA(1, 1, 1, 1);
+            ctx.MoveTo(0, 0);
+            ctx.ShowText(text);
+            session.Flush();
 #endif
         }
 
+#if WINDOWS
         private void TextAntiAliasingCorrection()
         {
             // Drawing text leaves an anti-alias aura around the characters which is 100% opaque using a black background. This results in
@@ -119,6 +149,7 @@ namespace Interpreter
             bitlock.WritePixels(pixels);
             bitlock.Free();
         }
+#endif
 
         public DrawingSession GetActiveDrawingSession()
         {
@@ -188,13 +219,13 @@ namespace Interpreter
             public byte[] GetPixels()
             {
                 byte[] pixels = new byte[this.bmp.Width * this.bmp.Height * 4];
-                System.Runtime.InteropServices.Marshal.Copy(this.internalSession.Scan0, pixels, 0, pixels.Length);
+                System.Runtime.InteropServices.Marshal.Copy(this.GetPtr(), pixels, 0, pixels.Length);
                 return pixels;
             }
 
             public void WritePixels(byte[] pixels)
             {
-                System.Runtime.InteropServices.Marshal.Copy(pixels, 0, this.internalSession.Scan0, this.internalSession.Stride * this.bmp.Height);
+                System.Runtime.InteropServices.Marshal.Copy(pixels, 0, this.GetPtr(), this.bmp.Width * this.bmp.Height * 4);
             }
 
             public void Free()

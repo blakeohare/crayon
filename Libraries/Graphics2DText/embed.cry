@@ -318,9 +318,9 @@ namespace Graphics2DText {
                     fontRenderer.font._source,
                     fontRenderer.size,
                     fontRenderer.style,
-                    fontRenderer.r,
-                    fontRenderer.g,
-                    fontRenderer.b,
+                    fontRenderer.red,
+                    fontRenderer.green,
+                    fontRenderer.blue,
                     text);
             }
             this.width = sizeOut[0];
