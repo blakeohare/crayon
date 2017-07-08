@@ -105,15 +105,16 @@ namespace Interpreter
             Cairo.FontSlant slant = font.Italic ? Cairo.FontSlant.Italic : Cairo.FontSlant.Normal;
             Cairo.FontWeight weight = font.Bold ? Cairo.FontWeight.Bold : Cairo.FontWeight.Normal;
 
-            DrawingSession session = DUMMY_BITMAP.GetActiveDrawingSession();
+            UniversalBitmap dummyBitmap = new UniversalBitmap(10, 10);
+            DrawingSession session = dummyBitmap.GetActiveDrawingSession();
             Cairo.Context ctx = (Cairo.Context)session.NativeSession;
             ctx.SelectFontFace(fontName, slant, weight);
             ctx.SetFontSize(size);
             Cairo.TextExtents te = ctx.TextExtents(text);
             session.Flush();
 
-            this.Width = (int)((te.Width) + .5);
-            this.Height = (int)((te.Height) + .5);
+            this.Width = (int)((te.XAdvance) + .5);
+            this.Height = (int) (font.Size * 2 + .5);
             this.internalBitmap = new Cairo.ImageSurface(Cairo.Format.ARGB32, this.Width, this.Height);
 
             session = this.GetActiveDrawingSession();
@@ -121,7 +122,7 @@ namespace Interpreter
             ctx.SelectFontFace(fontName, slant, weight);
             ctx.SetFontSize(size);
             ctx.SetSourceRGBA(1, 1, 1, 1);
-            ctx.MoveTo(0, 0);
+            ctx.MoveTo(0, this.Height * 2 / 3);
             ctx.ShowText(text);
             session.Flush();
 #endif
