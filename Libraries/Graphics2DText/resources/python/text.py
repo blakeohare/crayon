@@ -4,7 +4,10 @@ def lib_graphics2dtext_createNativeFont(fontType, fontClass, fontPath, fontSize,
 	if fontType == 0: # default
 		raise Exception("Not implemented: default font by class")
 	elif fontType == 1: # resource
-		raise Exception("Not implemented: font embedded resource")
+		font = pygame.font.Font(os.path.join('res', 'ttf', fontPath), fontSize)
+		font.set_bold(isBold)
+		font.set_italic(isItalic)
+		return font
 	elif fontType == 2: # file system
 		raise Exception("Not implemented: font from file system")
 	elif fontType == 3: # system

@@ -44,8 +44,9 @@ Value lib_graphics2dtext_function_createNativeFont(Array<Value> args) {
         
         if (fontType == 1) {
 			Value res = resource_manager_getResourceOfType(fontPath, "TTF");
+			if (res.type == Types.NULL) return buildInteger(2); // not found
 			List<Value> resList = (List<Value>)res.internalValue;
-			if (!(bool) resList[0].internalValue) return buildInteger(2); // not found
+			if (!(bool) resList[0].internalValue) return buildInteger(2); // path found, but not a font.
 			fontPath = (string) resList[1].internalValue; // convert to a resource path
         }
     }

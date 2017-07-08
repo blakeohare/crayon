@@ -155,6 +155,11 @@ namespace PythonApp
                 output["res/text/" + textResource.CanonicalFileName] = textResource;
             }
 
+            foreach (FileOutput fontResource in resourceDatabase.FontResources)
+            {
+                output["res/ttf/" + fontResource.CanonicalFileName] = fontResource;
+            }
+
             return output;
         }
 
