@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Interpreter
 {
@@ -161,8 +163,7 @@ namespace Interpreter
             font.systemDrawingFontFamily = fonts.Families.FirstOrDefault();
             font.systemDrawingFont = new System.Drawing.Font(fonts.Families.FirstOrDefault(), size * 7 / 5, GetStyle(isBold, isItalic), System.Drawing.GraphicsUnit.Pixel);
 #elif OSX
-            // TODO: implement freetype solution
-            throw new System.NotImplementedException();
+            font.cairoFontFace = FreeTypeFontFace.Create(bytes, 0, 0);
 #endif
             string faceKey = "bin:" + font.BinarySource;
             string key = faceKey + "," + size + "," + (isBold ? 1 : 0) + "," + (isItalic ? 1 : 0);
@@ -189,4 +190,97 @@ namespace Interpreter
             return isAvailable;
         }
     }
+
+
+#if OSX
+    public class TempFile
+    {
+        private static int counter = 0;
+
+        public string FileName { get; private set; }
+        public TempFile(byte[] bytes)
+        {
+            // TODO: move this into the temp directory
+            this.FileName = "temp_" + (counter++) + ".dat";
+            System.IO.File.WriteAllBytes(this.FileName, bytes);
+        }
+
+        public void Cleanup()
+        {
+            if (System.IO.File.Exists(this.FileName))
+            {
+                System.IO.File.Delete(this.FileName);
+            }
+        }
+    }
+
+    // Credit to
+    // https://coviello.wordpress.com/2009/03/10/loading-font-face-from-file-using-mono-and-cairo
+    public class FreeTypeFontFace : Cairo.FontFace
+    {
+        private static bool initialized = false;
+        private static IntPtr ft_lib;
+        private IntPtr ft_face;
+
+        private FreeTypeFontFace(IntPtr handler, IntPtr ft_face) : base(handler, true)
+        {
+            this.ft_face = ft_face;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            cairo_font_face_destroy(ft_lib);
+            FT_Done_Face(ft_face);
+            ((IDisposable)this).Dispose();
+        }
+
+        public static FreeTypeFontFace Create(byte[] bytes, int faceindex, int loadoptions)
+        {
+            TempFile tempFile = new TempFile(bytes);
+            string filename = tempFile.FileName;
+            return Create(filename, faceindex, loadoptions);
+        }
+
+        public static FreeTypeFontFace Create(string filename, int faceindex, int loadoptions)
+        {
+            if (!initialized)
+                initialize();
+
+            IntPtr ft_face;
+            if (FT_New_Face(ft_lib, filename, faceindex, out ft_face) != 0)
+                throw new Exception("Can't load font face.");
+
+            IntPtr handler = cairo_ft_font_face_create_for_ft_face(ft_face, loadoptions);
+            if (cairo_font_face_status(handler) != 0)
+                throw new Exception("Can't create font face.");
+
+            return new FreeTypeFontFace(handler, ft_face);
+        }
+
+        private static void initialize()
+        {
+            if (FT_Init_FreeType(out ft_lib) != 0)
+                throw new Exception("Can't initialize freetype environment.");
+            initialized = true;
+        }
+
+        [DllImport("libfreetype.6.dylib")]
+        private static extern int FT_Init_FreeType(out IntPtr ft_lib);
+
+        [DllImport("libfreetype.6.dylib")]
+        private static extern int FT_New_Face(IntPtr ft_lib, string filename, int faceindex, out IntPtr ft_face);
+
+        [DllImport("libfreetype.6.dylib")]
+        private static extern int FT_Done_Face(IntPtr ft_face);
+
+        [DllImport("libcairo-2.dll", CallingConvention = CallingConvention.Cdecl)]
+        internal static extern IntPtr cairo_ft_font_face_create_for_ft_face(IntPtr face, int load_flags);
+
+        [DllImport("libcairo-2.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int cairo_font_face_status(IntPtr cr_face);
+
+        [DllImport("libcairo-2.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int cairo_font_face_destroy(IntPtr cr_face);
+    }
+#endif
 }
