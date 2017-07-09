@@ -13,7 +13,7 @@
         nativeData[2] -> pixel height
         nativeData[3] -> left margin
         nativeData[4] -> width
-        
+
         nativeData[5] -> GL texture ID (already loaded)
         nativeData[6] -> left
         nativeData[7] -> top

@@ -468,9 +468,9 @@ namespace Graphics2DText {
         nativeData[0] -> A bitmap instance of the tile
         nativeData[1] -> pixel width (int)
         nativeData[2] -> pixel height (int)
-		nativeData[3] -> left margin (int)
-		nativeData[4] -> effective width (int) (distance to right margin from left margin)
-		
+        nativeData[3] -> left margin (int)
+        nativeData[4] -> effective width (int) (distance to right margin from left margin)
+
         The following are values added each time this is allocated to a texture
         nativeData[5] -> GL texture ID#
         nativeData[6] -> texture region left
