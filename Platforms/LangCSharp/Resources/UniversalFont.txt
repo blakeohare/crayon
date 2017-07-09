@@ -45,10 +45,10 @@ namespace Interpreter
         public System.Drawing.Font NativeFont { get { return this.systemDrawingFont; } }
         private System.Drawing.FontFamily systemDrawingFontFamily = null;
 #elif OSX
-        private Cairo.FontFamily cairoFontFamily = null;
+        private Cairo.FontFace cairoFontFace = null;
 #endif
         private string systemFontName = null;
-        
+
         private static readonly Dictionary<string, UniversalFont> cache = new Dictionary<string, UniversalFont>();
         private static readonly Dictionary<string, UniversalFont> faceCache = new Dictionary<string, UniversalFont>();
 
@@ -75,7 +75,7 @@ namespace Interpreter
             font.systemDrawingFontFamily = this.systemDrawingFontFamily;
             font.systemDrawingFont = new System.Drawing.Font(this.systemDrawingFontFamily, size, GetStyle(isBold, isItalic));
 #elif OSX
-            font.cairoFontFamily = this.cairoFontFamily;
+            font.cairoFontFace = this.cairoFontFace;
 #endif
 
             cache[key] = font;
@@ -126,7 +126,7 @@ namespace Interpreter
                 newFont.systemDrawingFontFamily = sameFaceFont.systemDrawingFontFamily;
                 newFont.systemDrawingFont = new System.Drawing.Font(newFont.systemDrawingFontFamily, size * 7 / 5, GetStyle(isBold, isItalic));
 #elif OSX
-                newFont.cairoFontFamily = sameFaceFont.cairoFontFamily;
+                newFont.cairoFontFace = sameFaceFont.cairoFontFace;
 #endif
             }
             else
@@ -170,6 +170,12 @@ namespace Interpreter
             cache[key] = font;
             return font;
         }
+
+#if OSX
+        public Cairo.FontSlant CairoFontSlant { get { return this.IsItalic ? Cairo.FontSlant.Italic : Cairo.FontSlant.Normal; } }
+        public Cairo.FontWeight CairoFontWeight { get { return this.IsBold ? Cairo.FontWeight.Bold : Cairo.FontWeight.Normal; } }
+        public Cairo.FontFace CairoFontFace { get { return this.cairoFontFace; } }
+#endif
 
         private static readonly Dictionary<string, bool> systemFontCache = new Dictionary<string, bool>();
         public static bool IsSystemFontAvailable(string name)

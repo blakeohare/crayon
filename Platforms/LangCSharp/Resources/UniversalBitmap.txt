@@ -109,15 +109,13 @@ namespace Interpreter
 
             this.TextAntiAliasingCorrection();
 #elif OSX
-            string fontName = font.Name;
+            // TODO: italic/bold
             double size = font.Size;
-            Cairo.FontSlant slant = font.Italic ? Cairo.FontSlant.Italic : Cairo.FontSlant.Normal;
-            Cairo.FontWeight weight = font.Bold ? Cairo.FontWeight.Bold : Cairo.FontWeight.Normal;
-
+            
             UniversalBitmap dummyBitmap = new UniversalBitmap(10, 10);
             DrawingSession session = dummyBitmap.GetActiveDrawingSession();
             Cairo.Context ctx = (Cairo.Context)session.NativeSession;
-            ctx.SelectFontFace(fontName, slant, weight);
+            ctx.SetContextFontFace(font.CairoFontFace);
             ctx.SetFontSize(size);
             Cairo.TextExtents te = ctx.TextExtents(text);
             session.Flush();
@@ -128,7 +126,7 @@ namespace Interpreter
 
             session = this.GetActiveDrawingSession();
             ctx = (Cairo.Context)session.NativeSession;
-            ctx.SelectFontFace(fontName, slant, weight);
+            ctx.SetContextFontFace(font.CairoFontFace);
             ctx.SetFontSize(size);
             ctx.SetSourceRGBA(1, 1, 1, 1);
             ctx.MoveTo(0, this.Height * 2 / 3);
