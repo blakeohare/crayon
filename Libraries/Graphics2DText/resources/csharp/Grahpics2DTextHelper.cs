@@ -1,48 +1,32 @@
 using System;
-using System.Collections.Generic;
 
 internal static class Graphics2DTextHelper
 {
     public static object CreateNativeFont(int fontType, int fontClass, string fontId, int size, bool isBold, bool isItalic)
     {
-        System.Drawing.FontStyle style = System.Drawing.FontStyle.Regular;
-        if (isBold && isItalic) style = System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic;
-        else if (isBold) style = System.Drawing.FontStyle.Bold;
-        else if (isItalic) style = System.Drawing.FontStyle.Italic;
-        int adjustedSize = size * 7 / 5;
-        System.Drawing.Font font;
         if (fontType == 1) // embedded font resource
         {
-            // font ID is already converted into a canonical resource path
-            font = Interpreter.ResourceReader.ReadFontResource(fontId, adjustedSize, style);
+            return Interpreter.UniversalFont.FromResources(fontId, size, isBold, isItalic);
         }
         else if (fontType == 3) // system font
         {
-            font = new System.Drawing.Font(fontId, adjustedSize, style, System.Drawing.GraphicsUnit.Pixel);
+            return Interpreter.UniversalFont.FromSystem(fontId, size, isBold, isItalic);
         }
         else
         {
             throw new NotImplementedException("Not implemented.");
         }
-
-        return font;
     }
 
-    private static readonly Dictionary<string, bool> systemFontCache = new Dictionary<string, bool>();
     public static bool IsSystemFontAvailable(String name)
     {
-        if (systemFontCache.ContainsKey(name)) return systemFontCache[name];
-
-        // .NET uses automatic font fallback. If the name of the font is different, it's not available.
-        System.Drawing.Font dummyFont = new System.Drawing.Font(name, 12, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-        bool isAvailable = dummyFont.Name == name;
-        systemFontCache[name] = isAvailable;
-        return isAvailable;
+        // TODO: call this function directly
+        return Interpreter.UniversalFont.IsSystemFontAvailable(name);
     }
 
     public static Interpreter.UniversalBitmap RenderCharTile(object nativeFont, int charId, int[] sizeOut)
     {
-        Interpreter.UniversalBitmap bmp = new Interpreter.UniversalBitmap((System.Drawing.Font)nativeFont, (char)charId);
+        Interpreter.UniversalBitmap bmp = new Interpreter.UniversalBitmap((Interpreter.UniversalFont)nativeFont, (char)charId);
         sizeOut[0] = bmp.Width;
         sizeOut[1] = bmp.Height;
 

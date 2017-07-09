@@ -60,12 +60,8 @@ namespace Interpreter
 #endif
         }
 
-        private static readonly UniversalBitmap DUMMY_BITMAP =
 #if WINDOWS
-            new UniversalBitmap(1, 1);
-#elif OSX
-            // Need to do layout calculations with the Cairo bitmap
-            new UniversalBitmap(1024, 1024);
+        private static readonly UniversalBitmap DUMMY_BITMAP = new UniversalBitmap(1, 1);
 #endif
 
 #if OSX
@@ -95,20 +91,20 @@ namespace Interpreter
 #endif
         }
 
-        public UniversalBitmap(System.Drawing.Font font, char c)
+        public UniversalBitmap(UniversalFont font, char c)
         {
             string text = "" + c;
 #if WINDOWS
             DrawingSession session = DUMMY_BITMAP.GetActiveDrawingSession();
             System.Drawing.Graphics graphics = (System.Drawing.Graphics)session.NativeSession;
-            System.Drawing.SizeF size = graphics.MeasureString(text, font);
+            System.Drawing.SizeF size = graphics.MeasureString(text, font.NativeFont);
             session.Flush();
             this.Width = (int)System.Math.Ceiling(size.Width);
             this.Height = (int)System.Math.Ceiling(size.Height);
             this.internalBitmap = new System.Drawing.Bitmap(this.Width, this.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             session = this.GetActiveDrawingSession();
             graphics = (System.Drawing.Graphics)session.NativeSession;
-            graphics.DrawString(text, font, System.Drawing.Brushes.White, new System.Drawing.PointF(0, 0));
+            graphics.DrawString(text, font.NativeFont, System.Drawing.Brushes.White, new System.Drawing.PointF(0, 0));
             session.Flush();
 
             this.TextAntiAliasingCorrection();
@@ -148,7 +144,7 @@ namespace Interpreter
             // an ugly black border around letters that are drawn against non-black backgrounds.
             // Because this is supposed to be RGB(255, 255, 255) with varying values of alpha, go through and set the alpha channel to the
             // value in the red channel, and set all non-alpha channels to 255.
-            
+
             BitLockSession bitlock = this.GetActiveBitLockSession();
             byte[] pixels = bitlock.GetPixels();
             int length = pixels.Length;

@@ -1,0 +1,186 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Interpreter
+{
+    /*
+     * WINDOWS:
+     * System.Drawing.Graphics.DrawString requires a System.Drawing.Font instance. 
+     * It doesn't matter where this font came from.
+     * 
+     * OSX (CAIRO):
+     * If the font is a system-installed font, then only a string of the font name is required.
+     * If the font is from resources, then it can be loaded using FreeType into a Cairo Font Face after being serialized to a file.
+     * This file is in temp.
+     * 
+     * It's also important to note that the Cairo-based fonts are not specific to a certain size or style.
+     * 
+     * Windows:
+     * bytes[] -> load into FontFamily (saved) -> load into a System.Drawing.Font
+     * system -> load into a System.Drawing.Font
+     * 
+     * Cairo:
+     * bytes[] -> load into a Cairo.FontFace -> that's it. that's the only state. size/style are just basic properties which are used at render-time.
+     * system -> save the name, size, style as properties and that's it.
+     * 
+     * instances are immutable
+     * cache key templates:
+     * res:path,size,bold,italic
+     * sys:name,size,bold,italic
+     * 
+     * raw byte fonts are not cached
+     */
+    public class UniversalFont
+    {
+        public int Size { get; set; }
+        public bool IsItalic { get; set; }
+        public bool IsBold { get; set; }
+
+        private string Key { get; set; }
+        private string FaceKey { get; set; }
+        private int BinarySource { get; set; }
+        private static int binarySourceCounter = 0;
+#if WINDOWS
+        private System.Drawing.Font systemDrawingFont = null;
+        public System.Drawing.Font NativeFont { get { return this.systemDrawingFont; } }
+        private System.Drawing.FontFamily systemDrawingFontFamily = null;
+#elif OSX
+        private Cairo.FontFamily cairoFontFamily = null;
+#endif
+        private string systemFontName = null;
+        
+        private static readonly Dictionary<string, UniversalFont> cache = new Dictionary<string, UniversalFont>();
+        private static readonly Dictionary<string, UniversalFont> faceCache = new Dictionary<string, UniversalFont>();
+
+        private UniversalFont() { }
+
+        public UniversalFont CloneAndModify(int size, bool isBold, bool isItalic)
+        {
+            string faceKey = this.FaceKey;
+            string key = faceKey + "," + size + "," + (isBold ? 1 : 0) + "," + (isItalic ? 1 : 0);
+            if (cache.ContainsKey(key)) return cache[key];
+            UniversalFont font = new UniversalFont()
+            {
+                BinarySource = this.BinarySource,
+                FaceKey = faceKey,
+                IsBold = isBold,
+                IsItalic = IsItalic,
+                Size = size,
+                Key = key,
+            };
+
+            font.systemFontName = this.systemFontName;
+
+#if WINDOWS
+            font.systemDrawingFontFamily = this.systemDrawingFontFamily;
+            font.systemDrawingFont = new System.Drawing.Font(this.systemDrawingFontFamily, size, GetStyle(isBold, isItalic));
+#elif OSX
+            font.cairoFontFamily = this.cairoFontFamily;
+#endif
+
+            cache[key] = font;
+            return font;
+        }
+
+        private static System.Drawing.FontStyle GetStyle(bool isBold, bool isItalic)
+        {
+            if (isBold && isItalic) return System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic;
+            if (isBold) return System.Drawing.FontStyle.Bold;
+            if (isItalic) return System.Drawing.FontStyle.Italic;
+            return System.Drawing.FontStyle.Regular;
+        }
+
+        public static UniversalFont FromSystem(string name, int size, bool isBold, bool isItalic)
+        {
+            string faceKey = "sys:" + name;
+            string key = faceKey + "," + size + "," + (isBold ? 1 : 0) + "," + (isItalic ? 1 : 0);
+
+            if (cache.ContainsKey(key))
+            {
+                return cache[key];
+            }
+
+            UniversalFont font = new UniversalFont() { Size = size, IsBold = isBold, IsItalic = isItalic, Key = key, FaceKey = faceKey };
+            font.systemFontName = name;
+#if WINDOWS
+            font.systemDrawingFont = new System.Drawing.Font(name, size * 7 / 5, GetStyle(isBold, isItalic));
+            font.systemDrawingFontFamily = font.systemDrawingFont.FontFamily;
+#endif
+            faceCache[faceKey] = font;
+            cache[key] = font;
+            return font;
+        }
+
+        public static UniversalFont FromResources(string resourcePath, int size, bool isBold, bool isItalic)
+        {
+            string faceKey = "res:" + resourcePath;
+            string key = faceKey + "," + size + "," + (isBold ? 1 : 0) + "," + (isItalic ? 1 : 0);
+            if (cache.ContainsKey(key)) return cache[key];
+
+            UniversalFont sameFaceFont;
+            UniversalFont newFont;
+            if (faceCache.TryGetValue(faceKey, out sameFaceFont))
+            {
+                newFont = new UniversalFont() { Size = size, IsBold = isBold, IsItalic = isItalic, Key = key, FaceKey = faceKey };
+#if WINDOWS
+                newFont.systemDrawingFontFamily = sameFaceFont.systemDrawingFontFamily;
+                newFont.systemDrawingFont = new System.Drawing.Font(newFont.systemDrawingFontFamily, size * 7 / 5, GetStyle(isBold, isItalic));
+#elif OSX
+                newFont.cairoFontFamily = sameFaceFont.cairoFontFamily;
+#endif
+            }
+            else
+            {
+                byte[] bytes = ResourceReader.ReadBytes("Resources/" + resourcePath).ToArray();
+                newFont = FromBytes(bytes, size, isBold, isItalic);
+                newFont.Key = key;
+                newFont.FaceKey = faceKey;
+                faceCache[faceKey] = newFont;
+            }
+
+            cache[key] = newFont;
+            return newFont;
+        }
+
+        public static UniversalFont FromBytes(byte[] bytes, int size, bool isBold, bool isItalic)
+        {
+            UniversalFont font = new UniversalFont() { Size = size, IsBold = isBold, IsItalic = isItalic };
+            font.BinarySource = ++binarySourceCounter;
+#if WINDOWS
+            System.Drawing.Text.PrivateFontCollection fonts = new System.Drawing.Text.PrivateFontCollection();
+            System.Runtime.InteropServices.GCHandle handle = System.Runtime.InteropServices.GCHandle.Alloc(bytes, System.Runtime.InteropServices.GCHandleType.Pinned);
+            System.IntPtr pointer = handle.AddrOfPinnedObject();
+            try
+            {
+                fonts.AddMemoryFont(pointer, bytes.Length);
+            }
+            finally
+            {
+                handle.Free();
+            }
+            font.systemDrawingFontFamily = fonts.Families.FirstOrDefault();
+            font.systemDrawingFont = new System.Drawing.Font(fonts.Families.FirstOrDefault(), size * 7 / 5, GetStyle(isBold, isItalic), System.Drawing.GraphicsUnit.Pixel);
+#elif OSX
+            // TODO: implement freetype solution
+            throw new System.NotImplementedException();
+#endif
+            string faceKey = "bin:" + font.BinarySource;
+            string key = faceKey + "," + size + "," + (isBold ? 1 : 0) + "," + (isItalic ? 1 : 0);
+            faceCache[faceKey] = font;
+            cache[key] = font;
+            return font;
+        }
+
+        private static readonly Dictionary<string, bool> systemFontCache = new Dictionary<string, bool>();
+        public static bool IsSystemFontAvailable(string name)
+        {
+            if (systemFontCache.ContainsKey(name)) return systemFontCache[name];
+
+            // .NET uses automatic font fallback. If the name of the font is different, it's not available.
+            System.Drawing.Font dummyFont = new System.Drawing.Font(name, 12, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            bool isAvailable = dummyFont.Name == name;
+            systemFontCache[name] = isAvailable;
+            return isAvailable;
+        }
+    }
+}
