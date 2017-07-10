@@ -1,4 +1,0 @@
-﻿void lib_manifest_RegisterFunctions(object libRegData) {
-    Core.RegisterLibraryFunction(libRegData, "loadFont", 3);
-    Core.RegisterLibraryFunction(libRegData, "pushStringCodePoints", 2);
-}
