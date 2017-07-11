@@ -25,6 +25,14 @@ C$common$getTextRes = function (path) {
     return C$common$textResources[path];
 };
 
+C$common$addBinaryRes = function (path, value) {
+	C$common$binaryResources[path] = value;
+};
+
+C$common$getBinaryResBase64 = function (path) {
+	return C$common$binaryResources[path];
+};
+
 C$common$print = function (value) {
     console.log(value);
 };
