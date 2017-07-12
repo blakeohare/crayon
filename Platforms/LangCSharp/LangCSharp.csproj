@@ -66,6 +66,7 @@
     <EmbeddedResource Include="Resources\ResourceReader.txt" />
     <EmbeddedResource Include="Resources\TranslationHelper.txt" />
     <EmbeddedResource Include="Resources\UniversalBitmap.txt" />
+    <EmbeddedResource Include="Resources\UniversalFont.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

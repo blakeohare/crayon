@@ -137,7 +137,8 @@ namespace Crayon
                         case ResourceDatabase.FileCategory.FONT:
                             resDb.FontResources.Add(new FileOutput()
                             {
-                                Type = FileOutputType.Binary,
+                                Type = FileOutputType.Copy,
+                                RelativeInputPath = aliasedPath,
                                 OriginalPath = aliasedPath,
                                 AbsoluteInputPath = absolutePath,
                             });

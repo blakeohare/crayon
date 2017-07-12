@@ -134,6 +134,11 @@ namespace JavaApp
                 output["resources/text/" + textResource.CanonicalFileName] = textResource;
             }
 
+            foreach (FileOutput fontResource in resourceDatabase.FontResources)
+            {
+                output["resources/ttf/" + fontResource.CanonicalFileName] = fontResource;
+            }
+
             IEnumerable<FileOutput> javaFiles = output.Keys
                 .Where(filename => filename.ToLower().EndsWith(".java"))
                 .Select(filename => output[filename]);

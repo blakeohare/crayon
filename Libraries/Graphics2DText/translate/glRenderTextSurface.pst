@@ -1,0 +1,82 @@
+/*
+    args[0] -> TextSurface
+        nativeData[1] -> x coordinate offsets of each character
+        nativeData[2] -> y coordinate offsets of each character
+        ...
+        nativeData[4] -> character count
+        nativeData[5] -> red
+        nativeData[6] -> green
+        nativeData[7] -> blue
+    args[1] -> List of GLTile objects
+        ...
+        nativeData[1] -> pixel width
+        nativeData[2] -> pixel height
+        nativeData[3] -> left margin
+        nativeData[4] -> width
+
+        nativeData[5] -> GL texture ID (already loaded)
+        nativeData[6] -> left
+        nativeData[7] -> top
+        nativeData[8] -> right
+        nativeData[9] -> bottom
+        nativeData[10] -> texture height (width is always 1024)
+    args[2] -> Graphics2D draw queue object
+        nativeData[0] -> event list
+        nativeData[1] -> event list length
+    args[3] -> x coordinate
+    args[4] -> y coordinate
+    args[5] -> alpha
+
+    no return value
+*/
+Value lib_graphics2dtext_function_glRenderTextSurface(Array<Value> args) {
+    Array<object> textureNativeData = Core.ForceParens((ObjectInstance)args[0].internalValue).nativeData;
+    Array<int> xs = (Array<int>) textureNativeData[1];
+    Array<int> ys = (Array<int>) textureNativeData[2];
+    int charCount = (int) textureNativeData[4];
+    int red = (int) textureNativeData[5];
+    int green = (int) textureNativeData[6];
+    int blue = (int) textureNativeData[7];
+    int leftOffset = (int) args[3].internalValue;
+    int topOffset = (int) args[4].internalValue;
+    int alpha = (int) args[5].internalValue;
+
+    List<Value> tileValues = (List<Value>) args[1].internalValue;
+    Array<object> tileNativeData = null;
+    Array<object> queueData = Core.ForceParens((ObjectInstance)args[2].internalValue).nativeData;
+    Array<int> queue = (Array<int>) queueData[0];
+    int queueLength = (int) queueData[1];
+    int queueCapacity = queue.Size();
+    int requiredCapacity = queueLength + charCount * 16;
+    if (requiredCapacity > queueCapacity) {
+        queue = reallocIntArray(queue, requiredCapacity);
+        queueData[0] = queue;
+    }
+    queueData[1] = requiredCapacity;
+    int index = queueLength;
+    int x = 0;
+    int y = 0;
+    for (int i = 0; i < charCount; i += 1) {
+        tileNativeData = Core.ForceParens((ObjectInstance)tileValues[i].internalValue).nativeData;
+        queue[index] = 8; // draw texture direct
+        queue[index | 1] = (int) tileNativeData[5]; // texture ID
+        x = xs[i] + leftOffset;
+        y = ys[i] + topOffset;
+        queue[index | 2] = x;
+        queue[index | 3] = y;
+        queue[index | 4] = x + (int) tileNativeData[1]; // right on screen
+        queue[index | 5] = y + (int) tileNativeData[2]; // bottom on screen
+        queue[index | 6] = (int) tileNativeData[6]; // texture left
+        queue[index | 7] = (int) tileNativeData[7]; // texture top
+        queue[index | 8] = (int) tileNativeData[8]; // texture right
+        queue[index | 9] = (int) tileNativeData[9]; // texture bottom
+        queue[index | 10] = red;
+        queue[index | 11] = green;
+        queue[index | 12] = blue;
+        queue[index | 13] = alpha;
+        queue[index | 14] = (int) tileNativeData[10]; // full texture width
+        queue[index | 15] = (int) tileNativeData[11]; // full texture height
+        index += 16;
+    }
+    return VALUE_NULL;
+}

@@ -57,6 +57,8 @@ struct ProgramData {
     Dictionary<string, int> invFunctionNameLiterals;
     int activeLibraryReferenceId;
     Array<object> libraryFunctionByPc;
+
+    List<Value> shutdownHandlers;
 }
 
 struct ExecutionContext {

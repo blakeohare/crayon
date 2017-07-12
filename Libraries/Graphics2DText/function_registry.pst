@@ -1,0 +1,13 @@
+﻿void lib_manifest_RegisterFunctions(object libRegData) {
+    Core.RegisterLibraryFunction(libRegData, "createNativeFont", 8);
+    Core.RegisterLibraryFunction(libRegData, "getNativeFontUniqueKey", 8);
+    Core.RegisterLibraryFunction(libRegData, "glGenerateAndLoadTexture", 4);
+    Core.RegisterLibraryFunction(libRegData, "glRenderCharTile", 4);
+    Core.RegisterLibraryFunction(libRegData, "glRenderTextSurface", 2);
+    Core.RegisterLibraryFunction(libRegData, "glSetNativeDataIntArray", 3);
+    Core.RegisterLibraryFunction(libRegData, "isGlRenderer", 0);
+    Core.RegisterLibraryFunction(libRegData, "isResourceAvailable", 1);
+    Core.RegisterLibraryFunction(libRegData, "isSystemFontPresent", 1);
+    Core.RegisterLibraryFunction(libRegData, "renderText", 11);
+    Core.RegisterLibraryFunction(libRegData, "simpleBlit", 5);
+}

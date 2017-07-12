@@ -83,6 +83,7 @@ C$game$initializeScreen = function (width, height, pwidth, pheight, execId) {
       '<div id="crayon_image_loader_queue"></div>' +
       '<div id="crayon_image_store"></div>' +
       '<div id="crayon_temp_image"></div>' +
+	  '<div id="crayon_font_loader"></div>' +
     '</div>';
   var canvas = C$common$getElement('crayon_screen');
 

@@ -1,0 +1,23 @@
+/*
+    args[0] -> ObjectInstance
+    args[1] -> a native data index
+    args[2] -> a list of Value integers
+
+    creates a native integer array and sets it to the object instance's native data at that index.
+
+    no return value
+*/
+Value lib_graphics2dtext_function_glSetNativeDataIntArray(Array<Value> args) {
+    if (@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
+        ObjectInstance obj = (ObjectInstance) args[0].internalValue;
+        Array<object> nativeData = obj.nativeData;
+        List<Value> values = (List<Value>) args[2].internalValue;
+        int length = values.Size();
+        Array<int> intArray = new Array<int>(length);
+        for (int i = 0; i < length; i += 1) {
+            intArray[i] = (int)values[i].internalValue;
+        }
+        nativeData[(int)args[1].internalValue] = intArray;
+    }
+    return VALUE_NULL;
+}

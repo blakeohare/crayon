@@ -3,6 +3,7 @@ C$common$textResources = {};
 C$common$jsFilePrefix = ''; // overridden by resources.js if present.
 C$common$programData = null;
 C$common$resources = {};
+C$common$binaryResources = {};
 C$common$libraryFunctionLookups = {};
 
 C$common$readResourceText = function (path) {
@@ -23,6 +24,14 @@ C$common$addTextRes = function (path, value) {
 
 C$common$getTextRes = function (path) {
     return C$common$textResources[path];
+};
+
+C$common$addBinaryRes = function (path, value) {
+	C$common$binaryResources[path] = value;
+};
+
+C$common$getBinaryResBase64 = function (path) {
+	return C$common$binaryResources[path];
 };
 
 C$common$print = function (value) {

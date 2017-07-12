@@ -37,6 +37,9 @@ namespace Pastel.Nodes
 
         internal override Expression ResolveWithTypeContext(PastelCompiler compiler)
         {
+            // TODO: check if this is either:
+            // - exporting to a platform that supports this OR
+            // - is running as the direct descendant of ExpressionAsExecutable, and then swap out with += 1
             throw new NotImplementedException();
         }
     }

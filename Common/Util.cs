@@ -124,6 +124,11 @@ namespace Common
             return string.Join("", output);
         }
 
+        public static string ConvertByteArrayToBase64(byte[] bytes)
+        {
+            return System.Convert.ToBase64String(bytes, System.Base64FormattingOptions.None);
+        }
+
         public static string ReadFileExternally(string path, bool canonicalizeNewlines)
         {
             string contents = TrimBomIfPresent(System.IO.File.ReadAllText(path));

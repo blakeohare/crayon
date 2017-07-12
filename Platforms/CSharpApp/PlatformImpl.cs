@@ -62,6 +62,11 @@ namespace CSharpApp
                 embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + audioFile.CanonicalFileName + "\"/>");
             }
 
+            foreach (FileOutput fontFile in resDb.FontResources.Where(file => file.CanonicalFileName != null))
+            {
+                embeddedResources.Add("<EmbeddedResource Include=\"Resources\\" + fontFile.CanonicalFileName + "\"/>");
+            }
+
             string guidSeed = IdGenerator.GetRandomSeed();
 
             return Util.MergeDictionaries(
@@ -268,6 +273,11 @@ namespace CSharpApp
                 output[baseDir + "Resources/" + audioFile.CanonicalFileName] = audioFile;
             }
 
+            foreach (FileOutput fontFile in resourceDatabase.FontResources.Where(file => file.CanonicalFileName != null))
+            {
+                output[baseDir + "Resources/" + fontFile.CanonicalFileName] = fontFile;
+            }
+
             foreach (LangCSharp.DllFile dll in dlls)
             {
                 output[baseDir + dll.HintPath] = dll.FileOutput;
@@ -298,6 +308,7 @@ namespace CSharpApp
             this.CopyResourceAsText(output, baseDir + "Vm/LibraryFunctionPointer.cs", "Resources/LibraryFunctionPointer.txt", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/LibraryRegistry.cs", resourceDir + "/LibraryRegistry.txt", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/UniversalBitmap.cs", "Resources/UniversalBitmap.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/UniversalFont.cs", "Resources/UniversalFont.txt", replacements);
 
             // Required project files
             this.CopyResourceAsText(output, baseDir + "Properties/AssemblyInfo.cs", "Resources/AssemblyInfo.txt", replacements);

@@ -8,7 +8,7 @@ namespace Interpreter
     {
         public static string ReadResourceTextFile(string path)
         {
-			// TODO: Remove one of these
+            // TODO: Remove one of these
             return ReadTextResource(path);
         }
 

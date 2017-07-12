@@ -142,6 +142,15 @@ namespace JavaScriptAppGl
                 resourcesJs.Append(");\n");
             }
 
+            foreach (FileOutput fontResource in resourceDatabase.FontResources)
+            {
+                resourcesJs.Append("C$common$addBinaryRes(");
+                resourcesJs.Append(Util.ConvertStringValueToCode(fontResource.CanonicalFileName));
+                resourcesJs.Append(", '");
+                resourcesJs.Append(Util.ConvertByteArrayToBase64(fontResource.GetFinalBinaryContent()));
+                resourcesJs.Append("');\n");
+            }
+
             FileOutput imageSheetManifest = resourceDatabase.ImageSheetManifestFile;
             resourcesJs.Append("C$common$addTextRes('image_sheets.txt', ");
             resourcesJs.Append(imageSheetManifest == null ? "''" : Util.ConvertStringValueToCode(imageSheetManifest.TextContent));

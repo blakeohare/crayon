@@ -42,6 +42,7 @@
         REFLECT_GET_METHODS = 38,
         REFLECT_GET_CLASS = 39,
         CONVERT_LOCAL_FLOATS_TO_INTS = 40,
+        ADD_SHUTDOWN_HANDLER = 41,
     }
 
     public static class CoreFunctionIDHelper
@@ -90,6 +91,7 @@
                 case "reflectGetMethods": return (int)CoreFunctionID.REFLECT_GET_METHODS;
                 case "reflectGetClass": return (int)CoreFunctionID.REFLECT_GET_CLASS;
                 case "convertFloatArgsToInts": return (int)CoreFunctionID.CONVERT_LOCAL_FLOATS_TO_INTS;
+                case "addShutdownHandler": return (int)CoreFunctionID.ADD_SHUTDOWN_HANDLER;
                 default: return -1;
             }
         }

@@ -45,5 +45,16 @@
         // BOM's are automatically removed from .java files
         // TODO: change this to an enum: { DEFAULT, PRESENT, ABSENT }
         public bool TrimBomIfPresent { get; set; }
+
+        public byte[] GetFinalBinaryContent()
+        {
+            switch (this.Type)
+            {
+                case FileOutputType.Binary: return this.BinaryContent;
+                case FileOutputType.Copy: return System.IO.File.ReadAllBytes(this.AbsoluteInputPath);
+                case FileOutputType.Text: throw new System.NotImplementedException(); // TODO: return UTF-8 bytes
+                default: throw new System.NotImplementedException();
+            }
+        }
     }
 }
