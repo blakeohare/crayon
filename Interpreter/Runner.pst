@@ -149,16 +149,16 @@ int runInterpreter(int executionContextId) {
 }
 
 int runShutdownHandlers() {
-	// This will recursively invoke the shutdown handlers upon completion,
-	// so be sure to pop off the handler as it's used.
+    // This will recursively invoke the shutdown handlers upon completion,
+    // so be sure to pop off the handler as it's used.
     ProgramData p = Core.GetProgramData();
     while (p.shutdownHandlers.Size() > 0) {
-    	// Pop from the front. An iterating index will not be accurate if state is modified recursively.
-    	Value handler = p.shutdownHandlers[0];
-    	p.shutdownHandlers.RemoveAt(0);
-    	runInterpreterWithFunctionPointer(handler, new Array<Value>(0));
+        // Pop from the front. An iterating index will not be accurate if state is modified recursively.
+        Value handler = p.shutdownHandlers[0];
+        p.shutdownHandlers.RemoveAt(0);
+        runInterpreterWithFunctionPointer(handler, new Array<Value>(0));
     }
-	return 0;
+    return 0;
 }
 
 int runInterpreterWithFunctionPointer(Value fpValue, Array<Value> args) {

@@ -639,10 +639,10 @@
         }
         break;
     case 41:
-    	Core.EmitComment("addShutdownHandler");
+        Core.EmitComment("addShutdownHandler");
         @import("FrameworkFunctions/1_arg.cry");
         p.shutdownHandlers.Add(arg1);
-    	break;
+        break;
 }
 if (row[1] == 1) {
     @import("ValueStackCapacityCheck.cry");
