@@ -113,7 +113,9 @@ int main() {
         new List<int>(), // library function arg count list
         new Dictionary<string, int>(), // inverse function name literal lookup
         -1, // active library reference ID
-        null // library functions by PC (populated by FINALIZE_INITIALIZATION)
+        null, // library functions by PC (populated by FINALIZE_INITIALIZATION)
+
+        new List<Value>() // shutdown handlers
         ));
 
     runInterpreter(executionContext.id);
@@ -135,13 +137,28 @@ int runInterpreter(int executionContextId) {
         if (p.executionContexts.Contains(executionContextId)) {
             p.executionContexts.Remove(executionContextId);
         }
+        runShutdownHandlers();
     } else if (status == InterpreterResultStatus.FATAL_ERROR) {
         // TODO: don't generate the error in the interpreter. Instead just return the message and
         // the stack trace will be determined from the stack here. Also later add logic to
         // conditionally find symbol information here.
         Core.PrintStdOut(result.errorMessage);
+        runShutdownHandlers();
     }
     return status;
+}
+
+int runShutdownHandlers() {
+	// This will recursively invoke the shutdown handlers upon completion,
+	// so be sure to pop off the handler as it's used.
+    ProgramData p = Core.GetProgramData();
+    while (p.shutdownHandlers.Size() > 0) {
+    	// Pop from the front. An iterating index will not be accurate if state is modified recursively.
+    	Value handler = p.shutdownHandlers[0];
+    	p.shutdownHandlers.RemoveAt(0);
+    	runInterpreterWithFunctionPointer(handler, new Array<Value>(0));
+    }
+	return 0;
 }
 
 int runInterpreterWithFunctionPointer(Value fpValue, Array<Value> args) {

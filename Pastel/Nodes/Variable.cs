@@ -42,7 +42,7 @@ namespace Pastel.Nodes
             this.ResolvedType = type;
             if (type == null)
             {
-                throw new ParserException(this.FirstToken, "The variable '" + this.Name + "'is not defined.");
+                throw new ParserException(this.FirstToken, "The variable '" + this.Name + "' is not defined.");
             }
 
             return this;
