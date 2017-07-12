@@ -51,7 +51,11 @@ namespace Crayon.ParseTree
 
             if (cons.PrivateAnnotation != null)
             {
-                if (this.Class != this.FunctionOrClassOwner.FunctionOrClassOwner)
+                bool isValidUsage =
+                    this.Class == this.FunctionOrClassOwner ||
+                    this.Class == this.FunctionOrClassOwner.FunctionOrClassOwner;
+
+                if (!isValidUsage)
                 {
                     string errorMessage = "The constructor for " + this.Class.NameToken.Value + " is private and cannot be invoked from outside the class.";
                     if (cons.PrivateAnnotation.Args.Length > 0)
