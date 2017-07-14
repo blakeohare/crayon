@@ -297,7 +297,24 @@ namespace Crayon
                 IosBundlePrefix = flattened.IosBundlePrefix,
                 WindowWidth = Util.ParseIntWithErrorNullOkay(flattened.WindowSize.Width, "Invalid window width in build file."),
                 WindowHeight = Util.ParseIntWithErrorNullOkay(flattened.WindowSize.Height, "Invalid window height in build file."),
-            };
+            }.ValidateValues();
+        }
+
+        public BuildContext ValidateValues()
+        {
+            if (this.ProjectID == null) throw new InvalidOperationException("Project ID missing");
+
+            foreach (char c in this.ProjectID)
+            {
+                if (!((c >= 'a' && c <= 'z') ||
+                    (c >= 'A' && c <= 'Z') ||
+                    (c >= '0' && c <= '9')))
+                {
+                    throw new InvalidOperationException("Project ID must be alphanumeric characters only (a-z, A-Z, 0-9)");
+                }
+            }
+            
+            return this;
         }
 
         private static FilePath[] ToFilePaths(string projectDir, SourceItem[] sourceDirs)
