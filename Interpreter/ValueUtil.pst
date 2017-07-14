@@ -89,8 +89,8 @@ string valueToString(Value wrappedValue) {
         return output;
     }
 
-    // TODO: convert this to a hard crash at this point
-    return Core.StringConcatAll("TODO: toString for ", getTypeFromId(type));
+    // This should not happen.
+    return "<unknown>";
 }
 
 int initialize_constant_values() {
