@@ -142,14 +142,26 @@ namespace Platform
                     switch (rootType)
                     {
                         case "Array":
+                            if (constructor.Type.Generics.Length != 1)
+                            {
+                                throw new Pastel.ParserException(constructor.Type.FirstToken, "Array constructor requires exactly 1 generic type.");
+                            }
                             this.TranslateArrayNew(sb, constructor.Type.Generics[0], constructor.Args[0]);
                             break;
 
                         case "List":
+                            if (constructor.Type.Generics.Length != 1)
+                            {
+                                throw new Pastel.ParserException(constructor.Type.FirstToken, "List constructor requires exactly 1 generic type.");
+                            }
                             this.TranslateListNew(sb, constructor.Type.Generics[0]);
                             break;
 
                         case "Dictionary":
+                            if (constructor.Type.Generics.Length != 2)
+                            {
+                                throw new Pastel.ParserException(constructor.Type.FirstToken, "Dictionary constructor requires exactly 2 generic types.");
+                            }
                             PType dictionaryKeyType = constructor.Type.Generics[0];
                             PType dictionaryValueType = constructor.Type.Generics[1];
                             this.TranslateDictionaryNew(sb, dictionaryKeyType, dictionaryValueType);
