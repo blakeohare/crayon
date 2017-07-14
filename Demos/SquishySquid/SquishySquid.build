@@ -22,7 +22,7 @@
 	</target>
 	
 	<target name="javascript">
-		<platform>javascript-app-gl</platform>
+		<platform>javascript-app</platform>
 		<jsfileprefix>/demos/squishysquid/</jsfileprefix>
 	</target>
 	

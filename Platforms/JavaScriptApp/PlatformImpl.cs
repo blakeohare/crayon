@@ -6,11 +6,11 @@ using Common;
 using Pastel.Nodes;
 using Platform;
 
-namespace JavaScriptAppGl
+namespace JavaScriptApp
 {
     public class PlatformImpl : AbstractPlatform
     {
-        public override string Name { get { return "javascript-app-gl"; } }
+        public override string Name { get { return "javascript-app"; } }
         public override string InheritsFrom { get { return "lang-javascript"; } }
         public override string NL { get { return "\n"; } }
 

@@ -1,6 +1,0 @@
-$_lib_imageresources_checkLoaderIsDone: Library.ImageResources.ImageResourceHelper.CheckLoaderIsDone([ARG:1], [ARG:2], [ARG:3])
-$_lib_imageresources_loadAsync: Library.ImageResources.ImageResourceHelper.LoadAsync([ARG:1], [ARG:2], [ARG:3])
-$_lib_imageresources_loadSync: Library.ImageResources.ImageResourceHelper.LoadSync([ARG:1], [ARG:2], [ARG:3])
-$_lib_imageresources_getManifestString: Library.ImageResources.ImageResourceHelper.GetManifestString()
-$_lib_imageresources_blit: ((Library.ImageResources.AndroidBitmap)[ARG:1]).Blit([ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
-$_lib_imageresources_generateNativeBitmapOfSize: new Library.ImageResources.AndroidBitmap([ARG:1], [ARG:2])

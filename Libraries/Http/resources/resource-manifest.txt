@@ -1,7 +1,5 @@
 
 BEGIN
-APPLICABLE-TO: csharp-app-android
-APPLICABLE-TO: csharp-app-ios
 APPLICABLE-TO: csharp-app
 COPY_FILES: from=csharp, to=%LIBRARY_PATH%/%FILE%
 END
@@ -17,6 +15,6 @@ EMBED_FILES: from=python
 END
 
 BEGIN
-APPLICABLE-TO: javascript-app-gl
+APPLICABLE-TO: javascript-app
 EMBED_FILES: from=javascript
 END

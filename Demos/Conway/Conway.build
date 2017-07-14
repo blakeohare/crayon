@@ -8,7 +8,7 @@
 	
 	<!-- Targets -->
 	<target name="javascript">
-		<platform>javascript-app-gl</platform>
+		<platform>javascript-app</platform>
 	</target>
 	
 	<target name="csharp">

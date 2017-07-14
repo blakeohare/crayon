@@ -5,7 +5,7 @@
 	
 	<!-- Targets -->
 	<target name="javscript">
-		<platform>javascript-app-gl</platform>
+		<platform>javascript-app</platform>
 	</target>
 	
 	<target name="csharp">

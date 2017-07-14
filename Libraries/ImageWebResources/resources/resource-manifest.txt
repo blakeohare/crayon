@@ -11,7 +11,7 @@ COPY_FILES: from=java, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
-APPLICABLE-TO: javascript-app-gl
+APPLICABLE-TO: javascript-app
 EMBED_FILES: from=javascript
 END
 

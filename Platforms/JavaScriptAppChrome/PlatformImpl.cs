@@ -8,7 +8,7 @@ namespace JavaScriptAppChrome
 {
     public class PlatformImpl : Platform.AbstractPlatform
     {
-        public override string InheritsFrom { get { return "javascript-app-gl"; } }
+        public override string InheritsFrom { get { return "javascript-app"; } }
         public override string Name { get { return "javascript-app-chrome"; } }
         public override string NL { get { return "\n"; } }
 
@@ -37,12 +37,12 @@ namespace JavaScriptAppChrome
             SystemBitmap smallIcon = iconFile.CloneToNewSize(16, 16);
             SystemBitmap largeIcon = iconFile.CloneToNewSize(128, 128);
 
-            JavaScriptAppGl.PlatformImpl jsBasicPlatform = (JavaScriptAppGl.PlatformImpl)this.PlatformProvider.GetPlatform("javascript-app-gl");
+            JavaScriptApp.PlatformImpl jsBasicPlatform = (JavaScriptApp.PlatformImpl)this.PlatformProvider.GetPlatform("javascript-app");
             Dictionary<string, FileOutput> files = jsBasicPlatform.ExportProjectImpl(globals, structDefinitions, functionDefinitions, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform, this.Translator);
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             replacements["JS_LIB_INCLUSIONS"] = jsBasicPlatform.GenerateJsLibInclusionHtml(files.Keys);
             this.CopyResourceAsText(files, "background.js", "Resources/BackgroundJs.txt", replacements);
-            this.CopyResourceAsText(files, "index.html", "Resources/IndexHtml.txt", replacements); // overwrites GameHostHtml.txt from javascript-app-gl
+            this.CopyResourceAsText(files, "index.html", "Resources/IndexHtml.txt", replacements); // overwrites GameHostHtml.txt from javascript-app
             this.CopyResourceAsText(files, "chrome_web_app.js", "Resources/ChromeWebAppJs.txt", replacements);
             this.CopyResourceAsText(files, "manifest.json", "Resources/ManifestJson.txt", Util.MakeReplacementStringsJsonSafe(replacements));
             files["icon-16.png"] = new FileOutput()

@@ -70,9 +70,9 @@
       <Project>{0d8c38e5-6b24-489e-9c0f-d8101086bc32}</Project>
       <Name>JavaApp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platforms\JavaScriptAppGl\JavaScriptAppGl.csproj">
+    <ProjectReference Include="..\Platforms\JavaScriptApp\JavaScriptApp.csproj">
       <Project>{e2558b29-a032-40d0-90b0-1a9de368ec16}</Project>
-      <Name>JavaScriptAppGl</Name>
+      <Name>JavaScriptApp</Name>
     </ProjectReference>
     <ProjectReference Include="..\Platforms\LangC\LangC.csproj">
       <Project>{85cc1b47-a0c5-48b0-ba51-b3599acd1392}</Project>

@@ -5,7 +5,7 @@ using System.Text;
 using Pastel.Nodes;
 using Platform;
 
-namespace JavaScriptAppGl
+namespace JavaScriptApp
 {
     public class JavaScriptAppTranslator : LangJavaScript.JavaScriptTranslator
     {
