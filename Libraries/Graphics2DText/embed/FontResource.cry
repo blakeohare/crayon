@@ -1,0 +1,67 @@
+﻿namespace Graphics2DText {
+
+    class FontResource {
+        field _sourceType;
+        field _source;
+
+        @private
+        constructor(sourceType, source) {
+            this._sourceType = sourceType;
+            this._source = source;
+        }
+
+        function getRenderer() {
+            return new FontRenderer(this);
+        }
+
+        static field _cache = {};
+
+        static function _getKey(sourceType, source) {
+            return sourceType + source;
+        }
+
+        static function _get(sourceType, source) {
+            key = sourceType + source;
+            font = FontResource._cache.get(key);
+            if (font == null) {
+                font = new FontResource(sourceType, source);
+                FontResource._cache[key] = font;
+            }
+            return font;
+        }
+
+        static function fromResource(path) {
+            if (!$$lib_graphics2dtext_isResourceAvailable(path)) {
+                throw new FontNotFoundException("Font resource not found: '" + path + "'");
+            }
+            return FontResource._get(FontSourceType.RESOURCE, path);
+        }
+
+        static function fromDisk(path) {
+            throw new NotImplementedException();
+        }
+
+        static function fromSystem(name) {
+            if (!FontResource.isSystemFontPresent(name)) {
+                throw new FontNotFoundException("Font not installed: '" + name + "'");
+            }
+            return FontResource._get(FontSourceType.SYSTEM, name);
+        }
+
+        static function isSystemFontPresent(name) {
+            return $$lib_graphics2dtext_isSystemFontPresent(name);
+        }
+
+        static function getDefaultSerifFont() {
+            return FontResource._get(FontSourceType.DEFAULT, FontClass.SERIF);
+        }
+
+        static function getDefaultSansSerifFont() {
+            return FontResource._get(FontSourceType.DEFAULT, FontClass.SANS_SERIF);
+        }
+
+        static function getDefaultMonospaceFont() {
+            return FontResource._get(FontSourceType.DEFAULT, FontClass.MONOSPACE);
+        }
+    }
+}

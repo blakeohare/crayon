@@ -1,0 +1,116 @@
+﻿import Math;
+
+namespace Graphics2DText {
+
+    /*
+        A GL renderer juggles around some textures
+
+        A GL instance always stays alive.
+        They are only created on a unique (font, style, size) basis
+        They will unload their textures if unused and will essentially take up no space, so having a
+        lifetime tied to the life of the app is okay.
+
+        nativeData[0] -> some native object that takes in a character code and generates a bitmap.
+    */
+    class GLRenderer {
+        /*
+            nativeData[0] -> some sort of native font resource the system can use to generate
+                bitmaps that can be loaded as textures.
+                If the nativeRenderer happens to only include face, style, and size, then this may possibly be the same instance.
+            nativeData[1] -> a nullable int-to-int dictionary that maps char code ID's to texture ID's
+                set to null to invalidate and reconstruct
+        */
+
+        field sheets = [];
+        field sheetByCharId = {};
+        field tileByCharId = {};
+        field spaceWidth = null;
+        field nativeFont = null;
+
+        static field glRenderers = {};
+        static field unknownChars = [];
+
+        static function get(sourceType, sourceId, size, style, nativeFont) {
+            key = [sourceType, sourceId, size, style].join(':');
+            renderer = GLRenderer.glRenderers.get(key);
+            if (renderer == null) {
+                renderer = new GLRenderer(nativeFont, size);
+                GLRenderer.glRenderers[key] = renderer;
+            }
+            return renderer;
+        }
+
+        @private
+        constructor(nativeFont, size) {
+            this.nativeFont = nativeFont;
+            this.spaceWidth = size * 3 / 10;
+            $$$('allocNativeData', this, 1);
+            $$$('setNativeData', this, 0, null);
+        }
+
+        function renderText(text, sizeOut, textSurfaceWithNativeData, tileList) {
+            width = 0;
+            height = 0;
+            newTiles = null;
+            charIds = [];
+            xs = [];
+            ys = [];
+            lastTile = null;
+            for (c : text) {
+                charId = Core.ord(c);
+                if (c == ' ') {
+                    width += this.spaceWidth;
+                } else if (c == '\r' || c == '\n') {
+                    throw new Core.NotImplementedException();
+                } else {
+                    charIds.add(charId);
+                    tile = this.tileByCharId.get(charId);
+                    if (tile == null) {
+                        retry = true;
+                        tile = new GLTile(this, charId);
+                        if (newTiles == null) newTiles = [];
+                        newTiles.add(tile);
+                    }
+                    lastTile = tile;
+                    xs.add(width - tile.leftMargin);
+                    ys.add(0);
+                    tileList.add(tile);
+                    height = Math.max(height, tile.height);
+                    width += tile.effectiveWidth;
+                }
+            }
+            width += (lastTile.width - lastTile.effectiveWidth - tile.leftMargin) * 6 / 10;
+
+            if (newTiles != null) {
+                // Just dump all of them into new sheets.
+                // The consolidator will get triggered at the end of the frame and make the packing better.
+                sheets = GLTextureSheet.makeSheets(newTiles);
+                for (sheet : sheets) {
+                    this.sheets.add(sheet);
+                    for (tile : sheet.tiles) {
+                        this.sheetByCharId[tile.charId] = sheet;
+                        this.tileByCharId[tile.charId] = tile;
+                    }
+                }
+            }
+
+            $$lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 1, xs);
+            $$lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 2, ys);
+            $$lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 3, charIds);
+            $$$('setNativeData', textSurfaceWithNativeData, 4, charIds.length);
+
+            sizeOut[0] = width;
+            sizeOut[1] = height;
+        }
+
+        /*
+            If there are two or more textures that are less than or equal to 512 x 512, then trigger a reconsolidation
+            This is called once per frame.
+
+            TODO: add this to a Game frame end callback
+        */
+        function consolidate() {
+            throw new NotImplementedException();
+        }
+    }
+}

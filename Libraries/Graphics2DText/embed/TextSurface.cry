@@ -1,0 +1,82 @@
+﻿import Graphics2D;
+
+namespace Graphics2DText {
+
+    /*
+        Presents itself as something similar to a GraphicsTexture that can be drawn to the screen.
+        The actual implementation may vary depending on the platform.
+        It may either be a cached image or a set of drawing instructions.
+    */
+    class TextSurface {
+        field _glRenderer = null;
+        field _isGl = false;
+        field width;
+        field height;
+        field text;
+        field tiles = null;
+
+        constructor(fontRenderer, text) {
+            this.text = text;
+
+            /*
+                for bitmap based platforms:
+                nativeData[0] -> a native image object such as a pygame.Surface or JS canvas
+
+                for GL based platforms:
+                nativeData[0] -> unused
+                nativeData[1] -> an int[] of x coordinates
+                nativeData[2] -> an int[] of y coordinates
+                nativeData[3] -> an int[] of character codes
+                nativeData[4] -> number of characters to render (array.length of the above 3 arrays)
+                nativeData[5] -> red
+                nativeData[6] -> green
+                nativeData[7] -> blue
+            */
+
+            sizeOut = [0, 0];
+            if ($$lib_graphics2dtext_isGlRenderer()) {
+                this.tiles = [];
+                $$$('allocNativeData', this, 8);
+                this._glRenderer = fontRenderer._glRenderer;
+                this._glRenderer.renderText(text, sizeOut, this, this.tiles);
+                $$$('setNativeData', this, 5, fontRenderer.red);
+                $$$('setNativeData', this, 6, fontRenderer.green);
+                $$$('setNativeData', this, 7, fontRenderer.blue);
+                this._isGl = true;
+            } else {
+                $$$('allocNativeData', this, 1);
+                $$lib_graphics2dtext_renderText(
+                    sizeOut,
+                    this,
+                    fontRenderer._native,
+                    fontRenderer.font._sourceType,
+                    fontRenderer.font._source,
+                    fontRenderer.size,
+                    fontRenderer.style,
+                    fontRenderer.red,
+                    fontRenderer.green,
+                    fontRenderer.blue,
+                    text);
+            }
+            this.width = sizeOut[0];
+            this.height = sizeOut[1];
+        }
+
+        function _refreshGlRenderer() {
+            throw new Core.NotImplementedException();
+        }
+
+        function draw(x, y) {
+            return this.drawWithAlpha(x, y, 255);
+        }
+
+        function drawWithAlpha(x, y, alpha) {
+            if (this._isGl){
+                return $$lib_graphics2dtext_glRenderTextSurface(this, this.tiles, Graphics2D.Draw._queue, x, y, alpha);
+            } else {
+                Graphics2D.Draw.rectangle(0, 0, 10, 10, 255, 0, 0); // ensure the Draw._queue has capacity
+                return $$lib_graphics2dtext_simpleBlit(this, Graphics2D.Draw._queue, x, y, alpha);
+            }
+        }
+    }
+}
