@@ -1,4 +1,4 @@
-﻿@import("ValueStackCapacityCheck.cry");
+﻿@import("ValueStackCapacityCheck.pst");
 if (@ext_boolean("HAS_INCREMENT")) {
     valueStack[valueStackSize++] = literalTable[row[0]];
 } else {

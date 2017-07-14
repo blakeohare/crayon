@@ -58,6 +58,6 @@ value = new Value(Types.DICTIONARY, new DictImpl(
     len,
     type));
 
-@import("ValueStackCapacityCheck.cry");
+@import("ValueStackCapacityCheck.pst");
 valueStack[valueStackSize] = value;
 valueStackSize += 1;

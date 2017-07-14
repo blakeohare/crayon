@@ -26,18 +26,18 @@ switch (row[1]) {
         // note that a static constructor call must occur here.
         classId = row[2];
         classInfo = classTable[classId];
-        @import("InvokeStaticConstructor.cry");
+        @import("InvokeStaticConstructor.pst");
         if (bool1) {
             value = new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.STATIC_METHOD, null, classId, row[0]));
         } else {
-            // a precaution just in case value is ever added to InvokeStaticConstructor.cry
+            // a precaution just in case value is ever added to InvokeStaticConstructor.pst
             value = null;
         }
         break;
 }
 
 if (value != null) {
-    @import("ValueStackCapacityCheck.cry");
+    @import("ValueStackCapacityCheck.pst");
     valueStack[valueStackSize] = value;
     valueStackSize += 1;
 }

@@ -474,6 +474,6 @@ switch ((((leftValue.type * MAX_OP) + row[0]) * MAX_TYPE) + rightValue.type) {
         break;
 }
 
-@import("ValueStackCapacityCheck.cry");
+@import("ValueStackCapacityCheck.pst");
 valueStack[valueStackSize] = value;
 valueStackSize += 1;

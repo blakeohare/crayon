@@ -22,7 +22,7 @@ if (ec.executionStateChange) {
 }
 
 if (row[3] == 1) { // output used?
-    @import("ValueStackCapacityCheck.cry");
+    @import("ValueStackCapacityCheck.pst");
     valueStack[valueStackSize] = value;
     valueStackSize += 1;
 }

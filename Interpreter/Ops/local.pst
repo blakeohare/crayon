@@ -1,6 +1,6 @@
 ﻿int1 = localsStackOffset + row[0];
 if (localsStackSet[int1] == localsStackSetToken) {
-    @import("ValueStackCapacityCheck.cry");
+    @import("ValueStackCapacityCheck.pst");
     valueStack[valueStackSize] = localsStack[int1];
     valueStackSize += 1;
 } else {

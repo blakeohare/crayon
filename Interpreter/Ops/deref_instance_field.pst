@@ -8,6 +8,6 @@ objInstance1 = ((ObjectInstance) value.internalValue);
 // Therefore it's safe to not check the functionIds array.
 value = objInstance1.members[row[0]];
 
-@import("ValueStackCapacityCheck.cry");
+@import("ValueStackCapacityCheck.pst");
 valueStack[valueStackSize] = value;
 valueStackSize += 1;

@@ -41,7 +41,7 @@ if (esfData[pc] != null) {
             // returning null? pop the stack frame stack and push null to the value stack. Capacity check needed.
             valueStackSize = stack.valueStackPopSize;
             stack = stack.previous;
-            @import("ValueStackCapacityCheck.cry"); // edge case: called function didn't push anything to the stack and you happen to be at the valueStack capacity
+            @import("ValueStackCapacityCheck.pst"); // edge case: called function didn't push anything to the stack and you happen to be at the valueStack capacity
             valueStack[valueStackSize] = VALUE_NULL;
         } else {
             value = valueStack[(valueStackSize - 1)];

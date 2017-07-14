@@ -3,7 +3,7 @@
 switch (row[0]) {
 
     case 1: Core.EmitComment("parseInt");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         output = VALUE_NULL;
         if (arg1.type == Types.STRING) {
@@ -17,7 +17,7 @@ switch (row[0]) {
         break;
 
     case 2: Core.EmitComment("parseFloat");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         output = VALUE_NULL;
         if (arg1.type == Types.STRING) {
@@ -32,21 +32,21 @@ switch (row[0]) {
         break;
 
     case 3: Core.EmitComment("print");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         output = VALUE_NULL;
         Core.PrintStdOut(valueToString(arg1));
         break;
 
     case 4: Core.EmitComment("typeof");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         // TODO: UNIT TEST!!!! This is fast-but-brittle code.
         output = buildInteger(arg1.type - 1);
         break;
 
     case 5: Core.EmitComment("typeis");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         int1 = arg1.type;
         int2 = row[2]; // arg count
@@ -71,7 +71,7 @@ switch (row[0]) {
         break;
 
     case 7: Core.EmitComment("assert");
-        @import("FrameworkFunctions/3_arg.cry");
+        @import("FrameworkFunctions/3_arg.pst");
 
         if (arg1.type != Types.BOOLEAN) return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Assertion expression must be a boolean.");
         if ((bool) arg1.internalValue) output = VALUE_NULL;
@@ -83,7 +83,7 @@ switch (row[0]) {
         break;
 
     case 8: Core.EmitComment("chr");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         output = null;
         if (arg1.type == Types.INTEGER) {
@@ -100,7 +100,7 @@ switch (row[0]) {
         break;
 
     case 9: Core.EmitComment("ord");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         output = null;
         if (arg1.type == Types.STRING) {
@@ -121,7 +121,7 @@ switch (row[0]) {
         break;
 
     case 11: Core.EmitComment("sortList");
-        @import("FrameworkFunctions/2_arg.cry");
+        @import("FrameworkFunctions/2_arg.pst");
 
         // No arg checks because the primitive method resolver already resolved the item list and the key list is from embed.cry code.
         // Identical length is also presumed.
@@ -135,7 +135,7 @@ switch (row[0]) {
         break;
 
     case 12: Core.EmitComment("abs");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         output = VALUE_NULL;
         if (arg1.type == Types.INTEGER) {
@@ -157,7 +157,7 @@ switch (row[0]) {
         break;
 
     case 13: Core.EmitComment("arcCos");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         if (arg1.type == Types.FLOAT) {
             float1 = (double) arg1.internalValue;
@@ -175,7 +175,7 @@ switch (row[0]) {
         break;
 
     case 14: Core.EmitComment("arcSin");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         if (arg1.type == Types.FLOAT) {
             float1 = (double) arg1.internalValue;
@@ -193,7 +193,7 @@ switch (row[0]) {
         break;
 
     case 15: Core.EmitComment("arcTan");
-        @import("FrameworkFunctions/2_arg.cry");
+        @import("FrameworkFunctions/2_arg.pst");
 
         bool1 = false;
         if (arg1.type == Types.FLOAT) {
@@ -220,7 +220,7 @@ switch (row[0]) {
         break;
 
     case 16: Core.EmitComment("cos");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         if (arg1.type == Types.FLOAT) {
             float1 = (double) arg1.internalValue;
@@ -237,7 +237,7 @@ switch (row[0]) {
         // arg 1: value
         // arg 2: min
         // arg 3: max
-        @import("FrameworkFunctions/3_arg.cry");
+        @import("FrameworkFunctions/3_arg.pst");
 
         bool1 = false; // type error flag.
 
@@ -280,7 +280,7 @@ switch (row[0]) {
         break;
 
     case 18: Core.EmitComment("floor");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         if (arg1.type == Types.FLOAT) {
             float1 = (double) arg1.internalValue;
@@ -311,7 +311,7 @@ switch (row[0]) {
         break;
 
     case 19: Core.EmitComment("max");
-        @import("FrameworkFunctions/2_arg.cry");
+        @import("FrameworkFunctions/2_arg.pst");
 
         bool1 = false;
         if (arg1.type == Types.FLOAT) float1 = (double) arg1.internalValue;
@@ -332,7 +332,7 @@ switch (row[0]) {
         break;
 
     case 20: Core.EmitComment("min");
-        @import("FrameworkFunctions/2_arg.cry");
+        @import("FrameworkFunctions/2_arg.pst");
 
         bool1 = false;
         if (arg1.type == Types.FLOAT) float1 = (double) arg1.internalValue;
@@ -358,7 +358,7 @@ switch (row[0]) {
             arg 1: object instance
             arg 2: native data index
         */
-        @import("FrameworkFunctions/2_arg.cry");
+        @import("FrameworkFunctions/2_arg.pst");
         output = buildInteger((int) Core.ForceParens((ObjectInstance) arg1.internalValue).nativeData[(int) arg2.internalValue]);
         break;
 
@@ -368,7 +368,7 @@ switch (row[0]) {
             arg 2: native data index
             arg 3: bool if this should be treated as a common string (this is useful for rapid-access short strings)
         */
-        @import("FrameworkFunctions/3_arg.cry");
+        @import("FrameworkFunctions/3_arg.pst");
 
         string1 = (string) Core.ForceParens((ObjectInstance) arg1.internalValue).nativeData[(int) arg2.internalValue];
         if ((bool) arg3.internalValue) {
@@ -379,7 +379,7 @@ switch (row[0]) {
         break;
 
     case 23: Core.EmitComment("sign");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         if (arg1.type == Types.INTEGER) float1 = (double) Core.ForceParens((int) arg1.internalValue);
         else if (arg1.type == Types.FLOAT) float1 = (double) arg1.internalValue;
@@ -392,7 +392,7 @@ switch (row[0]) {
         break;
 
     case 24: Core.EmitComment("sin");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         if (arg1.type == Types.FLOAT) {
             float1 = (double) arg1.internalValue;
@@ -405,7 +405,7 @@ switch (row[0]) {
         break;
 
     case 25: Core.EmitComment("tan");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         // Checking for pi / 2 is not really necessary even though it is not a valid tan value, because
         // floating point arithmetic will never create a "true" pi / 2 and will instead return giant numbers.
@@ -428,7 +428,8 @@ switch (row[0]) {
             to help avoid floating point arithmetic errors, add an tiny epsilon and then round
             down to check for crossing an int boundary.
         */
-        @import("FrameworkFunctions/2_arg.cry");
+        @import("FrameworkFunctions/2_arg.pst");
+
         if (arg1.type == Types.FLOAT) {
             float1 = (double) arg1.internalValue;
         } else if (arg1.type == Types.INTEGER) {
@@ -446,7 +447,7 @@ switch (row[0]) {
 
     // TODO: replace the code that uses this with a call to setNativeData
     case 27: Core.EmitComment("intQueueClear");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         output = VALUE_NULL;
         objInstance1 = (ObjectInstance) arg1.internalValue;
@@ -492,7 +493,8 @@ switch (row[0]) {
         output = buildInteger(ec.executionCounter);
         break;
 
-    case 30: Core.EmitComment("sleep"); @import("FrameworkFunctions/1_arg.cry");
+    case 30: Core.EmitComment("sleep");
+        @import("FrameworkFunctions/1_arg.pst");
 
         // type guaranteed
         float1 = getFloat(arg1);
@@ -502,7 +504,7 @@ switch (row[0]) {
         } else {
             // Do the output-used check here.
             if (row[1] == 1) {
-                @import("ValueStackCapacityCheck.cry");
+                @import("ValueStackCapacityCheck.pst");
                 valueStack[valueStackSize] = VALUE_NULL;
                 valueStackSize += 1;
             }
@@ -543,7 +545,7 @@ switch (row[0]) {
         break;
 
     case 34: Core.EmitComment("allocNativeData");
-        @import("FrameworkFunctions/2_arg.cry");
+        @import("FrameworkFunctions/2_arg.pst");
 
         objInstance1 = (ObjectInstance) arg1.internalValue;
         int1 = (int) arg2.internalValue;
@@ -553,12 +555,13 @@ switch (row[0]) {
         break;
 
     case 35: Core.EmitComment("setNativeData");
-        @import("FrameworkFunctions/3_arg.cry");
+        @import("FrameworkFunctions/3_arg.pst");
+
         Core.ForceParens((ObjectInstance) arg1.internalValue).nativeData[(int) arg2.internalValue] = arg3.internalValue;
         break;
 
     case 36: Core.EmitComment("getExceptionTrace");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         intList1 = (List<int>) getNativeDataItem(arg1, 1);
         list1 = new List<Value>();
@@ -588,7 +591,7 @@ switch (row[0]) {
         break;
 
     case 38: Core.EmitComment("reflectGetMethods");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         list1 = new List<Value>();
         output = new Value(Types.LIST, list1);
@@ -609,7 +612,7 @@ switch (row[0]) {
         break;
 
     case 39: Core.EmitComment("reflectGetClass");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
 
         if (arg1.type != Types.INSTANCE) {
             return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Cannot get class from non-instance types.");
@@ -653,13 +656,13 @@ switch (row[0]) {
         break;
 
     case 41: Core.EmitComment("addShutdownHandler");
-        @import("FrameworkFunctions/1_arg.cry");
+        @import("FrameworkFunctions/1_arg.pst");
         p.shutdownHandlers.Add(arg1);
         break;
 }
 
 if (row[1] == 1) { // output used?
-    @import("ValueStackCapacityCheck.cry");
+    @import("ValueStackCapacityCheck.pst");
     valueStack[valueStackSize] = output;
     valueStackSize += 1;
 }

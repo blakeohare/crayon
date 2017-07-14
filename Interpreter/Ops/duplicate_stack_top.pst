@@ -1,7 +1,7 @@
 ﻿
 if (row[0] == 1) {
     value = valueStack[(valueStackSize - 1)];
-    @import("ValueStackCapacityCheck.cry");
+    @import("ValueStackCapacityCheck.pst");
     valueStack[valueStackSize] = value;
     valueStackSize += 1;
 } else if (row[0] == 2) {

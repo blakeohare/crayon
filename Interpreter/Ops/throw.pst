@@ -28,4 +28,4 @@ if (!isPcFromCore(pc)) {
 
 ec.activeException = value;
 
-@import("BubbleException.cry");
+@import("BubbleException.pst");

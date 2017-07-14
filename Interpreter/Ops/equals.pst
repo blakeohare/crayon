@@ -11,7 +11,7 @@ if (int1 == 0) {
     return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "== and != not defined here.");
 }
 
-@import("ValueStackCapacityCheck.cry");
+@import("ValueStackCapacityCheck.pst");
 
 if (bool1 != Core.ForceParens((row[0] == 1))) {
     valueStack[valueStackSize] = VALUE_TRUE;

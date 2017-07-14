@@ -1,4 +1,4 @@
-﻿@import("ValueStackCapacityCheck.cry");
+﻿@import("ValueStackCapacityCheck.pst");
 valueStack[valueStackSize] = valueStack[valueStackSize - 1];
 valueStack[valueStackSize - 1] = valueStack[valueStackSize - 2];
 valueStack[valueStackSize - 2] = valueStack[valueStackSize - 3];
