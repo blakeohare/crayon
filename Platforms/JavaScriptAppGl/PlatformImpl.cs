@@ -178,6 +178,11 @@ namespace JavaScriptAppGl
                 output["resources/images/" + imageResourceFile] = file;
             }
 
+            foreach (FileOutput audioResourceFile in resourceDatabase.AudioResources)
+            {
+                output["resources/audio/" + audioResourceFile.CanonicalFileName] = audioResourceFile;
+            }
+
             // TODO: minify JavaScript across all of output dictionary
 
             return output;
