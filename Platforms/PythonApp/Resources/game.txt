@@ -102,8 +102,15 @@ def pygame_pump_events():
 
   return evlist
 
+_pygame_init_already = False
+def pygame_init():
+  global _pygame_init_already
+  if not _pygame_init_already:
+    _pygame_init_already = True
+    pygame.init()
+
 def platform_begin(fps):
-  pygame.init()
+  pygame_init()
   _global_vars['fps'] = fps
 
 def pygame_initialize_screen(width, height, pixel_dimensions, execId):

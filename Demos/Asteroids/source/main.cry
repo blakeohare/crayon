@@ -8,9 +8,9 @@ const GAME_HEIGHT = 600;
 
 function main() {
 
-    window = new GameWindow('Asteroids!', FPS, GAME_WIDTH, GAME_HEIGHT);
-
     activeScene = new TitleScene();
+
+    window = new GameWindow('Asteroids!', FPS, GAME_WIDTH, GAME_HEIGHT);
 
     pressedKeys = {};
     pressedThisFrame = {};
