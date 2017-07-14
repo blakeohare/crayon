@@ -26,10 +26,8 @@ LIB$graphics2dtext$loadFontStyle = function(nativeFont) {
 		loader.innerHTML += [
 			'<style type="text/css">',
 				'@font-face { ',
-					"font-family: '" + fontFamily + "';",
-					'src: url(data:font/truetype;char;charset=utf-8;base64,' + base64 + ") format('truetype');",
-					'font-weight: normal;',
-					'font-style: normal;',
+					"font-family: " + fontFamily + ";",
+					'src: url(data:font/truetype;charset=utf-8;base64,' + base64 + ") format('truetype');",
 				'}',
 			'</style>'].join('\n');
 		nativeFont[1] = true;
