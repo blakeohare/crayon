@@ -77,13 +77,19 @@ C$game$initializeScreen = function (width, height, pwidth, pheight, execId) {
   }
   var canvasHost = C$common$getElement('crayon_host');
   canvasHost.innerHTML =
-    '<canvas id="crayon_screen" width="' + canvasWidth + '" height="' + canvasHeight + '"></canvas>' +
-    '<div style="display:none;">' +
-      '<img id="crayon_image_loader" onload="Q._finish_loading()" crossOrigin="anonymous" />' +
-      '<div id="crayon_image_loader_queue"></div>' +
-      '<div id="crayon_image_store"></div>' +
-      '<div id="crayon_temp_image"></div>' +
-	  '<div id="crayon_font_loader"></div>' +
+	'<div style="position:relative;">' +
+      '<div style="position:absolute;left:0px;top:0px;font-size:8px">' + 
+	    '<span id="crayon_font_loader_1"></span>' +
+	    '<span id="crayon_font_loader_2"></span>' +
+	  '</div>' +
+      '<canvas id="crayon_screen" width="' + canvasWidth + '" height="' + canvasHeight + '"></canvas>' +
+      '<div style="display:none;">' +
+        '<img id="crayon_image_loader" onload="Q._finish_loading()" crossOrigin="anonymous" />' +
+        '<div id="crayon_image_loader_queue"></div>' +
+        '<div id="crayon_image_store"></div>' +
+        '<div id="crayon_temp_image"></div>' +
+	    '<div id="crayon_font_loader"></div>' +
+	  '</div>';
     '</div>';
   var canvas = C$common$getElement('crayon_screen');
 

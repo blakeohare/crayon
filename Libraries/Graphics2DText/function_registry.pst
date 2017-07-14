@@ -5,6 +5,7 @@
     Core.RegisterLibraryFunction(libRegData, "glRenderCharTile", 4);
     Core.RegisterLibraryFunction(libRegData, "glRenderTextSurface", 2);
     Core.RegisterLibraryFunction(libRegData, "glSetNativeDataIntArray", 3);
+    Core.RegisterLibraryFunction(libRegData, "isDynamicFontLoaded", 0);
     Core.RegisterLibraryFunction(libRegData, "isGlRenderer", 0);
     Core.RegisterLibraryFunction(libRegData, "isResourceAvailable", 1);
     Core.RegisterLibraryFunction(libRegData, "isSystemFontPresent", 1);
