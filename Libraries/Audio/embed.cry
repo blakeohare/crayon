@@ -25,7 +25,7 @@ namespace Audio {
         field _isResource;
         field _path;
 
-        // TODO: private constructors
+        @private
         constructor() {
             // Initialized by factory methods.
         }
@@ -33,15 +33,14 @@ namespace Audio {
         static function _convertPath(path) {
             fileinfo = $$lib_audio_getAudioResourcePath(path + '');
             if (fileinfo == null) {
-                Core.assert(false, "Audio resource not found.");
+                throw new MusicNotFoundException("Audio resource '" + path + "' not found.");
             } else if (!fileinfo[0]) {
-                Core.assert(false, "Resource is not an audio file.");
+                throw new Core.InvalidArgumentException("Resource '" + path + "' is not an audio file.");
             }
             return fileinfo[1];
         }
 
         static function loadFromResource(path) {
-            if (!Music._isSupported) return null;
 
             path = Music._convertPath(path);
 
@@ -49,7 +48,7 @@ namespace Audio {
             music._isResource = true;
             music._path = path;
             if (!$$lib_audio_music_load_from_resource(music, path)) {
-                Core.assert(false, "Music resource not found.");
+                throw new MusicNotFoundException("Music resource '" + path + "' not found.");
             }
             return music;
         }
@@ -349,7 +348,6 @@ namespace Audio {
         }
 
         static function loadFromFile(path) {
-            if (!Music._isSupported) return null;
 
             s = new SoundResource();
             $$lib_audio_sfx_load_from_file(s, path);
@@ -359,7 +357,6 @@ namespace Audio {
         }
 
         static function loadFromResource(path, useCache = true) {
-            if (!Music._isSupported) return null;
 
             s = null;
             path += ''; // ensure string
