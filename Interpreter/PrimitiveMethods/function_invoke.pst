@@ -1,14 +1,17 @@
-﻿if (argCount == 1) {
+﻿/*
+    arg[0] -> (optional) a list of values. If not provided, VALUE_NULL is used instead and the invoker will treat it as an empty list.
+    Type check occurs at invocation time.
+*/
+if (argCount == 1) {
     funcArgs[1] = funcArgs[0];
+} else if (argCount == 0) {
+    funcArgs[1] = VALUE_NULL;
 } else {
-    if (argCount == 0) {
-        funcArgs[1] = VALUE_NULL;
-    } else {
-        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "invoke requires a list of arguments.");
-    }
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "invoke requires a list of arguments.");
 }
+
 funcArgs[0] = value;
 argCount = 2;
 primitiveMethodToCoreLibraryFallback = true;
-functionId = p.primitiveMethodFunctionIdFallbackLookup[3];
-output = null;
+functionId = p.primitiveMethodFunctionIdFallbackLookup[3]; // MAGIC NUMBER: 3 (see metadata initializer)
+output = null; // triggers core library fallback

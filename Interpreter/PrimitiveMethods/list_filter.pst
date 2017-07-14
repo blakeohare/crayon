@@ -1,12 +1,18 @@
 ﻿if (argCount != 1) {
     return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list filter method", 1, argCount));
 }
+
 value2 = funcArgs[0];
 if (value2.type != Types.FUNCTION) {
     return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "list filter method requires a function pointer as its argument.");
 }
+
+// TODO: consider checking arg length of the method pointer?
+// For now it'll just error in the Core/embed.cry code
+
 primitiveMethodToCoreLibraryFallback = true;
-functionId = p.primitiveMethodFunctionIdFallbackLookup[0];
-funcArgs[1] = value;
+functionId = p.primitiveMethodFunctionIdFallbackLookup[0]; // MAGIC NUMBER: 0 (see metadata initializer)
+funcArgs[1] = value; // funcArgs is allocated very big.
 argCount = 2;
-output = null;
+
+output = null; // This is required. Triggers function fallback.

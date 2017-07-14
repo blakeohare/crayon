@@ -1,9 +1,12 @@
-﻿value = valueStack[(valueStackSize - 1)];
+﻿
+value = valueStack[valueStackSize - 1];
+
 if (value.type != Types.BOOLEAN) {
     return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Boolean expected.");
 }
-if (((bool) value.internalValue)) {
-    valueStack[(valueStackSize - 1)] = VALUE_FALSE;
+
+if ((bool) value.internalValue) {
+    valueStack[valueStackSize - 1] = VALUE_FALSE;
 } else {
-    valueStack[(valueStackSize - 1)] = VALUE_TRUE;
+    valueStack[valueStackSize - 1] = VALUE_TRUE;
 }

@@ -1,13 +1,26 @@
-﻿len = ops.Size();
-intArray1 = new Array<int>(len);
-int1 = 0;
-int2 = row.Size();
-int3 = 0;
+﻿/*
+    2n arguments:
+    * 2n + 0 -> PC
+    * 2n + 1 -> delta in value stack depth
+
+    This op creates a single int array of the base value stack depth at any given PC.
+    This will be used whenever a special kind of JUMP occurs.
+    - going from a try block to a finally
+    - going from a finally to basically anywhere else
+    - in the debugger when the next line to execute is set arbitrarily
+
+*/
+len = ops.Size(); // total PC count
+intArray1 = new Array<int>(len); // output
+int1 = 0; // row index
+int2 = row.Size(); // row length
+int3 = 0; // depth total
 for (i = 0; i < len; i += 1) {
-    if ((int1 < int2) && (i == row[int1])) {
-        int3 += row[(int1 + 1)];
+    if (int1 < int2 && i == row[int1]) {
+        int3 += row[int1 + 1];
         int1 += 2;
     }
     intArray1[i] = int3;
 }
+
 p.valueStackDepthByPc = intArray1;

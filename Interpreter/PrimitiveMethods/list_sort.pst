@@ -8,12 +8,12 @@
         value2 = funcArgs[0];
         if (value2.type == Types.FUNCTION) {
             primitiveMethodToCoreLibraryFallback = true;
-            functionId = p.primitiveMethodFunctionIdFallbackLookup[2];
-            funcArgs[1] = value;
+            functionId = p.primitiveMethodFunctionIdFallbackLookup[2]; // MAGIC NUMBER: 2 (see metadata initializer)
+            funcArgs[1] = value; // funcArgs is allocated very big.
             argCount = 2;
         } else {
             return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "list.sort(get_key_function) requires a function pointer as its argument.");
         }
-        output = null;
+        output = null; // This is required. Triggers function fallback.
     }
 }

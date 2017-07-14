@@ -5,8 +5,12 @@ value2 = funcArgs[0];
 if (value2.type != Types.FUNCTION) {
     return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "list map method requires a function pointer as its argument.");
 }
+
+// TODO: consider checking arg length?
+
 primitiveMethodToCoreLibraryFallback = true;
-functionId = p.primitiveMethodFunctionIdFallbackLookup[1];
-funcArgs[1] = value;
+functionId = p.primitiveMethodFunctionIdFallbackLookup[1]; // MAGIC NUMBER: 1 (see metadata initializer)
+funcArgs[1] = value; // funcArgs is allocated very big.
 argCount = 2;
-output = null;
+
+output = null; // This is required. Triggers function fallback.

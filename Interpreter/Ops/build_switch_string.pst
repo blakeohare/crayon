@@ -1,4 +1,5 @@
 ﻿List<Dictionary<string, int>> allStringSwitchLookups = p.stringSwitchLookupsBuilder;
+// int1 is id
 int1 = row[0];
 while (allStringSwitchLookups.Size() <= int1) {
     allStringSwitchLookups.Add(new Dictionary<string, int>());

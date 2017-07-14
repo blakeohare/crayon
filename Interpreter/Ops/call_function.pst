@@ -1,8 +1,66 @@
-﻿type = row[0];
+﻿/*
+    All function calls (even constructor invocations and primitive methods) go through this op code, with the exception
+    of static constructors that are implicitly called from dereferencing a static field. However, implicit static constructor
+    invocations that occur as a result of a static method invocation goes through this op as well.
+
+    Generally, any ambiguous function invocation (such as invoking a field on a variable of unknown type) is resolved into
+    a known invocation, and then follows through the rest of the shared codepath.
+
+    Here are the values of FunctionInvocationType, and what they do in this op...
+
+        NORMAL_FUNCTION
+        Nothing special. Function is invoked.
+
+        STATIC_METHOD
+        Check to see if the class is staticly initialized. If it isn't (or not in progress), don't pop the args, subtract
+        1 from the PC, and then change the invocation type to STATIC_CONSTRUCTOR. When it returns, it'll return to the previous
+        PC and then resume this op again and it'll be initialized.
+
+        LOCAL_METHOD
+        At the final invocation phase, functionId and value must be set.
+
+        POINTER_PROVIDED
+        Pop the stack, look at the pointer, and figure out what this is. Change type accordingly.
+        This happens before final invocation time.
+
+        FIELD_INVOCATION
+        Pop the stack, look at the pointer, look at the field name, then resolve this into one of the following:
+        LOCAL_METHOD, POINTER_PROVIDED (i.e. it's a function pointer that was set on a normal field of a class, or
+        PRIMITIVE_METHOD
+
+        CONSTRUCTOR
+
+        BASE_CONSTRUCTOR
+
+        STATIC_CONSTRUCTOR
+        This is never invoked from the byte code. It is always invoked as a result of STATIC_METHOD.
+        When it is invoked, it must mark the stack frame as having a static initalization resolution, so that when it's popped,
+        the class is marked as fully initialized.
+
+        PRIMITIVE_METHOD
+        This is the only function invocation that does not result in stack changes. The value is computed
+        synchronously and immediately pushed back to the stack.
+        There may be an exception to this in the future thoough, when list.sort(key_function_pointer) is added,
+        in which case, this primitive method call may possibly be resolved into a NORMAL_FUNCTION call referring a
+        function in the core library.
+    }
+
+    args:
+    row[0] --> type (see above)
+    row[1] --> args passed by user. If this is -1, then that means a list was passed and should be used instead. This is a special case just used for Core.functionInvoke.
+    row[2] --> functionID if known (available for all types except POINTER_PROVIDED and FIELD_INVOCATION)
+    row[3] --> 1 if output is used
+    row[4] --> class ID if method or constructor of any type. If this is FIELD_INVOCATION, then this is the global name ID
+    row[5] --> only provided in a field invocation. The local field ID of the field being invoked. Used to do lookup on specific class if different than the one the function ID refers to.
+
+*/
+type = row[0];
 argCount = row[1];
 functionId = row[2];
 returnValueUsed = row[3] == 1;
 classId = row[4];
+
+// Check to see if a static initialization is required.
 bool1 = true;
 if ((type == FunctionInvocationType.STATIC_METHOD) || (type == FunctionInvocationType.CONSTRUCTOR)) {
     Core.EmitComment("constructor or static method");
@@ -10,29 +68,33 @@ if ((type == FunctionInvocationType.STATIC_METHOD) || (type == FunctionInvocatio
     @import("InvokeStaticConstructor.cry");
 }
 if (bool1) {
+
     Core.EmitComment("construct args array");
+    // Note that if a static constructor is invoked, the args of the previous static method are safe because argCount was set to 0.
+
     if (argCount == -1) {
+        // See hack at the beginning of ByteCodeCompiler.cs's CompileFunctionCall method
         valueStackSize -= 1;
         value = valueStack[valueStackSize];
         if (value.type == Types.NULL) {
             argCount = 0;
-        } else {
-            if (value.type == Types.LIST) {
-                list1 = ((List<Value>) value.internalValue);
-                argCount = list1.Size();
-                for (i = argCount - 1; i >= 0; i -= 1) {
-                    funcArgs[i] = list1[i];
-                }
-            } else {
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Function pointers' .invoke method requires a list argument.");
+        } else if (value.type == Types.LIST) {
+            list1 = ((List<Value>) value.internalValue);
+            argCount = list1.Size();
+            for (i = argCount - 1; i >= 0; i -= 1) {
+                funcArgs[i] = list1[i];
             }
+        } else {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Function pointers' .invoke method requires a list argument.");
         }
+
     } else {
         for (i = argCount - 1; i >= 0; i -= 1) {
             valueStackSize -= 1;
             funcArgs[i] = valueStack[valueStackSize];
         }
     }
+
     if (type == FunctionInvocationType.LOCAL_METHOD) {
         value = stack.objectContext;
         objInstance1 = ((ObjectInstance) value.internalValue);
@@ -43,75 +105,100 @@ if (bool1) {
                 functionId = classInfo.functionIds[int2];
             }
         }
-    } else {
-        if (type == FunctionInvocationType.FIELD_INVOCATION) {
-            Core.EmitComment("field invocation");
-            valueStackSize -= 1;
-            value = valueStack[valueStackSize];
-            switch (value.type) {
-                case Types.NULL:
-                    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.NULL_REFERENCE, "Invoked method on null.");
-                case Types.INSTANCE:
-                    Core.EmitComment("field invoked on an object instance.");
-                    objInstance1 = ((ObjectInstance) value.internalValue);
-                    int1 = objInstance1.classId;
-                    classInfo = classTable[int1];
-                    if (classInfo.globalIdToMemberId.Contains(classId)) {
-                        int1 = classInfo.globalIdToMemberId[classId];
-                        functionId = classInfo.functionIds[int1];
-                        if (functionId > 0) {
-                            type = FunctionInvocationType.LOCAL_METHOD;
-                        } else {
-                            value = objInstance1.members[int1];
-                            type = FunctionInvocationType.POINTER_PROVIDED;
-                            valueStack[valueStackSize] = value;
-                            valueStackSize += 1;
-                        }
-                    } else {
-                        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNKNOWN_FIELD, "Unknown field.");
-                    }
-                    break;
-                case Types.CLASS:
-                    Core.EmitComment("field invocation on a class object instance.");
-                    functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
-                    if (functionId < 0) {
-                        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, "Class definitions do not have that method.");
-                    }
-                    functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
-                    if (functionId < 0) {
-                        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, Core.StringConcatAll(getTypeFromId(value.type), " does not have that method."));
-                    }
-                    if (globalNameIdToPrimitiveMethodName[classId] == PrimitiveMethodName.CREATE_INSTANCE) {
-                        type = FunctionInvocationType.CONSTRUCTOR;
-                        classValue = ((ClassValue) value.internalValue);
-                        if (classValue.isInterface) {
-                            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot create an instance of an interface.");
-                        }
-                        classId = classValue.classId;
-                        if (!returnValueUsed) {
-                            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot create an instance and not use the output.");
-                        }
-                        classInfo = p.classTable[classId];
-                        functionId = classInfo.constructorFunctionId;
-                    } else {
-                        type = FunctionInvocationType.PRIMITIVE_METHOD;
-                    }
-                    break;
-                default:
-                    Core.EmitComment("primitive method suspected.");
-                    functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
-                    if (functionId < 0) {
-                        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, Core.StringConcatAll(getTypeFromId(value.type), " does not have that method."));
-                    }
-                    type = FunctionInvocationType.PRIMITIVE_METHOD;
-                    break;
-            }
-        }
-    }
-    if (type == FunctionInvocationType.POINTER_PROVIDED) {
-        Core.EmitComment("pointer provided");
+    } else if (type == FunctionInvocationType.FIELD_INVOCATION) {
+        Core.EmitComment("field invocation");
+        // provided pointers have no risk of requiring a static initialization because the pointer can only be
+        // provided from a source that would have already triggered it.
+
+        // Pop the stack and see what we have.
         valueStackSize -= 1;
         value = valueStack[valueStackSize];
+
+        switch (value.type) {
+            case Types.NULL:
+                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.NULL_REFERENCE, "Invoked method on null.");
+
+            case Types.INSTANCE:
+                Core.EmitComment("field invoked on an object instance.");
+                objInstance1 = ((ObjectInstance) value.internalValue);
+                int1 = objInstance1.classId; // note that classId has the field name ID and so this is sort of confusing
+                classInfo = classTable[int1];
+                if (classInfo.globalIdToMemberId.Contains(classId)) {
+                    int1 = classInfo.globalIdToMemberId[classId]; // int1 is now the member ID.
+                    // now that we have the member ID, check to see if this is a field or a known method.
+                    functionId = classInfo.functionIds[int1];
+                    if (functionId > 0) {
+                        // This is a local method. 'value' already contains the context.
+                        type = FunctionInvocationType.LOCAL_METHOD;
+                    } else {
+                        // This is just a field which is a pointer to something. Dereference the field into 'value' and change type to POINTER_PROVIDED.
+                        // Since there are unverified POINTER_PROVIDED codepaths at this point, don't do verification that it is a FunctionPointer here
+                        // as it will be done redundantly later.
+                        value = objInstance1.members[int1];
+                        type = FunctionInvocationType.POINTER_PROVIDED;
+
+                        valueStack[valueStackSize] = value;
+                        valueStackSize += 1;
+                    }
+                } else {
+                    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNKNOWN_FIELD, "Unknown field.");
+                }
+                break;
+
+            case Types.CLASS:
+                Core.EmitComment("field invocation on a class object instance.");
+                functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId); // enum value in PrimitiveMethodName
+                if (functionId < 0) {
+                    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, "Class definitions do not have that method.");
+                }
+
+                // Note: a static constructor will never need to run because it will have already happened
+                // at the time that you fetched the class reference.
+
+                functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
+                if (functionId < 0) {
+                    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, Core.StringConcatAll(getTypeFromId(value.type), " does not have that method."));
+                }
+
+                if (globalNameIdToPrimitiveMethodName[classId] == PrimitiveMethodName.CREATE_INSTANCE) {
+                    type = FunctionInvocationType.CONSTRUCTOR;
+                    classValue = ((ClassValue) value.internalValue);
+                    if (classValue.isInterface) {
+                        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot create an instance of an interface.");
+                    }
+                    classId = classValue.classId;
+                    if (!returnValueUsed) {
+                        // TODO: This is kind of silly.
+                        // Try removing it and verify there is no stack corruption.
+                        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot create an instance and not use the output.");
+                    }
+
+                    classInfo = p.classTable[classId];
+                    functionId = classInfo.constructorFunctionId;
+                } else {
+                    type = FunctionInvocationType.PRIMITIVE_METHOD;
+                }
+                break;
+
+            default:
+                Core.EmitComment("primitive method suspected.");
+                // resolve a primitive method
+                functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId); // enum value in PrimitiveMethodName
+                if (functionId < 0) {
+                    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, Core.StringConcatAll(getTypeFromId(value.type), " does not have that method."));
+                }
+
+                type = FunctionInvocationType.PRIMITIVE_METHOD;
+                break;
+        }
+    }
+
+    if (type == FunctionInvocationType.POINTER_PROVIDED) {
+        Core.EmitComment("pointer provided");
+
+        valueStackSize -= 1;
+        value = valueStack[valueStackSize];
+
         if (value.type == Types.FUNCTION) {
             functionPointer1 = ((FunctionPointer) value.internalValue);
             switch (functionPointer1.type) {
@@ -143,6 +230,7 @@ if (bool1) {
             return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, "This type cannot be invoked like a function.");
         }
     }
+
     if (type == FunctionInvocationType.PRIMITIVE_METHOD) {
         Core.EmitComment("primitive method invocation");
         output = VALUE_NULL;
@@ -152,175 +240,85 @@ if (bool1) {
                 Core.EmitComment("...on a string");
                 string1 = ((string) value.internalValue);
                 switch (functionId) {
-                    case PrimitiveMethodName.CONTAINS:
-                        @import("PrimitiveMethods/string_contains.cry");
-                        break;
-                    case PrimitiveMethodName.ENDS_WITH:
-                        @import("PrimitiveMethods/string_ends_with.cry");
-                        break;
-                    case PrimitiveMethodName.INDEX_OF:
-                        @import("PrimitiveMethods/string_index_of.cry");
-                        break;
-                    case PrimitiveMethodName.LOWER:
-                        @import("PrimitiveMethods/string_lower.cry");
-                        break;
-                    case PrimitiveMethodName.LTRIM:
-                        @import("PrimitiveMethods/string_ltrim.cry");
-                        break;
-                    case PrimitiveMethodName.REPLACE:
-                        @import("PrimitiveMethods/string_replace.cry");
-                        break;
-                    case PrimitiveMethodName.REVERSE:
-                        @import("PrimitiveMethods/string_reverse.cry");
-                        break;
-                    case PrimitiveMethodName.RTRIM:
-                        @import("PrimitiveMethods/string_rtrim.cry");
-                        break;
-                    case PrimitiveMethodName.SPLIT:
-                        @import("PrimitiveMethods/string_split.cry");
-                        break;
-                    case PrimitiveMethodName.STARTS_WITH:
-                        @import("PrimitiveMethods/string_starts_with.cry");
-                        break;
-                    case PrimitiveMethodName.TRIM:
-                        @import("PrimitiveMethods/string_trim.cry");
-                        break;
-                    case PrimitiveMethodName.UPPER:
-                        @import("PrimitiveMethods/string_upper.cry");
-                        break;
-                    default:
-                        output = null;
-                        break;
+                    case PrimitiveMethodName.CONTAINS: @import("PrimitiveMethods/string_contains.cry"); break;
+                    case PrimitiveMethodName.ENDS_WITH: @import("PrimitiveMethods/string_ends_with.cry"); break;
+                    case PrimitiveMethodName.INDEX_OF: @import("PrimitiveMethods/string_index_of.cry"); break;
+                    case PrimitiveMethodName.LOWER: @import("PrimitiveMethods/string_lower.cry"); break;
+                    case PrimitiveMethodName.LTRIM: @import("PrimitiveMethods/string_ltrim.cry"); break;
+                    case PrimitiveMethodName.REPLACE: @import("PrimitiveMethods/string_replace.cry"); break;
+                    case PrimitiveMethodName.REVERSE: @import("PrimitiveMethods/string_reverse.cry"); break;
+                    case PrimitiveMethodName.RTRIM: @import("PrimitiveMethods/string_rtrim.cry"); break;
+                    case PrimitiveMethodName.SPLIT: @import("PrimitiveMethods/string_split.cry"); break;
+                    case PrimitiveMethodName.STARTS_WITH: @import("PrimitiveMethods/string_starts_with.cry"); break;
+                    case PrimitiveMethodName.TRIM: @import("PrimitiveMethods/string_trim.cry"); break;
+                    case PrimitiveMethodName.UPPER: @import("PrimitiveMethods/string_upper.cry"); break;
+                    default: output = null; break;
                 }
                 break;
             case Types.LIST:
                 Core.EmitComment("...on a list");
                 list1 = ((List<Value>) value.internalValue);
                 switch (functionId) {
-                    case PrimitiveMethodName.ADD:
-                        @import("PrimitiveMethods/list_add.cry");
-                        break;
-                    case PrimitiveMethodName.CHOICE:
-                        @import("PrimitiveMethods/list_choice.cry");
-                        break;
-                    case PrimitiveMethodName.CLEAR:
-                        @import("PrimitiveMethods/list_clear.cry");
-                        break;
-                    case PrimitiveMethodName.CLONE:
-                        @import("PrimitiveMethods/list_clone.cry");
-                        break;
-                    case PrimitiveMethodName.CONCAT:
-                        @import("PrimitiveMethods/list_concat.cry");
-                        break;
-                    case PrimitiveMethodName.CONTAINS:
-                        @import("PrimitiveMethods/list_contains.cry");
-                        break;
-                    case PrimitiveMethodName.FILTER:
-                        @import("PrimitiveMethods/list_filter.cry");
-                        break;
-                    case PrimitiveMethodName.INSERT:
-                        @import("PrimitiveMethods/list_insert.cry");
-                        break;
-                    case PrimitiveMethodName.JOIN:
-                        @import("PrimitiveMethods/list_join.cry");
-                        break;
-                    case PrimitiveMethodName.MAP:
-                        @import("PrimitiveMethods/list_map.cry");
-                        break;
-                    case PrimitiveMethodName.POP:
-                        @import("PrimitiveMethods/list_pop.cry");
-                        break;
-                    case PrimitiveMethodName.REMOVE:
-                        @import("PrimitiveMethods/list_remove.cry");
-                        break;
-                    case PrimitiveMethodName.REVERSE:
-                        @import("PrimitiveMethods/list_reverse.cry");
-                        break;
-                    case PrimitiveMethodName.SHUFFLE:
-                        @import("PrimitiveMethods/list_shuffle.cry");
-                        break;
-                    case PrimitiveMethodName.SORT:
-                        @import("PrimitiveMethods/list_sort.cry");
-                        break;
-                    default:
-                        output = null;
-                        break;
+                    case PrimitiveMethodName.ADD: @import("PrimitiveMethods/list_add.cry"); break;
+                    case PrimitiveMethodName.CHOICE: @import("PrimitiveMethods/list_choice.cry"); break;
+                    case PrimitiveMethodName.CLEAR: @import("PrimitiveMethods/list_clear.cry"); break;
+                    case PrimitiveMethodName.CLONE: @import("PrimitiveMethods/list_clone.cry"); break;
+                    case PrimitiveMethodName.CONCAT: @import("PrimitiveMethods/list_concat.cry"); break;
+                    case PrimitiveMethodName.CONTAINS: @import("PrimitiveMethods/list_contains.cry"); break;
+                    case PrimitiveMethodName.FILTER: @import("PrimitiveMethods/list_filter.cry"); break;
+                    case PrimitiveMethodName.INSERT: @import("PrimitiveMethods/list_insert.cry"); break;
+                    case PrimitiveMethodName.JOIN: @import("PrimitiveMethods/list_join.cry"); break;
+                    case PrimitiveMethodName.MAP: @import("PrimitiveMethods/list_map.cry"); break;
+                    case PrimitiveMethodName.POP: @import("PrimitiveMethods/list_pop.cry"); break;
+                    case PrimitiveMethodName.REMOVE: @import("PrimitiveMethods/list_remove.cry"); break;
+                    case PrimitiveMethodName.REVERSE: @import("PrimitiveMethods/list_reverse.cry"); break;
+                    case PrimitiveMethodName.SHUFFLE: @import("PrimitiveMethods/list_shuffle.cry"); break;
+                    case PrimitiveMethodName.SORT: @import("PrimitiveMethods/list_sort.cry"); break;
+                    default: output = null; break;
                 }
                 break;
             case Types.DICTIONARY:
                 Core.EmitComment("...on a dictionary");
                 dictImpl = ((DictImpl) value.internalValue);
                 switch (functionId) {
-                    case PrimitiveMethodName.CLEAR:
-                        @import("PrimitiveMethods/dict_clear.cry");
-                        break;
-                    case PrimitiveMethodName.CLONE:
-                        @import("PrimitiveMethods/dict_clone.cry");
-                        break;
-                    case PrimitiveMethodName.CONTAINS:
-                        @import("PrimitiveMethods/dict_contains.cry");
-                        break;
-                    case PrimitiveMethodName.GET:
-                        @import("PrimitiveMethods/dict_get.cry");
-                        break;
-                    case PrimitiveMethodName.KEYS:
-                        @import("PrimitiveMethods/dict_keys.cry");
-                        break;
-                    case PrimitiveMethodName.MERGE:
-                        @import("PrimitiveMethods/dict_merge.cry");
-                        break;
-                    case PrimitiveMethodName.REMOVE:
-                        @import("PrimitiveMethods/dict_remove.cry");
-                        break;
-                    case PrimitiveMethodName.VALUES:
-                        @import("PrimitiveMethods/dict_values.cry");
-                        break;
-                    default:
-                        output = null;
-                        break;
+                    case PrimitiveMethodName.CLEAR: @import("PrimitiveMethods/dict_clear.cry"); break;
+                    case PrimitiveMethodName.CLONE: @import("PrimitiveMethods/dict_clone.cry"); break;
+                    case PrimitiveMethodName.CONTAINS: @import("PrimitiveMethods/dict_contains.cry"); break;
+                    case PrimitiveMethodName.GET: @import("PrimitiveMethods/dict_get.cry"); break;
+                    case PrimitiveMethodName.KEYS: @import("PrimitiveMethods/dict_keys.cry"); break;
+                    case PrimitiveMethodName.MERGE: @import("PrimitiveMethods/dict_merge.cry"); break;
+                    case PrimitiveMethodName.REMOVE: @import("PrimitiveMethods/dict_remove.cry"); break;
+                    case PrimitiveMethodName.VALUES: @import("PrimitiveMethods/dict_values.cry"); break;
+                    default: output = null; break;
                 }
                 break;
             case Types.FUNCTION:
                 Core.EmitComment("...on a function pointer");
                 functionPointer1 = ((FunctionPointer) value.internalValue);
                 switch (functionId) {
-                    case PrimitiveMethodName.ARG_COUNT_MAX:
-                        @import("PrimitiveMethods/function_arg_count_max.cry");
-                        break;
-                    case PrimitiveMethodName.ARG_COUNT_MIN:
-                        @import("PrimitiveMethods/function_arg_count_min.cry");
-                        break;
-                    case PrimitiveMethodName.GET_NAME:
-                        @import("PrimitiveMethods/function_get_name.cry");
-                        break;
-                    case PrimitiveMethodName.INVOKE:
-                        @import("PrimitiveMethods/function_invoke.cry");
-                        break;
-                    default:
-                        output = null;
-                        break;
+                    case PrimitiveMethodName.ARG_COUNT_MAX: @import("PrimitiveMethods/function_arg_count_max.cry"); break;
+                    case PrimitiveMethodName.ARG_COUNT_MIN: @import("PrimitiveMethods/function_arg_count_min.cry"); break;
+                    case PrimitiveMethodName.GET_NAME: @import("PrimitiveMethods/function_get_name.cry"); break;
+                    case PrimitiveMethodName.INVOKE: @import("PrimitiveMethods/function_invoke.cry"); break;
+                    default: output = null; break;
                 }
                 break;
             case Types.CLASS:
                 Core.EmitComment("...on a class definition");
                 classValue = ((ClassValue) value.internalValue);
                 switch (functionId) {
-                    case PrimitiveMethodName.GET_NAME:
-                        @import("PrimitiveMethods/class_get_name.cry");
-                        break;
-                    case PrimitiveMethodName.IS_A:
-                        @import("PrimitiveMethods/class_is_a.cry");
-                        break;
-                    default:
-                        output = null;
-                        break;
+                    case PrimitiveMethodName.GET_NAME: @import("PrimitiveMethods/class_get_name.cry"); break;
+                    case PrimitiveMethodName.IS_A: @import("PrimitiveMethods/class_is_a.cry"); break;
+                    default: output = null; break;
                 }
                 break;
         }
+
         if (output == null) {
             if (primitiveMethodToCoreLibraryFallback) {
                 type = FunctionInvocationType.NORMAL_FUNCTION;
                 bool1 = true;
+                // functionId has been set.
             } else {
                 return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, "primitive method not found.");
             }
@@ -335,8 +333,14 @@ if (bool1) {
     }
     if (bool1) {
         Core.EmitComment("push a new frame to the stack");
+
         stack.pc = pc;
-        bool1 = false;
+        bool1 = false; // bool1 now indicates whether the PC's in intArray1 indicate additional stack frames that need to be pushed.
+
+        // Set the following variables...
+        // pc --> since pc is now saved, put the new PC into the 'pc' variable.
+        // classId --> for static constructors, set this to the class ID to mark as initialization-completed, 0 otherwise
+        // value --> the value of 'this' in the next function
         switch (type) {
             case FunctionInvocationType.NORMAL_FUNCTION:
                 Core.EmitComment("function");
@@ -357,6 +361,7 @@ if (bool1) {
                 functionInfo = functionTable[functionId];
                 pc = functionInfo.pc;
                 classId = 0;
+                // value already set
                 break;
             case FunctionInvocationType.CONSTRUCTOR:
                 Core.EmitComment("constructor");
@@ -372,17 +377,29 @@ if (bool1) {
                             valueArray1[i] = new Value(Types.LIST, new List<Value>());
                             break;
                         case 2:
-                            valueArray1[i] = new Value(Types.DICTIONARY, new DictImpl(new Dictionary<int, Value>(), new Dictionary<int, Value>(), new Dictionary<string, Value>(), new Dictionary<string, Value>(), 0, Types.INTEGER));
+                            valueArray1[i] = new Value(Types.DICTIONARY, new DictImpl(
+                                new Dictionary<int, Value>(),
+                                new Dictionary<int, Value>(),
+                                new Dictionary<string, Value>(),
+                                new Dictionary<string, Value>(),
+                                0,
+                                Types.INTEGER));
                             break;
                     }
                 }
-                objInstance1 = new ObjectInstance(classId, p.instanceCounter, valueArray1, null);
+                objInstance1 = new ObjectInstance(
+                    classId,
+                    p.instanceCounter,
+                    valueArray1,
+                    null);
                 value = new Value(Types.INSTANCE, objInstance1);
                 functionId = classInfo.constructorFunctionId;
                 functionInfo = functionTable[functionId];
                 pc = functionInfo.pc;
                 classId = 0;
                 if (returnValueUsed) {
+                    // if the return value is used, push the new constructed object to the stack NOW and then call the function
+                    // as though the return value is not used.
                     returnValueUsed = false;
                     @import("ValueStackCapacityCheck.cry");
                     valueStack[valueStackSize] = value;
@@ -399,38 +416,66 @@ if (bool1) {
                 classId = 0;
                 break;
         }
+
         if ((argCount < functionInfo.minArgs) || (argCount > functionInfo.maxArgs)) {
             pc = stack.pc;
             return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Incorrect number of args were passed to this function.");
         }
+
         int1 = functionInfo.localsSize;
+
+        // where the current locals stack ends (will be the new locals stack begin)
         int2 = stack.localsStackOffsetEnd;
+
         if (localsStackCapacity <= (int2 + int1)) {
             increaseLocalsStackCapacity(ec, int1);
             localsStack = ec.localsStack;
             localsStackSet = ec.localsStackSet;
             localsStackCapacity = localsStack.Size();
         }
+
         localsStackSetToken += 1;
         if (localsStackSetToken > 2000000000) {
             resetLocalsStackTokens(ec, stack);
             localsStackSetToken = 2;
         }
+
         localsStackOffset = int2;
+
         Core.EmitComment("invoke the function");
-        stack = new StackFrame(pc, localsStackSetToken, localsStackOffset, (localsStackOffset + int1), stack, returnValueUsed, value, valueStackSize, 0, (stack.depth + 1), PostFinallyBehavior.NOTHING, null);
+        stack = new StackFrame(
+            pc,
+            localsStackSetToken,
+            localsStackOffset,
+            localsStackOffset + int1, // locals stack end (exclusive) and also the next stack frame's localsStackOffset
+            stack,
+            returnValueUsed,
+            value, // the value of the 'this' keyword
+            valueStackSize,
+            0, // for static constructor use only
+            stack.depth + 1,
+            PostFinallyBehavior.NOTHING,
+            null); // temp return value
+
+        // now that we're in the new stack frame, flush out all the passed args to the local stack since their
+        // ID's are allocated with args first.
         for (i = 0; i < argCount; i += 1) {
             int1 = localsStackOffset + i;
             localsStack[int1] = funcArgs[i];
             localsStackSet[int1] = localsStackSetToken;
         }
         if (argCount != functionInfo.minArgs) {
-            int1 = argCount - functionInfo.minArgs;
+            // optional args are simply local variable assignments at the front of the function body.
+            // Adjust the PC to skip these if those arguments were provided.
+            int1 = argCount - functionInfo.minArgs; // number of optional args provided
             if (int1 > 0) {
+                // The amount to increment the PC by is conveniently stored in the function metadata in an
+                // array indexed by the number of optional args provided.
                 pc += functionInfo.pcOffsetsForOptionalArgs[int1];
                 stack.pc = pc;
             }
         }
+
         if (stack.depth > 1000) {
             return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, "Stack overflow.");
         }

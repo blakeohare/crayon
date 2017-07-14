@@ -15,7 +15,7 @@ if (dictImpl2.size > 0) {
     } else if (dictImpl2.keyType != dictImpl.keyType) {
         return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, "dictionaries with different key types cannot be merged.");
     } else {
-        cloneDictionary(dictImpl2, dictImpl);
+        cloneDictionary(dictImpl2, dictImpl); // no need to overwrite value.internalValue, changes written directly to dictImpl.
     }
 }
 

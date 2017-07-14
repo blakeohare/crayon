@@ -1,9 +1,0 @@
-﻿
-if (argCount == 0) {
-	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "List add method requires at least one argument.");
-}
-
-for (i = 0; i < argCount; i += 1) {
-	$_list_push(list1, $_array_get(funcArgs, i));
-}
-output = VALUE_NULL;

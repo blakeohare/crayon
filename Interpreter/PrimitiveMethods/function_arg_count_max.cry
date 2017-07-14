@@ -1,8 +1,0 @@
-﻿
-if (argCount > 0) {
-	return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("argCountMax method", 0, argCount));
-}
-
-functionId = FunctionPointer$functionPointer1.functionId;
-functionInfo = $_array_get(ProgramData$p.functionTable, functionId);
-output = buildInteger(FunctionInfo$functionInfo.maxArgs);

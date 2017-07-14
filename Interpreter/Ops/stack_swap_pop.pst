@@ -1,2 +1,2 @@
 ﻿valueStackSize -= 1;
-valueStack[(valueStackSize - 1)] = valueStack[valueStackSize];
+valueStack[valueStackSize - 1] = valueStack[valueStackSize];

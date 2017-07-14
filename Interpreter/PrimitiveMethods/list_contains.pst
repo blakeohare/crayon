@@ -1,12 +1,13 @@
 ﻿if (argCount != 1) {
     return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list contains method", 1, argCount));
 }
+
 value2 = funcArgs[0];
 len = list1.Size();
 output = VALUE_FALSE;
 for (i = 0; i < len; i += 1) {
     if (doEqualityComparisonAndReturnCode(value2, list1[i]) == 1) {
         output = VALUE_TRUE;
-        i += len;
+        i = len; // break
     }
 }

@@ -1,4 +1,4 @@
-﻿value = valueStack[(valueStackSize - 1)];
+﻿value = valueStack[valueStackSize - 1];
 if (value.type == Types.NULL) {
     valueStackSize -= 1;
 } else {
