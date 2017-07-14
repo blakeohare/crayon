@@ -417,6 +417,13 @@ switch (row[0]) {
         } else {
             return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "tan requires a number argument.");
         }
+
+        float2 = Core.Cos(float1);
+        if (float2 < 0) float2 = -float2;
+        if (float2 < 0.0000000001) {
+            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.DIVISION_BY_ZERO, "Tangent is undefined.");
+        }
+
         output = buildFloat(Core.Tan(float1));
         break;
 
