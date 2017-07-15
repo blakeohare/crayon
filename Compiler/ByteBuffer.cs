@@ -174,6 +174,33 @@ namespace Crayon
             }
         }
 
+        public void OptimizeJumps()
+        {
+            int offset;
+            for (int i = 0; i < this.Size; ++i)
+            {
+                // TODO: optimize jump-if's as well (but don't follow other jump-if's
+                if (this.rows[i].ByteCode[0] == (int)OpCode.JUMP)
+                {
+                    offset = this.rows[i].ByteCode[1];
+                    if (this.rows[i + offset + 1].ByteCode[0] == (int)OpCode.JUMP)
+                    {
+                        this.rows[i].ByteCode[1] = this.FindFinalPc(i) - i - 1;
+                    }
+                }
+            }
+        }
+
+        private int FindFinalPc(int startPc)
+        {
+            int currentPc = startPc;
+            while (this.rows[currentPc].ByteCode[0] == (int)OpCode.JUMP)
+            {
+                currentPc = currentPc + this.rows[currentPc].ByteCode[1] + 1;
+            }
+            return currentPc;
+        }
+
         public void SetEsfToken(int index, int catchOffset, int finallyOffset)
         {
             this.rows[index].EsfToken = new ByteCodeEsfToken()

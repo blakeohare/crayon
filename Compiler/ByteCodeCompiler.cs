@@ -29,6 +29,8 @@ namespace Crayon
 
             this.Compile(parser, userCode, lines);
 
+            userCode.OptimizeJumps();
+
             ByteBuffer literalsTable = parser.LiteralLookup.BuildByteCode();
 
             ByteBuffer tokenData = this.BuildTokenData(userCode);
