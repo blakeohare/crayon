@@ -6,7 +6,9 @@ END
 BEGIN
 APPLICABLE-TO: csharp-app
 COPY_FILES: from=csharp, to=%LIBRARY_PATH%/%FILE%
+LIB_DLL_REF: name=Game, version=v1
 END
+
 
 BEGIN
 APPLICABLE-TO: lang-python

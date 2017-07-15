@@ -236,6 +236,10 @@ namespace Crayon
             {
                 output["res/snd/" + sndResource.CanonicalFileName] = sndResource;
             }
+            foreach (FileOutput fontResource in resDb.FontResources)
+            {
+                output["res/ttf/" + fontResource.CanonicalFileName] = fontResource;
+            }
             foreach (FileOutput binResource in resDb.BinaryResources)
             {
                 output["res/bin/" + binResource.CanonicalFileName] = binResource;

@@ -59,7 +59,7 @@ def main(args):
 		'Game',
 		'Gamepad',
 		'Graphics2D',
-		'GraphicsText',
+		'Graphics2DText',
 		'Http',
 		'ImageEncoder',
 		'ImageResources',

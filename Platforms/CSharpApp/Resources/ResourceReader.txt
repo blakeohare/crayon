@@ -53,6 +53,12 @@ namespace Interpreter
             return ReadImageResource("icons/" + path);
         }
 
+        public static byte[] ReadFontResource(string path)
+        {
+            List<byte> bytes = ReadBytes("Resources/" + path);
+            return bytes == null ? null : bytes.ToArray();
+        }
+
         // C# does not like it when you access resources from different threads.
         private static object resMutex = new object();
 

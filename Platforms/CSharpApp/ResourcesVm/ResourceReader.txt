@@ -33,6 +33,12 @@ namespace Interpreter
             return ReadImage("res/img/" + path);
         }
 
+        public static byte[] ReadFontResource(string path)
+        {
+            List<byte> bytes = ReadBytes("res/ttf/" + path);
+            return bytes == null ? null : bytes.ToArray();
+        }
+
         public static byte[] ReadSoundResource(string path)
         {
             List<byte> bytes = ReadBytes("res/snd/" + path);

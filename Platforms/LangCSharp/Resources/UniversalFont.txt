@@ -133,7 +133,7 @@ namespace Interpreter
             }
             else
             {
-                byte[] bytes = ResourceReader.ReadBytes("Resources/" + resourcePath).ToArray();
+                byte[] bytes = ResourceReader.ReadFontResource(resourcePath).ToArray();
                 newFont = FromBytes(bytes, size, isBold, isItalic);
                 newFont.Key = key;
                 newFont.FaceKey = faceKey;

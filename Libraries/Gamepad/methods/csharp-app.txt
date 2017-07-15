@@ -2,7 +2,7 @@
 $_lib_gamepad_platform_requires_refresh: TranslationHelper.AlwaysFalse()
 $_lib_gamepad_get_current_device_count: Libraries.Game.GamepadTranslationHelper.GetCurrentDeviceCount()
 $_lib_gamepad_get_device_reference: Libraries.Game.GamepadTranslationHelper.GetDeviceReference([ARG:1])
-$_lib_gamepad_get_name: GamepadTranslationHelper.GetDeviceName([ARG:2])
+$_lib_gamepad_get_name: Libraries.Game.GamepadTranslationHelper.GetDeviceName([ARG:2])
 $_lib_gamepad_get_button_count: Libraries.Game.GamepadTranslationHelper.GetDeviceButtonCount([ARG:2])
 $_lib_gamepad_get_axis_1d_count: Libraries.Game.GamepadTranslationHelper.GetDeviceAxis1dCount([ARG:2])
 $_lib_gamepad_get_axis_2d_count: Libraries.Game.GamepadTranslationHelper.GetDeviceAxis2dCount([ARG:2])
