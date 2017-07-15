@@ -1,6 +1,6 @@
 package crayonlib.http;
 
-import %%%PACKAGE%%%.Value;
+import org.crayonlang.interpreter.structs.*;
 
 import java.io.DataOutputStream;
 import java.io.InputStream;

@@ -126,13 +126,13 @@
         }
 
         function getHeaders(name) {
-            output = this._headerNames.get(name.loweer());
+            output = this._headerValues.get(name.lower());
             if (output == null) return [];
             return output.clone();
         }
 
         function getHeader(name) {
-            output = this._headerNames.get(name.lower());
+            output = this._headerValues.get(name.lower());
             if (output == null) return null;
             return output[0];
         }
