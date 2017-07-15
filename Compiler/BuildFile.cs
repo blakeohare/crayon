@@ -295,8 +295,8 @@ namespace Crayon
                 Orientation = flattened.Orientation,
                 CrayonPath = flattened.CrayonPath,
                 IosBundlePrefix = flattened.IosBundlePrefix,
-                WindowWidth = Util.ParseIntWithErrorNullOkay(flattened.WindowSize.Width, "Invalid window width in build file."),
-                WindowHeight = Util.ParseIntWithErrorNullOkay(flattened.WindowSize.Height, "Invalid window height in build file."),
+                WindowWidth = Util.ParseIntWithErrorNullOkay((flattened.WindowSize ?? new Size()).Width, "Invalid window width in build file."),
+                WindowHeight = Util.ParseIntWithErrorNullOkay((flattened.WindowSize ?? new Size()).Height, "Invalid window height in build file."),
             }.ValidateValues();
         }
 
