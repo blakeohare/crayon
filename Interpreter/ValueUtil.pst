@@ -204,7 +204,7 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
                         output = 1;
                     }
                 } else {
-                    if ((ObjectInstance)a.internalValue == (ObjectInstance)b.internalValue) {
+                    if ((object)a.internalValue == (object)b.internalValue) {
                         output = 1;
                     }
                 }
