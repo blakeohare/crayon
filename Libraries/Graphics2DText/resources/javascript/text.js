@@ -10,7 +10,7 @@ LIB$graphics2dtext$createNativeFont = function(sourceType, fontClass, fontPath) 
 		case 2: // file
 			throw "TODO";
 		case 3: // system font
-			throw "TODO";
+			return [fontPath, true, null];
 	}
 };
 
@@ -33,28 +33,33 @@ LIB$graphics2dtext$loadFontStyle = function(nativeFont) {
 		nativeFont[1] = true;
 		nativeFont[2] = fontFamily;
 		
-		/*
-			Add the lowercase letter 'l' to two span elements.
-			Each has the font applied, but one uses a monospace fallback (which will be wide) and 
-			the other will have a sans-serif fallback (which will be skinny). The reason for this
-			mechanism is two-fold:
-			- some browsers will not load a font face resource (even if directly embedded as base64)
-			  unless it is applied to some element on the page.
-			- some browsers will not synchronously load the font so applying the font with a fallback
-			  font that is known to have different widths is an easy way to query whether the font
-			  is truly loaded (by checking the width of the span elements).
-		*/
-		var loader1 = LIB$graphics2dtext$getFontLoader(1);
-		var loader2 = LIB$graphics2dtext$getFontLoader(2);
-		loader1.style.fontFamily = fontFamily + ",monospace";
-		loader2.style.fontFamily = fontFamily + ",sans-serif";
-		loader1.innerHTML = 'l';
-		loader2.innerHTML = 'l';
+		LIB$graphics2dtext$testFont(fontFamily);
 		
 		return true;
 	}
 	return false;
 }
+
+LIB$graphics2dtext$testFont = function(name) {
+	
+	/*
+		Add the lowercase letter 'l' to two span elements.
+		Each has the font applied, but one uses a monospace fallback (which will be wide) and 
+		the other will have a sans-serif fallback (which will be skinny). The reason for this
+		mechanism is two-fold:
+		- some browsers will not load a font face resource (even if directly embedded as base64)
+		  unless it is applied to some element on the page.
+		- some browsers will not synchronously load the font so applying the font with a fallback
+		  font that is known to have different widths is an easy way to query whether the font
+		  is truly loaded (by checking the width of the span elements).
+	*/
+	var loader1 = LIB$graphics2dtext$getFontLoader(1);
+	var loader2 = LIB$graphics2dtext$getFontLoader(2);
+	loader1.style.fontFamily = name + ",monospace";
+	loader2.style.fontFamily = name + ",sans-serif";
+	loader1.innerHTML = 'l';
+	loader2.innerHTML = 'l';
+};
 
 LIB$graphics2dtext$getFontLoader = function(id) {
 	return document.getElementById('crayon_font_loader_' + id);
@@ -75,7 +80,8 @@ LIB$graphics2dtext$isDynamicFontLoaded = function() {
 };
 
 LIB$graphics2dtext$isSystemFontAvailable = function(name) {
-	return false;
+	LIB$graphics2dtext$testFont(name);
+	return LIB$graphics2dtext$isDynamicFontLoaded(name);
 };
 
 LIB$graphics2dtext$tempCanvas = document.createElement('canvas');
