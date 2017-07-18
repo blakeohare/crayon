@@ -150,6 +150,11 @@ namespace PythonApp
                 output["res/images/" + imageSheetFile] = resourceDatabase.ImageSheetFiles[imageSheetFile];
             }
 
+            foreach (FileOutput sound in resourceDatabase.AudioResources)
+            {
+                output["res/audio/" + sound.CanonicalFileName] = sound;
+            }
+
             foreach (FileOutput textResource in resourceDatabase.TextResources)
             {
                 output["res/text/" + textResource.CanonicalFileName] = textResource;

@@ -203,16 +203,16 @@ def _parse_float_helper(f_out, value):
 def _music_pause():
   pygame.mixer.music.pause()
 
-def _audio_music_set_volume(ratio):
+def audio_music_set_volume(ratio):
   pygame.mixer.music.set_volume(ratio)
 
-def _audio_music_play_resource(path, loop):
-  path = 'resources/audio/' + path
+def audio_music_play_resource(path, loop):
+  path = 'res/audio/' + path
   pygame.mixer.music.load(path.replace('/', os.sep))
   pygame.mixer.music.play(-1 if loop else 0)
 
 def readLocalSoundResource(path):
-  path = 'resources/audio/' + path
+  path = 'res/audio/' + path
   path = path.replace('/', os.sep)
   if os.path.exists(path):
     try:
@@ -221,7 +221,7 @@ def readLocalSoundResource(path):
       return None
   return None
 
-def _audio_sound_play(sfx, vol, pan):
+def audio_sound_play(sfx, vol, pan):
   ch = sfx.play()
   ch.set_volume(vol)
 
