@@ -129,6 +129,11 @@ namespace JavaApp
                 output["resources/images/" + imageSheetFileName] = imageSheetFile;
             }
 
+            foreach (FileOutput audioResource in resourceDatabase.AudioResources)
+            {
+                output["resources/audio/" + audioResource.CanonicalFileName] = audioResource;
+            }
+
             foreach (FileOutput textResource in resourceDatabase.TextResources)
             {
                 output["resources/text/" + textResource.CanonicalFileName] = textResource;
