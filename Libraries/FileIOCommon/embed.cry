@@ -204,7 +204,8 @@ namespace FileIOCommon {
             }
 
             hardwarePath = output.join('/');
-            if (!this.isWindowsDisk && this.virtualDiskRoot == null) {
+            if ((!this.isWindowsDisk && this.virtualDiskRoot == null) ||
+                $$$('isJavaScript')) {
                 hardwarePath = '/' + hardwarePath;
             }
 
