@@ -55,7 +55,13 @@ namespace Crayon.ParseTree
                         }
                         else
                         {
-                            throw new ParserException(this.Index.FirstToken, "The build variable with id '" + index + "' is not defined for this target.");
+                            return new NullConstant(this.FirstToken, this.FunctionOrClassOwner);
+                            // TODO: strict mode that enforces this. There are two ways this could be done:
+                            // 1) $var['foo'] vs $optional['foo']
+                            // 2) <strictvars>true</strictvars>
+                            // I kind of prefer #1.
+
+                            // throw new ParserException(this.Index.FirstToken, "The build variable with id '" + index + "' is not defined for this target.");
                         }
                     }
                 }
