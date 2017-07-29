@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Crayon.ParseTree;
 
 namespace Crayon
@@ -132,8 +133,53 @@ namespace Crayon
         {
             this.parser.VerifyNoBadImports();
 
+            Dictionary<string, Executable> definitionsByFullyQualifiedNames = this.CreateFullyQualifiedLookup(this.currentCode);
+
+            Library[] librariesInDependencyOrder = LibraryDependencyResolver.GetLibraryResolutionOrder(this.parser);
+
+            // Populate lookups of executables based on library.
+            Dictionary<Library, Dictionary<string, Executable>> definitionsByLibrary = new Dictionary<Library, Dictionary<string, Executable>>();
+            Dictionary<string, Executable> nonLibraryCode = new Dictionary<string, Executable>();
+            foreach (string exKey in definitionsByFullyQualifiedNames.Keys)
+            {
+                Executable ex = definitionsByFullyQualifiedNames[exKey];
+                if (ex.LibraryName == null)
+                {
+                    nonLibraryCode[exKey] = ex;
+                }
+                else
+                {
+                    Library library = this.parser.LibraryManager.GetLibraryFromKey(ex.LibraryName);
+                    Dictionary<string, Executable> lookup;
+                    if (!definitionsByLibrary.TryGetValue(library, out lookup))
+                    {
+                        lookup = new Dictionary<string, Executable>();
+                        definitionsByLibrary[library] = lookup;
+                    }
+                    lookup[exKey] = ex;
+                }
+            }
+
+            // A running list of all things that have been resolved.
+            Dictionary<string, Executable> alreadyResolved = new Dictionary<string, Executable>();
+
             // Resolve raw names into the actual things they refer to based on namespaces and imports.
-            this.ResolveNames();
+            foreach (Library library in librariesInDependencyOrder)
+            {
+                // First create a lookup of JUST the libraries that are available to this library.
+                Dictionary<string, Executable> alreadyResolvedDependencies =
+                    Common.Util.MergeDictionaries<string, Executable>(library.LibraryDependencies.Select(lib => definitionsByLibrary[lib]).ToArray());
+
+                // Resolve definitions based on what's available.
+                this.ResolveNames(library, alreadyResolvedDependencies, definitionsByLibrary[library]);
+            }
+            this.ResolveNames(null, alreadyResolved, nonLibraryCode);
+
+            // Determine if the main function uses args.
+            FunctionDefinition mainFunction = (FunctionDefinition)definitionsByFullyQualifiedNames["~"];
+            this.parser.MainFunctionHasArg = mainFunction.ArgNames.Length == 1;
+
+            this.ResolveNames(null, alreadyResolved, definitionsByLibrary[null]);
 
             this.SimpleFirstPassResolution();
 
@@ -191,37 +237,51 @@ namespace Crayon
 
             this.parser.InlinableLibraryFunctions = inlineCandidates;
         }
-
-        private void ResolveNames()
+        
+        private void ResolveNames(
+            Library nullableLibrary, 
+            Dictionary<string, Executable> alreadyResolved, 
+            Dictionary<string, Executable> currentLibraryDefinitions)
         {
-            Dictionary<string, Executable> definitionsByFullyQualifiedNames = this.CreateFullyQualifiedLookup(this.currentCode);
+            IEnumerable<ClassDefinition> classes = currentLibraryDefinitions.OfType<ClassDefinition>(); // TODO: change this when nested classes are done.
 
-            this.parser.MainFunctionHasArg = ((FunctionDefinition)definitionsByFullyQualifiedNames["~"]).ArgNames.Length == 1;
-
-            IEnumerable<ClassDefinition> allClasses = this.currentCode.OfType<ClassDefinition>(); // TODO: change this when nested classes are done.
-
-            foreach (ClassDefinition cd in allClasses)
+            // Concatenate compilation items on top of everything that's already been resolved to create a lookup of everything that is available for this library.
+            Dictionary<string, Executable> allKnownDefinitions = new Dictionary<string, Executable>(alreadyResolved);
+            foreach (string executableKey in currentLibraryDefinitions.Keys)
             {
-                cd.ResolveBaseClasses(definitionsByFullyQualifiedNames, cd.NamespacePrefixSearch);
+                if (allKnownDefinitions.ContainsKey(executableKey))
+                {
+                    throw new ParserException(
+                        currentLibraryDefinitions[executableKey].FirstToken, 
+                        "Two conflicting definitions of '" + executableKey + "'");
+                }
+                allKnownDefinitions[executableKey] = currentLibraryDefinitions[executableKey];
             }
 
-            foreach (ClassDefinition cd in allClasses)
+            foreach (ClassDefinition cd in classes)
+            {
+                if (cd.BaseClassDeclarations.Length > 0)
+                {
+                    cd.ResolveBaseClasses(allKnownDefinitions, cd.NamespacePrefixSearch);
+                }
+            }
+
+            foreach (ClassDefinition cd in classes)
             {
                 cd.VerifyNoBaseClassLoops();
             }
 
             foreach (Executable item in this.currentCode)
             {
-                item.ResolveNames(this.parser, definitionsByFullyQualifiedNames, item.NamespacePrefixSearch);
+                item.ResolveNames(this.parser, allKnownDefinitions, item.NamespacePrefixSearch);
             }
 
-            foreach (ClassDefinition cd in allClasses)
+            foreach (ClassDefinition cd in classes)
             {
                 cd.ResolveMemberIds();
             }
 
-            foreach (Executable ex in definitionsByFullyQualifiedNames.Values
-                .Where<Executable>(ex => ex is ConstStatement || ex is EnumDefinition))
+            foreach (Executable ex in currentLibraryDefinitions.Values.Where(ex => ex is ConstStatement || ex is EnumDefinition))
             {
                 parser.ConstantAndEnumResolutionState[ex] = ConstantResolutionState.NOT_RESOLVED;
             }

@@ -335,18 +335,25 @@ namespace Crayon
 
             tokens.InsertTokens(implicitCoreImport);
 
+            Library activeLibrary = libraryName == null ? null : this.LibraryManager.GetLibraryFromKey(libraryName);
+
             while (tokens.HasMore && tokens.IsNext("import"))
             {
                 ImportStatement importStatement = ExecutableParser.Parse(this, tokens, false, true, true, null) as ImportStatement;
                 if (importStatement == null) throw new Exception();
                 namespaceImportsBuilder.Add(importStatement.ImportPath);
-                Executable[] libraryEmbeddedCode = this.LibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
-                if (libraryEmbeddedCode == null)
+                List<Executable> libraryEmbeddedCode = new List<Executable>();
+                Library library = this.LibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath, libraryEmbeddedCode);
+                if (library == null)
                 {
                     this.unresolvedImports.Add(importStatement);
                 }
                 else
                 {
+                    if (activeLibrary != null)
+                    {
+                        activeLibrary.AddLibraryDependency(library);
+                    }
                     executables.AddRange(libraryEmbeddedCode);
                 }
             }
