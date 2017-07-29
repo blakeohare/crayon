@@ -143,13 +143,18 @@ namespace Crayon
             foreach (string exKey in definitionsByFullyQualifiedNames.Keys)
             {
                 Executable ex = definitionsByFullyQualifiedNames[exKey];
+                if (ex is Namespace)
+                {
+                    continue;
+                }
+
                 if (ex.LibraryName == null)
                 {
                     nonLibraryCode[exKey] = ex;
                 }
                 else
                 {
-                    Library library = this.parser.LibraryManager.GetLibraryFromKey(ex.LibraryName);
+                    Library library = this.parser.LibraryManager.GetLibraryFromName(ex.LibraryName);
                     Dictionary<string, Executable> lookup;
                     if (!definitionsByLibrary.TryGetValue(library, out lookup))
                     {
@@ -159,28 +164,27 @@ namespace Crayon
                     lookup[exKey] = ex;
                 }
             }
-
-            // A running list of all things that have been resolved.
-            Dictionary<string, Executable> alreadyResolved = new Dictionary<string, Executable>();
-
+            
+            Dictionary<string, Executable> alreadyResolvedDependencies;
             // Resolve raw names into the actual things they refer to based on namespaces and imports.
             foreach (Library library in librariesInDependencyOrder)
             {
                 // First create a lookup of JUST the libraries that are available to this library.
-                Dictionary<string, Executable> alreadyResolvedDependencies =
-                    Common.Util.MergeDictionaries<string, Executable>(library.LibraryDependencies.Select(lib => definitionsByLibrary[lib]).ToArray());
+                alreadyResolvedDependencies = Common.Util.MergeDictionaries<string, Executable>(
+                    library.LibraryDependencies.Select(lib => definitionsByLibrary[lib]).ToArray());
 
                 // Resolve definitions based on what's available.
                 this.ResolveNames(library, alreadyResolvedDependencies, definitionsByLibrary[library]);
             }
-            this.ResolveNames(null, alreadyResolved, nonLibraryCode);
+            alreadyResolvedDependencies = Common.Util.MergeDictionaries<string, Executable>(
+                this.parser.LibraryManager.LibrariesUsed.Select(lib => definitionsByLibrary[lib]).ToArray());
+            nonLibraryCode.Remove("~");
+            this.ResolveNames(null, alreadyResolvedDependencies, nonLibraryCode);
 
             // Determine if the main function uses args.
             FunctionDefinition mainFunction = (FunctionDefinition)definitionsByFullyQualifiedNames["~"];
             this.parser.MainFunctionHasArg = mainFunction.ArgNames.Length == 1;
-
-            this.ResolveNames(null, alreadyResolved, definitionsByLibrary[null]);
-
+            
             this.SimpleFirstPassResolution();
 
             this.DetermineInlinableLibraryFunctions();
@@ -243,7 +247,7 @@ namespace Crayon
             Dictionary<string, Executable> alreadyResolved, 
             Dictionary<string, Executable> currentLibraryDefinitions)
         {
-            IEnumerable<ClassDefinition> classes = currentLibraryDefinitions.OfType<ClassDefinition>(); // TODO: change this when nested classes are done.
+            List<ClassDefinition> classes = new List<ClassDefinition>();
 
             // Concatenate compilation items on top of everything that's already been resolved to create a lookup of everything that is available for this library.
             Dictionary<string, Executable> allKnownDefinitions = new Dictionary<string, Executable>(alreadyResolved);
@@ -252,10 +256,15 @@ namespace Crayon
                 if (allKnownDefinitions.ContainsKey(executableKey))
                 {
                     throw new ParserException(
-                        currentLibraryDefinitions[executableKey].FirstToken, 
+                        currentLibraryDefinitions[executableKey].FirstToken,
                         "Two conflicting definitions of '" + executableKey + "'");
                 }
-                allKnownDefinitions[executableKey] = currentLibraryDefinitions[executableKey];
+                Executable ex = currentLibraryDefinitions[executableKey];
+                if (ex is ClassDefinition)
+                {
+                    classes.Add((ClassDefinition)ex);
+                }
+                allKnownDefinitions[executableKey] = ex;
             }
 
             foreach (ClassDefinition cd in classes)
@@ -271,8 +280,9 @@ namespace Crayon
                 cd.VerifyNoBaseClassLoops();
             }
 
-            foreach (Executable item in this.currentCode)
+            foreach (string itemKey in currentLibraryDefinitions.Keys.OrderBy(key => key))
             {
+                Executable item = currentLibraryDefinitions[itemKey];
                 item.ResolveNames(this.parser, allKnownDefinitions, item.NamespacePrefixSearch);
             }
 
@@ -335,13 +345,12 @@ namespace Crayon
             }
         }
 
-        // This will run for both compiled and translated code.
         private void SimpleFirstPassResolution()
         {
             List<Executable> output = new List<Executable>();
-            foreach (Executable line in this.currentCode)
+            foreach (Executable ex in this.currentCode)
             {
-                output.AddRange(line.Resolve(this.parser));
+                output.AddRange(ex.Resolve(this.parser));
             }
 
             this.currentCode = output.ToArray();

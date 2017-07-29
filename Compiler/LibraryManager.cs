@@ -26,6 +26,13 @@ namespace Crayon
             return systemLibraryPathsByName.ContainsKey(name);
         }
 
+        public Library GetLibraryFromName(string name)
+        {
+            Library library = this.GetLibraryFromKey(name.ToLower());
+            if (library == null) return null;
+            return name == library.Name ? library : null;
+        }
+
         public Library GetLibraryFromKey(string key)
         {
             Library output;
