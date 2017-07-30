@@ -369,8 +369,21 @@ namespace Crayon
         {
             using (new PerformanceSection("SimpleFirstPassResolution"))
             {
-                List<Executable> output = new List<Executable>();
+                List<Executable> enumsAndConstants = new List<Executable>();
+                List<Executable> everythingElse = new List<Executable>();
                 foreach (Executable ex in this.currentCode)
+                {
+                    if (ex is EnumDefinition || ex is ConstStatement)
+                    {
+                        enumsAndConstants.Add(ex);
+                    }
+                    else
+                    {
+                        everythingElse.Add(ex);
+                    }
+                }
+                List<Executable> output = new List<Executable>();
+                foreach (Executable ex in enumsAndConstants.Concat(everythingElse))
                 {
                     output.AddRange(ex.Resolve(this.parser));
                 }

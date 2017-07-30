@@ -94,8 +94,6 @@ namespace Crayon.ParseTree
                 }
             }
 
-            parser.AddEnumDefinition(this);
-
             return Executable.EMPTY_ARRAY;
         }
 

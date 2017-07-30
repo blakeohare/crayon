@@ -204,48 +204,6 @@ namespace Crayon
             return null;
         }
 
-        private void VerifyNameFree(Token nameToken)
-        {
-            if (things.Contains(nameToken.Value))
-            {
-                throw new ParserException(nameToken, "This name has already been used.");
-            }
-        }
-
-        public void RegisterConst(Token nameToken, Expression value)
-        {
-            this.VerifyNameFree(nameToken);
-            this.things.Add(nameToken.Value);
-            this.constLookup[nameToken.Value] = value;
-        }
-
-        public Expression GetConst(string name)
-        {
-            if (this.constLookup.ContainsKey(name))
-            {
-                return this.constLookup[name];
-            }
-            return null;
-        }
-
-        public void AddEnumDefinition(EnumDefinition enumDefinition)
-        {
-            if (this.enumDefinitions.ContainsKey(enumDefinition.Name))
-            {
-                throw new ParserException(enumDefinition.FirstToken, "An enum with this name has already been defined.");
-            }
-
-            this.VerifyNameFree(enumDefinition.NameToken);
-
-            this.enumDefinitions.Add(enumDefinition.Name, enumDefinition);
-        }
-
-        public EnumDefinition GetEnumDefinition(string name)
-        {
-            EnumDefinition output = null;
-            return this.enumDefinitions.TryGetValue(name, out output) ? output : null;
-        }
-
         private Dictionary<int, string> filesUsed = new Dictionary<int, string>();
 
         private void RegisterFileUsed(string filename, string code, int fileId)

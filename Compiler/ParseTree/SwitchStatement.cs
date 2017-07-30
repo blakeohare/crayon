@@ -137,6 +137,7 @@ namespace Crayon.ParseTree
                         {
                             if (chunk.Cases[i] is DotStep)
                             {
+                                // Since most enums are in all caps, offer a more helpful error message when there's a dot followed by all caps.
                                 string field = ((DotStep)chunk.Cases[i]).StepToken.Value;
                                 if (field.ToUpperInvariant() == field)
                                 {

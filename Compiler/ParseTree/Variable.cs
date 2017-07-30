@@ -47,17 +47,6 @@ namespace Crayon.ParseTree
                 throw new ParserException(this.FirstToken, "'" + this.Name + "' is a reserved keyword and cannot be used like this.");
             }
 
-            Expression constant = parser.GetConst(this.Name);
-            if (constant != null)
-            {
-                return constant;
-            }
-
-            EnumDefinition enumDef = parser.GetEnumDefinition(this.Name);
-            if (enumDef != null)
-            {
-                return new EnumReference(this.FirstToken, enumDef, this.FunctionOrClassOwner);
-            }
             return this;
         }
 

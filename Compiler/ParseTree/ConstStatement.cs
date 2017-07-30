@@ -48,7 +48,6 @@ namespace Crayon.ParseTree
 
             parser.ConstantAndEnumResolutionState[this] = ConstantResolutionState.RESOLVED;
 
-            parser.RegisterConst(this.NameToken, this.Expression);
             return new Executable[0];
         }
 
