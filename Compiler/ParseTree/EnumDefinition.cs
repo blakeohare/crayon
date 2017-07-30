@@ -12,19 +12,23 @@ namespace Crayon.ParseTree
         public Expression[] Values { get; private set; }
         public Dictionary<string, int> IntValue { get; private set; }
 
-        public EnumDefinition(Token enumToken, Token nameToken, string ns, IList<Token> items, IList<Expression> values, Executable owner)
+        public EnumDefinition(Token enumToken, Token nameToken, string ns, Executable owner)
             : base(enumToken, owner)
         {
             this.NameToken = nameToken;
             this.Name = nameToken.Value;
             this.Namespace = ns;
+        }
+
+        public void SetItems(IList<Token> items, IList<Expression> values)
+        {
             this.Items = items.ToArray();
             this.Values = values.ToArray();
             this.IntValue = new Dictionary<string, int>();
 
             if (this.Items.Length == 0)
             {
-                throw new ParserException(enumToken, "Enum definitions cannot be empty.");
+                throw new ParserException(this.FirstToken, "Enum definitions cannot be empty.");
             }
         }
 

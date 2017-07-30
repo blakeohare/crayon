@@ -194,7 +194,7 @@ namespace Crayon
             Library library = librariesAlreadyImportedIndexByName.ContainsKey(name)
                 ? librariesAlreadyImported[librariesAlreadyImportedIndexByName[name]]
                 : null;
-            
+
             if (library == null)
             {
                 string libraryManifestPath = this.GetSystemLibraryPath(name, parser.BuildContext.CrayonPath, parser.BuildContext.ProjectDirectory);
@@ -218,7 +218,7 @@ namespace Crayon
 
                 string oldSystemLibrary = parser.CurrentSystemLibrary;
                 parser.CurrentSystemLibrary = name;
-                
+
                 Dictionary<string, string> embeddedCode = library.GetEmbeddedCode();
                 foreach (string embeddedFile in embeddedCode.Keys)
                 {

@@ -11,6 +11,9 @@ namespace Crayon.ParseTree
         }
 
         public Token FirstToken { get; private set; }
+
+        // This is a misnomer. This can be any top-level object such as a function, class, const, or enum that can wrap
+        // other executables or expressions.
         public Executable FunctionOrClassOwner { get; private set; }
 
         internal void BatchExecutableNameResolver(Parser parser, Dictionary<string, Executable> lookup, string[] imports, Executable[] executables)
@@ -45,9 +48,9 @@ namespace Crayon.ParseTree
 
          */
         public static Executable DoNameLookup(
-            Dictionary<string, Executable> lookup, 
-            string[] imports, 
-            string[] localNamespaces, 
+            Dictionary<string, Executable> lookup,
+            string[] imports,
+            string[] localNamespaces,
             string name)
         {
             Executable output;
@@ -67,7 +70,7 @@ namespace Crayon.ParseTree
                     return output;
                 }
             }
-            
+
             // check each import as a fully qualified name
             foreach (string import in imports)
             {

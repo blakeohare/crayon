@@ -402,7 +402,7 @@ namespace Crayon
             return output;
         }
 
-        // Generally this is used with the name resolver. So for example, you have a refernce to a ClassDefinition 
+        // Generally this is used with the name resolver. So for example, you have a refernce to a ClassDefinition
         // instance from the resolver, but you want to turn it into a ClassReference instance.
         public static Expression ConvertStaticReferenceToExpression(Executable item, Token primaryToken, Executable owner)
         {

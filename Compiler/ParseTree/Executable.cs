@@ -14,8 +14,8 @@ namespace Crayon.ParseTree
         private static Dictionary<string, string[]> namespacePartCache = new Dictionary<string, string[]>();
 
         /*
-            This is the namespace that this executable is housed in (only applicable to top-level 
-            executables such as functions, classes, constants, enums). It is an array of the full 
+            This is the namespace that this executable is housed in (only applicable to top-level
+            executables such as functions, classes, constants, enums). It is an array of the full
             namespace name (with dots) as the first element. Successive elements are shortened versions
             of this by popping off each segment one by one.
             For example, if this is a function whose fully qualified name is Foo.Bar.Baz.myFunction, then
