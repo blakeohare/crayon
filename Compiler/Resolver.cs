@@ -108,7 +108,11 @@ namespace Crayon
                 foreach (string ns in namespaces)
                 {
                     Namespace nsInstance = new Namespace(null, ns, null);
-                    nsInstance.LibraryName = ns.Split('.')[0];
+                    string possibleLibraryName = ns.Split('.')[0];
+                    if (this.parser.LibraryManager.GetLibraryFromName(possibleLibraryName) != null)
+                    {
+                        nsInstance.LibraryName = possibleLibraryName;
+                    }
                     lookup[ns] = nsInstance;
                 }
 
