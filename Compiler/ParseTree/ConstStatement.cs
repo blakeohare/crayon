@@ -13,7 +13,6 @@ namespace Crayon.ParseTree
         public Expression Expression { get; private set; }
         public Token NameToken { get; private set; }
         public string Name { get; private set; }
-        public string Namespace { get; private set; }
 
         public ConstStatement(Token constToken, Token nameToken, string ns, Expression expression, Executable owner)
             : base(constToken, owner)

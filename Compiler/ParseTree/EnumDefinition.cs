@@ -7,7 +7,6 @@ namespace Crayon.ParseTree
     internal class EnumDefinition : Executable
     {
         public string Name { get; private set; }
-        public string Namespace { get; set; }
         public Token NameToken { get; private set; }
         public Token[] Items { get; private set; }
         public Expression[] Values { get; private set; }

@@ -104,7 +104,9 @@ namespace Crayon
             // Go through and fill in all the partially qualified namespace names.
             foreach (string ns in namespaces)
             {
-                lookup[ns] = new Namespace(null, ns, null);
+                Namespace nsInstance = new Namespace(null, ns, null);
+                nsInstance.LibraryName = ns.Split('.')[0];
+                lookup[ns] = nsInstance;
             }
 
             if (lookup.ContainsKey("~"))
@@ -143,11 +145,6 @@ namespace Crayon
             foreach (string exKey in definitionsByFullyQualifiedNames.Keys)
             {
                 Executable ex = definitionsByFullyQualifiedNames[exKey];
-                if (ex is Namespace)
-                {
-                    continue;
-                }
-
                 if (ex.LibraryName == null)
                 {
                     nonLibraryCode[exKey] = ex;
@@ -164,7 +161,7 @@ namespace Crayon
                     lookup[exKey] = ex;
                 }
             }
-            
+
             Dictionary<string, Executable> alreadyResolvedDependencies;
             // Resolve raw names into the actual things they refer to based on namespaces and imports.
             foreach (Library library in librariesInDependencyOrder)
@@ -184,7 +181,7 @@ namespace Crayon
             // Determine if the main function uses args.
             FunctionDefinition mainFunction = (FunctionDefinition)definitionsByFullyQualifiedNames["~"];
             this.parser.MainFunctionHasArg = mainFunction.ArgNames.Length == 1;
-            
+
             this.SimpleFirstPassResolution();
 
             this.DetermineInlinableLibraryFunctions();
@@ -241,10 +238,10 @@ namespace Crayon
 
             this.parser.InlinableLibraryFunctions = inlineCandidates;
         }
-        
+
         private void ResolveNames(
-            Library nullableLibrary, 
-            Dictionary<string, Executable> alreadyResolved, 
+            Library nullableLibrary,
+            Dictionary<string, Executable> alreadyResolved,
             Dictionary<string, Executable> currentLibraryDefinitions)
         {
             List<ClassDefinition> classes = new List<ClassDefinition>();
@@ -271,7 +268,7 @@ namespace Crayon
             {
                 if (cd.BaseClassDeclarations.Length > 0)
                 {
-                    cd.ResolveBaseClasses(allKnownDefinitions, cd.NamespacePrefixSearch);
+                    cd.ResolveBaseClasses(allKnownDefinitions, cd.LocalNamespace, cd.NamespacePrefixSearch);
                 }
             }
 
@@ -283,7 +280,10 @@ namespace Crayon
             foreach (string itemKey in currentLibraryDefinitions.Keys.OrderBy(key => key))
             {
                 Executable item = currentLibraryDefinitions[itemKey];
-                item.ResolveNames(this.parser, allKnownDefinitions, item.NamespacePrefixSearch);
+                if (!(item is Namespace))
+                {
+                    item.ResolveNames(this.parser, allKnownDefinitions, item.NamespacePrefixSearch);
+                }
             }
 
             foreach (ClassDefinition cd in classes)
@@ -402,6 +402,8 @@ namespace Crayon
             return output;
         }
 
+        // Generally this is used with the name resolver. So for example, you have a refernce to a ClassDefinition 
+        // instance from the resolver, but you want to turn it into a ClassReference instance.
         public static Expression ConvertStaticReferenceToExpression(Executable item, Token primaryToken, Executable owner)
         {
             if (item is Namespace) return new PartialNamespaceReference(primaryToken, ((Namespace)item).Name, owner);
@@ -410,7 +412,7 @@ namespace Crayon
             if (item is ConstStatement) return new ConstReference(primaryToken, (ConstStatement)item, owner);
             if (item is FunctionDefinition) return new FunctionReference(primaryToken, (FunctionDefinition)item, owner);
 
-            throw new System.InvalidOperationException(); // what?
+            throw new InvalidOperationException();
         }
 
         private void TEMP_PastelOnlyFirstPass()

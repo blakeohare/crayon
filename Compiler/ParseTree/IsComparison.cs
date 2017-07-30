@@ -38,7 +38,7 @@ namespace Crayon.ParseTree
         internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             this.Expression.ResolveNames(parser, lookup, imports);
-            this.ClassDefinition = Node.DoClassLookup(this.ClassToken, lookup, imports, this.ClassName);
+            this.ClassDefinition = Node.DoClassLookup(this.ClassToken, lookup, imports, this.FunctionOrClassOwner.LocalNamespace, this.ClassName);
             return this;
         }
 
