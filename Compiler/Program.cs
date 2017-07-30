@@ -27,37 +27,44 @@ namespace Crayon
 
         static void Main(string[] args)
         {
+            using (new PerformanceSection("Crayon"))
+            {
 #if DEBUG
-            args = GetEffectiveArgs(args);
+                args = GetEffectiveArgs(args);
 
-            // First chance exceptions should crash in debug builds.
-            Program.Compile(args);
+                // First chance exceptions should crash in debug builds.
+                Program.Compile(args);
 
-            // Crash if there were any graphics contexts that weren't cleaned up.
-            // This is okay on Windows, but on OSX this is a problem, so ensure that a
-            // regressions are quickly noticed.
-            SystemBitmap.Graphics.EnsureCleanedUp();
+                // Crash if there were any graphics contexts that weren't cleaned up.
+                // This is okay on Windows, but on OSX this is a problem, so ensure that a
+                // regressions are quickly noticed.
+                SystemBitmap.Graphics.EnsureCleanedUp();
+
 #else
-
-            if (args.Length == 0)
-            {
-                System.Console.WriteLine(USAGE);
+                if (args.Length == 0)
+                {
+                    System.Console.WriteLine(USAGE);
+                }
+                else
+                {
+                    try
+                    {
+                        Program.Compile(args);
+                    }
+                    catch (InvalidOperationException e)
+                    {
+                        System.Console.Error.WriteLine(e.Message);
+                    }
+                    catch (ParserException e)
+                    {
+                        System.Console.Error.WriteLine(e.Message);
+                    }
+                }
+#endif
             }
-            else
-            {
-                try
-                {
-                    Program.Compile(args);
-                }
-                catch (InvalidOperationException e)
-                {
-                    System.Console.Error.WriteLine(e.Message);
-                }
-                catch (ParserException e)
-                {
-                    System.Console.Error.WriteLine(e.Message);
-                }
-            }
+#if DEBUG
+            string summary = PerformanceTimer.GetSummary();
+            Console.WriteLine(summary);
 #endif
         }
 
@@ -137,7 +144,8 @@ namespace Crayon
 
                 case ExecutionType.RUN_CBX:
                     string cbxFile = Program.ExportCbx(args);
-                    string crayonRuntimePath = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("CRAYON_HOME"), "vm", "CrayonRuntime.exe");
+
+                    string crayonRuntimePath = System.IO.Path.Combine(Environment.GetEnvironmentVariable("CRAYON_HOME"), "vm", "CrayonRuntime.exe");
                     cbxFile = FileUtil.GetPlatformPath(cbxFile);
                     System.Diagnostics.Process appProcess = new System.Diagnostics.Process();
 
@@ -173,88 +181,91 @@ namespace Crayon
         // TODO: HELPER CLASS
         private static string ExportCbx(string[] args)
         {
-            string buildFilePath = args[0]; // TODO: better use case identification that ensures this is actually here.
-            BuildContext buildContext = GetBuildContextCbx(buildFilePath);
-            CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
-            ResourceDatabase resDb = PrepareResources(buildContext, null);
-            string byteCode = ByteCodeEncoder.Encode(compilationResult.ByteCode);
-            List<byte> cbxOutput = new List<byte>() { 0 };
-            cbxOutput.AddRange("CBX".ToCharArray().Select(c => (byte)c));
-            cbxOutput.AddRange(GetBigEndian4Byte(0));
-            cbxOutput.AddRange(GetBigEndian4Byte(2));
-            cbxOutput.AddRange(GetBigEndian4Byte(0));
+            using (new PerformanceSection("ExportCbx"))
+            {
+                string buildFilePath = args[0]; // TODO: better use case identification that ensures this is actually here.
+                BuildContext buildContext = GetBuildContextCbx(buildFilePath);
+                CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
+                ResourceDatabase resDb = PrepareResources(buildContext, null);
+                string byteCode = ByteCodeEncoder.Encode(compilationResult.ByteCode);
+                List<byte> cbxOutput = new List<byte>() { 0 };
+                cbxOutput.AddRange("CBX".ToCharArray().Select(c => (byte)c));
+                cbxOutput.AddRange(GetBigEndian4Byte(0));
+                cbxOutput.AddRange(GetBigEndian4Byte(2));
+                cbxOutput.AddRange(GetBigEndian4Byte(0));
 
-            byte[] code = StringToBytes(byteCode);
-            cbxOutput.AddRange("CODE".ToCharArray().Select(c => (byte)c));
-            cbxOutput.AddRange(GetBigEndian4Byte(code.Length));
-            cbxOutput.AddRange(code);
+                byte[] code = StringToBytes(byteCode);
+                cbxOutput.AddRange("CODE".ToCharArray().Select(c => (byte)c));
+                cbxOutput.AddRange(GetBigEndian4Byte(code.Length));
+                cbxOutput.AddRange(code);
 
-            List<string> libraries = new List<string>();
-            foreach (Library library in compilationResult.LibrariesUsed.Where(lib => lib.IsMoreThanJustEmbedCode))
-            {
-                libraries.Add(library.Name);
-                libraries.Add(library.Version);
-            }
-            string libsData = string.Join(",", libraries);
-            byte[] libsDataBytes = StringToBytes(libsData);
-            cbxOutput.AddRange("LIBS".ToCharArray().Select(c => (byte)c));
-            cbxOutput.AddRange(GetBigEndian4Byte(libsDataBytes.Length));
-            cbxOutput.AddRange(libsDataBytes);
+                List<string> libraries = new List<string>();
+                foreach (Library library in compilationResult.LibrariesUsed.Where(lib => lib.IsMoreThanJustEmbedCode))
+                {
+                    libraries.Add(library.Name);
+                    libraries.Add(library.Version);
+                }
+                string libsData = string.Join(",", libraries);
+                byte[] libsDataBytes = StringToBytes(libsData);
+                cbxOutput.AddRange("LIBS".ToCharArray().Select(c => (byte)c));
+                cbxOutput.AddRange(GetBigEndian4Byte(libsDataBytes.Length));
+                cbxOutput.AddRange(libsDataBytes);
 
-            byte[] resourceManifest = StringToBytes(resDb.ResourceManifestFile.TextContent);
-            cbxOutput.AddRange("RSRC".ToCharArray().Select(c => (byte)c));
-            cbxOutput.AddRange(GetBigEndian4Byte(resourceManifest.Length));
-            cbxOutput.AddRange(resourceManifest);
+                byte[] resourceManifest = StringToBytes(resDb.ResourceManifestFile.TextContent);
+                cbxOutput.AddRange("RSRC".ToCharArray().Select(c => (byte)c));
+                cbxOutput.AddRange(GetBigEndian4Byte(resourceManifest.Length));
+                cbxOutput.AddRange(resourceManifest);
 
-            if (resDb.ImageSheetManifestFile != null)
-            {
-                byte[] imageSheetManifest = StringToBytes(resDb.ImageSheetManifestFile.TextContent);
-                cbxOutput.AddRange("IMSH".ToCharArray().Select(c => (byte)c));
-                cbxOutput.AddRange(GetBigEndian4Byte(imageSheetManifest.Length));
-                cbxOutput.AddRange(imageSheetManifest);
-            }
+                if (resDb.ImageSheetManifestFile != null)
+                {
+                    byte[] imageSheetManifest = StringToBytes(resDb.ImageSheetManifestFile.TextContent);
+                    cbxOutput.AddRange("IMSH".ToCharArray().Select(c => (byte)c));
+                    cbxOutput.AddRange(GetBigEndian4Byte(imageSheetManifest.Length));
+                    cbxOutput.AddRange(imageSheetManifest);
+                }
 
-            string outputFolder = buildContext.OutputFolder.Replace("%TARGET_NAME%", "cbx");
-            string fullyQualifiedOutputFolder = FileUtil.JoinPath(buildContext.ProjectDirectory, outputFolder);
-            string cbxPath = FileUtil.JoinPath(fullyQualifiedOutputFolder, buildContext.ProjectID + ".cbx");
-            cbxPath = FileUtil.GetCanonicalizeUniversalPath(cbxPath);
-            FileUtil.EnsureParentFolderExists(fullyQualifiedOutputFolder);
-            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
-            output[buildContext.ProjectID + ".cbx"] = new FileOutput()
-            {
-                Type = FileOutputType.Binary,
-                BinaryContent = cbxOutput.ToArray(),
-            };
+                string outputFolder = buildContext.OutputFolder.Replace("%TARGET_NAME%", "cbx");
+                string fullyQualifiedOutputFolder = FileUtil.JoinPath(buildContext.ProjectDirectory, outputFolder);
+                string cbxPath = FileUtil.JoinPath(fullyQualifiedOutputFolder, buildContext.ProjectID + ".cbx");
+                cbxPath = FileUtil.GetCanonicalizeUniversalPath(cbxPath);
+                FileUtil.EnsureParentFolderExists(fullyQualifiedOutputFolder);
+                Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
+                output[buildContext.ProjectID + ".cbx"] = new FileOutput()
+                {
+                    Type = FileOutputType.Binary,
+                    BinaryContent = cbxOutput.ToArray(),
+                };
 
-            // Resource manifest and image sheet manifest is embedded into the CBX file
+                // Resource manifest and image sheet manifest is embedded into the CBX file
 
-            foreach (FileOutput txtResource in resDb.TextResources)
-            {
-                output["res/txt/" + txtResource.CanonicalFileName] = txtResource;
-            }
-            foreach (FileOutput sndResource in resDb.AudioResources)
-            {
-                output["res/snd/" + sndResource.CanonicalFileName] = sndResource;
-            }
-            foreach (FileOutput fontResource in resDb.FontResources)
-            {
-                output["res/ttf/" + fontResource.CanonicalFileName] = fontResource;
-            }
-            foreach (FileOutput binResource in resDb.BinaryResources)
-            {
-                output["res/bin/" + binResource.CanonicalFileName] = binResource;
-            }
-            foreach (FileOutput imgResource in resDb.ImageResources)
-            {
-                output["res/img/" + imgResource.CanonicalFileName] = imgResource;
-            }
-            foreach (string key in resDb.ImageSheetFiles.Keys)
-            {
-                output["res/img/" + key] = resDb.ImageSheetFiles[key];
-            }
-            new FileOutputExporter(fullyQualifiedOutputFolder).ExportFiles(output);
+                foreach (FileOutput txtResource in resDb.TextResources)
+                {
+                    output["res/txt/" + txtResource.CanonicalFileName] = txtResource;
+                }
+                foreach (FileOutput sndResource in resDb.AudioResources)
+                {
+                    output["res/snd/" + sndResource.CanonicalFileName] = sndResource;
+                }
+                foreach (FileOutput fontResource in resDb.FontResources)
+                {
+                    output["res/ttf/" + fontResource.CanonicalFileName] = fontResource;
+                }
+                foreach (FileOutput binResource in resDb.BinaryResources)
+                {
+                    output["res/bin/" + binResource.CanonicalFileName] = binResource;
+                }
+                foreach (FileOutput imgResource in resDb.ImageResources)
+                {
+                    output["res/img/" + imgResource.CanonicalFileName] = imgResource;
+                }
+                foreach (string key in resDb.ImageSheetFiles.Keys)
+                {
+                    output["res/img/" + key] = resDb.ImageSheetFiles[key];
+                }
+                new FileOutputExporter(fullyQualifiedOutputFolder).ExportFiles(output);
 
-            return cbxPath;
+                return cbxPath;
+            }
         }
 
         private static byte[] StringToBytes(string value)
@@ -275,93 +286,108 @@ namespace Crayon
 
         private static void ExportStandaloneVm(string[] args)
         {
-            Platform.AbstractPlatform standaloneVmPlatform = platformProvider.GetPlatform(GetCommandLineFlagValue("-vm", args));
-            string targetDirectory = GetCommandLineFlagValue("-vmdir", args);
-            if (targetDirectory == null || standaloneVmPlatform == null) throw new InvalidOperationException("-vm and -vmdir flags must both have correct values.");
-            targetDirectory = FileUtil.FinalizeTilde(targetDirectory);
-            VmGenerator vmGenerator = new VmGenerator();
-            List<Library> allLibraries = new LibraryManager(platformProvider).GetAllAvailableLibraries(standaloneVmPlatform);
-            Dictionary<string, FileOutput> result = vmGenerator.GenerateVmSourceCodeForPlatform(
-                standaloneVmPlatform,
-                null,
-                null,
-                allLibraries,
-                VmGenerationMode.EXPORT_VM_AND_LIBRARIES);
-            FileOutputExporter exporter = new FileOutputExporter(targetDirectory);
-            exporter.ExportFiles(result);
+            using (new PerformanceSection("ExportStandaloneVm"))
+            {
+                Platform.AbstractPlatform standaloneVmPlatform = platformProvider.GetPlatform(GetCommandLineFlagValue("-vm", args));
+                string targetDirectory = GetCommandLineFlagValue("-vmdir", args);
+                if (targetDirectory == null || standaloneVmPlatform == null) throw new InvalidOperationException("-vm and -vmdir flags must both have correct values.");
+                targetDirectory = FileUtil.FinalizeTilde(targetDirectory);
+                VmGenerator vmGenerator = new VmGenerator();
+                List<Library> allLibraries = new LibraryManager(platformProvider).GetAllAvailableLibraries(standaloneVmPlatform);
+                Dictionary<string, FileOutput> result = vmGenerator.GenerateVmSourceCodeForPlatform(
+                    standaloneVmPlatform,
+                    null,
+                    null,
+                    allLibraries,
+                    VmGenerationMode.EXPORT_VM_AND_LIBRARIES);
+                FileOutputExporter exporter = new FileOutputExporter(targetDirectory);
+                exporter.ExportFiles(result);
+            }
         }
 
         private static ResourceDatabase PrepareResources(
             BuildContext buildContext,
             ByteBuffer nullableByteCode) // CBX files will not have this in the resources
         {
-            // This really needs to go in a separate helper file.
-            ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.CreateResourceDatabase(buildContext);
-            if (nullableByteCode != null)
+            using (new PerformanceSection("Program.PrepareResources"))
             {
-                resourceDatabase.ByteCodeFile = new FileOutput()
+                // This really needs to go in a separate helper file.
+                ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.CreateResourceDatabase(buildContext);
+                if (nullableByteCode != null)
                 {
-                    Type = FileOutputType.Text,
-                    TextContent = ByteCodeEncoder.Encode(nullableByteCode),
-                };
-            }
-
-            Common.ImageSheets.ImageSheetBuilder imageSheetBuilder = new Common.ImageSheets.ImageSheetBuilder();
-            if (buildContext.ImageSheetIds != null)
-            {
-                foreach (string imageSheetId in buildContext.ImageSheetIds)
-                {
-                    imageSheetBuilder.PrefixMatcher.RegisterId(imageSheetId);
-
-                    foreach (string fileMatcher in buildContext.ImageSheetPrefixesById[imageSheetId])
+                    resourceDatabase.ByteCodeFile = new FileOutput()
                     {
-                        imageSheetBuilder.PrefixMatcher.RegisterPrefix(imageSheetId, fileMatcher);
-                    }
+                        Type = FileOutputType.Text,
+                        TextContent = ByteCodeEncoder.Encode(nullableByteCode),
+                    };
                 }
+
+                using (new PerformanceSection("Program.PrepareResources/ImageSheetStuff"))
+                {
+                    Common.ImageSheets.ImageSheetBuilder imageSheetBuilder = new Common.ImageSheets.ImageSheetBuilder();
+                    if (buildContext.ImageSheetIds != null)
+                    {
+                        foreach (string imageSheetId in buildContext.ImageSheetIds)
+                        {
+                            imageSheetBuilder.PrefixMatcher.RegisterId(imageSheetId);
+
+                            foreach (string fileMatcher in buildContext.ImageSheetPrefixesById[imageSheetId])
+                            {
+                                imageSheetBuilder.PrefixMatcher.RegisterPrefix(imageSheetId, fileMatcher);
+                            }
+                        }
+                    }
+                    Common.ImageSheets.Sheet[] imageSheets = imageSheetBuilder.Generate(resourceDatabase);
+
+                    resourceDatabase.AddImageSheets(imageSheets);
+                }
+
+                resourceDatabase.GenerateResourceMapping();
+
+                return resourceDatabase;
             }
-            Common.ImageSheets.Sheet[] imageSheets = imageSheetBuilder.Generate(resourceDatabase);
-
-            resourceDatabase.AddImageSheets(imageSheets);
-
-            resourceDatabase.GenerateResourceMapping();
-
-            return resourceDatabase;
         }
 
         private static void ExportVmBundle(string[] args)
         {
-            BuildContext buildContext = GetBuildContext(args);
-            Platform.AbstractPlatform platform = GetPlatformInstance(buildContext);
-            if (platform == null) throw new InvalidOperationException("Unrecognized platform. See usage.");
-
-            CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
-
-            // Need to re-instantiate the libraries. The libraries are instantiated in a platform-context-free
-            // for the purpose of compiling the byte code. For the VM bundle, they need to know about the platform.
-
-            Library[] libraries = compilationResult.LibrariesUsed
-                .Select(lib => lib.CloneWithNewPlatform(platform))
-                .ToArray();
-
-            ResourceDatabase resourceDatabase = PrepareResources(buildContext, compilationResult.ByteCode);
-
-            VmGenerator vmGenerator = new VmGenerator();
-            Dictionary<string, FileOutput> result = vmGenerator.GenerateVmSourceCodeForPlatform(
-                platform,
-                compilationResult,
-                resourceDatabase,
-                libraries,
-                VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
-
-            string outputDirectory = buildContext.OutputFolder;
-            if (!FileUtil.IsAbsolutePath(outputDirectory))
+            using (new PerformanceSection("ExportVmBundle"))
             {
-                outputDirectory = FileUtil.JoinPath(buildContext.ProjectDirectory, outputDirectory);
-            }
-            outputDirectory = FileUtil.GetCanonicalizeUniversalPath(outputDirectory);
-            FileOutputExporter exporter = new FileOutputExporter(outputDirectory);
+                BuildContext buildContext = GetBuildContext(args);
+                Platform.AbstractPlatform platform = GetPlatformInstance(buildContext);
+                if (platform == null) throw new InvalidOperationException("Unrecognized platform. See usage.");
 
-            exporter.ExportFiles(result);
+                CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
+
+                // Need to re-instantiate the libraries. The libraries are instantiated in a platform-context-free
+                // for the purpose of compiling the byte code. For the VM bundle, they need to know about the platform.
+                Library[] libraries;
+                using (new PerformanceSection("Program.ExportVmBundle.CloneLibraries"))
+                {
+                    libraries = compilationResult.LibrariesUsed
+                        .Select(lib => lib.CloneWithNewPlatform(platform))
+                        .ToArray();
+                }
+
+                ResourceDatabase resourceDatabase = PrepareResources(buildContext, compilationResult.ByteCode);
+
+                VmGenerator vmGenerator = new VmGenerator();
+                Dictionary<string, FileOutput> result = vmGenerator.GenerateVmSourceCodeForPlatform(
+                    platform,
+                    compilationResult,
+                    resourceDatabase,
+                    libraries,
+                    VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
+
+                string outputDirectory = buildContext.OutputFolder;
+                if (!FileUtil.IsAbsolutePath(outputDirectory))
+                {
+                    outputDirectory = FileUtil.JoinPath(buildContext.ProjectDirectory, outputDirectory);
+                }
+                outputDirectory = FileUtil.GetCanonicalizeUniversalPath(outputDirectory);
+                FileOutputExporter exporter = new FileOutputExporter(outputDirectory);
+
+                exporter.ExportFiles(result);
+            }
         }
 
         private static Platform.AbstractPlatform GetPlatformInstance(BuildContext buildContext)
@@ -396,67 +422,73 @@ namespace Crayon
 
         private static BuildContext GetBuildContextCbx(string rawBuildFilePath)
         {
-            string buildFile = GetValidatedCanonicalBuildFilePath(rawBuildFilePath);
-            string projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
-            string buildFileContent = System.IO.File.ReadAllText(buildFile);
-            return BuildContext.Parse(projectDirectory, buildFileContent, null);
+            using (new PerformanceSection("GetBuildContextCbx"))
+            {
+                string buildFile = GetValidatedCanonicalBuildFilePath(rawBuildFilePath);
+                string projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
+                string buildFileContent = System.IO.File.ReadAllText(buildFile);
+                return BuildContext.Parse(projectDirectory, buildFileContent, null);
+            }
         }
 
         private static BuildContext GetBuildContext(string[] args)
         {
-            Dictionary<string, string> argLookup = Program.ParseArgs(args);
-
-            string buildFile = argLookup.ContainsKey("buildfile") ? argLookup["buildfile"] : null;
-            string target = argLookup.ContainsKey("target") ? argLookup["target"] : null;
-
-            if (buildFile == null || target == null)
+            using (new PerformanceSection("GetBuildContext"))
             {
-                throw new InvalidOperationException("Build file and target must be specified together.");
-            }
+                Dictionary<string, string> argLookup = Program.ParseArgs(args);
 
-            buildFile = GetValidatedCanonicalBuildFilePath(buildFile);
+                string buildFile = argLookup.ContainsKey("buildfile") ? argLookup["buildfile"] : null;
+                string target = argLookup.ContainsKey("target") ? argLookup["target"] : null;
 
-            string projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
-
-            BuildContext buildContext = null;
-
-            argLookup.Remove("buildfile");
-            argLookup.Remove("target");
-            projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
-
-            buildContext = BuildContext.Parse(projectDirectory, System.IO.File.ReadAllText(buildFile), target);
-
-
-            buildContext = buildContext ?? new BuildContext();
-
-            // command line arguments override build file values if present.
-
-            if (buildContext.Platform == null)
-                throw new InvalidOperationException("No platform specified in build file.");
-
-            if (buildContext.SourceFolders.Length == 0)
-                throw new InvalidOperationException("No source folder specified in build file.");
-
-            if (buildContext.OutputFolder == null)
-                throw new InvalidOperationException("No output folder specified in build file.");
-
-            buildContext.OutputFolder = FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.OutputFolder);
-            if (buildContext.IconFilePath != null)
-            {
-                buildContext.IconFilePath = FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.IconFilePath);
-            }
-
-            foreach (FilePath sourceFolder in buildContext.SourceFolders)
-            {
-                if (!FileUtil.DirectoryExists(sourceFolder.AbsolutePath))
+                if (buildFile == null || target == null)
                 {
-                    throw new InvalidOperationException("Source folder does not exist.");
+                    throw new InvalidOperationException("Build file and target must be specified together.");
                 }
+
+                buildFile = GetValidatedCanonicalBuildFilePath(buildFile);
+
+                string projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
+
+                BuildContext buildContext = null;
+
+                argLookup.Remove("buildfile");
+                argLookup.Remove("target");
+                projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
+
+                buildContext = BuildContext.Parse(projectDirectory, System.IO.File.ReadAllText(buildFile), target);
+
+
+                buildContext = buildContext ?? new BuildContext();
+
+                // command line arguments override build file values if present.
+
+                if (buildContext.Platform == null)
+                    throw new InvalidOperationException("No platform specified in build file.");
+
+                if (buildContext.SourceFolders.Length == 0)
+                    throw new InvalidOperationException("No source folder specified in build file.");
+
+                if (buildContext.OutputFolder == null)
+                    throw new InvalidOperationException("No output folder specified in build file.");
+
+                buildContext.OutputFolder = FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.OutputFolder);
+                if (buildContext.IconFilePath != null)
+                {
+                    buildContext.IconFilePath = FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.IconFilePath);
+                }
+
+                foreach (FilePath sourceFolder in buildContext.SourceFolders)
+                {
+                    if (!FileUtil.DirectoryExists(sourceFolder.AbsolutePath))
+                    {
+                        throw new InvalidOperationException("Source folder does not exist.");
+                    }
+                }
+
+                buildContext.ProjectID = buildContext.ProjectID ?? "Untitled";
+
+                return buildContext;
             }
-
-            buildContext.ProjectID = buildContext.ProjectID ?? "Untitled";
-
-            return buildContext;
         }
 
         // TODO: remove this and just use the simple extractor O(n^2) is worth getting rid of extra code when there's only a handful of args.

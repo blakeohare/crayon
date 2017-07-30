@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Common;
 using Crayon.ParseTree;
 
 namespace Crayon
@@ -19,110 +19,114 @@ namespace Crayon
 
         private Dictionary<string, Executable> CreateFullyQualifiedLookup(IList<Executable> code)
         {
-            HashSet<string> namespaces = new HashSet<string>();
-
-            Dictionary<string, Executable> lookup = new Dictionary<string, Executable>();
-            bool mainFound = false;
-            foreach (Executable item in code)
+            using (new PerformanceSection(""))
             {
-                string ns;
-                string memberName;
-                if (item is FunctionDefinition)
+
+                HashSet<string> namespaces = new HashSet<string>();
+
+                Dictionary<string, Executable> lookup = new Dictionary<string, Executable>();
+                bool mainFound = false;
+                foreach (Executable item in code)
                 {
-                    FunctionDefinition fd = (FunctionDefinition)item;
-                    ns = fd.Namespace;
-                    memberName = fd.NameToken.Value;
-                    if (memberName == "main")
+                    string ns;
+                    string memberName;
+                    if (item is FunctionDefinition)
                     {
-                        if (mainFound)
+                        FunctionDefinition fd = (FunctionDefinition)item;
+                        ns = fd.Namespace;
+                        memberName = fd.NameToken.Value;
+                        if (memberName == "main")
                         {
-                            throw new ParserException(item.FirstToken, "Multiple main methods found.");
+                            if (mainFound)
+                            {
+                                throw new ParserException(item.FirstToken, "Multiple main methods found.");
+                            }
+                            mainFound = true;
+                            lookup["~"] = item;
                         }
-                        mainFound = true;
-                        lookup["~"] = item;
+                    }
+                    else if (item is ClassDefinition)
+                    {
+                        ClassDefinition cd = (ClassDefinition)item;
+                        ns = cd.Namespace;
+                        memberName = cd.NameToken.Value;
+
+                        // TODO: nested classes, constants, and enums.
+                    }
+                    else if (item is EnumDefinition)
+                    {
+                        EnumDefinition ed = (EnumDefinition)item;
+                        ns = ed.Namespace;
+                        memberName = ed.Name;
+                    }
+                    else if (item is ConstStatement)
+                    {
+                        ConstStatement cs = (ConstStatement)item;
+                        ns = cs.Namespace;
+                        memberName = cs.Name;
+                    }
+                    else
+                    {
+                        string error = "This sort of expression cannot exist outside of function or field definitions.";
+                        if (item is Assignment)
+                        {
+                            error += " Did you mean to mark this as a const expression?";
+                        }
+                        throw new ParserException(item.FirstToken, error);
+                    }
+
+                    if (ns.Length > 0)
+                    {
+                        string accumulator = "";
+                        foreach (string nsPart in ns.Split('.'))
+                        {
+                            if (accumulator.Length > 0) accumulator += ".";
+                            accumulator += nsPart;
+                            namespaces.Add(accumulator);
+                        }
+                    }
+
+                    string fullyQualifiedName = (ns.Length > 0 ? (ns + ".") : "") + memberName;
+
+                    if (lookup.ContainsKey(fullyQualifiedName))
+                    {
+                        // TODO: token information from two locations
+                        throw new ParserException(item.FirstToken, "Two items have identical fully-qualified names: '" + fullyQualifiedName + "'");
+                    }
+                    lookup[fullyQualifiedName] = item;
+                }
+
+                foreach (string key in lookup.Keys)
+                {
+                    if (namespaces.Contains(key))
+                    {
+                        throw new ParserException(lookup[key].FirstToken, "This name collides with a namespace definition.");
                     }
                 }
-                else if (item is ClassDefinition)
-                {
-                    ClassDefinition cd = (ClassDefinition)item;
-                    ns = cd.Namespace;
-                    memberName = cd.NameToken.Value;
 
-                    // TODO: nested classes, constants, and enums.
-                }
-                else if (item is EnumDefinition)
+                // Go through and fill in all the partially qualified namespace names.
+                foreach (string ns in namespaces)
                 {
-                    EnumDefinition ed = (EnumDefinition)item;
-                    ns = ed.Namespace;
-                    memberName = ed.Name;
+                    Namespace nsInstance = new Namespace(null, ns, null);
+                    nsInstance.LibraryName = ns.Split('.')[0];
+                    lookup[ns] = nsInstance;
                 }
-                else if (item is ConstStatement)
+
+                if (lookup.ContainsKey("~"))
                 {
-                    ConstStatement cs = (ConstStatement)item;
-                    ns = cs.Namespace;
-                    memberName = cs.Name;
+                    FunctionDefinition mainFunc = (FunctionDefinition)lookup["~"];
+                    if (mainFunc.ArgNames.Length > 1)
+                    {
+                        throw new ParserException(mainFunc.FirstToken, "The main function must accept 0 or 1 arguments.");
+                    }
                 }
                 else
                 {
-                    string error = "This sort of expression cannot exist outside of function or field definitions.";
-                    if (item is Assignment)
-                    {
-                        error += " Did you mean to mark this as a const expression?";
-                    }
-                    throw new ParserException(item.FirstToken, error);
+                    throw new InvalidOperationException("No main(args) function was defined.");
                 }
 
-                if (ns.Length > 0)
-                {
-                    string accumulator = "";
-                    foreach (string nsPart in ns.Split('.'))
-                    {
-                        if (accumulator.Length > 0) accumulator += ".";
-                        accumulator += nsPart;
-                        namespaces.Add(accumulator);
-                    }
-                }
-
-                string fullyQualifiedName = (ns.Length > 0 ? (ns + ".") : "") + memberName;
-
-                if (lookup.ContainsKey(fullyQualifiedName))
-                {
-                    // TODO: token information from two locations
-                    throw new ParserException(item.FirstToken, "Two items have identical fully-qualified names: '" + fullyQualifiedName + "'");
-                }
-                lookup[fullyQualifiedName] = item;
+                return lookup;
             }
-
-            foreach (string key in lookup.Keys)
-            {
-                if (namespaces.Contains(key))
-                {
-                    throw new ParserException(lookup[key].FirstToken, "This name collides with a namespace definition.");
-                }
-            }
-
-            // Go through and fill in all the partially qualified namespace names.
-            foreach (string ns in namespaces)
-            {
-                Namespace nsInstance = new Namespace(null, ns, null);
-                nsInstance.LibraryName = ns.Split('.')[0];
-                lookup[ns] = nsInstance;
-            }
-
-            if (lookup.ContainsKey("~"))
-            {
-                FunctionDefinition mainFunc = (FunctionDefinition)lookup["~"];
-                if (mainFunc.ArgNames.Length > 1)
-                {
-                    throw new ParserException(mainFunc.FirstToken, "The main function must accept 0 or 1 arguments.");
-                }
-            }
-            else
-            {
-                throw new InvalidOperationException("No main(args) function was defined.");
-            }
-
-            return lookup;
         }
 
         public Executable[] ResolveTranslatedCode()
@@ -162,21 +166,24 @@ namespace Crayon
                 }
             }
 
-            Dictionary<string, Executable> alreadyResolvedDependencies;
-            // Resolve raw names into the actual things they refer to based on namespaces and imports.
-            foreach (Library library in librariesInDependencyOrder)
+            using (new PerformanceSection("ResolveNames for compilation segments"))
             {
-                // First create a lookup of JUST the libraries that are available to this library.
-                alreadyResolvedDependencies = Common.Util.MergeDictionaries<string, Executable>(
-                    library.LibraryDependencies.Select(lib => definitionsByLibrary[lib]).ToArray());
+                Dictionary<string, Executable> alreadyResolvedDependencies;
+                // Resolve raw names into the actual things they refer to based on namespaces and imports.
+                foreach (Library library in librariesInDependencyOrder)
+                {
+                    // First create a lookup of JUST the libraries that are available to this library.
+                    alreadyResolvedDependencies = Common.Util.MergeDictionaries<string, Executable>(
+                        library.LibraryDependencies.Select(lib => definitionsByLibrary[lib]).ToArray());
 
-                // Resolve definitions based on what's available.
-                this.ResolveNames(library, alreadyResolvedDependencies, definitionsByLibrary[library]);
+                    // Resolve definitions based on what's available.
+                    this.ResolveNames(library, alreadyResolvedDependencies, definitionsByLibrary[library]);
+                }
+                alreadyResolvedDependencies = Common.Util.MergeDictionaries<string, Executable>(
+                    this.parser.LibraryManager.LibrariesUsed.Select(lib => definitionsByLibrary[lib]).ToArray());
+                nonLibraryCode.Remove("~");
+                this.ResolveNames(null, alreadyResolvedDependencies, nonLibraryCode);
             }
-            alreadyResolvedDependencies = Common.Util.MergeDictionaries<string, Executable>(
-                this.parser.LibraryManager.LibrariesUsed.Select(lib => definitionsByLibrary[lib]).ToArray());
-            nonLibraryCode.Remove("~");
-            this.ResolveNames(null, alreadyResolvedDependencies, nonLibraryCode);
 
             // Determine if the main function uses args.
             FunctionDefinition mainFunction = (FunctionDefinition)definitionsByFullyQualifiedNames["~"];
@@ -195,48 +202,51 @@ namespace Crayon
 
         private void DetermineInlinableLibraryFunctions()
         {
-            HashSet<FunctionDefinition> inlineCandidates = new HashSet<FunctionDefinition>();
-            foreach (FunctionDefinition funcDef in this.currentCode.OfType<FunctionDefinition>())
+            using (new PerformanceSection("DetermineInlinableLibraryFunctions"))
             {
-                // Look for function definitions that are in libraries that have one single line of code that's a return statement that
-                // invokes a native code.
-                if (funcDef.LibraryName != null && funcDef.Code.Length == 1)
+                HashSet<FunctionDefinition> inlineCandidates = new HashSet<FunctionDefinition>();
+                foreach (FunctionDefinition funcDef in this.currentCode.OfType<FunctionDefinition>())
                 {
-                    ReturnStatement returnStatement = funcDef.Code[0] as ReturnStatement;
-                    if (returnStatement != null)
+                    // Look for function definitions that are in libraries that have one single line of code that's a return statement that
+                    // invokes a native code.
+                    if (funcDef.LibraryName != null && funcDef.Code.Length == 1)
                     {
-                        Expression[] argsFromLibOrCoreFunction = null;
-                        if (returnStatement.Expression is LibraryFunctionCall)
+                        ReturnStatement returnStatement = funcDef.Code[0] as ReturnStatement;
+                        if (returnStatement != null)
                         {
-                            argsFromLibOrCoreFunction = ((LibraryFunctionCall)returnStatement.Expression).Args;
-                        }
-                        else if (returnStatement.Expression is CoreFunctionInvocation)
-                        {
-                            argsFromLibOrCoreFunction = ((CoreFunctionInvocation)returnStatement.Expression).Args;
-                        }
-
-                        if (argsFromLibOrCoreFunction != null)
-                        {
-                            bool allSimpleVariables = true;
-                            foreach (Expression expr in argsFromLibOrCoreFunction)
+                            Expression[] argsFromLibOrCoreFunction = null;
+                            if (returnStatement.Expression is LibraryFunctionCall)
                             {
-                                if (!(expr is Variable))
-                                {
-                                    allSimpleVariables = false;
-                                    break;
-                                }
+                                argsFromLibOrCoreFunction = ((LibraryFunctionCall)returnStatement.Expression).Args;
+                            }
+                            else if (returnStatement.Expression is CoreFunctionInvocation)
+                            {
+                                argsFromLibOrCoreFunction = ((CoreFunctionInvocation)returnStatement.Expression).Args;
                             }
 
-                            if (allSimpleVariables)
+                            if (argsFromLibOrCoreFunction != null)
                             {
-                                inlineCandidates.Add(funcDef);
+                                bool allSimpleVariables = true;
+                                foreach (Expression expr in argsFromLibOrCoreFunction)
+                                {
+                                    if (!(expr is Variable))
+                                    {
+                                        allSimpleVariables = false;
+                                        break;
+                                    }
+                                }
+
+                                if (allSimpleVariables)
+                                {
+                                    inlineCandidates.Add(funcDef);
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            this.parser.InlinableLibraryFunctions = inlineCandidates;
+                this.parser.InlinableLibraryFunctions = inlineCandidates;
+            }
         }
 
         private void ResolveNames(
@@ -244,91 +254,97 @@ namespace Crayon
             Dictionary<string, Executable> alreadyResolved,
             Dictionary<string, Executable> currentLibraryDefinitions)
         {
-            List<ClassDefinition> classes = new List<ClassDefinition>();
-
-            // Concatenate compilation items on top of everything that's already been resolved to create a lookup of everything that is available for this library.
-            Dictionary<string, Executable> allKnownDefinitions = new Dictionary<string, Executable>(alreadyResolved);
-            foreach (string executableKey in currentLibraryDefinitions.Keys)
+            using (new PerformanceSection("ResolveNames"))
             {
-                if (allKnownDefinitions.ContainsKey(executableKey))
+                List<ClassDefinition> classes = new List<ClassDefinition>();
+
+                // Concatenate compilation items on top of everything that's already been resolved to create a lookup of everything that is available for this library.
+                Dictionary<string, Executable> allKnownDefinitions = new Dictionary<string, Executable>(alreadyResolved);
+                foreach (string executableKey in currentLibraryDefinitions.Keys)
                 {
-                    throw new ParserException(
-                        currentLibraryDefinitions[executableKey].FirstToken,
-                        "Two conflicting definitions of '" + executableKey + "'");
+                    if (allKnownDefinitions.ContainsKey(executableKey))
+                    {
+                        throw new ParserException(
+                            currentLibraryDefinitions[executableKey].FirstToken,
+                            "Two conflicting definitions of '" + executableKey + "'");
+                    }
+                    Executable ex = currentLibraryDefinitions[executableKey];
+                    if (ex is ClassDefinition)
+                    {
+                        classes.Add((ClassDefinition)ex);
+                    }
+                    allKnownDefinitions[executableKey] = ex;
                 }
-                Executable ex = currentLibraryDefinitions[executableKey];
-                if (ex is ClassDefinition)
+
+                foreach (ClassDefinition cd in classes)
                 {
-                    classes.Add((ClassDefinition)ex);
+                    if (cd.BaseClassDeclarations.Length > 0)
+                    {
+                        cd.ResolveBaseClasses(allKnownDefinitions, cd.LocalNamespace, cd.NamespacePrefixSearch);
+                    }
                 }
-                allKnownDefinitions[executableKey] = ex;
-            }
 
-            foreach (ClassDefinition cd in classes)
-            {
-                if (cd.BaseClassDeclarations.Length > 0)
+                foreach (ClassDefinition cd in classes)
                 {
-                    cd.ResolveBaseClasses(allKnownDefinitions, cd.LocalNamespace, cd.NamespacePrefixSearch);
+                    cd.VerifyNoBaseClassLoops();
                 }
-            }
 
-            foreach (ClassDefinition cd in classes)
-            {
-                cd.VerifyNoBaseClassLoops();
-            }
-
-            foreach (string itemKey in currentLibraryDefinitions.Keys.OrderBy(key => key))
-            {
-                Executable item = currentLibraryDefinitions[itemKey];
-                if (!(item is Namespace))
+                foreach (string itemKey in currentLibraryDefinitions.Keys.OrderBy(key => key))
                 {
-                    item.ResolveNames(this.parser, allKnownDefinitions, item.NamespacePrefixSearch);
+                    Executable item = currentLibraryDefinitions[itemKey];
+                    if (!(item is Namespace))
+                    {
+                        item.ResolveNames(this.parser, allKnownDefinitions, item.NamespacePrefixSearch);
+                    }
                 }
-            }
 
-            foreach (ClassDefinition cd in classes)
-            {
-                cd.ResolveMemberIds();
-            }
+                foreach (ClassDefinition cd in classes)
+                {
+                    cd.ResolveMemberIds();
+                }
 
-            foreach (Executable ex in currentLibraryDefinitions.Values.Where(ex => ex is ConstStatement || ex is EnumDefinition))
-            {
-                parser.ConstantAndEnumResolutionState[ex] = ConstantResolutionState.NOT_RESOLVED;
+                foreach (Executable ex in currentLibraryDefinitions.Values.Where(ex => ex is ConstStatement || ex is EnumDefinition))
+                {
+                    parser.ConstantAndEnumResolutionState[ex] = ConstantResolutionState.NOT_RESOLVED;
+                }
             }
         }
 
         private void RearrangeClassDefinitions()
         {
-            // Rearrange class definitions so that base classes always come first.
-
-            HashSet<int> classIdsIncluded = new HashSet<int>();
-            List<ClassDefinition> classDefinitions = new List<ClassDefinition>();
-            List<FunctionDefinition> functionDefinitions = new List<FunctionDefinition>();
-            List<Executable> output = new List<Executable>();
-            foreach (Executable exec in this.currentCode)
+            using (new PerformanceSection("RearrangeClassDefinitions"))
             {
-                if (exec is FunctionDefinition)
+                // Rearrange class definitions so that base classes always come first.
+
+                HashSet<int> classIdsIncluded = new HashSet<int>();
+                List<ClassDefinition> classDefinitions = new List<ClassDefinition>();
+                List<FunctionDefinition> functionDefinitions = new List<FunctionDefinition>();
+                List<Executable> output = new List<Executable>();
+                foreach (Executable exec in this.currentCode)
                 {
-                    functionDefinitions.Add((FunctionDefinition)exec);
+                    if (exec is FunctionDefinition)
+                    {
+                        functionDefinitions.Add((FunctionDefinition)exec);
+                    }
+                    else if (exec is ClassDefinition)
+                    {
+                        classDefinitions.Add((ClassDefinition)exec);
+                    }
+                    else
+                    {
+                        throw new ParserException(exec.FirstToken, "Unexpected item.");
+                    }
                 }
-                else if (exec is ClassDefinition)
+
+                output.AddRange(functionDefinitions);
+
+                foreach (ClassDefinition cd in classDefinitions)
                 {
-                    classDefinitions.Add((ClassDefinition)exec);
+                    this.RearrangeClassDefinitionsHelper(cd, classIdsIncluded, output);
                 }
-                else
-                {
-                    throw new ParserException(exec.FirstToken, "Unexpected item.");
-                }
+
+                this.currentCode = output.ToArray();
             }
-
-            output.AddRange(functionDefinitions);
-
-            foreach (ClassDefinition cd in classDefinitions)
-            {
-                this.RearrangeClassDefinitionsHelper(cd, classIdsIncluded, output);
-            }
-
-            this.currentCode = output.ToArray();
         }
 
         private void RearrangeClassDefinitionsHelper(ClassDefinition def, HashSet<int> idsAlreadyIncluded, List<Executable> output)
@@ -347,30 +363,36 @@ namespace Crayon
 
         private void SimpleFirstPassResolution()
         {
-            List<Executable> output = new List<Executable>();
-            foreach (Executable ex in this.currentCode)
+            using (new PerformanceSection("SimpleFirstPassResolution"))
             {
-                output.AddRange(ex.Resolve(this.parser));
-            }
+                List<Executable> output = new List<Executable>();
+                foreach (Executable ex in this.currentCode)
+                {
+                    output.AddRange(ex.Resolve(this.parser));
+                }
 
-            this.currentCode = output.ToArray();
+                this.currentCode = output.ToArray();
+            }
         }
 
         private void AllocateLocalScopeIds()
         {
-            foreach (Executable item in this.currentCode)
+            using (new PerformanceSection("AllocateLocalScopeIds"))
             {
-                if (item is FunctionDefinition)
+                foreach (Executable item in this.currentCode)
                 {
-                    ((FunctionDefinition)item).AllocateLocalScopeIds();
-                }
-                else if (item is ClassDefinition)
-                {
-                    ((ClassDefinition)item).AllocateLocalScopeIds();
-                }
-                else
-                {
-                    throw new System.InvalidOperationException(); // everything else in the root scope should have thrown before now.
+                    if (item is FunctionDefinition)
+                    {
+                        ((FunctionDefinition)item).AllocateLocalScopeIds();
+                    }
+                    else if (item is ClassDefinition)
+                    {
+                        ((ClassDefinition)item).AllocateLocalScopeIds();
+                    }
+                    else
+                    {
+                        throw new System.InvalidOperationException(); // everything else in the root scope should have thrown before now.
+                    }
                 }
             }
         }
@@ -379,27 +401,30 @@ namespace Crayon
         // available namespaces.
         public static List<Executable> CreateVerifiedFunctionCalls(Parser parser, IList<Executable> original)
         {
-            // First create a fully-qualified lookup of all functions and classes.
-            Dictionary<string, Executable> functionsAndClasses = new Dictionary<string, Executable>();
-            foreach (Executable exec in original)
+            using (new PerformanceSection("CreateVerifiedFunctionCalls"))
             {
-                if (exec is FunctionDefinition)
+                // First create a fully-qualified lookup of all functions and classes.
+                Dictionary<string, Executable> functionsAndClasses = new Dictionary<string, Executable>();
+                foreach (Executable exec in original)
                 {
-                    FunctionDefinition fd = (FunctionDefinition)exec;
-                    string key = fd.Namespace + ":" + fd.NameToken.Value;
-                    functionsAndClasses[key] = fd;
+                    if (exec is FunctionDefinition)
+                    {
+                        FunctionDefinition fd = (FunctionDefinition)exec;
+                        string key = fd.Namespace + ":" + fd.NameToken.Value;
+                        functionsAndClasses[key] = fd;
+                    }
+                    else if (exec is ClassDefinition)
+                    {
+                        ClassDefinition cd = (ClassDefinition)exec;
+                        string key = cd.Namespace + ":" + cd.NameToken.Value;
+                        functionsAndClasses[key] = cd;
+                    }
                 }
-                else if (exec is ClassDefinition)
-                {
-                    ClassDefinition cd = (ClassDefinition)exec;
-                    string key = cd.Namespace + ":" + cd.NameToken.Value;
-                    functionsAndClasses[key] = cd;
-                }
+
+                List<Executable> output = new List<Executable>();
+
+                return output;
             }
-
-            List<Executable> output = new List<Executable>();
-
-            return output;
         }
 
         // Generally this is used with the name resolver. So for example, you have a refernce to a ClassDefinition

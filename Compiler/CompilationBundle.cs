@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Common;
 using System.Collections.Generic;
 
 namespace Crayon
@@ -19,26 +19,29 @@ namespace Crayon
 
         public static CompilationBundle Compile(BuildContext buildContext)
         {
-            Parser parser = new Parser(buildContext, null);
-            Crayon.ParseTree.Executable[] resolvedParseTree = parser.ParseAllTheThings();
-
-            ByteCodeCompiler bcc = new ByteCodeCompiler();
-            ByteBuffer buffer = bcc.GenerateByteCode(parser, resolvedParseTree);
-
-            return new CompilationBundle()
+            using (new PerformanceSection("CompilationBundle.Compile"))
             {
-                ByteCode = buffer,
-                LibrariesUsed = parser.LibraryManager.LibrariesUsed,
-                ProjectID = buildContext.ProjectID,
-                Version = buildContext.Version,
-                Description = buildContext.Description,
-                GuidSeed = buildContext.GuidSeed,
-                DefaultTitle = buildContext.DefaultTitle,
-                IosBundlePrefix = buildContext.IosBundlePrefix,
-                IconPath = buildContext.IconFilePath,
-                WindowWidth = buildContext.WindowWidth,
-                WindowHeight = buildContext.WindowHeight,
-            };
+                Parser parser = new Parser(buildContext, null);
+                Crayon.ParseTree.Executable[] resolvedParseTree = parser.ParseAllTheThings();
+
+                ByteCodeCompiler bcc = new ByteCodeCompiler();
+                ByteBuffer buffer = bcc.GenerateByteCode(parser, resolvedParseTree);
+
+                return new CompilationBundle()
+                {
+                    ByteCode = buffer,
+                    LibrariesUsed = parser.LibraryManager.LibrariesUsed,
+                    ProjectID = buildContext.ProjectID,
+                    Version = buildContext.Version,
+                    Description = buildContext.Description,
+                    GuidSeed = buildContext.GuidSeed,
+                    DefaultTitle = buildContext.DefaultTitle,
+                    IosBundlePrefix = buildContext.IosBundlePrefix,
+                    IconPath = buildContext.IconFilePath,
+                    WindowWidth = buildContext.WindowWidth,
+                    WindowHeight = buildContext.WindowHeight,
+                };
+            }
         }
     }
 }

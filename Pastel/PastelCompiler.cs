@@ -166,108 +166,123 @@ namespace Pastel
 
         public void Resolve()
         {
-            this.ResolveConstants();
-            this.ResolveNamesAndCullUnusedCode();
-            this.ResolveTypes();
-            this.ResolveWithTypeContext();
+            using (new PerformanceSection("PastelCompiler.Resolve"))
+            {
+                this.ResolveConstants();
+                this.ResolveNamesAndCullUnusedCode();
+                this.ResolveTypes();
+                this.ResolveWithTypeContext();
+            }
         }
 
         private void ResolveConstants()
         {
-            HashSet<string> cycleDetection = new HashSet<string>();
-            foreach (EnumDefinition enumDef in this.EnumDefinitions.Values)
+            using (new PerformanceSection("PastelCompiler.ResolveConstants"))
             {
-                if (enumDef.UnresolvedValues.Count > 0)
+                HashSet<string> cycleDetection = new HashSet<string>();
+                foreach (EnumDefinition enumDef in this.EnumDefinitions.Values)
                 {
-                    enumDef.DoConstantResolutions(cycleDetection, this);
+                    if (enumDef.UnresolvedValues.Count > 0)
+                    {
+                        enumDef.DoConstantResolutions(cycleDetection, this);
+                    }
                 }
-            }
 
-            foreach (VariableDeclaration constDef in this.ConstantDefinitions.Values)
-            {
-                if (!(constDef.Value is InlineConstant))
+                foreach (VariableDeclaration constDef in this.ConstantDefinitions.Values)
                 {
-                    string name = constDef.VariableNameToken.Value;
-                    cycleDetection.Add(name);
-                    constDef.DoConstantResolutions(cycleDetection, this);
-                    cycleDetection.Remove(name);
+                    if (!(constDef.Value is InlineConstant))
+                    {
+                        string name = constDef.VariableNameToken.Value;
+                        cycleDetection.Add(name);
+                        constDef.DoConstantResolutions(cycleDetection, this);
+                        cycleDetection.Remove(name);
+                    }
                 }
             }
         }
 
         private void ResolveNamesAndCullUnusedCode()
         {
-            string[] globalNames = this.Globals.Keys.ToArray();
-            for (int i = 0; i < globalNames.Length; ++i)
+            using (new PerformanceSection("PastelCompiler.ResolveNamesAndCullUnusedCode"))
             {
-                string name = globalNames[i];
-                this.Globals[name] = (VariableDeclaration)this.Globals[name].ResolveNamesAndCullUnusedCode(this);
-            }
-
-            this.ResolvedFunctions = new HashSet<string>();
-            this.ResolutionQueue = new Queue<string>();
-
-            foreach (string functionName in this.FunctionDefinitions.Keys)
-            {
-                this.ResolutionQueue.Enqueue(functionName);
-            }
-
-            while (this.ResolutionQueue.Count > 0)
-            {
-                string functionName = this.ResolutionQueue.Dequeue();
-                if (!this.ResolvedFunctions.Contains(functionName)) // multiple invocations in a function will put it in the queue multiple times.
+                string[] globalNames = this.Globals.Keys.ToArray();
+                for (int i = 0; i < globalNames.Length; ++i)
                 {
-                    this.ResolvedFunctions.Add(functionName);
-                    this.FunctionDefinitions[functionName].ResolveNamesAndCullUnusedCode(this);
+                    string name = globalNames[i];
+                    this.Globals[name] = (VariableDeclaration)this.Globals[name].ResolveNamesAndCullUnusedCode(this);
                 }
-            }
 
-            List<string> unusedFunctions = new List<string>();
-            foreach (string functionName in this.FunctionDefinitions.Keys)
-            {
-                if (!this.ResolvedFunctions.Contains(functionName))
+                this.ResolvedFunctions = new HashSet<string>();
+                this.ResolutionQueue = new Queue<string>();
+
+                foreach (string functionName in this.FunctionDefinitions.Keys)
                 {
-                    unusedFunctions.Add(functionName);
+                    this.ResolutionQueue.Enqueue(functionName);
                 }
-            }
 
-            Dictionary<string, FunctionDefinition> finalFunctions = new Dictionary<string, FunctionDefinition>();
-            foreach (string usedFunctionName in this.ResolvedFunctions)
-            {
-                finalFunctions[usedFunctionName] = this.FunctionDefinitions[usedFunctionName];
+                while (this.ResolutionQueue.Count > 0)
+                {
+                    string functionName = this.ResolutionQueue.Dequeue();
+                    if (!this.ResolvedFunctions.Contains(functionName)) // multiple invocations in a function will put it in the queue multiple times.
+                    {
+                        this.ResolvedFunctions.Add(functionName);
+                        this.FunctionDefinitions[functionName].ResolveNamesAndCullUnusedCode(this);
+                    }
+                }
+
+                List<string> unusedFunctions = new List<string>();
+                foreach (string functionName in this.FunctionDefinitions.Keys)
+                {
+                    if (!this.ResolvedFunctions.Contains(functionName))
+                    {
+                        unusedFunctions.Add(functionName);
+                    }
+                }
+
+                Dictionary<string, FunctionDefinition> finalFunctions = new Dictionary<string, FunctionDefinition>();
+                foreach (string usedFunctionName in this.ResolvedFunctions)
+                {
+                    finalFunctions[usedFunctionName] = this.FunctionDefinitions[usedFunctionName];
+                }
+                this.FunctionDefinitions = finalFunctions;
             }
-            this.FunctionDefinitions = finalFunctions;
         }
 
         private void ResolveTypes()
         {
-            foreach (VariableDeclaration global in this.Globals.Values)
+            using (new PerformanceSection("PastelCompiler.ResolveTypes"))
             {
-                VariableScope vs = new VariableScope();
-                global.ResolveTypes(vs, this);
-            }
+                foreach (VariableDeclaration global in this.Globals.Values)
+                {
+                    VariableScope vs = new VariableScope();
+                    global.ResolveTypes(vs, this);
+                }
 
-            string[] functionNames = this.FunctionDefinitions.Keys.OrderBy(s => s).ToArray();
-            foreach (string functionName in functionNames)
-            {
-                FunctionDefinition functionDefinition = this.FunctionDefinitions[functionName];
-                functionDefinition.ResolveTypes(this);
+                string[] functionNames = this.FunctionDefinitions.Keys.OrderBy(s => s).ToArray();
+                foreach (string functionName in functionNames)
+                {
+                    FunctionDefinition functionDefinition = this.FunctionDefinitions[functionName];
+                    functionDefinition.ResolveTypes(this);
+                }
             }
         }
 
         private void ResolveWithTypeContext()
         {
-            string[] globalNames = this.Globals.Keys.OrderBy(s => s).ToArray();
-            foreach (string globalName in globalNames)
+            using (new PerformanceSection("PastelCompiler.ResolveWithTypeContext"))
             {
-                this.Globals[globalName] = (VariableDeclaration)this.Globals[globalName].ResolveWithTypeContext(this);
-            }
+                string[] globalNames = this.Globals.Keys.OrderBy(s => s).ToArray();
+                foreach (string globalName in globalNames)
+                {
+                    this.Globals[globalName] = (VariableDeclaration)this.Globals[globalName].ResolveWithTypeContext(this);
+                }
 
-            string[] functionNames = this.FunctionDefinitions.Keys.OrderBy<string, string>(s => s).ToArray();
-            foreach (string functionName in functionNames)
-            {
-                FunctionDefinition functionDefinition = this.FunctionDefinitions[functionName];
-                functionDefinition.ResolveWithTypeContext(this);
+                string[] functionNames = this.FunctionDefinitions.Keys.OrderBy<string, string>(s => s).ToArray();
+                foreach (string functionName in functionNames)
+                {
+                    FunctionDefinition functionDefinition = this.FunctionDefinitions[functionName];
+                    functionDefinition.ResolveWithTypeContext(this);
+                }
             }
         }
     }
