@@ -163,6 +163,30 @@ namespace Crayon
             }
         }
 
+        private List<Library> libraryDependencies = new List<Library>();
+        private HashSet<Library> libraryDependencyDuplicateCheck = new HashSet<Library>();
+        private Library[] libraryDependenciesArray = null;
+        public void AddLibraryDependency(Library library)
+        {
+            if (!libraryDependencyDuplicateCheck.Contains(library) && library != this)
+            {
+                this.libraryDependencies.Add(library);
+                this.libraryDependenciesArray = null;
+            }
+        }
+
+        public Library[] LibraryDependencies
+        {
+            get
+            {
+                if (this.libraryDependenciesArray == null)
+                {
+                    this.libraryDependenciesArray = this.libraryDependencies.ToArray();
+                }
+                return this.libraryDependenciesArray;
+            }
+        }
+
         public bool IsMoreThanJustEmbedCode
         {
             get { return this.filepathsByFunctionName.Count > 0; }

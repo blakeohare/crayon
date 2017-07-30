@@ -26,6 +26,13 @@ namespace Crayon
             return systemLibraryPathsByName.ContainsKey(name);
         }
 
+        public Library GetLibraryFromName(string name)
+        {
+            Library library = this.GetLibraryFromKey(name.ToLower());
+            if (library == null) return null;
+            return name == library.Name ? library : null;
+        }
+
         public Library GetLibraryFromKey(string key)
         {
             Library output;
@@ -181,13 +188,13 @@ namespace Crayon
 
         public Library[] LibrariesUsed { get { return this.librariesAlreadyImported.ToArray(); } }
 
-        public Executable[] ImportLibrary(Parser parser, Token throwToken, string name)
+        public Library ImportLibrary(Parser parser, Token throwToken, string name, List<Executable> executablesOut)
         {
             name = name.Split('.')[0];
             Library library = librariesAlreadyImportedIndexByName.ContainsKey(name)
                 ? librariesAlreadyImported[librariesAlreadyImportedIndexByName[name]]
                 : null;
-            Executable[] embedCode = EMPTY_EXECUTABLE;
+
             if (library == null)
             {
                 string libraryManifestPath = this.GetSystemLibraryPath(name, parser.BuildContext.CrayonPath, parser.BuildContext.ProjectDirectory);
@@ -212,17 +219,15 @@ namespace Crayon
                 string oldSystemLibrary = parser.CurrentSystemLibrary;
                 parser.CurrentSystemLibrary = name;
 
-                List<Executable> output = new List<Executable>();
                 Dictionary<string, string> embeddedCode = library.GetEmbeddedCode();
                 foreach (string embeddedFile in embeddedCode.Keys)
                 {
                     string fakeName = "[" + embeddedFile + "]";
                     string code = embeddedCode[embeddedFile];
-                    output.AddRange(parser.ParseInterpretedCode(fakeName, code, name));
+                    executablesOut.AddRange(parser.ParseInterpretedCode(fakeName, code, name));
                 }
 
                 parser.CurrentSystemLibrary = oldSystemLibrary;
-                embedCode = output.ToArray();
             }
 
             // Even if already imported, still must check to see if this import is allowed here.
@@ -231,7 +236,7 @@ namespace Crayon
                 throw new ParserException(throwToken, "This library cannot be imported from here.");
             }
 
-            return embedCode;
+            return library;
         }
     }
 }

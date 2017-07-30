@@ -115,12 +115,13 @@ namespace Crayon.ParseTree
                 return new BaseKeyword(this.FirstToken, this.FunctionOrClassOwner);
             }
 
-            Executable exec = DoNameLookup(lookup, imports, this.Name);
+            Executable exec = DoNameLookup(lookup, imports, this.FunctionOrClassOwner.LocalNamespace, this.Name);
 
             if (exec != null)
             {
                 return Resolver.ConvertStaticReferenceToExpression(exec, this.FirstToken, this.FunctionOrClassOwner);
             }
+
             return this;
         }
 

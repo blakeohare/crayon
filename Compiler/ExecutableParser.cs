@@ -213,12 +213,13 @@ namespace Crayon
         {
             Token constToken = tokens.PopExpected("const");
             Token nameToken = tokens.Pop();
+            ConstStatement constStatement = new ConstStatement(constToken, nameToken, parser.CurrentNamespace, owner);
             Parser.VerifyIdentifier(nameToken);
             tokens.PopExpected("=");
-            Expression expression = ExpressionParser.Parse(tokens, owner);
+            constStatement.Expression = ExpressionParser.Parse(tokens, constStatement);
             tokens.PopExpected(";");
 
-            return new ConstStatement(constToken, nameToken, parser.CurrentNamespace, expression, owner);
+            return constStatement;
         }
 
         private static Executable ParseEnumDefinition(Parser parser, TokenStream tokens, Executable owner)
@@ -227,6 +228,8 @@ namespace Crayon
             Token nameToken = tokens.Pop();
             Parser.VerifyIdentifier(nameToken);
             string name = nameToken.Value;
+            EnumDefinition ed = new EnumDefinition(enumToken, nameToken, parser.CurrentNamespace, owner);
+
             tokens.PopExpected("{");
             bool nextForbidden = false;
             List<Token> items = new List<Token>();
@@ -239,7 +242,7 @@ namespace Crayon
                 Parser.VerifyIdentifier(enumItem);
                 if (tokens.PopIfPresent("="))
                 {
-                    values.Add(ExpressionParser.Parse(tokens, owner));
+                    values.Add(ExpressionParser.Parse(tokens, ed));
                 }
                 else
                 {
@@ -249,7 +252,8 @@ namespace Crayon
                 items.Add(enumItem);
             }
 
-            return new EnumDefinition(enumToken, nameToken, parser.CurrentNamespace, items, values, owner);
+            ed.SetItems(items, values);
+            return ed;
         }
 
         private static Executable ParseClassDefinition(Parser parser, TokenStream tokens, Executable owner, Token staticToken, Token finalToken)

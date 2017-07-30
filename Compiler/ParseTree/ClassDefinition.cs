@@ -17,7 +17,6 @@ namespace Crayon.ParseTree
         public ConstructorDefinition Constructor { get; set; }
         public ConstructorDefinition StaticConstructor { get; set; }
         public FieldDeclaration[] Fields { get; set; }
-        public string Namespace { get; set; }
 
         public Token StaticToken { get; set; }
         public Token FinalToken { get; set; }
@@ -231,7 +230,7 @@ namespace Crayon.ParseTree
             return Listify(this);
         }
 
-        public void ResolveBaseClasses(Dictionary<string, Executable> lookup, string[] imports)
+        public void ResolveBaseClasses(Dictionary<string, Executable> lookup, string[] localNamespace, string[] imports)
         {
             List<ClassDefinition> baseClasses = new List<ClassDefinition>();
             List<Token> baseClassesTokens = new List<Token>();
@@ -239,7 +238,7 @@ namespace Crayon.ParseTree
             {
                 string value = this.BaseClassDeclarations[i];
                 Token token = this.BaseClassTokens[i];
-                Executable baseClassInstance = Executable.DoNameLookup(lookup, imports, value);
+                Executable baseClassInstance = Executable.DoNameLookup(lookup, imports, localNamespace, value);
                 if (baseClassInstance == null)
                 {
                     throw new ParserException(token, "No class named '" + token.Value + "' was found.");
