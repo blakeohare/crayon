@@ -213,12 +213,13 @@ namespace Crayon
         {
             Token constToken = tokens.PopExpected("const");
             Token nameToken = tokens.Pop();
+            ConstStatement constStatement = new ConstStatement(constToken, nameToken, parser.CurrentNamespace, owner);
             Parser.VerifyIdentifier(nameToken);
             tokens.PopExpected("=");
-            Expression expression = ExpressionParser.Parse(tokens, owner);
+            constStatement.Expression = ExpressionParser.Parse(tokens, constStatement);
             tokens.PopExpected(";");
 
-            return new ConstStatement(constToken, nameToken, parser.CurrentNamespace, expression, owner);
+            return constStatement;
         }
 
         private static Executable ParseEnumDefinition(Parser parser, TokenStream tokens, Executable owner)

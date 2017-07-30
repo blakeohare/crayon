@@ -164,11 +164,15 @@ namespace Crayon
         }
 
         private List<Library> libraryDependencies = new List<Library>();
+        private HashSet<Library> libraryDependencyDuplicateCheck = new HashSet<Library>();
         private Library[] libraryDependenciesArray = null;
         public void AddLibraryDependency(Library library)
         {
-            this.libraryDependencies.Add(library);
-            this.libraryDependenciesArray = null;
+            if (!libraryDependencyDuplicateCheck.Contains(library) && library != this)
+            {
+                this.libraryDependencies.Add(library);
+                this.libraryDependenciesArray = null;
+            }
         }
 
         public Library[] LibraryDependencies

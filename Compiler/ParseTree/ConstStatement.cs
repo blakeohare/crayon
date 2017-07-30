@@ -10,14 +10,13 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        public Expression Expression { get; private set; }
+        public Expression Expression { get; set; }
         public Token NameToken { get; private set; }
         public string Name { get; private set; }
 
-        public ConstStatement(Token constToken, Token nameToken, string ns, Expression expression, Executable owner)
+        public ConstStatement(Token constToken, Token nameToken, string ns, Executable owner)
             : base(constToken, owner)
         {
-            this.Expression = expression;
             this.NameToken = nameToken;
             this.Name = nameToken.Value;
             this.Namespace = ns;

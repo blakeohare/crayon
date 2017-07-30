@@ -335,7 +335,11 @@ namespace Crayon
 
             tokens.InsertTokens(implicitCoreImport);
 
-            Library activeLibrary = libraryName == null ? null : this.LibraryManager.GetLibraryFromKey(libraryName);
+            Library activeLibrary = libraryName == null ? null : this.LibraryManager.GetLibraryFromName(libraryName);
+            if (libraryName != null && libraryName != "Core")
+            {
+                activeLibrary.AddLibraryDependency(this.LibraryManager.GetLibraryFromName("Core"));
+            }
 
             while (tokens.HasMore && tokens.IsNext("import"))
             {
