@@ -7,7 +7,7 @@ class AbstractMenuScene : AbstractScene {
     field counter = 0;
 
     constructor(text, bg) : base() {
-		this.textImg = TextFactory.getText(text, 'large');
+        this.textImg = TextFactory.getText(text, 'large');
         this.bg = bg;
     }
 

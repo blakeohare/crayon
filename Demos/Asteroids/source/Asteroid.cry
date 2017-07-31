@@ -105,22 +105,22 @@ class Asteroid {
         this.angleRateX = defaultRate * (3 * Random.randomFloat() - 1.5);
         this.angleRateY = defaultRate * (3 * Random.randomFloat() - 1.5);
         this.angleRateZ = defaultRate * (3 * Random.randomFloat() - 1.5);
-		
-		switch (this.size) {
-			case AsteroidSize.SMALL:
-				this.polyhedronFresh = Asteroid.OCTA_FRESH;
-				this.polyhedronTransformed = Asteroid.OCTA_TRANSFORMED;
-				break;
-			case AsteroidSize.MEDIUM:
-				this.polyhedronFresh = Asteroid.DODECA_FRESH;
-				this.polyhedronTransformed = Asteroid.DODECA_TRANSFORMED;
-				break;
-			case AsteroidSize.BIG:
-				this.polyhedronFresh = Asteroid.ICO_FRESH;
-				this.polyhedronTransformed = Asteroid.ICO_TRANSFORMED;
-				break;
-				
-		}
+
+        switch (this.size) {
+            case AsteroidSize.SMALL:
+                this.polyhedronFresh = Asteroid.OCTA_FRESH;
+                this.polyhedronTransformed = Asteroid.OCTA_TRANSFORMED;
+                break;
+            case AsteroidSize.MEDIUM:
+                this.polyhedronFresh = Asteroid.DODECA_FRESH;
+                this.polyhedronTransformed = Asteroid.DODECA_TRANSFORMED;
+                break;
+            case AsteroidSize.BIG:
+                this.polyhedronFresh = Asteroid.ICO_FRESH;
+                this.polyhedronTransformed = Asteroid.ICO_TRANSFORMED;
+                break;
+
+        }
     }
 
     function update() {

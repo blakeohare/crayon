@@ -2,13 +2,13 @@ import Graphics2DText;
 
 class TextFactory {
 
-	static field FONT_RENDERERS = {
-		'small': FontResource.fromResource('font/xolonium.ttf').getRenderer().setColor(255, 255, 255).setSize(12),
-		'medium': FontResource.fromResource('font/xolonium.ttf').getRenderer().setColor(255, 255, 255).setSize(36),
-		'large': FontResource.fromResource('font/xolonium.ttf').getRenderer().setColor(255, 255, 255).setSize(72),
-	};
-	
-	static function getText(text, size) {
-		return TextFactory.FONT_RENDERERS[size].render(text);
-	}
+    static field FONT_RENDERERS = {
+        'small': FontResource.fromResource('font/xolonium.ttf').getRenderer().setColor(255, 255, 255).setSize(12),
+        'medium': FontResource.fromResource('font/xolonium.ttf').getRenderer().setColor(255, 255, 255).setSize(36),
+        'large': FontResource.fromResource('font/xolonium.ttf').getRenderer().setColor(255, 255, 255).setSize(72),
+    };
+
+    static function getText(text, size) {
+        return TextFactory.FONT_RENDERERS[size].render(text);
+    }
 }
