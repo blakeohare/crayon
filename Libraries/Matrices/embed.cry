@@ -58,6 +58,10 @@
             return $$lib_matrices_toVector(this, output) ?? this.argError();
         }
 
+        function copyFrom(other) {
+            return $$lib_matrices_copyFrom(this, other, other is Matrices.Matrix) ?? this.argError();
+        }
+
         function argError() { throw new Core.InvalidArgumentException($$lib_matrices_getError(this)); }
     }
 }

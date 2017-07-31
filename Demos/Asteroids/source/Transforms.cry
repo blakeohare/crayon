@@ -18,7 +18,7 @@ class Transforms {
             .setValue(1, 1, scale)
             .setValue(2, 2, scale)
             .multiplyByMatrix(matrix, Transforms.scratch);
-        return matrix.multiplyByScalar(0).addMatrix(Transforms.scratch);
+        return matrix.copyFrom(Transforms.scratch);
     }
 
     static field translateMatrix = Matrix.newIdentityMatrix(4);
@@ -28,7 +28,7 @@ class Transforms {
             .setValue(3, 1, y)
             .setValue(3, 2, z)
             .multiplyByMatrix(matrix, Transforms.scratch);
-        return matrix.multiplyByScalar(0).addMatrix(Transforms.scratch);
+        return matrix.copyFrom(Transforms.scratch);
     }
 
     static field rotateMatrixX = Matrix.newIdentityMatrix(4);
@@ -63,30 +63,26 @@ class Transforms {
         }
 
         rotMat.multiplyByMatrix(matrix, Transforms.scratch);
-        return matrix.multiplyByScalar(0).addMatrix(Transforms.scratch);
+        return matrix.copyFrom(Transforms.scratch);
     }
 
     static function makeScaleMatrix(matrix, scale) {
         return matrix
-            .multiplyByScalar(0.0)
-            .addMatrix(Transforms.identity)
+            .copyFrom(Transforms.identity)
             .multiplyByScalar(scale)
             .setValue(3, 3, 1.0);
     }
 
     static function makeTranslateMatrix(matrix, x, y, z) {
         matrix
-            .multiplyByScalar(0.0)
-            .addMatrix(Transforms.identity)
+            .copyFrom(Transforms.identity)
             .setValue(3, 0, x)
             .setValue(3, 1, y)
             .setValue(3, 2, z);
     }
 
     static function makeRotateMatrix(matrix, axis, theta) {
-        matrix
-            .multiplyByScalar(0.0)
-            .addMatrix(Transforms.identity);
+        matrix.copyFrom(Transforms.identity);
         c = Math.cos(theta);
         s = Math.sin(theta);
         switch (axis) {

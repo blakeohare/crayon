@@ -44,7 +44,7 @@ Value lib_matrices_function_multiplyMatrix(Array<Value> args) {
     Array<object> nd3 = null;
 
     if (isInline) {
-		nd3 = nd1;
+        nd3 = nd1;
         if (m2width != m2height) {
             nd1[5] = "You can only multiply a matrix inline with a square matrix.";
             return VALUE_NULL;
@@ -85,10 +85,10 @@ Value lib_matrices_function_multiplyMatrix(Array<Value> args) {
         }
     }
 
-	// Data is done being written to the back buffer. Swap buffers.
-	object t = nd3[0];
-	nd3[0] = nd3[6];
-	nd3[6] = t;
-	
+    // Data is done being written to the back buffer. Swap buffers.
+    object t = nd3[0];
+    nd3[0] = nd3[6];
+    nd3[6] = t;
+
     return args[0];
 }
