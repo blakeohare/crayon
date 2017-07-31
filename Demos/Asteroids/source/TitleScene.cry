@@ -1,3 +1,3 @@
 class TitleScene : AbstractMenuScene {
-    constructor() : base(ImageLibrary.get('title.png'), new PlayScene(true)) { }
+    constructor() : base('ASTEROIDS', new PlayScene(true)) { }
 }

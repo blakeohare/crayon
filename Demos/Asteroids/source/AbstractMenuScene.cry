@@ -6,8 +6,8 @@ class AbstractMenuScene : AbstractScene {
     field bg;
     field counter = 0;
 
-    constructor(textImg, bg) : base() {
-        this.textImg = textImg;
+    constructor(text, bg) : base() {
+		this.textImg = TextFactory.getText(text, 'large');
         this.bg = bg;
     }
 
@@ -33,7 +33,7 @@ class AbstractMenuScene : AbstractScene {
 
         // blink "Press Start" 3 times per second about 3 quarters of the way down the screen
         if ((6 * this.counter / FPS) % 2 == 0) {
-            pressStartImg = ImageLibrary.get('press_start.png');
+            pressStartImg = TextFactory.getText('Press Start or Enter', 'medium');
             pressStartImg.draw((GAME_WIDTH - pressStartImg.width) / 2, 3 * GAME_HEIGHT / 4 - pressStartImg.height / 2);
         }
     }
