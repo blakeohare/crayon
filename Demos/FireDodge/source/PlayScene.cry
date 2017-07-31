@@ -1,3 +1,4 @@
+import Game;
 import Graphics2D;
 import Math;
 
