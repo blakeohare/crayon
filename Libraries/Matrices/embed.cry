@@ -8,7 +8,7 @@
             nativeData[3] -> Array<Value> data as values
             nativeData[4] -> bool: data as values are dirty?
             nativeData[5] -> string: error
-            nativeData[6] -> Array<float> scratch data (for in place operations)
+            nativeData[6] -> Array<float> writeBuffer: new data gets written here on multipliccations and then pointers are swapped with data.
         */
 
         field width;

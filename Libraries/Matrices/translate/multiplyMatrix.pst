@@ -40,16 +40,15 @@ Value lib_matrices_function_multiplyMatrix(Array<Value> args) {
 
     Array<double> m1data = (Array<double>) nd1[0];
     Array<double> m2data = (Array<double>) nd2[0];
-    Array<double> m3data  = (Array<double>) nd1[6];
 
     Array<object> nd3 = null;
 
     if (isInline) {
+		nd3 = nd1;
         if (m2width != m2height) {
             nd1[5] = "You can only multiply a matrix inline with a square matrix.";
             return VALUE_NULL;
         }
-        nd1[4] = true;
     } else {
         obj = (ObjectInstance) args[3].internalValue;
         nd3 = obj.nativeData;
@@ -57,9 +56,9 @@ Value lib_matrices_function_multiplyMatrix(Array<Value> args) {
             nd1[5] = "Output matrix is incorrect size.";
             return VALUE_NULL;
         }
-        m3data = (Array<double>) nd3[0];
-        nd3[4] = true;
     }
+    nd3[4] = true;
+    Array<double> m3data = (Array<double>) nd3[6];
 
     int x = 0;
     int y = 0;
@@ -86,11 +85,10 @@ Value lib_matrices_function_multiplyMatrix(Array<Value> args) {
         }
     }
 
-    if (isInline) {
-        // simply swap the active data and scratch data matricies, if this is an inline operation
-        nd1[0] = m3data;
-        nd1[6] = m1data;
-    }
-
+	// Data is done being written to the back buffer. Swap buffers.
+	object t = nd3[0];
+	nd3[0] = nd3[6];
+	nd3[6] = t;
+	
     return args[0];
 }
