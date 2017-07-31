@@ -3,6 +3,7 @@ import Matrices;
 enum PolyhedronType {
     CUBE,
     OCTAHEDRON,
+    DODECAHEDRON,
     ICOSAHEDRON,
 
     CLONE,
@@ -51,6 +52,11 @@ class Polyhedron {
         return Polyhedron._polyhedraTemplate[8].clone();
     }
 
+    static function newDodecahedron() {
+        if (Polyhedron._polyhedraTemplate == null) Polyhedron.initTemplates();
+        return Polyhedron._polyhedraTemplate[12].clone();
+    }
+
     static function newIcosahedron() {
         if (Polyhedron._polyhedraTemplate == null) Polyhedron.initTemplates();
         return Polyhedron._polyhedraTemplate[20].clone();
@@ -60,6 +66,7 @@ class Polyhedron {
         Polyhedron._polyhedraTemplate = {
             6: new Polyhedron(PolyhedronType.CUBE),
             8: new Polyhedron(PolyhedronType.OCTAHEDRON),
+            12: new Polyhedron(PolyhedronType.DODECAHEDRON),
             20: new Polyhedron(PolyhedronType.ICOSAHEDRON),
         };
     }
@@ -97,6 +104,44 @@ class Polyhedron {
                 this.connectionsA = [0, 0, 0, 0, 5, 5, 5, 5, 1, 2, 3, 4];
                 this.connectionsB = [1, 2, 3, 4, 1, 2, 3, 4, 2, 3, 4, 1];
                 break;
+
+			case PolyhedronType.DODECAHEDRON:
+				phi = (1 + 5 ** .5) / 2;
+				invPhi = 1 / phi;
+				
+				a = [-1, -1,  1];
+				h = [-1,  1,  1];
+				j = [ 1,  1,  1];
+				d = [ 1, -1,  1];
+				o = [-1, -1, -1];
+				q = [-1,  1, -1];
+				s = [ 1,  1, -1];
+				m = [ 1, -1, -1];
+				
+				b = [-invPhi, 0,  phi];
+				c = [ invPhi, 0,  phi];
+				p = [-invPhi, 0, -phi];
+				t = [ invPhi, 0, -phi];
+				
+				e = [0, -phi,  invPhi];
+				i = [0,  phi,  invPhi];
+				n = [0, -phi, -invPhi];
+				r = [0,  phi, -invPhi];
+				
+				f = [-phi, -invPhi, 0];
+				g = [-phi,  invPhi, 0];
+				k = [ phi,  invPhi, 0];
+				l = [ phi, -invPhi, 0];
+				
+                pts = [a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t];
+                for (pt : pts) {
+					for (i = 0; i < 3; ++i) {
+						pt[i] *= 1.0 / SQRT3;
+					}
+                }
+                this.connectionsA = [0, 1, 2, 3, 4, 0, 1, 2, 3,  4,  5, 6, 7, 8, 9,  10, 11, 12, 13, 14, 6,  8,  10, 12, 14, 15, 16, 17, 18, 19];
+                this.connectionsB = [1, 2, 3, 4, 0, 5, 7, 9, 11, 13, 6, 7, 8, 9, 10, 11, 12, 13, 14,  5, 16, 17, 18, 19, 15, 16, 17, 18, 19, 15];
+				break;
 
             case PolyhedronType.ICOSAHEDRON:
                 // https://en.wikipedia.org/wiki/Regular_icosahedron#Cartesian_coordinates

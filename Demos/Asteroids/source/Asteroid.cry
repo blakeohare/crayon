@@ -69,6 +69,8 @@ class Asteroid {
 
     static field ICO_FRESH;
     static field ICO_TRANSFORMED;
+    static field DODECA_FRESH;
+    static field DODECA_TRANSFORMED;
     static field OCTA_FRESH;
     static field OCTA_TRANSFORMED;
     static field IDENTITY_MATRIX = Matrix.newIdentityMatrix(4);
@@ -80,6 +82,8 @@ class Asteroid {
     static constructor() {
         Asteroid.ICO_TRANSFORMED = Polyhedron.newIcosahedron();
         Asteroid.ICO_FRESH = Polyhedron.newIcosahedron();
+        Asteroid.DODECA_TRANSFORMED = Polyhedron.newDodecahedron();
+        Asteroid.DODECA_FRESH = Polyhedron.newDodecahedron();
         Asteroid.OCTA_TRANSFORMED = Polyhedron.newOctahedron();
         Asteroid.OCTA_FRESH = Polyhedron.newOctahedron();
     }
@@ -101,9 +105,22 @@ class Asteroid {
         this.angleRateX = defaultRate * (3 * Random.randomFloat() - 1.5);
         this.angleRateY = defaultRate * (3 * Random.randomFloat() - 1.5);
         this.angleRateZ = defaultRate * (3 * Random.randomFloat() - 1.5);
-
-        this.polyhedronFresh = this.size == AsteroidSize.SMALL ? Asteroid.OCTA_FRESH : Asteroid.ICO_FRESH;
-        this.polyhedronTransformed = this.size == AsteroidSize.SMALL ? Asteroid.OCTA_TRANSFORMED : Asteroid.ICO_TRANSFORMED;
+		
+		switch (this.size) {
+			case AsteroidSize.SMALL:
+				this.polyhedronFresh = Asteroid.OCTA_FRESH;
+				this.polyhedronTransformed = Asteroid.OCTA_TRANSFORMED;
+				break;
+			case AsteroidSize.MEDIUM:
+				this.polyhedronFresh = Asteroid.DODECA_FRESH;
+				this.polyhedronTransformed = Asteroid.DODECA_TRANSFORMED;
+				break;
+			case AsteroidSize.BIG:
+				this.polyhedronFresh = Asteroid.ICO_FRESH;
+				this.polyhedronTransformed = Asteroid.ICO_TRANSFORMED;
+				break;
+				
+		}
     }
 
     function update() {
