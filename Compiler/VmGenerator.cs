@@ -136,7 +136,8 @@ namespace Crayon
                         .SetOption(ExportOptionKey.DEFAULT_TITLE, nullableCompilationBundle.DefaultTitle)
                         .SetOption(ExportOptionKey.LIBRARIES_USED, libraries.Cast<object>().ToArray())
                         .SetOption(ExportOptionKey.HAS_ICON, nullableCompilationBundle.IconPath != null)
-                        .SetOption(ExportOptionKey.IOS_BUNDLE_PREFIX, nullableCompilationBundle.IosBundlePrefix);
+                        .SetOption(ExportOptionKey.IOS_BUNDLE_PREFIX, nullableCompilationBundle.IosBundlePrefix)
+                        .SetOption(ExportOptionKey.JS_FILE_PREFIX, nullableCompilationBundle.JsFilePrefix);
 
                     if (options.GetBool(ExportOptionKey.HAS_ICON)) options.SetOption(ExportOptionKey.ICON_PATH, nullableCompilationBundle.IconPath);
 
