@@ -160,6 +160,14 @@ namespace JavaScriptApp
             resourcesJs.Append(Util.ConvertStringValueToCode(resourceDatabase.ResourceManifestFile.TextContent));
             resourcesJs.Append(";\n");
 
+            string filePrefix = options.GetStringOrNull(ExportOptionKey.JS_FILE_PREFIX);
+            if (filePrefix != null)
+            {
+                resourcesJs.Append("C$common$jsFilePrefix = ");
+                resourcesJs.Append(Util.ConvertStringValueToCode(filePrefix));
+                resourcesJs.Append(";\n");
+            }
+
             output["resources.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,

@@ -11,6 +11,7 @@ namespace Crayon
         public ICollection<Library> LibrariesUsed { get; set; }
         public string IconPath { get; set; }
         public string DefaultTitle { get; set; }
+        public string JsFilePrefix { get; set; }
         public string IosBundlePrefix { get; set; }
         public int? WindowWidth { get; set; }
         public int? WindowHeight { get; set; }
@@ -27,6 +28,10 @@ namespace Crayon
                 ByteCodeCompiler bcc = new ByteCodeCompiler();
                 ByteBuffer buffer = bcc.GenerateByteCode(parser, resolvedParseTree);
 
+                string jsFilePrefix = buildContext.JsFilePrefix == null
+                    ? ""
+                    : ("/" + buildContext.JsFilePrefix.Trim('/') + "/");
+
                 return new CompilationBundle()
                 {
                     ByteCode = buffer,
@@ -36,6 +41,7 @@ namespace Crayon
                     Description = buildContext.Description,
                     GuidSeed = buildContext.GuidSeed,
                     DefaultTitle = buildContext.DefaultTitle,
+                    JsFilePrefix = jsFilePrefix,
                     IosBundlePrefix = buildContext.IosBundlePrefix,
                     IconPath = buildContext.IconFilePath,
                     WindowWidth = buildContext.WindowWidth,
