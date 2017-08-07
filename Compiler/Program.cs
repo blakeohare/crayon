@@ -131,7 +131,7 @@ namespace Crayon
             switch (IdentifyUseCase(args))
             {
                 case ExecutionType.EXPORT_CBX:
-                    Program.ExportCbx(args);
+                    new CbxExporter(args[0]).Export();
                     return;
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
@@ -143,7 +143,7 @@ namespace Crayon
                     return;
 
                 case ExecutionType.RUN_CBX:
-                    string cbxFile = Program.ExportCbx(args);
+                    string cbxFile = new CbxExporter(args[0]).Export().GetCbxPath();
 
                     string crayonRuntimePath = System.IO.Path.Combine(Environment.GetEnvironmentVariable("CRAYON_HOME"), "vm", "CrayonRuntime.exe");
                     cbxFile = FileUtil.GetPlatformPath(cbxFile);
@@ -177,113 +177,7 @@ namespace Crayon
                     throw new Exception(); // unknown use case.
             }
         }
-
-        // TODO: HELPER CLASS
-        private static string ExportCbx(string[] args)
-        {
-            using (new PerformanceSection("ExportCbx"))
-            {
-                string buildFilePath = args[0]; // TODO: better use case identification that ensures this is actually here.
-                BuildContext buildContext = GetBuildContextCbx(buildFilePath);
-                CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
-                ResourceDatabase resDb = PrepareResources(buildContext, null);
-                string byteCode = ByteCodeEncoder.Encode(compilationResult.ByteCode);
-                List<byte> cbxOutput = new List<byte>() { 0 };
-                cbxOutput.AddRange("CBX".ToCharArray().Select(c => (byte)c));
-                cbxOutput.AddRange(GetBigEndian4Byte(0));
-                cbxOutput.AddRange(GetBigEndian4Byte(2));
-                cbxOutput.AddRange(GetBigEndian4Byte(0));
-
-                byte[] code = StringToBytes(byteCode);
-                cbxOutput.AddRange("CODE".ToCharArray().Select(c => (byte)c));
-                cbxOutput.AddRange(GetBigEndian4Byte(code.Length));
-                cbxOutput.AddRange(code);
-
-                List<string> libraries = new List<string>();
-                foreach (Library library in compilationResult.LibrariesUsed.Where(lib => lib.IsMoreThanJustEmbedCode))
-                {
-                    libraries.Add(library.Name);
-                    libraries.Add(library.Version);
-                }
-                string libsData = string.Join(",", libraries);
-                byte[] libsDataBytes = StringToBytes(libsData);
-                cbxOutput.AddRange("LIBS".ToCharArray().Select(c => (byte)c));
-                cbxOutput.AddRange(GetBigEndian4Byte(libsDataBytes.Length));
-                cbxOutput.AddRange(libsDataBytes);
-
-                byte[] resourceManifest = StringToBytes(resDb.ResourceManifestFile.TextContent);
-                cbxOutput.AddRange("RSRC".ToCharArray().Select(c => (byte)c));
-                cbxOutput.AddRange(GetBigEndian4Byte(resourceManifest.Length));
-                cbxOutput.AddRange(resourceManifest);
-
-                if (resDb.ImageSheetManifestFile != null)
-                {
-                    byte[] imageSheetManifest = StringToBytes(resDb.ImageSheetManifestFile.TextContent);
-                    cbxOutput.AddRange("IMSH".ToCharArray().Select(c => (byte)c));
-                    cbxOutput.AddRange(GetBigEndian4Byte(imageSheetManifest.Length));
-                    cbxOutput.AddRange(imageSheetManifest);
-                }
-
-                string outputFolder = buildContext.OutputFolder.Replace("%TARGET_NAME%", "cbx");
-                string fullyQualifiedOutputFolder = FileUtil.JoinPath(buildContext.ProjectDirectory, outputFolder);
-                string cbxPath = FileUtil.JoinPath(fullyQualifiedOutputFolder, buildContext.ProjectID + ".cbx");
-                cbxPath = FileUtil.GetCanonicalizeUniversalPath(cbxPath);
-                FileUtil.EnsureParentFolderExists(fullyQualifiedOutputFolder);
-                Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
-                output[buildContext.ProjectID + ".cbx"] = new FileOutput()
-                {
-                    Type = FileOutputType.Binary,
-                    BinaryContent = cbxOutput.ToArray(),
-                };
-
-                // Resource manifest and image sheet manifest is embedded into the CBX file
-
-                foreach (FileOutput txtResource in resDb.TextResources)
-                {
-                    output["res/txt/" + txtResource.CanonicalFileName] = txtResource;
-                }
-                foreach (FileOutput sndResource in resDb.AudioResources)
-                {
-                    output["res/snd/" + sndResource.CanonicalFileName] = sndResource;
-                }
-                foreach (FileOutput fontResource in resDb.FontResources)
-                {
-                    output["res/ttf/" + fontResource.CanonicalFileName] = fontResource;
-                }
-                foreach (FileOutput binResource in resDb.BinaryResources)
-                {
-                    output["res/bin/" + binResource.CanonicalFileName] = binResource;
-                }
-                foreach (FileOutput imgResource in resDb.ImageResources)
-                {
-                    output["res/img/" + imgResource.CanonicalFileName] = imgResource;
-                }
-                foreach (string key in resDb.ImageSheetFiles.Keys)
-                {
-                    output["res/img/" + key] = resDb.ImageSheetFiles[key];
-                }
-                new FileOutputExporter(fullyQualifiedOutputFolder).ExportFiles(output);
-
-                return cbxPath;
-            }
-        }
-
-        private static byte[] StringToBytes(string value)
-        {
-            return System.Text.Encoding.UTF8.GetBytes(value);
-        }
-
-        private static byte[] GetBigEndian4Byte(int value)
-        {
-            return new byte[]
-            {
-                (byte) ((value >> 24) & 255),
-                (byte) ((value >> 16) & 255),
-                (byte) ((value >> 8) & 255),
-                (byte) (value & 255)
-            };
-        }
-
+        
         private static void ExportStandaloneVm(string[] args)
         {
             using (new PerformanceSection("ExportStandaloneVm"))
@@ -305,7 +199,7 @@ namespace Crayon
             }
         }
 
-        private static ResourceDatabase PrepareResources(
+        public static ResourceDatabase PrepareResources(
             BuildContext buildContext,
             ByteBuffer nullableByteCode) // CBX files will not have this in the resources
         {
@@ -398,7 +292,7 @@ namespace Crayon
 
         private static PlatformProvider platformProvider = new PlatformProvider();
 
-        private static string GetValidatedCanonicalBuildFilePath(string originalBuildFilePath)
+        public static string GetValidatedCanonicalBuildFilePath(string originalBuildFilePath)
         {
             string buildFilePath = originalBuildFilePath;
             buildFilePath = FileUtil.FinalizeTilde(buildFilePath);
@@ -418,17 +312,6 @@ namespace Crayon
             }
 
             return buildFilePath;
-        }
-
-        private static BuildContext GetBuildContextCbx(string rawBuildFilePath)
-        {
-            using (new PerformanceSection("GetBuildContextCbx"))
-            {
-                string buildFile = GetValidatedCanonicalBuildFilePath(rawBuildFilePath);
-                string projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
-                string buildFileContent = System.IO.File.ReadAllText(buildFile);
-                return BuildContext.Parse(projectDirectory, buildFileContent, null);
-            }
         }
 
         private static BuildContext GetBuildContext(string[] args)
