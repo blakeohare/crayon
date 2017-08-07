@@ -1,1 +1,4 @@
 ﻿initializeClass(pc, p, row, stringArgs[pc]);
+
+// it's possible that the class caused the class table to expand, which would be a new array instance.
+classTable = p.classTable;
