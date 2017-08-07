@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Common;
 
@@ -6,19 +7,24 @@ namespace Crayon
 {
     class CbxExporter
     {
-        private string buildFilePath;
+        private Dictionary<string, string> args;
         private string finalCbxPath;
 
-        public CbxExporter(string buildFilePath)
+        public CbxExporter(Dictionary<string, string> args)
         {
-            this.buildFilePath = buildFilePath;
+            this.args = args;
         }
 
         public CbxExporter Export()
         {
             using (new PerformanceSection("ExportCbx"))
             {
-                BuildContext buildContext = GetBuildContextCbx(this.buildFilePath);
+                if (!this.args.ContainsKey(FlagParser.BUILD_FILE))
+                {
+                    throw new InvalidOperationException("No build path was provided.");
+                }
+
+                BuildContext buildContext = GetBuildContextCbx(this.args[FlagParser.BUILD_FILE]);
                 CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
                 ResourceDatabase resDb = Program.PrepareResources(buildContext, null);
                 string byteCode = ByteCodeEncoder.Encode(compilationResult.ByteCode);

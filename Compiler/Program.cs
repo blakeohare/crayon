@@ -27,13 +27,16 @@ namespace Crayon
 
         static void Main(string[] args)
         {
+            Dictionary<string, string> argLookup = null;
+
             using (new PerformanceSection("Crayon"))
             {
 #if DEBUG
                 args = GetEffectiveArgs(args);
 
                 // First chance exceptions should crash in debug builds.
-                Program.Compile(args);
+                argLookup = FlagParser.Parse(args);
+                Program.Compile(argLookup);
 
                 // Crash if there were any graphics contexts that weren't cleaned up.
                 // This is okay on Windows, but on OSX this is a problem, so ensure that a
@@ -49,7 +52,8 @@ namespace Crayon
                 {
                     try
                     {
-                        Program.Compile(args);
+                        argLookup = FlagParser.Parse(args);
+                        Program.Compile(argLookup);
                     }
                     catch (InvalidOperationException e)
                     {
@@ -63,21 +67,20 @@ namespace Crayon
 #endif
             }
 #if DEBUG
-            string summary = PerformanceTimer.GetSummary();
-            Console.WriteLine(summary);
-#endif
-        }
-
-        private static string GetCommandLineFlagValue(string previousFlag, string[] args)
-        {
-            for (int i = 0; i < args.Length; ++i)
+            if (argLookup != null)
             {
-                if (args[i] == previousFlag && i + 1 < args.Length)
+                if (argLookup.ContainsKey(FlagParser.SHOW_PERFORMANCE_MARKERS))
                 {
-                    return args[i + 1];
+                    string summary = PerformanceTimer.GetSummary();
+                    Console.WriteLine(summary);
+                }
+
+                if (argLookup.ContainsKey(FlagParser.LIBRARY_DEP_TREE))
+                {
+                    // TODO: show library dependency tree
                 }
             }
-            return null;
+#endif
         }
 
         private static string[] GetEffectiveArgs(string[] actualArgs)
@@ -113,37 +116,33 @@ namespace Crayon
             SHOW_USAGE,
         }
 
-        private static ExecutionType IdentifyUseCase(string[] args)
+        private static ExecutionType IdentifyUseCase(Dictionary<string, string> args)
         {
-            if (args.Length == 0) return ExecutionType.SHOW_USAGE;
-
-            foreach (string arg in args)
-            {
-                if (arg == "-vm" || arg == "-vmdir") return ExecutionType.EXPORT_VM_STANDALONE;
-                if (arg == "-target") return ExecutionType.EXPORT_VM_BUNDLE;
-                if (arg == "-cbx") return ExecutionType.EXPORT_CBX;
-            }
+            if (args.Count == 0) return ExecutionType.SHOW_USAGE;
+            if (args.ContainsKey(FlagParser.VM) || args.ContainsKey(FlagParser.VM_DIR)) return ExecutionType.EXPORT_VM_STANDALONE;
+            if (args.ContainsKey(FlagParser.BUILD_TARGET)) return ExecutionType.EXPORT_VM_BUNDLE;
+            if (args.ContainsKey(FlagParser.CBX)) return ExecutionType.EXPORT_CBX;
             return ExecutionType.RUN_CBX;
         }
 
-        private static void Compile(string[] args)
+        private static void Compile(Dictionary<string, string> argLookup)
         {
-            switch (IdentifyUseCase(args))
+            switch (IdentifyUseCase(argLookup))
             {
                 case ExecutionType.EXPORT_CBX:
-                    new CbxExporter(args[0]).Export();
+                    new CbxExporter(argLookup).Export();
                     return;
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
-                    Program.ExportVmBundle(args);
+                    Program.ExportVmBundle(argLookup);
                     return;
 
                 case ExecutionType.EXPORT_VM_STANDALONE:
-                    Program.ExportStandaloneVm(args);
+                    Program.ExportStandaloneVm(argLookup);
                     return;
 
                 case ExecutionType.RUN_CBX:
-                    string cbxFile = new CbxExporter(args[0]).Export().GetCbxPath();
+                    string cbxFile = new CbxExporter(argLookup).Export().GetCbxPath();
 
                     string crayonRuntimePath = System.IO.Path.Combine(Environment.GetEnvironmentVariable("CRAYON_HOME"), "vm", "CrayonRuntime.exe");
                     cbxFile = FileUtil.GetPlatformPath(cbxFile);
@@ -177,14 +176,19 @@ namespace Crayon
                     throw new Exception(); // unknown use case.
             }
         }
-        
-        private static void ExportStandaloneVm(string[] args)
+
+        private static void ExportStandaloneVm(Dictionary<string, string> args)
         {
             using (new PerformanceSection("ExportStandaloneVm"))
             {
-                Platform.AbstractPlatform standaloneVmPlatform = platformProvider.GetPlatform(GetCommandLineFlagValue("-vm", args));
-                string targetDirectory = GetCommandLineFlagValue("-vmdir", args);
-                if (targetDirectory == null || standaloneVmPlatform == null) throw new InvalidOperationException("-vm and -vmdir flags must both have correct values.");
+                string vm;
+                string targetDirectory;
+                if (!args.TryGetValue(FlagParser.VM, out vm) ||
+                    !args.TryGetValue(FlagParser.VM_DIR, out targetDirectory))
+                {
+                    throw new InvalidOperationException("-vm and -vmdir flags must both have correct values.");
+                }
+                Platform.AbstractPlatform standaloneVmPlatform = platformProvider.GetPlatform(vm);
                 targetDirectory = FileUtil.FinalizeTilde(targetDirectory);
                 VmGenerator vmGenerator = new VmGenerator();
                 List<Library> allLibraries = new LibraryManager(platformProvider).GetAllAvailableLibraries(standaloneVmPlatform);
@@ -242,11 +246,11 @@ namespace Crayon
             }
         }
 
-        private static void ExportVmBundle(string[] args)
+        private static void ExportVmBundle(Dictionary<string, string> argLookup)
         {
             using (new PerformanceSection("ExportVmBundle"))
             {
-                BuildContext buildContext = GetBuildContext(args);
+                BuildContext buildContext = GetBuildContext(argLookup);
                 Platform.AbstractPlatform platform = GetPlatformInstance(buildContext);
                 if (platform == null) throw new InvalidOperationException("Unrecognized platform. See usage.");
 
@@ -314,12 +318,10 @@ namespace Crayon
             return buildFilePath;
         }
 
-        private static BuildContext GetBuildContext(string[] args)
+        private static BuildContext GetBuildContext(Dictionary<string, string> argLookup)
         {
             using (new PerformanceSection("GetBuildContext"))
             {
-                Dictionary<string, string> argLookup = Program.ParseArgs(args);
-
                 string buildFile = argLookup.ContainsKey("buildfile") ? argLookup["buildfile"] : null;
                 string target = argLookup.ContainsKey("target") ? argLookup["target"] : null;
 
@@ -339,7 +341,6 @@ namespace Crayon
                 projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
 
                 buildContext = BuildContext.Parse(projectDirectory, System.IO.File.ReadAllText(buildFile), target);
-
 
                 buildContext = buildContext ?? new BuildContext();
 
@@ -372,44 +373,6 @@ namespace Crayon
 
                 return buildContext;
             }
-        }
-
-        // TODO: remove this and just use the simple extractor O(n^2) is worth getting rid of extra code when there's only a handful of args.
-        private static readonly HashSet<string> ATOMIC_FLAGS = new HashSet<string>("min readablebytecode".Split(' '));
-        private static Dictionary<string, string> ParseArgs(string[] args)
-        {
-            Dictionary<string, string> output = new Dictionary<string, string>();
-
-            for (int i = 0; i < args.Length; ++i)
-            {
-                if (!args[i].StartsWith("-"))
-                {
-                    output["buildfile"] = args[i];
-                }
-                else
-                {
-                    string flagName = args[i].Substring(1);
-                    if (flagName.Length == 0)
-                    {
-                        continue;
-                    }
-
-                    if (ATOMIC_FLAGS.Contains(flagName.ToLowerInvariant()))
-                    {
-                        output[flagName] = "true";
-                    }
-                    else if (i + 1 < args.Length)
-                    {
-                        output[flagName] = args[++i];
-                    }
-                    else
-                    {
-                        output[flagName] = "true";
-                    }
-                }
-            }
-
-            return output;
         }
     }
 }
