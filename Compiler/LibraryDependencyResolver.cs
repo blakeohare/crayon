@@ -68,5 +68,22 @@ namespace Crayon
             usedLibraries.Add(libraryToUse);
             libraryOrderOut.Add(libraryToUse);
         }
+
+        public static string GetDependencyTreeLog(Library[] libraries)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (Library library in libraries)
+            {
+                sb.Append(library.Name);
+                sb.Append(": ");
+
+                sb.Append(string.Join(" ",
+                    new HashSet<string>(library.LibraryDependencies.Select(lib => lib.Name))
+                        .OrderBy(name => name.ToLower())));
+
+                sb.Append("\n");
+            }
+            return sb.ToString();
+        }
     }
 }

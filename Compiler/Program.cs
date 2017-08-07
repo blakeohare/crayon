@@ -74,11 +74,6 @@ namespace Crayon
                     string summary = PerformanceTimer.GetSummary();
                     Console.WriteLine(summary);
                 }
-
-                if (argLookup.ContainsKey(FlagParser.LIBRARY_DEP_TREE))
-                {
-                    // TODO: show library dependency tree
-                }
             }
 #endif
         }
@@ -285,6 +280,14 @@ namespace Crayon
                 FileOutputExporter exporter = new FileOutputExporter(outputDirectory);
 
                 exporter.ExportFiles(result);
+
+                if (argLookup.ContainsKey(FlagParser.LIBRARY_DEP_TREE))
+                {
+                    string libs = LibraryDependencyResolver.GetDependencyTreeLog(compilationResult.LibrariesUsed.ToArray());
+                    Console.WriteLine("<LibraryDependencies>");
+                    Console.WriteLine(libs.Trim());
+                    Console.WriteLine("</LibraryDependencies>");
+                }
             }
         }
 
