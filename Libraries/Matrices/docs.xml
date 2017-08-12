@@ -9,8 +9,8 @@
 			
 			<function name="(constructor)">
 				<description>Creates a new matrix</description>
-				<arg name="cols" type="int" description="Number of columns"/>
 				<arg name="rows" type="int" description="Number of rows"/>
+				<arg name="cols" type="int" description="Number of columns"/>
 			</function>
 			
 			<function name="newIdentityMatrix" static="true">
@@ -21,15 +21,15 @@
 			
 			<function name="getValue">
 				<description>Gets the value at the given column and row</description>
-				<arg name="col" type="int" description="column"/>
 				<arg name="row" type="int" description="row"/>
+				<arg name="col" type="int" description="column"/>
 				<returns type="float" description="Float located at that coordinate"/>
 			</function>
 			
 			<function name="setValue">
 				<description>Sets a value at the given column and row</description>
-				<arg name="col" type="int" description="column"/>
 				<arg name="row" type="int" description="row"/>
+				<arg name="col" type="int" description="column"/>
 				<arg name="value" type="float" description="The value to set"/>
 				<returns type="Matrix" description="Returns a reference to the original matrix so that chaining can be used."/>
 			</function>

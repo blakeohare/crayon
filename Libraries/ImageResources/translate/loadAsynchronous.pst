@@ -19,9 +19,9 @@
 */
 Value lib_imageresources_function_loadAsynchronous(Array<Value> args) {
 
-    ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
     string filename = (string) args[1].internalValue;
-    ObjectInstance objInstance2 = ((ObjectInstance) args[2];.internalValue);
+    ObjectInstance objInstance2 = (ObjectInstance) args[2].internalValue;
 
     Array<object> objArray1 = new Array<object>(3);
     objInstance1.nativeData = objArray1;

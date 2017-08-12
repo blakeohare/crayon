@@ -1,8 +1,5 @@
 ﻿namespace Matrices {
 
-	// TODO: all these dimensions are in reverse order of standard convention. Please reverse them and
-	// update the demo apps.
-
     class Matrix {
         /*
             nativeData[0] -> Array<float> data
@@ -17,7 +14,7 @@
         field width;
         field height;
 
-        constructor(width, height) {
+        constructor(height, width) {
             this.width = width;
             this.height = height;
             $$$('allocNativeData', this, 7);
@@ -33,11 +30,11 @@
             return matrix;
         }
 
-        function getValue(col, row) {
+        function getValue(row, col) {
             return $$lib_matrices_getValue(this, col, row) ?? this.argError();
         }
 
-        function setValue(col, row, value) {
+        function setValue(row, col, value) {
             return $$lib_matrices_setValue(this, col, row, value) ?? this.argError();
         }
 

@@ -30,7 +30,7 @@ class Polyhedron {
 
     function clone() {
         output = new Polyhedron(PolyhedronType.CLONE);
-        newPointMatrix = new Matrix(this.pointCount, 4);
+        newPointMatrix = new Matrix(4, this.pointCount);
         newPointMatrix.addMatrix(this.pointMatrix);
         output.pointMatrix = newPointMatrix;
         output.pointsList = this.pointsList.clone();
@@ -170,13 +170,12 @@ class Polyhedron {
 
         this.pointCount = pts.length;
         this.pointsList = [0.0] * (this.pointCount * 4);
-        this.pointMatrix = new Matrix(this.pointCount, 4);
-        for (i = 0; i < this.pointCount; ++i) {
-            for (j = 0; j < 3; ++j) {
-                this.pointMatrix.setValue(i, j, pts[i][j]);
+        this.pointMatrix = new Matrix(4, this.pointCount);
+        for (j = 0; j < this.pointCount; ++j) {
+            for (i = 0; i < 3; ++i) {
+                this.pointMatrix.setValue(i, j, pts[j][i]);
             }
-            this.pointMatrix.setValue(i, 3, 1.0);
+            this.pointMatrix.setValue(3, j, 1.0);
         }
     }
-
 }

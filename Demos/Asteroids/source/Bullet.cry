@@ -105,7 +105,5 @@ class Bullet {
             pt2 = connectionsB[i];
             Draw.line(values[pt1], values[pt1 + yOffset], values[pt2], values[pt2 + yOffset], 2, 255, 255, 255);
         }
-
-        //Draw.rectangle(left, top, BULLET_RADIUS * 2, BULLET_RADIUS * 2, 100, 255, 100);
     }
 }

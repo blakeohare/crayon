@@ -21,14 +21,14 @@ p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
 <ul>
 <li><span class="codefont">namespace</span> Matricies<ul>
 <li><a href="#class-matricies-matrix"><span class="codefont">class</span> Matrix</a><ul>
-<li><a href="#constructor-matricies-matrix"><span class="codefont">constructor</span>(cols, rows)</a></li>
+<li><a href="#constructor-matricies-matrix"><span class="codefont">constructor</span>(rows, cols)</a></li>
 <li><a href="#func-matricies-matrix-addmatrix"><span class="codefont">function</span> addMatrix(other, output)</a></li>
 <li><a href="#func-matricies-matrix-copyfrom"><span class="codefont">function</span> copyFrom(other)</a></li>
-<li><a href="#func-matricies-matrix-getvalue"><span class="codefont">function</span> getValue(col, row)</a></li>
+<li><a href="#func-matricies-matrix-getvalue"><span class="codefont">function</span> getValue(row, col)</a></li>
 <li><a href="#func-matricies-matrix-multiplybymatrix"><span class="codefont">function</span> multiplyByMatrix(other, output)</a></li>
 <li><a href="#func-matricies-matrix-multiplybyscalar"><span class="codefont">function</span> multiplyByScalar(value)</a></li>
 <li><a href="#func-matricies-matrix-newidentitymatrix"><span class="codefont">static function</span> newIdentityMatrix(n)</a></li>
-<li><a href="#func-matricies-matrix-setvalue"><span class="codefont">function</span> setValue(col, row, value)</a></li>
+<li><a href="#func-matricies-matrix-setvalue"><span class="codefont">function</span> setValue(row, col, value)</a></li>
 <li><a href="#func-matricies-matrix-tovector"><span class="codefont">function</span> toVector(output)</a></li>
 </ul>
 </li>
@@ -43,7 +43,7 @@ p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
 			</p>
 </div>
 <div class="itembox"><div>
-<h2><span class="keyword">new</span> Matrix(cols, rows)<a class="bookmark" name="constructor-matricies-matrix" href="#constructor-matricies-matrix">[link]</a></h2>
+<h2><span class="keyword">new</span> Matrix(rows, cols)<a class="bookmark" name="constructor-matricies-matrix" href="#constructor-matricies-matrix">[link]</a></h2>
 <div class="itembox">
 <p class="description">Creates a new matrix</p>
 <div>
@@ -52,14 +52,14 @@ p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
 <thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
 <tbody>
 <tr>
-<td class="codefont argname">cols</td>
-<td class="codefont argtype">integer</td>
-<td class="description"><p class="description">Number of columns</p></td>
-</tr>
-<tr>
 <td class="codefont argname">rows</td>
 <td class="codefont argtype">integer</td>
 <td class="description"><p class="description">Number of rows</p></td>
+</tr>
+<tr>
+<td class="codefont argname">cols</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">Number of columns</p></td>
 </tr>
 </tbody>
 </table>
@@ -133,7 +133,7 @@ p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
 </div>
 </div>
 <div class="itembox"><div>
-<h2><span class="keyword">function</span> getValue(col, row)<a class="bookmark" name="func-matricies-matrix-getvalue" href="#func-matricies-matrix-getvalue">[link]</a></h2>
+<h2><span class="keyword">function</span> getValue(row, col)<a class="bookmark" name="func-matricies-matrix-getvalue" href="#func-matricies-matrix-getvalue">[link]</a></h2>
 <div class="itembox">
 <p class="description">Gets the value at the given column and row</p>
 <div>
@@ -142,14 +142,14 @@ p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
 <thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
 <tbody>
 <tr>
-<td class="codefont argname">col</td>
-<td class="codefont argtype">integer</td>
-<td class="description"><p class="description">column</p></td>
-</tr>
-<tr>
 <td class="codefont argname">row</td>
 <td class="codefont argtype">integer</td>
 <td class="description"><p class="description">row</p></td>
+</tr>
+<tr>
+<td class="codefont argname">col</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">column</p></td>
 </tr>
 </tbody>
 </table>
@@ -261,7 +261,7 @@ p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
 </div>
 </div>
 <div class="itembox"><div>
-<h2><span class="keyword">function</span> setValue(col, row, value)<a class="bookmark" name="func-matricies-matrix-setvalue" href="#func-matricies-matrix-setvalue">[link]</a></h2>
+<h2><span class="keyword">function</span> setValue(row, col, value)<a class="bookmark" name="func-matricies-matrix-setvalue" href="#func-matricies-matrix-setvalue">[link]</a></h2>
 <div class="itembox">
 <p class="description">Sets a value at the given column and row</p>
 <div>
@@ -270,14 +270,14 @@ p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
 <thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
 <tbody>
 <tr>
-<td class="codefont argname">col</td>
-<td class="codefont argtype">integer</td>
-<td class="description"><p class="description">column</p></td>
-</tr>
-<tr>
 <td class="codefont argname">row</td>
 <td class="codefont argtype">integer</td>
 <td class="description"><p class="description">row</p></td>
+</tr>
+<tr>
+<td class="codefont argname">col</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">column</p></td>
 </tr>
 <tr>
 <td class="codefont argname">value</td>
