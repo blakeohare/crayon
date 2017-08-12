@@ -18,7 +18,7 @@ namespace Interpreter.Libraries.ImageWebResources
                 output[1] = image.Width;
                 output[2] = image.Height;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }

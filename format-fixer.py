@@ -95,7 +95,8 @@ def get_all_files_impl(path, output):
   for file in os.listdir(path):
     full_path = path + os.sep + file
     if os.path.isdir(full_path):
-      get_all_files_impl(full_path, output)
+      if not ('/obj/Debug' in full_path) and not ('/obj/Release' in full_path):
+        get_all_files_impl(full_path, output)
     else:
       output.append(full_path[2:])
 
