@@ -86,13 +86,16 @@ namespace Crayon
                 IF = keywords["IF"],
                 IMPORT = keywords["IMPORT"],
                 INTERFACE = keywords["INTERFACE"],
+                IS = keywords["IS"],
                 NAMESPACE = keywords["NAMESPACE"],
                 NEW = keywords["NEW"],
                 NULL = keywords["NULL"],
+                PRIVATE = keywords["PRIVATE"],
                 RETURN = keywords["RETURN"],
                 STATIC = keywords["STATIC"],
                 SWITCH = keywords["SWITCH"],
                 THIS = keywords["THIS"],
+                THROW = keywords["THROW"],
                 TRUE = keywords["TRUE"],
                 TRY = keywords["TRY"],
                 WHILE = keywords["WHILE"],
@@ -129,13 +132,16 @@ namespace Crayon
             public string IF { get; set; }
             public string IMPORT { get; set; }
             public string INTERFACE { get; set; }
+            public string IS { get; set; }
             public string NAMESPACE { get; set; }
             public string NEW { get; set; }
             public string NULL { get; set; }
+            public string PRIVATE { get; set; }
             public string RETURN { get; set; }
             public string STATIC { get; set; }
             public string SWITCH { get; set; }
             public string THIS { get; set; }
+            public string THROW { get; set; }
             public string TRUE { get; set; }
             public string TRY { get; set; }
             public string WHILE { get; set; }

@@ -29,14 +29,14 @@ namespace Crayon
             {
                 Token staticToken = null;
                 Token finalToken = null;
-                while (value == "static" || value == "final")
+                while (value == this.parser.Keywords.STATIC || value == this.parser.Keywords.FINAL)
                 {
-                    if (value == "static" && staticToken == null)
+                    if (value == this.parser.Keywords.STATIC && staticToken == null)
                     {
                         staticToken = tokens.Pop();
                         value = tokens.PeekValue();
                     }
-                    if (value == "final" && finalToken == null)
+                    if (value == this.parser.Keywords.FINAL && finalToken == null)
                     {
                         finalToken = tokens.Pop();
                         value = tokens.PeekValue();
@@ -45,7 +45,7 @@ namespace Crayon
 
                 if (staticToken != null || finalToken != null)
                 {
-                    if (value != "class")
+                    if (value != this.parser.Keywords.CLASS)
                     {
                         if (staticToken != null)
                         {
@@ -63,9 +63,13 @@ namespace Crayon
                     }
                 }
 
-                if (!isRoot && (value == "function" || value == "class"))
+                if (!isRoot && 
+                    (value == this.parser.Keywords.FUNCTION || value == this.parser.Keywords.CLASS))
                 {
-                    throw new ParserException(tokens.Peek(), (value == "function" ? "Function" : "Class") + " definition cannot be nested in another construct.");
+                    throw new ParserException(
+                        tokens.Peek(), 
+                        (value == this.parser.Keywords.FUNCTION ? "Function" : "Class") + 
+                        " definition cannot be nested in another construct.");
                 }
 
 
@@ -95,7 +99,7 @@ namespace Crayon
                     return new ImportStatement(importToken, importPath);
                 }
 
-                if (value == "enum")
+                if (value == this.parser.Keywords.ENUM)
                 {
                     if (!isRoot)
                     {
@@ -105,34 +109,30 @@ namespace Crayon
                     return this.ParseEnumDefinition(tokens, owner);
                 }
 
-                if (value == "namespace")
+                if (value == this.parser.Keywords.NAMESPACE)
                 {
                     if (!isRoot)
                     {
                         throw new ParserException(tokens.Peek(), "Namespace declarations cannot be nested in other constructs.");
                     }
+                    return this.ParseNamespace(tokens, owner);
                 }
 
-                switch (value)
-                {
-                    case "namespace": return this.ParseNamespace(tokens, owner);
-                    case "function": return this.ParseFunction(tokens, owner);
-                    case "class": return this.ParseClassDefinition(tokens, owner, staticToken, finalToken);
-                    case "enum": return this.ParseEnumDefinition(tokens, owner);
-                    case "for": return this.ParseFor(tokens, owner);
-                    case "while": return this.ParseWhile(tokens, owner);
-                    case "do": return this.ParseDoWhile(tokens, owner);
-                    case "switch": return this.ParseSwitch(tokens, owner);
-                    case "if": return this.ParseIf(tokens, owner);
-                    case "try": return this.ParseTry(tokens, owner);
-                    case "return": return this.ParseReturn(tokens, owner);
-                    case "break": return this.ParseBreak(tokens, owner);
-                    case "continue": return this.ParseContinue(tokens, owner);
-                    case "const": return this.ParseConst(tokens, owner);
-                    case "constructor": return this.ParseConstructor(tokens, owner);
-                    case "throw": return this.ParseThrow(tokens, owner);
-                    default: break;
-                }
+                if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner);
+                if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner);
+                if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, staticToken, finalToken);
+                if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner);
+                if (value == this.parser.Keywords.FOR) return this.ParseFor(tokens, owner);
+                if (value == this.parser.Keywords.WHILE) return this.ParseWhile(tokens, owner);
+                if (value == this.parser.Keywords.DO) return this.ParseDoWhile(tokens, owner);
+                if (value == this.parser.Keywords.SWITCH) return this.ParseSwitch(tokens, owner);
+                if (value == this.parser.Keywords.IF) return this.ParseIf(tokens, owner);
+                if (value == this.parser.Keywords.TRY) return this.ParseTry(tokens, owner);
+                if (value == this.parser.Keywords.RETURN) return this.ParseReturn(tokens, owner);
+                if (value == this.parser.Keywords.BREAK) return this.ParseBreak(tokens, owner);
+                if (value == this.parser.Keywords.CONTINUE) return this.ParseContinue(tokens, owner);
+                if (value == this.parser.Keywords.CONSTRUCTOR) return this.ParseConstructor(tokens, owner);
+                if (value == this.parser.Keywords.THROW) return this.ParseThrow(tokens, owner);
             }
 
             Expression expr = this.parser.ExpressionParser.Parse(tokens, owner);
@@ -155,7 +155,7 @@ namespace Crayon
 
         private Executable ParseThrow(TokenStream tokens, Executable owner)
         {
-            Token throwToken = tokens.PopExpected("throw");
+            Token throwToken = tokens.PopExpected(this.parser.Keywords.THROW);
             Expression throwExpression = this.parser.ExpressionParser.Parse(tokens, owner);
             tokens.PopExpected(";");
             return new ThrowStatement(throwToken, throwExpression, owner);
@@ -163,7 +163,7 @@ namespace Crayon
 
         private Executable ParseConstructor(TokenStream tokens, Executable owner)
         {
-            Token constructorToken = tokens.PopExpected("constructor");
+            Token constructorToken = tokens.PopExpected(this.parser.Keywords.CONSTRUCTOR);
             tokens.PopExpected("(");
             List<Token> argNames = new List<Token>();
             List<Expression> argValues = new List<Expression>();
@@ -196,7 +196,7 @@ namespace Crayon
             Token baseToken = null;
             if (tokens.PopIfPresent(":"))
             {
-                baseToken = tokens.PopExpected("base");
+                baseToken = tokens.PopExpected(this.parser.Keywords.BASE);
                 tokens.PopExpected("(");
                 while (!tokens.PopIfPresent(")"))
                 {
@@ -216,7 +216,7 @@ namespace Crayon
 
         private Executable ParseConst(TokenStream tokens, Executable owner)
         {
-            Token constToken = tokens.PopExpected("const");
+            Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             Token nameToken = tokens.Pop();
             ConstStatement constStatement = new ConstStatement(constToken, nameToken, parser.CurrentNamespace, owner);
             this.parser.VerifyIdentifier(nameToken);
@@ -229,7 +229,7 @@ namespace Crayon
 
         private Executable ParseEnumDefinition(TokenStream tokens, Executable owner)
         {
-            Token enumToken = tokens.PopExpected("enum");
+            Token enumToken = tokens.PopExpected(this.parser.Keywords.ENUM);
             Token nameToken = tokens.Pop();
             this.parser.VerifyIdentifier(nameToken);
             string name = nameToken.Value;
@@ -263,7 +263,7 @@ namespace Crayon
 
         private Executable ParseClassDefinition(TokenStream tokens, Executable owner, Token staticToken, Token finalToken)
         {
-            Token classToken = tokens.PopExpected("class");
+            Token classToken = tokens.PopExpected(this.parser.Keywords.CLASS);
             Token classNameToken = tokens.Pop();
             this.parser.VerifyIdentifier(classNameToken);
             List<Token> baseClassTokens = new List<Token>();
@@ -322,11 +322,12 @@ namespace Crayon
                     annotations[annotation.Type].Add(annotation);
                 }
 
-                if (tokens.IsNext("function") || tokens.AreNext("static", "function"))
+                if (tokens.IsNext(this.parser.Keywords.FUNCTION) ||
+                    tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FUNCTION))
                 {
                     methods.Add((FunctionDefinition)this.parser.ExecutableParser.ParseFunction(tokens, cd));
                 }
-                else if (tokens.IsNext("constructor"))
+                else if (tokens.IsNext(this.parser.Keywords.CONSTRUCTOR))
                 {
                     if (constructorDef != null)
                     {
@@ -335,13 +336,13 @@ namespace Crayon
 
                     constructorDef = (ConstructorDefinition)this.parser.ExecutableParser.ParseConstructor(tokens, cd);
 
-                    if (annotations != null && annotations.ContainsKey("private"))
+                    if (annotations != null && annotations.ContainsKey(this.parser.Keywords.PRIVATE))
                     {
-                        constructorDef.PrivateAnnotation = annotations["private"][0];
-                        annotations["private"].RemoveAt(0);
+                        constructorDef.PrivateAnnotation = annotations[this.parser.Keywords.PRIVATE][0];
+                        annotations[this.parser.Keywords.PRIVATE].RemoveAt(0);
                     }
                 }
-                else if (tokens.AreNext("static", "constructor"))
+                else if (tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.CONSTRUCTOR))
                 {
                     tokens.Pop(); // static token
                     if (staticConstructorDef != null)
@@ -351,7 +352,8 @@ namespace Crayon
 
                     staticConstructorDef = (ConstructorDefinition)this.parser.ExecutableParser.ParseConstructor(tokens, cd);
                 }
-                else if (tokens.IsNext("field") || tokens.AreNext("static", "field"))
+                else if (tokens.IsNext(this.parser.Keywords.FIELD) ||
+                    tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FIELD))
                 {
                     fields.Add(this.parser.ExecutableParser.ParseField(tokens, cd));
                 }
@@ -382,8 +384,8 @@ namespace Crayon
 
         private FieldDeclaration ParseField(TokenStream tokens, ClassDefinition owner)
         {
-            bool isStatic = tokens.PopIfPresent("static");
-            Token fieldToken = tokens.PopExpected("field");
+            bool isStatic = tokens.PopIfPresent(this.parser.Keywords.STATIC);
+            Token fieldToken = tokens.PopExpected(this.parser.Keywords.FIELD);
             Token nameToken = tokens.Pop();
             this.parser.VerifyIdentifier(nameToken);
             FieldDeclaration fd = new FieldDeclaration(fieldToken, nameToken, owner, isStatic);
@@ -397,7 +399,7 @@ namespace Crayon
 
         private Executable ParseNamespace(TokenStream tokens, Executable owner)
         {
-            Token namespaceToken = tokens.PopExpected("namespace");
+            Token namespaceToken = tokens.PopExpected(this.parser.Keywords.NAMESPACE);
             Token first = tokens.Pop();
             this.parser.VerifyIdentifier(first);
             List<Token> namespacePieces = new List<Token>() { first };
@@ -448,9 +450,9 @@ namespace Crayon
             bool isStatic =
                 nullableOwner != null &&
                 nullableOwner is ClassDefinition &&
-                tokens.PopIfPresent("static");
+                tokens.PopIfPresent(this.parser.Keywords.STATIC);
 
-            Token functionToken = tokens.PopExpected("function");
+            Token functionToken = tokens.PopExpected(this.parser.Keywords.FUNCTION);
 
             List<Annotation> functionAnnotations = new List<Annotation>();
 
@@ -503,7 +505,7 @@ namespace Crayon
 
         private Executable ParseFor(TokenStream tokens, Executable owner)
         {
-            Token forToken = tokens.PopExpected("for");
+            Token forToken = tokens.PopExpected(this.parser.Keywords.FOR);
             tokens.PopExpected("(");
             if (!tokens.HasMore) tokens.ThrowEofException();
 
@@ -550,7 +552,7 @@ namespace Crayon
 
         private Executable ParseWhile(TokenStream tokens, Executable owner)
         {
-            Token whileToken = tokens.PopExpected("while");
+            Token whileToken = tokens.PopExpected(this.parser.Keywords.WHILE);
             tokens.PopExpected("(");
             Expression condition = this.parser.ExpressionParser.Parse(tokens, owner);
             tokens.PopExpected(")");
@@ -560,9 +562,9 @@ namespace Crayon
 
         private Executable ParseDoWhile(TokenStream tokens, Executable owner)
         {
-            Token doToken = tokens.PopExpected("do");
+            Token doToken = tokens.PopExpected(this.parser.Keywords.DO);
             IList<Executable> body = Parser.ParseBlock(parser, tokens, true, owner);
-            tokens.PopExpected("while");
+            tokens.PopExpected(this.parser.Keywords.DO_WHILE_END);
             tokens.PopExpected("(");
             Expression condition = this.parser.ExpressionParser.Parse(tokens, owner);
             tokens.PopExpected(")");
@@ -572,7 +574,7 @@ namespace Crayon
 
         private Executable ParseSwitch(TokenStream tokens, Executable owner)
         {
-            Token switchToken = tokens.PopExpected("switch");
+            Token switchToken = tokens.PopExpected(this.parser.Keywords.SWITCH);
 
             Expression explicitMax = null;
             Token explicitMaxToken = null;
@@ -594,14 +596,14 @@ namespace Crayon
             bool defaultEncountered = false;
             while (!tokens.PopIfPresent("}"))
             {
-                if (tokens.IsNext("case"))
+                if (tokens.IsNext(this.parser.Keywords.CASE))
                 {
                     if (defaultEncountered)
                     {
                         throw new ParserException(tokens.Peek(), "default condition in a switch statement must be the last condition.");
                     }
 
-                    Token caseToken = tokens.PopExpected("case");
+                    Token caseToken = tokens.PopExpected(this.parser.Keywords.CASE);
                     if (state != 'A')
                     {
                         cases.Add(new List<Expression>());
@@ -612,9 +614,9 @@ namespace Crayon
                     cases[cases.Count - 1].Add(this.parser.ExpressionParser.Parse(tokens, owner));
                     tokens.PopExpected(":");
                 }
-                else if (tokens.IsNext("default"))
+                else if (tokens.IsNext(this.parser.Keywords.DEFAULT))
                 {
-                    Token defaultToken = tokens.PopExpected("default");
+                    Token defaultToken = tokens.PopExpected(this.parser.Keywords.DEFAULT);
                     if (state != 'A')
                     {
                         cases.Add(new List<Expression>());
@@ -644,13 +646,13 @@ namespace Crayon
 
         private Executable ParseIf(TokenStream tokens, Executable owner)
         {
-            Token ifToken = tokens.PopExpected("if");
+            Token ifToken = tokens.PopExpected(this.parser.Keywords.IF);
             tokens.PopExpected("(");
             Expression condition = this.parser.ExpressionParser.Parse(tokens, owner);
             tokens.PopExpected(")");
             IList<Executable> body = Parser.ParseBlock(parser, tokens, false, owner);
             IList<Executable> elseBody;
-            if (tokens.PopIfPresent("else"))
+            if (tokens.PopIfPresent(this.parser.Keywords.ELSE))
             {
                 elseBody = Parser.ParseBlock(parser, tokens, false, owner);
             }
@@ -663,7 +665,7 @@ namespace Crayon
 
         private Executable ParseTry(TokenStream tokens, Executable owner)
         {
-            Token tryToken = tokens.PopExpected("try");
+            Token tryToken = tokens.PopExpected(this.parser.Keywords.TRY);
             IList<Executable> tryBlock = Parser.ParseBlock(parser, tokens, true, owner);
 
             List<Token> catchTokens = new List<Token>();
@@ -675,7 +677,7 @@ namespace Crayon
             Token finallyToken = null;
             IList<Executable> finallyBlock = null;
 
-            while (tokens.IsNext("catch"))
+            while (tokens.IsNext(this.parser.Keywords.CATCH))
             {
                 /*
                     Parse patterns:
@@ -708,7 +710,7 @@ namespace Crayon
                             - style-breaking uppercase variables.
                 */
 
-                Token catchToken = tokens.PopExpected("catch");
+                Token catchToken = tokens.PopExpected(this.parser.Keywords.CATCH);
 
                 List<string> classNames = new List<string>();
                 List<Token> classTokens = new List<Token>();
@@ -755,7 +757,7 @@ namespace Crayon
                 catchBlocks.Add(catchBlockCode);
             }
 
-            if (tokens.IsNext("finally"))
+            if (tokens.IsNext(this.parser.Keywords.FINALLY))
             {
                 finallyToken = tokens.Pop();
                 finallyBlock = Parser.ParseBlock(parser, tokens, true, owner);
@@ -766,21 +768,21 @@ namespace Crayon
 
         private Executable ParseBreak(TokenStream tokens, Executable owner)
         {
-            Token breakToken = tokens.PopExpected("break");
+            Token breakToken = tokens.PopExpected(this.parser.Keywords.BREAK);
             tokens.PopExpected(";");
             return new BreakStatement(breakToken, owner);
         }
 
         private Executable ParseContinue(TokenStream tokens, Executable owner)
         {
-            Token continueToken = tokens.PopExpected("continue");
+            Token continueToken = tokens.PopExpected(this.parser.Keywords.CONTINUE);
             tokens.PopExpected(";");
             return new ContinueStatement(continueToken, owner);
         }
 
         private Executable ParseReturn(TokenStream tokens, Executable owner)
         {
-            Token returnToken = tokens.PopExpected("return");
+            Token returnToken = tokens.PopExpected(this.parser.Keywords.RETURN);
             Expression expr = null;
             if (!tokens.PopIfPresent(";"))
             {

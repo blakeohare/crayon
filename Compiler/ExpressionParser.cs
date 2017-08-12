@@ -211,7 +211,7 @@ namespace Crayon
 
         private Expression ParseInstantiate(TokenStream tokens, Executable owner)
         {
-            Token newToken = tokens.PopExpected("new");
+            Token newToken = tokens.PopExpected(this.parser.Keywords.NEW);
             Token classNameToken = tokens.Pop();
             string name = this.parser.PopClassNameWithFirstTokenAlreadyPopped(tokens, classNameToken);
 
@@ -250,7 +250,7 @@ namespace Crayon
                     Token stepToken = tokens.Pop();
                     // HACK alert: "class" is a valid field on a class.
                     // ParserVerifyIdentifier is invoked downstream for non-resolved fields.
-                    if (stepToken.Value != "class")
+                    if (stepToken.Value != this.parser.Keywords.CLASS)
                     {
                         this.parser.VerifyIdentifier(stepToken);
                     }
@@ -311,7 +311,7 @@ namespace Crayon
                     }
                     root = new FunctionCall(root, openParen, args, owner);
                 }
-                else if (tokens.IsNext("is"))
+                else if (tokens.IsNext(this.parser.Keywords.IS))
                 {
                     Token isToken = tokens.Pop();
                     Token classToken = tokens.Pop();
@@ -331,14 +331,14 @@ namespace Crayon
             string next = tokens.PeekValue();
 
             if (next == null) tokens.ThrowEofException();
-            if (next == "null") return new NullConstant(tokens.Pop(), owner);
-            if (next == "true") return new BooleanConstant(tokens.Pop(), true, owner);
-            if (next == "false") return new BooleanConstant(tokens.Pop(), false, owner);
+            if (next == this.parser.Keywords.NULL) return new NullConstant(tokens.Pop(), owner);
+            if (next == this.parser.Keywords.TRUE) return new BooleanConstant(tokens.Pop(), true, owner);
+            if (next == this.parser.Keywords.FALSE) return new BooleanConstant(tokens.Pop(), false, owner);
 
             Token peekToken = tokens.Peek();
             if (next.StartsWith("'")) return new StringConstant(tokens.Pop(), StringConstant.ParseOutRawValue(peekToken), owner);
             if (next.StartsWith("\"")) return new StringConstant(tokens.Pop(), StringConstant.ParseOutRawValue(peekToken), owner);
-            if (next == "new") return this.ParseInstantiate(tokens, owner);
+            if (next == this.parser.Keywords.NEW) return this.ParseInstantiate(tokens, owner);
 
             char firstChar = next[0];
             if (VARIABLE_STARTER.Contains(firstChar))

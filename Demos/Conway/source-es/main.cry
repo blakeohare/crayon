@@ -10,47 +10,47 @@ const CELL_SIZE = 16;
 const SCREEN_WIDTH = CELL_SIZE * WIDTH;
 const SCREEN_HEIGHT = CELL_SIZE * HEIGHT;
 
-function getRandomBlue() {
-    return [
-        Random.randomInt(40),
+funcion getRandomBlue() {
+    volver [
         Random.randomInt(100, 200),
+        Random.randomInt(40),
         Random.randomInt(170, 255)
     ];
 }
 
-function main() {
-    window = new GameWindow("Conway's Game of Life", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
+funcion main() {
+    window = crear GameWindow("Conway's Game of Life", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     totalCells = WIDTH * HEIGHT;
 
-    trues = [true] * (totalCells / 3);
-    falses = [false] * (totalCells - trues.length);
+    trues = [verdad] * (totalCells / 3);
+    falses = [falso] * (totalCells - trues.length);
     grid = trues + falses;
     grid.shuffle();
     cellPixelX = [];
-    for (x = 0; x < WIDTH; ++x) {
+    para (x = 0; x < WIDTH; ++x) {
         cellPixelX.add(x * CELL_SIZE);
     }
     cellPixelY = [];
-    for (y = 0; y < HEIGHT; ++y) {
+    para (y = 0; y < HEIGHT; ++y) {
         cellPixelY.add(y * CELL_SIZE);
     }
 
-    buffer = [false] * totalCells;
+    buffer = [falso] * totalCells;
     neighborsLookup = [];
     indices = [];
     blues = [];
     offsets = [-1, 0, 1];
-    for (y = 0; y < HEIGHT; ++y) {
-        for (x = 0; x < WIDTH; ++x) {
+    para (y = 0; y < HEIGHT; ++y) {
+        para (x = 0; x < WIDTH; ++x) {
             indices.add(indices.length);
             blues.add(getRandomBlue());
             neighbors = [];
-            for (dx : offsets) {
-                for (dy : offsets) {
+            para (dx : offsets) {
+                para (dy : offsets) {
                     neighborX = dx + x;
                     neighborY = dy + y;
-                    if (neighborX >= 0 &&
+                    si (neighborX >= 0 &&
                         neighborY >= 0 &&
                         neighborX < WIDTH &&
                         neighborY < HEIGHT &&
@@ -65,56 +65,56 @@ function main() {
     }
 
     lastPosition = -1;
-    mousePressed = false;
+    mousePressed = falso;
 
     // Lookup table for what to do if a live cell has n neighbors
-    liveTransformationLookup = [false] * 9; // die unless...
-    liveTransformationLookup[2] = true; // has exactly 2 neighbors
-    liveTransformationLookup[3] = true; // has exactly 3 neighbors
+    liveTransformationLookup = [falso] * 9; // die unless...
+    liveTransformationLookup[2] = verdad; // has exactly 2 neighbors
+    liveTransformationLookup[3] = verdad; // has exactly 3 neighbors
 
     // Lookup table for what to do if a dead cell has n neighbors
-    deadTransformationLookup = [false] * 9; // stay dead unless...
-    deadTransformationLookup[3] = true; // has exactly 3 neighbors
+    deadTransformationLookup = [falso] * 9; // stay dead unless...
+    deadTransformationLookup[3] = verdad; // has exactly 3 neighbors
 
-    while (true) {
-        for (event : window.pumpEvents()) {
-            switch (event.type) {
-                case EventType.QUIT:
-                    return;
+    mientras (verdad) {
+        para (event : window.pumpEvents()) {
+            elegir (event.type) {
+                caso EventType.QUIT:
+                    volver;
 
-                case EventType.MOUSE_MOVE:
+                caso EventType.MOUSE_MOVE:
                     lastCol = event.x / CELL_SIZE;
                     lastRow = event.y / CELL_SIZE;
-                    if (lastCol >= 0 && lastRow >= 0 && lastCol < WIDTH && lastRow < HEIGHT) {
+                    si (lastCol >= 0 && lastRow >= 0 && lastCol < WIDTH && lastRow < HEIGHT) {
                         lastPosition = lastCol + lastRow * WIDTH;
                     }
-                    break;
+                    parar;
 
-                case EventType.MOUSE_LEFT_DOWN:
-                    mousePressed = true;
-                    break;
+                caso EventType.MOUSE_LEFT_DOWN:
+                    mousePressed = verdad;
+                    parar;
 
-                case EventType.MOUSE_LEFT_UP:
-                    mousePressed = false;
-                    break;
+                caso EventType.MOUSE_LEFT_UP:
+                    mousePressed = falso;
+                    parar;
             }
         }
 
-        if (lastPosition >= 0) {
+        si (lastPosition >= 0) {
             // bring half of the cells in the neighbors lookup for the cursor's position to life.
             neighbors = neighborsLookup[lastPosition];
             neighbors.shuffle();
-            for (i = 0; i < neighbors.length / 2; ++i) {
-                grid[neighbors[i]] = true;
+            para (i = 0; i < neighbors.length / 2; ++i) {
+                grid[neighbors[i]] = verdad;
             }
         }
 
         // Perform an iteration on the entire grid...
-        for (index : indices) {
+        para (index : indices) {
             // Count neighbors
             neighbors = 0;
-            for (neighborIndex : neighborsLookup[index]) {
-                if (grid[neighborIndex]) {
+            para (neighborIndex : neighborsLookup[index]) {
+                si (grid[neighborIndex]) {
                     neighbors++;
                 }
             }
@@ -133,14 +133,14 @@ function main() {
         // Draw the grid
         Draw.fill(0, 0, 0);
         index = 0;
-        for (y : cellPixelY) {
-            for (x : cellPixelX) {
-                if (grid[index]) {
+        para (y : cellPixelY) {
+            para (x : cellPixelX) {
+                si (grid[index]) {
                     rgb = blues[index];
                     Draw.rectangle(
                         x, y, CELL_SIZE, CELL_SIZE,
                         rgb[0], rgb[1], rgb[2]);
-                } else if (index == lastPosition) {
+                } mas si (index == lastPosition) {
                     Draw.rectangle(
                         x, y, CELL_SIZE, CELL_SIZE,
                         64, 64, 64);

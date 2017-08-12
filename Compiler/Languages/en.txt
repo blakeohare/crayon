@@ -22,13 +22,16 @@ FUNCTION: function
 IF: if
 IMPORT: import
 INTERFACE: interface
+IS: is
 NAMESPACE: namespace
 NEW: new
 NULL: null
+PRIVATE: private
 RETURN: return
 STATIC: static
 SWITCH: switch
 THIS: this
+THROW: throw
 TRUE: true
 TRY: try
 WHILE: while
