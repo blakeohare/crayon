@@ -4,7 +4,6 @@
     int int2 = 0;
     Array<object> objArray1 = null;
     Array<object> objArray2 = null;
-    object object1 = null;
     ObjectInstance objInstance1 = null;
     ObjectInstance objInstance2 = null;
     Value output = VALUE_NULL;
