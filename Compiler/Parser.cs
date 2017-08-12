@@ -228,7 +228,7 @@ namespace Crayon
 
         public Executable[] ParseInterpreterCode(string filename, string contents)
         {
-            TokenStream tokens = new TokenStream(Tokenizer.Tokenize(filename, contents, 0, true));
+            TokenStream tokens = new TokenStream(Tokenizer.Tokenize(filename, contents, 0, true), filename);
             List<Executable> output = new List<Executable>();
             while (tokens.HasMore)
             {
@@ -285,7 +285,7 @@ namespace Crayon
             int fileId = this.GetNextFileId();
             this.RegisterFileUsed(filename, code, fileId);
             Token[] tokenList = Tokenizer.Tokenize(filename, code, fileId, true);
-            TokenStream tokens = new TokenStream(tokenList);
+            TokenStream tokens = new TokenStream(tokenList, filename);
 
             List<Executable> executables = new List<Executable>();
 

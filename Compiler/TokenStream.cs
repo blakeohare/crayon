@@ -12,7 +12,9 @@ namespace Crayon
         private int topLength;
         private bool empty;
 
-        public TokenStream(IList<Token> tokens)
+        private string fileName;
+
+        public TokenStream(IList<Token> tokens, string fileName)
         {
             this.topIndex = 0;
             this.topTokens = tokens.ToArray();
@@ -21,6 +23,15 @@ namespace Crayon
             this.indexes.Add(0);
             this.tokenLayers.Add(this.topTokens);
             this.empty = false;
+
+            this.fileName = fileName;
+        }
+
+        // returns an exception so that you can throw this function call in situations where you want
+        // the compiler to think the codepath terminates
+        public System.Exception ThrowEofException()
+        {
+            return ParserException.ThrowEofException(this.fileName);
         }
 
         private Token SafePeek()

@@ -8,6 +8,14 @@ namespace Crayon
             : base(InterpretToken(token) + message)
         { }
 
+        private ParserException(string message) : base(message)
+        { }
+
+        public static ParserException ThrowEofException(string filename)
+        {
+            throw new ParserException("Unexpected EOF in " + filename);
+        }
+
         private static string InterpretToken(Token token)
         {
             if (token == null) return "";

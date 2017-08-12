@@ -324,6 +324,7 @@ namespace Crayon
         {
             string next = tokens.PeekValue();
 
+            if (next == null) tokens.ThrowEofException();
             if (next == "null") return new NullConstant(tokens.Pop(), owner);
             if (next == "true") return new BooleanConstant(tokens.Pop(), true, owner);
             if (next == "false") return new BooleanConstant(tokens.Pop(), false, owner);
