@@ -110,11 +110,8 @@ namespace ImageResources {
                         height = Core.parseInt(parts[4]);
                         filename = parts[5:].join(',').trim();
                         resourceInfo[filename] = [ImgResourceType.SHEET, activeSheetId, activeChunkId, x, y, width, height];
-                        files = ImageResourceManifest.filesBySheetId.get(activeSheetId);
-                        if (files == null) {
-                            files = [];
-                            ImageResourceManifest.filesBySheetId[activeSheetId] = files;
-                        }
+                        files = ImageResourceManifest.filesBySheetId.get(activeSheetId) ?? [];
+                        ImageResourceManifest.filesBySheetId[activeSheetId] = files;
                         files.add(filename);
                         break;
 
@@ -133,6 +130,8 @@ namespace ImageResources {
                                 [genFilename, 0, 0, width, height, bytes],
                             ],
                         };
+                        files = ImageResourceManifest.filesBySheetId.get(activeSheetId) ?? [];
+                        ImageResourceManifest.filesBySheetId[activeSheetId] = files;
                         files.add(filename);
                         resourceInfo[filename] = [ImgResourceType.SHEET, activeSheetId, activeChunkId, 0, 0, width, height];
                         break;
