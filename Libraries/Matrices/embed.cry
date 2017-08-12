@@ -1,5 +1,8 @@
 ﻿namespace Matrices {
 
+	// TODO: all these dimensions are in reverse order of standard convention. Please reverse them and
+	// update the demo apps.
+
     class Matrix {
         /*
             nativeData[0] -> Array<float> data

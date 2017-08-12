@@ -2,5 +2,69 @@
 	<description>Library for performing operations on matrices.</description>
 	<namespace name="Matricies">
 		
+		<class name="Matrix">
+			<description>
+				Represents an n by m matrix of floats.
+			</description>
+			
+			<function name="(constructor)">
+				<description>Creates a new matrix</description>
+				<arg name="cols" type="int" description="Number of columns"/>
+				<arg name="rows" type="int" description="Number of rows"/>
+			</function>
+			
+			<function name="newIdentityMatrix" static="true">
+				<description>Generates a new n by n identity matrix.</description>
+				<arg name="n" type="int" description="The size of the matrix (it's a square)."/>
+				<returns type="Matrix" description="A new identity matrix instance"/>
+			</function>
+			
+			<function name="getValue">
+				<description>Gets the value at the given column and row</description>
+				<arg name="col" type="int" description="column"/>
+				<arg name="row" type="int" description="row"/>
+				<returns type="float" description="Float located at that coordinate"/>
+			</function>
+			
+			<function name="setValue">
+				<description>Sets a value at the given column and row</description>
+				<arg name="col" type="int" description="column"/>
+				<arg name="row" type="int" description="row"/>
+				<arg name="value" type="float" description="The value to set"/>
+				<returns type="Matrix" description="Returns a reference to the original matrix so that chaining can be used."/>
+			</function>
+			
+			<function name="multiplyByScalar">
+				<description>Multiplies all values in the matrix by a scalar</description>
+				<arg name="value" type="float" description="The scalar value to multiply by."/>
+				<returns type="Matrix" description="Returns a reference to the original matrix so that chaining can be used."/>
+			</function>
+			
+			<function name="addMatrix">
+				<description>Adds another matrix to this matrix and writes it to the optional output matrix</description>
+				<arg name="other" type="Matrix" description="The matrix to add to this matrix."/>
+				<arg name="output" type="Matrix" description="The matrix to write the result to. If this is not provided, the new values will be written to the original Matrix." optional="true"/>
+				<returns type="Matrix" description="Returns a reference to the original matrix so that chaining can be used."/>
+			</function>
+			
+			<function name="multiplyByMatrix">
+				<description>Multiplies another matrix to this matrix and writes it to the optional output matrix. Dimensions must be correct.</description>
+				<arg name="other" type="Matrix" description="The matrix to multiply this matrix by."/>
+				<arg name="output" type="Matrix" description="The matrix to write the result to. If this is not provided, the new values will be written to the original Matrix ONLY if the matrix is square. Otherwise, an error will be thrown." optional="true"/>
+				<returns type="Matrix" description="Returns a reference to the original matrix so that chaining can be used."/>
+			</function>
+			
+			<function name="toVector">
+				<description>Flattens the matrix into a single dimensional list. Values are written starting from the top left corner and go left-to-right first, then row-by-row down.</description>
+				<arg name="output" type="list-of-float" description="A list to write to. Values are written starting from position 0. If the list is not long enough, values will be added. If the list is longer than the number of elements in the matrix, the remaining values are left alone."/>
+				<returns type="list-of-float" description="Returns the list."/>
+			</function>
+			
+			<function name="copyFrom">
+				<description>Copies the values of one matrix into another.</description>
+				<arg name="other" type="Matrix" description="The matrix to copy values from. Must be the same size."/>
+				<returns type="Matrix" description="Returns a reference to the original matrix so that chaining can be used."/>
+			</function>
+		</class>
 	</namespace>
 </library>
