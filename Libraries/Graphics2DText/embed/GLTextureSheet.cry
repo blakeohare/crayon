@@ -4,7 +4,6 @@
         nativeData[0] -> bitmap instance (lifetime is very short, discarded once loaded)
     */
     class GLTextureSheet {
-        field glTextureId = null;
         field tiles = [];
         field tilesByCharId = {};
 
@@ -31,7 +30,9 @@
                 y += height;
             }
             // This will apply the properties to the individual tile's metadata
-            this.glTextureId = $$lib_graphics2dtext_glGenerateAndLoadTexture(xs, ys, tiles, y);
+            // It will not load the texture yet.
+            // TODO: remove "LoadTexture" from the name.
+            $$lib_graphics2dtext_glGenerateAndLoadTexture(xs, ys, tiles, y);
         }
 
         static function makeSheets(tiles) {

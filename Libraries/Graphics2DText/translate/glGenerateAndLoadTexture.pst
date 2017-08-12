@@ -8,13 +8,14 @@
         nativeData[2] -> bitmap height
 
         // The following native data needs to be filled in by this function
-        nativeData[5] -> GL Texture ID
-        nativeData[6] -> texture left
-        nativeData[7] -> texture top
-        nativeData[8] -> texture right
-        nativeData[9] -> texture bottom
-        nativeData[10] -> full texture width (always 1024)
-        nativeData[11] -> full texture height (some power of 2)
+        nativeData[5] -> GL Texture ID or -1 if not loaded yet
+        nativeData[6] -> bitmap to load into a GL texture or null if already loaded
+        nativeData[7] -> texture left
+        nativeData[8] -> texture top
+        nativeData[9] -> texture right
+        nativeData[10] -> texture bottom
+        nativeData[11] -> full texture width (always 1024)
+        nativeData[12] -> full texture height (some power of 2)
 
     args[3] -> total height of the rectangle packing result
         you'll need to generate an image with a height that's a power of 2 above this value
@@ -52,15 +53,10 @@ Value lib_graphics2dtext_function_glGenerateAndLoadTexture(Array<Value> args) {
 
         object textureSheetBitmap = Native._lib_graphics2dtext_generateTextureSheetAndAllocateRectangleInformation(tileNativeDatas, coordinates, 1024, height);
 
-        int textureId = Native._lib_graphics2dtext_glLoadTexture(textureSheetBitmap);
-
         // go back through and re-assign the texture ID to the tile native datas.
         for (i = 0; i < tileCount; i += 1) {
-            tileNativeDatas[i][5] = textureId;
+            tileNativeDatas[i][6] = textureSheetBitmap;
         }
-
-        return buildInteger(textureId);
-    } else {
-        return VALUE_NULL;
     }
+    return VALUE_NULL;
 }
