@@ -15,18 +15,523 @@ td.optional { color:#000; font-weight:bold; }
 a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
 a.bookmark:hover { color:#08a; }
 p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
-.keyword { font-weight:normal; }</style><h1>Audio</h1><div class="itembox"><p class="description">Provides audio functionality for games using the Game library. All sound resources must be OGG files. </p></div><ul><li><span class="codefont">namespace</span> Audio<ul><li><a href="#enum-audio-soundplaystate"><span class="codefont">enum</span> SoundPlayState</a></li><li><a href="#class-audio-music"><span class="codefont">class</span> Music</a><ul><li><a href="#func-audio-music-fadein"><span class="codefont">function</span> fadeIn(loop, inTransition)</a></li><li><a href="#func-audio-music-fadeout"><span class="codefont">function</span> fadeOut(outTransition)</a></li><li><a href="#func-audio-music-fadeoutandin"><span class="codefont">function</span> fadeOutAndIn(loop, outTransition, inTransition)</a></li><li><a href="#func-audio-music-fadeoutandplay"><span class="codefont">function</span> fadeOutAndPlay(loop, outTransition)</a></li><li><a href="#func-audio-music-fadeoutcurrent"><span class="codefont">static function</span> fadeOutCurrent(outTransition)</a></li><li><a href="#func-audio-music-getcurrent"><span class="codefont">static function</span> getCurrent()</a></li><li><a href="#func-audio-music-loadfromresource"><span class="codefont">static function</span> loadFromResource(path)</a></li><li><a href="#func-audio-music-play"><span class="codefont">function</span> play(loop)</a></li><li><a href="#func-audio-music-stop"><span class="codefont">static function</span> stop()</a></li></ul></li><li><a href="#class-audio-musicnotfoundexception"><span class="codefont">class</span> MusicNotFoundException</a></li><li><a href="#class-audio-sound"><span class="codefont">class</span> Sound</a><ul><li><a href="#func-audio-sound-getpan"><span class="codefont">function</span> getPan()</a></li><li><a href="#func-audio-sound-getresource"><span class="codefont">function</span> getResource()</a></li><li><a href="#func-audio-sound-getstate"><span class="codefont">function</span> getState()</a></li><li><a href="#func-audio-sound-getvolume"><span class="codefont">function</span> getVolume()</a></li><li><a href="#func-audio-sound-resume"><span class="codefont">function</span> resume()</a></li><li><a href="#func-audio-sound-setpan"><span class="codefont">function</span> setPan(value)</a></li><li><a href="#func-audio-sound-setvolume"><span class="codefont">function</span> setVolume(ratio)</a></li><li><a href="#func-audio-sound-stop"><span class="codefont">function</span> stop()</a></li></ul></li><li><a href="#class-audio-soundresource"><span class="codefont">class</span> SoundResource</a><ul><li><a href="#func-audio-soundresource-getdefaultvolume"><span class="codefont">function</span> getDefaultVolume()</a></li><li><a href="#func-audio-soundresource-loadfromfile"><span class="codefont">function</span> loadFromFile(path)</a></li><li><a href="#func-audio-soundresource-loadfromresource"><span class="codefont">function</span> loadFromResource(path)</a></li><li><a href="#func-audio-soundresource-play"><span class="codefont">function</span> play(pan)</a></li><li><a href="#func-audio-soundresource-setdefaultvolume"><span class="codefont">function</span> setDefaultVolume(ratio)</a></li></ul></li></ul></li></ul><div class="itembox"><h1><span class="keyword">enum</span> SoundPlayState<a class="bookmark" name="enum-audio-soundplaystate" href="#enum-audio-soundplaystate">[link]</a></h1><p class="description">Current state of a sound</p><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Description</th></thead><tbody><tr><td class="codefont argname">PLAYING</td><td class="description"><p class="description">Sound is currently playing</p></td></tr><tr><td class="codefont argname">PAUSED</td><td class="description"><p class="description">Sound is paused</p></td></tr><tr><td class="codefont argname">STOPPED</td><td class="description"><p class="description">Sound has stopped</p></td></tr></tbody></table></div></div><div><h1><span class="keyword">class</span> Music<a class="bookmark" name="class-audio-music" href="#class-audio-music">[link]</a></h1><div class="itembox"><p class="description">Encapsulates a sound file for the purpose of playing music. Supports looping and fading transitions, but only supports one sound playback at a time.</p></div><div class="itembox"><div><h2><span class="keyword">function</span> fadeIn(loop, inTransition)<a class="bookmark" name="func-audio-music-fadein" href="#func-audio-music-fadein">[link]</a></h2><div class="itembox"><p class="description">Stops the currently playing music (if any) and fades in this music.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">loop</td><td class="codefont argtype">boolean</td><td class="codefont optional">Optional</td><td class="description"><p class="description">True if this music should loop indefinitely.</p></td></tr><tr><td class="codefont argname">inTransition</td><td class="codefont argtype">float</td><td class="codefont optional">Optional</td><td class="description"><p class="description">Number of seconds to fade this music in</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> fadeOut(outTransition)<a class="bookmark" name="func-audio-music-fadeout" href="#func-audio-music-fadeout">[link]</a></h2><div class="itembox"><p class="description">Fades out this music if it is currently playing. See also Music.fadeOutCurrent()</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">outTransition</td><td class="codefont argtype">float</td><td class="codefont optional">Optional</td><td class="description"><p class="description">Number of seconds to fade out</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> fadeOutAndIn(loop, outTransition, inTransition)<a class="bookmark" name="func-audio-music-fadeoutandin" href="#func-audio-music-fadeoutandin">[link]</a></h2><div class="itembox"><p class="description">Fades out the currently playing music (if any) and fades in this music.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">loop</td><td class="codefont argtype">boolean</td><td class="codefont optional">Optional</td><td class="description"><p class="description">True if this music should loop indefinitely.</p></td></tr><tr><td class="codefont argname">outTransition</td><td class="codefont argtype">float</td><td class="codefont optional">Optional</td><td class="description"><p class="description">Number of seconds to fade the current music out</p></td></tr><tr><td class="codefont argname">inTransition</td><td class="codefont argtype">float</td><td class="codefont optional">Optional</td><td class="description"><p class="description">Number of seconds to fade this music in</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> fadeOutAndPlay(loop, outTransition)<a class="bookmark" name="func-audio-music-fadeoutandplay" href="#func-audio-music-fadeoutandplay">[link]</a></h2><div class="itembox"><p class="description">Fades out the currently playing music (if any) and starts playing this music.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">loop</td><td class="codefont argtype">boolean</td><td class="codefont optional">Optional</td><td class="description"><p class="description">True if this music should loop indefinitely.</p></td></tr><tr><td class="codefont argname">outTransition</td><td class="codefont argtype">float</td><td class="codefont optional">Optional</td><td class="description"><p class="description">Number of seconds to fade the current music out</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> fadeOutCurrent(outTransition)<a class="bookmark" name="func-audio-music-fadeoutcurrent" href="#func-audio-music-fadeoutcurrent">[link]</a></h2><div class="itembox"><p class="description">Fades out the current music, if any.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">outTransition</td><td class="codefont argtype">float</td><td class="codefont optional">Optional</td><td class="description"><p class="description">Number of seconds to fade the current music out</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> getCurrent()<a class="bookmark" name="func-audio-music-getcurrent" href="#func-audio-music-getcurrent">[link]</a></h2><div class="itembox"><p class="description">null</p><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">Audio.Music</td><td class="description"><p class="description">The currently playing music.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> loadFromResource(path)<a class="bookmark" name="func-audio-music-loadfromresource" href="#func-audio-music-loadfromresource">[link]</a></h2><div class="itembox"><p class="description">null</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">path</td><td class="codefont argtype">string</td><td class="description"><p class="description">path to a bundled OGG resource</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">Audio.Music</td><td class="description"><p class="description">A new Audio.Music instance</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> play(loop)<a class="bookmark" name="func-audio-music-play" href="#func-audio-music-play">[link]</a></h2><div class="itembox"><p class="description">Stops the currently playing music (if any) and starts playing this music.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">loop</td><td class="codefont argtype">boolean</td><td class="codefont optional">Optional</td><td class="description"><p class="description">True if this music should loop indefinitely.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> stop()<a class="bookmark" name="func-audio-music-stop" href="#func-audio-music-stop">[link]</a></h2><div class="itembox"><p class="description">Stops the current music, if any.</p></div></div></div></div><div><h1><span class="keyword">class</span> MusicNotFoundException<a class="bookmark" name="class-audio-musicnotfoundexception" href="#class-audio-musicnotfoundexception">[link]</a></h1><div class="itembox"><p class="description">An exception thrown when the music being attempted to load is not found.</p></div></div><div><h1><span class="keyword">class</span> Sound<a class="bookmark" name="class-audio-sound" href="#class-audio-sound">[link]</a></h1><div class="itembox"><p class="description">
+.keyword { font-weight:normal; }</style><h1>Audio</h1><div class="itembox">
+<p class="description">Provides audio functionality for games using the Game library. All sound resources must be OGG files. </p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> Audio<ul>
+<li><a href="#enum-audio-soundplaystate"><span class="codefont">enum</span> SoundPlayState</a></li>
+<li><a href="#class-audio-music"><span class="codefont">class</span> Music</a><ul>
+<li><a href="#func-audio-music-fadein"><span class="codefont">function</span> fadeIn(loop, inTransition)</a></li>
+<li><a href="#func-audio-music-fadeout"><span class="codefont">function</span> fadeOut(outTransition)</a></li>
+<li><a href="#func-audio-music-fadeoutandin"><span class="codefont">function</span> fadeOutAndIn(loop, outTransition, inTransition)</a></li>
+<li><a href="#func-audio-music-fadeoutandplay"><span class="codefont">function</span> fadeOutAndPlay(loop, outTransition)</a></li>
+<li><a href="#func-audio-music-fadeoutcurrent"><span class="codefont">static function</span> fadeOutCurrent(outTransition)</a></li>
+<li><a href="#func-audio-music-getcurrent"><span class="codefont">static function</span> getCurrent()</a></li>
+<li><a href="#func-audio-music-loadfromresource"><span class="codefont">static function</span> loadFromResource(path)</a></li>
+<li><a href="#func-audio-music-play"><span class="codefont">function</span> play(loop)</a></li>
+<li><a href="#func-audio-music-stop"><span class="codefont">static function</span> stop()</a></li>
+</ul>
+</li>
+<li><a href="#class-audio-musicnotfoundexception"><span class="codefont">class</span> MusicNotFoundException</a></li>
+<li><a href="#class-audio-sound"><span class="codefont">class</span> Sound</a><ul>
+<li><a href="#func-audio-sound-getpan"><span class="codefont">function</span> getPan()</a></li>
+<li><a href="#func-audio-sound-getresource"><span class="codefont">function</span> getResource()</a></li>
+<li><a href="#func-audio-sound-getstate"><span class="codefont">function</span> getState()</a></li>
+<li><a href="#func-audio-sound-getvolume"><span class="codefont">function</span> getVolume()</a></li>
+<li><a href="#func-audio-sound-resume"><span class="codefont">function</span> resume()</a></li>
+<li><a href="#func-audio-sound-setpan"><span class="codefont">function</span> setPan(value)</a></li>
+<li><a href="#func-audio-sound-setvolume"><span class="codefont">function</span> setVolume(ratio)</a></li>
+<li><a href="#func-audio-sound-stop"><span class="codefont">function</span> stop()</a></li>
+</ul>
+</li>
+<li><a href="#class-audio-soundresource"><span class="codefont">class</span> SoundResource</a><ul>
+<li><a href="#func-audio-soundresource-getdefaultvolume"><span class="codefont">function</span> getDefaultVolume()</a></li>
+<li><a href="#func-audio-soundresource-loadfromfile"><span class="codefont">static function</span> loadFromFile(path)</a></li>
+<li><a href="#func-audio-soundresource-loadfromresource"><span class="codefont">static function</span> loadFromResource(path)</a></li>
+<li><a href="#func-audio-soundresource-play"><span class="codefont">function</span> play(pan)</a></li>
+<li><a href="#func-audio-soundresource-setdefaultvolume"><span class="codefont">function</span> setDefaultVolume(ratio)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="itembox">
+<h1><span class="keyword">enum</span> SoundPlayState<a class="bookmark" name="enum-audio-soundplaystate" href="#enum-audio-soundplaystate">[link]</a></h1>
+<p class="description">Current state of a sound</p>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">PLAYING</td>
+<td class="description"><p class="description">Sound is currently playing</p></td>
+</tr>
+<tr>
+<td class="codefont argname">PAUSED</td>
+<td class="description"><p class="description">Sound is paused</p></td>
+</tr>
+<tr>
+<td class="codefont argname">STOPPED</td>
+<td class="description"><p class="description">Sound has stopped</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> Music<a class="bookmark" name="class-audio-music" href="#class-audio-music">[link]</a></h1>
+<div class="itembox">
+<p class="description">Encapsulates a sound file for the purpose of playing music. Supports looping and fading transitions, but only supports one sound playback at a time.</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fadeIn(loop, inTransition)<a class="bookmark" name="func-audio-music-fadein" href="#func-audio-music-fadein">[link]</a></h2>
+<div class="itembox">
+<p class="description">Stops the currently playing music (if any) and fades in this music.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">loop</td>
+<td class="codefont argtype">boolean</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">True if this music should loop indefinitely.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">inTransition</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">Number of seconds to fade this music in</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fadeOut(outTransition)<a class="bookmark" name="func-audio-music-fadeout" href="#func-audio-music-fadeout">[link]</a></h2>
+<div class="itembox">
+<p class="description">Fades out this music if it is currently playing. See also Music.fadeOutCurrent()</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">outTransition</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">Number of seconds to fade out</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fadeOutAndIn(loop, outTransition, inTransition)<a class="bookmark" name="func-audio-music-fadeoutandin" href="#func-audio-music-fadeoutandin">[link]</a></h2>
+<div class="itembox">
+<p class="description">Fades out the currently playing music (if any) and fades in this music.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">loop</td>
+<td class="codefont argtype">boolean</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">True if this music should loop indefinitely.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">outTransition</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">Number of seconds to fade the current music out</p></td>
+</tr>
+<tr>
+<td class="codefont argname">inTransition</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">Number of seconds to fade this music in</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fadeOutAndPlay(loop, outTransition)<a class="bookmark" name="func-audio-music-fadeoutandplay" href="#func-audio-music-fadeoutandplay">[link]</a></h2>
+<div class="itembox">
+<p class="description">Fades out the currently playing music (if any) and starts playing this music.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">loop</td>
+<td class="codefont argtype">boolean</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">True if this music should loop indefinitely.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">outTransition</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">Number of seconds to fade the current music out</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fadeOutCurrent(outTransition)<a class="bookmark" name="func-audio-music-fadeoutcurrent" href="#func-audio-music-fadeoutcurrent">[link]</a></h2>
+<div class="itembox">
+<p class="description">Fades out the current music, if any.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">outTransition</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">Number of seconds to fade the current music out</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getCurrent()<a class="bookmark" name="func-audio-music-getcurrent" href="#func-audio-music-getcurrent">[link]</a></h2>
+<div class="itembox">
+<p class="description">null</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Audio.Music</td><td class="description"><p class="description">The currently playing music.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> loadFromResource(path)<a class="bookmark" name="func-audio-music-loadfromresource" href="#func-audio-music-loadfromresource">[link]</a></h2>
+<div class="itembox">
+<p class="description">null</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">path to a bundled OGG resource</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Audio.Music</td><td class="description"><p class="description">A new Audio.Music instance</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> play(loop)<a class="bookmark" name="func-audio-music-play" href="#func-audio-music-play">[link]</a></h2>
+<div class="itembox">
+<p class="description">Stops the currently playing music (if any) and starts playing this music.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">loop</td>
+<td class="codefont argtype">boolean</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">True if this music should loop indefinitely.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> stop()<a class="bookmark" name="func-audio-music-stop" href="#func-audio-music-stop">[link]</a></h2>
+<div class="itembox">
+<p class="description">Stops the current music, if any.</p>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> MusicNotFoundException<a class="bookmark" name="class-audio-musicnotfoundexception" href="#class-audio-musicnotfoundexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">An exception thrown when the music being attempted to load is not found.</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> Sound<a class="bookmark" name="class-audio-sound" href="#class-audio-sound">[link]</a></h1>
+<div class="itembox">
+<p class="description">
 				Represents a sound that is currently active.
 				Sound instances are created from the SoundResource.play() method.
-			</p></div><div class="itembox"><div><h2><span class="keyword">function</span> getPan()<a class="bookmark" name="func-audio-sound-getpan" href="#func-audio-sound-getpan">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getPan()<a class="bookmark" name="func-audio-sound-getpan" href="#func-audio-sound-getpan">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Gets the pan value for this sound. 
 					Pan is a value from -1.0 to 1.0 that represents which speaker this sound should come out of. 
 					-1.0 is the left speaker, 1.0 is the right speaker, and 0.0 is centered. 
 					Pan is not supported on all platforms, but this value is still persisted and returned after setting it with setPan or play.
-				</p></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> getResource()<a class="bookmark" name="func-audio-sound-getresource" href="#func-audio-sound-getresource">[link]</a></h2><div class="itembox"><p class="description">Gets a reference to the original SoundResource object of this Sound.</p><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">Audio.SoundResource</td><td class="description"><p class="description">Reference to the original SoundResource</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> getState()<a class="bookmark" name="func-audio-sound-getstate" href="#func-audio-sound-getstate">[link]</a></h2><div class="itembox"><p class="description">Gets the current state of the sound playback.</p><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">Audio.SoundPlayState</td><td class="description"><p class="description">Current state of the sound playback.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> getVolume()<a class="bookmark" name="func-audio-sound-getvolume" href="#func-audio-sound-getvolume">[link]</a></h2><div class="itembox"><p class="description">Gets the the current volume of the playing sound.</p><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">float</td><td class="description"><p class="description">The current volume of the sound as a ratio from 0.0 to 1.0</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> resume()<a class="bookmark" name="func-audio-sound-resume" href="#func-audio-sound-resume">[link]</a></h2><div class="itembox"><p class="description">Resumes a sound that has been paused.</p></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> setPan(value)<a class="bookmark" name="func-audio-sound-setpan" href="#func-audio-sound-setpan">[link]</a></h2><div class="itembox"><p class="description">Sets the pan value for this sound. Pan is not always supported by the platform, in which case this function will do nothing.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">value</td><td class="codefont argtype">float</td><td class="description"><p class="description">The pan value as a ratio from -1.0 to 1.0. 0.0 represents a centered sound, while -1 will play exclusively from the left speak and 1 will play from the right speaker.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> setVolume(ratio)<a class="bookmark" name="func-audio-sound-setvolume" href="#func-audio-sound-setvolume">[link]</a></h2><div class="itembox"><p class="description">Sets the volume of the currently playing sound. See also Audio.SoundResource.setDefaultVolume.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">ratio</td><td class="codefont argtype">float</td><td class="description"><p class="description">A volume ratio between 0.0 and 1.0</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> stop()<a class="bookmark" name="func-audio-sound-stop" href="#func-audio-sound-stop">[link]</a></h2><div class="itembox"><p class="description">Stops a sound that is playing. It cannot be resumed. If you want to resume playback, use pause() instead.</p></div></div></div></div><div><h1><span class="keyword">class</span> SoundResource<a class="bookmark" name="class-audio-soundresource" href="#class-audio-soundresource">[link]</a></h1><div class="itembox"><p class="description">Represents a file that can be played as a sound effect.</p></div><div class="itembox"><div><h2><span class="keyword">function</span> getDefaultVolume()<a class="bookmark" name="func-audio-soundresource-getdefaultvolume" href="#func-audio-soundresource-getdefaultvolume">[link]</a></h2><div class="itembox"><p class="description">Gets the default volume ratio for Audio.Sound objects that are played from this resource.</p><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">float</td><td class="description"><p class="description">Volume ratio from 0.0 to 1.0.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> loadFromFile(path)<a class="bookmark" name="func-audio-soundresource-loadfromfile" href="#func-audio-soundresource-loadfromfile">[link]</a></h2><div class="itembox"><p class="description">Creates a new Audio.SoundResource instance for the given file.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">path</td><td class="codefont argtype">string</td><td class="description"><p class="description">Absolute or relative path to a sound file on the local disk.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> loadFromResource(path)<a class="bookmark" name="func-audio-soundresource-loadfromresource" href="#func-audio-soundresource-loadfromresource">[link]</a></h2><div class="itembox"><p class="description">Creates a new Audio.SoundResource instance for the given bundled resource.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">path</td><td class="codefont argtype">string</td><td class="description"><p class="description">Path to a bundled resource</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> play(pan)<a class="bookmark" name="func-audio-soundresource-play" href="#func-audio-soundresource-play">[link]</a></h2><div class="itembox"><p class="description">
+				</p>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getResource()<a class="bookmark" name="func-audio-sound-getresource" href="#func-audio-sound-getresource">[link]</a></h2>
+<div class="itembox">
+<p class="description">Gets a reference to the original SoundResource object of this Sound.</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Audio.SoundResource</td><td class="description"><p class="description">Reference to the original SoundResource</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getState()<a class="bookmark" name="func-audio-sound-getstate" href="#func-audio-sound-getstate">[link]</a></h2>
+<div class="itembox">
+<p class="description">Gets the current state of the sound playback.</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Audio.SoundPlayState</td><td class="description"><p class="description">Current state of the sound playback.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getVolume()<a class="bookmark" name="func-audio-sound-getvolume" href="#func-audio-sound-getvolume">[link]</a></h2>
+<div class="itembox">
+<p class="description">Gets the the current volume of the playing sound.</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">float</td><td class="description"><p class="description">The current volume of the sound as a ratio from 0.0 to 1.0</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> resume()<a class="bookmark" name="func-audio-sound-resume" href="#func-audio-sound-resume">[link]</a></h2>
+<div class="itembox">
+<p class="description">Resumes a sound that has been paused.</p>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> setPan(value)<a class="bookmark" name="func-audio-sound-setpan" href="#func-audio-sound-setpan">[link]</a></h2>
+<div class="itembox">
+<p class="description">Sets the pan value for this sound. Pan is not always supported by the platform, in which case this function will do nothing.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">float</td>
+<td class="description"><p class="description">The pan value as a ratio from -1.0 to 1.0. 0.0 represents a centered sound, while -1 will play exclusively from the left speak and 1 will play from the right speaker.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> setVolume(ratio)<a class="bookmark" name="func-audio-sound-setvolume" href="#func-audio-sound-setvolume">[link]</a></h2>
+<div class="itembox">
+<p class="description">Sets the volume of the currently playing sound. See also Audio.SoundResource.setDefaultVolume.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">ratio</td>
+<td class="codefont argtype">float</td>
+<td class="description"><p class="description">A volume ratio between 0.0 and 1.0</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> stop()<a class="bookmark" name="func-audio-sound-stop" href="#func-audio-sound-stop">[link]</a></h2>
+<div class="itembox">
+<p class="description">Stops a sound that is playing. It cannot be resumed. If you want to resume playback, use pause() instead.</p>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> SoundResource<a class="bookmark" name="class-audio-soundresource" href="#class-audio-soundresource">[link]</a></h1>
+<div class="itembox">
+<p class="description">Represents a file that can be played as a sound effect.</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getDefaultVolume()<a class="bookmark" name="func-audio-soundresource-getdefaultvolume" href="#func-audio-soundresource-getdefaultvolume">[link]</a></h2>
+<div class="itembox">
+<p class="description">Gets the default volume ratio for Audio.Sound objects that are played from this resource.</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">float</td><td class="description"><p class="description">Volume ratio from 0.0 to 1.0.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> loadFromFile(path)<a class="bookmark" name="func-audio-soundresource-loadfromfile" href="#func-audio-soundresource-loadfromfile">[link]</a></h2>
+<div class="itembox">
+<p class="description">Creates a new Audio.SoundResource instance for the given file.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">Absolute or relative path to a sound file on the local disk.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> loadFromResource(path)<a class="bookmark" name="func-audio-soundresource-loadfromresource" href="#func-audio-soundresource-loadfromresource">[link]</a></h2>
+<div class="itembox">
+<p class="description">Creates a new Audio.SoundResource instance for the given bundled resource.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">Path to a bundled resource</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> play(pan)<a class="bookmark" name="func-audio-soundresource-play" href="#func-audio-soundresource-play">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Plays this SoundResource.
 					Returns a handle to a Audio.Sound instance which represents the current playback session. 
 					This handle can be used to pause the sound or change attributes of the playback such as volume and pan.
 					Ignoring this handle is okay as well, if you want the sound to play normally without changing attributes or pausing it.
 					You can optionally also pass in a default pan value to control which speakers this sound plays from (rather than adjusting it while it's playing).
-				</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">pan</td><td class="codefont argtype">float</td><td class="codefont optional">Optional</td><td class="description"><p class="description">Default pan value for playing this sound.</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">Audio.Sound</td><td class="description"><p class="description">A reference to the Sound scoped to this playback instance that can be used to pause, change volume, change pan, etc.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> setDefaultVolume(ratio)<a class="bookmark" name="func-audio-soundresource-setdefaultvolume" href="#func-audio-soundresource-setdefaultvolume">[link]</a></h2><div class="itembox"><p class="description">Sets the default volume ratio for Audio.Sound objects that are played from this resource.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">ratio</td><td class="codefont argtype">float</td><td class="description"><p class="description">A volume ratio from 0.0 to 1.0.</p></td></tr></tbody></table></div></div></div></div></div></body></html>
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">pan</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">Default pan value for playing this sound.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Audio.Sound</td><td class="description"><p class="description">A reference to the Sound scoped to this playback instance that can be used to pause, change volume, change pan, etc.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> setDefaultVolume(ratio)<a class="bookmark" name="func-audio-soundresource-setdefaultvolume" href="#func-audio-soundresource-setdefaultvolume">[link]</a></h2>
+<div class="itembox">
+<p class="description">Sets the default volume ratio for Audio.Sound objects that are played from this resource.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">ratio</td>
+<td class="codefont argtype">float</td>
+<td class="description"><p class="description">A volume ratio from 0.0 to 1.0.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

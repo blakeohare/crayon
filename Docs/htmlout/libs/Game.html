@@ -15,20 +15,737 @@ td.optional { color:#000; font-weight:bold; }
 a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
 a.bookmark:hover { color:#08a; }
 p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
-.keyword { font-weight:normal; }</style><h1>Game</h1><div class="itembox"><p class="description"></p></div><ul><li><span class="codefont">namespace</span> Game<ul><li><a href="#enum-game-eventbutton"><span class="codefont">enum</span> EventButton</a></li><li><a href="#enum-game-eventquittype"><span class="codefont">enum</span> EventQuitType</a></li><li><a href="#enum-game-eventtype"><span class="codefont">enum</span> EventType</a></li><li><a href="#enum-game-keyboardkey"><span class="codefont">enum</span> KeyboardKey</a></li><li><a href="#class-game-event"><span class="codefont">class</span> Event</a></li><li><a href="#class-game-gamewindow"><span class="codefont">class</span> GameWindow</a><ul><li><a href="#constructor-game-gamewindow"><span class="codefont">constructor</span>(title, fps, width, height, screenWidth, screenHeight)</a></li><li><a href="#func-game-gamewindow-clocktick"><span class="codefont">function</span> clockTick()</a></li><li><a href="#func-game-gamewindow-pumpevents"><span class="codefont">function</span> pumpEvents()</a></li><li><a href="#func-game-gamewindow-settitle"><span class="codefont">function</span> setTitle(title)</a></li></ul></li><li><a href="#class-game-keyevent"><span class="codefont">class</span> KeyEvent</a></li><li><a href="#class-game-mouseclickevent"><span class="codefont">class</span> MouseClickEvent</a></li><li><a href="#class-game-mouseevent"><span class="codefont">class</span> MouseEvent</a></li><li><a href="#class-game-mousemoveevent"><span class="codefont">class</span> MouseMoveEvent</a></li><li><a href="#class-game-mousescrollevent"><span class="codefont">class</span> MouseScrollEvent</a></li><li><a href="#class-game-quitevent"><span class="codefont">class</span> QuitEvent</a></li></ul></li></ul><div class="itembox"><h1><span class="keyword">enum</span> EventButton<a class="bookmark" name="enum-game-eventbutton" href="#enum-game-eventbutton">[link]</a></h1><p class="description">Enum for describing the button on mouse-based events.</p><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Description</th></thead><tbody><tr><td class="codefont argname">LEFT</td><td class="description"><p class="description">Mouse left button.</p></td></tr><tr><td class="codefont argname">RIGHT</td><td class="description"><p class="description">Mouse right button.</p></td></tr></tbody></table></div></div><div class="itembox"><h1><span class="keyword">enum</span> EventQuitType<a class="bookmark" name="enum-game-eventquittype" href="#enum-game-eventquittype">[link]</a></h1><p class="description">Enum for specifically describing how a quit event was generated.</p><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Description</th></thead><tbody><tr><td class="codefont argname">ALT_F4</td><td class="description"><p class="description">Quit event type for when user presses Alt + F4.</p></td></tr><tr><td class="codefont argname">CLOSE_BUTTON</td><td class="description"><p class="description">Quit event when user presses the close button in the window chrome.</p></td></tr><tr><td class="codefont argname">BACK_BUTTON</td><td class="description"><p class="description">Quit event when user presses the hardware back button.</p></td></tr></tbody></table></div></div><div class="itembox"><h1><span class="keyword">enum</span> EventType<a class="bookmark" name="enum-game-eventtype" href="#enum-game-eventtype">[link]</a></h1><p class="description">Describes the type of the event.</p><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Description</th></thead><tbody><tr><td class="codefont argname">QUIT</td><td class="description"><p class="description">Type of an event fired when the user attempts to close the program. This type is associated with the Game.QuitEvent class.</p></td></tr><tr><td class="codefont argname">KEY_DOWN</td><td class="description"><p class="description">Type of an event for when the user presses a key on the keyboard. This type is associated with the Game.KeyEvent class.</p></td></tr><tr><td class="codefont argname">KEY_UP</td><td class="description"><p class="description">Type of an event for when the user releases a key on the keyboard. This type is associated with the Game.KeyEvent class.</p></td></tr><tr><td class="codefont argname">MOUSE_LEFT_DOWN</td><td class="description"><p class="description">Type of an event for when the user presses the left mouse button. This type is associated with the Game.MouseClickEvent class.</p></td></tr><tr><td class="codefont argname">MOUSE_LEFT_UP</td><td class="description"><p class="description">Type of an event for when the user releases the left mouse button. This type is associated with the Game.MouseClickEvent class.</p></td></tr><tr><td class="codefont argname">MOUSE_RIGHT_DOWN</td><td class="description"><p class="description">Type of an event for when the user presses the right mouse button. This type is associated with the Game.MouseClickEvent class.</p></td></tr><tr><td class="codefont argname">MOUSE_RIGHT_UP</td><td class="description"><p class="description">Type of an event for when the user releases the right mouse button. This type is associated with the Game.MouseClickEvent class.</p></td></tr><tr><td class="codefont argname">MOUSE_MOVE</td><td class="description"><p class="description">Type of an event for when the mouse moves. This type is associated with the Game.MouseMoveEvent class.</p></td></tr><tr><td class="codefont argname">MOUSE_SCROLL</td><td class="description"><p class="description">Type of an event for when the mouse wheel is scrolled. This type is associated with the Game.MouseScrollEvent class.</p></td></tr><tr><td class="codefont argname">GAMEPAD_HARDWARE</td><td class="description"><p class="description">Type of an event when a gamepad button or axis' state has been modified.</p></td></tr><tr><td class="codefont argname">GAMEPAD</td><td class="description"><p class="description">Type of an event when a gamepad button or axis that has been configured has been modified.</p></td></tr></tbody></table></div></div><div class="itembox"><h1><span class="keyword">enum</span> KeyboardKey<a class="bookmark" name="enum-game-keyboardkey" href="#enum-game-keyboardkey">[link]</a></h1><p class="description">Enum representing keys on a standard US keyboard.</p><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Description</th></thead><tbody><tr><td class="codefont argname">A</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">ALT</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">APOSTROPHE</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">B</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">BACKSLASH</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">BACKSPACE</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">BACKTICK</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">C</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">CAPS_LOCK</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">CLOSE_BRACKET</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">COMMA</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">CONTEXT_MENU</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">CTRL</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">D</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">DELETE</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">DOWN</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">E</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">END</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">ENTER</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">EQUALS</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">ESCAPE</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">F</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">F1</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">F2</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">F3</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">F4</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">F5</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">F6</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">F7</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">F8</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">F9</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">F10</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">F11</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">F12</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">G</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">H</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">HOME</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">HYPHEN</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">I</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">INSERT</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">J</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">K</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">L</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">LEFT</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">M</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">N</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">NUM_0</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">NUM_1</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">NUM_2</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">NUM_3</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">NUM_4</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">NUM_5</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">NUM_6</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">NUM_7</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">NUM_8</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">NUM_9</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">NUM_LOCK</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">O</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">OPEN_BRACKET</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">OS_COMMAND</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">P</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">PAGE_DOWN</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">PAGE_UP</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">PAUSE</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">PERIOD</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">PRINT_SCREEN</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">Q</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">R</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">RIGHT</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">S</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">SCROLL_LOCK</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">SEMICOLON</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">SHIFT</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">SLASH</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">SPACE</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">T</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">TAB</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">U</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">UP</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">V</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">W</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">X</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">Y</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">Z</td><td class="description"><p class="description"></p></td></tr></tbody></table></div></div><div><h1><span class="keyword">class</span> Event<a class="bookmark" name="class-game-event" href="#class-game-event">[link]</a></h1><div class="itembox"><p class="description">Base abstract class of all game events. See the more specific class for more useful information.</p></div><div class="itembox"><h2>Fields</h2><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argname">.type<a name="field-game-event-type"></a></td><td class="codefont argtype">Game.EventType</td><td class="description"><p class="description">Indicates which specific type of event this is.</p></td></tr></tbody></table></div></div></div><div><h1><span class="keyword">class</span> GameWindow<a class="bookmark" name="class-game-gamewindow" href="#class-game-gamewindow">[link]</a></h1><div class="itembox"><p class="description">
+.keyword { font-weight:normal; }</style><h1>Game</h1><div class="itembox">
+<p class="description"></p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> Game<ul>
+<li><a href="#enum-game-eventbutton"><span class="codefont">enum</span> EventButton</a></li>
+<li><a href="#enum-game-eventquittype"><span class="codefont">enum</span> EventQuitType</a></li>
+<li><a href="#enum-game-eventtype"><span class="codefont">enum</span> EventType</a></li>
+<li><a href="#enum-game-keyboardkey"><span class="codefont">enum</span> KeyboardKey</a></li>
+<li><a href="#class-game-event"><span class="codefont">class</span> Event</a></li>
+<li><a href="#class-game-gamewindow"><span class="codefont">class</span> GameWindow</a><ul>
+<li><a href="#constructor-game-gamewindow"><span class="codefont">constructor</span>(title, fps, width, height, screenWidth, screenHeight)</a></li>
+<li><a href="#func-game-gamewindow-clocktick"><span class="codefont">function</span> clockTick()</a></li>
+<li><a href="#func-game-gamewindow-pumpevents"><span class="codefont">function</span> pumpEvents()</a></li>
+<li><a href="#func-game-gamewindow-settitle"><span class="codefont">function</span> setTitle(title)</a></li>
+</ul>
+</li>
+<li><a href="#class-game-keyevent"><span class="codefont">class</span> KeyEvent</a></li>
+<li><a href="#class-game-mouseclickevent"><span class="codefont">class</span> MouseClickEvent</a></li>
+<li><a href="#class-game-mouseevent"><span class="codefont">class</span> MouseEvent</a></li>
+<li><a href="#class-game-mousemoveevent"><span class="codefont">class</span> MouseMoveEvent</a></li>
+<li><a href="#class-game-mousescrollevent"><span class="codefont">class</span> MouseScrollEvent</a></li>
+<li><a href="#class-game-quitevent"><span class="codefont">class</span> QuitEvent</a></li>
+</ul>
+</li>
+</ul>
+<div class="itembox">
+<h1><span class="keyword">enum</span> EventButton<a class="bookmark" name="enum-game-eventbutton" href="#enum-game-eventbutton">[link]</a></h1>
+<p class="description">Enum for describing the button on mouse-based events.</p>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">LEFT</td>
+<td class="description"><p class="description">Mouse left button.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">RIGHT</td>
+<td class="description"><p class="description">Mouse right button.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="itembox">
+<h1><span class="keyword">enum</span> EventQuitType<a class="bookmark" name="enum-game-eventquittype" href="#enum-game-eventquittype">[link]</a></h1>
+<p class="description">Enum for specifically describing how a quit event was generated.</p>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">ALT_F4</td>
+<td class="description"><p class="description">Quit event type for when user presses Alt + F4.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">CLOSE_BUTTON</td>
+<td class="description"><p class="description">Quit event when user presses the close button in the window chrome.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">BACK_BUTTON</td>
+<td class="description"><p class="description">Quit event when user presses the hardware back button.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="itembox">
+<h1><span class="keyword">enum</span> EventType<a class="bookmark" name="enum-game-eventtype" href="#enum-game-eventtype">[link]</a></h1>
+<p class="description">Describes the type of the event.</p>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">QUIT</td>
+<td class="description"><p class="description">Type of an event fired when the user attempts to close the program. This type is associated with the Game.QuitEvent class.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">KEY_DOWN</td>
+<td class="description"><p class="description">Type of an event for when the user presses a key on the keyboard. This type is associated with the Game.KeyEvent class.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">KEY_UP</td>
+<td class="description"><p class="description">Type of an event for when the user releases a key on the keyboard. This type is associated with the Game.KeyEvent class.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">MOUSE_LEFT_DOWN</td>
+<td class="description"><p class="description">Type of an event for when the user presses the left mouse button. This type is associated with the Game.MouseClickEvent class.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">MOUSE_LEFT_UP</td>
+<td class="description"><p class="description">Type of an event for when the user releases the left mouse button. This type is associated with the Game.MouseClickEvent class.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">MOUSE_RIGHT_DOWN</td>
+<td class="description"><p class="description">Type of an event for when the user presses the right mouse button. This type is associated with the Game.MouseClickEvent class.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">MOUSE_RIGHT_UP</td>
+<td class="description"><p class="description">Type of an event for when the user releases the right mouse button. This type is associated with the Game.MouseClickEvent class.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">MOUSE_MOVE</td>
+<td class="description"><p class="description">Type of an event for when the mouse moves. This type is associated with the Game.MouseMoveEvent class.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">MOUSE_SCROLL</td>
+<td class="description"><p class="description">Type of an event for when the mouse wheel is scrolled. This type is associated with the Game.MouseScrollEvent class.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">GAMEPAD_HARDWARE</td>
+<td class="description"><p class="description">Type of an event when a gamepad button or axis' state has been modified.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">GAMEPAD</td>
+<td class="description"><p class="description">Type of an event when a gamepad button or axis that has been configured has been modified.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="itembox">
+<h1><span class="keyword">enum</span> KeyboardKey<a class="bookmark" name="enum-game-keyboardkey" href="#enum-game-keyboardkey">[link]</a></h1>
+<p class="description">Enum representing keys on a standard US keyboard.</p>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">A</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">ALT</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">APOSTROPHE</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">B</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">BACKSLASH</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">BACKSPACE</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">BACKTICK</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">C</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">CAPS_LOCK</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">CLOSE_BRACKET</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">COMMA</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">CONTEXT_MENU</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">CTRL</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">D</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">DELETE</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">DOWN</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">E</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">END</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">ENTER</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">EQUALS</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">ESCAPE</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">F</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">F1</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">F2</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">F3</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">F4</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">F5</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">F6</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">F7</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">F8</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">F9</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">F10</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">F11</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">F12</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">G</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">H</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">HOME</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">HYPHEN</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">I</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">INSERT</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">J</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">K</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">L</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">LEFT</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">M</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">N</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">NUM_0</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">NUM_1</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">NUM_2</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">NUM_3</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">NUM_4</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">NUM_5</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">NUM_6</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">NUM_7</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">NUM_8</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">NUM_9</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">NUM_LOCK</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">O</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">OPEN_BRACKET</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">OS_COMMAND</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">P</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">PAGE_DOWN</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">PAGE_UP</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">PAUSE</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">PERIOD</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">PRINT_SCREEN</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">Q</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">R</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">RIGHT</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">S</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">SCROLL_LOCK</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">SEMICOLON</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">SHIFT</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">SLASH</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">SPACE</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">T</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">TAB</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">U</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">UP</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">V</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">W</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">X</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">Y</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">Z</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> Event<a class="bookmark" name="class-game-event" href="#class-game-event">[link]</a></h1>
+<div class="itembox">
+<p class="description">Base abstract class of all game events. See the more specific class for more useful information.</p>
+</div>
+<div class="itembox">
+<h2>Fields</h2>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">.type<a name="field-game-event-type"></a></td>
+<td class="codefont argtype">Game.EventType</td>
+<td class="description"><p class="description">Indicates which specific type of event this is.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> GameWindow<a class="bookmark" name="class-game-gamewindow" href="#class-game-gamewindow">[link]</a></h1>
+<div class="itembox">
+<p class="description">
 				Represents the game window or the browser frame or mobile screen.
 				Manages the size of the screen, frame rate, and user input.
 				For drawing graphical information to the screen, see the Graphics2D library.
-			</p></div><div class="itembox"><div><h2><span class="keyword">new</span> GameWindow(title, fps, width, height, screenWidth, screenHeight)<a class="bookmark" name="constructor-game-gamewindow" href="#constructor-game-gamewindow">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">new</span> GameWindow(title, fps, width, height, screenWidth, screenHeight)<a class="bookmark" name="constructor-game-gamewindow" href="#constructor-game-gamewindow">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Instantiates a new game window.
 					For most platforms this will open a window or initialize the rendering surface (e.g. JavaScript's canvas).
 					Furthermore, the screenWidth and screenHeight parameters may be ignored in platforms that don't have a notion of a dynamically sized window (such as mobile with a fixed-size strings).
 					Creation of the window will also automatically show the window (i.e. there are no .show() or .hide() methods).
-				</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">title</td><td class="codefont argtype">string</td><td class="codefont optional"></td><td class="description"><p class="description">The title to appear in the window (if supported by the platform). Certain platforms require a name before the VM has a chance to run (such as the setting the title of the HTML host page or the name of a mobile app. For these, use the title field in the build file.</p></td></tr><tr><td class="codefont argname">fps</td><td class="codefont argtype">float</td><td class="codefont optional"></td><td class="description"><p class="description">The desired frames per second for the game.</p></td></tr><tr><td class="codefont argname">width</td><td class="codefont argtype">integer</td><td class="codefont optional"></td><td class="description"><p class="description">Logical width of the window.</p></td></tr><tr><td class="codefont argname">height</td><td class="codefont argtype">integer</td><td class="codefont optional"></td><td class="description"><p class="description">Logical height of the window.</p></td></tr><tr><td class="codefont argname">screenWidth</td><td class="codefont argtype">integer</td><td class="codefont optional">Optional</td><td class="description"><p class="description">Actual width of the window. The image will be stretched to fit this size.</p></td></tr><tr><td class="codefont argname">screenHeight</td><td class="codefont argtype">integer</td><td class="codefont optional">Optional</td><td class="description"><p class="description">Actual height of the window. The image will be stretched to fit this size.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> clockTick()<a class="bookmark" name="func-game-gamewindow-clocktick" href="#func-game-gamewindow-clocktick">[link]</a></h2><div class="itembox"><p class="description">
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">title</td>
+<td class="codefont argtype">string</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">The title to appear in the window (if supported by the platform). Certain platforms require a name before the VM has a chance to run (such as the setting the title of the HTML host page or the name of a mobile app. For these, use the title field in the build file.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">fps</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">The desired frames per second for the game.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">width</td>
+<td class="codefont argtype">integer</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">Logical width of the window.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">height</td>
+<td class="codefont argtype">integer</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">Logical height of the window.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">screenWidth</td>
+<td class="codefont argtype">integer</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">Actual width of the window. The image will be stretched to fit this size.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">screenHeight</td>
+<td class="codefont argtype">integer</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">Actual height of the window. The image will be stretched to fit this size.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> clockTick()<a class="bookmark" name="func-game-gamewindow-clocktick" href="#func-game-gamewindow-clocktick">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Indicates that the frame has ended. 
 					This will cause the program to pause for an amount of time to maintain the frame rate.
-				</p></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> pumpEvents()<a class="bookmark" name="func-game-gamewindow-pumpevents" href="#func-game-gamewindow-pumpevents">[link]</a></h2><div class="itembox"><p class="description">
+				</p>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> pumpEvents()<a class="bookmark" name="func-game-gamewindow-pumpevents" href="#func-game-gamewindow-pumpevents">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Returns a list of events that have occurred since the last time pumpEvents was invoked.
-				</p><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">List of Event</td><td class="description"><p class="description">Returns a list of events</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> setTitle(title)<a class="bookmark" name="func-game-gamewindow-settitle" href="#func-game-gamewindow-settitle">[link]</a></h2><div class="itembox"><p class="description">
+				</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">List of Event</td><td class="description"><p class="description">Returns a list of events</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> setTitle(title)<a class="bookmark" name="func-game-gamewindow-settitle" href="#func-game-gamewindow-settitle">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Sets the title of the window to a new string, if possible.
-				</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">title</td><td class="codefont argtype">string</td><td class="description"><p class="description">the new title of the window</p></td></tr></tbody></table></div></div></div></div></div><div><h1><span class="keyword">class</span> KeyEvent<a class="bookmark" name="class-game-keyevent" href="#class-game-keyevent">[link]</a></h1><div class="itembox"><p class="description">Event that gets fired when a keyboard key is pressed or released.</p></div><div class="itembox"><h2>Fields</h2><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argname">.key<a name="field-game-keyevent-key"></a></td><td class="codefont argtype">Game.KeyboardKey</td><td class="description"><p class="description">The key that is pressed.</p></td></tr><tr><td class="codefont argname">.down<a name="field-game-keyevent-down"></a></td><td class="codefont argtype">boolean</td><td class="description"><p class="description">True if the key was pressed down.</p></td></tr></tbody></table></div></div></div><div><h1><span class="keyword">class</span> MouseClickEvent<a class="bookmark" name="class-game-mouseclickevent" href="#class-game-mouseclickevent">[link]</a></h1><div class="itembox"><p class="description">Event that gets fired when a mouse button is pressed or released.</p></div><div class="itembox"><h2>Fields</h2><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argname">.button<a name="field-game-mouseclickevent-button"></a></td><td class="codefont argtype">Game.EventButton</td><td class="description"><p class="description">The mouse button that was pressed or released.</p></td></tr><tr><td class="codefont argname">.down<a name="field-game-mouseclickevent-down"></a></td><td class="codefont argtype">boolean</td><td class="description"><p class="description">True if the mouse was pressed down. False if it is released.</p></td></tr></tbody></table></div></div></div><div><h1><span class="keyword">class</span> MouseEvent<a class="bookmark" name="class-game-mouseevent" href="#class-game-mouseevent">[link]</a></h1><div class="itembox"><p class="description">Event that gets fired when a mouse event occurs. This is an abstract base class for other more specific mouse events.</p></div><div class="itembox"><h2>Fields</h2><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argname">.x<a name="field-game-mouseevent-x"></a></td><td class="codefont argtype">integer</td><td class="description"><p class="description">X coordinate for the mouse event.</p></td></tr><tr><td class="codefont argname">.y<a name="field-game-mouseevent-y"></a></td><td class="codefont argtype">integer</td><td class="description"><p class="description">Y coordinate for the mouse event.</p></td></tr></tbody></table></div></div></div><div><h1><span class="keyword">class</span> MouseMoveEvent<a class="bookmark" name="class-game-mousemoveevent" href="#class-game-mousemoveevent">[link]</a></h1><div class="itembox"><p class="description">Event that gets fired when the mouse moves. Does not have any special fields since the X and Y values are in the base class.</p></div></div><div><h1><span class="keyword">class</span> MouseScrollEvent<a class="bookmark" name="class-game-mousescrollevent" href="#class-game-mousescrollevent">[link]</a></h1><div class="itembox"><p class="description">Event that gets fired when the scroll wheel is scrolled.</p></div><div class="itembox"><h2>Fields</h2><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argname">.amount<a name="field-game-mousescrollevent-amount"></a></td><td class="codefont argtype">float</td><td class="description"><p class="description">The amount that was scrolled.</p></td></tr></tbody></table></div></div></div><div><h1><span class="keyword">class</span> QuitEvent<a class="bookmark" name="class-game-quitevent" href="#class-game-quitevent">[link]</a></h1><div class="itembox"><p class="description">Event that gets fired when a quit attempt has occured, such clicking the close button or pressing Alt+F4.</p></div><div class="itembox"><h2>Fields</h2><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argname">.quitType<a name="field-game-quitevent-quittype"></a></td><td class="codefont argtype">Game.EventQuitType</td><td class="description"><p class="description">Enum value describing how this quit event was invoked.</p></td></tr></tbody></table></div></div></div></body></html>
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">title</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">the new title of the window</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> KeyEvent<a class="bookmark" name="class-game-keyevent" href="#class-game-keyevent">[link]</a></h1>
+<div class="itembox">
+<p class="description">Event that gets fired when a keyboard key is pressed or released.</p>
+</div>
+<div class="itembox">
+<h2>Fields</h2>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">.key<a name="field-game-keyevent-key"></a></td>
+<td class="codefont argtype">Game.KeyboardKey</td>
+<td class="description"><p class="description">The key that is pressed.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.down<a name="field-game-keyevent-down"></a></td>
+<td class="codefont argtype">boolean</td>
+<td class="description"><p class="description">True if the key was pressed down.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> MouseClickEvent<a class="bookmark" name="class-game-mouseclickevent" href="#class-game-mouseclickevent">[link]</a></h1>
+<div class="itembox">
+<p class="description">Event that gets fired when a mouse button is pressed or released.</p>
+</div>
+<div class="itembox">
+<h2>Fields</h2>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">.button<a name="field-game-mouseclickevent-button"></a></td>
+<td class="codefont argtype">Game.EventButton</td>
+<td class="description"><p class="description">The mouse button that was pressed or released.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.down<a name="field-game-mouseclickevent-down"></a></td>
+<td class="codefont argtype">boolean</td>
+<td class="description"><p class="description">True if the mouse was pressed down. False if it is released.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> MouseEvent<a class="bookmark" name="class-game-mouseevent" href="#class-game-mouseevent">[link]</a></h1>
+<div class="itembox">
+<p class="description">Event that gets fired when a mouse event occurs. This is an abstract base class for other more specific mouse events.</p>
+</div>
+<div class="itembox">
+<h2>Fields</h2>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">.x<a name="field-game-mouseevent-x"></a></td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">X coordinate for the mouse event.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.y<a name="field-game-mouseevent-y"></a></td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">Y coordinate for the mouse event.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> MouseMoveEvent<a class="bookmark" name="class-game-mousemoveevent" href="#class-game-mousemoveevent">[link]</a></h1>
+<div class="itembox">
+<p class="description">Event that gets fired when the mouse moves. Does not have any special fields since the X and Y values are in the base class.</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> MouseScrollEvent<a class="bookmark" name="class-game-mousescrollevent" href="#class-game-mousescrollevent">[link]</a></h1>
+<div class="itembox">
+<p class="description">Event that gets fired when the scroll wheel is scrolled.</p>
+</div>
+<div class="itembox">
+<h2>Fields</h2>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">.amount<a name="field-game-mousescrollevent-amount"></a></td>
+<td class="codefont argtype">float</td>
+<td class="description"><p class="description">The amount that was scrolled.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> QuitEvent<a class="bookmark" name="class-game-quitevent" href="#class-game-quitevent">[link]</a></h1>
+<div class="itembox">
+<p class="description">Event that gets fired when a quit attempt has occured, such clicking the close button or pressing Alt+F4.</p>
+</div>
+<div class="itembox">
+<h2>Fields</h2>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">.quitType<a name="field-game-quitevent-quittype"></a></td>
+<td class="codefont argtype">Game.EventQuitType</td>
+<td class="description"><p class="description">Enum value describing how this quit event was invoked.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</body></html>

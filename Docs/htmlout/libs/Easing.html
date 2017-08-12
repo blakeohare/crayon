@@ -15,26 +15,259 @@ td.optional { color:#000; font-weight:bold; }
 a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
 a.bookmark:hover { color:#08a; }
 p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
-.keyword { font-weight:normal; }</style><h1>Easing</h1><div class="itembox"><p class="description">Provides easing functions for various predefined equations and customizable functions as well.</p></div><ul><li><span class="codefont">namespace</span> Easing<ul><li><a href="#class-easing-easingfunction"><span class="codefont">class</span> EasingFunction</a><ul><li><a href="#constructor-easing-easingfunction"><span class="codefont">constructor</span>(functionPointer, intervals)</a></li><li><a href="#func-easing-easingfunction-ease"><span class="codefont">function</span> ease(start, end, current, duration, useIntegers)</a></li><li><a href="#func-easing-easingfunction-easein"><span class="codefont">function</span> easeIn(start, end, current, duration, useIntegers)</a></li><li><a href="#func-easing-easingfunction-easeout"><span class="codefont">function</span> easeOut(start, end, current, duration, useIntegers)</a></li></ul></li></ul></li></ul><div><h1><span class="keyword">class</span> EasingFunction<a class="bookmark" name="class-easing-easingfunction" href="#class-easing-easingfunction">[link]</a></h1><div class="itembox"><p class="description">
+.keyword { font-weight:normal; }</style><h1>Easing</h1><div class="itembox">
+<p class="description">Provides easing functions for various predefined equations and customizable functions as well.</p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> Easing<ul>
+<li><a href="#class-easing-easingfunction"><span class="codefont">class</span> EasingFunction</a><ul>
+<li><a href="#constructor-easing-easingfunction"><span class="codefont">constructor</span>(functionPointer, intervals)</a></li>
+<li><a href="#func-easing-easingfunction-ease"><span class="codefont">function</span> ease(start, end, current, duration, useIntegers)</a></li>
+<li><a href="#func-easing-easingfunction-easein"><span class="codefont">function</span> easeIn(start, end, current, duration, useIntegers)</a></li>
+<li><a href="#func-easing-easingfunction-easeout"><span class="codefont">function</span> easeOut(start, end, current, duration, useIntegers)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div>
+<h1><span class="keyword">class</span> EasingFunction<a class="bookmark" name="class-easing-easingfunction" href="#class-easing-easingfunction">[link]</a></h1>
+<div class="itembox">
+<p class="description">
 				Embodies an easing equation.
-			</p></div><div class="itembox"><h2>Fields</h2><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argname">.LINEAR<a name="field-easing-easingfunction-linear"></a></td><td class="codefont argtype">Easing.EasingFunction</td><td class="description"><p class="description">
+			</p>
+</div>
+<div class="itembox">
+<h2>Fields</h2>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">.LINEAR<a name="field-easing-easingfunction-linear"></a></td>
+<td class="codefont argtype">Easing.EasingFunction</td>
+<td class="description"><p class="description">
 					An easing function that follows a linear progression. Defined by the function f(t) = t for t = 0 to 1.
-				</p></td></tr><tr><td class="codefont argname">.QUADRATIC<a name="field-easing-easingfunction-quadratic"></a></td><td class="codefont argtype">Easing.EasingFunction</td><td class="description"><p class="description">
+				</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.QUADRATIC<a name="field-easing-easingfunction-quadratic"></a></td>
+<td class="codefont argtype">Easing.EasingFunction</td>
+<td class="description"><p class="description">
 					An easing function that follows a quadratic progression. Defined by the function f(t) = t^2 for t = 0 to 1.
-				</p></td></tr><tr><td class="codefont argname">.CUBIC<a name="field-easing-easingfunction-cubic"></a></td><td class="codefont argtype">Easing.EasingFunction</td><td class="description"><p class="description">
+				</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.CUBIC<a name="field-easing-easingfunction-cubic"></a></td>
+<td class="codefont argtype">Easing.EasingFunction</td>
+<td class="description"><p class="description">
 					An easing function that follows a cubic progression. Defined by the function f(t) = t^3 for t = 0 to 1.
-				</p></td></tr><tr><td class="codefont argname">.QUART<a name="field-easing-easingfunction-quart"></a></td><td class="codefont argtype">Easing.EasingFunction</td><td class="description"><p class="description">
+				</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.QUART<a name="field-easing-easingfunction-quart"></a></td>
+<td class="codefont argtype">Easing.EasingFunction</td>
+<td class="description"><p class="description">
 					An easing function that follows a quartic progression. Defined by the function f(t) = t^4 for t = 0 to 1.
-				</p></td></tr><tr><td class="codefont argname">.QUINT<a name="field-easing-easingfunction-quint"></a></td><td class="codefont argtype">Easing.EasingFunction</td><td class="description"><p class="description">
+				</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.QUINT<a name="field-easing-easingfunction-quint"></a></td>
+<td class="codefont argtype">Easing.EasingFunction</td>
+<td class="description"><p class="description">
 					An easing function that follows a quintic progression. Defined by the function f(t) = t^5 for t = 0 to 1.
-				</p></td></tr><tr><td class="codefont argname">.CIRCLE<a name="field-easing-easingfunction-circle"></a></td><td class="codefont argtype">Easing.EasingFunction</td><td class="description"><p class="description">
+				</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.CIRCLE<a name="field-easing-easingfunction-circle"></a></td>
+<td class="codefont argtype">Easing.EasingFunction</td>
+<td class="description"><p class="description">
 					An easing function that follows a circular progression. Defined by the function f(t) = sqrt(1 - t^2) for t = 0 to 1.
-				</p></td></tr><tr><td class="codefont argname">.SIN<a name="field-easing-easingfunction-sin"></a></td><td class="codefont argtype">Easing.EasingFunction</td><td class="description"><p class="description">
+				</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.SIN<a name="field-easing-easingfunction-sin"></a></td>
+<td class="codefont argtype">Easing.EasingFunction</td>
+<td class="description"><p class="description">
 					An easing function that follows the shape of a sine curve. Defined by the function f(t) = 1 - cos(t * pi / 2) for t = 0 to 1.
-				</p></td></tr><tr><td class="codefont argname">.ELASTIC<a name="field-easing-easingfunction-elastic"></a></td><td class="codefont argtype">Easing.EasingFunction</td><td class="description"><p class="description">
+				</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.ELASTIC<a name="field-easing-easingfunction-elastic"></a></td>
+<td class="codefont argtype">Easing.EasingFunction</td>
+<td class="description"><p class="description">
 					An easing function that follows an elastic behavior. Defined by a complicated function that can be seen in the source code.
-				</p></td></tr></tbody></table></div></div><div class="itembox"><div><h2><span class="keyword">new</span> EasingFunction(functionPointer, intervals)<a class="bookmark" name="constructor-easing-easingfunction" href="#constructor-easing-easingfunction">[link]</a></h2><div class="itembox"><p class="description">
+				</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">new</span> EasingFunction(functionPointer, intervals)<a class="bookmark" name="constructor-easing-easingfunction" href="#constructor-easing-easingfunction">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Creates a new EasingFunction instance based on a custom equation.
 					The function is sampled at even intervals to create a lookup table for optimal speed. 
 					This allows for fast run-time computations of easing for potentially complex equations.
-				</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">functionPointer</td><td class="codefont argtype">function</td><td class="codefont optional"></td><td class="description"><p class="description">A function that takes in a float value from 0 to 1 and returns a value typically in the range of 0 to 1, although it can go out of that range e.g. to achieve springiness.</p></td></tr><tr><td class="codefont argname">intervals</td><td class="codefont argtype">integer</td><td class="codefont optional">Optional</td><td class="description"><p class="description">The number of intervals to sample the given function. Default value is 100.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> ease(start, end, current, duration, useIntegers)<a class="bookmark" name="func-easing-easingfunction-ease" href="#func-easing-easingfunction-ease">[link]</a></h2><div class="itembox"><p class="description">Interpolates the value by using a compound function of the easeOut and easeIn functions.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">start</td><td class="codefont argtype">float</td><td class="codefont optional"></td><td class="description"><p class="description">A starting value</p></td></tr><tr><td class="codefont argname">end</td><td class="codefont argtype">float</td><td class="codefont optional"></td><td class="description"><p class="description">An ending value</p></td></tr><tr><td class="codefont argname">current</td><td class="codefont argtype">float</td><td class="codefont optional"></td><td class="description"><p class="description">The current point in time</p></td></tr><tr><td class="codefont argname">duration</td><td class="codefont argtype">float</td><td class="codefont optional"></td><td class="description"><p class="description">The length of the interpolation timeline</p></td></tr><tr><td class="codefont argname">useIntegers</td><td class="codefont argtype">boolean</td><td class="codefont optional">Optional</td><td class="description"><p class="description">If true, the output will be rounded to the closest integer. Default value is false.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> easeIn(start, end, current, duration, useIntegers)<a class="bookmark" name="func-easing-easingfunction-easein" href="#func-easing-easingfunction-easein">[link]</a></h2><div class="itembox"><p class="description">Interpolate two values by evaluating the easing function from 0 to 1</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">start</td><td class="codefont argtype">float</td><td class="codefont optional"></td><td class="description"><p class="description">A starting value</p></td></tr><tr><td class="codefont argname">end</td><td class="codefont argtype">float</td><td class="codefont optional"></td><td class="description"><p class="description">An ending value</p></td></tr><tr><td class="codefont argname">current</td><td class="codefont argtype">float</td><td class="codefont optional"></td><td class="description"><p class="description">The current point in time</p></td></tr><tr><td class="codefont argname">duration</td><td class="codefont argtype">float</td><td class="codefont optional"></td><td class="description"><p class="description">The length of the interpolation timeline</p></td></tr><tr><td class="codefont argname">useIntegers</td><td class="codefont argtype">boolean</td><td class="codefont optional">Optional</td><td class="description"><p class="description">If true, the output will be rounded to the closest integer. Default value is false.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> easeOut(start, end, current, duration, useIntegers)<a class="bookmark" name="func-easing-easingfunction-easeout" href="#func-easing-easingfunction-easeout">[link]</a></h2><div class="itembox"><p class="description">Interpolate two values by evaluating the easing function backwards from 1 to 0 and then transposing the output by subtracting it from 1.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">start</td><td class="codefont argtype">float</td><td class="codefont optional"></td><td class="description"><p class="description">A starting value</p></td></tr><tr><td class="codefont argname">end</td><td class="codefont argtype">float</td><td class="codefont optional"></td><td class="description"><p class="description">An ending value</p></td></tr><tr><td class="codefont argname">current</td><td class="codefont argtype">float</td><td class="codefont optional"></td><td class="description"><p class="description">The current point in time</p></td></tr><tr><td class="codefont argname">duration</td><td class="codefont argtype">float</td><td class="codefont optional"></td><td class="description"><p class="description">The length of the interpolation timeline</p></td></tr><tr><td class="codefont argname">useIntegers</td><td class="codefont argtype">boolean</td><td class="codefont optional">Optional</td><td class="description"><p class="description">If true, the output will be rounded to the closest integer. Default value is false.</p></td></tr></tbody></table></div></div></div></div></div></body></html>
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">functionPointer</td>
+<td class="codefont argtype">function</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">A function that takes in a float value from 0 to 1 and returns a value typically in the range of 0 to 1, although it can go out of that range e.g. to achieve springiness.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">intervals</td>
+<td class="codefont argtype">integer</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">The number of intervals to sample the given function. Default value is 100.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> ease(start, end, current, duration, useIntegers)<a class="bookmark" name="func-easing-easingfunction-ease" href="#func-easing-easingfunction-ease">[link]</a></h2>
+<div class="itembox">
+<p class="description">Interpolates the value by using a compound function of the easeOut and easeIn functions.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">start</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">A starting value</p></td>
+</tr>
+<tr>
+<td class="codefont argname">end</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">An ending value</p></td>
+</tr>
+<tr>
+<td class="codefont argname">current</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">The current point in time</p></td>
+</tr>
+<tr>
+<td class="codefont argname">duration</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">The length of the interpolation timeline</p></td>
+</tr>
+<tr>
+<td class="codefont argname">useIntegers</td>
+<td class="codefont argtype">boolean</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">If true, the output will be rounded to the closest integer. Default value is false.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> easeIn(start, end, current, duration, useIntegers)<a class="bookmark" name="func-easing-easingfunction-easein" href="#func-easing-easingfunction-easein">[link]</a></h2>
+<div class="itembox">
+<p class="description">Interpolate two values by evaluating the easing function from 0 to 1</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">start</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">A starting value</p></td>
+</tr>
+<tr>
+<td class="codefont argname">end</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">An ending value</p></td>
+</tr>
+<tr>
+<td class="codefont argname">current</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">The current point in time</p></td>
+</tr>
+<tr>
+<td class="codefont argname">duration</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">The length of the interpolation timeline</p></td>
+</tr>
+<tr>
+<td class="codefont argname">useIntegers</td>
+<td class="codefont argtype">boolean</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">If true, the output will be rounded to the closest integer. Default value is false.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> easeOut(start, end, current, duration, useIntegers)<a class="bookmark" name="func-easing-easingfunction-easeout" href="#func-easing-easingfunction-easeout">[link]</a></h2>
+<div class="itembox">
+<p class="description">Interpolate two values by evaluating the easing function backwards from 1 to 0 and then transposing the output by subtracting it from 1.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">start</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">A starting value</p></td>
+</tr>
+<tr>
+<td class="codefont argname">end</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">An ending value</p></td>
+</tr>
+<tr>
+<td class="codefont argname">current</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">The current point in time</p></td>
+</tr>
+<tr>
+<td class="codefont argname">duration</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">The length of the interpolation timeline</p></td>
+</tr>
+<tr>
+<td class="codefont argname">useIntegers</td>
+<td class="codefont argtype">boolean</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">If true, the output will be rounded to the closest integer. Default value is false.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

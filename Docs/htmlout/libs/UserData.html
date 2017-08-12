@@ -15,7 +15,8 @@ td.optional { color:#000; font-weight:bold; }
 a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
 a.bookmark:hover { color:#08a; }
 p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
-.keyword { font-weight:normal; }</style><h1>UserData</h1><div class="itembox"><p class="description">
+.keyword { font-weight:normal; }</style><h1>UserData</h1><div class="itembox">
+<p class="description">
 		This library's API roughly matches the API of the FileIO library.
 		Provides basic functions for interacting with the local user-persisted-and-sandboxed file system.
 		Generally each platform provides a directory or some data store that is persisted just for the current user or app session.
@@ -23,4 +24,511 @@ p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
 		For OSX and linux, this is the app's .-prefixed directory under ~/.
 		For JavaScript, this library will create a virtual file system that is persisted over the localStorage object.
 		All operations are virtualized and sandboxed over this directory, treating it as an empty file system.
-	</p></div><ul><li><span class="codefont">namespace</span> UserData<ul><li><a href="#func-userdata-currentdirectory"><span class="codefont">function</span> currentDirectory()</a></li><li><a href="#func-userdata-directorycreate"><span class="codefont">function</span> directoryCreate(path, makeParents)</a></li><li><a href="#func-userdata-directorydelete"><span class="codefont">function</span> directoryDelete(path)</a></li><li><a href="#func-userdata-directoryexists"><span class="codefont">function</span> directoryExists(path)</a></li><li><a href="#func-userdata-directorylist"><span class="codefont">function</span> directoryList(path, includeFullPath)</a></li><li><a href="#func-userdata-directorymove"><span class="codefont">function</span> directoryMove(pathFrom, pathTo)</a></li><li><a href="#func-userdata-filecopy"><span class="codefont">function</span> fileCopy(pathFrom, pathTo, allowOverwrite)</a></li><li><a href="#func-userdata-filedelete"><span class="codefont">function</span> fileDelete(path)</a></li><li><a href="#func-userdata-fileexists"><span class="codefont">function</span> fileExists(path)</a></li><li><a href="#func-userdata-filemove"><span class="codefont">function</span> fileMove(pathFrom, pathTo, allowOverwrite)</a></li><li><a href="#func-userdata-filereadbytes"><span class="codefont">function</span> fileReadBytes(path)</a></li><li><a href="#func-userdata-filereadlines"><span class="codefont">function</span> fileReadLines(path)</a></li><li><a href="#func-userdata-filereadtext"><span class="codefont">function</span> fileReadText(path)</a></li><li><a href="#func-userdata-filewritebytes"><span class="codefont">function</span> fileWriteBytes(path, bytes)</a></li><li><a href="#func-userdata-filewritetext"><span class="codefont">function</span> fileWriteText(path, content, encoding)</a></li><li><a href="#func-userdata-getpathinfo"><span class="codefont">function</span> getPathInfo(path)</a></li><li><a href="#func-userdata-pathexists"><span class="codefont">function</span> pathExists(path)</a></li><li><a href="#func-userdata-pathjoin"><span class="codefont">function</span> pathJoin(parts)</a></li></ul></li></ul><div class="itembox"><div><h2><span class="keyword">function</span> currentDirectory()<a class="bookmark" name="func-userdata-currentdirectory" href="#func-userdata-currentdirectory">[link]</a></h2><div class="itembox"><p class="description">Returns the root of the virtualized sandboxed file system. This is actually a hard coded string and returns a '/' every time.</p></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> directoryCreate(path, makeParents)<a class="bookmark" name="func-userdata-directorycreate" href="#func-userdata-directorycreate">[link]</a></h2><div class="itembox"><p class="description">Creates a new directory</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">path</td><td class="codefont argtype">string</td><td class="codefont optional"></td><td class="description"><p class="description">an absolute or relative path to create</p></td></tr><tr><td class="codefont argname">makeParents</td><td class="codefont argtype">boolean</td><td class="codefont optional">Optional</td><td class="description"><p class="description">true if parent directories should be created if already not present</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> directoryDelete(path)<a class="bookmark" name="func-userdata-directorydelete" href="#func-userdata-directorydelete">[link]</a></h2><div class="itembox"><p class="description">Deletes a directory</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">path</td><td class="codefont argtype">string</td><td class="description"><p class="description">an absolute or relative path of a directory to delete</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> directoryExists(path)<a class="bookmark" name="func-userdata-directoryexists" href="#func-userdata-directoryexists">[link]</a></h2><div class="itembox"><p class="description">Checks to see if a directory exists.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">path</td><td class="codefont argtype">string</td><td class="description"><p class="description">an absolute or relative path</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">True if the path exists and is a directory (not a file).</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> directoryList(path, includeFullPath)<a class="bookmark" name="func-userdata-directorylist" href="#func-userdata-directorylist">[link]</a></h2><div class="itembox"><p class="description">Returns a list of files and subdirectories in a given directory</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">path</td><td class="codefont argtype">string</td><td class="codefont optional"></td><td class="description"><p class="description">an absolute or relative path</p></td></tr><tr><td class="codefont argname">includeFullPath</td><td class="codefont argtype">boolean</td><td class="codefont optional">Optional</td><td class="description"><p class="description">true if absolute file paths should be returned. Otherwise, file names only are returned.</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">List of strings</td><td class="description"><p class="description">list of files</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> directoryMove(pathFrom, pathTo)<a class="bookmark" name="func-userdata-directorymove" href="#func-userdata-directorymove">[link]</a></h2><div class="itembox"><p class="description">Moves a directory and its contents to a new location.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">pathFrom</td><td class="codefont argtype">string</td><td class="description"><p class="description">an absolute or relative path of a directory to move</p></td></tr><tr><td class="codefont argname">pathTo</td><td class="codefont argtype">string</td><td class="description"><p class="description">an absolute or relative path of a location to move a directory to</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> fileCopy(pathFrom, pathTo, allowOverwrite)<a class="bookmark" name="func-userdata-filecopy" href="#func-userdata-filecopy">[link]</a></h2><div class="itembox"><p class="description">Copies a file to a new location. Optionally allows overwriting files.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">pathFrom</td><td class="codefont argtype">string</td><td class="codefont optional"></td><td class="description"><p class="description">an absolute or relative path of the original file location</p></td></tr><tr><td class="codefont argname">pathTo</td><td class="codefont argtype">string</td><td class="codefont optional"></td><td class="description"><p class="description">an absolute or relative path of the new file location</p></td></tr><tr><td class="codefont argname">allowOverwrite</td><td class="codefont argtype">boolean</td><td class="codefont optional">Optional</td><td class="description"><p class="description">true if overwriting existing files is okay</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> fileDelete(path)<a class="bookmark" name="func-userdata-filedelete" href="#func-userdata-filedelete">[link]</a></h2><div class="itembox"><p class="description">Deletes a file from disk</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">path</td><td class="codefont argtype">string</td><td class="description"><p class="description">an absolute or relative path</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> fileExists(path)<a class="bookmark" name="func-userdata-fileexists" href="#func-userdata-fileexists">[link]</a></h2><div class="itembox"><p class="description">Checks to see if a file exists.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">path</td><td class="codefont argtype">string</td><td class="description"><p class="description">an absolute or relative path</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">True if the path exists and is a file (not a directory).</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> fileMove(pathFrom, pathTo, allowOverwrite)<a class="bookmark" name="func-userdata-filemove" href="#func-userdata-filemove">[link]</a></h2><div class="itembox"><p class="description">Moves a file from one location to a new one. Optionally allows overwriting files.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">pathFrom</td><td class="codefont argtype">string</td><td class="codefont optional"></td><td class="description"><p class="description">an absolute or relative path of the original file location</p></td></tr><tr><td class="codefont argname">pathTo</td><td class="codefont argtype">string</td><td class="codefont optional"></td><td class="description"><p class="description">an absolute or relative path of the new file location</p></td></tr><tr><td class="codefont argname">allowOverwrite</td><td class="codefont argtype">boolean</td><td class="codefont optional">Optional</td><td class="description"><p class="description">true if overwriting existing files is okay</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> fileReadBytes(path)<a class="bookmark" name="func-userdata-filereadbytes" href="#func-userdata-filereadbytes">[link]</a></h2><div class="itembox"><p class="description">Returns a list of bytes in the file. These are unsigned numbers from 0 to 255.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">path</td><td class="codefont argtype">string</td><td class="description"><p class="description">an absolute or relative path</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">List of integers</td><td class="description"><p class="description">List of bytes</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> fileReadLines(path)<a class="bookmark" name="func-userdata-filereadlines" href="#func-userdata-filereadlines">[link]</a></h2><div class="itembox"><p class="description">Returns a list of lines in the file as a list of strings</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">path</td><td class="codefont argtype">string</td><td class="description"><p class="description">an absolute or relative path</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">List of strings</td><td class="description"><p class="description">List of lines in the file</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> fileReadText(path)<a class="bookmark" name="func-userdata-filereadtext" href="#func-userdata-filereadtext">[link]</a></h2><div class="itembox"><p class="description">Returns the file contents as a string</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">path</td><td class="codefont argtype">string</td><td class="description"><p class="description">an absolute or relative path</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">string</td><td class="description"><p class="description">file contents as a string</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> fileWriteBytes(path, bytes)<a class="bookmark" name="func-userdata-filewritebytes" href="#func-userdata-filewritebytes">[link]</a></h2><div class="itembox"><p class="description">Writes binary content to a file. Input must be a list of byte values that are either signed or unsigned.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">path</td><td class="codefont argtype">string</td><td class="description"><p class="description">an absolute or relative path</p></td></tr><tr><td class="codefont argname">bytes</td><td class="codefont argtype">List of integers</td><td class="description"><p class="description">List of bytes</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> fileWriteText(path, content, encoding)<a class="bookmark" name="func-userdata-filewritetext" href="#func-userdata-filewritetext">[link]</a></h2><div class="itembox"><p class="description">Writes text to a file</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">path</td><td class="codefont argtype">string</td><td class="codefont optional"></td><td class="description"><p class="description">an absolute or relative path</p></td></tr><tr><td class="codefont argname">content</td><td class="codefont argtype">string</td><td class="codefont optional"></td><td class="description"><p class="description">content to write to a file as a string</p></td></tr><tr><td class="codefont argname">encoding</td><td class="codefont argtype">FileIO.TextEncoding</td><td class="codefont optional">Optional</td><td class="description"><p class="description">encoding to use</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> getPathInfo(path)<a class="bookmark" name="func-userdata-getpathinfo" href="#func-userdata-getpathinfo">[link]</a></h2><div class="itembox"><p class="description">Returns a file descriptor.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">path</td><td class="codefont argtype">string</td><td class="description"><p class="description">an absolute or relative path</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">FileIOCommon.FileDescriptor</td><td class="description"><p class="description">File properties</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> pathExists(path)<a class="bookmark" name="func-userdata-pathexists" href="#func-userdata-pathexists">[link]</a></h2><div class="itembox"><p class="description">Checks to see if a path exists (either a file or a directory).</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">path</td><td class="codefont argtype">string</td><td class="description"><p class="description">an absolute or relative path</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">True if the path exists.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> pathJoin(parts)<a class="bookmark" name="func-userdata-pathjoin" href="#func-userdata-pathjoin">[link]</a></h2><div class="itembox"><p class="description">Joins a list of strings with the platform's default path delimiter.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">parts</td><td class="codefont argtype">List of strings</td><td class="description"><p class="description">strings to join</p></td></tr></tbody></table></div></div></div></div></body></html>
+	</p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> UserData<ul>
+<li><a href="#func-userdata-currentdirectory"><span class="codefont">function</span> currentDirectory()</a></li>
+<li><a href="#func-userdata-directorycreate"><span class="codefont">function</span> directoryCreate(path, makeParents)</a></li>
+<li><a href="#func-userdata-directorydelete"><span class="codefont">function</span> directoryDelete(path)</a></li>
+<li><a href="#func-userdata-directoryexists"><span class="codefont">function</span> directoryExists(path)</a></li>
+<li><a href="#func-userdata-directorylist"><span class="codefont">function</span> directoryList(path, includeFullPath)</a></li>
+<li><a href="#func-userdata-directorymove"><span class="codefont">function</span> directoryMove(pathFrom, pathTo)</a></li>
+<li><a href="#func-userdata-filecopy"><span class="codefont">function</span> fileCopy(pathFrom, pathTo, allowOverwrite)</a></li>
+<li><a href="#func-userdata-filedelete"><span class="codefont">function</span> fileDelete(path)</a></li>
+<li><a href="#func-userdata-fileexists"><span class="codefont">function</span> fileExists(path)</a></li>
+<li><a href="#func-userdata-filemove"><span class="codefont">function</span> fileMove(pathFrom, pathTo, allowOverwrite)</a></li>
+<li><a href="#func-userdata-filereadbytes"><span class="codefont">function</span> fileReadBytes(path)</a></li>
+<li><a href="#func-userdata-filereadlines"><span class="codefont">function</span> fileReadLines(path)</a></li>
+<li><a href="#func-userdata-filereadtext"><span class="codefont">function</span> fileReadText(path)</a></li>
+<li><a href="#func-userdata-filewritebytes"><span class="codefont">function</span> fileWriteBytes(path, bytes)</a></li>
+<li><a href="#func-userdata-filewritetext"><span class="codefont">function</span> fileWriteText(path, content, encoding)</a></li>
+<li><a href="#func-userdata-getpathinfo"><span class="codefont">function</span> getPathInfo(path)</a></li>
+<li><a href="#func-userdata-pathexists"><span class="codefont">function</span> pathExists(path)</a></li>
+<li><a href="#func-userdata-pathjoin"><span class="codefont">function</span> pathJoin(parts)</a></li>
+</ul>
+</li>
+</ul>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> currentDirectory()<a class="bookmark" name="func-userdata-currentdirectory" href="#func-userdata-currentdirectory">[link]</a></h2>
+<div class="itembox">
+<p class="description">Returns the root of the virtualized sandboxed file system. This is actually a hard coded string and returns a '/' every time.</p>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> directoryCreate(path, makeParents)<a class="bookmark" name="func-userdata-directorycreate" href="#func-userdata-directorycreate">[link]</a></h2>
+<div class="itembox">
+<p class="description">Creates a new directory</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">an absolute or relative path to create</p></td>
+</tr>
+<tr>
+<td class="codefont argname">makeParents</td>
+<td class="codefont argtype">boolean</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">true if parent directories should be created if already not present</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> directoryDelete(path)<a class="bookmark" name="func-userdata-directorydelete" href="#func-userdata-directorydelete">[link]</a></h2>
+<div class="itembox">
+<p class="description">Deletes a directory</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">an absolute or relative path of a directory to delete</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> directoryExists(path)<a class="bookmark" name="func-userdata-directoryexists" href="#func-userdata-directoryexists">[link]</a></h2>
+<div class="itembox">
+<p class="description">Checks to see if a directory exists.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">an absolute or relative path</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">True if the path exists and is a directory (not a file).</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> directoryList(path, includeFullPath)<a class="bookmark" name="func-userdata-directorylist" href="#func-userdata-directorylist">[link]</a></h2>
+<div class="itembox">
+<p class="description">Returns a list of files and subdirectories in a given directory</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">an absolute or relative path</p></td>
+</tr>
+<tr>
+<td class="codefont argname">includeFullPath</td>
+<td class="codefont argtype">boolean</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">true if absolute file paths should be returned. Otherwise, file names only are returned.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">List of strings</td><td class="description"><p class="description">list of files</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> directoryMove(pathFrom, pathTo)<a class="bookmark" name="func-userdata-directorymove" href="#func-userdata-directorymove">[link]</a></h2>
+<div class="itembox">
+<p class="description">Moves a directory and its contents to a new location.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">pathFrom</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">an absolute or relative path of a directory to move</p></td>
+</tr>
+<tr>
+<td class="codefont argname">pathTo</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">an absolute or relative path of a location to move a directory to</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fileCopy(pathFrom, pathTo, allowOverwrite)<a class="bookmark" name="func-userdata-filecopy" href="#func-userdata-filecopy">[link]</a></h2>
+<div class="itembox">
+<p class="description">Copies a file to a new location. Optionally allows overwriting files.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">pathFrom</td>
+<td class="codefont argtype">string</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">an absolute or relative path of the original file location</p></td>
+</tr>
+<tr>
+<td class="codefont argname">pathTo</td>
+<td class="codefont argtype">string</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">an absolute or relative path of the new file location</p></td>
+</tr>
+<tr>
+<td class="codefont argname">allowOverwrite</td>
+<td class="codefont argtype">boolean</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">true if overwriting existing files is okay</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fileDelete(path)<a class="bookmark" name="func-userdata-filedelete" href="#func-userdata-filedelete">[link]</a></h2>
+<div class="itembox">
+<p class="description">Deletes a file from disk</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">an absolute or relative path</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fileExists(path)<a class="bookmark" name="func-userdata-fileexists" href="#func-userdata-fileexists">[link]</a></h2>
+<div class="itembox">
+<p class="description">Checks to see if a file exists.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">an absolute or relative path</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">True if the path exists and is a file (not a directory).</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fileMove(pathFrom, pathTo, allowOverwrite)<a class="bookmark" name="func-userdata-filemove" href="#func-userdata-filemove">[link]</a></h2>
+<div class="itembox">
+<p class="description">Moves a file from one location to a new one. Optionally allows overwriting files.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">pathFrom</td>
+<td class="codefont argtype">string</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">an absolute or relative path of the original file location</p></td>
+</tr>
+<tr>
+<td class="codefont argname">pathTo</td>
+<td class="codefont argtype">string</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">an absolute or relative path of the new file location</p></td>
+</tr>
+<tr>
+<td class="codefont argname">allowOverwrite</td>
+<td class="codefont argtype">boolean</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">true if overwriting existing files is okay</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fileReadBytes(path)<a class="bookmark" name="func-userdata-filereadbytes" href="#func-userdata-filereadbytes">[link]</a></h2>
+<div class="itembox">
+<p class="description">Returns a list of bytes in the file. These are unsigned numbers from 0 to 255.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">an absolute or relative path</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">List of integers</td><td class="description"><p class="description">List of bytes</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fileReadLines(path)<a class="bookmark" name="func-userdata-filereadlines" href="#func-userdata-filereadlines">[link]</a></h2>
+<div class="itembox">
+<p class="description">Returns a list of lines in the file as a list of strings</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">an absolute or relative path</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">List of strings</td><td class="description"><p class="description">List of lines in the file</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fileReadText(path)<a class="bookmark" name="func-userdata-filereadtext" href="#func-userdata-filereadtext">[link]</a></h2>
+<div class="itembox">
+<p class="description">Returns the file contents as a string</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">an absolute or relative path</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">string</td><td class="description"><p class="description">file contents as a string</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fileWriteBytes(path, bytes)<a class="bookmark" name="func-userdata-filewritebytes" href="#func-userdata-filewritebytes">[link]</a></h2>
+<div class="itembox">
+<p class="description">Writes binary content to a file. Input must be a list of byte values that are either signed or unsigned.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">an absolute or relative path</p></td>
+</tr>
+<tr>
+<td class="codefont argname">bytes</td>
+<td class="codefont argtype">List of integers</td>
+<td class="description"><p class="description">List of bytes</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fileWriteText(path, content, encoding)<a class="bookmark" name="func-userdata-filewritetext" href="#func-userdata-filewritetext">[link]</a></h2>
+<div class="itembox">
+<p class="description">Writes text to a file</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">an absolute or relative path</p></td>
+</tr>
+<tr>
+<td class="codefont argname">content</td>
+<td class="codefont argtype">string</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">content to write to a file as a string</p></td>
+</tr>
+<tr>
+<td class="codefont argname">encoding</td>
+<td class="codefont argtype">FileIO.TextEncoding</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">encoding to use</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getPathInfo(path)<a class="bookmark" name="func-userdata-getpathinfo" href="#func-userdata-getpathinfo">[link]</a></h2>
+<div class="itembox">
+<p class="description">Returns a file descriptor.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">an absolute or relative path</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">FileIOCommon.FileDescriptor</td><td class="description"><p class="description">File properties</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> pathExists(path)<a class="bookmark" name="func-userdata-pathexists" href="#func-userdata-pathexists">[link]</a></h2>
+<div class="itembox">
+<p class="description">Checks to see if a path exists (either a file or a directory).</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">an absolute or relative path</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">True if the path exists.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> pathJoin(parts)<a class="bookmark" name="func-userdata-pathjoin" href="#func-userdata-pathjoin">[link]</a></h2>
+<div class="itembox">
+<p class="description">Joins a list of strings with the platform's default path delimiter.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">parts</td>
+<td class="codefont argtype">List of strings</td>
+<td class="description"><p class="description">strings to join</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</body></html>

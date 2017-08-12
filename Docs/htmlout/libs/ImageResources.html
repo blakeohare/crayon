@@ -15,23 +15,125 @@ td.optional { color:#000; font-weight:bold; }
 a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
 a.bookmark:hover { color:#08a; }
 p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
-.keyword { font-weight:normal; }</style><h1>ImageResources</h1><div class="itembox"><p class="description">
+.keyword { font-weight:normal; }</style><h1>ImageResources</h1><div class="itembox">
+<p class="description">
 		Library for loading image resources. Also abstracts auto-image sheet/atlas resources.
-	</p></div><ul><li><span class="codefont">namespace</span> ImageResources<ul><li><a href="#class-imageresources-imageloader"><span class="codefont">class</span> ImageLoader</a><ul><li><a href="#func-imageresources-imageloader-getimage"><span class="codefont">function</span> getImage()</a></li><li><a href="#func-imageresources-imageloader-isdone"><span class="codefont">function</span> isDone()</a></li><li><a href="#func-imageresources-imageloader-loadfromresources"><span class="codefont">static function</span> loadFromResources(resourcePath)</a></li><li><a href="#func-imageresources-imageloader-loadfromresourcesasync"><span class="codefont">static function</span> loadFromResourcesAsync(resourcePath)</a></li></ul></li><li><a href="#class-imageresources-imagenotfoundexception"><span class="codefont">class</span> ImageNotFoundException</a></li><li><a href="#class-imageresources-imageresource"><span class="codefont">class</span> ImageResource</a><ul><li><a href="#constructor-imageresources-imageresource"><span class="codefont">constructor</span>(width, height)</a></li><li><a href="#func-imageresources-imageresource-getheight"><span class="codefont">function</span> getHeight()</a></li><li><a href="#func-imageresources-imageresource-getwidth"><span class="codefont">function</span> getWidth()</a></li></ul></li><li><a href="#class-imageresources-imagesheet"><span class="codefont">class</span> ImageSheet</a><ul><li><a href="#func-imageresources-imagesheet-getfiles"><span class="codefont">function</span> getFiles()</a></li><li><a href="#func-imageresources-imagesheet-getimage"><span class="codefont">function</span> getImage(resourcePath)</a></li><li><a href="#func-imageresources-imagesheet-getprogress"><span class="codefont">function</span> getProgress()</a></li><li><a href="#func-imageresources-imagesheet-isdone"><span class="codefont">function</span> isDone()</a></li><li><a href="#func-imageresources-imagesheet-loadfromresources"><span class="codefont">static function</span> loadFromResources(idOrIds)</a></li><li><a href="#func-imageresources-imagesheet-loadfromresources"><span class="codefont">static function</span> loadFromResources(idOrIds)</a></li></ul></li><li><a href="#class-imageresources-loadfailedexception"><span class="codefont">class</span> LoadFailedException</a></li><li><a href="#class-imageresources-sheetnotfoundexception"><span class="codefont">class</span> SheetNotFoundException</a></li></ul></li></ul><div><h1><span class="keyword">class</span> ImageLoader<a class="bookmark" name="class-imageresources-imageloader" href="#class-imageresources-imageloader">[link]</a></h1><div class="itembox"><p class="description">
+	</p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> ImageResources<ul>
+<li><a href="#class-imageresources-imageloader"><span class="codefont">class</span> ImageLoader</a><ul>
+<li><a href="#func-imageresources-imageloader-getimage"><span class="codefont">function</span> getImage()</a></li>
+<li><a href="#func-imageresources-imageloader-isdone"><span class="codefont">function</span> isDone()</a></li>
+<li><a href="#func-imageresources-imageloader-loadfromresources"><span class="codefont">static function</span> loadFromResources(resourcePath)</a></li>
+<li><a href="#func-imageresources-imageloader-loadfromresourcesasync"><span class="codefont">static function</span> loadFromResourcesAsync(resourcePath)</a></li>
+</ul>
+</li>
+<li><a href="#class-imageresources-imagenotfoundexception"><span class="codefont">class</span> ImageNotFoundException</a></li>
+<li><a href="#class-imageresources-imageresource"><span class="codefont">class</span> ImageResource</a><ul>
+<li><a href="#constructor-imageresources-imageresource"><span class="codefont">constructor</span>(width, height)</a></li>
+<li><a href="#func-imageresources-imageresource-getheight"><span class="codefont">function</span> getHeight()</a></li>
+<li><a href="#func-imageresources-imageresource-getwidth"><span class="codefont">function</span> getWidth()</a></li>
+</ul>
+</li>
+<li><a href="#class-imageresources-imagesheet"><span class="codefont">class</span> ImageSheet</a><ul>
+<li><a href="#func-imageresources-imagesheet-getfiles"><span class="codefont">function</span> getFiles()</a></li>
+<li><a href="#func-imageresources-imagesheet-getimage"><span class="codefont">function</span> getImage(resourcePath)</a></li>
+<li><a href="#func-imageresources-imagesheet-getprogress"><span class="codefont">function</span> getProgress()</a></li>
+<li><a href="#func-imageresources-imagesheet-isdone"><span class="codefont">function</span> isDone()</a></li>
+<li><a href="#func-imageresources-imagesheet-loadfromresources"><span class="codefont">static function</span> loadFromResources(idOrIds)</a></li>
+<li><a href="#func-imageresources-imagesheet-loadfromresourcesasync"><span class="codefont">static function</span> loadFromResourcesAsync(idOrIds)</a></li>
+</ul>
+</li>
+<li><a href="#class-imageresources-loadfailedexception"><span class="codefont">class</span> LoadFailedException</a></li>
+<li><a href="#class-imageresources-sheetnotfoundexception"><span class="codefont">class</span> SheetNotFoundException</a></li>
+</ul>
+</li>
+</ul>
+<div>
+<h1><span class="keyword">class</span> ImageLoader<a class="bookmark" name="class-imageresources-imageloader" href="#class-imageresources-imageloader">[link]</a></h1>
+<div class="itembox">
+<p class="description">
 				Loads an ImageResource from the program's compile-time embedded resources.
-			</p></div><div class="itembox"><div><h2><span class="keyword">function</span> getImage()<a class="bookmark" name="func-imageresources-imageloader-getimage" href="#func-imageresources-imageloader-getimage">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getImage()<a class="bookmark" name="func-imageresources-imageloader-getimage" href="#func-imageresources-imageloader-getimage">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Returns the image once loading is complete. 
 					Code must call .isDone() before calling this method.
 					Even if the image has finished loading, this function will throw a 
 					Core.InvalidOperationException if .isDone() was never called. 
-				</p><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">ImageResources.ImageResource</td><td class="description"><p class="description">The image</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> isDone()<a class="bookmark" name="func-imageresources-imageloader-isdone" href="#func-imageresources-imageloader-isdone">[link]</a></h2><div class="itembox"><p class="description">
+				</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">ImageResources.ImageResource</td><td class="description"><p class="description">The image</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> isDone()<a class="bookmark" name="func-imageresources-imageloader-isdone" href="#func-imageresources-imageloader-isdone">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Returns true if the image has finished loading.
-				</p><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">true if loading is complete</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> loadFromResources(resourcePath)<a class="bookmark" name="func-imageresources-imageloader-loadfromresources" href="#func-imageresources-imageloader-loadfromresources">[link]</a></h2><div class="itembox"><p class="description">
+				</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">true if loading is complete</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> loadFromResources(resourcePath)<a class="bookmark" name="func-imageresources-imageloader-loadfromresources" href="#func-imageresources-imageloader-loadfromresources">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Loads a compile-time image resource synchronously and returns it.
 					To load an image asynchronously, use .loadFromResourcesAsync().
 					This function cannot be used for image resources that are consolidated into an image sheet, 
 					in which case, the ImageSheet class must be used instead for loading. 
-				</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">resourcePath</td><td class="codefont argtype">string</td><td class="description"><p class="description">Path to the image resource.</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">ImageResources.ImageResource</td><td class="description"><p class="description">An image resource object.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> loadFromResourcesAsync(resourcePath)<a class="bookmark" name="func-imageresources-imageloader-loadfromresourcesasync" href="#func-imageresources-imageloader-loadfromresourcesasync">[link]</a></h2><div class="itembox"><p class="description">
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">resourcePath</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">Path to the image resource.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">ImageResources.ImageResource</td><td class="description"><p class="description">An image resource object.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> loadFromResourcesAsync(resourcePath)<a class="bookmark" name="func-imageresources-imageloader-loadfromresourcesasync" href="#func-imageresources-imageloader-loadfromresourcesasync">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Loads a compile-time image resource asynchronously and returns the loader object that can be queried for
 					status or the final result.
 					To check load progress, use .isDone().
@@ -39,15 +141,129 @@ p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
 					To load an image synchronously and get an ImageResource instance directly, use .loadFromResources().
 					This function cannot be used for image resources that are consolidated into an image sheet, 
 					in which case, the ImageSheet class must be used instead for loading. 
-				</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">resourcePath</td><td class="codefont argtype">string</td><td class="description"><p class="description">Path to the image resource.</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">ImageResources.ImageLoader</td><td class="description"><p class="description">A reference to a new loader object.</p></td></tr></tbody></table></div></div></div></div></div><div><h1><span class="keyword">class</span> ImageNotFoundException<a class="bookmark" name="class-imageresources-imagenotfoundexception" href="#class-imageresources-imagenotfoundexception">[link]</a></h1><div class="itembox"><p class="description">Exception thrown when an image path does not exist.</p></div><div class="itembox"><h2>Fields</h2><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argname">.path<a name="field-imageresources-imagenotfoundexception-path"></a></td><td class="codefont argtype">string</td><td class="description"><p class="description">Path of the image which was being attempted to load</p></td></tr></tbody></table></div></div></div><div><h1><span class="keyword">class</span> ImageResource<a class="bookmark" name="class-imageresources-imageresource" href="#class-imageresources-imageresource">[link]</a></h1><div class="itembox"><p class="description">
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">resourcePath</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">Path to the image resource.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">ImageResources.ImageLoader</td><td class="description"><p class="description">A reference to a new loader object.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> ImageNotFoundException<a class="bookmark" name="class-imageresources-imagenotfoundexception" href="#class-imageresources-imagenotfoundexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">Exception thrown when an image path does not exist.</p>
+</div>
+<div class="itembox">
+<h2>Fields</h2>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">.path<a name="field-imageresources-imagenotfoundexception-path"></a></td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">Path of the image which was being attempted to load</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> ImageResource<a class="bookmark" name="class-imageresources-imageresource" href="#class-imageresources-imageresource">[link]</a></h1>
+<div class="itembox">
+<p class="description">
 				Represents an image.
 				Generally, this class cannot do much on its own (aside from querying width and height), 
 				and is meant to be used in a secondary library such as Graphics2D or ImageEncoder.
-			</p></div><div class="itembox"><div><h2><span class="keyword">new</span> ImageResource(width, height)<a class="bookmark" name="constructor-imageresources-imageresource" href="#constructor-imageresources-imageresource">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">new</span> ImageResource(width, height)<a class="bookmark" name="constructor-imageresources-imageresource" href="#constructor-imageresources-imageresource">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Creates a new image resource with the given size.
 					To load an existing image from the program's embedded resources, see ImageLoader.
 					To load an existing image from an image sheet declared in the build file, see ImageSheet.
-				</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">width</td><td class="codefont argtype">integer</td><td class="description"><p class="description">Width of the image in pixels.</p></td></tr><tr><td class="codefont argname">height</td><td class="codefont argtype">integer</td><td class="description"><p class="description">Height of the image in pixels.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> getHeight()<a class="bookmark" name="func-imageresources-imageresource-getheight" href="#func-imageresources-imageresource-getheight">[link]</a></h2><div class="itembox"><p class="description">Gets the height of the image in pixels.</p><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">integer</td><td class="description"><p class="description">image height</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> getWidth()<a class="bookmark" name="func-imageresources-imageresource-getwidth" href="#func-imageresources-imageresource-getwidth">[link]</a></h2><div class="itembox"><p class="description">Gets the width of the image in pixels.</p><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">integer</td><td class="description"><p class="description">image width</p></td></tr></tbody></table></div></div></div></div></div><div><h1><span class="keyword">class</span> ImageSheet<a class="bookmark" name="class-imageresources-imagesheet" href="#class-imageresources-imagesheet">[link]</a></h1><div class="itembox"><p class="description">
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">width</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">Width of the image in pixels.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">height</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">Height of the image in pixels.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getHeight()<a class="bookmark" name="func-imageresources-imageresource-getheight" href="#func-imageresources-imageresource-getheight">[link]</a></h2>
+<div class="itembox">
+<p class="description">Gets the height of the image in pixels.</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">integer</td><td class="description"><p class="description">image height</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getWidth()<a class="bookmark" name="func-imageresources-imageresource-getwidth" href="#func-imageresources-imageresource-getwidth">[link]</a></h2>
+<div class="itembox">
+<p class="description">Gets the width of the image in pixels.</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">integer</td><td class="description"><p class="description">image width</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> ImageSheet<a class="bookmark" name="class-imageresources-imagesheet" href="#class-imageresources-imagesheet">[link]</a></h1>
+<div class="itembox">
+<p class="description">
 				An image sheet is a collection of image resources.
 				The way the images are aggregated is defined by the build file.
 				By aggregating images, loading images from disk is generally faster as it reduces the number
@@ -58,32 +274,197 @@ p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
 				the completion percentage is calculated by the library. 
 				All ImageResources that are loaded from an image sheet abstract the aggregation away from your code
 				such that operations will appear as though the image is a standalone image file.
-			</p></div><div class="itembox"><div><h2><span class="keyword">function</span> getFiles()<a class="bookmark" name="func-imageresources-imagesheet-getfiles" href="#func-imageresources-imagesheet-getfiles">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getFiles()<a class="bookmark" name="func-imageresources-imagesheet-getfiles" href="#func-imageresources-imagesheet-getfiles">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Returns a list of all the image resource paths available in this image sheet.
-				</p><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">List of strings</td><td class="description"><p class="description">List of all image resource paths in this sheet.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> getImage(resourcePath)<a class="bookmark" name="func-imageresources-imagesheet-getimage" href="#func-imageresources-imagesheet-getimage">[link]</a></h2><div class="itembox"><p class="description">
+				</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">List of strings</td><td class="description"><p class="description">List of all image resource paths in this sheet.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getImage(resourcePath)<a class="bookmark" name="func-imageresources-imagesheet-getimage" href="#func-imageresources-imagesheet-getimage">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Returns an image resource that is contained in this image sheet.
 					If the image sheet is loaded asynchronously, this method cannot be called without
 					calling .isDone() first, even if the image sheet has finished loading.
-				</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">resourcePath</td><td class="codefont argtype">string</td><td class="description"><p class="description">Path to an image resource</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">ImageResources.ImageResource</td><td class="description"><p class="description">An image resource</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> getProgress()<a class="bookmark" name="func-imageresources-imagesheet-getprogress" href="#func-imageresources-imagesheet-getprogress">[link]</a></h2><div class="itembox"><p class="description">
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">resourcePath</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">Path to an image resource</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">ImageResources.ImageResource</td><td class="description"><p class="description">An image resource</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getProgress()<a class="bookmark" name="func-imageresources-imagesheet-getprogress" href="#func-imageresources-imagesheet-getprogress">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Returns a ratio of loading progress from 0 to 1.
 					This is a convenience method for showing progress to the user, but .isDone() must still be called
 					before accessing any image resources.
-				</p><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">float</td><td class="description"><p class="description">Ratio of progress</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> isDone()<a class="bookmark" name="func-imageresources-imagesheet-isdone" href="#func-imageresources-imagesheet-isdone">[link]</a></h2><div class="itembox"><p class="description">
+				</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">float</td><td class="description"><p class="description">Ratio of progress</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> isDone()<a class="bookmark" name="func-imageresources-imagesheet-isdone" href="#func-imageresources-imagesheet-isdone">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Returns true if the image sheet is done loading. 
 					This method is only applicable to asynchronously-loaded image sheets.
 					This method must be called for all asynchronous image sheets before getImage() is called,
 					otherwise an InvalidOperationException is thrown, even if the image sheet is actually done loading.
-				</p><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">true if the image sheet is done loading</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> loadFromResources(idOrIds)<a class="bookmark" name="func-imageresources-imagesheet-loadfromresources" href="#func-imageresources-imagesheet-loadfromresources">[link]</a></h2><div class="itembox"><p class="description">
-					Returns a new image sheet object which is not completely loaded yet.
-					If multiple sheet ID's are passed to this method, all those image sheets will be aggregated 
-					into one single ImageSheet instance.
-					To check to see if the image sheet is done loading, use .isDone().
-					To check the progress of loading, use .getProgress().
-				</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">idOrIds</td><td class="codefont argtype">string <span style="font-weight:bold; color:#000;">or</span> List of strings</td><td class="description"><p class="description">An image sheet ID or a list of image sheet IDs</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">ImageResources.ImageSheet</td><td class="description"><p class="description">An image sheet</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> loadFromResources(idOrIds)<a class="bookmark" name="func-imageresources-imagesheet-loadfromresources" href="#func-imageresources-imagesheet-loadfromresources">[link]</a></h2><div class="itembox"><p class="description">
+				</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">true if the image sheet is done loading</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> loadFromResources(idOrIds)<a class="bookmark" name="func-imageresources-imagesheet-loadfromresources" href="#func-imageresources-imagesheet-loadfromresources">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Returns a new image sheet object.
 					If multiple sheet ID's are passed to this method, all those image sheets will be aggregated 
 					into one single ImageSheet instance.
 					This function will block execution of your program until loading has completed which 
 					can potentially be very slow. 
 					To load asynchronously, use .loadFromResourcesAsync().
-				</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">idOrIds</td><td class="codefont argtype">string <span style="font-weight:bold; color:#000;">or</span> List of strings</td><td class="description"><p class="description">An image sheet ID or a list of image sheet IDs</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">ImageResources.ImageSheet</td><td class="description"><p class="description">An image sheet</p></td></tr></tbody></table></div></div></div></div></div><div><h1><span class="keyword">class</span> LoadFailedException<a class="bookmark" name="class-imageresources-loadfailedexception" href="#class-imageresources-loadfailedexception">[link]</a></h1><div class="itembox"><p class="description">Exception thrown when an image fails to load. The exception message field may contain more information.</p></div></div><div><h1><span class="keyword">class</span> SheetNotFoundException<a class="bookmark" name="class-imageresources-sheetnotfoundexception" href="#class-imageresources-sheetnotfoundexception">[link]</a></h1><div class="itembox"><p class="description">Exception thrown when an image sheet with a given ID does not exist.</p></div><div class="itembox"><h2>Fields</h2><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argname">.id<a name="field-imageresources-sheetnotfoundexception-id"></a></td><td class="codefont argtype">string</td><td class="description"><p class="description">ID of the image sheet that does not exist</p></td></tr></tbody></table></div></div></div></body></html>
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">idOrIds</td>
+<td class="codefont argtype">string <span style="font-weight:bold; color:#000;">or</span> List of strings</td>
+<td class="description"><p class="description">An image sheet ID or a list of image sheet IDs</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">ImageResources.ImageSheet</td><td class="description"><p class="description">An image sheet</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> loadFromResourcesAsync(idOrIds)<a class="bookmark" name="func-imageresources-imagesheet-loadfromresourcesasync" href="#func-imageresources-imagesheet-loadfromresourcesasync">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Returns a new image sheet object which is not completely loaded yet.
+					If multiple sheet ID's are passed to this method, all those image sheets will be aggregated 
+					into one single ImageSheet instance.
+					To check to see if the image sheet is done loading, use .isDone().
+					To check the progress of loading, use .getProgress().
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">idOrIds</td>
+<td class="codefont argtype">string <span style="font-weight:bold; color:#000;">or</span> List of strings</td>
+<td class="description"><p class="description">An image sheet ID or a list of image sheet IDs</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">ImageResources.ImageSheet</td><td class="description"><p class="description">An image sheet</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> LoadFailedException<a class="bookmark" name="class-imageresources-loadfailedexception" href="#class-imageresources-loadfailedexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">Exception thrown when an image fails to load. The exception message field may contain more information.</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> SheetNotFoundException<a class="bookmark" name="class-imageresources-sheetnotfoundexception" href="#class-imageresources-sheetnotfoundexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">Exception thrown when an image sheet with a given ID does not exist.</p>
+</div>
+<div class="itembox">
+<h2>Fields</h2>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">.id<a name="field-imageresources-sheetnotfoundexception-id"></a></td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">ID of the image sheet that does not exist</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</body></html>

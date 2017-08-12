@@ -15,60 +15,666 @@ td.optional { color:#000; font-weight:bold; }
 a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
 a.bookmark:hover { color:#08a; }
 p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
-.keyword { font-weight:normal; }</style><h1>Core</h1><div class="itembox"><p class="description">
+.keyword { font-weight:normal; }</style><h1>Core</h1><div class="itembox">
+<p class="description">
 		The core library exposes some basic built-in language functionality. 
 		Unlike other libraries, the Core library does not need to be imported and is readily available from all files.
-	</p></div><ul><li><span class="codefont">namespace</span> Core<ul><li><a href="#enum-core-type"><span class="codefont">enum</span> Type</a></li><li><a href="#func-core-assert"><span class="codefont">function</span> assert(condition, message)</a></li><li><a href="#func-core-chr"><span class="codefont">function</span> chr(charCode)</a></li><li><a href="#func-core-currenttime"><span class="codefont">function</span> currentTime()</a></li><li><a href="#func-core-fail"><span class="codefont">function</span> fail(message)</a></li><li><a href="#func-core-isnumber"><span class="codefont">function</span> isNumber(value)</a></li><li><a href="#func-core-isstring"><span class="codefont">function</span> isString(value)</a></li><li><a href="#func-core-ord"><span class="codefont">function</span> ord(character)</a></li><li><a href="#func-core-parsefloat"><span class="codefont">function</span> parseFloat(value)</a></li><li><a href="#func-core-parseint"><span class="codefont">function</span> parseInt(value)</a></li><li><a href="#func-core-print"><span class="codefont">function</span> print(value)</a></li><li><a href="#func-core-sleep"><span class="codefont">function</span> sleep(delay)</a></li><li><a href="#func-core-typeof"><span class="codefont">function</span> typeof(value)</a></li><li><a href="#class-core-assertionfailedexception"><span class="codefont">class</span> AssertionFailedException</a></li><li><a href="#class-core-divisionbyzeroexception"><span class="codefont">class</span> DivisionByZeroException</a></li><li><a href="#class-core-exception"><span class="codefont">class</span> Exception</a><ul><li><a href="#constructor-core-exception"><span class="codefont">constructor</span>(message, cause)</a></li><li><a href="#func-core-exception-gettrace"><span class="codefont">function</span> getTrace()</a></li></ul></li><li><a href="#class-core-fatalexception"><span class="codefont">class</span> FatalException</a></li><li><a href="#class-core-indexoutofrangeexception"><span class="codefont">class</span> IndexOutOfRangeException</a></li><li><a href="#class-core-invalidargumentexception"><span class="codefont">class</span> InvalidArgumentException</a></li><li><a href="#class-core-invalidassignmentexception"><span class="codefont">class</span> InvalidAssignmentException</a></li><li><a href="#class-core-invalidinvocationexception"><span class="codefont">class</span> InvalidInvocationException</a></li><li><a href="#class-core-invalidkeyexception"><span class="codefont">class</span> InvalidKeyException</a></li><li><a href="#class-core-invalidoperationexception"><span class="codefont">class</span> InvalidOperationException</a></li><li><a href="#class-core-keynotfoundexception"><span class="codefont">class</span> KeyNotFoundException</a></li><li><a href="#class-core-notimplementedexception"><span class="codefont">class</span> NotImplementedException</a></li><li><a href="#class-core-nullreferenceexception"><span class="codefont">class</span> NullReferenceException</a></li><li><a href="#class-core-unassignedvariableexception"><span class="codefont">class</span> UnassignedVariableException</a></li><li><a href="#class-core-unknownfieldexception"><span class="codefont">class</span> UnknownFieldException</a></li><li><a href="#class-core-unsupportedoperationexception"><span class="codefont">class</span> UnsupportedOperationException</a></li></ul></li><li><span class="codefont">namespace</span> Core.Reflection<ul><li><a href="#func-core-reflection-getclasses"><span class="codefont">function</span> getClasses(commonBaseClass)</a></li><li><a href="#func-core-reflection-getclassfrominstance"><span class="codefont">function</span> getClassFromInstance(instance)</a></li><li><a href="#func-core-reflection-getmethods"><span class="codefont">function</span> getMethods(instanceOrClass)</a></li></ul></li></ul><div class="itembox"><h1><span class="keyword">enum</span> Type<a class="bookmark" name="enum-core-type" href="#enum-core-type">[link]</a></h1><p class="description">Enum representing the various types in Crayon.</p><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Description</th></thead><tbody><tr><td class="codefont argname">NULL</td><td class="description"><p class="description">null</p></td></tr><tr><td class="codefont argname">BOOLEAN</td><td class="description"><p class="description">booleans (true and false)</p></td></tr><tr><td class="codefont argname">INTEGER</td><td class="description"><p class="description">integers</p></td></tr><tr><td class="codefont argname">FLOAT</td><td class="description"><p class="description">floating point decimals</p></td></tr><tr><td class="codefont argname">STRING</td><td class="description"><p class="description">strings (text)</p></td></tr><tr><td class="codefont argname">LIST</td><td class="description"><p class="description">lists</p></td></tr><tr><td class="codefont argname">DICTIONARY</td><td class="description"><p class="description">dictionaries</p></td></tr><tr><td class="codefont argname">OBJECT</td><td class="description"><p class="description">object instances</p></td></tr><tr><td class="codefont argname">FUNCTION</td><td class="description"><p class="description">function pointer</p></td></tr><tr><td class="codefont argname">CLASS</td><td class="description"><p class="description">class reference</p></td></tr></tbody></table></div></div><div class="itembox"><div><h2><span class="keyword">function</span> assert(condition, message)<a class="bookmark" name="func-core-assert" href="#func-core-assert">[link]</a></h2><div class="itembox"><p class="description">Generates an exception if the condition is false.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">condition</td><td class="codefont argtype">boolean</td><td class="codefont optional"></td><td class="description"><p class="description">A boolean condition that must be true.</p></td></tr><tr><td class="codefont argname">message</td><td class="codefont argtype">string</td><td class="codefont optional">Optional</td><td class="description"><p class="description">An optional error message to show when the assertion condition is false.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> chr(charCode)<a class="bookmark" name="func-core-chr" href="#func-core-chr">[link]</a></h2><div class="itembox"><p class="description">Converts a character code value (as a unicode point value) into a single-character string.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">charCode</td><td class="codefont argtype">integer</td><td class="description"><p class="description">Unicode code point value.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> currentTime()<a class="bookmark" name="func-core-currenttime" href="#func-core-currenttime">[link]</a></h2><div class="itembox"><p class="description">Returns the current unix time stamp as reported by the local machine. The unix time stamp is the number of seconds since midnight January 1st, 1970.</p></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> fail(message)<a class="bookmark" name="func-core-fail" href="#func-core-fail">[link]</a></h2><div class="itembox"><p class="description">Generates an exception when called.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">message</td><td class="codefont argtype">string</td><td class="description"><p class="description">An error message to show in the exception.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> isNumber(value)<a class="bookmark" name="func-core-isnumber" href="#func-core-isnumber">[link]</a></h2><div class="itembox"><p class="description">
+	</p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> Core<ul>
+<li><a href="#enum-core-type"><span class="codefont">enum</span> Type</a></li>
+<li><a href="#func-core-assert"><span class="codefont">function</span> assert(condition, message)</a></li>
+<li><a href="#func-core-chr"><span class="codefont">function</span> chr(charCode)</a></li>
+<li><a href="#func-core-currenttime"><span class="codefont">function</span> currentTime()</a></li>
+<li><a href="#func-core-fail"><span class="codefont">function</span> fail(message)</a></li>
+<li><a href="#func-core-isnumber"><span class="codefont">function</span> isNumber(value)</a></li>
+<li><a href="#func-core-isstring"><span class="codefont">function</span> isString(value)</a></li>
+<li><a href="#func-core-ord"><span class="codefont">function</span> ord(character)</a></li>
+<li><a href="#func-core-parsefloat"><span class="codefont">function</span> parseFloat(value)</a></li>
+<li><a href="#func-core-parseint"><span class="codefont">function</span> parseInt(value)</a></li>
+<li><a href="#func-core-print"><span class="codefont">function</span> print(value)</a></li>
+<li><a href="#func-core-sleep"><span class="codefont">function</span> sleep(delay)</a></li>
+<li><a href="#func-core-typeof"><span class="codefont">function</span> typeof(value)</a></li>
+<li><a href="#class-core-assertionfailedexception"><span class="codefont">class</span> AssertionFailedException</a></li>
+<li><a href="#class-core-divisionbyzeroexception"><span class="codefont">class</span> DivisionByZeroException</a></li>
+<li><a href="#class-core-exception"><span class="codefont">class</span> Exception</a><ul>
+<li><a href="#constructor-core-exception"><span class="codefont">constructor</span>(message, cause)</a></li>
+<li><a href="#func-core-exception-gettrace"><span class="codefont">function</span> getTrace()</a></li>
+</ul>
+</li>
+<li><a href="#class-core-fatalexception"><span class="codefont">class</span> FatalException</a></li>
+<li><a href="#class-core-indexoutofrangeexception"><span class="codefont">class</span> IndexOutOfRangeException</a></li>
+<li><a href="#class-core-invalidargumentexception"><span class="codefont">class</span> InvalidArgumentException</a></li>
+<li><a href="#class-core-invalidassignmentexception"><span class="codefont">class</span> InvalidAssignmentException</a></li>
+<li><a href="#class-core-invalidinvocationexception"><span class="codefont">class</span> InvalidInvocationException</a></li>
+<li><a href="#class-core-invalidkeyexception"><span class="codefont">class</span> InvalidKeyException</a></li>
+<li><a href="#class-core-invalidoperationexception"><span class="codefont">class</span> InvalidOperationException</a></li>
+<li><a href="#class-core-keynotfoundexception"><span class="codefont">class</span> KeyNotFoundException</a></li>
+<li><a href="#class-core-notimplementedexception"><span class="codefont">class</span> NotImplementedException</a></li>
+<li><a href="#class-core-nullreferenceexception"><span class="codefont">class</span> NullReferenceException</a></li>
+<li><a href="#class-core-unassignedvariableexception"><span class="codefont">class</span> UnassignedVariableException</a></li>
+<li><a href="#class-core-unknownfieldexception"><span class="codefont">class</span> UnknownFieldException</a></li>
+<li><a href="#class-core-unsupportedoperationexception"><span class="codefont">class</span> UnsupportedOperationException</a></li>
+</ul>
+</li>
+<li><span class="codefont">namespace</span> Core.Reflection<ul>
+<li><a href="#func-core-reflection-getclasses"><span class="codefont">function</span> getClasses(commonBaseClass)</a></li>
+<li><a href="#func-core-reflection-getclassfrominstance"><span class="codefont">function</span> getClassFromInstance(instance)</a></li>
+<li><a href="#func-core-reflection-getmethods"><span class="codefont">function</span> getMethods(instanceOrClass)</a></li>
+</ul>
+</li>
+</ul>
+<div class="itembox">
+<h1><span class="keyword">enum</span> Type<a class="bookmark" name="enum-core-type" href="#enum-core-type">[link]</a></h1>
+<p class="description">Enum representing the various types in Crayon.</p>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">NULL</td>
+<td class="description"><p class="description">null</p></td>
+</tr>
+<tr>
+<td class="codefont argname">BOOLEAN</td>
+<td class="description"><p class="description">booleans (true and false)</p></td>
+</tr>
+<tr>
+<td class="codefont argname">INTEGER</td>
+<td class="description"><p class="description">integers</p></td>
+</tr>
+<tr>
+<td class="codefont argname">FLOAT</td>
+<td class="description"><p class="description">floating point decimals</p></td>
+</tr>
+<tr>
+<td class="codefont argname">STRING</td>
+<td class="description"><p class="description">strings (text)</p></td>
+</tr>
+<tr>
+<td class="codefont argname">LIST</td>
+<td class="description"><p class="description">lists</p></td>
+</tr>
+<tr>
+<td class="codefont argname">DICTIONARY</td>
+<td class="description"><p class="description">dictionaries</p></td>
+</tr>
+<tr>
+<td class="codefont argname">OBJECT</td>
+<td class="description"><p class="description">object instances</p></td>
+</tr>
+<tr>
+<td class="codefont argname">FUNCTION</td>
+<td class="description"><p class="description">function pointer</p></td>
+</tr>
+<tr>
+<td class="codefont argname">CLASS</td>
+<td class="description"><p class="description">class reference</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> assert(condition, message)<a class="bookmark" name="func-core-assert" href="#func-core-assert">[link]</a></h2>
+<div class="itembox">
+<p class="description">Generates an exception if the condition is false.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">condition</td>
+<td class="codefont argtype">boolean</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">A boolean condition that must be true.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">message</td>
+<td class="codefont argtype">string</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">An optional error message to show when the assertion condition is false.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> chr(charCode)<a class="bookmark" name="func-core-chr" href="#func-core-chr">[link]</a></h2>
+<div class="itembox">
+<p class="description">Converts a character code value (as a unicode point value) into a single-character string.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">charCode</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">Unicode code point value.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> currentTime()<a class="bookmark" name="func-core-currenttime" href="#func-core-currenttime">[link]</a></h2>
+<div class="itembox">
+<p class="description">Returns the current unix time stamp as reported by the local machine. The unix time stamp is the number of seconds since midnight January 1st, 1970.</p>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fail(message)<a class="bookmark" name="func-core-fail" href="#func-core-fail">[link]</a></h2>
+<div class="itembox">
+<p class="description">Generates an exception when called.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">message</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">An error message to show in the exception.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> isNumber(value)<a class="bookmark" name="func-core-isnumber" href="#func-core-isnumber">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 				Returns true if the given value is one of the numeric types (integer or float). 
 				This is semantically identical to typeof(value) == Core.Types.INTEGER || typeof(value) == Core.Types.FLOAT.
-			</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">value</td><td class="codefont argtype">any</td><td class="description"><p class="description">Any value</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">True if the value is an integer or a float</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> isString(value)<a class="bookmark" name="func-core-isstring" href="#func-core-isstring">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">any</td>
+<td class="description"><p class="description">Any value</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">True if the value is an integer or a float</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> isString(value)<a class="bookmark" name="func-core-isstring" href="#func-core-isstring">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 				Returns true if the given value is a string. This is semantically identical to typeof(value) == Core.Types.STRING.
-			</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">value</td><td class="codefont argtype">any</td><td class="description"><p class="description">Any value</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">True if the value is a string</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> ord(character)<a class="bookmark" name="func-core-ord" href="#func-core-ord">[link]</a></h2><div class="itembox"><p class="description">Converts a character value into its numerical unicode point value. If the string passed in has multiple characters, the first character is used.</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">character</td><td class="codefont argtype">string</td><td class="description"><p class="description">A single-character string</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> parseFloat(value)<a class="bookmark" name="func-core-parsefloat" href="#func-core-parsefloat">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">any</td>
+<td class="description"><p class="description">Any value</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">True if the value is a string</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> ord(character)<a class="bookmark" name="func-core-ord" href="#func-core-ord">[link]</a></h2>
+<div class="itembox">
+<p class="description">Converts a character value into its numerical unicode point value. If the string passed in has multiple characters, the first character is used.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">character</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">A single-character string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> parseFloat(value)<a class="bookmark" name="func-core-parsefloat" href="#func-core-parsefloat">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 				Converts a decimal (or integer) string into its actual numeric value. 
 				If the number depicted is an integer, the return value will still be a float (see parseInt).
 				Surrounding whitespace is ignored.
 				If the string does not depict a number, null is returned instead.
-			</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">value</td><td class="codefont argtype">string</td><td class="description"><p class="description">A floating point number as a string.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> parseInt(value)<a class="bookmark" name="func-core-parseint" href="#func-core-parseint">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">A floating point number as a string.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> parseInt(value)<a class="bookmark" name="func-core-parseint" href="#func-core-parseint">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 				Converts an integer as a text string into the actual integer type.
 				Surrounding whitespace is ignored.
 				If the string does not depict an integer, null is returned.
 				If the string is a floating point decimal, null is also returned (see parseFloat).
-			</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">value</td><td class="codefont argtype">string</td><td class="description"><p class="description">An integer as a string.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> print(value)<a class="bookmark" name="func-core-print" href="#func-core-print">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">An integer as a string.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> print(value)<a class="bookmark" name="func-core-print" href="#func-core-print">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 				Shows a message or value in the standard output. Standard output is generally in the same window
 				as the command line for platforms that support this, however, the actual output may appear elsewhere
 				depending on the platform (for example, the JavaScript console, or the Android Log).
-			</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">value</td><td class="codefont argtype">any</td><td class="description"><p class="description">Item or message to display in standard output</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> sleep(delay)<a class="bookmark" name="func-core-sleep" href="#func-core-sleep">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">any</td>
+<td class="description"><p class="description">Item or message to display in standard output</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> sleep(delay)<a class="bookmark" name="func-core-sleep" href="#func-core-sleep">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 				Pauses execution for some number of seconds. NOTE: for JavaScript-exported platforms, the underlying
 				implementation uses a setTimeout rather than blocking the browser thread, so this is still safe to use
 				in JavaScript without causing the browser to become unresponsive.
-			</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">delay</td><td class="codefont argtype">float</td><td class="description"><p class="description">Number of seconds to pause execution</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> typeof(value)<a class="bookmark" name="func-core-typeof" href="#func-core-typeof">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">delay</td>
+<td class="codefont argtype">float</td>
+<td class="description"><p class="description">Number of seconds to pause execution</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> typeof(value)<a class="bookmark" name="func-core-typeof" href="#func-core-typeof">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 				Determines which type the given value is.
-			</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">value</td><td class="codefont argtype">any</td><td class="description"><p class="description">Any value</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">Core.Type</td><td class="description"><p class="description">A type</p></td></tr></tbody></table></div></div></div></div><div><h1><span class="keyword">class</span> AssertionFailedException<a class="bookmark" name="class-core-assertionfailedexception" href="#class-core-assertionfailedexception">[link]</a></h1><div class="itembox"><p class="description">Exception thrown by Core.assert() and Core.fail()</p></div></div><div><h1><span class="keyword">class</span> DivisionByZeroException<a class="bookmark" name="class-core-divisionbyzeroexception" href="#class-core-divisionbyzeroexception">[link]</a></h1><div class="itembox"><p class="description">Generated when you divide or mod by 0.</p></div></div><div><h1><span class="keyword">class</span> Exception<a class="bookmark" name="class-core-exception" href="#class-core-exception">[link]</a></h1><div class="itembox"><p class="description">The root class of all exceptions.</p></div><div class="itembox"><h2>Fields</h2><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argname">.message<a name="field-core-exception-message"></a></td><td class="codefont argtype">string</td><td class="description"><p class="description">Error message of the exception</p></td></tr><tr><td class="codefont argname">.cause<a name="field-core-exception-cause"></a></td><td class="codefont argtype">Core.Exception</td><td class="description"><p class="description">A wrapped exception that caused this exception to occur.</p></td></tr></tbody></table></div></div><div class="itembox"><div><h2><span class="keyword">new</span> Exception(message, cause)<a class="bookmark" name="constructor-core-exception" href="#constructor-core-exception">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">any</td>
+<td class="description"><p class="description">Any value</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Core.Type</td><td class="description"><p class="description">A type</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> AssertionFailedException<a class="bookmark" name="class-core-assertionfailedexception" href="#class-core-assertionfailedexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">Exception thrown by Core.assert() and Core.fail()</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> DivisionByZeroException<a class="bookmark" name="class-core-divisionbyzeroexception" href="#class-core-divisionbyzeroexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">Generated when you divide or mod by 0.</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> Exception<a class="bookmark" name="class-core-exception" href="#class-core-exception">[link]</a></h1>
+<div class="itembox">
+<p class="description">The root class of all exceptions.</p>
+</div>
+<div class="itembox">
+<h2>Fields</h2>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">.message<a name="field-core-exception-message"></a></td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">Error message of the exception</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.cause<a name="field-core-exception-cause"></a></td>
+<td class="codefont argtype">Core.Exception</td>
+<td class="description"><p class="description">A wrapped exception that caused this exception to occur.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">new</span> Exception(message, cause)<a class="bookmark" name="constructor-core-exception" href="#constructor-core-exception">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 					Instantiates a new exception. Optionally allows for setting a message and also another exception
 					that caused this exception.
-				</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">message</td><td class="codefont argtype">string</td><td class="codefont optional">Optional</td><td class="description"><p class="description">Message to show in the exception</p></td></tr><tr><td class="codefont argname">cause</td><td class="codefont argtype">Core.Exception</td><td class="codefont optional">Optional</td><td class="description"><p class="description">Another exception</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> getTrace()<a class="bookmark" name="func-core-exception-gettrace" href="#func-core-exception-gettrace">[link]</a></h2><div class="itembox"><p class="description">Returns a stack trace of where the exception was thrown.</p><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">List of strings</td><td class="description"><p class="description">The stack trace of this exception.</p></td></tr></tbody></table></div></div></div></div></div><div><h1><span class="keyword">class</span> FatalException<a class="bookmark" name="class-core-fatalexception" href="#class-core-fatalexception">[link]</a></h1><div class="itembox"><p class="description">
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">message</td>
+<td class="codefont argtype">string</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">Message to show in the exception</p></td>
+</tr>
+<tr>
+<td class="codefont argname">cause</td>
+<td class="codefont argtype">Core.Exception</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">Another exception</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getTrace()<a class="bookmark" name="func-core-exception-gettrace" href="#func-core-exception-gettrace">[link]</a></h2>
+<div class="itembox">
+<p class="description">Returns a stack trace of where the exception was thrown.</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">List of strings</td><td class="description"><p class="description">The stack trace of this exception.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> FatalException<a class="bookmark" name="class-core-fatalexception" href="#class-core-fatalexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">
 				An exception that cannot be caught. 
 				This is generated by the VM in situations where it cannot recover, such as stack overflows.
-			</p></div></div><div><h1><span class="keyword">class</span> IndexOutOfRangeException<a class="bookmark" name="class-core-indexoutofrangeexception" href="#class-core-indexoutofrangeexception">[link]</a></h1><div class="itembox"><p class="description">Generated when you access an index in a list outside of its bounds.</p></div></div><div><h1><span class="keyword">class</span> InvalidArgumentException<a class="bookmark" name="class-core-invalidargumentexception" href="#class-core-invalidargumentexception">[link]</a></h1><div class="itembox"><p class="description">
+			</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> IndexOutOfRangeException<a class="bookmark" name="class-core-indexoutofrangeexception" href="#class-core-indexoutofrangeexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">Generated when you access an index in a list outside of its bounds.</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> InvalidArgumentException<a class="bookmark" name="class-core-invalidargumentexception" href="#class-core-invalidargumentexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">
 				General exception used when an argument to a function is wrong. 
 				The message field should contain specific information.
-			</p></div></div><div><h1><span class="keyword">class</span> InvalidAssignmentException<a class="bookmark" name="class-core-invalidassignmentexception" href="#class-core-invalidassignmentexception">[link]</a></h1><div class="itembox"><p class="description">
+			</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> InvalidAssignmentException<a class="bookmark" name="class-core-invalidassignmentexception" href="#class-core-invalidassignmentexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">
 				Exception generated when you assign a value to an invalid target. For example,
 				attempting to assign a value to a field that is already occupied by a function defined in code.
-			</p></div></div><div><h1><span class="keyword">class</span> InvalidInvocationException<a class="bookmark" name="class-core-invalidinvocationexception" href="#class-core-invalidinvocationexception">[link]</a></h1><div class="itembox"><p class="description">Generated when you attempt to invoke a non-function value like a function.</p></div></div><div><h1><span class="keyword">class</span> InvalidKeyException<a class="bookmark" name="class-core-invalidkeyexception" href="#class-core-invalidkeyexception">[link]</a></h1><div class="itembox"><p class="description">Generated when you attempt to use a value for a dictionary key that is not an integer, object, or string.</p></div></div><div><h1><span class="keyword">class</span> InvalidOperationException<a class="bookmark" name="class-core-invalidoperationexception" href="#class-core-invalidoperationexception">[link]</a></h1><div class="itembox"><p class="description">
+			</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> InvalidInvocationException<a class="bookmark" name="class-core-invalidinvocationexception" href="#class-core-invalidinvocationexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">Generated when you attempt to invoke a non-function value like a function.</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> InvalidKeyException<a class="bookmark" name="class-core-invalidkeyexception" href="#class-core-invalidkeyexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">Generated when you attempt to use a value for a dictionary key that is not an integer, object, or string.</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> InvalidOperationException<a class="bookmark" name="class-core-invalidoperationexception" href="#class-core-invalidoperationexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">
 				General-purpose exception for when something has been invoked incorrectly. 
 				The message should contain specific information.
-			</p></div></div><div><h1><span class="keyword">class</span> KeyNotFoundException<a class="bookmark" name="class-core-keynotfoundexception" href="#class-core-keynotfoundexception">[link]</a></h1><div class="itembox"><p class="description">Generated when you attempt to access a key in a dictionary that does not exist.</p></div></div><div><h1><span class="keyword">class</span> NotImplementedException<a class="bookmark" name="class-core-notimplementedexception" href="#class-core-notimplementedexception">[link]</a></h1><div class="itembox"><p class="description">Useful exception to throw for when you want to mark a function as not having been implemented.</p></div></div><div><h1><span class="keyword">class</span> NullReferenceException<a class="bookmark" name="class-core-nullreferenceexception" href="#class-core-nullreferenceexception">[link]</a></h1><div class="itembox"><p class="description">Thrown when null is accessed as though it is a non-null value.</p></div></div><div><h1><span class="keyword">class</span> UnassignedVariableException<a class="bookmark" name="class-core-unassignedvariableexception" href="#class-core-unassignedvariableexception">[link]</a></h1><div class="itembox"><p class="description">Occurs when a variable is used before it has any value assigned to it.</p></div></div><div><h1><span class="keyword">class</span> UnknownFieldException<a class="bookmark" name="class-core-unknownfieldexception" href="#class-core-unknownfieldexception">[link]</a></h1><div class="itembox"><p class="description">Occurs when you access a field on a value that does not exist.</p></div></div><div><h1><span class="keyword">class</span> UnsupportedOperationException<a class="bookmark" name="class-core-unsupportedoperationexception" href="#class-core-unsupportedoperationexception">[link]</a></h1><div class="itembox"><p class="description">
+			</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> KeyNotFoundException<a class="bookmark" name="class-core-keynotfoundexception" href="#class-core-keynotfoundexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">Generated when you attempt to access a key in a dictionary that does not exist.</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> NotImplementedException<a class="bookmark" name="class-core-notimplementedexception" href="#class-core-notimplementedexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">Useful exception to throw for when you want to mark a function as not having been implemented.</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> NullReferenceException<a class="bookmark" name="class-core-nullreferenceexception" href="#class-core-nullreferenceexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">Thrown when null is accessed as though it is a non-null value.</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> UnassignedVariableException<a class="bookmark" name="class-core-unassignedvariableexception" href="#class-core-unassignedvariableexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">Occurs when a variable is used before it has any value assigned to it.</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> UnknownFieldException<a class="bookmark" name="class-core-unknownfieldexception" href="#class-core-unknownfieldexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">Occurs when you access a field on a value that does not exist.</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> UnsupportedOperationException<a class="bookmark" name="class-core-unsupportedoperationexception" href="#class-core-unsupportedoperationexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">
 				General purpose exception for when you attempt to use code in a way that it was not designed to support.
 				Also thrown when you perform operations on types that do not have that combination of operations defined.
 				For example, subtracting a list from a string.
-			</p></div></div><div class="itembox"><div><h2><span class="keyword">function</span> getClasses(commonBaseClass)<a class="bookmark" name="func-core-reflection-getclasses" href="#func-core-reflection-getclasses">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getClasses(commonBaseClass)<a class="bookmark" name="func-core-reflection-getclasses" href="#func-core-reflection-getclasses">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 				Gets a list of all class types in the project.
 				Optionally, you can pass a filter argument to limit results down to only classes that implement that base class.
-			</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">commonBaseClass</td><td class="codefont argtype">class</td><td class="codefont optional">Optional</td><td class="description"><p class="description">filters results to only classes that extend from this class</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">List of class</td><td class="description"><p class="description">A list of class references</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> getClassFromInstance(instance)<a class="bookmark" name="func-core-reflection-getclassfrominstance" href="#func-core-reflection-getclassfrominstance">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">commonBaseClass</td>
+<td class="codefont argtype">class</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">filters results to only classes that extend from this class</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">List of class</td><td class="description"><p class="description">A list of class references</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getClassFromInstance(instance)<a class="bookmark" name="func-core-reflection-getclassfrominstance" href="#func-core-reflection-getclassfrominstance">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 				Gets a reference to the class of the given object.
-			</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">instance</td><td class="codefont argtype">object</td><td class="description"><p class="description">Any instance of an object.</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">class</td><td class="description"><p class="description">The class of the object.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> getMethods(instanceOrClass)<a class="bookmark" name="func-core-reflection-getmethods" href="#func-core-reflection-getmethods">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">instance</td>
+<td class="codefont argtype">object</td>
+<td class="description"><p class="description">Any instance of an object.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">class</td><td class="description"><p class="description">The class of the object.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getMethods(instanceOrClass)<a class="bookmark" name="func-core-reflection-getmethods" href="#func-core-reflection-getmethods">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 				Gets a list of methods on an instance or class. 
 				For instances, only instance methods are returned.
 				For classes, only static methods are returned.
-			</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">instanceOrClass</td><td class="codefont argtype">object <span style="font-weight:bold; color:#000;">or</span> class</td><td class="description"><p class="description">instance or class to get methods from.</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">List of functions</td><td class="description"><p class="description">A list of function pointers.</p></td></tr></tbody></table></div></div></div></div></body></html>
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">instanceOrClass</td>
+<td class="codefont argtype">object <span style="font-weight:bold; color:#000;">or</span> class</td>
+<td class="description"><p class="description">instance or class to get methods from.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">List of functions</td><td class="description"><p class="description">A list of function pointers.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</body></html>

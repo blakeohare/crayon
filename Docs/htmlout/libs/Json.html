@@ -15,10 +15,129 @@ td.optional { color:#000; font-weight:bold; }
 a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
 a.bookmark:hover { color:#08a; }
 p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
-.keyword { font-weight:normal; }</style><h1>Json</h1><div class="itembox"><p class="description">Library for parsing JSON.</p></div><ul><li><span class="codefont">namespace</span> Json<ul><li><a href="#enum-json-jsonserializerflag"><span class="codefont">enum</span> JsonSerializerFlag</a></li><li><a href="#func-json-parsejson"><span class="codefont">function</span> parseJson(rawJsonString, failSilently)</a></li><li><a href="#func-json-serialize"><span class="codefont">function</span> serialize(object, flags, depth)</a></li><li><a href="#class-json-jsonexception"><span class="codefont">class</span> JsonException</a></li></ul></li></ul><div class="itembox"><h1><span class="keyword">enum</span> JsonSerializerFlag<a class="bookmark" name="enum-json-jsonserializerflag" href="#enum-json-jsonserializerflag">[link]</a></h1><p class="description">
+.keyword { font-weight:normal; }</style><h1>Json</h1><div class="itembox">
+<p class="description">Library for parsing JSON.</p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> Json<ul>
+<li><a href="#enum-json-jsonserializerflag"><span class="codefont">enum</span> JsonSerializerFlag</a></li>
+<li><a href="#func-json-parsejson"><span class="codefont">function</span> parseJson(rawJsonString, failSilently)</a></li>
+<li><a href="#func-json-serialize"><span class="codefont">function</span> serialize(object, flags, depth)</a></li>
+<li><a href="#class-json-jsonexception"><span class="codefont">class</span> JsonException</a></li>
+</ul>
+</li>
+</ul>
+<div class="itembox">
+<h1><span class="keyword">enum</span> JsonSerializerFlag<a class="bookmark" name="enum-json-jsonserializerflag" href="#enum-json-jsonserializerflag">[link]</a></h1>
+<p class="description">
 				Bitmasked enum options for the JSON serializer.
-			</p><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Description</th></thead><tbody><tr><td class="codefont argname">DEFAULT</td><td class="description"><p class="description">Bitmask of 0. Indicates the absence of other option flags.</p></td></tr><tr><td class="codefont argname">PRETTY</td><td class="description"><p class="description">When enabled, includes whitespace in the output.</p></td></tr><tr><td class="codefont argname">OMIT_DICTIONARY_NULLS</td><td class="description"><p class="description">Dictionary keys that have null values will not be serialized.</p></td></tr></tbody></table></div></div><div class="itembox"><div><h2><span class="keyword">function</span> parseJson(rawJsonString, failSilently)<a class="bookmark" name="func-json-parsejson" href="#func-json-parsejson">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">DEFAULT</td>
+<td class="description"><p class="description">Bitmask of 0. Indicates the absence of other option flags.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">PRETTY</td>
+<td class="description"><p class="description">When enabled, includes whitespace in the output.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">OMIT_DICTIONARY_NULLS</td>
+<td class="description"><p class="description">Dictionary keys that have null values will not be serialized.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> parseJson(rawJsonString, failSilently)<a class="bookmark" name="func-json-parsejson" href="#func-json-parsejson">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 				Parses the JSON string into a dictionary object.
-			</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">rawJsonString</td><td class="codefont argtype">string</td><td class="codefont optional"></td><td class="description"><p class="description">Raw input text to parse.</p></td></tr><tr><td class="codefont argname">failSilently</td><td class="codefont argtype">boolean</td><td class="codefont optional">Optional</td><td class="description"><p class="description">Default is false. If true, syntax errors will not cause an exception and null will be returned instead.</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">dictionary</td><td class="description"><p class="description">A structured JSON object in the form of a dictionary.</p></td></tr></tbody></table></div></div></div></div><div class="itembox"><div><h2><span class="keyword">function</span> serialize(object, flags, depth)<a class="bookmark" name="func-json-serialize" href="#func-json-serialize">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">rawJsonString</td>
+<td class="codefont argtype">string</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">Raw input text to parse.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">failSilently</td>
+<td class="codefont argtype">boolean</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">Default is false. If true, syntax errors will not cause an exception and null will be returned instead.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">dictionary</td><td class="description"><p class="description">A structured JSON object in the form of a dictionary.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> serialize(object, flags, depth)<a class="bookmark" name="func-json-serialize" href="#func-json-serialize">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 				Serializes a dictionary object into a JSON string.
-			</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">object</td><td class="codefont argtype">dictionary</td><td class="codefont optional"></td><td class="description"><p class="description">Dictionary object to serialize into JSON.</p></td></tr><tr><td class="codefont argname">flags</td><td class="codefont argtype">Json.JsonSerializerFlag</td><td class="codefont optional">Optional</td><td class="description"><p class="description">Bitmask of flags for special options. See JsonSerializerFlag for more information. Default value is JsonSerializerFlag.DEFAULT</p></td></tr><tr><td class="codefont argname">depth</td><td class="codefont argtype">integer</td><td class="codefont optional">Optional</td><td class="description"><p class="description">To prevent infinite recursion, this is a maximum recursion depth. Default value is 64.</p></td></tr></tbody></table></div><div><h3>Return Value</h3> <table class="arguments"><thead><tr><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argtype">string</td><td class="description"><p class="description">A JSON string.</p></td></tr></tbody></table></div></div></div></div><div><h1><span class="keyword">class</span> JsonException<a class="bookmark" name="class-json-jsonexception" href="#class-json-jsonexception">[link]</a></h1><div class="itembox"><p class="description">An exception thrown upon a parsing or serializing error.</p></div></div></body></html>
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">object</td>
+<td class="codefont argtype">dictionary</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">Dictionary object to serialize into JSON.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">flags</td>
+<td class="codefont argtype">Json.JsonSerializerFlag</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">Bitmask of flags for special options. See JsonSerializerFlag for more information. Default value is JsonSerializerFlag.DEFAULT</p></td>
+</tr>
+<tr>
+<td class="codefont argname">depth</td>
+<td class="codefont argtype">integer</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">To prevent infinite recursion, this is a maximum recursion depth. Default value is 64.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">string</td><td class="description"><p class="description">A JSON string.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> JsonException<a class="bookmark" name="class-json-jsonexception" href="#class-json-jsonexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">An exception thrown upon a parsing or serializing error.</p>
+</div>
+</div>
+</body></html>
