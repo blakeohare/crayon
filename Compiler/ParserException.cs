@@ -13,7 +13,12 @@ namespace Crayon
 
         public static ParserException ThrowEofException(string filename)
         {
-            throw new ParserException("Unexpected EOF in " + filename);
+            return ThrowEofExceptionWithSuggestion(filename, "Did you forget a closing parenthesis or curly brace?");
+        }
+
+        public static ParserException ThrowEofExceptionWithSuggestion(string filename, string suggestion)
+        {
+            throw new ParserException("Unexpected EOF in " + filename + ". " + suggestion);
         }
 
         private static string InterpretToken(Token token)

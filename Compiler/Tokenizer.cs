@@ -73,12 +73,16 @@ namespace Crayon
                             }
                         }
 
-                        string unclosedStringError = "This file contains an unclosed string somewhere.";
+                        string unclosedStringError = "There is an unclosed string somewhere in this file.";
                         if (suspiciousToken != null)
                         {
                             unclosedStringError += " Line " + (suspiciousToken.Line + 1) + " is suspicious.";
                         }
-                        throw new ParserException(new Token("EOF", fileID, filename, lineByIndex[lineByIndex.Length - 1], colByIndex[colByIndex.Length - 1], false), unclosedStringError);
+                        else if (stringStart != 0)
+                        {
+                            unclosedStringError += " Line " + (lineByIndex[stringStart] + 1) + " is suspicious.";
+                        }
+                        ParserException.ThrowEofExceptionWithSuggestion(filename, unclosedStringError);
                     }
                 }
 

@@ -36,7 +36,7 @@ namespace Crayon
 
         private Token SafePeek()
         {
-            if (this.empty) throw new EofException();
+            if (this.empty) ThrowEofException();
 
             if (this.topIndex < this.topLength)
             {

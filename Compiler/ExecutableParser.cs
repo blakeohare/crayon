@@ -500,6 +500,7 @@ namespace Crayon
         {
             Token forToken = tokens.PopExpected("for");
             tokens.PopExpected("(");
+            if (!tokens.HasMore) tokens.ThrowEofException();
 
             if (Parser.IsValidIdentifier(tokens.PeekValue()) && tokens.PeekValue(1) == ":")
             {

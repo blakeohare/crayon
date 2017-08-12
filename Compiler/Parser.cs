@@ -324,15 +324,7 @@ namespace Crayon
 
             while (tokens.HasMore)
             {
-                Executable executable;
-                try
-                {
-                    executable = ExecutableParser.Parse(this, tokens, false, true, true, null);
-                }
-                catch (EofException)
-                {
-                    throw new ParserException(null, "Unexpected EOF encountered while parsing " + filename + ". Did you forget a closing curly brace?");
-                }
+                Executable executable = ExecutableParser.Parse(this, tokens, false, true, true, null);
 
                 if (executable is ImportStatement)
                 {
