@@ -105,12 +105,12 @@
 				<returns type="float" description="Volume ratio from 0.0 to 1.0."/>
 				<description>Gets the default volume ratio for Audio.Sound objects that are played from this resource.</description>
 			</function>
-			<function name="loadFromFile" isStatic="true">
+			<function name="loadFromFile" static="true">
 				<arg name="path" type="string" description="Absolute or relative path to a sound file on the local disk."/>
 				<returns type="Audio.SoundResource"/>
 				<description>Creates a new Audio.SoundResource instance for the given file.</description>
 			</function>
-			<function name="loadFromResource" isStatic="true">
+			<function name="loadFromResource" static="true">
 				<arg name="path" type="string" description="Path to a bundled resource"/>
 				<returns type="Audio.SoundResource"/>
 				<description>Creates a new Audio.SoundResource instance for the given bundled resource.</description>

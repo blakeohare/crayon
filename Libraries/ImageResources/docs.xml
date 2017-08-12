@@ -109,7 +109,7 @@
 				</description>
 			</function>
 
-			<function name="loadFromResources" static="true">
+			<function name="loadFromResourcesAsync" static="true">
 				<arg name="idOrIds" type="string|list-of-string" description="An image sheet ID or a list of image sheet IDs"/>
 				<returns type="ImageResources.ImageSheet" description="An image sheet"/>
 				<description>

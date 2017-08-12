@@ -15,19 +15,251 @@ td.optional { color:#000; font-weight:bold; }
 a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
 a.bookmark:hover { color:#08a; }
 p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
-.keyword { font-weight:normal; }</style><h1>Xml</h1><div class="itembox"><p class="description">
+.keyword { font-weight:normal; }</style><h1>Xml</h1><div class="itembox">
+<p class="description">
 		Library for parsing XML.
 		The underlying implementation is a common implementation that is translated to the various target platforms, 
 		so parsing is consistent between platforms and not prone to library-specific quirks.
-	</p></div><ul><li><span class="codefont">namespace</span> Xml<ul><li><a href="#enum-xml-nodetype"><span class="codefont">enum</span> NodeType</a></li><li><a href="#enum-xml-xmloption"><span class="codefont">enum</span> XmlOption</a></li><li><a href="#func-xml-parse"><span class="codefont">function</span> parse(xmlString, options)</a></li><li><a href="#class-xml-xmlelement"><span class="codefont">class</span> XmlElement</a></li><li><a href="#class-xml-xmlnamespacedattribute"><span class="codefont">class</span> XmlNamespacedAttribute</a></li><li><a href="#class-xml-xmlnamespacedelement"><span class="codefont">class</span> XmlNamespacedElement</a></li><li><a href="#class-xml-xmltext"><span class="codefont">class</span> XmlText</a></li></ul></li></ul><div class="itembox"><h1><span class="keyword">enum</span> NodeType<a class="bookmark" name="enum-xml-nodetype" href="#enum-xml-nodetype">[link]</a></h1><p class="description">Enum for identifying the type of a parse node</p><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Description</th></thead><tbody><tr><td class="codefont argname">ELEMENT</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">TEXT</td><td class="description"><p class="description"></p></td></tr><tr><td class="codefont argname">COMMENT</td><td class="description"><p class="description"></p></td></tr></tbody></table></div></div><div class="itembox"><h1><span class="keyword">enum</span> XmlOption<a class="bookmark" name="enum-xml-xmloption" href="#enum-xml-xmloption">[link]</a></h1><p class="description">
+	</p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> Xml<ul>
+<li><a href="#enum-xml-nodetype"><span class="codefont">enum</span> NodeType</a></li>
+<li><a href="#enum-xml-xmloption"><span class="codefont">enum</span> XmlOption</a></li>
+<li><a href="#func-xml-parse"><span class="codefont">function</span> parse(xmlString, options)</a></li>
+<li><a href="#class-xml-xmlelement"><span class="codefont">class</span> XmlElement</a></li>
+<li><a href="#class-xml-xmlnamespacedattribute"><span class="codefont">class</span> XmlNamespacedAttribute</a></li>
+<li><a href="#class-xml-xmlnamespacedelement"><span class="codefont">class</span> XmlNamespacedElement</a></li>
+<li><a href="#class-xml-xmltext"><span class="codefont">class</span> XmlText</a></li>
+</ul>
+</li>
+</ul>
+<div class="itembox">
+<h1><span class="keyword">enum</span> NodeType<a class="bookmark" name="enum-xml-nodetype" href="#enum-xml-nodetype">[link]</a></h1>
+<p class="description">Enum for identifying the type of a parse node</p>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">ELEMENT</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">TEXT</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">COMMENT</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="itembox">
+<h1><span class="keyword">enum</span> XmlOption<a class="bookmark" name="enum-xml-xmloption" href="#enum-xml-xmloption">[link]</a></h1>
+<p class="description">
 				A bit mask of various options used by the parser.
-			</p><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Description</th></thead><tbody><tr><td class="codefont argname">TRIM_WHITESPACE</td><td class="description"><p class="description">Trims the whitespace off text elements.</p></td></tr><tr><td class="codefont argname">FAIL_SILENTLY</td><td class="description"><p class="description">If there is a syntax error, return null instead of throwing an exception</p></td></tr><tr><td class="codefont argname">NAMESPACES</td><td class="description"><p class="description">Return an XML-namespace aware parse node tree instead of a strict literal parse tree.</p></td></tr></tbody></table></div></div><div class="itembox"><div><h2><span class="keyword">function</span> parse(xmlString, options)<a class="bookmark" name="func-xml-parse" href="#func-xml-parse">[link]</a></h2><div class="itembox"><p class="description">
+			</p>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">TRIM_WHITESPACE</td>
+<td class="description"><p class="description">Trims the whitespace off text elements.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">FAIL_SILENTLY</td>
+<td class="description"><p class="description">If there is a syntax error, return null instead of throwing an exception</p></td>
+</tr>
+<tr>
+<td class="codefont argname">NAMESPACES</td>
+<td class="description"><p class="description">Return an XML-namespace aware parse node tree instead of a strict literal parse tree.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> parse(xmlString, options)<a class="bookmark" name="func-xml-parse" href="#func-xml-parse">[link]</a></h2>
+<div class="itembox">
+<p class="description">
 				Parses a string and returns an XML node tree.
 				Capable of parsing the tree by the basic XML standard without namespaces, or with. See Xml.XmlOption.
-			</p><div><h3>Arguments</h3><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead><tbody><tr><td class="codefont argname">xmlString</td><td class="codefont argtype">string</td><td class="codefont optional"></td><td class="description"><p class="description">Some XML</p></td></tr><tr><td class="codefont argname">options</td><td class="codefont argtype">Xml.XmlOption</td><td class="codefont optional">Optional</td><td class="description"><p class="description">A bitmask of extra options for the parser.</p></td></tr></tbody></table></div></div></div></div><div><h1><span class="keyword">class</span> XmlElement<a class="bookmark" name="class-xml-xmlelement" href="#class-xml-xmlelement">[link]</a></h1><div class="itembox"><p class="description">Represents an XML Element</p></div><div class="itembox"><h2>Fields</h2><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argname">.name<a name="field-xml-xmlelement-name"></a></td><td class="codefont argtype">string</td><td class="description"><p class="description">The name of the element.</p></td></tr><tr><td class="codefont argname">.attributes<a name="field-xml-xmlelement-attributes"></a></td><td class="codefont argtype">dictionary</td><td class="description"><p class="description">A dictionary with string keys for all the element's attributes</p></td></tr><tr><td class="codefont argname">.children<a name="field-xml-xmlelement-children"></a></td><td class="codefont argtype">List of object</td><td class="description"><p class="description">A list of XmlElements, XmlText, or XmlComments that are nested within this element, in the order they appear. Use the .type field to distinguish them.</p></td></tr><tr><td class="codefont argname">.type<a name="field-xml-xmlelement-type"></a></td><td class="codefont argtype">Xml.NodeType</td><td class="description"><p class="description">Always set to Xml.NodeType.ELEMENT</p></td></tr></tbody></table></div></div></div><div><h1><span class="keyword">class</span> XmlNamespacedAttribute<a class="bookmark" name="class-xml-xmlnamespacedattribute" href="#class-xml-xmlnamespacedattribute">[link]</a></h1><div class="itembox"><p class="description">
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">xmlString</td>
+<td class="codefont argtype">string</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">Some XML</p></td>
+</tr>
+<tr>
+<td class="codefont argname">options</td>
+<td class="codefont argtype">Xml.XmlOption</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">A bitmask of extra options for the parser.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> XmlElement<a class="bookmark" name="class-xml-xmlelement" href="#class-xml-xmlelement">[link]</a></h1>
+<div class="itembox">
+<p class="description">Represents an XML Element</p>
+</div>
+<div class="itembox">
+<h2>Fields</h2>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">.name<a name="field-xml-xmlelement-name"></a></td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">The name of the element.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.attributes<a name="field-xml-xmlelement-attributes"></a></td>
+<td class="codefont argtype">dictionary</td>
+<td class="description"><p class="description">A dictionary with string keys for all the element's attributes</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.children<a name="field-xml-xmlelement-children"></a></td>
+<td class="codefont argtype">List of object</td>
+<td class="description"><p class="description">A list of XmlElements, XmlText, or XmlComments that are nested within this element, in the order they appear. Use the .type field to distinguish them.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.type<a name="field-xml-xmlelement-type"></a></td>
+<td class="codefont argtype">Xml.NodeType</td>
+<td class="description"><p class="description">Always set to Xml.NodeType.ELEMENT</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> XmlNamespacedAttribute<a class="bookmark" name="class-xml-xmlnamespacedattribute" href="#class-xml-xmlnamespacedattribute">[link]</a></h1>
+<div class="itembox">
+<p class="description">
 				Represents an attribute in an XML element with namespace information. 
 				This is only used if the XML is parsed with the NAMESPACES flag. 
 				Otherwise the element contains a simple string-to-string dictionary.
-			</p></div><div class="itembox"><h2>Fields</h2><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argname">.name<a name="field-xml-xmlnamespacedattribute-name"></a></td><td class="codefont argtype">string</td><td class="description"><p class="description">The name of this attribute without the namespace alias prefix.</p></td></tr><tr><td class="codefont argname">.alias<a name="field-xml-xmlnamespacedattribute-alias"></a></td><td class="codefont argtype">string</td><td class="description"><p class="description">The namespace alias prefix, if present.</p></td></tr><tr><td class="codefont argname">.xmlns<a name="field-xml-xmlnamespacedattribute-xmlns"></a></td><td class="codefont argtype">string</td><td class="description"><p class="description">The namespace of this element, if present.</p></td></tr><tr><td class="codefont argname">.value<a name="field-xml-xmlnamespacedattribute-value"></a></td><td class="codefont argtype">string</td><td class="description"><p class="description">The value of the attribute.</p></td></tr></tbody></table></div></div></div><div><h1><span class="keyword">class</span> XmlNamespacedElement<a class="bookmark" name="class-xml-xmlnamespacedelement" href="#class-xml-xmlnamespacedelement">[link]</a></h1><div class="itembox"><p class="description">Represents an XML Element along with resolved namespace information</p></div><div class="itembox"><h2>Fields</h2><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argname">.name<a name="field-xml-xmlnamespacedelement-name"></a></td><td class="codefont argtype">string</td><td class="description"><p class="description">The name of this element without the namespace alias prefix.</p></td></tr><tr><td class="codefont argname">.alias<a name="field-xml-xmlnamespacedelement-alias"></a></td><td class="codefont argtype">string</td><td class="description"><p class="description">The namespace alias prefix, if present.</p></td></tr><tr><td class="codefont argname">.xmlns<a name="field-xml-xmlnamespacedelement-xmlns"></a></td><td class="codefont argtype">string</td><td class="description"><p class="description">The namespace of this element, if present.</p></td></tr><tr><td class="codefont argname">.attributes<a name="field-xml-xmlnamespacedelement-attributes"></a></td><td class="codefont argtype">List of Xml.XmlNamespacedAttribute</td><td class="description"><p class="description">A list of attributes in this element. Because namespaces can allow for multiple attributes with the same root name and aliases can be arbitrary, this value is given as a list of attribute objects, instead of a dictionary keyed by the attribute name.</p></td></tr><tr><td class="codefont argname">.children<a name="field-xml-xmlnamespacedelement-children"></a></td><td class="codefont argtype">List of object</td><td class="description"><p class="description">A list of XmlNamespacedElements, XmlText, or XmlComments that are nested within this element, in the order they appear. Use the .type field to distinguish them.</p></td></tr><tr><td class="codefont argname">.type<a name="field-xml-xmlnamespacedelement-type"></a></td><td class="codefont argtype">Xml.NodeType</td><td class="description"><p class="description">Always set to Xml.NodeType.ELEMENT</p></td></tr></tbody></table></div></div></div><div><h1><span class="keyword">class</span> XmlText<a class="bookmark" name="class-xml-xmltext" href="#class-xml-xmltext">[link]</a></h1><div class="itembox"><p class="description">
+			</p>
+</div>
+<div class="itembox">
+<h2>Fields</h2>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">.name<a name="field-xml-xmlnamespacedattribute-name"></a></td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">The name of this attribute without the namespace alias prefix.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.alias<a name="field-xml-xmlnamespacedattribute-alias"></a></td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">The namespace alias prefix, if present.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.xmlns<a name="field-xml-xmlnamespacedattribute-xmlns"></a></td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">The namespace of this element, if present.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.value<a name="field-xml-xmlnamespacedattribute-value"></a></td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">The value of the attribute.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> XmlNamespacedElement<a class="bookmark" name="class-xml-xmlnamespacedelement" href="#class-xml-xmlnamespacedelement">[link]</a></h1>
+<div class="itembox">
+<p class="description">Represents an XML Element along with resolved namespace information</p>
+</div>
+<div class="itembox">
+<h2>Fields</h2>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">.name<a name="field-xml-xmlnamespacedelement-name"></a></td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">The name of this element without the namespace alias prefix.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.alias<a name="field-xml-xmlnamespacedelement-alias"></a></td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">The namespace alias prefix, if present.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.xmlns<a name="field-xml-xmlnamespacedelement-xmlns"></a></td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">The namespace of this element, if present.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.attributes<a name="field-xml-xmlnamespacedelement-attributes"></a></td>
+<td class="codefont argtype">List of Xml.XmlNamespacedAttribute</td>
+<td class="description"><p class="description">A list of attributes in this element. Because namespaces can allow for multiple attributes with the same root name and aliases can be arbitrary, this value is given as a list of attribute objects, instead of a dictionary keyed by the attribute name.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.children<a name="field-xml-xmlnamespacedelement-children"></a></td>
+<td class="codefont argtype">List of object</td>
+<td class="description"><p class="description">A list of XmlNamespacedElements, XmlText, or XmlComments that are nested within this element, in the order they appear. Use the .type field to distinguish them.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.type<a name="field-xml-xmlnamespacedelement-type"></a></td>
+<td class="codefont argtype">Xml.NodeType</td>
+<td class="description"><p class="description">Always set to Xml.NodeType.ELEMENT</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> XmlText<a class="bookmark" name="class-xml-xmltext" href="#class-xml-xmltext">[link]</a></h1>
+<div class="itembox">
+<p class="description">
 				Represents a blob of text present in an XML file, either as the body of an element or text between elements.
-			</p></div><div class="itembox"><h2>Fields</h2><div class="itembox"><table class="arguments"><thead><tr><th>Name</th><th>Type</th><th>Description</th></thead><tbody><tr><td class="codefont argname">.value<a name="field-xml-xmltext-value"></a></td><td class="codefont argtype">string</td><td class="description"><p class="description">The value of the text.</p></td></tr><tr><td class="codefont argname">.type<a name="field-xml-xmltext-type"></a></td><td class="codefont argtype">Xml.NodeType</td><td class="description"><p class="description">Always set to Xml.NodeType.TEXT</p></td></tr></tbody></table></div></div></div></body></html>
+			</p>
+</div>
+<div class="itembox">
+<h2>Fields</h2>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">.value<a name="field-xml-xmltext-value"></a></td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">The value of the text.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">.type<a name="field-xml-xmltext-type"></a></td>
+<td class="codefont argtype">Xml.NodeType</td>
+<td class="description"><p class="description">Always set to Xml.NodeType.TEXT</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</body></html>
