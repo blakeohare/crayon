@@ -1,6 +1,5 @@
 <build>
 	<projectname>Conway</projectname>
-	<source>source/</source>
 	<output>output/%TARGET_NAME%</output>
 	
 	<iosbundleprefix>org.crayonlang.demos</iosbundleprefix>
@@ -8,30 +7,43 @@
 	
 	<!-- Targets -->
 	<target name="javascript">
+		<source>source-en</source>
 		<platform>javascript-app</platform>
 	</target>
 	
 	<target name="csharp">
+		<source>source-en</source>
+		<platform>csharp-app</platform>
+	</target>
+	
+	<target name="csharp-es">
+		<source>source-es</source>
+		<compilerlocale>es</compilerlocale>
 		<platform>csharp-app</platform>
 	</target>
 	
 	<target name="java">
+		<source>source-en</source>
 		<platform>java-app</platform>
 	</target>
 	
 	<target name="python">
+		<source>source-en</source>
 		<platform>python-app</platform>
 	</target>
 	
 	<target name="ruby">
+		<source>source-en</source>
 		<platform>ruby-app</platform>
 	</target>
 	
 	<target name="android">
+		<source>source-en</source>
 		<platform>javascript-app-android</platform>
 	</target>
 
 	<target name="ios">
+		<source>source-en</source>
 		<platform>javascript-app-ios</platform>
 	</target>
 </build>
