@@ -9,14 +9,15 @@
         nativeData[4] -> effective width (int) (distance to right margin from left margin)
 
         The following are values added each time this is allocated to a texture
-        nativeData[5] -> GL texture ID#
-        nativeData[6] -> texture region left
-        nativeData[7] -> texture region top
-        nativeData[8] -> textuure region right
-        nativeData[9] -> texture region bottom
+        nativeData[5] -> GL texture ID# or -1 if not initialized
+        nativeData[6] -> bitmap instance that needs to be loaded into the [5] GL Texture ID, or null if already loaded.
+        nativeData[7] -> texture region left
+        nativeData[8] -> texture region top
+        nativeData[9] -> texture region right
+        nativeData[10] -> texture region bottom
         ...
-        nativeData[10] -> full texture width (always 1024)
-        nativeData[11] -> full texture height
+        nativeData[11] -> full texture width (always 1024)
+        nativeData[12] -> full texture height
     */
     class GLTile {
         field charId;
@@ -34,7 +35,7 @@
         constructor(renderer, charId) {
             this.charId = charId;
             this.renderer = renderer;
-            $$$('allocNativeData', this, 12);
+            $$$('allocNativeData', this, 13);
             size = [0, 0, 0, 0];
             if (!$$lib_graphics2dtext_glRenderCharTile(renderer.nativeFont, this, charId, size)) {
                 throw new InvalidArgumentException("Could not render character (" + charId + ")");

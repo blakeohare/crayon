@@ -14,12 +14,13 @@
         nativeData[3] -> left margin
         nativeData[4] -> width
 
-        nativeData[5] -> GL texture ID (already loaded)
-        nativeData[6] -> left
-        nativeData[7] -> top
-        nativeData[8] -> right
-        nativeData[9] -> bottom
-        nativeData[10] -> texture height (width is always 1024)
+        nativeData[5] -> GL texture ID if already loaded (-1 otherwise)
+        nativeData[6] -> bitmap instance to load into [5] as GL Texture ID, or null if already loaded
+        nativeData[7] -> left
+        nativeData[8] -> top
+        nativeData[9] -> right
+        nativeData[10] -> bottom
+        nativeData[11] -> texture height (width is always 1024)
     args[2] -> Graphics2D draw queue object
         nativeData[0] -> event list
         nativeData[1] -> event list length
@@ -56,26 +57,33 @@ Value lib_graphics2dtext_function_glRenderTextSurface(Array<Value> args) {
     int index = queueLength;
     int x = 0;
     int y = 0;
+    int textureId = 0;
     for (int i = 0; i < charCount; i += 1) {
         tileNativeData = Core.ForceParens((ObjectInstance)tileValues[i].internalValue).nativeData;
         queue[index] = 8; // draw texture direct
-        queue[index | 1] = (int) tileNativeData[5]; // texture ID
+        textureId = (int) tileNativeData[5];
+        if (textureId == -1) {
+            textureId = Native._lib_graphics2dtext_glLoadTexture(tileNativeData[6]);
+            tileNativeData[5] = textureId;
+            tileNativeData[6] = null;
+        }
+        queue[index | 1] = textureId;
         x = xs[i] + leftOffset;
         y = ys[i] + topOffset;
         queue[index | 2] = x;
         queue[index | 3] = y;
         queue[index | 4] = x + (int) tileNativeData[1]; // right on screen
         queue[index | 5] = y + (int) tileNativeData[2]; // bottom on screen
-        queue[index | 6] = (int) tileNativeData[6]; // texture left
-        queue[index | 7] = (int) tileNativeData[7]; // texture top
-        queue[index | 8] = (int) tileNativeData[8]; // texture right
-        queue[index | 9] = (int) tileNativeData[9]; // texture bottom
+        queue[index | 6] = (int) tileNativeData[7]; // texture left
+        queue[index | 7] = (int) tileNativeData[8]; // texture top
+        queue[index | 8] = (int) tileNativeData[9]; // texture right
+        queue[index | 9] = (int) tileNativeData[10]; // texture bottom
         queue[index | 10] = red;
         queue[index | 11] = green;
         queue[index | 12] = blue;
         queue[index | 13] = alpha;
-        queue[index | 14] = (int) tileNativeData[10]; // full texture width
-        queue[index | 15] = (int) tileNativeData[11]; // full texture height
+        queue[index | 14] = (int) tileNativeData[11]; // full texture width
+        queue[index | 15] = (int) tileNativeData[12]; // full texture height
         index += 16;
     }
     return VALUE_NULL;

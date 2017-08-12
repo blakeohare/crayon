@@ -15,6 +15,8 @@ namespace Interpreter.Libraries.Game
 
 		public static int ForceLoadTexture(UniversalBitmap bitmap)
 		{
+			if (bitmap.GlTextureId != 0) return bitmap.GlTextureId;
+
 			bitmap = NormalizeBitmap(bitmap);
 			int width = bitmap.Width;
 			int height = bitmap.Height;
@@ -36,6 +38,8 @@ namespace Interpreter.Libraries.Game
 
 			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
 			GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+
+			bitmap.GlTextureId = textureId;
 
 			return textureId;
 		}

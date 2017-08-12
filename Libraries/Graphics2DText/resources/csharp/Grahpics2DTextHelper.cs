@@ -54,13 +54,15 @@ internal static class Graphics2DTextHelper
             tileHeight = coordinateInfo[i * 4 + 3];
 
             g.Draw((Interpreter.UniversalBitmap)nativeData[0], tileX, tileY, 0, 0, tileWidth, tileHeight);
-            nativeData[6] = tileX;
-            nativeData[7] = tileY;
-            nativeData[8] = tileX + tileWidth;
-            nativeData[9] = tileY + tileHeight;
+			nativeData[5] = -1;
+			nativeData[6] = null;
+            nativeData[7] = tileX;
+            nativeData[8] = tileY;
+            nativeData[9] = tileX + tileWidth;
+            nativeData[10] = tileY + tileHeight;
 
-            nativeData[10] = output.Width;
-            nativeData[11] = output.Height;
+            nativeData[11] = output.Width;
+            nativeData[12] = output.Height;
         }
         g.Flush();
         return output;
