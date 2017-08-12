@@ -42,7 +42,7 @@ namespace Crayon.ParseTree
                 return new CompileTimeDictionary(this.FirstToken, "var", this.FunctionOrClassOwner);
             }
 
-            if (Parser.IsReservedKeyword(this.Name))
+            if (parser.IsReservedKeyword(this.Name))
             {
                 throw new ParserException(this.FirstToken, "'" + this.Name + "' is a reserved keyword and cannot be used like this.");
             }

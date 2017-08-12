@@ -5,11 +5,17 @@ namespace Crayon
 {
     internal class AnnotationParser
     {
-        public static Annotation ParseAnnotation(TokenStream tokens)
+        private Parser parser;
+        public AnnotationParser(Parser parser)
+        {
+            this.parser = parser;
+        }
+
+        public Annotation ParseAnnotation(TokenStream tokens)
         {
             Token annotationToken = tokens.PopExpected("@");
             Token typeToken = tokens.Pop();
-            Parser.VerifyIdentifier(typeToken);
+            parser.VerifyIdentifier(typeToken);
             List<Expression> args = new List<Expression>();
             if (tokens.PopIfPresent("("))
             {
@@ -20,7 +26,7 @@ namespace Crayon
                         tokens.PopExpected(",");
                     }
 
-                    args.Add(ExpressionParser.Parse(tokens, null));
+                    args.Add(this.parser.ExpressionParser.Parse(tokens, null));
                 }
             }
             return new Annotation(annotationToken, typeToken, args);

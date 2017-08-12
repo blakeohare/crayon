@@ -286,7 +286,7 @@ namespace Crayon.ParseTree
                 }
                 throw new ParserException(this.DotToken, ".class can only be applied to class names.");
             }
-            Parser.VerifyIdentifier(this.StepToken);
+            parser.VerifyIdentifier(this.StepToken);
 
             return this;
         }

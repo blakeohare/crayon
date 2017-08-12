@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Crayon.ParseTree;
 using Common;
 
@@ -13,11 +12,47 @@ namespace Crayon
             this.CurrentClass = null;
             this.CurrentSystemLibrary = null;
             this.BuildContext = buildContext;
-            this.LibraryManager = sysLibMan ?? new Crayon.LibraryManager(null);
+            this.LibraryManager = sysLibMan ?? new LibraryManager(null);
             this.CurrentNamespace = "";
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<Executable, ConstantResolutionState>();
+            this.Locale = buildContext.CompilerLocale;
+            this.Keywords = this.Locale.Keywords;
+            this.RESERVED_KEYWORDS.UnionWith(this.Locale.GetKeywordsList());
+            this.ExpressionParser = new ExpressionParser(this);
+            this.ExecutableParser = new ExecutableParser(this);
+            this.AnnotationParser = new AnnotationParser(this);
+            this.localeStack = new Stack<Locale>();
+            this.localeStack.Push(this.Locale);
         }
+
+        private Stack<Locale> localeStack;
+
+        public void PushLocale(Locale locale)
+        {
+            this.localeStack.Push(locale);
+            this.Locale = locale;
+            this.Keywords = this.Locale.Keywords;
+        }
+
+        public void PopLocale()
+        {
+            this.localeStack.Pop();
+            this.Locale = this.localeStack.Peek();
+            this.Keywords = this.Locale.Keywords;
+        }
+
+        private Token[] GetImplicitCoreImport()
+        {
+            return Tokenizer.Tokenize("implicit code", this.Keywords.IMPORT + " Core;", -1, true);
+        }
+
+        public ExpressionParser ExpressionParser { get; private set; }
+        public ExecutableParser ExecutableParser { get; private set; }
+        public AnnotationParser AnnotationParser { get; private set; }
+
+        public Locale Locale { get; private set; }
+        public Locale.KeywordsLookup Keywords { get; private set; }
 
         public Dictionary<Executable, ConstantResolutionState> ConstantAndEnumResolutionState { get; private set; }
 
@@ -88,6 +123,19 @@ namespace Crayon
         public int GetIntConstant(int value) { return this.literalLookup.GetIntId(value); }
         public int GetNullConstant() { return this.literalLookup.GetNullId(); }
         public int GetClassRefConstant(ClassDefinition value) { return this.literalLookup.GetClassRefId(value); }
+
+        public string PopClassNameWithFirstTokenAlreadyPopped(TokenStream tokens, Token firstToken)
+        {
+            this.VerifyIdentifier(firstToken);
+            string name = firstToken.Value;
+            while (tokens.PopIfPresent("."))
+            {
+                Token nameNext = tokens.Pop();
+                this.VerifyIdentifier(nameNext);
+                name += "." + nameNext.Value;
+            }
+            return name;
+        }
 
         public int GetLiteralId(Expression value)
         {
@@ -232,7 +280,7 @@ namespace Crayon
             List<Executable> output = new List<Executable>();
             while (tokens.HasMore)
             {
-                output.Add(ExecutableParser.Parse(this, tokens, false, true, true, null));
+                output.Add(this.ExecutableParser.Parse(tokens, false, true, true, null));
             }
             return new Resolver(this, output).ResolveTranslatedCode();
         }
@@ -278,8 +326,6 @@ namespace Crayon
             return fileIdCounter++;
         }
 
-        private static readonly Token[] implicitCoreImport = Tokenizer.Tokenize("implicit code", "import Core;", -1, true);
-
         public Executable[] ParseInterpretedCode(string filename, string code, string libraryName)
         {
             int fileId = this.GetNextFileId();
@@ -291,7 +337,7 @@ namespace Crayon
 
             List<string> namespaceImportsBuilder = new List<string>();
 
-            tokens.InsertTokens(implicitCoreImport);
+            tokens.InsertTokens(this.GetImplicitCoreImport());
 
             Library activeLibrary = libraryName == null ? null : this.LibraryManager.GetLibraryFromName(libraryName);
             if (libraryName != null && libraryName != "Core")
@@ -299,9 +345,9 @@ namespace Crayon
                 activeLibrary.AddLibraryDependency(this.LibraryManager.GetLibraryFromName("Core"));
             }
 
-            while (tokens.HasMore && tokens.IsNext("import"))
+            while (tokens.HasMore && tokens.IsNext(this.Keywords.IMPORT))
             {
-                ImportStatement importStatement = ExecutableParser.Parse(this, tokens, false, true, true, null) as ImportStatement;
+                ImportStatement importStatement = this.ExecutableParser.Parse(tokens, false, true, true, null) as ImportStatement;
                 if (importStatement == null) throw new Exception();
                 namespaceImportsBuilder.Add(importStatement.ImportPath);
                 List<Executable> libraryEmbeddedCode = new List<Executable>();
@@ -324,7 +370,7 @@ namespace Crayon
 
             while (tokens.HasMore)
             {
-                Executable executable = ExecutableParser.Parse(this, tokens, false, true, true, null);
+                Executable executable = this.ExecutableParser.Parse(tokens, false, true, true, null);
 
                 if (executable is ImportStatement)
                 {
@@ -359,7 +405,7 @@ namespace Crayon
             return true;
         }
 
-        internal static void VerifyIdentifier(Token token)
+        internal void VerifyIdentifier(Token token)
         {
             if (!IsValidIdentifier(token.Value))
             {
@@ -367,49 +413,15 @@ namespace Crayon
             }
         }
 
-        private static readonly HashSet<string> RESERVED_KEYWORDS = new HashSet<string>(
-            new string[] {
-                "abstract",
-                "base",
-                "break",
-                "case",
-                "catch",
-                "class",
-                "const",
-                "constructor",
-                "continue",
-                "default",
-                "do",
-                "else",
-                "enum",
-                "false",
-                "field",
-                "final",
-                "finally",
-                "for",
-                "function",
-                "if",
-                "import",
-                "interface",
-                "namespace",
-                "new",
-                "null",
-                "return",
-                "static",
-                "switch",
-                "this",
-                "true",
-                "try",
-                "while",
-            });
+        private readonly HashSet<string> RESERVED_KEYWORDS = new HashSet<string>();
 
-        internal static bool IsReservedKeyword(string value)
+        internal bool IsReservedKeyword(string value)
         {
             return RESERVED_KEYWORDS.Contains(value);
         }
 
         private static readonly HashSet<char> IDENTIFIER_CHARS = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$".ToCharArray());
-        internal static bool IsValidIdentifier(string value)
+        internal bool IsValidIdentifier(string value)
         {
             if (IsReservedKeyword(value))
             {
@@ -436,7 +448,7 @@ namespace Crayon
             {
                 while (!tokens.PopIfPresent("}"))
                 {
-                    output.Add(ExecutableParser.Parse(parser, tokens, false, true, false, owner));
+                    output.Add(parser.ExecutableParser.Parse(tokens, false, true, false, owner));
                 }
             }
             else
@@ -451,7 +463,7 @@ namespace Crayon
                     return output;
                 }
 
-                output.Add(ExecutableParser.Parse(parser, tokens, false, true, false, owner));
+                output.Add(parser.ExecutableParser.Parse(tokens, false, true, false, owner));
             }
             return output;
         }

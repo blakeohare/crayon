@@ -139,7 +139,7 @@ namespace Crayon.ParseTree
                 throw new ParserException(this.FirstToken, "Nested classes aren't a thing, yet.");
             }
 
-            if (Parser.IsReservedKeyword(this.NameToken.Value))
+            if (parser.IsReservedKeyword(this.NameToken.Value))
             {
                 throw new ParserException(this.NameToken, "'" + this.NameToken.Value + "' is a reserved keyword.");
             }

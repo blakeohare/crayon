@@ -1,0 +1,35 @@
+﻿@@@KEYWORDS_START@@@
+ABSTRACT: abstract
+BASE: base
+BREAK: break
+CASE: case
+CATCH: catch
+CLASS: class
+CONST: const
+CONSTRUCTOR: constructor
+CONTINUE: continue
+DEFAULT: default
+DO: do
+DO_WHILE_END: while
+ELSE: else
+ENUM: enum
+FALSE: false
+FIELD: field
+FINAL: final
+FINALLY: finally
+FOR: for
+FUNCTION: function
+IF: if
+IMPORT: import
+INTERFACE: interface
+NAMESPACE: namespace
+NEW: new
+NULL: null
+RETURN: return
+STATIC: static
+SWITCH: switch
+THIS: this
+TRUE: true
+TRY: try
+WHILE: while
+@@@KEYWORDS_END@@@

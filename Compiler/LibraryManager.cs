@@ -188,6 +188,9 @@ namespace Crayon
 
         public Library[] LibrariesUsed { get { return this.librariesAlreadyImported.ToArray(); } }
 
+        // TODO: libraries will be able to declare their source code locale.
+        private static readonly Locale ENGLISH_LOCALE_FOR_LIBRARIES = new Locale("en");
+
         public Library ImportLibrary(Parser parser, Token throwToken, string name, List<Executable> executablesOut)
         {
             name = name.Split('.')[0];
@@ -224,7 +227,9 @@ namespace Crayon
                 {
                     string fakeName = "[" + embeddedFile + "]";
                     string code = embeddedCode[embeddedFile];
+                    parser.PushLocale(ENGLISH_LOCALE_FOR_LIBRARIES);
                     executablesOut.AddRange(parser.ParseInterpretedCode(fakeName, code, name));
+                    parser.PopLocale();
                 }
 
                 parser.CurrentSystemLibrary = oldSystemLibrary;

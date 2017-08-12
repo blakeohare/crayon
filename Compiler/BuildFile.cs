@@ -32,6 +32,7 @@ namespace Crayon
         public int? WindowHeight { get; set; }
         public string Description { get; set; }
         public string Version { get; set; }
+        public Locale CompilerLocale { get; set; }
 
         public enum VarType
         {
@@ -115,6 +116,9 @@ namespace Crayon
 
             [XmlElement("windowsize")]
             public Size WindowSize { get; set; }
+
+            [XmlElement("compilerlocale")]
+            public string CompilerLocale { get; set; }
 
             private bool TranslateStringToBoolean(string value)
             {
@@ -264,6 +268,7 @@ namespace Crayon
                 flattened.Description = DoReplacement(targetName, desiredTarget.Description ?? flattened.Description);
                 flattened.Version = DoReplacement(targetName, desiredTarget.Version ?? flattened.Version);
                 flattened.WindowSize = Size.Merge(desiredTarget.WindowSize, flattened.WindowSize) ?? new Size();
+                flattened.CompilerLocale = desiredTarget.CompilerLocale ?? flattened.CompilerLocale;
 
                 platform = desiredTarget.Platform;
             }
@@ -297,6 +302,7 @@ namespace Crayon
                 IosBundlePrefix = flattened.IosBundlePrefix,
                 WindowWidth = Util.ParseIntWithErrorNullOkay((flattened.WindowSize ?? new Size()).Width, "Invalid window width in build file."),
                 WindowHeight = Util.ParseIntWithErrorNullOkay((flattened.WindowSize ?? new Size()).Height, "Invalid window height in build file."),
+                CompilerLocale = new Locale((flattened.CompilerLocale ?? "en").Trim()),
             }.ValidateValues();
         }
 
