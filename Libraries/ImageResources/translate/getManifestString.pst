@@ -1,5 +1,6 @@
-﻿Value lib_imageresources_function_getManifestString(Array<Value> args) {
-    Value output = VALUE_NULL;
-    output = buildString(Native._lib_imageresources_getManifestString());
-    return output;
+﻿/*
+    Get the image resource manifest as a string.
+*/
+Value lib_imageresources_function_getManifestString(Array<Value> args) {
+    return buildString(Native._lib_imageresources_getManifestString());
 }

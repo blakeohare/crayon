@@ -1,20 +1,27 @@
-﻿Value lib_imageresources_function_nativeImageDataInit(Array<Value> args) {
-    int int1 = 0;
-    int int2 = 0;
-    Array<object> objArray1 = null;
-    ObjectInstance objInstance1 = null;
-    Value output = VALUE_NULL;
-    Value arg1 = args[0];
-    Value arg2 = args[1];
-    Value arg3 = args[2];
-    objInstance1 = ((ObjectInstance) arg1.internalValue);
-    objArray1 = new Array<object>(4);
-    int1 = ((int) arg2.internalValue);
-    int2 = ((int) arg3.internalValue);
-    objArray1[0] = Native._lib_imageresources_generateNativeBitmapOfSize(int1, int2);
-    objArray1[1] = int1;
-    objArray1[2] = int2;
-    objArray1[3] = null;
-    objInstance1.nativeData = objArray1;
-    return output;
+﻿/*
+    Initialize the nativeData for a NativeImageData object instance.
+
+    args[0]: NativeImageData object instance
+    args[1]: width (int)
+    args[2]: height (int)
+
+    Native data to initialize:
+    nativeData[0] -> platform bitmap image instance
+    nativeData[1] -> width
+    nativeData[2] -> height
+    nativeData[3] -> null (pixel editing session, but only when active)
+*/
+Value lib_imageresources_function_nativeImageDataInit(Array<Value> args) {
+    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
+    Array<object> nd = new Array<object>(4);
+    int width = (int) args[1].internalValue;
+    int height = (int) args[2].internalValue;
+
+    nd[0] = Native._lib_imageresources_generateNativeBitmapOfSize(width, height);
+    nd[1] = width;
+    nd[2] = height;
+    nd[3] = null;
+    objInstance1.nativeData = nd;
+
+    return VALUE_NULL;
 }

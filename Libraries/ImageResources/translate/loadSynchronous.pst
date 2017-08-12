@@ -1,21 +1,23 @@
-﻿Value lib_imageresources_function_loadSynchronous(Array<Value> args) {
-    List<Value> list1 = null;
-    Array<object> objArray1 = null;
-    ObjectInstance objInstance1 = null;
-    string string1 = "";
-    Value output = VALUE_NULL;
-    Value arg1 = args[0];
-    Value arg2 = args[1];
-    Value arg3 = args[2];
+﻿/*
+    Load an image synchronously.
+    This codepath does not get used by platforms where synchronous loading is
+    impossible (JS) hence the wrapping if statement.
+
+    args[0]: NativeImageData object instance (blank. must fill in the nativeData for this)
+        nativeData[0] -> native bitmap resource
+        nativeData[1] -> width (int)
+        nativeData[2] -> height (int)
+    args[1]: Generated filename
+    args[2]: Status out. Reverse this list upon success.
+*/
+Value lib_imageresources_function_loadSynchronous(Array<Value> args) {
     if (!@ext_boolean("IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM")) {
-        objInstance1 = ((ObjectInstance) arg1.internalValue);
-        string1 = ((string) arg2.internalValue);
-        list1 = ((List<Value>) arg3.internalValue);
-        objArray1 = new Array<object>(3);
-        objInstance1.nativeData = objArray1;
-        Native._lib_imageresources_loadSync(string1, objArray1, list1);
-    } else {
-        output = VALUE_NULL;
+        ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
+        string filename = (string) args[1].internalValue;
+        List<Value> list1 = (List<Value>) args[2].internalValue;
+        Array<object> nd = new Array<object>(3);
+        objInstance1.nativeData = nd;
+        Native._lib_imageresources_loadSync(filename, nd, list1);
     }
-    return output;
+    return VALUE_NULL;
 }

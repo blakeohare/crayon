@@ -1,14 +1,16 @@
-﻿Value lib_imageresources_function_checkLoaderIsDone(Array<Value> args) {
-    List<Value> list1 = null;
-    ObjectInstance objInstance1 = null;
-    ObjectInstance objInstance2 = null;
-    Value output = VALUE_NULL;
-    Value arg1 = args[0];
-    Value arg2 = args[1];
-    Value arg3 = args[2];
-    objInstance1 = ((ObjectInstance) arg1.internalValue);
-    objInstance2 = ((ObjectInstance) arg2.internalValue);
-    list1 = ((List<Value>) arg3.internalValue);
+﻿/*
+    Checks to see if the loader is done.
+    Possibly uses a mutex.
+    Possibly copies the information over if the platform requires it.
+
+    args[0]: loader object instance
+    args[1]: native image data object instance
+    args[2]: single-item list for boolean value output
+*/
+Value lib_imageresources_function_checkLoaderIsDone(Array<Value> args) {
+    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
+    ObjectInstance objInstance2 = (ObjectInstance) args[1].internalValue;
+    List<Value> list1 = (List<Value>) args[2].internalValue;
     Native._lib_imageresources_checkLoaderIsDone(objInstance1.nativeData, objInstance2.nativeData, list1);
-    return output;
+    return VALUE_NULL;
 }
