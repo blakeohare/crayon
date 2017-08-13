@@ -18,14 +18,12 @@ namespace Crayon
         }
 
         private Library library;
-        private string platformName;
         private Multimap<string, ExportEntity> exportEntities;
         private List<string> dotNetLibs;
 
         public LibraryResourceDatabase(Library library, AbstractPlatform platform)
         {
             this.library = library;
-            this.platformName = platform == null ? null : platform.Name;
             this.exportEntities = null;
             this.ApplicablePlatformNames = new HashSet<string>();
             while (platform != null)
@@ -61,8 +59,7 @@ namespace Crayon
             }
         }
 
-        private static readonly char[] COLON_CHAR = new char[] { ':' };
-        private static readonly char[] EQUALS_CHAR = new char[] { '=' };
+        private static readonly char[] COLON_CHAR = { ':' };
 
         private List<Dictionary<string, string>> ParseApplicableInstructions()
         {
@@ -307,8 +304,8 @@ namespace Crayon
                             string extLibName = parts[1].Trim();
                             from = parts[2];
 
-                            entity.DeferredFileOutputBytesLibraryName = parts[1].Trim();
-                            entity.DeferredFileOutputBytesLibraryPath = parts[2].Trim();
+                            entity.DeferredFileOutputBytesLibraryName = extLibName;
+                            entity.DeferredFileOutputBytesLibraryPath = from.Trim();
                         }
                         else
                         {

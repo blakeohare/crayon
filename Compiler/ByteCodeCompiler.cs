@@ -402,7 +402,7 @@ namespace Crayon
 
             chunkBuffer.ResolveBreaks();
 
-            int switchId = parser.RegisterByteCodeSwitch(switchStatement.FirstToken, chunkIdsToOffsets, integersToChunkIds, stringsToChunkIds, switchStatement.UsesIntegers);
+            int switchId = parser.RegisterByteCodeSwitch(chunkIdsToOffsets, integersToChunkIds, stringsToChunkIds, switchStatement.UsesIntegers);
 
             int defaultOffsetLength = defaultChunkId == -1
                 ? chunkBuffer.Size
@@ -1222,7 +1222,7 @@ namespace Crayon
 
         private void CompileInstantiate(Parser parser, ByteBuffer buffer, Instantiate instantiate, bool outputUsed)
         {
-            ClassDefinition cd = (ClassDefinition)instantiate.Class;
+            ClassDefinition cd = instantiate.Class;
             ConstructorDefinition constructor = cd.Constructor;
 
             this.CompileExpressionList(parser, buffer, instantiate.Args, true);

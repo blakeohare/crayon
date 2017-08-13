@@ -186,7 +186,7 @@ namespace Crayon
             return this.byteCodeSwitchStringToOffsets;
         }
 
-        public int RegisterByteCodeSwitch(Token switchToken, Dictionary<int, int> chunkIdsToOffsets, Dictionary<int, int> integersToChunkIds, Dictionary<string, int> stringsToChunkIds, bool isIntegerSwitch)
+        public int RegisterByteCodeSwitch(Dictionary<int, int> chunkIdsToOffsets, Dictionary<int, int> integersToChunkIds, Dictionary<string, int> stringsToChunkIds, bool isIntegerSwitch)
         {
             int switchId;
             if (isIntegerSwitch)
@@ -236,10 +236,6 @@ namespace Crayon
             }
             return id;
         }
-
-        private Dictionary<string, EnumDefinition> enumDefinitions = new Dictionary<string, EnumDefinition>();
-        private Dictionary<string, Expression> constLookup = new Dictionary<string, Expression>();
-        private HashSet<string> things = new HashSet<string>();
 
         private Dictionary<string, ClassDefinition> classDefinitions = new Dictionary<string, ClassDefinition>();
 

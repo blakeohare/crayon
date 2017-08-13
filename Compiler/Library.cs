@@ -303,7 +303,7 @@ namespace Crayon
         private Dictionary<string, string> GetMethodTranslations(string platformName)
         {
             string methodTranslations = this.ReadFile(false, System.IO.Path.Combine("methods", platformName + ".txt"), true);
-            Dictionary<string, string> translations = new Dictionary<string, string>();
+            Dictionary<string, string> translationsLookup = new Dictionary<string, string>();
             if (methodTranslations != null)
             {
                 foreach (string line in methodTranslations.Split('\n'))
@@ -317,11 +317,11 @@ namespace Crayon
                         {
                             value += ":" + parts[i];
                         }
-                        translations[key.Trim()] = value.Trim();
+                        translationsLookup[key.Trim()] = value.Trim();
                     }
                 }
             }
-            return translations;
+            return translationsLookup;
         }
 
         public string TranslateNativeInvocation(object throwToken, object legacyAbstractPlatformOrCbxTranslator, string functionName, object[] args)
