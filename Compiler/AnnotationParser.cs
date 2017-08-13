@@ -15,7 +15,13 @@ namespace Crayon
         {
             Token annotationToken = tokens.PopExpected("@");
             Token typeToken = tokens.Pop();
-            parser.VerifyIdentifier(typeToken);
+
+            // TODO: refactor this. All built-in annotations should be exempt from the VerifyIdentifier check in an extensible way.
+            if (typeToken.Value != this.parser.Keywords.PRIVATE)
+            {
+                parser.VerifyIdentifier(typeToken);
+            }
+
             List<Expression> args = new List<Expression>();
             if (tokens.PopIfPresent("("))
             {

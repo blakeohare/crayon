@@ -8,9 +8,7 @@ namespace Crayon
     public class Locale
     {
         public KeywordsLookup Keywords { get; private set; }
-
-        private static readonly string MARKER_KEYWORDS_START = "@@@KEYWORDS_START@@@";
-        private static readonly string MARKER_KEYWORDS_END = "@@@KEYWORDS_END@@@";
+        public StringTable Strings { get; private set; }
 
         private Dictionary<string, string> keywordsDictionary;
 
@@ -30,8 +28,8 @@ namespace Crayon
                     }
                 }
             }
-            string configFile = Util.ReadAssemblyFileText(typeof(Locale).Assembly, "Languages/" + name.ToLower() + ".txt");
-            if (configFile == null)
+            string keywordsRaw = Util.ReadAssemblyFileText(typeof(Locale).Assembly, "Languages/" + name.ToLower() + "/keywords.txt");
+            if (keywordsRaw == null)
             {
                 invalid = true;
             }
@@ -42,10 +40,7 @@ namespace Crayon
             }
 
             Dictionary<string, string> keywords = new Dictionary<string, string>();
-            int keywordsStart = configFile.IndexOf(MARKER_KEYWORDS_START) + MARKER_KEYWORDS_START.Length;
-            int keywordsEnd = configFile.IndexOf(MARKER_KEYWORDS_END);
-            string[] keywordsRaw = configFile.Substring(keywordsStart, keywordsEnd - keywordsStart).Trim().Split('\n');
-            foreach (string keywordRow in keywordsRaw)
+            foreach (string keywordRow in keywordsRaw.Trim().Split('\n'))
             {
                 string row = keywordRow.Trim();
                 if (row.Length > 0)
@@ -100,6 +95,8 @@ namespace Crayon
                 TRY = keywords["TRY"],
                 WHILE = keywords["WHILE"],
             };
+
+            this.Strings = new StringTable(name);
         }
 
         public string[] GetKeywordsList()

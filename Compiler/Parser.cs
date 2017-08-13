@@ -374,7 +374,9 @@ namespace Crayon
 
                 if (executable is ImportStatement)
                 {
-                    throw new ParserException(executable.FirstToken, "All imports must occur at the beginning of the file.");
+                    throw new ParserException(
+                        executable.FirstToken,
+                        this.Locale.Strings.Get("ALL_IMPORTS_MUST_OCCUR_AT_BEGINNING_OF_FILE"));
                 }
 
                 executable.NamespacePrefixSearch = namespaceImports;

@@ -1,5 +1,4 @@
-﻿@@@KEYWORDS_START@@@
-ABSTRACT: abstracto
+﻿ABSTRACT: abstracto
 BASE: raiz
 BREAK: parar
 CASE: caso
@@ -35,4 +34,3 @@ THROW: arrojar
 TRUE: verdad
 TRY: intentar
 WHILE: mientras
-@@@KEYWORDS_END@@@

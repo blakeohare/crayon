@@ -1,5 +1,4 @@
-﻿@@@KEYWORDS_START@@@
-ABSTRACT: abstract
+﻿ABSTRACT: abstract
 BASE: base
 BREAK: break
 CASE: case
@@ -35,4 +34,3 @@ THROW: throw
 TRUE: true
 TRY: try
 WHILE: while
-@@@KEYWORDS_END@@@
