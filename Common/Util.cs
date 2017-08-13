@@ -20,7 +20,9 @@ namespace Common
                     output = "-" + output;
                 }
                 value *= 15;
+#pragma warning disable RECS0018 // Comparison of floating point numbers with equality operator
                 for (int i = 0; i < 20 && value != 0; ++i)
+#pragma warning restore RECS0018 // Comparison of floating point numbers with equality operator
                 {
                     output += (int)(value % 10);
                     value = value % 1;
@@ -184,6 +186,9 @@ namespace Common
             return ReadAssemblyFileBytes(assembly, path, false);
         }
 
+        private static Dictionary<System.Reflection.Assembly, Dictionary<string, string>> caseInsensitiveLookup =
+            new Dictionary<System.Reflection.Assembly, Dictionary<string, string>>();
+
         public static byte[] ReadAssemblyFileBytes(System.Reflection.Assembly assembly, string path, bool failSilently)
         {
             string canonicalizedPath = path.Replace('/', '.');
@@ -191,9 +196,20 @@ namespace Common
             // a rather odd difference...
             canonicalizedPath = canonicalizedPath.Replace('-', '_');
 #endif
+            string assemblyName = assembly.GetName().Name.ToLower();
+            Dictionary<string, string> nameLookup;
+            if (!caseInsensitiveLookup.TryGetValue(assembly, out nameLookup))
+            {
+                nameLookup = new Dictionary<string, string>();
+                caseInsensitiveLookup[assembly] = nameLookup;
+                foreach (string resource in assembly.GetManifestResourceNames())
+                {
+                    nameLookup[resource.ToLower()] = resource;
+                }
+            }
+
             string fullPath = assembly.GetName().Name + "." + canonicalizedPath;
-            System.IO.Stream stream = assembly.GetManifestResourceStream(fullPath);
-            if (stream == null)
+            if (!nameLookup.ContainsKey(fullPath.ToLower()))
             {
                 if (failSilently)
                 {
@@ -202,6 +218,8 @@ namespace Common
 
                 throw new System.Exception(path + " not marked as an embedded resource.");
             }
+
+            System.IO.Stream stream = assembly.GetManifestResourceStream(nameLookup[fullPath.ToLower()]);
             List<byte> output = new List<byte>();
             int bytesRead = 1;
             while (bytesRead > 0)

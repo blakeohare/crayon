@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>CrayonMac</RootNamespace>
+    <RootNamespace>Crayon</RootNamespace>
     <AssemblyName>crayon</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <UseMSBuildEngine>false</UseMSBuildEngine>
@@ -39,6 +39,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ParseTree\*.cs" />
     <Compile Include="*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Languages\*\*.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LICENSE.txt">
