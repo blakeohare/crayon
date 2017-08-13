@@ -1,0 +1,35 @@
+namespace Core {
+
+    namespace Reflection {
+
+        function getClassFromInstance(instance) {
+            // TODO: document what happens when instance is not an instance.
+            return $$$('reflectGetClass', instance);
+        }
+
+        function getClasses(commonBaseClass = null) {
+            output = $$$('reflectAllClasses');
+            if (commonBaseClass != null) {
+                filtered = [];
+                for (c : output) {
+                    if (c.isA(commonBaseClass)) {
+                        filtered.add(c);
+                    }
+                }
+                return filtered;
+            }
+            return output;
+        }
+
+        function getMethods(instanceOrClass) {
+            switch (Core.typeof(instanceOrClass)) {
+                // TODO: verify that static methods are returned only from class inputs.
+                case Core.Type.OBJECT:
+                case Core.Type.CLASS:
+                    return $$$('reflectGetMethods', instanceOrClass);
+                default:
+                    throw new Core.InvalidArgumentException("Can only get methods from an instance or class reference.");
+            }
+        }
+    }
+}

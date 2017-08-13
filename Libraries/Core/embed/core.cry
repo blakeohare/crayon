@@ -1,0 +1,120 @@
+namespace Core {
+    const CRAYON_VERSION = "0.2.0";
+
+    enum Type {
+        NULL = 0,
+        BOOLEAN = 1,
+        INTEGER = 2,
+        FLOAT = 3,
+        STRING = 4,
+        LIST = 5,
+        DICTIONARY = 6,
+        OBJECT = 7,
+        FUNCTION = 8,
+        CLASS = 9,
+    }
+
+    function assert(condition, message = null) {
+        return $$$('assert', condition, message, true);
+    }
+
+    function fail(message) {
+        return $$$('assert', false, message, false);
+    }
+
+    function chr(value) {
+        return $$$('chr', value);
+    }
+
+    function currentTime() {
+        return $$$('currentTime');
+    }
+
+    function ord(value) {
+        return $$$('ord', value);
+    }
+
+    function parseFloat(value) {
+        return $$$('parseFloat', value);
+    }
+
+    function parseInt(value) {
+        return $$$('parseInt', value);
+    }
+
+    function print(value) {
+        return $$$('print', value);
+    }
+
+    function sleep(seconds) {
+        Core.assert(
+            $$$('typeis', seconds, Core.Type.INTEGER, Core.Type.FLOAT) &&
+            seconds >= 0, "Invalid argument.");
+        return $$$('sleep', seconds);
+    }
+
+    function typeof(value) {
+        return $$$('typeof',value);
+    }
+
+    function isString(value) {
+        return $$$('typeis', value, Core.Type.STRING);
+    }
+
+    function isNumber(value) {
+        return $$$('typeis', value, Core.Type.INTEGER, Core.Type.FLOAT);
+    }
+
+    function _LIB_CORE_list_sort_by_key(fp, list) {
+        if (list.length > 1) {
+            $$$('sortList', list, _LIB_CORE_list_map(fp, list));
+        }
+    }
+
+    function _LIB_CORE_list_map(fp, list) {
+        output = [];
+        for (t : list) {
+            output.add(fp(t));
+        }
+        return output;
+    }
+
+    function _LIB_CORE_list_filter(fp, list) {
+        output = [];
+        for (t : list) {
+            b = fp(t);
+            if (!$$$('typeis', b, Core.Type.BOOLEAN)) {
+                Core.fail("Filter function returned a non-boolean value.");
+            }
+            if (b) {
+                output.add(t);
+            }
+        }
+        return output;
+    }
+
+    function getCurrentExecutionToken() {
+        return $$$('execId');
+    }
+
+    function getExecutionIterationCounter() {
+        return $$$('execCounter');
+    }
+
+    function getProjectId() {
+        return $$$('projectId');
+    }
+
+    // Interanlly called by fp.invoke(args)
+    function _LIB_CORE_invoke(fp, args) {
+        // MAGIC ALERT: There is a special compiler hack that checks specifically for this line (based on parent
+        // function name) and compiles this function invocation with a special flag to treat the args list as
+        // individually passed arguments.
+        return fp(args);
+    }
+    
+    // A simple dummy object.
+    // The VM supports attaching native data to any object instance, and so this generally serves as
+    // the canonical object to use for that purpose.
+    class Object { }
+}
