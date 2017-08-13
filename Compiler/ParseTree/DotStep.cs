@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Crayon.ParseTree
 {
@@ -278,7 +277,7 @@ namespace Crayon.ParseTree
 
             // This is done here in the resolver instead of the parser because some unallowed
             // field names (such as .class) are valid.
-            if (this.StepToken.Value == "class")
+            if (this.StepToken.Value == parser.Keywords.CLASS)
             {
                 if (this.Root is Variable)
                 {

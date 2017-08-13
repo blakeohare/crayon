@@ -63,12 +63,12 @@ namespace Crayon
                     }
                 }
 
-                if (!isRoot && 
+                if (!isRoot &&
                     (value == this.parser.Keywords.FUNCTION || value == this.parser.Keywords.CLASS))
                 {
                     throw new ParserException(
-                        tokens.Peek(), 
-                        (value == this.parser.Keywords.FUNCTION ? "Function" : "Class") + 
+                        tokens.Peek(),
+                        (value == this.parser.Keywords.FUNCTION ? "Function" : "Class") +
                         " definition cannot be nested in another construct.");
                 }
 

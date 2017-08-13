@@ -112,7 +112,7 @@ namespace Core {
         // individually passed arguments.
         return fp(args);
     }
-    
+
     // A simple dummy object.
     // The VM supports attaching native data to any object instance, and so this generally serves as
     // the canonical object to use for that purpose.
