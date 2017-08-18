@@ -1,0 +1,23 @@
+class AbstractScene {
+
+    field _nextScene = null;
+
+    constructor() { }
+
+    function switchScene(scene) {
+        this._nextScene = scene;
+        scene._nextScene = null;
+    }
+
+    function switchSceneWithFade(scene) {
+        this.switchScene(new FadeTransitionScene(this, scene));
+    }
+
+    function update(isTap) {
+        Core.assert(false, "Override me!");
+    }
+
+    function render() {
+        Core.assert(false, "Override me!");
+    }
+}

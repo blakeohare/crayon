@@ -1,4 +1,0 @@
-﻿// $music_resume()
-// Resumes paused music.
-
-soundManagerPauseMusic(false);

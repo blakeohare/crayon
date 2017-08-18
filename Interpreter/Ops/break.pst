@@ -1,0 +1,16 @@
+﻿/*
+    row[0] -> 1 or 2
+        1 -> row[1] is a PC offset. Go there.
+        2 -> there is a finally that needs to run before you jump. Use the ESF data to go there.
+    row[1] -> PC offset (only if row[0] is 1, otherwise ignored)
+*/
+if (row[0] == 1) {
+    // simple BREAK, just jump to the offset
+    pc += row[1];
+} else { // row[1] == 2
+    // ESF data is present, jump to the finally block
+    intArray1 = esfData[pc];
+    pc = intArray1[1] - 1;
+    valueStackSize = stack.valueStackPopSize + p.valueStackDepthByPc[pc];
+    stack.postFinallyBehavior = PostFinallyBehavior.BREAK;
+}

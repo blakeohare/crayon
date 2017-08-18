@@ -1,0 +1,21 @@
+﻿
+def ResourceReader_readTextFile(path):
+  path = path.replace('/', os.sep)
+  c = open(path, 'rt')
+  text = c.read()
+  c.close()
+
+  # Trim the unicode BOM
+  if text[:3] == '\xef\xbb\xbf':
+    text = text[3:]
+  elif text[:1] == '\ufeff':
+    text = text[1:]
+
+  return text
+
+def ResourceReader_readImageFile(path):
+  path = path.replace('/', os.sep)
+  if not _pygame_init_already:
+    pygame_init()
+    pygame.display.set_mode((400, 300)) # Tacky, but necessary to prevent crash, and hopefully won't be up for more than a second until the game code resets the window size to the actual size
+  return pygame.image.load(path).convert_alpha()

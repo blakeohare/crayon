@@ -1,0 +1,3 @@
+$_lib_imagewebresources_isJavascript: true
+$_lib_imagewebresources_bytesToImage: C$common$alwaysTrue()
+$_lib_imagewebresources_jsDownload: LIB$imagewebresources$download([ARG:1], [ARG:2])

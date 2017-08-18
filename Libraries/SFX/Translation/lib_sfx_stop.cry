@@ -1,3 +1,0 @@
-﻿
-// $sfx_stop(sound_instance)
-import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";

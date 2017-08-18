@@ -1,0 +1,4 @@
+﻿
+declareLibrary(
+    row[0], // library reference ID
+    stringArgs[pc]); // library descriptor -> "NAME,VERSION"

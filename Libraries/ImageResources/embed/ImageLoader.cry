@@ -1,0 +1,171 @@
+namespace ImageResources {
+
+    enum ImageLoaderType {
+        RESOURCE,
+        WEB,
+        FILE,
+    }
+
+    class ImageLoader {
+
+        /*
+            nativeData[0] -> asynchronous loader reference
+                C# loader -> pointer to background worker
+                Python loader -> pointer to daemon thread
+                JavaScript loader -> some sort of data structure whose reference was passed to the async loader.
+                Java -> also a background thread worker.
+                PHP -> load image synchronously always. isDone() will just say true.
+
+            nativeData[1] -> actual image data
+            nativeData[2] -> status code
+                0 -> not done
+                1 -> done
+                2 -> load failed
+
+            nativeData[3] -> mutex (if the platform needs one)
+        */
+
+        @private
+        constructor() { }
+
+        /*
+            It's possible the user may not yield execution and check for isDone() in a while loop.
+            This is reasonable if the user is simply trying to take advantage of the multithreading
+            of loading images. For example...
+
+            loader = ImageLoader.loadFromResourcesAsync('foo.png'); // load image in parallel with task below
+            someSortOfExpensiveTask();
+            while (!loader.isDone()) { }
+            image = loader.getImage();
+
+            If they do, go ahead and yield the execution if they call isDone() enough times in one
+            iteration of the interpreter without waiting for a yield.
+        */
+        field _executionIterationCount = 0; // current interpreter execution counter for this execution context ID
+        field _isDoneChecksOnThisFrame = 0; // number of times isDone() has been called during this execution counter.
+        field _isDone = false;
+        field _nativeImage;
+        field _output = null;
+
+        function getImage() {
+            if (this._output != null) return this._output;
+            if (!this._isDone) throw new Core.InvalidOperationException("Loading is not finished.");
+            if (this._nativeImage == null) {
+                throw new Core.InvalidOperationException("Image has already been constructed.");
+            }
+            img = new ImageResource(this._nativeImage.width, this._nativeImage.height, false);
+            img._nativeResource = this._nativeImage;
+            this._output = img;
+            return img;
+        }
+
+        static field REUSABLE_IS_DONE_OUT = [null];
+        function isDone() {
+            if (this._isDone) {
+                return true;
+            }
+
+            // There are 2 possible places where the final result of the loading is copied to
+            // the NativeImageData instance's nativeData:
+            // - at the end of the asynchronous loader, using the mutex in nativeData[3]
+            // - as a result of this next function. It will never be called twice on a successfully loaded image.
+            $$lib_imageresources_checkLoaderIsDone(this, this._nativeImage, ImageLoader.REUSABLE_IS_DONE_OUT);
+
+            status = ImageLoader.REUSABLE_IS_DONE_OUT[0];
+            if (status > 0) {
+                this._isDone = true;
+                if(status != 1) throw new ImageResources.LoadFailedException("Error encountered while loading image.");
+                return true;
+            }
+
+            if ($$lib_imageresources_yieldRequiredByPlatform()) {
+                // Keep track of how many times this has been called without a yield.
+                // If it's more than a couple times, then it's likely this person is checking
+                // inside a blocking loop and the handler hasn't had a chance to fire.
+                c = Core.getExecutionIterationCounter();
+                if (c != this._executionIterationCount) {
+                    this._isDoneChecksOnThisFrame = 1;
+                    this._executionIterationCount = c;
+                } else {
+                    this._isDoneChecksOnThisFrame++;
+                }
+
+                // If they've called this function 10 times without a yield, do a thread sleep
+                // to potentially let the image load handler run.
+                if (this._isDoneChecksOnThisFrame > 10) {
+                    Core.sleep(.01);
+                }
+            }
+
+            return false;
+        }
+
+        static function loadFromResourcesAsync(filename) {
+            return ImageLoader._loadImpl(filename, false, true, null, null);
+        }
+
+        static function loadFromResources(filename) {
+            return ImageLoader._loadImpl(filename, false, false, null, null);
+        }
+
+        static function _loadImpl(filename, isGen, isAsync, width, height) {
+            if (!isGen) {
+                data = ImageLoader.getGenName(filename);
+                filename = data[1];
+                width = data[2];
+                height = data[3];
+            }
+            nativeImage = new NativeImageData(NativeImageDataConstructionType.BLANK, null);
+            nativeImage.width = width;
+            nativeImage.height = height;
+
+            if (isAsync) {
+                loader = new ImageResources.ImageLoader();
+                loader._nativeImage = nativeImage;
+                $$lib_imageresources_loadAsynchronous(
+                    nativeImage,
+                    filename,
+                    loader);
+                return loader;
+            }
+
+            statusOut = [false, true];
+            if ($$lib_imageresources_yieldRequiredByPlatform()) {
+                loader = new ImageResources.ImageLoader();
+                loader._nativeImage = nativeImage;
+                $$lib_imageresources_loadAsynchronous(
+                    nativeImage,
+                    filename,
+                    loader);
+
+                Core.sleep(.005);
+                delay = .01;
+                while (!loader.isDone()) {
+                    Core.sleep(delay);
+                    delay *= 1.2;
+                    if (delay > 1) delay = 1;
+                }
+                statusOut.reverse();
+            } else {
+                $$lib_imageresources_loadSynchronous(
+                    nativeImage,
+                    filename,
+                    statusOut);
+            }
+
+            // TODO: include filename in LoadFailedException. filename in this function can potentially be a generated name which is not useful.
+            if (!statusOut[0]) throw new ImageResources.LoadFailedException("Image load failed");
+
+            image = new ImageResources.ImageResource(width, height, false);
+            image._nativeResource = nativeImage;
+            return image;
+        }
+
+        static function getGenName(filename) {
+            info = ImageResourceManifest.getFileInfo(filename);
+            if (info == null) throw new ImageResources.ImageNotFoundException("Image resource '{0}' not found.", filename);
+            if (info[0] == ImgResourceType.SHEET) throw new ImageResources.LoadFailedException("'" + filename + "' must be loaded as an ImageSheet.");
+            return info;
+        }
+    }
+}

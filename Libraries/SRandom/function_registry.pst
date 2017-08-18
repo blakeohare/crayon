@@ -1,0 +1,5 @@
+﻿void lib_manifest_RegisterFunctions(object libRegData) {
+    Core.RegisterLibraryFunction(libRegData, "getBoolean", 1);
+    Core.RegisterLibraryFunction(libRegData, "getInteger", 1);
+    Core.RegisterLibraryFunction(libRegData, "getFloat", 1);
+}

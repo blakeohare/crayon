@@ -1,92 +1,274 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Crayon
 {
-	internal class ByteBuffer
-	{
-		private List<int[]> byteCode = new List<int[]>();
-		private List<Token> tokens = new List<Token>();
-		private List<string> stringArgs = new List<string>();
+    internal class ByteBuffer
+    {
+        private class ByteRow
+        {
+            public int[] ByteCode { get; set; }
+            public Token Token { get; set; }
+            public string StringArg { get; set; }
+            public ByteCodeEsfToken EsfToken { get; set; }
+            public int ValueStackSizeChange { get; set; }
+        }
 
-		public ByteBuffer() { }
+        private List<ByteRow> rows = new List<ByteRow>();
 
-		public OpCode LastOp
-		{
-			get
-			{
-				return (OpCode)this.byteCode[this.byteCode.Count - 1][0];
-			}
-		}
+        public ByteBuffer() { }
 
-		public int Size { get { return this.byteCode.Count; } }
+        public OpCode LastOp
+        {
+            get { return (OpCode)this.rows[this.rows.Count - 1].ByteCode[0]; }
+        }
 
-		public void Concat(ByteBuffer other)
-		{
-			this.byteCode.AddRange(other.byteCode);
-			this.tokens.AddRange(other.tokens);
-			this.stringArgs.AddRange(other.stringArgs);
-		}
+        public int Size { get { return this.rows.Count; } }
 
-		public void Add(Token token, OpCode op, string stringValue, params int[] args)
-		{
-			List<int> nums = new List<int>(args);
-			nums.Insert(0, (int)op);
-			this.byteCode.Add(nums.ToArray());
-			this.tokens.Add(token);
-			this.stringArgs.Add(stringValue);
-		}
+        public void Concat(ByteBuffer other)
+        {
+            this.rows.AddRange(other.rows);
+        }
 
-		public void Add(Token token, OpCode op, params int[] args)
-		{
-			this.Add(token, op, null, args);
-		}
+        public void Add(Token token, OpCode op, string stringValue, params int[] args)
+        {
+            List<int> nums = new List<int>(args.Length + 1) { (int)op };
+            nums.AddRange(args);
+            int[] byteCode = nums.ToArray();
 
-		public List<int[]> ToIntList()
-		{
-			return this.byteCode;
-		}
+            this.rows.Add(new ByteRow()
+            {
+                ByteCode = byteCode,
+                StringArg = stringValue,
+                Token = token
+            });
+        }
 
-		public List<string> ToStringList()
-		{
-			return this.stringArgs;
-		}
+        public void Add(Token token, OpCode op, params int[] args)
+        {
+            this.Add(token, op, null, args);
+        }
 
-		public List<Token> ToTokenList()
-		{
-			return this.tokens;
-		}
+        public void AddFrontSlow(Token token, OpCode op, params int[] args)
+        {
+            List<int> nums = new List<int>(args.Length + 1) { (int)op };
+            nums.AddRange(args);
+            int[] byteCode = nums.ToArray();
 
-		public void ResolveContinues()
-		{
-			this.ResolveContinues(false);
-		}
+            this.rows.Insert(0, new ByteRow()
+            {
+                ByteCode = byteCode,
+                Token = token,
+            });
+        }
 
-		// Continues should be resolved into JUMPs that go to the beginning of the current byte code buffer
-		// If resolveAsJumpToEnd is true, it'll do the opposite. This hack is used by for loop, where the 
-		// step condition must be run before returning to the top.
-		public void ResolveContinues(bool resolveAsJumpToEnd)
-		{
-			for (int i = 0; i < this.byteCode.Count; ++i)
-			{
-				if (this.byteCode[i][0] == (int)OpCode.CONTINUE)
-				{
-					this.byteCode[i] = resolveAsJumpToEnd
-						? new int[] { (int)OpCode.JUMP, this.byteCode.Count - i - 1 }
-						: new int[] { (int)OpCode.JUMP, -i - 1 };
-				}
-			}
-		}
+        public List<int[]> ToIntList()
+        {
+            return new List<int[]>(this.rows.Select<ByteRow, int[]>(row => row.ByteCode));
+        }
 
-		// Breaks should be resolved into JUMPS that go to the end of the current byte code buffer.
-		public void ResolveBreaks()
-		{
-			for (int i = 0; i < this.byteCode.Count; ++i)
-			{
-				if (this.byteCode[i][0] == (int)OpCode.BREAK)
-				{
-					this.byteCode[i] = new int[] { (int)OpCode.JUMP, this.byteCode.Count - i - 1 };
-				}
-			}
-		}
-	}
+        public List<string> ToStringList()
+        {
+            return new List<string>(this.rows.Select<ByteRow, string>(row => row.StringArg));
+        }
+
+        public List<Token> ToTokenList()
+        {
+            return new List<Token>(this.rows.Select<ByteRow, Token>(row => row.Token));
+        }
+
+        public void ResolveContinues()
+        {
+            this.ResolveContinues(false);
+        }
+
+        // Continues should be resolved into JUMPs that go to the beginning of the current byte code buffer
+        // If resolveAsJumpToEnd is true, it'll do the opposite. This hack is used by for loop, where the
+        // step condition must be run before returning to the top.
+        public void ResolveContinues(bool resolveAsJumpToEnd)
+        {
+            int size = this.Size;
+            int[] byteCode;
+            for (int i = 0; i < size; ++i)
+            {
+                byteCode = this.rows[i].ByteCode;
+                switch ((OpCode)byteCode[0])
+                {
+                    case OpCode.CONTINUE:
+                    case OpCode.FINALLY_END:
+                        int index = (OpCode)byteCode[0] == OpCode.CONTINUE ? 1 : 3;
+                        if (byteCode[index] == 0)
+                        {
+                            byteCode[index] = 1;
+                            byteCode[index + 1] = resolveAsJumpToEnd
+                                ? size - i - 1
+                                : -i - 1;
+                        }
+                        break;
+                }
+            }
+        }
+
+        // Breaks should be resolved into JUMPS that go to the end of the current byte code buffer.
+        public void ResolveBreaks()
+        {
+            int size = this.Size;
+            int[] byteCode;
+            for (int i = 0; i < size; ++i)
+            {
+                byteCode = this.rows[i].ByteCode;
+                switch ((OpCode)byteCode[0])
+                {
+                    case OpCode.BREAK:
+                    case OpCode.FINALLY_END:
+                        if (byteCode[1] == 0)
+                        {
+                            byteCode[1] = 1;
+                            byteCode[2] = size - i - 1;
+                        }
+                        break;
+                }
+            }
+        }
+
+        // Try catch code can be resolved with this function at any time
+        // Finally code MUST be resolved right before adding the FINALLY_END op to the byte buffer.
+        public void ResolveBreaksAndContinuesForFinally(bool isInTryCatch)
+        {
+            // If it's in the finally, then set status as 1 and jump to the last instruction
+            // If it's in the try/catch, just set the status to 2 which will indicate use ESF data
+            int[] byteCode;
+            int size = this.Size;
+            for (int i = 0; i < size; ++i)
+            {
+                byteCode = this.rows[i].ByteCode;
+                switch ((OpCode)byteCode[0])
+                {
+                    case OpCode.BREAK:
+                    case OpCode.CONTINUE:
+                    case OpCode.FINALLY_END:
+                        if (isInTryCatch)
+                        {
+                            // Set the jump type to 2 which means just use the finally offset in the ESF data.
+                            byteCode[1] = 2;
+                            if ((OpCode)byteCode[0] == OpCode.FINALLY_END)
+                            {
+                                byteCode[3] = 2;
+                            }
+                        }
+                        else
+                        {
+                            // Set the jump to go to the end of the byte buffer. This is right before
+                            // the FINALLY_END op has been added to this buffer.
+                            byteCode[1] = 1;
+                            byteCode[2] = size - i - 1;
+                            if ((OpCode)byteCode[0] == OpCode.FINALLY_END)
+                            {
+                                byteCode[3] = 1;
+                                byteCode[4] = byteCode[2];
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+
+        public void OptimizeJumps()
+        {
+            int offset;
+            for (int i = 0; i < this.Size; ++i)
+            {
+                // TODO: optimize jump-if's as well (but don't follow other jump-if's
+                if (this.rows[i].ByteCode[0] == (int)OpCode.JUMP)
+                {
+                    offset = this.rows[i].ByteCode[1];
+                    if (this.rows[i + offset + 1].ByteCode[0] == (int)OpCode.JUMP)
+                    {
+                        this.rows[i].ByteCode[1] = this.FindFinalPc(i) - i - 1;
+                    }
+                }
+            }
+        }
+
+        private int FindFinalPc(int startPc)
+        {
+            int currentPc = startPc;
+            while (this.rows[currentPc].ByteCode[0] == (int)OpCode.JUMP)
+            {
+                currentPc = currentPc + this.rows[currentPc].ByteCode[1] + 1;
+            }
+            return currentPc;
+        }
+
+        public void SetEsfToken(int index, int catchOffset, int finallyOffset)
+        {
+            this.rows[index].EsfToken = new ByteCodeEsfToken()
+            {
+                ExceptionSortPcOffsetFromTry = catchOffset,
+                FinallyPcOffsetFromTry = finallyOffset,
+            };
+        }
+
+        public int[] GetFinalizedEsfData()
+        {
+            List<int> esfData = new List<int>();
+            int size = this.Size;
+            ByteRow row;
+            for (int pc = 0; pc < size; ++pc)
+            {
+                row = this.rows[pc];
+                if (row.EsfToken != null)
+                {
+                    esfData.Add(pc);
+                    esfData.Add(pc + row.EsfToken.ExceptionSortPcOffsetFromTry);
+                    esfData.Add(pc + row.EsfToken.FinallyPcOffsetFromTry);
+                }
+            }
+            return esfData.ToArray();
+        }
+
+        public int[] GetFinalizedValueStackDepthData()
+        {
+            List<int> vsdData = new List<int>();
+            int size = this.Size;
+            ByteRow row;
+            for (int pc = 0; pc < size; ++pc)
+            {
+                row = this.rows[pc];
+                if (row.ValueStackSizeChange != 0)
+                {
+                    vsdData.Add(pc);
+                    vsdData.Add(row.ValueStackSizeChange);
+                }
+            }
+            return vsdData.ToArray();
+        }
+
+        public void SetLastValueStackDepthOffset(int offset)
+        {
+            this.rows[this.rows.Count - 1].ValueStackSizeChange += offset;
+        }
+
+        public int GetEsfPc()
+        {
+            int size = this.Size;
+            for (int i = 0; i < size; ++i)
+            {
+                if (this.rows[i].ByteCode[0] == (int)OpCode.ESF_LOOKUP)
+                {
+                    return i;
+                }
+            }
+            throw new Exception("ESF_LOOKUP op not found.");
+        }
+
+        public void SetArgs(int index, int[] newArgs)
+        {
+            ByteRow row = this.rows[index];
+            List<int> newByteRow = new List<int>() { row.ByteCode[0] };
+            newByteRow.AddRange(newArgs);
+            row.ByteCode = newByteRow.ToArray();
+        }
+    }
 }

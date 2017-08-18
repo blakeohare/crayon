@@ -1,0 +1,108 @@
+namespace Nori {
+
+    class Window {
+
+        field result = null;
+        field uiBox = null;
+        field content = null;
+        field title = 'Window';
+        field width = 500;
+        field height = 300;
+        field menuBar = null;
+        field menuDirty = true;
+        field sizeRelay;
+
+        constructor() {
+            this.sizeRelay = [this.width, this.height];
+            this.uiBox = new UiBox(this, this.width, this.height, false);
+            $$$('allocNativeData', this, 1);
+            $$lib_nori_windowInstantiate(this, this.uiBox, this.sizeRelay);
+        }
+
+        function onLoad() {
+            // override me.
+        }
+
+        function setContent(element) {
+            this.content = element;
+            this.uiBox.setChild(element);
+            return this;
+        }
+
+        function setTitle(title) {
+            this.title = title;
+            return this;
+        }
+
+        function setWidth(width) {
+            this.width = width;
+            return this;
+        }
+
+        function setHeight(height) {
+            this.height = height;
+            return this;
+        }
+
+        function setMenu(menuBar) {
+            this.menuBar = menuBar;
+            this._updateMenu();
+            return this;
+        }
+
+        function _updateMenu() {
+            if (this.menuDirty) {
+                $$lib_nori_windowUpdateMenu(this, this.menuBar == null ? null : Nori.MenuBar._buildList(this.menuBar));
+                this.menuDirty = false;
+            }
+        }
+
+        function show() {
+            return this._showImpl(false);
+        }
+
+        function showBlocking() {
+            return this._showImpl(true);
+        }
+
+        function _showImpl(isBlocking) {
+
+            this._updateMenu();
+
+            if (isBlocking) {
+                onOpenExecId = null;
+                onCloseExecId = $$$('execId');
+            } else {
+                onOpenExecId = $$$('execId');
+                onCloseExecId = null;
+            }
+
+            $$lib_nori_windowShow(
+                this, this.title, isBlocking, $$$('execId'), this.render, this.onLoad, this._handleCommand, this.width, this.height);
+
+            if (isBlocking) {
+                return this.result;
+            }
+        }
+
+        function render() {
+            if (this.menuDirty) this._updateMenu();
+
+            this.width = this.sizeRelay[0];
+            this.height = this.sizeRelay[1];
+
+            this.uiBox.width = this.width;
+            this.uiBox.height = this.height;
+            this.uiBox.renderCalculateSize(true, this.width, true, Alignment.STRETCH);
+            this.uiBox.renderCalculateSize(false, this.height, true, Alignment.STRETCH);
+            this.uiBox.render(null);
+        }
+
+        function _handleCommand(commandToken) {
+            this.handleCommand(commandToken);
+        }
+
+        // Override this in implementing classes.
+        function handleCommand(commandToken) { }
+    }
+}

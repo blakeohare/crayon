@@ -1,0 +1,244 @@
+import Xml;
+
+function adaptXml(xmlRoot) {
+	switch (xmlRoot.name) {
+		case 'library':
+			return adaptLibraryXml(xmlRoot);
+		default:
+			throw new Exception("Unknown root type: '" + xmlRoot.name + "'");
+	}
+}
+
+function adaptLibraryXml(libraryElement) {
+	lib = new Library();
+	lib.name = libraryElement.attributes.get('name');
+	lib.description = libraryElement.attributes.get('description');
+	for (child : getAllXmlChildrenNodes(libraryElement)) {
+		switch (child.name) {
+			case 'description':
+				lib.description = getTextContent(child);
+				break;
+			case 'name':
+				lib.name = getTextContent(child);
+				break;
+			case 'namespace':
+				lib.namespaces.add(adaptLibraryNamespaceXml(lib, child));
+				break;
+			default:
+				throw new Exception("Unknown child of library element: '" + child.name + "'");
+		}
+	}
+	return lib;
+}
+
+function adaptLibraryNamespaceXml(lib, nsElement) {
+	ns = new Namespace(lib);
+	ns.name = nsElement.attributes.get('name');
+	for (child : getAllXmlChildrenNodes(nsElement)) {
+		switch (child.name) {
+			case 'name':
+				ns.name = getTextContent(child);
+				break;
+			case 'enum':
+				ns.enums.add(adaptEnum(ns, child));
+				break;
+			case 'function':
+				ns.functions.add(adaptFunction(ns, null, child));
+				break;
+			case 'class':
+				ns.classes.add(adaptClass(ns, child));
+				break;
+			case 'constant':
+			case 'const':
+				ns.constants.add(adaptConstant(ns, child));
+				break;
+			default:
+				throw new Exception("Unknown child of namespace element: '" + child.name + "'");
+		}
+	}
+	return ns;
+}
+
+function adaptEnum(ns, enumElement) {
+	en = new Enum(ns);
+	en.name = enumElement.attributes.get('name');
+	en.description = enumElement.attributes.get('description');
+	for (child : getAllXmlChildrenNodes(enumElement)) {
+		switch (child.name) {
+			case 'name':
+				en.name = getTextContent(child);
+				break;
+			case 'description':
+				en.description = getTextContent(child);
+				break;
+			case 'value':
+				adaptEnumValue(child, en);
+				break;
+			default:
+				throw new Exception("Unknown child of enum element: '" + child.name + "'");
+		}
+	}
+	return en;
+}
+
+function adaptEnumValue(element, enumDef) {
+	name = element.attributes.get('name');
+	description = element.attributes.get('description');
+	for (child : getAllXmlChildrenNodes(element)) {
+		switch (child.name) {
+			case 'name':
+				name = getTextContent(child);
+				break;
+			case 'description':
+				description = getTextContent(child);
+				break;
+			default:
+				throw new Exception("Unknown child of enum's value element: '" + child.name + "'");
+		}
+	}
+	enumDef.valueNames.add(name);
+	enumDef.valueDescriptions.add(description);
+}
+
+function adaptFunction(ns, cls, element) {
+	fn = new Function(ns, cls);
+	fn.name = element.attributes.get('name');
+	fn.description = element.attributes.get('description');
+	fn.isStatic = element.attributes.get('static') == 'true';
+	for (child : getAllXmlChildrenNodes(element)) {
+		switch (child.name) {
+			case 'name':
+				fn.name = getTextContent(child);
+				break;
+			case 'description':
+				fn.description = getTextContent(child);
+				break;
+			case 'arg':
+				fn.argNames.add(child.attributes.get('name'));
+				fn.argTypes.add(child.attributes.get('type'));
+				fn.argDescriptions.add(child.attributes.get('description'));
+				isOptional = child.attributes.get('optional', 'false').lower() == "true";
+				fn.argIsOptional.add(isOptional);
+				fn.hasAnyOptionalArgs = isOptional || fn.hasAnyOptionalArgs;
+				break;
+			case 'returns':
+				fn.returnType = child.attributes.get('type');
+				fn.returnDescription = child.attributes.get('description');
+				break;
+			default:
+				throw new Exception("Unknown child of function element: '" + child.name + "'");
+		}
+	}
+	return fn;
+}
+
+function adaptClass(ns, element) {
+	cls = new Class(ns);
+	cls.name = element.attributes.get('name');
+	cls.parent = element.attributes.get('parent');
+	cls.description = element.attributes.get('description');
+	for (child : getAllXmlChildrenNodes(element)) {
+		switch (child.name) {
+			case 'name':
+				cls.name = getTextContent(child);
+				break;
+			case 'description':
+				cls.description = getTextContent(child);
+				break;
+			case 'parent':
+				cls.parent = getTextContent(child);
+				break;
+			case 'function':
+				fn = adaptFunction(ns, cls, child);
+				cls.functions.add(fn);
+				break;
+			case 'field':
+				fld = adaptField(cls, child);
+				if (fld.name == null) throw new Exception("There's a field with no name in class: " + cls.name);
+				cls.fields.add(fld);
+				break;
+			default:
+				throw new Exception("Unknown child of class element: '" + child.name + "'");
+		}
+	}
+	return cls;
+}
+
+function adaptField(cls, element) {
+	fi = new Field(cls);
+	fi.name = element.attributes.get('name');
+	fi.type = element.attributes.get('type');
+	fi.description = element.attributes.get('description');
+	for (child : getAllXmlChildrenNodes(element)) {
+		switch (child.name) {
+			case 'name':
+				fi.name = getTextContent(child);
+				break;
+			case 'description':
+				fi.description = getTextContent(child);
+				break;
+			default:
+				throw new Exception("Unknown child of field element: '" + child.name + "'");
+		}
+	}
+	return fi;
+}
+
+function adaptConstant(ns, element) {
+	cnst = new Constant(ns);
+	cnst.name = element.attributes.get('name');
+	cnst.type = element.attributes.get('type');
+	cnst.description = element.attributes.get('description');
+	cnst.value = element.attributes.get('value');
+	for (child : getAllXmlChildrenNodes(element)) {
+		switch (child.name) {
+			case 'name':
+				cnst.name = getTextContent(child);
+				break;
+			case 'description':
+				cnst.description = getTextContent(child);
+				break;
+			default:
+				throw new Exception("Unknown child of field element: '" + child.name + "'");
+		}
+	}
+	return cnst;
+}
+
+function getTextContent(xmlNode, buffer = null) {
+	text = buffer ?? [];
+	for (child : xmlNode.children) {
+		if (child.type == Xml.NodeType.TEXT) {
+			text.add(child.value);
+		} else if (child.type == Xml.NodeType.ELEMENT) {
+			switch (child.name) {
+				case 'ul':
+				case 'li':
+					text.add('<' + child.name + '>');
+					getTextContent(child, text);
+					text.add('</' + child.name + '>');
+					break;
+				default:
+					throw new Exception("Unknown html element in text content: '" + child.name + "'");
+			}
+		}
+	}
+	if (buffer == null) {
+		return text.join('');
+	}
+}
+
+// throws if there's a stray text node.
+function getAllXmlChildrenNodes(node) {
+	output = [];
+	for (child : node.children) {
+		if (child.type == Xml.NodeType.TEXT) {
+			if (child.value.trim().length > 0) {
+				throw new Exception("Unexpected text blob in '" + node.name + "' element.");
+			}
+		} else {
+			output.add(child);
+		}
+	}
+	return output;
+}

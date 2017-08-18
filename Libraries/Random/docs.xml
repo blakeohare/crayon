@@ -1,0 +1,30 @@
+<library name="Random">
+	<description>
+		Library for generating random numbers. 
+		Generally uses the default-seeded random number generator from the underlying platform.
+		For seedable random numbers that generates the same numbers per seed regardless of export platform, use the SRandom library.
+	</description>
+	<namespace name="Random">
+		<function name="randomInt">
+			<arg name="minInclOrMax" type="int" description="Minimum number that randomInt will return."/>
+			<arg name="optionalMax" type="int" description="Maximum number that randomInt will return." optional="true"/>
+			<description>
+				Generates a random integer within the given range. 
+				There are two ways randomInt can be called. 
+				When called with one parameter, it will generate a random number from 0 up to the number you provide (exclusive) i.e. if you call randomInt(10), you will get numbers from 0 through 9, but not 10 itself. 
+				When called with two parameters, it will generate a random number from the first number (inclusive) to the second number (exclusive) i.e. if you call randomInt(5, 10), you will get numbers from 5 through 9, but not 10 itself (but it may be 5). 
+			</description>
+			<returns type="int" description="A random integer"/>
+		</function>
+		<function name="randomFloat">
+			<description> 
+				Generates a random floating point decimal number from 0 up to (but not including) 1. 
+			</description>
+			<returns type="float" descriptio="A random float"/>
+		</function>
+		<function name="randomBool">
+			<returns type="boolean" description="A random boolean"/>
+			<description>Generates a random boolean.</description>
+		</function>
+	</namespace>
+</library>

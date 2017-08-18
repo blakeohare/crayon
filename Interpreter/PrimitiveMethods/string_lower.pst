@@ -1,0 +1,5 @@
+﻿if (argCount > 0) {
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("string lower method", 0, argCount));
+}
+
+output = buildString(string1.ToLower());

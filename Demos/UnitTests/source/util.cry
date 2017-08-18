@@ -1,26 +1,26 @@
 function range(a, b=null, c=null) {
-	
-	if (c != null) {
-		begin = a;
-		end = b;
-		step = c;
-	} else if (b != null) {
-		begin = a;
-		end = b;
-		step = 1;
-	} else {
-		begin = 0;
-		end = a;
-		step = 1;
-	}
-	
-	output = [];
-	for (i = begin; i < end; i += step) {
-		output.add(i);
-	}
-	return output;
+
+    if (c != null) {
+        begin = a;
+        end = b;
+        step = c;
+    } else if (b != null) {
+        begin = a;
+        end = b;
+        step = 1;
+    } else {
+        begin = 0;
+        end = a;
+        step = 1;
+    }
+
+    output = [];
+    for (i = begin; i < end; i += step) {
+        output.add(i);
+    }
+    return output;
 }
 
 function str(value) {
-	return '' + value;
+    return '' + (value ?? 'null');
 }

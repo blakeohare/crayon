@@ -1,29 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Crayon.ParseTree
 {
-	internal class ThisKeyword : Expression
-	{
-		public override bool CanAssignTo { get { return false; } }
+    internal class ThisKeyword : Expression
+    {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new System.NotImplementedException();
+        }
 
-		public ThisKeyword(Token token, Executable owner)
-			: base(token, owner)
-		{
-		}
+        public override bool CanAssignTo { get { return false; } }
 
-		internal override Expression Resolve(Parser parser)
-		{
-			return this;
-		}
+        public ThisKeyword(Token token, Executable owner)
+            : base(token, owner)
+        {
+        }
 
-		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
-		{
-			return this;
-		}
+        internal override Expression Resolve(Parser parser)
+        {
+            return this;
+        }
 
-		internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
-	}
+        internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+        {
+            return this;
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
+    }
 }

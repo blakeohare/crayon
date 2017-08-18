@@ -1,0 +1,14 @@
+$_lib_audio_isAudioSupported: TranslationHelper.AlwaysFalse()
+$_lib_audio_musicIsPlaying: /* TODO */
+$_lib_audio_musicLoadFromResource: AndroidTranslationHelper.loadMusicFromResource([ARG:1])
+$_lib_audio_musicPause: AndroidTranslationHelper.pauseMusic()
+$_lib_audio_musicPlayFile: /* TODO */
+$_lib_audio_musicPlayResource: /* TODO */
+$_lib_audio_musicSetVolume: AndroidTranslationHelper.setMusicVolume([ARG:1])
+$_lib_audio_musicVerifyFileExists: false
+$_lib_audio_readLocalSoundResource: AndroidTranslationHelper.readLocalSoundResource([ARG:1])
+$_lib_audio_sfxGetState: /* TODO */
+$_lib_audio_sfxPlay: /* TODO */
+$_lib_audio_sfxResume: /* TODO */
+$_lib_audio_sfxStop: AndroidTranslationHelper.stopSound([ARG:1])
+$_lib_audio_audioStop: /* TODO */

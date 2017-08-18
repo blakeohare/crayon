@@ -1,0 +1,26 @@
+BEGIN
+APPLICABLE-TO: java-app
+COPY_FILES: from=java-org-json, to=src/org/json/%FILE%
+COPY_FILES: from=java, to=%LIBRARY_PATH%/%FILE%
+END
+
+BEGIN
+APPLICABLE-TO: java-app-android
+COPY_FILES: from=java-org-json, to=app/src/main/java/org/json/%FILE%
+COPY_FILES: from=java, to=%LIBRARY_PATH%/%FILE%
+END
+
+BEGIN
+APPLICABLE-TO: lang-csharp
+COPY_FILES: from=csharp, to=%LIBRARY_PATH%/%FILE%
+END
+
+BEGIN
+APPLICABLE-TO: lang-python
+EMBED_FILES: from=python
+END
+
+BEGIN
+APPLICABLE-TO: lang-javascript
+EMBED_FILES: from=javascript
+END

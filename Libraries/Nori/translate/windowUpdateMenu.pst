@@ -1,0 +1,19 @@
+﻿/*
+    arg 1: window instance
+    arg 2: structured list instance with all the menu information
+*/
+Value lib_nori_function_windowUpdateMenu(Array<Value> args) {
+
+    Value arg1 = args[0];
+    Value arg2 = args[1];
+
+    ObjectInstance objInstance1 = ((ObjectInstance) arg1.internalValue);
+    object object1 = objInstance1.nativeData[0];
+    Array<object> objArray1 = libNoriUnwrapMenus(arg2);
+
+    Native._lib_nori_windowUpdateMenu(
+        object1,
+        objArray1);
+
+    return VALUE_NULL;
+}

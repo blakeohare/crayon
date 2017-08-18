@@ -1,0 +1,64 @@
+import Math;
+
+const GRAVITY = .5;
+const JUMP_VELOCITY = -10;
+const SQUID_SIZE = 40; // side length of the image
+const TERMINAL_VELOCITY = 10;
+
+class Squid {
+
+    field x;
+    field y;
+    field vy = 0.0;
+    field currentTheta = 0.0;
+    field targetTheta = 0.0;
+    field isDead = false;
+    field radius = SQUID_SIZE / 2.0;
+
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    function update() {
+        if (this.isDead) {
+            this.y = Math.ensureRange(this.y + 8, 0, AVAILABLE_HEIGHT);
+            this.targetTheta = Math.PI / 2;
+        } else {
+            this.vy += GRAVITY;
+            if (this.vy > TERMINAL_VELOCITY) {
+                this.vy = TERMINAL_VELOCITY;
+            }
+
+            this.y += this.vy;
+            cappedVelocity = Math.ensureRange(this.vy, -10, 10);
+            this.targetTheta = cappedVelocity / 10.0 * (Math.PI / 6);
+        }
+
+        this.currentTheta = this.currentTheta * .8 + this.targetTheta * .2;
+    }
+
+    function tap() {
+        this.vy = JUMP_VELOCITY;
+    }
+
+    function collide() {
+        this.isDead = true;
+    }
+
+    function render(cameraX) {
+        x = Math.floor(this.x - cameraX + WIDTH / 2);
+        y = Math.floor(this.y);
+
+        if (this.isDead) {
+            img = ImageLibrary.get('squid_dead.png');
+        } else {
+            imgNum = 1;
+            if (this.vy < 0) {
+                imgNum = this.vy < -5 ? 3 : 2;
+            }
+            img = ImageLibrary.get('squid_' + imgNum + '.png');
+        }
+        img.drawRotated(x, y, this.currentTheta);
+    }
+}

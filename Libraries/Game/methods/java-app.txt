@@ -1,0 +1,5 @@
+$_lib_game_get_events_raw_list: org.crayonlang.interpreter.GameWindow.INSTANCE.pumpEventQueue()
+$_lib_game_initialize_game_with_fps: org.crayonlang.interpreter.GameWindow.FPS = [ARG:1]
+$_lib_game_initialize_screen: org.crayonlang.interpreter.GameWindow.initializeScreen([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+$_lib_game_set_title: org.crayonlang.interpreter.GameWindow.INSTANCE.setTitle([ARG:1])
+$_lib_game_clockTick: TranslationHelper.alwaysTrue()

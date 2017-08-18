@@ -1,0 +1,24 @@
+﻿/*
+    arg 1: UI Box instance
+    arg 2: width
+    arg 3: height
+    arg 4: (bool) is clipping?
+*/
+Value lib_nori_function_render_uiBoxLayout(Array<Value> args) {
+
+    Value arg1 = args[0];
+    Value arg2 = args[1];
+    Value arg3 = args[2];
+    Value arg4 = args[3];
+
+    ObjectInstance objInstance1 = ((ObjectInstance) arg1.internalValue); // UI Box instance
+    object object1 = objInstance1.nativeData[0]; // native UI Box container
+
+    Native._lib_nori_render_uiBoxLayout(
+        object1,
+        (int) arg2.internalValue,
+        (int) arg3.internalValue,
+        (bool) arg4.internalValue);
+
+    return VALUE_NULL;
+}

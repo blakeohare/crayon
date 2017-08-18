@@ -1,3 +1,0 @@
-﻿
-// $music_set_volume(music_instance, value)
-import inline "InterpreterSource/FrameworkFunctions/2_arg.cry";

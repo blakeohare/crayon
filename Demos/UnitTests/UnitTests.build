@@ -4,27 +4,19 @@
 	<output>output/%TARGET_NAME%</output>
 	
 	<!-- Targets -->
-	<target name="js_local">
-		<platform>js</platform>
+	<target name="javscript">
+		<platform>javascript-app</platform>
 	</target>
 	
-	<target name="js_remote">
-		<platform>js</platform>
+	<target name="csharp">
+		<platform>csharp-app</platform>
 	</target>
 	
-	<target name="windows">
-		<platform>csopengl</platform>
-	</target>
-	
-	<target name="javaawt">
-		<platform>java</platform>
+	<target name="java">
+		<platform>java-app</platform>
 	</target>
 	
 	<target name="python">
-		<platform>python</platform>
-	</target>
-	
-	<target name="cwin">
-		<platform>cwin</platform>
+		<platform>python-app</platform>
 	</target>
 </build>

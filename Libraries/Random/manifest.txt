@@ -1,0 +1,4 @@
+NAME: Random
+AUTHOR: Blake O'Hare
+DOCUMENTATION: http://crayonlang.org/docs/0.2.0/random
+DESCRIPTION: Library for generating random numbers and behavior.

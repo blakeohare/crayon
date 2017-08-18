@@ -1,0 +1,14 @@
+namespace Nori {
+    class Border : Panel {
+        constructor() : base() { }
+
+        function renderCalculateSize(
+            isHorizontal,
+            availableSizePixels,
+            defaultAlign,
+            forcedAlign) {
+
+            Core.fail("TODO: implement me.");
+        }
+    }
+}

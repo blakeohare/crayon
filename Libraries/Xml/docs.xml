@@ -1,0 +1,74 @@
+<library name="Xml">
+	<description>
+		Library for parsing XML.
+		The underlying implementation is a common implementation that is translated to the various target platforms, 
+		so parsing is consistent between platforms and not prone to library-specific quirks.
+	</description>
+
+	<namespace name="Xml">
+		<enum name="XmlOption">
+			<description>
+				A bit mask of various options used by the parser.
+			</description>
+			<value name="TRIM_WHITESPACE" description="Trims the whitespace off text elements."/>
+			<value name="FAIL_SILENTLY" description="If there is a syntax error, return null instead of throwing an exception"/>
+			<value name="NAMESPACES" description="Return an XML-namespace aware parse node tree instead of a strict literal parse tree."/>
+		</enum>
+
+		<enum name="NodeType">
+			<description>Enum for identifying the type of a parse node</description>
+			<value name="ELEMENT"/>
+			<value name="TEXT" />
+			<value name="COMMENT" />
+		</enum>
+
+		<class name="XmlElement">
+			<description>Represents an XML Element</description>
+			<field name="name" type="string" description="The name of the element."/>
+			<field name="attributes" type="dictionary" description="A dictionary with string keys for all the element's attributes"/>
+			<field name="children" type="list-of-object" description="A list of XmlElements, XmlText, or XmlComments that are nested within this element, in the order they appear. Use the .type field to distinguish them."/>
+			<field name="type" type="Xml.NodeType" description="Always set to Xml.NodeType.ELEMENT"/>
+		</class>
+
+		<class name="XmlNamespacedElement">
+			<description>Represents an XML Element along with resolved namespace information</description>
+			<field name="name" type="string" description="The name of this element without the namespace alias prefix."/>
+			<field name="alias" type="string" description="The namespace alias prefix, if present."/>
+			<field name="xmlns" type="string" description="The namespace of this element, if present."/>
+			<field name="attributes" type="list-of-Xml.XmlNamespacedAttribute" description="A list of attributes in this element. Because namespaces can allow for multiple attributes with the same root name and aliases can be arbitrary, this value is given as a list of attribute objects, instead of a dictionary keyed by the attribute name."/>
+			<field name="children" type="list-of-object" description="A list of XmlNamespacedElements, XmlText, or XmlComments that are nested within this element, in the order they appear. Use the .type field to distinguish them."/>
+			<field name="type" type="Xml.NodeType" description="Always set to Xml.NodeType.ELEMENT"/>
+		</class>
+
+		<class name="XmlNamespacedAttribute">
+			<description>
+				Represents an attribute in an XML element with namespace information. 
+				This is only used if the XML is parsed with the NAMESPACES flag. 
+				Otherwise the element contains a simple string-to-string dictionary.
+			</description>
+			<field name="name" type="string" description="The name of this attribute without the namespace alias prefix."/>
+			<field name="alias" type="string" description="The namespace alias prefix, if present."/>
+			<field name="xmlns" type="string" description="The namespace of this element, if present."/>
+			<field name="value" type="string" description="The value of the attribute."/>
+		</class>
+
+		<class name="XmlText">
+			<description>
+				Represents a blob of text present in an XML file, either as the body of an element or text between elements.
+			</description>
+			<field name="value" type="string" description="The value of the text."/>
+			<field name="type" type="Xml.NodeType" description="Always set to Xml.NodeType.TEXT"/>
+		</class>
+
+		<function name="parse">
+			<description>
+				Parses a string and returns an XML node tree.
+				Capable of parsing the tree by the basic XML standard without namespaces, or with. See Xml.XmlOption.
+			</description>
+			<arg name="xmlString" type="string" description="Some XML"/>
+			<arg name="options" type="Xml.XmlOption" optional="true" description="A bitmask of extra options for the parser."/>
+			<returns type="Xml.XmlElement|Xml.XmlNamespacedElement"/>
+		</function>
+
+	</namespace>
+</library>

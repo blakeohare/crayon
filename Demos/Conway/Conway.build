@@ -1,27 +1,49 @@
 <build>
 	<projectname>Conway</projectname>
-	<source>source/</source>
 	<output>output/%TARGET_NAME%</output>
 	
+	<iosbundleprefix>org.crayonlang.demos</iosbundleprefix>
+	<guidseed>org.crayonlang.demos.conway,v0.2.0,%TARGET_NAME%</guidseed>
+	
 	<!-- Targets -->
-	<target name="js_local">
-		<platform>js</platform>
+	<target name="javascript">
+		<source>source-en</source>
+		<platform>javascript-app</platform>
 	</target>
 	
-	<target name="js_remote">
-		<platform>js</platform>
-		<jsfileprefix>/projects/polarity/</jsfileprefix>
+	<target name="csharp">
+		<source>source-en</source>
+		<platform>csharp-app</platform>
 	</target>
 	
-	<target name="windows">
-		<platform>csopengl</platform>
+	<target name="csharp-es">
+		<source>source-es</source>
+		<compilerlocale>es</compilerlocale>
+		<platform>csharp-app</platform>
 	</target>
 	
-	<target name="javaawt">
-		<platform>java</platform>
+	<target name="java">
+		<source>source-en</source>
+		<platform>java-app</platform>
 	</target>
 	
 	<target name="python">
-		<platform>python</platform>
+		<source>source-en</source>
+		<platform>python-app</platform>
+	</target>
+	
+	<target name="ruby">
+		<source>source-en</source>
+		<platform>ruby-app</platform>
+	</target>
+	
+	<target name="android">
+		<source>source-en</source>
+		<platform>javascript-app-android</platform>
+	</target>
+
+	<target name="ios">
+		<source>source-en</source>
+		<platform>javascript-app-ios</platform>
 	</target>
 </build>

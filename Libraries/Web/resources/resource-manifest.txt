@@ -1,0 +1,9 @@
+BEGIN
+APPLICABLE-TO: java-app
+COPYFILES: java: src/%PROJECT_ID%/%FILE%
+END
+
+BEGIN
+APPLICABLE-TO: lang-python
+EMBED: python
+END

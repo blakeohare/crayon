@@ -1,42 +1,56 @@
-﻿namespace Crayon.ParseTree
+﻿using System;
+using System.Collections.Generic;
+
+namespace Crayon.ParseTree
 {
-	internal class NegativeSign : Expression
-	{
-		public override bool CanAssignTo { get { return false; } }
+    internal class NegativeSign : Expression
+    {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            this.Root = this.Root.PastelResolve(parser);
+            return this;
+        }
 
-		public Expression Root { get; private set; }
+        public override bool CanAssignTo { get { return false; } }
 
-		public NegativeSign(Token sign, Expression root, Executable owner)
-			: base(sign, owner)
-		{
-			this.Root = root;
-		}
+        public Expression Root { get; private set; }
 
-		internal override Expression Resolve(Parser parser)
-		{
-			this.Root = this.Root.Resolve(parser);
-			if (this.Root is IntegerConstant)
-			{
-				return new IntegerConstant(this.FirstToken, ((IntegerConstant)this.Root).Value * -1, this.FunctionOrClassOwner);
-			}
+        public NegativeSign(Token sign, Expression root, Executable owner)
+            : base(sign, owner)
+        {
+            this.Root = root;
+        }
 
-			if (this.Root is FloatConstant)
-			{
-				return new FloatConstant(this.FirstToken, ((FloatConstant)this.Root).Value * -1, this.FunctionOrClassOwner);
-			}
+        internal override Expression Resolve(Parser parser)
+        {
+            this.Root = this.Root.Resolve(parser);
+            if (this.Root is IntegerConstant)
+            {
+                return new IntegerConstant(this.FirstToken, ((IntegerConstant)this.Root).Value * -1, this.FunctionOrClassOwner);
+            }
 
-			return this;
-		}
+            if (this.Root is FloatConstant)
+            {
+                return new FloatConstant(this.FirstToken, ((FloatConstant)this.Root).Value * -1, this.FunctionOrClassOwner);
+            }
 
-		internal override void SetLocalIdPass(VariableIdAllocator varIds)
-		{
-			this.Root.SetLocalIdPass(varIds);
-		}
+            return this;
+        }
 
-		internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
-		{
-			this.Root = this.Root.ResolveNames(parser, lookup, imports);
-			return this;
-		}
-	}
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
+            this.Root.PerformLocalIdAllocation(varIds, phase);
+        }
+
+        internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
+        {
+            this.Root = this.Root.ResolveNames(parser, lookup, imports);
+            return this;
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            this.Root.GetAllVariablesReferenced(vars);
+        }
+    }
 }

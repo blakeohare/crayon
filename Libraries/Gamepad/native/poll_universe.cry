@@ -1,0 +1,4 @@
+﻿
+if (%%%LIB_GAMEPAD_SUPPORTED%%%) {
+    $_lib_gamepad_poll_universe();
+}

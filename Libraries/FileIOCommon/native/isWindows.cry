@@ -1,0 +1,4 @@
+output = VALUE_FALSE;
+if ($_lib_fileiocommon_isWindows()) {
+    output = VALUE_TRUE;
+}

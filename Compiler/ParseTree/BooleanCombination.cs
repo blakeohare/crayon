@@ -1,53 +1,105 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
 {
-	internal class BooleanCombination : Expression
-	{
-		public override bool CanAssignTo { get { return false; } }
+    internal class BooleanCombination : Expression
+    {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            for (int i = 0; i < this.Expressions.Length; ++i)
+            {
+                this.Expressions[i] = this.Expressions[i].PastelResolve(parser);
+            }
+            return this;
+        }
 
-		public Expression[] Expressions { get; private set; }
-		public Token[] Ops { get; private set; }
+        public override bool CanAssignTo { get { return false; } }
 
-		public BooleanCombination(IList<Expression> expressions, IList<Token> ops, Executable owner)
-			: base(expressions[0].FirstToken, owner)
-		{
-			this.Expressions = expressions.ToArray();
-			this.Ops = ops.ToArray();
-		}
+        public Expression[] Expressions { get; private set; }
+        public Token[] Ops { get; private set; }
 
-		internal override Expression Resolve(Parser parser)
-		{
-			for (int i = 0; i < this.Expressions.Length; ++i)
-			{
-				this.Expressions[i] = this.Expressions[i].Resolve(parser);
-			}
+        public BooleanCombination(IList<Expression> expressions, IList<Token> ops, Executable owner)
+            : base(expressions[0].FirstToken, owner)
+        {
+            this.Expressions = expressions.ToArray();
+            this.Ops = ops.ToArray();
+        }
 
-			for (int i = 0; i < this.Ops.Length; ++i)
-			{
-				if (this.Expressions[i] is BooleanConstant)
-				{
-					// TODO: this can be optimized
-					// but I am in a hurry right now.
-				}
-			}
+        internal override Expression Resolve(Parser parser)
+        {
+            for (int i = 0; i < this.Expressions.Length; ++i)
+            {
+                this.Expressions[i] = this.Expressions[i].Resolve(parser);
+            }
 
-			return this;
-		}
+            if (this.Expressions[0] is BooleanConstant)
+            {
+                List<Expression> expressions = new List<Expression>(this.Expressions);
+                List<Token> ops = new List<Token>(this.Ops);
+                while (ops.Count > 0 && expressions[0] is BooleanConstant)
+                {
+                    bool boolValue = ((BooleanConstant)expressions[0]).Value;
+                    bool isAnd = ops[0].Value == "&&";
+                    if (isAnd)
+                    {
+                        if (boolValue)
+                        {
+                            expressions.RemoveAt(0);
+                            ops.RemoveAt(0);
+                        }
+                        else
+                        {
+                            return new BooleanConstant(this.FirstToken, false, this.FunctionOrClassOwner);
+                        }
+                    }
+                    else
+                    {
+                        if (boolValue)
+                        {
+                            return new BooleanConstant(this.FirstToken, true, this.FunctionOrClassOwner);
+                        }
+                        else
+                        {
+                            expressions.RemoveAt(0);
+                            ops.RemoveAt(0);
+                        }
+                    }
+                }
 
-		internal override void SetLocalIdPass(VariableIdAllocator varIds)
-		{
-			foreach (Expression expr in this.Expressions)
-			{
-				expr.SetLocalIdPass(varIds);
-			}
-		}
+                if (expressions.Count == 1)
+                {
+                    return expressions[0];
+                }
+            }
 
-		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
-		{
-			this.BatchExpressionNameResolver(parser, lookup, imports, this.Expressions);
-			return this;
-		}
-	}
+            return this;
+        }
+
+        internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+        {
+            this.BatchExpressionNameResolver(parser, lookup, imports, this.Expressions);
+            return this;
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            foreach (Expression expr in this.Expressions)
+            {
+                expr.GetAllVariablesReferenced(vars);
+            }
+        }
+
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
+            {
+                foreach (Expression ex in this.Expressions)
+                {
+                    ex.PerformLocalIdAllocation(varIds, phase);
+                }
+            }
+        }
+    }
 }

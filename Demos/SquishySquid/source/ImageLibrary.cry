@@ -1,0 +1,36 @@
+import Graphics2D;
+
+static class ImageLibrary {
+    static field images = {};
+    static field flippedImages = {};
+    static field textures = {};
+
+    static function get(path) {
+        texture = ImageLibrary.textures.get(path);
+        if (texture == null) {
+            texture = GraphicsTexture.load(ImageLibrary.getResource(path));
+            ImageLibrary.textures[path] = texture;
+        }
+        return texture;
+    }
+
+    static function getResource(path) {
+        return ImageLibrary.images[path];
+    }
+
+    static function getFlipped(path) {
+        img = ImageLibrary.flippedImages.get(path);
+        if (img == null) {
+            img = ImageLibrary.get(path).flip(false, true);
+            ImageLibrary.flippedImages[path] = img;
+        }
+        return img;
+    }
+
+    static function populateLibrary(sheet) {
+        for (file : sheet.getFiles()) {
+            key = file['images/'.length:];
+            ImageLibrary.images[key] = sheet.getImage(file);
+        }
+    }
+}

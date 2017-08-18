@@ -1,0 +1,27 @@
+namespace Nori {
+    class MenuBar {
+
+        field items = [];
+        field isDirty = false;
+        field window = null;
+
+        constructor() { }
+
+        function addChild(item) {
+            if (item.parent != null) Core.fail("Cannot add a menu item to the menu bar multiple times.");
+            item.parent = this;
+            this.items.add(item);
+            this.isDirty = true;
+            return this;
+        }
+
+        static function _buildList(menu) {
+            output = [];
+            for (item : menu.items) {
+                output.add(item._getDescriptor());
+            }
+            menu.isDirty = false;
+            return output;
+        }
+    }
+}

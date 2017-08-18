@@ -1,0 +1,4 @@
+NAME: Core
+AUTHOR: Blake O'Hare
+DOCUMENTATION: http://crayonlang.org/docs/0.2.0/core
+DESCRIPTION: Basic system functions. Automatically imported.

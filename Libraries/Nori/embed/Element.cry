@@ -1,0 +1,174 @@
+namespace Nori {
+
+    enum Alignment {
+        STRETCH,
+        LEADING,
+        CENTER,
+        TRAILING,
+    }
+
+    enum HorizontalAlignment {
+        STRETCH = Alignment.STRETCH,
+        LEFT = Alignment.LEADING,
+        CENTER = Alignment.CENTER,
+        RIGHT = Alignment.TRAILING,
+    }
+
+    enum VerticalAlignment {
+        STRETCH = Alignment.STRETCH,
+        TOP = Alignment.LEADING,
+        CENTER = Alignment.CENTER,
+        BOTTOM = Alignment.TRAILING,
+    }
+
+    class Element {
+        /*
+            nativeData[0] -> Actual platform UI element
+            nativeData[1] -> Dictionary<int, int> eventually replace fauxNativeData.
+
+        */
+        // dictionary of strings to values
+        // goal is to eventually convert this to nativeData with integer lookups
+        field fauxNativeData = {};
+        field isPanel = false;
+        field alreadyAddedToUiTree = false;
+
+        constructor() {
+            $$$('allocNativeData', this, 2);
+        }
+
+        function setSize(width, height) {
+            this.fauxNativeData['suggested-width'] = width;
+            this.fauxNativeData['suggested-height'] = height;
+            return this;
+        }
+
+        function setWidth(width) {
+            this.fauxNativeData['suggested-width'] = width;
+            return this;
+        }
+
+        function setHeight(height) {
+            this.fauxNativeData['suggested-height'] = height;
+            return this;
+        }
+
+        function setHorizontalAlignment(alignment) {
+            this.fauxNativeData['align-x'] = alignment;
+            return this;
+        }
+
+        function setVerticalAlignment(alignment) {
+            this.fauxNativeData['align-y'] = alignment;
+            return this;
+        }
+
+        function render(uiBox) {
+            // some elements do not render.
+        }
+
+        function calculateDefaultSize() {
+            // Override as appropriate.
+            this.fauxNativeData['default-width'] = 0;
+            this.fauxNativeData['default-height'] = 0;
+        }
+
+        function renderCalculateSize(
+            isHorizontal,
+            availableSizePixels, // null for this means use compact layout scheme
+            defaultAlign,
+            forcedAlign) {
+
+            nativeData = this.fauxNativeData;
+            align = forcedAlign ?? nativeData.get(isHorizontal ? 'align-x' : 'align-y') ?? defaultAlign;
+            leadingMargin = nativeData.get(isHorizontal ? 'margin-left' : 'margin-top', 0);
+            trailingMargin = nativeData.get(isHorizontal ? 'margin-right' : 'margin-bottom', 0);
+            suggestedSize = nativeData.get(isHorizontal ? 'suggested-width' : 'suggested-height', null);
+
+            if (suggestedSize == null) {
+                if (nativeData.get('default-size-dirty', false)) {
+                    this.calculateDefaultSize();
+                    nativeData['default-size-dirty'] = false;
+                }
+                suggestedSize = nativeData.get(isHorizontal ? 'default-width' : 'default-height', 0);
+            }
+
+            Element.renderPerformElementLayout(
+                nativeData, isHorizontal, leadingMargin, trailingMargin, suggestedSize, availableSizePixels, align);
+        }
+
+        /*
+            Calculates coordinates based on layout factors.
+
+            +-------OUTER-------+
+            |                   |
+            |   +---INNER----+  |
+            |   |            |  |
+            |   |            |  |
+            |   |            |  |
+            |   +------------+  |
+            |      MARGINS      |
+            +-------------------+
+
+            render-inner-width: width of inner box
+            render-inner-height: height of inner box
+            render-margin-left: distance between outer and inner box left sides
+            render-margin-top: distance between outer and inner box top sides
+            render-outer-width: width of outer box
+            render-outer-height: height of outer box
+            render-outer-x: left of outer box
+            render-outer-y: top of outer box
+
+            The top left corner of the outer box is assumed to be (0, 0) at the time this
+            function ends, but outer-x and outer-y will be manipulated by panel layout logic
+            afterwards.
+        */
+        static function renderPerformElementLayout(
+            fnd, isHorizontal, marginLeading, marginTrailing, suggestedSize, availableSize, alignment) {
+
+            // TODO: convert this to a native function
+
+            if (availableSize == null) {
+                innerSize = suggestedSize;
+                outerSize = suggestedSize + marginLeading + marginTrailing;
+                offset = marginLeading;
+            } else {
+                switch (alignment) {
+                    case Alignment.STRETCH:
+                        outerSize = availableSize;
+                        innerSize = availableSize - marginLeading - marginTrailing;
+                        if (innerSize < 0) innerSize = 0;
+                        offset = marginLeading;
+                        break;
+                    case Alignment.LEADING:
+                        innerSize = suggestedSize;
+                        outerSize = marginLeading + marginTrailing + suggestedSize;
+                        offset = marginLeading;
+                        break;
+                    case Alignment.TRAILING:
+                        innerSize = suggestedSize;
+                        outerSize = marginLeading + marginTrailing + suggestedSize;
+                        offset = availableSize - innerSize - marginTrailing;
+                        break;
+                    case Alignment.CENTER:
+                        innerSize = suggestedSize;
+                        outerSize = suggestedSize;
+                        offset = (availableSize - suggestedSize) / 2;
+                        break;
+                }
+            }
+
+            if (isHorizontal) {
+                fnd['render-inner-width'] = innerSize;
+                fnd['render-outer-width'] = outerSize;
+                fnd['render-margin-left'] = offset;
+                fnd['render-outer-x'] = 0;
+            } else {
+                fnd['render-inner-height'] = innerSize;
+                fnd['render-outer-height'] = outerSize;
+                fnd['render-margin-top'] = offset;
+                fnd['render-outer-y'] = 0;
+            }
+        }
+    }
+}

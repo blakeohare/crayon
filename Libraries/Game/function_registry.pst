@@ -1,0 +1,7 @@
+﻿void lib_manifest_RegisterFunctions(object libRegData) {
+    Core.RegisterLibraryFunction(libRegData, "clock_tick", 0);
+    Core.RegisterLibraryFunction(libRegData, "initialize", 1);
+    Core.RegisterLibraryFunction(libRegData, "initialize_screen", 4);
+    Core.RegisterLibraryFunction(libRegData, "pump_events", 1);
+    Core.RegisterLibraryFunction(libRegData, "set_title", 1);
+}

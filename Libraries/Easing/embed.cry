@@ -1,0 +1,61 @@
+﻿import Math;
+
+namespace Easing {
+
+    class EasingFunction {
+
+        static function _0(t) { return t; }
+        static field LINEAR = new EasingFunction(EasingFunction._0, 1);
+
+        static function _1(t) { return t ** 2; }
+        static field QUADRATIC = new EasingFunction(EasingFunction._1);
+
+        static function _2(t) { return t ** 3; }
+        static field CUBIC = new EasingFunction(EasingFunction._2);
+
+        static function _3(t) { return t ** 4; }
+        static field QUART = new EasingFunction(EasingFunction._3);
+
+        static function _4(t) { return t ** 5; }
+        static field QUINT = new EasingFunction(EasingFunction._4);
+
+        static function _5(t) { return (1 - t ** 2) ** .5; }
+        static field CIRCLE = new EasingFunction(EasingFunction._5);
+
+        static function _6(t) { return 1.0 - Math.cos(t * (Math.PI / 2)); }
+        static field SIN = new EasingFunction(EasingFunction._6);
+
+        static function _7(t) {
+            if (t < .1) t = (t * 6 + 4) * t;
+            else t = t * .6 + .4;
+            return Math.sin(t * (2 * Math.PI * 5.25)) * (t ** 6);
+        }
+        static field ELASTIC = new EasingFunction(EasingFunction._7, 400);
+
+        constructor(fp, intervals = 100) {
+            pts = [];
+            i = -1;
+            m = intervals + 1;
+            while (++i <= m) {
+                pts.add(fp(1.0 * i / m) * 1.0);
+            }
+            $$lib_easing_apply_pts(this, pts);
+        }
+
+        function easeIn(start, end, current, duration, integers = false) {
+            return $$lib_easing_interpolate(this, start, end, current, duration, integers, 0) ?? EasingFunction._throw();
+        }
+
+        function easeOut(start, end, current, duration, integers = false) {
+            return $$lib_easing_interpolate(this, start, end, current, duration, integers, 1) ?? EasingFunction._throw();
+        }
+
+        function ease(start, end, current, duration, integers = false) {
+            return $$lib_easing_interpolate(this, start, end, current, duration, integers, 2) ?? EasingFunction._throw();
+        }
+
+        static function _throw() {
+            throw new Core.InvalidArgumentException("Inputs must be numbers.");
+        }
+    }
+}

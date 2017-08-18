@@ -1,0 +1,58 @@
+/*
+    This method is multi purpose. Extracting the event queue is 99% of the work for all actions and performance here
+    isn't important, so they're combined to save code.
+
+    arg 1: object instance that contains the render event queue
+    arg 2: value list of integers representing the text characters to be drawn.
+    arg 3: an integer.
+        0 -> just run the native data intializers.
+        1 -> send the queue to the platform for rendering.
+        2 -> reset render queues to 0
+
+*/
+import inline "FrameworkFunctions/3_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+objArray1 = ObjectInstance$objInstance1.nativeData;
+if (objArray1 == null) {
+    objArray1 = $_new_array('object', 5);
+    ObjectInstance$objInstance1.nativeData = objArray1;
+}
+
+intArray1 = $_cast('Array<int>', $_array_get(objArray1, 0));
+if (intArray1 == null) {
+    intArray1 = $_new_array('int', 0);
+    $_array_set(objArray1, 0, intArray1);
+    $_array_set(objArray1, 1, 0);
+    $_array_set(objArray1, 2, $_new_array('Array<object>', 64));
+    $_array_set(objArray1, 3, 0);
+    $_array_set(objArray1, 4, $_new_list('int'));
+}
+
+intList1 = $_cast('List<int>', $_array_get(objArray1, 4));
+
+i = $_cast('int', Value$arg3.internalValue);
+if (i == 1) {
+    // Push the queues to the renderer.
+
+    // Copy the List<Value> of integers into a List<int>
+    if (Value$arg2.type == Types.LIST) {
+        list1 = $_cast('List<Value>', Value$arg2.internalValue);
+        len = $_list_length(list1);
+        for (i = 0; i < len; i += 1) {
+            value = $_list_get(list1, i);
+            $_list_push(intList1, $_cast('int', Value$value.internalValue));
+        }
+    }
+
+    $_lib_graphics2d_render(
+        intArray1,
+        $_cast('int', $_array_get(objArray1, 1)),
+        $_cast('Array<Array<object>>', $_array_get(objArray1, 2)),
+        intList1); // text characters
+} else if (i == 2) {
+    // Reset all render queues to 0.
+    $_array_set(objArray1, 1, 0);
+    $_array_set(objArray1, 3, 0);
+    $_list_clear($_force_parens(intList1));
+}

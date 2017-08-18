@@ -1,0 +1,21 @@
+BEGIN
+APPLICABLE-TO: java-app
+COPY_FILES: from=java, to=%LIBRARY_PATH%/%FILE%
+END
+
+BEGIN
+APPLICABLE-TO: csharp-app
+COPY_FILES: from=csharp, to=%LIBRARY_PATH%/%FILE%
+LIB_DLL_REF: name=Game, version=v1
+END
+
+
+BEGIN
+APPLICABLE-TO: lang-python
+EMBED_FILES: from=python
+END
+
+BEGIN
+APPLICABLE-TO: javascript-app
+EMBED_FILES: from=javascript
+END

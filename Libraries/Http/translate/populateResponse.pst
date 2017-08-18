@@ -1,0 +1,83 @@
+﻿/*
+    arg1: request object
+        nativeData[0] -> reference to platform HTTP request object
+        nativeData[1] -> unused here
+        nativeData[2] -> unused here
+
+    arg2: response object (nativeData not set yet)
+        nativeData[0] -> byte array if a binary request
+
+    arg3: empty list for output
+        out[0] -> status code e.g. 403
+        out[1] -> status message e.g. FORBIDDEN
+        out[2] -> text content
+        out[3] -> bool, true if binary
+
+    arg4: empty list for output (header data)
+        this list will have 2n values added to it, alternating between header name and header value
+*/
+
+Value lib_http_function_populateResponse(Array<Value> args) {
+    Value arg2 = args[1];
+    Value arg3 = args[2];
+    Value arg4 = args[3];
+
+    ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+    object object1 = objInstance1.nativeData[0];
+
+    Array<object> objArray1 = new Array<object>(1);
+    List<string> stringList1 = new List<string>();
+    Native._lib_http_readResponseData(
+        // native http request object
+        object1,
+
+        /*
+            output param for the following values:
+            [0] -> status code
+            [1] -> 0 => text, 1 => binary
+        */
+        Core.IntBuffer16,
+
+        /*
+            output param for the following values:
+            [0] -> status message
+            [1] -> text content
+        */
+        Core.StringBuffer16,
+
+        /*
+            output param for the following value:
+            [0] -> binary content as a byte array
+        */
+        objArray1,
+
+        // add the headers here.
+        stringList1);
+
+    objInstance1 = ((ObjectInstance) arg2.internalValue);
+    objInstance1.nativeData = objArray1;
+
+    List<Value> outputList = (List<Value>) arg3.internalValue;
+
+    // push the status code
+    outputList.Add(buildInteger(Core.IntBuffer16[0]));
+    outputList.Add(buildString(Core.StringBuffer16[0]));
+
+    // push the text content
+    Value value = VALUE_NULL;
+    Value value2 = VALUE_TRUE;
+    if (Core.IntBuffer16[1] == 0) {
+        value = buildString(Core.StringBuffer16[1]);
+        value2 = VALUE_FALSE;
+    }
+    outputList.Add(value); // content
+    outputList.Add(value2); // boolean
+
+    // push the header information
+    List<Value> list1 = ((List<Value>) arg4.internalValue);
+    for (int i = 0; i < stringList1.Size(); i += 1) {
+        list1.Add(buildString(stringList1[i]));
+    }
+
+    return VALUE_NULL;
+}

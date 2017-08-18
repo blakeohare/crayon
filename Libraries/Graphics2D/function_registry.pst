@@ -1,0 +1,11 @@
+﻿void lib_manifest_RegisterFunctions(object libRegData) {
+    Core.RegisterLibraryFunction(libRegData, "addImageRenderEvent", 13);
+    Core.RegisterLibraryFunction(libRegData, "flip", 6);
+    Core.RegisterLibraryFunction(libRegData, "initializeTexture", 5);
+    Core.RegisterLibraryFunction(libRegData, "initializeTextureResource", 3);
+    Core.RegisterLibraryFunction(libRegData, "isOpenGlBased", 0);
+    Core.RegisterLibraryFunction(libRegData, "isPlatformUsingTextureAtlas", 0);
+    Core.RegisterLibraryFunction(libRegData, "lineToQuad", 1);
+    Core.RegisterLibraryFunction(libRegData, "renderQueueAction", 3);
+    Core.RegisterLibraryFunction(libRegData, "scale", 6);
+}

@@ -1,0 +1,20 @@
+﻿/*
+    arg1: response object
+        nativeData[0] -> byte array (already populated)
+
+    arg2: output list
+
+    output: returns the list. No good reason other than saving an extra op in the byte code.
+*/
+Value lib_http_function_getResponseBytes(Array<Value> args) {
+    Value outputListValue = args[1];
+
+    ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+
+    Array<object> objArray1 = objInstance1.nativeData;
+
+    List<Value> list1 = (List<Value>) outputListValue.internalValue;
+    Native._lib_http_getResponseBytes(objArray1[0], INTEGER_POSITIVE_CACHE, list1);
+
+    return outputListValue;
+}

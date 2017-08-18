@@ -1,0 +1,146 @@
+/*
+    See notes.txt
+*/
+
+namespace ImageResources {
+    enum ImgResourceType {
+        STANDALONE,
+        SHEET,
+    }
+
+    class ImageResourceManifest {
+
+        static field resourceInfo = null;
+        static field sheetInfo = null;
+        static field sheetIdByName = {};
+        static field filesBySheetId = {};
+
+        static function getFileInfo(filename, sheetOnly = false) {
+            ImageResourceManifest.ensureInitialized();
+            output = ImageResourceManifest.resourceInfo.get(filename);
+            if (output == null) {
+                nkey = filename.trim().replace('\\', '/');
+                output = ImageResourceManifest.resourceInfo.get(nkey);
+                if (output != null) {
+                    ImageResourceManifest.resourceInfo[filename] = output;
+                }
+            }
+
+            if (output == null) {
+                throw new ImageResources.ImageNotFoundException("Resource '{0}' does not exist.", filename);
+            }
+
+            if (sheetOnly && output[0] != ImgResourceType.SHEET) {
+                throw new ImageResources.ImageNotFoundException("Resource '{0}' is standalone and not included in an image sheet.", filename);
+            }
+
+            return output;
+        }
+
+        static function getSheetInfo(name) {
+            ImageResourceManifest.ensureInitialized();
+            if (Core.typeof(name) != Core.Type.STRING) throw new Core.InvalidArgumentException("Image sheet ID must be a string");
+            id = ImageResourceManifest.sheetIdByName.get(name);
+            if (id == null) throw new ImageResources.SheetNotFoundException("Image sheet with ID of '{0}' not found.", name);
+            return ImageResourceManifest.sheetInfo[id];
+        }
+
+        static function ensureInitialized() {
+            if (ImageResourceManifest.resourceInfo != null) return;
+            resourceInfo = {};
+            sheetInfo = {};
+            ImageResourceManifest.resourceInfo = resourceInfo;
+            ImageResourceManifest.sheetInfo = sheetInfo;
+
+            manifest = $$lib_imageresources_getManifestString();
+            activeSheetId = null;
+            activeChunkId = 0;
+            for (line : manifest.split('\n')) {
+                parts = line.split(',');
+                switch (parts[0].trim()) {
+
+                    case 'A': // A standalone file
+                        genFilename = parts[1];
+                        w = Core.parseInt(parts[2]);
+                        h = Core.parseInt(parts[3]);
+                        filename = parts[4:].join(',').trim();
+                        resourceInfo[filename] = [ImgResourceType.STANDALONE, genFilename, w, h];
+                        break;
+
+                    case 'S': // declare a new sheet
+                        activeSheetId = parts[1];
+                        name = parts[2:].join(',').trim();
+                        sheetInfo[activeSheetId] = {
+                            'name': name,
+                            'id': activeSheetId,
+                            'chunks': {},
+                        };
+                        ImageResourceManifest.sheetIdByName[name] = activeSheetId;
+                        break;
+
+                    case 'C': // declare a new chunk
+                        ++activeChunkId;
+                        width = Core.parseInt(parts[1]);
+                        height = Core.parseInt(parts[2]);
+                        if (width == 0 && height == 0) {
+                            width = 1024;
+                            height = 1024;
+                        }
+                        sheetInfo[activeSheetId]['chunks'][activeChunkId] = {
+                            'width': width,
+                            'height': height,
+                            'tiles': [],
+                        };
+                        break;
+
+                    case 'T': // tile in the active chunk
+                        genFilename = parts[1];
+                        x = Core.parseInt(parts[2]);
+                        y = Core.parseInt(parts[3]);
+                        width = Core.parseInt(parts[4]);
+                        height = Core.parseInt(parts[5]);
+                        bytes = Core.parseInt(parts[6]);
+                        sheetInfo[activeSheetId]['chunks'][activeChunkId]['tiles'].add(
+                            [genFilename, x, y, width, height, bytes]);
+                        break;
+                    case 'I': // image in the active sheet/chunk
+                        x = Core.parseInt(parts[1]);
+                        y = Core.parseInt(parts[2]);
+                        width = Core.parseInt(parts[3]);
+                        height = Core.parseInt(parts[4]);
+                        filename = parts[5:].join(',').trim();
+                        resourceInfo[filename] = [ImgResourceType.SHEET, activeSheetId, activeChunkId, x, y, width, height];
+                        files = ImageResourceManifest.filesBySheetId.get(activeSheetId) ?? [];
+                        ImageResourceManifest.filesBySheetId[activeSheetId] = files;
+                        files.add(filename);
+                        break;
+
+                    case 'J': // A JPEG that is a member of a sheet logically but is its own chunk
+                        genFilename = parts[1];
+                        width = Core.parseInt(parts[2]);
+                        height = Core.parseInt(parts[3]);
+                        bytes = Core.parseInt(parts[4]);
+                        filename = parts[5:].join(',').trim();
+
+                        ++activeChunkId;
+                        sheetInfo[activeSheetId]['chunks'][activeChunkId] = {
+                            'width': width,
+                            'height': height,
+                            'tiles': [
+                                [genFilename, 0, 0, width, height, bytes],
+                            ],
+                        };
+                        files = ImageResourceManifest.filesBySheetId.get(activeSheetId) ?? [];
+                        ImageResourceManifest.filesBySheetId[activeSheetId] = files;
+                        files.add(filename);
+                        resourceInfo[filename] = [ImgResourceType.SHEET, activeSheetId, activeChunkId, 0, 0, width, height];
+                        break;
+                }
+            }
+
+            for (files : ImageResourceManifest.filesBySheetId.values()) {
+                files.sort();
+            }
+        }
+    }
+}

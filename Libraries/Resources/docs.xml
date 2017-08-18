@@ -1,0 +1,38 @@
+<library name="Resources">
+	<description>
+		Library for accessing embedded resources.	
+	</description>
+
+	<namespace name="Resources">
+		<function name="readText">
+			<description>Reads a text file from embedded resources.</description>
+			<arg name="resourcePath" type="string" description="path to the resource from the root of the source directory."/>
+			<returns type="string" description="Text content of the file."/>
+		</function>
+
+		<function name="fileExists">
+			<description>Checks to see if a file path exists in embedded resources.</description>
+			<arg name="resourcePath" type="string" description="path to the resource from the root of the source directory."/>
+			<returns type="boolean" description="True if the resource exists."/>
+		</function>
+
+		<function name="directoryList">
+			<description>
+				Returns a list of file resources that are present in the given resource directory.
+			</description>
+			<arg name="directoryPath" type="string" description="path to a resource directory."/>
+			<arg name="includeFullPath" type="boolean" optional="true" description="if true, the full resource path will be included in the result."/>
+			<returns type="list-of-string" description="List of file resources available in that directory."/>
+		</function>
+
+		<function name="directoryExists">
+			<description>
+				Checks to see if a directory exists.
+				Note that directories only exist in resources if there are files contained in them.
+				Directories present in the original source directory are not transferred to the final embedded resources.
+			</description>
+			<arg name="directoryPath" type="string" description="path to a resource directory."/>
+			<returns type="boolean" description="true if the directory exists."/>
+		</function>
+	</namespace>
+</library>

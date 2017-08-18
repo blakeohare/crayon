@@ -1,0 +1,98 @@
+// These are used by OOTest.cry
+
+class OoSimple1 { }
+class OoSimple2 { }
+
+class OoInheritanceParent {
+	
+	field field1;
+	field field2 = null;
+	field field3 = 3;
+	field field4 = 4.0;
+	field field5 = [];
+	field field6 = {};
+	field field7 = [7, 8, 9];
+	field field8 = {'a': 1, 'b': 2, 'c': 3 };
+	field field9 = '9';
+	field field10;
+	field field11;
+	field field12;
+	
+	constructor(explicit, optional = 'optional') {
+		this.field10 = '10';
+		this.field11 = explicit;
+		this.field12 = optional;
+	}
+	
+	function notOverridden() {
+		return 'notOverridden-super';
+	}
+	
+	function overridden() {
+		return 'overridden-super';
+	}
+}
+
+class OoInheritanceChild1 : OoInheritanceParent {
+	field field13 = 'child1';
+	field field14;
+	
+	constructor() : base('from-child1') {
+		this.field3++;
+		this.field14 = 'child1-constructor';
+	}
+	
+	function child1Function() {
+		return 'child1';
+	}
+	
+	function overridden() {
+		return 'overridden-child1';
+	}
+}
+
+class OoInheritanceChild2 : OoInheritanceParent {
+	field field13 = 'child2';
+	field field14;
+	constructor(arg) : base('from-child2', arg) {
+		this.field14 = 'child2-constructor';
+	}
+	
+	function child2Function() {
+		return base.overridden();
+	}
+	
+	function overridden() {
+		return '[child2]' + base.overridden();
+	}
+}
+
+class OoInheritanceGrandChild : OoInheritanceChild2 {
+	constructor() : base('grand-child') { }
+	
+	function overridden() {
+		return '[grandchild]' + base.overridden();
+	}
+}
+
+class OoSkipGenerationBaseCall1 {
+	function myMethod() {
+		return 'A';
+	}
+	
+	function anotherMethod() {
+		return this.myMethod();
+	}
+}
+
+class OoSkipGenerationBaseCall2 : OoSkipGenerationBaseCall1 {
+	constructor() : base() { }
+}
+
+class OoSkipGenerationBaseCall3 : OoSkipGenerationBaseCall2 {
+	constructor() : base() { }
+	
+	function myMethod() {
+		return 'B' + base.myMethod();
+	}
+}

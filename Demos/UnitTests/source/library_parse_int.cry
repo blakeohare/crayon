@@ -1,12 +1,11 @@
-
 function library_parse_int() {
 
-	$print('library_parse_int - parsing integers');
-	
-	$assert($parse_int('42') == 42, "library_parse_int");
-	$assert($parse_int('42') + '' == '42', "library_parse_int");
-	$assert($parse_int(' 42 ') == 42, "library_parse_int");
-	$assert($parse_int(' 42 \r\n') == 42, "library_parse_int");
-	$assert($parse_int(' 42 \r') == 42, "library_parse_int");
-	$assert($parse_int('kitties') == null, "library_parse_int");
+    print('library_parse_int - parsing integers');
+
+    assert(parseInt('42') == 42, "library_parse_int");
+    assert(parseInt('42') + '' == '42', "library_parse_int");
+    assert(parseInt(' 42 ') == 42, "library_parse_int");
+    assert(parseInt(' 42 \r\n') == 42, "library_parse_int");
+    assert(parseInt(' 42 \r') == 42, "library_parse_int");
+    assert(parseInt('kitties') == null, "library_parse_int");
 }

@@ -1,0 +1,15 @@
+﻿package %%%PACKAGE%%%;
+
+import org.crayonlang.interpreter.Interpreter;
+import org.crayonlang.interpreter.TranslationHelper;
+import org.crayonlang.interpreter.ResourceReader;
+
+public final class Main {
+
+  public static void main(String[] args) {
+    TranslationHelper.setResourceManifest(ResourceReader.readFileText("resources/manifest.txt"));
+    TranslationHelper.setCommandLineArgs(args);
+    Interpreter.v_main();
+  }
+
+}

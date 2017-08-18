@@ -1,0 +1,85 @@
+import Game;
+import Gamepad;
+
+const FPS = 60;
+
+const GAME_WIDTH = 800;
+const GAME_HEIGHT = 600;
+
+function main() {
+
+    activeScene = new TitleScene();
+
+    window = new GameWindow('Asteroids!', FPS, GAME_WIDTH, GAME_HEIGHT);
+
+
+    pressedKeys = {};
+    pressedThisFrame = {};
+
+    gamepad = null;
+
+    while (true) {
+
+        if (gamepad == null) {
+            GamepadManager.refreshDevices();
+            if (GamepadManager.getDeviceCount() > 0) {
+                gamepad = GamepadManager.getDeviceByIndex(0);
+                gamepad.setId('player');
+                gamepad.pushAutoConfigure();
+            }
+        }
+
+        pressedThisFrame.clear();
+
+        for (event : window.pumpEvents()) {
+            switch (event.type) {
+                case EventType.QUIT:
+                    return;
+
+                case EventType.KEY_DOWN:
+                    pressedThisFrame[event.key] = true;
+                    pressedKeys[event.key] = true;
+                    break;
+
+                case EventType.KEY_UP:
+                    pressedKeys[event.key] = false;
+                    break;
+
+                case EventType.GAMEPAD:
+                    if (event.deviceId == 'player') {
+                        switch (event.buttonId) {
+                            // Map XBox-style gamepad buttons to various keyboard key presses
+                            case Gamepad.XBoxButtonId.AXIS1:
+                                pressedKeys[KeyboardKey.LEFT] = event.x < -.5;
+                                pressedKeys[KeyboardKey.RIGHT] = event.x > .5;
+                                pressedKeys[KeyboardKey.UP] = event.y < -.5;
+                                pressedKeys[KeyboardKey.DOWN] = event.y > .5;
+                                break;
+
+                            case Gamepad.XBoxButtonId.A:
+                            case Gamepad.XBoxButtonId.B:
+                            case Gamepad.XBoxButtonId.X:
+                            case Gamepad.XBoxButtonId.Y:
+                                if (event.value) {
+                                    pressedThisFrame[KeyboardKey.SPACE] = true;
+                                }
+                                break;
+
+                            case Gamepad.XBoxButtonId.START:
+                                if (event.value) {
+                                    pressedThisFrame[KeyboardKey.ENTER] = true;
+                                }
+                                break;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        activeScene.update(pressedKeys, pressedThisFrame);
+        activeScene.render();
+        activeScene = activeScene.next ?? activeScene;
+
+        window.clockTick();
+    }
+}

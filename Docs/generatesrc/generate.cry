@@ -1,0 +1,431 @@
+
+function generateDocumentationHtml(docRoot) {
+	output = [
+		'<html>',
+		'<head>',
+		'<title>Documentation</title>',
+		'</head>',
+		'<body>',
+		'<style>',
+		[
+			'body { font-family: "Helvetica", "Arial", sans-serif; }',
+			'h1 { font-size:20pt; font-weight:bold; color:#247; }',
+			'h2 { font-size:16pt; font-weight:bold; color:#247; }',
+			'h3 { font-size:12pt; font-weight:bold; color:#247; }',
+			'.codefont { font-family: "Menlo", "Consolas", "Courier New", monospace; font-size:10pt; }',
+			'table.arguments { border-radius:8px; overflow:hidden; border-spacing:0px; border-collapse: separate; background-color:#eee; }',
+			'table.arguments thead { background-color:#ccc; font-weight:bold; text-align:left; }',
+			'table.arguments td, table.arguments th { padding:8px; padding-right:20px; }',
+			'table.arguments tbody tr { vertical-align:top; }',
+			'td.argname { color:#286; }',
+			'table.arguments td.argtype { color:#666; }',
+			'td.optional { color:#000; font-weight:bold; }',
+			'.codesnippet { background-color:#eee; border-radius:8px; padding:16px; margin-bottom:12px; }',
+			'.itembox { margin-bottom:40px; margin-left:30px;}',
+			'a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }',
+			'a.bookmark:hover { color:#08a; }',
+			'p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}',
+			'.keyword { font-weight:normal; }',
+		].join('\n'),
+		'</style>'];
+
+	if (docRoot is Library) {
+		generateLibraryHtml(docRoot, output);
+	} else {
+		throw new Exception("Unrecognized doc root type.");
+	}
+	output.add('</body></html>');
+	return output.join('');
+}
+
+const LINK_LABEL = 
+	//'&#128279;';
+	'[link]';
+
+function spanCodeFont(str) {
+	return '<span class="codefont">' + htmlSpecialChars(str) + '</span>';
+}
+
+function generateLibraryHtml(library, buffer) {
+	buffer.add('<h1>' + htmlSpecialChars(library.name) + '</h1>');
+
+	buffer.add('<div class="itembox">\n');
+	buffer.add('<p class="description">');
+	buffer.add(library.description);
+	buffer.add('</p>\n');
+	buffer.add('</div>\n');
+
+	library.namespaces.sort(sortByNameKeyFunction);
+
+	buffer.add('<ul>\n');
+	for (ns : getSortedList(library.namespaces)) {
+		buffer.add('<li>');
+		buffer.add(spanCodeFont('namespace'));
+		buffer.add(' ');
+		buffer.add(htmlSpecialChars(ns.name));
+		
+		buffer.add('<ul>\n');
+		if (ns.constants.length > 0) {
+			for (cnst : getSortedList(ns.constants)) {
+				buffer.add('<li>');
+				buffer.add('<a href="#');
+				buffer.add(cnst.getBookmark());
+				buffer.add('">');
+				buffer.add(spanCodeFont('const'));
+				buffer.add(' ');
+				buffer.add(htmlSpecialChars(cnst.name));
+				buffer.add('</a></li>\n');
+			}
+		}
+
+		if (ns.enums.length > 0) {
+			for (en : getSortedList(ns.enums)) {
+				buffer.add('<li>');
+				buffer.add('<a href="#');
+				buffer.add(en.getBookmark());
+				buffer.add('">');
+				buffer.add(spanCodeFont('enum'));
+				buffer.add(' ');
+				buffer.add(htmlSpecialChars(en.name));
+				buffer.add('</a></li>\n');
+			}
+		}
+
+		if (ns.functions.length > 0) {
+			for (fn : getSortedList(ns.functions)) {
+				buffer.add('<li>');
+				buffer.add('<a href="#');
+				buffer.add(fn.getBookmark());
+				buffer.add('">');
+				buffer.add(spanCodeFont('function'));
+				buffer.add(' ');
+				buffer.add(htmlSpecialChars(fn.name));
+				buffer.add('(');
+				for (i = 0; i < fn.argNames.length; ++i) {
+					if (i > 0) buffer.add(', ');
+					buffer.add(htmlSpecialChars(fn.argNames[i]));
+				}
+				buffer.add(')');
+				buffer.add('</a>');
+				buffer.add('</li>\n');
+			}
+		}
+
+		if (ns.classes.length > 0) {
+			for (cls : getSortedList(ns.classes)) {
+				buffer.add('<li>');
+				buffer.add('<a href="#');
+				buffer.add(cls.getBookmark());
+				buffer.add('">');
+				buffer.add(spanCodeFont('class'));
+				buffer.add(' ');
+				buffer.add(htmlSpecialChars(cls.name));
+				buffer.add('</a>');
+				if (cls.functions.length > 0) {
+					buffer.add('<ul>\n');
+					for (fn : getSortedList(cls.functions)) {
+						buffer.add('<li>');
+						buffer.add('<a href="#');
+						buffer.add(fn.getBookmark());
+						buffer.add('">');
+						if (fn.isConstructor()) {
+							buffer.add(spanCodeFont('constructor'));
+						} else {
+							buffer.add(spanCodeFont((fn.isStatic ? 'static ' : '') + 'function'));
+							buffer.add(' ');
+							buffer.add(htmlSpecialChars(fn.name));	
+						}
+						buffer.add('(');
+						for (i = 0; i < fn.argNames.length; ++i) {
+							if (i > 0) buffer.add(', ');
+							buffer.add(htmlSpecialChars(fn.argNames[i]));
+						}
+						buffer.add(')');
+						buffer.add('</a>');
+						buffer.add('</li>\n');
+					}
+					buffer.add('</ul>\n');
+				}
+				buffer.add('</li>\n');
+			}
+		}
+		buffer.add('</ul>\n');
+		buffer.add('</li>\n');
+	}
+	buffer.add('</ul>\n');
+
+
+	for (ns : library.namespaces) {
+
+		if (ns.constants.length > 0) {
+			buffer.add('<div class="itembox">\n');
+			buffer.add('<h1>Constants</h1>\n');
+			buffer.add('<div class="itembox">\n');
+
+			buffer.add('<table class="arguments">\n');
+			buffer.add('<thead><tr><th>Name</th><th>Type</th><th>Value</th><th>Description</th></thead>\n');
+			buffer.add('<tbody>\n');
+
+			for (cnst : ns.constants) {
+				buffer.add('<tr>\n');
+				buffer.add('<td class="codefont argname">');
+				buffer.add(cnst.name);
+				buffer.add('</td>\n');
+				buffer.add('<td class="codefont argtype">');
+				buffer.add(formatType(cnst.type));
+				buffer.add('</td>\n');
+				buffer.add('<td class="codefont argtype">');
+				buffer.add(cnst.value);
+				buffer.add('</td>\n');
+				buffer.add('<td class="description">');
+				buffer.add('<p class="description">');
+				if (cnst.description != null) {
+					buffer.add(cnst.description);
+				}
+				buffer.add('</p>');
+				buffer.add('</td>\n');
+				buffer.add('</tr>\n');
+			}
+			buffer.add('</tbody>\n</table>\n');
+			buffer.add('</div>\n');
+			buffer.add('</div>\n');
+		}
+		
+		for (en : ns.enums) {
+			buffer.add('<div class="itembox">\n');
+			buffer.add('<h1>');
+			buffer.add('<span class="keyword">enum</span> ');
+			buffer.add(en.name);
+			buffer.add('<a class="bookmark" name="' + en.getBookmark() + '" href="#' + en.getBookmark() + '">' + LINK_LABEL + '</a>');
+			buffer.add('</h1>\n');
+
+			buffer.add('<p class="description">');
+			buffer.add(en.description);
+			buffer.add('</p>\n');
+
+
+			buffer.add('<div class="itembox">\n');
+			buffer.add('<table class="arguments">\n');
+			buffer.add('<thead><tr><th>Name</th><th>Description</th></thead>\n');
+			buffer.add('<tbody>\n');
+
+			for (i = 0; i < en.valueNames.length; ++i) {
+				buffer.add('<tr>\n');
+				buffer.add('<td class="codefont argname">');
+				buffer.add(en.valueNames[i]);
+				buffer.add('</td>\n');
+				buffer.add('<td class="description">');
+				buffer.add('<p class="description">');
+				d = en.valueDescriptions[i];
+				if (d != null) {
+					buffer.add(d);
+				}
+				buffer.add('</p>');
+				buffer.add('</td>\n');
+				buffer.add('</tr>\n');
+			}
+
+			buffer.add('</tbody>\n</table>\n</div>\n');
+
+			buffer.add('</div>\n'); // itembox
+		}
+
+		for (fn : ns.functions) {
+			buffer.add('<div class="itembox">');
+			generateFunctionHtml(buffer, fn);
+			buffer.add('</div>\n');
+		}
+
+		for (cls : ns.classes) {
+			buffer.add('<div>\n');
+			buffer.add('<h1>');
+			buffer.add('<span class="keyword">class</span> ' + cls.name);
+			buffer.add('<a class="bookmark" name="' + cls.getBookmark() + '" href="#' + cls.getBookmark() + '">' + LINK_LABEL + '</a>');
+			buffer.add('</h1>\n');
+
+			buffer.add('<div class="itembox">\n');
+			buffer.add('<p class="description">');
+			if (cls.description == null) {
+				throw new Exception("Class does not have a description: " + cls.name);
+			}
+			buffer.add(htmlSpecialChars(cls.description));
+			buffer.add('</p>\n');
+			buffer.add('</div>\n');
+
+			classVar = cls.name;
+			classVar = classVar[0].lower() + classVar[1:];
+
+			if (cls.fields.length > 0) {
+				buffer.add('<div class="itembox">\n');
+				buffer.add('<h2>Fields</h2>\n');
+
+				buffer.add('<div class="itembox">\n');
+				buffer.add('<table class="arguments">\n');
+				buffer.add('<thead><tr><th>Name</th><th>Type</th><th>Description</th></thead>\n');
+				buffer.add('<tbody>\n');
+
+				for (fi : cls.fields) {
+					buffer.add('<tr>\n');
+					buffer.add('<td class="codefont argname">');
+					buffer.add('.' + fi.name);
+					buffer.add('<a name="' + fi.getBookmark() + '"></a>');
+					buffer.add('</td>\n');
+					buffer.add('<td class="codefont argtype">');
+					buffer.add(formatType(fi.type));
+					buffer.add('</td>\n');
+					buffer.add('<td class="description">');
+					buffer.add('<p class="description">');
+					buffer.add(htmlSpecialChars(fi.description));
+					buffer.add('</p>');
+					buffer.add('</td>\n');
+					buffer.add('</tr>\n');
+				}
+
+				buffer.add('</tbody>\n');
+				buffer.add('</table>\n');
+				buffer.add('</div>\n'); // .itembox
+				buffer.add('</div>\n'); // .itembox
+			}
+
+			for (fn : cls.functions) {
+				buffer.add('<div class="itembox">');
+				generateFunctionHtml(buffer, fn);
+				buffer.add('</div>\n');
+			}
+
+			buffer.add('</div>\n');
+		}
+	}
+
+}
+
+function formatType(typeKey, usePlural = false) {
+	if (typeKey.contains('|')) {
+		output = [];
+		for (tk : typeKey.split('|')) {
+			output.add(formatType(tk));
+		}
+		return output.join(' <span style="font-weight:bold; color:#000;">or</span> ');
+	}
+	switch (typeKey) {
+		case 'int':
+		case 'integer':
+			return usePlural ? 'integers' : 'integer';
+
+		case 'float':
+		case 'double':
+			return usePlural ? 'floats' : 'float';
+
+		case 'bool':
+		case 'boolean':
+			return usePlural ? 'booleans' : 'boolean';
+
+		case 'function':
+			return usePlural ? 'functions' : 'function';
+
+		case 'string':
+			return usePlural ? 'strings' : 'string';
+
+		default:
+			if (typeKey.startsWith('list-of-')) {
+				return "List of " + formatType(typeKey['list-of-'.length:], true);
+			}
+			return typeKey;
+	}
+}
+
+function generateFunctionHtml(buffer, fn) {
+	buffer.add('<div>\n');
+
+	buffer.add('<h2>');
+	if (fn.isConstructor()) {
+		buffer.add('<span class="keyword">new</span> ');
+		buffer.add(fn.parentClass.name);
+		fn.getArgsList(buffer);
+	} else {
+		buffer.add('<span class="keyword">function</span> ');
+		buffer.add(fn.name);
+		fn.getArgsList(buffer);
+	}
+	buffer.add('<a class="bookmark" name="' + fn.getBookmark() + '" href="#' + fn.getBookmark() + '">' + LINK_LABEL + '</a>');
+	buffer.add('</h2>\n');
+	
+	buffer.add('<div class="itembox">\n');
+
+	buffer.add('<p class="description">');
+	buffer.add(fn.description);
+	buffer.add('</p>\n');
+	
+	if (fn.argNames.length > 0) {
+		buffer.add('<div>\n');
+		buffer.add("<h3>Arguments</h3>\n");
+		buffer.add('<table class="arguments">\n');
+		buffer.add('<thead><tr><th>Name</th><th>Type</th>');
+		if (fn.hasAnyOptionalArgs) {
+			buffer.add('<th>Optional</th>');
+		}
+		buffer.add('<th>Description</th></tr></thead>\n');
+		buffer.add('<tbody>\n');
+		for (i = 0; i < fn.argNames.length; ++i) {
+			buffer.add('<tr>\n');
+			buffer.add('<td class="codefont argname">');
+			buffer.add(fn.argNames[i]);
+			buffer.add('</td>\n');
+			buffer.add('<td class="codefont argtype">');
+			buffer.add(formatType(fn.argTypes[i]));
+			buffer.add('</td>\n');
+
+			if (fn.hasAnyOptionalArgs) {
+				buffer.add('<td class="codefont optional">');
+				if (fn.argIsOptional[i]) {
+					buffer.add('Optional');
+				}
+				buffer.add('</td>\n');
+			}
+
+			buffer.add('<td class="description">');
+			buffer.add('<p class="description">');
+			buffer.add(fn.argDescriptions[i]);
+			buffer.add('</p>');
+			buffer.add('</td>\n');
+			buffer.add('</tr>\n');
+		}
+		buffer.add('</tbody>\n');
+		buffer.add('</table>\n');
+		buffer.add('</div>\n');
+	}
+
+	if (fn.returnDescription != null) {
+		buffer.add('<div>\n');
+		buffer.add("<h3>Return Value</h3>\n");
+		buffer.add('<table class="arguments">\n');
+		buffer.add('<thead><tr><th>Type</th><th>Description</th></thead>\n');
+		buffer.add('<tbody>\n');
+		buffer.add('<tr><td class="codefont argtype">');
+		buffer.add(formatType(fn.returnType));
+		buffer.add('</td><td class="description">');
+		buffer.add('<p class="description">');
+		buffer.add(fn.returnDescription);
+		buffer.add('</p>');
+		buffer.add('</td></tr>\n');
+		buffer.add('</tbody>\n');
+		buffer.add('</table>\n');
+		buffer.add('</div>\n');
+	}
+
+	buffer.add('</div>\n'); // itembox
+	buffer.add('</div>\n');
+}
+
+function htmlSpecialChars(str) {
+	return str.replace('&', '&amp;').replace('<', '&lt;');
+}
+
+function getSortedList(list) {
+	list.sort(sortByNameKeyFunction);
+	return list;
+}
+
+function sortByNameKeyFunction(thing) {
+	return thing.name.lower();
+}

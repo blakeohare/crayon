@@ -1,0 +1,191 @@
+namespace ImageResources {
+    class ImageSheet {
+
+        field _isLoaded = false;
+        field _info;
+        field _loader;
+        field _name;
+        field _id;
+
+        // List where the chunk ID is the index and the value is an ImageResource instance.
+        field _chunks;
+
+        // essentially this amounts to the tile count (as of now)
+        // For aggregated image sheets, this represents a relative weight of how much "stuff"
+        // this sheet loads so that the overall percentage can be shown as a function of all
+        // sheets more accurately.
+        field _weight;
+
+        @private
+        constructor(info, isAsync) {
+            this._info = info;
+            this._name = info['name'];
+            this._id = info['id'];
+
+            chunks = info['chunks'];
+            tiles = [];
+            for (chunk : chunks.values()) {
+                tiles.concat(chunk['tiles']);
+            }
+
+            this._weight = tiles.length;
+
+            if (isAsync) {
+                this._loader = new ImageResources.ImageSheetLoaderAsync(tiles).load();
+            } else {
+                lookup = {};
+                for (tile : tiles) {
+                    genName = tile[0];
+                    width = tile[3];
+                    height = tile[4];
+                    lookup[genName] = ImageLoader._loadImpl(
+                        genName,
+                        true, // is generated name
+                        false, // is asynchronous
+                        width, height);
+                }
+                this._turnTilesIntoSheet(lookup);
+            }
+        }
+
+        static function loadFromResources(name) {
+            return ImageSheet._initImpl(name, false, true);
+        }
+
+        static function loadFromResourcesAsync(name) {
+            return ImageSheet._initImpl(name, true, true);
+        }
+
+        static function _initImpl(name, isAsync, allowLists) {
+
+            // If name is actually a LIST of names, then the user actually wants an
+            // aggregated image sheet.
+            if (allowLists && Core.typeof(name) == Core.Type.LIST) {
+                sheets = [];
+                for (t : name) {
+                    sheets.add(ImageSheet._initImpl(t, isAsync, false));
+                }
+                return new AggregatedImageSheet(sheets);
+            }
+
+            // asserts on not found, so info is always non-null/valid
+            info = ImageResourceManifest.getSheetInfo(name);
+
+            return new ImageSheet(info, isAsync);
+        }
+
+        function getImage(resourcePath) {
+            if (!this._isLoaded) throw new ImageResources.LoadFailedException("Cannot load image from sheet that is not finished loading.");
+
+            // Convert the _loader object into a finalized sheet and GC the loader
+            // if present.
+            if (this._loader != null) {
+                this._turnTilesIntoSheet(this._loader.completed);
+                this._loader = null;
+            }
+
+            res = ImageResourceManifest.getFileInfo(resourcePath, true);
+            if (res[1] != this._id) {
+                throw new ImageResources.ImageNotFoundException("Image sheet '" + this._name + "' does not contain resource: '{0}'", resourcePath);
+            }
+
+            img = this._chunks[res[2]];
+
+            output = new ImageResources.ImageResource(res[5], res[6], false);
+            output._nativeResource = img._nativeResource;
+            output._x = res[3];
+            output._y = res[4];
+            return output;
+        }
+
+        static field _reusableStatusOut = [null, null];
+        function isDone() {
+            if (this._isLoaded) return true;
+            this._loader.getStatus(ImageSheet._reusableStatusOut);
+            if (ImageSheet._reusableStatusOut[0]) {
+                this._isLoaded = true;
+            }
+            return this._isLoaded;
+        }
+
+        function getProgress() {
+            if (this._isLoaded) return 1.0;
+            this._loader.getStatus(ImageSheet._reusableStatusOut);
+            if (ImageSheet._reusableStatusOut[0]) {
+                this._isLoaded = true;
+                return 1.0;
+            }
+            return ImageSheet._reusableStatusOut[1];
+        }
+
+        function _turnTilesIntoSheet(tilesByName) {
+            chunkMetadata = this._info['chunks'];
+            chunks = [];
+            for (chunkId : chunkMetadata.keys()) {
+                chunk = chunkMetadata[chunkId];
+                img = new ImageResources.ImageResource(chunk['width'], chunk['height']);
+                res = img._nativeResource;
+                res.lock();
+                for (tile : chunk['tiles']) {
+                    name = tile[0];
+                    x = tile[1];
+                    y = tile[2];
+                    res.blit(tilesByName[name], x, y);
+                }
+                res.unlock();
+                while (chunks.length <= chunkId) { chunks.add(null); }
+                chunks[chunkId] = img;
+            }
+            this._chunks = chunks;
+            this._isLoaded = true;
+            this._info = null; // no longer needed. feed to the GC.
+        }
+
+        function getFiles() {
+            return ImageResourceManifest.filesBySheetId[this._id].clone();
+        }
+    }
+
+    class ImageSheetLoaderAsync {
+        field tiles;
+        field completed = {};
+        field inProgress = {};
+
+        constructor(tiles) {
+            this.tiles = tiles;
+        }
+
+        function load() {
+            for (tile : this.tiles) {
+                genName = tile[0];
+                width = tile[3];
+                height = tile[4];
+                this.inProgress[genName] = ImageLoader._loadImpl(
+                    genName,
+                    true, // is generated filename
+                    true, // is asynchronous
+                    width, height);
+            }
+            return this;
+        }
+
+        function getStatus(out) {
+            if (this.inProgress.length > 0) {
+                for (key : this.inProgress.keys()) {
+                    if (this.inProgress[key].isDone()) {
+                        this.completed[key] = this.inProgress[key].getImage();
+                        this.inProgress.remove(key);
+                    }
+                }
+            }
+
+            if (this.inProgress.length == 0) {
+                out[0] = true;
+                out[1] = 1.0;
+            } else {
+                out[0] = false;
+                out[1] = 1.0 * this.completed.length / this.tiles.length;
+            }
+        }
+    }
+}

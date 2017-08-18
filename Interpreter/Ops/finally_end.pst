@@ -1,0 +1,66 @@
+﻿
+value = ec.activeException;
+if (value == null || ec.activeExceptionHandled) {
+    switch (stack.postFinallyBehavior) {
+        case PostFinallyBehavior.NOTHING:
+            ec.activeException = null;
+            break;
+
+        case PostFinallyBehavior.BREAK:
+            ec.activeException = null;
+            int1 = row[0];
+            if (int1 == 1) {
+                pc += row[1];
+            } else if (int1 == 2) {
+                intArray1 = esfData[pc];
+                pc = intArray1[1];
+            } else {
+                // TODO: compile-time error
+                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, "break exists without a loop");
+            }
+            break;
+
+        case PostFinallyBehavior.CONTINUE:
+            ec.activeException = null;
+            int1 = row[2];
+            if (int1 == 1) {
+                pc += row[3];
+            } else if (int1 == 2) {
+                intArray1 = esfData[pc];
+                pc = intArray1[1];
+            } else {
+                // TODO: compile-time error
+                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, "continue exists without a loop");
+            }
+            break;
+
+        case PostFinallyBehavior.RETURN:
+            // A lot of this is taken from the RETURN op.
+
+            // is this the static constructor returning?
+            if (stack.markClassAsInitialized != 0) {
+                markClassAsInitialized(stack, stack.markClassAsInitialized);
+            }
+
+            if (stack.returnValueUsed) {
+                valueStackSize = stack.valueStackPopSize;
+                value = stack.returnValueTempStorage;
+                stack = stack.previous;
+                @import("ValueStackCapacityCheck.pst");
+                valueStack[valueStackSize] = value;
+                valueStackSize += 1;
+            } else {
+                // discard the return value. Set the value stack size back the way it was.
+                valueStackSize = stack.valueStackPopSize;
+                stack = stack.previous;
+            }
+
+            pc = stack.pc;
+            localsStackOffset = stack.localsStackOffset;
+            localsStackSetToken = stack.localsStackSetToken;
+
+            break;
+    }
+} else {
+    @import("BubbleException.pst");
+}

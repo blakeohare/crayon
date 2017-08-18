@@ -1,0 +1,195 @@
+<html><head><title>Documentation</title></head><body><style>body { font-family: "Helvetica", "Arial", sans-serif; }
+h1 { font-size:20pt; font-weight:bold; color:#247; }
+h2 { font-size:16pt; font-weight:bold; color:#247; }
+h3 { font-size:12pt; font-weight:bold; color:#247; }
+.codefont { font-family: "Menlo", "Consolas", "Courier New", monospace; font-size:10pt; }
+table.arguments { border-radius:8px; overflow:hidden; border-spacing:0px; border-collapse: separate; background-color:#eee; }
+table.arguments thead { background-color:#ccc; font-weight:bold; text-align:left; }
+table.arguments td, table.arguments th { padding:8px; padding-right:20px; }
+table.arguments tbody tr { vertical-align:top; }
+td.argname { color:#286; }
+table.arguments td.argtype { color:#666; }
+td.optional { color:#000; font-weight:bold; }
+.codesnippet { background-color:#eee; border-radius:8px; padding:16px; margin-bottom:12px; }
+.itembox { margin-bottom:40px; margin-left:30px;}
+a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
+a.bookmark:hover { color:#08a; }
+p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
+.keyword { font-weight:normal; }</style><h1>SRandom</h1><div class="itembox">
+<p class="description">
+		Library for generating random numbers that have platform-independent consistency per a given seed.
+	</p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> SRandom<ul>
+<li><a href="#class-srandom-srandom"><span class="codefont">class</span> SRandom</a><ul>
+<li><a href="#constructor-srandom-srandom"><span class="codefont">constructor</span>(seed)</a></li>
+<li><a href="#func-srandom-srandom-choice"><span class="codefont">function</span> choice(list)</a></li>
+<li><a href="#func-srandom-srandom-getboolean"><span class="codefont">function</span> getBoolean()</a></li>
+<li><a href="#func-srandom-srandom-getfloat"><span class="codefont">function</span> getFloat()</a></li>
+<li><a href="#func-srandom-srandom-getinteger"><span class="codefont">function</span> getInteger(bound1, bound2)</a></li>
+<li><a href="#func-srandom-srandom-shuffle"><span class="codefont">function</span> shuffle(list)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div>
+<h1><span class="keyword">class</span> SRandom<a class="bookmark" name="class-srandom-srandom" href="#class-srandom-srandom">[link]</a></h1>
+<div class="itembox">
+<p class="description">
+				Contains a seeded random session.
+				Sessions seeded with the same value will generate the same random values.
+			</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">new</span> SRandom(seed)<a class="bookmark" name="constructor-srandom-srandom" href="#constructor-srandom-srandom">[link]</a></h2>
+<div class="itembox">
+<p class="description">Creates a new seeded random session</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">seed</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">An arbitrary string to use as a seed. This string is hashed.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> choice(list)<a class="bookmark" name="func-srandom-srandom-choice" href="#func-srandom-srandom-choice">[link]</a></h2>
+<div class="itembox">
+<p class="description">Chooses an item randomly from a list.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">list</td>
+<td class="codefont argtype">List of any</td>
+<td class="description"><p class="description">Any lit</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">any</td><td class="description"><p class="description">A random item from the list.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getBoolean()<a class="bookmark" name="func-srandom-srandom-getboolean" href="#func-srandom-srandom-getboolean">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Gets a random boolean.
+				</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">a random boolean</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getFloat()<a class="bookmark" name="func-srandom-srandom-getfloat" href="#func-srandom-srandom-getfloat">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Gets a random float in the range of 0.0 up to but not including 1.0. 
+				</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">float</td><td class="description"><p class="description">a random float</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getInteger(bound1, bound2)<a class="bookmark" name="func-srandom-srandom-getinteger" href="#func-srandom-srandom-getinteger">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Gets the next random integer.
+					If no bounds are given, this function will return a number from 0 through 2^31 - 1.
+					If one bound is provided, that will serve as the exclusive upper bound, and this function will return a number from 0 through max - 1.
+					If two bounds are provided, those will serve as the inclusive lower bound and exclusive upper bound, and this function will return a number from min through max - 1.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">bound1</td>
+<td class="codefont argtype">integer</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">The exclusive maximum bound if this is the only number provided. If two numbers are provided, this is the minimum inclusive bound</p></td>
+</tr>
+<tr>
+<td class="codefont argname">bound2</td>
+<td class="codefont argtype">integer</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">The exlusive maximum bound, if provided. This number must be higher than the first number.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">integer</td><td class="description"><p class="description">a random integer</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> shuffle(list)<a class="bookmark" name="func-srandom-srandom-shuffle" href="#func-srandom-srandom-shuffle">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Shuffles a list randomly in place.
+					The list is modified and nothing is returned.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">list</td>
+<td class="codefont argtype">List of any</td>
+<td class="description"><p class="description">Any list</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

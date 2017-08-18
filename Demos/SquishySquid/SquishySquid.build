@@ -1,0 +1,40 @@
+<build>
+	<projectname>SquishySquid</projectname>
+	<source>source/</source>
+	<output>output/%TARGET_NAME%</output>
+	
+	<imagesheets>
+		<sheet id="everything">
+			<prefix>*</prefix>
+		</sheet>
+	</imagesheets>
+
+	<iosbundleprefix>org.crayonlang.demos</iosbundleprefix>
+	<guidseed>org.crayonlang.demos.squishysquid,v0.2.0,%TARGET_NAME%</guidseed>
+	
+	<!-- Targets -->
+	<target name="android">
+		<platform>java-app-android</platform>
+	</target>
+
+	<target name="ios">
+		<platform>javascript-app-ios</platform>
+	</target>
+	
+	<target name="javascript">
+		<platform>javascript-app</platform>
+		<jsfileprefix>/demos/squishysquid/</jsfileprefix>
+	</target>
+	
+	<target name="csharp">
+		<platform>csharp-app</platform>
+	</target>
+	
+	<target name="java">
+		<platform>java-app</platform>
+	</target>
+	
+	<target name="python">
+		<platform>python-app</platform>
+	</target>
+</build>

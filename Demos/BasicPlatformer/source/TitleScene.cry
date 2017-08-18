@@ -1,0 +1,32 @@
+import GFX;
+import Game;
+
+/*
+    A placeholder for a title screen.
+    Just displays the words "Press Space".
+*/
+class TitleScene : AbstractScene {
+    field pressSpace;
+
+    constructor() : base() {
+        this.pressSpace = ImageLibrary.get('press_space.png');
+    }
+
+    function update(pressedKeys, pressedThisFrame) {
+        if (pressedThisFrame.get(KeyboardKey.SPACE, false)) {
+            this.next = new FadeTransitionScene(this, new PlayScene());
+        }
+    }
+
+    function render(rc) {
+        Draw.fill(0, 80, 180);
+        interval = FPS / 3;
+        if ((rc / interval) % 2 == 0) {
+
+            left = (WIDTH - this.pressSpace.width) / 2;
+            top = (HEIGHT - this.pressSpace.height) / 2;
+
+            this.pressSpace.draw(left, top);
+        }
+    }
+}

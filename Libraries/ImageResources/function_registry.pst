@@ -1,0 +1,10 @@
+﻿void lib_manifest_RegisterFunctions(object libRegData) {
+    Core.RegisterLibraryFunction(libRegData, "blit", 8);
+    Core.RegisterLibraryFunction(libRegData, "checkLoaderIsDone", 3);
+    Core.RegisterLibraryFunction(libRegData, "flushImageChanges", 1);
+    Core.RegisterLibraryFunction(libRegData, "getManifestString", 0);
+    Core.RegisterLibraryFunction(libRegData, "loadAsynchronous", 3);
+    Core.RegisterLibraryFunction(libRegData, "loadSynchronous", 3);
+    Core.RegisterLibraryFunction(libRegData, "nativeImageDataInit", 3);
+    Core.RegisterLibraryFunction(libRegData, "yieldRequiredByPlatform", 0);
+}

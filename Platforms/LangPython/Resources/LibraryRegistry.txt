@@ -1,0 +1,25 @@
+﻿class Library:
+  def __init__(self, name, manifestFunction):
+    self.name = name
+    self.manifestFunction = manifestFunction
+
+class LibraryRegistry:
+  def __init__(self, libraries):
+    self.libraries = {}
+    self.manifestFunctions = {}
+    for name in libraries.keys():
+      canonicalName = name.lower()
+      try:
+        self.manifestFunctions[canonicalName] = libraries[name].v_lib_manifest_RegisterFunctions
+      except:
+        print("Invalid library: ", name)
+
+  def loadLibrary(self, name, ver):
+    canonicalName = name.lower()
+    manifestFunction = self.manifestFunctions.get(canonicalName)
+    if manifestFunction != None:
+      self.libraries[canonicalName] = Library(canonicalName, manifestFunction)
+    return 0
+
+  def getLibrary(self, name):
+    return self.libraries.get(name.lower())

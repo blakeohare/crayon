@@ -1,0 +1,10 @@
+=== VERIFYING MONO ===
+
+In order to run Crayon, you must have mono installed. To test if you have mono, open a bash shell
+and type "mono" and see if usage notes are displayed. If you see "command not found", then you need
+to install it: http://www.mono-project.com/download/
+
+
+=== SETTING UP CRAYON ===
+
+See https://github.com/blakeohare/crayon/blob/master/Docs/installation/index.md

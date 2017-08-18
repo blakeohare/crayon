@@ -1,0 +1,181 @@
+import Matrices;
+
+enum PolyhedronType {
+    CUBE,
+    OCTAHEDRON,
+    DODECAHEDRON,
+    ICOSAHEDRON,
+
+    CLONE,
+}
+
+const SQRT3 = 3 ** .5;
+
+class Polyhedron {
+
+    // A 4xN matrix containing all the points in this polyhedron
+    // Since this is for graphics, a 4th row that's just the value 1.0 is included in the bottom of the matrix.
+    field pointMatrix;
+
+    // Just a scratch list used for generating output without churning memory
+    field pointsList;
+
+    // Number of points.
+    field pointCount;
+
+    // Two lists of the same length containing indices of points.
+    // Each parallel pair of points indicates a line exists between the points at these indices.
+    field connectionsA;
+    field connectionsB;
+
+    function clone() {
+        output = new Polyhedron(PolyhedronType.CLONE);
+        newPointMatrix = new Matrix(4, this.pointCount);
+        newPointMatrix.addMatrix(this.pointMatrix);
+        output.pointMatrix = newPointMatrix;
+        output.pointsList = this.pointsList.clone();
+        output.connectionsA = this.connectionsA.clone();
+        output.connectionsB = this.connectionsB.clone();
+        output.pointCount = this.pointCount;
+        return output;
+    }
+
+    static field _polyhedraTemplate = null;
+
+    static function newCube() {
+        if (Polyhedron._polyhedraTemplate == null) Polyhedron.initTemplates();
+        return Polyhedron._polyhedraTemplate[6].clone();
+    }
+
+    static function newOctahedron() {
+        if (Polyhedron._polyhedraTemplate == null) Polyhedron.initTemplates();
+        return Polyhedron._polyhedraTemplate[8].clone();
+    }
+
+    static function newDodecahedron() {
+        if (Polyhedron._polyhedraTemplate == null) Polyhedron.initTemplates();
+        return Polyhedron._polyhedraTemplate[12].clone();
+    }
+
+    static function newIcosahedron() {
+        if (Polyhedron._polyhedraTemplate == null) Polyhedron.initTemplates();
+        return Polyhedron._polyhedraTemplate[20].clone();
+    }
+
+    static function initTemplates() {
+        Polyhedron._polyhedraTemplate = {
+            6: new Polyhedron(PolyhedronType.CUBE),
+            8: new Polyhedron(PolyhedronType.OCTAHEDRON),
+            12: new Polyhedron(PolyhedronType.DODECAHEDRON),
+            20: new Polyhedron(PolyhedronType.ICOSAHEDRON),
+        };
+    }
+
+    @private
+    constructor(type) {
+        switch (type) {
+            case PolyhedronType.CLONE:
+                // this instance is initialized by cloning individual fields
+                // no need to regenerate
+                return;
+
+            case PolyhedronType.CUBE:
+
+                pts = [];
+                for (layer : [-SQRT3, SQRT3]) {
+                    pts.add([-SQRT3, -SQRT3, layer, 1]);
+                    pts.add([SQRT3, -SQRT3, layer, 1]);
+                    pts.add([SQRT3, SQRT3, layer, 1]);
+                    pts.add([-SQRT3, SQRT3, layer, 1]);
+                }
+                this.connectionsA = [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3];
+                this.connectionsB = [1, 2, 3, 0, 5, 6, 7, 4, 4, 5, 6, 7];
+                break;
+
+            case PolyhedronType.OCTAHEDRON:
+                pts = [];
+                a = [0, 0, 1];
+                b = [-1, 0, 0];
+                c = [0, 1, 0];
+                d = [1, 0, 0];
+                e = [0, -1, 0];
+                f = [0, 0, -1];
+                pts = [a, b, c, d, e, f];
+                this.connectionsA = [0, 0, 0, 0, 5, 5, 5, 5, 1, 2, 3, 4];
+                this.connectionsB = [1, 2, 3, 4, 1, 2, 3, 4, 2, 3, 4, 1];
+                break;
+
+            case PolyhedronType.DODECAHEDRON:
+                phi = (1 + 5 ** .5) / 2;
+                invPhi = 1 / phi;
+
+                a = [-1, -1,  1];
+                h = [-1,  1,  1];
+                j = [ 1,  1,  1];
+                d = [ 1, -1,  1];
+                o = [-1, -1, -1];
+                q = [-1,  1, -1];
+                s = [ 1,  1, -1];
+                m = [ 1, -1, -1];
+
+                b = [-invPhi, 0,  phi];
+                c = [ invPhi, 0,  phi];
+                p = [-invPhi, 0, -phi];
+                t = [ invPhi, 0, -phi];
+
+                e = [0, -phi,  invPhi];
+                i = [0,  phi,  invPhi];
+                n = [0, -phi, -invPhi];
+                r = [0,  phi, -invPhi];
+
+                f = [-phi, -invPhi, 0];
+                g = [-phi,  invPhi, 0];
+                k = [ phi,  invPhi, 0];
+                l = [ phi, -invPhi, 0];
+
+                pts = [a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t];
+                for (pt : pts) {
+                    for (i = 0; i < 3; ++i) {
+                        pt[i] *= 1.0 / SQRT3;
+                    }
+                }
+                this.connectionsA = [0, 1, 2, 3, 4, 0, 1, 2, 3,  4,  5, 6, 7, 8, 9,  10, 11, 12, 13, 14, 6,  8,  10, 12, 14, 15, 16, 17, 18, 19];
+                this.connectionsB = [1, 2, 3, 4, 0, 5, 7, 9, 11, 13, 6, 7, 8, 9, 10, 11, 12, 13, 14,  5, 16, 17, 18, 19, 15, 16, 17, 18, 19, 15];
+                break;
+
+            case PolyhedronType.ICOSAHEDRON:
+                // https://en.wikipedia.org/wiki/Regular_icosahedron#Cartesian_coordinates
+                g = (1 + 5 ** .5) / 2;
+                d = (1 + g ** 2) ** .5;
+                sml = 1 / d;
+                big = g / d;
+
+                a1 = [-sml, 0, big];
+                a2 = [sml, 0, big];
+                a3 = [sml, 0, -big];
+                a4 = [-sml, 0, -big];
+                b1 = [0, -big, sml];
+                b2 = [0, big, sml];
+                b3 = [0, big, -sml];
+                b4 = [0, -big, -sml];
+                c1 = [-big, -sml, 0];
+                c2 = [big, -sml, 0];
+                c3 = [big, sml, 0];
+                c4 = [-big, sml, 0];
+                pts = [a1, a2, a3, a4, b1, b2, b3, b4, c1, c2, c3, c4];
+                this.connectionsA = [0, 0, 0, 0,  0, 4, 1, 5,  11, 8, 1,  1, 4, 4, 5, 5,  11, 11, 8, 8, 2, 2, 2,  2, 2, 3, 6, 10, 9, 7];
+                this.connectionsB = [4, 1, 5, 11, 8, 1, 5, 11, 8,  4, 10, 9, 7, 9, 6, 10, 3,  6,  3, 7, 3, 6, 10, 9, 7, 6, 10, 9, 7, 3];
+                break;
+        }
+
+        this.pointCount = pts.length;
+        this.pointsList = [0.0] * (this.pointCount * 4);
+        this.pointMatrix = new Matrix(4, this.pointCount);
+        for (j = 0; j < this.pointCount; ++j) {
+            for (i = 0; i < 3; ++i) {
+                this.pointMatrix.setValue(i, j, pts[j][i]);
+            }
+            this.pointMatrix.setValue(3, j, 1.0);
+        }
+    }
+}

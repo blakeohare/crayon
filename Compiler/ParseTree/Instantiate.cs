@@ -1,89 +1,118 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon.ParseTree
 {
-	internal class Instantiate : Expression
-	{
-		public override bool CanAssignTo { get { return false; } }
+    internal class Instantiate : Expression
+    {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            for (int i = 0; i < this.Args.Length; ++i)
+            {
+                this.Args[i] = this.Args[i].PastelResolve(parser);
+            }
+            return this;
+        }
 
-		public Token NameToken { get; private set; }
-		public string Name { get; private set; }
-		public Expression[] Args { get; private set; }
-		public ClassDefinition Class { get; set; }
+        public override bool CanAssignTo { get { return false; } }
 
-		public Instantiate(Token firstToken, Token firstClassNameToken, string name, IList<Expression> args, Executable owner)
-			: base(firstToken, owner)
-		{
-			this.NameToken = firstClassNameToken;
-			this.Name = name;
-			this.Args = args.ToArray();
-		}
+        public Token NameToken { get; private set; }
+        public string Name { get; private set; }
+        public Expression[] Args { get; private set; }
+        public ClassDefinition Class { get; set; }
 
-		internal override Expression Resolve(Parser parser)
-		{
-			string className = this.NameToken.Value;
+        public Instantiate(Token firstToken, Token firstClassNameToken, string name, IList<Expression> args, Executable owner)
+            : base(firstToken, owner)
+        {
+            this.NameToken = firstClassNameToken;
+            this.Name = name;
+            this.Args = args.ToArray();
+        }
 
-			if (parser.IsTranslateMode)
-			{
-				StructDefinition structDefinition = parser.GetStructDefinition(className);
+        internal override Expression Resolve(Parser parser)
+        {
+            for (int i = 0; i < this.Args.Length; ++i)
+            {
+                this.Args[i] = this.Args[i].Resolve(parser);
+            }
 
-				if (structDefinition != null)
-				{
-					if (this.Args.Length != structDefinition.Fields.Length)
-					{
-						throw new ParserException(this.FirstToken, "Args length did not match struct field count for '" + structDefinition.Name.Value + "'.");
-					}
+            if (this.Class == null)
+            {
+                throw new ParserException(this.FirstToken, "No class named '" + this.Name + "'");
+            }
 
-					StructInstance si = new StructInstance(this.FirstToken, this.NameToken, this.Args, this.FunctionOrClassOwner);
-					si = (StructInstance)si.Resolve(parser);
-					return si;
-				}
-			}
+            if (this.Class.StaticToken != null)
+            {
+                throw new ParserException(this.FirstToken, "Cannot instantiate a static class.");
+            }
 
-			for (int i = 0; i < this.Args.Length; ++i)
-			{
-				this.Args[i] = this.Args[i].Resolve(parser);
-			}
+            ConstructorDefinition cons = this.Class.Constructor;
 
-			ConstructorDefinition cons = this.Class.Constructor;
-			if (this.Args.Length < cons.MinArgCount || this.Args.Length > cons.MaxArgCount)
-			{
-				// TODO: show the correct arg count.
-				throw new ParserException(this.FirstToken, "This constructor has the wrong number of arguments.");
-			}
+            if (cons.PrivateAnnotation != null)
+            {
+                bool isValidUsage =
+                    this.Class == this.FunctionOrClassOwner ||
+                    this.Class == this.FunctionOrClassOwner.FunctionOrClassOwner;
 
-			return this;
-		}
+                if (!isValidUsage)
+                {
+                    string errorMessage = "The constructor for " + this.Class.NameToken.Value + " is private and cannot be invoked from outside the class.";
+                    if (cons.PrivateAnnotation.Args.Length > 0)
+                    {
+                        StringConstant stringMessage = cons.PrivateAnnotation.Args[0] as StringConstant;
+                        if (stringMessage != null)
+                        {
+                            errorMessage += " " + stringMessage.Value.Trim();
+                        }
+                    }
 
-		internal override void SetLocalIdPass(VariableIdAllocator varIds)
-		{
-			for (int i = 0; i < this.Args.Length; ++i)
-			{
-				this.Args[i].SetLocalIdPass(varIds);
-			}
-		}
+                    throw new ParserException(this.FirstToken, errorMessage);
+                }
+            }
 
-		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
-		{
-			this.BatchExpressionNameResolver(parser, lookup, imports, this.Args);
+            if (this.Args.Length < cons.MinArgCount || this.Args.Length > cons.MaxArgCount)
+            {
+                string message = "This constructor has the wrong number of arguments. ";
+                if (cons.MinArgCount == cons.MaxArgCount)
+                {
+                    message += "Expected " + cons.MinArgCount + " but found " + this.Args.Length;
+                }
+                else if (this.Args.Length < cons.MinArgCount)
+                {
+                    message += " At least " + cons.MinArgCount + " are required but found only " + this.Args.Length + ".";
+                }
+                else
+                {
+                    message += " At most " + cons.MaxArgCount + " are allowed but found " + this.Args.Length + ".";
+                }
+                throw new ParserException(this.FirstToken, message);
+            }
 
-			Executable ex = Expression.DoNameLookup(lookup, imports, this.Name);
-			if (ex == null)
-			{
-				throw new ParserException(this.NameToken, "No class found called '" + this.Name + "'");
-			}
+            return this;
+        }
 
-			if (ex is ClassDefinition)
-			{
-				this.Class = (ClassDefinition)ex;
-			}
-			else
-			{
-				throw new ParserException(this.NameToken, "This is not a class.");
-			}
+        internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+        {
+            this.BatchExpressionNameResolver(parser, lookup, imports, this.Args);
+            this.Class = Node.DoClassLookup(this.NameToken, lookup, imports, this.FunctionOrClassOwner.LocalNamespace, this.Name);
+            return this;
+        }
 
-			return this;
-		}
-	}
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
+            {
+                foreach (Expression arg in this.Args)
+                {
+                    arg.PerformLocalIdAllocation(varIds, phase);
+                }
+            }
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }

@@ -1,32 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Crayon.ParseTree
 {
-	internal class FieldReference : Expression
-	{
-		public override bool CanAssignTo { get { return true; } }
+    internal class FieldReference : Expression
+    {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
 
-		public FieldDeclaration Field { get; set; }
+        public override bool CanAssignTo { get { return true; } }
 
-		public FieldReference(Token token, FieldDeclaration field, Executable owner)
-			: base(token, owner)
-		{
-			this.Field = field;
-		}
+        public FieldDeclaration Field { get; set; }
 
-		internal override Expression Resolve(Parser parser)
-		{
-			return this;
-		}
+        public FieldReference(Token token, FieldDeclaration field, Executable owner)
+            : base(token, owner)
+        {
+            this.Field = field;
+        }
 
-		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
-		{
-			throw new InvalidOperationException(); // created in the resolve name phase.
-		}
+        internal override Expression Resolve(Parser parser)
+        {
+            return this;
+        }
 
-		internal override void SetLocalIdPass(VariableIdAllocator varIds) { }
-	}
+        internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+        {
+            throw new InvalidOperationException(); // created in the resolve name phase.
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
+
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
+    }
 }

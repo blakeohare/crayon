@@ -1,116 +1,220 @@
-SIZE_TO_RADIUS = {
-	AsteroidSize.BIG: 80,
-	AsteroidSize.MEDIUM: 40,
-	AsteroidSize.SMALL: 20
-};
+import Graphics2D;
+import Math;
+import Random;
+import Matrices;
 
-SIZE_TO_VELOCITY = {
-	AsteroidSize.BIG: 1,
-	AsteroidSize.MEDIUM: 3,
-	AsteroidSize.SMALL: 4.5
-};
-
-SIZE_TO_ROTATION_SPEED = {
-	AsteroidSize.BIG: 3.14159 * 2 / 150,
-	AsteroidSize.MEDIUM: 3.14159 * 2 / 80,
-	AsteroidSize.SMALL: 3.14159 * 2 / 30
-};
-
-SIZE_TO_POINT_COUNT = {
-	AsteroidSize.BIG: 40,
-	AsteroidSize.MEDIUM: 20,
-	AsteroidSize.SMALL: 10
-};
-
-SIZE_TO_BUMPS = {
-	AsteroidSize.BIG: 12,
-	AsteroidSize.MEDIUM: 9,
-	AsteroidSize.SMALL: 6
-};
-
-POINTS_X = [];
-POINTS_Y = [];
+enum AsteroidSize {
+    BIG,
+    MEDIUM,
+    SMALL
+}
 
 class Asteroid {
-	constructor(x, y, size) {
-		this.x = x;
-		this.y = y;
-		this.size = size;
-		this.radius = SIZE_TO_RADIUS[size];
-		v = SIZE_TO_VELOCITY[size];
-		ang = $random() * 2 * 3.14159;
-		this.angular_velocity = SIZE_TO_ROTATION_SPEED[size] * ($random() < .5 ? 1 : -1);
-		this.vx = v * $cos(ang);
-		this.vy = v * $sin(ang);
-		this.angle = $random() * 2 * 3.14159;
-		this.point_count = SIZE_TO_POINT_COUNT[this.size];
-		this.bumps = SIZE_TO_BUMPS[this.size];
-		this.dead = false;
-	}
-	
-	function update() {
-		this.x = (this.x + this.vx) % (0.0 + GAME_WIDTH);
-		this.y = (this.y + this.vy) % (0.0 + GAME_HEIGHT);
-		this.angle += this.angular_velocity;
-	}
-	
-	function render(rc) {
-		POINTS_X.clear();
-		POINTS_Y.clear();
-		for (i = 0; i < this.point_count; ++i) {
-			a = this.angle + (3.14159 * 2 * i) / this.point_count;
-			r = this.radius + 2 * $sin(this.angle + a * this.bumps);
-			POINTS_X.add($floor(this.x + r * $cos(a)));
-			POINTS_Y.add($floor(this.y + r * $sin(a)));
-		}
-		
-		offsets_x = [0];
-		offsets_y = [0];
-		if (this.x < GAME_WIDTH / 4) {
-			offsets_x.add(GAME_WIDTH);
-		} else if (this.x > GAME_WIDTH * 3 / 4) {
-			offsets_x.add(-GAME_WIDTH);
-		}
-		
-		if (this.y < GAME_HEIGHT / 4) {
-			offsets_y.add(GAME_HEIGHT);
-		} else if (this.y > GAME_HEIGHT * 3 / 4) {
-			offsets_y.add(-GAME_HEIGHT);
-		}
-		
-		for (ox : offsets_x) {
-			for (oy : offsets_y) {
-		
-				for (i = 0; i < this.point_count; ++i) {
-					ax = POINTS_X[i] + ox;
-					ay = POINTS_Y[i] + oy;
-					bx = POINTS_X[(i + 1) % this.point_count] + ox;
-					by = POINTS_Y[(i + 1) % this.point_count] + oy;
-					$gfx_draw_line(ax, ay, bx, by, 1, 0, 255, 0, 255);
-				}
-			}
-		}
-	}
-	
-	function split() {
-		if (this.size == AsteroidSize.SMALL) return [];
-		new_angle = this.angle + 3.14159 / 2;
-		new_size = this.size == AsteroidSize.MEDIUM ? AsteroidSize.SMALL : AsteroidSize.MEDIUM;
-		new_x = this.x;
-		new_y = this.y;
-		a1 = new Asteroid(this.x, this.y, new_size);
-		a2 = new Asteroid(this.x, this.y, new_size);
-		angle = this.angle + 3.14159 / 2;
-		a1.angle = angle;
-		a2.angle = angle + 3.14159;
-		return [a1, a2];
-	}
-	
-	function collides_with_player(player) {
-		dx = player.x - this.x;
-		dy = player.y - this.y;
-		threshhold = 10 + this.radius; // ship radius
-		dist = (dx ** 2 + dy ** 2);
-		return dist < threshhold ** 2;
-	}
+
+    static field SIZE_TO_RADIUS = {
+        AsteroidSize.BIG: 80,
+        AsteroidSize.MEDIUM: 40,
+        AsteroidSize.SMALL: 20,
+    };
+
+    static field SIZE_TO_VELOCITY = {
+        AsteroidSize.BIG: .8,
+        AsteroidSize.MEDIUM: 2.4,
+        AsteroidSize.SMALL: 3.3,
+    };
+
+    static field SIZE_TO_ROTATION_MULTIPLIER = {
+        AsteroidSize.BIG: .7,
+        AsteroidSize.MEDIUM: 3,
+        AsteroidSize.SMALL: 6,
+    };
+
+    static field SIZE_TO_POINT_COUNT = {
+        AsteroidSize.BIG: 32,
+        AsteroidSize.MEDIUM: 16,
+        AsteroidSize.SMALL: 10,
+    };
+
+    static field SIZE_TO_BUMPS = {
+        AsteroidSize.BIG: 12,
+        AsteroidSize.MEDIUM: 9,
+        AsteroidSize.SMALL: 6,
+    };
+
+    static field SIZE_TO_GLOW = {
+        AsteroidSize.BIG: ImageLibrary.get('asteroid_big.png'),
+        AsteroidSize.MEDIUM: ImageLibrary.get('asteroid_medium.png'),
+        AsteroidSize.SMALL: ImageLibrary.get('asteroid_small.png'),
+    };
+
+    field x;
+    field y;
+    field vx;
+    field vy;
+    field size;
+    field radius;
+    field angle;
+    field angleRateX;
+    field angleRateY;
+    field angleRateZ;
+    field pointCount;
+    field bumps;
+    field dead = false;
+    field counter = 0;
+
+    // When points are calculated for rendering, cache them in case they need to be
+    // drawn again on the other side of the screen.
+    field renderPointsX = [];
+    field renderPointsY = [];
+
+    static field ICO_FRESH;
+    static field ICO_TRANSFORMED;
+    static field DODECA_FRESH;
+    static field DODECA_TRANSFORMED;
+    static field OCTA_FRESH;
+    static field OCTA_TRANSFORMED;
+    static field IDENTITY_MATRIX = Matrix.newIdentityMatrix(4);
+    static field TRANSFORM_MATRIX = new Matrix(4, 4);
+
+    field polyhedronFresh;
+    field polyhedronTransformed;
+
+    static constructor() {
+        Asteroid.ICO_TRANSFORMED = Polyhedron.newIcosahedron();
+        Asteroid.ICO_FRESH = Polyhedron.newIcosahedron();
+        Asteroid.DODECA_TRANSFORMED = Polyhedron.newDodecahedron();
+        Asteroid.DODECA_FRESH = Polyhedron.newDodecahedron();
+        Asteroid.OCTA_TRANSFORMED = Polyhedron.newOctahedron();
+        Asteroid.OCTA_FRESH = Polyhedron.newOctahedron();
+    }
+
+    constructor(x, y, size) {
+        this.x = x + 0.0;
+        this.y = y + 0.0;
+        this.size = size;
+        this.radius = Asteroid.SIZE_TO_RADIUS[size];
+        v = Asteroid.SIZE_TO_VELOCITY[size];
+        ang = Random.randomFloat() * 2 * Math.PI;
+        this.vx = v * Math.cos(ang);
+        this.vy = v * Math.sin(ang);
+        this.angle = Random.randomFloat() * 2 * Math.PI;
+        this.pointCount = Asteroid.SIZE_TO_POINT_COUNT[this.size];
+        this.bumps = Asteroid.SIZE_TO_BUMPS[this.size];
+        defaultRate = 2 * Math.PI / 60 * .1; // one rotation per 10 seconds
+        defaultRate *= Asteroid.SIZE_TO_ROTATION_MULTIPLIER[this.size];
+        this.angleRateX = defaultRate * (3 * Random.randomFloat() - 1.5);
+        this.angleRateY = defaultRate * (3 * Random.randomFloat() - 1.5);
+        this.angleRateZ = defaultRate * (3 * Random.randomFloat() - 1.5);
+
+        switch (this.size) {
+            case AsteroidSize.SMALL:
+                this.polyhedronFresh = Asteroid.OCTA_FRESH;
+                this.polyhedronTransformed = Asteroid.OCTA_TRANSFORMED;
+                break;
+            case AsteroidSize.MEDIUM:
+                this.polyhedronFresh = Asteroid.DODECA_FRESH;
+                this.polyhedronTransformed = Asteroid.DODECA_TRANSFORMED;
+                break;
+            case AsteroidSize.BIG:
+                this.polyhedronFresh = Asteroid.ICO_FRESH;
+                this.polyhedronTransformed = Asteroid.ICO_TRANSFORMED;
+                break;
+
+        }
+    }
+
+    function update() {
+        this.x = (this.x + this.vx) % GAME_WIDTH;
+        this.y = (this.y + this.vy) % GAME_HEIGHT;
+        this.counter++;
+    }
+
+    function render() {
+
+        transform = Asteroid.TRANSFORM_MATRIX.multiplyByScalar(0).addMatrix(Asteroid.IDENTITY_MATRIX);
+        Transforms.rotate(transform, 'x', this.angleRateX * this.counter);
+        Transforms.rotate(transform, 'y', this.angleRateY * this.counter);
+        Transforms.rotate(transform, 'z', this.angleRateZ * this.counter);
+        Transforms.scale(transform, this.radius * 1.05); // scale up so that it looks like a collision but isn't (which is less frustrating than the reverse)
+        Transforms.translate(transform, this.x, this.y, 0);
+
+        transform.multiplyByMatrix(this.polyhedronFresh.pointMatrix, this.polyhedronTransformed.pointMatrix);
+        connectionsA = this.polyhedronTransformed.connectionsA;
+        connectionsB = this.polyhedronTransformed.connectionsB;
+        connectionsLength = connectionsA.length;
+        values = this.polyhedronTransformed.pointMatrix.toVector(Bullet.pointScratchVector);
+        yOffset = this.polyhedronTransformed.pointCount;
+
+        switch (this.size) {
+            case AsteroidSize.BIG:
+                r = 40;
+                g = 0;
+                b = 160;
+                break;
+            case AsteroidSize.MEDIUM:
+                r = 120;
+                g = 0;
+                b = 120;
+                break;
+            case AsteroidSize.SMALL:
+                r = 180;
+                g = 0;
+                b = 60;
+                break;
+        }
+
+        glow = Asteroid.SIZE_TO_GLOW[this.size];
+        x = Math.floor(this.x) - glow.width / 2;
+        y = Math.floor(this.y) - glow.height / 2;
+
+        wrapAroundX = [0];
+        wrapAroundY = [0];
+        if (this.x < GAME_WIDTH / 4) wrapAroundX.add(GAME_WIDTH);
+        else if (this.x > 3 * GAME_WIDTH / 4) wrapAroundX.add(-GAME_WIDTH);
+        if (this.y < GAME_HEIGHT / 4) wrapAroundY.add(GAME_HEIGHT);
+        else if (this.y > 3 * GAME_HEIGHT / 4) wrapAroundY.add(-GAME_HEIGHT);
+
+
+        for (wx : wrapAroundX) {
+            for (wy : wrapAroundY) {
+                glow.draw(wx + x, wy + y);
+
+                for (i = 0; i < connectionsLength; ++i) {
+                    pt1 = connectionsA[i];
+                    pt2 = connectionsB[i];
+                    Draw.line(wx + values[pt1], wy + values[pt1 + yOffset], wx + values[pt2], wy + values[pt2 + yOffset], 3, r, g, b);
+                }
+            }
+        }
+    }
+
+    // Generate a list of sprites that will result when you shoot this asteroid.
+    function split() {
+        switch (this.size) {
+            case AsteroidSize.BIG:
+                newSize = AsteroidSize.MEDIUM;
+                break;
+
+            case AsteroidSize.MEDIUM:
+                newSize = AsteroidSize.SMALL;
+                break;
+
+            case AsteroidSize.SMALL:
+                // If it's already the smallest size, a split event (shooting it with a bullet) will destroy it.
+                return [];
+        }
+
+        a1 = new Asteroid(this.x, this.y, newSize);
+        a2 = new Asteroid(this.x, this.y, newSize);
+        a1.angle = this.angle + Math.PI / 2;
+        a2.angle = this.angle - Math.PI / 2;
+
+        return [a1, a2];
+    }
+
+    function isPlayerCollision(player) {
+        distance = ((player.x - this.x) ** 2 + (player.y - this.y) ** 2) ** .5;
+        collisionThreshold = SHIP_COLLISION_RADIUS + this.radius;
+        return distance < collisionThreshold;
+    }
 }

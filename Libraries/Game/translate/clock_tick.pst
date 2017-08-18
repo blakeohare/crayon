@@ -1,0 +1,7 @@
+﻿Value lib_game_function_clock_tick(Array<Value> args) {
+    Native._lib_game_clockTick();
+
+    vm_suspend();
+
+    return VALUE_NULL;
+}

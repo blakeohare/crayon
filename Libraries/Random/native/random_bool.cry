@@ -1,0 +1,8 @@
+﻿/*
+    Returns a random boolean.
+*/
+if ($_random_float() < .5) {
+    output = VALUE_TRUE;
+} else {
+    output = VALUE_FALSE;
+}

@@ -1,3 +1,0 @@
-﻿
-// $sfx_load_from_file(path)
-import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";

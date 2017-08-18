@@ -1,0 +1,38 @@
+﻿/*
+    Start loading asynchronously if possible. For platforms where images cannot be loaded asynchronously,
+    or it is not practical to do so for embedded resources, simply load synchronously.
+
+    args[0]: NativeImageData object instance (blank. must fill in the nativeData for this)
+        nativeData[0] -> native bitmap resource
+        nativeData[1] -> width (int)
+        nativeData[2] -> height (int)
+    args[1]: Generated filename
+    args[2]: Loader object instance. Native data must be populated.
+        nativeData[0] -> reference to a loader
+        nativeData[1] -> image data once loaded
+        nativeData[2] -> status (integer)
+            0 -> still going
+            1 -> success
+            2 -> failed
+        nativeData[3] -> mutex (if necessary)
+
+*/
+Value lib_imageresources_function_loadAsynchronous(Array<Value> args) {
+
+    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
+    string filename = (string) args[1].internalValue;
+    ObjectInstance objInstance2 = (ObjectInstance) args[2].internalValue;
+
+    Array<object> objArray1 = new Array<object>(3);
+    objInstance1.nativeData = objArray1;
+    Array<object> objArray2 = new Array<object>(4);
+    objArray2[2] = 0;
+    objInstance2.nativeData = objArray2;
+
+    Native._lib_imageresources_loadAsync(
+        filename,
+        objArray1, // native image data nativeData
+        objArray2); // image loader nativeData
+
+    return VALUE_NULL;
+}

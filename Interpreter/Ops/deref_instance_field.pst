@@ -1,0 +1,13 @@
+﻿// row[0] -> member ID
+// stack.objectContext -> this
+
+value = stack.objectContext;
+objInstance1 = ((ObjectInstance) value.internalValue);
+
+// Note: Methods do not go through this codepath. They are compiled into PUSH_FUNC_REF
+// Therefore it's safe to not check the functionIds array.
+value = objInstance1.members[row[0]];
+
+@import("ValueStackCapacityCheck.pst");
+valueStack[valueStackSize] = value;
+valueStackSize += 1;

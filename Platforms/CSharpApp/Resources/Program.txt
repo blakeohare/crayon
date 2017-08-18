@@ -1,0 +1,19 @@
+﻿using System;
+using Interpreter;
+using Interpreter.Vm;
+
+namespace %%%PROJECT_ID%%%
+{
+    internal class Program
+    {
+        public static void Main(string[] args)
+        {
+            TranslationHelper.CommandLineArgs = args;
+            TranslationHelper.LibraryRegistry = new LibraryRegistry();
+            TranslationHelper.ByteCode = ResourceReader.ReadResourceTextFile("ByteCode.txt");
+            TranslationHelper.ResourceManifest = ResourceReader.ReadResourceTextFile("ResourceManifest.txt");
+            TranslationHelper.ImageSheetManifest = ResourceReader.ReadMetadata("ImageSheetManifest.txt", true);
+            CrayonWrapper.v_main();
+        }
+    }
+}

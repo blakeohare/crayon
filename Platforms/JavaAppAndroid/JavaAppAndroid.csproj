@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{41DEBAC3-73C4-4F40-93AE-9FE02319276D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>JavaAppAndroid</RootNamespace>
+    <AssemblyName>JavaAppAndroid</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PlatformImpl.cs" />
+    <Compile Include="JavaAppAndroidTranslator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.csproj">
+      <Project>{18617A9A-3B1F-4532-BF4D-12BD62A3E5C6}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LangJava\LangJava.csproj">
+      <Project>{3F62B368-B14F-4C77-98AB-C94B19B07EAF}</Project>
+      <Name>LangJava</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Pastel\Pastel.csproj">
+      <Project>{6D073BA4-2E71-42AC-8F5A-5C3079D935CD}</Project>
+      <Name>Pastel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Platform\Platform.csproj">
+      <Project>{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}</Project>
+      <Name>Platform</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\app\src\main\java\org\crayonlang\interpreter\AndroidTranslationHelper.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\java\org\crayonlang\sampleapp\app\MainActivityJava.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\res\drawableHdpi\ic_launcher.png" />
+    <EmbeddedResource Include="Resources\app\src\main\res\drawableMdpi\ic_launcher.png" />
+    <EmbeddedResource Include="Resources\app\src\main\res\drawableXhdpi\ic_launcher.png" />
+    <EmbeddedResource Include="Resources\app\src\main\res\drawableXxhdpi\ic_launcher.png" />
+    <EmbeddedResource Include="Resources\app\src\main\res\values\DimensXml.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\res\values\StringsXml.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\res\values\StylesXml.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\res\menu\MainXml.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\res\layout\ActivityMainXml.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\res\valuesW820dp\DimensXml.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\AndroidManifestXml.txt" />
+    <EmbeddedResource Include="Resources\app\src\main\IcLauncherWeb.png" />
+    <EmbeddedResource Include="Resources\app\proguardRules.txt" />
+    <EmbeddedResource Include="Resources\app\buildGradle.txt" />
+    <EmbeddedResource Include="Resources\app\appIml.txt" />
+    <EmbeddedResource Include="Resources\app\gitignore.txt" />
+    <EmbeddedResource Include="Resources\gradle\wrapper\GradleWrapper.jar" />
+    <EmbeddedResource Include="Resources\gradle\wrapper\GradleWrapperProperties.txt" />
+    <EmbeddedResource Include="Resources\idea\copyright\profileSettings.txt" />
+    <EmbeddedResource Include="Resources\idea\scopes\scopeSettings.txt" />
+    <EmbeddedResource Include="Resources\idea\compilerXml.txt" />
+    <EmbeddedResource Include="Resources\idea\encodingsXml.txt" />
+    <EmbeddedResource Include="Resources\idea\gradleXml.txt" />
+    <EmbeddedResource Include="Resources\idea\miscXml.txt" />
+    <EmbeddedResource Include="Resources\idea\modulesXml.txt" />
+    <EmbeddedResource Include="Resources\idea\name.txt" />
+    <EmbeddedResource Include="Resources\idea\vcsXml.txt" />
+    <EmbeddedResource Include="Resources\idea\workspaceXml.txt" />
+    <EmbeddedResource Include="Resources\buildGradle.txt" />
+    <EmbeddedResource Include="Resources\CrayonAppIml.txt" />
+    <EmbeddedResource Include="Resources\gitignore.txt" />
+    <EmbeddedResource Include="Resources\gradleProperties.txt" />
+    <EmbeddedResource Include="Resources\gradlew.txt" />
+    <EmbeddedResource Include="Resources\gradlewBat.txt" />
+    <EmbeddedResource Include="Resources\localProperties.txt" />
+    <EmbeddedResource Include="Resources\settingsGradle.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

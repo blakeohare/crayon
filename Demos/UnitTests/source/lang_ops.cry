@@ -1,75 +1,72 @@
-// TODO: This test method was created to address a specific exponent bug which is 
-// now fixed and so the rest of these need to be filled in now.
+/*
+    There are two weird things you will notice in this test method:
 
-/* 
-	There are two weird things you will notice in this test method:
+    1)  Each test runs twice. Once with the constants inline and once with the
+        aptly named variables. This is because the Crayon compiler will optimize
+        obvious expressions that only contain inline constants rather than compile
+        it as an expression. The duplication is to exercise both of these codepaths.
 
-	1)  Each test runs twice. Once with the constants inline and once with the
-		aptly named variables. This is because the Crayon compiler will optimize
-		obvious expressions that only contain inline constants rather than compile
-		it as an expression. The duplication is to exercise both of these codepaths.
-		
-	2)  The actual and expected outputs are converted to strings before being compared.
-		This is so that the type (float vs integer) can be verified. When a float is
-		converted to a string, it will always have a decimal. Otherwise  a float and 
-		integer of  equal mathematical values will pass a == test. 
+    2)  The actual and expected outputs are converted to strings before being compared.
+        This is so that the type (float vs integer) can be verified. When a float is
+        converted to a string, it will always have a decimal. Otherwise a float and
+        integer of equal mathematical values will pass a == test.
 */
 function lang_ops() {
-	
-	one = 1;
-	two = 2;
-	three = 3;
-	four = 4;
-	one_f = 1.0;
-	two_f = 2.0;
-	three_f = 3.0;
-	four_f = 4.0;
-	neg_one = -1;
-	neg_one_f = -1.0;
-	neg_four = -4;
-	neg_four_f = -4.0;
-	
-	$print('lang_ops - basic arithmetic');
-	
-	$assert(1 + 1 + '' == '2', 'lang_ops - addition');
-	$assert(one + one + '' == '2', 'lang_ops - addition');
-	
-	$assert(1.0 + 1 + '' == '2.0', 'lang_ops - addition');
-	$assert(one_f + one + '' == '2.0', 'lang_ops - addition');
-	
-	$assert(1 + 1.0 + '' == '2.0', 'lang_ops - addition');
-	$assert(one + one_f + '' == '2.0', 'lang_ops - addition');
-	
-	$assert(1.0 + 1.0 + '' == '2.0', 'lang_ops - addition');
-	$assert(one_f + one_f + '' == '2.0', 'lang_ops - addition');
-	
-	$assert((4 ** 2) + '' == '16', 'lang_ops - exponent');
-	$assert(four ** two + '' == '16', 'lang_ops - exponent');
-	
-	$assert((4 ** 2.0) + '' == '16.0', 'lang_ops - exponent');
-	$assert(four ** two_f + '' == '16.0', 'lang_ops - exponent');
-	
-	$assert((4 ** -1) + '' == '0.25', 'lang_ops - exponent');
-	$assert(four ** neg_one_f + '' == '0.25', 'lang_ops - exponent');
-	
-	$assert((4.0 ** -1) + '' == '0.25', 'lang_ops - exponent');
-	$assert(four_f ** neg_one_f + '' == '0.25', 'lang_ops - exponent');
-	
-	$assert((3 & 2) + '' == '2', 'lang_ops - bitwise and');
-	$assert((three & two) + '' == '2', 'lang_ops - bitwise and');
-	
-	$assert((4 | 1) + '' == '5', 'lang_ops - bitwise or');
-	$assert((four | one) + '' == '5', 'lang_ops - bitwise or');
-	
-	$assert((3 ^ 1) + '' == '2', 'lang_ops - bitwise xor');
-	$assert((three ^ one) + '' == '2', 'lang_ops - bitwise xor');
-	
-	$assert((3 << 3) + '' == '24', 'lang_ops - bitshift left');
-	$assert((three << three) + '' == '24', 'lang_ops - bitshift left');
-	
-	$assert((4 >> 1) + '' == '2', 'lang_ops - bitshift right');
-	$assert((four >> one) + '' == '2', 'lang_ops - bitshift right');
-	
-	$assert(((-4) >> 1) + '' == '-2', 'lang_ops - bitshift_right (negative)');
-	$assert((neg_four >> one) + '' == '-2', 'lang_ops - bitshift_right (negative)');
+
+    one = 1;
+    two = 2;
+    three = 3;
+    four = 4;
+    one_f = 1.0;
+    two_f = 2.0;
+    three_f = 3.0;
+    four_f = 4.0;
+    neg_one = -1;
+    neg_one_f = -1.0;
+    neg_four = -4;
+    neg_four_f = -4.0;
+
+    print('lang_ops - basic arithmetic');
+
+    assert(1 + 1 + '' == '2', 'lang_ops - addition');
+    assert(one + one + '' == '2', 'lang_ops - addition');
+
+    assert(1.0 + 1 + '' == '2.0', 'lang_ops - addition');
+    assert(one_f + one + '' == '2.0', 'lang_ops - addition');
+
+    assert(1 + 1.0 + '' == '2.0', 'lang_ops - addition');
+    assert(one + one_f + '' == '2.0', 'lang_ops - addition');
+
+    assert(1.0 + 1.0 + '' == '2.0', 'lang_ops - addition');
+    assert(one_f + one_f + '' == '2.0', 'lang_ops - addition');
+
+    assert((4 ** 2) + '' == '16', 'lang_ops - exponent');
+    assert(four ** two + '' == '16', 'lang_ops - exponent');
+
+    assert((4 ** 2.0) + '' == '16.0', 'lang_ops - exponent');
+    assert(four ** two_f + '' == '16.0', 'lang_ops - exponent');
+
+    assert((4 ** -1) + '' == '0.25', 'lang_ops - exponent');
+    assert(four ** neg_one_f + '' == '0.25', 'lang_ops - exponent');
+
+    assert((4.0 ** -1) + '' == '0.25', 'lang_ops - exponent');
+    assert(four_f ** neg_one_f + '' == '0.25', 'lang_ops - exponent');
+
+    assert((3 & 2) + '' == '2', 'lang_ops - bitwise and');
+    assert((three & two) + '' == '2', 'lang_ops - bitwise and');
+
+    assert((4 | 1) + '' == '5', 'lang_ops - bitwise or');
+    assert((four | one) + '' == '5', 'lang_ops - bitwise or');
+
+    assert((3 ^ 1) + '' == '2', 'lang_ops - bitwise xor');
+    assert((three ^ one) + '' == '2', 'lang_ops - bitwise xor');
+
+    assert((3 << 3) + '' == '24', 'lang_ops - bitshift left');
+    assert((three << three) + '' == '24', 'lang_ops - bitshift left');
+
+    assert((4 >> 1) + '' == '2', 'lang_ops - bitshift right');
+    assert((four >> one) + '' == '2', 'lang_ops - bitshift right');
+
+    assert(((-4) >> 1) + '' == '-2', 'lang_ops - bitshift_right (negative)');
+    assert((neg_four >> one) + '' == '-2', 'lang_ops - bitshift_right (negative)');
 }

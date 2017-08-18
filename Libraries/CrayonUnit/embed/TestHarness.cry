@@ -1,0 +1,54 @@
+namespace CrayonUnit {
+
+    // TODO: ability to configure a custom logger rather than just printing things out.
+    // Of course there should still be a default built-in print-logger that does exactly this, though.
+
+    class TestHarness {
+        field _classes;
+        constructor() {
+            this._classes = Core.Reflection.getClasses(CrayonUnit.Test.class);
+        }
+
+        function run() {
+            this._classes.sort(CrayonUnit.TestHarness._getName);
+            for (c : this._classes) {
+                test = c.createInstance();
+                methodsRaw = Core.Reflection.getMethods(test);
+                methodsFiltered = [];
+                for (method : methodsRaw) {
+                    if (method.argCountMax() == 0 &&
+                        method.getName() != 'setup' &&
+                        method.getName() != 'teardown') {
+
+                        methodsFiltered.add(method);
+                    }
+                }
+
+                methodsFiltered.sort(CrayonUnit.TestHarness._getName);
+
+                test.setup();
+
+                for (method : methodsFiltered) {
+                    try {
+                        print("Running " + c.getName() + "." + method.getName());
+                        method();
+                        print("PASS");
+                    } catch (CrayonUnit.UnitTestFailedException e)  {
+                        print("FAIL -> " + e.message);
+                        print(e.getTrace().join('\n'));
+                    } catch (Core.Exception e) {
+                        print("FAIL - UNHANDLED EXCEPTION of type: " + Core.Reflection.getClassFromInstance(e).getName());
+                        print(e.message);
+                        print(e.getTrace().join('\n'));
+                    }
+                }
+
+                test.teardown();
+            }
+        }
+
+        static function _getName(c) {
+            return c.getName();
+        }
+    }
+}

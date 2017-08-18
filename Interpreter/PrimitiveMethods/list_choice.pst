@@ -1,0 +1,10 @@
+﻿if (argCount > 0) {
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("list choice method", 0, argCount));
+}
+
+len = list1.Size();
+if (len == 0) {
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot use list.choice() method on an empty list.");
+}
+
+output = list1[Core.Int(Core.ForceParens((Core.RandomFloat() * len)))];

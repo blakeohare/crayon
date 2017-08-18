@@ -1,3 +1,0 @@
-﻿
-// $sfx_set_master_volume(ratio)
-import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";

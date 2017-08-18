@@ -1,0 +1,20 @@
+﻿/*
+    Only invoked by JavaScript
+
+    arg 1: (Instance) create nativeData and apply results to it
+        nativeData[0] -> (boolean) is done?
+        nativeData[1] -> (boolean) error occurred?
+        nativeData[2] -> Canvas of final image (if no error occurred)
+
+    output is simply relaying nativeData[0]
+*/
+Value lib_imagewebresources_function_jsPoll(Array<Value> args) {
+
+    if (@ext_boolean("IS_JAVASCRIPT")) {
+        objInstance1 = (ObjectInstance) args[0].internalValue;
+        if ((bool) objInstance1.nativeData[0]) {
+            return VALUE_TRUE;
+        }
+    }
+    return VALUE_FALSE;
+}

@@ -1,0 +1,470 @@
+﻿int initializeFunction(ProgramData p, Array<int> args, int currentPc, string stringArg) {
+    int functionId = args[0];
+    int nameId = args[1];
+    int minArgCount = args[2];
+    int maxArgCount = args[3];
+    int functionType = args[4];
+    int classId = args[5];
+    int localsCount = args[6];
+    int pcJump = args[7];
+    int numPcOffsetsForOptionalArgs = args[8];
+
+    Array<int> pcOffsetsForOptionalArgs = new Array<int>((numPcOffsetsForOptionalArgs + 1));
+    for (int i = 0; i < numPcOffsetsForOptionalArgs; i += 1) {
+        pcOffsetsForOptionalArgs[(i + 1)] = args[(9 + i)];
+    }
+
+    Array<FunctionInfo> functionTable = getFunctionTable(p, functionId);
+    functionTable[functionId] = new FunctionInfo(
+        functionId,
+        nameId,
+        currentPc,
+        minArgCount,
+        maxArgCount,
+        functionType,
+        classId,
+        localsCount,
+        pcOffsetsForOptionalArgs,
+        stringArg); // function name
+
+    // This is SUPER tacky.
+    // TODO: Do this name comparison at compile time and then stick that in the arguments which will also eliminate the
+    // need for the obfuscation prefix since the namespace can be checked.
+    if (nameId >= 0) {
+        string name = p.identifiers[nameId];
+        if (Core.StringEquals("_LIB_CORE_list_filter", name)) {
+            p.primitiveMethodFunctionIdFallbackLookup[0] = functionId;
+        } else if (Core.StringEquals("_LIB_CORE_list_map", name)) {
+            p.primitiveMethodFunctionIdFallbackLookup[1] = functionId;
+        } else if (Core.StringEquals("_LIB_CORE_list_sort_by_key", name)) {
+            p.primitiveMethodFunctionIdFallbackLookup[2] = functionId;
+        } else if (Core.StringEquals("_LIB_CORE_invoke", name)) {
+            p.primitiveMethodFunctionIdFallbackLookup[3] = functionId;
+        } else if (Core.StringEquals("_LIB_CORE_generateException", name)) {
+            MagicNumbers mn = p.magicNumbers;
+            mn.coreGenerateExceptionFunctionId = functionId;
+        }
+    }
+
+    return pcJump;
+}
+
+Array<FunctionInfo> getFunctionTable(ProgramData p, int functionId) {
+    Array<FunctionInfo> oldTable = p.functionTable;
+    int oldLength = oldTable.Size();
+
+    if (functionId < oldLength) {
+        return oldTable;
+    }
+
+    int newLength = oldLength * 2;
+    if (functionId >= newLength) {
+        newLength = functionId + 100;
+    }
+
+    Array<FunctionInfo> newTable = new Array<FunctionInfo>(newLength);
+    for (int i = 0; i < oldLength; i += 1) {
+        newTable[i] = oldTable[i];
+    }
+
+    p.functionTable = newTable;
+    return newTable;
+}
+
+/*
+    Note that static methods do not appear anywhere in the class metadata as they all get (mostly) converted
+    into normal function calls (annotated with the class ID to trigger static initializers).
+
+    args[0] -> class ID
+    args[1] -> base class ID or -1 if no parent
+    args[2] -> global name ID for class (potentially not unique)
+    args[3] -> constructor function ID
+    args[4] -> static constructor function ID or -1
+    args[5] -> number of static fields
+    args[n .. n+5] -> fields and methods that are declared in this class.
+        n + 0 -> 0 if field, 1 if method
+        n + 1 -> member ID (numbering starts after base class member ID's
+        n + 2 -> global name ID
+        for fields:
+            n + 3 -> initialization instruction
+                0: use a literal
+                1: use an empty list
+                2: use an empty dictionary
+            n + 4 -> literal ID or ignored
+        for methods:
+            n + 3 -> function ID
+            n + 4 -> not used
+*/
+int initializeClass(int pc, ProgramData p, Array<int> args, string className) {
+    int i = 0;
+    int memberId = 0;
+    int globalId = 0;
+    int functionId = 0;
+    int t = 0;
+
+    int classId = args[0];
+    int baseClassId = args[1];
+    int globalNameId = args[2];
+    int constructorFunctionId = args[3];
+    int staticConstructorFunctionId = args[4];
+    int staticInitializationState = 0;
+    if (staticConstructorFunctionId == -1) {
+        staticInitializationState = 2;
+    }
+    int staticFieldCount = args[5];
+
+    Array<Value> staticFields = new Array<Value>(staticFieldCount);
+    for (i = 0; i < staticFieldCount; i += 1) {
+        staticFields[i] = VALUE_NULL;
+    }
+
+    ClassInfo classInfo = new ClassInfo(
+        classId,
+        globalNameId,
+        baseClassId,
+        staticInitializationState,
+        staticFields,
+        staticConstructorFunctionId,
+        constructorFunctionId,
+        0, // member count
+        null, // Array of member ID -> function IDs (with -1 fallback)
+        null, // Field initialization command by member ID
+        null, // Literal starting value by member ID
+        null, // Global nameID -> member ID
+        className); // fully qualified class name
+
+    Array<ClassInfo> classTable = getClassTable(p, classId);
+
+    classTable[classId] = classInfo;
+
+    List<ClassInfo> classChain = new List<ClassInfo>();
+    classChain.Add(classInfo);
+    int classIdWalker = baseClassId;
+    while (classIdWalker != -1) {
+        ClassInfo walkerClass = classTable[classIdWalker];
+        classChain.Add(walkerClass);
+        classIdWalker = walkerClass.baseClassId;
+    }
+
+    ClassInfo baseClass = null;
+    if (baseClassId != -1) {
+        baseClass = classChain[1];
+    }
+
+    // populate all the members. basically just copy the member lookups for the base class and then
+    // overlay the current classes value on top of it.
+    // Note that the current class may re-define some methods with the same member ID as a parent class.
+
+    // initialize members
+    List<int> functionIds = new List<int>();
+    List<int> fieldInitializationCommand = new List<int>();
+    List<Value> fieldInitializationLiteral = new List<Value>();
+    Dictionary<int, int> globalNameIdToMemberId = new Dictionary<int, int>();
+
+    if (baseClass != null) {
+        for (i = 0; i < baseClass.memberCount; i += 1) {
+            functionIds.Add(baseClass.functionIds[i]);
+            fieldInitializationCommand.Add(baseClass.fieldInitializationCommand[i]);
+            fieldInitializationLiteral.Add(baseClass.fieldInitializationLiteral[i]);
+        }
+
+        Array<int> keys = baseClass.globalIdToMemberId.Keys();
+        for (i = 0; i < keys.Size(); i += 1) {
+            t = keys[i];
+            globalNameIdToMemberId[t] = baseClass.globalIdToMemberId[t];
+        }
+    }
+
+    // and now add the overrides and appends
+    for (i = 6; i < args.Size(); i += 5) {
+        memberId = args[(i + 1)];
+        globalId = args[(i + 2)];
+        while (memberId >= functionIds.Size()) {
+            functionIds.Add(-1);
+            fieldInitializationCommand.Add(-1);
+            fieldInitializationLiteral.Add(null);
+        }
+        globalNameIdToMemberId[globalId] = memberId; // potentially override previous entries
+        if (args[i] == 0) { // field
+            fieldInitializationCommand[memberId] = args[(i + 3)];
+            t = args[(i + 4)]; // literal ID or -1 for NULL
+            if (t == -1) {
+                fieldInitializationLiteral[memberId] = VALUE_NULL;
+            } else {
+                fieldInitializationLiteral[memberId] = p.literalTable[t];
+            }
+        } else { // method
+            functionId = args[(i + 3)];
+            functionIds[memberId] = functionId;
+        }
+    }
+
+    classInfo.functionIds = Core.ListToArray(functionIds);
+    classInfo.fieldInitializationCommand = Core.ListToArray(fieldInitializationCommand);
+    classInfo.fieldInitializationLiteral = Core.ListToArray(fieldInitializationLiteral);
+    classInfo.memberCount = functionIds.Size();
+    classInfo.globalIdToMemberId = globalNameIdToMemberId;
+
+    if (Core.StringEquals("Core.Exception", className)) {
+        MagicNumbers mn = p.magicNumbers;
+        mn.coreExceptionClassId = classId;
+    }
+
+    return 0;
+}
+
+Array<ClassInfo> getClassTable(ProgramData p, int classId) {
+    Array<ClassInfo> oldTable = p.classTable;
+    int oldLength = oldTable.Size();
+    if (classId < oldLength) {
+        return oldTable;
+    }
+    int newLength = oldLength * 2;
+    if (classId >= newLength) {
+        newLength = classId + 100;
+    }
+
+    Array<ClassInfo> newTable = new Array<ClassInfo>(newLength);
+    for (int i = oldLength - 1; i >= 0; i -= 1) {
+        newTable[i] = oldTable[i];
+    }
+
+    p.classTable = newTable;
+    return newTable;
+}
+
+int resetLocalsStackTokens(ExecutionContext ec, StackFrame stack) {
+
+    Array<Value> localsStack = ec.localsStack;
+    Array<int> localsStackSet = ec.localsStackSet;
+
+    int i = stack.localsStackOffsetEnd;
+    while (i < localsStackSet.Size()) {
+        localsStackSet[i] = 0;
+        localsStack[i] = null;
+        i += 1;
+    }
+
+    StackFrame stackWalker = stack;
+
+    while (stackWalker != null) {
+        int token = stackWalker.localsStackSetToken;
+        stackWalker.localsStackSetToken = 1;
+        for (i = stackWalker.localsStackOffset; i < stackWalker.localsStackOffsetEnd; i += 1) {
+            if (localsStackSet[i] == token) {
+                localsStackSet[i] = 1;
+            } else {
+                localsStackSet[i] = 0;
+                localsStack[i] = null;
+            }
+        }
+        stackWalker = stackWalker.previous;
+    }
+
+    ec.localsStackSetToken = 1;
+
+    return -1;
+}
+
+int increaseLocalsStackCapacity(ExecutionContext ec, int newScopeSize) {
+    Array<Value> oldLocals = ec.localsStack;
+    Array<int> oldSetIndicator = ec.localsStackSet;
+
+    int oldCapacity = oldLocals.Size();
+    int newCapacity = (oldCapacity * 2) + newScopeSize;
+
+    Array<Value> newLocals = new Array<Value>(newCapacity);
+    Array<int> newSetIndicator = new Array<int>(newCapacity);
+
+    for (int i = 0; i < oldCapacity; i += 1) {
+        newLocals[i] = oldLocals[i];
+        newSetIndicator[i] = oldSetIndicator[i];
+    }
+
+    ec.localsStack = newLocals;
+    ec.localsStackSet = newSetIndicator;
+
+    return 0;
+}
+
+StackFrame maybeInvokeStaticConstructor(
+        ProgramData p,
+        ExecutionContext ec,
+        StackFrame stack,
+        ClassInfo classInfo,
+        int valueStackSize,
+        Array<int> intOutParam) {
+
+    Core.IntBuffer16[0] = 0;
+    int classId = classInfo.id;
+    if (classInfo.staticInitializationState == 1) {
+        // check to make sure it's the last item on the static init stack
+        List<int> classIdsBeingInitialized = p.classStaticInitializationStack;
+        if (classIdsBeingInitialized[(classIdsBeingInitialized.Size() - 1)] != classId) {
+            Core.IntBuffer16[0] = 1;
+        }
+        return null;
+    }
+
+    classInfo.staticInitializationState = 1;
+    p.classStaticInitializationStack.Add(classId);
+
+    FunctionInfo functionInfo = p.functionTable[classInfo.staticConstructorFunctionId];
+
+    stack.pc -= 1; // when static constructor completes, return to this same op.
+
+    int newFrameLocalsSize = functionInfo.localsSize;
+    int currentFrameLocalsEnd = stack.localsStackOffsetEnd;
+    if (ec.localsStack.Size() <= (currentFrameLocalsEnd + newFrameLocalsSize)) {
+        increaseLocalsStackCapacity(ec, newFrameLocalsSize);
+    }
+
+    if (ec.localsStackSetToken > 2000000000) {
+        resetLocalsStackTokens(ec, stack);
+    }
+
+    ec.localsStackSetToken += 1;
+
+    return new StackFrame(
+        functionInfo.pc,
+        ec.localsStackSetToken,
+        currentFrameLocalsEnd,
+        (currentFrameLocalsEnd + newFrameLocalsSize),
+        stack,
+        false, // return value used?
+        null, // value of 'this' keyword.
+        valueStackSize,
+        classId, // mark class as initialized when RETURN runs.
+        stack.depth + 1,
+        PostFinallyBehavior.NOTHING,
+        null); // temp return value
+}
+
+/*
+    There are 3n args that correspond to the n ESF tokens.
+
+    3n + 0: PC of the beginning of the try block
+    3n + 1: PC of the beginning of the exception sorting code
+    3n + 2: PC of the finally block
+
+    Final ESF data should be a per-row list of 2 values OR null if there is no ESF data:
+    [pc][0] -> pc of exception sorter
+    [pc][1] -> pc of finally
+*/
+Array<Array<int>> generateEsfData(int byteCodeLength, Array<int> esfArgs) {
+    Array<Array<int>> output = new Array<Array<int>>(byteCodeLength);
+
+    List<Array<int>> esfTokenStack = new List<Array<int>>();
+    Array<int> esfTokenStackTop = null;
+    int esfArgIterator = 0;
+    int esfArgLength = esfArgs.Size();
+    int j = 0;
+
+    for (int pc = 0; pc < byteCodeLength; pc += 1) {
+        // Check to see if a new ESF arg needs to be pushed onto the stack.
+        if ((esfArgIterator < esfArgLength) && (pc == esfArgs[esfArgIterator])) {
+            // push the next esf arg onto the stack.
+            esfTokenStackTop = new Array<int>(2);
+            for (j = 1; j < 3; j += 1) {
+                esfTokenStackTop[(j - 1)] = esfArgs[(esfArgIterator + j)];
+            }
+            esfTokenStack.Add(esfTokenStackTop);
+            esfArgIterator += 3;
+        }
+
+        // Check to see if the top of the ESF stack needs to be popped
+        while ((esfTokenStackTop != null) && (esfTokenStackTop[1] <= pc)) {
+            esfTokenStack.Pop();
+            if (esfTokenStack.Size() == 0) {
+                esfTokenStackTop = null;
+            } else {
+                esfTokenStackTop = esfTokenStack[(esfTokenStack.Size() - 1)];
+            }
+        }
+
+        // Set the stack top to the current row
+        output[pc] = esfTokenStackTop;
+    }
+
+    return output;
+}
+
+int markClassAsInitialized(StackFrame stack, int classId) {
+    ProgramData p = Core.GetProgramData();
+    ClassInfo classInfo = p.classTable[stack.markClassAsInitialized];
+    classInfo.staticInitializationState = 2; // mark class as completely ready to use.
+    p.classStaticInitializationStack.Pop();
+    return 0;
+}
+
+/*
+    Status codes:
+    0 -> This is fine.
+    1 -> Unknown error occurred
+    2 -> Library not found
+    3 -> Library found, but incompatible version
+*/
+int declareLibrary(int refId, string descriptor) {
+    ProgramData p = Core.GetProgramData();
+    Array<string> descriptorParts = descriptor.Split(",");
+    string name = descriptorParts[0];
+    string ver = descriptorParts[1];
+    int status = Core.VmDetermineLibraryAvailability(name, ver);
+
+    if (status == 0) {
+        LibRegObj lro = new LibRegObj(p.libraryFunctionPointers, p.libraryFunctionNames, p.libraryFunctionArgCounts);
+        p.activeLibraryReferenceId = refId;
+        status = Core.VmRunLibraryManifest(name, lro);
+    }
+
+    return status;
+}
+
+int registerLibraryFunction(
+        object functionPointer,
+        object libRegObjRaw,
+        string functionName,
+        int argCount) {
+
+    LibRegObj libRegObj = ((LibRegObj) libRegObjRaw);
+    List<object> functionPointersById = libRegObj.functionPointers;
+    List<string> functionNamesById = libRegObj.functionNames;
+    List<int> functionArgCountsById = libRegObj.argCounts;
+    int index = functionPointersById.Size();
+
+    functionPointersById.Add(functionPointer);
+    functionNamesById.Add(functionName);
+    functionArgCountsById.Add(argCount);
+
+    ProgramData p = Core.GetProgramData();
+    if (p.invFunctionNameLiterals.Contains(functionName)) {
+        int functionNameReferenceId = p.invFunctionNameLiterals[functionName];
+        int lookupId = p.activeLibraryReferenceId + (4096 * functionNameReferenceId);
+        p.libraryFunctionIdByLookupId[lookupId] = index;
+    }
+
+    return 0;
+}
+
+// runs during FINALIZE_INITIALIZATION
+// allocates a library function pointer lookup by PC based on the args of CALL_LIB_FUNCTION_DYNAMIC
+Array<object> createLibraryFunctionLookup() {
+    ProgramData p = Core.GetProgramData();
+
+    int length = p.ops.Size();
+    Array<int> row = null;
+    Array<object> functionPointersByPc = new Array<object>(length);
+
+    for (int pc = 0; pc < length; pc += 1) {
+        if (p.ops[pc] == OpCodes.CALL_LIB_FUNCTION_DYNAMIC) {
+            row = p.args[pc];
+            int functionId = p.libraryFunctionIdByLookupId[((row[0] * 4096) + row[1])];
+            object fp = p.libraryFunctionPointers[functionId];
+
+            functionPointersByPc[pc] = fp;
+        }
+    }
+
+    p.libraryFunctionByPc = functionPointersByPc;
+    return functionPointersByPc;
+}

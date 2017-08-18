@@ -1,0 +1,41 @@
+﻿Value lib_graphics2d_function_scale(Array<Value> args) {
+    Array<object> objArray1 = null;
+    Array<object> objArray2 = null;
+    ObjectInstance objInstance1 = null;
+    ObjectInstance objInstance2 = null;
+    Value arg2 = args[1];
+    Value arg3 = args[2];
+    Value arg4 = args[3];
+    Value arg5 = args[4];
+    Value arg6 = args[5];
+    int int1 = (int) arg3.internalValue;
+    int int2 = (int) arg4.internalValue;
+    if (!@ext_boolean("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
+        objInstance1 = (ObjectInstance) arg5.internalValue;
+        object object1 = objInstance1.nativeData[3];
+        objInstance1 = (ObjectInstance) arg6.internalValue;
+        objArray1 = new Array<object>(6);
+        objInstance1.nativeData = objArray1;
+        objArray1[0] = false;
+        objArray1[1] = true;
+        objArray1[2] = 0;
+        objArray1[3] = Native._lib_graphics2d_scale(object1, int1, int2);
+        objArray1[4] = int1;
+        objArray1[5] = int2;
+    }
+    objInstance2 = (ObjectInstance) arg2.internalValue;
+    objArray1 = new Array<object>(7);
+    objInstance2.nativeData = objArray1;
+    objInstance2 = (ObjectInstance) args[0].internalValue;
+    objArray2 = objInstance2.nativeData;
+    int i = 4;
+    while (i >= 1) {
+        objArray1[i] = objArray2[i];
+        i -= 1;
+    }
+    objArray1[5] = int1;
+    objArray1[6] = int2;
+    objInstance1 = (ObjectInstance) arg6.internalValue;
+    objArray1[0] = objInstance1.nativeData;
+    return args[0];
+}

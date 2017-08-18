@@ -1,0 +1,20 @@
+class TitleScene : AbstractScene {
+
+    field ocean;
+
+    constructor() : base() {
+        this.ocean = new Ocean();
+    }
+
+    function update(isTap) {
+        this.ocean.update();
+        if (isTap) {
+            this.ocean.tap();
+            this.switchScene(new PlayScene(this.ocean));
+        }
+    }
+
+    function render() {
+        this.ocean.render();
+    }
+}

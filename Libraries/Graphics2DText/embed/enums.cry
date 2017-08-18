@@ -1,0 +1,45 @@
+﻿/*
+    On some level, some sort of font resource needs to be cached.
+    What is defined as a font resource varies from platform to platform
+
+    For Python, it's the font face, size, style
+
+    For Java, it's just the font
+
+    For JavaScript, there's nothing. You pass the font name as a string to the draw context for each use
+    - although, for JS, the process for checking if a font is a little weird.
+
+    For OpenGL a collection of texture atlases are created.
+    - first each character is rendered at size 36 in individual images
+    - these characters are stored in a several layer cache
+    - each time a character is used it's moved to the top cache
+    - every minute or so each cache layer is demoted
+    - every once in a while a series of textures are created
+    - if there are less than 200 characters rendered by the font, no cache churning occurs
+    - each cache/texture system is keyed off font face, size, and style
+    - coloring is handled by the fragment shader
+    - note that rendering rapidly changing characters (of something like chinese) at size 72 could kill performance, but that's an edge case
+
+*/
+namespace Graphics2DText {
+
+    enum FontSourceType {
+        DEFAULT = 0,
+        RESOURCE = 1,
+        FILE = 2,
+        SYSTEM = 3,
+    }
+
+    enum FontClass {
+        SERIF = 1,
+        SANS_SERIF = 2,
+        MONOSPACE = 3,
+    }
+
+    enum FontStyle {
+        NORMAL = 0,
+        BOLD = 1,
+        ITALIC = 2,
+        BOLD_ITALIC = 3, // bit mask of BOLD | ITALIC
+    }
+}

@@ -1,0 +1,19 @@
+﻿global Array<Value> INTEGER_POSITIVE_CACHE = new Array<Value>(INTEGER_POSITIVE_CACHE_SIZE);
+global Array<Value> INTEGER_NEGATIVE_CACHE = new Array<Value>(INTEGER_NEGATIVE_CACHE_SIZE);
+
+global Value VALUE_NULL = new Value(Types.NULL, null);
+
+global Value VALUE_TRUE = new Value(Types.BOOLEAN, true);
+global Value VALUE_FALSE = new Value(Types.BOOLEAN, false);
+
+global Value VALUE_EMPTY_STRING = new Value(Types.STRING, "");
+
+global Value VALUE_INT_ONE = new Value(Types.INTEGER, 1);
+global Value VALUE_INT_ZERO = new Value(Types.INTEGER, 0);
+global Value VALUE_INT_NEG_ONE = new Value(Types.INTEGER, -1);
+
+global Value VALUE_FLOAT_ZERO = new Value(Types.FLOAT, 0.0);
+global Value VALUE_FLOAT_ONE = new Value(Types.FLOAT, 1.0);
+global Value VALUE_FLOAT_NEGATIVE_ONE = new Value(Types.FLOAT, -1.0);
+
+global Dictionary<string, Value> COMMON_STRINGS = new Dictionary<string, Value>();

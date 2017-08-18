@@ -1,0 +1,12 @@
+NAME: ImageResources
+AUTHOR: Blake O'Hare
+DOCUMENTATION: http://crayonlang.org/docs/0.2.0/imageresources
+DESCRIPTION: synchronous and asynchronous image and image sheet loaders
+
+BOOL_FLAG: IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM: false
+[javascript-app-android] BOOL_FLAG: IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM: true
+[javascript-app-chrome] BOOL_FLAG: IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM: true
+[javascript-app] BOOL_FLAG: IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM: true
+[javascript-app-ios] BOOL_FLAG: IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM: true
+BOOL_FLAG: IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS: false
+[csharp-app] BOOL_FLAG: IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS: true

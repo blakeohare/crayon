@@ -1,0 +1,8 @@
+﻿
+int1 = row[0]; // file ID
+string1 = p.stringArgs[pc]; // file contents
+List<string> codeLookup = p.sourceCodeBuilder;
+while (codeLookup.Size() <= int1) {
+    codeLookup.Add(null);
+}
+codeLookup[int1] = string1;

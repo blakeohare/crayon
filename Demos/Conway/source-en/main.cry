@@ -1,0 +1,155 @@
+import Game;
+import Graphics2D;
+import Math;
+import Random;
+
+const FPS = 60;
+const WIDTH = 50;
+const HEIGHT = 40;
+const CELL_SIZE = 16;
+const SCREEN_WIDTH = CELL_SIZE * WIDTH;
+const SCREEN_HEIGHT = CELL_SIZE * HEIGHT;
+
+function getRandomBlue() {
+    return [
+        Random.randomInt(40),
+        Random.randomInt(100, 200),
+        Random.randomInt(170, 255)
+    ];
+}
+
+function main() {
+    window = new GameWindow("Conway's Game of Life", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    totalCells = WIDTH * HEIGHT;
+
+    trues = [true] * (totalCells / 3);
+    falses = [false] * (totalCells - trues.length);
+    grid = trues + falses;
+    grid.shuffle();
+    cellPixelX = [];
+    for (x = 0; x < WIDTH; ++x) {
+        cellPixelX.add(x * CELL_SIZE);
+    }
+    cellPixelY = [];
+    for (y = 0; y < HEIGHT; ++y) {
+        cellPixelY.add(y * CELL_SIZE);
+    }
+
+    buffer = [false] * totalCells;
+    neighborsLookup = [];
+    indices = [];
+    blues = [];
+    offsets = [-1, 0, 1];
+    for (y = 0; y < HEIGHT; ++y) {
+        for (x = 0; x < WIDTH; ++x) {
+            indices.add(indices.length);
+            blues.add(getRandomBlue());
+            neighbors = [];
+            for (dx : offsets) {
+                for (dy : offsets) {
+                    neighborX = dx + x;
+                    neighborY = dy + y;
+                    if (neighborX >= 0 &&
+                        neighborY >= 0 &&
+                        neighborX < WIDTH &&
+                        neighborY < HEIGHT &&
+                        (neighborX != x || neighborY != y)) {
+
+                        neighbors.add(neighborX + neighborY * WIDTH);
+                    }
+                }
+            }
+            neighborsLookup.add(neighbors);
+        }
+    }
+
+    lastPosition = -1;
+    mousePressed = false;
+
+    // Lookup table for what to do if a live cell has n neighbors
+    liveTransformationLookup = [false] * 9; // die unless...
+    liveTransformationLookup[2] = true; // has exactly 2 neighbors
+    liveTransformationLookup[3] = true; // has exactly 3 neighbors
+
+    // Lookup table for what to do if a dead cell has n neighbors
+    deadTransformationLookup = [false] * 9; // stay dead unless...
+    deadTransformationLookup[3] = true; // has exactly 3 neighbors
+
+    while (true) {
+        for (event : window.pumpEvents()) {
+            switch (event.type) {
+                case EventType.QUIT:
+                    return;
+
+                case EventType.MOUSE_MOVE:
+                    lastCol = event.x / CELL_SIZE;
+                    lastRow = event.y / CELL_SIZE;
+                    if (lastCol >= 0 && lastRow >= 0 && lastCol < WIDTH && lastRow < HEIGHT) {
+                        lastPosition = lastCol + lastRow * WIDTH;
+                    }
+                    break;
+
+                case EventType.MOUSE_LEFT_DOWN:
+                    mousePressed = true;
+                    break;
+
+                case EventType.MOUSE_LEFT_UP:
+                    mousePressed = false;
+                    break;
+            }
+        }
+
+        if (lastPosition >= 0) {
+            // bring half of the cells in the neighbors lookup for the cursor's position to life.
+            neighbors = neighborsLookup[lastPosition];
+            neighbors.shuffle();
+            for (i = 0; i < neighbors.length / 2; ++i) {
+                grid[neighbors[i]] = true;
+            }
+        }
+
+        // Perform an iteration on the entire grid...
+        for (index : indices) {
+            // Count neighbors
+            neighbors = 0;
+            for (neighborIndex : neighborsLookup[index]) {
+                if (grid[neighborIndex]) {
+                    neighbors++;
+                }
+            }
+
+            // Lookup new state
+            buffer[index] = (grid[index]
+                ? liveTransformationLookup
+                : deadTransformationLookup)[neighbors];
+        }
+
+        // swap buffers
+        t = buffer;
+        buffer = grid;
+        grid = t;
+
+        // Draw the grid
+        Draw.fill(0, 0, 0);
+        index = 0;
+        for (y : cellPixelY) {
+            for (x : cellPixelX) {
+                if (grid[index]) {
+                    rgb = blues[index];
+                    Draw.rectangle(
+                        x, y, CELL_SIZE, CELL_SIZE,
+                        rgb[0], rgb[1], rgb[2]);
+                } else if (index == lastPosition) {
+                    Draw.rectangle(
+                        x, y, CELL_SIZE, CELL_SIZE,
+                        64, 64, 64);
+                }
+
+                ++index;
+            }
+        }
+
+        window.clockTick();
+    }
+}

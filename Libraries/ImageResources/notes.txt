@@ -1,0 +1,151 @@
+There is a manifest that declares all image resources, where they are, and how they are loaded.
+
+Image sheets are created by aggregating a bunch of images together (as defined by the build file)
+and separating them into logical chunks (sprite sheets). Each of these chunks can further be
+partitioned into indivdiual downloadable tiles. The tiles are then aggregated after they are all
+loaded and you have a series of chunks.
+
+A sheet is made of chunks which are made of tiles.
+Files are either standalone or exist in a sheet.
+The notion of chunks and tiles are never exposed to the end user. 
+This makes downloading go faster if you have tons of small images and also you can expose
+download progress to the user in the form of a progress bar.
+
+The manifest itself is a series of lines. Each line is a set of comma delimited values.
+The first value is a letter...
+
+--A--
+Declares a single standalone file, its generated resource name, and its original
+user-facing name.
+"A, gen-filename, width, height, filename"
+
+--S--
+Declares an image sheet. This sheet then becomes the "active sheet".
+"S, Sheet ID, name" 
+
+--C--
+Declares a chunk in the active sheet.
+This then becomes the "active chunk"
+Note: If the width and height are 0,0 then it is actually a 1024x1024 sheet which is the 
+most common size.
+"C, width, height"
+
+--T--
+Tile. Declares a physical image file in the active chunk.
+"T, gen-filename, x, y, width, height, bytes"
+
+--I--
+Declares an image in the active chunk.
+"I, x, y, width, height, filename"
+
+--J--
+A JPEG chunk/image. JPEG has fuzzy artifacts and will spill into adjoining images if composed
+into a sheet. By using a high quality compression and padding images by extending the border 
+pixels outward, it may be possible to aggregate them into a real sheet, though.
+TODO: For games it's not a big deal that JPEGs are handled in this wonky way since JPEGs tend 
+to be used for large purposes such as background that would be their own chunk anyway, but for
+general purposes, this assumption will be less true and so they should be composited eventually.
+"J, gen-filename, width, height, bytes, filename"
+
+The manifest class has the following lookup datastructure that is generated from the above manifest...
+
+resourceInfo is a dictionary of user-facing filenames to information of where files come from 
+and dimension info.
+{
+	filename1: [ImgResourceType.STANDALONE, gen-filename, width, height]
+	filename2: [ImgResourceType.SHEET, sheet ID, chunk ID, x, y, width, height]
+	...
+}
+
+sheetInfo is a lookup of sheet information based on sheet ID...
+{
+	<SHEET ID>: {
+		name: <NAME>,
+		id: <ID>,
+		chunks: {
+			<CHUNK ID>: {
+				width: <WIDTH>
+				height: <HEIGHT>
+				tiles: [
+					[<GENERATED FILENAME>, <X>, <Y>, <WIDTH>, <HEIGHT>, <BYTES>],
+					...
+				]
+			}
+		}
+	}
+}
+
+
+TODO: will need to double-buffer the render pipeline so that synchronous loadFromResource 
+will not do weird things to the screen.
+
+User code:
+
+imageLoader = ImageLoader.loadFromResourceAsync("my file.png");
+imageLoader = ImageLoader.loadFromResource("my file.png");
+...
+imageLoader.isDone();
+imageLoader.getImage();
+
+sheet = ImageSheetLoader.fromIdsAsync(["sprites", "tiles"]);
+sheet = ImageSheetLoader.fromIds(["sprites", "tiles"]);
+...
+sheet.isDone();
+img = sheet.getImage("foo.png");
+members = sheet.getFiles();
+...
+
+immutableTexture = GFX.loadTextureFromImage(img);
+
+There are two classes that represent a native image: NativeImageResource and Image.
+NativeImageResource is generally not exposed to the user.
+
+NativeImageResource
+- nativeData[0] -> native bitmap data (System.Drawing.Image/canavs/pygame.Surface/java.awt.BufferedImage/etc)
+- width - width and height of the native resource.
+- height
+- revision ID -- counter that starts at 0 for each resource ID and increments each time it is modified.
+- resource ID -- globally unique ID
+- resourceFingerprint - above two fields as a string for use as a quick key comparison.
+- .clone() -- creates a copy of this data with a new resource ID, with a rev ID of 0. 
+- .blit(image, x, y) -- draw another image onto this one without creating a resource copy or incrementing revision ID.
+- isLocked -- can't use this unless this is false
+- .lock() -- prevent using this aside from blit. increments the revision ID and makes a copy.
+- .unlock() -- sets the isLocked bit to false.
+
+Image
+- res -- a reference to the NativeImageResource
+- x -- x and y coordinates within the NativeImageResource
+- y
+- width -- width and height within the NativeImageResource
+- height
+- .clone() -- will create a individual copy of native resource of just the section covered by this image
+
+GfxTextureResource
+- nativeData[0] - boolean if this is GL based
+- nativeData[1] - a copy of the actual native image resource
+	for GL platforms -> this is a power-of-2 sized image
+	for non-GL -> this is just a simple image of just 1 image
+- nativeData[2] - width
+- nativeData[3] - height
+- nativeData[4] - texture ID (GL only)
+- width
+- height
+
+GfxTexture
+- nativeData[0 - 3] - texture left, top, right, bottom
+- gfxTextureResource
+- resourceX - where in the resource this image is
+- resourceY
+- width - width and height of just this image within the sheet
+- height
+
+GfxTextureDatabase (static lookup dictionary on GfxTextureResource)
+- Dictionary<resourceVersionKey, gfxTextureResource> loadedResources
+
+PixelSession
+- create a transaction session object
+-- this creates a temporary image object that's a copy of just the pixels being edited
+- flush the session to the original image will increment the revision ID
+-- Image objects will be updated
+-- GfxTextures will not.

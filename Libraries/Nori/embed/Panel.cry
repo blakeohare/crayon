@@ -1,0 +1,57 @@
+namespace Nori {
+
+    class Panel : Element {
+
+        field children = [];
+        field removedChildren = [];
+        field xOffsets = [];
+        field yOffsets = [];
+        field onlyOneChild = false;
+
+        constructor() : base() {
+            this.isPanel = true;
+        }
+
+        function addChild(element) {
+            if (!element is Nori.Element) Core.fail("Only Nori.Element objects can be added to a panel.");
+            if (element.alreadyAddedToUiTree) Core.fail("Cannot change a UI Element's parent after it has already been set.");
+            element.alreadyAddedToUiTree = true;
+            if (this.onlyOneChild) {
+                if (this.children > 0) Core.fail("Cannot add more than one child to this panel.");
+            }
+            this.children.add(element);
+            return this;
+        }
+
+        function setContent(element) {
+            if (this.onlyOneChild && this.children == 0) {
+                this.removeChildAtIndex(0);
+            }
+            this.addChild(element);
+        }
+
+        function removeLastChild() { return this.removeChildAtIndex(-1); }
+        function removeFirstChild() { return this.removeChildAtIndex(0); }
+
+        function removeAllChildren() {
+            this.removedChildren.concat(this.children);
+            this.children.clear();
+        }
+
+        function removeChildAtIndex(index) {
+            element = this.children[index]; // induce an array index out of range
+            index = index % this.children.length; // canonicalize the index
+            this.removedChildren.add(element);
+        }
+
+        function render(uiBox) {
+            for (child : this.children) {
+                child.render(uiBox);
+            }
+
+            if (this.removedChildren.length > 0) {
+                $$lib_nori_removeElementsFromUiBox(uiBox, this.removedChildren);
+            }
+        }
+    }
+}

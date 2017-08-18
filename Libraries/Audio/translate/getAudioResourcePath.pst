@@ -1,0 +1,12 @@
+﻿/*
+    arg[0]: user defined path of a file resource
+
+    output is a list...
+    output[0] -> true if an audio file
+    output[1] -> string of the filepath relative to the root of where audio files are kept.
+*/
+Value lib_audio_function_getAudioResourcePath(Array<Value> args) {
+    return resource_manager_getResourceOfType(
+        (string) args[0].internalValue,
+        "SND");
+}

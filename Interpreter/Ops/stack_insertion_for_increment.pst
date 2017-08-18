@@ -1,0 +1,6 @@
+﻿@import("ValueStackCapacityCheck.pst");
+valueStack[valueStackSize] = valueStack[valueStackSize - 1];
+valueStack[valueStackSize - 1] = valueStack[valueStackSize - 2];
+valueStack[valueStackSize - 2] = valueStack[valueStackSize - 3];
+valueStack[valueStackSize - 3] = valueStack[valueStackSize];
+valueStackSize += 1;

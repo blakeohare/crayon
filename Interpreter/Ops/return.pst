@@ -1,0 +1,63 @@
+﻿// WARNING: if you modify this, be sure to check FINALLY_END op to see if changes are needed there as well.
+
+// row[0]:
+//   0 --> no return value on stack, implicit null.
+//   1 --> return value is on the stack.
+
+// Check to see if there is a finally block that needs to run first.
+if (esfData[pc] != null) {
+
+    // Get ESF data
+    intArray1 = esfData[pc];
+
+    // Jump to the finally block
+    pc = intArray1[1] - 1;
+
+    // Stash the return value on the stack frame temporarily
+    if (row[0] == 0) {
+        stack.returnValueTempStorage = VALUE_NULL;
+    } else {
+        stack.returnValueTempStorage = valueStack[(valueStackSize - 1)];
+    }
+
+    // Adjust the value stack to ensure it is the correct size.
+    // e.g. avoid stack corruption when returning from a foreach loop within a try block
+    valueStackSize = stack.valueStackPopSize + p.valueStackDepthByPc[pc];
+    stack.postFinallyBehavior = PostFinallyBehavior.RETURN;
+} else {
+
+    if (stack.previous == null) {
+        // returning from the root stack
+        return interpreterFinished(ec);
+    }
+
+    // is this the static constructor returning?
+    if (stack.markClassAsInitialized != 0) {
+        markClassAsInitialized(stack, stack.markClassAsInitialized);
+    }
+
+    if (stack.returnValueUsed) {
+        if (row[0] == 0) {
+            // returning null? pop the stack frame stack and push null to the value stack. Capacity check needed.
+            valueStackSize = stack.valueStackPopSize;
+            stack = stack.previous;
+            @import("ValueStackCapacityCheck.pst"); // edge case: called function didn't push anything to the stack and you happen to be at the valueStack capacity
+            valueStack[valueStackSize] = VALUE_NULL;
+        } else {
+            value = valueStack[(valueStackSize - 1)];
+            valueStackSize = stack.valueStackPopSize;
+            stack = stack.previous;
+            // no capacity check needed since the value was already on the stack.
+            valueStack[valueStackSize] = value;
+        }
+        valueStackSize += 1;
+    } else {
+        // discard the return value. Set the value stack size back the way it was.
+        valueStackSize = stack.valueStackPopSize;
+        stack = stack.previous;
+    }
+
+    pc = stack.pc;
+    localsStackOffset = stack.localsStackOffset;
+    localsStackSetToken = stack.localsStackSetToken;
+}

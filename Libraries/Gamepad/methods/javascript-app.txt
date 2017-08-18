@@ -1,0 +1,16 @@
+﻿$_lib_gamepad_is_supported: C$gamepad$isSupported()
+$_lib_gamepad_platform_requires_refresh: C$gamepad$isSupported()
+$_lib_gamepad_get_current_device_count: C$gamepad$getDeviceCount()
+$_lib_gamepad_get_device_reference: C$gamepad$getDevice([ARG:1])
+$_lib_gamepad_get_name: C$gamepad$getName([ARG:2])
+$_lib_gamepad_get_button_count: C$gamepad$getButtonCount([ARG:2])
+$_lib_gamepad_get_axis_1d_count: C$gamepad$getAxisCount([ARG:2])
+$_lib_gamepad_get_axis_2d_count: 0
+$_lib_gamepad_get_button_state: C$gamepad$getButtonState([ARG:1], [ARG:2])
+$_lib_gamepad_get_axis_1d_state: C$gamepad$getAxisState([ARG:1], [ARG:2])
+$_lib_gamepad_get_axis_2d_state: 0
+$_lib_gamepad_poll_universe: C$common$alwaysTrue()
+$_lib_gamepad_refresh_devices: C$gamepad$refresh()
+$_lib_gamepad_config_file_path: ".crayon-js.gamepad.config"
+$_lib_gamepad_getPlatform: 3
+$_lib_gamepad_jsIsOsx: (window.navigator.platform == 'MacIntel' ? 1 : 0)

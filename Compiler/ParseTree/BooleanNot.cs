@@ -1,38 +1,55 @@
-﻿namespace Crayon.ParseTree
+﻿using System;
+using System.Collections.Generic;
+
+namespace Crayon.ParseTree
 {
-	internal class BooleanNot : Expression
-	{
-		public override bool CanAssignTo { get { return false; } }
+    internal class BooleanNot : Expression
+    {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            this.Root = this.Root.PastelResolve(parser);
+            return this;
+        }
 
-		public Expression Root { get; private set; }
+        public override bool CanAssignTo { get { return false; } }
 
-		public BooleanNot(Token bang, Expression root, Executable owner)
-			: base(bang, owner)
-		{
-			this.Root = root;
-		}
+        public Expression Root { get; private set; }
 
-		internal override Expression Resolve(Parser parser)
-		{
-			this.Root = this.Root.Resolve(parser);
+        public BooleanNot(Token bang, Expression root, Executable owner)
+            : base(bang, owner)
+        {
+            this.Root = root;
+        }
 
-			if (this.Root is BooleanConstant)
-			{
-				return new BooleanConstant(this.FirstToken, !((BooleanConstant)this.Root).Value, this.FunctionOrClassOwner);
-			}
+        internal override Expression Resolve(Parser parser)
+        {
+            this.Root = this.Root.Resolve(parser);
 
-			return this;
-		}
+            if (this.Root is BooleanConstant)
+            {
+                return new BooleanConstant(this.FirstToken, !((BooleanConstant)this.Root).Value, this.FunctionOrClassOwner);
+            }
 
-		internal override void SetLocalIdPass(VariableIdAllocator varIds)
-		{
-			this.Root.SetLocalIdPass(varIds);
-		}
+            return this;
+        }
 
-		internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
-		{
-			this.Root = this.Root.ResolveNames(parser, lookup, imports);
-			return this;
-		}
-	}
+        internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
+        {
+            this.Root = this.Root.ResolveNames(parser, lookup, imports);
+            return this;
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            this.Root.GetAllVariablesReferenced(vars);
+        }
+
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
+            {
+                this.Root.PerformLocalIdAllocation(varIds, phase);
+            }
+        }
+    }
 }

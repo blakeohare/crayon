@@ -1,33 +1,42 @@
 <build>
 	<projectname>Asteroids</projectname>
+	<title>Asteroids</title>
+	<description>Classic Asteroids clone</description>
 	<source>source/</source>
 	<output>output/%TARGET_NAME%</output>
+	<icon>assets/icon.png</icon>
 	
-	<spritesheets>
+	<windowsize width="800" height="600"/>
+	<version>0.1</version>
+	
+	<imagesheets>
 		<sheet id="everything">
 			<prefix>*</prefix>
 		</sheet>
-	</spritesheets>
+	</imagesheets>
+	
+	
+	<guidseed>org.crayonlang.demos.asteroids,v0.2.0,%TARGET_NAME%</guidseed>
 	
 	<!-- Targets -->
-	<target name="js_local">
-		<platform>js</platform>
-	</target>
-	
-	<target name="js_remote">
-		<platform>js</platform>
+	<target name="javascript">
+		<platform>javascript-app</platform>
 		<jsfileprefix>/demos/asteroids/</jsfileprefix>
 	</target>
 	
-	<target name="windows">
-		<platform>csopengl</platform>
+	<target name="csharp">
+		<platform>csharp-app</platform>
 	</target>
 	
-	<target name="javaawt">
-		<platform>java</platform>
+	<target name="java">
+		<platform>java-app</platform>
 	</target>
 	
 	<target name="python">
-		<platform>python</platform>
+		<platform>python-app</platform>
+	</target>
+	
+	<target name="chrome-web-app">
+		<platform>javascript-app-chrome</platform>
 	</target>
 </build>

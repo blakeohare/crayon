@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Crayon</RootNamespace>
     <AssemblyName>Crayon</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -20,393 +21,114 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>RELEASE;TRACE;WINDOWS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnnotatedType.cs" />
-    <Compile Include="AnnotationParser.cs" />
-    <Compile Include="AsyncMessageType.cs" />
-    <Compile Include="BinaryOps.cs" />
-    <Compile Include="BuildFile.cs" />
-    <Compile Include="ByteBuffer.cs" />
-    <Compile Include="ByteCodeCompiler.cs" />
-    <Compile Include="ByteCodeEncoder.cs" />
-    <Compile Include="CompileContext.cs" />
-    <Compile Include="ExpressionTranslator.cs" />
-    <Compile Include="FunctionInvocationType.cs" />
-    <Compile Include="HackUtil.cs" />
-    <Compile Include="ILibraryConfig.cs" />
-    <Compile Include="InterpreterCompiler.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="EofException.cs" />
-    <Compile Include="ExpressionParser.cs" />
-    <Compile Include="FileOutput.cs" />
-    <Compile Include="IOErrors.cs" />
-    <Compile Include="LanguageId.cs" />
-    <Compile Include="LiteralLookup.cs" />
-    <Compile Include="NativeObjectTypes.cs" />
-    <Compile Include="OpCode.cs" />
-    <Compile Include="ParserException.cs" />
-    <Compile Include="ParseTree\Annotation.cs" />
-    <Compile Include="ParseTree\Assignment.cs" />
-    <Compile Include="ParseTree\BaseKeyword.cs" />
-    <Compile Include="ParseTree\BaseMethodReference.cs" />
-    <Compile Include="ParseTree\BinaryOpChain.cs" />
-    <Compile Include="ParseTree\BooleanCombination.cs" />
-    <Compile Include="ParseTree\BooleanConstant.cs" />
-    <Compile Include="ParseTree\BooleanNot.cs" />
-    <Compile Include="ParseTree\BracketIndex.cs" />
-    <Compile Include="ParseTree\BreakStatement.cs" />
-    <Compile Include="ParseTree\ClassDefinition.cs" />
-    <Compile Include="ParseTree\ClassReference.cs" />
-    <Compile Include="ParseTree\CompileTimeDictionary.cs" />
-    <Compile Include="ParseTree\ConstructorDefinition.cs" />
-    <Compile Include="ParseTree\ConstStatement.cs" />
-    <Compile Include="ParseTree\ContinueStatement.cs" />
-    <Compile Include="ParseTree\DictionaryDefinition.cs" />
-    <Compile Include="ParseTree\DotStep.cs" />
-    <Compile Include="ParseTree\DotStepStruct.cs" />
-    <Compile Include="ParseTree\DoWhileLoop.cs" />
-    <Compile Include="ParseTree\EnumDefinition.cs" />
-    <Compile Include="ParseTree\Executable.cs" />
-    <Compile Include="ExecutableParser.cs" />
-    <Compile Include="ParseTree\Expression.cs" />
-    <Compile Include="Parser.cs" />
-    <Compile Include="ParseTree\ExpressionAsExecutable.cs" />
-    <Compile Include="ParseTree\FieldDeclaration.cs" />
-    <Compile Include="ParseTree\FloatConstant.cs" />
-    <Compile Include="ParseTree\ForEachLoop.cs" />
-    <Compile Include="ParseTree\ForLoop.cs" />
-    <Compile Include="ParseTree\FunctionCall.cs" />
-    <Compile Include="ParseTree\FunctionDefinition.cs" />
-    <Compile Include="ParseTree\FunctionReference.cs" />
-    <Compile Include="ParseTree\IConstantValue.cs" />
-    <Compile Include="ParseTree\IfStatement.cs" />
-    <Compile Include="ParseTree\ImportStatement.cs" />
-    <Compile Include="ParseTree\Increment.cs" />
-    <Compile Include="ParseTree\Instantiate.cs" />
-    <Compile Include="ParseTree\IntegerConstant.cs" />
-    <Compile Include="ParseTree\LibraryFunctionCall.cs" />
-    <Compile Include="ParseTree\LibraryFunctionReference.cs" />
-    <Compile Include="ParseTree\ListDefinition.cs" />
-    <Compile Include="ParseTree\ListSlice.cs" />
-    <Compile Include="ParseTree\Namespace.cs" />
-    <Compile Include="ParseTree\NegativeSign.cs" />
-    <Compile Include="ParseTree\Node.cs" />
-    <Compile Include="ParseTree\NullCoalescer.cs" />
-    <Compile Include="ParseTree\NullConstant.cs" />
-    <Compile Include="ParseTree\PartialNamespaceReference.cs" />
-    <Compile Include="ParseTree\ReturnStatement.cs" />
-    <Compile Include="ParseTree\FieldReference.cs" />
-    <Compile Include="ParseTree\StringConstant.cs" />
-    <Compile Include="ParseTree\StructInstance.cs" />
-    <Compile Include="ParseTree\StructDefinition.cs" />
-    <Compile Include="ParseTree\SwitchStatement.cs" />
-    <Compile Include="ParseTree\SwitchStatementContinuousSafe.cs" />
-    <Compile Include="ParseTree\SwitchStatementUnsafeBlotchy.cs" />
-    <Compile Include="ParseTree\SystemFunctionCall.cs" />
-    <Compile Include="ParseTree\SystemFunctionReference.cs" />
-    <Compile Include="ParseTree\Ternary.cs" />
-    <Compile Include="ParseTree\ThisKeyword.cs" />
-    <Compile Include="ParseTree\Variable.cs" />
-    <Compile Include="ParseTree\WhileLoop.cs" />
-    <Compile Include="PlatformId.cs" />
-    <Compile Include="PrimitiveMethods.cs" />
-    <Compile Include="PrimitiveMethodsUtil.cs" />
-    <Compile Include="Resolver.cs" />
-    <Compile Include="SpriteSheetBuilder.cs" />
-    <Compile Include="SubTypes.cs" />
-    <Compile Include="SystemLibraryManager.cs" />
-    <Compile Include="Token.cs" />
-    <Compile Include="Tokenizer.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TokenStream.cs" />
-    <Compile Include="AbstractPlatform.cs" />
-    <Compile Include="Translator\AbstractGamepadTranslator.cs" />
-    <Compile Include="Translator\AbstractOpenGlTranslator.cs" />
-    <Compile Include="Translator\AbstractSystemFunctionTranslator.cs" />
-    <Compile Include="Translator\AbstractTranslator.cs" />
-    <Compile Include="Translator\COpenGL\COpenGlOpenGlTranslator.cs" />
-    <Compile Include="Translator\COpenGL\COpenGLPlatform.cs" />
-    <Compile Include="Translator\COpenGL\COpenGLSystemFunctionTranslator.cs" />
-    <Compile Include="Translator\COpenGL\CTranslator.cs" />
-    <Compile Include="Translator\CSharp\CSharpOpenTkGamepadTranslator.cs" />
-    <Compile Include="Translator\CSharp\CSharpOpenTkOpenGlTranslator.cs" />
-    <Compile Include="Translator\CSharp\CSharpOpenTkPlatform.cs" />
-    <Compile Include="Translator\CSharp\CSharpOpenTkSystemFunctionTranslator.cs" />
-    <Compile Include="Translator\CSharp\CSharpPlatform.cs" />
-    <Compile Include="Translator\CSharp\CSharpSystemFunctionTranslator.cs" />
-    <Compile Include="Translator\CSharp\CSharpTranslator.cs" />
-    <Compile Include="Translator\JavaScript\JavaScriptMinifier.cs" />
-    <Compile Include="Translator\JavaScript\JavaScriptPlatform.cs" />
-    <Compile Include="Translator\JavaScript\JavaScriptSystemFunctionTranslator.cs" />
-    <Compile Include="Translator\JavaScript\JavaScriptTranslator.cs" />
-    <Compile Include="Translator\Java\JavaAndroidOpenGlEsTranslator.cs" />
-    <Compile Include="Translator\Java\JavaAndroidPlatform.cs" />
-    <Compile Include="Translator\Java\JavaAndroidSystemFunctionTranslator.cs" />
-    <Compile Include="Translator\Java\JavaAwtPlatform.cs" />
-    <Compile Include="Translator\Java\JavaAwtSystemFunctionTranslator.cs" />
-    <Compile Include="Translator\Java\JavaPlatform.cs" />
-    <Compile Include="Translator\Java\JavaSystemFunctionTranslator.cs" />
-    <Compile Include="Translator\Java\JavaTranslator.cs" />
-    <Compile Include="Translator\Python\PyGameGamepadTranslator.cs" />
-    <Compile Include="Translator\Python\PythonPlatform.cs" />
-    <Compile Include="Translator\Python\PythonSystemFunctionTranslator.cs" />
-    <Compile Include="Translator\Python\PythonTranslator.cs" />
-    <Compile Include="Translator\CurlyBraceImplementation.cs" />
-    <Compile Include="Types.cs" />
-    <Compile Include="Util.cs" />
-    <Compile Include="VariableIdAllocator.cs" />
+    <Compile Include="ParseTree\*.cs" />
+    <Compile Include="*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_pop.cry" />
+    <EmbeddedResource Include="Languages\*\*.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Translator\JavaScript\Browser\interpreter_helpers.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\game_host_html.txt" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\game_code.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\fake_disk.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\drawing.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\file_io.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\input.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\sound.js" />
-    <EmbeddedResource Include="Translator\JavaScript\Browser\http.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translator\Python\PyGame\AsyncHttpFetcher.py" />
-    <EmbeddedResource Include="Translator\Python\PyGame\Footer.py" />
-    <EmbeddedResource Include="Translator\Python\PyGame\Header.py" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translator\CSharp\Project\ProjectFile.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\SolutionFile.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\AssemblyInfo.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\ProgramCs.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\TranslationHelper.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\ResourceReader.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\GameWindowOpenTK.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\JsonParser.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\GameWindowWinForms.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\RendererWinForms.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\ImageWinForms.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\GlUtil.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\License.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\AsyncMessageQueue.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Project\GamepadTranslationHelper.txt" />
-    <EmbeddedResource Include="Translator\CSharp\Binaries\SdlDotNet.dll" />
-    <EmbeddedResource Include="Translator\CSharp\Binaries\Tao.Sdl.dll" />
-    <EmbeddedResource Include="Translator\CSharp\Binaries\OpenTK.dll" />
-    <EmbeddedResource Include="Translator\CSharp\Binaries\SDL.dll" />
-    <EmbeddedResource Include="Translator\CSharp\Binaries\SDL_mixer.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translator\COpenGL\Project\Header.c" />
-    <EmbeddedResource Include="Translator\COpenGL\Project\Footer.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translator\Java\Project\TranslationHelper.txt" />
-    <EmbeddedResource Include="Translator\Java\Project\Start.txt" />
-    <EmbeddedResource Include="Translator\Java\Project\GameWindow.txt" />
-    <EmbeddedResource Include="Translator\Java\Project\RenderEngine.txt" />
-    <EmbeddedResource Include="Translator\Java\Project\Image.txt" />
-    <EmbeddedResource Include="Translator\Java\Project\JsonParser.txt" />
-    <EmbeddedResource Include="Translator\Java\Project\BuildXml.txt" />
-    <EmbeddedResource Include="Translator\Java\Project\AsyncMessageQueue.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translator\Java\AndroidProject\GameActivity.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\OpenGlRenderer.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\GlUtil.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\AndroidTranslationHelper.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\CrayonGlRenderer.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\CrayonGlSurfaceView.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\BuildGradle.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleProperties.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Gradlew.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradlewBat.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ProjectIml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\SettingsGradle.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperJar" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\AppBuildGradle.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\AppIml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResDrawableHdpiIcLauncher.png" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResDrawableMdpiIcLauncher.png" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResDrawableXhdpiIcLauncher.png" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResDrawableXxhdpiIcLauncher.png" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResLayoutActivityGameXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesAttrsXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesColorsXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesStringsXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesStylesXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\ResValuesV11StylesXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\JavaUtilSystemUiHiderBase.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\JavaUtilSystemUiHiderHoneycomb.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\JavaUtilSystemUiHider.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\AndroidManifestXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\IcLauncherWeb.png" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\CompilerXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\CopyrightProfilesSettingsXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\DotName.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\EncodingsXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\GradleXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\LibrariesSupportXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\MiscXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\ModulesXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\ScopeSettingsXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\VcsXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\Idea\WorkspaceXml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\AndroidIml.txt" />
-    <EmbeddedResource Include="Translator\Java\AndroidProject\Boilerplate\GradleWrapperProperties.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Translator\Java\AwtProject\AwtTranslationHelper.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="InterpreterSource\BinaryOpsUtil.cry" />
-    <EmbeddedResource Include="InterpreterSource\ByteCodeLoader.cry" />
-    <EmbeddedResource Include="InterpreterSource\Constants.cry" />
-    <EmbeddedResource Include="InterpreterSource\GamepadManager.cry" />
-    <EmbeddedResource Include="InterpreterSource\Globals.cry" />
-    <EmbeddedResource Include="InterpreterSource\Graphics.cry" />
-    <EmbeddedResource Include="InterpreterSource\Interpreter.cry" />
-    <EmbeddedResource Include="InterpreterSource\InvokeStaticConstructor.cry" />
-    <EmbeddedResource Include="InterpreterSource\IOManager.cry" />
-    <EmbeddedResource Include="InterpreterSource\MetadataInitializer.cry" />
-    <EmbeddedResource Include="InterpreterSource\NetworkManager.cry" />
-    <EmbeddedResource Include="InterpreterSource\OpenGlPipeline.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods.cry" />
-    <EmbeddedResource Include="InterpreterSource\Runner.cry" />
-    <EmbeddedResource Include="InterpreterSource\SoundManager.cry" />
-    <EmbeddedResource Include="InterpreterSource\Structs.cry" />
-    <EmbeddedResource Include="InterpreterSource\TypesUtil.cry" />
-    <EmbeddedResource Include="InterpreterSource\ValueStackCapacityCheck.cry" />
-    <EmbeddedResource Include="InterpreterSource\ValueUtil.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="InterpreterSource\Ops\add_literal.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\add_name.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\assign_index.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\assign_local.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\assign_static_field.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\assign_step.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\assign_this_step.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\binary_op.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\boolean_not.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\build_switch_int.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\build_switch_string.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\call_function.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\call_lib_function.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\class_definition.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\def_dictionary.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\def_list.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\def_original_code.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\deref_dot.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\deref_instance_field.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\deref_static_field.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\duplicate_stack_top.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\finalize_initialization.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\function_definition.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\index.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\iteration_step.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\jump.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\jump_if_false.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\jump_if_false_no_pop.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\jump_if_true.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\jump_if_true_no_pop.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\list_slice.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\literal.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\literal_stream.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\local.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\negative_sign.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\pop.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\pop_if_null_or_jump.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\push_func_ref.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\return.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\sprite_sheet_builder.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\stack_insertion_for_increment.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\stack_swap_pop.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\switch_int.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\switch_string.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\this.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\token_data.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\user_code_start.cry" />
-    <EmbeddedResource Include="InterpreterSource\Ops\verify_type_is_iterable.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\1_arg.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\2_arg.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\3_arg.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\4_arg.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\5_arg.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\6_arg.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\7_arg.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\8_arg.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\9_arg.cry" />
-    <EmbeddedResource Include="InterpreterSource\FrameworkFunctions\10_arg.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\dict_clear.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\dict_clone.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\dict_contains.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\dict_get.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\dict_keys.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\dict_merge.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\dict_remove.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\dict_values.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_add.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_clear.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_clone.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_concat.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_contains.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_filter.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_insert.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_join.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_map.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_remove.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_reverse.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_shuffle.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\list_sort.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\string_contains.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\string_ends_with.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\string_index_of.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\string_lower.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\string_replace.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\string_reverse.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\string_split.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\string_starts_with.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\string_trim.cry" />
-    <EmbeddedResource Include="InterpreterSource\PrimitiveMethods\string_upper.cry" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="InterpreterSource\PrimitiveMethods\_README.txt" />
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{18617a9a-3b1f-4532-bf4d-12bd62a3e5c6}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Interpreter\Interpreter.csproj">
+      <Project>{b7d7c85b-96ce-4fd5-9653-cc9bce291363}</Project>
+      <Name>Interpreter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pastel\Pastel.csproj">
+      <Project>{6d073ba4-2e71-42ac-8f5a-5c3079d935cd}</Project>
+      <Name>Pastel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\CApp\CApp.csproj">
+      <Project>{7f8c6292-5e35-4fd2-91c4-98123fd4e7e3}</Project>
+      <Name>CApp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\CSharpApp\CSharpApp.csproj">
+      <Project>{4dca9e82-a6c2-4669-84f3-00d13204af7e}</Project>
+      <Name>CSharpApp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\JavaAppAndroid\JavaAppAndroid.csproj">
+      <Project>{41debac3-73c4-4f40-93ae-9fe02319276d}</Project>
+      <Name>JavaAppAndroid</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\JavaApp\JavaApp.csproj">
+      <Project>{0d8c38e5-6b24-489e-9c0f-d8101086bc32}</Project>
+      <Name>JavaApp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\JavaScriptAppChrome\JavaScriptAppChrome.csproj">
+      <Project>{f83233e0-fd87-4db6-9b6b-db828240f3d3}</Project>
+      <Name>JavaScriptAppChrome</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\JavaScriptApp\JavaScriptApp.csproj">
+      <Project>{e2558b29-a032-40d0-90b0-1a9de368ec16}</Project>
+      <Name>JavaScriptApp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj">
+      <Project>{c1876949-86d6-405e-b717-afc56c27e1c8}</Project>
+      <Name>JavaScriptAppIos</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\LangC\LangC.csproj">
+      <Project>{85cc1b47-a0c5-48b0-ba51-b3599acd1392}</Project>
+      <Name>LangC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\PythonApp\PythonApp.csproj">
+      <Project>{4e41e38d-3ff9-4c91-9446-5f51024d8bd9}</Project>
+      <Name>PythonApp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\LangCSharp\LangCSharp.csproj">
+      <Project>{bd2af3e6-4a96-4511-86a5-e414a6cab81e}</Project>
+      <Name>LangCSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\LangJavaScript\LangJavaScript.csproj">
+      <Project>{56f7043f-a270-4900-b6d3-1701af619a1b}</Project>
+      <Name>LangJavaScript</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\LangJava\LangJava.csproj">
+      <Project>{3f62b368-b14f-4c77-98ab-c94b19b07eaf}</Project>
+      <Name>LangJava</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\LangPython\LangPython.csproj">
+      <Project>{11ff3292-43a0-4c40-93de-4f0dd18c4e4a}</Project>
+      <Name>LangPython</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platform\Platform.csproj">
+      <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
+      <Name>Platform</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

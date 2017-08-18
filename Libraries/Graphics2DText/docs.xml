@@ -1,0 +1,6 @@
+<library name="Graphics2DText">
+	<description>Provides functionality to render text in games made with the Game library</description>
+	<namespace name="Graphics2DText">
+		
+	</namespace>
+</library>

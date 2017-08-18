@@ -1,0 +1,13 @@
+﻿tokensByPc = p.tokenData;
+i = row[0] + p.userCodeStart; // PC
+int1 = row[1]; // Line
+int2 = row[2]; // Col
+int3 = row[3]; // File ID
+
+tokens = tokensByPc[i];
+if (tokens == null) {
+    tokens = new List<Token>();
+    tokensByPc[i] = tokens;
+}
+
+tokens.Add(new Token(int1, int2, int3));

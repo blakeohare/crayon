@@ -1,3 +1,0 @@
-﻿
-// $music_set_master_volume(value)
-import inline "InterpreterSource/FrameworkFunctions/1_arg.cry";

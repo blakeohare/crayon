@@ -1,0 +1,27 @@
+﻿type = row[0];
+if (type == Types.NULL) {
+    p.literalTableBuilder.Add(VALUE_NULL);
+} else if (type == Types.BOOLEAN) {
+    if (row[1] == 1) {
+        p.literalTableBuilder.Add(VALUE_TRUE);
+    } else {
+        p.literalTableBuilder.Add(VALUE_FALSE);
+    }
+} else if (type == Types.INTEGER) {
+    p.literalTableBuilder.Add(buildInteger(row[1]));
+} else if (type == Types.FLOAT) {
+        p.literalTableBuilder.Add(buildFloat(Core.ParseFloatUnsafe(stringArgs[pc])));
+} else if (type == Types.STRING) {
+    p.literalTableBuilder.Add(buildCommonString(stringArgs[pc]));
+} else if (type == Types.FUNCTION) {
+    string1 = stringArgs[pc];
+    int1 = p.literalTableBuilder.Size();
+    p.literalTableBuilder.Add(buildCommonString(string1));
+    p.invFunctionNameLiterals[string1] = int1;
+} else if (type == Types.CLASS) {
+    classValue = new ClassValue(
+        // TODO: going to need to update this for interfaces. Negative numbers too hacky?
+        false, // is interface?
+        row[1]); // class ID
+    p.literalTableBuilder.Add(new Value(Types.CLASS, classValue));
+}

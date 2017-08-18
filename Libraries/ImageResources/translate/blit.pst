@@ -1,0 +1,40 @@
+﻿/*
+    All arguments are within valid range before this function is invoked.
+
+    arg 1: NativeImageData object, whose nativeData[0] bitmap must be modified.
+    arg 2: NativeImageData object, whose nativeData[0] bitmap must be copied onto arg 1's
+    arg 3: target left (int)
+    arg 4: target top (int)
+    arg 5: source left (int)
+    arg 6: source top (int)
+    arg 7: width (int)
+    arg 8: height (int)
+*/
+Value lib_imageresources_function_blit(Array<Value> args) {
+    object object1 = null;
+    ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+    ObjectInstance objInstance2 = ((ObjectInstance) args[1].internalValue);
+
+    // If pixel edit sessions are not used, then the object1 arg is not used in the following blit command
+    // and so not setting it will not have any adverse effects.
+    if (@ext_boolean("IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS")) {
+        Array<object> objArray1 = objInstance1.nativeData;
+        object1 = objArray1[3];
+        if (object1 == null) {
+            object1 = Native._lib_imageresources_getPixelEditSession(objArray1[0]);
+            objArray1[3] = object1;
+        }
+    }
+    Native._lib_imageresources_blit(
+        objInstance1.nativeData[0], // target bitmap
+        objInstance2.nativeData[0], // source bitmap
+        (int) args[2].internalValue, // target left
+        (int) args[3].internalValue, // target top
+        (int) args[4].internalValue, // source left
+        (int) args[5].internalValue, // source top
+        (int) args[6].internalValue, // width
+        (int) args[7].internalValue, // height
+        object1); // pixel edit session
+
+    return VALUE_NULL;
+}

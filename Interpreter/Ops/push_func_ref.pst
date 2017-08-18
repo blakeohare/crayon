@@ -1,0 +1,43 @@
+﻿/*
+    row[0] --> Function ID
+    row[1] --> Type (see below)
+    row[2] --> class ID
+
+    Possible values for type:
+        0: normal function
+        1: method
+        2: static method
+        3: lambda, one of these days
+*/
+value = null;
+switch (row[1]) {
+    case 0: // normal function
+        value = new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.FUNCTION, null, 0, row[0]));
+        break;
+    case 1: // method
+        value = new Value(Types.FUNCTION, new FunctionPointer(
+            FunctionPointerType.METHOD,
+            stack.objectContext,
+            row[2], // class ID (either object context's class ID or one of its base classes.)
+            row[0])); // function ID
+        break;
+
+    case 2: // static method
+        // note that a static constructor call must occur here.
+        classId = row[2];
+        classInfo = classTable[classId];
+        @import("InvokeStaticConstructor.pst");
+        if (bool1) {
+            value = new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.STATIC_METHOD, null, classId, row[0]));
+        } else {
+            // a precaution just in case value is ever added to InvokeStaticConstructor.pst
+            value = null;
+        }
+        break;
+}
+
+if (value != null) {
+    @import("ValueStackCapacityCheck.pst");
+    valueStack[valueStackSize] = value;
+    valueStackSize += 1;
+}

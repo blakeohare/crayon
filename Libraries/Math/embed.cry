@@ -1,33 +1,70 @@
-﻿namespace Math {
-	function abs(value) {
-		return $$lib_math_abs(value);
-	}
+namespace Math {
 
-	function arccos(ratio) {
-		return $$lib_math_arccos(ratio);
-	}
+    const PI = 3.141592653589793238462;
+    const E = 2.718281828459045235360;
 
-	function arcsin(ratio) {
-		return $$lib_math_arcsin(ratio);
-	}
+    function arccos(ratio) {
+        // range is checked in translated code.
+        return $$$('arcCos', ratio);
+    }
 
-	function arctan(ratio_or_y, x = 1) {
-		return $$lib_math_arctan(ratio_or_y, x);
-	}
+    function arcsin(ratio) {
+        // range is checked in translated code.
+        return $$$('arcSin', ratio);
+    }
 
-	function cos(theta) {
-		return $$lib_math_cos(theta);
-	}
+    function arctan(ratio_or_y, x = 1) {
+        return $$$('arcTan', ratio_or_y, x);
+    }
 
-	function floor(value) {
-		return $$lib_math_floor(value);
-	}
+    function cos(theta) {
+        return $$$('cos', theta);
+    }
 
-	function sin(theta) {
-		return $$lib_math_sin(theta);
-	}
+    function floor(value) {
+        return $$$('floor', value);
+    }
 
-	function tan(theta) {
-		return $$lib_math_tan(theta);
-	}
+    function sin(theta) {
+        return $$$('sin', theta);
+    }
+
+    function tan(theta) {
+        return $$$('tan', theta);
+    }
+
+    // All logarithms are just implemented with natural log and divided by a constant value to change base.
+    // An attempt is made to prevent floating point arithmetic from giving bogus values like log10(1000000) -> 5.999999...
+    // (see fixFuzzyFloatPrecision in ValueUtil.cry)
+    function log10(value) {
+        return $$$('ln', value, 1 / 2.302585092994046);
+    }
+    function ln(value) {
+        return $$$('ln', value, 1.0);
+    }
+    function log2(value) {
+        return $$$('ln', value, 1 / 0.6931471805599453);
+    }
+
+    // Despite the fact that the following functions are relatively simple and could be implemented in
+    // non-translated code, they are relatively common and the native code should be inlined if possible.
+    function abs(value) {
+        return $$$('abs', value);
+    }
+
+    function max(a, b) {
+        return $$$('max', a, b);
+    }
+
+    function min(a, b) {
+        return $$$('min', a, b);
+    }
+
+    function ensureRange(value, minBound, maxBound) {
+        return $$$('ensureRange', value, minBound, maxBound);
+    }
+
+    function sign(num) {
+        return $$$('sign', num);
+    }
 }

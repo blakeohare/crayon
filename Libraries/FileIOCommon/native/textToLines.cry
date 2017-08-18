@@ -1,0 +1,16 @@
+/*
+    Convert a string into a list of strings, split on the newline, but contains the original newline character.
+
+    arg 1: original string
+    arg 2: output list
+
+    output is the output list to save a VM cycle
+*/
+
+import inline "FrameworkFunctions/2_arg.cry";
+
+lib_fileiocommon_textToLines(
+    $_cast('string', Value$arg1.internalValue),
+    $_cast('List<Value>', Value$arg2.internalValue));
+
+output = arg2;

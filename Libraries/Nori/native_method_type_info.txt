@@ -1,0 +1,9 @@
+void _lib_nori_removeElementsFromUiBox(object o, Array<object> objs);
+void _lib_nori_render_rectangleLayout(object o1, object o2, int i1, int i2, int i3, int i4);
+void _lib_nori_render_rectangleVisuals(object o1, int i1, int i2, int i3, int i4);
+void _lib_nori_render_textAreaLayout(object o1, object o2, int i1, int i2, int i3, int i4);
+void _lib_nori_render_textAreaVisuals(object o1);
+void _lib_nori_render_uiBoxLayout(object o1, int i1, int i2, bool b1);
+void _lib_nori_windowInstantiate(Array<object> nd1, Array<object> nd2, List<Value> values);
+void _lib_nori_windowShow(object o1, string s1, bool b1, int i1, Value v1, Value v2, Value v3, int i2, int i3);
+void _lib_nori_windowUpdateMenu(object o1, Array<object> objects);

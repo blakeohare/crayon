@@ -1,0 +1,11 @@
+﻿void lib_manifest_RegisterFunctions(object libRegData) {
+    Core.RegisterLibraryFunction(libRegData, "addMatrix", 5);
+    Core.RegisterLibraryFunction(libRegData, "copyFrom", 3);
+    Core.RegisterLibraryFunction(libRegData, "getError", 1);
+    Core.RegisterLibraryFunction(libRegData, "getValue", 3);
+    Core.RegisterLibraryFunction(libRegData, "initMatrix", 3);
+    Core.RegisterLibraryFunction(libRegData, "multiplyMatrix", 5);
+    Core.RegisterLibraryFunction(libRegData, "multiplyScalar", 4);
+    Core.RegisterLibraryFunction(libRegData, "setValue", 4);
+    Core.RegisterLibraryFunction(libRegData, "toVector", 2);
+}

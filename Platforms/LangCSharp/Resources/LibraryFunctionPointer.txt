@@ -1,0 +1,22 @@
+﻿using System;
+using Interpreter.Structs;
+
+namespace Interpreter.Vm
+{
+	// TODO: if there's no special logic that ends up going in here, remove this and use Func<Value[], Value>'s directly
+
+    public class LibraryFunctionPointer
+    {
+        private Func<Value[], Value> functionPointer;
+
+        public LibraryFunctionPointer(Func<Value[], Value> fp)
+        {
+            this.functionPointer = fp;
+        }
+
+        public Value Run(Value[] args)
+        {
+            return this.functionPointer.Invoke(args);
+        }
+    }
+}

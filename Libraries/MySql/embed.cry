@@ -1,0 +1,107 @@
+﻿namespace MySql {
+
+    function connect(host, user, password, db) {
+        return new MySql.Connection(host, user, password, db);
+    }
+
+    class Connection {
+        static field _lastConnection = null;
+
+        constructor(host, user, password, db) {
+            $$lib_mysql_connect(this, host + '', user + '', password + '', db + '');
+            Connection._lastConnection = this;
+        }
+
+        function _queryImpl(output, sql) {
+            columnsOut = [];
+            error = $$lib_mysql_runQuery(this, output, sql, MySql.Connection._reusableOut, columnsOut);
+            if (error != null) {
+                Core.assert(false, "MySQL encountered an error: " + error);
+            }
+
+            if (output != null) {
+                output._results = MySql.Connection._reusableOut[1];
+                output._colCount = columnsOut.length / 2;
+                if (output._colCount != 0) {
+                    output._columns = columnsOut[::2];
+                    output._columnTypes = columnsOut[1::2];
+                } else {
+                    output._columns = [];
+                    output._columnTypes = [];
+                }
+            }
+            return output;
+        }
+
+        function select(sql) {
+            return this._queryImpl(new MySqlSelectResult(), sql);
+        }
+
+        function sanitize(str) {
+            return $$lib_mysql_sanitize(str + '', this);
+        }
+
+        static field _reusableOut = [null, null];
+        function insert(table, valuesDict) {
+
+            sql = [
+                'INSERT INTO `',
+                $$lib_mysql_sanitize(table + '', this),
+                '`'];
+            if (valuesDict.length == 0) {
+                sql.add(' DEFAULT VALUES');
+            } else {
+                columns = [];
+                values = [];
+                for (column : valuesDict.keys()) {
+                    columns.add('`' + $$lib_mysql_sanitize(column + '', this) + '`');
+                    values.add("'" + $$lib_mysql_sanitize(valuesDict[column] + '', this) + "'");
+                }
+                sql.add('(');
+                sql.add(columns.join(', '));
+                sql.add(') VALUES (');
+                sql.add(values.join(', '));
+                sql.add(')');
+            }
+
+            this._queryImpl(null, sql.join());
+            return MySql.Connection._reusableOut[0];
+        }
+    }
+
+    class MySqlSelectResult {
+        field _results = null;
+        field _current = 0;
+        field _columns = null;
+        field _columnTypes = null;
+        field _colCount = null;
+        field _values = [];
+
+        constructor() { }
+
+        function hasMore() {
+            return this._current < this._results;
+        }
+
+        function getColumns() {
+            return this._columns.clone();
+        }
+
+        function getNext() {
+            if (this._current >= this._results) {
+                Core.assert(false, "getNext() was called when there were no more rows.");
+            }
+            this._values.clear();
+            $$lib_mysql_resultGetNext(this, this._columns, this._columnTypes, this._values);
+            if (this._colCount == null) {
+                this._colCount = this._columns.length;
+            }
+            output = {};
+            for (i = 0; i < this._colCount; ++i) {
+                output[this._columns[i]] = this._values[i];
+            }
+            this._current++;
+            return output;
+        }
+    }
+}

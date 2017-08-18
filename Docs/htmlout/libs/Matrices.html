@@ -1,0 +1,332 @@
+<html><head><title>Documentation</title></head><body><style>body { font-family: "Helvetica", "Arial", sans-serif; }
+h1 { font-size:20pt; font-weight:bold; color:#247; }
+h2 { font-size:16pt; font-weight:bold; color:#247; }
+h3 { font-size:12pt; font-weight:bold; color:#247; }
+.codefont { font-family: "Menlo", "Consolas", "Courier New", monospace; font-size:10pt; }
+table.arguments { border-radius:8px; overflow:hidden; border-spacing:0px; border-collapse: separate; background-color:#eee; }
+table.arguments thead { background-color:#ccc; font-weight:bold; text-align:left; }
+table.arguments td, table.arguments th { padding:8px; padding-right:20px; }
+table.arguments tbody tr { vertical-align:top; }
+td.argname { color:#286; }
+table.arguments td.argtype { color:#666; }
+td.optional { color:#000; font-weight:bold; }
+.codesnippet { background-color:#eee; border-radius:8px; padding:16px; margin-bottom:12px; }
+.itembox { margin-bottom:40px; margin-left:30px;}
+a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
+a.bookmark:hover { color:#08a; }
+p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
+.keyword { font-weight:normal; }</style><h1>Matricies</h1><div class="itembox">
+<p class="description">Library for performing operations on matrices.</p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> Matricies<ul>
+<li><a href="#class-matricies-matrix"><span class="codefont">class</span> Matrix</a><ul>
+<li><a href="#constructor-matricies-matrix"><span class="codefont">constructor</span>(rows, cols)</a></li>
+<li><a href="#func-matricies-matrix-addmatrix"><span class="codefont">function</span> addMatrix(other, output)</a></li>
+<li><a href="#func-matricies-matrix-copyfrom"><span class="codefont">function</span> copyFrom(other)</a></li>
+<li><a href="#func-matricies-matrix-getvalue"><span class="codefont">function</span> getValue(row, col)</a></li>
+<li><a href="#func-matricies-matrix-multiplybymatrix"><span class="codefont">function</span> multiplyByMatrix(other, output)</a></li>
+<li><a href="#func-matricies-matrix-multiplybyscalar"><span class="codefont">function</span> multiplyByScalar(value)</a></li>
+<li><a href="#func-matricies-matrix-newidentitymatrix"><span class="codefont">static function</span> newIdentityMatrix(n)</a></li>
+<li><a href="#func-matricies-matrix-setvalue"><span class="codefont">function</span> setValue(row, col, value)</a></li>
+<li><a href="#func-matricies-matrix-tovector"><span class="codefont">function</span> toVector(output)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div>
+<h1><span class="keyword">class</span> Matrix<a class="bookmark" name="class-matricies-matrix" href="#class-matricies-matrix">[link]</a></h1>
+<div class="itembox">
+<p class="description">
+				Represents an n by m matrix of floats.
+			</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">new</span> Matrix(rows, cols)<a class="bookmark" name="constructor-matricies-matrix" href="#constructor-matricies-matrix">[link]</a></h2>
+<div class="itembox">
+<p class="description">Creates a new matrix</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">rows</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">Number of rows</p></td>
+</tr>
+<tr>
+<td class="codefont argname">cols</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">Number of columns</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> addMatrix(other, output)<a class="bookmark" name="func-matricies-matrix-addmatrix" href="#func-matricies-matrix-addmatrix">[link]</a></h2>
+<div class="itembox">
+<p class="description">Adds another matrix to this matrix and writes it to the optional output matrix</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">other</td>
+<td class="codefont argtype">Matrix</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">The matrix to add to this matrix.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">output</td>
+<td class="codefont argtype">Matrix</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">The matrix to write the result to. If this is not provided, the new values will be written to the original Matrix.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Matrix</td><td class="description"><p class="description">Returns a reference to the original matrix so that chaining can be used.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> copyFrom(other)<a class="bookmark" name="func-matricies-matrix-copyfrom" href="#func-matricies-matrix-copyfrom">[link]</a></h2>
+<div class="itembox">
+<p class="description">Copies the values of one matrix into another.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">other</td>
+<td class="codefont argtype">Matrix</td>
+<td class="description"><p class="description">The matrix to copy values from. Must be the same size.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Matrix</td><td class="description"><p class="description">Returns a reference to the original matrix so that chaining can be used.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getValue(row, col)<a class="bookmark" name="func-matricies-matrix-getvalue" href="#func-matricies-matrix-getvalue">[link]</a></h2>
+<div class="itembox">
+<p class="description">Gets the value at the given column and row</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">row</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">row</p></td>
+</tr>
+<tr>
+<td class="codefont argname">col</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">column</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">float</td><td class="description"><p class="description">Float located at that coordinate</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> multiplyByMatrix(other, output)<a class="bookmark" name="func-matricies-matrix-multiplybymatrix" href="#func-matricies-matrix-multiplybymatrix">[link]</a></h2>
+<div class="itembox">
+<p class="description">Multiplies another matrix to this matrix and writes it to the optional output matrix. Dimensions must be correct.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">other</td>
+<td class="codefont argtype">Matrix</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">The matrix to multiply this matrix by.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">output</td>
+<td class="codefont argtype">Matrix</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">The matrix to write the result to. If this is not provided, the new values will be written to the original Matrix ONLY if the matrix is square. Otherwise, an error will be thrown.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Matrix</td><td class="description"><p class="description">Returns a reference to the original matrix so that chaining can be used.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> multiplyByScalar(value)<a class="bookmark" name="func-matricies-matrix-multiplybyscalar" href="#func-matricies-matrix-multiplybyscalar">[link]</a></h2>
+<div class="itembox">
+<p class="description">Multiplies all values in the matrix by a scalar</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">float</td>
+<td class="description"><p class="description">The scalar value to multiply by.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Matrix</td><td class="description"><p class="description">Returns a reference to the original matrix so that chaining can be used.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> newIdentityMatrix(n)<a class="bookmark" name="func-matricies-matrix-newidentitymatrix" href="#func-matricies-matrix-newidentitymatrix">[link]</a></h2>
+<div class="itembox">
+<p class="description">Generates a new n by n identity matrix.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">n</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">The size of the matrix (it's a square).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Matrix</td><td class="description"><p class="description">A new identity matrix instance</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> setValue(row, col, value)<a class="bookmark" name="func-matricies-matrix-setvalue" href="#func-matricies-matrix-setvalue">[link]</a></h2>
+<div class="itembox">
+<p class="description">Sets a value at the given column and row</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">row</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">row</p></td>
+</tr>
+<tr>
+<td class="codefont argname">col</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">column</p></td>
+</tr>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">float</td>
+<td class="description"><p class="description">The value to set</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Matrix</td><td class="description"><p class="description">Returns a reference to the original matrix so that chaining can be used.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> toVector(output)<a class="bookmark" name="func-matricies-matrix-tovector" href="#func-matricies-matrix-tovector">[link]</a></h2>
+<div class="itembox">
+<p class="description">Flattens the matrix into a single dimensional list. Values are written starting from the top left corner and go left-to-right first, then row-by-row down.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">output</td>
+<td class="codefont argtype">List of floats</td>
+<td class="description"><p class="description">A list to write to. Values are written starting from position 0. If the list is not long enough, values will be added. If the list is longer than the number of elements in the matrix, the remaining values are left alone.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">List of floats</td><td class="description"><p class="description">Returns the list.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

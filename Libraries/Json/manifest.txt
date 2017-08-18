@@ -1,0 +1,4 @@
+NAME: Json
+AUTHOR: Blake O'Hare
+DOCUMENTATION: http://crayonlang.org/docs/0.2.0/json
+DESCRIPTION: Library for parsing JSON strings into objects.

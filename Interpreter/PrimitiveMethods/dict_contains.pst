@@ -1,0 +1,15 @@
+﻿if (argCount != 1) {
+    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary contains method", 1, argCount));
+}
+
+value = funcArgs[0];
+output = VALUE_FALSE;
+if (value.type == Types.STRING) {
+    if (dictImpl.keyStringLookup.Contains(((string) value.internalValue))) {
+        output = VALUE_TRUE;
+    }
+} else if (value.type == Types.INTEGER) {
+    if (dictImpl.keyIntLookup.Contains(((int) value.internalValue))) {
+        output = VALUE_TRUE;
+    }
+}

@@ -1,0 +1,145 @@
+<library name="Math">
+	<description>Library for common mathematical functions.</description>
+	<namespace name="Math">
+		<const name="PI" type="float" value="3.141592653589793238462" description="It's pi."/>
+		<const name="E" type="float" value="2.718281828459045235360" description="It's e."/>
+
+		<function name="arccos">
+			<description>Calculates the arc cosine (inverse cosine) of the given ratio.</description>
+			<arg name="ratio" type="float" description="A valid cosine ratio."/>
+			<returns type="float" description="the angle with the given cosine value in radians"/>
+		</function>
+
+		<function name="arcsin">
+			<description>Calculates the arc sine (inverse sine) of the given ratio.</description>
+			<arg name="ratio" type="float" description="A valid sine ratio."/>
+			<returns type="float" description="the angle with the given sine value in radians"/>
+		</function>
+
+		<function name="arctan">
+			<description>
+				Calculates the arc tangent (inverse tangent) of the given ratio.
+				This function can be called with either 1 or 2 arguments. 
+				If given one argument, that value is the ratio and a theta between -pi / 2 and pi / 2will be returned.
+				If given two arguments, these represent y and x components (respectively) of a vector.
+				By providing two vector components, you will get return values in the full range of -pi to pi.
+			</description>
+			<arg name="yComponent" type="float" description="A y-component value."/>
+			<arg name="xComponent" type="float" optional="true" description="An optional x-component value. If ommitted, the default value is 1.0 and the first argument simply becomes a ratio."/>
+			<returns type="float" description="the angle with the given tangent value"/>
+		</function>
+
+		<function name="cos">
+			<description>Computes the cosine of the given angle</description>
+			<arg name="theta" type="float" description="An angle in radians"/>
+			<returns type="float" description="The cosine ratio"/>
+		</function>
+
+		<function name="cos">
+			<description>Computes the sine of the given angle</description>
+			<arg name="theta" type="float" description="An angle in radians"/>
+			<returns type="float" description="The sine ratio"/>
+		</function>
+
+		<function name="tan">
+			<description>
+				Computes the tangent of the given angle.
+			</description>
+			<arg name="theta" type="float" description="An angle in radians"/>
+			<returns type="float" description="The tangent ratio"/>
+		</function>
+
+		<function name="floor">
+			<description>
+				Returns the integer less than or equal to the given number.
+			</description>
+			<arg name="number" type="float|int" description="A float to round down. Integers are also valid input, but will return themselves."/>
+			<returns type="int" description="The next integer less than or equal to the input."/>
+		</function>
+
+		<function name="log10">
+			<description>
+				Computes the base-10 logarithm of the input.
+				Throws Core.InvalidArgumentException for values less than or equal to 0.
+				Guaranteed to return floating-point-error-free floats for inputs that are exactly powers of 10.
+			</description>
+			<arg name="number" type="float|int" description="A positive number"/>
+			<returns type="float" description="The base 10 logarithm"/>
+		</function>
+
+		<function name="log2">
+			<description>
+				Computes the base-2 logarithm of the input.
+				Throws Core.InvalidArgumentException for values less than or equal to 0.
+				Guaranteed to return floating-point-error-free floats for inputs that are exactly powers of 2.
+			</description>
+			<arg name="number" type="float|int" description="A positive number"/>
+			<returns type="float" description="The base 2 logarithm"/>
+		</function>
+
+		<function name="ln">
+			<description>
+				Computes the natural logarithm (base e) of the input.
+				Throws Core.InvalidArgumentException for values less than or equal to 0.
+			</description>
+			<arg name="number" type="float|int" description="A positive number"/>
+			<returns type="float" description="The natural logarithm"/>
+		</function>
+
+		<function name="abs">
+			<description>
+				Returns the absolute value of the given numerical input.
+				The type of the output will match the input.
+			</description>
+			<arg name="number" type="float|int" description="Any number"/>
+			<returns type="float|int" description="A positive number"/>
+		</function>
+
+		<function name="max">
+			<description>
+				Returns the maximum of two numbers.
+				The type of the output will match the number that is chosen.
+				For example, max(3.0, 2) will be 3.0, but the max of (3, 2.0) will be 3.
+				If they match, the first number is returned, so max(3.0, 3) is unambiguously 3.0, not 3.
+			</description>
+			<arg name="a" type="float|int" description="Any number"/>
+			<arg name="b" type="float|int" description="Any number"/>
+			<returns type="float|int" description="The higher number."/>
+		</function>
+
+		<function name="min">
+			<description>
+				Returns the minimum of two numbers.
+				The type of the output will match the number that is chosen.
+				For example, min(2.0, 3) will be 2.0, but the min of (2, 3.0) will be 2.
+				If they match, the first number is returned, so min(3.0, 3) is unambiguously 3.0, not 3.
+			</description>
+			<arg name="a" type="float|int" description="Any number"/>
+			<arg name="b" type="float|int" description="Any number"/>
+			<returns type="float|int" description="The lower number."/>
+		</function>
+
+		<function name="ensureRange">
+			<description>
+				Ensures the number falls within the given range.
+				The type of the output will match the number that is chosen.
+				For example, ensureRange(2.0, 1, 3) will be 2.0, but ensureRange of (2, 0, 1) will be 1.
+				If the number matches either the upper or lower bound, the initial input will be returned,
+				so ensureRange(3.0, 3, 4) is unambiguously 3.0, not 3.
+			</description>
+			<arg name="num" type="float|int" description="Any number"/>
+			<arg name="lowerBound" type="float|int" description="The lower bound"/>
+			<arg name="upperBound" type="float|int" description="The upper bound"/>
+			<returns type="float|int" description="A guaranteed to be in the given range."/>
+		</function>
+
+		<function name="sign">
+			<description>
+				Determines positive/negative/zero-ness of a number by returning -1, 0, or 1 accordingly.
+				Output is always an integer regardless of input type.
+			</description>
+			<arg name="num" type="float|int" description="Any number"/>
+			<returns type="int" description="-1 if the number is negative. 1 if it's positive. 0 if it's 0 or 0.0"/>
+		</function>
+	</namespace>
+</library>

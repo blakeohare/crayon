@@ -1,0 +1,77 @@
+﻿namespace Graphics2DText {
+
+    /*
+        nativeData[0] -> bitmap instance (lifetime is very short, discarded once loaded)
+    */
+    class GLTextureSheet {
+        field tiles = [];
+        field tilesByCharId = {};
+
+        constructor(rows) {
+            y = 0;
+            height = rows[0][0].height;
+            xs = [];
+            ys = [];
+            tiles = [];
+            for (row : rows) {
+                this.tiles.concat(row);
+                x = 0;
+                for (tile : row) {
+                    this.tilesByCharId[tile.charId] = tile;
+                    tile.sheetX = x;
+                    tile.sheetY = y;
+                    tile.sheet = this;
+                    tile.currentTextureId = null;
+                    xs.add(x);
+                    ys.add(y);
+                    tiles.add(tile);
+                    x += tile.width;
+                }
+                y += height;
+            }
+            // This will apply the properties to the individual tile's metadata
+            // It will not load the texture yet.
+            // TODO: remove "LoadTexture" from the name.
+            $$lib_graphics2dtext_glGenerateAndLoadTexture(xs, ys, tiles, y);
+        }
+
+        static function makeSheets(tiles) {
+            // A simple O(n) greedy packing algorithm
+            // Since sheets are on a per-size basis, all tiles will have the same height
+            // that makes things a little simpler.
+
+            sheets = [];
+            tilesLength = tiles.length;
+            tileIndex = 0;
+            if (tiles.length > 0) {
+                height = tiles[0].height;
+                rowCount = 1024 / height;
+                tiles.sort(GLTextureSheet.sortByWidthKeyFunction);
+                rows = [];
+                while (rows.length < rowCount && tileIndex < tilesLength) {
+                    row = [];
+                    rows.add(row);
+                    width = 0;
+                    // Fill the front of the row with as many large tiles as possible
+                    while (tileIndex < tilesLength && width + tiles[tileIndex].width < 1024) {
+                        tile = tiles[tileIndex++];
+                        row.add(tile);
+                        width += tile.width;
+                    }
+                    // once you run out of space, fill the row with as many small tiles as possible
+                    while (tileIndex < tilesLength && width + tiles[tilesLength - 1].width < 1024) {
+                        tile = tiles[--tilesLength];
+                        row.add(tile);
+                        width += tile.width;
+                    }
+                }
+                sheets.add(new GLTextureSheet(rows));
+            }
+            return sheets;
+        }
+
+        static function sortByWidthKeyFunction(tile) {
+            return tile.width;
+        }
+    }
+}

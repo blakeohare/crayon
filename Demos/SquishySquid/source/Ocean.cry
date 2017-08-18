@@ -1,0 +1,184 @@
+import Graphics2D;
+import Random;
+import Math;
+
+const KELP_SPACING = 280;
+const AVAILABLE_HEIGHT = HEIGHT - 40;
+
+class Ocean {
+
+    field squid = null;
+    field kelp = [];
+    field cameraX = 0;
+    field isAddKelpMode = false;
+    field isMoving = true;
+
+    constructor() {
+        this.squid = new Squid(-WIDTH / 4, AVAILABLE_HEIGHT / 2);
+    }
+
+    function start() {
+        this.isAddKelpMode = true;
+    }
+
+    function update() {
+        if (this.isMoving) {
+            this.cameraX += 2.0;
+            this.checkCollisions();
+        }
+
+        this.squid.x = this.cameraX - WIDTH / 4; // place squid along the left quartile
+
+        if (this.isAddKelpMode) {
+            rightEdge = this.cameraX + WIDTH / 2;
+            // add a kelp patch if there are none or the last one is on the screen.
+            if (this.kelp.length == 0 || this.kelp[-1].x < rightEdge) {
+                openingY = Math.floor(Random.randomFloat() * (AVAILABLE_HEIGHT - KELP_OPENING_HEIGHT - 60) + 30 + KELP_OPENING_HEIGHT / 2);
+                kelp = new Kelp(rightEdge + KELP_SPACING, openingY);
+                this.kelp.add(kelp);
+            }
+
+            this.squid.update();
+        }
+
+        if (this.kelp.length > 0 && this.kelp[0].x < -KELP_SPACING) {
+            this.kelp = this.kelp[1:];
+        }
+    }
+
+    function tap() {
+        this.squid.tap();
+    }
+
+    function checkCollisions() {
+        isCollision = false;
+        if (this.squid.y + this.squid.radius > AVAILABLE_HEIGHT) {
+            isCollision = true;
+        } else {
+            for (kelp : this.kelp) {
+                if (kelp.isCollision(this.squid)) {
+                    isCollision = true;
+                    break;
+                }
+            }
+        }
+
+        if (isCollision) {
+            this.squid.collide();
+            this.isMoving = false;
+        }
+    }
+
+    function renderParallaxLayer(t, y, img) {
+        width = img.width;
+        x = t % width - width;
+        while (x < WIDTH) {
+            img.draw(x, y);
+            x += width;
+        }
+    }
+
+    field backgroundItems = {
+        'sea': [],
+        'floor_far': [],
+        'floor_near': [],
+    };
+
+    field backgroundItemMovementOffsetRatio = {
+        'sea': 4.0,
+        'floor_far': 2.0,
+        'floor_near': 1.0,
+    };
+
+    function renderParallaxItems(cameraX, id) {
+        items = this.backgroundItems.get(id);
+        movementRatio = this.backgroundItemMovementOffsetRatio.get(id);
+
+        // no list? list empty? last item in list is on the screen?
+        if (items.length == 0 || items[-1][0] < WIDTH) {
+            // add some number of items to the list
+            switch (id) {
+                case 'floor_near':
+                    images = ['crab.png', 'seashell.png', 'starfish.png'];
+                    yTop = AVAILABLE_HEIGHT;
+                    yBottom = AVAILABLE_HEIGHT + 30;
+                    xMin = 0;
+                    xMax = 80;
+                    break;
+                case 'floor_far':
+                    images = ['coral1.png', 'coral2.png', 'coral3.png'];
+                    // Add 2 items somewhere random in the 80 pixels to the right of the edge of the screen
+                    yTop = HEIGHT - 140;
+                    yBottom = yTop;
+                    xMin = 0;
+                    xMax = 100;
+                    break;
+                case 'sea':
+                    images = ['shark.png', 'whale.png', 'submarine.png'];
+                    // Add 2 items somewhere random in the 80 pixels to the right of the edge of the screen
+                    yTop = 300;
+                    yBottom = 500;
+                    xMin = 300;
+                    xMax = 600;
+                    break;
+            }
+            images.shuffle();
+            image = ImageLibrary.get(images[0]);
+            // Add an item somewhere random in the 80 pixels to the right of the edge of the screen.
+            x = WIDTH + Random.randomInt(xMin, xMax) + Math.floor(cameraX / movementRatio) + image.width / 2;
+            y = Random.randomInt(yTop, yBottom + 1);
+            items.add([x - image.width / 2, y - image.height / 2, image]);
+        }
+
+        for (i = items.length - 1; i >= 0; --i) {
+            item = items[i];
+            x = item[0] - Math.floor(cameraX / movementRatio);
+            y = item[1];
+            image = item[2];
+            image.draw(x, y);
+            if (x + image.width < 0) {
+                items.remove(i);
+            }
+        }
+    }
+
+    function render() {
+        t = -this.cameraX;
+
+        Draw.fill(0, 70, 230);
+
+        parallax = {
+            // parallax layers of the ocean floor (closest to furthest)
+            'sand1': t,
+            'sand2': t / 2,
+            'sand3': t / 5,
+
+            // parallax layers of the ocean surface (closest to furthest)
+            'top1': t / 2,
+            'top2': t / 3,
+            'top3': t / 4,
+            'top4': t / 5,
+        };
+
+        waterSurface = ImageLibrary.get('ocean_top.png');
+        for (i = 3; i >= 0; --i) {
+            y = i * 30;
+            Draw.rectangle(0, 0, WIDTH, 3 * 30 + waterSurface.height, 0, 70, 230, 90);
+            this.renderParallaxLayer(parallax['top' + (i + 1)], y, waterSurface);
+        }
+
+        this.renderParallaxItems(this.cameraX, 'sea');
+
+        this.renderParallaxLayer(parallax['sand3'], HEIGHT - 128, ImageLibrary.get('ground3.png'));
+        this.renderParallaxItems(this.cameraX, 'floor_far');
+        this.renderParallaxLayer(parallax['sand2'], HEIGHT - 96, ImageLibrary.get('ground2.png'));
+
+        for (kelp : this.kelp) {
+            kelp.render(this.cameraX);
+        }
+        this.renderParallaxLayer(parallax['sand1'], HEIGHT - 64, ImageLibrary.get('ground1.png'));
+
+        this.renderParallaxItems(this.cameraX, 'floor_near');
+        this.squid.render(this.cameraX);
+    }
+}

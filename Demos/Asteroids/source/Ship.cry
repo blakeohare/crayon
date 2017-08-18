@@ -1,51 +1,73 @@
-SHIP_ROTATION_SPEED = 2 * 3.14159 / 80;
-SHIP_ACCELERATION = 1.0;
+import Graphics2D;
+import Math;
+
+const SHIP_ROTATION_SPEED = 2 * Math.PI / 80;
+const SHIP_ACCELERATION = 1.0;
+
+const SHIP_NOSE_RADIUS = 20;
+const SHIP_WING_RADIUS = 15;
+const SHIP_COLLISION_RADIUS = 10;
+
+enum ShipThrust {
+    NONE = 0,
+    ACCELERATE = 1,
+    DECELERATE = -1,
+}
+
+enum ShipRotation {
+    NONE = 0,
+    CLOCKWISE = 1,
+    COUNTER_CLOCKWISE = -1,
+}
 
 class Ship {
-	constructor(x, y) {
-		this.x = x;
-		this.y = y;
-		this.vx = 0;
-		this.vy = 0;
-		this.angle = 0;
-	}
-	
-	function update(accel, decel, rotation_dir /* -1, 0, or 1 */) {
-		if (rotation_dir != 0) {
-			this.angle += SHIP_ROTATION_SPEED * rotation_dir;
-		}
-		
-		accel_sign = accel ? 1 : decel ? -1 : 0;
-		this.vx += accel_sign * SHIP_ACCELERATION * $cos(this.angle);
-		this.vy += accel_sign * SHIP_ACCELERATION * $sin(this.angle);
-		
-		this.x += this.vx;
-		this.y += this.vy;
-		
-		
-		this.x = this.x % (0.0 + GAME_WIDTH);
-		this.y = this.y % (0.0 + GAME_HEIGHT);
-	}
-	
-	function render(rc) {
 
-		nose_radius = 20;
-		wing_radius = 15;
+    field x;
+    field y;
+    field vx = 0.0;
+    field vy = 0.0;
+    field angle = 0.0;
 
-		x1 = $floor(nose_radius * $cos(this.angle) + this.x);
-		y1 = $floor(nose_radius * $sin(this.angle) + this.y);
-		
-		ang1 = this.angle - 2.6;
-		ang2 = this.angle + 2.6;
-		
-		x2 = $floor(wing_radius * $cos(ang1) + this.x);
-		y2 = $floor(wing_radius * $sin(ang1) + this.y);
-		
-		x3 = $floor(wing_radius * $cos(ang2) + this.x);
-		y3 = $floor(wing_radius * $sin(ang2) + this.y);
-		
-		$gfx_draw_line(x1, y1, x2, y2, 2, 0, 255, 0, 255);
-		$gfx_draw_line(x1, y1, x3, y3, 2, 0, 255, 0, 255);
-		$gfx_draw_line(x3, y3, x2, y2, 2, 0, 255, 0, 255);
-	}
+    constructor(x, y) {
+        this.x = x + 0.0;
+        this.y = y + 0.0;
+    }
+
+    function update(thrust, rotation) {
+        this.angle += SHIP_ROTATION_SPEED * rotation;
+
+        this.vx += thrust * SHIP_ACCELERATION * Math.cos(this.angle);
+        this.vy += thrust * SHIP_ACCELERATION * Math.sin(this.angle);
+
+        this.x += this.vx;
+        this.y += this.vy;
+
+        this.x = this.x % GAME_WIDTH;
+        this.y = this.y % GAME_HEIGHT;
+    }
+
+    function render() {
+
+        ang1 = this.angle - Math.PI * .8;
+        ang2 = this.angle + Math.PI * .8;
+
+        // Nose coordinate
+        x1 = Math.floor(SHIP_NOSE_RADIUS * Math.cos(this.angle) + this.x);
+        y1 = Math.floor(SHIP_NOSE_RADIUS * Math.sin(this.angle) + this.y);
+
+        // Wing coordinates
+        x2 = Math.floor(SHIP_WING_RADIUS * Math.cos(ang1) + this.x);
+        y2 = Math.floor(SHIP_WING_RADIUS * Math.sin(ang1) + this.y);
+        x3 = Math.floor(SHIP_WING_RADIUS * Math.cos(ang2) + this.x);
+        y3 = Math.floor(SHIP_WING_RADIUS * Math.sin(ang2) + this.y);
+
+        // starboard
+        Draw.line(x1, y1, x2, y2, 2, 0, 255, 0);
+
+        // port
+        Draw.line(x1, y1, x3, y3, 2, 0, 255, 0);
+
+        // aft
+        Draw.line(x3, y3, x2, y2, 2, 0, 255, 0);
+    }
 }

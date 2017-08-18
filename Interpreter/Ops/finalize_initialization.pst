@@ -1,0 +1,25 @@
+﻿
+p.identifiers = Core.ListToArray(p.identifiersBuilder);
+p.literalTable = Core.ListToArray(p.literalTableBuilder);
+p.integerSwitchLookups = Core.ListToArray(p.integerSwitchLookupsBuilder);
+p.stringSwitchLookups = Core.ListToArray(p.stringSwitchLookupsBuilder);
+p.sourceCode = Core.ListToArray(p.sourceCodeBuilder);
+p.globalNameIdToPrimitiveMethodName = primitiveMethodsInitializeLookup(p.invIdentifiers);
+p.funcArgs = new Array<Value>(p.identifiers.Size()); // WAY over-allocated but that's okay for now, I guess.
+p.projectId = p.stringArgs[pc];
+p.identifiersBuilder = null;
+p.literalTableBuilder = null;
+p.integerSwitchLookupsBuilder = null;
+p.stringSwitchLookupsBuilder = null;
+p.sourceCodeBuilder = null;
+libFunctionPointers = createLibraryFunctionLookup();
+p.libraryFunctionByPc = libFunctionPointers;
+
+identifiers = p.identifiers;
+literalTable = p.literalTable;
+integerSwitches = p.integerSwitchLookups;
+stringSwitches = p.stringSwitchLookups;
+globalNameIdToPrimitiveMethodName = p.globalNameIdToPrimitiveMethodName;
+funcArgs = p.funcArgs;
+
+p.initializationComplete = true;

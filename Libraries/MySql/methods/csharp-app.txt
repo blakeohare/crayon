@@ -1,0 +1,5 @@
+$_lib_mysql_connect: TranslationHelper.ThrowNotImplemented("mysql connect")
+$_lib_mysql_query: TranslationHelper.ThrowNotImplemented("msyql query")
+$_lib_mysql_sanitize: (string)TranslationHelper.ThrowNotImplemented("mysql sanitize")
+$_lib_mysql_num_rows: (int)TranslationHelper.ThrowNotImplemented("mysql num rows")
+$_lib_mysql_getNext: TranslationHelper.ThrowNotImplemented("mysql get next")

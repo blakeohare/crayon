@@ -1,77 +1,99 @@
-﻿namespace Crayon.ParseTree
+﻿using System.Collections.Generic;
+
+namespace Crayon.ParseTree
 {
-	internal class BracketIndex : Expression
-	{
-		public override bool CanAssignTo { get { return true; } }
+    internal class BracketIndex : Expression
+    {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new System.NotImplementedException();
+        }
 
-		public Expression Root { get; set; }
-		public Token BracketToken { get; private set; }
-		public Expression Index { get; set; }
+        public override bool CanAssignTo { get { return true; } }
 
-		public BracketIndex(Expression root, Token bracketToken, Expression index, Executable owner)
-			: base(root.FirstToken, owner)
-		{
-			this.Root = root;
-			this.BracketToken = bracketToken;
-			this.Index = index;
-		}
+        public Expression Root { get; set; }
+        public Token BracketToken { get; private set; }
+        public Expression Index { get; set; }
 
-		internal override Expression Resolve(Parser parser)
-		{
-			this.Root = this.Root.Resolve(parser);
-			this.Index = this.Index.Resolve(parser);
+        public BracketIndex(Expression root, Token bracketToken, Expression index, Executable owner)
+            : base(root.FirstToken, owner)
+        {
+            this.Root = root;
+            this.BracketToken = bracketToken;
+            this.Index = index;
+        }
 
-			if (this.Root is CompileTimeDictionary)
-			{
-				// Swap out this bracketed expression with a fixed constant.
-				CompileTimeDictionary root = (CompileTimeDictionary)this.Root;
+        internal override Expression Resolve(Parser parser)
+        {
+            this.Root = this.Root.Resolve(parser);
+            this.Index = this.Index.Resolve(parser);
 
-				if (root.Type == "var")
-				{
-					if (this.Index is StringConstant)
-					{
-						string index = ((StringConstant)this.Index).Value;
+            if (this.Root is CompileTimeDictionary)
+            {
+                // Swap out this bracketed expression with a fixed constant.
+                CompileTimeDictionary root = (CompileTimeDictionary)this.Root;
 
-						if (parser.BuildContext.BuildVariableLookup.ContainsKey(index))
-						{
-							Crayon.BuildContext.BuildVarCanonicalized buildVar = parser.BuildContext.BuildVariableLookup[index];
-							switch (buildVar.Type)
-							{
-								case Crayon.BuildContext.VarType.INT: return new IntegerConstant(this.FirstToken, buildVar.IntValue, this.FunctionOrClassOwner);
-								case Crayon.BuildContext.VarType.FLOAT: return new FloatConstant(this.FirstToken, buildVar.FloatValue, this.FunctionOrClassOwner);
-								case Crayon.BuildContext.VarType.STRING: return new StringConstant(this.FirstToken, buildVar.StringValue, this.FunctionOrClassOwner);
-								case Crayon.BuildContext.VarType.BOOLEAN: return new BooleanConstant(this.FirstToken, buildVar.BoolValue, this.FunctionOrClassOwner);
-								default:
-									throw new System.Exception("This should not happen."); // invalid types filtered during build context construction.
+                if (root.Type == "var")
+                {
+                    if (this.Index is StringConstant)
+                    {
+                        string index = ((StringConstant)this.Index).Value;
 
-							}
-						}
-						else
-						{
-							throw new ParserException(this.Index.FirstToken, "The build variable with id '" + index + "' is not defined for this target.");
-						}
-					}
-				}
-				else
-				{
-					throw new System.Exception("Unknown compile time dictionary type.");
-				}
-			}
+                        if (parser.BuildContext.BuildVariableLookup.ContainsKey(index))
+                        {
+                            Crayon.BuildContext.BuildVarCanonicalized buildVar = parser.BuildContext.BuildVariableLookup[index];
+                            switch (buildVar.Type)
+                            {
+                                case Crayon.BuildContext.VarType.INT: return new IntegerConstant(this.FirstToken, buildVar.IntValue, this.FunctionOrClassOwner);
+                                case Crayon.BuildContext.VarType.FLOAT: return new FloatConstant(this.FirstToken, buildVar.FloatValue, this.FunctionOrClassOwner);
+                                case Crayon.BuildContext.VarType.STRING: return new StringConstant(this.FirstToken, buildVar.StringValue, this.FunctionOrClassOwner);
+                                case Crayon.BuildContext.VarType.BOOLEAN: return new BooleanConstant(this.FirstToken, buildVar.BoolValue, this.FunctionOrClassOwner);
+                                default:
+                                    throw new System.Exception("This should not happen."); // invalid types filtered during build context construction.
 
-			return this;
-		}
+                            }
+                        }
+                        else
+                        {
+                            return new NullConstant(this.FirstToken, this.FunctionOrClassOwner);
+                            // TODO: strict mode that enforces this. There are two ways this could be done:
+                            // 1) $var['foo'] vs $optional['foo']
+                            // 2) <strictvars>true</strictvars>
+                            // I kind of prefer #1.
 
-		internal override void SetLocalIdPass(VariableIdAllocator varIds)
-		{
-			this.Root.SetLocalIdPass(varIds);
-			this.Index.SetLocalIdPass(varIds);
-		}
+                            // throw new ParserException(this.Index.FirstToken, "The build variable with id '" + index + "' is not defined for this target.");
+                        }
+                    }
+                }
+                else
+                {
+                    throw new System.Exception("Unknown compile time dictionary type.");
+                }
+            }
 
-		internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
-		{
-			this.Root = this.Root.ResolveNames(parser, lookup, imports);
-			this.Index = this.Index.ResolveNames(parser, lookup, imports);
-			return this;
-		}
-	}
+            return this;
+        }
+
+        internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
+        {
+            this.Root = this.Root.ResolveNames(parser, lookup, imports);
+            this.Index = this.Index.ResolveNames(parser, lookup, imports);
+            return this;
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            this.Root.GetAllVariablesReferenced(vars);
+            this.Index.GetAllVariablesReferenced(vars);
+        }
+
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
+            {
+                this.Root.PerformLocalIdAllocation(varIds, phase);
+                this.Index.PerformLocalIdAllocation(varIds, phase);
+            }
+        }
+    }
 }

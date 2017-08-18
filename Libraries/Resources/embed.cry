@@ -1,4 +1,137 @@
-﻿
-function resource_read_text(filepath) {
-	return $$lib_resources_read_text(filepath);
+﻿namespace Resources {
+
+    enum ResourceNodeType {
+        // These values are used in native code implementation, so don't change them.
+        DIRECTORY = 0,
+        TEXT = 1,
+        IMAGE = 2,
+        SOUND = 3,
+        FONT = 4,
+        BINARY = 5,
+    }
+
+    class LibResourcesNode {
+        field type;
+        field name;
+        field fullpath;
+        field parent;
+        field children;
+        field realPath;
+
+        static field rootNode;
+        static field allNodesByPath;
+    }
+
+    // TODO: designate encoding. For now, UTF-8 is assumed.
+    function readText(filepath) {
+        node = _getNode(filepath);
+        if (node == null) throw new Core.Exception("Resource not found: '" + filepath + "'");
+        if (node.type != ResourceNodeType.TEXT) throw new Core.Exception("'" + filepath + "' is not a text file.");
+        return $$lib_resources_readText(node.realPath);
+    }
+
+    function fileExists(filepath) {
+        node = _getNode(filepath);
+        return node != null && node.type != ResourceNodeType.DIRECTORY;
+    }
+
+    function directoryList(path, includeFullPath = false) {
+        dir = _getNode(path);
+        if (dir == null) throw new Core.Exception("Directory '" + path + "' does not exist.");
+        if (dir.type != ResourceNodeType.DIRECTORY) throw new Core.Exception("'" + path + "' is a file, not a directory.");
+        output = [];
+        for (child : dir.children) {
+            output.add(includeFullPath ? child.fullpath : child.name);
+        }
+        return output;
+    }
+
+    function directoryExists(path) {
+        node = _getNode(path);
+        return node != null && node.type == ResourceNodeType.DIRECTORY;
+    }
+
+    function _getNode(path) {
+        if (LibResourcesNode.rootNode == null) _initializeLibResNode();
+        return LibResourcesNode.allNodesByPath.get(path);
+    }
+
+    function _nodeSortKey(node) {
+        return node.name;
+    }
+
+    function _initializeLibResNode() {
+
+        allNodesByPath = {};
+
+        // explicitly initialize the root just in case there are no resources.
+        LibResourcesNode.rootNode = new LibResourcesNode();
+        LibResourcesNode.rootNode.type = ResourceNodeType.DIRECTORY;
+        LibResourcesNode.rootNode.name = '';
+        LibResourcesNode.rootNode.fullpath = '';
+        LibResourcesNode.rootNode.children = [];
+        allNodesByPath[''] = LibResourcesNode.rootNode;
+
+        /*
+            data is a flat list with in the following format:
+                [3n + 0] -> full/path/filename/foo.txt (no leading slash)
+                [3n + 1] -> type (int) value in ResourceNodeType enum
+                [3n + 2] -> internal reference path
+        */
+        data = $$lib_resources_getResourceData();
+        i = 0;
+        while (i < data.length) {
+            path = data[i++];
+            type = data[i++];
+            resPath = data[i++];
+
+            pathParts = path.split('/');
+            pathBuilder = [];
+            previousDir = null;
+            for (j = 0; j <= pathParts.length; ++j) {
+                isLast = j == pathParts.length;
+                dirPath = pathBuilder.join('/');
+                node = allNodesByPath.get(dirPath);
+                if (node == null) {
+                    node = new LibResourcesNode();
+                    node.type = isLast ? type : ResourceNodeType.DIRECTORY;
+                    node.name = pathParts[j - 1];
+                    node.fullpath = dirPath;
+                    node.children = isLast ? null : [];
+                    node.parent = previousDir;
+                    allNodesByPath[dirPath] = node;
+
+                    if (isLast) {
+                        node.realPath = resPath;
+                    }
+                }
+                previousDir = node;
+                if (!isLast) {
+                    pathBuilder.add(pathParts[j]);
+                }
+            }
+        }
+
+        allNodes = allNodesByPath.values();
+
+        for (node : allNodes) {
+            parent = node.parent;
+            if (parent != null) {
+                parent.children.add(node);
+            }
+        }
+
+        for (node : allNodes) {
+            if (node.type == ResourceNodeType.DIRECTORY) {
+                node.children.sort(Resources._nodeSortKey);
+            }
+        }
+
+        for (node : allNodes) {
+            // also allow lookup with preceding slash
+            allNodesByPath['/' + node.fullpath] = node;
+        }
+
+        LibResourcesNode.allNodesByPath = allNodesByPath;
+    }
 }

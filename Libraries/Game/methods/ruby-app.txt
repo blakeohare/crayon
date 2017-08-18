@@ -1,0 +1,5 @@
+$_lib_game_get_events_raw_list: libGame_getEventsRaw()
+$_lib_game_initialize_game_with_fps: libGame_setFps([ARG:1])
+$_lib_game_initialize_screen: libGame_openWindow([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+$_lib_game_set_title: libGame_setWindowTitle([ARG:1])
+$_lib_game_clockTick: libGame_clockTick()

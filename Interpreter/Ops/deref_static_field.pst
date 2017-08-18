@@ -1,0 +1,11 @@
+﻿
+classInfo = classTable[row[0]];
+
+// reads value in classInfo and sets bool1 to true if op should continue.
+@import("InvokeStaticConstructor.pst");
+
+if (bool1) {
+    @import("ValueStackCapacityCheck.pst");
+    valueStack[valueStackSize] = classInfo.staticFields[row[1]];
+    valueStackSize += 1;
+}

@@ -1,0 +1,115 @@
+﻿// $$lib_easing_interpolate(this, start, end, current, duration, integers, easingType)
+
+/*
+    Easing types:
+    0 --> ease in (do not modify progress)
+    1 --> ease out (reverse progress)
+    2 --> ease in then out
+*/
+
+import inline "FrameworkFunctions/7_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+objArray1 = ObjectInstance$objInstance1.nativeData;
+len = $_array_length(objArray1);
+int1 = $_cast('int', Value$arg7.internalValue);
+
+// current
+if (Value$arg4.type == Types.INTEGER) {
+    float1 = $_cast('int', Value$arg4.internalValue);
+} else if (Value$arg4.type == Types.FLOAT) {
+    float1 = $_cast('double', Value$arg4.internalValue);
+} else {
+    return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "current value was not a number.");
+}
+
+// duration
+if (Value$arg5.type == Types.INTEGER) {
+    float2 = $_cast('int', Value$arg5.internalValue);
+} else if (Value$arg5.type == Types.FLOAT) {
+    float2 = $_cast('double', Value$arg5.internalValue);
+} else {
+    return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "duration value was not a number.");
+}
+
+bool1 = false; // should invert ratio value
+bool2 = false; // add a half
+first = false; // multiply by a half (reuse abuse)
+
+// Manipulate the current and duration values to achieve ease in/out/in-out
+if (int1 == 2) {
+    first = true;
+    // do normal ease in progression for the first half, then do the ease out progress for the second half, except inverted.
+    if (float1 * 2.0 > float2) {
+        // do ease-out progression (normalize current 2nd-half value as though it was a full range value)
+        float1 = (float2 - float1) * 2;
+        bool1 = true;
+        bool2 = true;
+    } else {
+        // do normal ease-in progression twice as fast.
+        float1 *= 2.0;
+    }
+} else if (int1 == 1) {
+    float1 = float2 - float1;
+    bool1 = true;
+}
+
+if (float2 == 0) {
+    // Not sure whether throwing an error is better here or just fail silently to 0%.
+    float1 = $_cast('double', $_array_get(objArray1, 0));
+} else {
+    if (float2 < 0) {
+        float2 = -float2;
+        float1 = -float1;
+    }
+
+    if (float1 >= float2) {
+        float1 = $_cast('double', $_array_get(objArray1, len - 1));
+    } else if (float1 < 0) {
+        float1 = $_cast('double', $_array_get(objArray1, 0));
+    } else {
+        float1 = $_unsafe_float_division(float1, float2);
+
+        if (len > 2) { // if there's only 2 points, then the result can only be linear
+
+            float2 = float1 * len; // which index to use?
+            i = $_int(float2); // round down
+            float2 -= i; // this is the ratio between this index and the next
+
+            float1 = $_cast('double', $_array_get(objArray1, i)); // get the left value
+            if (i < len - 1 && float2 > 0) { // not at the end of the list? ratio of right value more than 0?
+                float3 = $_cast('double', $_array_get(objArray1, i + 1)); // get the right value
+                float1 = float1 * (1 - float2) + float3 * float2; // linearly interpolate between left and right values.
+            }
+        }
+    }
+}
+
+if (Value$arg2.type == Types.INTEGER) {
+    float2 = $_cast('int', Value$arg2.internalValue);
+} else if (Value$arg2.type == Types.FLOAT) {
+    float2 = $_cast('double', Value$arg2.internalValue);
+} else {
+    return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "Start position must be a number.");
+}
+if (Value$arg3.type == Types.INTEGER) {
+    float3 = $_cast('int', Value$arg3.internalValue);
+} else if (Value$arg3.type == Types.FLOAT) {
+    float3 = $_cast('double', Value$arg3.internalValue);
+} else {
+    return $_exception(CoreExceptionTypes.INVALID_ARGUMENT, "End position must be a number.");
+}
+
+if (bool1) float1 = 1.0 - float1;
+if (first) float1 *= .5;
+if (bool2) float1 += .5;
+
+// interpolate
+float1 = (float1 * float3 + (1 - float1) * float2);
+
+// integer output desired?
+if (Value$arg6.type == Types.BOOLEAN && $_cast('bool', Value$arg6.internalValue)) {
+    output = buildInteger($_int(float1 + .5));
+} else {
+    output = buildFloat(float1);
+}

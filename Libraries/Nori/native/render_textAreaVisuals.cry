@@ -1,0 +1,10 @@
+﻿/*
+    arg 1: textarea instance
+
+    There isn't really much here yet.
+*/
+import inline "FrameworkFunctions/1_arg.cry";
+
+objInstance1 = $_cast('ObjectInstance', Value$arg1.internalValue);
+$_lib_nori_render_textAreaVisuals(
+    $_array_get(ObjectInstance$objInstance1.nativeData, 0));

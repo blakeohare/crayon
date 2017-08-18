@@ -1,0 +1,27 @@
+﻿/*
+    Initialize the nativeData for a NativeImageData object instance.
+
+    args[0]: NativeImageData object instance
+    args[1]: width (int)
+    args[2]: height (int)
+
+    Native data to initialize:
+    nativeData[0] -> platform bitmap image instance
+    nativeData[1] -> width
+    nativeData[2] -> height
+    nativeData[3] -> null (pixel editing session, but only when active)
+*/
+Value lib_imageresources_function_nativeImageDataInit(Array<Value> args) {
+    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
+    Array<object> nd = new Array<object>(4);
+    int width = (int) args[1].internalValue;
+    int height = (int) args[2].internalValue;
+
+    nd[0] = Native._lib_imageresources_generateNativeBitmapOfSize(width, height);
+    nd[1] = width;
+    nd[2] = height;
+    nd[3] = null;
+    objInstance1.nativeData = nd;
+
+    return VALUE_NULL;
+}

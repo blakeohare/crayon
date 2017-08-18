@@ -1,0 +1,125 @@
+﻿ResourceDB resource_manager_initialize() {
+
+    Dictionary<string, List<string>> filesPerDirectoryBuilder = new Dictionary<string, List<string>>();
+    Dictionary<string, ResourceInfo> fileInfo = new Dictionary<string, ResourceInfo>();
+
+    List<Value> dataList = new List<Value>();
+
+    string manifest = Core.GetResourceManifest();
+    Array<string> items = manifest.Split("\n");
+    ResourceInfo resourceInfo = null;
+    string type = "";
+    string userPath = "";
+    string internalPath = "";
+    string argument = "";
+    bool isText = false;
+    int intType = 0;
+    int i = 0;
+    while (i < items.Size()) {
+        Array<string> itemData = items[i].Split(",");
+        if (itemData.Size() >= 3) {
+            type = itemData[0];
+            isText = Core.StringEquals("TXT", type);
+            if (isText) {
+                intType = 1;
+            } else if (Core.StringEquals("IMGSH", type) || Core.StringEquals("IMG", type)) {
+                intType = 2;
+            } else if (Core.StringEquals("SND", type)) {
+                intType = 3;
+            } else if (Core.StringEquals("TTF", type)) {
+                intType = 4;
+            } else {
+                // binary resource
+                intType = 5;
+            }
+
+            // TODO: binary resources
+            userPath = stringDecode(itemData[1]);
+            internalPath = itemData[2];
+            argument = "";
+            if (itemData.Size() > 3) {
+                argument = stringDecode(itemData[3]);
+            }
+
+            resourceInfo = new ResourceInfo(userPath, internalPath, isText, type, argument);
+            fileInfo[userPath] = resourceInfo;
+
+            resource_manager_populate_directory_lookup(filesPerDirectoryBuilder, userPath);
+
+            dataList.Add(buildString(userPath)); // file path
+            dataList.Add(buildInteger(intType)); // file type
+            if (internalPath != null) {
+                dataList.Add(buildString(internalPath));
+            } else {
+                dataList.Add(VALUE_NULL);
+            }
+        }
+        i += 1;
+    }
+
+    Array<string> dirs = filesPerDirectoryBuilder.Keys();
+    Dictionary<string, Array<string>> filesPerDirectorySorted = new Dictionary<string, Array<string>>();
+    for (i = 0; i < dirs.Size(); i += 1) {
+        string dir = dirs[i];
+        List<string> unsortedDirs = filesPerDirectoryBuilder[dir];
+        Array<string> dirsSorted = Core.ListToArray(unsortedDirs);
+        dirsSorted = Core.SortedCopyOfStringArray(dirsSorted);
+        filesPerDirectorySorted[dir] = dirsSorted;
+    }
+
+    return new ResourceDB(filesPerDirectorySorted, fileInfo, dataList);
+}
+
+int resource_manager_populate_directory_lookup(
+        Dictionary<string, List<string>> dirs,
+        string path) {
+
+    Array<string> parts = path.Split("/");
+    string pathBuilder = "";
+    string file = "";
+    for (int i = 0; i < parts.Size(); i += 1) {
+        file = parts[i];
+        List<string> files = null;
+        if (!dirs.Contains(pathBuilder)) {
+            files = new List<string>();
+            dirs[pathBuilder] = files;
+        } else {
+            files = dirs[pathBuilder];
+        }
+
+        files.Add(file);
+
+        if (i > 0) {
+            pathBuilder = Core.StringConcatAll(pathBuilder, "/", file);
+        } else {
+            pathBuilder = file;
+        }
+    }
+
+    return 0;
+}
+
+/*
+    Takes in a path and a type.
+    Returns null if it is not a user resource.
+    Returns a Crayon Value list if it is...
+    output[0] -> boolean if it's the correct type.
+    output[1] -> actual resource path relative to the root of where these sorts of files are stored. (value ommitted if previous boolean is false)
+*/
+Value resource_manager_getResourceOfType(string userPath, string type) {
+    ProgramData p = Core.GetProgramData();
+    ResourceDB db = p.resourceDatabase;
+    Dictionary<string, ResourceInfo> lookup = db.fileInfo;
+    if (lookup.Contains(userPath)) {
+        List<Value> output = new List<Value>();
+        ResourceInfo file = lookup[userPath];
+        if (Core.StringEquals(file.type, type)) {
+            output.Add(VALUE_TRUE);
+            output.Add(buildString(file.internalPath));
+        } else {
+            output.Add(VALUE_FALSE);
+        }
+        return new Value(Types.LIST, output);
+    }
+    return VALUE_NULL;
+}

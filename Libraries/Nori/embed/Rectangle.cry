@@ -1,0 +1,29 @@
+namespace Nori {
+    class Rectangle : Element {
+
+        field red;
+        field green;
+        field blue;
+        field alpha;
+
+        constructor() : base() { }
+
+        function render(uiBox) {
+            nativeData = this.fauxNativeData;
+            x = nativeData['render-outer-x'] + nativeData['render-margin-left'];
+            y = nativeData['render-outer-y'] + nativeData['render-margin-top'];
+            width = nativeData['render-inner-width'];
+            height = nativeData['render-inner-height'];
+            $$lib_nori_render_rectangleLayout(this, uiBox, x, y, width, height);
+            $$lib_nori_render_rectangleVisuals(this, this.red, this.green, this.blue, this.alpha);
+        }
+
+        function setColor(r, g, b, a = 255) {
+            this.red = r;
+            this.green = g;
+            this.blue = b;
+            this.alpha = a;
+            return this;
+        }
+    }
+}

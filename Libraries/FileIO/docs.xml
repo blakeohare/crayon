@@ -1,0 +1,122 @@
+<library name="FileIO">
+	<description>Provides basic functions for interacting with the local file system.</description>
+	<namespace name="FileIO">
+		
+		<enum name="TextEncoding">
+			<description>Available text encodings for files. Used by FileIO functions.</description>
+			<value name="UTF8" description="The UTF-8 encoding without a Byte-Order-Mark."/>
+			<value name="UTF8_BOM" description="The UTF-8 encoding with the Byte-Order-Mark."/>
+			<value name="UTF16" description="The UTF-16 encoding."/>
+			<value name="UTF32" description="The UTF-32 encoding."/>
+			<value name="ASCII" description="Basic ASCII encoding."/>
+		</enum>
+
+		<function name="pathJoin">
+			<arg name="parts" type="list-of-string" description="strings to join"/>
+			<description>Joins a list of strings with the platform's default path delimiter.</description>
+		</function>
+
+		<function name="pathExists">
+			<arg name="path" type="string" description="an absolute or relative path"/>
+			<returns type="bool" description="True if the path exists."/>
+			<description>Checks to see if a path exists (either a file or a directory).</description>
+		</function>
+
+		<function name="fileExists">
+			<arg name="path" type="string" description="an absolute or relative path"/>
+			<returns type="bool" description="True if the path exists and is a file (not a directory)."/>
+			<description>Checks to see if a file exists.</description>
+		</function>
+
+		<function name="directoryExists">
+			<arg name="path" type="string" description="an absolute or relative path"/>
+			<returns type="bool" description="True if the path exists and is a directory (not a file)."/>
+			<description>Checks to see if a directory exists.</description>
+		</function>
+
+		<function name="getPathInfo">
+			<arg name="path" type="string" description="an absolute or relative path"/>
+			<returns type="FileIOCommon.FileDescriptor" description="File properties"/>
+			<description>Returns a file descriptor.</description>
+		</function>
+
+		<function name="fileWriteText">
+			<arg name="path" type="string" description="an absolute or relative path"/>
+			<arg name="content" type="string" description="content to write to a file as a string"/>
+			<arg name="encoding" type="FileIO.TextEncoding" description="encoding to use" optional="true" default="UTF8"/>
+			<description>Writes text to a file</description>
+		</function>
+
+		<function name="fileReadText">
+			<arg name="path" type="string" description="an absolute or relative path"/>
+			<returns type="string" description="file contents as a string"/>
+			<description>Returns the file contents as a string</description>
+		</function>
+
+		<function name="fileReadLines">
+			<arg name="path" type="string" description="an absolute or relative path"/>
+			<returns type="list-of-string" description="List of lines in the file"/>
+			<description>Returns a list of lines in the file as a list of strings</description>
+		</function>
+
+		<function name="fileReadBytes">
+			<arg name="path" type="string" description="an absolute or relative path"/>
+			<returns type="list-of-int" description="List of bytes"/>
+			<description>Returns a list of bytes in the file. These are unsigned numbers from 0 to 255.</description>
+		</function>
+
+		<function name="fileWriteBytes">
+			<arg name="path" type="string" description="an absolute or relative path"/>
+			<arg name="bytes" type="list-of-int" description="List of bytes"/>
+			<description>Writes binary content to a file. Input must be a list of byte values that are either signed or unsigned.</description>
+		</function>
+
+		<function name="fileDelete">
+			<arg name="path" type="string" description="an absolute or relative path"/>
+			<description>Deletes a file from disk</description>
+		</function>
+
+		<function name="fileMove">
+			<arg name="pathFrom" type="string" description="an absolute or relative path of the original file location"/>
+			<arg name="pathTo" type="string" description="an absolute or relative path of the new file location"/>
+			<arg name="allowOverwrite" type="bool" description="true if overwriting existing files is okay" optional="true" default="false"/>
+			<description>Moves a file from one location to a new one. Optionally allows overwriting files.</description>
+		</function>
+
+		<function name="fileCopy">
+			<arg name="pathFrom" type="string" description="an absolute or relative path of the original file location"/>
+			<arg name="pathTo" type="string" description="an absolute or relative path of the new file location"/>
+			<arg name="allowOverwrite" type="bool" description="true if overwriting existing files is okay" optional="true" default="false"/>
+			<description>Copies a file to a new location. Optionally allows overwriting files.</description>
+		</function>
+
+		<function name="directoryList">
+			<arg name="path" type="string" description="an absolute or relative path"/>
+			<arg name="includeFullPath" type="bool" description="true if absolute file paths should be returned. Otherwise, file names only are returned." optional="true" default="false"/>
+			<returns type="list-of-string" description="list of files"/>
+			<description>Returns a list of files and subdirectories in a given directory</description>
+		</function>
+
+		<function name="directoryCreate">
+			<arg name="path" type="string" description="an absolute or relative path to create"/>
+			<arg name="makeParents" type="bool" description="true if parent directories should be created if already not present" optional="true" default="false"/>
+			<description>Creates a new directory</description>
+		</function>
+
+		<function name="directoryDelete">
+			<arg name="path" type="string" description="an absolute or relative path of a directory to delete"/>
+			<description>Deletes a directory</description>
+		</function>
+
+		<function name="directoryMove">
+			<arg name="pathFrom" type="string" description="an absolute or relative path of a directory to move"/>
+			<arg name="pathTo" type="string" description="an absolute or relative path of a location to move a directory to"/>
+			<description>Moves a directory and its contents to a new location.</description>
+		</function>
+
+		<function name="currentDirectory">
+			<returns>The current working directory</returns>
+			<description>Returns the current directory that the app is running in.</description>
+		</function>
+	</namespace>
+</library>

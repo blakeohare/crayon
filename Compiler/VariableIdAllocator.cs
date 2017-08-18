@@ -2,40 +2,79 @@
 
 namespace Crayon
 {
-	internal class VariableIdAllocator
-	{
-		private Dictionary<string, int> idsByVar = new Dictionary<string, int>();
-		private List<string> varsById = new List<string>();
+    internal enum VariableIdAllocPhase
+    {
+        REGISTER = 0x1,
 
-		public VariableIdAllocator()
-		{ }
+        ALLOC = 0x2,
 
-		public int Size { get { return this.idsByVar.Count; } }
+        REGISTER_AND_ALLOC = 0x3,
+    }
 
-		public void RegisterVariable(string value)
-		{
-			if (!this.idsByVar.ContainsKey(value))
-			{
-				idsByVar[value] = varsById.Count;
-				varsById.Add(value);
-			}
-		}
+    internal class VariableIdAllocator
+    {
+        private VariableIdAllocator underlyingInstance = null;
+        private readonly Dictionary<string, int> idsByVar = new Dictionary<string, int>();
+        private Dictionary<int, string> varsById = new Dictionary<int, string>();
+        private List<string> orderedVars = new List<string>();
 
-		public int GetVarId(Token variableToken, bool isRead)
-		{
-			int id;
-			if (this.idsByVar.TryGetValue(variableToken.Value, out id))
-			{
-				return id;
-			}
+        public int Size { get { return this.idsByVar.Count + (underlyingInstance == null ? 0 : underlyingInstance.Size); } }
 
-			if (isRead)
-			{
-				throw new ParserException(variableToken, "'" + variableToken.Value + "' is not defined anywhere.");
-			}
+        public void RegisterVariable(string value)
+        {
+            if (underlyingInstance != null && underlyingInstance.idsByVar.ContainsKey(value))
+            {
+                return;
+            }
 
-			throw new ParserException(variableToken,
-				"BAD STATE - CRAYON BUG!!!! A variable assignment was not registered by the parse tree traversal.");
-		}
-	}
+            if (!this.idsByVar.ContainsKey(value))
+            {
+                idsByVar[value] = varsById.Count;
+                varsById.Add(this.Size, value);
+                orderedVars.Add(value);
+            }
+        }
+
+        public int GetVarId(Token variableToken)
+        {
+            int id;
+            if (this.idsByVar.TryGetValue(variableToken.Value, out id))
+            {
+                return id;
+            }
+
+            if (this.underlyingInstance != null)
+            {
+                return this.underlyingInstance.GetVarId(variableToken);
+            }
+
+            return -1;
+        }
+
+        public VariableIdAllocator Clone()
+        {
+            VariableIdAllocator output = new VariableIdAllocator();
+            output.underlyingInstance = this;
+            return output;
+        }
+
+        public void MergeClonesBack(params VariableIdAllocator[] branches)
+        {
+            foreach (VariableIdAllocator branch in branches)
+            {
+                if (this != branch.underlyingInstance)
+                {
+                    throw new System.InvalidOperationException("Cannot merge two branches that aren't from the same root.");
+                }
+            }
+
+            foreach (VariableIdAllocator branch in branches)
+            {
+                foreach (string varId in branch.orderedVars)
+                {
+                    this.RegisterVariable(varId);
+                }
+            }
+        }
+    }
 }

@@ -1,0 +1,54 @@
+/*
+    Fetch information about a file.
+
+    arg 1: disk host object
+    arg 2: well-formed and sandboxed path
+    arg 3: a bit mask of properties to fetch
+    arg 4: output list, size is already 6 containing old data.
+
+    output[0] -> bool: exists
+    output[1] -> bool: is directory?
+    output[2] -> int: file size bytes // TODO: deal with integer overflow
+    output[3] -> bool: is readonly?
+    output[4] -> float: file created timestamp
+    output[5] -> float: file modified timestamp
+
+    mask & 1 -> fetch size
+    mask & 2 -> fetch readonly
+    mask & 4 -> fetch created timestamp
+    mask & 8 -> fetch modified timestamp
+
+    directory and existence status are always fetched.
+*/
+
+import inline "FrameworkFunctions/4_arg.cry";
+
+int1 = $_cast('int', Value$arg3.internalValue);
+$_lib_fileiocommon_getFileInfo(
+    lib_fileiocommon_getDiskObject(arg1),
+    $_cast('string', Value$arg2.internalValue),
+    int1,
+    intOutParam,
+    floatOutParam);
+
+list1 = $_cast('List<Value>', Value$arg4.internalValue);
+
+// exists
+$_list_set(list1, 0, buildBoolean($_array_get(intOutParam, 0) > 0));
+
+// is directory?
+$_list_set(list1, 1, buildBoolean($_array_get(intOutParam, 1) > 0));
+
+// size
+if ((int1 & 1) != 0) $_list_set(list1, 2, buildInteger($_array_get(intOutParam, 2)));
+
+// readonly?
+if ((int1 & 2) != 0) $_list_set(list1, 3, buildBoolean($_array_get(intOutParam, 3) > 0));
+
+// created timestamp
+if ((int1 & 4) != 0) $_list_set(list1, 4, buildFloat($_array_get(floatOutParam, 0)));
+
+// modified timestamp
+if ((int1 & 8) != 0) $_list_set(list1, 5, buildFloat($_array_get(floatOutParam, 1)));
+
+output = arg4;

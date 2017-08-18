@@ -1,8 +1,0 @@
-
-class Tile {
-	constructor(template, col, row) {
-		this.template = template;
-		this.col = col;
-		this.row = row;
-	}
-}

@@ -1,56 +1,76 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Crayon.ParseTree
 {
-	internal class LibraryFunctionCall: Expression
-	{
-		public override bool CanAssignTo { get { return false; } }
+    internal class LibraryFunctionCall : Expression
+    {
+        internal override Expression PastelResolve(Parser parser)
+        {
+            throw new NotImplementedException();
+        }
 
-		public string Name { get; private set; }
-		public Expression[] Args { get; private set; }
-		public string LibraryName { get; set; }
+        public override bool CanAssignTo { get { return false; } }
 
-		public LibraryFunctionCall(Token token, string name, IList<Expression> args, Executable owner)
-			: base(token, owner)
-		{
-			string callingLibrary = owner.LibraryName;
+        public string Name { get; private set; }
+        public Expression[] Args { get; private set; }
+        public string LibraryName { get; set; }
 
-			if (callingLibrary == null)
-			{
-				throw new ParserException(this.FirstToken, "Cannot call native library functions from outside a library.");
-			}
+        public LibraryFunctionCall(Token token, string name, IList<Expression> args, Executable owner)
+            : base(token, owner)
+        {
+            string callingLibrary = null;
+            while (callingLibrary == null && owner != null)
+            {
+                callingLibrary = owner.LibraryName;
+                owner = owner.FunctionOrClassOwner;
+            }
 
-			this.LibraryName = callingLibrary;
+            if (callingLibrary == null)
+            {
+                throw new ParserException(this.FirstToken, "Cannot call native library functions from outside a library.");
+            }
 
-			string expectedPrefix = "lib_" + callingLibrary.ToLower() + "_";
-			if (!name.StartsWith(expectedPrefix))
-			{
-				throw new ParserException(this.FirstToken, "Invalid library function name. Must begin with a '$$" + expectedPrefix + "' prefix.");
-			}
-			this.Name = name;
-			this.Args = args.ToArray();
-		}
+            this.LibraryName = callingLibrary;
 
-		internal override Expression Resolve(Parser parser)
-		{
-			// Args are already resolved.
-			return this;
-		}
+            string expectedPrefix = "lib_" + callingLibrary.ToLower() + "_";
+            if (!name.StartsWith(expectedPrefix))
+            {
+                throw new ParserException(this.FirstToken, "Invalid library function name. Must begin with a '$$" + expectedPrefix + "' prefix.");
+            }
+            this.Name = name;
+            this.Args = args.ToArray();
+        }
 
-		internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
-		{
-			throw new InvalidOperationException(); // this class is generated on the general resolve pass.
-		}
+        internal override Expression Resolve(Parser parser)
+        {
+            for (int i = 0; i < this.Args.Length; ++i)
+            {
+                this.Args[i] = this.Args[i].Resolve(parser);
+            }
+            return this;
+        }
 
-		internal override void SetLocalIdPass(VariableIdAllocator varIds)
-		{
-			for (int i = 0; i < this.Args.Length; ++i)
-			{
-				this.Args[i].SetLocalIdPass(varIds);
-			}
-		}
-	}
+        internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+        {
+            throw new InvalidOperationException(); // this class is generated on the general resolve pass.
+        }
+
+        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        {
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
+            {
+                foreach (Expression ex in this.Args)
+                {
+                    ex.PerformLocalIdAllocation(varIds, phase);
+                }
+            }
+        }
+
+        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }

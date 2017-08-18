@@ -1,0 +1,151 @@
+import CrayonUnit;
+
+class EqualityTestHelper {
+	function f1() { }
+	function f2() { }
+	static function f3() { }
+	static function f4() { }
+}
+
+class OpsTest : Test {
+
+	constructor() : base() { }
+
+	// Strings are used to verify correct output type (i.e. float vs int) since == comparisons won't catch that
+	
+	function testCompileTimeOperations() {
+		// These operations are performed at compile time.
+		
+		assertThat(2 + 5 + '').isEqualTo('7');
+		assertThat(2 - 5 + '').isEqualTo('-3');
+		assertThat(2 * 5 + '').isEqualTo('10');
+		assertThat(5 / 2 + '').isEqualTo('2');
+		assertThat(5 % 2 + '').isEqualTo('1');
+		assertThat(-5 % 2 + '').isEqualTo('1');
+		assertThat(2 ** 5 + '').isEqualTo('32');
+		assertThat((2 & 5) + '').isEqualTo('0');
+		assertThat((2 | 5) + '').isEqualTo('7');
+		assertThat((2 ^ 7) + '').isEqualTo('5');
+		
+		assertThat(2.0 + 5.0 + '').isEqualTo('7.0');
+		assertThat(2.0 - 5.0 + '').isEqualTo('-3.0');
+		assertThat(2.0 * 5.0 + '').isEqualTo('10.0');
+		assertThat(5.0 % 2.0 + '').isEqualTo('1.0');
+		assertThat(-5.0 % 2.0 + '').isEqualTo('1.0');
+		assertThat(2.0 ** 5.0 + '').isEqualTo('32.0');
+	}
+	
+	function testRunTimeOperations() {
+		
+		iTwo = 2;
+		fTwo = 2.0;
+		iFive = 5;
+		fFive = 5.0;
+		iSeven = 7;
+		
+		// These operations are performed at run time.
+		
+		assertThat(iTwo + iFive + '').isEqualTo('7');
+		assertThat(iTwo - iFive + '').isEqualTo('-3');
+		assertThat(iTwo * iFive + '').isEqualTo('10');
+		assertThat(iFive / iTwo + '').isEqualTo('2');
+		assertThat(iFive % iTwo + '').isEqualTo('1');
+		assertThat(-iFive % iTwo + '').isEqualTo('1');
+		assertThat(iTwo ** iFive + '').isEqualTo('32');
+		assertThat((iTwo & iFive) + '').isEqualTo('0');
+		assertThat((iTwo | iFive) + '').isEqualTo('7');
+		assertThat((iTwo ^ 7) + '').isEqualTo('5');
+		
+		assertThat(fTwo + fFive + '').isEqualTo('7.0');
+		assertThat(fTwo - fFive + '').isEqualTo('-3.0');
+		assertThat(fTwo * fFive + '').isEqualTo('10.0');
+		assertThat(fFive % fTwo + '').isEqualTo('1.0');
+		assertThat(-fFive % fTwo + '').isEqualTo('1.0');
+		assertThat(fTwo ** fFive + '').isEqualTo('32.0');
+	}
+	
+	function testRuntimeEqualityChecks() {
+		
+		//*
+		nil1 = null;
+		nil2 = null;
+		int1 = 1;
+		int2 = 2;
+		float1 = 1.0;
+		float2 = 2.0;
+		string1 = '1';
+		string2 = '2';
+		list1 = [];
+		list2 = [];
+		dict1 = {};
+		dict2 = {};
+		fp1 = Core.ord;
+		fp2 = Core.chr;
+		eth = new EqualityTestHelper();
+		fp3 = eth.f1;
+		fp4 = eth.f2;
+		fp5 = EqualityTestHelper.f3;
+		fp6 = EqualityTestHelper.f4;
+		fp7 = list1.add;
+		fp8 = list1.clear;
+		fp9 = list2.add;
+		fp10 = new EqualityTestHelper().f1;
+		cls1 = Core.Object.class;
+		cls2 = EqualityTestHelper.class;
+		
+		assertThat(nil1 == nil1).isTrue();
+		assertThat(nil1 == nil2).isTrue();
+		assertThat(nil1 == int1).isFalse();
+		assertThat(int1 == nil1).isFalse();
+		
+		assertThat(int1 == int1).isTrue();
+		assertThat(int2 == int2).isTrue();
+		assertThat(int1 == int2).isFalse();
+		
+		assertThat(float1 == float1).isTrue();
+		assertThat(float2 == float2).isTrue();
+		assertThat(float1 == float2).isFalse();
+		
+		assertThat(string1 == string1).isTrue();
+		assertThat(string2 == string2).isTrue();
+		assertThat(string1 == string2).isFalse();
+		
+		assertThat(list1 == list1).isTrue();
+		assertThat(list2 == list2).isTrue();
+		assertThat(list1 == list2).isFalse();
+		
+		assertThat(dict1 == dict1).isTrue();
+		assertThat(dict2 == dict2).isTrue();
+		assertThat(dict1 == dict2).isFalse();
+		
+		assertThat(cls1 == cls1).isTrue();
+		assertThat(cls2 == cls2).isTrue();
+		assertThat(cls1 == cls2).isFalse();
+		
+		// identical references
+		assertThat(fp1 == fp1).isTrue();
+		assertThat(fp2 == fp2).isTrue();
+		assertThat(fp3 == fp3).isTrue();
+		assertThat(fp4 == fp4).isTrue();
+		assertThat(fp5 == fp5).isTrue();
+		assertThat(fp6 == fp6).isTrue();
+		assertThat(fp7 == fp7).isTrue();
+		assertThat(fp8 == fp8).isTrue();
+		assertThat(fp9 == fp9).isTrue();
+		
+		// same type different function
+		assertThat(fp1 == fp2).isFalse();
+		assertThat(fp3 == fp4).isFalse();
+		assertThat(fp5 == fp6).isFalse();
+		assertThat(fp7 == fp8).isFalse();
+		
+		// same function, different context
+		assertThat(fp3 == fp10).isFalse();
+		assertThat(fp7 == fp9).isFalse();
+		
+		// different function type altogether
+		assertThat(fp2 == fp3).isFalse();
+		assertThat(fp4 == fp5).isFalse();
+		assertThat(fp6 == fp7).isFalse();
+	}
+}

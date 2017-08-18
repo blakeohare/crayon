@@ -1,0 +1,40 @@
+﻿/*
+    arg1: HttpResponse object. nativeData[0] contains a byte array
+    arg2: an output vector
+        list[1] -> ImageResources.ImageNativeData instance. Must populate the nativeData here.
+            nativeData[0] -> platform image instance
+            nativeData[1] -> width
+            nativeData[2] -> height
+        list[2] -> image width
+        list[3] -> image height
+
+    returns true on success.
+*/
+
+Value lib_imagewebresources_function_bytesToImage(Array<Value> args) {
+
+    // Get the byte array
+    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
+    object object1 = objInstance1.nativeData[0];
+
+    // Get the output vector.
+    List<Value> list1 = (List<Value>) args[1].internalValue;
+
+    // Get the ImageNativeData object from the output vector and get its nativeData ready, which will
+    // serve as the output vector for $_lib_imagewebresources_byteToImage
+    Value value = list1[0];
+
+    // TODO: Use common native data init function
+    Array<object> objArray1 = new Array<object>(3);
+    objInstance1 = (ObjectInstance) value.internalValue;
+    objInstance1.nativeData = objArray1;
+
+    // Pass the nativeData and the byte array and create an image object and calculate its width.
+    if (Native._lib_imagewebresources_bytesToImage(object1, objArray1)) {
+        list1[1] = buildInteger((int) objArray1[1]);
+        list1[2] = buildInteger((int) objArray1[2]);
+        return VALUE_TRUE;
+    }
+
+    return VALUE_FALSE;
+}

@@ -1,0 +1,176 @@
+<library name="ImageResources">
+	<description>
+		Library for loading image resources. Also abstracts auto-image sheet/atlas resources.
+	</description>
+	
+	<namespace name="ImageResources">
+		<class name="ImageResource">
+			<description>
+				Represents an image.
+				Generally, this class cannot do much on its own (aside from querying width and height), 
+				and is meant to be used in a secondary library such as Graphics2D or ImageEncoder.
+			</description>
+
+			<function name="(constructor)">
+				<description>
+					Creates a new image resource with the given size.
+					To load an existing image from the program's embedded resources, see ImageLoader.
+					To load an existing image from an image sheet declared in the build file, see ImageSheet.
+				</description>
+				<arg name="width" type="int" description="Width of the image in pixels."/>
+				<arg name="height" type="int" description="Height of the image in pixels."/>
+			</function>
+
+			<function name="getWidth">
+				<description>Gets the width of the image in pixels.</description>
+				<returns type="int" description="image width"/>
+			</function>
+
+			<function name="getHeight">
+				<description>Gets the height of the image in pixels.</description>
+				<returns type="int" description="image height"/>
+			</function>
+		</class>
+
+		<class name="ImageLoader">
+
+			<description>
+				Loads an ImageResource from the program's compile-time embedded resources.
+			</description>
+
+			<function name="loadFromResourcesAsync" static="true">
+				<arg name="resourcePath" type="string" description="Path to the image resource."/>
+				<returns type="ImageResources.ImageLoader" description="A reference to a new loader object."/>
+				<description>
+					Loads a compile-time image resource asynchronously and returns the loader object that can be queried for
+					status or the final result.
+					To check load progress, use .isDone().
+					To get the image after loading is complete, use .getImage().
+					To load an image synchronously and get an ImageResource instance directly, use .loadFromResources().
+					This function cannot be used for image resources that are consolidated into an image sheet, 
+					in which case, the ImageSheet class must be used instead for loading. 
+				</description>
+			</function>
+
+			<function name="loadFromResources" static="true">
+				<arg name="resourcePath" type="string" description="Path to the image resource."/>
+				<returns type="ImageResources.ImageResource" description="An image resource object."/>
+				<description>
+					Loads a compile-time image resource synchronously and returns it.
+					To load an image asynchronously, use .loadFromResourcesAsync().
+					This function cannot be used for image resources that are consolidated into an image sheet, 
+					in which case, the ImageSheet class must be used instead for loading. 
+				</description>
+			</function>
+
+			<function name="isDone">
+				<returns type="boolean" description="true if loading is complete"/>
+				<description>
+					Returns true if the image has finished loading.
+				</description>
+			</function>
+
+			<function name="getImage">
+				<returns type="ImageResources.ImageResource" description="The image"/>
+				<description>
+					Returns the image once loading is complete. 
+					Code must call .isDone() before calling this method.
+					Even if the image has finished loading, this function will throw a 
+					Core.InvalidOperationException if .isDone() was never called. 
+				</description>
+			</function>
+		</class>
+
+		<class name="ImageSheet">
+
+			<description>
+				An image sheet is a collection of image resources.
+				The way the images are aggregated is defined by the build file.
+				By aggregating images, loading images from disk is generally faster as it reduces the number
+				of hard disk reads (or in the case of JavaScript, image download requests). 
+				Furthermore, OpenGL based platforms can load all the images into a single texture atlas
+				to prevent texture context switches.
+				If there are lots of images to load, this simplifies the process of providing a progress bar since
+				the completion percentage is calculated by the library. 
+				All ImageResources that are loaded from an image sheet abstract the aggregation away from your code
+				such that operations will appear as though the image is a standalone image file.
+			</description>
+
+			<function name="loadFromResources" static="true">
+				<arg name="idOrIds" type="string|list-of-string" description="An image sheet ID or a list of image sheet IDs"/>
+				<returns type="ImageResources.ImageSheet" description="An image sheet"/>
+				<description>
+					Returns a new image sheet object.
+					If multiple sheet ID's are passed to this method, all those image sheets will be aggregated 
+					into one single ImageSheet instance.
+					This function will block execution of your program until loading has completed which 
+					can potentially be very slow. 
+					To load asynchronously, use .loadFromResourcesAsync().
+				</description>
+			</function>
+
+			<function name="loadFromResourcesAsync" static="true">
+				<arg name="idOrIds" type="string|list-of-string" description="An image sheet ID or a list of image sheet IDs"/>
+				<returns type="ImageResources.ImageSheet" description="An image sheet"/>
+				<description>
+					Returns a new image sheet object which is not completely loaded yet.
+					If multiple sheet ID's are passed to this method, all those image sheets will be aggregated 
+					into one single ImageSheet instance.
+					To check to see if the image sheet is done loading, use .isDone().
+					To check the progress of loading, use .getProgress().
+				</description>
+			</function>
+
+			<function name="getImage">
+				<arg name="resourcePath" type="string" description="Path to an image resource"/>
+				<returns type="ImageResources.ImageResource" description="An image resource"/>
+				<description>
+					Returns an image resource that is contained in this image sheet.
+					If the image sheet is loaded asynchronously, this method cannot be called without
+					calling .isDone() first, even if the image sheet has finished loading.
+				</description>
+			</function>
+
+			<function name="isDone">
+				<returns type="boolean" description="true if the image sheet is done loading"/>
+				<description>
+					Returns true if the image sheet is done loading. 
+					This method is only applicable to asynchronously-loaded image sheets.
+					This method must be called for all asynchronous image sheets before getImage() is called,
+					otherwise an InvalidOperationException is thrown, even if the image sheet is actually done loading.
+				</description>
+			</function>
+
+			<function name="getProgress">
+				<returns type="float" description="Ratio of progress"/>
+				<description>
+					Returns a ratio of loading progress from 0 to 1.
+					This is a convenience method for showing progress to the user, but .isDone() must still be called
+					before accessing any image resources.
+				</description>
+			</function>
+
+			<function name="getFiles">
+				<returns type="list-of-string" description="List of all image resource paths in this sheet."/>
+				<description>
+					Returns a list of all the image resource paths available in this image sheet.
+				</description>
+			</function>
+		</class>
+		
+		<class name="ImageNotFoundException">
+			<description>Exception thrown when an image path does not exist.</description>
+			<field name="path" type="string" description="Path of the image which was being attempted to load"/>
+		</class>
+		
+		<class name="SheetNotFoundException">
+			<description>Exception thrown when an image sheet with a given ID does not exist.</description>
+			<field name="id" type="string" description="ID of the image sheet that does not exist"/>
+		</class>
+		
+		<class name="LoadFailedException">
+			<description>Exception thrown when an image fails to load. The exception message field may contain more information.</description>
+		</class>
+		
+	</namespace>
+</library>

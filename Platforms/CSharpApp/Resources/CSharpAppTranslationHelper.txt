@@ -1,0 +1,110 @@
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using Interpreter.Structs;
+using Interpreter.Vm;
+
+namespace Interpreter
+{
+    public static class CSharpAppTranslationHelper
+    {
+        private static string appDataRoot = null;
+        public static string AppDataRoot
+        {
+            get
+            {
+                if (appDataRoot == null)
+                {
+                    // TODO: test with Mono
+                    appDataRoot = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("APPDATA"), "Polarity");
+                    appDataRoot = appDataRoot.Replace('\\', '/');
+                }
+                return appDataRoot;
+            }
+        }
+
+        public static void CheckLoaderIsDone(object[] imageLoaderNativeData, object[] nativeImageDataNativeData, List<Value> output)
+        {
+            int status = 0;
+            lock (imageLoaderNativeData[3])
+            {
+                status = (int)imageLoaderNativeData[2];
+            }
+
+            output[0] = CrayonWrapper.v_buildInteger(status);
+        }
+
+        public static void ImageLoadAsync(
+            string filename,
+            object[] nativeImageDataNativeData,
+            object[] imageLoaderNativeData)
+        {
+            imageLoaderNativeData[3] = new object();
+            System.ComponentModel.BackgroundWorker bgw = new System.ComponentModel.BackgroundWorker();
+            bgw.DoWork += (sender, args) =>
+            {
+                bool loaded = ImageLoadSync(filename, nativeImageDataNativeData, null);
+
+                lock (imageLoaderNativeData[3])
+                {
+                    imageLoaderNativeData[2] = loaded ? 1 : 2;
+                }
+            };
+
+            bgw.RunWorkerAsync();
+        }
+
+        public static bool ImageLoadSync(string filename, object[] nativeImageDataNativeData, List<Value> statusOutCheesy)
+        {
+            UniversalBitmap bmp = ResourceReader.ReadImageResource(filename);
+            if (bmp != null)
+            {
+                if (statusOutCheesy != null) statusOutCheesy.Reverse();
+                nativeImageDataNativeData[0] = bmp;
+                nativeImageDataNativeData[1] = bmp.Width;
+                nativeImageDataNativeData[2] = bmp.Height;
+                return true;
+            }
+            return false;
+        }
+
+        public static object GenerateNativeBitmapOfSize(int width, int height)
+        {
+            return new UniversalBitmap(width, height);
+        }
+
+        public static void BlitImage(
+            object targetBmp, object sourceBmp,
+            int targetX, int targetY,
+            int sourceX, int sourceY,
+            int width, int height,
+            object graphicsSession)
+        {
+            UniversalBitmap target = (UniversalBitmap)targetBmp;
+            UniversalBitmap source = (UniversalBitmap)sourceBmp;
+            ((UniversalBitmap.DrawingSession)graphicsSession).Draw(source, targetX, targetY, sourceX, sourceY, width, height);
+        }
+
+        public static object GetPixelEditSession(object nativeImageResource)
+        {
+            return ((UniversalBitmap)nativeImageResource).GetActiveDrawingSession();
+        }
+
+        public static void FlushPixelEditSession(object graphicsObj)
+        {
+            ((UniversalBitmap.DrawingSession)graphicsObj).Flush();
+        }
+
+        public static bool LoadFont(bool isSystem, string name, int fontId)
+        {
+            // No-op for now.
+            return true;
+        }
+
+        public static int PushCodePoints(List<int> codePoints, string value)
+        {
+            // No-op for now.
+            return 0;
+        }
+    }
+}

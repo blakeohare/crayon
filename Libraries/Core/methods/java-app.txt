@@ -1,0 +1,5 @@
+$_app_data_root: AwtTranslationHelper.getAppDataRoot()
+$_byte_code_get_raw_string: AwtTranslationHelper.getRawByteCodeString()
+$_print_stderr: System.err.println([ARG:1])
+$_print_stdout: System.out.println([ARG:1])
+$_resource_read_text_file: AwtTranslationHelper.getTextResource("text/" + [ARG:1])

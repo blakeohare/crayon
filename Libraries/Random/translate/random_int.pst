@@ -1,0 +1,20 @@
+﻿Value lib_random_function_random_int(Array<Value> args) {
+    int int1 = 0;
+    int int2 = 0;
+    Value output = VALUE_NULL;
+    Value arg1 = args[0];
+    Value arg2 = args[1];
+    if ((arg1.type != Types.INTEGER) || (arg2.type != Types.INTEGER)) {
+        output = VALUE_NULL;
+    } else {
+        int1 = ((int) arg1.internalValue);
+        int2 = ((int) arg2.internalValue);
+        if (int1 >= int2) {
+            output = VALUE_NULL;
+        } else {
+            int2 = Core.Int(Core.ForceParens((Core.RandomFloat() * (int2 - int1))));
+            output = buildInteger(int1 + int2);
+        }
+    }
+    return output;
+}

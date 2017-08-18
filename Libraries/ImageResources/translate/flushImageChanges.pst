@@ -1,0 +1,23 @@
+﻿/*
+    args[0] -> NativeImageData instance that is being unlocked and may have blitted changes.
+
+    nativeData[0] -> the raw bitmap resource
+    ...
+    nativeData[3] -> the pixel edit session e.g. a UniversalBitmap.EditSession instance in .NET.
+
+    If present, flush the changes in the session to the bitmap and then clear the session instance.
+*/
+Value lib_imageresources_function_flushImageChanges(Array<Value> args) {
+    if (@ext_boolean("IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS")) {
+        ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+        Array<object> objArray1 = objInstance1.nativeData;
+        if (objArray1 != null) {
+            object object1 = objArray1[3];
+            if (object1 != null) {
+                Native._lib_imageresources_flushPixelEditSession(object1);
+                objArray1[3] = null;
+            }
+        }
+    }
+    return VALUE_NULL;
+}

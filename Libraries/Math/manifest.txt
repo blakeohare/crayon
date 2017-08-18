@@ -1,0 +1,5 @@
+NAME: Math
+AUTHOR: Blake O'Hare
+DOCUMENTATION: http://crayonlang.org/docs/0.2.0/math
+DESCRIPTION: Common basic math functions.
+

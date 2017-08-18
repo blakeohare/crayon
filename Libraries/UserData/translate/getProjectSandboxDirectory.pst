@@ -1,0 +1,15 @@
+﻿/*
+    args[0]: string project ID (lowercase)
+
+    This is only implemented in JavaScript and Android (so far)
+*/
+Value lib_userdata_function_getProjectSandboxDirectory(Array<Value> args) {
+    Value output = VALUE_NULL;
+    Value arg1 = args[0];
+    if (@ext_boolean("IS_ANDROID") || @ext_boolean("IS_JAVASCRIPT")) {
+        string string1 = (string) arg1.internalValue;
+        string string2 = Native._lib_userdata_getProjectSandboxDirectory(string1);
+        output = buildString(string2);
+    }
+    return output;
+}

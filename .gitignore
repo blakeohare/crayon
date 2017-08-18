@@ -1,10 +1,7 @@
 *.suo
+.DS_Store
 bin
 obj
-/csharp/Demos/*/output/android
-/csharp/Demos/*/output/cwin
-/csharp/Demos/*/output/javaawt
-/csharp/Demos/*/output/js_local
-/csharp/Demos/*/output/js_remote
-/csharp/Demos/*/output/python
-/csharp/Demos/*/output/windows
+/Compiler/CrayonOSX.userprefs
+/Docs/sql.txt
+/Compiler/.vs

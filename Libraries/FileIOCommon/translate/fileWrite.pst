@@ -1,0 +1,36 @@
+﻿Value lib_fileiocommon_function_fileWrite(Array<Value> args) {
+    int int1 = 0;
+    int int2 = 0;
+    object object1 = null;
+    string string1 = "";
+    Value output = VALUE_NULL;
+    Value arg1 = args[0];
+    Value arg2 = args[1];
+    Value arg3 = args[2];
+    Value arg4 = args[3];
+    string1 = null;
+    object1 = null;
+    if (arg4.type != Types.INTEGER) {
+        int1 = 3;
+    } else {
+        int1 = 0;
+        int2 = ((int) arg4.internalValue);
+        if (int2 == 0) {
+            object1 = lib_fileiocommon_listToBytes(((List<Value>) arg3.internalValue));
+            if (object1 == null) {
+                int1 = 6;
+            }
+        } else {
+            if (arg3.type != Types.STRING) {
+                int1 = 6;
+            } else {
+                string1 = ((string) arg3.internalValue);
+            }
+        }
+        if (int1 == 0) {
+            int1 = Native._lib_fileiocommon_fileWrite(lib_fileiocommon_getDiskObject(arg1), ((string) arg2.internalValue), int2, string1, object1);
+        }
+    }
+    output = buildInteger(int1);
+    return output;
+}

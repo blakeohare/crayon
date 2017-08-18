@@ -1,0 +1,54 @@
+import Game;
+import Graphics2D;
+import UserData;
+
+const FPS = 30;
+const WIDTH = 640;
+const HEIGHT = 480;
+const SESSION_FILE = 'session_tutorial.txt';
+
+function main() {
+	window = new GameWindow('UserData Tutorial', FPS, WIDTH, HEIGHT);
+	
+	dotLocation = [WIDTH / 2, HEIGHT / 2]; // center
+	
+	if (UserData.pathExists(SESSION_FILE)) {
+		previousData = UserData.fileReadLines(SESSION_FILE);
+		if (previousData.length >= 2) {
+			x = parseInt(previousData[0]);
+			y = parseInt(previousData[1]);
+			if (x != null && y != null) {
+				dotLocation = [x, y];
+			}
+		}
+	}
+	
+	while (true) {
+		clickLocation = null;
+		for (event : window.pumpEvents()) {
+			if (event.type == EventType.QUIT) {
+				return;
+			}
+			
+			if (event.type == EventType.MOUSE_LEFT_DOWN) {
+				newX = event.x;
+				newY = event.y;
+				dotLocation = [newX, newY];
+				UserData.fileWriteText(SESSION_FILE, newX + "\n" + newY);
+			}
+		}
+		
+		Graphics2D.Draw.fill(255, 255, 255);
+		
+		x = dotLocation[0];
+		y = dotLocation[1];
+		width = 50;
+		height = 50;
+		left = x - width / 2;
+		top = y - height / 2;
+		
+		Graphics2D.Draw.ellipse(left, top, width, height, 0, 128, 255);
+		
+		window.clockTick();
+	}
+}

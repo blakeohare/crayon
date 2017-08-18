@@ -1,0 +1,49 @@
+﻿namespace Graphics2DText {
+
+    /*
+        The following are attributes of the image and never change once allocated:
+        nativeData[0] -> A bitmap instance of the tile
+        nativeData[1] -> pixel width (int)
+        nativeData[2] -> pixel height (int)
+        nativeData[3] -> left margin (int)
+        nativeData[4] -> effective width (int) (distance to right margin from left margin)
+
+        The following are values added each time this is allocated to a texture
+        nativeData[5] -> GL texture ID# or -1 if not initialized
+        nativeData[6] -> bitmap instance that needs to be loaded into the [5] GL Texture ID, or null if already loaded.
+        nativeData[7] -> texture region left
+        nativeData[8] -> texture region top
+        nativeData[9] -> texture region right
+        nativeData[10] -> texture region bottom
+        ...
+        nativeData[11] -> full texture width (always 1024)
+        nativeData[12] -> full texture height
+    */
+    class GLTile {
+        field charId;
+        field width;
+        field height;
+        field currentTextureId;
+        field sheet;
+        field sheetX;
+        field sheetY;
+        field lastUsed;
+        field renderer;
+        field leftMargin;
+        field effectiveWidth;
+
+        constructor(renderer, charId) {
+            this.charId = charId;
+            this.renderer = renderer;
+            $$$('allocNativeData', this, 13);
+            size = [0, 0, 0, 0];
+            if (!$$lib_graphics2dtext_glRenderCharTile(renderer.nativeFont, this, charId, size)) {
+                throw new InvalidArgumentException("Could not render character (" + charId + ")");
+            }
+            this.width = size[0];
+            this.height = size[1];
+            this.leftMargin = size[2];
+            this.effectiveWidth = size[3];
+        }
+    }
+}

@@ -1,0 +1,24 @@
+/*
+    Generates a unique key identifying this native font instance
+    All possible attributes that encompass a native font are passed in.
+    It is up to native code to filter out the ones it doesn't need.
+    For example, if one native font instance is shared for all colors, then the color attributes should
+    be dropped from the native key.
+
+    All attribute arguments are guaranteed to be strings
+    args[0] -> type
+    args[1] -> id
+    args[2] -> size
+    args[3] -> red
+    args[4] -> green
+    args[5] -> blue
+    args[6] -> style
+
+    args[7] -> output list
+        This is an empty list. Append all strings from applicable properties to this list.
+*/
+Value lib_graphics2dtext_function_getNativeFontUniqueKey(Array<Value> args) {
+    List<Value> output = (List<Value>) args[7].internalValue;
+    Native._lib_graphics2dtext_getNativeFontUniqueKey(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+    return VALUE_NULL;
+}

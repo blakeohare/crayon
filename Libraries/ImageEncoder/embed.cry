@@ -1,0 +1,134 @@
+import ImageResources;
+import Math;
+
+namespace ImageEncoder {
+
+    enum ImageFormat {
+        PNG = 1,
+        JPEG = 2,
+        // 3 and 4 are reserved for GIF and BMP
+        ICO = 5,
+    }
+
+    class AbstractImageEncoder {
+        field _res;
+        field _format;
+
+        constructor(resource, format) {
+            this._res = resource;
+            this._format = format;
+        }
+
+        function _ensureResourceStandalone() {
+            res = this._res;
+            nRes = res._nativeResource;
+            if (res._x != 0 || res._y != 0 || res._width != nRes.width || res._height != nRes.height) {
+                newResource = new ImageResources.ImageResource(res._width, res._height);
+                newResource.lock();
+                newResource.blit(res, 0, 0);
+                newResource.unlock();
+                this._res = newResource;
+            }
+        }
+
+        function encode() {
+            this._ensureResourceStandalone();
+            output = [];
+            status = $$lib_imageencoder_encodeToBytes(this._res._nativeResource, this._format, output);
+            switch (status) {
+                case 0: return output;
+                default: throw new Core.InvalidOperationException("An unknown error occurred while encoding the image.");
+            }
+        }
+    }
+
+    class PngEncoder : AbstractImageEncoder {
+        constructor(imageResource) : base(imageResource, ImageEncoder.ImageFormat.PNG) { }
+    }
+
+    class JpegEncoder : AbstractImageEncoder {
+        constructor(imageResource) : base(imageResource, ImageEncoder.ImageFormat.JPEG) { }
+    }
+
+    class IconEncoder : AbstractImageEncoder {
+
+        field imagesBySize = {};
+
+        constructor() : base(null, ImageEncoder.ImageFormat.ICO) { }
+
+        function addImage(imageResource) {
+            width = imageResource.getWidth();
+            height = imageResource.getHeight();
+            largest = Math.max(width, height);
+            if (width > 256 || height > 256) throw new Core.InvalidOperationException("Icon images must fit in a 256x256 space.");
+            for (size : [256, 128, 64, 32]) {
+                if (largest > size / 2) {
+                    this.imagesBySize[size] = imageResource;
+                    return this;
+                }
+            }
+            this.imagesBySize[16] = imageResource;
+            return this;
+        }
+
+        function encode() {
+
+            // https://en.wikipedia.org/wiki/ICO_(file_format)#Icon_resource_structure
+
+            sizes = this.imagesBySize.keys();
+            if (sizes.length == 0) Core.fail("Cannot encode an icon with no images.");
+            sizes.sort();
+            imageBytes = [];
+            startingPositions = [];
+            startingPosition = 6 + 16 * sizes.length; // ico header is 6 bytes and each file header is 16 bytes.
+            icoHeader = [];
+            pngHeaders = [];
+            pngPayloads = [];
+
+            this._toLittleEndian(0, 2, icoHeader); // first two bytes are always 0
+            this._toLittleEndian(1, 2, icoHeader); // 1 for ICO format (2 is CUR)
+            this._toLittleEndian(sizes.length, 2, icoHeader); // number of files
+
+            for (size : sizes) {
+                originalImage = this.imagesBySize[size];
+                width = originalImage.getWidth();
+                height = originalImage.getHeight();
+                x = (size - width) / 2;
+                y = (size - height) / 2;
+                resource = new ImageResource(size, size);
+                nr = resource._nativeResource;
+                nr.lock();
+                nr.blit(originalImage, x, y);
+                nr.unlock();
+
+                pngBytes = new PngEncoder(resource).encode();
+                pngPayloads.concat(pngBytes);
+
+                this._toLittleEndian(size == 256 ? 0 : size, 1, pngHeaders);
+                this._toLittleEndian(size == 256 ? 0 : size, 1, pngHeaders);
+                this._toLittleEndian(0, 1, pngHeaders); // 0 for not using a color palette
+                this._toLittleEndian(0, 1, pngHeaders); // reserved, always 0
+                this._toLittleEndian(0, 2, pngHeaders); // 0 color planes.
+                this._toLittleEndian(32, 2, pngHeaders); // 32 bits per pixel
+                this._toLittleEndian(pngBytes.length, 4, pngHeaders); // file size in bytes
+                this._toLittleEndian(startingPosition, 4, pngHeaders); // byte position from the beginning of the file
+
+                startingPosition += pngBytes.length;
+            }
+
+            finalOutput = icoHeader;
+            finalOutput.concat(pngHeaders);
+            finalOutput.concat(pngPayloads);
+
+            return finalOutput;
+        }
+
+        function _toLittleEndian(num, bytes, output) {
+            while (bytes-- > 0) {
+                value = num % 255;
+                output.add(value);
+                num = num / 256;
+            }
+        }
+    }
+}

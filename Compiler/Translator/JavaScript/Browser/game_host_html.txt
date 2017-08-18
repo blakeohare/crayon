@@ -1,2 +1,0 @@
-﻿
-<div id="crayon_host" oncontextmenu="return false;"></div>

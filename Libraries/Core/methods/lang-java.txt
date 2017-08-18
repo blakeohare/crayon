@@ -1,0 +1,59 @@
+$_array_get: [ARG:1][[ARG:2]]
+$_array_join: String.join([ARG:2], [ARG:1])
+$_array_length: [ARG:1].length
+$_array_set: [ARG:1][[ARG:2]] = [ARG:3]
+$_assert: TranslationHelper.assertion([ARG:1])
+$_char_to_string: "" + [ARG:1]
+$_current_time_seconds: System.currentTimeMillis() / 1000.0
+$_dictionary_contains: [ARG:1].containsKey([ARG:2])
+$_dot_equals: [ARG:1].equals([ARG:2])
+$_dummy_char_to_string_conversion: [ARG:1]
+$_float_to_string: Double.toString([ARG:1])
+$_force_parens: ([ARG:1])
+$_get_program_data: TranslationHelper.getProgramData()
+$_int_to_string: Integer.toString([ARG:1])
+$_is_valid_integer: TranslationHelper.isValidInteger([ARG:1])
+$_list_clear: [ARG:1].clear()
+$_list_concat: TranslationHelper.concatLists([ARG:1], [ARG:2])
+$_list_get: [ARG:1].get([ARG:2])
+$_list_insert: [ARG:1].add([ARG:2], [ARG:3])
+$_list_join: TranslationHelper.joinList([ARG:2], [ARG:1])
+$_list_join_chars: TranslationHelper.joinChars([ARG:1])
+$_list_last_index: [ARG:1].size() - 1
+$_list_length: [ARG:1].size()
+$_list_pop: [ARG:1].remove([ARG:1].size() - 1)
+$_list_push: [ARG:1].add([ARG:2])
+$_list_remove_at: [ARG:1].remove([ARG:2])
+$_list_reverse_in_place: TranslationHelper.reverseList([ARG:1])
+$_list_set: [ARG:1].set([ARG:2], [ARG:3])
+$_list_shuffle_in_place: TranslationHelper.shuffleInPlace([ARG:1])
+$_math_arc_cos: Math.acos([ARG:1])
+$_math_arc_sin: Math.asin([ARG:1])
+$_math_arc_tan: Math.atan2([ARG:1], [ARG:2])
+$_math_cos: Math.cos([ARG:1])
+$_math_log: Math.log([ARG:1])
+$_math_pow: Math.pow([ARG:1], [ARG:2])
+$_math_sin: Math.sin([ARG:1])
+$_math_tan: Math.tan([ARG:1])])
+$_multiply_list: TranslationHelper.multiplyList([ARG:1], [ARG:2])
+$_postfix_decrement: [ARG:1]--
+$_postfix_increment: [ARG:1]++
+$_prefix_decrement: --[ARG:1]
+$_prefix_increment: ++[ARG:1]
+$_random_float: TranslationHelper.random.nextDouble()
+$_resource_read_text_file: [ARG:1]
+$_set_program_data: TranslationHelper.setProgramData([ARG:1])
+$_string_contains: [ARG:1].contains([ARG:2])
+$_string_endswith: [ARG:1].endsWith([ARG:2])
+$_string_length: [ARG:1].length()
+$_string_lower: [ARG:1].toLowerCase()
+$_string_ltrim: TranslationHelper.trimSide([ARG:1], true)
+$_string_replace: [ARG:1].replace((CharSequence) [ARG:2], (CharSequence) [ARG:3])
+$_string_reverse: TranslationHelper.reverseString([ARG:1])
+$_string_rtrim: TranslationHelper.trimSide([ARG:1], false)
+$_string_split: TranslationHelper.literalStringSplit([ARG:1], [ARG:2
+$_string_startswith: [ARG:1].startsWith([ARG:2])
+$_string_trim: [ARG:1].trim()
+$_string_upper: [ARG:1].toUpperCase()
+$_unsafe_float_division: [ARG:1] / [ARG:2]
+$_unsafe_integer_division: [ARG:1] / [ARG:2]

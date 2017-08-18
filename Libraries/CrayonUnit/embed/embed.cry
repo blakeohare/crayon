@@ -1,0 +1,10 @@
+namespace CrayonUnit {
+
+    function assertThat(thing) {
+        return new VerificationContextObject(thing);
+    }
+
+    class UnitTestFailedException : Core.Exception {
+        constructor(message) : base(message) { }
+    }
+}

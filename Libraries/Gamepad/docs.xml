@@ -1,0 +1,387 @@
+<library name="Gamepad">
+	<description>
+		Library for interacting with USB Gamepads meant to be used in conjunction with the Game library.
+
+		The Gamepad library is currently supported for the following project types: C#/OpenTK, JavaScript, Python/PyGame.
+		Projects that use the Gamepad library can still be safely exported to other project types. However, the number of gamepads detected will always be 0. Note that JavaScript projects may or may not support the Gamepad library depending on browser.
+	</description>
+	<namespace name="Gamepad">
+
+		<enum name="ButtonId">
+			<description>
+				Convenience enum for use as button binding ID's.
+				Auto configure will use these values.
+				Note that the other button ID enums will have identical integer values as this enum.
+			</description>
+			<value name="BUTTON_LEFT"/>
+			<value name="BUTTON_RIGHT"/>
+			<value name="BUTTON_UP"/>
+			<value name="BUTTON_DOWN"/>
+			<value name="DPAD"/>
+			<value name="AXIS1"/>
+			<value name="AXIS2"/>
+			<value name="LEFT_TRIGGER"/>
+			<value name="RIGHT_TRIGGER"/>
+			<value name="LEFT_BUMPER"/>
+			<value name="RIGHT_BUMPER"/>
+			<value name="START"/>
+			<value name="BACK"/>
+			<value name="AXIS1_BUTTON"/>
+			<value name="AXIS2_BUTTON"/>
+		</enum>
+
+		<enum name="XBoxButtonId">
+			<description>
+				Convenience enum for use as button binding ID's.
+				These map the integer ID's of the auto-configure to the recognizeable XBox gamepad.
+				Corresponds to equivalent buttons in the ButtonId enum.
+			</description>
+			<value name="X"/>
+			<value name="B"/>
+			<value name="Y"/>
+			<value name="A"/>
+			<value name="DPAD"/>
+			<value name="AXIS1"/>
+			<value name="AXIS2"/>
+			<value name="AXIS1_BUTTON"/>
+			<value name="AXIS2_BUTTON"/>
+			<value name="LEFT_TRIGGER"/>
+			<value name="RIGHT_TRIGGER"/>
+			<value name="LEFT_BUMPER"/>
+			<value name="RIGHT_BUMPER"/>
+			<value name="START"/>
+			<value name="BACK"/>
+		</enum>
+
+		<enum name="PsButtonId">
+			<description>
+				Convenience enum for use as button binding ID's.
+				These map the integer ID's of the auto-configure to the recognizeable PlayStation gamepad.
+				Corresponds to equivalent buttons in the ButtonId enum.
+			</description>
+			<value name="SQUARE"/>
+			<value name="CIRCLE"/>
+			<value name="TRIANGLE"/>
+			<value name="X"/>
+			<value name="DPAD"/>
+			<value name="AXIS1"/>
+			<value name="AXIS2"/>
+			<value name="LEFT_BUMPER2"/>
+			<value name="RIGHT_BUMPER2"/>
+			<value name="LEFT_BUMPER1"/>
+			<value name="RIGHT_BUMPER1"/>
+			<value name="START"/>
+			<value name="SELECT"/>
+		</enum>
+
+		<class name="GamepadManager">
+			<description>
+				The GamepadManager is a static class with various utility methods for interacting with Gamepads.
+			</description>
+			
+			<function name="isGamepadSupported" static="true">
+				<description>
+					A static method that returns true if Gamepads are supported.
+				</description>
+				<returns type="bool" description="true if the gamepad is supported."/>
+			</function>
+
+			<function name="platformRequiresRefresh" static="true">
+				<description>
+					A static method that returns true if the current platform does not detect gamepads on startup and must be periodically checked.
+
+					Notably this returns true in JavaScript projects, because the browser does not report the existence of a gamepad unless you first push a button after the page has loaded.
+
+					Technically this method is not funcetionally necessary as it is safe to call refreshDevices multiple times on any platform. But it does allow for better UX i.e. displaying a message in your gamepad config UI that explicitly tells the user "Please push a button for the gamepad to show up".
+				</description>
+				<returns type="bool" description="True if new gamepads can appear at any time"/>
+			</function>
+
+			<function name="refreshDevices" static="true">
+				<description>
+					A static method that checks to see if any new devices are available. This must be called before accessing any Gamepad methods that interact with devices.
+				</description>
+			</function>
+
+			<function name="getDeviceCount" static="true">
+				<description>
+					A static method that returns the number of devices that are currently available.
+				</description>
+				<returns type="int" description="Number of devices currently available."/>
+			</function>
+
+			<function name="getDeviceByIndex" static="true">
+				<description>
+					A static method that returns a GamepadDevice instance by providing its index value.
+				</description>
+				<arg name="index" type="int" description="The index of the gamepad device as an index value from 0 to n - 1 where n is the number of gamepads as reported by getDeviceCount()."/>
+				<returns type="Gamepad.GamepadDevice" description="a gamepad device"/>
+			</function>
+
+			<function name="getDeviceById" static="true">
+				<description>
+					A static method that returns a GamepadDevice instance by providing the ID value previously assigned to it.
+
+					ID's can either be a string or integer and are assigned to devices in a few possible ways.
+					<ul>
+						<li>The ID was assigned by loading the previous config file.</li>
+						<li>The ID was assigned to the GamepadDevice via auto-configuring.</li>
+						<li>The ID was manually assigned to a GamepadDevice instance.</li>
+					</ul>
+				</description>
+				<arg name="id" type="string|int" description="The ID that has been assigned to this device."/>
+				<returns type="Gamepad.GamepadDevice" description="a gamepad device with that ID"/>
+			</function>
+
+			<function name="restoreSettingsFromUserData" static="true">
+				<description>
+					Checks to see if there is a previously saved gamepad configuration in UserData. If so, configure as many gamepad devices as possible and assign ID's accordingly. Return the number of gamepads successfully configured.
+				</description>
+				<arg name="deviceIdOrIdList" type="string|int|list-of-int|list-of-string" description="ID's to assign to devices.
+"/>
+				<returns type="int" description="number of gamepads successfully configured."/>
+			</function>
+
+			<function name="saveSettingsToUserData" static="true">
+				<description>
+					Saves the current gamepad configuration to UserData so that it can be re-used the next time this program runs.
+					This will overwrite configurations for previous gamepads that have the same hardware fingerprint as those currently configured. But if no gamepads are currently configured, this function will not delete previous configurations.
+				</description>
+			</function>
+
+			<function name="clearAllIds" static="true">
+				<description>
+					Clears all the ID's that are currently configured to GamepadDevices.
+				</description>
+			</function>
+		</class>
+
+		<class name="GamepadDevice">
+			<description>
+				Represents a physical gamepad device.
+			</description>
+
+			<function name="getId">
+				<description>Returns the user-assigned ID to this device.</description>
+				<returns type="string|int|null" description="ID value"/>
+			</function>
+
+			<function name="setId">
+				<description>Sets an ID for this device.</description>
+				<arg name="id" type="string|int" description="A value that can be used to identify this device. More consistently reliable than simply its device index."/>
+			</function>
+
+			<function name="clearId">
+				<description>
+					Clears the ID for this device.
+				</description>
+			</function>
+
+			<function name="pushAutoConfigure">
+				<description>
+					Pushes a configuration to the GamepadDevice's configuration stack that makes its best guess as to how the buttons ought to be configured.
+				</description>
+			</function>
+
+			<function name="pushEmptyConfig">
+				<description>
+					Pushes an empty configuration to the GamepadDevice's configuration stack.
+				</description>
+			</function>
+
+			<function name="popConfig">
+				<description>
+					Pops the active configuration off of the GamepadDevice's configuration stack.
+				</description>
+			</function>
+
+			<function name="flattenConfigs">
+				<description>
+					Removes all items in the GamepadDevice's configuration stack other than the active one.
+				</description>
+			</function>
+
+			<function name="clearBinding">
+				<description>
+					Removes the binding for the given button ID in the active configuration.
+					If the button ID does not exist in the current configuration, nothing will happen and no error is generated.
+				</description>
+				<arg name="buttonId" type="string|int" description="A button ID previously assigned."/>
+			</function>
+
+			<function name="clearBindings">
+				<description>
+					Removes all bindings in the active configuration.
+				</description>
+			</function>
+
+			<function name="getName">
+				<description>
+					Returns the name of this device as reported by the hardware. This is a product string such as "Lodgy-Tek Stick-o-Joy 5000".
+					This value should be shown to the user in any configuration UI to help identify specific devices.
+					Note: some platforms are unable to identify the product name and will instead return a description of the device including the number of buttons and axes instead.
+				</description>
+				<returns type="string" description="The name of the gamepad"/>
+			</function>
+
+			<function name="getButtonCount">
+				<description>
+					Returns the number of buttons on this device.
+					This is the number of push-buttons on this device. Axes and directional pads do not count towards this value.
+				</description>
+				<returns type="int" description="Number of buttons on this device"/>
+			</function>
+
+			<function name="getAxisCount">
+				<description>
+					Returns the number of axes on this device.
+					This is the number of hardware axes on this device. Note that a single "joystick" axis on a device is generally counted as 2 separate axes. This is because an axis is single-directional that has a positive and negative direction, whereas a joystick axis is 2-dimensional and is treated as two separate axes by the hardware.
+				</description>
+				<returns type="int" description="Number of axes on this device."/>
+			</function>
+
+			<function name="getButtonState">
+				<description>
+					Returns the state of a button.
+				</description>
+				<arg name="index" type="int" description="The index of the button. This must be between 0 and n - 1 where n is the value returned by getButtonCount()"/>
+				<returns type="bool" description="True if the button is currently being held."/>
+			</function>
+
+			<function name="getAxisState">
+				<description>
+					Returns the state of an axis.
+				</description>
+				<arg name="index" type="int" description="The index of the axis. This must be between 0 and n - 1 where n is the value returned by getAxisCount()"/>
+				<returns type="float" description="The current state of the axis from -1.0 to 1.0."/>
+			</function>
+
+			<function name="getCurrentState">
+				<description>
+					Returns the state of the given configured button.
+					The actual type that is returned depends on how the button or series of buttons/axes are configured.
+					<ul>
+						<li>If the button or axis direction is configured as a digital button, a boolean will be returned.</li>
+						<li>If the button or axis direction is configured as an analog button, a float from 0.0 to 1.0 will be returned, even if the button or axis is hardware digital button.</li>
+						<li>If the axes are configured as a digital 1D axis, an integer from -1 to 1 will be returned.</li>
+						<li>If the axes are configured as an analog 1D axis, a float from -1.0 to 1.0 will be returned.</li>
+						<li>If the axes are configured as a digital 2D axis, a list of two integers will be returned, each between -1 and 1.</li>
+						<li>If the axes are configured as an analog 2D axis, a list of two integers will be returned, each between -1.0 and 1.0.</li>
+					</ul>
+				</description>
+				<arg name="buttonId" type="string|int" description="The button ID of a button or 1D or 2D axis that has been configured."/>
+				<returns type="bool|int|float|list-of-float|list-of-int" description="The current state of the configured button."/>
+			</function>
+
+			<function name="bindDigitalButton">
+				<description>
+					Binds any actively pressed button or axis that is not already bound in the active configuration to the button ID as a digital button. 
+					If binding is successful, true is returned.
+					If a button or axis is pressed, but is already associated with another button ID, nothing will be bound and false is returned.
+					If no buttons or axes are pressed, false is returned.
+					A digital button returns a boolean when queried.
+				</description>
+				<arg name="buttonId" type="string|int" description="Button ID to bind."/>
+				<returns type="bool" description="True if a button was bound."/>
+			</function>
+
+			<function name="bindDigitalAxis">
+				<description>
+					Binds any actively pressed button or axis that is not already bound in the active configuration to the button ID as a direction of a digital axis. 
+					If binding is successful, true is returned.
+					If a button or axis is pressed, but is already associated with another button ID, nothing will be bound and false is returned.
+					If no buttons or axes are pressed, false is returned.
+					A digital axis returns -1, 0, or 1 when queried.
+					This function only binds one direction of the axis. For example, if you bind with isPositive set to false, the button pressed will cause querying it to return -1. 
+				</description>
+				<arg name="buttonId" type="string|int" description="Button ID to bind."/>
+				<arg name="isPositive" type="bool" description="Direction of the axis to bind."/>
+				<returns type="bool" description="True if a button was bound."/>
+			</function>
+
+			<function name="bindDigitalAxis2dX">
+				<description>
+					Binds any actively pressed button or axis that is not already bound in the active configuration to the button ID as the X component of a digital axis in a specific direction.
+					If binding is successful, true is returned.
+					If a button or axis is pressed, but is already associated with another button ID, nothing will be bound and false is returned.
+					If no buttons or axes are pressed, false is returned.
+					A 2D digital axis returns a pair of integers when queried (each being from -1 to 1).
+					This function only binds one side of the axis for the x direction. For example, if you bind with isPositive set to false, pressing this button will cause queries to possibly have -1 in the first part of the 2D vector returned.
+				</description>
+				<arg name="buttonId" type="string|int" description="Button ID to bind."/>
+				<arg name="isPositive" type="bool" description="Direction of the axis to bind."/>
+				<returns type="bool" description="True if a button was bound."/>
+			</function>
+
+			<function name="bindDigitalAxis2dY">
+				<description>
+					Binds any actively pressed button or axis that is not already bound in the active configuration to the button ID as the Y component of a digital axis in a specific direction.
+					If binding is successful, true is returned.
+					If a button or axis is pressed, but is already associated with another button ID, nothing will be bound and false is returned.
+					If no buttons or axes are pressed, false is returned.
+					A 2D digital axis returns a pair of integers when queried (each being from -1 to 1).
+					This function only binds one side of the axis for the y direction. For example, if you bind with isPositive set to false, pressing this button will cause queries to possibly have -1 in the second part of the 2D vector returned.
+				</description>
+				<arg name="buttonId" type="string|int" description="Button ID to bind."/>
+				<arg name="isPositive" type="bool" description="Direction of the axis to bind."/>
+				<returns type="bool" description="True if a button was bound."/>
+			</function>
+
+			<function name="bindAnalogButton">
+				<description>
+					Binds any actively pressed button or axis that is not already bound in the active configuration to the button ID as an analog button. An analog button returns a float between 0.0 and 1.0 when queried.
+
+					If binding is successful, true is returned.
+					If a button or axis is pressed, but is already associated with another button ID, nothing will be bound and false is returned.
+					If no buttons or axes are pressed, false is returned.
+				</description>
+				<arg name="buttonId" type="string|int" description="Button ID to bind."/>
+				<returns type="bool" description="True if a button was bound."/>
+			</function>
+
+			<function name="bindAnalogAxis">
+				<description>
+					Binds any actively pressed button or axis that is not already bound in the active configuration to the button ID as a direction of an analog axis. 
+					If binding is successful, true is returned.
+					If a button or axis is pressed, but is already associated with another button ID, nothing will be bound and false is returned.
+					If no buttons or axes are pressed, false is returned.
+					An analog axis returns a float from -1.0 to 1.0 when queried.
+					This function only binds one direction of the axis. For example, if you bind with isPositive set to false, the button pressed will cause querying it to be less than 0.
+				</description>
+				<arg name="buttonId" type="string|int" description="Button ID to bind."/>
+				<arg name="isPositive" type="bool" description="Direction of the axis to bind."/>
+				<returns type="bool" description="True if a button was bound."/>
+			</function>
+
+			<function name="bindAnalogAxis2dX">
+				<description>
+					Binds any actively pressed button or axis that is not already bound in the active configuration to the button ID as the X component of an analog axis in a specific direction.
+					If binding is successful, true is returned.
+					If a button or axis is pressed, but is already associated with another button ID, nothing will be bound and false is returned.
+					If no buttons or axes are pressed, false is returned.
+					A 2D analog axis returns a pair of floats when queried (each being from -1.0 to 1.0).
+					This function only binds one side of the axis for the x direction. For example, if you bind with isPositive set to false, pressing this button will cause queries to the first part of the 2D vector returned to be less than 0.0.
+				</description>
+				<arg name="buttonId" type="string|int" description="Button ID to bind."/>
+				<arg name="isPositive" type="bool" description="Direction of the axis to bind."/>
+				<returns type="bool" description="True if a button was bound."/>
+			</function>
+
+			<function name="bindAnalogAxis2dY">
+				<description>
+					Binds any actively pressed button or axis that is not already bound in the active configuration to the button ID as the Y component of an analog axis in a specific direction.
+					If binding is successful, true is returned.
+					If a button or axis is pressed, but is already associated with another button ID, nothing will be bound and false is returned.
+					If no buttons or axes are pressed, false is returned.
+					A 2D analog axis returns a pair of floats when queried (each being from -1.0 to 1.0).
+					This function only binds one side of the axis for the y direction. For example, if you bind with isPositive set to false, pressing this button will cause queries to the second part of the 2D vector returned to be less than 0.0.
+				</description>
+				<arg name="buttonId" type="string|int" description="Button ID to bind."/>
+				<arg name="isPositive" type="bool" description="Direction of the axis to bind."/>
+				<returns type="bool" description="True if a button was bound."/>
+			</function>
+
+		</class>
+
+	</namespace>
+</library>

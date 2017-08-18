@@ -1,17 +1,21 @@
-class ImageLibrary {
-	constructor() {
-		this.images = {};
-	}
-	
-	function get_image(path) {
-		img = this.images.get(path, null);
-		if (img == null) {
-			$gfx_image_load_from_resource('t', 'images/' + path);
-			img = $gfx_image_get('t');
-			this.images[path] = img;
-		}
-		return img;
-	}
-}
+import Graphics2D;
+import ImageResources;
 
-IMAGE_LIBRARY = new ImageLibrary();
+class ImageLibrary {
+    static field images = {};
+    static field imageSheet = null;
+
+    constructor() { }
+
+    static function get(path) {
+        img = ImageLibrary.images.get(path);
+        if (img == null) {
+            if (ImageLibrary.imageSheet == null) {
+                ImageLibrary.imageSheet = ImageSheet.loadFromResources('everything');
+            }
+            img = GraphicsTexture.load(ImageLibrary.imageSheet.getImage('images/' + path));
+            ImageLibrary.images[path] = img;
+        }
+        return img;
+    }
+}

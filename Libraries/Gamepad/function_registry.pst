@@ -1,0 +1,14 @@
+﻿void lib_manifest_RegisterFunctions(object libRegData) {
+    Core.RegisterLibraryFunction(libRegData, "current_device_count", 0);
+    Core.RegisterLibraryFunction(libRegData, "get_axis_1d_state", 2);
+    Core.RegisterLibraryFunction(libRegData, "get_axis_2d_state", 3);
+    Core.RegisterLibraryFunction(libRegData, "get_button_state", 2);
+    Core.RegisterLibraryFunction(libRegData, "get_save_file_path", 0);
+    Core.RegisterLibraryFunction(libRegData, "getPlatform", 0);
+    Core.RegisterLibraryFunction(libRegData, "initialize_device", 3);
+    Core.RegisterLibraryFunction(libRegData, "is_supported", 0);
+    Core.RegisterLibraryFunction(libRegData, "jsIsOsx", 0);
+    Core.RegisterLibraryFunction(libRegData, "platform_requires_refresh", 0);
+    Core.RegisterLibraryFunction(libRegData, "poll_universe", 0);
+    Core.RegisterLibraryFunction(libRegData, "refresh_devices", 0);
+}

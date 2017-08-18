@@ -1,0 +1,20 @@
+﻿int1 = row.Size();
+if ((valueStackSize + int1) > valueStackCapacity) {
+    // literal count may be greater than a capacity increase in some cases.
+    while ((valueStackSize + int1) > valueStackCapacity) {
+        valueStackIncreaseCapacity(ec);
+        valueStack = ec.valueStack;
+        valueStackCapacity = valueStack.Size();
+    }
+}
+if (@ext_boolean("HAS_INCREMENT")) {
+    i = int1;
+    while (--i >= 0) {
+        valueStack[valueStackSize++] = literalTable[row[i]];
+    }
+} else {
+    for (i = int1 - 1; i >= 0; i -= 1) {
+        valueStack[valueStackSize] = literalTable[row[i]];
+        valueStackSize += 1;
+    }
+}
