@@ -9,9 +9,14 @@ class Sprite {
     field velocity;
     field isDead = false;
     field isMoving = false;
+    field width;
+    field height;
 
     constructor(position) {
         this.position = position;
+        img = this.getImage(0);
+        this.width = img.width;
+        this.height = img.height;
     }
 
     function update() {
@@ -120,7 +125,7 @@ class Fire : Sprite {
     }
 
     constructor(position) : base(position) {
-        this.velocity = 1.3;
+        this.velocity = 1.6;
     }
 
     function update() {
