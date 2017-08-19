@@ -34,8 +34,8 @@ class PlayScene : AbstractScene {
                 if (this.mode == GameMode.PLAYING) {
 
                     // Ensure the coordinate isn't too close to the edge.
-                    x = Math.ensureRange(event.x, 20, SCREEN_WIDTH - 20);
-                    y = Math.ensureRange(event.y, 20, SCREEN_HEIGHT - 20);
+                    x = Math.ensureRange(event.x, 30, SCREEN_WIDTH - 30);
+                    y = Math.ensureRange(event.y, 30, SCREEN_HEIGHT - 30);
 
                     // Tell the player sprite to go there.
                     this.player.targetPosition = [x, y];
@@ -62,17 +62,10 @@ class PlayScene : AbstractScene {
                 this.player.update();
 
                 // Check for player touching a fire.
-                px = this.player.position[0];
-                py = this.player.position[1] + 10; // it makes more visual sense to move the vulnerable point towards his feet.
-                for (fire : this.fires) {
-                    dx = fire.position[0] - px;
-                    dy = fire.position[1] - py;
-                    distance = (dx ** 2 + dy ** 2) * .5;
-                    if (distance < 30) {
-                        this.player.isDead = true;
-                        this.mode = GameMode.YOU_DIED;
-                        this.modeCounter = 0;
-                    }
+                if (this.isPlayerTouchingFire()) {
+					this.player.isDead = true;
+					this.mode = GameMode.YOU_DIED;
+					this.modeCounter = 0;
                 }
 
                 break;
@@ -89,6 +82,30 @@ class PlayScene : AbstractScene {
         for (fire : this.fires) {
             fire.update();
         }
+    }
+    
+    function isPlayerTouchingFire() {
+		px = this.player.position[0];
+		py = this.player.position[1];
+		playerWidth = this.player.width;
+		
+		for (fire : this.fires) {
+			dx = fire.position[0] - px;
+			dy = fire.position[1] - py;
+			if (dx > 100 || dy > 100) {
+				// fast and easy vicinity check that most sprites will not pass.
+				continue;
+			}
+			
+			distance = (dx ** 2 + dy ** 2) ** .5;
+			deathDistance = (playerWidth + fire.width) / 2;
+			deathDistance *= .7; // make the game a little easier
+			
+			if (distance < deathDistance) {
+				return true;
+			}
+		}
+		return false;
     }
 
     function render() {

@@ -14,6 +14,7 @@ namespace %%%PROJECT_ID%%%
             TranslationHelper.ResourceManifest = ResourceReader.ReadResourceTextFile("ResourceManifest.txt");
             TranslationHelper.ImageSheetManifest = ResourceReader.ReadMetadata("ImageSheetManifest.txt", true);
             CrayonWrapper.v_main();
+            UniversalBitmap.EnsureAllFreed();
         }
     }
 }
