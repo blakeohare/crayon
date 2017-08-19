@@ -67,7 +67,7 @@ class PlayScene : AbstractScene {
                 for (fire : this.fires) {
                     dx = fire.position[0] - px;
                     dy = fire.position[1] - py;
-                    distance = (dx ** 2 + dy ** 2) * .5;
+                    distance = (dx ** 2 + dy ** 2) ** .5;
                     if (distance < 30) {
                         this.player.isDead = true;
                         this.mode = GameMode.YOU_DIED;
