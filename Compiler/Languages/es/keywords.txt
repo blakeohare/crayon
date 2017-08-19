@@ -16,7 +16,7 @@ FALSE: falso
 FIELD: trozo
 FINAL: estable
 FINALLY: finalmente
-FOR: para
+FOR: por
 FUNCTION: funcion
 IF: si
 IS: es
