@@ -330,6 +330,19 @@ namespace Crayon
                 }
             }
 
+            string iconPath = this.IconFilePath;
+            if (iconPath != null)
+            {
+                if (!FileUtil.IsAbsolutePath(iconPath))
+                {
+                    iconPath = FileUtil.JoinPath(this.ProjectDirectory, iconPath);
+                }
+                if (!FileUtil.FileExists(iconPath))
+                {
+                    throw new InvalidOperationException("Icon file path does not exist: " + this.IconFilePath);
+                }
+            }
+
             return this;
         }
 
