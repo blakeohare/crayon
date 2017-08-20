@@ -57,11 +57,11 @@ namespace Crayon
                     }
                     catch (InvalidOperationException e)
                     {
-                        System.Console.Error.WriteLine(e.Message);
+                        System.Console.WriteLine(e.Message);
                     }
                     catch (ParserException e)
                     {
-                        System.Console.Error.WriteLine(e.Message);
+                        System.Console.WriteLine(e.Message);
                     }
                 }
 #endif
