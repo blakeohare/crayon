@@ -253,9 +253,14 @@ namespace Crayon
 
                 varLookup = GenerateBuildVars(buildInput, desiredTarget, targetName);
 
-                flattened.Sources = desiredTarget.SourcesNonNull.Union<SourceItem>(flattened.SourcesNonNull).ToArray();
-                flattened.Output = FileUtil.GetCanonicalizeUniversalPath(DoReplacement(targetName, desiredTarget.Output ?? flattened.Output));
-                flattened.ProjectName = DoReplacement(targetName, desiredTarget.ProjectName ?? flattened.ProjectName);
+                SourceItem[] sources = desiredTarget.SourcesNonNull.Union<SourceItem>(flattened.SourcesNonNull).ToArray();
+                if (sources.Length == 0) ThrowError("There are no <source> paths for this build target.");
+                string outputPath = desiredTarget.Output ?? flattened.Output ?? ThrowError("There is no <output> path for this build target.");
+                string projectName = desiredTarget.ProjectName ?? flattened.ProjectName ?? ThrowError("There is no <projectname> for this build target.");
+
+                flattened.Sources = sources;
+                flattened.Output = FileUtil.GetCanonicalizeUniversalPath(DoReplacement(targetName, outputPath));
+                flattened.ProjectName = DoReplacement(targetName, projectName);
                 flattened.JsFilePrefix = DoReplacement(targetName, desiredTarget.JsFilePrefix ?? flattened.JsFilePrefix);
                 flattened.ImageSheets = MergeImageSheets(desiredTarget.ImageSheets, flattened.ImageSheets);
                 flattened.MinifiedRaw = desiredTarget.MinifiedRaw ?? flattened.MinifiedRaw;
@@ -304,6 +309,11 @@ namespace Crayon
                 WindowHeight = Util.ParseIntWithErrorNullOkay((flattened.WindowSize ?? new Size()).Height, "Invalid window height in build file."),
                 CompilerLocale = new Locale((flattened.CompilerLocale ?? "en").Trim()),
             }.ValidateValues();
+        }
+
+        private static string ThrowError(string message)
+        {
+            throw new InvalidOperationException(message);
         }
 
         public BuildContext ValidateValues()
