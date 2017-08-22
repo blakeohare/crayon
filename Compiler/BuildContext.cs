@@ -253,14 +253,9 @@ namespace Crayon
 
                 varLookup = GenerateBuildVars(buildInput, desiredTarget, targetName);
 
-                SourceItem[] sources = desiredTarget.SourcesNonNull.Union<SourceItem>(flattened.SourcesNonNull).ToArray();
-                if (sources.Length == 0) ThrowError("There are no <source> paths for this build target.");
-                string outputPath = desiredTarget.Output ?? flattened.Output ?? ThrowError("There is no <output> path for this build target.");
-                string projectName = desiredTarget.ProjectName ?? flattened.ProjectName ?? ThrowError("There is no <projectname> for this build target.");
-
-                flattened.Sources = sources;
-                flattened.Output = FileUtil.GetCanonicalizeUniversalPath(DoReplacement(targetName, outputPath));
-                flattened.ProjectName = DoReplacement(targetName, projectName);
+                flattened.Sources = desiredTarget.SourcesNonNull.Union<SourceItem>(flattened.SourcesNonNull).ToArray();
+                flattened.Output = FileUtil.GetCanonicalizeUniversalPath(DoReplacement(targetName, desiredTarget.Output ?? flattened.Output));
+                flattened.ProjectName = DoReplacement(targetName, desiredTarget.ProjectName ?? flattened.ProjectName);
                 flattened.JsFilePrefix = DoReplacement(targetName, desiredTarget.JsFilePrefix ?? flattened.JsFilePrefix);
                 flattened.ImageSheets = MergeImageSheets(desiredTarget.ImageSheets, flattened.ImageSheets);
                 flattened.MinifiedRaw = desiredTarget.MinifiedRaw ?? flattened.MinifiedRaw;
@@ -318,7 +313,11 @@ namespace Crayon
 
         public BuildContext ValidateValues()
         {
-            if (this.ProjectID == null) throw new InvalidOperationException("Project ID missing");
+            if (this.ProjectID == null) throw new InvalidOperationException("There is no <projectname> for this build target.");
+
+
+            if (this.SourceFolders.Length == 0) throw new InvalidOperationException("There are no <source> paths for this build target.");
+            if (this.OutputFolder == null) throw new InvalidOperationException("There is no <output> path for this build target.");
 
             foreach (char c in this.ProjectID)
             {
