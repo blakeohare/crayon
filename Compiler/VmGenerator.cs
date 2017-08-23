@@ -106,6 +106,7 @@ namespace Crayon
             CompilationBundle nullableCompilationBundle,
             ResourceDatabase resourceDatabase,
             ICollection<Library> relevantLibraries,
+            string verifiedAbsoluteOutputPath,
             VmGenerationMode mode)
         {
             using (new PerformanceSection("VmGenerator.GenerateVmSourceCodeForPlatform"))
@@ -140,6 +141,8 @@ namespace Crayon
                         .SetOption(ExportOptionKey.JS_FILE_PREFIX, nullableCompilationBundle.JsFilePrefix);
 
                     if (options.GetBool(ExportOptionKey.HAS_ICON)) options.SetOption(ExportOptionKey.ICON_PATH, nullableCompilationBundle.IconPath);
+
+                    platform.GleanInformationFromPreviouslyExportedProject(options, verifiedAbsoluteOutputPath);
 
                     return platform.ExportProject(
                         vm.Globals.Values.OrderBy(v => v.VariableNameToken.Value).ToArray(),

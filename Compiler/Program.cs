@@ -192,6 +192,7 @@ namespace Crayon
                     null,
                     null,
                     allLibraries,
+                    targetDirectory,
                     VmGenerationMode.EXPORT_VM_AND_LIBRARIES);
                 FileOutputExporter exporter = new FileOutputExporter(targetDirectory);
                 exporter.ExportFiles(result);
@@ -263,14 +264,6 @@ namespace Crayon
 
                 ResourceDatabase resourceDatabase = PrepareResources(buildContext, compilationResult.ByteCode);
 
-                VmGenerator vmGenerator = new VmGenerator();
-                Dictionary<string, FileOutput> result = vmGenerator.GenerateVmSourceCodeForPlatform(
-                    platform,
-                    compilationResult,
-                    resourceDatabase,
-                    libraries,
-                    VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
-
                 string outputDirectory = buildContext.OutputFolder;
                 if (!FileUtil.IsAbsolutePath(outputDirectory))
                 {
@@ -278,6 +271,15 @@ namespace Crayon
                 }
                 outputDirectory = FileUtil.GetCanonicalizeUniversalPath(outputDirectory);
                 FileOutputExporter exporter = new FileOutputExporter(outputDirectory);
+
+                VmGenerator vmGenerator = new VmGenerator();
+                Dictionary<string, FileOutput> result = vmGenerator.GenerateVmSourceCodeForPlatform(
+                    platform,
+                    compilationResult,
+                    resourceDatabase,
+                    libraries,
+                    outputDirectory,
+                    VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
 
                 exporter.ExportFiles(result);
 

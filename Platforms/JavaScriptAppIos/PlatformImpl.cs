@@ -112,7 +112,16 @@ namespace JavaScriptAppIos
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
             Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
-            replacements["ORGANIZTION_NAME"] = "Organization Name";
+            replacements["ORGANIZATION_NAME"] = "Organization Name";
+
+            replacements["DEVELOPMENT_TEAM_ALL_CAPS"] = "";
+            replacements["DEVELOPMENT_TEAM_NOT_CAPS"] = "";
+            string developmentTeam = options.GetStringOrNull(ExportOptionKey.IOS_DEV_TEAM_ID);
+            if (developmentTeam != null)
+            {
+                replacements["DEVELOPMENT_TEAM_ALL_CAPS"] = "DevelopmentTeam = " + developmentTeam + ";";
+                replacements["DEVELOPMENT_TEAM_NOT_CAPS"] = "DEVELOPMENT_TEAM = " + developmentTeam + ";";
+            }
 
             string bundleIdPrefix = options.GetStringOrNull(ExportOptionKey.IOS_BUNDLE_PREFIX);
             replacements["IOS_BUNDLE_ID"] = bundleIdPrefix == null
@@ -125,6 +134,33 @@ namespace JavaScriptAppIos
         public override IDictionary<string, object> GetConstantFlags()
         {
             return this.ParentPlatform.GetConstantFlags();
+        }
+
+        public override void GleanInformationFromPreviouslyExportedProject(Options options, string outputDirectory)
+        {
+            string pbxproj = FileUtil.JoinPath(
+                outputDirectory,
+                options.GetStringOrEmpty(ExportOptionKey.PROJECT_ID),
+                options.GetStringOrEmpty(ExportOptionKey.PROJECT_ID) + ".xcodeproj",
+                "project.pbxproj");
+            if (FileUtil.FileExists(pbxproj))
+            {
+                string contents = FileUtil.ReadFileText(pbxproj);
+                int devTeam = contents.IndexOf("DevelopmentTeam = ");
+                if (devTeam != -1)
+                {
+                    devTeam += "DevelopmentTeam = ".Length;
+                    int devTeamEnd = contents.IndexOf(';', devTeam);
+                    if (devTeamEnd != -1 )
+                    {
+                        string value = contents.Substring(devTeam, devTeamEnd - devTeam).Trim();
+                        if (value.Length > 0 && !value.Contains("\n"))
+                        {
+                            options.SetOption(ExportOptionKey.IOS_DEV_TEAM_ID, value);
+                        }
+                    }
+                }
+            }
         }
     }
 }

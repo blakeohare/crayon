@@ -9,6 +9,7 @@
         HAS_ICON,
         ICON_PATH,
         IOS_BUNDLE_PREFIX,
+        IOS_DEV_TEAM_ID,
         JS_FILE_PREFIX,
         JS_HEAD_EXTRAS,
         LIBRARIES_USED,

@@ -217,5 +217,12 @@ namespace Platform
                 { "DEFAULT_WINDOW_HEIGHT", options.GetInteger(ExportOptionKey.WINDOW_HEIGHT, 600).ToString() },
             };
         }
+
+        public virtual void GleanInformationFromPreviouslyExportedProject(
+            Options options,
+            string outputDirectory)
+        {
+
+        }
     }
 }

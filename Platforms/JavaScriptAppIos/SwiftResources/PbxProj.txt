@@ -99,6 +99,7 @@
 				TargetAttributes = {
 					69F72C131EE448D500F89B5E = {
 						CreatedOnToolsVersion = 7.3.1;
+						%%%DEVELOPMENT_TEAM_NOT_CAPS%%%
 						LastSwiftMigration = 0830;
 					};
 				};
@@ -256,6 +257,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				%%%DEVELOPMENT_TEAM_ALL_CAPS%%%
 				INFOPLIST_FILE = %%%PROJECT_ID%%%/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = %%%IOS_BUNDLE_ID%%%;
@@ -268,6 +270,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				%%%DEVELOPMENT_TEAM_ALL_CAPS%%%
 				INFOPLIST_FILE = %%%PROJECT_ID%%%/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = %%%IOS_BUNDLE_ID%%%;
