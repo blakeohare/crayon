@@ -105,8 +105,12 @@ namespace Crayon
             [XmlElement("title")]
             public string DefaultTitle { get; set; }
 
+            // comma-delimited list of values
+            // { portrait | upsidedown | landscape | landscapeleft | landscaperight | all }
+            // landscape is a shortcut of landscapeleft,landscaperight
+            // see Common/OrientationParser.cs
             [XmlElement("orientation")]
-            public string Orientation { get; set; } // values = { portrait | landscape | auto }
+            public string Orientation { get; set; }
 
             [XmlElement("crayonpath")]
             public string CrayonPath { get; set; }
@@ -269,6 +273,7 @@ namespace Crayon
                 flattened.Version = DoReplacement(targetName, desiredTarget.Version ?? flattened.Version);
                 flattened.WindowSize = Size.Merge(desiredTarget.WindowSize, flattened.WindowSize) ?? new Size();
                 flattened.CompilerLocale = desiredTarget.CompilerLocale ?? flattened.CompilerLocale;
+                flattened.Orientation = desiredTarget.Orientation ?? flattened.Orientation;
 
                 platform = desiredTarget.Platform;
             }

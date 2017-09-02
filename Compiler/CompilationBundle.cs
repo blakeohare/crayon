@@ -15,6 +15,7 @@ namespace Crayon
         public string IosBundlePrefix { get; set; }
         public int? WindowWidth { get; set; }
         public int? WindowHeight { get; set; }
+        public string Orientations { get; set; }
         public string Version { get; set; }
         public string Description { get; set; }
 
@@ -46,6 +47,7 @@ namespace Crayon
                     IconPath = buildContext.IconFilePath,
                     WindowWidth = buildContext.WindowWidth,
                     WindowHeight = buildContext.WindowHeight,
+                    Orientations = buildContext.Orientation,
                 };
             }
         }

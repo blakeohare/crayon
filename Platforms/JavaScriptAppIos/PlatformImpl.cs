@@ -126,59 +126,15 @@ namespace JavaScriptAppIos
             string bundleIdPrefix = options.GetStringOrNull(ExportOptionKey.IOS_BUNDLE_PREFIX);
             replacements["IOS_BUNDLE_ID"] = bundleIdPrefix == null
                 ? options.GetString(ExportOptionKey.PROJECT_ID)
-         		: bundleIdPrefix + "." + options.GetString(ExportOptionKey.PROJECT_ID);
+                : bundleIdPrefix + "." + options.GetString(ExportOptionKey.PROJECT_ID);
 
-
-            string orientationRaw = options.GetStringOrEmpty(ExportOptionKey.SUPPORTED_ORIENTATION).Trim();
-
-            bool down = false;
-            bool up = false;
-            bool left = false;
-            bool right = false;
-            if (orientationRaw.Length == 0)
-            {
-                down = true;
-            }
-            else
-            {
-                foreach (string orientation in orientationRaw.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    switch (orientation)
-                    {
-                        case "portrait":
-                            down = true;
-                            break;
-                        case "upsidedown":
-                            up = true;
-                            break;
-                        case "landscape":
-                            left = true;
-                            right = true;
-                            break;
-                        case "landscapeleft":
-                            left = true;
-                            break;
-                        case "landscaperight":
-                            right = true;
-                            break;
-                        case "all":
-                            down = true;
-                            up = true;
-                            left = true;
-                            right = true;
-                            break;
-                        default:
-                            throw new InvalidOperationException("Unrecognized screen orientation: '" + orientation + "'");
-                    }
-                }
-            }
-
+            OrientationParser orientations = new OrientationParser(options);
             replacements["IOS_SUPPORTED_ORIENTATIONS_INFO_PLIST"] = string.Join("",
                 "\t<array>\n",
-                down ? "\t\t<string>UIInterfaceOrientationPortrait</string>\n" : "",
-                up ? "\t\t<string>UIInterfaceOrientationPortraitUpsideDown</string>\n" : "",
-                left ? "\t\t<string>UIInterfaceOrientationLandscapeLeft</string>\n" : "",
-                right ? "\t\t<string>UIInterfaceOrientationLandscapeRight</string>\n" : "",
+                orientations.SupportsPortrait ? "\t\t<string>UIInterfaceOrientationPortrait</string>\n" : "",
+                orientations.SupportsUpsideDown ? "\t\t<string>UIInterfaceOrientationPortraitUpsideDown</string>\n" : "",
+                orientations.SupportsLandscapeLeft ? "\t\t<string>UIInterfaceOrientationLandscapeLeft</string>\n" : "",
+                orientations.SupportsLandscapeRight ? "\t\t<string>UIInterfaceOrientationLandscapeRight</string>\n" : "",
                 "\t</array>");
 
             return replacements;
@@ -204,7 +160,7 @@ namespace JavaScriptAppIos
                 {
                     devTeam += "DevelopmentTeam = ".Length;
                     int devTeamEnd = contents.IndexOf(';', devTeam);
-                    if (devTeamEnd != -1 )
+                    if (devTeamEnd != -1)
                     {
                         string value = contents.Substring(devTeam, devTeamEnd - devTeam).Trim();
                         if (value.Length > 0 && !value.Contains("\n"))
