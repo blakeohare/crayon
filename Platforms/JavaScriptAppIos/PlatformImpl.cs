@@ -67,12 +67,14 @@ namespace JavaScriptAppIos
                 .AddOutputSize(29 * 1)
                 .AddOutputSize(29 * 2)
                 .AddOutputSize(29 * 3)
+                .AddOutputSize(40 * 1)
                 .AddOutputSize(40 * 2)
                 .AddOutputSize(40 * 3)
                 .AddOutputSize(60 * 2)
                 .AddOutputSize(60 * 3)
                 .AddOutputSize(76 * 1)
                 .AddOutputSize(76 * 2)
+                .AddOutputSize(167) // 83.5 * 2
                 .GenerateWithDefaultFallback();
             foreach (int size in iconImagesBySize.Keys)
             {
