@@ -14,6 +14,7 @@
         JS_HEAD_EXTRAS,
         LIBRARIES_USED,
         PROJECT_ID,
+        SUPPORTED_ORIENTATION,
         VERSION,
         WINDOW_WIDTH,
         WINDOW_HEIGHT,

@@ -128,6 +128,59 @@ namespace JavaScriptAppIos
                 ? options.GetString(ExportOptionKey.PROJECT_ID)
          		: bundleIdPrefix + "." + options.GetString(ExportOptionKey.PROJECT_ID);
 
+
+            string orientationRaw = options.GetStringOrEmpty(ExportOptionKey.SUPPORTED_ORIENTATION).Trim();
+
+            bool down = false;
+            bool up = false;
+            bool left = false;
+            bool right = false;
+            if (orientationRaw.Length == 0)
+            {
+                down = true;
+            }
+            else
+            {
+                foreach (string orientation in orientationRaw.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    switch (orientation)
+                    {
+                        case "portrait":
+                            down = true;
+                            break;
+                        case "upsidedown":
+                            up = true;
+                            break;
+                        case "landscape":
+                            left = true;
+                            right = true;
+                            break;
+                        case "landscapeleft":
+                            left = true;
+                            break;
+                        case "landscaperight":
+                            right = true;
+                            break;
+                        case "all":
+                            down = true;
+                            up = true;
+                            left = true;
+                            right = true;
+                            break;
+                        default:
+                            throw new InvalidOperationException("Unrecognized screen orientation: '" + orientation + "'");
+                    }
+                }
+            }
+
+            replacements["IOS_SUPPORTED_ORIENTATIONS_INFO_PLIST"] = string.Join("",
+                "\t<array>\n",
+                down ? "\t\t<string>UIInterfaceOrientationPortrait</string>\n" : "",
+                up ? "\t\t<string>UIInterfaceOrientationPortraitUpsideDown</string>\n" : "",
+                left ? "\t\t<string>UIInterfaceOrientationLandscapeLeft</string>\n" : "",
+                right ? "\t\t<string>UIInterfaceOrientationLandscapeRight</string>\n" : "",
+                "\t</array>");
+
             return replacements;
         }
 
