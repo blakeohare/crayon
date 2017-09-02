@@ -10,6 +10,7 @@ namespace Crayon
         public string GuidSeed { get; set; }
         public ICollection<Library> LibrariesUsed { get; set; }
         public string IconPath { get; set; }
+        public string LaunchScreenPath { get; set; }
         public string DefaultTitle { get; set; }
         public string JsFilePrefix { get; set; }
         public string IosBundlePrefix { get; set; }
@@ -45,6 +46,7 @@ namespace Crayon
                     JsFilePrefix = jsFilePrefix,
                     IosBundlePrefix = buildContext.IosBundlePrefix,
                     IconPath = buildContext.IconFilePath,
+                    LaunchScreenPath = buildContext.LaunchScreenPath,
                     WindowWidth = buildContext.WindowWidth,
                     WindowHeight = buildContext.WindowHeight,
                     Orientations = buildContext.Orientation,

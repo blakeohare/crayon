@@ -24,6 +24,7 @@ namespace Crayon
         public bool ReadableByteCode { get; set; }
         public string GuidSeed { get; set; }
         public string IconFilePath { get; set; }
+        public string LaunchScreenPath { get; set; }
         public string DefaultTitle { get; set; }
         public string Orientation { get; set; }
         public string CrayonPath { get; set; }
@@ -101,6 +102,9 @@ namespace Crayon
 
             [XmlElement("icon")]
             public string IconFilePath { get; set; }
+
+            [XmlElement("launchscreen")]
+            public string LaunchScreen { get; set; }
 
             [XmlElement("title")]
             public string DefaultTitle { get; set; }
@@ -266,6 +270,7 @@ namespace Crayon
                 flattened.ExportDebugByteCodeRaw = desiredTarget.ExportDebugByteCodeRaw ?? flattened.ExportDebugByteCodeRaw;
                 flattened.GuidSeed = DoReplacement(targetName, desiredTarget.GuidSeed ?? flattened.GuidSeed);
                 flattened.IconFilePath = DoReplacement(targetName, desiredTarget.IconFilePath ?? flattened.IconFilePath);
+                flattened.LaunchScreen = DoReplacement(targetName, desiredTarget.LaunchScreen ?? flattened.LaunchScreen);
                 flattened.DefaultTitle = DoReplacement(targetName, desiredTarget.DefaultTitle ?? flattened.DefaultTitle);
                 flattened.Orientation = DoReplacement(targetName, desiredTarget.Orientation ?? flattened.Orientation);
                 flattened.CrayonPath = DoReplacement(targetName, desiredTarget.CrayonPath ?? flattened.CrayonPath);
@@ -301,6 +306,7 @@ namespace Crayon
                 BuildVariableLookup = varLookup,
                 GuidSeed = flattened.GuidSeed,
                 IconFilePath = flattened.IconFilePath,
+                LaunchScreenPath = flattened.LaunchScreen,
                 DefaultTitle = flattened.DefaultTitle,
                 Orientation = flattened.Orientation,
                 CrayonPath = flattened.CrayonPath,
@@ -344,6 +350,19 @@ namespace Crayon
                 if (!FileUtil.FileExists(iconPath))
                 {
                     throw new InvalidOperationException("Icon file path does not exist: " + this.IconFilePath);
+                }
+            }
+
+            string launchScreenPath = this.LaunchScreenPath;
+            if (launchScreenPath != null)
+            {
+                if (!FileUtil.IsAbsolutePath(launchScreenPath))
+                {
+                    launchScreenPath = FileUtil.JoinPath(this.ProjectDirectory, launchScreenPath);
+                }
+                if (!FileUtil.FileExists(launchScreenPath))
+                {
+                    throw new InvalidOperationException("Launch screen file path does not exist: " + this.LaunchScreenPath);
                 }
             }
 

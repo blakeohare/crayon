@@ -365,6 +365,10 @@ namespace Crayon
                 {
                     buildContext.IconFilePath = FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.IconFilePath);
                 }
+                if (buildContext.LaunchScreenPath != null)
+                {
+                    buildContext.LaunchScreenPath = FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.LaunchScreenPath);
+                }
 
                 foreach (FilePath sourceFolder in buildContext.SourceFolders)
                 {

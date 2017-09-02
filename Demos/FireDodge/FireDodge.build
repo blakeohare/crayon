@@ -3,6 +3,7 @@
 	<source>source/</source>
 	<output>output/%TARGET_NAME%</output>
 	<icon>assets/icon.png</icon>
+	<launchscreen>assets/launchscreen.png</launchscreen>
 
 	<imagesheets>
 		<sheet id="everything">

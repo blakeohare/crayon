@@ -58,15 +58,27 @@ namespace JavaScriptAppIos
 
             OrientationParser orientations = new OrientationParser(options);
             bool useLandscapeForLaunchscreen = orientations.SupportsLandscapeLeft || orientations.SupportsLandscapeRight;
-            files["%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Assets.xcassets/Launchscreen.imageset/launchscreen.png"] = new FileOutput()
+            FileOutput launchScreen;
+            if (options.GetBool(ExportOptionKey.HAS_LAUNCHSCREEN))
             {
-                Type = FileOutputType.Image,
-                Bitmap = new SystemBitmap(typeof(JavaScriptAppIosTranslator).Assembly, "SwiftResources/" +
-                    (useLandscapeForLaunchscreen ? "launchhorizontal.png" : "launchvertical.png")),
-            };
-
-            // DELETE THISS
-            files["%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/launchscreen.png"] = files["%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Assets.xcassets/Launchscreen.imageset/launchscreen.png"];
+                launchScreen = new FileOutput()
+                {
+                    Type = FileOutputType.Image,
+                    Bitmap = new SystemBitmap(options.GetString(ExportOptionKey.LAUNCHSCREEN_PATH)),
+                };
+            }
+            else
+            {
+                launchScreen = new FileOutput()
+                {
+                    Type = FileOutputType.Image,
+                    Bitmap = new SystemBitmap(typeof(JavaScriptAppIosTranslator).Assembly, "SwiftResources/" +
+                       (useLandscapeForLaunchscreen ? "launchhorizontal.png" : "launchvertical.png")),
+                };
+            }
+            files["%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Assets.xcassets/Launchscreen.imageset/launchscreen.png"] = launchScreen;
+            replacements["LAUNCH_SCREEN_WIDTH"] = launchScreen.Bitmap.Width.ToString();
+            replacements["LAUNCH_SCREEN_HEIGHT"] = launchScreen.Bitmap.Height.ToString();
 
             IconSetGenerator icons = new IconSetGenerator();
             if (options.GetBool(ExportOptionKey.HAS_ICON))

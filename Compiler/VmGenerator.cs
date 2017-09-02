@@ -137,11 +137,13 @@ namespace Crayon
                         .SetOption(ExportOptionKey.DEFAULT_TITLE, nullableCompilationBundle.DefaultTitle)
                         .SetOption(ExportOptionKey.LIBRARIES_USED, libraries.Cast<object>().ToArray())
                         .SetOption(ExportOptionKey.HAS_ICON, nullableCompilationBundle.IconPath != null)
+                        .SetOption(ExportOptionKey.HAS_LAUNCHSCREEN, nullableCompilationBundle.LaunchScreenPath != null)
                         .SetOption(ExportOptionKey.IOS_BUNDLE_PREFIX, nullableCompilationBundle.IosBundlePrefix)
                         .SetOption(ExportOptionKey.JS_FILE_PREFIX, nullableCompilationBundle.JsFilePrefix)
                         .SetOption(ExportOptionKey.SUPPORTED_ORIENTATION, nullableCompilationBundle.Orientations);
 
                     if (options.GetBool(ExportOptionKey.HAS_ICON)) options.SetOption(ExportOptionKey.ICON_PATH, nullableCompilationBundle.IconPath);
+                    if (options.GetBool(ExportOptionKey.HAS_LAUNCHSCREEN)) options.SetOption(ExportOptionKey.LAUNCHSCREEN_PATH, nullableCompilationBundle.LaunchScreenPath);
 
                     platform.GleanInformationFromPreviouslyExportedProject(options, verifiedAbsoluteOutputPath);
 
