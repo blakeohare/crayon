@@ -55,6 +55,19 @@ namespace JavaScriptAppIos
             // TODO: use this in the pbxproj file.
             string uuidSeed = options.GetStringOrNull(ExportOptionKey.GUID_SEED);
 
+
+            OrientationParser orientations = new OrientationParser(options);
+            bool useLandscapeForLaunchscreen = orientations.SupportsLandscapeLeft || orientations.SupportsLandscapeRight;
+            files["%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Assets.xcassets/Launchscreen.imageset/launchscreen.png"] = new FileOutput()
+            {
+                Type = FileOutputType.Image,
+                Bitmap = new SystemBitmap(typeof(JavaScriptAppIosTranslator).Assembly, "SwiftResources/" +
+                    (useLandscapeForLaunchscreen ? "launchhorizontal.png" : "launchvertical.png")),
+            };
+
+            // DELETE THISS
+            files["%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/launchscreen.png"] = files["%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Assets.xcassets/Launchscreen.imageset/launchscreen.png"];
+
             IconSetGenerator icons = new IconSetGenerator();
             if (options.GetBool(ExportOptionKey.HAS_ICON))
             {
@@ -89,6 +102,7 @@ namespace JavaScriptAppIos
                 "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%.xcodeproj/project.pbxproj|SwiftResources/PbxProj.txt",
                 "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/AppDelegate.swift|SwiftResources/AppDelegateSwift.txt",
                 "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Assets.xcassets/AppIcon.appiconset/Contents.json|SwiftResources/IconSetContentJson.txt",
+                "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Assets.xcassets/Launchscreen.imageset/Contents.json|SwiftResources/ImageSetContentJson.txt",
                 "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Base.lproj/LaunchScreen.storyboard|SwiftResources/LaunchScreenStoryboard.txt",
                 "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Base.lproj/Main.storyboard|SwiftResources/MainStoryboard.txt",
                 "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Info.plist|SwiftResources/InfoPlist.txt",

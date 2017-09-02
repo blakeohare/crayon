@@ -71,6 +71,9 @@
     <EmbeddedResource Include="SwiftResources\InfoPlist.txt" />
     <EmbeddedResource Include="SwiftResources\ViewControllerSwift.txt" />
     <EmbeddedResource Include="SwiftResources\iOSjs.txt" />
+    <EmbeddedResource Include="SwiftResources\launchhorizontal.png" />
+    <EmbeddedResource Include="SwiftResources\launchvertical.png" />
+    <EmbeddedResource Include="SwiftResources\ImageSetContentJson.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
