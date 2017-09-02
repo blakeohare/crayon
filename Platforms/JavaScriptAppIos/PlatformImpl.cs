@@ -149,8 +149,8 @@ namespace JavaScriptAppIos
             string developmentTeam = options.GetStringOrNull(ExportOptionKey.IOS_DEV_TEAM_ID);
             if (developmentTeam != null)
             {
-                replacements["DEVELOPMENT_TEAM_ALL_CAPS"] = "DevelopmentTeam = " + developmentTeam + ";";
-                replacements["DEVELOPMENT_TEAM_NOT_CAPS"] = "DEVELOPMENT_TEAM = " + developmentTeam + ";";
+                replacements["DEVELOPMENT_TEAM_NOT_CAPS"] = "DevelopmentTeam = " + developmentTeam + ";";
+                replacements["DEVELOPMENT_TEAM_ALL_CAPS"] = "DEVELOPMENT_TEAM = " + developmentTeam + ";";
             }
 
             string bundleIdPrefix = options.GetStringOrNull(ExportOptionKey.IOS_BUNDLE_PREFIX);

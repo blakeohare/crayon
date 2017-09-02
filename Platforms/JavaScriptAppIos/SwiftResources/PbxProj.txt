@@ -17,7 +17,7 @@
 
 /* Begin PBXFileReference section */
 		69984F0E1EE4526D008458E4 /* jsres */ = {isa = PBXFileReference; lastKnownFileType = folder; path = jsres; sourceTree = "<group>"; };
-		69F72C141EE448D500F89B5E /* %%%PROJECT_ID%%%.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CrayonApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		69F72C141EE448D500F89B5E /* %%%PROJECT_ID%%%.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = %%%PROJECT_ID%%%.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69F72C171EE448D500F89B5E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		69F72C191EE448D500F89B5E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		69F72C1C1EE448D500F89B5E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
