@@ -89,6 +89,9 @@ namespace JavaScriptAppIos
             }
 
             Dictionary<int, SystemBitmap> iconImagesBySize = icons
+                .AddOutputSize(20 * 1)
+                .AddOutputSize(20 * 2)
+                .AddOutputSize(20 * 3)
                 .AddOutputSize(29 * 1)
                 .AddOutputSize(29 * 2)
                 .AddOutputSize(29 * 3)
