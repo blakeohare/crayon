@@ -2,7 +2,8 @@
 	<projectname>FireDodge</projectname>
 	<source>source/</source>
 	<output>output/%TARGET_NAME%</output>
-	
+	<icon>assets/icon.png</icon>
+
 	<imagesheets>
 		<sheet id="everything">
 			<prefix>*</prefix>

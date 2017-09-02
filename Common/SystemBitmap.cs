@@ -46,6 +46,22 @@ namespace Common
 #endif
         }
 
+        public SystemBitmap(System.Reflection.Assembly assembly, string path)
+        {
+            byte[] bytes = Util.ReadAssemblyFileBytes(assembly, path);
+#if WINDOWS
+            using (System.IO.MemoryStream ms = new System.IO.MemoryStream(bytes))
+            {
+                this.bitmap = new System.Drawing.Bitmap(ms);
+            }
+            this.bitmap.SetResolution(96, 96);
+            this.Width = this.bitmap.Width;
+            this.Height = this.bitmap.Height;
+#elif OSX
+            throw new System.Exception("not implemented.");
+#endif
+        }
+
         public SystemBitmap(int width, int height)
         {
             this.Width = width;

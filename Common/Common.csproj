@@ -47,6 +47,9 @@
   <ItemGroup>
     <Reference Include="System.Drawing" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="icons\crayon_logo.png" />
+  </ItemGroup>
   <Choose>
     <When Condition=" '$(SolutionFileName)' == 'CrayonWindows.sln' ">
       <PropertyGroup>

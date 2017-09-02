@@ -55,6 +55,34 @@ namespace JavaScriptAppIos
             // TODO: use this in the pbxproj file.
             string uuidSeed = options.GetStringOrNull(ExportOptionKey.GUID_SEED);
 
+            IconSetGenerator icons = new IconSetGenerator();
+            if (options.GetBool(ExportOptionKey.HAS_ICON))
+            {
+                string iconPath = options.GetString(ExportOptionKey.ICON_PATH);
+                SystemBitmap icon = new SystemBitmap(iconPath);
+                icons.AddInputImage(icon);
+            }
+
+            Dictionary<int, SystemBitmap> iconImagesBySize = icons
+                .AddOutputSize(29 * 1)
+                .AddOutputSize(29 * 2)
+                .AddOutputSize(29 * 3)
+                .AddOutputSize(40 * 2)
+                .AddOutputSize(40 * 3)
+                .AddOutputSize(60 * 2)
+                .AddOutputSize(60 * 3)
+                .AddOutputSize(76 * 1)
+                .AddOutputSize(76 * 2)
+                .GenerateWithDefaultFallback();
+            foreach (int size in iconImagesBySize.Keys)
+            {
+                files["%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Assets.xcassets/AppIcon.appiconset/icon" + size + ".png"] = new FileOutput()
+                {
+                    Type = FileOutputType.Image,
+                    Bitmap = iconImagesBySize[size],
+                };
+            }
+
             foreach (string pair in new string[] {
                 "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%.xcodeproj/project.pbxproj|SwiftResources/PbxProj.txt",
                 "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/AppDelegate.swift|SwiftResources/AppDelegateSwift.txt",
