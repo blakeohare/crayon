@@ -58,7 +58,13 @@ namespace Common
             this.Width = this.bitmap.Width;
             this.Height = this.bitmap.Height;
 #elif OSX
-            throw new System.Exception("not implemented.");
+            string tempDir = System.IO.Path.GetTempPath();
+            string tempFile = System.IO.Path.Combine(tempDir, "crayon_image_temp.png");
+            System.IO.File.WriteAllBytes(tempFile, bytes);
+            this.bitmap = new Cairo.ImageSurface(tempFile);
+            System.IO.File.Delete(tempFile);
+            this.Width = this.bitmap.Width;
+            this.Height = this.bitmap.Height;
 #endif
         }
 

@@ -34,5 +34,9 @@
 %%%IOS_SUPPORTED_ORIENTATIONS_INFO_PLIST%%%
 	<key>UISupportedInterfaceOrientations~ipad</key>
 %%%IOS_SUPPORTED_ORIENTATIONS_INFO_PLIST%%%
+	<key>UIRequiresFullScreen</key>
+	<true/>
+	<key>UIRequiresFullScreen~ipad</key>
+	<true/>
 </dict>
 </plist>

@@ -67,12 +67,14 @@ namespace JavaScriptAppIos
                 .AddOutputSize(29 * 1)
                 .AddOutputSize(29 * 2)
                 .AddOutputSize(29 * 3)
+                .AddOutputSize(40 * 1)
                 .AddOutputSize(40 * 2)
                 .AddOutputSize(40 * 3)
                 .AddOutputSize(60 * 2)
                 .AddOutputSize(60 * 3)
                 .AddOutputSize(76 * 1)
                 .AddOutputSize(76 * 2)
+                .AddOutputSize(167) // 83.5 * 2
                 .GenerateWithDefaultFallback();
             foreach (int size in iconImagesBySize.Keys)
             {
@@ -147,8 +149,8 @@ namespace JavaScriptAppIos
             string developmentTeam = options.GetStringOrNull(ExportOptionKey.IOS_DEV_TEAM_ID);
             if (developmentTeam != null)
             {
-                replacements["DEVELOPMENT_TEAM_ALL_CAPS"] = "DevelopmentTeam = " + developmentTeam + ";";
-                replacements["DEVELOPMENT_TEAM_NOT_CAPS"] = "DEVELOPMENT_TEAM = " + developmentTeam + ";";
+                replacements["DEVELOPMENT_TEAM_NOT_CAPS"] = "DevelopmentTeam = " + developmentTeam + ";";
+                replacements["DEVELOPMENT_TEAM_ALL_CAPS"] = "DEVELOPMENT_TEAM = " + developmentTeam + ";";
             }
 
             string bundleIdPrefix = options.GetStringOrNull(ExportOptionKey.IOS_BUNDLE_PREFIX);
