@@ -7,12 +7,12 @@ namespace Crayon
 {
     internal class Parser
     {
-        public Parser(BuildContext buildContext, LibraryManager sysLibMan)
+        public Parser(BuildContext buildContext)
         {
             this.CurrentClass = null;
             this.CurrentSystemLibrary = null;
             this.BuildContext = buildContext;
-            this.LibraryManager = sysLibMan ?? new LibraryManager(null);
+            this.LibraryManager = LibraryManager.ForByteCodeCompilation(buildContext);
             this.CurrentNamespace = "";
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<Executable, ConstantResolutionState>();

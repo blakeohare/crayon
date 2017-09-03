@@ -16,16 +16,28 @@ namespace Crayon
         private List<string> orderedListOfFunctionNames = new List<string>();
 
         public Platform.IPlatformProvider PlatformProvider { get; private set; }
+        private BuildContext buildContext = null;
 
-        public LibraryManager(Platform.IPlatformProvider platformProvider)
+        public static LibraryManager ForStandaloneVmExport(Platform.IPlatformProvider platformProvider)
         {
+            return new LibraryManager(null, platformProvider);
+        }
+
+        public static LibraryManager ForByteCodeCompilation(BuildContext buildContext)
+        {
+            return new LibraryManager(buildContext, null);
+        }
+
+        private LibraryManager(BuildContext buildContext, Platform.IPlatformProvider platformProvider)
+        {
+            this.buildContext = buildContext;
             this.PlatformProvider = platformProvider;
         }
 
         public bool IsValidLibraryName(Parser parser, string name)
         {
             // TODO: use the parser locale (top of the locale stack) to check the validity
-            return this.GetLibraryMetadata(name, parser.BuildContext) != null;
+            return this.GetLibraryMetadata(name) != null;
         }
 
         public Library GetLibraryFromName(string name)
@@ -74,7 +86,7 @@ namespace Crayon
             return output;
         }
 
-        public Library[] GetAllAvailableLibraries(Platform.AbstractPlatform platform)
+        public Library[] GetAllAvailableBuiltInLibraries(Platform.AbstractPlatform platform)
         {
             return GetAvailableLibraryPathsByLibraryName(null, null)
                 .Select(metadata => new Library(metadata, platform))
@@ -85,7 +97,7 @@ namespace Crayon
             string nullableBuildFileCrayonPath,
             string nullableProjectDirectory)
         {
-            Dictionary<string, string> systemLibraryPathsByName = new Dictionary<string, string>();
+            Dictionary<string, string> libraryPathsByName = new Dictionary<string, string>();
 
             string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
 
@@ -111,7 +123,7 @@ namespace Crayon
                 (System.Environment.GetEnvironmentVariable("CRAYON_PATH") ?? "");
 
 #if OSX
-                crayonPaths = crayonPaths.Replace(':', ';');
+            crayonPaths = crayonPaths.Replace(':', ';');
 #endif
             string[] paths = crayonPaths.Split(';');
             foreach (string path in paths)
@@ -150,11 +162,11 @@ namespace Crayon
                 string manifestPath = System.IO.Path.Combine(dir, "manifest.txt");
                 if (System.IO.File.Exists(manifestPath))
                 {
-                    systemLibraryPathsByName[libraryName] = dir;
+                    libraryPathsByName[libraryName] = dir;
                 }
             }
 
-            return systemLibraryPathsByName
+            return libraryPathsByName
                 .Select(kvp => new LibraryMetadata(kvp.Value, kvp.Key))
                 .OrderBy(metadata => metadata.Name.ToLower())
                 .ToArray();
@@ -162,7 +174,7 @@ namespace Crayon
 
         private LibraryMetadata[] allLibraries = null;
         private Dictionary<string, LibraryMetadata> libraryLookup = null;
-        private LibraryMetadata GetLibraryMetadata(string name, BuildContext buildContext)
+        private LibraryMetadata GetLibraryMetadata(string name)
         {
             if (allLibraries == null)
             {
@@ -200,7 +212,7 @@ namespace Crayon
 
             if (library == null)
             {
-                LibraryMetadata libraryMetadata = this.GetLibraryMetadata(name, parser.BuildContext);
+                LibraryMetadata libraryMetadata = this.GetLibraryMetadata(name);
 
                 if (libraryMetadata == null)
                 {
