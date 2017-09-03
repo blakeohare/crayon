@@ -89,12 +89,6 @@ namespace Crayon
 
         private Dictionary<ClassDefinition, int> classIdsByInstance = new Dictionary<ClassDefinition, int>();
 
-        // HACK ALERT - Forgive me father for I have sinned.
-        // I need an access-anywhere boolean flag to determine if the parser is running in translate mode.
-        // Syntax parsing is currently stateless. Which is nice. In an ideal world.
-        // One day I will undo this for a more reasonable solution.
-        public static bool IsTranslateMode_STATIC_HACK { get; set; }
-
         public Executable CurrentCodeContainer { get; set; }
 
         public static string CurrentSystemLibrary_STATIC_HACK { get; set; }
