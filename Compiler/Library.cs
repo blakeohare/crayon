@@ -8,6 +8,7 @@ namespace Crayon
     // Library is only instantiable in the context of a specific platform, which is not ideal, but not causing any problems at the moment.
     internal class Library
     {
+        private LibraryMetadata metadata;
         private string platformName;
 
         public string Name { get; set; }
@@ -20,23 +21,21 @@ namespace Crayon
 
         public Library CloneWithNewPlatform(Platform.AbstractPlatform platform)
         {
-            return new Library(
-                this.Name,
-                System.IO.Path.Combine(this.RootDirectory, "manifest.txt"),
-                platform);
+            return new Library(this.metadata, platform);
         }
 
-        public Library(string name, string libraryManifestPath, Platform.AbstractPlatform nullablePlatform)
+        public Library(LibraryMetadata metadata, Platform.AbstractPlatform nullablePlatform)
         {
             TODO.LibrariesNeedVersionNumber();
 
+            this.metadata = metadata;
             this.platformName = nullablePlatform == null ? null : nullablePlatform.Name;
 
             this.Resources = new LibraryResourceDatabase(this, nullablePlatform);
 
-            this.Name = name;
-            this.RootDirectory = System.IO.Path.GetDirectoryName(libraryManifestPath);
-            string[] manifest = System.IO.File.ReadAllText(libraryManifestPath).Split('\n');
+            this.Name = metadata.Name;
+            this.RootDirectory = metadata.Directory;
+            string[] manifest = metadata.Manifest.Split('\n');
             Dictionary<string, string> values = new Dictionary<string, string>();
             Dictionary<string, bool> flagValues = new Dictionary<string, bool>();
 
@@ -81,7 +80,7 @@ namespace Crayon
                             }
                             else
                             {
-                                throw new ParserException(null, "Library '" + name + "' has a syntax error in a boolean flag.");
+                                throw new ParserException(null, "Library '" + metadata.Name + "' has a syntax error in a boolean flag.");
                             }
                         }
                         else
@@ -91,7 +90,7 @@ namespace Crayon
                     }
                     else if (parts.Length == 1 && parts[0].Length != 0)
                     {
-                        throw new ParserException(null, "Library '" + name + "' has a syntax error in its manifest.");
+                        throw new ParserException(null, "Library '" + metadata.Name + "' has a syntax error in its manifest.");
                     }
                 }
             }

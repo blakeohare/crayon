@@ -130,7 +130,7 @@ namespace Crayon.ParseTree
                 if (this.LocalScopeId == -1)
                 {
                     string name = this.FirstToken.Value;
-                    if (LibraryManager.IsValidLibraryName(parser, name))
+                    if (parser.LibraryManager.IsValidLibraryName(parser, name))
                     {
                         throw new ParserException(this.FirstToken, "'" + name + "' is referenced but not imported in this file.");
                     }

@@ -186,7 +186,7 @@ namespace Crayon
                 Platform.AbstractPlatform standaloneVmPlatform = platformProvider.GetPlatform(vm);
                 targetDirectory = FileUtil.FinalizeTilde(targetDirectory);
                 VmGenerator vmGenerator = new VmGenerator();
-                List<Library> allLibraries = new LibraryManager(platformProvider).GetAllAvailableLibraries(standaloneVmPlatform);
+                Library[] allLibraries = new LibraryManager(platformProvider).GetAllAvailableLibraries(standaloneVmPlatform);
                 Dictionary<string, FileOutput> result = vmGenerator.GenerateVmSourceCodeForPlatform(
                     standaloneVmPlatform,
                     null,
