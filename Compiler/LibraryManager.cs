@@ -97,8 +97,6 @@ namespace Crayon
             string nullableBuildFileCrayonPath,
             string nullableProjectDirectory)
         {
-            List<string> libraryPathsByName = new List<string>();
-
             string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
 
 #if RELEASE
@@ -108,36 +106,32 @@ namespace Crayon
                 }
 #endif
 
-            List<string> directoriesToCheck = new List<string>();
-
+            string placesWhereLibraryDirectoriesCanExist = "";
+            
             if (crayonHome != null)
             {
-                string crayonHomeLibraries = System.IO.Path.Combine(crayonHome, "libs");
-                if (System.IO.Directory.Exists(crayonHomeLibraries))
-                {
-                    directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(crayonHomeLibraries));
-                }
+                placesWhereLibraryDirectoriesCanExist += ";" + System.IO.Path.Combine(crayonHome, "libs");
             }
-            string crayonPaths =
-                (nullableBuildFileCrayonPath ?? "") + ";" +
-                (System.Environment.GetEnvironmentVariable("CRAYON_PATH") ?? "");
+            if (nullableBuildFileCrayonPath != null)
+            {
+                placesWhereLibraryDirectoriesCanExist += ";" + nullableBuildFileCrayonPath;
+            }
+            placesWhereLibraryDirectoriesCanExist += ";" + (System.Environment.GetEnvironmentVariable("CRAYON_PATH") ?? "");
 
 #if OSX
-            crayonPaths = crayonPaths.Replace(':', ';');
+            placesWhereLibraryDirectoriesCanExist = placesWhereLibraryDirectoriesCanExist.Replace(':', ';');
 #endif
-            string[] paths = crayonPaths.Split(';');
+            string[] paths = placesWhereLibraryDirectoriesCanExist.Split(new char[] { ';' }, System.StringSplitOptions.RemoveEmptyEntries);
+            List<string> unverifiedLibraryDirectories = new List<string>();
             foreach (string path in paths)
             {
-                if (path.Length > 0)
+                string absolutePath = FileUtil.IsAbsolutePath(path)
+                    ? path
+                    : System.IO.Path.Combine(nullableProjectDirectory, path);
+                absolutePath = System.IO.Path.GetFullPath(absolutePath);
+                if (System.IO.Directory.Exists(absolutePath))
                 {
-                    string absolutePath = FileUtil.IsAbsolutePath(path)
-                        ? path
-                        : System.IO.Path.Combine(nullableProjectDirectory, path);
-                    absolutePath = System.IO.Path.GetFullPath(absolutePath);
-                    if (System.IO.Directory.Exists(absolutePath))
-                    {
-                        directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(absolutePath));
-                    }
+                    unverifiedLibraryDirectories.AddRange(System.IO.Directory.GetDirectories(absolutePath));
                 }
             }
 
@@ -148,25 +142,32 @@ namespace Crayon
             while (!string.IsNullOrEmpty(currentDirectory))
             {
                 string path = System.IO.Path.Combine(currentDirectory, "Libraries");
-                if (System.IO.Directory.Exists(path))
+                if (System.IO.Directory.Exists(path) &&
+                    System.IO.Directory.Exists(System.IO.Path.Combine(currentDirectory, "Compiler", "CrayonWindows.sln"))) // quick sanity check
                 {
-                    directoriesToCheck.AddRange(System.IO.Directory.GetDirectories(path));
+                    unverifiedLibraryDirectories.AddRange(System.IO.Directory.GetDirectories(path));
                     break;
                 }
                 currentDirectory = System.IO.Path.GetDirectoryName(currentDirectory);
             }
 #endif
-            foreach (string dir in directoriesToCheck)
+            List<string> verifiedLibraryPaths = new List<string>();
+
+            foreach (string dir in unverifiedLibraryDirectories)
             {
                 string manifestPath = System.IO.Path.Combine(dir, "manifest.txt");
                 if (System.IO.File.Exists(manifestPath))
                 {
-                    libraryPathsByName.Add(dir);
+                    verifiedLibraryPaths.Add(dir);
                 }
             }
 
+            // Library name collisions will override any previous definition. 
+            // For example, a custom library referenced by a build file will override a built-in library.
+            // An example use case of this would be to define a custom library called "Gamepad" for mobile that puts 
+            // buttons in the corners of the screen, but without having to change any code to be platform-aware.
             Dictionary<string, LibraryMetadata> uniqueLibraries = new Dictionary<string, LibraryMetadata>();
-            foreach (string path in libraryPathsByName)
+            foreach (string path in verifiedLibraryPaths)
             {
                 string defaultName = System.IO.Path.GetFileName(path);
                 LibraryMetadata metadata = new LibraryMetadata(path, defaultName);
