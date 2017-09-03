@@ -41,11 +41,11 @@ namespace Crayon.ParseTree
             throw new NotImplementedException();
         }
 
-        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             foreach (Expression item in this.Items)
             {
-                item.PerformLocalIdAllocation(varIds, phase);
+                item.PerformLocalIdAllocation(parser, varIds, phase);
             }
         }
     }

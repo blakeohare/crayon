@@ -53,9 +53,9 @@ namespace Crayon.ParseTree
             this.Target.GetAllVariableNames(lookup);
         }
 
-        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            this.Value.PerformLocalIdAllocation(varIds, phase);
+            this.Value.PerformLocalIdAllocation(parser, varIds, phase);
 
             if ((phase & VariableIdAllocPhase.REGISTER) != 0)
             {
@@ -70,7 +70,7 @@ namespace Crayon.ParseTree
                 }
             }
 
-            this.Target.PerformLocalIdAllocation(varIds, phase);
+            this.Target.PerformLocalIdAllocation(parser, varIds, phase);
         }
 
         internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)

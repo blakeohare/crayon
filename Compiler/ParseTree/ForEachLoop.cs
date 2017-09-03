@@ -28,9 +28,9 @@ namespace Crayon.ParseTree
             return Listify(this);
         }
 
-        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            this.IterationExpression.PerformLocalIdAllocation(varIds, phase);
+            this.IterationExpression.PerformLocalIdAllocation(parser, varIds, phase);
 
             if ((phase & VariableIdAllocPhase.REGISTER) != 0)
             {
@@ -41,19 +41,19 @@ namespace Crayon.ParseTree
             {
                 foreach (Executable ex in this.Code)
                 {
-                    ex.PerformLocalIdAllocation(varIds, phase);
+                    ex.PerformLocalIdAllocation(parser, varIds, phase);
                 }
             }
             else
             {
                 foreach (Executable ex in this.Code)
                 {
-                    ex.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.REGISTER);
+                    ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.REGISTER);
                 }
 
                 foreach (Executable ex in this.Code)
                 {
-                    ex.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.ALLOC);
+                    ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
                 }
             }
 

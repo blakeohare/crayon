@@ -400,15 +400,15 @@ namespace Crayon
                 {
                     if (item is FunctionDefinition)
                     {
-                        ((FunctionDefinition)item).AllocateLocalScopeIds();
+                        ((FunctionDefinition)item).AllocateLocalScopeIds(this.parser);
                     }
                     else if (item is ClassDefinition)
                     {
-                        ((ClassDefinition)item).AllocateLocalScopeIds();
+                        ((ClassDefinition)item).AllocateLocalScopeIds(this.parser);
                     }
                     else
                     {
-                        throw new System.InvalidOperationException(); // everything else in the root scope should have thrown before now.
+                        throw new InvalidOperationException(); // everything else in the root scope should have thrown before now.
                     }
                 }
             }

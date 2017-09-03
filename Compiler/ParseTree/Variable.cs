@@ -114,7 +114,7 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override void GetAllVariableNames(System.Collections.Generic.Dictionary<string, bool> lookup)
+        internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
         {
             if (this.GetAnnotation("global") == null)
             {
@@ -122,7 +122,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
@@ -130,7 +130,7 @@ namespace Crayon.ParseTree
                 if (this.LocalScopeId == -1)
                 {
                     string name = this.FirstToken.Value;
-                    if (LibraryManager.IsValidLibrary(name))
+                    if (LibraryManager.IsValidLibraryName(parser, name))
                     {
                         throw new ParserException(this.FirstToken, "'" + name + "' is referenced but not imported in this file.");
                     }

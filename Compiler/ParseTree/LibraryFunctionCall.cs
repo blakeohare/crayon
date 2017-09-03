@@ -57,20 +57,20 @@ namespace Crayon.ParseTree
             throw new InvalidOperationException(); // this class is generated on the general resolve pass.
         }
 
-        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
                 foreach (Expression ex in this.Args)
                 {
-                    ex.PerformLocalIdAllocation(varIds, phase);
+                    ex.PerformLocalIdAllocation(parser, varIds, phase);
                 }
             }
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

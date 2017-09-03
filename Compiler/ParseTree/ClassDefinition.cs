@@ -55,24 +55,24 @@ namespace Crayon.ParseTree
         }
 
         private static readonly VariableIdAllocator EMPTY_VAR_ALLOC = new VariableIdAllocator();
-        public void AllocateLocalScopeIds()
+        public void AllocateLocalScopeIds(Parser parser)
         {
             foreach (FieldDeclaration fd in this.Fields)
             {
-                fd.PerformLocalIdAllocation(EMPTY_VAR_ALLOC, VariableIdAllocPhase.ALLOC);
+                fd.PerformLocalIdAllocation(parser, EMPTY_VAR_ALLOC, VariableIdAllocPhase.ALLOC);
             }
 
             // null check has occurred before now.
-            this.Constructor.AllocateLocalScopeIds();
+            this.Constructor.AllocateLocalScopeIds(parser);
 
             if (this.StaticConstructor != null)
             {
-                this.StaticConstructor.AllocateLocalScopeIds();
+                this.StaticConstructor.AllocateLocalScopeIds(parser);
             }
 
             foreach (FunctionDefinition fd in this.Methods)
             {
-                fd.AllocateLocalScopeIds();
+                fd.AllocateLocalScopeIds(parser);
             }
         }
 
@@ -380,7 +380,7 @@ namespace Crayon.ParseTree
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
-        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             // Not called in this way.
             throw new System.NotImplementedException();

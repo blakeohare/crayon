@@ -37,7 +37,7 @@ namespace Crayon.ParseTree
 
         internal abstract void GetAllVariableNames(Dictionary<string, bool> lookup);
 
-        internal abstract void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase);
+        internal abstract void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase);
 
         /*
             Resolution order:

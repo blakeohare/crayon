@@ -30,7 +30,7 @@ namespace Crayon.ParseTree
         }
 
         // No variables are assumed.
-        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
+        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
 
         internal class EnumMaxFunction : SpecialEntity
         {

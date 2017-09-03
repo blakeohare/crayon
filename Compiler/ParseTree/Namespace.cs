@@ -55,7 +55,7 @@ namespace Crayon.ParseTree
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
-        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             // Not called in this way.
             throw new NotImplementedException();

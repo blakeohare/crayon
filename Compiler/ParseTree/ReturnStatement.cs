@@ -33,11 +33,11 @@ namespace Crayon.ParseTree
 
         public override bool IsTerminator { get { return true; } }
 
-        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             if (this.Expression != null)
             {
-                this.Expression.PerformLocalIdAllocation(varIds, phase);
+                this.Expression.PerformLocalIdAllocation(parser, varIds, phase);
             }
         }
 

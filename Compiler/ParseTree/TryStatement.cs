@@ -166,11 +166,11 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             foreach (Executable ex in this.TryBlock)
             {
-                ex.PerformLocalIdAllocation(varIds, phase);
+                ex.PerformLocalIdAllocation(parser, varIds, phase);
             }
 
             foreach (CatchBlock cb in this.CatchBlocks)
@@ -190,7 +190,7 @@ namespace Crayon.ParseTree
 
                 foreach (Executable ex in cb.Code)
                 {
-                    ex.PerformLocalIdAllocation(varIds, phase);
+                    ex.PerformLocalIdAllocation(parser, varIds, phase);
                 }
             }
 
@@ -198,7 +198,7 @@ namespace Crayon.ParseTree
             {
                 foreach (Executable ex in this.FinallyBlock)
                 {
-                    ex.PerformLocalIdAllocation(varIds, phase);
+                    ex.PerformLocalIdAllocation(parser, varIds, phase);
                 }
             }
         }

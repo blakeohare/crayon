@@ -50,12 +50,12 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
-                this.PrimaryExpression.PerformLocalIdAllocation(varIds, phase);
-                this.SecondaryExpression.PerformLocalIdAllocation(varIds, phase);
+                this.PrimaryExpression.PerformLocalIdAllocation(parser, varIds, phase);
+                this.SecondaryExpression.PerformLocalIdAllocation(parser, varIds, phase);
             }
         }
 

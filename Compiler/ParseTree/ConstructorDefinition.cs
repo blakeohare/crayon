@@ -88,7 +88,7 @@ namespace Crayon.ParseTree
             return Listify(this);
         }
 
-        internal void AllocateLocalScopeIds()
+        internal void AllocateLocalScopeIds(Parser parser)
         {
             VariableIdAllocator variableIds = new VariableIdAllocator();
             for (int i = 0; i < this.ArgNames.Length; ++i)
@@ -96,21 +96,21 @@ namespace Crayon.ParseTree
                 variableIds.RegisterVariable(this.ArgNames[i].Value);
             }
 
-            this.PerformLocalIdAllocation(variableIds, VariableIdAllocPhase.REGISTER_AND_ALLOC);
+            this.PerformLocalIdAllocation(parser, variableIds, VariableIdAllocPhase.REGISTER_AND_ALLOC);
 
             this.LocalScopeSize = variableIds.Size;
         }
 
-        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             foreach (Expression arg in this.BaseArgs)
             {
-                arg.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.ALLOC);
+                arg.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
             }
 
             foreach (Executable ex in this.Code)
             {
-                ex.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.REGISTER_AND_ALLOC);
+                ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.REGISTER_AND_ALLOC);
             }
         }
 

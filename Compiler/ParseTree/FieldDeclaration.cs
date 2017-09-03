@@ -37,10 +37,10 @@ namespace Crayon.ParseTree
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
 
-        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             // Throws if it finds any variable.
-            this.DefaultValue.PerformLocalIdAllocation(varIds, phase);
+            this.DefaultValue.PerformLocalIdAllocation(parser, varIds, phase);
         }
 
         internal override Executable PastelResolve(Parser parser)

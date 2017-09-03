@@ -21,8 +21,9 @@ namespace Crayon
             this.PlatformProvider = platformProvider;
         }
 
-        public static bool IsValidLibrary(string name)
+        public static bool IsValidLibraryName(Parser parser, string name)
         {
+            // TODO: use the parser locale to check the validity
             return systemLibraryPathsByName.ContainsKey(name);
         }
 

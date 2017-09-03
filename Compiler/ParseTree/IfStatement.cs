@@ -75,14 +75,14 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override void PerformLocalIdAllocation(VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
-            this.Condition.PerformLocalIdAllocation(varIds, phase);
+            this.Condition.PerformLocalIdAllocation(parser, varIds, phase);
             if (phase != VariableIdAllocPhase.REGISTER_AND_ALLOC || this.TrueCode.Length == 0 || this.FalseCode.Length == 0)
             {
                 foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
                 {
-                    ex.PerformLocalIdAllocation(varIds, phase);
+                    ex.PerformLocalIdAllocation(parser, varIds, phase);
                 }
             }
             else
@@ -96,11 +96,11 @@ namespace Crayon.ParseTree
                 // declared before being used.
                 foreach (Executable ex in this.TrueCode)
                 {
-                    ex.PerformLocalIdAllocation(trueVars, VariableIdAllocPhase.REGISTER_AND_ALLOC);
+                    ex.PerformLocalIdAllocation(parser, trueVars, VariableIdAllocPhase.REGISTER_AND_ALLOC);
                 }
                 foreach (Executable ex in this.FalseCode)
                 {
-                    ex.PerformLocalIdAllocation(falseVars, VariableIdAllocPhase.REGISTER_AND_ALLOC);
+                    ex.PerformLocalIdAllocation(parser, falseVars, VariableIdAllocPhase.REGISTER_AND_ALLOC);
                 }
 
                 // Now that the code is as correct as we can verify, merge the branches back together
@@ -110,7 +110,7 @@ namespace Crayon.ParseTree
                 // Go back through and do another allocation pass and assign the correct variable ID's.
                 foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
                 {
-                    ex.PerformLocalIdAllocation(varIds, VariableIdAllocPhase.ALLOC);
+                    ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
                 }
             }
         }
