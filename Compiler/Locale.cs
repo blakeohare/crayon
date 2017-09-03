@@ -7,13 +7,27 @@ namespace Crayon
 {
     public class Locale
     {
+        public string ID { get; set; }
         public KeywordsLookup Keywords { get; private set; }
         public StringTable Strings { get; private set; }
 
         private Dictionary<string, string> keywordsDictionary;
+        private static readonly Dictionary<string, Locale> locales = new Dictionary<string, Locale>();
 
-        public Locale(string name)
+        public static Locale Get(string id)
         {
+            Locale output;
+            if (!locales.TryGetValue(id.ToLower(), out output))
+            {
+                output = new Locale(id.ToLower());
+                locales[id.ToLower()] = output;
+            }
+            return output;
+        }
+
+        private Locale(string name)
+        {
+            this.ID = name;
             bool invalid = false;
             if (name.Length > 100)
             {

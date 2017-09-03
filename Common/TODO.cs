@@ -23,5 +23,13 @@
         public static void PleaseRenameThisFunction() { }
         public static void ExplicitlyDisallowThisAtCompileTime() { }
         public static void MoveCbxParserIntoTranslatedPastelCode() { }
+
+        // TODO: resolve before releasing locale stuff
+        public static void HardCodedEnglishValue() { }
+        public static void MakeMainMethodCheckerLocalized() { }
+        public static void EnglishLocaleAssumed() { }
+        public static void GetCoreNameFromMetadataWithLocale() { }
+        public static void NotAllLibrariesAreWrittenInEnglish() { }
+        public static void LibraryNameLocalization() { }
     }
 }

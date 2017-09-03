@@ -10,13 +10,14 @@ namespace Crayon.ParseTree
         public Executable[] Code { get; set; }
         public string Name { get; set; }
 
-        public Namespace(Token namespaceToken, string name, Executable owner)
+        public Namespace(Token namespaceToken, string name, Executable owner, Library library)
             : base(namespaceToken, owner)
         {
+            this.Library = library;
             this.Name = name;
         }
 
-        public void GetFlattenedCode(IList<Executable> executableOut, string[] imports, string libraryName)
+        public void GetFlattenedCode(IList<Executable> executableOut, string[] imports)
         {
             List<string> importsBuilder = new List<string>() { this.Name };
             importsBuilder.AddRange(imports);
@@ -25,11 +26,10 @@ namespace Crayon.ParseTree
             foreach (Executable item in this.Code)
             {
                 item.NamespacePrefixSearch = imports;
-                item.LibraryName = libraryName;
 
                 if (item is Namespace)
                 {
-                    ((Namespace)item).GetFlattenedCode(executableOut, imports, libraryName);
+                    ((Namespace)item).GetFlattenedCode(executableOut, imports);
                 }
                 else
                 {

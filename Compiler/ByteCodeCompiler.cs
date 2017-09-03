@@ -1383,7 +1383,8 @@ namespace Crayon
             int id = parser.LibraryManager.GetIdForFunction(libFunc.Name, libFunc.LibraryName);
             Token token = parenTokenOverride ?? libFunc.FirstToken;
             string libraryName = libFunc.LibraryName;
-            int libraryRefId = parser.LibraryManager.GetLibraryReferenceId(libraryName);
+            Library library = libFunc.FunctionOrClassOwner.Library;
+            int libraryRefId = parser.LibraryManager.GetLibraryReferenceIdFromKey(library.CanonicalKey);
             int functionNameReferenceId = parser.LiteralLookup.GetLibFuncRefId(libFunc.Name);
 
             buffer.Add(token,

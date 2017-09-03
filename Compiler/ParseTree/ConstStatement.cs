@@ -14,9 +14,10 @@ namespace Crayon.ParseTree
         public Token NameToken { get; private set; }
         public string Name { get; private set; }
 
-        public ConstStatement(Token constToken, Token nameToken, string ns, Executable owner)
+        public ConstStatement(Token constToken, Token nameToken, string ns, Executable owner, Library library)
             : base(constToken, owner)
         {
+            this.Library = library;
             this.NameToken = nameToken;
             this.Name = nameToken.Value;
             this.Namespace = ns;

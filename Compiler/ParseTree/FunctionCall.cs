@@ -66,7 +66,9 @@ namespace Crayon.ParseTree
             if (this.Root is FunctionReference && this.Args.Length == 1)
             {
                 FunctionDefinition funcDef = ((FunctionReference)this.Root).FunctionDefinition;
-                if (funcDef.LibraryName == "Math" && funcDef.NameToken.Value == "floor")
+                if (funcDef.Library != null &&
+                    funcDef.Library.CanonicalKey == "en:Math" &&
+                    funcDef.NameToken.Value == "floor")
                 {
                     Expression arg0 = this.Args[0];
                     if (arg0 is IntegerConstant)

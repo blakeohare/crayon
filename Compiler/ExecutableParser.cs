@@ -96,7 +96,7 @@ namespace Crayon
                     }
                     string importPath = string.Join(".", importPathBuilder);
 
-                    return new ImportStatement(importToken, importPath);
+                    return new ImportStatement(importToken, importPath, parser.CurrentLibrary);
                 }
 
                 if (value == this.parser.Keywords.ENUM)
@@ -218,7 +218,7 @@ namespace Crayon
         {
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             Token nameToken = tokens.Pop();
-            ConstStatement constStatement = new ConstStatement(constToken, nameToken, parser.CurrentNamespace, owner);
+            ConstStatement constStatement = new ConstStatement(constToken, nameToken, parser.CurrentNamespace, owner, parser.CurrentLibrary);
             this.parser.VerifyIdentifier(nameToken);
             tokens.PopExpected("=");
             constStatement.Expression = this.parser.ExpressionParser.Parse(tokens, constStatement);
@@ -233,7 +233,7 @@ namespace Crayon
             Token nameToken = tokens.Pop();
             this.parser.VerifyIdentifier(nameToken);
             string name = nameToken.Value;
-            EnumDefinition ed = new EnumDefinition(enumToken, nameToken, parser.CurrentNamespace, owner);
+            EnumDefinition ed = new EnumDefinition(enumToken, nameToken, parser.CurrentNamespace, owner, parser.CurrentLibrary);
 
             tokens.PopExpected("{");
             bool nextForbidden = false;
@@ -297,6 +297,7 @@ namespace Crayon
                 baseClassStrings,
                 parser.CurrentNamespace,
                 owner,
+                parser.CurrentLibrary,
                 staticToken,
                 finalToken);
 
@@ -417,7 +418,7 @@ namespace Crayon
             string name = string.Join(".", namespacePieces.Select<Token, string>(t => t.Value));
             parser.PushNamespacePrefix(name);
 
-            Namespace namespaceInstance = new Namespace(namespaceToken, name, owner);
+            Namespace namespaceInstance = new Namespace(namespaceToken, name, owner, parser.CurrentLibrary);
 
             tokens.PopExpected("{");
             List<Executable> namespaceMembers = new List<Executable>();
@@ -464,7 +465,7 @@ namespace Crayon
             Token functionNameToken = tokens.Pop();
             this.parser.VerifyIdentifier(functionNameToken);
 
-            FunctionDefinition fd = new FunctionDefinition(functionToken, nullableOwner, isStatic, functionNameToken, functionAnnotations, parser.CurrentNamespace);
+            FunctionDefinition fd = new FunctionDefinition(functionToken, parser.CurrentLibrary, nullableOwner, isStatic, functionNameToken, functionAnnotations, parser.CurrentNamespace);
 
             tokens.PopExpected("(");
             List<Token> argNames = new List<Token>();

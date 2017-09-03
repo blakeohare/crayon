@@ -107,11 +107,15 @@ namespace Crayon
                 // Go through and fill in all the partially qualified namespace names.
                 foreach (string ns in namespaces)
                 {
-                    Namespace nsInstance = new Namespace(null, ns, null);
+                    Namespace nsInstance = new Namespace(null, ns, null, null);
                     string possibleLibraryName = ns.Split('.')[0];
-                    if (this.parser.LibraryManager.GetLibraryFromName(possibleLibraryName) != null)
+
+                    TODO.EnglishLocaleAssumed();
+                    Library library = this.parser.LibraryManager.GetLibraryFromName(possibleLibraryName);
+                    if (library != null)
                     {
-                        nsInstance.LibraryName = possibleLibraryName;
+                        // TODO: once you get rid of this line, make the Library setter protected
+                        nsInstance.Library = library;
                     }
                     lookup[ns] = nsInstance;
                 }
@@ -153,13 +157,13 @@ namespace Crayon
             foreach (string exKey in definitionsByFullyQualifiedNames.Keys)
             {
                 Executable ex = definitionsByFullyQualifiedNames[exKey];
-                if (ex.LibraryName == null)
+                if (ex.Library == null)
                 {
                     nonLibraryCode[exKey] = ex;
                 }
                 else
                 {
-                    Library library = this.parser.LibraryManager.GetLibraryFromName(ex.LibraryName);
+                    Library library = ex.Library;
                     Dictionary<string, Executable> lookup;
                     if (!definitionsByLibrary.TryGetValue(library, out lookup))
                     {
@@ -213,7 +217,7 @@ namespace Crayon
                 {
                     // Look for function definitions that are in libraries that have one single line of code that's a return statement that
                     // invokes a native code.
-                    if (funcDef.LibraryName != null && funcDef.Code.Length == 1)
+                    if (funcDef.Library != null && funcDef.Code.Length == 1)
                     {
                         ReturnStatement returnStatement = funcDef.Code[0] as ReturnStatement;
                         if (returnStatement != null)

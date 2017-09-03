@@ -35,10 +35,12 @@ namespace Crayon.ParseTree
             IList<string> subclassNames,
             string ns,
             Executable owner,
+            Library library,
             Token staticToken,
             Token finalToken)
             : base(classToken, owner)
         {
+            this.Library = library;
             this.ClassID = ClassDefinition.classIdAlloc++;
 
             this.Namespace = ns;

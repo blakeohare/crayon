@@ -7,39 +7,43 @@ namespace Crayon
 {
     internal class Parser
     {
+        private Stack<Library> libraryStack = new Stack<Library>();
+        private Stack<Locale> localeStack = new Stack<Locale>();
+
         public Parser(BuildContext buildContext)
         {
-            this.CurrentClass = null;
-            this.CurrentSystemLibrary = null;
             this.BuildContext = buildContext;
+            this.PushLibrary(null);
+            this.CurrentClass = null;
             this.LibraryManager = LibraryManager.ForByteCodeCompilation(buildContext);
             this.CurrentNamespace = "";
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<Executable, ConstantResolutionState>();
-            this.Locale = buildContext.CompilerLocale;
-            this.Keywords = this.Locale.Keywords;
-            this.RESERVED_KEYWORDS.UnionWith(this.Locale.GetKeywordsList());
             this.ExpressionParser = new ExpressionParser(this);
             this.ExecutableParser = new ExecutableParser(this);
             this.AnnotationParser = new AnnotationParser(this);
-            this.localeStack = new Stack<Locale>();
-            this.localeStack.Push(this.Locale);
         }
 
-        private Stack<Locale> localeStack;
+        public HashSet<string> ReservedKeywords { get; private set; }
 
-        public void PushLocale(Locale locale)
+        public void PushLibrary(Library library)
         {
-            this.localeStack.Push(locale);
-            this.Locale = locale;
-            this.Keywords = this.Locale.Keywords;
+            this.libraryStack.Push(library);
+            this.localeStack.Push(library == null ? this.BuildContext.CompilerLocale : library.Metadata.InternalLocale);
+            this.CurrentLibrary = library;
+            this.CurrentLocale = localeStack.Peek();
+            this.Keywords = this.CurrentLocale.Keywords;
+            this.ReservedKeywords = new HashSet<string>(this.CurrentLocale.GetKeywordsList());
         }
 
-        public void PopLocale()
+        public void PopLibrary()
         {
+            this.libraryStack.Pop();
             this.localeStack.Pop();
-            this.Locale = this.localeStack.Peek();
-            this.Keywords = this.Locale.Keywords;
+            this.CurrentLibrary = this.libraryStack.Peek();
+            this.CurrentLocale = localeStack.Peek();
+            this.Keywords = this.CurrentLocale.Keywords;
+            this.ReservedKeywords = new HashSet<string>(this.CurrentLocale.GetKeywordsList());
         }
 
         private Token[] GetImplicitCoreImport()
@@ -51,7 +55,7 @@ namespace Crayon
         public ExecutableParser ExecutableParser { get; private set; }
         public AnnotationParser AnnotationParser { get; private set; }
 
-        public Locale Locale { get; private set; }
+        public Locale CurrentLocale { get; private set; }
         public Locale.KeywordsLookup Keywords { get; private set; }
 
         public Dictionary<Executable, ConstantResolutionState> ConstantAndEnumResolutionState { get; private set; }
@@ -91,8 +95,7 @@ namespace Crayon
 
         public Executable CurrentCodeContainer { get; set; }
 
-        public static string CurrentSystemLibrary_STATIC_HACK { get; set; }
-        public string CurrentSystemLibrary { get; set; }
+        public Library CurrentLibrary { get; set; }
 
         public LibraryManager LibraryManager { get; private set; }
 
@@ -305,7 +308,7 @@ namespace Crayon
             foreach (string fileName in files.Keys)
             {
                 string code = files[fileName];
-                Executable[] fileContent = this.ParseInterpretedCode(fileName, code, null);
+                Executable[] fileContent = this.ParseInterpretedCode(fileName, code);
                 output.AddRange(fileContent);
             }
             return new Resolver(this, output).ResolveInterpretedCode();
@@ -316,7 +319,7 @@ namespace Crayon
             return fileIdCounter++;
         }
 
-        public Executable[] ParseInterpretedCode(string filename, string code, string libraryName)
+        public Executable[] ParseInterpretedCode(string filename, string code)
         {
             int fileId = this.GetNextFileId();
             this.RegisterFileUsed(filename, code, fileId);
@@ -329,10 +332,10 @@ namespace Crayon
 
             tokens.InsertTokens(this.GetImplicitCoreImport());
 
-            Library activeLibrary = libraryName == null ? null : this.LibraryManager.GetLibraryFromName(libraryName);
-            if (libraryName != null && libraryName != "Core")
+            if (this.CurrentLibrary != null && this.CurrentLibrary.CanonicalKey != "en:Core")
             {
-                activeLibrary.AddLibraryDependency(this.LibraryManager.GetLibraryFromName("Core"));
+                Library coreLibrary = this.LibraryManager.GetCoreLibrary(this, executables);
+                this.CurrentLibrary.AddLibraryDependency(coreLibrary);
             }
 
             while (tokens.HasMore && tokens.IsNext(this.Keywords.IMPORT))
@@ -348,9 +351,9 @@ namespace Crayon
                 }
                 else
                 {
-                    if (activeLibrary != null)
+                    if (this.CurrentLibrary != null)
                     {
-                        activeLibrary.AddLibraryDependency(library);
+                        this.CurrentLibrary.AddLibraryDependency(library);
                     }
                     executables.AddRange(libraryEmbeddedCode);
                 }
@@ -366,15 +369,14 @@ namespace Crayon
                 {
                     throw new ParserException(
                         executable.FirstToken,
-                        this.Locale.Strings.Get("ALL_IMPORTS_MUST_OCCUR_AT_BEGINNING_OF_FILE"));
+                        this.CurrentLocale.Strings.Get("ALL_IMPORTS_MUST_OCCUR_AT_BEGINNING_OF_FILE"));
                 }
 
                 executable.NamespacePrefixSearch = namespaceImports;
-                executable.LibraryName = libraryName;
 
                 if (executable is Namespace)
                 {
-                    ((Namespace)executable).GetFlattenedCode(executables, namespaceImports, libraryName);
+                    ((Namespace)executable).GetFlattenedCode(executables, namespaceImports);
                 }
                 else
                 {

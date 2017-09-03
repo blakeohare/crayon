@@ -12,9 +12,10 @@ namespace Crayon.ParseTree
         public Expression[] Values { get; private set; }
         public Dictionary<string, int> IntValue { get; private set; }
 
-        public EnumDefinition(Token enumToken, Token nameToken, string ns, Executable owner)
+        public EnumDefinition(Token enumToken, Token nameToken, string ns, Executable owner, Library library)
             : base(enumToken, owner)
         {
+            this.Library = library;
             this.NameToken = nameToken;
             this.Name = nameToken.Value;
             this.Namespace = ns;

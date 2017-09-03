@@ -6,9 +6,9 @@ using Common;
 namespace Crayon
 {
     // Library is only instantiable in the context of a specific platform, which is not ideal, but not causing any problems at the moment.
-    internal class Library
+    public class Library
     {
-        private LibraryMetadata metadata;
+        public LibraryMetadata Metadata { get; private set; }
         private string platformName;
 
         public string Name { get; set; }
@@ -16,19 +16,21 @@ namespace Crayon
         public string RootDirectory { get; set; }
         private HashSet<string> onlyImportableFrom = null;
         public Dictionary<string, object> CompileTimeConstants { get; set; }
+        public string CanonicalKey { get; private set; }
 
-        public LibraryResourceDatabase Resources { get; private set; }
+        internal LibraryResourceDatabase Resources { get; private set; }
 
         public Library CloneWithNewPlatform(Platform.AbstractPlatform platform)
         {
-            return new Library(this.metadata, platform);
+            return new Library(this.Metadata, platform);
         }
 
         public Library(LibraryMetadata metadata, Platform.AbstractPlatform nullablePlatform)
         {
             TODO.LibrariesNeedVersionNumber();
 
-            this.metadata = metadata;
+            this.CanonicalKey = metadata.InternalLocale.ID + ":" + metadata.Name;
+            this.Metadata = metadata;
             this.platformName = nullablePlatform == null ? null : nullablePlatform.Name;
 
             this.Resources = new LibraryResourceDatabase(this, nullablePlatform);
@@ -157,12 +159,13 @@ namespace Crayon
                 foreach (string onlyImportFrom in values["ONLY_ALLOW_IMPORT_FROM"].Split(','))
                 {
                     string libraryName = onlyImportFrom.Trim();
-                    this.onlyImportableFrom.Add(libraryName);
+                    this.onlyImportableFrom.Add(this.Metadata.InternalLocale.ID + ":" + libraryName);
                 }
             }
         }
 
         private List<Library> libraryDependencies = new List<Library>();
+        private HashSet<Locale> localesAccessed = new HashSet<Locale>();
         private HashSet<Library> libraryDependencyDuplicateCheck = new HashSet<Library>();
         private Library[] libraryDependenciesArray = null;
         public void AddLibraryDependency(Library library)
@@ -172,6 +175,12 @@ namespace Crayon
                 this.libraryDependencies.Add(library);
                 this.libraryDependenciesArray = null;
             }
+            library.AddLocaleAccess(this.Metadata.InternalLocale);
+        }
+
+        public void AddLocaleAccess(Locale locale)
+        {
+            this.localesAccessed.Add(locale);
         }
 
         public Library[] LibraryDependencies
@@ -191,7 +200,7 @@ namespace Crayon
             get { return this.filepathsByFunctionName.Count > 0; }
         }
 
-        public bool IsAllowedImport(string currentLibrary)
+        public bool IsAllowedImport(Library currentLibrary)
         {
             // Empty list means it's open to everyone.
             if (this.onlyImportableFrom == null || this.onlyImportableFrom.Count == 0)
@@ -206,7 +215,7 @@ namespace Crayon
             }
 
             // Is the current library on the list?
-            return this.onlyImportableFrom.Contains(currentLibrary);
+            return this.onlyImportableFrom.Contains(currentLibrary.CanonicalKey);
         }
 
         private Dictionary<string, string> filepathsByFunctionName;

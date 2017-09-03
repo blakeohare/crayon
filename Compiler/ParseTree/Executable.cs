@@ -9,7 +9,7 @@ namespace Crayon.ParseTree
         public static readonly Executable[] EMPTY_ARRAY = new Executable[0];
 
         public string[] NamespacePrefixSearch { get; set; }
-        public string LibraryName { get; set; }
+        public Library Library { get; set; }
 
         private static Dictionary<string, string[]> namespacePartCache = new Dictionary<string, string[]>();
 
@@ -54,7 +54,12 @@ namespace Crayon.ParseTree
 
         public Executable(Token firstToken, Executable owner)
             : base(firstToken, owner)
-        { }
+        {
+            if (owner != null)
+            {
+                this.Library = owner.Library;
+            }
+        }
 
         public virtual bool IsTerminator { get { return false; } }
 

@@ -104,6 +104,7 @@ namespace Crayon.ParseTree
         {
             this.BatchExecutableNameResolver(parser, lookup, imports, this.TryBlock);
 
+            Common.TODO.HardCodedEnglishValue();
             ClassDefinition simpleException = Node.DoClassLookup(null, lookup, imports, this.FunctionOrClassOwner.LocalNamespace, "Core.Exception");
 
             foreach (CatchBlock cb in this.CatchBlocks)
@@ -114,6 +115,7 @@ namespace Crayon.ParseTree
                 cb.TypeClasses = new ClassDefinition[typeCount];
                 for (int i = 0; i < typeCount; ++i)
                 {
+                    Common.TODO.HardCodedEnglishValue();
                     string typeName = types[i] ?? "Core.Exception";
                     Token token = typeTokens[i] ?? cb.CatchToken;
                     ClassDefinition resolvedType = Node.DoClassLookup(token, lookup, imports, this.FunctionOrClassOwner.LocalNamespace, typeName, true);
@@ -123,7 +125,7 @@ namespace Crayon.ParseTree
                     }
                     if (!resolvedType.ExtendsFrom(simpleException))
                     {
-                        if (resolvedType.BaseClass == null && resolvedType.LibraryName == null)
+                        if (resolvedType.BaseClass == null && resolvedType.Library == null)
                         {
                             throw new ParserException(token, "This class does not extend from Core.Exception.");
                         }
@@ -143,6 +145,7 @@ namespace Crayon.ParseTree
                         // ...that means this is not a type but is actually a variable.
 
                         // Change the type to "Core.Exception", move this token to a variable
+                        Common.TODO.HardCodedEnglishValue();
                         types[0] = "Core.Exception";
                         cb.ExceptionVariableToken = token;
                         typeTokens[0] = null;

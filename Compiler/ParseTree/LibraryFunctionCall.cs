@@ -23,7 +23,7 @@ namespace Crayon.ParseTree
             string callingLibrary = null;
             while (callingLibrary == null && owner != null)
             {
-                callingLibrary = owner.LibraryName;
+                callingLibrary = owner.Library.Name;
                 owner = owner.FunctionOrClassOwner;
             }
 

@@ -22,6 +22,7 @@ namespace Crayon.ParseTree
 
         public FunctionDefinition(
             Token functionToken,
+            Library library,
             Executable nullableOwner,
             bool isStaticMethod,
             Token nameToken,
@@ -29,6 +30,7 @@ namespace Crayon.ParseTree
             string namespyace)
             : base(functionToken, nullableOwner)
         {
+            this.Library = library;
             this.IsStaticMethod = isStaticMethod;
             this.Namespace = namespyace;
             this.NameToken = nameToken;

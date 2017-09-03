@@ -313,7 +313,7 @@ namespace Crayon
                 IosBundlePrefix = flattened.IosBundlePrefix,
                 WindowWidth = Util.ParseIntWithErrorNullOkay((flattened.WindowSize ?? new Size()).Width, "Invalid window width in build file."),
                 WindowHeight = Util.ParseIntWithErrorNullOkay((flattened.WindowSize ?? new Size()).Height, "Invalid window height in build file."),
-                CompilerLocale = new Locale((flattened.CompilerLocale ?? "en").Trim()),
+                CompilerLocale = Locale.Get((flattened.CompilerLocale ?? "en").Trim()),
             }.ValidateValues();
         }
 

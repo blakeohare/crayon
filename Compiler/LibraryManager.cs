@@ -36,8 +36,7 @@ namespace Crayon
 
         public bool IsValidLibraryName(Parser parser, string name)
         {
-            // TODO: use the parser locale (top of the locale stack) to check the validity
-            return this.GetLibraryMetadata(name) != null;
+            return this.GetLibraryMetadataFromAnyPossibleKey(parser.CurrentLocale.ID + ":" + name) != null;
         }
 
         public Library GetLibraryFromName(string name)
@@ -51,6 +50,25 @@ namespace Crayon
         {
             Library output;
             return this.librariesByKey.TryGetValue(key, out output) ? output : null;
+        }
+
+        private Library coreLibrary = null;
+        public Library GetCoreLibrary(Parser parser, List<Executable> executablesOut)
+        {
+            if (this.coreLibrary == null)
+            {
+                this.coreLibrary = this.GetLibraryFromKey("en:Core"); // canonical key will work even if english locale not used.
+                if (this.coreLibrary == null)
+                {
+                    LibraryMetadata coreLibMetadata = this.GetLibraryMetadataFromAnyPossibleKey("en:Core");
+
+                    TODO.GetCoreNameFromMetadataWithLocale();
+                    string coreNameInLocale = coreLibMetadata.Name;
+
+                    this.coreLibrary = this.ImportLibrary(parser, null, coreNameInLocale, executablesOut);
+                }
+            }
+            return this.coreLibrary;
         }
 
         public int GetIdForFunction(string name, string library)
@@ -100,14 +118,14 @@ namespace Crayon
             string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
 
 #if RELEASE
-                if (crayonHome == null)
-                {
-                    throw new System.InvalidOperationException("Please set the CRAYON_HOME environment variable to the location of the directory containing both 'crayon.exe' and the 'lib' directory.");
-                }
+            if (crayonHome == null)
+            {
+                throw new System.InvalidOperationException("Please set the CRAYON_HOME environment variable to the location of the directory containing both 'crayon.exe' and the 'lib' directory.");
+            }
 #endif
 
             string placesWhereLibraryDirectoriesCanExist = "";
-            
+
             if (crayonHome != null)
             {
                 placesWhereLibraryDirectoriesCanExist += ";" + System.IO.Path.Combine(crayonHome, "libs");
@@ -162,9 +180,9 @@ namespace Crayon
                 }
             }
 
-            // Library name collisions will override any previous definition. 
+            // Library name collisions will override any previous definition.
             // For example, a custom library referenced by a build file will override a built-in library.
-            // An example use case of this would be to define a custom library called "Gamepad" for mobile that puts 
+            // An example use case of this would be to define a custom library called "Gamepad" for mobile that puts
             // buttons in the corners of the screen, but without having to change any code to be platform-aware.
             Dictionary<string, LibraryMetadata> uniqueLibraries = new Dictionary<string, LibraryMetadata>();
             foreach (string path in verifiedLibraryPaths)
@@ -173,7 +191,7 @@ namespace Crayon
                 LibraryMetadata metadata = new LibraryMetadata(path, defaultName);
 
                 // TODO: don't hardcode EN
-                string uniqueKey = "EN:" + metadata.Name;
+                string uniqueKey = "en:" + metadata.Name;
                 uniqueLibraries[uniqueKey] = metadata;
             }
 
@@ -184,12 +202,19 @@ namespace Crayon
 
         private LibraryMetadata[] allLibraries = null;
         private Dictionary<string, LibraryMetadata> libraryLookup = null;
-        private LibraryMetadata GetLibraryMetadata(string name)
+        private LibraryMetadata GetLibraryMetadataFromAnyPossibleKey(string name)
         {
             if (allLibraries == null)
             {
                 allLibraries = GetAvailableLibraryPathsByLibraryName(buildContext.CrayonPath, buildContext.ProjectDirectory);
                 libraryLookup = allLibraries.ToDictionary(metadata => metadata.Name);
+                foreach (LibraryMetadata libraryMetadata in allLibraries)
+                {
+                    foreach (Locale supportedLocale in libraryMetadata.SupportedLocales)
+                    {
+                        libraryLookup[supportedLocale.ID + ":" + libraryMetadata.GetName(supportedLocale)] = libraryMetadata;
+                    }
+                }
             }
 
             LibraryMetadata library;
@@ -200,30 +225,28 @@ namespace Crayon
 
         private readonly List<Library> librariesAlreadyImported = new List<Library>();
         // The index + 1 is the reference ID
-        private readonly Dictionary<string, int> librariesAlreadyImportedIndexByName = new Dictionary<string, int>();
+        private readonly Dictionary<string, int> librariesAlreadyImportedIndexByKey = new Dictionary<string, int>();
         private static readonly Executable[] EMPTY_EXECUTABLE = new Executable[0];
 
-        public int GetLibraryReferenceId(string name)
+        public int GetLibraryReferenceIdFromKey(string key)
         {
-            return this.librariesAlreadyImportedIndexByName[name] + 1;
+            return this.librariesAlreadyImportedIndexByKey[key] + 1;
         }
 
         public Library[] LibrariesUsed { get { return this.librariesAlreadyImported.ToArray(); } }
 
         // TODO: libraries will be able to declare their source code locale.
-        private static readonly Locale ENGLISH_LOCALE_FOR_LIBRARIES = new Locale("en");
+        private static readonly Locale ENGLISH_LOCALE_FOR_LIBRARIES = Locale.Get("en");
 
         public Library ImportLibrary(Parser parser, Token throwToken, string name, List<Executable> executablesOut)
         {
             name = name.Split('.')[0];
-            Library library = librariesAlreadyImportedIndexByName.ContainsKey(name)
-                ? librariesAlreadyImported[librariesAlreadyImportedIndexByName[name]]
-                : null;
-
-            if (library == null)
+            string key = parser.CurrentLocale.ID + ":" + name;
+            LibraryMetadata libraryMetadata = this.GetLibraryMetadataFromAnyPossibleKey(key);
+            if (libraryMetadata == null)
             {
-                LibraryMetadata libraryMetadata = this.GetLibraryMetadata(name);
-
+                // check for default locale
+                libraryMetadata = this.GetLibraryMetadataFromAnyPossibleKey(name);
                 if (libraryMetadata == null)
                 {
                     // No library found. Could just be a local namespace import.
@@ -231,34 +254,46 @@ namespace Crayon
                     return null;
                 }
 
+                if (libraryMetadata.SupportedLocales.Contains(parser.CurrentLocale))
+                {
+                    // If you import something by its default name from a supported locale, then it doesn't count.
+                    // Don't throw an error. A user should be able to define a namespace that happens to have the
+                    // same name as a library in some locale they aren't using.
+                    return null;
+                }
+            }
+
+            Library library = librariesAlreadyImportedIndexByKey.ContainsKey(libraryMetadata.CanonicalKey)
+                ? librariesAlreadyImported[librariesAlreadyImportedIndexByKey[libraryMetadata.CanonicalKey]]
+                : null;
+
+            if (library == null)
+            {
                 string platformName = parser.BuildContext.Platform;
                 Platform.AbstractPlatform platform = platformName == null || this.PlatformProvider == null ? null : this.PlatformProvider.GetPlatform(platformName);
                 library = new Library(libraryMetadata, platform);
+                library.AddLocaleAccess(parser.CurrentLocale);
 
-                this.librariesAlreadyImportedIndexByName[name] = this.librariesAlreadyImported.Count;
+                this.librariesAlreadyImportedIndexByKey[libraryMetadata.CanonicalKey] = this.librariesAlreadyImported.Count;
                 this.librariesAlreadyImported.Add(library);
 
                 this.importedLibraries[name] = library;
                 this.librariesByKey[name.ToLowerInvariant()] = library;
 
-                string oldSystemLibrary = parser.CurrentSystemLibrary;
-                parser.CurrentSystemLibrary = name;
-
+                parser.PushLibrary(library);
                 Dictionary<string, string> embeddedCode = library.GetEmbeddedCode();
                 foreach (string embeddedFile in embeddedCode.Keys)
                 {
                     string fakeName = "[" + embeddedFile + "]";
                     string code = embeddedCode[embeddedFile];
-                    parser.PushLocale(ENGLISH_LOCALE_FOR_LIBRARIES);
-                    executablesOut.AddRange(parser.ParseInterpretedCode(fakeName, code, name));
-                    parser.PopLocale();
+                    executablesOut.AddRange(parser.ParseInterpretedCode(fakeName, code));
                 }
 
-                parser.CurrentSystemLibrary = oldSystemLibrary;
+                parser.PopLibrary();
             }
 
             // Even if already imported, still must check to see if this import is allowed here.
-            if (!library.IsAllowedImport(parser.CurrentSystemLibrary))
+            if (!library.IsAllowedImport(parser.CurrentLibrary))
             {
                 throw new ParserException(throwToken, "This library cannot be imported from here.");
             }
