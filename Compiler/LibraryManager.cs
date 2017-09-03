@@ -97,7 +97,7 @@ namespace Crayon
             string nullableBuildFileCrayonPath,
             string nullableProjectDirectory)
         {
-            Dictionary<string, string> libraryPathsByName = new Dictionary<string, string>();
+            List<string> libraryPathsByName = new List<string>();
 
             string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
 
@@ -158,16 +158,25 @@ namespace Crayon
 #endif
             foreach (string dir in directoriesToCheck)
             {
-                string libraryName = System.IO.Path.GetFileName(dir);
                 string manifestPath = System.IO.Path.Combine(dir, "manifest.txt");
                 if (System.IO.File.Exists(manifestPath))
                 {
-                    libraryPathsByName[libraryName] = dir;
+                    libraryPathsByName.Add(dir);
                 }
             }
 
-            return libraryPathsByName
-                .Select(kvp => new LibraryMetadata(kvp.Value, kvp.Key))
+            Dictionary<string, LibraryMetadata> uniqueLibraries = new Dictionary<string, LibraryMetadata>();
+            foreach (string path in libraryPathsByName)
+            {
+                string defaultName = System.IO.Path.GetFileName(path);
+                LibraryMetadata metadata = new LibraryMetadata(path, defaultName);
+
+                // TODO: don't hardcode EN
+                string uniqueKey = "EN:" + metadata.Name;
+                uniqueLibraries[uniqueKey] = metadata;
+            }
+
+            return uniqueLibraries.Values
                 .OrderBy(metadata => metadata.Name.ToLower())
                 .ToArray();
         }
