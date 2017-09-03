@@ -28,11 +28,11 @@ funcion main() {
     grid = trues + falses;
     grid.shuffle();
     cellPixelX = [];
-    para (x = 0; x < WIDTH; ++x) {
+    por (x = 0; x < WIDTH; ++x) {
         cellPixelX.add(x * CELL_SIZE);
     }
     cellPixelY = [];
-    para (y = 0; y < HEIGHT; ++y) {
+    por (y = 0; y < HEIGHT; ++y) {
         cellPixelY.add(y * CELL_SIZE);
     }
 
@@ -41,13 +41,13 @@ funcion main() {
     indices = [];
     blues = [];
     offsets = [-1, 0, 1];
-    para (y = 0; y < HEIGHT; ++y) {
-        para (x = 0; x < WIDTH; ++x) {
+    por (y = 0; y < HEIGHT; ++y) {
+        por (x = 0; x < WIDTH; ++x) {
             indices.add(indices.length);
             blues.add(getRandomBlue());
             neighbors = [];
-            para (dx : offsets) {
-                para (dy : offsets) {
+            por (dx : offsets) {
+                por (dy : offsets) {
                     neighborX = dx + x;
                     neighborY = dy + y;
                     si (neighborX >= 0 &&
@@ -77,7 +77,7 @@ funcion main() {
     deadTransformationLookup[3] = verdad; // has exactly 3 neighbors
 
     mientras (verdad) {
-        para (event : window.pumpEvents()) {
+        por (event : window.pumpEvents()) {
             elegir (event.type) {
                 caso EventType.QUIT:
                     volver;
@@ -104,16 +104,16 @@ funcion main() {
             // bring half of the cells in the neighbors lookup for the cursor's position to life.
             neighbors = neighborsLookup[lastPosition];
             neighbors.shuffle();
-            para (i = 0; i < neighbors.length / 2; ++i) {
+            por (i = 0; i < neighbors.length / 2; ++i) {
                 grid[neighbors[i]] = verdad;
             }
         }
 
         // Perform an iteration on the entire grid...
-        para (index : indices) {
+        por (index : indices) {
             // Count neighbors
             neighbors = 0;
-            para (neighborIndex : neighborsLookup[index]) {
+            por (neighborIndex : neighborsLookup[index]) {
                 si (grid[neighborIndex]) {
                     neighbors++;
                 }
@@ -133,8 +133,8 @@ funcion main() {
         // Draw the grid
         Draw.fill(0, 0, 0);
         index = 0;
-        para (y : cellPixelY) {
-            para (x : cellPixelX) {
+        por (y : cellPixelY) {
+            por (x : cellPixelX) {
                 si (grid[index]) {
                     rgb = blues[index];
                     Draw.rectangle(
