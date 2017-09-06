@@ -171,14 +171,17 @@ namespace Interpreter.Vm
 
         public static bool IsValidInteger(string value)
         {
-            char c;
-            for (int i = value.Length - 1; i >= 0; --i)
+            if (value.Length == 0) return false;
+            char c = value[0];
+            if (value.Length == 1)
+            {
+                return c >= '0' && c <= '9';
+            }
+            int length = value.Length;
+            for (int i = c == '-' ? 1 : 0; i < length; ++i)
             {
                 c = value[i];
-                if (c < '0' || c > '9')
-                {
-                    return false;
-                }
+                if (c < '0' || c > '9') return false;
             }
             return true;
         }
