@@ -25,7 +25,7 @@ If you see usage information, you're good to go! If you see an error message, su
 ## Editing Environment Variables for OSX
 - Open a terminal and type **pico ~/.bash_profile**. This will open a text editor for your Terminal settings file. 
 - Add the following lines to the end (be sure to change **yourusername** to your actual username, or use whichever directory you created if it's elsewhere): 
-  - `export CRAYON_HOME="/Users/yourusername/crayon`
+  - `export CRAYON_HOME="/Users/yourusername/crayon"`
   - `export PATH=$CRAYON_HOME:$PATH`
 - While you have this file open, go ahead and add the following line as well, which you will need to do later in the setup anyway:
   - `alias crayon='mono $CRAYON_HOME/crayon.exe'`
