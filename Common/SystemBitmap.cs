@@ -13,9 +13,33 @@ namespace Common
      */
     public class SystemBitmap
     {
+        public void CheesyCleanup()
+        {
+#if OSX
+            // There seems to be a bug in Cairo where the reference counting isn't decremented correctly.
+            // However, making manual multiple redundant calls to cairo_surface_destroy will (safely?) decrement
+            // the reference count.
+            // TODO: track references to SystemBitmap and verify all have had CheesyCleanup called on it when
+            // the program exits. Be sure to set the bitmap field to null so it doesn't act too much like a memory leak.
+            System.IntPtr handle = this.bitmap.Handle;
+            int refCount = (int)this.bitmap.ReferenceCount;
+            this.bitmap.Dispose();
+            refCount -= 1;
+            if (refCount <= 0)
+            {
+                System.Type nativeMethods = typeof(Cairo.Surface).Assembly.GetType("Cairo.NativeMethods");
+                System.Reflection.MethodInfo surfaceDestroyFp = nativeMethods.GetMethod("cairo_surface_destroy", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+                for (int i = 0; i < refCount; ++i)
+                {
+                    surfaceDestroyFp.Invoke(null, new object[] { handle });
+                }
+            }
+#endif        }
+
 #if WINDOWS
         private System.Drawing.Bitmap bitmap;
 #elif OSX
+        // TODO: determine what the reasoning behind this readonly was.
         private readonly Cairo.ImageSurface bitmap;
 #endif
 
