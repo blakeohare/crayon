@@ -196,12 +196,13 @@ namespace Interpreter
     public class TempFile
     {
         private static int counter = 0;
+        private static readonly System.Random random = new System.Random();
 
         public string FileName { get; private set; }
         public TempFile(byte[] bytes)
         {
-            // TODO: move this into the temp directory
-            this.FileName = "temp_" + (counter++) + ".dat";
+            string filename = "temp_" + (counter++) + "_" + random.Next(99999999) + ".dat";
+            this.FileName = System.IO.Path.Combine(System.IO.Path.GetTempPath(), filename);
             System.IO.File.WriteAllBytes(this.FileName, bytes);
         }
 
