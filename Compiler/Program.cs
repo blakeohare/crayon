@@ -30,8 +30,6 @@ namespace Crayon
 
         static void Main(string[] args)
         {
-            Dictionary<string, string> argLookup = null;
-
             using (new PerformanceSection("Crayon"))
             {
 #if DEBUG
@@ -67,16 +65,6 @@ namespace Crayon
                 }
 #endif
             }
-#if DEBUG
-            if (argLookup != null)
-            {
-                if (argLookup.ContainsKey(FlagParser.SHOW_PERFORMANCE_MARKERS))
-                {
-                    string summary = PerformanceTimer.GetSummary();
-                    Console.WriteLine(summary);
-                }
-            }
-#endif
         }
 
         private static void ExecuteProgramUnchecked(string[] args)
@@ -98,6 +86,16 @@ namespace Crayon
             {
                 Program.Compile(argLookup);
             }
+#if DEBUG
+            if (argLookup != null)
+            {
+                if (argLookup.ContainsKey(FlagParser.SHOW_PERFORMANCE_MARKERS))
+                {
+                    string summary = PerformanceTimer.GetSummary();
+                    Console.WriteLine(summary);
+                }
+            }
+#endif
         }
 
         private static string[] GetEffectiveArgs(string[] actualArgs)
