@@ -9,11 +9,11 @@ namespace Crayon
     internal class Resolver
     {
         private Parser parser;
-        private Executable[] currentCode;
+        private TopLevelConstruct[] currentCode;
 
         public Resolver(Parser parser, ICollection<CompilationScope> compilationScopes)
         {
-            List<Executable> originalCode = new List<Executable>();
+            List<TopLevelConstruct> originalCode = new List<TopLevelConstruct>();
             foreach (CompilationScope scope in compilationScopes
                 .OrderBy(scope => scope.Library == null ? "" : scope.Library.Metadata.Name))
             {
@@ -23,15 +23,15 @@ namespace Crayon
             this.currentCode = originalCode.ToArray();
         }
 
-        private Dictionary<string, Executable> CreateFullyQualifiedLookup(IList<Executable> code)
+        private Dictionary<string, TopLevelConstruct> CreateFullyQualifiedLookup(IList<Executable> code)
         {
             using (new PerformanceSection(""))
             {
                 HashSet<string> namespaces = new HashSet<string>();
 
-                Dictionary<string, Executable> lookup = new Dictionary<string, Executable>();
+                Dictionary<string, TopLevelConstruct> lookup = new Dictionary<string, TopLevelConstruct>();
                 bool mainFound = false;
-                foreach (Executable item in code)
+                foreach (TopLevelConstruct item in code)
                 {
                     string ns;
                     string memberName;
@@ -142,17 +142,17 @@ namespace Crayon
             }
         }
 
-        public Executable[] ResolveTranslatedCode()
+        public TopLevelConstruct[] ResolveTranslatedCode()
         {
             this.SimpleFirstPassResolution();
             return this.currentCode;
         }
 
-        public Executable[] ResolveInterpretedCode()
+        public TopLevelConstruct[] ResolveInterpretedCode()
         {
             this.parser.VerifyNoBadImports();
 
-            Dictionary<string, Executable> definitionsByFullyQualifiedNames = this.CreateFullyQualifiedLookup(this.currentCode);
+            Dictionary<string, TopLevelConstruct> definitionsByFullyQualifiedNames = this.CreateFullyQualifiedLookup(this.currentCode);
 
             Library[] librariesInDependencyOrder = LibraryDependencyResolver.GetLibraryResolutionOrder(this.parser);
 
@@ -332,8 +332,8 @@ namespace Crayon
                 HashSet<int> classIdsIncluded = new HashSet<int>();
                 List<ClassDefinition> classDefinitions = new List<ClassDefinition>();
                 List<FunctionDefinition> functionDefinitions = new List<FunctionDefinition>();
-                List<Executable> output = new List<Executable>();
-                foreach (Executable exec in this.currentCode)
+                List<TopLevelConstruct> output = new List<TopLevelConstruct>();
+                foreach (TopLevelConstruct exec in this.currentCode)
                 {
                     if (exec is FunctionDefinition)
                     {
@@ -360,7 +360,7 @@ namespace Crayon
             }
         }
 
-        private void RearrangeClassDefinitionsHelper(ClassDefinition def, HashSet<int> idsAlreadyIncluded, List<Executable> output)
+        private void RearrangeClassDefinitionsHelper(ClassDefinition def, HashSet<int> idsAlreadyIncluded, List<TopLevelConstruct> output)
         {
             if (!idsAlreadyIncluded.Contains(def.ClassID))
             {
@@ -391,10 +391,10 @@ namespace Crayon
                         everythingElse.Add(ex);
                     }
                 }
-                List<Executable> output = new List<Executable>();
-                foreach (Executable ex in enumsAndConstants.Concat(everythingElse))
+                List<TopLevelConstruct> output = new List<TopLevelConstruct>();
+                foreach (TopLevelConstruct ex in enumsAndConstants.Concat(everythingElse))
                 {
-                    output.AddRange(ex.Resolve(this.parser));
+                    output.AddRange(ex.ResolveTopLevel(this.parser));
                 }
 
                 this.currentCode = output.ToArray();
@@ -464,16 +464,6 @@ namespace Crayon
             if (item is FunctionDefinition) return new FunctionReference(primaryToken, (FunctionDefinition)item, owner);
 
             throw new InvalidOperationException();
-        }
-
-        private void TEMP_PastelOnlyFirstPass()
-        {
-            List<Executable> output = new List<Executable>();
-            foreach (Executable line in this.currentCode)
-            {
-                output.AddRange(line.PastelResolveComposite(this.parser));
-            }
-            this.currentCode = output.ToArray();
         }
     }
 }

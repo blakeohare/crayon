@@ -7,7 +7,7 @@ namespace Crayon.ParseTree
     // It will get optimized away at resolution time.
     internal class Namespace : TopLevelConstruct
     {
-        public Executable[] Code { get; set; }
+        public TopLevelConstruct[] Code { get; set; }
         public string Name { get; set; }
 
         public Namespace(Token namespaceToken, string name, Executable owner, Library library)
@@ -17,13 +17,13 @@ namespace Crayon.ParseTree
             this.Name = name;
         }
 
-        public void GetFlattenedCode(IList<Executable> executableOut, string[] imports)
+        public void GetFlattenedCode(IList<TopLevelConstruct> executableOut, string[] imports)
         {
             List<string> importsBuilder = new List<string>() { this.Name };
             importsBuilder.AddRange(imports);
             imports = importsBuilder.ToArray();
 
-            foreach (Executable item in this.Code)
+            foreach (TopLevelConstruct item in this.Code)
             {
                 item.NamespacePrefixSearch = imports;
 

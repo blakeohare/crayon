@@ -298,7 +298,7 @@ namespace Crayon
             return output;
         }
 
-        public Executable[] ParseAllTheThings()
+        public TopLevelConstruct[] ParseAllTheThings()
         {
             Dictionary<string, string> files = this.GetCodeFiles();
             // Only iterate through actual user files. Library imports will be inserted into the code when encountered
@@ -358,7 +358,7 @@ namespace Crayon
 
             while (tokens.HasMore)
             {
-                Executable executable = this.ExecutableParser.Parse(tokens, false, true, true, null);
+                TopLevelConstruct executable = this.ExecutableParser.ParseTopLevel(tokens, false, true, true, null);
 
                 if (executable is ImportStatement)
                 {

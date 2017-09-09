@@ -16,6 +16,17 @@ namespace Crayon
         private static readonly HashSet<string> ASSIGNMENT_OPS = new HashSet<string>(
             "= += -= *= /= %= |= &= ^= <<= >>=".Split(' '));
 
+        public TopLevelConstruct ParseTopLevel(
+            TokenStream tokens,
+            bool simpleOnly,
+            bool semicolonPresent,
+            bool isRoot,
+            Executable owner)
+        {
+            // TODO: split the things out from the implementation of Parse.
+            return (TopLevelConstruct)this.Parse(tokens, simpleOnly, semicolonPresent, isRoot, owner);
+        }
+
         public Executable Parse(
             TokenStream tokens,
             bool simpleOnly,
@@ -421,10 +432,10 @@ namespace Crayon
             Namespace namespaceInstance = new Namespace(namespaceToken, name, owner, parser.CurrentLibrary);
 
             tokens.PopExpected("{");
-            List<Executable> namespaceMembers = new List<Executable>();
+            List<TopLevelConstruct> namespaceMembers = new List<TopLevelConstruct>();
             while (!tokens.PopIfPresent("}"))
             {
-                Executable executable = this.parser.ExecutableParser.Parse(tokens, false, false, true, namespaceInstance);
+                TopLevelConstruct executable = this.parser.ExecutableParser.ParseTopLevel(tokens, false, false, true, namespaceInstance);
                 if (executable is FunctionDefinition ||
                     executable is ClassDefinition ||
                     executable is EnumDefinition ||

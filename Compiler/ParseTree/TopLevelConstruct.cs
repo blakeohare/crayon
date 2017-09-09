@@ -26,6 +26,11 @@ namespace Crayon.ParseTree
             throw new NotImplementedException();
         }
 
+        internal IList<TopLevelConstruct> ResolveTopLevel(Parser parser)
+        {
+            return new List<TopLevelConstruct>(this.Resolve(parser).Cast<TopLevelConstruct>());
+        }
+
         internal override IList<Executable> Resolve(Parser parser)
         {
             throw new NotImplementedException();

@@ -14,14 +14,14 @@ namespace Crayon
             get { return this.Library == null ? this.buildContext.CompilerLocale : this.Library.Metadata.InternalLocale; }
         }
 
-        private List<Executable> executables = new List<Executable>();
+        private List<TopLevelConstruct> executables = new List<TopLevelConstruct>();
 
-        public List<Executable> GetExecutables_HACK()
+        public List<TopLevelConstruct> GetExecutables_HACK()
         {
             return this.executables;
         }
 
-        public void AddExecutable(Executable executable, string[] importsNamespaceSearch)
+        public void AddExecutable(TopLevelConstruct executable, string[] importsNamespaceSearch)
         {
             executable.NamespacePrefixSearch = importsNamespaceSearch;
 
