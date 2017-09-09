@@ -279,32 +279,11 @@ namespace Crayon
             Dictionary<string, string> output = new Dictionary<string, string>();
             foreach (string key in this.filepathsByFunctionName.Keys)
             {
-                if (key == "addImageRenderEventForPastel")
-                {
-                    continue;
-                }
                 string filename = "translate/" + this.filepathsByFunctionName[key].Replace(".cry", ".pst");
                 output[key] = this.ReadFile(false, filename, false);
             }
 
             return output;
-        }
-
-        public string GetTranslationCode(string functionName, bool isPastel)
-        {
-            string prefix = "lib_" + this.Name.ToLower() + "_";
-            if (!functionName.StartsWith(prefix))
-            {
-                throw new InvalidOperationException("Cannot call library function '" + functionName + "' from the '" + this.Name + "' library.");
-            }
-            string shortName = functionName.Substring(prefix.Length);
-            if (!this.filepathsByFunctionName.ContainsKey(shortName))
-            {
-                throw new NotImplementedException("The library function '" + functionName + "' is not implemented.");
-            }
-
-            string dir = isPastel ? "native" : "native_pastel";
-            return "  import inline 'LIB:" + this.Name + ":" + dir + "/" + this.filepathsByFunctionName[shortName] + "';\n";
         }
 
         Dictionary<string, string> translations = null;

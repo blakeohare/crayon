@@ -57,7 +57,7 @@ namespace Crayon
                     throw new ParserException(staticToken, "Classes cannot be both static and final.");
                 }
             }
-            
+
             if (value == parser.Keywords.IMPORT)
             {
                 Token importToken = tokens.PopExpected(parser.Keywords.IMPORT);
@@ -114,7 +114,7 @@ namespace Crayon
                         (value == this.parser.Keywords.FUNCTION ? "Function" : "Class") +
                         " definition cannot be nested in another construct.");
                 }
-                
+
                 if (value == parser.Keywords.IMPORT)
                 {
                     throw new ParserException(tokens.Peek(), "Imports can only be made from the root of a file and cannot be nested inside other constructs.");
@@ -134,7 +134,7 @@ namespace Crayon
                 {
                     throw new ParserException(tokens.Peek(), "Constant declarations cannot be nested in other constructs.");
                 }
-                
+
                 if (value == this.parser.Keywords.FOR) return this.ParseFor(tokens, owner);
                 if (value == this.parser.Keywords.WHILE) return this.ParseWhile(tokens, owner);
                 if (value == this.parser.Keywords.DO) return this.ParseDoWhile(tokens, owner);
@@ -164,7 +164,7 @@ namespace Crayon
 
             return new ExpressionAsExecutable(expr, owner);
         }
-        
+
         private Executable ParseThrow(TokenStream tokens, TopLevelConstruct owner)
         {
             Token throwToken = tokens.PopExpected(this.parser.Keywords.THROW);

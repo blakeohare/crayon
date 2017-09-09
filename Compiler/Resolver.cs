@@ -419,36 +419,6 @@ namespace Crayon
             }
         }
 
-        // Convert anything that looks like a function call into a verified pointer to the function if possible using the
-        // available namespaces.
-        public static List<Executable> CreateVerifiedFunctionCalls(Parser parser, IList<TopLevelConstruct> original)
-        {
-            using (new PerformanceSection("CreateVerifiedFunctionCalls"))
-            {
-                // First create a fully-qualified lookup of all functions and classes.
-                Dictionary<string, TopLevelConstruct> functionsAndClasses = new Dictionary<string, TopLevelConstruct>();
-                foreach (TopLevelConstruct exec in original)
-                {
-                    if (exec is FunctionDefinition)
-                    {
-                        FunctionDefinition fd = (FunctionDefinition)exec;
-                        string key = fd.Namespace + ":" + fd.NameToken.Value;
-                        functionsAndClasses[key] = fd;
-                    }
-                    else if (exec is ClassDefinition)
-                    {
-                        ClassDefinition cd = (ClassDefinition)exec;
-                        string key = cd.Namespace + ":" + cd.NameToken.Value;
-                        functionsAndClasses[key] = cd;
-                    }
-                }
-
-                List<Executable> output = new List<Executable>();
-
-                return output;
-            }
-        }
-
         // Generally this is used with the name resolver. So for example, you have a refernce to a ClassDefinition
         // instance from the resolver, but you want to turn it into a ClassReference instance.
         public static Expression ConvertStaticReferenceToExpression(TopLevelConstruct item, Token primaryToken, TopLevelConstruct owner)
