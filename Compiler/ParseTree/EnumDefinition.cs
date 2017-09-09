@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Crayon.ParseTree
 {
-    internal class EnumDefinition : Executable
+    internal class EnumDefinition : TopLevelConstruct
     {
         public string Name { get; private set; }
         public Token NameToken { get; private set; }

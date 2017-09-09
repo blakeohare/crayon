@@ -5,7 +5,7 @@ using Common;
 
 namespace Crayon.ParseTree
 {
-    internal class FunctionDefinition : Executable
+    internal class FunctionDefinition : TopLevelConstruct
     {
         public int FunctionID { get; set; }
         public Token NameToken { get; private set; }

@@ -5,7 +5,7 @@ namespace Crayon.ParseTree
 {
     // Despite being an "Executable", this isn't an executable thing.
     // It will get optimized away at resolution time.
-    internal class Namespace : Executable
+    internal class Namespace : TopLevelConstruct
     {
         public Executable[] Code { get; set; }
         public string Name { get; set; }

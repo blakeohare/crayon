@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Crayon.ParseTree
 {
-    internal class FieldDeclaration : Executable
+    internal class FieldDeclaration : TopLevelConstruct
     {
         public Token NameToken { get; set; }
         public Expression DefaultValue { get; set; }

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Crayon.ParseTree
 {
-    internal class ClassDefinition : Executable
+    internal class ClassDefinition : TopLevelConstruct
     {
         private static int classIdAlloc = 1;
 

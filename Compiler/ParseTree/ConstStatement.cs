@@ -2,7 +2,7 @@
 
 namespace Crayon.ParseTree
 {
-    internal class ConstStatement : Executable
+    internal class ConstStatement : TopLevelConstruct
     {
         internal override Executable PastelResolve(Parser parser)
         {

@@ -64,6 +64,9 @@ namespace Crayon.ParseTree
         public virtual bool IsTerminator { get { return false; } }
 
         internal abstract IList<Executable> Resolve(Parser parser);
+        internal abstract Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports);
+        internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
+        internal abstract Executable PastelResolve(Parser parser);
 
         internal static IList<Executable> Resolve(Parser parser, IList<Executable> executables)
         {
@@ -74,8 +77,6 @@ namespace Crayon.ParseTree
             }
             return output;
         }
-
-        internal abstract Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports);
 
         // The reason why I still run this function with actuallyDoThis = false is so that other platforms can still be exported to
         // and potentially crash if the implementation was somehow broken on Python (or some other future platform that doesn't have traditional switch statements).
@@ -116,14 +117,10 @@ namespace Crayon.ParseTree
         internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
         { }
 
-        internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
-
         internal virtual IList<Executable> PastelResolveComposite(Parser parser)
         {
             return Listify(this.PastelResolve(parser));
         }
-
-        internal abstract Executable PastelResolve(Parser parser);
 
         internal static Executable[] PastelResolveExecutables(Parser parser, IList<Executable> code)
         {

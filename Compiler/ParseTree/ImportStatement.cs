@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Crayon.ParseTree
 {
-    internal class ImportStatement : Executable
+    internal class ImportStatement : TopLevelConstruct
     {
         public string ImportPath { get; set; }
 
