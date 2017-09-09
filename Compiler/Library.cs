@@ -9,6 +9,7 @@ namespace Crayon
     public class Library
     {
         public LibraryMetadata Metadata { get; private set; }
+        public CompilationScope Scope { get; set; }
         private string platformName;
 
         public string Name { get; set; }

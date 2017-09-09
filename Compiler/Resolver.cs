@@ -11,8 +11,14 @@ namespace Crayon
         private Parser parser;
         private Executable[] currentCode;
 
-        public Resolver(Parser parser, IList<Executable> originalCode)
+        public Resolver(Parser parser, ICollection<CompilationScope> compilationScopes)
         {
+            List<Executable> originalCode = new List<Executable>();
+            foreach (CompilationScope scope in compilationScopes
+                .OrderBy(scope => scope.Library == null ? "" : scope.Library.Metadata.Name))
+            {
+                originalCode.AddRange(scope.GetExecutables_HACK());
+            }
             this.parser = parser;
             this.currentCode = originalCode.ToArray();
         }
@@ -21,7 +27,6 @@ namespace Crayon
         {
             using (new PerformanceSection(""))
             {
-
                 HashSet<string> namespaces = new HashSet<string>();
 
                 Dictionary<string, Executable> lookup = new Dictionary<string, Executable>();

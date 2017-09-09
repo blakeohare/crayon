@@ -7,13 +7,14 @@ namespace Crayon
 {
     internal class Parser
     {
-        private Stack<Library> libraryStack = new Stack<Library>();
-        private Stack<Locale> localeStack = new Stack<Locale>();
+        private Stack<CompilationScope> scopeStack = new Stack<CompilationScope>();
+
+        private Dictionary<string, CompilationScope> compilationScopes = new Dictionary<string, CompilationScope>();
 
         public Parser(BuildContext buildContext)
         {
             this.BuildContext = buildContext;
-            this.PushLibrary(null);
+            this.PushScope(new CompilationScope(buildContext, null));
             this.CurrentClass = null;
             this.LibraryManager = LibraryManager.ForByteCodeCompilation(buildContext);
             this.CurrentNamespace = "";
@@ -24,24 +25,31 @@ namespace Crayon
             this.AnnotationParser = new AnnotationParser(this);
         }
 
+        public void AddCompilationScope(CompilationScope scope)
+        {
+            string scopeKey = scope.Library == null ? "." : scope.Library.Metadata.CanonicalKey;
+            this.compilationScopes.Add(scopeKey, scope);
+        }
+
         public HashSet<string> ReservedKeywords { get; private set; }
 
-        public void PushLibrary(Library library)
+        public void PushScope(CompilationScope scope)
         {
-            this.libraryStack.Push(library);
-            this.localeStack.Push(library == null ? this.BuildContext.CompilerLocale : library.Metadata.InternalLocale);
-            this.CurrentLibrary = library;
-            this.CurrentLocale = localeStack.Peek();
+            this.AddCompilationScope(scope);
+            this.scopeStack.Push(scope);
+            this.CurrentScope = scope;
+            this.CurrentLibrary = scope.Library;
+            this.CurrentLocale = scope.Locale;
             this.Keywords = this.CurrentLocale.Keywords;
             this.ReservedKeywords = new HashSet<string>(this.CurrentLocale.GetKeywordsList());
         }
 
-        public void PopLibrary()
+        public void PopScope()
         {
-            this.libraryStack.Pop();
-            this.localeStack.Pop();
-            this.CurrentLibrary = this.libraryStack.Peek();
-            this.CurrentLocale = localeStack.Peek();
+            this.scopeStack.Pop();
+            this.CurrentScope = this.scopeStack.Peek();
+            this.CurrentLibrary = this.CurrentScope.Library;
+            this.CurrentLocale = this.CurrentScope.Locale;
             this.Keywords = this.CurrentLocale.Keywords;
             this.ReservedKeywords = new HashSet<string>(this.CurrentLocale.GetKeywordsList());
         }
@@ -96,6 +104,8 @@ namespace Crayon
         public Executable CurrentCodeContainer { get; set; }
 
         public Library CurrentLibrary { get; set; }
+
+        public CompilationScope CurrentScope { get; private set; }
 
         public LibraryManager LibraryManager { get; private set; }
 
@@ -267,17 +277,6 @@ namespace Crayon
             return output.ToArray();
         }
 
-        public Executable[] ParseInterpreterCode(string filename, string contents)
-        {
-            TokenStream tokens = new TokenStream(Tokenizer.Tokenize(filename, contents, 0, true), filename);
-            List<Executable> output = new List<Executable>();
-            while (tokens.HasMore)
-            {
-                output.Add(this.ExecutableParser.Parse(tokens, false, true, true, null));
-            }
-            return new Resolver(this, output).ResolveTranslatedCode();
-        }
-
         public Dictionary<string, string> GetCodeFiles()
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
@@ -301,17 +300,15 @@ namespace Crayon
 
         public Executable[] ParseAllTheThings()
         {
-            List<Executable> output = new List<Executable>();
             Dictionary<string, string> files = this.GetCodeFiles();
             // Only iterate through actual user files. Library imports will be inserted into the code when encountered
             // the first time for each library.
             foreach (string fileName in files.Keys)
             {
                 string code = files[fileName];
-                Executable[] fileContent = this.ParseInterpretedCode(fileName, code);
-                output.AddRange(fileContent);
+                this.ParseInterpretedCode(fileName, code);
             }
-            return new Resolver(this, output).ResolveInterpretedCode();
+            return new Resolver(this, this.compilationScopes.Values).ResolveInterpretedCode();
         }
 
         public int GetNextFileId()
@@ -319,14 +316,12 @@ namespace Crayon
             return fileIdCounter++;
         }
 
-        public Executable[] ParseInterpretedCode(string filename, string code)
+        public void ParseInterpretedCode(string filename, string code)
         {
             int fileId = this.GetNextFileId();
             this.RegisterFileUsed(filename, code, fileId);
             Token[] tokenList = Tokenizer.Tokenize(filename, code, fileId, true);
             TokenStream tokens = new TokenStream(tokenList, filename);
-
-            List<Executable> executables = new List<Executable>();
 
             List<string> namespaceImportsBuilder = new List<string>();
 
@@ -334,17 +329,17 @@ namespace Crayon
 
             if (this.CurrentLibrary != null && this.CurrentLibrary.CanonicalKey != "en:Core")
             {
-                Library coreLibrary = this.LibraryManager.GetCoreLibrary(this, executables);
+                Library coreLibrary = this.LibraryManager.GetCoreLibrary(this);
                 this.CurrentLibrary.AddLibraryDependency(coreLibrary);
             }
 
+            List<CompilationScope> scopesAdded = new List<CompilationScope>();
             while (tokens.HasMore && tokens.IsNext(this.Keywords.IMPORT))
             {
                 ImportStatement importStatement = this.ExecutableParser.Parse(tokens, false, true, true, null) as ImportStatement;
                 if (importStatement == null) throw new Exception();
                 namespaceImportsBuilder.Add(importStatement.ImportPath);
-                List<Executable> libraryEmbeddedCode = new List<Executable>();
-                Library library = this.LibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath, libraryEmbeddedCode);
+                Library library = this.LibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
                 if (library == null)
                 {
                     this.unresolvedImports.Add(importStatement);
@@ -355,7 +350,7 @@ namespace Crayon
                     {
                         this.CurrentLibrary.AddLibraryDependency(library);
                     }
-                    executables.AddRange(libraryEmbeddedCode);
+                    scopesAdded.Add(library.Scope);
                 }
             }
 
@@ -372,19 +367,8 @@ namespace Crayon
                         this.CurrentLocale.Strings.Get("ALL_IMPORTS_MUST_OCCUR_AT_BEGINNING_OF_FILE"));
                 }
 
-                executable.NamespacePrefixSearch = namespaceImports;
-
-                if (executable is Namespace)
-                {
-                    ((Namespace)executable).GetFlattenedCode(executables, namespaceImports);
-                }
-                else
-                {
-                    executables.Add(executable);
-                }
+                this.CurrentScope.AddExecutable(executable, namespaceImports);
             }
-
-            return executables.ToArray();
         }
 
         internal static bool IsInteger(string value)

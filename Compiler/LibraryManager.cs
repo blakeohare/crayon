@@ -53,7 +53,7 @@ namespace Crayon
         }
 
         private Library coreLibrary = null;
-        public Library GetCoreLibrary(Parser parser, List<Executable> executablesOut)
+        public Library GetCoreLibrary(Parser parser)
         {
             if (this.coreLibrary == null)
             {
@@ -65,7 +65,7 @@ namespace Crayon
                     TODO.GetCoreNameFromMetadataWithLocale();
                     string coreNameInLocale = coreLibMetadata.Name;
 
-                    this.coreLibrary = this.ImportLibrary(parser, null, coreNameInLocale, executablesOut);
+                    this.coreLibrary = this.ImportLibrary(parser, null, coreNameInLocale);
                 }
             }
             return this.coreLibrary;
@@ -238,7 +238,7 @@ namespace Crayon
         // TODO: libraries will be able to declare their source code locale.
         private static readonly Locale ENGLISH_LOCALE_FOR_LIBRARIES = Locale.Get("en");
 
-        public Library ImportLibrary(Parser parser, Token throwToken, string name, List<Executable> executablesOut)
+        public Library ImportLibrary(Parser parser, Token throwToken, string name)
         {
             name = name.Split('.')[0];
             string key = parser.CurrentLocale.ID + ":" + name;
@@ -272,6 +272,8 @@ namespace Crayon
                 string platformName = parser.BuildContext.Platform;
                 Platform.AbstractPlatform platform = platformName == null || this.PlatformProvider == null ? null : this.PlatformProvider.GetPlatform(platformName);
                 library = new Library(libraryMetadata, platform);
+                CompilationScope scope = new CompilationScope(parser.BuildContext, library);
+                library.Scope = scope;
                 library.AddLocaleAccess(parser.CurrentLocale);
 
                 this.librariesAlreadyImportedIndexByKey[libraryMetadata.CanonicalKey] = this.librariesAlreadyImported.Count;
@@ -280,16 +282,15 @@ namespace Crayon
                 this.importedLibraries[name] = library;
                 this.librariesByKey[name.ToLowerInvariant()] = library;
 
-                parser.PushLibrary(library);
+                parser.PushScope(scope);
                 Dictionary<string, string> embeddedCode = library.GetEmbeddedCode();
                 foreach (string embeddedFile in embeddedCode.Keys)
                 {
                     string fakeName = "[" + embeddedFile + "]";
                     string code = embeddedCode[embeddedFile];
-                    executablesOut.AddRange(parser.ParseInterpretedCode(fakeName, code));
+                    parser.ParseInterpretedCode(fakeName, code);
                 }
-
-                parser.PopLibrary();
+                parser.PopScope();
             }
 
             // Even if already imported, still must check to see if this import is allowed here.
