@@ -60,7 +60,7 @@ namespace Crayon.ParseTree
             this.IterationVariableId = varIds.GetVarId(this.IterationVariable);
         }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             this.IterationExpression = this.IterationExpression.ResolveNames(parser, lookup, imports);
             this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);

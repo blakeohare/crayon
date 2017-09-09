@@ -28,7 +28,7 @@ namespace Crayon.ParseTree
             throw new ParserException(this.FirstToken, "Dangling reference to a namespace.");
         }
 
-        internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+        internal override Expression ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             throw new InvalidOperationException(); // created during the name resolution phase.
         }

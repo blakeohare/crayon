@@ -25,7 +25,7 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+        internal override Expression ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             throw new InvalidOperationException(); // Generated in the resolve name phase.
         }

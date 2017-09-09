@@ -39,7 +39,7 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override Expression ResolveNames(Parser parser, System.Collections.Generic.Dictionary<string, Executable> lookup, string[] imports)
+        internal override Expression ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             this.Condition = this.Condition.ResolveNames(parser, lookup, imports);
             this.TrueValue = this.TrueValue.ResolveNames(parser, lookup, imports);

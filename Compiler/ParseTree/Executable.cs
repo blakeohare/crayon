@@ -9,7 +9,6 @@ namespace Crayon.ParseTree
         public static readonly Executable[] EMPTY_ARRAY = new Executable[0];
 
         public string[] NamespacePrefixSearch { get; set; }
-        public Library Library { get; set; }
 
         private static Dictionary<string, string[]> namespacePartCache = new Dictionary<string, string[]>();
 
@@ -55,16 +54,16 @@ namespace Crayon.ParseTree
         public Executable(Token firstToken, TopLevelConstruct owner)
             : base(firstToken, owner)
         {
-            if (owner != null)
+            if (owner == null)
             {
-                this.Library = owner.Library;
+                throw new Exception(); // This should never happen.
             }
         }
 
         public virtual bool IsTerminator { get { return false; } }
 
         internal abstract IList<Executable> Resolve(Parser parser);
-        internal abstract Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports);
+        internal abstract Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports);
         internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
         internal abstract Executable PastelResolve(Parser parser);
 

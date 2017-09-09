@@ -16,7 +16,7 @@ namespace Crayon.ParseTree
         // other executables or expressions.
         public TopLevelConstruct Owner { get; private set; }
 
-        internal void BatchExecutableNameResolver(Parser parser, Dictionary<string, Executable> lookup, string[] imports, Executable[] executables)
+        internal void BatchExecutableNameResolver(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports, Executable[] executables)
         {
             for (int i = 0; i < executables.Length; ++i)
             {
@@ -24,7 +24,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal void BatchExpressionNameResolver(Parser parser, Dictionary<string, Executable> lookup, string[] imports, Expression[] expressions)
+        internal void BatchExpressionNameResolver(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports, Expression[] expressions)
         {
             for (int i = 0; i < expressions.Length; ++i)
             {
@@ -47,13 +47,13 @@ namespace Crayon.ParseTree
             - Then walk through the local namespace, popping off the last namespace component and using that as a prefix for fully qualified names.
 
          */
-        public static Executable DoNameLookup(
-            Dictionary<string, Executable> lookup,
+        public static TopLevelConstruct DoNameLookup(
+            Dictionary<string, TopLevelConstruct> lookup,
             string[] imports,
             string[] localNamespaces,
             string name)
         {
-            Executable output;
+            TopLevelConstruct output;
 
             // If it exists as a direct fully-qualified name, then stop.
             if (lookup.TryGetValue(name, out output))
@@ -95,14 +95,14 @@ namespace Crayon.ParseTree
             return null;
         }
 
-        internal static ClassDefinition DoClassLookup(Token nameToken, Dictionary<string, Executable> lookup, string[] imports, string[] localNamespace, string name)
+        internal static ClassDefinition DoClassLookup(Token nameToken, Dictionary<string, TopLevelConstruct> lookup, string[] imports, string[] localNamespace, string name)
         {
             return DoClassLookup(nameToken, lookup, imports, localNamespace, name, false);
         }
 
-        internal static ClassDefinition DoClassLookup(Token nameToken, Dictionary<string, Executable> lookup, string[] imports, string[] localNamespace, string name, bool failSilently)
+        internal static ClassDefinition DoClassLookup(Token nameToken, Dictionary<string, TopLevelConstruct> lookup, string[] imports, string[] localNamespace, string name, bool failSilently)
         {
-            Executable ex = DoNameLookup(lookup, imports, localNamespace, name);
+            TopLevelConstruct ex = DoNameLookup(lookup, imports, localNamespace, name);
             if (ex == null)
             {
                 if (failSilently)

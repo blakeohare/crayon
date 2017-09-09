@@ -120,7 +120,7 @@ namespace Crayon.ParseTree
 
         internal override Expression ResolveNames(
             Parser parser,
-            Dictionary<string, Executable> lookup,
+            Dictionary<string, TopLevelConstruct> lookup,
             string[] imports)
         {
             FunctionDefinition funcDef; // used in multiple places.

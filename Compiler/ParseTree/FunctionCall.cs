@@ -121,7 +121,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+        internal override Expression ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             if (this.Root is Variable && ((Variable)this.Root).Name.Contains("$$$"))
             {

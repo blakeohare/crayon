@@ -232,7 +232,7 @@ namespace Crayon.ParseTree
             return Listify(this);
         }
 
-        public void ResolveBaseClasses(Dictionary<string, Executable> lookup, string[] localNamespace, string[] imports)
+        public void ResolveBaseClasses(Dictionary<string, TopLevelConstruct> lookup, string[] localNamespace, string[] imports)
         {
             List<ClassDefinition> baseClasses = new List<ClassDefinition>();
             List<Token> baseClassesTokens = new List<Token>();
@@ -280,7 +280,7 @@ namespace Crayon.ParseTree
             return newImports.ToArray();
         }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             imports = this.ExpandImportsToIncludeThis(imports);
 

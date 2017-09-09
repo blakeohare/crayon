@@ -6,6 +6,8 @@ namespace Crayon.ParseTree
 {
     public class TopLevelConstruct : Executable
     {
+        public Library Library { get; set; }
+
         public TopLevelConstruct(Token firstToken, TopLevelConstruct owner) : base(firstToken, owner)
         {
 
@@ -36,7 +38,7 @@ namespace Crayon.ParseTree
             throw new NotImplementedException();
         }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             throw new NotImplementedException();
         }

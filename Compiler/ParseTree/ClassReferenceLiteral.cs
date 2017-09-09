@@ -26,7 +26,7 @@ namespace Crayon.ParseTree
 
         internal override Expression Resolve(Parser parser) { return this; }
 
-        internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+        internal override Expression ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             // ClassReferenceLiteral is created in the Resolve pass, so this is never called.
             throw new InvalidOperationException();

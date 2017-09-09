@@ -98,7 +98,7 @@ namespace Crayon.ParseTree
             return Executable.EMPTY_ARRAY;
         }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
+        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             this.BatchExpressionNameResolver(parser, lookup, imports, this.Values);
             return this;

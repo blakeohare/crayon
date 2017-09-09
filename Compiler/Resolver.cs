@@ -153,11 +153,11 @@ namespace Crayon
             Library[] librariesInDependencyOrder = LibraryDependencyResolver.GetLibraryResolutionOrder(this.parser);
 
             // Populate lookups of executables based on library.
-            Dictionary<Library, Dictionary<string, Executable>> definitionsByLibrary = new Dictionary<Library, Dictionary<string, Executable>>();
-            Dictionary<string, Executable> nonLibraryCode = new Dictionary<string, Executable>();
+            Dictionary<Library, Dictionary<string, TopLevelConstruct>> definitionsByLibrary = new Dictionary<Library, Dictionary<string, TopLevelConstruct>>();
+            Dictionary<string, TopLevelConstruct> nonLibraryCode = new Dictionary<string, TopLevelConstruct>();
             foreach (string exKey in definitionsByFullyQualifiedNames.Keys)
             {
-                Executable ex = definitionsByFullyQualifiedNames[exKey];
+                TopLevelConstruct ex = definitionsByFullyQualifiedNames[exKey];
                 if (ex.Library == null)
                 {
                     nonLibraryCode[exKey] = ex;
@@ -165,10 +165,10 @@ namespace Crayon
                 else
                 {
                     Library library = ex.Library;
-                    Dictionary<string, Executable> lookup;
+                    Dictionary<string, TopLevelConstruct> lookup;
                     if (!definitionsByLibrary.TryGetValue(library, out lookup))
                     {
-                        lookup = new Dictionary<string, Executable>();
+                        lookup = new Dictionary<string, TopLevelConstruct>();
                         definitionsByLibrary[library] = lookup;
                     }
                     lookup[exKey] = ex;
@@ -177,18 +177,18 @@ namespace Crayon
 
             using (new PerformanceSection("ResolveNames for compilation segments"))
             {
-                Dictionary<string, Executable> alreadyResolvedDependencies;
+                Dictionary<string, TopLevelConstruct> alreadyResolvedDependencies;
                 // Resolve raw names into the actual things they refer to based on namespaces and imports.
                 foreach (Library library in librariesInDependencyOrder)
                 {
                     // First create a lookup of JUST the libraries that are available to this library.
-                    alreadyResolvedDependencies = Common.Util.MergeDictionaries<string, Executable>(
+                    alreadyResolvedDependencies = Util.MergeDictionaries(
                         library.LibraryDependencies.Select(lib => definitionsByLibrary[lib]).ToArray());
 
                     // Resolve definitions based on what's available.
                     this.ResolveNames(library, alreadyResolvedDependencies, definitionsByLibrary[library]);
                 }
-                alreadyResolvedDependencies = Common.Util.MergeDictionaries<string, Executable>(
+                alreadyResolvedDependencies = Util.MergeDictionaries<string, TopLevelConstruct>(
                     this.parser.LibraryManager.LibrariesUsed.Select(lib => definitionsByLibrary[lib]).ToArray());
                 nonLibraryCode.Remove("~");
                 this.ResolveNames(null, alreadyResolvedDependencies, nonLibraryCode);
@@ -260,15 +260,15 @@ namespace Crayon
 
         private void ResolveNames(
             Library nullableLibrary,
-            Dictionary<string, Executable> alreadyResolved,
-            Dictionary<string, Executable> currentLibraryDefinitions)
+            Dictionary<string, TopLevelConstruct> alreadyResolved,
+            Dictionary<string, TopLevelConstruct> currentLibraryDefinitions)
         {
             using (new PerformanceSection("ResolveNames"))
             {
                 List<ClassDefinition> classes = new List<ClassDefinition>();
 
                 // Concatenate compilation items on top of everything that's already been resolved to create a lookup of everything that is available for this library.
-                Dictionary<string, Executable> allKnownDefinitions = new Dictionary<string, Executable>(alreadyResolved);
+                Dictionary<string, TopLevelConstruct> allKnownDefinitions = new Dictionary<string, TopLevelConstruct>(alreadyResolved);
                 foreach (string executableKey in currentLibraryDefinitions.Keys)
                 {
                     if (allKnownDefinitions.ContainsKey(executableKey))
@@ -277,7 +277,7 @@ namespace Crayon
                             currentLibraryDefinitions[executableKey].FirstToken,
                             "Two conflicting definitions of '" + executableKey + "'");
                     }
-                    Executable ex = currentLibraryDefinitions[executableKey];
+                    TopLevelConstruct ex = currentLibraryDefinitions[executableKey];
                     if (ex is ClassDefinition)
                     {
                         classes.Add((ClassDefinition)ex);
