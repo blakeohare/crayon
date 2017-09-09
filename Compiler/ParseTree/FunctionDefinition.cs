@@ -60,7 +60,7 @@ namespace Crayon.ParseTree
             return null;
         }
 
-        internal override IList<Executable> Resolve(Parser parser)
+        internal override void Resolve(Parser parser)
         {
             parser.ValueStackDepth = 0;
 
@@ -82,16 +82,14 @@ namespace Crayon.ParseTree
                 }
             }
 
-            this.Code = Resolve(parser, this.Code).ToArray();
+            this.Code = Executable.Resolve(parser, this.Code).ToArray();
 
             if (this.Code.Length == 0 || !(this.Code[this.Code.Length - 1] is ReturnStatement))
             {
                 List<Executable> newCode = new List<Executable>(this.Code);
-                newCode.Add(new ReturnStatement(this.FirstToken, null, this.Owner));
+                newCode.Add(new ReturnStatement(this.FirstToken, null, this));
                 this.Code = newCode.ToArray();
             }
-
-            return Listify(this);
         }
 
         internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
@@ -123,14 +121,12 @@ namespace Crayon.ParseTree
             return variableNamesDict.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
         }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             parser.CurrentCodeContainer = this;
             this.BatchExpressionNameResolver(parser, lookup, imports, this.DefaultValues);
             this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);
             parser.CurrentCodeContainer = null;
-
-            return this;
         }
 
         internal void AllocateLocalScopeIds(Parser parser)
@@ -157,12 +153,6 @@ namespace Crayon.ParseTree
             // Currently only used to get the variables declared in a function in translation mode. This shouldn't
             // be called directly.
             throw new NotImplementedException();
-        }
-
-        internal override Executable PastelResolve(Parser parser)
-        {
-            this.Code = Executable.PastelResolveExecutables(parser, this.Code);
-            return this;
         }
     }
 }

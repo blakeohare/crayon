@@ -8,7 +8,7 @@ namespace Crayon
 {
     internal class ByteCodeCompiler
     {
-        public ByteBuffer GenerateByteCode(Parser parser, IList<Executable> lines)
+        public ByteBuffer GenerateByteCode(Parser parser, IList<TopLevelConstruct> lines)
         {
             FunctionDefinition mainFunction = lines
                 .OfType<FunctionDefinition>()
@@ -27,7 +27,7 @@ namespace Crayon
 
             ByteBuffer userCode = new ByteBuffer();
 
-            this.Compile(parser, userCode, lines);
+            this.CompileTopLevelEntities(parser, userCode, lines);
 
             userCode.OptimizeJumps();
 
@@ -173,18 +173,32 @@ namespace Crayon
             return output;
         }
 
-        public void Compile(Parser parser, ByteBuffer buffer, IList<Executable> lines)
+        public void CompileTopLevelEntities(Parser parser, ByteBuffer buffer, IList<TopLevelConstruct> entities)
         {
-            foreach (Executable line in lines)
+            foreach (TopLevelConstruct entity in entities)
             {
-                this.Compile(parser, buffer, line);
+                this.CompileTopLevelEntity(parser, buffer, entity);
+            }
+        }
+
+        public void CompileTopLevelEntity(Parser parser, ByteBuffer buffer, TopLevelConstruct entity)
+        {
+            if (entity is FunctionDefinition) this.CompileFunctionDefinition(parser, buffer, (FunctionDefinition)entity, false);
+            else if (entity is ClassDefinition) this.CompileClass(parser, buffer, (ClassDefinition)entity);
+            else throw new NotImplementedException("Invalid target for byte code compilation");
+        }
+
+        public void Compile(Parser parser, ByteBuffer buffer, IList<Executable> executables)
+        {
+            foreach (Executable ex in executables)
+            {
+                this.Compile(parser, buffer, ex);
             }
         }
 
         public void Compile(Parser parser, ByteBuffer buffer, Executable line)
         {
             if (line is ExpressionAsExecutable) this.CompileExpressionAsExecutable(parser, buffer, (ExpressionAsExecutable)line);
-            else if (line is FunctionDefinition) this.CompileFunctionDefinition(parser, buffer, (FunctionDefinition)line, false);
             else if (line is Assignment) this.CompileAssignment(parser, buffer, (Assignment)line);
             else if (line is WhileLoop) this.CompileWhileLoop(parser, buffer, (WhileLoop)line);
             else if (line is BreakStatement) this.CompileBreakStatement(parser, buffer, (BreakStatement)line);
@@ -192,7 +206,6 @@ namespace Crayon
             else if (line is ForLoop) this.CompileForLoop(parser, buffer, (ForLoop)line);
             else if (line is IfStatement) this.CompileIfStatement(parser, buffer, (IfStatement)line);
             else if (line is ReturnStatement) this.CompileReturnStatement(parser, buffer, (ReturnStatement)line);
-            else if (line is ClassDefinition) this.CompileClass(parser, buffer, (ClassDefinition)line);
             else if (line is SwitchStatement) this.CompileSwitchStatement(parser, buffer, (SwitchStatement)line);
             else if (line is ForEachLoop) this.CompileForEachLoop(parser, buffer, (ForEachLoop)line);
             else if (line is DoWhileLoop) this.CompileDoWhileLoop(parser, buffer, (DoWhileLoop)line);

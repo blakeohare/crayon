@@ -23,7 +23,7 @@ namespace Crayon
             this.currentCode = originalCode.ToArray();
         }
 
-        private Dictionary<string, TopLevelConstruct> CreateFullyQualifiedLookup(IList<Executable> code)
+        private Dictionary<string, TopLevelConstruct> CreateFullyQualifiedLookup(IList<TopLevelConstruct> code)
         {
             using (new PerformanceSection(""))
             {
@@ -312,7 +312,7 @@ namespace Crayon
                     cd.ResolveMemberIds();
                 }
 
-                foreach (Executable ex in currentLibraryDefinitions.Values.Where(ex => ex is ConstStatement || ex is EnumDefinition))
+                foreach (TopLevelConstruct ex in currentLibraryDefinitions.Values.Where(ex => ex is ConstStatement || ex is EnumDefinition))
                 {
                     parser.ConstantAndEnumResolutionState[ex] = ConstantResolutionState.NOT_RESOLVED;
                 }
@@ -374,9 +374,9 @@ namespace Crayon
         {
             using (new PerformanceSection("SimpleFirstPassResolution"))
             {
-                List<Executable> enumsAndConstants = new List<Executable>();
-                List<Executable> everythingElse = new List<Executable>();
-                foreach (Executable ex in this.currentCode)
+                List<TopLevelConstruct> enumsAndConstants = new List<TopLevelConstruct>();
+                List<TopLevelConstruct> everythingElse = new List<TopLevelConstruct>();
+                foreach (TopLevelConstruct ex in this.currentCode)
                 {
                     if (ex is EnumDefinition || ex is ConstStatement)
                     {
@@ -390,10 +390,10 @@ namespace Crayon
                 List<TopLevelConstruct> output = new List<TopLevelConstruct>();
                 foreach (TopLevelConstruct ex in enumsAndConstants.Concat(everythingElse))
                 {
-                    output.AddRange(ex.ResolveTopLevel(this.parser));
+                    ex.Resolve(this.parser);
                 }
 
-                this.currentCode = output.ToArray();
+                this.currentCode = everythingElse.ToArray();
             }
         }
 
@@ -401,7 +401,7 @@ namespace Crayon
         {
             using (new PerformanceSection("AllocateLocalScopeIds"))
             {
-                foreach (Executable item in this.currentCode)
+                foreach (TopLevelConstruct item in this.currentCode)
                 {
                     if (item is FunctionDefinition)
                     {
@@ -421,13 +421,13 @@ namespace Crayon
 
         // Convert anything that looks like a function call into a verified pointer to the function if possible using the
         // available namespaces.
-        public static List<Executable> CreateVerifiedFunctionCalls(Parser parser, IList<Executable> original)
+        public static List<Executable> CreateVerifiedFunctionCalls(Parser parser, IList<TopLevelConstruct> original)
         {
             using (new PerformanceSection("CreateVerifiedFunctionCalls"))
             {
                 // First create a fully-qualified lookup of all functions and classes.
-                Dictionary<string, Executable> functionsAndClasses = new Dictionary<string, Executable>();
-                foreach (Executable exec in original)
+                Dictionary<string, TopLevelConstruct> functionsAndClasses = new Dictionary<string, TopLevelConstruct>();
+                foreach (TopLevelConstruct exec in original)
                 {
                     if (exec is FunctionDefinition)
                     {
@@ -451,7 +451,7 @@ namespace Crayon
 
         // Generally this is used with the name resolver. So for example, you have a refernce to a ClassDefinition
         // instance from the resolver, but you want to turn it into a ClassReference instance.
-        public static Expression ConvertStaticReferenceToExpression(Executable item, Token primaryToken, TopLevelConstruct owner)
+        public static Expression ConvertStaticReferenceToExpression(TopLevelConstruct item, Token primaryToken, TopLevelConstruct owner)
         {
             if (item is Namespace) return new PartialNamespaceReference(primaryToken, ((Namespace)item).Name, owner);
             if (item is ClassDefinition) return new ClassReference(primaryToken, (ClassDefinition)item, owner);

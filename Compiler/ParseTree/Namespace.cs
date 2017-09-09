@@ -39,12 +39,12 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override IList<Executable> Resolve(Parser parser)
+        internal override void Resolve(Parser parser)
         {
             throw new ParserException(this.FirstToken, "Namespace declaration not allowed here. Namespaces may only exist in the root of a file or nested within other namespaces.");
         }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             throw new InvalidOperationException();
         }
@@ -59,11 +59,6 @@ namespace Crayon.ParseTree
         {
             // Not called in this way.
             throw new NotImplementedException();
-        }
-
-        internal override Executable PastelResolve(Parser parser)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

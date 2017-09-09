@@ -33,10 +33,10 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override IList<Executable> Resolve(Parser parser)
+        internal override void Resolve(Parser parser)
         {
             ConstantResolutionState resolutionState = parser.ConstantAndEnumResolutionState[this];
-            if (resolutionState == ConstantResolutionState.RESOLVED) return new Executable[0];
+            if (resolutionState == ConstantResolutionState.RESOLVED) return;
             if (resolutionState == ConstantResolutionState.RESOLVING)
             {
                 throw new ParserException(this.FirstToken, "The resolution of this enum creates a cycle.");
@@ -94,14 +94,11 @@ namespace Crayon.ParseTree
                     consumed.Add(next);
                 }
             }
-
-            return Executable.EMPTY_ARRAY;
         }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             this.BatchExpressionNameResolver(parser, lookup, imports, this.Values);
-            return this;
         }
 
         internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
@@ -111,14 +108,5 @@ namespace Crayon.ParseTree
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
-
-        internal override Executable PastelResolve(Parser parser)
-        {
-            for (int i = 0; i < this.Values.Length; ++i)
-            {
-                this.Values[i] = this.Values[i] == null ? null : this.Values[i].PastelResolve(parser);
-            }
-            return this;
-        }
     }
 }

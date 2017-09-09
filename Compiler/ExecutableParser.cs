@@ -24,10 +24,22 @@ namespace Crayon
             TopLevelConstruct owner)
         {
             // TODO: split the things out from the implementation of Parse.
-            return (TopLevelConstruct)this.Parse(tokens, simpleOnly, semicolonPresent, isRoot, owner);
+            return (TopLevelConstruct)this.ParseInternal(tokens, simpleOnly, semicolonPresent, isRoot, owner);
         }
 
+
         public Executable Parse(
+            TokenStream tokens,
+            bool simpleOnly,
+            bool semicolonPresent,
+            bool isRoot,
+            TopLevelConstruct owner)
+        {
+            return (Executable)this.ParseInternal(tokens, simpleOnly, semicolonPresent, isRoot, owner);
+        }
+
+        // TODO: split this up now that TopLevelConstruct and Executable are now different.
+        public object ParseInternal(
             TokenStream tokens,
             bool simpleOnly,
             bool semicolonPresent,
@@ -172,7 +184,7 @@ namespace Crayon
             return new ThrowStatement(throwToken, throwExpression, owner);
         }
 
-        private Executable ParseConstructor(TokenStream tokens, TopLevelConstruct owner)
+        private ConstructorDefinition ParseConstructor(TokenStream tokens, TopLevelConstruct owner)
         {
             Token constructorToken = tokens.PopExpected(this.parser.Keywords.CONSTRUCTOR);
             tokens.PopExpected("(");
@@ -225,7 +237,7 @@ namespace Crayon
             return new ConstructorDefinition(constructorToken, argNames, argValues, baseArgs, code, baseToken, owner);
         }
 
-        private Executable ParseConst(TokenStream tokens, TopLevelConstruct owner)
+        private ConstStatement ParseConst(TokenStream tokens, TopLevelConstruct owner)
         {
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             Token nameToken = tokens.Pop();
@@ -238,7 +250,7 @@ namespace Crayon
             return constStatement;
         }
 
-        private Executable ParseEnumDefinition(TokenStream tokens, TopLevelConstruct owner)
+        private EnumDefinition ParseEnumDefinition(TokenStream tokens, TopLevelConstruct owner)
         {
             Token enumToken = tokens.PopExpected(this.parser.Keywords.ENUM);
             Token nameToken = tokens.Pop();
@@ -272,7 +284,7 @@ namespace Crayon
             return ed;
         }
 
-        private Executable ParseClassDefinition(TokenStream tokens, TopLevelConstruct owner, Token staticToken, Token finalToken)
+        private ClassDefinition ParseClassDefinition(TokenStream tokens, TopLevelConstruct owner, Token staticToken, Token finalToken)
         {
             Token classToken = tokens.PopExpected(this.parser.Keywords.CLASS);
             Token classNameToken = tokens.Pop();
@@ -409,7 +421,7 @@ namespace Crayon
             return fd;
         }
 
-        private Executable ParseNamespace(TokenStream tokens, TopLevelConstruct owner)
+        private Namespace ParseNamespace(TokenStream tokens, TopLevelConstruct owner)
         {
             Token namespaceToken = tokens.PopExpected(this.parser.Keywords.NAMESPACE);
             Token first = tokens.Pop();
@@ -457,7 +469,7 @@ namespace Crayon
             return namespaceInstance;
         }
 
-        private Executable ParseFunction(TokenStream tokens, TopLevelConstruct nullableOwner)
+        private FunctionDefinition ParseFunction(TokenStream tokens, TopLevelConstruct nullableOwner)
         {
             bool isStatic =
                 nullableOwner != null &&

@@ -64,7 +64,7 @@ namespace Crayon.ParseTree
 
             if (this.Name == "this" || this.Name == "base")
             {
-                Executable container = parser.CurrentCodeContainer;
+                TopLevelConstruct container = parser.CurrentCodeContainer;
 
                 if (container is FunctionDefinition)
                 {
@@ -104,7 +104,7 @@ namespace Crayon.ParseTree
                 return new BaseKeyword(this.FirstToken, this.Owner);
             }
 
-            Executable exec = DoNameLookup(lookup, imports, this.Owner.LocalNamespace, this.Name);
+            TopLevelConstruct exec = DoNameLookup(lookup, imports, this.Owner.LocalNamespace, this.Name);
 
             if (exec != null)
             {
@@ -135,7 +135,7 @@ namespace Crayon.ParseTree
                         throw new ParserException(this.FirstToken, "'" + name + "' is referenced but not imported in this file.");
                     }
 
-                    Executable owner = this.Owner;
+                    TopLevelConstruct owner = this.Owner;
                     while (owner != null && !(owner is ClassDefinition))
                     {
                         owner = owner.Owner;

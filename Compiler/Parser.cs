@@ -19,7 +19,7 @@ namespace Crayon
             this.LibraryManager = LibraryManager.ForByteCodeCompilation(buildContext);
             this.CurrentNamespace = "";
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
-            this.ConstantAndEnumResolutionState = new Dictionary<Executable, ConstantResolutionState>();
+            this.ConstantAndEnumResolutionState = new Dictionary<TopLevelConstruct, ConstantResolutionState>();
             this.ExpressionParser = new ExpressionParser(this);
             this.ExecutableParser = new ExecutableParser(this);
             this.AnnotationParser = new AnnotationParser(this);
@@ -66,7 +66,7 @@ namespace Crayon
         public Locale CurrentLocale { get; private set; }
         public Locale.KeywordsLookup Keywords { get; private set; }
 
-        public Dictionary<Executable, ConstantResolutionState> ConstantAndEnumResolutionState { get; private set; }
+        public Dictionary<TopLevelConstruct, ConstantResolutionState> ConstantAndEnumResolutionState { get; private set; }
 
         private int functionIdCounter = 0;
         private int fileIdCounter = 0;
@@ -101,7 +101,7 @@ namespace Crayon
 
         private Dictionary<ClassDefinition, int> classIdsByInstance = new Dictionary<ClassDefinition, int>();
 
-        public Executable CurrentCodeContainer { get; set; }
+        public TopLevelConstruct CurrentCodeContainer { get; set; }
 
         public Library CurrentLibrary { get; set; }
 
@@ -336,7 +336,7 @@ namespace Crayon
             List<CompilationScope> scopesAdded = new List<CompilationScope>();
             while (tokens.HasMore && tokens.IsNext(this.Keywords.IMPORT))
             {
-                ImportStatement importStatement = this.ExecutableParser.Parse(tokens, false, true, true, null) as ImportStatement;
+                ImportStatement importStatement = this.ExecutableParser.ParseTopLevel(tokens, false, true, true, null) as ImportStatement;
                 if (importStatement == null) throw new Exception();
                 namespaceImportsBuilder.Add(importStatement.ImportPath);
                 Library library = this.LibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);

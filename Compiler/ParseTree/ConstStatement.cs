@@ -4,12 +4,6 @@ namespace Crayon.ParseTree
 {
     internal class ConstStatement : TopLevelConstruct
     {
-        internal override Executable PastelResolve(Parser parser)
-        {
-            this.Expression = this.Expression.PastelResolve(parser);
-            return this;
-        }
-
         public Expression Expression { get; set; }
         public Token NameToken { get; private set; }
         public string Name { get; private set; }
@@ -23,10 +17,10 @@ namespace Crayon.ParseTree
             this.Namespace = ns;
         }
 
-        internal override IList<Executable> Resolve(Parser parser)
+        internal override void Resolve(Parser parser)
         {
             ConstantResolutionState resolutionState = parser.ConstantAndEnumResolutionState[this];
-            if (resolutionState == ConstantResolutionState.RESOLVED) return new Executable[0];
+            if (resolutionState == ConstantResolutionState.RESOLVED) return;
             if (resolutionState == ConstantResolutionState.RESOLVING)
             {
                 throw new ParserException(this.FirstToken, "The resolution of this enum creates a cycle.");
@@ -48,14 +42,11 @@ namespace Crayon.ParseTree
             }
 
             parser.ConstantAndEnumResolutionState[this] = ConstantResolutionState.RESOLVED;
-
-            return new Executable[0];
         }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             this.Expression = this.Expression.ResolveNames(parser, lookup, imports);
-            return this;
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }

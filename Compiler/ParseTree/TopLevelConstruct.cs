@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Crayon.ParseTree
 {
-    public class TopLevelConstruct : Executable
+    public abstract class TopLevelConstruct : Node
     {
         public Library Library { get; set; }
         public string[] NamespacePrefixSearch { get; set; }
@@ -55,32 +55,15 @@ namespace Crayon.ParseTree
         }
         public string Namespace { get; set; }
 
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
+        internal abstract void Resolve(Parser parser);
+        internal abstract void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports);
+        internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
+        internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
         {
-            throw new NotImplementedException();
-        }
-
-        internal override Executable PastelResolve(Parser parser)
-        {
-            throw new NotImplementedException();
+            throw new Exception(); // Not used
         }
 
         internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal IList<TopLevelConstruct> ResolveTopLevel(Parser parser)
-        {
-            return new List<TopLevelConstruct>(this.Resolve(parser).Cast<TopLevelConstruct>());
-        }
-
-        internal override IList<Executable> Resolve(Parser parser)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             throw new NotImplementedException();
         }

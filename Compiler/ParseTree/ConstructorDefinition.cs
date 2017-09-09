@@ -66,7 +66,7 @@ namespace Crayon.ParseTree
             this.MinArgCount = minArgCount;
         }
 
-        internal override IList<Executable> Resolve(Parser parser)
+        internal override void Resolve(Parser parser)
         {
             parser.ValueStackDepth = 0;
 
@@ -91,8 +91,6 @@ namespace Crayon.ParseTree
                 code.AddRange(line.Resolve(parser));
             }
             this.Code = code.ToArray();
-
-            return Listify(this);
         }
 
         internal void AllocateLocalScopeIds(Parser parser)
@@ -121,7 +119,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             parser.CurrentCodeContainer = this;
             if (this.DefaultValues.Length > 0)
@@ -135,15 +133,8 @@ namespace Crayon.ParseTree
             }
             this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);
             parser.CurrentCodeContainer = null;
-
-            return this;
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
-
-        internal override Executable PastelResolve(Parser parser)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

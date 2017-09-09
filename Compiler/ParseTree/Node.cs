@@ -16,6 +16,14 @@ namespace Crayon.ParseTree
         // other executables or expressions.
         public TopLevelConstruct Owner { get; private set; }
 
+        internal void BatchTopLevelConstructNameResolver(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports, ICollection<TopLevelConstruct> constructs)
+        {
+            foreach (TopLevelConstruct tlc in constructs)
+            {
+                tlc.ResolveNames(parser, lookup, imports);
+            }
+        }
+
         internal void BatchExecutableNameResolver(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports, Executable[] executables)
         {
             for (int i = 0; i < executables.Length; ++i)

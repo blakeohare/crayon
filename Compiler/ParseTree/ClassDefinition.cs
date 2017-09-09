@@ -134,7 +134,7 @@ namespace Crayon.ParseTree
             return null;
         }
 
-        internal override IList<Executable> Resolve(Parser parser)
+        internal override void Resolve(Parser parser)
         {
             if (parser.IsInClass)
             {
@@ -150,7 +150,9 @@ namespace Crayon.ParseTree
 
             for (int i = 0; i < this.Fields.Length; ++i)
             {
-                FieldDeclaration field = (FieldDeclaration)this.Fields[i].Resolve(parser)[0];
+
+                FieldDeclaration field = this.Fields[i];
+                field.Resolve(parser);
                 this.Fields[i] = field;
                 if (this.StaticToken != null && !field.IsStaticField)
                 {
@@ -160,7 +162,8 @@ namespace Crayon.ParseTree
 
             for (int i = 0; i < this.Methods.Length; ++i)
             {
-                FunctionDefinition funcDef = (FunctionDefinition)this.Methods[i].Resolve(parser)[0];
+                FunctionDefinition funcDef = this.Methods[i];
+                funcDef.Resolve(parser);
                 this.Methods[i] = funcDef;
                 if (this.StaticToken != null && !funcDef.IsStaticMethod)
                 {
@@ -228,8 +231,6 @@ namespace Crayon.ParseTree
             {
                 // yeah, that's fine.
             }
-
-            return Listify(this);
         }
 
         public void ResolveBaseClasses(Dictionary<string, TopLevelConstruct> lookup, string[] localNamespace, string[] imports)
@@ -240,7 +241,7 @@ namespace Crayon.ParseTree
             {
                 string value = this.BaseClassDeclarations[i];
                 Token token = this.BaseClassTokens[i];
-                Executable baseClassInstance = Executable.DoNameLookup(lookup, imports, localNamespace, value);
+                TopLevelConstruct baseClassInstance = Executable.DoNameLookup(lookup, imports, localNamespace, value);
                 if (baseClassInstance == null)
                 {
                     throw new ParserException(token, "No class named '" + token.Value + "' was found.");
@@ -280,7 +281,7 @@ namespace Crayon.ParseTree
             return newImports.ToArray();
         }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             imports = this.ExpandImportsToIncludeThis(imports);
 
@@ -301,9 +302,7 @@ namespace Crayon.ParseTree
             }
 
             this.Constructor.ResolveNames(parser, lookup, imports);
-            this.BatchExecutableNameResolver(parser, lookup, imports, this.Methods);
-
-            return this;
+            this.BatchTopLevelConstructNameResolver(parser, lookup, imports, this.Methods);
         }
 
         public void VerifyNoBaseClassLoops()
@@ -323,7 +322,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        private Dictionary<string, Executable> flattenedFieldAndMethodDeclarationsByName = new Dictionary<string, Executable>();
+        private Dictionary<string, TopLevelConstruct> flattenedFieldAndMethodDeclarationsByName = new Dictionary<string, TopLevelConstruct>();
 
         public void ResolveMemberIds()
         {
@@ -332,7 +331,7 @@ namespace Crayon.ParseTree
             if (this.BaseClass != null)
             {
                 this.BaseClass.ResolveMemberIds();
-                Dictionary<string, Executable> parentDefinitions = this.BaseClass.flattenedFieldAndMethodDeclarationsByName;
+                Dictionary<string, TopLevelConstruct> parentDefinitions = this.BaseClass.flattenedFieldAndMethodDeclarationsByName;
                 foreach (string key in parentDefinitions.Keys)
                 {
                     this.flattenedFieldAndMethodDeclarationsByName[key] = parentDefinitions[key];
@@ -341,7 +340,7 @@ namespace Crayon.ParseTree
 
             foreach (FieldDeclaration fd in this.Fields)
             {
-                Executable existingItem;
+                TopLevelConstruct existingItem;
                 if (this.flattenedFieldAndMethodDeclarationsByName.TryGetValue(fd.NameToken.Value, out existingItem))
                 {
                     // TODO: definition of a field or a method? from this class or a parent?
@@ -357,7 +356,7 @@ namespace Crayon.ParseTree
             {
                 if (!fd.IsStaticMethod)
                 {
-                    Executable existingItem;
+                    TopLevelConstruct existingItem;
                     if (this.flattenedFieldAndMethodDeclarationsByName.TryGetValue(fd.NameToken.Value, out existingItem))
                     {
                         if (existingItem is FieldDeclaration)
@@ -397,11 +396,6 @@ namespace Crayon.ParseTree
                 walker = walker.BaseClass;
             }
             return false;
-        }
-
-        internal override Executable PastelResolve(Parser parser)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

@@ -20,19 +20,16 @@ namespace Crayon.ParseTree
             this.MemberID = -1;
         }
 
-        internal override IList<Executable> Resolve(Parser parser)
+        internal override void Resolve(Parser parser)
         {
             this.DefaultValue = this.DefaultValue.Resolve(parser);
-            return Listify(this);
         }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
         {
             parser.CurrentCodeContainer = this;
             this.DefaultValue = this.DefaultValue.ResolveNames(parser, lookup, imports);
             parser.CurrentCodeContainer = null;
-
-            return this;
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
@@ -41,11 +38,6 @@ namespace Crayon.ParseTree
         {
             // Throws if it finds any variable.
             this.DefaultValue.PerformLocalIdAllocation(parser, varIds, phase);
-        }
-
-        internal override Executable PastelResolve(Parser parser)
-        {
-            throw new NotImplementedException();
         }
     }
 }
