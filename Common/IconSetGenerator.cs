@@ -13,6 +13,9 @@ namespace Common
         private List<SystemBitmap> bitmaps = new List<SystemBitmap>();
         private List<int> bitmapMaxDimenion = new List<int>();
 
+        // Temporary images whose lifetimes are owned by the icon generator.
+        private HashSet<SystemBitmap> ownedBitmapReferences = new HashSet<SystemBitmap>();
+
         public IconSetGenerator() { }
 
         public IconSetGenerator AddOutputSize(int size)
@@ -27,6 +30,7 @@ namespace Common
             {
                 int size = Math.Max(bmp.Width, bmp.Height);
                 SystemBitmap newBmp = new SystemBitmap(size, size);
+                this.ownedBitmapReferences.Add(newBmp);
                 SystemBitmap.Graphics g = newBmp.MakeGraphics();
                 int x = (size - bmp.Width) / 2;
                 int y = (size - bmp.Height) / 2;
@@ -44,8 +48,10 @@ namespace Common
             if (this.bitmaps.Count == 0)
             {
                 SystemBitmap defaultIcon = new SystemBitmap(typeof(Util).Assembly, "icons/crayon_logo.png");
+                this.ownedBitmapReferences.Add(defaultIcon);
                 this.AddInputImage(defaultIcon);
             }
+
             return Generate();
         }
 
@@ -65,7 +71,17 @@ namespace Common
                 lookup.Add(desiredSize, bmp);
             }
 
+            this.Cleanup();
+
             return lookup;
+        }
+
+        private void Cleanup()
+        {
+            foreach (SystemBitmap bmp in this.ownedBitmapReferences)
+            {
+                bmp.CheesyCleanup();
+            }
         }
 
         private SystemBitmap FindBestMatch(SystemBitmap[] imagesFromLargestToSmallest, int desiredSize)
