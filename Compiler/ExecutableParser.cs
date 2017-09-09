@@ -21,7 +21,7 @@ namespace Crayon
             bool simpleOnly,
             bool semicolonPresent,
             bool isRoot,
-            Executable owner)
+            TopLevelConstruct owner)
         {
             // TODO: split the things out from the implementation of Parse.
             return (TopLevelConstruct)this.Parse(tokens, simpleOnly, semicolonPresent, isRoot, owner);
@@ -32,7 +32,7 @@ namespace Crayon
             bool simpleOnly,
             bool semicolonPresent,
             bool isRoot,
-            Executable owner)
+            TopLevelConstruct owner)
         {
             string value = tokens.PeekValue();
 
@@ -164,7 +164,7 @@ namespace Crayon
             return new ExpressionAsExecutable(expr, owner);
         }
 
-        private Executable ParseThrow(TokenStream tokens, Executable owner)
+        private Executable ParseThrow(TokenStream tokens, TopLevelConstruct owner)
         {
             Token throwToken = tokens.PopExpected(this.parser.Keywords.THROW);
             Expression throwExpression = this.parser.ExpressionParser.Parse(tokens, owner);
@@ -172,7 +172,7 @@ namespace Crayon
             return new ThrowStatement(throwToken, throwExpression, owner);
         }
 
-        private Executable ParseConstructor(TokenStream tokens, Executable owner)
+        private Executable ParseConstructor(TokenStream tokens, TopLevelConstruct owner)
         {
             Token constructorToken = tokens.PopExpected(this.parser.Keywords.CONSTRUCTOR);
             tokens.PopExpected("(");
@@ -225,7 +225,7 @@ namespace Crayon
             return new ConstructorDefinition(constructorToken, argNames, argValues, baseArgs, code, baseToken, owner);
         }
 
-        private Executable ParseConst(TokenStream tokens, Executable owner)
+        private Executable ParseConst(TokenStream tokens, TopLevelConstruct owner)
         {
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             Token nameToken = tokens.Pop();
@@ -238,7 +238,7 @@ namespace Crayon
             return constStatement;
         }
 
-        private Executable ParseEnumDefinition(TokenStream tokens, Executable owner)
+        private Executable ParseEnumDefinition(TokenStream tokens, TopLevelConstruct owner)
         {
             Token enumToken = tokens.PopExpected(this.parser.Keywords.ENUM);
             Token nameToken = tokens.Pop();
@@ -272,7 +272,7 @@ namespace Crayon
             return ed;
         }
 
-        private Executable ParseClassDefinition(TokenStream tokens, Executable owner, Token staticToken, Token finalToken)
+        private Executable ParseClassDefinition(TokenStream tokens, TopLevelConstruct owner, Token staticToken, Token finalToken)
         {
             Token classToken = tokens.PopExpected(this.parser.Keywords.CLASS);
             Token classNameToken = tokens.Pop();
@@ -409,7 +409,7 @@ namespace Crayon
             return fd;
         }
 
-        private Executable ParseNamespace(TokenStream tokens, Executable owner)
+        private Executable ParseNamespace(TokenStream tokens, TopLevelConstruct owner)
         {
             Token namespaceToken = tokens.PopExpected(this.parser.Keywords.NAMESPACE);
             Token first = tokens.Pop();
@@ -457,7 +457,7 @@ namespace Crayon
             return namespaceInstance;
         }
 
-        private Executable ParseFunction(TokenStream tokens, Executable nullableOwner)
+        private Executable ParseFunction(TokenStream tokens, TopLevelConstruct nullableOwner)
         {
             bool isStatic =
                 nullableOwner != null &&
@@ -515,7 +515,7 @@ namespace Crayon
             return fd;
         }
 
-        private Executable ParseFor(TokenStream tokens, Executable owner)
+        private Executable ParseFor(TokenStream tokens, TopLevelConstruct owner)
         {
             Token forToken = tokens.PopExpected(this.parser.Keywords.FOR);
             tokens.PopExpected("(");
@@ -562,7 +562,7 @@ namespace Crayon
             }
         }
 
-        private Executable ParseWhile(TokenStream tokens, Executable owner)
+        private Executable ParseWhile(TokenStream tokens, TopLevelConstruct owner)
         {
             Token whileToken = tokens.PopExpected(this.parser.Keywords.WHILE);
             tokens.PopExpected("(");
@@ -572,7 +572,7 @@ namespace Crayon
             return new WhileLoop(whileToken, condition, body, owner);
         }
 
-        private Executable ParseDoWhile(TokenStream tokens, Executable owner)
+        private Executable ParseDoWhile(TokenStream tokens, TopLevelConstruct owner)
         {
             Token doToken = tokens.PopExpected(this.parser.Keywords.DO);
             IList<Executable> body = Parser.ParseBlock(parser, tokens, true, owner);
@@ -584,7 +584,7 @@ namespace Crayon
             return new DoWhileLoop(doToken, body, condition, owner);
         }
 
-        private Executable ParseSwitch(TokenStream tokens, Executable owner)
+        private Executable ParseSwitch(TokenStream tokens, TopLevelConstruct owner)
         {
             Token switchToken = tokens.PopExpected(this.parser.Keywords.SWITCH);
 
@@ -656,7 +656,7 @@ namespace Crayon
             return new SwitchStatement(switchToken, condition, firstTokens, cases, code, explicitMax, explicitMaxToken, owner);
         }
 
-        private Executable ParseIf(TokenStream tokens, Executable owner)
+        private Executable ParseIf(TokenStream tokens, TopLevelConstruct owner)
         {
             Token ifToken = tokens.PopExpected(this.parser.Keywords.IF);
             tokens.PopExpected("(");
@@ -675,7 +675,7 @@ namespace Crayon
             return new IfStatement(ifToken, condition, body, elseBody, owner);
         }
 
-        private Executable ParseTry(TokenStream tokens, Executable owner)
+        private Executable ParseTry(TokenStream tokens, TopLevelConstruct owner)
         {
             Token tryToken = tokens.PopExpected(this.parser.Keywords.TRY);
             IList<Executable> tryBlock = Parser.ParseBlock(parser, tokens, true, owner);
@@ -778,21 +778,21 @@ namespace Crayon
             return new TryStatement(tryToken, tryBlock, catchTokens, exceptionVariables, exceptionTypeTokens, exceptionTypes, catchBlocks, finallyToken, finallyBlock, owner);
         }
 
-        private Executable ParseBreak(TokenStream tokens, Executable owner)
+        private Executable ParseBreak(TokenStream tokens, TopLevelConstruct owner)
         {
             Token breakToken = tokens.PopExpected(this.parser.Keywords.BREAK);
             tokens.PopExpected(";");
             return new BreakStatement(breakToken, owner);
         }
 
-        private Executable ParseContinue(TokenStream tokens, Executable owner)
+        private Executable ParseContinue(TokenStream tokens, TopLevelConstruct owner)
         {
             Token continueToken = tokens.PopExpected(this.parser.Keywords.CONTINUE);
             tokens.PopExpected(";");
             return new ContinueStatement(continueToken, owner);
         }
 
-        private Executable ParseReturn(TokenStream tokens, Executable owner)
+        private Executable ParseReturn(TokenStream tokens, TopLevelConstruct owner)
         {
             Token returnToken = tokens.PopExpected(this.parser.Keywords.RETURN);
             Expression expr = null;

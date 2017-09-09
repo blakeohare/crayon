@@ -15,7 +15,7 @@ namespace Crayon.ParseTree
 
         public override bool IsLiteral { get { return true; } }
 
-        public BooleanConstant(Token token, bool value, Executable owner)
+        public BooleanConstant(Token token, bool value, TopLevelConstruct owner)
             : base(token, owner)
         {
             this.Value = value;
@@ -31,7 +31,7 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        public Expression CloneValue(Token token, Executable owner)
+        public Expression CloneValue(Token token, TopLevelConstruct owner)
         {
             return new BooleanConstant(token, this.Value, owner);
         }

@@ -20,7 +20,7 @@ namespace Crayon.ParseTree
         public Expression[] Expressions { get; private set; }
         public Token[] Ops { get; private set; }
 
-        public BooleanCombination(IList<Expression> expressions, IList<Token> ops, Executable owner)
+        public BooleanCombination(IList<Expression> expressions, IList<Token> ops, TopLevelConstruct owner)
             : base(expressions[0].FirstToken, owner)
         {
             this.Expressions = expressions.ToArray();
@@ -51,14 +51,14 @@ namespace Crayon.ParseTree
                         }
                         else
                         {
-                            return new BooleanConstant(this.FirstToken, false, this.FunctionOrClassOwner);
+                            return new BooleanConstant(this.FirstToken, false, this.Owner);
                         }
                     }
                     else
                     {
                         if (boolValue)
                         {
-                            return new BooleanConstant(this.FirstToken, true, this.FunctionOrClassOwner);
+                            return new BooleanConstant(this.FirstToken, true, this.Owner);
                         }
                         else
                         {

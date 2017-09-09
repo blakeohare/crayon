@@ -13,7 +13,7 @@ namespace Crayon.ParseTree
 
         public string Type { get; private set; }
 
-        public CompileTimeDictionary(Token firstToken, string type, Executable owner)
+        public CompileTimeDictionary(Token firstToken, string type, TopLevelConstruct owner)
             : base(firstToken, owner)
         {
             this.Type = type;

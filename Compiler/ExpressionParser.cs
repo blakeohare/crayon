@@ -13,7 +13,7 @@ namespace Crayon
             this.parser = parser;
         }
 
-        public Expression Parse(TokenStream tokens, Executable owner)
+        public Expression Parse(TokenStream tokens, TopLevelConstruct owner)
         {
             Dictionary<string, Annotation> annotations = null;
             if (tokens.IsNext("@"))
@@ -30,7 +30,7 @@ namespace Crayon
             return output;
         }
 
-        private Expression ParseTernary(TokenStream tokens, Executable owner)
+        private Expression ParseTernary(TokenStream tokens, TopLevelConstruct owner)
         {
             Expression root = ParseNullCoalescing(tokens, owner);
             if (tokens.PopIfPresent("?"))
@@ -44,7 +44,7 @@ namespace Crayon
             return root;
         }
 
-        private Expression ParseNullCoalescing(TokenStream tokens, Executable owner)
+        private Expression ParseNullCoalescing(TokenStream tokens, TopLevelConstruct owner)
         {
             Expression root = ParseBooleanCombination(tokens, owner);
             if (tokens.PopIfPresent("??"))
@@ -55,7 +55,7 @@ namespace Crayon
             return root;
         }
 
-        private Expression ParseBooleanCombination(TokenStream tokens, Executable owner)
+        private Expression ParseBooleanCombination(TokenStream tokens, TopLevelConstruct owner)
         {
             Expression expr = ParseBitwiseOp(tokens, owner);
             string next = tokens.PeekValue();
@@ -74,7 +74,7 @@ namespace Crayon
             return expr;
         }
 
-        private Expression ParseBitwiseOp(TokenStream tokens, Executable owner)
+        private Expression ParseBitwiseOp(TokenStream tokens, TopLevelConstruct owner)
         {
             Expression expr = ParseEqualityComparison(tokens, owner);
             string next = tokens.PeekValue();
@@ -87,7 +87,7 @@ namespace Crayon
             return expr;
         }
 
-        private Expression ParseEqualityComparison(TokenStream tokens, Executable owner)
+        private Expression ParseEqualityComparison(TokenStream tokens, TopLevelConstruct owner)
         {
             Expression expr = ParseInequalityComparison(tokens, owner);
             string next = tokens.PeekValue();
@@ -100,7 +100,7 @@ namespace Crayon
             return expr;
         }
 
-        private Expression ParseInequalityComparison(TokenStream tokens, Executable owner)
+        private Expression ParseInequalityComparison(TokenStream tokens, TopLevelConstruct owner)
         {
             Expression expr = ParseBitShift(tokens, owner);
             string next = tokens.PeekValue();
@@ -114,7 +114,7 @@ namespace Crayon
             return expr;
         }
 
-        private Expression ParseBitShift(TokenStream tokens, Executable owner)
+        private Expression ParseBitShift(TokenStream tokens, TopLevelConstruct owner)
         {
             Expression expr = ParseAddition(tokens, owner);
             string next = tokens.PeekValue();
@@ -131,7 +131,7 @@ namespace Crayon
         private static readonly HashSet<string> MULTIPLICATION_OPS = new HashSet<string>("* / %".Split(' '));
         private static readonly HashSet<string> NEGATE_OPS = new HashSet<string>("! -".Split(' '));
 
-        private Expression ParseAddition(TokenStream tokens, Executable owner)
+        private Expression ParseAddition(TokenStream tokens, TopLevelConstruct owner)
         {
             Expression expr = ParseMultiplication(tokens, owner);
             string next = tokens.PeekValue();
@@ -145,7 +145,7 @@ namespace Crayon
             return expr;
         }
 
-        private Expression ParseMultiplication(TokenStream tokens, Executable owner)
+        private Expression ParseMultiplication(TokenStream tokens, TopLevelConstruct owner)
         {
             Expression expr = ParseNegate(tokens, owner);
             string next = tokens.PeekValue();
@@ -159,7 +159,7 @@ namespace Crayon
             return expr;
         }
 
-        private Expression ParseNegate(TokenStream tokens, Executable owner)
+        private Expression ParseNegate(TokenStream tokens, TopLevelConstruct owner)
         {
             string next = tokens.PeekValue();
             if (NEGATE_OPS.Contains(next))
@@ -174,7 +174,7 @@ namespace Crayon
             return ParseExponents(tokens, owner);
         }
 
-        private Expression ParseExponents(TokenStream tokens, Executable owner)
+        private Expression ParseExponents(TokenStream tokens, TopLevelConstruct owner)
         {
             Expression expr = ParseIncrement(tokens, owner);
             string next = tokens.PeekValue();
@@ -187,7 +187,7 @@ namespace Crayon
             return expr;
         }
 
-        private Expression ParseIncrement(TokenStream tokens, Executable owner)
+        private Expression ParseIncrement(TokenStream tokens, TopLevelConstruct owner)
         {
             Expression root;
             if (tokens.IsNext("++") || tokens.IsNext("--"))
@@ -209,7 +209,7 @@ namespace Crayon
 
         private static readonly HashSet<char> VARIABLE_STARTER = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$".ToCharArray());
 
-        private Expression ParseInstantiate(TokenStream tokens, Executable owner)
+        private Expression ParseInstantiate(TokenStream tokens, TopLevelConstruct owner)
         {
             Token newToken = tokens.PopExpected(this.parser.Keywords.NEW);
             Token classNameToken = tokens.Pop();
@@ -229,7 +229,7 @@ namespace Crayon
             return new Instantiate(newToken, classNameToken, name, args, owner);
         }
 
-        private Expression ParseEntity(TokenStream tokens, Executable owner)
+        private Expression ParseEntity(TokenStream tokens, TopLevelConstruct owner)
         {
             Expression root;
             if (tokens.PopIfPresent("("))
@@ -326,7 +326,7 @@ namespace Crayon
             return root;
         }
 
-        private Expression ParseEntityWithoutSuffixChain(TokenStream tokens, Executable owner)
+        private Expression ParseEntityWithoutSuffixChain(TokenStream tokens, TopLevelConstruct owner)
         {
             string next = tokens.PeekValue();
 

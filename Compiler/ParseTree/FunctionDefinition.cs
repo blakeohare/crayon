@@ -23,7 +23,7 @@ namespace Crayon.ParseTree
         public FunctionDefinition(
             Token functionToken,
             Library library,
-            Executable nullableOwner,
+            TopLevelConstruct nullableOwner,
             bool isStaticMethod,
             Token nameToken,
             IList<Annotation> functionAnnotations,
@@ -87,7 +87,7 @@ namespace Crayon.ParseTree
             if (this.Code.Length == 0 || !(this.Code[this.Code.Length - 1] is ReturnStatement))
             {
                 List<Executable> newCode = new List<Executable>(this.Code);
-                newCode.Add(new ReturnStatement(this.FirstToken, null, this.FunctionOrClassOwner));
+                newCode.Add(new ReturnStatement(this.FirstToken, null, this.Owner));
                 this.Code = newCode.ToArray();
             }
 

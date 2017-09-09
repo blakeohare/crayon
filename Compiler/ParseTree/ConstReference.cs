@@ -14,7 +14,7 @@ namespace Crayon.ParseTree
 
         public ConstStatement ConstStatement { get; private set; }
 
-        public ConstReference(Token token, ConstStatement con, Executable owner)
+        public ConstReference(Token token, ConstStatement con, TopLevelConstruct owner)
             : base(token, owner)
         {
             this.ConstStatement = con;
@@ -32,7 +32,7 @@ namespace Crayon.ParseTree
             {
                 throw new ParserException(this.ConstStatement.FirstToken, "Could not resolve this expression into a constant value.");
             }
-            return value.CloneValue(this.FirstToken, this.FunctionOrClassOwner);
+            return value.CloneValue(this.FirstToken, this.Owner);
         }
 
         internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)

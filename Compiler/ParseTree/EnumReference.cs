@@ -12,7 +12,7 @@ namespace Crayon.ParseTree
 
         public EnumDefinition EnumDefinition { get; set; }
 
-        public EnumReference(Token token, EnumDefinition enumDefinition, Executable owner)
+        public EnumReference(Token token, EnumDefinition enumDefinition, TopLevelConstruct owner)
             : base(token, owner)
         {
             this.EnumDefinition = enumDefinition;

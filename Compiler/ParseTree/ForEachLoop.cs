@@ -11,7 +11,7 @@ namespace Crayon.ParseTree
         public Expression IterationExpression { get; private set; }
         public Executable[] Code { get; private set; }
 
-        public ForEachLoop(Token forToken, Token iterationVariable, Expression iterationExpression, IList<Executable> code, Executable owner)
+        public ForEachLoop(Token forToken, Token iterationVariable, Expression iterationExpression, IList<Executable> code, TopLevelConstruct owner)
             : base(forToken, owner)
         {
             this.IterationVariable = iterationVariable;

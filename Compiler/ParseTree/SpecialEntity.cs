@@ -12,7 +12,7 @@ namespace Crayon.ParseTree
             throw new NotImplementedException();
         }
 
-        public SpecialEntity(Token firstToken, Executable owner) : base(firstToken, owner)
+        public SpecialEntity(Token firstToken, TopLevelConstruct owner) : base(firstToken, owner)
         { }
 
         public override bool CanAssignTo { get { return false; } }
@@ -35,7 +35,7 @@ namespace Crayon.ParseTree
         internal class EnumMaxFunction : SpecialEntity
         {
             private EnumDefinition enumDef;
-            public EnumMaxFunction(Token firstToken, EnumDefinition enumDef, Executable owner)
+            public EnumMaxFunction(Token firstToken, EnumDefinition enumDef, TopLevelConstruct owner)
                 : base(firstToken, owner)
             {
                 this.enumDef = enumDef;
@@ -59,7 +59,7 @@ namespace Crayon.ParseTree
         internal class EnumValuesFunction : SpecialEntity
         {
             private EnumDefinition enumDef;
-            public EnumValuesFunction(Token firstToken, EnumDefinition enumDef, Executable owner)
+            public EnumValuesFunction(Token firstToken, EnumDefinition enumDef, TopLevelConstruct owner)
                 : base(firstToken, owner)
             {
                 this.enumDef = enumDef;

@@ -14,7 +14,7 @@ namespace Crayon.ParseTree
 
         public FunctionDefinition FunctionDefinition { get; set; }
 
-        public FunctionReference(Token token, FunctionDefinition funcDef, Executable owner)
+        public FunctionReference(Token token, FunctionDefinition funcDef, TopLevelConstruct owner)
             : base(token, owner)
         {
             this.FunctionDefinition = funcDef;

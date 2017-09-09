@@ -16,7 +16,7 @@ namespace Crayon.ParseTree
 
         public override bool IsLiteral { get { return true; } }
 
-        public FloatConstant(Token startValue, double value, Executable owner)
+        public FloatConstant(Token startValue, double value, TopLevelConstruct owner)
             : base(startValue, owner)
         {
             this.Value = value;
@@ -42,7 +42,7 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        public Expression CloneValue(Token token, Executable owner)
+        public Expression CloneValue(Token token, TopLevelConstruct owner)
         {
             return new FloatConstant(token, this.Value, owner);
         }

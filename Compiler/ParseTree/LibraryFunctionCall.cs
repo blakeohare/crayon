@@ -17,14 +17,14 @@ namespace Crayon.ParseTree
         public Expression[] Args { get; private set; }
         public string LibraryName { get; set; }
 
-        public LibraryFunctionCall(Token token, string name, IList<Expression> args, Executable owner)
+        public LibraryFunctionCall(Token token, string name, IList<Expression> args, TopLevelConstruct owner)
             : base(token, owner)
         {
             string callingLibrary = null;
             while (callingLibrary == null && owner != null)
             {
                 callingLibrary = owner.Library.Name;
-                owner = owner.FunctionOrClassOwner;
+                owner = owner.Owner;
             }
 
             if (callingLibrary == null)

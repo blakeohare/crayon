@@ -13,7 +13,7 @@ namespace Crayon.ParseTree
                 string[] name = root.Name.Split('$');
                 if (name.Length == 2)
                 {
-                    root = new Variable(root.FirstToken, name[1], root.FunctionOrClassOwner);
+                    root = new Variable(root.FirstToken, name[1], root.Owner);
                     this.Root = root;
                 }
                 else if (name.Length == 1)
@@ -40,7 +40,7 @@ namespace Crayon.ParseTree
         public Token DotToken { get; private set; }
         public Token StepToken { get; private set; }
 
-        public DotStep(Expression root, Token dotToken, Token stepToken, Executable owner)
+        public DotStep(Expression root, Token dotToken, Token stepToken, TopLevelConstruct owner)
             : base(root.FirstToken, owner)
         {
             this.Root = root;
@@ -67,16 +67,16 @@ namespace Crayon.ParseTree
                 switch (step)
                 {
                     case "length":
-                        return new IntegerConstant(this.FirstToken, enumDef.IntValue.Count, this.FunctionOrClassOwner);
+                        return new IntegerConstant(this.FirstToken, enumDef.IntValue.Count, this.Owner);
                     case "max":
-                        return new SpecialEntity.EnumMaxFunction(this.FirstToken, enumDef, this.FunctionOrClassOwner);
+                        return new SpecialEntity.EnumMaxFunction(this.FirstToken, enumDef, this.Owner);
                     case "values":
-                        return new SpecialEntity.EnumValuesFunction(this.FirstToken, enumDef, this.FunctionOrClassOwner);
+                        return new SpecialEntity.EnumValuesFunction(this.FirstToken, enumDef, this.Owner);
                 }
 
                 if (enumDef.IntValue.ContainsKey(step))
                 {
-                    return new IntegerConstant(this.FirstToken, enumDef.IntValue[step], this.FunctionOrClassOwner);
+                    return new IntegerConstant(this.FirstToken, enumDef.IntValue[step], this.Owner);
                 }
                 else
                 {
@@ -86,7 +86,7 @@ namespace Crayon.ParseTree
 
             if (this.Root is BaseKeyword)
             {
-                return new BaseMethodReference(this.Root.FirstToken, this.DotToken, this.StepToken, this.FunctionOrClassOwner).Resolve(parser);
+                return new BaseMethodReference(this.Root.FirstToken, this.DotToken, this.StepToken, this.Owner).Resolve(parser);
             }
 
             if (this.Root is StringConstant)
@@ -103,7 +103,7 @@ namespace Crayon.ParseTree
                 else if (step == "length")
                 {
                     int length = ((StringConstant)this.Root).Value.Length;
-                    return new IntegerConstant(this.FirstToken, length, this.FunctionOrClassOwner);
+                    return new IntegerConstant(this.FirstToken, length, this.Owner);
                 }
             }
 
@@ -135,7 +135,7 @@ namespace Crayon.ParseTree
                 string fullyQualifiedName = ((PartialNamespaceReference)root).Name + "." + field;
                 if (lookup.ContainsKey(fullyQualifiedName))
                 {
-                    return Resolver.ConvertStaticReferenceToExpression(lookup[fullyQualifiedName], this.FirstToken, this.FunctionOrClassOwner);
+                    return Resolver.ConvertStaticReferenceToExpression(lookup[fullyQualifiedName], this.FirstToken, this.Owner);
                 }
 
                 throw new ParserException(this.FirstToken, "Could not find class or function by the name of: '" + fullyQualifiedName + "'");
@@ -156,7 +156,7 @@ namespace Crayon.ParseTree
                         throw new ParserException(this.DotToken, "'" + className + "." + functionName + "' is not a static method, but it is being used as though it is static.");
                     }
 
-                    return new FunctionReference(this.FirstToken, funcDef, this.FunctionOrClassOwner);
+                    return new FunctionReference(this.FirstToken, funcDef, this.Owner);
                 }
 
                 fieldDec = cd.GetField(field, false);
@@ -167,12 +167,12 @@ namespace Crayon.ParseTree
                         throw new ParserException(this.DotToken, "Cannot make a static reference to a non-static field.");
                     }
 
-                    return new FieldReference(this.FirstToken, fieldDec, this.FunctionOrClassOwner);
+                    return new FieldReference(this.FirstToken, fieldDec, this.Owner);
                 }
 
                 if (field == "class")
                 {
-                    return new ClassReferenceLiteral(this.FirstToken, cd, this.FunctionOrClassOwner);
+                    return new ClassReferenceLiteral(this.FirstToken, cd, this.Owner);
                 }
 
                 // TODO: nested classes, enums, constants
@@ -184,15 +184,15 @@ namespace Crayon.ParseTree
             if (root is BaseKeyword)
             {
                 ClassDefinition thisClass = null;
-                if (this.FunctionOrClassOwner != null)
+                if (this.Owner != null)
                 {
-                    if (this.FunctionOrClassOwner is FunctionDefinition)
+                    if (this.Owner is FunctionDefinition)
                     {
-                        thisClass = this.FunctionOrClassOwner.FunctionOrClassOwner as ClassDefinition;
+                        thisClass = this.Owner.Owner as ClassDefinition;
                     }
                     else
                     {
-                        thisClass = this.FunctionOrClassOwner as ClassDefinition;
+                        thisClass = this.Owner as ClassDefinition;
                     }
                 }
 
@@ -218,30 +218,30 @@ namespace Crayon.ParseTree
                     throw new ParserException(this.DotToken, "Cannot reference static methods using 'base' keyword.");
                 }
 
-                return new BaseMethodReference(this.FirstToken, this.DotToken, this.StepToken, this.FunctionOrClassOwner);
+                return new BaseMethodReference(this.FirstToken, this.DotToken, this.StepToken, this.Owner);
             }
 
             if (root is ThisKeyword)
             {
                 ClassDefinition cd = null;
-                if (this.FunctionOrClassOwner != null)
+                if (this.Owner != null)
                 {
-                    if (this.FunctionOrClassOwner is FunctionDefinition)
+                    if (this.Owner is FunctionDefinition)
                     {
-                        funcDef = this.FunctionOrClassOwner as FunctionDefinition;
+                        funcDef = this.Owner as FunctionDefinition;
                         if (funcDef.IsStaticMethod)
                         {
                             throw new ParserException(this.Root.FirstToken, "'this' keyword cannot be used in static methods.");
                         }
-                        cd = funcDef.FunctionOrClassOwner as ClassDefinition;
+                        cd = funcDef.Owner as ClassDefinition;
                         if (cd == null)
                         {
                             throw new ParserException(this.Root.FirstToken, "'this' keyword must be used inside a class.");
                         }
                     }
-                    else if (this.FunctionOrClassOwner is ClassDefinition)
+                    else if (this.Owner is ClassDefinition)
                     {
-                        cd = (ClassDefinition)this.FunctionOrClassOwner;
+                        cd = (ClassDefinition)this.Owner;
                     }
                 }
 
@@ -257,7 +257,7 @@ namespace Crayon.ParseTree
                     {
                         throw new ParserException(this.DotToken, "This method is static and must be referenced by the class name, not 'this'.");
                     }
-                    return new FunctionReference(this.FirstToken, funcDef, this.FunctionOrClassOwner);
+                    return new FunctionReference(this.FirstToken, funcDef, this.Owner);
                 }
 
                 FieldDeclaration fieldDef = cd.GetField(field, true);
@@ -268,7 +268,7 @@ namespace Crayon.ParseTree
                         throw new ParserException(this.DotToken, "This field is static and must be referenced by the class name, not 'this'.");
                     }
 
-                    return new FieldReference(this.FirstToken, fieldDef, this.FunctionOrClassOwner);
+                    return new FieldReference(this.FirstToken, fieldDef, this.Owner);
                 }
 
                 // TODO: show suggestions in the error message for anything close to what was typed.

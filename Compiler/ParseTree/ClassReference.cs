@@ -14,7 +14,7 @@ namespace Crayon.ParseTree
 
         public ClassDefinition ClassDefinition { get; private set; }
 
-        public ClassReference(Token token, ClassDefinition clazz, Executable owner)
+        public ClassReference(Token token, ClassDefinition clazz, TopLevelConstruct owner)
             : base(token, owner)
         {
             this.ClassDefinition = clazz;

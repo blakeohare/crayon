@@ -16,7 +16,7 @@ namespace Crayon.ParseTree
         public Expression TrueValue { get; private set; }
         public Expression FalseValue { get; private set; }
 
-        public Ternary(Expression condition, Expression trueValue, Expression falseValue, Executable owner)
+        public Ternary(Expression condition, Expression trueValue, Expression falseValue, TopLevelConstruct owner)
             : base(condition.FirstToken, owner)
         {
             this.Condition = condition;

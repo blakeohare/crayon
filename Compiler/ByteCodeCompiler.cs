@@ -556,7 +556,7 @@ namespace Crayon
 
             ByteBuffer tBuffer = new ByteBuffer();
 
-            ClassDefinition cd = (ClassDefinition)constructor.FunctionOrClassOwner;
+            ClassDefinition cd = (ClassDefinition)constructor.Owner;
 
             List<int> offsetsForOptionalArgs = new List<int>();
             this.CompileFunctionArgs(parser, tBuffer, constructor.ArgNames, constructor.DefaultValues, offsetsForOptionalArgs);
@@ -786,7 +786,7 @@ namespace Crayon
                         buffer.Add(
                             assignment.AssignmentOpToken,
                             OpCode.ASSIGN_STATIC_FIELD,
-                            ((ClassDefinition)fieldReference.Field.FunctionOrClassOwner).ClassID,
+                            ((ClassDefinition)fieldReference.Field.Owner).ClassID,
                             fieldReference.Field.StaticMemberID);
                     }
                     else
@@ -862,7 +862,7 @@ namespace Crayon
                         buffer.Add(
                             assignment.AssignmentOpToken,
                             OpCode.ASSIGN_STATIC_FIELD,
-                            ((ClassDefinition)fieldRef.Field.FunctionOrClassOwner).ClassID,
+                            ((ClassDefinition)fieldRef.Field.Owner).ClassID,
                             fieldRef.Field.StaticMemberID);
                     }
                     else
@@ -922,7 +922,7 @@ namespace Crayon
                 minArgCount,
                 funDef.ArgNames.Length, // max number of args supplied
                 isMethod ? (funDef.IsStaticMethod ? 2 : 1) : 0, // type (0 - function, 1 - method, 2 - static method)
-                isMethod ? ((ClassDefinition)funDef.FunctionOrClassOwner).ClassID : 0,
+                isMethod ? ((ClassDefinition)funDef.Owner).ClassID : 0,
                 funDef.LocalScopeSize,
                 tBuffer.Size,
                 offsetsForOptionalArgs.Count
@@ -1053,7 +1053,7 @@ namespace Crayon
                 buffer.Add(
                     fieldRef.FirstToken,
                     OpCode.DEREF_STATIC_FIELD,
-                    ((ClassDefinition)fieldRef.Field.FunctionOrClassOwner).ClassID,
+                    ((ClassDefinition)fieldRef.Field.Owner).ClassID,
                     fieldRef.Field.StaticMemberID);
             }
             else
@@ -1074,11 +1074,11 @@ namespace Crayon
 
             int classIdStaticCheck = 0;
             int type = 0;
-            if (funcDef.FunctionOrClassOwner is ClassDefinition)
+            if (funcDef.Owner is ClassDefinition)
             {
                 if (funcDef.IsStaticMethod)
                 {
-                    classIdStaticCheck = ((ClassDefinition)funcDef.FunctionOrClassOwner).ClassID;
+                    classIdStaticCheck = ((ClassDefinition)funcDef.Owner).ClassID;
                     type = 2;
                 }
                 else
@@ -1333,7 +1333,7 @@ namespace Crayon
             {
                 FieldReference fr = (FieldReference)increment.Root;
                 bool isStatic = fr.Field.IsStaticField;
-                ClassDefinition cd = (ClassDefinition)fr.Field.FunctionOrClassOwner;
+                ClassDefinition cd = (ClassDefinition)fr.Field.Owner;
                 int memberId = isStatic ? fr.Field.StaticMemberID : fr.Field.MemberID;
 
                 this.CompileExpression(parser, buffer, fr, true);
@@ -1352,7 +1352,7 @@ namespace Crayon
                 Token token = increment.IsPrefix ? increment.FirstToken : fr.FirstToken;
                 if (isStatic)
                 {
-                    buffer.Add(token, OpCode.ASSIGN_STATIC_FIELD, ((ClassDefinition)fr.Field.FunctionOrClassOwner).ClassID, memberId);
+                    buffer.Add(token, OpCode.ASSIGN_STATIC_FIELD, ((ClassDefinition)fr.Field.Owner).ClassID, memberId);
                 }
                 else
                 {
@@ -1383,7 +1383,7 @@ namespace Crayon
             int id = parser.LibraryManager.GetIdForFunction(libFunc.Name, libFunc.LibraryName);
             Token token = parenTokenOverride ?? libFunc.FirstToken;
             string libraryName = libFunc.LibraryName;
-            Library library = libFunc.FunctionOrClassOwner.Library;
+            Library library = libFunc.Owner.Library;
             int libraryRefId = parser.LibraryManager.GetLibraryReferenceIdFromKey(library.CanonicalKey);
             int functionNameReferenceId = parser.LiteralLookup.GetLibFuncRefId(libFunc.Name);
 
@@ -1636,7 +1636,7 @@ namespace Crayon
         private void CompileFunctionCall(Parser parser, ByteBuffer buffer, FunctionCall funCall, bool outputUsed)
         {
             bool argCountIsNegativeOne = false;
-            FunctionDefinition ownerFunction = funCall.FunctionOrClassOwner as FunctionDefinition;
+            FunctionDefinition ownerFunction = funCall.Owner as FunctionDefinition;
             if (ownerFunction != null && ownerFunction.Namespace == "Core" && ownerFunction.NameToken.Value == "_LIB_CORE_invoke")
             {
                 argCountIsNegativeOne = true;
@@ -1655,9 +1655,9 @@ namespace Crayon
                 else
                 {
                     this.CompileExpressionList(parser, buffer, funCall.Args, true);
-                    if (fd.FunctionOrClassOwner is ClassDefinition)
+                    if (fd.Owner is ClassDefinition)
                     {
-                        ClassDefinition cd = (ClassDefinition)fd.FunctionOrClassOwner;
+                        ClassDefinition cd = (ClassDefinition)fd.Owner;
                         if (fd.IsStaticMethod)
                         {
                             buffer.Add(

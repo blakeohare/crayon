@@ -17,7 +17,7 @@ namespace Crayon.ParseTree
         public Expression[] Keys { get; private set; }
         public Expression[] Values { get; private set; }
 
-        public DictionaryDefinition(Token braceToken, IList<Expression> keys, IList<Expression> values, Executable owner)
+        public DictionaryDefinition(Token braceToken, IList<Expression> keys, IList<Expression> values, TopLevelConstruct owner)
             : base(braceToken, owner)
         {
             this.Keys = keys.ToArray();

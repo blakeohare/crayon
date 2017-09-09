@@ -15,7 +15,7 @@ namespace Crayon.ParseTree
         public Token BracketToken { get; private set; }
         public Expression Index { get; set; }
 
-        public BracketIndex(Expression root, Token bracketToken, Expression index, Executable owner)
+        public BracketIndex(Expression root, Token bracketToken, Expression index, TopLevelConstruct owner)
             : base(root.FirstToken, owner)
         {
             this.Root = root;
@@ -41,13 +41,13 @@ namespace Crayon.ParseTree
 
                         if (parser.BuildContext.BuildVariableLookup.ContainsKey(index))
                         {
-                            Crayon.BuildContext.BuildVarCanonicalized buildVar = parser.BuildContext.BuildVariableLookup[index];
+                            BuildContext.BuildVarCanonicalized buildVar = parser.BuildContext.BuildVariableLookup[index];
                             switch (buildVar.Type)
                             {
-                                case Crayon.BuildContext.VarType.INT: return new IntegerConstant(this.FirstToken, buildVar.IntValue, this.FunctionOrClassOwner);
-                                case Crayon.BuildContext.VarType.FLOAT: return new FloatConstant(this.FirstToken, buildVar.FloatValue, this.FunctionOrClassOwner);
-                                case Crayon.BuildContext.VarType.STRING: return new StringConstant(this.FirstToken, buildVar.StringValue, this.FunctionOrClassOwner);
-                                case Crayon.BuildContext.VarType.BOOLEAN: return new BooleanConstant(this.FirstToken, buildVar.BoolValue, this.FunctionOrClassOwner);
+                                case BuildContext.VarType.INT: return new IntegerConstant(this.FirstToken, buildVar.IntValue, this.Owner);
+                                case BuildContext.VarType.FLOAT: return new FloatConstant(this.FirstToken, buildVar.FloatValue, this.Owner);
+                                case BuildContext.VarType.STRING: return new StringConstant(this.FirstToken, buildVar.StringValue, this.Owner);
+                                case BuildContext.VarType.BOOLEAN: return new BooleanConstant(this.FirstToken, buildVar.BoolValue, this.Owner);
                                 default:
                                     throw new System.Exception("This should not happen."); // invalid types filtered during build context construction.
 
@@ -55,7 +55,7 @@ namespace Crayon.ParseTree
                         }
                         else
                         {
-                            return new NullConstant(this.FirstToken, this.FunctionOrClassOwner);
+                            return new NullConstant(this.FirstToken, this.Owner);
                             // TODO: strict mode that enforces this. There are two ways this could be done:
                             // 1) $var['foo'] vs $optional['foo']
                             // 2) <strictvars>true</strictvars>

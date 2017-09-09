@@ -35,7 +35,7 @@ namespace Crayon.ParseTree
             List<Executable[]> catchBlockExecutableses,
             Token finallyToken,
             IList<Executable> finallyBlock,
-            Executable owner) : base(tryToken, owner)
+            TopLevelConstruct owner) : base(tryToken, owner)
         {
             this.TryToken = tryToken;
             this.TryBlock = tryBlock.ToArray();
@@ -105,7 +105,7 @@ namespace Crayon.ParseTree
             this.BatchExecutableNameResolver(parser, lookup, imports, this.TryBlock);
 
             Common.TODO.HardCodedEnglishValue();
-            ClassDefinition simpleException = Node.DoClassLookup(null, lookup, imports, this.FunctionOrClassOwner.LocalNamespace, "Core.Exception");
+            ClassDefinition simpleException = Node.DoClassLookup(null, lookup, imports, this.Owner.LocalNamespace, "Core.Exception");
 
             foreach (CatchBlock cb in this.CatchBlocks)
             {
@@ -118,7 +118,7 @@ namespace Crayon.ParseTree
                     Common.TODO.HardCodedEnglishValue();
                     string typeName = types[i] ?? "Core.Exception";
                     Token token = typeTokens[i] ?? cb.CatchToken;
-                    ClassDefinition resolvedType = Node.DoClassLookup(token, lookup, imports, this.FunctionOrClassOwner.LocalNamespace, typeName, true);
+                    ClassDefinition resolvedType = Node.DoClassLookup(token, lookup, imports, this.Owner.LocalNamespace, typeName, true);
                     if (resolvedType == null)
                     {
                         throw new ParserException(token, "Could not resolve class name for catch.");

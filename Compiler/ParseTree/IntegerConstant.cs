@@ -66,7 +66,7 @@ namespace Crayon.ParseTree
             return number;
         }
 
-        public IntegerConstant(Token token, int value, Executable owner)
+        public IntegerConstant(Token token, int value, TopLevelConstruct owner)
             : base(token, owner)
         {
             this.Value = value;
@@ -83,7 +83,7 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        public Expression CloneValue(Token token, Executable owner)
+        public Expression CloneValue(Token token, TopLevelConstruct owner)
         {
             return new IntegerConstant(token, this.Value, owner);
         }

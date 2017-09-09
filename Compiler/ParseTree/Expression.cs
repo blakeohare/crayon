@@ -4,7 +4,7 @@ namespace Crayon.ParseTree
 {
     public abstract class Expression : Node
     {
-        public Expression(Token firstToken, Executable owner)
+        public Expression(Token firstToken, TopLevelConstruct owner)
             : base(firstToken, owner)
         {
             this.Annotations = null;

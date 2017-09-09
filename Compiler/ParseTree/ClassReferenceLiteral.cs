@@ -12,7 +12,7 @@ namespace Crayon.ParseTree
 
         public ClassDefinition ClassDefinition { get; set; }
 
-        public ClassReferenceLiteral(Token firstToken, ClassDefinition cd, Executable owner)
+        public ClassReferenceLiteral(Token firstToken, ClassDefinition cd, TopLevelConstruct owner)
             : base(firstToken, owner)
         {
             this.ClassDefinition = cd;

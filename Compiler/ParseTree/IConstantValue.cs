@@ -2,6 +2,6 @@
 {
     internal interface IConstantValue
     {
-        Expression CloneValue(Token token, Executable owner);
+        Expression CloneValue(Token token, TopLevelConstruct owner);
     }
 }

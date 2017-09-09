@@ -9,7 +9,7 @@ namespace Crayon.ParseTree
         public Expression Expression { get; set; }
         public Token ThrowToken { get; set; }
 
-        public ThrowStatement(Token throwToken, Expression expression, Executable owner) : base(throwToken, owner)
+        public ThrowStatement(Token throwToken, Expression expression, TopLevelConstruct owner) : base(throwToken, owner)
         {
             this.ThrowToken = throwToken;
             this.Expression = expression;

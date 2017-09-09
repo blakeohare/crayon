@@ -73,10 +73,6 @@ namespace Crayon
                     else
                     {
                         string error = "This sort of expression cannot exist outside of function or field definitions.";
-                        if (item is Assignment)
-                        {
-                            error += " Did you mean to mark this as a const expression?";
-                        }
                         throw new ParserException(item.FirstToken, error);
                     }
 
@@ -455,7 +451,7 @@ namespace Crayon
 
         // Generally this is used with the name resolver. So for example, you have a refernce to a ClassDefinition
         // instance from the resolver, but you want to turn it into a ClassReference instance.
-        public static Expression ConvertStaticReferenceToExpression(Executable item, Token primaryToken, Executable owner)
+        public static Expression ConvertStaticReferenceToExpression(Executable item, Token primaryToken, TopLevelConstruct owner)
         {
             if (item is Namespace) return new PartialNamespaceReference(primaryToken, ((Namespace)item).Name, owner);
             if (item is ClassDefinition) return new ClassReference(primaryToken, (ClassDefinition)item, owner);

@@ -7,7 +7,7 @@ namespace Crayon.ParseTree
     {
         public Expression Expression { get; private set; }
 
-        public ReturnStatement(Token returnToken, Expression nullableExpression, Executable owner)
+        public ReturnStatement(Token returnToken, Expression nullableExpression, TopLevelConstruct owner)
             : base(returnToken, owner)
         {
             this.Expression = nullableExpression;

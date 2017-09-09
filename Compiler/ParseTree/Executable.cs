@@ -52,7 +52,7 @@ namespace Crayon.ParseTree
         }
         public string Namespace { get; set; }
 
-        public Executable(Token firstToken, Executable owner)
+        public Executable(Token firstToken, TopLevelConstruct owner)
             : base(firstToken, owner)
         {
             if (owner != null)

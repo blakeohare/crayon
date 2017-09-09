@@ -14,7 +14,7 @@ namespace Crayon.ParseTree
         public Token NameToken { get; private set; }
         public string Name { get; private set; }
 
-        public ConstStatement(Token constToken, Token nameToken, string ns, Executable owner, Library library)
+        public ConstStatement(Token constToken, Token nameToken, string ns, TopLevelConstruct owner, Library library)
             : base(constToken, owner)
         {
             this.Library = library;

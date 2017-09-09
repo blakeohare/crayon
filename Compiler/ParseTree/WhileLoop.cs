@@ -9,7 +9,7 @@ namespace Crayon.ParseTree
         public Expression Condition { get; private set; }
         public Executable[] Code { get; private set; }
 
-        public WhileLoop(Token whileToken, Expression condition, IList<Executable> code, Executable owner)
+        public WhileLoop(Token whileToken, Expression condition, IList<Executable> code, TopLevelConstruct owner)
             : base(whileToken, owner)
         {
             this.Condition = condition;

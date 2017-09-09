@@ -5,7 +5,7 @@ namespace Crayon.ParseTree
 {
     internal class BreakStatement : Executable
     {
-        public BreakStatement(Token breakToken, Executable owner)
+        public BreakStatement(Token breakToken, TopLevelConstruct owner)
             : base(breakToken, owner)
         { }
 

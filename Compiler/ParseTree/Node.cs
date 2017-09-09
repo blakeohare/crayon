@@ -4,17 +4,17 @@ namespace Crayon.ParseTree
 {
     public abstract class Node
     {
-        internal Node(Token firstToken, Executable functionOrClassOwner)
+        internal Node(Token firstToken, TopLevelConstruct owner)
         {
             this.FirstToken = firstToken;
-            this.FunctionOrClassOwner = functionOrClassOwner;
+            this.Owner = owner;
         }
 
         public Token FirstToken { get; private set; }
 
         // This is a misnomer. This can be any top-level object such as a function, class, const, or enum that can wrap
         // other executables or expressions.
-        public Executable FunctionOrClassOwner { get; private set; }
+        public TopLevelConstruct Owner { get; private set; }
 
         internal void BatchExecutableNameResolver(Parser parser, Dictionary<string, Executable> lookup, string[] imports, Executable[] executables)
         {

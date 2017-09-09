@@ -43,7 +43,7 @@ namespace Crayon.ParseTree
         private Expression explicitMax;
         private Token explicitMaxToken;
 
-        public SwitchStatement(Token switchToken, Expression condition, List<Token> firstTokens, List<List<Expression>> cases, List<List<Executable>> code, Expression explicitMax, Token explicitMaxToken, Executable owner)
+        public SwitchStatement(Token switchToken, Expression condition, List<Token> firstTokens, List<List<Expression>> cases, List<List<Executable>> code, Expression explicitMax, Token explicitMaxToken, TopLevelConstruct owner)
             : base(switchToken, owner)
         {
             if (cases.Count == 0) throw new ParserException(switchToken, "Switch statement needs cases.");

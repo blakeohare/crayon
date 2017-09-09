@@ -22,7 +22,7 @@ namespace Crayon.ParseTree
         public Expression[] Args { get; private set; }
         public ClassDefinition Class { get; set; }
 
-        public Instantiate(Token firstToken, Token firstClassNameToken, string name, IList<Expression> args, Executable owner)
+        public Instantiate(Token firstToken, Token firstClassNameToken, string name, IList<Expression> args, TopLevelConstruct owner)
             : base(firstToken, owner)
         {
             this.NameToken = firstClassNameToken;
@@ -52,8 +52,8 @@ namespace Crayon.ParseTree
             if (cons.PrivateAnnotation != null)
             {
                 bool isValidUsage =
-                    this.Class == this.FunctionOrClassOwner ||
-                    this.Class == this.FunctionOrClassOwner.FunctionOrClassOwner;
+                    this.Class == this.Owner ||
+                    this.Class == this.Owner.Owner;
 
                 if (!isValidUsage)
                 {
@@ -95,7 +95,7 @@ namespace Crayon.ParseTree
         internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             this.BatchExpressionNameResolver(parser, lookup, imports, this.Args);
-            this.Class = Node.DoClassLookup(this.NameToken, lookup, imports, this.FunctionOrClassOwner.LocalNamespace, this.Name);
+            this.Class = Node.DoClassLookup(this.NameToken, lookup, imports, this.Owner.LocalNamespace, this.Name);
             return this;
         }
 

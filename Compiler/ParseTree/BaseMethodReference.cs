@@ -16,7 +16,7 @@ namespace Crayon.ParseTree
         public ClassDefinition ClassToWhichThisMethodRefers { get; set; }
         public FunctionDefinition FunctionDefinition { get; set; }
 
-        public BaseMethodReference(Token firstToken, Token dotToken, Token stepToken, Executable owner)
+        public BaseMethodReference(Token firstToken, Token dotToken, Token stepToken, TopLevelConstruct owner)
             : base(firstToken, owner)
         {
             this.DotToken = dotToken;
@@ -24,7 +24,7 @@ namespace Crayon.ParseTree
             ClassDefinition cd = null;
             if (owner is FunctionDefinition)
             {
-                cd = (ClassDefinition)((FunctionDefinition)owner).FunctionOrClassOwner;
+                cd = (ClassDefinition)((FunctionDefinition)owner).Owner;
             }
             else if (owner is ClassDefinition)
             {

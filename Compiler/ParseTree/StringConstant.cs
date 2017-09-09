@@ -13,7 +13,7 @@ namespace Crayon.ParseTree
         public override bool CanAssignTo { get { return false; } }
 
         public string Value { get; private set; }
-        public StringConstant(Token token, string value, Executable owner)
+        public StringConstant(Token token, string value, TopLevelConstruct owner)
             : base(token, owner)
         {
             this.Value = value;
@@ -65,7 +65,7 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        public Expression CloneValue(Token token, Executable owner)
+        public Expression CloneValue(Token token, TopLevelConstruct owner)
         {
             return new StringConstant(token, this.Value, owner);
         }

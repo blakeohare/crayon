@@ -20,7 +20,7 @@ namespace Crayon.ParseTree
 
         public int LocalScopeId { get; set; }
 
-        public Variable(Token token, string name, Executable owner)
+        public Variable(Token token, string name, TopLevelConstruct owner)
             : base(token, owner)
         {
             this.Name = name;
@@ -39,7 +39,7 @@ namespace Crayon.ParseTree
         {
             if (this.Name == "$var")
             {
-                return new CompileTimeDictionary(this.FirstToken, "var", this.FunctionOrClassOwner);
+                return new CompileTimeDictionary(this.FirstToken, "var", this.Owner);
             }
 
             if (parser.IsReservedKeyword(this.Name))
@@ -59,7 +59,7 @@ namespace Crayon.ParseTree
 
             if (this.Name.StartsWith("$$"))
             {
-                return new LibraryFunctionReference(this.FirstToken, this.Name.Substring(2), this.FunctionOrClassOwner);
+                return new LibraryFunctionReference(this.FirstToken, this.Name.Substring(2), this.Owner);
             }
 
             if (this.Name == "this" || this.Name == "base")
@@ -68,13 +68,13 @@ namespace Crayon.ParseTree
 
                 if (container is FunctionDefinition)
                 {
-                    FunctionDefinition funcDef = (FunctionDefinition)this.FunctionOrClassOwner;
+                    FunctionDefinition funcDef = (FunctionDefinition)this.Owner;
                     if (funcDef.IsStaticMethod)
                     {
                         throw new ParserException(this.FirstToken, "Cannot use '" + this.Name + "' in a static method");
                     }
 
-                    if (funcDef.FunctionOrClassOwner == null)
+                    if (funcDef.Owner == null)
                     {
                         throw new ParserException(this.FirstToken, "Cannot use '" + this.Name + "' in a function that isn't a class method.");
                     }
@@ -91,7 +91,7 @@ namespace Crayon.ParseTree
                 if (container is ConstructorDefinition)
                 {
                     ConstructorDefinition constructor = (ConstructorDefinition)container;
-                    if (constructor == ((ClassDefinition)constructor.FunctionOrClassOwner).StaticConstructor) // TODO: This check is silly. Add an IsStatic field to ConstructorDefinition.
+                    if (constructor == ((ClassDefinition)constructor.Owner).StaticConstructor) // TODO: This check is silly. Add an IsStatic field to ConstructorDefinition.
                     {
                         throw new ParserException(this.FirstToken, "Cannot use '" + this.Name + "' in a static constructor.");
                     }
@@ -99,16 +99,16 @@ namespace Crayon.ParseTree
 
                 if (this.Name == "this")
                 {
-                    return new ThisKeyword(this.FirstToken, this.FunctionOrClassOwner);
+                    return new ThisKeyword(this.FirstToken, this.Owner);
                 }
-                return new BaseKeyword(this.FirstToken, this.FunctionOrClassOwner);
+                return new BaseKeyword(this.FirstToken, this.Owner);
             }
 
-            Executable exec = DoNameLookup(lookup, imports, this.FunctionOrClassOwner.LocalNamespace, this.Name);
+            Executable exec = DoNameLookup(lookup, imports, this.Owner.LocalNamespace, this.Name);
 
             if (exec != null)
             {
-                return Resolver.ConvertStaticReferenceToExpression(exec, this.FirstToken, this.FunctionOrClassOwner);
+                return Resolver.ConvertStaticReferenceToExpression(exec, this.FirstToken, this.Owner);
             }
 
             return this;
@@ -135,10 +135,10 @@ namespace Crayon.ParseTree
                         throw new ParserException(this.FirstToken, "'" + name + "' is referenced but not imported in this file.");
                     }
 
-                    Executable owner = this.FunctionOrClassOwner;
+                    Executable owner = this.Owner;
                     while (owner != null && !(owner is ClassDefinition))
                     {
-                        owner = owner.FunctionOrClassOwner;
+                        owner = owner.Owner;
                     }
 
                     if (owner != null)

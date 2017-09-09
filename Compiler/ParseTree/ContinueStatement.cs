@@ -4,7 +4,7 @@ namespace Crayon.ParseTree
 {
     internal class ContinueStatement : Executable
     {
-        public ContinueStatement(Token continueToken, Executable owner)
+        public ContinueStatement(Token continueToken, TopLevelConstruct owner)
             : base(continueToken, owner)
         { }
 

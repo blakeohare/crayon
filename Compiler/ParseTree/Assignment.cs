@@ -13,7 +13,7 @@ namespace Crayon.ParseTree
 
         public bool HACK_IsVmGlobal { get; set; }
 
-        public Assignment(Expression target, Token assignmentOpToken, string assignmentOp, Expression assignedValue, Executable owner)
+        public Assignment(Expression target, Token assignmentOpToken, string assignmentOp, Expression assignedValue, TopLevelConstruct owner)
             : base(target.FirstToken, owner)
         {
             this.Target = target;

@@ -6,7 +6,7 @@ namespace Crayon.ParseTree
 {
     public class TopLevelConstruct : Executable
     {
-        public TopLevelConstruct(Token firstToken, Executable owner) : base(firstToken, owner)
+        public TopLevelConstruct(Token firstToken, TopLevelConstruct owner) : base(firstToken, owner)
         {
 
         }

@@ -14,7 +14,7 @@ namespace Crayon.ParseTree
         public Expression PrimaryExpression { get; set; }
         public Expression SecondaryExpression { get; set; }
 
-        public NullCoalescer(Expression primaryExpression, Expression secondaryExpression, Executable owner)
+        public NullCoalescer(Expression primaryExpression, Expression secondaryExpression, TopLevelConstruct owner)
             : base(primaryExpression.FirstToken, owner)
         {
             this.PrimaryExpression = primaryExpression;

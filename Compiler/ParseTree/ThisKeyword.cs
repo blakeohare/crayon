@@ -11,7 +11,7 @@ namespace Crayon.ParseTree
 
         public override bool CanAssignTo { get { return false; } }
 
-        public ThisKeyword(Token token, Executable owner)
+        public ThisKeyword(Token token, TopLevelConstruct owner)
             : base(token, owner)
         {
         }

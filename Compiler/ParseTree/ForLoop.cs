@@ -11,7 +11,7 @@ namespace Crayon.ParseTree
         public Executable[] Step { get; private set; }
         public Executable[] Code { get; private set; }
 
-        public ForLoop(Token forToken, IList<Executable> init, Expression condition, IList<Executable> step, IList<Executable> code, Executable owner)
+        public ForLoop(Token forToken, IList<Executable> init, Expression condition, IList<Executable> step, IList<Executable> code, TopLevelConstruct owner)
             : base(forToken, owner)
         {
             this.Init = init.ToArray();

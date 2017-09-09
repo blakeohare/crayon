@@ -17,7 +17,7 @@ namespace Crayon.ParseTree
 
         public string Name { get; set; }
 
-        public PartialNamespaceReference(Token token, string name, Executable owner)
+        public PartialNamespaceReference(Token token, string name, TopLevelConstruct owner)
             : base(token, owner)
         {
             this.Name = name;

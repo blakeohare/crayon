@@ -10,7 +10,7 @@ namespace Crayon.ParseTree
         public TopLevelConstruct[] Code { get; set; }
         public string Name { get; set; }
 
-        public Namespace(Token namespaceToken, string name, Executable owner, Library library)
+        public Namespace(Token namespaceToken, string name, TopLevelConstruct owner, Library library)
             : base(namespaceToken, owner)
         {
             this.Library = library;

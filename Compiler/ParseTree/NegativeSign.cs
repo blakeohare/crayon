@@ -15,7 +15,7 @@ namespace Crayon.ParseTree
 
         public Expression Root { get; private set; }
 
-        public NegativeSign(Token sign, Expression root, Executable owner)
+        public NegativeSign(Token sign, Expression root, TopLevelConstruct owner)
             : base(sign, owner)
         {
             this.Root = root;
@@ -26,12 +26,12 @@ namespace Crayon.ParseTree
             this.Root = this.Root.Resolve(parser);
             if (this.Root is IntegerConstant)
             {
-                return new IntegerConstant(this.FirstToken, ((IntegerConstant)this.Root).Value * -1, this.FunctionOrClassOwner);
+                return new IntegerConstant(this.FirstToken, ((IntegerConstant)this.Root).Value * -1, this.Owner);
             }
 
             if (this.Root is FloatConstant)
             {
-                return new FloatConstant(this.FirstToken, ((FloatConstant)this.Root).Value * -1, this.FunctionOrClassOwner);
+                return new FloatConstant(this.FirstToken, ((FloatConstant)this.Root).Value * -1, this.Owner);
             }
 
             return this;

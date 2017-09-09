@@ -15,7 +15,7 @@ namespace Crayon.ParseTree
 
         public Expression Root { get; private set; }
 
-        public BooleanNot(Token bang, Expression root, Executable owner)
+        public BooleanNot(Token bang, Expression root, TopLevelConstruct owner)
             : base(bang, owner)
         {
             this.Root = root;
@@ -27,7 +27,7 @@ namespace Crayon.ParseTree
 
             if (this.Root is BooleanConstant)
             {
-                return new BooleanConstant(this.FirstToken, !((BooleanConstant)this.Root).Value, this.FunctionOrClassOwner);
+                return new BooleanConstant(this.FirstToken, !((BooleanConstant)this.Root).Value, this.Owner);
             }
 
             return this;

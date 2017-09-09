@@ -14,7 +14,7 @@ namespace Crayon.ParseTree
 
         public string Name { get; private set; }
 
-        public LibraryFunctionReference(Token token, string name, Executable owner)
+        public LibraryFunctionReference(Token token, string name, TopLevelConstruct owner)
             : base(token, owner)
         {
             this.Name = name;

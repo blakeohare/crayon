@@ -14,7 +14,7 @@ namespace Crayon.ParseTree
 
         public FieldDeclaration Field { get; set; }
 
-        public FieldReference(Token token, FieldDeclaration field, Executable owner)
+        public FieldReference(Token token, FieldDeclaration field, TopLevelConstruct owner)
             : base(token, owner)
         {
             this.Field = field;

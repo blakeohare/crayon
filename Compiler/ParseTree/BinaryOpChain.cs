@@ -19,7 +19,7 @@ namespace Crayon.ParseTree
         public Expression Right { get; private set; }
         public Token Op { get; private set; }
 
-        public BinaryOpChain(Expression left, Token op, Expression right, Executable owner)
+        public BinaryOpChain(Expression left, Token op, Expression right, TopLevelConstruct owner)
             : base(left.FirstToken, owner)
         {
             this.Left = left;
@@ -27,7 +27,7 @@ namespace Crayon.ParseTree
             this.Op = op;
         }
 
-        public static BinaryOpChain Build(IList<Expression> expressions, IList<Token> ops, Executable owner)
+        public static BinaryOpChain Build(IList<Expression> expressions, IList<Token> ops, TopLevelConstruct owner)
         {
             int expressionIndex = 0;
             int opIndex = 0;
@@ -244,17 +244,17 @@ namespace Crayon.ParseTree
 
         private Expression MakeFloat(Token firstToken, double value)
         {
-            return new FloatConstant(firstToken, value, this.FunctionOrClassOwner);
+            return new FloatConstant(firstToken, value, this.Owner);
         }
 
         private Expression MakeInt(Token firstToken, int value)
         {
-            return new IntegerConstant(firstToken, value, this.FunctionOrClassOwner);
+            return new IntegerConstant(firstToken, value, this.Owner);
         }
 
         private Expression MakeString(Token firstToken, string value)
         {
-            return new StringConstant(firstToken, value, this.FunctionOrClassOwner);
+            return new StringConstant(firstToken, value, this.Owner);
         }
 
         private bool GetBool(Expression expr)
@@ -289,7 +289,7 @@ namespace Crayon.ParseTree
 
         private Expression MakeBool(Token firstToken, bool value)
         {
-            return new BooleanConstant(firstToken, value, this.FunctionOrClassOwner);
+            return new BooleanConstant(firstToken, value, this.Owner);
         }
 
         internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)

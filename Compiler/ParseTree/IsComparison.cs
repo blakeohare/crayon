@@ -20,7 +20,7 @@ namespace Crayon.ParseTree
 
         public override bool CanAssignTo { get { return false; } }
 
-        public IsComparison(Expression root, Token isToken, Token firstClassToken, string classNameWithNamespace, Executable owner)
+        public IsComparison(Expression root, Token isToken, Token firstClassToken, string classNameWithNamespace, TopLevelConstruct owner)
             : base(root.FirstToken, owner)
         {
             this.Expression = root;
@@ -38,7 +38,7 @@ namespace Crayon.ParseTree
         internal override Expression ResolveNames(Parser parser, Dictionary<string, Executable> lookup, string[] imports)
         {
             this.Expression.ResolveNames(parser, lookup, imports);
-            this.ClassDefinition = Node.DoClassLookup(this.ClassToken, lookup, imports, this.FunctionOrClassOwner.LocalNamespace, this.ClassName);
+            this.ClassDefinition = Node.DoClassLookup(this.ClassToken, lookup, imports, this.Owner.LocalNamespace, this.ClassName);
             return this;
         }
 

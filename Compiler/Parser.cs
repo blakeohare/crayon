@@ -418,7 +418,7 @@ namespace Crayon
             return true;
         }
 
-        internal static IList<Executable> ParseBlock(Parser parser, TokenStream tokens, bool bracketsRequired, Executable owner)
+        internal static IList<Executable> ParseBlock(Parser parser, TokenStream tokens, bool bracketsRequired, TopLevelConstruct owner)
         {
             List<Executable> output = new List<Executable>();
 

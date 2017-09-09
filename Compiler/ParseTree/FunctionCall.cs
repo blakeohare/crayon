@@ -22,7 +22,7 @@ namespace Crayon.ParseTree
             if (fp.Name == "prepareToSuspend" && this.FirstToken.FileName.Contains("Libraries/"))
             {
                 this.Args = new Expression[0];
-                this.Root = new Variable(this.FirstToken, "noop", this.FunctionOrClassOwner);
+                this.Root = new Variable(this.FirstToken, "noop", this.Owner);
             }
             return this;
         }
@@ -33,7 +33,7 @@ namespace Crayon.ParseTree
         public Token ParenToken { get; private set; }
         public Expression[] Args { get; private set; }
 
-        public FunctionCall(Expression root, Token parenToken, IList<Expression> args, Executable owner)
+        public FunctionCall(Expression root, Token parenToken, IList<Expression> args, TopLevelConstruct owner)
             : base(root.FirstToken, owner)
         {
             this.Root = root;
@@ -74,14 +74,14 @@ namespace Crayon.ParseTree
                     if (arg0 is IntegerConstant)
                     {
                         int integerValue = ((IntegerConstant)arg0).Value;
-                        return new IntegerConstant(this.FirstToken, integerValue, this.FunctionOrClassOwner);
+                        return new IntegerConstant(this.FirstToken, integerValue, this.Owner);
                     }
 
                     if (arg0 is FloatConstant)
                     {
                         double floatValue = ((FloatConstant)arg0).Value;
                         int integerValue = (int)floatValue;
-                        return new IntegerConstant(this.FirstToken, integerValue, this.FunctionOrClassOwner);
+                        return new IntegerConstant(this.FirstToken, integerValue, this.Owner);
                     }
                 }
             }
@@ -91,7 +91,7 @@ namespace Crayon.ParseTree
                 if (this.Root is SpecialEntity.EnumMaxFunction)
                 {
                     int max = ((SpecialEntity.EnumMaxFunction)this.Root).GetMax();
-                    return new IntegerConstant(this.Root.FirstToken, max, this.FunctionOrClassOwner);
+                    return new IntegerConstant(this.Root.FirstToken, max, this.Owner);
                 }
 
                 if (this.Root is SpecialEntity.EnumValuesFunction)
@@ -100,9 +100,9 @@ namespace Crayon.ParseTree
                     List<Expression> values = new List<Expression>();
                     foreach (int rawValue in rawValues)
                     {
-                        values.Add(new IntegerConstant(this.Root.FirstToken, rawValue, this.FunctionOrClassOwner));
+                        values.Add(new IntegerConstant(this.Root.FirstToken, rawValue, this.Owner));
                     }
-                    return new ListDefinition(this.FirstToken, values, this.FunctionOrClassOwner);
+                    return new ListDefinition(this.FirstToken, values, this.Owner);
                 }
             }
 
@@ -127,7 +127,7 @@ namespace Crayon.ParseTree
             {
                 this.BatchExpressionNameResolver(parser, lookup, imports, this.Args);
 
-                return new CoreFunctionInvocation(this.FirstToken, this.Args, this.FunctionOrClassOwner);
+                return new CoreFunctionInvocation(this.FirstToken, this.Args, this.Owner);
             }
 
             this.Root = this.Root.ResolveNames(parser, lookup, imports);
@@ -139,7 +139,7 @@ namespace Crayon.ParseTree
                     this.FirstToken,
                     ((LibraryFunctionReference)this.Root).Name,
                     this.Args,
-                    this.FunctionOrClassOwner);
+                    this.Owner);
             }
 
             if (this.Root is DotStep ||

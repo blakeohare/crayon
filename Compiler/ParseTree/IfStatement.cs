@@ -10,7 +10,7 @@ namespace Crayon.ParseTree
         public Executable[] TrueCode { get; private set; }
         public Executable[] FalseCode { get; private set; }
 
-        public IfStatement(Token ifToken, Expression condition, IList<Executable> trueCode, IList<Executable> falseCode, Executable owner)
+        public IfStatement(Token ifToken, Expression condition, IList<Executable> trueCode, IList<Executable> falseCode, TopLevelConstruct owner)
             : base(ifToken, owner)
         {
             this.Condition = condition;
