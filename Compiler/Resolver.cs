@@ -300,7 +300,7 @@ namespace Crayon
 
                 foreach (string itemKey in currentLibraryDefinitions.Keys.OrderBy(key => key))
                 {
-                    Executable item = currentLibraryDefinitions[itemKey];
+                    TopLevelConstruct item = currentLibraryDefinitions[itemKey];
                     if (!(item is Namespace))
                     {
                         item.ResolveNames(this.parser, allKnownDefinitions, item.NamespacePrefixSearch);
