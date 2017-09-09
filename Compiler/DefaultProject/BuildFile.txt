@@ -1,0 +1,43 @@
+﻿<build>
+	<projectname>%%%PROJECT_NAME%%%</projectname>
+	<title>%%%TITLE%%%</title>
+	<description>Enter description of %%%PROJECT_NAME%%%</description>
+	<icon>assets/icon32.png,assets/icon256.png</icon>
+
+	<source>source</source>
+	<output>output/%TARGET_NAME%</output>
+
+	<imagesheets>
+		<sheet id="everything">
+			<prefix>*</prefix>
+		</sheet>
+	</imagesheets>
+	
+	<guidseed>com.yourname.%%%PROJECT_NAME%%%,v1,%TARGET_NAME%</guidseed>
+	
+	<!-- Various targets for exporting to different platforms -->
+	<target name="javascript">
+		<platform>javascript-app</platform>
+		<jsfileprefix>/website/relative/path/from/domain/root</jsfileprefix>
+	</target>
+	
+	<target name="csharp">
+		<platform>csharp-app</platform>
+	</target>
+	
+	<target name="java">
+		<platform>java-app</platform>
+	</target>
+	
+	<target name="python">
+		<platform>python-app</platform>
+	</target>
+	
+	<target name="chrome-web-app">
+		<platform>javascript-app-chrome</platform>
+	</target>
+	
+	<target name="ios">
+		<platform>javascript-app-ios</platform>
+	</target>
+</build>

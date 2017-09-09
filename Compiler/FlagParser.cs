@@ -14,6 +14,7 @@ namespace Crayon
         public static readonly string VM = "vm";
         public static readonly string VM_DIR = "vmdir";
         public static readonly string CBX = "cbx";
+        public static readonly string GEN_DEFAULT_PROJ = "genDefaultProj";
 
         private static readonly HashSet<string> ATOMIC_FLAGS = new HashSet<string>() {
             MIN_ARG,
@@ -29,6 +30,7 @@ namespace Crayon
             BUILD_FILE, // this will be implicitly applied to the first argument that ends in .build and has no flag associated with it.
             VM,
             VM_DIR,
+            GEN_DEFAULT_PROJ,
         };
 
         public static Dictionary<string, string> Parse(string[] args)

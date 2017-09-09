@@ -53,6 +53,9 @@
     <EmbeddedResource Include="Languages\*\*.txt" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DefaultProject\*.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="LICENSE.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

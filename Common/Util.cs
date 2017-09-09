@@ -131,6 +131,19 @@ namespace Common
             return System.Convert.ToBase64String(bytes, System.Base64FormattingOptions.None);
         }
 
+        public static string ConvertStringToAlphanumerics(string value)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            foreach (char c in value)
+            {
+                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
+                {
+                    sb.Append(c);
+                }
+            }
+            return sb.ToString();
+        }
+
         public static string ReadFileExternally(string path, bool canonicalizeNewlines)
         {
             string contents = TrimBomIfPresent(System.IO.File.ReadAllText(path));

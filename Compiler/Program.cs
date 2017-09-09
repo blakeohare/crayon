@@ -22,6 +22,9 @@ namespace Crayon
             "",
             "  -vmdir             Directory to output the VM to (when -vm is",
             "                     specified).",
+            "",
+            "  -genDefaultProj    Generate a default boilerplate project to",
+            "                     the current directory.",
             "");
 #endif
 
@@ -35,8 +38,7 @@ namespace Crayon
                 args = GetEffectiveArgs(args);
 
                 // First chance exceptions should crash in debug builds.
-                argLookup = FlagParser.Parse(args);
-                Program.Compile(argLookup);
+                ExecuteProgramUnchecked(args);
 
                 // Crash if there were any graphics contexts that weren't cleaned up.
                 // This is okay on Windows, but on OSX this is a problem, so ensure that a
@@ -52,8 +54,7 @@ namespace Crayon
                 {
                     try
                     {
-                        argLookup = FlagParser.Parse(args);
-                        Program.Compile(argLookup);
+                        ExecuteProgramUnchecked(args);
                     }
                     catch (InvalidOperationException e)
                     {
@@ -76,6 +77,27 @@ namespace Crayon
                 }
             }
 #endif
+        }
+
+        private static void ExecuteProgramUnchecked(string[] args)
+        {
+            Dictionary<string, string> argLookup = FlagParser.Parse(args);
+            if (argLookup.ContainsKey(FlagParser.GEN_DEFAULT_PROJ))
+            {
+                DefaultProjectGenerator generator = new DefaultProjectGenerator(argLookup[FlagParser.GEN_DEFAULT_PROJ].Trim());
+                Dictionary<string, FileOutput> project = generator.Validate().Export();
+
+                string directory = System.IO.Path.Combine(
+                    System.IO.Directory.GetCurrentDirectory(),
+                    generator.ProjectID);
+                new FileOutputExporter(directory).ExportFiles(project);
+
+                Console.WriteLine("Empty project exported to directory '" + generator.ProjectID + "/'");
+            }
+            else
+            {
+                Program.Compile(argLookup);
+            }
         }
 
         private static string[] GetEffectiveArgs(string[] actualArgs)
