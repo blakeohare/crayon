@@ -18,133 +18,123 @@ namespace Crayon
 
         public TopLevelConstruct ParseTopLevel(
             TokenStream tokens,
-            bool simpleOnly,
-            bool semicolonPresent,
-            bool isRoot,
             TopLevelConstruct owner)
         {
-            // TODO: split the things out from the implementation of Parse.
-            return (TopLevelConstruct)this.ParseInternal(tokens, simpleOnly, semicolonPresent, isRoot, owner);
-        }
+            string value = tokens.PeekValue();
 
+            Token staticToken = null;
+            Token finalToken = null;
+            while (value == this.parser.Keywords.STATIC || value == this.parser.Keywords.FINAL)
+            {
+                if (value == this.parser.Keywords.STATIC && staticToken == null)
+                {
+                    staticToken = tokens.Pop();
+                    value = tokens.PeekValue();
+                }
+                if (value == this.parser.Keywords.FINAL && finalToken == null)
+                {
+                    finalToken = tokens.Pop();
+                    value = tokens.PeekValue();
+                }
+            }
+
+            if (staticToken != null || finalToken != null)
+            {
+                if (value != this.parser.Keywords.CLASS)
+                {
+                    if (staticToken != null)
+                    {
+                        throw new ParserException(staticToken, "Only classes, methods, and fields may be marked as static");
+                    }
+                    else
+                    {
+                        throw new ParserException(finalToken, "Only classes may be marked as final.");
+                    }
+                }
+
+                if (staticToken != null && finalToken != null)
+                {
+                    throw new ParserException(staticToken, "Classes cannot be both static and final.");
+                }
+            }
+            
+            if (value == parser.Keywords.IMPORT)
+            {
+                Token importToken = tokens.PopExpected(parser.Keywords.IMPORT);
+                List<string> importPathBuilder = new List<string>();
+                while (!tokens.PopIfPresent(";"))
+                {
+                    if (importPathBuilder.Count > 0)
+                    {
+                        tokens.PopExpected(".");
+                    }
+
+                    Token pathToken = tokens.Pop();
+                    parser.VerifyIdentifier(pathToken);
+                    importPathBuilder.Add(pathToken.Value);
+                }
+                string importPath = string.Join(".", importPathBuilder);
+
+                return new ImportStatement(importToken, importPath, parser.CurrentLibrary);
+            }
+
+            if (value == this.parser.Keywords.ENUM)
+            {
+                return this.ParseEnumDefinition(tokens, owner);
+            }
+
+            if (value == this.parser.Keywords.NAMESPACE)
+            {
+                return this.ParseNamespace(tokens, owner);
+            }
+
+            if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner);
+            if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner);
+            if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, staticToken, finalToken);
+            if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner);
+            if (value == this.parser.Keywords.CONSTRUCTOR) return this.ParseConstructor(tokens, owner);
+
+            throw new ParserException(tokens.Peek(), "Unrecognized token.");
+        }
 
         public Executable Parse(
             TokenStream tokens,
             bool simpleOnly,
             bool semicolonPresent,
-            bool isRoot,
-            TopLevelConstruct owner)
-        {
-            return (Executable)this.ParseInternal(tokens, simpleOnly, semicolonPresent, isRoot, owner);
-        }
-
-        // TODO: split this up now that TopLevelConstruct and Executable are now different.
-        public object ParseInternal(
-            TokenStream tokens,
-            bool simpleOnly,
-            bool semicolonPresent,
-            bool isRoot,
             TopLevelConstruct owner)
         {
             string value = tokens.PeekValue();
 
             if (!simpleOnly)
             {
-                Token staticToken = null;
-                Token finalToken = null;
-                while (value == this.parser.Keywords.STATIC || value == this.parser.Keywords.FINAL)
-                {
-                    if (value == this.parser.Keywords.STATIC && staticToken == null)
-                    {
-                        staticToken = tokens.Pop();
-                        value = tokens.PeekValue();
-                    }
-                    if (value == this.parser.Keywords.FINAL && finalToken == null)
-                    {
-                        finalToken = tokens.Pop();
-                        value = tokens.PeekValue();
-                    }
-                }
-
-                if (staticToken != null || finalToken != null)
-                {
-                    if (value != this.parser.Keywords.CLASS)
-                    {
-                        if (staticToken != null)
-                        {
-                            throw new ParserException(staticToken, "Only classes, methods, and fields may be marked as static");
-                        }
-                        else
-                        {
-                            throw new ParserException(finalToken, "Only classes may be marked as final.");
-                        }
-                    }
-
-                    if (staticToken != null && finalToken != null)
-                    {
-                        throw new ParserException(staticToken, "Classes cannot be both static and final.");
-                    }
-                }
-
-                if (!isRoot &&
-                    (value == this.parser.Keywords.FUNCTION || value == this.parser.Keywords.CLASS))
+                if (value == this.parser.Keywords.FUNCTION || value == this.parser.Keywords.CLASS)
                 {
                     throw new ParserException(
                         tokens.Peek(),
                         (value == this.parser.Keywords.FUNCTION ? "Function" : "Class") +
                         " definition cannot be nested in another construct.");
                 }
-
-
+                
                 if (value == parser.Keywords.IMPORT)
                 {
-                    Token importToken = tokens.PopExpected(parser.Keywords.IMPORT);
-
-                    if (!isRoot)
-                    {
-                        throw new ParserException(tokens.Peek(), "Imports can only be made from the root of a file and cannot be nested inside other constructs.");
-                    }
-
-                    List<string> importPathBuilder = new List<string>();
-                    while (!tokens.PopIfPresent(";"))
-                    {
-                        if (importPathBuilder.Count > 0)
-                        {
-                            tokens.PopExpected(".");
-                        }
-
-                        Token pathToken = tokens.Pop();
-                        parser.VerifyIdentifier(pathToken);
-                        importPathBuilder.Add(pathToken.Value);
-                    }
-                    string importPath = string.Join(".", importPathBuilder);
-
-                    return new ImportStatement(importToken, importPath, parser.CurrentLibrary);
+                    throw new ParserException(tokens.Peek(), "Imports can only be made from the root of a file and cannot be nested inside other constructs.");
                 }
 
                 if (value == this.parser.Keywords.ENUM)
                 {
-                    if (!isRoot)
-                    {
-                        throw new ParserException(tokens.Peek(), "Enums can only be defined from the root of a file and cannot be nested inside functions/loops/etc.");
-                    }
-
-                    return this.ParseEnumDefinition(tokens, owner);
+                    throw new ParserException(tokens.Peek(), "Enums can only be defined from the root of a file and cannot be nested inside functions/loops/etc.");
                 }
 
                 if (value == this.parser.Keywords.NAMESPACE)
                 {
-                    if (!isRoot)
-                    {
-                        throw new ParserException(tokens.Peek(), "Namespace declarations cannot be nested in other constructs.");
-                    }
-                    return this.ParseNamespace(tokens, owner);
+                    throw new ParserException(tokens.Peek(), "Namespace declarations cannot be nested in other constructs.");
                 }
 
-                if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner);
-                if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner);
-                if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, staticToken, finalToken);
-                if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner);
+                if (value == this.parser.Keywords.CONST)
+                {
+                    throw new ParserException(tokens.Peek(), "Constant declarations cannot be nested in other constructs.");
+                }
+                
                 if (value == this.parser.Keywords.FOR) return this.ParseFor(tokens, owner);
                 if (value == this.parser.Keywords.WHILE) return this.ParseWhile(tokens, owner);
                 if (value == this.parser.Keywords.DO) return this.ParseDoWhile(tokens, owner);
@@ -154,7 +144,6 @@ namespace Crayon
                 if (value == this.parser.Keywords.RETURN) return this.ParseReturn(tokens, owner);
                 if (value == this.parser.Keywords.BREAK) return this.ParseBreak(tokens, owner);
                 if (value == this.parser.Keywords.CONTINUE) return this.ParseContinue(tokens, owner);
-                if (value == this.parser.Keywords.CONSTRUCTOR) return this.ParseConstructor(tokens, owner);
                 if (value == this.parser.Keywords.THROW) return this.ParseThrow(tokens, owner);
             }
 
@@ -175,7 +164,7 @@ namespace Crayon
 
             return new ExpressionAsExecutable(expr, owner);
         }
-
+        
         private Executable ParseThrow(TokenStream tokens, TopLevelConstruct owner)
         {
             Token throwToken = tokens.PopExpected(this.parser.Keywords.THROW);
@@ -447,7 +436,7 @@ namespace Crayon
             List<TopLevelConstruct> namespaceMembers = new List<TopLevelConstruct>();
             while (!tokens.PopIfPresent("}"))
             {
-                TopLevelConstruct executable = this.parser.ExecutableParser.ParseTopLevel(tokens, false, false, true, namespaceInstance);
+                TopLevelConstruct executable = this.parser.ExecutableParser.ParseTopLevel(tokens, namespaceInstance);
                 if (executable is FunctionDefinition ||
                     executable is ClassDefinition ||
                     executable is EnumDefinition ||
@@ -553,7 +542,7 @@ namespace Crayon
                 while (!tokens.PopIfPresent(";"))
                 {
                     if (init.Count > 0) tokens.PopExpected(",");
-                    init.Add(this.Parse(tokens, true, false, false, owner));
+                    init.Add(this.Parse(tokens, true, false, owner));
                 }
                 Expression condition = null;
                 if (!tokens.PopIfPresent(";"))
@@ -565,7 +554,7 @@ namespace Crayon
                 while (!tokens.PopIfPresent(")"))
                 {
                     if (step.Count > 0) tokens.PopExpected(",");
-                    step.Add(this.Parse(tokens, true, false, false, owner));
+                    step.Add(this.Parse(tokens, true, false, owner));
                 }
 
                 IList<Executable> body = Parser.ParseBlock(parser, tokens, false, owner);
@@ -661,7 +650,7 @@ namespace Crayon
                         code.Add(new List<Executable>());
                         state = 'O';
                     }
-                    code[code.Count - 1].Add(this.parser.ExecutableParser.Parse(tokens, false, true, false, owner));
+                    code[code.Count - 1].Add(this.parser.ExecutableParser.Parse(tokens, false, true, owner));
                 }
             }
 

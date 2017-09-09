@@ -336,7 +336,7 @@ namespace Crayon
             List<CompilationScope> scopesAdded = new List<CompilationScope>();
             while (tokens.HasMore && tokens.IsNext(this.Keywords.IMPORT))
             {
-                ImportStatement importStatement = this.ExecutableParser.ParseTopLevel(tokens, false, true, true, null) as ImportStatement;
+                ImportStatement importStatement = this.ExecutableParser.ParseTopLevel(tokens, null) as ImportStatement;
                 if (importStatement == null) throw new Exception();
                 namespaceImportsBuilder.Add(importStatement.ImportPath);
                 Library library = this.LibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
@@ -358,7 +358,7 @@ namespace Crayon
 
             while (tokens.HasMore)
             {
-                TopLevelConstruct executable = this.ExecutableParser.ParseTopLevel(tokens, false, true, true, null);
+                TopLevelConstruct executable = this.ExecutableParser.ParseTopLevel(tokens, null);
 
                 if (executable is ImportStatement)
                 {
@@ -426,7 +426,7 @@ namespace Crayon
             {
                 while (!tokens.PopIfPresent("}"))
                 {
-                    output.Add(parser.ExecutableParser.Parse(tokens, false, true, false, owner));
+                    output.Add(parser.ExecutableParser.Parse(tokens, false, true, owner));
                 }
             }
             else
@@ -441,7 +441,7 @@ namespace Crayon
                     return output;
                 }
 
-                output.Add(parser.ExecutableParser.Parse(tokens, false, true, false, owner));
+                output.Add(parser.ExecutableParser.Parse(tokens, false, true, owner));
             }
             return output;
         }
