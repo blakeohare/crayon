@@ -34,7 +34,8 @@ namespace Common
                     surfaceDestroyFp.Invoke(null, new object[] { handle });
                 }
             }
-#endif        }
+#endif
+        }
 
 #if WINDOWS
         private System.Drawing.Bitmap bitmap;

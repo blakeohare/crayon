@@ -59,7 +59,7 @@ namespace Crayon
             }
         }
 
-        private static readonly char[] COLON_CHAR = { ':' };
+        private static readonly char[] COLON_CHAR = new char[] { ':' };
 
         private List<Dictionary<string, string>> ParseApplicableInstructions()
         {

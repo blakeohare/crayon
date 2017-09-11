@@ -101,7 +101,7 @@ namespace LangC
 
         public override void TranslateBooleanConstant(StringBuilder sb, bool value)
         {
-            sb.Append(value ? "1" : "0");;
+            sb.Append(value ? "1" : "0");
         }
 
         private string GetValueStructInternalValueFieldName(PType expectedType)

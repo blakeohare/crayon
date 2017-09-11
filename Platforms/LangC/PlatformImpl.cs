@@ -161,7 +161,7 @@ namespace LangC
             }
             sb.Append('}');
             sb.Append(newline);
-            sb.Append(newline); ;
+            sb.Append(newline);
         }
 
         public override string GenerateCodeForFunctionDeclaration(AbstractTranslator translator, FunctionDefinition funcDef)
