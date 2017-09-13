@@ -13,7 +13,7 @@ namespace Crayon
 
         // Following the @ will be an encoded integer indicating how many rows are in the byte code.
         // After that is each encoded row.
-        public static String Encode(ByteBuffer buffer)
+        public static string Encode(ByteBuffer buffer)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("CRAYON@");
