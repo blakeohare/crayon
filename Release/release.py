@@ -131,7 +131,7 @@ def main(args):
 		setupFile = readFile("setup-windows.txt")
 		writeFile(copyToDir + '/Setup Instructions.txt', setupFile, '\r\n')
 	if platform == 'mono':
-		setupFile = readFile("setup-mono.md")
+		setupFile = readFile("setup-mono.txt")
 		writeFile(copyToDir + '/Setup Instructions.txt', setupFile, '\n')
 
 	print("Release directory created: " + copyToDir)
