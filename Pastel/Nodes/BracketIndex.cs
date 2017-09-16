@@ -46,6 +46,13 @@ namespace Pastel.Nodes
             {
                 badIndex = !indexType.IsIdentical(PType.INT);
                 this.ResolvedType = PType.CHAR;
+                if (this.Root is InlineConstant && this.Index is InlineConstant)
+                {
+                    string c = ((string)((InlineConstant)this.Root).Value)[(int)((InlineConstant)this.Index).Value].ToString();
+                    InlineConstant newValue = new InlineConstant(PType.CHAR, this.FirstToken, c);
+                    newValue.ResolveType(varScope, compiler);
+                    return newValue;
+                }
             }
             else
             {

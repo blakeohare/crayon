@@ -22,6 +22,7 @@ namespace Pastel.Nodes
         public InlineConstant(PType type, Token firstToken, object value) : base(firstToken)
         {
             this.Type = type;
+            this.ResolvedType = type;
             this.Value = value;
         }
 

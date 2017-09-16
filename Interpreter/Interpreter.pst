@@ -358,6 +358,16 @@ List<Token> generateTokenListFromPcs(List<int> pcs) {
     return output;
 }
 
+// detect if a stack trace item is a library
+// not a library --> my/src/foo.cry, Line: 2, Col 3
+// not a library --> my/src[1]/foo.cry, Line: 4, Col 5
+// library --> [Lib:foo.cry] Line: 6, Col 7
+bool stackItemIsLibrary(string stackInfo) {
+	if (stackInfo[0] != '[') return false;
+	int cIndex = stackInfo.IndexOf(":");
+	return cIndex > 0 && cIndex < stackInfo.IndexOf("]");
+}
+
 List<string> tokenHelperConvertPcsToStackTraceStrings(List<int> pcs) {
     ProgramData p = Core.GetProgramData();
     List<Token> tokens = generateTokenListFromPcs(pcs);
@@ -450,8 +460,16 @@ string unrollExceptionOutput(Value exceptionInstance) {
     trace.Pop();
     trace.Add("Stack Trace:");
     trace.Reverse();
+	pcs.Reverse();
 
-    List<Token> tokensAtPc = p.tokenData[pcs[0]];
+	if (!Core.IsDebug() && !stackItemIsLibrary(trace[0])) {
+		while (stackItemIsLibrary(trace[trace.Size() - 1])) {
+			trace.Pop();
+			pcs.Pop();
+		}
+	}
+
+    List<Token> tokensAtPc = p.tokenData[pcs[pcs.Size() - 1]];
     if (tokensAtPc != null) {
         codeFormattedPointer = Core.StringConcatAll("\n\n", tokenHelperGetFormattedPointerToToken(tokensAtPc[0]));
     }

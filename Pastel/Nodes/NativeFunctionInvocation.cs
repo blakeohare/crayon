@@ -40,11 +40,20 @@ namespace Pastel.Nodes
             PType[] expectedTypes = NativeFunctionUtil.GetNativeFunctionArgTypes(this.Function);
             bool[] isArgRepeated = NativeFunctionUtil.GetNativeFunctionIsArgTypeRepeated(this.Function);
 
-            if (this.Function == NativeFunction.FORCE_PARENS)
+            switch (this.Function)
             {
-                if (this.Args.Length != 1) throw new ParserException(this.FirstToken, "Expected 1 arg.");
+                case NativeFunction.FORCE_PARENS:
+                    if (this.Args.Length != 1) throw new ParserException(this.FirstToken, "Expected 1 arg.");
 
-                return new ForcedParenthesis(this.FirstToken, this.Args[0]);
+                    return new ForcedParenthesis(this.FirstToken, this.Args[0]);
+
+                case NativeFunction.IS_DEBUG:
+#if DEBUG
+                    bool value = true;
+#else
+                    bool value = false;
+#endif
+                    return new InlineConstant(PType.BOOL, this.FirstToken, value);
             }
 
             Dictionary<string, PType> templateLookup = new Dictionary<string, PType>();
