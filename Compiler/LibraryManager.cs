@@ -161,7 +161,7 @@ namespace Crayon
             {
                 string path = System.IO.Path.Combine(currentDirectory, "Libraries");
                 if (System.IO.Directory.Exists(path) &&
-                    System.IO.Directory.Exists(System.IO.Path.Combine(currentDirectory, "Compiler", "CrayonWindows.sln"))) // quick sanity check
+                    System.IO.File.Exists(System.IO.Path.Combine(currentDirectory, "Compiler", "CrayonWindows.sln"))) // quick sanity check
                 {
                     unverifiedLibraryDirectories.AddRange(System.IO.Directory.GetDirectories(path));
                     break;
