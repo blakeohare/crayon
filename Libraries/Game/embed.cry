@@ -190,6 +190,14 @@ namespace Game {
             $$lib_game_set_title(title);
         }
 
+		// returns a list [isAspectRatioForced, screenWidth, screenHeight]
+		// can be called before game is created
+		// may possibly return 0 x 0 for the screen size if the underlying API can't tell
+		// will never return [true, 0, 0]
+		static function getScreenSize() {
+			return $$lib_game_getScreenInfo([false, 0, 0]);
+		}
+
         function clockTick() {
             for (t : Game.GameWindow._frameEndHandlers) {
                 t();

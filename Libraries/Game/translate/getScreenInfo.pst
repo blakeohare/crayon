@@ -1,0 +1,19 @@
+﻿/*
+    args[0]: A list for output
+		The following values will be set:
+		list[0] -> (bool) true if the aspect ratio is forced by the platform (e.g. a phone screen)
+		list[1] -> (int) screen width (or 0 if not known)
+		list[2] -> (int) screen height (or 0 if not known)
+		starting values are [false, 0, 0]
+*/
+Value lib_game_function_getScreenInfo(Array<Value> args) {
+	Value outList = args[0];
+	Array<int> o = Core.IntBuffer16;
+    if (Native._lib_game_getScreenInfo(o)) {
+		List<Value> output = (List<Value>) outList.internalValue;
+		output[0] = buildBoolean(o[0] == 1);
+		output[1] = buildInteger(o[1]);
+		output[2] = buildInteger(o[2]);
+    }
+    return outList;
+}

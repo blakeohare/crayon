@@ -8,6 +8,8 @@ void _lib_game_clockTick();
 // TODO: document this
 void _lib_game_event_queue_flush();
 
+bool _lib_game_getScreenInfo(Array<int> output);
+
 void _lib_game_initialize_game_with_fps(double fps);
 
 void _lib_game_initialize_screen(int gameWidth, int gameHeight, int windowWidth, int windowHeight, int executionContextId);

@@ -358,5 +358,11 @@ namespace Interpreter.Libraries.Game
         {
             return device.Axis[axisIndex];
         }
+
+        public static bool GetScreenInfo(int[] output)
+        {
+            // TODO: implement this when the public API is a bit more finalized.
+            return false;
+        }
     }
 }
