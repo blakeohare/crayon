@@ -37,3 +37,10 @@ C$ios$adjustScreen = function() {
 C$game$everyFrame = function() {
 	C$ios$adjustScreen();
 };
+
+C$game$screenInfo = function(o) {
+    o[0] = 1;
+    o[1] = window.innerWidth;
+    o[2] = window.innerHeight;
+    return true;
+}

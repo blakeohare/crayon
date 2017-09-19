@@ -130,6 +130,8 @@ C$game$setTitle = function (title) {
 
 C$game$enforcedScreenSize = function(width, height) { return [width, height]; }
 
+C$game$screenInfo = function(o) { return false; };
+
 window.addEventListener('keydown', function(e) {
   if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
     e.preventDefault();

@@ -1,0 +1,1 @@
+$_lib_game_getScreenInfo: C$ios$screenInfo([ARG:1])

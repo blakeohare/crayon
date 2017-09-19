@@ -194,7 +194,7 @@ namespace Game {
 		// can be called before game is created
 		// may possibly return 0 x 0 for the screen size if the underlying API can't tell
 		// will never return [true, 0, 0]
-		static function getScreenSize() {
+		static function getScreenInfo() {
 			return $$lib_game_getScreenInfo([false, 0, 0]);
 		}
 
