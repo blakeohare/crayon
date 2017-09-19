@@ -21,8 +21,8 @@ if (value2.type == Types.INSTANCE) {
             return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ASSIGNMENT, "Cannot override a method with assignment.");
         }
     } else {
-		return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ASSIGNMENT, Core.StringConcatAll("'", classInfo.fullyQualifiedName, "' instances do not have a field called '", p.identifiers[nameId], "'"));
-	}
+        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ASSIGNMENT, Core.StringConcatAll("'", classInfo.fullyQualifiedName, "' instances do not have a field called '", p.identifiers[nameId], "'"));
+    }
 } else {
     return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ASSIGNMENT, "Cannot assign to a field on this type.");
 }
