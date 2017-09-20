@@ -205,4 +205,12 @@ public class GameLibView extends View {
         this.imagesNativeData = imagesNativeData;
         this.textChars = textChars;
     }
+    
+    public static boolean getScreenInfo(int[] output) {
+        // TODO: get screen size.
+        output[1] = 1;
+        output[2] = 400;
+        output[3] = 800;
+        return true;
+    }
 }

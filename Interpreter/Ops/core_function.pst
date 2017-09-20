@@ -381,7 +381,7 @@ switch (row[0]) {
     case 23: Core.EmitComment("sign");
         @import("FrameworkFunctions/1_arg.pst");
 
-        if (arg1.type == Types.INTEGER) float1 = (double) Core.ForceParens((int) arg1.internalValue);
+        if (arg1.type == Types.INTEGER) float1 = 0.0 + Core.ForceParens((int) arg1.internalValue);
         else if (arg1.type == Types.FLOAT) float1 = (double) arg1.internalValue;
         else return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "sign requires a number as input.");
 

@@ -15,6 +15,11 @@ COPY_FILES: from=java, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
+APPLICABLE-TO: java-app-android
+COPY_FILES: from=java-android, to=%LIBRARY_PATH%/%FILE%
+END
+
+BEGIN
 APPLICABLE-TO: python-app
 EMBED_FILES: from=python
 END
