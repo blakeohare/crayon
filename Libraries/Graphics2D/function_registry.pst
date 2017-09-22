@@ -7,5 +7,6 @@
     Core.RegisterLibraryFunction(libRegData, "isPlatformUsingTextureAtlas", 0);
     Core.RegisterLibraryFunction(libRegData, "lineToQuad", 1);
     Core.RegisterLibraryFunction(libRegData, "renderQueueAction", 3);
+    Core.RegisterLibraryFunction(libRegData, "renderQueueValidateArgs", 1);
     Core.RegisterLibraryFunction(libRegData, "scale", 6);
 }

@@ -103,11 +103,6 @@ namespace Interpreter.Libraries.Game
                         blue = commands[i | 7];
                         alpha = commands[i | 8];
 
-                        if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
-                        if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
-                        if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
-                        if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
-
                         if (right >= 0 && left < VW && bottom > 0 && top < VH)
                         {
                             if (state == null || state.commandType != 1 || state.mode != 1 || state.textureId != 0 || state.r != red || state.g != green || state.b != blue || state.a != alpha)
@@ -163,11 +158,6 @@ namespace Interpreter.Libraries.Game
                         width = width / 2;
                         height = height / 2;
 
-                        if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
-                        if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
-                        if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
-                        if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
-
                         if (right >= 0 && left < VW && bottom >= 0 && top < VH && width > 0 && height > 0)
                         {
                             if (state != null)
@@ -214,11 +204,6 @@ namespace Interpreter.Libraries.Game
                         alpha = commands[i | 9];
                         left = startX;
                         right = startX;
-
-                        if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
-                        if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
-                        if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
-                        if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
 
                         if (startX > endX)
                         {
@@ -334,11 +319,6 @@ namespace Interpreter.Libraries.Game
                         blue = commands[i | 9];
                         alpha = commands[i | 10];
 
-                        if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
-                        if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
-                        if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
-                        if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
-
                         if (state != null)
                         {
                             GL.End();
@@ -380,11 +360,6 @@ namespace Interpreter.Libraries.Game
                         green = commands[i | 10];
                         blue = commands[i | 11];
                         alpha = commands[i | 12];
-
-                        if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
-                        if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
-                        if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
-                        if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
 
                         if (state != null)
                         {
@@ -442,7 +417,6 @@ namespace Interpreter.Libraries.Game
                         if ((mask & 8) != 0)
                         {
                             alpha = commands[i | 11];
-                            if (alpha < 0 || alpha > 255) alpha = alpha < 0 ? 0 : 255;
                         }
 
                         textureLeft = (double)textureNativeData[1];

@@ -1,23 +1,26 @@
-﻿Value lib_graphics2d_function_renderQueueAction(Array<Value> args) {
-    int i = 0;
-    Array<int> intArray1 = null;
-    List<int> intList1 = null;
-    int len = 0;
-    List<Value> list1 = null;
-    Array<object> objArray1 = null;
-    ObjectInstance objInstance1 = null;
-    Value value = null;
-    Value output = VALUE_NULL;
-    Value arg1 = args[0];
-    Value arg2 = args[1];
-    Value arg3 = args[2];
-    objInstance1 = ((ObjectInstance) arg1.internalValue);
-    objArray1 = objInstance1.nativeData;
+﻿/*
+    This method is multi purpose. Extracting the event queue is 99% of the work for all actions and performance here
+    isn't important, so they're combined to save code.
+
+    arg 1: object instance that contains the render event queue
+    arg 2: value list of integers representing the text characters to be drawn.
+    arg 3: an integer.
+        0 -> just run the native data intializers.
+        1 -> send the queue to the platform for rendering.
+        2 -> reset render queues to 0
+
+*/
+Value lib_graphics2d_function_renderQueueAction(Array<Value> args) {
+    int command = (int) args[2].internalValue;
+
+    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
+    Array<object> objArray1 = objInstance1.nativeData;
     if (objArray1 == null) {
         objArray1 = new Array<object>(5);
         objInstance1.nativeData = objArray1;
     }
-    intArray1 = ((Array<int>) objArray1[0]);
+
+    Array<int> intArray1 = (Array<int>) objArray1[0];
     if (intArray1 == null) {
         intArray1 = new Array<int>(0);
         objArray1[0] = intArray1;
@@ -26,24 +29,34 @@
         objArray1[3] = 0;
         objArray1[4] = new List<int>();
     }
-    intList1 = ((List<int>) objArray1[4]);
-    i = ((int) arg3.internalValue);
-    if (i == 1) {
-        if (arg2.type == Types.LIST) {
-            list1 = ((List<Value>) arg2.internalValue);
-            len = list1.Size();
-            for (i = 0; i < len; i += 1) {
+
+    List<int> intList1 = (List<int>) objArray1[4];
+
+    if (command == 1) {
+        Value charList = args[1];
+
+        // Copy the List<Value> of integers into a List<int>
+        if (charList.type == Types.LIST) {
+            Value value = null;
+            List<Value> list1 = ((List<Value>) charList.internalValue);
+            int len = list1.Size();
+            for (int i = 0; i < len; i += 1) {
                 value = list1[i];
                 intList1.Add(((int) value.internalValue));
             }
         }
-        Native._lib_graphics2d_render(intArray1, ((int) objArray1[1]), ((Array<Array<object>>) objArray1[2]), intList1);
-    } else {
-        if (i == 2) {
-            objArray1[1] = 0;
-            objArray1[3] = 0;
-            Core.ForceParens(intList1).Clear();
-        }
+        // Push the queues to the renderer.
+        Native._lib_graphics2d_render(
+            intArray1,
+            (int) objArray1[1],
+            (Array<Array<object>>) objArray1[2],
+            intList1); // text characters
+    } else if (command == 2) {
+        // Reset all render queues to 0.
+        objArray1[1] = 0;
+        objArray1[3] = 0;
+        Core.ForceParens(intList1).Clear();
     }
-    return output;
+
+    return VALUE_NULL;
 }

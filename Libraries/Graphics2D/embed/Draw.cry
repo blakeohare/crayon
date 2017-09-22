@@ -13,7 +13,7 @@ namespace Graphics2D {
         TEXT = 7, // Not used directly in Graphics2D. Injected by GraphicsText
     }
 
-    class Draw {
+    static class Draw {
 
         static field _queueOld = new Core.Object();
         static field _queue = new Core.Object();
@@ -29,10 +29,13 @@ namespace Graphics2D {
             Game.GameWindow._frameBeginHandlers.add(Graphics2D.Draw._rendererReset);
         }
 
-        // TODO: static classes
-        constructor() { Core.fail(); }
-
         static function _renderer() {
+            // Go through and cap the color arguments to a proper range.
+            // Doing this here is two-fold:
+            // - only one function call. User-facing draw calls are unencumbered with extra logic.
+            // - This is done in Pastel code. Platform-specific renders will get canonicalized data.
+            $$lib_graphics2d_renderQueueValidateArgs(Graphics2D.Draw._queue);
+
             // send the render queue to the platform renderer
             $$lib_graphics2d_renderQueueAction(Graphics2D.Draw._queue, Graphics2D.Draw._text_queue, 1);
 
