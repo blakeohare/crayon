@@ -27,8 +27,9 @@ namespace Crayon.ParseTree
             bool isStaticMethod,
             Token nameToken,
             IList<Annotation> functionAnnotations,
-            string namespyace)
-            : base(functionToken, nullableOwner)
+            string namespyace,
+            FileScope fileScope)
+            : base(functionToken, nullableOwner, fileScope)
         {
             this.Library = library;
             this.IsStaticMethod = isStaticMethod;

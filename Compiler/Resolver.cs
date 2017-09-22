@@ -108,7 +108,7 @@ namespace Crayon
                 // Go through and fill in all the partially qualified namespace names.
                 foreach (string ns in namespaces)
                 {
-                    Namespace nsInstance = new Namespace(null, ns, null, null);
+                    Namespace nsInstance = new Namespace(null, ns, null, null, null);
                     string possibleLibraryName = ns.Split('.')[0];
 
                     TODO.EnglishLocaleAssumed();

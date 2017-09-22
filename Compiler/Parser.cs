@@ -318,6 +318,7 @@ namespace Crayon
 
         public void ParseInterpretedCode(string filename, string code)
         {
+            FileScope fileScope = new FileScope(filename);
             int fileId = this.GetNextFileId();
             this.RegisterFileUsed(filename, code, fileId);
             Token[] tokenList = Tokenizer.Tokenize(filename, code, fileId, true);
@@ -336,7 +337,7 @@ namespace Crayon
             List<CompilationScope> scopesAdded = new List<CompilationScope>();
             while (tokens.HasMore && tokens.IsNext(this.Keywords.IMPORT))
             {
-                ImportStatement importStatement = this.ExecutableParser.ParseTopLevel(tokens, null) as ImportStatement;
+                ImportStatement importStatement = this.ExecutableParser.ParseTopLevel(tokens, null, fileScope) as ImportStatement;
                 if (importStatement == null) throw new Exception();
                 namespaceImportsBuilder.Add(importStatement.ImportPath);
                 Library library = this.LibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
@@ -358,7 +359,7 @@ namespace Crayon
 
             while (tokens.HasMore)
             {
-                TopLevelConstruct executable = this.ExecutableParser.ParseTopLevel(tokens, null);
+                TopLevelConstruct executable = this.ExecutableParser.ParseTopLevel(tokens, null, fileScope);
 
                 if (executable is ImportStatement)
                 {

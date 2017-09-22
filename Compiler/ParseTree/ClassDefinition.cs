@@ -37,8 +37,9 @@ namespace Crayon.ParseTree
             TopLevelConstruct owner,
             Library library,
             Token staticToken,
-            Token finalToken)
-            : base(classToken, owner)
+            Token finalToken,
+            FileScope fileScope)
+            : base(classToken, owner, fileScope)
         {
             this.Library = library;
             this.ClassID = ClassDefinition.classIdAlloc++;

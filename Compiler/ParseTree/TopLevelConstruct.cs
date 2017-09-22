@@ -6,12 +6,14 @@ namespace Crayon.ParseTree
 {
     public abstract class TopLevelConstruct : Node
     {
+        public FileScope FileScope { get; private set; }
         public Library Library { get; set; }
         public string[] NamespacePrefixSearch { get; set; }
 
-        public TopLevelConstruct(Token firstToken, TopLevelConstruct owner) : base(firstToken, owner)
+        public TopLevelConstruct(Token firstToken, TopLevelConstruct owner, FileScope fileScope)
+            : base(firstToken, owner)
         {
-
+            this.FileScope = fileScope;
         }
 
         private static Dictionary<string, string[]> namespacePartCache = new Dictionary<string, string[]>();

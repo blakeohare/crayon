@@ -19,7 +19,7 @@ namespace Crayon.ParseTree
         public bool IsDefault { get; private set; }
         public Annotation PrivateAnnotation { get; set; }
 
-        public ConstructorDefinition(TopLevelConstruct owner) : base(null, owner)
+        public ConstructorDefinition(TopLevelConstruct owner) : base(null, owner, owner.FileScope)
         {
             this.IsDefault = true;
 
@@ -39,7 +39,7 @@ namespace Crayon.ParseTree
             IList<Executable> code,
             Token baseToken,
             TopLevelConstruct owner)
-            : base(constructorToken, owner)
+            : base(constructorToken, owner, owner.FileScope)
         {
             this.IsDefault = false;
             this.ArgNames = args.ToArray();

@@ -7,11 +7,12 @@ namespace Crayon.ParseTree
     {
         public string ImportPath { get; set; }
 
-        public ImportStatement(Token importToken, string path, Library callingLibrary)
-            : base(importToken, null)
+        public ImportStatement(Token importToken, string path, Library callingLibrary, FileScope fileScope)
+            : base(importToken, null, fileScope)
         {
             this.Library = callingLibrary;
             this.ImportPath = path;
+            fileScope.Imports.Add(this);
         }
 
         internal override void Resolve(Parser parser)

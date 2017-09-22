@@ -18,7 +18,8 @@ namespace Crayon
 
         public TopLevelConstruct ParseTopLevel(
             TokenStream tokens,
-            TopLevelConstruct owner)
+            TopLevelConstruct owner,
+            FileScope fileScope)
         {
             string value = tokens.PeekValue();
 
@@ -75,23 +76,23 @@ namespace Crayon
                 }
                 string importPath = string.Join(".", importPathBuilder);
 
-                return new ImportStatement(importToken, importPath, parser.CurrentLibrary);
+                return new ImportStatement(importToken, importPath, parser.CurrentLibrary, fileScope);
             }
 
             if (value == this.parser.Keywords.ENUM)
             {
-                return this.ParseEnumDefinition(tokens, owner);
+                return this.ParseEnumDefinition(tokens, owner, fileScope);
             }
 
             if (value == this.parser.Keywords.NAMESPACE)
             {
-                return this.ParseNamespace(tokens, owner);
+                return this.ParseNamespace(tokens, owner, fileScope);
             }
 
-            if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner);
-            if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner);
-            if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, staticToken, finalToken);
-            if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner);
+            if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner, fileScope);
+            if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner, fileScope);
+            if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, staticToken, finalToken, fileScope);
+            if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner, fileScope);
             if (value == this.parser.Keywords.CONSTRUCTOR) return this.ParseConstructor(tokens, owner);
 
             throw new ParserException(tokens.Peek(), "Unrecognized token.");
@@ -226,11 +227,11 @@ namespace Crayon
             return new ConstructorDefinition(constructorToken, argNames, argValues, baseArgs, code, baseToken, owner);
         }
 
-        private ConstStatement ParseConst(TokenStream tokens, TopLevelConstruct owner)
+        private ConstStatement ParseConst(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope)
         {
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             Token nameToken = tokens.Pop();
-            ConstStatement constStatement = new ConstStatement(constToken, nameToken, parser.CurrentNamespace, owner, parser.CurrentLibrary);
+            ConstStatement constStatement = new ConstStatement(constToken, nameToken, parser.CurrentNamespace, owner, parser.CurrentLibrary, fileScope);
             this.parser.VerifyIdentifier(nameToken);
             tokens.PopExpected("=");
             constStatement.Expression = this.parser.ExpressionParser.Parse(tokens, constStatement);
@@ -239,13 +240,13 @@ namespace Crayon
             return constStatement;
         }
 
-        private EnumDefinition ParseEnumDefinition(TokenStream tokens, TopLevelConstruct owner)
+        private EnumDefinition ParseEnumDefinition(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope)
         {
             Token enumToken = tokens.PopExpected(this.parser.Keywords.ENUM);
             Token nameToken = tokens.Pop();
             this.parser.VerifyIdentifier(nameToken);
             string name = nameToken.Value;
-            EnumDefinition ed = new EnumDefinition(enumToken, nameToken, parser.CurrentNamespace, owner, parser.CurrentLibrary);
+            EnumDefinition ed = new EnumDefinition(enumToken, nameToken, parser.CurrentNamespace, owner, parser.CurrentLibrary, fileScope);
 
             tokens.PopExpected("{");
             bool nextForbidden = false;
@@ -273,7 +274,7 @@ namespace Crayon
             return ed;
         }
 
-        private ClassDefinition ParseClassDefinition(TokenStream tokens, TopLevelConstruct owner, Token staticToken, Token finalToken)
+        private ClassDefinition ParseClassDefinition(TokenStream tokens, TopLevelConstruct owner, Token staticToken, Token finalToken, FileScope fileScope)
         {
             Token classToken = tokens.PopExpected(this.parser.Keywords.CLASS);
             Token classNameToken = tokens.Pop();
@@ -311,7 +312,8 @@ namespace Crayon
                 owner,
                 parser.CurrentLibrary,
                 staticToken,
-                finalToken);
+                finalToken,
+                fileScope);
 
             tokens.PopExpected("{");
             List<FunctionDefinition> methods = new List<FunctionDefinition>();
@@ -338,7 +340,7 @@ namespace Crayon
                 if (tokens.IsNext(this.parser.Keywords.FUNCTION) ||
                     tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FUNCTION))
                 {
-                    methods.Add((FunctionDefinition)this.parser.ExecutableParser.ParseFunction(tokens, cd));
+                    methods.Add((FunctionDefinition)this.parser.ExecutableParser.ParseFunction(tokens, cd, fileScope));
                 }
                 else if (tokens.IsNext(this.parser.Keywords.CONSTRUCTOR))
                 {
@@ -410,7 +412,7 @@ namespace Crayon
             return fd;
         }
 
-        private Namespace ParseNamespace(TokenStream tokens, TopLevelConstruct owner)
+        private Namespace ParseNamespace(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope)
         {
             Token namespaceToken = tokens.PopExpected(this.parser.Keywords.NAMESPACE);
             Token first = tokens.Pop();
@@ -430,13 +432,13 @@ namespace Crayon
             string name = string.Join(".", namespacePieces.Select<Token, string>(t => t.Value));
             parser.PushNamespacePrefix(name);
 
-            Namespace namespaceInstance = new Namespace(namespaceToken, name, owner, parser.CurrentLibrary);
+            Namespace namespaceInstance = new Namespace(namespaceToken, name, owner, parser.CurrentLibrary, fileScope);
 
             tokens.PopExpected("{");
             List<TopLevelConstruct> namespaceMembers = new List<TopLevelConstruct>();
             while (!tokens.PopIfPresent("}"))
             {
-                TopLevelConstruct executable = this.parser.ExecutableParser.ParseTopLevel(tokens, namespaceInstance);
+                TopLevelConstruct executable = this.parser.ExecutableParser.ParseTopLevel(tokens, namespaceInstance, fileScope);
                 if (executable is FunctionDefinition ||
                     executable is ClassDefinition ||
                     executable is EnumDefinition ||
@@ -458,7 +460,7 @@ namespace Crayon
             return namespaceInstance;
         }
 
-        private FunctionDefinition ParseFunction(TokenStream tokens, TopLevelConstruct nullableOwner)
+        private FunctionDefinition ParseFunction(TokenStream tokens, TopLevelConstruct nullableOwner, FileScope fileScope)
         {
             bool isStatic =
                 nullableOwner != null &&
@@ -477,7 +479,7 @@ namespace Crayon
             Token functionNameToken = tokens.Pop();
             this.parser.VerifyIdentifier(functionNameToken);
 
-            FunctionDefinition fd = new FunctionDefinition(functionToken, parser.CurrentLibrary, nullableOwner, isStatic, functionNameToken, functionAnnotations, parser.CurrentNamespace);
+            FunctionDefinition fd = new FunctionDefinition(functionToken, parser.CurrentLibrary, nullableOwner, isStatic, functionNameToken, functionAnnotations, parser.CurrentNamespace, fileScope);
 
             tokens.PopExpected("(");
             List<Token> argNames = new List<Token>();

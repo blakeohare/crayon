@@ -12,7 +12,7 @@ namespace Crayon.ParseTree
         public int StaticMemberID { get; set; }
 
         public FieldDeclaration(Token fieldToken, Token nameToken, ClassDefinition owner, bool isStatic)
-            : base(fieldToken, owner)
+            : base(fieldToken, owner, owner.FileScope)
         {
             this.NameToken = nameToken;
             this.DefaultValue = new NullConstant(fieldToken, owner);
