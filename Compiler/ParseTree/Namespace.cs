@@ -17,19 +17,13 @@ namespace Crayon.ParseTree
             this.Name = name;
         }
 
-        public void GetFlattenedCode(IList<TopLevelConstruct> executableOut, string[] imports)
+        public void GetFlattenedCode(IList<TopLevelConstruct> executableOut)
         {
-            List<string> importsBuilder = new List<string>() { this.Name };
-            importsBuilder.AddRange(imports);
-            imports = importsBuilder.ToArray();
-
             foreach (TopLevelConstruct item in this.Code)
             {
-                item.NamespacePrefixSearch = imports;
-
                 if (item is Namespace)
                 {
-                    ((Namespace)item).GetFlattenedCode(executableOut, imports);
+                    ((Namespace)item).GetFlattenedCode(executableOut);
                 }
                 else
                 {
@@ -44,7 +38,7 @@ namespace Crayon.ParseTree
             throw new ParserException(this.FirstToken, "Namespace declaration not allowed here. Namespaces may only exist in the root of a file or nested within other namespaces.");
         }
 
-        internal override void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override void ResolveNames(Parser parser)
         {
             throw new InvalidOperationException();
         }

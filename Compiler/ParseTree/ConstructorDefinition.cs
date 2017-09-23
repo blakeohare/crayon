@@ -119,19 +119,19 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override void ResolveNames(Parser parser)
         {
             parser.CurrentCodeContainer = this;
             if (this.DefaultValues.Length > 0)
             {
-                this.BatchExpressionNameResolver(parser, lookup, imports, this.DefaultValues);
+                this.BatchExpressionNameResolver(parser, this.DefaultValues);
             }
 
             if (this.BaseArgs.Length > 0)
             {
-                this.BatchExpressionNameResolver(parser, lookup, imports, this.BaseArgs);
+                this.BatchExpressionNameResolver(parser, this.BaseArgs);
             }
-            this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);
+            this.BatchExecutableNameResolver(parser, this.Code);
             parser.CurrentCodeContainer = null;
         }
 

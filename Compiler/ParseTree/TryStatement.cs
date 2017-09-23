@@ -100,12 +100,12 @@ namespace Crayon.ParseTree
                 : Listify(this);
         }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override Executable ResolveNames(Parser parser)
         {
-            this.BatchExecutableNameResolver(parser, lookup, imports, this.TryBlock);
+            this.BatchExecutableNameResolver(parser, this.TryBlock);
 
             Common.TODO.HardCodedEnglishValue();
-            ClassDefinition simpleException = Node.DoClassLookup(null, lookup, imports, this.Owner.LocalNamespace, "Core.Exception");
+            ClassDefinition simpleException = Node.DoClassLookup(this.Owner, null, "Core.Exception");
 
             foreach (CatchBlock cb in this.CatchBlocks)
             {
@@ -118,7 +118,7 @@ namespace Crayon.ParseTree
                     Common.TODO.HardCodedEnglishValue();
                     string typeName = types[i] ?? "Core.Exception";
                     Token token = typeTokens[i] ?? cb.CatchToken;
-                    ClassDefinition resolvedType = Node.DoClassLookup(token, lookup, imports, this.Owner.LocalNamespace, typeName, true);
+                    ClassDefinition resolvedType = Node.DoClassLookup(this.Owner, token, typeName, true);
                     if (resolvedType == null)
                     {
                         throw new ParserException(token, "Could not resolve class name for catch.");
@@ -161,10 +161,10 @@ namespace Crayon.ParseTree
                     catch (InvalidArgumentException) { ... }
                 */
 
-                this.BatchExecutableNameResolver(parser, lookup, imports, cb.Code);
+                this.BatchExecutableNameResolver(parser, cb.Code);
             }
 
-            if (this.FinallyBlock != null) this.BatchExecutableNameResolver(parser, lookup, imports, this.FinallyBlock);
+            if (this.FinallyBlock != null) this.BatchExecutableNameResolver(parser, this.FinallyBlock);
 
             return this;
         }

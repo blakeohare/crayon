@@ -122,11 +122,11 @@ namespace Crayon.ParseTree
             return variableNamesDict.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
         }
 
-        internal override void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override void ResolveNames(Parser parser)
         {
             parser.CurrentCodeContainer = this;
-            this.BatchExpressionNameResolver(parser, lookup, imports, this.DefaultValues);
-            this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);
+            this.BatchExpressionNameResolver(parser, this.DefaultValues);
+            this.BatchExecutableNameResolver(parser, this.Code);
             parser.CurrentCodeContainer = null;
         }
 

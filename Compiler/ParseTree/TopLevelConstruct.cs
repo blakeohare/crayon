@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Crayon.ParseTree
 {
@@ -8,7 +7,6 @@ namespace Crayon.ParseTree
     {
         public FileScope FileScope { get; private set; }
         public Library Library { get; set; }
-        public string[] NamespacePrefixSearch { get; set; }
 
         public TopLevelConstruct(Token firstToken, TopLevelConstruct owner, FileScope fileScope)
             : base(firstToken, owner)
@@ -58,7 +56,7 @@ namespace Crayon.ParseTree
         public string Namespace { get; set; }
 
         internal abstract void Resolve(Parser parser);
-        internal abstract void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports);
+        internal abstract void ResolveNames(Parser parser);
         internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
         internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
         {

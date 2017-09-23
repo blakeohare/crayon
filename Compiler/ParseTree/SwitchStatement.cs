@@ -176,13 +176,13 @@ namespace Crayon.ParseTree
             return this.CompilationResolution(parser);
         }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override Executable ResolveNames(Parser parser)
         {
-            this.Condition = this.Condition.ResolveNames(parser, lookup, imports);
+            this.Condition = this.Condition.ResolveNames(parser);
             foreach (Chunk chunk in this.Chunks)
             {
-                this.BatchExpressionNameResolver(parser, lookup, imports, chunk.Cases);
-                this.BatchExecutableNameResolver(parser, lookup, imports, chunk.Code);
+                this.BatchExpressionNameResolver(parser, chunk.Cases);
+                this.BatchExecutableNameResolver(parser, chunk.Code);
             }
             return this;
         }

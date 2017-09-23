@@ -21,13 +21,11 @@ namespace Crayon
             return this.executables;
         }
 
-        public void AddExecutable(TopLevelConstruct executable, string[] importsNamespaceSearch)
+        public void AddExecutable(TopLevelConstruct executable)
         {
-            executable.NamespacePrefixSearch = importsNamespaceSearch;
-
             if (executable is Namespace)
             {
-                ((Namespace)executable).GetFlattenedCode(this.executables, importsNamespaceSearch);
+                ((Namespace)executable).GetFlattenedCode(this.executables);
             }
             else
             {

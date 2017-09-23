@@ -96,9 +96,9 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override void ResolveNames(Parser parser)
         {
-            this.BatchExpressionNameResolver(parser, lookup, imports, this.Values);
+            this.BatchExpressionNameResolver(parser, this.Values);
         }
 
         internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)

@@ -121,17 +121,17 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override Expression ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override Expression ResolveNames(Parser parser)
         {
             if (this.Root is Variable && ((Variable)this.Root).Name.Contains("$$$"))
             {
-                this.BatchExpressionNameResolver(parser, lookup, imports, this.Args);
+                this.BatchExpressionNameResolver(parser, this.Args);
 
                 return new CoreFunctionInvocation(this.FirstToken, this.Args, this.Owner);
             }
 
-            this.Root = this.Root.ResolveNames(parser, lookup, imports);
-            this.BatchExpressionNameResolver(parser, lookup, imports, this.Args);
+            this.Root = this.Root.ResolveNames(parser);
+            this.BatchExpressionNameResolver(parser, this.Args);
 
             if (this.Root is LibraryFunctionReference)
             {

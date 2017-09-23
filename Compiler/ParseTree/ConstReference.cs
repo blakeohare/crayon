@@ -35,7 +35,7 @@ namespace Crayon.ParseTree
             return value.CloneValue(this.FirstToken, this.Owner);
         }
 
-        internal override Expression ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override Expression ResolveNames(Parser parser)
         {
             throw new NotImplementedException();
         }

@@ -29,14 +29,7 @@ namespace Crayon.ParseTree
 
             this.Expression = this.Expression.Resolve(parser);
 
-            if (this.Expression is IntegerConstant ||
-                this.Expression is BooleanConstant ||
-                this.Expression is FloatConstant ||
-                this.Expression is StringConstant)
-            {
-                // that's fine.
-            }
-            else
+            if (!(this.Expression is IConstantValue))
             {
                 throw new ParserException(this.FirstToken, "Invalid value for const. Expression must resolve to a constant at compile time.");
             }
@@ -44,9 +37,9 @@ namespace Crayon.ParseTree
             parser.ConstantAndEnumResolutionState[this] = ConstantResolutionState.RESOLVED;
         }
 
-        internal override void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override void ResolveNames(Parser parser)
         {
-            this.Expression = this.Expression.ResolveNames(parser, lookup, imports);
+            this.Expression = this.Expression.ResolveNames(parser);
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }

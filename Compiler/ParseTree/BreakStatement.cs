@@ -16,7 +16,7 @@ namespace Crayon.ParseTree
 
         public override bool IsTerminator { get { return true; } }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override Executable ResolveNames(Parser parser)
         {
             return this;
         }

@@ -301,10 +301,10 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override Expression ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override Expression ResolveNames(Parser parser)
         {
-            this.Left = this.Left.ResolveNames(parser, lookup, imports);
-            this.Right = this.Right.ResolveNames(parser, lookup, imports);
+            this.Left = this.Left.ResolveNames(parser);
+            this.Right = this.Right.ResolveNames(parser);
             return this;
         }
 

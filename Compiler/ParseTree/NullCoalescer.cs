@@ -43,10 +43,10 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override Expression ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override Expression ResolveNames(Parser parser)
         {
-            this.PrimaryExpression = this.PrimaryExpression.ResolveNames(parser, lookup, imports);
-            this.SecondaryExpression = this.SecondaryExpression.ResolveNames(parser, lookup, imports);
+            this.PrimaryExpression = this.PrimaryExpression.ResolveNames(parser);
+            this.SecondaryExpression = this.SecondaryExpression.ResolveNames(parser);
             return this;
         }
 

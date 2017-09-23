@@ -57,10 +57,10 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override Executable ResolveNames(Parser parser)
         {
-            this.BatchExecutableNameResolver(parser, lookup, imports, this.Code);
-            this.Condition = this.Condition.ResolveNames(parser, lookup, imports);
+            this.BatchExecutableNameResolver(parser, this.Code);
+            this.Condition = this.Condition.ResolveNames(parser);
             return this;
         }
 

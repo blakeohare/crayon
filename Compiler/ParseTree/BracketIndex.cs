@@ -74,10 +74,10 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override Expression ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override Expression ResolveNames(Parser parser)
         {
-            this.Root = this.Root.ResolveNames(parser, lookup, imports);
-            this.Index = this.Index.ResolveNames(parser, lookup, imports);
+            this.Root = this.Root.ResolveNames(parser);
+            this.Index = this.Index.ResolveNames(parser);
             return this;
         }
 

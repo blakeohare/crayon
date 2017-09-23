@@ -25,10 +25,10 @@ namespace Crayon.ParseTree
             this.DefaultValue = this.DefaultValue.Resolve(parser);
         }
 
-        internal override void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override void ResolveNames(Parser parser)
         {
             parser.CurrentCodeContainer = this;
-            this.DefaultValue = this.DefaultValue.ResolveNames(parser, lookup, imports);
+            this.DefaultValue = this.DefaultValue.ResolveNames(parser);
             parser.CurrentCodeContainer = null;
         }
 

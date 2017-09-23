@@ -289,7 +289,8 @@ namespace Crayon
                 {
                     if (cd.BaseClassDeclarations.Length > 0)
                     {
-                        cd.ResolveBaseClasses(allKnownDefinitions, cd.LocalNamespace, cd.NamespacePrefixSearch);
+                        cd.FileScope.FileScopeEntityLookup.InitializeLookups(allKnownDefinitions, currentLibraryDefinitions);
+                        cd.ResolveBaseClasses();
                     }
                 }
 
@@ -303,7 +304,9 @@ namespace Crayon
                     TopLevelConstruct item = currentLibraryDefinitions[itemKey];
                     if (!(item is Namespace))
                     {
-                        item.ResolveNames(this.parser, allKnownDefinitions, item.NamespacePrefixSearch);
+                        item.FileScope.FileScopeEntityLookup.InitializeLookups(allKnownDefinitions, currentLibraryDefinitions);
+
+                        item.ResolveNames(this.parser);
                     }
                 }
 

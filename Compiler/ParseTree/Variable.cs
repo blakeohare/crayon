@@ -50,7 +50,7 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override Expression ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override Expression ResolveNames(Parser parser)
         {
             if (this.Name == "$$$")
             {
@@ -104,7 +104,7 @@ namespace Crayon.ParseTree
                 return new BaseKeyword(this.FirstToken, this.Owner);
             }
 
-            TopLevelConstruct exec = DoNameLookup(lookup, imports, this.Owner.LocalNamespace, this.Name);
+            TopLevelConstruct exec = this.Owner.FileScope.FileScopeEntityLookup.DoLookup(this.Name, this.Owner);
 
             if (exec != null)
             {

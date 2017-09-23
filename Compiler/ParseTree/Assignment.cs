@@ -73,10 +73,10 @@ namespace Crayon.ParseTree
             this.Target.PerformLocalIdAllocation(parser, varIds, phase);
         }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override Executable ResolveNames(Parser parser)
         {
-            this.Target = this.Target.ResolveNames(parser, lookup, imports);
-            this.Value = this.Value.ResolveNames(parser, lookup, imports);
+            this.Target = this.Target.ResolveNames(parser);
+            this.Value = this.Value.ResolveNames(parser);
 
             if (!this.Target.CanAssignTo)
             {

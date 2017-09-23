@@ -16,29 +16,29 @@ namespace Crayon.ParseTree
         // other executables or expressions.
         public TopLevelConstruct Owner { get; private set; }
 
-        internal void BatchTopLevelConstructNameResolver(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports, ICollection<TopLevelConstruct> constructs)
+        internal void BatchTopLevelConstructNameResolver(Parser parser, ICollection<TopLevelConstruct> constructs)
         {
             foreach (TopLevelConstruct tlc in constructs)
             {
-                tlc.ResolveNames(parser, lookup, imports);
+                tlc.ResolveNames(parser);
             }
         }
 
-        internal void BatchExecutableNameResolver(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports, Executable[] executables)
+        internal void BatchExecutableNameResolver(Parser parser, Executable[] executables)
         {
             for (int i = 0; i < executables.Length; ++i)
             {
-                executables[i] = executables[i].ResolveNames(parser, lookup, imports);
+                executables[i] = executables[i].ResolveNames(parser);
             }
         }
 
-        internal void BatchExpressionNameResolver(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports, Expression[] expressions)
+        internal void BatchExpressionNameResolver(Parser parser, Expression[] expressions)
         {
             for (int i = 0; i < expressions.Length; ++i)
             {
                 if (expressions[i] != null)
                 {
-                    expressions[i] = expressions[i].ResolveNames(parser, lookup, imports);
+                    expressions[i] = expressions[i].ResolveNames(parser);
                 }
             }
         }
@@ -55,7 +55,7 @@ namespace Crayon.ParseTree
             - Then walk through the local namespace, popping off the last namespace component and using that as a prefix for fully qualified names.
 
          */
-        public static TopLevelConstruct DoNameLookup(
+        public static TopLevelConstruct DoNameLookupXXXXX(
             Dictionary<string, TopLevelConstruct> lookup,
             string[] imports,
             string[] localNamespaces,
@@ -103,14 +103,14 @@ namespace Crayon.ParseTree
             return null;
         }
 
-        internal static ClassDefinition DoClassLookup(Token nameToken, Dictionary<string, TopLevelConstruct> lookup, string[] imports, string[] localNamespace, string name)
+        internal static ClassDefinition DoClassLookup(TopLevelConstruct currentContainer, Token nameToken, string name)
         {
-            return DoClassLookup(nameToken, lookup, imports, localNamespace, name, false);
+            return DoClassLookup(currentContainer, nameToken, name, false);
         }
 
-        internal static ClassDefinition DoClassLookup(Token nameToken, Dictionary<string, TopLevelConstruct> lookup, string[] imports, string[] localNamespace, string name, bool failSilently)
+        internal static ClassDefinition DoClassLookup(TopLevelConstruct currentContainer, Token nameToken, string name, bool failSilently)
         {
-            TopLevelConstruct ex = DoNameLookup(lookup, imports, localNamespace, name);
+            TopLevelConstruct ex = currentContainer.FileScope.FileScopeEntityLookup.DoLookup(name, currentContainer);
             if (ex == null)
             {
                 if (failSilently)

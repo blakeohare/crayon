@@ -20,7 +20,7 @@ namespace Crayon.ParseTree
         public virtual bool IsTerminator { get { return false; } }
 
         internal abstract IList<Executable> Resolve(Parser parser);
-        internal abstract Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports);
+        internal abstract Executable ResolveNames(Parser parser);
         internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
         internal abstract Executable PastelResolve(Parser parser);
 

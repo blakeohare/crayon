@@ -14,7 +14,7 @@ namespace Crayon.ParseTree
 
         internal abstract Expression Resolve(Parser parser);
 
-        internal abstract Expression ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports);
+        internal abstract Expression ResolveNames(Parser parser);
 
         public virtual bool IsLiteral { get { return false; } }
 

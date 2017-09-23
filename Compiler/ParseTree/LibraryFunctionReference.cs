@@ -25,7 +25,7 @@ namespace Crayon.ParseTree
             throw new ParserException(this.FirstToken, "Library functions cannot be passed around as references. They can only be invoked.");
         }
 
-        internal override Expression ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override Expression ResolveNames(Parser parser)
         {
             throw new InvalidOperationException(); // Created during resolve name phase.
         }

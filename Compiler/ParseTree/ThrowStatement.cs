@@ -21,9 +21,9 @@ namespace Crayon.ParseTree
             return Listify(this);
         }
 
-        internal override Executable ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override Executable ResolveNames(Parser parser)
         {
-            this.Expression.ResolveNames(parser, lookup, imports);
+            this.Expression.ResolveNames(parser);
             return this;
         }
 

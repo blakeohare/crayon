@@ -27,7 +27,7 @@ namespace Crayon.ParseTree
             throw new ParserException(this.FirstToken, "Unexpected class reference.");
         }
 
-        internal override Expression ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override Expression ResolveNames(Parser parser)
         {
             throw new InvalidOperationException(); // Created during the resolve names phase.
         }

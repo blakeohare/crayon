@@ -20,7 +20,7 @@ namespace Crayon.ParseTree
             throw new Exception("Imports shouldn't exist at this point in the compilation pipeline.");
         }
 
-        internal override void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
+        internal override void ResolveNames(Parser parser)
         {
             throw new InvalidOperationException();
         }

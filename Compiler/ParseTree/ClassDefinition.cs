@@ -234,7 +234,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        public void ResolveBaseClasses(Dictionary<string, TopLevelConstruct> lookup, string[] localNamespace, string[] imports)
+        public void ResolveBaseClasses()
         {
             List<ClassDefinition> baseClasses = new List<ClassDefinition>();
             List<Token> baseClassesTokens = new List<Token>();
@@ -242,7 +242,7 @@ namespace Crayon.ParseTree
             {
                 string value = this.BaseClassDeclarations[i];
                 Token token = this.BaseClassTokens[i];
-                TopLevelConstruct baseClassInstance = Executable.DoNameLookup(lookup, imports, localNamespace, value);
+                TopLevelConstruct baseClassInstance = this.FileScope.FileScopeEntityLookup.DoLookup(value, this);
                 if (baseClassInstance == null)
                 {
                     throw new ParserException(token, "No class named '" + token.Value + "' was found.");
@@ -271,29 +271,16 @@ namespace Crayon.ParseTree
             }
         }
 
-        private string[] ExpandImportsToIncludeThis(string[] imports)
+        internal override void ResolveNames(Parser parser)
         {
-            // Tack on this class as an import. Once classes/enums/constants can be nested inside other classes, it'll be important.
-            string thisClassFullyQualified = this.Namespace;
-            if (thisClassFullyQualified.Length > 0) thisClassFullyQualified += ".";
-            thisClassFullyQualified += this.NameToken.Value;
-            List<string> newImports = new List<string>(imports);
-            newImports.Add(thisClassFullyQualified);
-            return newImports.ToArray();
-        }
-
-        internal override void ResolveNames(Parser parser, Dictionary<string, TopLevelConstruct> lookup, string[] imports)
-        {
-            imports = this.ExpandImportsToIncludeThis(imports);
-
             foreach (FieldDeclaration fd in this.Fields)
             {
-                fd.ResolveNames(parser, lookup, imports);
+                fd.ResolveNames(parser);
             }
 
             if (this.StaticConstructor != null)
             {
-                this.StaticConstructor.ResolveNames(parser, lookup, imports);
+                this.StaticConstructor.ResolveNames(parser);
             }
 
             // This should be empty if there is no base class, or just pass along the base class' args if there is.
@@ -302,8 +289,8 @@ namespace Crayon.ParseTree
                 this.Constructor = new ConstructorDefinition(this);
             }
 
-            this.Constructor.ResolveNames(parser, lookup, imports);
-            this.BatchTopLevelConstructNameResolver(parser, lookup, imports, this.Methods);
+            this.Constructor.ResolveNames(parser);
+            this.BatchTopLevelConstructNameResolver(parser, this.Methods);
         }
 
         public void VerifyNoBaseClassLoops()

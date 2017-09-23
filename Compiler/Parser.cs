@@ -368,7 +368,7 @@ namespace Crayon
                         this.CurrentLocale.Strings.Get("ALL_IMPORTS_MUST_OCCUR_AT_BEGINNING_OF_FILE"));
                 }
 
-                this.CurrentScope.AddExecutable(executable, namespaceImports);
+                this.CurrentScope.AddExecutable(executable);
             }
         }
 

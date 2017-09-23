@@ -119,13 +119,11 @@ namespace Crayon.ParseTree
         }
 
         internal override Expression ResolveNames(
-            Parser parser,
-            Dictionary<string, TopLevelConstruct> lookup,
-            string[] imports)
+            Parser parser)
         {
             FunctionDefinition funcDef; // used in multiple places.
             FieldDeclaration fieldDec;
-            this.Root = this.Root.ResolveNames(parser, lookup, imports);
+            this.Root = this.Root.ResolveNames(parser);
             Expression root = this.Root;
             string field = this.StepToken.Value;
 
@@ -133,9 +131,10 @@ namespace Crayon.ParseTree
             {
                 // already a fully qualified namespace, therefore imports don't matter.
                 string fullyQualifiedName = ((PartialNamespaceReference)root).Name + "." + field;
-                if (lookup.ContainsKey(fullyQualifiedName))
+                TopLevelConstruct entity = this.Owner.FileScope.FileScopeEntityLookup.DoLookup(fullyQualifiedName, parser.CurrentCodeContainer);
+                if (entity != null)
                 {
-                    return Resolver.ConvertStaticReferenceToExpression(lookup[fullyQualifiedName], this.FirstToken, this.Owner);
+                    return Resolver.ConvertStaticReferenceToExpression(entity, this.FirstToken, this.Owner);
                 }
 
                 throw new ParserException(this.FirstToken, "Could not find class or function by the name of: '" + fullyQualifiedName + "'");
