@@ -21,6 +21,10 @@ class FormatStyle:
     self.should_rtrim = should_rtrim
     return self
 
+  def disableEndNewline(self):
+    self.should_end_with_newline = False
+    return self
+
   def apply(self, text):
     if self.should_trim:
       text = text.strip()
@@ -59,6 +63,7 @@ class FormatStyle:
 
 CSHARP_STYLE = FormatStyle().tabs(' ' * 4).newline('\r\n')
 CRAYON_STYLE = FormatStyle().tabs(' ' * 4).newline('\n')
+CSPROJ_STYLE = FormatStyle().tabs(' ' * 2).newline('\r\n').disableEndNewline()
 PASTEL_STYLE = FormatStyle().tabs(' ' * 4).newline('\n')
 PYTHON_STYLE_2_SPACES = FormatStyle().tabs(' ' * 2).newline('\n')
 PYTHON_STYLE_4_SPACES = FormatStyle().tabs(' ' * 4).newline('\n')
@@ -71,6 +76,12 @@ MATCHERS = [
   ('Pastel/*.cs', CSHARP_STYLE),
   ('Platform/*.cs', CSHARP_STYLE),
   ('Platforms/*.cs', CSHARP_STYLE),
+  ('Common/*.csproj', CSPROJ_STYLE),
+  ('Compiler/*.csproj', CSPROJ_STYLE),
+  ('Interpreter/*.csproj', CSPROJ_STYLE),
+  ('Pastel/*.csproj', CSPROJ_STYLE),
+  ('Platform/*.csproj', CSPROJ_STYLE),
+  ('Platforms/*.csproj', CSPROJ_STYLE),
 
   # Pastel
   ('Interpreter/*.pst', PASTEL_STYLE),
