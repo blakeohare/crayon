@@ -147,7 +147,9 @@ namespace LangCSharp
             output.Append(this.NL);
             output.Append("{");
             output.Append(this.NL);
-            translator.TabDepth = 1;
+			translator.TabDepth = 1;
+			output.Append("#pragma warning disable 0219"); // Added by TimJSwan89 to avoid warnings for unused generated variables.
+			output.Append(this.NL); // Added by TimJSwan89
             translator.TranslateExecutables(output, funcDef.Code);
             translator.TabDepth = 0;
             output.Append("}");
