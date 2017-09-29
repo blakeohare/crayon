@@ -8,6 +8,7 @@ class FormatStyle:
     self.should_rtrim = True
     self.should_trim = True
     self.should_end_with_newline = True
+    self.canonicalize_csproj_tools_version = False
 
   def tabs(self, tab_char):
     self.tab_char = tab_char
@@ -25,9 +26,20 @@ class FormatStyle:
     self.should_end_with_newline = False
     return self
 
+  def enableCanonicalizeCsprojToolsVersion(self):
+    self.canonicalize_csproj_tools_version = True
+    return self
+
   def apply(self, text):
     if self.should_trim:
       text = text.strip()
+
+    if self.canonicalize_csproj_tools_version:
+      if 'ToolsVersion="' in text and not 'ToolsVersion="14.0"' in text:
+        tools_version_loc = text.find('ToolsVersion=')
+        first_quote = text.find('"', tools_version_loc)
+        close_quote = text.find('"', first_quote + 1)
+        text = text[:first_quote] + '"14.0' + text[close_quote:]
 
     lines = text.replace('\r\n', '\n').split('\n')
 
@@ -57,13 +69,14 @@ class FormatStyle:
 
     if self.should_end_with_newline:
       new_lines.append('')
+    
     text = '\n'.join(new_lines)
 
     return text
 
 CSHARP_STYLE = FormatStyle().tabs(' ' * 4).newline('\r\n')
 CRAYON_STYLE = FormatStyle().tabs(' ' * 4).newline('\n')
-CSPROJ_STYLE = FormatStyle().tabs(' ' * 2).newline('\r\n').disableEndNewline()
+CSPROJ_STYLE = FormatStyle().tabs(' ' * 2).newline('\r\n').disableEndNewline().enableCanonicalizeCsprojToolsVersion()
 PASTEL_STYLE = FormatStyle().tabs(' ' * 4).newline('\n')
 PYTHON_STYLE_2_SPACES = FormatStyle().tabs(' ' * 2).newline('\n')
 PYTHON_STYLE_4_SPACES = FormatStyle().tabs(' ' * 4).newline('\n')
