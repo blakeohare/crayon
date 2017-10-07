@@ -9,10 +9,10 @@
 */
 Value lib_fileiocommon_function_fileMove(Array<Value> args) {
     int statusCode = Native._lib_fileiocommon_fileMove(
-		lib_fileiocommon_getDiskObject(args[0]),
-		(string) args[1].internalValue,
-		(string) args[2].internalValue,
-		(bool) args[3].internalValue,
-		(bool) args[4].internalValue);
+        lib_fileiocommon_getDiskObject(args[0]),
+        (string) args[1].internalValue,
+        (string) args[2].internalValue,
+        (bool) args[3].internalValue,
+        (bool) args[4].internalValue);
     return buildInteger(statusCode);
 }

@@ -6,11 +6,11 @@
     args[2]: well-formed and sandboxed path of where to move the directory to
 */
 Value lib_fileiocommon_function_directoryMove(Array<Value> args) {
-    
+
     int statusCode = Native._lib_fileiocommon_directoryMove(
-		lib_fileiocommon_getDiskObject(args[0]),
-		(string) args[1].internalValue,
-		(string) args[2].internalValue);
-    
+        lib_fileiocommon_getDiskObject(args[0]),
+        (string) args[1].internalValue,
+        (string) args[2].internalValue);
+
     return buildInteger(statusCode);
 }

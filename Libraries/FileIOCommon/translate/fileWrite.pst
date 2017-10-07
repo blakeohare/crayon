@@ -16,28 +16,28 @@
 Value lib_fileiocommon_function_fileWrite(Array<Value> args) {
 
     if (args[3].type != Types.INTEGER) return buildInteger(3);
-    
+
     int statusCode = 0;
     string contentString = null;
     object byteArrayRef = null;
-	int format = (int) args[3].internalValue;
-	if (format == 0) {
-		byteArrayRef = lib_fileiocommon_listToBytes((List<Value>) args[2].internalValue);
-		if (byteArrayRef == null) return buildInteger(6);
-	} else if (args[2].type != Types.STRING) {
-		return buildInteger(6);
-	} else {
-		contentString = (string) args[2].internalValue;
-	}
-	
-	if (statusCode == 0) {
-		statusCode = Native._lib_fileiocommon_fileWrite(
-			lib_fileiocommon_getDiskObject(args[0]),
-			(string) args[1].internalValue,
-			format,
-			contentString,
-			byteArrayRef);
-	}
-	
+    int format = (int) args[3].internalValue;
+    if (format == 0) {
+        byteArrayRef = lib_fileiocommon_listToBytes((List<Value>) args[2].internalValue);
+        if (byteArrayRef == null) return buildInteger(6);
+    } else if (args[2].type != Types.STRING) {
+        return buildInteger(6);
+    } else {
+        contentString = (string) args[2].internalValue;
+    }
+
+    if (statusCode == 0) {
+        statusCode = Native._lib_fileiocommon_fileWrite(
+            lib_fileiocommon_getDiskObject(args[0]),
+            (string) args[1].internalValue,
+            format,
+            contentString,
+            byteArrayRef);
+    }
+
     return buildInteger(statusCode);
 }

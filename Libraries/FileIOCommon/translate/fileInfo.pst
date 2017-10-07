@@ -6,12 +6,12 @@
     args[2]: a bit mask of properties to fetch
     args[3]: output list, size is already 6 containing old data.
 
-		output[0] -> bool: exists
-		output[1] -> bool: is directory?
-		output[2] -> int: file size bytes // TODO: deal with integer overflow
-		output[3] -> bool: is readonly?
-		output[4] -> float: file created timestamp
-		output[5] -> float: file modified timestamp
+        output[0] -> bool: exists
+        output[1] -> bool: is directory?
+        output[2] -> int: file size bytes // TODO: deal with integer overflow
+        output[3] -> bool: is readonly?
+        output[4] -> float: file created timestamp
+        output[5] -> float: file modified timestamp
 
     mask & 1 -> fetch size
     mask & 2 -> fetch readonly
@@ -23,39 +23,39 @@
 Value lib_fileiocommon_function_fileInfo(Array<Value> args) {
     int mask = (int) args[2].internalValue;
     Native._lib_fileiocommon_getFileInfo(
-		lib_fileiocommon_getDiskObject(args[0]),
-		(string) args[1].internalValue,
-		mask,
-		Core.IntBuffer16,
-		Core.FloatBuffer16);
-		
+        lib_fileiocommon_getDiskObject(args[0]),
+        (string) args[1].internalValue,
+        mask,
+        Core.IntBuffer16,
+        Core.FloatBuffer16);
+
     List<Value> outputList = (List<Value>) args[3].internalValue;
-    
-	// exists
+
+    // exists
     outputList[0] = buildBoolean(Core.IntBuffer16[0] > 0);
-    
-	// is directory?
+
+    // is directory?
     outputList[1] = buildBoolean(Core.IntBuffer16[1] > 0);
-    
-	// size
+
+    // size
     if ((mask & 1) != 0) {
         outputList[2] = buildInteger(Core.IntBuffer16[2]);
     }
-    
-	// readonly?
+
+    // readonly?
     if ((mask & 2) != 0) {
         outputList[3] = buildBoolean(Core.IntBuffer16[3] > 0);
     }
-    
-	// created timestamp
+
+    // created timestamp
     if ((mask & 4) != 0) {
         outputList[4] = buildFloat(Core.FloatBuffer16[0]);
     }
-    
-	// modified timestamp
+
+    // modified timestamp
     if ((mask & 8) != 0) {
         outputList[5] = buildFloat(Core.FloatBuffer16[1]);
     }
-    
+
     return args[3];
 }
