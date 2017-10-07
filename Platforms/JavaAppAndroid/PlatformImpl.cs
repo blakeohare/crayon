@@ -18,11 +18,18 @@ namespace JavaAppAndroid
         public override string Name { get { return "java-app-android"; } }
         public override string NL { get { return "\n"; } }
 
-        public override Dictionary<string, FileOutput> ExportProject(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> libraries, ResourceDatabase resourceDatabase, Options options, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        public override Dictionary<string, FileOutput> ExportProject(
+            IList<VariableDeclaration> globals,
+            IList<StructDefinition> structDefinitions,
+            IList<FunctionDefinition> functionDefinitions,
+            IList<LibraryForExport> libraries,
+            ResourceDatabase resourceDatabase,
+            Options options,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
-            this.OutputAndroidBoilerplate(output, replacements);
+            this.OutputAndroidBoilerplate(output, replacements, options);
 
             string srcPath = "app/src/main/java";
 
@@ -109,7 +116,7 @@ namespace JavaAppAndroid
             };
         }
 
-        public void OutputAndroidBoilerplate(Dictionary<string, FileOutput> output, Dictionary<string, string> replacements)
+        public void OutputAndroidBoilerplate(Dictionary<string, FileOutput> output, Dictionary<string, string> replacements, Options options)
         {
             output[".gitignore"] = this.LoadTextFile("Resources/gitignore.txt", replacements);
             output["build.gradle"] = this.LoadTextFile("Resources/buildGradle.txt", replacements);
@@ -139,19 +146,35 @@ namespace JavaAppAndroid
             output["app/build.gradle"] = this.LoadTextFile("Resources/app/buildGradle.txt", replacements);
             output["app/proguard-rules.txt"] = this.LoadTextFile("Resources/app/proguardRules.txt", replacements);
             output["app/src/main/AndroidManifest.xml"] = this.LoadTextFile("Resources/app/src/main/AndroidManifestXml.txt", replacements);
-            output["app/src/main/ic_launcher-web.png"] = this.LoadBinaryFile("Resources/app/src/main/IcLauncherWeb.png");
 
             output["app/src/main/java/org/crayonlang/crayonsampleapp/app/MainActivity.java"] = this.LoadTextFile("Resources/app/src/main/java/org/crayonlang/sampleapp/app/MainActivityJava.txt", replacements);
-            output["app/src/main/res/drawable-hdpi/ic_launcher.png"] = this.LoadBinaryFile("Resources/app/src/main/res/drawableHdpi/ic_launcher.png");
-            output["app/src/main/res/drawable-mdpi/ic_launcher.png"] = this.LoadBinaryFile("Resources/app/src/main/res/drawableMdpi/ic_launcher.png");
-            output["app/src/main/res/drawable-xhdpi/ic_launcher.png"] = this.LoadBinaryFile("Resources/app/src/main/res/drawableXhdpi/ic_launcher.png");
-            output["app/src/main/res/drawable-xxhdpi/ic_launcher.png"] = this.LoadBinaryFile("Resources/app/src/main/res/drawableXxhdpi/ic_launcher.png");
             output["app/src/main/res/layout/activity_main.xml"] = this.LoadTextFile("Resources/app/src/main/res/layout/ActivityMainXml.txt", replacements);
             output["app/src/main/res/menu/main.xml"] = this.LoadTextFile("Resources/app/src/main/res/menu/MainXml.txt", replacements);
             output["app/src/main/res/values/dimens.xml"] = this.LoadTextFile("Resources/app/src/main/res/values/DimensXml.txt", replacements);
             output["app/src/main/res/values/strings.xml"] = this.LoadTextFile("Resources/app/src/main/res/values/StringsXml.txt", replacements);
             output["app/src/main/res/values/styles.xml"] = this.LoadTextFile("Resources/app/src/main/res/values/StylesXml.txt", replacements);
             output["app/src/main/res/values-w820dp/dimens.xml"] = this.LoadTextFile("Resources/app/src/main/res/valuesW820dp/DimensXml.txt", replacements);
+
+            IconSetGenerator icons = new IconSetGenerator();
+            if (options.GetBool(ExportOptionKey.HAS_ICON))
+            {
+                string iconPath = options.GetString(ExportOptionKey.ICON_PATH);
+                SystemBitmap icon = new SystemBitmap(iconPath);
+                icons.AddInputImage(icon);
+            }
+            Dictionary<int, SystemBitmap> iconImagesBySize = icons
+                .AddOutputSize(48)
+                .AddOutputSize(72)
+                .AddOutputSize(96)
+                .AddOutputSize(144)
+                .AddOutputSize(512)
+                .GenerateWithDefaultFallback();
+
+            output["app/src/main/res/drawable-mdpi/ic_launcher.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = iconImagesBySize[48] };
+            output["app/src/main/res/drawable-hdpi/ic_launcher.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = iconImagesBySize[72] };
+            output["app/src/main/res/drawable-xhdpi/ic_launcher.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = iconImagesBySize[96] };
+            output["app/src/main/res/drawable-xxhdpi/ic_launcher.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = iconImagesBySize[144] };
+            output["app/src/main/ic_launcher-web.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = iconImagesBySize[512] };
         }
 
         public override Dictionary<string, FileOutput> ExportStandaloneVm(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
