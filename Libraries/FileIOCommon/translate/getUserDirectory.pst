@@ -1,5 +1,9 @@
-﻿Value lib_fileiocommon_function_getUserDirectory(Array<Value> args) {
-    Value output = VALUE_NULL;
-    output = buildString(Native._lib_fileiocommon_getUserDirectory());
-    return output;
+﻿/*
+    Returns the user's home directory.
+    - Windows: "C:\Users\Cthulhu"
+    - Linux: "~"
+    - JavaScript: "/" (this is used for the virtualized disk)
+*/
+Value lib_fileiocommon_function_getUserDirectory(Array<Value> args) {
+    return buildString(Native._lib_fileiocommon_getUserDirectory());
 }

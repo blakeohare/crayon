@@ -1,5 +1,11 @@
-﻿Value lib_fileiocommon_function_getCurrentDirectory(Array<Value> args) {
-    Value output = VALUE_NULL;
-    output = buildString(Native._lib_fileiocommon_getCurrentDirectory());
-    return output;
+﻿/*
+    Returns the current directory.
+    This is never called for a virtual disk.
+
+    - JavaScript: '/'
+    - Mobile: '/'
+    - Everything else: absolute path of where the host platform thinks the current directory is.
+*/
+Value lib_fileiocommon_function_getCurrentDirectory(Array<Value> args) {
+    return buildString(Native._lib_fileiocommon_getCurrentDirectory());
 }

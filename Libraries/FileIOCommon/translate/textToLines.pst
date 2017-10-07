@@ -1,8 +1,15 @@
-﻿Value lib_fileiocommon_function_textToLines(Array<Value> args) {
-    Value output = VALUE_NULL;
-    Value arg1 = args[0];
-    Value arg2 = args[1];
-    lib_fileiocommon_textToLines(((string) arg1.internalValue), ((List<Value>) arg2.internalValue));
-    output = arg2;
-    return output;
+﻿/*
+    Convert a string into a list of strings, split on the newline, but contains the original newline character.
+
+    args[0]: original string
+    args[1]: output list
+
+    output is the output list to save a VM cycle
+*/
+Value lib_fileiocommon_function_textToLines(Array<Value> args) {
+
+    lib_fileiocommon_textToLines(
+		(string) args[0].internalValue,
+		(List<Value>) args[1].internalValue);
+    return args[1];
 }

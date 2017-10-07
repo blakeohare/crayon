@@ -1,28 +1,61 @@
-﻿Value lib_fileiocommon_function_fileInfo(Array<Value> args) {
-    int int1 = 0;
-    List<Value> list1 = null;
-    Value output = VALUE_NULL;
-    Value arg1 = args[0];
-    Value arg2 = args[1];
-    Value arg3 = args[2];
-    Value arg4 = args[3];
-    int1 = ((int) arg3.internalValue);
-    Native._lib_fileiocommon_getFileInfo(lib_fileiocommon_getDiskObject(arg1), ((string) arg2.internalValue), int1, Core.IntBuffer16, Core.FloatBuffer16);
-    list1 = ((List<Value>) arg4.internalValue);
-    list1[0] = buildBoolean(Core.IntBuffer16[0] > 0);
-    list1[1] = buildBoolean(Core.IntBuffer16[1] > 0);
-    if ((int1 & 1) != 0) {
-        list1[2] = buildInteger(Core.IntBuffer16[2]);
+﻿/*
+    Fetch information about a file.
+
+    args[0]: disk host object
+    args[1]: well-formed and sandboxed path
+    args[2]: a bit mask of properties to fetch
+    args[3]: output list, size is already 6 containing old data.
+
+		output[0] -> bool: exists
+		output[1] -> bool: is directory?
+		output[2] -> int: file size bytes // TODO: deal with integer overflow
+		output[3] -> bool: is readonly?
+		output[4] -> float: file created timestamp
+		output[5] -> float: file modified timestamp
+
+    mask & 1 -> fetch size
+    mask & 2 -> fetch readonly
+    mask & 4 -> fetch created timestamp
+    mask & 8 -> fetch modified timestamp
+
+    directory and existence status are always fetched.
+*/
+Value lib_fileiocommon_function_fileInfo(Array<Value> args) {
+    int mask = (int) args[2].internalValue;
+    Native._lib_fileiocommon_getFileInfo(
+		lib_fileiocommon_getDiskObject(args[0]),
+		(string) args[1].internalValue,
+		mask,
+		Core.IntBuffer16,
+		Core.FloatBuffer16);
+		
+    List<Value> outputList = (List<Value>) args[3].internalValue;
+    
+	// exists
+    outputList[0] = buildBoolean(Core.IntBuffer16[0] > 0);
+    
+	// is directory?
+    outputList[1] = buildBoolean(Core.IntBuffer16[1] > 0);
+    
+	// size
+    if ((mask & 1) != 0) {
+        outputList[2] = buildInteger(Core.IntBuffer16[2]);
     }
-    if ((int1 & 2) != 0) {
-        list1[3] = buildBoolean(Core.IntBuffer16[3] > 0);
+    
+	// readonly?
+    if ((mask & 2) != 0) {
+        outputList[3] = buildBoolean(Core.IntBuffer16[3] > 0);
     }
-    if ((int1 & 4) != 0) {
-        list1[4] = buildFloat(Core.FloatBuffer16[0]);
+    
+	// created timestamp
+    if ((mask & 4) != 0) {
+        outputList[4] = buildFloat(Core.FloatBuffer16[0]);
     }
-    if ((int1 & 8) != 0) {
-        list1[5] = buildFloat(Core.FloatBuffer16[1]);
+    
+	// modified timestamp
+    if ((mask & 8) != 0) {
+        outputList[5] = buildFloat(Core.FloatBuffer16[1]);
     }
-    output = arg4;
-    return output;
+    
+    return args[3];
 }

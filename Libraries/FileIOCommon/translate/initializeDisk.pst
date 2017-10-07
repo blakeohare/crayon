@@ -1,14 +1,18 @@
-﻿Value lib_fileiocommon_function_initializeDisk(Array<Value> args) {
-    Array<object> objArray1 = null;
-    object object1 = null;
-    ObjectInstance objInstance1 = null;
-    Value output = VALUE_NULL;
-    Value arg1 = args[0];
-    Value arg2 = args[1];
-    objInstance1 = ((ObjectInstance) arg1.internalValue);
-    objArray1 = new Array<object>(1);
+﻿/*
+    Initialize a virtualized disk instance if the platform uses such a thing.
+
+    args[0]: disk host object
+    args[1]: boolean
+        true -> JS platform should back the virtual disk with a localStorage dictionary
+        false -> JS should just use a normal dictionary
+        not JS? the $_lib_fileiocommon_initializeDisk no-ops, so it doesn't matter.
+
+*/
+Value lib_fileiocommon_function_initializeDisk(Array<Value> args) {
+    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
+    Array<object> objArray1 = new Array<object>(1);
     objInstance1.nativeData = objArray1;
-    object1 = Native._lib_fileiocommon_initializeDisk(((bool) arg2.internalValue));
+    object object1 = Native._lib_fileiocommon_initializeDisk(((bool) args[1].internalValue));
     objArray1[0] = object1;
-    return output;
+    return VALUE_NULL;
 }
