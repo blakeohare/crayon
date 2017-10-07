@@ -1,6 +1,156 @@
 <library name="Graphics2DText">
-	<description>Provides functionality to render text in games made with the Game library</description>
+	<description>
+		Provides functionality to render text in games made with the Game library
+	</description>
 	<namespace name="Graphics2DText">
 		
+		<enum name="FontSourceType">
+			<description>
+				Used to identify the source of a font.
+			</description>
+			<value name="DEFAULT"/>
+			<value name="RESOURCE"/>
+			<value name="FILE"/>
+			<value name="SYSTEM"/>
+		</enum>
+		
+		<enum name="FontClass">
+			<description>
+				Used to identify a type of font class.
+			</description>
+			<value name="SERIF"/>
+			<value name="SANS_SERIF"/>
+			<value name="MONOSPACE"/>
+		</enum>
+		
+		<enum name="FontStyle">
+			<description>
+				Used to identify a type of font style.
+			</description>
+			<value name="NORMAL"/>
+			<value name="BOLD"/>
+			<value name="ITALIC"/>
+			<value name="BOLD_ITALIC"/>
+		</enum>
+		
+		<class name="FontNotFoundException" parent="Core.Exception">
+			<description>
+				An exception thrown when a font cannot be found.
+			</description>
+		</class>
+		
+		<class name="FontRenderer">
+			<description>
+				Renders a specific font face, style, size, and color, by generating TextSurface instances.
+			</description>
+			
+			<function name="setColor">
+				<description>
+					Sets the color of the renderer.
+				</description>
+				<arg name="red" type="int" description="red component of the font color."/>
+				<arg name="green" type="int" description="green component of the font color."/>
+				<arg name="blue" type="int" description="blue component of the font color."/>
+				<returns type="Graphics2DText.FontRenderer" description="Returns itself for chaining."/>
+			</function>
+			
+			<function name="setSize">
+				<description>
+					Sets the font size of the renderer.
+				</description>
+				<arg name="size" type="int" description="the new font size"/>
+				<returns type="Graphics2DText.FontRenderer" description="Returns itself for chaining."/>
+			</function>
+			
+			<function name="setStyle">
+				<description>
+					Sets the style of the renderer (e.g. bold, italic)
+				</description>
+				<arg name="style" type="Graphics2DText.FontStyle" description="the new font style"/>
+				<returns type="Graphics2DText.FontRenderer" description="Returns itself for chaining."/>
+			</function>
+			
+			<function name="render">
+				<description>
+					Renders text into a Graphics2DText.TextSurface instance, which can be used much like an
+					ordinary Graphics2D.GraphicsTexture
+				</description>
+				<arg name="text" type="string" description="text to render"/>
+				<returns type="Graphics2DText.TextSurface" description="A surface containing pixel data."/>
+			</function>
+		</class>
+		
+		<class name="FontResource">
+			<description>
+				Represents a font resource, regardless of where it came from.
+				This can be used to generate new FontRenderer instances, which handle styling, color, etc.
+			</description>
+		
+			<function name="getRenderer">
+				<description>
+					Get a render instance for this font face.
+				</description>
+				<returns type="Graphics2DText.FontRenderer"/>
+			</function>
+			
+			<function name="fromResource" static="true">
+				<arg name="path" type="string" description="resource path of the font resource"/>
+				<description>
+					Loads a font face from an embedded resource.
+				</description>
+				<returns type="Graphics2DText.FontResource" description="A font resource"/>
+			</function>
+			
+			<function name="fromDisk" static="true">
+				<arg name="path" type="string" description="file path to the font resource on disk"/>
+				<description>
+					Loads a font face from an embedded resource.
+				</description>
+				<returns type="Graphics2DText.FontResource" description="A font resource"/>
+			</function>
+			
+			<function name="fromSystem" static="true">
+				<arg name="name" type="string" description="The name of the font resource."/>
+				<description>
+					Loads a font face from a system-installed font.
+				</description>
+				<returns type="Graphics2DText.FontResource" description="A font resource"/>
+			</function>
+			
+			<function name="isSystemFontPresent" static="true">
+				<arg name="name" type="string" description="The name of the font resource."/>
+				<description>
+					Determines if the given font is present on the current system.
+				</description>
+				<returns type="bool" description="True if that font is present."/>
+			</function>
+		</class>
+		
+		<class name="TextSurface">
+			<description>
+				A surface containing some rendered text.
+				These are generated from the Graphics2DText.FontRenderer's render method.
+			</description>
+			
+			<function name="draw">
+				<description>
+					Renders a text surface to the screen at the given coordinates.
+					These coordinates describe the position of the top left corner of the text surface on the screen.
+				</description>
+				<arg name="x" type="int" description="X coordinate to draw this text surface to"/>
+				<arg name="y" type="int" description="Y coordinate to draw this text surface to"/>
+			</function>
+			
+			<function name="drawWithAlpha">
+				<description>
+					Renders a text surface to the screen at the given coordinates.
+					These coordinates describe the position of the top left corner of the text surface on the screen.
+					The surface will be drawn at the given opacity.
+				</description>
+				<arg name="x" type="int" description="X coordinate to draw this text surface to"/>
+				<arg name="y" type="int" description="Y coordinate to draw this text surface to"/>
+				<arg name="alpha" type="int" description="Alpha value to draw this surface with (0-255)."/>
+			</function>
+		</class>
 	</namespace>
 </library>

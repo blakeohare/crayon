@@ -52,14 +52,17 @@
             return $$lib_graphics2dtext_isSystemFontPresent(name);
         }
 
+        // TODO: implement this
         static function getDefaultSerifFont() {
             return FontResource._get(FontSourceType.DEFAULT, FontClass.SERIF);
         }
 
+        // TODO: implement this
         static function getDefaultSansSerifFont() {
             return FontResource._get(FontSourceType.DEFAULT, FontClass.SANS_SERIF);
         }
 
+        // TODO: implement this
         static function getDefaultMonospaceFont() {
             return FontResource._get(FontSourceType.DEFAULT, FontClass.MONOSPACE);
         }

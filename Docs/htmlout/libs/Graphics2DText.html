@@ -16,11 +16,484 @@ a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:
 a.bookmark:hover { color:#08a; }
 p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
 .keyword { font-weight:normal; }</style><h1>Graphics2DText</h1><div class="itembox">
-<p class="description">Provides functionality to render text in games made with the Game library</p>
+<p class="description">
+		Provides functionality to render text in games made with the Game library
+	</p>
 </div>
 <ul>
 <li><span class="codefont">namespace</span> Graphics2DText<ul>
+<li><a href="#enum-graphics2dtext-fontclass"><span class="codefont">enum</span> FontClass</a></li>
+<li><a href="#enum-graphics2dtext-fontsourcetype"><span class="codefont">enum</span> FontSourceType</a></li>
+<li><a href="#enum-graphics2dtext-fontstyle"><span class="codefont">enum</span> FontStyle</a></li>
+<li><a href="#class-graphics2dtext-fontnotfoundexception"><span class="codefont">class</span> FontNotFoundException</a></li>
+<li><a href="#class-graphics2dtext-fontrenderer"><span class="codefont">class</span> FontRenderer</a><ul>
+<li><a href="#func-graphics2dtext-fontrenderer-render"><span class="codefont">function</span> render(text)</a></li>
+<li><a href="#func-graphics2dtext-fontrenderer-setcolor"><span class="codefont">function</span> setColor(red, green, blue)</a></li>
+<li><a href="#func-graphics2dtext-fontrenderer-setsize"><span class="codefont">function</span> setSize(size)</a></li>
+<li><a href="#func-graphics2dtext-fontrenderer-setstyle"><span class="codefont">function</span> setStyle(style)</a></li>
+</ul>
+</li>
+<li><a href="#class-graphics2dtext-fontresource"><span class="codefont">class</span> FontResource</a><ul>
+<li><a href="#func-graphics2dtext-fontresource-fromdisk"><span class="codefont">static function</span> fromDisk(path)</a></li>
+<li><a href="#func-graphics2dtext-fontresource-fromresource"><span class="codefont">static function</span> fromResource(path)</a></li>
+<li><a href="#func-graphics2dtext-fontresource-fromsystem"><span class="codefont">static function</span> fromSystem(name)</a></li>
+<li><a href="#func-graphics2dtext-fontresource-getrenderer"><span class="codefont">function</span> getRenderer()</a></li>
+<li><a href="#func-graphics2dtext-fontresource-issystemfontpresent"><span class="codefont">static function</span> isSystemFontPresent(name)</a></li>
+</ul>
+</li>
+<li><a href="#class-graphics2dtext-textsurface"><span class="codefont">class</span> TextSurface</a><ul>
+<li><a href="#func-graphics2dtext-textsurface-draw"><span class="codefont">function</span> draw(x, y)</a></li>
+<li><a href="#func-graphics2dtext-textsurface-drawwithalpha"><span class="codefont">function</span> drawWithAlpha(x, y, alpha)</a></li>
 </ul>
 </li>
 </ul>
+</li>
+</ul>
+<div class="itembox">
+<h1><span class="keyword">enum</span> FontClass<a class="bookmark" name="enum-graphics2dtext-fontclass" href="#enum-graphics2dtext-fontclass">[link]</a></h1>
+<p class="description">
+				Used to identify a type of font class.
+			</p>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">SERIF</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">SANS_SERIF</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">MONOSPACE</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="itembox">
+<h1><span class="keyword">enum</span> FontSourceType<a class="bookmark" name="enum-graphics2dtext-fontsourcetype" href="#enum-graphics2dtext-fontsourcetype">[link]</a></h1>
+<p class="description">
+				Used to identify the source of a font.
+			</p>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">DEFAULT</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">RESOURCE</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">FILE</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">SYSTEM</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="itembox">
+<h1><span class="keyword">enum</span> FontStyle<a class="bookmark" name="enum-graphics2dtext-fontstyle" href="#enum-graphics2dtext-fontstyle">[link]</a></h1>
+<p class="description">
+				Used to identify a type of font style.
+			</p>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">NORMAL</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">BOLD</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">ITALIC</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+<tr>
+<td class="codefont argname">BOLD_ITALIC</td>
+<td class="description"><p class="description"></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> FontNotFoundException<a class="bookmark" name="class-graphics2dtext-fontnotfoundexception" href="#class-graphics2dtext-fontnotfoundexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">
+				An exception thrown when a font cannot be found.
+			</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> FontRenderer<a class="bookmark" name="class-graphics2dtext-fontrenderer" href="#class-graphics2dtext-fontrenderer">[link]</a></h1>
+<div class="itembox">
+<p class="description">
+				Renders a specific font face, style, size, and color, by generating TextSurface instances.
+			</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> render(text)<a class="bookmark" name="func-graphics2dtext-fontrenderer-render" href="#func-graphics2dtext-fontrenderer-render">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Renders text into a Graphics2DText.TextSurface instance, which can be used much like an
+					ordinary Graphics2D.GraphicsTexture
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">text</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">text to render</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Graphics2DText.TextSurface</td><td class="description"><p class="description">A surface containing pixel data.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> setColor(red, green, blue)<a class="bookmark" name="func-graphics2dtext-fontrenderer-setcolor" href="#func-graphics2dtext-fontrenderer-setcolor">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Sets the color of the renderer.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">red</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">red component of the font color.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">green</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">green component of the font color.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">blue</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">blue component of the font color.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Graphics2DText.FontRenderer</td><td class="description"><p class="description">Returns itself for chaining.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> setSize(size)<a class="bookmark" name="func-graphics2dtext-fontrenderer-setsize" href="#func-graphics2dtext-fontrenderer-setsize">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Sets the font size of the renderer.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">size</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">the new font size</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Graphics2DText.FontRenderer</td><td class="description"><p class="description">Returns itself for chaining.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> setStyle(style)<a class="bookmark" name="func-graphics2dtext-fontrenderer-setstyle" href="#func-graphics2dtext-fontrenderer-setstyle">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Sets the style of the renderer (e.g. bold, italic)
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">style</td>
+<td class="codefont argtype">Graphics2DText.FontStyle</td>
+<td class="description"><p class="description">the new font style</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Graphics2DText.FontRenderer</td><td class="description"><p class="description">Returns itself for chaining.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> FontResource<a class="bookmark" name="class-graphics2dtext-fontresource" href="#class-graphics2dtext-fontresource">[link]</a></h1>
+<div class="itembox">
+<p class="description">
+				Represents a font resource, regardless of where it came from.
+				This can be used to generate new FontRenderer instances, which handle styling, color, etc.
+			</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fromDisk(path)<a class="bookmark" name="func-graphics2dtext-fontresource-fromdisk" href="#func-graphics2dtext-fontresource-fromdisk">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Loads a font face from an embedded resource.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">file path to the font resource on disk</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Graphics2DText.FontResource</td><td class="description"><p class="description">A font resource</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fromResource(path)<a class="bookmark" name="func-graphics2dtext-fontresource-fromresource" href="#func-graphics2dtext-fontresource-fromresource">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Loads a font face from an embedded resource.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">resource path of the font resource</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Graphics2DText.FontResource</td><td class="description"><p class="description">A font resource</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fromSystem(name)<a class="bookmark" name="func-graphics2dtext-fontresource-fromsystem" href="#func-graphics2dtext-fontresource-fromsystem">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Loads a font face from a system-installed font.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">name</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">The name of the font resource.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">Graphics2DText.FontResource</td><td class="description"><p class="description">A font resource</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getRenderer()<a class="bookmark" name="func-graphics2dtext-fontresource-getrenderer" href="#func-graphics2dtext-fontresource-getrenderer">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Get a render instance for this font face.
+				</p>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> isSystemFontPresent(name)<a class="bookmark" name="func-graphics2dtext-fontresource-issystemfontpresent" href="#func-graphics2dtext-fontresource-issystemfontpresent">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Determines if the given font is present on the current system.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">name</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">The name of the font resource.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">True if that font is present.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> TextSurface<a class="bookmark" name="class-graphics2dtext-textsurface" href="#class-graphics2dtext-textsurface">[link]</a></h1>
+<div class="itembox">
+<p class="description">
+				A surface containing some rendered text.
+				These are generated from the Graphics2DText.FontRenderer's render method.
+			</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> draw(x, y)<a class="bookmark" name="func-graphics2dtext-textsurface-draw" href="#func-graphics2dtext-textsurface-draw">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Renders a text surface to the screen at the given coordinates.
+					These coordinates describe the position of the top left corner of the text surface on the screen.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">x</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">X coordinate to draw this text surface to</p></td>
+</tr>
+<tr>
+<td class="codefont argname">y</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">Y coordinate to draw this text surface to</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> drawWithAlpha(x, y, alpha)<a class="bookmark" name="func-graphics2dtext-textsurface-drawwithalpha" href="#func-graphics2dtext-textsurface-drawwithalpha">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Renders a text surface to the screen at the given coordinates.
+					These coordinates describe the position of the top left corner of the text surface on the screen.
+					The surface will be drawn at the given opacity.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">x</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">X coordinate to draw this text surface to</p></td>
+</tr>
+<tr>
+<td class="codefont argname">y</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">Y coordinate to draw this text surface to</p></td>
+</tr>
+<tr>
+<td class="codefont argname">alpha</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">Alpha value to draw this surface with (0-255).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
 </body></html>
