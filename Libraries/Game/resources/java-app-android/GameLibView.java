@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.opengl.GLSurfaceView;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -15,7 +16,7 @@ import org.crayonlang.interpreter.structs.PlatformRelayObject;
 
 import java.util.ArrayList;
 
-public class GameLibView extends View {
+public class GameLibView extends GLSurfaceView {
 
     public static GameLibView INSTANCE = null;
 
@@ -27,13 +28,14 @@ public class GameLibView extends View {
     private int screenWidth = -1;
     private int screenHeight = -1;
     private ArrayList<PlatformRelayObject> events = new ArrayList<PlatformRelayObject>();
-    private Paint paint = new Paint();
+    private final GameLibGlRenderer renderer;
 
     public GameLibView(double fps, Context context) {
         super(context);
         INSTANCE = this;
         lastClockTimestamp = getCurrentTime();
         this.fps = fps;
+        this.renderer = new GameLibGlRenderer();
     }
 
     private void handleMouseEventImpl(boolean isMove, boolean isDown, float x, float y) {
@@ -76,61 +78,6 @@ public class GameLibView extends View {
                 break;
         }
         return true;
-    }
-
-    @Override
-    public void onDraw(Canvas canvas) {
-        // TODO: draw on a temporary canvas (which will likely be smaller) and then draw that canvas onto the final region.
-        super.onDraw(canvas);
-        paint.setColor(Color.BLUE);
-        int screenWidth = canvas.getWidth();
-        int screenHeight = canvas.getHeight();
-        this.screenWidth = screenWidth;
-        this.screenHeight = screenHeight;
-        int logicalWidth = this.logicalWidth;
-        int logicalHeight = this.logicalHeight;
-
-        int left;
-        int right;
-        int top;
-        int bottom;
-        int alpha;
-        int red;
-        int green;
-        int blue;
-
-        for (int i = 0; i < this.eventLength; i += 16) {
-            switch (this.eventList[i]) {
-                case 1: // rectangle
-                    left = eventList[i | 1];
-                    top = eventList[i | 2];
-                    right = left + eventList[i | 3];
-                    bottom = top + eventList[i | 4];
-                    red = eventList[i | 5];
-                    green = eventList[i | 6];
-                    blue = eventList[i | 7];
-                    alpha = eventList[i | 8];
-
-                    if (red > 255 || red < 0) red = red > 255 ? 255 : 0;
-                    if (green > 255 || green < 0) green = green > 255 ? 255 : 0;
-                    if (blue > 255 || blue < 0) blue = blue > 255 ? 255 : 0;
-                    if (alpha > 255 || alpha < 0) alpha = alpha > 255 ? 255 : 0;
-                    paint.setColor(Color.argb(alpha, red, green, blue));
-                    canvas.drawRect(
-                        left * screenWidth / logicalWidth,
-                        top * screenHeight / logicalHeight,
-                        right * screenWidth / logicalWidth,
-                        bottom * screenHeight / logicalHeight,
-                        paint);
-
-                    break;
-                default:
-                    // TODO: this
-                    break;
-            }
-        }
-
-        invalidate();
     }
 
     public static void initializeGame(double fps) {
