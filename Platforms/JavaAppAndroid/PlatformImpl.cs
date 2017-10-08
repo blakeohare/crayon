@@ -95,6 +95,11 @@ namespace JavaAppAndroid
             output["app/src/main/assets/bytecode.txt"] = resourceDatabase.ByteCodeFile;
             output["app/src/main/assets/resourcemanifest.txt"] = resourceDatabase.ResourceManifestFile;
 
+            output["app/src/main/assets/imagesheetmanifest.txt"] =
+                resourceDatabase.ImageSheetManifestFile != null
+                    ? resourceDatabase.ImageSheetManifestFile
+                    : new FileOutput() { Type = FileOutputType.Text, TextContent = "" };
+
             return output;
         }
 

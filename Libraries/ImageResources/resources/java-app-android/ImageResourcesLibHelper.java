@@ -16,7 +16,7 @@ public final class ImageResourcesLibHelper {
     }
 
     public static String getImageResourceManifestString() {
-        throw new RuntimeException();
+        return org.crayonlang.interpreter.AndroidTranslationHelper.getTextAsset("imagesheetmanifest.txt");
     }
 
     public static void imageLoadAsync(String str1, Object[] objArray1, Object[] objArray2) {
