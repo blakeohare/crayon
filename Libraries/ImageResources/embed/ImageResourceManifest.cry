@@ -135,6 +135,14 @@ namespace ImageResources {
                         files.add(filename);
                         resourceInfo[filename] = [ImgResourceType.SHEET, activeSheetId, activeChunkId, 0, 0, width, height];
                         break;
+
+                    default:
+                        // This should not happen.
+                        // If it does, there's a good chance that it's the BOM in the file.
+                        throw new Exception([
+                            parts,
+                            parts[0].trim().length // this value should be 1
+                        ]);
                 }
             }
 

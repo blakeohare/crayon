@@ -19,7 +19,11 @@ public final class AndroidTranslationHelper {
     public static String getTextAsset(String path) {
         try {
             InputStream inputStream = mainActivity.getAssets().open(path);
-            return flushTextInputStream(inputStream);
+            String value = flushTextInputStream(inputStream);
+            if (value.length() > 0 && value.charAt(0) == 65279) {
+                value = value.substring(1);
+            }
+            return value;
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
