@@ -36,6 +36,7 @@ public class GameLibView extends GLSurfaceView {
         lastClockTimestamp = getCurrentTime();
         this.fps = fps;
         this.renderer = new GameLibGlRenderer();
+        this.setRenderer(this.renderer);
     }
 
     private void handleMouseEventImpl(boolean isMove, boolean isDown, float x, float y) {
