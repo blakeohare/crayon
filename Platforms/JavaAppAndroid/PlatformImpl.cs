@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Common;
 using Pastel.Nodes;
@@ -145,7 +146,6 @@ namespace JavaAppAndroid
             output["app/app.iml"] = this.LoadTextFile("Resources/app/appIml.txt", replacements);
             output["app/build.gradle"] = this.LoadTextFile("Resources/app/buildGradle.txt", replacements);
             output["app/proguard-rules.txt"] = this.LoadTextFile("Resources/app/proguardRules.txt", replacements);
-            output["app/src/main/AndroidManifest.xml"] = this.LoadTextFile("Resources/app/src/main/AndroidManifestXml.txt", replacements);
 
             output["app/src/main/java/org/crayonlang/crayonsampleapp/app/MainActivity.java"] = this.LoadTextFile("Resources/app/src/main/java/org/crayonlang/sampleapp/app/MainActivityJava.txt", replacements);
             output["app/src/main/res/layout/activity_main.xml"] = this.LoadTextFile("Resources/app/src/main/res/layout/ActivityMainXml.txt", replacements);
@@ -154,6 +154,10 @@ namespace JavaAppAndroid
             output["app/src/main/res/values/strings.xml"] = this.LoadTextFile("Resources/app/src/main/res/values/StringsXml.txt", replacements);
             output["app/src/main/res/values/styles.xml"] = this.LoadTextFile("Resources/app/src/main/res/values/StylesXml.txt", replacements);
             output["app/src/main/res/values-w820dp/dimens.xml"] = this.LoadTextFile("Resources/app/src/main/res/valuesW820dp/DimensXml.txt", replacements);
+
+            FileOutput androidManifest = this.LoadTextFile("Resources/app/src/main/AndroidManifestXml.txt", replacements);
+            output["app/src/main/AndroidManifest.xml"] = androidManifest;
+            androidManifest.TextContent = this.AdjustAndroidManifest(androidManifest.TextContent, options);
 
             IconSetGenerator icons = new IconSetGenerator();
             if (options.GetBool(ExportOptionKey.HAS_ICON))
@@ -208,6 +212,39 @@ namespace JavaAppAndroid
             {
                 {  "IS_JAVA", true },
             };
+        }
+
+        private string AdjustAndroidManifest(string content, Options options)
+        {
+            // TODO: LibraryForExport should maybe have an UsesOpenGL flag?
+            bool usesOpenGl = options.GetArray(ExportOptionKey.LIBRARIES_USED)
+                .Cast<LibraryForExport>()
+                .Where(lfe => lfe.Name == "Game")
+                .Count() > 0;
+
+            // This is kind of a weird way to do this...
+
+            string[] parts = content.Split(new string[] { "###" }, StringSplitOptions.None);
+            Dictionary<string, int> flags = new Dictionary<string, int>();
+            for (int i = 0; i < parts.Length; ++i)
+            {
+                flags[parts[i]] = i;
+            }
+
+            parts[flags["USES_OPENGL_BEGIN"]] = "";
+            parts[flags["USES_OPENGL_END"]] = "";
+
+            if (!usesOpenGl)
+            {
+                parts[flags["USES_OPENGL_BEGIN"] + 1] = "";
+            }
+
+            string[] lines = string.Join("", parts)
+                .Split('\n')
+                .Select(line => line.TrimEnd())
+                .Where(line => line.Length > 0)
+                .ToArray();
+            return string.Join("\n", lines);
         }
     }
 }

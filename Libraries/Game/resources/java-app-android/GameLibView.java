@@ -89,9 +89,7 @@ public class GameLibView extends GLSurfaceView {
         this.logicalWidth = logicalWidth;
         this.logicalHeight = logicalHeight;
 
-        // most platforms open a blocking window and so most platforms assume this call
-        // will re-invoke the interpreter.
-        enqueueNextFrame();
+        this.renderer.setExecutionContextId(executionContextId);
     }
 
     public void setTitle(String title) {
@@ -109,9 +107,9 @@ public class GameLibView extends GLSurfaceView {
     }
 
     public void clockTick() {
-        enqueueNextFrame();
+        //enqueueNextFrame();
     }
-
+/*
     private void enqueueNextFrame() {
         double now = getCurrentTime();
         double diff = now - lastClockTimestamp;
@@ -123,13 +121,16 @@ public class GameLibView extends GLSurfaceView {
 
         handler.postDelayed(nextFrameRunner, (int) (delay * 1000));
     }
+    //*/
 
+    /*
     private final Handler handler = new Handler();
     private final Runnable nextFrameRunner = new Runnable() {
         public void run() {
             beginNextFrame();
         }
     };
+    //*/
 
     public void beginNextFrame() {
         lastClockTimestamp = getCurrentTime();
