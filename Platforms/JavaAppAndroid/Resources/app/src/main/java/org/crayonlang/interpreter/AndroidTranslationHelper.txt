@@ -1,6 +1,8 @@
 ﻿package org.crayonlang.interpreter;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.View;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +28,15 @@ public final class AndroidTranslationHelper {
             return value;
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
+        }
+    }
+
+    public static Bitmap getImageAsset(String path) {
+        try {
+            InputStream inputStream = mainActivity.getAssets().open("images/" + path);
+            return BitmapFactory.decodeStream(inputStream);
+        } catch (IOException ioe) {
+            return null;
         }
     }
 

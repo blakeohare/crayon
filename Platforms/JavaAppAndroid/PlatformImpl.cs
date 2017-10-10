@@ -100,6 +100,12 @@ namespace JavaAppAndroid
                     ? resourceDatabase.ImageSheetManifestFile
                     : new FileOutput() { Type = FileOutputType.Text, TextContent = "" };
 
+            foreach (string imageResourceFile in resourceDatabase.ImageSheetFiles.Keys)
+            {
+                FileOutput file = resourceDatabase.ImageSheetFiles[imageResourceFile];
+                output["app/src/main/assets/images/" + imageResourceFile] = file;
+            }
+
             return output;
         }
 
