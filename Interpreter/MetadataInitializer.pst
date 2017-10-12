@@ -468,3 +468,152 @@ Array<object> createLibraryFunctionLookup() {
     p.libraryFunctionByPc = functionPointersByPc;
     return functionPointersByPc;
 }
+
+int addLiteralImpl(Array<int> row, string stringArg) {
+    ProgramData p = Core.GetProgramData();
+    int type = row[0];
+    if (type == Types.NULL) {
+        p.literalTableBuilder.Add(VALUE_NULL);
+    } else if (type == Types.BOOLEAN) {
+        p.literalTableBuilder.Add(buildBoolean(row[1] == 1));
+    } else if (type == Types.INTEGER) {
+        p.literalTableBuilder.Add(buildInteger(row[1]));
+    } else if (type == Types.FLOAT) {
+        p.literalTableBuilder.Add(buildFloat(Core.ParseFloatUnsafe(stringArg)));
+    } else if (type == Types.STRING) {
+        p.literalTableBuilder.Add(buildCommonString(stringArg));
+    } else if (type == Types.FUNCTION) {
+        int index = p.literalTableBuilder.Size();
+        p.literalTableBuilder.Add(buildCommonString(stringArg));
+        p.invFunctionNameLiterals[stringArg] = index;
+    } else if (type == Types.CLASS) {
+        ClassValue cv = new ClassValue(
+            // TODO: going to need to update this for interfaces. Negative numbers too hacky?
+            false, // is interface?
+            row[1]); // class ID
+        p.literalTableBuilder.Add(new Value(Types.CLASS, cv));
+    }
+
+    return 0;
+}
+
+int addNameImpl(string nameValue) {
+    ProgramData p = Core.GetProgramData();
+    int index = p.identifiersBuilder.Size(); // name ID (sequentially allocated so it happens to be the length of the list at the time of declaration)
+    p.invIdentifiers[nameValue] = index;
+    p.identifiersBuilder.Add(nameValue);
+
+    if (Core.StringEquals("length", nameValue)) {
+        p.lengthId = index;
+    }
+
+    return 0;
+}
+
+int finalizeInitializationImpl(string projectId) {
+    ProgramData p = Core.GetProgramData();
+
+    p.identifiers = Core.ListToArray(p.identifiersBuilder);
+    p.literalTable = Core.ListToArray(p.literalTableBuilder);
+    p.integerSwitchLookups = Core.ListToArray(p.integerSwitchLookupsBuilder);
+    p.stringSwitchLookups = Core.ListToArray(p.stringSwitchLookupsBuilder);
+    p.sourceCode = Core.ListToArray(p.sourceCodeBuilder);
+    p.globalNameIdToPrimitiveMethodName = primitiveMethodsInitializeLookup(p.invIdentifiers);
+    p.funcArgs = new Array<Value>(p.identifiers.Size()); // WAY over-allocated but that's okay for now, I guess.
+    p.projectId = projectId;
+    p.identifiersBuilder = null;
+    p.literalTableBuilder = null;
+    p.integerSwitchLookupsBuilder = null;
+    p.stringSwitchLookupsBuilder = null;
+    p.sourceCodeBuilder = null;
+    p.libraryFunctionByPc = createLibraryFunctionLookup();
+    p.initializationComplete = true;
+
+    return 0;
+}
+
+int buildSwitchIntImpl(Array<int> row) {
+    ProgramData p = Core.GetProgramData();
+    Dictionary<int, int> integerSwitchLookup = new Dictionary<int, int>();
+    for (int i = 0; i < row.Size(); i += 2) {
+        integerSwitchLookup[row[i]] = row[i + 1];
+    }
+    p.integerSwitchLookupsBuilder.Add(integerSwitchLookup);
+
+    return 0;
+}
+
+int buildSwitchStringImpl(Array<int> row, string caseValue) {
+    ProgramData p = Core.GetProgramData();
+    List<Dictionary<string, int>> allStringSwitchLookups = p.stringSwitchLookupsBuilder;
+    int id = row[0];
+    while (allStringSwitchLookups.Size() <= id) {
+        allStringSwitchLookups.Add(new Dictionary<string, int>());
+    }
+    Dictionary<string, int> stringSwitchLookup = allStringSwitchLookups[id];
+    stringSwitchLookup[caseValue] = row[1];
+
+    return 0;
+}
+
+// TODO: eventually this should come from embedded resources instead of byte code (with the option of it being absent)
+int defOriginalCodeImpl(Array<int> row, string fileContents) {
+    ProgramData p = Core.GetProgramData();
+    int fileId = row[0]; // file ID
+    List<string> codeLookup = p.sourceCodeBuilder;
+    while (codeLookup.Size() <= fileId) {
+        codeLookup.Add(null);
+    }
+    codeLookup[fileId] = fileContents;
+
+    return 0;
+}
+
+int tokenDataImpl(Array<int> row) {
+    ProgramData p = Core.GetProgramData();
+    Array<List<Token>> tokensByPc = p.tokenData;
+    int pc = row[0] + p.userCodeStart; // PC
+    int line = row[1]; // Line
+    int col = row[2]; // Col
+    int file = row[3]; // File ID
+    List<Token> tokens = tokensByPc[pc];
+    if (tokens == null) {
+        tokens = new List<Token>();
+        tokensByPc[pc] = tokens;
+    }
+    tokens.Add(new Token(line, col, file));
+
+    return 0;
+}
+
+/*
+    2n arguments:
+    * 2n + 0 -> PC
+    * 2n + 1 -> delta in value stack depth
+
+    This op creates a single int array of the base value stack depth at any given PC.
+    This will be used whenever a special kind of JUMP occurs.
+    - going from a try block to a finally
+    - going from a finally to basically anywhere else
+    - in the debugger when the next line to execute is set arbitrarily
+
+*/
+int valueStackDepthImpl(Array<int> row) {
+    ProgramData p = Core.GetProgramData();
+    int totalPcCount = p.ops.Size(); // total PC count
+    Array<int> valueStackDepthByPc = new Array<int>(totalPcCount); // output
+    int rowIndex = 0; // row index
+    int rowLength = row.Size(); // row length
+    int depth = 0; // depth total
+    for (int pc = 0; pc < totalPcCount; pc += 1) {
+        if (rowIndex < rowLength && pc == row[rowIndex]) {
+            depth += row[rowIndex + 1];
+            rowIndex += 2;
+        }
+        valueStackDepthByPc[pc] = depth;
+    }
+
+    p.valueStackDepthByPc = valueStackDepthByPc;
+
+    return 0;
+}

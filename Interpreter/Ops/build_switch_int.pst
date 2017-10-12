@@ -1,8 +1,2 @@
 ﻿
-Dictionary<int, int> integerSwitchLookup = new Dictionary<int, int>();
-
-for (i = 0; i < row.Size(); i += 2) {
-    integerSwitchLookup[row[i]] = row[i + 1];
-}
-
-p.integerSwitchLookupsBuilder.Add(integerSwitchLookup);
+buildSwitchIntImpl(row);

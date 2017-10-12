@@ -122,8 +122,6 @@ InterpreterResult interpretImpl(int executionContextId) {
     bool returnValueUsed = false;
     Value output = null;
     FunctionInfo functionInfo = null;
-    Array<List<Token>> tokensByPc = null;
-    List<Token> tokens = null;
     int keyType = 0;
     int intKey = 0;
     string stringKey = null;
