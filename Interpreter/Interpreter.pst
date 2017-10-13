@@ -452,7 +452,7 @@ int prepareToSuspend(ExecutionContext ec, StackFrame stack, int valueStackSize, 
     return 0;
 }
 
-int valueStackIncreaseCapacity(ExecutionContext ec) {
+Array<Value> valueStackIncreaseCapacity(ExecutionContext ec) {
     Array<Value> stack = ec.valueStack;
     int oldCapacity = stack.Size();
     int newCapacity = oldCapacity * 2;
@@ -461,7 +461,7 @@ int valueStackIncreaseCapacity(ExecutionContext ec) {
         newStack[i] = stack[i];
     }
     ec.valueStack = newStack;
-    return 0;
+    return newStack;
 }
 
 string unrollExceptionOutput(Value exceptionInstance) {

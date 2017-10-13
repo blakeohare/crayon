@@ -1,5 +1,4 @@
 ﻿if (valueStackSize == valueStackCapacity) {
-    valueStackIncreaseCapacity(ec);
-    valueStack = ec.valueStack;
+    valueStack = valueStackIncreaseCapacity(ec);
     valueStackCapacity = valueStack.Size();
 }

@@ -7,7 +7,7 @@ valueStackSize -= 2;
 rightValue = valueStack[valueStackSize + 1];
 leftValue = valueStack[valueStackSize];
 
-value = null;
+value = VALUE_NULL;
 
 switch ((((leftValue.type * MAX_OP) + row[0]) * MAX_TYPE) + rightValue.type) {
 
@@ -270,18 +270,20 @@ switch ((((leftValue.type * MAX_OP) + row[0]) * MAX_TYPE) + rightValue.type) {
         Core.EmitComment("int << int");
         int1 = (int) rightValue.internalValue;
         if (int1 < 0) {
-            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Cannot bit shift by a negative number.");
+            hasInterrupt = EX_InvalidArgument(ec, "Cannot bit shift by a negative number.");
+        } else {
+            value = buildInteger((int) leftValue.internalValue << int1);
         }
-        value = buildInteger((int) leftValue.internalValue << int1);
         break;
 
     case (((Types.INTEGER * MAX_OP) + BinaryOps.BIT_SHIFT_RIGHT) * MAX_TYPE) + Types.INTEGER:
         Core.EmitComment("int >> int");
         int1 = (int) rightValue.internalValue;
         if (int1 < 0) {
-            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Cannot bit shift by a negative number.");
+            hasInterrupt = EX_InvalidArgument(ec, "Cannot bit shift by a negative number.");
+        } else {
+            value = buildInteger((int) leftValue.internalValue >> int1);
         }
-        value = buildInteger((int) leftValue.internalValue >> int1);
         break;
 
     case (((Types.INTEGER * MAX_OP) + BinaryOps.LESS_THAN) * MAX_TYPE) + Types.INTEGER:
