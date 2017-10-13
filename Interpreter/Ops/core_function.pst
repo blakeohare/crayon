@@ -50,19 +50,14 @@ switch (row[0]) {
 
         int1 = arg1.type;
         int2 = row[2]; // arg count
-        bool1 = false;
+        output = VALUE_FALSE;
         while (int2 > 0) {
             if (row[(2 + int2)] == int1) {
-                bool1 = true;
+                output = VALUE_TRUE;
                 int2 = 0;
             } else {
                 int2 -= 1;
             }
-        }
-        if (bool1) {
-            output = VALUE_TRUE;
-        } else {
-            output = VALUE_FALSE;
         }
         break;
 
@@ -137,18 +132,14 @@ switch (row[0]) {
     case 12: Core.EmitComment("abs");
         @import("FrameworkFunctions/1_arg.pst");
 
-        output = VALUE_NULL;
+        output = arg1;
         if (arg1.type == Types.INTEGER) {
             if ((int) arg1.internalValue < 0) {
                 output = buildInteger(-(int) arg1.internalValue);
-            } else {
-                output = arg1;
             }
         } else if (arg1.type == Types.FLOAT) {
             if ((double) arg1.internalValue < 0) {
                 output = buildFloat(-(double) arg1.internalValue);
-            } else {
-                output = arg1;
             }
         } else {
             return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "abs requires a number as input.");

@@ -149,11 +149,9 @@ InterpreterResult interpretImpl(int executionContextId) {
     Value value3 = null;
     string string1 = null;
     string string2 = null;
-    string string3 = null;
     ObjectInstance objInstance1 = null;
     ObjectInstance objInstance2 = null;
     object object1 = null;
-    object object2 = null;
     List<Value> list1 = null;
     List<Value> list2 = null;
     DictImpl dictImpl = null;
@@ -188,8 +186,7 @@ InterpreterResult interpretImpl(int executionContextId) {
     int localsStackOffset = stack.localsStackOffset;
     Array<Value> funcArgs = p.funcArgs;
     int pc = stack.pc;
-    if ((object2 == null) || (intList1 == null) || (objArray1 == null)) {
-    }
+
     while (true) {
         row = args[pc];
         switch (ops[pc]) {
