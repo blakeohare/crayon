@@ -574,38 +574,13 @@ switch (row[0]) {
         break;
 
     case 37: Core.EmitComment("reflectAllClasses");
-        list1 = new List<Value>();
-        output = new Value(Types.LIST, list1);
-        for (i = 1; i < p.classTable.Size(); i += 1) {
-            classInfo = p.classTable[i];
-            if (classInfo == null) {
-                // TODO: why is the class table not sized to its actual size?
-                i += p.classTable.Size();
-            } else {
-                list1.Add(new Value(Types.CLASS, new ClassValue(false, classInfo.id)));
-            }
-        }
+        output = Reflect_allClasses();
         break;
 
     case 38: Core.EmitComment("reflectGetMethods");
         @import("FrameworkFunctions/1_arg.pst");
-
-        list1 = new List<Value>();
-        output = new Value(Types.LIST, list1);
-        if (arg1.type == Types.INSTANCE) {
-            objInstance1 = ((ObjectInstance) arg1.internalValue);
-            classInfo = p.classTable[objInstance1.classId];
-            for (i = 0; i < classInfo.functionIds.Size(); i += 1) {
-                functionId = classInfo.functionIds[i];
-                if (functionId != -1) {
-                    list1.Add(new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.METHOD, arg1, objInstance1.classId, functionId)));
-                }
-            }
-        } else {
-            classValue = ((ClassValue) arg1.internalValue);
-            classInfo = p.classTable[classValue.classId];
-            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "static method reflection not implemented yet.");
-        }
+        output = Reflect_getMethods(ec, arg1);
+        hasInterrupt = ec.activeInterrupt != null;
         break;
 
     case 39: Core.EmitComment("reflectGetClass");
@@ -614,7 +589,7 @@ switch (row[0]) {
         if (arg1.type != Types.INSTANCE) {
             hasInterrupt = EX_InvalidArgument(ec, "Cannot get class from non-instance types.");
         } else {
-            objInstance1 = ((ObjectInstance) arg1.internalValue);
+            objInstance1 = (ObjectInstance) arg1.internalValue;
             output = new Value(Types.CLASS, new ClassValue(false, objInstance1.classId));
         }
         break;

@@ -25,8 +25,16 @@ InterpreterResult interpreterFinished(ExecutionContext ec) {
     return new InterpreterResult(InterpreterResultStatus.FINISHED, null);
 }
 
+bool EX_UnsupportedOperation(ExecutionContext ec, string exMsg) {
+    return generateException2(ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, exMsg);
+}
+
 bool EX_InvalidArgument(ExecutionContext ec, string exMsg) {
     return generateException2(ec, CoreExceptionTypes.INVALID_ARGUMENT, exMsg);
+}
+
+bool EX_DivisionByZero(ExecutionContext ec, string exMsg) {
+    return generateException2(ec, CoreExceptionTypes.DIVISION_BY_ZERO, exMsg);
 }
 
 bool generateException2(ExecutionContext ec, int exceptionType, string exMsg) {

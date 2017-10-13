@@ -1,9 +1,8 @@
 ﻿
-value = valueStack[valueStackSize - 1];
-if (value.type != Types.LIST && value.type != Types.STRING) {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT,
-        Core.StringConcatAll(
-            "Expected an iterable type, such as a list or string. Found ",
-            getTypeFromId(value.type),
-            " instead."));
+int1 = valueStack[valueStackSize - 1].type;
+if (int1 != Types.LIST && int1 != Types.STRING) {
+    hasInterrupt = EX_InvalidArgument(ec, Core.StringConcatAll(
+        "Expected an iterable type, such as a list or string. Found ",
+        getTypeFromId(int1),
+        " instead."));
 }

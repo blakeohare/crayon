@@ -23,6 +23,7 @@ namespace Crayon
             "Interpreter.pst",
             "MetadataInitializer.pst",
             "PrimitiveMethods.pst",
+            "Reflection.pst",
             "ResourceManager.pst",
             "Runner.pst",
             "Structs.pst",
