@@ -62,7 +62,9 @@ int main() {
         null, // active exception
 
         false, // execution state changed
-        0); // execution state change command
+        0, // execution state change command
+
+        null); // active interrupt
 
     Dictionary<int, ExecutionContext> executionContexts = new Dictionary<int, ExecutionContext>();
     executionContexts[0] = executionContext;
@@ -208,7 +210,9 @@ int runInterpreterWithFunctionPointer(Value fpValue, Array<Value> args) {
         null, // active exception
 
         false, // execution state changed
-        0); // execution state change command
+        0, // execution state change command
+
+        null); // active interrupt
 
     p.executionContexts[newId] = executionContext;
     return runInterpreter(newId);

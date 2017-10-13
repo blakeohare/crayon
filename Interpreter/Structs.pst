@@ -75,6 +75,13 @@ struct ExecutionContext {
     Value activeException;
     bool executionStateChange;
     int executionStateChangeCommand;
+    Interrupt activeInterrupt;
+}
+
+struct Interrupt {
+    int type;
+    int exceptionType;
+    string exceptionMessage;
 }
 
 struct StackFrame {

@@ -146,6 +146,11 @@ enum CoreExceptionTypes {
     UNSUPPORTED_OPERATION = 13,
 }
 
+enum InterruptType {
+    EXCEPTION = 1,
+    DEBUG_BREAKPOINT = 2, // TODO: one of these days...
+}
+
 const int INTEGER_POSITIVE_CACHE_SIZE = 1025;
 const int INTEGER_NEGATIVE_CACHE_SIZE = 129;
 

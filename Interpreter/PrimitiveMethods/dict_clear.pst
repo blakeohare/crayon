@@ -1,8 +1,6 @@
 ﻿if (argCount > 0) {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary clear method", 0, argCount));
-}
-
-if (dictImpl.size > 0) {
+    hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary clear method", 0, argCount));
+} else if (dictImpl.size > 0) {
     // TODO: use platform specific clear methods if available.
     // TODO: empty dictionaries should be null and just set the lookups as needed, so that there are only 2 underlying dictionaries at a time, not 4.
     dictImpl.keyIntLookup = new Dictionary<int, Value>();
