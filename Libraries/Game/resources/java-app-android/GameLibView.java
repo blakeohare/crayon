@@ -110,28 +110,6 @@ public class GameLibView extends GLSurfaceView {
     public void clockTick() {
         //enqueueNextFrame();
     }
-/*
-    private void enqueueNextFrame() {
-        double now = getCurrentTime();
-        double diff = now - lastClockTimestamp;
-        double spf = fps > 0 ? (1.0 / fps) : 1.0;
-        double delay = spf - diff;
-        if (delay <= 0.001) {
-            delay = 0.001;
-        }
-
-        handler.postDelayed(nextFrameRunner, (int) (delay * 1000));
-    }
-    //*/
-
-    /*
-    private final Handler handler = new Handler();
-    private final Runnable nextFrameRunner = new Runnable() {
-        public void run() {
-            beginNextFrame();
-        }
-    };
-    //*/
 
     public void beginNextFrame() {
         lastClockTimestamp = getCurrentTime();
@@ -153,6 +131,10 @@ public class GameLibView extends GLSurfaceView {
         this.eventLength = eventListLength;
         this.imagesNativeData = imagesNativeData;
         this.textChars = textChars;
+    }
+
+    public void render() {
+        this.renderer.doRenderEventQueue(this.eventList, this.eventLength, this.imagesNativeData);
     }
     
     public static boolean getScreenInfo(int[] output) {

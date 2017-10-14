@@ -327,11 +327,6 @@ namespace Interpreter.Libraries.Game
                         GL.Disable(EnableCap.Texture2D);
                         GL.Color4((byte)red, (byte)green, (byte)blue, (byte)alpha);
                         GL.Begin(BeginMode.Polygon);
-                        ptCount = (width + height) / 8;
-                        if (ptCount < 16)
-                        {
-                            ptCount = 16;
-                        }
                         if (scaled)
                         {
                             GL.Vertex2(ax * RW / VW, ay * RH / VH);
