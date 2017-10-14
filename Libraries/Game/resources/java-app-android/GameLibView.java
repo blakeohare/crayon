@@ -35,6 +35,7 @@ public class GameLibView extends GLSurfaceView {
         INSTANCE = this;
         lastClockTimestamp = getCurrentTime();
         this.fps = fps;
+        setEGLContextClientVersion(2);
         this.renderer = new GameLibGlRenderer();
         this.setRenderer(this.renderer);
     }

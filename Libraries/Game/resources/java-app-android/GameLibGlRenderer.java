@@ -6,6 +6,10 @@ import android.opengl.GLSurfaceView;
 import org.crayonlang.interpreter.Interpreter;
 import org.crayonlang.interpreter.structs.InterpreterResult;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -35,9 +39,73 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
         GLES20.glViewport(0, 0, width, height);
     }
 
+    private static FloatBuffer squareBuffer = null;
+
+    private static final String vertexShaderCode =
+            "attribute vec4 vPosition;" +
+                    "void main() {" +
+                    "  gl_Position = vPosition;" +
+                    "}";
+
+    private static final String fragmentShaderCode =
+            "precision mediump float;" +
+                    "uniform vec4 vColor;" +
+                    "void main() {" +
+                    "  gl_FragColor = vColor;" +
+                    "}";
+
+    public static int loadShader(int type, String shaderCode){
+
+        // create a vertex shader type (GLES20.GL_VERTEX_SHADER)
+        // or a fragment shader type (GLES20.GL_FRAGMENT_SHADER)
+        int shader = GLES20.glCreateShader(type);
+
+        // add the source code to the shader and compile it
+        GLES20.glShaderSource(shader, shaderCode);
+        GLES20.glCompileShader(shader);
+
+        return shader;
+    }
+
+    private static int rectVertexShaderId = -1;
+    private static int rectFragmentShaderId = -1;
+    private static int programId = -1;
+
+    private static boolean initialized = false;
+
+    private static final int COORDS_PER_VERTEX = 3;
+
     public void doRenderEventQueue(int[] events, int eventsLength, Object[][] imageNativeData) {
+
+        if (!initialized) {
+            ByteBuffer bb = ByteBuffer.allocateDirect(
+                    4 /* vertex count */
+                    * COORDS_PER_VERTEX
+                    * 4 /* sizeof(float) */);
+            bb.order(ByteOrder.nativeOrder());
+            squareBuffer = bb.asFloatBuffer();
+            squareBuffer.put(new float[] {
+                    0f, 0f, 0f,
+                    0f, 1f, 0f,
+                    1f, 0f, 0f,
+                    1f, 1f, 0f,
+            });
+            squareBuffer.position(0);
+
+            rectVertexShaderId = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
+            rectFragmentShaderId = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
+            programId = GLES20.glCreateProgram();
+            GLES20.glAttachShader(programId, rectVertexShaderId);
+            GLES20.glAttachShader(programId, rectFragmentShaderId);
+            GLES20.glLinkProgram(programId);
+
+            initialized = true;
+        }
+
         int left;
         int top;
+        int width;
+        int height;
         int right;
         int bottom;
         int startX;
@@ -57,10 +125,27 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
         int lineWidth;
         boolean rotated;
 
-        int red;
-        int green;
-        int blue;
-        int alpha;
+        float[] color = new float[4];
+
+        GLES20.glUseProgram(programId);
+
+        int mPositionHandle = GLES20.glGetAttribLocation(programId, "vPosition");
+        GLES20.glEnableVertexAttribArray(mPositionHandle);
+
+        int mColorHandle = GLES20.glGetUniformLocation(programId, "vColor");
+
+        // fast conversion from 0-255 to 0f-1f
+        float[] conversion256 = new float[256];
+        for (int i = 0; i < 256; ++i) {
+            conversion256[i] = i / 255f;
+        }
+
+        // TODO: These are hardcoded for FireDodge. Get the actual values from the view.
+        float VW = 800f;
+        float VH = 600f;
+
+        float vwHalf = VW / 2;
+        float vhHalf = VH / 2;
 
         for (int i = 0; i < eventsLength; i += 16) {
             switch (events[i]) {
@@ -69,25 +154,40 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
                 case 1:
                     left = events[i | 1];
                     top = events[i | 2];
-                    right = events[i | 3] + left;
-                    bottom = events[i | 4] + top;
-                    red = events[i | 5];
-                    green = events[i | 6];
-                    blue = events[i | 7];
-                    alpha = events[i | 8];
-                    // TODO: draw rectangle
+                    width = events[i | 3];
+                    height = events[i | 4];
+
+                    // For now, this is just rendering the 0,0-1,1 square while I debug OpenGL.
+
+                    color[0] = conversion256[events[i | 5]];
+                    color[1] = conversion256[events[i | 6]];
+                    color[2] = conversion256[events[i | 7]];
+                    color[3] = conversion256[events[i | 8]];
+
+                    GLES20.glUniform4fv(mColorHandle, 1, color, 0);
+
+                    GLES20.glVertexAttribPointer(
+                            mPositionHandle,
+                            COORDS_PER_VERTEX,
+                            GLES20.GL_FLOAT,
+                            false,
+                            COORDS_PER_VERTEX * 4 /* stride */,
+                            squareBuffer);
+
+                    GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4 /* vertex count */);
+                    GLES20.glDisableVertexAttribArray(mPositionHandle);
                     break;
 
                 // Ellipse
                 case 2:
                     left = events[i | 1];
                     top = events[i | 2];
-                    right = events[i | 3] + left;
-                    bottom = events[i | 4] + top;
-                    red = events[i | 5];
-                    green = events[i | 6];
-                    blue = events[i | 7];
-                    alpha = events[i | 8];
+                    width = events[i | 3];
+                    height = events[i | 4];
+                    color[0] = conversion256[events[i | 5]];
+                    color[1] = conversion256[events[i | 6]];
+                    color[2] = conversion256[events[i | 7]];
+                    color[3] = conversion256[events[i | 8]];
                     // TODO: draw ellipse
                     break;
 
@@ -98,10 +198,10 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
                     endX = events[i | 3];
                     endY = events[i | 4];
                     lineWidth = events[i | 5];
-                    red = events[i | 6];
-                    green = events[i | 7];
-                    blue = events[i | 8];
-                    alpha = events[i | 9];
+                    color[0] = conversion256[events[i | 6]];
+                    color[1] = conversion256[events[i | 7]];
+                    color[2] = conversion256[events[i | 8]];
+                    color[3] = conversion256[events[i | 9]];
                     // TODO: render line
                     break;
 
@@ -113,10 +213,10 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
                     by = events[i | 4];
                     cx = events[i | 5];
                     cy = events[i | 6];
-                    red = events[i | 7];
-                    green = events[i | 8];
-                    blue = events[i | 9];
-                    alpha = events[i | 10];
+                    color[0] = conversion256[events[i | 7]];
+                    color[1] = conversion256[events[i | 8]];
+                    color[2] = conversion256[events[i | 9]];
+                    color[3] = conversion256[events[i | 10]];
                     // TODO: render triangle
                     break;
 
@@ -130,10 +230,10 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
                     cy = events[i | 6];
                     dx = events[i | 7];
                     dy = events[i | 8];
-                    red = events[i | 9];
-                    green = events[i | 10];
-                    blue = events[i | 11];
-                    alpha = events[i | 12];
+                    color[0] = conversion256[events[i | 9]];
+                    color[1] = conversion256[events[i | 10]];
+                    color[2] = conversion256[events[i | 11]];
+                    color[3] = conversion256[events[i | 12]];
                     // TODO: render quadrilateral
                     break;
 
@@ -141,7 +241,7 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
                 case 6:
                     mask = events[i | 1];
                     rotated = (mask & 4) != 0;
-                    alpha = (mask & 8) != 0 ? events[i | 11] : 255;
+                    color[3] = (mask & 8) != 0 ? events[i | 11] : 255;
 
                     // TODO: render image
                     break;
