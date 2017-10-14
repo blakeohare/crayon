@@ -87,8 +87,8 @@
     <EmbeddedResource Include="Resources\idea\name.txt" />
     <EmbeddedResource Include="Resources\idea\vcsXml.txt" />
     <EmbeddedResource Include="Resources\idea\workspaceXml.txt" />
+    <EmbeddedResource Include="Resources\androidIml.txt" />
     <EmbeddedResource Include="Resources\buildGradle.txt" />
-    <EmbeddedResource Include="Resources\CrayonAppIml.txt" />
     <EmbeddedResource Include="Resources\gitignore.txt" />
     <EmbeddedResource Include="Resources\gradleProperties.txt" />
     <EmbeddedResource Include="Resources\gradlew.txt" />

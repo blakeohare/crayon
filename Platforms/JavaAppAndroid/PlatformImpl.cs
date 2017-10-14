@@ -132,7 +132,7 @@ namespace JavaAppAndroid
         {
             output[".gitignore"] = this.LoadTextFile("Resources/gitignore.txt", replacements);
             output["build.gradle"] = this.LoadTextFile("Resources/buildGradle.txt", replacements);
-            output["CrayonSampleApp.iml"] = this.LoadTextFile("Resources/CrayonAppIml.txt", replacements);
+            output["android.iml"] = this.LoadTextFile("Resources/androidIml.txt", replacements);
             output["gradle.properties"] = this.LoadTextFile("Resources/gradleProperties.txt", replacements);
             output["gradlew"] = this.LoadTextFile("Resources/gradlew.txt", replacements);
             output["gradlew.bat"] = this.LoadTextFile("Resources/gradlewBat.txt", replacements);
