@@ -42,17 +42,22 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
     private static FloatBuffer squareBuffer = null;
 
     private static final String vertexShaderCode =
-            "attribute vec4 vPosition;" +
-                    "void main() {" +
-                    "  gl_Position = vPosition;" +
-                    "}";
+        "uniform mat4 uMVPMatrix;" +
+        "attribute vec4 vPosition;" +
+
+        "void main() {" +
+        "  gl_Position = uMVPMatrix * vPosition;" +
+        //"  gl_Position = vPosition;" +
+
+        "}";
 
     private static final String fragmentShaderCode =
-            "precision mediump float;" +
-                    "uniform vec4 vColor;" +
-                    "void main() {" +
-                    "  gl_FragColor = vColor;" +
-                    "}";
+        "precision mediump float;" +
+        "uniform vec4 vColor;" +
+
+        "void main() {" +
+        "  gl_FragColor = vColor;" +
+        "}";
 
     public static int loadShader(int type, String shaderCode){
 
@@ -127,25 +132,29 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
 
         float[] color = new float[4];
 
-        GLES20.glUseProgram(programId);
-
-        int mPositionHandle = GLES20.glGetAttribLocation(programId, "vPosition");
-        GLES20.glEnableVertexAttribArray(mPositionHandle);
-
-        int mColorHandle = GLES20.glGetUniformLocation(programId, "vColor");
-
         // fast conversion from 0-255 to 0f-1f
         float[] conversion256 = new float[256];
         for (int i = 0; i < 256; ++i) {
             conversion256[i] = i / 255f;
         }
 
+        float[] positioningMatrix = new float[16];
+        for (int i = 0; i < 16; ++i) {
+            positioningMatrix[i] = i % 5 == 0 ? 1 : 0;
+        }
+
         // TODO: These are hardcoded for FireDodge. Get the actual values from the view.
         float VW = 800f;
         float VH = 600f;
-
         float vwHalf = VW / 2;
         float vhHalf = VH / 2;
+
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+
+        int mPositionHandle = GLES20.glGetAttribLocation(programId, "vPosition");
+        int mColorHandle = GLES20.glGetUniformLocation(programId, "vColor");
+        int mMVPMatrixHandle = GLES20.glGetUniformLocation(programId, "uMVPMatrix");
 
         for (int i = 0; i < eventsLength; i += 16) {
             switch (events[i]) {
@@ -157,23 +166,29 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
                     width = events[i | 3];
                     height = events[i | 4];
 
-                    // For now, this is just rendering the 0,0-1,1 square while I debug OpenGL.
+                    positioningMatrix[0] = width / vwHalf;
+                    positioningMatrix[5] = -height / vhHalf;
+                    positioningMatrix[10] = 1;
+                    positioningMatrix[15] = 1;
+                    positioningMatrix[12] = (left - vwHalf) / vwHalf;;
+                    positioningMatrix[13] = 1f - top / vhHalf; // map 0 to height ---> 1 to -1
 
                     color[0] = conversion256[events[i | 5]];
                     color[1] = conversion256[events[i | 6]];
                     color[2] = conversion256[events[i | 7]];
                     color[3] = conversion256[events[i | 8]];
 
+                    GLES20.glUseProgram(programId);
+                    GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, positioningMatrix, 0);
                     GLES20.glUniform4fv(mColorHandle, 1, color, 0);
-
+                    GLES20.glEnableVertexAttribArray(mPositionHandle);
                     GLES20.glVertexAttribPointer(
-                            mPositionHandle,
-                            COORDS_PER_VERTEX,
-                            GLES20.GL_FLOAT,
-                            false,
-                            COORDS_PER_VERTEX * 4 /* stride */,
-                            squareBuffer);
-
+                        mPositionHandle,
+                        COORDS_PER_VERTEX,
+                        GLES20.GL_FLOAT,
+                        false,
+                        COORDS_PER_VERTEX * 4 /* stride */,
+                        squareBuffer);
                     GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4 /* vertex count */);
                     GLES20.glDisableVertexAttribArray(mPositionHandle);
                     break;
