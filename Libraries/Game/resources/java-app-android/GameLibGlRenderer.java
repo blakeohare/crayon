@@ -2,9 +2,11 @@ package org.crayonlang.libraries.game;
 
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.opengl.GLUtils;
 
 import org.crayonlang.interpreter.Interpreter;
 import org.crayonlang.interpreter.structs.InterpreterResult;
+import org.crayonlang.libraries.imageresources.CrayonBitmap;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -12,6 +14,8 @@ import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import static android.R.attr.bitmap;
 
 public class GameLibGlRenderer implements GLSurfaceView.Renderer {
 
@@ -80,6 +84,18 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
 
     private static final int COORDS_PER_VERTEX = 3;
 
+    private int loadTexture(CrayonBitmap cbmp) {
+        int[] integerPointer = new int[1];
+        GLES20.glGenTextures(1, integerPointer, 0);
+        int textureId = integerPointer[0];
+        if (textureId == 0) throw new RuntimeException();
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, cbmp.getNativeBitmap(), 0);
+        return textureId;
+    }
+
     public void doRenderEventQueue(int[] events, int eventsLength, Object[][] imageNativeData) {
 
         if (!initialized) {
@@ -126,11 +142,30 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
         int dx;
         int dy;
 
+        int cropWidth;
+        int cropHeight;
+        float croppedLeft;
+        float croppedRight;
+        float croppedTop;
+        float croppedBottom;
+
+        float textureLeft;
+        float textureRight;
+        float textureTop;
+        float textureBottom;
+        float textureWidth;
+        float textureHeight;
+        int textureResourceWidth;
+        int textureResourceHeight;
+
         int mask;
         int lineWidth;
         boolean rotated;
+        int textureId;
 
         float[] color = new float[4];
+        Object[] textureNativeData;
+        Object[] textureResourceNativeData;
 
         // fast conversion from 0-255 to 0f-1f
         float[] conversion256 = new float[256];
@@ -156,6 +191,8 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
         int mColorHandle = GLES20.glGetUniformLocation(programId, "vColor");
         int mMVPMatrixHandle = GLES20.glGetUniformLocation(programId, "uMVPMatrix");
 
+        int imageIndex = 0;
+
         for (int i = 0; i < eventsLength; i += 16) {
             switch (events[i]) {
 
@@ -170,7 +207,7 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
                     positioningMatrix[5] = -height / vhHalf;
                     positioningMatrix[10] = 1;
                     positioningMatrix[15] = 1;
-                    positioningMatrix[12] = (left - vwHalf) / vwHalf;;
+                    positioningMatrix[12] = (left - vwHalf) / vwHalf;
                     positioningMatrix[13] = 1f - top / vhHalf; // map 0 to height ---> 1 to -1
 
                     color[0] = conversion256[events[i | 5]];
@@ -254,11 +291,98 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
 
                 // Image
                 case 6:
+                    textureNativeData = imageNativeData[imageIndex++];
+                    textureResourceNativeData = (Object[]) textureNativeData[0];
+
+                    if (!(boolean) textureResourceNativeData[1]) {
+                        textureResourceNativeData[2] = loadTexture((CrayonBitmap) textureResourceNativeData[3]);
+                        textureResourceNativeData[1] = true;
+                    }
+
                     mask = events[i | 1];
                     rotated = (mask & 4) != 0;
                     color[3] = (mask & 8) != 0 ? events[i | 11] : 255;
+                    textureId = (int)textureResourceNativeData[2];
 
-                    // TODO: render image
+
+                    startX = events[i | 8]; // left
+                    startY = events[i | 9]; // top
+
+                    textureLeft = (float)(double)textureNativeData[1];
+                    textureTop = (float)(double)textureNativeData[2];
+                    textureRight = (float)(double)textureNativeData[3];
+                    textureBottom = (float)(double)textureNativeData[4];
+                    width = (int)textureNativeData[5];
+                    height = (int)textureNativeData[6];
+
+                    textureWidth = textureRight - textureLeft;
+                    textureHeight = textureBottom - textureTop;
+                    textureResourceWidth = (int)textureResourceNativeData[4];
+                    textureResourceHeight = (int)textureResourceNativeData[5];
+
+                    // slice
+                    if ((mask & 1) != 0)
+                    {
+                        ax = events[i | 2];
+                        ay = events[i | 3];
+                        cropWidth = events[i | 4];
+                        cropHeight = events[i | 5];
+
+                        croppedLeft = textureLeft + textureWidth * ax / width;
+                        croppedRight = textureLeft + textureWidth * (ax + cropWidth) / width;
+                        croppedTop = textureTop + textureHeight * ay / height;
+                        croppedBottom = textureTop + textureHeight * (ay + cropHeight) / height;
+
+                        textureLeft = croppedLeft;
+                        textureRight = croppedRight;
+                        textureTop = croppedTop;
+                        textureBottom = croppedBottom;
+                        width = cropWidth;
+                        height = cropHeight;
+                    }
+
+                    // stretch
+                    if ((mask & 2) != 0)
+                    {
+                        width = events[i | 6];
+                        height = events[i | 7];
+                    }
+
+                    if (rotated) {
+                        throw new RuntimeException();
+                    } else {
+                        endX = startX + width;
+                        endY = startY + height;
+
+                        positioningMatrix[0] = width / vwHalf;
+                        positioningMatrix[5] = -height / vhHalf;
+                        positioningMatrix[10] = 1;
+                        positioningMatrix[15] = 1;
+                        positioningMatrix[12] = (startX - vwHalf) / vwHalf;
+                        positioningMatrix[13] = 1f - startY / vhHalf; // map 0 to height ---> 1 to -1
+
+                        // white for now.
+                        color[0] = 1;
+                        color[1] = 1;
+                        color[2] = 1;
+                        color[3] = 1;
+
+                        GLES20.glUseProgram(programId);
+                        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, positioningMatrix, 0);
+                        GLES20.glUniform4fv(mColorHandle, 1, color, 0);
+                        GLES20.glEnableVertexAttribArray(mPositionHandle);
+                        GLES20.glVertexAttribPointer(
+                                mPositionHandle,
+                                COORDS_PER_VERTEX,
+                                GLES20.GL_FLOAT,
+                                false,
+                                COORDS_PER_VERTEX * 4 /* stride */,
+                                squareBuffer);
+                        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4 /* vertex count */);
+                        GLES20.glDisableVertexAttribArray(mPositionHandle);
+
+                    }
+
                     break;
 
                 // Tinted Image

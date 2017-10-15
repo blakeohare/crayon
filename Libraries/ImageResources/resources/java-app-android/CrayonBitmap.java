@@ -27,6 +27,10 @@ public final class CrayonBitmap {
         this.height = toClone.height;
     }
 
+    public Bitmap getNativeBitmap() {
+        return this.internalBitmap;
+    }
+
     public int getWidth() {
         return this.width;
     }
