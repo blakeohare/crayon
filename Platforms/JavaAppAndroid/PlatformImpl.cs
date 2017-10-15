@@ -149,9 +149,13 @@ namespace JavaAppAndroid
             output[".idea/misc.xml"] = this.LoadTextFile("Resources/idea/miscXml.txt", replacements);
             output[".idea/modules.xml"] = this.LoadTextFile("Resources/idea/modulesXml.txt", replacements);
             output[".idea/vcs.xml"] = this.LoadTextFile("Resources/idea/vcsXml.txt", replacements);
-            output[".idea/workspace.xml"] = this.LoadTextFile("Resources/idea/workspaceXml.txt", replacements);
             output[".idea/copyright/profiles_settings.xml"] = this.LoadTextFile("Resources/idea/copyright/profileSettings.txt", replacements);
             output[".idea/scopes/scope_settings.xml"] = this.LoadTextFile("Resources/idea/scopes/scopeSettings.txt", replacements);
+
+            if (!options.GetBool(ExportOptionKey.ANDROID_SKIP_WORKSPACE_XML))
+            {
+                output[".idea/workspace.xml"] = this.LoadTextFile("Resources/idea/workspaceXml.txt", replacements);
+            }
 
             output["app/.gitignore"] = this.LoadTextFile("Resources/app/gitignore.txt", replacements);
             output["app/app.iml"] = this.LoadTextFile("Resources/app/appIml.txt", replacements);
@@ -256,6 +260,12 @@ namespace JavaAppAndroid
                 .Where(line => line.Length > 0)
                 .ToArray();
             return string.Join("\n", lines);
+        }
+
+        public override void GleanInformationFromPreviouslyExportedProject(Options options, string outputDirectory)
+        {
+            bool skipWorkspaceXml = FileUtil.FileExists(outputDirectory + "/.idea/workspace.xml");
+            options.SetOption(ExportOptionKey.ANDROID_SKIP_WORKSPACE_XML, true);
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     public enum ExportOptionKey
     {
+        ANDROID_SKIP_WORKSPACE_XML,
         DEFAULT_TITLE,
         DESCRIPTION,
         EMBED_BYTE_CODE,
