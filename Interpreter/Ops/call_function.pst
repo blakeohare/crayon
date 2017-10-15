@@ -61,13 +61,17 @@ returnValueUsed = row[3] == 1;
 classId = row[4];
 
 // Check to see if a static initialization is required.
-staticConstructorNotInvoked = true;
 if ((type == FunctionInvocationType.STATIC_METHOD) || (type == FunctionInvocationType.CONSTRUCTOR)) {
     Core.EmitComment("constructor or static method");
     classInfo = p.classTable[classId];
     @import("InvokeStaticConstructor.pst");
+} else {
+    staticConstructorNotInvoked = true;
 }
+
 if (staticConstructorNotInvoked) {
+
+    bool1 = true;
 
     Core.EmitComment("construct args array");
     // Note that if a static constructor is invoked, the args of the previous static method are safe because argCount was set to 0.
