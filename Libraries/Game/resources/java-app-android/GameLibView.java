@@ -63,6 +63,11 @@ public class GameLibView extends GLSurfaceView {
 
     private static final MotionEvent.PointerCoords POINTER_COORDS_OUT = new MotionEvent.PointerCoords();
 
+    void updateScreenSize(int width, int height) {
+        this.screenWidth = width;
+        this.screenHeight = height;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         switch (e.getAction()) {

@@ -41,6 +41,7 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
 
     public void onSurfaceChanged(GL10 unused, int width, int height) {
         GLES20.glViewport(0, 0, width, height);
+        GameLibView.INSTANCE.updateScreenSize(width, height);
     }
 
     private static FloatBuffer squareBuffer = null;
