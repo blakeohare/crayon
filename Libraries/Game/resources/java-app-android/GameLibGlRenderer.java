@@ -52,8 +52,6 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
 
         "void main() {" +
         "  gl_Position = uMVPMatrix * vPosition;" +
-        //"  gl_Position = vPosition;" +
-
         "}";
 
     private static final String fragmentShaderCode =

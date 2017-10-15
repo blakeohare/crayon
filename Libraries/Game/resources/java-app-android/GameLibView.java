@@ -1,14 +1,8 @@
 package org.crayonlang.libraries.game;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.opengl.GLSurfaceView;
-import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 
 import org.crayonlang.interpreter.AndroidTranslationHelper;
 import org.crayonlang.interpreter.Interpreter;
@@ -144,10 +138,10 @@ public class GameLibView extends GLSurfaceView {
     }
     
     public static boolean getScreenInfo(int[] output) {
-        // TODO: get screen size.
+        int[] size = AndroidTranslationHelper.getSize();
         output[1] = 1;
-        output[2] = 400;
-        output[3] = 800;
+        output[2] = size[0];
+        output[3] = size[1];
         return true;
     }
 }

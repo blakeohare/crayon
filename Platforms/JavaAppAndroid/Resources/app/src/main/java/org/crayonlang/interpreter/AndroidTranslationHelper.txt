@@ -61,4 +61,14 @@ public final class AndroidTranslationHelper {
     public static Activity getMainActivity() {
         return mainActivity;
     }
+
+    private static int[] size;
+
+    public static void setSize(int width, int height) {
+        size = new int[] { width, height };
+    }
+
+    public static int[] getSize() {
+        return size;
+    }
 }
