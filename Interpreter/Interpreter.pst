@@ -147,6 +147,7 @@ InterpreterResult interpretImpl(int executionContextId) {
     bool primitiveMethodToCoreLibraryFallback = false;
     bool bool1 = false;
     bool bool2 = false;
+    bool staticConstructorNotInvoked = true;
     int int1 = 0;
     int int2 = 0;
     int int3 = 0;

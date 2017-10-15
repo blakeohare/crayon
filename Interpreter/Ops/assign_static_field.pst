@@ -6,7 +6,7 @@ classInfo = classTable[row[0]];
 
 @import("InvokeStaticConstructor.pst");
 
-if (bool1) {
+if (staticConstructorNotInvoked) {
     valueStackSize -= 1;
     classInfo.staticFields[row[1]] = valueStack[valueStackSize];
 }

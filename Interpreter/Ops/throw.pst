@@ -11,21 +11,21 @@ if (bool2) {
     }
 }
 
-if (!bool2) {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Thrown value is not an exception.");
+if (bool2) {
+    objArray1 = objInstance1.nativeData;
+    intList1 = new List<int>();
+    objArray1[1] = intList1;
+
+    // Do not push token if this is from _LIB_CORE_generateException
+    if (!isPcFromCore(pc)) {
+        // This is purely based on TokenData. If there is no token data, then it doesn't matter anyway as this is notably used
+        // for printing the human-readable stack trace.
+        intList1.Add(pc);
+    }
+
+    ec.activeException = value;
+
+    @import("BubbleException.pst");
+} else {
+    hasInterrupt = EX_InvalidArgument(ec, "Thrown value is not an exception.");
 }
-
-objArray1 = objInstance1.nativeData;
-intList1 = new List<int>();
-objArray1[1] = intList1;
-
-// Do not push token if this is from _LIB_CORE_generateException
-if (!isPcFromCore(pc)) {
-    // This is purely based on TokenData. If there is no token data, then it doesn't matter anyway as this is notably used
-    // for printing the human-readable stack trace.
-    intList1.Add(pc);
-}
-
-ec.activeException = value;
-
-@import("BubbleException.pst");

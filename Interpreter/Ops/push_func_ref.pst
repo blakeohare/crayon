@@ -27,7 +27,7 @@ switch (row[1]) {
         classId = row[2];
         classInfo = classTable[classId];
         @import("InvokeStaticConstructor.pst");
-        if (bool1) {
+        if (staticConstructorNotInvoked) {
             value = new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.STATIC_METHOD, null, classId, row[0]));
         } else {
             // a precaution just in case value is ever added to InvokeStaticConstructor.pst

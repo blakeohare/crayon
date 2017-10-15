@@ -1,10 +1,14 @@
-﻿// This code will OVERWRITE bool1 and use it as output.
-// bool1 == true --> continue to run the op code that invoked this as usual.
-// bool1 == fase --> do not run the op code. The static constructor has been invoked and stack vars updated.
+﻿// TODO: re-design this as an interrupt so that this code isn't duplicated via inline
+// import ~4 times. When that is done, it's possible to remove the staticConstructorNotInvoked
+// boolean as it will be redundant with the hasInterrupt boolean flag.
+
+// This code will set staticConstructorNotInvoked and use it as output.
+// staticConstructorNotInvoked == true --> continue to run the op code that invoked this as usual.
+// staticConstructorNotInvoked == fase --> do not run the op code. The static constructor has been invoked and stack vars updated.
 
 // This code assumes all stack-related local variables (like valueStackSize, pc, etc) are in an accurate state.
 
-bool1 = true;
+staticConstructorNotInvoked = true;
 if (classInfo.staticInitializationState < 2) {
     stack.pc = pc;
     // maybeInvokeStaticConstructor is null if the static constructor was not invoked.
@@ -15,7 +19,7 @@ if (classInfo.staticInitializationState < 2) {
     }
 
     if (stackFrame2 != null) {
-        bool1 = false;
+        staticConstructorNotInvoked = false;
         stack = stackFrame2;
         pc = stack.pc;
         localsStackSetToken = stack.localsStackSetToken;

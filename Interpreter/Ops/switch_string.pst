@@ -9,5 +9,5 @@ if (value.type == Types.STRING) {
         pc += row[1]; // default
     }
 } else {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Switch statement expects a string.");
+    hasInterrupt = EX_InvalidArgument(ec, "Switch statement expects a string.");
 }
