@@ -135,7 +135,7 @@ public class GameLibView extends GLSurfaceView {
     }
 
     public void render() {
-        this.renderer.doRenderEventQueue(this.eventList, this.eventLength, this.imagesNativeData);
+        this.renderer.doRenderEventQueue(this.eventList, this.eventLength, this.imagesNativeData, this.logicalWidth, this.logicalHeight);
     }
     
     public static boolean getScreenInfo(int[] output) {

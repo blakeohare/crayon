@@ -84,7 +84,10 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
 
     private static final int COORDS_PER_VERTEX = 3;
 
+    private static float[] conversion256;
+
     private int loadTexture(CrayonBitmap cbmp) {
+
         int[] integerPointer = new int[1];
         GLES20.glGenTextures(1, integerPointer, 0);
         int textureId = integerPointer[0];
@@ -93,10 +96,11 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, cbmp.getNativeBitmap(), 0);
+        GLES20.glDisable(GLES20.GL_TEXTURE_2D);
         return textureId;
     }
 
-    public void doRenderEventQueue(int[] events, int eventsLength, Object[][] imageNativeData) {
+    public void doRenderEventQueue(int[] events, int eventsLength, Object[][] imageNativeData, int logicalWidth, int logicalHeight) {
 
         if (!initialized) {
             ByteBuffer bb = ByteBuffer.allocateDirect(
@@ -119,6 +123,12 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
             GLES20.glAttachShader(programId, rectVertexShaderId);
             GLES20.glAttachShader(programId, rectFragmentShaderId);
             GLES20.glLinkProgram(programId);
+
+            // fast conversion from 0-255 to 0f-1f
+            conversion256 = new float[256];
+            for (int i = 0; i < 256; ++i) {
+                conversion256[i] = i / 255f;
+            }
 
             initialized = true;
         }
@@ -167,24 +177,17 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
         Object[] textureNativeData;
         Object[] textureResourceNativeData;
 
-        // fast conversion from 0-255 to 0f-1f
-        float[] conversion256 = new float[256];
-        for (int i = 0; i < 256; ++i) {
-            conversion256[i] = i / 255f;
-        }
-
         float[] positioningMatrix = new float[16];
         for (int i = 0; i < 16; ++i) {
             positioningMatrix[i] = i % 5 == 0 ? 1 : 0;
         }
 
         // TODO: These are hardcoded for FireDodge. Get the actual values from the view.
-        float VW = 800f;
-        float VH = 600f;
+        float VW = logicalWidth;
+        float VH = logicalHeight;
         float vwHalf = VW / 2;
         float vhHalf = VH / 2;
 
-        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
         int mPositionHandle = GLES20.glGetAttribLocation(programId, "vPosition");
@@ -193,11 +196,20 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
 
         int imageIndex = 0;
 
+        float[] conversion256 = this.conversion256;
+
+        int activeTextureId = -1;
+
         for (int i = 0; i < eventsLength; i += 16) {
             switch (events[i]) {
 
                 // Rectangle
                 case 1:
+                    if (activeTextureId != -1) {
+                        activeTextureId = -1;
+                        GLES20.glDisable(GLES20.GL_TEXTURE_2D);
+                    }
+
                     left = events[i | 1];
                     top = events[i | 2];
                     width = events[i | 3];
@@ -301,9 +313,13 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
 
                     mask = events[i | 1];
                     rotated = (mask & 4) != 0;
-                    color[3] = (mask & 8) != 0 ? events[i | 11] : 255;
+                    color[3] = (mask & 8) != 0 ? conversion256[events[i | 11]] : 1f;
                     textureId = (int)textureResourceNativeData[2];
 
+                    if (activeTextureId != textureId) {
+                        activeTextureId = textureId;
+                        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureId);
+                    }
 
                     startX = events[i | 8]; // left
                     startY = events[i | 9]; // top
@@ -351,9 +367,6 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
                     if (rotated) {
                         throw new RuntimeException();
                     } else {
-                        endX = startX + width;
-                        endY = startY + height;
-
                         positioningMatrix[0] = width / vwHalf;
                         positioningMatrix[5] = -height / vhHalf;
                         positioningMatrix[10] = 1;
@@ -365,7 +378,6 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
                         color[0] = 1;
                         color[1] = 1;
                         color[2] = 1;
-                        color[3] = 1;
 
                         GLES20.glUseProgram(programId);
                         GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, positioningMatrix, 0);
@@ -393,5 +405,7 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
                     throw new RuntimeException("Render event ID " + events[i] + " not implemented.");
             }
         }
+
+        GLES20.glDisable(GLES20.GL_TEXTURE_2D);
     }
 }
