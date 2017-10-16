@@ -41,11 +41,8 @@ namespace JavaApp
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 
-            TODO.OverrideJavaPackagesFromBuildFile();
-
-            string package = options.GetString(ExportOptionKey.PROJECT_ID).ToLower();
             string srcPath = "src";
-            string sourcePath = srcPath + "/" + package + "/";
+            string srcPackagePath = srcPath + "/" + replacements["JAVA_PACKAGE"].Replace('.', '/') + "/";
 
             string[] imports = new string[]
             {
@@ -113,7 +110,7 @@ namespace JavaApp
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/GameWindow.java", "Resources/GameWindow.txt", replacements);
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/RenderEngine.java", "Resources/RenderEngine.txt", replacements);
 
-            this.CopyResourceAsText(output, "src/" + package + "/Main.java", "Resources/Main.txt", replacements);
+            this.CopyResourceAsText(output, srcPackagePath + "/Main.java", "Resources/Main.txt", replacements);
             this.CopyResourceAsText(output, "build.xml", "Resources/BuildXml.txt", replacements);
 
             output["resources/manifest.txt"] = resourceDatabase.ResourceManifestFile;
@@ -172,10 +169,7 @@ namespace JavaApp
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
-            Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
-            replacements["PROJECT_ID"] = options.GetString(ExportOptionKey.PROJECT_ID);
-            replacements["PACKAGE"] = options.GetString(ExportOptionKey.PROJECT_ID).ToLower();
-            return replacements;
+            return this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
         }
 
         public override IDictionary<string, object> GetConstantFlags()

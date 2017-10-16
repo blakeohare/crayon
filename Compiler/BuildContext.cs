@@ -29,6 +29,7 @@ namespace Crayon
         public string Orientation { get; set; }
         public string CrayonPath { get; set; }
         public string IosBundlePrefix { get; set; }
+        public string JavaPackage { get; private set; }
         public int? WindowWidth { get; set; }
         public int? WindowHeight { get; set; }
         public string Description { get; set; }
@@ -121,6 +122,9 @@ namespace Crayon
 
             [XmlElement("iosbundleprefix")]
             public string IosBundlePrefix { get; set; }
+
+            [XmlElement("javapackage")]
+            public string JavaPackage { get; set; }
 
             [XmlElement("windowsize")]
             public Size WindowSize { get; set; }
@@ -311,6 +315,7 @@ namespace Crayon
                 Orientation = flattened.Orientation,
                 CrayonPath = flattened.CrayonPath,
                 IosBundlePrefix = flattened.IosBundlePrefix,
+                JavaPackage = flattened.JavaPackage,
                 WindowWidth = Util.ParseIntWithErrorNullOkay((flattened.WindowSize ?? new Size()).Width, "Invalid window width in build file."),
                 WindowHeight = Util.ParseIntWithErrorNullOkay((flattened.WindowSize ?? new Size()).Height, "Invalid window height in build file."),
                 CompilerLocale = Locale.Get((flattened.CompilerLocale ?? "en").Trim()),

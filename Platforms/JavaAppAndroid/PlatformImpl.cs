@@ -8,7 +8,7 @@ using Platform;
 
 namespace JavaAppAndroid
 {
-    public class PlatformImpl : Platform.AbstractPlatform
+    public class PlatformImpl : AbstractPlatform
     {
         public PlatformImpl() : base()
         {
@@ -130,6 +130,7 @@ namespace JavaAppAndroid
 
         public void OutputAndroidBoilerplate(Dictionary<string, FileOutput> output, Dictionary<string, string> replacements, Options options)
         {
+            string packagedDir = replacements["JAVA_PACKAGE"].Replace('.', '/');
             output[".gitignore"] = this.LoadTextFile("Resources/gitignore.txt", replacements);
             output["build.gradle"] = this.LoadTextFile("Resources/buildGradle.txt", replacements);
             output["android.iml"] = this.LoadTextFile("Resources/androidIml.txt", replacements);
@@ -162,7 +163,7 @@ namespace JavaAppAndroid
             output["app/build.gradle"] = this.LoadTextFile("Resources/app/buildGradle.txt", replacements);
             output["app/proguard-rules.txt"] = this.LoadTextFile("Resources/app/proguardRules.txt", replacements);
 
-            output["app/src/main/java/org/crayonlang/crayonsampleapp/app/MainActivity.java"] = this.LoadTextFile("Resources/app/src/main/java/org/crayonlang/sampleapp/app/MainActivityJava.txt", replacements);
+            output["app/src/main/java/" + packagedDir + "/app/MainActivity.java"] = this.LoadTextFile("Resources/app/src/main/java/org/crayonlang/sampleapp/app/MainActivityJava.txt", replacements);
             output["app/src/main/res/layout/activity_main.xml"] = this.LoadTextFile("Resources/app/src/main/res/layout/ActivityMainXml.txt", replacements);
             output["app/src/main/res/menu/main.xml"] = this.LoadTextFile("Resources/app/src/main/res/menu/MainXml.txt", replacements);
             output["app/src/main/res/values/dimens.xml"] = this.LoadTextFile("Resources/app/src/main/res/values/DimensXml.txt", replacements);

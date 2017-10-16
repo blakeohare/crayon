@@ -12,6 +12,7 @@
         ICON_PATH,
         IOS_BUNDLE_PREFIX,
         IOS_DEV_TEAM_ID,
+        JAVA_PACKAGE,
         JS_FILE_PREFIX,
         JS_HEAD_EXTRAS,
         LAUNCHSCREEN_PATH,

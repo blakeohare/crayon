@@ -3,6 +3,7 @@
 	<source>source</source>
 	<output>output/%TARGET_NAME%</output>
 	
+	<javapackage>org.crayonlang.demos.conway</javapackage>
 	<iosbundleprefix>org.crayonlang.demos</iosbundleprefix>
 	<guidseed>org.crayonlang.demos.conway,v0.2.0,%TARGET_NAME%</guidseed>
 	
@@ -28,7 +29,7 @@
 	</target>
 	
 	<target name="android">
-		<platform>javascript-app-android</platform>
+		<platform>java-app-android</platform>
 	</target>
 
 	<target name="ios">

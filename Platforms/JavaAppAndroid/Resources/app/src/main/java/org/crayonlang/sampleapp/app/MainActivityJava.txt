@@ -1,4 +1,4 @@
-package org.crayonlang.crayonsampleapp.app;
+package %%%JAVA_PACKAGE%%%.app;
 
 import android.app.Activity;
 import android.graphics.Point;

@@ -5,7 +5,6 @@
         // TODO: Group these by priority/severity
 
         public static void LibrariesNeedVersionNumber() { }
-        public static void OverrideJavaPackagesFromBuildFile() { }
         public static void RemoveAnnotationsFromParser() { }
         public static void ThrowErrorIfReturnAppearsWithValueInConstructors() { }
         public static void ThrowErrorIfKeywordThisIsUsedInBaseArgsOrDefaultArgsAnywhereInConstructor() { }

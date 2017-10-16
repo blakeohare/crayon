@@ -14,6 +14,7 @@ namespace Crayon
         public string DefaultTitle { get; set; }
         public string JsFilePrefix { get; set; }
         public string IosBundlePrefix { get; set; }
+        public string JavaPackage { get; set; }
         public int? WindowWidth { get; set; }
         public int? WindowHeight { get; set; }
         public string Orientations { get; set; }
@@ -45,6 +46,7 @@ namespace Crayon
                     DefaultTitle = buildContext.DefaultTitle,
                     JsFilePrefix = jsFilePrefix,
                     IosBundlePrefix = buildContext.IosBundlePrefix,
+                    JavaPackage = buildContext.JavaPackage,
                     IconPath = buildContext.IconFilePath,
                     LaunchScreenPath = buildContext.LaunchScreenPath,
                     WindowWidth = buildContext.WindowWidth,
