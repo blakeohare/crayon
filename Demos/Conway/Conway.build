@@ -2,6 +2,7 @@
 	<projectname>Conway</projectname>
 	<source>source</source>
 	<output>output/%TARGET_NAME%</output>
+	<icon>assets/icon.png</icon>
 	
 	<javapackage>org.crayonlang.demos.conway</javapackage>
 	<iosbundleprefix>org.crayonlang.demos</iosbundleprefix>
