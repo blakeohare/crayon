@@ -2,6 +2,8 @@
 	<projectname>SquishySquid</projectname>
 	<source>source/</source>
 	<output>output/%TARGET_NAME%</output>
+	<icon>assets/icon.png</icon>
+	<title>Squishy Squid</title>
 	
 	<imagesheets>
 		<sheet id="everything">
