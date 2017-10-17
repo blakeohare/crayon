@@ -12,9 +12,12 @@ namespace Crayon
         private Library library;
         private IList<string> platformInheritanceChain;
 
-        public LibraryNativeInvocationTranslator(Library library, IList<string> platformInheritanceChain)
+        public LibraryForExport Library { get; private set; }
+
+        public LibraryNativeInvocationTranslator(Library library, LibraryForExport lfe, IList<string> platformInheritanceChain)
         {
             this.library = library;
+            this.Library = lfe;
             this.platformInheritanceChain = platformInheritanceChain;
         }
 

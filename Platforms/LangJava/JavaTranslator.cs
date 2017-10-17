@@ -354,9 +354,9 @@ namespace LangJava
 
         public override void TranslateInvokeDynamicLibraryFunction(StringBuilder sb, Expression functionId, Expression argsArray)
         {
-            sb.Append("TranslationHelper.invokeLibraryFunction(");
+            sb.Append("((LibraryFunctionPointer)");
             this.TranslateExpression(sb, functionId);
-            sb.Append(", ");
+            sb.Append(").invoke(");
             this.TranslateExpression(sb, argsArray);
             sb.Append(')');
         }
@@ -782,9 +782,15 @@ namespace LangJava
 
         public override void TranslateRegisterLibraryFunction(StringBuilder sb, Expression libRegObj, Expression functionName, Expression functionArgCount)
         {
+            Platform.LibraryForExport lfe = this.CurrentLibraryFunctionTranslator.Library;
+            string functionNameString = ((InlineConstant)functionName).Value.ToString();
+            string className = "FP_lib_" + lfe.Name.ToLower() + "_function_" + functionNameString;
+
             sb.Append("TranslationHelper.registerLibraryFunction(LibraryWrapper.class, ");
             this.TranslateExpression(sb, libRegObj);
-            sb.Append(", ");
+            sb.Append(", new ");
+            sb.Append(className);
+            sb.Append("(), ");
             this.TranslateExpression(sb, functionName);
             sb.Append(", ");
             this.TranslateExpression(sb, functionArgCount);

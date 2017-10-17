@@ -5,6 +5,7 @@ namespace Platform
     public interface ILibraryNativeInvocationTranslator
     {
         string LibraryName { get; }
+        LibraryForExport Library { get; }
 
         void TranslateInvocation(
             StringBuilder sb,

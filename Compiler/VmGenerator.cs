@@ -125,6 +125,7 @@ namespace Crayon
                 LibraryNativeInvocationTranslatorProvider libTranslationProvider =
                     new LibraryNativeInvocationTranslatorProvider(
                         relevantLibraries.ToDictionary(lib => lib.Name),
+                        libraries,
                         platform);
 
                 if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)

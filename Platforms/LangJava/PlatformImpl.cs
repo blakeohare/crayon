@@ -43,6 +43,7 @@ namespace LangJava
                 "import java.util.HashMap;",
                 "import org.crayonlang.interpreter.FastList;",
                 "import org.crayonlang.interpreter.Interpreter;",
+                "import org.crayonlang.interpreter.LibraryFunctionPointer;",
                 "import org.crayonlang.interpreter.TranslationHelper;",
                 "import org.crayonlang.interpreter.VmGlobal;",
                 "import org.crayonlang.interpreter.structs.*;",
@@ -73,9 +74,25 @@ namespace LangJava
 
                     platform.Translator.TabDepth = 1;
                     libraryCode.Add(platform.GenerateCodeForFunction(platform.Translator, library.ManifestFunction));
+                    string reflectionCalledPrefix = "lib_" + library.Name.ToLower() + "_function_";
                     foreach (FunctionDefinition fnDef in library.Functions)
                     {
-                        libraryCode.Add(platform.GenerateCodeForFunction(platform.Translator, fnDef));
+                        string name = fnDef.NameToken.Value;
+                        bool isFunctionPointerObject = name.StartsWith(reflectionCalledPrefix);
+
+                        string functionCode = platform.GenerateCodeForFunction(platform.Translator, fnDef);
+                        if (isFunctionPointerObject)
+                        {
+                            functionCode = functionCode.Replace("public static Value v_" + name + "(Value[] ", "public Value invoke(Value[] ");
+                            functionCode = "  " + functionCode.Replace("\n", "\n  ").TrimEnd();
+                            functionCode = "  public static class FP_" + name + " extends LibraryFunctionPointer {\n" + functionCode + "\n  }\n";
+
+                            libraryCode.Add(functionCode);
+                        }
+                        else
+                        {
+                            libraryCode.Add(functionCode);
+                        }
                     }
                     platform.Translator.TabDepth = 0;
                     libraryCode.Add("}");
