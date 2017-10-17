@@ -45,6 +45,7 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
     }
 
     private static FloatBuffer squareBuffer = null;
+    private static FloatBuffer ellipseBuffer = null;
 
     private static final String vertexShaderCode =
         "uniform mat4 uMVPMatrix;" +
@@ -116,6 +117,25 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
             });
             squareBuffer.position(0);
 
+            ByteBuffer ellipseBB = ByteBuffer.allocateDirect(
+                    42 /* vertex count */
+                    * COORDS_PER_VERTEX
+                    * 4 /* sizeof(float) */);
+
+            ellipseBB.order(ByteOrder.nativeOrder());
+            ellipseBuffer = ellipseBB.asFloatBuffer();
+            float[] ellipseVerticies = new float[42 * 3];
+            for (int i = 0; i < 40; ++i) {
+                ellipseVerticies[3 + i * 3] = (float) Math.cos(i * 2 * 3.14159265 / 40);
+                ellipseVerticies[3 + i * 3 + 1] = (float) Math.sin(i * 2 * 3.14159265 / 40);
+                ellipseVerticies[3 + i * 3 + 2] = 0f;
+            }
+            ellipseVerticies[41 * 3] = ellipseVerticies[3];
+            ellipseVerticies[41 * 3 + 1] = ellipseVerticies[4];
+
+            ellipseBuffer.put(ellipseVerticies);
+            ellipseBuffer.position(0);
+
             rectVertexShaderId = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode);
             rectFragmentShaderId = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode);
             programId = GLES20.glCreateProgram();
@@ -181,7 +201,6 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
             positioningMatrix[i] = i % 5 == 0 ? 1 : 0;
         }
 
-        // TODO: These are hardcoded for FireDodge. Get the actual values from the view.
         float VW = logicalWidth;
         float VH = logicalHeight;
         float vwHalf = VW / 2;
@@ -199,11 +218,15 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
 
         int activeTextureId = -1;
 
+        boolean isRect;
+
         for (int i = 0; i < eventsLength; i += 16) {
             switch (events[i]) {
 
-                // Rectangle
-                case 1:
+
+                case 1: // Rectangle
+                case 2: // Ellipse
+                    isRect = events[i] == 1;
                     if (activeTextureId != -1) {
                         activeTextureId = -1;
                         GLES20.glDisable(GLES20.GL_TEXTURE_2D);
@@ -236,22 +259,12 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
                         GLES20.GL_FLOAT,
                         false,
                         COORDS_PER_VERTEX * 4 /* stride */,
-                        squareBuffer);
-                    GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4 /* vertex count */);
+                        isRect ? squareBuffer : ellipseBuffer);
+                    GLES20.glDrawArrays(
+                        isRect ? GLES20.GL_TRIANGLE_STRIP : GLES20.GL_TRIANGLE_FAN,
+                        0,
+                        isRect ? 4 : 42 /* vertex count */);
                     GLES20.glDisableVertexAttribArray(mPositionHandle);
-                    break;
-
-                // Ellipse
-                case 2:
-                    left = events[i | 1];
-                    top = events[i | 2];
-                    width = events[i | 3];
-                    height = events[i | 4];
-                    color[0] = conversion256[events[i | 5]];
-                    color[1] = conversion256[events[i | 6]];
-                    color[2] = conversion256[events[i | 7]];
-                    color[3] = conversion256[events[i | 8]];
-                    // TODO: draw ellipse
                     break;
 
                 // Line
@@ -373,10 +386,10 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
                         positioningMatrix[12] = (startX - vwHalf) / vwHalf;
                         positioningMatrix[13] = 1f - startY / vhHalf; // map 0 to height ---> 1 to -1
 
-                        // white for now.
-                        color[0] = 1;
-                        color[1] = 1;
-                        color[2] = 1;
+                        // use a dummy color to distinguish image regions.
+                        color[0] = conversion256[(((i * 37) * width * 37) * height) & 255];
+                        color[1] = conversion256[((((i + 1) * 37) * width * 37) * height) & 255];
+                        color[2] = conversion256[((((i + 2) * 37) * width * 37) * height) & 255];
 
                         GLES20.glUseProgram(programId);
                         GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, positioningMatrix, 0);
