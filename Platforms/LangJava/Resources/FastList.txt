@@ -2,6 +2,8 @@
 
 import org.crayonlang.interpreter.structs.Value;
 
+import java.util.Collection;
+
 public final class FastList {
 
 	private static Value[] EMPTY_VALUES = new Value[0];
@@ -9,6 +11,18 @@ public final class FastList {
 	public int length = 0;
 	public int capacity = 0;
 	public Value[] items = EMPTY_VALUES;
+	
+	public FastList initializeValueCollection(Collection<Value> values) {
+		items = new Value[8];
+		capacity = 8;
+		for (Value v : values) {
+			if (length == capacity) {
+				increaseCapacity();
+			}
+			items[length++] = v;
+		}
+		return this;
+	}
 
 	public int increaseCapacity() {
 		if (this.length == 0) {

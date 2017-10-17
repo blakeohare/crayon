@@ -179,12 +179,7 @@ namespace LangJava
         {
             TODO.PleaseRenameThisFunction();
 
-            sb.Append("new ArrayList");
-            if (!this.isJava6)
-            {
-                sb.Append("<>");
-            }
-            sb.Append('(');
+            sb.Append("new FastList().initializeValueCollection(");
             this.TranslateExpression(sb, dictionary);
             sb.Append(')');
         }
@@ -275,12 +270,7 @@ namespace LangJava
 
         public override void TranslateDictionaryValuesToValueList(StringBuilder sb, Expression dictionary)
         {
-            sb.Append("new ArrayList");
-            if (!this.isJava6)
-            {
-                sb.Append("<>");
-            }
-            sb.Append('(');
+            sb.Append("new FastList().initializeValueCollection(");
             this.TranslateExpression(sb, dictionary);
             sb.Append(".values())");
         }
