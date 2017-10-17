@@ -3,6 +3,7 @@ package org.crayonlang.libraries.imageresources;
 import android.graphics.Bitmap;
 
 import java.util.ArrayList;
+import org.crayonlang.interpreter.FastList;
 import org.crayonlang.interpreter.structs.Value;
 
 public final class ImageResourcesLibHelper {
@@ -20,9 +21,9 @@ public final class ImageResourcesLibHelper {
         imageDst.blit(imageSrc, dstX, dstY, srcX, srcY, width, height);
     }
 
-    public static void checkLoaderIsDone(Object[] imageLoaderNativeData, Object[] nativeImageDataNativeData, ArrayList<Value> output) {
+    public static void checkLoaderIsDone(Object[] imageLoaderNativeData, Object[] nativeImageDataNativeData, FastList output) {
         // TODO: this will have to have mutex locking when _imageLoadAsync is implemented for real.
-        output.set(0, org.crayonlang.interpreter.Interpreter.v_buildInteger((int)imageLoaderNativeData[2]));
+        output.items[0] = org.crayonlang.interpreter.Interpreter.v_buildInteger((int)imageLoaderNativeData[2]);
     }
 
     public static String getImageResourceManifestString() {
@@ -38,7 +39,7 @@ public final class ImageResourcesLibHelper {
     public static boolean imageLoadSync(
             String imagePath,
             Object[] nativeImageDataNativeData,
-            ArrayList<Value> statusOutCheesey) {
+            FastList statusOutCheesey) {
         Bitmap bitmap = org.crayonlang.interpreter.AndroidTranslationHelper.getImageAsset(imagePath);
         if (bitmap == null) {
             return false;
@@ -49,7 +50,7 @@ public final class ImageResourcesLibHelper {
         nativeImageDataNativeData[2] = cb.getHeight();
 
         if (statusOutCheesey != null) {
-            statusOutCheesey.set(0, statusOutCheesey.get(1));
+            statusOutCheesey.reverse();
         }
 
         return true;
