@@ -41,6 +41,7 @@ namespace LangJava
             {
                 "import java.util.ArrayList;",
                 "import java.util.HashMap;",
+                "import org.crayonlang.interpreter.FastList;",
                 "import org.crayonlang.interpreter.Interpreter;",
                 "import org.crayonlang.interpreter.TranslationHelper;",
                 "import org.crayonlang.interpreter.VmGlobal;",
@@ -209,8 +210,10 @@ namespace LangJava
             structFileLines.Add("package org.crayonlang.interpreter.structs;");
             structFileLines.Add("");
             bool hasLists = structCode.Contains("public ArrayList<");
+            bool hasFastLists = structCode.Contains("FastList");
             bool hasDictionaries = structCode.Contains("public HashMap<");
             if (hasLists) structFileLines.Add("import java.util.ArrayList;");
+            if (hasFastLists) structFileLines.Add("import org.crayonlang.interpreter.FastList;");
             if (hasDictionaries) structFileLines.Add("import java.util.HashMap;");
             if (hasLists || hasDictionaries) structFileLines.Add("");
             structFileLines.Add(structCode);
@@ -272,6 +275,10 @@ namespace LangJava
                     return innerType + "[]";
 
                 case "List":
+                    if (type.Generics[0].RootValue == "Value")
+                    {
+                        return "FastList";
+                    }
                     return "ArrayList<" + TranslateJavaNestedType(type.Generics[0]) + ">";
 
                 case "Dictionary":

@@ -384,29 +384,62 @@ namespace LangJava
 
         public override void TranslateListConcat(StringBuilder sb, Expression list, Expression items)
         {
-            sb.Append("TranslationHelper.concatLists(");
-            this.TranslateExpression(sb, list);
-            sb.Append(", ");
-            this.TranslateExpression(sb, items);
-            sb.Append(')');
+            if (list.ResolvedType.Generics[0].RootValue == "Value")
+            {
+                this.TranslateExpression(sb, list);
+                sb.Append(".concat(");
+                this.TranslateExpression(sb, items);
+                sb.Append(')');
+            }
+            else
+            {
+                sb.Append("TranslationHelper.concatLists(");
+                this.TranslateExpression(sb, list);
+                sb.Append(", ");
+                this.TranslateExpression(sb, items);
+                sb.Append(')');
+            }
         }
 
         public override void TranslateListGet(StringBuilder sb, Expression list, Expression index)
         {
-            this.TranslateExpression(sb, list);
-            sb.Append(".get(");
-            this.TranslateExpression(sb, index);
-            sb.Append(')');
+            if (list.ResolvedType.Generics[0].RootValue == "Value")
+            {
+                this.TranslateExpression(sb, list);
+                sb.Append(".items[");
+                this.TranslateExpression(sb, index);
+                sb.Append(']');
+            }
+            else
+            {
+                this.TranslateExpression(sb, list);
+                sb.Append(".get(");
+                this.TranslateExpression(sb, index);
+                sb.Append(')');
+            }
         }
 
         public override void TranslateListInsert(StringBuilder sb, Expression list, Expression index, Expression item)
         {
-            this.TranslateExpression(sb, list);
-            sb.Append(".add(");
-            this.TranslateExpression(sb, index);
-            sb.Append(", ");
-            this.TranslateExpression(sb, item);
-            sb.Append(')');
+
+            if (list.ResolvedType.Generics[0].RootValue == "Value")
+            {
+                this.TranslateExpression(sb, list);
+                sb.Append(".insert(");
+                this.TranslateExpression(sb, index);
+                sb.Append(", ");
+                this.TranslateExpression(sb, item);
+                sb.Append(')');
+            }
+            else
+            {
+                this.TranslateExpression(sb, list);
+                sb.Append(".add(");
+                this.TranslateExpression(sb, index);
+                sb.Append(", ");
+                this.TranslateExpression(sb, item);
+                sb.Append(')');
+            }
         }
 
         public override void TranslateListJoinChars(StringBuilder sb, Expression list)
@@ -427,29 +460,44 @@ namespace LangJava
 
         public override void TranslateListNew(StringBuilder sb, PType type)
         {
-            sb.Append("new ArrayList<");
-            sb.Append(LangJava.PlatformImpl.TranslateJavaNestedType(type));
-            sb.Append(">()");
+            if (type.RootValue == "Value")
+            {
+                sb.Append("new FastList()");
+            }
+            else
+            {
+                sb.Append("new ArrayList<");
+                sb.Append(LangJava.PlatformImpl.TranslateJavaNestedType(type));
+                sb.Append(">()");
+            }
         }
 
         public override void TranslateListPop(StringBuilder sb, Expression list)
         {
-            bool useInlineListPop =
-                (list is Variable) ||
-                (list is DotField && ((DotField)list).Root is Variable);
-
-            if (useInlineListPop)
+            if (list.ResolvedType.Generics[0].RootValue == "Value")
             {
                 this.TranslateExpression(sb, list);
-                sb.Append(".remove(");
-                this.TranslateExpression(sb, list);
-                sb.Append(".size() - 1)");
+                sb.Append(".pop()");
             }
             else
             {
-                sb.Append("TranslationHelper.listPop(");
-                this.TranslateExpression(sb, list);
-                sb.Append(')');
+                bool useInlineListPop =
+                (list is Variable) ||
+                (list is DotField && ((DotField)list).Root is Variable);
+
+                if (useInlineListPop)
+                {
+                    this.TranslateExpression(sb, list);
+                    sb.Append(".remove(");
+                    this.TranslateExpression(sb, list);
+                    sb.Append(".size() - 1)");
+                }
+                else
+                {
+                    sb.Append("TranslationHelper.listPop(");
+                    this.TranslateExpression(sb, list);
+                    sb.Append(')');
+                }
             }
         }
 
@@ -463,19 +511,38 @@ namespace LangJava
 
         public override void TranslateListReverse(StringBuilder sb, Expression list)
         {
-            sb.Append("TranslationHelper.reverseList(");
-            this.TranslateExpression(sb, list);
-            sb.Append(')');
+            if (list.ResolvedType.Generics[0].RootValue == "Value")
+            {
+                this.TranslateExpression(sb, list);
+                sb.Append(".reverse()");
+            }
+            else
+            {
+                sb.Append("TranslationHelper.reverseList(");
+                this.TranslateExpression(sb, list);
+                sb.Append(')');
+            }
         }
 
         public override void TranslateListSet(StringBuilder sb, Expression list, Expression index, Expression value)
         {
-            this.TranslateExpression(sb, list);
-            sb.Append(".set(");
-            this.TranslateExpression(sb, index);
-            sb.Append(", ");
-            this.TranslateExpression(sb, value);
-            sb.Append(')');
+            if (list.ResolvedType.Generics[0].RootValue == "Value")
+            {
+                this.TranslateExpression(sb, list);
+                sb.Append(".items[");
+                this.TranslateExpression(sb, index);
+                sb.Append("] = ");
+                this.TranslateExpression(sb, value);
+            }
+            else
+            {
+                this.TranslateExpression(sb, list);
+                sb.Append(".set(");
+                this.TranslateExpression(sb, index);
+                sb.Append(", ");
+                this.TranslateExpression(sb, value);
+                sb.Append(')');
+            }
         }
 
         public override void TranslateListShuffle(StringBuilder sb, Expression list)
@@ -488,7 +555,15 @@ namespace LangJava
         public override void TranslateListSize(StringBuilder sb, Expression list)
         {
             this.TranslateExpression(sb, list);
-            sb.Append(".size()");
+
+            if (list.ResolvedType.Generics[0].RootValue == "Value")
+            {
+                sb.Append(".length");
+            }
+            else
+            {
+                sb.Append(".size()");
+            }
         }
 
         public override void TranslateListToArray(StringBuilder sb, Expression list)
@@ -523,7 +598,7 @@ namespace LangJava
                     break;
                 case "Value":
                     this.TranslateExpression(sb, list);
-                    sb.Append(".toArray(TranslationHelper.EMPTY_ARRAY_VALUE)");
+                    sb.Append(".toArray()");
                     break;
                 case "List":
                     this.TranslateExpression(sb, list);
@@ -616,11 +691,21 @@ namespace LangJava
 
         public override void TranslateMultiplyList(StringBuilder sb, Expression list, Expression n)
         {
-            sb.Append("TranslationHelper.multiplyList(");
-            this.TranslateExpression(sb, list);
-            sb.Append(", ");
-            this.TranslateExpression(sb, n);
-            sb.Append(')');
+            if (list.ResolvedType.Generics[0].RootValue == "Value")
+            {
+                this.TranslateExpression(sb, list);
+                sb.Append(".multiply(");
+                this.TranslateExpression(sb, n);
+                sb.Append(')');
+            }
+            else
+            {
+                sb.Append("TranslationHelper.multiplyList(");
+                this.TranslateExpression(sb, list);
+                sb.Append(", ");
+                this.TranslateExpression(sb, n);
+                sb.Append(')');
+            }
         }
 
         public override void TranslateNullConstant(StringBuilder sb)

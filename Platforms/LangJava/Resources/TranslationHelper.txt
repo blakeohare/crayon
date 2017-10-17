@@ -124,16 +124,17 @@ public final class TranslationHelper {
         }
         return String.copyValueOf(output);
     }
-
-    public static void shuffleInPlace(ArrayList<Value> list) {
-        int length = list.size();
+	
+    public static void shuffleInPlace(FastList list) {
+        int length = list.length;
         int tIndex;
         Value t;
+		Value[] items = list.items;
         for (int i = length - 1; i >= 0; --i) {
             tIndex = random.nextInt(length);
-            t = list.get(tIndex);
-            list.set(tIndex, list.get(i));
-            list.set(i, t);
+            t = items[tIndex];
+            items[tIndex] = items[i];
+            items[i] = t;
         }
     }
 
@@ -151,21 +152,6 @@ public final class TranslationHelper {
         int i = 0;
         for (String value : original) {
             output[i++] = value;
-        }
-        return output;
-    }
-
-    public static ArrayList<Value> concatLists(ArrayList<Value> listA, ArrayList<Value> listB) {
-        ArrayList<Value> output = new ArrayList<Value>(listA.size() + listB.size());
-        output.addAll(listA);
-        output.addAll(listB);
-        return output;
-    }
-
-    public static ArrayList<Value> multiplyList(ArrayList<Value> list, int num) {
-        ArrayList<Value> output = new ArrayList<Value>(list.size() * num);
-        while (num-- > 0) {
-            output.addAll(list);
         }
         return output;
     }

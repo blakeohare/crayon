@@ -203,6 +203,12 @@ namespace Platform
                     else this.TranslateBooleanNot(sb, uo);
                     break;
 
+                case "ForcedParenthesis":
+                    sb.Append('(');
+                    this.TranslateExpression(sb, ((ForcedParenthesis)expression).Expression);
+                    sb.Append(')');
+                    break;
+
                 default: throw new NotImplementedException(typeName);
             }
         }
@@ -236,7 +242,6 @@ namespace Platform
                 case Pastel.NativeFunction.FLOAT_BUFFER_16: this.TranslateFloatBuffer16(sb); break;
                 case Pastel.NativeFunction.FLOAT_DIVISION: this.TranslateFloatDivision(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.FLOAT_TO_STRING: this.TranslateFloatToString(sb, args[0]); break;
-                case Pastel.NativeFunction.FORCE_PARENS: this.TranslateForceParens(sb, args[0]); break;
                 case Pastel.NativeFunction.GET_PROGRAM_DATA: this.TranslateGetProgramData(sb); break;
                 case Pastel.NativeFunction.GET_RESOURCE_MANIFEST: this.TranslateGetResourceManifest(sb); break;
                 case Pastel.NativeFunction.INT: this.TranslateFloatToInt(sb, args[0]); break;
@@ -364,7 +369,6 @@ namespace Platform
         public abstract void TranslateFloatDivision(StringBuilder sb, Expression floatNumerator, Expression floatDenominator);
         public abstract void TranslateFloatToInt(StringBuilder sb, Expression floatExpr);
         public abstract void TranslateFloatToString(StringBuilder sb, Expression floatExpr);
-        public abstract void TranslateForceParens(StringBuilder sb, Expression expression);
         public abstract void TranslateFunctionInvocationInterpreterScoped(StringBuilder sb, FunctionReference funcRef, Expression[] args);
         public abstract void TranslateFunctionInvocationLocallyScoped(StringBuilder sb, FunctionReference funcRef, Expression[] args);
         public abstract void TranslateFunctionReference(StringBuilder sb, FunctionReference funcRef);

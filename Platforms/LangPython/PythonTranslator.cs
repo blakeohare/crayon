@@ -301,13 +301,6 @@ namespace LangPython
             sb.Append(')');
         }
 
-        public override void TranslateForceParens(StringBuilder sb, Expression expression)
-        {
-            sb.Append('(');
-            this.TranslateExpression(sb, expression);
-            sb.Append(')');
-        }
-
         public override void TranslateFunctionInvocationInterpreterScoped(StringBuilder sb, FunctionReference funcRef, Expression[] args)
         {
             this.TranslateFunctionReference(sb, funcRef);

@@ -162,10 +162,10 @@ public final class AwtTranslationHelper {
 		imageLoaderNativeData[2] = loaded ? 1 : 2;
 	}
 
-	public static boolean imageLoadSync(String genFileName, Object[] nativeImageDataNativeData, ArrayList<Value> outStatusCheesy) {
+	public static boolean imageLoadSync(String genFileName, Object[] nativeImageDataNativeData, FastList outStatusCheesy) {
 		BufferedImage image = ResourceReader.loadImageFromLocalFile("images/" + genFileName);
 		if (image != null) {
-			if (outStatusCheesy != null) java.util.Collections.reverse(outStatusCheesy);
+			if (outStatusCheesy != null) outStatusCheesy.reverse();
 			nativeImageDataNativeData[0] = image;
 			nativeImageDataNativeData[1] = image.getWidth();
 			nativeImageDataNativeData[2] = image.getHeight();
@@ -177,13 +177,13 @@ public final class AwtTranslationHelper {
 	public static void checkLoaderIsDone(
 		Object[] imageLoaderNativeData,
 		Object[] nativeImageDataNativeData,
-		ArrayList<Value> output) {
+		FastList output) {
 		
 		// TODO: add mutex checks when imageLoadAsync is implemented
 		int status = (int)imageLoaderNativeData[2];
 		// TODO: release mutex
 
-		output.set(0, Interpreter.v_buildInteger(status));
+		output.items[0] = Interpreter.v_buildInteger(status);
 	}
 
 	private static HashMap<String, java.awt.Font> systemFonts = null;
