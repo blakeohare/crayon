@@ -1,9 +1,9 @@
 ﻿if (argCount == 0) {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "List add method requires at least one argument.");
-}
+    hasInterrupt = EX_InvalidArgument(ec, "List add method requires at least one argument.");
+} else {
+    for (i = 0; i < argCount; i += 1) {
+        list1.Add(funcArgs[i]);
+    }
 
-for (i = 0; i < argCount; i += 1) {
-    list1.Add(funcArgs[i]);
+    output = VALUE_NULL;
 }
-
-output = VALUE_NULL;

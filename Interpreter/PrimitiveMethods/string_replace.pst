@@ -1,12 +1,12 @@
 ﻿if (argCount != 2) {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("string replace method", 2, argCount));
+    hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string replace method", 2, argCount));
+} else {
+    value2 = funcArgs[0];
+    value3 = funcArgs[1];
+
+    if (value2.type != Types.STRING || value3.type != Types.STRING) {
+        hasInterrupt = EX_InvalidArgument(ec, "string replace method requires 2 strings as input.");
+    } else {
+        output = buildString(string1.Replace((string) value2.internalValue, (string) value3.internalValue));
+    }
 }
-
-value2 = funcArgs[0];
-value3 = funcArgs[1];
-
-if (value2.type != Types.STRING || value3.type != Types.STRING) {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "string replace method requires 2 strings as input.");
-}
-
-output = buildString(string1.Replace((string) value2.internalValue, (string) value3.internalValue));

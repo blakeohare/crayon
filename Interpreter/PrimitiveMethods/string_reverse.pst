@@ -1,5 +1,5 @@
 ﻿if (argCount > 0) {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("string reverse method", 0, argCount));
+    hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string reverse method", 0, argCount));
+} else {
+    output = buildString(string1.Reverse());
 }
-
-output = buildString(string1.Reverse());

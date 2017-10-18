@@ -1,18 +1,18 @@
 ﻿if (argCount != 1) {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("string split method", 1, argCount));
+    hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string split method", 1, argCount));
+} else {
+    value2 = funcArgs[0];
+    if (value2.type != Types.STRING) {
+        hasInterrupt = EX_InvalidArgument(ec, "string split method requires another string as input.");
+    } else {
+        stringList = string1.Split((string) value2.internalValue);
+
+        list1 = new List<Value>();
+        len = stringList.Size();
+        for (i = 0; i < len; i += 1) {
+            list1.Add(buildString(stringList[i]));
+        }
+
+        output = new Value(Types.LIST, list1);
+    }
 }
-
-value2 = funcArgs[0];
-if (value2.type != Types.STRING) {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "string split method requires another string as input.");
-}
-
-stringList = string1.Split((string) value2.internalValue);
-
-list1 = new List<Value>();
-len = stringList.Size();
-for (i = 0; i < len; i += 1) {
-    list1.Add(buildString(stringList[i]));
-}
-
-output = new Value(Types.LIST, list1);

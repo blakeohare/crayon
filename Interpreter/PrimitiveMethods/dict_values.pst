@@ -1,8 +1,6 @@
 ﻿if (argCount > 0) {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary values method", 0, argCount));
-}
-
-if (dictImpl.keyType == Types.STRING) {
+    hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary values method", 0, argCount));
+} else if (dictImpl.keyType == Types.STRING) {
     output = new Value(Types.LIST, Core.ConvertRawDictionaryValueCollectionToAReusableValueList(dictImpl.valueStringLookup.Values()));
 } else {
     output = new Value(Types.LIST, Core.ConvertRawDictionaryValueCollectionToAReusableValueList(dictImpl.valueIntLookup.Values()));

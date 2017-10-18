@@ -1,22 +1,24 @@
 ﻿if (argCount != 1) {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, primitiveMethodWrongArgCountError("dictionary merge method", 1, argCount));
-}
+    hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary merge method", 1, argCount));
+} else {
 
-value2 = funcArgs[0];
-if (value2.type != Types.DICTIONARY) {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "dictionary merge method requires another dictionary as a parameeter.");
-}
-
-dictImpl2 = ((DictImpl) value2.internalValue);
-
-if (dictImpl2.size > 0) {
-    if (dictImpl.size == 0) {
-        value.internalValue = cloneDictionary(dictImpl2, null);
-    } else if (dictImpl2.keyType != dictImpl.keyType) {
-        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_KEY, "dictionaries with different key types cannot be merged.");
+    value2 = funcArgs[0];
+    if (value2.type != Types.DICTIONARY) {
+        hasInterrupt = EX_InvalidArgument(ec, "dictionary merge method requires another dictionary as a parameeter.");
     } else {
-        cloneDictionary(dictImpl2, dictImpl); // no need to overwrite value.internalValue, changes written directly to dictImpl.
+
+        dictImpl2 = ((DictImpl) value2.internalValue);
+
+        if (dictImpl2.size > 0) {
+            if (dictImpl.size == 0) {
+                value.internalValue = cloneDictionary(dictImpl2, null);
+            } else if (dictImpl2.keyType != dictImpl.keyType) {
+                hasInterrupt = EX_InvalidKey(ec, "dictionaries with different key types cannot be merged.");
+            } else {
+                cloneDictionary(dictImpl2, dictImpl); // no need to overwrite value.internalValue, changes written directly to dictImpl.
+            }
+        }
+
+        output = VALUE_NULL;
     }
 }
-
-output = VALUE_NULL;

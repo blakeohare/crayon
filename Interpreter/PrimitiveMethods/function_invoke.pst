@@ -7,8 +7,10 @@ if (argCount == 1) {
 } else if (argCount == 0) {
     funcArgs[1] = VALUE_NULL;
 } else {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "invoke requires a list of arguments.");
+    hasInterrupt = EX_InvalidArgument(ec, "invoke requires a list of arguments.");
 }
+
+// if there's an interrupt, it doesn't matter whether or not these run. Don't waste the extra CPU cycle to check.
 
 funcArgs[0] = value;
 argCount = 2;
