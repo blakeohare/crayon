@@ -16,7 +16,7 @@ if (value == null || ec.activeExceptionHandled) {
                 pc = intArray1[1];
             } else {
                 // TODO: compile-time error
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, "break exists without a loop");
+                hasInterrupt = EX_Fatal(ec, "break exists without a loop");
             }
             break;
 
@@ -30,7 +30,7 @@ if (value == null || ec.activeExceptionHandled) {
                 pc = intArray1[1];
             } else {
                 // TODO: compile-time error
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, "continue exists without a loop");
+                hasInterrupt = EX_Fatal(ec, "continue exists without a loop");
             }
             break;
 

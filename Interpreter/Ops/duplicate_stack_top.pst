@@ -16,5 +16,5 @@ if (row[0] == 1) {
     valueStackSize += 2;
 } else {
     // This should not happen. All occurrences of duplicate stack top are either for size 1 or 2.
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, "?");
+    hasInterrupt = EX_Fatal(ec, "?");
 }

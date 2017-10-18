@@ -61,29 +61,33 @@ switch (value.type) {
 
     default:
         if (value.type == Types.NULL) {
-            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.NULL_REFERENCE, "Derferenced a field from null.");
+            hasInterrupt = EX_NullReference(ec, "Derferenced a field from null.");
+            output = VALUE_NULL;
+        } else {
+            output = null;
         }
-        output = null;
         break;
 }
 
 if (output == null) {
     output = generatePrimitiveMethodReference(globalNameIdToPrimitiveMethodName, nameId, value);
     if (output == null) {
+        // TODO: put this all in a helper function.
         if (value.type == Types.NULL) {
-            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.NULL_REFERENCE, "Tried to dereference a field on null.");
-        }
-
-        if (value.type == Types.INSTANCE) {
-            objInstance1 = ((ObjectInstance) value.internalValue);
-            classId = objInstance1.classId;
-            classInfo = classTable[classId];
-            string1 = Core.StringConcatAll(classInfo.fullyQualifiedName, " instance");
+            hasInterrupt = EX_NullReference(ec, "Tried to dereference a field on null.");
         } else {
-            string1 = getTypeFromId(value.type);
-        }
 
-        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNKNOWN_FIELD, Core.StringConcatAll(string1, " does not have that field."));
+            if (value.type == Types.INSTANCE) {
+                objInstance1 = ((ObjectInstance) value.internalValue);
+                classId = objInstance1.classId;
+                classInfo = classTable[classId];
+                string1 = Core.StringConcatAll(classInfo.fullyQualifiedName, " instance");
+            } else {
+                string1 = getTypeFromId(value.type);
+            }
+
+            hasInterrupt = EX_UnknownField(ec, Core.StringConcatAll(string1, " does not have that field."));
+        }
     }
 }
 

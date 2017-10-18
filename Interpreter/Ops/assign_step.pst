@@ -18,15 +18,16 @@ if (value2.type == Types.INSTANCE) {
         if (int2 == -1) {
             objInstance1.members[int1] = value;
         } else {
-            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ASSIGNMENT, "Cannot override a method with assignment.");
+            hasInterrupt = EX_InvalidArgument(ec, "Cannot override a method with assignment.");
         }
     } else {
-        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ASSIGNMENT, Core.StringConcatAll("'", classInfo.fullyQualifiedName, "' instances do not have a field called '", p.identifiers[nameId], "'"));
+        hasInterrupt = EX_InvalidAssignment(ec, Core.StringConcatAll("'", classInfo.fullyQualifiedName, "' instances do not have a field called '", p.identifiers[nameId], "'"));
     }
 } else {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ASSIGNMENT, "Cannot assign to a field on this type.");
+    hasInterrupt = EX_InvalidAssignment(ec, "Cannot assign to a field on this type.");
 }
 
+// this shouldn't hurt even when there's an interrupt
 if (row[1] == 1) {
     valueStack[valueStackSize] = value;
     valueStackSize += 1;

@@ -4,5 +4,5 @@ if (localsStackSet[int1] == localsStackSetToken) {
     valueStack[valueStackSize] = localsStack[int1];
     valueStackSize += 1;
 } else {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNASSIGNED_VARIABLE, "Variable used before it was set.");
+    hasInterrupt = EX_UnassignedVariable(ec, "Variable used before it was set.");
 }

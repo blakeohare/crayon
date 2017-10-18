@@ -8,11 +8,11 @@ if (int1 == 0) {
 } else if (int1 == 1) {
     bool1 = true;
 } else {
-    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "== and != not defined here.");
+    hasInterrupt = EX_UnsupportedOperation(ec, "== and != not defined here.");
 }
 
+// This is relatively harmless even if there is an interrupt
 @import("ValueStackCapacityCheck.pst");
-
 if (bool1 != Core.ForceParens((row[0] == 1))) {
     valueStack[valueStackSize] = VALUE_TRUE;
 } else {
