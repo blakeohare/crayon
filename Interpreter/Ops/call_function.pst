@@ -89,9 +89,8 @@ if (staticConstructorNotInvoked) {
                 funcArgs[i] = list1[i];
             }
         } else {
-            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Function pointers' .invoke method requires a list argument.");
+            hasInterrupt = EX_InvalidArgument(ec, "Function pointers' .invoke method requires a list argument.");
         }
-
     } else {
         for (i = argCount - 1; i >= 0; i -= 1) {
             valueStackSize -= 1;
@@ -99,105 +98,111 @@ if (staticConstructorNotInvoked) {
         }
     }
 
-    if (type == FunctionInvocationType.LOCAL_METHOD) {
-        value = stack.objectContext;
-        objInstance1 = ((ObjectInstance) value.internalValue);
-        if (objInstance1.classId != classId) {
-            int2 = row[5];
-            if (int2 != -1) {
-                classInfo = classTable[objInstance1.classId];
-                functionId = classInfo.functionIds[int2];
+    if (!hasInterrupt) {
+        if (type == FunctionInvocationType.LOCAL_METHOD) {
+            value = stack.objectContext;
+            objInstance1 = ((ObjectInstance) value.internalValue);
+            if (objInstance1.classId != classId) {
+                int2 = row[5];
+                if (int2 != -1) {
+                    classInfo = classTable[objInstance1.classId];
+                    functionId = classInfo.functionIds[int2];
+                }
             }
-        }
-    } else if (type == FunctionInvocationType.FIELD_INVOCATION) {
-        Core.EmitComment("field invocation");
-        // provided pointers have no risk of requiring a static initialization because the pointer can only be
-        // provided from a source that would have already triggered it.
+        } else if (type == FunctionInvocationType.FIELD_INVOCATION) {
+            Core.EmitComment("field invocation");
+            // provided pointers have no risk of requiring a static initialization because the pointer can only be
+            // provided from a source that would have already triggered it.
 
-        // Pop the stack and see what we have.
-        valueStackSize -= 1;
-        value = valueStack[valueStackSize];
+            // Pop the stack and see what we have.
+            valueStackSize -= 1;
+            value = valueStack[valueStackSize];
 
-        switch (value.type) {
-            case Types.NULL:
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.NULL_REFERENCE, "Invoked method on null.");
+            switch (value.type) {
+                case Types.NULL:
+                    hasInterrupt = EX_NullReference(ec, "Invoked method on null.");
+                    break;
 
-            case Types.INSTANCE:
-                Core.EmitComment("field invoked on an object instance.");
-                objInstance1 = ((ObjectInstance) value.internalValue);
-                int1 = objInstance1.classId; // note that classId has the field name ID and so this is sort of confusing
-                classInfo = classTable[int1];
-                if (classInfo.globalIdToMemberId.Contains(classId)) {
-                    int1 = classInfo.globalIdToMemberId[classId]; // int1 is now the member ID.
-                    // now that we have the member ID, check to see if this is a field or a known method.
-                    functionId = classInfo.functionIds[int1];
-                    if (functionId > 0) {
-                        // This is a local method. 'value' already contains the context.
-                        type = FunctionInvocationType.LOCAL_METHOD;
+                case Types.INSTANCE:
+                    Core.EmitComment("field invoked on an object instance.");
+                    objInstance1 = ((ObjectInstance) value.internalValue);
+                    int1 = objInstance1.classId; // note that classId has the field name ID and so this is sort of confusing
+                    classInfo = classTable[int1];
+                    if (classInfo.globalIdToMemberId.Contains(classId)) {
+                        int1 = classInfo.globalIdToMemberId[classId]; // int1 is now the member ID.
+                        // now that we have the member ID, check to see if this is a field or a known method.
+                        functionId = classInfo.functionIds[int1];
+                        if (functionId > 0) {
+                            // This is a local method. 'value' already contains the context.
+                            type = FunctionInvocationType.LOCAL_METHOD;
+                        } else {
+                            // This is just a field which is a pointer to something. Dereference the field into 'value' and change type to POINTER_PROVIDED.
+                            // Since there are unverified POINTER_PROVIDED codepaths at this point, don't do verification that it is a FunctionPointer here
+                            // as it will be done redundantly later.
+                            value = objInstance1.members[int1];
+                            type = FunctionInvocationType.POINTER_PROVIDED;
+
+                            valueStack[valueStackSize] = value;
+                            valueStackSize += 1;
+                        }
                     } else {
-                        // This is just a field which is a pointer to something. Dereference the field into 'value' and change type to POINTER_PROVIDED.
-                        // Since there are unverified POINTER_PROVIDED codepaths at this point, don't do verification that it is a FunctionPointer here
-                        // as it will be done redundantly later.
-                        value = objInstance1.members[int1];
-                        type = FunctionInvocationType.POINTER_PROVIDED;
-
-                        valueStack[valueStackSize] = value;
-                        valueStackSize += 1;
+                        hasInterrupt = EX_UnknownField(ec, "Unknown field.");
                     }
-                } else {
-                    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNKNOWN_FIELD, "Unknown field.");
-                }
-                break;
+                    break;
 
-            case Types.CLASS:
-                Core.EmitComment("field invocation on a class object instance.");
-                functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId); // enum value in PrimitiveMethodName
-                if (functionId < 0) {
-                    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, "Class definitions do not have that method.");
-                }
+                case Types.CLASS:
+                    Core.EmitComment("field invocation on a class object instance.");
+                    functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId); // enum value in PrimitiveMethodName
+                    if (functionId < 0) {
+                        hasInterrupt = EX_InvalidInvocation(ec, "Class definitions do not have that method.");
+                    } else {
 
-                // Note: a static constructor will never need to run because it will have already happened
-                // at the time that you fetched the class reference.
+                        // Note: a static constructor will never need to run because it will have already happened
+                        // at the time that you fetched the class reference.
 
-                functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
-                if (functionId < 0) {
-                    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, Core.StringConcatAll(getTypeFromId(value.type), " does not have that method."));
-                }
+                        functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
+                        if (functionId < 0) {
+                            hasInterrupt = EX_InvalidInvocation(ec, Core.StringConcatAll(getTypeFromId(value.type), " does not have that method."));
+                        } else {
 
-                if (globalNameIdToPrimitiveMethodName[classId] == PrimitiveMethodName.CREATE_INSTANCE) {
-                    type = FunctionInvocationType.CONSTRUCTOR;
-                    classValue = ((ClassValue) value.internalValue);
-                    if (classValue.isInterface) {
-                        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot create an instance of an interface.");
+                            if (globalNameIdToPrimitiveMethodName[classId] == PrimitiveMethodName.CREATE_INSTANCE) {
+                                type = FunctionInvocationType.CONSTRUCTOR;
+                                classValue = ((ClassValue) value.internalValue);
+                                if (classValue.isInterface) {
+                                    hasInterrupt = EX_UnsupportedOperation(ec, "Cannot create an instance of an interface.");
+                                } else {
+                                    classId = classValue.classId;
+                                    if (!returnValueUsed) {
+                                        // TODO: This is kind of silly.
+                                        // Try removing it and verify there is no stack corruption.
+                                        hasInterrupt = EX_UnsupportedOperation(ec, "Cannot create an instance and not use the output.");
+                                    } else {
+                                        classInfo = p.classTable[classId];
+                                        functionId = classInfo.constructorFunctionId;
+                                    }
+                                }
+                            } else {
+                                type = FunctionInvocationType.PRIMITIVE_METHOD;
+                            }
+                        }
                     }
-                    classId = classValue.classId;
-                    if (!returnValueUsed) {
-                        // TODO: This is kind of silly.
-                        // Try removing it and verify there is no stack corruption.
-                        return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.UNSUPPORTED_OPERATION, "Cannot create an instance and not use the output.");
+                    break;
+
+                default:
+                    Core.EmitComment("primitive method suspected.");
+                    // resolve a primitive method
+                    functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId); // enum value in PrimitiveMethodName
+                    if (functionId < 0) {
+                        hasInterrupt = EX_InvalidInvocation(ec, Core.StringConcatAll(getTypeFromId(value.type), " does not have that method."));
+                    } else {
+                        type = FunctionInvocationType.PRIMITIVE_METHOD;
                     }
-
-                    classInfo = p.classTable[classId];
-                    functionId = classInfo.constructorFunctionId;
-                } else {
-                    type = FunctionInvocationType.PRIMITIVE_METHOD;
-                }
-                break;
-
-            default:
-                Core.EmitComment("primitive method suspected.");
-                // resolve a primitive method
-                functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId); // enum value in PrimitiveMethodName
-                if (functionId < 0) {
-                    return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, Core.StringConcatAll(getTypeFromId(value.type), " does not have that method."));
-                }
-
-                type = FunctionInvocationType.PRIMITIVE_METHOD;
-                break;
+                    break;
+            }
         }
     }
 
-    if (type == FunctionInvocationType.POINTER_PROVIDED) {
+    if (type == FunctionInvocationType.POINTER_PROVIDED && !hasInterrupt) {
         Core.EmitComment("pointer provided");
 
         valueStackSize -= 1;
@@ -231,11 +236,11 @@ if (staticConstructorNotInvoked) {
                     break;
             }
         } else {
-            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, "This type cannot be invoked like a function.");
+            hasInterrupt = EX_InvalidInvocation(ec, "This type cannot be invoked like a function.");
         }
     }
 
-    if (type == FunctionInvocationType.PRIMITIVE_METHOD) {
+    if (type == FunctionInvocationType.PRIMITIVE_METHOD && !hasInterrupt) {
         Core.EmitComment("primitive method invocation");
         output = VALUE_NULL;
         primitiveMethodToCoreLibraryFallback = false;
@@ -318,24 +323,27 @@ if (staticConstructorNotInvoked) {
                 break;
         }
 
-        if (output == null) {
-            if (primitiveMethodToCoreLibraryFallback) {
-                type = FunctionInvocationType.NORMAL_FUNCTION;
-                bool1 = true;
-                // functionId has been set.
+        if (!hasInterrupt) {
+            if (output == null) {
+                if (primitiveMethodToCoreLibraryFallback) {
+                    type = FunctionInvocationType.NORMAL_FUNCTION;
+                    bool1 = true;
+                    // functionId has been set.
+                } else {
+                    hasInterrupt = EX_InvalidInvocation(ec, "primitive method not found.");
+                }
             } else {
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_INVOCATION, "primitive method not found.");
+                if (returnValueUsed) {
+                    @import("ValueStackCapacityCheck.pst");
+                    valueStack[valueStackSize] = output;
+                    valueStackSize += 1;
+                }
+                bool1 = false;
             }
-        } else {
-            if (returnValueUsed) {
-                @import("ValueStackCapacityCheck.pst");
-                valueStack[valueStackSize] = output;
-                valueStackSize += 1;
-            }
-            bool1 = false;
         }
     }
-    if (bool1) {
+
+    if (bool1 && !hasInterrupt) {
         Core.EmitComment("push a new frame to the stack");
 
         stack.pc = pc;
@@ -421,67 +429,68 @@ if (staticConstructorNotInvoked) {
                 break;
         }
 
-        if ((argCount < functionInfo.minArgs) || (argCount > functionInfo.maxArgs)) {
+        if (argCount < functionInfo.minArgs || argCount > functionInfo.maxArgs) {
             pc = stack.pc;
-            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.INVALID_ARGUMENT, "Incorrect number of args were passed to this function.");
-        }
+            hasInterrupt = EX_InvalidArgument(ec, "Incorrect number of args were passed to this function.");
+        } else {
 
-        int1 = functionInfo.localsSize;
+            int1 = functionInfo.localsSize;
 
-        // where the current locals stack ends (will be the new locals stack begin)
-        int2 = stack.localsStackOffsetEnd;
+            // where the current locals stack ends (will be the new locals stack begin)
+            int2 = stack.localsStackOffsetEnd;
 
-        if (localsStackCapacity <= (int2 + int1)) {
-            increaseLocalsStackCapacity(ec, int1);
-            localsStack = ec.localsStack;
-            localsStackSet = ec.localsStackSet;
-            localsStackCapacity = localsStack.Size();
-        }
-
-        localsStackSetToken += 1;
-        if (localsStackSetToken > 2000000000) {
-            resetLocalsStackTokens(ec, stack);
-            localsStackSetToken = 2;
-        }
-
-        localsStackOffset = int2;
-
-        Core.EmitComment("invoke the function");
-        stack = new StackFrame(
-            pc,
-            localsStackSetToken,
-            localsStackOffset,
-            localsStackOffset + int1, // locals stack end (exclusive) and also the next stack frame's localsStackOffset
-            stack,
-            returnValueUsed,
-            value, // the value of the 'this' keyword
-            valueStackSize,
-            0, // for static constructor use only
-            stack.depth + 1,
-            PostFinallyBehavior.NOTHING,
-            null); // temp return value
-
-        // now that we're in the new stack frame, flush out all the passed args to the local stack since their
-        // ID's are allocated with args first.
-        for (i = 0; i < argCount; i += 1) {
-            int1 = localsStackOffset + i;
-            localsStack[int1] = funcArgs[i];
-            localsStackSet[int1] = localsStackSetToken;
-        }
-        if (argCount != functionInfo.minArgs) {
-            // optional args are simply local variable assignments at the front of the function body.
-            // Adjust the PC to skip these if those arguments were provided.
-            int1 = argCount - functionInfo.minArgs; // number of optional args provided
-            if (int1 > 0) {
-                // The amount to increment the PC by is conveniently stored in the function metadata in an
-                // array indexed by the number of optional args provided.
-                pc += functionInfo.pcOffsetsForOptionalArgs[int1];
-                stack.pc = pc;
+            if (localsStackCapacity <= (int2 + int1)) {
+                increaseLocalsStackCapacity(ec, int1);
+                localsStack = ec.localsStack;
+                localsStackSet = ec.localsStackSet;
+                localsStackCapacity = localsStack.Size();
             }
-        }
 
-        if (stack.depth > 1000) {
-            return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, "Stack overflow.");
+            localsStackSetToken += 1;
+            if (localsStackSetToken > 2000000000) {
+                resetLocalsStackTokens(ec, stack);
+                localsStackSetToken = 2;
+            }
+
+            localsStackOffset = int2;
+
+            Core.EmitComment("invoke the function");
+            stack = new StackFrame(
+                pc,
+                localsStackSetToken,
+                localsStackOffset,
+                localsStackOffset + int1, // locals stack end (exclusive) and also the next stack frame's localsStackOffset
+                stack,
+                returnValueUsed,
+                value, // the value of the 'this' keyword
+                valueStackSize,
+                0, // for static constructor use only
+                stack.depth + 1,
+                PostFinallyBehavior.NOTHING,
+                null); // temp return value
+
+            // now that we're in the new stack frame, flush out all the passed args to the local stack since their
+            // ID's are allocated with args first.
+            for (i = 0; i < argCount; i += 1) {
+                int1 = localsStackOffset + i;
+                localsStack[int1] = funcArgs[i];
+                localsStackSet[int1] = localsStackSetToken;
+            }
+            if (argCount != functionInfo.minArgs) {
+                // optional args are simply local variable assignments at the front of the function body.
+                // Adjust the PC to skip these if those arguments were provided.
+                int1 = argCount - functionInfo.minArgs; // number of optional args provided
+                if (int1 > 0) {
+                    // The amount to increment the PC by is conveniently stored in the function metadata in an
+                    // array indexed by the number of optional args provided.
+                    pc += functionInfo.pcOffsetsForOptionalArgs[int1];
+                    stack.pc = pc;
+                }
+            }
+
+            if (stack.depth > 1000) {
+                hasInterrupt = EX_Fatal(ec, "Stack overflow.");
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import org.crayonlang.interpreter.FastList;
 import org.crayonlang.interpreter.structs.Value;
 
 public class FileIOHelper {
@@ -90,7 +91,7 @@ public class FileIOHelper {
 		return 0;
     }
     
-    public static int fileRead(String path, boolean isBytes, String[] stringOut, Value[] integers, ArrayList<Value> byteOutput) {
+    public static int fileRead(String path, boolean isBytes, String[] stringOut, Value[] integers, FastList byteOutput) {
 		File file = new File(path);
 		if (!file.exists() || file.isDirectory()) return 4;
 		if (file.length() > Integer.MAX_VALUE) return 1;
@@ -120,8 +121,12 @@ public class FileIOHelper {
 		}
 		
 		if (isBytes) {
+			Value[] outputItems = new Value[length];
+			byteOutput.items = outputItems;
+			byteOutput.length = length;
+			byteOutput.capacity = length;
 			for (int i = 0; i < length; ++i) {
-				byteOutput.add(integers[(int) bytes[i]]);
+				outputItems[i] = integers[(int) bytes[i]];
 			}
 		} else {
 			

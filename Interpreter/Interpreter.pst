@@ -29,6 +29,10 @@ bool EX_UnsupportedOperation(ExecutionContext ec, string exMsg) { return generat
 bool EX_InvalidArgument(ExecutionContext ec, string exMsg) { return generateException2(ec, CoreExceptionTypes.INVALID_ARGUMENT, exMsg); }
 bool EX_DivisionByZero(ExecutionContext ec, string exMsg) { return generateException2(ec, CoreExceptionTypes.DIVISION_BY_ZERO, exMsg); }
 bool EX_IndexOutOfRange(ExecutionContext ec, string exMsg) { return generateException2(ec, CoreExceptionTypes.INDEX_OUT_OF_RANGE, exMsg); }
+bool EX_NullReference(ExecutionContext ec, string exMsg) { return generateException2(ec, CoreExceptionTypes.NULL_REFERENCE, exMsg); }
+bool EX_UnknownField(ExecutionContext ec, string exMsg) { return generateException2(ec, CoreExceptionTypes.UNKNOWN_FIELD, exMsg); }
+bool EX_InvalidInvocation(ExecutionContext ec, string exMsg) { return generateException2(ec, CoreExceptionTypes.INVALID_INVOCATION, exMsg); }
+bool EX_Fatal(ExecutionContext ec, string exMsg) { return generateException2(ec, CoreExceptionTypes.FATAL, exMsg); }
 
 bool generateException2(ExecutionContext ec, int exceptionType, string exMsg) {
     ec.activeInterrupt = new Interrupt(
