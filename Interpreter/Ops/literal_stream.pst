@@ -1,5 +1,5 @@
 ﻿int1 = row.Size();
-if ((valueStackSize + int1) > valueStackCapacity) {
+if (valueStackSize + int1 > valueStackCapacity) {
     // literal count may be greater than a capacity increase in some cases.
     while ((valueStackSize + int1) > valueStackCapacity) {
         valueStackIncreaseCapacity(ec);
@@ -7,6 +7,7 @@ if ((valueStackSize + int1) > valueStackCapacity) {
         valueStackCapacity = valueStack.Size();
     }
 }
+
 if (@ext_boolean("HAS_INCREMENT")) {
     i = int1;
     while (--i >= 0) {

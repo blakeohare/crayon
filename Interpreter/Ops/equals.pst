@@ -1,6 +1,6 @@
 ﻿
 valueStackSize -= 2;
-rightValue = valueStack[(valueStackSize + 1)];
+rightValue = valueStack[valueStackSize + 1];
 leftValue = valueStack[valueStackSize];
 int1 = doEqualityComparisonAndReturnCode(leftValue, rightValue);
 if (int1 == 0) {
@@ -13,7 +13,7 @@ if (int1 == 0) {
 
 // This is relatively harmless even if there is an interrupt
 @import("ValueStackCapacityCheck.pst");
-if (bool1 != Core.ForceParens((row[0] == 1))) {
+if (bool1 != Core.ForceParens(row[0] == 1)) {
     valueStack[valueStackSize] = VALUE_TRUE;
 } else {
     valueStack[valueStackSize] = VALUE_FALSE;

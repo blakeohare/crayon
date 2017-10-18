@@ -180,6 +180,7 @@ namespace LangJava
         public override string GenerateCodeForStruct(StructDefinition structDef)
         {
             StringBuilder sb = new StringBuilder();
+            bool isValue = structDef.NameToken.Value == "Value";
             sb.Append("public final class ");
             sb.Append(structDef.NameToken.Value);
             sb.Append(" {");
@@ -196,6 +197,13 @@ namespace LangJava
                 sb.Append(';');
                 sb.Append(this.NL);
             }
+
+            if (isValue)
+            {
+                sb.Append("  public int intValue;");
+                sb.Append(this.NL);
+            }
+
             sb.Append(this.NL);
             sb.Append("  public ");
             sb.Append(structDef.NameToken.Value);
@@ -219,6 +227,29 @@ namespace LangJava
                 sb.Append(this.NL);
             }
             sb.Append("  }");
+
+            if (isValue)
+            {
+                sb.Append(this.NL);
+                sb.Append(this.NL);
+                sb.Append("  public Value(int intValue) {");
+                sb.Append(this.NL);
+                sb.Append("    this.type = 3;");
+                sb.Append(this.NL);
+                sb.Append("    this.intValue = intValue;");
+                sb.Append(this.NL);
+                sb.Append("  }");
+                sb.Append(this.NL);
+                sb.Append(this.NL);
+                sb.Append("  public Value(boolean boolValue) {");
+                sb.Append(this.NL);
+                sb.Append("    this.type = 2;");
+                sb.Append(this.NL);
+                sb.Append("    this.intValue = boolValue ? 1 : 0;");
+                sb.Append(this.NL);
+                sb.Append("  }");
+            }
+
             sb.Append(this.NL);
             sb.Append("}");
             string structCode = sb.ToString();

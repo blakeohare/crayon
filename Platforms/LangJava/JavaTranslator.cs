@@ -80,6 +80,26 @@ namespace LangJava
 
         public override void TranslateCast(StringBuilder sb, PType type, Expression expression)
         {
+            DotField dotField = expression as DotField;
+            if (dotField != null &&
+                dotField.Root.ResolvedType.RootValue == "Value" &&
+                dotField.FieldName.Value == "internalValue")
+            {
+                if (type.RootValue == "int")
+                {
+                    this.TranslateExpression(sb, dotField.Root);
+                    sb.Append(".intValue");
+                    return;
+                }
+                else if (type.RootValue == "bool")
+                {
+                    sb.Append('(');
+                    this.TranslateExpression(sb, dotField.Root);
+                    sb.Append(".intValue == 1)");
+                    return;
+                }
+            }
+
             sb.Append('(');
             if (this.isJava6) // "(int) object" vs "(Integer) object"
             {
@@ -158,6 +178,24 @@ namespace LangJava
 
         public override void TranslateConstructorInvocation(StringBuilder sb, ConstructorInvocation constructorInvocation)
         {
+            if (constructorInvocation.StructType.NameToken.Value == "Value")
+            {
+                Expression firstArg = constructorInvocation.Args[0];
+                if (!(firstArg is InlineConstant))
+                {
+                    throw new InvalidOperationException("Cannot pass in non constant for first arg of Value construction.");
+                }
+
+                int type = (int)((InlineConstant)firstArg).Value;
+                if (type == 2 || type == 3)
+                {
+                    sb.Append("new Value(");
+                    this.TranslateExpression(sb, constructorInvocation.Args[1]);
+                    sb.Append(')');
+                    return;
+                }
+            }
+
             sb.Append("new ");
             string structType = constructorInvocation.StructType.NameToken.Value;
             if (structType == "ClassValue")

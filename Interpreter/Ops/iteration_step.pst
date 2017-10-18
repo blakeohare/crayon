@@ -22,9 +22,12 @@ if (int1 < len) {
         // Go easy on GC. Single-char strings are going to be common for users that use foreach loops on strings.
         value = buildCommonString(Core.CharToString(string2[int1]));
     }
+
+    // TODO: these two operations can actually be done in the verify_type_is_iterable op, I think.
     int3 = localsStackOffset + int2;
-    localsStack[int3] = value;
     localsStackSet[int3] = localsStackSetToken;
+
+    localsStack[int3] = value;
 } else {
     pc += row[0];
 }
