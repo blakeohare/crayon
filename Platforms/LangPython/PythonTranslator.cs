@@ -386,6 +386,13 @@ namespace LangPython
             }
         }
 
+        public override void TranslateInlineIncrement(StringBuilder sb, Expression innerExpression, bool isPrefix, bool isAddition)
+        {
+            throw new Pastel.ParserException(
+                innerExpression.FirstToken,
+                "Python does not support ++ or --. Please check all usages with if (@ext_boolean(\"HAS_INCREMENT\")) { ... }");
+        }
+
         public override void TranslateIntBuffer16(StringBuilder sb)
         {
             sb.Append("TranslationHelper_IntBuffer16");

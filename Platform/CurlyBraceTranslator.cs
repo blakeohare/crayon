@@ -143,6 +143,13 @@ namespace Platform
             sb.Append(this.NewLine);
         }
 
+        public override void TranslateInlineIncrement(StringBuilder sb, Expression innerExpression, bool isPrefix, bool isAddition)
+        {
+            if (isPrefix) sb.Append(isAddition ? "++" : "--");
+            this.TranslateExpression(sb, innerExpression);
+            if (!isPrefix) sb.Append(isAddition ? "++" : "--");
+        }
+
         public override void TranslateIntegerConstant(StringBuilder sb, int value)
         {
             sb.Append(value.ToString());

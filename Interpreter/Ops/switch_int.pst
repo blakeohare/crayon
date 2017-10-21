@@ -1,5 +1,11 @@
-﻿valueStackSize -= 1;
-value = valueStack[valueStackSize];
+﻿
+if (@ext_boolean("HAS_INCREMENT")) {
+    value = valueStack[--valueStackSize];
+} else {
+    valueStackSize -= 1;
+    value = valueStack[valueStackSize];
+}
+
 if (value.type == Types.INTEGER) {
     int1 = (int) value.internalValue; // switch ID
     integerSwitch = integerSwitches[row[0]];

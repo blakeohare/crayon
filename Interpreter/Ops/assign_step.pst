@@ -3,12 +3,12 @@
 // row[1] -> push the assigned value back to the stack if this is 1.
 
 valueStackSize -= 2;
-value = valueStack[(valueStackSize + 1)]; // value to assign
+value = valueStack[valueStackSize + 1]; // value to assign
 value2 = valueStack[valueStackSize]; // target root
 nameId = row[0];
 
 if (value2.type == Types.INSTANCE) {
-    objInstance1 = ((ObjectInstance) value2.internalValue);
+    objInstance1 = (ObjectInstance) value2.internalValue;
     classId = objInstance1.classId;
     classInfo = classTable[classId];
     intIntDict1 = classInfo.globalIdToMemberId;
@@ -29,6 +29,10 @@ if (value2.type == Types.INSTANCE) {
 
 // this shouldn't hurt even when there's an interrupt
 if (row[1] == 1) {
-    valueStack[valueStackSize] = value;
-    valueStackSize += 1;
+    if (@ext_boolean("HAS_INCREMENT")) {
+        valueStack[valueStackSize++] = value;
+    } else {
+        valueStack[valueStackSize] = value;
+        valueStackSize += 1;
+    }
 }

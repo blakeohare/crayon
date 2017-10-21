@@ -1,6 +1,6 @@
 ﻿// row[0] -> global name ID
 
-value = valueStack[(valueStackSize - 1)];
+value = valueStack[valueStackSize - 1];
 nameId = row[0];
 
 switch (value.type) {

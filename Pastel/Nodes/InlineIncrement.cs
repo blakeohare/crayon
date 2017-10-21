@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Pastel.Nodes
+﻿namespace Pastel.Nodes
 {
-    class InlineIncrement : Expression
+    public class InlineIncrement : Expression
     {
         public Token IncrementToken { get; set; }
         public Expression Expression { get; set; }
@@ -40,7 +35,7 @@ namespace Pastel.Nodes
             // TODO: check if this is either:
             // - exporting to a platform that supports this OR
             // - is running as the direct descendant of ExpressionAsExecutable, and then swap out with += 1
-            throw new NotImplementedException();
+            return this;
         }
     }
 }

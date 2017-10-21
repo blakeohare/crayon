@@ -1,5 +1,11 @@
-﻿valueStackSize -= 1;
-value = valueStack[valueStackSize];
+﻿
+if (@ext_boolean("HAS_INCREMENT")) {
+    value = valueStack[--valueStackSize];
+} else {
+    valueStackSize -= 1;
+    value = valueStack[valueStackSize];
+}
+
 if (value.type == Types.STRING) {
     string1 = (string) value.internalValue;
     stringSwitch = stringSwitches[row[0]];

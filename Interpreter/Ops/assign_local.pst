@@ -1,6 +1,9 @@
-﻿
-valueStackSize -= 1;
-value = valueStack[valueStackSize];
-int1 = localsStackOffset + row[0];
-localsStack[int1] = value;
-localsStackSet[int1] = localsStackSetToken;
+﻿i = localsStackOffset + row[0];
+
+if (@ext_boolean("HAS_INCREMENT")) {
+    localsStack[i] = valueStack[--valueStackSize];
+} else {
+    valueStackSize -= 1;
+    localsStack[i] = valueStack[valueStackSize];
+}
+localsStackSet[i] = localsStackSetToken;

@@ -75,7 +75,6 @@ namespace Platform
                 case "SwitchStatement": this.TranslateSwitchStatement(sb, (SwitchStatement)executable); break;
                 case "VariableDeclaration": this.TranslateVariableDeclaration(sb, (VariableDeclaration)executable); break;
                 case "WhileLoop": this.TranslateWhileLoop(sb, (WhileLoop)executable); break;
-
                 case "ExecutableBatch":
                     Executable[] execs = ((ExecutableBatch)executable).Executables;
                     for (int i = 0; i < execs.Length; ++i)
@@ -99,6 +98,11 @@ namespace Platform
                 case "NativeFunctionInvocation": this.TranslateNativeFunctionInvocation(sb, (NativeFunctionInvocation)expression); break;
                 case "OpChain": this.TranslateOpChain(sb, (OpChain)expression); break;
                 case "LibraryNativeFunctionInvocation": this.TranslateLibraryNativeFunctionInvocation(sb, (LibraryNativeFunctionInvocation)expression); break;
+
+                case "InlineIncrement":
+                    InlineIncrement ii = (InlineIncrement)expression;
+                    this.TranslateInlineIncrement(sb, ii.Expression, ii.IsPrefix, ii.IncrementToken.Value == "++");
+                    break;
 
                 case "FunctionInvocation":
                     FunctionInvocation funcInvocation = (FunctionInvocation)expression;
@@ -376,6 +380,7 @@ namespace Platform
         public abstract void TranslateGetResourceManifest(StringBuilder sb);
         public abstract void TranslateGlobalVariable(StringBuilder sb, Variable variable);
         public abstract void TranslateIfStatement(StringBuilder sb, IfStatement ifStatement);
+        public abstract void TranslateInlineIncrement(StringBuilder sb, Expression innerExpression, bool isPrefix, bool isAddition);
         public abstract void TranslateIntBuffer16(StringBuilder sb);
         public abstract void TranslateIntegerConstant(StringBuilder sb, int value);
         public abstract void TranslateIntegerDivision(StringBuilder sb, Expression integerNumerator, Expression integerDenominator);

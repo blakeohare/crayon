@@ -1,5 +1,11 @@
-﻿valueStackSize -= 1;
-value = valueStack[valueStackSize];
+﻿
+if (@ext_boolean("HAS_INCREMENT")) {
+    value = valueStack[--valueStackSize];
+} else {
+    valueStackSize -= 1;
+    value = valueStack[valueStackSize];
+}
+
 if (value.type != Types.BOOLEAN) {
     hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
 } else if (!((bool) value.internalValue)) {

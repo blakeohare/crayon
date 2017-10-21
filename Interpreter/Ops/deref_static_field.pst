@@ -6,6 +6,11 @@ classInfo = classTable[row[0]];
 
 if (staticConstructorNotInvoked) {
     @import("ValueStackCapacityCheck.pst");
-    valueStack[valueStackSize] = classInfo.staticFields[row[1]];
-    valueStackSize += 1;
+
+    if (@ext_boolean("HAS_INCREMENT")) {
+        valueStack[valueStackSize++] = classInfo.staticFields[row[1]];
+    } else {
+        valueStack[valueStackSize] = classInfo.staticFields[row[1]];
+        valueStackSize += 1;
+    }
 }

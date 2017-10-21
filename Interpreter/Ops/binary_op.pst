@@ -1,41 +1,42 @@
-﻿
-/*
+﻿/*
     All 4 basic operations for integers and integers have the buildInteger code inlined.
 */
 
-valueStackSize -= 2;
-rightValue = valueStack[valueStackSize + 1];
-leftValue = valueStack[valueStackSize];
+if (@ext_boolean("HAS_INCREMENT")) {
+    rightValue = valueStack[--valueStackSize];
+} else {
+    valueStackSize -= 1;
+    rightValue = valueStack[valueStackSize];
+}
+leftValue = valueStack[valueStackSize - 1];
 
-value = VALUE_NULL;
-
-switch ((((leftValue.type * MAX_OP) + row[0]) * MAX_TYPE) + rightValue.type) {
+switch ((leftValue.type * MAX_OP + row[0]) * MAX_TYPE + rightValue.type) {
 
     case (Types.INTEGER * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.INTEGER:
         Core.EmitComment("int ** int");
         if ((int) rightValue.internalValue == 0) {
             value = VALUE_INT_ONE;
         } else if ((int) rightValue.internalValue > 0) {
-            value = buildInteger(Core.Int(Core.Pow(((int) leftValue.internalValue), ((int) rightValue.internalValue))));
+            value = buildInteger(Core.Int(Core.Pow((int) leftValue.internalValue, (int) rightValue.internalValue)));
         } else {
-            value = buildFloat(Core.Pow(((int) leftValue.internalValue), ((int) rightValue.internalValue)));
+            value = buildFloat(Core.Pow((int) leftValue.internalValue, (int) rightValue.internalValue));
         }
         break;
 
     // add 0.0 just in case underlying platform likes to fall back to integer when possible
     case (((Types.INTEGER * MAX_OP) + BinaryOps.EXPONENT) * MAX_TYPE) + Types.FLOAT:
         Core.EmitComment("int ** float");
-        value = buildFloat(0.0 + Core.Pow(((int) leftValue.internalValue), ((double) rightValue.internalValue)));
+        value = buildFloat(0.0 + Core.Pow((int) leftValue.internalValue, (double) rightValue.internalValue));
         break;
 
     case (((Types.FLOAT * MAX_OP) + BinaryOps.EXPONENT) * MAX_TYPE) + Types.INTEGER:
         Core.EmitComment("float ** int");
-        value = buildFloat(0.0 + Core.Pow(((double) leftValue.internalValue), ((int) rightValue.internalValue)));
+        value = buildFloat(0.0 + Core.Pow((double) leftValue.internalValue, (int) rightValue.internalValue));
         break;
 
     case (((Types.FLOAT * MAX_OP) + BinaryOps.EXPONENT) * MAX_TYPE) + Types.FLOAT:
         Core.EmitComment("float ** float");
-        value = buildFloat(0.0 + Core.Pow(((double) leftValue.internalValue), ((double) rightValue.internalValue)));
+        value = buildFloat(0.0 + Core.Pow((double) leftValue.internalValue, (double) rightValue.internalValue));
         break;
 
     case (((Types.FLOAT * MAX_OP) + BinaryOps.MODULO) * MAX_TYPE) + Types.FLOAT:
@@ -255,7 +256,7 @@ switch ((((leftValue.type * MAX_OP) + row[0]) * MAX_TYPE) + rightValue.type) {
         if (float1 == 0) {
             hasInterrupt = EX_DivisionByZero(ec, "Division by 0.");
         } else {
-            value = buildFloat(Core.FloatDivision(((double) leftValue.internalValue), float1));
+            value = buildFloat(Core.FloatDivision((double) leftValue.internalValue, float1));
         }
         break;
 
@@ -486,6 +487,4 @@ switch ((((leftValue.type * MAX_OP) + row[0]) * MAX_TYPE) + rightValue.type) {
         break;
 }
 
-@import("ValueStackCapacityCheck.pst");
-valueStack[valueStackSize] = value;
-valueStackSize += 1;
+valueStack[valueStackSize - 1] = value;

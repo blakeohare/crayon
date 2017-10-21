@@ -1,18 +1,23 @@
 ﻿
 if (row[0] == 1) {
-    value = valueStack[(valueStackSize - 1)];
+    value = valueStack[valueStackSize - 1];
     @import("ValueStackCapacityCheck.pst");
-    valueStack[valueStackSize] = value;
-    valueStackSize += 1;
+
+    if (@ext_boolean("HAS_INCREMENT")) {
+        valueStack[valueStackSize++] = value;
+    } else {
+        valueStack[valueStackSize] = value;
+        valueStackSize += 1;
+    }
 } else if (row[0] == 2) {
-    if ((valueStackSize + 1) > valueStackCapacity) {
+    if (valueStackSize + 1 > valueStackCapacity) {
         valueStackIncreaseCapacity(ec);
         valueStack = ec.valueStack;
         valueStackCapacity = valueStack.Size();
     }
 
-    valueStack[valueStackSize] = valueStack[(valueStackSize - 2)];
-    valueStack[(valueStackSize + 1)] = valueStack[(valueStackSize - 1)];
+    valueStack[valueStackSize] = valueStack[valueStackSize - 2];
+    valueStack[valueStackSize + 1] = valueStack[valueStackSize - 1];
     valueStackSize += 2;
 } else {
     // This should not happen. All occurrences of duplicate stack top are either for size 1 or 2.

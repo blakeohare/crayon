@@ -2,9 +2,13 @@
 // row[0] -> member ID
 
 // Assignments that override methods are blocked at compile-time.
+// use of 'this' is blocked at compile time outside of non-static methods, so referencing the objectContext is always safe here.
 
-value2 = stack.objectContext; // use of 'this' is blocked at compile time outside of non-static methods.
+objInstance2 = (ObjectInstance) stack.objectContext.internalValue;
 
-objInstance2 = ((ObjectInstance) value2.internalValue);
-valueStackSize -= 1;
-objInstance2.members[row[0]] = valueStack[valueStackSize];
+if (@ext_boolean("HAS_INCREMENT")) {
+    objInstance2.members[row[0]] = valueStack[--valueStackSize];
+} else {
+    valueStackSize -= 1;
+    objInstance2.members[row[0]] = valueStack[valueStackSize];
+}
