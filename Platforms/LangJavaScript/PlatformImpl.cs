@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Common;
 using Pastel.Nodes;
@@ -90,6 +89,7 @@ namespace LangJavaScript
                     { "IS_CHAR_A_NUMBER", false },
                     { "INT_IS_FLOOR", true },
                     { "IS_THREAD_BLOCKING_ALLOWED", false },
+                    { "HAS_INCREMENT", true },
                 };
         }
     }

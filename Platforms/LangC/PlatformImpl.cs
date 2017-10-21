@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Common;
 using Pastel.Nodes;
@@ -26,6 +25,7 @@ namespace LangC
                     { "IS_CHAR_A_NUMBER", true },
                     { "INT_IS_FLOOR", true },
                     { "IS_THREAD_BLOCKING_ALLOWED", true },
+                    { "HAS_INCREMENT", true },
                 };
         }
 

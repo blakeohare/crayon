@@ -1,8 +1,13 @@
 ﻿int1 = localsStackOffset + row[0];
 if (localsStackSet[int1] == localsStackSetToken) {
     @import("ValueStackCapacityCheck.pst");
-    valueStack[valueStackSize] = localsStack[int1];
-    valueStackSize += 1;
+
+    if (@ext_boolean("HAS_INCREMENT")) {
+        valueStack[valueStackSize++] = localsStack[int1];
+    } else {
+        valueStack[valueStackSize] = localsStack[int1];
+        valueStackSize += 1;
+    }
 } else {
     hasInterrupt = EX_UnassignedVariable(ec, "Variable used before it was set.");
 }
