@@ -1590,59 +1590,95 @@ namespace Crayon
             }
         }
 
-        private void CompileInlinedLibraryFunctionCall(Parser parser, ByteBuffer buffer, FunctionCall functionCall, FunctionDefinition libraryFunction, bool outputUsed)
+        private void CompileInlinedLibraryFunctionCall(
+            Parser parser,
+            ByteBuffer buffer,
+            FunctionCall userWrittenOuterFunctionCall,
+            FunctionDefinition embedFunctionBeingInlined,
+            bool outputUsed)
         {
-            int nativeLength = libraryFunction.ArgNames.Length;
-            int userLength = functionCall.Args.Length;
-            if (userLength > nativeLength)
+            Expression coreOrLibFunctionBeingInlined = ((ReturnStatement)embedFunctionBeingInlined.Code[0]).Expression;
+
+            int embedFuncLength = embedFunctionBeingInlined.ArgNames.Length;
+            int userProvidedArgLength = userWrittenOuterFunctionCall.Args.Length;
+            if (userProvidedArgLength > embedFuncLength)
             {
-                throw new ParserException(functionCall.ParenToken, "More arguments were passed to this function than allowed.");
+                // TODO: can this be removed? Isn't this caught elsewhere?
+                throw new ParserException(userWrittenOuterFunctionCall.ParenToken, "More arguments were passed to this function than allowed.");
             }
 
-            Dictionary<string, Expression> variableValues = new Dictionary<string, Expression>();
-            for (int i = 0; i < nativeLength; ++i)
+            // First go through the args provided and map them to the arg names of the embed function that's being inlined.
+            Dictionary<string, Expression> userProvidedAndImplicitArgumentsByArgName = new Dictionary<string, Expression>();
+            for (int i = 0; i < embedFuncLength; ++i)
             {
                 Expression argValue;
-                if (i < userLength)
+                if (i < userProvidedArgLength)
                 {
-                    argValue = functionCall.Args[i];
+                    argValue = userWrittenOuterFunctionCall.Args[i];
                 }
                 else
                 {
-                    argValue = libraryFunction.DefaultValues[i];
+                    argValue = embedFunctionBeingInlined.DefaultValues[i];
                     if (argValue == null)
                     {
-                        throw new ParserException(functionCall.ParenToken, "Not enough arguments were supplied to this function.");
+                        throw new ParserException(userWrittenOuterFunctionCall.ParenToken, "Not enough arguments were supplied to this function.");
                     }
                 }
-                variableValues[libraryFunction.ArgNames[i].Value] = argValue;
+                userProvidedAndImplicitArgumentsByArgName[embedFunctionBeingInlined.ArgNames[i].Value] = argValue;
             }
 
-            Expression libraryFunctionBody = ((ReturnStatement)libraryFunction.Code[0]).Expression;
-            LibraryFunctionCall nativeLibraryFunctionCall = libraryFunctionBody as LibraryFunctionCall;
-            CoreFunctionInvocation coreFunctionCall = libraryFunctionBody as CoreFunctionInvocation;
+            LibraryFunctionCall nativeLibraryFunctionCall = coreOrLibFunctionBeingInlined as LibraryFunctionCall;
+            CoreFunctionInvocation coreFunctionCall = coreOrLibFunctionBeingInlined as CoreFunctionInvocation;
             if (nativeLibraryFunctionCall == null && coreFunctionCall == null)
             {
                 throw new InvalidOperationException(); // This shouldn't happen. The body of the library function should have been verified by the resolver before getting to this state.
             }
 
-            Expression[] args = nativeLibraryFunctionCall != null
+            Expression[] innermostArgList = nativeLibraryFunctionCall != null
                 ? nativeLibraryFunctionCall.Args
                 : coreFunctionCall.Args;
 
-            List<Expression> arguments = new List<Expression>();
-            for (int i = 0; i < nativeLength; ++i)
+            // This is the new list of arguments that will be passed to the inner underlying lib/core function.
+            List<Expression> finalArguments = new List<Expression>();
+
+            Expression arg;
+            for (int i = 0; i < innermostArgList.Length; ++i)
             {
-                arguments.Add(variableValues[((Variable)args[i]).Name]);
+                arg = innermostArgList[i];
+                if (arg is Variable)
+                {
+                    string argName = ((Variable)innermostArgList[i]).Name;
+                    finalArguments.Add(userProvidedAndImplicitArgumentsByArgName[argName]);
+                }
+                else if (arg.IsLiteral || arg is FieldReference)
+                {
+                    finalArguments.Add(arg);
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
             }
 
             if (nativeLibraryFunctionCall != null)
             {
-                this.CompileLibraryFunctionCall(parser, buffer, nativeLibraryFunctionCall, arguments, functionCall.ParenToken, outputUsed);
+                this.CompileLibraryFunctionCall(
+                    parser,
+                    buffer,
+                    nativeLibraryFunctionCall,
+                    finalArguments,
+                    userWrittenOuterFunctionCall.ParenToken,
+                    outputUsed);
             }
             else
             {
-                this.CompileCoreFunctionInvocation(parser, buffer, coreFunctionCall, arguments.ToArray(), functionCall.ParenToken, outputUsed);
+                this.CompileCoreFunctionInvocation(
+                    parser,
+                    buffer,
+                    coreFunctionCall,
+                    finalArguments.ToArray(),
+                    userWrittenOuterFunctionCall.ParenToken,
+                    outputUsed);
             }
         }
 

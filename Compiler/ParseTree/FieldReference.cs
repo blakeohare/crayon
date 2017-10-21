@@ -10,6 +10,15 @@ namespace Crayon.ParseTree
             throw new NotImplementedException();
         }
 
+        public override bool IsInlineCandidate
+        {
+            get
+            {
+                return this.Field.IsStaticField;
+            }
+
+        }
+
         public override bool CanAssignTo { get { return true; } }
 
         public FieldDeclaration Field { get; set; }

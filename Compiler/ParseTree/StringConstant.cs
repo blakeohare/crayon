@@ -10,6 +10,8 @@ namespace Crayon.ParseTree
             return this;
         }
 
+        public override bool IsInlineCandidate { get { return true; } }
+
         public override bool CanAssignTo { get { return false; } }
 
         public string Value { get; private set; }

@@ -12,6 +12,10 @@ namespace Crayon.ParseTree
 
         public abstract bool CanAssignTo { get; }
 
+        // Override and return true if this expression, when used in an inline function as an argument into a library/core
+        // function, shouldn't pose any problems. Generally this would be inline constants, simple variables, or static fields.
+        public virtual bool IsInlineCandidate {  get { return false; } }
+
         internal abstract Expression Resolve(Parser parser);
 
         internal abstract Expression ResolveNames(Parser parser);

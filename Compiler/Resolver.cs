@@ -214,7 +214,14 @@ namespace Crayon
             using (new PerformanceSection("DetermineInlinableLibraryFunctions"))
             {
                 HashSet<FunctionDefinition> inlineCandidates = new HashSet<FunctionDefinition>();
-                foreach (FunctionDefinition funcDef in this.currentCode.OfType<FunctionDefinition>())
+
+                List<FunctionDefinition> allFlattenedFunctions = new List<FunctionDefinition>(this.currentCode.OfType<FunctionDefinition>());
+                foreach (ClassDefinition cd in this.currentCode.OfType<ClassDefinition>())
+                {
+                    allFlattenedFunctions.AddRange(cd.Methods.Where(fd => fd.IsStaticMethod));
+                }
+
+                foreach (FunctionDefinition funcDef in allFlattenedFunctions)
                 {
                     // Look for function definitions that are in libraries that have one single line of code that's a return statement that
                     // invokes a native code.
@@ -238,7 +245,7 @@ namespace Crayon
                                 bool allSimpleVariables = true;
                                 foreach (Expression expr in argsFromLibOrCoreFunction)
                                 {
-                                    if (!(expr is Variable))
+                                    if (!expr.IsInlineCandidate)
                                     {
                                         allSimpleVariables = false;
                                         break;
