@@ -200,7 +200,10 @@ namespace LangJava
 
             if (isValue)
             {
+                // The overhead of having extra fields on each Value is much less than the overhead
+                // of Java's casting. Particularly on Android.
                 sb.Append("  public int intValue;");
+                sb.Append("  public FastList listValue;");
                 sb.Append(this.NL);
             }
 
@@ -246,6 +249,15 @@ namespace LangJava
                 sb.Append("    this.type = 2;");
                 sb.Append(this.NL);
                 sb.Append("    this.intValue = boolValue ? 1 : 0;");
+                sb.Append(this.NL);
+                sb.Append("  }");
+                sb.Append(this.NL);
+                sb.Append(this.NL);
+                sb.Append("  public Value(FastList listValue) {");
+                sb.Append(this.NL);
+                sb.Append("    this.type = 6;");
+                sb.Append(this.NL);
+                sb.Append("    this.listValue = listValue;");
                 sb.Append(this.NL);
                 sb.Append("  }");
             }

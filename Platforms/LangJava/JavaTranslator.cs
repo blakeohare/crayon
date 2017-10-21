@@ -98,6 +98,12 @@ namespace LangJava
                     sb.Append(".intValue == 1)");
                     return;
                 }
+                else if (type.RootValue == "List")
+                {
+                    this.TranslateExpression(sb, dotField.Root);
+                    sb.Append(".listValue");
+                    return;
+                }
             }
 
             sb.Append('(');
@@ -187,7 +193,7 @@ namespace LangJava
                 }
 
                 int type = (int)((InlineConstant)firstArg).Value;
-                if (type == 2 || type == 3)
+                if (type == 2 || type == 3 || type == 6)
                 {
                     sb.Append("new Value(");
                     this.TranslateExpression(sb, constructorInvocation.Args[1]);

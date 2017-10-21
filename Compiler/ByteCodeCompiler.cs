@@ -1015,7 +1015,13 @@ namespace Crayon
             buffer.Add(isComp.IsToken, OpCode.IS_COMPARISON, isComp.ClassDefinition.ClassID);
         }
 
-        private void CompileCoreFunctionInvocation(Parser parser, ByteBuffer buffer, CoreFunctionInvocation coreFuncInvocation, Expression[] argsOverrideOrNull, Token tokenOverrideOrNull, bool outputUsed)
+        private void CompileCoreFunctionInvocation(
+            Parser parser,
+            ByteBuffer buffer,
+            CoreFunctionInvocation coreFuncInvocation,
+            Expression[] argsOverrideOrNull,
+            Token tokenOverrideOrNull,
+            bool outputUsed)
         {
             Token token = tokenOverrideOrNull ?? coreFuncInvocation.FirstToken;
             Expression[] args = argsOverrideOrNull ?? coreFuncInvocation.Args;
