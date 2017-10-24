@@ -8,7 +8,8 @@
 Value lib_audio_function_sfx_stop(Array<Value> args) {
     ObjectInstance channel = (ObjectInstance) args[0].internalValue;
     object nativeChannel = channel.nativeData[0];
-    ObjectInstance resource = (ObjectInstance) args[1].internalValue;
+/* The following line was commented by TimJSwan89 to suppress unused variable warnings */
+/*  ObjectInstance resource = (ObjectInstance) args[1].internalValue; */
     object nativeResource = resource.nativeData[0];
     int resourceId = (int) args[2].internalValue;
     int currentState = (int) args[3].internalValue;
