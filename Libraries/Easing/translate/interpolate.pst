@@ -14,20 +14,20 @@ Value lib_easing_function_interpolate(Array<Value> args) {
     Value arg4 = args[3];
     Value arg5 = args[4];
     Value arg6 = args[5];
-    ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
     Array<object> objArray1 = objInstance1.nativeData;
     int len = objArray1.Size();
-    int int1 = ((int) args[6].internalValue);
+    int int1 = (int) args[6].internalValue;
     double float1 = 0.0;
     double float2 = 0.0;
     double float3 = 0.0;
 
     // current
     if (arg4.type == Types.INTEGER) {
-        float1 = 0.0 + ((int) arg4.internalValue);
+        float1 = 0.0 + (int) arg4.internalValue;
     } else {
         if (arg4.type == Types.FLOAT) {
-            float1 = ((double) arg4.internalValue);
+            float1 = (double) arg4.internalValue;
         } else {
             return VALUE_NULL;
         }
@@ -35,9 +35,9 @@ Value lib_easing_function_interpolate(Array<Value> args) {
 
     // duration
     if (arg5.type == Types.INTEGER) {
-        float2 = 0.0 + ((int) arg5.internalValue);
+        float2 = 0.0 + (int) arg5.internalValue;
     } else if (arg5.type == Types.FLOAT) {
-        float2 = ((double) arg5.internalValue);
+        float2 = (double) arg5.internalValue;
     } else {
         return VALUE_NULL;
     }
@@ -86,25 +86,25 @@ Value lib_easing_function_interpolate(Array<Value> args) {
                 int index = Core.Int(float2); // round down
                 float2 -= index; // this is the ratio between this index and the next
 
-                float1 = ((double) objArray1[index]); // get the left value
-                if ((index < (len - 1)) && (float2 > 0)) { // not at the end of the list? ratio of right value more than 0?
-                    float3 = ((double) objArray1[(index + 1)]); // get the right value
+                float1 = (double) objArray1[index]; // get the left value
+                if (index < len - 1 && float2 > 0) { // not at the end of the list? ratio of right value more than 0?
+                    float3 = (double) objArray1[index + 1]; // get the right value
                     float1 = (float1 * (1 - float2)) + (float3 * float2); // linearly interpolate between left and right values.
                 }
             }
         }
     }
     if (arg2.type == Types.INTEGER) {
-        float2 = 0.0 + ((int) arg2.internalValue);
+        float2 = 0.0 + (int) arg2.internalValue;
     } else if (arg2.type == Types.FLOAT) {
-        float2 = ((double) arg2.internalValue);
+        float2 = (double) arg2.internalValue;
     } else {
         return VALUE_NULL;
     }
     if (arg3.type == Types.INTEGER) {
-        float3 = 0.0 + ((int) arg3.internalValue);
+        float3 = 0.0 + (int) arg3.internalValue;
     } else if (arg3.type == Types.FLOAT) {
-        float3 = ((double) arg3.internalValue);
+        float3 = (double) arg3.internalValue;
     } else {
         return VALUE_NULL;
     }
@@ -116,8 +116,8 @@ Value lib_easing_function_interpolate(Array<Value> args) {
     float1 = (float1 * float3) + ((1 - float1) * float2);
 
     // integer output desired?
-    if ((arg6.type == Types.BOOLEAN) && ((bool) arg6.internalValue)) {
-        return buildInteger(Core.Int((float1 + 0.5)));
+    if (arg6.type == Types.BOOLEAN && (bool) arg6.internalValue) {
+        return buildInteger(Core.Int(float1 + 0.5));
     }
 
     return buildFloat(float1);
