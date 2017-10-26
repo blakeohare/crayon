@@ -190,6 +190,10 @@ struct ObjectInstance {
     // system libraries can attach arbitrary values to objects, which can be operated on more efficiently than values, and
     // are inherently inaccessible by user code.
     Array<object> nativeData;
+
+    // Same idea as nativeData, except this will be cast to a library-specific struct and will eventually replace all
+    // usages of nativeData.
+    object nativeObject;
 }
 
 struct FunctionPointer {

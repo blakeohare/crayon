@@ -166,7 +166,11 @@ namespace CSharpApp
         }
 
         // Returns true if any export is necessary i.e. bytecode-only libraries will return false.
-        private bool GetLibraryCode(string baseDir, LibraryForExport library, List<LangCSharp.DllFile> dllsOut, Dictionary<string, FileOutput> filesOut,
+        private bool GetLibraryCode(
+            string baseDir,
+            LibraryForExport library,
+            List<LangCSharp.DllFile> dllsOut,
+            Dictionary<string, FileOutput> filesOut,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             string libraryName = library.Name;
@@ -179,6 +183,11 @@ namespace CSharpApp
                 foreach (FunctionDefinition funcDef in library.Functions)
                 {
                     libraryLines.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
+                }
+
+                foreach (StructDefinition structDef in library.Structs)
+                {
+                    filesOut[libraryDir + "/Structs/" + structDef.NameToken.Value + ".cs"] = this.GetStructFile(structDef);
                 }
 
                 filesOut[libraryDir + "/LibraryWrapper.cs"] = new FileOutput()
@@ -319,6 +328,24 @@ namespace CSharpApp
             this.CopyResourceAsText(output, baseDir + "ResourceReader.cs", resourceDir + "/ResourceReader.txt", replacements);
         }
 
+        private FileOutput GetStructFile(StructDefinition sd)
+        {
+            return new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = string.Join("\r\n", new string[] {
+                    "using System;",
+                    "using System.Collections.Generic;",
+                    "",
+                    "namespace Interpreter.Structs",
+                    "{",
+                    this.IndentCodeWithSpaces(this.GenerateCodeForStruct(sd).Trim(), 4),
+                    "}",
+                    ""
+                }),
+            };
+        }
+
         private void ExportInterpreter(
             string baseDir,
             Dictionary<string, FileOutput> output,
@@ -328,20 +355,7 @@ namespace CSharpApp
         {
             foreach (StructDefinition structDefinition in structDefinitions)
             {
-                output[baseDir + "Structs/" + structDefinition.NameToken.Value + ".cs"] = new FileOutput()
-                {
-                    Type = FileOutputType.Text,
-                    TextContent = string.Join("\r\n", new string[] {
-                        "using System;",
-                        "using System.Collections.Generic;",
-                        "",
-                        "namespace Interpreter.Structs",
-                        "{",
-                        this.IndentCodeWithSpaces(this.GenerateCodeForStruct(structDefinition).Trim(), 4),
-                        "}",
-                        ""
-                    }),
-                };
+                output[baseDir + "Structs/" + structDefinition.NameToken.Value + ".cs"] = this.GetStructFile(structDefinition);
             }
 
             List<string> coreVmFunctions = new List<string>();

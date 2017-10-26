@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Libraries\%%%LIBRARY_NAME%%%\*.cs" />
+    <Compile Include="Libraries\%%%LIBRARY_NAME%%%\Structs\*.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

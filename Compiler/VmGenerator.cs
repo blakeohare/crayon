@@ -205,6 +205,7 @@ namespace Crayon
                     Version = libraryVersion,
                     FunctionRegisteredNamesOrNulls = names,
                     Functions = functions,
+                    Structs = compilation.StructDefinitions.Values.ToArray(),
                     ManifestFunction = manifestFunction,
                     ExportEntities = exportEntities,
                     DotNetLibs = dotNetLibs,
@@ -267,6 +268,7 @@ namespace Crayon
                     Dictionary<string, string> supplementalCode = library.GetSupplementalTranslatedCode(false);
                     Dictionary<string, string> pastelSupplementalCode = library.GetSupplementalTranslatedCode(true);
                     Dictionary<string, string> translatedCode = library.GetNativeCode();
+                    Dictionary<string, string> structCode = library.GetStructFilesCode();
                     // need to load from the actual Library instance, which could have come from either CRAYON_HOME or source
 
                     string registryCode = library.GetRegistryCode();
@@ -280,6 +282,12 @@ namespace Crayon
                     else
                     {
                         compiler.CompileBlobOfCode("LIB:" + libName + "/function_registry.pst", registryCode);
+
+                        foreach (string structFile in structCode.Keys)
+                        {
+                            string code = structCode[structFile];
+                            compiler.CompileBlobOfCode("LIB:" + libName + "/structs/" + structFile, code);
+                        }
 
                         foreach (string supplementalFile in supplementalCode.Keys)
                         {

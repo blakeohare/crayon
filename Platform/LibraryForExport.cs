@@ -9,6 +9,7 @@ namespace Platform
         public string Version { get; set; }
         public Pastel.Nodes.FunctionDefinition ManifestFunction { get; set; }
         public Pastel.Nodes.FunctionDefinition[] Functions { get; set; }
+        public Pastel.Nodes.StructDefinition[] Structs { get; set; }
         public string[] FunctionRegisteredNamesOrNulls { get; set; }
         public Multimap<string, ExportEntity> ExportEntities { get; set; }
         public string[] DotNetLibs { get; set; }

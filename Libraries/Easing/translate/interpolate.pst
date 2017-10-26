@@ -14,9 +14,10 @@ Value lib_easing_function_interpolate(Array<Value> args) {
     Value arg4 = args[3];
     Value arg5 = args[4];
     Value arg6 = args[5];
-    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
-    Array<object> objArray1 = objInstance1.nativeData;
-    int len = objArray1.Size();
+    ObjectInstance o = (ObjectInstance) args[0].internalValue;
+    EasingSampling es = (EasingSampling) o.nativeObject;
+    Array<double> samples = es.samples;
+    int len = es.sampleCount;
     int int1 = (int) args[6].internalValue;
     double float1 = 0.0;
     double float2 = 0.0;
@@ -68,16 +69,16 @@ Value lib_easing_function_interpolate(Array<Value> args) {
 
     if (float2 == 0) {
         // Not sure whether throwing an error is better here or just fail silently to 0%.
-        float1 = ((double) objArray1[0]);
+        float1 = samples[0];
     } else {
         if (float2 < 0) {
             float2 = -float2;
             float1 = -float1;
         }
         if (float1 >= float2) {
-            float1 = ((double) objArray1[(len - 1)]);
+            float1 = samples[len - 1];
         } else if (float1 < 0) {
-            float1 = ((double) objArray1[0]);
+            float1 = samples[0];
         } else {
             float1 = Core.FloatDivision(float1, float2);
 
@@ -86,9 +87,9 @@ Value lib_easing_function_interpolate(Array<Value> args) {
                 int index = Core.Int(float2); // round down
                 float2 -= index; // this is the ratio between this index and the next
 
-                float1 = (double) objArray1[index]; // get the left value
+                float1 = samples[index]; // get the left value
                 if (index < len - 1 && float2 > 0) { // not at the end of the list? ratio of right value more than 0?
-                    float3 = (double) objArray1[index + 1]; // get the right value
+                    float3 = samples[index + 1]; // get the right value
                     float1 = (float1 * (1 - float2)) + (float3 * float2); // linearly interpolate between left and right values.
                 }
             }

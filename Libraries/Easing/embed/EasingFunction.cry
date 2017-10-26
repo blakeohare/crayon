@@ -4,7 +4,7 @@ namespace Easing {
 
     class EasingFunction {
 
-        static function _0(t) { print(["WAT", t]); return t; }
+        static function _0(t) { return t; }
         static field LINEAR = new EasingFunction(EasingFunction._0, 1);
 
         static function _1(t) { return t ** 2; }

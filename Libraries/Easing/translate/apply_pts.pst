@@ -1,23 +1,21 @@
 ﻿Value lib_easing_function_apply_pts(Array<Value> args) {
-    ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
-    List<Value> list1 = ((List<Value>) args[1].internalValue); // guaranteed to be ints or floats
+    List<Value> sampleValues = (List<Value>) args[1].internalValue; // guaranteed to be floats
 
-    int len = list1.Size();
-    Array<object> objArray1 = new Array<object>(len);
+    int len = sampleValues.Size();
+    Array<double> samples = new Array<double>(len);
 
     Value value = null;
     for (int i = 0; i < len; i += 1) {
-        value = list1[i];
-        if (value.type == Types.INTEGER) {
-            objArray1[i] = ((int) value.internalValue);
-        } else {
-            objArray1[i] = ((double) value.internalValue);
-        }
+        samples[i] = (double) sampleValues[i].internalValue;
     }
 
-    // Override just in case the user defined function begins or ends in a weird state.
-    objArray1[0] = 0.0;
-    objArray1[(len - 1)] = 1.0;
-    objInstance1.nativeData = objArray1;
+    // Override just in case a user-defined sampling function begins or ends
+    // in a weird state or has floating point noise.
+    samples[0] = 0.0;
+    samples[len - 1] = 1.0;
+
+    ObjectInstance o = (ObjectInstance) args[0].internalValue;
+    o.nativeObject = new EasingSampling(len, samples);
+
     return VALUE_NULL;
 }

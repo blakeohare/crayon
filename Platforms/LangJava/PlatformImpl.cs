@@ -106,6 +106,23 @@ namespace LangJava
                         TextContent = string.Join(platform.NL, libraryCode),
                     };
 
+                    foreach (StructDefinition structDef in library.Structs)
+                    {
+                        string structCode = platform.GenerateCodeForStruct(structDef);
+
+                        // This is kind of a hack.
+                        // TODO: better.
+                        structCode = structCode.Replace(
+                            "package org.crayonlang.interpreter.structs;",
+                            "package org.crayonlang.libraries." + library.Name.ToLower() + ";");
+
+                        output[libraryPath + "/" + structDef.NameToken.Value + ".java"] = new FileOutput()
+                        {
+                            Type = FileOutputType.Text,
+                            TextContent = structCode,
+                        };
+                    }
+
                     foreach (ExportEntity supFile in library.ExportEntities["COPY_CODE"])
                     {
                         string path = supFile.Values["target"].Replace("%LIBRARY_PATH%", libraryPath);

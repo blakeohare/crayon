@@ -250,6 +250,26 @@ namespace Crayon
             return System.IO.File.ReadAllText(path);
         }
 
+        private Dictionary<string, string> structFiles = null;
+
+        public Dictionary<string, string> GetStructFilesCode()
+        {
+            if (this.structFiles == null)
+            {
+                this.structFiles = new Dictionary<string, string>();
+                string structFilesDir = System.IO.Path.Combine(this.RootDirectory, "structs");
+                if (System.IO.Directory.Exists(structFilesDir))
+                {
+                    foreach (string filepath in System.IO.Directory.GetFiles(structFilesDir))
+                    {
+                        string name = System.IO.Path.GetFileName(filepath);
+                        this.structFiles[name] = this.ReadFile(false, System.IO.Path.Combine("structs", name), false);
+                    }
+                }
+            }
+            return this.structFiles;
+        }
+
         private Dictionary<string, string> supplementalFiles = null;
 
         public Dictionary<string, string> GetSupplementalTranslatedCode(bool isPastel)

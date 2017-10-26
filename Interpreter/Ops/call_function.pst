@@ -403,6 +403,7 @@ if (staticConstructorNotInvoked) {
                     classId,
                     p.instanceCounter,
                     valueArray1,
+                    null,
                     null);
                 value = new Value(Types.INSTANCE, objInstance1);
                 functionId = classInfo.constructorFunctionId;
