@@ -1,0 +1,8 @@
+﻿namespace Xml {
+
+    enum NodeType {
+        ELEMENT,
+        TEXT,
+        COMMENT,
+    }
+}

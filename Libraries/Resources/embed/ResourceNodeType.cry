@@ -1,0 +1,12 @@
+﻿namespace Resources {
+
+    enum ResourceNodeType {
+        // These values are used in native code implementation, so don't change them.
+        DIRECTORY = 0,
+        TEXT = 1,
+        IMAGE = 2,
+        SOUND = 3,
+        FONT = 4,
+        BINARY = 5,
+    }
+}

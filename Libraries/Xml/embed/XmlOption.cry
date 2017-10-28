@@ -1,0 +1,21 @@
+﻿namespace Xml {
+    enum XmlOption {
+        TRIM_WHITESPACE = 1,
+
+        // TODO: use this
+        STRICT_ENTITIES = 2,
+
+        // TODO: use this
+        ALLOW_INCOMPLETE_DOCUMENT = 4,
+
+        FAIL_SILENTLY = 8,
+
+        NAMESPACES = 16,
+
+        // TODO: use this
+        TEXT_LOCATION_INFO = 32,
+
+        // TODO: use this
+        PRESERVE_COMMENTS = 64,
+    }
+}

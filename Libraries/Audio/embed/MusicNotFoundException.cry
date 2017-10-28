@@ -1,0 +1,6 @@
+﻿namespace Audio {
+
+    class MusicNotFoundException : Exception {
+        constructor(m) : base(m) { }
+    }
+}

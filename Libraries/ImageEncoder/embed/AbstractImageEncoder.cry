@@ -1,0 +1,36 @@
+import ImageResources;
+
+namespace ImageEncoder {
+
+    class AbstractImageEncoder {
+        field _res;
+        field _format;
+
+        constructor(resource, format) {
+            this._res = resource;
+            this._format = format;
+        }
+
+        function _ensureResourceStandalone() {
+            res = this._res;
+            nRes = res._nativeResource;
+            if (res._x != 0 || res._y != 0 || res._width != nRes.width || res._height != nRes.height) {
+                newResource = new ImageResources.ImageResource(res._width, res._height);
+                newResource.lock();
+                newResource.blit(res, 0, 0);
+                newResource.unlock();
+                this._res = newResource;
+            }
+        }
+
+        function encode() {
+            this._ensureResourceStandalone();
+            output = [];
+            status = $$lib_imageencoder_encodeToBytes(this._res._nativeResource, this._format, output);
+            switch (status) {
+                case 0: return output;
+                default: throw new Core.InvalidOperationException("An unknown error occurred while encoding the image.");
+            }
+        }
+    }
+}

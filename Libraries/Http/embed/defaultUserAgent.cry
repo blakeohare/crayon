@@ -1,0 +1,3 @@
+﻿namespace Http {
+    const DEFAULT_USER_AGENT = "Crayon/v" + Core.CRAYON_VERSION + "; Have a nice day.";
+}

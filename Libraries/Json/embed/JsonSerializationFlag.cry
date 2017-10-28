@@ -1,0 +1,13 @@
+﻿namespace Json {
+
+    enum JsonSerializerFlag {
+        DEFAULT = 0,
+
+        PRETTY = 1,
+
+        OMIT_DICTIONARY_NULLS = 2,
+
+        // TODO: implement big integers as strings
+        // BIG_INT_AS_STRINGS = 4,
+    }
+}

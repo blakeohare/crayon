@@ -1,0 +1,70 @@
+﻿import Math;
+import Game;
+
+namespace Audio {
+
+    /*
+        native_data[0] -> actual native instance of the sound.
+    */
+    class SoundResource {
+
+        static field _cache = {};
+
+        static field _resID = 0;
+
+        field _v = 1.0; // volume
+        field _p; // path
+        field _e; // is embedded resource
+        field _c = []; // playing channels
+
+        field _id; // unique ID for this particular resource
+
+        @private
+        constructor() {
+            this._id = SoundResource._resID++;
+        }
+
+        function setDefaultVolume(r) {
+            this._v = Math.ensureRange(r, 0.0, 1.0) + 0.0;
+        }
+
+        function getDefaultVolume() {
+            return this._v;
+        }
+
+        static function loadFromFile(path) {
+
+            s = new SoundResource();
+            $$lib_audio_sfx_load_from_file(s, path);
+            s._p = path;
+            s._e = false;
+            return s;
+        }
+
+        static function loadFromResource(path, useCache = true) {
+
+            s = null;
+            path += ''; // ensure string
+            if (useCache) {
+                s = SoundResource._cache.get(path);
+            }
+            if (s == null) {
+                path = Music._convertPath(path);
+                s = new SoundResource();
+                $$lib_audio_sfx_load_from_resource(s, path);
+                s._p = path;
+                s._e = true;
+                if (useCache) {
+                    SoundResource._cache[path] = s;
+                }
+            }
+            return s;
+        }
+
+        function play(pan = 0.0) {
+            c = new Sound(this, this._v, pan);
+            this._c.add(c);
+            return c;
+        }
+    }
+}

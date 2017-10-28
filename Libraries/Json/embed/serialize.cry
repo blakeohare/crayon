@@ -1,36 +1,5 @@
 ﻿namespace Json {
 
-    class JsonException : Core.Exception {
-        constructor(message) : base(message) { }
-    }
-
-    class JsonHelper {
-        static field tabCache = {};
-        static function getTab(depth) {
-            tab = depth * '  ';
-            JsonHelper.tabCache[depth] = tab;
-            return tab;
-        }
-    }
-
-    enum JsonSerializerFlag {
-        DEFAULT = 0,
-
-        PRETTY = 1,
-
-        OMIT_DICTIONARY_NULLS = 2,
-
-        // TODO: implement big integers as strings
-        // BIG_INT_AS_STRINGS = 4,
-    }
-
-    function parseJson(text, failSilently = false) {
-        if (Core.typeof(text) != Core.Type.STRING) throw new Core.InvalidArgumentException("parseJson requires a string argument.");
-        o = $$lib_json_parse(text);
-        if (o == null && !failSilently) throw new JsonException("The JSON has a syntax error");
-        return o;
-    }
-
     function serialize(object, flags = Json.JsonSerializerFlag.DEFAULT, depth = 64) {
         builder = [];
         Json._serializeImpl(object, flags, depth, builder, (flags & Json.JsonSerializerFlag.PRETTY) != 0, 0);

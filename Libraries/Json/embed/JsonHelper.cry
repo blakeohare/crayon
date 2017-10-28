@@ -1,0 +1,11 @@
+﻿namespace Json {
+
+    class JsonHelper {
+        static field tabCache = {};
+        static function getTab(depth) {
+            tab = depth * '  ';
+            JsonHelper.tabCache[depth] = tab;
+            return tab;
+        }
+    }
+}

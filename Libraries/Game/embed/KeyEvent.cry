@@ -1,0 +1,12 @@
+﻿namespace Game {
+
+    class KeyEvent : Event {
+        field key;
+        field down;
+
+        constructor(key, down) : base(down ? EventType.KEY_DOWN : EventType.KEY_UP) {
+            this.key = key;
+            this.down = down;
+        }
+    }
+}

@@ -1,0 +1,10 @@
+﻿namespace Xml {
+
+    class XmlText {
+        field value;
+        field type = NodeType.TEXT;
+        constructor(value) {
+            this.value = value;
+        }
+    }
+}

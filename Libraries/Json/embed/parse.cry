@@ -1,0 +1,9 @@
+﻿namespace Json {
+
+    function parseJson(text, failSilently = false) {
+        if (Core.typeof(text) != Core.Type.STRING) throw new Core.InvalidArgumentException("parseJson requires a string argument.");
+        o = $$lib_json_parse(text);
+        if (o == null && !failSilently) throw new JsonException("The JSON has a syntax error");
+        return o;
+    }
+}

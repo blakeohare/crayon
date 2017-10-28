@@ -1,0 +1,22 @@
+﻿namespace Game {
+
+    // WARNING: These magic numbers are used throughout the stack
+    // GameLibHelper.cry and platform specific code.
+    enum EventType {
+        QUIT = 0x1,
+
+        KEY_DOWN = 0x10,
+        KEY_UP = 0x11,
+
+        MOUSE_MOVE = 0x20,
+        MOUSE_LEFT_DOWN = 0x21,
+        MOUSE_LEFT_UP = 0x22,
+        MOUSE_RIGHT_DOWN = 0x23,
+        MOUSE_RIGHT_UP = 0x24,
+        MOUSE_SCROLL = 0x25,
+
+        GAMEPAD_HARDWARE = 0x30,
+        GAMEPAD = 0x31,
+
+    }
+}

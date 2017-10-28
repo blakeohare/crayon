@@ -1,0 +1,26 @@
+namespace FileIOCommon {
+
+    class FileInfo {
+        field path;
+        field exists;
+        field isDirectory;
+        field size;
+        field readonly;
+        field created;
+        field modified;
+
+        constructor(path, info) {
+            this.path = path;
+            this.exists = info[0];
+            this.isDirectory = info[1];
+            if (this.exists) {
+                if (!this.isDirectory) {
+                    this.size = info[2];
+                }
+                this.readonly = info[3];
+                this.created = info[4];
+                this.modified = info[5];
+            }
+        }
+    }
+}

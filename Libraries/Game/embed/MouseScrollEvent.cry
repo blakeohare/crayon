@@ -1,0 +1,9 @@
+﻿namespace Game {
+
+    class MouseScrollEvent : MouseEvent {
+        field amount;
+        constructor(x, y, amount) : base(EventType.MOUSE_SCROLL, x, y) {
+            this.amount = amount;
+        }
+    }
+}

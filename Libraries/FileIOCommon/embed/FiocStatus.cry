@@ -1,0 +1,17 @@
+namespace FileIOCommon {
+
+    enum FiocStatus {
+        OK = 0,
+        UNKNOWN_ERROR = 1,
+        PATH_WALKED_ABOVE_DOMAIN = 2,
+        UNKNOWN_ENCODING = 3,
+        NOT_FOUND = 4,
+        PATH_TO_LONG = 5,
+        INVALID_ARGUMENT = 6,
+        ENCODING_FAIL = 7,
+        ACCESS_DENIED = 8,
+        CANNOT_OVERWRITE = 9,
+        PATH_ALREADY_EXISTS = 10,
+        PARENT_DIR_DOES_NOT_EXIST = 11,
+    }
+}

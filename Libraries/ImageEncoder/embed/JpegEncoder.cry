@@ -1,0 +1,6 @@
+namespace ImageEncoder {
+
+    class JpegEncoder : AbstractImageEncoder {
+        constructor(imageResource) : base(imageResource, ImageEncoder.ImageFormat.JPEG) { }
+    }
+}

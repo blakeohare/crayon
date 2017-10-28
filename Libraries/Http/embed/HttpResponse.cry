@@ -1,0 +1,74 @@
+﻿namespace Http {
+
+    class HttpResponse {
+        /*
+            nativeData[0] -> a byte array if this is a binary response
+        */
+        field _headerValues = {}; // key is lowercase
+        field _headerNames = []; // original case
+        field _content;
+        field _statusCode = 0;
+        field _statusMessage = '';
+        field _isBinary = false;
+
+        @private constructor() { }
+
+        static function _initialize(request) {
+            response = new HttpResponse();
+            output = [];
+            headersOut = [];
+            $$lib_http_populateResponse(request, response, output, headersOut);
+            for (i = 0; i < headersOut.length; i += 2) {
+                name = headersOut[i].trim();
+                key = name.lower();
+                value = headersOut[i + 1];
+                values = response._headerValues.get(key);
+                if (values == null) {
+                    values = [];
+                    response._headerValues[key] = values;
+                    response._headerNames.add(name);
+                }
+                values.add(value);
+            }
+            response._statusCode = output[0];
+            response._statusMessage = output[1];
+            response._content = output[2];
+            response._isBinary = output[3];
+
+            return response;
+        }
+
+        function getHeaderNames() {
+            return this._headerNames;
+        }
+
+        function getHeaders(name) {
+            output = this._headerValues.get(name.lower());
+            if (output == null) return [];
+            return output.clone();
+        }
+
+        function getHeader(name) {
+            output = this._headerValues.get(name.lower());
+            if (output == null) return null;
+            return output[0];
+        }
+
+        function getContent() {
+            if (this._isBinary) {
+                output = [];
+                // just returns output
+                return $$lib_http_getResponseBytes(this, output);
+            }
+            return this._content;
+        }
+
+        function getStatusCode() {
+            return this._statusCode;
+        }
+
+        function getStatusMessage() {
+            return this._statusMessage;
+        }
+    }
+}

@@ -1,0 +1,6 @@
+﻿namespace Game {
+
+    class MouseMoveEvent : MouseEvent {
+        constructor(x, y) : base(EventType.MOUSE_MOVE, x, y) { }
+    }
+}

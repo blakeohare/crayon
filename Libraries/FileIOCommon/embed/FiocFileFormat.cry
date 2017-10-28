@@ -1,0 +1,12 @@
+namespace FileIOCommon {
+
+    enum FiocFileFormat {
+        BINARY = 0,
+
+        TEXT_UTF8 = 1,
+        TEXT_UTF8_BOM = 2,
+        TEXT_UTF16 = 3,
+        TEXT_UTF32 = 4,
+        TEXT_ISO_8859 = 5,
+    }
+}

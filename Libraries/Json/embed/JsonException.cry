@@ -1,0 +1,6 @@
+﻿namespace Json {
+
+    class JsonException : Core.Exception {
+        constructor(message) : base(message) { }
+    }
+}

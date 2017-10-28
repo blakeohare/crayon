@@ -1,0 +1,7 @@
+﻿namespace Gamepad {
+
+    enum GamepadMashyType {
+        BUTTON = 1,
+        AXIS = 2,
+    }
+}

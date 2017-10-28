@@ -1,0 +1,19 @@
+﻿namespace Xml {
+
+    class XmlElement {
+
+        // the nativeData field of this dummy object contains some helper data structures for parsing.
+        static field _DUMMY = new Core.Object();
+
+        field name;
+        field attributes;
+        field children;
+        field type = NodeType.ELEMENT;
+
+        constructor(name, attributes, children) {
+            this.name = name;
+            this.attributes = attributes.clone();
+            this.children = children.clone();
+        }
+    }
+}

@@ -1,0 +1,6 @@
+namespace ImageEncoder {
+
+    class PngEncoder : AbstractImageEncoder {
+        constructor(imageResource) : base(imageResource, ImageEncoder.ImageFormat.PNG) { }
+    }
+}

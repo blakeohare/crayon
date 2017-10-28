@@ -1,0 +1,11 @@
+﻿namespace Game {
+
+    class MouseClickEvent : MouseEvent {
+        field button;
+        field down;
+        constructor(type, button, down, x, y) : base(type, x, y) {
+            this.button = button;
+            this.down = down;
+        }
+    }
+}

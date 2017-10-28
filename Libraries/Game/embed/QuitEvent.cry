@@ -1,0 +1,9 @@
+﻿namespace Game {
+
+    class QuitEvent : Event {
+        field quitType;
+        constructor(quitType) : base(EventType.QUIT) {
+            this.quitType = quitType;
+        }
+    }
+}

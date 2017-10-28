@@ -1,0 +1,44 @@
+﻿namespace Xml {
+
+    // Take the regular XML tree and convert it into an xml-namespace-aware tree.
+    function _convertToNamespaces(element) {
+        return new XmlNamespacedElement([{}], element);
+    }
+
+    /*
+        Input is a struct-like list representing an XML element.
+        The data represented is trusted to be well-formed.
+        data[0] -> the boolean true. false indicates that this list represents a text object.
+        data[1] -> name
+        data[2] -> attribute names
+        data[3] -> attribute values
+        data[4] -> children
+    */
+    function _objGen(data, dictReusable, options) {
+        children = [];
+        trim = (options & Xml.XmlOption.TRIM_WHITESPACE) != 0;
+        for (child : data[4]) {
+            if (child[0]) {
+                children.add(Xml._objGen(child, dictReusable, options));
+            } else {
+                value = child[1];
+                if (trim) {
+                    value = value.trim();
+                    if (value.length == 0) continue;
+                }
+                children.add(new XmlText(value));
+            }
+        }
+        keys = data[2];
+        values = data[3];
+        len = keys.length;
+
+        for (i = 0; i < len; ++i) {
+            dictReusable[keys[i]] = values[i];
+        }
+        output = new XmlElement(data[1], dictReusable, children);
+        dictReusable.clear();
+
+        return output;
+    }
+}

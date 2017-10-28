@@ -1,0 +1,7 @@
+﻿namespace Game {
+    enum EventButton {
+        LEFT = 0,
+        // MIDDLE = 1, // TODO
+        RIGHT = 2,
+    }
+}

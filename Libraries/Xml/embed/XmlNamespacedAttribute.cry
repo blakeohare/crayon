@@ -1,0 +1,16 @@
+﻿namespace Xml {
+
+    class XmlNamespacedAttribute {
+        field name;
+        field alias;
+        field xmlns;
+        field value;
+
+        constructor(name, alias, xmlns, value) {
+            this.name = name;
+            this.alias = alias;
+            this.xmlns = xmlns;
+            this.value = value;
+        }
+    }
+}

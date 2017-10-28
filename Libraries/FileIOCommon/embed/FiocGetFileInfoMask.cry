@@ -1,0 +1,9 @@
+namespace FileIOCommon {
+
+    enum FiocGetFileInfoMask {
+        SIZE = 1,
+        READONLY = 2,
+        CREATED_TIMESTAMP = 4,
+        MODIFIED_TIMESTAMP = 8,
+    }
+}
