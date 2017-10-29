@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Crayon
 {
-    internal static class Tokenizer
+    public static class Tokenizer
     {
         private static readonly HashSet<string> TWO_CHAR_TOKENS = new HashSet<string>(
             "++ -- << >> == != <= >= && || += -= *= /= %= &= |= ^= ** ??".Split(' '));

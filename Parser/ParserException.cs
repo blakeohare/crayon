@@ -2,7 +2,7 @@
 
 namespace Crayon
 {
-    class ParserException : Exception
+    public class ParserException : Exception
     {
         public ParserException(Token token, string message)
             : base(InterpretToken(token) + message)
