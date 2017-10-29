@@ -83,15 +83,19 @@ PYTHON_STYLE_4_SPACES = FormatStyle().tabs(' ' * 4).newline('\n')
 
 MATCHERS = [
   # C#
+  ('Build/*.cs', CSHARP_STYLE),
   ('Common/*.cs', CSHARP_STYLE),
   ('Compiler/*.cs', CSHARP_STYLE),
   ('Interpreter/*.cs', CSHARP_STYLE),
+  ('Localization/*.cs', CSHARP_STYLE),
   ('Pastel/*.cs', CSHARP_STYLE),
   ('Platform/*.cs', CSHARP_STYLE),
   ('Platforms/*.cs', CSHARP_STYLE),
+  ('Build/*.csproj', CSPROJ_STYLE),
   ('Common/*.csproj', CSPROJ_STYLE),
   ('Compiler/*.csproj', CSPROJ_STYLE),
   ('Interpreter/*.csproj', CSPROJ_STYLE),
+  ('Localization/*.csproj', CSPROJ_STYLE),
   ('Pastel/*.csproj', CSPROJ_STYLE),
   ('Platform/*.csproj', CSPROJ_STYLE),
   ('Platforms/*.csproj', CSPROJ_STYLE),

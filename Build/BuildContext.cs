@@ -5,8 +5,9 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 using Common;
+using Localization;
 
-namespace Crayon
+namespace Build
 {
     // TODO: split these classes out into their own namespace. It is time.
     public class BuildContext

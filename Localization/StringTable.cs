@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Common;
 
-namespace Crayon
+namespace Localization
 {
     public class StringTable
     {

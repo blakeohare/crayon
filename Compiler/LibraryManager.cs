@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Crayon.ParseTree;
+﻿using Build;
 using Common;
+using Crayon.ParseTree;
+using Localization;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Crayon
 {

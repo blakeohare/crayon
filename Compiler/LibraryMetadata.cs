@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Localization;
+using System.Collections.Generic;
 
 namespace Crayon
 {
