@@ -16,7 +16,7 @@ namespace Crayon.ParseTree
         // other executables or expressions.
         public TopLevelConstruct Owner { get; private set; }
 
-        internal void BatchTopLevelConstructNameResolver(Parser parser, ICollection<TopLevelConstruct> constructs)
+        internal void BatchTopLevelConstructNameResolver(ParserContext parser, ICollection<TopLevelConstruct> constructs)
         {
             foreach (TopLevelConstruct tlc in constructs)
             {
@@ -24,7 +24,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal void BatchExecutableNameResolver(Parser parser, Executable[] executables)
+        internal void BatchExecutableNameResolver(ParserContext parser, Executable[] executables)
         {
             for (int i = 0; i < executables.Length; ++i)
             {
@@ -32,7 +32,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal void BatchExpressionNameResolver(Parser parser, Expression[] expressions)
+        internal void BatchExpressionNameResolver(ParserContext parser, Expression[] expressions)
         {
             for (int i = 0; i < expressions.Length; ++i)
             {
@@ -45,7 +45,7 @@ namespace Crayon.ParseTree
 
         internal abstract void GetAllVariableNames(Dictionary<string, bool> lookup);
 
-        internal abstract void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase);
+        internal abstract void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase);
 
         /*
             Resolution order:

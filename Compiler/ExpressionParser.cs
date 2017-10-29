@@ -7,8 +7,8 @@ namespace Crayon
 {
     internal class ExpressionParser
     {
-        private Parser parser;
-        public ExpressionParser(Parser parser)
+        private ParserContext parser;
+        public ExpressionParser(ParserContext parser)
         {
             this.parser = parser;
         }
@@ -385,7 +385,7 @@ namespace Crayon
                 return new IntegerConstant(intToken, intValue, owner);
             }
 
-            if (Parser.IsInteger(next))
+            if (ParserContext.IsInteger(next))
             {
                 Token numberToken = tokens.Pop();
                 string numberValue = numberToken.Value;
@@ -400,7 +400,7 @@ namespace Crayon
 
                     Token afterDecimal = tokens.Pop();
                     if (afterDecimal.HasWhitespacePrefix) throw new ParserException(afterDecimal, "Cannot have whitespace after the decimal.");
-                    if (!Parser.IsInteger(afterDecimal.Value)) throw new ParserException(afterDecimal, "Decimal must be followed by an integer.");
+                    if (!ParserContext.IsInteger(afterDecimal.Value)) throw new ParserException(afterDecimal, "Decimal must be followed by an integer.");
 
                     numberValue += "." + afterDecimal.Value;
 
@@ -417,7 +417,7 @@ namespace Crayon
                 Token dotToken = tokens.PopExpected(".");
                 string numberValue = "0.";
                 Token postDecimal = tokens.Pop();
-                if (postDecimal.HasWhitespacePrefix || !Parser.IsInteger(postDecimal.Value))
+                if (postDecimal.HasWhitespacePrefix || !ParserContext.IsInteger(postDecimal.Value))
                 {
                     throw new ParserException(dotToken, "Unexpected dot.");
                 }

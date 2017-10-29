@@ -17,7 +17,7 @@ namespace Crayon.ParseTree
             this.Namespace = ns;
         }
 
-        internal override void Resolve(Parser parser)
+        internal override void Resolve(ParserContext parser)
         {
             ConstantResolutionState resolutionState = parser.ConstantAndEnumResolutionState[this];
             if (resolutionState == ConstantResolutionState.RESOLVED) return;
@@ -37,12 +37,12 @@ namespace Crayon.ParseTree
             parser.ConstantAndEnumResolutionState[this] = ConstantResolutionState.RESOLVED;
         }
 
-        internal override void ResolveNames(Parser parser)
+        internal override void ResolveNames(ParserContext parser)
         {
             this.Expression = this.Expression.ResolveNames(parser);
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
     }
 }

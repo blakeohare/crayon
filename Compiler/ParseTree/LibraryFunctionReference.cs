@@ -5,7 +5,7 @@ namespace Crayon.ParseTree
 {
     internal class LibraryFunctionReference : Expression
     {
-        internal override Expression PastelResolve(Parser parser)
+        internal override Expression PastelResolve(ParserContext parser)
         {
             throw new NotImplementedException();
         }
@@ -20,17 +20,17 @@ namespace Crayon.ParseTree
             this.Name = name;
         }
 
-        internal override Expression Resolve(Parser parser)
+        internal override Expression Resolve(ParserContext parser)
         {
             throw new ParserException(this.FirstToken, "Library functions cannot be passed around as references. They can only be invoked.");
         }
 
-        internal override Expression ResolveNames(Parser parser)
+        internal override Expression ResolveNames(ParserContext parser)
         {
             throw new InvalidOperationException(); // Created during resolve name phase.
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
         {

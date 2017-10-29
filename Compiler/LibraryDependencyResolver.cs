@@ -8,7 +8,7 @@ namespace Crayon
     class LibraryDependencyResolver
     {
         // Essentially, just a post-order traversal
-        public static Library[] GetLibraryResolutionOrder(Parser parser)
+        public static Library[] GetLibraryResolutionOrder(ParserContext parser)
         {
             // these are alphabetized simply to guarantee consistent behavior.
             Library[] unorderedLibraries = parser.LibraryManager.LibrariesUsed.OrderBy(lib => lib.Name.ToLowerInvariant()).ToArray();

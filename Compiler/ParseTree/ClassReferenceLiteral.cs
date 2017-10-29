@@ -5,7 +5,7 @@ namespace Crayon.ParseTree
 {
     internal class ClassReferenceLiteral : Expression
     {
-        internal override Expression PastelResolve(Parser parser)
+        internal override Expression PastelResolve(ParserContext parser)
         {
             throw new NotImplementedException();
         }
@@ -22,11 +22,11 @@ namespace Crayon.ParseTree
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
 
-        internal override Expression Resolve(Parser parser) { return this; }
+        internal override Expression Resolve(ParserContext parser) { return this; }
 
-        internal override Expression ResolveNames(Parser parser)
+        internal override Expression ResolveNames(ParserContext parser)
         {
             // ClassReferenceLiteral is created in the Resolve pass, so this is never called.
             throw new InvalidOperationException();

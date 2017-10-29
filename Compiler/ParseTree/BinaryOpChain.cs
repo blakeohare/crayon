@@ -6,7 +6,7 @@ namespace Crayon.ParseTree
 {
     internal class BinaryOpChain : Expression
     {
-        internal override Expression PastelResolve(Parser parser)
+        internal override Expression PastelResolve(ParserContext parser)
         {
             this.Left = this.Left.PastelResolve(parser);
             this.Right = this.Right.PastelResolve(parser);
@@ -57,7 +57,7 @@ namespace Crayon.ParseTree
             return "other";
         }
 
-        internal override Expression Resolve(Parser parser)
+        internal override Expression Resolve(ParserContext parser)
         {
             this.Left = this.Left.Resolve(parser);
             this.Right = this.Right.Resolve(parser);
@@ -292,7 +292,7 @@ namespace Crayon.ParseTree
             return new BooleanConstant(firstToken, value, this.Owner);
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
@@ -301,7 +301,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override Expression ResolveNames(Parser parser)
+        internal override Expression ResolveNames(ParserContext parser)
         {
             this.Left = this.Left.ResolveNames(parser);
             this.Right = this.Right.ResolveNames(parser);

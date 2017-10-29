@@ -9,23 +9,23 @@ namespace Crayon.ParseTree
             : base(breakToken, owner)
         { }
 
-        internal override IList<Executable> Resolve(Parser parser)
+        internal override IList<Executable> Resolve(ParserContext parser)
         {
             return Listify(this);
         }
 
         public override bool IsTerminator { get { return true; } }
 
-        internal override Executable ResolveNames(Parser parser)
+        internal override Executable ResolveNames(ParserContext parser)
         {
             return this;
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
 
-        internal override Executable PastelResolve(Parser parser)
+        internal override Executable PastelResolve(ParserContext parser)
         {
             return this;
         }

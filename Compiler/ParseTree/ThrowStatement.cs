@@ -15,13 +15,13 @@ namespace Crayon.ParseTree
             this.Expression = expression;
         }
 
-        internal override IList<Executable> Resolve(Parser parser)
+        internal override IList<Executable> Resolve(ParserContext parser)
         {
             this.Expression = this.Expression.Resolve(parser);
             return Listify(this);
         }
 
-        internal override Executable ResolveNames(Parser parser)
+        internal override Executable ResolveNames(ParserContext parser)
         {
             this.Expression.ResolveNames(parser);
             return this;
@@ -32,12 +32,12 @@ namespace Crayon.ParseTree
             this.Expression.GetAllVariablesReferenced(vars);
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             this.Expression.PerformLocalIdAllocation(parser, varIds, phase);
         }
 
-        internal override Executable PastelResolve(Parser parser)
+        internal override Executable PastelResolve(ParserContext parser)
         {
             throw new System.NotImplementedException();
         }

@@ -7,8 +7,8 @@ namespace Crayon
 {
     internal class ExecutableParser
     {
-        private Parser parser;
-        public ExecutableParser(Parser parser)
+        private ParserContext parser;
+        public ExecutableParser(ParserContext parser)
         {
             this.parser = parser;
         }
@@ -222,7 +222,7 @@ namespace Crayon
                 }
             }
 
-            IList<Executable> code = Parser.ParseBlock(parser, tokens, true, owner);
+            IList<Executable> code = ParserContext.ParseBlock(parser, tokens, true, owner);
 
             return new ConstructorDefinition(constructorToken, argNames, argValues, baseArgs, code, baseToken, owner);
         }
@@ -508,7 +508,7 @@ namespace Crayon
                 defaultValues.Add(defaultValue);
             }
 
-            IList<Executable> code = Parser.ParseBlock(parser, tokens, true, fd);
+            IList<Executable> code = ParserContext.ParseBlock(parser, tokens, true, fd);
 
             fd.ArgNames = argNames.ToArray();
             fd.DefaultValues = defaultValues.ToArray();
@@ -534,7 +534,7 @@ namespace Crayon
                 tokens.PopExpected(":");
                 Expression iterationExpression = this.parser.ExpressionParser.Parse(tokens, owner);
                 tokens.PopExpected(")");
-                IList<Executable> body = Parser.ParseBlock(parser, tokens, false, owner);
+                IList<Executable> body = ParserContext.ParseBlock(parser, tokens, false, owner);
 
                 return new ForEachLoop(forToken, iteratorToken, iterationExpression, body, owner);
             }
@@ -559,7 +559,7 @@ namespace Crayon
                     step.Add(this.Parse(tokens, true, false, owner));
                 }
 
-                IList<Executable> body = Parser.ParseBlock(parser, tokens, false, owner);
+                IList<Executable> body = ParserContext.ParseBlock(parser, tokens, false, owner);
 
                 return new ForLoop(forToken, init, condition, step, body, owner);
             }
@@ -571,14 +571,14 @@ namespace Crayon
             tokens.PopExpected("(");
             Expression condition = this.parser.ExpressionParser.Parse(tokens, owner);
             tokens.PopExpected(")");
-            IList<Executable> body = Parser.ParseBlock(parser, tokens, false, owner);
+            IList<Executable> body = ParserContext.ParseBlock(parser, tokens, false, owner);
             return new WhileLoop(whileToken, condition, body, owner);
         }
 
         private Executable ParseDoWhile(TokenStream tokens, TopLevelConstruct owner)
         {
             Token doToken = tokens.PopExpected(this.parser.Keywords.DO);
-            IList<Executable> body = Parser.ParseBlock(parser, tokens, true, owner);
+            IList<Executable> body = ParserContext.ParseBlock(parser, tokens, true, owner);
             tokens.PopExpected(this.parser.Keywords.DO_WHILE_END);
             tokens.PopExpected("(");
             Expression condition = this.parser.ExpressionParser.Parse(tokens, owner);
@@ -665,11 +665,11 @@ namespace Crayon
             tokens.PopExpected("(");
             Expression condition = this.parser.ExpressionParser.Parse(tokens, owner);
             tokens.PopExpected(")");
-            IList<Executable> body = Parser.ParseBlock(parser, tokens, false, owner);
+            IList<Executable> body = ParserContext.ParseBlock(parser, tokens, false, owner);
             IList<Executable> elseBody;
             if (tokens.PopIfPresent(this.parser.Keywords.ELSE))
             {
-                elseBody = Parser.ParseBlock(parser, tokens, false, owner);
+                elseBody = ParserContext.ParseBlock(parser, tokens, false, owner);
             }
             else
             {
@@ -681,7 +681,7 @@ namespace Crayon
         private Executable ParseTry(TokenStream tokens, TopLevelConstruct owner)
         {
             Token tryToken = tokens.PopExpected(this.parser.Keywords.TRY);
-            IList<Executable> tryBlock = Parser.ParseBlock(parser, tokens, true, owner);
+            IList<Executable> tryBlock = ParserContext.ParseBlock(parser, tokens, true, owner);
 
             List<Token> catchTokens = new List<Token>();
             List<string[]> exceptionTypes = new List<string[]>();
@@ -762,7 +762,7 @@ namespace Crayon
                     classTokens.Add(null);
                 }
 
-                Executable[] catchBlockCode = Parser.ParseBlock(parser, tokens, true, owner).ToArray();
+                Executable[] catchBlockCode = ParserContext.ParseBlock(parser, tokens, true, owner).ToArray();
 
 
                 catchTokens.Add(catchToken);
@@ -775,7 +775,7 @@ namespace Crayon
             if (tokens.IsNext(this.parser.Keywords.FINALLY))
             {
                 finallyToken = tokens.Pop();
-                finallyBlock = Parser.ParseBlock(parser, tokens, true, owner);
+                finallyBlock = ParserContext.ParseBlock(parser, tokens, true, owner);
             }
 
             return new TryStatement(tryToken, tryBlock, catchTokens, exceptionVariables, exceptionTypeTokens, exceptionTypes, catchBlocks, finallyToken, finallyBlock, owner);

@@ -66,7 +66,7 @@ namespace Crayon.ParseTree
             this.MinArgCount = minArgCount;
         }
 
-        internal override void Resolve(Parser parser)
+        internal override void Resolve(ParserContext parser)
         {
             parser.ValueStackDepth = 0;
 
@@ -93,7 +93,7 @@ namespace Crayon.ParseTree
             this.Code = code.ToArray();
         }
 
-        internal void AllocateLocalScopeIds(Parser parser)
+        internal void AllocateLocalScopeIds(ParserContext parser)
         {
             VariableIdAllocator variableIds = new VariableIdAllocator();
             for (int i = 0; i < this.ArgNames.Length; ++i)
@@ -106,7 +106,7 @@ namespace Crayon.ParseTree
             this.LocalScopeSize = variableIds.Size;
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             foreach (Expression arg in this.BaseArgs)
             {
@@ -119,7 +119,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override void ResolveNames(Parser parser)
+        internal override void ResolveNames(ParserContext parser)
         {
             parser.CurrentCodeContainer = this;
             if (this.DefaultValues.Length > 0)

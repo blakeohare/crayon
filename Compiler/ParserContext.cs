@@ -7,13 +7,13 @@ using System.Collections.Generic;
 
 namespace Crayon
 {
-    internal class Parser
+    internal class ParserContext
     {
         private Stack<CompilationScope> scopeStack = new Stack<CompilationScope>();
 
         private Dictionary<string, CompilationScope> compilationScopes = new Dictionary<string, CompilationScope>();
 
-        public Parser(BuildContext buildContext)
+        public ParserContext(BuildContext buildContext)
         {
             this.BuildContext = buildContext;
             this.PushScope(new CompilationScope(buildContext, null));
@@ -421,7 +421,7 @@ namespace Crayon
             return true;
         }
 
-        internal static IList<Executable> ParseBlock(Parser parser, TokenStream tokens, bool bracketsRequired, TopLevelConstruct owner)
+        internal static IList<Executable> ParseBlock(ParserContext parser, TokenStream tokens, bool bracketsRequired, TopLevelConstruct owner)
         {
             List<Executable> output = new List<Executable>();
 

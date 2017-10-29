@@ -7,7 +7,7 @@ namespace Crayon.ParseTree
 {
     internal abstract class SpecialEntity : Expression
     {
-        internal override Expression PastelResolve(Parser parser)
+        internal override Expression PastelResolve(ParserContext parser)
         {
             throw new NotImplementedException();
         }
@@ -18,19 +18,19 @@ namespace Crayon.ParseTree
         public override bool CanAssignTo { get { return false; } }
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
 
-        internal override Expression ResolveNames(Parser parser)
+        internal override Expression ResolveNames(ParserContext parser)
         {
             return this;
         }
 
-        internal override Expression Resolve(Parser parser)
+        internal override Expression Resolve(ParserContext parser)
         {
             // Needs to be optimized out before resolving.
             throw new InvalidOperationException();
         }
 
         // No variables are assumed.
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
 
         internal class EnumMaxFunction : SpecialEntity
         {

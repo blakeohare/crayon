@@ -19,12 +19,12 @@ namespace Crayon.ParseTree
 
         public virtual bool IsTerminator { get { return false; } }
 
-        internal abstract IList<Executable> Resolve(Parser parser);
-        internal abstract Executable ResolveNames(Parser parser);
+        internal abstract IList<Executable> Resolve(ParserContext parser);
+        internal abstract Executable ResolveNames(ParserContext parser);
         internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
-        internal abstract Executable PastelResolve(Parser parser);
+        internal abstract Executable PastelResolve(ParserContext parser);
 
-        internal static IList<Executable> Resolve(Parser parser, IList<Executable> executables)
+        internal static IList<Executable> Resolve(ParserContext parser, IList<Executable> executables)
         {
             List<Executable> output = new List<Executable>();
             foreach (Executable executable in executables)
@@ -73,12 +73,12 @@ namespace Crayon.ParseTree
         internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
         { }
 
-        internal virtual IList<Executable> PastelResolveComposite(Parser parser)
+        internal virtual IList<Executable> PastelResolveComposite(ParserContext parser)
         {
             return Listify(this.PastelResolve(parser));
         }
 
-        internal static Executable[] PastelResolveExecutables(Parser parser, IList<Executable> code)
+        internal static Executable[] PastelResolveExecutables(ParserContext parser, IList<Executable> code)
         {
             if (code == null) return null;
             List<Executable> output = new List<Executable>();

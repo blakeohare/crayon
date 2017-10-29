@@ -5,7 +5,7 @@ namespace Crayon.ParseTree
 {
     internal class DotStep : Expression
     {
-        internal override Expression PastelResolve(Parser parser)
+        internal override Expression PastelResolve(ParserContext parser)
         {
             Variable root = this.Root as Variable;
             if (root != null)
@@ -48,7 +48,7 @@ namespace Crayon.ParseTree
             this.StepToken = stepToken;
         }
 
-        internal override Expression Resolve(Parser parser)
+        internal override Expression Resolve(ParserContext parser)
         {
             this.Root = this.Root.Resolve(parser);
 
@@ -110,7 +110,7 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
@@ -119,7 +119,7 @@ namespace Crayon.ParseTree
         }
 
         internal override Expression ResolveNames(
-            Parser parser)
+            ParserContext parser)
         {
             FunctionDefinition funcDef; // used in multiple places.
             FieldDeclaration fieldDec;

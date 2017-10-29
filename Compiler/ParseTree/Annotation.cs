@@ -18,7 +18,7 @@ namespace Crayon.ParseTree
             this.Args = args.ToArray();
         }
 
-        public string GetSingleArgAsString(Parser parser)
+        public string GetSingleArgAsString(ParserContext parser)
         {
             if (this.Args.Length != 1) throw new ParserException(this.TypeToken, "This annotation requires exactly 1 arg.");
             StringConstant stringConstant = this.Args[0].Resolve(parser) as StringConstant;

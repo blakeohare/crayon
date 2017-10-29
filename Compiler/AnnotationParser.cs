@@ -5,8 +5,8 @@ namespace Crayon
 {
     internal class AnnotationParser
     {
-        private Parser parser;
-        public AnnotationParser(Parser parser)
+        private ParserContext parser;
+        public AnnotationParser(ParserContext parser)
         {
             this.parser = parser;
         }

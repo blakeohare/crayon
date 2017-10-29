@@ -33,12 +33,12 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override void Resolve(Parser parser)
+        internal override void Resolve(ParserContext parser)
         {
             throw new ParserException(this.FirstToken, "Namespace declaration not allowed here. Namespaces may only exist in the root of a file or nested within other namespaces.");
         }
 
-        internal override void ResolveNames(Parser parser)
+        internal override void ResolveNames(ParserContext parser)
         {
             throw new InvalidOperationException();
         }
@@ -49,7 +49,7 @@ namespace Crayon.ParseTree
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             // Not called in this way.
             throw new NotImplementedException();

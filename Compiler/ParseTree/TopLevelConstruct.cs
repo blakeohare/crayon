@@ -55,15 +55,15 @@ namespace Crayon.ParseTree
         }
         public string Namespace { get; set; }
 
-        internal abstract void Resolve(Parser parser);
-        internal abstract void ResolveNames(Parser parser);
+        internal abstract void Resolve(ParserContext parser);
+        internal abstract void ResolveNames(ParserContext parser);
         internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
         internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
         {
             throw new Exception(); // Not used
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             throw new NotImplementedException();
         }

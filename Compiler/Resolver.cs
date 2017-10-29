@@ -8,10 +8,10 @@ namespace Crayon
 {
     internal class Resolver
     {
-        private Parser parser;
+        private ParserContext parser;
         private TopLevelConstruct[] currentCode;
 
-        public Resolver(Parser parser, ICollection<CompilationScope> compilationScopes)
+        public Resolver(ParserContext parser, ICollection<CompilationScope> compilationScopes)
         {
             List<TopLevelConstruct> originalCode = new List<TopLevelConstruct>();
             foreach (CompilationScope scope in compilationScopes

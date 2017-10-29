@@ -84,7 +84,7 @@ namespace Crayon.ParseTree
             return output;
         }
 
-        internal override IList<Executable> Resolve(Parser parser)
+        internal override IList<Executable> Resolve(ParserContext parser)
         {
             this.ValueStackDepth = parser.ValueStackDepth;
 
@@ -100,7 +100,7 @@ namespace Crayon.ParseTree
                 : Listify(this);
         }
 
-        internal override Executable ResolveNames(Parser parser)
+        internal override Executable ResolveNames(ParserContext parser)
         {
             this.BatchExecutableNameResolver(parser, this.TryBlock);
 
@@ -169,7 +169,7 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             foreach (Executable ex in this.TryBlock)
             {
@@ -222,7 +222,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override Executable PastelResolve(Parser parser)
+        internal override Executable PastelResolve(ParserContext parser)
         {
             throw new System.NotImplementedException();
         }

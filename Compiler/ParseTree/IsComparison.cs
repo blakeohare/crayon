@@ -7,7 +7,7 @@ namespace Crayon.ParseTree
 {
     internal class IsComparison : Expression
     {
-        internal override Expression PastelResolve(Parser parser)
+        internal override Expression PastelResolve(ParserContext parser)
         {
             throw new NotImplementedException();
         }
@@ -29,13 +29,13 @@ namespace Crayon.ParseTree
             this.ClassName = classNameWithNamespace;
         }
 
-        internal override Expression Resolve(Parser parser)
+        internal override Expression Resolve(ParserContext parser)
         {
             this.Expression.Resolve(parser);
             return this;
         }
 
-        internal override Expression ResolveNames(Parser parser)
+        internal override Expression ResolveNames(ParserContext parser)
         {
             this.Expression.ResolveNames(parser);
             this.ClassDefinition = Node.DoClassLookup(this.Owner, this.ClassToken, this.ClassName);
@@ -47,7 +47,7 @@ namespace Crayon.ParseTree
             this.Expression.GetAllVariablesReferenced(vars);
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             this.Expression.PerformLocalIdAllocation(parser, varIds, phase);
         }

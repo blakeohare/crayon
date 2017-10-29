@@ -16,7 +16,7 @@ namespace Crayon.ParseTree
             this.Condition = condition;
         }
 
-        internal override IList<Executable> Resolve(Parser parser)
+        internal override IList<Executable> Resolve(ParserContext parser)
         {
             this.Code = Resolve(parser, this.Code).ToArray();
 
@@ -33,7 +33,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             if (phase != VariableIdAllocPhase.REGISTER_AND_ALLOC)
             {
@@ -57,7 +57,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override Executable ResolveNames(Parser parser)
+        internal override Executable ResolveNames(ParserContext parser)
         {
             this.BatchExecutableNameResolver(parser, this.Code);
             this.Condition = this.Condition.ResolveNames(parser);
@@ -73,7 +73,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override Executable PastelResolve(Parser parser)
+        internal override Executable PastelResolve(ParserContext parser)
         {
             throw new System.NotImplementedException();
         }

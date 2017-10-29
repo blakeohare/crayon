@@ -5,7 +5,7 @@ namespace Crayon.ParseTree
 {
     internal class ConstReference : Expression
     {
-        internal override Expression PastelResolve(Parser parser)
+        internal override Expression PastelResolve(ParserContext parser)
         {
             throw new NotImplementedException();
         }
@@ -20,7 +20,7 @@ namespace Crayon.ParseTree
             this.ConstStatement = con;
         }
 
-        internal override Expression Resolve(Parser parser)
+        internal override Expression Resolve(ParserContext parser)
         {
             if (parser.ConstantAndEnumResolutionState[this.ConstStatement] != ConstantResolutionState.RESOLVED)
             {
@@ -35,12 +35,12 @@ namespace Crayon.ParseTree
             return value.CloneValue(this.FirstToken, this.Owner);
         }
 
-        internal override Expression ResolveNames(Parser parser)
+        internal override Expression ResolveNames(ParserContext parser)
         {
             throw new NotImplementedException();
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
     }
 }

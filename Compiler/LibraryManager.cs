@@ -36,7 +36,7 @@ namespace Crayon
             this.PlatformProvider = platformProvider;
         }
 
-        public bool IsValidLibraryName(Parser parser, string name)
+        public bool IsValidLibraryName(ParserContext parser, string name)
         {
             return this.GetLibraryMetadataFromAnyPossibleKey(parser.CurrentLocale.ID + ":" + name) != null;
         }
@@ -55,7 +55,7 @@ namespace Crayon
         }
 
         private Library coreLibrary = null;
-        public Library GetCoreLibrary(Parser parser)
+        public Library GetCoreLibrary(ParserContext parser)
         {
             if (this.coreLibrary == null)
             {
@@ -240,7 +240,7 @@ namespace Crayon
         // TODO: libraries will be able to declare their source code locale.
         private static readonly Locale ENGLISH_LOCALE_FOR_LIBRARIES = Locale.Get("en");
 
-        public Library ImportLibrary(Parser parser, Token throwToken, string name)
+        public Library ImportLibrary(ParserContext parser, Token throwToken, string name)
         {
             name = name.Split('.')[0];
             string key = parser.CurrentLocale.ID + ":" + name;

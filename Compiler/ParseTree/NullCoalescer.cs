@@ -4,7 +4,7 @@ namespace Crayon.ParseTree
 {
     internal class NullCoalescer : Expression
     {
-        internal override Expression PastelResolve(Parser parser)
+        internal override Expression PastelResolve(ParserContext parser)
         {
             throw new System.NotImplementedException();
         }
@@ -21,7 +21,7 @@ namespace Crayon.ParseTree
             this.SecondaryExpression = secondaryExpression;
         }
 
-        internal override Expression Resolve(Parser parser)
+        internal override Expression Resolve(ParserContext parser)
         {
             this.PrimaryExpression = this.PrimaryExpression.Resolve(parser);
             this.SecondaryExpression = this.SecondaryExpression.Resolve(parser);
@@ -43,14 +43,14 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override Expression ResolveNames(Parser parser)
+        internal override Expression ResolveNames(ParserContext parser)
         {
             this.PrimaryExpression = this.PrimaryExpression.ResolveNames(parser);
             this.SecondaryExpression = this.SecondaryExpression.ResolveNames(parser);
             return this;
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {

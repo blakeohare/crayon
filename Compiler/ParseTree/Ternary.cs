@@ -5,7 +5,7 @@ namespace Crayon.ParseTree
 {
     internal class Ternary : Expression
     {
-        internal override Expression PastelResolve(Parser parser)
+        internal override Expression PastelResolve(ParserContext parser)
         {
             throw new NotImplementedException();
         }
@@ -24,7 +24,7 @@ namespace Crayon.ParseTree
             this.FalseValue = falseValue;
         }
 
-        internal override Expression Resolve(Parser parser)
+        internal override Expression Resolve(ParserContext parser)
         {
             this.Condition = this.Condition.Resolve(parser);
             this.TrueValue = this.TrueValue.Resolve(parser);
@@ -39,7 +39,7 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override Expression ResolveNames(Parser parser)
+        internal override Expression ResolveNames(ParserContext parser)
         {
             this.Condition = this.Condition.ResolveNames(parser);
             this.TrueValue = this.TrueValue.ResolveNames(parser);
@@ -47,7 +47,7 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             this.Condition.PerformLocalIdAllocation(parser, varIds, phase);
             this.TrueValue.PerformLocalIdAllocation(parser, varIds, phase);

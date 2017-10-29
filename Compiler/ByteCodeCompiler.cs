@@ -8,7 +8,7 @@ namespace Crayon
 {
     internal class ByteCodeCompiler
     {
-        public ByteBuffer GenerateByteCode(Parser parser, IList<TopLevelConstruct> lines)
+        public ByteBuffer GenerateByteCode(ParserContext parser, IList<TopLevelConstruct> lines)
         {
             FunctionDefinition mainFunction = lines
                 .OfType<FunctionDefinition>()
@@ -87,7 +87,7 @@ namespace Crayon
             return output;
         }
 
-        private ByteBuffer BuildLibraryDeclarations(Parser parser)
+        private ByteBuffer BuildLibraryDeclarations(ParserContext parser)
         {
             ByteBuffer output = new ByteBuffer();
 
@@ -106,7 +106,7 @@ namespace Crayon
             return output;
         }
 
-        private ByteBuffer BuildSwitchStatementTables(Parser parser)
+        private ByteBuffer BuildSwitchStatementTables(ParserContext parser)
         {
             ByteBuffer output = new ByteBuffer();
             List<Dictionary<int, int>> intSwitches = parser.GetIntegerSwitchStatements();
@@ -173,7 +173,7 @@ namespace Crayon
             return output;
         }
 
-        public void CompileTopLevelEntities(Parser parser, ByteBuffer buffer, IList<TopLevelConstruct> entities)
+        public void CompileTopLevelEntities(ParserContext parser, ByteBuffer buffer, IList<TopLevelConstruct> entities)
         {
             foreach (TopLevelConstruct entity in entities)
             {
@@ -181,14 +181,14 @@ namespace Crayon
             }
         }
 
-        public void CompileTopLevelEntity(Parser parser, ByteBuffer buffer, TopLevelConstruct entity)
+        public void CompileTopLevelEntity(ParserContext parser, ByteBuffer buffer, TopLevelConstruct entity)
         {
             if (entity is FunctionDefinition) this.CompileFunctionDefinition(parser, buffer, (FunctionDefinition)entity, false);
             else if (entity is ClassDefinition) this.CompileClass(parser, buffer, (ClassDefinition)entity);
             else throw new NotImplementedException("Invalid target for byte code compilation");
         }
 
-        public void Compile(Parser parser, ByteBuffer buffer, IList<Executable> executables)
+        public void Compile(ParserContext parser, ByteBuffer buffer, IList<Executable> executables)
         {
             foreach (Executable ex in executables)
             {
@@ -196,7 +196,7 @@ namespace Crayon
             }
         }
 
-        public void Compile(Parser parser, ByteBuffer buffer, Executable line)
+        public void Compile(ParserContext parser, ByteBuffer buffer, Executable line)
         {
             if (line is ExpressionAsExecutable) this.CompileExpressionAsExecutable(parser, buffer, (ExpressionAsExecutable)line);
             else if (line is Assignment) this.CompileAssignment(parser, buffer, (Assignment)line);
@@ -214,13 +214,13 @@ namespace Crayon
             else throw new NotImplementedException("Invalid target for byte code compilation");
         }
 
-        private void CompileThrowStatement(Parser parser, ByteBuffer buffer, ThrowStatement throwStatement)
+        private void CompileThrowStatement(ParserContext parser, ByteBuffer buffer, ThrowStatement throwStatement)
         {
             this.CompileExpression(parser, buffer, throwStatement.Expression, true);
             buffer.Add(throwStatement.FirstToken, OpCode.THROW);
         }
 
-        private void CompileTryStatement(Parser parser, ByteBuffer buffer, TryStatement tryStatement)
+        private void CompileTryStatement(ParserContext parser, ByteBuffer buffer, TryStatement tryStatement)
         {
             ByteBuffer tryCode = new ByteBuffer();
             this.Compile(parser, tryCode, tryStatement.TryBlock);
@@ -345,7 +345,7 @@ namespace Crayon
             buffer.SetEsfToken(tryBegin, offsetToCatch, offsetToFinally);
         }
 
-        private void CompileForEachLoop(Parser parser, ByteBuffer buffer, ForEachLoop forEachLoop)
+        private void CompileForEachLoop(ParserContext parser, ByteBuffer buffer, ForEachLoop forEachLoop)
         {
             buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(0));
             buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(forEachLoop.IterationVariableId));
@@ -374,7 +374,7 @@ namespace Crayon
             buffer.SetLastValueStackDepthOffset(-3);
         }
 
-        private void CompileSwitchStatement(Parser parser, ByteBuffer buffer, SwitchStatement switchStatement)
+        private void CompileSwitchStatement(ParserContext parser, ByteBuffer buffer, SwitchStatement switchStatement)
         {
             this.CompileExpression(parser, buffer, switchStatement.Condition, true);
 
@@ -425,7 +425,7 @@ namespace Crayon
             buffer.Concat(chunkBuffer);
         }
 
-        private void CompileClass(Parser parser, ByteBuffer buffer, ClassDefinition classDefinition)
+        private void CompileClass(ParserContext parser, ByteBuffer buffer, ClassDefinition classDefinition)
         {
             bool hasStaticFieldsWithStartingValues = classDefinition.Fields
                 .Where<FieldDeclaration>(fd =>
@@ -562,7 +562,7 @@ namespace Crayon
             buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION, fullyQualifiedName, args.ToArray());
         }
 
-        private void CompileConstructor(Parser parser, ByteBuffer buffer, ConstructorDefinition constructor, ByteBuffer complexFieldInitializers)
+        private void CompileConstructor(ParserContext parser, ByteBuffer buffer, ConstructorDefinition constructor, ByteBuffer complexFieldInitializers)
         {
             TODO.ThrowErrorIfReturnAppearsWithValueInConstructors();
             TODO.ThrowErrorIfKeywordThisIsUsedInBaseArgsOrDefaultArgsAnywhereInConstructor();
@@ -630,7 +630,7 @@ namespace Crayon
             buffer.Concat(tBuffer);
         }
 
-        private void CompileReturnStatement(Parser parser, ByteBuffer buffer, ReturnStatement returnStatement)
+        private void CompileReturnStatement(ParserContext parser, ByteBuffer buffer, ReturnStatement returnStatement)
         {
             if (returnStatement.Expression == null || returnStatement.Expression is NullConstant)
             {
@@ -643,7 +643,7 @@ namespace Crayon
             }
         }
 
-        private void CompileIfStatement(Parser parser, ByteBuffer buffer, IfStatement ifStatement)
+        private void CompileIfStatement(ParserContext parser, ByteBuffer buffer, IfStatement ifStatement)
         {
             this.CompileExpression(parser, buffer, ifStatement.Condition, true);
             ByteBuffer trueCode = new ByteBuffer();
@@ -669,17 +669,17 @@ namespace Crayon
             }
         }
 
-        private void CompileBreakStatement(Parser parser, ByteBuffer buffer, BreakStatement breakStatement)
+        private void CompileBreakStatement(ParserContext parser, ByteBuffer buffer, BreakStatement breakStatement)
         {
             buffer.Add(breakStatement.FirstToken, OpCode.BREAK, 0, 0);
         }
 
-        private void CompileContinueStatement(Parser parser, ByteBuffer buffer, ContinueStatement continueStatement)
+        private void CompileContinueStatement(ParserContext parser, ByteBuffer buffer, ContinueStatement continueStatement)
         {
             buffer.Add(continueStatement.FirstToken, OpCode.CONTINUE, 0, 0);
         }
 
-        private void CompileForLoop(Parser parser, ByteBuffer buffer, ForLoop forLoop)
+        private void CompileForLoop(ParserContext parser, ByteBuffer buffer, ForLoop forLoop)
         {
             this.Compile(parser, buffer, forLoop.Init);
 
@@ -700,7 +700,7 @@ namespace Crayon
             buffer.Concat(forBuffer);
         }
 
-        private void CompileWhileLoop(Parser parser, ByteBuffer buffer, WhileLoop whileLoop)
+        private void CompileWhileLoop(ParserContext parser, ByteBuffer buffer, WhileLoop whileLoop)
         {
             ByteBuffer loopBody = new ByteBuffer();
             this.Compile(parser, loopBody, whileLoop.Code);
@@ -717,7 +717,7 @@ namespace Crayon
             buffer.Concat(condition);
         }
 
-        private void CompileDoWhileLoop(Parser parser, ByteBuffer buffer, DoWhileLoop doWhileLoop)
+        private void CompileDoWhileLoop(ParserContext parser, ByteBuffer buffer, DoWhileLoop doWhileLoop)
         {
             ByteBuffer loopBody = new ByteBuffer();
             this.Compile(parser, loopBody, doWhileLoop.Code);
@@ -752,7 +752,7 @@ namespace Crayon
             }
         }
 
-        private void CompileAssignment(Parser parser, ByteBuffer buffer, Assignment assignment)
+        private void CompileAssignment(ParserContext parser, ByteBuffer buffer, Assignment assignment)
         {
             if (assignment.AssignmentOp == "=")
             {
@@ -893,7 +893,7 @@ namespace Crayon
             }
         }
 
-        private void CompileFunctionArgs(Parser parser, ByteBuffer buffer, IList<Token> argNames, IList<Expression> argValues, List<int> offsetsForOptionalArgs)
+        private void CompileFunctionArgs(ParserContext parser, ByteBuffer buffer, IList<Token> argNames, IList<Expression> argValues, List<int> offsetsForOptionalArgs)
         {
             int bufferStartSize = buffer.Size;
             for (int i = 0; i < argNames.Count; ++i)
@@ -907,7 +907,7 @@ namespace Crayon
             }
         }
 
-        private void CompileFunctionDefinition(Parser parser, ByteBuffer buffer, FunctionDefinition funDef, bool isMethod)
+        private void CompileFunctionDefinition(ParserContext parser, ByteBuffer buffer, FunctionDefinition funDef, bool isMethod)
         {
             ByteBuffer tBuffer = new ByteBuffer();
 
@@ -951,12 +951,12 @@ namespace Crayon
             buffer.Concat(tBuffer);
         }
 
-        private void CompileExpressionAsExecutable(Parser parser, ByteBuffer buffer, ExpressionAsExecutable expr)
+        private void CompileExpressionAsExecutable(ParserContext parser, ByteBuffer buffer, ExpressionAsExecutable expr)
         {
             this.CompileExpression(parser, buffer, expr.Expression, false);
         }
 
-        private void CompileExpression(Parser parser, ByteBuffer buffer, Expression expr, bool outputUsed)
+        private void CompileExpression(ParserContext parser, ByteBuffer buffer, Expression expr, bool outputUsed)
         {
             if (expr is FunctionCall) this.CompileFunctionCall(parser, buffer, (FunctionCall)expr, outputUsed);
             else if (expr is IntegerConstant) this.CompileIntegerConstant(parser, buffer, (IntegerConstant)expr, outputUsed);
@@ -991,7 +991,7 @@ namespace Crayon
             else throw new NotImplementedException();
         }
 
-        private void CompileClassReferenceLiteral(Parser parser, ByteBuffer buffer, ClassReferenceLiteral classRef, bool outputUsed)
+        private void CompileClassReferenceLiteral(ParserContext parser, ByteBuffer buffer, ClassReferenceLiteral classRef, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(classRef.FirstToken, "This class reference expression does nothing.");
             buffer.Add(classRef.FirstToken, OpCode.LITERAL, parser.GetClassRefConstant(classRef.ClassDefinition));
@@ -1008,7 +1008,7 @@ namespace Crayon
             }
         }
 
-        private void CompileIsComparison(Parser parser, ByteBuffer buffer, IsComparison isComp, bool outputUsed)
+        private void CompileIsComparison(ParserContext parser, ByteBuffer buffer, IsComparison isComp, bool outputUsed)
         {
             EnsureUsed(isComp.IsToken, outputUsed);
             this.CompileExpression(parser, buffer, isComp.Expression, true);
@@ -1016,7 +1016,7 @@ namespace Crayon
         }
 
         private void CompileCoreFunctionInvocation(
-            Parser parser,
+            ParserContext parser,
             ByteBuffer buffer,
             CoreFunctionInvocation coreFuncInvocation,
             Expression[] argsOverrideOrNull,
@@ -1063,7 +1063,7 @@ namespace Crayon
             buffer.Add(token, OpCode.CORE_FUNCTION, coreFuncInvocation.FunctionId, outputUsed ? 1 : 0);
         }
 
-        private void CompileFieldReference(Parser parser, ByteBuffer buffer, FieldReference fieldRef, bool outputUsed)
+        private void CompileFieldReference(ParserContext parser, ByteBuffer buffer, FieldReference fieldRef, bool outputUsed)
         {
             EnsureUsed(fieldRef.FirstToken, outputUsed);
 
@@ -1085,7 +1085,7 @@ namespace Crayon
         }
 
         // Non-invoked function references.
-        private void CompileFunctionReference(Parser parser, ByteBuffer buffer, FunctionReference funcRef, bool outputUsed)
+        private void CompileFunctionReference(ParserContext parser, ByteBuffer buffer, FunctionReference funcRef, bool outputUsed)
         {
             EnsureUsed(funcRef.FirstToken, outputUsed);
 
@@ -1111,12 +1111,12 @@ namespace Crayon
                 classIdStaticCheck);
         }
 
-        private void CompileBaseKeyword(Parser parser, ByteBuffer buffer, BaseKeyword baseKeyword, bool outputUsed)
+        private void CompileBaseKeyword(ParserContext parser, ByteBuffer buffer, BaseKeyword baseKeyword, bool outputUsed)
         {
             throw new ParserException(baseKeyword.FirstToken, "Cannot have a reference to 'base' without invoking a field.");
         }
 
-        private void CompileBaseMethodReference(Parser parser, ByteBuffer buffer, BaseMethodReference baseMethodReference, bool outputUsed)
+        private void CompileBaseMethodReference(ParserContext parser, ByteBuffer buffer, BaseMethodReference baseMethodReference, bool outputUsed)
         {
             EnsureUsed(baseMethodReference.FirstToken, outputUsed);
             int baseClassId = baseMethodReference.ClassToWhichThisMethodRefers.ClassID;
@@ -1137,7 +1137,7 @@ namespace Crayon
             throw new Exception(); // should not happen.
         }
 
-        private void CompileListSlice(Parser parser, ByteBuffer buffer, ListSlice listSlice, bool outputUsed)
+        private void CompileListSlice(ParserContext parser, ByteBuffer buffer, ListSlice listSlice, bool outputUsed)
         {
             EnsureUsed(listSlice.FirstToken, outputUsed);
             this.CompileExpression(parser, buffer, listSlice.Root, true);
@@ -1161,7 +1161,7 @@ namespace Crayon
             buffer.Add(listSlice.BracketToken, OpCode.LIST_SLICE, new int[] { firstIsPresent ? 1 : 0, secondIsPresent ? 1 : 0, isStep1 ? 0 : 1 });
         }
 
-        private void CompileTernary(Parser parser, ByteBuffer buffer, Ternary ternary, bool outputUsed)
+        private void CompileTernary(ParserContext parser, ByteBuffer buffer, Ternary ternary, bool outputUsed)
         {
             EnsureUsed(ternary.FirstToken, outputUsed);
 
@@ -1176,7 +1176,7 @@ namespace Crayon
             buffer.Concat(falseBuffer);
         }
 
-        private void CompileNullCoalescer(Parser parser, ByteBuffer buffer, NullCoalescer nullCoalescer, bool outputUsed)
+        private void CompileNullCoalescer(ParserContext parser, ByteBuffer buffer, NullCoalescer nullCoalescer, bool outputUsed)
         {
             EnsureUsed(nullCoalescer.FirstToken, outputUsed);
 
@@ -1187,7 +1187,7 @@ namespace Crayon
             buffer.Concat(secondaryExpression);
         }
 
-        private void CompileBooleanNot(Parser parser, ByteBuffer buffer, BooleanNot boolNot, bool outputUsed)
+        private void CompileBooleanNot(ParserContext parser, ByteBuffer buffer, BooleanNot boolNot, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(boolNot.FirstToken, "Cannot have this expression here.");
 
@@ -1195,7 +1195,7 @@ namespace Crayon
             buffer.Add(boolNot.FirstToken, OpCode.BOOLEAN_NOT);
         }
 
-        private void CompileBooleanCombination(Parser parser, ByteBuffer buffer, BooleanCombination boolComb, bool outputUsed)
+        private void CompileBooleanCombination(ParserContext parser, ByteBuffer buffer, BooleanCombination boolComb, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(boolComb.FirstToken, "Cannot have this expression here.");
 
@@ -1222,7 +1222,7 @@ namespace Crayon
             buffer.Concat(rightBuffer);
         }
 
-        private void CompileDictionaryDefinition(Parser parser, ByteBuffer buffer, DictionaryDefinition dictDef, bool outputUsed)
+        private void CompileDictionaryDefinition(ParserContext parser, ByteBuffer buffer, DictionaryDefinition dictDef, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(dictDef.FirstToken, "Cannot have a dictionary all by itself.");
 
@@ -1239,7 +1239,7 @@ namespace Crayon
             buffer.Add(dictDef.FirstToken, OpCode.DEF_DICTIONARY, itemCount);
         }
 
-        private void CompileInstantiate(Parser parser, ByteBuffer buffer, Instantiate instantiate, bool outputUsed)
+        private void CompileInstantiate(ParserContext parser, ByteBuffer buffer, Instantiate instantiate, bool outputUsed)
         {
             ClassDefinition cd = instantiate.Class;
             ConstructorDefinition constructor = cd.Constructor;
@@ -1254,27 +1254,27 @@ namespace Crayon
                 cd.ClassID);
         }
 
-        private void CompileThisKeyword(Parser parser, ByteBuffer buffer, ThisKeyword thisKeyword, bool outputUsed)
+        private void CompileThisKeyword(ParserContext parser, ByteBuffer buffer, ThisKeyword thisKeyword, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(thisKeyword.FirstToken, "This expression doesn't do anything.");
 
             buffer.Add(thisKeyword.FirstToken, OpCode.THIS);
         }
 
-        private void CompileNullConstant(Parser parser, ByteBuffer buffer, NullConstant nullConstant, bool outputUsed)
+        private void CompileNullConstant(ParserContext parser, ByteBuffer buffer, NullConstant nullConstant, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(nullConstant.FirstToken, "This expression doesn't do anything.");
 
             buffer.Add(nullConstant.FirstToken, OpCode.LITERAL, parser.GetNullConstant());
         }
 
-        private void CompileFloatConstant(Parser parser, ByteBuffer buffer, FloatConstant floatConstant, bool outputUsed)
+        private void CompileFloatConstant(ParserContext parser, ByteBuffer buffer, FloatConstant floatConstant, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(floatConstant.FirstToken, "This expression doesn't do anything.");
             buffer.Add(floatConstant.FirstToken, OpCode.LITERAL, parser.GetFloatConstant(floatConstant.Value));
         }
 
-        private void CompileIncrement(Parser parser, ByteBuffer buffer, Increment increment, bool outputUsed)
+        private void CompileIncrement(ParserContext parser, ByteBuffer buffer, Increment increment, bool outputUsed)
         {
             if (!outputUsed)
             {
@@ -1384,7 +1384,7 @@ namespace Crayon
             }
         }
 
-        private void CompileListDefinition(Parser parser, ByteBuffer buffer, ListDefinition listDef, bool outputUsed)
+        private void CompileListDefinition(ParserContext parser, ByteBuffer buffer, ListDefinition listDef, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(listDef.FirstToken, "List allocation made without storing it. This is likely a mistake.");
             foreach (Expression item in listDef.Items)
@@ -1394,7 +1394,7 @@ namespace Crayon
             buffer.Add(listDef.FirstToken, OpCode.DEF_LIST, listDef.Items.Length);
         }
 
-        private void CompileLibraryFunctionCall(Parser parser, ByteBuffer buffer, LibraryFunctionCall libFunc, List<Expression> argsOverrideOrNull, Token parenTokenOverride, bool outputUsed)
+        private void CompileLibraryFunctionCall(ParserContext parser, ByteBuffer buffer, LibraryFunctionCall libFunc, List<Expression> argsOverrideOrNull, Token parenTokenOverride, bool outputUsed)
         {
             List<Expression> args = argsOverrideOrNull ?? new List<Expression>(libFunc.Args);
             this.CompileExpressionList(parser, buffer, args, true);
@@ -1414,20 +1414,20 @@ namespace Crayon
                 outputUsed ? 1 : 0);
         }
 
-        private void CompileNegativeSign(Parser parser, ByteBuffer buffer, NegativeSign negativeSign, bool outputUsed)
+        private void CompileNegativeSign(ParserContext parser, ByteBuffer buffer, NegativeSign negativeSign, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(negativeSign.FirstToken, "This expression does nothing.");
             this.CompileExpression(parser, buffer, negativeSign.Root, true);
             buffer.Add(negativeSign.FirstToken, OpCode.NEGATIVE_SIGN);
         }
 
-        private void CompileStringConstant(Parser parser, ByteBuffer buffer, StringConstant stringConstant, bool outputUsed)
+        private void CompileStringConstant(ParserContext parser, ByteBuffer buffer, StringConstant stringConstant, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(stringConstant.FirstToken, "This expression does nothing.");
             buffer.Add(stringConstant.FirstToken, OpCode.LITERAL, parser.GetStringConstant(stringConstant.Value));
         }
 
-        private void CompileBinaryOpChain(Parser parser, ByteBuffer buffer, BinaryOpChain opChain, bool outputUsed)
+        private void CompileBinaryOpChain(ParserContext parser, ByteBuffer buffer, BinaryOpChain opChain, bool outputUsed)
         {
             if (!outputUsed)
             {
@@ -1469,7 +1469,7 @@ namespace Crayon
             }
         }
 
-        private void CompileBracketIndex(Parser parser, ByteBuffer buffer, BracketIndex bracketIndex, bool outputUsed)
+        private void CompileBracketIndex(ParserContext parser, ByteBuffer buffer, BracketIndex bracketIndex, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(bracketIndex.FirstToken, "This expression does nothing.");
             this.CompileExpression(parser, buffer, bracketIndex.Root, true);
@@ -1477,20 +1477,20 @@ namespace Crayon
             buffer.Add(bracketIndex.BracketToken, OpCode.INDEX);
         }
 
-        private void CompileDotStep(Parser parser, ByteBuffer buffer, DotStep dotStep, bool outputUsed)
+        private void CompileDotStep(ParserContext parser, ByteBuffer buffer, DotStep dotStep, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(dotStep.FirstToken, "This expression does nothing.");
             this.CompileExpression(parser, buffer, dotStep.Root, true);
             buffer.Add(dotStep.DotToken, OpCode.DEREF_DOT, parser.GetId(dotStep.StepToken.Value));
         }
 
-        private void CompileBooleanConstant(Parser parser, ByteBuffer buffer, BooleanConstant boolConstant, bool outputUsed)
+        private void CompileBooleanConstant(ParserContext parser, ByteBuffer buffer, BooleanConstant boolConstant, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(boolConstant.FirstToken, "This expression does nothing.");
             buffer.Add(boolConstant.FirstToken, OpCode.LITERAL, parser.GetBoolConstant(boolConstant.Value));
         }
 
-        private void CompileVariable(Parser parser, ByteBuffer buffer, Variable variable, bool outputUsed)
+        private void CompileVariable(ParserContext parser, ByteBuffer buffer, Variable variable, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(variable.FirstToken, "This expression does nothing.");
             int nameId = parser.GetId(variable.Name);
@@ -1505,13 +1505,13 @@ namespace Crayon
             }
         }
 
-        private void CompileIntegerConstant(Parser parser, ByteBuffer buffer, IntegerConstant intConst, bool outputUsed)
+        private void CompileIntegerConstant(ParserContext parser, ByteBuffer buffer, IntegerConstant intConst, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(intConst.FirstToken, "This expression does nothing.");
             buffer.Add(intConst.FirstToken, OpCode.LITERAL, parser.GetIntConstant(intConst.Value));
         }
 
-        private void CompileLiteralStream(Parser parser, ByteBuffer buffer, IList<Expression> expressions, bool outputUsed)
+        private void CompileLiteralStream(ParserContext parser, ByteBuffer buffer, IList<Expression> expressions, bool outputUsed)
         {
             if (expressions.Count == 1)
             {
@@ -1536,7 +1536,7 @@ namespace Crayon
         private const int EXPR_STREAM_OTHER = 1;
         private const int EXPR_STREAM_LITERAL = 2;
 
-        public void CompileExpressionList(Parser parser, ByteBuffer buffer, IList<Expression> expressions, bool outputUsed)
+        public void CompileExpressionList(ParserContext parser, ByteBuffer buffer, IList<Expression> expressions, bool outputUsed)
         {
             if (expressions.Count == 0) return;
             if (expressions.Count == 1)
@@ -1597,7 +1597,7 @@ namespace Crayon
         }
 
         private void CompileInlinedLibraryFunctionCall(
-            Parser parser,
+            ParserContext parser,
             ByteBuffer buffer,
             FunctionCall userWrittenOuterFunctionCall,
             FunctionDefinition embedFunctionBeingInlined,
@@ -1688,7 +1688,7 @@ namespace Crayon
             }
         }
 
-        private void CompileFunctionCall(Parser parser, ByteBuffer buffer, FunctionCall funCall, bool outputUsed)
+        private void CompileFunctionCall(ParserContext parser, ByteBuffer buffer, FunctionCall funCall, bool outputUsed)
         {
             bool argCountIsNegativeOne = false;
             FunctionDefinition ownerFunction = funCall.Owner as FunctionDefinition;

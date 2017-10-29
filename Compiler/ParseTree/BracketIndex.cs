@@ -5,7 +5,7 @@ namespace Crayon.ParseTree
 {
     internal class BracketIndex : Expression
     {
-        internal override Expression PastelResolve(Parser parser)
+        internal override Expression PastelResolve(ParserContext parser)
         {
             throw new System.NotImplementedException();
         }
@@ -24,7 +24,7 @@ namespace Crayon.ParseTree
             this.Index = index;
         }
 
-        internal override Expression Resolve(Parser parser)
+        internal override Expression Resolve(ParserContext parser)
         {
             this.Root = this.Root.Resolve(parser);
             this.Index = this.Index.Resolve(parser);
@@ -74,7 +74,7 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override Expression ResolveNames(Parser parser)
+        internal override Expression ResolveNames(ParserContext parser)
         {
             this.Root = this.Root.ResolveNames(parser);
             this.Index = this.Index.ResolveNames(parser);
@@ -87,7 +87,7 @@ namespace Crayon.ParseTree
             this.Index.GetAllVariablesReferenced(vars);
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {

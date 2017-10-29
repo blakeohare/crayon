@@ -16,9 +16,9 @@ namespace Crayon.ParseTree
         // function, shouldn't pose any problems. Generally this would be inline constants, simple variables, or static fields.
         public virtual bool IsInlineCandidate {  get { return false; } }
 
-        internal abstract Expression Resolve(Parser parser);
+        internal abstract Expression Resolve(ParserContext parser);
 
-        internal abstract Expression ResolveNames(Parser parser);
+        internal abstract Expression ResolveNames(ParserContext parser);
 
         public virtual bool IsLiteral { get { return false; } }
 
@@ -38,6 +38,6 @@ namespace Crayon.ParseTree
         }
 
         internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
-        internal abstract Expression PastelResolve(Parser parser);
+        internal abstract Expression PastelResolve(ParserContext parser);
     }
 }

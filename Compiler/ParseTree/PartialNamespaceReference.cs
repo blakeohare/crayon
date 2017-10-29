@@ -8,7 +8,7 @@ namespace Crayon.ParseTree
     // Otherwise, throw an error during the Resolve phase.
     internal class PartialNamespaceReference : Expression
     {
-        internal override Expression PastelResolve(Parser parser)
+        internal override Expression PastelResolve(ParserContext parser)
         {
             throw new NotImplementedException();
         }
@@ -23,17 +23,17 @@ namespace Crayon.ParseTree
             this.Name = name;
         }
 
-        internal override Expression Resolve(Parser parser)
+        internal override Expression Resolve(ParserContext parser)
         {
             throw new ParserException(this.FirstToken, "Dangling reference to a namespace.");
         }
 
-        internal override Expression ResolveNames(Parser parser)
+        internal override Expression ResolveNames(ParserContext parser)
         {
             throw new InvalidOperationException(); // created during the name resolution phase.
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
     }
 }

@@ -13,7 +13,7 @@ namespace Crayon.ParseTree
             this.Expression = nullableExpression;
         }
 
-        internal override IList<Executable> Resolve(Parser parser)
+        internal override IList<Executable> Resolve(ParserContext parser)
         {
             if (this.Expression != null)
             {
@@ -22,7 +22,7 @@ namespace Crayon.ParseTree
             return Listify(this);
         }
 
-        internal override Executable ResolveNames(Parser parser)
+        internal override Executable ResolveNames(ParserContext parser)
         {
             if (this.Expression != null)
             {
@@ -33,7 +33,7 @@ namespace Crayon.ParseTree
 
         public override bool IsTerminator { get { return true; } }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             if (this.Expression != null)
             {
@@ -46,7 +46,7 @@ namespace Crayon.ParseTree
             if (this.Expression != null) this.Expression.GetAllVariablesReferenced(vars);
         }
 
-        internal override Executable PastelResolve(Parser parser)
+        internal override Executable PastelResolve(ParserContext parser)
         {
             if (this.Expression != null)
             {

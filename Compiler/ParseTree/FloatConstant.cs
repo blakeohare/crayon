@@ -5,7 +5,7 @@ namespace Crayon.ParseTree
 {
     internal class FloatConstant : Expression, IConstantValue
     {
-        internal override Expression PastelResolve(Parser parser)
+        internal override Expression PastelResolve(ParserContext parser)
         {
             return this;
         }
@@ -34,12 +34,12 @@ namespace Crayon.ParseTree
             return value;
         }
 
-        internal override Expression Resolve(Parser parser)
+        internal override Expression Resolve(ParserContext parser)
         {
             return this;
         }
 
-        internal override Expression ResolveNames(Parser parser)
+        internal override Expression ResolveNames(ParserContext parser)
         {
             return this;
         }
@@ -51,6 +51,6 @@ namespace Crayon.ParseTree
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
     }
 }

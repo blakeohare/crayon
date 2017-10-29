@@ -20,12 +20,12 @@ namespace Crayon.ParseTree
             this.MemberID = -1;
         }
 
-        internal override void Resolve(Parser parser)
+        internal override void Resolve(ParserContext parser)
         {
             this.DefaultValue = this.DefaultValue.Resolve(parser);
         }
 
-        internal override void ResolveNames(Parser parser)
+        internal override void ResolveNames(ParserContext parser)
         {
             parser.CurrentCodeContainer = this;
             this.DefaultValue = this.DefaultValue.ResolveNames(parser);
@@ -34,7 +34,7 @@ namespace Crayon.ParseTree
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             // Throws if it finds any variable.
             this.DefaultValue.PerformLocalIdAllocation(parser, varIds, phase);

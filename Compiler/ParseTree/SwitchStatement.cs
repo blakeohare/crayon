@@ -76,7 +76,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override IList<Executable> Resolve(Parser parser)
+        internal override IList<Executable> Resolve(ParserContext parser)
         {
             TODO.MakeSwitchStatementFallthroughsErrors();
             if (this.explicitMax != null)
@@ -176,7 +176,7 @@ namespace Crayon.ParseTree
             return this.CompilationResolution(parser);
         }
 
-        internal override Executable ResolveNames(Parser parser)
+        internal override Executable ResolveNames(ParserContext parser)
         {
             this.Condition = this.Condition.ResolveNames(parser);
             foreach (Chunk chunk in this.Chunks)
@@ -187,7 +187,7 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal IList<Executable> CompilationResolution(Parser parser)
+        internal IList<Executable> CompilationResolution(ParserContext parser)
         {
             Chunk lastChunk = this.chunks[this.chunks.Length - 1];
             bool lastChunkContainsNull = false;
@@ -265,7 +265,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             this.Condition.PerformLocalIdAllocation(parser, varIds, phase);
 
@@ -312,7 +312,7 @@ namespace Crayon.ParseTree
             throw new NotImplementedException();
         }
 
-        internal override Executable PastelResolve(Parser parser)
+        internal override Executable PastelResolve(ParserContext parser)
         {
             this.Condition = this.Condition.PastelResolve(parser);
             for (int i = 0; i < this.Chunks.Length; ++i)

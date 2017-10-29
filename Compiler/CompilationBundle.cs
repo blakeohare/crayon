@@ -27,7 +27,7 @@ namespace Crayon
         {
             using (new PerformanceSection("CompilationBundle.Compile"))
             {
-                Parser parser = new Parser(buildContext);
+                ParserContext parser = new ParserContext(buildContext);
                 Crayon.ParseTree.TopLevelConstruct[] resolvedParseTree = parser.ParseAllTheThings();
 
                 ByteCodeCompiler bcc = new ByteCodeCompiler();

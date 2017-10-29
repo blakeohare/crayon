@@ -23,7 +23,7 @@ namespace Crayon.ParseTree
             this.HACK_IsVmGlobal = false;
         }
 
-        internal override IList<Executable> Resolve(Parser parser)
+        internal override IList<Executable> Resolve(ParserContext parser)
         {
             this.Target = this.Target.Resolve(parser);
 
@@ -53,7 +53,7 @@ namespace Crayon.ParseTree
             this.Target.GetAllVariableNames(lookup);
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             this.Value.PerformLocalIdAllocation(parser, varIds, phase);
 
@@ -73,7 +73,7 @@ namespace Crayon.ParseTree
             this.Target.PerformLocalIdAllocation(parser, varIds, phase);
         }
 
-        internal override Executable ResolveNames(Parser parser)
+        internal override Executable ResolveNames(ParserContext parser)
         {
             this.Target = this.Target.ResolveNames(parser);
             this.Value = this.Value.ResolveNames(parser);
@@ -92,7 +92,7 @@ namespace Crayon.ParseTree
             this.Value.GetAllVariablesReferenced(vars);
         }
 
-        internal override Executable PastelResolve(Parser parser)
+        internal override Executable PastelResolve(ParserContext parser)
         {
             this.Target = this.Target.PastelResolve(parser);
             this.Value = this.Value.PastelResolve(parser);

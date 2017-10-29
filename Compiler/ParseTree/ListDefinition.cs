@@ -6,7 +6,7 @@ namespace Crayon.ParseTree
 {
     internal class ListDefinition : Expression
     {
-        internal override Expression PastelResolve(Parser parser)
+        internal override Expression PastelResolve(ParserContext parser)
         {
             throw new NotImplementedException();
         }
@@ -20,7 +20,7 @@ namespace Crayon.ParseTree
             this.Items = items.ToArray();
         }
 
-        internal override Expression Resolve(Parser parser)
+        internal override Expression Resolve(ParserContext parser)
         {
             for (int i = 0; i < this.Items.Length; ++i)
             {
@@ -30,7 +30,7 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override Expression ResolveNames(Parser parser)
+        internal override Expression ResolveNames(ParserContext parser)
         {
             this.BatchExpressionNameResolver(parser, this.Items);
             return this;
@@ -41,7 +41,7 @@ namespace Crayon.ParseTree
             throw new NotImplementedException();
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             foreach (Expression item in this.Items)
             {

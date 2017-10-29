@@ -5,7 +5,7 @@ namespace Crayon.ParseTree
 {
     internal class Increment : Expression
     {
-        internal override Expression PastelResolve(Parser parser)
+        internal override Expression PastelResolve(ParserContext parser)
         {
             throw new NotImplementedException();
         }
@@ -26,7 +26,7 @@ namespace Crayon.ParseTree
             this.Root = root;
         }
 
-        internal override Expression Resolve(Parser parser)
+        internal override Expression Resolve(ParserContext parser)
         {
             this.Root = this.Root.Resolve(parser);
 
@@ -40,7 +40,7 @@ namespace Crayon.ParseTree
             return this;
         }
 
-        internal override void PerformLocalIdAllocation(Parser parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
@@ -49,7 +49,7 @@ namespace Crayon.ParseTree
             }
         }
 
-        internal override Expression ResolveNames(Parser parser)
+        internal override Expression ResolveNames(ParserContext parser)
         {
             this.Root = this.Root.ResolveNames(parser);
             return this;
