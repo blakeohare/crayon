@@ -274,9 +274,9 @@ namespace Crayon
                 string platformName = parser.BuildContext.Platform;
                 Platform.AbstractPlatform platform = platformName == null || this.PlatformProvider == null ? null : this.PlatformProvider.GetPlatform(platformName);
                 library = new Library(libraryMetadata, platform);
-                CompilationScope scope = new CompilationScope(parser.BuildContext, library);
+                CompilationScope scope = new CompilationScope(parser.BuildContext, library.Metadata);
                 library.Scope = scope;
-                library.AddLocaleAccess(parser.CurrentLocale);
+                library.Metadata.AddLocaleAccess(parser.CurrentLocale);
 
                 this.librariesAlreadyImportedIndexByKey[libraryMetadata.CanonicalKey] = this.librariesAlreadyImported.Count;
                 this.librariesAlreadyImported.Add(library);

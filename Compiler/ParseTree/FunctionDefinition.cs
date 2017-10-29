@@ -22,7 +22,7 @@ namespace Crayon.ParseTree
 
         public FunctionDefinition(
             Token functionToken,
-            Library library,
+            LibraryMetadata library,
             TopLevelConstruct nullableOwner,
             bool isStaticMethod,
             Token nameToken,

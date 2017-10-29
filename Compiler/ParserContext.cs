@@ -29,7 +29,7 @@ namespace Crayon
 
         public void AddCompilationScope(CompilationScope scope)
         {
-            string scopeKey = scope.Library == null ? "." : scope.Library.Metadata.CanonicalKey;
+            string scopeKey = scope.Library == null ? "." : scope.Library.CanonicalKey;
             this.compilationScopes.Add(scopeKey, scope);
         }
 
@@ -105,7 +105,7 @@ namespace Crayon
 
         public TopLevelConstruct CurrentCodeContainer { get; set; }
 
-        public Library CurrentLibrary { get; set; }
+        public LibraryMetadata CurrentLibrary { get; set; }
 
         public CompilationScope CurrentScope { get; private set; }
 
@@ -333,7 +333,7 @@ namespace Crayon
             if (this.CurrentLibrary != null && this.CurrentLibrary.CanonicalKey != "en:Core")
             {
                 Library coreLibrary = this.LibraryManager.GetCoreLibrary(this);
-                this.CurrentLibrary.AddLibraryDependency(coreLibrary);
+                this.CurrentLibrary.AddLibraryDependency(coreLibrary.Metadata);
             }
 
             List<CompilationScope> scopesAdded = new List<CompilationScope>();
@@ -351,7 +351,7 @@ namespace Crayon
                 {
                     if (this.CurrentLibrary != null)
                     {
-                        this.CurrentLibrary.AddLibraryDependency(library);
+                        this.CurrentLibrary.AddLibraryDependency(library.Metadata);
                     }
                     scopesAdded.Add(library.Scope);
                 }

@@ -7,7 +7,7 @@ namespace Crayon.ParseTree
     {
         public string ImportPath { get; set; }
 
-        public ImportStatement(Token importToken, string path, Library callingLibrary, FileScope fileScope)
+        public ImportStatement(Token importToken, string path, LibraryMetadata callingLibrary, FileScope fileScope)
             : base(importToken, null, fileScope)
         {
             this.Library = callingLibrary;

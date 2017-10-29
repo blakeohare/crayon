@@ -68,5 +68,38 @@ namespace Crayon
                 default: return this.Name;
             }
         }
+
+
+        private List<LibraryMetadata> libraryDependencies = new List<LibraryMetadata>();
+        private HashSet<Locale> localesAccessed = new HashSet<Locale>();
+        private HashSet<LibraryMetadata> libraryDependencyDuplicateCheck = new HashSet<LibraryMetadata>();
+        private LibraryMetadata[] libraryDependenciesArray = null;
+        public void AddLibraryDependency(LibraryMetadata library)
+        {
+            if (!libraryDependencyDuplicateCheck.Contains(library) && library != this)
+            {
+                this.libraryDependencies.Add(library);
+                this.libraryDependenciesArray = null;
+            }
+            library.AddLocaleAccess(this.InternalLocale);
+        }
+
+        public void AddLocaleAccess(Locale locale)
+        {
+            this.localesAccessed.Add(locale);
+        }
+
+        public LibraryMetadata[] LibraryDependencies
+        {
+            get
+            {
+                if (this.libraryDependenciesArray == null)
+                {
+                    this.libraryDependenciesArray = this.libraryDependencies.ToArray();
+                }
+                return this.libraryDependenciesArray;
+            }
+        }
+
     }
 }

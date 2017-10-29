@@ -306,7 +306,7 @@ namespace Crayon
 
                 if (argLookup.ContainsKey(FlagParser.LIBRARY_DEP_TREE))
                 {
-                    string libs = LibraryDependencyResolver.GetDependencyTreeLog(compilationResult.LibrariesUsed.ToArray());
+                    string libs = LibraryDependencyResolver.GetDependencyTreeLog(compilationResult.LibrariesUsed.Select(lib => lib.Metadata).ToArray());
                     Console.WriteLine("<LibraryDependencies>");
                     Console.WriteLine(libs.Trim());
                     Console.WriteLine("</LibraryDependencies>");

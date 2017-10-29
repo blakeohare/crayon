@@ -35,7 +35,7 @@ namespace Crayon.ParseTree
             IList<string> subclassNames,
             string ns,
             TopLevelConstruct owner,
-            Library library,
+            LibraryMetadata library,
             Token staticToken,
             Token finalToken,
             FileScope fileScope)

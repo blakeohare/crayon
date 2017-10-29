@@ -15,7 +15,7 @@ namespace Crayon
         {
             List<TopLevelConstruct> originalCode = new List<TopLevelConstruct>();
             foreach (CompilationScope scope in compilationScopes
-                .OrderBy(scope => scope.Library == null ? "" : scope.Library.Metadata.Name))
+                .OrderBy(scope => scope.Library == null ? "" : scope.Library.Name))
             {
                 originalCode.AddRange(scope.GetExecutables_HACK());
             }
@@ -116,7 +116,7 @@ namespace Crayon
                     if (library != null)
                     {
                         // TODO: once you get rid of this line, make the Library setter protected
-                        nsInstance.Library = library;
+                        nsInstance.Library = library.Metadata;
                     }
                     lookup[ns] = nsInstance;
                 }
@@ -150,10 +150,10 @@ namespace Crayon
 
             Dictionary<string, TopLevelConstruct> definitionsByFullyQualifiedNames = this.CreateFullyQualifiedLookup(this.currentCode);
 
-            Library[] librariesInDependencyOrder = LibraryDependencyResolver.GetLibraryResolutionOrder(this.parser);
+            LibraryMetadata[] librariesInDependencyOrder = LibraryDependencyResolver.GetLibraryResolutionOrder(this.parser);
 
             // Populate lookups of executables based on library.
-            Dictionary<Library, Dictionary<string, TopLevelConstruct>> definitionsByLibrary = new Dictionary<Library, Dictionary<string, TopLevelConstruct>>();
+            Dictionary<LibraryMetadata, Dictionary<string, TopLevelConstruct>> definitionsByLibrary = new Dictionary<LibraryMetadata, Dictionary<string, TopLevelConstruct>>();
             Dictionary<string, TopLevelConstruct> nonLibraryCode = new Dictionary<string, TopLevelConstruct>();
             foreach (string exKey in definitionsByFullyQualifiedNames.Keys)
             {
@@ -164,7 +164,7 @@ namespace Crayon
                 }
                 else
                 {
-                    Library library = ex.Library;
+                    LibraryMetadata library = ex.Library;
                     Dictionary<string, TopLevelConstruct> lookup;
                     if (!definitionsByLibrary.TryGetValue(library, out lookup))
                     {
@@ -179,7 +179,7 @@ namespace Crayon
             {
                 Dictionary<string, TopLevelConstruct> alreadyResolvedDependencies;
                 // Resolve raw names into the actual things they refer to based on namespaces and imports.
-                foreach (Library library in librariesInDependencyOrder)
+                foreach (LibraryMetadata library in librariesInDependencyOrder)
                 {
                     // First create a lookup of JUST the libraries that are available to this library.
                     alreadyResolvedDependencies = Util.MergeDictionaries(
@@ -189,7 +189,7 @@ namespace Crayon
                     this.ResolveNames(library, alreadyResolvedDependencies, definitionsByLibrary[library]);
                 }
                 alreadyResolvedDependencies = Util.MergeDictionaries<string, TopLevelConstruct>(
-                    this.parser.LibraryManager.LibrariesUsed.Select(lib => definitionsByLibrary[lib]).ToArray());
+                    this.parser.LibraryManager.LibrariesUsed.Select(lib => definitionsByLibrary[lib.Metadata]).ToArray());
                 nonLibraryCode.Remove("~");
                 this.ResolveNames(null, alreadyResolvedDependencies, nonLibraryCode);
             }
@@ -266,7 +266,7 @@ namespace Crayon
         }
 
         private void ResolveNames(
-            Library nullableLibrary,
+            LibraryMetadata nullableLibrary,
             Dictionary<string, TopLevelConstruct> alreadyResolved,
             Dictionary<string, TopLevelConstruct> currentLibraryDefinitions)
         {

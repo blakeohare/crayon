@@ -128,43 +128,12 @@ namespace Crayon
             }
         }
 
-        private List<Library> libraryDependencies = new List<Library>();
-        private HashSet<Locale> localesAccessed = new HashSet<Locale>();
-        private HashSet<Library> libraryDependencyDuplicateCheck = new HashSet<Library>();
-        private Library[] libraryDependenciesArray = null;
-        public void AddLibraryDependency(Library library)
-        {
-            if (!libraryDependencyDuplicateCheck.Contains(library) && library != this)
-            {
-                this.libraryDependencies.Add(library);
-                this.libraryDependenciesArray = null;
-            }
-            library.AddLocaleAccess(this.Metadata.InternalLocale);
-        }
-
-        public void AddLocaleAccess(Locale locale)
-        {
-            this.localesAccessed.Add(locale);
-        }
-
-        public Library[] LibraryDependencies
-        {
-            get
-            {
-                if (this.libraryDependenciesArray == null)
-                {
-                    this.libraryDependenciesArray = this.libraryDependencies.ToArray();
-                }
-                return this.libraryDependenciesArray;
-            }
-        }
-
         public bool IsMoreThanJustEmbedCode
         {
             get { return this.filepathsByFunctionName.Count > 0; }
         }
 
-        public bool IsAllowedImport(Library currentLibrary)
+        public bool IsAllowedImport(LibraryMetadata currentLibrary)
         {
             if (this.Metadata.IsImportRestricted)
             {

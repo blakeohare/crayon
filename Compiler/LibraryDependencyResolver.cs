@@ -8,17 +8,17 @@ namespace Crayon
     class LibraryDependencyResolver
     {
         // Essentially, just a post-order traversal
-        public static Library[] GetLibraryResolutionOrder(ParserContext parser)
+        public static LibraryMetadata[] GetLibraryResolutionOrder(ParserContext parser)
         {
             // these are alphabetized simply to guarantee consistent behavior.
-            Library[] unorderedLibraries = parser.LibraryManager.LibrariesUsed.OrderBy(lib => lib.Name.ToLowerInvariant()).ToArray();
+            LibraryMetadata[] unorderedLibraries = parser.LibraryManager.LibrariesUsed.OrderBy(lib => lib.Name.ToLowerInvariant()).Select(lib => lib.Metadata).ToArray();
 
-            List<Library> orderedLibraries = new List<Library>();
-            HashSet<Library> usedLibraries = new HashSet<Library>();
+            List<LibraryMetadata> orderedLibraries = new List<LibraryMetadata>();
+            HashSet<LibraryMetadata> usedLibraries = new HashSet<LibraryMetadata>();
 
-            HashSet<Library> cycleCheck = new HashSet<Library>();
-            Stack<Library> breadcrumbs = new Stack<Library>();
-            foreach (Library library in unorderedLibraries)
+            HashSet<LibraryMetadata> cycleCheck = new HashSet<LibraryMetadata>();
+            Stack<LibraryMetadata> breadcrumbs = new Stack<LibraryMetadata>();
+            foreach (LibraryMetadata library in unorderedLibraries)
             {
                 if (!usedLibraries.Contains(library))
                 {
@@ -33,11 +33,11 @@ namespace Crayon
         }
 
         private static void LibraryUsagePostOrderTraversal(
-            Library libraryToUse,
-            List<Library> libraryOrderOut,
-            HashSet<Library> usedLibraries,
-            HashSet<Library> cycleCheck,
-            Stack<Library> breadcrumbs)
+            LibraryMetadata libraryToUse,
+            List<LibraryMetadata> libraryOrderOut,
+            HashSet<LibraryMetadata> usedLibraries,
+            HashSet<LibraryMetadata> cycleCheck,
+            Stack<LibraryMetadata> breadcrumbs)
         {
             if (usedLibraries.Contains(libraryToUse)) return;
 
@@ -48,7 +48,7 @@ namespace Crayon
                 StringBuilder message = new StringBuilder();
                 message.Append("There is a dependency cycle in your libraries: ");
                 bool first = true;
-                foreach (Library breadcrumb in breadcrumbs)
+                foreach (LibraryMetadata breadcrumb in breadcrumbs)
                 {
                     if (first) first = false;
                     else message.Append(" -> ");
@@ -58,7 +58,7 @@ namespace Crayon
             }
             cycleCheck.Add(libraryToUse);
 
-            foreach (Library dependency in libraryToUse.LibraryDependencies)
+            foreach (LibraryMetadata dependency in libraryToUse.LibraryDependencies)
             {
                 LibraryUsagePostOrderTraversal(dependency, libraryOrderOut, usedLibraries, cycleCheck, breadcrumbs);
             }
@@ -69,10 +69,10 @@ namespace Crayon
             libraryOrderOut.Add(libraryToUse);
         }
 
-        public static string GetDependencyTreeLog(Library[] libraries)
+        public static string GetDependencyTreeLog(LibraryMetadata[] libraries)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (Library library in libraries)
+            foreach (LibraryMetadata library in libraries)
             {
                 sb.Append(library.Name);
                 sb.Append(": ");

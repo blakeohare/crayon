@@ -7,11 +7,11 @@ namespace Crayon
 {
     public class CompilationScope
     {
-        public Library Library { get; private set; }
+        public LibraryMetadata Library { get; private set; }
 
         public Locale Locale
         {
-            get { return this.Library == null ? this.buildContext.CompilerLocale : this.Library.Metadata.InternalLocale; }
+            get { return this.Library == null ? this.buildContext.CompilerLocale : this.Library.InternalLocale; }
         }
 
         private List<TopLevelConstruct> executables = new List<TopLevelConstruct>();
@@ -35,7 +35,7 @@ namespace Crayon
 
         private BuildContext buildContext;
 
-        public CompilationScope(BuildContext buildContext, Library library)
+        public CompilationScope(BuildContext buildContext, LibraryMetadata library)
         {
             this.buildContext = buildContext;
             this.Library = library;

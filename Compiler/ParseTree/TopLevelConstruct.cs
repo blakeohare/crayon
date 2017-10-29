@@ -6,7 +6,7 @@ namespace Crayon.ParseTree
     public abstract class TopLevelConstruct : Node
     {
         public FileScope FileScope { get; private set; }
-        public Library Library { get; set; }
+        public LibraryMetadata Library { get; set; }
 
         public TopLevelConstruct(Token firstToken, TopLevelConstruct owner, FileScope fileScope)
             : base(firstToken, owner)
