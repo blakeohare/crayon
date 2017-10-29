@@ -12,12 +12,13 @@ namespace Crayon
         public CompilationScope Scope { get; set; }
         private string platformName;
 
-        public string Name { get; set; }
+        public string Name { get { return this.Metadata.Name; } }
         public string Version { get { return "v1"; } } // TODO: versions
-        public string RootDirectory { get; set; }
+        public string RootDirectory { get { return this.Metadata.Directory; } }
+        public string CanonicalKey { get { return this.Metadata.CanonicalKey; } }
+
         private HashSet<string> onlyImportableFrom = null;
         public Dictionary<string, object> CompileTimeConstants { get; set; }
-        public string CanonicalKey { get; private set; }
 
         internal LibraryResourceDatabase Resources { get; private set; }
 
@@ -30,14 +31,11 @@ namespace Crayon
         {
             TODO.LibrariesNeedVersionNumber();
 
-            this.CanonicalKey = metadata.InternalLocale.ID + ":" + metadata.Name;
             this.Metadata = metadata;
             this.platformName = nullablePlatform == null ? null : nullablePlatform.Name;
 
             this.Resources = new LibraryResourceDatabase(this, nullablePlatform);
 
-            this.Name = metadata.Name;
-            this.RootDirectory = metadata.Directory;
             string[] manifest = metadata.Manifest.Split('\n');
             Dictionary<string, string> values = new Dictionary<string, string>();
             Dictionary<string, bool> flagValues = new Dictionary<string, bool>();
