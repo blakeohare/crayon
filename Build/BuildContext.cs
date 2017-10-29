@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using System.Xml.Serialization;
+using Build.BuildParseNodes;
 using Common;
 using Localization;
 
 namespace Build
 {
-    // TODO: split these classes out into their own namespace. It is time.
     public class BuildContext
     {
         public string ProjectID { get; set; }
@@ -37,187 +36,13 @@ namespace Build
         public string Version { get; set; }
         public Locale CompilerLocale { get; set; }
 
-        public enum VarType
-        {
-            BOOLEAN,
-            INT,
-            FLOAT,
-            STRING
-        }
-
-        public class BuildVarCanonicalized
-        {
-            public string ID { get; set; }
-            public VarType Type { get; set; }
-            public string StringValue { get; set; }
-            public int IntValue { get; set; }
-            public bool BoolValue { get; set; }
-            public double FloatValue { get; set; }
-        }
-
-        public class SourceItem
-        {
-            [XmlAttribute("alias")]
-            public string Alias { get; set; }
-
-            [XmlText]
-            public string Value { get; set; }
-        }
-
-        public abstract class BuildItem
-        {
-            [XmlElement("projectname")]
-            public string ProjectName { get; set; }
-
-            [XmlElement("version")]
-            public string Version { get; set; }
-
-            [XmlElement("description")]
-            public string Description { get; set; }
-
-            [XmlElement("source")]
-            public SourceItem[] Sources { get; set; }
-
-            public SourceItem[] SourcesNonNull { get { return this.Sources ?? new SourceItem[0]; } }
-
-            [XmlElement("output")]
-            public string Output { get; set; }
-
-            [XmlArray("imagesheets")]
-            [XmlArrayItem("sheet")]
-            public ImageSheet[] ImageSheets { get; set; }
-
-            [XmlElement("jsfileprefix")]
-            public string JsFilePrefix { get; set; }
-
-            [XmlElement("minified")]
-            public string MinifiedRaw { get; set; }
-
-            [XmlElement("readablebytecode")]
-            public string ExportDebugByteCodeRaw { get; set; }
-
-            [XmlElement("var")]
-            public BuildVar[] Var { get; set; }
-
-            [XmlElement("guidseed")]
-            public string GuidSeed { get; set; }
-
-            [XmlElement("icon")]
-            public string IconFilePath { get; set; }
-
-            [XmlElement("launchscreen")]
-            public string LaunchScreen { get; set; }
-
-            [XmlElement("title")]
-            public string DefaultTitle { get; set; }
-
-            // comma-delimited list of values
-            // { portrait | upsidedown | landscape | landscapeleft | landscaperight | all }
-            // landscape is a shortcut of landscapeleft,landscaperight
-            // see Common/OrientationParser.cs
-            [XmlElement("orientation")]
-            public string Orientation { get; set; }
-
-            [XmlElement("crayonpath")]
-            public string CrayonPath { get; set; }
-
-            [XmlElement("iosbundleprefix")]
-            public string IosBundlePrefix { get; set; }
-
-            [XmlElement("javapackage")]
-            public string JavaPackage { get; set; }
-
-            [XmlElement("windowsize")]
-            public Size WindowSize { get; set; }
-
-            [XmlElement("compilerlocale")]
-            public string CompilerLocale { get; set; }
-
-            private bool TranslateStringToBoolean(string value)
-            {
-                if (value == null) return false;
-                value = value.ToLowerInvariant();
-                return value == "1" || value == "t" || value == "y" || value == "true" || value == "yes";
-            }
-
-            public bool Minified
-            {
-                get { return this.TranslateStringToBoolean(this.MinifiedRaw); }
-            }
-
-            public bool ExportDebugByteCode
-            {
-                get { return this.TranslateStringToBoolean(this.ExportDebugByteCodeRaw); }
-            }
-        }
-
-        [XmlRoot("build")]
-        public class Build : BuildItem
-        {
-            [XmlElement("target")]
-            public Target[] Targets { get; set; }
-        }
-
-        public class Target : BuildItem
-        {
-            [XmlAttribute("name")]
-            public string Name { get; set; }
-
-            [XmlElement("platform")]
-            public string Platform { get; set; }
-        }
-
-        public class BuildVar
-        {
-            [XmlElement("id")]
-            public string Id { get; set; }
-
-            [XmlAttribute("type")]
-            public string Type { get; set; }
-
-            [XmlElement("value")]
-            public string Value { get; set; }
-
-            [XmlElement("env")]
-            public string EnvironmentVarValue { get; set; }
-        }
-
-        public class ImageSheet
-        {
-            [XmlAttribute("id")]
-            public string Id { get; set; }
-
-            [XmlElement("prefix")]
-            public string[] Prefixes { get; set; }
-        }
-
-        public class Size
-        {
-            [XmlAttribute("width")]
-            public string Width { get; set; }
-
-            [XmlAttribute("height")]
-            public string Height { get; set; }
-
-            public static Size Merge(Size primary, Size secondary)
-            {
-                if (primary == null) return secondary;
-                if (secondary == null) return primary;
-                return new Size()
-                {
-                    Width = primary.Width ?? secondary.Width,
-                    Height = primary.Height ?? secondary.Height,
-                };
-            }
-        }
-
         public static BuildContext Parse(string projectDir, string buildFile, string nullableTargetName)
         {
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(Build));
-            Build buildInput;
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(BuildRoot));
+            BuildRoot buildInput;
             try
             {
-                buildInput = (Build)xmlSerializer.Deserialize(new StringReader(buildFile));
+                buildInput = (BuildRoot)xmlSerializer.Deserialize(new StringReader(buildFile));
             }
             catch (InvalidOperationException e)
             {
@@ -242,7 +67,7 @@ namespace Build
                 }
                 throw new InvalidOperationException("An error occurred while parsing the build file.");
             }
-            Build flattened = buildInput;
+            BuildRoot flattened = buildInput;
             string platform = null;
             Dictionary<string, BuildVarCanonicalized> varLookup;
             if (nullableTargetName != null)

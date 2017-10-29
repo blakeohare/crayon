@@ -42,16 +42,15 @@ namespace Crayon.ParseTree
 
                         if (parser.BuildContext.BuildVariableLookup.ContainsKey(index))
                         {
-                            BuildContext.BuildVarCanonicalized buildVar = parser.BuildContext.BuildVariableLookup[index];
+                            BuildVarCanonicalized buildVar = parser.BuildContext.BuildVariableLookup[index];
                             switch (buildVar.Type)
                             {
-                                case BuildContext.VarType.INT: return new IntegerConstant(this.FirstToken, buildVar.IntValue, this.Owner);
-                                case BuildContext.VarType.FLOAT: return new FloatConstant(this.FirstToken, buildVar.FloatValue, this.Owner);
-                                case BuildContext.VarType.STRING: return new StringConstant(this.FirstToken, buildVar.StringValue, this.Owner);
-                                case BuildContext.VarType.BOOLEAN: return new BooleanConstant(this.FirstToken, buildVar.BoolValue, this.Owner);
+                                case VarType.INT: return new IntegerConstant(this.FirstToken, buildVar.IntValue, this.Owner);
+                                case VarType.FLOAT: return new FloatConstant(this.FirstToken, buildVar.FloatValue, this.Owner);
+                                case VarType.STRING: return new StringConstant(this.FirstToken, buildVar.StringValue, this.Owner);
+                                case VarType.BOOLEAN: return new BooleanConstant(this.FirstToken, buildVar.BoolValue, this.Owner);
                                 default:
                                     throw new System.Exception("This should not happen."); // invalid types filtered during build context construction.
-
                             }
                         }
                         else
