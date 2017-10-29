@@ -31,7 +31,7 @@ namespace Crayon
 
             userCode.OptimizeJumps();
 
-            ByteBuffer literalsTable = parser.LiteralLookup.BuildByteCode();
+            ByteBuffer literalsTable = ByteBuffer.FromLiteralLookup(parser.LiteralLookup);
 
             ByteBuffer tokenData = this.BuildTokenData(userCode);
 
@@ -439,7 +439,7 @@ namespace Crayon
                 if (classDefinition.StaticConstructor == null)
                 {
                     classDefinition.StaticConstructor = new ConstructorDefinition(null, new Token[0], new Expression[0], new Expression[0], new Executable[0], null, classDefinition);
-                    classDefinition.StaticConstructor.Resolve(parser);
+                    classDefinition.StaticConstructor.ResolvePublic(parser);
                 }
 
                 List<Executable> staticFieldInitializers = new List<Executable>();

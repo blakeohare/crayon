@@ -270,5 +270,51 @@ namespace Crayon
             newByteRow.AddRange(newArgs);
             row.ByteCode = newByteRow.ToArray();
         }
+
+        public static ByteBuffer FromLiteralLookup(LiteralLookup literalLookup)
+        {
+            ByteBuffer output = new ByteBuffer();
+            int size = literalLookup.LiteralTypes.Count;
+            for (int i = 0; i < size; ++i)
+            {
+                Types type = literalLookup.LiteralTypes[i];
+                object value = literalLookup.LiteralValues[i];
+                switch (type)
+                {
+                    case Types.NULL:
+                        output.Add(null, OpCode.ADD_LITERAL, (int)Types.NULL);
+                        break;
+                    case Types.BOOLEAN:
+                        output.Add(null, OpCode.ADD_LITERAL, (int)Types.BOOLEAN, ((bool)value) ? 1 : 0);
+                        break;
+                    case Types.FLOAT:
+                        output.Add(null, OpCode.ADD_LITERAL, value.ToString(), (int)Types.FLOAT);
+                        break;
+                    case Types.INTEGER:
+                        output.Add(null, OpCode.ADD_LITERAL, (int)Types.INTEGER, (int)value);
+                        break;
+                    case Types.STRING:
+                        output.Add(null, OpCode.ADD_LITERAL, value.ToString(), (int)Types.STRING);
+                        break;
+                    case Types.CLASS:
+                        output.Add(null, OpCode.ADD_LITERAL, (int)Types.CLASS, (int)value);
+                        break;
+                    case Types.FUNCTION:
+                        output.Add(null, OpCode.ADD_LITERAL, value.ToString(), (int)Types.FUNCTION);
+                        break;
+                    default:
+                        // unknown literal type.
+                        throw new InvalidOperationException();
+                }
+            }
+
+            size = literalLookup.Names.Count;
+            for (int i = 0; i < size; ++i)
+            {
+                output.Add(null, OpCode.ADD_NAME, literalLookup.Names[i]);
+            }
+
+            return output;
+        }
     }
 }
