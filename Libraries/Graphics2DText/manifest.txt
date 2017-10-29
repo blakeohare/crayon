@@ -1,7 +1,0 @@
-NAME: Graphics2DText
-AUTHOR: Blake O'Hare
-DOCUMENTATION: http://crayonlang.org/docs/0.2.0/graphics2dtext
-DESCRIPTION: Render text for Game and Graphics2D-based games
-
-BOOL_FLAG: LIB_GRAPHICS2DTEXT_IS_OPENGL: false
-[csharp-app] BOOL_FLAG: LIB_GRAPHICS2DTEXT_IS_OPENGL: true

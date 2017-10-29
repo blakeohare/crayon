@@ -1,0 +1,6 @@
+{
+	"name": "ImageWebResources",
+	"author": "Blake O'Hare",
+	"documentation": "http://crayonlang.org/docs/0.2.0/imagewebresources",
+	"description": "Downloads images using HTTP and makes them available as an ImageResource."
+}

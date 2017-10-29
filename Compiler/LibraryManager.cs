@@ -175,7 +175,7 @@ namespace Crayon
 
             foreach (string dir in unverifiedLibraryDirectories)
             {
-                string manifestPath = System.IO.Path.Combine(dir, "manifest.txt");
+                string manifestPath = System.IO.Path.Combine(dir, "manifest.json");
                 if (System.IO.File.Exists(manifestPath))
                 {
                     verifiedLibraryPaths.Add(dir);

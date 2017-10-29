@@ -17,7 +17,6 @@ namespace Crayon
         public string RootDirectory { get { return this.Metadata.Directory; } }
         public string CanonicalKey { get { return this.Metadata.CanonicalKey; } }
 
-        private HashSet<string> onlyImportableFrom = null;
         public Dictionary<string, object> CompileTimeConstants { get; set; }
 
         internal LibraryResourceDatabase Resources { get; private set; }
@@ -25,6 +24,50 @@ namespace Crayon
         public Library CloneWithNewPlatform(Platform.AbstractPlatform platform)
         {
             return new Library(this.Metadata, platform);
+        }
+
+        private Dictionary<string, object> LoadFlagsForPlatform(Platform.AbstractPlatform platform)
+        {
+            Dictionary<string, object> flags = new Dictionary<string, object>();
+            List<string> platformChain = new List<string>() { "default" };
+            if (platform != null)
+            {
+                platformChain.AddRange(platform.InheritanceChain.Reverse());
+            }
+            foreach (string platformId in platformChain)
+            {
+                Dictionary<string, object> mergeFlagsWith = this.LoadFlagsFromFile(platformId);
+                flags = Util.MergeDictionaries(flags, mergeFlagsWith);
+            }
+            return flags;
+        }
+
+        private Dictionary<string, object> LoadFlagsFromFile(string platformId)
+        {
+            Dictionary<string, object> output = new Dictionary<string, object>();
+            string path = FileUtil.JoinAndCanonicalizePath(this.RootDirectory, "flags", platformId + ".txt");
+            if (FileUtil.FileExists(path))
+            {
+                foreach (string line in FileUtil.ReadFileText(path).Split('\n'))
+                {
+                    string fline = line.Trim();
+                    if (fline.Length > 0 && fline[0] != '#')
+                    {
+                        string[] parts = fline.Split(new char[] { ':' }, 2);
+                        string key = parts[0].Trim();
+                        string value = parts[1].Trim();
+                        if (value == "false" || value == "true")
+                        {
+                            output[key] = value == "true";
+                        }
+                        else
+                        {
+                            output[key] = value;
+                        }
+                    }
+                }
+            }
+            return output;
         }
 
         public Library(LibraryMetadata metadata, Platform.AbstractPlatform nullablePlatform)
@@ -36,75 +79,7 @@ namespace Crayon
 
             this.Resources = new LibraryResourceDatabase(this, nullablePlatform);
 
-            string[] manifest = metadata.Manifest.Split('\n');
-            Dictionary<string, string> values = new Dictionary<string, string>();
-            Dictionary<string, bool> flagValues = new Dictionary<string, bool>();
-
-            string platformPrefix = "[" + this.platformName + "]";
-
-            foreach (string line in manifest)
-            {
-                string trimmedLine = line.Trim();
-                if (trimmedLine.Length > 0 && line[0] != '#')
-                {
-                    string[] parts = trimmedLine.Split(':');
-                    if (parts.Length >= 2)
-                    {
-                        string key = parts[0].Trim();
-                        string value = parts[1];
-                        for (int i = 2; i < parts.Length; ++i)
-                        {
-                            value += ":" + parts[i];
-                        }
-
-                        if (key.StartsWith("["))
-                        {
-                            if (key.StartsWith(platformPrefix))
-                            {
-                                key = key.Substring(platformPrefix.Length).Trim();
-                            }
-                            else
-                            {
-                                continue;
-                            }
-                        }
-
-                        if (key == "BOOL_FLAG")
-                        {
-                            // TODO: parse bool flag value
-                            parts = value.Split(':');
-                            if (parts.Length == 2)
-                            {
-                                key = parts[0].Trim();
-                                bool boolValue = parts[1].Trim().ToLowerInvariant() == "true";
-                                flagValues[key] = boolValue;
-                            }
-                            else
-                            {
-                                throw new ParserException(null, "Library '" + metadata.Name + "' has a syntax error in a boolean flag.");
-                            }
-                        }
-                        else
-                        {
-                            values[key] = value;
-                        }
-                    }
-                    else if (parts.Length == 1 && parts[0].Length != 0)
-                    {
-                        throw new ParserException(null, "Library '" + metadata.Name + "' has a syntax error in its manifest.");
-                    }
-                }
-            }
-
-            this.CompileTimeConstants = new Dictionary<string, object>();
-            foreach (string key in flagValues.Keys)
-            {
-                this.CompileTimeConstants[key] = flagValues[key];
-            }
-            foreach (string key in values.Keys)
-            {
-                this.CompileTimeConstants[key] = values[key];
-            }
+            this.CompileTimeConstants = this.LoadFlagsForPlatform(nullablePlatform);
 
             this.filepathsByFunctionName = new Dictionary<string, string>();
             // Build a lookup dictionary of all file names that are simple function names e.g. "foo.cry"
@@ -151,16 +126,6 @@ namespace Crayon
             {
                 this.filepathsByFunctionName[functionName] = moreSpecificFiles[functionName];
             }
-
-            if (values.ContainsKey("ONLY_ALLOW_IMPORT_FROM"))
-            {
-                this.onlyImportableFrom = new HashSet<string>();
-                foreach (string onlyImportFrom in values["ONLY_ALLOW_IMPORT_FROM"].Split(','))
-                {
-                    string libraryName = onlyImportFrom.Trim();
-                    this.onlyImportableFrom.Add(this.Metadata.InternalLocale.ID + ":" + libraryName);
-                }
-            }
         }
 
         private List<Library> libraryDependencies = new List<Library>();
@@ -201,20 +166,16 @@ namespace Crayon
 
         public bool IsAllowedImport(Library currentLibrary)
         {
-            // Empty list means it's open to everyone.
-            if (this.onlyImportableFrom == null || this.onlyImportableFrom.Count == 0)
+            if (this.Metadata.IsImportRestricted)
             {
-                return true;
-            }
+                // Non-empty list means it must be only accessible from a specific library and not top-level user code.
+                if (currentLibrary == null) return false;
 
-            // Non-empty list means it must be only accessible from a specific library and not top-level user code.
-            if (currentLibrary == null)
-            {
-                return false;
-            }
 
-            // Is the current library on the list?
-            return this.onlyImportableFrom.Contains(currentLibrary.CanonicalKey);
+                // Is the current library on the list?
+                return this.Metadata.OnlyImportableFrom.Contains(currentLibrary.Name);
+            }
+            return true;
         }
 
         private Dictionary<string, string> filepathsByFunctionName;

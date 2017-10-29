@@ -1,0 +1,6 @@
+{
+	"name": "ImageResources",
+	"author": "Blake O'Hare",
+	"documentation": "http://crayonlang.org/docs/0.2.0/imageresources",
+	"description": "Synchronous and asynchronous image and image sheet loaders."
+}

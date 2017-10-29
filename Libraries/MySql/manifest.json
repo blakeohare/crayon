@@ -1,0 +1,6 @@
+{
+	"name": "MySql",
+	"author": "Blake O'Hare",
+	"documentation": "http://crayonlang.org/docs/0.2.0/mysql",
+	"description": "Library for interacting with a MySQL database."
+}

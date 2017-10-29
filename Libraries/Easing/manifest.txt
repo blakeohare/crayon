@@ -1,4 +1,0 @@
-NAME: Easing
-AUTHOR: Blake O'Hare
-DOCUMENTATION: http://crayonlang.org/docs/0.2.0/easing
-DESCRIPTION: A variety of useful easing functions.

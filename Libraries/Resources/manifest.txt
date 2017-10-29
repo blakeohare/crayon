@@ -1,4 +1,0 @@
-NAME: Resources
-AUTHOR: Blake O'Hare
-DOCUMENTATION: http://crayonlang.org/docs/0.2.0/resources
-DESCRIPTION: Library for reading bundled text resources

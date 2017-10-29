@@ -1,9 +1,0 @@
-NAME: Gamepad
-AUTHOR: Blake O'Hare
-DOCUMENTATION: http://crayonlang.org/docs/0.2.0/gamepad
-DESCRIPTION: Library for interacting with gamepads
-
-BOOL_FLAG: LIB_GAMEPAD_SUPPORTED: false
-[csharp-app] BOOL_FLAG: LIB_GAMEPAD_SUPPORTED: true
-[javascript-app] BOOL_FLAG: LIB_GAMEPAD_SUPPORTED: true
-[python-app] BOOL_FLAG: LIB_GAMEPAD_SUPPORTED: true

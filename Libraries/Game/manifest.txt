@@ -1,4 +1,0 @@
-NAME: Game
-AUTHOR: Blake O'Hare
-DOCUMENTATION: http://crayonlang.org/docs/0.2.0/game
-DESCRIPTION: Basic game infrastructure API.

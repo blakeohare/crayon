@@ -1,0 +1,6 @@
+{
+	"name": "Graphics2DText",
+	"author": "Blake O'Hare",
+	"documentation": "http://crayonlang.org/docs/0.2.0/graphics2dtext",
+	"description": "Render text for Game and Graphics2D-based games."
+}

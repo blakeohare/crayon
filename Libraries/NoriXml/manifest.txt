@@ -1,4 +1,0 @@
-NAME: NoriXml
-AUTHOR: Blake O'Hare
-DOCUMENTATION: http://crayonlang.org/docs/0.2.0/norixml
-DESCRIPTION: XML-based builder for Nori UI

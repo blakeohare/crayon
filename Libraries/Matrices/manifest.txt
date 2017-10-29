@@ -1,4 +1,0 @@
-NAME: Matrices
-AUTHOR: Blake O'Hare
-DOCUMENTATION: http://crayonlang.org/docs/0.2.0/matrices
-DESCRIPTION: Library to perform basic operations on matrices.

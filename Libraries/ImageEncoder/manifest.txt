@@ -1,4 +1,0 @@
-NAME: ImageEncoder
-AUTHOR: Blake O'Hare
-DOCUMENTATION: http://crayonlang.org/docs/0.2.0/imageencoder
-DESCRIPTION: Library for encoding ImageResources to file formats

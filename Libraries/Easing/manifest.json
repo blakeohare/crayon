@@ -1,0 +1,6 @@
+{
+	"name": "Easing",
+	"author": "Blake O'Hare",
+	"documentation": "http://crayonlang.org/docs/0.2.0/easing",
+	"description": "A variety of useful easing functions."
+}

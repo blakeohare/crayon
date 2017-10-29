@@ -1,4 +1,0 @@
-NAME: ImageWebResources
-AUTHOR: Blake O'Hare
-DOCUMENTATION: http://crayonlang.org/docs/0.2.0/imagewebresources
-DESCRIPTION: Downloads images using HTTP and makes them available as an ImageResource
