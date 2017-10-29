@@ -332,8 +332,8 @@ namespace Crayon
 
             if (this.CurrentLibrary != null && this.CurrentLibrary.CanonicalKey != "en:Core")
             {
-                Library coreLibrary = this.LibraryManager.GetCoreLibrary(this);
-                this.CurrentLibrary.AddLibraryDependency(coreLibrary.Metadata);
+                CompilationScope coreLibrary = this.LibraryManager.GetCoreLibrary(this);
+                this.CurrentLibrary.AddLibraryDependency(coreLibrary.Library);
             }
 
             List<CompilationScope> scopesAdded = new List<CompilationScope>();
@@ -342,8 +342,8 @@ namespace Crayon
                 ImportStatement importStatement = this.ExecutableParser.ParseTopLevel(tokens, null, fileScope) as ImportStatement;
                 if (importStatement == null) throw new Exception();
                 namespaceImportsBuilder.Add(importStatement.ImportPath);
-                Library library = this.LibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
-                if (library == null)
+                CompilationScope libraryScope = this.LibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
+                if (libraryScope == null)
                 {
                     this.unresolvedImports.Add(importStatement);
                 }
@@ -351,9 +351,9 @@ namespace Crayon
                 {
                     if (this.CurrentLibrary != null)
                     {
-                        this.CurrentLibrary.AddLibraryDependency(library.Metadata);
+                        this.CurrentLibrary.AddLibraryDependency(libraryScope.Library);
                     }
-                    scopesAdded.Add(library.Scope);
+                    scopesAdded.Add(libraryScope);
                 }
             }
 

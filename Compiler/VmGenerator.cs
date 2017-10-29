@@ -43,7 +43,7 @@ namespace Crayon
 
         private List<Platform.LibraryForExport> GetLibrariesForExport(
             Platform.AbstractPlatform platform,
-            Dictionary<string, Library> librariesByName,
+            Dictionary<string, LibraryMetadata> librariesByName,
             Dictionary<string, object> constantFlags,
             Pastel.PastelCompiler vm)
         {
@@ -60,11 +60,11 @@ namespace Crayon
                 Dictionary<string, Library> libraryByName = new Dictionary<string, Library>();
                 foreach (string libraryName in libraryCompilation.Keys.OrderBy(s => s))
                 {
-                    Library library = librariesByName[libraryName];
+                    Library library = Library.Get(librariesByName[libraryName], platform);
                     libraryByName[library.Name] = library;
                     Platform.LibraryForExport libraryForExport = this.CreateLibraryForExport(
                         library.Name,
-                        library.Version,
+                        library.Metadata.Version,
                         libraryCompilation[library.Name],
                         library.Resources);
                     libraries.Add(libraryForExport);
@@ -84,7 +84,7 @@ namespace Crayon
                             }
 
                             string resourcePath = "resources/" + ee.DeferredFileOutputBytesLibraryPath;
-                            byte[] dllFile = sourceLibrary.ReadFileBytes(resourcePath);
+                            byte[] dllFile = sourceLibrary.Metadata.ReadFileBytes(resourcePath);
                             if (dllFile == null)
                             {
                                 throw new InvalidOperationException("Could not find file: '" + resourcePath + "' in library '" + sourceLibrary.Name + "'");
@@ -106,7 +106,7 @@ namespace Crayon
             Platform.AbstractPlatform platform,
             CompilationBundle nullableCompilationBundle,
             ResourceDatabase resourceDatabase,
-            ICollection<Library> relevantLibraries,
+            ICollection<LibraryMetadata> relevantLibraries,
             string verifiedAbsoluteOutputPath,
             VmGenerationMode mode)
         {
@@ -119,7 +119,7 @@ namespace Crayon
                 this.AddTypeEnumsToConstants(constantFlags);
                 Pastel.PastelCompiler vm = this.GenerateCoreVmParseTree(platform, constantFlags);
 
-                Dictionary<string, Library> librariesByName = relevantLibraries.ToDictionary(lib => lib.Name);
+                Dictionary<string, LibraryMetadata> librariesByName = relevantLibraries.ToDictionary(lib => lib.Name);
                 List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByName, constantFlags, vm);
 
                 LibraryNativeInvocationTranslatorProvider libTranslationProvider =
@@ -243,16 +243,16 @@ namespace Crayon
             Platform.AbstractPlatform platform,
             Dictionary<string, object> constantFlags,
             InlineImportCodeLoader codeLoader,
-            ICollection<Library> relevantLibraries,
+            ICollection<LibraryMetadata> relevantLibraries,
             Pastel.PastelCompiler sharedScope)
         {
             using (new PerformanceSection("VmGenerator.GenerateLibraryParseTree"))
             {
                 Dictionary<string, Pastel.PastelCompiler> libraries = new Dictionary<string, Pastel.PastelCompiler>();
 
-                foreach (Library library in relevantLibraries)
+                foreach (LibraryMetadata libraryMetadata in relevantLibraries)
                 {
-                    string libName = library.Name;
+                    Library library = Library.Get(libraryMetadata, platform);
 
                     Dictionary<string, object> constantsLookup = Util.MergeDictionaries<string, object>(constantFlags, library.CompileTimeConstants);
 
@@ -263,41 +263,41 @@ namespace Crayon
                         codeLoader,
                         library.GetReturnTypesForNativeMethods(),
                         library.GetArgumentTypesForNativeMethods());
-                    libraries[libName] = compiler;
+                    libraries[library.Name] = compiler;
 
-                    Dictionary<string, string> supplementalCode = library.GetSupplementalTranslatedCode(false);
-                    Dictionary<string, string> pastelSupplementalCode = library.GetSupplementalTranslatedCode(true);
+                    Dictionary<string, string> supplementalCode = library.Metadata.GetSupplementalTranslatedCode(false);
+                    Dictionary<string, string> pastelSupplementalCode = library.Metadata.GetSupplementalTranslatedCode(true);
                     Dictionary<string, string> translatedCode = library.GetNativeCode();
-                    Dictionary<string, string> structCode = library.GetStructFilesCode();
+                    Dictionary<string, string> structCode = library.Metadata.GetStructFilesCode();
                     // need to load from the actual Library instance, which could have come from either CRAYON_HOME or source
 
-                    string registryCode = library.GetRegistryCode();
+                    string registryCode = library.Metadata.GetRegistryCode();
                     if (registryCode == null)
                     {
                         if (supplementalCode.Count > 0 || translatedCode.Count > 0)
                         {
-                            throw new InvalidOperationException("The library '" + libName + "' has translated code but no function_registry.pst file.");
+                            throw new InvalidOperationException("The library '" + library.Name + "' has translated code but no function_registry.pst file.");
                         }
                     }
                     else
                     {
-                        compiler.CompileBlobOfCode("LIB:" + libName + "/function_registry.pst", registryCode);
+                        compiler.CompileBlobOfCode("LIB:" + library.Name + "/function_registry.pst", registryCode);
 
                         foreach (string structFile in structCode.Keys)
                         {
                             string code = structCode[structFile];
-                            compiler.CompileBlobOfCode("LIB:" + libName + "/structs/" + structFile, code);
+                            compiler.CompileBlobOfCode("LIB:" + library.Name + "/structs/" + structFile, code);
                         }
 
                         foreach (string supplementalFile in supplementalCode.Keys)
                         {
                             string code = supplementalCode[supplementalFile];
-                            compiler.CompileBlobOfCode("LIB:" + libName + "/supplemental/" + supplementalFile, code);
+                            compiler.CompileBlobOfCode("LIB:" + library.Name + "/supplemental/" + supplementalFile, code);
                         }
                         foreach (string translatedFile in translatedCode.Keys)
                         {
                             string code = translatedCode[translatedFile];
-                            compiler.CompileBlobOfCode("LIB:" + libName + "/translate/" + translatedFile, code);
+                            compiler.CompileBlobOfCode("LIB:" + library.Name + "/translate/" + translatedFile, code);
                         }
                         compiler.Resolve();
                     }

@@ -9,8 +9,8 @@ namespace Crayon
 {
     internal class LibraryManager
     {
-        private Dictionary<string, Library> importedLibraries = new Dictionary<string, Library>();
-        private Dictionary<string, Library> librariesByKey = new Dictionary<string, Library>();
+        private Dictionary<string, CompilationScope> importedLibraryScopes = new Dictionary<string, CompilationScope>();
+        private Dictionary<string, CompilationScope> librariesByKey = new Dictionary<string, CompilationScope>();
 
         private Dictionary<string, string> functionNameToLibraryName = new Dictionary<string, string>();
 
@@ -41,36 +41,36 @@ namespace Crayon
             return this.GetLibraryMetadataFromAnyPossibleKey(parser.CurrentLocale.ID + ":" + name) != null;
         }
 
-        public Library GetLibraryFromName(string name)
+        public CompilationScope GetLibraryFromName(string name)
         {
-            Library library = this.GetLibraryFromKey(name.ToLower());
-            if (library == null) return null;
-            return name == library.Name ? library : null;
+            CompilationScope libraryScope = this.GetLibraryFromKey(name.ToLower());
+            if (libraryScope == null) return null;
+            return name == libraryScope.Library.Name ? libraryScope : null;
         }
 
-        public Library GetLibraryFromKey(string key)
+        public CompilationScope GetLibraryFromKey(string key)
         {
-            Library output;
+            CompilationScope output;
             return this.librariesByKey.TryGetValue(key, out output) ? output : null;
         }
 
-        private Library coreLibrary = null;
-        public Library GetCoreLibrary(ParserContext parser)
+        private CompilationScope coreLibraryScope = null;
+        public CompilationScope GetCoreLibrary(ParserContext parser)
         {
-            if (this.coreLibrary == null)
+            if (this.coreLibraryScope == null)
             {
-                this.coreLibrary = this.GetLibraryFromKey("en:Core"); // canonical key will work even if english locale not used.
-                if (this.coreLibrary == null)
+                this.coreLibraryScope = this.GetLibraryFromKey("en:Core"); // canonical key will work even if english locale not used.
+                if (this.coreLibraryScope == null)
                 {
                     LibraryMetadata coreLibMetadata = this.GetLibraryMetadataFromAnyPossibleKey("en:Core");
 
                     TODO.GetCoreNameFromMetadataWithLocale();
                     string coreNameInLocale = coreLibMetadata.Name;
 
-                    this.coreLibrary = this.ImportLibrary(parser, null, coreNameInLocale);
+                    this.coreLibraryScope = this.ImportLibrary(parser, null, coreNameInLocale);
                 }
             }
-            return this.coreLibrary;
+            return this.coreLibraryScope;
         }
 
         public int GetIdForFunction(string name, string library)
@@ -89,15 +89,15 @@ namespace Crayon
 
         public Dictionary<string, string> GetEmbeddedCode(string libraryName)
         {
-            return this.importedLibraries[libraryName].GetEmbeddedCode();
+            return this.importedLibraryScopes[libraryName].Library.GetEmbeddedCode();
         }
 
         public Dictionary<string, string> GetSupplementalTranslationFiles(bool isPastel)
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
-            foreach (Library library in this.importedLibraries.Values)
+            foreach (CompilationScope libraryScope in this.importedLibraryScopes.Values)
             {
-                Dictionary<string, string> files = library.GetSupplementalTranslatedCode(isPastel);
+                Dictionary<string, string> files = libraryScope.Library.GetSupplementalTranslatedCode(isPastel);
                 foreach (string key in files.Keys)
                 {
                     output[key] = files[key];
@@ -106,11 +106,9 @@ namespace Crayon
             return output;
         }
 
-        public Library[] GetAllAvailableBuiltInLibraries(Platform.AbstractPlatform platform)
+        public LibraryMetadata[] GetAllAvailableBuiltInLibraries(Platform.AbstractPlatform platform)
         {
-            return GetAvailableLibraryPathsByLibraryName(null, null)
-                .Select(metadata => new Library(metadata, platform))
-                .ToArray();
+            return GetAvailableLibraryPathsByLibraryName(null, null);
         }
 
         private LibraryMetadata[] GetAvailableLibraryPathsByLibraryName(
@@ -225,7 +223,7 @@ namespace Crayon
                 : null;
         }
 
-        private readonly List<Library> librariesAlreadyImported = new List<Library>();
+        private readonly List<CompilationScope> librariesAlreadyImported = new List<CompilationScope>();
         // The index + 1 is the reference ID
         private readonly Dictionary<string, int> librariesAlreadyImportedIndexByKey = new Dictionary<string, int>();
         private static readonly Executable[] EMPTY_EXECUTABLE = new Executable[0];
@@ -235,12 +233,12 @@ namespace Crayon
             return this.librariesAlreadyImportedIndexByKey[key] + 1;
         }
 
-        public Library[] LibrariesUsed { get { return this.librariesAlreadyImported.ToArray(); } }
+        public CompilationScope[] LibraryScopesUsed { get { return this.librariesAlreadyImported.ToArray(); } }
 
         // TODO: libraries will be able to declare their source code locale.
         private static readonly Locale ENGLISH_LOCALE_FOR_LIBRARIES = Locale.Get("en");
 
-        public Library ImportLibrary(ParserContext parser, Token throwToken, string name)
+        public CompilationScope ImportLibrary(ParserContext parser, Token throwToken, string name)
         {
             name = name.Split('.')[0];
             string key = parser.CurrentLocale.ID + ":" + name;
@@ -265,27 +263,24 @@ namespace Crayon
                 }
             }
 
-            Library library = librariesAlreadyImportedIndexByKey.ContainsKey(libraryMetadata.CanonicalKey)
+            CompilationScope libraryScope = this.librariesAlreadyImportedIndexByKey.ContainsKey(libraryMetadata.CanonicalKey)
                 ? librariesAlreadyImported[librariesAlreadyImportedIndexByKey[libraryMetadata.CanonicalKey]]
                 : null;
 
-            if (library == null)
+            if (libraryScope == null)
             {
                 string platformName = parser.BuildContext.Platform;
-                Platform.AbstractPlatform platform = platformName == null || this.PlatformProvider == null ? null : this.PlatformProvider.GetPlatform(platformName);
-                library = new Library(libraryMetadata, platform);
-                CompilationScope scope = new CompilationScope(parser.BuildContext, library.Metadata);
-                library.Scope = scope;
-                library.Metadata.AddLocaleAccess(parser.CurrentLocale);
+                libraryScope = new CompilationScope(parser.BuildContext, libraryMetadata);
+                libraryMetadata.AddLocaleAccess(parser.CurrentLocale);
 
                 this.librariesAlreadyImportedIndexByKey[libraryMetadata.CanonicalKey] = this.librariesAlreadyImported.Count;
-                this.librariesAlreadyImported.Add(library);
+                this.librariesAlreadyImported.Add(libraryScope);
 
-                this.importedLibraries[name] = library;
-                this.librariesByKey[name.ToLowerInvariant()] = library;
+                this.importedLibraryScopes[name] = libraryScope;
+                this.librariesByKey[name.ToLowerInvariant()] = libraryScope;
 
-                parser.PushScope(scope);
-                Dictionary<string, string> embeddedCode = library.GetEmbeddedCode();
+                parser.PushScope(libraryScope);
+                Dictionary<string, string> embeddedCode = libraryMetadata.GetEmbeddedCode();
                 foreach (string embeddedFile in embeddedCode.Keys)
                 {
                     string fakeName = "[" + embeddedFile + "]";
@@ -296,12 +291,12 @@ namespace Crayon
             }
 
             // Even if already imported, still must check to see if this import is allowed here.
-            if (!library.IsAllowedImport(parser.CurrentLibrary))
+            if (!libraryScope.Library.IsAllowedImport(parser.CurrentLibrary))
             {
                 throw new ParserException(throwToken, "This library cannot be imported from here.");
             }
 
-            return library;
+            return libraryScope;
         }
     }
 }

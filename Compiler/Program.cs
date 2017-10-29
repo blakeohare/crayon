@@ -207,7 +207,7 @@ namespace Crayon
                 Platform.AbstractPlatform standaloneVmPlatform = platformProvider.GetPlatform(vm);
                 targetDirectory = FileUtil.FinalizeTilde(targetDirectory);
                 VmGenerator vmGenerator = new VmGenerator();
-                Library[] allLibraries = LibraryManager.ForStandaloneVmExport(platformProvider).GetAllAvailableBuiltInLibraries(standaloneVmPlatform);
+                LibraryMetadata[] allLibraries = LibraryManager.ForStandaloneVmExport(platformProvider).GetAllAvailableBuiltInLibraries(standaloneVmPlatform);
                 Dictionary<string, FileOutput> result = vmGenerator.GenerateVmSourceCodeForPlatform(
                     standaloneVmPlatform,
                     null,
@@ -272,16 +272,7 @@ namespace Crayon
                 if (platform == null) throw new InvalidOperationException("Unrecognized platform. See usage.");
 
                 CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
-
-                // Need to re-instantiate the libraries. The libraries are instantiated in a platform-context-free
-                // for the purpose of compiling the byte code. For the VM bundle, they need to know about the platform.
-                Library[] libraries;
-                using (new PerformanceSection("Program.ExportVmBundle.CloneLibraries"))
-                {
-                    libraries = compilationResult.LibrariesUsed
-                        .Select(lib => lib.CloneWithNewPlatform(platform))
-                        .ToArray();
-                }
+                LibraryMetadata[] libraries = compilationResult.LibraryScopesUsed.Select(scope => scope.Library).ToArray();
 
                 ResourceDatabase resourceDatabase = PrepareResources(buildContext, compilationResult.ByteCode);
 
@@ -306,7 +297,7 @@ namespace Crayon
 
                 if (argLookup.ContainsKey(FlagParser.LIBRARY_DEP_TREE))
                 {
-                    string libs = LibraryDependencyResolver.GetDependencyTreeLog(compilationResult.LibrariesUsed.Select(lib => lib.Metadata).ToArray());
+                    string libs = LibraryDependencyResolver.GetDependencyTreeLog(compilationResult.LibraryScopesUsed.Select(scope => scope.Library).ToArray());
                     Console.WriteLine("<LibraryDependencies>");
                     Console.WriteLine(libs.Trim());
                     Console.WriteLine("</LibraryDependencies>");

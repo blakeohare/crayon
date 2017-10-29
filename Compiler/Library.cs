@@ -9,11 +9,9 @@ namespace Crayon
     public class Library
     {
         public LibraryMetadata Metadata { get; private set; }
-        public CompilationScope Scope { get; set; }
         private string platformName;
 
         public string Name { get { return this.Metadata.Name; } }
-        public string Version { get { return "v1"; } } // TODO: versions
         public string RootDirectory { get { return this.Metadata.Directory; } }
         public string CanonicalKey { get { return this.Metadata.CanonicalKey; } }
 
@@ -21,65 +19,34 @@ namespace Crayon
 
         internal LibraryResourceDatabase Resources { get; private set; }
 
-        public Library CloneWithNewPlatform(Platform.AbstractPlatform platform)
+        private static Dictionary<string, Library> libraryCache = new Dictionary<string, Library>();
+
+        private static string GetLibKey(LibraryMetadata metadata, Platform.AbstractPlatform platform)
         {
-            return new Library(this.Metadata, platform);
+            return metadata.CanonicalKey + "#" + platform.Name;
         }
 
-        private Dictionary<string, object> LoadFlagsForPlatform(Platform.AbstractPlatform platform)
+        // TODO: this ought to go away and the cache needs to move to some sort of scope whose lifetime is tied to a specific compilation scope.
+        public static Library Get(LibraryMetadata metadata, Platform.AbstractPlatform platform)
         {
-            Dictionary<string, object> flags = new Dictionary<string, object>();
-            List<string> platformChain = new List<string>() { "default" };
-            if (platform != null)
+            string key = GetLibKey(metadata, platform);
+            if (!libraryCache.ContainsKey(key))
             {
-                platformChain.AddRange(platform.InheritanceChain.Reverse());
+                libraryCache[key] = new Library(metadata, platform);
             }
-            foreach (string platformId in platformChain)
-            {
-                Dictionary<string, object> mergeFlagsWith = this.LoadFlagsFromFile(platformId);
-                flags = Util.MergeDictionaries(flags, mergeFlagsWith);
-            }
-            return flags;
+            return libraryCache[key];
         }
 
-        private Dictionary<string, object> LoadFlagsFromFile(string platformId)
-        {
-            Dictionary<string, object> output = new Dictionary<string, object>();
-            string path = FileUtil.JoinAndCanonicalizePath(this.RootDirectory, "flags", platformId + ".txt");
-            if (FileUtil.FileExists(path))
-            {
-                foreach (string line in FileUtil.ReadFileText(path).Split('\n'))
-                {
-                    string fline = line.Trim();
-                    if (fline.Length > 0 && fline[0] != '#')
-                    {
-                        string[] parts = fline.Split(new char[] { ':' }, 2);
-                        string key = parts[0].Trim();
-                        string value = parts[1].Trim();
-                        if (value == "false" || value == "true")
-                        {
-                            output[key] = value == "true";
-                        }
-                        else
-                        {
-                            output[key] = value;
-                        }
-                    }
-                }
-            }
-            return output;
-        }
-
-        public Library(LibraryMetadata metadata, Platform.AbstractPlatform nullablePlatform)
+        private Library(LibraryMetadata metadata, Platform.AbstractPlatform platform)
         {
             TODO.LibrariesNeedVersionNumber();
 
             this.Metadata = metadata;
-            this.platformName = nullablePlatform == null ? null : nullablePlatform.Name;
+            this.platformName = platform.Name;
 
-            this.Resources = new LibraryResourceDatabase(this, nullablePlatform);
+            this.Resources = new LibraryResourceDatabase(this, platform);
 
-            this.CompileTimeConstants = this.LoadFlagsForPlatform(nullablePlatform);
+            this.CompileTimeConstants = this.LoadFlagsForPlatform(platform);
 
             this.filepathsByFunctionName = new Dictionary<string, string>();
             // Build a lookup dictionary of all file names that are simple function names e.g. "foo.cry"
@@ -128,99 +95,51 @@ namespace Crayon
             }
         }
 
-        public bool IsMoreThanJustEmbedCode
+        private Dictionary<string, object> LoadFlagsForPlatform(Platform.AbstractPlatform platform)
         {
-            get { return this.filepathsByFunctionName.Count > 0; }
-        }
-
-        public bool IsAllowedImport(LibraryMetadata currentLibrary)
-        {
-            if (this.Metadata.IsImportRestricted)
+            Dictionary<string, object> flags = new Dictionary<string, object>();
+            List<string> platformChain = new List<string>() { "default" };
+            if (platform != null)
             {
-                // Non-empty list means it must be only accessible from a specific library and not top-level user code.
-                if (currentLibrary == null) return false;
-
-
-                // Is the current library on the list?
-                return this.Metadata.OnlyImportableFrom.Contains(currentLibrary.Name);
+                platformChain.AddRange(platform.InheritanceChain.Reverse());
             }
-            return true;
+            foreach (string platformId in platformChain)
+            {
+                Dictionary<string, object> mergeFlagsWith = this.LoadFlagsFromFile(platformId);
+                flags = Util.MergeDictionaries(flags, mergeFlagsWith);
+            }
+            return flags;
         }
 
-        private Dictionary<string, string> filepathsByFunctionName;
-
-        public Dictionary<string, string> GetEmbeddedCode()
+        private Dictionary<string, object> LoadFlagsFromFile(string platformId)
         {
-            Dictionary<string, string> output = new Dictionary<string, string>() {
-                { this.Name, this.ReadFile(false, "embed.cry", true) }
-            };
-            string embedDir = FileUtil.JoinPath(this.RootDirectory, "embed");
-            if (FileUtil.DirectoryExists(embedDir))
+            Dictionary<string, object> output = new Dictionary<string, object>();
+            string path = FileUtil.JoinAndCanonicalizePath(this.RootDirectory, "flags", platformId + ".txt");
+            if (FileUtil.FileExists(path))
             {
-                string[] additionalFiles = FileUtil.GetAllFilePathsRelativeToRoot(embedDir);
-                foreach (string additionalFile in additionalFiles)
+                foreach (string line in FileUtil.ReadFileText(path).Split('\n'))
                 {
-                    string embedCode = this.ReadFile(false, "embed/" + additionalFile, false);
-                    output[this.Name + ":" + additionalFile] = embedCode;
+                    string fline = line.Trim();
+                    if (fline.Length > 0 && fline[0] != '#')
+                    {
+                        string[] parts = fline.Split(new char[] { ':' }, 2);
+                        string key = parts[0].Trim();
+                        string value = parts[1].Trim();
+                        if (value == "false" || value == "true")
+                        {
+                            output[key] = value == "true";
+                        }
+                        else
+                        {
+                            output[key] = value;
+                        }
+                    }
                 }
             }
             return output;
         }
 
-        public string GetRegistryCode()
-        {
-            string path = System.IO.Path.Combine(this.RootDirectory, "function_registry.pst");
-            if (!System.IO.File.Exists(path))
-            {
-                return null;
-            }
-
-            return System.IO.File.ReadAllText(path);
-        }
-
-        private Dictionary<string, string> structFiles = null;
-
-        public Dictionary<string, string> GetStructFilesCode()
-        {
-            if (this.structFiles == null)
-            {
-                this.structFiles = new Dictionary<string, string>();
-                string structFilesDir = System.IO.Path.Combine(this.RootDirectory, "structs");
-                if (System.IO.Directory.Exists(structFilesDir))
-                {
-                    foreach (string filepath in System.IO.Directory.GetFiles(structFilesDir))
-                    {
-                        string name = System.IO.Path.GetFileName(filepath);
-                        this.structFiles[name] = this.ReadFile(false, System.IO.Path.Combine("structs", name), false);
-                    }
-                }
-            }
-            return this.structFiles;
-        }
-
-        private Dictionary<string, string> supplementalFiles = null;
-
-        public Dictionary<string, string> GetSupplementalTranslatedCode(bool isPastel)
-        {
-            if (this.supplementalFiles == null)
-            {
-                this.supplementalFiles = new Dictionary<string, string>();
-                string supplementalFilesDir = System.IO.Path.Combine(this.RootDirectory, "supplemental");
-                if (System.IO.Directory.Exists(supplementalFilesDir))
-                {
-                    foreach (string filepath in System.IO.Directory.GetFiles(supplementalFilesDir))
-                    {
-                        string name = System.IO.Path.GetFileName(filepath);
-                        if ((isPastel && name.EndsWith(".cry")) || (!isPastel && name.EndsWith(".pst")))
-                        {
-                            string key = name.Substring(0, name.Length - ".cry".Length);
-                            this.supplementalFiles[key] = this.ReadFile(false, System.IO.Path.Combine("supplemental", name), false);
-                        }
-                    }
-                }
-            }
-            return this.supplementalFiles;
-        }
+        private Dictionary<string, string> filepathsByFunctionName;
 
         public Dictionary<string, string> GetNativeCode()
         {
@@ -228,58 +147,32 @@ namespace Crayon
             foreach (string key in this.filepathsByFunctionName.Keys)
             {
                 string filename = "translate/" + this.filepathsByFunctionName[key].Replace(".cry", ".pst");
-                output[key] = this.ReadFile(false, filename, false);
+                output[key] = this.Metadata.ReadFile(false, filename, false);
             }
 
             return output;
         }
 
-        Dictionary<string, string> translations = null;
+        private Dictionary<string, string> translationsLookup = null;
 
-        private Dictionary<string, string> GetMethodTranslations(string platformName)
+        public string TranslateNativeInvocation(object throwToken, Platform.AbstractTranslator translator, string functionName, object[] args)
         {
-            string methodTranslations = this.ReadFile(false, System.IO.Path.Combine("methods", platformName + ".txt"), true);
-            Dictionary<string, string> translationsLookup = new Dictionary<string, string>();
-            if (methodTranslations != null)
+            if (translationsLookup == null)
             {
-                foreach (string line in methodTranslations.Split('\n'))
-                {
-                    string[] parts = line.Trim().Split(':');
-                    if (parts.Length > 1)
-                    {
-                        string key = parts[0];
-                        string value = parts[1];
-                        for (int i = 2; i < parts.Length; ++i)
-                        {
-                            value += ":" + parts[i];
-                        }
-                        translationsLookup[key.Trim()] = value.Trim();
-                    }
-                }
-            }
-            return translationsLookup;
-        }
-
-        public string TranslateNativeInvocation(object throwToken, object legacyAbstractPlatformOrCbxTranslator, string functionName, object[] args)
-        {
-            if (this.translations == null)
-            {
-                Platform.AbstractTranslator translator = (Platform.AbstractTranslator)legacyAbstractPlatformOrCbxTranslator;
-                Dictionary<string, string> translationsBuilder = new Dictionary<string, string>();
+                translationsLookup = new Dictionary<string, string>();
                 foreach (string platformName in translator.Platform.InheritanceChain.Reverse())
                 {
-                    Dictionary<string, string> translationsForPlatform = this.GetMethodTranslations(platformName);
-                    translationsBuilder = Util.MergeDictionaries(translationsBuilder, translationsForPlatform);
+                    Dictionary<string, string> translationsForPlatform = this.Metadata.GetMethodTranslations(platformName);
+                    translationsLookup = Util.MergeDictionaries(translationsLookup, translationsForPlatform);
                 }
-                this.translations = translationsBuilder;
             }
 
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             string output = null;
             string lookup = "$" + functionName;
-            if (this.translations.ContainsKey(lookup))
+            if (translationsLookup.ContainsKey(lookup))
             {
-                output = this.translations[lookup];
+                output = translationsLookup[lookup];
             }
 
             if (output != null)
@@ -287,7 +180,7 @@ namespace Crayon
                 for (int i = 0; i < args.Length; ++i)
                 {
 
-                    ((Platform.AbstractTranslator)legacyAbstractPlatformOrCbxTranslator).TranslateExpression(sb, (Pastel.Nodes.Expression)args[i]);
+                    translator.TranslateExpression(sb, (Pastel.Nodes.Expression)args[i]);
                     string argAsString = sb.ToString();
                     sb.Clear();
                     output = output.Replace("[ARG:" + (i + 1) + "]", argAsString);
@@ -299,7 +192,7 @@ namespace Crayon
             string MISSING_FUNCTION_NAME_FOR_DEBUGGER = functionName;
             MISSING_FUNCTION_NAME_FOR_DEBUGGER.Trim(); // no compile warnings
 
-            string msg = "The " + this.Name + " library does not support " + this.platformName + " projects.";
+            string msg = "The " + this.Name + " library does not support " + translator.Platform.Name + " projects.";
             if (throwToken is Token)
             {
                 throw new ParserException((Token)throwToken, msg);
@@ -326,32 +219,6 @@ namespace Crayon
                 }
             }
             return output.ToArray();
-        }
-
-        public byte[] ReadFileBytes(string pathRelativeToLibraryRoot)
-        {
-            string fullPath = FileUtil.JoinPath(this.RootDirectory, pathRelativeToLibraryRoot);
-            if (System.IO.File.Exists(fullPath))
-            {
-                return FileUtil.ReadFileBytes(fullPath);
-            }
-            throw new ParserException(null, "The '" + this.Name + "' library does not contain the resource '" + pathRelativeToLibraryRoot + "'");
-        }
-
-        public string ReadFile(bool keepPercents, string pathRelativeToLibraryRoot, bool failSilently)
-        {
-            string fullPath = FileUtil.JoinPath(this.RootDirectory, pathRelativeToLibraryRoot);
-            if (System.IO.File.Exists(fullPath))
-            {
-                return FileUtil.ReadFileText(fullPath);
-            }
-
-            if (failSilently)
-            {
-                return "";
-            }
-
-            throw new ParserException(null, "The " + this.Name + " library does not support " + this.platformName + " projects.");
         }
 
         private Dictionary<string, Pastel.Nodes.PType> returnTypeInfoForNativeMethods = null;

@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Pastel.Nodes;
+using Platform;using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Pastel.Nodes;
-using Platform;
 
 namespace Crayon
 {
     class LibraryNativeInvocationTranslator : ILibraryNativeInvocationTranslator
     {
-        private Library library;
+        private LibraryMetadata library;
         private IList<string> platformInheritanceChain;
 
         public LibraryForExport Library { get; private set; }
 
-        public LibraryNativeInvocationTranslator(Library library, LibraryForExport lfe, IList<string> platformInheritanceChain)
+        public LibraryNativeInvocationTranslator(LibraryMetadata library, LibraryForExport lfe, IList<string> platformInheritanceChain)
         {
             this.library = library;
             this.Library = lfe;
@@ -32,7 +30,7 @@ namespace Crayon
         {
             try
             {
-                sb.Append(this.library.TranslateNativeInvocation(throwToken, translator, functionName, args));
+                sb.Append(Crayon.Library.Get(this.library, translator.Platform).TranslateNativeInvocation(throwToken, translator, functionName, args));
             }
             catch (System.Reflection.TargetInvocationException tie)
             {

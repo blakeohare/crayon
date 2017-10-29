@@ -92,12 +92,12 @@ namespace Crayon
             ByteBuffer output = new ByteBuffer();
 
             int id = 1;
-            foreach (Library library in parser.LibraryManager.LibrariesUsed)
+            foreach (CompilationScope libraryScope in parser.LibraryManager.LibraryScopesUsed)
             {
                 List<string> descriptorComponents = new List<string>()
                 {
-                    library.Name,
-                    library.Version,
+                    libraryScope.Library.Name,
+                    libraryScope.Library.Version,
                 };
                 string libraryDescriptor = string.Join(",", descriptorComponents);
                 output.Add(null, OpCode.LIB_DECLARATION, libraryDescriptor, id++);

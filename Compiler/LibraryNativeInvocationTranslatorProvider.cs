@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Platform;
+using System;
 using System.Collections.Generic;
-using Platform;
 
 namespace Crayon
 {
     class LibraryNativeInvocationTranslatorProvider : ILibraryNativeInvocationTranslatorProvider
     {
-        private Dictionary<string, Library> libraries;
+        private Dictionary<string, LibraryMetadata> libraries;
         private List<LibraryForExport> librariesForExport;
         private AbstractPlatform platform;
 
         public LibraryNativeInvocationTranslatorProvider(
-            Dictionary<string, Library> libraries,
+            Dictionary<string, LibraryMetadata> libraries,
             List<LibraryForExport> librariesForExport,
             AbstractPlatform platform)
         {

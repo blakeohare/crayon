@@ -41,10 +41,10 @@ namespace Crayon
                 cbxOutput.AddRange(code);
 
                 List<string> libraries = new List<string>();
-                foreach (Library library in compilationResult.LibrariesUsed.Where(lib => lib.IsMoreThanJustEmbedCode))
+                foreach (CompilationScope scopeForLibrary in compilationResult.LibraryScopesUsed.Where(scope => scope.Library.IsMoreThanJustEmbedCode))
                 {
-                    libraries.Add(library.Name);
-                    libraries.Add(library.Version);
+                    libraries.Add(scopeForLibrary.Library.Name);
+                    libraries.Add(scopeForLibrary.Library.Version);
                 }
                 string libsData = string.Join(",", libraries);
                 byte[] libsDataBytes = StringToBytes(libsData);

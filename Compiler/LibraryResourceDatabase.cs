@@ -64,7 +64,7 @@ namespace Crayon
         private List<Dictionary<string, string>> ParseApplicableInstructions()
         {
             List<Dictionary<string, string>> instructions = new List<Dictionary<string, string>>();
-            string resourceManifest = this.library.ReadFile(false, "resources/resource-manifest.txt", true).Trim();
+            string resourceManifest = this.library.Metadata.ReadFile(false, "resources/resource-manifest.txt", true).Trim();
             if (resourceManifest.Length > 0)
             {
                 string mode = "inactive"; // inactive | pending | active
@@ -157,7 +157,7 @@ namespace Crayon
                         foreach (string file in this.library.ListDirectory("resources/" + from)
                             .Where(path => typeFilter == null || path.ToLower().EndsWith(typeFilter)))
                         {
-                            content = this.library.ReadFile(false, "resources/" + from + "/" + file, false);
+                            content = this.library.Metadata.ReadFile(false, "resources/" + from + "/" + file, false);
                             output.Add(new Dictionary<string, string>() {
                                 { "TYPE", "COPY_CODE" },
                                 { "target", to.Replace("%FILE%", file) },
@@ -171,7 +171,7 @@ namespace Crayon
                         this.EnsureInstructionContainsAttribute("COPY_FILE", instruction, "to");
                         from = instruction["from"];
                         to = instruction["to"];
-                        content = this.library.ReadFile(false, "resources/" + from, false);
+                        content = this.library.Metadata.ReadFile(false, "resources/" + from, false);
                         output.Add(new Dictionary<string, string>()
                         {
                             { "TYPE", "COPY_CODE" },
@@ -183,7 +183,7 @@ namespace Crayon
                     case "EMBED_FILE":
                         this.EnsureInstructionContainsAttribute("EMBED_FILES", instruction, "from");
                         from = instruction["from"];
-                        totalEmbed.Append(this.library.ReadFile(false, "resources/" + from, false));
+                        totalEmbed.Append(this.library.Metadata.ReadFile(false, "resources/" + from, false));
                         totalEmbed.Append("\n\n");
                         break;
 
@@ -192,7 +192,7 @@ namespace Crayon
                         from = instruction["from"];
                         foreach (string file in this.library.ListDirectory("resources/" + from))
                         {
-                            totalEmbed.Append(this.library.ReadFile(false, "resources/" + from + "/" + file, false));
+                            totalEmbed.Append(this.library.Metadata.ReadFile(false, "resources/" + from + "/" + file, false));
                             totalEmbed.Append("\n\n");
                         }
                         break;
@@ -312,7 +312,7 @@ namespace Crayon
                             entity.FileOutput = new FileOutput()
                             {
                                 Type = FileOutputType.Binary,
-                                BinaryContent = this.library.ReadFileBytes("resources/" + from)
+                                BinaryContent = this.library.Metadata.ReadFileBytes("resources/" + from)
                             };
                         }
 

@@ -112,11 +112,11 @@ namespace Crayon
                     string possibleLibraryName = ns.Split('.')[0];
 
                     TODO.EnglishLocaleAssumed();
-                    Library library = this.parser.LibraryManager.GetLibraryFromName(possibleLibraryName);
-                    if (library != null)
+                    CompilationScope libraryScope = this.parser.LibraryManager.GetLibraryFromName(possibleLibraryName);
+                    if (libraryScope != null)
                     {
                         // TODO: once you get rid of this line, make the Library setter protected
-                        nsInstance.Library = library.Metadata;
+                        nsInstance.Library = libraryScope.Library;
                     }
                     lookup[ns] = nsInstance;
                 }
@@ -189,7 +189,7 @@ namespace Crayon
                     this.ResolveNames(library, alreadyResolvedDependencies, definitionsByLibrary[library]);
                 }
                 alreadyResolvedDependencies = Util.MergeDictionaries<string, TopLevelConstruct>(
-                    this.parser.LibraryManager.LibrariesUsed.Select(lib => definitionsByLibrary[lib.Metadata]).ToArray());
+                    this.parser.LibraryManager.LibraryScopesUsed.Select(scope => definitionsByLibrary[scope.Library]).ToArray());
                 nonLibraryCode.Remove("~");
                 this.ResolveNames(null, alreadyResolvedDependencies, nonLibraryCode);
             }

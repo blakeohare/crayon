@@ -10,7 +10,7 @@ namespace Crayon
         public ByteBuffer ByteCode { get; set; }
         public string ProjectID { get; set; }
         public string GuidSeed { get; set; }
-        public ICollection<Library> LibrariesUsed { get; set; }
+        public ICollection<CompilationScope> LibraryScopesUsed { get; set; }
         public string IconPath { get; set; }
         public string LaunchScreenPath { get; set; }
         public string DefaultTitle { get; set; }
@@ -40,7 +40,7 @@ namespace Crayon
                 return new CompilationBundle()
                 {
                     ByteCode = buffer,
-                    LibrariesUsed = parser.LibraryManager.LibrariesUsed,
+                    LibraryScopesUsed = parser.LibraryManager.LibraryScopesUsed,
                     ProjectID = buildContext.ProjectID,
                     Version = buildContext.Version,
                     Description = buildContext.Description,
