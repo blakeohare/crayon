@@ -5,14 +5,12 @@ using System.Collections.Generic;
 
 namespace Crayon
 {
-    public class CompilationScope
+    public abstract class CompilationScope
     {
-        public LibraryMetadata Library { get; private set; }
+        public virtual Locale Locale { get; }
+        public virtual string ScopeKey { get; }
 
-        public Locale Locale
-        {
-            get { return this.Library == null ? this.buildContext.CompilerLocale : this.Library.InternalLocale; }
-        }
+        protected BuildContext buildContext;
 
         private List<TopLevelConstruct> executables = new List<TopLevelConstruct>();
 
@@ -33,12 +31,45 @@ namespace Crayon
             }
         }
 
-        private BuildContext buildContext;
-
-        public CompilationScope(BuildContext buildContext, LibraryMetadata library)
+        public CompilationScope(BuildContext buildContext)
         {
             this.buildContext = buildContext;
-            this.Library = library;
         }
+    }
+
+    public class UserCodeCompilationScope : CompilationScope
+    {
+        public UserCodeCompilationScope(BuildContext buildContext) : base(buildContext)
+        { }
+
+        public override Locale Locale
+        {
+            get { return this.buildContext.CompilerLocale; }
+        }
+
+        public override string ScopeKey
+        {
+            get { return "."; }
+        }
+
+    }
+
+    public class LibraryCompilationScope : CompilationScope
+    {
+        public LibraryMetadata Library { get; private set; }
+        private string scopeKey;
+
+        public LibraryCompilationScope(BuildContext buildContext, LibraryMetadata library) : base(buildContext)
+        {
+            this.Library = library;
+            this.scopeKey = library.CanonicalKey;
+        }
+
+        public override Locale Locale
+        {
+            get { return this.Library.InternalLocale; }
+        }
+
+        public override string ScopeKey { get { return this.scopeKey; } }
     }
 }

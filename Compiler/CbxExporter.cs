@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Build;
+using Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Build;
-using Common;
 
 namespace Crayon
 {
@@ -41,7 +41,7 @@ namespace Crayon
                 cbxOutput.AddRange(code);
 
                 List<string> libraries = new List<string>();
-                foreach (CompilationScope scopeForLibrary in compilationResult.LibraryScopesUsed.Where(scope => scope.Library.IsMoreThanJustEmbedCode))
+                foreach (LibraryCompilationScope scopeForLibrary in compilationResult.LibraryScopesUsed.Where(scope => scope.Library.IsMoreThanJustEmbedCode))
                 {
                     libraries.Add(scopeForLibrary.Library.Name);
                     libraries.Add(scopeForLibrary.Library.Version);

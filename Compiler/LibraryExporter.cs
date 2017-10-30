@@ -10,7 +10,7 @@ namespace Crayon
     {
         public LibraryMetadata Metadata { get; private set; }
         private string platformName;
-        
+
         public Dictionary<string, object> CompileTimeConstants { get; set; }
 
         internal LibraryResourceDatabase Resources { get; private set; }

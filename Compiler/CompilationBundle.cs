@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using Build;
+﻿using Build;
 using Common;
-
+using System.Collections.Generic;
 
 namespace Crayon
 {
@@ -10,7 +9,7 @@ namespace Crayon
         public ByteBuffer ByteCode { get; set; }
         public string ProjectID { get; set; }
         public string GuidSeed { get; set; }
-        public ICollection<CompilationScope> LibraryScopesUsed { get; set; }
+        public ICollection<LibraryCompilationScope> LibraryScopesUsed { get; set; }
         public string IconPath { get; set; }
         public string LaunchScreenPath { get; set; }
         public string DefaultTitle { get; set; }

@@ -16,7 +16,7 @@ namespace Crayon
         public ParserContext(BuildContext buildContext)
         {
             this.BuildContext = buildContext;
-            this.PushScope(new CompilationScope(buildContext, null));
+            this.PushScope(new UserCodeCompilationScope(buildContext));
             this.CurrentClass = null;
             this.LibraryManager = LibraryManager.ForByteCodeCompilation(buildContext);
             this.CurrentNamespace = "";
@@ -29,8 +29,7 @@ namespace Crayon
 
         public void AddCompilationScope(CompilationScope scope)
         {
-            string scopeKey = scope.Library == null ? "." : scope.Library.CanonicalKey;
-            this.compilationScopes.Add(scopeKey, scope);
+            this.compilationScopes.Add(scope.ScopeKey, scope);
         }
 
         public HashSet<string> ReservedKeywords { get; private set; }
@@ -40,7 +39,6 @@ namespace Crayon
             this.AddCompilationScope(scope);
             this.scopeStack.Push(scope);
             this.CurrentScope = scope;
-            this.CurrentLibrary = scope.Library;
             this.CurrentLocale = scope.Locale;
             this.Keywords = this.CurrentLocale.Keywords;
             this.ReservedKeywords = new HashSet<string>(this.CurrentLocale.GetKeywordsList());
@@ -50,7 +48,6 @@ namespace Crayon
         {
             this.scopeStack.Pop();
             this.CurrentScope = this.scopeStack.Peek();
-            this.CurrentLibrary = this.CurrentScope.Library;
             this.CurrentLocale = this.CurrentScope.Locale;
             this.Keywords = this.CurrentLocale.Keywords;
             this.ReservedKeywords = new HashSet<string>(this.CurrentLocale.GetKeywordsList());
@@ -105,7 +102,7 @@ namespace Crayon
 
         public TopLevelConstruct CurrentCodeContainer { get; set; }
 
-        public LibraryMetadata CurrentLibrary { get; set; }
+        public LibraryMetadata CurrentLibrary { get { return this.CurrentScope is LibraryCompilationScope ? ((LibraryCompilationScope)this.CurrentScope).Library : null; } }
 
         public CompilationScope CurrentScope { get; private set; }
 
@@ -332,7 +329,7 @@ namespace Crayon
 
             if (this.CurrentLibrary != null && this.CurrentLibrary.CanonicalKey != "en:Core")
             {
-                CompilationScope coreLibrary = this.LibraryManager.GetCoreLibrary(this);
+                LibraryCompilationScope coreLibrary = this.LibraryManager.GetCoreLibrary(this);
                 this.CurrentLibrary.AddLibraryDependency(coreLibrary.Library);
             }
 
@@ -342,7 +339,7 @@ namespace Crayon
                 ImportStatement importStatement = this.ExecutableParser.ParseTopLevel(tokens, null, fileScope) as ImportStatement;
                 if (importStatement == null) throw new Exception();
                 namespaceImportsBuilder.Add(importStatement.ImportPath);
-                CompilationScope libraryScope = this.LibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
+                LibraryCompilationScope libraryScope = this.LibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
                 if (libraryScope == null)
                 {
                     this.unresolvedImports.Add(importStatement);

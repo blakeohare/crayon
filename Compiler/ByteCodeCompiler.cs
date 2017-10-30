@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Common;
+using Crayon.ParseTree;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Crayon.ParseTree;
-using Common;
 
 namespace Crayon
 {
@@ -92,7 +92,7 @@ namespace Crayon
             ByteBuffer output = new ByteBuffer();
 
             int id = 1;
-            foreach (CompilationScope libraryScope in parser.LibraryManager.LibraryScopesUsed)
+            foreach (LibraryCompilationScope libraryScope in parser.LibraryManager.LibraryScopesUsed)
             {
                 List<string> descriptorComponents = new List<string>()
                 {

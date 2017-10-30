@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Common;
+using Crayon.ParseTree;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common;
-using Crayon.ParseTree;
 
 namespace Crayon
 {
@@ -14,8 +14,7 @@ namespace Crayon
         public Resolver(ParserContext parser, ICollection<CompilationScope> compilationScopes)
         {
             List<TopLevelConstruct> originalCode = new List<TopLevelConstruct>();
-            foreach (CompilationScope scope in compilationScopes
-                .OrderBy(scope => scope.Library == null ? "" : scope.Library.Name))
+            foreach (CompilationScope scope in compilationScopes.OrderBy(scope => scope.ScopeKey))
             {
                 originalCode.AddRange(scope.GetExecutables_HACK());
             }
@@ -112,7 +111,7 @@ namespace Crayon
                     string possibleLibraryName = ns.Split('.')[0];
 
                     TODO.EnglishLocaleAssumed();
-                    CompilationScope libraryScope = this.parser.LibraryManager.GetLibraryFromName(possibleLibraryName);
+                    LibraryCompilationScope libraryScope = this.parser.LibraryManager.GetLibraryFromName(possibleLibraryName);
                     if (libraryScope != null)
                     {
                         // TODO: once you get rid of this line, make the Library setter protected
