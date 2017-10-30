@@ -168,7 +168,7 @@ namespace Crayon
 
         private Dictionary<string, string> supplementalFiles = null;
 
-        public Dictionary<string, string> GetSupplementalTranslatedCode(bool isPastel)
+        public Dictionary<string, string> GetSupplementalTranslatedCode()
         {
             if (this.supplementalFiles == null)
             {
@@ -179,9 +179,9 @@ namespace Crayon
                     foreach (string filepath in System.IO.Directory.GetFiles(supplementalFilesDir))
                     {
                         string name = System.IO.Path.GetFileName(filepath);
-                        if ((isPastel && name.EndsWith(".cry")) || (!isPastel && name.EndsWith(".pst")))
+                        if (name.EndsWith(".pst"))
                         {
-                            string key = name.Substring(0, name.Length - ".cry".Length);
+                            string key = name.Substring(0, name.Length - ".pst".Length);
                             this.supplementalFiles[key] = this.ReadFile(false, System.IO.Path.Combine("supplemental", name), false);
                         }
                     }

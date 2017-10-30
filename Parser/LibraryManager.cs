@@ -16,7 +16,7 @@ namespace Crayon
 
         private Dictionary<string, int> libFunctionIds = new Dictionary<string, int>();
         private List<string> orderedListOfFunctionNames = new List<string>();
-        
+
         private BuildContext buildContext = null;
 
         public static LibraryManager ForStandaloneVmExport()
@@ -88,20 +88,6 @@ namespace Crayon
         public Dictionary<string, string> GetEmbeddedCode(string libraryName)
         {
             return this.importedLibraryScopes[libraryName].Library.GetEmbeddedCode();
-        }
-
-        public Dictionary<string, string> GetSupplementalTranslationFiles(bool isPastel)
-        {
-            Dictionary<string, string> output = new Dictionary<string, string>();
-            foreach (LibraryCompilationScope libraryScope in this.importedLibraryScopes.Values)
-            {
-                Dictionary<string, string> files = libraryScope.Library.GetSupplementalTranslatedCode(isPastel);
-                foreach (string key in files.Keys)
-                {
-                    output[key] = files[key];
-                }
-            }
-            return output;
         }
 
         public LibraryMetadata[] GetAllAvailableBuiltInLibraries()

@@ -264,8 +264,7 @@ namespace Crayon
                         library.GetArgumentTypesForNativeMethods());
                     libraries[library.Metadata.Name] = compiler;
 
-                    Dictionary<string, string> supplementalCode = library.Metadata.GetSupplementalTranslatedCode(false);
-                    Dictionary<string, string> pastelSupplementalCode = library.Metadata.GetSupplementalTranslatedCode(true);
+                    Dictionary<string, string> supplementalCode = library.Metadata.GetSupplementalTranslatedCode();
                     Dictionary<string, string> translatedCode = library.GetNativeCode();
                     Dictionary<string, string> structCode = library.Metadata.GetStructFilesCode();
                     // need to load from the actual Library instance, which could have come from either CRAYON_HOME or source
