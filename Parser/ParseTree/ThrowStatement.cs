@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Crayon.ParseTree
+namespace Parser.ParseTree
 {
     public class ThrowStatement : Executable
     {

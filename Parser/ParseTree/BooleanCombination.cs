@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Crayon.ParseTree
+namespace Parser.ParseTree
 {
     public class BooleanCombination : Expression
     {

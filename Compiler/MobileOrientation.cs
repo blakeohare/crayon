@@ -23,7 +23,7 @@
                 case "auto": return MobileOrientation.AUTO;
                 case "": return MobileOrientation.AUTO;
                 default:
-                    throw new ParserException(null, "Unknown mobile orientation value");
+                    throw new System.InvalidOperationException("Unknown mobile orientation value");
             }
         }
     }

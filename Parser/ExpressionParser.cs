@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Crayon.ParseTree;
 using Common;
+using Parser.ParseTree;
 
-namespace Crayon
+namespace Parser
 {
     public class ExpressionParser
     {

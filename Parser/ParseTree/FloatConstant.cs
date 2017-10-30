@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Common;
 
-namespace Crayon.ParseTree
+namespace Parser.ParseTree
 {
     public class FloatConstant : Expression, IConstantValue
     {

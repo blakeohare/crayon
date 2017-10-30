@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace Crayon
+namespace Parser
 {
     public static class Tokenizer
     {

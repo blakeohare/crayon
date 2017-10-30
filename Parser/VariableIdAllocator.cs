@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Crayon
+namespace Parser
 {
     internal enum VariableIdAllocPhase
     {

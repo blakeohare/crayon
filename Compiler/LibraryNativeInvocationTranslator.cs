@@ -1,4 +1,5 @@
-﻿using Pastel.Nodes;
+﻿using Parser;
+using Pastel.Nodes;
 using Platform;
 using System.Collections.Generic;
 using System.Text;
@@ -30,7 +31,7 @@ namespace Crayon
         {
             try
             {
-                sb.Append(Crayon.LibraryExporter.Get(this.library, translator.Platform).TranslateNativeInvocation(throwToken, translator, functionName, args));
+                sb.Append(LibraryExporter.Get(this.library, translator.Platform).TranslateNativeInvocation(throwToken, translator, functionName, args));
             }
             catch (System.Reflection.TargetInvocationException tie)
             {

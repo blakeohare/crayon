@@ -1,11 +1,11 @@
 ﻿using Build;
 using Common;
-using Crayon.ParseTree;
 using Localization;
+using Parser.ParseTree;
 using System;
 using System.Collections.Generic;
 
-namespace Crayon
+namespace Parser
 {
     public class ParserContext
     {

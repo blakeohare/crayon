@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Parser.ParseTree;
+using System.Collections.Generic;
 using System.Linq;
-using Crayon.ParseTree;
-using Common;
 
-namespace Crayon
+namespace Parser
 {
     public class ExecutableParser
     {

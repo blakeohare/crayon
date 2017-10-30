@@ -1,11 +1,11 @@
 ﻿using Build;
 using Common;
-using Crayon.ParseTree;
 using Localization;
+using Parser.ParseTree;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Crayon
+namespace Parser
 {
     public class LibraryManager
     {

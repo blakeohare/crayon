@@ -1,7 +1,7 @@
-﻿using Crayon.ParseTree;
+﻿using Parser.ParseTree;
 using System.Collections.Generic;
 
-namespace Crayon
+namespace Parser
 {
     public class AnnotationParser
     {

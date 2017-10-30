@@ -1,4 +1,4 @@
-﻿namespace Crayon.ParseTree
+﻿namespace Parser.ParseTree
 {
     public interface IConstantValue
     {

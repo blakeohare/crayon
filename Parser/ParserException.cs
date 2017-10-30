@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Crayon
+namespace Parser
 {
     public class ParserException : Exception
     {

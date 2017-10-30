@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Crayon.ParseTree
+namespace Parser.ParseTree
 {
     // These are ephemeral references to a portion of a namespace and ideally occur only as part of
     // a DotStep chain that resolves into something concrete during the name resolution phase.

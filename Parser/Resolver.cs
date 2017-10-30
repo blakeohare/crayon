@@ -1,10 +1,10 @@
 ﻿using Common;
-using Crayon.ParseTree;
+using Parser.ParseTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Crayon
+namespace Parser
 {
     internal class Resolver
     {

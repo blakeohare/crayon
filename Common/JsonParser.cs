@@ -633,7 +633,7 @@ namespace Common
 
         public object Get(string path)
         {
-            // strings and integers
+            // TODO: add support for list indexing as well
             string[] steps = path.Split('.');
             IDictionary<string, object> current = this.root;
             for (int i = 0; i < steps.Length; ++i)

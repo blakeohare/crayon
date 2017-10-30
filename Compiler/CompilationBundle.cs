@@ -1,5 +1,6 @@
 ﻿using Build;
 using Common;
+using Parser;
 using System.Collections.Generic;
 
 namespace Crayon
@@ -27,7 +28,7 @@ namespace Crayon
             using (new PerformanceSection("CompilationBundle.Compile"))
             {
                 ParserContext parser = new ParserContext(buildContext);
-                Crayon.ParseTree.TopLevelConstruct[] resolvedParseTree = parser.ParseAllTheThings();
+                Parser.ParseTree.TopLevelConstruct[] resolvedParseTree = parser.ParseAllTheThings();
 
                 ByteCodeCompiler bcc = new ByteCodeCompiler();
                 ByteBuffer buffer = bcc.GenerateByteCode(parser, resolvedParseTree);

@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Parser.ParseTree;
+using System.Collections.Generic;
 
-namespace Crayon
+namespace Parser
 {
     public class LiteralLookup
     {
@@ -62,7 +63,7 @@ namespace Crayon
             return this.GetIdForValue("s" + value, Types.STRING, value);
         }
 
-        public int GetClassRefId(Crayon.ParseTree.ClassDefinition value)
+        public int GetClassRefId(ClassDefinition value)
         {
             return this.GetIdForValue("c" + value.ClassID, Types.CLASS, value.ClassID);
         }

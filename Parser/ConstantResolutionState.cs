@@ -1,4 +1,4 @@
-﻿namespace Crayon
+﻿namespace Parser
 {
     public enum ConstantResolutionState
     {

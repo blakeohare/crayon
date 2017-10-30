@@ -1,9 +1,9 @@
 ﻿using Build;
-using Crayon.ParseTree;
 using Localization;
+using Parser.ParseTree;
 using System.Collections.Generic;
 
-namespace Crayon
+namespace Parser
 {
     public abstract class CompilationScope
     {

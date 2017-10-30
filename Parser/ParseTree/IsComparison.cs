@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Crayon.ParseTree
+namespace Parser.ParseTree
 {
     public class IsComparison : Expression
     {

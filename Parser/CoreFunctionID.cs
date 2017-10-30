@@ -1,4 +1,6 @@
-﻿namespace Crayon
+﻿using Parser.ParseTree;
+
+namespace Parser
 {
     public enum CoreFunctionID
     {
@@ -96,7 +98,7 @@
             }
         }
 
-        internal static int GetId(Crayon.ParseTree.StringConstant str)
+        internal static int GetId(StringConstant str)
         {
             int output = GetId(str.Value);
             if (output == -1)

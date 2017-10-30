@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace Crayon.ParseTree
+namespace Parser.ParseTree
 {
     public class StringConstant : Expression, IConstantValue
     {

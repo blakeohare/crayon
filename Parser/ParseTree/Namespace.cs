@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Crayon.ParseTree
+namespace Parser.ParseTree
 {
     // Despite being an "Executable", this isn't an executable thing.
     // It will get optimized away at resolution time.
