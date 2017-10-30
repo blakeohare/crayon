@@ -2,5 +2,13 @@
 	"name": "Math",
 	"author": "Blake O'Hare",
 	"documentation": "http://crayonlang.org/docs/0.2.0/math",
-	"description": "Common basic math functions."
+	"description": "Common basic math functions.",
+
+	"localization": {
+		"default": "en",
+		"names": {
+			"en": "Math",
+			"es": "Mates",
+		}
+	},
 }

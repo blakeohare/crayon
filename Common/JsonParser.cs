@@ -611,4 +611,54 @@ namespace Common
             public bool Remove(string key) { throw new NotImplementedException(); }
         }
     }
+
+    public class JsonLookup
+    {
+        private IDictionary<string, object> root;
+        public JsonLookup(IDictionary<string, object> root)
+        {
+            this.root = root;
+        }
+
+        public string GetAsString(string path, string defaultValue) { return GetAsString(path) ?? defaultValue; }
+        public string GetAsString(string path) { return this.Get(path) as string; }
+        public int GetAsInteger(string path, int defaultValue) { object value = this.Get(path); return value == null ? defaultValue : (int)value; }
+        public double GetAsInteger(string path) { return GetAsInteger(path, 0); }
+        public double GetAsDouble(string path, double defaultValue) { object value = this.Get(path); return value == null ? defaultValue : (double)value; }
+        public double GetAsDouble(string path) { return GetAsDouble(path, 0); }
+        public bool GetAsBoolean(string path, bool defaultValue) { object value = this.Get(path); return value == null ? defaultValue : (bool)value; }
+        public bool GetAsBoolean(string path) { return GetAsBoolean(path, false); }
+        public object[] GetAsList(string path) { return (Get(path) as object[]) ?? new object[0]; }
+        public IDictionary<string, object> GetAsLookup(string path) { return (Get(path) as IDictionary<string, object>) ?? new Dictionary<string, object>(); }
+
+        public object Get(string path)
+        {
+            // strings and integers
+            string[] steps = path.Split('.');
+            IDictionary<string, object> current = this.root;
+            for (int i = 0; i < steps.Length; ++i)
+            {
+                if (current.ContainsKey(steps[i]))
+                {
+                    if (i == steps.Length - 1)
+                    {
+                        return current[steps[i]];
+                    }
+                    else if (current[steps[i]] is IDictionary<string, object>)
+                    {
+                        current = (IDictionary<string, object>)current[steps[i]];
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            return null;
+        }
+    }
 }

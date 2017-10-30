@@ -10,11 +10,11 @@ namespace Crayon
         public string Directory { get; private set; }
         public string Name { get; private set; }
         public string Version { get { return "v1"; } } // TODO: versions
-        public IDictionary<string, object> Manifest { get; private set; }
+        public JsonLookup Manifest { get; private set; }
         public Locale InternalLocale { get; private set; }
         public string CanonicalKey { get; private set; }
         public HashSet<Locale> SupportedLocales { get; private set; }
-        public bool IsImportRestricted { get { return this.OnlyImportableFrom != null; } }
+        public bool IsImportRestricted { get { return this.OnlyImportableFrom.Count > 0; } }
         public HashSet<string> OnlyImportableFrom { get; private set; }
 
         public LibraryMetadata(string directory, string name)
@@ -25,53 +25,33 @@ namespace Crayon
             string manifestText = System.IO.File.ReadAllText(System.IO.Path.Combine(directory, "manifest.json"));
             try
             {
-                this.Manifest = new JsonParser(manifestText)
+                this.Manifest = new JsonLookup(new JsonParser(manifestText)
                     .AddOption(JsonOption.ALLOW_TRAILING_COMMA)
                     .AddOption(JsonOption.ALLOW_COMMENTS)
-                    .ParseAsDictionary();
+                    .ParseAsDictionary());
             }
             catch (JsonParser.JsonParserException jpe)
             {
                 throw new System.InvalidOperationException("Syntax error while parsing the library manifest for '" + name + "'.", jpe);
             }
-
-            this.InternalLocale = Locale.Get("en"); TODO.NotAllLibrariesAreWrittenInEnglish();
+            
+            this.InternalLocale = Locale.Get(this.Manifest.GetAsString("localization.default", "en"));
             this.CanonicalKey = this.InternalLocale.ID + ":" + this.Name;
-            this.SupportedLocales = new HashSet<Locale>();
+            this.SupportedLocales = new HashSet<Locale>(this.Manifest.GetAsLookup("localization.names").Keys.Select(localeName => Locale.Get(localeName)));
             this.SupportedLocales.Add(this.InternalLocale);
-
-            if (this.Manifest.ContainsKey("only_allow_import_from"))
-            {
-                object[] libs = (object[])this.Manifest["only_allow_import_from"];
-                this.OnlyImportableFrom = new HashSet<string>(libs.Select(o => o.ToString()));
-            }
-
-            switch (this.Name)
-            {
-                case "Game":
-                case "Graphics2D":
-                case "Math":
-                case "Random":
-                    this.SupportedLocales.Add(Locale.Get("es"));
-                    break;
-            }
+            this.OnlyImportableFrom = new HashSet<string>(this.Manifest.GetAsList("onlyAllowImportFrom").Cast<string>());
         }
 
+        private Dictionary<string, string> nameByLocale = new Dictionary<string, string>();
         public string GetName(Locale locale)
         {
-            TODO.LibraryNameLocalization();
-            // TODO: This is just a test. Remove promptly.
-            switch (locale.ID + ":" + this.Name)
+            if (!nameByLocale.ContainsKey(locale.ID))
             {
-                case "es:Game": return "Juego";
-                case "es:Graphics2D": return "Graficos2D";
-                case "es:Math": return "Mates";
-                case "es:Random": return "Aleatorio";
-                default: return this.Name;
+                nameByLocale[locale.ID] = this.Manifest.GetAsString("localization.names." + locale.ID, this.Name);
             }
+            return nameByLocale[locale.ID];
         }
-
-
+        
         private List<LibraryMetadata> libraryDependencies = new List<LibraryMetadata>();
         private HashSet<Locale> localesAccessed = new HashSet<Locale>();
         private HashSet<LibraryMetadata> libraryDependencyDuplicateCheck = new HashSet<LibraryMetadata>();

@@ -2,5 +2,13 @@
 	"name": "Random",
 	"author": "Blake O'Hare",
 	"documentation": "http://crayonlang.org/docs/0.2.0/random",
-	"description": "Library for generating random numbers and behavior."
+	"description": "Library for generating random numbers and behavior.",
+
+	"localization": {
+		"default": "en",
+		"names": {
+			"en": "Random",
+			"es": "Aleatorio",
+		}
+	},
 }

@@ -3,7 +3,7 @@
 	"author": "Blake O'Hare",
 	"description": "Underlying implementation for FileIO and UserData. Not meant for direct use.",
 	
-	"only_allow_import_from": [
+	"onlyAllowImportFrom": [
 		"FileIO",
 		"UserData"
 	]
