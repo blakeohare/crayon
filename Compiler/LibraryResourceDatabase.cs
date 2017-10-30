@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Common;
+using Platform;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Common;
-using Platform;
 
 namespace Crayon
 {
@@ -17,11 +17,11 @@ namespace Crayon
             public virtual string Value { get; set; }
         }
 
-        private Library library;
+        private LibraryExporter library;
         private Multimap<string, ExportEntity> exportEntities;
         private List<string> dotNetLibs;
 
-        public LibraryResourceDatabase(Library library, AbstractPlatform platform)
+        public LibraryResourceDatabase(LibraryExporter library, AbstractPlatform platform)
         {
             this.library = library;
             this.exportEntities = null;
@@ -90,7 +90,7 @@ namespace Crayon
                                         Dictionary<string, string> values = KeyValuePairParser.Parse(parts[1]);
                                         if (values == null)
                                         {
-                                            throw new InvalidOperationException("The library '" + this.library.Name + "' has a malformed copy instruction on the following line: " + lineRaw);
+                                            throw new InvalidOperationException("The library '" + this.library.Metadata.Name + "' has a malformed copy instruction on the following line: " + lineRaw);
                                         }
                                         values["TYPE"] = command;
                                         instructions.Add(values);
@@ -221,7 +221,7 @@ namespace Crayon
         {
             if (!instruction.ContainsKey(attribute))
             {
-                throw new InvalidOperationException(command + " command in '" + this.library.Name + "' is missing a '" + attribute + "' attribute.");
+                throw new InvalidOperationException(command + " command in '" + this.library.Metadata.Name + "' is missing a '" + attribute + "' attribute.");
             }
         }
 
@@ -337,7 +337,7 @@ namespace Crayon
                         break;
 
                     default:
-                        throw new InvalidOperationException("The command '" + command + "' is not recongized in the resource manifest of library: '" + this.library.Name + "'");
+                        throw new InvalidOperationException("The command '" + command + "' is not recongized in the resource manifest of library: '" + this.library.Metadata.Name + "'");
                 }
             }
         }

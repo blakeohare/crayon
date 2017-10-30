@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Common;
+using Pastel.Nodes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Common;
-using Pastel.Nodes;
 
 namespace Crayon
 {
@@ -57,15 +56,15 @@ namespace Crayon
                 vm);
 
                 List<Platform.LibraryForExport> libraries = new List<Platform.LibraryForExport>();
-                Dictionary<string, Library> libraryByName = new Dictionary<string, Library>();
+                Dictionary<string, LibraryExporter> libraryByName = new Dictionary<string, LibraryExporter>();
                 foreach (string libraryName in libraryCompilation.Keys.OrderBy(s => s))
                 {
-                    Library library = Library.Get(librariesByName[libraryName], platform);
-                    libraryByName[library.Name] = library;
+                    LibraryExporter library = LibraryExporter.Get(librariesByName[libraryName], platform);
+                    libraryByName[library.Metadata.Name] = library;
                     Platform.LibraryForExport libraryForExport = this.CreateLibraryForExport(
-                        library.Name,
+                        library.Metadata.Name,
                         library.Metadata.Version,
-                        libraryCompilation[library.Name],
+                        libraryCompilation[library.Metadata.Name],
                         library.Resources);
                     libraries.Add(libraryForExport);
                 }
@@ -77,7 +76,7 @@ namespace Crayon
                     {
                         if (ee.DeferredFileOutputBytesLibraryName != null)
                         {
-                            Library sourceLibrary;
+                            LibraryExporter sourceLibrary;
                             if (!libraryByName.TryGetValue(ee.DeferredFileOutputBytesLibraryName, out sourceLibrary))
                             {
                                 throw new InvalidOperationException("The library '" + lfe.Name + "' makes reference to another library '" + ee.DeferredFileOutputBytesLibraryName + "' which could not be found.");
@@ -87,7 +86,7 @@ namespace Crayon
                             byte[] dllFile = sourceLibrary.Metadata.ReadFileBytes(resourcePath);
                             if (dllFile == null)
                             {
-                                throw new InvalidOperationException("Could not find file: '" + resourcePath + "' in library '" + sourceLibrary.Name + "'");
+                                throw new InvalidOperationException("Could not find file: '" + resourcePath + "' in library '" + sourceLibrary.Metadata.Name + "'");
                             }
                             ee.FileOutput = new FileOutput()
                             {
@@ -252,7 +251,7 @@ namespace Crayon
 
                 foreach (LibraryMetadata libraryMetadata in relevantLibraries)
                 {
-                    Library library = Library.Get(libraryMetadata, platform);
+                    LibraryExporter library = LibraryExporter.Get(libraryMetadata, platform);
 
                     Dictionary<string, object> constantsLookup = Util.MergeDictionaries<string, object>(constantFlags, library.CompileTimeConstants);
 
@@ -263,7 +262,7 @@ namespace Crayon
                         codeLoader,
                         library.GetReturnTypesForNativeMethods(),
                         library.GetArgumentTypesForNativeMethods());
-                    libraries[library.Name] = compiler;
+                    libraries[library.Metadata.Name] = compiler;
 
                     Dictionary<string, string> supplementalCode = library.Metadata.GetSupplementalTranslatedCode(false);
                     Dictionary<string, string> pastelSupplementalCode = library.Metadata.GetSupplementalTranslatedCode(true);
@@ -276,28 +275,28 @@ namespace Crayon
                     {
                         if (supplementalCode.Count > 0 || translatedCode.Count > 0)
                         {
-                            throw new InvalidOperationException("The library '" + library.Name + "' has translated code but no function_registry.pst file.");
+                            throw new InvalidOperationException("The library '" + library.Metadata.Name + "' has translated code but no function_registry.pst file.");
                         }
                     }
                     else
                     {
-                        compiler.CompileBlobOfCode("LIB:" + library.Name + "/function_registry.pst", registryCode);
+                        compiler.CompileBlobOfCode("LIB:" + library.Metadata.Name + "/function_registry.pst", registryCode);
 
                         foreach (string structFile in structCode.Keys)
                         {
                             string code = structCode[structFile];
-                            compiler.CompileBlobOfCode("LIB:" + library.Name + "/structs/" + structFile, code);
+                            compiler.CompileBlobOfCode("LIB:" + library.Metadata.Name + "/structs/" + structFile, code);
                         }
 
                         foreach (string supplementalFile in supplementalCode.Keys)
                         {
                             string code = supplementalCode[supplementalFile];
-                            compiler.CompileBlobOfCode("LIB:" + library.Name + "/supplemental/" + supplementalFile, code);
+                            compiler.CompileBlobOfCode("LIB:" + library.Metadata.Name + "/supplemental/" + supplementalFile, code);
                         }
                         foreach (string translatedFile in translatedCode.Keys)
                         {
                             string code = translatedCode[translatedFile];
-                            compiler.CompileBlobOfCode("LIB:" + library.Name + "/translate/" + translatedFile, code);
+                            compiler.CompileBlobOfCode("LIB:" + library.Metadata.Name + "/translate/" + translatedFile, code);
                         }
                         compiler.Resolve();
                     }

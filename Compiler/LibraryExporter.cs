@@ -6,20 +6,16 @@ using System.Linq;
 namespace Crayon
 {
     // Library is only instantiable in the context of a specific platform, which is not ideal, but not causing any problems at the moment.
-    public class Library
+    public class LibraryExporter
     {
         public LibraryMetadata Metadata { get; private set; }
         private string platformName;
-
-        public string Name { get { return this.Metadata.Name; } }
-        public string RootDirectory { get { return this.Metadata.Directory; } }
-        public string CanonicalKey { get { return this.Metadata.CanonicalKey; } }
-
+        
         public Dictionary<string, object> CompileTimeConstants { get; set; }
 
         internal LibraryResourceDatabase Resources { get; private set; }
 
-        private static Dictionary<string, Library> libraryCache = new Dictionary<string, Library>();
+        private static Dictionary<string, LibraryExporter> libraryCache = new Dictionary<string, LibraryExporter>();
 
         private static string GetLibKey(LibraryMetadata metadata, Platform.AbstractPlatform platform)
         {
@@ -27,17 +23,17 @@ namespace Crayon
         }
 
         // TODO: this ought to go away and the cache needs to move to some sort of scope whose lifetime is tied to a specific compilation scope.
-        public static Library Get(LibraryMetadata metadata, Platform.AbstractPlatform platform)
+        public static LibraryExporter Get(LibraryMetadata metadata, Platform.AbstractPlatform platform)
         {
             string key = GetLibKey(metadata, platform);
             if (!libraryCache.ContainsKey(key))
             {
-                libraryCache[key] = new Library(metadata, platform);
+                libraryCache[key] = new LibraryExporter(metadata, platform);
             }
             return libraryCache[key];
         }
 
-        private Library(LibraryMetadata metadata, Platform.AbstractPlatform platform)
+        private LibraryExporter(LibraryMetadata metadata, Platform.AbstractPlatform platform)
         {
             TODO.LibrariesNeedVersionNumber();
 
@@ -57,9 +53,9 @@ namespace Crayon
             // on Python, myFunction will be included for lib_foo_myFunction(), but on Android, android.myFunction.cry will be included instead.
 
             string[] files = new string[0];
-            if (FileUtil.DirectoryExists(this.RootDirectory + "/translate"))
+            if (FileUtil.DirectoryExists(this.Metadata.Directory + "/translate"))
             {
-                files = System.IO.Directory.GetFiles(System.IO.Path.Combine(this.RootDirectory, "translate"));
+                files = System.IO.Directory.GetFiles(System.IO.Path.Combine(this.Metadata.Directory, "translate"));
             }
             Dictionary<string, string> moreSpecificFiles = new Dictionary<string, string>();
             foreach (string fileWithDirectory in files)
@@ -114,7 +110,7 @@ namespace Crayon
         private Dictionary<string, object> LoadFlagsFromFile(string platformId)
         {
             Dictionary<string, object> output = new Dictionary<string, object>();
-            string path = FileUtil.JoinAndCanonicalizePath(this.RootDirectory, "flags", platformId + ".txt");
+            string path = FileUtil.JoinAndCanonicalizePath(this.Metadata.Directory, "flags", platformId + ".txt");
             if (FileUtil.FileExists(path))
             {
                 foreach (string line in FileUtil.ReadFileText(path).Split('\n'))
@@ -192,7 +188,7 @@ namespace Crayon
             string MISSING_FUNCTION_NAME_FOR_DEBUGGER = functionName;
             MISSING_FUNCTION_NAME_FOR_DEBUGGER.Trim(); // no compile warnings
 
-            string msg = "The " + this.Name + " library does not support " + translator.Platform.Name + " projects.";
+            string msg = "The " + this.Metadata.Name + " library does not support " + translator.Platform.Name + " projects.";
             if (throwToken is Token)
             {
                 throw new ParserException((Token)throwToken, msg);
@@ -206,7 +202,7 @@ namespace Crayon
         private HashSet<string> IGNORABLE_FILES = new HashSet<string>(new string[] { ".ds_store", "thumbs.db" });
         internal string[] ListDirectory(string pathRelativeToLibraryRoot)
         {
-            string fullPath = FileUtil.JoinPath(this.RootDirectory, pathRelativeToLibraryRoot);
+            string fullPath = FileUtil.JoinPath(this.Metadata.Directory, pathRelativeToLibraryRoot);
             List<string> output = new List<string>();
             if (FileUtil.DirectoryExists(fullPath))
             {
@@ -229,11 +225,11 @@ namespace Crayon
             this.returnTypeInfoForNativeMethods = new Dictionary<string, Pastel.Nodes.PType>();
             this.argumentTypeInfoForNativeMethods = new Dictionary<string, Pastel.Nodes.PType[]>();
 
-            string typeInfoFile = System.IO.Path.Combine(this.RootDirectory, "native_method_type_info.txt");
+            string typeInfoFile = System.IO.Path.Combine(this.Metadata.Directory, "native_method_type_info.txt");
             if (System.IO.File.Exists(typeInfoFile))
             {
                 string typeInfo = System.IO.File.ReadAllText(typeInfoFile);
-                Pastel.TokenStream tokens = new Pastel.TokenStream(Pastel.Tokenizer.Tokenize("LIB:" + this.Name + "/native_method_type_info.txt", typeInfo));
+                Pastel.TokenStream tokens = new Pastel.TokenStream(Pastel.Tokenizer.Tokenize("LIB:" + this.Metadata.Name + "/native_method_type_info.txt", typeInfo));
 
                 while (tokens.HasMore)
                 {
