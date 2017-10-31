@@ -1,5 +1,7 @@
 ﻿import Math;
 
+@localized('en', 'Random')
+@localized('es', 'Aleatorio')
 namespace Random {
     function randomFloat() {
         return $$lib_random_random_float();

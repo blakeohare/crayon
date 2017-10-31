@@ -1,3 +1,5 @@
+@localized('en', 'Graphics2D')
+@localized('es', 'Graficos2D')
 namespace Graphics2D {
     class GraphicsTextureResource {
 

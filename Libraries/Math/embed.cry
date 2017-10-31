@@ -1,3 +1,5 @@
+@localized('en', 'Math')
+@localized('es', 'Mates')
 namespace Math {
 
     const PI = 3.141592653589793238462;

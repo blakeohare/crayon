@@ -1,4 +1,5 @@
-﻿using Parser.ParseTree;
+﻿using Common;
+using Parser.ParseTree;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,6 +23,12 @@ namespace Parser
         {
             string value = tokens.PeekValue();
 
+            Multimap<string, Annotation> annotations = null;
+            if (value == "@")
+            {
+                annotations = new AnnotationParser(this.parser).ParseAnnotations(tokens);
+            }
+            
             Token staticToken = null;
             Token finalToken = null;
             while (value == this.parser.Keywords.STATIC || value == this.parser.Keywords.FINAL)
@@ -85,7 +92,7 @@ namespace Parser
 
             if (value == this.parser.Keywords.NAMESPACE)
             {
-                return this.ParseNamespace(tokens, owner, fileScope);
+                return this.ParseNamespace(tokens, owner, fileScope, annotations);
             }
 
             if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner, fileScope);
@@ -411,7 +418,7 @@ namespace Parser
             return fd;
         }
 
-        private Namespace ParseNamespace(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope)
+        private Namespace ParseNamespace(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope, Multimap<string, Annotation> annotations)
         {
             Token namespaceToken = tokens.PopExpected(this.parser.Keywords.NAMESPACE);
             Token first = tokens.Pop();
@@ -431,7 +438,7 @@ namespace Parser
             string name = string.Join(".", namespacePieces.Select<Token, string>(t => t.Value));
             parser.PushNamespacePrefix(name);
 
-            Namespace namespaceInstance = new Namespace(namespaceToken, name, owner, parser.CurrentLibrary, fileScope);
+            Namespace namespaceInstance = new Namespace(namespaceToken, name, owner, parser.CurrentLibrary, fileScope, annotations);
 
             tokens.PopExpected("{");
             List<TopLevelConstruct> namespaceMembers = new List<TopLevelConstruct>();

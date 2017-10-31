@@ -1,4 +1,6 @@
-﻿namespace Game {
+﻿@localized('en', 'Game')
+@localized('es', 'Juego')
+namespace Game {
     enum EventButton {
         LEFT = 0,
         // MIDDLE = 1, // TODO

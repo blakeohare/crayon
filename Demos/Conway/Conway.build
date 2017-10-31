@@ -1,6 +1,5 @@
 <build>
 	<projectname>Conway</projectname>
-	<source>source</source>
 	<output>output/%TARGET_NAME%</output>
 	<icon>assets/icon.png</icon>
 	
@@ -10,30 +9,43 @@
 	
 	<!-- Targets -->
 	<target name="javascript">
+		<source>source</source>
 		<platform>javascript-app</platform>
 	</target>
 	
 	<target name="csharp">
+		<source>source</source>
 		<platform>csharp-app</platform>
 	</target>
 	
+	<target name="es-demo">
+		<source>source-es</source>
+		<platform>csharp-app</platform>
+		<compilerlocale>es</compilerlocale>
+	</target>
+	
 	<target name="java">
+		<source>source</source>
 		<platform>java-app</platform>
 	</target>
 	
 	<target name="python">
+		<source>source</source>
 		<platform>python-app</platform>
 	</target>
 	
 	<target name="ruby">
+		<source>source</source>
 		<platform>ruby-app</platform>
 	</target>
 	
 	<target name="android">
+		<source>source</source>
 		<platform>java-app-android</platform>
 	</target>
 
 	<target name="ios">
+		<source>source</source>
 		<platform>javascript-app-ios</platform>
 	</target>
 </build>

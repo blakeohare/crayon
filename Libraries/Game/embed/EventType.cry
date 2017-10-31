@@ -1,4 +1,6 @@
-﻿namespace Game {
+﻿@localized('en', 'Game')
+@localized('es', 'Juego')
+namespace Game {
 
     // WARNING: These magic numbers are used throughout the stack
     // GameLibHelper.cry and platform specific code.

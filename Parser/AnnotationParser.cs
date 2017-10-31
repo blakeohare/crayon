@@ -1,4 +1,5 @@
-﻿using Parser.ParseTree;
+﻿using Common;
+using Parser.ParseTree;
 using System.Collections.Generic;
 
 namespace Parser
@@ -36,6 +37,17 @@ namespace Parser
                 }
             }
             return new Annotation(annotationToken, typeToken, args);
+        }
+
+        public Multimap<string, Annotation> ParseAnnotations(TokenStream tokens)
+        {
+            Multimap<string, Annotation> annotations = new Multimap<string, Annotation>();
+            while (tokens.IsNext("@"))
+            {
+                Annotation annotation = this.ParseAnnotation(tokens);
+                annotations.Add(annotation.Type, annotation);
+            }
+            return annotations;
         }
     }
 }

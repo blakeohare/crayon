@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Common;
+using Localization;
+using System;
 using System.Collections.Generic;
 
 namespace Parser.ParseTree
@@ -8,18 +10,28 @@ namespace Parser.ParseTree
     public class Namespace : TopLevelConstruct
     {
         public TopLevelConstruct[] Code { get; set; }
-        public string Name { get; set; }
+        public string DefaultName { get; set; }
+        public Dictionary<Locale, string> NamesByLocale { get; private set; }
 
         public Namespace(
             Token namespaceToken,
             string name,
             TopLevelConstruct owner,
             LibraryMetadata library,
-            FileScope fileScope)
+            FileScope fileScope,
+            Multimap<string, Annotation> annotations)
             : base(namespaceToken, owner, fileScope)
         {
             this.Library = library;
-            this.Name = name;
+            this.DefaultName = name;
+            this.NamesByLocale = new Dictionary<Locale, string>();
+            // TODO: move this
+            foreach (Annotation localeAnnotation in annotations["localized"])
+            {
+                string locale = ((StringConstant)localeAnnotation.Args[0]).Value;
+                string localizedName = ((StringConstant)localeAnnotation.Args[1]).Value;
+                this.NamesByLocale[Locale.Get(locale)] = localizedName;
+            }
         }
 
         public void GetFlattenedCode(IList<TopLevelConstruct> executableOut)

@@ -1,4 +1,6 @@
-﻿namespace Game {
+﻿@localized('en', 'Game')
+@localized('es', 'Juego')
+namespace Game {
 
     class MouseEvent : Event {
         field x;

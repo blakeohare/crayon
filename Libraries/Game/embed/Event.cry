@@ -1,4 +1,6 @@
-﻿namespace Game {
+﻿@localized('en', 'Game')
+@localized('es', 'Juego')
+namespace Game {
 
     // TODO: mark as abstract.
     // This can be extended in other libraries, such as Gamepad
