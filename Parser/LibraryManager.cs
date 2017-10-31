@@ -1,7 +1,7 @@
 ﻿using Build;
-using Common;
 using Localization;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Parser
 {
@@ -11,8 +11,8 @@ namespace Parser
         private LibraryFinder libraryFinder;
         public LibraryFunctionTracker LibraryFunctionTracker { get; private set; }
 
-        private Dictionary<string, LibraryCompilationScope> importedLibraryScopes = new Dictionary<string, LibraryCompilationScope>();
-        private Dictionary<string, LibraryCompilationScope> librariesByKey = new Dictionary<string, LibraryCompilationScope>();
+        private Dictionary<string, LibraryCompilationScope> importedLibrariesById = new Dictionary<string, LibraryCompilationScope>();
+        private Dictionary<Locale, Dictionary<string, LocalizedLibraryView>> importedLibrariesByLocalizedName = new Dictionary<Locale, Dictionary<string, LocalizedLibraryView>>();
 
         public List<LibraryCompilationScope> ImportedLibraries { get; private set; }
         // The index + 1 is the reference ID
@@ -30,108 +30,111 @@ namespace Parser
         {
             return this.libraryFinder.GetLibraryMetadataFromAnyPossibleKey(parser.CurrentLocale.ID + ":" + name) != null;
         }
-
-        public LibraryCompilationScope GetLibraryFromName(string name)
-        {
-            LibraryCompilationScope libraryScope = this.GetLibraryFromKey(name.ToLower());
-            if (libraryScope == null) return null;
-            return name == libraryScope.Library.ID ? libraryScope : null;
-        }
-
-        public LibraryCompilationScope GetLibraryFromKey(string key)
-        {
-            LibraryCompilationScope output;
-            return this.librariesByKey.TryGetValue(key, out output) ? output : null;
-        }
-
-        private LibraryCompilationScope coreLibraryScope = null;
-        public LibraryCompilationScope GetCoreLibrary(ParserContext parser)
-        {
-            if (this.coreLibraryScope == null)
-            {
-                this.coreLibraryScope = this.GetLibraryFromKey("en:Core"); // canonical key will work even if english locale not used.
-                if (this.coreLibraryScope == null)
-                {
-                    LibraryMetadata coreLibMetadata = this.libraryFinder.GetLibraryMetadataFromAnyPossibleKey("en:Core");
-
-                    TODO.GetCoreNameFromMetadataWithLocale();
-                    string coreNameInLocale = coreLibMetadata.ID;
-
-                    this.coreLibraryScope = this.ImportLibrary(parser, null, coreNameInLocale);
-                }
-            }
-            return this.coreLibraryScope;
-        }
-
-        public Dictionary<string, string> GetEmbeddedCode(string libraryName)
-        {
-            return this.importedLibraryScopes[libraryName].Library.GetEmbeddedCode();
-        }
-
+        
         public int GetLibraryReferenceIdFromKey(string key)
         {
             return this.librariesAlreadyImportedIndexByKey[key] + 1;
         }
-        
-        public LibraryCompilationScope ImportLibrary(ParserContext parser, Token throwToken, string name)
+
+        public LocalizedLibraryView GetLocalizedLibraryIfImported(Locale locale, string localizedName)
         {
-            name = name.Split('.')[0];
-            string key = parser.CurrentLocale.ID + ":" + name;
-            LibraryMetadata libraryMetadata = this.libraryFinder.GetLibraryMetadataFromAnyPossibleKey(key);
+            return
+                this.importedLibrariesByLocalizedName.ContainsKey(locale) &&
+                this.importedLibrariesByLocalizedName[locale].ContainsKey(localizedName)
+                    ? this.importedLibrariesByLocalizedName[locale][localizedName]
+                    : null;
+        }
+
+        public LibraryCompilationScope GetLibraryIfImported(string libraryId)
+        {
+            return this.importedLibrariesById.ContainsKey(libraryId) ? this.importedLibrariesById[libraryId] : null;
+        }
+
+        public LocalizedLibraryView GetCoreLibrary(ParserContext parser)
+        {
+            string anyValidCoreLibId = "en:Core";
+            LibraryMetadata coreLib = this.libraryFinder.GetLibraryMetadataFromAnyPossibleKey(anyValidCoreLibId);
+            string name = coreLib.GetName(parser.CurrentLocale);
+            return this.GetOrImportLibrary(parser, null, name);
+        }
+
+        public LocalizedLibraryView GetOrImportLibrary(ParserContext parser, Token throwToken, string fullImportNameWithDots)
+        {
+            // TODO: allow importing from a user-specified locale
+            Locale fromLocale = parser.CurrentLocale;
+            string name = fullImportNameWithDots.Split('.')[0];
+            
+            string secondAttemptedKey = name;
+            LibraryMetadata libraryMetadata = this.libraryFinder.GetLibraryMetadataFromAnyPossibleKey(fromLocale.ID + ":" + name);
+            Locale effectiveLocale = fromLocale;
+
             if (libraryMetadata == null)
             {
-                // check for default locale
                 libraryMetadata = this.libraryFinder.GetLibraryMetadataFromAnyPossibleKey(name);
+                if (libraryMetadata != null &&
+                    libraryMetadata.SupportedLocales.Contains(fromLocale) &&
+                    libraryMetadata.InternalLocale != fromLocale) {
+                    // Coincidental cross-language collision.
+                    return null;
+                }
+
                 if (libraryMetadata == null)
                 {
-                    // No library found. Could just be a local namespace import.
-                    // If this is a bogus import, it'll throw in the Resolver.
+                    // Simply no matches at all.
                     return null;
                 }
 
-                if (libraryMetadata.SupportedLocales.Contains(parser.CurrentLocale))
-                {
-                    // If you import something by its default name from a supported locale, then it doesn't count.
-                    // Don't throw an error. A user should be able to define a namespace that happens to have the
-                    // same name as a library in some locale they aren't using.
-                    return null;
-                }
+                effectiveLocale = libraryMetadata.InternalLocale;
             }
 
-            LibraryCompilationScope libraryScope = this.librariesAlreadyImportedIndexByKey.ContainsKey(libraryMetadata.CanonicalKey)
-                ? this.ImportedLibraries[librariesAlreadyImportedIndexByKey[libraryMetadata.CanonicalKey]]
-                : null;
-
-            if (libraryScope == null)
-            {
-                string platformName = parser.BuildContext.Platform;
-                libraryScope = new LibraryCompilationScope(parser.BuildContext, libraryMetadata);
-                libraryMetadata.AddLocaleAccess(parser.CurrentLocale);
-
-                this.librariesAlreadyImportedIndexByKey[libraryMetadata.CanonicalKey] = this.ImportedLibraries.Count;
-                this.ImportedLibraries.Add(libraryScope);
-
-                this.importedLibraryScopes[name] = libraryScope;
-                this.librariesByKey[name.ToLowerInvariant()] = libraryScope;
-
-                parser.PushScope(libraryScope);
-                Dictionary<string, string> embeddedCode = libraryMetadata.GetEmbeddedCode();
-                foreach (string embeddedFile in embeddedCode.Keys)
-                {
-                    string fakeName = "[" + embeddedFile + "]";
-                    string code = embeddedCode[embeddedFile];
-                    parser.ParseInterpretedCode(fakeName, code);
-                }
-                parser.PopScope();
-            }
-
-            // Even if already imported, still must check to see if this import is allowed here.
-            if (!libraryScope.Library.IsAllowedImport(parser.CurrentLibrary))
+            // Are there any restrictions on importing that library from this location?
+            if (!libraryMetadata.IsAllowedImport(parser.CurrentLibrary))
             {
                 throw new ParserException(throwToken, "This library cannot be imported from here.");
             }
 
-            return libraryScope;
+            // Ensure all secondary lookups for each locale is instantiated to make the upcoming code more readable.
+            if (!this.importedLibrariesByLocalizedName.ContainsKey(effectiveLocale)) this.importedLibrariesByLocalizedName[effectiveLocale] = new Dictionary<string, LocalizedLibraryView>();
+            if (!this.importedLibrariesByLocalizedName.ContainsKey(libraryMetadata.InternalLocale)) this.importedLibrariesByLocalizedName[libraryMetadata.InternalLocale] = new Dictionary<string, LocalizedLibraryView>();
+            
+            // Check to see if this library has been imported before.
+            if (this.importedLibrariesById.ContainsKey(libraryMetadata.ID))
+            {
+                // Is it imported by the same locale?
+                if (this.importedLibrariesByLocalizedName[effectiveLocale].ContainsKey(name))
+                {
+                    // Then just return the previous instance as-is.
+                    return this.importedLibrariesByLocalizedName[effectiveLocale][name];
+                }
+
+                // Wrap the previous instance in the new locale.
+                LocalizedLibraryView output = new  LocalizedLibraryView(effectiveLocale,  this.importedLibrariesById[libraryMetadata.ID]);
+                this.importedLibrariesByLocalizedName[effectiveLocale][output.Name] = output;
+                return output;
+            }
+
+            // If the library exists but hasn't been imported before, instantiate it and
+            // add it to all the lookups. This needs to happen before parsing the embedded
+            // code to prevent infinite recursion.
+            LibraryCompilationScope libraryScope = new LibraryCompilationScope(parser.BuildContext, libraryMetadata);
+            this.librariesAlreadyImportedIndexByKey[libraryMetadata.CanonicalKey] = this.ImportedLibraries.Count;
+            this.ImportedLibraries.Add(libraryScope);
+            this.importedLibrariesById[libraryMetadata.ID] = libraryScope;
+            LocalizedLibraryView localizedView = new LocalizedLibraryView(effectiveLocale, libraryScope);
+            this.importedLibrariesByLocalizedName[effectiveLocale][name] = localizedView;
+            
+            // Parse the library.
+            parser.PushScope(libraryScope);
+            Dictionary<string, string> embeddedCode = libraryMetadata.GetEmbeddedCode();
+            foreach (string embeddedFile in embeddedCode.Keys.OrderBy(s => s.ToLower()))
+            {
+                string fakeName = "[" + embeddedFile + "]";
+                string code = embeddedCode[embeddedFile];
+                parser.ParseInterpretedCode(fakeName, code);
+            }
+            parser.PopScope();
+            
+            return localizedView;
         }
     }
 }

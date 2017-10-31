@@ -112,7 +112,7 @@ namespace Parser
                     string possibleLibraryName = ns.Split('.')[0];
 
                     TODO.EnglishLocaleAssumed();
-                    LibraryCompilationScope libraryScope = this.parser.LibraryManager.GetLibraryFromName(possibleLibraryName);
+                    LibraryCompilationScope libraryScope = this.parser.LibraryManager.GetLibraryIfImported(possibleLibraryName);
                     if (libraryScope != null)
                     {
                         // TODO: once you get rid of this line, make the Library setter protected

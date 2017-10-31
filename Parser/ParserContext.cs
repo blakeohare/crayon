@@ -314,7 +314,7 @@ namespace Parser
         {
             return fileIdCounter++;
         }
-
+        
         public void ParseInterpretedCode(string filename, string code)
         {
             FileScope fileScope = new FileScope(filename);
@@ -329,8 +329,8 @@ namespace Parser
 
             if (this.CurrentLibrary != null && this.CurrentLibrary.CanonicalKey != "en:Core")
             {
-                LibraryCompilationScope coreLibrary = this.LibraryManager.GetCoreLibrary(this);
-                this.CurrentLibrary.AddLibraryDependency(coreLibrary.Library);
+                LocalizedLibraryView coreLibrary = this.LibraryManager.GetCoreLibrary(this);
+                this.CurrentLibrary.AddLibraryDependency(coreLibrary.LibraryScope.Library);
             }
 
             List<CompilationScope> scopesAdded = new List<CompilationScope>();
@@ -339,8 +339,8 @@ namespace Parser
                 ImportStatement importStatement = this.ExecutableParser.ParseTopLevel(tokens, null, fileScope) as ImportStatement;
                 if (importStatement == null) throw new Exception();
                 namespaceImportsBuilder.Add(importStatement.ImportPath);
-                LibraryCompilationScope libraryScope = this.LibraryManager.ImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
-                if (libraryScope == null)
+                LocalizedLibraryView localizedLibraryView = this.LibraryManager.GetOrImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
+                if (localizedLibraryView == null)
                 {
                     this.unresolvedImports.Add(importStatement);
                 }
@@ -348,9 +348,9 @@ namespace Parser
                 {
                     if (this.CurrentLibrary != null)
                     {
-                        this.CurrentLibrary.AddLibraryDependency(libraryScope.Library);
+                        this.CurrentLibrary.AddLibraryDependency(localizedLibraryView.LibraryScope.Library);
                     }
-                    scopesAdded.Add(libraryScope);
+                    scopesAdded.Add(localizedLibraryView.LibraryScope);
                 }
             }
 

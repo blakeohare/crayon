@@ -63,14 +63,8 @@ namespace Parser
                 this.libraryDependencies.Add(library);
                 this.libraryDependenciesArray = null;
             }
-            library.AddLocaleAccess(this.InternalLocale);
         }
-
-        public void AddLocaleAccess(Locale locale)
-        {
-            this.localesAccessed.Add(locale);
-        }
-
+        
         public LibraryMetadata[] LibraryDependencies
         {
             get
@@ -89,8 +83,7 @@ namespace Parser
             {
                 // Non-empty list means it must be only accessible from a specific library and not top-level user code.
                 if (currentLibrary == null) return false;
-
-
+                
                 // Is the current library on the list?
                 return this.OnlyImportableFrom.Contains(currentLibrary.ID);
             }
