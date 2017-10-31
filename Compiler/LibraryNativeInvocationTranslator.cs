@@ -20,7 +20,7 @@ namespace Crayon
             this.platformInheritanceChain = platformInheritanceChain;
         }
 
-        public string LibraryName { get { return library.Name; } }
+        public string LibraryID { get { return library.ID; } }
 
         public void TranslateInvocation(
             StringBuilder sb,

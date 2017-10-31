@@ -90,7 +90,7 @@ namespace Crayon
                                         Dictionary<string, string> values = KeyValuePairParser.Parse(parts[1]);
                                         if (values == null)
                                         {
-                                            throw new InvalidOperationException("The library '" + this.library.Metadata.Name + "' has a malformed copy instruction on the following line: " + lineRaw);
+                                            throw new InvalidOperationException("The library '" + this.library.Metadata.ID + "' has a malformed copy instruction on the following line: " + lineRaw);
                                         }
                                         values["TYPE"] = command;
                                         instructions.Add(values);
@@ -133,7 +133,8 @@ namespace Crayon
          * COPY_FILES and COPY_FILE become 1 or more COPY_CODE instructions.
          * EMBED_FILES and EMBED_FILE becomes 1 or more EMBED_CODE instructions.
          */
-        private List<Dictionary<string, string>> GetResourceCopyInstructions() {
+        private List<Dictionary<string, string>> GetResourceCopyInstructions()
+        {
             List<Dictionary<string, string>> output = new List<Dictionary<string, string>>();
             StringBuilder totalEmbed = new StringBuilder();
             string from, to, content, typeFilter;
@@ -147,7 +148,8 @@ namespace Crayon
                         from = instruction["from"];
                         to = instruction["to"];
                         typeFilter = null;
-                        if (instruction.ContainsKey("type")) {
+                        if (instruction.ContainsKey("type"))
+                        {
                             typeFilter = instruction["type"];
                             if (!typeFilter.StartsWith("."))
                             {
@@ -221,7 +223,7 @@ namespace Crayon
         {
             if (!instruction.ContainsKey(attribute))
             {
-                throw new InvalidOperationException(command + " command in '" + this.library.Metadata.Name + "' is missing a '" + attribute + "' attribute.");
+                throw new InvalidOperationException(command + " command in '" + this.library.Metadata.ID + "' is missing a '" + attribute + "' attribute.");
             }
         }
 
@@ -337,7 +339,7 @@ namespace Crayon
                         break;
 
                     default:
-                        throw new InvalidOperationException("The command '" + command + "' is not recongized in the resource manifest of library: '" + this.library.Metadata.Name + "'");
+                        throw new InvalidOperationException("The command '" + command + "' is not recongized in the resource manifest of library: '" + this.library.Metadata.ID + "'");
                 }
             }
         }

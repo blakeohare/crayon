@@ -43,7 +43,7 @@ namespace Crayon
 
         private List<Platform.LibraryForExport> GetLibrariesForExport(
             Platform.AbstractPlatform platform,
-            Dictionary<string, LibraryMetadata> librariesByName,
+            Dictionary<string, LibraryMetadata> librariesById,
             Dictionary<string, object> constantFlags,
             Pastel.PastelCompiler vm)
         {
@@ -53,19 +53,19 @@ namespace Crayon
                 platform,
                 constantFlags,
                 new InlineImportCodeLoader(),
-                librariesByName.Values,
+                librariesById.Values,
                 vm);
 
                 List<Platform.LibraryForExport> libraries = new List<Platform.LibraryForExport>();
                 Dictionary<string, LibraryExporter> libraryByName = new Dictionary<string, LibraryExporter>();
-                foreach (string libraryName in libraryCompilation.Keys.OrderBy(s => s))
+                foreach (string libraryId in libraryCompilation.Keys.OrderBy(s => s))
                 {
-                    LibraryExporter library = LibraryExporter.Get(librariesByName[libraryName], platform);
-                    libraryByName[library.Metadata.Name] = library;
+                    LibraryExporter library = LibraryExporter.Get(librariesById[libraryId], platform);
+                    libraryByName[library.Metadata.ID] = library;
                     Platform.LibraryForExport libraryForExport = this.CreateLibraryForExport(
-                        library.Metadata.Name,
+                        library.Metadata.ID,
                         library.Metadata.Version,
-                        libraryCompilation[library.Metadata.Name],
+                        libraryCompilation[library.Metadata.ID],
                         library.Resources);
                     libraries.Add(libraryForExport);
                 }
@@ -87,7 +87,7 @@ namespace Crayon
                             byte[] dllFile = sourceLibrary.Metadata.ReadFileBytes(resourcePath);
                             if (dllFile == null)
                             {
-                                throw new InvalidOperationException("Could not find file: '" + resourcePath + "' in library '" + sourceLibrary.Metadata.Name + "'");
+                                throw new InvalidOperationException("Could not find file: '" + resourcePath + "' in library '" + sourceLibrary.Metadata.ID + "'");
                             }
                             ee.FileOutput = new FileOutput()
                             {
@@ -119,12 +119,12 @@ namespace Crayon
                 this.AddTypeEnumsToConstants(constantFlags);
                 Pastel.PastelCompiler vm = this.GenerateCoreVmParseTree(platform, constantFlags);
 
-                Dictionary<string, LibraryMetadata> librariesByName = relevantLibraries.ToDictionary(lib => lib.Name);
-                List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByName, constantFlags, vm);
+                Dictionary<string, LibraryMetadata> librariesByID = relevantLibraries.ToDictionary(lib => lib.ID);
+                List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByID, constantFlags, vm);
 
                 LibraryNativeInvocationTranslatorProvider libTranslationProvider =
                     new LibraryNativeInvocationTranslatorProvider(
-                        relevantLibraries.ToDictionary(lib => lib.Name),
+                        relevantLibraries.ToDictionary(lib => lib.ID),
                         libraries,
                         platform);
 
@@ -263,7 +263,7 @@ namespace Crayon
                         codeLoader,
                         library.GetReturnTypesForNativeMethods(),
                         library.GetArgumentTypesForNativeMethods());
-                    libraries[library.Metadata.Name] = compiler;
+                    libraries[library.Metadata.ID] = compiler;
 
                     Dictionary<string, string> supplementalCode = library.Metadata.GetSupplementalTranslatedCode();
                     Dictionary<string, string> translatedCode = library.GetNativeCode();
@@ -275,28 +275,28 @@ namespace Crayon
                     {
                         if (supplementalCode.Count > 0 || translatedCode.Count > 0)
                         {
-                            throw new InvalidOperationException("The library '" + library.Metadata.Name + "' has translated code but no function_registry.pst file.");
+                            throw new InvalidOperationException("The library '" + library.Metadata.ID + "' has translated code but no function_registry.pst file.");
                         }
                     }
                     else
                     {
-                        compiler.CompileBlobOfCode("LIB:" + library.Metadata.Name + "/function_registry.pst", registryCode);
+                        compiler.CompileBlobOfCode("LIB:" + library.Metadata.ID + "/function_registry.pst", registryCode);
 
                         foreach (string structFile in structCode.Keys)
                         {
                             string code = structCode[structFile];
-                            compiler.CompileBlobOfCode("LIB:" + library.Metadata.Name + "/structs/" + structFile, code);
+                            compiler.CompileBlobOfCode("LIB:" + library.Metadata.ID + "/structs/" + structFile, code);
                         }
 
                         foreach (string supplementalFile in supplementalCode.Keys)
                         {
                             string code = supplementalCode[supplementalFile];
-                            compiler.CompileBlobOfCode("LIB:" + library.Metadata.Name + "/supplemental/" + supplementalFile, code);
+                            compiler.CompileBlobOfCode("LIB:" + library.Metadata.ID + "/supplemental/" + supplementalFile, code);
                         }
                         foreach (string translatedFile in translatedCode.Keys)
                         {
                             string code = translatedCode[translatedFile];
-                            compiler.CompileBlobOfCode("LIB:" + library.Metadata.Name + "/translate/" + translatedFile, code);
+                            compiler.CompileBlobOfCode("LIB:" + library.Metadata.ID + "/translate/" + translatedFile, code);
                         }
                         compiler.Resolve();
                     }

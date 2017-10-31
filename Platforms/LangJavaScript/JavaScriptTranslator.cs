@@ -478,7 +478,7 @@ namespace LangJavaScript
         public override void TranslateRegisterLibraryFunction(StringBuilder sb, Expression libRegObj, Expression functionName, Expression functionArgCount)
         {
             sb.Append("C$common$registerLibraryFunction('");
-            sb.Append(this.CurrentLibraryFunctionTranslator.LibraryName.ToLower());
+            sb.Append(this.CurrentLibraryFunctionTranslator.LibraryID.ToLower());
             sb.Append("', ");
             this.TranslateExpression(sb, libRegObj);
             sb.Append(", ");

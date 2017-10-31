@@ -11,7 +11,7 @@ namespace Parser
         public static LibraryMetadata[] GetLibraryResolutionOrder(ParserContext parser)
         {
             // these are alphabetized simply to guarantee consistent behavior.
-            LibraryMetadata[] unorderedLibraries = parser.LibraryManager.LibraryScopesUsed.OrderBy(scope => scope.Library.Name.ToLowerInvariant()).Select(lib => lib.Library).ToArray();
+            LibraryMetadata[] unorderedLibraries = parser.LibraryManager.LibraryScopesUsed.OrderBy(scope => scope.Library.ID.ToLowerInvariant()).Select(lib => lib.Library).ToArray();
 
             List<LibraryMetadata> orderedLibraries = new List<LibraryMetadata>();
             HashSet<LibraryMetadata> usedLibraries = new HashSet<LibraryMetadata>();
@@ -52,7 +52,7 @@ namespace Parser
                 {
                     if (first) first = false;
                     else message.Append(" -> ");
-                    message.Append(breadcrumb.Name);
+                    message.Append(breadcrumb.ID);
                 }
                 throw new InvalidOperationException(message.ToString());
             }
@@ -74,11 +74,11 @@ namespace Parser
             StringBuilder sb = new StringBuilder();
             foreach (LibraryMetadata library in libraries)
             {
-                sb.Append(library.Name);
+                sb.Append(library.ID);
                 sb.Append(": ");
 
                 sb.Append(string.Join(" ",
-                    new HashSet<string>(library.LibraryDependencies.Select(lib => lib.Name))
+                    new HashSet<string>(library.LibraryDependencies.Select(lib => lib.ID))
                         .OrderBy(name => name.ToLower())));
 
                 sb.Append("\n");

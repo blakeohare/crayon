@@ -97,7 +97,7 @@ namespace Crayon
             {
                 List<string> descriptorComponents = new List<string>()
                 {
-                    libraryScope.Library.Name,
+                    libraryScope.Library.ID,
                     libraryScope.Library.Version,
                 };
                 string libraryDescriptor = string.Join(",", descriptorComponents);

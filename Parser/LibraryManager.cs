@@ -43,7 +43,7 @@ namespace Parser
         {
             LibraryCompilationScope libraryScope = this.GetLibraryFromKey(name.ToLower());
             if (libraryScope == null) return null;
-            return name == libraryScope.Library.Name ? libraryScope : null;
+            return name == libraryScope.Library.ID ? libraryScope : null;
         }
 
         public LibraryCompilationScope GetLibraryFromKey(string key)
@@ -63,7 +63,7 @@ namespace Parser
                     LibraryMetadata coreLibMetadata = this.GetLibraryMetadataFromAnyPossibleKey("en:Core");
 
                     TODO.GetCoreNameFromMetadataWithLocale();
-                    string coreNameInLocale = coreLibMetadata.Name;
+                    string coreNameInLocale = coreLibMetadata.ID;
 
                     this.coreLibraryScope = this.ImportLibrary(parser, null, coreNameInLocale);
                 }
@@ -175,12 +175,12 @@ namespace Parser
                 LibraryMetadata metadata = new LibraryMetadata(path, defaultName);
 
                 // TODO: don't hardcode EN
-                string uniqueKey = "en:" + metadata.Name;
+                string uniqueKey = "en:" + metadata.ID;
                 uniqueLibraries[uniqueKey] = metadata;
             }
 
             return uniqueLibraries.Values
-                .OrderBy(metadata => metadata.Name.ToLower())
+                .OrderBy(metadata => metadata.ID.ToLower())
                 .ToArray();
         }
 
@@ -191,7 +191,7 @@ namespace Parser
             if (allLibraries == null)
             {
                 allLibraries = GetAvailableLibraryPathsByLibraryName(buildContext.CrayonPath, buildContext.ProjectDirectory);
-                libraryLookup = allLibraries.ToDictionary(metadata => metadata.Name);
+                libraryLookup = allLibraries.ToDictionary(metadata => metadata.ID);
                 foreach (LibraryMetadata libraryMetadata in allLibraries)
                 {
                     foreach (Locale supportedLocale in libraryMetadata.SupportedLocales)

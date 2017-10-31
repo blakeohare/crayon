@@ -188,7 +188,7 @@ namespace Crayon
             string MISSING_FUNCTION_NAME_FOR_DEBUGGER = functionName;
             MISSING_FUNCTION_NAME_FOR_DEBUGGER.Trim(); // no compile warnings
 
-            string msg = "The " + this.Metadata.Name + " library does not support " + translator.Platform.Name + " projects.";
+            string msg = "The " + this.Metadata.ID + " library does not support " + translator.Platform.Name + " projects.";
             if (throwToken is Token)
             {
                 throw new ParserException((Token)throwToken, msg);
@@ -229,7 +229,7 @@ namespace Crayon
             if (System.IO.File.Exists(typeInfoFile))
             {
                 string typeInfo = System.IO.File.ReadAllText(typeInfoFile);
-                Pastel.TokenStream tokens = new Pastel.TokenStream(Pastel.Tokenizer.Tokenize("LIB:" + this.Metadata.Name + "/native_method_type_info.txt", typeInfo));
+                Pastel.TokenStream tokens = new Pastel.TokenStream(Pastel.Tokenizer.Tokenize("LIB:" + this.Metadata.ID + "/native_method_type_info.txt", typeInfo));
 
                 while (tokens.HasMore)
                 {

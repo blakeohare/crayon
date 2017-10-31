@@ -4,7 +4,7 @@ namespace Platform
 {
     public interface ILibraryNativeInvocationTranslator
     {
-        string LibraryName { get; }
+        string LibraryID { get; }
         LibraryForExport Library { get; }
 
         void TranslateInvocation(

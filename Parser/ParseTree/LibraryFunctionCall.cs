@@ -23,7 +23,7 @@ namespace Parser.ParseTree
             string callingLibrary = null;
             while (callingLibrary == null && owner != null)
             {
-                callingLibrary = owner.Library.Name;
+                callingLibrary = owner.Library.ID;
                 owner = owner.Owner;
             }
 

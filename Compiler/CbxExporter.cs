@@ -44,7 +44,7 @@ namespace Crayon
                 List<string> libraries = new List<string>();
                 foreach (LibraryCompilationScope scopeForLibrary in compilationResult.LibraryScopesUsed.Where(scope => scope.Library.IsMoreThanJustEmbedCode))
                 {
-                    libraries.Add(scopeForLibrary.Library.Name);
+                    libraries.Add(scopeForLibrary.Library.ID);
                     libraries.Add(scopeForLibrary.Library.Version);
                 }
                 string libsData = string.Join(",", libraries);

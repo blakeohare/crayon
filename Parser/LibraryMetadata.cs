@@ -8,7 +8,7 @@ namespace Parser
     public class LibraryMetadata
     {
         public string Directory { get; private set; }
-        public string Name { get; private set; }
+        public string ID { get; private set; }
         public string Version { get { return "v1"; } } // TODO: versions
         public JsonLookup Manifest { get; private set; }
         public Locale InternalLocale { get; private set; }
@@ -17,10 +17,10 @@ namespace Parser
         public bool IsImportRestricted { get { return this.OnlyImportableFrom.Count > 0; } }
         public HashSet<string> OnlyImportableFrom { get; private set; }
 
-        public LibraryMetadata(string directory, string name)
+        public LibraryMetadata(string directory, string id)
         {
             this.Directory = directory;
-            this.Name = name;
+            this.ID = id;
 
             string manifestText = System.IO.File.ReadAllText(System.IO.Path.Combine(directory, "manifest.json"));
             try
@@ -32,11 +32,11 @@ namespace Parser
             }
             catch (JsonParser.JsonParserException jpe)
             {
-                throw new System.InvalidOperationException("Syntax error while parsing the library manifest for '" + name + "'.", jpe);
+                throw new System.InvalidOperationException("Syntax error while parsing the library manifest for '" + id + "'.", jpe);
             }
             
             this.InternalLocale = Locale.Get(this.Manifest.GetAsString("localization.default", "en"));
-            this.CanonicalKey = this.InternalLocale.ID + ":" + this.Name;
+            this.CanonicalKey = this.InternalLocale.ID + ":" + this.ID;
             this.SupportedLocales = new HashSet<Locale>(this.Manifest.GetAsLookup("localization.names").Keys.Select(localeName => Locale.Get(localeName)));
             this.SupportedLocales.Add(this.InternalLocale);
             this.OnlyImportableFrom = new HashSet<string>(this.Manifest.GetAsList("onlyAllowImportFrom").Cast<string>());
@@ -47,7 +47,7 @@ namespace Parser
         {
             if (!nameByLocale.ContainsKey(locale.ID))
             {
-                nameByLocale[locale.ID] = this.Manifest.GetAsString("localization.names." + locale.ID, this.Name);
+                nameByLocale[locale.ID] = this.Manifest.GetAsString("localization.names." + locale.ID, this.ID);
             }
             return nameByLocale[locale.ID];
         }
@@ -92,7 +92,7 @@ namespace Parser
 
 
                 // Is the current library on the list?
-                return this.OnlyImportableFrom.Contains(currentLibrary.Name);
+                return this.OnlyImportableFrom.Contains(currentLibrary.ID);
             }
             return true;
         }
@@ -100,7 +100,7 @@ namespace Parser
         public Dictionary<string, string> GetEmbeddedCode()
         {
             Dictionary<string, string> output = new Dictionary<string, string>() {
-                { this.Name, this.ReadFile(false, "embed.cry", true) }
+                { this.ID, this.ReadFile(false, "embed.cry", true) }
             };
             string embedDir = FileUtil.JoinPath(this.Directory, "embed");
             if (FileUtil.DirectoryExists(embedDir))
@@ -109,7 +109,7 @@ namespace Parser
                 foreach (string additionalFile in additionalFiles)
                 {
                     string embedCode = this.ReadFile(false, "embed/" + additionalFile, false);
-                    output[this.Name + ":" + additionalFile] = embedCode;
+                    output[this.ID + ":" + additionalFile] = embedCode;
                 }
             }
             return output;
@@ -190,7 +190,7 @@ namespace Parser
             {
                 return FileUtil.ReadFileBytes(fullPath);
             }
-            throw new ParserException(null, "The '" + this.Name + "' library does not contain the resource '" + pathRelativeToLibraryRoot + "'");
+            throw new ParserException(null, "The '" + this.ID + "' library does not contain the resource '" + pathRelativeToLibraryRoot + "'");
         }
 
         public string ReadFile(bool keepPercents, string pathRelativeToLibraryRoot, bool failSilently)
@@ -206,7 +206,7 @@ namespace Parser
                 return "";
             }
 
-            throw new System.InvalidOperationException("Missing resource in library '" + this.Name + "': '" + pathRelativeToLibraryRoot + "'");
+            throw new System.InvalidOperationException("Missing resource in library '" + this.ID + "': '" + pathRelativeToLibraryRoot + "'");
         }
 
         // This ONLY gets the translations that are specific only for this platform and does not do any inheritance chain walking.
