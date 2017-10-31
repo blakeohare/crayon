@@ -27,6 +27,7 @@ namespace Parser
             if (value == "@")
             {
                 annotations = new AnnotationParser(this.parser).ParseAnnotations(tokens);
+                value = tokens.PeekValue();
             }
             
             Token staticToken = null;

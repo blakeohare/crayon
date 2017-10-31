@@ -26,11 +26,14 @@ namespace Parser.ParseTree
             this.DefaultName = name;
             this.NamesByLocale = new Dictionary<Locale, string>();
             // TODO: move this
-            foreach (Annotation localeAnnotation in annotations["localized"])
+            if (annotations != null)
             {
-                string locale = ((StringConstant)localeAnnotation.Args[0]).Value;
-                string localizedName = ((StringConstant)localeAnnotation.Args[1]).Value;
-                this.NamesByLocale[Locale.Get(locale)] = localizedName;
+                foreach (Annotation localeAnnotation in annotations["localized"])
+                {
+                    string locale = ((StringConstant)localeAnnotation.Args[0]).Value;
+                    string localizedName = ((StringConstant)localeAnnotation.Args[1]).Value;
+                    this.NamesByLocale[Locale.Get(locale)] = localizedName;
+                }
             }
         }
 

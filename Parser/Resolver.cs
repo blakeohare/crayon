@@ -107,7 +107,8 @@ namespace Parser
                 // Go through and fill in all the partially qualified namespace names.
                 foreach (string ns in namespaces)
                 {
-                    Namespace nsInstance = new Namespace(null, ns, null, null, null);
+                    Multimap<string, Annotation> localizedNamespaces = null; // TODO: copy this from the original
+                    Namespace nsInstance = new Namespace(null, ns, null, null, null, localizedNamespaces);
                     string possibleLibraryName = ns.Split('.')[0];
 
                     TODO.EnglishLocaleAssumed();
@@ -432,7 +433,12 @@ namespace Parser
         // instance from the resolver, but you want to turn it into a ClassReference instance.
         public static Expression ConvertStaticReferenceToExpression(TopLevelConstruct item, Token primaryToken, TopLevelConstruct owner)
         {
-            if (item is Namespace) return new PartialNamespaceReference(primaryToken, ((Namespace)item).Name, owner);
+            if (item is Namespace)
+            {
+                // TODO: this isn't properly propagating localized values. Should probably redefine PartiaNamespaceReferences
+                // in terms of the original + some sort of sub segment descriptor.
+                return new PartialNamespaceReference(primaryToken, ((Namespace)item).DefaultName, owner);
+            }
             if (item is ClassDefinition) return new ClassReference(primaryToken, (ClassDefinition)item, owner);
             if (item is EnumDefinition) return new EnumReference(primaryToken, (EnumDefinition)item, owner);
             if (item is ConstStatement) return new ConstReference(primaryToken, (ConstStatement)item, owner);
