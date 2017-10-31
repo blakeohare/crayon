@@ -18,7 +18,7 @@ namespace Parser
             this.BuildContext = buildContext;
             this.PushScope(new UserCodeCompilationScope(buildContext));
             this.CurrentClass = null;
-            this.LibraryManager = LibraryManager.ForByteCodeCompilation(buildContext);
+            this.LibraryManager = new LibraryManager(buildContext);
             this.CurrentNamespace = "";
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelConstruct, ConstantResolutionState>();

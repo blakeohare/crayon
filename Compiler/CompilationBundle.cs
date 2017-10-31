@@ -40,7 +40,7 @@ namespace Crayon
                 return new CompilationBundle()
                 {
                     ByteCode = buffer,
-                    LibraryScopesUsed = parser.LibraryManager.LibraryScopesUsed,
+                    LibraryScopesUsed = parser.LibraryManager.ImportedLibraries.ToArray(),
                     ProjectID = buildContext.ProjectID,
                     Version = buildContext.Version,
                     Description = buildContext.Description,

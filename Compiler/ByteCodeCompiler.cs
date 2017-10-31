@@ -93,7 +93,7 @@ namespace Crayon
             ByteBuffer output = new ByteBuffer();
 
             int id = 1;
-            foreach (LibraryCompilationScope libraryScope in parser.LibraryManager.LibraryScopesUsed)
+            foreach (LibraryCompilationScope libraryScope in parser.LibraryManager.ImportedLibraries)
             {
                 List<string> descriptorComponents = new List<string>()
                 {
@@ -1400,7 +1400,7 @@ namespace Crayon
             List<Expression> args = argsOverrideOrNull ?? new List<Expression>(libFunc.Args);
             this.CompileExpressionList(parser, buffer, args, true);
             int argCount = libFunc.Args.Length;
-            int id = parser.LibraryManager.GetIdForFunction(libFunc.Name, libFunc.LibraryName);
+            int id = parser.LibraryManager.LibraryFunctionTracker.GetIdForFunction(libFunc.Name, libFunc.LibraryName);
             Token token = parenTokenOverride ?? libFunc.FirstToken;
             string libraryName = libFunc.LibraryName;
             LibraryMetadata library = libFunc.Owner.Library;

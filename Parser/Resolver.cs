@@ -189,7 +189,7 @@ namespace Parser
                     this.ResolveNames(library, alreadyResolvedDependencies, definitionsByLibrary[library]);
                 }
                 alreadyResolvedDependencies = Util.MergeDictionaries<string, TopLevelConstruct>(
-                    this.parser.LibraryManager.LibraryScopesUsed.Select(scope => definitionsByLibrary[scope.Library]).ToArray());
+                    this.parser.LibraryManager.ImportedLibraries.Select(scope => definitionsByLibrary[scope.Library]).ToArray());
                 nonLibraryCode.Remove("~");
                 this.ResolveNames(null, alreadyResolvedDependencies, nonLibraryCode);
             }

@@ -11,7 +11,7 @@ namespace Parser
         public static LibraryMetadata[] GetLibraryResolutionOrder(ParserContext parser)
         {
             // these are alphabetized simply to guarantee consistent behavior.
-            LibraryMetadata[] unorderedLibraries = parser.LibraryManager.LibraryScopesUsed.OrderBy(scope => scope.Library.ID.ToLowerInvariant()).Select(lib => lib.Library).ToArray();
+            LibraryMetadata[] unorderedLibraries = parser.LibraryManager.ImportedLibraries.OrderBy(scope => scope.Library.ID.ToLowerInvariant()).Select(lib => lib.Library).ToArray();
 
             List<LibraryMetadata> orderedLibraries = new List<LibraryMetadata>();
             HashSet<LibraryMetadata> usedLibraries = new HashSet<LibraryMetadata>();
