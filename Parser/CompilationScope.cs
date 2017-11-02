@@ -16,8 +16,8 @@ namespace Parser
         private Dictionary<LibraryCompilationScope, LocalizedLibraryView> dependenciesAndViews = new Dictionary<LibraryCompilationScope, LocalizedLibraryView>();
 
         private List<TopLevelConstruct> executables = new List<TopLevelConstruct>();
-        private Multimap<string, Namespace> rawNamespaceDeclarations = new Multimap<string, Namespace>();
-        private Dictionary<Locale, Dictionary<string, NamespaceReferenceTemplate>> flattenedNamespaceLookup = new Dictionary<Locale, Dictionary<string, NamespaceReferenceTemplate>>();
+
+        private ScopedNamespaceLocaleFlattener namespaceFlattener = new ScopedNamespaceLocaleFlattener();
 
         public List<TopLevelConstruct> GetExecutables_HACK()
         {
@@ -28,9 +28,8 @@ namespace Parser
         {
             if (executable is Namespace)
             {
-                this.flattenedNamespaceLookup = null;
                 Namespace ns = (Namespace)executable;
-                this.rawNamespaceDeclarations.Add(ns.FullyQualifiedDefaultName, ns);
+                this.namespaceFlattener.AddNamespace(ns);
                 foreach (TopLevelConstruct tlc in ns.Code)
                 {
                     this.AddExecutable(tlc);
@@ -44,25 +43,7 @@ namespace Parser
 
         public Dictionary<string, NamespaceReferenceTemplate> GetFlattenedNamespaceLookup(Locale locale)
         {
-            if (this.flattenedNamespaceLookup == null)
-            {
-                this.flattenedNamespaceLookup = new Dictionary<Locale, Dictionary<string, NamespaceReferenceTemplate>>();
-            }
-
-            if (!this.flattenedNamespaceLookup.ContainsKey(locale))
-            {
-                if (this.Locale != locale)
-                {
-                    // This is the fallback locale for missing localization entries, so make sure it exists.
-                    this.GetFlattenedNamespaceLookup(this.Locale);
-                    this.flattenedNamespaceLookup[locale] = NamespaceLocaleFlattener.GetLookup(this.rawNamespaceDeclarations, locale);
-                }
-                else
-                {
-                    this.flattenedNamespaceLookup[locale] = NamespaceLocaleFlattener.GetLookupInDefaultLocale(this.rawNamespaceDeclarations);
-                }
-            }
-            return this.flattenedNamespaceLookup[locale];
+            return this.namespaceFlattener.GetLookup(locale);
         }
 
         public TopLevelConstruct[] GetTopLevelConstructs()

@@ -25,6 +25,11 @@ namespace Localization
             return output;
         }
 
+        public override string ToString()
+        {
+            return "Locale: " + this.ID;
+        }
+
         private Locale(string name)
         {
             this.ID = name;

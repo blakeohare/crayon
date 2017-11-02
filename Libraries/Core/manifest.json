@@ -2,5 +2,13 @@
 	"name": "Core",
 	"author": "Blake O'Hare",
 	"documentation": "http://crayonlang.org/docs/0.2.0/core",
-	"description": "Basic system functions. Automatically imported."
+	"description": "Basic system functions. Automatically imported.",
+
+	"localization": {
+		"default": "en",
+		"names": {
+			"en": "Core",
+			"es": "Esencia",
+		}
+	}
 }

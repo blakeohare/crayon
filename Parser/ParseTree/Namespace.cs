@@ -12,7 +12,19 @@ namespace Parser.ParseTree
         public TopLevelConstruct[] Code { get; set; }
         public string DefaultName { get; set; }
         public string FullyQualifiedDefaultName { get; set; }
-        public Dictionary<Locale, string> NamesByLocale { get; private set; }
+        public Dictionary<Locale, string[]> NamesByLocale { get; private set; }
+        public string[] DefaultNameSegments { get; private set; }
+        public string[] FullyQualifiedDefaultNameSegments { get; private set; }
+
+        // How many namespaces is this nested under.
+        public int NestDepth { get; private set; }
+
+        private Dictionary<Locale, string[]> fullyQualifiedNamesByLocale = new Dictionary<Locale, string[]>();
+
+        public override string ToString()
+        {
+            return "Namespace: " + this.DefaultName + " (" + this.FullyQualifiedDefaultName + ")";
+        }
 
         public Namespace(
             Token namespaceToken,
@@ -28,26 +40,48 @@ namespace Parser.ParseTree
             this.FullyQualifiedDefaultName = owner == null
                 ? name
                 : (((Namespace)owner).FullyQualifiedDefaultName + "." + name);
-            this.NamesByLocale = new Dictionary<Locale, string>();
-            // TODO: move this
+            this.FullyQualifiedDefaultNameSegments = this.FullyQualifiedDefaultName.Split('.');
+            this.DefaultNameSegments = this.DefaultName.Split('.');
+
+            this.NamesByLocale = new Dictionary<Locale, string[]>();
+            // TODO: move this when you start using @localized on other entities.
             if (annotations != null)
             {
                 foreach (Annotation localeAnnotation in annotations["localized"])
                 {
                     string locale = ((StringConstant)localeAnnotation.Args[0]).Value;
-                    string localizedName = ((StringConstant)localeAnnotation.Args[1]).Value;
+                    string[] localizedName = ((StringConstant)localeAnnotation.Args[1]).Value.Split('.');
+                    if (localizedName.Length != this.DefaultNameSegments.Length)
+                    {
+                        throw new ParserException(localeAnnotation.Args[1].FirstToken, "@localized annotation name does not have the correct number of namespace segments.");
+                    }
                     this.NamesByLocale[Locale.Get(locale)] = localizedName;
                 }
             }
+
+            Locale defaultLocale = fileScope.CompilationScope.Locale;
+            if (!this.NamesByLocale.ContainsKey(defaultLocale))
+            {
+                this.NamesByLocale[defaultLocale] = this.DefaultName.Split('.');
+            }
+            
+            this.NestDepth = this.FullyQualifiedDefaultNameSegments.Length - this.DefaultNameSegments.Length;
         }
 
         public override string GetFullyQualifiedLocalizedName(Locale locale)
         {
             if (this.NamesByLocale.ContainsKey(locale))
             {
-                return this.NamesByLocale[locale];
+                List<string> segments = new List<string>();
+                if (this.Owner != null)
+                {
+                    segments.Add(this.Owner.GetFullyQualifiedLocalizedName(locale));
+                }
+                segments.AddRange(this.NamesByLocale[locale]);
+
+                return string.Join(".", segments);
             }
-            return this.DefaultName;
+            return this.FullyQualifiedDefaultName;
         }
 
         internal override void Resolve(ParserContext parser)

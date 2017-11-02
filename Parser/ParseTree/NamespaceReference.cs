@@ -9,6 +9,8 @@ namespace Parser.ParseTree
         public string Name { get; set; }
     }
 
+    // This serves as an ephemeral instance of an Expression that relays the NamespaceReferenceTemplate to
+    // the next parent node of the name resolver. It should never reach the byte code serialization phase.
     public class NamespaceReference : Expression
     {
         public NamespaceReferenceTemplate Template { get; private set; }

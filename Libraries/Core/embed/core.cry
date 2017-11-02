@@ -1,3 +1,5 @@
+@localized('en', 'Core')
+@localized('es', 'Esencia')
 namespace Core {
     const CRAYON_VERSION = "0.2.0";
 
