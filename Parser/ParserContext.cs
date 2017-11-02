@@ -13,6 +13,8 @@ namespace Parser
 
         private Dictionary<string, CompilationScope> compilationScopes = new Dictionary<string, CompilationScope>();
 
+        public UserCodeCompilationScope UserCodeCompilationScope { get { return (UserCodeCompilationScope)this.compilationScopes["."]; } }
+
         public ParserContext(BuildContext buildContext)
         {
             this.BuildContext = buildContext;
@@ -52,12 +54,7 @@ namespace Parser
             this.Keywords = this.CurrentLocale.Keywords;
             this.ReservedKeywords = new HashSet<string>(this.CurrentLocale.GetKeywordsList());
         }
-
-        private Token[] GetImplicitCoreImport()
-        {
-            return Tokenizer.Tokenize("implicit code", this.Keywords.IMPORT + " Core;", -1, true);
-        }
-
+        
         public ExpressionParser ExpressionParser { get; private set; }
         public ExecutableParser ExecutableParser { get; private set; }
         public AnnotationParser AnnotationParser { get; private set; }
@@ -317,7 +314,7 @@ namespace Parser
         
         public void ParseInterpretedCode(string filename, string code)
         {
-            FileScope fileScope = new FileScope(filename);
+            FileScope fileScope = new FileScope(filename, this.CurrentScope);
             int fileId = this.GetNextFileId();
             this.RegisterFileUsed(filename, code, fileId);
             Token[] tokenList = Tokenizer.Tokenize(filename, code, fileId, true);
@@ -325,15 +322,11 @@ namespace Parser
 
             List<string> namespaceImportsBuilder = new List<string>();
 
-            tokens.InsertTokens(this.GetImplicitCoreImport());
+            // Implicitly import the Core library for the current locale.
+            LocalizedLibraryView implicitCoreImport = this.LibraryManager.GetCoreLibrary(this);
+            namespaceImportsBuilder.Add(implicitCoreImport.Name);
+            fileScope.Imports.Add(new ImportStatement(null, implicitCoreImport.Name, this.CurrentLibrary, fileScope));
 
-            if (this.CurrentLibrary != null && this.CurrentLibrary.CanonicalKey != "en:Core")
-            {
-                LocalizedLibraryView coreLibrary = this.LibraryManager.GetCoreLibrary(this);
-                this.CurrentLibrary.AddLibraryDependency(coreLibrary.LibraryScope.Library);
-            }
-
-            List<CompilationScope> scopesAdded = new List<CompilationScope>();
             while (tokens.HasMore && tokens.IsNext(this.Keywords.IMPORT))
             {
                 ImportStatement importStatement = this.ExecutableParser.ParseTopLevel(tokens, null, fileScope) as ImportStatement;
@@ -343,14 +336,6 @@ namespace Parser
                 if (localizedLibraryView == null)
                 {
                     this.unresolvedImports.Add(importStatement);
-                }
-                else
-                {
-                    if (this.CurrentLibrary != null)
-                    {
-                        this.CurrentLibrary.AddLibraryDependency(localizedLibraryView.LibraryScope.Library);
-                    }
-                    scopesAdded.Add(localizedLibraryView.LibraryScope);
                 }
             }
 

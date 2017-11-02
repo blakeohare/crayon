@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Localization;
+using System;
 using System.Collections.Generic;
 
 namespace Parser.ParseTree
@@ -13,6 +14,8 @@ namespace Parser.ParseTree
         {
             this.FileScope = fileScope;
         }
+
+        public abstract string GetFullyQualifiedLocalizedName(Locale locale);
 
         private static Dictionary<string, string[]> namespacePartCache = new Dictionary<string, string[]>();
 

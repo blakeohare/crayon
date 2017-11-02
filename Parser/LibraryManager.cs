@@ -1,5 +1,6 @@
 ﻿using Build;
 using Localization;
+using Parser.ParseTree;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -26,9 +27,14 @@ namespace Parser
             this.ImportedLibraries = new List<LibraryCompilationScope>();
         }
 
-        public bool IsValidLibraryName(ParserContext parser, string name)
+        public bool IsValidLibraryNameFromLocale(Locale locale, string name)
         {
-            return this.libraryFinder.GetLibraryMetadataFromAnyPossibleKey(parser.CurrentLocale.ID + ":" + name) != null;
+            // TODO: This is only checking if the library is available in this locale.
+            // It needs to check for all libraries.
+            // This is currently only used in slim circumstances.
+            Common.TODO.IsValidLibraryNameIsWrong();
+
+            return this.libraryFinder.GetLibraryMetadataFromAnyPossibleKey(locale + ":" + name) != null;
         }
         
         public int GetLibraryReferenceIdFromKey(string key)
@@ -60,9 +66,18 @@ namespace Parser
 
         public LocalizedLibraryView GetOrImportLibrary(ParserContext parser, Token throwToken, string fullImportNameWithDots)
         {
+            LocalizedLibraryView libView = this.GetOrImportLibraryImpl(parser, throwToken, fullImportNameWithDots);
+            if (libView != null && libView.LibraryScope != parser.CurrentScope)
+            {
+                parser.CurrentScope.AddDependency(throwToken, libView);
+            }
+            return libView;
+        }
+
+        private LocalizedLibraryView GetOrImportLibraryImpl(ParserContext parser, Token throwToken, string fullImportNameWithDots) { 
             // TODO: allow importing from a user-specified locale
             Locale fromLocale = parser.CurrentLocale;
-            string name = fullImportNameWithDots.Split('.')[0];
+            string name = fullImportNameWithDots.Contains('.') ? fullImportNameWithDots.Split('.')[0] : fullImportNameWithDots;
             
             string secondAttemptedKey = name;
             LibraryMetadata libraryMetadata = this.libraryFinder.GetLibraryMetadataFromAnyPossibleKey(fromLocale.ID + ":" + name);
@@ -108,7 +123,7 @@ namespace Parser
                 }
 
                 // Wrap the previous instance in the new locale.
-                LocalizedLibraryView output = new  LocalizedLibraryView(effectiveLocale,  this.importedLibrariesById[libraryMetadata.ID]);
+                LocalizedLibraryView output = new LocalizedLibraryView(effectiveLocale,  this.importedLibrariesById[libraryMetadata.ID]);
                 this.importedLibrariesByLocalizedName[effectiveLocale][output.Name] = output;
                 return output;
             }

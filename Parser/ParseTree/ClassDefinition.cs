@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Localization;
 
 namespace Parser.ParseTree
 {
@@ -55,6 +57,16 @@ namespace Parser.ParseTree
             {
                 throw new ParserException(staticToken, "Class cannot be static and have base classes or interfaces.");
             }
+        }
+
+        public override string GetFullyQualifiedLocalizedName(Locale locale)
+        {
+            string name = this.NameToken.Value;
+            if (this.Owner != null)
+            {
+                name = this.Owner.GetFullyQualifiedLocalizedName(locale) + "." + name;
+            }
+            return name;
         }
 
         private static readonly VariableIdAllocator EMPTY_VAR_ALLOC = new VariableIdAllocator();
@@ -242,7 +254,7 @@ namespace Parser.ParseTree
             {
                 string value = this.BaseClassDeclarations[i];
                 Token token = this.BaseClassTokens[i];
-                TopLevelConstruct baseClassInstance = this.FileScope.FileScopeEntityLookup.DoLookup(value, this);
+                TopLevelConstruct baseClassInstance = this.FileScope.FileScopeEntityLookup.DoEntityLookup(value, this);
                 if (baseClassInstance == null)
                 {
                     throw new ParserException(token, "No class named '" + token.Value + "' was found.");

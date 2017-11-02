@@ -22,120 +22,15 @@ namespace Parser
             this.currentCode = originalCode.ToArray();
         }
 
-        private Dictionary<string, TopLevelConstruct> CreateFullyQualifiedLookup(IList<TopLevelConstruct> code)
+        private FunctionDefinition FindMain(UserCodeCompilationScope userCodeScope)
         {
-            using (new PerformanceSection(""))
-            {
-                HashSet<string> namespaces = new HashSet<string>();
-
-                Dictionary<string, TopLevelConstruct> lookup = new Dictionary<string, TopLevelConstruct>();
-                bool mainFound = false;
-                foreach (TopLevelConstruct item in code)
-                {
-                    string ns;
-                    string memberName;
-                    if (item is FunctionDefinition)
-                    {
-                        FunctionDefinition fd = (FunctionDefinition)item;
-                        ns = fd.Namespace;
-                        memberName = fd.NameToken.Value;
-                        if (memberName == "main")
-                        {
-                            if (mainFound)
-                            {
-                                throw new ParserException(item.FirstToken, "Multiple main methods found.");
-                            }
-                            mainFound = true;
-                            lookup["~"] = item;
-                        }
-                    }
-                    else if (item is ClassDefinition)
-                    {
-                        ClassDefinition cd = (ClassDefinition)item;
-                        ns = cd.Namespace;
-                        memberName = cd.NameToken.Value;
-
-                        // TODO: nested classes, constants, and enums.
-                    }
-                    else if (item is EnumDefinition)
-                    {
-                        EnumDefinition ed = (EnumDefinition)item;
-                        ns = ed.Namespace;
-                        memberName = ed.Name;
-                    }
-                    else if (item is ConstStatement)
-                    {
-                        ConstStatement cs = (ConstStatement)item;
-                        ns = cs.Namespace;
-                        memberName = cs.Name;
-                    }
-                    else
-                    {
-                        string error = "This sort of expression cannot exist outside of function or field definitions.";
-                        throw new ParserException(item.FirstToken, error);
-                    }
-
-                    if (ns.Length > 0)
-                    {
-                        string accumulator = "";
-                        foreach (string nsPart in ns.Split('.'))
-                        {
-                            if (accumulator.Length > 0) accumulator += ".";
-                            accumulator += nsPart;
-                            namespaces.Add(accumulator);
-                        }
-                    }
-
-                    string fullyQualifiedName = (ns.Length > 0 ? (ns + ".") : "") + memberName;
-
-                    if (lookup.ContainsKey(fullyQualifiedName))
-                    {
-                        // TODO: token information from two locations
-                        throw new ParserException(item.FirstToken, "Two items have identical fully-qualified names: '" + fullyQualifiedName + "'");
-                    }
-                    lookup[fullyQualifiedName] = item;
-                }
-
-                foreach (string key in lookup.Keys)
-                {
-                    if (namespaces.Contains(key))
-                    {
-                        throw new ParserException(lookup[key].FirstToken, "This name collides with a namespace definition.");
-                    }
-                }
-
-                // Go through and fill in all the partially qualified namespace names.
-                foreach (string ns in namespaces)
-                {
-                    Multimap<string, Annotation> localizedNamespaces = null; // TODO: copy this from the original
-                    Namespace nsInstance = new Namespace(null, ns, null, null, null, localizedNamespaces);
-                    string possibleLibraryName = ns.Split('.')[0];
-
-                    TODO.EnglishLocaleAssumed();
-                    LibraryCompilationScope libraryScope = this.parser.LibraryManager.GetLibraryIfImported(possibleLibraryName);
-                    if (libraryScope != null)
-                    {
-                        // TODO: once you get rid of this line, make the Library setter protected
-                        nsInstance.Library = libraryScope.Library;
-                    }
-                    lookup[ns] = nsInstance;
-                }
-
-                if (lookup.ContainsKey("~"))
-                {
-                    FunctionDefinition mainFunc = (FunctionDefinition)lookup["~"];
-                    if (mainFunc.ArgNames.Length > 1)
-                    {
-                        throw new ParserException(mainFunc.FirstToken, "The main function must accept 0 or 1 arguments.");
-                    }
-                }
-                else
-                {
-                    throw new InvalidOperationException("No main(args) function was defined.");
-                }
-
-                return lookup;
-            }
+            FunctionDefinition[] mainFunctions = userCodeScope.GetTopLevelConstructs()
+                .OfType<FunctionDefinition>()
+                .Where(fd => fd.NameToken.Value == "main")
+                .ToArray();
+            if (mainFunctions.Length == 1) return mainFunctions[0];
+            if (mainFunctions.Length == 0) throw new InvalidOperationException("No main(args) function was defined.");
+            throw new ParserException(mainFunctions[0].FirstToken, "Multiple main methods found.");
         }
 
         public TopLevelConstruct[] ResolveTranslatedCode()
@@ -148,54 +43,41 @@ namespace Parser
         {
             this.parser.VerifyNoBadImports();
 
-            Dictionary<string, TopLevelConstruct> definitionsByFullyQualifiedNames = this.CreateFullyQualifiedLookup(this.currentCode);
-
-            LibraryMetadata[] librariesInDependencyOrder = LibraryDependencyResolver.GetLibraryResolutionOrder(this.parser);
-
-            // Populate lookups of executables based on library.
-            Dictionary<LibraryMetadata, Dictionary<string, TopLevelConstruct>> definitionsByLibrary = new Dictionary<LibraryMetadata, Dictionary<string, TopLevelConstruct>>();
-            Dictionary<string, TopLevelConstruct> nonLibraryCode = new Dictionary<string, TopLevelConstruct>();
-            foreach (string exKey in definitionsByFullyQualifiedNames.Keys)
-            {
-                TopLevelConstruct ex = definitionsByFullyQualifiedNames[exKey];
-                if (ex.Library == null)
-                {
-                    nonLibraryCode[exKey] = ex;
-                }
-                else
-                {
-                    LibraryMetadata library = ex.Library;
-                    Dictionary<string, TopLevelConstruct> lookup;
-                    if (!definitionsByLibrary.TryGetValue(library, out lookup))
-                    {
-                        lookup = new Dictionary<string, TopLevelConstruct>();
-                        definitionsByLibrary[library] = lookup;
-                    }
-                    lookup[exKey] = ex;
-                }
-            }
+            LibraryCompilationScope[] librariesInDependencyOrder = LibraryDependencyResolver.GetLibraryResolutionOrder(this.parser);
+            List<CompilationScope> compilationScopes = new List<CompilationScope>(librariesInDependencyOrder);
+            compilationScopes.Add(this.parser.UserCodeCompilationScope);
 
             using (new PerformanceSection("ResolveNames for compilation segments"))
             {
-                Dictionary<string, TopLevelConstruct> alreadyResolvedDependencies;
                 // Resolve raw names into the actual things they refer to based on namespaces and imports.
-                foreach (LibraryMetadata library in librariesInDependencyOrder)
+                foreach (CompilationScope scope in compilationScopes)
                 {
-                    // First create a lookup of JUST the libraries that are available to this library.
-                    alreadyResolvedDependencies = Util.MergeDictionaries(
-                        library.LibraryDependencies.Select(lib => definitionsByLibrary[lib]).ToArray());
+                    Dictionary<string, TopLevelConstruct> scopeLookup = new Dictionary<string, TopLevelConstruct>();
+                    Dictionary<string, TopLevelConstruct> depsLookup = new Dictionary<string, TopLevelConstruct>();
+                    Dictionary<string, NamespaceReferenceTemplate> depsNamespaceLookup = new Dictionary<string, NamespaceReferenceTemplate>();
 
-                    // Resolve definitions based on what's available.
-                    this.ResolveNames(library, alreadyResolvedDependencies, definitionsByLibrary[library]);
+                    // First create a lookup of JUST the libraries that are available to this library.
+                    // This is localized to the locales that are used by that library.
+                    foreach (LocalizedLibraryView depLocView in scope.Dependencies)
+                    {
+                        depLocView.LibraryScope.FlattenFullyQualifiedLookupsIntoGlobalLookup(depsLookup, depLocView.Locale);
+                        Util.MergeDictionaryInto(depLocView.LibraryScope.GetFlattenedNamespaceLookup(depLocView.Locale), depsNamespaceLookup);
+                    }
+
+                    scope.FlattenFullyQualifiedLookupsIntoGlobalLookup(scopeLookup, scope.Locale);
+                    Dictionary<string, NamespaceReferenceTemplate> scopeNamespaceLookup = scope.GetFlattenedNamespaceLookup(scope.Locale);
+                    TopLevelConstruct[] toResolve = scope.GetTopLevelConstructs();
+
+                    this.ResolveNames(toResolve, scopeLookup, depsLookup, scopeNamespaceLookup, depsNamespaceLookup);
                 }
-                alreadyResolvedDependencies = Util.MergeDictionaries<string, TopLevelConstruct>(
-                    this.parser.LibraryManager.ImportedLibraries.Select(scope => definitionsByLibrary[scope.Library]).ToArray());
-                nonLibraryCode.Remove("~");
-                this.ResolveNames(null, alreadyResolvedDependencies, nonLibraryCode);
             }
 
             // Determine if the main function uses args.
-            FunctionDefinition mainFunction = (FunctionDefinition)definitionsByFullyQualifiedNames["~"];
+            FunctionDefinition mainFunction = this.FindMain(this.parser.UserCodeCompilationScope);
+            if (mainFunction == null)
+            {
+                throw new InvalidOperationException("No main(args) function was defined.");
+            }
             this.parser.MainFunctionHasArg = mainFunction.ArgNames.Length == 1;
 
             this.SimpleFirstPassResolution();
@@ -265,38 +147,27 @@ namespace Parser
             }
         }
 
+        // Note that the lookup will also contain the toResolve entries plus the entities from the dependencies.
         private void ResolveNames(
-            LibraryMetadata nullableLibrary,
-            Dictionary<string, TopLevelConstruct> alreadyResolved,
-            Dictionary<string, TopLevelConstruct> currentLibraryDefinitions)
+            TopLevelConstruct[] toResolve,
+            Dictionary<string, TopLevelConstruct> scopeLookup,
+            Dictionary<string, TopLevelConstruct> depsLookup,
+            Dictionary<string, NamespaceReferenceTemplate> scopeNamespaceLookup,
+            Dictionary<string, NamespaceReferenceTemplate> depsNamespaceLookup)
         {
             using (new PerformanceSection("ResolveNames"))
             {
-                List<ClassDefinition> classes = new List<ClassDefinition>();
-
-                // Concatenate compilation items on top of everything that's already been resolved to create a lookup of everything that is available for this library.
-                Dictionary<string, TopLevelConstruct> allKnownDefinitions = new Dictionary<string, TopLevelConstruct>(alreadyResolved);
-                foreach (string executableKey in currentLibraryDefinitions.Keys)
+                foreach (FileScope file in new HashSet<FileScope>(toResolve.Select(tlc => tlc.FileScope)))
                 {
-                    if (allKnownDefinitions.ContainsKey(executableKey))
-                    {
-                        throw new ParserException(
-                            currentLibraryDefinitions[executableKey].FirstToken,
-                            "Two conflicting definitions of '" + executableKey + "'");
-                    }
-                    TopLevelConstruct ex = currentLibraryDefinitions[executableKey];
-                    if (ex is ClassDefinition)
-                    {
-                        classes.Add((ClassDefinition)ex);
-                    }
-                    allKnownDefinitions[executableKey] = ex;
+                    file.FileScopeEntityLookup.InitializeLookups(depsLookup, scopeLookup, depsNamespaceLookup, scopeNamespaceLookup);
                 }
+
+                List<ClassDefinition> classes = new List<ClassDefinition>(toResolve.OfType<ClassDefinition>());
 
                 foreach (ClassDefinition cd in classes)
                 {
                     if (cd.BaseClassDeclarations.Length > 0)
                     {
-                        cd.FileScope.FileScopeEntityLookup.InitializeLookups(allKnownDefinitions, currentLibraryDefinitions);
                         cd.ResolveBaseClasses();
                     }
                 }
@@ -306,13 +177,10 @@ namespace Parser
                     cd.VerifyNoBaseClassLoops();
                 }
 
-                foreach (string itemKey in currentLibraryDefinitions.Keys.OrderBy(key => key))
+                foreach (TopLevelConstruct item in toResolve)
                 {
-                    TopLevelConstruct item = currentLibraryDefinitions[itemKey];
                     if (!(item is Namespace))
                     {
-                        item.FileScope.FileScopeEntityLookup.InitializeLookups(allKnownDefinitions, currentLibraryDefinitions);
-
                         item.ResolveNames(this.parser);
                     }
                 }
@@ -322,7 +190,7 @@ namespace Parser
                     cd.ResolveMemberIds();
                 }
 
-                foreach (TopLevelConstruct ex in currentLibraryDefinitions.Values.Where(ex => ex is ConstStatement || ex is EnumDefinition))
+                foreach (TopLevelConstruct ex in toResolve.Where(ex => ex is ConstStatement || ex is EnumDefinition))
                 {
                     parser.ConstantAndEnumResolutionState[ex] = ConstantResolutionState.NOT_RESOLVED;
                 }
@@ -433,12 +301,6 @@ namespace Parser
         // instance from the resolver, but you want to turn it into a ClassReference instance.
         public static Expression ConvertStaticReferenceToExpression(TopLevelConstruct item, Token primaryToken, TopLevelConstruct owner)
         {
-            if (item is Namespace)
-            {
-                // TODO: this isn't properly propagating localized values. Should probably redefine PartiaNamespaceReferences
-                // in terms of the original + some sort of sub segment descriptor.
-                return new PartialNamespaceReference(primaryToken, ((Namespace)item).DefaultName, owner);
-            }
             if (item is ClassDefinition) return new ClassReference(primaryToken, (ClassDefinition)item, owner);
             if (item is EnumDefinition) return new EnumReference(primaryToken, (EnumDefinition)item, owner);
             if (item is ConstStatement) return new ConstReference(primaryToken, (ConstStatement)item, owner);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Localization;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -15,6 +16,16 @@ namespace Parser.ParseTree
             this.NameToken = nameToken;
             this.Name = nameToken.Value;
             this.Namespace = ns;
+        }
+
+        public override string GetFullyQualifiedLocalizedName(Locale locale)
+        {
+            string name = this.NameToken.Value;
+            if (this.Owner != null)
+            {
+                name = this.Owner.GetFullyQualifiedLocalizedName(locale) + "." + name;
+            }
+            return name;
         }
 
         internal override void Resolve(ParserContext parser)

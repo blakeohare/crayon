@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Localization;
+using System;
 using System.Collections.Generic;
 
 namespace Parser.ParseTree
@@ -13,6 +14,11 @@ namespace Parser.ParseTree
             this.Library = callingLibrary;
             this.ImportPath = path;
             fileScope.Imports.Add(this);
+        }
+
+        public override string GetFullyQualifiedLocalizedName(Locale locale)
+        {
+            throw new Exception();
         }
 
         internal override void Resolve(ParserContext parser)

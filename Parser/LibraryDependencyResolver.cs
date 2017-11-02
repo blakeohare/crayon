@@ -8,17 +8,17 @@ namespace Parser
     public class LibraryDependencyResolver
     {
         // Essentially, just a post-order traversal
-        public static LibraryMetadata[] GetLibraryResolutionOrder(ParserContext parser)
+        public static LibraryCompilationScope[] GetLibraryResolutionOrder(ParserContext parser)
         {
             // these are alphabetized simply to guarantee consistent behavior.
-            LibraryMetadata[] unorderedLibraries = parser.LibraryManager.ImportedLibraries.OrderBy(scope => scope.Library.ID.ToLowerInvariant()).Select(lib => lib.Library).ToArray();
+            LibraryCompilationScope[] unorderedLibraries = parser.LibraryManager.ImportedLibraries.OrderBy(scope => scope.Library.ID.ToLowerInvariant()).ToArray();
 
-            List<LibraryMetadata> orderedLibraries = new List<LibraryMetadata>();
-            HashSet<LibraryMetadata> usedLibraries = new HashSet<LibraryMetadata>();
+            List<LibraryCompilationScope> orderedLibraries = new List<LibraryCompilationScope>();
+            HashSet<LibraryCompilationScope> usedLibraries = new HashSet<LibraryCompilationScope>();
 
-            HashSet<LibraryMetadata> cycleCheck = new HashSet<LibraryMetadata>();
-            Stack<LibraryMetadata> breadcrumbs = new Stack<LibraryMetadata>();
-            foreach (LibraryMetadata library in unorderedLibraries)
+            HashSet<LibraryCompilationScope> cycleCheck = new HashSet<LibraryCompilationScope>();
+            Stack<LibraryCompilationScope> breadcrumbs = new Stack<LibraryCompilationScope>();
+            foreach (LibraryCompilationScope library in unorderedLibraries)
             {
                 if (!usedLibraries.Contains(library))
                 {
@@ -33,11 +33,11 @@ namespace Parser
         }
 
         private static void LibraryUsagePostOrderTraversal(
-            LibraryMetadata libraryToUse,
-            List<LibraryMetadata> libraryOrderOut,
-            HashSet<LibraryMetadata> usedLibraries,
-            HashSet<LibraryMetadata> cycleCheck,
-            Stack<LibraryMetadata> breadcrumbs)
+            LibraryCompilationScope libraryToUse,
+            List<LibraryCompilationScope> libraryOrderOut,
+            HashSet<LibraryCompilationScope> usedLibraries,
+            HashSet<LibraryCompilationScope> cycleCheck,
+            Stack<LibraryCompilationScope> breadcrumbs)
         {
             if (usedLibraries.Contains(libraryToUse)) return;
 
@@ -48,19 +48,19 @@ namespace Parser
                 StringBuilder message = new StringBuilder();
                 message.Append("There is a dependency cycle in your libraries: ");
                 bool first = true;
-                foreach (LibraryMetadata breadcrumb in breadcrumbs)
+                foreach (LibraryCompilationScope breadcrumb in breadcrumbs)
                 {
                     if (first) first = false;
                     else message.Append(" -> ");
-                    message.Append(breadcrumb.ID);
+                    message.Append(breadcrumb.Library.ID);
                 }
                 throw new InvalidOperationException(message.ToString());
             }
             cycleCheck.Add(libraryToUse);
 
-            foreach (LibraryMetadata dependency in libraryToUse.LibraryDependencies)
+            foreach (LocalizedLibraryView dependency in libraryToUse.Dependencies)
             {
-                LibraryUsagePostOrderTraversal(dependency, libraryOrderOut, usedLibraries, cycleCheck, breadcrumbs);
+                LibraryUsagePostOrderTraversal(dependency.LibraryScope, libraryOrderOut, usedLibraries, cycleCheck, breadcrumbs);
             }
             cycleCheck.Remove(libraryToUse);
             breadcrumbs.Pop();
@@ -78,7 +78,8 @@ namespace Parser
                 sb.Append(": ");
 
                 sb.Append(string.Join(" ",
-                    new HashSet<string>(library.LibraryDependencies.Select(lib => lib.ID))
+                    new HashSet<string>(library.LibraryScope.Dependencies
+                        .Select(lib => lib.LibraryScope.Library.ID))
                         .OrderBy(name => name.ToLower())));
 
                 sb.Append("\n");

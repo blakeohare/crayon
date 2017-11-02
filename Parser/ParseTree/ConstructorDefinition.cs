@@ -1,4 +1,5 @@
 ﻿using Common;
+using Localization;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -63,6 +64,12 @@ namespace Parser.ParseTree
                 }
             }
             this.MinArgCount = minArgCount;
+        }
+
+        public override string GetFullyQualifiedLocalizedName(Locale locale)
+        {
+            // This shouldn't be called.
+            throw new System.Exception();
         }
 
         public void ResolvePublic(ParserContext parser)

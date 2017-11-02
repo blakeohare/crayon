@@ -6,9 +6,11 @@ namespace Parser
 {
     class FileScopedEntityLookup
     {
+        private bool initialized = false;
         private FileScope fileScope;
-        private Dictionary<string, TopLevelConstruct> libraryEntities;
-        private Dictionary<string, TopLevelConstruct> localEntities;
+        private Dictionary<string, object> depsLookup;
+        private Dictionary<string, object> scopeLookup;
+
         private string[] importStatements;
 
         public FileScopedEntityLookup SetFileScope(FileScope fileScope)
@@ -19,14 +21,25 @@ namespace Parser
 
         // whittles down the universal lookup to just the things that were imported.
         public void InitializeLookups(
-            Dictionary<string, TopLevelConstruct> universalLookup,
-            Dictionary<string, TopLevelConstruct> compilationScopeLookup)
+            Dictionary<string, TopLevelConstruct> depsEntityLookup,
+            Dictionary<string, TopLevelConstruct> compilationScopeEntityLookup,
+            Dictionary<string, NamespaceReferenceTemplate> depsNamespaceLookup,
+            Dictionary<string, NamespaceReferenceTemplate> compilationScopeNamespaceLookup)
         {
-            if (this.importStatements != null) return;
+            if (this.initialized) throw new System.Exception(); // This should not happen.
+            this.initialized = true;
 
-            Dictionary<string, TopLevelConstruct> visibleItems = new Dictionary<string, TopLevelConstruct>();
+            // TODO: This is horrificly hacky and I don't like it but oh well.
+            // Maybe add a common interface for these Dictionary values.
+            Dictionary<string, object> depsLookupBuilder = new Dictionary<string, object>();
+            this.scopeLookup = new Dictionary<string, object>();
+            foreach (string key in depsEntityLookup.Keys) depsLookupBuilder[key] = depsEntityLookup[key];
+            foreach (string key in depsNamespaceLookup.Keys) depsLookupBuilder[key] = depsNamespaceLookup[key];
+            foreach (string key in compilationScopeEntityLookup.Keys) this.scopeLookup[key] = compilationScopeEntityLookup[key];
+            foreach (string key in compilationScopeNamespaceLookup.Keys) this.scopeLookup[key] = compilationScopeNamespaceLookup[key];
+
+            Dictionary<string, object> visibleItems = new Dictionary<string, object>();
             this.importStatements = this.fileScope.Imports.Select(t => t.ImportPath).ToArray();
-            this.localEntities = compilationScopeLookup;
 
             // Since this lookup would otherwise be O(number of imports * number of universal entities),
             // optimize this by creating a lookup based on the first character of the import. Generally this will be unique
@@ -43,13 +56,13 @@ namespace Parser
                 byCharLookup[firstChar].Add(importPath + ".");
 
                 string topLevelNamespace = importPath.Split('.')[0];
-                if (universalLookup.ContainsKey(topLevelNamespace))
+                if (depsLookupBuilder.ContainsKey(topLevelNamespace))
                 {
-                    visibleItems[topLevelNamespace] = universalLookup[topLevelNamespace];
+                    visibleItems[topLevelNamespace] = depsLookupBuilder[topLevelNamespace];
                 }
             }
 
-            foreach (string path in universalLookup.Keys)
+            foreach (string path in depsLookupBuilder.Keys)
             {
                 firstChar = path[0];
                 if (byCharLookup.ContainsKey(firstChar))
@@ -63,26 +76,38 @@ namespace Parser
                     {
                         if (path.StartsWith(importedPaths))
                         {
-                            visibleItems[path] = universalLookup[path];
+                            visibleItems[path] = depsLookupBuilder[path];
                             break;
                         }
                     }
                 }
             }
 
-            this.libraryEntities = visibleItems;
+            this.depsLookup = visibleItems;
+        }
+
+        public NamespaceReferenceTemplate DoNamespaceLookup(string name, TopLevelConstruct currentEntity)
+        {
+            return this.DoLookupImpl(name, currentEntity) as NamespaceReferenceTemplate;
+        }
+
+        public TopLevelConstruct DoEntityLookup(string name, TopLevelConstruct currentEntity)
+        {
+            return this.DoLookupImpl(name, currentEntity) as TopLevelConstruct;
         }
 
         // Note: wraapping namespaces is a list of the namespace chains in a popped order...
         // namespace MyNamespace.Foo.Bar.Baz { ... } will result in...
         //   ["MyNamespace.Foo.Bar.Baz", "MyNamespace.Foo.Bar", "MyNamespace.Foo", "MyNamespace"]
-        public TopLevelConstruct DoLookup(string name, TopLevelConstruct currentEntity)
+        public object DoLookupImpl(
+            string name,
+            TopLevelConstruct currentEntity)
         {
             // check for that entity in the current compilation scope,
-            if (this.localEntities.ContainsKey(name)) return this.localEntities[name];
+            if (scopeLookup.ContainsKey(name)) return scopeLookup[name];
 
             // check for that entity in another compilation scope
-            if (this.libraryEntities.ContainsKey(name)) return this.libraryEntities[name];
+            if (depsLookup.ContainsKey(name)) return depsLookup[name];
 
             string[] wrappingNamespaces = currentEntity.LocalNamespace;
 
@@ -90,22 +115,22 @@ namespace Parser
             if (wrappingNamespaces.Length > 0)
             {
                 string fullyQualified = wrappingNamespaces[0] + "." + name;
-                if (this.localEntities.ContainsKey(fullyQualified)) return this.localEntities[fullyQualified];
+                if (scopeLookup.ContainsKey(fullyQualified)) return scopeLookup[fullyQualified];
             }
 
             // Go through all the imports and check to see if any of them fully qualify it as a prefix.
             for (int i = 0; i < this.importStatements.Length; ++i)
             {
                 string fullyQualified = this.importStatements[i] + "." + name;
-                if (this.localEntities.ContainsKey(fullyQualified)) return this.localEntities[fullyQualified];
-                if (this.libraryEntities.ContainsKey(fullyQualified)) return this.libraryEntities[fullyQualified];
+                if (scopeLookup.ContainsKey(fullyQualified)) return scopeLookup[fullyQualified];
+                if (depsLookup.ContainsKey(fullyQualified)) return depsLookup[fullyQualified];
             }
 
             // Now go back through the wrapping namespaces and check each fragment in decreasing order.
             for (int i = 1; i < wrappingNamespaces.Length; ++i)
             {
                 string fullyQualified = wrappingNamespaces[i] + "." + name;
-                if (this.localEntities.ContainsKey(fullyQualified)) return this.localEntities[fullyQualified];
+                if (scopeLookup.ContainsKey(fullyQualified)) return scopeLookup[fullyQualified];
             }
 
             return null;

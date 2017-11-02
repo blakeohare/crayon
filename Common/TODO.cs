@@ -30,5 +30,11 @@
         public static void GetCoreNameFromMetadataWithLocale() { }
         public static void NotAllLibrariesAreWrittenInEnglish() { }
         public static void LibraryNameLocalization() { }
+        public static void IsValidLibraryNameIsWrong() { }
+        public static class UnitTestNeeded
+        {
+            public static void LibraryScopeWithOnlyNestedNamespaces() { }
+            public static void LibraryWithInconsistentLocalizationAnnotations() { }
+        }
     }
 }

@@ -12,9 +12,9 @@ const SCREEN_HEIGHT = CELL_SIZE * HEIGHT;
 
 funcion getRandomBlue() {
     volver [
-        Random.randomInt(100, 200),
-        Random.randomInt(40),
-        Random.randomInt(170, 255)
+        Aleatorio.randomInt(100, 200),
+        Aleatorio.randomInt(40),
+        Aleatorio.randomInt(170, 255)
     ];
 }
 

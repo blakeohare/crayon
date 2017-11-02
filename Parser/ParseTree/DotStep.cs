@@ -127,14 +127,20 @@ namespace Parser.ParseTree
             Expression root = this.Root;
             string field = this.StepToken.Value;
 
-            if (root is PartialNamespaceReference)
+            if (root is NamespaceReference)
             {
                 // already a fully qualified namespace, therefore imports don't matter.
-                string fullyQualifiedName = ((PartialNamespaceReference)root).Name + "." + field;
-                TopLevelConstruct entity = this.Owner.FileScope.FileScopeEntityLookup.DoLookup(fullyQualifiedName, parser.CurrentCodeContainer);
+                string fullyQualifiedName = ((NamespaceReference)root).Template.Name + "." + field;
+                TopLevelConstruct entity = this.Owner.FileScope.FileScopeEntityLookup.DoEntityLookup(fullyQualifiedName, parser.CurrentCodeContainer);
                 if (entity != null)
                 {
                     return Resolver.ConvertStaticReferenceToExpression(entity, this.FirstToken, this.Owner);
+                }
+
+                NamespaceReferenceTemplate nrt = this.Owner.FileScope.FileScopeEntityLookup.DoNamespaceLookup(fullyQualifiedName, parser.CurrentCodeContainer);
+                if (nrt != null)
+                {
+                    return new NamespaceReference(this.FirstToken, this.Owner, nrt);
                 }
 
                 throw new ParserException(this.FirstToken, "Could not find class or function by the name of: '" + fullyQualifiedName + "'");

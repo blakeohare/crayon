@@ -1,4 +1,6 @@
 ﻿using Localization;
+using Parser.ParseTree;
+using System.Collections.Generic;
 
 namespace Parser
 {
@@ -7,10 +9,13 @@ namespace Parser
         public Locale Locale { get; private set; }
         public LibraryCompilationScope LibraryScope { get; private set; }
 
+        public Dictionary<string, TopLevelConstruct> FullyQualifiedEntityLookup { get; private set; }
+        
         public LocalizedLibraryView(Locale locale, LibraryCompilationScope libraryScope)
         {
             this.Locale = locale;
             this.LibraryScope = libraryScope;
+            this.FullyQualifiedEntityLookup = null;
         }
 
         public string Name

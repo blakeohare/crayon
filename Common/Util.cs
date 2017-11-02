@@ -255,6 +255,14 @@ namespace Common
             return output.ToArray();
         }
 
+        public static void MergeDictionaryInto<K, V>(Dictionary<K, V> newDict, Dictionary<K, V> mergeIntoThis)
+        {
+            foreach (KeyValuePair<K, V> kvp in newDict)
+            {
+                mergeIntoThis[kvp.Key] = kvp.Value;
+            }
+        }
+
         public static Dictionary<K, V> MergeDictionaries<K, V>(params Dictionary<K, V>[] dictionaries)
         {
             if (dictionaries.Length == 0) return new Dictionary<K, V>();

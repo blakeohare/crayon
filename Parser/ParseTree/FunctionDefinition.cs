@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Common;
+using Localization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Common;
 
 namespace Parser.ParseTree
 {
@@ -41,6 +42,16 @@ namespace Parser.ParseTree
                 this.annotations[annotation.Type] = annotation;
             }
             this.MemberID = -1;
+        }
+
+        public override string GetFullyQualifiedLocalizedName(Locale locale)
+        {
+            string name = this.NameToken.Value;
+            if (this.Owner != null)
+            {
+                name = this.Owner.GetFullyQualifiedLocalizedName(locale) + "." + name;
+            }
+            return name;
         }
 
         public int[] ArgVarIDs

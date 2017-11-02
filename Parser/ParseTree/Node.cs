@@ -110,7 +110,7 @@ namespace Parser.ParseTree
 
         internal static ClassDefinition DoClassLookup(TopLevelConstruct currentContainer, Token nameToken, string name, bool failSilently)
         {
-            TopLevelConstruct ex = currentContainer.FileScope.FileScopeEntityLookup.DoLookup(name, currentContainer);
+            TopLevelConstruct ex = currentContainer.FileScope.FileScopeEntityLookup.DoEntityLookup(name, currentContainer);
             if (ex == null)
             {
                 if (failSilently)

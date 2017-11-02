@@ -11,6 +11,7 @@ namespace Parser.ParseTree
     {
         public TopLevelConstruct[] Code { get; set; }
         public string DefaultName { get; set; }
+        public string FullyQualifiedDefaultName { get; set; }
         public Dictionary<Locale, string> NamesByLocale { get; private set; }
 
         public Namespace(
@@ -24,6 +25,9 @@ namespace Parser.ParseTree
         {
             this.Library = library;
             this.DefaultName = name;
+            this.FullyQualifiedDefaultName = owner == null
+                ? name
+                : (((Namespace)owner).FullyQualifiedDefaultName + "." + name);
             this.NamesByLocale = new Dictionary<Locale, string>();
             // TODO: move this
             if (annotations != null)
@@ -37,20 +41,13 @@ namespace Parser.ParseTree
             }
         }
 
-        public void GetFlattenedCode(IList<TopLevelConstruct> executableOut)
+        public override string GetFullyQualifiedLocalizedName(Locale locale)
         {
-            foreach (TopLevelConstruct item in this.Code)
+            if (this.NamesByLocale.ContainsKey(locale))
             {
-                if (item is Namespace)
-                {
-                    ((Namespace)item).GetFlattenedCode(executableOut);
-                }
-                else
-                {
-                    // already filtered at parse time to correct member types.
-                    executableOut.Add(item);
-                }
+                return this.NamesByLocale[locale];
             }
+            return this.DefaultName;
         }
 
         internal override void Resolve(ParserContext parser)

@@ -106,7 +106,13 @@ namespace Parser.ParseTree
                 return new BaseKeyword(this.FirstToken, this.Owner);
             }
 
-            TopLevelConstruct exec = this.Owner.FileScope.FileScopeEntityLookup.DoLookup(this.Name, this.Owner);
+            NamespaceReferenceTemplate nrt = this.Owner.FileScope.FileScopeEntityLookup.DoNamespaceLookup(this.Name, this.Owner);
+            if (nrt != null)
+            {
+                return new NamespaceReference(this.FirstToken, this.Owner, nrt);
+            }
+
+            TopLevelConstruct exec = this.Owner.FileScope.FileScopeEntityLookup.DoEntityLookup(this.Name, this.Owner);
 
             if (exec != null)
             {
@@ -132,7 +138,8 @@ namespace Parser.ParseTree
                 if (this.LocalScopeId == -1)
                 {
                     string name = this.FirstToken.Value;
-                    if (parser.LibraryManager.IsValidLibraryName(parser, name))
+                    
+                    if (parser.LibraryManager.IsValidLibraryNameFromLocale(this.Owner.FileScope.CompilationScope.Locale, name))
                     {
                         throw new ParserException(this.FirstToken, "'" + name + "' is referenced but not imported in this file.");
                     }
