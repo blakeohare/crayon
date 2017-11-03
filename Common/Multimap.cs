@@ -68,5 +68,10 @@ namespace Common
         {
             get { return new List<TKey>(this.lookup.Keys); }
         }
+
+        public bool ContainsKey(TKey key)
+        {
+            return this.lookup.ContainsKey(key);
+        }
     }
 }

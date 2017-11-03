@@ -26,10 +26,14 @@ namespace Parser
             Multimap<string, Annotation> annotations = null;
             if (value == "@")
             {
-                annotations = new AnnotationParser(this.parser).ParseAnnotations(tokens);
+                annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
                 value = tokens.PeekValue();
             }
             
+            // The returns are inline, so you'll have to refactor or put the check inside each parse call.
+            // Or maybe a try/finally.
+            TODO.CheckForUnusedAnnotations();
+
             Token staticToken = null;
             Token finalToken = null;
             while (value == this.parser.Keywords.STATIC || value == this.parser.Keywords.FINAL)
@@ -97,7 +101,7 @@ namespace Parser
             }
 
             if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner, fileScope);
-            if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner, fileScope);
+            if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, staticToken, finalToken, fileScope);
             if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner, fileScope);
             if (value == this.parser.Keywords.CONSTRUCTOR) return this.ParseConstructor(tokens, owner);
@@ -330,24 +334,14 @@ namespace Parser
 
             while (!tokens.PopIfPresent("}"))
             {
-                Dictionary<string, List<Annotation>> annotations = null;
-
-                while (tokens.IsNext("@"))
-                {
-                    annotations = annotations ?? new Dictionary<string, List<Annotation>>();
-                    Annotation annotation = this.parser.AnnotationParser.ParseAnnotation(tokens);
-                    if (!annotations.ContainsKey(annotation.Type))
-                    {
-                        annotations[annotation.Type] = new List<Annotation>();
-                    }
-
-                    annotations[annotation.Type].Add(annotation);
-                }
-
+                Multimap<string, Annotation> annotations = tokens.IsNext("@")
+                    ? this.parser.AnnotationParser.ParseAnnotations(tokens)
+                    : null;
+                
                 if (tokens.IsNext(this.parser.Keywords.FUNCTION) ||
                     tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FUNCTION))
                 {
-                    methods.Add((FunctionDefinition)this.parser.ExecutableParser.ParseFunction(tokens, cd, fileScope));
+                    methods.Add(this.parser.ExecutableParser.ParseFunction(tokens, cd, fileScope, annotations));
                 }
                 else if (tokens.IsNext(this.parser.Keywords.CONSTRUCTOR))
                 {
@@ -360,8 +354,15 @@ namespace Parser
 
                     if (annotations != null && annotations.ContainsKey(this.parser.Keywords.PRIVATE))
                     {
-                        constructorDef.PrivateAnnotation = annotations[this.parser.Keywords.PRIVATE][0];
-                        annotations[this.parser.Keywords.PRIVATE].RemoveAt(0);
+                        Annotation[] privateAnnotations = annotations[this.parser.Keywords.PRIVATE].ToArray();
+                        if (privateAnnotations.Length == 1)
+                        {
+                            constructorDef.PrivateAnnotation = privateAnnotations[0];
+                        }
+                        else
+                        {
+                            throw new ParserException(privateAnnotations[1].FirstToken, "Multiple @private annotations.");
+                        }
                     }
                 }
                 else if (tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.CONSTRUCTOR))
@@ -384,16 +385,7 @@ namespace Parser
                     tokens.PopExpected("}");
                 }
 
-                if (annotations != null)
-                {
-                    foreach (List<Annotation> annotationsOfType in annotations.Values)
-                    {
-                        if (annotationsOfType.Count > 0)
-                        {
-                            throw new ParserException(annotationsOfType[0].FirstToken, "Unused or extra annotation.");
-                        }
-                    }
-                }
+                TODO.CheckForUnusedAnnotations();
             }
 
             cd.Methods = methods.ToArray();
@@ -467,7 +459,11 @@ namespace Parser
             return namespaceInstance;
         }
 
-        private FunctionDefinition ParseFunction(TokenStream tokens, TopLevelConstruct nullableOwner, FileScope fileScope)
+        private FunctionDefinition ParseFunction(
+            TokenStream tokens,
+            TopLevelConstruct nullableOwner,
+            FileScope fileScope,
+            Multimap<string, Annotation> annotations)
         {
             bool isStatic =
                 nullableOwner != null &&
@@ -475,18 +471,11 @@ namespace Parser
                 tokens.PopIfPresent(this.parser.Keywords.STATIC);
 
             Token functionToken = tokens.PopExpected(this.parser.Keywords.FUNCTION);
-
-            List<Annotation> functionAnnotations = new List<Annotation>();
-
-            while (tokens.IsNext("@"))
-            {
-                functionAnnotations.Add(this.parser.AnnotationParser.ParseAnnotation(tokens));
-            }
-
+            
             Token functionNameToken = tokens.Pop();
             this.parser.VerifyIdentifier(functionNameToken);
 
-            FunctionDefinition fd = new FunctionDefinition(functionToken, parser.CurrentLibrary, nullableOwner, isStatic, functionNameToken, functionAnnotations, parser.CurrentNamespace, fileScope);
+            FunctionDefinition fd = new FunctionDefinition(functionToken, parser.CurrentLibrary, nullableOwner, isStatic, functionNameToken, annotations, parser.CurrentNamespace, fileScope);
 
             tokens.PopExpected("(");
             List<Token> argNames = new List<Token>();
@@ -519,7 +508,6 @@ namespace Parser
 
             fd.ArgNames = argNames.ToArray();
             fd.DefaultValues = defaultValues.ToArray();
-            fd.ArgAnnotations = argAnnotations.ToArray();
             fd.Code = code.ToArray();
 
             return fd;

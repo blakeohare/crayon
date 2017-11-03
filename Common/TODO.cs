@@ -5,7 +5,6 @@
         // TODO: Group these by priority/severity
 
         public static void LibrariesNeedVersionNumber() { }
-        public static void RemoveAnnotationsFromParser() { }
         public static void ThrowErrorIfReturnAppearsWithValueInConstructors() { }
         public static void ThrowErrorIfKeywordThisIsUsedInBaseArgsOrDefaultArgsAnywhereInConstructor() { }
         public static void VerifyDefaultArgumentsAreAtTheEnd() { }
@@ -32,5 +31,6 @@
         public static void LibraryNameLocalization() { }
         public static void IsValidLibraryNameIsWrong() { }
         public static void ThisErrorMessageIsNotVeryHelpeful() { }
+        public static void CheckForUnusedAnnotations() { }
     }
 }

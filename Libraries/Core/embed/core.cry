@@ -16,38 +16,56 @@ namespace Core {
         CLASS = 9,
     }
 
+    @localized('en', 'assert')
+    @localized('es', 'ES_assert')
     function assert(condition, message = null) {
         return $$$('assert', condition, message, true);
     }
 
+    @localized('en', 'fail')
+    @localized('es', 'ES_fail')
     function fail(message) {
         return $$$('assert', false, message, false);
     }
 
+    @localized('en', 'chr')
+    @localized('es', 'ES_chr')
     function chr(value) {
         return $$$('chr', value);
     }
 
+    @localized('en', 'currentTime')
+    @localized('es', 'ES_currentTime')
     function currentTime() {
         return $$$('currentTime');
     }
 
+    @localized('en', 'ord')
+    @localized('es', 'ES_ord')
     function ord(value) {
         return $$$('ord', value);
     }
 
+    @localized('en', 'parseFloat')
+    @localized('es', 'ES_parseFloat')
     function parseFloat(value) {
         return $$$('parseFloat', value);
     }
 
+    @localized('en', 'parseInt')
+    @localized('es', 'ES_parseInt')
     function parseInt(value) {
         return $$$('parseInt', value);
     }
 
+    @localized('en', 'print')
+    @localized('es', 'publicar')
     function print(value) {
         return $$$('print', value);
     }
 
+    @localized('en', 'sleep')
+    @localized('es', 'ES_sleep')
     function sleep(seconds) {
         Core.assert(
             $$$('typeis', seconds, Core.Type.INTEGER, Core.Type.FLOAT) &&
@@ -55,14 +73,20 @@ namespace Core {
         return $$$('sleep', seconds);
     }
 
+    @localized('en', 'typeof')
+    @localized('es', 'ES_typeof')
     function typeof(value) {
         return $$$('typeof',value);
     }
 
+    @localized('en', 'isString')
+    @localized('es', 'ES_isString')
     function isString(value) {
         return $$$('typeis', value, Core.Type.STRING);
     }
 
+    @localized('en', 'isNumber')
+    @localized('es', 'ES_isNumber')
     function isNumber(value) {
         return $$$('typeis', value, Core.Type.INTEGER, Core.Type.FLOAT);
     }
@@ -95,14 +119,20 @@ namespace Core {
         return output;
     }
 
+    @localized('en', 'getCurrentExecutionToken')
+    @localized('es', 'ES_getCurrentExecutionToken')
     function getCurrentExecutionToken() {
         return $$$('execId');
     }
 
+    @localized('en', 'getExecutionIterationCounter')
+    @localized('es', 'ES_getExecutionIterationCounter')
     function getExecutionIterationCounter() {
         return $$$('execCounter');
     }
 
+    @localized('en', 'getProjectId')
+    @localized('es', 'ES_getProjectId')
     function getProjectId() {
         return $$$('projectId');
     }

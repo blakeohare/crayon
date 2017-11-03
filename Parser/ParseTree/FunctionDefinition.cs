@@ -15,8 +15,7 @@ namespace Parser.ParseTree
         public Expression[] DefaultValues { get; set; }
         private int[] argVarIds = null;
         public Executable[] Code { get; set; }
-        public Annotation[] ArgAnnotations { get; set; }
-        private Dictionary<string, Annotation> annotations;
+        private Multimap<string, Annotation> annotations;
         public int LocalScopeSize { get; set; }
         public int FinalizedPC { get; set; }
         public int MemberID { get; set; }
@@ -27,7 +26,7 @@ namespace Parser.ParseTree
             TopLevelConstruct nullableOwner,
             bool isStaticMethod,
             Token nameToken,
-            IList<Annotation> functionAnnotations,
+            Multimap<string, Annotation> annotations,
             string namespyace,
             FileScope fileScope)
             : base(functionToken, nullableOwner, fileScope)
@@ -36,17 +35,23 @@ namespace Parser.ParseTree
             this.IsStaticMethod = isStaticMethod;
             this.Namespace = namespyace;
             this.NameToken = nameToken;
-            this.annotations = new Dictionary<string, Annotation>();
-            foreach (Annotation annotation in functionAnnotations)
-            {
-                this.annotations[annotation.Type] = annotation;
-            }
+            this.annotations = annotations;
             this.MemberID = -1;
         }
 
         public override string GetFullyQualifiedLocalizedName(Locale locale)
         {
             string name = this.NameToken.Value;
+            if (this.annotations != null && this.annotations.ContainsKey("localized"))
+            {
+                foreach (Annotation annotation in this.annotations["localized"])
+                {
+                    if (((StringConstant)annotation.Args[0]).Value == locale.ID)
+                    {
+                        name = ((StringConstant)annotation.Args[1]).Value;
+                    }
+                }
+            }
             if (this.Owner != null)
             {
                 name = this.Owner.GetFullyQualifiedLocalizedName(locale) + "." + name;
@@ -66,12 +71,6 @@ namespace Parser.ParseTree
             }
         }
 
-        public Annotation GetAnnotation(string type)
-        {
-            if (this.annotations.ContainsKey(type)) return this.annotations[type];
-            return null;
-        }
-
         internal override void Resolve(ParserContext parser)
         {
             parser.ValueStackDepth = 0;
@@ -83,14 +82,6 @@ namespace Parser.ParseTree
                 if (this.DefaultValues[i] != null)
                 {
                     this.DefaultValues[i] = this.DefaultValues[i].Resolve(parser);
-                }
-
-                TODO.RemoveAnnotationsFromParser();
-
-                // Annotations not allowed in byte code mode
-                if (this.ArgAnnotations[i] != null)
-                {
-                    throw new ParserException(this.ArgAnnotations[i].FirstToken, "Unexpected token: '@'");
                 }
             }
 
