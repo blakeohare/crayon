@@ -1,4 +1,5 @@
-﻿using Localization;
+﻿using Common;
+using Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,19 +13,32 @@ namespace Parser.ParseTree
         public Token[] Items { get; private set; }
         public Expression[] Values { get; private set; }
         public Dictionary<string, int> IntValue { get; private set; }
+        private Multimap<string, Annotation> annotations;
 
-        public EnumDefinition(Token enumToken, Token nameToken, string ns, TopLevelConstruct owner, LibraryMetadata library, FileScope fileScope)
+        public EnumDefinition(
+            Token enumToken, 
+            Token nameToken, 
+            string ns, 
+            TopLevelConstruct owner, 
+            LibraryMetadata library, 
+            FileScope fileScope,
+            Multimap<string, Annotation> annotations)
             : base(enumToken, owner, fileScope)
         {
             this.Library = library;
             this.NameToken = nameToken;
             this.Name = nameToken.Value;
             this.Namespace = ns;
+            this.annotations = annotations;
         }
 
+        private Dictionary<Locale, string> namesByLocale = null;
         public override string GetFullyQualifiedLocalizedName(Locale locale)
         {
+            if (this.namesByLocale == null) this.namesByLocale = Annotation.GetNamesByLocale(this.annotations, 1);
             string name = this.NameToken.Value;
+            if (this.namesByLocale.ContainsKey(locale)) name = this.namesByLocale[locale];
+
             if (this.Owner != null)
             {
                 name = this.Owner.GetFullyQualifiedLocalizedName(locale) + "." + name;

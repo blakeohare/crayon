@@ -72,6 +72,8 @@ namespace Game {
             return $$lib_game_getScreenInfo([false, 0, 0]);
         }
 
+        @localized('en', 'clockTick')
+        @localized('es', 'ES_clockTick')
         function clockTick() {
             for (t : Game.GameWindow._frameEndHandlers) {
                 t();
@@ -84,6 +86,8 @@ namespace Game {
             }
         }
 
+        @localized('en', 'pumpEvents')
+        @localized('es', 'ES_pumpEvents')
         function pumpEvents() {
             output = [];
             t = $$lib_game_pump_events(GameWindow._reusable_list);
@@ -124,6 +128,8 @@ namespace Game {
             return output;
         }
 
+        @localized('en', 'setTitle')
+        @localized('es', 'ES_setTitle')
         function setTitle(title) {
             title += '';
             if (title.length == 0) throw new Core.InvalidArgumentException("Title cannot be empty.");

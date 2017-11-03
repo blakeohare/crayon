@@ -90,20 +90,11 @@ namespace Parser
                 return new ImportStatement(importToken, importPath, parser.CurrentLibrary, fileScope);
             }
 
-            if (value == this.parser.Keywords.ENUM)
-            {
-                return this.ParseEnumDefinition(tokens, owner, fileScope);
-            }
-
-            if (value == this.parser.Keywords.NAMESPACE)
-            {
-                return this.ParseNamespace(tokens, owner, fileScope, annotations);
-            }
-
+            if (value == this.parser.Keywords.NAMESPACE) return this.ParseNamespace(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner, fileScope);
             if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, staticToken, finalToken, fileScope, annotations);
-            if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner, fileScope);
+            if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.CONSTRUCTOR) return this.ParseConstructor(tokens, owner);
 
             throw new ParserException(tokens.Peek(), "Unrecognized token.");
@@ -251,13 +242,13 @@ namespace Parser
             return constStatement;
         }
 
-        private EnumDefinition ParseEnumDefinition(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope)
+        private EnumDefinition ParseEnumDefinition(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope, Multimap<string, Annotation> annotations)
         {
             Token enumToken = tokens.PopExpected(this.parser.Keywords.ENUM);
             Token nameToken = tokens.Pop();
             this.parser.VerifyIdentifier(nameToken);
             string name = nameToken.Value;
-            EnumDefinition ed = new EnumDefinition(enumToken, nameToken, parser.CurrentNamespace, owner, parser.CurrentLibrary, fileScope);
+            EnumDefinition ed = new EnumDefinition(enumToken, nameToken, parser.CurrentNamespace, owner, parser.CurrentLibrary, fileScope, annotations);
 
             tokens.PopExpected("{");
             bool nextForbidden = false;

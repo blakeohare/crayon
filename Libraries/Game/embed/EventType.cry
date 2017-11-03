@@ -4,6 +4,8 @@ namespace Game {
 
     // WARNING: These magic numbers are used throughout the stack
     // GameLibHelper.cry and platform specific code.
+    @localized('en', 'EventType')
+    @localized('es', 'TipoEvento')
     enum EventType {
         QUIT = 0x1,
 

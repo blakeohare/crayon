@@ -12,9 +12,9 @@ const SCREEN_HEIGHT = CELL_SIZE * HEIGHT;
 
 funcion getRandomBlue() {
     volver [
-        Aleatorio.randomInt(100, 200),
-        Aleatorio.randomInt(40),
-        Aleatorio.randomInt(170, 255)
+        Aleatorio.ES_randomInt(100, 200),
+        Aleatorio.ES_randomInt(40),
+        Aleatorio.ES_randomInt(170, 255)
     ];
 }
 
@@ -84,10 +84,10 @@ funcion primero() {
     mientras (verdad) {
         por (event : window.pumpEvents()) {
             elegir (event.type) {
-                caso EventType.QUIT:
+                caso TipoEvento.QUIT:
                     volver;
 
-                caso EventType.MOUSE_MOVE:
+                caso TipoEvento.MOUSE_MOVE:
                     lastCol = event.x / CELL_SIZE;
                     lastRow = event.y / CELL_SIZE;
                     si (lastCol >= 0 && lastRow >= 0 && lastCol < WIDTH && lastRow < HEIGHT) {
@@ -95,11 +95,11 @@ funcion primero() {
                     }
                     parar;
 
-                caso EventType.MOUSE_LEFT_DOWN:
+                caso TipoEvento.MOUSE_LEFT_DOWN:
                     mousePressed = verdad;
                     parar;
 
-                caso EventType.MOUSE_LEFT_UP:
+                caso TipoEvento.MOUSE_LEFT_UP:
                     mousePressed = falso;
                     parar;
             }

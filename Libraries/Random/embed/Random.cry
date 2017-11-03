@@ -3,11 +3,16 @@
 @localized('en', 'Random')
 @localized('es', 'Aleatorio')
 namespace Random {
+
+    @localized('en', 'randomFloat')
+    @localized('es', 'ES_randomFloat')
     function randomFloat() {
         return $$lib_random_random_float();
     }
 
     // When one argument is provided, it is the max exclusive upper bound and the min is 0.
+    @localized('en', 'randomInt')
+    @localized('es', 'ES_randomInt')
     function randomInt(minIncl, maxExcl = null) {
         return (maxExcl == null)
             ? ($$lib_random_random_int(0, minIncl)
@@ -20,6 +25,8 @@ namespace Random {
         throw new Core.InvalidArgumentException(msg);
     }
 
+    @localized('en', 'randomBool')
+    @localized('es', 'ES_randomBool')
     function randomBool() {
         // could write this as $$lib_random_random_float() < .5, but this way it can get inlined.
         // performance of this function may potentially be important to the user.
@@ -31,6 +38,8 @@ namespace Random {
         2 args: n in d chance that true is returned
         1 arg: a float from 0 to 1 that indicates the ratio of trues.
     */
+    @localized('en', 'randomChance')
+    @localized('es', 'ES_randomChance')
     function randomChance(n, d = 1) {
         return $$lib_random_random_float() * d < n;
     }
