@@ -13,8 +13,8 @@ namespace Crayon
         {
             FunctionDefinition mainFunction = lines
                 .OfType<FunctionDefinition>()
-                .Where<FunctionDefinition>(fd => fd.NameToken.Value == "main")
-                .FirstOrDefault<FunctionDefinition>();
+                .Where(fd => fd.NameToken.Value == parser.Keywords.MAIN_FUNCTION)
+                .FirstOrDefault();
 
             if (mainFunction == null)
             {

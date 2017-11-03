@@ -22,6 +22,7 @@ IF: si
 IS: es
 IMPORT: entablar
 INTERFACE: interfaz
+MAIN_FUNCTION: primero
 NAMESPACE: conjunto
 NEW: crear
 NULL: nulo

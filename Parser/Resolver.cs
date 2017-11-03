@@ -26,7 +26,7 @@ namespace Parser
         {
             FunctionDefinition[] mainFunctions = userCodeScope.GetTopLevelConstructs()
                 .OfType<FunctionDefinition>()
-                .Where(fd => fd.NameToken.Value == "main")
+                .Where(fd => fd.NameToken.Value == this.parser.Keywords.MAIN_FUNCTION)
                 .ToArray();
             if (mainFunctions.Length == 1) return mainFunctions[0];
             if (mainFunctions.Length == 0) throw new InvalidOperationException("No main(args) function was defined.");

@@ -101,6 +101,7 @@ namespace Localization
                 IMPORT = keywords["IMPORT"],
                 INTERFACE = keywords["INTERFACE"],
                 IS = keywords["IS"],
+                MAIN_FUNCTION = keywords["MAIN_FUNCTION"],
                 NAMESPACE = keywords["NAMESPACE"],
                 NEW = keywords["NEW"],
                 NULL = keywords["NULL"],
@@ -149,6 +150,7 @@ namespace Localization
             public string IMPORT { get; set; }
             public string INTERFACE { get; set; }
             public string IS { get; set; }
+            public string MAIN_FUNCTION { get; set; }
             public string NAMESPACE { get; set; }
             public string NEW { get; set; }
             public string NULL { get; set; }

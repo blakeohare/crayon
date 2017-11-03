@@ -22,6 +22,7 @@ IF: if
 IMPORT: import
 INTERFACE: interface
 IS: is
+MAIN_FUNCTION: main
 NAMESPACE: namespace
 NEW: new
 NULL: null
