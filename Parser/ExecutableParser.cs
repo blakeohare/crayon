@@ -233,7 +233,7 @@ namespace Parser
         {
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             Token nameToken = tokens.Pop();
-            ConstStatement constStatement = new ConstStatement(constToken, nameToken, parser.CurrentNamespace, owner, parser.CurrentLibrary, fileScope);
+            ConstStatement constStatement = new ConstStatement(constToken, nameToken, owner, parser.CurrentLibrary, fileScope);
             this.parser.VerifyIdentifier(nameToken);
             tokens.PopExpected("=");
             constStatement.Expression = this.parser.ExpressionParser.Parse(tokens, constStatement);
@@ -248,7 +248,7 @@ namespace Parser
             Token nameToken = tokens.Pop();
             this.parser.VerifyIdentifier(nameToken);
             string name = nameToken.Value;
-            EnumDefinition ed = new EnumDefinition(enumToken, nameToken, parser.CurrentNamespace, owner, parser.CurrentLibrary, fileScope, annotations);
+            EnumDefinition ed = new EnumDefinition(enumToken, nameToken, owner, parser.CurrentLibrary, fileScope, annotations);
 
             tokens.PopExpected("{");
             bool nextForbidden = false;
@@ -310,7 +310,6 @@ namespace Parser
                 classNameToken,
                 baseClassTokens,
                 baseClassStrings,
-                parser.CurrentNamespace,
                 owner,
                 parser.CurrentLibrary,
                 staticToken,

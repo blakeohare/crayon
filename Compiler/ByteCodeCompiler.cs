@@ -23,8 +23,10 @@ namespace Crayon
 
             FunctionDefinition invokeFunction = lines
                 .OfType<FunctionDefinition>()
-                .Where<FunctionDefinition>(fd => fd.NameToken.Value == "_LIB_CORE_invoke" && fd.Namespace == "Core")
-                .FirstOrDefault<FunctionDefinition>();
+                .Where(fd =>
+                    fd.NameToken.Value == "_LIB_CORE_invoke" &&
+                    fd.FileScope.CompilationScope.Dependencies.Length == 0) // only the core library is capable of having 0 deps
+                .FirstOrDefault();
 
             ByteBuffer userCode = new ByteBuffer();
 
@@ -554,11 +556,7 @@ namespace Crayon
 
             args.AddRange(members);
 
-            string fullyQualifiedName = classDefinition.NameToken.Value;
-            if (classDefinition.Namespace != "")
-            {
-                fullyQualifiedName = classDefinition.Namespace + "." + fullyQualifiedName;
-            }
+            string fullyQualifiedName = classDefinition.GetFullyQualifiedLocalizedName(parser.UserCodeCompilationScope.Locale);
 
             buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION, fullyQualifiedName, args.ToArray());
         }
@@ -1693,7 +1691,9 @@ namespace Crayon
         {
             bool argCountIsNegativeOne = false;
             FunctionDefinition ownerFunction = funCall.Owner as FunctionDefinition;
-            if (ownerFunction != null && ownerFunction.Namespace == "Core" && ownerFunction.NameToken.Value == "_LIB_CORE_invoke")
+            if (ownerFunction != null &&
+                ownerFunction.NameToken.Value == "_LIB_CORE_invoke" &&
+                ownerFunction.FileScope.CompilationScope.Dependencies.Length == 0)
             {
                 argCountIsNegativeOne = true;
             }

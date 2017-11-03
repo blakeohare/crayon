@@ -18,7 +18,6 @@ namespace Parser.ParseTree
         public EnumDefinition(
             Token enumToken, 
             Token nameToken, 
-            string ns, 
             TopLevelConstruct owner, 
             LibraryMetadata library, 
             FileScope fileScope,
@@ -28,7 +27,6 @@ namespace Parser.ParseTree
             this.Library = library;
             this.NameToken = nameToken;
             this.Name = nameToken.Value;
-            this.Namespace = ns;
             this.annotations = annotations;
         }
 

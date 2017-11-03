@@ -36,7 +36,6 @@ namespace Parser.ParseTree
             Token nameToken,
             IList<Token> subclassTokens,
             IList<string> subclassNames,
-            string ns,
             TopLevelConstruct owner,
             LibraryMetadata library,
             Token staticToken,
@@ -47,8 +46,7 @@ namespace Parser.ParseTree
         {
             this.Library = library;
             this.ClassID = ClassDefinition.classIdAlloc++;
-
-            this.Namespace = ns;
+            
             this.NameToken = nameToken;
             this.BaseClassTokens = subclassTokens.ToArray();
             this.BaseClassDeclarations = subclassNames.ToArray();

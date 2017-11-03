@@ -109,7 +109,7 @@ namespace Parser
             // check for that entity in another compilation scope
             if (depsLookup.ContainsKey(name)) return depsLookup[name];
 
-            string[] wrappingNamespaces = currentEntity.LocalNamespace;
+            string[] wrappingNamespaces = currentEntity.GetWrappingNamespaceIncrements(this.fileScope.CompilationScope.Locale);
 
             // if there's a namespace or series of namespaces, check if it's in that fully-specified namespace
             if (wrappingNamespaces.Length > 0)

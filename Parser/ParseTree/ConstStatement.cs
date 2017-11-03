@@ -9,13 +9,12 @@ namespace Parser.ParseTree
         public Token NameToken { get; private set; }
         public string Name { get; private set; }
 
-        public ConstStatement(Token constToken, Token nameToken, string ns, TopLevelConstruct owner, LibraryMetadata library, FileScope fileScope)
+        public ConstStatement(Token constToken, Token nameToken, TopLevelConstruct owner, LibraryMetadata library, FileScope fileScope)
             : base(constToken, owner, fileScope)
         {
             this.Library = library;
             this.NameToken = nameToken;
             this.Name = nameToken.Value;
-            this.Namespace = ns;
         }
 
         public override string GetFullyQualifiedLocalizedName(Locale locale)

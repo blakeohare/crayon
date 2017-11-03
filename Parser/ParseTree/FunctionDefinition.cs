@@ -33,7 +33,6 @@ namespace Parser.ParseTree
         {
             this.Library = library;
             this.IsStaticMethod = isStaticMethod;
-            this.Namespace = namespyace;
             this.NameToken = nameToken;
             this.annotations = annotations;
             this.MemberID = -1;
