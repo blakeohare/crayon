@@ -4,6 +4,8 @@
 @localized('es', 'Juego')
 namespace Game {
 
+    @localized('en', 'GameWindow')
+    @localized('es', 'JuegoVentana')
     class GameWindow {
 
         static field instance;

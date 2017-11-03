@@ -39,19 +39,13 @@ namespace Parser.ParseTree
             this.MemberID = -1;
         }
 
+
+        private Dictionary<Locale, string> namesByLocale = null;
+
         public override string GetFullyQualifiedLocalizedName(Locale locale)
         {
-            string name = this.NameToken.Value;
-            if (this.annotations != null && this.annotations.ContainsKey("localized"))
-            {
-                foreach (Annotation annotation in this.annotations["localized"])
-                {
-                    if (((StringConstant)annotation.Args[0]).Value == locale.ID)
-                    {
-                        name = ((StringConstant)annotation.Args[1]).Value;
-                    }
-                }
-            }
+            if (this.namesByLocale == null) this.namesByLocale = Annotation.GetNamesByLocale(this.annotations, 1);
+            string name = this.namesByLocale.ContainsKey(locale) ? this.namesByLocale[locale] : this.NameToken.Value;
             if (this.Owner != null)
             {
                 name = this.Owner.GetFullyQualifiedLocalizedName(locale) + "." + name;

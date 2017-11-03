@@ -102,7 +102,7 @@ namespace Parser
 
             if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner, fileScope);
             if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner, fileScope, annotations);
-            if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, staticToken, finalToken, fileScope);
+            if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, staticToken, finalToken, fileScope, annotations);
             if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner, fileScope);
             if (value == this.parser.Keywords.CONSTRUCTOR) return this.ParseConstructor(tokens, owner);
 
@@ -285,7 +285,7 @@ namespace Parser
             return ed;
         }
 
-        private ClassDefinition ParseClassDefinition(TokenStream tokens, TopLevelConstruct owner, Token staticToken, Token finalToken, FileScope fileScope)
+        private ClassDefinition ParseClassDefinition(TokenStream tokens, TopLevelConstruct owner, Token staticToken, Token finalToken, FileScope fileScope, Multimap<string, Annotation> classAnnotations)
         {
             Token classToken = tokens.PopExpected(this.parser.Keywords.CLASS);
             Token classNameToken = tokens.Pop();
@@ -324,7 +324,8 @@ namespace Parser
                 parser.CurrentLibrary,
                 staticToken,
                 finalToken,
-                fileScope);
+                fileScope,
+                classAnnotations);
 
             tokens.PopExpected("{");
             List<FunctionDefinition> methods = new List<FunctionDefinition>();

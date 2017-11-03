@@ -20,7 +20,7 @@ funcion getRandomBlue() {
 
 funcion main() {
 
-    window = crear GameWindow("Conway's Game of Life", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
+    window = crear JuegoVentana("Conway's Game of Life", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     // TODO: Remove this...eventually. This is here just for localization testing.
     publicar(Esencia.Espejo.getClassFromInstance(window));

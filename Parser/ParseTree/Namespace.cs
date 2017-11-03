@@ -2,6 +2,7 @@
 using Localization;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Parser.ParseTree
 {
@@ -42,23 +43,10 @@ namespace Parser.ParseTree
                 : (((Namespace)owner).FullyQualifiedDefaultName + "." + name);
             this.FullyQualifiedDefaultNameSegments = this.FullyQualifiedDefaultName.Split('.');
             this.DefaultNameSegments = this.DefaultName.Split('.');
-
-            this.NamesByLocale = new Dictionary<Locale, string[]>();
-            // TODO: move this when you start using @localized on other entities.
-            if (annotations != null)
-            {
-                foreach (Annotation localeAnnotation in annotations["localized"])
-                {
-                    string locale = ((StringConstant)localeAnnotation.Args[0]).Value;
-                    string[] localizedName = ((StringConstant)localeAnnotation.Args[1]).Value.Split('.');
-                    if (localizedName.Length != this.DefaultNameSegments.Length)
-                    {
-                        throw new ParserException(localeAnnotation.Args[1].FirstToken, "@localized annotation name does not have the correct number of namespace segments.");
-                    }
-                    this.NamesByLocale[Locale.Get(locale)] = localizedName;
-                }
-            }
-
+            
+            this.NamesByLocale = Annotation.GetNamesByLocale(annotations, this.DefaultNameSegments.Length)
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Split('.'));
+            
             Locale defaultLocale = fileScope.CompilationScope.Locale;
             if (!this.NamesByLocale.ContainsKey(defaultLocale))
             {
