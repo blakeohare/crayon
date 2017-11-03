@@ -25,6 +25,7 @@ funcion primero() {
     // TODO: Remove this...eventually. This is here just for localization testing.
     publicar(Esencia.Espejo.getClassFromInstance(window));
     Esencia.publicar("¡Hola, Mundo!");
+    Esencia.publicar("Pi = " + Mates.PI);
 
     totalCells = WIDTH * HEIGHT;
 

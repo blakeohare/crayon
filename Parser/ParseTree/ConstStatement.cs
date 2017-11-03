@@ -1,4 +1,5 @@
-﻿using Localization;
+﻿using Common;
+using Localization;
 using System.Collections.Generic;
 
 namespace Parser.ParseTree
@@ -8,18 +9,30 @@ namespace Parser.ParseTree
         public Expression Expression { get; set; }
         public Token NameToken { get; private set; }
         public string Name { get; private set; }
+        private Multimap<string, Annotation> annotations;
 
-        public ConstStatement(Token constToken, Token nameToken, TopLevelConstruct owner, LibraryMetadata library, FileScope fileScope)
+        public ConstStatement(
+            Token constToken, 
+            Token nameToken, 
+            TopLevelConstruct owner, 
+            LibraryMetadata library, 
+            FileScope fileScope,
+            Multimap<string, Annotation> annotations)
             : base(constToken, owner, fileScope)
         {
             this.Library = library;
             this.NameToken = nameToken;
             this.Name = nameToken.Value;
+            this.annotations = annotations;
         }
 
+        private Dictionary<Locale, string> namesByLocale = null;
         public override string GetFullyQualifiedLocalizedName(Locale locale)
         {
+            if (this.namesByLocale == null) this.namesByLocale = Annotation.GetNamesByLocale(this.annotations, 1);
             string name = this.NameToken.Value;
+            if (this.namesByLocale.ContainsKey(locale)) name = this.namesByLocale[locale];
+
             if (this.Owner != null)
             {
                 name = this.Owner.GetFullyQualifiedLocalizedName(locale) + "." + name;

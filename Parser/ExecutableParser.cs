@@ -91,7 +91,7 @@ namespace Parser
             }
 
             if (value == this.parser.Keywords.NAMESPACE) return this.ParseNamespace(tokens, owner, fileScope, annotations);
-            if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner, fileScope);
+            if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, staticToken, finalToken, fileScope, annotations);
             if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner, fileScope, annotations);
@@ -229,11 +229,11 @@ namespace Parser
             return new ConstructorDefinition(constructorToken, argNames, argValues, baseArgs, code, baseToken, owner);
         }
 
-        private ConstStatement ParseConst(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope)
+        private ConstStatement ParseConst(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope, Multimap<string, Annotation> annotations)
         {
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             Token nameToken = tokens.Pop();
-            ConstStatement constStatement = new ConstStatement(constToken, nameToken, owner, parser.CurrentLibrary, fileScope);
+            ConstStatement constStatement = new ConstStatement(constToken, nameToken, owner, parser.CurrentLibrary, fileScope, annotations);
             this.parser.VerifyIdentifier(nameToken);
             tokens.PopExpected("=");
             constStatement.Expression = this.parser.ExpressionParser.Parse(tokens, constStatement);

@@ -2,7 +2,12 @@
 @localized('es', 'Mates')
 namespace Math {
 
+    @localized('en', 'PI')
+    @localized('es', 'PI')
     const PI = 3.141592653589793238462;
+
+    @localized('en', 'E')
+    @localized('es', 'E')
     const E = 2.718281828459045235360;
 
     function arccos(ratio) {
