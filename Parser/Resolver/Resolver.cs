@@ -4,14 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser
+namespace Parser.Resolver
 {
-    internal class Resolver
+    internal class ResolverPipeline
     {
         private ParserContext parser;
         private TopLevelConstruct[] currentCode;
 
-        public Resolver(ParserContext parser, ICollection<CompilationScope> compilationScopes)
+        public ResolverPipeline(ParserContext parser, ICollection<CompilationScope> compilationScopes)
         {
             List<TopLevelConstruct> originalCode = new List<TopLevelConstruct>();
             foreach (CompilationScope scope in compilationScopes.OrderBy(scope => scope.ScopeKey))

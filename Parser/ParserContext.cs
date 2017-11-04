@@ -2,6 +2,7 @@
 using Common;
 using Localization;
 using Parser.ParseTree;
+using Parser.Resolver;
 using System;
 using System.Collections.Generic;
 
@@ -304,7 +305,7 @@ namespace Parser
                 string code = files[fileName];
                 this.ParseInterpretedCode(fileName, code);
             }
-            return new Resolver(this, this.compilationScopes.Values).ResolveInterpretedCode();
+            return new ResolverPipeline(this, this.compilationScopes.Values).ResolveInterpretedCode();
         }
 
         public int GetNextFileId()

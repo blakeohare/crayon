@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Parser.Resolver;
+using System;
 using System.Collections.Generic;
 
 namespace Parser.ParseTree
@@ -134,7 +135,7 @@ namespace Parser.ParseTree
                 TopLevelConstruct entity = this.Owner.FileScope.FileScopeEntityLookup.DoEntityLookup(fullyQualifiedName, parser.CurrentCodeContainer);
                 if (entity != null)
                 {
-                    return Resolver.ConvertStaticReferenceToExpression(entity, this.FirstToken, this.Owner);
+                    return ResolverPipeline.ConvertStaticReferenceToExpression(entity, this.FirstToken, this.Owner);
                 }
 
                 NamespaceReferenceTemplate nrt = this.Owner.FileScope.FileScopeEntityLookup.DoNamespaceLookup(fullyQualifiedName, parser.CurrentCodeContainer);

@@ -116,7 +116,7 @@ namespace Parser.ParseTree
 
             if (exec != null)
             {
-                return Resolver.ConvertStaticReferenceToExpression(exec, this.FirstToken, this.Owner);
+				return Resolver.ResolverPipeline.ConvertStaticReferenceToExpression(exec, this.FirstToken, this.Owner);
             }
 
             return this;
