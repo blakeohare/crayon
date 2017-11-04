@@ -34,5 +34,6 @@
         public static void ThisErrorMessageIsNotVeryHelpeful() { }
         public static void CheckForUnusedAnnotations() { }
         public static void MoreExtensibleFormOfParsingAnnotations() { }
+        public static void EnumBuiltInFunctionLocalization() { }
     }
 }

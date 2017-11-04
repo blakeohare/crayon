@@ -65,6 +65,7 @@ namespace Parser.ParseTree
                     enumDef.Resolve(parser);
                 }
 
+                Common.TODO.EnumBuiltInFunctionLocalization();
                 switch (step)
                 {
                     case "length":
