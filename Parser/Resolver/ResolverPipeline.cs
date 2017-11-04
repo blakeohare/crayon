@@ -33,12 +33,6 @@ namespace Parser.Resolver
             throw new ParserException(mainFunctions[0].FirstToken, "Multiple main methods found.");
         }
 
-        public TopLevelConstruct[] ResolveTranslatedCode()
-        {
-            this.SimpleFirstPassResolution();
-            return this.currentCode;
-        }
-
         public TopLevelConstruct[] ResolveInterpretedCode()
         {
             this.parser.VerifyNoBadImports();
@@ -74,13 +68,10 @@ namespace Parser.Resolver
 
             // Determine if the main function uses args.
             FunctionDefinition mainFunction = this.FindMain(this.parser.UserCodeCompilationScope);
-            if (mainFunction == null)
-            {
-                throw new InvalidOperationException("No main(args) function was defined.");
-            }
+
             this.parser.MainFunctionHasArg = mainFunction.ArgNames.Length == 1;
 
-            this.SimpleFirstPassResolution();
+            this.currentCode = new SimpleFirstPass().Run(this.parser, this.currentCode);
 
             this.DetermineInlinableLibraryFunctions();
 
@@ -245,33 +236,6 @@ namespace Parser.Resolver
 
                 output.Add(def);
                 idsAlreadyIncluded.Add(def.ClassID);
-            }
-        }
-
-        private void SimpleFirstPassResolution()
-        {
-            using (new PerformanceSection("SimpleFirstPassResolution"))
-            {
-                List<TopLevelConstruct> enumsAndConstants = new List<TopLevelConstruct>();
-                List<TopLevelConstruct> everythingElse = new List<TopLevelConstruct>();
-                foreach (TopLevelConstruct ex in this.currentCode)
-                {
-                    if (ex is EnumDefinition || ex is ConstStatement)
-                    {
-                        enumsAndConstants.Add(ex);
-                    }
-                    else
-                    {
-                        everythingElse.Add(ex);
-                    }
-                }
-                List<TopLevelConstruct> output = new List<TopLevelConstruct>();
-                foreach (TopLevelConstruct ex in enumsAndConstants.Concat(everythingElse))
-                {
-                    ex.Resolve(this.parser);
-                }
-
-                this.currentCode = everythingElse.ToArray();
             }
         }
 
