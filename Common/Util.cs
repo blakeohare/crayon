@@ -345,5 +345,13 @@ namespace Common
             }
             return output;
         }
+
+        // A check for 100% absolute floating-point equality is sometimes needed.
+        public static bool FloatEqualsNoEpislon(double a, double b)
+        {
+#pragma warning disable RECS0018
+            return a == b;
+#pragma warning restore RECS0018
+        }
     }
 }
