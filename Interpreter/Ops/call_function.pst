@@ -25,7 +25,7 @@
 
         FIELD_INVOCATION
         Pop the stack, look at the pointer, look at the field name, then resolve this into one of the following:
-        LOCAL_METHOD, POINTER_PROVIDED (i.e. it's a function pointer that was set on a normal field of a class, or
+        LOCAL_METHOD, POINTER_PROVIDED (i.e. it's a function pointer that was set on a normal field of a class), or
         PRIMITIVE_METHOD
 
         CONSTRUCTOR
@@ -39,10 +39,8 @@
 
         PRIMITIVE_METHOD
         This is the only function invocation that does not result in stack changes. The value is computed
-        synchronously and immediately pushed back to the stack.
-        There may be an exception to this in the future thoough, when list.sort(key_function_pointer) is added,
-        in which case, this primitive method call may possibly be resolved into a NORMAL_FUNCTION call referring a
-        function in the core library.
+        synchronously and immediately pushed back to the stack. There are a few exceptions such as list.sort(fp) that
+        will resolve into a NORMAL_FUNCTION and point to a known Core function.
     }
 
     args:
@@ -50,8 +48,11 @@
     row[1] --> args passed by user. If this is -1, then that means a list was passed and should be used instead. This is a special case just used for Core.functionInvoke.
     row[2] --> functionID if known (available for all types except POINTER_PROVIDED and FIELD_INVOCATION)
     row[3] --> 1 if output is used
-    row[4] --> class ID if method or constructor of any type. If this is FIELD_INVOCATION, then this is the global name ID
+    row[4] -->
+        if this is a FIELD_INVOCATION then this is the global name ID
+        otherwise this is the class ID if this is a method or constructor of any type.
     row[5] --> only provided in a field invocation. The local field ID of the field being invoked. Used to do lookup on specific class if different than the one the function ID refers to.
+    row[6] --> current locale ID for FIELD_INVOCATION types
 
 */
 type = row[0];
@@ -61,7 +62,7 @@ returnValueUsed = row[3] == 1;
 classId = row[4];
 
 // Check to see if a static initialization is required.
-if ((type == FunctionInvocationType.STATIC_METHOD) || (type == FunctionInvocationType.CONSTRUCTOR)) {
+if (type == FunctionInvocationType.STATIC_METHOD || type == FunctionInvocationType.CONSTRUCTOR) {
     Core.EmitComment("constructor or static method");
     classInfo = p.classTable[classId];
     @import("InvokeStaticConstructor.pst");
@@ -117,6 +118,7 @@ if (staticConstructorNotInvoked) {
             // Pop the stack and see what we have.
             valueStackSize -= 1;
             value = valueStack[valueStackSize];
+            localeId = row[6];
 
             switch (value.type) {
                 case Types.NULL:
@@ -125,7 +127,7 @@ if (staticConstructorNotInvoked) {
 
                 case Types.INSTANCE:
                     Core.EmitComment("field invoked on an object instance.");
-                    objInstance1 = ((ObjectInstance) value.internalValue);
+                    objInstance1 = (ObjectInstance) value.internalValue;
                     int1 = objInstance1.classId; // note that classId has the field name ID and so this is sort of confusing
                     classInfo = classTable[int1];
                     if (classInfo.globalIdToMemberId.Contains(classId)) {

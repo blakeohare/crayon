@@ -24,6 +24,12 @@
 		<compilerlocale>es</compilerlocale>
 	</target>
 	
+	<target name="es-demo-java">
+		<source>source-es</source>
+		<platform>java-app</platform>
+		<compilerlocale>es</compilerlocale>
+	</target>
+	
 	<target name="java">
 		<source>source</source>
 		<platform>java-app</platform>

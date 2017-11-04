@@ -11,6 +11,7 @@ namespace Crayon
     {
         public ByteBuffer GenerateByteCode(ParserContext parser, IList<TopLevelConstruct> lines)
         {
+			// TODO: this was already found by the resolver. Cache it there instead of searching again.
             FunctionDefinition mainFunction = lines
                 .OfType<FunctionDefinition>()
                 .Where(fd => fd.NameToken.Value == parser.Keywords.MAIN_FUNCTION)
@@ -21,6 +22,7 @@ namespace Crayon
                 throw new Exception(); // should have thrown before if there was no main function.
             }
 
+			// TODO: Also get this from the resolver. This should also assert if not found (but in the resolver).
             FunctionDefinition invokeFunction = lines
                 .OfType<FunctionDefinition>()
                 .Where(fd =>
@@ -1758,6 +1760,7 @@ namespace Crayon
                 int globalNameId = parser.GetId(ds.StepToken.Value);
                 this.CompileExpression(parser, buffer, dotRoot, true);
                 this.CompileExpressionList(parser, buffer, funCall.Args, true);
+                int localeId = parser.LocaleIds[ds.Owner.FileScope.CompilationScope.Locale];
                 buffer.Add(
                     funCall.ParenToken,
                     OpCode.CALL_FUNCTION,
@@ -1765,7 +1768,8 @@ namespace Crayon
                     funCall.Args.Length,
                     0,
                     outputUsed ? 1 : 0,
-                    globalNameId);
+                    globalNameId,
+                    localeId);
             }
             else if (root is BaseMethodReference)
             {

@@ -14,6 +14,8 @@ namespace Parser
 
         private Dictionary<string, CompilationScope> compilationScopes = new Dictionary<string, CompilationScope>();
 
+        public Dictionary<Locale, int> LocaleIds { get; private set; }
+
         public UserCodeCompilationScope UserCodeCompilationScope { get { return (UserCodeCompilationScope)this.compilationScopes["."]; } }
 
         public ParserContext(BuildContext buildContext)
@@ -24,6 +26,7 @@ namespace Parser
             this.LibraryManager = new LibraryManager(buildContext);
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelConstruct, ConstantResolutionState>();
+            this.LocaleIds = new Dictionary<Locale, int>();
             this.ExpressionParser = new ExpressionParser(this);
             this.ExecutableParser = new ExecutableParser(this);
             this.AnnotationParser = new AnnotationParser(this);

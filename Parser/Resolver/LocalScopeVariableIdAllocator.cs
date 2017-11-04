@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Parser.Resolver
 {
-    internal static class LocaleScopeVariableIdAllocator
+    internal static class LocalScopeVariableIdAllocator
     {
         public static void Run(ParserContext parser, IList<TopLevelConstruct> code)
         {

@@ -43,7 +43,8 @@ namespace Parser.Resolver
 
             code = DependencyBasedClassSorter.Run(code);
 
-            LocaleScopeVariableIdAllocator.Run(parser, code);
+            LocalScopeVariableIdAllocator.Run(parser, code);
+            LocaleIdAllocator.Run(parser, compilationScopes);
 
             return code;
         }
