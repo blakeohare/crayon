@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Build.BuildParseNodes;
+using Common;
+using Localization;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using Build.BuildParseNodes;
-using Common;
-using Localization;
 
 namespace Build
 {

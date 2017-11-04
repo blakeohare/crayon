@@ -8,8 +8,6 @@ namespace Common
         private TValue[] EMPTY_BUCKET = new TValue[0];
         private Dictionary<TKey, List<TValue>> lookup = new Dictionary<TKey, List<TValue>>();
 
-        public Multimap() { }
-
         public IEnumerable<TValue> this[TKey key]
         {
             get

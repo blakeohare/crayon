@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Common
 {
     public class IconGenerator
     {
         private Dictionary<int, SystemBitmap> bitmaps = new Dictionary<int, SystemBitmap>();
-
-        public IconGenerator() { }
 
         public void AddImage(SystemBitmap bmp)
         {

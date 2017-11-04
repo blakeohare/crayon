@@ -341,7 +341,7 @@ namespace Parser
                         throw new ParserException(tokens.Pop(), "Multiple constructors are not allowed. Use optional arguments.");
                     }
 
-                    constructorDef = (ConstructorDefinition)this.parser.ExecutableParser.ParseConstructor(tokens, cd);
+                    constructorDef = this.parser.ExecutableParser.ParseConstructor(tokens, cd);
 
                     if (annotations != null && annotations.ContainsKey(this.parser.Keywords.PRIVATE))
                     {
@@ -364,7 +364,7 @@ namespace Parser
                         throw new ParserException(tokens.Pop(), "Multiple static constructors are not allowed.");
                     }
 
-                    staticConstructorDef = (ConstructorDefinition)this.parser.ExecutableParser.ParseConstructor(tokens, cd);
+                    staticConstructorDef = this.parser.ExecutableParser.ParseConstructor(tokens, cd);
                 }
                 else if (tokens.IsNext(this.parser.Keywords.FIELD) ||
                     tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FIELD))
@@ -420,7 +420,6 @@ namespace Parser
             }
 
             string name = string.Join(".", namespacePieces.Select<Token, string>(t => t.Value));
-            parser.PushNamespacePrefix(name);
 
             Namespace namespaceInstance = new Namespace(namespaceToken, name, owner, parser.CurrentLibrary, fileScope, annotations);
 
@@ -445,8 +444,6 @@ namespace Parser
 
             namespaceInstance.Code = namespaceMembers.ToArray();
 
-            parser.PopNamespacePrefix();
-
             return namespaceInstance;
         }
 
@@ -466,7 +463,7 @@ namespace Parser
             Token functionNameToken = tokens.Pop();
             this.parser.VerifyIdentifier(functionNameToken);
 
-            FunctionDefinition fd = new FunctionDefinition(functionToken, parser.CurrentLibrary, nullableOwner, isStatic, functionNameToken, annotations, parser.CurrentNamespace, fileScope);
+            FunctionDefinition fd = new FunctionDefinition(functionToken, parser.CurrentLibrary, nullableOwner, isStatic, functionNameToken, annotations, fileScope);
 
             tokens.PopExpected("(");
             List<Token> argNames = new List<Token>();

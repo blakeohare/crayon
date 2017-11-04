@@ -156,9 +156,9 @@ namespace Crayon
             if (translationsLookup == null)
             {
                 translationsLookup = new Dictionary<string, string>();
-                foreach (string platformName in translator.Platform.InheritanceChain.Reverse())
+                foreach (string inheritedPlatformName in translator.Platform.InheritanceChain.Reverse())
                 {
-                    Dictionary<string, string> translationsForPlatform = this.Metadata.GetMethodTranslations(platformName);
+                    Dictionary<string, string> translationsForPlatform = this.Metadata.GetMethodTranslations(inheritedPlatformName);
                     translationsLookup = Util.MergeDictionaries(translationsLookup, translationsForPlatform);
                 }
             }

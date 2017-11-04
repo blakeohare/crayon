@@ -27,7 +27,6 @@ namespace Parser.ParseTree
             bool isStaticMethod,
             Token nameToken,
             Multimap<string, Annotation> annotations,
-            string namespyace,
             FileScope fileScope)
             : base(functionToken, nullableOwner, fileScope)
         {

@@ -1,6 +1,4 @@
-﻿using Common;
-
-namespace Common.ImageSheets
+﻿namespace Common.ImageSheets
 {
     public class Tile
     {

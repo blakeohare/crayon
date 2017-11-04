@@ -1,7 +1,6 @@
 ﻿using Parser;
 using Pastel.Nodes;
 using Platform;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Crayon
@@ -9,15 +8,13 @@ namespace Crayon
     class LibraryNativeInvocationTranslator : ILibraryNativeInvocationTranslator
     {
         private LibraryMetadata library;
-        private IList<string> platformInheritanceChain;
 
         public LibraryForExport Library { get; private set; }
 
-        public LibraryNativeInvocationTranslator(LibraryMetadata library, LibraryForExport lfe, IList<string> platformInheritanceChain)
+        public LibraryNativeInvocationTranslator(LibraryMetadata library, LibraryForExport lfe)
         {
             this.library = library;
             this.Library = lfe;
-            this.platformInheritanceChain = platformInheritanceChain;
         }
 
         public string LibraryID { get { return library.ID; } }

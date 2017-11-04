@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Common
 {
     public class Options
     {
         private Dictionary<ExportOptionKey, object> options = new Dictionary<ExportOptionKey, object>();
-
-        public Options() { }
 
         public Options SetOption(ExportOptionKey key, object value)
         {

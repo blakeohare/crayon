@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 
 namespace Crayon
@@ -136,7 +135,7 @@ namespace Crayon
                 return "~" + BASE62[c / 62] + BASE62[c % 62];
             }
 
-            return "`" + EncodeInteger((int)c);
+            return "`" + EncodeInteger(c);
         }
 
         // if the first char is a %, then there will be some characters followed by another %. This is a simple toString representation of the number.

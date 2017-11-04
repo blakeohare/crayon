@@ -22,7 +22,6 @@ namespace Parser
             this.PushScope(new UserCodeCompilationScope(buildContext));
             this.CurrentClass = null;
             this.LibraryManager = new LibraryManager(buildContext);
-            this.CurrentNamespace = "";
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelConstruct, ConstantResolutionState>();
             this.ExpressionParser = new ExpressionParser(this);
@@ -499,21 +498,6 @@ namespace Parser
             return string.Join("", output);
         }
 
-        private List<string> namespaceStack = new List<string>();
-
-        public void PushNamespacePrefix(string value)
-        {
-            this.namespaceStack.Add(value);
-            this.CurrentNamespace = string.Join(".", this.namespaceStack);
-        }
-
-        public void PopNamespacePrefix()
-        {
-            this.namespaceStack.RemoveAt(this.namespaceStack.Count - 1);
-            this.CurrentNamespace = string.Join(".", this.namespaceStack);
-        }
-
-        public string CurrentNamespace { get; private set; }
         public int ValueStackDepth { get; set; }
     }
 }

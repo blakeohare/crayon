@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Generic;
-using Common;
 
 namespace Crayon
 {
@@ -39,8 +39,6 @@ namespace Crayon
             };
 
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
-
-            SystemBitmap crayonIcon = new SystemBitmap(typeof(Util).Assembly, "icons/crayon_logo.png");
             Dictionary<int, SystemBitmap> icons = new IconSetGenerator()
                 .AddOutputSize(32)
                 .AddOutputSize(256)

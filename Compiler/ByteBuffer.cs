@@ -18,8 +18,6 @@ namespace Crayon
 
         private List<ByteRow> rows = new List<ByteRow>();
 
-        public ByteBuffer() { }
-
         public OpCode LastOp
         {
             get { return (OpCode)this.rows[this.rows.Count - 1].ByteCode[0]; }

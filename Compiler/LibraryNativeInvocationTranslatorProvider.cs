@@ -38,7 +38,7 @@ namespace Crayon
                 throw new Exception();
             }
 
-            return new LibraryNativeInvocationTranslator(this.libraries[libraryName], libraryForExport, this.platform.InheritanceChain);
+            return new LibraryNativeInvocationTranslator(this.libraries[libraryName], libraryForExport);
         }
     }
 }

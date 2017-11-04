@@ -2,9 +2,6 @@
 {
     public enum PlatformId
     {
-        // temporary
-        PASTEL_VM,
-
         C_OPENGL,
         CSHARP_OPENTK,
         PHP_SERVER,

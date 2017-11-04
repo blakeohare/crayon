@@ -15,7 +15,7 @@ namespace Crayon
 
     internal class VmGenerator
     {
-        private static readonly string[] INTERPRETER_BASE_FILES = new string[] {
+        private static readonly string[] INTERPRETER_BASE_FILES = {
             "BinaryOpsUtil.pst",
             "ByteCodeLoader.pst",
             "Constants.pst",
@@ -30,8 +30,6 @@ namespace Crayon
             "TypesUtil.pst",
             "ValueUtil.pst",
         };
-
-        private VmGenerationMode mode;
 
         private void AddTypeEnumsToConstants(Dictionary<string, object> constantFlags)
         {
@@ -114,7 +112,6 @@ namespace Crayon
             {
                 Options options = new Options();
                 Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags() ?? new Dictionary<string, object>();
-                this.mode = mode;
 
                 this.AddTypeEnumsToConstants(constantFlags);
                 Pastel.PastelCompiler vm = this.GenerateCoreVmParseTree(platform, constantFlags);
