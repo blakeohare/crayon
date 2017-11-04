@@ -121,11 +121,18 @@ def get_all_files():
   get_all_files_impl('.', output)
   return output
 
+BAD_PATH_MARKERS = ['/obj/Debug'.replace('/', os.sep), '/obj/Release'.replace('/', os.sep)]
+
 def get_all_files_impl(path, output):
   for file in os.listdir(path):
     full_path = path + os.sep + file
     if os.path.isdir(full_path):
-      if not ('/obj/Debug' in full_path) and not ('/obj/Release' in full_path):
+      bad = False
+      for bad_path_marker in BAD_PATH_MARKERS:
+        if full_path.endswith(bad_path_marker):
+          bad = True
+          break
+      if not bad:
         get_all_files_impl(full_path, output)
     else:
       output.append(full_path[2:])
