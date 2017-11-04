@@ -75,112 +75,115 @@ namespace Parser.ParseTree
             int leftInt, rightInt;
             double leftFloat, rightFloat;
 
-            switch (leftType + " " + opToken.Value + " " + rightType)
+			// This was an on-the-fly hack to get this working but I can definitely do better than string concatenation.
+			Common.TODO.CompileTimeConstantConsolidationTypeLookupIsVeryUgly();
+
+            switch (leftType + opToken.Value + rightType)
             {
-                case "null == null": return MakeBool(tk, true);
-                case "null != null": return MakeBool(tk, false);
+                case "null==null": return MakeBool(tk, true);
+                case "null!=null": return MakeBool(tk, false);
 
-                case "bool == bool": return MakeBool(tk, GetBool(left) == GetBool(right));
-                case "bool != bool": return MakeBool(tk, GetBool(left) != GetBool(right));
+                case "bool==bool": return MakeBool(tk, GetBool(left) == GetBool(right));
+                case "bool!=bool": return MakeBool(tk, GetBool(left) != GetBool(right));
 
-                case "int + int": return MakeInt(tk, GetInt(left) + GetInt(right));
-                case "int - int": return MakeInt(tk, GetInt(left) - GetInt(right));
-                case "int * int": return MakeInt(tk, GetInt(left) * GetInt(right));
-                case "int / int": CheckZero(right); return MakeInt(tk, GetInt(left) / GetInt(right));
-                case "int ** int":
+                case "int+int": return MakeInt(tk, GetInt(left) + GetInt(right));
+                case "int-int": return MakeInt(tk, GetInt(left) - GetInt(right));
+                case "int*int": return MakeInt(tk, GetInt(left) * GetInt(right));
+                case "int/int": CheckZero(right); return MakeInt(tk, GetInt(left) / GetInt(right));
+                case "int**int":
                     rightInt = GetInt(right);
                     leftInt = GetInt(left);
                     if (rightInt == 0) return MakeInt(tk, 1);
                     if (rightInt > 0) return MakeInt(tk, (int)Math.Pow(leftInt, rightInt));
                     return MakeFloat(tk, Math.Pow(leftInt, rightInt));
-                case "int % int": return MakeInt(tk, PositiveModInt(left, right));
-                case "int & int": return MakeInt(tk, GetInt(left) & GetInt(right));
-                case "int | int": return MakeInt(tk, GetInt(left) | GetInt(right));
-                case "int ^ int": return MakeInt(tk, GetInt(left) ^ GetInt(right));
-                case "int <= int": return MakeBool(tk, GetInt(left) <= GetInt(right));
-                case "int >= int": return MakeBool(tk, GetInt(left) >= GetInt(right));
-                case "int < int": return MakeBool(tk, GetInt(left) < GetInt(right));
-                case "int > int": return MakeBool(tk, GetInt(left) > GetInt(right));
-                case "int == int": return MakeBool(tk, GetInt(left) == GetInt(right));
-                case "int != int": return MakeBool(tk, GetInt(left) != GetInt(right));
+                case "int%int": return MakeInt(tk, PositiveModInt(left, right));
+                case "int&int": return MakeInt(tk, GetInt(left) & GetInt(right));
+                case "int|int": return MakeInt(tk, GetInt(left) | GetInt(right));
+                case "int^int": return MakeInt(tk, GetInt(left) ^ GetInt(right));
+                case "int<=int": return MakeBool(tk, GetInt(left) <= GetInt(right));
+                case "int>=int": return MakeBool(tk, GetInt(left) >= GetInt(right));
+                case "int<int": return MakeBool(tk, GetInt(left) < GetInt(right));
+                case "int>int": return MakeBool(tk, GetInt(left) > GetInt(right));
+                case "int==int": return MakeBool(tk, GetInt(left) == GetInt(right));
+                case "int!=int": return MakeBool(tk, GetInt(left) != GetInt(right));
 
-                case "int << int":
+                case "int<<int":
                     rightInt = GetInt(right);
                     if (rightInt < 0) throw new ParserException(tk, "Cannot bit shift by a negative number.");
                     return MakeInt(tk, GetInt(left) << rightInt);
-                case "int >> int":
+                case "int>>int":
                     rightInt = GetInt(right);
                     if (rightInt < 0) throw new ParserException(tk, "Cannot bit shift by a negative number.");
                     return MakeInt(tk, GetInt(left) >> rightInt);
 
-                case "int + float": return MakeFloat(tk, GetInt(left) + GetFloat(right));
-                case "int - float": return MakeFloat(tk, GetInt(left) - GetFloat(right));
-                case "int * float": return MakeFloat(tk, GetInt(left) * GetFloat(right));
-                case "int / float": CheckZero(right); return MakeFloat(tk, GetInt(left) / GetFloat(right));
-                case "int ** float":
+                case "int+float": return MakeFloat(tk, GetInt(left) + GetFloat(right));
+                case "int-float": return MakeFloat(tk, GetInt(left) - GetFloat(right));
+                case "int*float": return MakeFloat(tk, GetInt(left) * GetFloat(right));
+                case "int/float": CheckZero(right); return MakeFloat(tk, GetInt(left) / GetFloat(right));
+                case "int**float":
                     rightFloat = GetFloat(right);
                     leftInt = GetInt(left);
                     if (rightFloat == 0) return MakeFloat(tk, 1);
                     return MakeFloat(tk, Math.Pow(leftInt, rightFloat));
-                case "int % float": return MakeFloat(tk, PositiveModFloat(left, right));
-                case "int <= float": return MakeBool(tk, GetInt(left) <= GetFloat(right));
-                case "int >= float": return MakeBool(tk, GetInt(left) >= GetFloat(right));
-                case "int < float": return MakeBool(tk, GetInt(left) < GetFloat(right));
-                case "int > float": return MakeBool(tk, GetInt(left) > GetFloat(right));
-                case "int == float": return MakeBool(tk, GetInt(left) == GetFloat(right));
-                case "int != float": return MakeBool(tk, GetInt(left) != GetFloat(right));
+                case "int%float": return MakeFloat(tk, PositiveModFloat(left, right));
+                case "int<=float": return MakeBool(tk, GetInt(left) <= GetFloat(right));
+                case "int>=float": return MakeBool(tk, GetInt(left) >= GetFloat(right));
+                case "int<float": return MakeBool(tk, GetInt(left) < GetFloat(right));
+                case "int>float": return MakeBool(tk, GetInt(left) > GetFloat(right));
+                case "int==float": return MakeBool(tk, GetInt(left) == GetFloat(right));
+                case "int!=float": return MakeBool(tk, GetInt(left) != GetFloat(right));
 
-                case "float + int": return MakeFloat(tk, GetFloat(left) + GetInt(right));
-                case "float - int": return MakeFloat(tk, GetFloat(left) - GetInt(right));
-                case "float * int": return MakeFloat(tk, GetFloat(left) * GetInt(right));
-                case "float / int": CheckZero(right); return MakeFloat(tk, GetFloat(left) / GetInt(right));
-                case "float ** int":
+                case "float+int": return MakeFloat(tk, GetFloat(left) + GetInt(right));
+                case "float-int": return MakeFloat(tk, GetFloat(left) - GetInt(right));
+                case "float*int": return MakeFloat(tk, GetFloat(left) * GetInt(right));
+                case "float/int": CheckZero(right); return MakeFloat(tk, GetFloat(left) / GetInt(right));
+                case "float**int":
                     rightInt = GetInt(right);
                     leftFloat = GetFloat(left);
                     if (rightInt == 0) return MakeFloat(tk, 1);
                     return MakeFloat(tk, Math.Pow(leftFloat, rightInt));
-                case "float % int": return MakeFloat(tk, PositiveModFloat(left, right));
-                case "float <= int": return MakeBool(tk, GetFloat(left) <= GetInt(right));
-                case "float >= int": return MakeBool(tk, GetFloat(left) >= GetInt(right));
-                case "float < int": return MakeBool(tk, GetFloat(left) < GetInt(right));
-                case "float > int": return MakeBool(tk, GetFloat(left) > GetInt(right));
-                case "float == int": return MakeBool(tk, GetFloat(left) == GetInt(right));
-                case "float != int": return MakeBool(tk, GetFloat(left) != GetInt(right));
+                case "float%int": return MakeFloat(tk, PositiveModFloat(left, right));
+                case "float<=int": return MakeBool(tk, GetFloat(left) <= GetInt(right));
+                case "float>=int": return MakeBool(tk, GetFloat(left) >= GetInt(right));
+                case "float<int": return MakeBool(tk, GetFloat(left) < GetInt(right));
+                case "float>int": return MakeBool(tk, GetFloat(left) > GetInt(right));
+                case "float==int": return MakeBool(tk, GetFloat(left) == GetInt(right));
+                case "float!=int": return MakeBool(tk, GetFloat(left) != GetInt(right));
 
-                case "float + float": return MakeFloat(tk, GetFloat(left) + GetFloat(right));
-                case "float - float": return MakeFloat(tk, GetFloat(left) - GetFloat(right));
-                case "float * float": return MakeFloat(tk, GetFloat(left) * GetFloat(right));
-                case "float / float": CheckZero(right); return MakeFloat(tk, GetFloat(left) / GetFloat(right));
-                case "float ** float":
+                case "float+float": return MakeFloat(tk, GetFloat(left) + GetFloat(right));
+                case "float-float": return MakeFloat(tk, GetFloat(left) - GetFloat(right));
+                case "float*float": return MakeFloat(tk, GetFloat(left) * GetFloat(right));
+                case "float/float": CheckZero(right); return MakeFloat(tk, GetFloat(left) / GetFloat(right));
+                case "float**float":
                     rightFloat = GetFloat(right);
                     leftFloat = GetFloat(left);
                     if (rightFloat == 0) return MakeFloat(tk, 1);
                     return MakeFloat(tk, Math.Pow(leftFloat, rightFloat));
-                case "float % float": return MakeFloat(tk, PositiveModFloat(left, right));
-                case "float <= float": return MakeBool(tk, GetFloat(left) <= GetFloat(right));
-                case "float >= float": return MakeBool(tk, GetFloat(left) >= GetFloat(right));
-                case "float < float": return MakeBool(tk, GetFloat(left) < GetFloat(right));
-                case "float > float": return MakeBool(tk, GetFloat(left) > GetFloat(right));
-                case "float == float": return MakeBool(tk, GetFloat(left) == GetFloat(right));
-                case "float != float": return MakeBool(tk, GetFloat(left) != GetFloat(right));
+                case "float%float": return MakeFloat(tk, PositiveModFloat(left, right));
+                case "float<=float": return MakeBool(tk, GetFloat(left) <= GetFloat(right));
+                case "float>=float": return MakeBool(tk, GetFloat(left) >= GetFloat(right));
+                case "float<float": return MakeBool(tk, GetFloat(left) < GetFloat(right));
+                case "float>float": return MakeBool(tk, GetFloat(left) > GetFloat(right));
+                case "float==float": return MakeBool(tk, GetFloat(left) == GetFloat(right));
+                case "float!=float": return MakeBool(tk, GetFloat(left) != GetFloat(right));
 
-                case "bool + string": return MakeString(tk, GetBool(left).ToString() + GetString(right));
-                case "int + string": return MakeString(tk, GetInt(left).ToString() + GetString(right));
-                case "float + string": return MakeString(tk, GetFloatAsString(left) + GetString(right));
+                case "bool+string": return MakeString(tk, GetBool(left).ToString() + GetString(right));
+                case "int+string": return MakeString(tk, GetInt(left).ToString() + GetString(right));
+                case "float+string": return MakeString(tk, GetFloatAsString(left) + GetString(right));
 
-                case "string + bool": return MakeString(tk, GetString(left) + GetBool(right).ToString());
-                case "string + int": return MakeString(tk, GetString(left) + GetInt(right).ToString());
-                case "string + float": return MakeString(tk, GetString(left) + GetFloatAsString(right));
+                case "string+bool": return MakeString(tk, GetString(left) + GetBool(right).ToString());
+                case "string+int": return MakeString(tk, GetString(left) + GetInt(right).ToString());
+                case "string+float": return MakeString(tk, GetString(left) + GetFloatAsString(right));
 
-                case "string + string": return MakeString(tk, GetString(left) + GetString(right));
+                case "string+string": return MakeString(tk, GetString(left) + GetString(right));
 
-                case "string * int":
-                case "int * string":
+                case "string*int":
+                case "int*string":
                     string stringValue = (leftType == "string") ? GetString(left) : GetString(right);
                     int intValue = (leftType == "string") ? GetInt(right) : GetInt(left);
 
-                    // don't consolidate this operation if it's going to use a bunch of memory.
-                    if (intValue * stringValue.Length <= 100)
+                    // don't consolidate this operation if it's going to make the file size blow up.
+                    if (intValue * stringValue.Length <= 50)
                     {
                         string output = "";
                         while (intValue > 0)
@@ -193,8 +196,8 @@ namespace Parser.ParseTree
 
                     return this;
 
-                case "string == string": return MakeBool(tk, GetString(left) == GetString(right));
-                case "string != string": return MakeBool(tk, GetString(left) != GetString(right));
+                case "string==string": return MakeBool(tk, GetString(left) == GetString(right));
+                case "string!=string": return MakeBool(tk, GetString(left) != GetString(right));
 
                 default:
                     throw new ParserException(opToken, "This operator is invalid for types: " + leftType + ", " + rightType + ".");

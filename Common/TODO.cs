@@ -21,6 +21,7 @@
         public static void PleaseRenameThisFunction() { }
         public static void ExplicitlyDisallowThisAtCompileTime() { }
         public static void MoveCbxParserIntoTranslatedPastelCode() { }
+        public static void CompileTimeConstantConsolidationTypeLookupIsVeryUgly() { }
 
         // TODO: resolve before releasing locale stuff
         public static void HardCodedEnglishValue() { }
