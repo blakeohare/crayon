@@ -9,7 +9,6 @@ namespace Parser
     {
         private BuildContext buildContext;
         private LibraryFinder libraryFinder;
-        public LibraryFunctionTracker LibraryFunctionTracker { get; private set; }
 
         private Dictionary<string, LibraryCompilationScope> importedLibrariesById = new Dictionary<string, LibraryCompilationScope>();
         private Dictionary<Locale, Dictionary<string, LocalizedLibraryView>> importedLibrariesByLocalizedName = new Dictionary<Locale, Dictionary<string, LocalizedLibraryView>>();
@@ -22,7 +21,6 @@ namespace Parser
         {
             this.buildContext = buildContext;
             this.libraryFinder = new LibraryFinder(buildContext.CrayonPath, buildContext.ProjectDirectory);
-            this.LibraryFunctionTracker = new LibraryFunctionTracker();
             this.ImportedLibraries = new List<LibraryCompilationScope>();
         }
 

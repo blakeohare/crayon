@@ -1398,7 +1398,6 @@ namespace Crayon
             List<Expression> args = argsOverrideOrNull ?? new List<Expression>(libFunc.Args);
             this.CompileExpressionList(parser, buffer, args, true);
             int argCount = libFunc.Args.Length;
-            int id = parser.LibraryManager.LibraryFunctionTracker.GetIdForFunction(libFunc.Name, libFunc.LibraryName);
             Token token = parenTokenOverride ?? libFunc.FirstToken;
             string libraryName = libFunc.LibraryName;
             LibraryMetadata library = libFunc.Owner.Library;
