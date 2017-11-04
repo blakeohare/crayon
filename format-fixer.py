@@ -97,6 +97,7 @@ MATCHERS = [
   ('Compiler/*.csproj', CSPROJ_STYLE),
   ('Interpreter/*.csproj', CSPROJ_STYLE),
   ('Localization/*.csproj', CSPROJ_STYLE),
+  ('Parser/*.csproj', CSPROJ_STYLE),
   ('Pastel/*.csproj', CSPROJ_STYLE),
   ('Platform/*.csproj', CSPROJ_STYLE),
   ('Platforms/*.csproj', CSPROJ_STYLE),
