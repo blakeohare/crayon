@@ -9,9 +9,9 @@ namespace Parser.Resolver
     // constants (such as consts and enums) into literal values, among other things.
     // Note that the constant and enum definitions are resolved first and then dropped from the final output as they are
     // no longer needed.
-    public class SimpleFirstPass
+    internal static class SimpleFirstPass
     {
-        public TopLevelConstruct[] Run(ParserContext parser, TopLevelConstruct[] currentCode)
+        public static TopLevelConstruct[] Run(ParserContext parser, TopLevelConstruct[] currentCode)
         {
             using (new PerformanceSection("SimpleFirstPassResolution"))
             {

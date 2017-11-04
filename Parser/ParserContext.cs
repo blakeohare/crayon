@@ -305,7 +305,7 @@ namespace Parser
                 string code = files[fileName];
                 this.ParseInterpretedCode(fileName, code);
             }
-            return new ResolverPipeline(this, this.compilationScopes.Values).ResolveInterpretedCode();
+            return ResolverPipeline.Resolve(this, this.compilationScopes.Values);
         }
 
         public int GetNextFileId()
