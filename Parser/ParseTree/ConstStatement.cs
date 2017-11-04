@@ -12,10 +12,10 @@ namespace Parser.ParseTree
         private Multimap<string, Annotation> annotations;
 
         public ConstStatement(
-            Token constToken, 
-            Token nameToken, 
-            TopLevelConstruct owner, 
-            LibraryMetadata library, 
+            Token constToken,
+            Token nameToken,
+            TopLevelConstruct owner,
+            LibraryMetadata library,
             FileScope fileScope,
             Multimap<string, Annotation> annotations)
             : base(constToken, owner, fileScope)

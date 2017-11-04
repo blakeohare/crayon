@@ -29,7 +29,7 @@ namespace Parser
                 annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
                 value = tokens.PeekValue();
             }
-            
+
             // The returns are inline, so you'll have to refactor or put the check inside each parse call.
             // Or maybe a try/finally.
             TODO.CheckForUnusedAnnotations();
@@ -328,7 +328,7 @@ namespace Parser
                 Multimap<string, Annotation> annotations = tokens.IsNext("@")
                     ? this.parser.AnnotationParser.ParseAnnotations(tokens)
                     : null;
-                
+
                 if (tokens.IsNext(this.parser.Keywords.FUNCTION) ||
                     tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FUNCTION))
                 {
@@ -462,7 +462,7 @@ namespace Parser
                 tokens.PopIfPresent(this.parser.Keywords.STATIC);
 
             Token functionToken = tokens.PopExpected(this.parser.Keywords.FUNCTION);
-            
+
             Token functionNameToken = tokens.Pop();
             this.parser.VerifyIdentifier(functionNameToken);
 

@@ -116,7 +116,7 @@ namespace Parser.ParseTree
 
             if (exec != null)
             {
-				return Resolver.ResolverPipeline.ConvertStaticReferenceToExpression(exec, this.FirstToken, this.Owner);
+                return Resolver.ResolverPipeline.ConvertStaticReferenceToExpression(exec, this.FirstToken, this.Owner);
             }
 
             return this;
@@ -138,7 +138,7 @@ namespace Parser.ParseTree
                 if (this.LocalScopeId == -1)
                 {
                     string name = this.FirstToken.Value;
-                    
+
                     if (parser.LibraryManager.IsValidLibraryNameFromLocale(this.Owner.FileScope.CompilationScope.Locale, name))
                     {
                         throw new ParserException(this.FirstToken, "'" + name + "' is referenced but not imported in this file.");

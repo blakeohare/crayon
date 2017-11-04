@@ -10,7 +10,7 @@ namespace Parser
         public LibraryCompilationScope LibraryScope { get; private set; }
 
         public Dictionary<string, TopLevelConstruct> FullyQualifiedEntityLookup { get; private set; }
-        
+
         public LocalizedLibraryView(Locale locale, LibraryCompilationScope libraryScope)
         {
             this.Locale = locale;

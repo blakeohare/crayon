@@ -37,7 +37,7 @@ namespace Parser
             {
                 throw new System.InvalidOperationException("Syntax error while parsing the library manifest for '" + id + "'.", jpe);
             }
-            
+
             this.InternalLocale = Locale.Get(this.Manifest.GetAsString("localization.default", "en"));
             this.CanonicalKey = this.InternalLocale.ID + ":" + this.ID;
             this.SupportedLocales = new HashSet<Locale>(this.Manifest.GetAsLookup("localization.names").Keys.Select(localeName => Locale.Get(localeName)));
@@ -54,14 +54,14 @@ namespace Parser
             }
             return nameByLocale[locale.ID];
         }
-        
+
         public bool IsAllowedImport(LibraryMetadata currentLibrary)
         {
             if (this.IsImportRestricted)
             {
                 // Non-empty list means it must be only accessible from a specific library and not top-level user code.
                 if (currentLibrary == null) return false;
-                
+
                 // Is the current library on the list?
                 return this.OnlyImportableFrom.Contains(currentLibrary.ID);
             }

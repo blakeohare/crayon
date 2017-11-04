@@ -88,6 +88,7 @@ MATCHERS = [
   ('Compiler/*.cs', CSHARP_STYLE),
   ('Interpreter/*.cs', CSHARP_STYLE),
   ('Localization/*.cs', CSHARP_STYLE),
+  ('Parser/*.cs', CSHARP_STYLE),
   ('Pastel/*.cs', CSHARP_STYLE),
   ('Platform/*.cs', CSHARP_STYLE),
   ('Platforms/*.cs', CSHARP_STYLE),

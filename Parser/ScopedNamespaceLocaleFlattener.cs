@@ -66,7 +66,7 @@ namespace Parser
 
             this.root.AddNamespace(ns, segments);
         }
-        
+
         public Dictionary<string, NamespaceReferenceTemplate> GetLookup(Locale locale)
         {
             if (!this.finalizedLookupForLocales.ContainsKey(locale))

@@ -46,7 +46,7 @@ namespace Parser.ParseTree
         {
             this.Library = library;
             this.ClassID = ClassDefinition.classIdAlloc++;
-            
+
             this.NameToken = nameToken;
             this.BaseClassTokens = subclassTokens.ToArray();
             this.BaseClassDeclarations = subclassNames.ToArray();

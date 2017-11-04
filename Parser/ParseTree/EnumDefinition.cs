@@ -16,10 +16,10 @@ namespace Parser.ParseTree
         private Multimap<string, Annotation> annotations;
 
         public EnumDefinition(
-            Token enumToken, 
-            Token nameToken, 
-            TopLevelConstruct owner, 
-            LibraryMetadata library, 
+            Token enumToken,
+            Token nameToken,
+            TopLevelConstruct owner,
+            LibraryMetadata library,
             FileScope fileScope,
             Multimap<string, Annotation> annotations)
             : base(enumToken, owner, fileScope)

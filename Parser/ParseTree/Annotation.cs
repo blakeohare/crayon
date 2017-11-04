@@ -27,7 +27,7 @@ namespace Parser.ParseTree
             if (stringConstant == null) throw new ParserException(this.Args[0].FirstToken, "This annotation requires exactly 1 string arg.");
             return stringConstant.Value;
         }
-        
+
         public static Dictionary<Locale, string> GetNamesByLocale(Multimap<string, Annotation> annotations, int expectedSegments)
         {
             TODO.MoreExtensibleFormOfParsingAnnotations();
@@ -52,7 +52,7 @@ namespace Parser.ParseTree
                     if (segmentCount != expectedSegments)
                     {
                         throw new ParserException(
-                            annotation.Args[1].FirstToken, 
+                            annotation.Args[1].FirstToken,
                             "@localized name must contain the same number of dotted segments as the original definition.");
                     }
                     Locale locale = Locale.Get(localeId);

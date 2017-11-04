@@ -76,8 +76,8 @@ namespace Parser.ParseTree
             int leftInt, rightInt;
             double leftFloat, rightFloat;
 
-			// This was an on-the-fly hack to get this working but I can definitely do better than string concatenation.
-			Common.TODO.CompileTimeConstantConsolidationTypeLookupIsVeryUgly();
+            // This was an on-the-fly hack to get this working but I can definitely do better than string concatenation.
+            Common.TODO.CompileTimeConstantConsolidationTypeLookupIsVeryUgly();
 
             switch (leftType + opToken.Value + rightType)
             {
@@ -124,7 +124,7 @@ namespace Parser.ParseTree
                 case "int**float":
                     rightFloat = GetFloat(right);
                     leftInt = GetInt(left);
-					if (Util.FloatEqualsNoEpislon(rightFloat, 0)) return MakeFloat(tk, 1);
+                    if (Util.FloatEqualsNoEpislon(rightFloat, 0)) return MakeFloat(tk, 1);
                     return MakeFloat(tk, Math.Pow(leftInt, rightFloat));
                 case "int%float": return MakeFloat(tk, PositiveModFloat(left, right));
                 case "int<=float": return MakeBool(tk, GetInt(left) <= GetFloat(right));
@@ -148,8 +148,8 @@ namespace Parser.ParseTree
                 case "float>=int": return MakeBool(tk, GetFloat(left) >= GetInt(right));
                 case "float<int": return MakeBool(tk, GetFloat(left) < GetInt(right));
                 case "float>int": return MakeBool(tk, GetFloat(left) > GetInt(right));
-				case "float==int": return MakeBool(tk, Util.FloatEqualsNoEpislon(GetFloat(left), GetInt(right)));
-				case "float!=int": return MakeBool(tk, !Util.FloatEqualsNoEpislon(GetFloat(left), GetInt(right)));
+                case "float==int": return MakeBool(tk, Util.FloatEqualsNoEpislon(GetFloat(left), GetInt(right)));
+                case "float!=int": return MakeBool(tk, !Util.FloatEqualsNoEpislon(GetFloat(left), GetInt(right)));
 
                 case "float+float": return MakeFloat(tk, GetFloat(left) + GetFloat(right));
                 case "float-float": return MakeFloat(tk, GetFloat(left) - GetFloat(right));
@@ -158,15 +158,15 @@ namespace Parser.ParseTree
                 case "float**float":
                     rightFloat = GetFloat(right);
                     leftFloat = GetFloat(left);
-					if (Util.FloatEqualsNoEpislon(rightFloat, 0)) return MakeFloat(tk, 1);
+                    if (Util.FloatEqualsNoEpislon(rightFloat, 0)) return MakeFloat(tk, 1);
                     return MakeFloat(tk, Math.Pow(leftFloat, rightFloat));
                 case "float%float": return MakeFloat(tk, PositiveModFloat(left, right));
                 case "float<=float": return MakeBool(tk, GetFloat(left) <= GetFloat(right));
                 case "float>=float": return MakeBool(tk, GetFloat(left) >= GetFloat(right));
                 case "float<float": return MakeBool(tk, GetFloat(left) < GetFloat(right));
                 case "float>float": return MakeBool(tk, GetFloat(left) > GetFloat(right));
-				case "float==float": return MakeBool(tk, Util.FloatEqualsNoEpislon(GetFloat(left), GetFloat(right)));
-				case "float!=float": return MakeBool(tk, !Util.FloatEqualsNoEpislon(GetFloat(left), GetFloat(right)));
+                case "float==float": return MakeBool(tk, Util.FloatEqualsNoEpislon(GetFloat(left), GetFloat(right)));
+                case "float!=float": return MakeBool(tk, !Util.FloatEqualsNoEpislon(GetFloat(left), GetFloat(right)));
 
                 case "bool+string": return MakeString(tk, GetBool(left).ToString() + GetString(right));
                 case "int+string": return MakeString(tk, GetInt(left).ToString() + GetString(right));
@@ -238,7 +238,7 @@ namespace Parser.ParseTree
             }
             else
             {
-				isZero = Util.FloatEqualsNoEpislon(((FloatConstant)expr).Value, 0);
+                isZero = Util.FloatEqualsNoEpislon(((FloatConstant)expr).Value, 0);
             }
             if (isZero)
             {

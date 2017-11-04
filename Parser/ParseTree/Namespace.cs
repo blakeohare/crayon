@@ -43,16 +43,16 @@ namespace Parser.ParseTree
                 : (((Namespace)owner).FullyQualifiedDefaultName + "." + name);
             this.FullyQualifiedDefaultNameSegments = this.FullyQualifiedDefaultName.Split('.');
             this.DefaultNameSegments = this.DefaultName.Split('.');
-            
+
             this.NamesByLocale = Annotation.GetNamesByLocale(annotations, this.DefaultNameSegments.Length)
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Split('.'));
-            
+
             Locale defaultLocale = fileScope.CompilationScope.Locale;
             if (!this.NamesByLocale.ContainsKey(defaultLocale))
             {
                 this.NamesByLocale[defaultLocale] = this.DefaultName.Split('.');
             }
-            
+
             this.NestDepth = this.FullyQualifiedDefaultNameSegments.Length - this.DefaultNameSegments.Length;
         }
 

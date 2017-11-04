@@ -36,7 +36,7 @@ namespace Parser
 
             return this.libraryFinder.GetLibraryMetadataFromAnyPossibleKey(locale + ":" + name) != null;
         }
-        
+
         public int GetLibraryReferenceIdFromKey(string key)
         {
             return this.librariesAlreadyImportedIndexByKey[key] + 1;
@@ -74,11 +74,11 @@ namespace Parser
             return libView;
         }
 
-        private LocalizedLibraryView GetOrImportLibraryImpl(ParserContext parser, Token throwToken, string fullImportNameWithDots) { 
+        private LocalizedLibraryView GetOrImportLibraryImpl(ParserContext parser, Token throwToken, string fullImportNameWithDots) {
             // TODO: allow importing from a user-specified locale
             Locale fromLocale = parser.CurrentLocale;
             string name = fullImportNameWithDots.Contains('.') ? fullImportNameWithDots.Split('.')[0] : fullImportNameWithDots;
-            
+
             string secondAttemptedKey = name;
             LibraryMetadata libraryMetadata = this.libraryFinder.GetLibraryMetadataFromAnyPossibleKey(fromLocale.ID + ":" + name);
             Locale effectiveLocale = fromLocale;
@@ -111,7 +111,7 @@ namespace Parser
             // Ensure all secondary lookups for each locale is instantiated to make the upcoming code more readable.
             if (!this.importedLibrariesByLocalizedName.ContainsKey(effectiveLocale)) this.importedLibrariesByLocalizedName[effectiveLocale] = new Dictionary<string, LocalizedLibraryView>();
             if (!this.importedLibrariesByLocalizedName.ContainsKey(libraryMetadata.InternalLocale)) this.importedLibrariesByLocalizedName[libraryMetadata.InternalLocale] = new Dictionary<string, LocalizedLibraryView>();
-            
+
             // Check to see if this library has been imported before.
             if (this.importedLibrariesById.ContainsKey(libraryMetadata.ID))
             {
@@ -137,7 +137,7 @@ namespace Parser
             this.importedLibrariesById[libraryMetadata.ID] = libraryScope;
             LocalizedLibraryView localizedView = new LocalizedLibraryView(effectiveLocale, libraryScope);
             this.importedLibrariesByLocalizedName[effectiveLocale][name] = localizedView;
-            
+
             // Parse the library.
             parser.PushScope(libraryScope);
             Dictionary<string, string> embeddedCode = libraryMetadata.GetEmbeddedCode();
@@ -148,7 +148,7 @@ namespace Parser
                 parser.ParseInterpretedCode(fakeName, code);
             }
             parser.PopScope();
-            
+
             return localizedView;
         }
     }

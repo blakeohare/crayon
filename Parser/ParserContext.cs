@@ -55,7 +55,7 @@ namespace Parser
             this.Keywords = this.CurrentLocale.Keywords;
             this.ReservedKeywords = new HashSet<string>(this.CurrentLocale.GetKeywordsList());
         }
-        
+
         public ExpressionParser ExpressionParser { get; private set; }
         public ExecutableParser ExecutableParser { get; private set; }
         public AnnotationParser AnnotationParser { get; private set; }
@@ -312,7 +312,7 @@ namespace Parser
         {
             return fileIdCounter++;
         }
-        
+
         public void ParseInterpretedCode(string filename, string code)
         {
             FileScope fileScope = new FileScope(filename, this.CurrentScope);

@@ -23,7 +23,7 @@ namespace Parser
         {
             return this.executables;
         }
-        
+
         public void AddExecutable(TopLevelConstruct executable)
         {
             if (executable is Namespace)
