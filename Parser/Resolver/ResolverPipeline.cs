@@ -35,7 +35,7 @@ namespace Parser.Resolver
                 }
             }
 
-            FunctionDefinition mainFunction = MainFunctionFinder.Find(parser);
+            SpecialFunctionFinder.Run(parser);
 
             code = SimpleFirstPass.Run(parser, code);
 

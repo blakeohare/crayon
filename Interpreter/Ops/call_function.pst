@@ -51,8 +51,10 @@
     row[4] -->
         if this is a FIELD_INVOCATION then this is the global name ID
         otherwise this is the class ID if this is a method or constructor of any type.
-    row[5] --> only provided in a field invocation. The local field ID of the field being invoked. Used to do lookup on specific class if different than the one the function ID refers to.
-    row[6] --> current locale ID for FIELD_INVOCATION types
+    row[5] -->
+        for LOCAL_METHOD invocation -> the local field ID of the field being invoked. Used to do lookup on specific
+            class if different than the one the function ID refers to.
+        for FIELD_INVOCATION -> current locale ID
 
 */
 type = row[0];
@@ -118,7 +120,7 @@ if (staticConstructorNotInvoked) {
             // Pop the stack and see what we have.
             valueStackSize -= 1;
             value = valueStack[valueStackSize];
-            localeId = row[6];
+            localeId = row[5];
 
             switch (value.type) {
                 case Types.NULL:

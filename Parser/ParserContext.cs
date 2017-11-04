@@ -18,6 +18,9 @@ namespace Parser
 
         public UserCodeCompilationScope UserCodeCompilationScope { get { return (UserCodeCompilationScope)this.compilationScopes["."]; } }
 
+        public FunctionDefinition MainFunction { get; set; }
+        public FunctionDefinition CoreLibInvokeFunction { get; set; }
+
         public ParserContext(BuildContext buildContext)
         {
             this.BuildContext = buildContext;

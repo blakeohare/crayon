@@ -136,6 +136,7 @@ InterpreterResult interpretImpl(int executionContextId) {
     int nameId = 0;
     int classId = 0;
     int functionId = 0;
+    int localeId = 0;
     ClassInfo classInfo = null;
     int len = 0;
     Value root = null;

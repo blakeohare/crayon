@@ -11,25 +11,6 @@ namespace Crayon
     {
         public ByteBuffer GenerateByteCode(ParserContext parser, IList<TopLevelConstruct> lines)
         {
-			// TODO: this was already found by the resolver. Cache it there instead of searching again.
-            FunctionDefinition mainFunction = lines
-                .OfType<FunctionDefinition>()
-                .Where(fd => fd.NameToken.Value == parser.Keywords.MAIN_FUNCTION)
-                .FirstOrDefault();
-
-            if (mainFunction == null)
-            {
-                throw new Exception(); // should have thrown before if there was no main function.
-            }
-
-			// TODO: Also get this from the resolver. This should also assert if not found (but in the resolver).
-            FunctionDefinition invokeFunction = lines
-                .OfType<FunctionDefinition>()
-                .Where(fd =>
-                    fd.NameToken.Value == "_LIB_CORE_invoke" &&
-                    fd.FileScope.CompilationScope.Dependencies.Length == 0) // only the core library is capable of having 0 deps
-                .FirstOrDefault();
-
             ByteBuffer userCode = new ByteBuffer();
 
             this.CompileTopLevelEntities(parser, userCode, lines);
@@ -68,18 +49,18 @@ namespace Crayon
             if (parser.MainFunctionHasArg)
             {
                 output.Add(null, OpCode.COMMAND_LINE_ARGS);
-                output.Add(null, OpCode.CALL_FUNCTION, (int)FunctionInvocationType.NORMAL_FUNCTION, 1, mainFunction.FunctionID, 0, 0);
+                output.Add(null, OpCode.CALL_FUNCTION, (int)FunctionInvocationType.NORMAL_FUNCTION, 1, parser.MainFunction.FunctionID, 0, 0);
             }
             else
             {
-                output.Add(null, OpCode.CALL_FUNCTION, (int)FunctionInvocationType.NORMAL_FUNCTION, 0, mainFunction.FunctionID, 0, 0);
+                output.Add(null, OpCode.CALL_FUNCTION, (int)FunctionInvocationType.NORMAL_FUNCTION, 0, parser.MainFunction.FunctionID, 0, 0);
             }
             output.Add(null, OpCode.RETURN, 0);
 
             // artificially inject a function call to _LIB_CORE_invoke after the final return.
             // When the interpreter is invoked with a function pointer, simply pop the function pointer and a Value list of the args
             // onto the value stack and point the PC to opLength-2
-            output.Add(null, OpCode.CALL_FUNCTION, (int)FunctionInvocationType.NORMAL_FUNCTION, 2, invokeFunction.FunctionID, 0, 0);
+            output.Add(null, OpCode.CALL_FUNCTION, (int)FunctionInvocationType.NORMAL_FUNCTION, 2, parser.CoreLibInvokeFunction.FunctionID, 0, 0);
             output.Add(null, OpCode.RETURN, 0);
 
             // Now that ops (and PCs) have been finalized, fill in ESF and Value Stack Depth data with absolute PC's
