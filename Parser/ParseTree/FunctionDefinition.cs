@@ -1,5 +1,4 @@
-﻿using Common;
-using Localization;
+﻿using Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +14,7 @@ namespace Parser.ParseTree
         public Expression[] DefaultValues { get; set; }
         private int[] argVarIds = null;
         public Executable[] Code { get; set; }
-        private Multimap<string, Annotation> annotations;
+        AnnotationCollection annotations;
         public int LocalScopeSize { get; set; }
         public int FinalizedPC { get; set; }
         public int MemberID { get; set; }
@@ -26,7 +25,7 @@ namespace Parser.ParseTree
             TopLevelConstruct nullableOwner,
             bool isStaticMethod,
             Token nameToken,
-            Multimap<string, Annotation> annotations,
+            AnnotationCollection annotations,
             FileScope fileScope)
             : base(functionToken, nullableOwner, fileScope)
         {
@@ -42,7 +41,7 @@ namespace Parser.ParseTree
 
         public override string GetFullyQualifiedLocalizedName(Locale locale)
         {
-            if (this.namesByLocale == null) this.namesByLocale = Annotation.GetNamesByLocale(this.annotations, 1);
+            if (this.namesByLocale == null) this.namesByLocale = this.annotations.GetNamesByLocale(1);
             string name = this.namesByLocale.ContainsKey(locale) ? this.namesByLocale[locale] : this.NameToken.Value;
             if (this.Owner != null)
             {

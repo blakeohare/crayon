@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Parser.ParseTree
@@ -49,25 +48,15 @@ namespace Parser.ParseTree
 
             ConstructorDefinition cons = this.Class.Constructor;
 
-            if (cons.PrivateAnnotation != null)
+            if (cons.Annotations.IsPrivate())
             {
                 bool isValidUsage =
-                    this.Class == this.Owner ||
-                    this.Class == this.Owner.Owner;
+                    this.Class == this.Owner || // used in a field where the owner is the class directly
+                    this.Class == this.Owner.Owner; // used in a function where the owner is the method whose owner is the class.
 
                 if (!isValidUsage)
                 {
-                    string errorMessage = "The constructor for " + this.Class.NameToken.Value + " is private and cannot be invoked from outside the class.";
-                    if (cons.PrivateAnnotation.Args.Length > 0)
-                    {
-                        StringConstant stringMessage = cons.PrivateAnnotation.Args[0] as StringConstant;
-                        if (stringMessage != null)
-                        {
-                            errorMessage += " " + stringMessage.Value.Trim();
-                        }
-                    }
-
-                    throw new ParserException(this.FirstToken, errorMessage);
+                    throw new ParserException(this.FirstToken, "The constructor for " + this.Class.NameToken.Value + " is private and cannot be invoked from outside the class.");
                 }
             }
 

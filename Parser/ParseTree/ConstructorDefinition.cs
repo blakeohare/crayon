@@ -17,9 +17,10 @@ namespace Parser.ParseTree
         public int MinArgCount { get; set; }
         public int MaxArgCount { get; set; }
         public bool IsDefault { get; private set; }
-        public Annotation PrivateAnnotation { get; set; }
+        public AnnotationCollection Annotations { get; set; }
 
-        public ConstructorDefinition(TopLevelConstruct owner) : base(null, owner, owner.FileScope)
+        public ConstructorDefinition(TopLevelConstruct owner, AnnotationCollection annotations)
+            : base(null, owner, owner.FileScope)
         {
             this.IsDefault = true;
 
@@ -29,6 +30,7 @@ namespace Parser.ParseTree
             this.BaseArgs = new Expression[0];
             this.MaxArgCount = 0;
             this.MinArgCount = 0;
+            this.Annotations = annotations;
         }
 
         public ConstructorDefinition(
@@ -38,6 +40,7 @@ namespace Parser.ParseTree
             IList<Expression> baseArgs,
             IList<Executable> code,
             Token baseToken,
+            AnnotationCollection annotations,
             TopLevelConstruct owner)
             : base(constructorToken, owner, owner.FileScope)
         {
@@ -47,6 +50,7 @@ namespace Parser.ParseTree
             this.BaseArgs = baseArgs.ToArray();
             this.Code = code.ToArray();
             this.BaseToken = baseToken;
+            this.Annotations = annotations;
 
             TODO.VerifyDefaultArgumentsAreAtTheEnd();
 

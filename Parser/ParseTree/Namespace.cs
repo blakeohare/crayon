@@ -1,5 +1,4 @@
-﻿using Common;
-using Localization;
+﻿using Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +32,7 @@ namespace Parser.ParseTree
             TopLevelConstruct owner,
             LibraryMetadata library,
             FileScope fileScope,
-            Multimap<string, Annotation> annotations)
+            AnnotationCollection annotations)
             : base(namespaceToken, owner, fileScope)
         {
             this.Library = library;
@@ -44,7 +43,7 @@ namespace Parser.ParseTree
             this.FullyQualifiedDefaultNameSegments = this.FullyQualifiedDefaultName.Split('.');
             this.DefaultNameSegments = this.DefaultName.Split('.');
 
-            this.NamesByLocale = Annotation.GetNamesByLocale(annotations, this.DefaultNameSegments.Length)
+            this.NamesByLocale = annotations.GetNamesByLocale(this.DefaultNameSegments.Length)
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Split('.'));
 
             Locale defaultLocale = fileScope.CompilationScope.Locale;

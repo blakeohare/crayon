@@ -15,19 +15,7 @@ namespace Parser
 
         public Expression Parse(TokenStream tokens, TopLevelConstruct owner)
         {
-            Dictionary<string, Annotation> annotations = null;
-            if (tokens.IsNext("@"))
-            {
-                annotations = new Dictionary<string, Annotation>();
-                while (tokens.IsNext("@"))
-                {
-                    Annotation annotation = this.parser.AnnotationParser.ParseAnnotation(tokens);
-                    annotations[annotation.Type] = annotation;
-                }
-            }
-            Expression output = ParseTernary(tokens, owner);
-            output.Annotations = annotations;
-            return output;
+            return ParseTernary(tokens, owner);
         }
 
         private Expression ParseTernary(TokenStream tokens, TopLevelConstruct owner)

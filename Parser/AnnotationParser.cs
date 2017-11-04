@@ -1,5 +1,4 @@
-﻿using Common;
-using Parser.ParseTree;
+﻿using Parser.ParseTree;
 using System.Collections.Generic;
 
 namespace Parser
@@ -12,7 +11,20 @@ namespace Parser
             this.parser = parser;
         }
 
-        public Annotation ParseAnnotation(TokenStream tokens)
+        internal AnnotationCollection ParseAnnotations(TokenStream tokens)
+        {
+            AnnotationCollection annotationCollection = new AnnotationCollection(this.parser);
+            while (tokens.IsNext("@"))
+            {
+                annotationCollection.Add(this.ParseAnnotation(tokens));
+            }
+
+            annotationCollection.Validate();
+
+            return annotationCollection;
+        }
+
+        private Annotation ParseAnnotation(TokenStream tokens)
         {
             Token annotationToken = tokens.PopExpected("@");
             Token typeToken = tokens.Pop();
@@ -37,17 +49,6 @@ namespace Parser
                 }
             }
             return new Annotation(annotationToken, typeToken, args);
-        }
-
-        public Multimap<string, Annotation> ParseAnnotations(TokenStream tokens)
-        {
-            Multimap<string, Annotation> annotations = new Multimap<string, Annotation>();
-            while (tokens.IsNext("@"))
-            {
-                Annotation annotation = this.ParseAnnotation(tokens);
-                annotations.Add(annotation.Type, annotation);
-            }
-            return annotations;
         }
     }
 }

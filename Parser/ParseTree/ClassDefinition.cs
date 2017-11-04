@@ -1,5 +1,4 @@
-﻿using Common;
-using Localization;
+﻿using Localization;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,7 +23,7 @@ namespace Parser.ParseTree
         public Token FinalToken { get; set; }
 
         private bool memberIdsResolved = false;
-        private Multimap<string, Annotation> annotations;
+        private AnnotationCollection annotations;
 
         // When a variable in this class is not locally defined, look for a fully qualified name that has one of these prefixes.
 
@@ -41,7 +40,7 @@ namespace Parser.ParseTree
             Token staticToken,
             Token finalToken,
             FileScope fileScope,
-            Multimap<string, Annotation> annotations)
+            AnnotationCollection annotations)
             : base(classToken, owner, fileScope)
         {
             this.Library = library;
@@ -63,7 +62,7 @@ namespace Parser.ParseTree
         private Dictionary<Locale, string> namesByLocale = null;
         public override string GetFullyQualifiedLocalizedName(Locale locale)
         {
-            if (this.namesByLocale == null) this.namesByLocale = Annotation.GetNamesByLocale(this.annotations, 1);
+            if (this.namesByLocale == null) this.namesByLocale = this.annotations.GetNamesByLocale(1);
             string name = this.NameToken.Value;
             if (this.namesByLocale.ContainsKey(locale)) name = this.namesByLocale[locale];
 
@@ -303,7 +302,7 @@ namespace Parser.ParseTree
             // This should be empty if there is no base class, or just pass along the base class' args if there is.
             if (this.Constructor == null)
             {
-                this.Constructor = new ConstructorDefinition(this);
+                this.Constructor = new ConstructorDefinition(this, new AnnotationCollection(parser));
             }
 
             this.Constructor.ResolveNames(parser);

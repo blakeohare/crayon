@@ -21,14 +21,9 @@ namespace Parser
             TopLevelConstruct owner,
             FileScope fileScope)
         {
-            string value = tokens.PeekValue();
+            AnnotationCollection annotations = annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
 
-            Multimap<string, Annotation> annotations = null;
-            if (value == "@")
-            {
-                annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
-                value = tokens.PeekValue();
-            }
+            string value = tokens.PeekValue();
 
             // The returns are inline, so you'll have to refactor or put the check inside each parse call.
             // Or maybe a try/finally.
@@ -95,7 +90,7 @@ namespace Parser
             if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, staticToken, finalToken, fileScope, annotations);
             if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner, fileScope, annotations);
-            if (value == this.parser.Keywords.CONSTRUCTOR) return this.ParseConstructor(tokens, owner);
+            if (value == this.parser.Keywords.CONSTRUCTOR) return this.ParseConstructor(tokens, owner, annotations);
 
             throw new ParserException(tokens.Peek(), "Unrecognized token.");
         }
@@ -176,7 +171,10 @@ namespace Parser
             return new ThrowStatement(throwToken, throwExpression, owner);
         }
 
-        private ConstructorDefinition ParseConstructor(TokenStream tokens, TopLevelConstruct owner)
+        private ConstructorDefinition ParseConstructor(
+            TokenStream tokens,
+            TopLevelConstruct owner,
+            AnnotationCollection annotations)
         {
             Token constructorToken = tokens.PopExpected(this.parser.Keywords.CONSTRUCTOR);
             tokens.PopExpected("(");
@@ -226,10 +224,10 @@ namespace Parser
 
             IList<Executable> code = ParserContext.ParseBlock(parser, tokens, true, owner);
 
-            return new ConstructorDefinition(constructorToken, argNames, argValues, baseArgs, code, baseToken, owner);
+            return new ConstructorDefinition(constructorToken, argNames, argValues, baseArgs, code, baseToken, annotations, owner);
         }
 
-        private ConstStatement ParseConst(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope, Multimap<string, Annotation> annotations)
+        private ConstStatement ParseConst(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope, AnnotationCollection annotations)
         {
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             Token nameToken = tokens.Pop();
@@ -242,7 +240,7 @@ namespace Parser
             return constStatement;
         }
 
-        private EnumDefinition ParseEnumDefinition(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope, Multimap<string, Annotation> annotations)
+        private EnumDefinition ParseEnumDefinition(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope, AnnotationCollection annotations)
         {
             Token enumToken = tokens.PopExpected(this.parser.Keywords.ENUM);
             Token nameToken = tokens.Pop();
@@ -276,7 +274,7 @@ namespace Parser
             return ed;
         }
 
-        private ClassDefinition ParseClassDefinition(TokenStream tokens, TopLevelConstruct owner, Token staticToken, Token finalToken, FileScope fileScope, Multimap<string, Annotation> classAnnotations)
+        private ClassDefinition ParseClassDefinition(TokenStream tokens, TopLevelConstruct owner, Token staticToken, Token finalToken, FileScope fileScope, AnnotationCollection classAnnotations)
         {
             Token classToken = tokens.PopExpected(this.parser.Keywords.CLASS);
             Token classNameToken = tokens.Pop();
@@ -325,9 +323,7 @@ namespace Parser
 
             while (!tokens.PopIfPresent("}"))
             {
-                Multimap<string, Annotation> annotations = tokens.IsNext("@")
-                    ? this.parser.AnnotationParser.ParseAnnotations(tokens)
-                    : null;
+                AnnotationCollection annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
 
                 if (tokens.IsNext(this.parser.Keywords.FUNCTION) ||
                     tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FUNCTION))
@@ -341,20 +337,7 @@ namespace Parser
                         throw new ParserException(tokens.Pop(), "Multiple constructors are not allowed. Use optional arguments.");
                     }
 
-                    constructorDef = this.parser.ExecutableParser.ParseConstructor(tokens, cd);
-
-                    if (annotations != null && annotations.ContainsKey(this.parser.Keywords.PRIVATE))
-                    {
-                        Annotation[] privateAnnotations = annotations[this.parser.Keywords.PRIVATE].ToArray();
-                        if (privateAnnotations.Length == 1)
-                        {
-                            constructorDef.PrivateAnnotation = privateAnnotations[0];
-                        }
-                        else
-                        {
-                            throw new ParserException(privateAnnotations[1].FirstToken, "Multiple @private annotations.");
-                        }
-                    }
+                    constructorDef = this.parser.ExecutableParser.ParseConstructor(tokens, cd, annotations);
                 }
                 else if (tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.CONSTRUCTOR))
                 {
@@ -364,7 +347,7 @@ namespace Parser
                         throw new ParserException(tokens.Pop(), "Multiple static constructors are not allowed.");
                     }
 
-                    staticConstructorDef = this.parser.ExecutableParser.ParseConstructor(tokens, cd);
+                    staticConstructorDef = this.parser.ExecutableParser.ParseConstructor(tokens, cd, annotations);
                 }
                 else if (tokens.IsNext(this.parser.Keywords.FIELD) ||
                     tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FIELD))
@@ -402,7 +385,7 @@ namespace Parser
             return fd;
         }
 
-        private Namespace ParseNamespace(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope, Multimap<string, Annotation> annotations)
+        private Namespace ParseNamespace(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope, AnnotationCollection annotations)
         {
             Token namespaceToken = tokens.PopExpected(this.parser.Keywords.NAMESPACE);
             Token first = tokens.Pop();
@@ -451,7 +434,7 @@ namespace Parser
             TokenStream tokens,
             TopLevelConstruct nullableOwner,
             FileScope fileScope,
-            Multimap<string, Annotation> annotations)
+            AnnotationCollection annotations)
         {
             bool isStatic =
                 nullableOwner != null &&
@@ -468,13 +451,11 @@ namespace Parser
             tokens.PopExpected("(");
             List<Token> argNames = new List<Token>();
             List<Expression> defaultValues = new List<Expression>();
-            List<Annotation> argAnnotations = new List<Annotation>();
             bool optionalArgFound = false;
             while (!tokens.PopIfPresent(")"))
             {
                 if (argNames.Count > 0) tokens.PopExpected(",");
 
-                Annotation annotation = tokens.IsNext("@") ? this.parser.AnnotationParser.ParseAnnotation(tokens) : null;
                 Token argName = tokens.Pop();
                 Expression defaultValue = null;
                 this.parser.VerifyIdentifier(argName);
@@ -487,7 +468,6 @@ namespace Parser
                 {
                     throw new ParserException(argName, "All optional arguments must come at the end of the argument list.");
                 }
-                argAnnotations.Add(annotation);
                 argNames.Add(argName);
                 defaultValues.Add(defaultValue);
             }
