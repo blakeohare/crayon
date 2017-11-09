@@ -39,7 +39,8 @@ namespace Common
         public static string ReadFileText(string path)
         {
             path = NormalizePath(path);
-            return System.IO.File.ReadAllText(path);
+            byte[] bytes = System.IO.File.ReadAllBytes(path);
+            return MysteryTextDecoder.DecodeArbitraryBytesAsAppropriatelyAsPossible(bytes);
         }
 
         public static void WriteFileBytes(string path, byte[] content)
