@@ -1,0 +1,155 @@
+﻿輸入 Game;
+輸入 Graphics2D;
+輸入 Math;
+輸入 Random;
+
+不変 FPS = 60;
+不変 WIDTH = 50;
+不変 HEIGHT = 40;
+不変 CELL_SIZE = 16;
+不変 SCREEN_WIDTH = CELL_SIZE * WIDTH;
+不変 SCREEN_HEIGHT = CELL_SIZE * HEIGHT;
+
+作用 getRandomBlue() {
+    戻 [
+        Random.randomInt(170, 255),
+        Random.randomInt(40),
+        Random.randomInt(40)
+    ];
+}
+
+作用 原() {
+    window = 新 GameWindow("Conway's Game of Life", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    totalCells = WIDTH * HEIGHT;
+
+    trues = [正] * (totalCells / 3);
+    falses = [false] * (totalCells - trues.length);
+    grid = trues + falses;
+    grid.shuffle();
+    cellPixelX = [];
+    ごと (x = 0; x < WIDTH; ++x) {
+        cellPixelX.add(x * CELL_SIZE);
+    }
+    cellPixelY = [];
+    ごと (y = 0; y < HEIGHT; ++y) {
+        cellPixelY.add(y * CELL_SIZE);
+    }
+
+    buffer = [不] * totalCells;
+    neighborsLookup = [];
+    indices = [];
+    blues = [];
+    offsets = [-1, 0, 1];
+    ごと (y = 0; y < HEIGHT; ++y) {
+        ごと (x = 0; x < WIDTH; ++x) {
+            indices.add(indices.length);
+            blues.add(getRandomBlue());
+            neighbors = [];
+            ごと (dx : offsets) {
+                ごと (dy : offsets) {
+                    neighborX = dx + x;
+                    neighborY = dy + y;
+                    もし (neighborX >= 0 &&
+                        neighborY >= 0 &&
+                        neighborX < WIDTH &&
+                        neighborY < HEIGHT &&
+                        (neighborX != x || neighborY != y)) {
+
+                        neighbors.add(neighborX + neighborY * WIDTH);
+                    }
+                }
+            }
+            neighborsLookup.add(neighbors);
+        }
+    }
+
+    lastPosition = -1;
+    mousePressed = 不;
+
+    // Lookup table for what to do if a live cell has n neighbors
+    liveTransformationLookup = [不] * 9; // die unless...
+    liveTransformationLookup[2] = 正; // has exactly 2 neighbors
+    liveTransformationLookup[3] = 正; // has exactly 3 neighbors
+
+    // Lookup table for what to do if a dead cell has n neighbors
+    deadTransformationLookup = [不] * 9; // stay dead unless...
+    deadTransformationLookup[3] = 正; // has exactly 3 neighbors
+
+    中 (正) {
+        ごと (event : window.pumpEvents()) {
+            指揮 (event.type) {
+                場合 EventType.QUIT:
+                    戻;
+
+                場合 EventType.MOUSE_MOVE:
+                    lastCol = event.x / CELL_SIZE;
+                    lastRow = event.y / CELL_SIZE;
+                    もし (lastCol >= 0 && lastRow >= 0 && lastCol < WIDTH && lastRow < HEIGHT) {
+                        lastPosition = lastCol + lastRow * WIDTH;
+                    }
+                    切;
+
+                場合 EventType.MOUSE_LEFT_DOWN:
+                    mousePressed = 正;
+                    切;
+
+                場合 EventType.MOUSE_LEFT_UP:
+                    mousePressed = 不;
+                    切;
+            }
+        }
+
+        もし (lastPosition >= 0) {
+            // bring half of the cells in the neighbors lookup for the cursor's position to life.
+            neighbors = neighborsLookup[lastPosition];
+            neighbors.shuffle();
+            ごと (i = 0; i < neighbors.length / 2; ++i) {
+                grid[neighbors[i]] = 正;
+            }
+        }
+
+        // Perform an iteration on the entire grid...
+        ごと (index : indices) {
+            // Count neighbors
+            neighbors = 0;
+            ごと (neighborIndex : neighborsLookup[index]) {
+                もし (grid[neighborIndex]) {
+                    neighbors++;
+                }
+            }
+
+            // Lookup new state
+            buffer[index] = (grid[index]
+                ? liveTransformationLookup
+                : deadTransformationLookup)[neighbors];
+        }
+
+        // swap buffers
+        t = buffer;
+        buffer = grid;
+        grid = t;
+
+        // Draw the grid
+        Draw.fill(0, 0, 0);
+        index = 0;
+        ごと (y : cellPixelY) {
+            ごと (x : cellPixelX) {
+                もし (grid[index]) {
+                    rgb = blues[index];
+                    Draw.rectangle(
+                        x, y, CELL_SIZE, CELL_SIZE,
+                        rgb[0], rgb[1], rgb[2]);
+                } 又 もし (index == lastPosition) {
+                    Draw.rectangle(
+                        x, y, CELL_SIZE, CELL_SIZE,
+                        64, 64, 64);
+                }
+
+                ++index;
+            }
+        }
+
+        window.clockTick();
+    }
+}

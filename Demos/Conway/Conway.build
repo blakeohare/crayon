@@ -30,6 +30,12 @@
 		<compilerlocale>es</compilerlocale>
 	</target>
 	
+	<target name="jp-demo">
+		<source>source-jp</source>
+		<platform>csharp-app</platform>
+		<compilerlocale>jp</compilerlocale>
+	</target>
+	
 	<target name="java">
 		<source>source</source>
 		<platform>java-app</platform>
