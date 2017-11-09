@@ -63,6 +63,13 @@ namespace LangCSharp
             this.TranslateExpression(sb, value);
         }
 
+        public override void TranslateBase64ToString(StringBuilder sb, Expression base64String)
+        {
+            sb.Append("TranslationHelper.Base64ToString(");
+            this.TranslateExpression(sb, base64String);
+            sb.Append(')');
+        }
+
         public override void TranslateCast(StringBuilder sb, PType type, Expression expression)
         {
             sb.Append('(');

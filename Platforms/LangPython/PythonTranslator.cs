@@ -98,6 +98,13 @@ namespace LangPython
             sb.Append(this.NewLine);
         }
 
+        public override void TranslateBase64ToString(StringBuilder sb, Expression base64String)
+        {
+            sb.Append("TranslationHelper_base64ToString(");
+            this.TranslateExpression(sb, base64String);
+            sb.Append(')');
+        }
+
         public override void TranslateBooleanConstant(StringBuilder sb, bool value)
         {
             sb.Append(value ? "True" : "False");

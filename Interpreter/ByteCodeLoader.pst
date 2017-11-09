@@ -2,19 +2,19 @@
 // Many of these read functions take in an integer _pointer_ as an index. This is accomplished
 // by passing in a reference to an integer array of length 1.
 
-string read_till(Array<int> index, string raw, int length, char char) {
+string read_till(Array<int> index, string raw, int length, char end) {
     List<char> output = new List<char>();
     if (!@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
         bool ctn = true;
         char c = ' ';
         while (ctn) {
             c = raw[index[0]];
-            if (c == char) {
+            if (c == end) {
                 ctn = false;
             } else {
                 output.Add(c);
             }
-            index[0] = (index[0] + 1);
+            index[0] = index[0] + 1;
         }
     }
     return output.Join();
@@ -24,7 +24,7 @@ int read_integer(Array<int> pindex, string raw, int length, string alphaNums) {
     if (!@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
         int num = 0;
         char c = raw[pindex[0]];
-        pindex[0] = (pindex[0] + 1);
+        pindex[0] = pindex[0] + 1;
         if (c == '%') {
             string value = read_till(pindex, raw, length, '%');
             num = Core.ParseInt(value);
@@ -52,40 +52,12 @@ int read_integer(Array<int> pindex, string raw, int length, string alphaNums) {
 }
 
 string read_string(Array<int> pindex, string raw, int length, string alphaNums) {
-    List<string> output = new List<string>();
     if (!@ext_boolean("IS_BYTECODE_LOADED_DIRECTLY")) {
-        bool cont = true;
-        char c = ' ';
-        while (cont) {
-            c = raw[pindex[0]];
-            pindex[0] = (pindex[0] + 1);
-            if (c == '@') {
-                int repeat = read_integer(pindex, raw, length, alphaNums);
-                string last = output[(output.Size() - 1)];
-                while (repeat > 0) {
-                    output.Add(last);
-                    repeat -= 1;
-                }
-            } else if (c == '~') {
-                int d1 = read_integer(pindex, raw, length, alphaNums);
-                int d2 = read_integer(pindex, raw, length, alphaNums);
-                int charcode = (d1 * 62) + d2;
-                output.Add(Core.StringFromCharCode(charcode));
-            } else if (c == '`') {
-                int d1 = read_integer(pindex, raw, length, alphaNums);
-                int d2 = read_integer(pindex, raw, length, alphaNums);
-                int d3 = read_integer(pindex, raw, length, alphaNums);
-                int d4 = read_integer(pindex, raw, length, alphaNums);
-                int charcode = (((((d1 * 62) + d2) * 62) + d3) * 62) + d4;
-                output.Add(Core.StringFromCharCode(charcode));
-            } else if (c == '%') {
-                cont = false;
-            } else {
-                output.Add(Core.CharToString(c));
-            }
-        }
+        string b64 = read_till(pindex, raw, length, '%');
+        return Core.Base64ToString(b64);
+    } else {
+        return "";
     }
-    return output.Join("");
 }
 
 Code loadByteCode() {

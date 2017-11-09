@@ -369,4 +369,63 @@ public final class TranslationHelper {
 	while (++i < length) output[i] = list.get(i);
 	return output;
   }
+
+  private static final java.nio.charset.Charset UTF8 = java.nio.charset.Charset.forName("UTF-8");
+  public static String base64ToString(String b64Value) {
+    int inputLength = b64Value.length();
+	
+	if (inputLength == 0) return "";
+	while (inputLength > 0 && b64Value.charAt(inputLength - 1) == '=') {
+		b64Value = b64Value.substring(0, --inputLength);
+	}
+	int bitsOfData = inputLength * 6;
+	int outputLength = bitsOfData / 8;
+	
+	byte[] buffer = new byte[outputLength];
+	char c;
+	int charValue;
+	for (int i = 0; i < inputLength; ++i) {
+		c = b64Value.charAt(i);
+		charValue = -1;
+		switch (c) {
+			case '=': break;
+			case '+': charValue = 62;
+			case '/': charValue = 63;
+			default:
+				if (c >= 'A' && c <= 'Z') {
+					charValue = c - 'A';
+				} else if (c >= 'a' && c <= 'z') {
+					charValue = c - 'a' + 26;
+				} else if (c >= '0' && c <= '9') {
+					charValue = c - '0' + 52;
+				}
+				break;
+		}
+
+		if (charValue != -1) {
+			int bitOffset = i * 6;
+			int targetIndex = bitOffset / 8;
+			int bitWithinByte = bitOffset % 8;
+			switch (bitOffset % 8) {
+				case 0:
+					buffer[targetIndex] |= charValue << 2;
+					break;
+				case 2:
+					buffer[targetIndex] |= charValue;
+					break;
+				case 4:
+					buffer[targetIndex] |= charValue >> 2;
+					if (targetIndex + 1 < outputLength)
+						buffer[targetIndex + 1] |= charValue << 6;
+					break;
+				case 6:
+					buffer[targetIndex] |= charValue >> 4;
+					if (targetIndex + 1 < outputLength)
+						buffer[targetIndex + 1] |= charValue << 4;
+					break;
+			}
+		}
+	}
+	return new String(buffer, UTF8);
+  }
 }

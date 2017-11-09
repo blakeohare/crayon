@@ -207,6 +207,12 @@ C$common$registerLibraryFunction = function(libName, lro, fnName, argc) {
 	v_registerLibraryFunction(fn, lro, lookupName, argc);
 };
 
+C$common$base64ToString = function(s) {
+	return decodeURIComponent(Array.prototype.map.call(atob(s), function(c) {
+		return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+	}).join(''))
+};
+
 C$common$intBuffer16 = C$common$multiplyList([0], 16);
 C$common$floatBuffer16 = C$common$multiplyList([0.0], 16);
 C$common$stringBuffer16 = C$common$multiplyList([''], 16);

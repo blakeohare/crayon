@@ -294,5 +294,12 @@ namespace Interpreter.Vm
 				return System.DateTime.UtcNow.Subtract(UNIX_EPOCH).TotalSeconds;
 			}
 		}
+
+        public static string Base64ToString(string b64Value)
+        {
+            byte[] utf8Bytes = System.Convert.FromBase64String(b64Value);
+            string value = System.Text.Encoding.UTF8.GetString(utf8Bytes);
+            return value;
+        }
     }
 }

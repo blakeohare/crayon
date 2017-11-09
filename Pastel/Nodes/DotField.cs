@@ -113,6 +113,7 @@ namespace Pastel.Nodes
                 case "ArcCos": return NativeFunction.MATH_ARCCOS;
                 case "ArcSin": return NativeFunction.MATH_ARCSIN;
                 case "ArcTan": return NativeFunction.MATH_ARCTAN;
+                case "Base64ToString": return NativeFunction.BASE64_TO_STRING;
                 case "CharToString": return NativeFunction.CHAR_TO_STRING;
                 case "Chr": return NativeFunction.CHR;
                 case "CommandLineArgs": return NativeFunction.COMMAND_LINE_ARGS;

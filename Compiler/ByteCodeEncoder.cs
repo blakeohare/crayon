@@ -77,43 +77,8 @@ namespace Crayon
         // If a % appears, that indicates the end of the string.
         private static void EncodeString(StringBuilder sb, string value)
         {
-            List<char> characters = new List<char>();
-            List<int> counts = new List<int>();
-            int size = 0;
-            foreach (char c in value)
-            {
-                if (size > 0 && characters[size - 1] == c)
-                {
-                    counts[size - 1]++;
-                }
-                else
-                {
-                    characters.Add(c);
-                    counts.Add(1);
-                    size++;
-                }
-            }
-
-            for (int i = 0; i < size; ++i)
-            {
-                string encodedChar = EncodeChar(characters[i]);
-                int count = counts[i];
-                sb.Append(encodedChar);
-
-                if (count > 1)
-                {
-                    if (encodedChar.Length == 1 && count == 2)
-                    {
-                        sb.Append(encodedChar);
-                    }
-                    else
-                    {
-                        sb.Append("@");
-                        sb.Append(EncodeInteger(count - 1));
-                    }
-                }
-            }
-            sb.Append("%");
+            sb.Append(Common.Utf8Base64.ToBase64(value));
+            sb.Append('%');
         }
 
         private static readonly HashSet<char> SAFE_CHARS = new HashSet<char>((

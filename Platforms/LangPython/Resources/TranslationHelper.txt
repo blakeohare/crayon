@@ -4,6 +4,8 @@ TranslationHelper_StringBuffer16 = [None] * 16
 TranslationHelper_IntBuffer16 = [0] * 16
 TranslationHelper_FloatBuffer16 = [0.0] * 16
 
+TranslationHelper_StringType = type('')
+
 def always_true(): return True
 def always_false(): return False
 
@@ -70,3 +72,9 @@ def TranslationHelper_tryParseFloat(value, floatOut):
     floatOut[0] = 1.0
   except:
     floatOut[0] = -1.0
+
+def TranslationHelper_base64ToString(value):
+  u_value = base64.b64decode(value)
+  if type(u_value) == TranslationHelper_StringType:
+    return u_value
+  return u_value.encode('utf8')

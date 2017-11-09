@@ -2,6 +2,7 @@
 string ARRAY_JOIN(Array<string>, string)
 int ARRAY_LENGTH(Array<T>)
 void ARRAY_SET(Array<T>, int, T)
+string BASE64_TO_STRING(string)
 string CHAR_TO_STRING(char)
 char CHR(int)
 Array<string> COMMAND_LINE_ARGS()

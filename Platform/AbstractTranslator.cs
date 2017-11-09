@@ -226,6 +226,7 @@ namespace Platform
                 case Pastel.NativeFunction.ARRAY_JOIN: this.TranslateArrayJoin(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.ARRAY_LENGTH: this.TranslateArrayLength(sb, args[0]); break;
                 case Pastel.NativeFunction.ARRAY_SET: this.TranslateArraySet(sb, args[0], args[1], args[2]); break;
+                case Pastel.NativeFunction.BASE64_TO_STRING: this.TranslateBase64ToString(sb, args[0]); break;
                 case Pastel.NativeFunction.CHAR_TO_STRING: this.TranslateCharToString(sb, args[0]); break;
                 case Pastel.NativeFunction.CHR: this.TranslateChr(sb, args[0]); break;
                 case Pastel.NativeFunction.COMMAND_LINE_ARGS: this.TranslateCommandLineArgs(sb); break;
@@ -345,6 +346,7 @@ namespace Platform
         public abstract void TranslateArrayNew(StringBuilder sb, PType arrayType, Expression lengthExpression);
         public abstract void TranslateArraySet(StringBuilder sb, Expression array, Expression index, Expression value);
         public abstract void TranslateAssignment(StringBuilder sb, Assignment assignment);
+        public abstract void TranslateBase64ToString(StringBuilder sb, Expression base64String);
         public abstract void TranslateBooleanConstant(StringBuilder sb, bool value);
         public abstract void TranslateBooleanNot(StringBuilder sb, UnaryOp unaryOp);
         public abstract void TranslateBreak(StringBuilder sb);

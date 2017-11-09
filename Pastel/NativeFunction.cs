@@ -13,6 +13,7 @@ namespace Pastel
         ARRAY_JOIN,
         ARRAY_LENGTH,
         ARRAY_SET,
+        BASE64_TO_STRING,
         CHAR_TO_STRING,
         CHR,
         COMMAND_LINE_ARGS,
