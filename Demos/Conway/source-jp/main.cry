@@ -14,7 +14,7 @@
     戻 [
         Random.randomInt(170, 255),
         Random.randomInt(40),
-        Random.randomInt(40)
+        Random.randomInt(30, 70)
     ];
 }
 
@@ -24,7 +24,7 @@
     totalCells = WIDTH * HEIGHT;
 
     trues = [正] * (totalCells / 3);
-    falses = [false] * (totalCells - trues.length);
+    falses = [不] * (totalCells - trues.length);
     grid = trues + falses;
     grid.shuffle();
     cellPixelX = [];

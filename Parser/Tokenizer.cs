@@ -7,8 +7,37 @@ namespace Parser
     {
         private static readonly HashSet<string> TWO_CHAR_TOKENS = new HashSet<string>(
             "++ -- << >> == != <= >= && || += -= *= /= %= &= |= ^= ** ??".Split(' '));
-        private static readonly HashSet<char> IDENTIFIER_CHARS = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$".ToCharArray());
         private static readonly HashSet<char> WHITESPACE = new HashSet<char>(" \r\n\t".ToCharArray());
+
+        private static Dictionary<char, bool> IDENTIFIER_CHARS_CACHE = new Dictionary<char, bool>()
+        {
+            { '$', true },
+            { '_', true },
+        };
+
+        public static bool IsIdentifierChar(char c)
+        {
+            bool result;
+            if (!IDENTIFIER_CHARS_CACHE.TryGetValue(c, out result))
+            {
+                switch (Localization.CharSetDetector.GetCharType(c))
+                {
+                    case Localization.CharType.ACCENTED:
+                    case Localization.CharType.LETTER:
+                    case Localization.CharType.NUMBER:
+                    case Localization.CharType.KANJI:
+                    case Localization.CharType.HIRAGANA:
+                    case Localization.CharType.KATAKANA:
+                        result = true;
+                        break;
+                    default:
+                        result = false;
+                        break;
+                }
+                IDENTIFIER_CHARS_CACHE[c] = result;
+            }
+            return result;
+        }
 
         public static Token[] Tokenize(string filename, string code, int fileID, bool useMultiCharTokens)
         {
@@ -124,7 +153,7 @@ namespace Parser
                 }
                 else if (normalToken != null)
                 {
-                    if (IDENTIFIER_CHARS.Contains(c))
+                    if (IsIdentifierChar(c))
                     {
                         normalToken += c;
                     }
@@ -162,7 +191,7 @@ namespace Parser
                     tokenStartHasPreviousWhitespace = previousIsWhitespace;
                     previousIsWhitespace = false;
                 }
-                else if (IDENTIFIER_CHARS.Contains(c))
+                else if (IsIdentifierChar(c))
                 {
                     normalToken = "" + c;
                     normalStart = i;

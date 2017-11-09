@@ -388,20 +388,19 @@ namespace Parser
         {
             return RESERVED_KEYWORDS.Contains(value);
         }
-
-        private static readonly HashSet<char> IDENTIFIER_CHARS = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_$".ToCharArray());
+        
         internal bool IsValidIdentifier(string value)
         {
             if (IsReservedKeyword(value))
             {
                 return false;
             }
-
+            
             if (value[0] >= '0' && value[0] <= '9') return false;
 
             foreach (char c in value)
             {
-                if (!IDENTIFIER_CHARS.Contains(c))
+                if (!Tokenizer.IsIdentifierChar(c))
                 {
                     return false;
                 }

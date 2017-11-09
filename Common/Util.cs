@@ -168,8 +168,7 @@ namespace Common
             {
                 return null;
             }
-            // Ick. Drops the encoding. TODO: fix this
-            return TrimBomIfPresent(string.Join("", bytes.Select<byte, char>(b => (char)b)));
+            return MysteryTextDecoder.DecodeArbitraryBytesAsAppropriatelyAsPossible(bytes);
         }
 
         public static string TrimBomIfPresent(string text)
