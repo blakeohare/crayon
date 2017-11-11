@@ -5,19 +5,17 @@ namespace Crayon
 {
     public class FlagParser
     {
-        public static readonly string MIN_ARG = "min";
-        public static readonly string READABLE_BYTE_CODE = "readablebytecode";
-        public static readonly string LIBRARY_DEP_TREE = "librarydeptree";
-        public static readonly string SHOW_PERFORMANCE_MARKERS = "showperf";
-        public static readonly string BUILD_TARGET = "target";
-        public static readonly string BUILD_FILE = "buildfile";
-        public static readonly string VM = "vm";
-        public static readonly string VM_DIR = "vmdir";
-        public static readonly string CBX = "cbx";
-        public static readonly string GEN_DEFAULT_PROJ = "genDefaultProj";
+        private static readonly string READABLE_BYTE_CODE = "readablebytecode";
+        private static readonly string LIBRARY_DEP_TREE = "librarydeptree";
+        private static readonly string SHOW_PERFORMANCE_MARKERS = "showperf";
+        private static readonly string BUILD_TARGET = "target";
+        private static readonly string BUILD_FILE = "buildfile";
+        private static readonly string VM = "vm";
+        private static readonly string VM_DIR = "vmdir";
+        private static readonly string CBX = "cbx";
+        private static readonly string GEN_DEFAULT_PROJ = "genDefaultProj";
 
         private static readonly HashSet<string> ATOMIC_FLAGS = new HashSet<string>() {
-            MIN_ARG,
             READABLE_BYTE_CODE,
             LIBRARY_DEP_TREE,
             SHOW_PERFORMANCE_MARKERS,
@@ -33,7 +31,7 @@ namespace Crayon
             GEN_DEFAULT_PROJ,
         };
 
-        public static Dictionary<string, string> Parse(string[] args)
+        public static ExportCommand Parse(string[] args)
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
 
@@ -89,7 +87,25 @@ namespace Crayon
                 }
             }
 
-            return output;
+            return GenerateExportCommand(output);
+        }
+
+        private static ExportCommand GenerateExportCommand(Dictionary<string, string> args)
+        {
+            ExportCommand command = new ExportCommand();
+
+            if (args.Count == 0) command.IsEmpty = true;
+
+            if (args.ContainsKey(GEN_DEFAULT_PROJ)) command.DefaultProjectId = args[GEN_DEFAULT_PROJ].Trim();
+            if (args.ContainsKey(BUILD_FILE)) command.BuildFilePath = args[BUILD_FILE].Trim();
+            if (args.ContainsKey(BUILD_TARGET)) command.BuildTarget = args[BUILD_TARGET].Trim();
+            if (args.ContainsKey(VM_DIR)) command.VmExportDirectory = args[VM_DIR].Trim();
+            if (args.ContainsKey(VM)) command.VmPlatform = args[VM].Trim();
+            if (args.ContainsKey(CBX)) command.CbxExportPath = args[CBX].Trim();
+            command.ShowPerformanceMarkers = args.ContainsKey(SHOW_PERFORMANCE_MARKERS);
+            command.ShowLibraryDepTree = args.ContainsKey(LIBRARY_DEP_TREE);
+
+            return command;
         }
     }
 }

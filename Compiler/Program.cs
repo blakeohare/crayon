@@ -71,10 +71,10 @@ namespace Crayon
 
         private static void ExecuteProgramUnchecked(string[] args)
         {
-            Dictionary<string, string> argLookup = FlagParser.Parse(args);
-            if (argLookup.ContainsKey(FlagParser.GEN_DEFAULT_PROJ))
+            ExportCommand command = FlagParser.Parse(args);
+            if (command.IsGenerateDefaultProject)
             {
-                DefaultProjectGenerator generator = new DefaultProjectGenerator(argLookup[FlagParser.GEN_DEFAULT_PROJ].Trim());
+                DefaultProjectGenerator generator = new DefaultProjectGenerator(command.DefaultProjectId);
                 Dictionary<string, FileOutput> project = generator.Validate().Export();
 
                 string directory = System.IO.Path.Combine(
@@ -86,16 +86,13 @@ namespace Crayon
             }
             else
             {
-                Program.Compile(argLookup);
+                Program.Compile(command);
             }
 #if DEBUG
-            if (argLookup != null)
+            if (command.ShowPerformanceMarkers)
             {
-                if (argLookup.ContainsKey(FlagParser.SHOW_PERFORMANCE_MARKERS))
-                {
-                    string summary = PerformanceTimer.GetSummary();
-                    Console.WriteLine(summary);
-                }
+                string summary = PerformanceTimer.GetSummary();
+                Console.WriteLine(summary);
             }
 #endif
         }
@@ -133,33 +130,33 @@ namespace Crayon
             SHOW_USAGE,
         }
 
-        private static ExecutionType IdentifyUseCase(Dictionary<string, string> args)
+        private static ExecutionType IdentifyUseCase(ExportCommand command)
         {
-            if (args.Count == 0) return ExecutionType.SHOW_USAGE;
-            if (args.ContainsKey(FlagParser.VM) || args.ContainsKey(FlagParser.VM_DIR)) return ExecutionType.EXPORT_VM_STANDALONE;
-            if (args.ContainsKey(FlagParser.BUILD_TARGET)) return ExecutionType.EXPORT_VM_BUNDLE;
-            if (args.ContainsKey(FlagParser.CBX)) return ExecutionType.EXPORT_CBX;
+            if (command.IsEmpty) return ExecutionType.SHOW_USAGE;
+            if (command.IsVmExportCommand) return ExecutionType.EXPORT_VM_STANDALONE;
+            if (command.HasTarget) return ExecutionType.EXPORT_VM_BUNDLE;
+            if (command.IsCbxExport) return ExecutionType.EXPORT_CBX;
             return ExecutionType.RUN_CBX;
         }
 
-        private static void Compile(Dictionary<string, string> argLookup)
+        private static void Compile(ExportCommand command)
         {
-            switch (IdentifyUseCase(argLookup))
+            switch (IdentifyUseCase(command))
             {
                 case ExecutionType.EXPORT_CBX:
-                    new CbxExporter(argLookup).Export();
+                    new CbxExporter(command).Export();
                     return;
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
-                    Program.ExportVmBundle(argLookup);
+                    Program.ExportVmBundle(command);
                     return;
 
                 case ExecutionType.EXPORT_VM_STANDALONE:
-                    Program.ExportStandaloneVm(argLookup);
+                    Program.ExportStandaloneVm(command);
                     return;
 
                 case ExecutionType.RUN_CBX:
-                    string cbxFile = new CbxExporter(argLookup).Export().GetCbxPath();
+                    string cbxFile = new CbxExporter(command).Export().GetCbxPath();
 
                     string crayonRuntimePath = System.IO.Path.Combine(Environment.GetEnvironmentVariable("CRAYON_HOME"), "vm", "CrayonRuntime.exe");
                     cbxFile = FileUtil.GetPlatformPath(cbxFile);
@@ -194,19 +191,18 @@ namespace Crayon
             }
         }
 
-        private static void ExportStandaloneVm(Dictionary<string, string> args)
+        private static void ExportStandaloneVm(ExportCommand command)
         {
             using (new PerformanceSection("ExportStandaloneVm"))
             {
-                string vm;
-                string targetDirectory;
-                if (!args.TryGetValue(FlagParser.VM, out vm) ||
-                    !args.TryGetValue(FlagParser.VM_DIR, out targetDirectory))
+                string vmPlatform = command.VmPlatform;
+                string vmTargetDirectory = command.VmExportDirectory;
+                if (vmPlatform == null || vmTargetDirectory == null)
                 {
                     throw new InvalidOperationException("-vm and -vmdir flags must both have correct values.");
                 }
-                Platform.AbstractPlatform standaloneVmPlatform = platformProvider.GetPlatform(vm);
-                targetDirectory = FileUtil.FinalizeTilde(targetDirectory);
+                Platform.AbstractPlatform standaloneVmPlatform = platformProvider.GetPlatform(vmPlatform);
+                vmTargetDirectory = FileUtil.FinalizeTilde(vmTargetDirectory);
                 VmGenerator vmGenerator = new VmGenerator();
                 LibraryMetadata[] allLibraries = new LibraryFinder().LibraryFlatList;
                 Dictionary<string, FileOutput> result = vmGenerator.GenerateVmSourceCodeForPlatform(
@@ -214,9 +210,9 @@ namespace Crayon
                     null,
                     null,
                     allLibraries,
-                    targetDirectory,
+                    vmTargetDirectory,
                     VmGenerationMode.EXPORT_VM_AND_LIBRARIES);
-                FileOutputExporter exporter = new FileOutputExporter(targetDirectory);
+                FileOutputExporter exporter = new FileOutputExporter(vmTargetDirectory);
                 exporter.ExportFiles(result);
             }
         }
@@ -264,11 +260,11 @@ namespace Crayon
             }
         }
 
-        private static void ExportVmBundle(Dictionary<string, string> argLookup)
+        private static void ExportVmBundle(ExportCommand command)
         {
             using (new PerformanceSection("ExportVmBundle"))
             {
-                BuildContext buildContext = GetBuildContext(argLookup);
+                BuildContext buildContext = GetBuildContext(command);
                 Platform.AbstractPlatform platform = GetPlatformInstance(buildContext);
                 if (platform == null) throw new InvalidOperationException("Unrecognized platform. See usage.");
 
@@ -296,7 +292,7 @@ namespace Crayon
 
                 exporter.ExportFiles(result);
 
-                if (argLookup.ContainsKey(FlagParser.LIBRARY_DEP_TREE))
+                if (command.ShowLibraryDepTree)
                 {
                     string libs = LibraryDependencyResolver.GetDependencyTreeLog(compilationResult.LibraryScopesUsed.Select(scope => scope.Library).ToArray());
                     Console.WriteLine("<LibraryDependencies>");
@@ -336,12 +332,12 @@ namespace Crayon
             return buildFilePath;
         }
 
-        private static BuildContext GetBuildContext(Dictionary<string, string> argLookup)
+        private static BuildContext GetBuildContext(ExportCommand command)
         {
             using (new PerformanceSection("GetBuildContext"))
             {
-                string buildFile = argLookup.ContainsKey("buildfile") ? argLookup["buildfile"] : null;
-                string target = argLookup.ContainsKey("target") ? argLookup["target"] : null;
+                string buildFile = command.BuildFilePath;
+                string target = command.BuildTarget;
 
                 if (buildFile == null || target == null)
                 {
@@ -354,8 +350,6 @@ namespace Crayon
 
                 BuildContext buildContext = null;
 
-                argLookup.Remove("buildfile");
-                argLookup.Remove("target");
                 projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
 
                 buildContext = BuildContext.Parse(projectDirectory, System.IO.File.ReadAllText(buildFile), target);
