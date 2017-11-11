@@ -11,8 +11,6 @@
     <RootNamespace>Crayon</RootNamespace>
     <AssemblyName>Crayon</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -31,7 +29,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>RELEASE;TRACE;WINDOWS</DefineConstants>
+    <DefineConstants>RELEASE;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -138,4 +136,19 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <Choose>
+    <When Condition=" '$(SolutionFileName)' == 'CrayonRuntime.sln' ">
+      <PropertyGroup>
+        <DefineConstants>WINDOWS</DefineConstants>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DefineConstants>OSX</DefineConstants>
+      </PropertyGroup>
+      <ItemGroup>
+        <Reference Include="Mono.Cairo" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
 </Project>
