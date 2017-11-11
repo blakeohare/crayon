@@ -125,7 +125,8 @@
       <Name>PythonApp</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" Condition=" '$(SolutionFileName)' == 'CrayonWindows.sln' "/>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" Condition=" '$(SolutionFileName)' == 'CrayonOSX.sln' "/>
   <Choose>
     <When Condition=" '$(SolutionFileName)' == 'CrayonWindows.sln' ">
       <PropertyGroup>
