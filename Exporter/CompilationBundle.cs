@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Crayon
 {
-    internal class CompilationBundle
+    public class CompilationBundle
     {
         public ByteBuffer ByteCode { get; set; }
         public string ProjectID { get; set; }

@@ -5,12 +5,55 @@ using System.Collections.Generic;
 
 namespace Crayon
 {
-    class ResourceDatabaseBuilder
+    public class ResourceDatabaseBuilder
     {
         private static HashSet<string> IGNORABLE_FILES = new HashSet<string>(new string[] {
             ".ds_store",
             "thumbs.db",
         });
+
+        public static ResourceDatabase PrepareResources(
+            BuildContext buildContext,
+            ByteBuffer nullableByteCode) // CBX files will not have this in the resources
+        {
+            using (new PerformanceSection("Program.PrepareResources"))
+            {
+                // This really needs to go in a separate helper file.
+                ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.CreateResourceDatabase(buildContext);
+                if (nullableByteCode != null)
+                {
+                    resourceDatabase.ByteCodeFile = new FileOutput()
+                    {
+                        Type = FileOutputType.Text,
+                        TextContent = ByteCodeEncoder.Encode(nullableByteCode),
+                    };
+                }
+
+                using (new PerformanceSection("Program.PrepareResources/ImageSheetStuff"))
+                {
+                    Common.ImageSheets.ImageSheetBuilder imageSheetBuilder = new Common.ImageSheets.ImageSheetBuilder();
+                    if (buildContext.ImageSheetIds != null)
+                    {
+                        foreach (string imageSheetId in buildContext.ImageSheetIds)
+                        {
+                            imageSheetBuilder.PrefixMatcher.RegisterId(imageSheetId);
+
+                            foreach (string fileMatcher in buildContext.ImageSheetPrefixesById[imageSheetId])
+                            {
+                                imageSheetBuilder.PrefixMatcher.RegisterPrefix(imageSheetId, fileMatcher);
+                            }
+                        }
+                    }
+                    Common.ImageSheets.Sheet[] imageSheets = imageSheetBuilder.Generate(resourceDatabase);
+
+                    resourceDatabase.AddImageSheets(imageSheets);
+                }
+
+                resourceDatabase.GenerateResourceMapping();
+
+                return resourceDatabase;
+            }
+        }
 
         public static ResourceDatabase CreateResourceDatabase(BuildContext buildContext)
         {

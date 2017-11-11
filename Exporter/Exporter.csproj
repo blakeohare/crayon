@@ -39,5 +39,34 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="*.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DefaultProject\*.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Build\Build.csproj">
+      <Project>{5bee19d9-117d-4c0e-bf60-45da72c9d355}</Project>
+      <Name>Build</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{18617a9a-3b1f-4532-bf4d-12bd62a3e5c6}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Localization\Localization.csproj">
+      <Project>{d64b5413-739c-4bbd-b70b-264cfae4b720}</Project>
+      <Name>Localization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Parser\Parser.csproj">
+      <Project>{70941077-b058-4a91-ac11-38e22930f01f}</Project>
+      <Name>Parser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pastel\Pastel.csproj">
+      <Project>{6d073ba4-2e71-42ac-8f5a-5c3079d935cd}</Project>
+      <Name>Pastel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platform\Platform.csproj">
+      <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
+      <Name>Platform</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

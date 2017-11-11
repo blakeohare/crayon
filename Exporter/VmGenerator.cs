@@ -13,7 +13,7 @@ namespace Crayon
         EXPORT_VM_AND_LIBRARIES,
     }
 
-    internal class VmGenerator
+    public class VmGenerator
     {
         private static readonly string[] INTERPRETER_BASE_FILES = {
             "BinaryOpsUtil.pst",
@@ -43,6 +43,7 @@ namespace Crayon
             Platform.AbstractPlatform platform,
             Dictionary<string, LibraryMetadata> librariesById,
             Dictionary<string, object> constantFlags,
+            IInlineImportCodeLoader codeLoader,
             Pastel.PastelCompiler vm)
         {
             using (new PerformanceSection("VmGenerator.GetLibrariesForExport"))
@@ -50,7 +51,7 @@ namespace Crayon
                 Dictionary<string, Pastel.PastelCompiler> libraryCompilation = this.GenerateLibraryParseTree(
                 platform,
                 constantFlags,
-                new InlineImportCodeLoader(),
+                codeLoader,
                 librariesById.Values,
                 vm);
 
@@ -106,6 +107,7 @@ namespace Crayon
             ResourceDatabase resourceDatabase,
             ICollection<LibraryMetadata> relevantLibraries,
             string verifiedAbsoluteOutputPath,
+            IInlineImportCodeLoader codeLoader,
             VmGenerationMode mode)
         {
             using (new PerformanceSection("VmGenerator.GenerateVmSourceCodeForPlatform"))
@@ -114,10 +116,10 @@ namespace Crayon
                 Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags() ?? new Dictionary<string, object>();
 
                 this.AddTypeEnumsToConstants(constantFlags);
-                Pastel.PastelCompiler vm = this.GenerateCoreVmParseTree(platform, constantFlags);
+                Pastel.PastelCompiler vm = this.GenerateCoreVmParseTree(platform, codeLoader, constantFlags);
 
                 Dictionary<string, LibraryMetadata> librariesByID = relevantLibraries.ToDictionary(lib => lib.ID);
-                List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByID, constantFlags, vm);
+                List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByID, constantFlags, codeLoader, vm);
 
                 LibraryNativeInvocationTranslatorProvider libTranslationProvider =
                     new LibraryNativeInvocationTranslatorProvider(
@@ -213,6 +215,7 @@ namespace Crayon
 
         private Pastel.PastelCompiler GenerateCoreVmParseTree(
             Platform.AbstractPlatform platform,
+            IInlineImportCodeLoader codeLoader,
             Dictionary<string, object> constantFlags)
         {
             using (new PerformanceSection("VmGenerator.GenerateCoreVmParseTree"))
@@ -221,13 +224,13 @@ namespace Crayon
                 false,
                 null,
                 constantFlags,
-                new InlineImportCodeLoader(),
+                codeLoader,
                 null,
                 null);
 
                 foreach (string file in INTERPRETER_BASE_FILES)
                 {
-                    string code = LegacyUtil.ReadInterpreterFileInternally(file);
+                    string code = codeLoader.LoadCode(file);
                     compiler.CompileBlobOfCode(file, code);
                 }
                 compiler.Resolve();
@@ -239,7 +242,7 @@ namespace Crayon
         private Dictionary<string, Pastel.PastelCompiler> GenerateLibraryParseTree(
             Platform.AbstractPlatform platform,
             Dictionary<string, object> constantFlags,
-            InlineImportCodeLoader codeLoader,
+            IInlineImportCodeLoader codeLoader,
             ICollection<LibraryMetadata> relevantLibraries,
             Pastel.PastelCompiler sharedScope)
         {

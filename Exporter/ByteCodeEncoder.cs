@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Crayon
 {
-    internal static class ByteCodeEncoder
+    public static class ByteCodeEncoder
     {
         // the encoded byte code begins with the word CRAYON followed by a @ char.
         // The word crayon serves as a version stamp. For example, in a later version of byte code, CRAYON can be

@@ -46,7 +46,7 @@ namespace Crayon
             output["assets/icon32.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = icons[32] };
             output["assets/icon256.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = icons[256] };
 
-            System.Reflection.Assembly thisAsm = typeof(Program).Assembly;
+            System.Reflection.Assembly thisAsm = typeof(DefaultProjectGenerator).Assembly;
             foreach (string file in new string[]
                 {
                         "DefaultProject/BuildFile.txt|%%%PROJECT_NAME%%%.build",
@@ -55,7 +55,7 @@ namespace Crayon
                 })
             {
                 string[] parts = file.Split('|');
-                string content = Util.ReadAssemblyFileText(typeof(Program).Assembly, parts[0]);
+                string content = Util.ReadAssemblyFileText(typeof(DefaultProjectGenerator).Assembly, parts[0]);
                 content = this.ReplaceStrings(content);
                 string outputPath = this.ReplaceStrings(parts[1]);
                 output[outputPath] = new FileOutput()

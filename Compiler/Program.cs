@@ -211,52 +211,10 @@ namespace Crayon
                     null,
                     allLibraries,
                     vmTargetDirectory,
+                    new InlineImportCodeLoader(),
                     VmGenerationMode.EXPORT_VM_AND_LIBRARIES);
                 FileOutputExporter exporter = new FileOutputExporter(vmTargetDirectory);
                 exporter.ExportFiles(result);
-            }
-        }
-
-        public static ResourceDatabase PrepareResources(
-            BuildContext buildContext,
-            ByteBuffer nullableByteCode) // CBX files will not have this in the resources
-        {
-            using (new PerformanceSection("Program.PrepareResources"))
-            {
-                // This really needs to go in a separate helper file.
-                ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.CreateResourceDatabase(buildContext);
-                if (nullableByteCode != null)
-                {
-                    resourceDatabase.ByteCodeFile = new FileOutput()
-                    {
-                        Type = FileOutputType.Text,
-                        TextContent = ByteCodeEncoder.Encode(nullableByteCode),
-                    };
-                }
-
-                using (new PerformanceSection("Program.PrepareResources/ImageSheetStuff"))
-                {
-                    Common.ImageSheets.ImageSheetBuilder imageSheetBuilder = new Common.ImageSheets.ImageSheetBuilder();
-                    if (buildContext.ImageSheetIds != null)
-                    {
-                        foreach (string imageSheetId in buildContext.ImageSheetIds)
-                        {
-                            imageSheetBuilder.PrefixMatcher.RegisterId(imageSheetId);
-
-                            foreach (string fileMatcher in buildContext.ImageSheetPrefixesById[imageSheetId])
-                            {
-                                imageSheetBuilder.PrefixMatcher.RegisterPrefix(imageSheetId, fileMatcher);
-                            }
-                        }
-                    }
-                    Common.ImageSheets.Sheet[] imageSheets = imageSheetBuilder.Generate(resourceDatabase);
-
-                    resourceDatabase.AddImageSheets(imageSheets);
-                }
-
-                resourceDatabase.GenerateResourceMapping();
-
-                return resourceDatabase;
             }
         }
 
@@ -271,7 +229,7 @@ namespace Crayon
                 CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
                 LibraryMetadata[] libraries = compilationResult.LibraryScopesUsed.Select(scope => scope.Library).ToArray();
 
-                ResourceDatabase resourceDatabase = PrepareResources(buildContext, compilationResult.ByteCode);
+                ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext, compilationResult.ByteCode);
 
                 string outputDirectory = buildContext.OutputFolder;
                 if (!FileUtil.IsAbsolutePath(outputDirectory))
@@ -288,6 +246,7 @@ namespace Crayon
                     resourceDatabase,
                     libraries,
                     outputDirectory,
+                    new InlineImportCodeLoader(),
                     VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
 
                 exporter.ExportFiles(result);
@@ -310,28 +269,6 @@ namespace Crayon
 
         private static PlatformProvider platformProvider = new PlatformProvider();
 
-        public static string GetValidatedCanonicalBuildFilePath(string originalBuildFilePath)
-        {
-            string buildFilePath = originalBuildFilePath;
-            buildFilePath = FileUtil.FinalizeTilde(buildFilePath);
-            if (!buildFilePath.StartsWith("/") &&
-                !(buildFilePath.Length > 1 && buildFilePath[1] == ':'))
-            {
-                // Build file will always be absolute. So make it absolute if it isn't already.
-                buildFilePath = System.IO.Path.GetFullPath(
-                    System.IO.Path.Combine(
-                        System.IO.Directory.GetCurrentDirectory(), buildFilePath));
-
-            }
-
-            if (!System.IO.File.Exists(buildFilePath))
-            {
-                throw new InvalidOperationException("Build file does not exist: " + originalBuildFilePath);
-            }
-
-            return buildFilePath;
-        }
-
         private static BuildContext GetBuildContext(ExportCommand command)
         {
             using (new PerformanceSection("GetBuildContext"))
@@ -344,7 +281,7 @@ namespace Crayon
                     throw new InvalidOperationException("Build file and target must be specified together.");
                 }
 
-                buildFile = GetValidatedCanonicalBuildFilePath(buildFile);
+                buildFile = BuildContext.GetValidatedCanonicalBuildFilePath(buildFile);
 
                 string projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
 

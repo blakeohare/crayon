@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Crayon
 {
-    class CbxExporter
+    public class CbxExporter
     {
         private ExportCommand args;
         private string finalCbxPath;
@@ -28,7 +28,7 @@ namespace Crayon
 
                 BuildContext buildContext = GetBuildContextCbx(this.args.BuildFilePath);
                 CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
-                ResourceDatabase resDb = Program.PrepareResources(buildContext, null);
+                ResourceDatabase resDb = ResourceDatabaseBuilder.PrepareResources(buildContext, null);
                 string byteCode = ByteCodeEncoder.Encode(compilationResult.ByteCode);
                 List<byte> cbxOutput = new List<byte>() { 0 };
                 cbxOutput.AddRange("CBX".ToCharArray().Select(c => (byte)c));
@@ -115,7 +115,7 @@ namespace Crayon
         {
             using (new PerformanceSection("GetBuildContextCbx"))
             {
-                string buildFile = Program.GetValidatedCanonicalBuildFilePath(rawBuildFilePath);
+                string buildFile = BuildContext.GetValidatedCanonicalBuildFilePath(rawBuildFilePath);
                 string projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
                 string buildFileContent = System.IO.File.ReadAllText(buildFile);
                 return BuildContext.Parse(projectDirectory, buildFileContent, null);

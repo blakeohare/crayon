@@ -391,5 +391,28 @@ namespace Build
                     })
                 .ToArray();
         }
+
+
+        public static string GetValidatedCanonicalBuildFilePath(string originalBuildFilePath)
+        {
+            string buildFilePath = originalBuildFilePath;
+            buildFilePath = FileUtil.FinalizeTilde(buildFilePath);
+            if (!buildFilePath.StartsWith("/") &&
+                !(buildFilePath.Length > 1 && buildFilePath[1] == ':'))
+            {
+                // Build file will always be absolute. So make it absolute if it isn't already.
+                buildFilePath = System.IO.Path.GetFullPath(
+                    System.IO.Path.Combine(
+                        System.IO.Directory.GetCurrentDirectory(), buildFilePath));
+
+            }
+
+            if (!System.IO.File.Exists(buildFilePath))
+            {
+                throw new InvalidOperationException("Build file does not exist: " + originalBuildFilePath);
+            }
+
+            return buildFilePath;
+        }
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Crayon
 {
-    internal class ByteBuffer
+    public class ByteBuffer
     {
         private class ByteRow
         {
