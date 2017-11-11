@@ -51,7 +51,7 @@
             switch (this.Type)
             {
                 case FileOutputType.Binary: return this.BinaryContent;
-                case FileOutputType.Copy: return System.IO.File.ReadAllBytes(this.AbsoluteInputPath);
+                case FileOutputType.Copy: return FileUtil.ReadFileBytes(this.AbsoluteInputPath);
                 case FileOutputType.Text: throw new System.NotImplementedException(); // TODO: return UTF-8 bytes
                 default: throw new System.NotImplementedException();
             }

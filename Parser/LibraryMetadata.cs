@@ -25,7 +25,7 @@ namespace Parser
             this.Directory = directory;
             this.ID = id;
 
-            string manifestText = System.IO.File.ReadAllText(System.IO.Path.Combine(directory, "manifest.json"));
+            string manifestText = FileUtil.ReadFileText(FileUtil.JoinPath(directory, "manifest.json"));
             try
             {
                 this.Manifest = new JsonLookup(new JsonParser(manifestText)
@@ -88,13 +88,13 @@ namespace Parser
 
         public string GetRegistryCode()
         {
-            string path = System.IO.Path.Combine(this.Directory, "function_registry.pst");
-            if (!System.IO.File.Exists(path))
+            string path = FileUtil.JoinPath(this.Directory, "function_registry.pst");
+            if (!FileUtil.FileExists(path))
             {
                 return null;
             }
 
-            return System.IO.File.ReadAllText(path);
+            return FileUtil.ReadFileText(path);
         }
 
         private Dictionary<string, string> structFiles = null;
@@ -104,13 +104,12 @@ namespace Parser
             if (this.structFiles == null)
             {
                 this.structFiles = new Dictionary<string, string>();
-                string structFilesDir = System.IO.Path.Combine(this.Directory, "structs");
-                if (System.IO.Directory.Exists(structFilesDir))
+                string structFilesDir = FileUtil.JoinPath(this.Directory, "structs");
+                if (FileUtil.DirectoryExists(structFilesDir))
                 {
-                    foreach (string filepath in System.IO.Directory.GetFiles(structFilesDir))
+                    foreach (string name in FileUtil.DirectoryListFileNames(structFilesDir))
                     {
-                        string name = System.IO.Path.GetFileName(filepath);
-                        this.structFiles[name] = this.ReadFile(false, System.IO.Path.Combine("structs", name), false);
+                        this.structFiles[name] = this.ReadFile(false, FileUtil.JoinPath("structs", name), false);
                     }
                 }
             }
@@ -124,16 +123,15 @@ namespace Parser
             if (this.supplementalFiles == null)
             {
                 this.supplementalFiles = new Dictionary<string, string>();
-                string supplementalFilesDir = System.IO.Path.Combine(this.Directory, "supplemental");
-                if (System.IO.Directory.Exists(supplementalFilesDir))
+                string supplementalFilesDir = FileUtil.JoinPath(this.Directory, "supplemental");
+                if (FileUtil.DirectoryExists(supplementalFilesDir))
                 {
-                    foreach (string filepath in System.IO.Directory.GetFiles(supplementalFilesDir))
+                    foreach (string name in FileUtil.DirectoryListFileNames(supplementalFilesDir))
                     {
-                        string name = System.IO.Path.GetFileName(filepath);
                         if (name.EndsWith(".pst"))
                         {
                             string key = name.Substring(0, name.Length - ".pst".Length);
-                            this.supplementalFiles[key] = this.ReadFile(false, System.IO.Path.Combine("supplemental", name), false);
+                            this.supplementalFiles[key] = this.ReadFile(false, FileUtil.JoinPath("supplemental", name), false);
                         }
                     }
                 }
@@ -157,7 +155,7 @@ namespace Parser
         public byte[] ReadFileBytes(string pathRelativeToLibraryRoot)
         {
             string fullPath = FileUtil.JoinPath(this.Directory, pathRelativeToLibraryRoot);
-            if (System.IO.File.Exists(fullPath))
+            if (FileUtil.FileExists(fullPath))
             {
                 return FileUtil.ReadFileBytes(fullPath);
             }
@@ -167,7 +165,7 @@ namespace Parser
         public string ReadFile(bool keepPercents, string pathRelativeToLibraryRoot, bool failSilently)
         {
             string fullPath = FileUtil.JoinPath(this.Directory, pathRelativeToLibraryRoot);
-            if (System.IO.File.Exists(fullPath))
+            if (FileUtil.FileExists(fullPath))
             {
                 return FileUtil.ReadFileText(fullPath);
             }
@@ -183,7 +181,7 @@ namespace Parser
         // This ONLY gets the translations that are specific only for this platform and does not do any inheritance chain walking.
         public Dictionary<string, string> GetMethodTranslations(string platformName)
         {
-            string methodTranslations = this.ReadFile(false, System.IO.Path.Combine("methods", platformName + ".txt"), true);
+            string methodTranslations = this.ReadFile(false, FileUtil.JoinPath("methods", platformName + ".txt"), true);
             Dictionary<string, string> translationsLookup = new Dictionary<string, string>();
             if (methodTranslations != null)
             {

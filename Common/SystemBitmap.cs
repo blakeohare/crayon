@@ -83,11 +83,11 @@ namespace Common
             this.Width = this.bitmap.Width;
             this.Height = this.bitmap.Height;
 #elif OSX
-            string tempDir = System.IO.Path.GetTempPath();
-            string tempFile = System.IO.Path.Combine(tempDir, "crayon_image_temp.png");
-            System.IO.File.WriteAllBytes(tempFile, bytes);
+            string tempDir = FileUtil.GetTempDirectory();
+            string tempFile = FileUtil.JoinPath(tempDir, "crayon_image_temp.png");
+            FileUtil.WriteFileBytes(tempFile, bytes);
             this.bitmap = new Cairo.ImageSurface(tempFile);
-            System.IO.File.Delete(tempFile);
+            FileUtil.DeleteFile(tempFile);
             this.Width = this.bitmap.Width;
             this.Height = this.bitmap.Height;
 #endif
@@ -127,7 +127,7 @@ namespace Common
             {
                 IconGenerator ico = new IconGenerator();
                 ico.AddImage(this);
-                System.IO.File.WriteAllBytes(path, ico.GenerateIconFile());
+                FileUtil.WriteFileBytes(path, ico.GenerateIconFile());
             }
             else
             {
@@ -153,10 +153,12 @@ namespace Common
         {
             // TODO: for Windows you can save a stream. Need to look into Cairo, but this may be the only way for OSX.
             string seed = IdGenerator.GetRandomSeed();
-            string file = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "crayon-" + IdGenerator.Generate32HexDigits(seed, "image") + FormatToExtension(format));
+            string file = FileUtil.JoinPath(
+                FileUtil.GetTempDirectory(),
+                "crayon-" + IdGenerator.Generate32HexDigits(seed, "image") + FormatToExtension(format));
             this.Save(file);
-            byte[] bytes = System.IO.File.ReadAllBytes(file);
-            System.IO.File.Delete(file);
+            byte[] bytes = FileUtil.ReadFileBytes(file);
+            FileUtil.DeleteFile(file);
             return bytes;
         }
 

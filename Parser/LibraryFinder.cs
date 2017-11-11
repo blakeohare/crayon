@@ -52,7 +52,7 @@ namespace Parser
 
             if (crayonHome != null)
             {
-                placesWhereLibraryDirectoriesCanExist += ";" + System.IO.Path.Combine(crayonHome, "libs");
+                placesWhereLibraryDirectoriesCanExist += ";" + FileUtil.JoinPath(crayonHome, "libs");
             }
             if (nullableBuildFileCrayonPath != null)
             {
@@ -67,38 +67,36 @@ namespace Parser
             List<string> unverifiedLibraryDirectories = new List<string>();
             foreach (string path in paths)
             {
-                string absolutePath = FileUtil.IsAbsolutePath(path)
-                    ? path
-                    : System.IO.Path.Combine(nullableProjectDirectory, path);
-                absolutePath = System.IO.Path.GetFullPath(absolutePath);
-                if (System.IO.Directory.Exists(absolutePath))
+                // TODO: figure out why this says nullable yet is being used directly.
+                string absolutePath = FileUtil.GetAbsolutePathFromRelativeOrAbsolutePath(nullableProjectDirectory, path);
+                if (FileUtil.DirectoryExists(absolutePath))
                 {
-                    unverifiedLibraryDirectories.AddRange(System.IO.Directory.GetDirectories(absolutePath));
+                    unverifiedLibraryDirectories.AddRange(FileUtil.DirectoryListDirectoryPaths(absolutePath));
                 }
             }
 
 #if DEBUG
             // Presumably running from source. Walk up to the root directory and find the Libraries directory.
             // From there use the list of folders.
-            string currentDirectory = System.IO.Path.GetFullPath(".");
+            string currentDirectory = FileUtil.GetCurrentDirectory();
             while (!string.IsNullOrEmpty(currentDirectory))
             {
-                string path = System.IO.Path.Combine(currentDirectory, "Libraries");
-                if (System.IO.Directory.Exists(path) &&
-                    System.IO.File.Exists(System.IO.Path.Combine(currentDirectory, "Compiler", "CrayonWindows.sln"))) // quick sanity check
+                string path = FileUtil.JoinPath(currentDirectory, "Libraries");
+                if (FileUtil.DirectoryExists(path) &&
+                    FileUtil.FileExists(FileUtil.JoinPath(currentDirectory, "Compiler", "CrayonWindows.sln"))) // quick sanity check
                 {
-                    unverifiedLibraryDirectories.AddRange(System.IO.Directory.GetDirectories(path));
+                    unverifiedLibraryDirectories.AddRange(FileUtil.DirectoryListDirectoryPaths(path));
                     break;
                 }
-                currentDirectory = System.IO.Path.GetDirectoryName(currentDirectory);
+                currentDirectory = FileUtil.GetParentDirectory(currentDirectory);
             }
 #endif
             List<string> verifiedLibraryPaths = new List<string>();
 
             foreach (string dir in unverifiedLibraryDirectories)
             {
-                string manifestPath = System.IO.Path.Combine(dir, "manifest.json");
-                if (System.IO.File.Exists(manifestPath))
+                string manifestPath = FileUtil.JoinPath(dir, "manifest.json");
+                if (FileUtil.FileExists(manifestPath))
                 {
                     verifiedLibraryPaths.Add(dir);
                 }
@@ -111,7 +109,7 @@ namespace Parser
             Dictionary<string, LibraryMetadata> uniqueLibraries = new Dictionary<string, LibraryMetadata>();
             foreach (string path in verifiedLibraryPaths)
             {
-                string defaultName = System.IO.Path.GetFileName(path);
+                string defaultName = FileUtil.GetFileNameFromPath(path);
                 LibraryMetadata metadata = new LibraryMetadata(path, defaultName);
 
                 // TODO: don't hardcode EN

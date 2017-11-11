@@ -144,18 +144,6 @@ namespace Common
             return sb.ToString();
         }
 
-        public static string ReadFileExternally(string path, bool canonicalizeNewlines)
-        {
-            string contents = TrimBomIfPresent(System.IO.File.ReadAllText(path));
-
-            if (canonicalizeNewlines)
-            {
-                contents = contents.Replace("\r\n", "\n").Replace('\r', '\n');
-            }
-
-            return contents;
-        }
-
         public static string ReadAssemblyFileText(System.Reflection.Assembly assembly, string path)
         {
             return ReadAssemblyFileText(assembly, path, false);

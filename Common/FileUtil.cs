@@ -376,5 +376,44 @@ namespace Common
 
             return homedir + path.Substring(1);
         }
+
+        public static string GetCurrentDirectory()
+        {
+            return System.IO.Directory.GetCurrentDirectory();
+        }
+
+        public static string GetParentDirectory(string path)
+        {
+            return System.IO.Path.GetDirectoryName(path);
+        }
+
+        public static void DeleteFile(string path)
+        {
+            System.IO.File.Delete(path);
+        }
+
+        public static string GetTempDirectory()
+        {
+            return System.IO.Path.GetTempPath();
+        }
+
+        public static string GetAbsolutePathFromRelativeOrAbsolutePath(string path)
+        {
+            return GetAbsolutePathFromRelativeOrAbsolutePath(FileUtil.GetCurrentDirectory(), path);
+        }
+
+        public static string GetAbsolutePathFromRelativeOrAbsolutePath(string dirForAbsoluteFallback, string path) {
+            if (FileUtil.IsAbsolutePath(path)) return path;
+
+            return System.IO.Path.GetFullPath(
+                System.IO.Path.Combine(
+                    dirForAbsoluteFallback,
+                    path));
+        }
+
+        public static string GetFileNameFromPath(string path)
+        {
+            return System.IO.Path.GetFileName(path);
+        }
     }
 }

@@ -76,8 +76,8 @@ namespace Crayon
                 DefaultProjectGenerator generator = new DefaultProjectGenerator(command.DefaultProjectId);
                 Dictionary<string, FileOutput> project = generator.Validate().Export();
 
-                string directory = System.IO.Path.Combine(
-                    System.IO.Directory.GetCurrentDirectory(),
+                string directory = FileUtil.JoinPath(
+                    FileUtil.GetCurrentDirectory(),
                     generator.ProjectID);
                 new FileOutputExporter(directory).ExportFiles(project);
 
@@ -104,10 +104,10 @@ namespace Crayon
                 string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
                 if (crayonHome != null)
                 {
-                    string debugArgsFile = System.IO.Path.Combine(crayonHome, "DEBUG_ARGS.txt");
-                    if (System.IO.File.Exists(debugArgsFile))
+                    string debugArgsFile = FileUtil.JoinPath(crayonHome, "DEBUG_ARGS.txt");
+                    if (FileUtil.FileExists(debugArgsFile))
                     {
-                        string[] debugArgs = System.IO.File.ReadAllText(debugArgsFile).Trim().Split('\n');
+                        string[] debugArgs = FileUtil.ReadFileText(debugArgsFile).Trim().Split('\n');
                         string lastArgSet = debugArgs[debugArgs.Length - 1].Trim();
                         if (lastArgSet.Length > 0)
                         {
@@ -157,7 +157,7 @@ namespace Crayon
                 case ExecutionType.RUN_CBX:
                     string cbxFile = new CbxExporter(command).Export().GetCbxPath();
 
-                    string crayonRuntimePath = System.IO.Path.Combine(Environment.GetEnvironmentVariable("CRAYON_HOME"), "vm", "CrayonRuntime.exe");
+                    string crayonRuntimePath = FileUtil.JoinPath(Environment.GetEnvironmentVariable("CRAYON_HOME"), "vm", "CrayonRuntime.exe");
                     cbxFile = FileUtil.GetPlatformPath(cbxFile);
                     System.Diagnostics.Process appProcess = new System.Diagnostics.Process();
 
@@ -282,13 +282,13 @@ namespace Crayon
 
                 buildFile = BuildContext.GetValidatedCanonicalBuildFilePath(buildFile);
 
-                string projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
+                string projectDirectory = FileUtil.GetParentDirectory(buildFile);
 
                 BuildContext buildContext = null;
 
-                projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
+                projectDirectory = FileUtil.GetParentDirectory(buildFile);
 
-                buildContext = BuildContext.Parse(projectDirectory, System.IO.File.ReadAllText(buildFile), target);
+                buildContext = BuildContext.Parse(projectDirectory, FileUtil.ReadFileText(buildFile), target);
 
                 buildContext = buildContext ?? new BuildContext();
 

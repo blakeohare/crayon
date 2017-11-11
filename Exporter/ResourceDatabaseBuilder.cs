@@ -70,7 +70,7 @@ namespace Crayon
                     {
                         string absolutePath = FileUtil.GetCanonicalizeUniversalPath(sourceRoot.AbsolutePath + "/" + relativeFilePath);
                         string aliasedPath = sourceRoot.GetAliasedOrRelativePathh(absolutePath);
-                        string fileName = System.IO.Path.GetFileName(absolutePath);
+                        string fileName = FileUtil.GetFileNameFromPath(absolutePath);
                         string extension = FileUtil.GetCanonicalExtension(fileName) ?? "";
 
                         ResourceDatabase.FileCategory category;

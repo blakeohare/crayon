@@ -55,12 +55,11 @@ namespace Crayon
             string[] files = new string[0];
             if (FileUtil.DirectoryExists(this.Metadata.Directory + "/translate"))
             {
-                files = System.IO.Directory.GetFiles(System.IO.Path.Combine(this.Metadata.Directory, "translate"));
+                files = FileUtil.DirectoryListFileNames(FileUtil.JoinPath(this.Metadata.Directory, "translate"));
             }
             Dictionary<string, string> moreSpecificFiles = new Dictionary<string, string>();
-            foreach (string fileWithDirectory in files)
+            foreach (string file in files)
             {
-                string file = System.IO.Path.GetFileName(fileWithDirectory);
                 if (file.EndsWith(".pst"))
                 {
                     string functionName = file.Substring(0, file.Length - ".pst".Length);
@@ -225,10 +224,10 @@ namespace Crayon
             this.returnTypeInfoForNativeMethods = new Dictionary<string, Pastel.Nodes.PType>();
             this.argumentTypeInfoForNativeMethods = new Dictionary<string, Pastel.Nodes.PType[]>();
 
-            string typeInfoFile = System.IO.Path.Combine(this.Metadata.Directory, "native_method_type_info.txt");
-            if (System.IO.File.Exists(typeInfoFile))
+            string typeInfoFile = FileUtil.JoinPath(this.Metadata.Directory, "native_method_type_info.txt");
+            if (FileUtil.FileExists(typeInfoFile))
             {
-                string typeInfo = System.IO.File.ReadAllText(typeInfoFile);
+                string typeInfo = FileUtil.ReadFileText(typeInfoFile);
                 Pastel.TokenStream tokens = new Pastel.TokenStream(Pastel.Tokenizer.Tokenize("LIB:" + this.Metadata.ID + "/native_method_type_info.txt", typeInfo));
 
                 while (tokens.HasMore)

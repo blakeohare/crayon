@@ -3,7 +3,6 @@ using Common;
 using Localization;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 
@@ -42,7 +41,7 @@ namespace Build
             BuildRoot buildInput;
             try
             {
-                buildInput = (BuildRoot)xmlSerializer.Deserialize(new StringReader(buildFile));
+                buildInput = (BuildRoot)xmlSerializer.Deserialize(new System.IO.StringReader(buildFile));
             }
             catch (InvalidOperationException e)
             {
@@ -401,13 +400,10 @@ namespace Build
                 !(buildFilePath.Length > 1 && buildFilePath[1] == ':'))
             {
                 // Build file will always be absolute. So make it absolute if it isn't already.
-                buildFilePath = System.IO.Path.GetFullPath(
-                    System.IO.Path.Combine(
-                        System.IO.Directory.GetCurrentDirectory(), buildFilePath));
-
+                buildFilePath = FileUtil.GetAbsolutePathFromRelativeOrAbsolutePath(buildFilePath);
             }
 
-            if (!System.IO.File.Exists(buildFilePath))
+            if (!FileUtil.FileExists(buildFilePath))
             {
                 throw new InvalidOperationException("Build file does not exist: " + originalBuildFilePath);
             }

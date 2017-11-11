@@ -116,8 +116,8 @@ namespace Crayon
             using (new PerformanceSection("GetBuildContextCbx"))
             {
                 string buildFile = BuildContext.GetValidatedCanonicalBuildFilePath(rawBuildFilePath);
-                string projectDirectory = System.IO.Path.GetDirectoryName(buildFile);
-                string buildFileContent = System.IO.File.ReadAllText(buildFile);
+                string projectDirectory = FileUtil.GetParentDirectory(buildFile);
+                string buildFileContent = FileUtil.ReadFileText(buildFile);
                 return BuildContext.Parse(projectDirectory, buildFileContent, null);
             }
         }
