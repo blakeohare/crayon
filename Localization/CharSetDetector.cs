@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Localization
 {
@@ -34,6 +30,13 @@ namespace Localization
             return ct;
         }
 
+        private static readonly string DIACRITIC_CHARS =
+            // This is not an exhaustive list and should not be defined this way.
+            // TODO: Find the correct way to identify these characters programmatically.
+            "āēīūčģķļņšžўõáíóúýáéíóúýöáâãàçéêíóôõúâêîôûŵŷäëïöüẅÿàèìòùẁỳáéíóúẃý";
+        private static readonly HashSet<char> DIACRITICS = new HashSet<char>(
+            (DIACRITIC_CHARS + DIACRITIC_CHARS.ToUpper()).ToCharArray());
+
         private static CharType GetTypeImpl(char c)
         {
             if (c >= '0' && c <= '9') return CharType.NUMBER;
@@ -45,7 +48,10 @@ namespace Localization
             if (code >= 0x30a0 && code <= 0x30ff) return CharType.KATAKANA;
             if (code >= 0x4e00 && code <= 0x9fbf) return CharType.KANJI;
 
-            // TODO: diacritic characters
+            if (DIACRITICS.Contains(c))
+            {
+                return CharType.ACCENTED;
+            }
 
             return CharType.UNKNOWN;
         }
