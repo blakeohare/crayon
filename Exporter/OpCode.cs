@@ -1,6 +1,6 @@
 ﻿namespace Crayon
 {
-    internal enum OpCode
+    public enum OpCode
     {
         ADD_LITERAL, // 1: type, 2: value (0 or 1 for false/true or an integer. String values are in the string arg. Float values are as well, and are parsed.)
         ADD_NAME, // name is string arg. ID is the order in which this was encountered.

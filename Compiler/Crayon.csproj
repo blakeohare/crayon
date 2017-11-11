@@ -63,6 +63,10 @@
       <Project>{18617a9a-3b1f-4532-bf4d-12bd62a3e5c6}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Exporter\Exporter.csproj">
+      <Project>{f6484452-d2c1-4187-b3ea-abf70d311978}</Project>
+      <Name>Exporter</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Interpreter\Interpreter.csproj">
       <Project>{b7d7c85b-96ce-4fd5-9653-cc9bce291363}</Project>
       <Name>Interpreter</Name>
