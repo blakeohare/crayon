@@ -85,7 +85,11 @@ namespace Parser
                 if (c == '\0' && i == length - 1)
                 {
                     // Indicates the end of the stream. Throw an exception in cases where you left something lingering.
-                    if (commentType == "*") throw new ParserException(new Token("EOF", fileID, filename, lineByIndex[lineByIndex.Length - 1], colByIndex[colByIndex.Length - 1], false), "This file contains an unclosed comment somewhere.");
+                    if (commentType == "*")
+                    {
+                        ParserException.ThrowEofExceptionWithSuggestion(filename, "This file contains an unclosed comment somewhere.");
+                    }
+
                     if (stringType != null)
                     {
                         Token suspiciousToken = null;

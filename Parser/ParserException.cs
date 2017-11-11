@@ -1,7 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Parser
 {
+    public class MultiParserException : Exception
+    {
+        public MultiParserException(IList<ParserException> exceptions)
+            : base(string.Join("\n\n", exceptions.Select(ex => ex.Message)))
+        { }
+    }
+
     public class ParserException : Exception
     {
         public ParserException(Token token, string message)

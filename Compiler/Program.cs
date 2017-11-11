@@ -59,6 +59,10 @@ namespace Crayon
                     {
                         System.Console.WriteLine(e.Message);
                     }
+                    catch (MultiParserException e)
+                    {
+                        System.Console.WriteLine(e.Message);
+                    }
                     catch (ParserException e)
                     {
                         System.Console.WriteLine(e.Message);

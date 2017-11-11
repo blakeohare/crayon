@@ -303,13 +303,38 @@ namespace Parser
         public TopLevelConstruct[] ParseAllTheThings()
         {
             Dictionary<string, string> files = this.GetCodeFiles();
+
+            // When a syntax error is encountered, add it to this list (RELEASE builds only).
+            // Only allow one syntax error per file. Libraries are considered stable and will
+            // only report the first error in the event that an error occurs (since they get
+            // parsed along with the file that imports it and so it's considered an error from
+            // the importing file).
+            List<ParserException> parseErrors = new List<ParserException>();
+
             // Only iterate through actual user files. Library imports will be inserted into the code when encountered
             // the first time for each library.
             foreach (string fileName in files.Keys)
             {
                 string code = files[fileName];
+#if DEBUG
                 this.ParseInterpretedCode(fileName, code);
+#else
+                try
+                {
+                    this.ParseInterpretedCode(fileName, code);
+                }
+                catch (ParserException pe)
+                {
+                    parseErrors.Add(pe);
+                }
+#endif
             }
+
+            if (parseErrors.Count > 0)
+            {
+                throw new MultiParserException(parseErrors);
+            }
+
             return ResolverPipeline.Resolve(this, this.compilationScopes.Values);
         }
 
