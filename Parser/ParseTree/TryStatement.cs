@@ -103,8 +103,10 @@ namespace Parser.ParseTree
         {
             this.BatchExecutableNameResolver(parser, this.TryBlock);
 
-            Common.TODO.HardCodedEnglishValue();
-            ClassDefinition simpleException = Node.DoClassLookup(this.Owner, null, "Core.Exception");
+            Common.TODO.GetCoreNameFromMetadataWithLocale();
+            string coreExceptionName = "Core.Exception";
+
+            ClassDefinition simpleException = Node.DoClassLookup(this.Owner, null, coreExceptionName);
 
             foreach (CatchBlock cb in this.CatchBlocks)
             {
@@ -114,8 +116,7 @@ namespace Parser.ParseTree
                 cb.TypeClasses = new ClassDefinition[typeCount];
                 for (int i = 0; i < typeCount; ++i)
                 {
-                    Common.TODO.HardCodedEnglishValue();
-                    string typeName = types[i] ?? "Core.Exception";
+                    string typeName = types[i] ?? coreExceptionName;
                     Token token = typeTokens[i] ?? cb.CatchToken;
                     ClassDefinition resolvedType = Node.DoClassLookup(this.Owner, token, typeName, true);
                     if (resolvedType == null)
@@ -144,8 +145,7 @@ namespace Parser.ParseTree
                         // ...that means this is not a type but is actually a variable.
 
                         // Change the type to "Core.Exception", move this token to a variable
-                        Common.TODO.HardCodedEnglishValue();
-                        types[0] = "Core.Exception";
+                        types[0] = coreExceptionName;
                         cb.ExceptionVariableToken = token;
                         typeTokens[0] = null;
                         --i; // and then try resolving again.

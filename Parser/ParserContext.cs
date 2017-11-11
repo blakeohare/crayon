@@ -388,14 +388,14 @@ namespace Parser
         {
             return RESERVED_KEYWORDS.Contains(value);
         }
-        
+
         internal bool IsValidIdentifier(string value)
         {
             if (IsReservedKeyword(value))
             {
                 return false;
             }
-            
+
             if (value[0] >= '0' && value[0] <= '9') return false;
 
             foreach (char c in value)

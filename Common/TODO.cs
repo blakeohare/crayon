@@ -3,7 +3,6 @@
     public static class TODO
     {
         // TODO: Group these by priority/severity
-
         public static void LibrariesNeedVersionNumber() { }
         public static void ThrowErrorIfReturnAppearsWithValueInConstructors() { }
         public static void ThrowErrorIfKeywordThisIsUsedInBaseArgsOrDefaultArgsAnywhereInConstructor() { }
@@ -24,12 +23,7 @@
         public static void CompileTimeConstantConsolidationTypeLookupIsVeryUgly() { }
 
         // TODO: resolve before releasing locale stuff
-        public static void HardCodedEnglishValue() { }
-        public static void MakeMainMethodCheckerLocalized() { }
-        public static void EnglishLocaleAssumed() { }
         public static void GetCoreNameFromMetadataWithLocale() { }
-        public static void NotAllLibrariesAreWrittenInEnglish() { }
-        public static void LibraryNameLocalization() { }
         public static void IsValidLibraryNameIsWrong() { }
         public static void ThisErrorMessageIsNotVeryHelpeful() { }
         public static void CheckForUnusedAnnotations() { }
