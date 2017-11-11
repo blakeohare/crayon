@@ -40,17 +40,22 @@ namespace Parser
                     }
                     else
                     {
-                        throw new ParserException(privateAnnotation.FirstToken, "Multiple @private annotations");
+                        throw this.parser.GenerateParseError(
+                            ErrorMessages.MULTIPLE_PRIVATE_ANNOTATIONS,
+                            privateAnnotation.FirstToken);
                     }
                 }
 
                 if (firstPrivate.Args.Length > 0)
                 {
-                    throw new ParserException(firstPrivate.FirstToken, "@private does not take any arguments.");
+                    throw this.parser.GenerateParseError(
+                        ErrorMessages.PRIVATE_ANNOTATION_HAS_ARGUMENT,
+                        firstPrivate.FirstToken);
                 }
 
                 return true;
             }
+
             return false;
         }
 

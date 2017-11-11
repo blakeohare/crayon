@@ -13,6 +13,10 @@ namespace Parser
 
     public class ParserException : Exception
     {
+        public ParserException(Localization.ErrorMessages errorType, Token token, Localization.Locale locale)
+            : this(token, locale.Strings.Get(errorType.ToString()))
+        { }
+
         public ParserException(Token token, string message)
             : base(InterpretToken(token) + message)
         { }

@@ -378,9 +378,9 @@ namespace Parser
 
                 if (executable is ImportStatement)
                 {
-                    throw new ParserException(
-                        executable.FirstToken,
-                        this.CurrentLocale.Strings.Get("ALL_IMPORTS_MUST_OCCUR_AT_BEGINNING_OF_FILE"));
+                    throw this.GenerateParseError(
+                        ErrorMessages.ALL_IMPORTS_MUST_OCCUR_AT_BEGINNING_OF_FILE,
+                        executable.FirstToken);
                 }
 
                 this.CurrentScope.AddExecutable(executable);
@@ -529,5 +529,10 @@ namespace Parser
         }
 
         public int ValueStackDepth { get; set; }
+
+        public Exception GenerateParseError(ErrorMessages errorType, Token token, params string[] args)
+        {
+            return new ParserException(token, this.CurrentLocale.Strings.Get(errorType.ToString(), args));
+        }
     }
 }

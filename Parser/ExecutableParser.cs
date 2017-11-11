@@ -1,4 +1,5 @@
 ﻿using Common;
+using Localization;
 using Parser.ParseTree;
 using System.Collections.Generic;
 using System.Linq;
@@ -115,7 +116,7 @@ namespace Parser
 
                 if (value == parser.Keywords.IMPORT)
                 {
-                    throw new ParserException(tokens.Peek(), "Imports can only be made from the root of a file and cannot be nested inside other constructs.");
+                    throw this.parser.GenerateParseError(ErrorMessages.ALL_IMPORTS_MUST_OCCUR_AT_BEGINNING_OF_FILE, tokens.Peek());
                 }
 
                 if (value == this.parser.Keywords.ENUM)
@@ -198,7 +199,9 @@ namespace Parser
                 }
                 else if (optionalArgFound)
                 {
-                    throw new ParserException(argName, "All optional arguments must come at the end of the argument list.");
+                    throw this.parser.GenerateParseError(
+                        ErrorMessages.OPTIONAL_ARGUMENT_WAS_NOT_AT_END_OF_ARGUMENT_LIST,
+                        argName);
                 }
 
                 argNames.Add(argName);
@@ -334,7 +337,9 @@ namespace Parser
                 {
                     if (constructorDef != null)
                     {
-                        throw new ParserException(tokens.Pop(), "Multiple constructors are not allowed. Use optional arguments.");
+                        throw this.parser.GenerateParseError(
+                            ErrorMessages.CLASS_CANNOT_HAVE_MULTIPLE_CONSTRUCTORS,
+                            tokens.Pop());
                     }
 
                     constructorDef = this.parser.ExecutableParser.ParseConstructor(tokens, cd, annotations);
