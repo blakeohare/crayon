@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrayonOSX", "CrayonOSX.csproj", "{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crayon", "Crayon.csproj", "{6A25BB31-4280-470F-959E-25D6D5A173AD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpreter", "..\Interpreter\Interpreter.csproj", "{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}"
 EndProject
@@ -59,18 +59,18 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}.Debug|x86.Build.0 = Debug|Any CPU
-		{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}.Release|x86.ActiveCfg = Release|Any CPU
-		{EF9671BB-A3E3-4620-A175-0D98BC4CB14B}.Release|x86.Build.0 = Release|Any CPU
+		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Debug|x86.Build.0 = Debug|Any CPU
+		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Release|x86.ActiveCfg = Release|Any CPU
+		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Release|x86.Build.0 = Release|Any CPU
 		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
