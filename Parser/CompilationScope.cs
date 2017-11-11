@@ -8,8 +8,8 @@ namespace Parser
 {
     public abstract class CompilationScope
     {
-        public virtual Locale Locale { get; }
-        public virtual string ScopeKey { get; }
+        public abstract Locale Locale { get; }
+        public abstract string ScopeKey { get; }
 
         protected BuildContext buildContext;
         private Dictionary<LibraryCompilationScope, LocalizedLibraryView> dependenciesAndViews = new Dictionary<LibraryCompilationScope, LocalizedLibraryView>();
