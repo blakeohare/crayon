@@ -1,26 +1,24 @@
-﻿using System;
+﻿using Platform;
 using System.Collections.Generic;
-using System.Linq;
-using Platform;
 
 namespace Crayon
 {
     class PlatformProvider : IPlatformProvider
     {
-        private Dictionary<string, Platform.AbstractPlatform> platforms;
-        public Platform.AbstractPlatform GetPlatform(string name)
+        private Dictionary<string, AbstractPlatform> platforms;
+        public AbstractPlatform GetPlatform(string name)
         {
             if (platforms == null)
             {
-                platforms = new Dictionary<string, Platform.AbstractPlatform>();
+                platforms = new Dictionary<string, AbstractPlatform>();
                 foreach (System.Reflection.Assembly assembly in GetRawAssemblies())
                 {
-                    Platform.AbstractPlatform platform = this.GetPlatformInstance(assembly);
+                    AbstractPlatform platform = this.GetPlatformInstance(assembly);
                     platform.PlatformProvider = this;
                     string key = platform.Name;
                     if (platforms.ContainsKey(key))
                     {
-                        throw new InvalidOperationException("Multiple platforms with the same ID: '" + key + "'");
+                        throw new System.InvalidOperationException("Multiple platforms with the same ID: '" + key + "'");
                     }
                     platforms[key] = platform;
                 }
@@ -34,7 +32,7 @@ namespace Crayon
             return null;
         }
 
-        private Platform.AbstractPlatform GetPlatformInstance(System.Reflection.Assembly assembly)
+        private AbstractPlatform GetPlatformInstance(System.Reflection.Assembly assembly)
         {
             foreach (System.Type type in assembly.GetExportedTypes())
             {
@@ -42,10 +40,10 @@ namespace Crayon
                 // Perhaps make that the only qualification instead of going by name?
                 if (type.Name == "PlatformImpl")
                 {
-                    return (Platform.AbstractPlatform)assembly.CreateInstance(type.FullName);
+                    return (AbstractPlatform)assembly.CreateInstance(type.FullName);
                 }
             }
-            throw new InvalidOperationException("This assembly does not define a PlatformImpl type: " + assembly.FullName);
+            throw new System.InvalidOperationException("This assembly does not define a PlatformImpl type: " + assembly.FullName);
         }
 
         private static System.Reflection.Assembly[] GetRawAssemblies()
