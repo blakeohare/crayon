@@ -9,13 +9,14 @@
     <AssemblyName>crayon</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <UseMSBuildEngine>false</UseMSBuildEngine>
+    <GlobalConstants>TRACE</GlobalConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;OSX;</DefineConstants>
+    <InheritedConstants>DEBUG;$(GlobalConstants)</InheritedConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ExternalConsole>true</ExternalConsole>
@@ -23,7 +24,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
-    <DefineConstants>RELEASE;OSX;</DefineConstants>
+    <InheritedConstants>RELEASE;$(GlobalConstants)</InheritedConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ExternalConsole>true</ExternalConsole>
@@ -33,7 +34,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Mono.Cairo" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -131,4 +131,19 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Choose>
+    <When Condition=" '$(SolutionFileName)' == 'CrayonWindows.sln' ">
+      <PropertyGroup>
+        <DefineConstants>WINDOWS;$(InheritedConstants)</DefineConstants>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DefineConstants>OSX;$(InheritedConstants)</DefineConstants>
+      </PropertyGroup>
+      <ItemGroup>
+        <Reference Include="Mono.Cairo" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
 </Project>
