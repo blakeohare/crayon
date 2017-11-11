@@ -53,6 +53,10 @@
       <Project>{18617a9a-3b1f-4532-bf4d-12bd62a3e5c6}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Exporter\Exporter.csproj">
+      <Project>{F6484452-D2C1-4187-B3EA-ABF70D311978}</Project>
+      <Name>Exporter</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Interpreter\Interpreter.csproj">
       <Project>{b7d7c85b-96ce-4fd5-9653-cc9bce291363}</Project>
       <Name>Interpreter</Name>
@@ -81,29 +85,37 @@
       <Project>{0d8c38e5-6b24-489e-9c0f-d8101086bc32}</Project>
       <Name>JavaApp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Platforms\JavaAppAndroid\JavaAppAndroid.csproj">
+      <Project>{41DEBAC3-73C4-4F40-93AE-9FE02319276D}</Project>
+      <Name>JavaAppAndroid</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Platforms\JavaScriptApp\JavaScriptApp.csproj">
       <Project>{e2558b29-a032-40d0-90b0-1a9de368ec16}</Project>
       <Name>JavaScriptApp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\JavaScriptAppChrome\JavaScriptAppChrome.csproj">
+      <Project>{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}</Project>
+      <Name>JavaScriptAppChrome</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj">
+      <Project>{C1876949-86D6-405E-B717-AFC56C27E1C8}</Project>
+      <Name>JavaScriptAppIos</Name>
     </ProjectReference>
     <ProjectReference Include="..\Platforms\LangC\LangC.csproj">
       <Project>{85cc1b47-a0c5-48b0-ba51-b3599acd1392}</Project>
       <Name>LangC</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platforms\PythonApp\PythonApp.csproj">
-      <Project>{4e41e38d-3ff9-4c91-9446-5f51024d8bd9}</Project>
-      <Name>PythonApp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Platforms\LangCSharp\LangCSharp.csproj">
       <Project>{bd2af3e6-4a96-4511-86a5-e414a6cab81e}</Project>
       <Name>LangCSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platforms\LangJavaScript\LangJavaScript.csproj">
-      <Project>{56f7043f-a270-4900-b6d3-1701af619a1b}</Project>
-      <Name>LangJavaScript</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Platforms\LangJava\LangJava.csproj">
       <Project>{3f62b368-b14f-4c77-98ab-c94b19b07eaf}</Project>
       <Name>LangJava</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\LangJavaScript\LangJavaScript.csproj">
+      <Project>{56f7043f-a270-4900-b6d3-1701af619a1b}</Project>
+      <Name>LangJavaScript</Name>
     </ProjectReference>
     <ProjectReference Include="..\Platforms\LangPython\LangPython.csproj">
       <Project>{11ff3292-43a0-4c40-93de-4f0dd18c4e4a}</Project>
@@ -113,21 +125,9 @@
       <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
       <Name>Platform</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platforms\JavaAppAndroid\JavaAppAndroid.csproj">
-      <Project>{41DEBAC3-73C4-4F40-93AE-9FE02319276D}</Project>
-      <Name>JavaAppAndroid</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj">
-      <Project>{C1876949-86D6-405E-B717-AFC56C27E1C8}</Project>
-      <Name>JavaScriptAppIos</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\JavaScriptAppChrome\JavaScriptAppChrome.csproj">
-      <Project>{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}</Project>
-      <Name>JavaScriptAppChrome</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Exporter\Exporter.csproj">
-      <Project>{F6484452-D2C1-4187-B3EA-ABF70D311978}</Project>
-      <Name>Exporter</Name>
+    <ProjectReference Include="..\Platforms\PythonApp\PythonApp.csproj">
+      <Project>{4e41e38d-3ff9-4c91-9446-5f51024d8bd9}</Project>
+      <Name>PythonApp</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
