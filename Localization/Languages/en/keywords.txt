@@ -14,6 +14,9 @@ ELSE: else
 ENUM: enum
 FALSE: false
 FIELD: field
+FIELD_ENUM_LENGTH: length
+FIELD_ENUM_MAX: max
+FIELD_ENUM_VALUES: values
 FINAL: final
 FINALLY: finally
 FOR: for

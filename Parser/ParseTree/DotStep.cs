@@ -65,16 +65,12 @@ namespace Parser.ParseTree
                     enumDef.Resolve(parser);
                 }
 
-                Common.TODO.EnumBuiltInFunctionLocalization();
-                switch (step)
-                {
-                    case "length":
-                        return new IntegerConstant(this.FirstToken, enumDef.IntValue.Count, this.Owner);
-                    case "max":
-                        return new SpecialEntity.EnumMaxFunction(this.FirstToken, enumDef, this.Owner);
-                    case "values":
-                        return new SpecialEntity.EnumValuesFunction(this.FirstToken, enumDef, this.Owner);
-                }
+                if (step == parser.Keywords.FIELD_ENUM_LENGTH)
+                    return new IntegerConstant(this.FirstToken, enumDef.IntValue.Count, this.Owner);
+                if (step == parser.Keywords.FIELD_ENUM_MAX)
+                    return new SpecialEntity.EnumMaxFunction(this.FirstToken, enumDef, this.Owner);
+                if (step == parser.Keywords.FIELD_ENUM_VALUES)
+                    return new SpecialEntity.EnumValuesFunction(this.FirstToken, enumDef, this.Owner);
 
                 if (enumDef.IntValue.ContainsKey(step))
                 {

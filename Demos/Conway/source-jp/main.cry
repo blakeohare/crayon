@@ -10,6 +10,12 @@
 不変 SCREEN_WIDTH = CELL_SIZE * WIDTH;
 不変 SCREEN_HEIGHT = CELL_SIZE * HEIGHT;
 
+列挙 LocalizationTest {
+    FOO = 0,
+    BAR = 1,
+    ETC = 2,
+}
+
 作用 getRandomBlue() {
     戻 [
         Random.randomInt(170, 255),
@@ -20,6 +26,8 @@
 
 作用 原() {
     window = 新 GameWindow("Conway's Game of Life", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    print("Length: " + LocalizationTest.全額 + " Max: " + LocalizationTest.最高() + " Values: " + LocalizationTest.材料());
 
     totalCells = WIDTH * HEIGHT;
 

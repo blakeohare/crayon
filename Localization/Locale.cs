@@ -93,6 +93,9 @@ namespace Localization
                 ENUM = keywords["ENUM"],
                 FALSE = keywords["FALSE"],
                 FIELD = keywords["FIELD"],
+                FIELD_ENUM_LENGTH = keywords["FIELD_ENUM_LENGTH"],
+                FIELD_ENUM_MAX = keywords["FIELD_ENUM_MAX"],
+                FIELD_ENUM_VALUES = keywords["FIELD_ENUM_VALUES"],
                 FINAL = keywords["FINAL"],
                 FINALLY = keywords["FINALLY"],
                 FOR = keywords["FOR"],
@@ -142,6 +145,9 @@ namespace Localization
             public string ENUM { get; set; }
             public string FALSE { get; set; }
             public string FIELD { get; set; }
+            public string FIELD_ENUM_LENGTH { get; set; }
+            public string FIELD_ENUM_MAX { get; set; }
+            public string FIELD_ENUM_VALUES { get; set; }
             public string FINAL { get; set; }
             public string FINALLY { get; set; }
             public string FOR { get; set; }

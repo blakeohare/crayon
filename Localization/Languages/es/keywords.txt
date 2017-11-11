@@ -14,6 +14,9 @@ ELSE: mas
 ENUM: enum
 FALSE: falso
 FIELD: trozo
+FIELD_ENUM_LENGTH: largo
+FIELD_ENUM_MAX: max
+FIELD_ENUM_VALUES: miembros
 FINAL: estable
 FINALLY: finalmente
 FOR: por
