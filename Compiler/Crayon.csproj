@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -12,6 +13,7 @@
     <AssemblyName>Crayon</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <GlobalConstants>TRACE</GlobalConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -19,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
+    <InheritedConstants>DEBUG;$(GlobalConstants)</InheritedConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -29,7 +31,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>RELEASE;TRACE</DefineConstants>
+    <InheritedConstants>RELEASE;$(GlobalConstants)</InheritedConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -136,15 +138,15 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-    <Choose>
-    <When Condition=" '$(SolutionFileName)' == 'CrayonRuntime.sln' ">
+  <Choose>
+    <When Condition=" '$(SolutionFileName)' == 'CrayonWindows.sln' ">
       <PropertyGroup>
-        <DefineConstants>WINDOWS</DefineConstants>
+        <DefineConstants>WINDOWS;$(InheritedConstants)</DefineConstants>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <DefineConstants>OSX</DefineConstants>
+        <DefineConstants>OSX;$(InheritedConstants)</DefineConstants>
       </PropertyGroup>
       <ItemGroup>
         <Reference Include="Mono.Cairo" />

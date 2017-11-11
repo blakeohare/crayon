@@ -44,7 +44,6 @@ namespace Crayon
                 // This is okay on Windows, but on OSX this is a problem, so ensure that a
                 // regressions are quickly noticed.
                 SystemBitmap.Graphics.EnsureCleanedUp();
-
 #else
                 if (args.Length == 0)
                 {
