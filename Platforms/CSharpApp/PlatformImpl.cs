@@ -131,12 +131,11 @@ namespace CSharpApp
 
                     libraryProjectNameToGuid[name] = projectGuid;
 
-                    List<string> dotNetLibraries = new List<string>();
-                    foreach (string dotNetLib in library.DotNetLibs)
-                    {
-                        dotNetLibraries.Add("    <Reference Include=\"" + dotNetLib + "\" />");
-                    }
-                    replacements["DOT_NET_LIBS"] = Util.JoinLines(dotNetLibraries.ToArray());
+                    replacements["DOT_NET_LIBS"] = Util.JoinLines(
+                        library.DotNetLibs.Select(
+                            dotNetLib =>
+                                "    <Reference Include=\"" + dotNetLib + "\" />")
+                        .ToArray());
 
                     this.CopyResourceAsText(output, libBaseDir + library.Name + ".sln", "ResourcesLib/Solution.txt", replacements);
                     this.CopyResourceAsText(output, libBaseDir + library.Name + ".csproj", "ResourcesLib/ProjectFile.txt", replacements);
@@ -246,12 +245,26 @@ namespace CSharpApp
 
             List<LangCSharp.DllFile> dlls = new List<LangCSharp.DllFile>();
 
+            HashSet<string> dotNetLibs = new HashSet<string>();
+
             foreach (LibraryForExport library in libraries)
             {
+                foreach (string dotNetLib in library.DotNetLibs)
+                {
+                    dotNetLibs.Add(dotNetLib);
+                }
                 this.GetLibraryCode(baseDir, library, dlls, output, libraryNativeInvocationTranslatorProviderForPlatform);
             }
 
             LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls, new Dictionary<string, string>());
+
+            replacements["DLL_REFERENCES"] += Util.JoinLines(
+                dotNetLibs
+                    .OrderBy(v => v.ToLower())
+                    .Select(
+                        dotNetLib =>
+                            "    <Reference Include=\"" + dotNetLib + "\" />")
+                    .ToArray());
 
             this.ExportInterpreter(baseDir, output, globals, structDefinitions, functionDefinitions);
 
