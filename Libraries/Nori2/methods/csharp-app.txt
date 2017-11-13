@@ -1,0 +1,8 @@
+$_lib_nori2_addChildToParent: NoriHelper.AddChildToParent([ARG:1], [ARG:2])
+$_lib_nori2_closeWindow: NoriHelper.CloseWindow([ARG:1])
+$_lib_nori2_ensureParentLinkOrder: NoriHelper.EnsureParentLinkOrder([ARG:1], [ARG:2])
+$_lib_nori2_instantiateElement: NoriHelper.InstantiateElement([ARG:1], [ARG:2])
+$_lib_nori2_instantiateWindow: NoriHelper.InstantiateWindow([ARG:1])
+$_lib_nori2_invalidateElementProperty: NoriHelper.InvalidateElementProperty([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+$_lib_nori2_invalidateWindowProperty: NoriHelper.InvalidateWindowProperty([ARG:1], [ARG:2], [ARG:3])
+$_lib_nori2_showWindow: NoriHelper.ShowWindow([ARG:1], [ARG:2])

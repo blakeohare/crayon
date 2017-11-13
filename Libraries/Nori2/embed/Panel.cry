@@ -1,0 +1,79 @@
+namespace Nori2 {
+    class Panel : Element {
+
+        field _children = [];
+        field _singleChild = false;
+
+        constructor() : base() {
+            this._isVirtual = true;
+        }
+
+        function clearChildren() {
+            this._children.clear();
+            if (this._window != null) this._window._hierarchyDirty = true;
+            return this;
+        }
+
+        static function instantiateTree(element) {
+
+            if (!element._isVirtual) {
+                ni = new Core.Object();
+                element._nativeInstance = ni;
+                $$lib_nori2_instantiateElement(element._typeId, ni, element._properties);
+                if (!element._isWindowRoot) {
+                    $$lib_nori2_addChildToParent(ni, element._viewParent._nativeInstance);
+                }
+            }
+
+            if (element is Panel) {
+                for (child : element._children) {
+                    Panel.instantiateTree(child);
+                }
+            }
+        }
+
+        function addChild(element) {
+            if (element._parent != null) throw new Core.Exception("Element already added to UI tree");
+            if (this._singleChild && this._children.length > 0) throw new Core.Exception("Cannot add more than one child to this panel.");
+            element._parent = this;
+            this._children.add(element);
+
+            if (this._window != null && this._window._isShown) {
+                Panel.instantiateTree(element);
+            }
+
+            if (this._isViewRoot) {
+                this._applyViewParentRecursive(element, this);
+            } else if (this._viewParent != null) {
+                this._applyViewParentRecursive(element, this._viewParent);
+            }
+            if (this._window != null) {
+                this._applyWindowRecursive(element, this._window);
+                this._window._hierarchyDirty = true;
+            }
+            return this;
+        }
+
+        function _applyViewParentRecursive(element, vp) {
+            element._viewParent = vp;
+            if (element._isVirtual) {
+                for (child : element._children) {
+                    child._applyViewParentRecursive(child, vp);
+                }
+            } else if (element._isViewRoot) {
+                for (child : element._children) {
+                    child._applyViewParentRecursive(child, element);
+                }
+            }
+        }
+
+        function _applyWindowRecursive(element, window) {
+            element._window = window;
+            if (element is Panel) {
+                for (child : element._children) {
+                    this._applyWindowRecursive(child, window);
+                }
+            }
+        }
+    }
+}

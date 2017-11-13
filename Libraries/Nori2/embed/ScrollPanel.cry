@@ -1,0 +1,74 @@
+namespace Nori2 {
+    class ScrollPanel : Panel {
+
+        field hscroll = false;
+        field vscroll = false;
+
+        constructor() : base() {
+            this._typeId = ElementTypeId.SCROLL_PANEL;
+            this._isViewRoot = true;
+            this._singleChild = true;
+            this._isVirtual = false;
+        }
+
+        function _updateAbsoluteRequiredSize() {
+            base._updateAbsoluteRequiredSize(); // basic rectangle layout
+
+            if (this._children.length == 1) {
+                child = this._children[0];
+                child._updateAbsoluteRequiredSize();
+                if (!this.hscroll && this._requiredWidth < child._requiredWidth) this._requiredWidth = child._requiredWidth;
+                if (!this.vscroll && this._requiredHeight < child._requiredHeight) this._requiredHeight = child._requiredHeight;
+            }
+        }
+
+        function _allocateAvailableSpace(left, top, right, bottom, width, height, haOverride, vaOverride) {
+            base._allocateAvailableSpace(left, top, right, bottom, width, height, haOverride, vaOverride);
+
+            childLeft = this._properties[ElementProperties.RENDER_LEFT];
+            childRight = this._properties[ElementProperties.RENDER_RIGHT];
+            childTop = this._properties[ElementProperties.RENDER_TOP];
+            childBottom = this._properties[ElementProperties.RENDER_BOTTOM];
+            childWidth = this._properties[ElementProperties.RENDER_WIDTH];
+            childHeight = this._properties[ElementProperties.RENDER_HEIGHT];
+
+            if (this.hscroll) {
+                switch (haOverride ?? this._properties[ElementProperties.HORIZONTAL_ALIGNMENT]) {
+                    case HorizontalAlignment.LEFT:
+                        childRight = null;
+                        childWidth = null;
+                        break;
+                    case HorizontalAlignment.RIGHT:
+                        childLeft = null;
+                        childWidth = null;
+                        break;
+                    case HorizontalAlignment.STRETCH:
+                    case HorizontalAlignment.CENTER:
+                        break;
+                }
+            }
+
+            if (this.vscroll) {
+                switch (vaOverride ?? this._properties[ElementProperties.VERTICAL_ALIGNMENT]) {
+                    case VerticalAlignment.TOP:
+                        childBottom = null;
+                        childHeight = null;
+                        break;
+                    case VerticalAlignment.BOTTOM:
+                        childTop = null;
+                        childHeight = null;
+                        break;
+                    case VerticalAlignment.STRETCH:
+                    case VerticalAlignment.CENTER:
+                        break;
+                }
+            }
+
+            for (child : this._children) {
+                child._allocateAvailableSpace(
+                    childLeft, childTop, childRight, childBottom, childWidth, childHeight,
+                    null, null);
+            }
+        }
+    }
+}

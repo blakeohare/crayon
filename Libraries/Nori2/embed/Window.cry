@@ -1,0 +1,119 @@
+namespace Nori2 {
+    enum WindowProperties {
+        TITLE,
+        SIZE,
+    }
+
+    class Window {
+
+        field _nativeInstance = null;
+
+        field _properties = [null] * (WindowProperties.max() + 1);
+
+        field _root = new ScrollPanel();
+        field _isShown = false;
+        field _hierarchyDirty = true;
+
+        constructor() {
+            this._properties[WindowProperties.TITLE] = "Untitled Window";
+            this._properties[WindowProperties.SIZE] = [400, 300];
+            this._root._window = this;
+            this._root._isWindowRoot = true;
+        }
+
+        function show() {
+            if (this._nativeInstance == null) {
+                this._nativeInstance = new Core.Object();
+                $$lib_nori2_instantiateWindow(this._nativeInstance, this._properties);
+            }
+
+            Panel.instantiateTree(this._root);
+
+            this._isShown = true;
+            $$lib_nori2_showWindow(this._nativeInstance, this._properties);
+            return this;
+        }
+
+        function close() {
+            $$lib_nori2_closeWindow(this._nativeInstance);
+            this._isShown = false;
+            return this;
+        }
+
+        function setTitle(title) {
+            this._properties[WindowProperties.TITLE] = title + '';
+            if (this._nativeInstance != null) this._invalidate(WindowProperties.TITLE);
+            return this;
+        }
+
+        function _invalidate(property) {
+            return $$lib_nori2_invalidateWindowProperty(this._nativeInstance, property, this._properties[property]);
+        }
+
+        function _updateLayout() {
+            if (!this._isShown) return;
+            if (this._hierarchyDirty) {
+                this._updateHierarchy();
+                this._hierarchyDirty = false;
+            }
+            this._root._updateAbsoluteRequiredSize();
+            size = this._properties[WindowProperties.SIZE];
+            width = size[0];
+            height = size[1];
+            this._root._allocateAvailableSpace(0, 0, width, height, width, height, HorizontalAlignment.STRETCH, VerticalAlignment.STRETCH);
+        }
+
+        function _updateHierarchy() {
+            recurse = [this._root]; // simulate recursion through an iteration queue, for speed
+            viewRootMembers = [];
+            renderedChildren = [];
+            for (i = 0; i < recurse.length; ++i) {
+                viewRoot = recurse[i];
+                viewRootMembers.concat(viewRoot._children);
+                for (child : viewRootMembers) {
+                    if (child is ScrollPanel) {
+                        renderedChildren.add(child._nativeInstance);
+                        recurse.add(child);
+                    } else if (child is Panel) {
+                        viewRootMembers.concat(child._children);
+                    } else {
+                        renderedChildren.add(child._nativeInstance);
+                    }
+                }
+                $$lib_nori2_ensureParentLinkOrder(viewRoot._nativeInstance, renderedChildren);
+
+                viewRootMembers.clear();
+                renderedChildren.clear();
+            }
+        }
+
+        function setSize(width, height) {
+            this._properties[WindowProperties.SIZE][0] = width;
+            this._properties[WindowProperties.SIZE][1] = height;
+            if (this._nativeInstance != null) {
+                this._invalidate(WindowProperties.SIZE);
+            }
+
+            this._root._updateAbsoluteRequiredSize();
+            this._root._allocateAvailableSpace(0, 0, width, height, width, height, HorizontalAlignment.STRETCH, VerticalAlignment.STRETCH);
+
+            return this;
+        }
+
+        function setWidth(width) {
+            return this.setSize(width, this._properties[WindowProperties.SIZE][1]);
+        }
+
+        function setHeight(height) {
+            return this.setSize(this._properties[WindowProperties.SIZE][0], height);
+        }
+
+        function setContent(element) {
+            if (this._root._children.length > 0) {
+                this._root.clearChildren();
+            }
+            this._root.addChild(element);
+            return this;
+        }
+    }
+}

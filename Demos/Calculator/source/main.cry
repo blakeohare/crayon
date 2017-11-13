@@ -1,0 +1,34 @@
+import Nori2;
+
+/*
+    #####
+    789-C
+    456*+
+    123/+
+    0.-s=
+*/
+
+function main() {
+
+    window = new Window()
+        .setTitle("Calculator")
+        .setSize(500, 500);
+
+    mainCanvas = new Canvas();
+    window.setContent(mainCanvas);
+
+    display = new Rectangle().setWidth(500).setHeight(100).setColor(200, 200, 200);
+    buttons = [display];
+    for (y = 2; y <= 5; ++y) {
+        for (x = 1; x <= 5; ++x) {
+            color = (x + y) % 2 == 0 ? 0 : 255;
+            buttons.add(new Rectangle().setWidth(100).setHeight(100).setColor(color, color, color));
+        }
+    }
+
+    for (button : buttons) {
+        mainCanvas.addChild(button);
+    }
+
+    window.show();
+}

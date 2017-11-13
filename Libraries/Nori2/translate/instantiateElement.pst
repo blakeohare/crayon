@@ -1,0 +1,22 @@
+/*
+    args[0] -> (int) type ID
+    args[1] -> (ObjectInstance) native element
+    args[2] -> (List<various>) property values
+*/
+Value lib_nori2_function_instantiateElement(Array<Value> args) {
+    int type = (int) args[0].internalValue;
+    ObjectInstance o = (ObjectInstance) args[1].internalValue;
+
+    // TODO: need to figure out how to unwrap these on the translated side
+    List<Value> properties = (List<Value>) args[2].internalValue;
+    Array<object> unboxed = new Array<object>(properties.Size());
+    int propertiesSize = properties.Size();
+    for (int i = 0; i < propertiesSize; i += 1) {
+        unboxed[i] = properties[i].internalValue;
+    }
+
+    o.nativeData = new Array<object>(1);
+    o.nativeData[0] = Native._lib_nori2_instantiateElement(type, unboxed);
+
+    return VALUE_NULL;
+}

@@ -1,0 +1,20 @@
+<build>
+	<projectname>Calculator</projectname>
+	<output>output/%TARGET_NAME%</output>
+	<icon>assets/icon.png</icon>
+	
+	<javapackage>org.crayonlang.demos.calculator</javapackage>
+	<iosbundleprefix>org.crayonlang.demos</iosbundleprefix>
+	<guidseed>org.crayonlang.demos.calculator,v0.2.1,%TARGET_NAME%</guidseed>
+	
+	<!-- Targets -->
+	<target name="javascript">
+		<source>source</source>
+		<platform>javascript-app</platform>
+	</target>
+	
+	<target name="csharp">
+		<source>source</source>
+		<platform>csharp-app</platform>
+	</target>
+</build>

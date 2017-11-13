@@ -1,0 +1,20 @@
+/*
+    args[0] -> (int) type
+    args[1] -> (Value<ObjectInstance>) nativeInstance of the ui element, guaranteed to be instantiated
+    args[2] -> (int<ElementProperty>) property key
+    args[3] -> (object) value
+
+*/
+Value lib_nori2_function_invalidateElementProperty(Array<Value> args) {
+    // TODO: define struct
+    ObjectInstance o = (ObjectInstance) args[1].internalValue;
+    object nativeElement = o.nativeData[0];
+    int type = (int) args[0].internalValue;
+    int key = (int) args[2].internalValue;
+
+    // TODO: do type checking for the given key and convert to a specific value, otherwise this won't translate to C very well.
+    object value = args[3].internalValue;
+
+    Native._lib_nori2_invalidateElementProperty(type, nativeElement, key, value);
+    return VALUE_NULL;
+}

@@ -1,0 +1,33 @@
+namespace Nori2 {
+    class Canvas : Panel {
+        constructor() : base() {
+            this._typeId = ElementTypeId.CANVAS;
+        }
+
+        function _updateAbsoluteRequiredSize() {
+            base._updateAbsoluteRequiredSize(); // basic rectangle layout
+            for (child : this._children) {
+                child._updateAbsoluteRequiredSize();
+                if (this._requiredWidth < child._requiredWidth) this._requiredWidth = child._requiredWidth;
+                if (this._requiredHeight < child._requiredHeight) this._requiredHeight = child._requiredHeight;
+            }
+        }
+
+        function _allocateAvailableSpace(left, top, right, bottom, width, height, haOverride, vaOverride) {
+            base._allocateAvailableSpace(left, top, right, bottom, width, height, haOverride, vaOverride);
+
+            childLeft = this._properties[ElementProperties.RENDER_LEFT];
+            childRight = this._properties[ElementProperties.RENDER_RIGHT];
+            childTop = this._properties[ElementProperties.RENDER_TOP];
+            childBottom = this._properties[ElementProperties.RENDER_BOTTOM];
+            childWidth = this._properties[ElementProperties.RENDER_WIDTH];
+            childHeight = this._properties[ElementProperties.RENDER_HEIGHT];
+
+            for (child : this._children) {
+                child._allocateAvailableSpace(
+                    childLeft, childTop, childRight, childBottom, childWidth, childHeight,
+                    null, null);
+            }
+        }
+    }
+}
