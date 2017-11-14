@@ -17,3 +17,8 @@ BEGIN
 APPLICABLE-TO: java-app-android
 COPY_FILES: from=java-app-android, to=%LIBRARY_PATH%/%FILE%
 END
+
+BEGIN
+APPLICABLE-TO: lang-javascript
+EMBED_FILES: from=javascript
+END

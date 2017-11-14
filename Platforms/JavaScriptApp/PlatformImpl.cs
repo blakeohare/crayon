@@ -113,7 +113,7 @@ namespace JavaScriptApp
 
             Dictionary<string, string> htmlReplacements = new Dictionary<string, string>(replacements);
             replacements["JS_LIB_INCLUSIONS"] = this.GenerateJsLibInclusionHtml(output.Keys);
-            this.CopyResourceAsText(output, "index.html", "Resources/GameHostHtml.txt", replacements);
+            this.CopyResourceAsText(output, "index.html", "Resources/HostHtml.txt", replacements);
 
             this.CopyResourceAsText(output, "common.js", "Resources/Common.txt", replacements);
 
@@ -121,14 +121,7 @@ namespace JavaScriptApp
             output["lib_supplemental.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = string.Join("\n\n", new string[] {
-                    this.LoadTextResource("Resources/ImageResource.txt", replacements),
-                    this.LoadTextResource("Resources/Game.txt", replacements),
-                    this.LoadTextResource("Resources/Drawing.txt", replacements),
-                    this.LoadTextResource("Resources/Gamepad.txt", replacements),
-                    this.LoadTextResource("Resources/Input.txt", replacements),
-                    this.LoadTextResource("Resources/Sound.txt", replacements),
-                }),
+                TextContent = this.LoadTextResource("Resources/ImageResource.txt", replacements),
             };
 
             StringBuilder resourcesJs = new StringBuilder();

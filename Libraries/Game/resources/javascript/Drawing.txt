@@ -1,8 +1,4 @@
-﻿
-
-if (!C$game) { throw 1; } // Cannot use the drawing library without the game library.
-
-// Lookups for fast hex conversion
+﻿// Lookups for fast hex conversion
 C$drawing = 1;
 C$drawing$HEX = [];
 C$drawing$HEXR = [];
