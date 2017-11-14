@@ -161,8 +161,6 @@ InterpreterResult interpretImpl(int executionContextId) {
     int int1 = 0;
     int int2 = 0;
     int int3 = 0;
-    int int4 = 0;
-    int int5 = 0;
     int i = 0;
     int j = 0;
     double float1 = 0.0;
