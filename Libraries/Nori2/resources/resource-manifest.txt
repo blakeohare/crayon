@@ -4,3 +4,8 @@ APPLICABLE-TO: csharp-app
 COPY_FILES: from=csharp-app, to=%LIBRARY_PATH%/%FILE%
 DOTNET_LIB: name=System.Windows.Forms
 END
+
+BEGIN
+APPLICABLE-TO: lang-javascript
+EMBED_FILES: from=javascript
+END

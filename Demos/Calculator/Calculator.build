@@ -11,6 +11,7 @@
 	<target name="javascript">
 		<source>source</source>
 		<platform>javascript-app</platform>
+		<jsfileprefix>/calculator/</jsfileprefix>
 	</target>
 	
 	<target name="csharp">
