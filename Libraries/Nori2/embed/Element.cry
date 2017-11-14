@@ -66,8 +66,10 @@ namespace Nori2 {
         static field PROPERTIES_TEMPLATE = [null] * (ElementProperties.max() + 1);
 
         static constructor() {
-            Element.PROPERTIES_TEMPLATE[ElementProperties.HORIZONTAL_ALIGNMENT] = HorizontalAlignment.STRETCH;
-            Element.PROPERTIES_TEMPLATE[ElementProperties.VERTICAL_ALIGNMENT] = VerticalAlignment.STRETCH;
+            Element.PROPERTIES_TEMPLATE[ElementProperties.HORIZONTAL_ALIGNMENT] = HorizontalAlignment.LEFT;
+            Element.PROPERTIES_TEMPLATE[ElementProperties.VERTICAL_ALIGNMENT] = VerticalAlignment.TOP;
+            Element.PROPERTIES_TEMPLATE[ElementProperties.X] = 0;
+            Element.PROPERTIES_TEMPLATE[ElementProperties.Y] = 0;
         }
 
         field _properties = Element.PROPERTIES_TEMPLATE.clone();
@@ -83,7 +85,7 @@ namespace Nori2 {
         }
 
         function _invalidateViewRootLayout() {
-            throw new Core.Exception();
+            throw new Core.Exception("TODO");
         }
 
         function setWidth(value) { if (this._window != null) this._invalidateViewRootLayout(); return this._setValue(ElementProperties.WIDTH, value); }
@@ -96,10 +98,10 @@ namespace Nori2 {
         function _updateAbsoluteRequiredSize() {
             this._requiredWidth = this._properties[ElementProperties.HORIZONTAL_ALIGNMENT] == HorizontalAlignment.STRETCH
                 ? 0
-                : this._properties[ElementProperties.WIDTH];
-            this._requiredHeight = this._properties[ElementProperties.VERTICAL_ALIGNMENT] == HorizontalAlignment.STRETCH
+                : (this._properties[ElementProperties.WIDTH] ?? 0);
+            this._requiredHeight = this._properties[ElementProperties.VERTICAL_ALIGNMENT] == VerticalAlignment.STRETCH
                 ? 0
-                : this._properties[ElementProperties.WIDTH];
+                : (this._properties[ElementProperties.HEIGHT] ?? 0);
         }
 
         function _allocateAvailableSpace(left, top, right, bottom, width, height, haOverride, vaOverride) {
@@ -122,19 +124,19 @@ namespace Nori2 {
                 case HorizontalAlignment.LEFT:
                 case HorizontalAlignment.STRETCH:
                     Core.assert(left != null);
-                    t = left + (this._properties[ElementProperties.X] ?? 0);
+                    t = left + this._properties[ElementProperties.X];
                     this._properties[ElementProperties.RENDER_LEFT] = t;
                     this._properties[ElementProperties.RENDER_RIGHT] = t + this._allocatedWidth;
                     break;
                 case HorizontalAlignment.RIGHT:
                     Core.assert(right != null);
-                    t = right - (this._properties[ElementProperties.X] ?? 0);
+                    t = right - this._properties[ElementProperties.X];
                     this._properties[ElementProperties.RENDER_RIGHT] = t;
                     this._properties[ElementProperties.RENDER_LEFT] = t - this._allocatedWidth;
                     break;
                 case HorizontalAlignment.CENTER:
                     Core.assert(left != null && right != null);
-                    t = (left + right - this._allocatedWidth) / 2 + (this._properties[ElementProperties.X] ?? 0);
+                    t = (left + right - this._allocatedWidth) / 2 + this._properties[ElementProperties.X];
                     this._properties[ElementProperties.RENDER_LEFT] = t;
                     this._properties[ElementProperties.RENDER_RIGHT] = t + this._allocatedWidth;
                     break;
@@ -144,19 +146,19 @@ namespace Nori2 {
                 case VerticalAlignment.TOP:
                 case VerticalAlignment.STRETCH:
                     Core.assert(top != null);
-                    t = top + (this._properties[ElementProperties.Y] ?? 0);
+                    t = top + this._properties[ElementProperties.Y];
                     this._properties[ElementProperties.RENDER_TOP] = t;
                     this._properties[ElementProperties.RENDER_BOTTOM] = t + this._allocatedHeight;
                     break;
                 case VerticalAlignment.BOTTOM:
                     Core.assert(bottom != null);
-                    t = bottom - (this._properties[ElementProperties.Y] ?? 0);
+                    t = bottom - this._properties[ElementProperties.Y];
                     this._properties[ElementProperties.RENDER_BOTTOM] = t;
                     this._properties[ElementProperties.RENDER_TOP] = t - this._allocatedHeight;
                     break;
                 case VerticalAlignment.CENTER:
                     Core.assert(top != null && bottom != null);
-                    t = (top + bottom - this._allocatedHeight) / 2 + (this._properties[ElementProperties.Y] ?? 0);
+                    t = (top + bottom - this._allocatedHeight) / 2 + this._properties[ElementProperties.Y];
                     this._properties[ElementProperties.RENDER_TOP] = t;
                     this._properties[ElementProperties.RENDER_BOTTOM] = t + this._allocatedHeight;
                     break;

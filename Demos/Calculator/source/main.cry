@@ -19,10 +19,10 @@ function main() {
 
     display = new Rectangle().setWidth(500).setHeight(100).setColor(200, 200, 200);
     buttons = [display];
-    for (y = 2; y <= 5; ++y) {
-        for (x = 1; x <= 5; ++x) {
+    for (y = 1; y < 5; ++y) {
+        for (x = 0; x < 5; ++x) {
             color = (x + y) % 2 == 0 ? 0 : 255;
-            buttons.add(new Rectangle().setWidth(100).setHeight(100).setColor(color, color, color));
+            buttons.add(new Rectangle().setX(x * 100).setY(y * 100).setWidth(100).setHeight(100).setColor(color, color, color));
         }
     }
 

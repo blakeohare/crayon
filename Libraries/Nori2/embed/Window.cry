@@ -28,9 +28,9 @@ namespace Nori2 {
             }
 
             Panel.instantiateTree(this._root);
-
             this._isShown = true;
-            $$lib_nori2_showWindow(this._nativeInstance, this._properties);
+            this._updateLayout();
+            $$lib_nori2_showWindow(this._nativeInstance, this._properties, this._root._nativeInstance);
             return this;
         }
 
@@ -50,6 +50,24 @@ namespace Nori2 {
             return $$lib_nori2_invalidateWindowProperty(this._nativeInstance, property, this._properties[property]);
         }
 
+        static field NON_VIRTUALS_REUSABLE = [];
+        static field QUEUE_REUSABLE = [];
+        function getNonVirtuals() {
+            output = Window.NON_VIRTUALS_REUSABLE;
+            queue = Window.QUEUE_REUSABLE;
+            queue.add(this._root);
+            for (item : queue) {
+                if (item is Panel) {
+                    queue.concat(item._children);
+                }
+                if (!item._isVirtual) {
+                    output.add(item);
+                }
+            }
+            queue.clear();
+            return output;
+        }
+
         function _updateLayout() {
             if (!this._isShown) return;
             if (this._hierarchyDirty) {
@@ -60,7 +78,22 @@ namespace Nori2 {
             size = this._properties[WindowProperties.SIZE];
             width = size[0];
             height = size[1];
+
             this._root._allocateAvailableSpace(0, 0, width, height, width, height, HorizontalAlignment.STRETCH, VerticalAlignment.STRETCH);
+
+            nonVirtuals = [];
+
+            nativeElements = [];
+            properties = [];
+            types = [];
+            nonVirtuals = this.getNonVirtuals();
+            for (element : nonVirtuals) {
+                nativeElements.add(element._nativeInstance);
+                properties.add(element._properties);
+                types.add(element._typeId);
+            }
+            nonVirtuals.clear();
+            $$lib_nori2_updateLayout(nativeElements, properties, types);
         }
 
         function _updateHierarchy() {
@@ -93,10 +126,7 @@ namespace Nori2 {
             if (this._nativeInstance != null) {
                 this._invalidate(WindowProperties.SIZE);
             }
-
-            this._root._updateAbsoluteRequiredSize();
-            this._root._allocateAvailableSpace(0, 0, width, height, width, height, HorizontalAlignment.STRETCH, VerticalAlignment.STRETCH);
-
+            this._updateLayout();
             return this;
         }
 
