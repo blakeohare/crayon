@@ -16,6 +16,7 @@ namespace Nori2 {
         BACKGROUND_RGBA = 16,
 
         MISC_0 = 20,
+        MISC_STRING_0 = 21,
     }
 
     enum ElementTypeId {
@@ -24,6 +25,7 @@ namespace Nori2 {
         RECTANGLE = 1,
         CANVAS = 2,
         SCROLL_PANEL = 3,
+        BUTTON = 4,
     }
 
     enum Alignment {

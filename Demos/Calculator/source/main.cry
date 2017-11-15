@@ -18,17 +18,45 @@ function main() {
     window.setContent(mainCanvas);
 
     display = new Rectangle().setWidth(500).setHeight(100).setColor(200, 200, 200);
-    buttons = [display];
-    for (y = 1; y < 5; ++y) {
-        for (x = 0; x < 5; ++x) {
-            color = (x + y) % 2 == 0 ? 0 : 255;
-            buttons.add(new Rectangle().setX(x * 100).setY(y * 100).setWidth(100).setHeight(100).setColor(color, color, color));
-        }
-    }
+    buttons = [
+        makeButton(0, 0, 5, 1, "Display"),
+
+        makeButton(0, 1, 1, 1, "7"),
+        makeButton(1, 1, 1, 1, "8"),
+        makeButton(2, 1, 1, 1, "9"),
+
+        makeButton(0, 2, 1, 1, "4"),
+        makeButton(1, 2, 1, 1, "5"),
+        makeButton(2, 2, 1, 1, "6"),
+
+        makeButton(0, 3, 1, 1, "1"),
+        makeButton(1, 3, 1, 1, "2"),
+        makeButton(2, 3, 1, 1, "3"),
+
+        makeButton(0, 4, 2, 1, "0"),
+        makeButton(2, 4, 1, 1, "."),
+
+        makeButton(3, 1, 1, 1, "-"),
+        makeButton(3, 2, 1, 1, "*"),
+        makeButton(3, 3, 1, 1, "/"),
+        makeButton(3, 4, 1, 1, "sqrt"),
+        makeButton(4, 1, 1, 1, "C"),
+        makeButton(4, 2, 1, 2, "+"),
+        makeButton(4, 4, 1, 1, "="),
+    ];
 
     for (button : buttons) {
         mainCanvas.addChild(button);
     }
 
     window.show();
+}
+
+function makeButton(col, row, colSpan, rowSpan, label) {
+    return new Button()
+        .setText(label)
+        .setX(col * 100)
+        .setY(row * 100)
+        .setWidth(colSpan * 100)
+        .setHeight(rowSpan * 100);
 }

@@ -9,4 +9,6 @@ struct ElementProperties {
     int bg_green;
     int bg_blue;
     int bg_alpha;
+
+    string misc_string_0;
 }

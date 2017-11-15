@@ -67,6 +67,12 @@ namespace Interpreter.Libraries.Nori2
                     scrollPanel.SetPosition(left, top, width, height);
                     return scrollPanel;
 
+                case 4: // Button
+                    Button button = new Button();
+                    button.SetPosition(left, top, width, height);
+                    button.Text = properties.misc_string_0;
+                    return button;
+
                 default:
                     throw new NotImplementedException();
             }
@@ -113,14 +119,17 @@ namespace Interpreter.Libraries.Nori2
             {
                 case 1:
                     Rectangle r = (Rectangle)element;
-                    r.Location = new System.Drawing.Point(x, y);
-                    r.Size = new System.Drawing.Size(width, height);
+                    r.SetPosition(x, y, width, height);
                     break;
 
                 case 3:
                     ScrollPanel sp = (ScrollPanel)element;
-                    sp.Location = new System.Drawing.Point(x, y);
-                    sp.Size = new System.Drawing.Size(width, height);
+                    sp.SetPosition(x, y, width, height);
+                    break;
+
+                case 4:
+                    Button btn = (Button)element;
+                    btn.SetPosition(x, y, width, height);
                     break;
 
                 default:

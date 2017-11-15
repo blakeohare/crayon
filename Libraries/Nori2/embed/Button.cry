@@ -1,0 +1,14 @@
+namespace Nori2 {
+
+    const BUTTON_TEXT_LABEL = ElementProperties.MISC_STRING_0;
+
+    class Button : Element {
+
+        constructor() : base() {
+            this._typeId = ElementTypeId.BUTTON;
+            this._properties[BUTTON_TEXT_LABEL] = 'Button';
+        }
+
+        function setText(text) { return this._setValue(BUTTON_TEXT_LABEL, text); }
+    }
+}
