@@ -6,16 +6,25 @@
 Value lib_nori2_function_instantiateElement(Array<Value> args) {
     int type = (int) args[0].internalValue;
     ObjectInstance o = (ObjectInstance) args[1].internalValue;
-
-    // TODO: need to figure out how to unwrap these on the translated side
+    o.nativeData = new Array<object>(1);
     List<Value> properties = (List<Value>) args[2].internalValue;
-    Array<object> unboxed = new Array<object>(properties.Size());
-    int propertiesSize = properties.Size();
-    for (int i = 0; i < propertiesSize; i += 1) {
-        unboxed[i] = properties[i].internalValue;
+    ElementProperties unboxed = new ElementProperties(
+        (int) properties[0].internalValue, // x
+        (int) properties[1].internalValue, // y
+        (int) properties[4].internalValue, // width
+        (int) properties[5].internalValue, // height
+        0, // red
+        0, // green
+        0, // blue
+        255); // alpha
+    if (properties[16].type == Types.LIST) {
+        List<Value> bgColor = (List<Value>) properties[16].internalValue;
+        unboxed.bg_red = (int) bgColor[0].internalValue;
+        unboxed.bg_green = (int) bgColor[1].internalValue;
+        unboxed.bg_blue = (int) bgColor[2].internalValue;
+        unboxed.bg_alpha = (int) bgColor[3].internalValue;
     }
 
-    o.nativeData = new Array<object>(1);
     o.nativeData[0] = Native._lib_nori2_instantiateElement(type, unboxed);
 
     return VALUE_NULL;

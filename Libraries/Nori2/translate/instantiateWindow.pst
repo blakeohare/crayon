@@ -5,19 +5,12 @@
 Value lib_nori2_function_instantiateWindow(Array<Value> args) {
     ObjectInstance window = (ObjectInstance) args[0].internalValue;
     List<Value> properties = (List<Value>) args[1].internalValue;
-    int propertyCount = properties.Size();
-    Array<object> unboxedValues = new Array<object>(propertyCount);
-    Value v = null;
-    for (int i = 0; i < propertyCount; i += 1) {
-        v = properties[i];
-        // This is due to a weird java hack.
-        if (v.type == Types.LIST) {
-            unboxedValues[i] = (List<Value>) properties[i].internalValue;
-        } else {
-            unboxedValues[i] = properties[i].internalValue;
-        }
-    }
+    List<Value> size = (List<Value>) properties[1].internalValue;
+    WindowProperties unboxed = new WindowProperties(
+        (string) properties[0].internalValue,
+        (int) size[0].internalValue,
+        (int) size[1].internalValue);
     window.nativeData = new Array<object>(1);
-    window.nativeData[0] = Native._lib_nori2_instantiateWindow(unboxedValues);
+    window.nativeData[0] = Native._lib_nori2_instantiateWindow(unboxed);
     return VALUE_NULL;
 }

@@ -1,5 +1,6 @@
 package org.crayonlang.libraries.nori2;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -12,5 +13,13 @@ public class NoriWindow {
 		this.frame = new JFrame("Nori Window");
 		this.frame.setSize(width, height);
 		this.contentHost = (JPanel) this.frame.getContentPane();
+	}
+	
+	public void show() {
+		this.frame.show();
+	}
+	
+	public void setContent(JComponent content) {
+		this.contentHost.add(content, null);
 	}
 }

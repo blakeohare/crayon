@@ -1,0 +1,5 @@
+struct WindowProperties {
+    string title;
+    int width;
+    int height;
+}

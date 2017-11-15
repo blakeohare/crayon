@@ -1,7 +1,11 @@
 package org.crayonlang.libraries.nori2;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.util.ArrayList;
-
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import org.crayonlang.interpreter.structs.Value;
 import org.crayonlang.interpreter.FastList;
 
@@ -9,8 +13,10 @@ final class NoriHelper {
 
 	private NoriHelper() {}
 
-	public static void addChildToParent(Object child, Object parent) {
-		throw new RuntimeException();
+	public static void addChildToParent(Object childObj, Object parentObj) {
+		JPanel jp = (JPanel) parentObj;
+		JComponent jc = (JComponent)  childObj;
+		jp.add(jc, null);
 	}
 
 	public static void closeWindow(Object window) {
@@ -18,18 +24,46 @@ final class NoriHelper {
 	}
 
 	public static void ensureParentLinkOrder(Object parent, Object[] children) {
+		Component[] actualChildren = ((JPanel)parent).getComponents();
+		if (actualChildren.length == children.length) {
+			int validUntil = 0;
+			for (int i = 0; i < children.length; ++i) {
+				if (actualChildren[i] == children[i]) {
+					validUntil = i + 1;
+				} else {
+					break;
+				}
+			}
+			if (validUntil == children.length) return;
+		}
 		throw new RuntimeException();
 	}
 
-	public static Object instantiateElement(int type, Object[] properties) {
-		throw new RuntimeException();
+	public static Object instantiateElement(int type, ElementProperties properties) {
+		JComponent jc = null;
+		switch (type) {
+			case 1:
+				jc = new JPanel();
+				jc.setBackground(new Color(properties.bg_red, properties.bg_green, properties.bg_blue, properties.bg_alpha));
+				break;
+			case 3:
+				jc = new JPanel();
+				break;
+			default:
+				throw new RuntimeException("not implemented");
+		}
+		
+		jc.setAlignmentX(properties.render_left);
+		jc.setAlignmentY(properties.render_top);
+		jc.setPreferredSize(new Dimension(properties.render_width, properties.render_height));
+		
+		return jc;
 	}
 
-	public static Object instantiateWindow(Object[] properties) {
-		String title = properties[0].toString();
-		FastList size = (FastList) properties[1];
-		int width = (Integer) size.items[0].intValue;
-		int height = (Integer) size.items[1].intValue;
+	public static Object instantiateWindow(WindowProperties properties) {
+		String title = properties.title;
+		int width = properties.width;
+		int height = properties.height;
 		return new NoriWindow(title, width, height);
 	}
 
@@ -41,11 +75,16 @@ final class NoriHelper {
 		throw new RuntimeException();
 	}
 
-	public static void showWindow(Object window, Object[] ignored, Object rootElement) {
-		throw new RuntimeException();
+	public static void showWindow(Object wObj, Object[] ignored, Object rootElement) {
+		NoriWindow window = (NoriWindow) wObj;
+		window.setContent((JComponent) rootElement);
+		window.show();
 	}
 
-	public static void updateLayout(Object element, int typeId, int x, int y, int width, int height) {
-		throw new RuntimeException();
+	public static void updateLayout(Object obj, int typeId, int x, int y, int width, int height) {
+		JComponent jc = (JComponent) obj;
+		jc.setAlignmentX(x);
+		jc.setAlignmentY(y);
+		jc.setPreferredSize(new Dimension(width, height));
 	}
 }
