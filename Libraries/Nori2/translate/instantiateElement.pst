@@ -8,11 +8,21 @@ Value lib_nori2_function_instantiateElement(Array<Value> args) {
     ObjectInstance o = (ObjectInstance) args[1].internalValue;
     o.nativeData = new Array<object>(1);
     List<Value> properties = (List<Value>) args[2].internalValue;
+    int x = 0;
+    int y = 0;
+    int width = 0;
+    int height = 0;
+    if (properties[0].type == Types.INTEGER) {
+        x = (int) properties[0].internalValue;
+        y = (int) properties[1].internalValue;
+        width = (int) properties[4].internalValue;
+        height = (int) properties[5].internalValue;
+    }
     ElementProperties unboxed = new ElementProperties(
-        (int) properties[0].internalValue, // x
-        (int) properties[1].internalValue, // y
-        (int) properties[4].internalValue, // width
-        (int) properties[5].internalValue, // height
+        x,
+        y,
+        width,
+        height,
         0, // red
         0, // green
         0, // blue

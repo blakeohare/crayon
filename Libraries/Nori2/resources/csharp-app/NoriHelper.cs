@@ -39,39 +39,22 @@ namespace Interpreter.Libraries.Nori2
             throw new NotImplementedException();
         }
 
-        public static object InstantiateElement(int type, object[] properties)
+        public static object InstantiateElement(int type, ElementProperties properties)
         {
-            int left = 0;
-            int top = 0;
-            int width = 0;
-            int height = 0;
-            int red = 0;
-            int green = 0;
-            int blue = 0;
-            int alpha = 0;
-
-            if (properties[0] != null)
-            {
-                left = (int)properties[0];
-                top = (int)properties[1];
-                width = (int)properties[4];
-                height = (int)properties[5];
-            }
-            if (properties[16] != null)
-            {
-                List<Value> colors = (List<Value>)properties[16];
-                red = (int)colors[0].internalValue;
-                green = (int)colors[1].internalValue;
-                blue = (int)colors[2].internalValue;
-                alpha = (int)colors[3].internalValue;
-            }
+            int left = properties.render_left;
+            int top = properties.render_top;
+            int width = properties.render_width;
+            int height = properties.render_height;
 
             switch (type)
             {
                 case 1: // Rectangle
                     Rectangle rect = new Rectangle();
-                    rect.SetPosition(left, top, width, height);
-                    rect.SetColor(red, green, blue, alpha);
+                    rect.SetColor(
+                        properties.bg_red,
+                        properties.bg_green,
+                        properties.bg_blue,
+                        properties.bg_alpha);
                     return rect;
 
                 case 2: // Canvas
@@ -89,15 +72,11 @@ namespace Interpreter.Libraries.Nori2
             }
         }
 
-        public static object InstantiateWindow(object[] properties)
+        public static object InstantiateWindow(WindowProperties properties)
         {
             System.Windows.Forms.Form form = new System.Windows.Forms.Form();
-            string title = properties[0].ToString();
-            List<Value> size = (List<Value>)properties[1];
-            int width = (int)size[0].internalValue;
-            int height = (int)size[1].internalValue;
-            form.Text = title;
-            form.Size = new System.Drawing.Size(width, height);
+            form.Text = properties.title;
+            form.Size = new System.Drawing.Size(properties.width, properties.height);
             return form;
         }
 

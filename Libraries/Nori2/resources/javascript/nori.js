@@ -44,28 +44,14 @@ LIB$nori$ensureParentLinkOrder = function(parent, children) {
 };
 
 LIB$nori$instantiateElement = function(type, properties) {
-	var left = 0;
-	var top = 0;
-	var width = 0;
-	var height = 0;
-	var red = 0;
-	var green = 0;
-	var blue = 0;
-	var alpha = 255;
-	
-	if (properties[0] !== null) {
-		left = properties[0];
-		top = properties[1];
-		width = properties[2];
-		height = properties[3];
-	}
-	if (properties[16] !== null) {
-		var colors = properties[16];
-		red = colors[0][1];
-		green = colors[1][1];
-		blue = colors[2][1];
-		// TODO: alpha
-	}
+	var left = properties[0];
+	var top = properties[1];
+	var width = properties[2];
+	var height = properties[3];
+	var red = properties[4];
+	var green = properties[5];
+	var blue = properties[6];
+	var alpha = properties[7];
 	
 	var obj = null;
 	switch (type) {
@@ -92,8 +78,8 @@ LIB$nori$instantiateElement = function(type, properties) {
 
 LIB$nori$instantiateWindow = function(properties) {
 	var title = properties[0];
-	var width = properties[1][0][1];
-	var height = properties[1][0][1];
+	var width = properties[1];
+	var height = properties[2];
 	return LIB$nori$makeWindow(title, width, height);
 };
 
