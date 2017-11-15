@@ -6,6 +6,11 @@ DOTNET_LIB: name=System.Windows.Forms
 END
 
 BEGIN
+APPLICABLE-TO: java-app
+COPY_FILES: from=java-app, to=%LIBRARY_PATH%/%FILE%
+END
+
+BEGIN
 APPLICABLE-TO: lang-javascript
 EMBED_FILES: from=javascript
 END
