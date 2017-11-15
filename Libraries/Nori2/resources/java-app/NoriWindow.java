@@ -13,6 +13,8 @@ public class NoriWindow {
 		this.frame = new JFrame("Nori Window");
 		this.frame.setSize(width, height);
 		this.contentHost = (JPanel) this.frame.getContentPane();
+		this.contentHost.setLayout(null);
+		this.contentHost.setBounds(0, 0, width, height);
 	}
 	
 	public void show() {

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import org.crayonlang.interpreter.structs.Value;
@@ -47,15 +48,19 @@ final class NoriHelper {
 				jc.setBackground(new Color(properties.bg_red, properties.bg_green, properties.bg_blue, properties.bg_alpha));
 				break;
 			case 3:
-				jc = new JPanel();
+				JPanel jp = new JPanel();
+				jp.setLayout(null);
+				jc = jp;
+				break;
+			case 4:
+				JButton btn = new JButton(properties.misc_string_0);
+				jc = btn;
 				break;
 			default:
 				throw new RuntimeException("not implemented");
 		}
 		
-		jc.setAlignmentX(properties.render_left);
-		jc.setAlignmentY(properties.render_top);
-		jc.setPreferredSize(new Dimension(properties.render_width, properties.render_height));
+		jc.setBounds(properties.render_left, properties.render_top, properties.render_width, properties.render_height);
 		
 		return jc;
 	}
@@ -83,8 +88,6 @@ final class NoriHelper {
 
 	public static void updateLayout(Object obj, int typeId, int x, int y, int width, int height) {
 		JComponent jc = (JComponent) obj;
-		jc.setAlignmentX(x);
-		jc.setAlignmentY(y);
-		jc.setPreferredSize(new Dimension(width, height));
+		jc.setBounds(x, y, width, height);
 	}
 }
