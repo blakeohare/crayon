@@ -290,8 +290,6 @@ namespace Crayon
 
                 BuildContext buildContext = null;
 
-                projectDirectory = FileUtil.GetParentDirectory(buildFile);
-
                 buildContext = BuildContext.Parse(projectDirectory, FileUtil.ReadFileText(buildFile), target);
 
                 buildContext = buildContext ?? new BuildContext();

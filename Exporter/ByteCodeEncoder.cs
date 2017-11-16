@@ -95,7 +95,7 @@ namespace Crayon
         {
             if (SAFE_CHARS.Contains(c)) return "" + c;
 
-            if (c >= 0 && c < 62 * 62)
+            if (c < 62 * 62)
             {
                 return "~" + BASE62[c / 62] + BASE62[c % 62];
             }
