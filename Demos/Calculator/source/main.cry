@@ -50,6 +50,8 @@ function main() {
     }
 
     window.show();
+
+    print("And the window is now closed.");
 }
 
 function makeButton(col, row, colSpan, rowSpan, label) {

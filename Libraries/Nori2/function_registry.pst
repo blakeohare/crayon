@@ -6,6 +6,6 @@
     Core.RegisterLibraryFunction(libRegData, "instantiateWindow", 3);
     Core.RegisterLibraryFunction(libRegData, "invalidateElementProperty", 3);
     Core.RegisterLibraryFunction(libRegData, "invalidateWindowProperty", 3);
-    Core.RegisterLibraryFunction(libRegData, "showWindow", 3);
+    Core.RegisterLibraryFunction(libRegData, "showWindow", 4);
     Core.RegisterLibraryFunction(libRegData, "updateLayout", 3);
 }

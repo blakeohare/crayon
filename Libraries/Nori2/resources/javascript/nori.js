@@ -5,7 +5,7 @@ LIB$nori$makeWindow = function(title, width, height) {
 	host.style.backgroundColor = '#cccccc';
 	host.style.position = 'relative';
 	document.title = title;
-	return [host];
+	return [host, -1];
 };
 
 var t = '0123456789abcdef';
@@ -103,8 +103,9 @@ LIB$nori$invalidateWindowProperty = function(window, key, value) {
 	throw 'not implemented - invalidateWindowProperty';
 };
 
-LIB$nori$showWindow = function(window, properties, rootElement) {
+LIB$nori$showWindow = function(window, properties, rootElement, execId) {
 	window[0].appendChild(rootElement);
+	window[1] = execId;
 };
 
 LIB$nori$updateLayout = function(element, typeId, x, y, width, height) {
