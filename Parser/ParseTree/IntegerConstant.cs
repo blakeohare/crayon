@@ -61,7 +61,7 @@ namespace Parser.ParseTree
             {
                 foreach (char c in value)
                 {
-                    if (c < '0' && c > '9') throw new ParserException(token, "Invalid integer constant.");
+                    if (c < '0' || c > '9') throw new ParserException(token, "Invalid integer constant.");
                     number = number * 10 + (c - '0');
                 }
             }

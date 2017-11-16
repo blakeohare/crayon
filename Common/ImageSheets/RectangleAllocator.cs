@@ -82,7 +82,6 @@ namespace Common.ImageSheets
                         // move to the next row.
                         x = 0;
                         topY = bottomY;
-                        bottomY = topY;
                     }
 
                     bottomY = System.Math.Max(bottomY, topY + currentImage.Height);
