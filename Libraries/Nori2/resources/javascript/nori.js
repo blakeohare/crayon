@@ -54,6 +54,7 @@ LIB$nori$instantiateElement = function(type, properties) {
 	var alpha = properties[7];
 	
 	var obj = null;
+	var s;
 	switch (type) {
 		case 1:
 			obj = document.createElement("div");
@@ -63,11 +64,20 @@ LIB$nori$instantiateElement = function(type, properties) {
 		case 3:
 			obj = document.createElement("div");
 			break;
+		case 4:
+			obj = document.createElement("div");
+			var btn = document.createElement("button");
+			btn.innerHTML = properties[8]; // misc_string_0
+			obj.appendChild(btn);
+			s = btn.style;
+			s.width = '100%';
+			s.height = '100%';
+			break;
 		default:
 			throw 'not implemented';
 	}
 	
-	var s = obj.style;
+	s = obj.style;
 	s.position = 'absolute';
 	s.left = left + 'px';
 	s.top = top + 'px';
