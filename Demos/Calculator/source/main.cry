@@ -60,5 +60,14 @@ function makeButton(col, row, colSpan, rowSpan, label) {
         .setX(col * 100)
         .setY(row * 100)
         .setWidth(colSpan * 100)
-        .setHeight(rowSpan * 100);
+        .setHeight(rowSpan * 100)
+        .setClickHandler(new ClickHandler(label).buttonClick);
+}
+
+class ClickHandler {
+    field id;
+    constructor(id) { this.id = id; }
+    function buttonClick(args) {
+        print("You clicked on '" + this.id + "'");
+    }
 }

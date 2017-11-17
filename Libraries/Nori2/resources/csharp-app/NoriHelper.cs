@@ -6,6 +6,34 @@ namespace Interpreter.Libraries.Nori2
 {
     public static class NoriHelper
     {
+        public static void RegisterHandler(object element, int typeId, string type, int handlerId)
+        {
+            switch (typeId + ":" + type)
+            {
+                case "4:click": // button click
+                    Button btn = (Button)element;
+                    btn.Click += (obj, args) => { EventHandlerCallback(handlerId); };
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        private static void EventHandlerCallback(int id)
+        {
+            ARGS_WRAPPER[0] = Interpreter.Vm.CrayonWrapper.v_buildInteger(id);
+            Interpreter.Vm.CrayonWrapper.v_runInterpreterWithFunctionPointer(EVENT_HANDLER_CALLBACK, ARGS_WRAPPER);
+        }
+
+        private static Value[] ARGS_WRAPPER = new Value[1];
+        private static Value EVENT_HANDLER_CALLBACK = null;
+        private static List<Value> EVENT_HANDLER_ARGS_OUT = null;
+        public static void RegisterHandlerCallback(Value callback, List<Value> args)
+        {
+            EVENT_HANDLER_CALLBACK = callback;
+            EVENT_HANDLER_ARGS_OUT = args;
+        }
+
         public static void AddChildToParent(object child, object parent)
         {
             ((System.Windows.Forms.Panel)parent).Controls.Add((System.Windows.Forms.Control)child);

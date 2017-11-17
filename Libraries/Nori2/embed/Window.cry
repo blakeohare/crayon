@@ -6,6 +6,8 @@ namespace Nori2 {
 
     class Window {
 
+        static field WINDOWS_OPEN = [];
+
         field _nativeInstance = null;
 
         field _properties = [null] * (WindowProperties.max() + 1);
@@ -13,6 +15,11 @@ namespace Nori2 {
         field _root = new ScrollPanel();
         field _isShown = false;
         field _hierarchyDirty = true;
+        field _childrenHandlers = {};
+
+        static constructor() {
+            $$lib_nori2_registerHandlerCallback(Window.invokeHandler, Window.HANDLER_ARGS);
+        }
 
         constructor() {
             this._properties[WindowProperties.TITLE] = "Untitled Window";
@@ -21,7 +28,24 @@ namespace Nori2 {
             this._root._isWindowRoot = true;
         }
 
+        static field HANDLER_ARGS = [];
+        static function invokeHandler(id) {
+            for (window : Window.WINDOWS_OPEN) {
+                entry = window._childrenHandlers.get(id);
+                if (entry != null) {
+                    fp = entry[1];
+                    fp(Window.HANDLER_ARGS);
+                    Window.HANDLER_ARGS.clear();
+                    return;
+                }
+            }
+        }
+
         function show() {
+            if (this._isShown) return;
+
+            Window.WINDOWS_OPEN.add(this);
+
             if (this._nativeInstance == null) {
                 this._nativeInstance = new Core.Object();
                 $$lib_nori2_instantiateWindow(this._nativeInstance, this._properties);
@@ -35,6 +59,14 @@ namespace Nori2 {
         }
 
         function close() {
+            if (!this._isShown) return;
+            for (i = 0; i < Window.WINDOWS_OPEN.length; ++i) {
+                if (Window.WINDOWS_OPEN[i] == this) {
+                    Window.WINDOWS_OPEN.remove(i);
+                    break;
+                }
+            }
+
             $$lib_nori2_closeWindow(this._nativeInstance);
             this._isShown = false;
             return this;

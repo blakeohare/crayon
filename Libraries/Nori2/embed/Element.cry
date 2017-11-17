@@ -76,12 +76,37 @@ namespace Nori2 {
 
         field _properties = Element.PROPERTIES_TEMPLATE.clone();
 
+        // Dictionary of handler type to a list pair of [handler ID, function pointer].
+        field _handlers = null;
+
         constructor() { }
 
         function _setValue(key, value) {
             this._properties[key] = value;
             if (this._nativeInstance != null) {
                 $$lib_nori2_invalidateElementProperty(this._typeId, this._nativeInstance, key, value);
+            }
+            return this;
+        }
+
+        static field HANDLER_ID = 0;
+
+        function _registerHandler(type, fp) {
+            if (this._handlers == null) this._handlers = {};
+            entry = this._handlers.get(type);
+            if (entry != null) {
+                entry[1] = fp;
+            } else {
+                id = Element.HANDLER_ID++;
+                entry = [id, fp];
+                this._handlers[type] = entry;
+            }
+
+            if (this._window != null) {
+                this._window._handlers[id] = [type, this];
+            }
+            if (this._nativeInstance != null) {
+                $$lib_nori2_registerHandler(this._nativeInstance, this._typeId, type, entry[0]);
             }
             return this;
         }

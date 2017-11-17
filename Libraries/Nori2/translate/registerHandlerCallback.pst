@@ -1,0 +1,10 @@
+/*
+    args[0] -> (Value<FunctionPointer>) function pointer for callback (do not unwrap)
+    args[1] -> (List<Value>) arg list
+*/
+Value lib_nori2_function_registerHandlerCallback(Array<Value> args) {
+    Value fp = args[0];
+    List<Value> argOutList = (List<Value>) args[1].internalValue;
+    Native._lib_nori2_registerHandlerCallback(fp, argOutList);
+    return VALUE_NULL;
+}

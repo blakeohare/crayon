@@ -10,5 +10,6 @@ namespace Nori2 {
         }
 
         function setText(text) { return this._setValue(BUTTON_TEXT_LABEL, text); }
+        function setClickHandler(fp) { return this._registerHandler('click', fp); }
     }
 }
