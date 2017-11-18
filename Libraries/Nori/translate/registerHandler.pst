@@ -1,0 +1,14 @@
+/*
+    args[0] -> (ObjectInstance) element
+    args[1] -> (string) type
+    args[2] -> (int) handler ID#
+*/
+Value lib_nori_function_registerHandler(Array<Value> args) {
+    ObjectInstance element = (ObjectInstance) args[0].internalValue;
+    Native._lib_nori_registerHandler(
+        element.nativeData[0],
+        (int) args[1].internalValue,
+        (string) args[2].internalValue,
+        (int) args[3].internalValue);
+    return VALUE_NULL;
+}

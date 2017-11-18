@@ -1,0 +1,11 @@
+void _lib_nori_addChildToParent(object child, object parent);
+void _lib_nori_closeWindow(object window);
+void _lib_nori_ensureParentLinkOrder(object parent, Array<object> childrenExpectedOrder);
+object _lib_nori_instantiateElement(int type, ElementProperties properties);
+object _lib_nori_instantiateWindow(WindowProperties properties);
+void _lib_nori_invalidateElementProperty(int type, object nativeElement, int key, object value);
+void _lib_nori_invalidateWindowProperty(object nativeWindow, int key, object value);
+void _lib_nori_registerHandler(object element, int typeId, string type, int id);
+void _lib_nori_registerHandlerCallback(Value fp, List<Value> argList);
+object _lib_nori_showWindow(object window, Array<object> windowProperties, object rootElement, int execId);
+void _lib_nori_updateLayout(object element, int type, int x, int y, int width, int height);

@@ -1,0 +1,37 @@
+/*
+    args[0] -> (int) type
+    args[1] -> (Value<ObjectInstance>) nativeInstance of the ui element, guaranteed to be instantiated
+    args[2] -> (int<ElementProperty>) property key
+    args[3] -> (object) value
+
+*/
+Value lib_nori_function_invalidateElementProperty(Array<Value> args) {
+    // TODO: define struct
+    ObjectInstance o = (ObjectInstance) args[1].internalValue;
+    object nativeElement = o.nativeData[0];
+    int type = (int) args[0].internalValue;
+    int key = (int) args[2].internalValue;
+
+    // TODO: make this less ugly.
+    // this is weird because Java does weird stuff based on how Value.internalValue is being accessed.
+    object value = null;
+    Value v = args[3];
+    if (v.type == Types.INTEGER) {
+        int iValue = (int) v.internalValue;
+        value = iValue;
+    } else if (v.type == Types.BOOLEAN) {
+        bool bValue = (bool) v.internalValue;
+        value = bValue;
+    } else if (v.type == Types.STRING) {
+        string sValue = (string) v.internalValue;
+        value = sValue;
+    } else if (v.type == Types.LIST) {
+        List<Value> lValue = (List<Value>) v.internalValue;
+        value = lValue;
+    } else {
+        value = v.internalValue;
+    }
+
+    Native._lib_nori_invalidateElementProperty(type, nativeElement, key, value);
+    return VALUE_NULL;
+}
