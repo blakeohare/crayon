@@ -17,32 +17,35 @@ function main() {
     mainCanvas = new Canvas();
     window.setContent(mainCanvas);
 
-    display = new Rectangle().setWidth(500).setHeight(100).setColor(200, 200, 200);
+    display = makeButton(null, 0, 0, 5, 1, "0");
+    screenUpdater = new ScreenUpdater(display);
+    calculator = new CalculatorLogic(screenUpdater.update);
+
     buttons = [
-        makeButton(0, 0, 5, 1, "Display"),
+        display,
 
-        makeButton(0, 1, 1, 1, "7"),
-        makeButton(1, 1, 1, 1, "8"),
-        makeButton(2, 1, 1, 1, "9"),
+        makeButton(calculator, 0, 1, 1, 1, "7"),
+        makeButton(calculator, 1, 1, 1, 1, "8"),
+        makeButton(calculator, 2, 1, 1, 1, "9"),
 
-        makeButton(0, 2, 1, 1, "4"),
-        makeButton(1, 2, 1, 1, "5"),
-        makeButton(2, 2, 1, 1, "6"),
+        makeButton(calculator, 0, 2, 1, 1, "4"),
+        makeButton(calculator, 1, 2, 1, 1, "5"),
+        makeButton(calculator, 2, 2, 1, 1, "6"),
 
-        makeButton(0, 3, 1, 1, "1"),
-        makeButton(1, 3, 1, 1, "2"),
-        makeButton(2, 3, 1, 1, "3"),
+        makeButton(calculator, 0, 3, 1, 1, "1"),
+        makeButton(calculator, 1, 3, 1, 1, "2"),
+        makeButton(calculator, 2, 3, 1, 1, "3"),
 
-        makeButton(0, 4, 2, 1, "0"),
-        makeButton(2, 4, 1, 1, "."),
+        makeButton(calculator, 0, 4, 2, 1, "0"),
+        makeButton(calculator, 2, 4, 1, 1, "."),
 
-        makeButton(3, 1, 1, 1, "-"),
-        makeButton(3, 2, 1, 1, "*"),
-        makeButton(3, 3, 1, 1, "/"),
-        makeButton(3, 4, 1, 1, "sqrt"),
-        makeButton(4, 1, 1, 1, "C"),
-        makeButton(4, 2, 1, 2, "+"),
-        makeButton(4, 4, 1, 1, "="),
+        makeButton(calculator, 3, 1, 1, 1, "-"),
+        makeButton(calculator, 3, 2, 1, 1, "*"),
+        makeButton(calculator, 3, 3, 1, 1, "/"),
+        makeButton(calculator, 3, 4, 1, 1, "sqrt"),
+        makeButton(calculator, 4, 1, 1, 1, "C"),
+        makeButton(calculator, 4, 2, 1, 2, "+"),
+        makeButton(calculator, 4, 4, 1, 1, "="),
     ];
 
     for (button : buttons) {
@@ -54,20 +57,126 @@ function main() {
     print("And the window is now closed.");
 }
 
-function makeButton(col, row, colSpan, rowSpan, label) {
+function makeButton(calculator, col, row, colSpan, rowSpan, label) {
     return new Button()
         .setText(label)
         .setX(col * 100)
         .setY(row * 100)
         .setWidth(colSpan * 100)
         .setHeight(rowSpan * 100)
-        .setClickHandler(new ClickHandler(label).buttonClick);
+        .setClickHandler(new ClickHandler(calculator, label).buttonClick);
+}
+
+class ScreenUpdater {
+    field screenElement;
+
+    constructor(screen) {
+        this.screenElement = screen;
+    }
+
+    function update(value) {
+        print("Update screen to: '" + value + "'");
+    }
+}
+
+class CalculatorLogic {
+
+    field displayUpdaterCallback;
+
+    field currentValue = null;
+    field previousValue = null;
+    field operator = null;
+    field lastOperatorPushed = null;
+    field autoEqual = null;
+
+    constructor(displayUpdaterCallback) {
+        this.displayUpdaterCallback = displayUpdaterCallback;
+    }
+
+    function pushNumber(num) {
+        this.autoEqual = null;
+        this.currentValue = (this.currentValue ?? 0) * 10 + num;
+        this.updateDisplay();
+    }
+
+    function pushOperator(op) {
+        if (this.currentValue == null) return;
+        this.autoEqual = null;
+
+        this.previousValue = this.currentValue;
+        this.currentValue = null;
+        this.operator = op;
+    }
+
+    function pushEquals() {
+        if (this.autoEqual != null) {
+            this.currentValue = this.autoEqual[0];
+            this.operator = this.autoEqual[1];
+        }
+
+        left = this.previousValue;
+        right = this.currentValue;
+
+        switch (this.operator ?? this.lastOperatorPushed ?? "invalid") {
+            case "+": value = left + right; break;
+            case "-": value = left - right; break;
+            case "*": value = left * right; break;
+            case "/": value = left / right; break;
+            case "invalid": return;
+            default: throw new Exception();
+        }
+
+        this.autoEqual = [right, this.operator];
+        this.currentValue = null;
+        this.operator = null;
+        this.previousValue = value;
+
+        this.updateDisplay();
+    }
+
+    function updateDisplay() {
+        this.displayUpdaterCallback(this.currentValue ?? this.previousValue ?? 0);
+    }
 }
 
 class ClickHandler {
     field id;
-    constructor(id) { this.id = id; }
+    field calculator;
+    constructor(calculator, id) {
+        this.calculator = calculator;
+        this.id = id;
+    }
+
     function buttonClick(args) {
-        print("You clicked on '" + this.id + "'");
+        switch (this.id) {
+            case "0":
+            case "1":
+            case "2":
+            case "3":
+            case "4":
+            case "5":
+            case "6":
+            case "7":
+            case "8":
+            case "9":
+                this.calculator.pushNumber(Core.parseInt(this.id));
+                break;
+
+            case "*":
+            case "/":
+            case "+":
+            case "-":
+                this.calculator.pushOperator(this.id);
+                break;
+
+            case "=":
+                this.calculator.pushEquals();
+                break;
+
+            default:
+                print("Not implemented: " + this.id);
+                break;
+
+        }
     }
 }
