@@ -12,8 +12,25 @@ Value lib_nori2_function_invalidateElementProperty(Array<Value> args) {
     int type = (int) args[0].internalValue;
     int key = (int) args[2].internalValue;
 
-    // TODO: do type checking for the given key and convert to a specific value, otherwise this won't translate to C very well.
-    object value = args[3].internalValue;
+    // TODO: make this less ugly.
+    // this is weird because Java does weird stuff based on how Value.internalValue is being accessed.
+    object value = null;
+    Value v = args[3];
+    if (v.type == Types.INTEGER) {
+        int iValue = (int) v.internalValue;
+        value = iValue;
+    } else if (v.type == Types.BOOLEAN) {
+        bool bValue = (bool) v.internalValue;
+        value = bValue;
+    } else if (v.type == Types.STRING) {
+        string sValue = (string) v.internalValue;
+        value = sValue;
+    } else if (v.type == Types.LIST) {
+        List<Value> lValue = (List<Value>) v.internalValue;
+        value = lValue;
+    } else {
+        value = v.internalValue;
+    }
 
     Native._lib_nori2_invalidateElementProperty(type, nativeElement, key, value);
     return VALUE_NULL;

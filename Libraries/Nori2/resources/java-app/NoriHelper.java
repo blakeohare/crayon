@@ -76,6 +76,15 @@ final class NoriHelper {
 	}
 
 	public static void invalidateElementProperty(int type, Object element, int key, Object value) {
+		switch (type) {
+			// Button
+			case 4:
+				switch (key) {
+					// misc_string_0
+					case 21: ((JButton)element).setText(value.toString()); return;
+				}
+				break;
+		}
 		throw new RuntimeException();
 	}
 

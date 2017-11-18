@@ -116,6 +116,20 @@ namespace Interpreter.Libraries.Nori2
 
         public static void InvalidateElementProperty(int type, object element, int key, object value)
         {
+            switch (type)
+            {
+                case 4:
+                    switch (key)
+                    {
+                        case 21:
+                            Button b = (Button)element;
+                            b.Text = value.ToString();
+                            return;
+                    }
+                    break;
+                default:
+                    break;
+            }
             throw new NotImplementedException();
         }
 

@@ -75,7 +75,7 @@ class ScreenUpdater {
     }
 
     function update(value) {
-        print("Update screen to: '" + value + "'");
+        this.screenElement.setText(value);
     }
 }
 
