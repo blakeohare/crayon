@@ -94,8 +94,16 @@ LIB$nori$instantiateWindow = function(properties) {
 };
 
 LIB$nori$invalidateElementProperty = function(type, element, key, value) {
-
-	throw 'not implemented - invalidateElementProperty';
+	switch (type) {
+		// button
+		case 4:
+			switch (key) {
+				// text
+				case 21: element.firstChild.innerHTML = value; return;
+			}
+			break;
+	}
+	throw 'not implemented';
 };
 
 LIB$nori$invalidateWindowProperty = function(window, key, value) {
@@ -114,4 +122,28 @@ LIB$nori$updateLayout = function(element, typeId, x, y, width, height) {
 	s.top = y + 'px';
 	s.width = width + 'px';
 	s.height = height + 'px';
+};
+
+LIB$nori$CALLBACK_FP = null;
+LIB$nori$CALLBACK_ARGS = null;
+LIB$nori$CALLBACK_VALUE_ARRAY = [0];
+
+LIB$nori$registerHandlerCallback = function(callbackValue, callbackArgs) {
+	LIB$nori$CALLBACK_FP = callbackValue;
+	LIB$nori$CALLBACK_ARGS = callbackArgs;
+};
+
+LIB$nori$registerHandler = function(element, typeId, handlerType, handlerId) {
+	switch (typeId + ":" + handlerType) {
+		case "4:click":
+			element.firstChild.addEventListener('click', function() { LIB$nori$eventHandler(handlerId); });
+			break;
+		default:
+			throw "Not implemented: " + typeId + ":" + handlerType;
+	}
+};
+
+LIB$nori$eventHandler = function(id) {
+	LIB$nori$CALLBACK_VALUE_ARRAY[0] = v_buildInteger(id);
+	v_runInterpreterWithFunctionPointer(LIB$nori$CALLBACK_FP, LIB$nori$CALLBACK_VALUE_ARRAY);
 };
