@@ -3,11 +3,14 @@ package org.crayonlang.libraries.nori2;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import org.crayonlang.interpreter.structs.Value;
+import org.crayonlang.interpreter.Interpreter;
 import org.crayonlang.interpreter.FastList;
 
 final class NoriHelper {
@@ -89,5 +92,33 @@ final class NoriHelper {
 	public static void updateLayout(Object obj, int typeId, int x, int y, int width, int height) {
 		JComponent jc = (JComponent) obj;
 		jc.setBounds(x, y, width, height);
+	}
+	
+	private static Value eventHandlerCallbackValue;
+	private static FastList eventHandlerArgs;
+	private static Value[] argsWrapper = new Value[1];
+	
+	public static void registerHandlerCallback(Value callbackValue, FastList args) {
+		eventHandlerCallbackValue = callbackValue;
+		eventHandlerArgs = args;
+	}
+	
+	public static void registerHandler(Object element, int typeId, String handlerType, final int handlerId) {
+		switch (typeId + ":" + handlerType) {
+			case "4:click":
+				((JButton)element).addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						invokeEventHandlerCallback(handlerId);
+					}
+				});
+				break;
+			default:
+				throw new RuntimeException("Not implemented: " + typeId + ":" + handlerType);
+		}
+	}
+	
+	private static void invokeEventHandlerCallback(int id) {
+		argsWrapper[0] = Interpreter.v_buildInteger(id);
+		Interpreter.v_runInterpreterWithFunctionPointer(eventHandlerCallbackValue, argsWrapper);
 	}
 }
