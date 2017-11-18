@@ -11,7 +11,7 @@ namespace Interpreter.Libraries.Nori
             switch (typeId + ":" + type)
             {
                 case "4:click": // button click
-                    Button btn = (Button)element;
+                    Element.Button btn = (Element.Button)element;
                     btn.Click += (obj, args) => { EventHandlerCallback(handlerId); };
                     break;
                 default:
@@ -77,7 +77,7 @@ namespace Interpreter.Libraries.Nori
             switch (type)
             {
                 case 1: // Rectangle
-                    Rectangle rect = new Rectangle();
+                    Element.Rectangle rect = new Element.Rectangle();
                     rect.SetColor(
                         properties.bg_red,
                         properties.bg_green,
@@ -86,17 +86,17 @@ namespace Interpreter.Libraries.Nori
                     return rect;
 
                 case 2: // Canvas
-                    Canvas canvas = new Canvas();
+                    Element.Canvas canvas = new Element.Canvas();
                     canvas.SetPosition(left, top, width, height);
                     return canvas;
 
                 case 3: // ScrollPanel
-                    ScrollPanel scrollPanel = new ScrollPanel();
+                    Element.ScrollPanel scrollPanel = new Element.ScrollPanel();
                     scrollPanel.SetPosition(left, top, width, height);
                     return scrollPanel;
 
                 case 4: // Button
-                    Button button = new Button();
+                    Element.Button button = new Element.Button();
                     button.SetPosition(left, top, width, height);
                     button.Text = properties.misc_string_0;
                     return button;
@@ -122,7 +122,7 @@ namespace Interpreter.Libraries.Nori
                     switch (key)
                     {
                         case 21:
-                            Button b = (Button)element;
+                            Element.Button b = (Element.Button)element;
                             b.Text = value.ToString();
                             return;
                     }
@@ -160,17 +160,17 @@ namespace Interpreter.Libraries.Nori
             switch (typeId)
             {
                 case 1:
-                    Rectangle r = (Rectangle)element;
+                    Element.Rectangle r = (Element.Rectangle)element;
                     r.SetPosition(x, y, width, height);
                     break;
 
                 case 3:
-                    ScrollPanel sp = (ScrollPanel)element;
+                    Element.ScrollPanel sp = (Element.ScrollPanel)element;
                     sp.SetPosition(x, y, width, height);
                     break;
 
                 case 4:
-                    Button btn = (Button)element;
+                    Element.Button btn = (Element.Button)element;
                     btn.SetPosition(x, y, width, height);
                     break;
 
