@@ -33,5 +33,10 @@ namespace JavaAppAndroid
         {
             sb.Append("TranslationHelper.getByteCode()");
         }
+
+        public override void TranslateVmEndProcess(StringBuilder sb)
+        {
+            sb.Append("System.exit(0)");
+        }
     }
 }

@@ -1032,6 +1032,11 @@ namespace LangPython
             throw new NotImplementedException();
         }
 
+        public override void TranslateVmEndProcess(StringBuilder sb)
+        {
+            sb.Append("sys.exit(0)");
+        }
+
         public override void TranslateVmRunLibraryManifest(
             StringBuilder sb,
             Expression libraryName,

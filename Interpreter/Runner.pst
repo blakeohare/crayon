@@ -135,17 +135,23 @@ int runInterpreter(int executionContextId) {
     ProgramData p = Core.GetProgramData();
     InterpreterResult result = interpret(executionContextId);
     int status = result.status;
+    bool shutdown = false;
     if (status == InterpreterResultStatus.FINISHED) {
         if (p.executionContexts.Contains(executionContextId)) {
             p.executionContexts.Remove(executionContextId);
         }
         runShutdownHandlers();
+        shutdown = true;
     } else if (status == InterpreterResultStatus.FATAL_ERROR) {
         // TODO: don't generate the error in the interpreter. Instead just return the message and
         // the stack trace will be determined from the stack here. Also later add logic to
         // conditionally find symbol information here.
         Core.PrintStdOut(result.errorMessage);
         runShutdownHandlers();
+        shutdown = true;
+    }
+    if (shutdown && executionContextId == 0) {
+        Core.VmEndProcess();
     }
     return status;
 }

@@ -532,12 +532,17 @@ ExecutionContext getExecutionContext(int id) {
     return null;
 }
 
-int vm_suspend() {
-    return vm_suspend_for_context(getExecutionContext(-1));
+int vm_suspend_with_status(int status) {
+    return vm_suspend_for_context(getExecutionContext(-1), status);
 }
 
-int vm_suspend_for_context(ExecutionContext ec) {
+// status is an enum value in InterpreterStatus.
+int vm_suspend(int status) {
+    return vm_suspend_for_context(getExecutionContext(-1), 1);
+}
+
+int vm_suspend_for_context(ExecutionContext ec, int status) {
     ec.executionStateChange = true;
-    ec.executionStateChangeCommand = 1;
+    ec.executionStateChangeCommand = status;
     return 0;
 }

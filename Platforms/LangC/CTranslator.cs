@@ -1040,6 +1040,11 @@ namespace LangC
             throw new Exception();
         }
 
+        public override void TranslateVmEndProcess(StringBuilder sb)
+        {
+            throw new Exception();
+        }
+
         public override void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression libRegObj)
         {
             sb.Append("LibraryHelper_run_library_manifest(");

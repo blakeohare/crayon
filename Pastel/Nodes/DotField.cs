@@ -162,6 +162,7 @@ namespace Pastel.Nodes
                 case "ThreadSleep": return NativeFunction.THREAD_SLEEP;
                 case "TryParseFloat": return NativeFunction.TRY_PARSE_FLOAT;
                 case "VmDetermineLibraryAvailability": return NativeFunction.VM_DETERMINE_LIBRARY_AVAILABILITY;
+                case "VmEndProcess": return NativeFunction.VM_END_PROCESS;
                 case "VmRunLibraryManifest": return NativeFunction.VM_RUN_LIBRARY_MANIFEST;
 
                 // TODO: get this information from the parameter rather than having separate Core function

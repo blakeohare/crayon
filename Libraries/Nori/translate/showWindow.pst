@@ -23,7 +23,7 @@ Value lib_nori_function_showWindow(Array<Value> args) {
     // must be suspended. The JavaScript implementation of Nori will fire a new Interpreter process once
     // the closed handler is run.
     if (!@ext_boolean("IS_WINDOW_SHOW_BlOCKING")) {
-        vm_suspend();
+        vm_suspend_with_status(1);
     }
 
     return VALUE_NULL;

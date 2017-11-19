@@ -791,6 +791,11 @@ namespace LangCSharp
             throw new NotImplementedException();
         }
 
+        public override void TranslateVmEndProcess(StringBuilder sb)
+        {
+            // Not needed. C# Finishes cleanly on all current platforms.
+        }
+
         public override void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression libRegObj)
         {
             sb.Append("TranslationHelper.VmRunLibraryManifest(");

@@ -36,5 +36,10 @@ namespace JavaApp
         {
             sb.Append("AwtTranslationHelper.getRawByteCodeString()");
         }
+
+        public override void TranslateVmEndProcess(StringBuilder sb)
+        {
+            sb.Append("System.exit(0)");
+        }
     }
 }

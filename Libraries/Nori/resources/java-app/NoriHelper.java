@@ -92,8 +92,9 @@ final class NoriHelper {
 		throw new RuntimeException();
 	}
 
-	public static void showWindow(Object wObj, Object[] ignored, Object rootElement) {
+	public static void showWindow(Object wObj, Object[] ignored, Object rootElement, int execId) {
 		NoriWindow window = (NoriWindow) wObj;
+		window.setExecId(execId);
 		window.setContent((JComponent) rootElement);
 		window.show();
 	}

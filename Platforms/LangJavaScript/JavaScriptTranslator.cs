@@ -778,6 +778,11 @@ namespace LangJavaScript
             sb.Append(')');
         }
 
+        public override void TranslateVmEndProcess(StringBuilder sb)
+        {
+            // Specific app-like JS platforms can override.
+        }
+
         public override void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression libRegObj)
         {
             sb.Append("C$common$runLibraryManifest(");

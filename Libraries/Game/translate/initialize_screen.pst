@@ -23,7 +23,7 @@ Value lib_game_function_initialize_screen(Array<Value> args) {
 
     // Suspend the ExecutionContext that is active when this was called (as that will be the one
     // that will be checked for state changes).
-    vm_suspend_for_context(ec);
+    vm_suspend_for_context(ec, 1);
 
     return VALUE_NULL;
 }
