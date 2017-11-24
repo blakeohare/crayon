@@ -83,7 +83,7 @@ funcion primero() {
     deadTransformationLookup[3] = verdad; // has exactly 3 neighbors
 
     mientras (verdad) {
-        por (event : window.pumpEvents()) {
+        por (event : window.ES_pumpEvents()) {
             elegir (event.type) {
                 caso TipoEvento.QUIT:
                     volver;
@@ -156,6 +156,6 @@ funcion primero() {
             }
         }
 
-        window.clockTick();
+        window.ES_clockTick();
     }
 }

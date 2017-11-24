@@ -48,6 +48,7 @@
         LITERAL, // 1: literal ID in the literal table
         LITERAL_STREAM, // repeated version of the LITERAL op. Literals are listed in reverse order.
         LOCAL, // pushes a local value onto the stack. 1: local ID, 2: name ID
+        LOC_TABLE, // 1: class ID, 2: member count n, [locale ID, n member name ID's] * k locales
         NEGATIVE_SIGN, // no args. pop, flip, push.
         POP, // no args. pop value from value stack.
         POP_IF_NULL_OR_JUMP, // if the last item on the value stack is null, pop it. If it isn't, then jump. 1: jump distance.

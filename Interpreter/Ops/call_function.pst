@@ -132,8 +132,10 @@ if (staticConstructorNotInvoked) {
                     objInstance1 = (ObjectInstance) value.internalValue;
                     int1 = objInstance1.classId; // note that classId has the field name ID and so this is sort of confusing
                     classInfo = classTable[int1];
-                    if (classInfo.globalIdToMemberId.Contains(classId)) {
-                        int1 = classInfo.globalIdToMemberId[classId]; // int1 is now the member ID.
+                    intIntDict1 = classInfo.localeScopedNameIdToMemberId;
+                    int1 = row[4] * p.magicNumbers.totalLocaleCount + row[5];
+                    if (intIntDict1.Contains(int1)) {
+                        int1 = intIntDict1[int1]; // int1 is now the member ID.
                         // now that we have the member ID, check to see if this is a field or a known method.
                         functionId = classInfo.functionIds[int1];
                         if (functionId > 0) {

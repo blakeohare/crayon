@@ -1,17 +1,18 @@
 ﻿// row[0] -> global name ID
+// row[1] -> locale scoped name ID
 
 value = valueStack[valueStackSize - 1];
 nameId = row[0];
-
+int2 = row[1]; // locale scoped name ID
 switch (value.type) {
     case Types.INSTANCE:
-        objInstance1 = ((ObjectInstance) value.internalValue);
+        objInstance1 = (ObjectInstance) value.internalValue;
         classInfo = classTable[objInstance1.classId];
-        intIntDict1 = classInfo.globalIdToMemberId;
+        intIntDict1 = classInfo.localeScopedNameIdToMemberId;
 
         // TODO: a better way to do this without double-lookup.
-        if (intIntDict1.Contains(nameId)) {
-            int1 = intIntDict1[nameId];
+        if (intIntDict1.Contains(int2)) {
+            int1 = intIntDict1[int2];
             functionId = classInfo.functionIds[int1];
             if (functionId == -1) {
                 output = objInstance1.members[int1];

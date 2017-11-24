@@ -1,5 +1,5 @@
 ﻿
-finalizeInitializationImpl(p.stringArgs[pc]);
+finalizeInitializationImpl(p.stringArgs[pc], row[0]);
 
 libFunctionPointers = p.libraryFunctionByPc;
 identifiers = p.identifiers;

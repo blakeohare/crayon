@@ -59,6 +59,7 @@ namespace Parser
             return false;
         }
 
+        // Note: the output of this function is currently treated as mutable.
         public Dictionary<Locale, string> GetNamesByLocale(int expectedSegments)
         {
             TODO.MoreExtensibleFormOfParsingAnnotations();

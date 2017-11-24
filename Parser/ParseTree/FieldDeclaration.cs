@@ -10,14 +10,16 @@ namespace Parser.ParseTree
         public bool IsStaticField { get; private set; }
         public int MemberID { get; set; }
         public int StaticMemberID { get; set; }
+        public AnnotationCollection Annotations { get; set; }
 
-        public FieldDeclaration(Token fieldToken, Token nameToken, ClassDefinition owner, bool isStatic)
+        public FieldDeclaration(Token fieldToken, Token nameToken, ClassDefinition owner, bool isStatic, AnnotationCollection annotations)
             : base(fieldToken, owner, owner.FileScope)
         {
             this.NameToken = nameToken;
             this.DefaultValue = new NullConstant(fieldToken, owner);
             this.IsStaticField = isStatic;
             this.MemberID = -1;
+            this.Annotations = annotations;
         }
 
         public override string GetFullyQualifiedLocalizedName(Locale locale)

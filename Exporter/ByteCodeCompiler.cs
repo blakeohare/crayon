@@ -1,4 +1,5 @@
 ﻿using Common;
+using Localization;
 using Parser;
 using Parser.ParseTree;
 using System;
@@ -38,7 +39,12 @@ namespace Crayon
             header.Add(null, OpCode.ESF_LOOKUP); // offsets to catch and finally blocks
             header.Add(null, OpCode.VALUE_STACK_DEPTH); // changes in the depth of the value stack at given PC's
 
-            header.Add(null, OpCode.FINALIZE_INITIALIZATION, parser.BuildContext.ProjectID);
+            header.Add(null, OpCode.FINALIZE_INITIALIZATION, parser.BuildContext.ProjectID, parser.GetLocaleCount());
+
+            // FINALIZE_INITIALIZATION sets the total number of locales and so this needs that information which is
+            // why it's listed afterwards. TODO: please fix.
+            ByteBuffer localeNameIdTable = this.BuildLocaleNameIdTable(parser);
+            header.Concat(localeNameIdTable);
 
             ByteBuffer output = new ByteBuffer();
             output.Add(null, OpCode.USER_CODE_START, header.Size + 1);
@@ -90,6 +96,120 @@ namespace Crayon
             }
 
             return output;
+        }
+
+        private ByteBuffer BuildLocaleNameIdTable(ParserContext parser)
+        {
+            ByteBuffer output = new ByteBuffer();
+            Locale[] localesUsed = parser.GetAllUsedLocales();
+
+            foreach (CompilationScope scope in parser.GetAllCompilationScopes())
+            {
+                Locale scopeLocale = scope.Locale;
+                foreach (ClassDefinition cd in scope.GetAllClassDefinitions())
+                {
+                    this.BuildLocaleNameIdTableEntry(parser, output, cd, localesUsed, scopeLocale);
+                }
+            }
+
+            return output;
+        }
+
+        private void BuildLocaleNameIdTableEntry(
+            ParserContext parser,
+            ByteBuffer output,
+            ClassDefinition cd,
+            Locale[] localesUsed,
+            Locale classOriginalLocale)
+        {
+            // TODO: This would be so much easier if there was an interface. This is super goofy.
+            List<TopLevelConstruct> topLevelConstructs = new List<TopLevelConstruct>();
+            List<AnnotationCollection> tlcAnnotations = new List<AnnotationCollection>();
+            List<string> tlcDefaultNames = new List<string>();
+            List<int> memberIds = new List<int>();
+            foreach (FieldDeclaration field in cd.Fields)
+            {
+                if (field.IsStaticField) continue;
+                topLevelConstructs.Add(field);
+                tlcAnnotations.Add(field.Annotations);
+                tlcDefaultNames.Add(field.NameToken.Value);
+                memberIds.Add(field.MemberID);
+            }
+            foreach (FunctionDefinition method in cd.Methods)
+            {
+                if (method.IsStaticMethod) continue;
+                topLevelConstructs.Add(method);
+                tlcAnnotations.Add(method.Annotations);
+                tlcDefaultNames.Add(method.NameToken.Value);
+                memberIds.Add(method.MemberID);
+            }
+
+            // Apparently static members are getting allocated member ID's. They shouldn't be.
+            // Adding this hack to get the total member count including static members.
+            int effectiveMemberCount = topLevelConstructs.Count;
+            int perceivedMemberCount = 0; // updated as members are encountered
+
+            // Build a lookup of all the localized names by member ID by locale ID
+            Dictionary<int, List<int>> nameIdByMemberIdByLocaleId = new Dictionary<int, List<int>>();
+
+            for (int i = 0; i < effectiveMemberCount; ++i)
+            {
+                TopLevelConstruct tlc = topLevelConstructs[i];
+                int memberId = memberIds[i];
+                perceivedMemberCount = Math.Max(memberId + 1, perceivedMemberCount);
+                AnnotationCollection annotations = tlcAnnotations[i];
+                string defaultName = tlcDefaultNames[i];
+                Dictionary<Locale, string> localizedNames = annotations.GetNamesByLocale(1);
+                localizedNames[classOriginalLocale] = defaultName;
+                int defaultNameId = parser.LiteralLookup.GetNameId(defaultName);
+                foreach (Locale locale in localesUsed)
+                {
+                    // If this locale isn't even used anywhere, don't bother adding it to the lookup.
+                    int localeId = parser.GetLocaleId(locale);
+                    if (localeId == -1) throw new Exception();
+                    List<int> nameIdByMemberId = null;
+                    if (!nameIdByMemberIdByLocaleId.ContainsKey(localeId))
+                    {
+                        nameIdByMemberId = new List<int>();
+                        nameIdByMemberIdByLocaleId[localeId] = nameIdByMemberId;
+                    }
+                    else
+                    {
+                        nameIdByMemberId = nameIdByMemberIdByLocaleId[localeId];
+                    }
+                    string name = localizedNames.ContainsKey(locale) ? localizedNames[locale] : defaultName;
+                    int nameId = parser.LiteralLookup.GetNameId(name);
+                    while (nameIdByMemberId.Count <= memberId)
+                    {
+                        nameIdByMemberId.Add(-1); // there are some gaps due to static members.
+                    }
+                    nameIdByMemberId[memberId] = nameId;
+                }
+            }
+
+            List<int> op = new List<int>();
+            op.Add(cd.ClassID);
+            op.Add(perceivedMemberCount);
+            foreach (int localeId in nameIdByMemberIdByLocaleId.Keys.OrderBy(k => k))
+            {
+                op.Add(localeId);
+                List<int> nameIdsByMemberId = nameIdByMemberIdByLocaleId[localeId];
+                for (int i = 0; i < perceivedMemberCount; ++i)
+                {
+                    int nameId = -1;
+                    if (i < nameIdsByMemberId.Count)
+                    {
+                        int localizedNameId = nameIdsByMemberId[i];
+                        if (localizedNameId != -1)
+                        {
+                            nameId = localizedNameId;
+                        }
+                    }
+                    op.Add(nameId);
+                }
+            }
+
+            output.Add(null, OpCode.LOC_TABLE, op.ToArray());
         }
 
         private ByteBuffer BuildSwitchStatementTables(ParserContext parser)
@@ -769,7 +889,9 @@ namespace Crayon
                     {
                         this.CompileExpression(parser, buffer, dotStep.Root, true);
                         this.CompileExpression(parser, buffer, assignment.Value, true);
-                        buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_STEP, parser.GetId(dotStep.StepToken.Value), 0);
+                        int nameId = parser.GetId(dotStep.StepToken.Value);
+                        int localeScopedNameId = nameId * parser.GetLocaleCount() + parser.GetLocaleId(dotStep.Owner.FileScope.CompilationScope.Locale);
+                        buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_STEP, nameId, 0, localeScopedNameId);
                     }
                 }
                 else if (assignment.Target is FieldReference)
@@ -817,12 +939,13 @@ namespace Crayon
                 {
                     DotStep dotExpr = (DotStep)assignment.Target;
                     int stepId = parser.GetId(dotExpr.StepToken.Value);
+                    int localeScopedStepId = parser.GetLocaleCount() * stepId + parser.GetLocaleId(dotExpr.Owner.FileScope.CompilationScope.Locale);
                     this.CompileExpression(parser, buffer, dotExpr.Root, true);
                     if (!(dotExpr.Root is ThisKeyword))
                     {
                         buffer.Add(null, OpCode.DUPLICATE_STACK_TOP, 1);
                     }
-                    buffer.Add(dotExpr.DotToken, OpCode.DEREF_DOT, stepId);
+                    buffer.Add(dotExpr.DotToken, OpCode.DEREF_DOT, stepId, localeScopedStepId);
                     this.CompileExpression(parser, buffer, assignment.Value, true);
                     buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
                     if (dotExpr.Root is ThisKeyword)
@@ -1314,7 +1437,9 @@ namespace Crayon
                 DotStep dotStep = (DotStep)increment.Root;
                 this.CompileExpression(parser, buffer, dotStep.Root, true);
                 buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
-                buffer.Add(dotStep.DotToken, OpCode.DEREF_DOT, parser.GetId(dotStep.StepToken.Value));
+                int nameId = parser.GetId(dotStep.StepToken.Value);
+                int localeScopedNameId = nameId * parser.GetLocaleCount() + parser.GetLocaleId(dotStep.Owner.FileScope.CompilationScope.Locale);
+                buffer.Add(dotStep.DotToken, OpCode.DEREF_DOT, nameId, localeScopedNameId);
                 if (increment.IsPrefix)
                 {
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
@@ -1462,7 +1587,10 @@ namespace Crayon
         {
             if (!outputUsed) throw new ParserException(dotStep.FirstToken, "This expression does nothing.");
             this.CompileExpression(parser, buffer, dotStep.Root, true);
-            buffer.Add(dotStep.DotToken, OpCode.DEREF_DOT, parser.GetId(dotStep.StepToken.Value));
+            int rawNameId = parser.GetId(dotStep.StepToken.Value);
+            int localeId = parser.GetLocaleId(dotStep.Owner.FileScope.CompilationScope.Locale);
+            int localeScopedNameId = rawNameId * parser.GetLocaleCount() + localeId;
+            buffer.Add(dotStep.DotToken, OpCode.DEREF_DOT, rawNameId, localeScopedNameId);
         }
 
         private void CompileBooleanConstant(ParserContext parser, ByteBuffer buffer, BooleanConstant boolConstant, bool outputUsed)
@@ -1741,7 +1869,7 @@ namespace Crayon
                 int globalNameId = parser.GetId(ds.StepToken.Value);
                 this.CompileExpression(parser, buffer, dotRoot, true);
                 this.CompileExpressionList(parser, buffer, funCall.Args, true);
-                int localeId = parser.LocaleIds[ds.Owner.FileScope.CompilationScope.Locale];
+                int localeId = parser.GetLocaleId(ds.Owner.FileScope.CompilationScope.Locale);
                 buffer.Add(
                     funCall.ParenToken,
                     OpCode.CALL_FUNCTION,

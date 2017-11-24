@@ -14,7 +14,7 @@ namespace Parser.ParseTree
         public Expression[] DefaultValues { get; set; }
         private int[] argVarIds = null;
         public Executable[] Code { get; set; }
-        AnnotationCollection annotations;
+        public AnnotationCollection Annotations { get; set; }
         public int LocalScopeSize { get; set; }
         public int FinalizedPC { get; set; }
         public int MemberID { get; set; }
@@ -32,7 +32,7 @@ namespace Parser.ParseTree
             this.Library = library;
             this.IsStaticMethod = isStaticMethod;
             this.NameToken = nameToken;
-            this.annotations = annotations;
+            this.Annotations = annotations;
             this.MemberID = -1;
         }
 
@@ -41,7 +41,7 @@ namespace Parser.ParseTree
 
         public override string GetFullyQualifiedLocalizedName(Locale locale)
         {
-            if (this.namesByLocale == null) this.namesByLocale = this.annotations.GetNamesByLocale(1);
+            if (this.namesByLocale == null) this.namesByLocale = this.Annotations.GetNamesByLocale(1);
             string name = this.namesByLocale.ContainsKey(locale) ? this.namesByLocale[locale] : this.NameToken.Value;
             if (this.Owner != null)
             {

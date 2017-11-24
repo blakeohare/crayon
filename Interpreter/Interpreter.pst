@@ -258,6 +258,7 @@ InterpreterResult interpretImpl(int executionContextId) {
             case OpCodes.LITERAL: Core.EmitComment("LITERAL"); @import("Ops/literal.pst"); break;
             case OpCodes.LITERAL_STREAM: Core.EmitComment("LITERAL_STREAM"); @import("Ops/literal_stream.pst"); break;
             case OpCodes.LOCAL: Core.EmitComment("LOCAL"); @import("Ops/local.pst"); break;
+            case OpCodes.LOC_TABLE: Core.EmitComment("LOC_TABLE"); @import("Ops/loc_table.pst"); break;
             case OpCodes.NEGATIVE_SIGN: Core.EmitComment("NEGATIVE_SIGN");@import("Ops/negative_sign.pst"); break;
             case OpCodes.POP: Core.EmitComment("POP"); @import("Ops/pop.pst"); break;
             case OpCodes.POP_IF_NULL_OR_JUMP: Core.EmitComment("POP_IF_NULL_OR_JUMP"); @import("Ops/pop_if_null_or_jump.pst"); break;

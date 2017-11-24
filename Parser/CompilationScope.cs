@@ -101,6 +101,14 @@ namespace Parser
                 output.Remove(key);
             }
         }
+
+        public ClassDefinition[] GetAllClassDefinitions()
+        {
+            return this.executables
+                .OfType<ClassDefinition>()
+                .OrderBy(cd => cd.NameToken.Value)
+                .ToArray();
+        }
     }
 
     public class UserCodeCompilationScope : CompilationScope

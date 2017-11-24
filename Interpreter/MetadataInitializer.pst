@@ -130,7 +130,8 @@ int initializeClass(int pc, ProgramData p, Array<int> args, string className) {
         null, // Array of member ID -> function IDs (with -1 fallback)
         null, // Field initialization command by member ID
         null, // Literal starting value by member ID
-        null, // Global nameID -> member ID
+        null, // Global name ID -> member ID
+        p.classMemberLocalizerBuilder[classId], // Locale-scoped name ID -> member ID
         className); // fully qualified class name
 
     Array<ClassInfo> classTable = getClassTable(p, classId);
@@ -172,6 +173,13 @@ int initializeClass(int pc, ProgramData p, Array<int> args, string className) {
         for (i = 0; i < keys.Size(); i += 1) {
             t = keys[i];
             globalNameIdToMemberId[t] = baseClass.globalIdToMemberId[t];
+        }
+
+        keys = baseClass.localeScopedNameIdToMemberId.Keys();
+        for (i = 0; i < keys.Size(); i += 1) {
+            t = keys[i];
+            // TODO: throw compile time error if you attempt to change the localization of an overridden member.
+            classInfo.localeScopedNameIdToMemberId[t] = baseClass.localeScopedNameIdToMemberId[t];
         }
     }
 
@@ -510,9 +518,10 @@ int addNameImpl(string nameValue) {
     return 0;
 }
 
-int finalizeInitializationImpl(string projectId) {
+int finalizeInitializationImpl(string projectId, int localeCount) {
     ProgramData p = Core.GetProgramData();
 
+    p.magicNumbers.totalLocaleCount = localeCount;
     p.identifiers = Core.ListToArray(p.identifiersBuilder);
     p.literalTable = Core.ListToArray(p.literalTableBuilder);
     p.integerSwitchLookups = Core.ListToArray(p.integerSwitchLookupsBuilder);
@@ -615,5 +624,39 @@ int valueStackDepthImpl(Array<int> row) {
 
     p.valueStackDepthByPc = valueStackDepthByPc;
 
+    return 0;
+}
+
+/*
+    format of the LOC_TABLE op is as follows
+    row[0] -> class ID this is applicable to
+    row[1] -> members of this class (n)
+    row[(n + 1) * k + 2] -> locale ID the following n elements apply to
+    row[(n + 1) * k + 3 + [0 ... n - 1]] -> the name ID's for the members for that locale
+
+    This runs before class initialization, so the lookup table must be added to ProgramData.
+
+    The key is in the form of the nameID * totalLocaleCount + localeId.
+    This mathematically namespaces name ID's to prevent collisions across different locales.
+*/
+int initLocTable(Array<int> row) {
+    int classId = row[0];
+    int memberCount = row[1];
+    int nameId = 0;
+    ProgramData p = Core.GetProgramData();
+    int totalLocales = p.magicNumbers.totalLocaleCount;
+    Dictionary<int, int> lookup = new Dictionary<int, int>();
+    for (int i = 2; i < row.Size(); i += memberCount) {
+        int localeId = row[i];
+        i += 1;
+        for (int j = 0; j < memberCount; j += 1) {
+            nameId = row[i + j];
+            if (nameId != -1) {
+                // These have the default-locale fallbacks filled in for non-default locale access
+                lookup[nameId * totalLocales + localeId] = j;
+            }
+        }
+    }
+    p.classMemberLocalizerBuilder[classId] = lookup;
     return 0;
 }

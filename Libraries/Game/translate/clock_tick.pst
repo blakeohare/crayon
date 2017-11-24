@@ -1,7 +1,8 @@
 ﻿Value lib_game_function_clock_tick(Array<Value> args) {
     Native._lib_game_clockTick();
 
-    vm_suspend();
+    // TODO: replace this with an enum.
+    vm_suspend(1);
 
     return VALUE_NULL;
 }

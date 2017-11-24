@@ -59,6 +59,8 @@ struct ProgramData {
     Array<object> libraryFunctionByPc;
 
     List<Value> shutdownHandlers;
+
+    Dictionary<int, Dictionary<int, int>> classMemberLocalizerBuilder;
 }
 
 struct ExecutionContext {
@@ -160,6 +162,8 @@ struct ClassInfo {
     // the road for private/protected/public modifiers.
     Dictionary<int, int> globalIdToMemberId;
 
+    Dictionary<int, int> localeScopedNameIdToMemberId;
+
     string fullyQualifiedName;
 }
 
@@ -238,6 +242,7 @@ struct ResourceDB {
 struct MagicNumbers {
     int coreExceptionClassId;
     int coreGenerateExceptionFunctionId;
+    int totalLocaleCount;
 }
 
 struct LibRegObj {

@@ -357,7 +357,7 @@ namespace Parser
                 else if (tokens.IsNext(this.parser.Keywords.FIELD) ||
                     tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FIELD))
                 {
-                    fields.Add(this.parser.ExecutableParser.ParseField(tokens, cd));
+                    fields.Add(this.parser.ExecutableParser.ParseField(tokens, cd, annotations));
                 }
                 else
                 {
@@ -375,13 +375,13 @@ namespace Parser
             return cd;
         }
 
-        private FieldDeclaration ParseField(TokenStream tokens, ClassDefinition owner)
+        private FieldDeclaration ParseField(TokenStream tokens, ClassDefinition owner, AnnotationCollection annotations)
         {
             bool isStatic = tokens.PopIfPresent(this.parser.Keywords.STATIC);
             Token fieldToken = tokens.PopExpected(this.parser.Keywords.FIELD);
             Token nameToken = tokens.Pop();
             this.parser.VerifyIdentifier(nameToken);
-            FieldDeclaration fd = new FieldDeclaration(fieldToken, nameToken, owner, isStatic);
+            FieldDeclaration fd = new FieldDeclaration(fieldToken, nameToken, owner, isStatic, annotations);
             if (tokens.PopIfPresent("="))
             {
                 fd.DefaultValue = this.parser.ExpressionParser.Parse(tokens, owner);

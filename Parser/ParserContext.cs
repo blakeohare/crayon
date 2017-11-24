@@ -5,6 +5,7 @@ using Parser.ParseTree;
 using Parser.Resolver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Parser
 {
@@ -13,8 +14,6 @@ namespace Parser
         private Stack<CompilationScope> scopeStack = new Stack<CompilationScope>();
 
         private Dictionary<string, CompilationScope> compilationScopes = new Dictionary<string, CompilationScope>();
-
-        public Dictionary<Locale, int> LocaleIds { get; private set; }
 
         public UserCodeCompilationScope UserCodeCompilationScope { get { return (UserCodeCompilationScope)this.compilationScopes["."]; } }
 
@@ -29,15 +28,65 @@ namespace Parser
             this.LibraryManager = new LibraryManager(buildContext);
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelConstruct, ConstantResolutionState>();
-            this.LocaleIds = new Dictionary<Locale, int>();
             this.ExpressionParser = new ExpressionParser(this);
             this.ExecutableParser = new ExecutableParser(this);
             this.AnnotationParser = new AnnotationParser(this);
         }
 
+        private int localeCount = -1;
+        public int GetLocaleCount()
+        {
+            if (this.localeCount == -1)
+            {
+                HashSet<Locale> locales = new HashSet<Locale>();
+                foreach (CompilationScope scope in this.compilationScopes.Values)
+                {
+                    locales.Add(scope.Locale);
+                }
+                this.localeCount = locales.Count;
+            }
+            return this.localeCount;
+        }
+
+        private Dictionary<Locale, int> localeIds = null;
+        public int GetLocaleId(Locale locale)
+        {
+            if (localeIds == null)
+            {
+                this.localeIds = new Dictionary<Locale, int>();
+                foreach (CompilationScope scope in this.compilationScopes.Keys.OrderBy(key => key).Select(key => this.compilationScopes[key]))
+                {
+                    if (!this.localeIds.ContainsKey(scope.Locale))
+                    {
+                        this.localeIds[scope.Locale] = this.localeIds.Count;
+                    }
+                }
+            }
+            int localeId;
+            if (this.localeIds.TryGetValue(locale, out localeId))
+            {
+                return localeId;
+            }
+            return -1;
+        }
+
         public void AddCompilationScope(CompilationScope scope)
         {
             this.compilationScopes.Add(scope.ScopeKey, scope);
+            this.localeCount = -1;
+        }
+
+        public Locale[] GetAllUsedLocales()
+        {
+            return new HashSet<Locale>(this.GetAllCompilationScopes().Select(scope => scope.Locale)).OrderBy(loc => loc.ID).ToArray();
+        }
+
+        public CompilationScope[] GetAllCompilationScopes()
+        {
+            return this.compilationScopes.Keys
+                .OrderBy(s => s)
+                .Select(key => this.compilationScopes[key])
+                .ToArray();
         }
 
         public HashSet<string> ReservedKeywords { get; private set; }
