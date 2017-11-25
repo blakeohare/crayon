@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.crayonlang.interpreter.structs.Value;
 import org.crayonlang.interpreter.Interpreter;
@@ -59,6 +60,11 @@ final class NoriHelper {
 				JButton btn = new JButton(properties.misc_string_0);
 				jc = btn;
 				break;
+			case 5:
+				JLabel lbl = new JLabel(properties.misc_string_0);
+				lbl.setVerticalAlignment(JLabel.TOP);
+				jc = lbl;
+				break;
 			default:
 				throw new RuntimeException("not implemented");
 		}
@@ -82,6 +88,13 @@ final class NoriHelper {
 				switch (key) {
 					// misc_string_0
 					case 21: ((JButton)element).setText(value.toString()); return;
+				}
+				break;
+			// Label
+			case 5:
+				switch (key) {
+					// misc_string_0
+					case 21: ((JLabel)element).setText(value.toString()); return;
 				}
 				break;
 		}

@@ -73,6 +73,11 @@ LIB$nori$instantiateElement = function(type, properties) {
 			s.width = '100%';
 			s.height = '100%';
 			break;
+		case 5:
+			obj = document.createElement("div");
+			obj.innerHTML = properties[8]; // misc_string_0
+			obj.style.textAlign = 'left';
+			break;
 		default:
 			throw 'not implemented';
 	}
@@ -100,6 +105,13 @@ LIB$nori$invalidateElementProperty = function(type, element, key, value) {
 			switch (key) {
 				// text
 				case 21: element.firstChild.innerHTML = value; return;
+			}
+			break;
+		// label
+		case 5:
+			switch (key) {
+				// text
+				case 21: element.innerHTML = value; return;
 			}
 			break;
 	}

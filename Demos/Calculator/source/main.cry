@@ -17,7 +17,13 @@ function main() {
     mainCanvas = new Canvas();
     window.setContent(mainCanvas);
 
-    display = makeButton(null, 0, 0, 5, 1, "0");
+    display = new Label()
+        .setText('0')
+        .setX(0)
+        .setY(0)
+        .setWidth(500)
+        .setHeight(100);
+
     screenUpdater = new ScreenUpdater(display);
     calculator = new CalculatorLogic(screenUpdater.update);
 
@@ -171,6 +177,10 @@ class ClickHandler {
 
             case "=":
                 this.calculator.pushEquals();
+                break;
+
+            case "C":
+                this.calculator = new CalculatorLogic(this.calculator.displayUpdaterCallback);
                 break;
 
             default:

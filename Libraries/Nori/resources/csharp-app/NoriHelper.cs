@@ -101,6 +101,11 @@ namespace Interpreter.Libraries.Nori
                     button.Text = properties.misc_string_0;
                     return button;
 
+                case 5: // Label
+                    Element.Label label = new Element.Label();
+                    label.Text = properties.misc_string_0;
+                    return label;
+
                 default:
                     throw new NotImplementedException();
             }
@@ -121,10 +126,13 @@ namespace Interpreter.Libraries.Nori
                 case 4:
                     switch (key)
                     {
-                        case 21:
-                            Element.Button b = (Element.Button)element;
-                            b.Text = value.ToString();
-                            return;
+                        case 21: ((Element.Button)element).Text = value.ToString(); return;
+                    }
+                    break;
+                case 5:
+                    switch (key)
+                    {
+                        case 21: ((Element.Label)element).Text = value.ToString(); return;
                     }
                     break;
                 default:
@@ -172,6 +180,11 @@ namespace Interpreter.Libraries.Nori
                 case 4:
                     Element.Button btn = (Element.Button)element;
                     btn.SetPosition(x, y, width, height);
+                    break;
+
+                case 5:
+                    Element.Label lbl = (Element.Label)element;
+                    lbl.SetPosition(x, y, width, height);
                     break;
 
                 default:

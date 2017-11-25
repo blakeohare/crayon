@@ -26,6 +26,7 @@ namespace Nori {
         CANVAS = 2,
         SCROLL_PANEL = 3,
         BUTTON = 4,
+        LABEL = 5,
     }
 
     enum Alignment {
