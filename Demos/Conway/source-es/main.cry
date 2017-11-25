@@ -10,7 +10,7 @@ const CELL_SIZE = 16;
 const SCREEN_WIDTH = CELL_SIZE * WIDTH;
 const SCREEN_HEIGHT = CELL_SIZE * HEIGHT;
 
-funcion getRandomBlue() {
+funcion getRandomColor() {
     volver [
         Aleatorio.ES_randomInt(100, 200),
         Aleatorio.ES_randomInt(40),
@@ -50,7 +50,7 @@ funcion primero() {
     por (y = 0; y < HEIGHT; ++y) {
         por (x = 0; x < WIDTH; ++x) {
             indices.add(indices.length);
-            blues.add(getRandomBlue());
+            blues.add(getRandomColor());
             neighbors = [];
             por (dx : offsets) {
                 por (dy : offsets) {

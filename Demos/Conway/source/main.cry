@@ -10,7 +10,7 @@ const CELL_SIZE = 16;
 const SCREEN_WIDTH = CELL_SIZE * WIDTH;
 const SCREEN_HEIGHT = CELL_SIZE * HEIGHT;
 
-function getRandomBlue() {
+function getRandomColor() {
     return [
         Random.randomInt(40),
         Random.randomInt(100, 200),
@@ -44,7 +44,7 @@ function main() {
     for (y = 0; y < HEIGHT; ++y) {
         for (x = 0; x < WIDTH; ++x) {
             indices.add(indices.length);
-            blues.add(getRandomBlue());
+            blues.add(getRandomColor());
             neighbors = [];
             for (dx : offsets) {
                 for (dy : offsets) {

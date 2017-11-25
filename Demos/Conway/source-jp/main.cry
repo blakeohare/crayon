@@ -16,7 +16,7 @@
     ETC = 2,
 }
 
-作用 getRandomBlue() {
+作用 getRandomColor() {
     戻 [
         Random.randomInt(170, 255),
         Random.randomInt(40),
@@ -52,7 +52,7 @@
     ごと (y = 0; y < HEIGHT; ++y) {
         ごと (x = 0; x < WIDTH; ++x) {
             indices.add(indices.length);
-            blues.add(getRandomBlue());
+            blues.add(getRandomColor());
             neighbors = [];
             ごと (dx : offsets) {
                 ごと (dy : offsets) {
