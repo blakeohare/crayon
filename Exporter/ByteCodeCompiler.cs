@@ -954,7 +954,8 @@ namespace Crayon
                     }
                     else
                     {
-                        buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_STEP, stepId, 0);
+                        int localeScopedNameId = stepId * parser.GetLocaleCount() + parser.GetLocaleId(dotExpr.Owner.FileScope.CompilationScope.Locale);
+                        buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_STEP, stepId, 0, localeScopedNameId);
                     }
                 }
                 else if (assignment.Target is BracketIndex)
@@ -1444,14 +1445,14 @@ namespace Crayon
                 {
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
                     buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
-                    buffer.Add(increment.IncrementToken, OpCode.ASSIGN_STEP, parser.GetId(dotStep.StepToken.Value), 1);
+                    buffer.Add(increment.IncrementToken, OpCode.ASSIGN_STEP, nameId, 1, localeScopedNameId);
                 }
                 else
                 {
                     buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 2);
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
                     buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
-                    buffer.Add(increment.IncrementToken, OpCode.ASSIGN_STEP, parser.GetId(dotStep.StepToken.Value), 0);
+                    buffer.Add(increment.IncrementToken, OpCode.ASSIGN_STEP, nameId, 0, localeScopedNameId);
                     buffer.Add(increment.IncrementToken, OpCode.STACK_SWAP_POP);
                 }
             }
