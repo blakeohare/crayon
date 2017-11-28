@@ -119,6 +119,8 @@ def main(args):
 	runtimeCompilationCommand = canonicalize_sep(copyToDir + '/crayon.exe') + ' -vm csharp-app -vmdir ' + canonicalize_sep(VM_TEMP_DIR_SOURCE)
 	if isMono:
 		runtimeCompilationCommand = 'mono ' + runtimeCompilationCommand
+	print 'running:',
+	print '  ' + runtimeCompilationCommand
 	print runCommand(runtimeCompilationCommand)
 	
 	print "Compiling VM for distribution..."

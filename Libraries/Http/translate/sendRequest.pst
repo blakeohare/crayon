@@ -55,7 +55,7 @@ Value lib_http_function_sendRequest(Array<Value> args) {
         if (Native._lib_http_sendRequestSynchronous(
             objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText, vm_getCurrentExecutionContextId())) {
 
-            vm_suspend();
+            vm_suspend(1);
         }
     }
 
