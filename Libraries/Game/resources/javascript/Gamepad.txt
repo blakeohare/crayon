@@ -10,14 +10,34 @@ C$gamepad$devices = [];
 C$gamepad$support = !!navigator.getGamepads;
 
 C$gamepad$isSupported = function () {
-    return C$gamepad$support;
+	return C$gamepad$support;
 };
 
 C$gamepad$refresh = function () {
-    for (i = 0; i < C$gamepad$queue.length; ++i) {
-        C$gamepad$devices.push(C$gamepad$queue[i]);
-  }
-    C$gamepad$queue = [];
+	for (i = 0; i < C$gamepad$queue.length; ++i) {
+		C$gamepad$devices.push(C$gamepad$queue[i]);
+	}
+	
+	if (C$gamepad$support) {
+		var gps = navigator.getGamepads();
+		for (var i = 0; i < gps.length; ++i) {
+			var gp = gps[i];
+			if (!!gp) {
+				var known = false;
+				for (var j = 0; j < C$gamepad$devices.length; ++j) {
+					if (gp == C$gamepad$devices[j]) {
+						known = true;
+						break;
+					}
+				}
+				if (!known) {
+					C$gamepad$devices.push(gp);
+				}
+			}
+		}
+	}
+	
+	C$gamepad$queue = [];
 };
 
 C$gamepad$getDeviceCount = function () {
