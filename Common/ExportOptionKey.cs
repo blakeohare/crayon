@@ -15,6 +15,7 @@
         JAVA_PACKAGE,
         JS_FILE_PREFIX,
         JS_HEAD_EXTRAS,
+        JS_FULL_PAGE,
         LAUNCHSCREEN_PATH,
         LIBRARIES_USED,
         PROJECT_ID,

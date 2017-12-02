@@ -24,6 +24,7 @@ namespace JavaScriptAppIos
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             options.SetOption(ExportOptionKey.JS_FILE_PREFIX, null);
+            options.SetOption(ExportOptionKey.JS_FULL_PAGE, false); // iOS export has its own enforced fullscreen logic
             options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, string.Join(
                 "\n",
                 "<script type=\"text/javascript\" src=\"ios.js\"></script>",
@@ -123,6 +124,7 @@ namespace JavaScriptAppIos
                 "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/Info.plist|SwiftResources/InfoPlist.txt",
                 "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/ViewController.swift|SwiftResources/ViewControllerSwift.txt",
                 "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/jsres/ios.js|SwiftResources/iOSjs.txt",
+                "%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/jsres/index.html|SwiftResources/HostHtml.txt",
             })
             {
                 string[] parts = pair.Split('|');

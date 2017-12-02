@@ -2,22 +2,4 @@
   v_main();
 });
 
-C$chromewebapp$knownSize = null;
-
-C$chromewebapp$adjustScreen = function() {
-  var screen = [window.innerWidth, window.innerHeight];
-
-  if (C$chromewebapp$knownSize === null ||
-      C$chromewebapp$knownSize[0] != screen[0] ||
-      C$chromewebapp$knownSize[1] != screen[1]) {
-	var phsCanvas = C$game$real_canvas;
-    C$chromewebapp$knownSize = screen;
-    phsCanvas.width = screen[0];
-    phsCanvas.height = screen[1];
-    C$game$ctx.scale(screen[0] / C$game$width, screen[1] / C$game$height);
-  }
-};
-
-C$game$everyFrame = function() {
-	C$chromewebapp$adjustScreen();
-};
+C$common$globalOptions['fullscreen'] = true;

@@ -15,6 +15,7 @@ namespace Crayon
         public string LaunchScreenPath { get; set; }
         public string DefaultTitle { get; set; }
         public string JsFilePrefix { get; set; }
+        public bool JsFullPage { get; set; }
         public string IosBundlePrefix { get; set; }
         public string JavaPackage { get; set; }
         public int? WindowWidth { get; set; }
@@ -47,6 +48,7 @@ namespace Crayon
                     GuidSeed = buildContext.GuidSeed,
                     DefaultTitle = buildContext.DefaultTitle,
                     JsFilePrefix = jsFilePrefix,
+                    JsFullPage = buildContext.JsFullPage,
                     IosBundlePrefix = buildContext.IosBundlePrefix,
                     JavaPackage = buildContext.JavaPackage,
                     IconPath = buildContext.IconFilePath,

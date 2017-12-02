@@ -5,10 +5,7 @@
 
 		<title>%%%DEFAULT_TITLE%%%</title>
 		%%%FAVICON%%%
-		<style type="text/css">
-			body { background-color:#000; text-align:center; }
-			%%%CSS_EXTRA%%%
-		</style>
+		<style type="text/css"> body { background-color:#000; text-align:center; }</style>
 		
 		<script type="text/javascript" src="common.js"></script>
 		<script type="text/javascript" src="vm.js"></script>

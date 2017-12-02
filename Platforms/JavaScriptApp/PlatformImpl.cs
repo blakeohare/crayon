@@ -57,6 +57,20 @@ namespace JavaScriptApp
             AbstractTranslator translatorOverride)
         {
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
+
+            List<string> jsExtraHead = new List<string>() { options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) };
+            bool fullPage = options.GetBool(ExportOptionKey.JS_FULL_PAGE);
+
+            // There's a double-check here so that you can || them together and then have multiple options added here.
+            if (fullPage)
+            {
+                jsExtraHead.Add(
+                    "<script type=\"text/javascript\">"
+                    + (fullPage ? "C$common$globalOptions['fullscreen'] = true;" : "")
+                    + "</script>");
+            }
+            options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, string.Join("\n", jsExtraHead));
+
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
             List<string> coreVmCode = new List<string>();
@@ -113,6 +127,7 @@ namespace JavaScriptApp
 
             Dictionary<string, string> htmlReplacements = new Dictionary<string, string>(replacements);
             replacements["JS_LIB_INCLUSIONS"] = this.GenerateJsLibInclusionHtml(output.Keys);
+
             this.CopyResourceAsText(output, "index.html", "Resources/HostHtml.txt", replacements);
 
             this.CopyResourceAsText(output, "common.js", "Resources/Common.txt", replacements);
@@ -232,6 +247,13 @@ namespace JavaScriptApp
                         "FAVICON",
                         options.GetBool(ExportOptionKey.HAS_ICON)
                             ? "<link rel=\"shortcut icon\" href=\"" + options.GetStringOrEmpty(ExportOptionKey.JS_FILE_PREFIX) + "favicon.ico\">"
+                            : ""
+                    },
+                    {
+                        "CSS_EXTRA",
+                        options.GetBool(ExportOptionKey.JS_FULL_PAGE)
+                            ? ("#crayon_host { background-color:#000; text-align:left; width: 100%; height: 100%; }\n"
+                                + "body { overflow:hidden; }")
                             : ""
                     },
                     { "JS_EXTRA_HEAD", options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) },

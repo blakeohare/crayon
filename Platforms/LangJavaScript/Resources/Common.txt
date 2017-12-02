@@ -6,6 +6,9 @@ C$common$resources = {};
 C$common$binaryResources = {};
 C$common$libraryFunctionLookups = {};
 
+C$common$globalOptions = {};
+C$common$globalOptions['fullscreen'] = false;
+
 C$common$readResourceText = function (path) {
   var v = C$common$getTextRes(path);
   return !v ? null : v;

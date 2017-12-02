@@ -5,6 +5,27 @@ namespace Common
 {
     public static class Util
     {
+        public static bool StringToBool(string value)
+        {
+            if (value == null) return false;
+
+            switch (value.ToLower())
+            {
+                case "true":
+                case "t":
+                case "1":
+                case "yes":
+                case "y":
+                case "yup":
+                case "aye":
+                case "youknowit":
+                case "youbetcha":
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         /// <summary>
         /// Override C#'s default float to string behavior of not display the decimal portion if it's a whole number.
         /// </summary>

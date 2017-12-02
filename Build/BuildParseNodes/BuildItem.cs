@@ -29,6 +29,9 @@ namespace Build.BuildParseNodes
         [XmlElement("jsfileprefix")]
         public string JsFilePrefix { get; set; }
 
+        [XmlElement("jsfullpage")]
+        public string JsFullPage { get; set; }
+
         [XmlElement("minified")]
         public string MinifiedRaw { get; set; }
 

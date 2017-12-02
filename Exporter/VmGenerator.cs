@@ -142,6 +142,7 @@ namespace Crayon
                         .SetOption(ExportOptionKey.IOS_BUNDLE_PREFIX, nullableCompilationBundle.IosBundlePrefix)
                         .SetOption(ExportOptionKey.JAVA_PACKAGE, nullableCompilationBundle.JavaPackage)
                         .SetOption(ExportOptionKey.JS_FILE_PREFIX, nullableCompilationBundle.JsFilePrefix)
+                        .SetOption(ExportOptionKey.JS_FULL_PAGE, nullableCompilationBundle.JsFullPage)
                         .SetOption(ExportOptionKey.SUPPORTED_ORIENTATION, nullableCompilationBundle.Orientations);
 
                     if (options.GetBool(ExportOptionKey.HAS_ICON)) options.SetOption(ExportOptionKey.ICON_PATH, nullableCompilationBundle.IconPath);
