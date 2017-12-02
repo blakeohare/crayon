@@ -169,6 +169,7 @@ namespace Parser.ParseTree
                     // - give an even better error message when there's a class or instance function with the same name
                     //   e.g. "'foo' is a static function and must be invoked with the class name: FooClass.foo(...)
                     // - if there's a method, suggest using "this."
+                    // - if the variable name matches a library that is available, suggest it as a missing import.
                     throw new ParserException(this.FirstToken, "The variable '" + name + "' is used but is never assigned to.");
                 }
             }
