@@ -4,6 +4,24 @@
 @localized('es', 'Juego')
 namespace Game {
 
+    class Experimental {
+        // maps an ID to a game coordinate (as a list of two integers)
+        static field touches = {};
+        static field touchesRawData = [];
+
+        static function getTouchState() {
+            rd = Experimental.touchesRawData;
+            rd.clear();
+            t =  Experimental.touches;
+            t.clear();
+            $$lib_game_getTouchState(rd);
+            for (i = 0; i < rd.length; i += 3) {
+                t[rd[i]] = [rd[i + 1], rd[i + 2]];
+            }
+            return t;
+        }
+    }
+
     @localized('en', 'GameWindow')
     @localized('es', 'JuegoVentana')
     class GameWindow {

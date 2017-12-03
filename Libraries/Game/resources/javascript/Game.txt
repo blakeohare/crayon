@@ -133,6 +133,13 @@ C$game$initializeScreen = function (width, height, pwidth, pheight, execId) {
   canvas.addEventListener('mouseup', C$input$mouseup);
   canvas.addEventListener('mousemove', C$input$mousemove);
 
+  if (C$game$isMobile()) {
+	canvas.ontouchstart = C$game$onTouchUpdate;
+	canvas.ontouchmove = C$game$onTouchUpdate;
+	canvas.ontouchcancel = C$game$onTouchUpdate;
+	canvas.ontouchend = C$game$onTouchUpdate;
+  }
+
   C$game$ctx.imageSmoothingEnabled = false;
   C$game$ctx.mozImageSmoothingEnabled = false;
   C$game$ctx.msImageSmoothingEnabled = false;
@@ -149,7 +156,7 @@ C$game$setTitle = function (title) {
   window.document.title = title;
 };
 
-C$game$enforcedScreenSize = function(width, height) { return [width, height]; }
+C$game$enforcedScreenSize = function(width, height) { return [width, height]; };
 
 C$game$screenInfo = function(o) { return false; };
 
@@ -158,3 +165,39 @@ window.addEventListener('keydown', function(e) {
     e.preventDefault();
   }
 }, false);
+
+C$game$touches = {}; // { ID -> [x, y] }
+
+C$game$onTouchUpdate= function(ev) {
+  ev.preventDefault();
+  C$game$touches = {};
+  var w = C$game$width;
+  var h = C$game$height;
+  for (var i = 0; i < ev.touches.length; ++i) {
+	var t = ev.touches[i];
+	var c = t.target;
+	var x = Math.floor(w * (t.clientX - c.clientLeft) / c.clientWidth);
+	var y = Math.floor(h * (t.clientY - c.clientTop) / c.clientHeight);
+	x = Math.max(0, Math.min(w - 1, x));
+	y = Math.max(0, Math.min(h - 1, y));
+	C$game$touches[t.identifier] = [x, y];
+  }
+};
+
+C$game$getTouchState = function(data) {
+	var n = 0;
+	for (var key in C$game$touches) {
+		var p = C$game$touches[key];
+		var i = n * 3 + 1;
+		data[i] = key;
+		data[i + 1] = p[0];
+		data[i + 2] = p[1];
+		n++;
+		if (n > 9) break;
+	}
+	data[0] = n;
+};
+
+C$game$isMobile = function() {
+	return navigator.userAgent.indexOf('Mobile') !== -1;
+};
