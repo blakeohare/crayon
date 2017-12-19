@@ -126,7 +126,7 @@ Here is an exhaustive list of all of the operators:
 | `/` | Division. Divides two numbers. If the denominator is 0, that results in an error. Integers divided by integers will result in an integer that is rounded down to the nearest integer. |
 | `%` | Modulo. Will return remainder of a division operation. Modulo 0 will result in an error. `%` will always return a positive number. |
 | `&&` | Boolean AND. This will AND two booleans together. This supports short-circuiting. (If the left side is false, the right side will not be evaluated) |
-| `&#124;&#124;` | Boolean OR. This will OR two booleans together. Like AND, this supports short-circuiting i.e. if the left value is true, the right side will not be evaluated. |
+| <code>&#124;&#124;</code> | Boolean OR. This will OR two booleans together. Like AND, this supports short-circuiting i.e. if the left value is true, the right side will not be evaluated. |
 | `==` | Equals. Checks to see if two values are the same. For primitive types (such as booleans, numbers, and even strings) this will return true if the values are the same. For reference types, (such as lists, objects, dictionaries) this will return true if and only if the instance is identical. For example, comparing two lists that have identical contents but are separate list instances will result in a false when compared with `==`. |
 | `!=` | Not equals. Returns the opposite boolean as `==`. |
 | `<` | Less than. Returns true if the value on the left is less than the value on the right. Only works for numbers. |
@@ -134,7 +134,7 @@ Here is an exhaustive list of all of the operators:
 | `<=` | Less than or equals. Returns true if the value on the left is less than or equal to the value on the right. Only works for numbers. |
 | `>=` | Greater than or equals. Returns true if the value on the left is greater than or equal to the value on the right. Only works for numbers. |
 | `&` | Bitwise AND. Performs an AND operation for each bit in the two integers surrounding it. |
-| `&#124;` | Bitwise OR. Performs an OR operation for each bit in the two integers surrounding it. |
+| <code>&#124;</code> | Bitwise OR. Performs an OR operation for each bit in the two integers surrounding it. |
 | `^` | Bitwise XOR. Performs an XOR operation for each bit in the two integers surrounding it. |
 | `<<` | Bit shift left. Only applicable to integers. |
 | `>>` | Bit shift right (sign extended). Only applicable to integers. |
