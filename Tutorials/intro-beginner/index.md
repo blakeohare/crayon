@@ -52,7 +52,7 @@ Open up the *source/main.cry* file in a text editor such as notepad. If you have
  
 Once you open the file, you'll see the following:
 
-```
+```csharp
 function main(args) {
 	print("Hello, World!");
 }
@@ -85,7 +85,7 @@ In this section I'll talk about variables and equations. With the exception of o
 
 Modify your original HelloWorld program so that the main function looks like this:
 
-```
+```csharp
 function main(args) {
 	x = 1;
 	x = 2 * x;
@@ -111,19 +111,19 @@ Your instincts will probably tell you to subtract one `x` from each side leaving
 
 "Store the number 1 into a bucket called x":
 
-```
+```csharp
 x = 1;
 ```
 
 "Take the value out of the bucket, multiply it by 2, and then put it back into that same bucket.":
 
-```
+```csharp
 x = 2 * x;
 ```
 
 "Take the value out of the bucket again, this time add 10 to it, and then put it back."
 
-```
+```csharp
 x = x + 10;
 ```
 
@@ -131,14 +131,14 @@ As you can see, it's a very orderly, unambiguous, mechanical process and there i
 
 However, one thing does still apply from what you learned in high school math, and that is order of operations. Multiplication and division are applied first before addition and subtraction. 
 
-```
+```csharp
 print(1 + 2 * 3);
 ```
 
 This prints 7, not 9. 
 When in doubt, just add parenthesis to things. Parenthesis never hurt:
 
-```
+```csharp
 print((1 + 2) * 3);
 ```
 
@@ -158,7 +158,7 @@ Variables can be named anything. Not just algebraic-style single letter names li
 
 Programs that do the same thing every time are kind of boring. Let's mix things up a bit. Change your main function definition to look like this:
 
-```
+```csharp
 function main(args) {
 	x = parseInt(args[0]);
 	xSquared = x * x;
@@ -175,7 +175,7 @@ C:\...> crayon HelloWorld.build 9
 
 The next line of the program introduces a few other things that we won't worry too much about right now aside from a quick temporary explanation.
 
-```
+```csharp
 x = parseInt(args[0]);
 ```
 
@@ -183,7 +183,7 @@ Numbers and operators aren't the only thing you can put on the right side of an 
 
 Programs that have the same behavior no matter what sort of input you give it are somewhat boring. Let's mix things up a bit and talk about conditional code.
 
-```
+```csharp
 function main(args) {
 	x = parseInt(args[0]);
 	xSquared = x * x;
@@ -215,7 +215,7 @@ That's big
 
 Furthermore, the else is entirely optional. The following is also valid:
 
-```
+```csharp
 function main(args) {
 	x = parseInt(args[0]);
 	xSquared = x * x;
@@ -229,7 +229,7 @@ function main(args) {
 
 You can also chain them together to create lists of possibilities:
 
-```
+```csharp
 function main(args) {
 	x = parseInt(args[0]);
 	xSquared = x * x;
@@ -249,7 +249,7 @@ function main(args) {
 
 Because the conditions in a series of `if`/`else` statements are checked sequentially, only the first applicable condition will run. Here's yet another example that illustrates this distinction more clearly:
 
-```
+```csharp
 function main(args) {
 	x = parseInt(args[0]);
 	xSquared = x * x;
@@ -274,7 +274,7 @@ Another aspect of more complicated programs is making them do more than run from
 ### While loops
 A while loop is the simplest kind of loop and resembles an if statement without an else in many ways.
 
-```
+```csharp
 function main(args) {
 	x = 1;
 	while (x < 1000) {
@@ -308,7 +308,7 @@ The condition is always checked before the block of code runs. The first time th
 
 The while loop is the most versatile loop, but as you start using it more frequently, you'll notice a common recurring usage pattern. Generally, when creating loops, you have some sort of line of code that sets up the loop, and another line of code that moves the state of your program closer to finishing the loop. Take a look at the while loop from the example again: 
 
-```
+```csharp
 x = 1;
 while (x < 1000) {
 	print(x);
@@ -318,7 +318,7 @@ while (x < 1000) {
 
 Here we have `x = 1;`, which is the setup. We also have `x = x * 2;` which steadily moves the value closer to the ending conditions. The existence of these two extra components are so common that there's another kind of loop called a for loop which works much like a while loop, except it lets you express these concepts more compactly. The above while loop could have equally been expressed like this:
 
-```
+```csharp
 for (x = 1; x < 1000; x = x * 2) {
 	print(x);
 }
@@ -334,7 +334,7 @@ So far we've been using functions without really talking about them. A simple de
 
 To define your own function, use the keyword function. Your main.cry file can have multiple function definitions, not just the main function. To invoke a function, use the name of the function followed by parentheses.
 
-```
+```csharp
 function main() {
 	sayHello();
 }
@@ -348,7 +348,7 @@ The order that you define the functions does not matter. The `main()` function w
 
 Here's a more complicated example:
 
-```
+```csharp
 function main(args) {
 	x = parseInt(args[0]);
 	xSquared = square(x);
@@ -367,7 +367,7 @@ More significantly, the square function uses the `return` keyword. Notice how `s
 
 Here are some example functions of common math operations:
 
-```
+```csharp
 function absoluteValue(value) {
 	if (value < 0) {
 		value = -1 * value;
@@ -390,7 +390,7 @@ function average(a, b) {
 
 Notice in the last example, a function can have multiple arguments separated by commas. This would be invoked from another function like this:
 
-```
+```csharp
 average(10, 20);
 ```
 
@@ -402,7 +402,7 @@ Another important note is that when a program executes a function, variables nam
 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, ...
 ```
 
-```
+```csharp
 function fib(n) {
 	if (n < 2) {
 		return 1;
@@ -455,7 +455,7 @@ I've also shown strings being combined with numbers by using the `+` operator. I
 
 You can also use the `*` operator to multiply strings by integers. This will result in a new string that is the old string repeated that many times.
 
-```
+```csharp
 function showATriangle() {
 	for (width = 1; width < 10; width = width + 1) {
 		print("@" * width);
@@ -469,7 +469,7 @@ In this example, the for loop will run 10 times, where the variable width will g
 
 Booleans are another type that only have two possible values: true and false. You have been implicitly using booleans each time you use an if or while statement with something like `==` or `<`. These operators take two numbers and create a boolean from it. The if (or while) statement itself consumes a boolean in parenthesis. Therefore it is equally acceptable to do something like this:
 
-```
+```csharp
 isSmall = x < 5;
 if (isSmall) {
 	print("x is small");
@@ -490,14 +490,14 @@ isSmall is true
 
 We've used lists once before since that's how the command line arguments are passed into the main function. You can create your own lists by using square bracket characters [ and ] and storing the result in a variable. You can then access the items in the list by using square brackets again at the end of the variable (we've done this before using args[0]) and putting the offset from the beginning of the list into the brackets as an integer. This is called indexing into a list. Just keep in mind that the index in a list counts from 0 because it's an offset, not the nth item in the list.
 
-```
+```csharp
 someList = [1, 2, 3, 4, 5];
 print("The 2nd item in the list is " + someList[1]);
 ```
 
 For convenience, you can also pass in negative numbers as the index of the list. This will count from the end of the list where `-1` is the last item in the list.
 
-```
+```csharp
 print("The 2nd to last item in the list is " + someList[-2]);
 ```
 
@@ -505,7 +505,7 @@ print("The 2nd to last item in the list is " + someList[-2]);
 
 Certain types of values have something called "fields". These are extra bits of information that can be accessed by using a dot . followed by the name of the field. For strings and lists, there are several built-in fields. For example, you can get the length of a list by adding a .length to the end of any list value. This will result in the length of the list as an integer. 
 
-```
+```csharp
 function printTheListLineByLine(someList) {
 	for (i = 0; i < someList.length; i = i + 1) {
 		print(someList[i]);
@@ -515,7 +515,7 @@ function printTheListLineByLine(someList) {
 
 Sometimes these fields can be built-in functions. These are called **methods**. For example, there is a method on each list called `.add` which will add an item to the end of the list.
 
-```
+```csharp
 function buildAListOfSizeN(n) {
 	output = []; // An empty list. 0 items.
 	for (i = 1; i <= n; i = i + 1) {
@@ -527,7 +527,7 @@ function buildAListOfSizeN(n) {
 
 There's another list method called `.shuffle` which will shuffle the items in a list in a random order.
 
-```
+```csharp
 function rollADice() {
 	outcomes = [1, 2, 3, 4, 5, 6];
 	outcomes.shuffle();
@@ -541,7 +541,7 @@ Like a function, a method generally must be followed by parentheses to invoke it
 
 A **library** is a packaged set of existing code either written by yourself or someone else. This package of code is intended to serve some sort of standalone or themed purpose. You can import a library into your code and use the functions defined in it using the `import` statement. An import statement goes at the top of the file where you want to call the library's code. One simple example of a library is the `Math` library which is built in to Crayon. 
 
-```
+```csharp
 import Math;
 
 function main(args) {
@@ -556,7 +556,7 @@ To access functions inside a library, you can use dot notation. There are quite 
 
 In this section and the ones that follow, we'll finally start working with 2D graphics and the disparate concepts I've been throwing at you thus far will start coalescing into something useful. This is also a pretty good review section since it uses almost everything introduced so far.
 
-```
+```csharp
 import Game;
 import Graphics2D;
 
