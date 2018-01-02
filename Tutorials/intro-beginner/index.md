@@ -2,6 +2,8 @@
 
 This tutorial is intended for anyone that wants to start learning programming who currently has absolutely no previous programming experience.
 
+If you do have some programming experience, you may be interested in the [intermediate tutorial](https://github.com/blakeohare/crayon/blob/master/Tutorials/intro-intermediate/index.md) which introduces Crayon in terms of concepts you probably know from other languages.
+
 ## Why learn Crayon? Why not another language?
 I'll address this question by giving a quick rundown of what the modern programming language options are and why you would or wouldn't want to learn those languages as a first programming language. 
 
@@ -60,12 +62,12 @@ function main(args) {
 
 Don't panic. Here's a super quick rundown of what this is and what it means. We'll talk about everything in much more detail in later sections. But for now this is all you need to know:
 
-* A function is just a collection of code. The word `function` here declares that you are about to define a function and its name in this case is `main`.
+* A **function** is just a collection of code. The word `function` here declares that you are about to define a function and its name in this case is `main`.
 * Don't worry about the `(args)` yet. I'll talk about that more later.
 * The `{` and `}` characters group lines of code together. In this case, this is saying that the next line is the code that belongs to this function.
 * `print` has nothing to do with your printer. This will simply display text on the screen. We'll be running this from the command line and so this text will also appear on the command line when we run it.
 * `"Hello, World"` is the text that will be displayed on the screen.
-The semicolon indicates that this is the end of this line of code.
+* The semicolon indicates that this is the end of this line of code.
 
 When a program runs, it'll start by running the code in the main function. It'll run each line, one by one, and then once it gets to the end, the program will quit. In this case there's only one line. 
 
@@ -423,7 +425,7 @@ If you were to draw a timeline diagram of the computer executing this program, i
 
 At any given moment, the computer is executing exactly one function at a time. But that function has a parent that originally called it. And that function has a parent that called it, and so on until you get all the way up to `main()`. This is called the "call stack". In this case, calling `fib(5)` will ultimately cause the `fib` function to run 15 times, but at any given moment, at most 5 versions are present in the call stack.
 
-This is called recursion and we'll talk about it more later in lesson 15.
+This is called **recursion** and we'll talk about it more later in lesson 15.
 
 ## Lesson 6 - More Types and Operators
 
@@ -433,23 +435,24 @@ This section will seem a little information-dense since I'll be filling in a lot
 
 ### Numbers aren't just numbers
 
-While it's true that we've been using numbers up to this point, there are actually two kinds of numbers. Whole numbers, and decimals. In programming, these are usually referred to as "integers" and "floats" (which is short for "floating point decimal"). However, in Crayon (and most programming languages), there's a few twists. In normal math, adding .5 and .5 will give you 1, a whole number. But in code, adding these together will give you 1.0, a float. 
+While it's true that we've been using numbers up to this point, there are actually two kinds of numbers. Whole numbers, and decimals. In programming, these are usually referred to as **integers** and **floats** (which is short for "floating point decimal"). However, in Crayon (and also in most programming languages), there's a few twists. In normal math, adding `.5` and `.5` will give you `1`, a whole number. But in code, adding these together will give you `1.0`, a float. 
 
 That's right. Even if the part after the decimal is a 0, this number is still considered to be a float by the computer. This is because there are strict rules that govern the interactions between numbers while doing math operations:
 
-* Any operator (such as addition, subtraction, multiplication, division) that is applied between two integers will result in an integer. 3 + 3 is 6.
+* Any operator (such as addition, subtraction, multiplication, division) that is applied between two integers will result in an integer.
+  * `3 + 3` is `6`.
 * Any operator that is applied between two numbers where one or both of them are floats will result in a float. 
-  * 1.0 + 1.0 results in 2.0
-  * 0.0 + 3 results in 3.0
+  * `1.0 + 1.0` results in `2.0`
+  * `0.0 + 3` results in `3.0`
 * If the true mathematical result of an operation between integers will result in a decimal, the decimal is always rounded DOWN so that the result can stay an integer. 
-  * 7 / 2 results in 3
-  * 49 / 10 results in 4
+  * `7 / 2` results in `3`
+  * `49 / 10` results in `4`
 
-This is why the average function from the previous lesson divided the sum of the two numbers by 2.0 instead of 2. 
+This is why the average function from the previous lesson divided the sum of the two numbers by `2.0` instead of `2`. 
 
 ### Strings: Not just for cheese
 
-We've been using pieces of text here and there so far. "Text" is a valid term, but the term "string" is used to refer specifically to the text type. The term originates from the idea that text is comprised of a "string of characters". 
+We've been using pieces of text here and there so far. The word "Text" is a valid term, but the term **string** is used to refer specifically to the text type. The term originates from the idea that text is comprised of a "string of characters". 
 
 I've also shown strings being combined with numbers by using the `+` operator. It's not just numbers, though. You can combine a string with any other type to generate a new string. This is useful when using the `print` statement. 
 
@@ -467,7 +470,7 @@ In this example, the for loop will run 10 times, where the variable width will g
 
 ### Booleans
 
-Booleans are another type that only have two possible values: true and false. You have been implicitly using booleans each time you use an if or while statement with something like `==` or `<`. These operators take two numbers and create a boolean from it. The if (or while) statement itself consumes a boolean in parenthesis. Therefore it is equally acceptable to do something like this:
+Booleans are another type that only have two possible values: `true` and `false`. You have been implicitly using booleans each time you use an if or while statement with something like `==` or `<`. These operators take two numbers and create a boolean from it. The `if` (or `while`) statement itself consumes a boolean in parenthesis. Therefore it is equally acceptable to do something like this:
 
 ```csharp
 isSmall = x < 5;
@@ -486,9 +489,16 @@ x is 3
 isSmall is true
 ```
 
+You can literally assign a boolean value to a variable by using the keywords `true` and `false`.
+
+```
+x = true;
+y = false;
+```
+
 ### Lists
 
-We've used lists once before since that's how the command line arguments are passed into the main function. You can create your own lists by using square bracket characters [ and ] and storing the result in a variable. You can then access the items in the list by using square brackets again at the end of the variable (we've done this before using args[0]) and putting the offset from the beginning of the list into the brackets as an integer. This is called indexing into a list. Just keep in mind that the index in a list counts from 0 because it's an offset, not the nth item in the list.
+We've used lists once before since that's how the command line arguments are passed into the main function. You can create your own lists by using square bracket characters `[` and `]` and storing the result in a variable. You can then access the items in the list by using square brackets again at the end of the variable (we've done this before using `args[0]`) and putting the offset from the beginning of the list into the brackets as an integer. This is called **indexing** into a list. Just keep in mind that the index in a list counts from 0 because it's an offset, not the n<sup>th</sup> item in the list.
 
 ```csharp
 someList = [1, 2, 3, 4, 5];
@@ -503,7 +513,7 @@ print("The 2nd to last item in the list is " + someList[-2]);
 
 ### Fields and dot notation
 
-Certain types of values have something called "fields". These are extra bits of information that can be accessed by using a dot . followed by the name of the field. For strings and lists, there are several built-in fields. For example, you can get the length of a list by adding a .length to the end of any list value. This will result in the length of the list as an integer. 
+Certain types of values have something called **fields**. These are extra bits of information that can be accessed by using a dot `.` character followed by the name of the field. For strings and lists, there are several built-in fields. For example, you can get the length of a list by adding a `.length` to the end of any list value. This will result in the length of the list as an integer. 
 
 ```csharp
 function printTheListLineByLine(someList) {
