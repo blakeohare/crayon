@@ -27,7 +27,7 @@ As a side note, C had a great deal of influence in the design of the syntax of m
 
 ## Lesson 1 - Setting up Crayon and Hello World
 
-The way to set up Crayon is slightly different depending on whether you're using Windows or Mac. How to set up Crayon is outlined in [this walkthrough](https://github.com/blakeohare/crayon/blob/master/Docs/installation/index.md). Once you've gotten set up, open the command line and type "crayon" (without the quotes) and hit enter. If you haven't used the command line before, there's a command line tutorial here. Once you type crayon and hit enter, you should see something like this:
+The way to set up Crayon is slightly different depending on whether you're using Windows or Mac. How to set up Crayon is outlined in [this walkthrough](https://github.com/blakeohare/crayon/blob/master/Docs/installation/index.md). Once you've gotten set up, open the command line and type "crayon" (without the quotes) and hit enter. If you haven't used the command line before, there's a [command line tutorial here](https://github.com/blakeohare/crayon/blob/master/Tutorials/command-line/index.md). Once you type crayon and hit enter, you should see something like this:
 
 ```
 Usage:
