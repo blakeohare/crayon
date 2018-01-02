@@ -8,6 +8,16 @@ The command line goes by a few names. In Windows it is often referred to as the 
 
 TODO: write this up
 
+![img1](./images/windows1.png)
+
+![img2](./images/windows2.png)
+
+![img3](./images/windows3.png)
+
+![img4](./images/windows4.png)
+
+![img5](./images/windows5.png)
+
 ## Using the terminal in OSX/Linux
 
 TODO: write this up
