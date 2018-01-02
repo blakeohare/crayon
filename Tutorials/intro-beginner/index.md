@@ -21,11 +21,11 @@ These offer lots of protections, but at the same time are so high level, that th
 ### Where does Crayon fit in?
 Crayon was designed to be at the low end of the high level languages. It enforces some of the structure similar to the mid level languages in the above list, but at its core, it's a high level language that was initially based off of Python's behaviors. 
 
-As a side note, C had a great deal of influence in the design of the syntax of many of the languages that follow it. You'll notice that of the languages listed here, all of them (except for Python and Ruby) are about 90% similar to C in the way they look. For the sake of consistency and adhering to common industry practices, Crayon is no different. This means a lot of the information you learn in this tutorial will actually be transferable to other languages and vice-versa. If you already know one of these other languages, you may be more interested in the intermediate tutorial which quickly goes over various Crayon concepts in terms of programming concepts you already know from other languages. 
+As a side note, C had a great deal of influence in the design of the syntax of many of the languages that follow it. You'll notice that of the languages listed here, all of them (except for Python and Ruby) are about 90% similar to C in the way they look. For the sake of consistency and adhering to common industry practices, Crayon is no different. This means a lot of the information you learn in this tutorial will actually be transferable to other languages and vice-versa. If you already know one of these other languages, you may be more interested in the [intermediate tutorial](https://github.com/blakeohare/crayon/blob/master/Tutorials/intro-intermediate/index.md) which quickly goes over various Crayon concepts in terms of programming concepts you already know from other languages. 
 
 ## Lesson 1 - Setting up Crayon and Hello World
 
-The way to set up Crayon is slightly different depending on whether you're using Windows or Mac. How to set up Crayon is outlined in this walkthrough. Once you've gotten set up, open the command line and type "crayon" (without the quotes) and hit enter. If you haven't used the command line before, there's a command line tutorial here. Once you type crayon and hit enter, you should see something like this:
+The way to set up Crayon is slightly different depending on whether you're using Windows or Mac. How to set up Crayon is outlined in [this walkthrough](https://github.com/blakeohare/crayon/blob/master/Docs/installation/index.md). Once you've gotten set up, open the command line and type "crayon" (without the quotes) and hit enter. If you haven't used the command line before, there's a command line tutorial here. Once you type crayon and hit enter, you should see something like this:
 
 ```
 Usage:
@@ -34,7 +34,7 @@ Usage:
 (...and some other stuff as well)
 ```
 
-If you see that, then you're good to go. If not, please reach out to the mailing list for help. 
+If you see that, then you're good to go. If not, please reach out to the [mailing list](https://groups.google.com/forum/#!forum/crayon-lang) for help. 
 
 To create a new project use the command line and navigate to the directory where you'd like to create a project. I'll be working in C:\Users\Blake\Documents in this example. Once you've navigated there, run the following command:
 
@@ -146,7 +146,7 @@ Now this prints 9 instead of 7.
 
 Variables can be named anything. Not just algebraic-style single letter names like "x". There's just a few rules:
 
-* Letters, numbers, and the underscore (_) characters can be used in the name.
+* Letters, numbers, and the underscore (`_`) characters can be used in the name.
 * The variable name cannot begin with a number.
 * The name cannot be the same as a built-in programming language keyword. For example, you can't use `function` as a variable name.
 * The following are not rules, but guidelines to follow:
@@ -166,7 +166,7 @@ function main(args) {
 }
 ```
 	
-First notice that I added "args" between the parenthesis after the name of the function. This is called function arguments. But because this is the main function, these are also known as command line arguments. Like its name implies, these are set from the command line when you execute your program. When you run your program, put a number at the end and this will happen:
+Notice the `args` between the parenthesis after the name of the function. This is called function **arguments**. But because this is the main function, these are also known as command line arguments. Like its name implies, these are set from the command line when you execute your program. When you run your program, put a number at the end and this will happen:
 
 ```
 C:\...> crayon HelloWorld.build 9
@@ -179,7 +179,7 @@ The next line of the program introduces a few other things that we won't worry t
 x = parseInt(args[0]);
 ```
 
-Numbers and operators aren't the only thing you can put on the right side of an equation. args is a variable, but instead of holding a number, it is actually a list of pieces of text. Specifically the list of things you typed at the end of the command line command. The [0] tells it that you'd like to access the first item in that list (computers count starting from 0, not 1). In the example above, this would mean that it would be the text "9". As far as computers are concerned, text and numbers are not the same. You could have easily typed "kitty-cat" or "Orbeez" instead of a number. The parseInt thing is a function that converts text into an actual number such that the variable x actually contains the number 9 instead of the text that has the symbol "9" in it. If you use parseInt on things that aren't numbers, bad-ish things will happen, but that's out of scope of this section.
+Numbers and operators aren't the only thing you can put on the right side of an equation. args is a variable, but instead of holding a number, it is actually a list of pieces of text. Specifically the list of things you typed at the end of the command line command. The `[0]` tells it that you'd like to access the first item in that list (computers count starting from 0, not 1). In the example above, this would mean that it would be the text `9`. As far as computers are concerned, text and numbers are not the same. You could have easily typed `kitty-cat` or `Orbeez` instead of a number. The `parseInt` thing is a function that converts text into an actual number such that the variable `x` actually contains the number `9` instead of the text that has the symbol "`9`" in it. If you use `parseInt` on things that aren't numbers, bad-ish things will happen, but that's out of scope of this section.
 
 Programs that have the same behavior no matter what sort of input you give it are somewhat boring. Let's mix things up a bit and talk about conditional code.
 
@@ -208,7 +208,7 @@ C:\...> crayon HelloWorld.build 9
 81
 That's small
 
-C:\Things> crayon HelloWorld.build 210
+C:\...> crayon HelloWorld.build 210
 44100
 That's big
 ```
@@ -285,7 +285,7 @@ function main(args) {
 }
 ```
 
-Think of a while loop as an if statement except instead of running the block of code once, it'll keep running it repeatedly until the condition is no longer true. In this case, it will double the value of x until the value is no longer less than 1000.
+Think of a while loop as an if statement except instead of running the block of code once, it'll keep running it repeatedly until the condition is no longer true. In this case, it will double the value of `x` until the value is no longer less than 1000.
 
 If you run this, you'll see the following:
 
