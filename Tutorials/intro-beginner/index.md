@@ -54,7 +54,7 @@ Once you open the file, you'll see the following:
 
 ```csharp
 function main(args) {
-	print("Hello, World!");
+    print("Hello, World!");
 }
 ```
 
@@ -87,10 +87,10 @@ Modify your original HelloWorld program so that the main function looks like thi
 
 ```csharp
 function main(args) {
-	x = 1;
-	x = 2 * x;
-	x = x + 10;
-	print(x);
+    x = 1;
+    x = 2 * x;
+    x = x + 10;
+    print(x);
 }
 ```
 
@@ -121,7 +121,7 @@ x = 1;
 x = 2 * x;
 ```
 
-"Take the value out of the bucket again, this time add 10 to it, and then put it back."
+"Take the value out of the bucket again, this time add 10 to it, and then put it back.":
 
 ```csharp
 x = x + 10;
@@ -146,7 +146,7 @@ Now this prints 9 instead of 7.
 
 Variables can be named anything. Not just algebraic-style single letter names like "x". There's just a few rules:
 
-* Letters, numbers, and the underscore (`_`) characters can be used in the name.
+* Letters, numbers, and the underscore `_` characters can be used in the name.
 * The variable name cannot begin with a number.
 * The name cannot be the same as a built-in programming language keyword. For example, you can't use `function` as a variable name.
 * The following are not rules, but guidelines to follow:
@@ -160,12 +160,12 @@ Programs that do the same thing every time are kind of boring. Let's mix things 
 
 ```csharp
 function main(args) {
-	x = parseInt(args[0]);
-	xSquared = x * x;
-	print(xSquared);
+    x = parseInt(args[0]);
+    xSquared = x * x;
+    print(xSquared);
 }
 ```
-	
+    
 Notice the `args` between the parenthesis after the name of the function. This is called function **arguments**. But because this is the main function, these are also known as command line arguments. Like its name implies, these are set from the command line when you execute your program. When you run your program, put a number at the end and this will happen:
 
 ```
@@ -185,15 +185,15 @@ Programs that have the same behavior no matter what sort of input you give it ar
 
 ```csharp
 function main(args) {
-	x = parseInt(args[0]);
-	xSquared = x * x;
-	print(xSquared);
+    x = parseInt(args[0]);
+    xSquared = x * x;
+    print(xSquared);
 
-	if (xSquared > 9000) {
-		print("That's big");
-	} else {
-		print("That's small");
-	}
+    if (xSquared > 9000) {
+        print("That's big");
+    } else {
+        print("That's small");
+    }
 }
 ```
 
@@ -217,13 +217,13 @@ Furthermore, the else is entirely optional. The following is also valid:
 
 ```csharp
 function main(args) {
-	x = parseInt(args[0]);
-	xSquared = x * x;
-	print(xSquared);
+    x = parseInt(args[0]);
+    xSquared = x * x;
+    print(xSquared);
 
-	if (xSquared > 9000) {
-		print("That's big");
-	}
+    if (xSquared > 9000) {
+        print("That's big");
+    }
 }
 ```
 
@@ -231,17 +231,17 @@ You can also chain them together to create lists of possibilities:
 
 ```csharp
 function main(args) {
-	x = parseInt(args[0]);
-	xSquared = x * x;
-	print(xSquared);
+    x = parseInt(args[0]);
+    xSquared = x * x;
+    print(xSquared);
 
-	if (xSquared > 9000) {
-		print("That's big");
-	} else if (xSquared == 9000) {
-		print("That is exactly 9000");
-	} else {
-		print("That's small");
-	}
+    if (xSquared > 9000) {
+        print("That's big");
+    } else if (xSquared == 9000) {
+        print("That is exactly 9000");
+    } else {
+        print("That's small");
+    }
 }
 ```
 
@@ -251,17 +251,17 @@ Because the conditions in a series of `if`/`else` statements are checked sequent
 
 ```csharp
 function main(args) {
-	x = parseInt(args[0]);
-	xSquared = x * x;
-	print(xSquared);
+    x = parseInt(args[0]);
+    xSquared = x * x;
+    print(xSquared);
 
-	if (xSquared < 100) {
-		print("That's small");
-	} else if (xSquared < 10000) {
-		print("That medium-sized");
-	} else {
-		print("That's big");
-	}
+    if (xSquared < 100) {
+        print("That's small");
+    } else if (xSquared < 10000) {
+        print("That medium-sized");
+    } else {
+        print("That's big");
+    }
 }
 ```
 
@@ -276,12 +276,12 @@ A while loop is the simplest kind of loop and resembles an if statement without 
 
 ```csharp
 function main(args) {
-	x = 1;
-	while (x < 1000) {
-		print(x);
-		x = x * 2;
-	}
-	print("All done.");
+    x = 1;
+    while (x < 1000) {
+        print(x);
+        x = x * 2;
+    }
+    print("All done.");
 }
 ```
 
@@ -311,8 +311,8 @@ The while loop is the most versatile loop, but as you start using it more freque
 ```csharp
 x = 1;
 while (x < 1000) {
-	print(x);
-	x = x * 2;
+    print(x);
+    x = x * 2;
 }
 ```
 
@@ -320,7 +320,7 @@ Here we have `x = 1;`, which is the setup. We also have `x = x * 2;` which stead
 
 ```csharp
 for (x = 1; x < 1000; x = x * 2) {
-	print(x);
+    print(x);
 }
 ```
 
@@ -336,11 +336,11 @@ To define your own function, use the keyword function. Your main.cry file can ha
 
 ```csharp
 function main() {
-	sayHello();
+    sayHello();
 }
 
 function sayHello() {
-	print("Hello, World!");
+    print("Hello, World!");
 }
 ```
 
@@ -350,14 +350,14 @@ Here's a more complicated example:
 
 ```csharp
 function main(args) {
-	x = parseInt(args[0]);
-	xSquared = square(x);
-	print("The square of " + x + " is " + xSquared);
+    x = parseInt(args[0]);
+    xSquared = square(x);
+    print("The square of " + x + " is " + xSquared);
 }
 
 function square(value) {
-	result = value * value;
-	return result;
+    result = value * value;
+    return result;
 }
 ```
 
@@ -369,22 +369,22 @@ Here are some example functions of common math operations:
 
 ```csharp
 function absoluteValue(value) {
-	if (value < 0) {
-		value = -1 * value;
-	}
-	return value;
+    if (value < 0) {
+        value = -1 * value;
+    }
+    return value;
 }
 
 function factorial(value) {
-	accumulatedValue = 1;
-	for (n = 1; n <= value; n = n + 1) {
-		accumulatedValue = accumulatedValue * n;
-	}
-	return accumulatedValue;
+    accumulatedValue = 1;
+    for (n = 1; n <= value; n = n + 1) {
+        accumulatedValue = accumulatedValue * n;
+    }
+    return accumulatedValue;
 }
 
 function average(a, b) {
-	return (a + b) / 2.0;
+    return (a + b) / 2.0;
 }
 ```
 
@@ -404,16 +404,16 @@ Another important note is that when a program executes a function, variables nam
 
 ```csharp
 function fib(n) {
-	if (n < 2) {
-		return 1;
-	}
-	value = fib(n - 1) + fib(n - 2);
-	return value;
+    if (n < 2) {
+        return 1;
+    }
+    value = fib(n - 1) + fib(n - 2);
+    return value;
 }
 
 function main() {
-	n5 = fib(5);
-	print(n5);
+    n5 = fib(5);
+    print(n5);
 }
 ```
 
@@ -457,9 +457,9 @@ You can also use the `*` operator to multiply strings by integers. This will res
 
 ```csharp
 function showATriangle() {
-	for (width = 1; width < 10; width = width + 1) {
-		print("@" * width);
-	}
+    for (width = 1; width < 10; width = width + 1) {
+        print("@" * width);
+    }
 }
 ```
 
@@ -472,9 +472,9 @@ Booleans are another type that only have two possible values: true and false. Yo
 ```csharp
 isSmall = x < 5;
 if (isSmall) {
-	print("x is small");
-	print("x is " + x);
-	print("isSmall is " + isSmall);
+    print("x is small");
+    print("x is " + x);
+    print("isSmall is " + isSmall);
 }
 ```
 
@@ -507,9 +507,9 @@ Certain types of values have something called "fields". These are extra bits of 
 
 ```csharp
 function printTheListLineByLine(someList) {
-	for (i = 0; i < someList.length; i = i + 1) {
-		print(someList[i]);
-	}
+    for (i = 0; i < someList.length; i = i + 1) {
+        print(someList[i]);
+    }
 }
 ```
 
@@ -517,11 +517,11 @@ Sometimes these fields can be built-in functions. These are called **methods**. 
 
 ```csharp
 function buildAListOfSizeN(n) {
-	output = []; // An empty list. 0 items.
-	for (i = 1; i <= n; i = i + 1) {
-		output.add(i);
-	}
-	return output;
+    output = []; // An empty list. 0 items.
+    for (i = 1; i <= n; i = i + 1) {
+        output.add(i);
+    }
+    return output;
 }
 ```
 
@@ -529,9 +529,9 @@ There's another list method called `.shuffle` which will shuffle the items in a 
 
 ```csharp
 function rollADice() {
-	outcomes = [1, 2, 3, 4, 5, 6];
-	outcomes.shuffle();
-	return outcomes[0];
+    outcomes = [1, 2, 3, 4, 5, 6];
+    outcomes.shuffle();
+    return outcomes[0];
 }
 ```
 
@@ -545,8 +545,8 @@ A **library** is a packaged set of existing code either written by yourself or s
 import Math;
 
 function main(args) {
-	root2 = Math.sqrt(2);
-	print("The square root of 2 is " + root2);
+    root2 = Math.sqrt(2);
+    print("The square root of 2 is " + root2);
 }
 ```
 
@@ -561,42 +561,42 @@ import Game;
 import Graphics2D;
 
 function main() {
-	// Open a window that has the title of "A Box". This
-	// window shall be 600 pixels wide and 400 pixels tall.
-	// The graphics pipeline should run at 30 frames per second.
-	window = new Game.GameWindow("A Box", 30, 600, 400);
+    // Open a window that has the title of "A Box". This
+    // window shall be 600 pixels wide and 400 pixels tall.
+    // The graphics pipeline should run at 30 frames per second.
+    window = new Game.GameWindow("A Box", 30, 600, 400);
 
-	gameRunning = true;
-	while (gameRunning) {
-		// Gather a list of events that happened since
-		// the last time clockTick was called.
-		eventList = window.pumpEvents();
+    gameRunning = true;
+    while (gameRunning) {
+        // Gather a list of events that happened since
+        // the last time clockTick was called.
+        eventList = window.pumpEvents();
 
-		// Loop through the events and look for a quit
-		// event. 
-		for (i = 0; i < eventList.length; i++) {
-			event = eventList[i];
-			// A QUIT event is generated if the user
-			// attempts to close the window.
-			if (event.type == Game.EventType.QUIT) {
-				// This will cause the while loop
-				// to end, which will cause main()
-				// to finish, thus ending the program.
-				gameRunning = false;
-			}
-		}
-		
-		// Fill the screen with black
-		Graphics2D.Draw.fill(0, 0, 0);
+        // Loop through the events and look for a quit
+        // event. 
+        for (i = 0; i < eventList.length; i++) {
+            event = eventList[i];
+            // A QUIT event is generated if the user
+            // attempts to close the window.
+            if (event.type == Game.EventType.QUIT) {
+                // This will cause the while loop
+                // to end, which will cause main()
+                // to finish, thus ending the program.
+                gameRunning = false;
+            }
+        }
+        
+        // Fill the screen with black
+        Graphics2D.Draw.fill(0, 0, 0);
 
-		// Draw a 100 x 100 red rectangle with 10 pixel gap
-		// between the top and left sides of the window.
-		Graphics2D.Draw.rectangle(10, 10, 100, 100, 255, 0, 0);
+        // Draw a 100 x 100 red rectangle with 10 pixel gap
+        // between the top and left sides of the window.
+        Graphics2D.Draw.rectangle(10, 10, 100, 100, 255, 0, 0);
 
-		// pause the game for a split second so that the 
-		// framerate of 30 frames per second is maintained.
-		window.clockTick();
-	}
+        // pause the game for a split second so that the 
+        // framerate of 30 frames per second is maintained.
+        window.clockTick();
+    }
 }
 ```
 
