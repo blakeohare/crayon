@@ -81,7 +81,7 @@ Hello, World!
 That pretty much concludes this lesson. If you saw `Hello, World!` appear when you ran that command, it means you're completely set up and ready to do some more complicated stuff.
 
 ### A quick safety demonstration before we start our flight:
-If at any point in this tutorial you create a program that won't close, you can always press `Ctrl + C` in the command line to close a program.
+If at any point in this tutorial you accidentally create a program that won't close, you can always press `Ctrl + C` in the command line to force it to close.
 
 ## Lesson 2 - Variables and Operators
 Programs are all about moving data around, changing it, and using it in a meaningful way. Even in games. But before we start writing Tetris, we'll need to start with the basic verbs.
