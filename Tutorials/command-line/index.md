@@ -6,11 +6,29 @@ The command line goes by a few names. In Windows it is often referred to as the 
 
 ## Using the Command Prompt in Windows
 
-TODO: write this up
+There's a couple of ways to start the command prompt. But the fastest way is to simply push and hold the Windows key and press R on the keyboard. This will bring up the run dialog as seen here:
+
+![img1](./images/windows0.png)
+
+At the run dialog, type **cmd** and then press enter. A black window will show up that looks like this.
 
 ![img1](./images/windows1.png)
 
+It'll show a directory followed by a prompt where you can type. Typically this is something like `C:\Users\YOUR-USERNAME`. This is called the **Current Working Directory**. 
+
+You can type commands to make Windows do different things in that directory. 
+The first command to learn is the **Change Directory** command, which is invoked by typing `cd` followed by a directory name. 
+This will change the current working directory to something else. 
+
+For example, there's probably a directory in your user folder called **Documents**. 
+You can either type the full path to that directory such as `cd C:\Users\YOUR-NAME\Documents` or you can simply type the name of the directory relative to where you currently are.
+Since you're currently in your `C:\Users\YOUR-NAME` folder, you can simply type `cd Documents`.
+
 ![img2](./images/windows2.png)
+
+Now the command line is in the Documents directory. 
+To go back, you can use `cd ..` which will go back to the directory above the one you're
+currently at, i.e. where you started.
 
 ![img3](./images/windows3.png)
 
