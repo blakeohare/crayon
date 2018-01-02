@@ -8,7 +8,7 @@ The command line goes by a few names. In Windows it is often referred to as the 
 
 There's a couple of ways to start the command prompt. But the fastest way is to simply push and hold the Windows key and press R on the keyboard. This will bring up the run dialog as seen here:
 
-![img1](./images/windows0.png)
+![img0](./images/windows0.png)
 
 At the run dialog, type **cmd** and then press enter. A black window will show up that looks like this.
 
@@ -32,9 +32,26 @@ currently at, i.e. where you started.
 
 ![img3](./images/windows3.png)
 
+And now you're back.
+
+Another useful command is the **Make Directory** command which can be invoked by typing `mkdir` followed by the folder name you'd like to create.
+For example, if you want to create a new project called **MyProject** in your User folder, you can type `mkdir MyProject` while the command prompt is currently in your user folder...
+
 ![img4](./images/windows4.png)
 
+If at any time you'd prefer to use the regular Windows Explorer UI to do certain things, you can always type `explorer .` in any directory and it'll open Windows Explorer in that folder.
+
 ![img5](./images/windows5.png)
+
+Here's a few other useful commands:
+
+* `dir` - Typing `dir` in a directory will list all the files in that directory. 
+* `cls` - This will clear the command line screen if you feel like it's getting too cluttered.
+* `exit` - This will close the window. But you could also do that by clicking on the close button at the top.
+* `notepad` - You can type `notepad` followed by any file name and it will open that file in notepad.
+
+That's pretty much all you need to know when it comes to doing the basics with the command line. 
+Any other more specific commands are likely to be explained by the specific tutorial you originally came from. 
 
 ## Using the terminal in OSX/Linux
 
