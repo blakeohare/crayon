@@ -48,7 +48,7 @@ This will generate a new directory called HelloWorld. This will create a couple 
 * **HelloWorld/source/main.cry** - this is the main source code file for the project. We'll mostly be working with this in this tutorial.
 * **HelloWorld/.gitignore** - this is useful if you plan on committing your code to a git repository. If you don't plan on doing that, it's safe to just ignore or even delete this file.
 
-Open up the source/main.cry file in a text editor such as notepad. If you have a text editor that's designed for editing code, use that. Otherwise, Notepad will work for now. I highly recommend Notepad++ for Windows users or sublime for other platforms. Do not use something like wordpad or any other word-processing style text editor. These editors are generally not capable nor designed to edit plain text (formatting-free) documents and will ruin the file.
+Open up the *source/main.cry* file in a text editor such as notepad. If you have a text editor that's designed for editing code, use that. Otherwise, Notepad will work for now. I highly recommend Notepad++ for Windows users or sublime for other platforms. Do not use something like wordpad or any other word-processing style text editor. These editors are generally not capable nor designed to edit plain text (formatting-free) documents and will ruin the file.
  
 Once you open the file, you'll see the following:
 
@@ -60,171 +60,210 @@ function main(args) {
 
 Don't panic. Here's a super quick rundown of what this is and what it means. We'll talk about everything in much more detail in later sections. But for now this is all you need to know:
 
-A function is just a collection of code. The word "function" here declares that you are about to define a function and its name in this case is "main".
-Don't worry about the "(args)" yet. I'll talk about that more later.
-The { and } characters group lines of code together. In this case, this is saying that the next line is the code that belongs to this function.
-"print" has nothing to do with your printer. This will simply display text on the screen. We'll be running this from the command line and so this text will also appear on the command line when we run it.
-"Hello, World" is the text that will be displayed on the screen.
+* A function is just a collection of code. The word `function` here declares that you are about to define a function and its name in this case is `main`.
+* Don't worry about the `(args)` yet. I'll talk about that more later.
+* The `{` and `}` characters group lines of code together. In this case, this is saying that the next line is the code that belongs to this function.
+* `print` has nothing to do with your printer. This will simply display text on the screen. We'll be running this from the command line and so this text will also appear on the command line when we run it.
+* `"Hello, World"` is the text that will be displayed on the screen.
 The semicolon indicates that this is the end of this line of code.
 
 When a program runs, it'll start by running the code in the main function. It'll run each line, one by one, and then once it gets to the end, the program will quit. In this case there's only one line. 
 
 Go ahead and give it a try. Make sure the command line is currently pointed to the HelloWorld folder and then run this command:
 
+```
 C:\Users\Blake\Documents\HelloWorld> crayon HelloWorld.build
 Hello, World!
+```
 
-That pretty much concludes this lesson. If you saw "Hello, World!" appear when you ran that command, it means you're completely set up and ready to do some more complicated stuff.
-Lesson 2 - Variables and Operators
+That pretty much concludes this lesson. If you saw `Hello, World!` appear when you ran that command, it means you're completely set up and ready to do some more complicated stuff.
+
+## Lesson 2 - Variables and Operators
 Programs are all about moving data around, changing it, and using it in a meaningful way. Even in games. But before we start writing Tetris, we'll need to start with the basic verbs.
 
 In this section I'll talk about variables and equations. With the exception of order of operations, please forget everything you learned in high school math. Variables and equations in programming are entirely different than math variables aside from their name. 
 
 Modify your original HelloWorld program so that the main function looks like this:
 
+```
 function main(args) {
 	x = 1;
 	x = 2 * x;
 	x = x + 10;
 	print(x);
 }
+```
 
 Run this and you'll see the following:
 
+```
 C:\...> crayon HelloWorld.build
-12 
+12
+```
 
 If you're confused it's probably because you paid attention in high school math, where you probably saw something like this:
 
+```
 x = 10 + 2 * x
+```
 
-Your instincts will probably tell you to subtract one x from each side leaving you with 0 = 10 + x, do some other stuff, and then realize x is equal to -10. Please forget this process entirely. In programming, variables are nothing more than little buckets of memory that hold some sort of value, such as a number. Solving equations does not exist in programming and often the = sign is somewhat confusing to first time programmers. Instead of an = sign, you can imagine that this is actually an arrow pointing to the left. This means store the value on the right side of the "equation" into the variable on the left side. The lines are executed in order from top to bottom. If we look back at the example code, it starts to make more sense:
+Your instincts will probably tell you to subtract one `x` from each side leaving you with `0 = 10 + x`, do some other stuff, and then realize `x` is equal to `-10`. ***Please forget this process entirely***. In programming, variables are nothing more than little buckets of memory that hold some sort of value, such as a number. Solving equations does not exist in programming and often the `=` is somewhat confusing to first time programmers. Instead of a `=`, you can imagine that this is actually an arrow pointing to the left. This means store the value on the right side of the "equation" into the variable on the left side. The lines are executed in order from top to bottom. If we look back at the example code, it starts to make more sense:
 
 "Store the number 1 into a bucket called x":
+
+```
 x = 1;
+```
+
 "Take the value out of the bucket, multiply it by 2, and then put it back into that same bucket.":
+
+```
 x = 2 * x;
+```
+
 "Take the value out of the bucket again, this time add 10 to it, and then put it back."
+
+```
 x = x + 10;
+```
 
 As you can see, it's a very orderly, unambiguous, mechanical process and there is no "solving for x". 
 
 However, one thing does still apply from what you learned in high school math, and that is order of operations. Multiplication and division are applied first before addition and subtraction. 
 
+```
 print(1 + 2 * 3);
+```
 
 This prints 7, not 9. 
 When in doubt, just add parenthesis to things. Parenthesis never hurt:
 
+```
 print((1 + 2) * 3);
+```
 
 Now this prints 9 instead of 7. 
 
 Variables can be named anything. Not just algebraic-style single letter names like "x". There's just a few rules:
-Letters, numbers, and the underscore (_) characters can be used in the name.
-The variable name cannot begin with a number.
-The name cannot be the same as a built-in programming language keyword. For example, you can't use "function" as a variable name.
-The following are not rules, but guidelines to follow:
-The variable name should be specific and clearly understandable. Long names are okay. They don't make your program slower. 
-One letter variable names are generally discouraged except for one specific case that I'll talk about in the section about loops. 
-Variables should begin with a lowercase letter. While this makes no technical difference, there are other things that generally begin with uppercase letters and sticking to this convention makes code easier to read.
 
-Lesson 3 - Conditions and Command Line Input
+* Letters, numbers, and the underscore (_) characters can be used in the name.
+* The variable name cannot begin with a number.
+* The name cannot be the same as a built-in programming language keyword. For example, you can't use `function` as a variable name.
+* The following are not rules, but guidelines to follow:
+* The variable name should be specific and clearly understandable. Long names are okay. They don't make your program slower. 
+* One letter variable names are generally discouraged except for one specific case that I'll talk about in the section about loops. 
+* Variables should begin with a lowercase letter. While this makes no technical difference, there are other things that generally begin with uppercase letters and sticking to this convention makes code easier to read.
+
+## Lesson 3 - Conditions and Command Line Input
 
 Programs that do the same thing every time are kind of boring. Let's mix things up a bit. Change your main function definition to look like this:
 
+```
 function main(args) {
-x = parseInt(args[0]);
+	x = parseInt(args[0]);
 	xSquared = x * x;
-print(xSquared);
+	print(xSquared);
 }
+```
 	
 First notice that I added "args" between the parenthesis after the name of the function. This is called function arguments. But because this is the main function, these are also known as command line arguments. Like its name implies, these are set from the command line when you execute your program. When you run your program, put a number at the end and this will happen:
 
-C:\Things> crayon HelloWorld.build 9
+```
+C:\...> crayon HelloWorld.build 9
 81
-C:\Things>
+```
 
 The next line of the program introduces a few other things that we won't worry too much about right now aside from a quick temporary explanation.
 
+```
 x = parseInt(args[0]);
+```
 
 Numbers and operators aren't the only thing you can put on the right side of an equation. args is a variable, but instead of holding a number, it is actually a list of pieces of text. Specifically the list of things you typed at the end of the command line command. The [0] tells it that you'd like to access the first item in that list (computers count starting from 0, not 1). In the example above, this would mean that it would be the text "9". As far as computers are concerned, text and numbers are not the same. You could have easily typed "kitty-cat" or "Orbeez" instead of a number. The parseInt thing is a function that converts text into an actual number such that the variable x actually contains the number 9 instead of the text that has the symbol "9" in it. If you use parseInt on things that aren't numbers, bad-ish things will happen, but that's out of scope of this section.
 
 Programs that have the same behavior no matter what sort of input you give it are somewhat boring. Let's mix things up a bit and talk about conditional code.
 
+```
 function main(args) {
-x = parseInt(args[0]);
+	x = parseInt(args[0]);
 	xSquared = x * x;
-print(xSquared);
+	print(xSquared);
 
-if (xSquared > 9000) {
-	print("That's big");
-} else {
-	print("That's small");
+	if (xSquared > 9000) {
+		print("That's big");
+	} else {
+		print("That's small");
+	}
 }
-}
+```
 
-This introduces the if statement and its optional counterpart, else. 
+This introduces the `if` statement and its optional counterpart, `else`. 
 
-We haven't talked about the { and } characters yet, but basically they are a way to group lines of code together. These are often referred to as "blocks" of code. While it is possible to distinguish blocks of code by how much they are indented, this is simply a convention and is not enforced. You can write your entire program without any indention or even write the entire thing on one line if you want to (as long as your semicolons are still applied correctly). Curly braces { and } are a way of strictly declaring where a block begins and ends.
+We haven't talked about the `{` and `}` characters much yet, but basically they are a way to group lines of code together. These are often referred to as "blocks" of code. While it is possible to distinguish blocks of code by how much they are indented, this is simply a convention and is not enforced. You can write your entire program without any indention or even write the entire thing on one line if you want to (as long as your semicolons are still applied correctly). Curly braces `{` and `}` are a way of strictly declaring where a block begins and ends.
 
-The if statement is followed by parenthesis which contains a statement that is either true or false. If it is true, then the block of code following it will run. If it is false, then the block of code following the else statement will run. 
+The `if` statement is followed by parenthesis which contains a statement that is either true or false. If it is true, then the block of code following it will run. If it is false, then the block of code following the else statement will run. 
 
-C:\Things> crayon HelloWorld.build 9
+```
+C:\...> crayon HelloWorld.build 9
 81
 That's small
-
 
 C:\Things> crayon HelloWorld.build 210
 44100
 That's big
+```
 
 Furthermore, the else is entirely optional. The following is also valid:
+
+```
 function main(args) {
-x = parseInt(args[0]);
+	x = parseInt(args[0]);
 	xSquared = x * x;
-print(xSquared);
+	print(xSquared);
 
-
-if (xSquared > 9000) {
-	print("That's big");
+	if (xSquared > 9000) {
+		print("That's big");
+	}
 }
-}
+```
 
 You can also chain them together to create lists of possibilities:
+
+```
 function main(args) {
-x = parseInt(args[0]);
+	x = parseInt(args[0]);
 	xSquared = x * x;
-print(xSquared);
+	print(xSquared);
 
-
-if (xSquared > 9000) {
-	print("That's big");
-} else if (xSquared == 9000) {
-	print("That is exactly 9000");
-} else {
-	print("That's small");
+	if (xSquared > 9000) {
+		print("That's big");
+	} else if (xSquared == 9000) {
+		print("That is exactly 9000");
+	} else {
+		print("That's small");
+	}
 }
-}
+```
 
-Note: == was not a typo. Comparing two things to see if they're equal is done with two = signs: ==. This is to distinguish it from the single = which is used to assign values. 
+**Note:** `==` was not a typo. Comparing two things to see if they're equal is done with two equal signs: `==`. This is to distinguish it from the single `=` which is used to assign values. 
 
-Because the conditions in a series of if/else statements are checked sequentially, only the first applicable condition will run. Here's yet another example that illustrates this distinction more clearly:
+Because the conditions in a series of `if`/`else` statements are checked sequentially, only the first applicable condition will run. Here's yet another example that illustrates this distinction more clearly:
+
+```
 function main(args) {
-x = parseInt(args[0]);
+	x = parseInt(args[0]);
 	xSquared = x * x;
-print(xSquared);
+	print(xSquared);
 
-
-if (xSquared < 100) {
-	print("That's small");
-} else if (xSquared < 10000) {
-	print("That medium-sized");
-} else {
-	print("That's big");
+	if (xSquared < 100) {
+		print("That's small");
+	} else if (xSquared < 10000) {
+		print("That medium-sized");
+	} else {
+		print("That's big");
+	}
 }
-}
+```
 
 If you were to pass in 2, the square would be 4, which is both less than 100 and less than 10000. However, this code will only show "That's very small". This is because in a chain of if/else statements, only the first applicable one will be applied and the remaining ones will be skipped. 
 Lesson 4 - Loops
