@@ -7,4 +7,4 @@ to install it: http://www.mono-project.com/download/
 
 === SETTING UP CRAYON ===
 
-See https://github.com/blakeohare/crayon/blob/master/Docs/installation/index.md
+See https://github.com/blakeohare/crayon/blob/v0.2.0/Docs/installation/index.md
