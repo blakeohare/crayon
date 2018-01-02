@@ -55,4 +55,12 @@ Any other more specific commands are likely to be explained by the specific tuto
 
 ## Using the terminal in OSX/Linux
 
-TODO: write this up
+![img1](./images/osx1.png)
+
+![img2](./images/osx2.png)
+
+![img3](./images/osx3.png)
+
+![img4](./images/osx4.png)
+
+![img5](./images/osx5.png)
