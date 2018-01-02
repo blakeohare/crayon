@@ -73,17 +73,9 @@
       <Project>{6d073ba4-2e71-42ac-8f5a-5c3079d935cd}</Project>
       <Name>Pastel</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platforms\CApp\CApp.csproj">
-      <Project>{7f8c6292-5e35-4fd2-91c4-98123fd4e7e3}</Project>
-      <Name>CApp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Platforms\CSharpApp\CSharpApp.csproj">
       <Project>{4dca9e82-a6c2-4669-84f3-00d13204af7e}</Project>
       <Name>CSharpApp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\JavaAppAndroid\JavaAppAndroid.csproj">
-      <Project>{41debac3-73c4-4f40-93ae-9fe02319276d}</Project>
-      <Name>JavaAppAndroid</Name>
     </ProjectReference>
     <ProjectReference Include="..\Platforms\JavaApp\JavaApp.csproj">
       <Project>{0d8c38e5-6b24-489e-9c0f-d8101086bc32}</Project>
@@ -100,10 +92,6 @@
     <ProjectReference Include="..\Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj">
       <Project>{c1876949-86d6-405e-b717-afc56c27e1c8}</Project>
       <Name>JavaScriptAppIos</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Platforms\LangC\LangC.csproj">
-      <Project>{85cc1b47-a0c5-48b0-ba51-b3599acd1392}</Project>
-      <Name>LangC</Name>
     </ProjectReference>
     <ProjectReference Include="..\Platforms\PythonApp\PythonApp.csproj">
       <Project>{4e41e38d-3ff9-4c91-9446-5f51024d8bd9}</Project>

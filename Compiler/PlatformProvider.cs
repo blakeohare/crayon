@@ -53,14 +53,11 @@ namespace Crayon
             // TODO: create a dev Crayon csproj that has a strong project reference to the platforms
             // and a release csproj that does not and then ifdef out the implementation of this function.
             return new System.Reflection.Assembly[] {
-                typeof(CApp.PlatformImpl).Assembly,
                 typeof(CSharpApp.PlatformImpl).Assembly,
                 typeof(JavaApp.PlatformImpl).Assembly,
-                typeof(JavaAppAndroid.PlatformImpl).Assembly,
                 typeof(JavaScriptAppChrome.PlatformImpl).Assembly,
                 typeof(JavaScriptApp.PlatformImpl).Assembly,
                 typeof(JavaScriptAppIos.PlatformImpl).Assembly,
-                typeof(LangC.PlatformImpl).Assembly,
                 typeof(LangCSharp.PlatformImpl).Assembly,
                 typeof(LangJava.PlatformImpl).Assembly,
                 typeof(LangJavaScript.PlatformImpl).Assembly,

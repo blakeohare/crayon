@@ -1,7 +1,0 @@
-function main() {
-    lang();
-    library();
-    methods();
-
-    print("=== All tests passed! ===");
-}

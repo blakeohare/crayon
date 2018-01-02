@@ -1,3 +1,0 @@
-﻿void lib_manifest_RegisterFunctions(object libRegData) {
-    Core.RegisterLibraryFunction(libRegData, "getRequest", 1);
-}

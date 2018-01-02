@@ -1,6 +1,0 @@
-namespace CrayonUnit {
-
-    class UnitTestFailedException : Core.Exception {
-        constructor(message) : base(message) { }
-    }
-}

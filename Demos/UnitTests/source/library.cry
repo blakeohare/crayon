@@ -1,4 +1,0 @@
-function library() {
-    library_parse_int();
-    library_parse_float();
-}

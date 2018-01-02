@@ -52,7 +52,6 @@ def main(args):
 	librariesForRelease = [
 		'Audio',
 		'Core',
-		'CrayonUnit',
 		'Easing',
 		'FileIO',
 		'FileIOCommon',
