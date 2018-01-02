@@ -62,13 +62,8 @@ Any other more specific commands are likely to be explained by the specific tuto
 
 There's a couple of ways to start the terminal. 
 
-### For OSX users:
-If you haven't used it before, probably the easiest way is to go into finder and click on **Applications** on 
-the left side of the window. From there, look for a folder called **Utilities** and you'll see it listed as **Terminal**.
-Double click on it. 
-
-### For Linux users:
-It of course depends on your environment, but Ctrl + Alt + T is a common way to quickly bring up the terminal.
+| For OSX users | If you haven't used it before, probably the easiest way is to go into finder and click on **Applications** on the left side of the window. From there, look for a folder called **Utilities** and you'll see it listed as **Terminal**. Double click on it. |
+| For Linux users | It of course depends on your environment, but `Ctrl + Alt + T` is a common way to quickly bring up the terminal. |
 
 A black window will show up that looks like this.
 
