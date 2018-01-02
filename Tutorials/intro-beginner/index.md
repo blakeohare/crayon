@@ -80,6 +80,9 @@ Hello, World!
 
 That pretty much concludes this lesson. If you saw `Hello, World!` appear when you ran that command, it means you're completely set up and ready to do some more complicated stuff.
 
+### A quick safety demonstration before we start our flight:
+If at any point in this tutorial you create a program that won't close, you can always press `Ctrl + C` in the command line to close a program.
+
 ## Lesson 2 - Variables and Operators
 Programs are all about moving data around, changing it, and using it in a meaningful way. Even in games. But before we start writing Tetris, we'll need to start with the basic verbs.
 
@@ -215,7 +218,7 @@ C:\...> crayon HelloWorld.build 210
 That's big
 ```
 
-Furthermore, the else is entirely optional. The following is also valid:
+Furthermore, the `else` is entirely optional. The following is also valid:
 
 ```csharp
 function main(args) {
@@ -267,14 +270,14 @@ function main(args) {
 }
 ```
 
-If you were to pass in `2`, the square would be `4`, which is both less than `100` and less than `10000`. However, this code will only show `That's very small`. This is because in a chain of if/else statements, only the first applicable one will be applied and the remaining ones will be skipped. 
+If you were to pass in `2`, the square would be `4`, which is both less than `100` and less than `10000`. However, this code will only show `That's very small`. This is because in a chain of `if`/`else` statements, only the first applicable one will be applied and the remaining ones will be skipped. 
 
 ## Lesson 4 - Loops
 
 Another aspect of more complicated programs is making them do more than run from top to bottom. A loop will make a program run a block of code some number of times. How many times and why depends on the kind of loop, of which there are 4.
 
 ### While loops
-A while loop is the simplest kind of loop and resembles an if statement without an else in many ways.
+A `while` loop is the simplest kind of loop and resembles an `if` statement without an `else` in many ways.
 
 ```csharp
 function main(args) {
@@ -287,7 +290,7 @@ function main(args) {
 }
 ```
 
-Think of a while loop as an if statement except instead of running the block of code once, it'll keep running it repeatedly until the condition is no longer true. In this case, it will double the value of `x` until the value is no longer less than 1000.
+Think of a `while` loop as an `if` statement except instead of running the block of code once, it'll keep running it repeatedly until the condition is no longer true. In this case, it will double the value of `x` until the value is no longer less than 1000.
 
 If you run this, you'll see the following:
 
@@ -306,9 +309,9 @@ C:\...> crayon HelloWorld.build
 All done.
 ```
 
-The condition is always checked before the block of code runs. The first time through, the value of x was 1, which is less than 1000, and so it printed 1, doubled it, and then went back to the condition. The last time through x was 512. It got doubled, and the loop went back to the condition. Now x was 1024 which is greater than 1000 and so the block did not run and instead it proceeded to the code after the while statement, which prints `All done`. 
+The condition is always checked before the block of code runs. The first time through, the value of `x` was 1, which is less than 1000, and so it printed 1, doubled it, and then went back to the condition. The last time through `x` was 512. It got doubled, and the loop went back to the condition. Now x was 1024 which is greater than 1000 and so the block did not run and instead it proceeded to the code after the while statement, which prints `All done`. 
 
-The while loop is the most versatile loop, but as you start using it more frequently, you'll notice a common recurring usage pattern. Generally, when creating loops, you have some sort of line of code that sets up the loop, and another line of code that moves the state of your program closer to finishing the loop. Take a look at the while loop from the example again: 
+The `while` loop is the most versatile loop, but as you start using it more frequently, you'll notice a common recurring usage pattern. Generally, when creating loops, you have some sort of line of code that sets up the loop, and another line of code that moves the state of your program closer to finishing the loop. Take a look at the `while` loop from the example again: 
 
 ```csharp
 x = 1;
@@ -318,7 +321,7 @@ while (x < 1000) {
 }
 ```
 
-Here we have `x = 1;`, which is the setup. We also have `x = x * 2;` which steadily moves the value closer to the ending conditions. The existence of these two extra components are so common that there's another kind of loop called a for loop which works much like a while loop, except it lets you express these concepts more compactly. The above while loop could have equally been expressed like this:
+Here we have `x = 1;`, which is the setup. We also have `x = x * 2;` which steadily moves the value closer to the ending conditions. The existence of these two extra components are so common that there's another kind of loop called a `for` loop which works much like a `while` loop, except it lets you express these concepts more compactly. The above `while` loop could have equally been expressed like this:
 
 ```csharp
 for (x = 1; x < 1000; x = x * 2) {
@@ -328,13 +331,13 @@ for (x = 1; x < 1000; x = x * 2) {
 
 The parenthesis after the word `for` has 3 components separated by semicolons. The first is the setup (`x = 1`), the middle is the condition (`x < 1000`), and the last part is the step (`x = x * 2`). This code is 100% equivalent to the while loop version, but because we have expressed the setup and step as part of the loop, it is easier to read and understand since it is a way of syntactically labelling these lines with their intended purpose in the program. 
 
-In the beginning of this section I stated that there were 4 kinds of loops. One of the others is called a do-while loop and is used so seldomly that I will omit it from this tutorial. The fourth kind is called a for-each loop and I cannot talk about it until we've talked about lists a little more. 
+In the beginning of this section I stated that there were 4 kinds of loops. One of the others is called a `do-while` loop and is used so seldomly that I will omit it from this tutorial. The fourth kind is called a `for-each` loop and I cannot talk about it until we've talked about lists a little more. 
 
 ## Lesson 5 - Functions
 
-So far we've been using functions without really talking about them. A simple definition of a function is that it's a chunk of code with a name. We've been using one function called main. We've also used two other functions so far: `print` and `parseInt`. 
+So far we've been using functions without really talking about them. A simple definition of a function is that it's a chunk of code with a name. We've been using one function called `main`. We've also used two other functions so far: `print` and `parseInt`. 
 
-To define your own function, use the keyword function. Your main.cry file can have multiple function definitions, not just the main function. To invoke a function, use the name of the function followed by parentheses.
+To define your own function, use the keyword `function`. Your *main.cry* file can have multiple function definitions, not just the `main` function. To invoke a function, use the name of the function followed by parentheses:
 
 ```csharp
 function main() {
@@ -363,7 +366,7 @@ function square(value) {
 }
 ```
 
-You can use the + to add text and numbers together. This will result in a longer piece of text that includes the values concatenated together.
+You can use the `+` to add text and numbers together. This will result in a longer piece of text that includes the values concatenated together.
 
 More significantly, the square function uses the `return` keyword. Notice how `square` is used on the right side of an equals sign. This means that the function needs to generate some sort of value that will be assigned to `xSquared`. What that value is is determined by the value that is `return`ed. 
 
@@ -398,7 +401,7 @@ average(10, 20);
 
 And would give the result `15.0`. The reason why I used `2.0` instead of `2` and the result having a decimal in it will be covered in the next section.
 
-Another important note is that when a program executes a function, variables names in one function will not interfere with variables in another function even if they have the same name. In fact, every invocation of a function runs in its own separate copy. To illustrate this concept, here's a function that calculates the nth sequence in the fibonacci sequence. For a refresher, the fibonacci sequence is the sequence of numbers where each number is the sum of the previous 2. It looks like this:
+Another important note is that when a program executes a function, variables names in one function will not interfere with variables in another function even if they have the same name. In fact, every invocation of a function runs in its own separate copy. To illustrate this concept, here's a function that calculates the n<sup>th</sup> number in the fibonacci sequence. For a refresher, the [fibonacci sequence](https://en.wikipedia.org/wiki/Fibonacci_number) is the sequence of numbers where each number is the sum of the previous 2. It looks like this:
 
 ```
 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, ...
@@ -423,7 +426,7 @@ If you were to draw a timeline diagram of the computer executing this program, i
 
 ```TODO: copy the table from the google doc```
 
-At any given moment, the computer is executing exactly one function at a time. But that function has a parent that originally called it. And that function has a parent that called it, and so on until you get all the way up to `main()`. This is called the "call stack". In this case, calling `fib(5)` will ultimately cause the `fib` function to run 15 times, but at any given moment, at most 5 versions are present in the call stack.
+At any given moment, the computer is executing exactly one function at a time. But that function has a parent that originally called it. And that function has a parent that called it, and so on until you get all the way up to `main()`. This is called the **call stack**. In this case, calling `fib(5)` will ultimately cause the `fib` function to run 15 times, but at any given moment, at most 5 versions are present in the call stack.
 
 This is called **recursion** and we'll talk about it more later in lesson 15.
 
@@ -452,7 +455,7 @@ This is why the average function from the previous lesson divided the sum of the
 
 ### Strings: Not just for cheese
 
-We've been using pieces of text here and there so far. The word "Text" is a valid term, but the term **string** is used to refer specifically to the text type. The term originates from the idea that text is comprised of a "string of characters". 
+We've been using pieces of text here and there so far. The word *Text* is a valid term, but the term **string** is used to refer specifically to the text type. The term originates from the idea that text is comprised of a "string of characters". 
 
 I've also shown strings being combined with numbers by using the `+` operator. It's not just numbers, though. You can combine a string with any other type to generate a new string. This is useful when using the `print` statement. 
 
@@ -466,11 +469,11 @@ function showATriangle() {
 }
 ```
 
-In this example, the for loop will run 10 times, where the variable width will go from 1 to 10. Each time, a string consisting of `width` `@` characters will be shown.
+In this example, the for loop will run 10 times, where the variable `width` will go from 1 to 10. Each time, a string consisting of `width` `@` characters will be shown.
 
 ### Booleans
 
-Booleans are another type that only have two possible values: `true` and `false`. You have been implicitly using booleans each time you use an if or while statement with something like `==` or `<`. These operators take two numbers and create a boolean from it. The `if` (or `while`) statement itself consumes a boolean in parenthesis. Therefore it is equally acceptable to do something like this:
+**Booleans** are another type that only have two possible values: `true` and `false`. You have been implicitly using booleans each time you use an `if` or `while` statement with something like `==` or `<`. These operators take two numbers and create a boolean from it. The `if` (or `while`) statement itself consumes a boolean in parenthesis. Therefore it is equally acceptable to do something like this:
 
 ```csharp
 isSmall = x < 5;
