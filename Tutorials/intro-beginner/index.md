@@ -265,12 +265,16 @@ function main(args) {
 }
 ```
 
-If you were to pass in 2, the square would be 4, which is both less than 100 and less than 10000. However, this code will only show "That's very small". This is because in a chain of if/else statements, only the first applicable one will be applied and the remaining ones will be skipped. 
-Lesson 4 - Loops
+If you were to pass in `2`, the square would be `4`, which is both less than `100` and less than `10000`. However, this code will only show `That's very small`. This is because in a chain of if/else statements, only the first applicable one will be applied and the remaining ones will be skipped. 
+
+## Lesson 4 - Loops
+
 Another aspect of more complicated programs is making them do more than run from top to bottom. A loop will make a program run a block of code some number of times. How many times and why depends on the kind of loop, of which there are 4.
-While loops
+
+### While loops
 A while loop is the simplest kind of loop and resembles an if statement without an else in many ways.
 
+```
 function main(args) {
 	x = 1;
 	while (x < 1000) {
@@ -279,11 +283,14 @@ function main(args) {
 	}
 	print("All done.");
 }
+```
 
 Think of a while loop as an if statement except instead of running the block of code once, it'll keep running it repeatedly until the condition is no longer true. In this case, it will double the value of x until the value is no longer less than 1000.
 
 If you run this, you'll see the following:
-C:\Things> crayon HelloWorld.build
+
+```
+C:\...> crayon HelloWorld.build
 1
 2
 4
@@ -295,29 +302,39 @@ C:\Things> crayon HelloWorld.build
 256
 512
 All done.
+```
 
-The condition is always checked before the block of code runs. The first time through, the value of x was 1, which is less than 1000, and so it printed 1, doubled it, and then went back to the condition. The last time through x was 512. It got doubled, and the loop went back to the condition. Now x was 1024 which is greater than 1000 and so the block did not run and instead it proceeded to the code after the while statement, which prints "All done". 
+The condition is always checked before the block of code runs. The first time through, the value of x was 1, which is less than 1000, and so it printed 1, doubled it, and then went back to the condition. The last time through x was 512. It got doubled, and the loop went back to the condition. Now x was 1024 which is greater than 1000 and so the block did not run and instead it proceeded to the code after the while statement, which prints `All done`. 
 
 The while loop is the most versatile loop, but as you start using it more frequently, you'll notice a common recurring usage pattern. Generally, when creating loops, you have some sort of line of code that sets up the loop, and another line of code that moves the state of your program closer to finishing the loop. Take a look at the while loop from the example again: 
+
+```
 x = 1;
 while (x < 1000) {
 	print(x);
 	x = x * 2;
 }
-Here we have x = 1, which is the setup. We also have x = x * 2 which steadily moves the value closer to the ending conditions. The existence of these two extra components are so common that there's another kind of loop called a for loop which works much like a while loop, except it lets you express these concepts more compactly. The above while loop could have equally been expressed like this:
+```
 
+Here we have `x = 1;`, which is the setup. We also have `x = x * 2;` which steadily moves the value closer to the ending conditions. The existence of these two extra components are so common that there's another kind of loop called a for loop which works much like a while loop, except it lets you express these concepts more compactly. The above while loop could have equally been expressed like this:
+
+```
 for (x = 1; x < 1000; x = x * 2) {
 	print(x);
 }
+```
 
-The parenthesis after the word "for" has 3 components separated by semicolons. The first is the setup (x = 1), the middle is the condition (x < 1000), and the last part is the step (x = x * 2). This code is 100% equivalent to the while loop version, but because we have expressed the setup and step as part of the loop, it is easier to read and understand since it is a way of syntactically labelling these lines with their intended purpose in the program. 
+The parenthesis after the word `for` has 3 components separated by semicolons. The first is the setup (`x = 1`), the middle is the condition (`x < 1000`), and the last part is the step (`x = x * 2`). This code is 100% equivalent to the while loop version, but because we have expressed the setup and step as part of the loop, it is easier to read and understand since it is a way of syntactically labelling these lines with their intended purpose in the program. 
 
 In the beginning of this section I stated that there were 4 kinds of loops. One of the others is called a do-while loop and is used so seldomly that I will omit it from this tutorial. The fourth kind is called a for-each loop and I cannot talk about it until we've talked about lists a little more. 
-Lesson 5 - Functions
-So far we've been using functions without really talking about them. A simple definition of a function is that it's a chunk of code with a name. We've been using one function called main. We've also used two other functions so far: print and parseInt. 
+
+## Lesson 5 - Functions
+
+So far we've been using functions without really talking about them. A simple definition of a function is that it's a chunk of code with a name. We've been using one function called main. We've also used two other functions so far: `print` and `parseInt`. 
 
 To define your own function, use the keyword function. Your main.cry file can have multiple function definitions, not just the main function. To invoke a function, use the name of the function followed by parentheses.
 
+```
 function main() {
 	sayHello();
 }
@@ -325,59 +342,72 @@ function main() {
 function sayHello() {
 	print("Hello, World!");
 }
+```
 
-The order that you define the functions does not matter. The main() function will always run first. When the main function ends, the program ends. In this case, the main function calls another function, sayHello, which we have defined below. Then sayHello in turn calls another function called print. sayHello has no arguments. You can just call it and it needs no extra information in order to run. 
+The order that you define the functions does not matter. The `main()` function will always run first. When the `main` function ends, the program ends. In this case, the main function calls another function, `sayHello`, which we have defined below. Then `sayHello` in turn calls another function called `print`. `sayHello` has no arguments. You can just call it and it needs no extra information in order to run. 
 
 Here's a more complicated example:
+
+```
 function main(args) {
-x = parseInt(args[0]);
-xSquared = square(x);
+	x = parseInt(args[0]);
+	xSquared = square(x);
 	print("The square of " + x + " is " + xSquared);
 }
 
 function square(value) {
 	result = value * value;
-return result;
+	return result;
 }
-
-This re-introduces args as an argument to the main function, but does a few things you haven't seen before. 
+```
 
 You can use the + to add text and numbers together. This will result in a longer piece of text that includes the values concatenated together.
 
-More significantly, the square function uses the return keyword. Notice how square is used on the right side of an equals sign. This means that the function needs to generate some sort of value that will be assigned to xSquared. What that value is is determined by the value that is returned. 
+More significantly, the square function uses the `return` keyword. Notice how `square` is used on the right side of an equals sign. This means that the function needs to generate some sort of value that will be assigned to `xSquared`. What that value is is determined by the value that is `return`ed. 
 
 Here are some example functions of common math operations:
+
+```
 function absoluteValue(value) {
 	if (value < 0) {
 		value = -1 * value;
 	}
-return value;
+	return value;
 }
 
 function factorial(value) {
 	accumulatedValue = 1;
-for (n = 1; n <= value; n = n + 1) {
+	for (n = 1; n <= value; n = n + 1) {
 		accumulatedValue = accumulatedValue * n;
 	}
-return accumulatedValue;
+	return accumulatedValue;
 }
 
 function average(a, b) {
 	return (a + b) / 2.0;
 }
+```
+
 Notice in the last example, a function can have multiple arguments separated by commas. This would be invoked from another function like this:
+
+```
 average(10, 20);
-And would give the result 15.0. The reason why I used 2.0 instead of 2 and the result having a decimal in it will be covered in the next section.
+```
+
+And would give the result `15.0`. The reason why I used `2.0` instead of `2` and the result having a decimal in it will be covered in the next section.
 
 Another important note is that when a program executes a function, variables names in one function will not interfere with variables in another function even if they have the same name. In fact, every invocation of a function runs in its own separate copy. To illustrate this concept, here's a function that calculates the nth sequence in the fibonacci sequence. For a refresher, the fibonacci sequence is the sequence of numbers where each number is the sum of the previous 2. It looks like this:
 
+```
 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, ...
+```
 
+```
 function fib(n) {
 	if (n < 2) {
-	return 1;
-}
-value = fib(n - 1) + fib(n - 2);
+		return 1;
+	}
+	value = fib(n - 1) + fib(n - 2);
 	return value;
 }
 
@@ -385,155 +415,148 @@ function main() {
 	n5 = fib(5);
 	print(n5);
 }
+```
 
-If you were to draw a timeline diagram of the computer executing this program, it would look something like the diagram below. Every time you invoke the fib function, it will return 1 if the argument is less than 2, but it will invoke itself twice for every other argument. Each invocation is a separate copy of the function, and it knows which copy to return to when it's done. It's as though it keeps a breadcrumb pointing back to its origin. 
+If you were to draw a timeline diagram of the computer executing this program, it would look something like the diagram below. Every time you invoke the `fib` function, it will return `1` if the argument is less than `2`, but it will invoke itself twice for every other argument. Each invocation is a separate copy of the function, and it knows which copy to return to when it's done. It's as though each copy keeps a breadcrumb pointing back to its origin. 
 
-Time →
-main()
+```TODO: copy the table from the google doc```
 
+At any given moment, the computer is executing exactly one function at a time. But that function has a parent that originally called it. And that function has a parent that called it, and so on until you get all the way up to `main()`. This is called the "call stack". In this case, calling `fib(5)` will ultimately cause the `fib` function to run 15 times, but at any given moment, at most 5 versions are present in the call stack.
 
-fib(5)
-print(8)
+This is called recursion and we'll talk about it more later in lesson 15.
 
+## Lesson 6 - More Types and Operators
 
-fib(4)
-fib(3)
-
-
-
-
-fib(3)
-fib(2)
-fib(2)
-fib(1)
-
-
-
-
-fib(2)
-fib(1)
-fib(1)
-fib(0)
-fib(1)
-fib(0)
-
-
-
-
-
-
-fib(1)
-fib(0)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-At any given moment, the computer is executing exactly one function at a time. But that function has a parent that originally called it. And that function has a parent that called it, and so on until you get all the way up to main(). This is called the "call stack". In this case, calling fib(5) will ultimately cause the fib function to run 15 times, but at any given moment, at most 5 versions are present in the call stack.
-
-This is called recursion and we'll talk about it more later in lesson 15.  
-Lesson 6 - More Types and Operators
 Up to this point, types have only informally been introduced. So far, you've seen numbers, text, and a list. In this section I'll talk a little more about the ones we've used so far and also the ones we haven't.
-Numbers aren't just numbers
-While it's true that we've been using numbers up to this point, there are actually two kinds of numbers. Whole numbers, and decimals. In programming, these are usually referred to as "integers" and "floats" (which is short for floating point decimal). However, in Crayon (and most programming languages), there's a few twists. In normal math, adding .5 and .5 will give you 1, a whole number. But in code, adding these together will give you 1.0, a float. 
+
+This section will seem a little information-dense since I'll be filling in a lot of the holes that we've skipped over up until this point. 
+
+### Numbers aren't just numbers
+
+While it's true that we've been using numbers up to this point, there are actually two kinds of numbers. Whole numbers, and decimals. In programming, these are usually referred to as "integers" and "floats" (which is short for "floating point decimal"). However, in Crayon (and most programming languages), there's a few twists. In normal math, adding .5 and .5 will give you 1, a whole number. But in code, adding these together will give you 1.0, a float. 
 
 That's right. Even if the part after the decimal is a 0, this number is still considered to be a float by the computer. This is because there are strict rules that govern the interactions between numbers while doing math operations:
-Any operator (such as addition, subtraction, multiplication, division) that is applied between two integers will result in an integer. 3 + 3 is 6.
-Any operator that is applied between two numbers where one or both of them are floats will result in a float. 
-1.0 + 1.0 results in 2.0
-0.0 + 3 results in 3.0
-If the true mathematical result of an operation between integers will result in a decimal, the decimal is always rounded DOWN so that the result can stay an integer. 
-7 / 2 results in 3
-49 / 10 results in 4
+
+* Any operator (such as addition, subtraction, multiplication, division) that is applied between two integers will result in an integer. 3 + 3 is 6.
+* Any operator that is applied between two numbers where one or both of them are floats will result in a float. 
+  * 1.0 + 1.0 results in 2.0
+  * 0.0 + 3 results in 3.0
+* If the true mathematical result of an operation between integers will result in a decimal, the decimal is always rounded DOWN so that the result can stay an integer. 
+  * 7 / 2 results in 3
+  * 49 / 10 results in 4
 
 This is why the average function from the previous lesson divided the sum of the two numbers by 2.0 instead of 2. 
 
-Strings: Not just for cheese
+### Strings: Not just for cheese
+
 We've been using pieces of text here and there so far. "Text" is a valid term, but the term "string" is used to refer specifically to the text type. The term originates from the idea that text is comprised of a "string of characters". 
 
-I've also shown strings being combined with numbers by using the + operator. It's not just numbers, though. You can combine a string with any other type to generate a new string. This is useful when using the print statement. 
+I've also shown strings being combined with numbers by using the `+` operator. It's not just numbers, though. You can combine a string with any other type to generate a new string. This is useful when using the `print` statement. 
 
-You can also use the * operator to multiply strings by integers. This will result in a new string that is the old string repeated that many times.
+You can also use the `*` operator to multiply strings by integers. This will result in a new string that is the old string repeated that many times.
+
+```
 function showATriangle() {
 	for (width = 1; width < 10; width = width + 1) {
 		print("@" * width);
 	}
 }
-In this example, the for loop will run 10 times, where the variable width will go from 1 to 10. Each time, a string consisting of width @ characters will be shown.
-Booleans
-Booleans are another type that only have two possible values: true and false. You have been implicitly using booleans each time you use an if or while statement with something like == or <. These operators take two numbers and create a boolean from it. The if (or while) statement itself consumes a boolean in parenthesis. Therefore it is equally acceptable to do something like this:
+```
 
+In this example, the for loop will run 10 times, where the variable width will go from 1 to 10. Each time, a string consisting of `width` `@` characters will be shown.
+
+### Booleans
+
+Booleans are another type that only have two possible values: true and false. You have been implicitly using booleans each time you use an if or while statement with something like `==` or `<`. These operators take two numbers and create a boolean from it. The if (or while) statement itself consumes a boolean in parenthesis. Therefore it is equally acceptable to do something like this:
+
+```
 isSmall = x < 5;
 if (isSmall) {
 	print("x is small");
 	print("x is " + x);
-print("isSmall is " + isSmall);
+	print("isSmall is " + isSmall);
 }
-If you were to run this and x was 3, then you'd see something like this:
+```
+
+If you were to run this and `x` was `3`, then you'd see something like this:
+
+```
 x is small
 x is 3
 isSmall is true
+```
 
-Lists
+### Lists
+
 We've used lists once before since that's how the command line arguments are passed into the main function. You can create your own lists by using square bracket characters [ and ] and storing the result in a variable. You can then access the items in the list by using square brackets again at the end of the variable (we've done this before using args[0]) and putting the offset from the beginning of the list into the brackets as an integer. This is called indexing into a list. Just keep in mind that the index in a list counts from 0 because it's an offset, not the nth item in the list.
 
+```
 someList = [1, 2, 3, 4, 5];
 print("The 2nd item in the list is " + someList[1]);
+```
 
-For convenience, you can also pass in negative numbers as the index of the list. This will count from the end of the list where -1 is the last item in the list.
+For convenience, you can also pass in negative numbers as the index of the list. This will count from the end of the list where `-1` is the last item in the list.
 
+```
 print("The 2nd to last item in the list is " + someList[-2]);
-	
-Fields and dot notation
+```
+
+### Fields and dot notation
+
 Certain types of values have something called "fields". These are extra bits of information that can be accessed by using a dot . followed by the name of the field. For strings and lists, there are several built-in fields. For example, you can get the length of a list by adding a .length to the end of any list value. This will result in the length of the list as an integer. 
+
+```
 function printTheListLineByLine(someList) {
 	for (i = 0; i < someList.length; i = i + 1) {
 		print(someList[i]);
 	}
 }
-Sometimes these fields can be built-in functions. These are called methods. For example, there is a method on each list called .add which will add an item to the end of the list.
+```
+
+Sometimes these fields can be built-in functions. These are called **methods**. For example, there is a method on each list called `.add` which will add an item to the end of the list.
+
+```
 function buildAListOfSizeN(n) {
 	output = []; // An empty list. 0 items.
-for (i = 1; i <= n; i = i + 1) {
+	for (i = 1; i <= n; i = i + 1) {
 		output.add(i);
 	}
-return output;
+	return output;
 }
-There's another list method called .shuffle which will shuffle the items in a list in a random order.
+```
 
+There's another list method called `.shuffle` which will shuffle the items in a list in a random order.
+
+```
 function rollADice() {
 	outcomes = [1, 2, 3, 4, 5, 6];
 	outcomes.shuffle();
 	return outcomes[0];
 }
+```
 
-Like a function, a method generally must be followed by parentheses to invoke it. However, fields that are not methods do not need this. For now, .length is the only field that isn't a method that you should worry about.
-Lesson 7 - Imports and Libraries
-A library is a packaged set of existing code either written by yourself or someone else. This package of code is intended to serve some sort of standalone or themed purpose. You can import a library into your code and use the functions defined in it using the import statement. An import statement goes at the top of the file where you want to call the library's code. One simple example of a library is the Math library which is built in to Crayon. 
+Like a function, a method generally must be followed by parentheses to invoke it. However, fields that are not methods do not need this. For now, `.length` is the only field that isn't a method that you should know about.
 
+### Lesson 7 - Imports and Libraries
+
+A **library** is a packaged set of existing code either written by yourself or someone else. This package of code is intended to serve some sort of standalone or themed purpose. You can import a library into your code and use the functions defined in it using the `import` statement. An import statement goes at the top of the file where you want to call the library's code. One simple example of a library is the `Math` library which is built in to Crayon. 
+
+```
 import Math;
 
-function main() {
+function main(args) {
 	root2 = Math.sqrt(2);
 	print("The square root of 2 is " + root2);
 }
+```
 
-To access functions inside a library, you can use dot notation. This is generally considered the easiest to read and the least likely to cause a name collision with other variables or function names in your code since libraries generally begin with an uppercase letter (because variables and function names begin with a lowercase letter, generally). There are quite a few libraries that are built in to Crayon and the documentation for each can be found here. However, it is out of scope to go over each in this tutorial. In the next section, we'll start making something that looks like a game by using some of the graphics and game-related libraries. However, defining your own library is out of scope of this tutorial as well. 
-Lesson 8 - A box on the screen
+To access functions inside a library, you can use dot notation. There are quite a few libraries that are built in to Crayon and the documentation for each can be found here. However, it is out of scope to go over each in this tutorial. In the next section, we'll start making something that looks like a game by using some of the graphics and game-related libraries. 
+
+### Lesson 8 - A box on the screen
+
 In this section and the ones that follow, we'll finally start working with 2D graphics and the disparate concepts I've been throwing at you thus far will start coalescing into something useful. This is also a pretty good review section since it uses almost everything introduced so far.
 
+```
 import Game;
 import Graphics2D;
 
@@ -544,7 +567,7 @@ function main() {
 	window = new Game.GameWindow("A Box", 30, 600, 400);
 
 	gameRunning = true;
-while (gameRunning) {
+	while (gameRunning) {
 		// Gather a list of events that happened since
 		// the last time clockTick was called.
 		eventList = window.pumpEvents();
@@ -575,39 +598,44 @@ while (gameRunning) {
 		window.clockTick();
 	}
 }
+```
 
-There's quite a bit going on here. First of all, this is the first time we've shown something to the user by using something other than print. 
+There's quite a bit going on here. First of all, this is the first time we've shown something to the user by using something other than `print`. 
 
-The window itself is generated by invoking new Game.GameWindow(...) and saving the result in the variable window. This variable contains the game window and you can do various with it. You can think of the game window as another type, like a list or string, which has random methods built in to it. Don't worry too much about the new keyword that's used to create it. We'll go into more details about that in Lesson 14.
+The window itself is generated by invoking `new Game.GameWindow(...)` and saving the result in the variable `window`. This variable contains the game window and you can do various with it. You can think of the game window as another type, like a list or string, which has some methods built in to it. Don't worry too much about the `new` keyword that's used to create it. We'll go into more details about that in Lesson 14.
 
-Next, it introduces the notion of the game loop. A computer game is like a movie. It shows an image on the screen very briefly. Then it shows a different image. And then another. These create animations. The rate at which these animations are shown is known as the frame rate. This game loop is literally a while loop, that you see in this code snippet. The game loop itself can be divided into 3 sections. 
+Next, this code introduces the notion of the **game loop**. A computer game is like a movie. It shows an image on the screen very briefly. Then it shows a different image. And then another. These create animations. The rate at which these animations are shown is known as the **frame rate**. The game loop in this code is literally just a `while` loop. You can think of the game loop as being divided into 3 sections. 
 
-The first section analyzes any input received by the user and updates the state of the game accordingly. This game doesn't really do anything aside from quit when you close the window, so this part is somewhat limited in this version of our "game". In a real game, this would, for example, take the state of the arrow keys, and update the coordinates of a character.
+* The first section analyzes any input received by the user and updates the state of the game accordingly. This game doesn't really do anything aside from quit when you close the window, so this part is somewhat limited in this version of our "game". In a real game, this would, for example, take the state of the arrow keys, and update the coordinates of a character.
+* The next section draws to the screen based on the current state of the game. Each image shown to the user must be generated from scratch at the beginning of each frame. In this simple game, we clear out the screen with a black background and then draw a red rectangle. 
+* The last section is the invocation of `window.clockTick()`. This will pause the game for several milliseconds. The exact duration is determined in a way that will make your game run at exactly a rate of 30 frames per second. However, if your game code is too slow and it cannot run that fast, the game will slow down. You can choose what the frame rate will be when you create the window (it's the first number that's passed into the creation of GameWindow). 60 is a common frame rate for most action or aesthetically intensive games. However 30 frames per second is also common for more casual games and is gentler on your user's batteries if using a laptop or mobile device. 
 
-The next section draws to the screen based on the current state of the game. Each image shown to the user must be generated from scratch at the beginning of each frame. In this simple game, we clear out the screen with a black background and then draw a red rectangle. 
+### A closer look at specifics
 
-The last section is the invocation of window.clockTick(). This will pause the game for several milliseconds. The exact duration is determined in a way that will make your game run at exactly a rate of 30 frames per second. However, if your game code is too slow and it cannot run that fast, the game will slow down. You can choose what the frame rate will be when you create the window (it's the first number that's passed into the creation of GameWindow). 60 is a common frame rate for most action or aesthetically intensive games. However 30 frames per second is also common for more casual games and is gentler on your user's batteries if using a laptop or mobile device. 
+Here's a breakdown of the new things that appear in this snippet...
 
-A closer look at specifics
-The window variable contains a reference to the actual window and has two methods that are shown in the example. 
-window.pumpEvents() - This will generate a list of events that have occurred since the last time you called this function. The actual items in this list are also custom types called event objects, which also have more fields and methods on them. Various events will come from this function including mouse, keyboard, and gamepad input, and also any attempt to close the window will also appear as an event (which is the only kind of event that is checked for in this example).
-window.clockTick() - as explained above, this will pause the game for a few milliseconds to maintain the frame rate. Additionally it will update the screen with the graphical operations you performed during the frame. Most importantly it will also query the underlying framework or operating system to figure out which events have occurred and will hand them off to the event queue which will appear as events in pumpEvents. If you do not call window.clockTick(), these events will accumulate and it is possible to cause the window to freeze since it will seem like an unresponsive window to the operating system.
-event.type == Game.EventType.QUIT - the variable event contains an event object. This object has a field called type which indicates which type of event this object is. If you were to print this value, unfortunately you'd see an arbitrary integer. However, there is another value defined in the Game library called EventType.QUIT which matches that value. You can use == to check to see if the types match. 
-Graphics2D.Draw.fill(red, green, blue) - This will fill the entire window with one color. In this case, we use black. The numbers that you pass in are integers that range from 0 to 255 that describe the intensity of that color component. 0 for all three values is black whereas 255 for all three will be white. If you haven't worked with red/green/blue color component values before, here's a quick tutorial. 
-Graphics2D.Draw.rectangle(left, top, width, height, red, green, blue) - This draws a rectangle to the screen at the given location with the given color. The first number is the distance the left side of the rectangle is from the left side of the window. The second number is the distance the top is from the top of the window. The next two are width and height and the final 3 numbers are red/green/blue color components that work the same way as Draw.fill(r, g, b).
+* The **window** variable contains a reference to the actual window and has two methods that are shown in the example. 
+* **window.pumpEvents()** - This will generate a list of events that have occurred since the last time you called this function. The actual items in this list are also custom types called event objects, which also have more fields and methods on them. Various events will come from this function including mouse, keyboard, and gamepad input, and also any attempt to close the window will also appear as an event (which is the only kind of event that is checked for in this example).
+* **window.clockTick()** - as explained above, this will pause the game for a few milliseconds to maintain the frame rate. Additionally it will update the screen with the graphical operations you performed during the frame. Most importantly it will also query the underlying framework or operating system to figure out which events have occurred and will hand them off to the event queue which will appear as events in pumpEvents. If you do not call window.clockTick(), these events will accumulate and it is possible to cause the window to freeze since it will seem like an unresponsive window to the operating system.
+* **event.type == Game.EventType.QUIT** - the variable event contains an event object. This object has a field called type which indicates which type of event this object is. If you were to print this value, unfortunately you'd see an arbitrary integer. However, there is another value defined in the Game library called EventType.QUIT which matches that value. You can use == to check to see if the types match. 
+* **Graphics2D.Draw.fill(red, green, blue)** - This will fill the entire window with one color. In this case, we use black. The numbers that you pass in are integers that range from 0 to 255 that describe the intensity of that color component. 0 for all three values is black whereas 255 for all three will be white. If you haven't worked with red/green/blue color component values before, here's a quick tutorial. 
+* **Graphics2D.Draw.rectangle(left, top, width, height, red, green, blue)** - This draws a rectangle to the screen at the given location with the given color. The first number is the distance the left side of the rectangle is from the left side of the window. The second number is the distance the top is from the top of the window. The next two are width and height and the final 3 numbers are red/green/blue color components that work the same way as Draw.fill(r, g, b).
 
+```
 TODO: include an image
-Lesson 9 - A circle that chases the cursor
+```
+
+## Lesson 9 - A circle that chases the cursor
 In this lesson I'll use the previous code as a foundation to create something a little more interesting, a circle that chases the cursor. 
 
-Lesson 10 - Images
+## Lesson 10 - Images
 
+## Lesson 11 - References vs Values
 
-Lesson 12 - References vs Values
-Lesson 13 - Dictionaries
-Lesson 14 - Objects
+## Lesson 12 - Dictionaries
 
-Lesson 15 - Exceptions
+## Lesson 13 - Objects
 
-Lesson 16 - Recursion and traversal
+## Lesson 14 - Exceptions
 
+## Lesson 15 - Recursion and traversal
