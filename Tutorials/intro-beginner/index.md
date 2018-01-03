@@ -848,13 +848,157 @@ function main() {
 
 ![circle with an attitude](./images/circle-attitude.png)
 
-## Lesson 10 - Images
+## Lesson 10 - Objects
 
-## Lesson 11 - References vs Values
+The previous example with the purple circle shooting white bullets was done only using programming concepts you already know. However, the way this is implemented is not ideal and kind of hard to read. In this example, I'll be re-implementing the same program but this time I'll be using something called Object oriented programming to make it easier to read and maintain.
 
-## Lesson 12 - Dictionaries
+Object-oriented programming is a vast and deep subject that encompasses lots of theory, best-practices, and conventions. However, this section will only cover some super-high level concepts and how to use them in Crayon. 
 
-## Lesson 13 - Objects
+You've been working with objects a little bit so far. The GameWindow and the events that you loop through are both objects. An object is basically just a custom type that has its own fields and methods on it. The event object had a `.type` field. It also had `.x` and `.y` fields for the mouse location. The GameWindow object has `.clockTick()` and `.pumpEvents()` methods. You too, can define your own object type and use it to make your code more readable.
+
+You should never use a list to represent structured data. For example, the bullets in the previous example were lists of 3 items, where the first two items were the x and y coordinates, and the last item was the angle that the bullet was travelling at. The technical term for this is a travesty of readability.
+
+Instead, we can define a `Bullet` object which has fields called `.x`, `.y`, and `.angle`. This will make things much easier to read and also less error-prone. We do this using the `class` keyword. A **class** is a definition of an object type. 
+
+```csharp
+class Bullet {
+	field x;
+	field y;
+	field angle;
+	
+	constructor(x, y, angle) {
+		this.x = x;
+		this.y = y;
+		this.angle = angle;
+	}
+	
+	function update() {
+		velocity = 7;
+		this.x = this.x + Math.cos(this.angle) * velocity;
+		this.y = this.y + Math.sin(this.angle) * velocity;
+	}
+	
+	function isOffScreen(width, height) {
+		return this.x < 0 || this.y < 0 || this.x > width || this.y > height;
+	}
+	
+	function draw() {
+		size = 6;
+		Graphics2D.Draw.rectangle(
+			this.x - size / 2, this.y - size / 2, size, size,
+			255, 255, 255); // white
+	}
+}
+```
+
+Here you can see a definition of a Bullet type. This type will have 3 fields, x, y, and angle. When we create a bullet object (or more commonly referred to as a Bullet **instance**) these fields will be referenced with dot notation. Furthermore, I've defined two functions *inside* the class. These will be methods that you can access using `.update()`, `.isOnScreen(600, 400)`, and `.draw()`. 
+
+By moving the complicated parts of our code into the Bullet class as methods, the game code will be a lot easier to read now. The concept of hiding away complexity into object definitions is called **Encapsulation**. 
+
+There's a few new syntax things you'll notice in the above class definition. 
+
+### Constructor
+You'll notice that I have something that looks like a function definition, but instead of the keyword `function` followed by the name of the function, it simply says `constructor`. The constructor of a class is a nameless function that automatically gets run when you create an instance of an object. Remember when you create a new GameWindow object, you used the keyword `new`?
+
+```csharp
+window = new Game.GameWindow("A Box", 30, 600, 400);
+```
+
+The `new` keyword will create a new instance of the object and run the constructor like a function. The output of the constructor function is always the instance of the function, therefore a return statement in the constructor is never necessary. 
+
+### this
+Another thing you may have noticed is the keyword `this`. `this` is basically an implicitly declared variable where the value of `this` is the current object. This is how you refer to the fields on the current object. For example in update, `this.x` is used, which will read from or write to the field x of the current object that this method was called on.
+
+You may be tempted to create objects for just concrete concepts that you can see on the screen. But you can also create objects for more abstract concepts that may make your code easier to read. For example, there seems to be a lot of logic related to creating and managing the bullets as a collection. So let's create an object called BulletCollection.
+
+```csharp
+class BulletCollection {
+
+	// You can initialize fields with a default starting value.
+	field bullets = [];
+	
+	// Because the field is already initialized, the constructor can be empty.
+	constructor() { }
+	
+	function addNewBullet(x, y) {
+		angle = Random.randomFloat() * 2 * Math.PI;
+		
+		// Here we use the 'new' keyword to create a new Bullet.
+		this.bullets.add(new Bullet(x, y, angle));
+	}
+	
+	function update(screenWidth, screenHeight) {
+		for (i = 0; i < this.bullets.length; i++) {
+			bullet = this.bullets[i];
+			bullet.update();
+			if (bullet.isOffScreen(screenWidth, screenHeight)) {
+				this.bullets.remove(i);
+				i--;
+			}
+		}
+	}
+	
+	function draw() {
+		for (i = 0; i < this.bullets.length; i++) {
+			bullets[i].draw();
+		}
+	}
+}
+```
+
+If we include the above class definitions at the end of our code, we can trim our code down to something much simpler and more readable:
+
+```csharp
+import Game;
+import Graphics2D;
+import Math;
+import Random;
+
+function main() {
+    window = new Game.GameWindow("A circle with an attitude", 30, 600, 400);
+
+    bullets = new BulletCollection();
+    
+    circleX = 300;
+    circleY = 200;
+    
+    purple = [128, 0, 128];
+
+    gameRunning = true;
+    while (gameRunning) {
+        eventList = window.pumpEvents();
+
+        for (i = 0; i < eventList.length; i++) {
+            event = eventList[i];
+            if (event.type == Game.EventType.QUIT) {
+                gameRunning = false;
+            } else if (event.type == Game.EventType.KEY_DOWN && event.key == Game.KeyboardKey.SPACE) {
+                bullets.addNewBullet(circleX, circleY);
+            }
+        }
+        
+        bullets.update(600, 400);
+        
+        Graphics2D.Draw.fill(0, 0, 0);
+        
+        radius = 30;
+        Graphics2D.Draw.ellipse(
+            circleX - radius, circleY - radius, radius * 2, radius * 2,
+            purple[0], purple[1], purple[2]);
+        
+        bullets.draw();
+        
+        window.clockTick();
+    }
+}```
+
+I would include a screenshot but it looks exactly the same as before.
+
+## Lesson 11 - Images
+
+## Lesson 12 - References vs Values
+
+## Lesson 13 - Dictionaries
 
 ## Lesson 14 - Exceptions
 
