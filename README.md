@@ -1,4 +1,4 @@
-# Crayon version 0.2.0 (Alpha)
+# Crayon version 0.2.1 (Alpha)
 ==============================================
 
 Please go to http://crayonlang.org for documentation, tutorials, demos, and other resources.
@@ -23,11 +23,10 @@ The official Crayon IRC channel is #crayon on FreeNode.net. Feel free to ask any
 Google Mailing list/forum: https://groups.google.com/forum/#!forum/crayon-lang
 Use the stackoverflow tag "crayon" for any issues. This tag is monitored.
 
-# New in 0.2.0
-There have been so many fundamental changes to the language since 0.1.7 that it's not even worth listing them all.
-It's essentially a new language and created a bulleted list diff between the two versions is not going to be useful.
-For learning the latest version language, please see one of the introduction tutorials in the Tutorials/ directory,
-which is conveniently up to date.
+# New in 0.2.1
+The following have been added since 0.2.0
+
+* Localized compiler for Japanese and Spanish.
 
 # Setting up and Running Crayon
 If you have downloaded Crayon from the site (recommended) please read the instructions on the site (linked from download
