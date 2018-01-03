@@ -66,6 +66,11 @@ namespace Nori {
         field _allocatedWidth = null;
         field _allocatedHeight = null;
 
+        field _gridCol = 0;
+        field _gridRow = 0;
+        field _gridColSpan = 1;
+        field _gridRowSpan = 1;
+
         static field PROPERTIES_TEMPLATE = [null] * (ElementProperties.max() + 1);
 
         static constructor() {

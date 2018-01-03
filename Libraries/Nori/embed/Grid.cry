@@ -1,0 +1,35 @@
+namespace Nori {
+    class RowColDef {
+        
+
+    }
+
+    class Grid : Panel {
+
+        field _rows = [new RowColDef()];
+        field _cols = [new RowColDef()];
+
+        constructor() : base() {
+            this._typeId = ElementTypeId.GRID;
+        }
+
+        function _updateAbsoluteRequiredSize() {
+            rowCount = this._rows.length;
+            colCount = this._cols.length;
+
+            whereThingsEndRow = {};
+            whereThingsEndCol = {};
+
+            for (child : this._children) {
+
+            }
+
+            maxRequiredWidth = 0;
+
+        }
+
+        function _allocateAvailableSpace(left, top, right, bottom, width, height, haOverride, vaOverride) {
+            base._allocateAvailableSpace(left, top, right, bottom, width, height, haOverride, vaOverride);
+        }
+    }
+}
