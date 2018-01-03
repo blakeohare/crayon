@@ -4,7 +4,6 @@ using Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Serialization;
 
 namespace Build
 {
@@ -38,35 +37,7 @@ namespace Build
 
         public static BuildContext Parse(string projectDir, string buildFile, string nullableTargetName)
         {
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(BuildRoot));
-            BuildRoot buildInput;
-            try
-            {
-                buildInput = (BuildRoot)xmlSerializer.Deserialize(new System.IO.StringReader(buildFile));
-            }
-            catch (InvalidOperationException e)
-            {
-                // Yeah, yeah, I know...
-                string[] parts = e.Message.Split('(');
-                if (parts.Length == 2)
-                {
-                    parts = parts[1].Split(')');
-                    if (parts.Length == 2)
-                    {
-                        parts = parts[0].Split(',');
-                        if (parts.Length == 2)
-                        {
-                            int line, col;
-
-                            if (int.TryParse(parts[0], out line) && int.TryParse(parts[1], out col))
-                            {
-                                throw new InvalidOperationException("There is an XML syntax error in the build file on line " + line + ", column " + col);
-                            }
-                        }
-                    }
-                }
-                throw new InvalidOperationException("An error occurred while parsing the build file.");
-            }
+            BuildRoot buildInput = XmlParserForBuild.Parse(buildFile);
             BuildRoot flattened = buildInput;
             string platform = null;
             Dictionary<string, BuildVarCanonicalized> varLookup;
