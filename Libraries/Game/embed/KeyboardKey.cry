@@ -1,10 +1,12 @@
-﻿@localized('en', 'Game')
-@localized('es', 'Juego')
-namespace Game {
+﻿namespace Game {
 
-    // These keycodes are consistent with the JavaScript key codes.
-    // Because why not.
+    @localized('en', 'KeyboardKey')
+    @localized('es', 'ESKeyboardKey')
+    @localized('jp', 'JPKeyboardKey')
     enum KeyboardKey {
+
+        // These keycodes are consistent with the JavaScript key codes.
+        // This isn't strictly necessary, but there's no reason not to.
 
         BACKSPACE = 8,
         TAB = 9,

@@ -1,9 +1,15 @@
-﻿@localized('en', 'Game')
-@localized('es', 'Juego')
-namespace Game {
+﻿namespace Game {
 
+    @localized('en', 'MouseScrollEvent')
+    @localized('es', 'ESMouseScrollEvent')
+    @localized('jp', 'JPMouseScrollEvent')
     class MouseScrollEvent : MouseEvent {
+
+        @localized('en', 'amount')
+        @localized('es', 'ESamount')
+        @localized('jp', 'JPamount')
         field amount;
+
         constructor(x, y, amount) : base(EventType.MOUSE_SCROLL, x, y) {
             this.amount = amount;
         }

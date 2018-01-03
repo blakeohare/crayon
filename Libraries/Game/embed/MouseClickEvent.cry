@@ -1,10 +1,20 @@
-﻿@localized('en', 'Game')
-@localized('es', 'Juego')
-namespace Game {
+﻿namespace Game {
 
+    @localized('en', 'MouseClickEvent')
+    @localized('es', 'ESMouseClickEvent')
+    @localized('jp', 'JPMouseClickEvent')
     class MouseClickEvent : MouseEvent {
+
+        @localized('en', 'button')
+        @localized('es', 'ESbutton')
+        @localized('jp', 'JPbutton')
         field button;
+
+        @localized('en', 'down')
+        @localized('es', 'ESdown')
+        @localized('jp', 'JPdown')
         field down;
+
         constructor(type, button, down, x, y) : base(type, x, y) {
             this.button = button;
             this.down = down;

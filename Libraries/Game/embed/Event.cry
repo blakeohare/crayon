@@ -1,11 +1,17 @@
-﻿@localized('en', 'Game')
-@localized('es', 'Juego')
-namespace Game {
+﻿namespace Game {
 
     // TODO: mark as abstract.
     // This can be extended in other libraries, such as Gamepad
+    @localized('en', 'Event')
+    @localized('es', 'ESEvent')
+    @localized('jp', 'JPEvent')
     class Event {
+
+        @localized('en', 'type')
+        @localized('es', 'tipo')
+        @localized('jp', '種類')
         field type;
+
         constructor(type) {
             this.type = type;
         }

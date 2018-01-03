@@ -1,7 +1,5 @@
 ﻿import Math;
 
-@localized('en', 'Game')
-@localized('es', 'Juego')
 namespace Game {
 
     class Experimental {
@@ -24,6 +22,7 @@ namespace Game {
 
     @localized('en', 'GameWindow')
     @localized('es', 'JuegoVentana')
+    @localized('jp', 'JPGameWindow')
     class GameWindow {
 
         static field instance;
@@ -91,7 +90,8 @@ namespace Game {
         }
 
         @localized('en', 'clockTick')
-        @localized('es', 'ES_clockTick')
+        @localized('es', 'ESclockTick')
+        @localized('jp', 'JPclockTick')
         function clockTick() {
             for (t : Game.GameWindow._frameEndHandlers) {
                 t();
@@ -105,7 +105,8 @@ namespace Game {
         }
 
         @localized('en', 'pumpEvents')
-        @localized('es', 'ES_pumpEvents')
+        @localized('es', 'ESpumpEvents')
+        @localized('jp', 'JPpumpEvents')
         function pumpEvents() {
             output = [];
             t = $$lib_game_pump_events(GameWindow._reusable_list);
@@ -147,7 +148,8 @@ namespace Game {
         }
 
         @localized('en', 'setTitle')
-        @localized('es', 'ES_setTitle')
+        @localized('es', 'ESsetTitle')
+        @localized('jp', 'JPsetTitle')
         function setTitle(title) {
             title += '';
             if (title.length == 0) throw new Core.InvalidArgumentException("Title cannot be empty.");

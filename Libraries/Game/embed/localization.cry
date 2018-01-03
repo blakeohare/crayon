@@ -1,0 +1,6 @@
+@localized('en', 'Game')
+@localized('es', 'Juego')
+@localized('jp', 'JPGame')
+namespace Game {
+
+}

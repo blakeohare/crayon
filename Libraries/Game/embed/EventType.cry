@@ -1,12 +1,13 @@
-﻿@localized('en', 'Game')
-@localized('es', 'Juego')
-namespace Game {
+﻿namespace Game {
 
-    // WARNING: These magic numbers are used throughout the stack
-    // GameLibHelper.cry and platform specific code.
     @localized('en', 'EventType')
     @localized('es', 'TipoEvento')
+    @localized('jp', 'JPEventType')
     enum EventType {
+
+        // WARNING: These magic numbers are used throughout the stack,
+        // GameLibHelper.cry, and platform specific code.
+
         QUIT = 0x1,
 
         KEY_DOWN = 0x10,
@@ -21,6 +22,5 @@ namespace Game {
 
         GAMEPAD_HARDWARE = 0x30,
         GAMEPAD = 0x31,
-
     }
 }

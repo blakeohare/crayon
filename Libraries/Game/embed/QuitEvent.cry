@@ -1,9 +1,15 @@
-﻿@localized('en', 'Game')
-@localized('es', 'Juego')
-namespace Game {
+﻿namespace Game {
 
+    @localized('en', 'QuitEvent')
+    @localized('es', 'ESQuitEvent')
+    @localized('jp', 'JPQuitEvent')
     class QuitEvent : Event {
+
+        @localized('en', 'quitType')
+        @localized('es', 'ESquitType')
+        @localized('jp', 'JPquitType')
         field quitType;
+
         constructor(quitType) : base(EventType.QUIT) {
             this.quitType = quitType;
         }

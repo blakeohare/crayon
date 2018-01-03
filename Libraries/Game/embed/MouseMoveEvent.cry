@@ -1,7 +1,8 @@
-﻿@localized('en', 'Game')
-@localized('es', 'Juego')
-namespace Game {
+﻿namespace Game {
 
+    @localized('en', 'MouseMoveEvent')
+    @localized('es', 'ESMouseMoveEvent')
+    @localized('jp', 'JPMouseMoveEvent')
     class MouseMoveEvent : MouseEvent {
         constructor(x, y) : base(EventType.MOUSE_MOVE, x, y) { }
     }

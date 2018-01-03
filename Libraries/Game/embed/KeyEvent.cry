@@ -1,9 +1,18 @@
-﻿@localized('en', 'Game')
-@localized('es', 'Juego')
-namespace Game {
+﻿namespace Game {
 
+    @localized('en', 'KeyEvent')
+    @localized('es', 'ESKeyEvent')
+    @localized('jp', 'JPKeyEvent')
     class KeyEvent : Event {
+
+        @localized('en', 'key')
+        @localized('es', 'ESkey')
+        @localized('jp', 'JPkey')
         field key;
+
+        @localized('en', 'down')
+        @localized('es', 'ESdown')
+        @localized('jp', 'JPdown')
         field down;
 
         constructor(key, down) : base(down ? EventType.KEY_DOWN : EventType.KEY_UP) {

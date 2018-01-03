@@ -85,8 +85,8 @@
     deadTransformationLookup[3] = 真; // has exactly 3 neighbors
 
     間 (真) {
-        反復 (event : window.pumpEvents()) {
-            分岐 (event.type) {
+        反復 (event : window.JPpumpEvents()) {
+            分岐 (event.種類) {
                 場合 EventType.QUIT:
                     返す;
 
@@ -158,6 +158,6 @@
             }
         }
 
-        window.clockTick();
+        window.JPclockTick();
     }
 }
