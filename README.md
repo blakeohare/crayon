@@ -6,7 +6,7 @@ Please go to http://crayonlang.org for documentation, tutorials, demos, and othe
 [![Build Status](https://travis-ci.org/blakeohare/crayon.svg?branch=master)](https://travis-ci.org/blakeohare/crayon)
 
 # Copyright
-Copyright 2017 crayonlang.org, All rights reserved.
+Copyright 2018 crayonlang.org, All rights reserved.
 
 # Licenses
 Crayon is released under the MIT license.
