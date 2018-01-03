@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Crayon")]
 [assembly: ComVisible(false)]
 [assembly: Guid("6c822f9b-cce6-49aa-acc5-a1a03788c983")]
-[assembly: AssemblyFileVersion("0.2.0")]
+[assembly: AssemblyFileVersion("0.2.1")]
 
 #endif
 
@@ -31,4 +31,4 @@ using System.Runtime.InteropServices;
 //[assembly: AssemblyKeyFile("")]
 #endif
 
-[assembly: AssemblyVersion("0.2.0")]
+[assembly: AssemblyVersion("0.2.1")]
