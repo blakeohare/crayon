@@ -634,12 +634,219 @@ Here's a breakdown of the new things that appear in this snippet...
 * **Graphics2D.Draw.fill(red, green, blue)** - This will fill the entire window with one color. In this case, we use black. The numbers that you pass in are integers that range from 0 to 255 that describe the intensity of that color component. 0 for all three values is black whereas 255 for all three will be white. If you haven't worked with red/green/blue color component values before, here's a quick tutorial. 
 * **Graphics2D.Draw.rectangle(left, top, width, height, red, green, blue)** - This draws a rectangle to the screen at the given location with the given color. The first number is the distance the left side of the rectangle is from the left side of the window. The second number is the distance the top is from the top of the window. The next two are width and height and the final 3 numbers are red/green/blue color components that work the same way as Draw.fill(r, g, b).
 
-```
-TODO: include an image
+![red square](./images/square.png)
+
+
+
+## Lesson 9 - Interactivity and state
+In this lesson I'll use the previous code as a foundation to create things that are a little more interesting.
+
+* A circle that chases the mouse
+* A circle that shoots out small squares in random directions when you press the spacebar
+
+Obviously this will reveal how to use the mouse and keyboard, but more importantly, I'd like to introduce the concept of persistent state. State is any information that is saved (such as in a variable) and used across multiple frames.
+
+### Example 1 - Circle chasing the mouse.
+
+```csharp
+import Game;
+import Graphics2D;
+
+function main() {
+    window = new Game.GameWindow("A circle that wants a mouse", 30, 600, 400);
+
+    // These are the coordinates of the center of the circle.
+    circleX = 300;
+    circleY = 200;
+
+    // This is the last known position of the mouse that the circle will
+    // move towards. Since we don't know what it is at first, just start
+    // it with the same coordinates as the circle.
+    mouseX = circleX;
+    mouseY = circleY;
+
+    // These are the red-green-blue color definitions for green and blue.
+    // These will be used for the color of the circle.
+    green = [0, 255, 0];
+    blue = [0, 0, 255];
+
+    gameRunning = true;
+    while (gameRunning) {
+        eventList = window.pumpEvents();
+
+        for (i = 0; i < eventList.length; i++) {
+            event = eventList[i];
+            if (event.type == Game.EventType.QUIT) {
+                gameRunning = false;
+            } else if (event.type == Game.EventType.MOUSE_MOVE) {
+                // The mouse coordinates are in fields called .x and .y
+                // Put these numbers into the mouseX and mouseY variables
+                // so we can track it.
+                mouseX = event.x;
+                mouseY = event.y;
+            }
+        }
+        
+        // Remember the old coordinates before udpating them.
+        oldX = circleX;
+        oldY = circleY;
+        
+        // Move the circle towards the last known mouse coordinates.
+        // We do this by taking the weighted average of the current
+        // circle location and the mouse location. Because this will
+        // happen 30 times per second, it will move constantly.
+        // Eventually the difference will be small enough that the
+        // circle will no longer move.
+        circleX = (circleX * 14 + mouseX) / 15;
+        circleY = (circleY * 14 + mouseY) / 15;
+        
+        // If the circle moved, color it with green.
+        // If it was stationary during this frame, use blue.
+        if (circleX != oldX || circleY != oldY) {
+            color = green;
+        } else {
+            color = blue;
+        }
+        
+        Graphics2D.Draw.fill(0, 0, 0);
+        
+        radius = 30; // The radius is 30 pixels.
+        diameter = radius * 2;
+        left = circleX - radius; // circleX is the center, so the left side is circleX - radius.
+        top = circleY - radius; // circleY is the center, so the top side is circleY - radius.
+        Graphics2D.Draw.ellipse(left, top, diameter, diameter, color[0], color[1], color[2]);
+
+        window.clockTick();
+    }
+}
 ```
 
-## Lesson 9 - A circle that chases the cursor
-In this lesson I'll use the previous code as a foundation to create something a little more interesting, a circle that chases the cursor. 
+Blue stationary circle:
+![blue circle](./images/circle1.png)
+
+Green moving circle (it's moving, trust me):
+![green circle](./images/circle2.png)
+
+This introduces the concept of maintaining **state** across multiple frames.
+
+You can think of state as basically any information that survives beyond the time/place it is generated and is used across several frames.
+
+There are two pieces of state here:
+
+* The circle's location
+* The mouse's most recent location.
+
+The variables `circleX`, `circleY`, `mouseX`, and `mouseY` are declared outside of the game loop with some initial values and are updated slightly during each frame. The circle coordinates are adjusted to move close to the mouse coordinates in each frame. But the mouse coordinates are updated every time the mouse moves. 
+
+Why don't I consider `green` or `blue` a form of persistent state? Because they are values that do not get updated. While it's true that they're variables declared outside of the loop and are used inside the loop, they are declared for convenience and readability, but they are not updated. However, suppose I hypothetically made it so that the circle turned red when it moved, and then slowly faded to black over time when it was stationary. Then the color would be considered state because it is being updated based on factors over time.
+
+### Example 2 - Circle shooting out tiny squares.
+
+This next example is a little more complicated, it introduces the Random library, using the keyboard, but more importantly, it introduces how to track state across multiple objects.
+
+```csharp
+import Game;
+import Graphics2D;
+import Math;
+import Random;
+
+function main() {
+    window = new Game.GameWindow("A circle with an attitude", 30, 600, 400);
+
+    bullets = [];
+    
+    circleX = 300;
+    circleY = 200;
+    
+    purple = [128, 0, 128];
+    white = [255, 255, 255];
+
+    gameRunning = true;
+    while (gameRunning) {
+        eventList = window.pumpEvents();
+
+        shoot = false;
+        for (i = 0; i < eventList.length; i++) {
+            event = eventList[i];
+            if (event.type == Game.EventType.QUIT) {
+                gameRunning = false;
+            } else if (event.type == Game.EventType.KEY_DOWN && event.key == Game.KeyboardKey.SPACE) {
+                shoot = true;
+            }
+        }
+        
+        if (shoot) {
+            // choose a random angle. randomFloat() generates a random float between 0 and 1.
+            // Multiplying this value by 2 * pi will generate a random angle in any direction.
+            angle = Random.randomFloat() * 2 * Math.PI;
+            
+            // Create a list with 3 numbers in it. This list will represent a single bullet.
+            // Note that adding a list to a list will literally add that list as an item,
+            // rather than add those 3 items to the end. This is list-of-lists where each sub-list
+            // always has 3 items in it and represents a bullet.
+            bullets.add([circleX, circleY, angle]);
+        }
+        
+        // The velocity of the bullet. This is how many pixels it will travel each frame.
+        velocity = 7;
+        
+        // Loop through the list of bullets and update each one.
+        for (i = 0; i < bullets.length; i++) {
+        
+            // Grab the i-th bullet
+            bullet = bullets[i];
+            
+            // extract the 3 numbers from the bullet descriptor.
+            x = bullet[0];
+            y = bullet[1];
+            angle = bullet[2];
+            
+            // convert the velocity and the angle into a change in x and y.
+            dx = Math.cos(angle) * velocity;
+            dy = Math.sin(angle) * velocity;
+            
+            // Add the new offsets to the old coordinates.
+            x += dx;
+            y += dy;
+
+            // Save the new coordinates back into the bullet.
+            bullet[0] = x;
+            bullet[1] = y;
+            
+            // If the bullet goes off the edge of the screen, remove it from the list.
+            if (x < 0 || y < 0 || x > 600 || y > 400) {
+                bullets.remove(i);
+                
+                // Because we're removing this bullet from the list, the
+                // next bullet shifts ahead in the list. Since we don't
+                // want to skip it, subtract 1 from i.
+                i--;
+            }
+        }
+        
+        Graphics2D.Draw.fill(0, 0, 0);
+        
+        radius = 30;
+        Graphics2D.Draw.ellipse(
+            circleX - radius, circleY - radius, radius * 2, radius * 2,
+            purple[0], purple[1], purple[2]);
+        
+        bulletSize = 6;
+        for (i = 0; i < bullets.length; i++) {
+            bullet = bullets[i];
+            x = bullet[0];
+            y = bullet[1];
+            Graphics2D.Draw.rectangle(
+                x - bulletSize / 2, y - bulletSize / 2, bulletSize, bulletSize,
+                white[0], white[1], white[2]);
+        }
+        
+        window.clockTick();
+    }
+}
+```
+
+![circle with an attitude](./images/circle-attitude.png)
 
 ## Lesson 10 - Images
 
