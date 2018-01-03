@@ -1,8 +1,13 @@
-@localized('en', 'Core')
-@localized('es', 'Esencia')
 namespace Core {
+
+    @localized('en', 'CRAYON_VERSION')
+    @localized('es', 'ESCRAYON_VERSION')
+    @localized('jp', 'JPCRAYON_VERSION')
     const CRAYON_VERSION = "0.2.1";
 
+    @localized('en', 'Type')
+    @localized('es', 'ESType')
+    @localized('jp', 'JPType')
     enum Type {
         NULL = 0,
         BOOLEAN = 1,
@@ -17,55 +22,64 @@ namespace Core {
     }
 
     @localized('en', 'assert')
-    @localized('es', 'ES_assert')
+    @localized('es', 'ESassert')
+    @localized('jp', 'JPassert')
     function assert(condition, message = null) {
         return $$$('assert', condition, message, true);
     }
 
     @localized('en', 'fail')
-    @localized('es', 'ES_fail')
+    @localized('es', 'ESfail')
+    @localized('jp', 'JPfail')
     function fail(message) {
         return $$$('assert', false, message, false);
     }
 
     @localized('en', 'chr')
-    @localized('es', 'ES_chr')
+    @localized('es', 'ESchr')
+    @localized('jp', 'JPchr')
     function chr(value) {
         return $$$('chr', value);
     }
 
     @localized('en', 'currentTime')
-    @localized('es', 'ES_currentTime')
+    @localized('es', 'EScurrentTime')
+    @localized('jp', 'JPcurrentTime')
     function currentTime() {
         return $$$('currentTime');
     }
 
     @localized('en', 'ord')
-    @localized('es', 'ES_ord')
+    @localized('es', 'ESord')
+    @localized('jp', 'JPord')
     function ord(value) {
         return $$$('ord', value);
     }
 
     @localized('en', 'parseFloat')
-    @localized('es', 'ES_parseFloat')
+    @localized('es', 'ESparseFloat')
+    @localized('jp', 'JPparseFloat')
     function parseFloat(value) {
         return $$$('parseFloat', value);
     }
 
     @localized('en', 'parseInt')
-    @localized('es', 'ES_parseInt')
+    @localized('es', 'ESparseInt')
+    @localized('jp', 'JPparseInt')
     function parseInt(value) {
         return $$$('parseInt', value);
     }
 
     @localized('en', 'print')
     @localized('es', 'publicar')
+    @localized('jp', 'JPprint')
     function print(value) {
         return $$$('print', value);
     }
 
     @localized('en', 'sleep')
-    @localized('es', 'ES_sleep')
+    @localized('es', 'ESsleep')
+    @localized('jp', 'JPsleep')
     function sleep(seconds) {
         Core.assert(
             $$$('typeis', seconds, Core.Type.INTEGER, Core.Type.FLOAT) &&
@@ -74,19 +88,22 @@ namespace Core {
     }
 
     @localized('en', 'typeof')
-    @localized('es', 'ES_typeof')
+    @localized('es', 'EStypeof')
+    @localized('jp', 'JPtypeof')
     function typeof(value) {
         return $$$('typeof',value);
     }
 
     @localized('en', 'isString')
-    @localized('es', 'ES_isString')
+    @localized('es', 'ESisString')
+    @localized('jp', 'JPisString')
     function isString(value) {
         return $$$('typeis', value, Core.Type.STRING);
     }
 
     @localized('en', 'isNumber')
-    @localized('es', 'ES_isNumber')
+    @localized('es', 'ESisNumber')
+    @localized('jp', 'JPisNumber')
     function isNumber(value) {
         return $$$('typeis', value, Core.Type.INTEGER, Core.Type.FLOAT);
     }
@@ -120,19 +137,22 @@ namespace Core {
     }
 
     @localized('en', 'getCurrentExecutionToken')
-    @localized('es', 'ES_getCurrentExecutionToken')
+    @localized('es', 'ESgetCurrentExecutionToken')
+    @localized('jp', 'JPgetCurrentExecutionToken')
     function getCurrentExecutionToken() {
         return $$$('execId');
     }
 
     @localized('en', 'getExecutionIterationCounter')
-    @localized('es', 'ES_getExecutionIterationCounter')
+    @localized('es', 'ESgetExecutionIterationCounter')
+    @localized('jp', 'JPgetExecutionIterationCounter')
     function getExecutionIterationCounter() {
         return $$$('execCounter');
     }
 
     @localized('en', 'getProjectId')
-    @localized('es', 'ES_getProjectId')
+    @localized('es', 'ESgetProjectId')
+    @localized('jp', 'JPgetProjectId')
     function getProjectId() {
         return $$$('projectId');
     }
@@ -148,5 +168,8 @@ namespace Core {
     // A simple dummy object.
     // The VM supports attaching native data to any object instance, and so this generally serves as
     // the canonical object to use for that purpose.
+    @localized('en', 'Object')
+    @localized('es', 'ESObject')
+    @localized('jp', 'JPObject')
     class Object { }
 }

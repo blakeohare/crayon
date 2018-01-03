@@ -1,16 +1,18 @@
-@localized('en', 'Core')
-@localized('es', 'Esencia')
 namespace Core {
 
-    @localized('en', 'Reflection')
-    @localized('es', 'Espejo')
     namespace Reflection {
 
+        @localized('en', 'getClassFromInstance')
+        @localized('es', 'ESgetClassFromInstance')
+        @localized('jp', 'JPgetClassFromInstance')
         function getClassFromInstance(instance) {
             // TODO: document what happens when instance is not an instance.
             return $$$('reflectGetClass', instance);
         }
 
+        @localized('en', 'getClasses')
+        @localized('es', 'ESgetClasses')
+        @localized('jp', 'JPgetClasses')
         function getClasses(commonBaseClass = null) {
             output = $$$('reflectAllClasses');
             if (commonBaseClass != null) {
@@ -25,6 +27,9 @@ namespace Core {
             return output;
         }
 
+        @localized('en', 'getMethods')
+        @localized('es', 'ESgetMethods')
+        @localized('jp', 'JPgetMethods')
         function getMethods(instanceOrClass) {
             switch (Core.typeof(instanceOrClass)) {
                 // TODO: verify that static methods are returned only from class inputs.

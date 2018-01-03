@@ -1,0 +1,10 @@
+@localized('en', 'Core')
+@localized('es', 'Esencia')
+@localized('jp', 'JPCore')
+namespace Core {
+
+    @localized('en', 'Reflection')
+    @localized('es', 'Espejo')
+    @localized('jp', 'JPReflection')
+    namespace Reflection { }
+}

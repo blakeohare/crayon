@@ -4,10 +4,16 @@
     Please this keep this in sync with the UserData library.
 */
 
+@localized('en', 'FileIO')
+@localized('es', 'ESFileIO')
+@localized('jp', 'JPFileIO')
 namespace FileIO {
 
     // It's okay to duplicate this across other libraries that also use FileIOCommon.
     // Wasteful enums do not affect the size of the output.
+    @localized('en', 'TextEncoding')
+    @localized('es', 'ESTextEncoding')
+    @localized('jp', 'JPTextEncoding')
     enum TextEncoding {
         UTF8 = FileIOCommon.FiocFileFormat.TEXT_UTF8,
         UTF8_BOM = FileIOCommon.FiocFileFormat.TEXT_UTF8_BOM,
@@ -20,74 +26,128 @@ namespace FileIO {
         static field FIOC = new FileIOCommon.FiocHelper('\\', null, false);
     }
 
+    @localized('en', 'pathJoin')
+    @localized('es', 'ESpathJoin')
+    @localized('jp', 'JPpathJoin')
     function pathJoin(parts) {
         return _FileIOHelper.FIOC.pathJoin(parts);
     }
 
+    @localized('en', 'pathExists')
+    @localized('es', 'ESpathExists')
+    @localized('jp', 'JPpathExists')
     function pathExists(path) {
         return _FileIOHelper.FIOC.pathExists(path);
     }
 
+    @localized('en', 'fileExists')
+    @localized('es', 'ESfileExists')
+    @localized('jp', 'JPfileExists')
     function fileExists(path) {
         return _FileIOHelper.FIOC.fileExists(path);
     }
 
+    @localized('en', 'directoryExists')
+    @localized('es', 'ESdirectoryExists')
+    @localized('jp', 'JPdirectoryExists')
     function directoryExists(path) {
         return _FileIOHelper.FIOC.directoryExists(path);
     }
 
+    @localized('en', 'getPathInfo')
+    @localized('es', 'ESgetPathInfo')
+    @localized('jp', 'JPgetPathInfo')
     function getPathInfo(path) {
         return _FileIOHelper.FIOC.getPathInfoObj(path);
     }
 
+    @localized('en', 'fileWriteText')
+    @localized('es', 'ESfileWriteText')
+    @localized('jp', 'JPfileWriteText')
     function fileWriteText(path, content, encoding = FileIO.TextEncoding.UTF8) {
         return _FileIOHelper.FIOC.fileWriteText(path, content, encoding);
     }
 
+    @localized('en', 'fileReadText')
+    @localized('es', 'ESfileReadText')
+    @localized('jp', 'JPfileReadText')
     function fileReadText(path) {
         return _FileIOHelper.FIOC.fileReadText(path);
     }
 
+    @localized('en', 'fileReadLines')
+    @localized('es', 'ESfileReadLines')
+    @localized('jp', 'JPfileReadLines')
     function fileReadLines(path) {
         return _FileIOHelper.FIOC.fileReadLines(path);
     }
 
+    @localized('en', 'fileWriteBytes')
+    @localized('es', 'ESfileWriteBytes')
+    @localized('jp', 'JPfileWriteBytes')
     function fileWriteBytes(path, bytes) {
         return _FileIOHelper.FIOC.fileWriteBytes(path, bytes);
     }
 
+    @localized('en', 'fileReadBytes')
+    @localized('es', 'ESfileReadBytes')
+    @localized('jp', 'JPfileReadBytes')
     function fileReadBytes(path) {
         return _FileIOHelper.FIOC.fileReadBytes(path);
     }
 
+    @localized('en', 'fileDelete')
+    @localized('es', 'ESfileDelete')
+    @localized('jp', 'JPfileDelete')
     function fileDelete(path) {
         return _FileIOHelper.FIOC.fileDelete(path);
     }
 
+    @localized('en', 'fileMove')
+    @localized('es', 'ESfileMove')
+    @localized('jp', 'JPfileMove')
     function fileMove(pathFrom, pathTo, allowOverwrite = false) {
         return _FileIOHelper.FIOC.fileMoveOrCopy(pathFrom, pathTo, false, allowOverwrite);
     }
 
+    @localized('en', 'fileCopy')
+    @localized('es', 'ESfileCopy')
+    @localized('jp', 'JPfileCopy')
     function fileCopy(pathFrom, pathTo, allowOverwrite = false) {
         return _FileIOHelper.FIOC.fileMoveOrCopy(pathFrom, pathTo, true, allowOverwrite);
     }
 
+    @localized('en', 'directoryList')
+    @localized('es', 'ESdirectoryList')
+    @localized('jp', 'JPdirectoryList')
     function directoryList(path, includeFullPath = false) {
         return _FileIOHelper.FIOC.directoryList(path, includeFullPath);
     }
 
+    @localized('en', 'directoryCreate')
+    @localized('es', 'ESdirectoryCreate')
+    @localized('jp', 'JPdirectoryCreate')
     function directoryCreate(path, makeParents = false) {
         return _FileIOHelper.FIOC.directoryCreate(path, makeParents);
     }
 
+    @localized('en', 'directoryDelete')
+    @localized('es', 'ESdirectoryDelete')
+    @localized('jp', 'JPdirectoryDelete')
     function directoryDelete(path) {
         return _FileIOHelper.FIOC.directoryDelete(path);
     }
 
+    @localized('en', 'directoryMove')
+    @localized('es', 'ESdirectoryMove')
+    @localized('jp', 'JPdirectoryMove')
     function directoryMove(pathFrom, pathTo) {
         return _FileIOHelper.FIOC.directoryMove(pathFrom, pathTo);
     }
 
+    @localized('en', 'currentDirectory')
+    @localized('es', 'EScurrentDirectory')
+    @localized('jp', 'JPcurrentDirectory')
     function currentDirectory() {
         return _FileIOHelper.FIOC.currentDirectoryString;
     }

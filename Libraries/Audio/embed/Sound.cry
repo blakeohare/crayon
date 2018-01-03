@@ -3,6 +3,9 @@ import Game;
 
 namespace Audio {
 
+    @localized('en', 'SoundPlayState')
+    @localized('es', 'ESSoundPlayState')
+    @localized('jp', 'JPSoundPlayState')
     enum SoundPlayState {
         PLAYING = 1,
         PAUSED = 2,
@@ -12,6 +15,9 @@ namespace Audio {
     /*
         nativeData[0] -> mixer channel identifier or whatever is necessary to identify this particular playing instance.
     */
+    @localized('en', 'Sound')
+    @localized('es', 'ESSound')
+    @localized('jp', 'JPSound')
     class Sound {
         field _soundResource;
         field _id;
@@ -33,6 +39,9 @@ namespace Audio {
             this._isStopped = $$lib_audio_sfx_play(this, resource, volume, pan) == 1;
         }
 
+        @localized('en', 'getState')
+        @localized('es', 'ESgetState')
+        @localized('jp', 'JPgetState')
         function getState() {
             // ensures that it also returns STOPPED if the channel is playing a different sound.
             t = $$lib_audio_sfx_get_state(this, this._soundResource, this._id);
@@ -40,12 +49,18 @@ namespace Audio {
             return t;
         }
 
+        @localized('en', 'resume')
+        @localized('es', 'ESresume')
+        @localized('jp', 'JPresume')
         function resume() {
             if (this.getState() == SoundPlayState.PAUSED) {
                 $$lib_audio_sfx_resume(this, this._soundResource, this._volume, this._pan);
             }
         }
 
+        @localized('en', 'stop')
+        @localized('es', 'ESstop')
+        @localized('jp', 'JPstop')
         function stop() {
             t = this.getState();
             if (t != SoundPlayState.STOPPED) {
@@ -53,12 +68,18 @@ namespace Audio {
             }
         }
 
+        @localized('en', 'pause')
+        @localized('es', 'ESpause')
+        @localized('jp', 'JPpause')
         function pause() {
             if (this.getState() == SoundPlayState.PLAYING) {
                 $$lib_audio_sfx_stop(this, this._soundResource, this._id, SoundPlayState.PLAYING, false);
             }
         }
 
+        @localized('en', 'getResource')
+        @localized('es', 'ESgetResource')
+        @localized('jp', 'JPgetResource')
         function getResource() {
             return this._soundResource;
         }
@@ -68,21 +89,33 @@ namespace Audio {
             1.0 -> right speaker only
             0.0 -> balanced
         */
+        @localized('en', 'setPan')
+        @localized('es', 'ESsetPan')
+        @localized('jp', 'JPsetPan')
         function setPan(value) {
             this._pan = Math.ensureRange(value, -1.0, 1.0) + 0.0;
             $$lib_audio_sfx_set_pan(this, this._soundResource, this._pan);
         }
 
+        @localized('en', 'getPan')
+        @localized('es', 'ESgetPan')
+        @localized('jp', 'JPgetPan')
         function getPan() { return this._pan; }
 
         /*
             ratio from 0.0 to 1.0
         */
+        @localized('en', 'setVolume')
+        @localized('es', 'ESsetVolume')
+        @localized('jp', 'JPsetVolume')
         function setVolume(ratio) {
             this._volume = Math.ensureRange(ratio, 0.0, 1.0) + 0.0;
             $$lib_audio_sfx_set_volume(this, this._soundResource, this._volume);
         }
 
+        @localized('en', 'getVolume')
+        @localized('es', 'ESgetVolume')
+        @localized('jp', 'JPgetVolume')
         function getVolume() { return this._volume; }
     }
 }

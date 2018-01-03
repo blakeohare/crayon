@@ -1,6 +1,5 @@
-@localized('en', 'Core')
-@localized('es', 'Esencia')
 namespace Core {
+
     enum _LIB_CORE_ExType {
         // These must be kept in sync with CoreExceptionTypes in Constants.cry in the interpreter.
         FATAL = 0,
@@ -43,6 +42,9 @@ namespace Core {
         }
     }
 
+    @localized('en', 'Exception')
+    @localized('es', 'ESException')
+    @localized('jp', 'JPException')
     class Exception {
         /*
             nativeData[0] -> (boolean) is fatal exception?
@@ -52,7 +54,14 @@ namespace Core {
 
         // Do not re-order these.
         // .message field position within the class is assumed at compile time.
+        @localized('en', 'cause')
+        @localized('es', 'EScause')
+        @localized('jp', 'JPcause')
         field cause;
+
+        @localized('en', 'message')
+        @localized('es', 'ESmessage')
+        @localized('jp', 'JPmessage')
         field message;
 
         constructor(message = null, cause = null) {
@@ -62,29 +71,90 @@ namespace Core {
             this.cause = cause;
         }
 
+        @localized('en', 'getTrace')
+        @localized('es', 'ESgetTrace')
+        @localized('jp', 'JPgetTrace')
         function getTrace() {
             return $$$('getExceptionTrace', this);
         }
     }
 
+    @localized('en', 'FatalException')
+    @localized('es', 'ESFatalException')
+    @localized('jp', 'JPFatalException')
     class FatalException : Exception {
         constructor(m = null, c = null) : base(m, c) {
             $$$('setNativeData', this, 0, true); // is fatal?
         }
     }
 
+    @localized('en', 'AssertionFailedException')
+    @localized('es', 'ESAssertionFailedException')
+    @localized('jp', 'JPAssertionFailedException')
     class AssertionFailedException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+
+    @localized('en', 'DivisionByZeroException')
+    @localized('es', 'ESDivisionByZeroException')
+    @localized('jp', 'JPDivisionByZeroException')
     class DivisionByZeroException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+
+    @localized('en', 'IndexOutOfRangeException')
+    @localized('es', 'ESIndexOutOfRangeException')
+    @localized('jp', 'JPIndexOutOfRangeException')
     class IndexOutOfRangeException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+
+    @localized('en', 'InvalidArgumentException')
+    @localized('es', 'ESInvalidArgumentException')
+    @localized('jp', 'JPInvalidArgumentException')
     class InvalidArgumentException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+
+    @localized('en', 'InvalidAssignmentException')
+    @localized('es', 'ESInvalidAssignmentException')
+    @localized('jp', 'JPInvalidAssignmentException')
     class InvalidAssignmentException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+
+    @localized('en', 'InvalidInvocationException')
+    @localized('es', 'ESInvalidInvocationException')
+    @localized('jp', 'JPInvalidInvocationException')
     class InvalidInvocationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+
+    @localized('en', 'InvalidKeyException')
+    @localized('es', 'ESInvalidKeyException')
+    @localized('jp', 'JPInvalidKeyException')
     class InvalidKeyException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+
+    @localized('en', 'InvalidOperationException')
+    @localized('es', 'ESInvalidOperationException')
+    @localized('jp', 'JPInvalidOperationException')
     class InvalidOperationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+
+    @localized('en', 'KeyNotFoundException')
+    @localized('es', 'ESKeyNotFoundException')
+    @localized('jp', 'JPKeyNotFoundException')
     class KeyNotFoundException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+
+    @localized('en', 'NotImplementedException')
+    @localized('es', 'ESNotImplementedException')
+    @localized('jp', 'JPNotImplementedException')
     class NotImplementedException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+
+    @localized('en', 'NullReferenceException')
+    @localized('es', 'ESNullReferenceException')
+    @localized('jp', 'JPNullReferenceException')
     class NullReferenceException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+
+    @localized('en', 'UnassignedVariableException')
+    @localized('es', 'ESUnassignedVariableException')
+    @localized('jp', 'JPUnassignedVariableException')
     class UnassignedVariableException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+
+    @localized('en', 'UnknownFieldException')
+    @localized('es', 'ESUnknownFieldException')
+    @localized('jp', 'JPUnknownFieldException')
     class UnknownFieldException : Exception { constructor(m = null, c = null) : base(m, c) { } }
+
+    @localized('en', 'UnsupportedOperationException')
+    @localized('es', 'ESUnsupportedOperationException')
+    @localized('jp', 'JPUnsupportedOperationException')
     class UnsupportedOperationException : Exception { constructor(m = null, c = null) : base(m, c) { } }
 }

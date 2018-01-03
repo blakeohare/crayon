@@ -14,6 +14,9 @@ namespace Audio {
     /*
         nativeData[0] -> native music object, if necessary. Some platforms just do everything by path.
     */
+    @localized('en', 'Music')
+    @localized('es', 'ESMusic')
+    @localized('jp', 'JPMusic')
     class Music {
 
         static field _isSupported = $$lib_audio_is_supported();
@@ -36,6 +39,9 @@ namespace Audio {
             return fileinfo[1];
         }
 
+        @localized('en', 'loadFromResource')
+        @localized('es', 'ESloadFromResource')
+        @localized('jp', 'JPloadFromResource')
         static function loadFromResource(path) {
 
             path = Music._convertPath(path);
@@ -153,36 +159,60 @@ namespace Audio {
             }
         }
 
+        @localized('en', 'getCurrent')
+        @localized('es', 'ESgetCurrent')
+        @localized('jp', 'JPgetCurrent')
         static function getCurrent() {
             return Music.currentMusic;
         }
 
+        @localized('en', 'fadeOutAndIn')
+        @localized('es', 'ESfadeOutAndIn')
+        @localized('jp', 'JPfadeOutAndIn')
         function fadeOutAndIn(loop = true, outTransition = 2.0, inTransition = 2.0) {
             Music._transition(this, loop, outTransition, inTransition);
         }
 
+        @localized('en', 'fadeOutAndPlay')
+        @localized('es', 'ESfadeOutAndPlay')
+        @localized('jp', 'JPfadeOutAndPlay')
         function fadeOutAndPlay(loop = true, outTransition = 2.0) {
             Music._transition(this, loop, outTransition, null);
         }
 
+        @localized('en', 'play')
+        @localized('es', 'ESplay')
+        @localized('jp', 'JPplay')
         function play(loop = true) {
             Music._transition(this, loop, null, null);
         }
 
+        @localized('en', 'fadeOut')
+        @localized('es', 'ESfadeOut')
+        @localized('jp', 'JPfadeOut')
         function fadeOut(duration = 2.0) {
             if (Music.currentMusic == this) {
                 Music.fadeOutCurrent(duration);
             }
         }
 
+        @localized('en', 'fadeOutCurrent')
+        @localized('es', 'ESfadeOutCurrent')
+        @localized('jp', 'JPfadeOutCurrent')
         static function fadeOutCurrent(duration = 2.0) {
             Music._transition(null, false, duration, null);
         }
 
+        @localized('en', 'stop')
+        @localized('es', 'ESstop')
+        @localized('jp', 'JPstop')
         static function stop() {
             Music._transition(null, false, null, null);
         }
 
+        @localized('en', 'fadeIn')
+        @localized('es', 'ESfadeIn')
+        @localized('jp', 'JPfadeIn')
         function fadeIn(loop = true, duration = 2.0) {
             Music._transition(this, loop, null, duration);
         }

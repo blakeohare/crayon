@@ -1,5 +1,8 @@
 ﻿namespace Audio {
 
+    @localized('en', 'MusicNotFoundException')
+    @localized('es', 'ESMusicNotFoundException')
+    @localized('jp', 'JPMusicNotFoundException')
     class MusicNotFoundException : Exception {
         constructor(m) : base(m) { }
     }

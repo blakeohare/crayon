@@ -1,41 +1,65 @@
 @localized('en', 'Math')
 @localized('es', 'Mates')
+@localized('jp', 'JPMath')
 namespace Math {
 
     @localized('en', 'PI')
     @localized('es', 'PI')
+    @localized('jp', 'JPPI')
     const PI = 3.141592653589793238462;
 
     @localized('en', 'E')
     @localized('es', 'E')
+    @localized('jp', 'JPE')
     const E = 2.718281828459045235360;
 
+    @localized('en', 'arccos')
+    @localized('es', 'ESarccos')
+    @localized('jp', 'JParccos')
     function arccos(ratio) {
         // range is checked in translated code.
         return $$$('arcCos', ratio);
     }
 
+    @localized('en', 'arcsin')
+    @localized('es', 'ESarcsin')
+    @localized('jp', 'JParcsin')
     function arcsin(ratio) {
         // range is checked in translated code.
         return $$$('arcSin', ratio);
     }
 
+    @localized('en', 'arctan')
+    @localized('es', 'ESarctan')
+    @localized('jp', 'JParctan')
     function arctan(ratio_or_y, x = 1) {
         return $$$('arcTan', ratio_or_y, x);
     }
 
+    @localized('en', 'cos')
+    @localized('es', 'EScos')
+    @localized('jp', 'JPcos')
     function cos(theta) {
         return $$$('cos', theta);
     }
 
+    @localized('en', 'floor')
+    @localized('es', 'ESfloor')
+    @localized('jp', 'JPfloor')
     function floor(value) {
         return $$$('floor', value);
     }
 
+    @localized('en', 'sin')
+    @localized('es', 'ESsin')
+    @localized('jp', 'JPsin')
     function sin(theta) {
         return $$$('sin', theta);
     }
 
+    @localized('en', 'tan')
+    @localized('es', 'EStan')
+    @localized('jp', 'JPtan')
     function tan(theta) {
         return $$$('tan', theta);
     }
@@ -43,34 +67,60 @@ namespace Math {
     // All logarithms are just implemented with natural log and divided by a constant value to change base.
     // An attempt is made to prevent floating point arithmetic from giving bogus values like log10(1000000) -> 5.999999...
     // (see fixFuzzyFloatPrecision in ValueUtil.cry)
+    @localized('en', 'log10')
+    @localized('es', 'ESlog10')
+    @localized('jp', 'JPlog10')
     function log10(value) {
         return $$$('ln', value, 1 / 2.302585092994046);
     }
+
+    @localized('en', 'ln')
+    @localized('es', 'ESln')
+    @localized('jp', 'JPln')
     function ln(value) {
         return $$$('ln', value, 1.0);
     }
+
+    @localized('en', 'log2')
+    @localized('es', 'ESlog2')
+    @localized('jp', 'JPlog2')
     function log2(value) {
         return $$$('ln', value, 1 / 0.6931471805599453);
     }
 
     // Despite the fact that the following functions are relatively simple and could be implemented in
     // non-translated code, they are relatively common and the native code should be inlined if possible.
+    @localized('en', 'abs')
+    @localized('es', 'ESabs')
+    @localized('jp', 'JPabs')
     function abs(value) {
         return $$$('abs', value);
     }
 
+    @localized('en', 'max')
+    @localized('es', 'ESmax')
+    @localized('jp', 'JPmax')
     function max(a, b) {
         return $$$('max', a, b);
     }
 
+    @localized('en', 'min')
+    @localized('es', 'ESmin')
+    @localized('jp', 'JPmin')
     function min(a, b) {
         return $$$('min', a, b);
     }
 
+    @localized('en', 'ensureRange')
+    @localized('es', 'ESensureRange')
+    @localized('jp', 'JPensureRange')
     function ensureRange(value, minBound, maxBound) {
         return $$$('ensureRange', value, minBound, maxBound);
     }
 
+    @localized('en', 'sign')
+    @localized('es', 'ESsign')
+    @localized('jp', 'JPsign')
     function sign(num) {
         return $$$('sign', num);
     }

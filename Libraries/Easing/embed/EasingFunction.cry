@@ -1,28 +1,56 @@
 ﻿import Math;
 
+
+@localized('en', 'Easing')
+@localized('es', 'ESEasing')
+@localized('jp', 'JPEasing')
 namespace Easing {
 
+    @localized('en', 'EasingFunction')
+    @localized('es', 'ESEasingFunction')
+    @localized('jp', 'JPEasingFunction')
     class EasingFunction {
 
         static function _0(t) { return t; }
+        @localized('en', 'LINEAR')
+        @localized('es', 'ESLINEAR')
+        @localized('jp', 'JPLINEAR')
         static field LINEAR = new EasingFunction(EasingFunction._0, 1);
 
         static function _1(t) { return t ** 2; }
+        @localized('en', 'QUADRATIC')
+        @localized('es', 'ESQUADRATIC')
+        @localized('jp', 'JPQUADRATIC')
         static field QUADRATIC = new EasingFunction(EasingFunction._1);
 
         static function _2(t) { return t ** 3; }
+        @localized('en', 'CUBIC')
+        @localized('es', 'ESCUBIC')
+        @localized('jp', 'JPCUBIC')
         static field CUBIC = new EasingFunction(EasingFunction._2);
 
         static function _3(t) { return t ** 4; }
+        @localized('en', 'QUART')
+        @localized('es', 'ESQUART')
+        @localized('jp', 'JPQUART')
         static field QUART = new EasingFunction(EasingFunction._3);
 
         static function _4(t) { return t ** 5; }
+        @localized('en', 'QUINT')
+        @localized('es', 'ESQUINT')
+        @localized('jp', 'JPQUINT')
         static field QUINT = new EasingFunction(EasingFunction._4);
 
         static function _5(t) { return (1 - t ** 2) ** .5; }
+        @localized('en', 'CIRCLE')
+        @localized('es', 'ESCIRCLE')
+        @localized('jp', 'JPCIRCLE')
         static field CIRCLE = new EasingFunction(EasingFunction._5);
 
         static function _6(t) { return 1.0 - Math.cos(t * (Math.PI / 2)); }
+        @localized('en', 'SIN')
+        @localized('es', 'ESSIN')
+        @localized('jp', 'JPSIN')
         static field SIN = new EasingFunction(EasingFunction._6);
 
         static function _7(t) {
@@ -30,6 +58,9 @@ namespace Easing {
             else t = t * .6 + .4;
             return Math.sin(t * (2 * Math.PI * 5.25)) * (t ** 6);
         }
+        @localized('en', 'ELASTIC')
+        @localized('es', 'ESELASTIC')
+        @localized('jp', 'JPELASTIC')
         static field ELASTIC = new EasingFunction(EasingFunction._7, 400);
 
         constructor(fp, intervals = 100) {
@@ -42,14 +73,23 @@ namespace Easing {
             $$lib_easing_apply_pts(this, pts);
         }
 
+        @localized('en', 'easeIn')
+        @localized('es', 'ESeaseIn')
+        @localized('jp', 'JPeaseIn')
         function easeIn(start, end, current, duration, integers = false) {
             return $$lib_easing_interpolate(this, start, end, current, duration, integers, 0) ?? EasingFunction._throw();
         }
 
+        @localized('en', 'easeOut')
+        @localized('es', 'ESeaseOut')
+        @localized('jp', 'JPeaseOut')
         function easeOut(start, end, current, duration, integers = false) {
             return $$lib_easing_interpolate(this, start, end, current, duration, integers, 1) ?? EasingFunction._throw();
         }
 
+        @localized('en', 'ease')
+        @localized('es', 'ESease')
+        @localized('jp', 'JPease')
         function ease(start, end, current, duration, integers = false) {
             return $$lib_easing_interpolate(this, start, end, current, duration, integers, 2) ?? EasingFunction._throw();
         }

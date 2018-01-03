@@ -6,6 +6,9 @@ namespace Audio {
     /*
         native_data[0] -> actual native instance of the sound.
     */
+    @localized('en', 'SoundResource')
+    @localized('es', 'ESSoundResource')
+    @localized('jp', 'JPSoundResource')
     class SoundResource {
 
         static field _cache = {};
@@ -24,14 +27,23 @@ namespace Audio {
             this._id = SoundResource._resID++;
         }
 
+        @localized('en', 'setDefaultVolume')
+        @localized('es', 'ESsetDefaultVolume')
+        @localized('jp', 'JPsetDefaultVolume')
         function setDefaultVolume(r) {
             this._v = Math.ensureRange(r, 0.0, 1.0) + 0.0;
         }
 
+        @localized('en', 'getDefaultVolume')
+        @localized('es', 'ESgetDefaultVolume')
+        @localized('jp', 'JPgetDefaultVolume')
         function getDefaultVolume() {
             return this._v;
         }
 
+        @localized('en', 'loadFromFile')
+        @localized('es', 'ESloadFromFile')
+        @localized('jp', 'JPloadFromFile')
         static function loadFromFile(path) {
 
             s = new SoundResource();
@@ -41,6 +53,9 @@ namespace Audio {
             return s;
         }
 
+        @localized('en', 'loadFromResource')
+        @localized('es', 'ESloadFromResource')
+        @localized('jp', 'JPloadFromResource')
         static function loadFromResource(path, useCache = true) {
 
             s = null;
@@ -61,6 +76,9 @@ namespace Audio {
             return s;
         }
 
+        @localized('en', 'play')
+        @localized('es', 'ESplay')
+        @localized('jp', 'JPplay')
         function play(pan = 0.0) {
             c = new Sound(this, this._v, pan);
             this._c.add(c);
