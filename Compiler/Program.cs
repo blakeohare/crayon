@@ -306,10 +306,7 @@ namespace Crayon
                     throw new InvalidOperationException("No output folder specified in build file.");
 
                 buildContext.OutputFolder = FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.OutputFolder);
-                if (buildContext.IconFilePath != null)
-                {
-                    buildContext.IconFilePath = FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.IconFilePath);
-                }
+
                 if (buildContext.LaunchScreenPath != null)
                 {
                     buildContext.LaunchScreenPath = FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.LaunchScreenPath);

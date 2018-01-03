@@ -144,17 +144,24 @@ namespace Build
                 }
             }
 
-            string iconPath = this.IconFilePath;
-            if (iconPath != null)
+            string iconPathRaw = this.IconFilePath;
+            if (iconPathRaw != null)
             {
-                if (!FileUtil.IsAbsolutePath(iconPath))
+                List<string> absoluteIconPaths = new List<string>();
+                foreach (string iconFile in iconPathRaw.Split(','))
                 {
-                    iconPath = FileUtil.JoinPath(this.ProjectDirectory, iconPath);
+                    string trimmedIconFile = iconFile.Trim();
+                    if (!FileUtil.IsAbsolutePath(trimmedIconFile))
+                    {
+                        trimmedIconFile = FileUtil.JoinPath(this.ProjectDirectory, trimmedIconFile);
+                    }
+                    if (!FileUtil.FileExists(trimmedIconFile))
+                    {
+                        throw new InvalidOperationException("Icon file path does not exist: " + this.IconFilePath);
+                    }
+                    absoluteIconPaths.Add(trimmedIconFile);
                 }
-                if (!FileUtil.FileExists(iconPath))
-                {
-                    throw new InvalidOperationException("Icon file path does not exist: " + this.IconFilePath);
-                }
+                this.IconFilePath = string.Join(",", absoluteIconPaths);
             }
 
             string launchScreenPath = this.LaunchScreenPath;
