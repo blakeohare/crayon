@@ -550,7 +550,113 @@ function rollADice() {
 
 Like a function, a method generally must be followed by parentheses to invoke it. However, fields that are not methods do not need this. For now, `.length` is the only field that isn't a method that you should know about.
 
-### Lesson 7 - Imports and Libraries
+### Operators
+
+So far we've only used the four basic math operators: addition `+`, subtraction `-`, multiplication `*`, and division `/`. 
+
+These operators work between two numbers. Additionally, there is also exponents `**` and modulo `%`. Usually exponents are notated in text with the `^` character, but this is already used for another purpose, and so Crayon uses double-asterisk for exponents.
+
+2<sup>10</sup> is notated as:
+```
+x = 2 ** 10;
+```
+
+If you haven't heard of modulo before, it's basically a fancy name for remainder. While `/` will divide two numbers and return a result that is rounded down, `%` will divide two numbers and give you the remainder. For example, 10 divided by 7 is 1 remainder 3.
+
+```
+a = 10 / 7;
+b = 10 % 7;
+```
+
+`a` will be 1 while `b` will be 3.
+
+### Incremental operators
+
+There are several situations where you would like to modify a variable's current value by adding a number to it. Generally it looks something like this...
+
+```
+x = x + 5;
+```
+
+Because this is so common, you can use shorthand for it:
+
+```
+x += 5;
+```
+
+This will get the value of x, add 5 to it, and store it back into the variable x. This is completely equivalent to `x = x + 5;` from before.
+
+Furthermore, adding and subtracting 1 from a variable is so common, there's even a more compact way of notating this, using ++ and -- operators.
+
+```
+x = x + 1;
+```
+
+...is this same as...
+
+```
+x++;
+```
+
+Similarly you can use `--` to subtract 1 from a variable. The `++` and `--` operators can appear before or after the variable name. So `++x` will work as well. There's a subtle difference between "prefix" and "postfix" usages of `++` and `--` but it's okay to not worry about that for now.
+
+### Operators for non number types
+
+So far all these operators have been for numbers. There are also operators for other types as well, particularly booleans.
+
+You can combine two booleans together using `&&` or `||`. These mean "and" and "or" respectively.
+
+You most commonly see these used inside if statements which check for multiple conditions to see if all of them are true.
+
+```
+if (x > 5 && y > 5) {
+    print("x and y are both greater than 5");
+}
+```
+
+You could have used two if statements nested inside each other to achieve the same effect.
+
+The `||` operator checks to see if either of the values are true. If both of them are true, then that still counts.
+
+```
+if (x > 5 || y > 5) {
+    print("x or y are greater than 5, possibly both, but definitely at least one of them");
+}
+```
+
+| Expression | Value of A | Value of B | Result  |
+| ---------- | ---------- | ---------- | ------- |
+| `A && B`   | `true`     | `true`     | `true`  |
+| `A && B`   | `true`     | `false`    | `false` |
+| `A && B`   | `false`    | `true`     | `false` |
+| `A && B`   | `false`    | `false`    | `false` |
+| `A || B`   | `true`     | `true`     | `true`  |
+| `A || B`   | `true`     | `false`    | `true`  |
+| `A || B`   | `false`    | `true`     | `true`  |
+| `A || B`   | `false`    | `false`    | `false` |
+
+You can also put a `!` in front of any boolean to flip its value.
+
+```
+theOppositeCondition = !someCondition;
+```
+
+So for example, if you have two booleans, `a` and `b` and wanted to have an if statement that would run if one of them was true but not both of them, you could do this:
+
+```
+if ((a || b) && !(a && b)) {
+    print("Either a or b is true, but not both");
+}
+```
+
+### More comparison operators
+We've been using `==`, `<`, and `>` but there is actually a handful more.
+
+You can check to see if a number is **greater than or equal** by using `>=` instead of just `>`. Likewise, you can use `<=` for **less than or equal**. 
+
+In addition to these, there's also `!=` which is **not equal**. `a != b` is equivalent to `!(a == b)`.
+
+## Lesson 7 - Imports and Libraries
 
 A **library** is a packaged set of existing code either written by yourself or someone else. This package of code is intended to serve some sort of standalone or themed purpose. You can import a library into your code and use the functions defined in it using the `import` statement. An import statement goes at the top of the file where you want to call the library's code. One simple example of a library is the `Math` library which is built in to Crayon. 
 
@@ -565,7 +671,7 @@ function main(args) {
 
 To access functions inside a library, you can use dot notation. There are quite a few libraries that are built in to Crayon and the documentation for each can be found here. However, it is out of scope to go over each in this tutorial. In the next section, we'll start making something that looks like a game by using some of the graphics and game-related libraries. 
 
-### Lesson 8 - A box on the screen
+## Lesson 8 - A box on the screen
 
 In this section and the ones that follow, we'll finally start working with 2D graphics and the disparate concepts I've been throwing at you thus far will start coalescing into something useful. This is also a pretty good review section since it uses almost everything introduced so far.
 
@@ -722,9 +828,11 @@ function main() {
 ```
 
 Blue stationary circle:
+
 ![blue circle](./images/circle1.png)
 
 Green moving circle (it's moving, trust me):
+
 ![green circle](./images/circle2.png)
 
 This introduces the concept of maintaining **state** across multiple frames.
