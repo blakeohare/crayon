@@ -862,32 +862,32 @@ Instead, we can define a `Bullet` object which has fields called `.x`, `.y`, and
 
 ```csharp
 class Bullet {
-	field x;
-	field y;
-	field angle;
-	
-	constructor(x, y, angle) {
-		this.x = x;
-		this.y = y;
-		this.angle = angle;
-	}
-	
-	function update() {
-		velocity = 7;
-		this.x = this.x + Math.cos(this.angle) * velocity;
-		this.y = this.y + Math.sin(this.angle) * velocity;
-	}
-	
-	function isOffScreen(width, height) {
-		return this.x < 0 || this.y < 0 || this.x > width || this.y > height;
-	}
-	
-	function draw() {
-		size = 6;
-		Graphics2D.Draw.rectangle(
-			this.x - size / 2, this.y - size / 2, size, size,
-			255, 255, 255); // white
-	}
+    field x;
+    field y;
+    field angle;
+    
+    constructor(x, y, angle) {
+        this.x = x;
+        this.y = y;
+        this.angle = angle;
+    }
+    
+    function update() {
+        velocity = 7;
+        this.x = this.x + Math.cos(this.angle) * velocity;
+        this.y = this.y + Math.sin(this.angle) * velocity;
+    }
+    
+    function isOffScreen(width, height) {
+        return this.x < 0 || this.y < 0 || this.x > width || this.y > height;
+    }
+    
+    function draw() {
+        size = 6;
+        Graphics2D.Draw.rectangle(
+            this.x - size / 2, this.y - size / 2, size, size,
+            255, 255, 255); // white
+    }
 }
 ```
 
@@ -914,35 +914,35 @@ You may be tempted to create objects for just concrete concepts that you can see
 ```csharp
 class BulletCollection {
 
-	// You can initialize fields with a default starting value.
-	field bullets = [];
-	
-	// Because the field is already initialized, the constructor can be empty.
-	constructor() { }
-	
-	function addNewBullet(x, y) {
-		angle = Random.randomFloat() * 2 * Math.PI;
-		
-		// Here we use the 'new' keyword to create a new Bullet.
-		this.bullets.add(new Bullet(x, y, angle));
-	}
-	
-	function update(screenWidth, screenHeight) {
-		for (i = 0; i < this.bullets.length; i++) {
-			bullet = this.bullets[i];
-			bullet.update();
-			if (bullet.isOffScreen(screenWidth, screenHeight)) {
-				this.bullets.remove(i);
-				i--;
-			}
-		}
-	}
-	
-	function draw() {
-		for (i = 0; i < this.bullets.length; i++) {
-			bullets[i].draw();
-		}
-	}
+    // You can initialize fields with a default starting value.
+    field bullets = [];
+    
+    // Because the field is already initialized, the constructor can be empty.
+    constructor() { }
+    
+    function addNewBullet(x, y) {
+        angle = Random.randomFloat() * 2 * Math.PI;
+        
+        // Here we use the 'new' keyword to create a new Bullet.
+        this.bullets.add(new Bullet(x, y, angle));
+    }
+    
+    function update(screenWidth, screenHeight) {
+        for (i = 0; i < this.bullets.length; i++) {
+            bullet = this.bullets[i];
+            bullet.update();
+            if (bullet.isOffScreen(screenWidth, screenHeight)) {
+                this.bullets.remove(i);
+                i--;
+            }
+        }
+    }
+    
+    function draw() {
+        for (i = 0; i < this.bullets.length; i++) {
+            bullets[i].draw();
+        }
+    }
 }
 ```
 
@@ -990,7 +990,8 @@ function main() {
         
         window.clockTick();
     }
-}```
+}
+```
 
 I would include a screenshot but it looks exactly the same as before.
 
