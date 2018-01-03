@@ -1,14 +1,14 @@
-﻿輸入 Game;
-輸入 Graphics2D;
-輸入 Math;
-輸入 Random;
+﻿参照 Game;
+参照 Graphics2D;
+参照 Math;
+参照 Random;
 
-不変 FPS = 60;
-不変 WIDTH = 50;
-不変 HEIGHT = 40;
-不変 CELL_SIZE = 16;
-不変 SCREEN_WIDTH = CELL_SIZE * WIDTH;
-不変 SCREEN_HEIGHT = CELL_SIZE * HEIGHT;
+定数 FPS = 60;
+定数 WIDTH = 50;
+定数 HEIGHT = 40;
+定数 CELL_SIZE = 16;
+定数 SCREEN_WIDTH = CELL_SIZE * WIDTH;
+定数 SCREEN_HEIGHT = CELL_SIZE * HEIGHT;
 
 列挙 LocalizationTest {
     FOO = 0,
@@ -16,46 +16,46 @@
     ETC = 2,
 }
 
-作用 getRandomColor() {
-    戻 [
+関数 getRandomColor() {
+    返す [
         Random.randomInt(170, 255),
         Random.randomInt(40),
         Random.randomInt(30, 70)
     ];
 }
 
-作用 原() {
-    window = 新 GameWindow("Conway's Game of Life", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
+関数 開始起点() {
+    window = 生成 GameWindow("Conway's Game of Life", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    print("Length: " + LocalizationTest.全額 + " Max: " + LocalizationTest.最高() + " Values: " + LocalizationTest.材料());
+    print("Length: " + LocalizationTest.長さ + " Max: " + LocalizationTest.最大() + " Values: " + LocalizationTest.値());
 
     totalCells = WIDTH * HEIGHT;
 
-    trues = [正] * (totalCells / 3);
-    falses = [不] * (totalCells - trues.length);
+    trues = [真] * (totalCells / 3);
+    falses = [偽] * (totalCells - trues.length);
     grid = trues + falses;
     grid.shuffle();
     cellPixelX = [];
-    ごと (x = 0; x < WIDTH; ++x) {
+    反復 (x = 0; x < WIDTH; ++x) {
         cellPixelX.add(x * CELL_SIZE);
     }
     cellPixelY = [];
-    ごと (y = 0; y < HEIGHT; ++y) {
+    反復 (y = 0; y < HEIGHT; ++y) {
         cellPixelY.add(y * CELL_SIZE);
     }
 
-    buffer = [不] * totalCells;
+    buffer = [偽] * totalCells;
     neighborsLookup = [];
     indices = [];
     blues = [];
     offsets = [-1, 0, 1];
-    ごと (y = 0; y < HEIGHT; ++y) {
-        ごと (x = 0; x < WIDTH; ++x) {
+    反復 (y = 0; y < HEIGHT; ++y) {
+        反復 (x = 0; x < WIDTH; ++x) {
             indices.add(indices.length);
             blues.add(getRandomColor());
             neighbors = [];
-            ごと (dx : offsets) {
-                ごと (dy : offsets) {
+            反復 (dx : offsets) {
+                反復 (dy : offsets) {
                     neighborX = dx + x;
                     neighborY = dy + y;
                     もし (neighborX >= 0 &&
@@ -73,22 +73,22 @@
     }
 
     lastPosition = -1;
-    mousePressed = 不;
+    mousePressed = 偽;
 
     // Lookup table for what to do if a live cell has n neighbors
-    liveTransformationLookup = [不] * 9; // die unless...
-    liveTransformationLookup[2] = 正; // has exactly 2 neighbors
-    liveTransformationLookup[3] = 正; // has exactly 3 neighbors
+    liveTransformationLookup = [偽] * 9; // die unless...
+    liveTransformationLookup[2] = 真; // has exactly 2 neighbors
+    liveTransformationLookup[3] = 真; // has exactly 3 neighbors
 
     // Lookup table for what to do if a dead cell has n neighbors
-    deadTransformationLookup = [不] * 9; // stay dead unless...
-    deadTransformationLookup[3] = 正; // has exactly 3 neighbors
+    deadTransformationLookup = [偽] * 9; // stay dead unless...
+    deadTransformationLookup[3] = 真; // has exactly 3 neighbors
 
-    中 (正) {
-        ごと (event : window.pumpEvents()) {
-            指揮 (event.type) {
+    間 (真) {
+        反復 (event : window.pumpEvents()) {
+            分岐 (event.type) {
                 場合 EventType.QUIT:
-                    戻;
+                    返す;
 
                 場合 EventType.MOUSE_MOVE:
                     lastCol = event.x / CELL_SIZE;
@@ -96,15 +96,15 @@
                     もし (lastCol >= 0 && lastRow >= 0 && lastCol < WIDTH && lastRow < HEIGHT) {
                         lastPosition = lastCol + lastRow * WIDTH;
                     }
-                    切;
+                    抜ける;
 
                 場合 EventType.MOUSE_LEFT_DOWN:
-                    mousePressed = 正;
-                    切;
+                    mousePressed = 真;
+                    抜ける;
 
                 場合 EventType.MOUSE_LEFT_UP:
-                    mousePressed = 不;
-                    切;
+                    mousePressed = 偽;
+                    抜ける;
             }
         }
 
@@ -112,16 +112,16 @@
             // bring half of the cells in the neighbors lookup for the cursor's position to life.
             neighbors = neighborsLookup[lastPosition];
             neighbors.shuffle();
-            ごと (i = 0; i < neighbors.length / 2; ++i) {
-                grid[neighbors[i]] = 正;
+            反復 (i = 0; i < neighbors.length / 2; ++i) {
+                grid[neighbors[i]] = 真;
             }
         }
 
         // Perform an iteration on the entire grid...
-        ごと (index : indices) {
+        反復 (index : indices) {
             // Count neighbors
             neighbors = 0;
-            ごと (neighborIndex : neighborsLookup[index]) {
+            反復 (neighborIndex : neighborsLookup[index]) {
                 もし (grid[neighborIndex]) {
                     neighbors++;
                 }
@@ -141,14 +141,14 @@
         // Draw the grid
         Draw.fill(0, 0, 0);
         index = 0;
-        ごと (y : cellPixelY) {
-            ごと (x : cellPixelX) {
+        反復 (y : cellPixelY) {
+            反復 (x : cellPixelX) {
                 もし (grid[index]) {
                     rgb = blues[index];
                     Draw.rectangle(
                         x, y, CELL_SIZE, CELL_SIZE,
                         rgb[0], rgb[1], rgb[2]);
-                } 又 もし (index == lastPosition) {
+                } あるいは もし (index == lastPosition) {
                     Draw.rectangle(
                         x, y, CELL_SIZE, CELL_SIZE,
                         64, 64, 64);

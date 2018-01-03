@@ -313,7 +313,7 @@ namespace CSharpApp
                 {
                     iconGen.AddImage(new SystemBitmap(path.Trim()));
                 }
-                
+
                 output[baseDir + "icon.ico"] = new FileOutput()
                 {
                     Type = FileOutputType.Binary,
