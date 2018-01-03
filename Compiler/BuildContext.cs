@@ -348,6 +348,13 @@ namespace Crayon
             string iconPath = this.IconFilePath;
             if (iconPath != null)
             {
+                if (iconPath.Contains(','))
+                {
+                    // Temporary hack for 0.2.0 release branch for multiple-icon crash.
+                    // Drop all the icons aside from the first one. This is fixed in 0.2.1.
+                    iconPath = iconPath.Split(',')[0];
+                    this.IconFilePath = iconPath;
+                }
                 if (!FileUtil.IsAbsolutePath(iconPath))
                 {
                     iconPath = FileUtil.JoinPath(this.ProjectDirectory, iconPath);
