@@ -38,7 +38,7 @@ class LoadingScene : AbstractScene {
     function render() {
         Graphics2D.Draw.fill(0, 0, 0);
 
-        dotCount = 16;
+        dotCount = 100;
         mainRadius = 100 + this.postCompletionCounter * 8.0;
         dotRadius = 8;
         lightBlue = [100, 200, 255];

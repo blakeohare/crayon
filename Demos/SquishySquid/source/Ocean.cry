@@ -4,6 +4,7 @@ import Math;
 
 const KELP_SPACING = 280;
 const AVAILABLE_HEIGHT = HEIGHT - 40;
+const SCROLL_SPEED_RATIO = IS_LANDSCAPE_MODE ? 1.8 : 1.2;
 
 class Ocean {
 
@@ -23,7 +24,7 @@ class Ocean {
 
     function update() {
         if (this.isMoving) {
-            this.cameraX += 2.0;
+            this.cameraX += 2.0 * SCROLL_SPEED_RATIO;
             this.checkCollisions();
         }
 

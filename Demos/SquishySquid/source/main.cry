@@ -1,8 +1,9 @@
 import Game;
 
+const IS_LANDSCAPE_MODE = $var['is_landscape'];
 const FPS = 60;
-const WIDTH = 400;
-const HEIGHT = 700;
+const WIDTH = IS_LANDSCAPE_MODE ? 960 : 400;
+const HEIGHT = IS_LANDSCAPE_MODE ? 400: 700;
 
 function main() {
     window = new Game.GameWindow('Squishy Squid', FPS, WIDTH, HEIGHT);

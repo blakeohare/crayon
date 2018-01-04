@@ -13,6 +13,11 @@
 
 	<iosbundleprefix>org.crayonlang.demos</iosbundleprefix>
 	<guidseed>org.crayonlang.demos.squishysquid,v0.2.0,%TARGET_NAME%</guidseed>
+
+	<var type="boolean">
+		<id>is_landscape</id>
+		<value>false</value>
+	</var>
 	
 	<!-- Targets -->
 	<target name="android">
@@ -26,6 +31,23 @@
 	<target name="javascript">
 		<platform>javascript-app</platform>
 		<jsfileprefix>/demos/squishysquid/</jsfileprefix>
+	</target>
+	
+	<target name="sitecsharp">
+		<platform>csharp-app</platform>
+		<var type="boolean">
+			<id>is_landscape</id>
+			<value>true</value>
+		</var>
+	</target>
+	
+	<target name="sitejs">
+		<platform>javascript-app</platform>
+		<jsfileprefix>/frontpage/squishysquid/</jsfileprefix>
+		<var type="boolean">
+			<id>is_landscape</id>
+			<value>true</value>
+		</var>
 	</target>
 	
 	<target name="csharp">

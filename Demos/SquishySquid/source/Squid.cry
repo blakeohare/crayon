@@ -1,7 +1,7 @@
 import Math;
 
 const GRAVITY = .5;
-const JUMP_VELOCITY = -10;
+const JUMP_VELOCITY = IS_LANDSCAPE_MODE ? -8 : -10;
 const SQUID_SIZE = 40; // side length of the image
 const TERMINAL_VELOCITY = 10;
 
