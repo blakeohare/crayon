@@ -23,7 +23,7 @@ funcion primero() {
     window = crear JuegoVentana("Conway's Game of Life", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     // TODO: Remove this...eventually. This is here just for localization testing.
-    publicar(Esencia.Espejo.getClassFromInstance(window));
+    publicar(Esencia.Espejo.ESgetClassFromInstance(window));
     Esencia.publicar("¡Hola, Mundo!");
     Esencia.publicar("Pi = " + Mates.PI);
 

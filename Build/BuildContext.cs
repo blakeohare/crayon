@@ -208,7 +208,6 @@ namespace Build
 
         private static Dictionary<string, BuildVarCanonicalized> GenerateBuildVars(BuildItem root, BuildItem target, string targetName)
         {
-
             Dictionary<string, BuildVar> firstPass = new Dictionary<string, BuildVar>();
 
             if (root.Var != null)

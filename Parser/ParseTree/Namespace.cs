@@ -57,18 +57,7 @@ namespace Parser.ParseTree
 
         public override string GetFullyQualifiedLocalizedName(Locale locale)
         {
-            if (this.NamesByLocale.ContainsKey(locale))
-            {
-                List<string> segments = new List<string>();
-                if (this.Owner != null)
-                {
-                    segments.Add(this.Owner.GetFullyQualifiedLocalizedName(locale));
-                }
-                segments.AddRange(this.NamesByLocale[locale]);
-
-                return string.Join(".", segments);
-            }
-            return this.FullyQualifiedDefaultName;
+            return this.FileScope.CompilationScope.GetNamespaceNameForLocale(locale, this);
         }
 
         internal override void Resolve(ParserContext parser)

@@ -40,6 +40,26 @@ namespace Parser
             }
         }
 
+        // The localized view is an external view of a library, whereas this
+        // is the actual compilation of the internal localization data.
+        private Dictionary<string, string> getNamespaceNameForLocaleCache = new Dictionary<string, string>();
+        public string GetNamespaceNameForLocale(Locale locale, Namespace ns)
+        {
+            string fullyQualifiedDefaultName = ns.FullyQualifiedDefaultName;
+            string key = locale.ID + ":" + fullyQualifiedDefaultName;
+            if (!this.getNamespaceNameForLocaleCache.ContainsKey(key))
+            {
+                Dictionary<string, NamespaceReferenceTemplate> lookup = this.namespaceFlattener.GetLookup(locale);
+                foreach (NamespaceReferenceTemplate nrt in lookup.Values)
+                {
+                    string originalName = nrt.OriginalNamespace.FullyQualifiedDefaultName;
+                    string localizedName = nrt.Name;
+                    getNamespaceNameForLocaleCache[locale.ID + ":" + originalName] = localizedName;
+                }
+            }
+            return this.getNamespaceNameForLocaleCache[key];
+        }
+
         public Dictionary<string, NamespaceReferenceTemplate> GetFlattenedNamespaceLookup(Locale locale)
         {
             return this.namespaceFlattener.GetLookup(locale);
