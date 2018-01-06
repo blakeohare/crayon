@@ -4,7 +4,7 @@ With the exception of a few types of games that deal with abstract concepts, suc
 
 In this tutorial I’ll go over a few of the common types of situations that you may encounter, and offer a typical solution for basic collision detection. 
 
-Before we start, I’ll define the term sprite. A sprite is not really a specific technical term, but rather the abstract idea of a physical object being represented in your program in some way. The way to represent a sprite can be done in a variety of ways. Usually they’re a list of objects that have some sort of size and location. Other times, a sprite can simply be a single coordinate. The way a sprite is represented doesn’t really matter and the term sprite merely refers to the fact that it resembles an object in the physical world.
+Before we start, I’ll define the term **sprite**. A sprite is not really a specific technical term, but rather the abstract idea of a physical object being represented in your program in some way. The way to represent a sprite can be done in a variety of ways. Usually they’re a list of objects that have some sort of size and location. Other times, a sprite can simply be a single coordinate. The way a sprite is represented doesn’t really matter and the term sprite merely refers to the fact that it resembles an object in the physical world.
 
 Regardless of how a sprite is represented, it generally has a location, size, and shape of some sort. Consider a character that is drawn to the screen as an image. The sprite’s location may be the location of the image, the size and shape is that of the rectangular image itself. It’s very common for sprites to be shaped like a rectangle, but not always. Sometimes, if the picture of the sprite is not very rectangular, sometimes it is more effective to represent the character’s field of collision as a circle. In the case of a bullet, sometimes the sprite is represented as a single point since it’s so small. I’ll quickly go over the math of how to tell if these shapes overlap.
 
@@ -19,7 +19,7 @@ function isPointRectangleCollision(point, rectangle) {
 ```
 
 ## Point in a circle
-To see if a point is in a circle, check the distance between the point and the center of the circle. If the distance is less than the radius, then it’s inside. The distance formula is squareRoot(xDifference^2 + yDifference^2). However, it’s faster for a computer to square a number than it is to find the square root. Since we’re checking if the distance is less than the radius, it is faster to check to see if the square of the distance is less than the square of the radius. You’ll see this pattern of avoiding square root in favor of squaring throughout this tutorial.
+To see if a point is in a circle, check the distance between the point and the center of the circle. If the distance is less than the radius, then it’s inside. The distance formula is squareRoot(xDifference<sup>2</sup> + yDifference<sup>2</sup>). However, it’s faster for a computer to square a number than it is to find the square root. Since we’re checking if the distance is less than the radius, it is faster to check to see if the square of the distance is less than the square of the radius. You’ll see this pattern of avoiding square root in favor of squaring throughout this tutorial.
 
 ```csharp
 function isPointCircleCollision(point, circle) {
@@ -137,7 +137,7 @@ function applyCollisions(bullets, enemies) {
 }
 ```
 
-If this is like a megaman game where the number of bullets you’re allowed to shoot is capped at a maximum of 3 and there’s about a dozen enemy robots on the screen at most, then this simple code is good enough. But problems arise if this is a traditional bullet hell game where there are a hundred alien spaceships on the screen and about a hundred bullets. This means that the collision code runs about 10,000 times. In computer science, this is referred to as a O(n^2) algorithm. (pronounced “Big O of n squared”). This is because as your data set increases, the time it takes your code to run increases quadratically.
+If this is like a megaman game where the number of bullets you’re allowed to shoot is capped at a maximum of 3 and there’s about a dozen enemy robots on the screen at most, then this simple code is good enough. But problems arise if this is a traditional bullet hell game where there are a hundred alien spaceships on the screen and about a hundred bullets. This means that the collision code runs about 10,000 times. In computer science, this is referred to as a O(n<sup>2</sup>) algorithm. (pronounced “Big O of n squared”). This is because as your data set increases, the time it takes your code to run increases quadratically.
 
 One way to get this to become a O(n) algorithm (“Big O of n” or simply “linear”) is to implement a strategy called bucketing. 
 
