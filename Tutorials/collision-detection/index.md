@@ -4,6 +4,26 @@ With the exception of a few types of games that deal with abstract concepts, suc
 
 In this tutorial I'll go over a few of the common types of situations that you may encounter, and offer a typical solution for basic collision detection. 
 
+This tutorial is separated into a few sections. Feel free to skip around.
+
+### Part 1: Basic geometric intersections
+
+* Checking if a point is in a rectangle
+* Checking if a point is in a circle
+* Checking if two rectangles overlap
+* Checking if two circles overlap
+* Checking if a circle and a rectangle overlap
+
+### Part 2: Groups of sprites
+
+* Checking if one specific sprite touches any sprite in another group
+* Checking if any sprite in one group touches any sprite in another group when the groups are small
+* Checking if any sprite in one group touches any sprite in another group when the groups are really big
+
+### Part 3: Miscellaneous situations
+
+* A character swinging a weapon
+
 Before we start, I'll define the term **sprite**. A sprite is not really a specific technical term, but rather the abstract idea of a physical object being represented in your program in some way. The way to represent a sprite can be done in a variety of ways. Usually they're a list of objects that have some sort of size and location. Other times, a sprite can simply be a single coordinate. The way a sprite is represented doesn't really matter and the term sprite merely refers to the fact that it resembles an object in the physical world.
 
 Regardless of how a sprite is represented, it generally has a location, size, and shape of some sort. Consider a character that is drawn to the screen as an image. The sprite's location may be the location of the image, the size and shape is that of the rectangular image itself. It's very common for sprites to be shaped like a rectangle, but not always. Sometimes, if the picture of the sprite is not very rectangular, sometimes it is more effective to represent the character's field of collision as a circle. In the case of a bullet, sometimes the sprite is represented as a single point since it's so small. I'll quickly go over the math of how to tell if these shapes overlap.
