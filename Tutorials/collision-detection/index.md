@@ -24,6 +24,8 @@ This tutorial is separated into a few sections. Feel free to skip around.
 
 * A character swinging a weapon
 
+## Definition of a Sprite
+
 Before we start, I'll define the term **sprite**. A sprite is not really a specific technical term, but rather the abstract idea of a physical object being represented in your program in some way. The way to represent a sprite can be done in a variety of ways. Usually they're a list of objects that have some sort of size and location. Other times, a sprite can simply be a single coordinate. The way a sprite is represented doesn't really matter and the term sprite merely refers to the fact that it resembles an object in the physical world.
 
 Regardless of how a sprite is represented, it generally has a location, size, and shape of some sort. Consider a character that is drawn to the screen as an image. The sprite's location may be the location of the image, the size and shape is that of the rectangular image itself. It's very common for sprites to be shaped like a rectangle, but not always. Sometimes, if the picture of the sprite is not very rectangular, sometimes it is more effective to represent the character's field of collision as a circle. In the case of a bullet, sometimes the sprite is represented as a single point since it's so small. I'll quickly go over the math of how to tell if these shapes overlap.
@@ -44,9 +46,13 @@ function isPointRectangleCollision(point, rectangle) {
 }
 ```
 
+TODO: add image
+
 ## Point in a circle
 
 To see if a point is in a circle, check the distance between the point and the center of the circle. If the distance is less than the radius, then it's inside. The distance formula is squareRoot(xDifference<sup>2</sup> + yDifference<sup>2</sup>). However, it's faster for a computer to square a number than it is to find the square root. Since we're checking if the distance is less than the radius, it is faster to check to see if the square of the distance is less than the square of the radius. You'll see this pattern of avoiding square root in favor of squaring throughout this tutorial.
+
+TODO: add image
 
 ```csharp
 function isPointCircleCollision(point, circle) {
@@ -59,6 +65,8 @@ function isPointCircleCollision(point, circle) {
 ## Intersection of Two Rectangles
 
 This is a little more complicated. It is essentially just a list of all the possible situations where two rectangles are not overlapping. If the right side of one rectangle is completely to the left of the left side of another rectangle, then they cannot overlap. Using that logic for all 4 sides is sufficient to determine that two rectangles do not overlap.
+
+TODO: add image
 
 ```csharp
 function isRectangleCollision(rect1, rect2) {
@@ -73,6 +81,8 @@ function isRectangleCollision(rect1, rect2) {
 ## Intersection of Two Circles
 
 Like checking if a point is in a circle, you use the distance formula, except this time, it's the distance between the two centers of the circles. Instead of checking if that distance is less than the radius, you check to see if that distance is less than their combined radii. Notice that squaring the sum of the radii is used instead of using the square root function on the other side of the final inequality.
+
+TODO: add image
 
 ```csharp
 function isCircleCollision(circle1, circle2) {
@@ -91,6 +101,8 @@ There are 3 possible situations:
 * A circle's right-most point can be entirely located to the left of the left side of the rectangle. Similarly the left-most point can be located to the right of the right side of the rectangle. And the same logic can be applied to the other Y directions. If any of these are true, then it is impossible for the circle to overlap the rectangle. This is similar to the rectangle intersection logic.
 * If the above situation isn't true and a circle's center is to the left of the left side of a rectangle and it's also above the top of the rectangle, then it's possible that it doesn't overlap. In this situation check to see if the corner is in the circle. If it isn't, then it doesn't overlap. If it is, then it does overlap.
 * If it isn't one of the above situations, then that means they intersect.
+
+TODO: add image
 
 ```csharp
 function isRectangleCircleCollision(rectangle, circle) {
@@ -134,6 +146,8 @@ I will assume that all sprites are rectangular in the code sample. This is to il
 ## Scenario 1: One player and multiple enemies
 Or in other words, "does 1 specific sprite collide with any other sprites in a set?"
 
+TODO: add image
+
 This is the most straightforward situation where you have one specific sprite you're tracking that you would like to check against another set of sprites. This is simply a single loop checking each enemy to see if it collides with the player. If one is found, this function returns true. If none are found, then it returns false.
 
 ```csharp
@@ -150,6 +164,8 @@ function isCollision(player, enemies) {
 ## Scenario 2: Check collisions between two different sets
 
 Or in other words "many bullets and many enemies".
+
+TODO: add image
 
 This is a little more complicated. If you know that the number of enemies and bullets will be limited, it may be appropriate to simply use a nested for loop, checking each possible pair of enemy + bullet to see if there's an intersection.
 
@@ -171,11 +187,15 @@ function applyCollisions(bullets, enemies) {
 
 If this is like a Megaman game where the number of bullets you're allowed to shoot is capped at a maximum of 3 and there's about a dozen enemy robots on the screen at most, then this simple code is good enough. But problems arise if this is a traditional "bullet hell" game where there are a hundred alien spaceships on the screen and about a hundred bullets. This means that the collision code runs about 10,000 times. In computer science, this is referred to as a O(n<sup>2</sup>) algorithm. (pronounced "Big O of n squared"). This is because as your data set increases, the time it takes your code to run increases quadratically.
 
+TODO: add image
+
 One way to get this to become a O(n) algorithm ("Big O of n" or simply "linear") is to implement a strategy called bucketing. 
 
 Imagine, hypothetically, that this game is played on a field that's 1000 x 1000 pixels and the enemy spaceships are about 10 pixels wide. It seems silly to spend time checking if a spaceship in the bottom left corner of the screen is colliding with a bullet in the center of the screen.  
 
 The following logic is somewhat complicated, but no longer quadratic in nature. This code starts by looping through all the bullets and assigning them into a bucket. This is a linear operation, because the time it takes scales linearly with the number of bullets.
+
+TODO: add image of bucket grid
 
 ```csharp
 function applyCollisions(bullets, enemies) {
@@ -232,6 +252,8 @@ It is also very common for the environment to be represented in some other way o
 
 But the world usually more complicated. It is very common for game worlds to be constructed on a grid, sometimes referred to as tiles. Usually these tiles are complicated objects that have some sort of image and other qualities, but for the sake of simplicity, let's assume our game only has a grid of booleans, where true represents a tile that the player can walk on, and false is one that is blocking and that our player is a single point. 
 
+TODO: add image
+
 ```csharp
 const TILE_WIDTH = 20;
 
@@ -258,4 +280,14 @@ In situations like this, it's sometimes effective to create another dummy sprite
 
 TODO: add image example.
 
+### Weird shaped objects
 
+For weird shaped objects, you can create a complicated function to detect if another object overlaps. However, notice that by usig points, rectangles, and circles in the first section of this tutorial, there was one function for each combination of shapes. Adding more unique shapes makes this matrix of possibility expand further. Imagine a robot shooting out line-shaped laser beams or fireballs that shaped like large circle-sectors. While it may be effective to write circle + line intersection logic, it's typically more streamlined to define object collision regions in terms of other simpler shapes.
+
+For example, consider the robot shooting a laser. You could create a set of points that are spaced 10 pixels apart. If your other sprites are 30-pixel-wide circles or rectangles, checking for intersections between those sprites and a set of points is more than sufficient.
+
+TODO: add image example
+
+In the fireball example, consider this simplification:
+
+TODO: add image example
