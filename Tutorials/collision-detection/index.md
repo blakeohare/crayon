@@ -221,8 +221,8 @@ The following logic is somewhat complicated, but no longer quadratic in nature. 
 function applyCollisions(bullets, enemies) {
     bulletsByBucket = {};
     for (bullet : bullets) {
-        bucketX = bullet.x / 4;
-        bucketY = bullet.y / 4;
+        bucketX = bullet.x / 250;
+        bucketY = bullet.y / 250;
         bucketId = bulletX * 4 + bulletY;
         bucket = bulletsByBucket.get(bucketId);
         if (bucket == null) {
@@ -237,7 +237,7 @@ function applyCollisions(bullets, enemies) {
     neighborOffsets = [0, -1, 1, -3, -4, -5, 3, 4, 5];
 
     for (enemy : enemies) {
-        enemyBucket = (enemy.centerX / 4) * 4 + (enemy.centerY / 4);
+        enemyBucket = (enemy.centerX / 250) * 4 + (enemy.centerY / 250);
         collided = false;
         for (offset : neighborOffsets) {
             nearbyBullets = bulletsByBucket.get(enemyBucket + offset);
