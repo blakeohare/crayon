@@ -38,6 +38,13 @@ If you're more interested in the algorithm aspects of collision detection of man
 
 To see if a point is inside a rectangle, simply check each side to see if it's on the inner side of each. If it's on the inside of each side, then it's inside the rectangle.
 
+![Point in a rectangle](./images/point-in-rect.png)
+
+* Point 1 is in range of the x coordinates but not the y coordinates.
+* Point 2 is neither in range of the x or y coordinates.
+* Point 3 is in range of the y coordinates but not the x coordinates.
+* Point 4 is in range of all 4.
+
 ```csharp
 function isPointRectangleCollision(point, rectangle) {
     return
@@ -48,18 +55,11 @@ function isPointRectangleCollision(point, rectangle) {
 }
 ```
 
-* Point 1 is in range of the x coordinates but not the y coordinates.
-* Point 2 is neither in range of the x or y coordinates.
-* Point 3 is in range of the y coordinates but not the x coordinates.
-* Point 4 is in range of all 4.
-
-![Point in a rectangle](./images/point-in-rect.png)
-
 ## Point in a circle
 
 To see if a point is in a circle, check the distance between the point and the center of the circle. If the distance is less than the radius, then it's inside. The distance formula is squareRoot(xDifference<sup>2</sup> + yDifference<sup>2</sup>). However, it's faster for a computer to square a number than it is to find the square root. Since we're checking if the distance is less than the radius, it is faster to check to see if the square of the distance is less than the square of the radius. You'll see this pattern of avoiding square root in favor of squaring throughout this tutorial.
 
-TODO: add image
+![Point in a circle](./images/point-in-circle.png)
 
 ```csharp
 function isPointCircleCollision(point, circle) {
@@ -73,8 +73,6 @@ function isPointCircleCollision(point, circle) {
 
 This is a little more complicated. It is essentially just a list of all the possible situations where two rectangles are not overlapping. If the right side of one rectangle is completely to the left of the left side of another rectangle, then they cannot overlap. Using that logic for all 4 sides is sufficient to determine that two rectangles do not overlap.
 
-TODO: add image
-
 ```csharp
 function isRectangleCollision(rect1, rect2) {
     if (rect1.right < rect2.left) return false;
@@ -84,6 +82,14 @@ function isRectangleCollision(rect1, rect2) {
     return true;
 }
 ```
+
+Here's a quick graphic showing the various combinations...
+
+![Rectangle intersection](./images/two-rectangles.png)
+
+And remember, the rectangle can entirely consume the other...
+
+![Rectangle intersection](./images/two-rectangles2.png)
 
 ## Intersection of Two Circles
 
