@@ -93,7 +93,7 @@ And remember, the rectangle can entirely consume the other...
 
 ## Intersection of Two Circles
 
-Like checking if a point is in a circle, you use the distance formula, except this time, it's the distance between the two centers of the circles. Instead of checking if that distance is less than the radius, you check to see if that distance is less than their combined radii. Notice that squaring the sum of the radii is used instead of using the square root function on the other side of the final inequality.
+Like checking if a point is in a circle, you use the distance formula, except this time, it's the distance between the two centers of the circles. Instead of checking if that distance is less than the radius, you check to see if that distance is less than their combined radii. 
 
 ![Circle intersection](./images/two-circles.png)
 
@@ -105,17 +105,19 @@ function isCircleCollision(circle1, circle2) {
 }
 ```
 
+Notice that squaring the sum of the radii is used instead of using the square root function on the other side of the final inequality.
+
 ## Rectangle and a Circle Intersection
 
 This is the most complicated combination of intersection logic for these 3 shapes. 
 
 There are 3 possible situations: 
 
-* A circle's right-most point can be entirely located to the left of the left side of the rectangle. Similarly the left-most point can be located to the right of the right side of the rectangle. And the same logic can be applied to the other Y directions. If any of these are true, then it is impossible for the circle to overlap the rectangle. This is similar to the rectangle intersection logic.
+* A circle's right-most point can be entirely located to the left of the left side of the rectangle. Similarly the left-most point can be located to the right of the right side of the rectangle. And the same logic can be applied to the other Y directions. If any of these are true, then it is impossible for the circle to overlap the rectangle. This is similar to the rectangle intersection logic, in that you can think of a square circumscribed around the circle. If this square doesn't intersect the rectangle, then the inner circle definitely does not.
 * If the above situation isn't true and a circle's center is to the left of the left side of a rectangle and it's also above the top of the rectangle, then it's possible that it doesn't overlap. In this situation check to see if the corner is in the circle. If it isn't, then it doesn't overlap. If it is, then it does overlap.
 * If it isn't one of the above situations, then that means they intersect.
 
-TODO: add image
+![circle and rectangle](./images/circle-and-rect.png)
 
 ```csharp
 function isRectangleCircleCollision(rectangle, circle) {
@@ -151,6 +153,9 @@ function isRectangleCircleCollision(rectangle, circle) {
     return true;
 }
 ```
+
+
+# Sprite intersection algorithms
 
 Now that your panic flashback to high school geometry is over, let's get to the fun part. Sprites!
 
