@@ -282,7 +282,7 @@ Suppose you have a zelda-like where, in some of the sprite images you have, the 
 
 In situations like this, it's sometimes effective to create another dummy sprite in your game that represents the field of damage. This sprite can be a simple circular sprite superimposed in the area in front of the player. Once the sword swing is over, the sprite gets removed from the scene.
 
-TODO: add image example.
+![zelda link to the past, link swinging sword at ganon](./images/zelda-sword-collision.png)
 
 ### Weird shaped objects
 
