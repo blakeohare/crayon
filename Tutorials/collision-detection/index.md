@@ -183,7 +183,7 @@ function isCollision(player, enemies) {
 
 Or in other words "many bullets and many enemies".
 
-TODO: add image
+![megaman](./images/sprite-multiple-bullets.png)
 
 This is a little more complicated. If you know that the number of enemies and bullets will be limited, it may be appropriate to simply use a nested for loop, checking each possible pair of enemy + bullet to see if there's an intersection.
 
@@ -207,7 +207,7 @@ function applyCollisions(bullets, enemies) {
 
 If this is like a Megaman game where the number of bullets you're allowed to shoot is capped at a maximum of 3 and there's about a dozen enemy robots on the screen at most, then this simple code is good enough. But problems arise if this is a traditional "bullet hell" game where there are a hundred alien spaceships on the screen and about a hundred bullets. This means that the collision code runs about 10,000 times. In computer science, this is referred to as a O(n<sup>2</sup>) algorithm. (pronounced "Big O of n squared"). This is because as your data set increases, the time it takes your code to run increases quadratically.
 
-TODO: add image
+![bullet hell](./images/bullet-hell.png)
 
 One way to get this to become a O(n) algorithm ("Big O of n" or simply "linear") is to implement a strategy called bucketing. 
 
