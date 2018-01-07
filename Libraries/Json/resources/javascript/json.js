@@ -18,7 +18,7 @@ LIB$json$convertJsonThing = function(thing) {
             for (i = 0; i < thing.length; ++i) {
                 list.push(LIB$json$convertJsonThing(thing[i]));
             }
-            return v_buildListByWrappingInput(list);
+            return v_buildList(list);
         case 'dict':
             var keys = [];
             var values = [];
