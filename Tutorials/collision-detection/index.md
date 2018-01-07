@@ -288,10 +288,10 @@ In situations like this, it's sometimes effective to create another dummy sprite
 
 For weird shaped objects, you can create a complicated function to detect if another object overlaps. However, notice that by usig points, rectangles, and circles in the first section of this tutorial, there was one function for each combination of shapes. Adding more unique shapes makes this matrix of possibility expand further. Imagine a robot shooting out line-shaped laser beams or fireballs that shaped like large circle-sectors. While it may be effective to write circle + line intersection logic, it's typically more streamlined to define object collision regions in terms of other simpler shapes.
 
-For example, consider the robot shooting a laser. You could create a set of points that are spaced 10 pixels apart. If your other sprites are 30-pixel-wide circles or rectangles, checking for intersections between those sprites and a set of points is more than sufficient.
+For example, consider a spaceship shooting a laser. You could create a set of points that are spaced 10 pixels apart. If your other sprites are 30-pixel-wide circles or rectangles, checking for intersections between those sprites and a set of points is more than sufficient.
 
-TODO: add image example
+![rtype laser at a 45 degree angle](./images/rtype-laser-beam.png)
 
 In the fireball example, consider this simplification:
 
-TODO: add image example
+![megaman x xbuster](./images/megamanx-fireball.png)
