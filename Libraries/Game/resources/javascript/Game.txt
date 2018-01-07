@@ -96,22 +96,21 @@ C$game$initializeScreen = function (width, height, pwidth, pheight, execId) {
     virtualCanvas.width = width;
     virtualCanvas.height = height;
   }
-  var canvasHost = C$common$getElement('crayon_host');
-  canvasHost.innerHTML =
-	'<div style="position:relative;">' +
-      '<div style="position:absolute;left:0px;top:0px;font-size:8px">' + 
-	    '<span id="crayon_font_loader_1"></span>' +
-	    '<span id="crayon_font_loader_2"></span>' +
-	  '</div>' +
-      '<canvas id="crayon_screen" width="' + canvasWidth + '" height="' + canvasHeight + '"></canvas>' +
-      '<div style="display:none;">' +
-        '<img id="crayon_image_loader" onload="Q._finish_loading()" crossOrigin="anonymous" />' +
-        '<div id="crayon_image_loader_queue"></div>' +
-        '<div id="crayon_image_store"></div>' +
-        '<div id="crayon_temp_image"></div>' +
-	    '<div id="crayon_font_loader"></div>' +
-	  '</div>';
-    '</div>';
+  
+  var innerHost = C$game$getCrayonHostInner();
+  
+  // make sure the font loader exists first so that it can hide behind the screen.
+  C$game$getFontLoader();
+  
+  innerHost.innerHTML +=
+	'<canvas id="crayon_screen" width="' + canvasWidth + '" height="' + canvasHeight + '"></canvas>' +
+	'<div style="display:none;">' +
+		'<img id="crayon_image_loader" onload="Q._finish_loading()" crossOrigin="anonymous" />' +
+		'<div id="crayon_image_loader_queue"></div>' +
+		'<div id="crayon_image_store"></div>' +
+		'<div id="crayon_temp_image"></div>' +
+		'<div id="crayon_font_loader"></div>' +
+	'</div>';
   var canvas = C$common$getElement('crayon_screen');
 
   C$game$scaled_mode = scaledMode;
@@ -150,6 +149,30 @@ C$game$initializeScreen = function (width, height, pwidth, pheight, execId) {
   }
 
   C$game$runFrame();
+};
+
+C$game$getCrayonHostInner = function() {
+  var d = C$common$getElement('crayon_host_inner');
+  if (!d) {
+	C$common$getElement('crayon_host').innerHTML = '<div style="position:relative;" id="crayon_host_inner"></div>';
+	d = C$common$getElement('crayon_host_inner');
+  }
+  return d;
+};
+
+C$game$getFontLoader = function() {
+  var host = C$game$getCrayonHostInner();
+  var id = 'crayon_font_loader_host';
+  var fl = C$common$getElement(id);
+  if (!fl) {
+    host.innerHTML += 
+      '<div style="position:absolute;left:0px;top:0px;font-size:8px" id="' + id + '">' + 
+	    '<span id="crayon_font_loader_1"></span>' +
+	    '<span id="crayon_font_loader_2"></span>' +
+	  '</div>';
+	fl = C$common$getElement(id);
+  }
+  return fl;
 };
 
 C$game$setTitle = function (title) {

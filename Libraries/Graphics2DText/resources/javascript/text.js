@@ -62,6 +62,7 @@ LIB$graphics2dtext$testFont = function(name) {
 };
 
 LIB$graphics2dtext$getFontLoader = function(id) {
+	C$game$getFontLoader();
 	return document.getElementById('crayon_font_loader_' + id);
 }
 
