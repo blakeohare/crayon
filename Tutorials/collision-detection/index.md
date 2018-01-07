@@ -164,7 +164,7 @@ I will assume that all sprites are rectangular in the code sample. This is to il
 ## Scenario 1: One player and multiple enemies
 Or in other words, "does 1 specific sprite collide with any other sprites in a set?"
 
-TODO: add image
+![game of the year, 2019](./images/game-of-the-year-2019.png)
 
 This is the most straightforward situation where you have one specific sprite you're tracking that you would like to check against another set of sprites. This is simply a single loop checking each enemy to see if it collides with the player. If one is found, this function returns true. If none are found, then it returns false.
 
