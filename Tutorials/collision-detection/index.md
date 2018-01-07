@@ -215,15 +215,15 @@ Imagine, hypothetically, that this game is played on a field that's 1000 x 1000 
 
 The following logic is somewhat complicated, but no longer quadratic in nature. This code starts by looping through all the bullets and assigning them into a bucket. This is a linear operation, because the time it takes scales linearly with the number of bullets.
 
-TODO: add image of bucket grid
+![buckets](./images/buckets.png)
 
 ```csharp
 function applyCollisions(bullets, enemies) {
     bulletsByBucket = {};
     for (bullet : bullets) {
-        bucketX = bullet.x / 100;
-        bucketY = bullet.y / 100;
-        bucketId = bulletX * 100 + bulletY;
+        bucketX = bullet.x / 4;
+        bucketY = bullet.y / 4;
+        bucketId = bulletX * 4 + bulletY;
         bucket = bulletsByBucket.get(bucketId);
         if (bucket == null) {
             bulletsByBucket[bucketId] = [bullet];
@@ -232,9 +232,12 @@ function applyCollisions(bullets, enemies) {
         }
     }
 
-    neighborOffsets = [0, -1, 1, -100, -99, -101, 100, 99, 101];
+    // By adding these numbers to the current bucket ID, you can get all the
+    // neighboring bucket ID's.
+    neighborOffsets = [0, -1, 1, -3, -4, -5, 3, 4, 5];
+
     for (enemy : enemies) {
-        enemyBucket = (enemy.centerX / 100) * 100 + (enemy.centerY / 100);
+        enemyBucket = (enemy.centerX / 4) * 4 + (enemy.centerY / 4);
         collided = false;
         for (offset : neighborOffsets) {
             nearbyBullets = bulletsByBucket.get(enemyBucket + offset);
