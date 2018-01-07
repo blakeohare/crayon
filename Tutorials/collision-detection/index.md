@@ -48,7 +48,12 @@ function isPointRectangleCollision(point, rectangle) {
 }
 ```
 
-TODO: add image
+* Point 1 is in range of the x coordinates but not the y coordinates.
+* Point 2 is neither in range of the x or y coordinates.
+* Point 3 is in range of the y coordinates but not the x coordinates.
+* Point 4 is in range of all 4.
+
+![Point in a rectangle](./images/point-in-rect.png)
 
 ## Point in a circle
 
