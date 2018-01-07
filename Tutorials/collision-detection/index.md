@@ -18,7 +18,7 @@ This tutorial is separated into a few sections. Feel free to skip around.
 
 * [Checking if one specific sprite touches any sprite in another group](#scenario-1-one-player-and-multiple-enemies)
 * [Checking if any sprite in one group touches any sprite in another group when the groups are small](#scenario-2-check-collisions-between-two-different-sets)
-* Checking if any sprite in one group touches any sprite in another group when the groups are really big
+* [Checking if any sprite in one group touches any sprite in another group when the groups are really big](#scenario-2b-but-theres-hundreds-of-them)
 * [Using grid logic](#player-vs-walls-and-obstacles)
 
 ### Part 3: Miscellaneous situations
