@@ -8,21 +8,23 @@ This tutorial is separated into a few sections. Feel free to skip around.
 
 ### Part 1: Basic geometric intersections
 
-* Checking if a point is in a rectangle
-* Checking if a point is in a circle
-* Checking if two rectangles overlap
-* Checking if two circles overlap
-* Checking if a circle and a rectangle overlap
+* [Checking if a point is in a rectangle](#point-in-a-rectangle)
+* [Checking if a point is in a circle](#point-in-a-circle)
+* [Checking if two rectangles overlap](#intersection-of-two-rectangles)
+* [Checking if two circles overlap](#intersection-of-two-circles)
+* [Checking if a circle and a rectangle overlap](#rectangle-and-a-circle-intersection)
 
 ### Part 2: Groups of sprites
 
-* Checking if one specific sprite touches any sprite in another group
-* Checking if any sprite in one group touches any sprite in another group when the groups are small
+* [Checking if one specific sprite touches any sprite in another group](#scenario-1-one-player-and-multiple-enemies)
+* [Checking if any sprite in one group touches any sprite in another group when the groups are small](#scenario-2-check-collisions-between-two-different-sets)
 * Checking if any sprite in one group touches any sprite in another group when the groups are really big
+* [Using grid logic](#player-vs-walls-and-obstacles)
 
 ### Part 3: Miscellaneous situations
 
-* A character swinging a weapon
+* [A character swinging a weapon](#player-swinging-a-weapon)
+* [Collisions with weird shaped objects](#weird-shaped-objects)
 
 ## Definition of a Sprite
 
@@ -184,6 +186,8 @@ function applyCollisions(bullets, enemies) {
     }
 }
 ```
+
+## Scenario 2B: But there's hundreds of them
 
 If this is like a Megaman game where the number of bullets you're allowed to shoot is capped at a maximum of 3 and there's about a dozen enemy robots on the screen at most, then this simple code is good enough. But problems arise if this is a traditional "bullet hell" game where there are a hundred alien spaceships on the screen and about a hundred bullets. This means that the collision code runs about 10,000 times. In computer science, this is referred to as a O(n<sup>2</sup>) algorithm. (pronounced "Big O of n squared"). This is because as your data set increases, the time it takes your code to run increases quadratically.
 
