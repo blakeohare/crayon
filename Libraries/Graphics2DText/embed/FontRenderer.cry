@@ -3,6 +3,9 @@
     /*
         Renders a specific font face, style, size, and color.
     */
+    @localized('en', 'FontRenderer')
+    @localized('es', 'ESFontRenderer')
+    @localized('jp', 'JPFontRenderer')
     class FontRenderer {
 
         field font; // a FontResource instance
@@ -29,6 +32,9 @@
             this.font = font;
         }
 
+        @localized('en', 'setColor')
+        @localized('es', 'ESsetColor')
+        @localized('jp', 'JPsetColor')
         function setColor(red, green, blue) {
             // TODO: verify args
             this.red = red;
@@ -39,6 +45,9 @@
             return this;
         }
 
+        @localized('en', 'setSize')
+        @localized('es', 'ESsetSize')
+        @localized('jp', 'JPsetSize')
         function setSize(size) {
             // TODO: verify args
             this.size = size;
@@ -47,6 +56,9 @@
             return this;
         }
 
+        @localized('en', 'setStyle')
+        @localized('es', 'ESsetStyle')
+        @localized('jp', 'JPsetStyle')
         function setStyle(style) {
             // TODO: verify args
             this.style = style;
@@ -55,6 +67,9 @@
             return this;
         }
 
+        @localized('en', 'render')
+        @localized('es', 'ESrender')
+        @localized('jp', 'JPrender')
         function render(text) {
             if (this._native == null) {
                 this._native = NativeFont.get(

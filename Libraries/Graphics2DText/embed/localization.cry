@@ -1,0 +1,6 @@
+@localized('en', 'Graphics2DText')
+@localized('es', 'ESGraphics2DText')
+@localized('jp', 'JPGraphics2DText')
+namespace Graphics2DText {
+
+}

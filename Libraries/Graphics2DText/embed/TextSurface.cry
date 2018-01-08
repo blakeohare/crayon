@@ -7,11 +7,26 @@ namespace Graphics2DText {
         The actual implementation may vary depending on the platform.
         It may either be a cached image or a set of drawing instructions.
     */
+    @localized('en', 'TextSurface')
+    @localized('es', 'ESTextSurface')
+    @localized('jp', 'JPTextSurface')
     class TextSurface {
         field _glRenderer = null;
         field _isGl = false;
+
+        @localized('en', 'width')
+        @localized('es', 'ESwidth')
+        @localized('jp', 'JPwidth')
         field width;
+
+        @localized('en', 'height')
+        @localized('es', 'ESheight')
+        @localized('jp', 'JPheight')
         field height;
+
+        @localized('en', 'text')
+        @localized('es', 'EStext')
+        @localized('jp', 'JPtext')
         field text;
         field tiles = null;
 
@@ -66,10 +81,16 @@ namespace Graphics2DText {
             throw new Core.NotImplementedException();
         }
 
+        @localized('en', 'draw')
+        @localized('es', 'ESdraw')
+        @localized('jp', 'JPdraw')
         function draw(x, y) {
             return this.drawWithAlpha(x, y, 255);
         }
 
+        @localized('en', 'drawWithAlpha')
+        @localized('es', 'ESdrawWithAlpha')
+        @localized('jp', 'JPdrawWithAlpha')
         function drawWithAlpha(x, y, alpha) {
             if (this._isGl){
                 return $$lib_graphics2dtext_glRenderTextSurface(this, this.tiles, Graphics2D.Draw._queue, x, y, alpha);
