@@ -8,12 +8,14 @@ namespace Crayon
     {
         private string originalProjectId;
         private string projectId;
+        private Localization.Locale projectLocale;
 
         public string ProjectID { get { return this.projectId; } }
 
-        public DefaultProjectGenerator(string projectId)
+        public DefaultProjectGenerator(string projectId, string localeId)
         {
             this.originalProjectId = projectId.Trim();
+            this.projectLocale = Localization.Locale.Get(localeId);
             this.projectId = Util.ConvertStringToAlphanumerics(this.originalProjectId);
         }
 
@@ -36,6 +38,7 @@ namespace Crayon
             {
                 { "PROJECT_NAME", this.projectId },
                 { "TITLE", this.originalProjectId },
+                { "COMPILER_LOCALE", this.projectLocale.ID.ToLower() }
             };
 
             Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
@@ -49,9 +52,9 @@ namespace Crayon
             System.Reflection.Assembly thisAsm = typeof(DefaultProjectGenerator).Assembly;
             foreach (string file in new string[]
                 {
-                        "DefaultProject/BuildFile.txt|%%%PROJECT_NAME%%%.build",
-                        "DefaultProject/main.txt|source/main.cry",
-                        "DefaultProject/dotGitIgnore.txt|output/.gitignore",
+                    "DefaultProject/BuildFile.txt|%%%PROJECT_NAME%%%.build",
+                    "DefaultProject/main" + this.projectLocale.ID.ToUpper() + ".txt|source/main.cry",
+                    "DefaultProject/dotGitIgnore.txt|output/.gitignore",
                 })
             {
                 string[] parts = file.Split('|');

@@ -5,6 +5,7 @@
 	<icon>assets/icon32.png,assets/icon256.png</icon>
 
 	<source>source</source>
+	<compilerlocale>%%%COMPILER_LOCALE%%%</compilerlocale>
 	<output>output/%TARGET_NAME%</output>
 
 	<imagesheets>

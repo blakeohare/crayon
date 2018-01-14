@@ -14,6 +14,8 @@ namespace Crayon
         private static readonly string VM_DIR = "vmdir";
         private static readonly string CBX = "cbx";
         private static readonly string GEN_DEFAULT_PROJ = "genDefaultProj";
+        private static readonly string GEN_DEFAULT_PROJ_ES = "genDefaultProjES";
+        private static readonly string GEN_DEFAULT_PROJ_JP = "genDefaultProjJP";
 
         private static readonly HashSet<string> ATOMIC_FLAGS = new HashSet<string>() {
             READABLE_BYTE_CODE,
@@ -28,7 +30,10 @@ namespace Crayon
             BUILD_FILE, // this will be implicitly applied to the first argument that ends in .build and has no flag associated with it.
             VM,
             VM_DIR,
+
             GEN_DEFAULT_PROJ,
+            GEN_DEFAULT_PROJ_ES,
+            GEN_DEFAULT_PROJ_JP,
         };
 
         public static ExportCommand Parse(string[] args)
@@ -96,7 +101,22 @@ namespace Crayon
 
             if (args.Count == 0) command.IsEmpty = true;
 
-            if (args.ContainsKey(GEN_DEFAULT_PROJ)) command.DefaultProjectId = args[GEN_DEFAULT_PROJ].Trim();
+            if (args.ContainsKey(GEN_DEFAULT_PROJ))
+            {
+                command.DefaultProjectId = args[GEN_DEFAULT_PROJ].Trim();
+                command.DefaultProjectLocale = "EN";
+            }
+            if (args.ContainsKey(GEN_DEFAULT_PROJ_ES))
+            {
+                command.DefaultProjectId = args[GEN_DEFAULT_PROJ_ES].Trim();
+                command.DefaultProjectLocale = "ES";
+            }
+            if (args.ContainsKey(GEN_DEFAULT_PROJ_JP))
+            {
+                command.DefaultProjectId = args[GEN_DEFAULT_PROJ_JP].Trim();
+                command.DefaultProjectLocale = "JP";
+            }
+
             if (args.ContainsKey(BUILD_FILE)) command.BuildFilePath = args[BUILD_FILE].Trim();
             if (args.ContainsKey(BUILD_TARGET)) command.BuildTarget = args[BUILD_TARGET].Trim();
             if (args.ContainsKey(VM_DIR)) command.VmExportDirectory = args[VM_DIR].Trim();

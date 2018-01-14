@@ -27,6 +27,10 @@ namespace Crayon
             "",
             "  -genDefaultProj    Generate a default boilerplate project to",
             "                     the current directory.",
+            "",
+            "  -genDefaultProjES  Generates a default project with ES locale.",
+            "",
+            "  -genDefaultProjJP  Generates a default project with JP locale.",
             "");
 #endif
 
@@ -77,7 +81,7 @@ namespace Crayon
             ExportCommand command = FlagParser.Parse(args);
             if (command.IsGenerateDefaultProject)
             {
-                DefaultProjectGenerator generator = new DefaultProjectGenerator(command.DefaultProjectId);
+                DefaultProjectGenerator generator = new DefaultProjectGenerator(command.DefaultProjectId, command.DefaultProjectLocale);
                 Dictionary<string, FileOutput> project = generator.Validate().Export();
 
                 string directory = FileUtil.JoinPath(
