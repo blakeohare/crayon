@@ -47,7 +47,7 @@ namespace Localization
                     }
                 }
             }
-            string keywordsRaw = Util.ReadAssemblyFileText(typeof(Locale).Assembly, "Languages/" + name.ToLower() + "/keywords.txt");
+            string keywordsRaw = Util.ReadAssemblyFileText(typeof(Locale).Assembly, "Languages/" + name.ToLower() + "/keywords.txt", true);
             if (keywordsRaw == null)
             {
                 invalid = true;
