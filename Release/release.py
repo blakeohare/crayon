@@ -1,4 +1,4 @@
-VERSION = '0.2.0'
+VERSION = '0.2.1'
 MSBUILD = r'C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe'
 XBUILD = 'xbuild'
 RELEASE_CONFIG = '/p:Configuration=Release'
