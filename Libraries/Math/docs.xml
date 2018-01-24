@@ -35,7 +35,7 @@
 			<returns type="float" description="The cosine ratio"/>
 		</function>
 
-		<function name="cos">
+		<function name="sin">
 			<description>Computes the sine of the given angle</description>
 			<arg name="theta" type="float" description="An angle in radians"/>
 			<returns type="float" description="The sine ratio"/>
