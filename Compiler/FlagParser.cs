@@ -36,6 +36,13 @@ namespace Crayon
             GEN_DEFAULT_PROJ_JP,
         };
 
+        private static readonly Dictionary<string, string> ALIASES = new Dictionary<string, string>()
+        {
+            { "genDefaultProject", GEN_DEFAULT_PROJ },
+            { "genDefaultProjectES", GEN_DEFAULT_PROJ_ES },
+            { "genDefaultProjectJP", GEN_DEFAULT_PROJ_JP },
+        };
+
         public static ExportCommand Parse(string[] args)
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
@@ -47,6 +54,11 @@ namespace Crayon
                 if (arg.StartsWith("-"))
                 {
                     string noHyphen = arg.Substring(1);
+                    if (ALIASES.ContainsKey(noHyphen))
+                    {
+                        noHyphen = ALIASES[noHyphen];
+                    }
+
                     if (ATOMIC_FLAGS.Contains(noHyphen))
                     {
                         if (output.ContainsKey(noHyphen))
