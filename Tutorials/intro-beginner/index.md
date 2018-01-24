@@ -664,8 +664,8 @@ A **library** is a packaged set of existing code either written by yourself or s
 import Math;
 
 function main(args) {
-    root2 = Math.sqrt(2);
-    print("The square root of 2 is " + root2);
+    value = Math.abs(-4);
+    print("The absolute value of -4 is " + value);
 }
 ```
 
