@@ -47,6 +47,28 @@ namespace Crayon
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
 
+            // TODO: change this. This is a hack.
+            // Ideally, the format will change to something that is not ambiguous.
+            // For now, just check to see if the first argument ends with ".build" and
+            // that the second argument is not "-target".
+            // Current idea is to have -export Foo.build instead of just Foo.build
+            // However, this will make all currently written documentation and tutorials
+            // correct, at least for 0.2.1.
+            if (args.Length > 0 && args[0].ToLower().EndsWith(".build"))
+            {
+                if (args.Length == 1 || args[1].ToLower() != "-target")
+                {
+                    string[] directRunArgs = new string[args.Length - 1];
+                    Array.Copy(args, 1, directRunArgs, 0, directRunArgs.Length);
+                    return new ExportCommand()
+                    {
+                        IsDirectCbxRun = true,
+                        DirectRunArgs = directRunArgs,
+                        BuildFilePath = args[0],
+                    };
+                }
+            }
+
             int i = 0;
             while (i < args.Length)
             {

@@ -12,6 +12,8 @@
         public bool IsEmpty { get; set; }
         public string CbxExportPath { get; set; }
         public bool ShowLibraryDepTree { get; set; }
+        public bool IsDirectCbxRun { get; set; }
+        public string[] DirectRunArgs { get; set; }
 
         public bool HasBuildFile { get { return this.BuildFilePath != null; } }
         public bool HasTarget { get { return this.BuildTarget != null; } }

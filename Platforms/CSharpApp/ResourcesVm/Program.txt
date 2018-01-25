@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Interpreter.Vm;
 
 namespace CrayonRuntime
@@ -34,9 +35,15 @@ namespace CrayonRuntime
             List<string> argsList = new List<string>(args);
             string cbxPath = argsList[0];
 			string vmpidRaw = argsList[1];
-            argsList.RemoveAt(0);
-            argsList.RemoveAt(0);
-            args = argsList.ToArray();
+			string[] runtimeArgs = new string[0];
+			if (argsList.Count > 2 && argsList[2].StartsWith("runtimeargs:"))
+			{
+				runtimeArgs = argsList[2]
+					.Substring("runtimeargs:".Length)
+					.Split(',')
+					.Select(s => Base64Decode(s))
+					.ToArray();
+			}
 
 			int vmPid = 0;
             if (!cbxPath.ToLower().EndsWith(".cbx")) throw new Exception("File must be a CBX file.");
@@ -59,7 +66,7 @@ namespace CrayonRuntime
             string byteCode = cbxDecoder.ByteCode;
             if (byteCode == null) throw new Exception("CBX file did not contain byte code.");
 
-            TranslationHelper.CommandLineArgs = args;
+            TranslationHelper.CommandLineArgs = runtimeArgs;
             TranslationHelper.LibraryRegistry = new LibraryRegistry(cbxDecoder.LibraryVersionsByName);
             TranslationHelper.ByteCode = byteCode;
             TranslationHelper.ResourceManifest = cbxDecoder.ResourceManifest;
@@ -68,6 +75,12 @@ namespace CrayonRuntime
 
             CrayonWrapper.v_main();
         }
+
+		private static string Base64Decode(string encodedValue)
+		{
+            byte[] utf8Bytes = System.Convert.FromBase64String(encodedValue);
+            return System.Text.Encoding.UTF8.GetString(utf8Bytes);
+		}
 
         // TODO: Surely there is a better way. But for now...
         private static void ParentChecker(object pid)

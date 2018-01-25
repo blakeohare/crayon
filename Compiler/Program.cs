@@ -170,7 +170,12 @@ namespace Crayon
                     System.Diagnostics.Process appProcess = new System.Diagnostics.Process();
 
                     int processId = System.Diagnostics.Process.GetCurrentProcess().Id;
+                    string runtimeArgs = string.Join(",", command.DirectRunArgs.Select(s => Utf8Base64.ToBase64(s)));
                     string flags = cbxFile + " vmpid:" + processId;
+                    if (runtimeArgs.Length > 0)
+                    {
+                        flags += " runtimeargs:" + runtimeArgs;
+                    }
 
                     appProcess.StartInfo = new System.Diagnostics.ProcessStartInfo(crayonRuntimePath, flags)
                     {
