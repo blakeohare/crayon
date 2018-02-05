@@ -167,12 +167,12 @@ namespace Platform
             Options options,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform);
 
-        public string IndentCodeWithTabs(string code, int tabCount)
+        public static string IndentCodeWithTabs(string code, int tabCount)
         {
             return IndentCodeImpl(code, Util.MultiplyString("\t", tabCount));
         }
 
-        public string IndentCodeWithSpaces(string code, int spaceCount)
+        public static string IndentCodeWithSpaces(string code, int spaceCount)
         {
             return IndentCodeImpl(code, Util.MultiplyString(" ", spaceCount));
         }

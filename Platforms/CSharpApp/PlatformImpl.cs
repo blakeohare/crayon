@@ -204,7 +204,7 @@ namespace CSharpApp
                         "{",
                         "    public static class LibraryWrapper",
                         "    {",
-                        this.IndentCodeWithSpaces(string.Join(this.NL, libraryLines), 8),
+                        IndentCodeWithSpaces(string.Join(this.NL, libraryLines), 8),
                         "    }",
                         "}",
                         ""),
@@ -358,7 +358,7 @@ namespace CSharpApp
                     "",
                     "namespace Interpreter.Structs",
                     "{",
-                    this.IndentCodeWithSpaces(this.GenerateCodeForStruct(sd).Trim(), 4),
+                    IndentCodeWithSpaces(this.GenerateCodeForStruct(sd).Trim(), 4),
                     "}",
                     ""
                 }),
@@ -398,7 +398,7 @@ namespace CSharpApp
                     "{",
                     "    public class CrayonWrapper",
                     "    {",
-                    this.IndentCodeWithSpaces(functionCode, 8),
+                    IndentCodeWithSpaces(functionCode, 8),
                     "    }",
                     "}",
                     ""

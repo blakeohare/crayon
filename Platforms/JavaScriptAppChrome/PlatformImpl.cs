@@ -40,7 +40,7 @@ namespace JavaScriptAppChrome
             JavaScriptApp.PlatformImpl jsBasicPlatform = (JavaScriptApp.PlatformImpl)this.PlatformProvider.GetPlatform("javascript-app");
             Dictionary<string, FileOutput> files = jsBasicPlatform.ExportProjectImpl(globals, structDefinitions, functionDefinitions, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform, this.Translator);
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
-            replacements["JS_LIB_INCLUSIONS"] = jsBasicPlatform.GenerateJsLibInclusionHtml(files.Keys);
+            replacements["JS_LIB_INCLUSIONS"] = JavaScriptApp.PlatformImpl.GenerateJsLibInclusionHtml(files.Keys);
             this.CopyResourceAsText(files, "background.js", "Resources/BackgroundJs.txt", replacements);
             this.CopyResourceAsText(files, "index.html", "Resources/IndexHtml.txt", replacements); // overwrites GameHostHtml.txt from javascript-app
             this.CopyResourceAsText(files, "chrome_web_app.js", "Resources/ChromeWebAppJs.txt", replacements);

@@ -60,6 +60,10 @@
       <Project>{56f7043f-a270-4900-b6d3-1701af619a1b}</Project>
       <Name>LangJavaScript</Name>
     </ProjectReference>
+    <ProjectReference Include="..\JavaScriptApp\JavaScriptApp.csproj">
+      <Project>{E2558B29-A032-40D0-90B0-1A9DE368EC16}</Project>
+      <Name>JavaScriptApp</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

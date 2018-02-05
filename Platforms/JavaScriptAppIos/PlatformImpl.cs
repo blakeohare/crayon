@@ -39,6 +39,7 @@ namespace JavaScriptAppIos
                 "</style>"
             ));
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
+
             Dictionary<string, FileOutput> files = new Dictionary<string, FileOutput>();
             Dictionary<string, FileOutput> basicProject = this.ParentPlatform.ExportProject(
                 globals,
@@ -48,6 +49,11 @@ namespace JavaScriptAppIos
                 resourceDatabase,
                 options,
                 libraryNativeInvocationTranslatorProviderForPlatform);
+
+            // TODO: not good. The library inclusions should automatically be populated in LangJavaScript platforms.
+            // This is also done identically in the ChromeApp PlatformImpl.
+            replacements["JS_LIB_INCLUSIONS"] = JavaScriptApp.PlatformImpl.GenerateJsLibInclusionHtml(basicProject.Keys);
+
             foreach (string filePath in basicProject.Keys)
             {
                 files["%%%PROJECT_ID%%%/%%%PROJECT_ID%%%/jsres/" + filePath] = basicProject[filePath];

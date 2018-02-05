@@ -126,7 +126,7 @@ namespace JavaScriptApp
             }
 
             Dictionary<string, string> htmlReplacements = new Dictionary<string, string>(replacements);
-            replacements["JS_LIB_INCLUSIONS"] = this.GenerateJsLibInclusionHtml(output.Keys);
+            replacements["JS_LIB_INCLUSIONS"] = GenerateJsLibInclusionHtml(output.Keys);
 
             this.CopyResourceAsText(output, "index.html", "Resources/HostHtml.txt", replacements);
 
@@ -219,13 +219,13 @@ namespace JavaScriptApp
             return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(translator, globals);
         }
 
-        public string GenerateJsLibInclusionHtml(ICollection<string> filesIncluded)
+        public static string GenerateJsLibInclusionHtml(ICollection<string> filesIncluded)
         {
             string[] libraryPathsIncluded = filesIncluded.Where(s => s.StartsWith("libs/lib_")).OrderBy(s => s).ToArray();
             if (libraryPathsIncluded.Length > 0)
             {
                 return
-                    this.IndentCodeWithTabs(
+                    IndentCodeWithTabs(
                         "<script type=\"text/javascript\" src=\"" +
                         string.Join(
                             "\"></script>\n<script type=\"text/javascript\" src=\"",
