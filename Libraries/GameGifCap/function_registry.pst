@@ -1,0 +1,4 @@
+﻿void lib_manifest_RegisterFunctions(object libRegData) {
+    Core.RegisterLibraryFunction(libRegData, "screenCap", 1);
+    Core.RegisterLibraryFunction(libRegData, "saveToDisk", 3);
+}

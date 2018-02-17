@@ -1,0 +1,2 @@
+﻿$_lib_gamegifcap_screenCap: Libraries.GameGifCap.GameGifCapHelper.ScreenCap([ARG:1])
+$_lib_gamegifcap_saveToDisk: Libraries.GameGifCap.GameGifCapHelper.SaveToDisk([ARG:1], [ARG:2], [ARG:3])
