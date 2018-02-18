@@ -10,6 +10,10 @@ import Math;
 
 namespace GameGifCap {
 
+    function isSupported() {
+        return $$lib_gamegifcap_isSupported();
+    }
+
     class GifRecorder {
 
         static field _registered = false;
@@ -21,8 +25,10 @@ namespace GameGifCap {
             if (fps > 1000) fps = 1000;
             else if (fps < .01) throw new InvalidArgumentException("Invalid FPS");
 
-            $$$('allocNativeData', this, 1);
-            $$lib_gamegifcap_createGifContext(this, 1000 / fps);
+            if ($$lib_gamegifcap_isSupported()) {
+                $$$('allocNativeData', this, 1);
+                $$lib_gamegifcap_createGifContext(this, 1000 / fps);
+            }
         }
 
         function isRecording() {
@@ -45,14 +51,16 @@ namespace GameGifCap {
 
         function save(path) {
             // TODO: verify path
-            path = path + '';
+            path = path + "";
 
-            sc = $$lib_gamegifcap_saveToDisk(this, path);
-            switch (sc) {
-                case 0: return;
-                case 1: throw new InvalidArgumentException("No frames to save.");
-                case 2: throw new Exception("Error occurred while writing to disk.");
-                default: throw new Exception("An unknown error occurred.");
+            if ($$lib_gamegifcap_isSupported()) {
+                sc = $$lib_gamegifcap_saveToDisk(this, path);
+                switch (sc) {
+                    case 0: return;
+                    case 1: throw new InvalidArgumentException("No frames to save.");
+                    case 2: throw new Exception("Error occurred while writing to disk.");
+                    default: throw new Exception("An unknown error occurred.");
+                }
             }
         }
 
@@ -75,11 +83,13 @@ namespace GameGifCap {
         }
 
         function cap() {
-            sc = $$lib_gamegifcap_screenCap(this._ctx);
-            switch (sc) {
-                case 0: return;
-                case 1: throw new Exception("Game Window not open.");
-                default: throw new Exception("Unknown error occurred while capturing the screen.");
+            if ($$lib_gamegifcap_isSupported()) {
+                sc = $$lib_gamegifcap_screenCap(this._ctx);
+                switch (sc) {
+                    case 0: return;
+                    case 1: throw new Exception("Game Window not open.");
+                    default: throw new Exception("Unknown error occurred while capturing the screen.");
+                }
             }
         }
     }
