@@ -1,6 +1,8 @@
+// Returns a gif context object
+object _lib_gamegifcap_createGifContext(int millis);
 
 // Returns a status code
-int _lib_gamegifcap_screenCap(Array<object> output);
+int _lib_gamegifcap_screenCap(object gifContext);
 
-// Saves a list of images to a file.
-int _lib_gamegifcap_saveToDisk(string path, Array<object> images, int millisPerFrame);
+// Saves the GIF recorder context to a file.
+int _lib_gamegifcap_saveToDisk(object gifContext, string path);

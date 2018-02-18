@@ -1,37 +1,21 @@
 ﻿/*
     Returns a status code
 
-    args[0]: string path
-    args[1]: image object list (nativeData[0] contains native image)
-    args[2]: int FPS
+	args[0]: GifRecorder (with nativeData[0] as gif recorder context)
+    args[1]: string path
 
     status code returned:
         0 -> OK
         1 -> no frames
-        2 -> error writing to disk
+        2 -> error encoding file
+        3 -> error writing to disk
         -1 -> unknown error
 
 */
 Value lib_gamegifcap_function_saveToDisk(Array<Value> args) {
-    string path = (string) args[0].internalValue;
-    List<Value> imageList = (List<Value>) args[1].internalValue;
-    int millis = (int) args[2].internalValue;
-    int length = imageList.Size();
-
-    if (length == 0) return buildInteger(1);
-
-    Array<object> imageArray = new Array<object>(length);
-    int i = 0;
-    ObjectInstance o = null;
-    for (i = 0; i < length; i += 1) {
-        o = (ObjectInstance) imageList[i].internalValue;
-        imageArray[i] = o.nativeData[0];
-    }
-
-    int sc = Native._lib_gamegifcap_saveToDisk(
-        path, // path on disk (existence of directory verified)
-        imageArray, // object list of native images
-        millis); // millis per frame
-
+    ObjectInstance oi = (ObjectInstance) args[0].internalValue;
+    object ctx = oi.nativeData[0];
+    string path = (string) args[1].internalValue;
+    int sc = Native._lib_gamegifcap_saveToDisk(ctx, path);
     return buildInteger(sc);
 }

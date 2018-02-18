@@ -1,4 +1,5 @@
 ﻿void lib_manifest_RegisterFunctions(object libRegData) {
+    Core.RegisterLibraryFunction(libRegData, "createGifContext", 2);
     Core.RegisterLibraryFunction(libRegData, "screenCap", 1);
-    Core.RegisterLibraryFunction(libRegData, "saveToDisk", 3);
+    Core.RegisterLibraryFunction(libRegData, "saveToDisk", 2);
 }

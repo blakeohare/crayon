@@ -1,12 +1,14 @@
 ﻿/*
     Returns a status code
 
+	args[0]: gif recorder instance
+
     0 - nothing bad happened
     1 - no screen is open
     -1 - unknown error
 */
 Value lib_gamegifcap_function_screenCap(Array<Value> args) {
     ObjectInstance oi = (ObjectInstance) args[0].internalValue;
-    int sc = Native._lib_gamegifcap_screenCap(oi.nativeData);
+    int sc = Native._lib_gamegifcap_screenCap(oi.nativeData[0]);
     return buildInteger(sc);
 }
