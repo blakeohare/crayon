@@ -1,0 +1,9 @@
+﻿/*
+    Returns true if GIF capture is supported on this platform.
+*/
+Value lib_gamegifcap_function_isSupported(Array<Value> args) {
+    if (Native._lib_gamegifcap_isSupported()) {
+        return VALUE_TRUE;
+    }
+    return VALUE_FALSE;
+}

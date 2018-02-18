@@ -1,0 +1,21 @@
+﻿/*
+    Returns a status code
+
+    args[0]: GifRecorder (with nativeData[0] as gif recorder context)
+    args[1]: string path
+
+    status code returned:
+        0 -> OK
+        1 -> no frames
+        2 -> error encoding file
+        3 -> error writing to disk
+        -1 -> unknown error
+
+*/
+Value lib_gamegifcap_function_saveToDisk(Array<Value> args) {
+    ObjectInstance oi = (ObjectInstance) args[0].internalValue;
+    object ctx = oi.nativeData[0];
+    string path = (string) args[1].internalValue;
+    int sc = Native._lib_gamegifcap_saveToDisk(ctx, path);
+    return buildInteger(sc);
+}

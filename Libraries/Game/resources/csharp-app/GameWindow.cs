@@ -364,5 +364,27 @@ namespace Interpreter.Libraries.Game
             // TODO: implement this when the public API is a bit more finalized.
             return false;
         }
+
+        public object ScreenCapture()
+        {
+            int width = this.screenWidth;
+            int height = this.screenHeight;
+            System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(width, height);
+            System.Drawing.Rectangle area = new System.Drawing.Rectangle(0, 0, width, height);
+            System.Drawing.Imaging.BitmapData data =
+                bmp.LockBits(
+                    area,
+                    System.Drawing.Imaging.ImageLockMode.WriteOnly,
+                    System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            GL.ReadPixels(
+                0, 0, width, height,
+                PixelFormat.Bgr,
+                PixelType.UnsignedByte,
+                data.Scan0);
+
+            bmp.UnlockBits(data);
+
+            return bmp;
+        }
     }
 }

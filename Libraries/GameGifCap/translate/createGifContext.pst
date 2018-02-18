@@ -1,0 +1,13 @@
+﻿/*
+    Returns a GIF context object
+
+    args[0]: millis per frame
+    args[1]: path to a temporary file
+*/
+Value lib_gamegifcap_function_createGifContext(Array<Value> args) {
+
+    int ms = (int)args[1].internalValue;
+    ObjectInstance oi = (ObjectInstance) args[0].internalValue;
+    oi.nativeData[0] = Native._lib_gamegifcap_createGifContext(ms);
+    return VALUE_NULL;
+}

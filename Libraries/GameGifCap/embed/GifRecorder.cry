@@ -1,0 +1,113 @@
+import Game;
+import Math;
+
+/*
+    GifRecorder has a list of sessions.
+    When record() is invoked, the frame end handler is added to the GameWindow (but only once)
+    It also creates a GifRecSession.
+    When a GifRecSession is created, it reigsters itself in a global
+*/
+
+namespace GameGifCap {
+
+    function isSupported() {
+        return $$lib_gamegifcap_isSupported();
+    }
+
+    class GifRecorder {
+
+        static field _registered = false;
+
+        field _sessions = [];
+        field _fps;
+
+        constructor(fps) {
+            if (fps > 1000) fps = 1000;
+            else if (fps < .01) throw new InvalidArgumentException("Invalid FPS");
+
+            if ($$lib_gamegifcap_isSupported()) {
+                $$$('allocNativeData', this, 1);
+                $$lib_gamegifcap_createGifContext(this, 1000 / fps);
+            }
+        }
+
+        function isRecording() {
+            return this._sessions.length > 0 && this._sessions[-1]._isRecording;
+        }
+
+        function record() {
+            if (!GifRecorder._registered) {
+                GifRecorder._registered = true;
+                Game.GameWindow._frameEndHandlers.add(GameGifCap.gameFrameEndCallback);
+            }
+            this._sessions.add(new GifRecSession(this));
+        }
+
+        function pause() {
+            if (this._sessions.length > 0) {
+                this._sessions[-1]._isRecording = false;
+            }
+        }
+
+        function save(path) {
+            // TODO: verify path
+            path = path + "";
+
+            if ($$lib_gamegifcap_isSupported()) {
+                sc = $$lib_gamegifcap_saveToDisk(this, path);
+                switch (sc) {
+                    case 0: return;
+                    case 1: throw new InvalidArgumentException("No frames to save.");
+                    case 2: throw new Exception("Error occurred while writing to disk.");
+                    default: throw new Exception("An unknown error occurred.");
+                }
+            }
+        }
+
+        function clear() {
+            this._sessions.clear();
+        }
+    }
+
+    class GifRecSession {
+
+        static field activeSessions = {};
+
+        field _images = [];
+        field _isRecording = true;
+        field _ctx;
+
+        constructor(ctx) {
+            this._ctx = ctx;
+            GifRecSession.activeSessions[this] = true;
+        }
+
+        function cap() {
+            if ($$lib_gamegifcap_isSupported()) {
+                sc = $$lib_gamegifcap_screenCap(this._ctx);
+                switch (sc) {
+                    case 0: return;
+                    case 1: throw new Exception("Game Window not open.");
+                    default: throw new Exception("Unknown error occurred while capturing the screen.");
+                }
+            }
+        }
+    }
+
+    function gameFrameEndCallback() {
+        deadSessions = null;
+        for (session : GifRecSession.activeSessions.keys()) {
+            if (session._isRecording) {
+                session.cap();
+            } else {
+                if (deadSessions == null) deadSessions = [];
+                deadSessions.add(session);
+            }
+        }
+        if (deadSessions != null) {
+            for (ds : deadSessions) {
+                GifRecSession.activeSessions.remove(ds);
+            }
+        }
+    }
+}
