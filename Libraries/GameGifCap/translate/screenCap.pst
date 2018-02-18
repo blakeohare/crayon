@@ -1,7 +1,7 @@
 ﻿/*
     Returns a status code
 
-	args[0]: gif recorder instance
+    args[0]: gif recorder instance
 
     0 - nothing bad happened
     1 - no screen is open

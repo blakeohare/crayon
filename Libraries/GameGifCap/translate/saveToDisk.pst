@@ -1,7 +1,7 @@
 ﻿/*
     Returns a status code
 
-	args[0]: GifRecorder (with nativeData[0] as gif recorder context)
+    args[0]: GifRecorder (with nativeData[0] as gif recorder context)
     args[1]: string path
 
     status code returned:

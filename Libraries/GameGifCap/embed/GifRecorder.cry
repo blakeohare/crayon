@@ -22,7 +22,7 @@ namespace GameGifCap {
             else if (fps < .01) throw new InvalidArgumentException("Invalid FPS");
 
             $$$('allocNativeData', this, 1);
-			$$lib_gamegifcap_createGifContext(this, 1000 / fps);
+            $$lib_gamegifcap_createGifContext(this, 1000 / fps);
         }
 
         function isRecording() {
@@ -46,7 +46,7 @@ namespace GameGifCap {
         function save(path) {
             // TODO: verify path
             path = path + '';
-            
+
             sc = $$lib_gamegifcap_saveToDisk(this, path);
             switch (sc) {
                 case 0: return;
@@ -67,10 +67,10 @@ namespace GameGifCap {
 
         field _images = [];
         field _isRecording = true;
-		field _ctx;
-		
+        field _ctx;
+
         constructor(ctx) {
-			this._ctx = ctx;
+            this._ctx = ctx;
             GifRecSession.activeSessions[this] = true;
         }
 
