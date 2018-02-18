@@ -50,11 +50,41 @@ namespace GameGifCap {
             for (session : this._sessions) {
                 images.concat(session._images);
             }
-            $$lib_gamegifcap_saveToDisk(path, images, Math.floor(1000 / this._fps));
+            sc = $$lib_gamegifcap_saveToDisk(path, images, Math.floor(1000 / this._fps));
+            switch (sc) {
+                case 0: return;
+                case 1: throw new InvalidArgumentException("No frames to save.");
+                case 2: throw new Exception("Error occurred while writing to disk.");
+                default: throw new Exception("An unknown error occurred.");
+            }
         }
 
         function clear() {
             this._sessions.clear();
+        }
+    }
+
+    class GifRecSession {
+
+        static field activeSessions = {};
+
+        field _images = [];
+        field _isRecording = true;
+
+        constructor() {
+            GifRecSession.activeSessions[this] = true;
+        }
+
+        function cap() {
+            img = new Object();
+            this._images.add(img);
+            $$$('allocNativeData', img, 1);
+            sc = $$lib_gamegifcap_screenCap(img);
+            switch (sc) {
+                case 0: return;
+                case 1: throw new Exception("Game Window not open.");
+                default: throw new Exception("Unknown error occurred while capturing the screen.");
+            }
         }
     }
 
@@ -71,29 +101,6 @@ namespace GameGifCap {
         if (deadSessions != null) {
             for (ds : deadSessions) {
                 GifRecSession.activeSessions.remove(ds);
-            }
-        }
-    }
-
-    class GifRecSession {
-
-        static field activeSessions = {};
-
-        field _images = [];
-        field _isRecording = true;
-
-        constructor() {
-            $$$('allocNativeData', this, 1);
-            GifRecSession.activeSessions[this] = true;
-        }
-
-        function cap() {
-            // TODO: invoke screen scraper
-            sc = $$lib_gamegifcap_screenCap(this);
-            switch (sc) {
-                case 0: return;
-                case 1: throw new Exception("Game Window not open.");
-                default: throw new Exception("Unknown error occurred while capturing the screen.");
             }
         }
     }

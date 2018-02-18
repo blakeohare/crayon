@@ -1,3 +1,4 @@
+using System.Linq;
 
 namespace Interpreter.Libraries.GameGifCap
 {
@@ -5,7 +6,19 @@ namespace Interpreter.Libraries.GameGifCap
     {
         public static int SaveToDisk(string path, object[] images, int millisPerFrame)
         {
-            throw new System.NotImplementedException();
+            System.Drawing.Bitmap[] frames = images.Cast<System.Drawing.Bitmap>().ToArray();
+            System.IO.FileStream stream = System.IO.File.Create(path);
+            using (BumpKitGifEncoder gifEncoder = new BumpKitGifEncoder(stream, frames[0].Width, frames[0].Height))
+            {
+                foreach (System.Drawing.Bitmap frame in frames)
+                {
+                    gifEncoder.AddFrame(frame, 0, 0, System.TimeSpan.FromMilliseconds(millisPerFrame));
+                }
+            }
+            stream.Flush();
+            stream.Close();
+
+            return 0;
         }
 
         public static int ScreenCap(object[] output)
