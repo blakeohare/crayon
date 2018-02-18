@@ -1,5 +1,6 @@
 import Game;
 import Gamepad;
+import GameGifCap;
 
 const FPS = 60;
 
@@ -17,6 +18,8 @@ function main() {
     pressedThisFrame = {};
 
     gamepad = null;
+
+    gifRec = new GifRecorder(60);
 
     while (true) {
 
@@ -39,6 +42,21 @@ function main() {
                 case EventType.KEY_DOWN:
                     pressedThisFrame[event.key] = true;
                     pressedKeys[event.key] = true;
+                    switch (event.key) {
+                        case KeyboardKey.S:
+                            if (!gifRec.isRecording()) {
+                                print("Recording");
+                                gifRec.record();
+                            } else {
+                                print("Paused");
+                                gifRec.pause();
+                            }
+                            break;
+                        case KeyboardKey.F:
+                            print("Saved GIF");
+                            gifRec.save("C:\\Users\\Blake\\Desktop\\Asteroids.gif");
+                            break;
+                    }
                     break;
 
                 case EventType.KEY_UP:
