@@ -44,5 +44,3 @@ C$game$screenInfo = function(o) {
     o[2] = window.innerHeight;
     return true;
 }
-
-C$common$commandLineArgs = [];

@@ -219,3 +219,5 @@ C$common$base64ToString = function(s) {
 C$common$intBuffer16 = C$common$multiplyList([0], 16);
 C$common$floatBuffer16 = C$common$multiplyList([0.0], 16);
 C$common$stringBuffer16 = C$common$multiplyList([''], 16);
+
+C$common$commandLineArgs = [];
