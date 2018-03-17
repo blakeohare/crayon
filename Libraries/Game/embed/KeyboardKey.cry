@@ -96,7 +96,7 @@
         PERIOD = 190,
         SLASH = 191,
         BACKTICK = 192,
-        OPEN_BRAKET = 219,
+        OPEN_BRACKET = 219,
         BACKSLASH = 220,
         CLOSE_BRACKET = 221,
         APOSTROPHE = 222,
