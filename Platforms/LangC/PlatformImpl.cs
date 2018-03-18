@@ -26,6 +26,7 @@ namespace LangC
                     { "INT_IS_FLOOR", true },
                     { "IS_THREAD_BLOCKING_ALLOWED", true },
                     { "HAS_INCREMENT", true },
+                    { "IS_C", true },
                 };
         }
 

@@ -977,6 +977,14 @@ namespace LangC
                     this.TranslateExpression(sb, right);
                     break;
 
+                // Protection against re-wrapping
+                case "Value":
+                    this.TranslateExpression(sb, left);
+                    sb.Append("->internalValue == ");
+                    this.TranslateExpression(sb, right);
+                    sb.Append("->internalValue");
+                    break;
+
                 default:
                     // This shouldn't be necessary
                     // Strings should have used string equality comparisons

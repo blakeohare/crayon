@@ -60,4 +60,9 @@
 		<source>source</source>
 		<platform>javascript-app-ios</platform>
 	</target>
+
+	<target name="c">
+		<source>source</source>
+		<platform>c-app</platform>
+	</target>
 </build>

@@ -203,6 +203,12 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
                     if (Core.StrongReferenceEquality(a.internalValue, b.internalValue)) {
                         output = 1;
                     }
+                } else if (@ext_boolean("IS_C")) {
+                    // TODO: is this okay to do? Do Value structs ever get "re-wrapped"?
+                    // If this is okay, can the above case be simplified into this?
+                    if (Core.StrongReferenceEquality(a, b)) {
+                        output = 1;
+                    }
                 } else {
                     if ((object)a.internalValue == (object)b.internalValue) {
                         output = 1;
