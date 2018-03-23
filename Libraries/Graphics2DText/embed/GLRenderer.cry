@@ -25,6 +25,7 @@ namespace Graphics2DText {
         field sheetByCharId = {};
         field tileByCharId = {};
         field spaceWidth = null;
+        field defaultSurfaceHeight = null;
         field nativeFont = null;
 
         static field glRenderers = {};
@@ -43,6 +44,7 @@ namespace Graphics2DText {
         @private
         constructor(nativeFont, size) {
             this.nativeFont = nativeFont;
+            this.defaultSurfaceHeight = size;
             this.spaceWidth = size * 3 / 10;
             $$$('allocNativeData', this, 1);
             $$$('setNativeData', this, 0, null);
@@ -56,7 +58,9 @@ namespace Graphics2DText {
             xs = [];
             ys = [];
             lastTile = null;
+            lastCharacter = null;
             for (c : text) {
+                lastCharacter = c;
                 charId = Core.ord(c);
                 if (c == ' ') {
                     width += this.spaceWidth;
@@ -79,7 +83,10 @@ namespace Graphics2DText {
                     width += tile.effectiveWidth;
                 }
             }
-            width += (lastTile.width - lastTile.effectiveWidth - tile.leftMargin) * 6 / 10;
+
+            if (lastCharacter != ' ' && text.length > 0) {
+                width += (lastTile.width - lastTile.effectiveWidth - tile.leftMargin) * 6 / 10;
+            }
 
             if (newTiles != null) {
                 // Just dump all of them into new sheets.
@@ -93,6 +100,12 @@ namespace Graphics2DText {
                     }
                 }
             }
+
+            if (height == 0) {
+                height = this.defaultSurfaceHeight;
+            }
+
+            if (width == 0) width = 1;
 
             $$lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 1, xs);
             $$lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 2, ys);
