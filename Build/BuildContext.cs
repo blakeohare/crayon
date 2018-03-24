@@ -111,7 +111,7 @@ namespace Build
                 LaunchScreenPath = flattened.LaunchScreen,
                 DefaultTitle = flattened.DefaultTitle,
                 Orientation = flattened.Orientation,
-                CrayonPath = string.Join(";", flattened.CrayonPath),
+                CrayonPath = flattened.CrayonPath == null ? "" : string.Join(";", flattened.CrayonPath),
                 IosBundlePrefix = flattened.IosBundlePrefix,
                 JavaPackage = flattened.JavaPackage,
                 JsFullPage = Util.StringToBool(flattened.JsFullPage),
