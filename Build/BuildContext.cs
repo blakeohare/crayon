@@ -75,7 +75,7 @@ namespace Build
                 flattened.LaunchScreen = DoReplacement(targetName, desiredTarget.LaunchScreen ?? flattened.LaunchScreen);
                 flattened.DefaultTitle = DoReplacement(targetName, desiredTarget.DefaultTitle ?? flattened.DefaultTitle);
                 flattened.Orientation = DoReplacement(targetName, desiredTarget.Orientation ?? flattened.Orientation);
-                flattened.CrayonPath = DoReplacement(targetName, desiredTarget.CrayonPath ?? flattened.CrayonPath);
+                flattened.CrayonPath = CombineAndFlattenStringArrays(desiredTarget.CrayonPath, flattened.CrayonPath).Select(s => DoReplacement(targetName, s)).ToArray();
                 flattened.Description = DoReplacement(targetName, desiredTarget.Description ?? flattened.Description);
                 flattened.Version = DoReplacement(targetName, desiredTarget.Version ?? flattened.Version);
                 flattened.WindowSize = Size.Merge(desiredTarget.WindowSize, flattened.WindowSize) ?? new Size();
@@ -111,7 +111,7 @@ namespace Build
                 LaunchScreenPath = flattened.LaunchScreen,
                 DefaultTitle = flattened.DefaultTitle,
                 Orientation = flattened.Orientation,
-                CrayonPath = flattened.CrayonPath,
+                CrayonPath = string.Join(";", flattened.CrayonPath),
                 IosBundlePrefix = flattened.IosBundlePrefix,
                 JavaPackage = flattened.JavaPackage,
                 JsFullPage = Util.StringToBool(flattened.JsFullPage),
@@ -119,6 +119,14 @@ namespace Build
                 WindowHeight = Util.ParseIntWithErrorNullOkay((flattened.WindowSize ?? new Size()).Height, "Invalid window height in build file."),
                 CompilerLocale = Locale.Get((flattened.CompilerLocale ?? "en").Trim()),
             }.ValidateValues();
+        }
+
+        private static string[] CombineAndFlattenStringArrays(string[] a, string[] b)
+        {
+            List<string> output = new List<string>();
+            if (a != null) output.AddRange(a);
+            if (b != null) output.AddRange(b);
+            return output.ToArray();
         }
 
         private static string ThrowError(string message)

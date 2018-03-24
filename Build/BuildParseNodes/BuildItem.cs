@@ -61,7 +61,7 @@ namespace Build.BuildParseNodes
         public string Orientation { get; set; }
 
         [XmlElement("crayonpath")]
-        public string CrayonPath { get; set; }
+        public string[] CrayonPath { get; set; }
 
         [XmlElement("iosbundleprefix")]
         public string IosBundlePrefix { get; set; }
