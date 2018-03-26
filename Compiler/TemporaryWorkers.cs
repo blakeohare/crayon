@@ -4,137 +4,36 @@ using Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Common;
 
 namespace Crayon
 {
-    /*
-        This code is kind of peculiar, but this is an effort to start unravelling highly
-        coupled code. Eventually every major component of the parser/compiler/exporter/everything
-        will exist as standalone worker objects.
-
-        While the pipeline runner is hardcoded right now, eventually there'll be a more graph-like
-        interface to clearly show the flow of the process.
-
-        Because each worker is standalone and puts all its output into one data structure, this
-        will be much more testable than things are now (and maybe I'll even be able to write tests).
-        Additionally, certain types of work can be parallelized and a thread pool can interpret the
-        graph.
-
-        Also, eventually I'd like to move off of C# and into C, C++, or even Crayon itself. This
-        structure will lend itself better to partial migrations where part of the codebase can
-        be migrated and then communicate via the worker graph across processes. (contingent on
-        all inputs and outputs being serializable)
-
-        I apologize for how weird this looks right now.
-    */
-    internal class CrayonPipeline
+    class TemporaryWorkers
     {
-        private Dictionary<string, AbstractCrayonWorker> workers = new Dictionary<string, AbstractCrayonWorker>();
-
-        private CrayonPipeline RegisterWorker(AbstractCrayonWorker worker)
-        {
-            this.workers[worker.Name] = worker;
-            return this;
-        }
-
-        private object DoWork(string id, object arg)
-        {
-            // TODO: parallelization if arg is of certain type. Something like
-            // ParallelizableWorkUnit which will have an object[] Items property
-            // that can be arbitrarily split up.
-            return this.workers[id].DoWork(arg);
-        }
-
-        public void Run(string[] args)
-        {
-            this.RegisterWorker(new TopLevelCheckWorker());
-            this.RegisterWorker(new UsageDisplayWorker());
-            this.RegisterWorker(new GenerateDefaultProjectWorker());
-            this.RegisterWorker(new ExportStandaloneCbxWorker());
-            this.RegisterWorker(new ExportCbxVmBundleWorker());
-            this.RegisterWorker(new ExportStandaloneVmWorker());
-            this.RegisterWorker(new RunCbxWorker());
-
-            // TODO: maybe just remove this from the graph, since each of these results represent
-            // a very specific and established pipeline.
-            ExportCommand command = (ExportCommand)this.DoWork("Crayon.TopLevelCheck", args);
-            ExecutionType action = command.IdentifyUseCase();
-            switch (action)
-            {
-                case ExecutionType.SHOW_USAGE:
-                    this.DoWork("Crayon.DisplayUsage", null);
-                    break;
-
-                case ExecutionType.GENERATE_DEFAULT_PROJECT:
-                    this.DoWork("Crayon.GenerateDefaultProject", command);
-                    break;
-
-                case ExecutionType.EXPORT_VM_BUNDLE:
-                    this.DoWork("Crayon.ExportCbxVmBundle", command);
-                    break;
-
-                case ExecutionType.EXPORT_VM_STANDALONE:
-                    this.DoWork("Crayon.ExportStandaloneVm", command);
-                    break;
-
-                case ExecutionType.EXPORT_CBX:
-                case ExecutionType.RUN_CBX:
-                    CbxExporter cbxExporter = (CbxExporter)this.DoWork("Crayon.ExportStandaloneCbx", command.BuildFilePath);
-                    if (action == ExecutionType.RUN_CBX)
-                    {
-                        string cbxPath = cbxExporter.GetCbxPath();
-                        this.DoWork("Crayon.RunCbx", new object[] { command, cbxPath });
-                    }
-                    break;
-
-                default: throw new Exception();
-            }
-        }
-
-        public class GenerateDefaultProjectWorker : AbstractCrayonWorker
-        {
-            public override string Name { get { return "Crayon.GenerateDefaultProject"; } }
-
-            public override object DoWork(object arg)
-            {
-                ExportCommand command = (ExportCommand)arg;
-                DefaultProjectGenerator generator = new DefaultProjectGenerator(command.DefaultProjectId, command.DefaultProjectLocale);
-                Dictionary<string, FileOutput> project = generator.Validate().Export();
-
-                string directory = FileUtil.JoinPath(
-                    FileUtil.GetCurrentDirectory(),
-                    generator.ProjectID);
-                new FileOutputExporter(directory).ExportFiles(project);
-
-                Console.WriteLine("Empty project exported to directory '" + generator.ProjectID + "/'");
-                return null;
-            }
-        }
-
         public class ExportStandaloneCbxWorker : AbstractCrayonWorker
         {
-            public override string Name { get { return "Crayon.ExportStandaloneCbx"; } }
+            public override string Name { get { return "Crayon::ExportStandaloneCbx"; } }
 
-            public override object DoWork(object arg)
+            public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
             {
-                string buildFilePath = (string)arg;
-                return new CbxExporter(buildFilePath).Export();
+                ExportCommand command = (ExportCommand)args[0].Value;
+                string buildFilePath = command.BuildFilePath;
+                CbxExporter exporter = new CbxExporter(buildFilePath).Export();
+                return new CrayonWorkerResult()
+                {
+                    Value = exporter,
+                };
             }
         }
 
         public class ExportCbxVmBundleWorker : AbstractCrayonWorker
         {
-            public override string Name { get { return "Crayon.ExportCbxVmBundle"; } }
+            public override string Name { get { return "Crayon::ExportCbxVmBundle"; } }
 
-            public override object DoWork(object arg)
+            public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
             {
-                ExportCommand command = (ExportCommand)arg;
+                ExportCommand command = (ExportCommand)args[0].Value;
                 this.ExportVmBundle(command);
-                return null;
+                return new CrayonWorkerResult();
             }
 
             private void ExportVmBundle(ExportCommand command)
@@ -237,13 +136,13 @@ namespace Crayon
 
         public class ExportStandaloneVmWorker : AbstractCrayonWorker
         {
-            public override string Name { get { return "Crayon.ExportStandaloneVm"; } }
+            public override string Name { get { return "Crayon::ExportStandaloneVm"; } }
 
-            public override object DoWork(object arg)
+            public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
             {
-                ExportCommand command = (ExportCommand)arg;
+                ExportCommand command = (ExportCommand)args[0].Value;
                 this.ExportStandaloneVm(command);
-                return null;
+                return new CrayonWorkerResult();
             }
 
             private void ExportStandaloneVm(ExportCommand command)
@@ -276,17 +175,14 @@ namespace Crayon
 
         public class RunCbxWorker : AbstractCrayonWorker
         {
-            public override string Name { get { return "Crayon.RunCbx"; } }
+            public override string Name { get { return "Crayon::RunCbx"; } }
 
-            public override object DoWork(object arg)
+            public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
             {
-                object[] compositeArgs = (object[])arg;
-                this.DoWorkImpl((ExportCommand)compositeArgs[0], (string)compositeArgs[1]);
-                return null;
-            }
+                ExportCommand command = (ExportCommand)args[0].Value;
+                CbxExporter exporter = (CbxExporter)args[1].Value;
+                string cbxFile = exporter.GetCbxPath();
 
-            public void DoWorkImpl(ExportCommand command, string cbxFile)
-            {
                 string crayonRuntimePath = FileUtil.JoinPath(Environment.GetEnvironmentVariable("CRAYON_HOME"), "vm", "CrayonRuntime.exe");
                 cbxFile = FileUtil.GetPlatformPath(cbxFile);
                 System.Diagnostics.Process appProcess = new System.Diagnostics.Process();
@@ -312,6 +208,7 @@ namespace Crayon
                 appProcess.BeginOutputReadLine();
                 appProcess.BeginErrorReadLine();
                 appProcess.WaitForExit();
+                return new CrayonWorkerResult();
             }
         }
     }

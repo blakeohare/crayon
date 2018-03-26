@@ -1,9 +1,5 @@
 ﻿using Build;
 using Common;
-using Parser;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Crayon
 {
@@ -13,13 +9,14 @@ namespace Crayon
         {
             using (new PerformanceSection("Crayon"))
             {
+                commandLineArgs = args;
 #if DEBUG
                 // First chance exceptions should crash in debug builds.
-                ExecuteProgramUnchecked(args);
+                ExecuteProgramUnchecked();
 #else
                 try
                 {
-                    ExecuteProgramUnchecked(args);
+                    ExecuteProgramUnchecked();
                 }
                 catch (InvalidOperationException e)
                 {
@@ -44,14 +41,33 @@ namespace Crayon
             }
         }
 
-        private static void ExecuteProgramUnchecked(string[] args)
+        private static string[] commandLineArgs;
+
+        public static string[] GetCommandLineArgs()
         {
-#if DEBUG
-            args = GetEffectiveArgs(args);
-#endif
-            new CrayonPipeline().Run(args);
+            return GetEffectiveArgs(commandLineArgs);
+        }
+
+        private static void ExecuteProgramUnchecked()
+        {
+            new CrayonPipelineInterpreter()
+                .RegisterPipeline(
+                    "Crayon::Main", typeof(Program).Assembly, "Pipeline.txt")
+                // TODO: register workers via reflection
+                .RegisterWorker(new TopLevelCheckWorker())
+                .RegisterWorker(new UsageDisplayWorker())
+
+                // TODO: these temporary workers need to be pipelines in other assemblies
+                .RegisterWorker(new TemporaryWorkers.ExportCbxVmBundleWorker())
+                .RegisterWorker(new TemporaryWorkers.ExportStandaloneCbxWorker())
+                .RegisterWorker(new TemporaryWorkers.ExportStandaloneVmWorker())
+                .RegisterWorker(new TemporaryWorkers.RunCbxWorker())
+
+                .Interpret("Crayon::Main");
+
 
 #if DEBUG
+            // TODO: put this at the end of Pipeline.txt as its own worker
             /*
             if (command.ShowPerformanceMarkers)
             {

@@ -1,21 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Common;
 
 namespace Crayon
 {
-    internal class TopLevelCheckWorker : Common.AbstractCrayonWorker
+    internal class TopLevelCheckWorker : AbstractCrayonWorker
     {
-        public override string Name { get { return "Crayon.TopLevelCheck"; } }
+        public override string Name { get { return "Crayon::TopLevelCheck"; } }
 
-        // TODO: split this up in flag parsing and generating ExportCommand
-        public override object DoWork(object arg)
+        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
         {
-            string[] args = (string[])arg;
+            string[] commandLineArgs = Program.GetCommandLineArgs();
 
-            return FlagParser.Parse(args);
+            ExportCommand command = FlagParser.Parse(commandLineArgs);
+
+            CrayonWorkerResult result = new CrayonWorkerResult()
+            {
+                Value = command,
+            };
+            ExecutionType action = command.IdentifyUseCase();
+            switch (action)
+            {
+                case ExecutionType.SHOW_USAGE: result.SetField("IsDisplayUsage", true); break;
+                case ExecutionType.GENERATE_DEFAULT_PROJECT: result.SetField("IsGenerateDefaultProject", true); break;
+                case ExecutionType.EXPORT_VM_BUNDLE: result.SetField("IsExportCbxVmBundle", true); break;
+                case ExecutionType.EXPORT_VM_STANDALONE: result.SetField("IsExportStandaloneVm", true); break;
+                case ExecutionType.EXPORT_CBX: result.SetField("IsExportStandaloneCbx", true); break;
+                case ExecutionType.RUN_CBX: result.SetField("IsRunCbx", true); break;
+                default: throw new Exception();
+            }
+            return result;
         }
     }
 }

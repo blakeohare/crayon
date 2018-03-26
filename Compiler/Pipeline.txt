@@ -1,0 +1,32 @@
+﻿command = Crayon::TopLevelCheck()
+
+if command.IsDisplayUsage
+	Crayon::DisplayUsage()
+	return
+endif
+
+if command.IsGenerateDefaultProject
+	Crayon::GenerateDefaultProject(command)
+	return
+endif
+
+if command.IsExportCbxVmBundle
+	Crayon::ExportCbxVmBundle(command)
+	return
+endif
+
+if command.IsExportStandaloneVm
+	Crayon::ExportStandaloneVm(command)
+	return
+endif
+
+if command.IsExportStandaloneCbx
+	Crayon::ExportStandaloneCbx(command)
+	return
+endif
+
+if command.IsRunCbx
+	exporter = Crayon::ExportStandaloneCbx(command)
+	Crayon::RunCbx(command, exporter)
+	return
+endif

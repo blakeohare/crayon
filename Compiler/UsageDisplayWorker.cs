@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Common;
 
 namespace Crayon
@@ -31,12 +27,12 @@ namespace Crayon
             "  -genDefaultProjJP  Generates a default project with JP locale.",
             "");
 
-        public override string Name {  get { return "Crayon.DisplayUsage"; } }
+        public override string Name { get { return "Crayon::DisplayUsage"; } }
 
-        public override object DoWork(object arg)
+        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
         {
             Console.WriteLine(USAGE);
-            return null;
+            return new CrayonWorkerResult();
         }
     }
 }
