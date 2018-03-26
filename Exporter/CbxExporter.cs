@@ -9,24 +9,24 @@ namespace Crayon
 {
     public class CbxExporter
     {
-        private ExportCommand args;
+        private string buildFilePath;
         private string finalCbxPath;
 
-        public CbxExporter(ExportCommand args)
+        public CbxExporter(string buildFilePath)
         {
-            this.args = args;
+            if (buildFilePath == null)
+            {
+                throw new InvalidOperationException("No build path was provided.");
+            }
+
+            this.buildFilePath = buildFilePath;
         }
 
         public CbxExporter Export()
         {
             using (new PerformanceSection("ExportCbx"))
             {
-                if (!this.args.HasBuildFile)
-                {
-                    throw new InvalidOperationException("No build path was provided.");
-                }
-
-                BuildContext buildContext = GetBuildContextCbx(this.args.BuildFilePath);
+                BuildContext buildContext = GetBuildContextCbx(this.buildFilePath);
                 CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
                 ResourceDatabase resDb = ResourceDatabaseBuilder.PrepareResources(buildContext, null);
                 string byteCode = ByteCodeEncoder.Encode(compilationResult.ByteCode);
