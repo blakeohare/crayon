@@ -53,7 +53,10 @@ namespace Crayon
             new CrayonPipelineInterpreter()
                 .RegisterPipeline(
                     "Crayon::Main", typeof(Program).Assembly, "Pipeline.txt")
+
                 // TODO: register workers via reflection
+                .RegisterWorker(new GetBuildContextWorker())
+                .RegisterWorker(new RunCbxWorker())
                 .RegisterWorker(new TopLevelCheckWorker())
                 .RegisterWorker(new UsageDisplayWorker())
 
@@ -61,21 +64,8 @@ namespace Crayon
                 .RegisterWorker(new TemporaryWorkers.ExportCbxVmBundleWorker())
                 .RegisterWorker(new TemporaryWorkers.ExportStandaloneCbxWorker())
                 .RegisterWorker(new TemporaryWorkers.ExportStandaloneVmWorker())
-                .RegisterWorker(new TemporaryWorkers.RunCbxWorker())
 
                 .Interpret("Crayon::Main");
-
-
-#if DEBUG
-            // TODO: put this at the end of Pipeline.txt as its own worker
-            /*
-            if (command.ShowPerformanceMarkers)
-            {
-                string summary = PerformanceTimer.GetSummary();
-                Console.WriteLine(summary);
-            }
-            */
-#endif
         }
 
         private static string[] GetEffectiveArgs(string[] actualArgs)

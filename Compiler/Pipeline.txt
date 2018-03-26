@@ -2,31 +2,34 @@
 
 if command.IsDisplayUsage
 	Crayon::DisplayUsage()
-	return
 endif
 
 if command.IsGenerateDefaultProject
 	Crayon::GenerateDefaultProject(command)
-	return
 endif
 
 if command.IsExportCbxVmBundle
-	Crayon::ExportCbxVmBundle(command)
-	return
+	buildContext = Crayon::GetBuildContext(command)
+	TODO_Export::ExportCbxVmBundle(command, buildContext)
 endif
 
 if command.IsExportStandaloneVm
-	Crayon::ExportStandaloneVm(command)
-	return
+	TODO_Export::ExportStandaloneVm(command)
 endif
 
 if command.IsExportStandaloneCbx
-	Crayon::ExportStandaloneCbx(command)
-	return
+	TODO_Export::ExportStandaloneCbx(command)
 endif
 
 if command.IsRunCbx
-	exporter = Crayon::ExportStandaloneCbx(command)
-	Crayon::RunCbx(command, exporter)
+	exporter = TODO_Export::ExportStandaloneCbx(command)
+	cmdLineFlags = Crayon::RunCbxFlagBuilder(command, exporter)
+	Crayon::RunCbx(cmdLineFlags)
+
+	# Return now. Performance metrics should not be shown on RunCbx
 	return
+endif
+
+if command.ShowPerformance
+	Crayon::ShowPerformanceMetrics()
 endif

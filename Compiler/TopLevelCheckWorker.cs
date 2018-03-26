@@ -28,6 +28,9 @@ namespace Crayon
                 case ExecutionType.RUN_CBX: result.SetField("IsRunCbx", true); break;
                 default: throw new Exception();
             }
+
+            result.SetField("ShowPerformance", command.ShowPerformanceMarkers);
+
             return result;
         }
     }
