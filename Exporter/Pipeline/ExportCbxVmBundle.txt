@@ -1,0 +1,6 @@
+﻿# ExportCbxVmBundle(command, buildContext)
+
+command = $1
+buildContext = $2
+
+Exporter::ExportCbxVmBundleImpl(command, buildContext)

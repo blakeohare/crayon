@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DefaultProject\*.txt" />
+    <EmbeddedResource Include="Pipeline\*.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Build\Build.csproj">

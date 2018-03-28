@@ -86,29 +86,41 @@ namespace Common
                         {
                             parts = line.Split('=');
                             assignOutputTo = parts[0].Trim();
-                            current = parts[1];
+                            current = parts[1].Trim();
                         }
 
-                        parts = current.Split('(');
-                        string workerName = parts[0].Trim();
-
-                        CrayonWorkerResult[] args = parts[1]
-                            .TrimEnd(')')
-                            .Split(',')
-                            .Select(a => a.Trim())
-                            .Where(s => s.Length > 0)
-                            .Select(vName => variables[vName])
-                            .ToArray();
                         CrayonWorkerResult result;
-                        if (registeredPipelines.ContainsKey(workerName))
+                        if (current.StartsWith("$"))
                         {
-                            result = InterpretImpl(registeredPipelines[workerName], args);
+                            int argNum = int.Parse(current.Substring(1));
+                            if (assignOutputTo == null) { throw new System.InvalidOperationException(); }
+                            result = pipelineArgs[argNum - 1];
                         }
                         else
                         {
-                            result = workers[workerName].DoWork(args);
-                        }
+                            parts = current.Split('(');
+                            string workerName = parts[0].Trim();
 
+                            CrayonWorkerResult[] args = parts[1]
+                                .TrimEnd(')')
+                                .Split(',')
+                                .Select(a => a.Trim())
+                                .Where(s => s.Length > 0)
+                                .Select(vName => variables[vName])
+                                .ToArray();
+                            if (registeredPipelines.ContainsKey(workerName))
+                            {
+                                result = InterpretImpl(workerName, args);
+                            }
+                            else if (workers.ContainsKey(workerName))
+                            {
+                                result = workers[workerName].DoWork(args);
+                            }
+                            else
+                            {
+                                throw new System.InvalidOperationException("No worker or pipeline registered named '" + workerName + "'");
+                            }
+                        }
                         if (assignOutputTo != null)
                         {
                             variables[assignOutputTo] = result;
@@ -116,7 +128,7 @@ namespace Common
                     }
                 }
             }
-            return null;
+            return new CrayonWorkerResult();
         }
     }
 }

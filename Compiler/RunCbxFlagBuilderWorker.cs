@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Common;
+﻿using Common;
+using System.Linq;
 
 namespace Crayon
 {

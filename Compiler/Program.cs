@@ -1,5 +1,4 @@
-﻿using Build;
-using Common;
+﻿using Common;
 
 namespace Crayon
 {
@@ -50,22 +49,28 @@ namespace Crayon
 
         private static void ExecuteProgramUnchecked()
         {
-            new CrayonPipelineInterpreter()
+            CrayonPipelineInterpreter pipeline = new CrayonPipelineInterpreter()
                 .RegisterPipeline(
                     "Crayon::Main", typeof(Program).Assembly, "Pipeline.txt")
+                .RegisterPipeline(
+                    "Exporter::ExportCbxVmBundle", typeof(ExportCommand).Assembly, "Pipeline/ExportCbxVmBundle.txt")
 
                 // TODO: register workers via reflection
+
+                // Crayon
                 .RegisterWorker(new GetBuildContextWorker())
                 .RegisterWorker(new RunCbxWorker())
                 .RegisterWorker(new TopLevelCheckWorker())
                 .RegisterWorker(new UsageDisplayWorker())
 
-                // TODO: these temporary workers need to be pipelines in other assemblies
-                .RegisterWorker(new TemporaryWorkers.ExportCbxVmBundleWorker())
-                .RegisterWorker(new TemporaryWorkers.ExportStandaloneCbxWorker())
-                .RegisterWorker(new TemporaryWorkers.ExportStandaloneVmWorker())
+                // Exporter
+                .RegisterWorker(new ExportCbxVmBundleWorker())
 
-                .Interpret("Crayon::Main");
+                // TODO: these temporary workers need to be pipelines in other assemblies
+                .RegisterWorker(new TemporaryWorkers.ExportStandaloneCbxWorker())
+                .RegisterWorker(new TemporaryWorkers.ExportStandaloneVmWorker());
+
+            pipeline.Interpret("Crayon::Main");
         }
 
         private static string[] GetEffectiveArgs(string[] actualArgs)
@@ -91,13 +96,5 @@ namespace Crayon
 #endif
             return actualArgs;
         }
-
-        internal static Platform.AbstractPlatform GetPlatformInstance(BuildContext buildContext)
-        {
-            string platformId = buildContext.Platform.ToLowerInvariant();
-            return platformProvider.GetPlatform(platformId);
-        }
-
-        internal static PlatformProvider platformProvider = new PlatformProvider();
     }
 }

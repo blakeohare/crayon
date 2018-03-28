@@ -5,6 +5,16 @@ namespace Crayon
 {
     internal class TopLevelCheckWorker : AbstractCrayonWorker
     {
+        private enum ExecutionType
+        {
+            GENERATE_DEFAULT_PROJECT,
+            EXPORT_VM_BUNDLE,
+            EXPORT_VM_STANDALONE,
+            EXPORT_CBX,
+            RUN_CBX,
+            SHOW_USAGE,
+        }
+
         public override string Name { get { return "Crayon::TopLevelCheck"; } }
 
         public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
@@ -13,11 +23,16 @@ namespace Crayon
 
             ExportCommand command = FlagParser.Parse(commandLineArgs);
 
+            // TODO: I don't like these here.
+            command.PlatformProvider = new PlatformProvider();
+            command.InlineImportCodeLoader = new InlineImportCodeLoader();
+
             CrayonWorkerResult result = new CrayonWorkerResult()
             {
                 Value = command,
             };
-            ExecutionType action = command.IdentifyUseCase();
+
+            ExecutionType action = this.IdentifyUseCase(command);
             switch (action)
             {
                 case ExecutionType.SHOW_USAGE: result.SetField("IsDisplayUsage", true); break;
@@ -32,6 +47,16 @@ namespace Crayon
             result.SetField("ShowPerformance", command.ShowPerformanceMarkers);
 
             return result;
+        }
+
+        private ExecutionType IdentifyUseCase(ExportCommand command)
+        {
+            if (command.IsGenerateDefaultProject) return ExecutionType.GENERATE_DEFAULT_PROJECT;
+            if (command.IsEmpty) return ExecutionType.SHOW_USAGE;
+            if (command.IsVmExportCommand) return ExecutionType.EXPORT_VM_STANDALONE;
+            if (command.HasTarget) return ExecutionType.EXPORT_VM_BUNDLE;
+            if (command.IsCbxExport) return ExecutionType.EXPORT_CBX;
+            return ExecutionType.RUN_CBX;
         }
     }
 }
