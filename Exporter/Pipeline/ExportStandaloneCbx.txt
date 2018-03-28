@@ -1,0 +1,5 @@
+﻿# ExportStandaloneCbx(command)
+
+command = $1
+
+Exporter::ExportStandaloneCbxImpl(command)

@@ -14,19 +14,24 @@ if command.IsExportCbxVmBundle
 endif
 
 if command.IsExportStandaloneVm
-	TODO_Export::ExportStandaloneVm(command)
+	Exporter::ExportStandaloneVm(command)
 endif
 
 if command.IsExportStandaloneCbx
-	TODO_Export::ExportStandaloneCbx(command)
+	Exporter::ExportStandaloneCbx(command)
 endif
 
 if command.IsRunCbx
-	exporter = TODO_Export::ExportStandaloneCbx(command)
+	exporter = Exporter::ExportStandaloneCbx(command)
 	cmdLineFlags = Crayon::RunCbxFlagBuilder(command, exporter)
+
+	if command.ShowPerformance
+		Crayon::ShowPerformanceMetrics()
+	endif
+
 	Crayon::RunCbx(cmdLineFlags)
 
-	# Return now. Performance metrics should not be shown on RunCbx
+	# Return now. Performance metrics have already been shown.
 	return
 endif
 

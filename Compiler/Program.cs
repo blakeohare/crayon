@@ -18,15 +18,15 @@ namespace Crayon
                 {
                     ExecuteProgramUnchecked();
                 }
-                catch (InvalidOperationException e)
+                catch (System.InvalidOperationException e)
                 {
                     System.Console.WriteLine(e.Message);
                 }
-                catch (MultiParserException e)
+                catch (Parser.MultiParserException e)
                 {
                     System.Console.WriteLine(e.Message);
                 }
-                catch (ParserException e)
+                catch (Parser.ParserException e)
                 {
                     System.Console.WriteLine(e.Message);
                 }
@@ -66,10 +66,8 @@ namespace Crayon
 
                 // Exporter
                 .RegisterWorker(new ExportCbxVmBundleWorker())
-
-                // TODO: these temporary workers need to be pipelines in other assemblies
-                .RegisterWorker(new TemporaryWorkers.ExportStandaloneCbxWorker())
-                .RegisterWorker(new TemporaryWorkers.ExportStandaloneVmWorker());
+                .RegisterWorker(new ExportStandaloneCbxWorker())
+                .RegisterWorker(new ExportStandaloneVmWorker());
 
             pipeline.Interpret("Crayon::Main");
         }

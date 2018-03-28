@@ -1,0 +1,5 @@
+﻿# ExportStandaloneVm(command)
+
+command = $1
+
+Exporter::ExportStandaloneVmImpl(command)
