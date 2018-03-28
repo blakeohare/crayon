@@ -28,11 +28,11 @@ namespace Exporter
         {
             using (new PerformanceSection("CompilationBundle.Compile"))
             {
-                ParserContext parser = new ParserContext(buildContext);
-                Parser.ParseTree.TopLevelConstruct[] resolvedParseTree = parser.ParseAllTheThings();
+                ParserContext parserContext = new ParserContext(buildContext);
+                Parser.ParseTree.TopLevelConstruct[] resolvedParseTree = parserContext.ParseAllTheThings();
 
                 ByteCodeCompiler bcc = new ByteCodeCompiler();
-                ByteBuffer buffer = bcc.GenerateByteCode(parser, resolvedParseTree);
+                ByteBuffer buffer = bcc.GenerateByteCode(parserContext, resolvedParseTree);
 
                 string jsFilePrefix = buildContext.JsFilePrefix == null
                     ? ""
@@ -41,7 +41,7 @@ namespace Exporter
                 return new CompilationBundle()
                 {
                     ByteCode = buffer,
-                    LibraryScopesUsed = parser.LibraryManager.ImportedLibraries.ToArray(),
+                    LibraryScopesUsed = parserContext.LibraryManager.ImportedLibraries.ToArray(),
                     ProjectID = buildContext.ProjectID,
                     Version = buildContext.Version,
                     Description = buildContext.Description,

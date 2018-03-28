@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Platform;
+﻿using Common;
 using Pastel.Nodes;
-using Common;
+using Platform;
+using System;
+using System.Text;
 
 namespace LangJavaScript
 {

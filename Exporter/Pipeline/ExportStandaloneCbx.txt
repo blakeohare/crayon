@@ -1,5 +1,5 @@
-﻿# ExportStandaloneCbx(command)
+﻿# ExportStandaloneCbx(buildContext)
 
-command = $1
+buildContext = $1
 
-Exporter::ExportStandaloneCbxImpl(command)
+Exporter::ExportStandaloneCbxImpl(command, buildContext)

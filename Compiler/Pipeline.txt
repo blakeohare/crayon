@@ -18,7 +18,8 @@ if command.IsExportStandaloneVm
 endif
 
 if command.IsExportStandaloneCbx
-	Exporter::ExportStandaloneCbx(command)
+	buildContext = Crayon::GetBuildContextCbx(command)
+	Exporter::ExportStandaloneCbx(buildContext)
 endif
 
 if command.IsRunCbx

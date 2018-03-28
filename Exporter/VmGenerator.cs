@@ -101,7 +101,8 @@ namespace Exporter
             }
         }
 
-        public Dictionary<string, FileOutput> GenerateVmSourceCodeForPlatform(
+        public void GenerateVmSourceCodeForPlatform(
+            Dictionary<string, FileOutput> output,
             Platform.AbstractPlatform platform,
             CompilationBundle nullableCompilationBundle,
             ResourceDatabase resourceDatabase,
@@ -150,7 +151,8 @@ namespace Exporter
 
                     platform.GleanInformationFromPreviouslyExportedProject(options, verifiedAbsoluteOutputPath);
 
-                    return platform.ExportProject(
+                    platform.ExportProject(
+                        output,
                         vm.Globals.Values.OrderBy(v => v.VariableNameToken.Value).ToArray(),
                         vm.StructDefinitions.Values.OrderBy(s => s.NameToken.Value).ToArray(),
                         vm.FunctionDefinitions.Values.OrderBy(f => f.NameToken.Value).ToArray(),
@@ -161,7 +163,8 @@ namespace Exporter
                 }
                 else
                 {
-                    return platform.ExportStandaloneVm(
+                    platform.ExportStandaloneVm(
+                        output,
                         vm.Globals.Values.OrderBy(v => v.VariableNameToken.Value).ToArray(),
                         vm.StructDefinitions.Values.OrderBy(s => s.NameToken.Value).ToArray(),
                         vm.FunctionDefinitions.Values.OrderBy(f => f.NameToken.Value).ToArray(),

@@ -25,10 +25,16 @@ namespace Exporter
                 throw new InvalidOperationException("-vm and -vmdir flags must both have correct values.");
             }
             Platform.AbstractPlatform standaloneVmPlatform = command.PlatformProvider.GetPlatform(vmPlatform);
+
             vmTargetDirectory = FileUtil.FinalizeTilde(vmTargetDirectory);
+
             VmGenerator vmGenerator = new VmGenerator();
+
             LibraryMetadata[] allLibraries = new LibraryFinder().LibraryFlatList;
-            Dictionary<string, FileOutput> result = vmGenerator.GenerateVmSourceCodeForPlatform(
+            Dictionary<string, FileOutput> fileOutputDescriptor = new Dictionary<string, FileOutput>();
+
+            vmGenerator.GenerateVmSourceCodeForPlatform(
+                fileOutputDescriptor,
                 standaloneVmPlatform,
                 null,
                 null,
@@ -37,7 +43,7 @@ namespace Exporter
                 command.InlineImportCodeLoader,
                 VmGenerationMode.EXPORT_VM_AND_LIBRARIES);
             FileOutputExporter exporter = new FileOutputExporter(vmTargetDirectory);
-            exporter.ExportFiles(result);
+            exporter.ExportFiles(fileOutputDescriptor);
         }
     }
 }

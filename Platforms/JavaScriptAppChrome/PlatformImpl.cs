@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Common;
+﻿using Common;
 using Pastel.Nodes;
 using Platform;
+using System;
+using System.Collections.Generic;
 
 namespace JavaScriptAppChrome
 {
@@ -17,7 +17,8 @@ namespace JavaScriptAppChrome
             this.Translator = new JavaScriptAppChromeTranslator(this);
         }
 
-        public override Dictionary<string, FileOutput> ExportProject(
+        public override void ExportProject(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
@@ -38,31 +39,29 @@ namespace JavaScriptAppChrome
             SystemBitmap largeIcon = iconFile.CloneToNewSize(128, 128);
 
             JavaScriptApp.PlatformImpl jsBasicPlatform = (JavaScriptApp.PlatformImpl)this.PlatformProvider.GetPlatform("javascript-app");
-            Dictionary<string, FileOutput> files = jsBasicPlatform.ExportProjectImpl(globals, structDefinitions, functionDefinitions, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform, this.Translator);
+            Dictionary<string, FileOutput> proxyOutput = new Dictionary<string, FileOutput>();
+            jsBasicPlatform.ExportProjectImpl(proxyOutput, globals, structDefinitions, functionDefinitions, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform, this.Translator);
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
-            replacements["JS_LIB_INCLUSIONS"] = JavaScriptApp.PlatformImpl.GenerateJsLibInclusionHtml(files.Keys);
-            this.CopyResourceAsText(files, "background.js", "Resources/BackgroundJs.txt", replacements);
-            this.CopyResourceAsText(files, "index.html", "Resources/IndexHtml.txt", replacements); // overwrites GameHostHtml.txt from javascript-app
-            this.CopyResourceAsText(files, "chrome_web_app.js", "Resources/ChromeWebAppJs.txt", replacements);
-            this.CopyResourceAsText(files, "manifest.json", "Resources/ManifestJson.txt", Util.MakeReplacementStringsJsonSafe(replacements));
-            files["icon-16.png"] = new FileOutput()
+            replacements["JS_LIB_INCLUSIONS"] = JavaScriptApp.PlatformImpl.GenerateJsLibInclusionHtml(proxyOutput.Keys);
+            this.CopyResourceAsText(proxyOutput, "background.js", "Resources/BackgroundJs.txt", replacements);
+            this.CopyResourceAsText(proxyOutput, "index.html", "Resources/IndexHtml.txt", replacements); // overwrites GameHostHtml.txt from javascript-app
+            this.CopyResourceAsText(proxyOutput, "chrome_web_app.js", "Resources/ChromeWebAppJs.txt", replacements);
+            this.CopyResourceAsText(proxyOutput, "manifest.json", "Resources/ManifestJson.txt", Util.MakeReplacementStringsJsonSafe(replacements));
+            proxyOutput["icon-16.png"] = new FileOutput()
             {
                 Type = FileOutputType.Image,
                 Bitmap = smallIcon,
             };
-            files["icon-128.png"] = new FileOutput()
+            proxyOutput["icon-128.png"] = new FileOutput()
             {
                 Type = FileOutputType.Image,
                 Bitmap = largeIcon,
             };
 
-            return new Dictionary<string, FileOutput>()
-            {
-                { replacements["PROJECT_ID"] + ".zip", ZipCreator.Create(files, false) }
-            };
+            output[replacements["PROJECT_ID"] + ".zip"] = ZipCreator.Create(proxyOutput, false);
         }
 
-        public override Dictionary<string, FileOutput> ExportStandaloneVm(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output, IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             throw new NotImplementedException();
         }

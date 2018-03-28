@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Common;
+﻿using Common;
 using Pastel.Nodes;
 using Platform;
+using System;
+using System.Collections.Generic;
 
 namespace PythonApp
 {
@@ -22,7 +22,8 @@ namespace PythonApp
             return new Dictionary<string, object>();
         }
 
-        public override Dictionary<string, FileOutput> ExportStandaloneVm(
+        public override void ExportStandaloneVm(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
@@ -32,7 +33,8 @@ namespace PythonApp
             throw new NotImplementedException();
         }
 
-        public override Dictionary<string, FileOutput> ExportProject(
+        public override void ExportProject(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
@@ -41,8 +43,6 @@ namespace PythonApp
             Options options,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
-            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
-
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
             List<string> runPy = new List<string>();
@@ -164,8 +164,6 @@ namespace PythonApp
             {
                 output["res/ttf/" + fontResource.CanonicalFileName] = fontResource;
             }
-
-            return output;
         }
 
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)

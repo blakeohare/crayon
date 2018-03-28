@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Common;
+﻿using Common;
 using Pastel.Nodes;
 using Platform;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace CApp
 {
@@ -21,7 +20,8 @@ namespace CApp
 
         public LangC.CTranslator CTranslator { get { return (LangC.CTranslator)this.Translator; } }
 
-        public override Dictionary<string, FileOutput> ExportProject(
+        public override void ExportProject(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
@@ -30,7 +30,6 @@ namespace CApp
             Options options,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
-            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             StringBuilder cCode = new StringBuilder();
 
@@ -86,11 +85,9 @@ namespace CApp
                 Type = FileOutputType.Text,
                 TextContent = cCode.ToString(),
             };
-
-            return output;
         }
 
-        public override Dictionary<string, FileOutput> ExportStandaloneVm(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output, IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             throw new NotImplementedException();
         }

@@ -1,9 +1,5 @@
-﻿using Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Build;
+using Common;
 
 namespace Exporter
 {
@@ -13,9 +9,9 @@ namespace Exporter
 
         public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
         {
-            ExportCommand command = (ExportCommand)args[0].Value;
-            string buildFilePath = command.BuildFilePath;
-            CbxExporter exporter = new CbxExporter(buildFilePath).Export();
+            BuildContext buildContext = (BuildContext)args[1].Value;
+            CbxExporter exporter = new CbxExporter();
+            exporter.Export(buildContext);
             return new CrayonWorkerResult()
             {
                 Value = exporter,

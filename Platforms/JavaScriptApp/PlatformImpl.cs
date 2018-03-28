@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Common;
+using Pastel.Nodes;
+using Platform;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Common;
-using Pastel.Nodes;
-using Platform;
 
 namespace JavaScriptApp
 {
@@ -24,7 +24,8 @@ namespace JavaScriptApp
             return new Dictionary<string, object>();
         }
 
-        public override Dictionary<string, FileOutput> ExportStandaloneVm(
+        public override void ExportStandaloneVm(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
@@ -34,7 +35,8 @@ namespace JavaScriptApp
             throw new NotImplementedException();
         }
 
-        public override Dictionary<string, FileOutput> ExportProject(
+        public override void ExportProject(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
@@ -43,10 +45,11 @@ namespace JavaScriptApp
             Options options,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
-            return this.ExportProjectImpl(globals, structDefinitions, functionDefinitions, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform, this.Translator);
+            this.ExportProjectImpl(output, globals, structDefinitions, functionDefinitions, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform, this.Translator);
         }
 
-        public Dictionary<string, FileOutput> ExportProjectImpl(
+        public void ExportProjectImpl(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
@@ -56,8 +59,6 @@ namespace JavaScriptApp
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform,
             AbstractTranslator translatorOverride)
         {
-            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
-
             List<string> jsExtraHead = new List<string>() { options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) };
             bool fullPage = options.GetBool(ExportOptionKey.JS_FULL_PAGE);
 
@@ -200,8 +201,6 @@ namespace JavaScriptApp
             }
 
             // TODO: minify JavaScript across all of output dictionary
-
-            return output;
         }
 
         public override string GenerateCodeForStruct(StructDefinition structDef)

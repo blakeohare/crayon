@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Common;
+using Pastel.Nodes;
+using Platform;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Common;
-using Pastel.Nodes;
-using Platform;
 
 namespace LangJava
 {
@@ -14,7 +14,8 @@ namespace LangJava
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
 
-        public override Dictionary<string, FileOutput> ExportStandaloneVm(
+        public override void ExportStandaloneVm(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
@@ -24,7 +25,7 @@ namespace LangJava
             throw new NotImplementedException();
         }
 
-        public override Dictionary<string, FileOutput> ExportProject(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> libraries, ResourceDatabase resourceDatabase, Options options, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        public override void ExportProject(Dictionary<string, FileOutput> output, IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> libraries, ResourceDatabase resourceDatabase, Options options, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             throw new NotImplementedException();
         }

@@ -51,6 +51,7 @@ namespace Crayon
         private static void ExecuteProgramUnchecked()
         {
             CrayonPipelineInterpreter pipeline = new CrayonPipelineInterpreter()
+                // TODO: auto register pipelines by putting them all in Pipelines/ directories.
                 .RegisterPipeline(
                     "Crayon::Main", typeof(Program).Assembly, "Pipeline.txt")
                 .RegisterPipeline(
@@ -60,6 +61,7 @@ namespace Crayon
 
                 // Crayon
                 .RegisterWorker(new GetBuildContextWorker())
+                .RegisterWorker(new GetBuildContextCbxWorker())
                 .RegisterWorker(new RunCbxWorker())
                 .RegisterWorker(new TopLevelCheckWorker())
                 .RegisterWorker(new UsageDisplayWorker())

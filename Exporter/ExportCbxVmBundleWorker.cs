@@ -39,7 +39,9 @@ namespace Exporter
             FileOutputExporter exporter = new FileOutputExporter(outputDirectory);
 
             VmGenerator vmGenerator = new VmGenerator();
-            Dictionary<string, FileOutput> result = vmGenerator.GenerateVmSourceCodeForPlatform(
+            Dictionary<string, FileOutput> result = new Dictionary<string, FileOutput>();
+            vmGenerator.GenerateVmSourceCodeForPlatform(
+                result,
                 platform,
                 compilationResult,
                 resourceDatabase,

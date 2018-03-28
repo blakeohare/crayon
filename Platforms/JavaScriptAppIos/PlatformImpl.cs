@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Common;
+﻿using Common;
 using Pastel.Nodes;
 using Platform;
+using System;
+using System.Collections.Generic;
 
 namespace JavaScriptAppIos
 {
@@ -14,7 +12,8 @@ namespace JavaScriptAppIos
         public override string Name { get { return "javascript-app-ios"; } }
         public override string NL { get { return "\n"; } }
 
-        public override Dictionary<string, FileOutput> ExportProject(
+        public override void ExportProject(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
@@ -41,7 +40,9 @@ namespace JavaScriptAppIos
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
             Dictionary<string, FileOutput> files = new Dictionary<string, FileOutput>();
-            Dictionary<string, FileOutput> basicProject = this.ParentPlatform.ExportProject(
+            Dictionary<string, FileOutput> basicProject = new Dictionary<string, FileOutput>();
+            this.ParentPlatform.ExportProject(
+                basicProject,
                 globals,
                 structDefinitions,
                 functionDefinitions,
@@ -142,16 +143,14 @@ namespace JavaScriptAppIos
                 };
             }
 
-            Dictionary<string, FileOutput> filesFixed = new Dictionary<string, FileOutput>();
             foreach (string filename in files.Keys)
             {
-                filesFixed[this.ApplyReplacements(filename, replacements)] = files[filename];
+                output[this.ApplyReplacements(filename, replacements)] = files[filename];
             }
-
-            return filesFixed;
         }
 
-        public override Dictionary<string, FileOutput> ExportStandaloneVm(
+        public override void ExportStandaloneVm(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,

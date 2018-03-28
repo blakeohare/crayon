@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Common;
+﻿using Common;
 using Pastel.Nodes;
 using Platform;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace LangPython
 {
@@ -32,7 +32,8 @@ namespace LangPython
             throw new InvalidOperationException("Python does not support types.");
         }
 
-        public override Dictionary<string, FileOutput> ExportStandaloneVm(
+        public override void ExportStandaloneVm(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
@@ -42,7 +43,8 @@ namespace LangPython
             throw new NotImplementedException();
         }
 
-        public override Dictionary<string, FileOutput> ExportProject(
+        public override void ExportProject(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,

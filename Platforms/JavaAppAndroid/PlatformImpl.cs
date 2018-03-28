@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Common;
+using Pastel.Nodes;
+using Platform;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Common;
-using Pastel.Nodes;
-using Platform;
 
 namespace JavaAppAndroid
 {
@@ -19,7 +19,8 @@ namespace JavaAppAndroid
         public override string Name { get { return "java-app-android"; } }
         public override string NL { get { return "\n"; } }
 
-        public override Dictionary<string, FileOutput> ExportProject(
+        public override void ExportProject(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
@@ -28,7 +29,6 @@ namespace JavaAppAndroid
             Options options,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
-            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             this.OutputAndroidBoilerplate(output, replacements, options);
 
@@ -107,8 +107,6 @@ namespace JavaAppAndroid
                 FileOutput file = resourceDatabase.ImageSheetFiles[imageResourceFile];
                 output["app/src/main/assets/images/" + imageResourceFile] = file;
             }
-
-            return output;
         }
 
         private FileOutput LoadTextFile(string path, Dictionary<string, string> replacements)
@@ -199,7 +197,7 @@ namespace JavaAppAndroid
             output["app/src/main/ic_launcher-web.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = iconImagesBySize[512] };
         }
 
-        public override Dictionary<string, FileOutput> ExportStandaloneVm(IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output, IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             throw new NotImplementedException();
         }

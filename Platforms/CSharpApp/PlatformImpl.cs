@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Common;
+﻿using Common;
 using Platform;
 using Pastel.Nodes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace CSharpApp
@@ -81,7 +81,8 @@ namespace CSharpApp
 
         private Dictionary<string, string> HACK_libraryProjectGuidToPath = new Dictionary<string, string>();
 
-        public override Dictionary<string, FileOutput> ExportStandaloneVm(
+        public override void ExportStandaloneVm(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
@@ -93,7 +94,6 @@ namespace CSharpApp
             string runtimeProjectGuid = IdGenerator.GenerateCSharpGuid("runtime", "runtime-project");
             string runtimeAssemblyGuid = IdGenerator.GenerateCSharpGuid("runtime", "runtime-assembly");
 
-            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             Dictionary<string, string> replacements = new Dictionary<string, string>()
             {
                 { "PROJECT_ID", "CrayonRuntime" },
@@ -160,8 +160,6 @@ namespace CSharpApp
 
             TODO.MoveCbxParserIntoTranslatedPastelCode();
             this.CopyResourceAsText(output, baseDir + "CbxDecoder.cs", "ResourcesVm/CbxDecoder.txt", replacements);
-
-            return output;
         }
 
         // Returns true if any export is necessary i.e. bytecode-only libraries will return false.
@@ -227,7 +225,8 @@ namespace CSharpApp
             return false;
         }
 
-        public override Dictionary<string, FileOutput> ExportProject(
+        public override void ExportProject(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
@@ -237,7 +236,6 @@ namespace CSharpApp
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
-            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
             string projectId = options.GetString(ExportOptionKey.PROJECT_ID);
             string baseDir = projectId + "/";
 
@@ -322,8 +320,6 @@ namespace CSharpApp
             }
 
             this.ExportProjectFiles(baseDir, output, replacements, new Dictionary<string, string>(), false);
-
-            return output;
         }
 
         private void CopyTemplatedFiles(string baseDir, Dictionary<string, FileOutput> output, Dictionary<string, string> replacements, bool isStandaloneVm)

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Pastel.Nodes;
-
-namespace CApp
+﻿namespace CApp
 {
     public class CAppTranslator : LangC.CTranslator
     {

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Common;
+using Pastel.Nodes;
+using Platform;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Common;
-using Pastel.Nodes;
-using Platform;
 
 namespace JavaApp
 {
@@ -19,7 +19,8 @@ namespace JavaApp
             this.Translator = new JavaAppTranslator(this);
         }
 
-        public override Dictionary<string, FileOutput> ExportStandaloneVm(
+        public override void ExportStandaloneVm(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
@@ -29,7 +30,8 @@ namespace JavaApp
             throw new NotImplementedException();
         }
 
-        public override Dictionary<string, FileOutput> ExportProject(
+        public override void ExportProject(
+            Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions,
@@ -39,7 +41,6 @@ namespace JavaApp
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
-            Dictionary<string, FileOutput> output = new Dictionary<string, FileOutput>();
 
             string srcPath = "src";
             string srcPackagePath = srcPath + "/" + replacements["JAVA_PACKAGE"].Replace('.', '/') + "/";
@@ -150,8 +151,6 @@ namespace JavaApp
             {
                 file.TrimBomIfPresent = true;
             }
-
-            return output;
         }
 
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
