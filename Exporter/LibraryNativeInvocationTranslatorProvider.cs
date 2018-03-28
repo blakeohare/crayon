@@ -3,7 +3,7 @@ using Platform;
 using System;
 using System.Collections.Generic;
 
-namespace Crayon
+namespace Exporter
 {
     class LibraryNativeInvocationTranslatorProvider : ILibraryNativeInvocationTranslatorProvider
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Crayon
+namespace Exporter
 {
     internal static class PrimitiveMethodsUtil
     {

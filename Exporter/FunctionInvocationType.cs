@@ -1,4 +1,4 @@
-﻿namespace Crayon
+﻿namespace Exporter
 {
     // duplicated in Constants.cry
     internal enum FunctionInvocationType

@@ -3,7 +3,7 @@ using Parser;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Crayon
+namespace Exporter
 {
     // Library is only instantiable in the context of a specific platform, which is not ideal, but not causing any problems at the moment.
     public class LibraryExporter

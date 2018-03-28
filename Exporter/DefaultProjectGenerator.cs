@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Crayon
+namespace Exporter
 {
     public class DefaultProjectGenerator
     {

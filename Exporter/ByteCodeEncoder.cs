@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace Crayon
+namespace Exporter
 {
     public static class ByteCodeEncoder
     {

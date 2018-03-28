@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Crayon
+namespace Exporter
 {
     internal class ByteCodeCompiler
     {
@@ -28,7 +28,7 @@ namespace Crayon
 
             ByteBuffer buildLibraryDeclarations = this.BuildLibraryDeclarations(parser);
 
-            ByteBuffer header = new Crayon.ByteBuffer();
+            ByteBuffer header = new ByteBuffer();
             header.Concat(literalsTable);
             header.Concat(tokenData);
             header.Concat(fileContent);
@@ -461,7 +461,7 @@ namespace Crayon
             buffer.SetLastValueStackDepthOffset(3);
 
             ByteBuffer body = new ByteBuffer();
-            ByteBuffer body2 = new Crayon.ByteBuffer();
+            ByteBuffer body2 = new ByteBuffer();
 
             this.Compile(parser, body2, forEachLoop.Code);
 

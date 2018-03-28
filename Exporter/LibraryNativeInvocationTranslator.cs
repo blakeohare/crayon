@@ -3,7 +3,7 @@ using Pastel.Nodes;
 using Platform;
 using System.Text;
 
-namespace Crayon
+namespace Exporter
 {
     class LibraryNativeInvocationTranslator : ILibraryNativeInvocationTranslator
     {

@@ -1,4 +1,4 @@
-﻿namespace Crayon
+﻿namespace Exporter
 {
     internal enum PrimitiveMethods
     {
