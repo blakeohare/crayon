@@ -6,8 +6,6 @@ namespace Crayon
 {
     class RunCbxFlagBuilderWorker : AbstractCrayonWorker
     {
-        public override string Name { get { return "Crayon::RunCbxFlagBuilder"; } }
-
         public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
         {
             ExportCommand command = (ExportCommand)args[0].Value;

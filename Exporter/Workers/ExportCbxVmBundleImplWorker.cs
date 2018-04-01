@@ -7,10 +7,8 @@ using System.Linq;
 
 namespace Exporter
 {
-    public class ExportCbxVmBundleWorker : AbstractCrayonWorker
+    public class ExportCbxVmBundleImplWorker : AbstractCrayonWorker
     {
-        public override string Name { get { return "Exporter::ExportCbxVmBundleImpl"; } }
-
         public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
         {
             ExportCommand command = (ExportCommand)args[0].Value;

@@ -5,10 +5,8 @@ using System.Collections.Generic;
 
 namespace Exporter
 {
-    public class ExportStandaloneVmWorker : AbstractCrayonWorker
+    public class ExportStandaloneVmImplWorker : AbstractCrayonWorker
     {
-        public override string Name { get { return "Exporter::ExportStandaloneVmImpl"; } }
-
         public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
         {
             ExportCommand command = (ExportCommand)args[0].Value;

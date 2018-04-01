@@ -2,7 +2,19 @@
 {
     public abstract class AbstractCrayonWorker
     {
-        public abstract string Name { get; }
+        public string Name { get; private set; }
+
+        public AbstractCrayonWorker()
+        {
+            string fullName = this.GetType().FullName;
+            string[] parts = fullName.Split('.');
+            string workerName = parts[0] + "::" + parts[parts.Length - 1];
+            if (workerName.EndsWith("Worker"))
+            {
+                workerName = workerName.Substring(0, workerName.Length - "Worker".Length);
+            }
+            this.Name = workerName;
+        }
 
         public CrayonWorkerResult DoWork(CrayonWorkerResult[] args)
         {

@@ -16,8 +16,6 @@ namespace Crayon
             SHOW_USAGE,
         }
 
-        public override string Name { get { return "Crayon::TopLevelCheck"; } }
-
         public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
         {
             string[] commandLineArgs = Program.GetCommandLineArgs();

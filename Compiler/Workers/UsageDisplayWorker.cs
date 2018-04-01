@@ -27,8 +27,6 @@ namespace Crayon
             "  -genDefaultProjJP  Generates a default project with JP locale.",
             "");
 
-        public override string Name { get { return "Crayon::DisplayUsage"; } }
-
         public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
         {
             Console.WriteLine(USAGE);

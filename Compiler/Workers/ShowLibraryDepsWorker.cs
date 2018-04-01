@@ -6,10 +6,8 @@ using System.Linq;
 
 namespace Crayon
 {
-    class ShowLibraryDepsWorker : AbstractCrayonWorker
+    internal class ShowLibraryDepsWorker : AbstractCrayonWorker
     {
-        public override string Name { get { return "Crayon::ShowLibraryDeps"; } }
-
         public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
         {
             CompilationBundle compilationResult = (CompilationBundle)args[0].Value;

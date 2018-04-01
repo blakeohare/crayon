@@ -6,8 +6,6 @@ namespace Crayon
 {
     public class RunCbxWorker : AbstractCrayonWorker
     {
-        public override string Name { get { return "Crayon::RunCbx"; } }
-
         private string CrayonRuntimePath
         {
             get
