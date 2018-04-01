@@ -9,7 +9,7 @@ resDb = Exporter::GetResourceDatabaseFromBuild(buildContext)
 byteCode = Exporter::EncodeByteCode(compilationResult)
 cbxFileBytes = Exporter::GenerateCbxFileContent(buildContext, resDb, compilationResult, byteCode)
 fileOutputContext = Exporter::CreateFileOutputContext()
-Exporter::PopulateFileOutputContext(fileOutputContext, buildContext, resDb, cbxFileBytes)
+Exporter::PopulateFileOutputContextForCbx(fileOutputContext, buildContext, resDb, cbxFileBytes)
 Exporter::EmitFilesToDisk(fileOutputContext, outputDirectory)
 
 absoluteCbxFilePath = Exporter::GetCbxFileLocation(outputDirectory, buildContext)

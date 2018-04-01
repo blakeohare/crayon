@@ -2,4 +2,11 @@
 
 command = $1
 
-Exporter::ExportStandaloneVmImpl(command)
+vmTargetDir = Exporter::GetTargetVmExportDirectory(command)
+platform = Exporter::GetPlatformFromVmCommand(command)
+libraryMetadataList = Exporter::GetAllLibrariesForPlatformUniverse()
+fileOutputContext = Exporter::CreateFileOutputContext()
+Exporter::ExportStandaloneVmSourceCodeForPlatform(fileOutputContext, platform, libraryMetadataList, vmTargetDir, command)
+Exporter::EmitFilesToDisk(fileOutputContext, vmTargetDir)
+
+# Files emitted. Nothing to return.

@@ -3,45 +3,77 @@ using Parser;
 using System;
 using System.Collections.Generic;
 
+// TODO: split this file into separate files.
+
 namespace Exporter.Workers
 {
-    public class ExportStandaloneVmImplWorker : AbstractCrayonWorker
+    // vmTargetDir = Exporter::GetTargetVmExportDirectory(command)
+    public class GetTargetVmExportDirectoryWorker : AbstractCrayonWorker
     {
         public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
         {
             ExportCommand command = (ExportCommand)args[0].Value;
-            this.ExportStandaloneVm(command);
-            return new CrayonWorkerResult();
-        }
-
-        private void ExportStandaloneVm(ExportCommand command)
-        {
-            string vmPlatform = command.VmPlatform;
             string vmTargetDirectory = command.VmExportDirectory;
-            if (vmPlatform == null || vmTargetDirectory == null)
+            if (command.VmPlatform == null || vmTargetDirectory == null)
             {
+                // TODO: this should maybe go earlier during the command line parsing.
                 throw new InvalidOperationException("-vm and -vmdir flags must both have correct values.");
             }
-            Platform.AbstractPlatform standaloneVmPlatform = command.PlatformProvider.GetPlatform(vmPlatform);
-
             vmTargetDirectory = FileUtil.FinalizeTilde(vmTargetDirectory);
+            return new CrayonWorkerResult() { Value = vmTargetDirectory };
+        }
+    }
 
-            VmGenerator vmGenerator = new VmGenerator();
+    // platform = Exporter::GetPlatformFromVmCommand(command)
+    public class GetPlatformFromVmCommandWorker : AbstractCrayonWorker
+    {
+        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
+        {
+            ExportCommand command = (ExportCommand)args[0].Value;
+            Platform.AbstractPlatform standaloneVmPlatform = command.PlatformProvider.GetPlatform(command.VmPlatform);
+            return new CrayonWorkerResult() { Value = standaloneVmPlatform };
+        }
+    }
 
+    // libraryMetadataList = Exporter::GetAllLibrariesForPlatformUniverse()
+    public class GetAllLibrariesForPlatformUniverseWorker : AbstractCrayonWorker
+    {
+        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
+        {
             LibraryMetadata[] allLibraries = new LibraryFinder().LibraryFlatList;
-            Dictionary<string, FileOutput> fileOutputDescriptor = new Dictionary<string, FileOutput>();
+            return new CrayonWorkerResult() { Value = allLibraries };
+        }
+    }
 
-            vmGenerator.GenerateVmSourceCodeForPlatform(
-                fileOutputDescriptor,
-                standaloneVmPlatform,
+    /*
+        Exporter::ExportStandaloneVmSourceCodeForPlatform(
+            fileOutput,
+            platform,
+            libraryMetadataList,
+            vmTargetDir,
+            command)
+    */
+    public class ExportStandaloneVmSourceCodeForPlatformWorker : AbstractCrayonWorker
+    {
+        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
+        {
+            Dictionary<string, FileOutput> fileOutput = (Dictionary<string, FileOutput>)args[0].Value;
+            Platform.AbstractPlatform platform = (Platform.AbstractPlatform)args[1].Value;
+            LibraryMetadata[] allLibraries = (LibraryMetadata[])args[2].Value;
+            string vmTargetDir = (string)args[3].Value;
+            ExportCommand command = (ExportCommand)args[4].Value;
+
+            new VmGenerator().GenerateVmSourceCodeForPlatform(
+                fileOutput,
+                platform,
                 null,
                 null,
                 allLibraries,
-                vmTargetDirectory,
+                vmTargetDir,
                 command.InlineImportCodeLoader,
                 VmGenerationMode.EXPORT_VM_AND_LIBRARIES);
-            FileOutputExporter exporter = new FileOutputExporter(vmTargetDirectory);
-            exporter.ExportFiles(fileOutputDescriptor);
+
+            return new CrayonWorkerResult();
         }
     }
 }

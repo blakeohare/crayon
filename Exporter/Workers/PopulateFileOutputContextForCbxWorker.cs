@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Exporter.Workers
 {
-    public class PopulateFileOutputContextWorker : AbstractCrayonWorker
+    public class PopulateFileOutputContextForCbxWorker : AbstractCrayonWorker
     {
         public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
         {
