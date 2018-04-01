@@ -5,6 +5,11 @@ namespace Common
 {
     public static class Util
     {
+        public static string[] StringSplit(string value, string separator)
+        {
+            return value.Split(new string[] { separator }, System.StringSplitOptions.None);
+        }
+
         public static bool StringToBool(string value)
         {
             if (value == null) return false;

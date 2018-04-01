@@ -31,7 +31,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pipeline.txt" />
+    <EmbeddedResource Include="Pipeline\*.txt" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />

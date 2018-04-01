@@ -1,5 +1,4 @@
 ﻿using Common;
-using Exporter;
 
 namespace Crayon
 {
@@ -50,28 +49,12 @@ namespace Crayon
 
         private static void ExecuteProgramUnchecked()
         {
-            CrayonPipelineInterpreter pipeline = new CrayonPipelineInterpreter()
-                // TODO: auto register pipelines by putting them all in Pipelines/ directories.
-                .RegisterPipeline(
-                    "Crayon::Main", typeof(Program).Assembly, "Pipeline.txt")
-                .RegisterPipeline(
-                    "Exporter::ExportCbxVmBundle", typeof(ExportCommand).Assembly, "Pipeline/ExportCbxVmBundle.txt")
-
-                // TODO: register workers via reflection
-
-                // Crayon
-                .RegisterWorker(new GetBuildContextWorker())
-                .RegisterWorker(new GetBuildContextCbxWorker())
-                .RegisterWorker(new RunCbxWorker())
-                .RegisterWorker(new TopLevelCheckWorker())
-                .RegisterWorker(new UsageDisplayWorker())
-
-                // Exporter
-                .RegisterWorker(new ExportCbxVmBundleWorker())
-                .RegisterWorker(new ExportStandaloneCbxWorker())
-                .RegisterWorker(new ExportStandaloneVmWorker());
-
-            pipeline.Interpret("Crayon::Main");
+            new PipelineBuilder()
+                .AddAssembly(typeof(Program).Assembly)
+                .AddAssembly(typeof(Exporter.ExportCommand).Assembly)
+                .AddAssembly(typeof(Parser.ParserContext).Assembly)
+                .GetPipeline()
+                .Interpret("Crayon::Main");
         }
 
         private static string[] GetEffectiveArgs(string[] actualArgs)
