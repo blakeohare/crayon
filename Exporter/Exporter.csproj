@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="*.cs" />
+    <Compile Include="Workers\*.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DefaultProject\*.txt" />
