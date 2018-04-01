@@ -26,9 +26,10 @@ if command.IsExportStandaloneCbx
 endif
 
 if command.IsRunCbx
+	buildContext = Crayon::GetBuildContextCbx(command)
 	cbxFileLocation = Exporter::ExportStandaloneCbx(command, buildContext)
 
-	cmdLineFlags = Crayon::RunCbxFlagBuilder(command, buildContext)
+	cmdLineFlags = Crayon::RunCbxFlagBuilder(command, cbxFileLocation)
 
 	if command.ShowPerformance
 		Crayon::ShowPerformanceMetrics()

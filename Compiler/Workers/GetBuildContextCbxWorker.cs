@@ -5,6 +5,7 @@ using System;
 
 namespace Crayon
 {
+    // buildContext = Crayon::GetBuildContextCbx(command)
     public class GetBuildContextCbxWorker : AbstractCrayonWorker
     {
         public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)

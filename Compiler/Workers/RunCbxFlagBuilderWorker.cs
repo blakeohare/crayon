@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace Crayon
 {
+    // cmdLineFlags = Crayon::RunCbxFlagBuilder(command, buildContext)
     class RunCbxFlagBuilderWorker : AbstractCrayonWorker
     {
         public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)

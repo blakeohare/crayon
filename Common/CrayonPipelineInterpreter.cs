@@ -106,7 +106,7 @@ namespace Common
                                 .Split(',')
                                 .Select(a => a.Trim())
                                 .Where(s => s.Length > 0)
-                                .Select(vName => variables[vName])
+                                .Select(vName => variables.ContainsKey(vName) ? variables[vName] : ThrowWithMessage<CrayonWorkerResult>("Variable not defined in pipeline interpreter: '" + vName + "'"))
                                 .ToArray();
                             if (registeredPipelines.ContainsKey(workerName))
                             {
@@ -129,6 +129,13 @@ namespace Common
                 }
             }
             return new CrayonWorkerResult();
+        }
+
+        public T ThrowWithMessage<T>(string message)
+        {
+            System.Console.WriteLine("Error encountered!!!");
+            System.Console.Write(message);
+            throw new System.Exception(message);
         }
     }
 }

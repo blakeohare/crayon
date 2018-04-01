@@ -4,14 +4,14 @@ command = $1
 buildContext = $2
 
 outputDirectory = Exporter::GetOutputDirectory(buildContext)
-compilationResult = Compile(buildContext)
-resDb = GetResourceDatabaseFromBuild(buildContext)
-byteCode = EncodeByteCode(compilationResult)
-cbxFileBytes = GenerateCbxFileContent(buildContext, resDb, compilationResult, byteCode)
-fileOutputContext = CreateFileOutputContext()
-PopulateFileOutputContext(fileOutputContext, buildContext, resDb, cbxFileBytes)
-EmitFilesToDisk(fileOutputContext, outputDirectory)
+compilationResult = Exporter::Compiler(buildContext)
+resDb = Exporter::GetResourceDatabaseFromBuild(buildContext)
+byteCode = Exporter::EncodeByteCode(compilationResult)
+cbxFileBytes = Exporter::GenerateCbxFileContent(buildContext, resDb, compilationResult, byteCode)
+fileOutputContext = Exporter::CreateFileOutputContext()
+Exporter::PopulateFileOutputContext(fileOutputContext, buildContext, resDb, cbxFileBytes)
+Exporter::EmitFilesToDisk(fileOutputContext, outputDirectory)
 
-absoluteCbxFilePath = GetCbxFileLocation(outputDirectory, buildContext)
+absoluteCbxFilePath = Exporter::GetCbxFileLocation(outputDirectory, buildContext)
 
 return absoluteCbxFilePath
