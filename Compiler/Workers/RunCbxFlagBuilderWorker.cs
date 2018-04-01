@@ -9,9 +9,9 @@ namespace Crayon
         public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
         {
             ExportCommand command = (ExportCommand)args[0].Value;
-            CbxExporter exporter = (CbxExporter)args[1].Value;
+            string finalCbxPath = (string)args[1].Value;
 
-            string cbxFile = FileUtil.GetPlatformPath(exporter.FinalCbxPath);
+            string cbxFile = FileUtil.GetPlatformPath(finalCbxPath);
             int processId = System.Diagnostics.Process.GetCurrentProcess().Id;
             string runtimeArgs = string.Join(",", command.DirectRunArgs.Select(s => Utf8Base64.ToBase64(s)));
             string flags = cbxFile + " vmpid:" + processId;

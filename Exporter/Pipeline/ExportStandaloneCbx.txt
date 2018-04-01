@@ -1,5 +1,17 @@
-﻿# ExportStandaloneCbx(buildContext)
+﻿# ExportStandaloneCbx(command, buildContext)
 
-buildContext = $1
+command = $1
+buildContext = $2
 
-Exporter::ExportStandaloneCbxImpl(command, buildContext)
+outputDirectory = Exporter::GetOutputDirectory(buildContext)
+compilationResult = Compile(buildContext)
+resDb = GetResourceDatabaseFromBuild(buildContext)
+byteCode = EncodeByteCode(compilationResult)
+cbxFileBytes = GenerateCbxFileContent(buildContext, resDb, compilationResult, byteCode)
+fileOutputContext = CreateFileOutputContext()
+PopulateFileOutputContext(fileOutputContext, buildContext, resDb, cbxFileBytes)
+EmitFilesToDisk(fileOutputContext, outputDirectory)
+
+absoluteCbxFilePath = GetCbxFileLocation(outputDirectory, buildContext)
+
+return absoluteCbxFilePath

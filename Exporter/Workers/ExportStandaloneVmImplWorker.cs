@@ -3,7 +3,7 @@ using Parser;
 using System;
 using System.Collections.Generic;
 
-namespace Exporter
+namespace Exporter.Workers
 {
     public class ExportStandaloneVmImplWorker : AbstractCrayonWorker
     {

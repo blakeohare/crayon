@@ -15,7 +15,7 @@ namespace Crayon
                 {
                     AbstractPlatform platform = this.GetPlatformInstance(assembly);
                     platform.PlatformProvider = this;
-                    string key = platform.Name;
+                    string key = platform.Name.ToLowerInvariant();
                     if (platforms.ContainsKey(key))
                     {
                         throw new System.InvalidOperationException("Multiple platforms with the same ID: '" + key + "'");
@@ -24,9 +24,13 @@ namespace Crayon
                 }
             }
 
-            if (name != null && platforms.ContainsKey(name))
+            if (name != null)
             {
-                return platforms[name];
+                name = name.ToLowerInvariant();
+                if (platforms.ContainsKey(name))
+                {
+                    return platforms[name];
+                }
             }
 
             return null;

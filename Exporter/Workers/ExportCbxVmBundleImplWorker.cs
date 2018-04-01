@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Exporter
+namespace Exporter.Workers
 {
     public class ExportCbxVmBundleImplWorker : AbstractCrayonWorker
     {
@@ -19,10 +19,12 @@ namespace Exporter
 
         private CompilationBundle ExportVmBundle(ExportCommand command, BuildContext buildContext)
         {
+            // TODO: Worker: platform = GetPlatform(buildContext, command)
             string platformId = buildContext.Platform.ToLowerInvariant();
             Platform.AbstractPlatform platform = command.PlatformProvider.GetPlatform(platformId);
             if (platform == null) throw new InvalidOperationException("Unrecognized platform. See usage.");
 
+            // TODO: Worker: Compile
             CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
             LibraryMetadata[] libraries = compilationResult.LibraryScopesUsed.Select(scope => scope.Library).ToArray();
 
