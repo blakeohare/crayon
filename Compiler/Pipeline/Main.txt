@@ -10,7 +10,10 @@ endif
 
 if command.IsExportCbxVmBundle
 	buildContext = Crayon::GetBuildContext(command)
-	Exporter::ExportCbxVmBundle(command, buildContext)
+	result = Exporter::ExportCbxVmBundle(command, buildContext)
+	if command.ShowLibraryDeps
+		Crayon::ShowLibraryDeps(result)
+	endif
 endif
 
 if command.IsExportStandaloneVm

@@ -46,6 +46,7 @@ namespace Crayon
             }
 
             result.SetField("ShowPerformance", command.ShowPerformanceMarkers);
+            result.SetField("ShowLibraryDeps", command.ShowLibraryDepTree);
 
             return result;
         }

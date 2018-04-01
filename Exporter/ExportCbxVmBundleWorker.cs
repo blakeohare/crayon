@@ -15,11 +15,11 @@ namespace Exporter
         {
             ExportCommand command = (ExportCommand)args[0].Value;
             BuildContext buildContext = (BuildContext)args[1].Value;
-            this.ExportVmBundle(command, buildContext);
-            return new CrayonWorkerResult();
+            CompilationBundle compilationResult = this.ExportVmBundle(command, buildContext);
+            return new CrayonWorkerResult() { Value = compilationResult };
         }
 
-        private void ExportVmBundle(ExportCommand command, BuildContext buildContext)
+        private CompilationBundle ExportVmBundle(ExportCommand command, BuildContext buildContext)
         {
             string platformId = buildContext.Platform.ToLowerInvariant();
             Platform.AbstractPlatform platform = command.PlatformProvider.GetPlatform(platformId);
@@ -52,13 +52,8 @@ namespace Exporter
 
             exporter.ExportFiles(result);
 
-            if (command.ShowLibraryDepTree)
-            {
-                string libs = LibraryDependencyResolver.GetDependencyTreeLog(compilationResult.LibraryScopesUsed.Select(scope => scope.Library).ToArray());
-                Console.WriteLine("<LibraryDependencies>");
-                Console.WriteLine(libs.Trim());
-                Console.WriteLine("</LibraryDependencies>");
-            }
+            // TODO: this needs to be the result of an earlier step after this is split into workers.
+            return compilationResult;
         }
     }
 }

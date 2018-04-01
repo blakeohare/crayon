@@ -11,6 +11,7 @@ namespace Exporter
         public string ProjectID { get; set; }
         public string GuidSeed { get; set; }
         public ICollection<LibraryCompilationScope> LibraryScopesUsed { get; set; }
+        public UserCodeCompilationScope UserCodeScope { get; set; }
         public string IconPath { get; set; }
         public string LaunchScreenPath { get; set; }
         public string DefaultTitle { get; set; }
@@ -41,6 +42,7 @@ namespace Exporter
                 return new CompilationBundle()
                 {
                     ByteCode = buffer,
+                    UserCodeScope = parserContext.UserCodeCompilationScope,
                     LibraryScopesUsed = parserContext.LibraryManager.ImportedLibraries.ToArray(),
                     ProjectID = buildContext.ProjectID,
                     Version = buildContext.Version,

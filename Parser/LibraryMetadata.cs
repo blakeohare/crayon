@@ -7,6 +7,11 @@ namespace Parser
 {
     public class LibraryMetadata
     {
+        public override string ToString()
+        {
+            return "LibraryMetadata: " + this.ID + " (" + this.Version + ")";
+        }
+
         public string Directory { get; private set; }
         public string ID { get; private set; }
         public string Version { get { return "v1"; } } // TODO: versions

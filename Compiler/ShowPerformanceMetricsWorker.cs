@@ -1,9 +1,9 @@
-﻿using System;
-using Common;
+﻿using Common;
+using System;
 
 namespace Crayon
 {
-    class ShowPerformanceMetricsWorker : AbstractCrayonWorker
+    internal class ShowPerformanceMetricsWorker : AbstractCrayonWorker
     {
         public override string Name { get { return "Crayon::ShowPerformanceMetrics"; } }
 
