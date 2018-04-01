@@ -240,7 +240,7 @@ namespace JavaAppAndroid
 
             // This is kind of a weird way to do this...
 
-            string[] parts = content.Split(new string[] { "###" }, StringSplitOptions.None);
+            string[] parts = Util.StringSplit(content, "###");
             Dictionary<string, int> flags = new Dictionary<string, int>();
             for (int i = 0; i < parts.Length; ++i)
             {

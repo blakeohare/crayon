@@ -109,7 +109,7 @@ namespace Platform
         {
             if (text.Contains("%%%"))
             {
-                string[] segments = text.Split(new string[] { "%%%" }, StringSplitOptions.None);
+                string[] segments = Util.StringSplit(text, "%%%");
                 for (int i = 1; i < segments.Length; i += 2)
                 {
                     string replacement;
