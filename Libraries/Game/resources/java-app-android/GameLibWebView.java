@@ -21,6 +21,8 @@ public class GameLibWebView extends WebView {
     public GameLibWebView(double fps, Context context) {
         super(context);
 
+        GameLibDualStackHelper.WEB_VIEW = this;
+
         this.getSettings().setJavaScriptEnabled(true);
 
         this.setWebViewClient(new GameLibWebViewClient());

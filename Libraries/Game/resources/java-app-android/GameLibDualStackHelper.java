@@ -1,5 +1,7 @@
 package org.crayonlang.libraries.game;
 
+import android.util.Log;
+
 import org.crayonlang.interpreter.AndroidTranslationHelper;
 import org.crayonlang.interpreter.structs.PlatformRelayObject;
 
@@ -9,7 +11,7 @@ public class GameLibDualStackHelper {
 
     // Change this to use the OpenGL graphics stack.
     // Once the GL Stack is fully implemented, then the web view can safely be removed.
-    public static boolean IS_OPEN_GL = true;
+    public static boolean IS_OPEN_GL = false;
 
     public static double getCurrentTime() {
         return System.currentTimeMillis() / 1000.0;
@@ -30,7 +32,7 @@ public class GameLibDualStackHelper {
         if (IS_OPEN_GL) {
             GL_VIEW.clockTick();
         } else {
-
+            Log.d("TODO", "TODO: CLOCK TICK");
         }
     }
 
@@ -63,7 +65,8 @@ public class GameLibDualStackHelper {
         if (IS_OPEN_GL) {
             return GL_VIEW.getEventsRawList();
         } else {
-            throw new RuntimeException("get events list implementation for web view");
+            Log.d("TODO", "TODO: GET EVENTS");
+            return new ArrayList<>();
         }
     }
 
@@ -71,7 +74,7 @@ public class GameLibDualStackHelper {
         if (IS_OPEN_GL) {
             GL_VIEW.initializeScreen(width, height, screenWidth, screenHeight, executionContextId);
         } else {
-            throw new RuntimeException();
+            Log.d("TODO", "TODO: INIT SCREEN");
         }
     }
 
