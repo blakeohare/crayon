@@ -3,7 +3,9 @@ package org.crayonlang.libraries.game;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.opengl.GLES20;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -16,13 +18,17 @@ import org.crayonlang.interpreter.structs.InterpreterResult;
 
 import java.util.ArrayList;
 
+import javax.microedition.khronos.opengles.GL10;
+
 public class GameLibWebView extends WebView {
 
+    private int executionContextId;
     private boolean readyToReceiveMessages = false;
 
-    public static void initializeGame(double fps) {
-        AndroidTranslationHelper.switchToView(new GameLibWebView(fps, AndroidTranslationHelper.getMainActivity()));
-    }
+    // Use positive values so that if events happen to sneak through before initialization is
+    // complete, they won't cause division by 0 errors.
+    private int logicalWidth = 100;
+    private int logicalHeight = 100;
 
     public GameLibWebView(double fps, Context context) {
         super(context);
@@ -44,12 +50,22 @@ public class GameLibWebView extends WebView {
         this.loadUrl("file:///android_asset/webview_index.html");
     }
 
-    private int executionContextId;
+    public static void initializeGame(double fps) {
+        AndroidTranslationHelper.switchToView(new GameLibWebView(fps, AndroidTranslationHelper.getMainActivity()));
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        return GameLibDualStackHelper.onTouchEvent(e, this.logicalWidth, this.logicalHeight, this.getWidth(), this.getHeight());
+    }
+
     public void setExecutionContextId(int executionContextId) {
         this.executionContextId = executionContextId;
     }
 
     public void initializeScreen(int gameWidth, int gameHeight) {
+        this.logicalWidth = gameWidth;
+        this.logicalHeight = gameHeight;
         this.sendMessage("screen-size", gameWidth + "," + gameHeight);
     }
 
@@ -153,11 +169,6 @@ public class GameLibWebView extends WebView {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             view.getContext().startActivity(intent);
             return true;
-        }
-
-        @Override
-        public void onPageFinished(WebView view, String url)
-        {
         }
     }
 }
