@@ -19,6 +19,12 @@ import static android.R.attr.bitmap;
 
 public class GameLibGlRenderer implements GLSurfaceView.Renderer {
 
+    private GameLibGlView glView;
+
+    public GameLibGlRenderer(GameLibGlView glView) {
+        this.glView = glView;
+    }
+
     private int executionContextId;
 
     public void setExecutionContextId(int executionContextId) {
@@ -36,12 +42,12 @@ public class GameLibGlRenderer implements GLSurfaceView.Renderer {
                 throw new RuntimeException(ir.errorMessage);
         }
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        GameLibView.INSTANCE.render();
+        this.glView.render();
     }
 
     public void onSurfaceChanged(GL10 unused, int width, int height) {
         GLES20.glViewport(0, 0, width, height);
-        GameLibView.INSTANCE.updateScreenSize(width, height);
+        this.glView.updateScreenSize(width, height);
     }
 
     private static FloatBuffer squareBuffer = null;
