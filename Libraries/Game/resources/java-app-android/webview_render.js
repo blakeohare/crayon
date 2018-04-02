@@ -7,10 +7,10 @@ for (var num = 0; num < 256; ++num) {
 	HEXR.push('#' + n);
 }
 
-function performRender(ev) {
+function performRender(ev, imageIds) {
 	var evLength = ev.length;
-    var images = [];
     var imagesIndex = 0;
+    var image = null;
     var mask = 0;
     var x = 0;
     var y = 0;
@@ -61,6 +61,72 @@ function performRender(ev) {
                     ctx.fillRect(x, y, w + .1, h + .1);
                 }
                 break;
+
+            case 6:
+                textureId = imageIds[imagesIndex++];
+                image = loadedImages[textureId];
+                if (image) {
+                    x = ev[i | 8];
+                    y = ev[i | 9];
+                    w = image.width;
+                    h = image.height;
+                    mask = ev[i | 1];
+                    if (mask == 0) {
+                        // basic case
+                        ctx.drawImage(image, 0, 0, w, h, x, y, w, h);
+                    } else if ((mask & 4) != 0) {
+                        // rotation is involved
+                        theta = ev[i | 10] / 1048576.0;
+                        if ((mask & 3) == 0) {
+                            ctx.save();
+                            ctx.translate(x, y);
+                            ctx.rotate(theta);
+
+                            if ((mask & 8) == 0) {
+                                ctx.drawImage(image, -w / 2, -h / 2);
+                            } else {
+                                ctx.globalAlpha = ev[i | 11] / 255;
+                                ctx.drawImage(image, -w / 2, -h / 2);
+                                ctx.globalAlpha = 1;
+                            }
+                            ctx.restore();
+                        } else {
+                            // TODO: slice and scale a picture and rotate it.
+                        }
+                    } else {
+                        // no rotation
+                        if ((mask & 1) == 0) {
+                            sx = 0;
+                            sy = 0;
+                            sw = w;
+                            sh = h;
+                        } else {
+                            sx = ev[i | 2];
+                            sy = ev[i | 3];
+                            sw = ev[i | 4];
+                            sh = ev[i | 5];
+                        }
+                        if ((mask & 2) == 0) {
+                            tw = sw;
+                            th = sh;
+                        } else {
+                            tw = ev[i | 6];
+                            th = ev[i | 7];
+                        }
+
+                        if ((mask & 8) == 0) {
+                            ctx.drawImage(image, sx, sy, sw, sh, x, y, tw, th);
+                        } else {
+                            ctx.globalAlpha = ev[i | 11] / 255;
+                            ctx.drawImage(image, sx, sy, sw, sh, x, y, tw, th);
+                            ctx.globalAlpha = 1;
+                        }
+                    }
+                } else {
+                    console.log("Image not loaded yet: " + textureId)
+                }
+                break;
+
             default:
             	console.log("TODO: " + ev[i] + " events");
             	break;
@@ -68,28 +134,61 @@ function performRender(ev) {
     }
 }
 
-function receiveMessage(type, msg) {
+function msgDecode(value) {
+    var nums = value.split(' ');
+    var output = [];
+    var length = nums.length;
+    for (var i = 0; i < length; ++i) {
+        output.push(String.fromCharCode(parseInt(nums[i])));
+    }
+    return output.join('');
+}
+
+var loadedImages = {};
+function receiveMessage(type, msg, encoded) {
+    var msgOriginal = msg;
+    if (encoded) {
+        type = msgDecode(type);
+        msg = msgDecode(msg);
+    }
+	var parts = msg.split(',');
 	switch (type) {
 		case 'clock-tick':
-			clockTick(msg);
+			clockTick(parts[0], parts[1]);
 			break;
 		case 'screen-size':
-			var parts = msg.split(',');
 			var canvas = document.getElementById('crayon_render_canvas');
 			canvas.width = parseInt(parts[0]);
 			canvas.height = parseInt(parts[1]);
 			canvas.style.width = '100%';
 			canvas.style.height = '100%';
 			break;
+		case 'load-image':
+		    var textureId = parseInt(parts[0]);
+		    var imageData = 'data:image/png;base64,' + parts[1];
+		    var imageLoader = new Image();
+		    imageLoader.onload = function() {
+		        var canvas = document.createElement('canvas');
+                var body = document.getElementsByTagName("body")[0];
+                body.appendChild(canvas);
+		        var ctx = canvas.getContext('2d');
+		        ctx.drawImage(imageLoader, 0, 0);
+                loadedImages[textureId] = canvas;
+		        console.log("Finished loading image #" + textureId);
+		    };
+		    imageLoader.src = imageData;
+		    console.log("Loading image #" + textureId);
+			break;
+
 		default:
 			console.log("Unknown message type received on JS end: " + type);
 			break;
 	}
 }
 
-function clockTick(nums) {
+function clockTick(nums, imageIds) {
 	var renderEvents = decodeInstructions(nums);
-	performRender(renderEvents);
+	performRender(renderEvents, decodeInstructions(imageIds));
 	window.setTimeout(triggerNextFrame, 33);
 }
 
