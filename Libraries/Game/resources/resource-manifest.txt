@@ -15,7 +15,8 @@ END
 
 BEGIN
 APPLICABLE-TO: java-app-android
-COPY_FILES: from=java-app-android, to=%LIBRARY_PATH%/%FILE%
+COPY_FILES: from=java-app-android/code, to=%LIBRARY_PATH%/%FILE%
+COPY_FILE: from=java-app-android/webview_index.html, to=app/src/main/assets/webview_index.html
 END
 
 BEGIN

@@ -32,7 +32,7 @@ public class GameLibDualStackHelper {
         if (IS_OPEN_GL) {
             GL_VIEW.clockTick();
         } else {
-            Log.d("TODO", "TODO: CLOCK TICK");
+            WEB_VIEW.clockTick();
         }
     }
 
@@ -74,7 +74,8 @@ public class GameLibDualStackHelper {
         if (IS_OPEN_GL) {
             GL_VIEW.initializeScreen(width, height, screenWidth, screenHeight, executionContextId);
         } else {
-            Log.d("TODO", "TODO: INIT SCREEN");
+            WEB_VIEW.setExecutionContextId(executionContextId);
+            WEB_VIEW.initializeScreen(width, height);
         }
     }
 
