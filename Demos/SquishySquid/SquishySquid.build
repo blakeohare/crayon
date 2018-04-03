@@ -21,7 +21,7 @@
 	
 	<!-- Targets -->
 	<target name="android">
-		<platform>java-app-android</platform>
+		<platform>experimental-java-app-android</platform>
 	</target>
 
 	<target name="ios">

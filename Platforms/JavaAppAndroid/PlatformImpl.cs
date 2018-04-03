@@ -16,7 +16,7 @@ namespace JavaAppAndroid
         }
 
         public override string InheritsFrom { get { return "lang-java"; } }
-        public override string Name { get { return "java-app-android"; } }
+        public override string Name { get { return "experimental-java-app-android"; } }
         public override string NL { get { return "\n"; } }
 
         public override void ExportProject(
