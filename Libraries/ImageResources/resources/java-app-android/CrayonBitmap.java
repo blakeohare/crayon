@@ -43,8 +43,8 @@ public final class CrayonBitmap {
         Canvas canvas = new Canvas(this.internalBitmap);
         canvas.drawBitmap(
             bitmap.internalBitmap,
-            new Rect(srcX, srcY, width, height),
-            new Rect(dstX, dstY, width, height),
+            new Rect(srcX, srcY, srcX + width, srcY + height),
+            new Rect(dstX, dstY, dstX + width, dstY + height),
             null);
     }
 

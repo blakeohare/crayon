@@ -1,3 +1,3 @@
 $_lib_graphics2d_flipTexture: Graphics2DLibHelper.flipImage([ARG:1], [ARG:2], [ARG:3])
-$_lib_graphics2d_render: org.crayonlang.libraries.game.GameLibView.INSTANCE.setRenderQueues([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+$_lib_graphics2d_render: org.crayonlang.libraries.game.GameLibDualStackHelper.setRenderQueues([ARG:1], [ARG:2], [ARG:3], [ARG:4])
 $_lib_graphics2d_scale: Graphics2DLibHelper.scaleImage([ARG:1], [ARG:2], [ARG:3])
