@@ -302,6 +302,7 @@ namespace LangJava
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
+            // This is repeated in the JavaScriptAppAndroid platform.
             Dictionary<string, string> replacements = new Dictionary<string, string>();
             replacements["PROJECT_ID"] = options.GetString(ExportOptionKey.PROJECT_ID);
             replacements["JAVA_PACKAGE"] = (options.GetStringOrNull(ExportOptionKey.JAVA_PACKAGE) ?? options.GetString(ExportOptionKey.PROJECT_ID)).ToLower();

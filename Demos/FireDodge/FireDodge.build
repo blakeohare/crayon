@@ -32,7 +32,8 @@
 	</target>
 	
 	<target name="android">
-		<platform>experimental-java-app-android</platform>
+		<orientation>landscapeleft,landscaperight</orientation>
+		<platform>javascript-app-android</platform>
 	</target>
 	
 	<target name="ios">
