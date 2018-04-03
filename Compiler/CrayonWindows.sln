@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parser", "Parser\Parser.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exporter", "Exporter\Exporter.csproj", "{F6484452-D2C1-4187-B3EA-ABF70D311978}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaScriptAppAndroid", "Platforms\JavaScriptAppAndroid\JavaScriptAppAndroid.csproj", "{E495CAC5-84B5-481B-A997-F370FE1B40A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -323,6 +325,18 @@ Global
 		{F6484452-D2C1-4187-B3EA-ABF70D311978}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F6484452-D2C1-4187-B3EA-ABF70D311978}.Release|x86.ActiveCfg = Release|Any CPU
 		{F6484452-D2C1-4187-B3EA-ABF70D311978}.Release|x86.Build.0 = Release|Any CPU
+		{E495CAC5-84B5-481B-A997-F370FE1B40A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E495CAC5-84B5-481B-A997-F370FE1B40A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E495CAC5-84B5-481B-A997-F370FE1B40A2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E495CAC5-84B5-481B-A997-F370FE1B40A2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E495CAC5-84B5-481B-A997-F370FE1B40A2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E495CAC5-84B5-481B-A997-F370FE1B40A2}.Debug|x86.Build.0 = Debug|Any CPU
+		{E495CAC5-84B5-481B-A997-F370FE1B40A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E495CAC5-84B5-481B-A997-F370FE1B40A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E495CAC5-84B5-481B-A997-F370FE1B40A2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E495CAC5-84B5-481B-A997-F370FE1B40A2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E495CAC5-84B5-481B-A997-F370FE1B40A2}.Release|x86.ActiveCfg = Release|Any CPU
+		{E495CAC5-84B5-481B-A997-F370FE1B40A2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -341,5 +355,6 @@ Global
 		{41DEBAC3-73C4-4F40-93AE-9FE02319276D} = {E0B05933-80B8-443B-BB91-E378C4F79C37}
 		{C1876949-86D6-405E-B717-AFC56C27E1C8} = {E0B05933-80B8-443B-BB91-E378C4F79C37}
 		{F83233E0-FD87-4DB6-9B6B-DB828240F3D3} = {E0B05933-80B8-443B-BB91-E378C4F79C37}
+		{E495CAC5-84B5-481B-A997-F370FE1B40A2} = {E0B05933-80B8-443B-BB91-E378C4F79C37}
 	EndGlobalSection
 EndGlobal
