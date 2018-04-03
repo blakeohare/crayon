@@ -3,51 +3,51 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crayon", "Crayon.csproj", "{6A25BB31-4280-470F-959E-25D6D5A173AD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crayon", "Crayon\Crayon.csproj", "{6A25BB31-4280-470F-959E-25D6D5A173AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpreter", "..\Interpreter\Interpreter.csproj", "{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpreter", "Interpreter\Interpreter.csproj", "{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platforms", "Platforms", "{E0B05933-80B8-443B-BB91-E378C4F79C37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangPython", "..\Platforms\LangPython\LangPython.csproj", "{11FF3292-43A0-4C40-93DE-4F0DD18C4E4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangPython", "Platforms\LangPython\LangPython.csproj", "{11FF3292-43A0-4C40-93DE-4F0DD18C4E4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PythonApp", "..\Platforms\PythonApp\PythonApp.csproj", "{4E41E38D-3FF9-4C91-9446-5F51024D8BD9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PythonApp", "Platforms\PythonApp\PythonApp.csproj", "{4E41E38D-3FF9-4C91-9446-5F51024D8BD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pastel", "..\Pastel\Pastel.csproj", "{6D073BA4-2E71-42AC-8F5A-5C3079D935CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pastel", "Pastel\Pastel.csproj", "{6D073BA4-2E71-42AC-8F5A-5C3079D935CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\Common\Common.csproj", "{18617A9A-3B1F-4532-BF4D-12BD62A3E5C6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{18617A9A-3B1F-4532-BF4D-12BD62A3E5C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangCSharp", "..\Platforms\LangCSharp\LangCSharp.csproj", "{BD2AF3E6-4A96-4511-86A5-E414A6CAB81E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangCSharp", "Platforms\LangCSharp\LangCSharp.csproj", "{BD2AF3E6-4A96-4511-86A5-E414A6CAB81E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpApp", "..\Platforms\CSharpApp\CSharpApp.csproj", "{4DCA9E82-A6C2-4669-84F3-00D13204AF7E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpApp", "Platforms\CSharpApp\CSharpApp.csproj", "{4DCA9E82-A6C2-4669-84F3-00D13204AF7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Platform", "..\Platform\Platform.csproj", "{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Platform", "Platform\Platform.csproj", "{E9AEED59-8C51-4E56-8B8A-7A527B64E85E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangJavaScript", "..\Platforms\LangJavaScript\LangJavaScript.csproj", "{56F7043F-A270-4900-B6D3-1701AF619A1B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangJavaScript", "Platforms\LangJavaScript\LangJavaScript.csproj", "{56F7043F-A270-4900-B6D3-1701AF619A1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaScriptApp", "..\Platforms\JavaScriptApp\JavaScriptApp.csproj", "{E2558B29-A032-40D0-90B0-1A9DE368EC16}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaScriptApp", "Platforms\JavaScriptApp\JavaScriptApp.csproj", "{E2558B29-A032-40D0-90B0-1A9DE368EC16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangJava", "..\Platforms\LangJava\LangJava.csproj", "{3F62B368-B14F-4C77-98AB-C94B19B07EAF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangJava", "Platforms\LangJava\LangJava.csproj", "{3F62B368-B14F-4C77-98AB-C94B19B07EAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaApp", "..\Platforms\JavaApp\JavaApp.csproj", "{0D8C38E5-6B24-489E-9C0F-D8101086BC32}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaApp", "Platforms\JavaApp\JavaApp.csproj", "{0D8C38E5-6B24-489E-9C0F-D8101086BC32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangC", "..\Platforms\LangC\LangC.csproj", "{85CC1B47-A0C5-48B0-BA51-B3599ACD1392}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangC", "Platforms\LangC\LangC.csproj", "{85CC1B47-A0C5-48B0-BA51-B3599ACD1392}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CApp", "..\Platforms\CApp\CApp.csproj", "{7F8C6292-5E35-4FD2-91C4-98123FD4E7E3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CApp", "Platforms\CApp\CApp.csproj", "{7F8C6292-5E35-4FD2-91C4-98123FD4E7E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaAppAndroid", "..\Platforms\JavaAppAndroid\JavaAppAndroid.csproj", "{41DEBAC3-73C4-4F40-93AE-9FE02319276D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaAppAndroid", "Platforms\JavaAppAndroid\JavaAppAndroid.csproj", "{41DEBAC3-73C4-4F40-93AE-9FE02319276D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaScriptAppIos", "..\Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj", "{C1876949-86D6-405E-B717-AFC56C27E1C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaScriptAppIos", "Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj", "{C1876949-86D6-405E-B717-AFC56C27E1C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaScriptAppChrome", "..\Platforms\JavaScriptAppChrome\JavaScriptAppChrome.csproj", "{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaScriptAppChrome", "Platforms\JavaScriptAppChrome\JavaScriptAppChrome.csproj", "{F83233E0-FD87-4DB6-9B6B-DB828240F3D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Build", "..\Build\Build.csproj", "{5BEE19D9-117D-4C0E-BF60-45DA72C9D355}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Build", "Build\Build.csproj", "{5BEE19D9-117D-4C0E-BF60-45DA72C9D355}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Localization", "..\Localization\Localization.csproj", "{D64B5413-739C-4BBD-B70B-264CFAE4B720}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Localization", "Localization\Localization.csproj", "{D64B5413-739C-4BBD-B70B-264CFAE4B720}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parser", "..\Parser\Parser.csproj", "{70941077-B058-4A91-AC11-38E22930F01F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parser", "Parser\Parser.csproj", "{70941077-B058-4A91-AC11-38E22930F01F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exporter", "..\Exporter\Exporter.csproj", "{F6484452-D2C1-4187-B3EA-ABF70D311978}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exporter", "Exporter\Exporter.csproj", "{F6484452-D2C1-4187-B3EA-ABF70D311978}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
