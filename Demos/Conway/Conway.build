@@ -53,7 +53,7 @@
 	
 	<target name="android">
 		<source>source</source>
-		<platform>experimental-java-app-android</platform>
+		<platform>javascript-app-android</platform>
 	</target>
 
 	<target name="ios">
