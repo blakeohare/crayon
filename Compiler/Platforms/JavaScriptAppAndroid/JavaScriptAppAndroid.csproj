@@ -4,15 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C1876949-86D6-405E-B717-AFC56C27E1C8}</ProjectGuid>
+    <ProjectGuid>{E495CAC5-84B5-481B-A997-F370FE1B40A2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JavaScriptAppIos</RootNamespace>
-    <AssemblyName>JavaScriptAppIos</AssemblyName>
+    <RootNamespace>JavaScriptAppAndroid</RootNamespace>
+    <AssemblyName>JavaScriptAppAndroid</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,7 +21,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,7 +29,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -39,7 +36,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="JavaScriptAppIosTranslator.cs" />
+    <Compile Include="JavaScriptAppAndroidTranslator.cs" />
     <Compile Include="PlatformImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -56,18 +53,17 @@
       <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
       <Name>Platform</Name>
     </ProjectReference>
+    <ProjectReference Include="..\JavaScriptApp\JavaScriptApp.csproj">
+      <Project>{e2558b29-a032-40d0-90b0-1a9de368ec16}</Project>
+      <Name>JavaScriptApp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LangJavaScript\LangJavaScript.csproj">
       <Project>{56f7043f-a270-4900-b6d3-1701af619a1b}</Project>
       <Name>LangJavaScript</Name>
     </ProjectReference>
-    <ProjectReference Include="..\JavaScriptApp\JavaScriptApp.csproj">
-      <Project>{E2558B29-A032-40D0-90B0-1A9DE368EC16}</Project>
-      <Name>JavaScriptApp</Name>
-    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <EmbeddedResource Include="SwiftResources\*.*" />
+    <EmbeddedResource Include="JsAndroidResources\MainActivityJava.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

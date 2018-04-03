@@ -58,7 +58,7 @@ namespace Crayon
                 typeof(CApp.PlatformImpl).Assembly,
                 typeof(CSharpApp.PlatformImpl).Assembly,
                 typeof(JavaApp.PlatformImpl).Assembly,
-                typeof(JavaAppAndroid.PlatformImpl).Assembly,
+                typeof(JavaScriptApp.PlatformImpl).Assembly,
                 typeof(JavaScriptAppChrome.PlatformImpl).Assembly,
                 typeof(JavaScriptApp.PlatformImpl).Assembly,
                 typeof(JavaScriptAppIos.PlatformImpl).Assembly,
@@ -68,6 +68,9 @@ namespace Crayon
                 typeof(LangJavaScript.PlatformImpl).Assembly,
                 typeof(LangPython.PlatformImpl).Assembly,
                 typeof(PythonApp.PlatformImpl).Assembly,
+
+                // Experimental.
+                typeof(JavaAppAndroid.PlatformImpl).Assembly,
             };
         }
     }
