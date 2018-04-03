@@ -1,0 +1,4 @@
+﻿// android.js
+// overrides to the regular JavaScript project.
+
+C$common$globalOptions['fullscreen'] = true;

@@ -8,10 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 
-import org.crayonlang.interpreter.AndroidTranslationHelper;
-import org.crayonlang.interpreter.Interpreter;
-import org.crayonlang.interpreter.TranslationHelper;
-
 public class MainActivity extends Activity {
 
     private static boolean mainStarted = false;
@@ -22,18 +18,12 @@ public class MainActivity extends Activity {
 
         if (!mainStarted) {
             mainStarted = true;
-            
+
             Display display = this.getWindowManager().getDefaultDisplay();
             Point size = new Point();
             display.getSize(size);
-            AndroidTranslationHelper.setSize(size.x, size.y);
-
             requestWindowFeature(Window.FEATURE_NO_TITLE);
-            AndroidTranslationHelper.setMainActivity(this);
-            // TODO: set a default content view that just shows STDOUT output.
-            TranslationHelper.setByteCode(AndroidTranslationHelper.getTextAsset("bytecode.txt"));
-            TranslationHelper.setResourceManifest(AndroidTranslationHelper.getTextAsset("resourcemanifest.txt"));
-            Interpreter.v_main();
+            this.setContentView(new CrayonWebView(this, size.x, size.y));
         }
     }
 

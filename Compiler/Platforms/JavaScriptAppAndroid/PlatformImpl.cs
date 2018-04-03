@@ -29,7 +29,7 @@ namespace JavaScriptAppAndroid
             options.SetOption(ExportOptionKey.JS_FULL_PAGE, false); // TODO: figure out if logic should be implemented in the web view for this.
             options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, string.Join(
                 "\n",
-                "<script type=\"text/javascript\" src=\"file:///android_asset/android.js\"></script>",
+                "<script type=\"text/javascript\" src=\"android.js\"></script>",
                 "<style type=\"text/css\">",
                 "  body { margin:0px; background-color:#000; }",
                 "  #crayon_host {",
@@ -59,7 +59,14 @@ namespace JavaScriptAppAndroid
 
             foreach (string filePath in basicProject.Keys)
             {
-                files["app/src/main/assets/" + filePath] = basicProject[filePath];
+                FileOutput file = basicProject[filePath];
+                if (filePath.EndsWith("index.html"))
+                {
+                    file.TextContent = file.TextContent.Replace(
+                        "<script type=\"text / javascript\" src=\"",
+                        "<script type=\"text / javascript\" src=\"file:///android_asset/");
+                }
+                files["app/src/main/assets/" + filePath] = file;
             }
 
             // TODO: use orientations
@@ -132,6 +139,7 @@ namespace JavaScriptAppAndroid
             output["app/proguard-rules.txt"] = this.LoadTextFile("JsAndroidResources/app/proguardRules.txt", replacements);
 
             output["app/src/main/java/" + packagedDir + "/app/MainActivity.java"] = this.LoadTextFile("JsAndroidResources/app/src/main/java/org/crayonlang/sampleapp/app/MainActivityJava.txt", replacements);
+            output["app/src/main/java/" + packagedDir + "/app/CrayonWebView.java"] = this.LoadTextFile("JsAndroidResources/app/src/main/java/org/crayonlang/sampleapp/app/CrayonWebViewJava.txt", replacements);
             output["app/src/main/res/layout/activity_main.xml"] = this.LoadTextFile("JsAndroidResources/app/src/main/res/layout/ActivityMainXml.txt", replacements);
             output["app/src/main/res/menu/main.xml"] = this.LoadTextFile("JsAndroidResources/app/src/main/res/menu/MainXml.txt", replacements);
             output["app/src/main/res/values/dimens.xml"] = this.LoadTextFile("JsAndroidResources/app/src/main/res/values/DimensXml.txt", replacements);
@@ -162,6 +170,8 @@ namespace JavaScriptAppAndroid
             output["app/src/main/res/drawable-xhdpi/ic_launcher.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = iconImagesBySize[96] };
             output["app/src/main/res/drawable-xxhdpi/ic_launcher.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = iconImagesBySize[144] };
             output["app/src/main/ic_launcher-web.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = iconImagesBySize[512] };
+
+            output["app/src/main/assets/android.js"] = this.LoadTextFile("JsAndroidResources/app/src/main/assets/androidJs.txt", replacements);
         }
 
         private FileOutput LoadTextFile(string path, Dictionary<string, string> replacements)
@@ -181,6 +191,12 @@ namespace JavaScriptAppAndroid
                 Type = FileOutputType.Binary,
                 BinaryContent = this.LoadBinaryResource(path),
             };
+        }
+
+        public override void GleanInformationFromPreviouslyExportedProject(Options options, string outputDirectory)
+        {
+            bool skipWorkspaceXml = FileUtil.FileExists(outputDirectory + "/.idea/workspace.xml");
+            options.SetOption(ExportOptionKey.ANDROID_SKIP_WORKSPACE_XML, true);
         }
     }
 }
