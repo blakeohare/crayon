@@ -32,6 +32,7 @@ public class CrayonWebView extends WebView {
 		this.screenHeight = height;
 
         this.getSettings().setJavaScriptEnabled(true);
+        this.getSettings().setDomStorageEnabled(true);
         this.setInitialScale(100);
         this.setBackgroundColor(getResources().getColor(android.R.color.black));
         this.setWebViewClient(new CrayonWebViewClient());
