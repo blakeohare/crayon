@@ -2,3 +2,40 @@
 // overrides to the regular JavaScript project.
 
 C$common$globalOptions['fullscreen'] = true;
+
+C$android$receiveMessageDecoder = function(s) {
+    var output = [];
+    var codes = s.split(' ');
+    var length = codes.length;
+    for (var i = 0; i < length; ++i) {
+        output.push(String.fromCharCode(parseInt(codes[i])));
+    }
+    return output.join('');
+};
+
+receiveMessage = function(type, payload, useEncoding) {
+    if (useEncoding) {
+        type = C$android$receiveMessageDecoder(type);
+        payload = C$android$receiveMessageDecoder(payload);
+    }
+    var parts = payload.split(' ');
+    switch (type) {
+        case 'touch-event':
+            if (!!C$game$width) {
+                var eventId = parseInt(parts[0]);
+                var x = Math.floor(C$game$width * parseInt(parts[1]) / 100000);
+                var y = Math.floor(C$game$height * parseInt(parts[2]) / 100000);
+                C$input$eventRelays.push(v_buildRelayObj(eventId, x, y, 0, 0, ''));
+            }
+            break;
+        default:
+            console.log("Unknown message type: " + type);
+            break;
+    }
+};
+
+sendMessage = function(type, msg) {
+    JavaScriptBridge.onSendNativeMessage(type, msg);
+};
+
+sendMessage('ready', '');
