@@ -32,8 +32,9 @@ public class CrayonWebView extends WebView {
 		this.screenHeight = height;
 
         this.getSettings().setJavaScriptEnabled(true);
-
-        this.setWebViewClient(new GameLibWebViewClient());
+        this.setInitialScale(100);
+        this.setBackgroundColor(getResources().getColor(android.R.color.black));
+        this.setWebViewClient(new CrayonWebViewClient());
         this.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
@@ -48,7 +49,24 @@ public class CrayonWebView extends WebView {
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        this.sendMessage("touch-event", "TODO", false);
+        int actionId = 0;
+        switch (e.getAction()) {
+            case MotionEvent.ACTION_MOVE:
+                actionId = 32;
+                break;
+            case MotionEvent.ACTION_DOWN:
+                actionId = 33;
+                break;
+            case MotionEvent.ACTION_UP:
+                actionId = 34;
+                break;
+            default:
+                return true;
+        }
+        // don't know what the game size is on Java side so give coordinates in ratios * 100000 (as ints).
+        int x = (int) (100000 * e.getX() / this.screenWidth);
+        int y = (int) (100000 * e.getY() / this.screenHeight);
+        this.sendMessage("touch-event", actionId + " " + x + " " + y, false);
         return true;
     }
 
@@ -115,7 +133,7 @@ public class CrayonWebView extends WebView {
         }
     }
 
-    private class GameLibWebViewClient extends WebViewClient {
+    private class CrayonWebViewClient extends WebViewClient {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
