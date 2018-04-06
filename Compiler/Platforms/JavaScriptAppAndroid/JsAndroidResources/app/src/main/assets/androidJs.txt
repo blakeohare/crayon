@@ -1,6 +1,7 @@
 ﻿// android.js
 // overrides to the regular JavaScript project.
 
+C$common$globalOptions['is_android'] = true;
 C$common$globalOptions['fullscreen'] = true;
 
 C$android$receiveMessageDecoder = function(s) {
