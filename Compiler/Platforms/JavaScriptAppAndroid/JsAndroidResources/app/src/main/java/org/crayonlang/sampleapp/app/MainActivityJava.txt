@@ -3,6 +3,7 @@ package %%%JAVA_PACKAGE%%%.app;
 import android.app.Activity;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,9 +23,19 @@ public class MainActivity extends Activity {
             Display display = this.getWindowManager().getDefaultDisplay();
             Point size = new Point();
             display.getSize(size);
+            int actionBarHeight = this.getActionBarHeight();
             requestWindowFeature(Window.FEATURE_NO_TITLE);
-            this.setContentView(new CrayonWebView(this, size.x, size.y));
+            this.setContentView(new CrayonWebView(this, size.x, size.y - actionBarHeight));
         }
+    }
+
+    private int getActionBarHeight() {
+        TypedValue tv = new TypedValue();
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
+        {
+            return TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
+        }
+        return 0;
     }
 
     @Override
