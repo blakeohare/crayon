@@ -168,7 +168,7 @@ namespace Interpreter.Libraries.Game
                             GL.Disable(EnableCap.Texture2D);
                             GL.Color4((byte)red, (byte)green, (byte)blue, (byte)alpha);
                             GL.Begin(BeginMode.Polygon);
-                            ptCount = (width + height) / 8;
+                            ptCount = (width + height) / 5;
                             if (ptCount < 16)
                             {
                                 ptCount = 16;
@@ -176,8 +176,11 @@ namespace Interpreter.Libraries.Game
                             j = 0;
                             while ((j < ptCount))
                             {
-                                endX = (int)(Math.Cos(-6.28318530717958 * j / ptCount) * width + startX);
-                                endY = (int)(Math.Sin(-6.28318530717958 * j / ptCount) * height + startY);
+                                // Add .1 to the angle. Geometrically this doesn't make a difference,
+                                // but when rasterizing, having a point exactly at theta = 0 creates a
+                                // sort of asymmetric bump at the right edge of the circle.
+                                endX = (int)(Math.Cos(-6.28318530717958 * j / ptCount + .1) * width + startX);
+                                endY = (int)(Math.Sin(-6.28318530717958 * j / ptCount + .1) * height + startY);
                                 if (scaled)
                                 {
                                     GL.Vertex2(endX * RW / VW, endY * RH / VH);

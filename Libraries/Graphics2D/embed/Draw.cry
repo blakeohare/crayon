@@ -63,6 +63,14 @@ namespace Graphics2D {
                 left, top, width, height, r, g, b, a);
         }
 
+        static function circle(centerX, centerY, radius, r, g, b, a = 255) {
+            // This can't be inlined as it is currently written as it uses values indirectly and multiple times.
+            // TODO: Add a CIRCLE draw command to get around this problem.
+            return $$$('intQueueWrite16', Graphics2D.Draw._queue,
+                _DrawCommands.ELLIPSE,
+                centerX - radius, centerY - radius, radius * 2, radius * 2, r, g, b, a);
+        }
+
         static function line(startX, startY, endX, endY, strokeWidth, r, g, b, a = 255) {
             if (strokeWidth < 1) return;
 
