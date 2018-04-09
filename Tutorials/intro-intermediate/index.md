@@ -91,7 +91,7 @@ Like most programming languages, there are types and variables. The basic types 
 | Type | Description |
 | --- | --- |
 | **Booleans** | Boolean value, which is either `true` or `false`. |
-| **Integers** | Positive or negative whole numbers. |
+| **Integers** | Positive or negative whole numbers, or 0. |
 | **Floats** | Floating point numbers, i.e. decimals. |
 | **Strings** | Strings of text characters. |
 | **Null** | The lack of a value. |
@@ -124,7 +124,7 @@ Here is an exhaustive list of all of the operators:
 | `-` | Subtraction. This is only valid for numbers. |
 | `*` | Multiplication. If a string is multiplied by an integer, it will result in that string duplicated that integer number of times. |
 | `/` | Division. Divides two numbers. If the denominator is 0, that results in an error. Integers divided by integers will result in an integer that is rounded down to the nearest integer. |
-| `%` | Modulo. Will return remainder of a division operation. Modulo 0 will result in an error. `%` will always return a positive number. |
+| `%` | Modulo. Will return remainder of a division operation. Modulo 0 will result in an error. `%` will always return a non-negative number. |
 | `&&` | Boolean AND. This will AND two booleans together. This supports short-circuiting. (If the left side is false, the right side will not be evaluated) |
 | <code>&#124;&#124;</code> | Boolean OR. This will OR two booleans together. Like AND, this supports short-circuiting i.e. if the left value is true, the right side will not be evaluated. |
 | `==` | Equals. Checks to see if two values are the same. For primitive types (such as booleans, numbers, and even strings) this will return true if the values are the same. For reference types, (such as lists, objects, dictionaries) this will return true if and only if the instance is identical. For example, comparing two lists that have identical contents but are separate list instances will result in a false when compared with `==`. |
