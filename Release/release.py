@@ -100,7 +100,7 @@ def main(args):
 		SLN_PATH = '..\\Compiler\\CrayonWindows.sln'
 	print runCommand(' '.join([BUILD_CMD, RELEASE_CONFIG, SLN_PATH]))
 
-	releaseDir = '../Compiler/bin/Release'
+	releaseDir = '../Compiler/Crayon/bin/Release'
 	shutil.copyfile(canonicalize_sep(releaseDir + '/Crayon.exe'), canonicalize_sep(copyToDir + '/crayon.exe'))
 	shutil.copyfile(canonicalize_sep(releaseDir + '/LICENSE.txt'), canonicalize_sep(copyToDir + '/LICENSE.txt'))
 	shutil.copyfile(canonicalize_sep('../README.md'), canonicalize_sep(copyToDir + '/README.md'))
