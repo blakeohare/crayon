@@ -17,5 +17,10 @@ namespace Parser.ParseTree
             this.FileScopeEntityLookup = new FileScopedEntityLookup().SetFileScope(this);
             this.CompilationScope = scope;
         }
+
+        public override string ToString()
+        {
+            return "FileScope: " + this.Name;
+        }
     }
 }
