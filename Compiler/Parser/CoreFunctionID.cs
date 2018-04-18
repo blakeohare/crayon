@@ -98,12 +98,16 @@ namespace Parser
             }
         }
 
-        internal static int GetId(StringConstant str)
+        internal static int GetId(StringConstant str, Localization.Locale locale)
         {
             int output = GetId(str.Value);
             if (output == -1)
             {
-                throw new ParserException(str.FirstToken, "Unknown Core function name: '" + str.Value + "'");
+                throw ParserException.ThrowException(
+                    locale,
+                    Localization.ErrorMessages.UNKNOWN_CORE_FUNCTION_ID,
+                    str.FirstToken,
+                    str.Value);
             }
             return output;
         }

@@ -10,6 +10,8 @@ namespace Parser.ParseTree
             this.Owner = owner;
         }
 
+        public Localization.Locale Locale { get { return this.Owner.Locale; } }
+
         public Token FirstToken { get; private set; }
 
         // This is a misnomer. This can be any top-level object such as a function, class, const, or enum that can wrap

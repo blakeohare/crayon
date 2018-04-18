@@ -52,17 +52,17 @@ namespace Parser
                 {
                     if (staticToken != null)
                     {
-                        throw new ParserException(staticToken, "Only classes, methods, and fields may be marked as static");
+                        throw ParserException.ThrowException(this.parser.CurrentLocale, ErrorMessages.ONLY_CLASSES_METHODS_FIELDS_MAY_BE_STATIC, staticToken);
                     }
                     else
                     {
-                        throw new ParserException(finalToken, "Only classes may be marked as final.");
+                        throw ParserException.ThrowException(this.parser.CurrentLocale, ErrorMessages.ONLY_CLASSES_MAY_BE_FINAL, finalToken);
                     }
                 }
 
                 if (staticToken != null && finalToken != null)
                 {
-                    throw new ParserException(staticToken, "Classes cannot be both static and final.");
+                    throw ParserException.ThrowException(this.parser.CurrentLocale, ErrorMessages.CLASSES_CANNOT_BE_STATIC_AND_FINAL_SIMULTANEOUSLY, staticToken);
                 }
             }
 
@@ -93,7 +93,12 @@ namespace Parser
             if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.CONSTRUCTOR) return this.ParseConstructor(tokens, owner, annotations);
 
-            throw new ParserException(tokens.Peek(), "Unrecognized token.");
+            Token token = tokens.Peek();
+            throw ParserException.ThrowException(
+                this.parser.CurrentLocale,
+                ErrorMessages.UNEXPECTED_TOKEN_NO_SPECIFIC_EXPECTATIONS,
+                token,
+                token.Value);
         }
 
         public Executable Parse(

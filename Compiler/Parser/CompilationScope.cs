@@ -83,7 +83,10 @@ namespace Parser
             {
                 if (this.dependenciesAndViews[libraryView.LibraryScope] != libraryView)
                 {
-                    throw new ParserException(throwToken, "Cannot import the same library multiple times from different locales.");
+                    throw ParserException.ThrowException(
+                        libraryView.Locale,
+                        ErrorMessages.CANNOT_IMPORT_SAME_LIBRARY_FROM_DIFFERENT_LOCALES,
+                        throwToken);
                 }
             }
             this.dependenciesAndViews[libraryView.LibraryScope] = libraryView;

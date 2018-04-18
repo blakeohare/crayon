@@ -39,5 +39,13 @@ namespace Parser
             if (token == null) return "";
             return token.FileName + ", Line: " + (token.Line + 1) + ", Col: " + (token.Col + 1) + ", ";
         }
+
+        // Throws an exception, but also returns an exception so that you can use 'throw' syntax
+        // at the calling site to prevent the compiler from complaining about control flow branches
+        // that aren't actually accessible.
+        public static ParserException ThrowException(Localization.Locale locale, Localization.ErrorMessages errorType, Token token, params string[] args)
+        {
+            throw new ParserException(locale.Strings.Get(errorType.ToString(), args));
+        }
     }
 }

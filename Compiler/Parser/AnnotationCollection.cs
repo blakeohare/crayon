@@ -73,9 +73,9 @@ namespace Parser
                         !(annotation.Args[0] is StringConstant) ||
                         !(annotation.Args[1] is StringConstant))
                     {
-                        throw new ParserException(
-                            annotation.FirstToken,
-                            "@localized argument must have 2 constant string arguments.");
+                        throw this.parser.GenerateParseError(
+                            ErrorMessages.LOCALIZED_ANNOTATION_ARGUMENT_MUST_HAVE_2_STRINGS,
+                            annotation.FirstToken);
                     }
 
                     string localeId = ((StringConstant)annotation.Args[0]).Value;
@@ -83,9 +83,9 @@ namespace Parser
                     int segmentCount = name.Contains('.') ? name.Split('.').Length : 1;
                     if (segmentCount != expectedSegments)
                     {
-                        throw new ParserException(
-                            annotation.Args[1].FirstToken,
-                            "@localized name must contain the same number of dotted segments as the original definition.");
+                        throw this.parser.GenerateParseError(
+                            ErrorMessages.LOCALIZED_ANNOTATION_MUST_CONTAIN_SAME_NUMBER_DOTTED_SEGMENTS,
+                            annotation.FirstToken);
                     }
                     Locale locale = Locale.Get(localeId);
                     output[locale] = name;

@@ -23,7 +23,9 @@ namespace Parser.ParseTree
                 throw new ParserException(firstToken, "$$$ invocations must include a string constant containing the function name.");
             }
 
-            this.FunctionId = CoreFunctionIDHelper.GetId((StringConstant)originalArgs[0]);
+            this.FunctionId = CoreFunctionIDHelper.GetId(
+                (StringConstant)originalArgs[0],
+                this.Owner.FileScope.CompilationScope.Locale);
             List<Expression> args = new List<Expression>(originalArgs);
             args.RemoveAt(0);
             this.Args = args.ToArray();
