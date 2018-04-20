@@ -3,3 +3,8 @@ APPLICABLE-TO: csharp-app
 DOTNET_DLL: from=LIB:Game:csharp-app/SdlDotNet.dll, hintpath=SdlDotNet.dll, name=SdlDotNet, version=6.1.0.0, culture=neutral, token=26ad4f7e10c61408, architecture=MSIL, specificversion=false
 LIB_DLL_REF: name=Game, version=v1
 END
+
+BEGIN
+APPLICABLE-TO: java-app
+COPY_FILES: from=java-app, to=%LIBRARY_PATH%/%FILE%
+END

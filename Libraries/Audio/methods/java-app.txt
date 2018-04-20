@@ -1,6 +1,6 @@
 $_lib_audio_isAudioSupported: TranslationHelper.alwaysFalse()
 $_lib_audio_musicIsPlaying: false
-$_lib_audio_musicLoadFromResource: AwtTranslationHelper.loadMusicFromResource([ARG:1])
+$_lib_audio_musicLoadFromResource: AudioLibHelper.loadMusicFromResource([ARG:1])
 $_lib_audio_musicPause: TranslationHelper.Noop()
 $_lib_audio_musicPlayFile: TranslationHelper.NoopWithReturnNull()
 $_lib_audio_musicPlayResource: TranslationHelper.Noop()

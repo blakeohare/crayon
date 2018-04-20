@@ -109,18 +109,6 @@ public final class AwtTranslationHelper {
         return appDataRoot;
     }
 
-	// TODO: Ogg decoding in Java
-	private static class MusicDummyObject {
-		private String path;
-		public MusicDummyObject(String path) {
-			this.path = path;
-		}
-	}
-
-    public static Object loadMusicFromResource(String path) {
-        return new MusicDummyObject(path);
-    }
-
     public static BufferedImage scaleImage(Object imageObj, int width, int height) {
 		BufferedImage image = (BufferedImage) imageObj;
         BufferedImage newImage = new BufferedImage(width, height, image.getType());
