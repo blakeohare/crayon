@@ -1,8 +1,5 @@
-﻿using System;
+﻿using Pastel.Nodes;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Pastel.Nodes;
 
 namespace Pastel
 {
@@ -12,10 +9,7 @@ namespace Pastel
         private VariableScope parent = null;
         private Dictionary<string, PType> type = new Dictionary<string, PType>();
 
-        public VariableScope()
-        {
-
-        }
+        public VariableScope() { }
 
         public VariableScope(FunctionDefinition functionDef, Dictionary<string, VariableDeclaration> globals)
         {

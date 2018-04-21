@@ -78,7 +78,7 @@ namespace Pastel.Nodes
             if (this.Root is Variable && ((Variable)this.Root).Name == "Native")
             {
                 string name = this.FieldName.Value;
-                return new LibraryNativeFunctionReference(this.FirstToken, name);
+                return new ExtensibleFunctionReference(this.FirstToken, name);
             }
 
             this.Root = this.Root.ResolveType(varScope, compiler);

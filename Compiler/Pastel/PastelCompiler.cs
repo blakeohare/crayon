@@ -8,21 +8,20 @@ namespace Pastel
 {
     public class PastelCompiler
     {
-        internal PastelCompiler SharedScope { get; private set; }
+        internal PastelCompiler[] IncludedScopes { get; private set; }
 
-        internal IDictionary<string, PType> LibraryNativeFunctionReferenceReturnTypes { get; private set; }
-        internal IDictionary<string, PType[]> LibraryNativeFunctionReferenceArgumentTypes { get; private set; }
+        internal IDictionary<string, ExtensibleFunction> ExtensibleFunctions { get; private set; }
 
         public PastelCompiler(
-            PastelCompiler sharedScope,
+            IList<PastelCompiler> includedScopes,
             IDictionary<string, object> constants,
             IInlineImportCodeLoader inlineImportCodeLoader,
-            IDictionary<string, PType> returnTypesForNativeMethods,
-            IDictionary<string, PType[]> argumentTypesForNativeMethods)
+            ICollection<ExtensibleFunction> extensibleFunctions)
         {
-            this.SharedScope = sharedScope;
-            this.LibraryNativeFunctionReferenceArgumentTypes = argumentTypesForNativeMethods;
-            this.LibraryNativeFunctionReferenceReturnTypes = returnTypesForNativeMethods;
+            this.IncludedScopes = includedScopes.ToArray();
+            this.ExtensibleFunctions = extensibleFunctions == null
+                ? new Dictionary<string, ExtensibleFunction>()
+                : extensibleFunctions.ToDictionary(ef => ef.Name);
             this.StructDefinitions = new Dictionary<string, StructDefinition>();
             this.EnumDefinitions = new Dictionary<string, EnumDefinition>();
             this.Globals = new Dictionary<string, VariableDeclaration>();
@@ -49,9 +48,12 @@ namespace Pastel
                 return (InlineConstant)this.ConstantDefinitions[name].Value;
             }
 
-            if (this.SharedScope != null && this.SharedScope.ConstantDefinitions.ContainsKey(name))
+            foreach (PastelCompiler includedScope in this.IncludedScopes)
             {
-                return (InlineConstant)this.SharedScope.ConstantDefinitions[name].Value;
+                if (includedScope.ConstantDefinitions.ContainsKey(name))
+                {
+                    return (InlineConstant)includedScope.ConstantDefinitions[name].Value;
+                }
             }
 
             return null;
@@ -64,9 +66,12 @@ namespace Pastel
                 return this.EnumDefinitions[name];
             }
 
-            if (this.SharedScope != null && this.SharedScope.EnumDefinitions.ContainsKey(name))
+            foreach (PastelCompiler includedScope in this.IncludedScopes)
             {
-                return this.SharedScope.EnumDefinitions[name];
+                if (includedScope.EnumDefinitions.ContainsKey(name))
+                {
+                    return includedScope.EnumDefinitions[name];
+                }
             }
 
             return null;
@@ -79,9 +84,12 @@ namespace Pastel
                 return this.StructDefinitions[name];
             }
 
-            if (this.SharedScope != null && this.SharedScope.StructDefinitions.ContainsKey(name))
+            foreach (PastelCompiler includedScope in this.IncludedScopes)
             {
-                return this.SharedScope.StructDefinitions[name];
+                if (includedScope.StructDefinitions.ContainsKey(name))
+                {
+                    return includedScope.StructDefinitions[name];
+                }
             }
 
             return null;
@@ -94,9 +102,12 @@ namespace Pastel
                 return this.FunctionDefinitions[name];
             }
 
-            if (this.SharedScope != null && this.SharedScope.FunctionDefinitions.ContainsKey(name))
+            foreach (PastelCompiler includedScope in this.IncludedScopes)
             {
-                return this.SharedScope.FunctionDefinitions[name];
+                if (includedScope.FunctionDefinitions.ContainsKey(name))
+                {
+                    return includedScope.FunctionDefinitions[name];
+                }
             }
 
             return null;

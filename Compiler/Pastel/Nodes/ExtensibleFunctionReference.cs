@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Pastel.Nodes
 {
-    public class LibraryNativeFunctionReference : Expression
+    public class ExtensibleFunctionReference : Expression
     {
         public string Name { get; set; }
 
-        public LibraryNativeFunctionReference(Token token, string name) : base(token)
+        public ExtensibleFunctionReference(Token token, string name) : base(token)
         {
             this.Name = name;
         }
