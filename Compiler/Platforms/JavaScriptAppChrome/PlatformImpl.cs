@@ -15,7 +15,7 @@ namespace JavaScriptAppChrome
         public PlatformImpl()
         {
             this.ContextFreePlatformImpl = new ContextFreeJavaScriptAppChromePlatform();
-            this.Translator = new LangJavaScript.JavaScriptTranslator(this);
+            this.Translator = new LangJavaScript.JavaScriptTranslator();
         }
 
         public override void ExportProject(

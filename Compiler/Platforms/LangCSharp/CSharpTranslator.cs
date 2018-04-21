@@ -7,7 +7,7 @@ namespace LangCSharp
 {
     public class CSharpTranslator : Platform.CurlyBraceTranslator
     {
-        public CSharpTranslator(Platform.AbstractPlatform platform) : base(platform, "    ", "\r\n", false)
+        public CSharpTranslator() : base("    ", "\r\n", false)
         { }
 
         public override string TranslateType(PType type)

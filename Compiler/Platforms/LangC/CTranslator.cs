@@ -8,8 +8,7 @@ namespace LangC
     {
         public StringTableBuilder StringTableBuilder { get; set; }
 
-        public CTranslator(Platform.AbstractPlatform platform)
-            : base(platform, "    ", "\n", false)
+        public CTranslator() : base("    ", "\n", false)
         { }
 
         public override string TranslateType(PType type)

@@ -37,12 +37,11 @@ namespace Platform
             }
 
         }
-        public Platform.AbstractPlatform DEPRECATED_Platform { get; private set; }
-        public Platform.ILibraryNativeInvocationTranslator CurrentLibraryFunctionTranslator { get; set; }
 
-        public AbstractTranslator(Platform.AbstractPlatform platform, string tab, string newLine)
+        public ILibraryNativeInvocationTranslator CurrentLibraryFunctionTranslator { get; set; }
+
+        public AbstractTranslator(string tab, string newLine)
         {
-            this.DEPRECATED_Platform = platform;
             this.NewLine = newLine;
             this.tabChar = tab;
             this.tabs = new string[20];
@@ -105,7 +104,6 @@ namespace Platform
                 case "ExtensibleFunctionInvocation":
                     this.TranslateExtensibleFunctionInvocation(
                         sb,
-                        this.DEPRECATED_Platform,
                         (ExtensibleFunctionInvocation)expression);
                     break;
 
@@ -336,11 +334,11 @@ namespace Platform
             }
         }
 
-        public void TranslateExtensibleFunctionInvocation(StringBuilder sb, AbstractPlatform platform, ExtensibleFunctionInvocation funcInvocation)
+        public void TranslateExtensibleFunctionInvocation(StringBuilder sb, ExtensibleFunctionInvocation funcInvocation)
         {
             Expression[] args = funcInvocation.Args;
             string functionName = funcInvocation.FunctionRef.Name;
-            this.CurrentLibraryFunctionTranslator.TranslateInvocation(sb, platform, this, functionName, args, funcInvocation.FirstToken);
+            this.CurrentLibraryFunctionTranslator.TranslateInvocation(sb, this, functionName, args, funcInvocation.FirstToken);
         }
 
         public void TranslateCommaDelimitedExpressions(StringBuilder sb, IList<Expression> expressions)

@@ -8,8 +8,8 @@ namespace Platform
     {
         private bool isEgyptian;
 
-        public CurlyBraceTranslator(Platform.AbstractPlatform platform, string tabChar, string newline, bool isEgyptian)
-            : base(platform, tabChar, newline)
+        public CurlyBraceTranslator(string tabChar, string newline, bool isEgyptian)
+            : base(tabChar, newline)
         {
             this.isEgyptian = isEgyptian;
         }

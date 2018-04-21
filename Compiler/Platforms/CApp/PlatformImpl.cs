@@ -16,7 +16,7 @@ namespace CApp
         public PlatformImpl()
         {
             this.ContextFreePlatformImpl = new ContextFreeCAppPlatform();
-            this.Translator = new LangC.CTranslator(this);
+            this.Translator = new LangC.CTranslator();
         }
 
         public LangC.CTranslator CTranslator { get { return (LangC.CTranslator)this.Translator; } }

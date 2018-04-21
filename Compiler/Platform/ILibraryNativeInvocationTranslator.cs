@@ -9,7 +9,6 @@ namespace Platform
 
         void TranslateInvocation(
             StringBuilder sb,
-            AbstractPlatform platform,
             AbstractTranslator translator,
             string functionName,
             Pastel.Nodes.Expression[] args,
