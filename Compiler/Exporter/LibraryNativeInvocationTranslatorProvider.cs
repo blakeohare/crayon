@@ -38,7 +38,7 @@ namespace Exporter
                 throw new Exception();
             }
 
-            return new LibraryNativeInvocationTranslator(this.libraries[libraryName], libraryForExport);
+            return new LibraryNativeInvocationTranslator(this.libraries[libraryName], libraryForExport, this.platform);
         }
     }
 }

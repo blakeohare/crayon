@@ -8,11 +8,13 @@ namespace Exporter
     class LibraryNativeInvocationTranslator : ILibraryNativeInvocationTranslator
     {
         private LibraryMetadata library;
+        private AbstractPlatform platform;
 
         public LibraryForExport Library { get; private set; }
 
-        public LibraryNativeInvocationTranslator(LibraryMetadata library, LibraryForExport lfe)
+        public LibraryNativeInvocationTranslator(LibraryMetadata library, LibraryForExport lfe, AbstractPlatform platform)
         {
+            this.platform = platform;
             this.library = library;
             this.Library = lfe;
         }
@@ -21,7 +23,6 @@ namespace Exporter
 
         public void TranslateInvocation(
             StringBuilder sb,
-            AbstractPlatform platform,
             AbstractTranslator translator,
             string functionName,
             Expression[] args,
@@ -29,7 +30,7 @@ namespace Exporter
         {
             try
             {
-                sb.Append(LibraryExporter.Get(this.library, platform).TranslateNativeInvocation(throwToken, platform, translator, functionName, args));
+                sb.Append(LibraryExporter.Get(this.library, this.platform).TranslateNativeInvocation(throwToken, this.platform, translator, functionName, args));
             }
             catch (System.Reflection.TargetInvocationException tie)
             {

@@ -15,7 +15,7 @@ namespace PythonApp
         public PlatformImpl()
         {
             this.ContextFreePlatformImpl = new ContextFreePythonAppPlatform();
-            this.Translator = new LangPython.PythonTranslator(this);
+            this.Translator = new LangPython.PythonTranslator();
         }
 
         public override IDictionary<string, object> GetConstantFlags()

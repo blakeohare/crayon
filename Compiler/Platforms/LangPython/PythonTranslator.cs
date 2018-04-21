@@ -33,7 +33,7 @@ namespace LangPython
         }
         public List<PythonFakeSwitchStatement> SwitchStatements { get; private set; }
 
-        public PythonTranslator(Platform.AbstractPlatform platform) : base(platform, "  ", "\n")
+        public PythonTranslator() : base("  ", "\n")
         {
             this.SwitchStatements = new List<PythonFakeSwitchStatement>();
         }

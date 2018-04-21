@@ -9,9 +9,9 @@ namespace LangJava
     {
         private bool isJava6;
 
-        public JavaTranslator(Platform.AbstractPlatform platform) : base(platform, "  ", "\n", true)
+        public JavaTranslator(bool isJava6) : base("  ", "\n", true)
         {
-            this.isJava6 = platform.Name == "java-app-android"; // TODO: be more ashamed of this.
+            this.isJava6 = isJava6;
         }
 
         public override string TranslateType(PType type)

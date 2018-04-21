@@ -144,7 +144,7 @@ namespace LangJava
 
             sb.Append(translator.CurrentTab);
             sb.Append("public static ");
-            sb.Append(this.Translator.TranslateType(funcDef.ReturnType));
+            sb.Append(translator.TranslateType(funcDef.ReturnType));
             sb.Append(" v_");
             sb.Append(funcDef.NameToken.Value);
             sb.Append('(');
@@ -153,7 +153,7 @@ namespace LangJava
             for (int i = 0; i < argTypes.Length; ++i)
             {
                 if (i > 0) sb.Append(", ");
-                sb.Append(this.Translator.TranslateType(argTypes[i]));
+                sb.Append(translator.TranslateType(argTypes[i]));
                 sb.Append(" v_");
                 sb.Append(argNames[i].Value);
             }
@@ -187,7 +187,7 @@ namespace LangJava
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append("  public static final ");
-                sb.Append(this.Translator.TranslateType(varDecl.Type));
+                sb.Append(translator.TranslateType(varDecl.Type));
                 sb.Append(' ');
                 sb.Append(varDecl.VariableNameToken.Value);
                 sb.Append(" = ");
