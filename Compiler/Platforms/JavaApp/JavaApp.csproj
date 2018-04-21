@@ -65,6 +65,7 @@
     <EmbeddedResource Include="Resources\BuildXml.txt" />
     <EmbeddedResource Include="Resources\GameWindow.txt" />
     <EmbeddedResource Include="Resources\Main.txt" />
+    <EmbeddedResource Include="Resources\PlatformTranslationHelper.txt" />
     <EmbeddedResource Include="Resources\RenderEngine.txt" />
     <EmbeddedResource Include="Resources\ResourceReader.txt" />
   </ItemGroup>

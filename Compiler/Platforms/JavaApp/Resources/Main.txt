@@ -7,6 +7,7 @@ import org.crayonlang.interpreter.ResourceReader;
 public final class Main {
 
   public static void main(String[] args) {
+    TranslationHelper.setByteCode(ResourceReader.readFileText("resources/bytecode.txt"));
     TranslationHelper.setResourceManifest(ResourceReader.readFileText("resources/manifest.txt"));
     TranslationHelper.setCommandLineArgs(args);
     Interpreter.v_main();

@@ -19,10 +19,6 @@ public final class AwtTranslationHelper {
 
     private AwtTranslationHelper() {}
 
-    public static String getRawByteCodeString() {
-        return ResourceReader.readFileText("resources/bytecode.txt");
-    }
-	
     public static String getTextResource(String path) {
         return ResourceReader.readFileText("resources/" + path);
     }

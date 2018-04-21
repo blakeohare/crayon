@@ -66,8 +66,8 @@ Code loadByteCode() {
         // values directly. Parsing this all on every HTTP request would be a waste of CPU, whereas doing it once for
         // the rest of the traditional start-once-run-for-several-minutes apps that's okay.
         Array<int> ops = Core.ByteCodeGetOps();
-        Array<int> iargs = Core.ByteCOdeGetIntArgs();
-        Array<string> sargs = Core.ByteCOdeGetStringArgs();
+        Array<int> iargs = Core.ByteCodeGetIntArgs();
+        Array<string> sargs = Core.ByteCodeGetStringArgs();
     } else {
         string raw = Core.ReadByteCodeFile();
 

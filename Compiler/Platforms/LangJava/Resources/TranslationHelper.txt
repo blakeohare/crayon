@@ -55,7 +55,7 @@ public final class TranslationHelper {
 	public static void setResourceManifest(String resourceManifest) { TranslationHelper.resourceManifest = resourceManifest; }
 	public static String getResourceManifest() { return resourceManifest; }
 
-	private static String[] cmdLineArgs = null;
+	private static String[] cmdLineArgs = new String[0];
 	public static void setCmdLineArgs(String[] args) { cmdLineArgs = args; }
 	public static String[] getCmdLineArgs() { return cmdLineArgs; }
 
