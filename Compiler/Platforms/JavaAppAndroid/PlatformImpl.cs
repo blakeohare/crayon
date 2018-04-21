@@ -10,7 +10,7 @@ namespace JavaAppAndroid
 {
     public class PlatformImpl : AbstractPlatform
     {
-        public PlatformImpl() : base()
+        public PlatformImpl() : base(new ContextFreeJavaAppAndroidPlatform())
         {
             this.Translator = new JavaAppAndroidTranslator(this);
         }

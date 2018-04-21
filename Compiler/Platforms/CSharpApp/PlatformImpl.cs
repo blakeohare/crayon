@@ -14,7 +14,7 @@ namespace CSharpApp
         public override string InheritsFrom { get { return "lang-csharp"; } }
         public override string NL { get { return "\r\n"; } }
 
-        public PlatformImpl()
+        public PlatformImpl() : base(new ContextFreeCSharpAppPlatform())
         {
             this.Translator = new CSharpAppTranslator(this);
         }

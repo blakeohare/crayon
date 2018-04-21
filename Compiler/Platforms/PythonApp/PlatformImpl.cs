@@ -12,7 +12,7 @@ namespace PythonApp
         public override string InheritsFrom { get { return "lang-python"; } }
         public override string NL { get { return "\n"; } }
 
-        public PlatformImpl()
+        public PlatformImpl() : base(new ContextFreePythonAppPlatform())
         {
             this.Translator = new PythonAppTranslator(this);
         }

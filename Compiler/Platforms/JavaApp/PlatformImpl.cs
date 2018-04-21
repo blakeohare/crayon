@@ -15,6 +15,7 @@ namespace JavaApp
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
+            : base(new ContextFreeJavaAppPlatform())
         {
             this.Translator = new JavaAppTranslator(this);
         }

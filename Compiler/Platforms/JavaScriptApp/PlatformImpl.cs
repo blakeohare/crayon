@@ -14,7 +14,7 @@ namespace JavaScriptApp
         public override string InheritsFrom { get { return "lang-javascript"; } }
         public override string NL { get { return "\n"; } }
 
-        public PlatformImpl()
+        public PlatformImpl() : base(new ContextFreeJavaScriptAppPlatform())
         {
             this.Translator = new JavaScriptAppTranslator(this);
         }

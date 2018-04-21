@@ -13,6 +13,10 @@ namespace LangC
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
 
+        public PlatformImpl(AbstractContextFreePlatform contextFreePlatform)
+            : base(contextFreePlatform)
+        { }
+
         public override IDictionary<string, object> GetConstantFlags()
         {
             return new Dictionary<string, object>()

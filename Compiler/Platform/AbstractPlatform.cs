@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common;
-using Pastel;
 
 namespace Platform
 {
     public abstract class AbstractPlatform
     {
+        public AbstractPlatform(AbstractContextFreePlatform contextFreePlatform)
+        {
+            this.ContextFreePlatformImpl = contextFreePlatform;
+        }
+
         public IPlatformProvider PlatformProvider { get; set; }
 
         public abstract string Name { get; }
         public abstract string InheritsFrom { get; }
         public AbstractTranslator Translator { get; protected set; }
+        public AbstractContextFreePlatform ContextFreePlatformImpl { get; protected set; }
 
         public abstract IDictionary<string, object> GetConstantFlags();
         public abstract string NL { get; }

@@ -39,8 +39,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="JavaScriptAppIosTranslator.cs" />
-    <Compile Include="PlatformImpl.cs" />
+    <Compile Include="*.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

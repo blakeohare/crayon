@@ -6,11 +6,15 @@ using System.Collections.Generic;
 
 namespace JavaScriptAppIos
 {
-    public class PlatformImpl : Platform.AbstractPlatform
+    public class PlatformImpl : AbstractPlatform
     {
         public override string InheritsFrom { get { return "javascript-app"; } }
         public override string Name { get { return "javascript-app-ios"; } }
         public override string NL { get { return "\n"; } }
+
+        public PlatformImpl()
+            : base(new ContextFreeJavaScriptAppIosPlatform())
+        { }
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,

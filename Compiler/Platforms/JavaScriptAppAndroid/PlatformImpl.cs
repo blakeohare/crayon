@@ -12,6 +12,10 @@ namespace JavaScriptAppAndroid
         public override string Name { get { return "javascript-app-android"; } }
         public override string NL { get { return "\n"; } }
 
+        public PlatformImpl()
+            : base(new ContextFreeJavaScriptAppAndroidPlatform())
+        { }
+
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,

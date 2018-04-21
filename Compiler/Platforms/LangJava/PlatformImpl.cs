@@ -14,6 +14,10 @@ namespace LangJava
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
 
+        public PlatformImpl(AbstractContextFreePlatform contextFreePlatform)
+            : base(contextFreePlatform)
+        { }
+
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,

@@ -12,7 +12,7 @@ namespace JavaScriptAppChrome
         public override string Name { get { return "javascript-app-chrome"; } }
         public override string NL { get { return "\n"; } }
 
-        public PlatformImpl()
+        public PlatformImpl() : base(new ContextFreeJavaScriptAppChromePlatform())
         {
             this.Translator = new JavaScriptAppChromeTranslator(this);
         }
