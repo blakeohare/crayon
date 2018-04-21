@@ -13,9 +13,10 @@ namespace LangCSharp
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\r\n"; } }
 
-        public PlatformImpl(AbstractContextFreePlatform contextFreePlatform)
-            : base(contextFreePlatform)
-        { }
+        public PlatformImpl() : base()
+        {
+            this.ContextFreePlatformImpl = new ContextFreeLangCSharpPlatform();
+        }
 
         public override IDictionary<string, object> GetConstantFlags()
         {
@@ -57,9 +58,9 @@ namespace LangCSharp
             throw new InvalidOperationException("This platform does not support direct export.");
         }
 
-        public override string GenerateCodeForStruct(StructDefinition structDef)
+        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
         {
-            Pastel.Nodes.PType[] types = structDef.ArgTypes;
+            PType[] types = structDef.ArgTypes;
             Pastel.Token[] fieldNames = structDef.ArgNames;
             string name = structDef.NameToken.Value;
             List<string> lines = new List<string>();
@@ -68,7 +69,7 @@ namespace LangCSharp
             lines.Add("{");
             for (int i = 0; i < types.Length; ++i)
             {
-                lines.Add("    public " + this.Translator.TranslateType(types[i]) + " " + fieldNames[i].Value + ";");
+                lines.Add("    public " + translator.TranslateType(types[i]) + " " + fieldNames[i].Value + ";");
             }
             lines.Add("");
 
@@ -79,7 +80,7 @@ namespace LangCSharp
             for (int i = 0; i < types.Length; ++i)
             {
                 if (i > 0) constructorDeclaration.Append(", ");
-                constructorDeclaration.Append(this.Translator.TranslateType(types[i]));
+                constructorDeclaration.Append(translator.TranslateType(types[i]));
                 constructorDeclaration.Append(' ');
                 constructorDeclaration.Append(fieldNames[i].Value);
             }
@@ -108,14 +109,14 @@ namespace LangCSharp
             Pastel.Token[] argNames = funcDef.ArgNames;
 
             output.Append("public static ");
-            output.Append(this.Translator.TranslateType(returnType));
+            output.Append(translator.TranslateType(returnType));
             output.Append(" v_");
             output.Append(funcName);
             output.Append("(");
             for (int i = 0; i < argTypes.Length; ++i)
             {
                 if (i > 0) output.Append(", ");
-                output.Append(this.Translator.TranslateType(argTypes[i]));
+                output.Append(translator.TranslateType(argTypes[i]));
                 output.Append(" v_");
                 output.Append(argNames[i].Value);
             }

@@ -13,9 +13,10 @@ namespace LangPython
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
 
-        public PlatformImpl(AbstractContextFreePlatform contextFreePlatform)
-            : base(contextFreePlatform)
-        { }
+        public PlatformImpl() : base()
+        {
+            this.ContextFreePlatformImpl = new ContextFreeLangPythonPlatform();
+        }
 
         public override IDictionary<string, object> GetConstantFlags()
         {
@@ -91,7 +92,7 @@ namespace LangPython
             return sb.ToString();
         }
 
-        public override string GenerateCodeForStruct(StructDefinition structDef)
+        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
         {
             throw new InvalidOperationException("This function should not be called. Python uses lists as structs.");
         }

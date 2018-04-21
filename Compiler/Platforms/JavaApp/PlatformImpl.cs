@@ -15,8 +15,8 @@ namespace JavaApp
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-            : base(new ContextFreeJavaAppPlatform())
         {
+            this.ContextFreePlatformImpl = new ContextFreeJavaAppPlatform();
             this.Translator = new JavaAppTranslator(this);
         }
 
@@ -59,7 +59,7 @@ namespace JavaApp
                 output["src/org/crayonlang/interpreter/structs/" + structDef.NameToken.Value + ".java"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = this.GenerateCodeForStruct(structDef),
+                    TextContent = this.GenerateCodeForStruct(this.Translator, structDef),
                 };
             }
 
@@ -164,9 +164,9 @@ namespace JavaApp
             return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(translator, globals);
         }
 
-        public override string GenerateCodeForStruct(StructDefinition structDef)
+        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
         {
-            return this.ParentPlatform.GenerateCodeForStruct(structDef);
+            return this.ParentPlatform.GenerateCodeForStruct(translator, structDef);
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)

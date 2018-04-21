@@ -14,7 +14,10 @@ namespace LangJavaScript
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
 
-        public PlatformImpl(AbstractContextFreePlatform contextFreePlatform) : base(contextFreePlatform) { }
+        public PlatformImpl()
+        {
+            this.ContextFreePlatformImpl = new ContextFreeLangJavaScriptPlatform();
+        }
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
@@ -69,7 +72,7 @@ namespace LangJavaScript
             return sb.ToString();
         }
 
-        public override string GenerateCodeForStruct(StructDefinition structDef)
+        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
         {
             throw new NotImplementedException();
         }

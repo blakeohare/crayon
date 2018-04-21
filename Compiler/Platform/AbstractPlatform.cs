@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Generic;
-using Common;
 
 namespace Platform
 {
     public abstract class AbstractPlatform
     {
-        public AbstractPlatform(AbstractContextFreePlatform contextFreePlatform)
+        public AbstractPlatform()
         {
-            this.ContextFreePlatformImpl = contextFreePlatform;
         }
 
         public IPlatformProvider PlatformProvider { get; set; }
@@ -186,7 +185,7 @@ namespace Platform
             return string.Join(newline, lines);
         }
 
-        public abstract string GenerateCodeForStruct(Pastel.Nodes.StructDefinition structDef);
+        public abstract string GenerateCodeForStruct(AbstractTranslator translator, Pastel.Nodes.StructDefinition structDef);
         public abstract string GenerateCodeForFunction(AbstractTranslator translator, Pastel.Nodes.FunctionDefinition funcDef);
         public abstract string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<Pastel.Nodes.VariableDeclaration> globals);
 

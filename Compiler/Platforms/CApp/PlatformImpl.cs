@@ -13,8 +13,9 @@ namespace CApp
         public override string InheritsFrom { get { return "lang-c"; } }
         public override string NL { get { return "\n"; } }
 
-        public PlatformImpl() : base(new ContextFreeCAppPlatform())
+        public PlatformImpl()
         {
+            this.ContextFreePlatformImpl = new ContextFreeCAppPlatform();
             this.Translator = new CAppTranslator(this);
         }
 
@@ -53,7 +54,7 @@ namespace CApp
 
             foreach (StructDefinition structDef in structDefinitions)
             {
-                cCode.Append(this.GenerateCodeForStruct(structDef));
+                cCode.Append(this.GenerateCodeForStruct(this.Translator, structDef));
             }
 
             foreach (FunctionDefinition fd in functionDefinitions)
@@ -102,9 +103,9 @@ namespace CApp
             return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(translator, globals);
         }
 
-        public override string GenerateCodeForStruct(StructDefinition structDef)
+        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
         {
-            return this.ParentPlatform.GenerateCodeForStruct(structDef);
+            return this.ParentPlatform.GenerateCodeForStruct(translator, structDef);
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)

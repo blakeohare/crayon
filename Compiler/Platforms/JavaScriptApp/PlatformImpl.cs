@@ -14,8 +14,9 @@ namespace JavaScriptApp
         public override string InheritsFrom { get { return "lang-javascript"; } }
         public override string NL { get { return "\n"; } }
 
-        public PlatformImpl() : base(new ContextFreeJavaScriptAppPlatform())
+        public PlatformImpl() : base()
         {
+            this.ContextFreePlatformImpl = new ContextFreeJavaScriptAppPlatform();
             this.Translator = new JavaScriptAppTranslator(this);
         }
 
@@ -203,7 +204,7 @@ namespace JavaScriptApp
             // TODO: minify JavaScript across all of output dictionary
         }
 
-        public override string GenerateCodeForStruct(StructDefinition structDef)
+        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
         {
             throw new NotImplementedException();
         }

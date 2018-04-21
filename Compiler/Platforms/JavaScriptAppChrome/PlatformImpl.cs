@@ -6,14 +6,15 @@ using System.Collections.Generic;
 
 namespace JavaScriptAppChrome
 {
-    public class PlatformImpl : Platform.AbstractPlatform
+    public class PlatformImpl : AbstractPlatform
     {
         public override string InheritsFrom { get { return "javascript-app"; } }
         public override string Name { get { return "javascript-app-chrome"; } }
         public override string NL { get { return "\n"; } }
 
-        public PlatformImpl() : base(new ContextFreeJavaScriptAppChromePlatform())
+        public PlatformImpl()
         {
+            this.ContextFreePlatformImpl = new ContextFreeJavaScriptAppChromePlatform();
             this.Translator = new JavaScriptAppChromeTranslator(this);
         }
 
@@ -76,9 +77,9 @@ namespace JavaScriptAppChrome
             return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(translator, globals);
         }
 
-        public override string GenerateCodeForStruct(StructDefinition structDef)
+        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
         {
-            return this.ParentPlatform.GenerateCodeForStruct(structDef);
+            return this.ParentPlatform.GenerateCodeForStruct(translator, structDef);
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)

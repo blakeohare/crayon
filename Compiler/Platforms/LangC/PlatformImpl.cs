@@ -13,9 +13,10 @@ namespace LangC
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
 
-        public PlatformImpl(AbstractContextFreePlatform contextFreePlatform)
-            : base(contextFreePlatform)
-        { }
+        public PlatformImpl() : base()
+        {
+            this.ContextFreePlatformImpl = new ContextFreeLangCPlatform();
+        }
 
         public override IDictionary<string, object> GetConstantFlags()
         {
@@ -44,7 +45,7 @@ namespace LangC
             throw new NotImplementedException();
         }
 
-        public override string GenerateCodeForStruct(StructDefinition structDef)
+        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
         {
             if (structDef.NameToken.Value == "Value")
             {
@@ -62,7 +63,7 @@ namespace LangC
                 string fieldName = structDef.ArgNames[i].Value;
                 PType fieldType = structDef.ArgTypes[i];
                 sb.Append('\t');
-                sb.Append(this.Translator.TranslateType(fieldType));
+                sb.Append(translator.TranslateType(fieldType));
                 sb.Append(' ');
                 sb.Append(fieldName);
                 sb.Append(";\n");

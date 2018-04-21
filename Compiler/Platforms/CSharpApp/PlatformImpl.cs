@@ -14,8 +14,9 @@ namespace CSharpApp
         public override string InheritsFrom { get { return "lang-csharp"; } }
         public override string NL { get { return "\r\n"; } }
 
-        public PlatformImpl() : base(new ContextFreeCSharpAppPlatform())
+        public PlatformImpl()
         {
+            this.ContextFreePlatformImpl = new ContextFreeCSharpAppPlatform();
             this.Translator = new CSharpAppTranslator(this);
         }
 
@@ -354,7 +355,7 @@ namespace CSharpApp
                     "",
                     "namespace Interpreter.Structs",
                     "{",
-                    IndentCodeWithSpaces(this.GenerateCodeForStruct(sd).Trim(), 4),
+                    IndentCodeWithSpaces(this.GenerateCodeForStruct(this.Translator, sd).Trim(), 4),
                     "}",
                     ""
                 }),
@@ -487,9 +488,9 @@ namespace CSharpApp
             return this.ParentPlatform.GenerateCodeForFunction(this.Translator, funcDef);
         }
 
-        public override string GenerateCodeForStruct(StructDefinition structDef)
+        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
         {
-            return this.ParentPlatform.GenerateCodeForStruct(structDef);
+            return this.ParentPlatform.GenerateCodeForStruct(translator, structDef);
         }
     }
 }

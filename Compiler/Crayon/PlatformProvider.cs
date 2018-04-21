@@ -42,7 +42,7 @@ namespace Crayon
             {
                 // TODO: check to make sure it inherits from AbstractPlatform
                 // Perhaps make that the only qualification instead of going by name?
-                if (type.Name == "PlatformImpl")
+                if (type.Name == "PlatformImpl" && !type.IsAbstract)
                 {
                     return (AbstractPlatform)assembly.CreateInstance(type.FullName);
                 }

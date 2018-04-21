@@ -225,7 +225,6 @@ namespace Exporter
             using (new PerformanceSection("VmGenerator.GenerateCoreVmParseTree"))
             {
                 Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(
-                false,
                 null,
                 constantFlags,
                 codeLoader,
@@ -261,7 +260,6 @@ namespace Exporter
                     Dictionary<string, object> constantsLookup = Util.MergeDictionaries<string, object>(constantFlags, library.CompileTimeConstants);
 
                     Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(
-                        true,
                         sharedScope,
                         constantsLookup,
                         codeLoader,

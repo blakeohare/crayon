@@ -13,8 +13,9 @@ namespace JavaScriptAppIos
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-            : base(new ContextFreeJavaScriptAppIosPlatform())
-        { }
+        {
+            this.ContextFreePlatformImpl = new ContextFreeJavaScriptAppIosPlatform();
+        }
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
@@ -174,7 +175,7 @@ namespace JavaScriptAppIos
             throw new NotImplementedException();
         }
 
-        public override string GenerateCodeForStruct(StructDefinition structDef)
+        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
         {
             throw new NotImplementedException();
         }

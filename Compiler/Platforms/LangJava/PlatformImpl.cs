@@ -14,9 +14,10 @@ namespace LangJava
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
 
-        public PlatformImpl(AbstractContextFreePlatform contextFreePlatform)
-            : base(contextFreePlatform)
-        { }
+        public PlatformImpl() : base()
+        {
+            this.ContextFreePlatformImpl = new ContextFreeLangJavaPlatform();
+        }
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
@@ -113,7 +114,7 @@ namespace LangJava
 
                     foreach (StructDefinition structDef in library.Structs)
                     {
-                        string structCode = platform.GenerateCodeForStruct(structDef);
+                        string structCode = platform.GenerateCodeForStruct(platform.Translator, structDef);
 
                         // This is kind of a hack.
                         // TODO: better.
@@ -199,7 +200,7 @@ namespace LangJava
             return string.Join(this.NL, lines);
         }
 
-        public override string GenerateCodeForStruct(StructDefinition structDef)
+        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
         {
             StringBuilder sb = new StringBuilder();
             bool isValue = structDef.NameToken.Value == "Value";
@@ -207,7 +208,7 @@ namespace LangJava
             sb.Append(structDef.NameToken.Value);
             sb.Append(" {");
             sb.Append(this.NL);
-            string[] types = structDef.ArgTypes.Select(type => this.Translator.TranslateType(type)).ToArray();
+            string[] types = structDef.ArgTypes.Select(type => translator.TranslateType(type)).ToArray();
             string[] names = structDef.ArgNames.Select(token => token.Value).ToArray();
             int fieldCount = names.Length;
             for (int i = 0; i < fieldCount; ++i)

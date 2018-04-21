@@ -10,8 +10,9 @@ namespace JavaAppAndroid
 {
     public class PlatformImpl : AbstractPlatform
     {
-        public PlatformImpl() : base(new ContextFreeJavaAppAndroidPlatform())
+        public PlatformImpl()
         {
+            this.ContextFreePlatformImpl = new ContextFreeJavaAppAndroidPlatform();
             this.Translator = new JavaAppAndroidTranslator(this);
         }
 
@@ -46,7 +47,7 @@ namespace JavaAppAndroid
                 output["app/src/main/java/org/crayonlang/interpreter/structs/" + structDef.NameToken.Value + ".java"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = this.GenerateCodeForStruct(structDef),
+                    TextContent = this.GenerateCodeForStruct(this.Translator, structDef),
                 };
             }
 
@@ -212,9 +213,9 @@ namespace JavaAppAndroid
             return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(translator, globals);
         }
 
-        public override string GenerateCodeForStruct(StructDefinition structDef)
+        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
         {
-            return this.ParentPlatform.GenerateCodeForStruct(structDef);
+            return this.ParentPlatform.GenerateCodeForStruct(translator, structDef);
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)

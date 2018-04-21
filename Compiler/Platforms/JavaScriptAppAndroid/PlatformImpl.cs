@@ -13,8 +13,9 @@ namespace JavaScriptAppAndroid
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-            : base(new ContextFreeJavaScriptAppAndroidPlatform())
-        { }
+        {
+            this.ContextFreePlatformImpl = new ContextFreeJavaScriptAppAndroidPlatform();
+        }
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
@@ -104,8 +105,7 @@ namespace JavaScriptAppAndroid
         public override void ExportStandaloneVm(Dictionary<string, FileOutput> output, IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform) { throw new NotImplementedException(); }
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef) { throw new NotImplementedException(); }
         public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals) { throw new NotImplementedException(); }
-        public override string GenerateCodeForStruct(StructDefinition structDef) { throw new NotImplementedException(); }
-
+        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef) { throw new NotImplementedException(); }
 
         public void OutputAndroidBoilerplate(Dictionary<string, FileOutput> output, Dictionary<string, string> replacements, Options options)
         {
