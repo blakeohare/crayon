@@ -17,7 +17,7 @@ namespace JavaScriptApp
         public PlatformImpl() : base()
         {
             this.ContextFreePlatformImpl = new ContextFreeJavaScriptAppPlatform();
-            this.Translator = new JavaScriptAppTranslator(this);
+            this.Translator = new LangJavaScript.JavaScriptTranslator(this);
         }
 
         public override IDictionary<string, object> GetConstantFlags()

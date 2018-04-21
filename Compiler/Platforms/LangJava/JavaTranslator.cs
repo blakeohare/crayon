@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LangJava
 {
-    public abstract class JavaTranslator : Platform.CurlyBraceTranslator
+    public class JavaTranslator : Platform.CurlyBraceTranslator
     {
         private bool isJava6;
 
@@ -96,6 +96,11 @@ namespace LangJava
         public override void TranslateReadByteCodeFile(StringBuilder sb)
         {
             sb.Append("TranslationHelper.getByteCode()");
+        }
+
+        public override void TranslateVmEndProcess(StringBuilder sb)
+        {
+            sb.Append("System.exit(0)");
         }
 
         public override void TranslateArrayGet(StringBuilder sb, Expression array, Expression index)

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LangCSharp
 {
-    public abstract class CSharpTranslator : Platform.CurlyBraceTranslator
+    public class CSharpTranslator : Platform.CurlyBraceTranslator
     {
         public CSharpTranslator(Platform.AbstractPlatform platform) : base(platform, "    ", "\r\n", false)
         { }
@@ -40,7 +40,7 @@ namespace LangCSharp
                     return type.RootValue;
             }
         }
-        
+
         public override void TranslatePrintStdErr(StringBuilder sb, Expression value)
         {
             sb.Append("PlatformTranslationHelper.PrintStdErr(");
