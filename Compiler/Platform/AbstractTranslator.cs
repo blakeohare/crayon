@@ -102,11 +102,11 @@ namespace Platform
                 case "FunctionReference": this.TranslateFunctionReference(sb, (FunctionReference)expression); break;
                 case "NativeFunctionInvocation": this.TranslateNativeFunctionInvocation(sb, (NativeFunctionInvocation)expression); break;
                 case "OpChain": this.TranslateOpChain(sb, (OpChain)expression); break;
-                case "LibraryNativeFunctionInvocation":
-                    this.TranslateLibraryNativeFunctionInvocation(
+                case "ExtensibleFunctionInvocation":
+                    this.TranslateExtensibleFunctionInvocation(
                         sb,
                         this.DEPRECATED_Platform,
-                        (LibraryNativeFunctionInvocation)expression);
+                        (ExtensibleFunctionInvocation)expression);
                     break;
 
                 case "InlineIncrement":
@@ -336,10 +336,10 @@ namespace Platform
             }
         }
 
-        public void TranslateLibraryNativeFunctionInvocation(StringBuilder sb, AbstractPlatform platform, LibraryNativeFunctionInvocation funcInvocation)
+        public void TranslateExtensibleFunctionInvocation(StringBuilder sb, AbstractPlatform platform, ExtensibleFunctionInvocation funcInvocation)
         {
             Expression[] args = funcInvocation.Args;
-            string functionName = funcInvocation.LibraryNativeFunction.Name;
+            string functionName = funcInvocation.FunctionRef.Name;
             this.CurrentLibraryFunctionTranslator.TranslateInvocation(sb, platform, this, functionName, args, funcInvocation.FirstToken);
         }
 

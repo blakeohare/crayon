@@ -5,14 +5,18 @@ using System.Text;
 
 namespace Pastel.Nodes
 {
-    public class LibraryNativeFunctionInvocation : Expression
+    public class ExtensibleFunctionInvocation : Expression
     {
         public Expression[] Args { get; set; }
-        public LibraryNativeFunctionReference LibraryNativeFunction { get; set; }
+        public ExtensibleFunctionReference FunctionRef { get; set; }
 
-        public LibraryNativeFunctionInvocation(Token firstToken, LibraryNativeFunctionReference libraryNativeFunction, IList<Expression> args) : base(firstToken)
+        public ExtensibleFunctionInvocation(
+            Token firstToken, 
+            ExtensibleFunctionReference functionRef, 
+            IList<Expression> args) 
+            : base(firstToken)
         {
-            this.LibraryNativeFunction = libraryNativeFunction;
+            this.FunctionRef = functionRef;
             this.Args = args.ToArray();
         }
 
@@ -25,15 +29,15 @@ namespace Pastel.Nodes
         {
             // Args already resolved by FunctionInvocation.ResolveType().
 
-            string name = this.LibraryNativeFunction.Name;
-            PType returnType;
-            if (!compiler.LibraryNativeFunctionReferenceReturnTypes.TryGetValue(name, out returnType))
+            string name = this.FunctionRef.Name;
+            ExtensibleFunction extensibleFunction;
+            if (!compiler.ExtensibleFunctions.TryGetValue(name, out extensibleFunction))
             {
-                throw new ParserException(this.FirstToken, "Type information for '" + name + "' library function is not defined.");
+                throw new ParserException(this.FirstToken, "Type information for '" + name + "' extensible function is not defined.");
             }
-            this.ResolvedType = returnType;
+            this.ResolvedType = extensibleFunction.ReturnType;
 
-            PType[] argTypes = compiler.LibraryNativeFunctionReferenceArgumentTypes[name];
+            PType[] argTypes = extensibleFunction.ArgTypes;
 
             if (argTypes.Length != this.Args.Length)
             {

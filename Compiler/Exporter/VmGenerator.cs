@@ -225,11 +225,10 @@ namespace Exporter
             using (new PerformanceSection("VmGenerator.GenerateCoreVmParseTree"))
             {
                 Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(
-                null,
+                new Pastel.PastelCompiler[0],
                 constantFlags,
                 codeLoader,
-                null,
-                null);
+                new Pastel.ExtensibleFunction[0]);
 
                 foreach (string file in INTERPRETER_BASE_FILES)
                 {
@@ -259,12 +258,25 @@ namespace Exporter
 
                     Dictionary<string, object> constantsLookup = Util.MergeDictionaries<string, object>(constantFlags, library.CompileTimeConstants);
 
+                    Dictionary<string, PType> libraryReturnTypes = library.GetReturnTypesForNativeMethods();
+                    Dictionary<string, PType[]> libraryArgTypes = library.GetArgumentTypesForNativeMethods();
+
+                    List<Pastel.ExtensibleFunction> libraryFunctions = new List<Pastel.ExtensibleFunction>();
+                    foreach (string libraryFunctionName in libraryReturnTypes.Keys)
+                    {
+                        libraryFunctions.Add(new Pastel.ExtensibleFunction()
+                        {
+                            Name = libraryFunctionName,
+                            ReturnType = libraryReturnTypes[libraryFunctionName],
+                            ArgTypes = libraryArgTypes[libraryFunctionName],
+                        });
+                    }
+
                     Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(
-                        sharedScope,
+                        new List<Pastel.PastelCompiler> { sharedScope },
                         constantsLookup,
                         codeLoader,
-                        library.GetReturnTypesForNativeMethods(),
-                        library.GetArgumentTypesForNativeMethods());
+                        libraryFunctions);
                     libraries[library.Metadata.ID] = compiler;
 
                     Dictionary<string, string> supplementalCode = library.Metadata.GetSupplementalTranslatedCode();

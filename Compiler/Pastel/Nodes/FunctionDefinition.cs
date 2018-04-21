@@ -36,7 +36,11 @@ namespace Pastel.Nodes
 
         public void ResolveTypes(PastelCompiler compiler)
         {
-            Dictionary<string, VariableDeclaration> globals = compiler.SharedScope == null ? compiler.Globals : compiler.SharedScope.Globals;
+            Dictionary<string, VariableDeclaration> globals = new Dictionary<string, VariableDeclaration>(compiler.Globals);
+            foreach (PastelCompiler includedScope in compiler.IncludedScopes)
+            {
+                Common.Util.MergeDictionaryInto<string, VariableDeclaration>(includedScope.Globals, globals);
+            }
 
             VariableScope varScope = new VariableScope(this, globals);
             for (int i = 0; i < this.ArgTypes.Length; ++i)
