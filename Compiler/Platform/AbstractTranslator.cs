@@ -37,12 +37,12 @@ namespace Platform
             }
 
         }
-        public Platform.AbstractPlatform Platform { get; private set; }
+        public Platform.AbstractPlatform DEPRECATED_Platform { get; private set; }
         public Platform.ILibraryNativeInvocationTranslator CurrentLibraryFunctionTranslator { get; set; }
 
         public AbstractTranslator(Platform.AbstractPlatform platform, string tab, string newLine)
         {
-            this.Platform = platform;
+            this.DEPRECATED_Platform = platform;
             this.NewLine = newLine;
             this.tabChar = tab;
             this.tabs = new string[20];
@@ -52,6 +52,11 @@ namespace Platform
                 this.tabs[i] = this.tabs[i - 1] + this.tabChar;
             }
             this.TabDepth = 0;
+        }
+
+        public virtual string TranslateType(PType type)
+        {
+            throw new InvalidOperationException("This platform does not support types.");
         }
 
         public virtual void TranslateExecutables(StringBuilder sb, Executable[] executables)
@@ -97,7 +102,12 @@ namespace Platform
                 case "FunctionReference": this.TranslateFunctionReference(sb, (FunctionReference)expression); break;
                 case "NativeFunctionInvocation": this.TranslateNativeFunctionInvocation(sb, (NativeFunctionInvocation)expression); break;
                 case "OpChain": this.TranslateOpChain(sb, (OpChain)expression); break;
-                case "LibraryNativeFunctionInvocation": this.TranslateLibraryNativeFunctionInvocation(sb, (LibraryNativeFunctionInvocation)expression); break;
+                case "LibraryNativeFunctionInvocation":
+                    this.TranslateLibraryNativeFunctionInvocation(
+                        sb,
+                        this.DEPRECATED_Platform,
+                        (LibraryNativeFunctionInvocation)expression);
+                    break;
 
                 case "InlineIncrement":
                     InlineIncrement ii = (InlineIncrement)expression;
@@ -120,7 +130,8 @@ namespace Platform
                     if (specifyInterpreterScope)
                     {
                         this.TranslateFunctionInvocationInterpreterScoped(sb, (FunctionReference)funcInvocation.Root, funcInvocation.Args);
-                    } else
+                    }
+                    else
                     {
                         this.TranslateFunctionInvocationLocallyScoped(sb, (FunctionReference)funcInvocation.Root, funcInvocation.Args);
                     }
@@ -301,7 +312,7 @@ namespace Platform
                 case Pastel.NativeFunction.STRING_ENDS_WITH: this.TranslateStringEndsWith(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.STRING_EQUALS: this.TranslateStringEquals(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.STRING_FROM_CHAR_CODE: this.TranslateStringFromCharCode(sb, args[0]); break;
-                case Pastel.NativeFunction.STRING_INDEX_OF: if (args.Length == 2) this.TranslateStringIndexOf(sb, args[0], args[1]); else this.TranslateStringIndexOfWithStart(sb, args[0], args[1], args[2]);  break;
+                case Pastel.NativeFunction.STRING_INDEX_OF: if (args.Length == 2) this.TranslateStringIndexOf(sb, args[0], args[1]); else this.TranslateStringIndexOfWithStart(sb, args[0], args[1], args[2]); break;
                 case Pastel.NativeFunction.STRING_LENGTH: this.TranslateStringLength(sb, args[0]); break;
                 case Pastel.NativeFunction.STRING_REPLACE: this.TranslateStringReplace(sb, args[0], args[1], args[2]); break;
                 case Pastel.NativeFunction.STRING_REVERSE: this.TranslateStringReverse(sb, args[0]); break;
@@ -325,11 +336,11 @@ namespace Platform
             }
         }
 
-        public void TranslateLibraryNativeFunctionInvocation(StringBuilder sb, LibraryNativeFunctionInvocation funcInvocation)
+        public void TranslateLibraryNativeFunctionInvocation(StringBuilder sb, AbstractPlatform platform, LibraryNativeFunctionInvocation funcInvocation)
         {
             Expression[] args = funcInvocation.Args;
             string functionName = funcInvocation.LibraryNativeFunction.Name;
-            this.CurrentLibraryFunctionTranslator.TranslateInvocation(sb, this, functionName, args, funcInvocation.FirstToken);
+            this.CurrentLibraryFunctionTranslator.TranslateInvocation(sb, platform, this, functionName, args, funcInvocation.FirstToken);
         }
 
         public void TranslateCommaDelimitedExpressions(StringBuilder sb, IList<Expression> expressions)

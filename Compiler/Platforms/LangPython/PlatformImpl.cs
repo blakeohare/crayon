@@ -31,11 +31,6 @@ namespace LangPython
                 };
         }
 
-        public override string TranslateType(PType type)
-        {
-            throw new InvalidOperationException("Python does not support types.");
-        }
-
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,

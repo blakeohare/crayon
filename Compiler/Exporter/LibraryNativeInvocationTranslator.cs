@@ -21,6 +21,7 @@ namespace Exporter
 
         public void TranslateInvocation(
             StringBuilder sb,
+            AbstractPlatform platform,
             AbstractTranslator translator,
             string functionName,
             Expression[] args,
@@ -28,7 +29,7 @@ namespace Exporter
         {
             try
             {
-                sb.Append(LibraryExporter.Get(this.library, translator.Platform).TranslateNativeInvocation(throwToken, translator, functionName, args));
+                sb.Append(LibraryExporter.Get(this.library, platform).TranslateNativeInvocation(throwToken, platform, translator, functionName, args));
             }
             catch (System.Reflection.TargetInvocationException tie)
             {

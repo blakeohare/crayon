@@ -150,12 +150,12 @@ namespace Exporter
 
         private Dictionary<string, string> translationsLookup = null;
 
-        public string TranslateNativeInvocation(object throwToken, Platform.AbstractTranslator translator, string functionName, object[] args)
+        public string TranslateNativeInvocation(object throwToken, Platform.AbstractPlatform platform, Platform.AbstractTranslator translator, string functionName, object[] args)
         {
             if (translationsLookup == null)
             {
                 translationsLookup = new Dictionary<string, string>();
-                foreach (string inheritedPlatformName in translator.Platform.InheritanceChain.Reverse())
+                foreach (string inheritedPlatformName in platform.InheritanceChain.Reverse())
                 {
                     // TODO: make this hack less hacky.
                     string effectivePlatformName = inheritedPlatformName.StartsWith("experimental-")
@@ -191,7 +191,7 @@ namespace Exporter
             string MISSING_FUNCTION_NAME_FOR_DEBUGGER = functionName;
             MISSING_FUNCTION_NAME_FOR_DEBUGGER.Trim(); // no compile warnings
 
-            string msg = "The " + this.Metadata.ID + " library does not support " + translator.Platform.Name + " projects.";
+            string msg = "The " + this.Metadata.ID + " library does not support " + platform.Name + " projects.";
             if (throwToken is Token)
             {
                 throw new ParserException((Token)throwToken, msg);

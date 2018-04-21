@@ -1,7 +1,7 @@
-﻿using System;
-using System.Text;
+﻿using Common;
 using Pastel.Nodes;
-using Common;
+using System;
+using System.Text;
 
 namespace LangCSharp
 {
@@ -9,6 +9,37 @@ namespace LangCSharp
     {
         public CSharpTranslator(Platform.AbstractPlatform platform) : base(platform, "    ", "\r\n", false)
         { }
+
+        public override string TranslateType(PType type)
+        {
+            switch (type.RootValue)
+            {
+                case "int":
+                case "char":
+                case "bool":
+                case "double":
+                case "string":
+                case "object":
+                case "void":
+                    return type.RootValue;
+
+                case "List":
+                    return "List<" + this.TranslateType(type.Generics[0]) + ">";
+
+                case "Dictionary":
+                    return "Dictionary<" + this.TranslateType(type.Generics[0]) + ", " + this.TranslateType(type.Generics[1]) + ">";
+
+                case "Array":
+                    return this.TranslateType(type.Generics[0]) + "[]";
+
+                default:
+                    if (type.Generics.Length > 0)
+                    {
+                        throw new NotImplementedException();
+                    }
+                    return type.RootValue;
+            }
+        }
 
         public override void TranslateArrayGet(StringBuilder sb, Expression array, Expression index)
         {
@@ -42,7 +73,7 @@ namespace LangCSharp
                 arrayType = arrayType.Generics[0];
             }
             sb.Append("new ");
-            sb.Append(this.Platform.TranslateType(arrayType));
+            sb.Append(this.TranslateType(arrayType));
             sb.Append('[');
             this.TranslateExpression(sb, lengthExpression);
             sb.Append(']');
@@ -71,7 +102,7 @@ namespace LangCSharp
         public override void TranslateCast(StringBuilder sb, PType type, Expression expression)
         {
             sb.Append('(');
-            sb.Append(this.Platform.TranslateType(type));
+            sb.Append(this.TranslateType(type));
             sb.Append(')');
             this.TranslateExpression(sb, expression);
         }
@@ -150,9 +181,9 @@ namespace LangCSharp
         public override void TranslateDictionaryNew(StringBuilder sb, PType keyType, PType valueType)
         {
             sb.Append("new Dictionary<");
-            sb.Append(this.Platform.TranslateType(keyType));
+            sb.Append(this.TranslateType(keyType));
             sb.Append(", ");
-            sb.Append(this.Platform.TranslateType(valueType));
+            sb.Append(this.TranslateType(valueType));
             sb.Append(">()");
         }
 
@@ -341,7 +372,7 @@ namespace LangCSharp
         public override void TranslateListNew(StringBuilder sb, PType type)
         {
             sb.Append("new List<");
-            sb.Append(this.Platform.TranslateType(type));
+            sb.Append(this.TranslateType(type));
             sb.Append(">()");
         }
 
@@ -763,7 +794,7 @@ namespace LangCSharp
         public override void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl)
         {
             sb.Append(this.CurrentTab);
-            sb.Append(this.Platform.TranslateType(varDecl.Type));
+            sb.Append(this.TranslateType(varDecl.Type));
             sb.Append(" v_");
             sb.Append(varDecl.VariableNameToken.Value);
             if (varDecl.Value != null)

@@ -147,15 +147,6 @@ namespace Platform
             }
         }
 
-        public virtual string TranslateType(Pastel.Nodes.PType type)
-        {
-            if (this.parentPlatformSet)
-            {
-                return this.parentPlatform.TranslateType(type);
-            }
-            throw new InvalidOperationException("This platform does not support types.");
-        }
-
         public abstract void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             IList<Pastel.Nodes.VariableDeclaration> globals,

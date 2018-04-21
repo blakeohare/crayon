@@ -33,37 +33,6 @@ namespace LangCSharp
                 };
         }
 
-        public override string TranslateType(Pastel.Nodes.PType type)
-        {
-            switch (type.RootValue)
-            {
-                case "int":
-                case "char":
-                case "bool":
-                case "double":
-                case "string":
-                case "object":
-                case "void":
-                    return type.RootValue;
-
-                case "List":
-                    return "List<" + this.TranslateType(type.Generics[0]) + ">";
-
-                case "Dictionary":
-                    return "Dictionary<" + this.TranslateType(type.Generics[0]) + ", " + this.TranslateType(type.Generics[1]) + ">";
-
-                case "Array":
-                    return this.TranslateType(type.Generics[0]) + "[]";
-
-                default:
-                    if (type.Generics.Length > 0)
-                    {
-                        throw new NotImplementedException();
-                    }
-                    return type.RootValue;
-            }
-        }
-
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             IList<VariableDeclaration> globals,
@@ -99,7 +68,7 @@ namespace LangCSharp
             lines.Add("{");
             for (int i = 0; i < types.Length; ++i)
             {
-                lines.Add("    public " + this.TranslateType(types[i]) + " " + fieldNames[i].Value + ";");
+                lines.Add("    public " + this.Translator.TranslateType(types[i]) + " " + fieldNames[i].Value + ";");
             }
             lines.Add("");
 
@@ -110,7 +79,7 @@ namespace LangCSharp
             for (int i = 0; i < types.Length; ++i)
             {
                 if (i > 0) constructorDeclaration.Append(", ");
-                constructorDeclaration.Append(this.TranslateType(types[i]));
+                constructorDeclaration.Append(this.Translator.TranslateType(types[i]));
                 constructorDeclaration.Append(' ');
                 constructorDeclaration.Append(fieldNames[i].Value);
             }
@@ -139,14 +108,14 @@ namespace LangCSharp
             Pastel.Token[] argNames = funcDef.ArgNames;
 
             output.Append("public static ");
-            output.Append(this.TranslateType(returnType));
+            output.Append(this.Translator.TranslateType(returnType));
             output.Append(" v_");
             output.Append(funcName);
             output.Append("(");
             for (int i = 0; i < argTypes.Length; ++i)
             {
                 if (i > 0) output.Append(", ");
-                output.Append(this.TranslateType(argTypes[i]));
+                output.Append(this.Translator.TranslateType(argTypes[i]));
                 output.Append(" v_");
                 output.Append(argNames[i].Value);
             }

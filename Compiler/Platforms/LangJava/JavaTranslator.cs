@@ -14,6 +14,66 @@ namespace LangJava
             this.isJava6 = platform.Name == "java-app-android"; // TODO: be more ashamed of this.
         }
 
+        public override string TranslateType(PType type)
+        {
+            return TranslateJavaType(type);
+        }
+
+        private string TranslateJavaType(PType type)
+        {
+            switch (type.RootValue)
+            {
+                case "void": return "void";
+                case "byte": return "byte";
+                case "int": return "int";
+                case "char": return "char";
+                case "double": return "double";
+                case "bool": return "boolean";
+                case "object": return "Object";
+                case "string": return "String";
+
+                case "Array":
+                    string innerType = this.TranslateJavaType(type.Generics[0]);
+                    return innerType + "[]";
+
+                case "List":
+                    if (type.Generics[0].RootValue == "Value")
+                    {
+                        return "FastList";
+                    }
+                    return "ArrayList<" + this.TranslateJavaNestedType(type.Generics[0]) + ">";
+
+                case "Dictionary":
+                    return "HashMap<" + this.TranslateJavaNestedType(type.Generics[0]) + ", " + this.TranslateJavaNestedType(type.Generics[1]) + ">";
+
+                case "ClassValue":
+                    // java.lang.ClassValue collision
+                    return "org.crayonlang.interpreter.structs.ClassValue";
+
+                default:
+                    char firstChar = type.RootValue[0];
+                    if (firstChar >= 'A' && firstChar <= 'Z')
+                    {
+                        return type.RootValue;
+                    }
+                    throw new NotImplementedException();
+            }
+        }
+
+        private string TranslateJavaNestedType(PType type)
+        {
+            switch (type.RootValue)
+            {
+                case "bool": return "Boolean";
+                case "byte": return "Byte";
+                case "char": return "Character";
+                case "double": return "Double";
+                case "int": return "Integer";
+                default:
+                    return this.TranslateJavaType(type);
+            }
+        }
+
         public override void TranslateArrayGet(StringBuilder sb, Expression array, Expression index)
         {
             this.TranslateExpression(sb, array);
@@ -55,7 +115,7 @@ namespace LangJava
             }
             else
             {
-                sb.Append(this.Platform.TranslateType(arrayType));
+                sb.Append(this.TranslateType(arrayType));
             }
             sb.Append('[');
             this.TranslateExpression(sb, lengthExpression);
@@ -149,9 +209,9 @@ namespace LangJava
                     case "double":
                     case "char":
                         sb.Append('(');
-                        sb.Append(this.Platform.TranslateType(type));
+                        sb.Append(this.TranslateType(type));
                         sb.Append(") (");
-                        sb.Append(LangJava.PlatformImpl.TranslateJavaNestedType(type));
+                        sb.Append(this.TranslateJavaNestedType(type));
                         sb.Append(") ");
                         this.TranslateExpression(sb, expression);
                         sb.Append(')');
@@ -161,7 +221,7 @@ namespace LangJava
                 }
             }
             sb.Append('(');
-            sb.Append(this.Platform.TranslateType(type));
+            sb.Append(this.TranslateType(type));
             sb.Append(") ");
 
             this.TranslateExpression(sb, expression);
@@ -281,9 +341,9 @@ namespace LangJava
         public override void TranslateDictionaryNew(StringBuilder sb, PType keyType, PType valueType)
         {
             sb.Append("new HashMap<");
-            sb.Append(LangJava.PlatformImpl.TranslateJavaNestedType(keyType));
+            sb.Append(this.TranslateJavaNestedType(keyType));
             sb.Append(", ");
-            sb.Append(LangJava.PlatformImpl.TranslateJavaNestedType(valueType));
+            sb.Append(this.TranslateJavaNestedType(valueType));
             sb.Append(">()");
         }
 
@@ -506,7 +566,7 @@ namespace LangJava
             else
             {
                 sb.Append("new ArrayList<");
-                sb.Append(LangJava.PlatformImpl.TranslateJavaNestedType(type));
+                sb.Append(this.TranslateJavaNestedType(type));
                 sb.Append(">()");
             }
         }
@@ -650,7 +710,7 @@ namespace LangJava
                 case "Array":
                     throw NYI.JavaListOfArraysConvertToArray();
                 default:
-                    string javaType = this.Platform.TranslateType(itemType);
+                    string javaType = this.TranslateType(itemType);
                     char firstChar = javaType[0];
                     if (firstChar >= 'A' && firstChar <= 'Z')
                     {
@@ -1088,7 +1148,7 @@ namespace LangJava
         public override void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl)
         {
             sb.Append(this.CurrentTab);
-            sb.Append(this.Platform.TranslateType(varDecl.Type));
+            sb.Append(this.TranslateType(varDecl.Type));
             sb.Append(" v_");
             sb.Append(varDecl.VariableNameToken.Value);
             if (varDecl.Value != null)

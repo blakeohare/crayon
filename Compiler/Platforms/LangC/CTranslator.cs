@@ -11,6 +11,37 @@ namespace LangC
         public CTranslator(Platform.AbstractPlatform platform) : base(platform, "    ", "\n", false)
         { }
 
+        public override string TranslateType(PType type)
+        {
+            switch (type.RootValue)
+            {
+                case "int": return "int";
+                case "string": return "int*";
+                case "bool": return "int";
+                case "double": return "double";
+                case "object": return "void*";
+                case "char": return "int";
+                case "List": return "List*";
+                case "Array": return this.TranslateType(type.Generics[0]) + "*";
+                case "Dictionary":
+                    string keyType = type.Generics[0].RootValue;
+                    switch (keyType)
+                    {
+                        case "int":
+                        case "string":
+                            return "Dictionary*";
+                        default:
+                            throw new NotImplementedException();
+                    }
+                default: break;
+            }
+
+            char firstChar = type.RootValue[0];
+            if (firstChar >= 'A' && firstChar <= 'Z') return type.RootValue + "*";
+
+            throw new NotImplementedException();
+        }
+
         public override void TranslateArrayGet(StringBuilder sb, Expression array, Expression index)
         {
             this.TranslateExpression(sb, array);
@@ -53,7 +84,7 @@ namespace LangC
             // Potentially there'd be a virtual function called TranslateArrayNewWithoutLength that just calls this
             // and so it won't clutter up the interface implementation for 90% of languages that don't need the
             // distinction.t
-            string type = this.Platform.TranslateType(arrayType);
+            string type = this.TranslateType(arrayType);
             sb.Append("(");
             sb.Append(type);
             sb.Append("*)TranslationHelper_array_new(sizeof(");
@@ -150,7 +181,7 @@ namespace LangC
                 }
             }
             sb.Append("((");
-            sb.Append(this.Platform.TranslateType(type));
+            sb.Append(this.TranslateType(type));
             sb.Append(")(");
             this.TranslateExpression(sb, expression);
             sb.Append("))");
@@ -225,9 +256,9 @@ namespace LangC
         {
             PType dictionaryType = dictionary.ResolvedType;
             sb.Append("Dictionary_get_");
-            sb.Append(this.Platform.TranslateType(dictionaryType.Generics[0]));
+            sb.Append(this.TranslateType(dictionaryType.Generics[0]));
             sb.Append("_to_");
-            sb.Append(this.Platform.TranslateType(dictionaryType.Generics[1]));
+            sb.Append(this.TranslateType(dictionaryType.Generics[1]));
             sb.Append("(");
             this.TranslateExpression(sb, dictionary);
             sb.Append(", ");
@@ -254,9 +285,9 @@ namespace LangC
         public override void TranslateDictionaryNew(StringBuilder sb, PType keyType, PType valueType)
         {
             sb.Append("Dictionary_new(sizeof(");
-            sb.Append(this.Platform.TranslateType(keyType));
+            sb.Append(this.TranslateType(keyType));
             sb.Append("), sizeof(");
-            sb.Append(this.Platform.TranslateType(valueType));
+            sb.Append(this.TranslateType(valueType));
             sb.Append("))");
         }
 
@@ -481,7 +512,7 @@ namespace LangC
         public override void TranslateListNew(StringBuilder sb, PType type)
         {
             sb.Append("List_new(sizeof(");
-            sb.Append(this.Platform.TranslateType(type));
+            sb.Append(this.TranslateType(type));
             sb.Append("))");
         }
 
@@ -1020,7 +1051,7 @@ namespace LangC
         public override void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl)
         {
             sb.Append(this.CurrentTab);
-            sb.Append(this.Platform.TranslateType(varDecl.Type));
+            sb.Append(this.TranslateType(varDecl.Type));
             sb.Append(" v_");
             sb.Append(varDecl.VariableNameToken.Value);
             if (varDecl.Value != null)

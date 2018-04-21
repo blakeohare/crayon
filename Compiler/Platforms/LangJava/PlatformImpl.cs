@@ -143,7 +143,7 @@ namespace LangJava
 
             sb.Append(translator.CurrentTab);
             sb.Append("public static ");
-            sb.Append(this.TranslateType(funcDef.ReturnType));
+            sb.Append(this.Translator.TranslateType(funcDef.ReturnType));
             sb.Append(" v_");
             sb.Append(funcDef.NameToken.Value);
             sb.Append('(');
@@ -152,7 +152,7 @@ namespace LangJava
             for (int i = 0; i < argTypes.Length; ++i)
             {
                 if (i > 0) sb.Append(", ");
-                sb.Append(this.TranslateType(argTypes[i]));
+                sb.Append(this.Translator.TranslateType(argTypes[i]));
                 sb.Append(" v_");
                 sb.Append(argNames[i].Value);
             }
@@ -186,7 +186,7 @@ namespace LangJava
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append("  public static final ");
-                sb.Append(this.TranslateType(varDecl.Type));
+                sb.Append(this.Translator.TranslateType(varDecl.Type));
                 sb.Append(' ');
                 sb.Append(varDecl.VariableNameToken.Value);
                 sb.Append(" = ");
@@ -207,7 +207,7 @@ namespace LangJava
             sb.Append(structDef.NameToken.Value);
             sb.Append(" {");
             sb.Append(this.NL);
-            string[] types = structDef.ArgTypes.Select(type => this.TranslateType(type)).ToArray();
+            string[] types = structDef.ArgTypes.Select(type => this.Translator.TranslateType(type)).ToArray();
             string[] names = structDef.ArgNames.Select(token => token.Value).ToArray();
             int fieldCount = names.Length;
             for (int i = 0; i < fieldCount; ++i)
@@ -334,66 +334,6 @@ namespace LangJava
                     { "IS_THREAD_BLOCKING_ALLOWED", true },
                     { "HAS_INCREMENT", true },
                 };
-        }
-
-        public override string TranslateType(PType type)
-        {
-            return TranslateJavaType(type);
-        }
-
-        public static string TranslateJavaType(PType type)
-        {
-            switch (type.RootValue)
-            {
-                case "void": return "void";
-                case "byte": return "byte";
-                case "int": return "int";
-                case "char": return "char";
-                case "double": return "double";
-                case "bool": return "boolean";
-                case "object": return "Object";
-                case "string": return "String";
-
-                case "Array":
-                    string innerType = TranslateJavaType(type.Generics[0]);
-                    return innerType + "[]";
-
-                case "List":
-                    if (type.Generics[0].RootValue == "Value")
-                    {
-                        return "FastList";
-                    }
-                    return "ArrayList<" + TranslateJavaNestedType(type.Generics[0]) + ">";
-
-                case "Dictionary":
-                    return "HashMap<" + TranslateJavaNestedType(type.Generics[0]) + ", " + TranslateJavaNestedType(type.Generics[1]) + ">";
-
-                case "ClassValue":
-                    // java.lang.ClassValue collision
-                    return "org.crayonlang.interpreter.structs.ClassValue";
-
-                default:
-                    char firstChar = type.RootValue[0];
-                    if (firstChar >= 'A' && firstChar <= 'Z')
-                    {
-                        return type.RootValue;
-                    }
-                    throw new NotImplementedException();
-            }
-        }
-
-        public static string TranslateJavaNestedType(PType type)
-        {
-            switch (type.RootValue)
-            {
-                case "bool": return "Boolean";
-                case "byte": return "Byte";
-                case "char": return "Character";
-                case "double": return "Double";
-                case "int": return "Integer";
-                default:
-                    return TranslateJavaType(type);
-            }
         }
     }
 }

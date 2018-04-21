@@ -38,6 +38,11 @@ namespace LangPython
             this.SwitchStatements = new List<PythonFakeSwitchStatement>();
         }
 
+        public override string TranslateType(PType type)
+        {
+            throw new InvalidOperationException("Python does not support types.");
+        }
+
         public override void TranslateArrayGet(StringBuilder sb, Expression array, Expression index)
         {
             this.TranslateExpression(sb, array);

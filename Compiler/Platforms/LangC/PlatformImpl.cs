@@ -62,7 +62,7 @@ namespace LangC
                 string fieldName = structDef.ArgNames[i].Value;
                 PType fieldType = structDef.ArgTypes[i];
                 sb.Append('\t');
-                sb.Append(this.TranslateType(fieldType));
+                sb.Append(this.Translator.TranslateType(fieldType));
                 sb.Append(' ');
                 sb.Append(fieldName);
                 sb.Append(";\n");
@@ -76,14 +76,14 @@ namespace LangC
         public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(this.TranslateType(funcDef.ReturnType));
+            sb.Append(this.Translator.TranslateType(funcDef.ReturnType));
             sb.Append(" v_");
             sb.Append(funcDef.NameToken.Value);
             sb.Append('(');
             for (int i = 0; i < funcDef.ArgNames.Length; ++i)
             {
                 if (i > 0) sb.Append(", ");
-                sb.Append(this.TranslateType(funcDef.ArgTypes[i]));
+                sb.Append(this.Translator.TranslateType(funcDef.ArgTypes[i]));
                 sb.Append(" v_");
                 sb.Append(funcDef.ArgNames[i].Value);
             }
@@ -103,37 +103,6 @@ namespace LangC
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
-            throw new NotImplementedException();
-        }
-
-        public override string TranslateType(Pastel.Nodes.PType type)
-        {
-            switch (type.RootValue)
-            {
-                case "int": return "int";
-                case "string": return "int*";
-                case "bool": return "int";
-                case "double": return "double";
-                case "object": return "void*";
-                case "char": return "int";
-                case "List": return "List*";
-                case "Array": return this.TranslateType(type.Generics[0]) + "*";
-                case "Dictionary":
-                    string keyType = type.Generics[0].RootValue;
-                    switch (keyType)
-                    {
-                        case "int":
-                        case "string":
-                            return "Dictionary*";
-                        default:
-                            throw new NotImplementedException();
-                    }
-                default: break;
-            }
-
-            char firstChar = type.RootValue[0];
-            if (firstChar >= 'A' && firstChar <= 'Z') return type.RootValue + "*";
-
             throw new NotImplementedException();
         }
 
@@ -172,14 +141,14 @@ namespace LangC
         public override string GenerateCodeForFunctionDeclaration(AbstractTranslator translator, FunctionDefinition funcDef)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(this.TranslateType(funcDef.ReturnType));
+            sb.Append(this.Translator.TranslateType(funcDef.ReturnType));
             sb.Append(" v_");
             sb.Append(funcDef.NameToken.Value);
             sb.Append('(');
             for (int i = 0; i < funcDef.ArgNames.Length; ++i)
             {
                 if (i > 0) sb.Append(", ");
-                sb.Append(this.TranslateType(funcDef.ArgTypes[i]));
+                sb.Append(this.Translator.TranslateType(funcDef.ArgTypes[i]));
                 sb.Append(" v_");
                 sb.Append(funcDef.ArgNames[i].Value);
             }

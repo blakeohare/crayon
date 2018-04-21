@@ -116,10 +116,5 @@ namespace CApp
         {
             return new Dictionary<string, object>();
         }
-
-        public override string TranslateType(Pastel.Nodes.PType type)
-        {
-            return this.ParentPlatform.TranslateType(type);
-        }
     }
 }
