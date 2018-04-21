@@ -6,7 +6,7 @@ using System.Text;
 
 namespace LangPython
 {
-    public abstract class PythonTranslator : Platform.AbstractTranslator
+    public class PythonTranslator : Platform.AbstractTranslator
     {
         private string TranslateOp(string originalOp)
         {

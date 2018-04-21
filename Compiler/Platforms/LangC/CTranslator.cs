@@ -4,11 +4,12 @@ using System.Text;
 
 namespace LangC
 {
-    public abstract class CTranslator : Platform.CurlyBraceTranslator
+    public class CTranslator : Platform.CurlyBraceTranslator
     {
         public StringTableBuilder StringTableBuilder { get; set; }
 
-        public CTranslator(Platform.AbstractPlatform platform) : base(platform, "    ", "\n", false)
+        public CTranslator(Platform.AbstractPlatform platform)
+            : base(platform, "    ", "\n", false)
         { }
 
         public override string TranslateType(PType type)

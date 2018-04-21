@@ -85,7 +85,7 @@ namespace JavaScriptAppIos
                 launchScreen = new FileOutput()
                 {
                     Type = FileOutputType.Image,
-                    Bitmap = new SystemBitmap(typeof(JavaScriptAppIosTranslator).Assembly, "SwiftResources/" +
+                    Bitmap = new SystemBitmap(typeof(ContextFreeJavaScriptAppIosPlatform).Assembly, "SwiftResources/" +
                        (useLandscapeForLaunchscreen ? "launchhorizontal.png" : "launchvertical.png")),
                 };
             }

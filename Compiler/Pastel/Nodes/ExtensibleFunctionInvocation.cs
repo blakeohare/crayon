@@ -11,9 +11,9 @@ namespace Pastel.Nodes
         public ExtensibleFunctionReference FunctionRef { get; set; }
 
         public ExtensibleFunctionInvocation(
-            Token firstToken, 
-            ExtensibleFunctionReference functionRef, 
-            IList<Expression> args) 
+            Token firstToken,
+            ExtensibleFunctionReference functionRef,
+            IList<Expression> args)
             : base(firstToken)
         {
             this.FunctionRef = functionRef;

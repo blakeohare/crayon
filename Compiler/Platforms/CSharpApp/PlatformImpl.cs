@@ -17,7 +17,7 @@ namespace CSharpApp
         public PlatformImpl()
         {
             this.ContextFreePlatformImpl = new ContextFreeCSharpAppPlatform();
-            this.Translator = new CSharpAppTranslator(this);
+            this.Translator = new LangCSharp.CSharpTranslator(this);
         }
 
         public override IDictionary<string, object> GetConstantFlags()
