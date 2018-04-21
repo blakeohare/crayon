@@ -40,6 +40,27 @@ namespace LangCSharp
                     return type.RootValue;
             }
         }
+        
+        public override void TranslatePrintStdErr(StringBuilder sb, Expression value)
+        {
+            sb.Append("PlatformTranslationHelper.PrintStdErr(");
+            this.TranslateExpression(sb, value);
+            sb.Append(')');
+        }
+
+        public override void TranslatePrintStdOut(StringBuilder sb, Expression value)
+        {
+            sb.Append("PlatformTranslationHelper.PrintStdOut(");
+            this.TranslateExpression(sb, value);
+            sb.Append(')');
+        }
+
+        public override void TranslateThreadSleep(StringBuilder sb, Expression seconds)
+        {
+            sb.Append("PlatformTranslationHelper.ThreadSleep(");
+            this.TranslateExpression(sb, seconds);
+            sb.Append(')');
+        }
 
         public override void TranslateArrayGet(StringBuilder sb, Expression array, Expression index)
         {

@@ -74,6 +74,30 @@ namespace LangJava
             }
         }
 
+        public override void TranslateCommandLineArgs(StringBuilder sb)
+        {
+            sb.Append("TranslationHelper.getCommandLineArgs()");
+        }
+
+        public override void TranslatePrintStdErr(StringBuilder sb, Expression value)
+        {
+            sb.Append("PlatformTranslationHelper.printStdErr(");
+            this.TranslateExpression(sb, value);
+            sb.Append(')');
+        }
+
+        public override void TranslatePrintStdOut(StringBuilder sb, Expression value)
+        {
+            sb.Append("PlatformTranslationHelper.printStdOut(");
+            this.TranslateExpression(sb, value);
+            sb.Append(')');
+        }
+
+        public override void TranslateReadByteCodeFile(StringBuilder sb)
+        {
+            sb.Append("TranslationHelper.getByteCode()");
+        }
+
         public override void TranslateArrayGet(StringBuilder sb, Expression array, Expression index)
         {
             this.TranslateExpression(sb, array);

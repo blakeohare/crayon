@@ -63,6 +63,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\AssemblyInfo.txt" />
     <EmbeddedResource Include="Resources\CSharpAppTranslationHelper.txt" />
+    <EmbeddedResource Include="Resources\PlatformTranslationHelper.txt" />
     <EmbeddedResource Include="Resources\Program.txt" />
     <EmbeddedResource Include="Resources\ProjectFile.txt" />
     <EmbeddedResource Include="Resources\ResourceReader.txt" />
