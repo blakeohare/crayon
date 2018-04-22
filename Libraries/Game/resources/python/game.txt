@@ -14,6 +14,8 @@ _global_vars = {
   'pumped': False,
 }
 
+TranslationHelper_globals['LIB:GAME:init'] = False
+
 KEY_LOOKUP = {
   pygame.K_LEFT: 37,
   pygame.K_RIGHT: 39,
@@ -102,12 +104,13 @@ def pygame_pump_events():
 
   return evlist
 
-_pygame_init_already = False
 def pygame_init():
-  global _pygame_init_already
-  if not _pygame_init_already:
-    _pygame_init_already = True
+  if not TranslationHelper_globals['LIB:GAME:init']:
+    TranslationHelper_globals['LIB:GAME:init'] = True
     pygame.init()
+  return pygame
+
+TranslationHelper_globals['LIB:GAME:initFP'] = pygame_init
 
 def platform_begin(fps):
   pygame_init()
@@ -136,18 +139,6 @@ def pygame_initialize_screen(width, height, pixel_dimensions, execId):
     gfxRender()
     _pygame_end_of_frame()
 
-def create_assertion(message):
-  raise Exception(message)
-
-def _clear_list(list):
-  while len(list) > 0:
-    list.pop()
-
-def create_sorted_copy_of_list(items):
-  items = items[:]
-  items.sort()
-  return items
-
 def load_local_image_resource(path):
   path = path.replace('/', os.sep);
   if not os.path.exists(path): return None
@@ -155,26 +146,6 @@ def load_local_image_resource(path):
     return pygame.image.load(path)
   except:
     return None
-
-def wrappedChr(code):
-  if code < 0 or code > 255: return '?'
-  return chr(code)
-
-_NUM_CHARS = {}
-for c in '0123456789':
-  _NUM_CHARS[c] = True
-
-def _is_valid_integer(value):
-  first = True
-  if value == '-': return False
-  for c in value:
-    if first:
-      first = False
-      if c == '-':
-        continue
-    if not _NUM_CHARS.get(c, False):
-      return False
-  return True
 
 def _pygame_end_of_frame():
   if _global_vars['scaled_mode']:
@@ -191,14 +162,6 @@ def _pygame_end_of_frame():
     _global_vars['old_events'] += pygame.event.get()
   else:
     _global_vars['pumped'] = False
-
-def _parse_float_helper(f_out, value):
-  try:
-    output = float(value)
-    f_out[0] = 1
-    f_out[1] = output
-  except:
-    f_out[0] = -1
 
 def _music_pause():
   pygame.mixer.music.pause()
@@ -224,12 +187,5 @@ def readLocalSoundResource(path):
 def audio_sound_play(sfx, vol, pan):
   ch = sfx.play()
   ch.set_volume(vol)
-
-def string_check_slice(haystack, i, needle):
-  return haystack[i:i + len(needle)] == needle
-
-def string_substring(s, start, length = None):
-  if length == None: return s[start:]
-  return s[start:start + length]
 
 program_data = [None]

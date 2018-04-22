@@ -22,7 +22,8 @@ def gfxRendererSetData(events, eventsLength, images, textChars):
   _gfxRendererVars['eventsLength'] = eventsLength
   _gfxRendererVars['images'] = images
   _gfxRendererVars['textChars'] = textChars
-  
+TranslationHelper_globals['LIB:GAME:g2dRendererSetData'] = gfxRendererSetData
+
 def gfxRendererGetTempSurface(dim):
   s = _gfxRendererVars['tempSurfacesCurrent'].get(dim)
   if s != None: return s
@@ -319,3 +320,4 @@ def _gfxRenderChar(fontFace, codePoint, size, isBold, isItalic, r, g, b):
 
 def libhelper_graphics2d_gfxScale(img, width, height):
   return pygame.transform.scale(img, (width, height))
+TranslationHelper_globals['LIB:GAME:g2dscale'] = libhelper_graphics2d_gfxScale

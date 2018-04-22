@@ -27,7 +27,8 @@ def libhelper_imageresources_checkLoaderIsDone(imageLoaderNativeData, nativeImag
 # These are actually Graphics2D functions, not imageresource functions, so they'll have to move eventually.
 
 def libhelper_imageresources_generateNativeBitmapOfSize(w, h):
-  return pygame.Surface((w, h), pygame.SRCALPHA)
+  pg = GetPyGameReferenceWorkaround()
+  return pg.Surface((w, h), pg.SRCALPHA)
 
 def libhelper_imageresources_imageResourceBlitImage(target, source, targetX, targetY, sourceX, sourceY, width, height):
   target.blit(source, (targetX, targetY, width, height), area = (sourceX, sourceY, width, height))
