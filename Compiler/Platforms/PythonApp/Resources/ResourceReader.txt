@@ -15,7 +15,17 @@ def ResourceReader_readTextFile(path):
 
 def ResourceReader_readImageFile(path):
   path = path.replace('/', os.sep)
-  if not _pygame_init_already:
-    pygame_init()
-    pygame.display.set_mode((400, 300)) # Tacky, but necessary to prevent crash, and hopefully won't be up for more than a second until the game code resets the window size to the actual size
-  return pygame.image.load(path).convert_alpha()
+  return GetPyGameReferenceWorkaround().image.load(path).convert_alpha()
+
+# For some of the stuff that isn't exactly game related but still requires a reference to
+# some pygame library (image stuff), open a dummy window until the real window gets initialized
+# by calling into the game initializer method which was registered into globals when the game
+# library was imported. If the game library was not imported, the ImageResources library will not
+# work correctly. This is a current limitation.
+def GetPyGameReferenceWorkaround():
+  initFP = TranslationHelper_globals.get('LIB:GAME:initFP')
+  open_dummy_window = not TranslationHelper_globals.get('LIB:GAME:init', False)
+  pg = initFP()
+  if open_dummy_window:
+    pg.display.set_mode((400, 300))
+  return pg

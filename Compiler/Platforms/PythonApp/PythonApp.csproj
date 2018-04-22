@@ -64,10 +64,7 @@
     <EmbeddedResource Include="Resources\main.txt" />
     <EmbeddedResource Include="Resources\ResourceReader.txt" />
     <EmbeddedResource Include="Resources\header.txt" />
-    <EmbeddedResource Include="Resources\game.txt" />
-    <EmbeddedResource Include="Resources\gamepad_helper.txt" />
-    <EmbeddedResource Include="Resources\gfx_renderer.txt" />
-    <EmbeddedResource Include="Resources\image_helper.txt" />
+    <EmbeddedResource Include="Resources\translation_helper.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

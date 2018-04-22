@@ -24,3 +24,8 @@ BEGIN
 APPLICABLE-TO: lang-javascript
 EMBED_FILES: from=javascript
 END
+
+BEGIN
+APPLICABLE-TO: lang-python
+EMBED_FILES: from=python
+END

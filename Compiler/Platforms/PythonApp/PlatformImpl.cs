@@ -55,10 +55,7 @@ namespace PythonApp
 
             foreach (string simpleCodeConcat in new string[] {
                 "header.txt",
-                "image_helper.txt",
-                "game.txt",
-                "gfx_renderer.txt",
-                "gamepad_helper.txt",
+                "translation_helper.txt",
             })
             {
                 runPy.Add(this.LoadTextResource("Resources/" + simpleCodeConcat, replacements));
