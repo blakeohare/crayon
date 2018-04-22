@@ -260,7 +260,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateCharConstant(TranspilerContext sb, char value)
         {
-            sb.Append(Util.ConvertCharToCharConstantCode(value));
+            sb.Append(PastelUtil.ConvertCharToCharConstantCode(value));
         }
 
         public override void TranslateCharToString(TranspilerContext sb, Expression charValue)
@@ -314,10 +314,9 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
+        // TODO: rename this function.
         public override void TranslateConvertRawDictionaryValueCollectionToAReusableValueList(TranspilerContext sb, Expression dictionary)
         {
-            TODO.PleaseRenameThisFunction();
-
             sb.Append("new FastList().initializeValueCollection(");
             this.TranslateExpression(sb, dictionary);
             sb.Append(')');
@@ -353,7 +352,7 @@ namespace Pastel.Transpilers
                 case "string": sb.Append("String"); break;
 
                 default:
-                    TODO.ExplicitlyDisallowThisAtCompileTime();
+                    // TODO: Explicitly disallow dictionaries with non-intenger or non-string keys at compile time.
                     throw new NotImplementedException();
             }
             sb.Append("SetToArray(");
@@ -738,7 +737,7 @@ namespace Pastel.Transpilers
                     sb.Append(".toArray(TranslationHelper.EMPTY_ARRAY_MAP)");
                     break;
                 case "Array":
-                    throw NYI.JavaListOfArraysConvertToArray();
+                    throw new NotImplementedException("not implemented: java list of arrays to array");
                 default:
                     string javaType = this.TranslateType(itemType);
                     char firstChar = javaType[0];

@@ -63,8 +63,7 @@ namespace Pastel.Transpilers
                     default: break;
                 }
             }
-            TODO.UseGlobalListOfOneNoneToPreventFrequentReallocation();
-            sb.Append("([None] * ");
+            sb.Append("(TranslationHelper_NoneListOfOne * ");
             this.TranslateExpression(sb, lengthExpression);
             sb.Append(")");
         }

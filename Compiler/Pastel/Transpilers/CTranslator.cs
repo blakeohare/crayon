@@ -189,7 +189,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateCharConstant(TranspilerContext sb, char value)
         {
-            sb.Append(Common.Util.ConvertCharToCharConstantCode(value));
+            sb.Append(PastelUtil.ConvertCharToCharConstantCode(value));
         }
 
         public override void TranslateCharToString(TranspilerContext sb, Expression charValue)

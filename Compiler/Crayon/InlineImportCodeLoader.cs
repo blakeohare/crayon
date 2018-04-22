@@ -2,7 +2,7 @@
 
 namespace Crayon
 {
-    internal class InlineImportCodeLoader : IInlineImportCodeLoader
+    internal class InlineImportCodeLoader : Pastel.IInlineImportCodeLoader
     {
         private static readonly System.Reflection.Assembly INTERPRETER_ASSEMBLY = typeof(Interpreter.InterpreterAssembly).Assembly;
 

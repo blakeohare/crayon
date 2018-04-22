@@ -209,22 +209,24 @@ namespace Pastel.Transpilers
 
         private IfStatement BuildIfStatement(int id, string op, Executable[] trueCode, Executable[] falseCode)
         {
-            Pastel.Token equalsToken = Pastel.Token.CreateDummyToken(op);
-            Variable variable = new Variable(Pastel.Token.CreateDummyToken(this.ConditionVariableName));
+            Token equalsToken = Token.CreateDummyToken(op);
+            Variable variable = new Variable(Token.CreateDummyToken(this.ConditionVariableName));
             variable.ApplyPrefix = false;
             Expression condition = new OpChain(new Expression[] { variable, InlineConstant.Of(id) }, new Pastel.Token[] { equalsToken });
 
             return new IfStatement(
-                Pastel.Token.CreateDummyToken("if"),
+                Token.CreateDummyToken("if"),
                 condition,
                 TrimBreak(trueCode),
-                Pastel.Token.CreateDummyToken("else"),
+                Token.CreateDummyToken("else"),
                 TrimBreak(falseCode));
         }
 
         private Executable[] TrimBreak(Executable[] executables)
         {
-            TODO.PastelCompileTimeCheckForAbsenceOfBreakInSwitchStatementCodeOtherThanTheEndForTheSakeOfPythonCompilation();
+            // TODO: compile time check for absence of break in switch statement code
+            // aside from the one at the end of each case. This will simply be a limitation
+            // of Pastel for the sake of Python compatibility.
             int length = executables.Length;
             if (length == 0) return executables;
             Executable last = executables[length - 1];
