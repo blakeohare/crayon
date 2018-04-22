@@ -182,23 +182,6 @@ namespace Platform
             return string.Join(newline, lines);
         }
 
-        public abstract void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, Pastel.Nodes.StructDefinition structDef);
-        public abstract void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, Pastel.Nodes.FunctionDefinition funcDef);
-        public abstract void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<Pastel.Nodes.VariableDeclaration> globals);
-
-        // Overridden in languages that require a function to be declared separately in order for declaration order to not matter, such as C.
-        public virtual void GenerateCodeForFunctionDeclaration(TranspilerContext sb, AbstractTranslator translator, Pastel.Nodes.FunctionDefinition funcDef)
-        {
-            if (this.ParentPlatform != null)
-            {
-                this.ParentPlatform.GenerateCodeForFunctionDeclaration(sb, translator, funcDef);
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
-        }
-
         public abstract Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb);
 
         protected static Dictionary<string, string> GenerateGeneralReplacementsDictionary(Options options)

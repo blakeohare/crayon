@@ -53,7 +53,7 @@ namespace JavaApp
 
             foreach (StructDefinition structDef in compiler.GetStructDefinitions())
             {
-                this.GenerateCodeForStruct(ctx, this.Translator, structDef);
+                this.Translator.GenerateCodeForStruct(ctx, this.Translator, structDef);
                 output["src/org/crayonlang/interpreter/structs/" + structDef.NameToken.Value + ".java"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
@@ -77,7 +77,7 @@ namespace JavaApp
 
             foreach (FunctionDefinition fnDef in compiler.GetFunctionDefinitions())
             {
-                this.GenerateCodeForFunction(ctx, this.Translator, fnDef);
+                this.Translator.GenerateCodeForFunction(ctx, this.Translator, fnDef);
                 this.Translator.TabDepth = 1;
                 sb.Append(ctx.FlushAndClearBuffer());
                 sb.Append(this.NL);
@@ -92,7 +92,7 @@ namespace JavaApp
                 TextContent = sb.ToString(),
             };
 
-            this.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, compiler.GetGlobalsDefinitions());
+            this.Translator.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, compiler.GetGlobalsDefinitions());
             output["src/org/crayonlang/interpreter/VmGlobal.java"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -155,20 +155,6 @@ namespace JavaApp
             }
         }
 
-        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
-        {
-            this.ParentPlatform.GenerateCodeForFunction(sb, translator, funcDef);
-        }
-
-        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
-        {
-            this.ParentPlatform.GenerateCodeForGlobalsDefinitions(sb, translator, globals);
-        }
-
-        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
-        {
-            this.ParentPlatform.GenerateCodeForStruct(sb, translator, structDef);
-        }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {

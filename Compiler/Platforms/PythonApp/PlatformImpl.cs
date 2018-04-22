@@ -57,7 +57,7 @@ namespace PythonApp
                 runPy.Add(this.LoadTextResource("Resources/" + simpleCodeConcat, replacements));
                 runPy.Add("");
             }
-            this.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, compiler.GetGlobalsDefinitions());
+            this.Translator.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, compiler.GetGlobalsDefinitions());
             runPy.Add(ctx.FlushAndClearBuffer());
             runPy.Add("");
             runPy.Add(this.LoadTextResource("Resources/LibraryRegistry.txt", replacements));
@@ -69,7 +69,7 @@ namespace PythonApp
 
             foreach (FunctionDefinition funcDef in compiler.GetFunctionDefinitions())
             {
-                this.GenerateCodeForFunction(ctx, this.Translator, funcDef);
+                this.Translator.GenerateCodeForFunction(ctx, this.Translator, funcDef);
                 runPy.Add(ctx.FlushAndClearBuffer());
             }
 
@@ -96,11 +96,11 @@ namespace PythonApp
                     libraryLines.Add("from code.vm import *");
                     libraryLines.Add("");
 
-                    this.GenerateCodeForFunction(ctx, this.Translator, library.ManifestFunction);
+                    this.Translator.GenerateCodeForFunction(ctx, this.Translator, library.ManifestFunction);
                     libraryLines.Add(ctx.FlushAndClearBuffer());
                     foreach (FunctionDefinition funcDef in library.Functions)
                     {
-                        this.GenerateCodeForFunction(ctx, this.Translator, funcDef);
+                        this.Translator.GenerateCodeForFunction(ctx, this.Translator, funcDef);
                         libraryLines.Add(ctx.FlushAndClearBuffer());
                     }
 
@@ -166,24 +166,9 @@ namespace PythonApp
             }
         }
 
-        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
-        {
-            this.ParentPlatform.GenerateCodeForFunction(sb, this.Translator, funcDef);
-        }
-
-        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
-        {
-            this.ParentPlatform.GenerateCodeForStruct(sb, translator, structDef);
-        }
-
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
             return this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
-        }
-
-        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
-        {
-            this.ParentPlatform.GenerateCodeForGlobalsDefinitions(sb, translator, globals);
         }
     }
 }

@@ -176,11 +176,11 @@ namespace CSharpApp
             if (library.ManifestFunction != null)
             {
                 string libraryDir = baseDir + "Libraries/" + libraryName;
-                this.GenerateCodeForFunction(ctx, this.Translator, library.ManifestFunction);
+                this.Translator.GenerateCodeForFunction(ctx, this.Translator, library.ManifestFunction);
                 libraryLines.Add(ctx.FlushAndClearBuffer());
                 foreach (FunctionDefinition funcDef in library.Functions)
                 {
-                    this.GenerateCodeForFunction(ctx, this.Translator, funcDef);
+                    this.Translator.GenerateCodeForFunction(ctx, this.Translator, funcDef);
                     libraryLines.Add(ctx.FlushAndClearBuffer());
                 }
 
@@ -347,7 +347,7 @@ namespace CSharpApp
         private FileOutput GetStructFile(StructDefinition sd)
         {
             TranspilerContext ctx = new TranspilerContext();
-            this.GenerateCodeForStruct(ctx, this.Translator, sd);
+            this.Translator.GenerateCodeForStruct(ctx, this.Translator, sd);
             return new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -370,7 +370,7 @@ namespace CSharpApp
             Pastel.PastelCompiler compiler)
         {
             IList<VariableDeclaration> globals = compiler.Globals.Values.ToArray();
-            IList< StructDefinition > structDefinitions = compiler.StructDefinitions.Values.ToArray();
+            IList<StructDefinition> structDefinitions = compiler.StructDefinitions.Values.ToArray();
             IList<FunctionDefinition> functionDefinitions = compiler.FunctionDefinitions.Values.ToArray();
             TranspilerContext ctx = new TranspilerContext();
             foreach (StructDefinition structDefinition in structDefinitions)
@@ -381,7 +381,7 @@ namespace CSharpApp
             List<string> coreVmFunctions = new List<string>();
             foreach (FunctionDefinition funcDef in functionDefinitions)
             {
-                this.GenerateCodeForFunction(ctx, this.Translator, funcDef);
+                this.Translator.GenerateCodeForFunction(ctx, this.Translator, funcDef);
                 ctx.Append("\r\n\r\n");
             }
 
@@ -407,7 +407,7 @@ namespace CSharpApp
                 }),
             };
 
-            this.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, globals);
+            this.Translator.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, globals);
             output[baseDir + "Vm/Globals.cs"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -479,21 +479,6 @@ namespace CSharpApp
             this.CopyResourceAsText(output, projectId + "OSX.sln", "Resources/SolutionFileOsx.txt", replacements);
             string projectFileResource = (isStandaloneVm ? "ResourcesVm" : "Resources") + "/ProjectFile.txt";
             this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", projectFileResource, replacements);
-        }
-
-        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
-        {
-            this.ParentPlatform.GenerateCodeForGlobalsDefinitions(sb, this.Translator, globals);
-        }
-
-        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
-        {
-            this.ParentPlatform.GenerateCodeForFunction(sb, this.Translator, funcDef);
-        }
-
-        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
-        {
-            this.ParentPlatform.GenerateCodeForStruct(sb, translator, structDef);
         }
     }
 }

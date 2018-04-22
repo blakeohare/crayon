@@ -1,5 +1,6 @@
 ﻿using Pastel.Nodes;
 using System;
+using System.Collections.Generic;
 
 namespace Pastel.Transpilers
 {
@@ -1088,6 +1089,66 @@ namespace Pastel.Transpilers
             sb.Append(", ");
             this.TranslateExpression(sb, libRegObj);
             sb.Append(')');
+        }
+
+        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
+        {
+            sb.Append("struct ");
+            sb.Append(structDef.NameToken.Value);
+            sb.Append(" {\n");
+            for (int i = 0; i < structDef.ArgNames.Length; ++i)
+            {
+                string fieldName = structDef.ArgNames[i].Value;
+                PType fieldType = structDef.ArgTypes[i];
+                sb.Append('\t');
+                sb.Append(translator.TranslateType(fieldType));
+                sb.Append(' ');
+                sb.Append(fieldName);
+                sb.Append(";\n");
+            }
+
+            sb.Append("};\n\n");
+        }
+
+        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
+        {
+            sb.Append(this.TranslateType(funcDef.ReturnType));
+            sb.Append(" v_");
+            sb.Append(funcDef.NameToken.Value);
+            sb.Append('(');
+            for (int i = 0; i < funcDef.ArgNames.Length; ++i)
+            {
+                if (i > 0) sb.Append(", ");
+                sb.Append(this.TranslateType(funcDef.ArgTypes[i]));
+                sb.Append(" v_");
+                sb.Append(funcDef.ArgNames[i].Value);
+            }
+            sb.Append(")\n{\n");
+            translator.TabDepth = 1;
+            translator.TranslateExecutables(sb, funcDef.Code);
+            translator.TabDepth = 0;
+            sb.Append("}\n");
+        }
+
+        public override void GenerateCodeForFunctionDeclaration(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
+        {
+            sb.Append(this.TranslateType(funcDef.ReturnType));
+            sb.Append(" v_");
+            sb.Append(funcDef.NameToken.Value);
+            sb.Append('(');
+            for (int i = 0; i < funcDef.ArgNames.Length; ++i)
+            {
+                if (i > 0) sb.Append(", ");
+                sb.Append(this.TranslateType(funcDef.ArgTypes[i]));
+                sb.Append(" v_");
+                sb.Append(funcDef.ArgNames[i].Value);
+            }
+            sb.Append(");");
+        }
+
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
+        {
+            throw new NotImplementedException();
         }
     }
 }
