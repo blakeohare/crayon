@@ -1,7 +1,7 @@
 ﻿using Parser;
 using Pastel.Nodes;
+using Pastel.Transpilers;
 using Platform;
-using System.Text;
 
 namespace Exporter
 {
@@ -22,7 +22,7 @@ namespace Exporter
         public string LibraryID { get { return library.ID; } }
 
         public void TranslateInvocation(
-            StringBuilder sb,
+            TranspilerContext sb,
             AbstractTranslator translator,
             string functionName,
             Expression[] args,

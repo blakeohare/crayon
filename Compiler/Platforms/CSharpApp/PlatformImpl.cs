@@ -1,6 +1,7 @@
 ﻿using Common;
 using Platform;
 using Pastel.Nodes;
+using Pastel.Transpilers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -171,16 +172,19 @@ namespace CSharpApp
             Dictionary<string, FileOutput> filesOut,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
+            TranspilerContext ctx = new TranspilerContext();
             string libraryName = library.Name;
             this.Translator.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(libraryName);
             List<string> libraryLines = new List<string>();
             if (library.ManifestFunction != null)
             {
                 string libraryDir = baseDir + "Libraries/" + libraryName;
-                libraryLines.Add(this.GenerateCodeForFunction(this.Translator, library.ManifestFunction));
+                this.GenerateCodeForFunction(ctx, this.Translator, library.ManifestFunction);
+                libraryLines.Add(ctx.FlushAndClearBuffer());
                 foreach (FunctionDefinition funcDef in library.Functions)
                 {
-                    libraryLines.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
+                    this.GenerateCodeForFunction(ctx, this.Translator, funcDef);
+                    libraryLines.Add(ctx.FlushAndClearBuffer());
                 }
 
                 foreach (StructDefinition structDef in library.Structs)
@@ -347,6 +351,8 @@ namespace CSharpApp
 
         private FileOutput GetStructFile(StructDefinition sd)
         {
+            TranspilerContext ctx = new TranspilerContext();
+            this.GenerateCodeForStruct(ctx, this.Translator, sd);
             return new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -356,7 +362,7 @@ namespace CSharpApp
                     "",
                     "namespace Interpreter.Structs",
                     "{",
-                    IndentCodeWithSpaces(this.GenerateCodeForStruct(this.Translator, sd).Trim(), 4),
+                    IndentCodeWithSpaces(ctx.FlushAndClearBuffer().Trim(), 4),
                     "}",
                     ""
                 }),
@@ -370,6 +376,7 @@ namespace CSharpApp
             IList<StructDefinition> structDefinitions,
             IList<FunctionDefinition> functionDefinitions)
         {
+            TranspilerContext ctx = new TranspilerContext();
             foreach (StructDefinition structDefinition in structDefinitions)
             {
                 output[baseDir + "Structs/" + structDefinition.NameToken.Value + ".cs"] = this.GetStructFile(structDefinition);
@@ -378,10 +385,11 @@ namespace CSharpApp
             List<string> coreVmFunctions = new List<string>();
             foreach (FunctionDefinition funcDef in functionDefinitions)
             {
-                coreVmFunctions.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
+                this.GenerateCodeForFunction(ctx, this.Translator, funcDef);
+                ctx.Append("\r\n\r\n");
             }
 
-            string functionCode = string.Join("\r\n\r\n", coreVmFunctions);
+            string functionCode = ctx.FlushAndClearBuffer();
 
             output[baseDir + "Vm/CrayonWrapper.cs"] = new FileOutput()
             {
@@ -403,9 +411,7 @@ namespace CSharpApp
                 }),
             };
 
-            StringBuilder globalsCode = new StringBuilder();
-            this.Translator.TranslateExecutables(globalsCode, globals.Cast<Executable>().ToArray());
-
+            this.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, globals);
             output[baseDir + "Vm/Globals.cs"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -417,7 +423,7 @@ namespace CSharpApp
                     "",
                     "namespace Interpreter.Vm",
                     "{",
-                    this.GenerateCodeForGlobalsDefinitions(this.Translator, globals),
+                    ctx.FlushAndClearBuffer(),
                     "}",
                     ""
                 }),
@@ -479,19 +485,19 @@ namespace CSharpApp
             this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", projectFileResource, replacements);
         }
 
-        public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
         {
-            return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(this.Translator, globals);
+            this.ParentPlatform.GenerateCodeForGlobalsDefinitions(sb, this.Translator, globals);
         }
 
-        public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            return this.ParentPlatform.GenerateCodeForFunction(this.Translator, funcDef);
+            this.ParentPlatform.GenerateCodeForFunction(sb, this.Translator, funcDef);
         }
 
-        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
+        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
         {
-            return this.ParentPlatform.GenerateCodeForStruct(translator, structDef);
+            this.ParentPlatform.GenerateCodeForStruct(sb, translator, structDef);
         }
     }
 }

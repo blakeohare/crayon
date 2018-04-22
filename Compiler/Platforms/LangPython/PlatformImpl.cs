@@ -1,5 +1,6 @@
 ﻿using Common;
 using Pastel.Nodes;
+using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -56,11 +57,10 @@ namespace LangPython
             throw new InvalidOperationException("This platform does not support direct export.");
         }
 
-        public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
         {
             PythonTranslator pyTranslator = (PythonTranslator)translator;
             pyTranslator.CurrentFunctionDefinition = funcDef;
-            StringBuilder sb = new StringBuilder();
 
             sb.Append(translator.CurrentTab);
             sb.Append("def v_");
@@ -88,11 +88,9 @@ namespace LangPython
             }
             pyTranslator.SwitchStatements.Clear();
             pyTranslator.CurrentFunctionDefinition = null;
-
-            return sb.ToString();
         }
 
-        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
+        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
         {
             throw new InvalidOperationException("This function should not be called. Python uses lists as structs.");
         }
@@ -102,14 +100,12 @@ namespace LangPython
             return AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
         }
 
-        public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
         {
-            StringBuilder sb = new StringBuilder();
             foreach (VariableDeclaration global in globals)
             {
                 translator.TranslateVariableDeclaration(sb, global);
             }
-            return sb.ToString();
         }
     }
 }

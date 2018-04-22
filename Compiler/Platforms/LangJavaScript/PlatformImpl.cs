@@ -1,6 +1,7 @@
 ﻿using Common;
 using Pastel;
 using Pastel.Nodes;
+using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -35,9 +36,8 @@ namespace LangJavaScript
             throw new NotImplementedException();
         }
 
-        public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            StringBuilder sb = new StringBuilder();
             sb.Append("var v_");
             sb.Append(funcDef.NameToken.Value);
             sb.Append(" = function(");
@@ -58,21 +58,17 @@ namespace LangJavaScript
             sb.Append("};");
             sb.Append(this.NL);
             sb.Append(this.NL);
-
-            return sb.ToString();
         }
 
-        public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
         {
-            StringBuilder sb = new StringBuilder();
             foreach (VariableDeclaration global in globals)
             {
                 translator.TranslateVariableDeclaration(sb, global);
             }
-            return sb.ToString();
         }
 
-        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
+        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
         {
             throw new NotImplementedException();
         }

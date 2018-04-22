@@ -1,5 +1,6 @@
 ﻿using Common;
 using Pastel.Nodes;
+using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -103,9 +104,9 @@ namespace JavaScriptAppAndroid
         }
 
         public override void ExportStandaloneVm(Dictionary<string, FileOutput> output, IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform) { throw new NotImplementedException(); }
-        public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef) { throw new NotImplementedException(); }
-        public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals) { throw new NotImplementedException(); }
-        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef) { throw new NotImplementedException(); }
+        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef) { throw new NotImplementedException(); }
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals) { throw new NotImplementedException(); }
+        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef) { throw new NotImplementedException(); }
 
         public void OutputAndroidBoilerplate(Dictionary<string, FileOutput> output, Dictionary<string, string> replacements, Options options)
         {

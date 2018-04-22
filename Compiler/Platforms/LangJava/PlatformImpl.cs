@@ -1,5 +1,6 @@
 ﻿using Common;
 using Pastel.Nodes;
+using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -43,6 +44,7 @@ namespace LangJava
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform,
             string[] extraImports)
         {
+            TranspilerContext ctx = new TranspilerContext();
             List<string> defaultImports = new List<string>()
             {
                 "import java.util.ArrayList;",
@@ -79,14 +81,16 @@ namespace LangJava
                     });
 
                     platform.Translator.TabDepth = 1;
-                    libraryCode.Add(platform.GenerateCodeForFunction(platform.Translator, library.ManifestFunction));
+                    platform.GenerateCodeForFunction(ctx, platform.Translator, library.ManifestFunction);
+                    libraryCode.Add(ctx.FlushAndClearBuffer());
                     string reflectionCalledPrefix = "lib_" + library.Name.ToLower() + "_function_";
                     foreach (FunctionDefinition fnDef in library.Functions)
                     {
                         string name = fnDef.NameToken.Value;
                         bool isFunctionPointerObject = name.StartsWith(reflectionCalledPrefix);
 
-                        string functionCode = platform.GenerateCodeForFunction(platform.Translator, fnDef);
+                        platform.GenerateCodeForFunction(ctx, platform.Translator, fnDef);
+                        string functionCode = ctx.FlushAndClearBuffer();
                         if (isFunctionPointerObject)
                         {
                             functionCode = functionCode.Replace("public static Value v_" + name + "(Value[] ", "public Value invoke(Value[] ");
@@ -114,7 +118,10 @@ namespace LangJava
 
                     foreach (StructDefinition structDef in library.Structs)
                     {
-                        string structCode = platform.GenerateCodeForStruct(platform.Translator, structDef);
+                        platform.GenerateCodeForStruct(ctx, platform.Translator, structDef);
+                        string structCode = ctx.FlushAndClearBuffer();
+
+                        structCode = WrapStructCodeWithImports(platform.NL, structCode);
 
                         // This is kind of a hack.
                         // TODO: better.
@@ -138,10 +145,8 @@ namespace LangJava
             }
         }
 
-        public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            StringBuilder sb = new StringBuilder();
-
             sb.Append(translator.CurrentTab);
             sb.Append("public static ");
             sb.Append(translator.TranslateType(funcDef.ReturnType));
@@ -165,14 +170,11 @@ namespace LangJava
             sb.Append(translator.CurrentTab);
             sb.Append('}');
             sb.Append(this.NL);
-
-            return sb.ToString();
         }
 
-        public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
         {
-            List<string> lines = new List<string>()
-            {
+            foreach (string line in new string[] {
                 "package org.crayonlang.interpreter;",
                 "",
                 "import java.util.HashMap;",
@@ -182,10 +184,13 @@ namespace LangJava
                 "",
                 "  private VmGlobal() {}",
                 "",
-            };
+            }) {
+                sb.Append(line);
+                sb.Append(this.NL);
+            }
+
             foreach (VariableDeclaration varDecl in globals)
             {
-                StringBuilder sb = new StringBuilder();
                 sb.Append("  public static final ");
                 sb.Append(translator.TranslateType(varDecl.Type));
                 sb.Append(' ');
@@ -193,16 +198,14 @@ namespace LangJava
                 sb.Append(" = ");
                 translator.TranslateExpression(sb, varDecl.Value);
                 sb.Append(';');
-                lines.Add(sb.ToString());
+                sb.Append(this.NL);
             }
-            lines.Add("}");
-            lines.Add("");
-            return string.Join(this.NL, lines);
+            sb.Append("}");
+            sb.Append(this.NL);
         }
 
-        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
+        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
         {
-            StringBuilder sb = new StringBuilder();
             bool isValue = structDef.NameToken.Value == "Value";
             sb.Append("public final class ");
             sb.Append(structDef.NameToken.Value);
@@ -287,22 +290,25 @@ namespace LangJava
 
             sb.Append(this.NL);
             sb.Append("}");
-            string structCode = sb.ToString();
+        }
 
-            List<string> structFileLines = new List<string>();
-            structFileLines.Add("package org.crayonlang.interpreter.structs;");
-            structFileLines.Add("");
-            bool hasLists = structCode.Contains("public ArrayList<");
-            bool hasFastLists = structCode.Contains("FastList");
-            bool hasDictionaries = structCode.Contains("public HashMap<");
-            if (hasLists) structFileLines.Add("import java.util.ArrayList;");
-            if (hasFastLists) structFileLines.Add("import org.crayonlang.interpreter.FastList;");
-            if (hasDictionaries) structFileLines.Add("import java.util.HashMap;");
-            if (hasLists || hasDictionaries) structFileLines.Add("");
-            structFileLines.Add(structCode);
-            structFileLines.Add("");
+        public static string WrapStructCodeWithImports(string nl, string original)
+        {
+            List<string> lines = new List<string>();
+            lines.Add("package org.crayonlang.interpreter.structs;");
+            lines.Add("");
+            bool hasLists = original.Contains("public ArrayList<");
+            bool hasFastLists = original.Contains("FastList");
+            bool hasDictionaries = original.Contains("public HashMap<");
+            if (hasLists) lines.Add("import java.util.ArrayList;");
+            if (hasFastLists) lines.Add("import org.crayonlang.interpreter.FastList;");
+            if (hasDictionaries) lines.Add("import java.util.HashMap;");
+            if (hasLists || hasDictionaries) lines.Add("");
 
-            return string.Join(this.NL, structFileLines);
+            lines.Add(original);
+            lines.Add("");
+
+            return string.Join(nl, lines);
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)

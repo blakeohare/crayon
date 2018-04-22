@@ -1,5 +1,6 @@
 ﻿using Common;
 using Pastel.Nodes;
+using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -60,6 +61,7 @@ namespace JavaScriptApp
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform,
             AbstractTranslator translatorOverride)
         {
+            TranspilerContext ctx = new TranspilerContext();
             List<string> jsExtraHead = new List<string>() { options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) };
             bool fullPage = options.GetBool(ExportOptionKey.JS_FULL_PAGE);
 
@@ -77,11 +79,13 @@ namespace JavaScriptApp
 
             List<string> coreVmCode = new List<string>();
 
-            coreVmCode.Add(this.GenerateCodeForGlobalsDefinitions(translatorOverride, globals));
+            this.GenerateCodeForGlobalsDefinitions(ctx, translatorOverride, globals);
+            coreVmCode.Add(ctx.FlushAndClearBuffer());
 
             foreach (FunctionDefinition funcDef in functionDefinitions)
             {
-                coreVmCode.Add(this.GenerateCodeForFunction(translatorOverride, funcDef));
+                this.GenerateCodeForFunction(ctx, translatorOverride, funcDef);
+                coreVmCode.Add(ctx.FlushAndClearBuffer());
             }
 
             string coreVm = string.Join("\r\n", coreVmCode);
@@ -103,10 +107,12 @@ namespace JavaScriptApp
                         libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
 
                     library.ManifestFunction.NameToken = Pastel.Token.CreateDummyToken("lib_" + library.Name.ToLower() + "_manifest");
-                    libraryLines.Add(this.GenerateCodeForFunction(translatorOverride, library.ManifestFunction));
+                    this.GenerateCodeForFunction(ctx, translatorOverride, library.ManifestFunction);
+                    libraryLines.Add(ctx.FlushAndClearBuffer());
                     foreach (FunctionDefinition fnDef in library.Functions)
                     {
-                        libraryLines.Add(this.GenerateCodeForFunction(translatorOverride, fnDef));
+                        this.GenerateCodeForFunction(ctx, translatorOverride, fnDef);
+                        libraryLines.Add(ctx.FlushAndClearBuffer());
                     }
                     libraryLines.Add("C$common$scrapeLibFuncNames('" + library.Name.ToLower() + "');");
                     libraryLines.Add("");
@@ -204,19 +210,19 @@ namespace JavaScriptApp
             // TODO: minify JavaScript across all of output dictionary
         }
 
-        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
+        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
         {
             throw new NotImplementedException();
         }
 
-        public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            return this.ParentPlatform.GenerateCodeForFunction(translator, funcDef);
+            this.ParentPlatform.GenerateCodeForFunction(sb, translator, funcDef);
         }
 
-        public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
         {
-            return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(translator, globals);
+            this.ParentPlatform.GenerateCodeForGlobalsDefinitions(sb, translator, globals);
         }
 
         public static string GenerateJsLibInclusionHtml(ICollection<string> filesIncluded)

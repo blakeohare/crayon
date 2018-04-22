@@ -1,4 +1,5 @@
 ﻿using Common;
+using Pastel.Transpilers;
 using System;
 using System.Collections.Generic;
 
@@ -185,18 +186,21 @@ namespace Platform
             return string.Join(newline, lines);
         }
 
-        public abstract string GenerateCodeForStruct(AbstractTranslator translator, Pastel.Nodes.StructDefinition structDef);
-        public abstract string GenerateCodeForFunction(AbstractTranslator translator, Pastel.Nodes.FunctionDefinition funcDef);
-        public abstract string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<Pastel.Nodes.VariableDeclaration> globals);
+        public abstract void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, Pastel.Nodes.StructDefinition structDef);
+        public abstract void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, Pastel.Nodes.FunctionDefinition funcDef);
+        public abstract void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<Pastel.Nodes.VariableDeclaration> globals);
 
         // Overridden in languages that require a function to be declared separately in order for declaration order to not matter, such as C.
-        public virtual string GenerateCodeForFunctionDeclaration(AbstractTranslator translator, Pastel.Nodes.FunctionDefinition funcDef)
+        public virtual void GenerateCodeForFunctionDeclaration(TranspilerContext sb, AbstractTranslator translator, Pastel.Nodes.FunctionDefinition funcDef)
         {
             if (this.ParentPlatform != null)
             {
-                return this.ParentPlatform.GenerateCodeForFunctionDeclaration(translator, funcDef);
+                this.ParentPlatform.GenerateCodeForFunctionDeclaration(sb, translator, funcDef);
             }
-            throw new NotSupportedException();
+            else
+            {
+                throw new NotSupportedException();
+            }
         }
 
         public abstract Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb);

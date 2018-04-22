@@ -1,5 +1,6 @@
 ﻿using Common;
 using Pastel.Nodes;
+using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,7 @@ namespace JavaApp
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
-
+            TranspilerContext ctx = new TranspilerContext();
             string srcPath = "src";
             string srcPackagePath = srcPath + "/" + replacements["JAVA_PACKAGE"].Replace('.', '/') + "/";
 
@@ -56,10 +57,11 @@ namespace JavaApp
 
             foreach (StructDefinition structDef in structDefinitions)
             {
+                this.GenerateCodeForStruct(ctx, this.Translator, structDef);
                 output["src/org/crayonlang/interpreter/structs/" + structDef.NameToken.Value + ".java"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = this.GenerateCodeForStruct(this.Translator, structDef),
+                    TextContent = LangJava.PlatformImpl.WrapStructCodeWithImports(this.NL, ctx.FlushAndClearBuffer()),
                 };
             }
 
@@ -79,8 +81,9 @@ namespace JavaApp
 
             foreach (FunctionDefinition fnDef in functionDefinitions)
             {
+                this.GenerateCodeForFunction(ctx, this.Translator, fnDef);
                 this.Translator.TabDepth = 1;
-                sb.Append(this.GenerateCodeForFunction(this.Translator, fnDef));
+                sb.Append(ctx.FlushAndClearBuffer());
                 sb.Append(this.NL);
             }
             this.Translator.TabDepth = 0;
@@ -93,10 +96,11 @@ namespace JavaApp
                 TextContent = sb.ToString(),
             };
 
+            this.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, globals);
             output["src/org/crayonlang/interpreter/VmGlobal.java"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = this.GenerateCodeForGlobalsDefinitions(this.Translator, globals),
+                TextContent = ctx.FlushAndClearBuffer(),
             };
 
             // common Java helper files
@@ -155,19 +159,19 @@ namespace JavaApp
             }
         }
 
-        public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            return this.ParentPlatform.GenerateCodeForFunction(translator, funcDef);
+            this.ParentPlatform.GenerateCodeForFunction(sb, translator, funcDef);
         }
 
-        public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
         {
-            return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(translator, globals);
+            this.ParentPlatform.GenerateCodeForGlobalsDefinitions(sb, translator, globals);
         }
 
-        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
+        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
         {
-            return this.ParentPlatform.GenerateCodeForStruct(translator, structDef);
+            this.ParentPlatform.GenerateCodeForStruct(sb, translator, structDef);
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
