@@ -54,13 +54,23 @@ namespace CApp
 
             foreach (StructDefinition structDef in compiler.GetStructDefinitions())
             {
-                this.GenerateCodeForStruct(ctx, this.Translator, structDef);
-                cCode.Append(ctx.FlushAndClearBuffer());
+
+                if (structDef.NameToken.Value == "Value")
+                {
+                    // I need to do fancy stuff with unions, so special case this one.
+                    string valueStruct = this.LoadTextResource("Resources/ValueStruct.txt", new Dictionary<string, string>());
+                    cCode.Append(valueStruct);
+                }
+                else
+                {
+                    this.Translator.GenerateCodeForStruct(ctx, this.Translator, structDef);
+                    cCode.Append(ctx.FlushAndClearBuffer());
+                }
             }
 
             foreach (FunctionDefinition fd in compiler.GetFunctionDefinitions())
             {
-                this.GenerateCodeForFunctionDeclaration(ctx, this.Translator, fd);
+                this.Translator.GenerateCodeForFunctionDeclaration(ctx, this.Translator, fd);
                 string functionDeclaration = ctx.FlushAndClearBuffer();
                 cCode.Append(functionDeclaration);
                 cCode.Append(this.NL);
@@ -71,7 +81,7 @@ namespace CApp
             StringBuilder functionCodeBuilder = new StringBuilder();
             foreach (FunctionDefinition fd in compiler.GetFunctionDefinitions())
             {
-                this.GenerateCodeForFunction(ctx, this.Translator, fd);
+                this.Translator.GenerateCodeForFunction(ctx, this.Translator, fd);
                 string functionCode = ctx.FlushAndClearBuffer();
                 functionCodeBuilder.Append(functionCode);
                 functionCodeBuilder.Append(this.NL);
@@ -98,21 +108,6 @@ namespace CApp
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             throw new NotImplementedException();
-        }
-
-        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
-        {
-            this.ParentPlatform.GenerateCodeForFunction(sb, translator, funcDef);
-        }
-
-        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
-        {
-            this.ParentPlatform.GenerateCodeForGlobalsDefinitions(sb, translator, globals);
-        }
-
-        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
-        {
-            this.ParentPlatform.GenerateCodeForStruct(sb, translator, structDef);
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)

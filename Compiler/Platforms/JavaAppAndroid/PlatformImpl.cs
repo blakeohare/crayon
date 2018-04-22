@@ -45,7 +45,7 @@ namespace JavaAppAndroid
 
             foreach (StructDefinition structDef in compiler.GetStructDefinitions())
             {
-                this.GenerateCodeForStruct(ctx, this.Translator, structDef);
+                this.Translator.GenerateCodeForStruct(ctx, this.Translator, structDef);
                 output["app/src/main/java/org/crayonlang/interpreter/structs/" + structDef.NameToken.Value + ".java"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
@@ -70,7 +70,7 @@ namespace JavaAppAndroid
             foreach (FunctionDefinition fnDef in compiler.GetFunctionDefinitions())
             {
                 this.Translator.TabDepth = 1;
-                this.GenerateCodeForFunction(ctx, this.Translator, fnDef);
+                this.Translator.GenerateCodeForFunction(ctx, this.Translator, fnDef);
                 sb.Append(ctx.FlushAndClearBuffer());
                 sb.Append(this.NL);
             }
@@ -84,7 +84,7 @@ namespace JavaAppAndroid
                 TextContent = sb.ToString(),
             };
 
-            this.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, compiler.GetGlobalsDefinitions());
+            this.Translator.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, compiler.GetGlobalsDefinitions());
             output["app/src/main/java/org/crayonlang/interpreter/VmGlobal.java"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -210,21 +210,6 @@ namespace JavaAppAndroid
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             throw new NotImplementedException();
-        }
-
-        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
-        {
-            this.ParentPlatform.GenerateCodeForFunction(sb, translator, funcDef);
-        }
-
-        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
-        {
-            this.ParentPlatform.GenerateCodeForGlobalsDefinitions(sb, translator, globals);
-        }
-
-        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
-        {
-            this.ParentPlatform.GenerateCodeForStruct(sb, translator, structDef);
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)

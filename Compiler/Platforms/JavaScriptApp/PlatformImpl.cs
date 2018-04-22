@@ -73,12 +73,12 @@ namespace JavaScriptApp
 
             List<string> coreVmCode = new List<string>();
 
-            this.GenerateCodeForGlobalsDefinitions(ctx, translatorOverride, compiler.GetGlobalsDefinitions());
+            this.Translator.GenerateCodeForGlobalsDefinitions(ctx, translatorOverride, compiler.GetGlobalsDefinitions());
             coreVmCode.Add(ctx.FlushAndClearBuffer());
 
             foreach (FunctionDefinition funcDef in compiler.GetFunctionDefinitions())
             {
-                this.GenerateCodeForFunction(ctx, translatorOverride, funcDef);
+                this.Translator.GenerateCodeForFunction(ctx, translatorOverride, funcDef);
                 coreVmCode.Add(ctx.FlushAndClearBuffer());
             }
 
@@ -101,11 +101,11 @@ namespace JavaScriptApp
                         libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
 
                     library.ManifestFunction.NameToken = Pastel.Token.CreateDummyToken("lib_" + library.Name.ToLower() + "_manifest");
-                    this.GenerateCodeForFunction(ctx, translatorOverride, library.ManifestFunction);
+                    this.Translator.GenerateCodeForFunction(ctx, translatorOverride, library.ManifestFunction);
                     libraryLines.Add(ctx.FlushAndClearBuffer());
                     foreach (FunctionDefinition fnDef in library.Functions)
                     {
-                        this.GenerateCodeForFunction(ctx, translatorOverride, fnDef);
+                        this.Translator.GenerateCodeForFunction(ctx, translatorOverride, fnDef);
                         libraryLines.Add(ctx.FlushAndClearBuffer());
                     }
                     libraryLines.Add("C$common$scrapeLibFuncNames('" + library.Name.ToLower() + "');");
@@ -202,21 +202,6 @@ namespace JavaScriptApp
             }
 
             // TODO: minify JavaScript across all of output dictionary
-        }
-
-        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
-        {
-            this.ParentPlatform.GenerateCodeForFunction(sb, translator, funcDef);
-        }
-
-        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
-        {
-            this.ParentPlatform.GenerateCodeForGlobalsDefinitions(sb, translator, globals);
         }
 
         public static string GenerateJsLibInclusionHtml(ICollection<string> filesIncluded)

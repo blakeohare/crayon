@@ -108,10 +108,6 @@ namespace JavaScriptAppAndroid
             throw new NotImplementedException();
         }
 
-        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef) { throw new NotImplementedException(); }
-        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals) { throw new NotImplementedException(); }
-        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef) { throw new NotImplementedException(); }
-
         public void OutputAndroidBoilerplate(Dictionary<string, FileOutput> output, Dictionary<string, string> replacements, Options options)
         {
             string packagedDir = replacements["JAVA_PACKAGE"].Replace('.', '/');

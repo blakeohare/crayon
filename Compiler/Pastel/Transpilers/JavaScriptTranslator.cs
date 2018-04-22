@@ -1,6 +1,7 @@
 ﻿using Common;
 using Pastel.Nodes;
 using System;
+using System.Collections.Generic;
 
 namespace Pastel.Transpilers
 {
@@ -786,6 +787,43 @@ namespace Pastel.Transpilers
             sb.Append(", ");
             this.TranslateExpression(sb, libRegObj);
             sb.Append(')');
+        }
+
+        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
+        {
+            sb.Append("var v_");
+            sb.Append(funcDef.NameToken.Value);
+            sb.Append(" = function(");
+            Token[] args = funcDef.ArgNames;
+            for (int i = 0; i < args.Length; ++i)
+            {
+                if (i > 0) sb.Append(", ");
+                sb.Append("v_");
+                sb.Append(args[i].Value);
+            }
+            sb.Append(") {");
+            sb.Append(this.NewLine);
+
+            translator.TabDepth = 1;
+            translator.TranslateExecutables(sb, funcDef.Code);
+            translator.TabDepth = 0;
+
+            sb.Append("};");
+            sb.Append(this.NewLine);
+            sb.Append(this.NewLine);
+        }
+
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
+        {
+            foreach (VariableDeclaration global in globals)
+            {
+                translator.TranslateVariableDeclaration(sb, global);
+            }
+        }
+
+        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Common;
 using Pastel.Nodes;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Pastel.Transpilers
 {
@@ -1209,6 +1211,155 @@ namespace Pastel.Transpilers
             sb.Append(", ");
             this.TranslateExpression(sb, libRegObj);
             sb.Append(')');
+        }
+
+
+        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
+        {
+            sb.Append(translator.CurrentTab);
+            sb.Append("public static ");
+            sb.Append(translator.TranslateType(funcDef.ReturnType));
+            sb.Append(" v_");
+            sb.Append(funcDef.NameToken.Value);
+            sb.Append('(');
+            Pastel.Token[] argNames = funcDef.ArgNames;
+            PType[] argTypes = funcDef.ArgTypes;
+            for (int i = 0; i < argTypes.Length; ++i)
+            {
+                if (i > 0) sb.Append(", ");
+                sb.Append(translator.TranslateType(argTypes[i]));
+                sb.Append(" v_");
+                sb.Append(argNames[i].Value);
+            }
+            sb.Append(") {");
+            sb.Append(this.NewLine);
+            translator.TabDepth++;
+            translator.TranslateExecutables(sb, funcDef.Code);
+            translator.TabDepth--;
+            sb.Append(translator.CurrentTab);
+            sb.Append('}');
+            sb.Append(this.NewLine);
+        }
+
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
+        {
+            foreach (string line in new string[] {
+                "package org.crayonlang.interpreter;",
+                "",
+                "import java.util.HashMap;",
+                "import org.crayonlang.interpreter.structs.Value;",
+                "",
+                "public final class VmGlobal {",
+                "",
+                "  private VmGlobal() {}",
+                "",
+            })
+            {
+                sb.Append(line);
+                sb.Append(this.NewLine);
+            }
+
+            foreach (VariableDeclaration varDecl in globals)
+            {
+                sb.Append("  public static final ");
+                sb.Append(translator.TranslateType(varDecl.Type));
+                sb.Append(' ');
+                sb.Append(varDecl.VariableNameToken.Value);
+                sb.Append(" = ");
+                translator.TranslateExpression(sb, varDecl.Value);
+                sb.Append(';');
+                sb.Append(this.NewLine);
+            }
+            sb.Append("}");
+            sb.Append(this.NewLine);
+        }
+
+        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
+        {
+            bool isValue = structDef.NameToken.Value == "Value";
+            sb.Append("public final class ");
+            sb.Append(structDef.NameToken.Value);
+            sb.Append(" {");
+            sb.Append(this.NewLine);
+            string[] types = structDef.ArgTypes.Select(type => translator.TranslateType(type)).ToArray();
+            string[] names = structDef.ArgNames.Select(token => token.Value).ToArray();
+            int fieldCount = names.Length;
+            for (int i = 0; i < fieldCount; ++i)
+            {
+                sb.Append("  public ");
+                sb.Append(types[i]);
+                sb.Append(' ');
+                sb.Append(names[i]);
+                sb.Append(';');
+                sb.Append(this.NewLine);
+            }
+
+            if (isValue)
+            {
+                // The overhead of having extra fields on each Value is much less than the overhead
+                // of Java's casting. Particularly on Android.
+                sb.Append("  public int intValue;");
+                sb.Append("  public FastList listValue;");
+                sb.Append(this.NewLine);
+            }
+
+            sb.Append(this.NewLine);
+            sb.Append("  public ");
+            sb.Append(structDef.NameToken.Value);
+            sb.Append('(');
+            for (int i = 0; i < fieldCount; ++i)
+            {
+                if (i > 0) sb.Append(", ");
+                sb.Append(types[i]);
+                sb.Append(' ');
+                sb.Append(names[i]);
+            }
+            sb.Append(") {");
+            sb.Append(this.NewLine);
+            for (int i = 0; i < fieldCount; ++i)
+            {
+                sb.Append("    this.");
+                sb.Append(names[i]);
+                sb.Append(" = ");
+                sb.Append(names[i]);
+                sb.Append(';');
+                sb.Append(this.NewLine);
+            }
+            sb.Append("  }");
+
+            if (isValue)
+            {
+                sb.Append(this.NewLine);
+                sb.Append(this.NewLine);
+                sb.Append("  public Value(int intValue) {");
+                sb.Append(this.NewLine);
+                sb.Append("    this.type = 3;");
+                sb.Append(this.NewLine);
+                sb.Append("    this.intValue = intValue;");
+                sb.Append(this.NewLine);
+                sb.Append("  }");
+                sb.Append(this.NewLine);
+                sb.Append(this.NewLine);
+                sb.Append("  public Value(boolean boolValue) {");
+                sb.Append(this.NewLine);
+                sb.Append("    this.type = 2;");
+                sb.Append(this.NewLine);
+                sb.Append("    this.intValue = boolValue ? 1 : 0;");
+                sb.Append(this.NewLine);
+                sb.Append("  }");
+                sb.Append(this.NewLine);
+                sb.Append(this.NewLine);
+                sb.Append("  public Value(FastList listValue) {");
+                sb.Append(this.NewLine);
+                sb.Append("    this.type = 6;");
+                sb.Append(this.NewLine);
+                sb.Append("    this.listValue = listValue;");
+                sb.Append(this.NewLine);
+                sb.Append("  }");
+            }
+
+            sb.Append(this.NewLine);
+            sb.Append("}");
         }
     }
 }

@@ -1051,5 +1051,51 @@ namespace Pastel.Transpilers
             this.TranslateExecutables(sb, whileLoop.Code);
             this.TabDepth--;
         }
+
+        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
+        {
+            PythonTranslator pyTranslator = (PythonTranslator)translator;
+            sb.CurrentFunctionDefinition = funcDef;
+
+            sb.Append(translator.CurrentTab);
+            sb.Append("def v_");
+            sb.Append(funcDef.NameToken.Value);
+            sb.Append('(');
+            int argCount = funcDef.ArgNames.Length;
+            for (int i = 0; i < argCount; ++i)
+            {
+                if (i > 0) sb.Append(", ");
+                sb.Append("v_");
+                sb.Append(funcDef.ArgNames[i].Value);
+            }
+            sb.Append("):");
+            sb.Append(this.NewLine);
+            translator.TabDepth++;
+            translator.TranslateExecutables(sb, funcDef.Code);
+            translator.TabDepth--;
+            sb.Append(this.NewLine);
+
+            foreach (PythonFakeSwitchStatement switchStatement in pyTranslator.SwitchStatements)
+            {
+                sb.Append(translator.CurrentTab);
+                sb.Append(switchStatement.GenerateGlobalDictionaryLookup());
+                sb.Append(this.NewLine);
+            }
+            pyTranslator.SwitchStatements.Clear();
+            sb.CurrentFunctionDefinition = null;
+        }
+
+        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
+        {
+            throw new InvalidOperationException("This function should not be called. Python uses lists as structs.");
+        }
+
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
+        {
+            foreach (VariableDeclaration global in globals)
+            {
+                translator.TranslateVariableDeclaration(sb, global);
+            }
+        }
     }
 }

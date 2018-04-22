@@ -475,5 +475,15 @@ namespace Pastel.Transpilers
         public abstract void TranslateVmEnqueueResume(TranspilerContext sb, Expression seconds, Expression executionContextId);
         public abstract void TranslateVmRunLibraryManifest(TranspilerContext sb, Expression libraryName, Expression libRegObj);
         public abstract void TranslateWhileLoop(TranspilerContext sb, WhileLoop whileLoop);
+
+        public abstract void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef);
+        public abstract void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef);
+        public abstract void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals);
+
+        // Overridden in languages that require a function to be declared separately in order for declaration order to not matter, such as C.
+        public virtual void GenerateCodeForFunctionDeclaration(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
+        {
+            throw new NotSupportedException();
+        }
     }
 }
