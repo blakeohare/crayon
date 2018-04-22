@@ -15,7 +15,6 @@
         public static void PutImageWidthAndHeightIntoFileOutputPropertiesSoThatBitmapDoesntNeedToBePersistedInMemory() { }
         public static void PastelCompileTimeCheckForAbsenceOfBreakInSwitchStatementCodeOtherThanTheEndForTheSakeOfPythonCompilation() { }
         public static void UseGlobalListOfOneNoneToPreventFrequentReallocation() { }
-        public static void PythonAppDeGamification() { }
         public static void JavaScriptDeGamification() { }
         public static void PleaseRenameThisFunction() { }
         public static void ExplicitlyDisallowThisAtCompileTime() { }
