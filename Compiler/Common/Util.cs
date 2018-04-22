@@ -100,20 +100,6 @@ namespace Common
         private const char ASCII_MAX = (char)127;
         private static readonly string[] HEX_CHARS = "0 1 2 3 4 5 6 7 8 9 a b c d e f".Split(' ');
 
-        public static string ConvertCharToCharConstantCode(char value)
-        {
-            switch (value)
-            {
-                case '\n': return "'\\n'";
-                case '\r': return "'\\r'";
-                case '\0': return "'\\0'";
-                case '\t': return "'\\t'";
-                case '\\': return "'\\\\'";
-                case '\'': return "'\\''";
-                default: return "'" + value + "'";
-            }
-        }
-
         public static string ConvertStringValueToCode(string rawValue, bool includeUnicodeEscape)
         {
             int uValue, d1, d2, d3, d4;

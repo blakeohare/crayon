@@ -1,6 +1,5 @@
-﻿namespace Common
+﻿namespace Pastel
 {
-    // maybe this class should be in Pastel?
     public interface IInlineImportCodeLoader
     {
         string LoadCode(string path);

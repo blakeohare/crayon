@@ -3,6 +3,7 @@
 TranslationHelper_StringBuffer16 = [None] * 16
 TranslationHelper_IntBuffer16 = [0] * 16
 TranslationHelper_FloatBuffer16 = [0.0] * 16
+TranslationHelper_NoneListOfOne = [None]
 
 TranslationHelper_StringType = type('')
 

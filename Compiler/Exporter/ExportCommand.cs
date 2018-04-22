@@ -15,7 +15,7 @@
         public bool IsDirectCbxRun { get; set; }
         public string[] DirectRunArgs { get; set; }
         public Platform.IPlatformProvider PlatformProvider { get; set; }
-        public Common.IInlineImportCodeLoader InlineImportCodeLoader { get; set; }
+        public Pastel.IInlineImportCodeLoader InlineImportCodeLoader { get; set; }
 
         public bool HasBuildFile { get { return this.BuildFilePath != null; } }
         public bool HasTarget { get { return this.BuildTarget != null; } }
