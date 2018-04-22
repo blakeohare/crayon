@@ -240,16 +240,16 @@ namespace Exporter
             }
         }
 
-        private Dictionary<string, Pastel.PastelCompiler> GenerateLibraryParseTree(
+        private Dictionary<string, PastelCompiler> GenerateLibraryParseTree(
             Platform.AbstractPlatform platform,
             Dictionary<string, object> constantFlags,
             IInlineImportCodeLoader codeLoader,
             ICollection<LibraryMetadata> relevantLibraries,
-            Pastel.PastelCompiler sharedScope)
+            PastelCompiler sharedScope)
         {
             using (new PerformanceSection("VmGenerator.GenerateLibraryParseTree"))
             {
-                Dictionary<string, Pastel.PastelCompiler> libraries = new Dictionary<string, Pastel.PastelCompiler>();
+                Dictionary<string, PastelCompiler> libraries = new Dictionary<string, PastelCompiler>();
 
                 foreach (LibraryMetadata libraryMetadata in relevantLibraries)
                 {
@@ -257,22 +257,10 @@ namespace Exporter
 
                     Dictionary<string, object> constantsLookup = Util.MergeDictionaries<string, object>(constantFlags, library.CompileTimeConstants);
 
-                    Dictionary<string, PType> libraryReturnTypes = library.GetReturnTypesForNativeMethods();
-                    Dictionary<string, PType[]> libraryArgTypes = library.GetArgumentTypesForNativeMethods();
+                    List<ExtensibleFunction> libraryFunctions = library.GetPastelExtensibleFunctions();
 
-                    List<Pastel.ExtensibleFunction> libraryFunctions = new List<Pastel.ExtensibleFunction>();
-                    foreach (string libraryFunctionName in libraryReturnTypes.Keys)
-                    {
-                        libraryFunctions.Add(new Pastel.ExtensibleFunction()
-                        {
-                            Name = libraryFunctionName,
-                            ReturnType = libraryReturnTypes[libraryFunctionName],
-                            ArgTypes = libraryArgTypes[libraryFunctionName],
-                        });
-                    }
-
-                    Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(
-                        new List<Pastel.PastelCompiler> { sharedScope },
+                    PastelCompiler compiler = new PastelCompiler(
+                        new List<PastelCompiler> { sharedScope },
                         constantsLookup,
                         codeLoader,
                         libraryFunctions);

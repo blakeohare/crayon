@@ -1,7 +1,6 @@
 ﻿using Common;
 using Parser;
 using Pastel.Transpilers;
-using Platform;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -251,89 +250,28 @@ namespace Exporter
             return output.ToArray();
         }
 
-        private Dictionary<string, Pastel.Nodes.PType> returnTypeInfoForNativeMethods = null;
-        private Dictionary<string, Pastel.Nodes.PType[]> argumentTypeInfoForNativeMethods = null;
+        private List<Pastel.ExtensibleFunction> extensibleFunctionMetadata = null;
 
         private void InitTypeInfo()
         {
-            this.returnTypeInfoForNativeMethods = new Dictionary<string, Pastel.Nodes.PType>();
-            this.argumentTypeInfoForNativeMethods = new Dictionary<string, Pastel.Nodes.PType[]>();
-
             string typeInfoFile = FileUtil.JoinPath(this.Metadata.Directory, "native_method_type_info.txt");
             if (FileUtil.FileExists(typeInfoFile))
             {
                 string typeInfo = FileUtil.ReadFileText(typeInfoFile);
-                Pastel.TokenStream tokens = new Pastel.TokenStream(Pastel.Tokenizer.Tokenize("LIB:" + this.Metadata.ID + "/native_method_type_info.txt", typeInfo));
-
-                while (tokens.HasMore)
-                {
-                    Pastel.Nodes.PType returnType = Pastel.Nodes.PType.Parse(tokens);
-                    string functionName = GetValidNativeLibraryFunctionNameFromPastelToken(tokens.Pop());
-                    tokens.PopExpected("(");
-                    List<Pastel.Nodes.PType> argTypes = new List<Pastel.Nodes.PType>();
-                    while (!tokens.PopIfPresent(")"))
-                    {
-                        if (argTypes.Count > 0) tokens.PopExpected(",");
-                        argTypes.Add(Pastel.Nodes.PType.Parse(tokens));
-
-                        // This is unused but could be later used as part of an auto-generated documentation for third-party platform implements of existing libraries.
-                        string argumentName = GetValidNativeLibraryFunctionNameFromPastelToken(tokens.Pop());
-                    }
-                    tokens.PopExpected(";");
-
-                    this.returnTypeInfoForNativeMethods[functionName] = returnType;
-                    this.argumentTypeInfoForNativeMethods[functionName] = argTypes.ToArray();
-                }
+                this.extensibleFunctionMetadata = Pastel.ExtensibleFunctionMetadataParser.Parse(
+                    "LIB:" + this.Metadata.ID + "/native_method_type_info.txt",
+                    typeInfo);
             }
-        }
-
-        private string GetValidNativeLibraryFunctionNameFromPastelToken(Pastel.Token token)
-        {
-            string name = token.Value;
-            char c;
-            bool okay = true;
-            for (int i = name.Length - 1; i >= 0; --i)
+            else
             {
-                c = name[i];
-                if ((c >= 'a' && c <= 'z') ||
-                    (c >= 'A' && c <= 'Z') ||
-                    c == '_')
-                {
-                    // this is fine
-                }
-                else if (c >= '0' && c <= '9')
-                {
-                    if (i == 0)
-                    {
-                        okay = false;
-                        break;
-                    }
-                }
-                else
-                {
-                    okay = false;
-                    break;
-                }
+                this.extensibleFunctionMetadata = new List<Pastel.ExtensibleFunction>();
             }
-            if (!okay)
-            {
-                throw new Pastel.ParserException(token, "Invalid name for a native function or argument.");
-            }
-            return name;
         }
 
-        public Dictionary<string, Pastel.Nodes.PType> GetReturnTypesForNativeMethods()
+        public List<Pastel.ExtensibleFunction> GetPastelExtensibleFunctions()
         {
-            if (this.returnTypeInfoForNativeMethods == null) this.InitTypeInfo();
-
-            return this.returnTypeInfoForNativeMethods;
-        }
-
-        public Dictionary<string, Pastel.Nodes.PType[]> GetArgumentTypesForNativeMethods()
-        {
-            if (this.argumentTypeInfoForNativeMethods == null) this.InitTypeInfo();
-
-            return this.argumentTypeInfoForNativeMethods;
+            if (this.extensibleFunctionMetadata == null) this.InitTypeInfo();
+            return this.extensibleFunctionMetadata;
         }
     }
 }
