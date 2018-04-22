@@ -153,7 +153,7 @@ namespace Exporter
         private Dictionary<string, string> translationsLookup = null;
 
         // TODO: extensible templating like this needs to go into Pastel itself.
-        public void TranslateNativeInvocation(StringBuilder sb, object throwToken, Platform.AbstractPlatform platform, AbstractTranslator translator, string functionName, object[] args)
+        public void TranslateNativeInvocation(StringBuilder sb, Pastel.Token throwToken, Platform.AbstractPlatform platform, AbstractTranslator translator, string functionName, object[] args)
         {
             if (translationsLookup == null)
             {
@@ -226,17 +226,10 @@ namespace Exporter
             {
                 // Use this to determine which function is causing the problem:
                 string MISSING_FUNCTION_NAME_FOR_DEBUGGER = functionName;
-                MISSING_FUNCTION_NAME_FOR_DEBUGGER.Trim(); // no compile warnings
+                MISSING_FUNCTION_NAME_FOR_DEBUGGER.Trim(); // no compile warnings from not using the above string.
 
                 string msg = "The " + this.Metadata.ID + " library does not support " + platform.Name + " projects.";
-                if (throwToken is Pastel.Token)
-                {
-                    throw new Pastel.ParserException((Pastel.Token)throwToken, msg);
-                }
-                else
-                {
-                    throw new Pastel.ParserException((Pastel.Token)throwToken, msg);
-                }
+                throw new Pastel.ParserException(throwToken, msg);
             }
         }
 
