@@ -47,8 +47,6 @@ namespace PythonApp
 
             List<string> runPy = new List<string>();
 
-            TODO.PythonAppDeGamification();
-
             foreach (string simpleCodeConcat in new string[] {
                 "header.txt",
                 "translation_helper.txt",
