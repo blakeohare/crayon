@@ -30,7 +30,7 @@ namespace Exporter
         {
             try
             {
-                sb.Append(LibraryExporter.Get(this.library, this.platform).TranslateNativeInvocation(throwToken, this.platform, translator, functionName, args));
+                LibraryExporter.Get(this.library, this.platform).TranslateNativeInvocation(sb, throwToken, this.platform, translator, functionName, args);
             }
             catch (System.Reflection.TargetInvocationException tie)
             {

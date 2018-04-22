@@ -1,7 +1,9 @@
 ﻿using Common;
 using Parser;
+using Platform;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Exporter
 {
@@ -150,7 +152,8 @@ namespace Exporter
 
         private Dictionary<string, string> translationsLookup = null;
 
-        public string TranslateNativeInvocation(object throwToken, Platform.AbstractPlatform platform, Platform.AbstractTranslator translator, string functionName, object[] args)
+        // TODO: extensible templating like this needs to go into Pastel itself.
+        public void TranslateNativeInvocation(StringBuilder sb, object throwToken, Platform.AbstractPlatform platform, AbstractTranslator translator, string functionName, object[] args)
         {
             if (translationsLookup == null)
             {
@@ -166,39 +169,74 @@ namespace Exporter
                 }
             }
 
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            string output = null;
+            string codeSnippet = null;
             string lookup = "$" + functionName;
             if (translationsLookup.ContainsKey(lookup))
             {
-                output = translationsLookup[lookup];
+                codeSnippet = translationsLookup[lookup];
             }
 
-            if (output != null)
+            if (codeSnippet != null)
             {
+                // Filter down to just the arguments that are used.
+                // Put their location and length in this locations lookup. The key
+                // is the ordinal for the argument starting from 0.
+                Dictionary<int, int[]> locations = new Dictionary<int, int[]>();
                 for (int i = 0; i < args.Length; ++i)
                 {
-
-                    translator.TranslateExpression(sb, (Pastel.Nodes.Expression)args[i]);
-                    string argAsString = sb.ToString();
-                    sb.Clear();
-                    output = output.Replace("[ARG:" + (i + 1) + "]", argAsString);
+                    string searchString = "[ARG:" + (i + 1) + "]";
+                    int argIndex = codeSnippet.IndexOf(searchString);
+                    if (argIndex != -1)
+                    {
+                        locations[i] = new int[] { argIndex, searchString.Length, argIndex + searchString.Length };
+                    }
                 }
-                return output;
-            }
-
-            // Use this to determine which function is causing the problem:
-            string MISSING_FUNCTION_NAME_FOR_DEBUGGER = functionName;
-            MISSING_FUNCTION_NAME_FOR_DEBUGGER.Trim(); // no compile warnings
-
-            string msg = "The " + this.Metadata.ID + " library does not support " + platform.Name + " projects.";
-            if (throwToken is Token)
-            {
-                throw new ParserException((Token)throwToken, msg);
+                // Get the arguments in order of their actual appearance.
+                int[] argOrdinalsInOrder = locations.Keys.OrderBy(argN => locations[argN][0]).ToArray();
+                if (argOrdinalsInOrder.Length == 0)
+                {
+                    // If there aren't any, you're done. Just put the code snippet into the
+                    // buffer as-is.
+                    sb.Append(codeSnippet);
+                }
+                else
+                {
+                    sb.Append(codeSnippet.Substring(0, locations[argOrdinalsInOrder[0]][0]));
+                    for (int i = 0; i < argOrdinalsInOrder.Length; ++i)
+                    {
+                        int currentArgOrdinal = argOrdinalsInOrder[i];
+                        int nextArgOrdinal = i + 1 < argOrdinalsInOrder.Length ? argOrdinalsInOrder[i + 1] : -1;
+                        translator.TranslateExpression(sb, (Pastel.Nodes.Expression)args[currentArgOrdinal]);
+                        int argEndIndex = locations[argOrdinalsInOrder[currentArgOrdinal]][2];
+                        if (nextArgOrdinal == -1)
+                        {
+                            // Take the code snippet from the end of the current arg to the end and
+                            // add it to the buffer.
+                            sb.Append(codeSnippet.Substring(argEndIndex));
+                        }
+                        else
+                        {
+                            int nextArgBeginIndex = locations[argOrdinalsInOrder[nextArgOrdinal]][0];
+                            sb.Append(codeSnippet.Substring(argEndIndex, nextArgBeginIndex - argEndIndex));
+                        }
+                    }
+                }
             }
             else
             {
-                throw new Pastel.ParserException((Pastel.Token)throwToken, msg);
+                // Use this to determine which function is causing the problem:
+                string MISSING_FUNCTION_NAME_FOR_DEBUGGER = functionName;
+                MISSING_FUNCTION_NAME_FOR_DEBUGGER.Trim(); // no compile warnings
+
+                string msg = "The " + this.Metadata.ID + " library does not support " + platform.Name + " projects.";
+                if (throwToken is Pastel.Token)
+                {
+                    throw new Pastel.ParserException((Pastel.Token)throwToken, msg);
+                }
+                else
+                {
+                    throw new Pastel.ParserException((Pastel.Token)throwToken, msg);
+                }
             }
         }
 
