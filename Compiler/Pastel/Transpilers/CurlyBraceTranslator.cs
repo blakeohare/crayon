@@ -1,8 +1,6 @@
 ﻿using Pastel.Nodes;
-using Pastel.Transpilers;
-using System.Text;
 
-namespace Platform
+namespace Pastel.Transpilers
 {
     public abstract class CurlyBraceTranslator : AbstractTranslator
     {

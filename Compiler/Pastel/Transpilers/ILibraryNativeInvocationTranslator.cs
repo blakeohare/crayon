@@ -1,9 +1,9 @@
-﻿namespace Platform
+﻿namespace Pastel.Transpilers
 {
     public interface ILibraryNativeInvocationTranslator
     {
         string LibraryID { get; }
-        LibraryForExport Library { get; }
+        string UniquePrefix { get; }
 
         void TranslateInvocation(
             Pastel.Transpilers.TranspilerContext sb,

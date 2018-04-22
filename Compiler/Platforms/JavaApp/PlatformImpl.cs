@@ -18,7 +18,7 @@ namespace JavaApp
         public PlatformImpl()
         {
             this.ContextFreePlatformImpl = new ContextFreeJavaAppPlatform();
-            this.Translator = new LangJava.JavaTranslator(false);
+            this.Translator = new JavaTranslator(false);
         }
 
         public override void ExportStandaloneVm(

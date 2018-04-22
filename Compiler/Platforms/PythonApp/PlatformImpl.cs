@@ -16,7 +16,7 @@ namespace PythonApp
         public PlatformImpl()
         {
             this.ContextFreePlatformImpl = new ContextFreePythonAppPlatform();
-            this.Translator = new LangPython.PythonTranslator();
+            this.Translator = new PythonTranslator();
         }
 
         public override IDictionary<string, object> GetConstantFlags()
@@ -88,7 +88,7 @@ namespace PythonApp
 
             foreach (LibraryForExport library in libraries)
             {
-                this.Translator.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
+                ctx.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
                 string libraryName = library.Name;
                 List<string> libraryLines = new List<string>();
                 if (library.ManifestFunction != null)

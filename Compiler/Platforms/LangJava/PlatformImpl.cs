@@ -64,7 +64,7 @@ namespace LangJava
             {
                 if (library.ManifestFunction != null)
                 {
-                    platform.Translator.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
+                    ctx.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
 
                     List<string> libraryCode = new List<string>()
                     {

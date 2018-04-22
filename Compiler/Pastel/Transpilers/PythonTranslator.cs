@@ -1,13 +1,11 @@
 ﻿using Common;
 using Pastel.Nodes;
-using Pastel.Transpilers;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace LangPython
+namespace Pastel.Transpilers
 {
-    public class PythonTranslator : Platform.AbstractTranslator
+    public class PythonTranslator : AbstractTranslator
     {
         private string TranslateOp(string originalOp)
         {
@@ -19,19 +17,6 @@ namespace LangPython
             }
         }
 
-        // This is a hack for conveying extra information to the top-level function serializer for switch statement stuff.
-        // This reference is updated in TranslateFunctionDefinition.
-        private FunctionDefinition currentFunctionDefinition = null;
-        private int switchCounter = 0;
-        internal FunctionDefinition CurrentFunctionDefinition
-        {
-            get { return this.currentFunctionDefinition; }
-            set
-            {
-                this.currentFunctionDefinition = value;
-                this.switchCounter = 0;
-            }
-        }
         public List<PythonFakeSwitchStatement> SwitchStatements { get; private set; }
 
         public PythonTranslator() : base("  ", "\n")
@@ -969,8 +954,8 @@ namespace LangPython
 
         public override void TranslateSwitchStatement(TranspilerContext sb, SwitchStatement switchStatement)
         {
-            string functionName = this.CurrentFunctionDefinition.NameToken.Value;
-            int switchId = this.switchCounter++;
+            string functionName = sb.CurrentFunctionDefinition.NameToken.Value;
+            int switchId = sb.SwitchCounter++;
             PythonFakeSwitchStatement fakeSwitchStatement = PythonFakeSwitchStatement.Build(switchStatement, switchId, functionName);
 
             sb.Append(this.CurrentTab);

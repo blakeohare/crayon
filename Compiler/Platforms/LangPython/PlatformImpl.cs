@@ -60,7 +60,7 @@ namespace LangPython
         public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
         {
             PythonTranslator pyTranslator = (PythonTranslator)translator;
-            pyTranslator.CurrentFunctionDefinition = funcDef;
+            sb.CurrentFunctionDefinition = funcDef;
 
             sb.Append(translator.CurrentTab);
             sb.Append("def v_");
@@ -87,7 +87,7 @@ namespace LangPython
                 sb.Append(this.NL);
             }
             pyTranslator.SwitchStatements.Clear();
-            pyTranslator.CurrentFunctionDefinition = null;
+            sb.CurrentFunctionDefinition = null;
         }
 
         public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)

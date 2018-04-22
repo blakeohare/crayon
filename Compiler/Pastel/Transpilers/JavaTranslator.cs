@@ -1,12 +1,10 @@
 ﻿using Common;
 using Pastel.Nodes;
-using Pastel.Transpilers;
 using System;
-using System.Text;
 
-namespace LangJava
+namespace Pastel.Transpilers
 {
-    public class JavaTranslator : Platform.CurlyBraceTranslator
+    public class JavaTranslator : CurlyBraceTranslator
     {
         private bool isJava6;
 
@@ -911,9 +909,9 @@ namespace LangJava
 
         public override void TranslateRegisterLibraryFunction(TranspilerContext sb, Expression libRegObj, Expression functionName, Expression functionArgCount)
         {
-            Platform.LibraryForExport lfe = this.CurrentLibraryFunctionTranslator.Library;
+            string prefix = sb.CurrentLibraryFunctionTranslator.UniquePrefix.ToLower();
             string functionNameString = ((InlineConstant)functionName).Value.ToString();
-            string className = "FP_lib_" + lfe.Name.ToLower() + "_function_" + functionNameString;
+            string className = "FP_lib_" + prefix + "_function_" + functionNameString;
 
             sb.Append("TranslationHelper.registerLibraryFunction(LibraryWrapper.class, ");
             this.TranslateExpression(sb, libRegObj);
