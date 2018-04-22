@@ -36,12 +36,24 @@ namespace LangC
                 };
         }
 
-        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output, Pastel.PastelCompiler compiler, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        public override void ExportStandaloneVm(
+            Dictionary<string, FileOutput> output,
+            Pastel.PastelCompiler compiler,
+            Pastel.PastelContext pastelContext,
+            IList<LibraryForExport> everyLibrary,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             throw new NotImplementedException();
         }
 
-        public override void ExportProject(Dictionary<string, FileOutput> output, Pastel.PastelCompiler compiler, IList<LibraryForExport> libraries, ResourceDatabase resourceDatabase, Options options, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        public override void ExportProject(
+            Dictionary<string, FileOutput> output,
+            Pastel.PastelCompiler compiler,
+            Pastel.PastelContext pastelContext,
+            IList<LibraryForExport> libraries,
+            ResourceDatabase resourceDatabase,
+            Options options,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             throw new NotImplementedException();
         }

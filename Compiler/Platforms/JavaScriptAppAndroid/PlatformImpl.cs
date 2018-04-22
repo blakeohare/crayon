@@ -21,6 +21,7 @@ namespace JavaScriptAppAndroid
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             Pastel.PastelCompiler compiler,
+            Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options,
@@ -50,6 +51,7 @@ namespace JavaScriptAppAndroid
             this.ParentPlatform.ExportProject(
                 basicProject,
                 compiler,
+                pastelContext,
                 libraries,
                 resourceDatabase,
                 options,

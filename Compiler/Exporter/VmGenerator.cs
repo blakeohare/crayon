@@ -118,7 +118,7 @@ namespace Exporter
                 Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags() ?? new Dictionary<string, object>();
 
                 this.AddTypeEnumsToConstants(constantFlags);
-                Pastel.PastelCompiler vm = this.GenerateCoreVmParseTree(platform, codeLoader, constantFlags);
+                PastelCompiler vm = this.GenerateCoreVmParseTree(platform, codeLoader, constantFlags);
 
                 Dictionary<string, LibraryMetadata> librariesByID = relevantLibraries.ToDictionary(lib => lib.ID);
                 List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByID, constantFlags, codeLoader, vm);
@@ -155,6 +155,7 @@ namespace Exporter
                     platform.ExportProject(
                         output,
                         vm,
+                        null,
                         libraries,
                         resourceDatabase,
                         options,
@@ -165,6 +166,7 @@ namespace Exporter
                     platform.ExportStandaloneVm(
                         output,
                         vm,
+                        null,
                         libraries,
                         libTranslationProvider);
                 }

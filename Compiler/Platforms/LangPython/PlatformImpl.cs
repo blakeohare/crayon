@@ -1,5 +1,4 @@
 ﻿using Common;
-using Pastel.Nodes;
 using Pastel.Transpilers;
 using Platform;
 using System;
@@ -35,6 +34,7 @@ namespace LangPython
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             Pastel.PastelCompiler compiler,
+            Pastel.PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
@@ -44,6 +44,7 @@ namespace LangPython
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             Pastel.PastelCompiler compiler,
+            Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options,
