@@ -49,12 +49,12 @@ namespace Exporter
         {
             using (new PerformanceSection("VmGenerator.GetLibrariesForExport"))
             {
-                Dictionary<string, Pastel.PastelCompiler> libraryCompilation = this.GenerateLibraryParseTree(
-                platform,
-                constantFlags,
-                codeLoader,
-                librariesById.Values,
-                vm);
+                Dictionary<string, PastelContext> libraryCompilation = this.GenerateLibraryParseTree(
+                    platform,
+                    constantFlags,
+                    codeLoader,
+                    librariesById.Values,
+                    vm);
 
                 List<Platform.LibraryForExport> libraries = new List<Platform.LibraryForExport>();
                 Dictionary<string, LibraryExporter> libraryByName = new Dictionary<string, LibraryExporter>();
@@ -176,7 +176,7 @@ namespace Exporter
         private Platform.LibraryForExport CreateLibraryForExport(
             string libraryName,
             string libraryVersion,
-            Pastel.PastelCompiler compilation,
+            PastelContext compilation,
             LibraryResourceDatabase libResDb)
         {
             using (new PerformanceSection("VmGenerator.CreateLibraryForExport"))
@@ -184,7 +184,8 @@ namespace Exporter
                 Multimap<string, Platform.ExportEntity> exportEntities = libResDb.ExportEntities;
                 FunctionDefinition manifestFunction = null;
                 Dictionary<string, FunctionDefinition> otherFunctions = new Dictionary<string, FunctionDefinition>();
-                foreach (FunctionDefinition functionDefinition in compilation.FunctionDefinitions.Values)
+                FunctionDefinition[] functionDefinitions = compilation.CompilerDEPRECATED != null ? compilation.CompilerDEPRECATED.FunctionDefinitions.Values.ToArray() : new FunctionDefinition[0];
+                foreach (FunctionDefinition functionDefinition in functionDefinitions)
                 {
                     string functionName = functionDefinition.NameToken.Value;
                     if (functionName == "lib_manifest_RegisterFunctions")
@@ -206,9 +207,9 @@ namespace Exporter
                     Name = libraryName,
                     Version = libraryVersion,
                     FunctionRegisteredNamesOrNulls = names,
-                    Functions = functions,
-                    Structs = compilation.StructDefinitions.Values.ToArray(),
-                    ManifestFunction = manifestFunction,
+                    FunctionsDEPRECATED = functions,
+                    StructsDEPRECATED = compilation.CompilerDEPRECATED != null ? compilation.CompilerDEPRECATED.StructDefinitions.Values.ToArray() : new StructDefinition[0],
+                    ManifestFunctionDEPRECATED = manifestFunction,
                     ExportEntities = exportEntities,
                     DotNetLibs = dotNetLibs,
                     LibProjectNamesAndGuids = libResDb.ProjectReferenceToGuid,
@@ -240,7 +241,7 @@ namespace Exporter
             }
         }
 
-        private Dictionary<string, PastelCompiler> GenerateLibraryParseTree(
+        private Dictionary<string, PastelContext> GenerateLibraryParseTree(
             Platform.AbstractPlatform platform,
             Dictionary<string, object> constantFlags,
             IInlineImportCodeLoader codeLoader,
@@ -249,7 +250,7 @@ namespace Exporter
         {
             using (new PerformanceSection("VmGenerator.GenerateLibraryParseTree"))
             {
-                Dictionary<string, PastelCompiler> libraries = new Dictionary<string, PastelCompiler>();
+                Dictionary<string, PastelContext> libraries = new Dictionary<string, PastelContext>();
 
                 foreach (LibraryMetadata libraryMetadata in relevantLibraries)
                 {
@@ -259,12 +260,18 @@ namespace Exporter
 
                     List<ExtensibleFunction> libraryFunctions = library.GetPastelExtensibleFunctions();
 
-                    PastelCompiler compiler = new PastelCompiler(
-                        new List<PastelCompiler> { sharedScope },
-                        constantsLookup,
-                        codeLoader,
-                        libraryFunctions);
-                    libraries[library.Metadata.ID] = compiler;
+                    PastelContext context = new PastelContext(platform.Translator, codeLoader);
+                    foreach (ExtensibleFunction exFn in libraryFunctions)
+                    {
+                        context.AddExtensibleFunction(exFn);
+                    }
+                    context.AddDependencyTEMP(sharedScope);
+                    foreach (string constKey in constantsLookup.Keys)
+                    {
+                        context.SetConstant(constKey, constantsLookup[constKey]);
+                    }
+
+                    libraries[library.Metadata.ID] = context;
 
                     Dictionary<string, string> supplementalCode = library.Metadata.GetSupplementalTranslatedCode();
                     Dictionary<string, string> translatedCode = library.GetNativeCode();
@@ -281,25 +288,27 @@ namespace Exporter
                     }
                     else
                     {
-                        compiler.CompileBlobOfCode("LIB:" + library.Metadata.ID + "/function_registry.pst", registryCode);
+                        string filename = "LIB:" + library.Metadata.ID + "/function_registry.pst";
+                        context.CompileCode(filename, registryCode);
 
                         foreach (string structFile in structCode.Keys)
                         {
-                            string code = structCode[structFile];
-                            compiler.CompileBlobOfCode("LIB:" + library.Metadata.ID + "/structs/" + structFile, code);
+                            filename = "LIB:" + library.Metadata.ID + "/structs/" + structFile;
+                            context.CompileCode(filename, structCode[structFile]);
                         }
 
                         foreach (string supplementalFile in supplementalCode.Keys)
                         {
-                            string code = supplementalCode[supplementalFile];
-                            compiler.CompileBlobOfCode("LIB:" + library.Metadata.ID + "/supplemental/" + supplementalFile, code);
+                            filename = "LIB:" + library.Metadata.ID + "/supplemental/" + supplementalFile;
+                            context.CompileCode(filename, supplementalCode[supplementalFile]);
                         }
                         foreach (string translatedFile in translatedCode.Keys)
                         {
-                            string code = translatedCode[translatedFile];
-                            compiler.CompileBlobOfCode("LIB:" + library.Metadata.ID + "/translate/" + translatedFile, code);
+                            filename = "LIB:" + library.Metadata.ID + "/translate/" + translatedFile;
+                            context.CompileCode(filename, translatedCode[translatedFile]);
                         }
-                        compiler.Resolve();
+
+                        context.FinalizeCompilation();
                     }
                 }
 

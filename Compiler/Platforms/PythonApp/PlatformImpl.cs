@@ -84,7 +84,7 @@ namespace PythonApp
                 ctx.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
                 string libraryName = library.Name;
                 List<string> libraryLines = new List<string>();
-                if (library.ManifestFunction != null)
+                if (library.ManifestFunctionDEPRECATED != null)
                 {
                     libraryLines.Add("import math");
                     libraryLines.Add("import os");
@@ -96,9 +96,9 @@ namespace PythonApp
                     libraryLines.Add("from code.vm import *");
                     libraryLines.Add("");
 
-                    this.Translator.GenerateCodeForFunction(ctx, this.Translator, library.ManifestFunction);
+                    this.Translator.GenerateCodeForFunction(ctx, this.Translator, library.ManifestFunctionDEPRECATED);
                     libraryLines.Add(ctx.FlushAndClearBuffer());
-                    foreach (FunctionDefinition funcDef in library.Functions)
+                    foreach (FunctionDefinition funcDef in library.FunctionsDEPRECATED)
                     {
                         this.Translator.GenerateCodeForFunction(ctx, this.Translator, funcDef);
                         libraryLines.Add(ctx.FlushAndClearBuffer());

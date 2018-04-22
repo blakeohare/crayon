@@ -1,9 +1,6 @@
 ﻿using Pastel.Nodes;
 using Pastel.Transpilers;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Pastel
 {
@@ -17,6 +14,9 @@ namespace Pastel
         public AbstractTranslator Transpiler { get; private set; }
         public IInlineImportCodeLoader CodeLoader { get; private set; }
 
+        // Remove this once direct dependence on Compiler is removed.
+        public PastelCompiler CompilerDEPRECATED { get { return this.compiler; } }
+
         // TODO: eventually the transpilers should be internal and this will be an enum.
         public PastelContext(AbstractTranslator transpiler, IInlineImportCodeLoader codeLoader)
         {
@@ -27,6 +27,13 @@ namespace Pastel
         public PastelContext AddDependency(PastelContext context)
         {
             this.dependencies.Add(context.compiler);
+            return this;
+        }
+
+        // TODO: remove this once everything has been migrated to use PastelContext exclusively.
+        public PastelContext AddDependencyTEMP(PastelCompiler compiler)
+        {
+            this.dependencies.Add(compiler);
             return this;
         }
 
@@ -42,7 +49,7 @@ namespace Pastel
             return this;
         }
 
-        public PastelContext CompileFile(string filename)
+        public PastelContext CompileCode(string filename, string code)
         {
             if (this.compiler == null)
             {
@@ -52,9 +59,18 @@ namespace Pastel
                     this.CodeLoader,
                     this.extensibleFunctions);
             }
+            this.compiler.CompileBlobOfCode(filename, code);
+            return this;
+        }
 
-            this.compiler.CompileBlobOfCode(filename, this.CodeLoader.LoadCode(filename));
+        public PastelContext CompileFile(string filename)
+        {
+            return this.CompileCode(filename, this.CodeLoader.LoadCode(filename));
+        }
 
+        public PastelContext FinalizeCompilation()
+        {
+            this.compiler.Resolve();
             return this;
         }
 

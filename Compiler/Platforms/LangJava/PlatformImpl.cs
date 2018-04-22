@@ -67,7 +67,7 @@ namespace LangJava
 
             foreach (LibraryForExport library in libraries)
             {
-                if (library.ManifestFunction != null)
+                if (library.ManifestFunctionDEPRECATED != null)
                 {
                     ctx.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
 
@@ -86,10 +86,10 @@ namespace LangJava
                     });
 
                     platform.Translator.TabDepth = 1;
-                    platform.Translator.GenerateCodeForFunction(ctx, platform.Translator, library.ManifestFunction);
+                    platform.Translator.GenerateCodeForFunction(ctx, platform.Translator, library.ManifestFunctionDEPRECATED);
                     libraryCode.Add(ctx.FlushAndClearBuffer());
                     string reflectionCalledPrefix = "lib_" + library.Name.ToLower() + "_function_";
-                    foreach (FunctionDefinition fnDef in library.Functions)
+                    foreach (FunctionDefinition fnDef in library.FunctionsDEPRECATED)
                     {
                         string name = fnDef.NameToken.Value;
                         bool isFunctionPointerObject = name.StartsWith(reflectionCalledPrefix);
@@ -121,7 +121,7 @@ namespace LangJava
                         TextContent = string.Join(platform.NL, libraryCode),
                     };
 
-                    foreach (StructDefinition structDef in library.Structs)
+                    foreach (StructDefinition structDef in library.StructsDEPRECATED)
                     {
                         platform.Translator.GenerateCodeForStruct(ctx, platform.Translator, structDef);
                         string structCode = ctx.FlushAndClearBuffer();

@@ -95,17 +95,17 @@ namespace JavaScriptApp
             List<LibraryForExport> librariesWithCode = new List<LibraryForExport>();
             foreach (LibraryForExport library in libraries)
             {
-                if (library.ManifestFunction != null)
+                if (library.ManifestFunctionDEPRECATED != null)
                 {
                     List<string> libraryLines = new List<string>();
 
                     ctx.CurrentLibraryFunctionTranslator =
                         libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
 
-                    library.ManifestFunction.NameToken = Pastel.Token.CreateDummyToken("lib_" + library.Name.ToLower() + "_manifest");
-                    this.Translator.GenerateCodeForFunction(ctx, translatorOverride, library.ManifestFunction);
+                    library.ManifestFunctionDEPRECATED.NameToken = Pastel.Token.CreateDummyToken("lib_" + library.Name.ToLower() + "_manifest");
+                    this.Translator.GenerateCodeForFunction(ctx, translatorOverride, library.ManifestFunctionDEPRECATED);
                     libraryLines.Add(ctx.FlushAndClearBuffer());
-                    foreach (FunctionDefinition fnDef in library.Functions)
+                    foreach (FunctionDefinition fnDef in library.FunctionsDEPRECATED)
                     {
                         this.Translator.GenerateCodeForFunction(ctx, translatorOverride, fnDef);
                         libraryLines.Add(ctx.FlushAndClearBuffer());

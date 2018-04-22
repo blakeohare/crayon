@@ -174,18 +174,18 @@ namespace CSharpApp
             string libraryName = library.Name;
             ctx.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(libraryName);
             List<string> libraryLines = new List<string>();
-            if (library.ManifestFunction != null)
+            if (library.ManifestFunctionDEPRECATED != null)
             {
                 string libraryDir = baseDir + "Libraries/" + libraryName;
-                this.Translator.GenerateCodeForFunction(ctx, this.Translator, library.ManifestFunction);
+                this.Translator.GenerateCodeForFunction(ctx, this.Translator, library.ManifestFunctionDEPRECATED);
                 libraryLines.Add(ctx.FlushAndClearBuffer());
-                foreach (FunctionDefinition funcDef in library.Functions)
+                foreach (FunctionDefinition funcDef in library.FunctionsDEPRECATED)
                 {
                     this.Translator.GenerateCodeForFunction(ctx, this.Translator, funcDef);
                     libraryLines.Add(ctx.FlushAndClearBuffer());
                 }
 
-                foreach (StructDefinition structDef in library.Structs)
+                foreach (StructDefinition structDef in library.StructsDEPRECATED)
                 {
                     filesOut[libraryDir + "/Structs/" + structDef.NameToken.Value + ".cs"] = this.GetStructFile(structDef);
                 }
