@@ -1,5 +1,6 @@
 ﻿using Common;
 using Pastel.Nodes;
+using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -45,15 +46,15 @@ namespace LangC
             throw new NotImplementedException();
         }
 
-        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
+        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
         {
             if (structDef.NameToken.Value == "Value")
             {
                 // I need to do fancy stuff with unions, so special case this one.
-                return this.LoadTextResource("Resources/ValueStruct.txt", new Dictionary<string, string>());
+                string valueStruct = this.LoadTextResource("Resources/ValueStruct.txt", new Dictionary<string, string>());
+                sb.Append(valueStruct);
+                return;
             }
-
-            StringBuilder sb = new StringBuilder();
 
             sb.Append("struct ");
             sb.Append(structDef.NameToken.Value);
@@ -70,13 +71,10 @@ namespace LangC
             }
 
             sb.Append("};\n\n");
-
-            return sb.ToString();
         }
 
-        public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            StringBuilder sb = new StringBuilder();
             sb.Append(this.Translator.TranslateType(funcDef.ReturnType));
             sb.Append(" v_");
             sb.Append(funcDef.NameToken.Value);
@@ -93,11 +91,9 @@ namespace LangC
             translator.TranslateExecutables(sb, funcDef.Code);
             translator.TabDepth = 0;
             sb.Append("}\n");
-
-            return sb.ToString();
         }
 
-        public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
         {
             throw new NotImplementedException();
         }
@@ -139,9 +135,8 @@ namespace LangC
             sb.Append(newline);
         }
 
-        public override string GenerateCodeForFunctionDeclaration(AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunctionDeclaration(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            StringBuilder sb = new StringBuilder();
             sb.Append(this.Translator.TranslateType(funcDef.ReturnType));
             sb.Append(" v_");
             sb.Append(funcDef.NameToken.Value);
@@ -154,7 +149,6 @@ namespace LangC
                 sb.Append(funcDef.ArgNames[i].Value);
             }
             sb.Append(");");
-            return sb.ToString();
         }
     }
 }

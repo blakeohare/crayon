@@ -1,5 +1,6 @@
 ﻿using Common;
 using Pastel.Nodes;
+using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,8 @@ namespace PythonApp
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
+            TranspilerContext ctx = new TranspilerContext();
+
             List<string> runPy = new List<string>();
 
             TODO.PythonAppDeGamification();
@@ -61,8 +64,8 @@ namespace PythonApp
                 runPy.Add(this.LoadTextResource("Resources/" + simpleCodeConcat, replacements));
                 runPy.Add("");
             }
-
-            runPy.Add(this.GenerateCodeForGlobalsDefinitions(this.Translator, globals));
+            this.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, globals);
+            runPy.Add(ctx.FlushAndClearBuffer());
             runPy.Add("");
             runPy.Add(this.LoadTextResource("Resources/LibraryRegistry.txt", replacements));
             runPy.Add("");
@@ -73,7 +76,8 @@ namespace PythonApp
 
             foreach (FunctionDefinition funcDef in functionDefinitions)
             {
-                runPy.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
+                this.GenerateCodeForFunction(ctx, this.Translator, funcDef);
+                runPy.Add(ctx.FlushAndClearBuffer());
             }
 
             output["code/vm.py"] = new FileOutput()
@@ -99,10 +103,12 @@ namespace PythonApp
                     libraryLines.Add("from code.vm import *");
                     libraryLines.Add("");
 
-                    libraryLines.Add(this.GenerateCodeForFunction(this.Translator, library.ManifestFunction));
+                    this.GenerateCodeForFunction(ctx, this.Translator, library.ManifestFunction);
+                    libraryLines.Add(ctx.FlushAndClearBuffer());
                     foreach (FunctionDefinition funcDef in library.Functions)
                     {
-                        libraryLines.Add(this.GenerateCodeForFunction(this.Translator, funcDef));
+                        this.GenerateCodeForFunction(ctx, this.Translator, funcDef);
+                        libraryLines.Add(ctx.FlushAndClearBuffer());
                     }
 
                     libraryLines.Add("");
@@ -167,14 +173,14 @@ namespace PythonApp
             }
         }
 
-        public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            return this.ParentPlatform.GenerateCodeForFunction(this.Translator, funcDef);
+            this.ParentPlatform.GenerateCodeForFunction(sb, this.Translator, funcDef);
         }
 
-        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
+        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
         {
-            return this.ParentPlatform.GenerateCodeForStruct(translator, structDef);
+            this.ParentPlatform.GenerateCodeForStruct(sb, translator, structDef);
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
@@ -182,9 +188,9 @@ namespace PythonApp
             return this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
         }
 
-        public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
         {
-            return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(translator, globals);
+            this.ParentPlatform.GenerateCodeForGlobalsDefinitions(sb, translator, globals);
         }
     }
 }

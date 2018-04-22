@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Pastel.Nodes;
+using Pastel.Transpilers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Pastel.Nodes;
 
 namespace Platform
 {
@@ -58,7 +59,7 @@ namespace Platform
             throw new InvalidOperationException("This platform does not support types.");
         }
 
-        public virtual void TranslateExecutables(StringBuilder sb, Executable[] executables)
+        public virtual void TranslateExecutables(TranspilerContext sb, Executable[] executables)
         {
             for (int i = 0; i < executables.Length; ++i)
             {
@@ -66,7 +67,7 @@ namespace Platform
             }
         }
 
-        public void TranslateExecutable(StringBuilder sb, Executable executable)
+        public void TranslateExecutable(TranspilerContext sb, Executable executable)
         {
             string typeName = executable.GetType().Name;
             switch (typeName)
@@ -92,7 +93,7 @@ namespace Platform
             }
         }
 
-        public void TranslateExpression(StringBuilder sb, Expression expression)
+        public void TranslateExpression(TranspilerContext sb, Expression expression)
         {
             string typeName = expression.GetType().Name;
             switch (typeName)
@@ -226,7 +227,7 @@ namespace Platform
             }
         }
 
-        public void TranslateNativeFunctionInvocation(StringBuilder sb, NativeFunctionInvocation nativeFuncInvocation)
+        public void TranslateNativeFunctionInvocation(TranspilerContext sb, NativeFunctionInvocation nativeFuncInvocation)
         {
             Expression[] args = nativeFuncInvocation.Args;
             switch (nativeFuncInvocation.Function)
@@ -334,14 +335,14 @@ namespace Platform
             }
         }
 
-        public void TranslateExtensibleFunctionInvocation(StringBuilder sb, ExtensibleFunctionInvocation funcInvocation)
+        public void TranslateExtensibleFunctionInvocation(TranspilerContext sb, ExtensibleFunctionInvocation funcInvocation)
         {
             Expression[] args = funcInvocation.Args;
             string functionName = funcInvocation.FunctionRef.Name;
             this.CurrentLibraryFunctionTranslator.TranslateInvocation(sb, this, functionName, args, funcInvocation.FirstToken);
         }
 
-        public void TranslateCommaDelimitedExpressions(StringBuilder sb, IList<Expression> expressions)
+        public void TranslateCommaDelimitedExpressions(TranspilerContext sb, IList<Expression> expressions)
         {
             for (int i = 0; i < expressions.Count; ++i)
             {
@@ -350,132 +351,132 @@ namespace Platform
             }
         }
 
-        public abstract void TranslateArrayGet(StringBuilder sb, Expression array, Expression index);
-        public abstract void TranslateArrayJoin(StringBuilder sb, Expression array, Expression sep);
-        public abstract void TranslateArrayLength(StringBuilder sb, Expression array);
-        public abstract void TranslateArrayNew(StringBuilder sb, PType arrayType, Expression lengthExpression);
-        public abstract void TranslateArraySet(StringBuilder sb, Expression array, Expression index, Expression value);
-        public abstract void TranslateAssignment(StringBuilder sb, Assignment assignment);
-        public abstract void TranslateBase64ToString(StringBuilder sb, Expression base64String);
-        public abstract void TranslateBooleanConstant(StringBuilder sb, bool value);
-        public abstract void TranslateBooleanNot(StringBuilder sb, UnaryOp unaryOp);
-        public abstract void TranslateBreak(StringBuilder sb);
-        public abstract void TranslateCast(StringBuilder sb, PType type, Expression expression);
-        public abstract void TranslateCharConstant(StringBuilder sb, char value);
-        public abstract void TranslateCharToString(StringBuilder sb, Expression charValue);
-        public abstract void TranslateChr(StringBuilder sb, Expression charCode);
-        public abstract void TranslateCommandLineArgs(StringBuilder sb);
-        public abstract void TranslateConstructorInvocation(StringBuilder sb, ConstructorInvocation constructorInvocation);
-        public abstract void TranslateConvertRawDictionaryValueCollectionToAReusableValueList(StringBuilder sb, Expression dictionary);
-        public abstract void TranslateCurrentTimeSeconds(StringBuilder sb);
-        public abstract void TranslateDictionaryContainsKey(StringBuilder sb, Expression dictionary, Expression key);
-        public abstract void TranslateDictionaryGet(StringBuilder sb, Expression dictionary, Expression key);
-        public abstract void TranslateDictionaryKeys(StringBuilder sb, Expression dictionary);
-        public abstract void TranslateDictionaryKeysToValueList(StringBuilder sb, Expression dictionary);
-        public abstract void TranslateDictionaryNew(StringBuilder sb, PType keyType, PType valueType);
-        public abstract void TranslateDictionaryRemove(StringBuilder sb, Expression dictionary, Expression key);
-        public abstract void TranslateDictionarySet(StringBuilder sb, Expression dictionary, Expression key, Expression value);
-        public abstract void TranslateDictionarySize(StringBuilder sb, Expression dictionary);
-        public abstract void TranslateDictionaryValues(StringBuilder sb, Expression dictionary);
-        public abstract void TranslateDictionaryValuesToValueList(StringBuilder sb, Expression dictionary);
-        public abstract void TranslateEmitComment(StringBuilder sb, string value);
-        public abstract void TranslateExpressionAsExecutable(StringBuilder sb, Expression expression);
-        public abstract void TranslateFloatBuffer16(StringBuilder sb);
-        public abstract void TranslateFloatConstant(StringBuilder sb, double value);
-        public abstract void TranslateFloatDivision(StringBuilder sb, Expression floatNumerator, Expression floatDenominator);
-        public abstract void TranslateFloatToInt(StringBuilder sb, Expression floatExpr);
-        public abstract void TranslateFloatToString(StringBuilder sb, Expression floatExpr);
-        public abstract void TranslateFunctionInvocationInterpreterScoped(StringBuilder sb, FunctionReference funcRef, Expression[] args);
-        public abstract void TranslateFunctionInvocationLocallyScoped(StringBuilder sb, FunctionReference funcRef, Expression[] args);
-        public abstract void TranslateFunctionReference(StringBuilder sb, FunctionReference funcRef);
-        public abstract void TranslateGetProgramData(StringBuilder sb);
-        public abstract void TranslateGetResourceManifest(StringBuilder sb);
-        public abstract void TranslateGlobalVariable(StringBuilder sb, Variable variable);
-        public abstract void TranslateIfStatement(StringBuilder sb, IfStatement ifStatement);
-        public abstract void TranslateInlineIncrement(StringBuilder sb, Expression innerExpression, bool isPrefix, bool isAddition);
-        public abstract void TranslateIntBuffer16(StringBuilder sb);
-        public abstract void TranslateIntegerConstant(StringBuilder sb, int value);
-        public abstract void TranslateIntegerDivision(StringBuilder sb, Expression integerNumerator, Expression integerDenominator);
-        public abstract void TranslateIntToString(StringBuilder sb, Expression integer);
-        public abstract void TranslateInvokeDynamicLibraryFunction(StringBuilder sb, Expression functionId, Expression argsArray);
-        public abstract void TranslateIsValidInteger(StringBuilder sb, Expression stringValue);
-        public abstract void TranslateListAdd(StringBuilder sb, Expression list, Expression item);
-        public abstract void TranslateListClear(StringBuilder sb, Expression list);
-        public abstract void TranslateListConcat(StringBuilder sb, Expression list, Expression items);
-        public abstract void TranslateListGet(StringBuilder sb, Expression list, Expression index);
-        public abstract void TranslateListInsert(StringBuilder sb, Expression list, Expression index, Expression item);
-        public abstract void TranslateListJoinChars(StringBuilder sb, Expression list);
-        public abstract void TranslateListJoinStrings(StringBuilder sb, Expression list, Expression sep);
-        public abstract void TranslateListNew(StringBuilder sb, PType type);
-        public abstract void TranslateListPop(StringBuilder sb, Expression list);
-        public abstract void TranslateListRemoveAt(StringBuilder sb, Expression list, Expression index);
-        public abstract void TranslateListReverse(StringBuilder sb, Expression list);
-        public abstract void TranslateListSet(StringBuilder sb, Expression list, Expression index, Expression value);
-        public abstract void TranslateListShuffle(StringBuilder sb, Expression list);
-        public abstract void TranslateListSize(StringBuilder sb, Expression list);
-        public abstract void TranslateListToArray(StringBuilder sb, Expression list);
-        public abstract void TranslateMathArcCos(StringBuilder sb, Expression ratio);
-        public abstract void TranslateMathArcSin(StringBuilder sb, Expression ratio);
-        public abstract void TranslateMathArcTan(StringBuilder sb, Expression yComponent, Expression xComponent);
-        public abstract void TranslateMathCos(StringBuilder sb, Expression thetaRadians);
-        public abstract void TranslateMathLog(StringBuilder sb, Expression value);
-        public abstract void TranslateMathPow(StringBuilder sb, Expression expBase, Expression exponent);
-        public abstract void TranslateMathSin(StringBuilder sb, Expression thetaRadians);
-        public abstract void TranslateMathTan(StringBuilder sb, Expression thetaRadians);
-        public abstract void TranslateMultiplyList(StringBuilder sb, Expression list, Expression n);
-        public abstract void TranslateNegative(StringBuilder sb, UnaryOp unaryOp);
-        public abstract void TranslateNullConstant(StringBuilder sb);
-        public abstract void TranslateOrd(StringBuilder sb, Expression charValue);
-        public abstract void TranslateOpChain(StringBuilder sb, OpChain opChain);
-        public abstract void TranslateParseFloatUnsafe(StringBuilder sb, Expression stringValue);
-        public abstract void TranslateParseInt(StringBuilder sb, Expression safeStringValue);
-        public abstract void TranslatePrintStdErr(StringBuilder sb, Expression value);
-        public abstract void TranslatePrintStdOut(StringBuilder sb, Expression value);
-        public abstract void TranslateRandomFloat(StringBuilder sb);
-        public abstract void TranslateReadByteCodeFile(StringBuilder sb);
-        public abstract void TranslateRegisterLibraryFunction(StringBuilder sb, Expression libRegObj, Expression functionName, Expression functionArgCount);
-        public abstract void TranslateResourceReadTextFile(StringBuilder sb, Expression path);
-        public abstract void TranslateReturnStatemnt(StringBuilder sb, ReturnStatement returnStatement);
-        public abstract void TranslateSetProgramData(StringBuilder sb, Expression programData);
-        public abstract void TranslateSortedCopyOfIntArray(StringBuilder sb, Expression intArray);
-        public abstract void TranslateSortedCopyOfStringArray(StringBuilder sb, Expression stringArray);
-        public abstract void TranslateStringAppend(StringBuilder sb, Expression str1, Expression str2);
-        public abstract void TranslateStringBuffer16(StringBuilder sb);
-        public abstract void TranslateStringCharAt(StringBuilder sb, Expression str, Expression index);
-        public abstract void TranslateStringCharCodeAt(StringBuilder sb, Expression str, Expression index);
-        public abstract void TranslateStringCompareIsReverse(StringBuilder sb, Expression str1, Expression str2);
-        public abstract void TranslateStringConcatAll(StringBuilder sb, Expression[] strings);
-        public abstract void TranslateStringConcatPair(StringBuilder sb, Expression strLeft, Expression strRight);
-        public abstract void TranslateStringConstant(StringBuilder sb, string value);
-        public abstract void TranslateStringContains(StringBuilder sb, Expression haystack, Expression needle);
-        public abstract void TranslateStringEndsWith(StringBuilder sb, Expression haystack, Expression needle);
-        public abstract void TranslateStringEquals(StringBuilder sb, Expression left, Expression right);
-        public abstract void TranslateStringFromCharCode(StringBuilder sb, Expression charCode);
-        public abstract void TranslateStringIndexOf(StringBuilder sb, Expression haystack, Expression needle);
-        public abstract void TranslateStringIndexOfWithStart(StringBuilder sb, Expression haystack, Expression needle, Expression startIndex);
-        public abstract void TranslateStringLength(StringBuilder sb, Expression str);
-        public abstract void TranslateStringReplace(StringBuilder sb, Expression haystack, Expression needle, Expression newNeedle);
-        public abstract void TranslateStringReverse(StringBuilder sb, Expression str);
-        public abstract void TranslateStringSplit(StringBuilder sb, Expression haystack, Expression needle);
-        public abstract void TranslateStringStartsWith(StringBuilder sb, Expression haystack, Expression needle);
-        public abstract void TranslateStringSubstring(StringBuilder sb, Expression str, Expression start, Expression length);
-        public abstract void TranslateStringSubstringIsEqualTo(StringBuilder sb, Expression haystack, Expression startIndex, Expression needle);
-        public abstract void TranslateStringToLower(StringBuilder sb, Expression str);
-        public abstract void TranslateStringToUpper(StringBuilder sb, Expression str);
-        public abstract void TranslateStringTrim(StringBuilder sb, Expression str);
-        public abstract void TranslateStringTrimEnd(StringBuilder sb, Expression str);
-        public abstract void TranslateStringTrimStart(StringBuilder sb, Expression str);
-        public abstract void TranslateStrongReferenceEquality(StringBuilder sb, Expression left, Expression right);
-        public abstract void TranslateThreadSleep(StringBuilder sb, Expression seconds);
-        public abstract void TranslateTryParseFloat(StringBuilder sb, Expression stringValue, Expression floatOutList);
-        public abstract void TranslateStructFieldDereference(StringBuilder sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex);
-        public abstract void TranslateSwitchStatement(StringBuilder sb, SwitchStatement switchStatement);
-        public abstract void TranslateVariable(StringBuilder sb, Variable variable);
-        public abstract void TranslateVariableDeclaration(StringBuilder sb, VariableDeclaration varDecl);
-        public abstract void TranslateVmDetermineLibraryAvailability(StringBuilder sb, Expression libraryName, Expression libraryVersion);
-        public abstract void TranslateVmEndProcess(StringBuilder sb);
-        public abstract void TranslateVmEnqueueResume(StringBuilder sb, Expression seconds, Expression executionContextId);
-        public abstract void TranslateVmRunLibraryManifest(StringBuilder sb, Expression libraryName, Expression libRegObj);
-        public abstract void TranslateWhileLoop(StringBuilder sb, WhileLoop whileLoop);
+        public abstract void TranslateArrayGet(TranspilerContext sb, Expression array, Expression index);
+        public abstract void TranslateArrayJoin(TranspilerContext sb, Expression array, Expression sep);
+        public abstract void TranslateArrayLength(TranspilerContext sb, Expression array);
+        public abstract void TranslateArrayNew(TranspilerContext sb, PType arrayType, Expression lengthExpression);
+        public abstract void TranslateArraySet(TranspilerContext sb, Expression array, Expression index, Expression value);
+        public abstract void TranslateAssignment(TranspilerContext sb, Assignment assignment);
+        public abstract void TranslateBase64ToString(TranspilerContext sb, Expression base64String);
+        public abstract void TranslateBooleanConstant(TranspilerContext sb, bool value);
+        public abstract void TranslateBooleanNot(TranspilerContext sb, UnaryOp unaryOp);
+        public abstract void TranslateBreak(TranspilerContext sb);
+        public abstract void TranslateCast(TranspilerContext sb, PType type, Expression expression);
+        public abstract void TranslateCharConstant(TranspilerContext sb, char value);
+        public abstract void TranslateCharToString(TranspilerContext sb, Expression charValue);
+        public abstract void TranslateChr(TranspilerContext sb, Expression charCode);
+        public abstract void TranslateCommandLineArgs(TranspilerContext sb);
+        public abstract void TranslateConstructorInvocation(TranspilerContext sb, ConstructorInvocation constructorInvocation);
+        public abstract void TranslateConvertRawDictionaryValueCollectionToAReusableValueList(TranspilerContext sb, Expression dictionary);
+        public abstract void TranslateCurrentTimeSeconds(TranspilerContext sb);
+        public abstract void TranslateDictionaryContainsKey(TranspilerContext sb, Expression dictionary, Expression key);
+        public abstract void TranslateDictionaryGet(TranspilerContext sb, Expression dictionary, Expression key);
+        public abstract void TranslateDictionaryKeys(TranspilerContext sb, Expression dictionary);
+        public abstract void TranslateDictionaryKeysToValueList(TranspilerContext sb, Expression dictionary);
+        public abstract void TranslateDictionaryNew(TranspilerContext sb, PType keyType, PType valueType);
+        public abstract void TranslateDictionaryRemove(TranspilerContext sb, Expression dictionary, Expression key);
+        public abstract void TranslateDictionarySet(TranspilerContext sb, Expression dictionary, Expression key, Expression value);
+        public abstract void TranslateDictionarySize(TranspilerContext sb, Expression dictionary);
+        public abstract void TranslateDictionaryValues(TranspilerContext sb, Expression dictionary);
+        public abstract void TranslateDictionaryValuesToValueList(TranspilerContext sb, Expression dictionary);
+        public abstract void TranslateEmitComment(TranspilerContext sb, string value);
+        public abstract void TranslateExpressionAsExecutable(TranspilerContext sb, Expression expression);
+        public abstract void TranslateFloatBuffer16(TranspilerContext sb);
+        public abstract void TranslateFloatConstant(TranspilerContext sb, double value);
+        public abstract void TranslateFloatDivision(TranspilerContext sb, Expression floatNumerator, Expression floatDenominator);
+        public abstract void TranslateFloatToInt(TranspilerContext sb, Expression floatExpr);
+        public abstract void TranslateFloatToString(TranspilerContext sb, Expression floatExpr);
+        public abstract void TranslateFunctionInvocationInterpreterScoped(TranspilerContext sb, FunctionReference funcRef, Expression[] args);
+        public abstract void TranslateFunctionInvocationLocallyScoped(TranspilerContext sb, FunctionReference funcRef, Expression[] args);
+        public abstract void TranslateFunctionReference(TranspilerContext sb, FunctionReference funcRef);
+        public abstract void TranslateGetProgramData(TranspilerContext sb);
+        public abstract void TranslateGetResourceManifest(TranspilerContext sb);
+        public abstract void TranslateGlobalVariable(TranspilerContext sb, Variable variable);
+        public abstract void TranslateIfStatement(TranspilerContext sb, IfStatement ifStatement);
+        public abstract void TranslateInlineIncrement(TranspilerContext sb, Expression innerExpression, bool isPrefix, bool isAddition);
+        public abstract void TranslateIntBuffer16(TranspilerContext sb);
+        public abstract void TranslateIntegerConstant(TranspilerContext sb, int value);
+        public abstract void TranslateIntegerDivision(TranspilerContext sb, Expression integerNumerator, Expression integerDenominator);
+        public abstract void TranslateIntToString(TranspilerContext sb, Expression integer);
+        public abstract void TranslateInvokeDynamicLibraryFunction(TranspilerContext sb, Expression functionId, Expression argsArray);
+        public abstract void TranslateIsValidInteger(TranspilerContext sb, Expression stringValue);
+        public abstract void TranslateListAdd(TranspilerContext sb, Expression list, Expression item);
+        public abstract void TranslateListClear(TranspilerContext sb, Expression list);
+        public abstract void TranslateListConcat(TranspilerContext sb, Expression list, Expression items);
+        public abstract void TranslateListGet(TranspilerContext sb, Expression list, Expression index);
+        public abstract void TranslateListInsert(TranspilerContext sb, Expression list, Expression index, Expression item);
+        public abstract void TranslateListJoinChars(TranspilerContext sb, Expression list);
+        public abstract void TranslateListJoinStrings(TranspilerContext sb, Expression list, Expression sep);
+        public abstract void TranslateListNew(TranspilerContext sb, PType type);
+        public abstract void TranslateListPop(TranspilerContext sb, Expression list);
+        public abstract void TranslateListRemoveAt(TranspilerContext sb, Expression list, Expression index);
+        public abstract void TranslateListReverse(TranspilerContext sb, Expression list);
+        public abstract void TranslateListSet(TranspilerContext sb, Expression list, Expression index, Expression value);
+        public abstract void TranslateListShuffle(TranspilerContext sb, Expression list);
+        public abstract void TranslateListSize(TranspilerContext sb, Expression list);
+        public abstract void TranslateListToArray(TranspilerContext sb, Expression list);
+        public abstract void TranslateMathArcCos(TranspilerContext sb, Expression ratio);
+        public abstract void TranslateMathArcSin(TranspilerContext sb, Expression ratio);
+        public abstract void TranslateMathArcTan(TranspilerContext sb, Expression yComponent, Expression xComponent);
+        public abstract void TranslateMathCos(TranspilerContext sb, Expression thetaRadians);
+        public abstract void TranslateMathLog(TranspilerContext sb, Expression value);
+        public abstract void TranslateMathPow(TranspilerContext sb, Expression expBase, Expression exponent);
+        public abstract void TranslateMathSin(TranspilerContext sb, Expression thetaRadians);
+        public abstract void TranslateMathTan(TranspilerContext sb, Expression thetaRadians);
+        public abstract void TranslateMultiplyList(TranspilerContext sb, Expression list, Expression n);
+        public abstract void TranslateNegative(TranspilerContext sb, UnaryOp unaryOp);
+        public abstract void TranslateNullConstant(TranspilerContext sb);
+        public abstract void TranslateOrd(TranspilerContext sb, Expression charValue);
+        public abstract void TranslateOpChain(TranspilerContext sb, OpChain opChain);
+        public abstract void TranslateParseFloatUnsafe(TranspilerContext sb, Expression stringValue);
+        public abstract void TranslateParseInt(TranspilerContext sb, Expression safeStringValue);
+        public abstract void TranslatePrintStdErr(TranspilerContext sb, Expression value);
+        public abstract void TranslatePrintStdOut(TranspilerContext sb, Expression value);
+        public abstract void TranslateRandomFloat(TranspilerContext sb);
+        public abstract void TranslateReadByteCodeFile(TranspilerContext sb);
+        public abstract void TranslateRegisterLibraryFunction(TranspilerContext sb, Expression libRegObj, Expression functionName, Expression functionArgCount);
+        public abstract void TranslateResourceReadTextFile(TranspilerContext sb, Expression path);
+        public abstract void TranslateReturnStatemnt(TranspilerContext sb, ReturnStatement returnStatement);
+        public abstract void TranslateSetProgramData(TranspilerContext sb, Expression programData);
+        public abstract void TranslateSortedCopyOfIntArray(TranspilerContext sb, Expression intArray);
+        public abstract void TranslateSortedCopyOfStringArray(TranspilerContext sb, Expression stringArray);
+        public abstract void TranslateStringAppend(TranspilerContext sb, Expression str1, Expression str2);
+        public abstract void TranslateStringBuffer16(TranspilerContext sb);
+        public abstract void TranslateStringCharAt(TranspilerContext sb, Expression str, Expression index);
+        public abstract void TranslateStringCharCodeAt(TranspilerContext sb, Expression str, Expression index);
+        public abstract void TranslateStringCompareIsReverse(TranspilerContext sb, Expression str1, Expression str2);
+        public abstract void TranslateStringConcatAll(TranspilerContext sb, Expression[] strings);
+        public abstract void TranslateStringConcatPair(TranspilerContext sb, Expression strLeft, Expression strRight);
+        public abstract void TranslateStringConstant(TranspilerContext sb, string value);
+        public abstract void TranslateStringContains(TranspilerContext sb, Expression haystack, Expression needle);
+        public abstract void TranslateStringEndsWith(TranspilerContext sb, Expression haystack, Expression needle);
+        public abstract void TranslateStringEquals(TranspilerContext sb, Expression left, Expression right);
+        public abstract void TranslateStringFromCharCode(TranspilerContext sb, Expression charCode);
+        public abstract void TranslateStringIndexOf(TranspilerContext sb, Expression haystack, Expression needle);
+        public abstract void TranslateStringIndexOfWithStart(TranspilerContext sb, Expression haystack, Expression needle, Expression startIndex);
+        public abstract void TranslateStringLength(TranspilerContext sb, Expression str);
+        public abstract void TranslateStringReplace(TranspilerContext sb, Expression haystack, Expression needle, Expression newNeedle);
+        public abstract void TranslateStringReverse(TranspilerContext sb, Expression str);
+        public abstract void TranslateStringSplit(TranspilerContext sb, Expression haystack, Expression needle);
+        public abstract void TranslateStringStartsWith(TranspilerContext sb, Expression haystack, Expression needle);
+        public abstract void TranslateStringSubstring(TranspilerContext sb, Expression str, Expression start, Expression length);
+        public abstract void TranslateStringSubstringIsEqualTo(TranspilerContext sb, Expression haystack, Expression startIndex, Expression needle);
+        public abstract void TranslateStringToLower(TranspilerContext sb, Expression str);
+        public abstract void TranslateStringToUpper(TranspilerContext sb, Expression str);
+        public abstract void TranslateStringTrim(TranspilerContext sb, Expression str);
+        public abstract void TranslateStringTrimEnd(TranspilerContext sb, Expression str);
+        public abstract void TranslateStringTrimStart(TranspilerContext sb, Expression str);
+        public abstract void TranslateStrongReferenceEquality(TranspilerContext sb, Expression left, Expression right);
+        public abstract void TranslateThreadSleep(TranspilerContext sb, Expression seconds);
+        public abstract void TranslateTryParseFloat(TranspilerContext sb, Expression stringValue, Expression floatOutList);
+        public abstract void TranslateStructFieldDereference(TranspilerContext sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex);
+        public abstract void TranslateSwitchStatement(TranspilerContext sb, SwitchStatement switchStatement);
+        public abstract void TranslateVariable(TranspilerContext sb, Variable variable);
+        public abstract void TranslateVariableDeclaration(TranspilerContext sb, VariableDeclaration varDecl);
+        public abstract void TranslateVmDetermineLibraryAvailability(TranspilerContext sb, Expression libraryName, Expression libraryVersion);
+        public abstract void TranslateVmEndProcess(TranspilerContext sb);
+        public abstract void TranslateVmEnqueueResume(TranspilerContext sb, Expression seconds, Expression executionContextId);
+        public abstract void TranslateVmRunLibraryManifest(TranspilerContext sb, Expression libraryName, Expression libRegObj);
+        public abstract void TranslateWhileLoop(TranspilerContext sb, WhileLoop whileLoop);
     }
 }

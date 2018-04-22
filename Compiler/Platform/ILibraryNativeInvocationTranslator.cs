@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace Platform
+﻿namespace Platform
 {
     public interface ILibraryNativeInvocationTranslator
     {
@@ -8,7 +6,7 @@ namespace Platform
         LibraryForExport Library { get; }
 
         void TranslateInvocation(
-            StringBuilder sb,
+            Pastel.Transpilers.TranspilerContext sb,
             AbstractTranslator translator,
             string functionName,
             Pastel.Nodes.Expression[] args,

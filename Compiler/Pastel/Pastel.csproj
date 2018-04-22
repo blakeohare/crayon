@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Nodes\*.cs" />
+    <Compile Include="Transpilers\*.cs" />
     <Compile Include="*.cs" />
   </ItemGroup>
   <ItemGroup>

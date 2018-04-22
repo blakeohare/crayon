@@ -1,5 +1,6 @@
 ﻿using Common;
 using Pastel.Nodes;
+using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,7 @@ namespace CApp
             Options options,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
+            TranspilerContext ctx = new TranspilerContext();
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             StringBuilder cCode = new StringBuilder();
 
@@ -54,12 +56,14 @@ namespace CApp
 
             foreach (StructDefinition structDef in structDefinitions)
             {
-                cCode.Append(this.GenerateCodeForStruct(this.Translator, structDef));
+                this.GenerateCodeForStruct(ctx, this.Translator, structDef);
+                cCode.Append(ctx.FlushAndClearBuffer());
             }
 
             foreach (FunctionDefinition fd in functionDefinitions)
             {
-                string functionDeclaration = this.GenerateCodeForFunctionDeclaration(this.Translator, fd);
+                this.GenerateCodeForFunctionDeclaration(ctx, this.Translator, fd);
+                string functionDeclaration = ctx.FlushAndClearBuffer();
                 cCode.Append(functionDeclaration);
                 cCode.Append(this.NL);
             }
@@ -69,7 +73,8 @@ namespace CApp
             StringBuilder functionCodeBuilder = new StringBuilder();
             foreach (FunctionDefinition fd in functionDefinitions)
             {
-                string functionCode = this.GenerateCodeForFunction(this.Translator, fd);
+                this.GenerateCodeForFunction(ctx, this.Translator, fd);
+                string functionCode = ctx.FlushAndClearBuffer();
                 functionCodeBuilder.Append(functionCode);
                 functionCodeBuilder.Append(this.NL);
                 functionCodeBuilder.Append(this.NL);
@@ -93,19 +98,19 @@ namespace CApp
             throw new NotImplementedException();
         }
 
-        public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            return this.ParentPlatform.GenerateCodeForFunction(translator, funcDef);
+            this.ParentPlatform.GenerateCodeForFunction(sb, translator, funcDef);
         }
 
-        public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
         {
-            return this.ParentPlatform.GenerateCodeForGlobalsDefinitions(translator, globals);
+            this.ParentPlatform.GenerateCodeForGlobalsDefinitions(sb, translator, globals);
         }
 
-        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
+        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
         {
-            return this.ParentPlatform.GenerateCodeForStruct(translator, structDef);
+            this.ParentPlatform.GenerateCodeForStruct(sb, translator, structDef);
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)

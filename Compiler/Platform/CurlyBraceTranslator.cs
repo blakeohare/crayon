@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Pastel.Nodes;
+using Pastel.Transpilers;
 using System.Text;
-using Pastel.Nodes;
 
 namespace Platform
 {
@@ -14,7 +14,7 @@ namespace Platform
             this.isEgyptian = isEgyptian;
         }
 
-        public override void TranslateAssignment(StringBuilder sb, Assignment assignment)
+        public override void TranslateAssignment(TranspilerContext sb, Assignment assignment)
         {
             sb.Append(this.CurrentTab);
             this.TranslateExpression(sb, assignment.Target);
@@ -26,31 +26,31 @@ namespace Platform
             sb.Append(this.NewLine);
         }
 
-        public override void TranslateBooleanConstant(StringBuilder sb, bool value)
+        public override void TranslateBooleanConstant(TranspilerContext sb, bool value)
         {
             sb.Append(value ? "true" : "false");
         }
 
-        public override void TranslateBooleanNot(StringBuilder sb, UnaryOp unaryOp)
+        public override void TranslateBooleanNot(TranspilerContext sb, UnaryOp unaryOp)
         {
             sb.Append('!');
             this.TranslateExpression(sb, unaryOp.Expression);
         }
 
-        public override void TranslateBreak(StringBuilder sb)
+        public override void TranslateBreak(TranspilerContext sb)
         {
             sb.Append(this.CurrentTab);
             sb.Append("break;");
             sb.Append(this.NewLine);
         }
 
-        public override void TranslateEmitComment(StringBuilder sb, string value)
+        public override void TranslateEmitComment(TranspilerContext sb, string value)
         {
             sb.Append("// ");
             sb.Append(value.Replace("\n", "\\n"));
         }
 
-        public override void TranslateExpressionAsExecutable(StringBuilder sb, Expression expression)
+        public override void TranslateExpressionAsExecutable(TranspilerContext sb, Expression expression)
         {
             sb.Append(this.CurrentTab);
             this.TranslateExpression(sb, expression);
@@ -58,12 +58,12 @@ namespace Platform
             sb.Append(this.NewLine);
         }
 
-        public override void TranslateFloatConstant(StringBuilder sb, double value)
+        public override void TranslateFloatConstant(TranspilerContext sb, double value)
         {
             sb.Append(Common.Util.FloatToString(value));
         }
 
-        public override void TranslateFunctionInvocationInterpreterScoped(StringBuilder sb, FunctionReference funcRef, Expression[] args)
+        public override void TranslateFunctionInvocationInterpreterScoped(TranspilerContext sb, FunctionReference funcRef, Expression[] args)
         {
             this.TranslateFunctionReference(sb, funcRef);
             sb.Append('(');
@@ -71,7 +71,7 @@ namespace Platform
             sb.Append(')');
         }
 
-        public override void TranslateFunctionInvocationLocallyScoped(StringBuilder sb, FunctionReference funcRef, Expression[] args)
+        public override void TranslateFunctionInvocationLocallyScoped(TranspilerContext sb, FunctionReference funcRef, Expression[] args)
         {
             this.TranslateFunctionReference(sb, funcRef);
             sb.Append('(');
@@ -79,13 +79,13 @@ namespace Platform
             sb.Append(')');
         }
 
-        public override void TranslateFunctionReference(StringBuilder sb, FunctionReference funcRef)
+        public override void TranslateFunctionReference(TranspilerContext sb, FunctionReference funcRef)
         {
             sb.Append("v_");
             sb.Append(funcRef.Function.NameToken.Value);
         }
 
-        public override void TranslateIfStatement(StringBuilder sb, IfStatement ifStatement)
+        public override void TranslateIfStatement(TranspilerContext sb, IfStatement ifStatement)
         {
             sb.Append(this.CurrentTab);
             sb.Append("if (");
@@ -141,25 +141,25 @@ namespace Platform
             sb.Append(this.NewLine);
         }
 
-        public override void TranslateInlineIncrement(StringBuilder sb, Expression innerExpression, bool isPrefix, bool isAddition)
+        public override void TranslateInlineIncrement(TranspilerContext sb, Expression innerExpression, bool isPrefix, bool isAddition)
         {
             if (isPrefix) sb.Append(isAddition ? "++" : "--");
             this.TranslateExpression(sb, innerExpression);
             if (!isPrefix) sb.Append(isAddition ? "++" : "--");
         }
 
-        public override void TranslateIntegerConstant(StringBuilder sb, int value)
+        public override void TranslateIntegerConstant(TranspilerContext sb, int value)
         {
             sb.Append(value.ToString());
         }
 
-        public override void TranslateNegative(StringBuilder sb, UnaryOp unaryOp)
+        public override void TranslateNegative(TranspilerContext sb, UnaryOp unaryOp)
         {
             sb.Append('-');
             this.TranslateExpression(sb, unaryOp.Expression);
         }
 
-        public override void TranslateOpChain(StringBuilder sb, OpChain opChain)
+        public override void TranslateOpChain(TranspilerContext sb, OpChain opChain)
         {
             // Need to do something about these parenthesis.
             sb.Append('(');
@@ -176,7 +176,7 @@ namespace Platform
             sb.Append(')');
         }
 
-        public override void TranslateReturnStatemnt(StringBuilder sb, ReturnStatement returnStatement)
+        public override void TranslateReturnStatemnt(TranspilerContext sb, ReturnStatement returnStatement)
         {
             sb.Append(this.CurrentTab);
             sb.Append("return ");
@@ -192,12 +192,12 @@ namespace Platform
             sb.Append(this.NewLine);
         }
 
-        public override void TranslateStringConstant(StringBuilder sb, string value)
+        public override void TranslateStringConstant(TranspilerContext sb, string value)
         {
             sb.Append(Common.Util.ConvertStringValueToCode(value));
         }
 
-        public override void TranslateSwitchStatement(StringBuilder sb, SwitchStatement switchStatement)
+        public override void TranslateSwitchStatement(TranspilerContext sb, SwitchStatement switchStatement)
         {
             sb.Append(this.CurrentTab);
             sb.Append("switch (");
@@ -246,13 +246,13 @@ namespace Platform
             sb.Append(this.NewLine);
         }
 
-        public override void TranslateVariable(StringBuilder sb, Variable variable)
+        public override void TranslateVariable(TranspilerContext sb, Variable variable)
         {
             sb.Append("v_");
             sb.Append(variable.Name);
         }
 
-        public override void TranslateWhileLoop(StringBuilder sb, WhileLoop whileLoop)
+        public override void TranslateWhileLoop(TranspilerContext sb, WhileLoop whileLoop)
         {
             sb.Append(this.CurrentTab);
             sb.Append("while (");

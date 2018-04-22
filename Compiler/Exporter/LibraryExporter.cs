@@ -1,9 +1,9 @@
 ﻿using Common;
 using Parser;
+using Pastel.Transpilers;
 using Platform;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Exporter
 {
@@ -153,7 +153,7 @@ namespace Exporter
         private Dictionary<string, string> translationsLookup = null;
 
         // TODO: extensible templating like this needs to go into Pastel itself.
-        public void TranslateNativeInvocation(StringBuilder sb, Pastel.Token throwToken, Platform.AbstractPlatform platform, AbstractTranslator translator, string functionName, object[] args)
+        public void TranslateNativeInvocation(TranspilerContext sb, Pastel.Token throwToken, Platform.AbstractPlatform platform, AbstractTranslator translator, string functionName, object[] args)
         {
             if (translationsLookup == null)
             {
@@ -207,7 +207,7 @@ namespace Exporter
                         int currentArgOrdinal = argOrdinalsInOrder[i];
                         int nextArgOrdinal = i + 1 < argOrdinalsInOrder.Length ? argOrdinalsInOrder[i + 1] : -1;
                         translator.TranslateExpression(sb, (Pastel.Nodes.Expression)args[currentArgOrdinal]);
-                        int argEndIndex = locations[argOrdinalsInOrder[currentArgOrdinal]][2];
+                        int argEndIndex = locations[currentArgOrdinal][2];
                         if (nextArgOrdinal == -1)
                         {
                             // Take the code snippet from the end of the current arg to the end and
@@ -216,7 +216,7 @@ namespace Exporter
                         }
                         else
                         {
-                            int nextArgBeginIndex = locations[argOrdinalsInOrder[nextArgOrdinal]][0];
+                            int nextArgBeginIndex = locations[nextArgOrdinal][0];
                             sb.Append(codeSnippet.Substring(argEndIndex, nextArgBeginIndex - argEndIndex));
                         }
                     }

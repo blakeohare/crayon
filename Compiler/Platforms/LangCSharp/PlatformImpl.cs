@@ -1,5 +1,6 @@
 ﻿using Common;
 using Pastel.Nodes;
+using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -58,7 +59,7 @@ namespace LangCSharp
             throw new InvalidOperationException("This platform does not support direct export.");
         }
 
-        public override string GenerateCodeForStruct(AbstractTranslator translator, StructDefinition structDef)
+        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
         {
             PType[] types = structDef.ArgTypes;
             Pastel.Token[] fieldNames = structDef.ArgNames;
@@ -97,12 +98,12 @@ namespace LangCSharp
             lines.Add("}");
             lines.Add("");
 
-            return string.Join("\r\n", lines);
+            // TODO: rewrite this function to use the string builder inline and use this.NL
+            sb.Append(string.Join("\r\n", lines));
         }
 
-        public override string GenerateCodeForFunction(AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunction(TranspilerContext output, AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            StringBuilder output = new StringBuilder();
             PType returnType = funcDef.ReturnType;
             string funcName = funcDef.NameToken.Value;
             PType[] argTypes = funcDef.ArgTypes;
@@ -128,8 +129,6 @@ namespace LangCSharp
             translator.TranslateExecutables(output, funcDef.Code);
             translator.TabDepth = 0;
             output.Append("}");
-
-            return string.Join("", output);
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
@@ -139,9 +138,8 @@ namespace LangCSharp
             return replacements;
         }
 
-        public override string GenerateCodeForGlobalsDefinitions(AbstractTranslator translator, IList<VariableDeclaration> globals)
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext output, AbstractTranslator translator, IList<VariableDeclaration> globals)
         {
-            StringBuilder output = new StringBuilder();
             output.Append("    public static class Globals");
             output.Append(this.NL);
             output.Append("    {");
@@ -153,7 +151,6 @@ namespace LangCSharp
                 translator.TranslateVariableDeclaration(output, vd);
             }
             output.Append("    }");
-            return output.ToString();
         }
     }
 }
