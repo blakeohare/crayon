@@ -38,6 +38,30 @@ namespace Pastel
         internal Dictionary<string, VariableDeclaration> ConstantDefinitions { get; set; }
         public Dictionary<string, FunctionDefinition> FunctionDefinitions { get; set; }
 
+        public StructDefinition[] GetStructDefinitions()
+        {
+            return this.StructDefinitions.Keys
+                .OrderBy(k => k)
+                .Select(key => this.StructDefinitions[key])
+                .ToArray();
+        }
+
+        public VariableDeclaration[] GetGlobalsDefinitions()
+        {
+            return this.Globals.Keys
+                .OrderBy(k => k)
+                .Select(key => this.Globals[key])
+                .ToArray();
+        }
+
+        public FunctionDefinition[] GetFunctionDefinitions()
+        {
+            return this.FunctionDefinitions.Keys
+                .OrderBy(k => k)
+                .Select(key => this.FunctionDefinitions[key])
+                .ToArray();
+        }
+
         internal HashSet<string> ResolvedFunctions { get; set; }
         internal Queue<string> ResolutionQueue { get; set; }
 

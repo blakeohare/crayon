@@ -26,9 +26,7 @@ namespace PythonApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
@@ -37,9 +35,7 @@ namespace PythonApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options,
@@ -61,7 +57,7 @@ namespace PythonApp
                 runPy.Add(this.LoadTextResource("Resources/" + simpleCodeConcat, replacements));
                 runPy.Add("");
             }
-            this.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, globals);
+            this.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, compiler.GetGlobalsDefinitions());
             runPy.Add(ctx.FlushAndClearBuffer());
             runPy.Add("");
             runPy.Add(this.LoadTextResource("Resources/LibraryRegistry.txt", replacements));
@@ -71,7 +67,7 @@ namespace PythonApp
             runPy.Add(this.LoadTextResource("Resources/ResourceReader.txt", replacements));
             runPy.Add("");
 
-            foreach (FunctionDefinition funcDef in functionDefinitions)
+            foreach (FunctionDefinition funcDef in compiler.GetFunctionDefinitions())
             {
                 this.GenerateCodeForFunction(ctx, this.Translator, funcDef);
                 runPy.Add(ctx.FlushAndClearBuffer());

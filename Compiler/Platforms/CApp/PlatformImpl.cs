@@ -24,9 +24,7 @@ namespace CApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options,
@@ -47,20 +45,20 @@ namespace CApp
             cCode.Append(this.LoadTextResource("Resources/TranslationHelper.txt", replacements));
 
             // This needs to be done in LangC
-            foreach (StructDefinition structDef in structDefinitions)
+            foreach (StructDefinition structDef in compiler.GetStructDefinitions())
             {
                 string name = structDef.NameToken.Value;
                 cCode.Append("typedef struct " + name + " " + name + ";\n");
             }
             cCode.Append(this.NL);
 
-            foreach (StructDefinition structDef in structDefinitions)
+            foreach (StructDefinition structDef in compiler.GetStructDefinitions())
             {
                 this.GenerateCodeForStruct(ctx, this.Translator, structDef);
                 cCode.Append(ctx.FlushAndClearBuffer());
             }
 
-            foreach (FunctionDefinition fd in functionDefinitions)
+            foreach (FunctionDefinition fd in compiler.GetFunctionDefinitions())
             {
                 this.GenerateCodeForFunctionDeclaration(ctx, this.Translator, fd);
                 string functionDeclaration = ctx.FlushAndClearBuffer();
@@ -71,7 +69,7 @@ namespace CApp
             this.CTranslator.StringTableBuilder = new StringTableBuilder("VM");
 
             StringBuilder functionCodeBuilder = new StringBuilder();
-            foreach (FunctionDefinition fd in functionDefinitions)
+            foreach (FunctionDefinition fd in compiler.GetFunctionDefinitions())
             {
                 this.GenerateCodeForFunction(ctx, this.Translator, fd);
                 string functionCode = ctx.FlushAndClearBuffer();
@@ -93,7 +91,11 @@ namespace CApp
             };
         }
 
-        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output, IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        public override void ExportStandaloneVm(
+            Dictionary<string, FileOutput> output,
+            Pastel.PastelCompiler compiler,
+            IList<LibraryForExport> everyLibrary,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             throw new NotImplementedException();
         }
