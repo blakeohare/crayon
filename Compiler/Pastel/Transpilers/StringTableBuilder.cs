@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LangC
+namespace Pastel.Transpilers
 {
     public class StringTableBuilder
     {

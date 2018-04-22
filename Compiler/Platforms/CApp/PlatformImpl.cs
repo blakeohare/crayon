@@ -17,10 +17,10 @@ namespace CApp
         public PlatformImpl()
         {
             this.ContextFreePlatformImpl = new ContextFreeCAppPlatform();
-            this.Translator = new LangC.CTranslator();
+            this.Translator = new CTranslator();
         }
 
-        public LangC.CTranslator CTranslator { get { return (LangC.CTranslator)this.Translator; } }
+        public CTranslator CTranslator { get { return (CTranslator)this.Translator; } }
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
@@ -68,7 +68,7 @@ namespace CApp
                 cCode.Append(this.NL);
             }
 
-            this.CTranslator.StringTableBuilder = new LangC.StringTableBuilder("VM");
+            this.CTranslator.StringTableBuilder = new StringTableBuilder("VM");
 
             StringBuilder functionCodeBuilder = new StringBuilder();
             foreach (FunctionDefinition fd in functionDefinitions)

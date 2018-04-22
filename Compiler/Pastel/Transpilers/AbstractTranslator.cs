@@ -1,11 +1,10 @@
 ﻿using Pastel.Nodes;
-using Pastel.Transpilers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Platform
+namespace Pastel.Transpilers
 {
     public abstract class AbstractTranslator
     {
@@ -38,9 +37,7 @@ namespace Platform
             }
 
         }
-
-        public ILibraryNativeInvocationTranslator CurrentLibraryFunctionTranslator { get; set; }
-
+        
         public AbstractTranslator(string tab, string newLine)
         {
             this.NewLine = newLine;
@@ -339,7 +336,7 @@ namespace Platform
         {
             Expression[] args = funcInvocation.Args;
             string functionName = funcInvocation.FunctionRef.Name;
-            this.CurrentLibraryFunctionTranslator.TranslateInvocation(sb, this, functionName, args, funcInvocation.FirstToken);
+            sb.CurrentLibraryFunctionTranslator.TranslateInvocation(sb, this, functionName, args, funcInvocation.FirstToken);
         }
 
         public void TranslateCommaDelimitedExpressions(TranspilerContext sb, IList<Expression> expressions)

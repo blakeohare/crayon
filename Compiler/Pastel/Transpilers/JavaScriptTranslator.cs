@@ -1,11 +1,8 @@
 ﻿using Common;
 using Pastel.Nodes;
-using Pastel.Transpilers;
-using Platform;
 using System;
-using System.Text;
 
-namespace LangJavaScript
+namespace Pastel.Transpilers
 {
     public class JavaScriptTranslator : CurlyBraceTranslator
     {
@@ -484,7 +481,7 @@ namespace LangJavaScript
         public override void TranslateRegisterLibraryFunction(TranspilerContext sb, Expression libRegObj, Expression functionName, Expression functionArgCount)
         {
             sb.Append("C$common$registerLibraryFunction('");
-            sb.Append(this.CurrentLibraryFunctionTranslator.LibraryID.ToLower());
+            sb.Append(sb.CurrentLibraryFunctionTranslator.LibraryID.ToLower());
             sb.Append("', ");
             this.TranslateExpression(sb, libRegObj);
             sb.Append(", ");

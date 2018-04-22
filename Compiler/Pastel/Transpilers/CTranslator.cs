@@ -1,11 +1,9 @@
 ﻿using Pastel.Nodes;
-using Pastel.Transpilers;
 using System;
-using System.Text;
 
-namespace LangC
+namespace Pastel.Transpilers
 {
-    public class CTranslator : Platform.CurlyBraceTranslator
+    public class CTranslator : CurlyBraceTranslator
     {
         public StringTableBuilder StringTableBuilder { get; set; }
 

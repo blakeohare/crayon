@@ -5,7 +5,7 @@ using System.Text;
 
 // I'm so sorry.
 
-namespace LangPython
+namespace Pastel.Transpilers
 {
     /*
         A switch statement has some cases and possibly a default.

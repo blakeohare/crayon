@@ -18,7 +18,7 @@ namespace CSharpApp
         public PlatformImpl()
         {
             this.ContextFreePlatformImpl = new ContextFreeCSharpAppPlatform();
-            this.Translator = new LangCSharp.CSharpTranslator();
+            this.Translator = new CSharpTranslator();
         }
 
         public override IDictionary<string, object> GetConstantFlags()
@@ -174,7 +174,7 @@ namespace CSharpApp
         {
             TranspilerContext ctx = new TranspilerContext();
             string libraryName = library.Name;
-            this.Translator.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(libraryName);
+            ctx.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(libraryName);
             List<string> libraryLines = new List<string>();
             if (library.ManifestFunction != null)
             {

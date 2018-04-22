@@ -11,6 +11,7 @@ namespace Exporter
         private AbstractPlatform platform;
 
         public LibraryForExport Library { get; private set; }
+        public string UniquePrefix { get; set; }
 
         public LibraryNativeInvocationTranslator(LibraryMetadata library, LibraryForExport lfe, AbstractPlatform platform)
         {

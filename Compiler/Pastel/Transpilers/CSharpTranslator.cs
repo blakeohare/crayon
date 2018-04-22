@@ -1,12 +1,10 @@
 ﻿using Common;
 using Pastel.Nodes;
-using Pastel.Transpilers;
 using System;
-using System.Text;
 
-namespace LangCSharp
+namespace Pastel.Transpilers
 {
-    public class CSharpTranslator : Platform.CurlyBraceTranslator
+    public class CSharpTranslator : CurlyBraceTranslator
     {
         public CSharpTranslator() : base("    ", "\r\n", false)
         { }

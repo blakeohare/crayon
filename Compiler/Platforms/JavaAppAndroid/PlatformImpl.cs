@@ -14,7 +14,7 @@ namespace JavaAppAndroid
         public PlatformImpl()
         {
             this.ContextFreePlatformImpl = new ContextFreeJavaAppAndroidPlatform();
-            this.Translator = new LangJava.JavaTranslator(true);
+            this.Translator = new JavaTranslator(true);
         }
 
         public override string InheritsFrom { get { return "lang-java"; } }

@@ -18,7 +18,7 @@ namespace JavaScriptApp
         public PlatformImpl() : base()
         {
             this.ContextFreePlatformImpl = new ContextFreeJavaScriptAppPlatform();
-            this.Translator = new LangJavaScript.JavaScriptTranslator();
+            this.Translator = new JavaScriptTranslator();
         }
 
         public override IDictionary<string, object> GetConstantFlags()
@@ -103,7 +103,7 @@ namespace JavaScriptApp
                 {
                     List<string> libraryLines = new List<string>();
 
-                    translatorOverride.CurrentLibraryFunctionTranslator =
+                    ctx.CurrentLibraryFunctionTranslator =
                         libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
 
                     library.ManifestFunction.NameToken = Pastel.Token.CreateDummyToken("lib_" + library.Name.ToLower() + "_manifest");
