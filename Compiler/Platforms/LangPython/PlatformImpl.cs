@@ -4,7 +4,6 @@ using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace LangPython
 {
@@ -35,9 +34,7 @@ namespace LangPython
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
@@ -46,9 +43,7 @@ namespace LangPython
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options,

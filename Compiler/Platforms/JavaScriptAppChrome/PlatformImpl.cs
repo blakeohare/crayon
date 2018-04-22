@@ -21,9 +21,7 @@ namespace JavaScriptAppChrome
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options,
@@ -42,7 +40,7 @@ namespace JavaScriptAppChrome
 
             JavaScriptApp.PlatformImpl jsBasicPlatform = (JavaScriptApp.PlatformImpl)this.PlatformProvider.GetPlatform("javascript-app");
             Dictionary<string, FileOutput> proxyOutput = new Dictionary<string, FileOutput>();
-            jsBasicPlatform.ExportProjectImpl(proxyOutput, globals, structDefinitions, functionDefinitions, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform, this.Translator);
+            jsBasicPlatform.ExportProjectImpl(proxyOutput, compiler, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform, this.Translator);
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             replacements["JS_LIB_INCLUSIONS"] = JavaScriptApp.PlatformImpl.GenerateJsLibInclusionHtml(proxyOutput.Keys);
             this.CopyResourceAsText(proxyOutput, "background.js", "Resources/BackgroundJs.txt", replacements);
@@ -63,7 +61,11 @@ namespace JavaScriptAppChrome
             output[replacements["PROJECT_ID"] + ".zip"] = ZipCreator.Create(proxyOutput, false);
         }
 
-        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output, IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        public override void ExportStandaloneVm(
+            Dictionary<string, FileOutput> output,
+            Pastel.PastelCompiler compiler,
+            IList<LibraryForExport> everyLibrary,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             throw new NotImplementedException();
         }

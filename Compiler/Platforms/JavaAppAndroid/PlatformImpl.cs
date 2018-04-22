@@ -23,9 +23,7 @@ namespace JavaAppAndroid
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options,
@@ -45,7 +43,7 @@ namespace JavaAppAndroid
 
             LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, libraryNativeInvocationTranslatorProviderForPlatform, imports);
 
-            foreach (StructDefinition structDef in structDefinitions)
+            foreach (StructDefinition structDef in compiler.GetStructDefinitions())
             {
                 this.GenerateCodeForStruct(ctx, this.Translator, structDef);
                 output["app/src/main/java/org/crayonlang/interpreter/structs/" + structDef.NameToken.Value + ".java"] = new FileOutput()
@@ -69,7 +67,7 @@ namespace JavaAppAndroid
                 "",
             }));
 
-            foreach (FunctionDefinition fnDef in functionDefinitions)
+            foreach (FunctionDefinition fnDef in compiler.GetFunctionDefinitions())
             {
                 this.Translator.TabDepth = 1;
                 this.GenerateCodeForFunction(ctx, this.Translator, fnDef);
@@ -86,7 +84,7 @@ namespace JavaAppAndroid
                 TextContent = sb.ToString(),
             };
 
-            this.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, globals);
+            this.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, compiler.GetGlobalsDefinitions());
             output["app/src/main/java/org/crayonlang/interpreter/VmGlobal.java"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -205,7 +203,11 @@ namespace JavaAppAndroid
             output["app/src/main/ic_launcher-web.png"] = new FileOutput() { Type = FileOutputType.Image, Bitmap = iconImagesBySize[512] };
         }
 
-        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output, IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        public override void ExportStandaloneVm(
+            Dictionary<string, FileOutput> output,
+            Pastel.PastelCompiler compiler,
+            IList<LibraryForExport> everyLibrary,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             throw new NotImplementedException();
         }

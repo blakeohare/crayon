@@ -37,7 +37,7 @@ namespace Pastel.Transpilers
             }
 
         }
-        
+
         public AbstractTranslator(string tab, string newLine)
         {
             this.NewLine = newLine;

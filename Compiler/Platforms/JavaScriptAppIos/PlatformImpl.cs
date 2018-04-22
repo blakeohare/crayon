@@ -20,9 +20,7 @@ namespace JavaScriptAppIos
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options,
@@ -49,9 +47,7 @@ namespace JavaScriptAppIos
             Dictionary<string, FileOutput> basicProject = new Dictionary<string, FileOutput>();
             this.ParentPlatform.ExportProject(
                 basicProject,
-                globals,
-                structDefinitions,
-                functionDefinitions,
+                compiler,
                 libraries,
                 resourceDatabase,
                 options,
@@ -157,9 +153,7 @@ namespace JavaScriptAppIos
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {

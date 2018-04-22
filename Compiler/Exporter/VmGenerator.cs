@@ -153,9 +153,7 @@ namespace Exporter
 
                     platform.ExportProject(
                         output,
-                        vm.Globals.Values.OrderBy(v => v.VariableNameToken.Value).ToArray(),
-                        vm.StructDefinitions.Values.OrderBy(s => s.NameToken.Value).ToArray(),
-                        vm.FunctionDefinitions.Values.OrderBy(f => f.NameToken.Value).ToArray(),
+                        vm,
                         libraries,
                         resourceDatabase,
                         options,
@@ -165,9 +163,7 @@ namespace Exporter
                 {
                     platform.ExportStandaloneVm(
                         output,
-                        vm.Globals.Values.OrderBy(v => v.VariableNameToken.Value).ToArray(),
-                        vm.StructDefinitions.Values.OrderBy(s => s.NameToken.Value).ToArray(),
-                        vm.FunctionDefinitions.Values.OrderBy(f => f.NameToken.Value).ToArray(),
+                        vm,
                         libraries,
                         libTranslationProvider);
                 }

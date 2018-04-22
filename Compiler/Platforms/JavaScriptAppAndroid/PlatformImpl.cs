@@ -20,9 +20,7 @@ namespace JavaScriptAppAndroid
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options,
@@ -51,9 +49,7 @@ namespace JavaScriptAppAndroid
             Dictionary<string, FileOutput> basicProject = new Dictionary<string, FileOutput>();
             this.ParentPlatform.ExportProject(
                 basicProject,
-                globals,
-                structDefinitions,
-                functionDefinitions,
+                compiler,
                 libraries,
                 resourceDatabase,
                 options,
@@ -103,7 +99,15 @@ namespace JavaScriptAppAndroid
             return this.ParentPlatform.GetConstantFlags();
         }
 
-        public override void ExportStandaloneVm(Dictionary<string, FileOutput> output, IList<VariableDeclaration> globals, IList<StructDefinition> structDefinitions, IList<FunctionDefinition> functionDefinitions, IList<LibraryForExport> everyLibrary, ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform) { throw new NotImplementedException(); }
+        public override void ExportStandaloneVm(
+            Dictionary<string, FileOutput> output,
+            Pastel.PastelCompiler compiler,
+            IList<LibraryForExport> everyLibrary,
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef) { throw new NotImplementedException(); }
         public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals) { throw new NotImplementedException(); }
         public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef) { throw new NotImplementedException(); }

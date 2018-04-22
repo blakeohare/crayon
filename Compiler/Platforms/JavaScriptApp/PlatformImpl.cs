@@ -28,9 +28,7 @@ namespace JavaScriptApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
@@ -39,22 +37,18 @@ namespace JavaScriptApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
-            this.ExportProjectImpl(output, globals, structDefinitions, functionDefinitions, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform, this.Translator);
+            this.ExportProjectImpl(output, compiler, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform, this.Translator);
         }
 
         public void ExportProjectImpl(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options,
@@ -79,10 +73,10 @@ namespace JavaScriptApp
 
             List<string> coreVmCode = new List<string>();
 
-            this.GenerateCodeForGlobalsDefinitions(ctx, translatorOverride, globals);
+            this.GenerateCodeForGlobalsDefinitions(ctx, translatorOverride, compiler.GetGlobalsDefinitions());
             coreVmCode.Add(ctx.FlushAndClearBuffer());
 
-            foreach (FunctionDefinition funcDef in functionDefinitions)
+            foreach (FunctionDefinition funcDef in compiler.GetFunctionDefinitions())
             {
                 this.GenerateCodeForFunction(ctx, translatorOverride, funcDef);
                 coreVmCode.Add(ctx.FlushAndClearBuffer());

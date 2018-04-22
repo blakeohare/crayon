@@ -149,17 +149,13 @@ namespace Platform
 
         public abstract void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            IList<Pastel.Nodes.VariableDeclaration> globals,
-            IList<Pastel.Nodes.StructDefinition> structDefinitions,
-            IList<Pastel.Nodes.FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform);
 
         public abstract void ExportProject(
             Dictionary<string, FileOutput> output,
-            IList<Pastel.Nodes.VariableDeclaration> globals,
-            IList<Pastel.Nodes.StructDefinition> structDefinitions,
-            IList<Pastel.Nodes.FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options,

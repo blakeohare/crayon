@@ -5,7 +5,6 @@ using Pastel.Transpilers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace CSharpApp
 {
@@ -85,9 +84,7 @@ namespace CSharpApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
@@ -156,7 +153,7 @@ namespace CSharpApp
             replacements["ASSEMBLY_GUID"] = runtimeAssemblyGuid;
 
             this.CopyTemplatedFiles(baseDir, output, replacements, true);
-            this.ExportInterpreter(baseDir, output, globals, structDefinitions, functionDefinitions);
+            this.ExportInterpreter(baseDir, output, compiler);
             this.ExportProjectFiles(baseDir, output, replacements, libraryProjectNameToGuid, true);
             this.CopyResourceAsBinary(output, baseDir + "icon.ico", "ResourcesVm/icon.ico");
 
@@ -232,9 +229,7 @@ namespace CSharpApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options,
@@ -269,7 +264,7 @@ namespace CSharpApp
                             "    <Reference Include=\"" + dotNetLib + "\" />")
                     .ToArray());
 
-            this.ExportInterpreter(baseDir, output, globals, structDefinitions, functionDefinitions);
+            this.ExportInterpreter(baseDir, output, compiler);
 
             output[baseDir + "Resources/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
             output[baseDir + "Resources/ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
@@ -372,10 +367,11 @@ namespace CSharpApp
         private void ExportInterpreter(
             string baseDir,
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions)
+            Pastel.PastelCompiler compiler)
         {
+            IList<VariableDeclaration> globals = compiler.Globals.Values.ToArray();
+            IList< StructDefinition > structDefinitions = compiler.StructDefinitions.Values.ToArray();
+            IList<FunctionDefinition> functionDefinitions = compiler.FunctionDefinitions.Values.ToArray();
             TranspilerContext ctx = new TranspilerContext();
             foreach (StructDefinition structDefinition in structDefinitions)
             {

@@ -23,9 +23,7 @@ namespace JavaApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
@@ -34,9 +32,7 @@ namespace JavaApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            IList<VariableDeclaration> globals,
-            IList<StructDefinition> structDefinitions,
-            IList<FunctionDefinition> functionDefinitions,
+            Pastel.PastelCompiler compiler,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options,
@@ -55,7 +51,7 @@ namespace JavaApp
 
             LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, libraryNativeInvocationTranslatorProviderForPlatform, imports);
 
-            foreach (StructDefinition structDef in structDefinitions)
+            foreach (StructDefinition structDef in compiler.GetStructDefinitions())
             {
                 this.GenerateCodeForStruct(ctx, this.Translator, structDef);
                 output["src/org/crayonlang/interpreter/structs/" + structDef.NameToken.Value + ".java"] = new FileOutput()
@@ -79,7 +75,7 @@ namespace JavaApp
                 "",
             }));
 
-            foreach (FunctionDefinition fnDef in functionDefinitions)
+            foreach (FunctionDefinition fnDef in compiler.GetFunctionDefinitions())
             {
                 this.GenerateCodeForFunction(ctx, this.Translator, fnDef);
                 this.Translator.TabDepth = 1;
@@ -96,7 +92,7 @@ namespace JavaApp
                 TextContent = sb.ToString(),
             };
 
-            this.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, globals);
+            this.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, compiler.GetGlobalsDefinitions());
             output["src/org/crayonlang/interpreter/VmGlobal.java"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
