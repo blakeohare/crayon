@@ -302,5 +302,61 @@ namespace Pastel
                 functionDefinition.ResolveWithTypeContext(this);
             }
         }
+
+        // Delete once migrated to PastelContext
+        public string GetFunctionCodeTEMP(Transpilers.AbstractTranslator translator, Pastel.Transpilers.TranspilerContext ctx, string indent)
+        {
+            foreach (FunctionDefinition fd in this.GetFunctionDefinitions())
+            {
+                if (!alreadySerializedFunctions.Contains(fd))
+                {
+                    translator.GenerateCodeForFunction(ctx, translator, fd);
+                    ctx.Append(translator.NewLine);
+                }
+            }
+
+            return Indent(ctx.FlushAndClearBuffer().Trim(), translator.NewLine, indent);
+        }
+
+        private HashSet<FunctionDefinition> alreadySerializedFunctions = new HashSet<FunctionDefinition>();
+        public string GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(
+            string name,
+            string swapOutWithNewNameOrNull,
+            Transpilers.AbstractTranslator translator,
+            Transpilers.TranspilerContext ctx,
+            string indent)
+        {
+            FunctionDefinition fd = this.GetFunctionDefinitions().Where(f => f.NameToken.Value == name).FirstOrDefault();
+            if (fd == null || this.alreadySerializedFunctions.Contains(fd))
+            {
+                return null;
+            }
+
+            this.alreadySerializedFunctions.Add(fd);
+
+            if (swapOutWithNewNameOrNull != null)
+            {
+                fd.NameToken = Token.CreateDummyToken(swapOutWithNewNameOrNull);
+            }
+
+            translator.GenerateCodeForFunction(ctx, translator, fd);
+            return Indent(ctx.FlushAndClearBuffer().Trim(), translator.NewLine, indent);
+        }
+
+        public string GetGlobalsCodeTEMP(Transpilers.AbstractTranslator translator, Pastel.Transpilers. TranspilerContext ctx, string indent)
+        {
+            translator.GenerateCodeForGlobalsDefinitions(ctx, translator, this.GetGlobalsDefinitions());
+            return Indent(ctx.FlushAndClearBuffer().Trim(), translator.NewLine, indent);
+        }
+
+        private static string Indent(string code, string newline, string indent)
+        {
+            if (indent.Length == 0) return code;
+
+            return string.Join(newline, code
+                .Split('\n')
+                .Select(s => s.Trim())
+                .Select(s => s.Length > 0 ? indent + s : ""));
+        }
     }
 }

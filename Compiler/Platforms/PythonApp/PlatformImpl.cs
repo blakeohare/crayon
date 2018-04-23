@@ -1,9 +1,9 @@
 ﻿using Common;
-using Pastel.Nodes;
 using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PythonApp
 {
@@ -46,36 +46,17 @@ namespace PythonApp
 
             TranspilerContext ctx = new TranspilerContext();
 
-            List<string> runPy = new List<string>();
-
-            foreach (string simpleCodeConcat in new string[] {
-                "header.txt",
-                "translation_helper.txt",
-            })
-            {
-                runPy.Add(this.LoadTextResource("Resources/" + simpleCodeConcat, replacements));
-                runPy.Add("");
-            }
-            this.Translator.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, compiler.GetGlobalsDefinitions());
-            runPy.Add(ctx.FlushAndClearBuffer());
-            runPy.Add("");
-            runPy.Add(this.LoadTextResource("Resources/LibraryRegistry.txt", replacements));
-            runPy.Add("");
-            runPy.Add(this.LoadTextResource("Resources/TranslationHelper.txt", replacements));
-            runPy.Add("");
-            runPy.Add(this.LoadTextResource("Resources/ResourceReader.txt", replacements));
-            runPy.Add("");
-
-            foreach (FunctionDefinition funcDef in compiler.GetFunctionDefinitions())
-            {
-                this.Translator.GenerateCodeForFunction(ctx, this.Translator, funcDef);
-                runPy.Add(ctx.FlushAndClearBuffer());
-            }
-
             output["code/vm.py"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = string.Join("\n", runPy),
+                TextContent = string.Join(this.Translator.NewLine, new string[] {
+                    this.LoadTextResource("Resources/header.txt" , replacements),
+                    this.LoadTextResource("Resources/TranslationHelper.txt", replacements),
+                    compiler.GetGlobalsCodeTEMP(this.Translator, ctx, ""),
+                    this.LoadTextResource("Resources/LibraryRegistry.txt", replacements),
+                    this.LoadTextResource("Resources/ResourceReader.txt", replacements),
+                    compiler.GetFunctionCodeTEMP(this.Translator, ctx, ""),
+                }),
             };
 
             foreach (LibraryForExport library in libraries)
@@ -83,7 +64,7 @@ namespace PythonApp
                 ctx.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
                 string libraryName = library.Name;
                 List<string> libraryLines = new List<string>();
-                if (library.ManifestFunctionDEPRECATED != null)
+                if (library.HasPastelCode)
                 {
                     libraryLines.Add("import math");
                     libraryLines.Add("import os");
@@ -91,26 +72,19 @@ namespace PythonApp
                     libraryLines.Add("import sys");
                     libraryLines.Add("import time");
                     libraryLines.Add("import inspect");
-                    libraryLines.Add("");
                     libraryLines.Add("from code.vm import *");
                     libraryLines.Add("");
-
-                    this.Translator.GenerateCodeForFunction(ctx, this.Translator, library.ManifestFunctionDEPRECATED);
-                    libraryLines.Add(ctx.FlushAndClearBuffer());
-                    foreach (FunctionDefinition funcDef in library.FunctionsDEPRECATED)
-                    {
-                        this.Translator.GenerateCodeForFunction(ctx, this.Translator, funcDef);
-                        libraryLines.Add(ctx.FlushAndClearBuffer());
-                    }
-
+                    libraryLines.Add(library.PastelContext.CompilerDEPRECATED.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(
+                        "lib_manifest_RegisterFunctions",
+                        null,
+                        this.Translator,
+                        ctx,
+                        ""));
+                    libraryLines.Add(library.PastelContext.CompilerDEPRECATED.GetFunctionCodeTEMP(this.Translator, ctx, ""));
                     libraryLines.Add("");
                     libraryLines.Add("_moduleInfo = ('" + libraryName + "', dict(inspect.getmembers(sys.modules[__name__])))");
                     libraryLines.Add("");
-
-                    foreach (ExportEntity codeToAppendToLibrary in library.ExportEntities["EMBED_CODE"])
-                    {
-                        libraryLines.Add(codeToAppendToLibrary.StringValue);
-                    }
+                    libraryLines.AddRange(library.ExportEntities["EMBED_CODE"].Select(entity => entity.StringValue));
 
                     output["code/lib_" + libraryName.ToLower() + ".py"] = new FileOutput()
                     {

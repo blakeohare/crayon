@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Common;
+﻿using Common;
+using System.Collections.Generic;
 
 namespace Platform
 {
@@ -7,6 +7,8 @@ namespace Platform
     {
         public string Name { get; set; }
         public string Version { get; set; }
+        public bool HasPastelCode { get { return this.ManifestFunctionDEPRECATED != null; } }
+        public Pastel.PastelContext PastelContext { get; set; }
         public Pastel.Nodes.FunctionDefinition ManifestFunctionDEPRECATED { get; set; }
         public Pastel.Nodes.FunctionDefinition[] FunctionsDEPRECATED { get; set; }
         public Pastel.Nodes.StructDefinition[] StructsDEPRECATED { get; set; }

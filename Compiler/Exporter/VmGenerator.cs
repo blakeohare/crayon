@@ -207,6 +207,7 @@ namespace Exporter
                     Name = libraryName,
                     Version = libraryVersion,
                     FunctionRegisteredNamesOrNulls = names,
+                    PastelContext = compilation,
                     FunctionsDEPRECATED = functions,
                     StructsDEPRECATED = compilation.CompilerDEPRECATED != null ? compilation.CompilerDEPRECATED.StructDefinitions.Values.ToArray() : new StructDefinition[0],
                     ManifestFunctionDEPRECATED = manifestFunction,
