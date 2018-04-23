@@ -16,7 +16,6 @@ namespace LangCSharp
 
         public PlatformImpl() : base()
         {
-            this.ContextFreePlatformImpl = new ContextFreeLangCSharpPlatform();
         }
 
         public override IDictionary<string, object> GetConstantFlags()

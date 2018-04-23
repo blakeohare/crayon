@@ -17,7 +17,6 @@ namespace LangJavaScript
 
         public PlatformImpl()
         {
-            this.ContextFreePlatformImpl = new ContextFreeLangJavaScriptPlatform();
         }
 
         public override void ExportStandaloneVm(

@@ -40,7 +40,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="*.cs" />
+    <Compile Include="AbstractPlatform.cs" />
+    <Compile Include="ExportEntity.cs" />
+    <Compile Include="IPlatformProvider.cs" />
+    <Compile Include="LibraryForExport.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

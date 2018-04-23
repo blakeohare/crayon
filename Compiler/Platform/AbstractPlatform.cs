@@ -16,7 +16,6 @@ namespace Platform
         public abstract string Name { get; }
         public abstract string InheritsFrom { get; }
         public AbstractTranslator Translator { get; protected set; }
-        public AbstractContextFreePlatform ContextFreePlatformImpl { get; protected set; }
 
         public abstract IDictionary<string, object> GetConstantFlags();
         public abstract string NL { get; }

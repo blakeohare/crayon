@@ -14,7 +14,6 @@ namespace LangPython
 
         public PlatformImpl() : base()
         {
-            this.ContextFreePlatformImpl = new ContextFreeLangPythonPlatform();
         }
 
         public override IDictionary<string, object> GetConstantFlags()

@@ -16,7 +16,6 @@ namespace CSharpApp
 
         public PlatformImpl()
         {
-            this.ContextFreePlatformImpl = new ContextFreeCSharpAppPlatform();
             this.Translator = new CSharpTranslator();
         }
 

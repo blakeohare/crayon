@@ -15,7 +15,6 @@ namespace PythonApp
 
         public PlatformImpl()
         {
-            this.ContextFreePlatformImpl = new ContextFreePythonAppPlatform();
             this.Translator = new PythonTranslator();
         }
 

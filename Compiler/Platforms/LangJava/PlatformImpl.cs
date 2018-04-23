@@ -16,7 +16,6 @@ namespace LangJava
 
         public PlatformImpl() : base()
         {
-            this.ContextFreePlatformImpl = new ContextFreeLangJavaPlatform();
         }
 
         public override void ExportStandaloneVm(

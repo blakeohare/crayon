@@ -13,7 +13,6 @@ namespace JavaAppAndroid
     {
         public PlatformImpl()
         {
-            this.ContextFreePlatformImpl = new ContextFreeJavaAppAndroidPlatform();
             this.Translator = new JavaTranslator(true);
         }
 

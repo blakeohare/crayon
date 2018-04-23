@@ -15,7 +15,6 @@ namespace JavaScriptAppIos
 
         public PlatformImpl()
         {
-            this.ContextFreePlatformImpl = new ContextFreeJavaScriptAppIosPlatform();
         }
 
         public override void ExportProject(
@@ -84,7 +83,7 @@ namespace JavaScriptAppIos
                 launchScreen = new FileOutput()
                 {
                     Type = FileOutputType.Image,
-                    Bitmap = new SystemBitmap(typeof(ContextFreeJavaScriptAppIosPlatform).Assembly, "SwiftResources/" +
+                    Bitmap = new SystemBitmap(typeof(JavaScriptAppIos.PlatformImpl).Assembly, "SwiftResources/" +
                        (useLandscapeForLaunchscreen ? "launchhorizontal.png" : "launchvertical.png")),
                 };
             }

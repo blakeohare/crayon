@@ -17,7 +17,6 @@ namespace JavaApp
 
         public PlatformImpl()
         {
-            this.ContextFreePlatformImpl = new ContextFreeJavaAppPlatform();
             this.Translator = new JavaTranslator(false);
         }
 

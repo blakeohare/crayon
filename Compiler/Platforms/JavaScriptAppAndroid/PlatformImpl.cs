@@ -15,7 +15,6 @@ namespace JavaScriptAppAndroid
 
         public PlatformImpl()
         {
-            this.ContextFreePlatformImpl = new ContextFreeJavaScriptAppAndroidPlatform();
         }
 
         public override void ExportProject(

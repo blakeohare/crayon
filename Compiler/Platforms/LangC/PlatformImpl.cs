@@ -16,7 +16,6 @@ namespace LangC
 
         public PlatformImpl() : base()
         {
-            this.ContextFreePlatformImpl = new ContextFreeLangCPlatform();
         }
 
         public override IDictionary<string, object> GetConstantFlags()

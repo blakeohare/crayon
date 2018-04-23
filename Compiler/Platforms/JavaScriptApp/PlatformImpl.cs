@@ -17,7 +17,6 @@ namespace JavaScriptApp
 
         public PlatformImpl() : base()
         {
-            this.ContextFreePlatformImpl = new ContextFreeJavaScriptAppPlatform();
             this.Translator = new JavaScriptTranslator();
         }
 

@@ -16,7 +16,6 @@ namespace CApp
 
         public PlatformImpl()
         {
-            this.ContextFreePlatformImpl = new ContextFreeCAppPlatform();
             this.Translator = new CTranslator();
         }
 
