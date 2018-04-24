@@ -1,5 +1,4 @@
 ﻿using Common;
-using Pastel.Nodes;
 using Pastel.Transpilers;
 using Platform;
 using System;
@@ -43,13 +42,15 @@ namespace JavaAppAndroid
 
             LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, libraryNativeInvocationTranslatorProviderForPlatform, imports);
 
-            foreach (StructDefinition structDef in compiler.GetStructDefinitions())
+            // Without the proper wrapping, I think this is wrong. Although this platform is deprecated and will be removed, so that's probably okay.
+            Dictionary<string, string> structCodeLookup = compiler.GetStructCodeByClassTEMP(this.Translator, ctx, "  ");
+            foreach (string structName in structCodeLookup.Keys)
             {
-                this.Translator.GenerateCodeForStruct(ctx, this.Translator, structDef);
-                output["app/src/main/java/org/crayonlang/interpreter/structs/" + structDef.NameToken.Value + ".java"] = new FileOutput()
+                string structCode = structCodeLookup[structName];
+                output["app/src/main/java/org/crayonlang/interpreter/structs/" + structName + ".java"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = ctx.FlushAndClearBuffer(),
+                    TextContent = structCode,
                 };
             }
 
@@ -67,13 +68,8 @@ namespace JavaAppAndroid
                 "",
             }));
 
-            foreach (FunctionDefinition fnDef in compiler.GetFunctionDefinitions())
-            {
-                this.Translator.TabDepth = 1;
-                this.Translator.GenerateCodeForFunction(ctx, this.Translator, fnDef);
-                sb.Append(ctx.FlushAndClearBuffer());
-                sb.Append(this.NL);
-            }
+            string functionCode = compiler.GetFunctionCodeTEMP(this.Translator, ctx, "  ");
+            sb.Append(functionCode);
             this.Translator.TabDepth = 0;
             sb.Append("}");
             sb.Append(this.NL);
