@@ -1,6 +1,5 @@
 ﻿using Common;
 using Platform;
-using Pastel.Nodes;
 using Pastel.Transpilers;
 using System;
 using System.Collections.Generic;
@@ -170,23 +169,24 @@ namespace CSharpApp
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             TranspilerContext ctx = new TranspilerContext();
+            Pastel.PastelCompiler libCompiler = library.PastelContext.CompilerDEPRECATED;
             string libraryName = library.Name;
             ctx.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(libraryName);
             List<string> libraryLines = new List<string>();
             if (library.ManifestFunctionDEPRECATED != null)
             {
                 string libraryDir = baseDir + "Libraries/" + libraryName;
-                this.Translator.GenerateCodeForFunction(ctx, this.Translator, library.ManifestFunctionDEPRECATED);
-                libraryLines.Add(ctx.FlushAndClearBuffer());
-                foreach (FunctionDefinition funcDef in library.FunctionsDEPRECATED)
-                {
-                    this.Translator.GenerateCodeForFunction(ctx, this.Translator, funcDef);
-                    libraryLines.Add(ctx.FlushAndClearBuffer());
-                }
+                string allFunctionCode = libCompiler.GetFunctionCodeTEMP(this.Translator, ctx, "");
+                libraryLines.Add(allFunctionCode);
 
-                foreach (StructDefinition structDef in library.StructsDEPRECATED)
+                Dictionary<string, string> structLookup = libCompiler.GetStructCodeByClassTEMP(this.Translator, ctx, "\t");
+                foreach (string structName in structLookup.Keys)
                 {
-                    filesOut[libraryDir + "/Structs/" + structDef.NameToken.Value + ".cs"] = this.GetStructFile(structDef);
+                    filesOut[libraryDir + "/Structs/" + structName + ".cs"] = new FileOutput()
+                    {
+                        Type = FileOutputType.Text,
+                        TextContent = this.WrapStructCode(structLookup[structName]),
+                    };
                 }
 
                 filesOut[libraryDir + "/LibraryWrapper.cs"] = new FileOutput()
@@ -345,24 +345,18 @@ namespace CSharpApp
             this.CopyResourceAsText(output, baseDir + "ResourceReader.cs", resourceDir + "/ResourceReader.txt", replacements);
         }
 
-        private FileOutput GetStructFile(StructDefinition sd)
+        private string WrapStructCode(string structCode)
         {
-            TranspilerContext ctx = new TranspilerContext();
-            this.Translator.GenerateCodeForStruct(ctx, this.Translator, sd);
-            return new FileOutput()
-            {
-                Type = FileOutputType.Text,
-                TextContent = string.Join("\r\n", new string[] {
-                    "using System;",
-                    "using System.Collections.Generic;",
-                    "",
-                    "namespace Interpreter.Structs",
-                    "{",
-                    IndentCodeWithSpaces(ctx.FlushAndClearBuffer().Trim(), 4),
-                    "}",
-                    ""
-                }),
-            };
+            return string.Join("\r\n", new string[] {
+                "using System;",
+                "using System.Collections.Generic;",
+                "",
+                "namespace Interpreter.Structs",
+                "{",
+                IndentCodeWithSpaces(structCode.Trim(), 4),
+                "}",
+                ""
+            });
         }
 
         private void ExportInterpreter(
@@ -370,23 +364,18 @@ namespace CSharpApp
             Dictionary<string, FileOutput> output,
             Pastel.PastelCompiler compiler)
         {
-            IList<VariableDeclaration> globals = compiler.Globals.Values.ToArray();
-            IList<StructDefinition> structDefinitions = compiler.StructDefinitions.Values.ToArray();
-            IList<FunctionDefinition> functionDefinitions = compiler.FunctionDefinitions.Values.ToArray();
             TranspilerContext ctx = new TranspilerContext();
-            foreach (StructDefinition structDefinition in structDefinitions)
+            Dictionary<string, string> structLookup = compiler.GetStructCodeByClassTEMP(this.Translator, ctx, "");
+            foreach (string structName in structLookup.Keys)
             {
-                output[baseDir + "Structs/" + structDefinition.NameToken.Value + ".cs"] = this.GetStructFile(structDefinition);
+                output[baseDir + "Structs/" + structName + ".cs"] = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = this.WrapStructCode(structLookup[structName]),
+                };
             }
 
-            List<string> coreVmFunctions = new List<string>();
-            foreach (FunctionDefinition funcDef in functionDefinitions)
-            {
-                this.Translator.GenerateCodeForFunction(ctx, this.Translator, funcDef);
-                ctx.Append("\r\n\r\n");
-            }
-
-            string functionCode = ctx.FlushAndClearBuffer();
+            string functionCode = compiler.GetFunctionCodeTEMP(this.Translator, ctx, "");
 
             output[baseDir + "Vm/CrayonWrapper.cs"] = new FileOutput()
             {
@@ -408,7 +397,8 @@ namespace CSharpApp
                 }),
             };
 
-            this.Translator.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, globals);
+            string globalsCode = compiler.GetGlobalsCodeTEMP(this.Translator, ctx, "\t\t");
+
             output[baseDir + "Vm/Globals.cs"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -420,7 +410,7 @@ namespace CSharpApp
                     "",
                     "namespace Interpreter.Vm",
                     "{",
-                    ctx.FlushAndClearBuffer(),
+                    globalsCode,
                     "}",
                     ""
                 }),

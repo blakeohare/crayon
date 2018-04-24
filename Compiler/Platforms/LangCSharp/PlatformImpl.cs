@@ -1,10 +1,8 @@
 ﻿using Common;
-using Pastel.Nodes;
 using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace LangCSharp
 {
