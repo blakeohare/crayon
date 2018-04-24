@@ -18,6 +18,7 @@ namespace Exporter
             this.platform = platform;
             this.library = library;
             this.Library = lfe;
+            this.UniquePrefix = library.ID;
         }
 
         public string LibraryID { get { return library.ID; } }

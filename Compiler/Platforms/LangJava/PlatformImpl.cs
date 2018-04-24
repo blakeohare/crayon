@@ -85,6 +85,7 @@ namespace LangJava
                     });
 
                     platform.Translator.TabDepth = 1;
+
                     platform.Translator.GenerateCodeForFunction(ctx, platform.Translator, library.ManifestFunctionDEPRECATED);
                     libraryCode.Add(ctx.FlushAndClearBuffer());
                     string reflectionCalledPrefix = "lib_" + library.Name.ToLower() + "_function_";

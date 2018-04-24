@@ -304,6 +304,19 @@ namespace Pastel
         }
 
         // Delete once migrated to PastelContext
+        public Dictionary<string, string> GetStructCodeByClassTEMP(Transpilers.AbstractTranslator translator, Pastel.Transpilers.TranspilerContext ctx, string indent)
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            foreach (StructDefinition sd in this.GetStructDefinitions())
+            {
+                string name = sd.NameToken.Value;
+                translator.GenerateCodeForStruct(ctx, translator, sd);
+                output[name] = ctx.FlushAndClearBuffer();
+            }
+            return output;
+        }
+
+        // Delete once migrated to PastelContext
         public string GetFunctionCodeTEMP(Transpilers.AbstractTranslator translator, Pastel.Transpilers.TranspilerContext ctx, string indent)
         {
             foreach (FunctionDefinition fd in this.GetFunctionDefinitions())

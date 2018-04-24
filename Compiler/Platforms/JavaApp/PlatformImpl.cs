@@ -52,13 +52,15 @@ namespace JavaApp
 
             LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, libraryNativeInvocationTranslatorProviderForPlatform, imports);
 
-            foreach (StructDefinition structDef in compiler.GetStructDefinitions())
+            Dictionary<string, string> structCodeFiles = compiler.GetStructCodeByClassTEMP(this.Translator, ctx, "  ");
+
+            foreach (string structName in structCodeFiles.Keys)
             {
-                this.Translator.GenerateCodeForStruct(ctx, this.Translator, structDef);
-                output["src/org/crayonlang/interpreter/structs/" + structDef.NameToken.Value + ".java"] = new FileOutput()
+                string structCode = structCodeFiles[structName];
+                output["src/org/crayonlang/interpreter/structs/" + structName + ".java"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = LangJava.PlatformImpl.WrapStructCodeWithImports(this.NL, ctx.FlushAndClearBuffer()),
+                    TextContent = LangJava.PlatformImpl.WrapStructCodeWithImports(this.NL, structCode),
                 };
             }
 
@@ -76,13 +78,7 @@ namespace JavaApp
                 "",
             }));
 
-            foreach (FunctionDefinition fnDef in compiler.GetFunctionDefinitions())
-            {
-                this.Translator.GenerateCodeForFunction(ctx, this.Translator, fnDef);
-                this.Translator.TabDepth = 1;
-                sb.Append(ctx.FlushAndClearBuffer());
-                sb.Append(this.NL);
-            }
+            sb.Append(compiler.GetFunctionCodeTEMP(this.Translator, ctx, "  "));
             this.Translator.TabDepth = 0;
             sb.Append("}");
             sb.Append(this.NL);
