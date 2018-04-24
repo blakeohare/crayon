@@ -64,6 +64,8 @@ namespace LangJava
             defaultImports.AddRange(extraImports);
             defaultImports.Sort();
 
+            AbstractTranslator translator = platform.Translator;
+
             foreach (LibraryForExport library in libraries)
             {
                 if (library.ManifestFunctionDEPRECATED != null)
@@ -86,29 +88,43 @@ namespace LangJava
 
                     platform.Translator.TabDepth = 1;
 
-                    platform.Translator.GenerateCodeForFunction(ctx, platform.Translator, library.ManifestFunctionDEPRECATED);
-                    libraryCode.Add(ctx.FlushAndClearBuffer());
-                    string reflectionCalledPrefix = "lib_" + library.Name.ToLower() + "_function_";
-                    foreach (FunctionDefinition fnDef in library.FunctionsDEPRECATED)
-                    {
-                        string name = fnDef.NameToken.Value;
-                        bool isFunctionPointerObject = name.StartsWith(reflectionCalledPrefix);
+                    Pastel.PastelCompiler libCompiler = library.PastelContext.CompilerDEPRECATED;
 
-                        platform.Translator.GenerateCodeForFunction(ctx, platform.Translator, fnDef);
-                        string functionCode = ctx.FlushAndClearBuffer();
+                    string reflectionCalledPrefix = "lib_" + library.Name.ToLower() + "_function_";
+                    string manifestFunctionCode = libCompiler.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(
+                        "lib_manifest_RegisterFunctions",
+                        null,
+                        translator,
+                        ctx,
+                        "");
+                    libraryCode.Add(manifestFunctionCode);
+                    Dictionary<string, string> lookup = libCompiler.GetFunctionCodeAsLookupTEMP(translator, ctx, "  ");
+
+                    foreach (string functionName in lookup.Keys)
+                    {
+                        string functionCode = lookup[functionName];
+                        bool isFunctionPointerObject = functionName.StartsWith(reflectionCalledPrefix);
+
                         if (isFunctionPointerObject)
                         {
-                            functionCode = functionCode.Replace("public static Value v_" + name + "(Value[] ", "public Value invoke(Value[] ");
-                            functionCode = "  " + functionCode.Replace("\n", "\n  ").TrimEnd();
-                            functionCode = "  public static class FP_" + name + " extends LibraryFunctionPointer {\n" + functionCode + "\n  }\n";
+                            // This is kind of hacky, BUT...
 
-                            libraryCode.Add(functionCode);
+                            // If the generated function needs to be used as a function pointer, (i.e. it's one
+                            // of the library's VM-native bridge methods) change the name to "invoke" and then
+                            // wrap it in a dummy class that extends LibraryFunctionPointer. The manifest
+                            // function will simply instantiate this in lieu of a performant way to do
+                            // function pointers in Java.
+                            functionCode = functionCode.Replace(
+                                "public static Value v_" + functionName + "(Value[] ",
+                                "public Value invoke(Value[] ");
+                            functionCode =
+                                "  public static class FP_" + functionName + " extends LibraryFunctionPointer {\n" +
+                                "  " + functionCode.Replace("\n", "\n  ").TrimEnd() + "\n" +
+                                "  }\n";
                         }
-                        else
-                        {
-                            libraryCode.Add(functionCode);
-                        }
+                        libraryCode.Add(functionCode);
                     }
+
                     platform.Translator.TabDepth = 0;
                     libraryCode.Add("}");
                     libraryCode.Add("");
@@ -121,10 +137,11 @@ namespace LangJava
                         TextContent = string.Join(platform.NL, libraryCode),
                     };
 
-                    foreach (StructDefinition structDef in library.StructsDEPRECATED)
+                    Dictionary<string, string> libStructs = libCompiler.GetStructCodeByClassTEMP(translator, ctx, "  ");
+
+                    foreach (string structName in libStructs.Keys)
                     {
-                        platform.Translator.GenerateCodeForStruct(ctx, platform.Translator, structDef);
-                        string structCode = ctx.FlushAndClearBuffer();
+                        string structCode = libStructs[structName];
 
                         structCode = WrapStructCodeWithImports(platform.NL, structCode);
 
@@ -134,7 +151,7 @@ namespace LangJava
                             "package org.crayonlang.interpreter.structs;",
                             "package org.crayonlang.libraries." + library.Name.ToLower() + ";");
 
-                        output[libraryPath + "/" + structDef.NameToken.Value + ".java"] = new FileOutput()
+                        output[libraryPath + "/" + structName + ".java"] = new FileOutput()
                         {
                             Type = FileOutputType.Text,
                             TextContent = structCode,

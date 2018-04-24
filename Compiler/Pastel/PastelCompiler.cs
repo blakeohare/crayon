@@ -330,6 +330,20 @@ namespace Pastel
 
             return Indent(ctx.FlushAndClearBuffer().Trim(), translator.NewLine, indent);
         }
+        public Dictionary<string, string> GetFunctionCodeAsLookupTEMP(Transpilers.AbstractTranslator translator, Pastel.Transpilers.TranspilerContext ctx, string indent)
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            foreach (FunctionDefinition fd in this.GetFunctionDefinitions())
+            {
+                if (!alreadySerializedFunctions.Contains(fd))
+                {
+                    translator.GenerateCodeForFunction(ctx, translator, fd);
+                    output[fd.NameToken.Value] = Indent(ctx.FlushAndClearBuffer().Trim(), translator.NewLine, indent);
+                }
+            }
+
+            return output;
+        }
 
         private HashSet<FunctionDefinition> alreadySerializedFunctions = new HashSet<FunctionDefinition>();
         public string GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(
