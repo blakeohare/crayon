@@ -1,4 +1,5 @@
 ﻿using Pastel.Nodes;
+using System.Collections.Generic;
 
 namespace Pastel.Transpilers
 {
@@ -10,6 +11,8 @@ namespace Pastel.Transpilers
 
         public StringTableBuilder StringTableBuilder { get; set; }
 
+        public List<PythonFakeSwitchStatement> SwitchStatements { get; private set; }
+
         // This is a hack for conveying extra information to the top-level function serializer for switch statement stuff.
         // This reference is updated in TranslateFunctionDefinition.
         public FunctionDefinition PY_HACK_CurrentFunctionDef { get; set; }
@@ -18,6 +21,7 @@ namespace Pastel.Transpilers
         public TranspilerContext()
         {
             this.SwitchCounter = 0;
+            this.SwitchStatements = new List<PythonFakeSwitchStatement>();
         }
 
         public TranspilerContext Append(char c)

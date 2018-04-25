@@ -17,11 +17,8 @@ namespace Pastel.Transpilers
             }
         }
 
-        public List<PythonFakeSwitchStatement> SwitchStatements { get; private set; }
-
         public PythonTranslator() : base("  ", "\n")
         {
-            this.SwitchStatements = new List<PythonFakeSwitchStatement>();
         }
 
         public override string TranslateType(PType type)
@@ -970,7 +967,7 @@ namespace Pastel.Transpilers
             this.TranslateIfStatement(sb, fakeSwitchStatement.GenerateIfStatementBinarySearchTree());
 
             // This list of switch statements will be serialized at the end of the function definition as globals.
-            this.SwitchStatements.Add(fakeSwitchStatement);
+            sb.SwitchStatements.Add(fakeSwitchStatement);
         }
 
         public override void TranslateThreadSleep(TranspilerContext sb, Expression seconds)
@@ -1053,7 +1050,6 @@ namespace Pastel.Transpilers
 
         public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
         {
-            PythonTranslator pyTranslator = (PythonTranslator)translator;
             sb.CurrentFunctionDefinition = funcDef;
 
             sb.Append(translator.CurrentTab);
@@ -1074,13 +1070,13 @@ namespace Pastel.Transpilers
             translator.TabDepth--;
             sb.Append(this.NewLine);
 
-            foreach (PythonFakeSwitchStatement switchStatement in pyTranslator.SwitchStatements)
+            foreach (PythonFakeSwitchStatement switchStatement in sb.SwitchStatements)
             {
                 sb.Append(translator.CurrentTab);
                 sb.Append(switchStatement.GenerateGlobalDictionaryLookup());
                 sb.Append(this.NewLine);
             }
-            pyTranslator.SwitchStatements.Clear();
+            sb.SwitchStatements.Clear();
             sb.CurrentFunctionDefinition = null;
         }
 
