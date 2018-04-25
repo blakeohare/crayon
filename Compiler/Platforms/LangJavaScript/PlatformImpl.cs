@@ -1,11 +1,9 @@
 ﻿using Common;
 using Pastel;
-using Pastel.Nodes;
 using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace LangJavaScript
 {

@@ -1,5 +1,4 @@
 ﻿using Common;
-using Pastel.Nodes;
 using Pastel.Transpilers;
 using Platform;
 using System;
@@ -74,14 +73,8 @@ namespace JavaScriptApp
 
             List<string> coreVmCode = new List<string>();
 
-            this.Translator.GenerateCodeForGlobalsDefinitions(ctx, translatorOverride, compiler.GetGlobalsDefinitions());
-            coreVmCode.Add(ctx.FlushAndClearBuffer());
-
-            foreach (FunctionDefinition funcDef in compiler.GetFunctionDefinitions())
-            {
-                this.Translator.GenerateCodeForFunction(ctx, translatorOverride, funcDef);
-                coreVmCode.Add(ctx.FlushAndClearBuffer());
-            }
+            coreVmCode.Add(compiler.GetGlobalsCodeTEMP(translatorOverride, ctx, ""));
+            coreVmCode.Add(compiler.GetFunctionCodeTEMP(translatorOverride, ctx, ""));
 
             string coreVm = string.Join("\r\n", coreVmCode);
 
@@ -94,21 +87,25 @@ namespace JavaScriptApp
             List<LibraryForExport> librariesWithCode = new List<LibraryForExport>();
             foreach (LibraryForExport library in libraries)
             {
-                if (library.ManifestFunctionDEPRECATED != null)
+                if (library.HasPastelCode)
                 {
+                    Pastel.PastelCompiler libCompiler = library.PastelContext.CompilerDEPRECATED;
+
                     List<string> libraryLines = new List<string>();
 
                     ctx.CurrentLibraryFunctionTranslator =
                         libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
 
-                    library.ManifestFunctionDEPRECATED.NameToken = Pastel.Token.CreateDummyToken("lib_" + library.Name.ToLower() + "_manifest");
-                    this.Translator.GenerateCodeForFunction(ctx, translatorOverride, library.ManifestFunctionDEPRECATED);
-                    libraryLines.Add(ctx.FlushAndClearBuffer());
-                    foreach (FunctionDefinition fnDef in library.FunctionsDEPRECATED)
-                    {
-                        this.Translator.GenerateCodeForFunction(ctx, translatorOverride, fnDef);
-                        libraryLines.Add(ctx.FlushAndClearBuffer());
-                    }
+                    string newManifestFunctionName = "lib_" + library.Name.ToLower() + "_manifest";
+
+                    string manifestFunctionCode = libCompiler.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(
+                        "lib_manifest_RegisterFunctions",
+                        newManifestFunctionName,
+                        translatorOverride,
+                        ctx,
+                        "");
+                    libraryLines.Add(manifestFunctionCode);
+                    libraryLines.Add(libCompiler.GetFunctionCodeTEMP(translatorOverride, ctx, ""));
                     libraryLines.Add("C$common$scrapeLibFuncNames('" + library.Name.ToLower() + "');");
                     libraryLines.Add("");
 
