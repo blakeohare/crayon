@@ -14,11 +14,8 @@ namespace CApp
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-        {
-            this.Translator = new CTranslator();
-        }
-
-        public CTranslator CTranslator { get { return (CTranslator)this.Translator; } }
+            : base(Pastel.Language.C)
+        { }
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
@@ -29,7 +26,7 @@ namespace CApp
             Options options,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
-            TranspilerContext ctx = new TranspilerContext();
+            TranspilerContext ctx = new TranspilerContext(Pastel.Language.C);
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             StringBuilder cCode = new StringBuilder();
 
@@ -44,7 +41,7 @@ namespace CApp
             cCode.Append(this.LoadTextResource("Resources/TranslationHelper.txt", replacements));
 
             // This needs to be done in LangC
-            Dictionary<string, string> structLookup = compiler.GetStructCodeByClassTEMP(this.Translator, ctx, "");
+            Dictionary<string, string> structLookup = compiler.GetStructCodeByClassTEMP(ctx, "");
             foreach (string structName in structLookup.Keys)
             {
                 cCode.Append("typedef struct " + structName + " " + structName + ";\n");
@@ -66,11 +63,11 @@ namespace CApp
                 }
             }
 
-            string functionDeclarationCode = compiler.GetFunctionDeclarationsTEMP(this.Translator, ctx, "");
+            string functionDeclarationCode = compiler.GetFunctionDeclarationsTEMP(ctx, "");
 
             ctx.StringTableBuilder = new StringTableBuilder("VM");
 
-            string functionDefinitionCode = compiler.GetFunctionCodeTEMP(this.Translator, ctx, "");
+            string functionDefinitionCode = compiler.GetFunctionCodeTEMP(ctx, "");
 
             LangC.PlatformImpl.BuildStringTable(cCode, ctx.StringTableBuilder, this.NL);
 

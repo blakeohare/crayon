@@ -6,49 +6,22 @@ using System.Text;
 
 namespace Pastel.Transpilers
 {
-    public abstract class AbstractTranslator
+    internal abstract class AbstractTranslator
     {
-        private int currentTab = 0;
-        private string tabChar;
-        private string[] tabs;
+        public string TabChar { get; private set; }
+        public string[] Tabs { get; set; }
         public string NewLine { get; private set; }
-        public string CurrentTab { get; private set; }
-        public int TabDepth
-        {
-            get
-            {
-                return this.currentTab;
-            }
-            set
-            {
-                this.currentTab = value;
-
-                while (this.currentTab >= this.tabs.Length)
-                {
-                    // Conciseness, not efficiency. Deeply nested stuff is rare.
-                    List<string> tabsBuilder = new List<string>(this.tabs);
-                    for (int i = 0; i < 20; ++i)
-                    {
-                        tabsBuilder.Add(tabsBuilder[tabsBuilder.Count - 1] + this.tabChar);
-                    }
-                    this.tabs = tabsBuilder.ToArray();
-                }
-                this.CurrentTab = this.tabs[this.currentTab];
-            }
-
-        }
 
         public AbstractTranslator(string tab, string newLine)
         {
             this.NewLine = newLine;
-            this.tabChar = tab;
-            this.tabs = new string[20];
-            this.tabs[0] = "";
+            this.TabChar = tab;
+            this.Tabs = new string[20];
+            this.Tabs[0] = "";
             for (int i = 1; i < 20; ++i)
             {
-                this.tabs[i] = this.tabs[i - 1] + this.tabChar;
+                this.Tabs[i] = this.Tabs[i - 1] + this.TabChar;
             }
-            this.TabDepth = 0;
         }
 
         public virtual string TranslateType(PType type)
@@ -336,7 +309,7 @@ namespace Pastel.Transpilers
         {
             Expression[] args = funcInvocation.Args;
             string functionName = funcInvocation.FunctionRef.Name;
-            sb.CurrentLibraryFunctionTranslator.TranslateInvocation(sb, this, functionName, args, funcInvocation.FirstToken);
+            sb.CurrentLibraryFunctionTranslator.TranslateInvocation(sb, functionName, args, funcInvocation.FirstToken);
         }
 
         public void TranslateCommaDelimitedExpressions(TranspilerContext sb, IList<Expression> expressions)
@@ -476,12 +449,12 @@ namespace Pastel.Transpilers
         public abstract void TranslateVmRunLibraryManifest(TranspilerContext sb, Expression libraryName, Expression libRegObj);
         public abstract void TranslateWhileLoop(TranspilerContext sb, WhileLoop whileLoop);
 
-        public abstract void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef);
-        public abstract void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef);
-        public abstract void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals);
+        public abstract void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef);
+        public abstract void GenerateCodeForFunction(TranspilerContext sb, FunctionDefinition funcDef);
+        public abstract void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, IList<VariableDeclaration> globals);
 
         // Overridden in languages that require a function to be declared separately in order for declaration order to not matter, such as C.
-        public virtual void GenerateCodeForFunctionDeclaration(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
+        public virtual void GenerateCodeForFunctionDeclaration(TranspilerContext sb, FunctionDefinition funcDef)
         {
             throw new NotSupportedException();
         }

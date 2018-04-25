@@ -218,18 +218,19 @@ namespace Exporter
             }
         }
 
-        private Pastel.PastelCompiler GenerateCoreVmParseTree(
+        private PastelCompiler GenerateCoreVmParseTree(
             Platform.AbstractPlatform platform,
             IInlineImportCodeLoader codeLoader,
             Dictionary<string, object> constantFlags)
         {
             using (new PerformanceSection("VmGenerator.GenerateCoreVmParseTree"))
             {
-                Pastel.PastelCompiler compiler = new Pastel.PastelCompiler(
-                new Pastel.PastelCompiler[0],
-                constantFlags,
-                codeLoader,
-                new Pastel.ExtensibleFunction[0]);
+                PastelCompiler compiler = new PastelCompiler(
+                    platform.Language,
+                    new PastelCompiler[0],
+                    constantFlags,
+                    codeLoader,
+                    new ExtensibleFunction[0]);
 
                 foreach (string file in INTERPRETER_BASE_FILES)
                 {
@@ -261,7 +262,7 @@ namespace Exporter
 
                     List<ExtensibleFunction> libraryFunctions = library.GetPastelExtensibleFunctions();
 
-                    PastelContext context = new PastelContext(platform.Translator, codeLoader);
+                    PastelContext context = new PastelContext(platform.Language, codeLoader);
                     foreach (ExtensibleFunction exFn in libraryFunctions)
                     {
                         context.AddExtensibleFunction(exFn);

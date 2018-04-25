@@ -14,10 +14,9 @@ namespace JavaScriptApp
         public override string InheritsFrom { get { return "lang-javascript"; } }
         public override string NL { get { return "\n"; } }
 
-        public PlatformImpl() : base()
-        {
-            this.Translator = new JavaScriptTranslator();
-        }
+        public PlatformImpl()
+            : base(Pastel.Language.JAVASCRIPT)
+        { }
 
         public override IDictionary<string, object> GetConstantFlags()
         {
@@ -43,7 +42,13 @@ namespace JavaScriptApp
             Options options,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
-            this.ExportProjectImpl(output, compiler, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform, this.Translator);
+            this.ExportProjectImpl(
+                output,
+                compiler,
+                libraries,
+                resourceDatabase,
+                options,
+                libraryNativeInvocationTranslatorProviderForPlatform);
         }
 
         public void ExportProjectImpl(
@@ -52,10 +57,9 @@ namespace JavaScriptApp
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform,
-            AbstractTranslator translatorOverride)
+            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
-            TranspilerContext ctx = new TranspilerContext();
+            TranspilerContext ctx = new TranspilerContext(Pastel.Language.JAVASCRIPT);
             List<string> jsExtraHead = new List<string>() { options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) };
             bool fullPage = options.GetBool(ExportOptionKey.JS_FULL_PAGE);
 
@@ -73,8 +77,8 @@ namespace JavaScriptApp
 
             List<string> coreVmCode = new List<string>();
 
-            coreVmCode.Add(compiler.GetGlobalsCodeTEMP(translatorOverride, ctx, ""));
-            coreVmCode.Add(compiler.GetFunctionCodeTEMP(translatorOverride, ctx, ""));
+            coreVmCode.Add(compiler.GetGlobalsCodeTEMP(ctx, ""));
+            coreVmCode.Add(compiler.GetFunctionCodeTEMP(ctx, ""));
 
             string coreVm = string.Join("\r\n", coreVmCode);
 
@@ -101,11 +105,10 @@ namespace JavaScriptApp
                     string manifestFunctionCode = libCompiler.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(
                         "lib_manifest_RegisterFunctions",
                         newManifestFunctionName,
-                        translatorOverride,
                         ctx,
                         "");
                     libraryLines.Add(manifestFunctionCode);
-                    libraryLines.Add(libCompiler.GetFunctionCodeTEMP(translatorOverride, ctx, ""));
+                    libraryLines.Add(libCompiler.GetFunctionCodeTEMP(ctx, ""));
                     libraryLines.Add("C$common$scrapeLibFuncNames('" + library.Name.ToLower() + "');");
                     libraryLines.Add("");
 

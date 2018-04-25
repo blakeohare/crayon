@@ -14,9 +14,8 @@ namespace CSharpApp
         public override string NL { get { return "\r\n"; } }
 
         public PlatformImpl()
-        {
-            this.Translator = new CSharpTranslator();
-        }
+            : base(Pastel.Language.CSHARP)
+        { }
 
         public override IDictionary<string, object> GetConstantFlags()
         {
@@ -168,7 +167,7 @@ namespace CSharpApp
             Dictionary<string, FileOutput> filesOut,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
-            TranspilerContext ctx = new TranspilerContext();
+            TranspilerContext ctx = new TranspilerContext(Pastel.Language.CSHARP);
             Pastel.PastelCompiler libCompiler = library.PastelContext.CompilerDEPRECATED;
             string libraryName = library.Name;
             ctx.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(libraryName);
@@ -176,10 +175,10 @@ namespace CSharpApp
             if (library.ManifestFunctionDEPRECATED != null)
             {
                 string libraryDir = baseDir + "Libraries/" + libraryName;
-                string allFunctionCode = libCompiler.GetFunctionCodeTEMP(this.Translator, ctx, "");
+                string allFunctionCode = libCompiler.GetFunctionCodeTEMP(ctx, "");
                 libraryLines.Add(allFunctionCode);
 
-                Dictionary<string, string> structLookup = libCompiler.GetStructCodeByClassTEMP(this.Translator, ctx, "\t");
+                Dictionary<string, string> structLookup = libCompiler.GetStructCodeByClassTEMP(ctx, "\t");
                 foreach (string structName in structLookup.Keys)
                 {
                     filesOut[libraryDir + "/Structs/" + structName + ".cs"] = new FileOutput()
@@ -364,8 +363,8 @@ namespace CSharpApp
             Dictionary<string, FileOutput> output,
             Pastel.PastelCompiler compiler)
         {
-            TranspilerContext ctx = new TranspilerContext();
-            Dictionary<string, string> structLookup = compiler.GetStructCodeByClassTEMP(this.Translator, ctx, "");
+            TranspilerContext ctx = new TranspilerContext(Pastel.Language.CSHARP);
+            Dictionary<string, string> structLookup = compiler.GetStructCodeByClassTEMP(ctx, "");
             foreach (string structName in structLookup.Keys)
             {
                 output[baseDir + "Structs/" + structName + ".cs"] = new FileOutput()
@@ -375,7 +374,7 @@ namespace CSharpApp
                 };
             }
 
-            string functionCode = compiler.GetFunctionCodeTEMP(this.Translator, ctx, "");
+            string functionCode = compiler.GetFunctionCodeTEMP(ctx, "");
 
             output[baseDir + "Vm/CrayonWrapper.cs"] = new FileOutput()
             {
@@ -397,7 +396,7 @@ namespace CSharpApp
                 }),
             };
 
-            string globalsCode = compiler.GetGlobalsCodeTEMP(this.Translator, ctx, "\t\t");
+            string globalsCode = compiler.GetGlobalsCodeTEMP(ctx, "\t\t");
 
             output[baseDir + "Vm/Globals.cs"] = new FileOutput()
             {

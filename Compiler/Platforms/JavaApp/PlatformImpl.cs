@@ -15,9 +15,8 @@ namespace JavaApp
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-        {
-            this.Translator = new JavaTranslator(false);
-        }
+            : base(Pastel.Language.JAVA)
+        { }
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
@@ -39,7 +38,7 @@ namespace JavaApp
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
-            TranspilerContext ctx = new TranspilerContext();
+            TranspilerContext ctx = new TranspilerContext(this.Language);
             string srcPath = "src";
             string srcPackagePath = srcPath + "/" + replacements["JAVA_PACKAGE"].Replace('.', '/') + "/";
 
@@ -51,7 +50,7 @@ namespace JavaApp
 
             LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, libraryNativeInvocationTranslatorProviderForPlatform, imports);
 
-            Dictionary<string, string> structCodeFiles = compiler.GetStructCodeByClassTEMP(this.Translator, ctx, "  ");
+            Dictionary<string, string> structCodeFiles = compiler.GetStructCodeByClassTEMP(ctx, "  ");
 
             foreach (string structName in structCodeFiles.Keys)
             {
@@ -77,8 +76,8 @@ namespace JavaApp
                 "",
             }));
 
-            sb.Append(compiler.GetFunctionCodeTEMP(this.Translator, ctx, "  "));
-            this.Translator.TabDepth = 0;
+            sb.Append(compiler.GetFunctionCodeTEMP(ctx, "  "));
+            ctx.TabDepth = 0;
             sb.Append("}");
             sb.Append(this.NL);
 
@@ -88,11 +87,11 @@ namespace JavaApp
                 TextContent = sb.ToString(),
             };
 
-            this.Translator.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, compiler.GetGlobalsDefinitions());
+            string globals = compiler.GetGlobalsCodeTEMP(ctx, "");
             output["src/org/crayonlang/interpreter/VmGlobal.java"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = ctx.FlushAndClearBuffer(),
+                TextContent = globals,
             };
 
             // common Java helper files

@@ -7,21 +7,23 @@ namespace Pastel
     public class PastelContext
     {
         private PastelCompiler compiler = null;
+        private Language language;
         private List<PastelCompiler> dependencies = new List<PastelCompiler>();
         private Dictionary<string, object> constants = new Dictionary<string, object>();
         private List<ExtensibleFunction> extensibleFunctions = new List<ExtensibleFunction>();
 
-        public AbstractTranslator Transpiler { get; private set; }
+        internal AbstractTranslator Transpiler { get; private set; }
         public IInlineImportCodeLoader CodeLoader { get; private set; }
 
         // Remove this once direct dependence on Compiler is removed.
         public PastelCompiler CompilerDEPRECATED { get { return this.compiler; } }
 
         // TODO: eventually the transpilers should be internal and this will be an enum.
-        public PastelContext(AbstractTranslator transpiler, IInlineImportCodeLoader codeLoader)
+        public PastelContext(Language language, IInlineImportCodeLoader codeLoader)
         {
             this.CodeLoader = codeLoader;
-            this.Transpiler = transpiler;
+            this.language = language;
+            this.Transpiler = LanguageUtil.GetTranspiler(language);
         }
 
         public PastelContext AddDependency(PastelContext context)
@@ -54,6 +56,7 @@ namespace Pastel
             if (this.compiler == null)
             {
                 this.compiler = new PastelCompiler(
+                    this.language,
                     this.dependencies,
                     this.constants,
                     this.CodeLoader,
@@ -74,34 +77,31 @@ namespace Pastel
             return this;
         }
 
-        public Dictionary<string, string> GetCodeForStructs()
+        public Dictionary<string, string> GetCodeForStructs(TranspilerContext ctx)
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
-            TranspilerContext ctx = new TranspilerContext();
             foreach (StructDefinition sd in this.compiler.GetStructDefinitions())
             {
-                this.Transpiler.GenerateCodeForStruct(ctx, this.Transpiler, sd);
+                this.Transpiler.GenerateCodeForStruct(ctx, sd);
                 output[sd.NameToken.Value] = ctx.FlushAndClearBuffer();
             }
             return output;
         }
 
-        public Dictionary<string, string> GetCodeForFunctions()
+        public Dictionary<string, string> GetCodeForFunctions(TranspilerContext ctx)
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
-            TranspilerContext ctx = new TranspilerContext();
             foreach (FunctionDefinition fd in this.compiler.GetFunctionDefinitions())
             {
-                this.Transpiler.GenerateCodeForFunction(ctx, this.Transpiler, fd);
+                this.Transpiler.GenerateCodeForFunction(ctx, fd);
                 output[fd.NameToken.Value] = ctx.FlushAndClearBuffer();
             }
             return output;
         }
 
-        public string GetCodeForGlobals()
+        public string GetCodeForGlobals(TranspilerContext ctx)
         {
-            TranspilerContext ctx = new TranspilerContext();
-            this.Transpiler.GenerateCodeForGlobalsDefinitions(ctx, this.Transpiler, this.compiler.GetGlobalsDefinitions());
+            this.Transpiler.GenerateCodeForGlobalsDefinitions(ctx, this.compiler.GetGlobalsDefinitions());
             return ctx.FlushAndClearBuffer();
         }
     }

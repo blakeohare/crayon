@@ -12,9 +12,9 @@ namespace LangCSharp
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\r\n"; } }
 
-        public PlatformImpl() : base()
-        {
-        }
+        public PlatformImpl()
+            : base(Pastel.Language.CSHARP)
+        { }
 
         public override IDictionary<string, object> GetConstantFlags()
         {

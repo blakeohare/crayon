@@ -14,8 +14,8 @@ namespace LangJavaScript
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-        {
-        }
+            : base(Language.JAVASCRIPT)
+        { }
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,

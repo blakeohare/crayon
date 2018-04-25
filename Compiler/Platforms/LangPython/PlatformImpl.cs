@@ -12,9 +12,9 @@ namespace LangPython
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
 
-        public PlatformImpl() : base()
-        {
-        }
+        public PlatformImpl()
+            : base(Pastel.Language.PYTHON)
+        { }
 
         public override IDictionary<string, object> GetConstantFlags()
         {

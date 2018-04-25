@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Transpilers
 {
-    public class PythonTranslator : AbstractTranslator
+    internal class PythonTranslator : AbstractTranslator
     {
         private string TranslateOp(string originalOp)
         {
@@ -76,7 +76,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateAssignment(TranspilerContext sb, Assignment assignment)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             this.TranslateExpression(sb, assignment.Target);
             sb.Append(' ');
             sb.Append(assignment.OpToken.Value);
@@ -245,7 +245,7 @@ namespace Pastel.Transpilers
         {
             if (executables.Length == 0)
             {
-                sb.Append(this.CurrentTab);
+                sb.Append(sb.CurrentTab);
                 sb.Append("pass");
                 sb.Append(this.NewLine);
             }
@@ -257,7 +257,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateExpressionAsExecutable(TranspilerContext sb, Expression expression)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             this.TranslateExpression(sb, expression);
             sb.Append(this.NewLine);
         }
@@ -335,7 +335,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateIfStatement(TranspilerContext sb, IfStatement ifStatement)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             this.TranslateIfStatementNoIndent(sb, ifStatement);
         }
 
@@ -345,11 +345,11 @@ namespace Pastel.Transpilers
             this.TranslateExpression(sb, ifStatement.Condition);
             sb.Append(':');
             sb.Append(this.NewLine);
-            this.TabDepth++;
+            sb.TabDepth++;
             if (ifStatement.IfCode.Length == 0)
             {
                 // ideally this should be optimized out at compile-time. TODO: throw instead and do that
-                sb.Append(this.CurrentTab);
+                sb.Append(sb.CurrentTab);
                 sb.Append("pass");
                 sb.Append(this.NewLine);
             }
@@ -357,7 +357,7 @@ namespace Pastel.Transpilers
             {
                 this.TranslateExecutables(sb, ifStatement.IfCode);
             }
-            this.TabDepth--;
+            sb.TabDepth--;
 
             Executable[] elseCode = ifStatement.ElseCode;
 
@@ -365,18 +365,18 @@ namespace Pastel.Transpilers
 
             if (elseCode.Length == 1 && elseCode[0] is IfStatement)
             {
-                sb.Append(this.CurrentTab);
+                sb.Append(sb.CurrentTab);
                 sb.Append("el");
                 this.TranslateIfStatementNoIndent(sb, (IfStatement)elseCode[0]);
             }
             else
             {
-                sb.Append(this.CurrentTab);
+                sb.Append(sb.CurrentTab);
                 sb.Append("else:");
                 sb.Append(this.NewLine);
-                this.TabDepth++;
+                sb.TabDepth++;
                 this.TranslateExecutables(sb, elseCode);
-                this.TabDepth--;
+                sb.TabDepth--;
             }
         }
 
@@ -710,7 +710,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateReturnStatemnt(TranspilerContext sb, ReturnStatement returnStatement)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             sb.Append("return ");
             this.TranslateExpression(sb, returnStatement.Expression);
             sb.Append(this.NewLine);
@@ -954,7 +954,7 @@ namespace Pastel.Transpilers
             int switchId = sb.SwitchCounter++;
             PythonFakeSwitchStatement fakeSwitchStatement = PythonFakeSwitchStatement.Build(switchStatement, switchId, functionName);
 
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             sb.Append(fakeSwitchStatement.ConditionVariableName);
             sb.Append(" = ");
             sb.Append(fakeSwitchStatement.DictionaryGlobalName);
@@ -997,7 +997,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateVariableDeclaration(TranspilerContext sb, VariableDeclaration varDecl)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             sb.Append("v_");
             sb.Append(varDecl.VariableNameToken.Value);
             sb.Append(" = ");
@@ -1038,21 +1038,21 @@ namespace Pastel.Transpilers
 
         public override void TranslateWhileLoop(TranspilerContext sb, WhileLoop whileLoop)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             sb.Append("while ");
             this.TranslateExpression(sb, whileLoop.Condition);
             sb.Append(':');
             sb.Append(this.NewLine);
-            this.TabDepth++;
+            sb.TabDepth++;
             this.TranslateExecutables(sb, whileLoop.Code);
-            this.TabDepth--;
+            sb.TabDepth--;
         }
 
-        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunction(TranspilerContext sb, FunctionDefinition funcDef)
         {
             sb.CurrentFunctionDefinition = funcDef;
 
-            sb.Append(translator.CurrentTab);
+            sb.Append(sb.CurrentTab);
             sb.Append("def v_");
             sb.Append(funcDef.NameToken.Value);
             sb.Append('(');
@@ -1065,14 +1065,14 @@ namespace Pastel.Transpilers
             }
             sb.Append("):");
             sb.Append(this.NewLine);
-            translator.TabDepth++;
-            translator.TranslateExecutables(sb, funcDef.Code);
-            translator.TabDepth--;
+            sb.TabDepth++;
+            this.TranslateExecutables(sb, funcDef.Code);
+            sb.TabDepth--;
             sb.Append(this.NewLine);
 
             foreach (PythonFakeSwitchStatement switchStatement in sb.SwitchStatements)
             {
-                sb.Append(translator.CurrentTab);
+                sb.Append(sb.CurrentTab);
                 sb.Append(switchStatement.GenerateGlobalDictionaryLookup());
                 sb.Append(this.NewLine);
             }
@@ -1080,16 +1080,16 @@ namespace Pastel.Transpilers
             sb.CurrentFunctionDefinition = null;
         }
 
-        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
+        public override void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef)
         {
             throw new InvalidOperationException("This function should not be called. Python uses lists as structs.");
         }
 
-        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, IList<VariableDeclaration> globals)
         {
             foreach (VariableDeclaration global in globals)
             {
-                translator.TranslateVariableDeclaration(sb, global);
+                this.TranslateVariableDeclaration(sb, global);
             }
         }
     }

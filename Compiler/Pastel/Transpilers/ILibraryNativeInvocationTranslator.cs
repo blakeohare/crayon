@@ -1,4 +1,6 @@
-﻿namespace Pastel.Transpilers
+﻿using Pastel.Nodes;
+
+namespace Pastel.Transpilers
 {
     public interface ILibraryNativeInvocationTranslator
     {
@@ -6,10 +8,9 @@
         string UniquePrefix { get; }
 
         void TranslateInvocation(
-            Pastel.Transpilers.TranspilerContext sb,
-            AbstractTranslator translator,
+            TranspilerContext sb,
             string functionName,
-            Pastel.Nodes.Expression[] args,
-            Pastel.Token throwToken);
+            Expression[] args,
+            Token throwToken);
     }
 }

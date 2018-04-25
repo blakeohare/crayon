@@ -1,5 +1,4 @@
 ﻿using Common;
-using Pastel.Nodes;
 using Pastel.Transpilers;
 using Platform;
 using System;
@@ -14,9 +13,9 @@ namespace LangC
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
 
-        public PlatformImpl() : base()
-        {
-        }
+        public PlatformImpl()
+            : base(Pastel.Language.C)
+        { }
 
         public override IDictionary<string, object> GetConstantFlags()
         {

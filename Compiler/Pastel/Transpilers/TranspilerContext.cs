@@ -17,11 +17,44 @@ namespace Pastel.Transpilers
         // This reference is updated in TranslateFunctionDefinition.
         public FunctionDefinition PY_HACK_CurrentFunctionDef { get; set; }
         public int SwitchCounter { get; set; }
+        private int currentTab = 0;
+        public string CurrentTab { get; private set; }
+        internal AbstractTranslator Transpiler { get; private set; }
 
-        public TranspilerContext()
+        public TranspilerContext(Language language)
         {
-            this.SwitchCounter = 0;
-            this.SwitchStatements = new List<PythonFakeSwitchStatement>();
+            this.Transpiler = LanguageUtil.GetTranspiler(language);
+            if (language == Language.PYTHON)
+            {
+                this.SwitchCounter = 0;
+                this.SwitchStatements = new List<PythonFakeSwitchStatement>();
+            }
+            this.TabDepth = 0;
+        }
+
+        public int TabDepth
+        {
+            get
+            {
+                return this.currentTab;
+            }
+            set
+            {
+                this.currentTab = value;
+
+                while (this.currentTab >= this.Transpiler.Tabs.Length)
+                {
+                    // Conciseness, not efficiency. Deeply nested stuff is rare.
+                    List<string> tabsBuilder = new List<string>(this.Transpiler.Tabs);
+                    for (int i = 0; i < 20; ++i)
+                    {
+                        tabsBuilder.Add(tabsBuilder[tabsBuilder.Count - 1] + this.Transpiler.TabChar);
+                    }
+                    this.Transpiler.Tabs = tabsBuilder.ToArray();
+                }
+                this.CurrentTab = this.Transpiler.Tabs[this.currentTab];
+            }
+
         }
 
         public TranspilerContext Append(char c)

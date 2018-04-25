@@ -11,9 +11,8 @@ namespace JavaAppAndroid
     public class PlatformImpl : AbstractPlatform
     {
         public PlatformImpl()
-        {
-            this.Translator = new JavaTranslator(true);
-        }
+            : base(Pastel.Language.JAVA6)
+        { }
 
         public override string InheritsFrom { get { return "lang-java"; } }
         public override string Name { get { return "experimental-java-app-android"; } }
@@ -31,7 +30,7 @@ namespace JavaAppAndroid
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             this.OutputAndroidBoilerplate(output, replacements, options);
 
-            TranspilerContext ctx = new TranspilerContext();
+            TranspilerContext ctx = new TranspilerContext(this.Language);
 
             string srcPath = "app/src/main/java";
 
@@ -43,7 +42,7 @@ namespace JavaAppAndroid
             LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, libraryNativeInvocationTranslatorProviderForPlatform, imports);
 
             // Without the proper wrapping, I think this is wrong. Although this platform is deprecated and will be removed, so that's probably okay.
-            Dictionary<string, string> structCodeLookup = compiler.GetStructCodeByClassTEMP(this.Translator, ctx, "  ");
+            Dictionary<string, string> structCodeLookup = compiler.GetStructCodeByClassTEMP(ctx, "  ");
             foreach (string structName in structCodeLookup.Keys)
             {
                 string structCode = structCodeLookup[structName];
@@ -68,9 +67,9 @@ namespace JavaAppAndroid
                 "",
             }));
 
-            string functionCode = compiler.GetFunctionCodeTEMP(this.Translator, ctx, "  ");
+            string functionCode = compiler.GetFunctionCodeTEMP(ctx, "  ");
             sb.Append(functionCode);
-            this.Translator.TabDepth = 0;
+            ctx.TabDepth = 0;
             sb.Append("}");
             sb.Append(this.NL);
 
@@ -80,11 +79,11 @@ namespace JavaAppAndroid
                 TextContent = sb.ToString(),
             };
 
-            this.Translator.GenerateCodeForGlobalsDefinitions(ctx, this.Translator, compiler.GetGlobalsDefinitions());
+            string globalsCode = compiler.GetGlobalsCodeTEMP(ctx, "");
             output["app/src/main/java/org/crayonlang/interpreter/VmGlobal.java"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = ctx.FlushAndClearBuffer(),
+                TextContent = globalsCode,
             };
 
             // common Java helper files

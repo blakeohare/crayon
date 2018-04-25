@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Transpilers
 {
-    public class CSharpTranslator : CurlyBraceTranslator
+    internal class CSharpTranslator : CurlyBraceTranslator
     {
         public CSharpTranslator() : base("    ", "\r\n", false)
         { }
@@ -814,7 +814,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateVariableDeclaration(TranspilerContext sb, VariableDeclaration varDecl)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             sb.Append(this.TranslateType(varDecl.Type));
             sb.Append(" v_");
             sb.Append(varDecl.VariableNameToken.Value);
@@ -855,7 +855,7 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
+        public override void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef)
         {
             PType[] types = structDef.ArgTypes;
             Pastel.Token[] fieldNames = structDef.ArgNames;
@@ -866,7 +866,7 @@ namespace Pastel.Transpilers
             lines.Add("{");
             for (int i = 0; i < types.Length; ++i)
             {
-                lines.Add("    public " + translator.TranslateType(types[i]) + " " + fieldNames[i].Value + ";");
+                lines.Add("    public " + this.TranslateType(types[i]) + " " + fieldNames[i].Value + ";");
             }
             lines.Add("");
 
@@ -877,7 +877,7 @@ namespace Pastel.Transpilers
             for (int i = 0; i < types.Length; ++i)
             {
                 if (i > 0) constructorDeclaration.Append(", ");
-                constructorDeclaration.Append(translator.TranslateType(types[i]));
+                constructorDeclaration.Append(this.TranslateType(types[i]));
                 constructorDeclaration.Append(' ');
                 constructorDeclaration.Append(fieldNames[i].Value);
             }
@@ -898,22 +898,22 @@ namespace Pastel.Transpilers
             sb.Append(string.Join("\r\n", lines));
         }
 
-        public override void GenerateCodeForFunction(TranspilerContext output, AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunction(TranspilerContext output, FunctionDefinition funcDef)
         {
             PType returnType = funcDef.ReturnType;
             string funcName = funcDef.NameToken.Value;
             PType[] argTypes = funcDef.ArgTypes;
-            Pastel.Token[] argNames = funcDef.ArgNames;
+            Token[] argNames = funcDef.ArgNames;
 
             output.Append("public static ");
-            output.Append(translator.TranslateType(returnType));
+            output.Append(this.TranslateType(returnType));
             output.Append(" v_");
             output.Append(funcName);
             output.Append("(");
             for (int i = 0; i < argTypes.Length; ++i)
             {
                 if (i > 0) output.Append(", ");
-                output.Append(translator.TranslateType(argTypes[i]));
+                output.Append(this.TranslateType(argTypes[i]));
                 output.Append(" v_");
                 output.Append(argNames[i].Value);
             }
@@ -921,23 +921,23 @@ namespace Pastel.Transpilers
             output.Append(this.NewLine);
             output.Append("{");
             output.Append(this.NewLine);
-            translator.TabDepth = 1;
-            translator.TranslateExecutables(output, funcDef.Code);
-            translator.TabDepth = 0;
+            output.TabDepth = 1;
+            this.TranslateExecutables(output, funcDef.Code);
+            output.TabDepth = 0;
             output.Append("}");
         }
 
-        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext output, AbstractTranslator translator, IList<VariableDeclaration> globals)
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext output, IList<VariableDeclaration> globals)
         {
             output.Append("    public static class Globals");
             output.Append(this.NewLine);
             output.Append("    {");
             output.Append(this.NewLine);
-            translator.TabDepth = 0;
+            output.TabDepth = 0;
             foreach (VariableDeclaration vd in globals)
             {
                 output.Append("        public static ");
-                translator.TranslateVariableDeclaration(output, vd);
+                this.TranslateVariableDeclaration(output, vd);
             }
             output.Append("    }");
         }

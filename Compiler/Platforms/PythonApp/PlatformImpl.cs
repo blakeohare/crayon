@@ -14,9 +14,8 @@ namespace PythonApp
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-        {
-            this.Translator = new PythonTranslator();
-        }
+            : base(Pastel.Language.PYTHON)
+        { }
 
         public override IDictionary<string, object> GetConstantFlags()
         {
@@ -44,18 +43,18 @@ namespace PythonApp
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
-            TranspilerContext ctx = new TranspilerContext();
+            TranspilerContext ctx = new TranspilerContext(this.Language);
 
             output["code/vm.py"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = string.Join(this.Translator.NewLine, new string[] {
+                TextContent = string.Join(this.NL, new string[] {
                     this.LoadTextResource("Resources/header.txt" , replacements),
                     this.LoadTextResource("Resources/TranslationHelper.txt", replacements),
-                    compiler.GetGlobalsCodeTEMP(this.Translator, ctx, ""),
+                    compiler.GetGlobalsCodeTEMP(ctx, ""),
                     this.LoadTextResource("Resources/LibraryRegistry.txt", replacements),
                     this.LoadTextResource("Resources/ResourceReader.txt", replacements),
-                    compiler.GetFunctionCodeTEMP(this.Translator, ctx, ""),
+                    compiler.GetFunctionCodeTEMP(ctx, ""),
                 }),
             };
 
@@ -77,10 +76,9 @@ namespace PythonApp
                     libraryLines.Add(library.PastelContext.CompilerDEPRECATED.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(
                         "lib_manifest_RegisterFunctions",
                         null,
-                        this.Translator,
                         ctx,
                         ""));
-                    libraryLines.Add(library.PastelContext.CompilerDEPRECATED.GetFunctionCodeTEMP(this.Translator, ctx, ""));
+                    libraryLines.Add(library.PastelContext.CompilerDEPRECATED.GetFunctionCodeTEMP(ctx, ""));
                     libraryLines.Add("");
                     libraryLines.Add("_moduleInfo = ('" + libraryName + "', dict(inspect.getmembers(sys.modules[__name__])))");
                     libraryLines.Add("");

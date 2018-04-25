@@ -2,7 +2,7 @@
 
 namespace Pastel.Transpilers
 {
-    public abstract class CurlyBraceTranslator : AbstractTranslator
+    internal abstract class CurlyBraceTranslator : AbstractTranslator
     {
         private bool isEgyptian;
 
@@ -14,7 +14,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateAssignment(TranspilerContext sb, Assignment assignment)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             this.TranslateExpression(sb, assignment.Target);
             sb.Append(' ');
             sb.Append(assignment.OpToken.Value);
@@ -37,7 +37,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateBreak(TranspilerContext sb)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             sb.Append("break;");
             sb.Append(this.NewLine);
         }
@@ -50,7 +50,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateExpressionAsExecutable(TranspilerContext sb, Expression expression)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             this.TranslateExpression(sb, expression);
             sb.Append(';');
             sb.Append(this.NewLine);
@@ -85,7 +85,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateIfStatement(TranspilerContext sb, IfStatement ifStatement)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             sb.Append("if (");
             this.TranslateExpression(sb, ifStatement.Condition);
             if (this.isEgyptian)
@@ -97,15 +97,15 @@ namespace Pastel.Transpilers
             {
                 sb.Append(")");
                 sb.Append(this.NewLine);
-                sb.Append(this.CurrentTab);
+                sb.Append(sb.CurrentTab);
                 sb.Append("{");
                 sb.Append(this.NewLine);
             }
 
-            this.TabDepth++;
+            sb.TabDepth++;
             this.TranslateExecutables(sb, ifStatement.IfCode);
-            this.TabDepth--;
-            sb.Append(this.CurrentTab);
+            sb.TabDepth--;
+            sb.Append(sb.CurrentTab);
             sb.Append("}");
 
             if (ifStatement.ElseCode.Length > 0)
@@ -119,20 +119,20 @@ namespace Pastel.Transpilers
                 {
                     sb.Append(this.NewLine);
 
-                    sb.Append(this.CurrentTab);
+                    sb.Append(sb.CurrentTab);
                     sb.Append("else");
                     sb.Append(this.NewLine);
 
-                    sb.Append(this.CurrentTab);
+                    sb.Append(sb.CurrentTab);
                     sb.Append("{");
                     sb.Append(this.NewLine);
                 }
 
-                this.TabDepth++;
+                sb.TabDepth++;
                 this.TranslateExecutables(sb, ifStatement.ElseCode);
-                this.TabDepth--;
+                sb.TabDepth--;
 
-                sb.Append(this.CurrentTab);
+                sb.Append(sb.CurrentTab);
                 sb.Append("}");
             }
 
@@ -176,7 +176,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateReturnStatemnt(TranspilerContext sb, ReturnStatement returnStatement)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             sb.Append("return ");
             if (returnStatement.Expression == null)
             {
@@ -197,7 +197,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateSwitchStatement(TranspilerContext sb, SwitchStatement switchStatement)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             sb.Append("switch (");
             this.TranslateExpression(sb, switchStatement.Condition);
             sb.Append(")");
@@ -208,18 +208,18 @@ namespace Pastel.Transpilers
             else
             {
                 sb.Append(this.NewLine);
-                sb.Append(this.CurrentTab);
+                sb.Append(sb.CurrentTab);
                 sb.Append('{');
             }
             sb.Append(this.NewLine);
 
-            this.TabDepth++;
+            sb.TabDepth++;
 
             foreach (SwitchStatement.SwitchChunk chunk in switchStatement.Chunks)
             {
                 for (int i = 0; i < chunk.Cases.Length; ++i)
                 {
-                    sb.Append(this.CurrentTab);
+                    sb.Append(sb.CurrentTab);
                     Expression c = chunk.Cases[i];
                     if (c == null)
                     {
@@ -232,14 +232,14 @@ namespace Pastel.Transpilers
                         sb.Append(':');
                     }
                     sb.Append(this.NewLine);
-                    this.TabDepth++;
+                    sb.TabDepth++;
                     this.TranslateExecutables(sb, chunk.Code);
-                    this.TabDepth--;
+                    sb.TabDepth--;
                 }
             }
 
-            this.TabDepth--;
-            sb.Append(this.CurrentTab);
+            sb.TabDepth--;
+            sb.Append(sb.CurrentTab);
             sb.Append('}');
             sb.Append(this.NewLine);
         }
@@ -252,7 +252,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateWhileLoop(TranspilerContext sb, WhileLoop whileLoop)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             sb.Append("while (");
             this.TranslateExpression(sb, whileLoop.Condition);
             sb.Append(')');
@@ -264,14 +264,14 @@ namespace Pastel.Transpilers
             else
             {
                 sb.Append(this.NewLine);
-                sb.Append(this.CurrentTab);
+                sb.Append(sb.CurrentTab);
                 sb.Append("{");
                 sb.Append(this.NewLine);
             }
-            this.TabDepth++;
+            sb.TabDepth++;
             this.TranslateExecutables(sb, whileLoop.Code);
-            this.TabDepth--;
-            sb.Append(this.CurrentTab);
+            sb.TabDepth--;
+            sb.Append(sb.CurrentTab);
             sb.Append("}");
             sb.Append(this.NewLine);
         }

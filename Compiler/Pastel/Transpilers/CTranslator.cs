@@ -4,9 +4,10 @@ using System.Collections.Generic;
 
 namespace Pastel.Transpilers
 {
-    public class CTranslator : CurlyBraceTranslator
+    internal class CTranslator : CurlyBraceTranslator
     {
-        public CTranslator() : base("    ", "\n", false)
+        public CTranslator()
+            : base("    ", "\n", false)
         { }
 
         public override string TranslateType(PType type)
@@ -1048,7 +1049,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateVariableDeclaration(TranspilerContext sb, VariableDeclaration varDecl)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             sb.Append(this.TranslateType(varDecl.Type));
             sb.Append(" v_");
             sb.Append(varDecl.VariableNameToken.Value);
@@ -1089,7 +1090,7 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
+        public override void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef)
         {
             sb.Append("struct ");
             sb.Append(structDef.NameToken.Value);
@@ -1099,7 +1100,7 @@ namespace Pastel.Transpilers
                 string fieldName = structDef.ArgNames[i].Value;
                 PType fieldType = structDef.ArgTypes[i];
                 sb.Append('\t');
-                sb.Append(translator.TranslateType(fieldType));
+                sb.Append(this.TranslateType(fieldType));
                 sb.Append(' ');
                 sb.Append(fieldName);
                 sb.Append(";\n");
@@ -1108,7 +1109,7 @@ namespace Pastel.Transpilers
             sb.Append("};\n\n");
         }
 
-        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunction(TranspilerContext sb, FunctionDefinition funcDef)
         {
             sb.Append(this.TranslateType(funcDef.ReturnType));
             sb.Append(" v_");
@@ -1122,13 +1123,13 @@ namespace Pastel.Transpilers
                 sb.Append(funcDef.ArgNames[i].Value);
             }
             sb.Append(")\n{\n");
-            translator.TabDepth = 1;
-            translator.TranslateExecutables(sb, funcDef.Code);
-            translator.TabDepth = 0;
+            sb.TabDepth = 1;
+            this.TranslateExecutables(sb, funcDef.Code);
+            sb.TabDepth = 0;
             sb.Append("}\n");
         }
 
-        public override void GenerateCodeForFunctionDeclaration(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunctionDeclaration(TranspilerContext sb, FunctionDefinition funcDef)
         {
             sb.Append(this.TranslateType(funcDef.ReturnType));
             sb.Append(" v_");
@@ -1144,7 +1145,7 @@ namespace Pastel.Transpilers
             sb.Append(");");
         }
 
-        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, IList<VariableDeclaration> globals)
         {
             throw new NotImplementedException();
         }

@@ -12,12 +12,16 @@ namespace Pastel
 
         internal IDictionary<string, ExtensibleFunction> ExtensibleFunctions { get; private set; }
 
+        internal Transpilers.AbstractTranslator Transpiler { get; set; }
+
         public PastelCompiler(
+            Language language,
             IList<PastelCompiler> includedScopes,
             IDictionary<string, object> constants,
             IInlineImportCodeLoader inlineImportCodeLoader,
             ICollection<ExtensibleFunction> extensibleFunctions)
         {
+            this.Transpiler = LanguageUtil.GetTranspiler(language);
             this.IncludedScopes = includedScopes.ToArray();
             this.ExtensibleFunctions = extensibleFunctions == null
                 ? new Dictionary<string, ExtensibleFunction>()
@@ -304,56 +308,56 @@ namespace Pastel
         }
 
         // Delete once migrated to PastelContext
-        public Dictionary<string, string> GetStructCodeByClassTEMP(Transpilers.AbstractTranslator translator, Pastel.Transpilers.TranspilerContext ctx, string indent)
+        public Dictionary<string, string> GetStructCodeByClassTEMP(Transpilers.TranspilerContext ctx, string indent)
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
             foreach (StructDefinition sd in this.GetStructDefinitions())
             {
                 string name = sd.NameToken.Value;
-                translator.GenerateCodeForStruct(ctx, translator, sd);
+                ctx.Transpiler.GenerateCodeForStruct(ctx, sd);
                 output[name] = ctx.FlushAndClearBuffer();
             }
             return output;
         }
 
         // Delete once migrated to PastelContext
-        public string GetFunctionDeclarationsTEMP(Transpilers.AbstractTranslator translator, Transpilers.TranspilerContext ctx, string indent)
+        public string GetFunctionDeclarationsTEMP(Transpilers.TranspilerContext ctx, string indent)
         {
             foreach (FunctionDefinition fd in this.GetFunctionDefinitions())
             {
                 if (!alreadySerializedFunctions.Contains(fd))
                 {
-                    translator.GenerateCodeForFunctionDeclaration(ctx, translator, fd);
-                    ctx.Append(translator.NewLine);
+                    ctx.Transpiler.GenerateCodeForFunctionDeclaration(ctx, fd);
+                    ctx.Append(ctx.Transpiler.NewLine);
                 }
             }
 
-            return Indent(ctx.FlushAndClearBuffer().Trim(), translator.NewLine, indent);
+            return Indent(ctx.FlushAndClearBuffer().Trim(), ctx.Transpiler.NewLine, indent);
         }
 
         // Delete once migrated to PastelContext
-        public string GetFunctionCodeTEMP(Transpilers.AbstractTranslator translator, Pastel.Transpilers.TranspilerContext ctx, string indent)
+        public string GetFunctionCodeTEMP(Transpilers.TranspilerContext ctx, string indent)
         {
             foreach (FunctionDefinition fd in this.GetFunctionDefinitions())
             {
                 if (!alreadySerializedFunctions.Contains(fd))
                 {
-                    translator.GenerateCodeForFunction(ctx, translator, fd);
-                    ctx.Append(translator.NewLine);
+                    this.Transpiler.GenerateCodeForFunction(ctx, fd);
+                    ctx.Append(this.Transpiler.NewLine);
                 }
             }
 
-            return Indent(ctx.FlushAndClearBuffer().Trim(), translator.NewLine, indent);
+            return Indent(ctx.FlushAndClearBuffer().Trim(), this.Transpiler.NewLine, indent);
         }
-        public Dictionary<string, string> GetFunctionCodeAsLookupTEMP(Transpilers.AbstractTranslator translator, Pastel.Transpilers.TranspilerContext ctx, string indent)
+        public Dictionary<string, string> GetFunctionCodeAsLookupTEMP(Transpilers.TranspilerContext ctx, string indent)
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
             foreach (FunctionDefinition fd in this.GetFunctionDefinitions())
             {
                 if (!alreadySerializedFunctions.Contains(fd))
                 {
-                    translator.GenerateCodeForFunction(ctx, translator, fd);
-                    output[fd.NameToken.Value] = Indent(ctx.FlushAndClearBuffer().Trim(), translator.NewLine, indent);
+                    ctx.Transpiler.GenerateCodeForFunction(ctx, fd);
+                    output[fd.NameToken.Value] = Indent(ctx.FlushAndClearBuffer().Trim(), ctx.Transpiler.NewLine, indent);
                 }
             }
 
@@ -364,7 +368,6 @@ namespace Pastel
         public string GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(
             string name,
             string swapOutWithNewNameOrNull,
-            Transpilers.AbstractTranslator translator,
             Transpilers.TranspilerContext ctx,
             string indent)
         {
@@ -381,14 +384,14 @@ namespace Pastel
                 fd.NameToken = Token.CreateDummyToken(swapOutWithNewNameOrNull);
             }
 
-            translator.GenerateCodeForFunction(ctx, translator, fd);
-            return Indent(ctx.FlushAndClearBuffer().Trim(), translator.NewLine, indent);
+            this.Transpiler.GenerateCodeForFunction(ctx, fd);
+            return Indent(ctx.FlushAndClearBuffer().Trim(), this.Transpiler.NewLine, indent);
         }
 
-        public string GetGlobalsCodeTEMP(Transpilers.AbstractTranslator translator, Pastel.Transpilers. TranspilerContext ctx, string indent)
+        public string GetGlobalsCodeTEMP(Transpilers.TranspilerContext ctx, string indent)
         {
-            translator.GenerateCodeForGlobalsDefinitions(ctx, translator, this.GetGlobalsDefinitions());
-            return Indent(ctx.FlushAndClearBuffer().Trim(), translator.NewLine, indent);
+            this.Transpiler.GenerateCodeForGlobalsDefinitions(ctx, this.GetGlobalsDefinitions());
+            return Indent(ctx.FlushAndClearBuffer().Trim(), this.Transpiler.NewLine, indent);
         }
 
         private static string Indent(string code, string newline, string indent)
@@ -399,6 +402,13 @@ namespace Pastel
                 .Split('\n')
                 .Select(s => s.Trim())
                 .Select(s => s.Length > 0 ? indent + s : ""));
+        }
+
+        // TODO: the place where this is being called from is in the Exporter project, but it should
+        // really be in Pastel. Then this can be moved.
+        public static void HACK_TranslateExpression(Transpilers.TranspilerContext ctx, object expressionAsObj)
+        {
+            ctx.Transpiler.TranslateExpression(ctx, (Expression)expressionAsObj);
         }
     }
 }

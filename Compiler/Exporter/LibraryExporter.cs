@@ -152,7 +152,7 @@ namespace Exporter
         private Dictionary<string, string> translationsLookup = null;
 
         // TODO: extensible templating like this needs to go into Pastel itself.
-        public void TranslateNativeInvocation(TranspilerContext sb, Pastel.Token throwToken, Platform.AbstractPlatform platform, AbstractTranslator translator, string functionName, object[] args)
+        public void TranslateNativeInvocation(TranspilerContext sb, Pastel.Token throwToken, Platform.AbstractPlatform platform, string functionName, object[] args)
         {
             if (translationsLookup == null)
             {
@@ -205,7 +205,7 @@ namespace Exporter
                     {
                         int currentArgOrdinal = argOrdinalsInOrder[i];
                         int nextArgOrdinal = i + 1 < argOrdinalsInOrder.Length ? argOrdinalsInOrder[i + 1] : -1;
-                        translator.TranslateExpression(sb, (Pastel.Nodes.Expression)args[currentArgOrdinal]);
+                        Pastel.PastelCompiler.HACK_TranslateExpression(sb, args[currentArgOrdinal]);
                         int argEndIndex = locations[currentArgOrdinal][2];
                         if (nextArgOrdinal == -1)
                         {

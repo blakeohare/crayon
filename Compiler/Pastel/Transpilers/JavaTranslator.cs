@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Pastel.Transpilers
 {
-    public class JavaTranslator : CurlyBraceTranslator
+    internal class JavaTranslator : CurlyBraceTranslator
     {
         private bool isJava6;
 
@@ -1176,7 +1176,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateVariableDeclaration(TranspilerContext sb, VariableDeclaration varDecl)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             sb.Append(this.TranslateType(varDecl.Type));
             sb.Append(" v_");
             sb.Append(varDecl.VariableNameToken.Value);
@@ -1213,11 +1213,11 @@ namespace Pastel.Transpilers
         }
 
 
-        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunction(TranspilerContext sb, FunctionDefinition funcDef)
         {
-            sb.Append(translator.CurrentTab);
+            sb.Append(sb.CurrentTab);
             sb.Append("public static ");
-            sb.Append(translator.TranslateType(funcDef.ReturnType));
+            sb.Append(this.TranslateType(funcDef.ReturnType));
             sb.Append(" v_");
             sb.Append(funcDef.NameToken.Value);
             sb.Append('(');
@@ -1226,21 +1226,21 @@ namespace Pastel.Transpilers
             for (int i = 0; i < argTypes.Length; ++i)
             {
                 if (i > 0) sb.Append(", ");
-                sb.Append(translator.TranslateType(argTypes[i]));
+                sb.Append(this.TranslateType(argTypes[i]));
                 sb.Append(" v_");
                 sb.Append(argNames[i].Value);
             }
             sb.Append(") {");
             sb.Append(this.NewLine);
-            translator.TabDepth++;
-            translator.TranslateExecutables(sb, funcDef.Code);
-            translator.TabDepth--;
-            sb.Append(translator.CurrentTab);
+            sb.TabDepth++;
+            this.TranslateExecutables(sb, funcDef.Code);
+            sb.TabDepth--;
+            sb.Append(sb.CurrentTab);
             sb.Append('}');
             sb.Append(this.NewLine);
         }
 
-        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, IList<VariableDeclaration> globals)
         {
             foreach (string line in new string[] {
                 "package org.crayonlang.interpreter;",
@@ -1261,11 +1261,11 @@ namespace Pastel.Transpilers
             foreach (VariableDeclaration varDecl in globals)
             {
                 sb.Append("  public static final ");
-                sb.Append(translator.TranslateType(varDecl.Type));
+                sb.Append(this.TranslateType(varDecl.Type));
                 sb.Append(' ');
                 sb.Append(varDecl.VariableNameToken.Value);
                 sb.Append(" = ");
-                translator.TranslateExpression(sb, varDecl.Value);
+                this.TranslateExpression(sb, varDecl.Value);
                 sb.Append(';');
                 sb.Append(this.NewLine);
             }
@@ -1273,14 +1273,14 @@ namespace Pastel.Transpilers
             sb.Append(this.NewLine);
         }
 
-        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
+        public override void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef)
         {
             bool isValue = structDef.NameToken.Value == "Value";
             sb.Append("public final class ");
             sb.Append(structDef.NameToken.Value);
             sb.Append(" {");
             sb.Append(this.NewLine);
-            string[] types = structDef.ArgTypes.Select(type => translator.TranslateType(type)).ToArray();
+            string[] types = structDef.ArgTypes.Select(type => this.TranslateType(type)).ToArray();
             string[] names = structDef.ArgNames.Select(token => token.Value).ToArray();
             int fieldCount = names.Length;
             for (int i = 0; i < fieldCount; ++i)

@@ -1,10 +1,8 @@
 ﻿using Common;
-using Pastel.Nodes;
 using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace LangJava
 {
@@ -14,9 +12,9 @@ namespace LangJava
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
 
-        public PlatformImpl() : base()
-        {
-        }
+        public PlatformImpl()
+            : base(Pastel.Language.JAVA)
+        { }
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
@@ -48,7 +46,7 @@ namespace LangJava
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform,
             string[] extraImports)
         {
-            TranspilerContext ctx = new TranspilerContext();
+            TranspilerContext ctx = new TranspilerContext(platform.Language);
             List<string> defaultImports = new List<string>()
             {
                 "import java.util.ArrayList;",
@@ -63,8 +61,6 @@ namespace LangJava
 
             defaultImports.AddRange(extraImports);
             defaultImports.Sort();
-
-            AbstractTranslator translator = platform.Translator;
 
             foreach (LibraryForExport library in libraries)
             {
@@ -86,7 +82,7 @@ namespace LangJava
                         "",
                     });
 
-                    platform.Translator.TabDepth = 1;
+                    ctx.TabDepth = 1;
 
                     Pastel.PastelCompiler libCompiler = library.PastelContext.CompilerDEPRECATED;
 
@@ -94,11 +90,10 @@ namespace LangJava
                     string manifestFunctionCode = libCompiler.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(
                         "lib_manifest_RegisterFunctions",
                         null,
-                        translator,
                         ctx,
                         "");
                     libraryCode.Add(manifestFunctionCode);
-                    Dictionary<string, string> lookup = libCompiler.GetFunctionCodeAsLookupTEMP(translator, ctx, "  ");
+                    Dictionary<string, string> lookup = libCompiler.GetFunctionCodeAsLookupTEMP(ctx, "  ");
 
                     foreach (string functionName in lookup.Keys)
                     {
@@ -125,7 +120,7 @@ namespace LangJava
                         libraryCode.Add(functionCode);
                     }
 
-                    platform.Translator.TabDepth = 0;
+                    ctx.TabDepth = 0;
                     libraryCode.Add("}");
                     libraryCode.Add("");
 
@@ -137,7 +132,7 @@ namespace LangJava
                         TextContent = string.Join(platform.NL, libraryCode),
                     };
 
-                    Dictionary<string, string> libStructs = libCompiler.GetStructCodeByClassTEMP(translator, ctx, "  ");
+                    Dictionary<string, string> libStructs = libCompiler.GetStructCodeByClassTEMP(ctx, "  ");
 
                     foreach (string structName in libStructs.Keys)
                     {

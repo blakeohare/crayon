@@ -7,15 +7,16 @@ namespace Platform
 {
     public abstract class AbstractPlatform
     {
-        public AbstractPlatform()
+        public AbstractPlatform(Pastel.Language language)
         {
+            this.Language = language;
         }
 
         public IPlatformProvider PlatformProvider { get; set; }
 
+        public Pastel.Language Language { get; private set; }
         public abstract string Name { get; }
         public abstract string InheritsFrom { get; }
-        public AbstractTranslator Translator { get; protected set; }
 
         public abstract IDictionary<string, object> GetConstantFlags();
         public abstract string NL { get; }

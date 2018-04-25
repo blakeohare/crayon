@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Transpilers
 {
-    public class JavaScriptTranslator : CurlyBraceTranslator
+    internal class JavaScriptTranslator : CurlyBraceTranslator
     {
         public JavaScriptTranslator() : base("\t", "\n", true)
         { }
@@ -741,7 +741,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateVariableDeclaration(TranspilerContext sb, VariableDeclaration varDecl)
         {
-            sb.Append(this.CurrentTab);
+            sb.Append(sb.CurrentTab);
             sb.Append("var v_");
             sb.Append(varDecl.VariableNameToken.Value);
             sb.Append(" = ");
@@ -789,7 +789,7 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void GenerateCodeForFunction(TranspilerContext sb, AbstractTranslator translator, FunctionDefinition funcDef)
+        public override void GenerateCodeForFunction(TranspilerContext sb, FunctionDefinition funcDef)
         {
             sb.Append("var v_");
             sb.Append(funcDef.NameToken.Value);
@@ -804,24 +804,24 @@ namespace Pastel.Transpilers
             sb.Append(") {");
             sb.Append(this.NewLine);
 
-            translator.TabDepth = 1;
-            translator.TranslateExecutables(sb, funcDef.Code);
-            translator.TabDepth = 0;
+            sb.TabDepth = 1;
+            this.TranslateExecutables(sb, funcDef.Code);
+            sb.TabDepth = 0;
 
             sb.Append("};");
             sb.Append(this.NewLine);
             sb.Append(this.NewLine);
         }
 
-        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, AbstractTranslator translator, IList<VariableDeclaration> globals)
+        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, IList<VariableDeclaration> globals)
         {
             foreach (VariableDeclaration global in globals)
             {
-                translator.TranslateVariableDeclaration(sb, global);
+                this.TranslateVariableDeclaration(sb, global);
             }
         }
 
-        public override void GenerateCodeForStruct(TranspilerContext sb, AbstractTranslator translator, StructDefinition structDef)
+        public override void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef)
         {
             throw new NotImplementedException();
         }

@@ -13,8 +13,8 @@ namespace JavaScriptAppIos
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-        {
-        }
+            : base(Pastel.Language.JAVASCRIPT)
+        { }
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,

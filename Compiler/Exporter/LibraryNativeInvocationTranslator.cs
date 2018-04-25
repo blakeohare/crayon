@@ -25,14 +25,13 @@ namespace Exporter
 
         public void TranslateInvocation(
             TranspilerContext sb,
-            AbstractTranslator translator,
             string functionName,
             Expression[] args,
             Pastel.Token throwToken)
         {
             try
             {
-                LibraryExporter.Get(this.library, this.platform).TranslateNativeInvocation(sb, throwToken, this.platform, translator, functionName, args);
+                LibraryExporter.Get(this.library, this.platform).TranslateNativeInvocation(sb, throwToken, this.platform, functionName, args);
             }
             catch (System.Reflection.TargetInvocationException tie)
             {
