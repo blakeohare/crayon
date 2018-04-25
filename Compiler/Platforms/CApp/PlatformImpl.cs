@@ -1,5 +1,4 @@
 ﻿using Common;
-using Pastel.Nodes;
 using Pastel.Transpilers;
 using Platform;
 using System;
@@ -45,17 +44,17 @@ namespace CApp
             cCode.Append(this.LoadTextResource("Resources/TranslationHelper.txt", replacements));
 
             // This needs to be done in LangC
-            foreach (StructDefinition structDef in compiler.GetStructDefinitions())
+            Dictionary<string, string> structLookup = compiler.GetStructCodeByClassTEMP(this.Translator, ctx, "");
+            foreach (string structName in structLookup.Keys)
             {
-                string name = structDef.NameToken.Value;
-                cCode.Append("typedef struct " + name + " " + name + ";\n");
+                cCode.Append("typedef struct " + structName + " " + structName + ";\n");
             }
+
             cCode.Append(this.NL);
 
-            foreach (StructDefinition structDef in compiler.GetStructDefinitions())
+            foreach (string structName in structLookup.Keys)
             {
-
-                if (structDef.NameToken.Value == "Value")
+                if (structName == "Value")
                 {
                     // I need to do fancy stuff with unions, so special case this one.
                     string valueStruct = this.LoadTextResource("Resources/ValueStruct.txt", new Dictionary<string, string>());
@@ -63,34 +62,21 @@ namespace CApp
                 }
                 else
                 {
-                    this.Translator.GenerateCodeForStruct(ctx, this.Translator, structDef);
-                    cCode.Append(ctx.FlushAndClearBuffer());
+                    cCode.Append(structLookup[structName]);
                 }
             }
 
-            foreach (FunctionDefinition fd in compiler.GetFunctionDefinitions())
-            {
-                this.Translator.GenerateCodeForFunctionDeclaration(ctx, this.Translator, fd);
-                string functionDeclaration = ctx.FlushAndClearBuffer();
-                cCode.Append(functionDeclaration);
-                cCode.Append(this.NL);
-            }
+            string functionDeclarationCode = compiler.GetFunctionDeclarationsTEMP(this.Translator, ctx, "");
 
-            this.CTranslator.StringTableBuilder = new StringTableBuilder("VM");
+            ctx.StringTableBuilder = new StringTableBuilder("VM");
 
-            StringBuilder functionCodeBuilder = new StringBuilder();
-            foreach (FunctionDefinition fd in compiler.GetFunctionDefinitions())
-            {
-                this.Translator.GenerateCodeForFunction(ctx, this.Translator, fd);
-                string functionCode = ctx.FlushAndClearBuffer();
-                functionCodeBuilder.Append(functionCode);
-                functionCodeBuilder.Append(this.NL);
-                functionCodeBuilder.Append(this.NL);
-            }
+            string functionDefinitionCode = compiler.GetFunctionCodeTEMP(this.Translator, ctx, "");
 
-            LangC.PlatformImpl.BuildStringTable(cCode, this.CTranslator.StringTableBuilder, this.NL);
+            LangC.PlatformImpl.BuildStringTable(cCode, ctx.StringTableBuilder, this.NL);
 
-            cCode.Append(functionCodeBuilder);
+            cCode.Append(functionDeclarationCode);
+            cCode.Append(this.NL);
+            cCode.Append(functionDefinitionCode);
 
             cCode.Append(this.LoadTextResource("Resources/main.txt", replacements));
 

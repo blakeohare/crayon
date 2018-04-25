@@ -8,6 +8,8 @@ namespace Pastel.Transpilers
 
         private System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 
+        public StringTableBuilder StringTableBuilder { get; set; }
+
         // This is a hack for conveying extra information to the top-level function serializer for switch statement stuff.
         // This reference is updated in TranslateFunctionDefinition.
         public FunctionDefinition PY_HACK_CurrentFunctionDef { get; set; }

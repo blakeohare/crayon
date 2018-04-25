@@ -317,6 +317,21 @@ namespace Pastel
         }
 
         // Delete once migrated to PastelContext
+        public string GetFunctionDeclarationsTEMP(Transpilers.AbstractTranslator translator, Transpilers.TranspilerContext ctx, string indent)
+        {
+            foreach (FunctionDefinition fd in this.GetFunctionDefinitions())
+            {
+                if (!alreadySerializedFunctions.Contains(fd))
+                {
+                    translator.GenerateCodeForFunctionDeclaration(ctx, translator, fd);
+                    ctx.Append(translator.NewLine);
+                }
+            }
+
+            return Indent(ctx.FlushAndClearBuffer().Trim(), translator.NewLine, indent);
+        }
+
+        // Delete once migrated to PastelContext
         public string GetFunctionCodeTEMP(Transpilers.AbstractTranslator translator, Pastel.Transpilers.TranspilerContext ctx, string indent)
         {
             foreach (FunctionDefinition fd in this.GetFunctionDefinitions())

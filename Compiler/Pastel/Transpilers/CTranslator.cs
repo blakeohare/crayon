@@ -6,8 +6,6 @@ namespace Pastel.Transpilers
 {
     public class CTranslator : CurlyBraceTranslator
     {
-        public StringTableBuilder StringTableBuilder { get; set; }
-
         public CTranslator() : base("    ", "\n", false)
         { }
 
@@ -825,7 +823,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringConstant(TranspilerContext sb, string value)
         {
-            sb.Append(this.StringTableBuilder.GetId(value));
+            sb.Append(sb.StringTableBuilder.GetId(value));
             sb.Append("/* ");
             sb.Append(Common.Util.ConvertStringValueToCode(value).Replace("*/", "* /"));
             sb.Append(" */");
