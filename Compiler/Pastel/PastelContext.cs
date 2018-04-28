@@ -140,5 +140,10 @@ namespace Pastel
             this.Transpiler.GenerateCodeForGlobalsDefinitions(ctx, this.compiler.GetGlobalsDefinitions());
             return ctx.FlushAndClearBuffer();
         }
+
+        public string GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(string name, string swapOutWithNewNameOrNull, TranspilerContext ctx)
+        {
+            return this.compiler.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(name, swapOutWithNewNameOrNull, ctx, "");
+        }
     }
 }

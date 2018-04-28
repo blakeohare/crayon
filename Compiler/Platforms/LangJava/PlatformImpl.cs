@@ -82,16 +82,15 @@ namespace LangJava
 
                     ctx.TabDepth = 1;
 
-                    Pastel.PastelCompiler libCompiler = library.PastelContext.CompilerDEPRECATED;
+                    Pastel.PastelContext libContext = library.PastelContext;
 
                     string reflectionCalledPrefix = "lib_" + library.Name.ToLower() + "_function_";
-                    string manifestFunctionCode = libCompiler.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(
+                    string manifestFunctionCode = libContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
                         "lib_manifest_RegisterFunctions",
                         null,
-                        ctx,
-                        "");
+                        ctx);
                     libraryCode.Add(manifestFunctionCode);
-                    Dictionary<string, string> lookup = libCompiler.GetFunctionCodeAsLookupTEMP(ctx, "  ");
+                    Dictionary<string, string> lookup = libContext.GetCodeForFunctionsLookup(ctx);
 
                     foreach (string functionName in lookup.Keys)
                     {
@@ -130,7 +129,7 @@ namespace LangJava
                         TextContent = string.Join(platform.NL, libraryCode),
                     };
 
-                    Dictionary<string, string> libStructs = libCompiler.GetStructCodeByClassTEMP(ctx, "  ");
+                    Dictionary<string, string> libStructs = libContext.GetCodeForStructs(ctx);
 
                     foreach (string structName in libStructs.Keys)
                     {

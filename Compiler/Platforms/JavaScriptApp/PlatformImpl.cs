@@ -90,7 +90,7 @@ namespace JavaScriptApp
             {
                 if (library.HasPastelCode)
                 {
-                    Pastel.PastelCompiler libCompiler = library.PastelContext.CompilerDEPRECATED;
+                    Pastel.PastelContext libContext = library.PastelContext;
 
                     List<string> libraryLines = new List<string>();
 
@@ -99,13 +99,12 @@ namespace JavaScriptApp
 
                     string newManifestFunctionName = "lib_" + library.Name.ToLower() + "_manifest";
 
-                    string manifestFunctionCode = libCompiler.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(
+                    string manifestFunctionCode = libContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
                         "lib_manifest_RegisterFunctions",
                         newManifestFunctionName,
-                        ctx,
-                        "");
+                        ctx);
                     libraryLines.Add(manifestFunctionCode);
-                    libraryLines.Add(libCompiler.GetFunctionCodeTEMP(ctx, ""));
+                    libraryLines.Add(libContext.GetCodeForFunctions(ctx));
                     libraryLines.Add("C$common$scrapeLibFuncNames('" + library.Name.ToLower() + "');");
                     libraryLines.Add("");
 

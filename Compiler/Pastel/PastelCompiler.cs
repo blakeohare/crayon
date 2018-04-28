@@ -310,7 +310,7 @@ namespace Pastel
         }
 
         // Delete once migrated to PastelContext
-        public Dictionary<string, string> GetStructCodeByClassTEMP(Transpilers.TranspilerContext ctx, string indent)
+        internal Dictionary<string, string> GetStructCodeByClassTEMP(Transpilers.TranspilerContext ctx, string indent)
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
             foreach (StructDefinition sd in this.GetStructDefinitions())
@@ -323,7 +323,7 @@ namespace Pastel
         }
 
         // Delete once migrated to PastelContext
-        public string GetFunctionDeclarationsTEMP(Transpilers.TranspilerContext ctx, string indent)
+        internal string GetFunctionDeclarationsTEMP(Transpilers.TranspilerContext ctx, string indent)
         {
             foreach (FunctionDefinition fd in this.GetFunctionDefinitions())
             {
@@ -338,7 +338,7 @@ namespace Pastel
         }
 
         // Delete once migrated to PastelContext
-        public string GetFunctionCodeTEMP(Transpilers.TranspilerContext ctx, string indent)
+        internal string GetFunctionCodeTEMP(Transpilers.TranspilerContext ctx, string indent)
         {
             foreach (FunctionDefinition fd in this.GetFunctionDefinitions())
             {
@@ -351,7 +351,7 @@ namespace Pastel
 
             return Indent(ctx.FlushAndClearBuffer().Trim(), this.Transpiler.NewLine, indent);
         }
-        public Dictionary<string, string> GetFunctionCodeAsLookupTEMP(Transpilers.TranspilerContext ctx, string indent)
+        internal Dictionary<string, string> GetFunctionCodeAsLookupTEMP(Transpilers.TranspilerContext ctx, string indent)
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
             foreach (FunctionDefinition fd in this.GetFunctionDefinitions())
@@ -367,7 +367,7 @@ namespace Pastel
         }
 
         private HashSet<FunctionDefinition> alreadySerializedFunctions = new HashSet<FunctionDefinition>();
-        public string GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(
+        internal string GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(
             string name,
             string swapOutWithNewNameOrNull,
             Transpilers.TranspilerContext ctx,

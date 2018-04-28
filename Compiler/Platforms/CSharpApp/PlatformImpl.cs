@@ -167,17 +167,17 @@ namespace CSharpApp
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
         {
             TranspilerContext ctx = new TranspilerContext(Pastel.Language.CSHARP);
-            Pastel.PastelCompiler libCompiler = library.PastelContext.CompilerDEPRECATED;
+            Pastel.PastelContext libContext = library.PastelContext;
             string libraryName = library.Name;
             ctx.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(libraryName);
             List<string> libraryLines = new List<string>();
             if (library.ManifestFunctionDEPRECATED != null)
             {
                 string libraryDir = baseDir + "Libraries/" + libraryName;
-                string allFunctionCode = libCompiler.GetFunctionCodeTEMP(ctx, "");
+                string allFunctionCode = libContext.GetCodeForFunctions(ctx);
                 libraryLines.Add(allFunctionCode);
 
-                Dictionary<string, string> structLookup = libCompiler.GetStructCodeByClassTEMP(ctx, "\t");
+                Dictionary<string, string> structLookup = libContext.GetCodeForStructs(ctx);
                 foreach (string structName in structLookup.Keys)
                 {
                     filesOut[libraryDir + "/Structs/" + structName + ".cs"] = new FileOutput()

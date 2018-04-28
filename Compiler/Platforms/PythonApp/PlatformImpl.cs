@@ -71,12 +71,11 @@ namespace PythonApp
                     libraryLines.Add("import inspect");
                     libraryLines.Add("from code.vm import *");
                     libraryLines.Add("");
-                    libraryLines.Add(library.PastelContext.CompilerDEPRECATED.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(
+                    libraryLines.Add(library.PastelContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
                         "lib_manifest_RegisterFunctions",
                         null,
-                        ctx,
-                        ""));
-                    libraryLines.Add(library.PastelContext.CompilerDEPRECATED.GetFunctionCodeTEMP(ctx, ""));
+                        ctx));
+                    libraryLines.Add(library.PastelContext.GetCodeForFunctions(ctx));
                     libraryLines.Add("");
                     libraryLines.Add("_moduleInfo = ('" + libraryName + "', dict(inspect.getmembers(sys.modules[__name__])))");
                     libraryLines.Add("");
