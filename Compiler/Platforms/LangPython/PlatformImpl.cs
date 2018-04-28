@@ -33,8 +33,7 @@ namespace LangPython
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             Pastel.PastelContext pastelContext,
-            IList<LibraryForExport> everyLibrary,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
         }
@@ -44,8 +43,7 @@ namespace LangPython
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
-            Options options,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            Options options)
         {
             throw new InvalidOperationException("This platform does not support direct export.");
         }

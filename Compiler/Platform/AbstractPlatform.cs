@@ -150,16 +150,14 @@ namespace Platform
         public abstract void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             Pastel.PastelContext pastelContext,
-            IList<LibraryForExport> everyLibrary,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform);
+            IList<LibraryForExport> everyLibrary);
 
         public abstract void ExportProject(
             Dictionary<string, FileOutput> output,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
-            Options options,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform);
+            Options options);
 
         public static string IndentCodeWithTabs(string code, int tabCount)
         {

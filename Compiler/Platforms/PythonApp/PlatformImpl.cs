@@ -25,8 +25,7 @@ namespace PythonApp
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             Pastel.PastelContext pastelContext,
-            IList<LibraryForExport> everyLibrary,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
         }
@@ -36,12 +35,11 @@ namespace PythonApp
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
-            Options options,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
-            TranspilerContext ctx = new TranspilerContext(this.Language);
+            TranspilerContext ctx = pastelContext.CreateTranspilerContext();
 
             output["code/vm.py"] = new FileOutput()
             {
@@ -58,7 +56,7 @@ namespace PythonApp
 
             foreach (LibraryForExport library in libraries)
             {
-                ctx.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
+                TranspilerContext libCtx = library.PastelContext.CreateTranspilerContext();
                 string libraryName = library.Name;
                 List<string> libraryLines = new List<string>();
                 if (library.HasPastelCode)
@@ -74,8 +72,8 @@ namespace PythonApp
                     libraryLines.Add(library.PastelContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
                         "lib_manifest_RegisterFunctions",
                         null,
-                        ctx));
-                    libraryLines.Add(library.PastelContext.GetCodeForFunctions(ctx));
+                        libCtx));
+                    libraryLines.Add(library.PastelContext.GetCodeForFunctions(libCtx));
                     libraryLines.Add("");
                     libraryLines.Add("_moduleInfo = ('" + libraryName + "', dict(inspect.getmembers(sys.modules[__name__])))");
                     libraryLines.Add("");

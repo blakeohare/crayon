@@ -910,7 +910,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateRegisterLibraryFunction(TranspilerContext sb, Expression libRegObj, Expression functionName, Expression functionArgCount)
         {
-            string prefix = sb.CurrentLibraryFunctionTranslator.UniquePrefix.ToLower();
+            string prefix = sb.UniquePrefixForNonCollisions;
             string functionNameString = ((InlineConstant)functionName).Value.ToString();
             string className = "FP_lib_" + prefix + "_function_" + functionNameString;
 

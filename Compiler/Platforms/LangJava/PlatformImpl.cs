@@ -19,8 +19,7 @@ namespace LangJava
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             Pastel.PastelContext pastelContext,
-            IList<LibraryForExport> everyLibrary,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
         }
@@ -30,8 +29,7 @@ namespace LangJava
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
-            Options options,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            Options options)
         {
             throw new NotImplementedException();
         }
@@ -41,10 +39,8 @@ namespace LangJava
             string srcPath,
             IList<LibraryForExport> libraries,
             Dictionary<string, FileOutput> output,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform,
             string[] extraImports)
         {
-            TranspilerContext ctx = new TranspilerContext(platform.Language);
             List<string> defaultImports = new List<string>()
             {
                 "import java.util.ArrayList;",
@@ -64,8 +60,7 @@ namespace LangJava
             {
                 if (library.ManifestFunctionDEPRECATED != null)
                 {
-                    ctx.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
-
+                    TranspilerContext ctx = library.PastelContext.CreateTranspilerContext();
                     List<string> libraryCode = new List<string>()
                     {
                         "package org.crayonlang.libraries." + library.Name.ToLower() + ";",

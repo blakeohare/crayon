@@ -23,13 +23,12 @@ namespace JavaAppAndroid
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
-            Options options,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             this.OutputAndroidBoilerplate(output, replacements, options);
 
-            TranspilerContext ctx = new TranspilerContext(this.Language);
+            TranspilerContext ctx = pastelContext.CreateTranspilerContext();
 
             string srcPath = "app/src/main/java";
 
@@ -38,7 +37,7 @@ namespace JavaAppAndroid
                 "import org.crayonlang.interpreter.AndroidTranslationHelper;",
             };
 
-            LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, libraryNativeInvocationTranslatorProviderForPlatform, imports);
+            LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, imports);
 
             // Without the proper wrapping, I think this is wrong. Although this platform is deprecated and will be removed, so that's probably okay.
             Dictionary<string, string> structCodeLookup = pastelContext.GetCodeForStructs(ctx);
@@ -200,8 +199,7 @@ namespace JavaAppAndroid
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             Pastel.PastelContext pastelContext,
-            IList<LibraryForExport> everyLibrary,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
         }

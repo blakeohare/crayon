@@ -21,8 +21,7 @@ namespace JavaApp
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             Pastel.PastelContext pastelContext,
-            IList<LibraryForExport> everyLibrary,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
         }
@@ -32,11 +31,10 @@ namespace JavaApp
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
-            Options options,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
-            TranspilerContext ctx = new TranspilerContext(this.Language);
+            TranspilerContext ctx = pastelContext.CreateTranspilerContext();
             string srcPath = "src";
             string srcPackagePath = srcPath + "/" + replacements["JAVA_PACKAGE"].Replace('.', '/') + "/";
 
@@ -46,7 +44,7 @@ namespace JavaApp
                 "import org.crayonlang.interpreter.AwtTranslationHelper;",
             };
 
-            LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, libraryNativeInvocationTranslatorProviderForPlatform, imports);
+            LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, imports);
 
             Dictionary<string, string> structCodeFiles = pastelContext.GetCodeForStructs(ctx);
 

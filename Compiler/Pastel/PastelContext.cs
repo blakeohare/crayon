@@ -12,6 +12,7 @@ namespace Pastel
         private List<PastelCompiler> dependencies = new List<PastelCompiler>();
         private Dictionary<string, object> constants = new Dictionary<string, object>();
         private List<ExtensibleFunction> extensibleFunctions = new List<ExtensibleFunction>();
+        private Dictionary<string, string> extensibleFunctionTranslations = new Dictionary<string, string>();
 
         internal AbstractTranslator Transpiler { get; private set; }
         public IInlineImportCodeLoader CodeLoader { get; private set; }
@@ -44,6 +45,11 @@ namespace Pastel
             this.Transpiler = LanguageUtil.GetTranspiler(language);
         }
 
+        public TranspilerContext CreateTranspilerContext()
+        {
+            return new TranspilerContext(this.language, this.extensibleFunctionTranslations);
+        }
+
         public PastelContext AddDependency(PastelContext context)
         {
             this.dependencies.Add(context.compiler);
@@ -63,9 +69,10 @@ namespace Pastel
             return this;
         }
 
-        public PastelContext AddExtensibleFunction(ExtensibleFunction fn)
+        public PastelContext AddExtensibleFunction(ExtensibleFunction fn, string translation)
         {
             this.extensibleFunctions.Add(fn);
+            this.extensibleFunctionTranslations[fn.Name] = translation;
             return this;
         }
 

@@ -151,12 +151,22 @@ namespace Exporter
 
         private Dictionary<string, string> translationsLookup = null;
 
-        // TODO: extensible templating like this needs to go into Pastel itself.
-        public void TranslateNativeInvocation(TranspilerContext sb, Pastel.Token throwToken, Platform.AbstractPlatform platform, string functionName, object[] args)
+        public void ApplyExtensibleFunctionTranslationsToTranspilerContext(Platform.AbstractPlatform platform, TranspilerContext ctx)
         {
-            if (translationsLookup == null)
+            Dictionary<string, string> translations = this.GetExtensibleFunctionTranslations(platform);
+            foreach (string fnNameRaw in translations.Keys)
             {
-                translationsLookup = new Dictionary<string, string>();
+                // TODO: remove these dollar signs from the actual library code.
+                string fnName = fnNameRaw.StartsWith("$") ? fnNameRaw.Substring(1) : fnNameRaw;
+                ctx.ExtensibleFunctionLookup[fnName] = translations[fnNameRaw];
+            }
+        }
+
+        public Dictionary<string, string> GetExtensibleFunctionTranslations(Platform.AbstractPlatform platform)
+        {
+            if (this.translationsLookup == null)
+            {
+                this.translationsLookup = new Dictionary<string, string>();
                 foreach (string inheritedPlatformName in platform.InheritanceChain.Reverse())
                 {
                     // TODO: make this hack less hacky.
@@ -164,72 +174,10 @@ namespace Exporter
                         ? inheritedPlatformName.Substring("experimental-".Length)
                         : inheritedPlatformName;
                     Dictionary<string, string> translationsForPlatform = this.Metadata.GetMethodTranslations(effectivePlatformName);
-                    translationsLookup = Util.MergeDictionaries(translationsLookup, translationsForPlatform);
+                    this.translationsLookup = Util.MergeDictionaries(translationsLookup, translationsForPlatform);
                 }
             }
-
-            string codeSnippet = null;
-            string lookup = "$" + functionName;
-            if (translationsLookup.ContainsKey(lookup))
-            {
-                codeSnippet = translationsLookup[lookup];
-            }
-
-            if (codeSnippet != null)
-            {
-                // Filter down to just the arguments that are used.
-                // Put their location and length in this locations lookup. The key
-                // is the ordinal for the argument starting from 0.
-                Dictionary<int, int[]> locations = new Dictionary<int, int[]>();
-                for (int i = 0; i < args.Length; ++i)
-                {
-                    string searchString = "[ARG:" + (i + 1) + "]";
-                    int argIndex = codeSnippet.IndexOf(searchString);
-                    if (argIndex != -1)
-                    {
-                        locations[i] = new int[] { argIndex, searchString.Length, argIndex + searchString.Length };
-                    }
-                }
-                // Get the arguments in order of their actual appearance.
-                int[] argOrdinalsInOrder = locations.Keys.OrderBy(argN => locations[argN][0]).ToArray();
-                if (argOrdinalsInOrder.Length == 0)
-                {
-                    // If there aren't any, you're done. Just put the code snippet into the
-                    // buffer as-is.
-                    sb.Append(codeSnippet);
-                }
-                else
-                {
-                    sb.Append(codeSnippet.Substring(0, locations[argOrdinalsInOrder[0]][0]));
-                    for (int i = 0; i < argOrdinalsInOrder.Length; ++i)
-                    {
-                        int currentArgOrdinal = argOrdinalsInOrder[i];
-                        int nextArgOrdinal = i + 1 < argOrdinalsInOrder.Length ? argOrdinalsInOrder[i + 1] : -1;
-                        Pastel.PastelCompiler.HACK_TranslateExpression(sb, args[currentArgOrdinal]);
-                        int argEndIndex = locations[currentArgOrdinal][2];
-                        if (nextArgOrdinal == -1)
-                        {
-                            // Take the code snippet from the end of the current arg to the end and
-                            // add it to the buffer.
-                            sb.Append(codeSnippet.Substring(argEndIndex));
-                        }
-                        else
-                        {
-                            int nextArgBeginIndex = locations[nextArgOrdinal][0];
-                            sb.Append(codeSnippet.Substring(argEndIndex, nextArgBeginIndex - argEndIndex));
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // Use this to determine which function is causing the problem:
-                string MISSING_FUNCTION_NAME_FOR_DEBUGGER = functionName;
-                MISSING_FUNCTION_NAME_FOR_DEBUGGER.Trim(); // no compile warnings from not using the above string.
-
-                string msg = "The " + this.Metadata.ID + " library does not support " + platform.Name + " projects.";
-                throw new Pastel.ParserException(throwToken, msg);
-            }
+            return this.translationsLookup;
         }
 
         private HashSet<string> IGNORABLE_FILES = new HashSet<string>(new string[] { ".ds_store", "thumbs.db" });

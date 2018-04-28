@@ -26,8 +26,7 @@ namespace JavaScriptApp
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             Pastel.PastelContext pastelContext,
-            IList<LibraryForExport> everyLibrary,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
         }
@@ -37,16 +36,14 @@ namespace JavaScriptApp
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
-            Options options,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            Options options)
         {
             this.ExportProjectImpl(
                 output,
                 pastelContext,
                 libraries,
                 resourceDatabase,
-                options,
-                libraryNativeInvocationTranslatorProviderForPlatform);
+                options);
         }
 
         public void ExportProjectImpl(
@@ -54,10 +51,9 @@ namespace JavaScriptApp
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
-            Options options,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            Options options)
         {
-            TranspilerContext ctx = new TranspilerContext(Pastel.Language.JAVASCRIPT);
+            TranspilerContext ctx = pastelContext.CreateTranspilerContext();
             List<string> jsExtraHead = new List<string>() { options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) };
             bool fullPage = options.GetBool(ExportOptionKey.JS_FULL_PAGE);
 
@@ -93,9 +89,6 @@ namespace JavaScriptApp
                     Pastel.PastelContext libContext = library.PastelContext;
 
                     List<string> libraryLines = new List<string>();
-
-                    ctx.CurrentLibraryFunctionTranslator =
-                        libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(library.Name);
 
                     string newManifestFunctionName = "lib_" + library.Name.ToLower() + "_manifest";
 

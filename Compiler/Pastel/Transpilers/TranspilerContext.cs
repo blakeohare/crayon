@@ -5,13 +5,13 @@ namespace Pastel.Transpilers
 {
     public class TranspilerContext
     {
-        public ILibraryNativeInvocationTranslator CurrentLibraryFunctionTranslator { get; set; }
-
         private System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 
         public StringTableBuilder StringTableBuilder { get; set; }
 
         public List<PythonFakeSwitchStatement> SwitchStatements { get; private set; }
+
+        public string UniquePrefixForNonCollisions { get; set; }
 
         // This is a hack for conveying extra information to the top-level function serializer for switch statement stuff.
         // This reference is updated in TranslateFunctionDefinition.
@@ -20,9 +20,11 @@ namespace Pastel.Transpilers
         private int currentTab = 0;
         public string CurrentTab { get; private set; }
         internal AbstractTranslator Transpiler { get; private set; }
+        public Dictionary<string, string> ExtensibleFunctionLookup { get; private set; }
 
-        public TranspilerContext(Language language)
+        internal TranspilerContext(Language language, Dictionary<string, string> extensibleFunctions)
         {
+            this.ExtensibleFunctionLookup = extensibleFunctions;
             this.Transpiler = LanguageUtil.GetTranspiler(language);
             if (language == Language.PYTHON)
             {

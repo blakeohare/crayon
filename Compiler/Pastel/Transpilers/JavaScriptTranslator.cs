@@ -482,7 +482,7 @@ namespace Pastel.Transpilers
         public override void TranslateRegisterLibraryFunction(TranspilerContext sb, Expression libRegObj, Expression functionName, Expression functionArgCount)
         {
             sb.Append("C$common$registerLibraryFunction('");
-            sb.Append(sb.CurrentLibraryFunctionTranslator.LibraryID.ToLower());
+            sb.Append(sb.UniquePrefixForNonCollisions);
             sb.Append("', ");
             this.TranslateExpression(sb, libRegObj);
             sb.Append(", ");

@@ -21,8 +21,7 @@ namespace JavaScriptAppAndroid
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
-            Options options,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             this.OutputAndroidBoilerplate(output, replacements, options);
@@ -50,8 +49,7 @@ namespace JavaScriptAppAndroid
                 pastelContext,
                 libraries,
                 resourceDatabase,
-                options,
-                libraryNativeInvocationTranslatorProviderForPlatform);
+                options);
 
             // TODO: not good. The library inclusions should automatically be populated in LangJavaScript platforms.
             // This is also done identically in the ChromeApp PlatformImpl.
@@ -100,8 +98,7 @@ namespace JavaScriptAppAndroid
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             Pastel.PastelContext pastelContext,
-            IList<LibraryForExport> everyLibrary,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
         }

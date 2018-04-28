@@ -22,10 +22,9 @@ namespace CApp
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
-            Options options,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            Options options)
         {
-            TranspilerContext ctx = new TranspilerContext(Pastel.Language.C);
+            TranspilerContext ctx = pastelContext.CreateTranspilerContext();
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             StringBuilder cCode = new StringBuilder();
 
@@ -86,8 +85,7 @@ namespace CApp
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             Pastel.PastelContext pastelContext,
-            IList<LibraryForExport> everyLibrary,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
         }

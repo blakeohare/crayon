@@ -82,8 +82,7 @@ namespace CSharpApp
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             Pastel.PastelContext pastelContext,
-            IList<LibraryForExport> everyLibrary,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            IList<LibraryForExport> everyLibrary)
         {
             Dictionary<string, string> libraryProjectNameToGuid = new Dictionary<string, string>();
 
@@ -115,7 +114,7 @@ namespace CSharpApp
             {
                 string libBaseDir = "Libs/" + library.Name + "/";
                 List<LangCSharp.DllFile> dlls = new List<LangCSharp.DllFile>();
-                if (this.GetLibraryCode(libBaseDir, library, dlls, output, libraryNativeInvocationTranslatorProviderForPlatform))
+                if (this.GetLibraryCode(libBaseDir, library, dlls, output))
                 {
                     string name = library.Name;
                     string projectGuid = IdGenerator.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-project");
@@ -163,13 +162,11 @@ namespace CSharpApp
             string baseDir,
             LibraryForExport library,
             List<LangCSharp.DllFile> dllsOut,
-            Dictionary<string, FileOutput> filesOut,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            Dictionary<string, FileOutput> filesOut)
         {
-            TranspilerContext ctx = new TranspilerContext(Pastel.Language.CSHARP);
             Pastel.PastelContext libContext = library.PastelContext;
+            TranspilerContext ctx = libContext.CreateTranspilerContext();
             string libraryName = library.Name;
-            ctx.CurrentLibraryFunctionTranslator = libraryNativeInvocationTranslatorProviderForPlatform.GetTranslator(libraryName);
             List<string> libraryLines = new List<string>();
             if (library.ManifestFunctionDEPRECATED != null)
             {
@@ -230,8 +227,7 @@ namespace CSharpApp
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
-            Options options,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             string projectId = options.GetString(ExportOptionKey.PROJECT_ID);
@@ -249,7 +245,7 @@ namespace CSharpApp
                 {
                     dotNetLibs.Add(dotNetLib);
                 }
-                this.GetLibraryCode(baseDir, library, dlls, output, libraryNativeInvocationTranslatorProviderForPlatform);
+                this.GetLibraryCode(baseDir, library, dlls, output);
             }
 
             LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls, new Dictionary<string, string>());
@@ -361,7 +357,7 @@ namespace CSharpApp
             Dictionary<string, FileOutput> output,
             Pastel.PastelContext context)
         {
-            TranspilerContext ctx = new TranspilerContext(Pastel.Language.CSHARP);
+            TranspilerContext ctx = context.CreateTranspilerContext();
             Dictionary<string, string> structLookup = context.GetCodeForStructs(ctx);
             foreach (string structName in structLookup.Keys)
             {

@@ -1,5 +1,4 @@
 ﻿using Common;
-using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -21,8 +20,7 @@ namespace JavaScriptAppIos
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
-            Options options,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            Options options)
         {
             options.SetOption(ExportOptionKey.JS_FILE_PREFIX, null);
             options.SetOption(ExportOptionKey.JS_FULL_PAGE, false); // iOS export has its own enforced fullscreen logic
@@ -48,8 +46,7 @@ namespace JavaScriptAppIos
                 pastelContext,
                 libraries,
                 resourceDatabase,
-                options,
-                libraryNativeInvocationTranslatorProviderForPlatform);
+                options);
 
             // TODO: not good. The library inclusions should automatically be populated in LangJavaScript platforms.
             // This is also done identically in the ChromeApp PlatformImpl.
@@ -152,8 +149,7 @@ namespace JavaScriptAppIos
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             Pastel.PastelContext pastelContext,
-            IList<LibraryForExport> everyLibrary,
-            ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
+            IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
         }

@@ -124,12 +124,6 @@ namespace Exporter
                 Dictionary<string, LibraryMetadata> librariesByID = relevantLibraries.ToDictionary(lib => lib.ID);
                 List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByID, constantFlags, codeLoader, vmPastelContext);
 
-                LibraryNativeInvocationTranslatorProvider libTranslationProvider =
-                    new LibraryNativeInvocationTranslatorProvider(
-                        relevantLibraries.ToDictionary(lib => lib.ID),
-                        libraries,
-                        platform);
-
                 if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
                 {
                     options
@@ -158,16 +152,14 @@ namespace Exporter
                         vmPastelContext,
                         libraries,
                         resourceDatabase,
-                        options,
-                        libTranslationProvider);
+                        options);
                 }
                 else
                 {
                     platform.ExportStandaloneVm(
                         output,
                         vmPastelContext,
-                        libraries,
-                        libTranslationProvider);
+                        libraries);
                 }
             }
         }
@@ -259,9 +251,20 @@ namespace Exporter
                     List<ExtensibleFunction> libraryFunctions = library.GetPastelExtensibleFunctions();
 
                     PastelContext context = new PastelContext(platform.Language, codeLoader);
+                    Dictionary<string, string> exFnTranslations = library.GetExtensibleFunctionTranslations(platform);
                     foreach (ExtensibleFunction exFn in libraryFunctions)
                     {
-                        context.AddExtensibleFunction(exFn);
+                        string exFnTranslation = null;
+                        if (exFnTranslations.ContainsKey(exFn.Name))
+                        {
+                            exFnTranslation = exFnTranslations[exFn.Name];
+                        }
+                        else if (exFnTranslations.ContainsKey("$" + exFn.Name))
+                        {
+                            exFnTranslation = exFnTranslations["$" + exFn.Name];
+                        }
+
+                        context.AddExtensibleFunction(exFn, exFnTranslation);
                     }
                     context.AddDependency(sharedScope);
                     foreach (string constKey in constantsLookup.Keys)
