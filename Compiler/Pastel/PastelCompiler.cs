@@ -405,12 +405,5 @@ namespace Pastel
                 .Select(s => s.Trim())
                 .Select(s => s.Length > 0 ? indent + s : ""));
         }
-
-        // TODO: the place where this is being called from is in the Exporter project, but it should
-        // really be in Pastel. Then this can be moved.
-        public static void HACK_TranslateExpression(Transpilers.TranspilerContext ctx, object expressionAsObj)
-        {
-            ctx.Transpiler.TranslateExpression(ctx, (Expression)expressionAsObj);
-        }
     }
 }

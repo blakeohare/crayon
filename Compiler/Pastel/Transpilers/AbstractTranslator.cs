@@ -347,7 +347,7 @@ namespace Pastel.Transpilers
                 {
                     int currentArgOrdinal = argOrdinalsInOrder[i];
                     int nextArgOrdinal = i + 1 < argOrdinalsInOrder.Length ? argOrdinalsInOrder[i + 1] : -1;
-                    Pastel.PastelCompiler.HACK_TranslateExpression(sb, args[currentArgOrdinal]);
+                    sb.Transpiler.TranslateExpression(sb, (Expression)args[currentArgOrdinal]);
                     int argEndIndex = locations[currentArgOrdinal][2];
                     if (nextArgOrdinal == -1)
                     {

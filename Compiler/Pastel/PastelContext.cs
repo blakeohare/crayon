@@ -16,10 +16,7 @@ namespace Pastel
 
         internal AbstractTranslator Transpiler { get; private set; }
         public IInlineImportCodeLoader CodeLoader { get; private set; }
-
-        // Remove this once direct dependence on Compiler is removed.
-        internal PastelCompiler CompilerDEPRECATED { get { return this.compiler; } }
-
+        
         // This is a temporary hack
         public static PastelContext of(Language language, PastelCompiler compiler, IInlineImportCodeLoader codeLoader)
         {
@@ -36,8 +33,7 @@ namespace Pastel
 
             return pc;
         }
-
-        // TODO: eventually the transpilers should be internal and this will be an enum.
+        
         public PastelContext(Language language, IInlineImportCodeLoader codeLoader)
         {
             this.CodeLoader = codeLoader;
@@ -55,14 +51,7 @@ namespace Pastel
             this.dependencies.Add(context.compiler);
             return this;
         }
-
-        // TODO: remove this once everything has been migrated to use PastelContext exclusively.
-        public PastelContext AddDependencyTEMP(PastelCompiler compiler)
-        {
-            this.dependencies.Add(compiler);
-            return this;
-        }
-
+        
         public PastelContext SetConstant(string key, object value)
         {
             this.constants[key] = value;
