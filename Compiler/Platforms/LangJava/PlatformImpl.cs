@@ -58,7 +58,7 @@ namespace LangJava
 
             foreach (LibraryForExport library in libraries)
             {
-                if (library.ManifestFunctionDEPRECATED != null)
+                if (library.HasPastelCode)
                 {
                     TranspilerContext ctx = library.PastelContext.CreateTranspilerContext();
                     List<string> libraryCode = new List<string>()

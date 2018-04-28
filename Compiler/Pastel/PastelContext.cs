@@ -18,7 +18,7 @@ namespace Pastel
         public IInlineImportCodeLoader CodeLoader { get; private set; }
 
         // Remove this once direct dependence on Compiler is removed.
-        public PastelCompiler CompilerDEPRECATED { get { return this.compiler; } }
+        internal PastelCompiler CompilerDEPRECATED { get { return this.compiler; } }
 
         // This is a temporary hack
         public static PastelContext of(Language language, PastelCompiler compiler, IInlineImportCodeLoader codeLoader)

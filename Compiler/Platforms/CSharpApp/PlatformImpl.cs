@@ -168,7 +168,7 @@ namespace CSharpApp
             TranspilerContext ctx = libContext.CreateTranspilerContext();
             string libraryName = library.Name;
             List<string> libraryLines = new List<string>();
-            if (library.ManifestFunctionDEPRECATED != null)
+            if (library.HasPastelCode)
             {
                 string libraryDir = baseDir + "Libraries/" + libraryName;
                 string allFunctionCode = libContext.GetCodeForFunctions(ctx);

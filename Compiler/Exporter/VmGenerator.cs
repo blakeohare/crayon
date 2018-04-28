@@ -62,10 +62,13 @@ namespace Exporter
                 {
                     LibraryExporter library = LibraryExporter.Get(librariesById[libraryId], platform);
                     libraryByName[library.Metadata.ID] = library;
+                    PastelContext libraryPastelContext = libraryCompilation.ContainsKey(library.Metadata.ID)
+                        ? libraryCompilation[library.Metadata.ID]
+                        : null;
                     Platform.LibraryForExport libraryForExport = this.CreateLibraryForExport(
                         library.Metadata.ID,
                         library.Metadata.Version,
-                        libraryCompilation[library.Metadata.ID],
+                        libraryPastelContext,
                         library.Resources);
                     libraries.Add(libraryForExport);
                 }
@@ -167,41 +170,20 @@ namespace Exporter
         private Platform.LibraryForExport CreateLibraryForExport(
             string libraryName,
             string libraryVersion,
-            PastelContext compilation,
+            PastelContext nullableLibaryPastelContext,
             LibraryResourceDatabase libResDb)
         {
             using (new PerformanceSection("VmGenerator.CreateLibraryForExport"))
             {
                 Multimap<string, Platform.ExportEntity> exportEntities = libResDb.ExportEntities;
-                FunctionDefinition manifestFunction = null;
-                Dictionary<string, FunctionDefinition> otherFunctions = new Dictionary<string, FunctionDefinition>();
-                FunctionDefinition[] functionDefinitions = compilation.CompilerDEPRECATED != null ? compilation.CompilerDEPRECATED.FunctionDefinitions.Values.ToArray() : new FunctionDefinition[0];
-                foreach (FunctionDefinition functionDefinition in functionDefinitions)
-                {
-                    string functionName = functionDefinition.NameToken.Value;
-                    if (functionName == "lib_manifest_RegisterFunctions")
-                    {
-                        manifestFunction = functionDefinition;
-                    }
-                    else
-                    {
-                        otherFunctions[functionName] = functionDefinition;
-                    }
-                }
 
-                string[] names = otherFunctions.Keys.OrderBy(s => s).ToArray();
-                FunctionDefinition[] functions = names.Select(n => otherFunctions[n]).ToArray();
                 string[] dotNetLibs = libResDb.DotNetLibs.OrderBy(s => s.ToLower()).ToArray();
 
                 return new Platform.LibraryForExport()
                 {
                     Name = libraryName,
                     Version = libraryVersion,
-                    FunctionRegisteredNamesOrNulls = names,
-                    PastelContext = compilation,
-                    FunctionsDEPRECATED = functions,
-                    StructsDEPRECATED = compilation.CompilerDEPRECATED != null ? compilation.CompilerDEPRECATED.StructDefinitions.Values.ToArray() : new StructDefinition[0],
-                    ManifestFunctionDEPRECATED = manifestFunction,
+                    PastelContext = nullableLibaryPastelContext,
                     ExportEntities = exportEntities,
                     DotNetLibs = dotNetLibs,
                     LibProjectNamesAndGuids = libResDb.ProjectReferenceToGuid,
@@ -249,6 +231,11 @@ namespace Exporter
                     Dictionary<string, object> constantsLookup = Util.MergeDictionaries<string, object>(constantFlags, library.CompileTimeConstants);
 
                     List<ExtensibleFunction> libraryFunctions = library.GetPastelExtensibleFunctions();
+
+                    if (!libraryMetadata.IsMoreThanJustEmbedCode)
+                    {
+                        continue;
+                    }
 
                     PastelContext context = new PastelContext(platform.Language, codeLoader);
                     Dictionary<string, string> exFnTranslations = library.GetExtensibleFunctionTranslations(platform);
