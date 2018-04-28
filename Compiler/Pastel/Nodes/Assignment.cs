@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    public class Assignment : Executable
+    internal class Assignment : Executable
     {
         public Expression Target { get; set; }
         public Token OpToken { get; set; }

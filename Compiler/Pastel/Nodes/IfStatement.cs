@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Pastel.Nodes
 {
-    public class IfStatement : Executable
+    internal class IfStatement : Executable
     {
         public Expression Condition { get; set; }
         public Executable[] IfCode { get; set; }

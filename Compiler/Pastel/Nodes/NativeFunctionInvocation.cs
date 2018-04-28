@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    public class NativeFunctionInvocation : Expression
+    internal class NativeFunctionInvocation : Expression
     {
         public NativeFunction Function { get; set; }
         public Expression[] Args { get; set; }

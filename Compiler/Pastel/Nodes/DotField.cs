@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    public class DotField : Expression
+    internal class DotField : Expression
     {
         public Expression Root { get; set; }
         public Token DotToken { get; set; }

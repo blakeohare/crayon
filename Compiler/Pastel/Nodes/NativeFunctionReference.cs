@@ -2,7 +2,7 @@
 
 namespace Pastel.Nodes
 {
-    class NativeFunctionReference : Expression
+    internal class NativeFunctionReference : Expression
     {
         public NativeFunction NativeFunctionId { get; set; }
         public Expression Context { get; set; }

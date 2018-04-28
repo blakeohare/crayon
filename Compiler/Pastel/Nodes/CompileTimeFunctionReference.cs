@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Pastel.Nodes
 {
-    class CompileTimeFunctionReference : Expression
+    internal class CompileTimeFunctionReference : Expression
     {
         public Token NameToken { get; set; }
 

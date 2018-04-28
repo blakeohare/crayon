@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Pastel.Nodes
+﻿namespace Pastel.Nodes
 {
-    public class ReturnStatement : Executable
+    internal class ReturnStatement : Executable
     {
         public Expression Expression { get; set; }
 

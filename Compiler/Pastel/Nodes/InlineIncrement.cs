@@ -1,6 +1,6 @@
 ﻿namespace Pastel.Nodes
 {
-    public class InlineIncrement : Expression
+    internal class InlineIncrement : Expression
     {
         public Token IncrementToken { get; set; }
         public Expression Expression { get; set; }

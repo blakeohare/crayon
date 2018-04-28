@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    public abstract class Executable
+    internal abstract class Executable
     {
         public Token FirstToken { get; set; }
 

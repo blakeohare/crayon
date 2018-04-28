@@ -1,5 +1,4 @@
-﻿using Common;
-using Pastel.Nodes;
+﻿using Pastel.Nodes;
 using System.Collections.Generic;
 using System.Text;
 
@@ -25,7 +24,7 @@ namespace Pastel.Transpilers
 
         The switch code itself is a binary search tree of if statements.
      */
-    public class PythonFakeSwitchStatement
+    internal class PythonFakeSwitchStatement
     {
         private string functionName;
         private int switchId;

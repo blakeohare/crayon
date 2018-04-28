@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Pastel.Nodes
+﻿namespace Pastel.Nodes
 {
-    public class CastExpression : Expression
+    internal class CastExpression : Expression
     {
         public PType Type { get; set; }
         public Expression Expression { get; set; }

@@ -2,7 +2,7 @@
 
 namespace Pastel
 {
-    public class ParserException : Exception
+    internal class ParserException : Exception
     {
         public ParserException(Token token, string message)
             : base(InterpretToken(token) + message)

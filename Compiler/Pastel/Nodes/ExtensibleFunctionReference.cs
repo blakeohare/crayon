@@ -2,7 +2,7 @@
 
 namespace Pastel.Nodes
 {
-    public class ExtensibleFunctionReference : Expression
+    internal class ExtensibleFunctionReference : Expression
     {
         public string Name { get; set; }
 

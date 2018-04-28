@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Pastel.Nodes
 {
-    class ConstructorReference : Expression
+    internal class ConstructorReference : Expression
     {
         public PType TypeToConstruct { get; set; }
 

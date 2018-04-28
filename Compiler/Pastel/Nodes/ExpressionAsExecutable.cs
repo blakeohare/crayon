@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    public class ExpressionAsExecutable : Executable
+    internal class ExpressionAsExecutable : Executable
     {
         public Expression Expression { get; set; }
 

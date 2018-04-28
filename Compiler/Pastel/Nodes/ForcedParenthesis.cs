@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    public class ForcedParenthesis : Expression
+    internal class ForcedParenthesis : Expression
     {
         public Expression Expression { get; set; }
 

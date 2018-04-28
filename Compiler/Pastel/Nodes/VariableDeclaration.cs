@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    public class VariableDeclaration : Executable, ICompilationEntity
+    internal class VariableDeclaration : Executable, ICompilationEntity
     {
         public CompilationEntityType EntityType
         {

@@ -9,13 +9,13 @@ namespace Pastel.Transpilers
 
         public StringTableBuilder StringTableBuilder { get; set; }
 
-        public List<PythonFakeSwitchStatement> SwitchStatements { get; private set; }
+        internal List<PythonFakeSwitchStatement> SwitchStatements { get; private set; }
 
         public string UniquePrefixForNonCollisions { get; set; }
 
         // This is a hack for conveying extra information to the top-level function serializer for switch statement stuff.
         // This reference is updated in TranslateFunctionDefinition.
-        public FunctionDefinition PY_HACK_CurrentFunctionDef { get; set; }
+        internal FunctionDefinition PY_HACK_CurrentFunctionDef { get; set; }
         public int SwitchCounter { get; set; }
         private int currentTab = 0;
         public string CurrentTab { get; private set; }
@@ -84,7 +84,7 @@ namespace Pastel.Transpilers
             return value;
         }
 
-        public FunctionDefinition CurrentFunctionDefinition
+        internal FunctionDefinition CurrentFunctionDefinition
         {
             get { return this.PY_HACK_CurrentFunctionDef; }
             set

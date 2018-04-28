@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Pastel.Nodes
 {
-    public class WhileLoop : Executable
+    internal class WhileLoop : Executable
     {
         public Expression Condition { get; set; }
         public Executable[] Code { get; set; }

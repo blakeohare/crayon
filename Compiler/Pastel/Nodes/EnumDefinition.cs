@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Pastel.Nodes
 {
-    class EnumDefinition : ICompilationEntity
+    internal class EnumDefinition : ICompilationEntity
     {
         public CompilationEntityType EntityType { get { return CompilationEntityType.ENUM; } }
 

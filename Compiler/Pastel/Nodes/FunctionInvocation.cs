@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    public class FunctionInvocation : Expression
+    internal class FunctionInvocation : Expression
     {
         public Expression Root { get; set; }
         public Token OpenParenToken { get; set; }

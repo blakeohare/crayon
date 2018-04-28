@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Pastel.Nodes
 {
-    public class ExtensibleFunctionInvocation : Expression
+    internal class ExtensibleFunctionInvocation : Expression
     {
         public Expression[] Args { get; set; }
         public ExtensibleFunctionReference FunctionRef { get; set; }

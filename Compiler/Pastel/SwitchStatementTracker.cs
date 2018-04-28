@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel
 {
-    class SwitchStatementTracker
+    internal class SwitchStatementTracker
     {
         private Dictionary<string, Dictionary<string, int>> stringSwitchLookups = new Dictionary<string, Dictionary<string, int>>();
         private Dictionary<string, Dictionary<int, int>> intListLookups = new Dictionary<string, Dictionary<int, int>>();

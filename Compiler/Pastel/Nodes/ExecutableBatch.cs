@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    public class ExecutableBatch : Executable
+    internal class ExecutableBatch : Executable
     {
         public Executable[] Executables { get; set; }
         public ExecutableBatch(Token firstToken, IList<Executable> executables) : base(firstToken)

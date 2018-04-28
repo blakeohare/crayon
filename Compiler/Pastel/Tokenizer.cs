@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Pastel
 {
-    public static class Tokenizer
+    internal static class Tokenizer
     {
         private static readonly HashSet<string> TWO_CHAR_TOKENS = new HashSet<string>(
             "++ -- == != <= >= && || += -= *= /= %= &= |= ^=".Split(' '));

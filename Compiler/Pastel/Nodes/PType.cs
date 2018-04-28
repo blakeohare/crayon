@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
@@ -219,7 +217,7 @@ namespace Pastel.Nodes
             return true;
         }
 
-        public static PType Parse(TokenStream tokens)
+        internal static PType Parse(TokenStream tokens)
         {
             Token firstToken = tokens.Peek();
             PType type = ParseImpl(tokens);
@@ -230,7 +228,7 @@ namespace Pastel.Nodes
             return type;
         }
 
-        public static PType TryParse(TokenStream tokens)
+        internal static PType TryParse(TokenStream tokens)
         {
             int index = tokens.SnapshotState();
             PType type = ParseImpl(tokens);

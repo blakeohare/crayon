@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Pastel
 {
-    public class PastelCompiler
+    internal class PastelCompiler
     {
         internal PastelCompiler[] IncludedScopes { get; private set; }
 

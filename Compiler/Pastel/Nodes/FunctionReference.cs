@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Pastel.Nodes
+﻿namespace Pastel.Nodes
 {
-    public class FunctionReference : Expression
+    internal class FunctionReference : Expression
     {
         public FunctionDefinition Function { get; set; }
         public bool IsLibraryScopedFunction { get; set; }

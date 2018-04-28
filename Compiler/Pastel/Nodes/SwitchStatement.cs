@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Pastel.Nodes
 {
-    public class SwitchStatement : Executable
+    internal class SwitchStatement : Executable
     {
         public Expression Condition { get; set; }
         public SwitchChunk[] Chunks { get; set; }

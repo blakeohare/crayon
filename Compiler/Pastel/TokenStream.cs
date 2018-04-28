@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Pastel
 {
-    public class TokenStream
+    internal class TokenStream
     {
         private Token[] tokens;
         private int index;

@@ -17,23 +17,6 @@ namespace Pastel
         internal AbstractTranslator Transpiler { get; private set; }
         public IInlineImportCodeLoader CodeLoader { get; private set; }
         
-        // This is a temporary hack
-        public static PastelContext of(Language language, PastelCompiler compiler, IInlineImportCodeLoader codeLoader)
-        {
-            PastelContext pc = new PastelContext(language, codeLoader);
-
-            pc.compiler = compiler;
-
-            // Cheesey hack alert:
-            // These are already set in the compiler and shouldn't be referenced anymore.
-            // Throw a null reference error if they are ever accessed.
-            pc.dependencies = null;
-            pc.constants = null;
-            pc.extensibleFunctions = null;
-
-            return pc;
-        }
-        
         public PastelContext(Language language, IInlineImportCodeLoader codeLoader)
         {
             this.CodeLoader = codeLoader;

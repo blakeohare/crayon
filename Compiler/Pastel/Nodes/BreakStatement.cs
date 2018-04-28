@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Pastel.Nodes
+﻿namespace Pastel.Nodes
 {
-    public class BreakStatement : Executable
+    internal class BreakStatement : Executable
     {
         public BreakStatement(Token breakToken) : base(breakToken)
         { }

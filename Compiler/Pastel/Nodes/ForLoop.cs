@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    class ForLoop : Executable
+    internal class ForLoop : Executable
     {
         public Executable[] InitCode { get; set; }
         public Expression Condition { get; set; }

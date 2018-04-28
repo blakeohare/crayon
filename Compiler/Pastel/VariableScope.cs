@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pastel
 {
-    class VariableScope
+    internal class VariableScope
     {
         public FunctionDefinition RootFunctionDefinition;
         private VariableScope parent = null;

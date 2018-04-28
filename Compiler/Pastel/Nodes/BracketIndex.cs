@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Pastel.Nodes
 {
-    public class BracketIndex : Expression
+    internal class BracketIndex : Expression
     {
         public Expression Root { get; set; }
         public Token BracketToken { get; set; }

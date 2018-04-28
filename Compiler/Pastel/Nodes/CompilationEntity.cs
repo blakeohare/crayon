@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Pastel.Nodes
+﻿namespace Pastel.Nodes
 {
-    public enum CompilationEntityType
+    internal enum CompilationEntityType
     {
         FUNCTION,
         ENUM,
@@ -14,7 +9,7 @@ namespace Pastel.Nodes
         STRUCT,
     }
 
-    public interface ICompilationEntity
+    internal interface ICompilationEntity
     {
         CompilationEntityType EntityType { get; }
     }

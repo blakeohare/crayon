@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Pastel.Nodes
 {
-    public class ConstructorInvocation : Expression
+    internal class ConstructorInvocation : Expression
     {
         public PType Type { get; set; }
         public Expression[] Args { get; set; }

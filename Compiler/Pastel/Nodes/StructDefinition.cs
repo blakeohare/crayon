@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    public class StructDefinition : ICompilationEntity
+    internal class StructDefinition : ICompilationEntity
     {
         public CompilationEntityType EntityType { get { return CompilationEntityType.STRUCT; } }
 
