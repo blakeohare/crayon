@@ -18,7 +18,6 @@ namespace JavaScriptAppChrome
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compiler,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
@@ -38,7 +37,7 @@ namespace JavaScriptAppChrome
 
             JavaScriptApp.PlatformImpl jsBasicPlatform = (JavaScriptApp.PlatformImpl)this.PlatformProvider.GetPlatform("javascript-app");
             Dictionary<string, FileOutput> proxyOutput = new Dictionary<string, FileOutput>();
-            jsBasicPlatform.ExportProjectImpl(proxyOutput, compiler, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform);
+            jsBasicPlatform.ExportProjectImpl(proxyOutput, pastelContext, libraries, resourceDatabase, options, libraryNativeInvocationTranslatorProviderForPlatform);
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             replacements["JS_LIB_INCLUSIONS"] = JavaScriptApp.PlatformImpl.GenerateJsLibInclusionHtml(proxyOutput.Keys);
             this.CopyResourceAsText(proxyOutput, "background.js", "Resources/BackgroundJs.txt", replacements);
@@ -61,7 +60,6 @@ namespace JavaScriptAppChrome
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compiler,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)

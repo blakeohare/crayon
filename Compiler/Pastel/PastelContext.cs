@@ -1,6 +1,7 @@
 ﻿using Pastel.Nodes;
 using Pastel.Transpilers;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Pastel
 {
@@ -17,6 +18,23 @@ namespace Pastel
 
         // Remove this once direct dependence on Compiler is removed.
         public PastelCompiler CompilerDEPRECATED { get { return this.compiler; } }
+
+        // This is a temporary hack
+        public static PastelContext of(Language language, PastelCompiler compiler, IInlineImportCodeLoader codeLoader)
+        {
+            PastelContext pc = new PastelContext(language, codeLoader);
+
+            pc.compiler = compiler;
+
+            // Cheesey hack alert:
+            // These are already set in the compiler and shouldn't be referenced anymore.
+            // Throw a null reference error if they are ever accessed.
+            pc.dependencies = null;
+            pc.constants = null;
+            pc.extensibleFunctions = null;
+
+            return pc;
+        }
 
         // TODO: eventually the transpilers should be internal and this will be an enum.
         public PastelContext(Language language, IInlineImportCodeLoader codeLoader)
@@ -88,7 +106,7 @@ namespace Pastel
             return output;
         }
 
-        public Dictionary<string, string> GetCodeForFunctions(TranspilerContext ctx)
+        public Dictionary<string, string> GetCodeForFunctionsLookup(TranspilerContext ctx)
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
             foreach (FunctionDefinition fd in this.compiler.GetFunctionDefinitions())
@@ -97,6 +115,24 @@ namespace Pastel
                 output[fd.NameToken.Value] = ctx.FlushAndClearBuffer();
             }
             return output;
+        }
+
+        public string GetCodeForFunctionDeclarations(TranspilerContext ctx)
+        {
+            return this.compiler.GetFunctionDeclarationsTEMP(ctx, "");
+        }
+
+        public string GetCodeForFunctions(TranspilerContext ctx)
+        {
+            Dictionary<string, string> output = this.GetCodeForFunctionsLookup(ctx);
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            foreach (string fnName in output.Keys.OrderBy(s => s))
+            {
+                sb.Append(output[fnName]);
+                sb.Append(ctx.Transpiler.NewLine);
+                sb.Append(ctx.Transpiler.NewLine);
+            }
+            return sb.ToString().Trim();
         }
 
         public string GetCodeForGlobals(TranspilerContext ctx)

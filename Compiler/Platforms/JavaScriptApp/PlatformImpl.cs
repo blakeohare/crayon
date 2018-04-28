@@ -25,7 +25,6 @@ namespace JavaScriptApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compiler,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
@@ -35,7 +34,6 @@ namespace JavaScriptApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compiler,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
@@ -44,7 +42,7 @@ namespace JavaScriptApp
         {
             this.ExportProjectImpl(
                 output,
-                compiler,
+                pastelContext,
                 libraries,
                 resourceDatabase,
                 options,
@@ -53,7 +51,7 @@ namespace JavaScriptApp
 
         public void ExportProjectImpl(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compiler,
+            Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options,
@@ -76,9 +74,8 @@ namespace JavaScriptApp
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
             List<string> coreVmCode = new List<string>();
-
-            coreVmCode.Add(compiler.GetGlobalsCodeTEMP(ctx, ""));
-            coreVmCode.Add(compiler.GetFunctionCodeTEMP(ctx, ""));
+            coreVmCode.Add(pastelContext.GetCodeForGlobals(ctx));
+            coreVmCode.Add(pastelContext.GetCodeForFunctions(ctx));
 
             string coreVm = string.Join("\r\n", coreVmCode);
 

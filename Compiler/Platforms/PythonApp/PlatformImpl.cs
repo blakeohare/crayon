@@ -24,7 +24,6 @@ namespace PythonApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compiler,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
@@ -34,7 +33,6 @@ namespace PythonApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compiler,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
@@ -51,10 +49,10 @@ namespace PythonApp
                 TextContent = string.Join(this.NL, new string[] {
                     this.LoadTextResource("Resources/header.txt" , replacements),
                     this.LoadTextResource("Resources/TranslationHelper.txt", replacements),
-                    compiler.GetGlobalsCodeTEMP(ctx, ""),
+                    pastelContext.GetCodeForGlobals(ctx),
                     this.LoadTextResource("Resources/LibraryRegistry.txt", replacements),
                     this.LoadTextResource("Resources/ResourceReader.txt", replacements),
-                    compiler.GetFunctionCodeTEMP(ctx, ""),
+                    pastelContext.GetCodeForFunctions(ctx),
                 }),
             };
 

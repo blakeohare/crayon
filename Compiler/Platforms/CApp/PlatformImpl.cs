@@ -19,7 +19,6 @@ namespace CApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compiler,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
@@ -41,7 +40,7 @@ namespace CApp
             cCode.Append(this.LoadTextResource("Resources/TranslationHelper.txt", replacements));
 
             // This needs to be done in LangC
-            Dictionary<string, string> structLookup = compiler.GetStructCodeByClassTEMP(ctx, "");
+            Dictionary<string, string> structLookup = pastelContext.GetCodeForStructs(ctx);
             foreach (string structName in structLookup.Keys)
             {
                 cCode.Append("typedef struct " + structName + " " + structName + ";\n");
@@ -63,11 +62,11 @@ namespace CApp
                 }
             }
 
-            string functionDeclarationCode = compiler.GetFunctionDeclarationsTEMP(ctx, "");
+            string functionDeclarationCode = pastelContext.GetCodeForFunctionDeclarations(ctx);
 
             ctx.StringTableBuilder = new StringTableBuilder("VM");
 
-            string functionDefinitionCode = compiler.GetFunctionCodeTEMP(ctx, "");
+            string functionDefinitionCode = pastelContext.GetCodeForFunctions(ctx);
 
             LangC.PlatformImpl.BuildStringTable(cCode, ctx.StringTableBuilder, this.NL);
 
@@ -86,7 +85,6 @@ namespace CApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compiler,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)

@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Pastel.Nodes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Pastel.Nodes;
-using Common;
 
 namespace Pastel
 {
@@ -14,6 +13,8 @@ namespace Pastel
 
         internal Transpilers.AbstractTranslator Transpiler { get; set; }
 
+        public IInlineImportCodeLoader CodeLoader { get; private set; }
+
         public PastelCompiler(
             Language language,
             IList<PastelCompiler> includedScopes,
@@ -21,6 +22,7 @@ namespace Pastel
             IInlineImportCodeLoader inlineImportCodeLoader,
             ICollection<ExtensibleFunction> extensibleFunctions)
         {
+            this.CodeLoader = inlineImportCodeLoader;
             this.Transpiler = LanguageUtil.GetTranspiler(language);
             this.IncludedScopes = includedScopes.ToArray();
             this.ExtensibleFunctions = extensibleFunctions == null
@@ -388,7 +390,7 @@ namespace Pastel
             return Indent(ctx.FlushAndClearBuffer().Trim(), this.Transpiler.NewLine, indent);
         }
 
-        public string GetGlobalsCodeTEMP(Transpilers.TranspilerContext ctx, string indent)
+        internal string GetGlobalsCodeTEMP(Transpilers.TranspilerContext ctx, string indent)
         {
             this.Transpiler.GenerateCodeForGlobalsDefinitions(ctx, this.GetGlobalsDefinitions());
             return Indent(ctx.FlushAndClearBuffer().Trim(), this.Transpiler.NewLine, indent);

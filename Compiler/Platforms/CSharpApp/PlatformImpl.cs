@@ -81,7 +81,6 @@ namespace CSharpApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compiler,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
@@ -151,7 +150,7 @@ namespace CSharpApp
             replacements["ASSEMBLY_GUID"] = runtimeAssemblyGuid;
 
             this.CopyTemplatedFiles(baseDir, output, replacements, true);
-            this.ExportInterpreter(baseDir, output, compiler);
+            this.ExportInterpreter(baseDir, output, pastelContext);
             this.ExportProjectFiles(baseDir, output, replacements, libraryProjectNameToGuid, true);
             this.CopyResourceAsBinary(output, baseDir + "icon.ico", "ResourcesVm/icon.ico");
 
@@ -228,7 +227,6 @@ namespace CSharpApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compiler,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
@@ -264,7 +262,7 @@ namespace CSharpApp
                             "    <Reference Include=\"" + dotNetLib + "\" />")
                     .ToArray());
 
-            this.ExportInterpreter(baseDir, output, compiler);
+            this.ExportInterpreter(baseDir, output, pastelContext);
 
             output[baseDir + "Resources/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
             output[baseDir + "Resources/ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
@@ -361,10 +359,10 @@ namespace CSharpApp
         private void ExportInterpreter(
             string baseDir,
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compiler)
+            Pastel.PastelContext context)
         {
             TranspilerContext ctx = new TranspilerContext(Pastel.Language.CSHARP);
-            Dictionary<string, string> structLookup = compiler.GetStructCodeByClassTEMP(ctx, "");
+            Dictionary<string, string> structLookup = context.GetCodeForStructs(ctx);
             foreach (string structName in structLookup.Keys)
             {
                 output[baseDir + "Structs/" + structName + ".cs"] = new FileOutput()
@@ -374,7 +372,7 @@ namespace CSharpApp
                 };
             }
 
-            string functionCode = compiler.GetFunctionCodeTEMP(ctx, "");
+            string functionCode = context.GetCodeForFunctions(ctx);
 
             output[baseDir + "Vm/CrayonWrapper.cs"] = new FileOutput()
             {
@@ -396,7 +394,7 @@ namespace CSharpApp
                 }),
             };
 
-            string globalsCode = compiler.GetGlobalsCodeTEMP(ctx, "\t\t");
+            string globalsCode = context.GetCodeForGlobals(ctx);
 
             output[baseDir + "Vm/Globals.cs"] = new FileOutput()
             {

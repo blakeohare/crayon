@@ -20,7 +20,6 @@ namespace JavaApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compiler,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
@@ -30,7 +29,6 @@ namespace JavaApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compiler,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
@@ -50,7 +48,7 @@ namespace JavaApp
 
             LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, libraryNativeInvocationTranslatorProviderForPlatform, imports);
 
-            Dictionary<string, string> structCodeFiles = compiler.GetStructCodeByClassTEMP(ctx, "  ");
+            Dictionary<string, string> structCodeFiles = pastelContext.GetCodeForStructs(ctx);
 
             foreach (string structName in structCodeFiles.Keys)
             {
@@ -76,7 +74,7 @@ namespace JavaApp
                 "",
             }));
 
-            sb.Append(compiler.GetFunctionCodeTEMP(ctx, "  "));
+            sb.Append(pastelContext.GetCodeForFunctions(ctx));
             ctx.TabDepth = 0;
             sb.Append("}");
             sb.Append(this.NL);
@@ -87,7 +85,7 @@ namespace JavaApp
                 TextContent = sb.ToString(),
             };
 
-            string globals = compiler.GetGlobalsCodeTEMP(ctx, "");
+            string globals = pastelContext.GetCodeForGlobals(ctx);
             output["src/org/crayonlang/interpreter/VmGlobal.java"] = new FileOutput()
             {
                 Type = FileOutputType.Text,

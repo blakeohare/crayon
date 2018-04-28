@@ -45,7 +45,7 @@ namespace Exporter
             Dictionary<string, LibraryMetadata> librariesById,
             Dictionary<string, object> constantFlags,
             IInlineImportCodeLoader codeLoader,
-            Pastel.PastelCompiler vm)
+            PastelContext vm)
         {
             using (new PerformanceSection("VmGenerator.GetLibrariesForExport"))
             {
@@ -118,10 +118,11 @@ namespace Exporter
                 Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags() ?? new Dictionary<string, object>();
 
                 this.AddTypeEnumsToConstants(constantFlags);
-                PastelCompiler vm = this.GenerateCoreVmParseTree(platform, codeLoader, constantFlags);
+
+                PastelContext vmPastelContext = this.GenerateCoreVmParseTree(platform, codeLoader, constantFlags);
 
                 Dictionary<string, LibraryMetadata> librariesByID = relevantLibraries.ToDictionary(lib => lib.ID);
-                List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByID, constantFlags, codeLoader, vm);
+                List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByID, constantFlags, codeLoader, vmPastelContext);
 
                 LibraryNativeInvocationTranslatorProvider libTranslationProvider =
                     new LibraryNativeInvocationTranslatorProvider(
@@ -154,8 +155,7 @@ namespace Exporter
 
                     platform.ExportProject(
                         output,
-                        vm,
-                        null,
+                        vmPastelContext,
                         libraries,
                         resourceDatabase,
                         options,
@@ -165,8 +165,7 @@ namespace Exporter
                 {
                     platform.ExportStandaloneVm(
                         output,
-                        vm,
-                        null,
+                        vmPastelContext,
                         libraries,
                         libTranslationProvider);
                 }
@@ -218,28 +217,25 @@ namespace Exporter
             }
         }
 
-        private PastelCompiler GenerateCoreVmParseTree(
+        private PastelContext GenerateCoreVmParseTree(
             Platform.AbstractPlatform platform,
             IInlineImportCodeLoader codeLoader,
             Dictionary<string, object> constantFlags)
         {
             using (new PerformanceSection("VmGenerator.GenerateCoreVmParseTree"))
             {
-                PastelCompiler compiler = new PastelCompiler(
-                    platform.Language,
-                    new PastelCompiler[0],
-                    constantFlags,
-                    codeLoader,
-                    new ExtensibleFunction[0]);
-
+                PastelContext context = new PastelContext(platform.Language, codeLoader);
+                foreach (string key in constantFlags.Keys)
+                {
+                    context.SetConstant(key, constantFlags[key]);
+                }
                 foreach (string file in INTERPRETER_BASE_FILES)
                 {
-                    string code = codeLoader.LoadCode(file);
-                    compiler.CompileBlobOfCode(file, code);
+                    context.CompileFile(file);
                 }
-                compiler.Resolve();
+                context.FinalizeCompilation();
 
-                return compiler;
+                return context;
             }
         }
 
@@ -248,7 +244,7 @@ namespace Exporter
             Dictionary<string, object> constantFlags,
             IInlineImportCodeLoader codeLoader,
             ICollection<LibraryMetadata> relevantLibraries,
-            PastelCompiler sharedScope)
+            PastelContext sharedScope)
         {
             using (new PerformanceSection("VmGenerator.GenerateLibraryParseTree"))
             {
@@ -267,7 +263,7 @@ namespace Exporter
                     {
                         context.AddExtensibleFunction(exFn);
                     }
-                    context.AddDependencyTEMP(sharedScope);
+                    context.AddDependency(sharedScope);
                     foreach (string constKey in constantsLookup.Keys)
                     {
                         context.SetConstant(constKey, constantsLookup[constKey]);

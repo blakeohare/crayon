@@ -149,14 +149,12 @@ namespace Platform
 
         public abstract void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compilerDEPRECATED,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform);
 
         public abstract void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compilerDEPRECATED,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,

@@ -20,7 +20,6 @@ namespace JavaAppAndroid
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compiler,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
@@ -42,7 +41,7 @@ namespace JavaAppAndroid
             LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, libraryNativeInvocationTranslatorProviderForPlatform, imports);
 
             // Without the proper wrapping, I think this is wrong. Although this platform is deprecated and will be removed, so that's probably okay.
-            Dictionary<string, string> structCodeLookup = compiler.GetStructCodeByClassTEMP(ctx, "  ");
+            Dictionary<string, string> structCodeLookup = pastelContext.GetCodeForStructs(ctx);
             foreach (string structName in structCodeLookup.Keys)
             {
                 string structCode = structCodeLookup[structName];
@@ -67,7 +66,7 @@ namespace JavaAppAndroid
                 "",
             }));
 
-            string functionCode = compiler.GetFunctionCodeTEMP(ctx, "  ");
+            string functionCode = pastelContext.GetCodeForFunctions(ctx);
             sb.Append(functionCode);
             ctx.TabDepth = 0;
             sb.Append("}");
@@ -79,7 +78,7 @@ namespace JavaAppAndroid
                 TextContent = sb.ToString(),
             };
 
-            string globalsCode = compiler.GetGlobalsCodeTEMP(ctx, "");
+            string globalsCode = pastelContext.GetCodeForGlobals(ctx);
             output["app/src/main/java/org/crayonlang/interpreter/VmGlobal.java"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -200,7 +199,6 @@ namespace JavaAppAndroid
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelCompiler compiler,
             Pastel.PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary,
             ILibraryNativeInvocationTranslatorProvider libraryNativeInvocationTranslatorProviderForPlatform)
