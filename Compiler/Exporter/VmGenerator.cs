@@ -161,7 +161,6 @@ namespace Exporter
                     platform.ExportProject(
                         output,
                         templates,
-                        vmPastelContext,
                         libraries,
                         resourceDatabase,
                         options);
@@ -171,7 +170,6 @@ namespace Exporter
                     platform.ExportStandaloneVm(
                         output,
                         templates,
-                        vmPastelContext,
                         libraries);
                 }
             }

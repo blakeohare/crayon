@@ -82,7 +82,6 @@ namespace CSharpApp
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             TemplateStorage templates,
-            PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary)
         {
             Dictionary<string, string> libraryProjectNameToGuid = new Dictionary<string, string>();
@@ -150,7 +149,7 @@ namespace CSharpApp
             replacements["ASSEMBLY_GUID"] = runtimeAssemblyGuid;
 
             this.CopyTemplatedFiles(baseDir, output, replacements, true);
-            this.ExportInterpreter(templates, baseDir, output, pastelContext);
+            this.ExportInterpreter(templates, baseDir, output);
             this.ExportProjectFiles(baseDir, output, replacements, libraryProjectNameToGuid, true);
             this.CopyResourceAsBinary(output, baseDir + "icon.ico", "ResourcesVm/icon.ico");
 
@@ -225,7 +224,6 @@ namespace CSharpApp
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             TemplateStorage templates,
-            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
@@ -259,7 +257,7 @@ namespace CSharpApp
                             "    <Reference Include=\"" + dotNetLib + "\" />")
                     .ToArray());
 
-            this.ExportInterpreter(templates, baseDir, output, pastelContext);
+            this.ExportInterpreter(templates, baseDir, output);
 
             output[baseDir + "Resources/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
             output[baseDir + "Resources/ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
@@ -356,8 +354,7 @@ namespace CSharpApp
         private void ExportInterpreter(
             TemplateStorage templates,
             string baseDir,
-            Dictionary<string, FileOutput> output,
-            PastelContext context)
+            Dictionary<string, FileOutput> output)
         {
             foreach (string structKey in templates.GetTemplateKeysWithPrefix("vm:struct:"))
             {

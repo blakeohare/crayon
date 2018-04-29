@@ -26,7 +26,6 @@ namespace PythonApp
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             TemplateStorage templates,
-            PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
@@ -35,15 +34,12 @@ namespace PythonApp
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             TemplateStorage templates,
-            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
-
-            TranspilerContext ctx = pastelContext.GetTranspilerContext();
-
+            
             output["code/vm.py"] = new FileOutput()
             {
                 Type = FileOutputType.Text,

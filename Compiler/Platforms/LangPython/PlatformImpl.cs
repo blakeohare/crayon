@@ -33,7 +33,6 @@ namespace LangPython
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             TemplateStorage templates,
-            PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
@@ -42,7 +41,6 @@ namespace LangPython
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             TemplateStorage templates,
-            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)

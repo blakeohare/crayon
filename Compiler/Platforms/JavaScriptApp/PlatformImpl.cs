@@ -27,7 +27,6 @@ namespace JavaScriptApp
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             TemplateStorage templates,
-            PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
@@ -36,7 +35,6 @@ namespace JavaScriptApp
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             TemplateStorage templates,
-            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
@@ -44,7 +42,6 @@ namespace JavaScriptApp
             this.ExportProjectImpl(
                 output,
                 templates,
-                pastelContext,
                 libraries,
                 resourceDatabase,
                 options);
@@ -53,12 +50,10 @@ namespace JavaScriptApp
         public void ExportProjectImpl(
             Dictionary<string, FileOutput> output,
             TemplateStorage templates,
-            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
         {
-            TranspilerContext ctx = pastelContext.GetTranspilerContext();
             List<string> jsExtraHead = new List<string>() { options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) };
             bool fullPage = options.GetBool(ExportOptionKey.JS_FULL_PAGE);
 

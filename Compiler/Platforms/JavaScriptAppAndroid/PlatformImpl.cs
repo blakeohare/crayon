@@ -19,7 +19,6 @@ namespace JavaScriptAppAndroid
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             TemplateStorage templates,
-            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
@@ -48,7 +47,6 @@ namespace JavaScriptAppAndroid
             this.ParentPlatform.ExportProject(
                 basicProject,
                 templates,
-                pastelContext,
                 libraries,
                 resourceDatabase,
                 options);
@@ -102,7 +100,6 @@ namespace JavaScriptAppAndroid
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             TemplateStorage templates,
-            PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
