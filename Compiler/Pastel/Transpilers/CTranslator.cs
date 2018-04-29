@@ -8,7 +8,11 @@ namespace Pastel.Transpilers
     {
         public CTranslator()
             : base("    ", "\n", false)
-        { }
+        {
+            this.UsesStringTable = true;
+            this.UsesStructDeclarations = true;
+            this.UsesFunctionDeclarations = true;
+        }
 
         public override string TranslateType(PType type)
         {
@@ -1179,6 +1183,16 @@ namespace Pastel.Transpilers
             }
             sb.Append('}');
             sb.Append(this.NewLine);
+            sb.Append(this.NewLine);
+        }
+
+        public override void GenerateCodeForStructDeclaration(TranspilerContext sb, string structName)
+        {
+            sb.Append("typedef struct ");
+            sb.Append(structName);
+            sb.Append(' ');
+            sb.Append(structName);
+            sb.Append(';');
             sb.Append(this.NewLine);
         }
     }

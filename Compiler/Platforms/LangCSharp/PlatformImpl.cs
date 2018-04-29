@@ -32,12 +32,6 @@ namespace LangCSharp
                 };
         }
 
-        public override void GenerateTemplates(
-            TemplateStorage templates,
-            PastelContext vmContext,
-            IList<LibraryForExport> libraries)
-        { }
-
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             TemplateStorage templates,

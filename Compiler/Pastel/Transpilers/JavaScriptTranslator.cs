@@ -8,7 +8,9 @@ namespace Pastel.Transpilers
     internal class JavaScriptTranslator : CurlyBraceTranslator
     {
         public JavaScriptTranslator() : base("\t", "\n", true)
-        { }
+        {
+            this.UsesStructDefinitions = false;
+        }
 
         public override void TranslateArrayGet(TranspilerContext sb, Expression array, Expression index)
         {

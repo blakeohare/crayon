@@ -16,14 +16,6 @@ namespace JavaScriptAppIos
             : base(Language.JAVASCRIPT)
         { }
 
-        public override void GenerateTemplates(
-            TemplateStorage templates,
-            PastelContext vmContext,
-            IList<LibraryForExport> libraries)
-        {
-            this.ParentPlatform.GenerateTemplates(templates, vmContext, libraries);
-        }
-
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             TemplateStorage templates,

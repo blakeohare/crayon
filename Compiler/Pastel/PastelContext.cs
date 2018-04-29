@@ -8,7 +8,7 @@ namespace Pastel
     public class PastelContext
     {
         private PastelCompiler compiler = null;
-        private Language language;
+        public Language Language { get; private set; }
         private List<PastelCompiler> dependencies = new List<PastelCompiler>();
         private Dictionary<string, object> constants = new Dictionary<string, object>();
         private List<ExtensibleFunction> extensibleFunctions = new List<ExtensibleFunction>();
@@ -20,16 +20,22 @@ namespace Pastel
         public PastelContext(Language language, IInlineImportCodeLoader codeLoader)
         {
             this.CodeLoader = codeLoader;
-            this.language = language;
+            this.Language = language;
             this.Transpiler = LanguageUtil.GetTranspiler(language);
         }
+
+        // TODO: refactor this all into a platform capabilities object.
+        public bool UsesStructDefinitions { get { return this.Transpiler.UsesStructDefinitions; } }
+        public bool UsesStringTable {  get { return this.Transpiler.UsesStringTable; } }
+        public bool UsesFunctionDeclarations { get { return this.Transpiler.UsesFunctionDeclarations; } }
+        public bool UsesStructDeclarations { get { return this.Transpiler.UsesStructDeclarations; } }
 
         private TranspilerContext tc = null;
         public TranspilerContext GetTranspilerContext()
         {
             if (this.tc == null)
             {
-                this.tc = new TranspilerContext(this.language, this.extensibleFunctionTranslations);
+                this.tc = new TranspilerContext(this.Language, this.extensibleFunctionTranslations);
             }
             return this.tc;
         }
@@ -58,7 +64,7 @@ namespace Pastel
             if (this.compiler == null)
             {
                 this.compiler = new PastelCompiler(
-                    this.language,
+                    this.Language,
                     this.dependencies,
                     this.constants,
                     this.CodeLoader,
@@ -91,16 +97,17 @@ namespace Pastel
             return output;
         }
 
+        public string GetCodeForStructDeclaration(string structName)
+        {
+            TranspilerContext ctx = this.GetTranspilerContext();
+            this.Transpiler.GenerateCodeForStructDeclaration(ctx, structName);
+            return ctx.FlushAndClearBuffer();
+        }
+
         public Dictionary<string, string> GetCodeForFunctionsLookup()
         {
             TranspilerContext ctx = this.GetTranspilerContext();
-            Dictionary<string, string> output = new Dictionary<string, string>();
-            foreach (FunctionDefinition fd in this.compiler.GetFunctionDefinitions())
-            {
-                this.Transpiler.GenerateCodeForFunction(ctx, fd);
-                output[fd.NameToken.Value] = ctx.FlushAndClearBuffer();
-            }
-            return output;
+            return this.compiler.GetFunctionCodeAsLookupTEMP(ctx, "");
         }
 
         public string GetCodeForFunctionDeclarations()
@@ -142,5 +149,5 @@ namespace Pastel
             this.Transpiler.GenerateCodeForStringTable(ctx, ctx.StringTableBuilder);
             return ctx.FlushAndClearBuffer();
         }
-    } 
+    }
 }

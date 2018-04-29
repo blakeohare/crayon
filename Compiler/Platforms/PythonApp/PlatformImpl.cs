@@ -18,33 +18,6 @@ namespace PythonApp
             : base(Language.PYTHON)
         { }
 
-        public override void GenerateTemplates(
-            TemplateStorage templates,
-            PastelContext vmContext,
-            IList<LibraryForExport> libraries)
-        {
-            string globalsCode = vmContext.GetCodeForGlobals();
-            templates.AddPastelTemplate("vm:globals", globalsCode);
-
-            string functionsCode = vmContext.GetCodeForFunctions();
-            templates.AddPastelTemplate("vm:functions", functionsCode);
-
-            foreach (LibraryForExport library in libraries.Where(lib => lib.HasPastelCode))
-            {
-                string libraryName = library.Name;
-                PastelContext libContext = library.PastelContext;
-                libContext.GetTranspilerContext().UniquePrefixForNonCollisions = libraryName.ToLower();
-
-                string manifestFunction = library.PastelContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
-                        "lib_manifest_RegisterFunctions",
-                        null);
-                templates.AddPastelTemplate("library:" + libraryName + ":manifestfunc", manifestFunction);
-
-                string libFunctions = library.PastelContext.GetCodeForFunctions();
-                templates.AddPastelTemplate("library:" + libraryName + ":functions", libFunctions);
-            }
-        }
-
         public override IDictionary<string, object> GetConstantFlags()
         {
             return new Dictionary<string, object>();

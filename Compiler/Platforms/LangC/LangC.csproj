@@ -62,7 +62,6 @@
     <EmbeddedResource Include="Resources\Dictionary.txt" />
     <EmbeddedResource Include="Resources\String.txt" />
     <EmbeddedResource Include="Resources\TranslationHelper.txt" />
-    <EmbeddedResource Include="Resources\ValueStruct.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

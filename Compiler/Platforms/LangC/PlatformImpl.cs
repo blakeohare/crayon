@@ -1,10 +1,8 @@
 ﻿using Common;
 using Pastel;
-using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace LangC
 {
@@ -34,12 +32,6 @@ namespace LangC
                     { "IS_C", true },
                 };
         }
-
-        public override void GenerateTemplates(
-            TemplateStorage templates,
-            PastelContext vmContext,
-            IList<LibraryForExport> libraries)
-        { }
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,

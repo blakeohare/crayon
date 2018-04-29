@@ -19,27 +19,6 @@ namespace JavaApp
             : base(Language.JAVA)
         { }
 
-        public override void GenerateTemplates(
-            TemplateStorage templates,
-            PastelContext vmContext,
-            IList<LibraryForExport> libraries)
-        {
-            this.ParentPlatform.GenerateTemplates(templates, vmContext, libraries);
-
-            string globalsCode = vmContext.GetCodeForGlobals();
-            templates.AddPastelTemplate("vm:globals", globalsCode);
-
-            string functionCode = vmContext.GetCodeForFunctions();
-            templates.AddPastelTemplate("vm:functions", functionCode);
-            vmContext.GetTranspilerContext().TabDepth = 0; // TODO: check if this is this still necessary? was there a bug?
-
-            Dictionary<string, string> structCodeFiles = vmContext.GetCodeForStructs();
-            foreach (string structName in structCodeFiles.Keys)
-            {
-                templates.AddPastelTemplate("vm:struct:" + structName, structName, structCodeFiles[structName]);
-            }
-        }
-
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
             TemplateStorage templtes,

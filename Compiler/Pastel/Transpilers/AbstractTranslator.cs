@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Pastel.Transpilers
 {
@@ -12,8 +11,18 @@ namespace Pastel.Transpilers
         public string[] Tabs { get; set; }
         public string NewLine { get; private set; }
 
+        public bool UsesStructDefinitions { get; protected set; }
+        public bool UsesStringTable { get; protected set; }
+        public bool UsesFunctionDeclarations { get; protected set; }
+        public bool UsesStructDeclarations { get; protected set; }
+
         public AbstractTranslator(string tab, string newLine)
         {
+            this.UsesStructDefinitions = true;
+            this.UsesFunctionDeclarations = false;
+            this.UsesStructDeclarations = false;
+            this.UsesStringTable = false;
+
             this.NewLine = newLine;
             this.TabChar = tab;
             this.Tabs = new string[20];
@@ -504,6 +513,11 @@ namespace Pastel.Transpilers
         public abstract void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef);
         public abstract void GenerateCodeForFunction(TranspilerContext sb, FunctionDefinition funcDef);
         public abstract void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, IList<VariableDeclaration> globals);
+
+        public virtual void GenerateCodeForStructDeclaration(TranspilerContext sb, string structName)
+        {
+            throw new NotSupportedException();
+        }
 
         // Overridden in languages that require a function to be declared separately in order for declaration order to not matter, such as C.
         public virtual void GenerateCodeForFunctionDeclaration(TranspilerContext sb, FunctionDefinition funcDef)

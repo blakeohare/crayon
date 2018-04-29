@@ -1,5 +1,4 @@
-﻿using Common;
-using Pastel.Nodes;
+﻿using Pastel.Nodes;
 using System;
 using System.Collections.Generic;
 
@@ -17,8 +16,10 @@ namespace Pastel.Transpilers
             }
         }
 
-        public PythonTranslator() : base("  ", "\n")
+        public PythonTranslator()
+            : base("  ", "\n")
         {
+            this.UsesStructDefinitions = false;
         }
 
         public override string TranslateType(PType type)

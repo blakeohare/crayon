@@ -202,12 +202,5 @@ namespace Platform
             Options options,
             string outputDirectory)
         { }
-
-        private Dictionary<string, string> pastelGeneratedCode = new Dictionary<string, string>();
-
-        public abstract void GenerateTemplates(
-            TemplateStorage templates,
-            PastelContext vmContext,
-            IList<LibraryForExport> libraries);
     }
 }

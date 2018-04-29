@@ -50,33 +50,6 @@ namespace JavaScriptApp
                 options);
         }
 
-        public override void GenerateTemplates(
-            TemplateStorage templates,
-            PastelContext vmContext,
-            IList<LibraryForExport> libraries)
-        {
-            string globalsCode = vmContext.GetCodeForGlobals();
-            templates.AddPastelTemplate("vm:globals", globalsCode);
-
-            string functionsCode = vmContext.GetCodeForFunctions();
-            templates.AddPastelTemplate("vm:functions", functionsCode);
-
-            foreach (LibraryForExport library in libraries)
-            {
-                PastelContext libContext = library.PastelContext;
-                string libraryName = library.Name;
-                libContext.GetTranspilerContext().UniquePrefixForNonCollisions = libraryName.ToLower();
-
-                string manifestFunctionCode = libContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
-                    "lib_manifest_RegisterFunctions",
-                    "lib_" + libraryName.ToLower() + "_manifest");
-                templates.AddPastelTemplate("library:" + libraryName + ":manifestfunc", manifestFunctionCode);
-
-                string libFunctions = libContext.GetCodeForFunctions();
-                templates.AddPastelTemplate("library:" + libraryName + ":functions", libFunctions);
-            }
-        }
-
         public void ExportProjectImpl(
             Dictionary<string, FileOutput> output,
             TemplateStorage templates,

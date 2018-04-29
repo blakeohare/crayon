@@ -18,48 +18,6 @@ namespace CApp
             : base(Language.C)
         { }
 
-        public override void GenerateTemplates(
-            TemplateStorage templates,
-            PastelContext vmContext,
-            IList<LibraryForExport> libraries)
-        {
-            vmContext.GetTranspilerContext().StringTableBuilder = new StringTableBuilder("VM");
-
-            string functionDeclarationCode = vmContext.GetCodeForFunctionDeclarations();
-            templates.AddPastelTemplate("vm:functionsdecl", functionDeclarationCode);
-
-            string functionDefinitionCode = vmContext.GetCodeForFunctions();
-            templates.AddPastelTemplate("vm:functions", functionDeclarationCode);
-
-            Dictionary<string, string> structsLookup = vmContext.GetCodeForStructs();
-            foreach (string structName in structsLookup.Keys)
-            {
-                templates.AddPastelTemplate("vm:struct:" + structName, structName, structsLookup[structName]);
-            }
-            // Override the auto generated Value struct since I need to do weird things with unions.
-            templates.AddPastelTemplate(
-                "vm:struct:Value",
-                "Value",
-                this.LoadTextResource("Resources/ValueStruct.txt",
-                new Dictionary<string, string>()));
-
-
-            StringBuilder sb = new StringBuilder();
-            foreach (string structKey in templates.GetTemplateKeysWithPrefix("vm:struct:"))
-            {
-                string structName = templates.GetName(structKey);
-                sb.Append("typedef struct " + structName + " " + structName + ";");
-                sb.Append(this.NL);
-            }
-            templates.AddPastelTemplate("vm:structsdecl", sb.ToString().Trim());
-
-            templates.AddPastelTemplate(
-                "vm:stringtable",
-                vmContext.GetStringConstantTable());
-
-            // TODO: libraries for C
-        }
-
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
             TemplateStorage templates,

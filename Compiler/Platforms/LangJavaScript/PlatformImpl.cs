@@ -36,12 +36,6 @@ namespace LangJavaScript
             throw new NotImplementedException();
         }
 
-        public override void GenerateTemplates(
-            TemplateStorage templates,
-            PastelContext vmContext,
-            IList<LibraryForExport> libraries)
-        { }
-
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
             ResourceDatabase resDb)

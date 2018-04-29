@@ -1,6 +1,5 @@
 ﻿using Common;
 using Pastel;
-using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -17,41 +16,6 @@ namespace CSharpApp
         public PlatformImpl()
             : base(Language.CSHARP)
         { }
-
-        public override void GenerateTemplates(
-            TemplateStorage templates,
-            PastelContext vmContext,
-            IList<LibraryForExport> libraries)
-        {
-            this.ParentPlatform.GenerateTemplates(templates, vmContext, libraries);
-
-            string vmGlobalsCode = vmContext.GetCodeForGlobals();
-            templates.AddPastelTemplate("vm:globals", vmGlobalsCode);
-
-            string functionCode = vmContext.GetCodeForFunctions();
-            templates.AddPastelTemplate("vm:functions", functionCode);
-
-            Dictionary<string, string> structLookup = vmContext.GetCodeForStructs();
-            foreach (string structName in structLookup.Keys)
-            {
-                templates.AddPastelTemplate("vm:struct:" + structName, structName, structLookup[structName]);
-            }
-
-            foreach (LibraryForExport library in libraries)
-            {
-                PastelContext libContext = library.PastelContext;
-                string allFunctionCode = libContext.GetCodeForFunctions();
-                templates.AddPastelTemplate("library:" + library.Name + ":functions", allFunctionCode);
-                Dictionary<string, string> libStructLookup = libContext.GetCodeForStructs();
-                foreach (string structName in libStructLookup.Keys)
-                {
-                    templates.AddPastelTemplate(
-                        "library:" + library.Name + ":struct:" + structName,
-                        structName,
-                        libStructLookup[structName]);
-                }
-            }
-        }
 
         public override IDictionary<string, object> GetConstantFlags()
         {

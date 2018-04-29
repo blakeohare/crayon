@@ -129,7 +129,11 @@ namespace Exporter
 
                 Platform.TemplateStorage templates = new Platform.TemplateStorage();
 
-                platform.GenerateTemplates(templates, vmPastelContext, libraries);
+                Platform.TemplateGenerator.GenerateTemplatesForVmExport(templates, vmPastelContext);
+                foreach (Platform.LibraryForExport library in libraries.Where(lib => lib.HasPastelCode))
+                {
+                    Platform.TemplateGenerator.GenerateTemplatesForLibraryExport(templates, library);
+                }
 
                 if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
                 {

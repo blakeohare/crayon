@@ -4,8 +4,6 @@ using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace LangJava
 {
@@ -18,68 +16,6 @@ namespace LangJava
         public PlatformImpl()
             : base(Language.JAVA)
         { }
-
-        public override void GenerateTemplates(
-            TemplateStorage templates,
-            PastelContext vmContext,
-            IList<LibraryForExport> libraries)
-        {
-            foreach (LibraryForExport library in libraries.Where(lib => lib.HasPastelCode))
-            {
-                PastelContext libContext = library.PastelContext;
-                string manifestFunctionCode = libContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
-                    "lib_manifest_RegisterFunctions",
-                    null);
-                templates.AddPastelTemplate("library:" + library.Name + ":manifestfunc", manifestFunctionCode);
-
-                Dictionary<string, string> lookup = libContext.GetCodeForFunctionsLookup();
-                StringBuilder sb = new StringBuilder();
-                string reflectionCalledPrefix = "lib_" + library.Name.ToLower() + "_function_";
-                libContext.GetTranspilerContext().TabDepth = 1;
-                foreach (string functionName in lookup.Keys.OrderBy(k => k))
-                {
-                    string functionCode = lookup[functionName];
-                    bool isFunctionPointerObject = functionName.StartsWith(reflectionCalledPrefix);
-
-                    if (isFunctionPointerObject)
-                    {
-                        // This is kind of hacky, BUT...
-
-                        // If the generated function needs to be used as a function pointer, (i.e. it's one
-                        // of the library's VM-native bridge methods) change the name to "invoke" and then
-                        // wrap it in a dummy class that extends LibraryFunctionPointer. The manifest
-                        // function will simply instantiate this in lieu of a performant way to do
-                        // function pointers in Java.
-                        functionCode = functionCode.Replace(
-                            "public static Value v_" + functionName + "(Value[] ",
-                            "public Value invoke(Value[] ");
-                        functionCode =
-                            "  public static class FP_" + functionName + " extends LibraryFunctionPointer {\n" +
-                            "  " + functionCode.Replace("\n", "\n  ").TrimEnd() + "\n" +
-                            "  }";
-                    }
-                    sb.Append(functionCode);
-                    sb.Append(this.NL);
-                }
-                templates.AddPastelTemplate("library:" + library.Name + ":functions", sb.ToString().Trim());
-                libContext.GetTranspilerContext().TabDepth = 0;
-
-
-
-                Dictionary<string, string> libStructs = libContext.GetCodeForStructs();
-                foreach (string structName in libStructs.Keys)
-                {
-                    string structCode = libStructs[structName];
-
-                    structCode = WrapStructCodeWithImports(this.NL, structCode);
-
-                    templates.AddPastelTemplate(
-                        "library:" + library.Name + ":struct:" + structName,
-                        structName,
-                        structCode);
-                }
-            }
-        }
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
@@ -161,6 +97,8 @@ namespace LangJava
                     {
                         string structName = templates.GetName(structKey);
                         string structCode = templates.GetCode(structKey);
+
+                        structCode = WrapStructCodeWithImports(platform.NL, structCode);
 
                         // This is kind of a hack.
                         // TODO: better.
