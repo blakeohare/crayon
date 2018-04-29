@@ -68,9 +68,6 @@ namespace Crayon
                 typeof(LangJavaScript.PlatformImpl).Assembly,
                 typeof(LangPython.PlatformImpl).Assembly,
                 typeof(PythonApp.PlatformImpl).Assembly,
-
-                // Experimental.
-                typeof(JavaAppAndroid.PlatformImpl).Assembly,
             };
         }
     }

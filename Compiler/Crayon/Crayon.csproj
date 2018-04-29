@@ -84,10 +84,6 @@
       <Project>{0d8c38e5-6b24-489e-9c0f-d8101086bc32}</Project>
       <Name>JavaApp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platforms\JavaAppAndroid\JavaAppAndroid.csproj">
-      <Project>{41debac3-73c4-4f40-93ae-9fe02319276d}</Project>
-      <Name>JavaAppAndroid</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Platforms\JavaScriptAppAndroid\JavaScriptAppAndroid.csproj">
       <Project>{e495cac5-84b5-481b-a997-f370fe1b40a2}</Project>
       <Name>JavaScriptAppAndroid</Name>

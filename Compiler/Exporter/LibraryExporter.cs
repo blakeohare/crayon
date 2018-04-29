@@ -169,11 +169,7 @@ namespace Exporter
                 this.translationsLookup = new Dictionary<string, string>();
                 foreach (string inheritedPlatformName in platform.InheritanceChain.Reverse())
                 {
-                    // TODO: make this hack less hacky.
-                    string effectivePlatformName = inheritedPlatformName.StartsWith("experimental-")
-                        ? inheritedPlatformName.Substring("experimental-".Length)
-                        : inheritedPlatformName;
-                    Dictionary<string, string> translationsForPlatform = this.Metadata.GetMethodTranslations(effectivePlatformName);
+                    Dictionary<string, string> translationsForPlatform = this.Metadata.GetMethodTranslations(inheritedPlatformName);
                     this.translationsLookup = Util.MergeDictionaries(translationsLookup, translationsForPlatform);
                 }
             }

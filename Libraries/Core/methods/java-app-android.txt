@@ -1,5 +1,0 @@
-$_app_data_root: AndroidTranslationHelper.getAppDataRoot()
-$_byte_code_get_raw_string: AndroidTranslationHelper.getRawByteCodeString()
-$_print_stderr: android.util.Log.d("", [ARG:1])
-$_print_stdout: android.util.Log.d("", [ARG:1])
-$_resource_read_text_file: AndroidTranslationHelper.resourceReadText([ARG:1])
