@@ -55,10 +55,10 @@ namespace JavaScriptApp
             PastelContext vmContext,
             IList<LibraryForExport> libraries)
         {
-            string globalsCode = vmContext.GetCodeForGlobals(vmContext.GetTranspilerContext());
+            string globalsCode = vmContext.GetCodeForGlobals();
             templates.AddPastelTemplate("vm:globals", globalsCode);
 
-            string functionsCode = vmContext.GetCodeForFunctions(vmContext.GetTranspilerContext());
+            string functionsCode = vmContext.GetCodeForFunctions();
             templates.AddPastelTemplate("vm:functions", functionsCode);
 
             foreach (LibraryForExport library in libraries)
@@ -69,11 +69,10 @@ namespace JavaScriptApp
 
                 string manifestFunctionCode = libContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
                     "lib_manifest_RegisterFunctions",
-                    "lib_" + libraryName.ToLower() + "_manifest",
-                    libContext.GetTranspilerContext());
+                    "lib_" + libraryName.ToLower() + "_manifest");
                 templates.AddPastelTemplate("library:" + libraryName + ":manifestfunc", manifestFunctionCode);
 
-                string libFunctions = libContext.GetCodeForFunctions(libContext.GetTranspilerContext());
+                string libFunctions = libContext.GetCodeForFunctions();
                 templates.AddPastelTemplate("library:" + libraryName + ":functions", libFunctions);
             }
         }

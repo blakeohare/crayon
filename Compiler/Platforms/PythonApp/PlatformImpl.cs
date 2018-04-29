@@ -23,12 +23,11 @@ namespace PythonApp
             PastelContext vmContext,
             IList<LibraryForExport> libraries)
         {
-            string globalsCode = vmContext.GetCodeForGlobals(vmContext.GetTranspilerContext());
+            string globalsCode = vmContext.GetCodeForGlobals();
             templates.AddPastelTemplate("vm:globals", globalsCode);
 
-            string functionsCode = vmContext.GetCodeForFunctions(vmContext.GetTranspilerContext());
+            string functionsCode = vmContext.GetCodeForFunctions();
             templates.AddPastelTemplate("vm:functions", functionsCode);
-
 
             foreach (LibraryForExport library in libraries.Where(lib => lib.HasPastelCode))
             {
@@ -38,11 +37,10 @@ namespace PythonApp
 
                 string manifestFunction = library.PastelContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
                         "lib_manifest_RegisterFunctions",
-                        null,
-                        libContext.GetTranspilerContext());
+                        null);
                 templates.AddPastelTemplate("library:" + libraryName + ":manifestfunc", manifestFunction);
 
-                string libFunctions = library.PastelContext.GetCodeForFunctions(libContext.GetTranspilerContext());
+                string libFunctions = library.PastelContext.GetCodeForFunctions();
                 templates.AddPastelTemplate("library:" + libraryName + ":functions", libFunctions);
             }
         }

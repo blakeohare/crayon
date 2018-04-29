@@ -79,8 +79,9 @@ namespace Pastel
             return this;
         }
 
-        public Dictionary<string, string> GetCodeForStructs(TranspilerContext ctx)
+        public Dictionary<string, string> GetCodeForStructs()
         {
+            TranspilerContext ctx = this.GetTranspilerContext();
             Dictionary<string, string> output = new Dictionary<string, string>();
             foreach (StructDefinition sd in this.compiler.GetStructDefinitions())
             {
@@ -90,8 +91,9 @@ namespace Pastel
             return output;
         }
 
-        public Dictionary<string, string> GetCodeForFunctionsLookup(TranspilerContext ctx)
+        public Dictionary<string, string> GetCodeForFunctionsLookup()
         {
+            TranspilerContext ctx = this.GetTranspilerContext();
             Dictionary<string, string> output = new Dictionary<string, string>();
             foreach (FunctionDefinition fd in this.compiler.GetFunctionDefinitions())
             {
@@ -101,14 +103,16 @@ namespace Pastel
             return output;
         }
 
-        public string GetCodeForFunctionDeclarations(TranspilerContext ctx)
+        public string GetCodeForFunctionDeclarations()
         {
+            TranspilerContext ctx = this.GetTranspilerContext();
             return this.compiler.GetFunctionDeclarationsTEMP(ctx, "");
         }
 
-        public string GetCodeForFunctions(TranspilerContext ctx)
+        public string GetCodeForFunctions()
         {
-            Dictionary<string, string> output = this.GetCodeForFunctionsLookup(ctx);
+            TranspilerContext ctx = this.GetTranspilerContext();
+            Dictionary<string, string> output = this.GetCodeForFunctionsLookup();
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             foreach (string fnName in output.Keys.OrderBy(s => s))
             {
@@ -119,14 +123,16 @@ namespace Pastel
             return sb.ToString().Trim();
         }
 
-        public string GetCodeForGlobals(TranspilerContext ctx)
+        public string GetCodeForGlobals()
         {
+            TranspilerContext ctx = this.GetTranspilerContext();
             this.Transpiler.GenerateCodeForGlobalsDefinitions(ctx, this.compiler.GetGlobalsDefinitions());
             return ctx.FlushAndClearBuffer();
         }
 
-        public string GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(string name, string swapOutWithNewNameOrNull, TranspilerContext ctx)
+        public string GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(string name, string swapOutWithNewNameOrNull)
         {
+            TranspilerContext ctx = this.GetTranspilerContext();
             return this.compiler.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(name, swapOutWithNewNameOrNull, ctx, "");
         }
     }

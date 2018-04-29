@@ -36,8 +36,6 @@ namespace JavaAppAndroid
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             this.OutputAndroidBoilerplate(output, replacements, options);
 
-            TranspilerContext ctx = pastelContext.GetTranspilerContext();
-
             string srcPath = "app/src/main/java";
 
             string[] imports = new string[]
@@ -48,7 +46,7 @@ namespace JavaAppAndroid
             LangJava.PlatformImpl.ExportJavaLibraries(this, templates, srcPath, libraries, output, imports);
 
             // Without the proper wrapping, I think this is wrong. Although this platform is deprecated and will be removed, so that's probably okay.
-            Dictionary<string, string> structCodeLookup = pastelContext.GetCodeForStructs(ctx);
+            Dictionary<string, string> structCodeLookup = pastelContext.GetCodeForStructs();
             foreach (string structName in structCodeLookup.Keys)
             {
                 string structCode = structCodeLookup[structName];
@@ -73,9 +71,8 @@ namespace JavaAppAndroid
                 "",
             }));
 
-            string functionCode = pastelContext.GetCodeForFunctions(ctx);
+            string functionCode = pastelContext.GetCodeForFunctions();
             sb.Append(functionCode);
-            ctx.TabDepth = 0;
             sb.Append("}");
             sb.Append(this.NL);
 
@@ -85,7 +82,7 @@ namespace JavaAppAndroid
                 TextContent = sb.ToString(),
             };
 
-            string globalsCode = pastelContext.GetCodeForGlobals(ctx);
+            string globalsCode = pastelContext.GetCodeForGlobals();
             output["app/src/main/java/org/crayonlang/interpreter/VmGlobal.java"] = new FileOutput()
             {
                 Type = FileOutputType.Text,

@@ -25,13 +25,13 @@ namespace CSharpApp
         {
             this.ParentPlatform.GenerateTemplates(templates, vmContext, libraries);
 
-            string vmGlobalsCode = vmContext.GetCodeForGlobals(vmContext.GetTranspilerContext());
+            string vmGlobalsCode = vmContext.GetCodeForGlobals();
             templates.AddPastelTemplate("vm:globals", vmGlobalsCode);
 
-            string functionCode = vmContext.GetCodeForFunctions(vmContext.GetTranspilerContext());
+            string functionCode = vmContext.GetCodeForFunctions();
             templates.AddPastelTemplate("vm:functions", functionCode);
 
-            Dictionary<string, string> structLookup = vmContext.GetCodeForStructs(vmContext.GetTranspilerContext());
+            Dictionary<string, string> structLookup = vmContext.GetCodeForStructs();
             foreach (string structName in structLookup.Keys)
             {
                 templates.AddPastelTemplate("vm:struct:" + structName, structName, structLookup[structName]);
@@ -40,10 +40,9 @@ namespace CSharpApp
             foreach (LibraryForExport library in libraries)
             {
                 PastelContext libContext = library.PastelContext;
-                TranspilerContext ctx = libContext.GetTranspilerContext();
-                string allFunctionCode = libContext.GetCodeForFunctions(ctx);
+                string allFunctionCode = libContext.GetCodeForFunctions();
                 templates.AddPastelTemplate("library:" + library.Name + ":functions", allFunctionCode);
-                Dictionary<string, string> libStructLookup = libContext.GetCodeForStructs(ctx);
+                Dictionary<string, string> libStructLookup = libContext.GetCodeForStructs();
                 foreach (string structName in libStructLookup.Keys)
                 {
                     templates.AddPastelTemplate(

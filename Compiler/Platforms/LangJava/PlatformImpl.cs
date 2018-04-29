@@ -29,11 +29,10 @@ namespace LangJava
                 PastelContext libContext = library.PastelContext;
                 string manifestFunctionCode = libContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
                     "lib_manifest_RegisterFunctions",
-                    null,
-                    libContext.GetTranspilerContext());
+                    null);
                 templates.AddPastelTemplate("library:" + library.Name + ":manifestfunc", manifestFunctionCode);
 
-                Dictionary<string, string> lookup = libContext.GetCodeForFunctionsLookup(libContext.GetTranspilerContext());
+                Dictionary<string, string> lookup = libContext.GetCodeForFunctionsLookup();
                 StringBuilder sb = new StringBuilder();
                 string reflectionCalledPrefix = "lib_" + library.Name.ToLower() + "_function_";
                 libContext.GetTranspilerContext().TabDepth = 1;
@@ -67,7 +66,7 @@ namespace LangJava
 
 
 
-                Dictionary<string, string> libStructs = libContext.GetCodeForStructs(libContext.GetTranspilerContext());
+                Dictionary<string, string> libStructs = libContext.GetCodeForStructs();
                 foreach (string structName in libStructs.Keys)
                 {
                     string structCode = libStructs[structName];

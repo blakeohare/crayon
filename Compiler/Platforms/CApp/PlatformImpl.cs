@@ -25,13 +25,13 @@ namespace CApp
         {
             vmContext.GetTranspilerContext().StringTableBuilder = new StringTableBuilder("VM");
 
-            string functionDeclarationCode = vmContext.GetCodeForFunctionDeclarations(vmContext.GetTranspilerContext());
+            string functionDeclarationCode = vmContext.GetCodeForFunctionDeclarations();
             templates.AddPastelTemplate("vm:functionsdecl", functionDeclarationCode);
 
-            string functionDefinitionCode = vmContext.GetCodeForFunctions(vmContext.GetTranspilerContext());
+            string functionDefinitionCode = vmContext.GetCodeForFunctions();
             templates.AddPastelTemplate("vm:functions", functionDeclarationCode);
 
-            Dictionary<string, string> structsLookup = vmContext.GetCodeForStructs(vmContext.GetTranspilerContext());
+            Dictionary<string, string> structsLookup = vmContext.GetCodeForStructs();
             foreach (string structName in structsLookup.Keys)
             {
                 templates.AddPastelTemplate("vm:struct:" + structName, structName, structsLookup[structName]);
