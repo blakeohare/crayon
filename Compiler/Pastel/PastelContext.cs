@@ -135,5 +135,12 @@ namespace Pastel
             TranspilerContext ctx = this.GetTranspilerContext();
             return this.compiler.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(name, swapOutWithNewNameOrNull, ctx, "");
         }
-    }
+
+        public string GetStringConstantTable()
+        {
+            TranspilerContext ctx = this.GetTranspilerContext();
+            this.Transpiler.GenerateCodeForStringTable(ctx, ctx.StringTableBuilder);
+            return ctx.FlushAndClearBuffer();
+        }
+    } 
 }

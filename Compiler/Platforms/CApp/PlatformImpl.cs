@@ -55,9 +55,7 @@ namespace CApp
 
             templates.AddPastelTemplate(
                 "vm:stringtable",
-                LangC.PlatformImpl.BuildStringTable(
-                    vmContext.GetTranspilerContext().StringTableBuilder,
-                    this.NL));
+                vmContext.GetStringConstantTable());
 
             // TODO: libraries for C
         }

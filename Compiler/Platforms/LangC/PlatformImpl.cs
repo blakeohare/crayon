@@ -65,41 +65,5 @@ namespace LangC
         {
             throw new NotImplementedException();
         }
-
-        // TODO: this should be in Pastel
-        public static string BuildStringTable(StringTableBuilder stringTable, string newline)
-        {
-            StringBuilder sb = new StringBuilder();
-            List<string> names = stringTable.Names;
-            List<string> values = stringTable.Values;
-            int total = names.Count;
-            for (int i = 0; i < total; ++i)
-            {
-                sb.Append("int* ");
-                sb.Append(names[i]);
-                sb.Append(';');
-                sb.Append(newline);
-            }
-            sb.Append("void populate_string_table_for_");
-            sb.Append(stringTable.Prefix);
-            sb.Append("()");
-            sb.Append(newline);
-            sb.Append('{');
-            sb.Append(newline);
-            for (int i = 0; i < total; ++i)
-            {
-                sb.Append('\t');
-                sb.Append(names[i]);
-                sb.Append(" = String_from_utf8(");
-                sb.Append(Util.ConvertStringValueToCode(values[i]).Replace("%", "%%"));
-                sb.Append(");");
-                sb.Append(newline);
-            }
-            sb.Append('}');
-            sb.Append(newline);
-            sb.Append(newline);
-
-            return sb.ToString();
-        }
     }
 }

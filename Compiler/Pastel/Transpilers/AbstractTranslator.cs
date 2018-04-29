@@ -510,5 +510,12 @@ namespace Pastel.Transpilers
         {
             throw new NotSupportedException();
         }
+
+        // Overridden in languages that can't allocate strings in the local scope.
+        // For example, strings allocated in C will be reclaimed once the scope ends.
+        public virtual void GenerateCodeForStringTable(TranspilerContext sb, StringTableBuilder stringTable)
+        {
+            throw new NotSupportedException();
+        }
     }
 }
