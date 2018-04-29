@@ -1,4 +1,5 @@
 ﻿using Common;
+using Pastel;
 using Pastel.Transpilers;
 using Platform;
 using System;
@@ -14,8 +15,37 @@ namespace PythonApp
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-            : base(Pastel.Language.PYTHON)
+            : base(Language.PYTHON)
         { }
+
+        public override void GenerateTemplates(
+            TemplateStorage templates,
+            PastelContext vmContext,
+            IList<LibraryForExport> libraries)
+        {
+            string globalsCode = vmContext.GetCodeForGlobals(vmContext.GetTranspilerContext());
+            templates.AddPastelTemplate("vm:globals", globalsCode);
+
+            string functionsCode = vmContext.GetCodeForFunctions(vmContext.GetTranspilerContext());
+            templates.AddPastelTemplate("vm:functions", functionsCode);
+
+
+            foreach (LibraryForExport library in libraries.Where(lib => lib.HasPastelCode))
+            {
+                string libraryName = library.Name;
+                PastelContext libContext = library.PastelContext;
+                libContext.GetTranspilerContext().UniquePrefixForNonCollisions = libraryName.ToLower();
+
+                string manifestFunction = library.PastelContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
+                        "lib_manifest_RegisterFunctions",
+                        null,
+                        libContext.GetTranspilerContext());
+                templates.AddPastelTemplate("library:" + libraryName + ":manifestfunc", manifestFunction);
+
+                string libFunctions = library.PastelContext.GetCodeForFunctions(libContext.GetTranspilerContext());
+                templates.AddPastelTemplate("library:" + libraryName + ":functions", libFunctions);
+            }
+        }
 
         public override IDictionary<string, object> GetConstantFlags()
         {
@@ -24,7 +54,8 @@ namespace PythonApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
@@ -32,14 +63,15 @@ namespace PythonApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
-            TranspilerContext ctx = pastelContext.CreateTranspilerContext();
+            TranspilerContext ctx = pastelContext.GetTranspilerContext();
 
             output["code/vm.py"] = new FileOutput()
             {
@@ -47,16 +79,16 @@ namespace PythonApp
                 TextContent = string.Join(this.NL, new string[] {
                     this.LoadTextResource("Resources/header.txt" , replacements),
                     this.LoadTextResource("Resources/TranslationHelper.txt", replacements),
-                    pastelContext.GetCodeForGlobals(ctx),
+                    templates.GetCode("vm:globals"),
                     this.LoadTextResource("Resources/LibraryRegistry.txt", replacements),
                     this.LoadTextResource("Resources/ResourceReader.txt", replacements),
-                    pastelContext.GetCodeForFunctions(ctx),
+                    templates.GetCode("vm:functions"),
                 }),
             };
 
             foreach (LibraryForExport library in libraries)
             {
-                TranspilerContext libCtx = library.PastelContext.CreateTranspilerContext();
+                TranspilerContext libCtx = library.PastelContext.GetTranspilerContext();
                 string libraryName = library.Name;
                 List<string> libraryLines = new List<string>();
                 if (library.HasPastelCode)
@@ -69,11 +101,8 @@ namespace PythonApp
                     libraryLines.Add("import inspect");
                     libraryLines.Add("from code.vm import *");
                     libraryLines.Add("");
-                    libraryLines.Add(library.PastelContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
-                        "lib_manifest_RegisterFunctions",
-                        null,
-                        libCtx));
-                    libraryLines.Add(library.PastelContext.GetCodeForFunctions(libCtx));
+                    libraryLines.Add(templates.GetCode("library:" + libraryName + ":manifestfunc"));
+                    libraryLines.Add(templates.GetCode("library:" + libraryName + ":functions"));
                     libraryLines.Add("");
                     libraryLines.Add("_moduleInfo = ('" + libraryName + "', dict(inspect.getmembers(sys.modules[__name__])))");
                     libraryLines.Add("");

@@ -1,4 +1,5 @@
 ﻿using Common;
+using Pastel;
 using Pastel.Transpilers;
 using Platform;
 using System;
@@ -15,12 +16,34 @@ namespace JavaApp
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-            : base(Pastel.Language.JAVA)
+            : base(Language.JAVA)
         { }
+
+        public override void GenerateTemplates(
+            TemplateStorage templates,
+            PastelContext vmContext,
+            IList<LibraryForExport> libraries)
+        {
+            this.ParentPlatform.GenerateTemplates(templates, vmContext, libraries);
+
+            string globalsCode = vmContext.GetCodeForGlobals(vmContext.GetTranspilerContext());
+            templates.AddPastelTemplate("vm:globals", globalsCode);
+
+            string functionCode = vmContext.GetCodeForFunctions(vmContext.GetTranspilerContext());
+            templates.AddPastelTemplate("vm:functions", functionCode);
+            vmContext.GetTranspilerContext().TabDepth = 0; // TODO: check if this is this still necessary? was there a bug?
+
+            Dictionary<string, string> structCodeFiles = vmContext.GetCodeForStructs(vmContext.GetTranspilerContext());
+            foreach (string structName in structCodeFiles.Keys)
+            {
+                templates.AddPastelTemplate("vm:struct:" + structName, structName, structCodeFiles[structName]);
+            }
+        }
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templtes,
+            PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
@@ -28,13 +51,14 @@ namespace JavaApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
-            TranspilerContext ctx = pastelContext.CreateTranspilerContext();
+
             string srcPath = "src";
             string srcPackagePath = srcPath + "/" + replacements["JAVA_PACKAGE"].Replace('.', '/') + "/";
 
@@ -44,13 +68,13 @@ namespace JavaApp
                 "import org.crayonlang.interpreter.AwtTranslationHelper;",
             };
 
-            LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, imports);
+            LangJava.PlatformImpl.ExportJavaLibraries(this, templates, srcPath, libraries, output, imports);
 
-            Dictionary<string, string> structCodeFiles = pastelContext.GetCodeForStructs(ctx);
-
-            foreach (string structName in structCodeFiles.Keys)
+            foreach (string structKey in templates.GetTemplateKeysWithPrefix("vm:struct:"))
             {
-                string structCode = structCodeFiles[structName];
+                string structName = templates.GetName(structKey);
+                string structCode = templates.GetCode(structKey);
+
                 output["src/org/crayonlang/interpreter/structs/" + structName + ".java"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
@@ -72,8 +96,7 @@ namespace JavaApp
                 "",
             }));
 
-            sb.Append(pastelContext.GetCodeForFunctions(ctx));
-            ctx.TabDepth = 0;
+            sb.Append(templates.GetCode("vm:functions"));
             sb.Append("}");
             sb.Append(this.NL);
 
@@ -83,11 +106,10 @@ namespace JavaApp
                 TextContent = sb.ToString(),
             };
 
-            string globals = pastelContext.GetCodeForGlobals(ctx);
             output["src/org/crayonlang/interpreter/VmGlobal.java"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = globals,
+                TextContent = templates.GetCode("vm:globals"),
             };
 
             // common Java helper files

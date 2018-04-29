@@ -1,5 +1,5 @@
 ﻿using Common;
-using Pastel.Transpilers;
+using Pastel;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace LangCSharp
         public override string NL { get { return "\r\n"; } }
 
         public PlatformImpl()
-            : base(Pastel.Language.CSHARP)
+            : base(Language.CSHARP)
         { }
 
         public override IDictionary<string, object> GetConstantFlags()
@@ -32,9 +32,16 @@ namespace LangCSharp
                 };
         }
 
+        public override void GenerateTemplates(
+            TemplateStorage templates,
+            PastelContext vmContext,
+            IList<LibraryForExport> libraries)
+        { }
+
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
@@ -42,7 +49,8 @@ namespace LangCSharp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
@@ -50,7 +58,9 @@ namespace LangCSharp
             throw new InvalidOperationException("This platform does not support direct export.");
         }
 
-        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
+        public override Dictionary<string, string> GenerateReplacementDictionary(
+            Options options,
+            ResourceDatabase resDb)
         {
             Dictionary<string, string> replacements = AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
             replacements["PROJECT_GUID"] = "project guid goes here.";

@@ -18,6 +18,7 @@ namespace LangJavaScript
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
+            TemplateStorage templates,
             PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary)
         {
@@ -26,6 +27,7 @@ namespace LangJavaScript
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
+            TemplateStorage templates,
             PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
@@ -34,7 +36,15 @@ namespace LangJavaScript
             throw new NotImplementedException();
         }
 
-        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
+        public override void GenerateTemplates(
+            TemplateStorage templates,
+            PastelContext vmContext,
+            IList<LibraryForExport> libraries)
+        { }
+
+        public override Dictionary<string, string> GenerateReplacementDictionary(
+            Options options,
+            ResourceDatabase resDb)
         {
             return AbstractPlatform.GenerateGeneralReplacementsDictionary(options);
         }

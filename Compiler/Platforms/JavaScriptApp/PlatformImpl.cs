@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Pastel;
 
 namespace JavaScriptApp
 {
@@ -15,7 +16,7 @@ namespace JavaScriptApp
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-            : base(Pastel.Language.JAVASCRIPT)
+            : base(Language.JAVASCRIPT)
         { }
 
         public override IDictionary<string, object> GetConstantFlags()
@@ -25,7 +26,8 @@ namespace JavaScriptApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
@@ -33,27 +35,58 @@ namespace JavaScriptApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
         {
             this.ExportProjectImpl(
                 output,
+                templates,
                 pastelContext,
                 libraries,
                 resourceDatabase,
                 options);
         }
 
+        public override void GenerateTemplates(
+            TemplateStorage templates,
+            PastelContext vmContext,
+            IList<LibraryForExport> libraries)
+        {
+            string globalsCode = vmContext.GetCodeForGlobals(vmContext.GetTranspilerContext());
+            templates.AddPastelTemplate("vm:globals", globalsCode);
+
+            string functionsCode = vmContext.GetCodeForFunctions(vmContext.GetTranspilerContext());
+            templates.AddPastelTemplate("vm:functions", functionsCode);
+
+            foreach (LibraryForExport library in libraries)
+            {
+                PastelContext libContext = library.PastelContext;
+                string libraryName = library.Name;
+                libContext.GetTranspilerContext().UniquePrefixForNonCollisions = libraryName.ToLower();
+
+                string manifestFunctionCode = libContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
+                    "lib_manifest_RegisterFunctions",
+                    "lib_" + libraryName.ToLower() + "_manifest",
+                    libContext.GetTranspilerContext());
+                templates.AddPastelTemplate("library:" + libraryName + ":manifestfunc", manifestFunctionCode);
+
+                string libFunctions = libContext.GetCodeForFunctions(libContext.GetTranspilerContext());
+                templates.AddPastelTemplate("library:" + libraryName + ":functions", libFunctions);
+            }
+        }
+
         public void ExportProjectImpl(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
         {
-            TranspilerContext ctx = pastelContext.CreateTranspilerContext();
+            TranspilerContext ctx = pastelContext.GetTranspilerContext();
             List<string> jsExtraHead = new List<string>() { options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) };
             bool fullPage = options.GetBool(ExportOptionKey.JS_FULL_PAGE);
 
@@ -69,16 +102,10 @@ namespace JavaScriptApp
 
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
-            List<string> coreVmCode = new List<string>();
-            coreVmCode.Add(pastelContext.GetCodeForGlobals(ctx));
-            coreVmCode.Add(pastelContext.GetCodeForFunctions(ctx));
-
-            string coreVm = string.Join("\r\n", coreVmCode);
-
             output["vm.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = coreVm,
+                TextContent = templates.GetCode("vm:globals") + this.NL + this.NL + templates.GetCode("vm:functions"),
             };
 
             List<LibraryForExport> librariesWithCode = new List<LibraryForExport>();
@@ -86,19 +113,15 @@ namespace JavaScriptApp
             {
                 if (library.HasPastelCode)
                 {
-                    Pastel.PastelContext libContext = library.PastelContext;
+                    string libraryName = library.Name;
+                    PastelContext libContext = library.PastelContext;
 
                     List<string> libraryLines = new List<string>();
-
-                    string newManifestFunctionName = "lib_" + library.Name.ToLower() + "_manifest";
-
-                    string manifestFunctionCode = libContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
-                        "lib_manifest_RegisterFunctions",
-                        newManifestFunctionName,
-                        ctx);
-                    libraryLines.Add(manifestFunctionCode);
-                    libraryLines.Add(libContext.GetCodeForFunctions(ctx));
-                    libraryLines.Add("C$common$scrapeLibFuncNames('" + library.Name.ToLower() + "');");
+                    libraryLines.Add(templates.GetCode("library:" + libraryName + ":manifestfunc"));
+                    libraryLines.Add("");
+                    libraryLines.Add(templates.GetCode("library:" + libraryName + ":functions"));
+                    libraryLines.Add("");
+                    libraryLines.Add("C$common$scrapeLibFuncNames('" + libraryName.ToLower() + "');");
                     libraryLines.Add("");
 
                     // add helper functions after the scrape.
@@ -108,7 +131,7 @@ namespace JavaScriptApp
                         libraryLines.Add(embedCode.StringValue);
                     }
 
-                    output["libs/lib_" + library.Name.ToLower() + ".js"] = new FileOutput()
+                    output["libs/lib_" + libraryName.ToLower() + ".js"] = new FileOutput()
                     {
                         Type = FileOutputType.Text,
                         TextContent = string.Join("\n", libraryLines),
@@ -211,7 +234,9 @@ namespace JavaScriptApp
             return "";
         }
 
-        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
+        public override Dictionary<string, string> GenerateReplacementDictionary(
+            Options options,
+            ResourceDatabase resDb)
         {
             return Util.MergeDictionaries(
                 this.ParentPlatform.GenerateReplacementDictionary(options, resDb),

@@ -1,4 +1,5 @@
 ﻿using Common;
+using Pastel;
 using Pastel.Transpilers;
 using Platform;
 using System;
@@ -13,12 +14,21 @@ namespace JavaScriptAppAndroid
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-            : base(Pastel.Language.JAVASCRIPT)
+            : base(Language.JAVASCRIPT)
         { }
+
+        public override void GenerateTemplates(
+            TemplateStorage templates,
+            PastelContext vmContext,
+            IList<LibraryForExport> libraries)
+        {
+            this.ParentPlatform.GenerateTemplates(templates, vmContext, libraries);
+        }
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
@@ -46,6 +56,7 @@ namespace JavaScriptAppAndroid
             Dictionary<string, FileOutput> basicProject = new Dictionary<string, FileOutput>();
             this.ParentPlatform.ExportProject(
                 basicProject,
+                templates,
                 pastelContext,
                 libraries,
                 resourceDatabase,
@@ -76,7 +87,9 @@ namespace JavaScriptAppAndroid
             }
         }
 
-        public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
+        public override Dictionary<string, string> GenerateReplacementDictionary(
+            Options options,
+            ResourceDatabase resDb)
         {
             Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
 
@@ -97,7 +110,8 @@ namespace JavaScriptAppAndroid
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();

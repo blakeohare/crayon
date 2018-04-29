@@ -1,8 +1,11 @@
 ﻿using Common;
+using Pastel;
 using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace LangJava
 {
@@ -13,12 +16,76 @@ namespace LangJava
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-            : base(Pastel.Language.JAVA)
+            : base(Language.JAVA)
         { }
+
+        public override void GenerateTemplates(
+            TemplateStorage templates,
+            PastelContext vmContext,
+            IList<LibraryForExport> libraries)
+        {
+            foreach (LibraryForExport library in libraries.Where(lib => lib.HasPastelCode))
+            {
+                PastelContext libContext = library.PastelContext;
+                string manifestFunctionCode = libContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
+                    "lib_manifest_RegisterFunctions",
+                    null,
+                    libContext.GetTranspilerContext());
+                templates.AddPastelTemplate("library:" + library.Name + ":manifestfunc", manifestFunctionCode);
+
+                Dictionary<string, string> lookup = libContext.GetCodeForFunctionsLookup(libContext.GetTranspilerContext());
+                StringBuilder sb = new StringBuilder();
+                string reflectionCalledPrefix = "lib_" + library.Name.ToLower() + "_function_";
+                libContext.GetTranspilerContext().TabDepth = 1;
+                foreach (string functionName in lookup.Keys.OrderBy(k => k))
+                {
+                    string functionCode = lookup[functionName];
+                    bool isFunctionPointerObject = functionName.StartsWith(reflectionCalledPrefix);
+
+                    if (isFunctionPointerObject)
+                    {
+                        // This is kind of hacky, BUT...
+
+                        // If the generated function needs to be used as a function pointer, (i.e. it's one
+                        // of the library's VM-native bridge methods) change the name to "invoke" and then
+                        // wrap it in a dummy class that extends LibraryFunctionPointer. The manifest
+                        // function will simply instantiate this in lieu of a performant way to do
+                        // function pointers in Java.
+                        functionCode = functionCode.Replace(
+                            "public static Value v_" + functionName + "(Value[] ",
+                            "public Value invoke(Value[] ");
+                        functionCode =
+                            "  public static class FP_" + functionName + " extends LibraryFunctionPointer {\n" +
+                            "  " + functionCode.Replace("\n", "\n  ").TrimEnd() + "\n" +
+                            "  }";
+                    }
+                    sb.Append(functionCode);
+                    sb.Append(this.NL);
+                }
+                templates.AddPastelTemplate("library:" + library.Name + ":functions", sb.ToString().Trim());
+                libContext.GetTranspilerContext().TabDepth = 0;
+
+
+
+                Dictionary<string, string> libStructs = libContext.GetCodeForStructs(libContext.GetTranspilerContext());
+                foreach (string structName in libStructs.Keys)
+                {
+                    string structCode = libStructs[structName];
+
+                    structCode = WrapStructCodeWithImports(this.NL, structCode);
+
+                    templates.AddPastelTemplate(
+                        "library:" + library.Name + ":struct:" + structName,
+                        structName,
+                        structCode);
+                }
+            }
+        }
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
@@ -26,7 +93,8 @@ namespace LangJava
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
@@ -36,6 +104,7 @@ namespace LangJava
 
         public static void ExportJavaLibraries(
             AbstractPlatform platform,
+            TemplateStorage templates,
             string srcPath,
             IList<LibraryForExport> libraries,
             Dictionary<string, FileOutput> output,
@@ -60,7 +129,7 @@ namespace LangJava
             {
                 if (library.HasPastelCode)
                 {
-                    TranspilerContext ctx = library.PastelContext.CreateTranspilerContext();
+                    TranspilerContext ctx = library.PastelContext.GetTranspilerContext();
                     List<string> libraryCode = new List<string>()
                     {
                         "package org.crayonlang.libraries." + library.Name.ToLower() + ";",
@@ -75,44 +144,9 @@ namespace LangJava
                         "",
                     });
 
-                    ctx.TabDepth = 1;
+                    libraryCode.Add(templates.GetCode("library:" + library.Name + ":manifestfunc"));
+                    libraryCode.Add(templates.GetCode("library:" + library.Name + ":functions"));
 
-                    Pastel.PastelContext libContext = library.PastelContext;
-
-                    string reflectionCalledPrefix = "lib_" + library.Name.ToLower() + "_function_";
-                    string manifestFunctionCode = libContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
-                        "lib_manifest_RegisterFunctions",
-                        null,
-                        ctx);
-                    libraryCode.Add(manifestFunctionCode);
-                    Dictionary<string, string> lookup = libContext.GetCodeForFunctionsLookup(ctx);
-
-                    foreach (string functionName in lookup.Keys)
-                    {
-                        string functionCode = lookup[functionName];
-                        bool isFunctionPointerObject = functionName.StartsWith(reflectionCalledPrefix);
-
-                        if (isFunctionPointerObject)
-                        {
-                            // This is kind of hacky, BUT...
-
-                            // If the generated function needs to be used as a function pointer, (i.e. it's one
-                            // of the library's VM-native bridge methods) change the name to "invoke" and then
-                            // wrap it in a dummy class that extends LibraryFunctionPointer. The manifest
-                            // function will simply instantiate this in lieu of a performant way to do
-                            // function pointers in Java.
-                            functionCode = functionCode.Replace(
-                                "public static Value v_" + functionName + "(Value[] ",
-                                "public Value invoke(Value[] ");
-                            functionCode =
-                                "  public static class FP_" + functionName + " extends LibraryFunctionPointer {\n" +
-                                "  " + functionCode.Replace("\n", "\n  ").TrimEnd() + "\n" +
-                                "  }\n";
-                        }
-                        libraryCode.Add(functionCode);
-                    }
-
-                    ctx.TabDepth = 0;
                     libraryCode.Add("}");
                     libraryCode.Add("");
 
@@ -124,13 +158,10 @@ namespace LangJava
                         TextContent = string.Join(platform.NL, libraryCode),
                     };
 
-                    Dictionary<string, string> libStructs = libContext.GetCodeForStructs(ctx);
-
-                    foreach (string structName in libStructs.Keys)
+                    foreach (string structKey in templates.GetTemplateKeysWithPrefix("library:" + library.Name + ":struct:"))
                     {
-                        string structCode = libStructs[structName];
-
-                        structCode = WrapStructCodeWithImports(platform.NL, structCode);
+                        string structName = templates.GetName(structKey);
+                        string structCode = templates.GetCode(structKey);
 
                         // This is kind of a hack.
                         // TODO: better.

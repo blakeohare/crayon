@@ -1,5 +1,5 @@
 ﻿using Common;
-using Pastel.Transpilers;
+using Pastel;
 using System;
 using System.Collections.Generic;
 
@@ -7,14 +7,14 @@ namespace Platform
 {
     public abstract class AbstractPlatform
     {
-        public AbstractPlatform(Pastel.Language language)
+        public AbstractPlatform(Language language)
         {
             this.Language = language;
         }
 
         public IPlatformProvider PlatformProvider { get; set; }
 
-        public Pastel.Language Language { get; private set; }
+        public Language Language { get; private set; }
         public abstract string Name { get; }
         public abstract string InheritsFrom { get; }
 
@@ -149,12 +149,14 @@ namespace Platform
 
         public abstract void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary);
 
         public abstract void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options);
@@ -199,8 +201,13 @@ namespace Platform
         public virtual void GleanInformationFromPreviouslyExportedProject(
             Options options,
             string outputDirectory)
-        {
+        { }
 
-        }
+        private Dictionary<string, string> pastelGeneratedCode = new Dictionary<string, string>();
+
+        public abstract void GenerateTemplates(
+            TemplateStorage templates,
+            PastelContext vmContext,
+            IList<LibraryForExport> libraries);
     }
 }

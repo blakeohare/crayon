@@ -16,7 +16,7 @@ namespace Pastel
 
         internal AbstractTranslator Transpiler { get; private set; }
         public IInlineImportCodeLoader CodeLoader { get; private set; }
-        
+
         public PastelContext(Language language, IInlineImportCodeLoader codeLoader)
         {
             this.CodeLoader = codeLoader;
@@ -24,9 +24,14 @@ namespace Pastel
             this.Transpiler = LanguageUtil.GetTranspiler(language);
         }
 
-        public TranspilerContext CreateTranspilerContext()
+        private TranspilerContext tc = null;
+        public TranspilerContext GetTranspilerContext()
         {
-            return new TranspilerContext(this.language, this.extensibleFunctionTranslations);
+            if (this.tc == null)
+            {
+                this.tc = new TranspilerContext(this.language, this.extensibleFunctionTranslations);
+            }
+            return this.tc;
         }
 
         public PastelContext AddDependency(PastelContext context)
@@ -34,7 +39,7 @@ namespace Pastel
             this.dependencies.Add(context.compiler);
             return this;
         }
-        
+
         public PastelContext SetConstant(string key, object value)
         {
             this.constants[key] = value;

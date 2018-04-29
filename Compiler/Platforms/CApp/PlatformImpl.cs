@@ -1,4 +1,5 @@
 ﻿using Common;
+using Pastel;
 using Pastel.Transpilers;
 using Platform;
 using System;
@@ -14,64 +15,95 @@ namespace CApp
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-            : base(Pastel.Language.C)
+            : base(Language.C)
         { }
+
+        public override void GenerateTemplates(
+            TemplateStorage templates,
+            PastelContext vmContext,
+            IList<LibraryForExport> libraries)
+        {
+            vmContext.GetTranspilerContext().StringTableBuilder = new StringTableBuilder("VM");
+
+            string functionDeclarationCode = vmContext.GetCodeForFunctionDeclarations(vmContext.GetTranspilerContext());
+            templates.AddPastelTemplate("vm:functionsdecl", functionDeclarationCode);
+
+            string functionDefinitionCode = vmContext.GetCodeForFunctions(vmContext.GetTranspilerContext());
+            templates.AddPastelTemplate("vm:functions", functionDeclarationCode);
+
+            Dictionary<string, string> structsLookup = vmContext.GetCodeForStructs(vmContext.GetTranspilerContext());
+            foreach (string structName in structsLookup.Keys)
+            {
+                templates.AddPastelTemplate("vm:struct:" + structName, structName, structsLookup[structName]);
+            }
+            // Override the auto generated Value struct since I need to do weird things with unions.
+            templates.AddPastelTemplate(
+                "vm:struct:Value",
+                "Value",
+                this.LoadTextResource("Resources/ValueStruct.txt",
+                new Dictionary<string, string>()));
+
+
+            StringBuilder sb = new StringBuilder();
+            foreach (string structKey in templates.GetTemplateKeysWithPrefix("vm:struct:"))
+            {
+                string structName = templates.GetName(structKey);
+                sb.Append("typedef struct " + structName + " " + structName + ";");
+                sb.Append(this.NL);
+            }
+            templates.AddPastelTemplate("vm:structsdecl", sb.ToString().Trim());
+
+            templates.AddPastelTemplate(
+                "vm:stringtable",
+                LangC.PlatformImpl.BuildStringTable(
+                    vmContext.GetTranspilerContext().StringTableBuilder,
+                    this.NL));
+
+            // TODO: libraries for C
+        }
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
         {
-            TranspilerContext ctx = pastelContext.CreateTranspilerContext();
+            TranspilerContext ctx = pastelContext.GetTranspilerContext();
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             StringBuilder cCode = new StringBuilder();
 
-            cCode.Append("#include <stdio.h>\n");
-            cCode.Append("#include <stdlib.h>\n");
-            cCode.Append("#include <string.h>\n");
+            cCode.Append("#include <stdio.h>");
+            cCode.Append(this.NL);
+            cCode.Append("#include <stdlib.h>");
+            cCode.Append(this.NL);
+            cCode.Append("#include <string.h>");
+            cCode.Append(this.NL);
             cCode.Append(this.NL);
 
             cCode.Append(this.LoadTextResource("Resources/List.txt", replacements));
             cCode.Append(this.LoadTextResource("Resources/String.txt", replacements));
             cCode.Append(this.LoadTextResource("Resources/Dictionary.txt", replacements));
             cCode.Append(this.LoadTextResource("Resources/TranslationHelper.txt", replacements));
-
-            // This needs to be done in LangC
-            Dictionary<string, string> structLookup = pastelContext.GetCodeForStructs(ctx);
-            foreach (string structName in structLookup.Keys)
-            {
-                cCode.Append("typedef struct " + structName + " " + structName + ";\n");
-            }
-
             cCode.Append(this.NL);
 
-            foreach (string structName in structLookup.Keys)
-            {
-                if (structName == "Value")
-                {
-                    // I need to do fancy stuff with unions, so special case this one.
-                    string valueStruct = this.LoadTextResource("Resources/ValueStruct.txt", new Dictionary<string, string>());
-                    cCode.Append(valueStruct);
-                }
-                else
-                {
-                    cCode.Append(structLookup[structName]);
-                }
-            }
-
-            string functionDeclarationCode = pastelContext.GetCodeForFunctionDeclarations(ctx);
-
-            ctx.StringTableBuilder = new StringTableBuilder("VM");
-
-            string functionDefinitionCode = pastelContext.GetCodeForFunctions(ctx);
-
-            LangC.PlatformImpl.BuildStringTable(cCode, ctx.StringTableBuilder, this.NL);
-
-            cCode.Append(functionDeclarationCode);
+            cCode.Append(templates.GetCode("vm:structsdecl"));
             cCode.Append(this.NL);
-            cCode.Append(functionDefinitionCode);
+
+            foreach (string structKey in templates.GetTemplateKeysWithPrefix("vm:struct:"))
+            {
+                string structName = templates.GetName(structKey);
+                cCode.Append(templates.GetCode(structKey));
+            }
+            cCode.Append(this.NL);
+
+            cCode.Append(templates.GetCode("vm:stringtable"));
+            cCode.Append(this.NL);
+            cCode.Append(templates.GetCode("vm:functionsdecl"));
+            cCode.Append(this.NL);
+            cCode.Append(templates.GetCode("vm:functions"));
+            cCode.Append(this.NL);
 
             cCode.Append(this.LoadTextResource("Resources/main.txt", replacements));
 
@@ -84,7 +116,8 @@ namespace CApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();

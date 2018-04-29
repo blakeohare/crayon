@@ -1,4 +1,5 @@
 ﻿using Common;
+using Pastel;
 using Pastel.Transpilers;
 using Platform;
 using System;
@@ -11,16 +12,23 @@ namespace JavaAppAndroid
     public class PlatformImpl : AbstractPlatform
     {
         public PlatformImpl()
-            : base(Pastel.Language.JAVA6)
+            : base(Language.JAVA6)
         { }
 
         public override string InheritsFrom { get { return "lang-java"; } }
         public override string Name { get { return "experimental-java-app-android"; } }
         public override string NL { get { return "\n"; } }
 
+        public override void GenerateTemplates(
+            TemplateStorage templates,
+            PastelContext vmContext,
+            IList<LibraryForExport> libraries)
+        { }
+
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
@@ -28,7 +36,7 @@ namespace JavaAppAndroid
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             this.OutputAndroidBoilerplate(output, replacements, options);
 
-            TranspilerContext ctx = pastelContext.CreateTranspilerContext();
+            TranspilerContext ctx = pastelContext.GetTranspilerContext();
 
             string srcPath = "app/src/main/java";
 
@@ -37,7 +45,7 @@ namespace JavaAppAndroid
                 "import org.crayonlang.interpreter.AndroidTranslationHelper;",
             };
 
-            LangJava.PlatformImpl.ExportJavaLibraries(this, srcPath, libraries, output, imports);
+            LangJava.PlatformImpl.ExportJavaLibraries(this, templates, srcPath, libraries, output, imports);
 
             // Without the proper wrapping, I think this is wrong. Although this platform is deprecated and will be removed, so that's probably okay.
             Dictionary<string, string> structCodeLookup = pastelContext.GetCodeForStructs(ctx);
@@ -198,7 +206,8 @@ namespace JavaAppAndroid
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();

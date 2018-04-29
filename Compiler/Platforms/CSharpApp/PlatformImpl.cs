@@ -1,6 +1,7 @@
 ﻿using Common;
-using Platform;
+using Pastel;
 using Pastel.Transpilers;
+using Platform;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,44 @@ namespace CSharpApp
         public override string NL { get { return "\r\n"; } }
 
         public PlatformImpl()
-            : base(Pastel.Language.CSHARP)
+            : base(Language.CSHARP)
         { }
+
+        public override void GenerateTemplates(
+            TemplateStorage templates,
+            PastelContext vmContext,
+            IList<LibraryForExport> libraries)
+        {
+            this.ParentPlatform.GenerateTemplates(templates, vmContext, libraries);
+
+            string vmGlobalsCode = vmContext.GetCodeForGlobals(vmContext.GetTranspilerContext());
+            templates.AddPastelTemplate("vm:globals", vmGlobalsCode);
+
+            string functionCode = vmContext.GetCodeForFunctions(vmContext.GetTranspilerContext());
+            templates.AddPastelTemplate("vm:functions", functionCode);
+
+            Dictionary<string, string> structLookup = vmContext.GetCodeForStructs(vmContext.GetTranspilerContext());
+            foreach (string structName in structLookup.Keys)
+            {
+                templates.AddPastelTemplate("vm:struct:" + structName, structName, structLookup[structName]);
+            }
+
+            foreach (LibraryForExport library in libraries)
+            {
+                PastelContext libContext = library.PastelContext;
+                TranspilerContext ctx = libContext.GetTranspilerContext();
+                string allFunctionCode = libContext.GetCodeForFunctions(ctx);
+                templates.AddPastelTemplate("library:" + library.Name + ":functions", allFunctionCode);
+                Dictionary<string, string> libStructLookup = libContext.GetCodeForStructs(ctx);
+                foreach (string structName in libStructLookup.Keys)
+                {
+                    templates.AddPastelTemplate(
+                        "library:" + library.Name + ":struct:" + structName,
+                        structName,
+                        libStructLookup[structName]);
+                }
+            }
+        }
 
         public override IDictionary<string, object> GetConstantFlags()
         {
@@ -81,7 +118,8 @@ namespace CSharpApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary)
         {
             Dictionary<string, string> libraryProjectNameToGuid = new Dictionary<string, string>();
@@ -114,7 +152,7 @@ namespace CSharpApp
             {
                 string libBaseDir = "Libs/" + library.Name + "/";
                 List<LangCSharp.DllFile> dlls = new List<LangCSharp.DllFile>();
-                if (this.GetLibraryCode(libBaseDir, library, dlls, output))
+                if (this.GetLibraryCode(templates, libBaseDir, library, dlls, output))
                 {
                     string name = library.Name;
                     string projectGuid = IdGenerator.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-project");
@@ -149,7 +187,7 @@ namespace CSharpApp
             replacements["ASSEMBLY_GUID"] = runtimeAssemblyGuid;
 
             this.CopyTemplatedFiles(baseDir, output, replacements, true);
-            this.ExportInterpreter(baseDir, output, pastelContext);
+            this.ExportInterpreter(templates, baseDir, output, pastelContext);
             this.ExportProjectFiles(baseDir, output, replacements, libraryProjectNameToGuid, true);
             this.CopyResourceAsBinary(output, baseDir + "icon.ico", "ResourcesVm/icon.ico");
 
@@ -159,28 +197,27 @@ namespace CSharpApp
 
         // Returns true if any export is necessary i.e. bytecode-only libraries will return false.
         private bool GetLibraryCode(
+            TemplateStorage templates,
             string baseDir,
             LibraryForExport library,
             List<LangCSharp.DllFile> dllsOut,
             Dictionary<string, FileOutput> filesOut)
         {
-            Pastel.PastelContext libContext = library.PastelContext;
-            TranspilerContext ctx = libContext.CreateTranspilerContext();
             string libraryName = library.Name;
             List<string> libraryLines = new List<string>();
             if (library.HasPastelCode)
             {
                 string libraryDir = baseDir + "Libraries/" + libraryName;
-                string allFunctionCode = libContext.GetCodeForFunctions(ctx);
+                string allFunctionCode = templates.GetCode("library:" + libraryName + ":functions");
                 libraryLines.Add(allFunctionCode);
 
-                Dictionary<string, string> structLookup = libContext.GetCodeForStructs(ctx);
-                foreach (string structName in structLookup.Keys)
+                foreach (string structKey in templates.GetTemplateKeysWithPrefix("library:" + libraryName + ":struct:"))
                 {
+                    string structName = templates.GetName(structKey);
                     filesOut[libraryDir + "/Structs/" + structName + ".cs"] = new FileOutput()
                     {
                         Type = FileOutputType.Text,
-                        TextContent = this.WrapStructCode(structLookup[structName]),
+                        TextContent = this.WrapStructCode(templates.GetCode(structKey)),
                     };
                 }
 
@@ -224,7 +261,8 @@ namespace CSharpApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
@@ -245,7 +283,7 @@ namespace CSharpApp
                 {
                     dotNetLibs.Add(dotNetLib);
                 }
-                this.GetLibraryCode(baseDir, library, dlls, output);
+                this.GetLibraryCode(templates, baseDir, library, dlls, output);
             }
 
             LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls, new Dictionary<string, string>());
@@ -258,7 +296,7 @@ namespace CSharpApp
                             "    <Reference Include=\"" + dotNetLib + "\" />")
                     .ToArray());
 
-            this.ExportInterpreter(baseDir, output, pastelContext);
+            this.ExportInterpreter(templates, baseDir, output, pastelContext);
 
             output[baseDir + "Resources/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
             output[baseDir + "Resources/ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
@@ -353,22 +391,22 @@ namespace CSharpApp
         }
 
         private void ExportInterpreter(
+            TemplateStorage templates,
             string baseDir,
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext context)
+            PastelContext context)
         {
-            TranspilerContext ctx = context.CreateTranspilerContext();
-            Dictionary<string, string> structLookup = context.GetCodeForStructs(ctx);
-            foreach (string structName in structLookup.Keys)
+            foreach (string structKey in templates.GetTemplateKeysWithPrefix("vm:struct:"))
             {
+                string structName = templates.GetName(structKey);
                 output[baseDir + "Structs/" + structName + ".cs"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = this.WrapStructCode(structLookup[structName]),
+                    TextContent = this.WrapStructCode(templates.GetCode(structKey)),
                 };
             }
 
-            string functionCode = context.GetCodeForFunctions(ctx);
+            string functionCode = templates.GetCode("vm:functions");
 
             output[baseDir + "Vm/CrayonWrapper.cs"] = new FileOutput()
             {
@@ -390,8 +428,6 @@ namespace CSharpApp
                 }),
             };
 
-            string globalsCode = context.GetCodeForGlobals(ctx);
-
             output[baseDir + "Vm/Globals.cs"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -403,7 +439,7 @@ namespace CSharpApp
                     "",
                     "namespace Interpreter.Vm",
                     "{",
-                    globalsCode,
+                    templates.GetCode("vm:globals"),
                     "}",
                     ""
                 }),

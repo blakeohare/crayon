@@ -1,4 +1,5 @@
 ﻿using Common;
+using Pastel;
 using Pastel.Transpilers;
 using Platform;
 using System;
@@ -14,7 +15,7 @@ namespace LangC
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-            : base(Pastel.Language.C)
+            : base(Language.C)
         { }
 
         public override IDictionary<string, object> GetConstantFlags()
@@ -34,9 +35,16 @@ namespace LangC
                 };
         }
 
+        public override void GenerateTemplates(
+            TemplateStorage templates,
+            PastelContext vmContext,
+            IList<LibraryForExport> libraries)
+        { }
+
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
@@ -44,7 +52,8 @@ namespace LangC
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            Pastel.PastelContext pastelContext,
+            TemplateStorage templates,
+            PastelContext pastelContext,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
@@ -57,8 +66,10 @@ namespace LangC
             throw new NotImplementedException();
         }
 
-        public static void BuildStringTable(StringBuilder sb, StringTableBuilder stringTable, string newline)
+        // TODO: this should be in Pastel
+        public static string BuildStringTable(StringTableBuilder stringTable, string newline)
         {
+            StringBuilder sb = new StringBuilder();
             List<string> names = stringTable.Names;
             List<string> values = stringTable.Values;
             int total = names.Count;
@@ -80,13 +91,15 @@ namespace LangC
                 sb.Append('\t');
                 sb.Append(names[i]);
                 sb.Append(" = String_from_utf8(");
-                sb.Append(Common.Util.ConvertStringValueToCode(values[i]).Replace("%", "%%"));
+                sb.Append(Util.ConvertStringValueToCode(values[i]).Replace("%", "%%"));
                 sb.Append(");");
                 sb.Append(newline);
             }
             sb.Append('}');
             sb.Append(newline);
             sb.Append(newline);
+
+            return sb.ToString();
         }
     }
 }

@@ -127,6 +127,10 @@ namespace Exporter
                 Dictionary<string, LibraryMetadata> librariesByID = relevantLibraries.ToDictionary(lib => lib.ID);
                 List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByID, constantFlags, codeLoader, vmPastelContext);
 
+                Platform.TemplateStorage templates = new Platform.TemplateStorage();
+
+                platform.GenerateTemplates(templates, vmPastelContext, libraries);
+
                 if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
                 {
                     options
@@ -152,6 +156,7 @@ namespace Exporter
 
                     platform.ExportProject(
                         output,
+                        templates,
                         vmPastelContext,
                         libraries,
                         resourceDatabase,
@@ -161,6 +166,7 @@ namespace Exporter
                 {
                     platform.ExportStandaloneVm(
                         output,
+                        templates,
                         vmPastelContext,
                         libraries);
                 }
