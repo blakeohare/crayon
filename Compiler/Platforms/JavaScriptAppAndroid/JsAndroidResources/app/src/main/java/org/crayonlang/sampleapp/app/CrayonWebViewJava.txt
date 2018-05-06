@@ -33,7 +33,10 @@ public class CrayonWebView extends WebView {
 
         this.getSettings().setJavaScriptEnabled(true);
         this.getSettings().setDomStorageEnabled(true);
-        this.setInitialScale(100);
+        this.setPivotX(0);
+        this.setPivotY(0);
+        this.setScaleX(2);
+        this.setScaleY(2);
         this.setBackgroundColor(getResources().getColor(android.R.color.black));
         this.setWebViewClient(new CrayonWebViewClient());
         this.setWebChromeClient(new WebChromeClient() {
@@ -65,8 +68,10 @@ public class CrayonWebView extends WebView {
                 return true;
         }
         // don't know what the game size is on Java side so give coordinates in ratios * 100000 (as ints).
-        int x = (int) (100000 * e.getX() / this.screenWidth);
-        int y = (int) (100000 * e.getY() / this.screenHeight);
+        float rawX = e.getX() - this.getLeft();
+        float rawY = e.getY() - this.getTop();
+        int x = (int) (2 * 100000 * rawX / this.getWidth());
+        int y = (int) (2 * 100000 * rawY / this.getHeight());
         this.sendMessage("touch-event", actionId + " " + x + " " + y, false);
         return true;
     }

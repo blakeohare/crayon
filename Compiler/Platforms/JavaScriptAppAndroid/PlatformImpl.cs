@@ -3,6 +3,7 @@ using Pastel;
 using Platform;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace JavaScriptAppAndroid
 {
@@ -155,9 +156,12 @@ namespace JavaScriptAppAndroid
             IconSetGenerator icons = new IconSetGenerator();
             if (options.GetBool(ExportOptionKey.HAS_ICON))
             {
-                string iconPath = options.GetString(ExportOptionKey.ICON_PATH);
-                SystemBitmap icon = new SystemBitmap(iconPath);
-                icons.AddInputImage(icon);
+                string iconPaths = options.GetString(ExportOptionKey.ICON_PATH);
+                foreach (string iconPath in iconPaths.Split(',').Select(s => s.Trim()))
+                {
+                    SystemBitmap icon = new SystemBitmap(iconPath);
+                    icons.AddInputImage(icon);
+                }
             }
             Dictionary<int, SystemBitmap> iconImagesBySize = icons
                 .AddOutputSize(48)
