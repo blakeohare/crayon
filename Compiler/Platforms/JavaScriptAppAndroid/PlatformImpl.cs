@@ -77,11 +77,30 @@ namespace JavaScriptAppAndroid
             }
         }
 
+        private string ConvertOrientationString(string buildFileString)
+        {
+            switch (buildFileString)
+            {
+                case "landscapeleft": return "landscape";
+                case "landscaperight": return "reverseLandscape";
+                case "landscape": return "sensorLandscape";
+                case "upsidedown": return "reversePortrait";
+                case "portrait": return "portrait";
+
+                case "":
+                case "all":
+                default:
+                    return "unspecified";
+            }
+        }
+
         public override Dictionary<string, string> GenerateReplacementDictionary(
             Options options,
             ResourceDatabase resDb)
         {
             Dictionary<string, string> replacements = this.ParentPlatform.GenerateReplacementDictionary(options, resDb);
+
+            replacements["ANDROID_ORIENTATION"] = this.ConvertOrientationString(options.GetStringOrEmpty(ExportOptionKey.SUPPORTED_ORIENTATION));
 
             // This logic is duplicated in LangJava's PlatformImpl
             replacements["JAVA_PACKAGE"] = (options.GetStringOrNull(ExportOptionKey.JAVA_PACKAGE) ?? options.GetString(ExportOptionKey.PROJECT_ID)).ToLower();
