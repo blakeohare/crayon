@@ -40,9 +40,46 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="JsAndroidResources\**\*.txt" />
-    <EmbeddedResource Include="JsAndroidResources\**\*.png" />
-    <EmbeddedResource Include="JsAndroidResources\**\*.jar" />
+    <EmbeddedResource Include="JsAndroidResources\androidIml.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\appIml.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\buildGradle.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\gitignore.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\proguardRules.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\AndroidManifestXml.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\assets\androidJs.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\java\org\crayonlang\interpreter\AndroidTranslationHelper.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\java\org\crayonlang\sampleapp\app\CrayonWebViewJava.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\java\org\crayonlang\sampleapp\app\MainActivityJava.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\IcLauncherWeb.png" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\drawableHdpi\ic_launcher.png" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\drawableMdpi\ic_launcher.png" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\drawableXhdpi\ic_launcher.png" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\drawableXxhdpi\ic_launcher.png" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\layout\ActivityMainXml.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\menu\MainXml.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\valuesW820dp\DimensXml.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\values\DimensXml.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\values\StringsXml.txt" />
+    <EmbeddedResource Include="JsAndroidResources\app\src\main\res\values\StylesXml.txt" />
+    <EmbeddedResource Include="JsAndroidResources\buildGradle.txt" />
+    <EmbeddedResource Include="JsAndroidResources\gitignore.txt" />
+    <EmbeddedResource Include="JsAndroidResources\gradleProperties.txt" />
+    <EmbeddedResource Include="JsAndroidResources\gradlew.txt" />
+    <EmbeddedResource Include="JsAndroidResources\gradlewBat.txt" />
+    <EmbeddedResource Include="JsAndroidResources\gradle\wrapper\GradleWrapperProperties.txt" />
+    <EmbeddedResource Include="JsAndroidResources\idea\compilerXml.txt" />
+    <EmbeddedResource Include="JsAndroidResources\idea\copyright\profileSettings.txt" />
+    <EmbeddedResource Include="JsAndroidResources\idea\encodingsXml.txt" />
+    <EmbeddedResource Include="JsAndroidResources\idea\gradleXml.txt" />
+    <EmbeddedResource Include="JsAndroidResources\idea\miscXml.txt" />
+    <EmbeddedResource Include="JsAndroidResources\idea\modulesXml.txt" />
+    <EmbeddedResource Include="JsAndroidResources\idea\name.txt" />
+    <EmbeddedResource Include="JsAndroidResources\idea\scopes\scopeSettings.txt" />
+    <EmbeddedResource Include="JsAndroidResources\idea\vcsXml.txt" />
+    <EmbeddedResource Include="JsAndroidResources\idea\workspaceXml.txt" />
+    <EmbeddedResource Include="JsAndroidResources\localProperties.txt" />
+    <EmbeddedResource Include="JsAndroidResources\settingsGradle.txt" />
+    <EmbeddedResource Include="JsAndroidResources\gradle\wrapper\GradleWrapper.jar" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">
