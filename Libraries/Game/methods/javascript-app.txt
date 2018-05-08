@@ -5,3 +5,4 @@ $_lib_game_initialize_game_with_fps: C$game$initializeGame([ARG:1])
 $_lib_game_initialize_screen: C$game$initializeScreen([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
 $_lib_game_set_title: C$game$setTitle([ARG:1])
 $_lib_game_clockTick: C$game$endFrame()
+$_lib_game_getNativeWindowHandle: null

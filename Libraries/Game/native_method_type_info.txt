@@ -14,6 +14,8 @@ void _lib_game_getTouchState(Array<int> output);
 
 void _lib_game_initialize_game_with_fps(double fps);
 
+object _lib_game_getNativeWindowHandle();
+
 void _lib_game_initialize_screen(int gameWidth, int gameHeight, int windowWidth, int windowHeight, int executionContextId);
 
 void _lib_game_set_title(string windowTitle);

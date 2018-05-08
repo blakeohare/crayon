@@ -39,7 +39,7 @@ namespace PythonApp
             Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
-            
+
             output["code/vm.py"] = new FileOutput()
             {
                 Type = FileOutputType.Text,

@@ -57,6 +57,7 @@ def main(args):
 		'FileIO',
 		'FileIOCommon',
 		'Game',
+		'GameGifCap',
 		'Gamepad',
 		'Graphics2D',
 		'Graphics2DText',

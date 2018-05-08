@@ -5,3 +5,4 @@ $_lib_game_initialize_game_with_fps: GameWindow.FPS = [ARG:1]
 $_lib_game_initialize_screen: GameWindow.InitializeScreen([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
 $_lib_game_set_title: GameWindow.Instance.SetTitle([ARG:1])
 $_lib_game_clockTick: TranslationHelper.AlwaysTrue()
+$_lib_game_getNativeWindowHandle: GameWindow.Instance

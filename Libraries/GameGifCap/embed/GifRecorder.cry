@@ -83,11 +83,13 @@ namespace GameGifCap {
         }
 
         function cap() {
+            if (Game.GameWindow.instance == null) {
+                throw new Exception("Game Window not open.");
+            }
             if ($$lib_gamegifcap_isSupported()) {
-                sc = $$lib_gamegifcap_screenCap(this._ctx);
+                sc = $$lib_gamegifcap_screenCap(this._ctx, Game.GameWindow.instance);
                 switch (sc) {
                     case 0: return;
-                    case 1: throw new Exception("Game Window not open.");
                     default: throw new Exception("Unknown error occurred while capturing the screen.");
                 }
             }

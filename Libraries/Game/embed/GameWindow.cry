@@ -79,6 +79,7 @@ namespace Game {
             $$lib_game_initialize(fps);
             $$lib_game_initialize_screen(width, height, screenWidth, screenHeight);
             $$lib_game_set_title(title);
+            $$lib_game_setInstance(this);
         }
 
         // returns a list [isAspectRatioForced, screenWidth, screenHeight]

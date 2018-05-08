@@ -16,15 +16,14 @@ namespace Interpreter.Libraries.GameGifCap
             return ((GifRecorderContext)gifRecContextObj).Finish(path);
         }
 
-        public static int ScreenCap(object gifContext)
+        public static int ScreenCap(object gifContext, object nativeWindowInstance)
         {
-            if (Game.GameWindow.Instance == null)
-            {
-                return 1;
-            }
-
             GifRecorderContext grc = (GifRecorderContext)gifContext;
-            object screenImage = Game.GameWindow.Instance.ScreenCapture();
+
+            object screenImage = nativeWindowInstance.GetType()
+                .GetMethod("ScreenCapture")
+                .Invoke(nativeWindowInstance, new object[0]);
+
             grc.AddImage(screenImage);
 
             return 0;
