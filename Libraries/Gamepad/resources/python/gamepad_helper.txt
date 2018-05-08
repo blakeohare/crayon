@@ -1,8 +1,10 @@
 ﻿
 def libhelper_gamepad_get_current_joystick_count():
+  pygame = GetPyGameReferenceWorkaround()
   return pygame.joystick.get_count()
 
 def libhelper_gamepad_get_joystick(index):
+  pygame = GetPyGameReferenceWorkaround()
   joystick = pygame.joystick.Joystick(index)
   joystick.init()
   return joystick
