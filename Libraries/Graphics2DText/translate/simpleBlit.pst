@@ -38,9 +38,9 @@ Value lib_graphics2dtext_function_simpleBlit(Array<Value> args) {
         Array<object> newImageQueue = new Array<object>(newSize);
         for (int i = 0; i < oldSize; i += 1) {
             newImageQueue[i] = imageQueue[i];
-            imageQueue = newImageQueue;
-            drawQueueNativeData[2] = imageQueue;
         }
+        imageQueue = newImageQueue;
+        drawQueueNativeData[2] = imageQueue;
     }
 
     imageQueue[imageQueueLength] = nativeBlittableBitmap; // This is actually a mess of object arrays where bmp = nativeBlittableBitmap[0][3];
