@@ -35,59 +35,69 @@ namespace Build
         public string Version { get; set; }
         public Locale CompilerLocale { get; set; }
 
+        private static Target FindTarget(string targetName, IList<Target> targets)
+        {
+            foreach (Target target in targets)
+            {
+                if (target.Name == null) throw new InvalidOperationException("A target in the build file is missing a name.");
+
+                // CBX targets don't have a platform specified.
+                if (target.Name != "cbx" && target.Platform == null) throw new InvalidOperationException("A target in the build file is missing a platform.");
+
+                if (target.Name == targetName)
+                {
+                    return target;
+                }
+            }
+            return null;
+        }
+
         public static BuildContext Parse(string projectDir, string buildFile, string nullableTargetName)
         {
             BuildRoot buildInput = XmlParserForBuild.Parse(buildFile);
             BuildRoot flattened = buildInput;
             string platform = null;
             Dictionary<string, BuildVarCanonicalized> varLookup;
+            string targetName = nullableTargetName;
+            Target desiredTarget = null;
             if (nullableTargetName != null)
             {
-                string targetName = nullableTargetName;
-                Target desiredTarget = null;
-                foreach (Target target in buildInput.Targets)
-                {
-                    if (target.Name == null) throw new InvalidOperationException("A target in the build file is missing a name.");
-                    if (target.Platform == null) throw new InvalidOperationException("A target in the build file is missing a platform.");
-                    if (target.Name == nullableTargetName)
-                    {
-                        desiredTarget = target;
-                    }
-                }
+                desiredTarget = FindTarget(targetName, buildInput.Targets);
 
                 if (desiredTarget == null)
                 {
                     throw new InvalidOperationException("Build target does not exist in build file: '" + targetName + "'.");
                 }
 
-                varLookup = GenerateBuildVars(buildInput, desiredTarget, targetName);
-
-                flattened.Sources = desiredTarget.SourcesNonNull.Union<SourceItem>(flattened.SourcesNonNull).ToArray();
-                flattened.Output = FileUtil.GetCanonicalizeUniversalPath(DoReplacement(targetName, desiredTarget.Output ?? flattened.Output));
-                flattened.ProjectName = DoReplacement(targetName, desiredTarget.ProjectName ?? flattened.ProjectName);
-                flattened.JsFilePrefix = DoReplacement(targetName, desiredTarget.JsFilePrefix ?? flattened.JsFilePrefix);
-                flattened.JsFullPage = desiredTarget.JsFullPage ?? flattened.JsFullPage;
-                flattened.ImageSheets = MergeImageSheets(desiredTarget.ImageSheets, flattened.ImageSheets);
-                flattened.MinifiedRaw = desiredTarget.MinifiedRaw ?? flattened.MinifiedRaw;
-                flattened.ExportDebugByteCodeRaw = desiredTarget.ExportDebugByteCodeRaw ?? flattened.ExportDebugByteCodeRaw;
-                flattened.GuidSeed = DoReplacement(targetName, desiredTarget.GuidSeed ?? flattened.GuidSeed);
-                flattened.IconFilePath = DoReplacement(targetName, desiredTarget.IconFilePath ?? flattened.IconFilePath);
-                flattened.LaunchScreen = DoReplacement(targetName, desiredTarget.LaunchScreen ?? flattened.LaunchScreen);
-                flattened.DefaultTitle = DoReplacement(targetName, desiredTarget.DefaultTitle ?? flattened.DefaultTitle);
-                flattened.Orientation = DoReplacement(targetName, desiredTarget.Orientation ?? flattened.Orientation);
-                flattened.CrayonPath = CombineAndFlattenStringArrays(desiredTarget.CrayonPath, flattened.CrayonPath).Select(s => DoReplacement(targetName, s)).ToArray();
-                flattened.Description = DoReplacement(targetName, desiredTarget.Description ?? flattened.Description);
-                flattened.Version = DoReplacement(targetName, desiredTarget.Version ?? flattened.Version);
-                flattened.WindowSize = Size.Merge(desiredTarget.WindowSize, flattened.WindowSize) ?? new Size();
-                flattened.CompilerLocale = desiredTarget.CompilerLocale ?? flattened.CompilerLocale;
-                flattened.Orientation = desiredTarget.Orientation ?? flattened.Orientation;
-
                 platform = desiredTarget.Platform;
             }
             else
             {
-                varLookup = GenerateBuildVars(buildInput, new Target(), null);
+                targetName = "cbx";
+                desiredTarget = FindTarget(targetName, buildInput.Targets) ?? new Target();
             }
+
+            varLookup = GenerateBuildVars(buildInput, desiredTarget, targetName);
+
+            flattened.Sources = desiredTarget.SourcesNonNull.Union<SourceItem>(flattened.SourcesNonNull).ToArray();
+            flattened.Output = FileUtil.GetCanonicalizeUniversalPath(DoReplacement(targetName, desiredTarget.Output ?? flattened.Output));
+            flattened.ProjectName = DoReplacement(targetName, desiredTarget.ProjectName ?? flattened.ProjectName);
+            flattened.JsFilePrefix = DoReplacement(targetName, desiredTarget.JsFilePrefix ?? flattened.JsFilePrefix);
+            flattened.JsFullPage = desiredTarget.JsFullPage ?? flattened.JsFullPage;
+            flattened.ImageSheets = MergeImageSheets(desiredTarget.ImageSheets, flattened.ImageSheets);
+            flattened.MinifiedRaw = desiredTarget.MinifiedRaw ?? flattened.MinifiedRaw;
+            flattened.ExportDebugByteCodeRaw = desiredTarget.ExportDebugByteCodeRaw ?? flattened.ExportDebugByteCodeRaw;
+            flattened.GuidSeed = DoReplacement(targetName, desiredTarget.GuidSeed ?? flattened.GuidSeed);
+            flattened.IconFilePath = DoReplacement(targetName, desiredTarget.IconFilePath ?? flattened.IconFilePath);
+            flattened.LaunchScreen = DoReplacement(targetName, desiredTarget.LaunchScreen ?? flattened.LaunchScreen);
+            flattened.DefaultTitle = DoReplacement(targetName, desiredTarget.DefaultTitle ?? flattened.DefaultTitle);
+            flattened.Orientation = DoReplacement(targetName, desiredTarget.Orientation ?? flattened.Orientation);
+            flattened.CrayonPath = CombineAndFlattenStringArrays(desiredTarget.CrayonPath, flattened.CrayonPath).Select(s => DoReplacement(targetName, s)).ToArray();
+            flattened.Description = DoReplacement(targetName, desiredTarget.Description ?? flattened.Description);
+            flattened.Version = DoReplacement(targetName, desiredTarget.Version ?? flattened.Version);
+            flattened.WindowSize = Size.Merge(desiredTarget.WindowSize, flattened.WindowSize) ?? new Size();
+            flattened.CompilerLocale = desiredTarget.CompilerLocale ?? flattened.CompilerLocale;
+            flattened.Orientation = desiredTarget.Orientation ?? flattened.Orientation;
 
             ImageSheet[] imageSheets = flattened.ImageSheets ?? new ImageSheet[0];
 
@@ -100,7 +110,7 @@ namespace Build
                 ProjectID = flattened.ProjectName,
                 Description = flattened.Description,
                 Version = flattened.Version,
-                SourceFolders = ToFilePaths(projectDir, flattened.Sources),
+                SourceFolders = ToFilePaths(projectDir, flattened.Sources ?? new SourceItem[0]),
                 ImageSheetPrefixesById = imageSheets.ToDictionary<ImageSheet, string, string[]>(s => s.Id, s => s.Prefixes),
                 ImageSheetIds = imageSheets.Select<ImageSheet, string>(s => s.Id).ToArray(),
                 Minified = flattened.Minified,

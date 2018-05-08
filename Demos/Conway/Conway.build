@@ -8,6 +8,11 @@
 	<guidseed>org.crayonlang.demos.conway,v0.2.0,%TARGET_NAME%</guidseed>
 	
 	<!-- Targets -->
+
+	<target name="cbx">
+		<source>source</source>
+	</target>
+	
 	<target name="javascript">
 		<source>source</source>
 		<platform>javascript-app</platform>
@@ -46,11 +51,6 @@
 		<platform>python-app</platform>
 	</target>
 	
-	<target name="ruby">
-		<source>source</source>
-		<platform>ruby-app</platform>
-	</target>
-	
 	<target name="android">
 		<source>source</source>
 		<platform>javascript-app-android</platform>
@@ -59,10 +59,5 @@
 	<target name="ios">
 		<source>source</source>
 		<platform>javascript-app-ios</platform>
-	</target>
-
-	<target name="c">
-		<source>source</source>
-		<platform>c-app</platform>
 	</target>
 </build>
