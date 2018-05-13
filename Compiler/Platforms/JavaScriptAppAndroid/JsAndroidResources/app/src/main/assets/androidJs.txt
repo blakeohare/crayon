@@ -18,6 +18,20 @@ C$game$enforcedScreenSize = function(w, h) {
 	return [null, null];
 }
 
+C$game$platformSpecificEnforceFullScreen = function(jsCanvas, canvasCtx, windowSize, gameSize) {
+    var hack = document.getElementById('android_canvas_hack');
+    hack.style.width = windowSize[0] + 'px';
+    hack.style.height = windowSize[1] + 'px';
+    jsCanvas.style.width = '50%';
+    jsCanvas.style.height = '50%';
+    jsCanvas.width = gameSize[0];
+    jsCanvas.height = gameSize[1];
+};
+
+C$game$wrapCanvasHtml = function(canvasHtml) {
+    return '<div id="android_canvas_hack">' + canvasHtml + '</div>';
+};
+
 receiveMessage = function(type, payload, useEncoding) {
     if (useEncoding) {
         type = C$android$receiveMessageDecoder(type);

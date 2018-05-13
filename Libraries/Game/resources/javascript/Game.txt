@@ -19,31 +19,22 @@ C$game$beginFrame = function () {
 
 C$game$knownSize = null;
 
+C$game$platformSpecificEnforceFullScreen = function(jsCanvas, canvasCtx, windowSize, gameSize) {
+    // TODO: make this a no-op and then move this to iOS
+    jsCanvas.width = windowSize[0];
+    jsCanvas.height = windowSize[1];
+    canvasCtx.scale(screen[0] / gameSize[0], screen[1] / gameSize[1]);
+};
+
 C$game$enforceFullScreen = function() {
 	var screen = [window.innerWidth, window.innerHeight];
-
-	// TODO: find a common thing that works for both the Android and iOS web view.
-    var isAndroid = !!C$common$globalOptions['is_android'];
-
 	if (C$game$knownSize === null ||
 		C$game$knownSize[0] != screen[0] ||
 		C$game$knownSize[1] != screen[1]) {
 		
 		var phsCanvas = C$game$real_canvas;
 		C$game$knownSize = screen;
-		if (isAndroid) {
-            var hack = document.getElementById('android_canvas_hack');
-            hack.style.width = screen[0] + 'px';
-            hack.style.height = screen[1] + 'px';
-            phsCanvas.style.width = '50%';
-            phsCanvas.style.height = '50%';
-            phsCanvas.width = C$game$width;
-            phsCanvas.height = C$game$height;
-		} else {
-			phsCanvas.width = screen[0];
-			phsCanvas.height = screen[1];
-		    C$game$ctx.scale(screen[0] / C$game$width, screen[1] / C$game$height);
-		}
+		C$game$platformSpecificEnforceFullScreen(phsCanvas, C$game$ctx, screen, [C$game$width, C$game$height]);
 	}
 };
 
@@ -87,6 +78,10 @@ C$game$everyFrame = function() {
 // override in other platforms
 };
 
+C$game$wrapCanvasHtml = function(canvasHtml) {
+    return canvasHtml;
+};
+
 // TODO: also apply keydown and mousedown handlers
 // TODO: (here and python as well) throw an error if you attempt to call this twice.
 C$game$initializeScreen = function (width, height, pwidth, pheight, execId) {
@@ -114,12 +109,8 @@ C$game$initializeScreen = function (width, height, pwidth, pheight, execId) {
   
   // make sure the font loader exists first so that it can hide behind the screen.
   C$game$getFontLoader();
-  var isAndroid = !!C$common$globalOptions['is_android'];
-  var canvas_hack_wrapper = isAndroid ? ['<div id="android_canvas_hack">', '</div>'] : ['', ''];
   innerHost.innerHTML +=
-	canvas_hack_wrapper[0] +
-	'<canvas id="crayon_screen" width="' + canvasWidth + '" height="' + canvasHeight + '"></canvas>' +
-	canvas_hack_wrapper[1] +
+	C$game$wrapCanvasHtml('<canvas id="crayon_screen" width="' + canvasWidth + '" height="' + canvasHeight + '"></canvas>') +
 	'<div style="display:none;">' +
 		'<img id="crayon_image_loader" crossOrigin="anonymous" />' +
 		'<div id="crayon_image_loader_queue"></div>' +
