@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -18,13 +19,6 @@ public class CrayonWebView extends WebView {
     private int executionContextId;
     private boolean readyToReceiveMessages = false;
 
-    // Use positive values so that if events happen to sneak through before initialization is
-    // complete, they won't cause division by 0 errors.
-    private int logicalWidth = 100;
-    private int logicalHeight = 100;
-	private int screenWidth;
-	private int screenHeight;
-
     public CrayonWebView(Context context, int width, int height) {
         super(context);
 
@@ -32,9 +26,6 @@ public class CrayonWebView extends WebView {
             SYSTEM_UI_FLAG_FULLSCREEN |
             SYSTEM_UI_FLAG_HIDE_NAVIGATION |
             SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-
-		this.screenWidth = width;
-		this.screenHeight = height;
 
         this.getSettings().setJavaScriptEnabled(true);
         this.getSettings().setDomStorageEnabled(true);
@@ -54,6 +45,16 @@ public class CrayonWebView extends WebView {
         });
         this.addJavascriptInterface(new JavaScriptBridge(this), "JavaScriptBridge");
         this.loadUrl("file:///android_asset/index.html");
+        final CrayonWebView outerThis = this;
+        this.addOnLayoutChangeListener(new OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int left, int top, int right, int bottom, int i4, int i5, int i6, int i7) {
+                outerThis.sendMessage(
+                    "screen-ratio",
+                    "" + (10000 * (bottom - top) / (right - left)),
+                    false);
+            }
+        });
     }
 
     @Override

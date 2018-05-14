@@ -26,8 +26,12 @@ C$game$platformSpecificEnforceFullScreen = function(jsCanvas, canvasCtx, windowS
     canvasCtx.scale(screen[0] / gameSize[0], screen[1] / gameSize[1]);
 };
 
+C$game$getScreenDimensionsForFullScreen = function() {
+  return [window.innerWidth, window.innerHeight];
+};
+
 C$game$enforceFullScreen = function() {
-	var screen = [window.innerWidth, window.innerHeight];
+	var screen = C$game$getScreenDimensionsForFullScreen();
 	if (C$game$knownSize === null ||
 		C$game$knownSize[0] != screen[0] ||
 		C$game$knownSize[1] != screen[1]) {

@@ -3,6 +3,7 @@
 
 C$common$globalOptions['is_android'] = true;
 C$common$globalOptions['fullscreen'] = true;
+C$common$globalOptions['aspect_ratio'] = 1.0;
 
 C$android$receiveMessageDecoder = function(s) {
     var output = [];
@@ -28,6 +29,12 @@ C$game$platformSpecificEnforceFullScreen = function(jsCanvas, canvasCtx, windowS
     jsCanvas.height = gameSize[1];
 };
 
+C$game$getScreenDimensionsForFullScreen = function() {
+    var width = document.body.offsetWidth;
+    var height = Math.floor(width * C$common$globalOptions['aspect_ratio'] + .5);
+    return [width, height];
+};
+
 C$game$wrapCanvasHtml = function(canvasHtml) {
     return '<div id="android_canvas_hack">' + canvasHtml + '</div>';
 };
@@ -46,6 +53,9 @@ receiveMessage = function(type, payload, useEncoding) {
                 var y = Math.floor(C$game$height * parseInt(parts[2]) / 100000);
                 C$input$eventRelays.push(v_buildRelayObj(eventId, x, y, 0, 0, ''));
             }
+            break;
+        case 'screen-ratio':
+            C$common$globalOptions['aspect_ratio'] = parseInt(parts[0]) / 10000;
             break;
         default:
             console.log("Unknown message type: " + type);
