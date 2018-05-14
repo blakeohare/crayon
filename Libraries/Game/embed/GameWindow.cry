@@ -129,6 +129,10 @@ namespace Game {
                     case EventType.KEY_DOWN: e = new KeyEvent(t[i++], true); break;
                     case EventType.KEY_UP: e = new KeyEvent(t[i++], false); break;
 
+                    case EventType.TOUCH_START: e = new TouchStartEvent(t[i++], t[i++], t[i++]); break;
+                    case EventType.TOUCH_END: e = new TouchEndEvent(t[i++], t[i++], t[i++]); break;
+                    case EventType.TOUCH_MOVE: e = new TouchMoveEvent(t[i++], t[i++], t[i++]); break;
+
                     // for quit events: t[1] -> quit subtype
                     case EventType.QUIT: e = new QuitEvent(t[i++]); break;
 

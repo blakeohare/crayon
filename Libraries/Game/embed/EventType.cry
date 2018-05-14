@@ -22,5 +22,9 @@
 
         GAMEPAD_HARDWARE = 0x30,
         GAMEPAD = 0x31,
+
+        TOUCH_START = 0x40,
+        TOUCH_END = 0x41,
+        TOUCH_MOVE = 0x42,
     }
 }

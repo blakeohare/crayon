@@ -13,6 +13,9 @@
                 output.Add(buildInteger(ev.iarg2));
                 if (t == 37) {
                     output.Add(buildFloat(ev.farg1));
+                } else if (t >= 64 && t < 80) {
+                    // touch events have coordinates and a pointer ID
+                    output.Add(buildInteger(ev.iarg3));
                 }
             }
         }
