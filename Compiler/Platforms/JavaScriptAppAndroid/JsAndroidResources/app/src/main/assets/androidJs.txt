@@ -51,7 +51,8 @@ receiveMessage = function(type, payload, useEncoding) {
                 var eventId = parseInt(parts[0]);
                 var x = Math.floor(C$game$width * parseInt(parts[1]) / 100000);
                 var y = Math.floor(C$game$height * parseInt(parts[2]) / 100000);
-                C$input$eventRelays.push(v_buildRelayObj(eventId, x, y, 0, 0, ''));
+                var pointerId = eventId >= 64 ? parseInt(parts[3]) : 0;
+                C$input$eventRelays.push(v_buildRelayObj(eventId, x, y, pointerId, 0.0, ''));
             }
             break;
         case 'screen-ratio':

@@ -56,30 +56,94 @@ public class CrayonWebView extends WebView {
             }
         });
     }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
-        int actionId = 0;
+	
+    private void handleMouseEvent(MotionEvent e) {
+        int mouseEventTypeId = 0;
         switch (e.getAction()) {
             case MotionEvent.ACTION_MOVE:
-                actionId = 32;
+                mouseEventTypeId = 32;
                 break;
             case MotionEvent.ACTION_DOWN:
-                actionId = 33;
+                mouseEventTypeId = 33;
                 break;
             case MotionEvent.ACTION_UP:
-                actionId = 34;
+                mouseEventTypeId = 34;
                 break;
             default:
-                return true;
+                return;
         }
         // don't know what the game size is on Java side so give coordinates in ratios * 100000 (as ints).
         float rawX = e.getX() - this.getLeft();
         float rawY = e.getY() - this.getTop();
         int x = (int) (2 * 100000 * rawX / this.getWidth());
         int y = (int) (2 * 100000 * rawY / this.getHeight());
-        this.sendMessage("touch-event", actionId + " " + x + " " + y, false);
-        return true;
+        this.sendMessage("touch-event", mouseEventTypeId + " " + x + " " + y, false);
+    }
+
+    private MotionEvent.PointerCoords pc = new MotionEvent.PointerCoords();
+    private int[] coordsOut = new int[2];
+    private void getTouchCoords(MotionEvent e, int pointerIndex) {
+        e.getPointerCoords(pointerIndex, pc);
+        float rawX = pc.x - this.getLeft();
+        float rawY = pc.y - this.getTop();
+        int x = (int) (2 * 100000 * rawX / this.getWidth());
+        int y = (int) (2 * 100000 * rawY / this.getHeight());
+        coordsOut[0] = x;
+        coordsOut[1] = y;
+    }
+
+    /*
+        Crayon Pointer ID's are unique to the lifetime of the app.
+        Android Pointer ID's are unique to the lifetime of the gesture.
+
+        When a pointer down event is received, add a lookup to this mapping from the Android ID
+        to the crayon ID (nextId). When the pointer up event is received, remove it. Every time
+        you send an event, convert it. Every time you create a new event, increment nextId.
+     */
+    private HashMap<Integer, Integer> pointerIdConversion = new HashMap<>();
+    private int nextId = 1;
+    private int convertPointerId(int androidPointerId) {
+        Integer crayonId = pointerIdConversion.get(androidPointerId);
+        if (crayonId == null) {
+            crayonId = nextId++;
+            pointerIdConversion.put(androidPointerId, crayonId);
+        }
+        return crayonId;
+    }
+
+    private void handleMultiTouchEvent(MotionEvent e) {
+        int rawActionValue = e.getAction();
+
+        int actionType = (rawActionValue & MotionEvent.ACTION_MASK);
+        int pointerIndex = (rawActionValue & MotionEvent.ACTION_POINTER_INDEX_MASK)
+                >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+        int pointerId = e.getPointerId(pointerIndex);
+        getTouchCoords(e, pointerIndex);
+        int touchEventTypeId;
+        int crayonId = convertPointerId(pointerId);
+        switch (actionType) {
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_POINTER_UP:
+                touchEventTypeId = 65;
+                pointerIdConversion.remove(pointerId);
+                break;
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_POINTER_DOWN:
+                touchEventTypeId = 64;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                touchEventTypeId = 66;
+                for (int i = 0; i < e.getPointerCount(); ++i) {
+                    getTouchCoords(e, i);
+                    crayonId = convertPointerId(e.getPointerId(i));
+                    this.sendMessage("touch-event", touchEventTypeId + " " + coordsOut[0] + " " + coordsOut[1] + " " + crayonId, false);
+                }
+                return;
+            default:
+                return;
+        }
+
+        this.sendMessage("touch-event", touchEventTypeId + " " + coordsOut[0] + " " + coordsOut[1] + " " + crayonId, false);
     }
 
     private String urlEncode(String value) {
