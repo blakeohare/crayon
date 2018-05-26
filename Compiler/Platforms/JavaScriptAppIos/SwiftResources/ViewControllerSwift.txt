@@ -61,10 +61,10 @@ class ViewController: UIViewController, WKScriptMessageHandler {
         }
         
         func invokeJsForMouseEvent(_ type : Int, touches: Set<UITouch>) {
-        	let touch = touches.first as UITouch!;
-        	let currentPoint = touch?.location(in: self);
-            let xratio = (currentPoint?.x)! / self.frame.width;
-            let yratio = (currentPoint?.y)! / self.frame.height;
+            let touch = touches.first! as UITouch;
+            let currentPoint = touch.location(in: self);
+            let xratio = currentPoint.x / self.frame.width;
+            let yratio = currentPoint.y / self.frame.height;
             let js = "C$ios$invokePointer(\(type), \(xratio), \(yratio));";
             webView!.evaluateJavaScript(js, completionHandler: nil);
         }
