@@ -99,7 +99,7 @@ def main(args):
 	else:
 		BUILD_CMD = MSBUILD
 		SLN_PATH = '..\\Compiler\\CrayonWindows.sln'
-	print runCommand(' '.join([BUILD_CMD, RELEASE_CONFIG, SLN_PATH]))
+	print(runCommand(' '.join([BUILD_CMD, RELEASE_CONFIG, SLN_PATH])))
 
 	releaseDir = '../Compiler/Crayon/bin/Release'
 	shutil.copyfile(canonicalize_sep(releaseDir + '/Crayon.exe'), canonicalize_sep(copyToDir + '/crayon.exe'))
@@ -116,16 +116,16 @@ def main(args):
 	
 	os.environ["CRAYON_HOME"] = os.path.abspath(canonicalize_sep(copyToDir))
 	
-	print "Generating VM code..."
+	print("Generating VM code...")
 	runtimeCompilationCommand = canonicalize_sep(copyToDir + '/crayon.exe') + ' -vm csharp-app -vmdir ' + canonicalize_sep(VM_TEMP_DIR_SOURCE)
 	if isMono:
 		runtimeCompilationCommand = 'mono ' + runtimeCompilationCommand
-	print 'running:',
-	print '  ' + runtimeCompilationCommand
-	print runCommand(runtimeCompilationCommand)
+	print('running:')
+	print('  ' + runtimeCompilationCommand)
+	print(runCommand(runtimeCompilationCommand))
 	
-	print "Compiling VM for distribution..."
-	print runCommand(' '.join([BUILD_CMD, RELEASE_CONFIG, canonicalize_sep(VM_TEMP_DIR_SOURCE + '/CrayonRuntime' + ('OSX' if isMono else '') + '.sln')]))
+	print("Compiling VM for distribution...")
+	print(runCommand(' '.join([BUILD_CMD, RELEASE_CONFIG, canonicalize_sep(VM_TEMP_DIR_SOURCE + '/CrayonRuntime' + ('OSX' if isMono else '') + '.sln')])))
 	
 	copyDirectory(VM_TEMP_DIR + '/Libs/Release', copyToDir + '/vm', '.dll')
 	copyDirectory(VM_TEMP_DIR + '/Libs/Release', copyToDir + '/vm', '.exe')

@@ -96,7 +96,8 @@ MATCHERS = [
   ('Libraries/*.pst', PASTEL_STYLE),
   ('Libraries/*.cry', CRAYON_STYLE),
 
-  # Clean Thyself
+  # Clean Scripts
+  ('Scripts/*.py', PYTHON_STYLE_2_SPACES),
   ('style-fixer.py', PYTHON_STYLE_2_SPACES),
 ]
 
