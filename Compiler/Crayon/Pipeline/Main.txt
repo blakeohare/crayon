@@ -1,7 +1,7 @@
 ﻿command = Crayon::TopLevelCheck()
 
 if command.IsDisplayUsage
-	Crayon::DisplayUsage()
+	Crayon::UsageDisplay()
 endif
 
 if command.IsGenerateDefaultProject
