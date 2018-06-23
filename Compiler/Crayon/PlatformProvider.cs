@@ -57,6 +57,7 @@ namespace Crayon
             return new System.Reflection.Assembly[] {
                 typeof(CApp.PlatformImpl).Assembly,
                 typeof(CSharpApp.PlatformImpl).Assembly,
+                typeof(CSharpAppUwp.PlatformImpl).Assembly,
                 typeof(JavaApp.PlatformImpl).Assembly,
                 typeof(JavaScriptApp.PlatformImpl).Assembly,
                 typeof(JavaScriptAppAndroid.PlatformImpl).Assembly,

@@ -80,6 +80,10 @@
       <Project>{4dca9e82-a6c2-4669-84f3-00d13204af7e}</Project>
       <Name>CSharpApp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Platforms\CSharpAppUwp\CSharpAppUwp.csproj">
+      <Project>{3617f9e5-947a-48cf-8773-d04f5dee4584}</Project>
+      <Name>CSharpAppUwp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Platforms\JavaApp\JavaApp.csproj">
       <Project>{0d8c38e5-6b24-489e-9c0f-d8101086bc32}</Project>
       <Name>JavaApp</Name>
