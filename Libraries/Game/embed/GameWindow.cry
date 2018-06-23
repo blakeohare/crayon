@@ -20,21 +20,21 @@ namespace Game {
         }
     }
 
-	enum PointerCanonicalizerMode {
-		
-		// All mouse and touch events will be presented separately in their original form.
-		NONE = 0,
-		
-		// THIS IS DEFAULT.
-		// The average of the touch points will be converted to mouse events.
-		// The original touch events will still be propagated.
-		CONVERT_TOUCH_TO_MOUSE = 1,
+    enum PointerCanonicalizerMode {
 
-		
-		// The left mouse click events will be converted into touch events.
-		// The pointer ID will be 0.
-		CONVERT_MOUSE_TO_TOUCH = 2,
-	}
+        // All mouse and touch events will be presented separately in their original form.
+        NONE = 0,
+
+        // THIS IS DEFAULT.
+        // The average of the touch points will be converted to mouse events.
+        // The original touch events will still be propagated.
+        CONVERT_TOUCH_TO_MOUSE = 1,
+
+
+        // The left mouse click events will be converted into touch events.
+        // The pointer ID will be 0.
+        CONVERT_MOUSE_TO_TOUCH = 2,
+    }
 
     @localized('en', 'GameWindow')
     @localized('es', 'JuegoVentana')
@@ -56,7 +56,7 @@ namespace Game {
         static field _frameBeginHandlers = [];
         static field _frameEndHandlers = [];
 
-		field _pointerMode = PointerCanonicalizerMode.CONVERT_TOUCH_TO_MOUSE;
+        field _pointerMode = PointerCanonicalizerMode.CONVERT_TOUCH_TO_MOUSE;
 
         field fps;
 
@@ -100,10 +100,10 @@ namespace Game {
             $$lib_game_setInstance(this);
         }
 
-		function setPointerCanonicalizationMode(mode) {
-			this._pointerMode = mode;
-			return this;
-		}
+        function setPointerCanonicalizationMode(mode) {
+            this._pointerMode = mode;
+            return this;
+        }
 
 
         // returns a list [isAspectRatioForced, screenWidth, screenHeight]
@@ -129,34 +129,34 @@ namespace Game {
             }
         }
 
-		/*
-			pointer ID 
-			
-			Key is the pointer ID where 0 is the mouse
-			Value is a list of the following:
-				[0] -> pointerId (redundant with key)
-				[1] -> x
-				[2] -> y
-				[3] -> pressed mask (1 for left, 2 for right, 3 for both, 0 for none)
-			
-		*/
-		field _pointers = {
-			0: [0, 0, 0, 0]
-		};
+        /*
+            pointer ID
 
-		function _getAveragePointerLocation() {
-			total = 0;
-			x = 0;
-			y = 0;
-			for (pointer : this._pointers.values()) {
-				x += pointer[1];
-				y += pointer[2];
-				total++;
-			}
-			
-			if (total == 0) return null;
-			return [x / total, y / total];
-		}
+            Key is the pointer ID where 0 is the mouse
+            Value is a list of the following:
+                [0] -> pointerId (redundant with key)
+                [1] -> x
+                [2] -> y
+                [3] -> pressed mask (1 for left, 2 for right, 3 for both, 0 for none)
+
+        */
+        field _pointers = {
+            0: [0, 0, 0, 0]
+        };
+
+        function _getAveragePointerLocation() {
+            total = 0;
+            x = 0;
+            y = 0;
+            for (pointer : this._pointers.values()) {
+                x += pointer[1];
+                y += pointer[2];
+                total++;
+            }
+
+            if (total == 0) return null;
+            return [x / total, y / total];
+        }
 
         @localized('en', 'pumpEvents')
         @localized('es', 'ESpumpEvents')
@@ -168,110 +168,110 @@ namespace Game {
             len = t.length;
             i = 0;
             while (i < len) {
-				eventType = t[i++];
+                eventType = t[i++];
                 switch (eventType) {
                     // for all mouse events: t[1] -> x, t[2] -> y
                     case EventType.MOUSE_MOVE:
-						x = t[i++];
-						y = t[i++];
-						output.add(new MouseMoveEvent(x, y));
-						if (this._pointerMode == PointerCanonicalizerMode.CONVERT_MOUSE_TO_TOUCH) {
-							output.add(new TouchMoveEvent(0, x, y));
-						}
-						break;
+                        x = t[i++];
+                        y = t[i++];
+                        output.add(new MouseMoveEvent(x, y));
+                        if (this._pointerMode == PointerCanonicalizerMode.CONVERT_MOUSE_TO_TOUCH) {
+                            output.add(new TouchMoveEvent(0, x, y));
+                        }
+                        break;
                     case EventType.MOUSE_LEFT_DOWN:
                     case EventType.MOUSE_LEFT_UP:
-						isDown = eventType == EventType.MOUSE_LEFT_DOWN;
-						x = t[i++];
-						y = t[i++];
-						output.add(new MouseClickEvent(eventType, EventButton.LEFT, isDown, x, y));
-						if (this._pointerMode == PointerCanonicalizerMode.CONVERT_MOUSE_TO_TOUCH) {
-							output.add(isDown ? new TouchStartEvent(0, x, y) : new TouchEndEvent(0, x, y));
-						}
-						break;
+                        isDown = eventType == EventType.MOUSE_LEFT_DOWN;
+                        x = t[i++];
+                        y = t[i++];
+                        output.add(new MouseClickEvent(eventType, EventButton.LEFT, isDown, x, y));
+                        if (this._pointerMode == PointerCanonicalizerMode.CONVERT_MOUSE_TO_TOUCH) {
+                            output.add(isDown ? new TouchStartEvent(0, x, y) : new TouchEndEvent(0, x, y));
+                        }
+                        break;
                     case EventType.MOUSE_RIGHT_DOWN:
                     case EventType.MOUSE_RIGHT_UP:
-						isDown = eventType == EventType.MOUSE_RIGHT_DOWN;
-						x = t[i++];
-						y = t[i++];
-						output.add(new MouseClickEvent(eventType, EventButton.RIGHT, isDown, x, y));
-						break;
+                        isDown = eventType == EventType.MOUSE_RIGHT_DOWN;
+                        x = t[i++];
+                        y = t[i++];
+                        output.add(new MouseClickEvent(eventType, EventButton.RIGHT, isDown, x, y));
+                        break;
 
                     case EventType.TOUCH_START:
                     case EventType.TOUCH_END:
                     case EventType.TOUCH_MOVE:
-						id = t[i++];
-						x = t[i++];
-						y = t[i++];
-						output.add(eventType == EventType.TOUCH_MOVE
-							? new TouchMoveEvent(id, x, y)
-							: eventType == EventType.TOUCH_START
-								? new TouchStartEvent(id, x, y)
-								: new TouchEndEvent(id, x, y));
-						
-						if (this._pointerMode == PointerCanonicalizerMode.CONVERT_TOUCH_TO_MOUSE) {
-							switch (eventType) {
-								case EventType.TOUCH_START:
-									avgPointerLoc = this._getAveragePointerLocation();
-									
-									// if there are no pointers masked to 1 as their button state, then
-									// issue a new MouseClickEvent for MOUSE_LEFT_DOWN
-									this._pointers[id] = [id, x, y, 1];
-									if (avgPointerLoc == null) {
-										output.add(new MouseClickEvent(EventType.MOUSE_LEFT_DOWN, EventButton.LEFT, true, x, y));
-									} else {
-										// if there are already pointers pressed, then incorporate this into
-										// the average location and then treat this as a mouse move event
-										avgPointerLoc = this._getAveragePointerLocation();
-										output.add(new MouseMoveEvent(avgPointerLoc[0], avgPointerLoc[1]));
-									}
-									break;
-								
-								case EventType.TOUCH_END:
-									// safely pop the pointer
-									if (this._pointers.get(id) != null) {
-										this._pointers.pop(id);
-									}
-									avgPointerLoc = this._getAveragePointerLocation();
-									if (avgPointerLoc == null) {
-										output.add(new MouseClickEvent(EventType.MOUSE_LEFT_UP, EventButton.LEFT, false, x, y));
-									} else {
-										output.add(new MouseMoveEvent(avgPointerLoc[0], avgPointerLoc[1]));
-									}
-									break;
-									
-								default:
-									this._pointers[id] = [id, x, y, 1];
-									avgPointerLoc = this._getAveragePointerLocation();
-									output.add(new MouseMoveEvent(avgPointerLoc[0], avgPointerLoc[1]));
-									break;
-							}
-						} else {
-							if (eventType == EventType.TOUCH_END) {
-								if (this._pointers.get(id) != null) {
-									this._pointers.pop(id);
-								}
-							} else {
-								this._pointers[id] = [id, x, y, 1];
-							}
-						}
-						break;
+                        id = t[i++];
+                        x = t[i++];
+                        y = t[i++];
+                        output.add(eventType == EventType.TOUCH_MOVE
+                            ? new TouchMoveEvent(id, x, y)
+                            : eventType == EventType.TOUCH_START
+                                ? new TouchStartEvent(id, x, y)
+                                : new TouchEndEvent(id, x, y));
+
+                        if (this._pointerMode == PointerCanonicalizerMode.CONVERT_TOUCH_TO_MOUSE) {
+                            switch (eventType) {
+                                case EventType.TOUCH_START:
+                                    avgPointerLoc = this._getAveragePointerLocation();
+
+                                    // if there are no pointers masked to 1 as their button state, then
+                                    // issue a new MouseClickEvent for MOUSE_LEFT_DOWN
+                                    this._pointers[id] = [id, x, y, 1];
+                                    if (avgPointerLoc == null) {
+                                        output.add(new MouseClickEvent(EventType.MOUSE_LEFT_DOWN, EventButton.LEFT, true, x, y));
+                                    } else {
+                                        // if there are already pointers pressed, then incorporate this into
+                                        // the average location and then treat this as a mouse move event
+                                        avgPointerLoc = this._getAveragePointerLocation();
+                                        output.add(new MouseMoveEvent(avgPointerLoc[0], avgPointerLoc[1]));
+                                    }
+                                    break;
+
+                                case EventType.TOUCH_END:
+                                    // safely pop the pointer
+                                    if (this._pointers.get(id) != null) {
+                                        this._pointers.pop(id);
+                                    }
+                                    avgPointerLoc = this._getAveragePointerLocation();
+                                    if (avgPointerLoc == null) {
+                                        output.add(new MouseClickEvent(EventType.MOUSE_LEFT_UP, EventButton.LEFT, false, x, y));
+                                    } else {
+                                        output.add(new MouseMoveEvent(avgPointerLoc[0], avgPointerLoc[1]));
+                                    }
+                                    break;
+
+                                default:
+                                    this._pointers[id] = [id, x, y, 1];
+                                    avgPointerLoc = this._getAveragePointerLocation();
+                                    output.add(new MouseMoveEvent(avgPointerLoc[0], avgPointerLoc[1]));
+                                    break;
+                            }
+                        } else {
+                            if (eventType == EventType.TOUCH_END) {
+                                if (this._pointers.get(id) != null) {
+                                    this._pointers.pop(id);
+                                }
+                            } else {
+                                this._pointers[id] = [id, x, y, 1];
+                            }
+                        }
+                        break;
 
                     // for mouse scroll events: t[3] -> scroll amount
                     case EventType.MOUSE_SCROLL:
-						output.add(new MouseScrollEvent(t[i++], t[i++], t[i++]));
-						break;
+                        output.add(new MouseScrollEvent(t[i++], t[i++], t[i++]));
+                        break;
 
                     // for key events: t[1] -> key code (see enum)
                     case EventType.KEY_DOWN:
                     case EventType.KEY_UP:
-						output.add(new KeyEvent(t[i++], eventType == EventType.KEY_DOWN));
-						break;
+                        output.add(new KeyEvent(t[i++], eventType == EventType.KEY_DOWN));
+                        break;
 
                     // for quit events: t[1] -> quit subtype
                     case EventType.QUIT:
-						output.add(new QuitEvent(t[i++]));
-						break;
+                        output.add(new QuitEvent(t[i++]));
+                        break;
 
                     default: assert(false); break;
                 }
@@ -287,15 +287,15 @@ namespace Game {
             return output;
         }
 
-		function getTouchPoints() {
-			output = [];
-			for (pointer : this._pointers.values()) {
-				if ((pointer[3] & 1) != 0) {
-					output.add(pointer[:3]);
-				}
-			}
-			return output;
-		}
+        function getTouchPoints() {
+            output = [];
+            for (pointer : this._pointers.values()) {
+                if ((pointer[3] & 1) != 0) {
+                    output.add(pointer[:3]);
+                }
+            }
+            return output;
+        }
 
         @localized('en', 'setTitle')
         @localized('es', 'ESsetTitle')
