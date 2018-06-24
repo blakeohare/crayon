@@ -18,11 +18,15 @@ namespace Interpreter.Vm
         public static string ImageSheetManifest { get; set; }
         public static string ByteCode { get; set; }
 
-        public static readonly bool IsWindows =
+		public static readonly bool IsWindows =
+#if WINDOWS_UWP
+            true;
+#else
             Environment.OSVersion.Platform == PlatformID.Win32NT ||
             Environment.OSVersion.Platform == PlatformID.Win32S ||
             Environment.OSVersion.Platform == PlatformID.Win32Windows ||
             Environment.OSVersion.Platform == PlatformID.WinCE;
+#endif
 
         static TranslationHelper()
         {
@@ -46,7 +50,11 @@ namespace Interpreter.Vm
         {
             if (status == 3)
             {
+#if WINDOWS_UWP
+                Windows.ApplicationModel.Core.CoreApplication.Exit();
+#else
                 System.Environment.Exit(1);
+#endif
             }
         }
 
@@ -258,7 +266,7 @@ namespace Interpreter.Vm
             string libraryName = libraryWrapperClass.Namespace.Split('.')[2];
             string fullyQualifiedFunctionName = "lib_" + libraryName.ToLower() + "_" + functionName;
             string compiledName = "v_lib_" + libraryName.ToLower() + "_function_" + functionName;
-            System.Reflection.MethodInfo fp = libraryWrapperClass.GetMethod(compiledName);
+            System.Reflection.MethodInfo fp = ReflectionHelper.GetMethodOffType(libraryWrapperClass, compiledName);
             if (fp == null) throw new Exception("Library function not found: '" + fullyQualifiedFunctionName + "'");
             CrayonWrapper.v_registerLibraryFunction(
                 fp,

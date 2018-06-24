@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Interpreter.Vm
 {
@@ -11,7 +12,8 @@ namespace Interpreter.Vm
 
         public LibraryRegistry()
         {
-            foreach (Type type in typeof(LibraryRegistry).Assembly.GetTypes().Where(t => t.Name == "LibraryWrapper"))
+			Type[] libraryWrappers = ReflectionHelper.GetAllTypesFromAssemblyWithName(typeof(LibraryRegistry), "LibraryWrapper");
+            foreach (Type type in libraryWrappers)
             {
                 string[] namespaceComponents = type.FullName.Split('.');
                 if (namespaceComponents.Length > 2 && namespaceComponents[1] == "Libraries")

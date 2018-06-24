@@ -106,6 +106,8 @@ namespace CSharpAppUwp
             this.CopyResourceAsText(output, baseDir + "Properties/Default.rd.xml", "Resources/DefaultRdXml.txt", replacements);
 
             this.CopyResourceAsText(output, baseDir + "Vm/TranslationHelper.cs", "Resources/TranslationHelper.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/ReflectionHelper.cs", "Resources/ReflectionHelperCs.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/PlatformTranslationHelper.cs", "Resources/PlatformTranslationHelperCs.txt", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/LibraryRegistry.cs", "Resources/LibraryRegistry.txt", replacements);
             this.CopyResourceAsText(output, baseDir + "Vm/Library.cs", "Resources/Library.txt", replacements);
 

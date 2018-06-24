@@ -67,5 +67,8 @@
     <EmbeddedResource Include="Resources\UniversalBitmap.txt" />
     <EmbeddedResource Include="Resources\UniversalFont.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ReflectionHelperCs.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

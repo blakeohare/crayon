@@ -1,0 +1,28 @@
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Reflection;
+
+namespace Interpreter.Vm
+{
+    public static class ReflectionHelper
+    {
+		public static System.Type[] GetAllTypesFromAssemblyWithName(Type typeInAssembly, string name) {
+			Type[] allTypes = typeof(LibraryRegistry)
+#if WINDOWS_UWP
+                .GetTypeInfo()
+#endif
+                .Assembly.GetTypes();
+			return allTypes.Where(t => t.Name == name).ToArray();
+		}
+
+		public static MethodInfo GetMethodOffType(Type type, string name)
+		{
+#if WINDOWS_UWP
+			return type.GetTypeInfo().GetDeclaredMethod(name);
+#else
+			return type.GetMethod(name);
+#endif
+		}
+    }
+}

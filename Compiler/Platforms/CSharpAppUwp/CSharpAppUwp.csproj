@@ -84,5 +84,8 @@
     <EmbeddedResource Include="Resources\AppXaml.txt" />
     <EmbeddedResource Include="Resources\AppXamlCs.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\PlatformTranslationHelperCs.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
