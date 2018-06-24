@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -59,6 +59,26 @@
       <Project>{bd2af3e6-4a96-4511-86a5-e414a6cab81e}</Project>
       <Name>LangCSharp</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\AssemblyInfoCs.txt" />
+    <EmbeddedResource Include="Resources\Assets\lockscreenlogoscale200.png" />
+    <EmbeddedResource Include="Resources\Assets\splashscreenscale200.png" />
+    <EmbeddedResource Include="Resources\Assets\square150x150logoscale200.png" />
+    <EmbeddedResource Include="Resources\Assets\square44x44logo.png" />
+    <EmbeddedResource Include="Resources\Assets\square44x44logotargetsize24altformunplated.png" />
+    <EmbeddedResource Include="Resources\Assets\storelogo.png" />
+    <EmbeddedResource Include="Resources\Assets\wide310x150logoscale200.png" />
+    <EmbeddedResource Include="Resources\DefaultRdXml.txt" />
+    <EmbeddedResource Include="Resources\MainPageXaml.txt" />
+    <EmbeddedResource Include="Resources\MainPageXamlCs.txt" />
+    <EmbeddedResource Include="Resources\PackageAppxmanifest.txt" />
+    <EmbeddedResource Include="Resources\ProjectFile.txt" />
+    <EmbeddedResource Include="Resources\SolutionFile.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\AppXaml.txt" />
+    <EmbeddedResource Include="Resources\AppXamlCs.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
