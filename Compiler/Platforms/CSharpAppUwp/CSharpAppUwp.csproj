@@ -55,6 +55,10 @@
       <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
       <Name>Platform</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CSharpApp\CSharpApp.csproj">
+      <Project>{4dca9e82-a6c2-4669-84f3-00d13204af7e}</Project>
+      <Name>CSharpApp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LangCSharp\LangCSharp.csproj">
       <Project>{bd2af3e6-4a96-4511-86a5-e414a6cab81e}</Project>
       <Name>LangCSharp</Name>

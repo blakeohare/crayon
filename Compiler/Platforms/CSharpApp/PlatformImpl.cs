@@ -23,8 +23,9 @@ namespace CSharpApp
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
-        {
-            List<string> embeddedResources = new List<string>()
+		{
+			// TODO: this is mostly duplicated in csharp-app-uwp
+			List<string> embeddedResources = new List<string>()
             {
                 "<EmbeddedResource Include=\"Resources\\ByteCode.txt\"/>",
                 "<EmbeddedResource Include=\"Resources\\ResourceManifest.txt\"/>",
@@ -142,6 +143,7 @@ namespace CSharpApp
                     }
                 }
             }
+
             replacements["DLL_REFERENCES"] = dllReferencesOriginal;
             replacements["DLLS_COPIED"] = dllsCopiedOriginal;
             replacements["EMBEDDED_RESOURCES"] = embeddedResources;
@@ -149,7 +151,7 @@ namespace CSharpApp
             replacements["ASSEMBLY_GUID"] = runtimeAssemblyGuid;
 
             this.CopyTemplatedFiles(baseDir, output, replacements, true);
-            this.ExportInterpreter(templates, baseDir, output);
+            ExportInterpreter(this, templates, baseDir, output);
             this.ExportProjectFiles(baseDir, output, replacements, libraryProjectNameToGuid, true);
             this.CopyResourceAsBinary(output, baseDir + "icon.ico", "ResourcesVm/icon.ico");
 
@@ -257,7 +259,7 @@ namespace CSharpApp
                             "    <Reference Include=\"" + dotNetLib + "\" />")
                     .ToArray());
 
-            this.ExportInterpreter(templates, baseDir, output);
+            ExportInterpreter(this, templates, baseDir, output);
 
             output[baseDir + "Resources/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
             output[baseDir + "Resources/ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
@@ -337,7 +339,7 @@ namespace CSharpApp
             this.CopyResourceAsText(output, baseDir + "ResourceReader.cs", resourceDir + "/ResourceReader.txt", replacements);
         }
 
-        private string WrapStructCode(string structCode)
+        public override string WrapStructCode(string structCode)
         {
             return string.Join("\r\n", new string[] {
                 "using System;",
@@ -351,7 +353,8 @@ namespace CSharpApp
             });
         }
 
-        private void ExportInterpreter(
+        public static void ExportInterpreter(
+			AbstractPlatform platform,
             TemplateStorage templates,
             string baseDir,
             Dictionary<string, FileOutput> output)
@@ -362,7 +365,7 @@ namespace CSharpApp
                 output[baseDir + "Structs/" + structName + ".cs"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = this.WrapStructCode(templates.GetCode(structKey)),
+                    TextContent = platform.WrapStructCode(templates.GetCode(structKey)),
                 };
             }
 

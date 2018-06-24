@@ -200,5 +200,7 @@ namespace Platform
             Options options,
             string outputDirectory)
         { }
+
+		public virtual string WrapStructCode(string basicStructCode) { return basicStructCode; }
     }
 }
