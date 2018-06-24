@@ -23,9 +23,9 @@ namespace CSharpApp
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
-		{
-			// TODO: this is mostly duplicated in csharp-app-uwp
-			List<string> embeddedResources = new List<string>()
+        {
+            // TODO: this is mostly duplicated in csharp-app-uwp
+            List<string> embeddedResources = new List<string>()
             {
                 "<EmbeddedResource Include=\"Resources\\ByteCode.txt\"/>",
                 "<EmbeddedResource Include=\"Resources\\ResourceManifest.txt\"/>",
@@ -354,7 +354,7 @@ namespace CSharpApp
         }
 
         public static void ExportInterpreter(
-			AbstractPlatform platform,
+            AbstractPlatform platform,
             TemplateStorage templates,
             string baseDir,
             Dictionary<string, FileOutput> output)

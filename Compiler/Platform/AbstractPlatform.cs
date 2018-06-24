@@ -201,6 +201,6 @@ namespace Platform
             string outputDirectory)
         { }
 
-		public virtual string WrapStructCode(string basicStructCode) { return basicStructCode; }
+        public virtual string WrapStructCode(string basicStructCode) { return basicStructCode; }
     }
 }
