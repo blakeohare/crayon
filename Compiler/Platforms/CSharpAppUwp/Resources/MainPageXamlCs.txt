@@ -40,12 +40,34 @@ namespace %%%PROJECT_ID%%%
 
 		private static readonly int WIDTH = 640;
 		private static readonly int HEIGHT = 480;
+		
+		private bool isInitialized = false;
+
+		private void InitializeVm()
+		{
+			TranslationHelper.CommandLineArgs = new string[0];
+			TranslationHelper.LibraryRegistry = new LibraryRegistry();
+			TranslationHelper.ByteCode = ResourceReader.ReadResourceTextFile("ByteCode.txt");
+			TranslationHelper.ResourceManifest = ResourceReader.ReadResourceTextFile("ResourceManifest.txt");
+			TranslationHelper.ImageSheetManifest = ResourceReader.ReadMetadata("ImageSheetManifest.txt", true);
+			isInitialized = true;
+		}
+
+		public static void Print(object value) {
+			string display = value == null ? "null" : value.ToString();
+			System.Diagnostics.Debug.WriteLine(display);
+		}
 
 		private void canvas_DrawAnimated(
 			Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl sender,
 			Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs args)
 		{
-			System.Diagnostics.Debug.WriteLine(lifetimeCounter++) ;
+			if (!isInitialized)
+			{
+				InitializeVm();
+			}
+
+			Print(lifetimeCounter++);
 			args.DrawingSession.DrawText(
 				"Hello, World!",
 				new Vector2(lifetimeCounter % WIDTH, lifetimeCounter % HEIGHT), 

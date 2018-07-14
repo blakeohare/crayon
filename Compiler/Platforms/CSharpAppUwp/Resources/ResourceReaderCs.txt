@@ -1,0 +1,6 @@
+﻿namespace %%%PROJECT_ID%%%
+{
+	public static class ResourceReader {
+		
+	}
+}

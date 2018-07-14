@@ -65,6 +65,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\AppXaml.txt" />
+    <EmbeddedResource Include="Resources\AppXamlCs.txt" />
     <EmbeddedResource Include="Resources\AssemblyInfoCs.txt" />
     <EmbeddedResource Include="Resources\Assets\lockscreenlogoscale200.png" />
     <EmbeddedResource Include="Resources\Assets\splashscreenscale200.png" />
@@ -77,15 +79,10 @@
     <EmbeddedResource Include="Resources\MainPageXaml.txt" />
     <EmbeddedResource Include="Resources\MainPageXamlCs.txt" />
     <EmbeddedResource Include="Resources\PackageAppxmanifest.txt" />
-    <EmbeddedResource Include="Resources\ProjectFile.txt" />
-    <EmbeddedResource Include="Resources\SolutionFile.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\AppXaml.txt" />
-    <EmbeddedResource Include="Resources\AppXamlCs.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\PlatformTranslationHelperCs.txt" />
+    <EmbeddedResource Include="Resources\ProjectFile.txt" />
+    <EmbeddedResource Include="Resources\ResourceReaderCs.txt" />
+    <EmbeddedResource Include="Resources\SolutionFile.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
