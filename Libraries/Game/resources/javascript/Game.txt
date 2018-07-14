@@ -162,6 +162,10 @@ C$game$initializeScreen = function (width, height, pwidth, pheight, execId) {
   C$game$runFrame();
 };
 
+C$game$doRender = function() {
+	C$drawing$render(C$game$ctx, C$game$width, C$game$height);
+};
+
 C$game$getCrayonHostInner = function() {
   var d = C$common$getElement('crayon_host_inner');
   if (!d) {
@@ -202,7 +206,7 @@ window.addEventListener('keydown', function(e) {
 
 C$game$touches = {}; // { ID -> [x, y] }
 
-C$game$onTouchUpdate= function(ev) {
+C$game$onTouchUpdate = function(ev) {
   ev.preventDefault();
   C$game$touches = {};
   var w = C$game$width;
