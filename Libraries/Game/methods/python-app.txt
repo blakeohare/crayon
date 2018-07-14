@@ -6,3 +6,4 @@ $_lib_game_initialize_screen: pygame_initialize_screen([ARG:1], [ARG:2], ([ARG:3
 $_lib_game_set_title: pygame.display.set_caption([ARG:1])
 $_lib_game_clockTick: always_true()
 $_lib_game_getNativeWindowHandle: None
+$_lib_game_set_window_mode: always_false()

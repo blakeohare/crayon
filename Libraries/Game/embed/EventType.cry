@@ -26,5 +26,8 @@
         TOUCH_START = 0x40,
         TOUCH_END = 0x41,
         TOUCH_MOVE = 0x42,
+		
+		// Internal only
+		WINDOW_SIZE_CHANGE = 0x50,
     }
 }

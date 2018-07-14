@@ -7,4 +7,5 @@
     Core.RegisterLibraryFunction(libRegData, "pump_events", 1);
     Core.RegisterLibraryFunction(libRegData, "set_title", 1);
     Core.RegisterLibraryFunction(libRegData, "setInstance", 1);
+    Core.RegisterLibraryFunction(libRegData, "set_window_mode", 3);
 }

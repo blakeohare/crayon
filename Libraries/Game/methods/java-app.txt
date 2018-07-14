@@ -6,3 +6,4 @@ $_lib_game_initialize_screen: org.crayonlang.interpreter.GameWindow.initializeSc
 $_lib_game_set_title: org.crayonlang.interpreter.GameWindow.INSTANCE.setTitle([ARG:1])
 $_lib_game_clockTick: TranslationHelper.alwaysTrue()
 $_lib_game_getNativeWindowHandle: org.crayonlang.interpreter.GameWindow.INSTANCE
+$_lib_game_set_window_mode: TranslationHelper.alwaysFalse()

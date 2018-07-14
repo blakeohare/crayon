@@ -36,6 +36,21 @@ namespace Game {
 		CONVERT_MOUSE_TO_TOUCH = 2,
 	}
 
+	// WARNING: not currently supported by all platforms yet
+	enum WindowScaleMode {
+		// Stretch the screen to cover the whole available window
+		FILL = 0,
+		
+		// Stretch the window, but add black boxes to the sides to maintain the aspect ratio
+		//FIT = 1,
+		
+		// The width and height will simply be the real pixels
+		//SIZE_TO_WINDOW = 2,
+		
+		// The largest dimension can be set to a constant
+		SIZE_TO_WINDOW_CONSTRAINED_MAX = 4,
+	}
+	
     @localized('en', 'GameWindow')
     @localized('es', 'JuegoVentana')
     @localized('jp', 'JPGameWindow')
@@ -43,8 +58,10 @@ namespace Game {
 
         static field instance;
 
+		// TODO: in lieu of private fields, move these to native fields on the window object. They are only accessed by .getSize()
         field _w;
         field _h;
+		field _scale_mode = WindowScaleMode.FILL;
 
         static field _reusable_list = [];
 
@@ -84,6 +101,7 @@ namespace Game {
             screenWidth = Math.floor(screenWidth);
             screenHeight = Math.floor(screenHeight);
 
+			// TODO: re-assess if this is necessary
             this._w = width;
             this._h = height;
 
@@ -100,6 +118,16 @@ namespace Game {
             $$lib_game_setInstance(this);
         }
 
+		function getSize() {
+			return [this._w, this._h];
+		}
+		
+		function setWindowMode(mode, width = null, height = null) {
+			// TODO: throw a nice error for bad types
+			this._scale_mode = mode;
+			return $$lib_game_set_window_mode(mode, width ?? 0, height ?? 0);
+		}
+		
 		function setPointerCanonicalizationMode(mode) {
 			this._pointerMode = mode;
 			return this;
@@ -273,6 +301,17 @@ namespace Game {
 						output.add(new QuitEvent(t[i++]));
 						break;
 
+					case EventType.WINDOW_SIZE_CHANGE:
+						w = t[i++];
+						h = t[i++];
+						switch (this._scale_mode) {
+							case WindowScaleMode.SIZE_TO_WINDOW_CONSTRAINED_MAX:
+								this._w = w;
+								this._h = h;
+								break;
+						}
+						break;
+						
                     default: assert(false); break;
                 }
             }
