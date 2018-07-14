@@ -7,6 +7,10 @@ namespace Interpreter.Libraries.Game
 {
     public class GameWindow : OpenTK.GameWindow
     {
+        // These are defined in embed/GameWindow.cry
+        private const int SCALE_MODE_STRETCH_TO_FILL = 1;
+        private const int SCALE_MODE_SIZE_TO_WINDOW_CONSTRAINED_MAX = 4;
+
         private const int MOUSE_EVENT = 0;
         private const int KEY_EVENT = 1;
         private const int EXIT = 2;
@@ -25,6 +29,9 @@ namespace Interpreter.Libraries.Game
         private int gameHeight;
         private int screenWidth;
         private int screenHeight;
+        private int scaleMode = SCALE_MODE_STRETCH_TO_FILL; // stretch to fit, do not adjust game dimensions
+        private int scaleModeMaxSize = 800;
+        private bool screenSizeChanged = false;
 
         private int executionContextId;
 
@@ -193,6 +200,40 @@ namespace Interpreter.Libraries.Game
             events.Enqueue(cc);
         }
 
+        private void UpdateScreenSize()
+        {
+            switch (this.scaleMode)
+            {
+                case SCALE_MODE_STRETCH_TO_FILL:
+                    break;
+
+                case SCALE_MODE_SIZE_TO_WINDOW_CONSTRAINED_MAX:
+                    this.gameWidth = this.screenWidth;
+                    this.gameHeight = this.screenHeight;
+                    if (this.gameWidth > this.gameHeight)
+                    {
+                        if (this.gameWidth > this.scaleModeMaxSize)
+                        {
+                            this.gameHeight = this.scaleModeMaxSize * this.gameHeight / this.gameWidth;
+                            this.gameWidth = this.scaleModeMaxSize;
+                        }
+                    }
+                    else
+                    {
+                        if (this.gameHeight > this.scaleModeMaxSize)
+                        {
+                            this.gameWidth = this.scaleModeMaxSize * this.gameWidth / this.gameHeight;
+                            this.gameHeight = this.scaleModeMaxSize;
+                        }
+                    }
+                    break;
+
+                default:
+                    throw new System.NotImplementedException();
+            }
+            this.screenSizeChanged = true;
+        }
+
         public List<PlatformRelayObject> GetEvents()
         {
             List<PlatformRelayObject> output = new List<PlatformRelayObject>();
@@ -235,6 +276,12 @@ namespace Interpreter.Libraries.Game
                 }
             }
 
+            if (this.screenSizeChanged)
+            {
+                output.Add(new PlatformRelayObject(0x50, this.gameWidth, this.gameHeight, 0, 0.0, null));
+                this.screenSizeChanged = false;
+            }
+
             return output;
         }
 
@@ -250,6 +297,7 @@ namespace Interpreter.Libraries.Game
         {
             this.screenWidth = this.Width;
             this.screenHeight = this.Height;
+            this.UpdateScreenSize();
 
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
@@ -363,6 +411,26 @@ namespace Interpreter.Libraries.Game
         {
             // TODO: implement this when the public API is a bit more finalized.
             return false;
+        }
+
+        public void SetScreenMode(int mode, int arg1, int arg2)
+        {
+            this.scaleMode = mode;
+            switch (mode)
+            {
+                case 1:
+                    this.gameWidth = arg1;
+                    this.gameHeight = arg2;
+                    break;
+
+                case 4:
+                    this.scaleModeMaxSize = arg1;
+                    break;
+
+                default:
+                    throw new System.NotImplementedException();
+            }
+            this.UpdateScreenSize();
         }
 
         public object ScreenCapture()

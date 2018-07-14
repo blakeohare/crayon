@@ -1,4 +1,6 @@
-﻿int libGamePumpEvents(List<Value> output) {
+﻿// TODO: this is extremely brittle code. Please rewrite.
+
+int libGamePumpEvents(List<Value> output) {
     List<PlatformRelayObject> eventList = Native._lib_game_get_events_raw_list();
     output.Clear();
     int len = eventList.Size();
