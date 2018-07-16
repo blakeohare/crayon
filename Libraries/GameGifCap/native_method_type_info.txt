@@ -7,5 +7,7 @@ bool _lib_gamegifcap_isSupported();
 // Returns a status code
 int _lib_gamegifcap_screenCap(object gifContext, object nativeGameWindow);
 
+void _lib_gamegifcap_setRecordSize(object gifContext, int width, int height);
+
 // Saves the GIF recorder context to a file.
 int _lib_gamegifcap_saveToDisk(object gifContext, string path);

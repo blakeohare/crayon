@@ -31,6 +31,18 @@ namespace GameGifCap {
             }
         }
 
+        function setTargetSize(width, height) {
+            if (this.isRecording())
+                throw new InvalidOperationException("Cannot set target size after recording has started.");
+            width = Math.floor(width);
+            height = Math.floor(height);
+            if (width < 1 || height < 1 || width >= 3000 || height >= 3000) {
+                throw new InvalidArgumentException("Width and height are not in an acceptable range.");
+            }
+            $$lib_gamegifcap_setRecordSize(this, width, height);
+            return this;
+        }
+
         function isRecording() {
             return this._sessions.length > 0 && this._sessions[-1]._isRecording;
         }

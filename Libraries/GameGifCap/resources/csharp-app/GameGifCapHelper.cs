@@ -11,6 +11,11 @@ namespace Interpreter.Libraries.GameGifCap
 #endif
         }
 
+        public static void SetRecordSize(object gifRecContextObj, int width, int height)
+        {
+            ((GifRecorderContext)gifRecContextObj).SetRecordSize(width, height);
+        }
+
         public static int SaveToDisk(object gifRecContextObj, string path)
         {
             return ((GifRecorderContext)gifRecContextObj).Finish(path);

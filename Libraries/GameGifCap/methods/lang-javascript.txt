@@ -1,4 +1,5 @@
 $_lib_gamegifcap_createGifContext: {}
+$_lib_gamegifcap_setRecordSize: C$common$alwaysFalse()
 $_lib_gamegifcap_isSupported: C$common$alwaysFalse()
 $_lib_gamegifcap_screenCap: 0
 $_lib_gamegifcap_saveToDisk: 0

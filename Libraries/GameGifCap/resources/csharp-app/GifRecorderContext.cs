@@ -6,6 +6,9 @@ namespace Interpreter.Libraries.GameGifCap
         private int millisPerFrame;
         private int expectedWidth;
         private int expectedHeight;
+        private int outputWidth;
+        private int outputHeight;
+        private bool useOutputSize = false;
         private string tempFile;
         private System.IO.FileStream tempFileStream;
 
@@ -29,8 +32,15 @@ namespace Interpreter.Libraries.GameGifCap
             {
                 this.expectedWidth = width;
                 this.expectedHeight = height;
+                int fileWidth = this.expectedWidth;
+                int fileHeight = this.expectedHeight;
+                if (this.useOutputSize)
+                {
+                    fileWidth = this.outputWidth;
+                    fileHeight = this.outputHeight;
+                }
                 this.tempFileStream = System.IO.File.Create(this.tempFile);
-                this.bkGifEncoder = new BumpKitGifEncoder(this.tempFileStream, width, height);
+                this.bkGifEncoder = new BumpKitGifEncoder(this.tempFileStream, fileWidth, fileHeight);
             }
             else
             {
@@ -41,8 +51,25 @@ namespace Interpreter.Libraries.GameGifCap
                 }
             }
 
+            if (this.useOutputSize &&
+                (this.outputWidth != this.expectedWidth || this.outputHeight != this.expectedHeight))
+            {
+                System.Drawing.Bitmap newFrame = new System.Drawing.Bitmap(this.outputWidth, this.outputHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(newFrame))
+                {
+                    g.DrawImage(frame, 0, 0, this.outputWidth, this.outputHeight);
+                }
+                frame = newFrame;
+            }
+
             this.bkGifEncoder.AddFrame(frame, 0, 0, System.TimeSpan.FromMilliseconds(this.millisPerFrame));
         }
+
+		public void SetRecordSize(int width, int height) {
+			this.outputWidth = width;
+			this.outputHeight = height;
+			this.useOutputSize = true;
+		}
 
         public int Finish(string path)
         {
