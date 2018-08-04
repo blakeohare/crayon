@@ -30,32 +30,41 @@ namespace CrayonRuntime
 
         private static void Run(string[] args)
         {
-            if (args.Length < 2) throw new Exception("Incorrect number of args. Requires path to a cbx file and parent process ID.");
+            if (args.Length < 3) throw new Exception("Incorrect number of args. Requires path to a cbx file and parent process ID.");
 
             List<string> argsList = new List<string>(args);
             string cbxPath = argsList[0];
-			string vmpidRaw = argsList[1];
-			string[] runtimeArgs = new string[0];
-			if (argsList.Count > 2 && argsList[2].StartsWith("runtimeargs:"))
-			{
-				runtimeArgs = argsList[2]
-					.Substring("runtimeargs:".Length)
-					.Split(',')
-					.Select(s => Base64Decode(s))
-					.ToArray();
-			}
+            string vmpidRaw = argsList[1];
+            string vmFlagsRaw = argsList[2];
+            string[] runtimeArgs = new string[0];
+            if (argsList.Count > 3 && argsList[2].StartsWith("runtimeargs:"))
+            {
+                runtimeArgs = argsList[3]
+                    .Substring("runtimeargs:".Length)
+                    .Split(',')
+                    .Select(s => Base64Decode(s))
+                    .ToArray();
+            }
 
-			int vmPid = 0;
+            string[] vmFlags = vmFlagsRaw.Split(',');
+            foreach (string vmFlag in vmFlags) {
+                switch (vmFlag) {
+                    case "showLibStack":
+                        TranslationHelper.ShowLibStack = true;
+                        break;
+                }
+            }
+            int vmPid = 0;
             if (!cbxPath.ToLower().EndsWith(".cbx")) throw new Exception("File must be a CBX file.");
             if (!System.IO.File.Exists(cbxPath)) throw new Exception("Given CBX file does not exist.");
-			if (!vmpidRaw.StartsWith("vmpid:") || !int.TryParse(vmpidRaw.Substring("vmpid:".Length), out vmPid)) throw new Exception("Invalid VM Process ID.");
+            if (!vmpidRaw.StartsWith("vmpid:") || !int.TryParse(vmpidRaw.Substring("vmpid:".Length), out vmPid)) throw new Exception("Invalid VM Process ID.");
 
-			if (vmPid > 0)
-			{
+            if (vmPid > 0)
+            {
                 System.Threading.Thread thread = new System.Threading.Thread(ParentChecker);
                 thread.IsBackground = true;
                 thread.Start(vmPid);
-			}
+            }
 
             byte[] cbxData = System.IO.File.ReadAllBytes(cbxPath);
 
@@ -76,11 +85,11 @@ namespace CrayonRuntime
             CrayonWrapper.v_main();
         }
 
-		private static string Base64Decode(string encodedValue)
-		{
+        private static string Base64Decode(string encodedValue)
+        {
             byte[] utf8Bytes = System.Convert.FromBase64String(encodedValue);
             return System.Text.Encoding.UTF8.GetString(utf8Bytes);
-		}
+        }
 
         // TODO: Surely there is a better way. But for now...
         private static void ParentChecker(object pid)
@@ -91,7 +100,7 @@ namespace CrayonRuntime
                 if (parentProcess == null || parentProcess.HasExited)
                 {
                     System.Diagnostics.Process.GetCurrentProcess().Kill();
-					return; // not strictly necessary but prevents an infinite loop compiler warning.
+                    return; // not strictly necessary but prevents an infinite loop compiler warning.
                 }
                 System.Threading.Thread.Sleep(50);
             }

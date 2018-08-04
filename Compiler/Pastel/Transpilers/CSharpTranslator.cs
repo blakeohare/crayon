@@ -855,6 +855,11 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
+        public override void TranslateVmShowLibStack(TranspilerContext sb)
+        {
+            sb.Append("TranslationHelper.ShowLibStack");
+        }
+
         public override void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef)
         {
             PType[] types = structDef.ArgTypes;

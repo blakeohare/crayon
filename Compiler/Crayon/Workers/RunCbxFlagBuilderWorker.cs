@@ -15,7 +15,8 @@ namespace Crayon
             string cbxFile = FileUtil.GetPlatformPath(finalCbxPath);
             int processId = System.Diagnostics.Process.GetCurrentProcess().Id;
             string runtimeArgs = string.Join(",", command.DirectRunArgs.Select(s => Utf8Base64.ToBase64(s)));
-            string flags = "\"" + cbxFile + "\" vmpid:" + processId;
+            string flags = "\"" + cbxFile + "\" vmpid:" + processId + " " + (command.DirectRunShowLibStack ? "showLibStack" : "ignore");
+
             if (runtimeArgs.Length > 0)
             {
                 flags += " runtimeargs:" + runtimeArgs;

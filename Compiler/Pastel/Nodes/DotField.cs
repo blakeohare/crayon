@@ -164,6 +164,7 @@ namespace Pastel.Nodes
                 case "VmDetermineLibraryAvailability": return NativeFunction.VM_DETERMINE_LIBRARY_AVAILABILITY;
                 case "VmEndProcess": return NativeFunction.VM_END_PROCESS;
                 case "VmRunLibraryManifest": return NativeFunction.VM_RUN_LIBRARY_MANIFEST;
+                case "VmShowLibStack": return NativeFunction.VM_SHOW_LIB_STACK;
 
                 // TODO: get this information from the parameter rather than having separate Core function
                 case "SortedCopyOfStringArray": return NativeFunction.SORTED_COPY_OF_STRING_ARRAY;

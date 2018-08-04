@@ -14,6 +14,7 @@
         public bool ShowLibraryDepTree { get; set; }
         public bool IsDirectCbxRun { get; set; }
         public string[] DirectRunArgs { get; set; }
+        public bool DirectRunShowLibStack { get; set; }
         public Platform.IPlatformProvider PlatformProvider { get; set; }
         public Pastel.IInlineImportCodeLoader InlineImportCodeLoader { get; set; }
 

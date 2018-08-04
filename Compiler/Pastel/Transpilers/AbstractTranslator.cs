@@ -309,6 +309,7 @@ namespace Pastel.Transpilers
                 case Pastel.NativeFunction.VM_DETERMINE_LIBRARY_AVAILABILITY: this.TranslateVmDetermineLibraryAvailability(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.VM_END_PROCESS: this.TranslateVmEndProcess(sb); break;
                 case Pastel.NativeFunction.VM_RUN_LIBRARY_MANIFEST: this.TranslateVmRunLibraryManifest(sb, args[0], args[1]); break;
+                case Pastel.NativeFunction.VM_SHOW_LIB_STACK: this.TranslateVmShowLibStack(sb); break;
 
                 default: throw new NotImplementedException(nativeFuncInvocation.Function.ToString());
             }
@@ -508,6 +509,7 @@ namespace Pastel.Transpilers
         public abstract void TranslateVmEndProcess(TranspilerContext sb);
         public abstract void TranslateVmEnqueueResume(TranspilerContext sb, Expression seconds, Expression executionContextId);
         public abstract void TranslateVmRunLibraryManifest(TranspilerContext sb, Expression libraryName, Expression libRegObj);
+        public abstract void TranslateVmShowLibStack(TranspilerContext sb);
         public abstract void TranslateWhileLoop(TranspilerContext sb, WhileLoop whileLoop);
 
         public abstract void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef);

@@ -17,12 +17,14 @@ namespace Crayon
         private static readonly string GEN_DEFAULT_PROJ = "genDefaultProj";
         private static readonly string GEN_DEFAULT_PROJ_ES = "genDefaultProjES";
         private static readonly string GEN_DEFAULT_PROJ_JP = "genDefaultProjJP";
+        private static readonly string SHOW_LIB_STACK = "showLibStack";
 
         private static readonly HashSet<string> ATOMIC_FLAGS = new HashSet<string>() {
             READABLE_BYTE_CODE,
             LIBRARY_DEP_TREE,
             SHOW_PERFORMANCE_MARKERS,
             CBX,
+            SHOW_LIB_STACK,
         };
 
         private static readonly HashSet<string> ONE_ARG_FLAGS = new HashSet<string>()
@@ -47,6 +49,20 @@ namespace Crayon
         public static ExportCommand Parse(string[] args)
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
+            int i;
+
+            // TODO: I need to fix the TODO below regarding having an unambiguous format.
+            // For now, do a first-pass scrape of showLibStack.
+            List<string> argsMutable = new List<string>(args);
+            for (i = 0; i < argsMutable.Count; ++i)
+            {
+                if (argsMutable[i] == "-" + SHOW_LIB_STACK)
+                {
+                    argsMutable.RemoveAt(i);
+                    output[SHOW_LIB_STACK] = "";
+                }
+            }
+            args = argsMutable.ToArray();
 
             // TODO: change this. This is a hack.
             // Ideally, the format will change to something that is not ambiguous.
@@ -66,11 +82,12 @@ namespace Crayon
                         IsDirectCbxRun = true,
                         DirectRunArgs = directRunArgs,
                         BuildFilePath = args[0],
+                        DirectRunShowLibStack = output.ContainsKey(SHOW_LIB_STACK)
                     };
                 }
             }
 
-            int i = 0;
+            i = 0;
             while (i < args.Length)
             {
                 string arg = args[i];
@@ -115,9 +132,9 @@ namespace Crayon
                         throw new InvalidOperationException("Unknown command line argument: " + arg);
                     }
                 }
-                else if (!output.ContainsKey("buildfile") && arg.ToLower().EndsWith(".build"))
+                else if (!output.ContainsKey(BUILD_FILE) && arg.ToLower().EndsWith(".build"))
                 {
-                    output["buildfile"] = arg;
+                    output[BUILD_FILE] = arg;
                     ++i;
                 }
                 else

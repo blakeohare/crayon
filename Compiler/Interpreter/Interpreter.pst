@@ -490,7 +490,9 @@ string unrollExceptionOutput(Value exceptionInstance) {
     trace.Reverse();
     pcs.Reverse();
 
-    if (!Core.IsDebug() && !stackItemIsLibrary(trace[0])) {
+    bool showLibStack = Core.IsDebug() || Core.VmShowLibStack();
+
+    if (!showLibStack && !stackItemIsLibrary(trace[0])) {
         while (stackItemIsLibrary(trace[trace.Size() - 1])) {
             trace.Pop();
             pcs.Pop();

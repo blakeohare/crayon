@@ -17,6 +17,7 @@ namespace Interpreter.Vm
         public static string ResourceManifest { get; set; }
         public static string ImageSheetManifest { get; set; }
         public static string ByteCode { get; set; }
+        public static bool ShowLibStack { get; set; }
 
         public static readonly bool IsWindows =
             Environment.OSVersion.Platform == PlatformID.Win32NT ||

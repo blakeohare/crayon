@@ -1212,6 +1212,10 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
+        public override void TranslateVmShowLibStack(TranspilerContext sb)
+        {
+            sb.Append("TranslationHelper.alwaysFalse()");
+        }
 
         public override void GenerateCodeForFunction(TranspilerContext sb, FunctionDefinition funcDef)
         {
