@@ -45,7 +45,7 @@ namespace Parser
         // that aren't actually accessible.
         public static ParserException ThrowException(Localization.Locale locale, Localization.ErrorMessages errorType, Token token, params string[] args)
         {
-            throw new ParserException(locale.Strings.Get(errorType.ToString(), args));
+            throw new ParserException(token, locale.Strings.Get(errorType.ToString(), args));
         }
     }
 }
