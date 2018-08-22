@@ -1,0 +1,21 @@
+function test() {
+	a = 37;
+	b = 42;
+	
+	x = -1;
+	y = 2;
+	
+	print(a + b);
+	print(a - b);
+	print(a * b);
+	print(a / b);
+	print(a % b);
+	print(x + y);
+	print(x - y);
+	print(x * y);
+	print(x / y);
+	print(x % y);
+	print(x ** y);
+	
+	
+}
