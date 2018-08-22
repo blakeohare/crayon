@@ -78,7 +78,7 @@ def TranslationHelper_base64ToString(value):
   u_value = base64.b64decode(value)
   if type(u_value) == TranslationHelper_StringType:
     return u_value
-  return u_value.encode('utf8')
+  return u_value.decode('utf8')
 
 def string_check_slice(haystack, i, needle):
   return haystack[i:i + len(needle)] == needle
