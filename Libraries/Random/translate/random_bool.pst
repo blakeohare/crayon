@@ -1,9 +1,9 @@
-﻿Value lib_random_function_random_bool(Array<Value> args) {
-    Value output = VALUE_NULL;
+﻿/*
+    Returns a random boolean.
+*/
+Value lib_random_function_random_bool(Array<Value> args) {
     if (Core.RandomFloat() < 0.5) {
-        output = VALUE_TRUE;
-    } else {
-        output = VALUE_FALSE;
+        return VALUE_TRUE;
     }
-    return output;
+    return VALUE_FALSE;
 }

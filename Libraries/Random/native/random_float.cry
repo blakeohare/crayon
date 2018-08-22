@@ -1,4 +1,0 @@
-﻿/*
-    Returns a value between 0.0 (inclusive) and 1.0 (exclusive)
-*/
-output = buildFloat($_random_float());

@@ -1,4 +1,23 @@
-﻿Value lib_graphics2d_function_initializeTexture(Array<Value> args) {
+﻿/*
+    Initializes the nativeData of a GraphicsTexture instance.
+
+    arg 1: GraphicsTexture instance
+    arg 2: GraphicsTextureResource instance
+    arg 3: list of 4 floats/doubles (left, top, right, bottom)
+    arg 4: texture width (pixels)
+    arg 5: texture height (pixels)
+
+
+    GraphicsTexture's nativeData...
+    nativeData[0] -> a weak reference to GraphicsTextureResource's nativeData
+    nativeData[1] -> texture left (ratio)
+    nativeData[2] -> texture top (ratio)
+    nativeData[3] -> texture right (ratio)
+    nativeData[4] -> texture bottom (ratio)
+    nativeData[5] -> texture width (pixels)
+    nativeData[6] -> texture height (pixels)
+*/
+Value lib_graphics2d_function_initializeTexture(Array<Value> args) {
     double float1 = 0.0;
     double float2 = 0.0;
     List<Value> list1 = null;

@@ -1,4 +1,15 @@
-﻿Value lib_gamepad_function_initialize_device(Array<Value> args) {
+﻿/*
+    args[0] -> device index
+    args[1] -> GamepadDevice object instance
+    args[2] -> list of values used as an out param. Size is already 4, guaranteed.
+
+    out params (args[2])
+        params[0] -> name (string)
+        params[1] -> button count (int)
+        params[2] -> digital axis count (int)
+        params[3] -> analog axis count (int)
+*/
+Value lib_gamepad_function_initialize_device(Array<Value> args) {
     int int1 = 0;
     List<Value> list1 = null;
     object object1 = null;

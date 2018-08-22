@@ -1,8 +1,7 @@
 ﻿Value lib_gamepad_function_is_supported(Array<Value> args) {
-    Value output = VALUE_NULL;
-    output = VALUE_FALSE;
     if (@ext_boolean("LIB_GAMEPAD_SUPPORTED") && Native._lib_gamepad_is_supported()) {
-        output = VALUE_TRUE;
+        return VALUE_TRUE;
+    } else {
+        return VALUE_FALSE;
     }
-    return output;
 }

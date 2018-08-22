@@ -1,4 +1,38 @@
-﻿Value lib_graphics2d_function_scale(Array<Value> args) {
+﻿/*
+    arg 1: Original GraphicsTexture instance
+    arg 2: New GraphicsTexture instance without nativeData
+        Need to copy the nativeData over.
+
+        nativeData[0] -> weak reference to GraphicsTextureResource's nativeData
+        nativeData[1] -> texture left
+        nativeData[2] -> texture top
+        nativeData[3] -> texture right
+        nativeData[4] -> texture button
+        nativeData[5] -> width
+        nativeData[6] -> height
+
+    arg 3: desired width
+    arg 4: desired height
+    arg 5: original GraphicsTextureResource
+    arg 6: new GraphicsTextureResource.
+        This needs to be initialized on non-atlas platforms.
+        On GL platforms, this will be identical to the previous argument since scaling only changes the render width and height.
+
+        nativeData[0] -> is GL?
+        nativeData[1] -> texture loaded?
+        nativeData[2] -> texture ID (GL only)
+        nativeData[3] -> platform image
+        nativeData[4] -> width
+        nativeData[5] -> height
+
+    At least one of width and height will be guaranteed to be different.
+
+    Because atlas based texture's sizes are based on the width and height fields
+    themselves, this function no-ops for those platforms.
+*/
+Value lib_graphics2d_function_scale(Array<Value> args) {
+
+    // auto generated variable declarations
     Array<object> objArray1 = null;
     Array<object> objArray2 = null;
     ObjectInstance objInstance1 = null;
@@ -8,11 +42,17 @@
     Value arg4 = args[3];
     Value arg5 = args[4];
     Value arg6 = args[5];
-    int int1 = (int) arg3.internalValue;
-    int int2 = (int) arg4.internalValue;
+
+    int int1 = (int) arg3.internalValue; // New width
+    int int2 = (int) arg4.internalValue; // New height
+
     if (!@ext_boolean("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
+
+        // Get the native platform image from the original image (GraphicsTextureResource)
         objInstance1 = (ObjectInstance) arg5.internalValue;
-        object object1 = objInstance1.nativeData[3];
+        object object1 = objInstance1.nativeData[3]; // original image
+
+        // New GraphicsTextureResource. Add nativeData.
         objInstance1 = (ObjectInstance) arg6.internalValue;
         objArray1 = new Array<object>(6);
         objInstance1.nativeData = objArray1;
@@ -23,18 +63,26 @@
         objArray1[4] = int1;
         objArray1[5] = int2;
     }
+
+    // Copy the original GraphicsTexture's native data to the new GraphicsTexture
+
+    // The new GraphicsTexture
     objInstance2 = (ObjectInstance) arg2.internalValue;
     objArray1 = new Array<object>(7);
     objInstance2.nativeData = objArray1;
     objInstance2 = (ObjectInstance) args[0].internalValue;
     objArray2 = objInstance2.nativeData;
     int i = 4;
-    while (i >= 1) {
+    while (i >= 1) { // leave off width and height since we overwrite that anyway
         objArray1[i] = objArray2[i];
         i -= 1;
     }
+
+    // Now change the width and height of the native data
     objArray1[5] = int1;
     objArray1[6] = int2;
+
+    // Now add a pointer to the new GraphicsTextureResource's native data
     objInstance1 = (ObjectInstance) arg6.internalValue;
     objArray1[0] = objInstance1.nativeData;
     return args[0];

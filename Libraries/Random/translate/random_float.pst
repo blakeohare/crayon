@@ -1,5 +1,6 @@
-﻿Value lib_random_function_random_float(Array<Value> args) {
-    Value output = VALUE_NULL;
-    output = buildFloat(Core.RandomFloat());
-    return output;
+﻿/*
+    Returns a value between 0.0 (inclusive) and 1.0 (exclusive)
+*/
+Value lib_random_function_random_float(Array<Value> args) {
+    return buildFloat(Core.RandomFloat());
 }
