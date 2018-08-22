@@ -156,22 +156,41 @@ switch ((leftValue.type * MAX_OP + row[0]) * MAX_TYPE + rightValue.type) {
 
     case (((Types.INTEGER * MAX_OP) + BinaryOps.DIVISION) * MAX_TYPE) + Types.INTEGER:
         Core.EmitComment("int / int");
+        int1 = (int) leftValue.internalValue;
         int2 = (int) rightValue.internalValue;
         if (int2 == 0) {
             hasInterrupt = EX_DivisionByZero(ec, "Division by 0.");
+        } else if (int1 == 0) {
+            value = VALUE_INT_ZERO;
         } else {
-            int1 = Core.IntegerDivision((int) leftValue.internalValue, int2);
-            if (int1 < 0) {
-                if (int1 > -INTEGER_NEGATIVE_CACHE_SIZE) {
-                    value = INTEGER_NEGATIVE_CACHE[-int1];
+            if (int1 % int2 == 0) {
+                int3 = Core.IntegerDivision(int1, int2);
+            } else {
+                // All integer division should round DOWN if there is a remainder.
+                // For division that requires rounding, ensure the computation is performed in positive numbers
+                // which will always result in roudning down. For negative results, add 1 before flipping back
+                // to negative.
+                // and add 1.
+                if (Core.ForceParens(int1 < 0) != Core.ForceParens(int2 < 0)) {
+                    float1 = 1 + Core.FloatDivision(-1.0 * int1, int2);
+                    float1 -= float1 % 1.0;
+                    int3 = Core.Int(Core.ForceParens(-float1));
                 } else {
-                    value = new Value(Types.INTEGER, int1);
+                    int3 = Core.IntegerDivision(int1, int2);
+                }
+            }
+
+            if (int3 < 0) {
+                if (int3 > -INTEGER_NEGATIVE_CACHE_SIZE) {
+                    value = INTEGER_NEGATIVE_CACHE[-int3];
+                } else {
+                    value = new Value(Types.INTEGER, int3);
                 }
             } else {
-                if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
-                    value = INTEGER_POSITIVE_CACHE[int1];
+                if (int3 < INTEGER_POSITIVE_CACHE_SIZE) {
+                    value = INTEGER_POSITIVE_CACHE[int3];
                 } else {
-                    value = new Value(Types.INTEGER, int1);
+                    value = new Value(Types.INTEGER, int3);
                 }
             }
         }
