@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser
 {
-    public class AnnotationParser
+    internal class AnnotationParser
     {
         private ParserContext parser;
         public AnnotationParser(ParserContext parser)

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Parser
 {
-    public class ExpressionParser
+    internal class ExpressionParser
     {
         private ParserContext parser;
         public ExpressionParser(ParserContext parser)

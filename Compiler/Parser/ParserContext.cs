@@ -27,6 +27,7 @@ namespace Parser
             this.LibraryManager = new LibraryManager(buildContext);
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelConstruct, ConstantResolutionState>();
+            this.TopLevelParser = new TopLevelParser(this);
             this.ExpressionParser = new ExpressionParser(this);
             this.ExecutableParser = new ExecutableParser(this);
             this.AnnotationParser = new AnnotationParser(this);
@@ -109,9 +110,10 @@ namespace Parser
             this.ReservedKeywords = new HashSet<string>(this.CurrentLocale.GetKeywordsList());
         }
 
-        public ExpressionParser ExpressionParser { get; private set; }
-        public ExecutableParser ExecutableParser { get; private set; }
-        public AnnotationParser AnnotationParser { get; private set; }
+        internal TopLevelParser TopLevelParser { get; private set; }
+        internal ExpressionParser ExpressionParser { get; private set; }
+        internal ExecutableParser ExecutableParser { get; private set; }
+        internal AnnotationParser AnnotationParser { get; private set; }
 
         public Locale CurrentLocale { get; private set; }
         public Locale.KeywordsLookup Keywords { get; private set; }
@@ -403,7 +405,7 @@ namespace Parser
 
             while (tokens.HasMore && tokens.IsNext(this.Keywords.IMPORT))
             {
-                ImportStatement importStatement = this.ExecutableParser.ParseTopLevel(tokens, null, fileScope) as ImportStatement;
+                ImportStatement importStatement = this.TopLevelParser.Parse(tokens, null, fileScope) as ImportStatement;
                 if (importStatement == null) throw new Exception();
                 namespaceImportsBuilder.Add(importStatement.ImportPath);
                 LocalizedLibraryView localizedLibraryView = this.LibraryManager.GetOrImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
@@ -417,7 +419,7 @@ namespace Parser
 
             while (tokens.HasMore)
             {
-                TopLevelConstruct executable = this.ExecutableParser.ParseTopLevel(tokens, null, fileScope);
+                TopLevelConstruct executable = this.TopLevelParser.Parse(tokens, null, fileScope);
 
                 if (executable is ImportStatement)
                 {
