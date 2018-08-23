@@ -67,7 +67,6 @@ namespace Parser.ParseTree
             return new StringConstant(token, this.Value, owner);
         }
 
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
     }
 }

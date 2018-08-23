@@ -39,10 +39,5 @@ namespace Parser.ParseTree
                 this.Expression.PerformLocalIdAllocation(parser, varIds, phase);
             }
         }
-
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
-        {
-            if (this.Expression != null) this.Expression.GetAllVariablesReferenced(vars);
-        }
     }
 }

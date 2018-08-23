@@ -153,10 +153,5 @@ namespace Parser.ParseTree
         {
             return "<Variable> " + this.Name;
         }
-
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
-        {
-            vars.Add(this);
-        }
     }
 }

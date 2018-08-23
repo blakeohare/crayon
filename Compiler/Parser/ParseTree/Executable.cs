@@ -21,7 +21,6 @@ namespace Parser.ParseTree
 
         internal abstract IList<Executable> Resolve(ParserContext parser);
         internal abstract Executable ResolveEntityNames(ParserContext parser);
-        internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
 
         internal static IList<Executable> Resolve(ParserContext parser, IList<Executable> executables)
         {

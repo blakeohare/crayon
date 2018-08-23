@@ -34,8 +34,6 @@ namespace Parser.ParseTree
             throw new InvalidOperationException(); // created in the resolve name phase.
         }
 
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
-
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
     }
 }

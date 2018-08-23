@@ -25,7 +25,6 @@ namespace Parser.ParseTree
             throw new NotImplementedException();
         }
 
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
     }
 }

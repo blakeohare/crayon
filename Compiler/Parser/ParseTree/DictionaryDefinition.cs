@@ -53,14 +53,5 @@ namespace Parser.ParseTree
             this.BatchExpressionEntityNameResolver(parser, this.Values);
             return this;
         }
-
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
-        {
-            for (int i = 0; i < this.Keys.Length; ++i)
-            {
-                this.Keys[i].GetAllVariablesReferenced(vars);
-                this.Values[i].GetAllVariablesReferenced(vars);
-            }
-        }
     }
 }

@@ -54,14 +54,5 @@ namespace Parser.ParseTree
             this.Condition = this.Condition.ResolveEntityNames(parser);
             return this;
         }
-
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
-        {
-            this.Condition.GetAllVariablesReferenced(vars);
-            for (int i = 0; i < this.Code.Length; ++i)
-            {
-                this.Code[i].GetAllVariablesReferenced(vars);
-            }
-        }
     }
 }

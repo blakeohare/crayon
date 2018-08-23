@@ -283,7 +283,8 @@ namespace Parser
 
         public int GetClassId(ClassDefinition cls)
         {
-            if (!this.classIdsByInstance.TryGetValue(cls, out int id))
+            int id;
+            if (!this.classIdsByInstance.TryGetValue(cls, out id))
             {
                 id = classIdsByInstance.Count + 1;
                 classIdsByInstance[cls] = id;

@@ -76,12 +76,6 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
-        {
-            this.Root.GetAllVariablesReferenced(vars);
-            this.Index.GetAllVariablesReferenced(vars);
-        }
-
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)

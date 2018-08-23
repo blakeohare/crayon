@@ -41,14 +41,6 @@ namespace Parser.ParseTree
             throw new NotImplementedException();
         }
 
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
-        {
-            foreach (Expression arg in this.Args)
-            {
-                arg.GetAllVariablesReferenced(vars);
-            }
-        }
-
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)

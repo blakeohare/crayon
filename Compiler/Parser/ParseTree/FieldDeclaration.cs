@@ -44,8 +44,6 @@ namespace Parser.ParseTree
             parser.CurrentCodeContainer = null;
         }
 
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
-
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             // Throws if it finds any variable.

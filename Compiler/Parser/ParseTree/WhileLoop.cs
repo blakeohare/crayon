@@ -53,14 +53,5 @@ namespace Parser.ParseTree
                 }
             }
         }
-
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
-        {
-            this.Condition.GetAllVariablesReferenced(vars);
-            foreach (Executable ex in this.Code)
-            {
-                ex.GetAllVariablesReferenced(vars);
-            }
-        }
     }
 }

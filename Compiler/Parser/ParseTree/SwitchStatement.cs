@@ -294,11 +294,5 @@ namespace Parser.ParseTree
                 }
             }
         }
-
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
-        {
-            // Translate mode only.
-            throw new NotImplementedException();
-        }
     }
 }

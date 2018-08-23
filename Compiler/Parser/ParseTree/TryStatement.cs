@@ -204,21 +204,5 @@ namespace Parser.ParseTree
                 }
             }
         }
-
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
-        {
-            foreach (Executable ex in this.TryBlock.Concat(this.FinallyBlock))
-            {
-                ex.GetAllVariablesReferenced(vars);
-            }
-
-            foreach (CatchBlock cb in this.CatchBlocks)
-            {
-                foreach (Executable ex in cb.Code)
-                {
-                    ex.GetAllVariablesReferenced(vars);
-                }
-            }
-        }
     }
 }

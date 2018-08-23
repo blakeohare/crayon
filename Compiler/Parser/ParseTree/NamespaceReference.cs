@@ -28,8 +28,6 @@ namespace Parser.ParseTree
 
         public override bool CanAssignTo { get { return false; } }
 
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
-        
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { throw new Exception(); }
 
         internal override Expression Resolve(ParserContext parser)

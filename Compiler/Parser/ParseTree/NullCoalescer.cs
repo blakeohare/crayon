@@ -53,10 +53,5 @@ namespace Parser.ParseTree
                 this.SecondaryExpression.PerformLocalIdAllocation(parser, varIds, phase);
             }
         }
-
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

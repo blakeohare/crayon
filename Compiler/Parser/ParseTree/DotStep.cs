@@ -273,12 +273,5 @@ namespace Parser.ParseTree
 
             return this;
         }
-
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
-        {
-            // Does this get optimized out in translate mode?
-            // If you run into this outside of translate mode go ahead and do a this.Root.GetAllVariablesReferenced(vars)
-            throw new System.Exception();
-        }
     }
 }

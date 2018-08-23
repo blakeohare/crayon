@@ -38,15 +38,6 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
-        {
-            this.Condition.GetAllVariablesReferenced(vars);
-            foreach (Executable ex in this.Init.Concat(this.Step).Concat(this.Code))
-            {
-                ex.GetAllVariablesReferenced(vars);
-            }
-        }
-
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             bool register = (phase & VariableIdAllocPhase.REGISTER) != 0;

@@ -128,7 +128,5 @@ namespace Parser.ParseTree
             // Not called this way.
             throw new InvalidOperationException();
         }
-
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
     }
 }

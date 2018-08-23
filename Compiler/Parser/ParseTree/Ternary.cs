@@ -48,12 +48,5 @@ namespace Parser.ParseTree
             this.TrueValue.PerformLocalIdAllocation(parser, varIds, phase);
             this.FalseValue.PerformLocalIdAllocation(parser, varIds, phase);
         }
-
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
-        {
-            this.Condition.GetAllVariablesReferenced(vars);
-            this.TrueValue.GetAllVariablesReferenced(vars);
-            this.FalseValue.GetAllVariablesReferenced(vars);
-        }
     }
 }

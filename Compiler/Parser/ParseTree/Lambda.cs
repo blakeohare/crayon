@@ -18,7 +18,7 @@ namespace Parser.ParseTree
             this.Args = args.Select(arg => arg.FirstToken).ToArray();
             this.Code = code.ToArray();
         }
-        
+
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             throw new NotImplementedException();
@@ -44,11 +44,6 @@ namespace Parser.ParseTree
             }
 
             return this;
-        }
-
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
-        {
-            throw new NotImplementedException();
         }
     }
 }

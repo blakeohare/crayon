@@ -304,11 +304,5 @@ namespace Parser.ParseTree
             this.Right = this.Right.ResolveEntityNames(parser);
             return this;
         }
-
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars)
-        {
-            this.Left.GetAllVariablesReferenced(vars);
-            this.Right.GetAllVariablesReferenced(vars);
-        }
     }
 }

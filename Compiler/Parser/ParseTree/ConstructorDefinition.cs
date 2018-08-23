@@ -149,7 +149,5 @@ namespace Parser.ParseTree
             this.BatchExecutableEntityNameResolver(parser, this.Code);
             parser.CurrentCodeContainer = null;
         }
-
-        internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
     }
 }
