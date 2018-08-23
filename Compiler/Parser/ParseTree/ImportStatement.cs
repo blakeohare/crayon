@@ -26,7 +26,7 @@ namespace Parser.ParseTree
             throw new Exception("Imports shouldn't exist at this point in the compilation pipeline.");
         }
 
-        internal override void ResolveNames(ParserContext parser)
+        internal override void ResolveEntityNames(ParserContext parser)
         {
             throw new InvalidOperationException();
         }

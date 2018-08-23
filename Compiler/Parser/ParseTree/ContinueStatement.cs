@@ -13,7 +13,7 @@ namespace Parser.ParseTree
             return Listify(this);
         }
 
-        internal override Executable ResolveNames(ParserContext parser)
+        internal override Executable ResolveEntityNames(ParserContext parser)
         {
             return this;
         }

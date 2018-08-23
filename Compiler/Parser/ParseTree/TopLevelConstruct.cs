@@ -61,7 +61,7 @@ namespace Parser.ParseTree
         }
 
         internal abstract void Resolve(ParserContext parser);
-        internal abstract void ResolveNames(ParserContext parser);
+        internal abstract void ResolveEntityNames(ParserContext parser);
         internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)

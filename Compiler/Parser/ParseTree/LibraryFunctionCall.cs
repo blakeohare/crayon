@@ -52,7 +52,7 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override Expression ResolveNames(ParserContext parser)
+        internal override Expression ResolveEntityNames(ParserContext parser)
         {
             throw new InvalidOperationException(); // this class is generated on the general resolve pass.
         }

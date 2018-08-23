@@ -24,7 +24,7 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override Expression ResolveNames(ParserContext parser)
+        internal override Expression ResolveEntityNames(ParserContext parser)
         {
             return this;
         }

@@ -37,10 +37,10 @@ namespace Parser.ParseTree
             this.DefaultValue = this.DefaultValue.Resolve(parser);
         }
 
-        internal override void ResolveNames(ParserContext parser)
+        internal override void ResolveEntityNames(ParserContext parser)
         {
             parser.CurrentCodeContainer = this;
-            this.DefaultValue = this.DefaultValue.ResolveNames(parser);
+            this.DefaultValue = this.DefaultValue.ResolveEntityNames(parser);
             parser.CurrentCodeContainer = null;
         }
 

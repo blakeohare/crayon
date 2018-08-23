@@ -65,7 +65,7 @@ namespace Parser.ParseTree
             throw new ParserException(this.FirstToken, "Namespace declaration not allowed here. Namespaces may only exist in the root of a file or nested within other namespaces.");
         }
 
-        internal override void ResolveNames(ParserContext parser)
+        internal override void ResolveEntityNames(ParserContext parser)
         {
             throw new InvalidOperationException();
         }

@@ -39,7 +39,7 @@ namespace Parser.ParseTree
             throw new ParserException(this.FirstToken, "Namespace reference was not used.");
         }
 
-        internal override Expression ResolveNames(ParserContext parser)
+        internal override Expression ResolveEntityNames(ParserContext parser)
         {
             throw new Exception(); // Generated from the ResolveNames phase.
         }

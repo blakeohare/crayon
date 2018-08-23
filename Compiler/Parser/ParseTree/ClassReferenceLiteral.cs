@@ -26,7 +26,7 @@ namespace Parser.ParseTree
 
         internal override Expression Resolve(ParserContext parser) { return this; }
 
-        internal override Expression ResolveNames(ParserContext parser)
+        internal override Expression ResolveEntityNames(ParserContext parser)
         {
             // ClassReferenceLiteral is created in the Resolve pass, so this is never called.
             throw new InvalidOperationException();

@@ -41,9 +41,9 @@ namespace Parser.ParseTree
             this.Root.PerformLocalIdAllocation(parser, varIds, phase);
         }
 
-        internal override Expression ResolveNames(ParserContext parser)
+        internal override Expression ResolveEntityNames(ParserContext parser)
         {
-            this.Root = this.Root.ResolveNames(parser);
+            this.Root = this.Root.ResolveEntityNames(parser);
             return this;
         }
 

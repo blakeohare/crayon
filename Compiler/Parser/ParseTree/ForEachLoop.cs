@@ -59,10 +59,10 @@ namespace Parser.ParseTree
             this.IterationVariableId = varIds.GetVarId(this.IterationVariable);
         }
 
-        internal override Executable ResolveNames(ParserContext parser)
+        internal override Executable ResolveEntityNames(ParserContext parser)
         {
-            this.IterationExpression = this.IterationExpression.ResolveNames(parser);
-            this.BatchExecutableNameResolver(parser, this.Code);
+            this.IterationExpression = this.IterationExpression.ResolveEntityNames(parser);
+            this.BatchExecutableEntityNameResolver(parser, this.Code);
             return this;
         }
 

@@ -118,9 +118,9 @@ namespace Parser.ParseTree
             }
         }
 
-        internal override void ResolveNames(ParserContext parser)
+        internal override void ResolveEntityNames(ParserContext parser)
         {
-            this.BatchExpressionNameResolver(parser, this.Values);
+            this.BatchExpressionEntityNameResolver(parser, this.Values);
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)

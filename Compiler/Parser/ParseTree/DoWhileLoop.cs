@@ -48,10 +48,10 @@ namespace Parser.ParseTree
             }
         }
 
-        internal override Executable ResolveNames(ParserContext parser)
+        internal override Executable ResolveEntityNames(ParserContext parser)
         {
-            this.BatchExecutableNameResolver(parser, this.Code);
-            this.Condition = this.Condition.ResolveNames(parser);
+            this.BatchExecutableEntityNameResolver(parser, this.Code);
+            this.Condition = this.Condition.ResolveEntityNames(parser);
             return this;
         }
 

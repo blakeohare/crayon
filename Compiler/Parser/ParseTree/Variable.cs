@@ -28,15 +28,6 @@ namespace Parser.ParseTree
             this.Name = name;
         }
 
-        public bool IsStatic
-        {
-            get
-            {
-                return this.Annotations != null &&
-                    this.Annotations.ContainsKey("uncontained");
-            }
-        }
-
         internal override Expression Resolve(ParserContext parser)
         {
             if (this.Name == "$var")
@@ -52,7 +43,7 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override Expression ResolveNames(ParserContext parser)
+        internal override Expression ResolveEntityNames(ParserContext parser)
         {
             if (this.Name == "$$$")
             {

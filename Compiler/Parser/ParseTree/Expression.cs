@@ -18,7 +18,7 @@ namespace Parser.ParseTree
 
         internal abstract Expression Resolve(ParserContext parser);
 
-        internal abstract Expression ResolveNames(ParserContext parser);
+        internal abstract Expression ResolveEntityNames(ParserContext parser);
 
         public virtual bool IsLiteral { get { return false; } }
 

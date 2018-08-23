@@ -59,9 +59,9 @@ namespace Parser.ParseTree
             parser.ConstantAndEnumResolutionState[this] = ConstantResolutionState.RESOLVED;
         }
 
-        internal override void ResolveNames(ParserContext parser)
+        internal override void ResolveEntityNames(ParserContext parser)
         {
-            this.Expression = this.Expression.ResolveNames(parser);
+            this.Expression = this.Expression.ResolveEntityNames(parser);
         }
 
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }

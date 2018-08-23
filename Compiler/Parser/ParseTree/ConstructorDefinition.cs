@@ -134,19 +134,19 @@ namespace Parser.ParseTree
             }
         }
 
-        internal override void ResolveNames(ParserContext parser)
+        internal override void ResolveEntityNames(ParserContext parser)
         {
             parser.CurrentCodeContainer = this;
             if (this.DefaultValues.Length > 0)
             {
-                this.BatchExpressionNameResolver(parser, this.DefaultValues);
+                this.BatchExpressionEntityNameResolver(parser, this.DefaultValues);
             }
 
             if (this.BaseArgs.Length > 0)
             {
-                this.BatchExpressionNameResolver(parser, this.BaseArgs);
+                this.BatchExpressionEntityNameResolver(parser, this.BaseArgs);
             }
-            this.BatchExecutableNameResolver(parser, this.Code);
+            this.BatchExecutableEntityNameResolver(parser, this.Code);
             parser.CurrentCodeContainer = null;
         }
 

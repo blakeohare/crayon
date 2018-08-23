@@ -67,10 +67,10 @@ namespace Parser.ParseTree
             this.Target.PerformLocalIdAllocation(parser, varIds, phase);
         }
 
-        internal override Executable ResolveNames(ParserContext parser)
+        internal override Executable ResolveEntityNames(ParserContext parser)
         {
-            this.Target = this.Target.ResolveNames(parser);
-            this.Value = this.Value.ResolveNames(parser);
+            this.Target = this.Target.ResolveEntityNames(parser);
+            this.Value = this.Value.ResolveEntityNames(parser);
 
             if (!this.Target.CanAssignTo)
             {

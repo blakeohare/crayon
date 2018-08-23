@@ -30,9 +30,9 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override Expression ResolveNames(ParserContext parser)
+        internal override Expression ResolveEntityNames(ParserContext parser)
         {
-            this.BatchExpressionNameResolver(parser, this.Items);
+            this.BatchExpressionEntityNameResolver(parser, this.Items);
             return this;
         }
 

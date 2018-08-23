@@ -121,17 +121,17 @@ namespace Parser.ParseTree
             }
         }
 
-        internal override Expression ResolveNames(ParserContext parser)
+        internal override Expression ResolveEntityNames(ParserContext parser)
         {
             if (this.Root is Variable && ((Variable)this.Root).Name.Contains("$$$"))
             {
-                this.BatchExpressionNameResolver(parser, this.Args);
+                this.BatchExpressionEntityNameResolver(parser, this.Args);
 
                 return new CoreFunctionInvocation(this.FirstToken, this.Args, this.Owner);
             }
 
-            this.Root = this.Root.ResolveNames(parser);
-            this.BatchExpressionNameResolver(parser, this.Args);
+            this.Root = this.Root.ResolveEntityNames(parser);
+            this.BatchExpressionEntityNameResolver(parser, this.Args);
 
             if (this.Root is LibraryFunctionReference)
             {

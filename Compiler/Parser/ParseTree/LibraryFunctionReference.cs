@@ -25,7 +25,7 @@ namespace Parser.ParseTree
             throw new ParserException(this.FirstToken, "Library functions cannot be passed around as references. They can only be invoked.");
         }
 
-        internal override Expression ResolveNames(ParserContext parser)
+        internal override Expression ResolveEntityNames(ParserContext parser)
         {
             throw new InvalidOperationException(); // Created during resolve name phase.
         }

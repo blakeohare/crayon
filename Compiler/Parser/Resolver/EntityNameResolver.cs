@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Parser.Resolver
 {
-    internal static class NameResolver
+    internal static class EntityNameResolver
     {
         public static void Resolve(ParserContext parser, CompilationScope scope)
         {
@@ -69,7 +69,7 @@ namespace Parser.Resolver
                 {
                     if (!(item is Namespace))
                     {
-                        item.ResolveNames(parser);
+                        item.ResolveEntityNames(parser);
                     }
                 }
 

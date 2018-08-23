@@ -89,19 +89,25 @@ namespace Parser.ParseTree
 
             if (this.Root is StringConstant)
             {
-                if (step == "join")
-                {
-                    throw new ParserException(this.StepToken,
-                        "There is no join method on strings. Did you mean to do list.join(string) instead?");
-                }
-                else if (step == "size")
-                {
-                    throw new ParserException(this.StepToken, "String size is indicated by string.length.");
-                }
-                else if (step == "length")
+                if (step == "length")
                 {
                     int length = ((StringConstant)this.Root).Value.Length;
                     return new IntegerConstant(this.FirstToken, length, this.Owner);
+                }
+
+                // TODO: the field name against the primitive methods. Also against other primitive types
+                // and do so in a localization friendly way.
+                if (parser.CurrentLocale.ID == "en")
+                {
+                    if (step == "join")
+                    {
+                        throw new ParserException(this.StepToken,
+                            "There is no join method on strings. Did you mean to do list.join(string) instead?");
+                    }
+                    else if (step == "size")
+                    {
+                        throw new ParserException(this.StepToken, "String size is indicated by string.length.");
+                    }
                 }
             }
 
@@ -116,12 +122,12 @@ namespace Parser.ParseTree
             }
         }
 
-        internal override Expression ResolveNames(
+        internal override Expression ResolveEntityNames(
             ParserContext parser)
         {
             FunctionDefinition funcDef; // used in multiple places.
             FieldDeclaration fieldDec;
-            this.Root = this.Root.ResolveNames(parser);
+            this.Root = this.Root.ResolveEntityNames(parser);
             Expression root = this.Root;
             string field = this.StepToken.Value;
 

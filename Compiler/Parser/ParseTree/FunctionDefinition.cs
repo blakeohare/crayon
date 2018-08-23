@@ -86,11 +86,11 @@ namespace Parser.ParseTree
             }
         }
 
-        internal override void ResolveNames(ParserContext parser)
+        internal override void ResolveEntityNames(ParserContext parser)
         {
             parser.CurrentCodeContainer = this;
-            this.BatchExpressionNameResolver(parser, this.DefaultValues);
-            this.BatchExecutableNameResolver(parser, this.Code);
+            this.BatchExpressionEntityNameResolver(parser, this.DefaultValues);
+            this.BatchExecutableEntityNameResolver(parser, this.Code);
             parser.CurrentCodeContainer = null;
         }
 

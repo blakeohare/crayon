@@ -22,25 +22,25 @@ namespace Parser.ParseTree
         {
             foreach (TopLevelConstruct tlc in constructs)
             {
-                tlc.ResolveNames(parser);
+                tlc.ResolveEntityNames(parser);
             }
         }
 
-        internal void BatchExecutableNameResolver(ParserContext parser, Executable[] executables)
+        internal void BatchExecutableEntityNameResolver(ParserContext parser, Executable[] executables)
         {
             for (int i = 0; i < executables.Length; ++i)
             {
-                executables[i] = executables[i].ResolveNames(parser);
+                executables[i] = executables[i].ResolveEntityNames(parser);
             }
         }
 
-        internal void BatchExpressionNameResolver(ParserContext parser, Expression[] expressions)
+        internal void BatchExpressionEntityNameResolver(ParserContext parser, Expression[] expressions)
         {
             for (int i = 0; i < expressions.Length; ++i)
             {
                 if (expressions[i] != null)
                 {
-                    expressions[i] = expressions[i].ResolveNames(parser);
+                    expressions[i] = expressions[i].ResolveEntityNames(parser);
                 }
             }
         }

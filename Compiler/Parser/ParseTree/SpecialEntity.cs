@@ -17,7 +17,7 @@ namespace Parser.ParseTree
         public override bool CanAssignTo { get { return false; } }
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
 
-        internal override Expression ResolveNames(ParserContext parser)
+        internal override Expression ResolveEntityNames(ParserContext parser)
         {
             return this;
         }

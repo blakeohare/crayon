@@ -15,7 +15,7 @@ namespace Parser.ParseTree
 
         public override bool IsTerminator { get { return true; } }
 
-        internal override Executable ResolveNames(ParserContext parser)
+        internal override Executable ResolveEntityNames(ParserContext parser)
         {
             return this;
         }

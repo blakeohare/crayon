@@ -22,10 +22,10 @@ namespace Parser.ParseTree
             return Listify(this);
         }
 
-        internal override Executable ResolveNames(ParserContext parser)
+        internal override Executable ResolveEntityNames(ParserContext parser)
         {
-            this.Condition = this.Condition.ResolveNames(parser);
-            this.BatchExecutableNameResolver(parser, this.Code);
+            this.Condition = this.Condition.ResolveEntityNames(parser);
+            this.BatchExecutableEntityNameResolver(parser, this.Code);
             return this;
         }
 

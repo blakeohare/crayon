@@ -20,7 +20,7 @@ namespace Parser.ParseTree
         public virtual bool IsTerminator { get { return false; } }
 
         internal abstract IList<Executable> Resolve(ParserContext parser);
-        internal abstract Executable ResolveNames(ParserContext parser);
+        internal abstract Executable ResolveEntityNames(ParserContext parser);
         internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
         internal abstract Executable PastelResolve(ParserContext parser);
 

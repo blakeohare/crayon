@@ -41,11 +41,11 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override Expression ResolveNames(ParserContext parser)
+        internal override Expression ResolveEntityNames(ParserContext parser)
         {
             for (int i = 0; i < this.Code.Length; ++i)
             {
-                this.Code[i] = this.Code[i].ResolveNames(parser);
+                this.Code[i] = this.Code[i].ResolveEntityNames(parser);
             }
 
             return this;

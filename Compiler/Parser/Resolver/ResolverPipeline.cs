@@ -30,7 +30,7 @@ namespace Parser.Resolver
                 {
                     using (new PerformanceSection("Resolve Names for: " + scope.ScopeKey))
                     {
-                        NameResolver.Resolve(parser, scope);
+                        EntityNameResolver.Resolve(parser, scope);
                     }
                 }
             }

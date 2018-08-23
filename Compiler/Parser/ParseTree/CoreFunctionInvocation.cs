@@ -40,7 +40,7 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override Expression ResolveNames(ParserContext parser)
+        internal override Expression ResolveEntityNames(ParserContext parser)
         {
             // created after the resolve name phase
             throw new NotImplementedException();

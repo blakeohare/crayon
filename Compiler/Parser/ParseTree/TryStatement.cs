@@ -99,9 +99,9 @@ namespace Parser.ParseTree
                 : Listify(this);
         }
 
-        internal override Executable ResolveNames(ParserContext parser)
+        internal override Executable ResolveEntityNames(ParserContext parser)
         {
-            this.BatchExecutableNameResolver(parser, this.TryBlock);
+            this.BatchExecutableEntityNameResolver(parser, this.TryBlock);
 
             Common.TODO.GetCoreNameFromMetadataWithLocale();
             string coreExceptionName = "Core.Exception";
@@ -160,10 +160,10 @@ namespace Parser.ParseTree
                     catch (InvalidArgumentException) { ... }
                 */
 
-                this.BatchExecutableNameResolver(parser, cb.Code);
+                this.BatchExecutableEntityNameResolver(parser, cb.Code);
             }
 
-            if (this.FinallyBlock != null) this.BatchExecutableNameResolver(parser, this.FinallyBlock);
+            if (this.FinallyBlock != null) this.BatchExecutableEntityNameResolver(parser, this.FinallyBlock);
 
             return this;
         }

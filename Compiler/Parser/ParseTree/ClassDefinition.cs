@@ -278,16 +278,16 @@ namespace Parser.ParseTree
             }
         }
 
-        internal override void ResolveNames(ParserContext parser)
+        internal override void ResolveEntityNames(ParserContext parser)
         {
             foreach (FieldDeclaration fd in this.Fields)
             {
-                fd.ResolveNames(parser);
+                fd.ResolveEntityNames(parser);
             }
 
             if (this.StaticConstructor != null)
             {
-                this.StaticConstructor.ResolveNames(parser);
+                this.StaticConstructor.ResolveEntityNames(parser);
             }
 
             // This should be empty if there is no base class, or just pass along the base class' args if there is.
@@ -296,7 +296,7 @@ namespace Parser.ParseTree
                 this.Constructor = new ConstructorDefinition(this, new AnnotationCollection(parser));
             }
 
-            this.Constructor.ResolveNames(parser);
+            this.Constructor.ResolveEntityNames(parser);
             this.BatchTopLevelConstructNameResolver(parser, this.Methods);
         }
 

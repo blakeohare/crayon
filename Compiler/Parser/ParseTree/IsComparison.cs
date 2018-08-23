@@ -33,9 +33,9 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override Expression ResolveNames(ParserContext parser)
+        internal override Expression ResolveEntityNames(ParserContext parser)
         {
-            this.Expression.ResolveNames(parser);
+            this.Expression.ResolveEntityNames(parser);
             this.ClassDefinition = Node.DoClassLookup(this.Owner, this.ClassToken, this.ClassName);
             return this;
         }

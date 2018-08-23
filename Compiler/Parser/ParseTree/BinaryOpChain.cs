@@ -305,10 +305,10 @@ namespace Parser.ParseTree
             }
         }
 
-        internal override Expression ResolveNames(ParserContext parser)
+        internal override Expression ResolveEntityNames(ParserContext parser)
         {
-            this.Left = this.Left.ResolveNames(parser);
-            this.Right = this.Right.ResolveNames(parser);
+            this.Left = this.Left.ResolveEntityNames(parser);
+            this.Right = this.Right.ResolveEntityNames(parser);
             return this;
         }
 

@@ -35,7 +35,7 @@ namespace Parser.ParseTree
             return value.CloneValue(this.FirstToken, this.Owner);
         }
 
-        internal override Expression ResolveNames(ParserContext parser)
+        internal override Expression ResolveEntityNames(ParserContext parser)
         {
             throw new NotImplementedException();
         }

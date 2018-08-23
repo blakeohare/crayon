@@ -176,13 +176,13 @@ namespace Parser.ParseTree
             return this.CompilationResolution(parser);
         }
 
-        internal override Executable ResolveNames(ParserContext parser)
+        internal override Executable ResolveEntityNames(ParserContext parser)
         {
-            this.Condition = this.Condition.ResolveNames(parser);
+            this.Condition = this.Condition.ResolveEntityNames(parser);
             foreach (Chunk chunk in this.Chunks)
             {
-                this.BatchExpressionNameResolver(parser, chunk.Cases);
-                this.BatchExecutableNameResolver(parser, chunk.Code);
+                this.BatchExpressionEntityNameResolver(parser, chunk.Cases);
+                this.BatchExecutableEntityNameResolver(parser, chunk.Code);
             }
             return this;
         }

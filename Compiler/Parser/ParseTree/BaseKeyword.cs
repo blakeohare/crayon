@@ -22,7 +22,7 @@ namespace Parser.ParseTree
             throw new ParserException(this.FirstToken, "'base' keyword can only be used as part of a method reference.");
         }
 
-        internal override Expression ResolveNames(ParserContext parser)
+        internal override Expression ResolveEntityNames(ParserContext parser)
         {
             return this;
         }
