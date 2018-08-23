@@ -169,6 +169,34 @@ namespace Parser
             return new ExpressionAsExecutable(expr, owner);
         }
 
+        internal IList<Executable> ParseBlock(TokenStream tokens, bool bracketsRequired, TopLevelConstruct owner)
+        {
+            List<Executable> output = new List<Executable>();
+
+            if (tokens.PopIfPresent("{"))
+            {
+                while (!tokens.PopIfPresent("}"))
+                {
+                    output.Add(this.parser.ExecutableParser.Parse(tokens, false, true, owner));
+                }
+            }
+            else
+            {
+                if (bracketsRequired)
+                {
+                    tokens.PopExpected("{"); // throws with reasonable exception message.
+                }
+
+                if (tokens.PopIfPresent(";"))
+                {
+                    return output;
+                }
+
+                output.Add(this.parser.ExecutableParser.Parse(tokens, false, true, owner));
+            }
+            return output;
+        }
+
         private Executable ParseThrow(TokenStream tokens, TopLevelConstruct owner)
         {
             Token throwToken = tokens.PopExpected(this.parser.Keywords.THROW);
@@ -230,7 +258,7 @@ namespace Parser
                 }
             }
 
-            IList<Executable> code = ParserContext.ParseBlock(parser, tokens, true, owner);
+            IList<Executable> code = this.ParseBlock(tokens, true, owner);
 
             return new ConstructorDefinition(constructorToken, argNames, argValues, baseArgs, code, baseToken, annotations, owner);
         }
@@ -482,7 +510,7 @@ namespace Parser
                 defaultValues.Add(defaultValue);
             }
 
-            IList<Executable> code = ParserContext.ParseBlock(parser, tokens, true, fd);
+            IList<Executable> code = this.ParseBlock(tokens, true, fd);
 
             fd.ArgNames = argNames.ToArray();
             fd.DefaultValues = defaultValues.ToArray();
@@ -507,7 +535,7 @@ namespace Parser
                 tokens.PopExpected(":");
                 Expression iterationExpression = this.parser.ExpressionParser.Parse(tokens, owner);
                 tokens.PopExpected(")");
-                IList<Executable> body = ParserContext.ParseBlock(parser, tokens, false, owner);
+                IList<Executable> body = this.ParseBlock(tokens, false, owner);
 
                 return new ForEachLoop(forToken, iteratorToken, iterationExpression, body, owner);
             }
@@ -532,7 +560,7 @@ namespace Parser
                     step.Add(this.Parse(tokens, true, false, owner));
                 }
 
-                IList<Executable> body = ParserContext.ParseBlock(parser, tokens, false, owner);
+                IList<Executable> body = this.ParseBlock(tokens, false, owner);
 
                 return new ForLoop(forToken, init, condition, step, body, owner);
             }
@@ -544,14 +572,14 @@ namespace Parser
             tokens.PopExpected("(");
             Expression condition = this.parser.ExpressionParser.Parse(tokens, owner);
             tokens.PopExpected(")");
-            IList<Executable> body = ParserContext.ParseBlock(parser, tokens, false, owner);
+            IList<Executable> body = this.ParseBlock(tokens, false, owner);
             return new WhileLoop(whileToken, condition, body, owner);
         }
 
         private Executable ParseDoWhile(TokenStream tokens, TopLevelConstruct owner)
         {
             Token doToken = tokens.PopExpected(this.parser.Keywords.DO);
-            IList<Executable> body = ParserContext.ParseBlock(parser, tokens, true, owner);
+            IList<Executable> body = this.ParseBlock(tokens, true, owner);
             tokens.PopExpected(this.parser.Keywords.DO_WHILE_END);
             tokens.PopExpected("(");
             Expression condition = this.parser.ExpressionParser.Parse(tokens, owner);
@@ -638,11 +666,11 @@ namespace Parser
             tokens.PopExpected("(");
             Expression condition = this.parser.ExpressionParser.Parse(tokens, owner);
             tokens.PopExpected(")");
-            IList<Executable> body = ParserContext.ParseBlock(parser, tokens, false, owner);
+            IList<Executable> body = this.ParseBlock(tokens, false, owner);
             IList<Executable> elseBody;
             if (tokens.PopIfPresent(this.parser.Keywords.ELSE))
             {
-                elseBody = ParserContext.ParseBlock(parser, tokens, false, owner);
+                elseBody = this.ParseBlock(tokens, false, owner);
             }
             else
             {
@@ -654,7 +682,7 @@ namespace Parser
         private Executable ParseTry(TokenStream tokens, TopLevelConstruct owner)
         {
             Token tryToken = tokens.PopExpected(this.parser.Keywords.TRY);
-            IList<Executable> tryBlock = ParserContext.ParseBlock(parser, tokens, true, owner);
+            IList<Executable> tryBlock = this.ParseBlock(tokens, true, owner);
 
             List<Token> catchTokens = new List<Token>();
             List<string[]> exceptionTypes = new List<string[]>();
@@ -735,8 +763,7 @@ namespace Parser
                     classTokens.Add(null);
                 }
 
-                Executable[] catchBlockCode = ParserContext.ParseBlock(parser, tokens, true, owner).ToArray();
-
+                Executable[] catchBlockCode = this.ParseBlock(tokens, true, owner).ToArray();
 
                 catchTokens.Add(catchToken);
                 exceptionTypes.Add(classNames.ToArray());
@@ -748,7 +775,7 @@ namespace Parser
             if (tokens.IsNext(this.parser.Keywords.FINALLY))
             {
                 finallyToken = tokens.Pop();
-                finallyBlock = ParserContext.ParseBlock(parser, tokens, true, owner);
+                finallyBlock = this.ParseBlock(tokens, true, owner);
             }
 
             return new TryStatement(tryToken, tryBlock, catchTokens, exceptionVariables, exceptionTypeTokens, exceptionTypes, catchBlocks, finallyToken, finallyBlock, owner);

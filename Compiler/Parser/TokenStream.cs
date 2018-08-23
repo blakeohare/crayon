@@ -27,6 +27,11 @@ namespace Parser
             this.fileName = fileName;
         }
 
+        public void EnsureNotEof()
+        {
+            if (!this.HasMore) this.ThrowEofException();
+        }
+
         // returns an exception so that you can throw this function call in situations where you want
         // the compiler to think the codepath terminates
         public System.Exception ThrowEofException()

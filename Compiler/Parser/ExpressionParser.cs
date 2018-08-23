@@ -220,7 +220,7 @@ namespace Parser
         private Expression ParseLambda(TokenStream tokens, Token firstToken, List<Expression> args, TopLevelConstruct owner)
         {
             tokens.PopExpected("=>");
-            IList<Executable> lambdaCode = ParserContext.ParseBlock(this.parser, tokens, true, owner);
+            IList<Executable> lambdaCode = this.parser.ExecutableParser.ParseBlock(tokens, true, owner);
             return new Lambda(firstToken, owner, args, lambdaCode);
         }
 
@@ -366,9 +366,11 @@ namespace Parser
 
         private Expression ParseEntityWithoutSuffixChain(TokenStream tokens, TopLevelConstruct owner)
         {
-            string next = tokens.PeekValue();
+            tokens.EnsureNotEof();
 
-            if (next == null) tokens.ThrowEofException();
+            Token nextToken = tokens.Peek();
+            string next = nextToken.Value;
+
             if (next == this.parser.Keywords.NULL) return new NullConstant(tokens.Pop(), owner);
             if (next == this.parser.Keywords.TRUE) return new BooleanConstant(tokens.Pop(), true, owner);
             if (next == this.parser.Keywords.FALSE) return new BooleanConstant(tokens.Pop(), false, owner);
@@ -423,7 +425,7 @@ namespace Parser
                 return new IntegerConstant(intToken, intValue, owner);
             }
 
-            if (ParserContext.IsInteger(next))
+            if (nextToken.IsInteger)
             {
                 Token numberToken = tokens.Pop();
                 string numberValue = numberToken.Value;
@@ -438,7 +440,7 @@ namespace Parser
 
                     Token afterDecimal = tokens.Pop();
                     if (afterDecimal.HasWhitespacePrefix) throw new ParserException(afterDecimal, "Cannot have whitespace after the decimal.");
-                    if (!ParserContext.IsInteger(afterDecimal.Value)) throw new ParserException(afterDecimal, "Decimal must be followed by an integer.");
+                    if (!afterDecimal.IsInteger) throw new ParserException(afterDecimal, "Decimal must be followed by an integer.");
 
                     numberValue += "." + afterDecimal.Value;
 
@@ -455,7 +457,7 @@ namespace Parser
                 Token dotToken = tokens.PopExpected(".");
                 string numberValue = "0.";
                 Token postDecimal = tokens.Pop();
-                if (postDecimal.HasWhitespacePrefix || !ParserContext.IsInteger(postDecimal.Value))
+                if (postDecimal.HasWhitespacePrefix || !postDecimal.IsInteger)
                 {
                     throw new ParserException(dotToken, "Unexpected dot.");
                 }

@@ -172,15 +172,15 @@ namespace Parser
 
         public HashSet<FunctionDefinition> InlinableLibraryFunctions { get; set; }
 
-        public LiteralLookup LiteralLookup { get { return this.literalLookup; } }
-        private LiteralLookup literalLookup = new LiteralLookup();
-        public int GetId(string name) { return this.literalLookup.GetNameId(name); }
-        public int GetStringConstant(string value) { return this.literalLookup.GetStringId(value); }
-        public int GetFloatConstant(double value) { return this.literalLookup.GetFloatId(value); }
-        public int GetBoolConstant(bool value) { return this.literalLookup.GetBoolId(value); }
-        public int GetIntConstant(int value) { return this.literalLookup.GetIntId(value); }
-        public int GetNullConstant() { return this.literalLookup.GetNullId(); }
-        public int GetClassRefConstant(ClassDefinition value) { return this.literalLookup.GetClassRefId(value); }
+        public LiteralLookup LiteralLookup { get; } = new LiteralLookup();
+
+        public int GetId(string name) { return this.LiteralLookup.GetNameId(name); }
+        public int GetStringConstant(string value) { return this.LiteralLookup.GetStringId(value); }
+        public int GetFloatConstant(double value) { return this.LiteralLookup.GetFloatId(value); }
+        public int GetBoolConstant(bool value) { return this.LiteralLookup.GetBoolId(value); }
+        public int GetIntConstant(int value) { return this.LiteralLookup.GetIntId(value); }
+        public int GetNullConstant() { return this.LiteralLookup.GetNullId(); }
+        public int GetClassRefConstant(ClassDefinition value) { return this.LiteralLookup.GetClassRefId(value); }
 
         public string PopClassNameWithFirstTokenAlreadyPopped(TokenStream tokens, Token firstToken)
         {
@@ -286,8 +286,7 @@ namespace Parser
 
         public int GetClassId(ClassDefinition cls)
         {
-            int id;
-            if (!this.classIdsByInstance.TryGetValue(cls, out id))
+            if (!this.classIdsByInstance.TryGetValue(cls, out int id))
             {
                 id = classIdsByInstance.Count + 1;
                 classIdsByInstance[cls] = id;
@@ -306,7 +305,7 @@ namespace Parser
             return null;
         }
 
-        private Dictionary<int, string> filesUsed = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> filesUsed = new Dictionary<int, string>();
 
         private void RegisterFileUsed(string filename, string code, int fileId)
         {
@@ -436,18 +435,6 @@ namespace Parser
             }
         }
 
-        internal static bool IsInteger(string value)
-        {
-            foreach (char c in value)
-            {
-                if (c < '0' || c > '9')
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
         internal void VerifyIdentifier(Token token)
         {
             if (!IsValidIdentifier(token.Value))
@@ -480,34 +467,6 @@ namespace Parser
                 }
             }
             return true;
-        }
-
-        internal static IList<Executable> ParseBlock(ParserContext parser, TokenStream tokens, bool bracketsRequired, TopLevelConstruct owner)
-        {
-            List<Executable> output = new List<Executable>();
-
-            if (tokens.PopIfPresent("{"))
-            {
-                while (!tokens.PopIfPresent("}"))
-                {
-                    output.Add(parser.ExecutableParser.Parse(tokens, false, true, owner));
-                }
-            }
-            else
-            {
-                if (bracketsRequired)
-                {
-                    tokens.PopExpected("{"); // throws with reasonable exception message.
-                }
-
-                if (tokens.PopIfPresent(";"))
-                {
-                    return output;
-                }
-
-                output.Add(parser.ExecutableParser.Parse(tokens, false, true, owner));
-            }
-            return output;
         }
 
         public Executable[] Resolve(IList<Executable> rawParsedLines)

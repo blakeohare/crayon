@@ -23,5 +23,20 @@
         {
             return "Token: '" + this.Value + "'";
         }
+
+        internal bool IsInteger
+        {
+            get
+            {
+                foreach (char c in this.Value)
+                {
+                    if (c < '0' || c > '9')
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
     }
 }
