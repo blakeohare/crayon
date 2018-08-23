@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Pastel.Nodes
+﻿namespace Pastel.Nodes
 {
     internal class Assignment : Executable
     {
