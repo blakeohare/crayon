@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Parser.ParseTree
+﻿namespace Parser.ParseTree
 {
     public class Variable : Expression
     {
@@ -113,7 +110,7 @@ namespace Parser.ParseTree
                 {
                     string name = this.FirstToken.Value;
 
-                    if (parser.LibraryManager.IsValidLibraryNameFromLocale(this.Owner.FileScope.CompilationScope.Locale, name))
+                    if (parser.LibraryManager.IsValidLibraryNameFromLocale(this.Locale, name))
                     {
                         throw new ParserException(this.FirstToken, "'" + name + "' is referenced but not imported in this file.");
                     }

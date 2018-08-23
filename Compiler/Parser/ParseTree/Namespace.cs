@@ -69,11 +69,5 @@ namespace Parser.ParseTree
         {
             throw new InvalidOperationException();
         }
-
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
-        {
-            // Not called in this way.
-            throw new NotImplementedException();
-        }
     }
 }

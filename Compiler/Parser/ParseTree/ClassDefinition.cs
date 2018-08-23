@@ -73,12 +73,11 @@ namespace Parser.ParseTree
             return name;
         }
 
-        private static readonly VariableIdAllocator EMPTY_VAR_ALLOC = new VariableIdAllocator();
         public void AllocateLocalScopeIds(ParserContext parser)
         {
             foreach (FieldDeclaration fd in this.Fields)
             {
-                fd.PerformLocalIdAllocation(parser, EMPTY_VAR_ALLOC, VariableIdAllocPhase.ALLOC);
+                fd.AllocateLocalScopeIds(parser);
             }
 
             // null check has occurred before now.
@@ -373,12 +372,6 @@ namespace Parser.ParseTree
             }
 
             this.memberIdsResolved = true;
-        }
-
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
-        {
-            // Not called in this way.
-            throw new System.NotImplementedException();
         }
 
         public bool ExtendsFrom(ClassDefinition cd)

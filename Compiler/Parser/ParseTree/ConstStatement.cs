@@ -63,7 +63,5 @@ namespace Parser.ParseTree
         {
             this.Expression = this.Expression.ResolveEntityNames(parser);
         }
-
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
     }
 }

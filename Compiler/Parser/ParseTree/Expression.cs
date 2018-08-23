@@ -16,9 +16,11 @@ namespace Parser.ParseTree
         // function, shouldn't pose any problems. Generally this would be inline constants, simple variables, or static fields.
         public virtual bool IsInlineCandidate {  get { return false; } }
 
+        internal abstract Expression ResolveEntityNames(ParserContext parser);
+
         internal abstract Expression Resolve(ParserContext parser);
 
-        internal abstract Expression ResolveEntityNames(ParserContext parser);
+        internal abstract void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase);
 
         public virtual bool IsLiteral { get { return false; } }
 

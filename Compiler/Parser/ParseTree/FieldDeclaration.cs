@@ -44,10 +44,11 @@ namespace Parser.ParseTree
             parser.CurrentCodeContainer = null;
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        private static readonly VariableIdAllocator EMPTY_VAR_ALLOC = new VariableIdAllocator();
+        internal void AllocateLocalScopeIds(ParserContext parser)
         {
             // Throws if it finds any variable.
-            this.DefaultValue.PerformLocalIdAllocation(parser, varIds, phase);
+            this.DefaultValue.PerformLocalIdAllocation(parser, EMPTY_VAR_ALLOC, VariableIdAllocPhase.ALLOC);
         }
     }
 }

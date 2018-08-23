@@ -122,11 +122,5 @@ namespace Parser.ParseTree
         {
             this.BatchExpressionEntityNameResolver(parser, this.Values);
         }
-
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
-        {
-            // Not called this way.
-            throw new InvalidOperationException();
-        }
     }
 }

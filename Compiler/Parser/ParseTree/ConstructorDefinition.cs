@@ -116,22 +116,16 @@ namespace Parser.ParseTree
                 variableIds.RegisterVariable(this.ArgNames[i].Value);
             }
 
-            this.PerformLocalIdAllocation(parser, variableIds, VariableIdAllocPhase.REGISTER_AND_ALLOC);
-
-            this.LocalScopeSize = variableIds.Size;
-        }
-
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
-        {
             foreach (Expression arg in this.BaseArgs)
             {
-                arg.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
+                arg.PerformLocalIdAllocation(parser, variableIds, VariableIdAllocPhase.ALLOC);
             }
 
             foreach (Executable ex in this.Code)
             {
-                ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.REGISTER_AND_ALLOC);
+                ex.PerformLocalIdAllocation(parser, variableIds, VariableIdAllocPhase.REGISTER_AND_ALLOC);
             }
+            this.LocalScopeSize = variableIds.Size;
         }
 
         internal override void ResolveEntityNames(ParserContext parser)
