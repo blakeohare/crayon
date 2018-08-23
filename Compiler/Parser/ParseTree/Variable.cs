@@ -122,14 +122,6 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
-        {
-            if (this.GetAnnotation("global") == null)
-            {
-                lookup[this.Name] = true;
-            }
-        }
-
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)

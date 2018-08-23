@@ -34,19 +34,6 @@ namespace Parser.ParseTree
             return Listify(this);
         }
 
-        internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
-        {
-            foreach (Executable line in this.TrueCode)
-            {
-                line.GetAllVariableNames(lookup);
-            }
-
-            foreach (Executable line in this.FalseCode)
-            {
-                line.GetAllVariableNames(lookup);
-            }
-        }
-
         public override bool IsTerminator
         {
             get

@@ -86,35 +86,6 @@ namespace Parser.ParseTree
             }
         }
 
-        internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
-        {
-            foreach (Executable line in this.Code)
-            {
-                line.GetAllVariableNames(lookup);
-            }
-        }
-
-        internal IList<string> GetVariableDeclarationList()
-        {
-            HashSet<string> dontRedeclareThese = new HashSet<string>();
-            foreach (Token argNameToken in this.ArgNames)
-            {
-                dontRedeclareThese.Add(argNameToken.Value);
-            }
-
-            Dictionary<string, bool> variableNamesDict = new Dictionary<string, bool>();
-            this.GetAllVariableNames(variableNamesDict);
-            foreach (string variableName in variableNamesDict.Keys.ToArray())
-            {
-                if (dontRedeclareThese.Contains(variableName))
-                {
-                    variableNamesDict.Remove(variableName);
-                }
-            }
-
-            return variableNamesDict.Keys.OrderBy<string, string>(s => s.ToLowerInvariant()).ToArray();
-        }
-
         internal override void ResolveNames(ParserContext parser)
         {
             parser.CurrentCodeContainer = this;

@@ -69,10 +69,6 @@ namespace Parser.ParseTree
             return new Executable[] { ex };
         }
 
-        // To be overridden if necessary.
-        internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
-        { }
-
         internal virtual IList<Executable> PastelResolveComposite(ParserContext parser)
         {
             return Listify(this.PastelResolve(parser));

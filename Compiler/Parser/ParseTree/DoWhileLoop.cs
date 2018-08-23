@@ -24,14 +24,6 @@ namespace Parser.ParseTree
             return Listify(this);
         }
 
-        internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
-        {
-            foreach (Executable line in this.Code)
-            {
-                line.GetAllVariableNames(lookup);
-            }
-        }
-
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             if (phase != VariableIdAllocPhase.REGISTER_AND_ALLOC)

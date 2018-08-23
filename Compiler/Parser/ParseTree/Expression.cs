@@ -24,10 +24,6 @@ namespace Parser.ParseTree
 
         internal Dictionary<string, Annotation> Annotations { get; set; }
 
-        // To be overridden if necessary.
-        internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
-        { }
-
         internal Annotation GetAnnotation(string type)
         {
             if (this.Annotations != null && this.Annotations.ContainsKey(type))

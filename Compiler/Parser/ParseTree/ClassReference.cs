@@ -20,7 +20,6 @@ namespace Parser.ParseTree
             this.ClassDefinition = clazz;
         }
 
-        internal override void GetAllVariableNames(Dictionary<string, bool> lookup) { }
         internal override Expression Resolve(ParserContext parser)
         {
             // normal usages should be optimized out by now.

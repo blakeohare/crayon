@@ -30,24 +30,6 @@ namespace Parser.ParseTree
             return Listify(this);
         }
 
-        internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
-        {
-            foreach (Executable init in this.Init)
-            {
-                init.GetAllVariableNames(lookup);
-            }
-
-            foreach (Executable step in this.Step)
-            {
-                step.GetAllVariableNames(lookup);
-            }
-
-            foreach (Executable line in this.Code)
-            {
-                line.GetAllVariableNames(lookup);
-            }
-        }
-
         internal override Executable ResolveNames(ParserContext parser)
         {
             this.BatchExecutableNameResolver(parser, this.Init);

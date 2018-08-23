@@ -238,17 +238,6 @@ namespace Parser.ParseTree
             return expectedTotal == integersUsed.Count;
         }
 
-        internal override void GetAllVariableNames(Dictionary<string, bool> lookup)
-        {
-            foreach (Chunk chunk in this.chunks)
-            {
-                foreach (Executable line in chunk.Code)
-                {
-                    line.GetAllVariableNames(lookup);
-                }
-            }
-        }
-
         public override bool IsTerminator
         {
             get

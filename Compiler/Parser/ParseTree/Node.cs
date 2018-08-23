@@ -45,8 +45,6 @@ namespace Parser.ParseTree
             }
         }
 
-        internal abstract void GetAllVariableNames(Dictionary<string, bool> lookup);
-
         internal abstract void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase);
 
         /*
