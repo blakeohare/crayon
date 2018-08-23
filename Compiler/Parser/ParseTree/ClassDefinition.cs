@@ -153,17 +153,10 @@ namespace Parser.ParseTree
 
         internal override void Resolve(ParserContext parser)
         {
-            if (parser.IsInClass)
-            {
-                throw new ParserException(this.FirstToken, "Nested classes aren't a thing, yet.");
-            }
-
             if (parser.IsReservedKeyword(this.NameToken.Value))
             {
                 throw new ParserException(this.NameToken, "'" + this.NameToken.Value + "' is a reserved keyword.");
             }
-
-            parser.CurrentClass = this;
 
             for (int i = 0; i < this.Fields.Length; ++i)
             {
@@ -198,8 +191,6 @@ namespace Parser.ParseTree
             {
                 this.StaticConstructor.Resolve(parser);
             }
-
-            parser.CurrentClass = null;
 
             bool hasABaseClass = this.BaseClass != null;
             bool callsBaseConstructor = this.Constructor.BaseToken != null;

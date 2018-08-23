@@ -24,7 +24,6 @@ namespace Parser
         {
             this.BuildContext = buildContext;
             this.PushScope(new UserCodeCompilationScope(buildContext));
-            this.CurrentClass = null;
             this.LibraryManager = new LibraryManager(buildContext);
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelConstruct, ConstantResolutionState>();
@@ -160,11 +159,7 @@ namespace Parser
 
         public LibraryManager LibraryManager { get; private set; }
 
-        public ClassDefinition CurrentClass { get; set; }
-
         public bool MainFunctionHasArg { get; set; }
-
-        public bool IsInClass { get { return this.CurrentClass != null; } }
 
         public BuildContext BuildContext { get; private set; }
 

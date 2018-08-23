@@ -392,6 +392,10 @@ namespace Parser
                 {
                     fields.Add(this.parser.ExecutableParser.ParseField(tokens, cd, annotations));
                 }
+                else if (tokens.IsNext(this.parser.Keywords.CLASS))
+                {
+                    throw new ParserException(tokens.Pop(), "Nested classes are not currently supported.");
+                }
                 else
                 {
                     tokens.PopExpected("}");
