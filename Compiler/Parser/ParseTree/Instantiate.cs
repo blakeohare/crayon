@@ -75,7 +75,7 @@ namespace Parser.ParseTree
         internal override Expression ResolveEntityNames(ParserContext parser)
         {
             this.BatchExpressionEntityNameResolver(parser, this.Args);
-            this.Class = Node.DoClassLookup(this.Owner, this.NameToken, this.Name);
+            this.Class = this.FileScope.DoClassLookup(this.Owner, this.NameToken, this.Name);
             return this;
         }
 

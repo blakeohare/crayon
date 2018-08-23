@@ -15,7 +15,10 @@ namespace Parser.ParseTree
         // This is a misnomer. This can be any top-level object such as a function, class, const, or enum that can wrap
         // other executables or expressions.
         public TopLevelConstruct Owner { get; private set; }
-        public CompilationScope CompilationScope {  get { return this.Owner.FileScope.CompilationScope; } }
+        public CompilationScope CompilationScope {  get { return this.FileScope.CompilationScope; } }
+
+        protected FileScope fileScopeOverride = null; // Top level items that have no Owner will have this set.
+        public FileScope FileScope {  get { return this.fileScopeOverride ?? this.Owner.FileScope; } }
         public Localization.Locale Locale { get { return this.CompilationScope.Locale; } }
 
         internal void BatchTopLevelConstructNameResolver(ParserContext parser, ICollection<TopLevelConstruct> constructs)
@@ -43,39 +46,6 @@ namespace Parser.ParseTree
                     expressions[i] = expressions[i].ResolveEntityNames(parser);
                 }
             }
-        }
-
-        internal static ClassDefinition DoClassLookup(TopLevelConstruct currentContainer, Token nameToken, string name)
-        {
-            return DoClassLookup(currentContainer, nameToken, name, false);
-        }
-
-        internal static ClassDefinition DoClassLookup(TopLevelConstruct currentContainer, Token nameToken, string name, bool failSilently)
-        {
-            TopLevelConstruct ex = currentContainer.FileScope.FileScopeEntityLookup.DoEntityLookup(name, currentContainer);
-            if (ex == null)
-            {
-                if (failSilently)
-                {
-                    return null;
-                }
-
-                string message = "No class named '" + name + "' was found.";
-                if (name.Contains("."))
-                {
-                    message += " Did you forget to import a library?";
-                }
-                throw new ParserException(nameToken, message);
-            }
-
-            if (ex is ClassDefinition)
-            {
-                return (ClassDefinition)ex;
-            }
-
-            // Still throw an exception if the found item is not a class. This is used by code to check if
-            // something is a valid variable name or a class name. Colliding with something else is bad.
-            throw new ParserException(nameToken, "This is not a class.");
         }
     }
 }

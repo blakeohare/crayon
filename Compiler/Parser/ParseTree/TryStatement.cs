@@ -106,7 +106,7 @@ namespace Parser.ParseTree
             Common.TODO.GetCoreNameFromMetadataWithLocale();
             string coreExceptionName = "Core.Exception";
 
-            ClassDefinition simpleException = Node.DoClassLookup(this.Owner, null, coreExceptionName);
+            ClassDefinition simpleException = this.FileScope.DoClassLookup(this.Owner, null, coreExceptionName);
 
             foreach (CatchBlock cb in this.CatchBlocks)
             {
@@ -118,7 +118,7 @@ namespace Parser.ParseTree
                 {
                     string typeName = types[i] ?? coreExceptionName;
                     Token token = typeTokens[i] ?? cb.CatchToken;
-                    ClassDefinition resolvedType = Node.DoClassLookup(this.Owner, token, typeName, true);
+                    ClassDefinition resolvedType = this.FileScope.DoClassLookup(this.Owner, token, typeName, true);
                     if (resolvedType == null)
                     {
                         throw new ParserException(token, "Could not resolve class name for catch.");

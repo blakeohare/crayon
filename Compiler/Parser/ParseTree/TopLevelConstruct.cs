@@ -6,13 +6,12 @@ namespace Parser.ParseTree
 {
     public abstract class TopLevelConstruct : Node
     {
-        public FileScope FileScope { get; private set; }
         public LibraryMetadata Library { get; set; }
 
         public TopLevelConstruct(Token firstToken, TopLevelConstruct owner, FileScope fileScope)
             : base(firstToken, owner)
         {
-            this.FileScope = fileScope;
+            this.fileScopeOverride = fileScope;
         }
 
         public abstract string GetFullyQualifiedLocalizedName(Locale locale);
