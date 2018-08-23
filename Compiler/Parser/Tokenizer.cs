@@ -6,7 +6,7 @@ namespace Parser
     public static class Tokenizer
     {
         private static readonly HashSet<string> TWO_CHAR_TOKENS = new HashSet<string>(
-            "++ -- << >> == != <= >= && || += -= *= /= %= &= |= ^= ** ??".Split(' '));
+            "++ -- << >> == != <= >= && || += -= *= /= %= &= |= ^= ** ?? =>".Split(' '));
         private static readonly HashSet<char> WHITESPACE = new HashSet<char>(" \r\n\t".ToCharArray());
 
         private static Dictionary<char, bool> IDENTIFIER_CHARS_CACHE = new Dictionary<char, bool>()

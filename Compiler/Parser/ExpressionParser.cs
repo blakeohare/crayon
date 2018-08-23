@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Common;
+﻿using Common;
 using Parser.ParseTree;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Parser
 {
@@ -217,13 +218,63 @@ namespace Parser
             return new Instantiate(newToken, classNameToken, name, args, owner);
         }
 
+        private Expression ParseLambda(TokenStream tokens, Token firstToken, List<Expression> args, TopLevelConstruct owner)
+        {
+            tokens.PopExpected("=>");
+            IList<Executable> lambdaCode = ParserContext.ParseBlock(this.parser, tokens, true, owner);
+            return new Lambda(firstToken, owner, args, lambdaCode);
+        }
+
         private Expression ParseEntity(TokenStream tokens, TopLevelConstruct owner)
         {
             Expression root;
+            Token firstToken = tokens.Peek();
             if (tokens.PopIfPresent("("))
             {
-                root = this.Parse(tokens, owner);
-                tokens.PopExpected(")");
+                if (tokens.PopIfPresent(")"))
+                {
+                    root = this.ParseLambda(tokens, firstToken, new List<Expression>(), owner);
+                }
+                else
+                {
+                    root = this.Parse(tokens, owner);
+                    if (root is Variable)
+                    {
+                        if (tokens.PopIfPresent(")"))
+                        {
+                            if (tokens.IsNext("=>"))
+                            {
+                                root = this.ParseLambda(tokens, firstToken, new List<Expression>() { root }, owner);
+                            }
+                        }
+                        else if (tokens.IsNext(","))
+                        {
+                            List<Expression> lambdaArgs = new List<Expression>() { root };
+                            Token comma = tokens.Peek();
+                            while (tokens.PopIfPresent(","))
+                            {
+                                lambdaArgs.Add(this.ParseEntity(tokens, owner));
+                                comma = tokens.Peek();
+                                if (!(lambdaArgs[lambdaArgs.Count - 1] is Variable))
+                                {
+                                    throw new ParserException(comma, "Unexpected comma");
+                                }
+                            }
+
+                            root = this.ParseLambda(tokens, firstToken, lambdaArgs, owner);
+                        }
+                        else
+                        {
+                            // This will purposely cause an unexpected token error
+                            // since it's none of the above conditions.
+                            tokens.PopExpected(")");
+                        }
+                    }
+                    else
+                    {
+                        tokens.PopExpected(")");
+                    }
+                }
             }
             else
             {
