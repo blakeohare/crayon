@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Parser.ParseTree;
+using System.Collections.Generic;
 
-namespace Parser.ParseTree
+namespace Parser
 {
     public class FileScope
     {

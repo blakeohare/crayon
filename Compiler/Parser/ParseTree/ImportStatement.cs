@@ -1,6 +1,5 @@
 ﻿using Localization;
 using System;
-using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
