@@ -173,7 +173,11 @@ namespace Parser.ParseTree
                     return new FieldReference(this.FirstToken, fieldDec, this.Owner);
                 }
 
-                if (field == "class")
+                // TODO: typeof(class name) is less error prone with localization conflicts.
+                // However there's a Core.typeOf() method that sort of conflicts.
+                // TODO: if this notation is kept, then this needs to be split into two class keywords
+                // since they do different things.
+                if (field == parser.Keywords.CLASS)
                 {
                     return new ClassReferenceLiteral(this.FirstToken, cd, this.Owner);
                 }
