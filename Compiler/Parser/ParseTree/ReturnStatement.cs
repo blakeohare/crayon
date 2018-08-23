@@ -44,14 +44,5 @@ namespace Parser.ParseTree
         {
             if (this.Expression != null) this.Expression.GetAllVariablesReferenced(vars);
         }
-
-        internal override Executable PastelResolve(ParserContext parser)
-        {
-            if (this.Expression != null)
-            {
-                this.Expression = this.Expression.PastelResolve(parser);
-            }
-            return this;
-        }
     }
 }

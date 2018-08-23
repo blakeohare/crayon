@@ -5,11 +5,6 @@ namespace Parser.ParseTree
 {
     public class ListSlice : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            throw new NotImplementedException();
-        }
-
         public override bool CanAssignTo { get { return false; } }
 
         public Token BracketToken { get; set; }

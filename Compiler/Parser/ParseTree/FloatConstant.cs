@@ -5,11 +5,6 @@ namespace Parser.ParseTree
 {
     public class FloatConstant : Expression, IConstantValue
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            return this;
-        }
-
         public override bool IsInlineCandidate { get { return true; } }
 
         public override bool CanAssignTo { get { return false; } }

@@ -5,11 +5,6 @@ namespace Parser.ParseTree
 {
     public class FunctionReference : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            throw new NotImplementedException();
-        }
-
         public override bool CanAssignTo { get { return false; } }
 
         public FunctionDefinition FunctionDefinition { get; set; }

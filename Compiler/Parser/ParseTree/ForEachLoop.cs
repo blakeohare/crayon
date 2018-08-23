@@ -74,10 +74,5 @@ namespace Parser.ParseTree
                 this.Code[i].GetAllVariablesReferenced(vars);
             }
         }
-
-        internal override Executable PastelResolve(ParserContext parser)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

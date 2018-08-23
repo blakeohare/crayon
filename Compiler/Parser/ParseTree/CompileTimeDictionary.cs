@@ -4,11 +4,6 @@ namespace Parser.ParseTree
 {
     public class CompileTimeDictionary : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public override bool CanAssignTo { get { return false; } }
 
         public string Type { get; private set; }

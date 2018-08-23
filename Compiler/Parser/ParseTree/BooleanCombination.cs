@@ -5,15 +5,6 @@ namespace Parser.ParseTree
 {
     public class BooleanCombination : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            for (int i = 0; i < this.Expressions.Length; ++i)
-            {
-                this.Expressions[i] = this.Expressions[i].PastelResolve(parser);
-            }
-            return this;
-        }
-
         public override bool CanAssignTo { get { return false; } }
 
         public Expression[] Expressions { get; private set; }

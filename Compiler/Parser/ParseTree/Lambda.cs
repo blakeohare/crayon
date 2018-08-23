@@ -18,12 +18,7 @@ namespace Parser.ParseTree
             this.Args = args.Select(arg => arg.FirstToken).ToArray();
             this.Code = code.ToArray();
         }
-
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
         {
             throw new NotImplementedException();

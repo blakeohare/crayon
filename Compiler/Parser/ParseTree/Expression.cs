@@ -34,6 +34,5 @@ namespace Parser.ParseTree
         }
 
         internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
-        internal abstract Expression PastelResolve(ParserContext parser);
     }
 }

@@ -6,11 +6,6 @@ namespace Parser.ParseTree
 {
     public abstract class SpecialEntity : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            throw new NotImplementedException();
-        }
-
         public SpecialEntity(Token firstToken, TopLevelConstruct owner) : base(firstToken, owner)
         { }
 

@@ -300,25 +300,5 @@ namespace Parser.ParseTree
             // Translate mode only.
             throw new NotImplementedException();
         }
-
-        internal override Executable PastelResolve(ParserContext parser)
-        {
-            this.Condition = this.Condition.PastelResolve(parser);
-            for (int i = 0; i < this.Chunks.Length; ++i)
-            {
-                Chunk chunk = this.Chunks[i];
-                for (int j = 0; j < chunk.Cases.Length; ++j)
-                {
-                    Expression c = chunk.Cases[j];
-                    if (c != null)
-                    {
-                        chunk.Cases[j] = c.PastelResolve(parser);
-                    }
-                }
-
-                chunk.Code = Executable.PastelResolveExecutables(parser, chunk.Code);
-            }
-            return this;
-        }
     }
 }

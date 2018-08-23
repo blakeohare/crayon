@@ -6,27 +6,6 @@ namespace Parser.ParseTree
 {
     public class FunctionCall : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            for (int i = 0; i < this.Args.Length; ++i)
-            {
-                this.Args[i] = this.Args[i].PastelResolve(parser);
-            }
-
-            Variable fp = this.Root as Variable;
-            if (fp == null)
-            {
-                throw new NotImplementedException();
-            }
-
-            if (fp.Name == "prepareToSuspend" && this.FirstToken.FileName.Contains("Libraries/"))
-            {
-                this.Args = new Expression[0];
-                this.Root = new Variable(this.FirstToken, "noop", this.Owner);
-            }
-            return this;
-        }
-
         public override bool CanAssignTo { get { return false; } }
 
         public Expression Root { get; private set; }

@@ -220,10 +220,5 @@ namespace Parser.ParseTree
                 }
             }
         }
-
-        internal override Executable PastelResolve(ParserContext parser)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

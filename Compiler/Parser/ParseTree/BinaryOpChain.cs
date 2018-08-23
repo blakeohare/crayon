@@ -7,13 +7,6 @@ namespace Parser.ParseTree
 {
     public class BinaryOpChain : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            this.Left = this.Left.PastelResolve(parser);
-            this.Right = this.Right.PastelResolve(parser);
-            return this;
-        }
-
         public override bool CanAssignTo { get { return false; } }
 
         public Expression Left { get; private set; }

@@ -5,11 +5,6 @@ namespace Parser.ParseTree
 {
     public class EnumReference : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            throw new NotImplementedException();
-        }
-
         public EnumDefinition EnumDefinition { get; set; }
 
         public EnumReference(Token token, EnumDefinition enumDefinition, TopLevelConstruct owner)

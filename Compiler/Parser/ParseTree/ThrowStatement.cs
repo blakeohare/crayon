@@ -36,10 +36,5 @@ namespace Parser.ParseTree
         {
             this.Expression.PerformLocalIdAllocation(parser, varIds, phase);
         }
-
-        internal override Executable PastelResolve(ParserContext parser)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

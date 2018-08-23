@@ -23,10 +23,5 @@ namespace Parser.ParseTree
         internal override void GetAllVariablesReferenced(HashSet<Variable> vars) { }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
-
-        internal override Executable PastelResolve(ParserContext parser)
-        {
-            return this;
-        }
     }
 }

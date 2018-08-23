@@ -7,11 +7,6 @@ namespace Parser.ParseTree
 {
     public class DictionaryDefinition : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            throw new NotImplementedException();
-        }
-
         public override bool CanAssignTo { get { return false; } }
 
         public Expression[] Keys { get; private set; }

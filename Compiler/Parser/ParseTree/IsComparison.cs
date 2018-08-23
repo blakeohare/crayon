@@ -5,11 +5,6 @@ namespace Parser.ParseTree
 {
     public class IsComparison : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            throw new NotImplementedException();
-        }
-
         public Expression Expression { get; set; }
         public Token IsToken { get; set; }
         public Token ClassToken { get; set; }

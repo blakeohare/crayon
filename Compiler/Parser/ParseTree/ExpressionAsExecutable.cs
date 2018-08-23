@@ -54,11 +54,5 @@ namespace Parser.ParseTree
                 this.Expression.PerformLocalIdAllocation(parser, varIds, phase);
             }
         }
-
-        internal override Executable PastelResolve(ParserContext parser)
-        {
-            this.Expression = this.Expression.PastelResolve(parser);
-            return this;
-        }
     }
 }

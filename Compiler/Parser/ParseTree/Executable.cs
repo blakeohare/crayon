@@ -22,7 +22,6 @@ namespace Parser.ParseTree
         internal abstract IList<Executable> Resolve(ParserContext parser);
         internal abstract Executable ResolveEntityNames(ParserContext parser);
         internal abstract void GetAllVariablesReferenced(HashSet<Variable> vars);
-        internal abstract Executable PastelResolve(ParserContext parser);
 
         internal static IList<Executable> Resolve(ParserContext parser, IList<Executable> executables)
         {
@@ -68,22 +67,5 @@ namespace Parser.ParseTree
         {
             return new Executable[] { ex };
         }
-
-        internal virtual IList<Executable> PastelResolveComposite(ParserContext parser)
-        {
-            return Listify(this.PastelResolve(parser));
-        }
-
-        internal static Executable[] PastelResolveExecutables(ParserContext parser, IList<Executable> code)
-        {
-            if (code == null) return null;
-            List<Executable> output = new List<Executable>();
-            foreach (Executable line in code)
-            {
-                output.AddRange(line.PastelResolveComposite(parser));
-            }
-            return output.ToArray();
-        }
-
     }
 }

@@ -4,12 +4,6 @@ namespace Parser.ParseTree
 {
     public class BooleanNot : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            this.Root = this.Root.PastelResolve(parser);
-            return this;
-        }
-
         public override bool CanAssignTo { get { return false; } }
 
         public Expression Root { get; private set; }

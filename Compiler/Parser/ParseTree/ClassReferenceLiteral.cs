@@ -5,11 +5,6 @@ namespace Parser.ParseTree
 {
     public class ClassReferenceLiteral : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            throw new NotImplementedException();
-        }
-
         public ClassDefinition ClassDefinition { get; set; }
 
         public ClassReferenceLiteral(Token firstToken, ClassDefinition cd, TopLevelConstruct owner)

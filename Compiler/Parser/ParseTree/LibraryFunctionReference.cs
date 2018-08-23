@@ -5,11 +5,6 @@ namespace Parser.ParseTree
 {
     public class LibraryFunctionReference : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            throw new NotImplementedException();
-        }
-
         public override bool CanAssignTo { get { return false; } }
 
         public string Name { get; private set; }

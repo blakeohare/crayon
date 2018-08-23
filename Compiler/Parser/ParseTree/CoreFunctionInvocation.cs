@@ -5,11 +5,6 @@ namespace Parser.ParseTree
 {
     public class CoreFunctionInvocation : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            throw new NotImplementedException();
-        }
-
         public Expression[] Args { get; set; }
         public int FunctionId { get; set; }
 

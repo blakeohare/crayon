@@ -5,11 +5,6 @@ namespace Parser.ParseTree
 {
     public class FieldReference : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            throw new NotImplementedException();
-        }
-
         public override bool IsInlineCandidate
         {
             get

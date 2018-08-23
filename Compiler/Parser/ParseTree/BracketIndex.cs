@@ -5,11 +5,6 @@ namespace Parser.ParseTree
 {
     public class BracketIndex : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public override bool CanAssignTo { get { return true; } }
 
         public Expression Root { get; set; }

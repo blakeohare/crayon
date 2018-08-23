@@ -10,8 +10,6 @@ namespace Parser.ParseTree
         public string AssignmentOp { get; private set; }
         public Variable TargetAsVariable { get { return this.Target as Variable; } }
 
-        public bool HACK_IsVmGlobal { get; set; }
-
         public Assignment(Expression target, Token assignmentOpToken, string assignmentOp, Expression assignedValue, TopLevelConstruct owner)
             : base(target.FirstToken, owner)
         {
@@ -19,7 +17,6 @@ namespace Parser.ParseTree
             this.AssignmentOpToken = assignmentOpToken;
             this.AssignmentOp = assignmentOp;
             this.Value = assignedValue;
-            this.HACK_IsVmGlobal = false;
         }
 
         internal override IList<Executable> Resolve(ParserContext parser)
@@ -84,13 +81,6 @@ namespace Parser.ParseTree
         {
             this.Target.GetAllVariablesReferenced(vars);
             this.Value.GetAllVariablesReferenced(vars);
-        }
-
-        internal override Executable PastelResolve(ParserContext parser)
-        {
-            this.Target = this.Target.PastelResolve(parser);
-            this.Value = this.Value.PastelResolve(parser);
-            return this;
         }
     }
 }

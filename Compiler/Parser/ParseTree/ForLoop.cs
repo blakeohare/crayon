@@ -80,14 +80,5 @@ namespace Parser.ParseTree
                 }
             }
         }
-
-        internal override Executable PastelResolve(ParserContext parser)
-        {
-            this.Init = Executable.PastelResolveExecutables(parser, this.Init);
-            this.Condition = this.Condition.PastelResolve(parser);
-            this.Step = Executable.PastelResolveExecutables(parser, this.Step);
-            this.Code = Executable.PastelResolveExecutables(parser, this.Code);
-            return this;
-        }
     }
 }

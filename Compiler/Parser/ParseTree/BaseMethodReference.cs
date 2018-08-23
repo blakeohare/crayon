@@ -4,11 +4,6 @@ namespace Parser.ParseTree
 {
     public class BaseMethodReference : Expression
     {
-        internal override Expression PastelResolve(ParserContext parser)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public override bool CanAssignTo { get { return false; } }
 
         public Token DotToken { get; set; }
