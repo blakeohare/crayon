@@ -414,7 +414,7 @@ namespace Exporter
                 {
                     TryStatement.CatchBlock cb = tryStatement.CatchBlocks[i];
                     ByteBuffer cbByteBuffer = catchBlocks[i];
-                    int variableId = cb.VariableLocalScopeId;
+                    int variableId = cb.VariableLocalScopeId.ID;
 
                     // for each catch block insert a type-check-jump
                     List<int> typeCheckArgs = new List<int>() { offset, variableId }; // first arg is offset, second is variable ID (or -1), successive args are all class ID's
@@ -454,7 +454,7 @@ namespace Exporter
         private void CompileForEachLoop(ParserContext parser, ByteBuffer buffer, ForEachLoop forEachLoop)
         {
             buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(0));
-            buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(forEachLoop.IterationVariableId));
+            buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(forEachLoop.IterationVariableId.ID));
             this.CompileExpression(parser, buffer, forEachLoop.IterationExpression, true);
             buffer.Add(forEachLoop.IterationExpression.FirstToken, OpCode.VERIFY_TYPE_IS_ITERABLE);
 
@@ -862,7 +862,7 @@ namespace Exporter
                 {
                     Variable varTarget = (Variable)assignment.Target;
                     this.CompileExpression(parser, buffer, assignment.Value, true);
-                    int scopeId = varTarget.LocalScopeId;
+                    int scopeId = varTarget.LocalScopeId.ID;
                     if (scopeId == -1)
                     {
                         throw new Exception(); // this should not happen.
@@ -925,7 +925,7 @@ namespace Exporter
                 if (assignment.Target is Variable)
                 {
                     Variable varTarget = (Variable)assignment.Target;
-                    int scopeId = varTarget.LocalScopeId;
+                    int scopeId = varTarget.LocalScopeId.ID;
                     if (scopeId == -1)
                     {
                         throw new Exception(); // all variables should have local ID's allocated or errors thrown by now.
@@ -1395,7 +1395,7 @@ namespace Exporter
                 // a '1' appended to it when it really should be an error if the variable is not an integer.
                 // Same for the others below. Ideally the DUPLICATE_STACK_TOP op should be removed.
                 Variable variable = (Variable)increment.Root;
-                int scopeId = variable.LocalScopeId;
+                int scopeId = variable.LocalScopeId.ID;
                 this.CompileExpression(parser, buffer, increment.Root, true);
                 if (increment.IsPrefix)
                 {
@@ -1605,13 +1605,13 @@ namespace Exporter
             if (!outputUsed) throw new ParserException(variable.FirstToken, "This expression does nothing.");
             int nameId = parser.GetId(variable.Name);
             Token token = variable.FirstToken;
-            if (variable.LocalScopeId == -1)
+            if (variable.LocalScopeId == null)
             {
                 throw new ParserException(token, "Variable used but not declared.");
             }
             else
             {
-                buffer.Add(token, OpCode.LOCAL, variable.LocalScopeId, nameId);
+                buffer.Add(token, OpCode.LOCAL, variable.LocalScopeId.ID, nameId);
             }
         }
 

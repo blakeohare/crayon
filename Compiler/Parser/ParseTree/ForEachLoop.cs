@@ -6,7 +6,7 @@ namespace Parser.ParseTree
     public class ForEachLoop : Executable
     {
         public Token IterationVariable { get; private set; }
-        public int IterationVariableId { get; private set; }
+        public VariableId IterationVariableId { get; private set; }
         public Expression IterationExpression { get; private set; }
         public Executable[] Code { get; private set; }
 

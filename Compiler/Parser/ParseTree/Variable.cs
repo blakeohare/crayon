@@ -8,7 +8,7 @@
 
         public string Name { get; private set; }
 
-        public int LocalScopeId { get; set; }
+        public VariableId LocalScopeId { get; set; }
 
         public Variable(Token token, string name, TopLevelConstruct owner)
             : base(token, owner)
@@ -106,7 +106,7 @@
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
                 this.LocalScopeId = varIds.GetVarId(this.FirstToken);
-                if (this.LocalScopeId == -1)
+                if (this.LocalScopeId == null)
                 {
                     string name = this.FirstToken.Value;
 

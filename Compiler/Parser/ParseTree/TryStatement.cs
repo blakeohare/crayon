@@ -18,7 +18,7 @@ namespace Parser.ParseTree
             public Token[] TypeTokens { get; set; }
             public string[] Types { get; set; }
             public Token ExceptionVariableToken { get; set; }
-            public int VariableLocalScopeId { get; set; }
+            public VariableId VariableLocalScopeId { get; set; }
             public Executable[] Code { get; set; }
             public ClassDefinition[] TypeClasses { get; set; }
         }
@@ -56,7 +56,7 @@ namespace Parser.ParseTree
                     ExceptionVariableToken = variableName,
                     Types = catchBlockTypes,
                     TypeTokens = catchBlockTypeTokens,
-                    VariableLocalScopeId = -1,
+                    VariableLocalScopeId = null,
                 };
             }
 

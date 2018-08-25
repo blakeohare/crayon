@@ -11,11 +11,16 @@ namespace Parser
         REGISTER_AND_ALLOC = 0x3,
     }
 
+    public class VariableId
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+    }
+
     internal class VariableIdAllocator
     {
         private VariableIdAllocator underlyingInstance = null;
-        private readonly Dictionary<string, int> idsByVar = new Dictionary<string, int>();
-        private Dictionary<int, string> varsById = new Dictionary<int, string>();
+        private readonly Dictionary<string, VariableId> idsByVar = new Dictionary<string, VariableId>();
         private List<string> orderedVars = new List<string>();
 
         public int Size { get { return this.idsByVar.Count + (underlyingInstance == null ? 0 : underlyingInstance.Size); } }
@@ -29,15 +34,14 @@ namespace Parser
 
             if (!this.idsByVar.ContainsKey(value))
             {
-                idsByVar[value] = varsById.Count;
-                varsById.Add(this.Size, value);
+                idsByVar[value] = new VariableId() { ID = idsByVar.Count, Name = value };
                 orderedVars.Add(value);
             }
         }
 
-        public int GetVarId(Token variableToken)
+        public VariableId GetVarId(Token variableToken)
         {
-            int id;
+            VariableId id;
             if (this.idsByVar.TryGetValue(variableToken.Value, out id))
             {
                 return id;
@@ -48,7 +52,7 @@ namespace Parser
                 return this.underlyingInstance.GetVarId(variableToken);
             }
 
-            return -1;
+            return null;
         }
 
         public VariableIdAllocator Clone()
