@@ -23,7 +23,7 @@ namespace Parser.ParseTree
         }
 
         // No variables are assumed.
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }
 
         internal class EnumMaxFunction : SpecialEntity
         {

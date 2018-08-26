@@ -21,7 +21,7 @@ namespace Parser.ParseTree
 
         internal abstract Executable ResolveEntityNames(ParserContext parser);
         internal abstract IList<Executable> Resolve(ParserContext parser);
-        internal abstract void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase);
+        internal abstract void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase);
 
         internal static IList<Executable> Resolve(ParserContext parser, IList<Executable> executables)
         {

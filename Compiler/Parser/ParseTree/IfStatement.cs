@@ -52,7 +52,7 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             this.Condition.PerformLocalIdAllocation(parser, varIds, phase);
             if (phase != VariableIdAllocPhase.REGISTER_AND_ALLOC || this.TrueCode.Length == 0 || this.FalseCode.Length == 0)
@@ -65,8 +65,8 @@ namespace Parser.ParseTree
             else
             {
                 // branch the variable ID allocator.
-                VariableIdAllocator trueVars = varIds.Clone();
-                VariableIdAllocator falseVars = varIds.Clone();
+                VariableScope trueVars = varIds.Clone();
+                VariableScope falseVars = varIds.Clone();
 
                 // Go through and register and allocate all variables.
                 // The allocated ID's are going to be garbage, but this enforces that they must be

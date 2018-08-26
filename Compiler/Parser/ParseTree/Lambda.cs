@@ -19,7 +19,7 @@ namespace Parser.ParseTree
             this.Code = code.ToArray();
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             throw new NotImplementedException();
         }

@@ -29,6 +29,6 @@ namespace Parser.ParseTree
             return new NullConstant(token, owner);
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }
     }
 }

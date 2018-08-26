@@ -17,9 +17,9 @@ namespace Parser
         public string Name { get; set; }
     }
 
-    internal class VariableIdAllocator
+    internal class VariableScope
     {
-        private VariableIdAllocator underlyingInstance = null;
+        private VariableScope underlyingInstance = null;
         private readonly Dictionary<string, VariableId> idsByVar = new Dictionary<string, VariableId>();
         private List<string> orderedVars = new List<string>();
 
@@ -55,16 +55,16 @@ namespace Parser
             return null;
         }
 
-        public VariableIdAllocator Clone()
+        public VariableScope Clone()
         {
-            VariableIdAllocator output = new VariableIdAllocator();
+            VariableScope output = new VariableScope();
             output.underlyingInstance = this;
             return output;
         }
 
-        public void MergeClonesBack(params VariableIdAllocator[] branches)
+        public void MergeClonesBack(params VariableScope[] branches)
         {
-            foreach (VariableIdAllocator branch in branches)
+            foreach (VariableScope branch in branches)
             {
                 if (this != branch.underlyingInstance)
                 {
@@ -72,7 +72,7 @@ namespace Parser
                 }
             }
 
-            foreach (VariableIdAllocator branch in branches)
+            foreach (VariableScope branch in branches)
             {
                 foreach (string varId in branch.orderedVars)
                 {

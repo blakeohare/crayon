@@ -44,7 +44,7 @@ namespace Parser.ParseTree
             parser.CurrentCodeContainer = null;
         }
 
-        private static readonly VariableIdAllocator EMPTY_VAR_ALLOC = new VariableIdAllocator();
+        private static readonly VariableScope EMPTY_VAR_ALLOC = new VariableScope();
         internal void AllocateLocalScopeIds(ParserContext parser)
         {
             // Throws if it finds any variable.

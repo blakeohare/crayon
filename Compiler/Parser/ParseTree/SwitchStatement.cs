@@ -254,7 +254,7 @@ namespace Parser.ParseTree
             }
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             this.Condition.PerformLocalIdAllocation(parser, varIds, phase);
 
@@ -270,7 +270,7 @@ namespace Parser.ParseTree
             }
             else
             {
-                VariableIdAllocator[] varIdBranches = new VariableIdAllocator[this.chunks.Length];
+                VariableScope[] varIdBranches = new VariableScope[this.chunks.Length];
                 for (int i = 0; i < this.chunks.Length; ++i)
                 {
                     Chunk chunk = this.chunks[i];

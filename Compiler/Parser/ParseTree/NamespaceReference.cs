@@ -28,7 +28,7 @@ namespace Parser.ParseTree
 
         public override bool CanAssignTo { get { return false; } }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { throw new Exception(); }
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { throw new Exception(); }
 
         internal override Expression Resolve(ParserContext parser)
         {

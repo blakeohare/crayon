@@ -20,7 +20,7 @@ namespace Parser.ParseTree
 
         internal abstract Expression Resolve(ParserContext parser);
 
-        internal abstract void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase);
+        internal abstract void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase);
 
         public virtual bool IsLiteral { get { return false; } }
 

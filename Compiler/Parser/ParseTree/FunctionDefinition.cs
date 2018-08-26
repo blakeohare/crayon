@@ -96,7 +96,7 @@ namespace Parser.ParseTree
 
         internal void AllocateLocalScopeIds(ParserContext parser)
         {
-            VariableIdAllocator variableIds = new VariableIdAllocator();
+            VariableScope variableIds = new VariableScope();
             for (int i = 0; i < this.ArgNames.Length; ++i)
             {
                 variableIds.RegisterVariable(this.ArgNames[i].Value);

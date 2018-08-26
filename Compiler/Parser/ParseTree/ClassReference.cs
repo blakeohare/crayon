@@ -26,6 +26,6 @@ namespace Parser.ParseTree
             throw new InvalidOperationException(); // Created during the resolve names phase.
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase) { }
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }
     }
 }

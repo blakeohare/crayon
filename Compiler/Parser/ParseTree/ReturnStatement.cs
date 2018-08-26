@@ -32,7 +32,7 @@ namespace Parser.ParseTree
 
         public override bool IsTerminator { get { return true; } }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             if (this.Expression != null)
             {

@@ -44,7 +44,7 @@ namespace Parser.ParseTree
             return Listify(this);
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableIdAllocator varIds, VariableIdAllocPhase phase)
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             this.Value.PerformLocalIdAllocation(parser, varIds, phase);
 
