@@ -217,7 +217,7 @@ namespace Parser
             return new Instantiate(newToken, classNameToken, name, args, owner);
         }
 
-        private Expression ParseLambda(TokenStream tokens, Token firstToken, List<Expression> args, Node owner)
+        private Expression ParseLambda(TokenStream tokens, Token firstToken, IList<Token> args, Node owner)
         {
             tokens.PopExpected("=>");
             IList<Executable> lambdaCode = this.parser.ExecutableParser.ParseBlock(tokens, true, owner);
@@ -232,7 +232,7 @@ namespace Parser
             {
                 if (tokens.PopIfPresent(")"))
                 {
-                    root = this.ParseLambda(tokens, firstToken, new List<Expression>(), owner);
+                    root = this.ParseLambda(tokens, firstToken, new Token[0], owner);
                 }
                 else
                 {
@@ -243,21 +243,22 @@ namespace Parser
                         {
                             if (tokens.IsNext("=>"))
                             {
-                                root = this.ParseLambda(tokens, firstToken, new List<Expression>() { root }, owner);
+                                root = this.ParseLambda(tokens, firstToken, new Token[] { root.FirstToken }, owner);
                             }
                         }
                         else if (tokens.IsNext(","))
                         {
-                            List<Expression> lambdaArgs = new List<Expression>() { root };
+                            List<Token> lambdaArgs = new List<Token>() { root.FirstToken };
                             Token comma = tokens.Peek();
                             while (tokens.PopIfPresent(","))
                             {
-                                lambdaArgs.Add(this.ParseEntity(tokens, owner));
-                                comma = tokens.Peek();
-                                if (!(lambdaArgs[lambdaArgs.Count - 1] is Variable))
+                                Token nextArg = tokens.Pop();
+                                if (this.parser.IsValidIdentifier(nextArg.Value))
                                 {
-                                    throw new ParserException(comma, "Unexpected comma");
+                                    throw new ParserException(comma, "Unexpected comma.");
                                 }
+                                lambdaArgs.Add(nextArg);
+                                comma = tokens.Peek();
                             }
 
                             root = this.ParseLambda(tokens, firstToken, lambdaArgs, owner);

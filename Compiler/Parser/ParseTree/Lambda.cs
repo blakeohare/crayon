@@ -14,12 +14,11 @@ namespace Parser.ParseTree
         public Lambda(
             Token firstToken,
             Node owner,
-            IList<Expression> args,
+            IList<Token> args,
             IList<Executable> code)
             : base(firstToken, owner)
         {
-            // TODO: ugh, change this at parse-time.
-            this.Args = args.Select(arg => arg.FirstToken).ToArray();
+            this.Args = args.ToArray();
             this.Code = code.ToArray();
             this.Lambdas = new List<Lambda>();
         }
