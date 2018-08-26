@@ -51,7 +51,7 @@ namespace Parser.ParseTree
 
             if (this.Items.Length == 0)
             {
-                throw new ParserException(this.FirstToken, "Enum definitions cannot be empty.");
+                throw new ParserException(this, "Enum definitions cannot be empty.");
             }
         }
 
@@ -61,7 +61,7 @@ namespace Parser.ParseTree
             if (resolutionState == ConstantResolutionState.RESOLVED) return;
             if (resolutionState == ConstantResolutionState.RESOLVING)
             {
-                throw new ParserException(this.FirstToken, "The resolution of this enum creates a cycle.");
+                throw new ParserException(this, "The resolution of this enum creates a cycle.");
             }
             parser.ConstantAndEnumResolutionState[this] = ConstantResolutionState.RESOLVING;
 
@@ -88,12 +88,12 @@ namespace Parser.ParseTree
                     IntegerConstant ic = this.Values[i].Resolve(parser) as IntegerConstant;
                     if (ic == null)
                     {
-                        throw new ParserException(this.Values[i].FirstToken, "Enum values must be integers or left blank.");
+                        throw new ParserException(this.Values[i], "Enum values must be integers or left blank.");
                     }
                     this.Values[i] = ic;
                     if (consumed.Contains(ic.Value))
                     {
-                        throw new ParserException(this.Values[i].FirstToken, "This integer value has already been used in the same enum.");
+                        throw new ParserException(this.Values[i], "This integer value has already been used in the same enum.");
                     }
 
                     consumed.Add(ic.Value);

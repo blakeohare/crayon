@@ -45,7 +45,7 @@ namespace Parser.ParseTree
             if (resolutionState == ConstantResolutionState.RESOLVED) return;
             if (resolutionState == ConstantResolutionState.RESOLVING)
             {
-                throw new ParserException(this.FirstToken, "The resolution of this enum creates a cycle.");
+                throw new ParserException(this, "The resolution of this enum creates a cycle.");
             }
             parser.ConstantAndEnumResolutionState[this] = ConstantResolutionState.RESOLVING;
 
@@ -53,7 +53,7 @@ namespace Parser.ParseTree
 
             if (!(this.Expression is IConstantValue))
             {
-                throw new ParserException(this.FirstToken, "Invalid value for const. Expression must resolve to a constant at compile time.");
+                throw new ParserException(this, "Invalid value for const. Expression must resolve to a constant at compile time.");
             }
 
             parser.ConstantAndEnumResolutionState[this] = ConstantResolutionState.RESOLVED;

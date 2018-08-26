@@ -18,7 +18,7 @@ namespace Parser.ParseTree
         internal override Expression Resolve(ParserContext parser)
         {
             // normal usages should be optimized out by now.
-            throw new ParserException(this.FirstToken, "Unexpected class reference.");
+            throw new ParserException(this, "Unexpected class reference.");
         }
 
         internal override Expression ResolveEntityNames(ParserContext parser)

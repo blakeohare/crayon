@@ -235,7 +235,7 @@ namespace Parser.ParseTree
             }
             if (isZero)
             {
-                throw new ParserException(expr.FirstToken, "Division by 0 error.");
+                throw new ParserException(expr, "Division by 0 error.");
             }
         }
 

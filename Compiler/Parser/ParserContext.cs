@@ -146,7 +146,7 @@ namespace Parser
                 if (!allNamespaces.Contains(import.ImportPath))
                 {
                     // TODO: show spelling suggestions
-                    throw new ParserException(import.FirstToken, "Unrecognized namespace or library: '" + import.ImportPath + "'");
+                    throw new ParserException(import, "Unrecognized namespace or library: '" + import.ImportPath + "'");
                 }
             }
         }

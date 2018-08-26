@@ -25,7 +25,7 @@
 
             if (parser.IsReservedKeyword(this.Name))
             {
-                throw new ParserException(this.FirstToken, "'" + this.Name + "' is a reserved keyword and cannot be used like this.");
+                throw new ParserException(this, "'" + this.Name + "' is a reserved keyword and cannot be used like this.");
             }
 
             return this;
@@ -35,7 +35,7 @@
         {
             if (this.Name == "$$$")
             {
-                throw new ParserException(this.FirstToken, "Core function invocations cannot stand alone and must be immediately invoked.");
+                throw new ParserException(this, "Core function invocations cannot stand alone and must be immediately invoked.");
             }
 
             if (this.Name.StartsWith("$$"))
@@ -52,12 +52,12 @@
                     FunctionDefinition funcDef = (FunctionDefinition)this.Owner;
                     if (funcDef.IsStaticMethod)
                     {
-                        throw new ParserException(this.FirstToken, "Cannot use '" + this.Name + "' in a static method");
+                        throw new ParserException(this, "Cannot use '" + this.Name + "' in a static method");
                     }
 
                     if (funcDef.Owner == null)
                     {
-                        throw new ParserException(this.FirstToken, "Cannot use '" + this.Name + "' in a function that isn't a class method.");
+                        throw new ParserException(this, "Cannot use '" + this.Name + "' in a function that isn't a class method.");
                     }
                 }
 
@@ -65,7 +65,7 @@
                 {
                     if (((FieldDeclaration)container).IsStaticField)
                     {
-                        throw new ParserException(this.FirstToken, "Cannot use '" + this.Name + "' in a static field value.");
+                        throw new ParserException(this, "Cannot use '" + this.Name + "' in a static field value.");
                     }
                 }
 
@@ -74,7 +74,7 @@
                     ConstructorDefinition constructor = (ConstructorDefinition)container;
                     if (constructor == ((ClassDefinition)constructor.Owner).StaticConstructor) // TODO: This check is silly. Add an IsStatic field to ConstructorDefinition.
                     {
-                        throw new ParserException(this.FirstToken, "Cannot use '" + this.Name + "' in a static constructor.");
+                        throw new ParserException(this, "Cannot use '" + this.Name + "' in a static constructor.");
                     }
                 }
 
@@ -112,7 +112,7 @@
 
                     if (parser.LibraryManager.IsValidLibraryNameFromLocale(this.Locale, name))
                     {
-                        throw new ParserException(this.FirstToken, "'" + name + "' is referenced but not imported in this file.");
+                        throw new ParserException(this, "'" + name + "' is referenced but not imported in this file.");
                     }
 
                     TopLevelConstruct owner = this.Owner;
@@ -130,7 +130,7 @@
                             {
                                 string message = "'" + name + "' is used like a local variable but it is " + (fd.IsStaticField ? "a static" : "an instance") + " field.";
                                 message += " Did you mean '" + (fd.IsStaticField ? cd.NameToken.Value : "this") + "." + name + "' instead of '" + name + "'?";
-                                throw new ParserException(this.FirstToken, message);
+                                throw new ParserException(this, message);
                             }
                         }
                     }
@@ -141,7 +141,7 @@
                     //   e.g. "'foo' is a static function and must be invoked with the class name: FooClass.foo(...)
                     // - if there's a method, suggest using "this."
                     // - if the variable name matches a library that is available, suggest it as a missing import.
-                    throw new ParserException(this.FirstToken, "The variable '" + name + "' is used but is never assigned to.");
+                    throw new ParserException(this, "The variable '" + name + "' is used but is never assigned to.");
                 }
             }
         }

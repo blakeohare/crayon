@@ -25,7 +25,7 @@ namespace Parser.ParseTree
             IConstantValue value = this.ConstStatement.Expression as IConstantValue;
             if (value == null)
             {
-                throw new ParserException(this.ConstStatement.FirstToken, "Could not resolve this expression into a constant value.");
+                throw new ParserException(this.ConstStatement, "Could not resolve this expression into a constant value.");
             }
             return value.CloneValue(this.FirstToken, this.Owner);
         }

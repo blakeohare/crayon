@@ -110,7 +110,7 @@ namespace Parser
                 string name = entity.GetFullyQualifiedLocalizedName(verifiedCallingLocale);
                 if (output.ContainsKey(name))
                 {
-                    throw new ParserException(entity.FirstToken, "Two items have identical fully-qualified names: '" + name + "'");
+                    throw new ParserException(entity, "Two items have identical fully-qualified names: '" + name + "'");
                 }
                 output[name] = entity;
                 if (entity is Namespace)

@@ -118,7 +118,7 @@ namespace Parser.ParseTree
                     return new NamespaceReference(this.FirstToken, this.Owner, nrt);
                 }
 
-                throw new ParserException(this.FirstToken, "Could not find class or function by the name of: '" + fullyQualifiedName + "'");
+                throw new ParserException(this, "Could not find class or function by the name of: '" + fullyQualifiedName + "'");
             }
 
             if (root is ClassReference)
@@ -182,13 +182,13 @@ namespace Parser.ParseTree
 
                 if (thisClass == null)
                 {
-                    throw new ParserException(root.FirstToken, "'base' keyword can only be used inside classes.");
+                    throw new ParserException(root, "'base' keyword can only be used inside classes.");
                 }
 
                 ClassDefinition cd = thisClass.BaseClass;
                 if (cd == null)
                 {
-                    throw new ParserException(root.FirstToken, "'base' keyword can only be used inside classes that extend from another class.");
+                    throw new ParserException(root, "'base' keyword can only be used inside classes that extend from another class.");
                 }
 
                 FunctionDefinition fd = cd.GetMethod(field, true);
@@ -215,12 +215,12 @@ namespace Parser.ParseTree
                         funcDef = this.Owner as FunctionDefinition;
                         if (funcDef.IsStaticMethod)
                         {
-                            throw new ParserException(this.Root.FirstToken, "'this' keyword cannot be used in static methods.");
+                            throw new ParserException(this.Root, "'this' keyword cannot be used in static methods.");
                         }
                         cd = funcDef.Owner as ClassDefinition;
                         if (cd == null)
                         {
-                            throw new ParserException(this.Root.FirstToken, "'this' keyword must be used inside a class.");
+                            throw new ParserException(this.Root, "'this' keyword must be used inside a class.");
                         }
                     }
                     else if (this.Owner is ClassDefinition)
@@ -231,7 +231,7 @@ namespace Parser.ParseTree
 
                 if (cd == null)
                 {
-                    throw new ParserException(this.Root.FirstToken, "'this' keyword is not allowed here.");
+                    throw new ParserException(this.Root, "'this' keyword is not allowed here.");
                 }
 
                 funcDef = cd.GetMethod(field, true);
@@ -265,7 +265,7 @@ namespace Parser.ParseTree
             {
                 if (this.Root is Variable)
                 {
-                    throw new ParserException(this.Root.FirstToken, "'" + ((Variable)this.Root).Name + "' is not a class.");
+                    throw new ParserException(this.Root, "'" + ((Variable)this.Root).Name + "' is not a class.");
                 }
                 throw new ParserException(this.DotToken, ".class can only be applied to class names.");
             }

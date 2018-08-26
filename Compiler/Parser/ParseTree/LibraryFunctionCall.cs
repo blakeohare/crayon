@@ -24,7 +24,7 @@ namespace Parser.ParseTree
 
             if (callingLibrary == null)
             {
-                throw new ParserException(this.FirstToken, "Cannot call native library functions from outside a library.");
+                throw new ParserException(this, "Cannot call native library functions from outside a library.");
             }
 
             this.LibraryName = callingLibrary;
@@ -32,7 +32,7 @@ namespace Parser.ParseTree
             string expectedPrefix = "lib_" + callingLibrary.ToLower() + "_";
             if (!name.StartsWith(expectedPrefix))
             {
-                throw new ParserException(this.FirstToken, "Invalid library function name. Must begin with a '$$" + expectedPrefix + "' prefix.");
+                throw new ParserException(this, "Invalid library function name. Must begin with a '$$" + expectedPrefix + "' prefix.");
             }
             this.Name = name;
             this.Args = args.ToArray();

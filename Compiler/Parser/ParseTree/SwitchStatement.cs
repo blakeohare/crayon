@@ -89,7 +89,7 @@ namespace Parser.ParseTree
             if (useExplicitMax)
             {
                 this.explicitMax = this.explicitMax.Resolve(parser);
-                if (!(this.explicitMax is IntegerConstant)) throw new ParserException(this.explicitMax.FirstToken, "Explicit max must be an integer.");
+                if (!(this.explicitMax is IntegerConstant)) throw new ParserException(this.explicitMax, "Explicit max must be an integer.");
                 explicitMax = ((IntegerConstant)this.explicitMax).Value;
             }
 
@@ -117,7 +117,7 @@ namespace Parser.ParseTree
                             int intValue = ((IntegerConstant)caseExpr).Value;
                             if (intCases.Contains(intValue))
                             {
-                                throw new ParserException(caseExpr.FirstToken, "Duplicate case value in same switch: " + intValue);
+                                throw new ParserException(caseExpr, "Duplicate case value in same switch: " + intValue);
                             }
                             intCases.Add(intValue);
                         }
@@ -126,7 +126,7 @@ namespace Parser.ParseTree
                             string strValue = ((StringConstant)caseExpr).Value;
                             if (stringCases.Contains(strValue))
                             {
-                                throw new ParserException(caseExpr.FirstToken, "Duplicate case value in same switch: " + Util.ConvertStringValueToCode(strValue));
+                                throw new ParserException(caseExpr, "Duplicate case value in same switch: " + Util.ConvertStringValueToCode(strValue));
                             }
                             stringCases.Add(strValue);
                         }
@@ -141,11 +141,11 @@ namespace Parser.ParseTree
                                 string field = ((DotStep)chunk.Cases[i]).StepToken.Value;
                                 if (field.ToUpperInvariant() == field)
                                 {
-                                    throw new ParserException(chunk.Cases[i].FirstToken,
+                                    throw new ParserException(chunk.Cases[i],
                                         "Only strings, integers, and enums can be used in a switch statement. It looks like this is probably supposed to be an enum. Make sure that it is spelled correctly.");
                                 }
                             }
-                            throw new ParserException(chunk.Cases[i].FirstToken, "Only strings, integers, and enums can be used in a switch statement.");
+                            throw new ParserException(chunk.Cases[i], "Only strings, integers, and enums can be used in a switch statement.");
                         }
                     }
                 }
@@ -155,12 +155,12 @@ namespace Parser.ParseTree
 
             if (integers != 0 && strings != 0)
             {
-                throw new ParserException(this.FirstToken, "Cannot mix string and integer cases in a single switch statement.");
+                throw new ParserException(this, "Cannot mix string and integer cases in a single switch statement.");
             }
 
             if (integers == 0 && strings == 0)
             {
-                if (this.chunks.Length == 0) throw new ParserException(this.FirstToken, "Cannot have a blank switch statement.");
+                if (this.chunks.Length == 0) throw new ParserException(this, "Cannot have a blank switch statement.");
                 if (this.chunks.Length > 1) throw new Exception("only had default but had multiple chunks. This should have been prevented at parse-time.");
                 return this.chunks[0].Code;
             }

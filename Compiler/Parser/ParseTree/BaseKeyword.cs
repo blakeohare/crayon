@@ -14,7 +14,7 @@ namespace Parser.ParseTree
 
         internal override Expression Resolve(ParserContext parser)
         {
-            throw new ParserException(this.FirstToken, "'base' keyword can only be used as part of a method reference.");
+            throw new ParserException(this, "'base' keyword can only be used as part of a method reference.");
         }
 
         internal override Expression ResolveEntityNames(ParserContext parser)

@@ -164,7 +164,7 @@ namespace Parser
             {
                 return FileUtil.ReadFileBytes(fullPath);
             }
-            throw new ParserException(null, "The '" + this.ID + "' library does not contain the resource '" + pathRelativeToLibraryRoot + "'");
+            throw new ParserException("The '" + this.ID + "' library does not contain the resource '" + pathRelativeToLibraryRoot + "'");
         }
 
         public string ReadFile(bool keepPercents, string pathRelativeToLibraryRoot, bool failSilently)

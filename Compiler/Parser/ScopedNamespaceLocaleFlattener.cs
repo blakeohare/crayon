@@ -100,7 +100,7 @@ namespace Parser
                     if (localizedName != null && newLocalizedName != localizedName)
                     {
                         TODO.ThisErrorMessageIsNotVeryHelpeful();
-                        throw new ParserException(ns.FirstToken, "This namespace definition has a different localized name somewhere else.");
+                        throw new ParserException(ns, "This namespace definition has a different localized name somewhere else.");
                     }
                     localizedName = newLocalizedName;
                     representative = ns;

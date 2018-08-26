@@ -1099,7 +1099,7 @@ namespace Exporter
 
         private void CompileClassReferenceLiteral(ParserContext parser, ByteBuffer buffer, ClassReferenceLiteral classRef, bool outputUsed)
         {
-            if (!outputUsed) throw new ParserException(classRef.FirstToken, "This class reference expression does nothing.");
+            if (!outputUsed) throw new ParserException(classRef, "This class reference expression does nothing.");
             buffer.Add(classRef.FirstToken, OpCode.LITERAL, parser.GetClassRefConstant(classRef.ClassDefinition));
         }
 
@@ -1147,7 +1147,7 @@ namespace Exporter
                     IntegerConstant typeArg = args[args.Length - 1 - i] as IntegerConstant;
                     if (typeArg == null)
                     {
-                        throw new ParserException(coreFuncInvocation.FirstToken, "typeis requires type enum values.");
+                        throw new ParserException(coreFuncInvocation, "typeis requires type enum values.");
                     }
                     actualArgs[3 + i] = typeArg.Value + 1;
                 }
@@ -1219,7 +1219,7 @@ namespace Exporter
 
         private void CompileBaseKeyword(ParserContext parser, ByteBuffer buffer, BaseKeyword baseKeyword, bool outputUsed)
         {
-            throw new ParserException(baseKeyword.FirstToken, "Cannot have a reference to 'base' without invoking a field.");
+            throw new ParserException(baseKeyword, "Cannot have a reference to 'base' without invoking a field.");
         }
 
         private void CompileBaseMethodReference(ParserContext parser, ByteBuffer buffer, BaseMethodReference baseMethodReference, bool outputUsed)
@@ -1238,7 +1238,7 @@ namespace Exporter
         {
             if (compileTimeDictionary.Type == "var")
             {
-                throw new ParserException(compileTimeDictionary.FirstToken, "$var is a compile-time dictionary and must be dereferenced with a hardcoded string constant.");
+                throw new ParserException(compileTimeDictionary, "$var is a compile-time dictionary and must be dereferenced with a hardcoded string constant.");
             }
             throw new Exception(); // should not happen.
         }
@@ -1295,7 +1295,7 @@ namespace Exporter
 
         private void CompileBooleanNot(ParserContext parser, ByteBuffer buffer, BooleanNot boolNot, bool outputUsed)
         {
-            if (!outputUsed) throw new ParserException(boolNot.FirstToken, "Cannot have this expression here.");
+            if (!outputUsed) throw new ParserException(boolNot, "Cannot have this expression here.");
 
             this.CompileExpression(parser, buffer, boolNot.Root, true);
             buffer.Add(boolNot.FirstToken, OpCode.BOOLEAN_NOT);
@@ -1303,7 +1303,7 @@ namespace Exporter
 
         private void CompileBooleanCombination(ParserContext parser, ByteBuffer buffer, BooleanCombination boolComb, bool outputUsed)
         {
-            if (!outputUsed) throw new ParserException(boolComb.FirstToken, "Cannot have this expression here.");
+            if (!outputUsed) throw new ParserException(boolComb, "Cannot have this expression here.");
 
             ByteBuffer rightBuffer = new ByteBuffer();
             Expression[] expressions = boolComb.Expressions;
@@ -1330,7 +1330,7 @@ namespace Exporter
 
         private void CompileDictionaryDefinition(ParserContext parser, ByteBuffer buffer, DictionaryDefinition dictDef, bool outputUsed)
         {
-            if (!outputUsed) throw new ParserException(dictDef.FirstToken, "Cannot have a dictionary all by itself.");
+            if (!outputUsed) throw new ParserException(dictDef, "Cannot have a dictionary all by itself.");
 
             int itemCount = dictDef.Keys.Length;
             List<Expression> expressionList = new List<Expression>();
@@ -1362,21 +1362,21 @@ namespace Exporter
 
         private void CompileThisKeyword(ParserContext parser, ByteBuffer buffer, ThisKeyword thisKeyword, bool outputUsed)
         {
-            if (!outputUsed) throw new ParserException(thisKeyword.FirstToken, "This expression doesn't do anything.");
+            if (!outputUsed) throw new ParserException(thisKeyword, "This expression doesn't do anything.");
 
             buffer.Add(thisKeyword.FirstToken, OpCode.THIS);
         }
 
         private void CompileNullConstant(ParserContext parser, ByteBuffer buffer, NullConstant nullConstant, bool outputUsed)
         {
-            if (!outputUsed) throw new ParserException(nullConstant.FirstToken, "This expression doesn't do anything.");
+            if (!outputUsed) throw new ParserException(nullConstant, "This expression doesn't do anything.");
 
             buffer.Add(nullConstant.FirstToken, OpCode.LITERAL, parser.GetNullConstant());
         }
 
         private void CompileFloatConstant(ParserContext parser, ByteBuffer buffer, FloatConstant floatConstant, bool outputUsed)
         {
-            if (!outputUsed) throw new ParserException(floatConstant.FirstToken, "This expression doesn't do anything.");
+            if (!outputUsed) throw new ParserException(floatConstant, "This expression doesn't do anything.");
             buffer.Add(floatConstant.FirstToken, OpCode.LITERAL, parser.GetFloatConstant(floatConstant.Value));
         }
 
@@ -1494,7 +1494,7 @@ namespace Exporter
 
         private void CompileListDefinition(ParserContext parser, ByteBuffer buffer, ListDefinition listDef, bool outputUsed)
         {
-            if (!outputUsed) throw new ParserException(listDef.FirstToken, "List allocation made without storing it. This is likely a mistake.");
+            if (!outputUsed) throw new ParserException(listDef, "List allocation made without storing it. This is likely a mistake.");
             foreach (Expression item in listDef.Items)
             {
                 this.CompileExpression(parser, buffer, item, true);
@@ -1523,14 +1523,14 @@ namespace Exporter
 
         private void CompileNegativeSign(ParserContext parser, ByteBuffer buffer, NegativeSign negativeSign, bool outputUsed)
         {
-            if (!outputUsed) throw new ParserException(negativeSign.FirstToken, "This expression does nothing.");
+            if (!outputUsed) throw new ParserException(negativeSign, "This expression does nothing.");
             this.CompileExpression(parser, buffer, negativeSign.Root, true);
             buffer.Add(negativeSign.FirstToken, OpCode.NEGATIVE_SIGN);
         }
 
         private void CompileStringConstant(ParserContext parser, ByteBuffer buffer, StringConstant stringConstant, bool outputUsed)
         {
-            if (!outputUsed) throw new ParserException(stringConstant.FirstToken, "This expression does nothing.");
+            if (!outputUsed) throw new ParserException(stringConstant, "This expression does nothing.");
             buffer.Add(stringConstant.FirstToken, OpCode.LITERAL, parser.GetStringConstant(stringConstant.Value));
         }
 
@@ -1542,7 +1542,7 @@ namespace Exporter
                 {
                     throw new ParserException(opChain.Op, "'==' cannot be used like this. Did you mean to use just a single '=' instead?");
                 }
-                throw new ParserException(opChain.FirstToken, "This expression isn't valid here.");
+                throw new ParserException(opChain, "This expression isn't valid here.");
             }
 
             this.CompileExpressionList(parser, buffer, new Expression[] { opChain.Left, opChain.Right }, true);
@@ -1578,7 +1578,7 @@ namespace Exporter
 
         private void CompileBracketIndex(ParserContext parser, ByteBuffer buffer, BracketIndex bracketIndex, bool outputUsed)
         {
-            if (!outputUsed) throw new ParserException(bracketIndex.FirstToken, "This expression does nothing.");
+            if (!outputUsed) throw new ParserException(bracketIndex, "This expression does nothing.");
             this.CompileExpression(parser, buffer, bracketIndex.Root, true);
             this.CompileExpression(parser, buffer, bracketIndex.Index, true);
             buffer.Add(bracketIndex.BracketToken, OpCode.INDEX);
@@ -1586,7 +1586,7 @@ namespace Exporter
 
         private void CompileDotStep(ParserContext parser, ByteBuffer buffer, DotStep dotStep, bool outputUsed)
         {
-            if (!outputUsed) throw new ParserException(dotStep.FirstToken, "This expression does nothing.");
+            if (!outputUsed) throw new ParserException(dotStep, "This expression does nothing.");
             this.CompileExpression(parser, buffer, dotStep.Root, true);
             int rawNameId = parser.GetId(dotStep.StepToken.Value);
             int localeId = parser.GetLocaleId(dotStep.Owner.FileScope.CompilationScope.Locale);
@@ -1596,13 +1596,13 @@ namespace Exporter
 
         private void CompileBooleanConstant(ParserContext parser, ByteBuffer buffer, BooleanConstant boolConstant, bool outputUsed)
         {
-            if (!outputUsed) throw new ParserException(boolConstant.FirstToken, "This expression does nothing.");
+            if (!outputUsed) throw new ParserException(boolConstant, "This expression does nothing.");
             buffer.Add(boolConstant.FirstToken, OpCode.LITERAL, parser.GetBoolConstant(boolConstant.Value));
         }
 
         private void CompileVariable(ParserContext parser, ByteBuffer buffer, Variable variable, bool outputUsed)
         {
-            if (!outputUsed) throw new ParserException(variable.FirstToken, "This expression does nothing.");
+            if (!outputUsed) throw new ParserException(variable, "This expression does nothing.");
             int nameId = parser.GetId(variable.Name);
             Token token = variable.FirstToken;
             if (variable.LocalScopeId == null)
@@ -1617,7 +1617,7 @@ namespace Exporter
 
         private void CompileIntegerConstant(ParserContext parser, ByteBuffer buffer, IntegerConstant intConst, bool outputUsed)
         {
-            if (!outputUsed) throw new ParserException(intConst.FirstToken, "This expression does nothing.");
+            if (!outputUsed) throw new ParserException(intConst, "This expression does nothing.");
             buffer.Add(intConst.FirstToken, OpCode.LITERAL, parser.GetIntConstant(intConst.Value));
         }
 

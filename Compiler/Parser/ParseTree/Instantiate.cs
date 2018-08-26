@@ -29,12 +29,12 @@ namespace Parser.ParseTree
 
             if (this.Class == null)
             {
-                throw new ParserException(this.FirstToken, "No class named '" + this.Name + "'");
+                throw new ParserException(this, "No class named '" + this.Name + "'");
             }
 
             if (this.Class.StaticToken != null)
             {
-                throw new ParserException(this.FirstToken, "Cannot instantiate a static class.");
+                throw new ParserException(this, "Cannot instantiate a static class.");
             }
 
             ConstructorDefinition cons = this.Class.Constructor;
@@ -47,7 +47,7 @@ namespace Parser.ParseTree
 
                 if (!isValidUsage)
                 {
-                    throw new ParserException(this.FirstToken, "The constructor for " + this.Class.NameToken.Value + " is private and cannot be invoked from outside the class.");
+                    throw new ParserException(this, "The constructor for " + this.Class.NameToken.Value + " is private and cannot be invoked from outside the class.");
                 }
             }
 
@@ -66,7 +66,7 @@ namespace Parser.ParseTree
                 {
                     message += " At most " + cons.MaxArgCount + " are allowed but found " + this.Args.Length + ".";
                 }
-                throw new ParserException(this.FirstToken, message);
+                throw new ParserException(this, message);
             }
 
             return this;

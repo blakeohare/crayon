@@ -62,7 +62,7 @@ namespace Parser.ParseTree
 
         internal override void Resolve(ParserContext parser)
         {
-            throw new ParserException(this.FirstToken, "Namespace declaration not allowed here. Namespaces may only exist in the root of a file or nested within other namespaces.");
+            throw new ParserException(this, "Namespace declaration not allowed here. Namespaces may only exist in the root of a file or nested within other namespaces.");
         }
 
         internal override void ResolveEntityNames(ParserContext parser)

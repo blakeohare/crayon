@@ -356,7 +356,7 @@ namespace Parser
                 }
                 else
                 {
-                    throw new ParserException(executable.FirstToken, "Only function, class, and nested namespace declarations may exist as direct members of a namespace.");
+                    throw new ParserException(executable, "Only function, class, and nested namespace declarations may exist as direct members of a namespace.");
                 }
             }
 

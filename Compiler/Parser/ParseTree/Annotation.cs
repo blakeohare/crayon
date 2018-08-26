@@ -22,7 +22,7 @@ namespace Parser.ParseTree
         {
             if (this.Args.Length != 1) throw new ParserException(this.TypeToken, "This annotation requires exactly 1 arg.");
             StringConstant stringConstant = this.Args[0].Resolve(parser) as StringConstant;
-            if (stringConstant == null) throw new ParserException(this.Args[0].FirstToken, "This annotation requires exactly 1 string arg.");
+            if (stringConstant == null) throw new ParserException(this.Args[0], "This annotation requires exactly 1 string arg.");
             return stringConstant.Value;
         }
     }

@@ -35,7 +35,7 @@ namespace Parser.Resolver
             FunctionDefinition[] mainFunctions = FindFunctionImpl(parserContext, parserContext.UserCodeCompilationScope, parserContext.Keywords.MAIN_FUNCTION);
 
             if (mainFunctions.Length == 0) throw new InvalidOperationException("No main(args) function was defined.");
-            if (mainFunctions.Length > 1) throw new ParserException(mainFunctions[0].FirstToken, "Multiple main methods found.");
+            if (mainFunctions.Length > 1) throw new ParserException(mainFunctions[0], "Multiple main methods found.");
 
             FunctionDefinition mainFunction = mainFunctions[0];
 

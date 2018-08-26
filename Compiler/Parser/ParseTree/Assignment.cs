@@ -71,7 +71,7 @@ namespace Parser.ParseTree
 
             if (!this.Target.CanAssignTo)
             {
-                throw new ParserException(this.Target.FirstToken, "Cannot use assignment on this.");
+                throw new ParserException(this.Target, "Cannot use assignment on this.");
             }
 
             return this;

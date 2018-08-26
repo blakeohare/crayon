@@ -165,7 +165,7 @@ namespace Parser.ParseTree
                 this.Fields[i] = field;
                 if (this.StaticToken != null && !field.IsStaticField)
                 {
-                    throw new ParserException(field.FirstToken, "Cannot have a non-static field in a static class.");
+                    throw new ParserException(field, "Cannot have a non-static field in a static class.");
                 }
             }
 
@@ -176,14 +176,14 @@ namespace Parser.ParseTree
                 this.Methods[i] = funcDef;
                 if (this.StaticToken != null && !funcDef.IsStaticMethod)
                 {
-                    throw new ParserException(funcDef.FirstToken, "Cannot have a non-static method in a static class.");
+                    throw new ParserException(funcDef, "Cannot have a non-static method in a static class.");
                 }
             }
 
             this.Constructor.Resolve(parser);
             if (this.StaticToken != null && !this.Constructor.IsDefault)
             {
-                throw new ParserException(this.Constructor.FirstToken, "Static classes cannot have a non-static constructor.");
+                throw new ParserException(this.Constructor, "Static classes cannot have a non-static constructor.");
             }
 
             if (this.StaticConstructor != null)
@@ -198,12 +198,12 @@ namespace Parser.ParseTree
             {
                 if (this.BaseClass.FinalToken != null)
                 {
-                    throw new ParserException(this.FirstToken, "This class extends from " + this.BaseClass.NameToken.Value + " which is marked as final.");
+                    throw new ParserException(this, "This class extends from " + this.BaseClass.NameToken.Value + " which is marked as final.");
                 }
 
                 if (this.BaseClass.StaticToken != null)
                 {
-                    throw new ParserException(this.FirstToken, "This class extends from " + this.BaseClass.NameToken.Value + " which is marked as static.");
+                    throw new ParserException(this, "This class extends from " + this.BaseClass.NameToken.Value + " which is marked as static.");
                 }
             }
 
@@ -227,7 +227,7 @@ namespace Parser.ParseTree
             {
                 if (this.BaseClass.Constructor != null)
                 {
-                    throw new ParserException(this.FirstToken, "The base class of this class has a constructor which must be called.");
+                    throw new ParserException(this, "The base class of this class has a constructor which must be called.");
                 }
             }
             else if (!hasABaseClass && callsBaseConstructor)
@@ -309,7 +309,7 @@ namespace Parser.ParseTree
             {
                 if (classIds.Contains(walker.ClassID))
                 {
-                    throw new ParserException(this.FirstToken, "This class' parent class hierarchy creates a cycle.");
+                    throw new ParserException(this, "This class' parent class hierarchy creates a cycle.");
                 }
                 classIds.Add(walker.ClassID);
                 walker = walker.BaseClass;
@@ -339,7 +339,7 @@ namespace Parser.ParseTree
                 {
                     // TODO: definition of a field or a method? from this class or a parent?
                     // TODO: check to see if this is already resolved before now.
-                    throw new ParserException(fd.FirstToken, "This overrides a previous definition of a member named '" + fd.NameToken.Value + "'.");
+                    throw new ParserException(fd, "This overrides a previous definition of a member named '" + fd.NameToken.Value + "'.");
                 }
 
                 fd.MemberID = this.flattenedFieldAndMethodDeclarationsByName.Count;
@@ -356,7 +356,7 @@ namespace Parser.ParseTree
                         if (existingItem is FieldDeclaration)
                         {
                             // TODO: again, give more information.
-                            throw new ParserException(fd.FirstToken, "This field overrides a previous definition.");
+                            throw new ParserException(fd, "This field overrides a previous definition.");
                         }
 
                         // Take the old member ID it overrides.

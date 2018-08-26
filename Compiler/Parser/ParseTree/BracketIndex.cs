@@ -56,7 +56,7 @@ namespace Parser.ParseTree
                             // 2) <strictvars>true</strictvars>
                             // I kind of prefer #1.
 
-                            // throw new ParserException(this.Index.FirstToken, "The build variable with id '" + index + "' is not defined for this target.");
+                            // throw new ParserException(this.Index, "The build variable with id '" + index + "' is not defined for this target.");
                         }
                     }
                 }

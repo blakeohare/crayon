@@ -17,11 +17,15 @@ namespace Parser
             : this(token, locale.Strings.Get(errorType.ToString()))
         { }
 
+        public ParserException(ParseTree.Node node, string message)
+            : this(node.FirstToken, message)
+        { }
+
         public ParserException(Token token, string message)
             : base(InterpretToken(token) + message)
         { }
 
-        private ParserException(string message) : base(message)
+        internal ParserException(string message) : base(message)
         { }
 
         public static ParserException ThrowEofException(string filename)

@@ -142,7 +142,7 @@ namespace Parser.ParseTree
 
             if (this.Root is ClassReference)
             {
-                throw new ParserException(this.Root.FirstToken, "Classes cannot be invoked like a function. If you meant to instantiate a new instance, use the 'new' keyword.");
+                throw new ParserException(this.Root, "Classes cannot be invoked like a function. If you meant to instantiate a new instance, use the 'new' keyword.");
             }
 
             throw new ParserException(this.ParenToken, "This cannot be invoked like a function.");

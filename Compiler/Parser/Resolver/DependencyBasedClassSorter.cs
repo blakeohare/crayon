@@ -30,7 +30,7 @@ namespace Parser.Resolver
                     }
                     else
                     {
-                        throw new ParserException(exec.FirstToken, "Unexpected item.");
+                        throw new ParserException(exec, "Unexpected item.");
                     }
                 }
 
