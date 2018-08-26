@@ -14,6 +14,26 @@ namespace Parser
             this.parser = parser;
         }
 
+        internal ImportStatement ParseImport(TokenStream tokens, FileScope fileScope)
+        {
+            Token importToken = tokens.PopExpected(parser.Keywords.IMPORT);
+            List<string> importPathBuilder = new List<string>();
+            while (!tokens.PopIfPresent(";"))
+            {
+                if (importPathBuilder.Count > 0)
+                {
+                    tokens.PopExpected(".");
+                }
+
+                Token pathToken = tokens.Pop();
+                parser.VerifyIdentifier(pathToken);
+                importPathBuilder.Add(pathToken.Value);
+            }
+            string importPath = string.Join(".", importPathBuilder);
+
+            return new ImportStatement(importToken, importPath, fileScope);
+        }
+
         internal TopLevelEntity Parse(
             TokenStream tokens,
             TopLevelEntity owner,
@@ -22,6 +42,13 @@ namespace Parser
             AnnotationCollection annotations = annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
 
             string value = tokens.PeekValue();
+
+            if (value == this.parser.Keywords.IMPORT)
+            {
+                throw this.parser.GenerateParseError(
+                    ErrorMessages.ALL_IMPORTS_MUST_OCCUR_AT_BEGINNING_OF_FILE,
+                    tokens.Pop());
+            }
 
             // The returns are inline, so you'll have to refactor or put the check inside each parse call.
             // Or maybe a try/finally.
@@ -61,26 +88,6 @@ namespace Parser
                 {
                     throw ParserException.ThrowException(this.parser.CurrentLocale, ErrorMessages.CLASSES_CANNOT_BE_STATIC_AND_FINAL_SIMULTANEOUSLY, staticToken);
                 }
-            }
-
-            if (value == parser.Keywords.IMPORT)
-            {
-                Token importToken = tokens.PopExpected(parser.Keywords.IMPORT);
-                List<string> importPathBuilder = new List<string>();
-                while (!tokens.PopIfPresent(";"))
-                {
-                    if (importPathBuilder.Count > 0)
-                    {
-                        tokens.PopExpected(".");
-                    }
-
-                    Token pathToken = tokens.Pop();
-                    parser.VerifyIdentifier(pathToken);
-                    importPathBuilder.Add(pathToken.Value);
-                }
-                string importPath = string.Join(".", importPathBuilder);
-
-                return new ImportStatement(importToken, importPath, fileScope);
             }
 
             if (value == this.parser.Keywords.NAMESPACE) return this.ParseNamespace(tokens, owner, fileScope, annotations);

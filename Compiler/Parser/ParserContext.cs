@@ -406,7 +406,7 @@ namespace Parser
 
             while (tokens.HasMore && tokens.IsNext(this.Keywords.IMPORT))
             {
-                ImportStatement importStatement = this.TopLevelParser.Parse(tokens, null, fileScope) as ImportStatement;
+                ImportStatement importStatement = this.TopLevelParser.ParseImport(tokens, fileScope);
                 if (importStatement == null) throw new Exception();
                 namespaceImportsBuilder.Add(importStatement.ImportPath);
                 LocalizedLibraryView localizedLibraryView = this.LibraryManager.GetOrImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
@@ -420,16 +420,7 @@ namespace Parser
 
             while (tokens.HasMore)
             {
-                TopLevelEntity executable = this.TopLevelParser.Parse(tokens, null, fileScope);
-
-                if (executable is ImportStatement)
-                {
-                    throw this.GenerateParseError(
-                        ErrorMessages.ALL_IMPORTS_MUST_OCCUR_AT_BEGINNING_OF_FILE,
-                        executable.FirstToken);
-                }
-
-                this.CurrentScope.AddExecutable(executable);
+                this.CurrentScope.AddExecutable(this.TopLevelParser.Parse(tokens, null, fileScope));
             }
         }
 

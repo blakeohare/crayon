@@ -9,7 +9,7 @@ namespace Parser.ParseTree
             this.FirstToken = firstToken;
             this.Owner = owner;
         }
-        
+
         public LibraryMetadata Library
         {
             get
@@ -21,7 +21,7 @@ namespace Parser.ParseTree
                 return null;
             }
         }
-        
+
         public Token FirstToken { get; private set; }
 
         // This is a misnomer. This can be any top-level object such as a function, class, const, or enum that can wrap
