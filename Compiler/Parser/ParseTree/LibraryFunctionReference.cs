@@ -9,7 +9,7 @@ namespace Parser.ParseTree
 
         public string Name { get; private set; }
 
-        public LibraryFunctionReference(Token token, string name, TopLevelConstruct owner)
+        public LibraryFunctionReference(Token token, string name, Node owner)
             : base(token, owner)
         {
             this.Name = name;

@@ -18,7 +18,7 @@ namespace Parser.ParseTree
         public Namespace ParentNamespace { get; private set; }
         public string Name { get; private set; }
 
-        public NamespaceReference(Token firstToken, TopLevelConstruct owner, NamespaceReferenceTemplate nsRef)
+        public NamespaceReference(Token firstToken, Node owner, NamespaceReferenceTemplate nsRef)
             : base(firstToken, owner)
         {
             this.Template = nsRef;

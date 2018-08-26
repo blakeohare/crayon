@@ -9,7 +9,7 @@ namespace Parser.ParseTree
         public override bool CanAssignTo { get { return false; } }
 
         public Expression[] Items { get; private set; }
-        public ListDefinition(Token openBracket, IList<Expression> items, TopLevelConstruct owner)
+        public ListDefinition(Token openBracket, IList<Expression> items, Node owner)
             : base(openBracket, owner)
         {
             this.Items = items.ToArray();

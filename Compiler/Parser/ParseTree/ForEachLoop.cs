@@ -10,7 +10,7 @@ namespace Parser.ParseTree
         public Expression IterationExpression { get; private set; }
         public Executable[] Code { get; private set; }
 
-        public ForEachLoop(Token forToken, Token iterationVariable, Expression iterationExpression, IList<Executable> code, TopLevelConstruct owner)
+        public ForEachLoop(Token forToken, Token iterationVariable, Expression iterationExpression, IList<Executable> code, Node owner)
             : base(forToken, owner)
         {
             this.IterationVariable = iterationVariable;

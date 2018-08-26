@@ -9,7 +9,7 @@ namespace Parser.ParseTree
 
         public ConstStatement ConstStatement { get; private set; }
 
-        public ConstReference(Token token, ConstStatement con, TopLevelConstruct owner)
+        public ConstReference(Token token, ConstStatement con, Node owner)
             : base(token, owner)
         {
             this.ConstStatement = con;

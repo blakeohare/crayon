@@ -12,7 +12,7 @@ namespace Parser.ParseTree
         public Expression[] Keys { get; private set; }
         public Expression[] Values { get; private set; }
 
-        public DictionaryDefinition(Token braceToken, IList<Expression> keys, IList<Expression> values, TopLevelConstruct owner)
+        public DictionaryDefinition(Token braceToken, IList<Expression> keys, IList<Expression> values, Node owner)
             : base(braceToken, owner)
         {
             this.Keys = keys.ToArray();

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Parser.ParseTree
+﻿namespace Parser.ParseTree
 {
     public class BaseMethodReference : Expression
     {
@@ -11,7 +9,7 @@ namespace Parser.ParseTree
         public ClassDefinition ClassToWhichThisMethodRefers { get; set; }
         public FunctionDefinition FunctionDefinition { get; set; }
 
-        public BaseMethodReference(Token firstToken, Token dotToken, Token stepToken, TopLevelConstruct owner)
+        public BaseMethodReference(Token firstToken, Token dotToken, Token stepToken, Node owner)
             : base(firstToken, owner)
         {
             this.DotToken = dotToken;

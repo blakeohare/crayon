@@ -43,9 +43,9 @@ namespace Parser.ParseTree
         {
             if (this.namesByLocale == null) this.namesByLocale = this.Annotations.GetNamesByLocale(1);
             string name = this.namesByLocale.ContainsKey(locale) ? this.namesByLocale[locale] : this.NameToken.Value;
-            if (this.Owner != null)
+            if (this.TopLevelEntity != null)
             {
-                name = this.Owner.GetFullyQualifiedLocalizedName(locale) + "." + name;
+                name = this.TopLevelEntity.GetFullyQualifiedLocalizedName(locale) + "." + name;
             }
             return name;
         }

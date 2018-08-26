@@ -6,7 +6,7 @@ namespace Parser.ParseTree
     {
         public override bool CanAssignTo { get { return false; } }
 
-        public ThisKeyword(Token token, TopLevelConstruct owner)
+        public ThisKeyword(Token token, Node owner)
             : base(token, owner)
         { }
 

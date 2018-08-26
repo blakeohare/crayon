@@ -20,7 +20,7 @@ namespace Parser
             TokenStream tokens,
             bool simpleOnly,
             bool semicolonPresent,
-            TopLevelConstruct owner)
+            Node owner)
         {
             string value = tokens.PeekValue();
 
@@ -84,7 +84,7 @@ namespace Parser
             return new ExpressionAsExecutable(expr, owner);
         }
 
-        internal IList<Executable> ParseBlock(TokenStream tokens, bool bracketsRequired, TopLevelConstruct owner)
+        internal IList<Executable> ParseBlock(TokenStream tokens, bool bracketsRequired, Node owner)
         {
             List<Executable> output = new List<Executable>();
 
@@ -112,7 +112,7 @@ namespace Parser
             return output;
         }
 
-        private Executable ParseThrow(TokenStream tokens, TopLevelConstruct owner)
+        private Executable ParseThrow(TokenStream tokens, Node owner)
         {
             Token throwToken = tokens.PopExpected(this.parser.Keywords.THROW);
             Expression throwExpression = this.parser.ExpressionParser.Parse(tokens, owner);
@@ -120,7 +120,7 @@ namespace Parser
             return new ThrowStatement(throwToken, throwExpression, owner);
         }
 
-        private Executable ParseFor(TokenStream tokens, TopLevelConstruct owner)
+        private Executable ParseFor(TokenStream tokens, Node owner)
         {
             Token forToken = tokens.PopExpected(this.parser.Keywords.FOR);
             tokens.PopExpected("(");
@@ -167,7 +167,7 @@ namespace Parser
             }
         }
 
-        private Executable ParseWhile(TokenStream tokens, TopLevelConstruct owner)
+        private Executable ParseWhile(TokenStream tokens, Node owner)
         {
             Token whileToken = tokens.PopExpected(this.parser.Keywords.WHILE);
             tokens.PopExpected("(");
@@ -177,7 +177,7 @@ namespace Parser
             return new WhileLoop(whileToken, condition, body, owner);
         }
 
-        private Executable ParseDoWhile(TokenStream tokens, TopLevelConstruct owner)
+        private Executable ParseDoWhile(TokenStream tokens, Node owner)
         {
             Token doToken = tokens.PopExpected(this.parser.Keywords.DO);
             IList<Executable> body = this.ParseBlock(tokens, true, owner);
@@ -189,7 +189,7 @@ namespace Parser
             return new DoWhileLoop(doToken, body, condition, owner);
         }
 
-        private Executable ParseSwitch(TokenStream tokens, TopLevelConstruct owner)
+        private Executable ParseSwitch(TokenStream tokens, Node owner)
         {
             Token switchToken = tokens.PopExpected(this.parser.Keywords.SWITCH);
 
@@ -261,7 +261,7 @@ namespace Parser
             return new SwitchStatement(switchToken, condition, firstTokens, cases, code, explicitMax, explicitMaxToken, owner);
         }
 
-        private Executable ParseIf(TokenStream tokens, TopLevelConstruct owner)
+        private Executable ParseIf(TokenStream tokens, Node owner)
         {
             Token ifToken = tokens.PopExpected(this.parser.Keywords.IF);
             tokens.PopExpected("(");
@@ -280,7 +280,7 @@ namespace Parser
             return new IfStatement(ifToken, condition, body, elseBody, owner);
         }
 
-        private Executable ParseTry(TokenStream tokens, TopLevelConstruct owner)
+        private Executable ParseTry(TokenStream tokens, Node owner)
         {
             Token tryToken = tokens.PopExpected(this.parser.Keywords.TRY);
             IList<Executable> tryBlock = this.ParseBlock(tokens, true, owner);
@@ -382,21 +382,21 @@ namespace Parser
             return new TryStatement(tryToken, tryBlock, catchTokens, exceptionVariables, exceptionTypeTokens, exceptionTypes, catchBlocks, finallyToken, finallyBlock, owner);
         }
 
-        private Executable ParseBreak(TokenStream tokens, TopLevelConstruct owner)
+        private Executable ParseBreak(TokenStream tokens, Node owner)
         {
             Token breakToken = tokens.PopExpected(this.parser.Keywords.BREAK);
             tokens.PopExpected(";");
             return new BreakStatement(breakToken, owner);
         }
 
-        private Executable ParseContinue(TokenStream tokens, TopLevelConstruct owner)
+        private Executable ParseContinue(TokenStream tokens, Node owner)
         {
             Token continueToken = tokens.PopExpected(this.parser.Keywords.CONTINUE);
             tokens.PopExpected(";");
             return new ContinueStatement(continueToken, owner);
         }
 
-        private Executable ParseReturn(TokenStream tokens, TopLevelConstruct owner)
+        private Executable ParseReturn(TokenStream tokens, Node owner)
         {
             Token returnToken = tokens.PopExpected(this.parser.Keywords.RETURN);
             Expression expr = null;

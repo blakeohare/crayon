@@ -35,7 +35,7 @@ namespace Parser.ParseTree
             Token nameToken,
             IList<Token> subclassTokens,
             IList<string> subclassNames,
-            TopLevelConstruct owner,
+            Node owner,
             LibraryMetadata library,
             Token staticToken,
             Token finalToken,
@@ -68,7 +68,7 @@ namespace Parser.ParseTree
 
             if (this.Owner != null)
             {
-                name = this.Owner.GetFullyQualifiedLocalizedName(locale) + "." + name;
+                name = this.TopLevelEntity.GetFullyQualifiedLocalizedName(locale) + "." + name;
             }
             return name;
         }

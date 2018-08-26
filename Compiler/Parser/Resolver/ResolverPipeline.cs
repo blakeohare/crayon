@@ -52,7 +52,7 @@ namespace Parser.Resolver
         // Generally this is used with the name resolver. So for example, you have a refernce to a ClassDefinition
         // instance from the resolver, but you want to turn it into a ClassReference instance.
         // TODO: put this in a method on these classes and implement an interface. The function signatures are all close enough.
-        public static Expression ConvertStaticReferenceToExpression(TopLevelConstruct item, Token primaryToken, TopLevelConstruct owner)
+        public static Expression ConvertStaticReferenceToExpression(TopLevelConstruct item, Token primaryToken, Node owner)
         {
             if (item is ClassDefinition) return new ClassReference(primaryToken, (ClassDefinition)item, owner);
             if (item is EnumDefinition) return new EnumReference(primaryToken, (EnumDefinition)item, owner);

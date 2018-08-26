@@ -12,7 +12,7 @@ namespace Parser.ParseTree
 
         public override bool IsLiteral { get { return true; } }
 
-        public BooleanConstant(Token token, bool value, TopLevelConstruct owner)
+        public BooleanConstant(Token token, bool value, Node owner)
             : base(token, owner)
         {
             this.Value = value;
@@ -28,7 +28,7 @@ namespace Parser.ParseTree
             return this;
         }
 
-        public Expression CloneValue(Token token, TopLevelConstruct owner)
+        public Expression CloneValue(Token token, Node owner)
         {
             return new BooleanConstant(token, this.Value, owner);
         }

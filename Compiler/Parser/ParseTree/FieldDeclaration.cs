@@ -16,7 +16,7 @@ namespace Parser.ParseTree
             : base(fieldToken, owner, owner.FileScope)
         {
             this.NameToken = nameToken;
-            this.DefaultValue = new NullConstant(fieldToken, owner);
+            this.DefaultValue = new NullConstant(fieldToken, this);
             this.IsStaticField = isStatic;
             this.MemberID = -1;
             this.Annotations = annotations;
@@ -25,9 +25,9 @@ namespace Parser.ParseTree
         public override string GetFullyQualifiedLocalizedName(Locale locale)
         {
             string name = this.NameToken.Value;
-            if (this.Owner != null)
+            if (this.TopLevelEntity != null)
             {
-                name = this.Owner.GetFullyQualifiedLocalizedName(locale) + "." + name;
+                name = this.TopLevelEntity.GetFullyQualifiedLocalizedName(locale) + "." + name;
             }
             return name;
         }

@@ -91,9 +91,9 @@ namespace Parser
             return this.DoLookupImpl(name, currentEntity) as NamespaceReferenceTemplate;
         }
 
-        public TopLevelConstruct DoEntityLookup(string name, TopLevelConstruct currentEntity)
+        public TopLevelConstruct DoEntityLookup(string name, Node fromWhere)
         {
-            return this.DoLookupImpl(name, currentEntity) as TopLevelConstruct;
+            return this.DoLookupImpl(name, fromWhere) as TopLevelConstruct;
         }
 
         // Note: wraapping namespaces is a list of the namespace chains in a popped order...
@@ -101,7 +101,7 @@ namespace Parser
         //   ["MyNamespace.Foo.Bar.Baz", "MyNamespace.Foo.Bar", "MyNamespace.Foo", "MyNamespace"]
         public object DoLookupImpl(
             string name,
-            TopLevelConstruct currentEntity)
+            Node fromWhere)
         {
             // check for that entity in the current compilation scope,
             if (scopeLookup.ContainsKey(name)) return scopeLookup[name];
@@ -109,7 +109,13 @@ namespace Parser
             // check for that entity in another compilation scope
             if (depsLookup.ContainsKey(name)) return depsLookup[name];
 
-            string[] wrappingNamespaces = currentEntity.GetWrappingNamespaceIncrements(this.fileScope.CompilationScope.Locale);
+            while (fromWhere != null && !(fromWhere is TopLevelConstruct))
+            {
+                fromWhere = fromWhere.Owner;
+            }
+            if (fromWhere == null) throw new System.ArgumentException();
+
+            string[] wrappingNamespaces = ((TopLevelConstruct)fromWhere).GetWrappingNamespaceIncrements(this.fileScope.CompilationScope.Locale);
 
             // if there's a namespace or series of namespaces, check if it's in that fully-specified namespace
             if (wrappingNamespaces.Length > 0)

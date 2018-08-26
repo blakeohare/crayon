@@ -88,7 +88,7 @@ namespace Parser
             if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, staticToken, finalToken, fileScope, annotations);
             if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner, fileScope, annotations);
-            if (value == this.parser.Keywords.CONSTRUCTOR) return this.ParseConstructor(tokens, owner, annotations);
+            if (value == this.parser.Keywords.CONSTRUCTOR && owner is ClassDefinition) return this.ParseConstructor(tokens, (ClassDefinition)owner, annotations);
 
             Token token = tokens.Peek();
             throw ParserException.ThrowException(
@@ -100,11 +100,13 @@ namespace Parser
 
         private ConstructorDefinition ParseConstructor(
             TokenStream tokens,
-            TopLevelConstruct owner,
+            ClassDefinition owner,
             AnnotationCollection annotations)
         {
             Token constructorToken = tokens.PopExpected(this.parser.Keywords.CONSTRUCTOR);
+            ConstructorDefinition ctor = new ConstructorDefinition(constructorToken, annotations, owner);
             tokens.PopExpected("(");
+
             List<Token> argNames = new List<Token>();
             List<Expression> argValues = new List<Expression>();
             bool optionalArgFound = false;
@@ -120,7 +122,7 @@ namespace Parser
                 Expression defaultValue = null;
                 if (tokens.PopIfPresent("="))
                 {
-                    defaultValue = this.parser.ExpressionParser.Parse(tokens, owner);
+                    defaultValue = this.parser.ExpressionParser.Parse(tokens, ctor);
                     optionalArgFound = true;
                 }
                 else if (optionalArgFound)
@@ -147,16 +149,20 @@ namespace Parser
                         tokens.PopExpected(",");
                     }
 
-                    baseArgs.Add(this.parser.ExpressionParser.Parse(tokens, owner));
+                    baseArgs.Add(this.parser.ExpressionParser.Parse(tokens, ctor));
                 }
             }
 
-            IList<Executable> code = this.parser.ExecutableParser.ParseBlock(tokens, true, owner);
+            IList<Executable> code = this.parser.ExecutableParser.ParseBlock(tokens, true, ctor);
 
-            return new ConstructorDefinition(constructorToken, argNames, argValues, baseArgs, code, baseToken, annotations, owner);
+            ctor.SetArgs(argNames, argValues);
+            ctor.SetBaseArgs(baseArgs);
+            ctor.SetCode(code);
+            ctor.BaseToken = baseToken;
+            return ctor;
         }
 
-        private ConstStatement ParseConst(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope, AnnotationCollection annotations)
+        private ConstStatement ParseConst(TokenStream tokens, Node owner, FileScope fileScope, AnnotationCollection annotations)
         {
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             Token nameToken = tokens.Pop();
@@ -169,7 +175,7 @@ namespace Parser
             return constStatement;
         }
 
-        private EnumDefinition ParseEnumDefinition(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope, AnnotationCollection annotations)
+        private EnumDefinition ParseEnumDefinition(TokenStream tokens, Node owner, FileScope fileScope, AnnotationCollection annotations)
         {
             Token enumToken = tokens.PopExpected(this.parser.Keywords.ENUM);
             Token nameToken = tokens.Pop();
@@ -203,7 +209,7 @@ namespace Parser
             return ed;
         }
 
-        private ClassDefinition ParseClassDefinition(TokenStream tokens, TopLevelConstruct owner, Token staticToken, Token finalToken, FileScope fileScope, AnnotationCollection classAnnotations)
+        private ClassDefinition ParseClassDefinition(TokenStream tokens, Node owner, Token staticToken, Token finalToken, FileScope fileScope, AnnotationCollection classAnnotations)
         {
             Token classToken = tokens.PopExpected(this.parser.Keywords.CLASS);
             Token classNameToken = tokens.Pop();
@@ -314,13 +320,13 @@ namespace Parser
             FieldDeclaration fd = new FieldDeclaration(fieldToken, nameToken, owner, isStatic, annotations);
             if (tokens.PopIfPresent("="))
             {
-                fd.DefaultValue = this.parser.ExpressionParser.Parse(tokens, owner);
+                fd.DefaultValue = this.parser.ExpressionParser.Parse(tokens, fd);
             }
             tokens.PopExpected(";");
             return fd;
         }
 
-        private Namespace ParseNamespace(TokenStream tokens, TopLevelConstruct owner, FileScope fileScope, AnnotationCollection annotations)
+        private Namespace ParseNamespace(TokenStream tokens, Node owner, FileScope fileScope, AnnotationCollection annotations)
         {
             Token namespaceToken = tokens.PopExpected(this.parser.Keywords.NAMESPACE);
             Token first = tokens.Pop();

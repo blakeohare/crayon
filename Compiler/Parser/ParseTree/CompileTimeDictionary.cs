@@ -8,7 +8,7 @@ namespace Parser.ParseTree
 
         public string Type { get; private set; }
 
-        public CompileTimeDictionary(Token firstToken, string type, TopLevelConstruct owner)
+        public CompileTimeDictionary(Token firstToken, string type, Node owner)
             : base(firstToken, owner)
         {
             this.Type = type;

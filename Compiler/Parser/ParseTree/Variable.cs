@@ -10,7 +10,7 @@
 
         public VariableId LocalScopeId { get; set; }
 
-        public Variable(Token token, string name, TopLevelConstruct owner)
+        public Variable(Token token, string name, Node owner)
             : base(token, owner)
         {
             this.Name = name;
@@ -85,7 +85,7 @@
                 return new BaseKeyword(this.FirstToken, this.Owner);
             }
 
-            NamespaceReferenceTemplate nrt = this.Owner.FileScope.FileScopeEntityLookup.DoNamespaceLookup(this.Name, this.Owner);
+            NamespaceReferenceTemplate nrt = this.Owner.FileScope.FileScopeEntityLookup.DoNamespaceLookup(this.Name, this.TopLevelEntity);
             if (nrt != null)
             {
                 return new NamespaceReference(this.FirstToken, this.Owner, nrt);
@@ -115,7 +115,7 @@
                         throw new ParserException(this, "'" + name + "' is referenced but not imported in this file.");
                     }
 
-                    TopLevelConstruct owner = this.Owner;
+                    Node owner = this.Owner;
                     while (owner != null && !(owner is ClassDefinition))
                     {
                         owner = owner.Owner;

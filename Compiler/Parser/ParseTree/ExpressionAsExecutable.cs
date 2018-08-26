@@ -6,7 +6,7 @@ namespace Parser.ParseTree
     {
         public Expression Expression { get; private set; }
 
-        public ExpressionAsExecutable(Expression expression, TopLevelConstruct owner)
+        public ExpressionAsExecutable(Expression expression, Node owner)
             : base(expression.FirstToken, owner)
         {
             this.Expression = expression;

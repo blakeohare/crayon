@@ -13,7 +13,12 @@ namespace Parser.ParseTree
 
         public override bool CanAssignTo { get { return false; } }
 
-        public IsComparison(Expression root, Token isToken, Token firstClassToken, string classNameWithNamespace, TopLevelConstruct owner)
+        public IsComparison(
+            Expression root,
+            Token isToken,
+            Token firstClassToken,
+            string classNameWithNamespace,
+            Node owner)
             : base(root.FirstToken, owner)
         {
             this.Expression = root;
@@ -31,7 +36,7 @@ namespace Parser.ParseTree
         internal override Expression ResolveEntityNames(ParserContext parser)
         {
             this.Expression.ResolveEntityNames(parser);
-            this.ClassDefinition = this.FileScope.DoClassLookup(this.Owner, this.ClassToken, this.ClassName);
+            this.ClassDefinition = this.FileScope.DoClassLookup(this, this.ClassToken, this.ClassName);
             return this;
         }
 

@@ -9,7 +9,7 @@ namespace Parser.ParseTree
 
         public ClassDefinition ClassDefinition { get; private set; }
 
-        public ClassReference(Token token, ClassDefinition clazz, TopLevelConstruct owner)
+        public ClassReference(Token token, ClassDefinition clazz, Node owner)
             : base(token, owner)
         {
             this.ClassDefinition = clazz;

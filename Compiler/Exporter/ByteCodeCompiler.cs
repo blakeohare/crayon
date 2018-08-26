@@ -544,7 +544,7 @@ namespace Exporter
             {
                 if (classDefinition.StaticConstructor == null)
                 {
-                    classDefinition.StaticConstructor = new ConstructorDefinition(null, new Token[0], new Expression[0], new Expression[0], new Executable[0], null, new AnnotationCollection(parser), classDefinition);
+                    classDefinition.StaticConstructor = new ConstructorDefinition(null, new AnnotationCollection(parser), classDefinition);
                     classDefinition.StaticConstructor.ResolvePublic(parser);
                 }
 
@@ -553,7 +553,11 @@ namespace Exporter
                 {
                     if (fd.IsStaticField && fd.DefaultValue != null && !(fd.DefaultValue is NullConstant))
                     {
-                        Executable assignment = new Assignment(new FieldReference(fd.FirstToken, fd, classDefinition), fd.NameToken, "=", fd.DefaultValue, classDefinition);
+                        Executable assignment = new Assignment(
+                            new FieldReference(fd.FirstToken, fd, fd),
+                            fd.NameToken,
+                            "=",
+                            fd.DefaultValue, fd);
                         staticFieldInitializers.Add(assignment);
                     }
                 }
@@ -1509,7 +1513,7 @@ namespace Exporter
             int argCount = libFunc.Args.Length;
             Token token = parenTokenOverride ?? libFunc.FirstToken;
             string libraryName = libFunc.LibraryName;
-            LibraryMetadata library = libFunc.Owner.Library;
+            LibraryMetadata library = libFunc.TopLevelEntity.Library;
             int libraryRefId = parser.LibraryManager.GetLibraryReferenceIdFromKey(library.CanonicalKey);
             int functionNameReferenceId = parser.LiteralLookup.GetLibFuncRefId(libFunc.Name);
 

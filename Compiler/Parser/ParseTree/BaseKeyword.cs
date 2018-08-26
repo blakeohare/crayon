@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Parser.ParseTree
+﻿namespace Parser.ParseTree
 {
     public class BaseKeyword : Expression
     {
         public override bool CanAssignTo { get { return false; } }
 
-        public BaseKeyword(Token token, TopLevelConstruct owner)
+        public BaseKeyword(Token token, Node owner)
             : base(token, owner)
-        {
-        }
+        { }
 
         internal override Expression Resolve(ParserContext parser)
         {

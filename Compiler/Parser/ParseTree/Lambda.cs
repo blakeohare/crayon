@@ -11,7 +11,11 @@ namespace Parser.ParseTree
 
         public override bool CanAssignTo { get { return false; } }
 
-        public Lambda(Token firstToken, TopLevelConstruct owner, IList<Expression> args, IList<Executable> code)
+        public Lambda(
+            Token firstToken,
+            Node owner,
+            IList<Expression> args,
+            IList<Executable> code)
             : base(firstToken, owner)
         {
             // TODO: ugh, change this at parse-time.

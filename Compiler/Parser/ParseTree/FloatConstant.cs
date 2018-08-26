@@ -13,7 +13,7 @@ namespace Parser.ParseTree
 
         public override bool IsLiteral { get { return true; } }
 
-        public FloatConstant(Token startValue, double value, TopLevelConstruct owner)
+        public FloatConstant(Token startValue, double value, Node owner)
             : base(startValue, owner)
         {
             this.Value = value;
@@ -39,7 +39,7 @@ namespace Parser.ParseTree
             return this;
         }
 
-        public Expression CloneValue(Token token, TopLevelConstruct owner)
+        public Expression CloneValue(Token token, Node owner)
         {
             return new FloatConstant(token, this.Value, owner);
         }

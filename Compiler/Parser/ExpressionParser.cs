@@ -13,12 +13,12 @@ namespace Parser
             this.parser = parser;
         }
 
-        public Expression Parse(TokenStream tokens, TopLevelConstruct owner)
+        public Expression Parse(TokenStream tokens, Node owner)
         {
             return ParseTernary(tokens, owner);
         }
 
-        private Expression ParseTernary(TokenStream tokens, TopLevelConstruct owner)
+        private Expression ParseTernary(TokenStream tokens, Node owner)
         {
             Expression root = ParseNullCoalescing(tokens, owner);
             if (tokens.PopIfPresent("?"))
@@ -32,7 +32,7 @@ namespace Parser
             return root;
         }
 
-        private Expression ParseNullCoalescing(TokenStream tokens, TopLevelConstruct owner)
+        private Expression ParseNullCoalescing(TokenStream tokens, Node owner)
         {
             Expression root = ParseBooleanCombination(tokens, owner);
             if (tokens.PopIfPresent("??"))
@@ -43,7 +43,7 @@ namespace Parser
             return root;
         }
 
-        private Expression ParseBooleanCombination(TokenStream tokens, TopLevelConstruct owner)
+        private Expression ParseBooleanCombination(TokenStream tokens, Node owner)
         {
             Expression expr = ParseBitwiseOp(tokens, owner);
             string next = tokens.PeekValue();
@@ -62,7 +62,7 @@ namespace Parser
             return expr;
         }
 
-        private Expression ParseBitwiseOp(TokenStream tokens, TopLevelConstruct owner)
+        private Expression ParseBitwiseOp(TokenStream tokens, Node owner)
         {
             Expression expr = ParseEqualityComparison(tokens, owner);
             string next = tokens.PeekValue();
@@ -75,7 +75,7 @@ namespace Parser
             return expr;
         }
 
-        private Expression ParseEqualityComparison(TokenStream tokens, TopLevelConstruct owner)
+        private Expression ParseEqualityComparison(TokenStream tokens, Node owner)
         {
             Expression expr = ParseInequalityComparison(tokens, owner);
             string next = tokens.PeekValue();
@@ -88,7 +88,7 @@ namespace Parser
             return expr;
         }
 
-        private Expression ParseInequalityComparison(TokenStream tokens, TopLevelConstruct owner)
+        private Expression ParseInequalityComparison(TokenStream tokens, Node owner)
         {
             Expression expr = ParseBitShift(tokens, owner);
             string next = tokens.PeekValue();
@@ -102,7 +102,7 @@ namespace Parser
             return expr;
         }
 
-        private Expression ParseBitShift(TokenStream tokens, TopLevelConstruct owner)
+        private Expression ParseBitShift(TokenStream tokens, Node owner)
         {
             Expression expr = ParseAddition(tokens, owner);
             string next = tokens.PeekValue();
@@ -119,7 +119,7 @@ namespace Parser
         private static readonly HashSet<string> MULTIPLICATION_OPS = new HashSet<string>("* / %".Split(' '));
         private static readonly HashSet<string> NEGATE_OPS = new HashSet<string>("! -".Split(' '));
 
-        private Expression ParseAddition(TokenStream tokens, TopLevelConstruct owner)
+        private Expression ParseAddition(TokenStream tokens, Node owner)
         {
             Expression expr = ParseMultiplication(tokens, owner);
             string next = tokens.PeekValue();
@@ -133,7 +133,7 @@ namespace Parser
             return expr;
         }
 
-        private Expression ParseMultiplication(TokenStream tokens, TopLevelConstruct owner)
+        private Expression ParseMultiplication(TokenStream tokens, Node owner)
         {
             Expression expr = ParseNegate(tokens, owner);
             string next = tokens.PeekValue();
@@ -147,7 +147,7 @@ namespace Parser
             return expr;
         }
 
-        private Expression ParseNegate(TokenStream tokens, TopLevelConstruct owner)
+        private Expression ParseNegate(TokenStream tokens, Node owner)
         {
             string next = tokens.PeekValue();
             if (NEGATE_OPS.Contains(next))
@@ -162,7 +162,7 @@ namespace Parser
             return ParseExponents(tokens, owner);
         }
 
-        private Expression ParseExponents(TokenStream tokens, TopLevelConstruct owner)
+        private Expression ParseExponents(TokenStream tokens, Node owner)
         {
             Expression expr = ParseIncrement(tokens, owner);
             string next = tokens.PeekValue();
@@ -175,7 +175,7 @@ namespace Parser
             return expr;
         }
 
-        private Expression ParseIncrement(TokenStream tokens, TopLevelConstruct owner)
+        private Expression ParseIncrement(TokenStream tokens, Node owner)
         {
             Expression root;
             if (tokens.IsNext("++") || tokens.IsNext("--"))
@@ -197,7 +197,7 @@ namespace Parser
 
         private static readonly HashSet<char> VARIABLE_STARTER = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$".ToCharArray());
 
-        private Expression ParseInstantiate(TokenStream tokens, TopLevelConstruct owner)
+        private Expression ParseInstantiate(TokenStream tokens, Node owner)
         {
             Token newToken = tokens.PopExpected(this.parser.Keywords.NEW);
             Token classNameToken = tokens.Pop();
@@ -217,14 +217,14 @@ namespace Parser
             return new Instantiate(newToken, classNameToken, name, args, owner);
         }
 
-        private Expression ParseLambda(TokenStream tokens, Token firstToken, List<Expression> args, TopLevelConstruct owner)
+        private Expression ParseLambda(TokenStream tokens, Token firstToken, List<Expression> args, Node owner)
         {
             tokens.PopExpected("=>");
             IList<Executable> lambdaCode = this.parser.ExecutableParser.ParseBlock(tokens, true, owner);
             return new Lambda(firstToken, owner, args, lambdaCode);
         }
 
-        private Expression ParseEntity(TokenStream tokens, TopLevelConstruct owner)
+        private Expression ParseEntity(TokenStream tokens, Node owner)
         {
             Expression root;
             Token firstToken = tokens.Peek();
@@ -364,7 +364,7 @@ namespace Parser
             return root;
         }
 
-        private Expression ParseEntityWithoutSuffixChain(TokenStream tokens, TopLevelConstruct owner)
+        private Expression ParseEntityWithoutSuffixChain(TokenStream tokens, Node owner)
         {
             tokens.EnsureNotEof();
 

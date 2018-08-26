@@ -11,7 +11,7 @@ namespace Parser.ParseTree
         public Expression TrueValue { get; private set; }
         public Expression FalseValue { get; private set; }
 
-        public Ternary(Expression condition, Expression trueValue, Expression falseValue, TopLevelConstruct owner)
+        public Ternary(Expression condition, Expression trueValue, Expression falseValue, Node owner)
             : base(condition.FirstToken, owner)
         {
             this.Condition = condition;

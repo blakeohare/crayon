@@ -19,14 +19,14 @@ namespace Parser
             this.CompilationScope = scope;
         }
 
-        internal ClassDefinition DoClassLookup(TopLevelConstruct currentContainer, Token nameToken, string name)
+        internal ClassDefinition DoClassLookup(Node fromWhere, Token nameToken, string name)
         {
-            return DoClassLookup(currentContainer, nameToken, name, false);
+            return DoClassLookup(fromWhere, nameToken, name, false);
         }
 
-        internal ClassDefinition DoClassLookup(TopLevelConstruct currentContainer, Token nameToken, string name, bool failSilently)
+        internal ClassDefinition DoClassLookup(Node fromWhere, Token nameToken, string name, bool failSilently)
         {
-            TopLevelConstruct ex = this.FileScopeEntityLookup.DoEntityLookup(name, currentContainer);
+            TopLevelConstruct ex = this.FileScopeEntityLookup.DoEntityLookup(name, fromWhere);
             if (ex == null)
             {
                 if (failSilently)

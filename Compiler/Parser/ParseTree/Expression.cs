@@ -4,7 +4,7 @@ namespace Parser.ParseTree
 {
     public abstract class Expression : Node
     {
-        public Expression(Token firstToken, TopLevelConstruct owner)
+        public Expression(Token firstToken, Node owner)
             : base(firstToken, owner)
         {
             this.Annotations = null;

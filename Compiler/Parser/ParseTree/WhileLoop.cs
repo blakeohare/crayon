@@ -8,7 +8,7 @@ namespace Parser.ParseTree
         public Expression Condition { get; private set; }
         public Executable[] Code { get; private set; }
 
-        public WhileLoop(Token whileToken, Expression condition, IList<Executable> code, TopLevelConstruct owner)
+        public WhileLoop(Token whileToken, Expression condition, IList<Executable> code, Node owner)
             : base(whileToken, owner)
         {
             this.Condition = condition;

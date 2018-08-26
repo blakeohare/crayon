@@ -7,7 +7,7 @@ namespace Parser.ParseTree
     {
         public ClassDefinition ClassDefinition { get; set; }
 
-        public ClassReferenceLiteral(Token firstToken, ClassDefinition cd, TopLevelConstruct owner)
+        public ClassReferenceLiteral(Token firstToken, ClassDefinition cd, Node owner)
             : base(firstToken, owner)
         {
             this.ClassDefinition = cd;

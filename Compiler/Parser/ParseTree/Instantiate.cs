@@ -12,7 +12,12 @@ namespace Parser.ParseTree
         public Expression[] Args { get; private set; }
         public ClassDefinition Class { get; set; }
 
-        public Instantiate(Token firstToken, Token firstClassNameToken, string name, IList<Expression> args, TopLevelConstruct owner)
+        public Instantiate(
+            Token firstToken,
+            Token firstClassNameToken,
+            string name,
+            IList<Expression> args,
+            Node owner)
             : base(firstToken, owner)
         {
             this.NameToken = firstClassNameToken;

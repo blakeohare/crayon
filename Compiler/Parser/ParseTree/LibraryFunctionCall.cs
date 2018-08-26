@@ -12,13 +12,16 @@ namespace Parser.ParseTree
         public Expression[] Args { get; private set; }
         public string LibraryName { get; set; }
 
-        public LibraryFunctionCall(Token token, string name, IList<Expression> args, TopLevelConstruct owner)
+        public LibraryFunctionCall(Token token, string name, IList<Expression> args, Node owner)
             : base(token, owner)
         {
             string callingLibrary = null;
             while (callingLibrary == null && owner != null)
             {
-                callingLibrary = owner.Library.ID;
+                if (owner is TopLevelConstruct && !(owner is FieldDeclaration))
+                {
+                    callingLibrary = owner.Library.ID;
+                }
                 owner = owner.Owner;
             }
 

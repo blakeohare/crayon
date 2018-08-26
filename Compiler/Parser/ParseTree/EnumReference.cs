@@ -7,7 +7,7 @@ namespace Parser.ParseTree
     {
         public EnumDefinition EnumDefinition { get; set; }
 
-        public EnumReference(Token token, EnumDefinition enumDefinition, TopLevelConstruct owner)
+        public EnumReference(Token token, EnumDefinition enumDefinition, Node owner)
             : base(token, owner)
         {
             this.EnumDefinition = enumDefinition;

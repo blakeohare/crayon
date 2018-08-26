@@ -4,7 +4,7 @@ namespace Parser.ParseTree
 {
     public class ContinueStatement : Executable
     {
-        public ContinueStatement(Token continueToken, TopLevelConstruct owner)
+        public ContinueStatement(Token continueToken, Node owner)
             : base(continueToken, owner)
         { }
 

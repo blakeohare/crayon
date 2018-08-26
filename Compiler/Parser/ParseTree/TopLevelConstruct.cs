@@ -6,9 +6,7 @@ namespace Parser.ParseTree
 {
     public abstract class TopLevelConstruct : Node
     {
-        public LibraryMetadata Library { get; set; }
-
-        public TopLevelConstruct(Token firstToken, TopLevelConstruct owner, FileScope fileScope)
+        public TopLevelConstruct(Token firstToken, Node owner, FileScope fileScope)
             : base(firstToken, owner)
         {
             this.fileScopeOverride = fileScope;
@@ -30,13 +28,14 @@ namespace Parser.ParseTree
         {
             if (!this.localNamespaceByLocale.ContainsKey(locale))
             {
-                TopLevelConstruct ownerWalker = this.Owner;
+                Node ownerWalker = this.Owner;
                 while (ownerWalker != null && !(ownerWalker is Namespace))
                 {
                     ownerWalker = ownerWalker.Owner;
                 }
+                Namespace nsInstance = (Namespace)ownerWalker;
 
-                string ns = ownerWalker == null ? "" : ownerWalker.GetFullyQualifiedLocalizedName(locale);
+                string ns = nsInstance == null ? "" : nsInstance.GetFullyQualifiedLocalizedName(locale);
                 if (!TopLevelConstruct.namespacePartCache.ContainsKey(ns))
                 {
                     if (ns.Length == 0)

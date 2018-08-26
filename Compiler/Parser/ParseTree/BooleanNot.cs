@@ -8,7 +8,7 @@ namespace Parser.ParseTree
 
         public Expression Root { get; private set; }
 
-        public BooleanNot(Token bang, Expression root, TopLevelConstruct owner)
+        public BooleanNot(Token bang, Expression root, Node owner)
             : base(bang, owner)
         {
             this.Root = root;

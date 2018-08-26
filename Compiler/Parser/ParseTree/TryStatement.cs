@@ -34,7 +34,7 @@ namespace Parser.ParseTree
             List<Executable[]> catchBlockExecutableses,
             Token finallyToken,
             IList<Executable> finallyBlock,
-            TopLevelConstruct owner) : base(tryToken, owner)
+            Node owner) : base(tryToken, owner)
         {
             this.TryToken = tryToken;
             this.TryBlock = tryBlock.ToArray();

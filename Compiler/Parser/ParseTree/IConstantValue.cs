@@ -2,6 +2,6 @@
 {
     public interface IConstantValue
     {
-        Expression CloneValue(Token token, TopLevelConstruct owner);
+        Expression CloneValue(Token token, Node owner);
     }
 }

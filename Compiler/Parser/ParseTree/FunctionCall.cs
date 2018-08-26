@@ -12,7 +12,7 @@ namespace Parser.ParseTree
         public Token ParenToken { get; private set; }
         public Expression[] Args { get; private set; }
 
-        public FunctionCall(Expression root, Token parenToken, IList<Expression> args, TopLevelConstruct owner)
+        public FunctionCall(Expression root, Token parenToken, IList<Expression> args, Node owner)
             : base(root.FirstToken, owner)
         {
             this.Root = root;

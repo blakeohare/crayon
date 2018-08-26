@@ -10,7 +10,7 @@ namespace Parser.ParseTree
 
         public override bool CanAssignTo { get { return false; } }
 
-        public CoreFunctionInvocation(Token firstToken, Expression[] originalArgs, TopLevelConstruct owner) :
+        public CoreFunctionInvocation(Token firstToken, Expression[] originalArgs, Node owner) :
             base(firstToken, owner)
         {
             if (originalArgs.Length == 0 || !(originalArgs[0] is StringConstant))

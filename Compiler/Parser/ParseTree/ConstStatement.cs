@@ -13,7 +13,7 @@ namespace Parser.ParseTree
         public ConstStatement(
             Token constToken,
             Token nameToken,
-            TopLevelConstruct owner,
+            Node owner,
             LibraryMetadata library,
             FileScope fileScope,
             AnnotationCollection annotations)
@@ -32,9 +32,9 @@ namespace Parser.ParseTree
             string name = this.NameToken.Value;
             if (this.namesByLocale.ContainsKey(locale)) name = this.namesByLocale[locale];
 
-            if (this.Owner != null)
+            if (this.TopLevelEntity != null)
             {
-                name = this.Owner.GetFullyQualifiedLocalizedName(locale) + "." + name;
+                name = this.TopLevelEntity.GetFullyQualifiedLocalizedName(locale) + "." + name;
             }
             return name;
         }

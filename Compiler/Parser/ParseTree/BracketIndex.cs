@@ -11,7 +11,7 @@ namespace Parser.ParseTree
         public Token BracketToken { get; private set; }
         public Expression Index { get; set; }
 
-        public BracketIndex(Expression root, Token bracketToken, Expression index, TopLevelConstruct owner)
+        public BracketIndex(Expression root, Token bracketToken, Expression index, Node owner)
             : base(root.FirstToken, owner)
         {
             this.Root = root;

@@ -8,7 +8,7 @@ namespace Parser.ParseTree
     {
         public static readonly Executable[] EMPTY_ARRAY = new Executable[0];
 
-        public Executable(Token firstToken, TopLevelConstruct owner)
+        public Executable(Token firstToken, Node owner)
             : base(firstToken, owner)
         {
             if (owner == null)

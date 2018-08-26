@@ -8,7 +8,7 @@ namespace Parser.ParseTree
 
         public Expression Root { get; private set; }
 
-        public NegativeSign(Token sign, Expression root, TopLevelConstruct owner)
+        public NegativeSign(Token sign, Expression root, Node owner)
             : base(sign, owner)
         {
             this.Root = root;

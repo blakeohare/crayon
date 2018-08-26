@@ -9,7 +9,7 @@ namespace Parser.ParseTree
 
         public FunctionDefinition FunctionDefinition { get; set; }
 
-        public FunctionReference(Token token, FunctionDefinition funcDef, TopLevelConstruct owner)
+        public FunctionReference(Token token, FunctionDefinition funcDef, Node owner)
             : base(token, owner)
         {
             this.FunctionDefinition = funcDef;

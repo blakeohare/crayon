@@ -11,7 +11,7 @@ namespace Parser.ParseTree
         public Expression[] Items { get; set; } // these can be null
         public Expression Root { get; set; }
 
-        public ListSlice(Expression root, List<Expression> items, Token bracketToken, TopLevelConstruct owner)
+        public ListSlice(Expression root, List<Expression> items, Token bracketToken, Node owner)
             : base(root.FirstToken, owner)
         {
             this.Root = root;

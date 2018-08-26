@@ -13,7 +13,7 @@ namespace Parser.ParseTree
         public Expression Right { get; private set; }
         public Token Op { get; private set; }
 
-        public BinaryOpChain(Expression left, Token op, Expression right, TopLevelConstruct owner)
+        public BinaryOpChain(Expression left, Token op, Expression right, Node owner)
             : base(left.FirstToken, owner)
         {
             this.Left = left;
@@ -21,7 +21,7 @@ namespace Parser.ParseTree
             this.Op = op;
         }
 
-        public static BinaryOpChain Build(IList<Expression> expressions, IList<Token> ops, TopLevelConstruct owner)
+        public static BinaryOpChain Build(IList<Expression> expressions, IList<Token> ops, Node owner)
         {
             int expressionIndex = 0;
             int opIndex = 0;

@@ -18,7 +18,7 @@ namespace Parser.ParseTree
 
         public FieldDeclaration Field { get; set; }
 
-        public FieldReference(Token token, FieldDeclaration field, TopLevelConstruct owner)
+        public FieldReference(Token token, FieldDeclaration field, Node owner)
             : base(token, owner)
         {
             this.Field = field;

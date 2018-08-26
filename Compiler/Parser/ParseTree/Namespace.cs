@@ -29,7 +29,7 @@ namespace Parser.ParseTree
         public Namespace(
             Token namespaceToken,
             string name,
-            TopLevelConstruct owner,
+            Node owner,
             LibraryMetadata library,
             FileScope fileScope,
             AnnotationCollection annotations)

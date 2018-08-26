@@ -4,7 +4,7 @@ namespace Parser.ParseTree
 {
     public class BreakStatement : Executable
     {
-        public BreakStatement(Token breakToken, TopLevelConstruct owner)
+        public BreakStatement(Token breakToken, Node owner)
             : base(breakToken, owner)
         { }
 

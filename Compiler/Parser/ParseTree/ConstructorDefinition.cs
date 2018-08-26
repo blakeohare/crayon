@@ -7,51 +7,48 @@ namespace Parser.ParseTree
 {
     public class ConstructorDefinition : TopLevelConstruct
     {
+        private static readonly Token[] NO_TOKENS = new Token[0];
+        private static readonly Expression[] NO_EXPRESSIONS = new Expression[0];
+        private static readonly Executable[] NO_EXECUTABLES = new Executable[0];
+
         public int FunctionID { get; private set; }
         public Executable[] Code { get; set; }
         public Token[] ArgNames { get; private set; }
         public Expression[] DefaultValues { get; private set; }
         public Expression[] BaseArgs { get; private set; }
-        public Token BaseToken { get; private set; }
+        public Token BaseToken { get; set; }
         public int LocalScopeSize { get; set; }
         public int MinArgCount { get; set; }
         public int MaxArgCount { get; set; }
         public bool IsDefault { get; private set; }
         public AnnotationCollection Annotations { get; set; }
 
-        public ConstructorDefinition(TopLevelConstruct owner, AnnotationCollection annotations)
-            : base(null, owner, owner.FileScope)
+        public ConstructorDefinition(ClassDefinition owner, AnnotationCollection annotations)
+            : this(null, annotations, owner)
         {
             this.IsDefault = true;
-
-            this.Code = new Executable[0];
-            this.ArgNames = new Token[0];
-            this.DefaultValues = new Expression[0];
-            this.BaseArgs = new Expression[0];
-            this.MaxArgCount = 0;
-            this.MinArgCount = 0;
-            this.Annotations = annotations;
         }
 
         public ConstructorDefinition(
             Token constructorToken,
-            IList<Token> args,
-            IList<Expression> defaultValues,
-            IList<Expression> baseArgs,
-            IList<Executable> code,
-            Token baseToken,
             AnnotationCollection annotations,
-            TopLevelConstruct owner)
+            ClassDefinition owner)
             : base(constructorToken, owner, owner.FileScope)
         {
             this.IsDefault = false;
-            this.ArgNames = args.ToArray();
-            this.DefaultValues = defaultValues.ToArray();
-            this.BaseArgs = baseArgs.ToArray();
-            this.Code = code.ToArray();
-            this.BaseToken = baseToken;
             this.Annotations = annotations;
+            this.ArgNames = NO_TOKENS;
+            this.DefaultValues = NO_EXPRESSIONS;
+            this.MaxArgCount = 0;
+            this.MinArgCount = 0;
+            this.BaseArgs = NO_EXPRESSIONS;
+            this.Code = NO_EXECUTABLES;
+        }
 
+        internal void SetArgs(IList<Token> argNames, IList<Expression> defaultValues)
+        {
+            this.ArgNames = argNames.ToArray();
+            this.DefaultValues = defaultValues.ToArray();
             TODO.VerifyDefaultArgumentsAreAtTheEnd();
 
             this.MaxArgCount = this.ArgNames.Length;
@@ -68,6 +65,16 @@ namespace Parser.ParseTree
                 }
             }
             this.MinArgCount = minArgCount;
+        }
+
+        internal void SetBaseArgs(IList<Expression> baseArgs)
+        {
+            this.BaseArgs = baseArgs.ToArray();
+        }
+
+        internal void SetCode(IList<Executable> code)
+        {
+            this.Code = code.ToArray();
         }
 
         public override string GetFullyQualifiedLocalizedName(Locale locale)

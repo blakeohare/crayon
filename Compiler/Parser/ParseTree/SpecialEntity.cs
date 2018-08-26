@@ -6,7 +6,7 @@ namespace Parser.ParseTree
 {
     public abstract class SpecialEntity : Expression
     {
-        public SpecialEntity(Token firstToken, TopLevelConstruct owner) : base(firstToken, owner)
+        public SpecialEntity(Token firstToken, Node owner) : base(firstToken, owner)
         { }
 
         public override bool CanAssignTo { get { return false; } }
@@ -28,7 +28,7 @@ namespace Parser.ParseTree
         internal class EnumMaxFunction : SpecialEntity
         {
             private EnumDefinition enumDef;
-            public EnumMaxFunction(Token firstToken, EnumDefinition enumDef, TopLevelConstruct owner)
+            public EnumMaxFunction(Token firstToken, EnumDefinition enumDef, Node owner)
                 : base(firstToken, owner)
             {
                 this.enumDef = enumDef;
@@ -52,7 +52,7 @@ namespace Parser.ParseTree
         internal class EnumValuesFunction : SpecialEntity
         {
             private EnumDefinition enumDef;
-            public EnumValuesFunction(Token firstToken, EnumDefinition enumDef, TopLevelConstruct owner)
+            public EnumValuesFunction(Token firstToken, EnumDefinition enumDef, Node owner)
                 : base(firstToken, owner)
             {
                 this.enumDef = enumDef;

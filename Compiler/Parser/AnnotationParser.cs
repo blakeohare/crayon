@@ -35,6 +35,7 @@ namespace Parser
                 parser.VerifyIdentifier(typeToken);
             }
 
+            Annotation annotation = new Annotation(annotationToken, typeToken);
             List<Expression> args = new List<Expression>();
             if (tokens.PopIfPresent("("))
             {
@@ -45,10 +46,11 @@ namespace Parser
                         tokens.PopExpected(",");
                     }
 
-                    args.Add(this.parser.ExpressionParser.Parse(tokens, null));
+                    args.Add(this.parser.ExpressionParser.Parse(tokens, annotation));
                 }
             }
-            return new Annotation(annotationToken, typeToken, args);
+            annotation.SetArgs(args);
+            return annotation;
         }
     }
 }

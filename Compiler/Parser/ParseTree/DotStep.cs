@@ -12,7 +12,7 @@ namespace Parser.ParseTree
         public Token DotToken { get; private set; }
         public Token StepToken { get; private set; }
 
-        public DotStep(Expression root, Token dotToken, Token stepToken, TopLevelConstruct owner)
+        public DotStep(Expression root, Token dotToken, Token stepToken, Node owner)
             : base(root.FirstToken, owner)
         {
             this.Root = root;
@@ -208,30 +208,28 @@ namespace Parser.ParseTree
             if (root is ThisKeyword)
             {
                 ClassDefinition cd = null;
-                if (this.Owner != null)
+                TopLevelConstruct owner = this.TopLevelEntity;
+                if (owner is FunctionDefinition)
                 {
-                    if (this.Owner is FunctionDefinition)
-                    {
-                        funcDef = this.Owner as FunctionDefinition;
-                        if (funcDef.IsStaticMethod)
-                        {
-                            throw new ParserException(this.Root, "'this' keyword cannot be used in static methods.");
-                        }
-                        cd = funcDef.Owner as ClassDefinition;
-                        if (cd == null)
-                        {
-                            throw new ParserException(this.Root, "'this' keyword must be used inside a class.");
-                        }
-                    }
-                    else if (this.Owner is ClassDefinition)
-                    {
-                        cd = (ClassDefinition)this.Owner;
-                    }
+                    if (((FunctionDefinition)owner).IsStaticMethod)
+                        throw new ParserException(this.Root, "'this' keyword cannot be used in static methods.");
+                    cd = (ClassDefinition)owner.Owner;
                 }
-
-                if (cd == null)
+                else if (owner is FieldDeclaration)
                 {
-                    throw new ParserException(this.Root, "'this' keyword is not allowed here.");
+                    if (((FieldDeclaration)owner).IsStaticField)
+                        throw new ParserException(this.Root, "'this' keyword cannot be used in static fields.");
+                    cd = (ClassDefinition)owner.Owner;
+                }
+                else if (owner is ConstructorDefinition)
+                {
+                    cd = (ClassDefinition)owner.Owner;
+                    if (cd.StaticConstructor == owner)
+                        throw new ParserException(this.Root, "'this', keyword cannot be used in static constructors.");
+                }
+                else
+                {
+                    throw new ParserException(this.Root, "'this' keyword must be used inside a class.");
                 }
 
                 funcDef = cd.GetMethod(field, true);

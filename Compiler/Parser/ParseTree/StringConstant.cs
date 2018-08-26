@@ -10,7 +10,7 @@ namespace Parser.ParseTree
         public override bool CanAssignTo { get { return false; } }
 
         public string Value { get; private set; }
-        public StringConstant(Token token, string value, TopLevelConstruct owner)
+        public StringConstant(Token token, string value, Node owner)
             : base(token, owner)
         {
             this.Value = value;
@@ -62,7 +62,7 @@ namespace Parser.ParseTree
             return this;
         }
 
-        public Expression CloneValue(Token token, TopLevelConstruct owner)
+        public Expression CloneValue(Token token, Node owner)
         {
             return new StringConstant(token, this.Value, owner);
         }

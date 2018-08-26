@@ -8,7 +8,7 @@ namespace Parser.ParseTree
         public Executable[] Code { get; private set; }
         public Expression Condition { get; private set; }
 
-        public DoWhileLoop(Token doToken, IList<Executable> code, Expression condition, TopLevelConstruct owner)
+        public DoWhileLoop(Token doToken, IList<Executable> code, Expression condition, Node owner)
             : base(doToken, owner)
         {
             this.Code = code.ToArray();

@@ -10,7 +10,7 @@ namespace Parser.ParseTree
         public Expression[] Expressions { get; private set; }
         public Token[] Ops { get; private set; }
 
-        public BooleanCombination(IList<Expression> expressions, IList<Token> ops, TopLevelConstruct owner)
+        public BooleanCombination(IList<Expression> expressions, IList<Token> ops, Node owner)
             : base(expressions[0].FirstToken, owner)
         {
             this.Expressions = expressions.ToArray();

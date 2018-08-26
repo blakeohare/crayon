@@ -63,7 +63,7 @@ namespace Parser.ParseTree
             return number;
         }
 
-        public IntegerConstant(Token token, int value, TopLevelConstruct owner)
+        public IntegerConstant(Token token, int value, Node owner)
             : base(token, owner)
         {
             this.Value = value;
@@ -80,7 +80,7 @@ namespace Parser.ParseTree
             return this;
         }
 
-        public Expression CloneValue(Token token, TopLevelConstruct owner)
+        public Expression CloneValue(Token token, Node owner)
         {
             return new IntegerConstant(token, this.Value, owner);
         }

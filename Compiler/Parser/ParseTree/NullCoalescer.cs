@@ -9,7 +9,7 @@ namespace Parser.ParseTree
         public Expression PrimaryExpression { get; set; }
         public Expression SecondaryExpression { get; set; }
 
-        public NullCoalescer(Expression primaryExpression, Expression secondaryExpression, TopLevelConstruct owner)
+        public NullCoalescer(Expression primaryExpression, Expression secondaryExpression, Node owner)
             : base(primaryExpression.FirstToken, owner)
         {
             this.PrimaryExpression = primaryExpression;

@@ -10,7 +10,7 @@ namespace Parser.ParseTree
         public string AssignmentOp { get; private set; }
         public Variable TargetAsVariable { get { return this.Target as Variable; } }
 
-        public Assignment(Expression target, Token assignmentOpToken, string assignmentOp, Expression assignedValue, TopLevelConstruct owner)
+        public Assignment(Expression target, Token assignmentOpToken, string assignmentOp, Expression assignedValue, Node owner)
             : base(target.FirstToken, owner)
         {
             this.Target = target;

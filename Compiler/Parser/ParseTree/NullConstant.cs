@@ -8,7 +8,7 @@ namespace Parser.ParseTree
 
         public override bool CanAssignTo { get { return false; } }
 
-        public NullConstant(Token token, TopLevelConstruct owner)
+        public NullConstant(Token token, Node owner)
             : base(token, owner)
         { }
 
@@ -24,7 +24,7 @@ namespace Parser.ParseTree
             return this;
         }
 
-        public Expression CloneValue(Token token, TopLevelConstruct owner)
+        public Expression CloneValue(Token token, Node owner)
         {
             return new NullConstant(token, owner);
         }

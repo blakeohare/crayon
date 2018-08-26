@@ -3,18 +3,21 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class Annotation
+    public class Annotation : Node
     {
-        public Token FirstToken { get; private set; }
         public Token TypeToken { get; private set; }
         public string Type { get; private set; }
         public Expression[] Args { get; private set; }
 
-        public Annotation(Token firstToken, Token typeToken, IList<Expression> args)
+        public Annotation(Token firstToken, Token typeToken)
+            : base(firstToken, null)
         {
-            this.FirstToken = firstToken;
             this.TypeToken = typeToken;
             this.Type = typeToken.Value;
+        }
+
+        public void SetArgs(IList<Expression> args)
+        {
             this.Args = args.ToArray();
         }
 
