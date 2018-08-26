@@ -1,8 +1,9 @@
 ﻿using Localization;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class FieldDefinition : TopLevelEntity
+    public class FieldDefinition : TopLevelEntity, ICodeContainer
     {
         public Token NameToken { get; set; }
         public Expression DefaultValue { get; set; }
@@ -10,6 +11,7 @@ namespace Parser.ParseTree
         public int MemberID { get; set; }
         public int StaticMemberID { get; set; }
         public AnnotationCollection Annotations { get; set; }
+        public List<Lambda> Lambdas { get; private set; }
 
         public FieldDefinition(Token fieldToken, Token nameToken, ClassDefinition owner, bool isStatic, AnnotationCollection annotations)
             : base(fieldToken, owner, owner.FileScope)
@@ -19,6 +21,7 @@ namespace Parser.ParseTree
             this.IsStaticField = isStatic;
             this.MemberID = -1;
             this.Annotations = annotations;
+            this.Lambdas = new List<Lambda>();
         }
 
         public override string GetFullyQualifiedLocalizedName(Locale locale)
@@ -43,11 +46,18 @@ namespace Parser.ParseTree
             parser.CurrentCodeContainer = null;
         }
 
-        private static readonly VariableScope EMPTY_VAR_ALLOC = VariableScope.NewEmptyScope();
         internal void AllocateLocalScopeIds(ParserContext parser)
         {
-            // Throws if it finds any variable.
-            this.DefaultValue.PerformLocalIdAllocation(parser, EMPTY_VAR_ALLOC, VariableIdAllocPhase.ALLOC);
+            VariableScope varScope = VariableScope.NewEmptyScope();
+            this.DefaultValue.PerformLocalIdAllocation(parser, varScope, VariableIdAllocPhase.REGISTER_AND_ALLOC);
+
+            if (varScope.Size > 0)
+            {
+                // Although if you manage to trigger this, I'd love to know how.
+                throw new ParserException(this, "Cannot declare a variable this way.");
+            }
+
+            Lambda.DoVarScopeIdAllocationForLambdaContainer(parser, varScope, this);
         }
     }
 }

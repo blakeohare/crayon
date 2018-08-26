@@ -13,8 +13,14 @@ namespace Parser
 
     public class VariableId
     {
+        public VariableId(string name)
+        {
+            this.Name = name;
+            this.UsedByClosure = false;
+        }
+
         public int ID { get; set; }
-        public string Name { get; set; }
+        public string Name { get; private set; }
         public bool UsedByClosure { get; set; }
     }
 
@@ -65,6 +71,15 @@ namespace Parser
             return scope;
         }
 
+        public void FinalizeScopeIds()
+        {
+            int id = 0;
+            foreach (string varName in this.rootScopeOrder)
+            {
+                this.idsByVar[varName].ID = id++;
+            }
+        }
+
         public VariableId RegisterVariable(string value)
         {
             // Before anything else, check to see if this is coming from the closure.
@@ -113,11 +128,7 @@ namespace Parser
             else
             {
                 // Variable has never been used anywhere. Create a new one and put it in the root bookkeeping.
-                varId = new VariableId()
-                {
-                    Name = value,
-                    ID = rootScope.rootScopeOrder.Count,
-                };
+                varId = new VariableId(value);
                 this.idsByVar[value] = varId;
                 this.rootScope.flattenedIds[value] = varId;
                 this.rootScope.rootScopeOrder.Add(value);

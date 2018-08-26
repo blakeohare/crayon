@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class FunctionDefinition : TopLevelEntity
+    public class FunctionDefinition : TopLevelEntity, ICodeContainer
     {
         public int FunctionID { get; set; }
         public Token NameToken { get; private set; }
@@ -17,6 +17,8 @@ namespace Parser.ParseTree
         public int LocalScopeSize { get; set; }
         public int FinalizedPC { get; set; }
         public int MemberID { get; set; }
+        public List<Lambda> Lambdas { get; private set; }
+        private Dictionary<Locale, string> namesByLocale = null;
 
         public FunctionDefinition(
             Token functionToken,
@@ -31,9 +33,8 @@ namespace Parser.ParseTree
             this.NameToken = nameToken;
             this.Annotations = annotations;
             this.MemberID = -1;
+            this.Lambdas = new List<Lambda>();
         }
-
-        private Dictionary<Locale, string> namesByLocale = null;
 
         public override string GetFullyQualifiedLocalizedName(Locale locale)
         {
@@ -92,18 +93,22 @@ namespace Parser.ParseTree
 
         internal void AllocateLocalScopeIds(ParserContext parser)
         {
-            VariableScope variableIds = VariableScope.NewEmptyScope();
+            VariableScope varScope = VariableScope.NewEmptyScope();
             for (int i = 0; i < this.ArgNames.Length; ++i)
             {
-                variableIds.RegisterVariable(this.ArgNames[i].Value);
+                varScope.RegisterVariable(this.ArgNames[i].Value);
             }
 
             foreach (Executable ex in this.Code)
             {
-                ex.PerformLocalIdAllocation(parser, variableIds, VariableIdAllocPhase.REGISTER_AND_ALLOC);
+                ex.PerformLocalIdAllocation(parser, varScope, VariableIdAllocPhase.REGISTER_AND_ALLOC);
             }
 
-            this.LocalScopeSize = variableIds.Size;
+            Lambda.DoVarScopeIdAllocationForLambdaContainer(parser, varScope, this);
+
+            varScope.FinalizeScopeIds();
+
+            this.LocalScopeSize = varScope.Size;
         }
     }
 }

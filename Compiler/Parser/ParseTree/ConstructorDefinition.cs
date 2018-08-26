@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class ConstructorDefinition : TopLevelEntity
+    public class ConstructorDefinition : TopLevelEntity, ICodeContainer
     {
         private static readonly Token[] NO_TOKENS = new Token[0];
         private static readonly Expression[] NO_EXPRESSIONS = new Expression[0];
@@ -22,6 +22,7 @@ namespace Parser.ParseTree
         public int MaxArgCount { get; set; }
         public bool IsDefault { get; private set; }
         public AnnotationCollection Annotations { get; set; }
+        public List<Lambda> Lambdas { get; private set; }
 
         public ConstructorDefinition(ClassDefinition owner, AnnotationCollection annotations)
             : this(null, annotations, owner)
@@ -43,6 +44,7 @@ namespace Parser.ParseTree
             this.MinArgCount = 0;
             this.BaseArgs = NO_EXPRESSIONS;
             this.Code = NO_EXECUTABLES;
+            this.Lambdas = new List<Lambda>();
         }
 
         internal void SetArgs(IList<Token> argNames, IList<Expression> defaultValues)
@@ -117,22 +119,27 @@ namespace Parser.ParseTree
 
         internal void AllocateLocalScopeIds(ParserContext parser)
         {
-            VariableScope variableIds = VariableScope.NewEmptyScope();
+            VariableScope varScope = VariableScope.NewEmptyScope();
             for (int i = 0; i < this.ArgNames.Length; ++i)
             {
-                variableIds.RegisterVariable(this.ArgNames[i].Value);
+                varScope.RegisterVariable(this.ArgNames[i].Value);
             }
 
             foreach (Expression arg in this.BaseArgs)
             {
-                arg.PerformLocalIdAllocation(parser, variableIds, VariableIdAllocPhase.ALLOC);
+                arg.PerformLocalIdAllocation(parser, varScope, VariableIdAllocPhase.ALLOC);
             }
 
             foreach (Executable ex in this.Code)
             {
-                ex.PerformLocalIdAllocation(parser, variableIds, VariableIdAllocPhase.REGISTER_AND_ALLOC);
+                ex.PerformLocalIdAllocation(parser, varScope, VariableIdAllocPhase.REGISTER_AND_ALLOC);
             }
-            this.LocalScopeSize = variableIds.Size;
+
+            Lambda.DoVarScopeIdAllocationForLambdaContainer(parser, varScope, this);
+
+            varScope.FinalizeScopeIds();
+
+            this.LocalScopeSize = varScope.Size;
         }
 
         internal override void ResolveEntityNames(ParserContext parser)

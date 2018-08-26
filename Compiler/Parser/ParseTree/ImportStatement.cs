@@ -1,7 +1,4 @@
-﻿using Localization;
-using System;
-
-namespace Parser.ParseTree
+﻿namespace Parser.ParseTree
 {
     public class ImportStatement : Node
     {
