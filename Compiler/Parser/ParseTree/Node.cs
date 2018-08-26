@@ -9,54 +9,19 @@ namespace Parser.ParseTree
             this.FirstToken = firstToken;
             this.Owner = owner;
         }
-
-        // TODO: get rid of this and use compilation scope directly
-        private LibraryMetadata library = null;
+        
         public LibraryMetadata Library
         {
             get
             {
-                if (this.library == null && this.TopLevelEntity != null)
+                if (this.CompilationScope is LibraryCompilationScope)
                 {
-                    this.library = this.TopLevelEntity.Library;
+                    return ((LibraryCompilationScope)this.CompilationScope).Library;
                 }
-                return this.library;
+                return null;
             }
-            set { this.library = value; }
         }
-
-        private string GetName(Node thing)
-        {
-            if (thing == null) return "none";
-
-            if (thing is Expression)
-            {
-                if (thing is Lambda) return "lambda";
-                return "expr";
-            }
-
-            if (thing is Executable)
-            {
-                return "exec";
-            }
-
-            if (thing is TopLevelEntity)
-            {
-                if (thing is FunctionDefinition) return "func";
-                if (thing is ClassDefinition) return "class";
-                if (thing is ConstructorDefinition) return "ctor";
-                if (thing is Namespace) return "namespace";
-                if (thing is FieldDefinition) return "field";
-                if (thing is EnumDefinition) return "enum";
-                if (thing is ConstDefinition) return "const";
-                if (thing is ImportStatement) return "import";
-            }
-
-            if (thing is Annotation) return "annotation";
-
-            throw new System.Exception();
-        }
-
+        
         public Token FirstToken { get; private set; }
 
         // This is a misnomer. This can be any top-level object such as a function, class, const, or enum that can wrap

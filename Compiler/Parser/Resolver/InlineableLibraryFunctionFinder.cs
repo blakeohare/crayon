@@ -61,7 +61,6 @@ namespace Parser.Resolver
 
                 return inlineCandidates;
             }
-
         }
     }
 }

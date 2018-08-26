@@ -36,14 +36,12 @@ namespace Parser.ParseTree
             IList<Token> subclassTokens,
             IList<string> subclassNames,
             Node owner,
-            LibraryMetadata library,
             Token staticToken,
             Token finalToken,
             FileScope fileScope,
             AnnotationCollection annotations)
             : base(classToken, owner, fileScope)
         {
-            this.Library = library;
             this.ClassID = ClassDefinition.classIdAlloc++;
 
             this.NameToken = nameToken;

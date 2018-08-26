@@ -125,14 +125,7 @@ namespace Parser.ParseTree
                     }
                     if (!resolvedType.ExtendsFrom(simpleException))
                     {
-                        if (resolvedType.BaseClass == null && resolvedType.Library == null)
-                        {
-                            throw new ParserException(token, "This class does not extend from Core.Exception.");
-                        }
-                        else
-                        {
-                            throw new ParserException(token, "Only classes that extend from Core.Exception may be caught.");
-                        }
+                        throw new ParserException(token, "Only classes that extend from Core.Exception may be caught.");
                     }
                     cb.TypeClasses[i] = resolvedType;
 

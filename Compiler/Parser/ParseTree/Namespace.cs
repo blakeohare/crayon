@@ -30,12 +30,10 @@ namespace Parser.ParseTree
             Token namespaceToken,
             string name,
             Node owner,
-            LibraryMetadata library,
             FileScope fileScope,
             AnnotationCollection annotations)
             : base(namespaceToken, owner, fileScope)
         {
-            this.Library = library;
             this.DefaultName = name;
             this.FullyQualifiedDefaultName = owner == null
                 ? name

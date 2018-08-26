@@ -7,10 +7,9 @@ namespace Parser.ParseTree
     {
         public string ImportPath { get; set; }
 
-        public ImportStatement(Token importToken, string path, LibraryMetadata callingLibrary, FileScope fileScope)
+        public ImportStatement(Token importToken, string path, FileScope fileScope)
             : base(importToken, null, fileScope)
         {
-            this.Library = callingLibrary;
             this.ImportPath = path;
             fileScope.Imports.Add(this);
         }

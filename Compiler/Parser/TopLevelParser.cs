@@ -80,7 +80,7 @@ namespace Parser
                 }
                 string importPath = string.Join(".", importPathBuilder);
 
-                return new ImportStatement(importToken, importPath, parser.CurrentLibrary, fileScope);
+                return new ImportStatement(importToken, importPath, fileScope);
             }
 
             if (value == this.parser.Keywords.NAMESPACE) return this.ParseNamespace(tokens, owner, fileScope, annotations);
@@ -166,7 +166,7 @@ namespace Parser
         {
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             Token nameToken = tokens.Pop();
-            ConstDefinition constStatement = new ConstDefinition(constToken, nameToken, owner, parser.CurrentLibrary, fileScope, annotations);
+            ConstDefinition constStatement = new ConstDefinition(constToken, nameToken, owner, fileScope, annotations);
             this.parser.VerifyIdentifier(nameToken);
             tokens.PopExpected("=");
             constStatement.Expression = this.parser.ExpressionParser.Parse(tokens, constStatement);
@@ -181,7 +181,7 @@ namespace Parser
             Token nameToken = tokens.Pop();
             this.parser.VerifyIdentifier(nameToken);
             string name = nameToken.Value;
-            EnumDefinition ed = new EnumDefinition(enumToken, nameToken, owner, parser.CurrentLibrary, fileScope, annotations);
+            EnumDefinition ed = new EnumDefinition(enumToken, nameToken, owner, fileScope, annotations);
 
             tokens.PopExpected("{");
             bool nextForbidden = false;
@@ -244,7 +244,6 @@ namespace Parser
                 baseClassTokens,
                 baseClassStrings,
                 owner,
-                parser.CurrentLibrary,
                 staticToken,
                 finalToken,
                 fileScope,
@@ -345,7 +344,7 @@ namespace Parser
 
             string name = string.Join(".", namespacePieces.Select<Token, string>(t => t.Value));
 
-            Namespace namespaceInstance = new Namespace(namespaceToken, name, owner, parser.CurrentLibrary, fileScope, annotations);
+            Namespace namespaceInstance = new Namespace(namespaceToken, name, owner, fileScope, annotations);
 
             tokens.PopExpected("{");
             List<TopLevelEntity> namespaceMembers = new List<TopLevelEntity>();
@@ -387,7 +386,7 @@ namespace Parser
             Token functionNameToken = tokens.Pop();
             this.parser.VerifyIdentifier(functionNameToken);
 
-            FunctionDefinition fd = new FunctionDefinition(functionToken, parser.CurrentLibrary, nullableOwner, isStatic, functionNameToken, annotations, fileScope);
+            FunctionDefinition fd = new FunctionDefinition(functionToken, nullableOwner, isStatic, functionNameToken, annotations, fileScope);
 
             tokens.PopExpected("(");
             List<Token> argNames = new List<Token>();
@@ -421,6 +420,5 @@ namespace Parser
 
             return fd;
         }
-
     }
 }

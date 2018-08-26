@@ -402,7 +402,7 @@ namespace Parser
             // Implicitly import the Core library for the current locale.
             LocalizedLibraryView implicitCoreImport = this.LibraryManager.GetCoreLibrary(this);
             namespaceImportsBuilder.Add(implicitCoreImport.Name);
-            fileScope.Imports.Add(new ImportStatement(null, implicitCoreImport.Name, this.CurrentLibrary, fileScope));
+            fileScope.Imports.Add(new ImportStatement(null, implicitCoreImport.Name, fileScope));
 
             while (tokens.HasMore && tokens.IsNext(this.Keywords.IMPORT))
             {

@@ -14,12 +14,10 @@ namespace Parser.ParseTree
             Token constToken,
             Token nameToken,
             Node owner,
-            LibraryMetadata library,
             FileScope fileScope,
             AnnotationCollection annotations)
             : base(constToken, owner, fileScope)
         {
-            this.Library = library;
             this.NameToken = nameToken;
             this.Name = nameToken.Value;
             this.annotations = annotations;

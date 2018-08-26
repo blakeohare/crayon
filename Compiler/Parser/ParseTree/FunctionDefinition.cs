@@ -20,7 +20,6 @@ namespace Parser.ParseTree
 
         public FunctionDefinition(
             Token functionToken,
-            LibraryMetadata library,
             TopLevelEntity nullableOwner,
             bool isStaticMethod,
             Token nameToken,
@@ -28,13 +27,11 @@ namespace Parser.ParseTree
             FileScope fileScope)
             : base(functionToken, nullableOwner, fileScope)
         {
-            this.Library = library;
             this.IsStaticMethod = isStaticMethod;
             this.NameToken = nameToken;
             this.Annotations = annotations;
             this.MemberID = -1;
         }
-
 
         private Dictionary<Locale, string> namesByLocale = null;
 
