@@ -45,7 +45,7 @@
 
             if (this.Name == "this" || this.Name == "base")
             {
-                TopLevelConstruct container = parser.CurrentCodeContainer;
+                TopLevelEntity container = parser.CurrentCodeContainer;
 
                 if (container is FunctionDefinition)
                 {
@@ -61,9 +61,9 @@
                     }
                 }
 
-                if (container is FieldDeclaration)
+                if (container is FieldDefinition)
                 {
-                    if (((FieldDeclaration)container).IsStaticField)
+                    if (((FieldDefinition)container).IsStaticField)
                     {
                         throw new ParserException(this, "Cannot use '" + this.Name + "' in a static field value.");
                     }
@@ -91,7 +91,7 @@
                 return new NamespaceReference(this.FirstToken, this.Owner, nrt);
             }
 
-            TopLevelConstruct exec = this.Owner.FileScope.FileScopeEntityLookup.DoEntityLookup(this.Name, this.Owner);
+            TopLevelEntity exec = this.Owner.FileScope.FileScopeEntityLookup.DoEntityLookup(this.Name, this.Owner);
 
             if (exec != null)
             {
@@ -124,7 +124,7 @@
                     if (owner != null)
                     {
                         ClassDefinition cd = (ClassDefinition)owner;
-                        foreach (FieldDeclaration fd in cd.Fields)
+                        foreach (FieldDefinition fd in cd.Fields)
                         {
                             if (fd.NameToken.Value == name)
                             {

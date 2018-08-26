@@ -1,10 +1,8 @@
 ﻿using Parser.Resolver;
-using System;
-using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class DotStep : Expression
+    public class DotField : Expression
     {
         public override bool CanAssignTo { get { return true; } }
 
@@ -12,7 +10,7 @@ namespace Parser.ParseTree
         public Token DotToken { get; private set; }
         public Token StepToken { get; private set; }
 
-        public DotStep(Expression root, Token dotToken, Token stepToken, Node owner)
+        public DotField(Expression root, Token dotToken, Token stepToken, Node owner)
             : base(root.FirstToken, owner)
         {
             this.Root = root;
@@ -97,7 +95,7 @@ namespace Parser.ParseTree
             ParserContext parser)
         {
             FunctionDefinition funcDef; // used in multiple places.
-            FieldDeclaration fieldDec;
+            FieldDefinition fieldDec;
             this.Root = this.Root.ResolveEntityNames(parser);
             Expression root = this.Root;
             string field = this.StepToken.Value;
@@ -106,7 +104,7 @@ namespace Parser.ParseTree
             {
                 // already a fully qualified namespace, therefore imports don't matter.
                 string fullyQualifiedName = ((NamespaceReference)root).Template.Name + "." + field;
-                TopLevelConstruct entity = this.Owner.FileScope.FileScopeEntityLookup.DoEntityLookup(fullyQualifiedName, parser.CurrentCodeContainer);
+                TopLevelEntity entity = this.Owner.FileScope.FileScopeEntityLookup.DoEntityLookup(fullyQualifiedName, parser.CurrentCodeContainer);
                 if (entity != null)
                 {
                     return ResolverPipeline.ConvertStaticReferenceToExpression(entity, this.FirstToken, this.Owner);
@@ -208,16 +206,16 @@ namespace Parser.ParseTree
             if (root is ThisKeyword)
             {
                 ClassDefinition cd = null;
-                TopLevelConstruct owner = this.TopLevelEntity;
+                TopLevelEntity owner = this.TopLevelEntity;
                 if (owner is FunctionDefinition)
                 {
                     if (((FunctionDefinition)owner).IsStaticMethod)
                         throw new ParserException(this.Root, "'this' keyword cannot be used in static methods.");
                     cd = (ClassDefinition)owner.Owner;
                 }
-                else if (owner is FieldDeclaration)
+                else if (owner is FieldDefinition)
                 {
-                    if (((FieldDeclaration)owner).IsStaticField)
+                    if (((FieldDefinition)owner).IsStaticField)
                         throw new ParserException(this.Root, "'this' keyword cannot be used in static fields.");
                     cd = (ClassDefinition)owner.Owner;
                 }
@@ -242,7 +240,7 @@ namespace Parser.ParseTree
                     return new FunctionReference(this.FirstToken, funcDef, this.Owner);
                 }
 
-                FieldDeclaration fieldDef = cd.GetField(field, true);
+                FieldDefinition fieldDef = cd.GetField(field, true);
                 if (fieldDef != null)
                 {
                     if (fieldDef.IsStaticField)

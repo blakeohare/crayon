@@ -8,14 +8,14 @@ namespace Parser.Resolver
 {
     internal static class ResolverPipeline
     {
-        public static TopLevelConstruct[] Resolve(ParserContext parser, ICollection<CompilationScope> compilationScopesRaw)
+        public static TopLevelEntity[] Resolve(ParserContext parser, ICollection<CompilationScope> compilationScopesRaw)
         {
-            List<TopLevelConstruct> originalCode = new List<TopLevelConstruct>();
+            List<TopLevelEntity> originalCode = new List<TopLevelEntity>();
             foreach (CompilationScope scope in compilationScopesRaw.OrderBy(scope => scope.ScopeKey))
             {
                 originalCode.AddRange(scope.GetExecutables_HACK());
             }
-            TopLevelConstruct[] code = originalCode.ToArray();
+            TopLevelEntity[] code = originalCode.ToArray();
 
             parser.VerifyNoBadImports();
 
@@ -44,7 +44,6 @@ namespace Parser.Resolver
             code = DependencyBasedClassSorter.Run(code);
 
             LocalScopeVariableIdAllocator.Run(parser, code);
-            LocaleIdAllocator.Run(parser, compilationScopes);
 
             return code;
         }
@@ -52,11 +51,11 @@ namespace Parser.Resolver
         // Generally this is used with the name resolver. So for example, you have a refernce to a ClassDefinition
         // instance from the resolver, but you want to turn it into a ClassReference instance.
         // TODO: put this in a method on these classes and implement an interface. The function signatures are all close enough.
-        public static Expression ConvertStaticReferenceToExpression(TopLevelConstruct item, Token primaryToken, Node owner)
+        public static Expression ConvertStaticReferenceToExpression(TopLevelEntity item, Token primaryToken, Node owner)
         {
             if (item is ClassDefinition) return new ClassReference(primaryToken, (ClassDefinition)item, owner);
             if (item is EnumDefinition) return new EnumReference(primaryToken, (EnumDefinition)item, owner);
-            if (item is ConstStatement) return new ConstReference(primaryToken, (ConstStatement)item, owner);
+            if (item is ConstDefinition) return new ConstReference(primaryToken, (ConstDefinition)item, owner);
             if (item is FunctionDefinition) return new FunctionReference(primaryToken, (FunctionDefinition)item, owner);
 
             throw new InvalidOperationException();

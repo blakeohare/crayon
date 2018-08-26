@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -16,9 +15,9 @@ namespace Parser.ParseTree
 
         public override bool CanAssignTo { get { return true; } }
 
-        public FieldDeclaration Field { get; set; }
+        public FieldDefinition Field { get; set; }
 
-        public FieldReference(Token token, FieldDeclaration field, Node owner)
+        public FieldReference(Token token, FieldDefinition field, Node owner)
             : base(token, owner)
         {
             this.Field = field;

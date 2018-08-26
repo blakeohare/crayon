@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public abstract class TopLevelConstruct : Node
+    public abstract class TopLevelEntity : Node
     {
-        public TopLevelConstruct(Token firstToken, Node owner, FileScope fileScope)
+        public TopLevelEntity(Token firstToken, Node owner, FileScope fileScope)
             : base(firstToken, owner)
         {
             this.fileScopeOverride = fileScope;
@@ -36,11 +36,11 @@ namespace Parser.ParseTree
                 Namespace nsInstance = (Namespace)ownerWalker;
 
                 string ns = nsInstance == null ? "" : nsInstance.GetFullyQualifiedLocalizedName(locale);
-                if (!TopLevelConstruct.namespacePartCache.ContainsKey(ns))
+                if (!TopLevelEntity.namespacePartCache.ContainsKey(ns))
                 {
                     if (ns.Length == 0)
                     {
-                        TopLevelConstruct.namespacePartCache[""] = new string[0];
+                        TopLevelEntity.namespacePartCache[""] = new string[0];
                     }
                     else
                     {
@@ -50,10 +50,10 @@ namespace Parser.ParseTree
                             parts[i] = parts[i - 1] + "." + parts[i];
                         }
                         Array.Reverse(parts);
-                        TopLevelConstruct.namespacePartCache[ns] = parts;
+                        TopLevelEntity.namespacePartCache[ns] = parts;
                     }
                 }
-                this.localNamespaceByLocale[locale] = TopLevelConstruct.namespacePartCache[ns];
+                this.localNamespaceByLocale[locale] = TopLevelEntity.namespacePartCache[ns];
             }
             return this.localNamespaceByLocale[locale];
         }

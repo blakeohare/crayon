@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Parser.ParseTree
+﻿namespace Parser.ParseTree
 {
     public class BooleanConstant : Expression, IConstantValue
     {

@@ -1,9 +1,8 @@
 ﻿using Localization;
-using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class FieldDeclaration : TopLevelConstruct
+    public class FieldDefinition : TopLevelEntity
     {
         public Token NameToken { get; set; }
         public Expression DefaultValue { get; set; }
@@ -12,7 +11,7 @@ namespace Parser.ParseTree
         public int StaticMemberID { get; set; }
         public AnnotationCollection Annotations { get; set; }
 
-        public FieldDeclaration(Token fieldToken, Token nameToken, ClassDefinition owner, bool isStatic, AnnotationCollection annotations)
+        public FieldDefinition(Token fieldToken, Token nameToken, ClassDefinition owner, bool isStatic, AnnotationCollection annotations)
             : base(fieldToken, owner, owner.FileScope)
         {
             this.NameToken = nameToken;

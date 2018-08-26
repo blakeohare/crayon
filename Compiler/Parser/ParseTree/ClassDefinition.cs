@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class ClassDefinition : TopLevelConstruct
+    public class ClassDefinition : TopLevelEntity
     {
         private static int classIdAlloc = 1;
 
@@ -17,7 +17,7 @@ namespace Parser.ParseTree
         public FunctionDefinition[] Methods { get; set; }
         public ConstructorDefinition Constructor { get; set; }
         public ConstructorDefinition StaticConstructor { get; set; }
-        public FieldDeclaration[] Fields { get; set; }
+        public FieldDefinition[] Fields { get; set; }
 
         public Token StaticToken { get; set; }
         public Token FinalToken { get; set; }
@@ -28,7 +28,7 @@ namespace Parser.ParseTree
         // When a variable in this class is not locally defined, look for a fully qualified name that has one of these prefixes.
 
         private Dictionary<string, FunctionDefinition> functionDefinitionsByName = null;
-        private Dictionary<string, FieldDeclaration> fieldDeclarationsByName = null;
+        private Dictionary<string, FieldDefinition> fieldDeclarationsByName = null;
 
         public ClassDefinition(
             Token classToken,
@@ -75,7 +75,7 @@ namespace Parser.ParseTree
 
         public void AllocateLocalScopeIds(ParserContext parser)
         {
-            foreach (FieldDeclaration fd in this.Fields)
+            foreach (FieldDefinition fd in this.Fields)
             {
                 fd.AllocateLocalScopeIds(parser);
             }
@@ -119,15 +119,15 @@ namespace Parser.ParseTree
             return null;
         }
 
-        public FieldDeclaration GetField(string name, bool walkUpBaseClasses)
+        public FieldDefinition GetField(string name, bool walkUpBaseClasses)
         {
             if (this.fieldDeclarationsByName == null)
             {
-                this.fieldDeclarationsByName = new Dictionary<string, FieldDeclaration>();
+                this.fieldDeclarationsByName = new Dictionary<string, FieldDefinition>();
 
                 int staticMemberId = 0;
 
-                foreach (FieldDeclaration fd in this.Fields)
+                foreach (FieldDefinition fd in this.Fields)
                 {
                     this.fieldDeclarationsByName[fd.NameToken.Value] = fd;
                     if (fd.IsStaticField)
@@ -160,7 +160,7 @@ namespace Parser.ParseTree
             for (int i = 0; i < this.Fields.Length; ++i)
             {
 
-                FieldDeclaration field = this.Fields[i];
+                FieldDefinition field = this.Fields[i];
                 field.Resolve(parser);
                 this.Fields[i] = field;
                 if (this.StaticToken != null && !field.IsStaticField)
@@ -248,7 +248,7 @@ namespace Parser.ParseTree
             {
                 string value = this.BaseClassDeclarations[i];
                 Token token = this.BaseClassTokens[i];
-                TopLevelConstruct baseClassInstance = this.FileScope.FileScopeEntityLookup.DoEntityLookup(value, this);
+                TopLevelEntity baseClassInstance = this.FileScope.FileScopeEntityLookup.DoEntityLookup(value, this);
                 if (baseClassInstance == null)
                 {
                     throw new ParserException(token, "No class named '" + token.Value + "' was found.");
@@ -279,7 +279,7 @@ namespace Parser.ParseTree
 
         internal override void ResolveEntityNames(ParserContext parser)
         {
-            foreach (FieldDeclaration fd in this.Fields)
+            foreach (FieldDefinition fd in this.Fields)
             {
                 fd.ResolveEntityNames(parser);
             }
@@ -316,7 +316,7 @@ namespace Parser.ParseTree
             }
         }
 
-        private Dictionary<string, TopLevelConstruct> flattenedFieldAndMethodDeclarationsByName = new Dictionary<string, TopLevelConstruct>();
+        private Dictionary<string, TopLevelEntity> flattenedFieldAndMethodDeclarationsByName = new Dictionary<string, TopLevelEntity>();
 
         public void ResolveMemberIds()
         {
@@ -325,16 +325,16 @@ namespace Parser.ParseTree
             if (this.BaseClass != null)
             {
                 this.BaseClass.ResolveMemberIds();
-                Dictionary<string, TopLevelConstruct> parentDefinitions = this.BaseClass.flattenedFieldAndMethodDeclarationsByName;
+                Dictionary<string, TopLevelEntity> parentDefinitions = this.BaseClass.flattenedFieldAndMethodDeclarationsByName;
                 foreach (string key in parentDefinitions.Keys)
                 {
                     this.flattenedFieldAndMethodDeclarationsByName[key] = parentDefinitions[key];
                 }
             }
 
-            foreach (FieldDeclaration fd in this.Fields)
+            foreach (FieldDefinition fd in this.Fields)
             {
-                TopLevelConstruct existingItem;
+                TopLevelEntity existingItem;
                 if (this.flattenedFieldAndMethodDeclarationsByName.TryGetValue(fd.NameToken.Value, out existingItem))
                 {
                     // TODO: definition of a field or a method? from this class or a parent?
@@ -350,10 +350,10 @@ namespace Parser.ParseTree
             {
                 if (!fd.IsStaticMethod)
                 {
-                    TopLevelConstruct existingItem;
+                    TopLevelEntity existingItem;
                     if (this.flattenedFieldAndMethodDeclarationsByName.TryGetValue(fd.NameToken.Value, out existingItem))
                     {
-                        if (existingItem is FieldDeclaration)
+                        if (existingItem is FieldDefinition)
                         {
                             // TODO: again, give more information.
                             throw new ParserException(fd, "This field overrides a previous definition.");

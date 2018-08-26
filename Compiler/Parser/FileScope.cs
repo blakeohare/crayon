@@ -26,7 +26,7 @@ namespace Parser
 
         internal ClassDefinition DoClassLookup(Node fromWhere, Token nameToken, string name, bool failSilently)
         {
-            TopLevelConstruct ex = this.FileScopeEntityLookup.DoEntityLookup(name, fromWhere);
+            TopLevelEntity ex = this.FileScopeEntityLookup.DoEntityLookup(name, fromWhere);
             if (ex == null)
             {
                 if (failSilently)

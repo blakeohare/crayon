@@ -30,7 +30,7 @@ namespace Exporter
             using (new PerformanceSection("CompilationBundle.Compile"))
             {
                 ParserContext parserContext = new ParserContext(buildContext);
-                Parser.ParseTree.TopLevelConstruct[] resolvedParseTree = parserContext.ParseAllTheThings();
+                Parser.ParseTree.TopLevelEntity[] resolvedParseTree = parserContext.ParseAllTheThings();
 
                 ByteCodeCompiler bcc = new ByteCodeCompiler();
                 ByteBuffer buffer = bcc.GenerateByteCode(parserContext, resolvedParseTree);

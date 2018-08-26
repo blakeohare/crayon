@@ -10,7 +10,7 @@ namespace Exporter
 {
     internal class ByteCodeCompiler
     {
-        public ByteBuffer GenerateByteCode(ParserContext parser, IList<TopLevelConstruct> lines)
+        public ByteBuffer GenerateByteCode(ParserContext parser, IList<TopLevelEntity> lines)
         {
             ByteBuffer userCode = new ByteBuffer();
 
@@ -123,11 +123,11 @@ namespace Exporter
             Locale classOriginalLocale)
         {
             // TODO: This would be so much easier if there was an interface. This is super goofy.
-            List<TopLevelConstruct> topLevelConstructs = new List<TopLevelConstruct>();
+            List<TopLevelEntity> topLevelConstructs = new List<TopLevelEntity>();
             List<AnnotationCollection> tlcAnnotations = new List<AnnotationCollection>();
             List<string> tlcDefaultNames = new List<string>();
             List<int> memberIds = new List<int>();
-            foreach (FieldDeclaration field in cd.Fields)
+            foreach (FieldDefinition field in cd.Fields)
             {
                 if (field.IsStaticField) continue;
                 topLevelConstructs.Add(field);
@@ -154,7 +154,7 @@ namespace Exporter
 
             for (int i = 0; i < effectiveMemberCount; ++i)
             {
-                TopLevelConstruct tlc = topLevelConstructs[i];
+                TopLevelEntity tlc = topLevelConstructs[i];
                 int memberId = memberIds[i];
                 perceivedMemberCount = Math.Max(memberId + 1, perceivedMemberCount);
                 AnnotationCollection annotations = tlcAnnotations[i];
@@ -279,15 +279,15 @@ namespace Exporter
             return output;
         }
 
-        public void CompileTopLevelEntities(ParserContext parser, ByteBuffer buffer, IList<TopLevelConstruct> entities)
+        public void CompileTopLevelEntities(ParserContext parser, ByteBuffer buffer, IList<TopLevelEntity> entities)
         {
-            foreach (TopLevelConstruct entity in entities)
+            foreach (TopLevelEntity entity in entities)
             {
                 this.CompileTopLevelEntity(parser, buffer, entity);
             }
         }
 
-        public void CompileTopLevelEntity(ParserContext parser, ByteBuffer buffer, TopLevelConstruct entity)
+        public void CompileTopLevelEntity(ParserContext parser, ByteBuffer buffer, TopLevelEntity entity)
         {
             if (entity is FunctionDefinition) this.CompileFunctionDefinition(parser, buffer, (FunctionDefinition)entity, false);
             else if (entity is ClassDefinition) this.CompileClass(parser, buffer, (ClassDefinition)entity);
@@ -534,7 +534,7 @@ namespace Exporter
         private void CompileClass(ParserContext parser, ByteBuffer buffer, ClassDefinition classDefinition)
         {
             bool hasStaticFieldsWithStartingValues = classDefinition.Fields
-                .Where<FieldDeclaration>(fd =>
+                .Where<FieldDefinition>(fd =>
                     fd.IsStaticField &&
                     fd.DefaultValue != null &&
                     !(fd.DefaultValue is NullConstant))
@@ -549,7 +549,7 @@ namespace Exporter
                 }
 
                 List<Executable> staticFieldInitializers = new List<Executable>();
-                foreach (FieldDeclaration fd in classDefinition.Fields)
+                foreach (FieldDefinition fd in classDefinition.Fields)
                 {
                     if (fd.IsStaticField && fd.DefaultValue != null && !(fd.DefaultValue is NullConstant))
                     {
@@ -585,12 +585,12 @@ namespace Exporter
             int constructorId = classDefinition.Constructor.FunctionID;
             int staticConstructorId = classDefinition.StaticConstructor != null ? classDefinition.StaticConstructor.FunctionID : -1;
 
-            int staticFieldCount = classDefinition.Fields.Where<FieldDeclaration>(fd => fd.IsStaticField).Count();
-            FieldDeclaration[] regularFields = classDefinition.Fields.Where<FieldDeclaration>(fd => !fd.IsStaticField).ToArray();
+            int staticFieldCount = classDefinition.Fields.Where<FieldDefinition>(fd => fd.IsStaticField).Count();
+            FieldDefinition[] regularFields = classDefinition.Fields.Where<FieldDefinition>(fd => !fd.IsStaticField).ToArray();
             FunctionDefinition[] regularMethods = classDefinition.Methods.Where<FunctionDefinition>(fd => !fd.IsStaticMethod).ToArray();
             List<int> members = new List<int>();
-            List<FieldDeclaration> fieldsWithComplexValues = new List<FieldDeclaration>();
-            foreach (FieldDeclaration fd in regularFields)
+            List<FieldDefinition> fieldsWithComplexValues = new List<FieldDefinition>();
+            foreach (FieldDefinition fd in regularFields)
             {
                 int memberId = fd.MemberID;
                 int fieldNameId = parser.GetId(fd.NameToken.Value);
@@ -642,7 +642,7 @@ namespace Exporter
 
             if (fieldsWithComplexValues.Count > 0)
             {
-                foreach (FieldDeclaration complexField in fieldsWithComplexValues)
+                foreach (FieldDefinition complexField in fieldsWithComplexValues)
                 {
                     this.CompileExpression(parser, initializer, complexField.DefaultValue, true);
                     initializer.Add(complexField.FirstToken, OpCode.ASSIGN_THIS_STEP, complexField.MemberID);
@@ -881,9 +881,9 @@ namespace Exporter
                     this.CompileExpression(parser, buffer, assignment.Value, true);
                     buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_INDEX, 0);
                 }
-                else if (assignment.Target is DotStep)
+                else if (assignment.Target is DotField)
                 {
-                    DotStep dotStep = (DotStep)assignment.Target;
+                    DotField dotStep = (DotField)assignment.Target;
                     if (dotStep.Root is ThisKeyword)
                     {
                         this.CompileExpression(parser, buffer, assignment.Value, true);
@@ -939,9 +939,9 @@ namespace Exporter
                     buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
                     buffer.Add(assignment.Target.FirstToken, OpCode.ASSIGN_LOCAL, scopeId);
                 }
-                else if (assignment.Target is DotStep)
+                else if (assignment.Target is DotField)
                 {
-                    DotStep dotExpr = (DotStep)assignment.Target;
+                    DotField dotExpr = (DotField)assignment.Target;
                     int stepId = parser.GetId(dotExpr.StepToken.Value);
                     int localeScopedStepId = parser.GetLocaleCount() * stepId + parser.GetLocaleId(dotExpr.Owner.FileScope.CompilationScope.Locale);
                     this.CompileExpression(parser, buffer, dotExpr.Root, true);
@@ -1072,9 +1072,9 @@ namespace Exporter
             else if (expr is IntegerConstant) this.CompileIntegerConstant(parser, buffer, (IntegerConstant)expr, outputUsed);
             else if (expr is Variable) this.CompileVariable(parser, buffer, (Variable)expr, outputUsed);
             else if (expr is BooleanConstant) this.CompileBooleanConstant(parser, buffer, (BooleanConstant)expr, outputUsed);
-            else if (expr is DotStep) this.CompileDotStep(parser, buffer, (DotStep)expr, outputUsed);
+            else if (expr is DotField) this.CompileDotStep(parser, buffer, (DotField)expr, outputUsed);
             else if (expr is BracketIndex) this.CompileBracketIndex(parser, buffer, (BracketIndex)expr, outputUsed);
-            else if (expr is BinaryOpChain) this.CompileBinaryOpChain(parser, buffer, (BinaryOpChain)expr, outputUsed);
+            else if (expr is OpChain) this.CompileBinaryOpChain(parser, buffer, (OpChain)expr, outputUsed);
             else if (expr is StringConstant) this.CompileStringConstant(parser, buffer, (StringConstant)expr, outputUsed);
             else if (expr is NegativeSign) this.CompileNegativeSign(parser, buffer, (NegativeSign)expr, outputUsed);
             else if (expr is ListDefinition) this.CompileListDefinition(parser, buffer, (ListDefinition)expr, outputUsed);
@@ -1437,9 +1437,9 @@ namespace Exporter
                     buffer.Add(increment.IncrementToken, OpCode.ASSIGN_INDEX, 0);
                 }
             }
-            else if (increment.Root is DotStep)
+            else if (increment.Root is DotField)
             {
-                DotStep dotStep = (DotStep)increment.Root;
+                DotField dotStep = (DotField)increment.Root;
                 this.CompileExpression(parser, buffer, dotStep.Root, true);
                 buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
                 int nameId = parser.GetId(dotStep.StepToken.Value);
@@ -1538,7 +1538,7 @@ namespace Exporter
             buffer.Add(stringConstant.FirstToken, OpCode.LITERAL, parser.GetStringConstant(stringConstant.Value));
         }
 
-        private void CompileBinaryOpChain(ParserContext parser, ByteBuffer buffer, BinaryOpChain opChain, bool outputUsed)
+        private void CompileBinaryOpChain(ParserContext parser, ByteBuffer buffer, OpChain opChain, bool outputUsed)
         {
             if (!outputUsed)
             {
@@ -1588,7 +1588,7 @@ namespace Exporter
             buffer.Add(bracketIndex.BracketToken, OpCode.INDEX);
         }
 
-        private void CompileDotStep(ParserContext parser, ByteBuffer buffer, DotStep dotStep, bool outputUsed)
+        private void CompileDotStep(ParserContext parser, ByteBuffer buffer, DotField dotStep, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(dotStep, "This expression does nothing.");
             this.CompileExpression(parser, buffer, dotStep.Root, true);
@@ -1867,9 +1867,9 @@ namespace Exporter
                     }
                 }
             }
-            else if (root is DotStep)
+            else if (root is DotField)
             {
-                DotStep ds = (DotStep)root;
+                DotField ds = (DotField)root;
                 Expression dotRoot = ds.Root;
                 int globalNameId = parser.GetId(ds.StepToken.Value);
                 this.CompileExpression(parser, buffer, dotRoot, true);

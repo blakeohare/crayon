@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Parser.ParseTree
@@ -121,7 +120,7 @@ namespace Parser.ParseTree
                     this.Owner);
             }
 
-            if (this.Root is DotStep ||
+            if (this.Root is DotField ||
                 this.Root is Variable ||
                 this.Root is FieldReference ||
                 this.Root is FunctionReference ||
@@ -133,7 +132,7 @@ namespace Parser.ParseTree
 
             if (this.Root is IConstantValue)
             {
-                if (this.Args.Length == 1 && this.Args[0] is BinaryOpChain)
+                if (this.Args.Length == 1 && this.Args[0] is OpChain)
                 {
                     throw new ParserException(this.ParenToken, "Constants cannot be invoked like functions. Although it sort of looks like you're missing an op here.");
                 }

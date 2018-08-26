@@ -1,11 +1,10 @@
 ﻿using Localization;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class EnumDefinition : TopLevelConstruct
+    public class EnumDefinition : TopLevelEntity
     {
         public string Name { get; private set; }
         public Token NameToken { get; private set; }

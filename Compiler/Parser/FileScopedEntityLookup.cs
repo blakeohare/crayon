@@ -21,8 +21,8 @@ namespace Parser
 
         // whittles down the universal lookup to just the things that were imported.
         public void InitializeLookups(
-            Dictionary<string, TopLevelConstruct> depsEntityLookup,
-            Dictionary<string, TopLevelConstruct> compilationScopeEntityLookup,
+            Dictionary<string, TopLevelEntity> depsEntityLookup,
+            Dictionary<string, TopLevelEntity> compilationScopeEntityLookup,
             Dictionary<string, NamespaceReferenceTemplate> depsNamespaceLookup,
             Dictionary<string, NamespaceReferenceTemplate> compilationScopeNamespaceLookup)
         {
@@ -86,14 +86,14 @@ namespace Parser
             this.depsLookup = visibleItems;
         }
 
-        public NamespaceReferenceTemplate DoNamespaceLookup(string name, TopLevelConstruct currentEntity)
+        public NamespaceReferenceTemplate DoNamespaceLookup(string name, TopLevelEntity currentEntity)
         {
             return this.DoLookupImpl(name, currentEntity) as NamespaceReferenceTemplate;
         }
 
-        public TopLevelConstruct DoEntityLookup(string name, Node fromWhere)
+        public TopLevelEntity DoEntityLookup(string name, Node fromWhere)
         {
-            return this.DoLookupImpl(name, fromWhere) as TopLevelConstruct;
+            return this.DoLookupImpl(name, fromWhere) as TopLevelEntity;
         }
 
         // Note: wraapping namespaces is a list of the namespace chains in a popped order...
@@ -109,13 +109,13 @@ namespace Parser
             // check for that entity in another compilation scope
             if (depsLookup.ContainsKey(name)) return depsLookup[name];
 
-            while (fromWhere != null && !(fromWhere is TopLevelConstruct))
+            while (fromWhere != null && !(fromWhere is TopLevelEntity))
             {
                 fromWhere = fromWhere.Owner;
             }
             if (fromWhere == null) throw new System.ArgumentException();
 
-            string[] wrappingNamespaces = ((TopLevelConstruct)fromWhere).GetWrappingNamespaceIncrements(this.fileScope.CompilationScope.Locale);
+            string[] wrappingNamespaces = ((TopLevelEntity)fromWhere).GetWrappingNamespaceIncrements(this.fileScope.CompilationScope.Locale);
 
             // if there's a namespace or series of namespaces, check if it's in that fully-specified namespace
             if (wrappingNamespaces.Length > 0)

@@ -26,7 +26,7 @@ namespace Parser
             this.PushScope(new UserCodeCompilationScope(buildContext));
             this.LibraryManager = new LibraryManager(buildContext);
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
-            this.ConstantAndEnumResolutionState = new Dictionary<TopLevelConstruct, ConstantResolutionState>();
+            this.ConstantAndEnumResolutionState = new Dictionary<TopLevelEntity, ConstantResolutionState>();
             this.TopLevelParser = new TopLevelParser(this);
             this.ExpressionParser = new ExpressionParser(this);
             this.ExecutableParser = new ExecutableParser(this);
@@ -118,7 +118,7 @@ namespace Parser
         public Locale CurrentLocale { get; private set; }
         public Locale.KeywordsLookup Keywords { get; private set; }
 
-        public Dictionary<TopLevelConstruct, ConstantResolutionState> ConstantAndEnumResolutionState { get; private set; }
+        public Dictionary<TopLevelEntity, ConstantResolutionState> ConstantAndEnumResolutionState { get; private set; }
 
         private int functionIdCounter = 0;
         private int fileIdCounter = 0;
@@ -153,7 +153,7 @@ namespace Parser
 
         private Dictionary<ClassDefinition, int> classIdsByInstance = new Dictionary<ClassDefinition, int>();
 
-        public TopLevelConstruct CurrentCodeContainer { get; set; }
+        public TopLevelEntity CurrentCodeContainer { get; set; }
 
         public LibraryMetadata CurrentLibrary { get { return this.CurrentScope is LibraryCompilationScope ? ((LibraryCompilationScope)this.CurrentScope).Library : null; } }
 
@@ -346,7 +346,7 @@ namespace Parser
             return output;
         }
 
-        public TopLevelConstruct[] ParseAllTheThings()
+        public TopLevelEntity[] ParseAllTheThings()
         {
             Dictionary<string, string> files = this.GetCodeFiles();
 
@@ -420,7 +420,7 @@ namespace Parser
 
             while (tokens.HasMore)
             {
-                TopLevelConstruct executable = this.TopLevelParser.Parse(tokens, null, fileScope);
+                TopLevelEntity executable = this.TopLevelParser.Parse(tokens, null, fileScope);
 
                 if (executable is ImportStatement)
                 {

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    public class ConstStatement : TopLevelConstruct
+    public class ConstDefinition : TopLevelEntity
     {
         public Expression Expression { get; set; }
         public Token NameToken { get; private set; }
         public string Name { get; private set; }
         private AnnotationCollection annotations;
 
-        public ConstStatement(
+        public ConstDefinition(
             Token constToken,
             Token nameToken,
             Node owner,

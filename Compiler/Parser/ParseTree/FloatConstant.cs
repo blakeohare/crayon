@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Common;
+﻿using Common;
 
 namespace Parser.ParseTree
 {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Parser.ParseTree
+﻿namespace Parser.ParseTree
 {
     public class Increment : Expression
     {
@@ -28,7 +25,7 @@ namespace Parser.ParseTree
             if (!(this.Root is Variable) &&
                 !(this.Root is BracketIndex) &&
                 !(this.Root is FieldReference) &&
-                !(this.Root is DotStep))
+                !(this.Root is DotField))
             {
                 throw new ParserException(this.IncrementToken, "Inline increment/decrement operation is not valid for this expression.");
             }

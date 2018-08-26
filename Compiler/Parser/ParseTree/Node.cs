@@ -40,15 +40,15 @@ namespace Parser.ParseTree
                 return "exec";
             }
 
-            if (thing is TopLevelConstruct)
+            if (thing is TopLevelEntity)
             {
                 if (thing is FunctionDefinition) return "func";
                 if (thing is ClassDefinition) return "class";
                 if (thing is ConstructorDefinition) return "ctor";
                 if (thing is Namespace) return "namespace";
-                if (thing is FieldDeclaration) return "field";
+                if (thing is FieldDefinition) return "field";
                 if (thing is EnumDefinition) return "enum";
-                if (thing is ConstStatement) return "const";
+                if (thing is ConstDefinition) return "const";
                 if (thing is ImportStatement) return "import";
             }
 
@@ -62,14 +62,14 @@ namespace Parser.ParseTree
         // This is a misnomer. This can be any top-level object such as a function, class, const, or enum that can wrap
         // other executables or expressions.
         public Node Owner { get; private set; }
-        private TopLevelConstruct topLevelEntity = null;
-        public TopLevelConstruct TopLevelEntity
+        private TopLevelEntity topLevelEntity = null;
+        public TopLevelEntity TopLevelEntity
         {
             get
             {
                 if (this.topLevelEntity == null && this.Owner != null)
                 {
-                    this.topLevelEntity = (this.Owner as TopLevelConstruct) ?? this.Owner.TopLevelEntity;
+                    this.topLevelEntity = (this.Owner as TopLevelEntity) ?? this.Owner.TopLevelEntity;
                 }
                 return this.topLevelEntity;
             }
@@ -80,9 +80,9 @@ namespace Parser.ParseTree
         public FileScope FileScope { get { return this.fileScopeOverride ?? this.Owner.FileScope; } }
         public Localization.Locale Locale { get { return this.CompilationScope.Locale; } }
 
-        internal void BatchTopLevelConstructNameResolver(ParserContext parser, ICollection<TopLevelConstruct> constructs)
+        internal void BatchTopLevelConstructNameResolver(ParserContext parser, ICollection<TopLevelEntity> constructs)
         {
-            foreach (TopLevelConstruct tlc in constructs)
+            foreach (TopLevelEntity tlc in constructs)
             {
                 tlc.ResolveEntityNames(parser);
             }

@@ -143,10 +143,10 @@ namespace Parser.ParseTree
                         else if (chunk.Cases[i] is StringConstant) strings++;
                         else
                         {
-                            if (chunk.Cases[i] is DotStep)
+                            if (chunk.Cases[i] is DotField)
                             {
                                 // Since most enums are in all caps, offer a more helpful error message when there's a dot followed by all caps.
-                                string field = ((DotStep)chunk.Cases[i]).StepToken.Value;
+                                string field = ((DotField)chunk.Cases[i]).StepToken.Value;
                                 if (field.ToUpperInvariant() == field)
                                 {
                                     throw new ParserException(chunk.Cases[i],

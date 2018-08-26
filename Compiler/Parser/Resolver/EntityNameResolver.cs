@@ -9,8 +9,8 @@ namespace Parser.Resolver
     {
         public static void Resolve(ParserContext parser, CompilationScope scope)
         {
-            Dictionary<string, TopLevelConstruct> scopeLookup = new Dictionary<string, TopLevelConstruct>();
-            Dictionary<string, TopLevelConstruct> depsLookup = new Dictionary<string, TopLevelConstruct>();
+            Dictionary<string, TopLevelEntity> scopeLookup = new Dictionary<string, TopLevelEntity>();
+            Dictionary<string, TopLevelEntity> depsLookup = new Dictionary<string, TopLevelEntity>();
             Dictionary<string, NamespaceReferenceTemplate> depsNamespaceLookup = new Dictionary<string, NamespaceReferenceTemplate>();
 
             // First create a lookup of JUST the libraries that are available to this library.
@@ -25,7 +25,7 @@ namespace Parser.Resolver
 
             scope.FlattenFullyQualifiedLookupsIntoGlobalLookup(scopeLookup, scope.Locale);
             Dictionary<string, NamespaceReferenceTemplate> scopeNamespaceLookup = scope.GetFlattenedNamespaceLookup(scope.Locale);
-            TopLevelConstruct[] toResolve = scope.GetTopLevelConstructs();
+            TopLevelEntity[] toResolve = scope.GetTopLevelConstructs();
 
             ResolveNames(parser, toResolve, scopeLookup, depsLookup, scopeNamespaceLookup, depsNamespaceLookup);
         }
@@ -33,9 +33,9 @@ namespace Parser.Resolver
         // Note that the lookup will also contain the toResolve entries plus the entities from the dependencies.
         public static void ResolveNames(
             ParserContext parser,
-            TopLevelConstruct[] toResolve,
-            Dictionary<string, TopLevelConstruct> scopeLookup,
-            Dictionary<string, TopLevelConstruct> depsLookup,
+            TopLevelEntity[] toResolve,
+            Dictionary<string, TopLevelEntity> scopeLookup,
+            Dictionary<string, TopLevelEntity> depsLookup,
             Dictionary<string, NamespaceReferenceTemplate> scopeNamespaceLookup,
             Dictionary<string, NamespaceReferenceTemplate> depsNamespaceLookup)
         {
@@ -65,7 +65,7 @@ namespace Parser.Resolver
                     cd.VerifyNoBaseClassLoops();
                 }
 
-                foreach (TopLevelConstruct item in toResolve)
+                foreach (TopLevelEntity item in toResolve)
                 {
                     if (!(item is Namespace))
                     {
@@ -78,7 +78,7 @@ namespace Parser.Resolver
                     cd.ResolveMemberIds();
                 }
 
-                foreach (TopLevelConstruct ex in toResolve.Where(ex => ex is ConstStatement || ex is EnumDefinition))
+                foreach (TopLevelEntity ex in toResolve.Where(ex => ex is ConstDefinition || ex is EnumDefinition))
                 {
                     parser.ConstantAndEnumResolutionState[ex] = ConstantResolutionState.NOT_RESOLVED;
                 }

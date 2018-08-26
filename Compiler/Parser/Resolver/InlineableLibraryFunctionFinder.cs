@@ -7,7 +7,7 @@ namespace Parser.Resolver
 {
     internal static class InlineableLibraryFunctionFinder
     {
-        public static HashSet<FunctionDefinition> Find(ICollection<TopLevelConstruct> entities)
+        public static HashSet<FunctionDefinition> Find(ICollection<TopLevelEntity> entities)
         {
             using (new PerformanceSection("DetermineInlinableLibraryFunctions"))
             {

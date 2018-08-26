@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class BinaryOpChain : Expression
+    public class OpChain : Expression
     {
         public override bool CanAssignTo { get { return false; } }
 
@@ -13,7 +13,7 @@ namespace Parser.ParseTree
         public Expression Right { get; private set; }
         public Token Op { get; private set; }
 
-        public BinaryOpChain(Expression left, Token op, Expression right, Node owner)
+        public OpChain(Expression left, Token op, Expression right, Node owner)
             : base(left.FirstToken, owner)
         {
             this.Left = left;
@@ -21,7 +21,7 @@ namespace Parser.ParseTree
             this.Op = op;
         }
 
-        public static BinaryOpChain Build(IList<Expression> expressions, IList<Token> ops, Node owner)
+        public static OpChain Build(IList<Expression> expressions, IList<Token> ops, Node owner)
         {
             int expressionIndex = 0;
             int opIndex = 0;
@@ -30,12 +30,12 @@ namespace Parser.ParseTree
 
             Token op = ops[opIndex++];
 
-            BinaryOpChain boc = new BinaryOpChain(left, op, right, owner);
+            OpChain boc = new OpChain(left, op, right, owner);
             while (expressionIndex < expressions.Count)
             {
                 right = expressions[expressionIndex++];
                 op = ops[opIndex++];
-                boc = new BinaryOpChain(boc, op, right, owner);
+                boc = new OpChain(boc, op, right, owner);
             }
 
             return boc;

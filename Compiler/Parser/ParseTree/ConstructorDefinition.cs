@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class ConstructorDefinition : TopLevelConstruct
+    public class ConstructorDefinition : TopLevelEntity
     {
         private static readonly Token[] NO_TOKENS = new Token[0];
         private static readonly Expression[] NO_EXPRESSIONS = new Expression[0];

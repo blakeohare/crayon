@@ -18,7 +18,7 @@ namespace Parser.ParseTree
             string callingLibrary = null;
             while (callingLibrary == null && owner != null)
             {
-                if (owner is TopLevelConstruct && !(owner is FieldDeclaration))
+                if (owner is TopLevelEntity && !(owner is FieldDefinition))
                 {
                     callingLibrary = owner.Library.ID;
                 }

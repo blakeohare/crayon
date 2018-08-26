@@ -11,15 +11,15 @@ namespace Parser.Resolver
     // no longer needed.
     internal static class SimpleFirstPass
     {
-        public static TopLevelConstruct[] Run(ParserContext parser, TopLevelConstruct[] currentCode)
+        public static TopLevelEntity[] Run(ParserContext parser, TopLevelEntity[] currentCode)
         {
             using (new PerformanceSection("SimpleFirstPassResolution"))
             {
-                List<TopLevelConstruct> enumsAndConstants = new List<TopLevelConstruct>();
-                List<TopLevelConstruct> everythingElse = new List<TopLevelConstruct>();
-                foreach (TopLevelConstruct ex in currentCode)
+                List<TopLevelEntity> enumsAndConstants = new List<TopLevelEntity>();
+                List<TopLevelEntity> everythingElse = new List<TopLevelEntity>();
+                foreach (TopLevelEntity ex in currentCode)
                 {
-                    if (ex is EnumDefinition || ex is ConstStatement)
+                    if (ex is EnumDefinition || ex is ConstDefinition)
                     {
                         enumsAndConstants.Add(ex);
                     }
@@ -28,8 +28,8 @@ namespace Parser.Resolver
                         everythingElse.Add(ex);
                     }
                 }
-                List<TopLevelConstruct> output = new List<TopLevelConstruct>();
-                foreach (TopLevelConstruct ex in enumsAndConstants.Concat(everythingElse))
+                List<TopLevelEntity> output = new List<TopLevelEntity>();
+                foreach (TopLevelEntity ex in enumsAndConstants.Concat(everythingElse))
                 {
                     ex.Resolve(parser);
                 }

@@ -70,7 +70,7 @@ namespace Parser
             {
                 Token bitwiseToken = tokens.Pop();
                 Expression rightExpr = ParseBitwiseOp(tokens, owner);
-                return new BinaryOpChain(expr, bitwiseToken, rightExpr, owner);
+                return new OpChain(expr, bitwiseToken, rightExpr, owner);
             }
             return expr;
         }
@@ -83,7 +83,7 @@ namespace Parser
             {
                 Token equalityToken = tokens.Pop();
                 Expression rightExpr = ParseEqualityComparison(tokens, owner);
-                return new BinaryOpChain(expr, equalityToken, rightExpr, owner);
+                return new OpChain(expr, equalityToken, rightExpr, owner);
             }
             return expr;
         }
@@ -97,7 +97,7 @@ namespace Parser
                 // Don't allow chaining of inqeualities
                 Token opToken = tokens.Pop();
                 Expression rightExpr = ParseBitShift(tokens, owner);
-                return new BinaryOpChain(expr, opToken, rightExpr, owner);
+                return new OpChain(expr, opToken, rightExpr, owner);
             }
             return expr;
         }
@@ -110,7 +110,7 @@ namespace Parser
             {
                 Token opToken = tokens.Pop();
                 Expression rightExpr = ParseBitShift(tokens, owner);
-                return new BinaryOpChain(expr, opToken, rightExpr, owner);
+                return new OpChain(expr, opToken, rightExpr, owner);
             }
             return expr;
         }
@@ -127,7 +127,7 @@ namespace Parser
             {
                 Token op = tokens.Pop();
                 Expression right = ParseMultiplication(tokens, owner);
-                expr = new BinaryOpChain(expr, op, right, owner);
+                expr = new OpChain(expr, op, right, owner);
                 next = tokens.PeekValue();
             }
             return expr;
@@ -141,7 +141,7 @@ namespace Parser
             {
                 Token op = tokens.Pop();
                 Expression right = ParseNegate(tokens, owner);
-                expr = new BinaryOpChain(expr, op, right, owner);
+                expr = new OpChain(expr, op, right, owner);
                 next = tokens.PeekValue();
             }
             return expr;
@@ -170,7 +170,7 @@ namespace Parser
             {
                 Token op = tokens.Pop();
                 Expression right = ParseNegate(tokens, owner);
-                expr = new BinaryOpChain(expr, op, right, owner);
+                expr = new OpChain(expr, op, right, owner);
             }
             return expr;
         }
@@ -292,7 +292,7 @@ namespace Parser
                     {
                         this.parser.VerifyIdentifier(stepToken);
                     }
-                    root = new DotStep(root, dotToken, stepToken, owner);
+                    root = new DotField(root, dotToken, stepToken, owner);
                 }
                 else if (tokens.IsNext("["))
                 {

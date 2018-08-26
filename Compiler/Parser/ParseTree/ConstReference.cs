@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -7,9 +6,9 @@ namespace Parser.ParseTree
     {
         public override bool CanAssignTo { get { return false; } }
 
-        public ConstStatement ConstStatement { get; private set; }
+        public ConstDefinition ConstStatement { get; private set; }
 
-        public ConstReference(Token token, ConstStatement con, Node owner)
+        public ConstReference(Token token, ConstDefinition con, Node owner)
             : base(token, owner)
         {
             this.ConstStatement = con;

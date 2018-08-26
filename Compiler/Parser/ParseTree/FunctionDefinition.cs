@@ -1,11 +1,10 @@
 ﻿using Localization;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Parser.ParseTree
 {
-    public class FunctionDefinition : TopLevelConstruct
+    public class FunctionDefinition : TopLevelEntity
     {
         public int FunctionID { get; set; }
         public Token NameToken { get; private set; }
@@ -22,7 +21,7 @@ namespace Parser.ParseTree
         public FunctionDefinition(
             Token functionToken,
             LibraryMetadata library,
-            TopLevelConstruct nullableOwner,
+            TopLevelEntity nullableOwner,
             bool isStaticMethod,
             Token nameToken,
             AnnotationCollection annotations,

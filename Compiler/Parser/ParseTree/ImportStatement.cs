@@ -3,7 +3,7 @@ using System;
 
 namespace Parser.ParseTree
 {
-    public class ImportStatement : TopLevelConstruct
+    public class ImportStatement : TopLevelEntity
     {
         public string ImportPath { get; set; }
 

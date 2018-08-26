@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Parser.ParseTree
+﻿namespace Parser.ParseTree
 {
     public class Ternary : Expression
     {

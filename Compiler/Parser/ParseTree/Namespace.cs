@@ -7,9 +7,9 @@ namespace Parser.ParseTree
 {
     // Despite being an "Executable", this isn't an executable thing.
     // It will get optimized away at resolution time.
-    public class Namespace : TopLevelConstruct
+    public class Namespace : TopLevelEntity
     {
-        public TopLevelConstruct[] Code { get; set; }
+        public TopLevelEntity[] Code { get; set; }
         public string DefaultName { get; set; }
         public string FullyQualifiedDefaultName { get; set; }
         public Dictionary<Locale, string[]> NamesByLocale { get; private set; }

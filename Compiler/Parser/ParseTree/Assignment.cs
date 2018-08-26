@@ -33,9 +33,9 @@ namespace Parser.ParseTree
                 bi.Root = bi.Root.Resolve(parser);
                 bi.Index = bi.Index.Resolve(parser);
             }
-            else if (this.Target is DotStep)
+            else if (this.Target is DotField)
             {
-                DotStep ds = this.Target as DotStep;
+                DotField ds = this.Target as DotField;
                 ds.Root = ds.Root.Resolve(parser);
             }
 

@@ -14,9 +14,9 @@ namespace Parser
             this.parser = parser;
         }
 
-        internal TopLevelConstruct Parse(
+        internal TopLevelEntity Parse(
             TokenStream tokens,
-            TopLevelConstruct owner,
+            TopLevelEntity owner,
             FileScope fileScope)
         {
             AnnotationCollection annotations = annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
@@ -162,11 +162,11 @@ namespace Parser
             return ctor;
         }
 
-        private ConstStatement ParseConst(TokenStream tokens, Node owner, FileScope fileScope, AnnotationCollection annotations)
+        private ConstDefinition ParseConst(TokenStream tokens, Node owner, FileScope fileScope, AnnotationCollection annotations)
         {
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             Token nameToken = tokens.Pop();
-            ConstStatement constStatement = new ConstStatement(constToken, nameToken, owner, parser.CurrentLibrary, fileScope, annotations);
+            ConstDefinition constStatement = new ConstDefinition(constToken, nameToken, owner, parser.CurrentLibrary, fileScope, annotations);
             this.parser.VerifyIdentifier(nameToken);
             tokens.PopExpected("=");
             constStatement.Expression = this.parser.ExpressionParser.Parse(tokens, constStatement);
@@ -252,7 +252,7 @@ namespace Parser
 
             tokens.PopExpected("{");
             List<FunctionDefinition> methods = new List<FunctionDefinition>();
-            List<FieldDeclaration> fields = new List<FieldDeclaration>();
+            List<FieldDefinition> fields = new List<FieldDefinition>();
             ConstructorDefinition constructorDef = null;
             ConstructorDefinition staticConstructorDef = null;
 
@@ -311,13 +311,13 @@ namespace Parser
             return cd;
         }
 
-        private FieldDeclaration ParseField(TokenStream tokens, ClassDefinition owner, AnnotationCollection annotations)
+        private FieldDefinition ParseField(TokenStream tokens, ClassDefinition owner, AnnotationCollection annotations)
         {
             bool isStatic = tokens.PopIfPresent(this.parser.Keywords.STATIC);
             Token fieldToken = tokens.PopExpected(this.parser.Keywords.FIELD);
             Token nameToken = tokens.Pop();
             this.parser.VerifyIdentifier(nameToken);
-            FieldDeclaration fd = new FieldDeclaration(fieldToken, nameToken, owner, isStatic, annotations);
+            FieldDefinition fd = new FieldDefinition(fieldToken, nameToken, owner, isStatic, annotations);
             if (tokens.PopIfPresent("="))
             {
                 fd.DefaultValue = this.parser.ExpressionParser.Parse(tokens, fd);
@@ -348,14 +348,14 @@ namespace Parser
             Namespace namespaceInstance = new Namespace(namespaceToken, name, owner, parser.CurrentLibrary, fileScope, annotations);
 
             tokens.PopExpected("{");
-            List<TopLevelConstruct> namespaceMembers = new List<TopLevelConstruct>();
+            List<TopLevelEntity> namespaceMembers = new List<TopLevelEntity>();
             while (!tokens.PopIfPresent("}"))
             {
-                TopLevelConstruct executable = this.Parse(tokens, namespaceInstance, fileScope);
+                TopLevelEntity executable = this.Parse(tokens, namespaceInstance, fileScope);
                 if (executable is FunctionDefinition ||
                     executable is ClassDefinition ||
                     executable is EnumDefinition ||
-                    executable is ConstStatement ||
+                    executable is ConstDefinition ||
                     executable is Namespace)
                 {
                     namespaceMembers.Add(executable);
@@ -373,7 +373,7 @@ namespace Parser
 
         private FunctionDefinition ParseFunction(
             TokenStream tokens,
-            TopLevelConstruct nullableOwner,
+            TopLevelEntity nullableOwner,
             FileScope fileScope,
             AnnotationCollection annotations)
         {

@@ -14,22 +14,22 @@ namespace Parser
         protected BuildContext buildContext;
         private Dictionary<LibraryCompilationScope, LocalizedLibraryView> dependenciesAndViews = new Dictionary<LibraryCompilationScope, LocalizedLibraryView>();
 
-        private List<TopLevelConstruct> executables = new List<TopLevelConstruct>();
+        private List<TopLevelEntity> executables = new List<TopLevelEntity>();
 
         private ScopedNamespaceLocaleFlattener namespaceFlattener = new ScopedNamespaceLocaleFlattener();
 
-        public List<TopLevelConstruct> GetExecutables_HACK()
+        public List<TopLevelEntity> GetExecutables_HACK()
         {
             return this.executables;
         }
 
-        public void AddExecutable(TopLevelConstruct executable)
+        public void AddExecutable(TopLevelEntity executable)
         {
             if (executable is Namespace)
             {
                 Namespace ns = (Namespace)executable;
                 this.namespaceFlattener.AddNamespace(ns);
-                foreach (TopLevelConstruct tlc in ns.Code)
+                foreach (TopLevelEntity tlc in ns.Code)
                 {
                     this.AddExecutable(tlc);
                 }
@@ -65,7 +65,7 @@ namespace Parser
             return this.namespaceFlattener.GetLookup(locale);
         }
 
-        public TopLevelConstruct[] GetTopLevelConstructs()
+        public TopLevelEntity[] GetTopLevelConstructs()
         {
             return this.executables.ToArray();
         }
@@ -100,12 +100,12 @@ namespace Parser
             }
         }
 
-        public void FlattenFullyQualifiedLookupsIntoGlobalLookup(Dictionary<string, TopLevelConstruct> output, Locale verifiedCallingLocale)
+        public void FlattenFullyQualifiedLookupsIntoGlobalLookup(Dictionary<string, TopLevelEntity> output, Locale verifiedCallingLocale)
         {
             // Add namespaces to the lookup but then remove them. I'd like for the collision detection to run here for namespaces.
             HashSet<string> keysToRemove = new HashSet<string>();
 
-            foreach (TopLevelConstruct entity in this.GetTopLevelConstructs())
+            foreach (TopLevelEntity entity in this.GetTopLevelConstructs())
             {
                 string name = entity.GetFullyQualifiedLocalizedName(verifiedCallingLocale);
                 if (output.ContainsKey(name))

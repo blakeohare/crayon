@@ -8,7 +8,7 @@ namespace Parser.Resolver
     // The makes metadata initialization at runtime easier.
     internal static class DependencyBasedClassSorter
     {
-        public static TopLevelConstruct[] Run(IList<TopLevelConstruct> code)
+        public static TopLevelEntity[] Run(IList<TopLevelEntity> code)
         {
             using (new PerformanceSection("RearrangeClassDefinitions"))
             {
@@ -17,8 +17,8 @@ namespace Parser.Resolver
                 HashSet<int> classIdsIncluded = new HashSet<int>();
                 List<ClassDefinition> classDefinitions = new List<ClassDefinition>();
                 List<FunctionDefinition> functionDefinitions = new List<FunctionDefinition>();
-                List<TopLevelConstruct> output = new List<TopLevelConstruct>();
-                foreach (TopLevelConstruct exec in code)
+                List<TopLevelEntity> output = new List<TopLevelEntity>();
+                foreach (TopLevelEntity exec in code)
                 {
                     if (exec is FunctionDefinition)
                     {
@@ -45,7 +45,7 @@ namespace Parser.Resolver
             }
         }
 
-        private static void RearrangeClassDefinitionsHelper(ClassDefinition def, HashSet<int> idsAlreadyIncluded, List<TopLevelConstruct> output)
+        private static void RearrangeClassDefinitionsHelper(ClassDefinition def, HashSet<int> idsAlreadyIncluded, List<TopLevelEntity> output)
         {
             if (!idsAlreadyIncluded.Contains(def.ClassID))
             {
