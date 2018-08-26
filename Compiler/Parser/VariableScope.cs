@@ -22,6 +22,7 @@ namespace Parser
         public int ID { get; set; }
         public string Name { get; private set; }
         public bool UsedByClosure { get; set; }
+        public int ClosureID { get; set; }
     }
 
     internal class VariableScope
@@ -29,6 +30,8 @@ namespace Parser
         private VariableScope parentScope = null;
         private VariableScope rootScope = null;
         private VariableScope closureScope = null;
+        private VariableScope closureRootScope = null;
+        private int closureIdAlloc = 1;
 
         // A lookup of all ID's that have been registered in this scope up until now.
         private readonly Dictionary<string, VariableId> idsByVar = new Dictionary<string, VariableId>();
@@ -52,6 +55,7 @@ namespace Parser
                 flattenedIds = new Dictionary<string, VariableId>(),
             };
             scope.rootScope = scope;
+            scope.closureRootScope = scope;
             return scope;
         }
 
@@ -61,6 +65,7 @@ namespace Parser
             {
                 parentScope = parent,
                 rootScope = parent.rootScope,
+                closureRootScope = parent.closureRootScope,
             };
         }
 
@@ -68,6 +73,7 @@ namespace Parser
         {
             VariableScope scope = NewEmptyScope();
             scope.closureScope = parent;
+            scope.closureRootScope = parent.closureRootScope;
             return scope;
         }
 
@@ -76,8 +82,27 @@ namespace Parser
             int id = 0;
             foreach (string varName in this.rootScopeOrder)
             {
-                this.idsByVar[varName].ID = id++;
+                VariableId varId = this.idsByVar[varName];
+                if (!varId.UsedByClosure)
+                {
+                    varId.ID = id++;
+                }
             }
+        }
+
+        private void MarkVarAsClosureVarThroughParentChain(VariableScope fromScope, VariableScope toScope, VariableId varId)
+        {
+            if (!varId.UsedByClosure)
+            {
+                varId.ClosureID = fromScope.closureRootScope.closureIdAlloc++;
+                varId.UsedByClosure = true;
+            }
+
+            do
+            {
+                fromScope.idsByVar[varId.Name] = varId;
+                fromScope = fromScope.closureScope;
+            } while (fromScope != toScope);
         }
 
         public VariableId RegisterVariable(string value)
@@ -89,7 +114,7 @@ namespace Parser
                 VariableId closureVarId;
                 if (closureWalker.idsByVar.TryGetValue(value, out closureVarId))
                 {
-                    closureVarId.UsedByClosure = true;
+                    MarkVarAsClosureVarThroughParentChain(this, closureWalker, closureVarId);
                     return closureVarId;
                 }
                 closureWalker = closureWalker.closureScope;
@@ -143,12 +168,22 @@ namespace Parser
             VariableId varId;
             string name = variableToken.Value;
 
+            // Most common case. Nothing to do if you find it here.
+            if (this.idsByVar.TryGetValue(name, out varId))
+            {
+                return varId;
+            }
+
             // Check closures
             walker = this.closureScope;
             while (walker != null)
             {
+                // Note that by the time the lambda var ID allocation begins, the containing scope
+                // has already been finished and flattened, so there's no concept of parent scopes here
+                // aside from the closure chain.
                 if (walker.idsByVar.TryGetValue(name, out varId))
                 {
+                    MarkVarAsClosureVarThroughParentChain(this, walker, varId);
                     return varId;
                 }
                 walker = walker.closureScope;
