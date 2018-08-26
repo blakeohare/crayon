@@ -274,22 +274,24 @@ namespace Parser.ParseTree
                 for (int i = 0; i < this.chunks.Length; ++i)
                 {
                     Chunk chunk = this.chunks[i];
-                    varIdBranches[i] = varIds.Clone();
+                    varIdBranches[i] = VariableScope.CreatedNestedBlockScope(varIds);
                     foreach (Executable ex in chunk.Code)
                     {
                         ex.PerformLocalIdAllocation(parser, varIdBranches[i], phase);
                     }
                 }
 
-                varIds.MergeClonesBack(varIdBranches);
+                foreach (VariableScope branch in varIdBranches)
+                {
+                    branch.MergeToParent();
+                }
 
                 for (int i = 0; i < this.chunks.Length; ++i)
                 {
                     Chunk chunk = this.chunks[i];
-                    varIdBranches[i] = varIds.Clone();
                     foreach (Executable ex in chunk.Code)
                     {
-                        ex.PerformLocalIdAllocation(parser, varIdBranches[i], VariableIdAllocPhase.ALLOC);
+                        ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
                     }
                 }
             }

@@ -65,8 +65,8 @@ namespace Parser.ParseTree
             else
             {
                 // branch the variable ID allocator.
-                VariableScope trueVars = varIds.Clone();
-                VariableScope falseVars = varIds.Clone();
+                VariableScope trueVars = VariableScope.CreatedNestedBlockScope(varIds);
+                VariableScope falseVars = VariableScope.CreatedNestedBlockScope(varIds);
 
                 // Go through and register and allocate all variables.
                 // The allocated ID's are going to be garbage, but this enforces that they must be
@@ -82,7 +82,8 @@ namespace Parser.ParseTree
 
                 // Now that the code is as correct as we can verify, merge the branches back together
                 // creating a new set of variable ID's.
-                varIds.MergeClonesBack(trueVars, falseVars);
+                trueVars.MergeToParent();
+                falseVars.MergeToParent();
 
                 // Go back through and do another allocation pass and assign the correct variable ID's.
                 foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))

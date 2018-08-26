@@ -15,69 +15,153 @@ namespace Parser
     {
         public int ID { get; set; }
         public string Name { get; set; }
+        public bool UsedByClosure { get; set; }
     }
 
     internal class VariableScope
     {
-        private VariableScope underlyingInstance = null;
+        private VariableScope parentScope = null;
+        private VariableScope rootScope = null;
+        private VariableScope closureScope = null;
+
+        // A lookup of all ID's that have been registered in this scope up until now.
         private readonly Dictionary<string, VariableId> idsByVar = new Dictionary<string, VariableId>();
-        private List<string> orderedVars = new List<string>();
 
-        public int Size { get { return this.idsByVar.Count + (underlyingInstance == null ? 0 : underlyingInstance.Size); } }
+        // The following fields are only used in the root scope.
+        // flattenedIds is a lookup of all ID's of children branches. Unlike idsByVar, this cannot be used
+        // to see if a variable is declared as it is possible that a variable is declared in another branch.
+        private Dictionary<string, VariableId> flattenedIds = null;
+        // The order that variables are encountered.
+        private List<string> rootScopeOrder;
 
-        public void RegisterVariable(string value)
+        public int Size { get { return this.flattenedIds.Count; } }
+
+        private VariableScope() { }
+
+        public static VariableScope NewEmptyScope()
         {
-            if (underlyingInstance != null && underlyingInstance.idsByVar.ContainsKey(value))
+            VariableScope scope = new VariableScope()
             {
-                return;
+                rootScopeOrder = new List<string>(),
+                flattenedIds = new Dictionary<string, VariableId>(),
+            };
+            scope.rootScope = scope;
+            return scope;
+        }
+
+        public static VariableScope CreatedNestedBlockScope(VariableScope parent)
+        {
+            return new VariableScope()
+            {
+                parentScope = parent,
+                rootScope = parent.rootScope,
+            };
+        }
+
+        public static VariableScope CreateClosure(VariableScope parent)
+        {
+            VariableScope scope = NewEmptyScope();
+            scope.closureScope = parent;
+            return scope;
+        }
+
+        public VariableId RegisterVariable(string value)
+        {
+            // Before anything else, check to see if this is coming from the closure.
+            VariableScope closureWalker = this.closureScope;
+            while (closureWalker != null)
+            {
+                VariableId closureVarId;
+                if (closureWalker.idsByVar.TryGetValue(value, out closureVarId))
+                {
+                    closureVarId.UsedByClosure = true;
+                    return closureVarId;
+                }
+                closureWalker = closureWalker.closureScope;
             }
 
-            if (!this.idsByVar.ContainsKey(value))
+            VariableId varId;
+
+            // Check if variable is already declared in this or a parent scope already.
+            if (rootScope.flattenedIds.ContainsKey(value))
             {
-                idsByVar[value] = new VariableId() { ID = idsByVar.Count, Name = value };
-                orderedVars.Add(value);
+                // The above if statement is a quick check to see if variable used before, anywhere,
+                // even if in a parallel branch. This will prevent many unnecessary walks up the parent chain.
+
+                // Variable is already known by this scope. Nothing to do.
+                if (!this.idsByVar.TryGetValue(value, out varId))
+                {
+                    // Check to see if this variable was used by this or any parent scope.
+                    VariableScope walker = this.parentScope;
+                    while (walker != null)
+                    {
+                        if (walker.idsByVar.TryGetValue(value, out varId))
+                        {
+                            // cache this value in the current scope to make the lookup faster in the future
+                            this.idsByVar[value] = varId;
+                            return varId;
+                        }
+                        walker = walker.parentScope;
+                    }
+
+                    // If you got to this point, that means the variable was used somewhere, but not in the direct
+                    // scope parent chain. Grab the same VariableId instance and copy it to this scope.
+                    varId = this.rootScope.flattenedIds[value];
+                    this.idsByVar[value] = varId;
+                }
             }
+            else
+            {
+                // Variable has never been used anywhere. Create a new one and put it in the root bookkeeping.
+                varId = new VariableId()
+                {
+                    Name = value,
+                    ID = rootScope.rootScopeOrder.Count,
+                };
+                this.idsByVar[value] = varId;
+                this.rootScope.flattenedIds[value] = varId;
+                this.rootScope.rootScopeOrder.Add(value);
+                return varId;
+            }
+            return varId;
         }
 
         public VariableId GetVarId(Token variableToken)
         {
-            VariableId id;
-            if (this.idsByVar.TryGetValue(variableToken.Value, out id))
+            VariableScope walker;
+            VariableId varId;
+            string name = variableToken.Value;
+
+            // Check closures
+            walker = this.closureScope;
+            while (walker != null)
             {
-                return id;
+                if (walker.idsByVar.TryGetValue(name, out varId))
+                {
+                    return varId;
+                }
+                walker = walker.closureScope;
             }
 
-            if (this.underlyingInstance != null)
+            // Check parent chain
+            walker = this;
+            while (walker != null)
             {
-                return this.underlyingInstance.GetVarId(variableToken);
+                if (walker.idsByVar.TryGetValue(name, out varId))
+                {
+                    return varId;
+                }
+                walker = walker.parentScope;
             }
 
             return null;
         }
 
-        public VariableScope Clone()
+        public void MergeToParent()
         {
-            VariableScope output = new VariableScope();
-            output.underlyingInstance = this;
-            return output;
-        }
-
-        public void MergeClonesBack(params VariableScope[] branches)
-        {
-            foreach (VariableScope branch in branches)
+            foreach (VariableId v in this.idsByVar.Values)
             {
-                if (this != branch.underlyingInstance)
-                {
-                    throw new System.InvalidOperationException("Cannot merge two branches that aren't from the same root.");
-                }
-            }
-
-            foreach (VariableScope branch in branches)
-            {
-                foreach (string varId in branch.orderedVars)
-                {
-                    this.RegisterVariable(varId);
-                }
+                this.parentScope.idsByVar[v.Name] = v;
             }
         }
     }
