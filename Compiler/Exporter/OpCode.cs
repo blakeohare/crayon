@@ -4,6 +4,7 @@
     {
         ADD_LITERAL, // 1: type, 2: value (0 or 1 for false/true or an integer. String values are in the string arg. Float values are as well, and are parsed.)
         ADD_NAME, // name is string arg. ID is the order in which this was encountered.
+        ASSIGN_CLOSURE, // 1: closure variable ID
         ASSIGN_INDEX, // 1: 0 or 1 for whether to push the assigned value back on the stack when done. value stack: [root, index, value]
         ASSIGN_LOCAL, // 1: local scope ID
         ASSIGN_STATIC_FIELD, // 1: class ID, 2: field ID
@@ -24,6 +25,7 @@
         DEF_ORIGINAL_CODE, // 1: file ID, string arg: source code of that file with a preceding line for the file name.
         DEF_DICTIONARY, // 1: size
         DEF_LIST, // 1: size
+        DEREF_CLOSURE, // 1: var ID
         DEREF_DOT, // 1: step ID
         DEREF_INSTANCE_FIELD, // 1: member ID
         DEREF_STATIC_FIELD, // 1: class ID, 2: static member ID

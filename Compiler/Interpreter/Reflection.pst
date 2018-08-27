@@ -24,7 +24,7 @@ Value Reflect_getMethods(ExecutionContext ec, Value methodSource) {
         for (int i = 0; i < classInfo.functionIds.Size(); i += 1) {
             int functionId = classInfo.functionIds[i];
             if (functionId != -1) {
-                methodList.Add(new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.METHOD, methodSource, objInstance1.classId, functionId)));
+                methodList.Add(new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.METHOD, methodSource, objInstance1.classId, functionId, null)));
             }
         }
     } else {

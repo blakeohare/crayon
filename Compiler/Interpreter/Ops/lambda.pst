@@ -1,5 +1,27 @@
-﻿@import("ValueStackCapacityCheck.pst");
-valueStack[valueStackSize] = new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.LAMBDA, null, 0, pc));
+﻿/*
+    row[0] -> min args
+    row[1] -> max args
+    row[2] -> scope size
+    row[3] -> function code length
+    row[4] -> number of optional args
+        row[4 + n] -> optional jump length
+    row[next] -> number of closure IDs
+        row[next + n] -> closure ID
+*/
+
+// Initialize the Lambda if it isn't already.
+// TODO: move this into the metadata initializer
+if (!p.lambdaTable.Contains(pc)) {
+    intArray1 = new Array<int>(0);
+    p.lambdaTable[pc] = new LambdaInfo(pc, intArray1, row[2], row[0], row[1]);
+}
+
+closure = new Dictionary<int, ClosureValuePointer>();
+
+@import("ValueStackCapacityCheck.pst");
+valueStack[valueStackSize] = new Value(
+    Types.FUNCTION,
+    new FunctionPointer(FunctionPointerType.LAMBDA, null, 0, pc, closure));
 valueStackSize += 1;
 
 pc += row[3]; // skip over the actual function body, which is inlined below the LAMBDA op.

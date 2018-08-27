@@ -481,7 +481,8 @@ if (staticConstructorNotInvoked) {
                 0, // for static constructor use only
                 stack.depth + 1,
                 PostFinallyBehavior.NOTHING,
-                null); // temp return value
+                null, // temp return value
+                null); // closure lookup
 
             // now that we're in the new stack frame, flush out all the passed args to the local stack since their
             // ID's are allocated with args first.

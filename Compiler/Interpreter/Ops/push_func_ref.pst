@@ -12,14 +12,15 @@
 value = null;
 switch (row[1]) {
     case 0: // normal function
-        value = new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.FUNCTION, null, 0, row[0]));
+        value = new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.FUNCTION, null, 0, row[0], null));
         break;
     case 1: // method
         value = new Value(Types.FUNCTION, new FunctionPointer(
             FunctionPointerType.METHOD,
             stack.objectContext,
             row[2], // class ID (either object context's class ID or one of its base classes.)
-            row[0])); // function ID
+            row[0], // function ID
+            null));
         break;
 
     case 2: // static method
@@ -28,7 +29,7 @@ switch (row[1]) {
         classInfo = classTable[classId];
         @import("InvokeStaticConstructor.pst");
         if (staticConstructorNotInvoked) {
-            value = new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.STATIC_METHOD, null, classId, row[0]));
+            value = new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.STATIC_METHOD, null, classId, row[0], null));
         } else {
             // a precaution just in case value is ever added to InvokeStaticConstructor.pst
             value = null;

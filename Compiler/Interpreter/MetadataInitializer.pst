@@ -345,7 +345,8 @@ StackFrame maybeInvokeStaticConstructor(
         classId, // mark class as initialized when RETURN runs.
         stack.depth + 1,
         PostFinallyBehavior.NOTHING,
-        null); // temp return value
+        null, // temp return value
+        null);
 }
 
 /*

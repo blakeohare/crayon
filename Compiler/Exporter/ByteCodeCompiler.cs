@@ -866,12 +866,15 @@ namespace Exporter
                 {
                     Variable varTarget = (Variable)assignment.Target;
                     this.CompileExpression(parser, buffer, assignment.Value, true);
-                    int scopeId = varTarget.LocalScopeId.ID;
-                    if (scopeId == -1)
+                    VariableId varId = varTarget.LocalScopeId;
+                    if (varId.UsedByClosure)
                     {
-                        throw new Exception(); // this should not happen.
+                        buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_CLOSURE, varId.ClosureID);
                     }
-                    buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_LOCAL, scopeId);
+                    else
+                    {
+                        buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_LOCAL, varId.ID);
+                    }
                 }
                 else if (assignment.Target is BracketIndex)
                 {
@@ -929,15 +932,14 @@ namespace Exporter
                 if (assignment.Target is Variable)
                 {
                     Variable varTarget = (Variable)assignment.Target;
-                    int scopeId = varTarget.LocalScopeId.ID;
-                    if (scopeId == -1)
-                    {
-                        throw new Exception(); // all variables should have local ID's allocated or errors thrown by now.
-                    }
-                    buffer.Add(varTarget.FirstToken, OpCode.LOCAL, scopeId);
+                    VariableId varId = varTarget.LocalScopeId;
+                    bool isClosure = varId.UsedByClosure;
+                    int scopeId = isClosure ? varId.ClosureID : varId.ID;
+
+                    buffer.Add(varTarget.FirstToken, isClosure ? OpCode.DEREF_CLOSURE : OpCode.LOCAL, scopeId);
                     this.CompileExpression(parser, buffer, assignment.Value, true);
                     buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
-                    buffer.Add(assignment.Target.FirstToken, OpCode.ASSIGN_LOCAL, scopeId);
+                    buffer.Add(assignment.Target.FirstToken, isClosure ? OpCode.ASSIGN_CLOSURE : OpCode.ASSIGN_LOCAL, scopeId);
                 }
                 else if (assignment.Target is DotField)
                 {
@@ -1439,21 +1441,23 @@ namespace Exporter
                 // a '1' appended to it when it really should be an error if the variable is not an integer.
                 // Same for the others below. Ideally the DUPLICATE_STACK_TOP op should be removed.
                 Variable variable = (Variable)increment.Root;
-                int scopeId = variable.LocalScopeId.ID;
+                VariableId varId = variable.LocalScopeId;
+                bool isClosureVar = varId.UsedByClosure;
+                int scopeId = isClosureVar ? varId.ClosureID : varId.ID;
                 this.CompileExpression(parser, buffer, increment.Root, true);
                 if (increment.IsPrefix)
                 {
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
                     buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
                     buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
-                    buffer.Add(variable.FirstToken, OpCode.ASSIGN_LOCAL, scopeId);
+                    buffer.Add(variable.FirstToken, isClosureVar ? OpCode.ASSIGN_CLOSURE : OpCode.ASSIGN_LOCAL, scopeId);
                 }
                 else
                 {
                     buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
                     buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
-                    buffer.Add(variable.FirstToken, OpCode.ASSIGN_LOCAL, scopeId);
+                    buffer.Add(variable.FirstToken, isClosureVar ? OpCode.ASSIGN_CLOSURE : OpCode.ASSIGN_LOCAL, scopeId);
                 }
             }
             else if (increment.Root is BracketIndex)
@@ -1649,14 +1653,13 @@ namespace Exporter
             if (!outputUsed) throw new ParserException(variable, "This expression does nothing.");
             int nameId = parser.GetId(variable.Name);
             Token token = variable.FirstToken;
-            if (variable.LocalScopeId == null)
+            VariableId varId = variable.LocalScopeId;
+            if (varId == null)
             {
                 throw new ParserException(token, "Variable used but not declared.");
             }
-            else
-            {
-                buffer.Add(token, OpCode.LOCAL, variable.LocalScopeId.ID, nameId);
-            }
+            bool isClosureVar = varId.UsedByClosure;
+            buffer.Add(token, isClosureVar ? OpCode.DEREF_CLOSURE : OpCode.LOCAL, isClosureVar ? varId.ClosureID : varId.ID, nameId);
         }
 
         private void CompileIntegerConstant(ParserContext parser, ByteBuffer buffer, IntegerConstant intConst, bool outputUsed)

@@ -55,7 +55,8 @@ Value generatePrimitiveMethodReference(Array<int> lookup, int globalNameId, Valu
             FunctionPointerType.PRIMITIVE_METHOD,
             context,
             0, // class ID is N/A
-            functionId));
+            functionId,
+            null));
 }
 
 // returns an integer value in the enum PrimitiveMethodName

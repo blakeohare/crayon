@@ -21,7 +21,8 @@ switch (value.type) {
                     FunctionPointerType.METHOD,
                     value, // object instance
                     objInstance1.classId,
-                    functionId));
+                    functionId,
+                    null));
             }
         } else {
             output = null;

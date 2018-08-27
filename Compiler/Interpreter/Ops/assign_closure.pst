@@ -1,0 +1,1 @@
+﻿hasInterrupt = EX_Fatal(ec, "assigning to a closure variable is not implemented");

@@ -41,7 +41,8 @@ int main() {
         0, // static initialization class ID marker upon completion (not applicable here)
         1, // stack depth
         PostFinallyBehavior.NOTHING,
-        null); // temp return value
+        null, // temp return value
+        null); // closure lookup
 
     ExecutionContext executionContext = new ExecutionContext(
         0, // execution context ID. 0 is always the root process and execution will end entirely if this context ends.
@@ -95,6 +96,7 @@ int main() {
         // OO stuff
         new Array<ClassInfo>(100),
         new Array<FunctionInfo>(100),
+        new Dictionary<int, LambdaInfo>(),
         new List<int>(), // class static initialization stack
         null, // globalNameIdToPrimitiveMethodName (set in FINALIZE_INITIALIZATION)
         null, // funcArgs (set in FINALIZE_INITIALIZATION)
@@ -195,7 +197,8 @@ int runInterpreterWithFunctionPointer(Value fpValue, Array<Value> args) {
         0, // static initialization class ID marker upon completion (not applicable here)
         1, // stack depth
         PostFinallyBehavior.NOTHING,
-        null // temp return value
+        null, // temp return value
+        null // closure lookup
         );
 
     ExecutionContext executionContext = new ExecutionContext(

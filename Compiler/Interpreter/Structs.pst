@@ -39,6 +39,7 @@ struct ProgramData {
 
     Array<ClassInfo> classTable;
     Array<FunctionInfo> functionTable;
+    Dictionary<int, LambdaInfo> lambdaTable;
     List<int> classStaticInitializationStack;
     Array<int> globalNameIdToPrimitiveMethodName;
     Array<Value> funcArgs;
@@ -99,6 +100,7 @@ struct StackFrame {
     int depth; // stack depth for infinite recursion detection
     int postFinallyBehavior; // value defined in PostFinallyBehavior enum
     Value returnValueTempStorage; // return value when you return but still need to run a finally block
+    Dictionary<int, ClosureValuePointer> closureVariables; // lazily initialized since most functions will not use this.
 }
 
 struct InterpreterResult {
@@ -205,6 +207,19 @@ struct FunctionPointer {
     Value context;
     int classId;
     int functionId; // For lambdas, this is just the PC of the LAMBDA op.
+    Dictionary<int, ClosureValuePointer> closureVaraibles;
+}
+
+struct ClosureValuePointer {
+    Value value; // this value is null when the variable isn't set yet.
+}
+
+struct LambdaInfo {
+    int pc; // The PC is used as the ID/lookup key of the lambda.
+    Array<int> closureIds;
+    int localStackSize;
+    int minArg;
+    int maxArg;
 }
 
 struct PlatformRelayObject {
