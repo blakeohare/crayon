@@ -240,6 +240,13 @@ if (staticConstructorNotInvoked) {
                     functionId = functionPointer1.functionId;
                     type = FunctionInvocationType.PRIMITIVE_METHOD;
                     break;
+                case FunctionPointerType.LAMBDA:
+                    Core.EmitComment("lambda instance");
+                    value = functionPointer1.context;
+                    functionId = functionPointer1.functionId; // the function ID is the PC
+                    type = FunctionInvocationType.LAMBDA;
+                    hasInterrupt = EX_InvalidInvocation(ec, "Lambda invocation not implemented yet.");
+                    break;
             }
         } else {
             hasInterrupt = EX_InvalidInvocation(ec, "This type cannot be invoked like a function.");

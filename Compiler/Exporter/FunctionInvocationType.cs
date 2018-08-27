@@ -12,5 +12,6 @@
         BASE_CONSTRUCTOR = 7,
         STATIC_CONSTRUCTOR = 8,
         PRIMITIVE_METHOD = 9,
+        LAMBDA = 10,
     }
 }

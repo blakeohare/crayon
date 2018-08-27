@@ -98,6 +98,7 @@ enum FunctionInvocationType {
     BASE_CONSTRUCTOR = 7,
     STATIC_CONSTRUCTOR = 8,
     PRIMITIVE_METHOD = 9,
+    LAMBDA = 10,
 }
 
 enum FunctionPointerType {
@@ -105,6 +106,7 @@ enum FunctionPointerType {
     METHOD = 2,
     STATIC_METHOD = 3,
     PRIMITIVE_METHOD = 4,
+    LAMBDA = 5,
 }
 
 enum Types {

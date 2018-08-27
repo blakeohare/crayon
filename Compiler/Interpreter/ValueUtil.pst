@@ -231,6 +231,8 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
                     } else {
                         output = 1;
                     }
+                    // TODO: currently lambdas that are from the same code location are considered equal.
+                    // This should probably be instead based on reference equality instead.
                 }
                 break;
 

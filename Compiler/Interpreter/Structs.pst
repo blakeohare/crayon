@@ -204,7 +204,7 @@ struct FunctionPointer {
     int type; // Enum value: FunctionPointerType
     Value context;
     int classId;
-    int functionId;
+    int functionId; // For lambdas, this is just the PC of the LAMBDA op.
 }
 
 struct PlatformRelayObject {

@@ -1,1 +1,5 @@
-﻿hasInterrupt = EX_Fatal(ec, "lambdas not implemented yet.");
+﻿@import("ValueStackCapacityCheck.pst");
+valueStack[valueStackSize] = new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.LAMBDA, null, 0, pc));
+valueStackSize += 1;
+
+pc += row[3]; // skip over the actual function body, which is inlined below the LAMBDA op.
