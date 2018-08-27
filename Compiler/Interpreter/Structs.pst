@@ -39,7 +39,7 @@ struct ProgramData {
 
     Array<ClassInfo> classTable;
     Array<FunctionInfo> functionTable;
-    Dictionary<int, LambdaInfo> lambdaTable;
+    Dictionary<int, FunctionInfo> lambdaTable;
     List<int> classStaticInitializationStack;
     Array<int> globalNameIdToPrimitiveMethodName;
     Array<Value> funcArgs;
@@ -175,11 +175,12 @@ struct FunctionInfo {
     int pc;
     int minArgs;
     int maxArgs;
-    int type; // 0 - function, 1 - method, 2 - static method, 3 - constructor, 4 - static constructor
+    int type; // 0 - function, 1 - method, 2 - static method, 3 - constructor, 4 - static constructor, 5 - lambda
     int associatedClassId;
     int localsSize;
     Array<int> pcOffsetsForOptionalArgs;
     string name;
+    Array<int> closureIds;
 }
 
 // Used as the internalValue of a Value instance for Class definition types.
@@ -207,19 +208,11 @@ struct FunctionPointer {
     Value context;
     int classId;
     int functionId; // For lambdas, this is just the PC of the LAMBDA op.
-    Dictionary<int, ClosureValuePointer> closureVaraibles;
+    Dictionary<int, ClosureValuePointer> closureVariables;
 }
 
 struct ClosureValuePointer {
     Value value; // this value is null when the variable isn't set yet.
-}
-
-struct LambdaInfo {
-    int pc; // The PC is used as the ID/lookup key of the lambda.
-    Array<int> closureIds;
-    int localStackSize;
-    int minArg;
-    int maxArg;
 }
 
 struct PlatformRelayObject {

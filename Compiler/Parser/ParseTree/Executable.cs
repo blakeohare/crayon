@@ -33,6 +33,21 @@ namespace Parser.ParseTree
             return output;
         }
 
+        internal static Executable[] EnsureBlockReturns(Executable[] codeBlock, Node owner)
+        {
+            if (codeBlock.Length > 0)
+            {
+                Executable last = codeBlock[codeBlock.Length - 1];
+                if (last is ReturnStatement || last is ThrowStatement)
+                {
+                    return codeBlock;
+                }
+            }
+            List<Executable> mutable = new List<Executable>(codeBlock);
+            mutable.Add(new ReturnStatement(null, null, owner));
+            return mutable.ToArray();
+        }
+
         // The reason why I still run this function with actuallyDoThis = false is so that other platforms can still be exported to
         // and potentially crash if the implementation was somehow broken on Python (or some other future platform that doesn't have traditional switch statements).
         internal static Executable[] RemoveBreaksForElifedSwitch(bool actuallyDoThis, IList<Executable> executables)

@@ -25,7 +25,8 @@
         classId,
         localsCount,
         pcOffsetsForOptionalArgs,
-        stringArg); // function name
+        stringArg, // function name
+        null);
 
     // This is SUPER tacky.
     // TODO: Do this name comparison at compile time and then stick that in the arguments which will also eliminate the

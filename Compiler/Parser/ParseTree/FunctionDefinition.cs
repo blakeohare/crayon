@@ -74,13 +74,7 @@ namespace Parser.ParseTree
             }
 
             this.Code = Executable.Resolve(parser, this.Code).ToArray();
-
-            if (this.Code.Length == 0 || !(this.Code[this.Code.Length - 1] is ReturnStatement))
-            {
-                List<Executable> newCode = new List<Executable>(this.Code);
-                newCode.Add(new ReturnStatement(this.FirstToken, null, this));
-                this.Code = newCode.ToArray();
-            }
+            this.Code = Executable.EnsureBlockReturns(this.Code, this);
         }
 
         internal override void ResolveEntityNames(ParserContext parser)

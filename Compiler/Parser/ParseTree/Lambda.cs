@@ -71,7 +71,8 @@ namespace Parser.ParseTree
             {
                 newCode.AddRange(ex.Resolve(parser));
             }
-            this.Code = newCode.ToArray();
+
+            this.Code = Executable.EnsureBlockReturns(newCode.ToArray(), this);
 
             return this;
         }

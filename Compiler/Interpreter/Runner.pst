@@ -96,7 +96,7 @@ int main() {
         // OO stuff
         new Array<ClassInfo>(100),
         new Array<FunctionInfo>(100),
-        new Dictionary<int, LambdaInfo>(),
+        new Dictionary<int, FunctionInfo>(),
         new List<int>(), // class static initialization stack
         null, // globalNameIdToPrimitiveMethodName (set in FINALIZE_INITIALIZATION)
         null, // funcArgs (set in FINALIZE_INITIALIZATION)

@@ -245,7 +245,7 @@ if (staticConstructorNotInvoked) {
                     value = functionPointer1.context;
                     functionId = functionPointer1.functionId; // the function ID is the PC
                     type = FunctionInvocationType.LAMBDA;
-                    hasInterrupt = EX_InvalidInvocation(ec, "Lambda invocation not implemented yet.");
+                    closure = functionPointer1.closureVariables;
                     break;
             }
         } else {
@@ -374,6 +374,13 @@ if (staticConstructorNotInvoked) {
                 value = null;
                 classId = 0;
                 break;
+            case FunctionInvocationType.LAMBDA:
+                Core.EmitComment("lambda");
+                pc = functionId;
+                functionInfo = p.lambdaTable[functionId];
+                value = null;
+                classId = 0;
+                break;
             case FunctionInvocationType.STATIC_METHOD:
                 Core.EmitComment("static method");
                 functionInfo = functionTable[functionId];
@@ -468,6 +475,10 @@ if (staticConstructorNotInvoked) {
 
             localsStackOffset = int2;
 
+            if (type != FunctionInvocationType.LAMBDA) {
+                closure = null;
+            }
+
             Core.EmitComment("invoke the function");
             stack = new StackFrame(
                 pc,
@@ -482,7 +493,7 @@ if (staticConstructorNotInvoked) {
                 stack.depth + 1,
                 PostFinallyBehavior.NOTHING,
                 null, // temp return value
-                null); // closure lookup
+                closure); // closure lookup
 
             // now that we're in the new stack frame, flush out all the passed args to the local stack since their
             // ID's are allocated with args first.
