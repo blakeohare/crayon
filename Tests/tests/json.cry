@@ -1,0 +1,39 @@
+import Json;
+
+function test() {
+	value = Json.parseJson('
+	{
+		"a": "string",
+		"b": true,
+		"c": 100,
+		"d": 3.14159,
+		"e": [1, 2, 3],
+		"f": {},
+		"g": [
+			{"k": "KEY", "v": "VALUE" }
+		],
+		"h": [1, [2, 3]]
+	}
+	');
+	
+	print(value['a']);
+	print(value['b']);
+	print(value['c']);
+	print(value['d']);
+	print(value['e'].join(':'));
+	print(value['f']);
+	print(value['g'][0]['k']);
+	print(value['g'][0]['v']);
+	print(value['h'][0]);
+	print(value['h'][1][0]);
+	print(value['h'][1][1]);
+	
+	print('---');
+	
+	print(Json.serialize(value));
+	
+	print('---');
+	
+	print(Json.serialize(value, JsonSerializerFlag.PRETTY));
+	
+}

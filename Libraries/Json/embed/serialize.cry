@@ -41,7 +41,6 @@
                 nextDepthRev = depthRev - 1;
                 nextDepth = depth + 1;
                 if (length == 0) return '[]';
-                if (isPretty) sb.add(' ');
                 sb.add('[');
                 if (isPretty) sb.add('\n');
 
