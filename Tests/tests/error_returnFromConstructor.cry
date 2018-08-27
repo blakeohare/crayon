@@ -1,0 +1,9 @@
+function test() {
+	print(new Foo());
+}
+
+class Foo {
+	constructor() {
+		return null;
+	}
+}

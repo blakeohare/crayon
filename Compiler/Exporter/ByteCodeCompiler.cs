@@ -670,7 +670,6 @@ namespace Exporter
 
         private void CompileConstructor(ParserContext parser, ByteBuffer buffer, ConstructorDefinition constructor, ByteBuffer complexFieldInitializers)
         {
-            TODO.ThrowErrorIfReturnAppearsWithValueInConstructors();
             TODO.ThrowErrorIfKeywordThisIsUsedInBaseArgsOrDefaultArgsAnywhereInConstructor();
 
             ByteBuffer tBuffer = new ByteBuffer();
@@ -738,6 +737,14 @@ namespace Exporter
 
         private void CompileReturnStatement(ParserContext parser, ByteBuffer buffer, ReturnStatement returnStatement)
         {
+            if (returnStatement.TopLevelEntity is ConstructorDefinition)
+            {
+                if (returnStatement.Expression != null)
+                {
+                    throw new ParserException(returnStatement, "Cannot return a value from a constructor.");
+                }
+            }
+
             if (returnStatement.Expression == null || returnStatement.Expression is NullConstant)
             {
                 buffer.Add(returnStatement.FirstToken, OpCode.RETURN, 0);
