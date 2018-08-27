@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Parser
 {
@@ -88,6 +89,14 @@ namespace Parser
                     varId.ID = id++;
                 }
             }
+        }
+
+        public VariableId[] GetClosureIds()
+        {
+            return this.idsByVar.Values
+                .Where(vid => vid.UsedByClosure)
+                .OrderBy(vid => vid.ClosureID)
+                .ToArray();
         }
 
         private void MarkVarAsClosureVarThroughParentChain(VariableScope fromScope, VariableScope toScope, VariableId varId)

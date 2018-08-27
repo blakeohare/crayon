@@ -8,6 +8,9 @@ namespace Parser.ParseTree
         public Token[] Args { get; private set; }
         public Executable[] Code { get; private set; }
         public List<Lambda> Lambdas { get; private set; }
+        internal VariableScope VariableScope { get; private set; }
+        public int LocalScopeSize { get { return this.VariableScope.Size; } }
+        public VariableId[] ClosureIds { get { return this.VariableScope.GetClosureIds(); } }
 
         public override bool CanAssignTo { get { return false; } }
 
@@ -21,6 +24,7 @@ namespace Parser.ParseTree
             this.Args = args.ToArray();
             this.Code = code.ToArray();
             this.Lambdas = new List<Lambda>();
+            ((ICodeContainer)owner).Lambdas.Add(this);
         }
 
         internal static void DoVarScopeIdAllocationForLambdaContainer(
@@ -37,27 +41,26 @@ namespace Parser.ParseTree
         // This is called when the lambda is being resolved as an expression.
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
-            ((ICodeContainer)this.Owner).Lambdas.Add(this);
         }
 
         // This is called at the end of the TopLevelEntity's allocation phase and allocates
         // ID's to the lambda's code.
         internal void AllocateLocalScopeIds(ParserContext parser, VariableScope scopeFromParent)
         {
-            VariableScope varScope = VariableScope.CreateClosure(scopeFromParent);
+            this.VariableScope = VariableScope.CreateClosure(scopeFromParent);
             for (int i = 0; i < this.Args.Length; ++i)
             {
-                varScope.RegisterVariable(this.Args[i].Value);
+                this.VariableScope.RegisterVariable(this.Args[i].Value);
             }
 
             foreach (Executable ex in this.Code)
             {
-                ex.PerformLocalIdAllocation(parser, varScope, VariableIdAllocPhase.REGISTER_AND_ALLOC);
+                ex.PerformLocalIdAllocation(parser, this.VariableScope, VariableIdAllocPhase.REGISTER_AND_ALLOC);
             }
 
             foreach (Lambda lambda in this.Lambdas)
             {
-                lambda.AllocateLocalScopeIds(parser, varScope);
+                lambda.AllocateLocalScopeIds(parser, this.VariableScope);
             }
         }
 

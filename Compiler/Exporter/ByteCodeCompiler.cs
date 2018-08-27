@@ -1017,6 +1017,20 @@ namespace Exporter
             }
         }
 
+        private int GetMinArgCountFromDefaultValuesList(Expression[] argDefaultValues)
+        {
+            int minArgCount = 0;
+            for (int i = 0; i < argDefaultValues.Length; ++i)
+            {
+                if (argDefaultValues[i] != null)
+                {
+                    break;
+                }
+                minArgCount++;
+            }
+            return minArgCount;
+        }
+
         private void CompileFunctionDefinition(ParserContext parser, ByteBuffer buffer, FunctionDefinition funDef, bool isMethod)
         {
             ByteBuffer tBuffer = new ByteBuffer();
@@ -1026,23 +1040,11 @@ namespace Exporter
 
             Compile(parser, tBuffer, funDef.Code);
 
-            int offset = tBuffer.Size;
-
-            int minArgCount = 0;
-            for (int i = 0; i < funDef.DefaultValues.Length; ++i)
-            {
-                if (funDef.DefaultValues[i] != null)
-                {
-                    break;
-                }
-                minArgCount++;
-            }
-
             List<int> args = new List<int>()
             {
                 funDef.FunctionID,
                 parser.GetId(funDef.NameToken.Value), // local var to save in
-                minArgCount,
+                this.GetMinArgCountFromDefaultValuesList(funDef.DefaultValues),
                 funDef.ArgNames.Length, // max number of args supplied
                 isMethod ? (funDef.IsStaticMethod ? 2 : 1) : 0, // type (0 - function, 1 - method, 2 - static method)
                 isMethod ? ((ClassDefinition)funDef.Owner).ClassID : 0,
@@ -1098,7 +1100,45 @@ namespace Exporter
             else if (expr is CoreFunctionInvocation) this.CompileCoreFunctionInvocation(parser, buffer, (CoreFunctionInvocation)expr, null, null, outputUsed);
             else if (expr is IsComparison) this.CompileIsComparison(parser, buffer, (IsComparison)expr, outputUsed);
             else if (expr is ClassReferenceLiteral) this.CompileClassReferenceLiteral(parser, buffer, (ClassReferenceLiteral)expr, outputUsed);
+            else if (expr is Lambda) this.CompileLambda(parser, buffer, (Lambda)expr, outputUsed);
             else throw new NotImplementedException();
+        }
+
+        private void CompileLambda(ParserContext parser, ByteBuffer buffer, Lambda lambda, bool outputUsed)
+        {
+            EnsureUsed(lambda.FirstToken, outputUsed);
+
+            ByteBuffer tBuffer = new ByteBuffer();
+
+            List<int> offsetsForOptionalArgs = new List<int>();
+            Expression[] argDefaultValues_allRequired = new Expression[lambda.Args.Length];
+            this.CompileFunctionArgs(parser, tBuffer, lambda.Args, argDefaultValues_allRequired, offsetsForOptionalArgs);
+
+            Compile(parser, tBuffer, lambda.Code);
+
+            List<int> args = new List<int>()
+            {
+                lambda.Args.Length, // min number of args required
+                lambda.Args.Length, // max number of args supplied
+                lambda.LocalScopeSize,
+                tBuffer.Size,
+                offsetsForOptionalArgs.Count
+            };
+            args.AddRange(offsetsForOptionalArgs);
+
+            VariableId[] closureIds = lambda.ClosureIds;
+            args.Add(closureIds.Length);
+            foreach (VariableId closureVarId in closureIds)
+            {
+                args.Add(closureVarId.ClosureID);
+            }
+
+            buffer.Add(
+                lambda.FirstToken,
+                OpCode.LAMBDA,
+                args.ToArray());
+
+            buffer.Concat(tBuffer);
         }
 
         private void CompileClassReferenceLiteral(ParserContext parser, ByteBuffer buffer, ClassReferenceLiteral classRef, bool outputUsed)

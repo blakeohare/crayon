@@ -253,6 +253,7 @@ InterpreterResult interpretImpl(int executionContextId) {
             case OpCodes.JUMP_IF_FALSE_NO_POP: Core.EmitComment("JUMP_IF_FALSE_NON_POP"); @import("Ops/jump_if_false_no_pop.pst"); break;
             case OpCodes.JUMP_IF_TRUE: Core.EmitComment("JUMP_IF_TRUE"); @import("Ops/jump_if_true.pst"); break;
             case OpCodes.JUMP_IF_TRUE_NO_POP: Core.EmitComment("JUMP_IF_TRUE_NO_POP"); @import("Ops/jump_if_true_no_pop.pst"); break;
+            case OpCodes.LAMBDA: Core.EmitComment("LAMBDA"); @import("Ops/lambda.pst"); break;
             case OpCodes.LIB_DECLARATION: Core.EmitComment("LIB_DECLARATION"); @import("Ops/lib_declaration.pst"); break;
             case OpCodes.LIST_SLICE: Core.EmitComment("LIST_SLICE"); @import("Ops/list_slice.pst"); break;
             case OpCodes.LITERAL: Core.EmitComment("LITERAL"); @import("Ops/literal.pst"); break;
