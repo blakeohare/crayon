@@ -31,6 +31,7 @@ namespace Parser
             this.ExpressionParser = new ExpressionParser(this);
             this.ExecutableParser = new ExecutableParser(this);
             this.AnnotationParser = new AnnotationParser(this);
+            this.LiteralLookup = new LiteralLookup();
         }
 
         private int localeCount = -1;
@@ -169,7 +170,7 @@ namespace Parser
 
         public HashSet<FunctionDefinition> InlinableLibraryFunctions { get; set; }
 
-        public LiteralLookup LiteralLookup { get; } = new LiteralLookup();
+        public LiteralLookup LiteralLookup { get; private set; }
 
         public int GetId(string name) { return this.LiteralLookup.GetNameId(name); }
         public int GetStringConstant(string value) { return this.LiteralLookup.GetStringId(value); }
