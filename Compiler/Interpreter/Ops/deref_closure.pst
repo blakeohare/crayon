@@ -1,1 +1,26 @@
-hasInterrupt = EX_Fatal(ec, "dereferencing a closure variable is not implemented");
+/*
+    Gets the value of the closure variable with the given ID and pushes it to the value stack.
+
+    row[0] -> variable ID
+*/
+
+bool1 = true;
+closure = stack.closureVariables;
+i = row[0];
+if (closure != null && closure.Contains(i)) {
+    value = closure[i].value;
+    if (value != null) {
+        bool1 = false;
+        @import("ValueStackCapacityCheck.pst");
+        if (@ext_boolean("HAS_INCREMENT")) {
+            valueStack[valueStackSize++] = value;
+        } else {
+            valueStack[valueStackSize] = value;
+            valueStackSize += 1;
+        }
+    }
+}
+
+if (bool1) {
+    hasInterrupt = EX_UnassignedVariable(ec, "Variable used before it was set.");
+}

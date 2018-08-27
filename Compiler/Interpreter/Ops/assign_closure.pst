@@ -1,1 +1,26 @@
-﻿hasInterrupt = EX_Fatal(ec, "assigning to a closure variable is not implemented");
+﻿/*
+    Pops a value off the value stack and assigns it to the current stack frame's closure variables
+    row[0] -> variable ID
+*/
+
+if (@ext_boolean("HAS_INCREMENT")) {
+    value = valueStack[--valueStackSize];
+} else {
+    valueStackSize -= 1;
+    value = valueStack[valueStackSize];
+}
+
+i = row[0];
+
+if (stack.closureVariables == null) {
+    closure = new Dictionary<int, ClosureValuePointer>();
+    stack.closureVariables = closure;
+    closure[i] = new ClosureValuePointer(value);
+} else {
+    closure = stack.closureVariables;
+    if (closure.Contains(i)) {
+        closure[i].value = value;
+    } else {
+        closure[i] = new ClosureValuePointer(value);
+    }
+}

@@ -203,6 +203,8 @@ InterpreterResult interpretImpl(int executionContextId) {
     Dictionary<string, int> stringSwitch = null;
     Array<Array<int>> esfData = p.esfData;
     Dictionary<int, ClosureValuePointer> closure = null;
+    Dictionary<int, ClosureValuePointer> parentClosure = null;
+    LambdaInfo lambdaInfo = null;
 
     Array<Value> localsStack = ec.localsStack;
     Array<int> localsStackSet = ec.localsStackSet;

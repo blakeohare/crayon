@@ -12,11 +12,35 @@
 // Initialize the Lambda if it isn't already.
 // TODO: move this into the metadata initializer
 if (!p.lambdaTable.Contains(pc)) {
-    intArray1 = new Array<int>(0);
+    int1 = 4 + row[4] + 1;
+    len = row[int1];
+    intArray1 = new Array<int>(len);
+    for (i = 0 ; i < len; i += 1) {
+        intArray1[i] = row[int1 + i + 1];
+    }
     p.lambdaTable[pc] = new LambdaInfo(pc, intArray1, row[2], row[0], row[1]);
 }
 
 closure = new Dictionary<int, ClosureValuePointer>();
+parentClosure = stack.closureVariables;
+if (parentClosure == null) {
+    parentClosure = new Dictionary<int, ClosureValuePointer>();
+    stack.closureVariables = parentClosure;
+}
+
+lambdaInfo = p.lambdaTable[pc];
+intArray1 = lambdaInfo.closureIds;
+len = intArray1.Size();
+
+for (i = 0; i < len; i += 1) {
+    j = intArray1[i];
+    if (parentClosure.Contains(j)) {
+        closure[j] = parentClosure[j];
+    } else {
+        closure[j] = new ClosureValuePointer(null);
+        parentClosure[j] = closure[j];
+    }
+}
 
 @import("ValueStackCapacityCheck.pst");
 valueStack[valueStackSize] = new Value(
