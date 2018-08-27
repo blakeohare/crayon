@@ -1,0 +1,27 @@
+function test() {
+	fn1 = closureDemo(0);
+	fn2 = closureDemo(100);
+	
+	print(fn1['get']()); // 0
+	print(fn2['get']()); // 100
+	
+	fn1['set'](42);
+	print(fn1['get']()); // 42
+	print(fn2['get']()); // 100
+	
+	fn1['increment']();
+	fn2['increment']();
+	print(fn1['get']()); // 43
+	print(fn2['get']()); // 101
+}
+
+function closureDemo(startingValue) {
+	
+	value = startingValue;
+	
+	return {
+		'get': () => { return value; },
+		'set': (newValue) => { value = newValue; },
+		'increment': () => { value++; }
+	};
+}
