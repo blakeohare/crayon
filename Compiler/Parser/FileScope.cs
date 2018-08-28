@@ -6,14 +6,16 @@ namespace Parser
     public class FileScope
     {
         public string Name { get; private set; }
+        public int ID { get; private set; }
         internal HashSet<ImportStatement> Imports { get; private set; }
         public CompilationScope CompilationScope { get; private set; }
 
         internal FileScopedEntityLookup FileScopeEntityLookup { get; private set; }
 
-        public FileScope(string filename, CompilationScope scope)
+        public FileScope(string filename, CompilationScope scope, int id)
         {
             this.Name = filename;
+            this.ID = id;
             this.Imports = new HashSet<ImportStatement>();
             this.FileScopeEntityLookup = new FileScopedEntityLookup().SetFileScope(this);
             this.CompilationScope = scope;

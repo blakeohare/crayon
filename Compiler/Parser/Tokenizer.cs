@@ -39,7 +39,7 @@ namespace Parser
             return result;
         }
 
-        public static Token[] Tokenize(string filename, string code, int fileID, bool useMultiCharTokens)
+        public static Token[] Tokenize(FileScope file, string code, bool useMultiCharTokens, Localization.Locale locale)
         {
             code += '\n';
             code += '\0';
@@ -87,7 +87,7 @@ namespace Parser
                     // Indicates the end of the stream. Throw an exception in cases where you left something lingering.
                     if (commentType == "*")
                     {
-                        ParserException.ThrowEofExceptionWithSuggestion(filename, "This file contains an unclosed comment somewhere.");
+                        ParserException.ThrowEofExceptionWithSuggestion(file.Name, "This file contains an unclosed comment somewhere.");
                     }
 
                     if (stringType != null)
@@ -115,7 +115,7 @@ namespace Parser
                         {
                             unclosedStringError += " Line " + (lineByIndex[stringStart] + 1) + " is suspicious.";
                         }
-                        ParserException.ThrowEofExceptionWithSuggestion(filename, unclosedStringError);
+                        ParserException.ThrowEofExceptionWithSuggestion(file.Name, unclosedStringError);
                     }
                 }
 
@@ -147,7 +147,7 @@ namespace Parser
                     {
                         stringToken.Append(c);
                         stringType = null;
-                        tokens.Add(new Token(stringToken.ToString(), fileID, filename, lineByIndex[stringStart], colByIndex[stringStart], tokenStartHasPreviousWhitespace));
+                        tokens.Add(new Token(stringToken.ToString(), TokenType.STRING, file, lineByIndex[stringStart], colByIndex[stringStart], tokenStartHasPreviousWhitespace));
                     }
                     else
                     {
@@ -163,7 +163,12 @@ namespace Parser
                     }
                     else
                     {
-                        tokens.Add(new Token(normalToken, fileID, filename, lineByIndex[normalStart], colByIndex[normalStart], tokenStartHasPreviousWhitespace));
+                        TokenType type = TokenType.WORD;
+                        if (!locale.Keywords.IsValidVariable(normalToken))
+                        {
+                            type = TokenType.KEYWORD;
+                        }
+                        tokens.Add(new Token(normalToken, type, file, lineByIndex[normalStart], colByIndex[normalStart], tokenStartHasPreviousWhitespace));
                         --i;
                         normalToken = null;
                     }
@@ -171,7 +176,7 @@ namespace Parser
                 }
                 else if (useMultiCharTokens && TWO_CHAR_TOKENS.Contains(c2))
                 {
-                    tokens.Add(new Token(c2, fileID, filename, lineByIndex[i], colByIndex[i], previousIsWhitespace));
+                    tokens.Add(new Token(c2, TokenType.PUNCTUATION, file, lineByIndex[i], colByIndex[i], previousIsWhitespace));
                     ++i;
                     previousIsWhitespace = false;
                 }
@@ -214,7 +219,7 @@ namespace Parser
                 }
                 else
                 {
-                    tokens.Add(new Token("" + c, fileID, filename, lineByIndex[i], colByIndex[i], previousIsWhitespace));
+                    tokens.Add(new Token("" + c, TokenType.PUNCTUATION, file, lineByIndex[i], colByIndex[i], previousIsWhitespace));
                     previousIsWhitespace = false;
                 }
             }

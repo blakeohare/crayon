@@ -126,13 +126,9 @@ namespace Parser
             tokens.PopExpected("(");
             if (!tokens.HasMore) tokens.ThrowEofException();
 
-            if (this.parser.IsValidIdentifier(tokens.PeekValue()) && tokens.PeekValue(1) == ":")
+            if (tokens.Peek().Type == TokenType.WORD && tokens.PeekValue(1) == ":")
             {
                 Token iteratorToken = tokens.Pop();
-                if (this.parser.IsReservedKeyword(iteratorToken.Value))
-                {
-                    throw new ParserException(iteratorToken, "Cannot use this name for an iterator.");
-                }
                 tokens.PopExpected(":");
                 Expression iterationExpression = this.parser.ExpressionParser.Parse(tokens, owner);
                 tokens.PopExpected(")");

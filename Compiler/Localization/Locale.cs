@@ -77,6 +77,15 @@ namespace Localization
 
             this.Keywords = new KeywordsLookup()
             {
+                Lookup = new HashSet<string>(keywords.Values),
+                ValidIdentifierNames = new HashSet<string>(
+                    new string[] {
+                        "FIELD_ENUM_LENGTH",
+                        "FIELD_ENUM_MAX",
+                        "FIELD_ENUM_VALUES",
+                        "MAIN_FUNCTION",
+                    }.Select(k => keywords[k])),
+
                 ABSTRACT = keywords["ABSTRACT"],
                 BASE = keywords["BASE"],
                 BREAK = keywords["BREAK"],
@@ -129,6 +138,13 @@ namespace Localization
 
         public class KeywordsLookup
         {
+            internal HashSet<string> ValidIdentifierNames { get; set; }
+            internal HashSet<string> Lookup { get; set; }
+            public bool IsValidVariable(string value)
+            {
+                return !this.Lookup.Contains(value) || this.ValidIdentifierNames.Contains(value);
+            }
+
             public string ABSTRACT { get; set; }
             public string BASE { get; set; }
             public string BREAK { get; set; }

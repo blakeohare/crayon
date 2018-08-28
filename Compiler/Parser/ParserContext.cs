@@ -306,9 +306,9 @@ namespace Parser
 
         private readonly Dictionary<int, string> filesUsed = new Dictionary<int, string>();
 
-        private void RegisterFileUsed(string filename, string code, int fileId)
+        private void RegisterFileUsed(FileScope file, string code)
         {
-            this.filesUsed.Add(fileId, filename + "\n" + code);
+            this.filesUsed.Add(file.ID, file.Name + "\n" + code);
         }
 
         public string[] GetFilesById()
@@ -392,10 +392,9 @@ namespace Parser
 
         public void ParseInterpretedCode(string filename, string code)
         {
-            FileScope fileScope = new FileScope(filename, this.CurrentScope);
-            int fileId = this.GetNextFileId();
-            this.RegisterFileUsed(filename, code, fileId);
-            Token[] tokenList = Tokenizer.Tokenize(filename, code, fileId, true);
+            FileScope fileScope = new FileScope(filename, this.CurrentScope, this.GetNextFileId());
+            this.RegisterFileUsed(fileScope, code);
+            Token[] tokenList = Tokenizer.Tokenize(fileScope, code, true, this.CurrentLocale);
             TokenStream tokens = new TokenStream(tokenList, filename);
 
             List<string> namespaceImportsBuilder = new List<string>();
@@ -427,37 +426,13 @@ namespace Parser
 
         internal void VerifyIdentifier(Token token)
         {
-            if (!IsValidIdentifier(token.Value))
+            if (token.Type != TokenType.WORD)
             {
-                throw new ParserException(token, "Identifier expected.");
+                throw new ParserException(token, "Identifier expected. Found '" + token.Value + "' instead.");
             }
         }
 
         private readonly HashSet<string> RESERVED_KEYWORDS = new HashSet<string>();
-
-        internal bool IsReservedKeyword(string value)
-        {
-            return RESERVED_KEYWORDS.Contains(value);
-        }
-
-        internal bool IsValidIdentifier(string value)
-        {
-            if (IsReservedKeyword(value))
-            {
-                return false;
-            }
-
-            if (value[0] >= '0' && value[0] <= '9') return false;
-
-            foreach (char c in value)
-            {
-                if (!Tokenizer.IsIdentifierChar(c))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
 
         public Executable[] Resolve(IList<Executable> rawParsedLines)
         {

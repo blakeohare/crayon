@@ -195,8 +195,6 @@ namespace Parser
             return root;
         }
 
-        private static readonly HashSet<char> VARIABLE_STARTER = new HashSet<char>("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$".ToCharArray());
-
         private Expression ParseInstantiate(TokenStream tokens, Node owner)
         {
             Token newToken = tokens.PopExpected(this.parser.Keywords.NEW);
@@ -253,7 +251,7 @@ namespace Parser
                             while (tokens.PopIfPresent(","))
                             {
                                 Token nextArg = tokens.Pop();
-                                if (this.parser.IsValidIdentifier(nextArg.Value))
+                                if (nextArg.Type != TokenType.WORD)
                                 {
                                     throw new ParserException(comma, "Unexpected comma.");
                                 }
@@ -375,6 +373,8 @@ namespace Parser
             if (next == this.parser.Keywords.NULL) return new NullConstant(tokens.Pop(), owner);
             if (next == this.parser.Keywords.TRUE) return new BooleanConstant(tokens.Pop(), true, owner);
             if (next == this.parser.Keywords.FALSE) return new BooleanConstant(tokens.Pop(), false, owner);
+            if (next == this.parser.Keywords.THIS) return new ThisKeyword(tokens.Pop(), owner);
+            if (next == this.parser.Keywords.BASE) return new BaseKeyword(tokens.Pop(), owner);
 
             Token peekToken = tokens.Peek();
             if (next.StartsWith("'")) return new StringConstant(tokens.Pop(), StringConstant.ParseOutRawValue(peekToken), owner);
@@ -382,7 +382,7 @@ namespace Parser
             if (next == this.parser.Keywords.NEW) return this.ParseInstantiate(tokens, owner);
 
             char firstChar = next[0];
-            if (VARIABLE_STARTER.Contains(firstChar))
+            if (nextToken.Type == TokenType.WORD && !(firstChar >= '0' && firstChar <= '9'))
             {
                 Token varToken = tokens.Pop();
                 return new Variable(varToken, varToken.Value, owner);

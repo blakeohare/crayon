@@ -15,6 +15,7 @@
 
         internal override Expression ResolveEntityNames(ParserContext parser)
         {
+            ThisKeyword.CheckIfThisOrBaseIsValid(this, parser);
             return this;
         }
 

@@ -5,15 +5,17 @@
         public string Value { get; private set; }
         public int Line { get; private set; }
         public int Col { get; private set; }
-        public int FileID { get; private set; }
-        public string FileName { get; private set; }
+        public int FileID { get { return this.File.ID; } }
+        public string FileName { get { return this.File.Name; } }
         public bool HasWhitespacePrefix { get; private set; }
+        public TokenType Type { get; private set; }
+        public FileScope File { get; private set; }
 
-        internal Token(string value, int fileID, string filename, int lineIndex, int colIndex, bool hasWhitespacePrefix)
+        internal Token(string value, TokenType type, FileScope file, int lineIndex, int colIndex, bool hasWhitespacePrefix)
         {
             this.Value = value;
-            this.FileID = fileID;
-            this.FileName = filename;
+            this.Type = type;
+            this.File = file;
             this.Line = lineIndex;
             this.Col = colIndex;
             this.HasWhitespacePrefix = hasWhitespacePrefix;

@@ -23,7 +23,7 @@
                 return new CompileTimeDictionary(this.FirstToken, "var", this.Owner);
             }
 
-            if (parser.IsReservedKeyword(this.Name))
+            if (!parser.Keywords.IsValidVariable(this.Name))
             {
                 throw new ParserException(this, "'" + this.Name + "' is a reserved keyword and cannot be used like this.");
             }
@@ -41,48 +41,6 @@
             if (this.Name.StartsWith("$$"))
             {
                 return new LibraryFunctionReference(this.FirstToken, this.Name.Substring(2), this.Owner);
-            }
-
-            if (this.Name == "this" || this.Name == "base")
-            {
-                TopLevelEntity container = parser.CurrentCodeContainer;
-
-                if (container is FunctionDefinition)
-                {
-                    FunctionDefinition funcDef = (FunctionDefinition)this.Owner;
-                    if (funcDef.IsStaticMethod)
-                    {
-                        throw new ParserException(this, "Cannot use '" + this.Name + "' in a static method");
-                    }
-
-                    if (funcDef.Owner == null)
-                    {
-                        throw new ParserException(this, "Cannot use '" + this.Name + "' in a function that isn't a class method.");
-                    }
-                }
-
-                if (container is FieldDefinition)
-                {
-                    if (((FieldDefinition)container).IsStaticField)
-                    {
-                        throw new ParserException(this, "Cannot use '" + this.Name + "' in a static field value.");
-                    }
-                }
-
-                if (container is ConstructorDefinition)
-                {
-                    ConstructorDefinition constructor = (ConstructorDefinition)container;
-                    if (constructor == ((ClassDefinition)constructor.Owner).StaticConstructor) // TODO: This check is silly. Add an IsStatic field to ConstructorDefinition.
-                    {
-                        throw new ParserException(this, "Cannot use '" + this.Name + "' in a static constructor.");
-                    }
-                }
-
-                if (this.Name == "this")
-                {
-                    return new ThisKeyword(this.FirstToken, this.Owner);
-                }
-                return new BaseKeyword(this.FirstToken, this.Owner);
             }
 
             NamespaceReferenceTemplate nrt = this.Owner.FileScope.FileScopeEntityLookup.DoNamespaceLookup(this.Name, this.TopLevelEntity);

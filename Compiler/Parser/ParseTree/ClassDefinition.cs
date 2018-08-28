@@ -150,11 +150,6 @@ namespace Parser.ParseTree
 
         internal override void Resolve(ParserContext parser)
         {
-            if (parser.IsReservedKeyword(this.NameToken.Value))
-            {
-                throw new ParserException(this.NameToken, "'" + this.NameToken.Value + "' is a reserved keyword.");
-            }
-
             for (int i = 0; i < this.Fields.Length; ++i)
             {
 
