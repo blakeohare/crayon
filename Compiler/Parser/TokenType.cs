@@ -6,5 +6,6 @@
         KEYWORD,
         WORD,
         STRING,
+        NUMBER,
     }
 }

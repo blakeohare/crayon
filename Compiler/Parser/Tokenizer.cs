@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace Parser
 {
@@ -16,6 +16,9 @@ namespace Parser
             "=>",
         };
         private static readonly HashSet<char> WHITESPACE = new HashSet<char>() { ' ', '\r', '\n', '\t' };
+
+        private static readonly HashSet<char> TWO_CHAR_TOKENS_TRIGGER_FIRST_TOKEN =
+            new HashSet<char>(TWO_CHAR_TOKENS.Select(t => t[0]));
 
         private static Dictionary<char, bool> IDENTIFIER_CHARS_CACHE = new Dictionary<char, bool>();
 
@@ -54,13 +57,26 @@ namespace Parser
             return result;
         }
 
+
+        private enum TokenMode
+        {
+            NORMAL,
+            COMMENT,
+            WORD,
+            STRING,
+        }
+
         public static Token[] Tokenize(FileScope file)
         {
-            bool useMultiCharTokens = true;
             Localization.Locale locale = file.CompilationScope.Locale;
             string code = file.Content;
-            code += '\n';
-            code += '\0';
+
+            // Add a newline and a dummy character at the end.
+            // Set the length equal to the code with the newline but without the null terminator.
+            // This makes dereferencing the index + 1 code simpler and all makes the check for the end
+            // of word tokens and single-line comments easy.
+            code += "\n\0";
+            int length = code.Length - 1;
 
             int[] lineByIndex = new int[code.Length];
             int[] colByIndex = new int[code.Length];
@@ -83,167 +99,162 @@ namespace Parser
 
             List<Token> tokens = new List<Token>();
 
-            string commentType = null;
-            string stringType = null;
-            StringBuilder stringToken = null;
-            string normalToken = null;
-            int stringStart = 0;
-            int normalStart = 0;
+            TokenMode mode = TokenMode.NORMAL;
+            char modeSubtype = ' ';
+            int tokenStart = 0;
+            string tokenValue;
+            char c2;
+            bool isTokenEnd = false;
 
-            bool previousIsWhitespace = false;
-            bool tokenStartHasPreviousWhitespace = false;
-
-            string c2;
-            int length = code.Length;
             for (int i = 0; i < length; ++i)
             {
                 c = code[i];
-                c2 = (i >= (length - 1)) ? "" : ("" + c + code[i + 1]);
 
-                if (c == '\0' && i == length - 1)
+                switch (mode)
                 {
-                    // Indicates the end of the stream. Throw an exception in cases where you left something lingering.
-                    if (commentType == "*")
-                    {
-                        ParserException.ThrowEofExceptionWithSuggestion(file.Name, "This file contains an unclosed comment somewhere.");
-                    }
-
-                    if (stringType != null)
-                    {
-                        Token suspiciousToken = null;
-                        foreach (Token suspiciousCheck in tokens)
+                    case TokenMode.COMMENT:
+                        if (modeSubtype == '*')
                         {
-                            c = suspiciousCheck.Value[0];
-                            if (c == '"' || c == '\'')
+                            if (c == '*' && code[i + 1] == '/')
                             {
-                                if (suspiciousCheck.Value.Contains("\n"))
-                                {
-                                    suspiciousToken = suspiciousCheck;
-                                    break;
-                                }
+                                ++i;
+                                mode = TokenMode.NORMAL;
                             }
                         }
+                        else
+                        {
+                            if (c == '\n')
+                            {
+                                mode = TokenMode.NORMAL;
+                            }
+                        }
+                        break;
 
-                        string unclosedStringError = "There is an unclosed string somewhere in this file.";
-                        if (suspiciousToken != null)
+                    case TokenMode.NORMAL:
+                        if (WHITESPACE.Contains(c))
                         {
-                            unclosedStringError += " Line " + (suspiciousToken.Line + 1) + " is suspicious.";
+                            // do nothing
                         }
-                        else if (stringStart != 0)
+                        else if (c == '/' && (code[i + 1] == '/' || code[i + 1] == '*'))
                         {
-                            unclosedStringError += " Line " + (lineByIndex[stringStart] + 1) + " is suspicious.";
+                            mode = TokenMode.COMMENT;
+                            modeSubtype = code[++i];
                         }
-                        ParserException.ThrowEofExceptionWithSuggestion(file.Name, unclosedStringError);
-                    }
-                }
+                        else if (IsIdentifierChar(c))
+                        {
+                            tokenStart = i;
+                            mode = TokenMode.WORD;
+                        }
+                        else if (c == '"' | c == '\'')
+                        {
+                            tokenStart = i;
+                            mode = TokenMode.STRING;
+                            modeSubtype = c;
+                        }
+                        else
+                        {
+                            if (c == '.')
+                            {
+                                c2 = code[i + 1];
+                                if (c2 >= '0' && c2 <= '9')
+                                {
+                                    mode = TokenMode.WORD;
+                                    tokenStart = i++;
+                                }
+                            }
 
-                if (commentType == "/")
-                {
-                    if (c == '\n')
-                    {
-                        commentType = null;
-                    }
-                    previousIsWhitespace = true;
-                }
-                else if (commentType == "*")
-                {
-                    if (c2 == "*/")
-                    {
-                        commentType = null;
-                        ++i;
-                    }
-                    previousIsWhitespace = true;
-                }
-                else if (stringType != null)
-                {
-                    if (c == '\\')
-                    {
-                        stringToken.Append(c2);
-                        ++i;
-                    }
-                    else if (c == stringType[0])
-                    {
-                        stringToken.Append(c);
-                        stringType = null;
-                        tokens.Add(new Token(stringToken.ToString(), TokenType.STRING, file, lineByIndex[stringStart], colByIndex[stringStart], tokenStartHasPreviousWhitespace));
-                    }
-                    else
-                    {
-                        stringToken.Append(c);
-                    }
-                    previousIsWhitespace = false;
-                }
-                else if (normalToken != null)
-                {
-                    if (IsIdentifierChar(c))
-                    {
-                        normalToken += c;
-                    }
-                    else
-                    {
-                        TokenType type = TokenType.WORD;
-                        if (!locale.Keywords.IsValidVariable(normalToken))
-                        {
-                            type = TokenType.KEYWORD;
+                            if (mode == TokenMode.NORMAL)
+                            {
+                                tokenValue = GetNextTokenValue(code, i);
+                                tokens.Add(new Token(tokenValue, TokenType.PUNCTUATION, file, lineByIndex[i], colByIndex[i]));
+                                i += tokenValue.Length - 1;
+                            }
                         }
-                        tokens.Add(new Token(normalToken, type, file, lineByIndex[normalStart], colByIndex[normalStart], tokenStartHasPreviousWhitespace));
-                        --i;
-                        normalToken = null;
-                    }
-                    previousIsWhitespace = false;
-                }
-                else if (useMultiCharTokens && TWO_CHAR_TOKENS.Contains(c2))
-                {
-                    tokens.Add(new Token(c2, TokenType.PUNCTUATION, file, lineByIndex[i], colByIndex[i], previousIsWhitespace));
-                    ++i;
-                    previousIsWhitespace = false;
-                }
-                else if (WHITESPACE.Contains(c))
-                {
-                    previousIsWhitespace = true;
-                }
-                else if (c == '"')
-                {
-                    stringType = "\"";
-                    stringToken = new StringBuilder("" + stringType);
-                    stringStart = i;
-                    tokenStartHasPreviousWhitespace = previousIsWhitespace;
-                    previousIsWhitespace = false;
-                }
-                else if (c == '\'')
-                {
-                    stringType = "'";
-                    stringToken = new StringBuilder("" + stringType);
-                    stringStart = i;
-                    tokenStartHasPreviousWhitespace = previousIsWhitespace;
-                    previousIsWhitespace = false;
-                }
-                else if (IsIdentifierChar(c))
-                {
-                    normalToken = "" + c;
-                    normalStart = i;
-                    tokenStartHasPreviousWhitespace = previousIsWhitespace;
-                    previousIsWhitespace = false;
-                }
-                else if (c2 == "//")
-                {
-                    commentType = "/";
-                    i += 1;
-                }
-                else if (c2 == "/*")
-                {
-                    commentType = "*";
-                    i += 1;
-                }
-                else
-                {
-                    tokens.Add(new Token("" + c, TokenType.PUNCTUATION, file, lineByIndex[i], colByIndex[i], previousIsWhitespace));
-                    previousIsWhitespace = false;
+                        break;
+
+                    case TokenMode.STRING:
+                        if (c == modeSubtype)
+                        {
+                            tokenValue = code.Substring(tokenStart, i - tokenStart + 1);
+                            tokens.Add(new Token(tokenValue, TokenType.STRING, file, lineByIndex[i], colByIndex[i]));
+                            mode = TokenMode.NORMAL;
+                        }
+                        else if (c == '\\')
+                        {
+                            ++i;
+                        }
+                        break;
+
+                    case TokenMode.WORD:
+                        isTokenEnd = false;
+                        if (IsIdentifierChar(c))
+                        {
+                            // do nothing
+                        }
+                        else if (c == '.')
+                        {
+                            if (code[tokenStart] >= '0' && code[tokenStart] <= '9')
+                            {
+                                // do nothing
+                            }
+                            else
+                            {
+                                isTokenEnd = true;
+                            }
+                        }
+                        else
+                        {
+                            isTokenEnd = true;
+                        }
+
+                        if (isTokenEnd)
+                        {
+                            tokenValue = code.Substring(tokenStart, i - tokenStart);
+                            c = tokenValue[0];
+                            TokenType type = TokenType.WORD;
+                            if ((c >= '0' && c <= '9') || c == '.')
+                            {
+                                type = TokenType.NUMBER;
+                            }
+                            else if (!locale.Keywords.IsValidVariable(tokenValue))
+                            {
+                                type = TokenType.KEYWORD;
+                            }
+                            tokens.Add(new Token(tokenValue, type, file, lineByIndex[tokenStart], colByIndex[tokenStart]));
+                            mode = TokenMode.NORMAL;
+                            --i;
+                        }
+                        break;
                 }
             }
-            tokens.RemoveAt(tokens.Count - 1);
+
+            switch (mode)
+            {
+                case TokenMode.COMMENT:
+                    throw new ParserException(file, "There is an unclosed comment in this file.");
+                case TokenMode.STRING:
+                    throw new ParserException(file, "There is an unclosed string in this file.");
+                case TokenMode.WORD:
+                    throw new System.InvalidOperationException();
+                default:
+                    break;
+            }
 
             return tokens.ToArray();
+        }
+
+        private static string GetNextTokenValue(string code, int index)
+        {
+            char c = code[index];
+            if (TWO_CHAR_TOKENS_TRIGGER_FIRST_TOKEN.Contains(c))
+            {
+                string c2 = code.Substring(index, 2);
+                if (TWO_CHAR_TOKENS.Contains(c2))
+                {
+                    return c2;
+                }
+            }
+            return c.ToString();
         }
     }
 }

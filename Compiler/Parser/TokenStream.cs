@@ -112,13 +112,5 @@
         }
 
         public bool HasMore { get { return this.index < this.length; } }
-
-        public bool NextHasNoWhitespacePrefix
-        {
-            get
-            {
-                return this.index < this.length && this.Peek().HasWhitespacePrefix;
-            }
-        }
     }
 }

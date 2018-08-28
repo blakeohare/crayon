@@ -25,6 +25,10 @@ namespace Parser
             : base(InterpretToken(token) + message)
         { }
 
+        public ParserException(FileScope file, string message)
+            : base(file.Name + ": " + message)
+        { }
+
         internal ParserException(string message) : base(message)
         { }
 

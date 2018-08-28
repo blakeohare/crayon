@@ -7,18 +7,16 @@
         public int Col { get; private set; }
         public int FileID { get { return this.File.ID; } }
         public string FileName { get { return this.File.Name; } }
-        public bool HasWhitespacePrefix { get; private set; }
         public TokenType Type { get; private set; }
         public FileScope File { get; private set; }
 
-        internal Token(string value, TokenType type, FileScope file, int lineIndex, int colIndex, bool hasWhitespacePrefix)
+        internal Token(string value, TokenType type, FileScope file, int lineIndex, int colIndex)
         {
             this.Value = value;
             this.Type = type;
             this.File = file;
             this.Line = lineIndex;
             this.Col = colIndex;
-            this.HasWhitespacePrefix = hasWhitespacePrefix;
         }
 
         public override string ToString()

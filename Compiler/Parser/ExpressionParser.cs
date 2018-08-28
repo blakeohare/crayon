@@ -1,5 +1,4 @@
-﻿using Common;
-using Parser.ParseTree;
+﻿using Parser.ParseTree;
 using System;
 using System.Collections.Generic;
 
@@ -382,7 +381,7 @@ namespace Parser
             if (next == this.parser.Keywords.NEW) return this.ParseInstantiate(tokens, owner);
 
             char firstChar = next[0];
-            if (nextToken.Type == TokenType.WORD && !(firstChar >= '0' && firstChar <= '9'))
+            if (nextToken.Type == TokenType.WORD)
             {
                 Token varToken = tokens.Pop();
                 return new Variable(varToken, varToken.Value, owner);
@@ -419,59 +418,21 @@ namespace Parser
                 return new DictionaryDefinition(braceToken, keys, values, owner);
             }
 
-            if (next.Length > 2 && next.Substring(0, 2) == "0x")
+            if (nextToken.Type == TokenType.NUMBER)
             {
-                Token intToken = tokens.Pop();
-                int intValue = IntegerConstant.ParseIntConstant(intToken, intToken.Value);
-                return new IntegerConstant(intToken, intValue, owner);
-            }
-
-            if (nextToken.IsInteger)
-            {
-                Token numberToken = tokens.Pop();
-                string numberValue = numberToken.Value;
-
-                if (tokens.IsNext("."))
+                if (next.Contains("."))
                 {
-                    Token decimalToken = tokens.Pop();
-                    if (decimalToken.HasWhitespacePrefix)
+                    double floatValue;
+                    if (double.TryParse(next, out floatValue))
                     {
-                        throw new ParserException(decimalToken, "Decimals cannot have whitespace before them.");
+                        return new FloatConstant(tokens.Pop(), floatValue, owner);
                     }
-
-                    Token afterDecimal = tokens.Pop();
-                    if (afterDecimal.HasWhitespacePrefix) throw new ParserException(afterDecimal, "Cannot have whitespace after the decimal.");
-                    if (!afterDecimal.IsInteger) throw new ParserException(afterDecimal, "Decimal must be followed by an integer.");
-
-                    numberValue += "." + afterDecimal.Value;
-
-                    double floatValue = FloatConstant.ParseValue(numberToken, numberValue);
-                    return new FloatConstant(numberToken, floatValue, owner);
+                    throw new ParserException(nextToken, "Invalid float literal.");
                 }
-
-                int intValue = IntegerConstant.ParseIntConstant(numberToken, numberToken.Value);
-                return new IntegerConstant(numberToken, intValue, owner);
-            }
-
-            if (tokens.IsNext("."))
-            {
-                Token dotToken = tokens.PopExpected(".");
-                string numberValue = "0.";
-                Token postDecimal = tokens.Pop();
-                if (postDecimal.HasWhitespacePrefix || !postDecimal.IsInteger)
-                {
-                    throw new ParserException(dotToken, "Unexpected dot.");
-                }
-
-                numberValue += postDecimal.Value;
-
-                double floatValue;
-                if (Util.ParseDouble(numberValue, out floatValue))
-                {
-                    return new FloatConstant(dotToken, floatValue, owner);
-                }
-
-                throw new ParserException(dotToken, "Invalid float literal.");
+                return new IntegerConstant(
+                    tokens.Pop(),
+                    IntegerConstant.ParseIntConstant(nextToken, next),
+                    owner);
             }
 
             throw new ParserException(tokens.Peek(), "Encountered unexpected token: '" + tokens.PeekValue() + "'");
