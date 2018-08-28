@@ -220,7 +220,10 @@ namespace Parser
         {
             Token classToken = tokens.PopExpected(this.parser.Keywords.CLASS);
             Token classNameToken = tokens.Pop();
-            this.parser.VerifyIdentifier(classNameToken);
+            if (classNameToken.Type != TokenType.WORD)
+            {
+                throw new ParserException(classNameToken, "This is not a valid class name.");
+            }
             List<Token> baseClassTokens = new List<Token>();
             List<string> baseClassStrings = new List<string>();
             if (tokens.PopIfPresent(":"))

@@ -392,10 +392,9 @@ namespace Parser
 
         public void ParseInterpretedCode(string filename, string code)
         {
-            FileScope fileScope = new FileScope(filename, this.CurrentScope, this.GetNextFileId());
+            FileScope fileScope = new FileScope(filename, code, this.CurrentScope, this.GetNextFileId());
             this.RegisterFileUsed(fileScope, code);
-            Token[] tokenList = Tokenizer.Tokenize(fileScope, code, true, this.CurrentLocale);
-            TokenStream tokens = new TokenStream(tokenList, filename);
+            TokenStream tokens = new TokenStream(fileScope);
 
             List<string> namespaceImportsBuilder = new List<string>();
 

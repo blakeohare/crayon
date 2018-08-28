@@ -5,42 +5,60 @@ namespace Parser
 {
     public static class Tokenizer
     {
-        private static readonly HashSet<string> TWO_CHAR_TOKENS = new HashSet<string>(
-            "++ -- << >> == != <= >= && || += -= *= /= %= &= |= ^= ** ?? =>".Split(' '));
-        private static readonly HashSet<char> WHITESPACE = new HashSet<char>(" \r\n\t".ToCharArray());
-
-        private static Dictionary<char, bool> IDENTIFIER_CHARS_CACHE = new Dictionary<char, bool>()
-        {
-            { '$', true },
-            { '_', true },
+        private static readonly HashSet<string> TWO_CHAR_TOKENS = new HashSet<string>() {
+            "==", "!=", "<=", ">=",
+            "&&", "||",
+            "++", "--",
+            "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=",
+            "<<", ">>",
+            "**",
+            "??",
+            "=>",
         };
+        private static readonly HashSet<char> WHITESPACE = new HashSet<char>() { ' ', '\r', '\n', '\t' };
+
+        private static Dictionary<char, bool> IDENTIFIER_CHARS_CACHE = new Dictionary<char, bool>();
+
+        private static bool IsIdentifierCharImpl(char c)
+        {
+            switch (c)
+            {
+                case '$':
+                case '_':
+                    return true;
+
+                default:
+                    switch (Localization.CharSetDetector.GetCharType(c))
+                    {
+                        case Localization.CharType.ACCENTED:
+                        case Localization.CharType.LETTER:
+                        case Localization.CharType.NUMBER:
+                        case Localization.CharType.KANJI:
+                        case Localization.CharType.HIRAGANA:
+                        case Localization.CharType.KATAKANA:
+                            return true;
+                        default:
+                            return false;
+                    }
+            }
+        }
 
         public static bool IsIdentifierChar(char c)
         {
             bool result;
             if (!IDENTIFIER_CHARS_CACHE.TryGetValue(c, out result))
             {
-                switch (Localization.CharSetDetector.GetCharType(c))
-                {
-                    case Localization.CharType.ACCENTED:
-                    case Localization.CharType.LETTER:
-                    case Localization.CharType.NUMBER:
-                    case Localization.CharType.KANJI:
-                    case Localization.CharType.HIRAGANA:
-                    case Localization.CharType.KATAKANA:
-                        result = true;
-                        break;
-                    default:
-                        result = false;
-                        break;
-                }
+                result = IsIdentifierCharImpl(c);
                 IDENTIFIER_CHARS_CACHE[c] = result;
             }
             return result;
         }
 
-        public static Token[] Tokenize(FileScope file, string code, bool useMultiCharTokens, Localization.Locale locale)
+        public static Token[] Tokenize(FileScope file)
         {
+            bool useMultiCharTokens = true;
+            Localization.Locale locale = file.CompilationScope.Locale;
+            string code = file.Content;
             code += '\n';
             code += '\0';
 

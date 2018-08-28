@@ -1,30 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Parser
+﻿namespace Parser
 {
     public class TokenStream
     {
-        private readonly List<Token[]> tokenLayers = new List<Token[]>();
-        private readonly List<int> indexes = new List<int>();
-        private Token[] topTokens;
-        private int topIndex;
-        private int topLength;
-        private bool empty;
+        private readonly FileScope file;
+        private readonly Token[] tokens;
+        private int index;
+        private readonly int length;
 
-        private string fileName;
-
-        public TokenStream(IList<Token> tokens, string fileName)
+        public TokenStream(FileScope file)
         {
-            this.topIndex = 0;
-            this.topTokens = tokens.ToArray();
-            this.topLength = this.topTokens.Length;
-
-            this.indexes.Add(0);
-            this.tokenLayers.Add(this.topTokens);
-            this.empty = false;
-
-            this.fileName = fileName;
+            this.file = file;
+            this.index = 0;
+            this.tokens = Tokenizer.Tokenize(file);
+            this.length = this.tokens.Length;
         }
 
         public void EnsureNotEof()
@@ -36,54 +24,12 @@ namespace Parser
         // the compiler to think the codepath terminates
         public System.Exception ThrowEofException()
         {
-            return ParserException.ThrowEofException(this.fileName);
-        }
-
-        private Token SafePeek()
-        {
-            if (this.empty) ThrowEofException();
-
-            if (this.topIndex < this.topLength)
-            {
-                return this.topTokens[this.topIndex];
-            }
-
-            this.SafePopLayer();
-
-            return this.SafePeek();
-        }
-
-        private Token SafePop()
-        {
-            Token token = this.SafePeek();
-            this.topIndex++;
-            return token;
+            throw ParserException.ThrowEofException(this.file.Name);
         }
 
         private bool SafeHasMore()
         {
-            if (this.empty) return false;
-            if (this.topIndex < this.topLength) return true;
-            this.SafePopLayer();
-            return this.SafeHasMore();
-        }
-
-        private void SafePopLayer()
-        {
-            this.indexes.RemoveAt(this.indexes.Count - 1);
-            this.tokenLayers.RemoveAt(this.indexes.Count);
-
-            int i = this.indexes.Count - 1;
-            if (i == -1)
-            {
-                this.empty = true;
-            }
-            else
-            {
-                this.topIndex = this.indexes[i];
-                this.topTokens = this.tokenLayers[i];
-                this.topLength = this.topTokens.Length;
-            }
+            return this.index < this.length;
         }
 
         public bool IsNext(string token)
@@ -93,52 +39,46 @@ namespace Parser
 
         public bool AreNext(string token1, string token2)
         {
-            if (this.empty) return false;
-
-            if (!this.IsNext(token1)) return false;
-
-            // only check the top stack as multi-stream results are never contextually relevant.
-            if (this.topIndex + 1 < this.topLength)
-            {
-                return this.topTokens[this.topIndex + 1].Value == token2;
-            }
-
-            return false;
+            return
+                this.index + 1 < this.length &&
+                this.tokens[this.index].Value == token1 &&
+                this.tokens[this.index + 1].Value == token2;
         }
 
         public Token Peek()
         {
-            return this.SafeHasMore() ? this.SafePeek() : null;
-        }
-
-        public string FlatPeekAhead(int i)
-        {
-            if (this.topIndex + i < this.topLength)
+            if (this.index < this.length)
             {
-                return this.topTokens[this.topIndex + i].Value;
+                return this.tokens[this.index];
             }
-            return null;
+            throw ThrowEofException();
         }
 
         public Token Pop()
         {
-            return this.SafePop();
+            if (this.index < this.length)
+            {
+                return this.tokens[this.index++];
+            }
+            throw ThrowEofException();
         }
 
         public string PeekValue()
         {
-            return this.SafeHasMore() ? this.SafePeek().Value : null;
+            if (this.index < this.length)
+            {
+                return this.tokens[this.index].Value;
+            }
+            throw ThrowEofException();
         }
 
         public string PeekValue(int offset)
         {
-            // only check the top stack as multi-stream results are never contextually relevant.
-            int index = this.topIndex + offset;
-            if (index < this.topLength)
+            if (this.index + offset < this.length)
             {
-                return this.topTokens[index].Value;
+                return this.tokens[this.index + offset].Value;
             }
-            return null;
+            throw ThrowEofException();
         }
 
         public string PopValue()
@@ -148,7 +88,7 @@ namespace Parser
 
         public bool PopIfPresent(string value)
         {
-            if (this.PeekValue() == value)
+            if (this.index < this.length && this.tokens[this.index].Value == value)
             {
                 this.Pop();
                 return true;
@@ -162,7 +102,7 @@ namespace Parser
             if (token.Value != value)
             {
                 string message = "Unexpected token. Expected: '" + value + "' but found '" + token.Value + "'.";
-                if (value == ";" && this.topIndex > 0 && this.topTokens[this.topIndex - 2].Line < token.Line)
+                if (value == ";" && this.index > 1 && this.tokens[this.index - 2].Line < this.tokens[this.index - 1].Line)
                 {
                     message += " Is this previous line missing a semicolon at the end?";
                 }
@@ -171,31 +111,14 @@ namespace Parser
             return token;
         }
 
-        public bool HasMore
-        {
-            get
-            {
-                return this.SafeHasMore();
-            }
-        }
+        public bool HasMore { get { return this.index < this.length; } }
 
         public bool NextHasNoWhitespacePrefix
         {
             get
             {
-                return this.SafeHasMore() && this.SafePeek().HasWhitespacePrefix;
+                return this.index < this.length && this.Peek().HasWhitespacePrefix;
             }
-        }
-
-        // Inline imports, implicit core import statements...
-        public void InsertTokens(IList<Token> tokens)
-        {
-            this.indexes[this.indexes.Count - 1] = this.topIndex;
-            this.topTokens = tokens.ToArray();
-            this.topIndex = 0;
-            this.topLength = this.topTokens.Length;
-            this.tokenLayers.Add(this.topTokens);
-            this.indexes.Add(0);
         }
     }
 }
