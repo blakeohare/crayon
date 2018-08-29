@@ -1,4 +1,4 @@
-﻿Value lib_game_function_clock_tick(Array<Value> args) {
+﻿Value lib_game_clock_tick(Array<Value> args) {
     Native._lib_game_clockTick();
 
     // TODO: replace this with an enum.

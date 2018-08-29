@@ -12,7 +12,7 @@ namespace Game {
             rd.clear();
             t =  Experimental.touches;
             t.clear();
-            $$lib_game_getTouchState(rd);
+            $lib_game_getTouchState(rd);
             for (i = 0; i < rd.length; i += 3) {
                 t[rd[i]] = [rd[i + 1], rd[i + 2]];
             }
@@ -112,10 +112,10 @@ namespace Game {
             Core.assert(screenHeight > 0, "screen " + h + t);
             Core.assert(fps > 0, "FPS" + t);
 
-            $$lib_game_initialize(fps);
-            $$lib_game_initialize_screen(width, height, screenWidth, screenHeight);
+            $lib_game_initialize(fps);
+            $lib_game_initialize_screen(width, height, screenWidth, screenHeight);
             $lib_game_set_title(title);
-            $$lib_game_setInstance(this);
+            $lib_game_setInstance(this);
         }
 
         function getSize() {
@@ -125,7 +125,7 @@ namespace Game {
         function setWindowMode(mode, width = null, height = null) {
             // TODO: throw a nice error for bad types
             this._scale_mode = mode;
-            return $$lib_game_set_window_mode(mode, width ?? 0, height ?? 0);
+            return $lib_game_set_window_mode(mode, width ?? 0, height ?? 0);
         }
 
         function setPointerCanonicalizationMode(mode) {
@@ -139,7 +139,7 @@ namespace Game {
         // may possibly return 0 x 0 for the screen size if the underlying API can't tell
         // will never return [true, 0, 0]
         static function getScreenInfo() {
-            return $$lib_game_getScreenInfo([false, 0, 0]);
+            return $lib_game_getScreenInfo([false, 0, 0]);
         }
 
         @localized('en', 'clockTick')
@@ -150,7 +150,7 @@ namespace Game {
                 t();
             }
 
-            $$lib_game_clock_tick();
+            $lib_game_clock_tick();
 
             for (t : Game.GameWindow._frameBeginHandlers) {
                 t();
@@ -192,7 +192,7 @@ namespace Game {
         function pumpEvents() {
             output = [];
             mouseState = this._pointers[0];
-            t = $$lib_game_pump_events(GameWindow._reusable_list);
+            t = $lib_game_pump_events(GameWindow._reusable_list);
             len = t.length;
             i = 0;
             while (i < len) {

@@ -30,7 +30,7 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveEntityNames(ParserContext parser)
         {
-            throw new InvalidOperationException(); // created in the resolve name phase.
+            throw new ParserException(this, "This should not happen.");
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }

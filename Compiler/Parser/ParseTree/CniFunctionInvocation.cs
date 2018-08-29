@@ -49,10 +49,8 @@ namespace Parser.ParseTree
                 throw new ParserException(this, "Incorrect number of args. Expected " + this.CniFunction.ArgCount + " but found " + this.Args.Length);
             }
 
-            for (int i = 0; i < this.Args.Length; ++i)
-            {
-                this.Args[i] = this.Args[i].ResolveEntityNames(parser);
-            }
+            // Do not resolve args as they have already been resolved.
+
             return this;
         }
     }
