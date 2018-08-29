@@ -100,10 +100,6 @@ namespace JavaApp
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/ResourceReader.java", "Resources/ResourceReader.txt", replacements);
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/AwtTranslationHelper.java", "Resources/AwtTranslationHelper.txt", replacements);
 
-            // need to move these to library supplemental files
-            this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/GameWindow.java", "Resources/GameWindow.txt", replacements);
-            this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/RenderEngine.java", "Resources/RenderEngine.txt", replacements);
-
             this.CopyResourceAsText(output, srcPackagePath + "/Main.java", "Resources/Main.txt", replacements);
             this.CopyResourceAsText(output, "build.xml", "Resources/BuildXml.txt", replacements);
 

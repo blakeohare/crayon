@@ -61,13 +61,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\AwtTranslationHelper.txt" />
-    <EmbeddedResource Include="Resources\BuildXml.txt" />
-    <EmbeddedResource Include="Resources\GameWindow.txt" />
-    <EmbeddedResource Include="Resources\Main.txt" />
-    <EmbeddedResource Include="Resources\PlatformTranslationHelper.txt" />
-    <EmbeddedResource Include="Resources\RenderEngine.txt" />
-    <EmbeddedResource Include="Resources\ResourceReader.txt" />
+    <EmbeddedResource Include="Resources\*.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
