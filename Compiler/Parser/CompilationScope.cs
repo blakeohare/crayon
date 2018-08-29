@@ -10,6 +10,7 @@ namespace Parser
     {
         public abstract Locale Locale { get; }
         public abstract string ScopeKey { get; }
+        public Dictionary<string, CniFunction> CniFunctionsByName { get; private set; }
 
         protected BuildContext buildContext;
         private Dictionary<LibraryCompilationScope, LocalizedLibraryView> dependenciesAndViews = new Dictionary<LibraryCompilationScope, LocalizedLibraryView>();
@@ -73,6 +74,18 @@ namespace Parser
         public CompilationScope(BuildContext buildContext)
         {
             this.buildContext = buildContext;
+            this.CniFunctionsByName = new Dictionary<string, CniFunction>();
+        }
+
+        public void RegisterCniFunction(string name, int args)
+        {
+            if (this.CniFunctionsByName.ContainsKey(name))
+            {
+                throw new ParserException("There are multiple CNI functions registered with the same name: '" + name + "'");
+            }
+
+            CniFunction func = new CniFunction(this, name, args);
+            this.CniFunctionsByName.Add(name, func);
         }
 
         public void AddDependency(Token throwToken, LocalizedLibraryView libraryView)

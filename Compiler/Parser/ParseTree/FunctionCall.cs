@@ -101,11 +101,20 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveEntityNames(ParserContext parser)
         {
-            if (this.Root is Variable && ((Variable)this.Root).Name.Contains("$$$"))
+            if (this.Root is Variable)
             {
-                this.BatchExpressionEntityNameResolver(parser, this.Args);
+                string varName = ((Variable)this.Root).Name;
+                if (varName.StartsWith("$$$"))
+                {
+                    this.BatchExpressionEntityNameResolver(parser, this.Args);
 
-                return new CoreFunctionInvocation(this.FirstToken, this.Args, this.Owner);
+                    return new CoreFunctionInvocation(this.FirstToken, this.Args, this.Owner);
+                }
+                else if (varName.StartsWith("$") && !varName.StartsWith("$$"))
+                {
+                    this.BatchExpressionEntityNameResolver(parser, this.Args);
+                    return new CniFunctionInvocation(this.FirstToken, this.Args, this.Owner);
+                }
             }
 
             this.Root = this.Root.ResolveEntityNames(parser);

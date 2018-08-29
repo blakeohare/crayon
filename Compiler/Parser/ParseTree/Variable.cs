@@ -43,6 +43,11 @@
                 return new LibraryFunctionReference(this.FirstToken, this.Name.Substring(2), this.Owner);
             }
 
+            if (this.Name.StartsWith("$") && this.Name != "$var")
+            {
+                throw new ParserException(this, "CNI functions must be invoked and cannot be used as function pointers.");
+            }
+
             NamespaceReferenceTemplate nrt = this.Owner.FileScope.FileScopeEntityLookup.DoNamespaceLookup(this.Name, this.TopLevelEntity);
             if (nrt != null)
             {
