@@ -378,6 +378,15 @@ namespace Parser
             Token peekToken = tokens.Peek();
             if (next.StartsWith("'")) return new StringConstant(tokens.Pop(), StringConstant.ParseOutRawValue(peekToken), owner);
             if (next.StartsWith("\"")) return new StringConstant(tokens.Pop(), StringConstant.ParseOutRawValue(peekToken), owner);
+            if (next == "@") // Raw strings (no escape sequences, a backslash is a literal backslash)
+            {
+                Token atToken = tokens.Pop();
+                Token stringToken = tokens.Pop();
+                char stringTokenChar = stringToken.Value[0];
+                if (stringTokenChar != '"' && stringTokenChar != '\'') throw new ParserException(atToken, "Unexpected token: '@'");
+                string stringValue = stringToken.Value.Substring(1, stringToken.Value.Length - 2);
+                return new StringConstant(atToken, stringValue, owner);
+            }
             if (next == this.parser.Keywords.NEW) return this.ParseInstantiate(tokens, owner);
 
             char firstChar = next[0];

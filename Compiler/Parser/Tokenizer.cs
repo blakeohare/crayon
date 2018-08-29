@@ -105,6 +105,7 @@ namespace Parser
             string tokenValue;
             char c2;
             bool isTokenEnd = false;
+            bool stringIsRaw = false;
 
             for (int i = 0; i < length; ++i)
             {
@@ -150,6 +151,7 @@ namespace Parser
                             tokenStart = i;
                             mode = TokenMode.STRING;
                             modeSubtype = c;
+                            stringIsRaw = tokens.Count > 0 && tokens[tokens.Count - 1].Value == "@";
                         }
                         else
                         {
@@ -179,7 +181,7 @@ namespace Parser
                             tokens.Add(new Token(tokenValue, TokenType.STRING, file, lineByIndex[i], colByIndex[i]));
                             mode = TokenMode.NORMAL;
                         }
-                        else if (c == '\\')
+                        else if (!stringIsRaw && c == '\\')
                         {
                             ++i;
                         }
