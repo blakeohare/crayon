@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.crayonlang.interpreter.AwtTranslationHelper;
+import org.crayonlang.interpreter.FastList;
 import org.crayonlang.interpreter.Interpreter;
 import org.crayonlang.interpreter.ResourceReader;
 import org.crayonlang.interpreter.structs.*;
@@ -58,6 +59,6 @@ class JsonParser {
 		for (int i = 0; i < list.length(); ++i) {
 			items.add(convertJsonThing(list.get(i)));
 		}
-		return Interpreter.v_buildList(items);
+		return Interpreter.v_buildList(new FastList().initializeValueCollection(items));
 	}
 }
