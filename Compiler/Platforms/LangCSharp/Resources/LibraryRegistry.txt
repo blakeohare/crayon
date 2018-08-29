@@ -20,8 +20,26 @@ namespace Interpreter.Vm
                     System.Reflection.MethodInfo manifestMethod = type.GetMethod("v_lib_manifest_RegisterFunctions");
                     manifestMethodsByLibraryName[name] = manifestMethod;
                     librariesByName[name] = new Library(manifestMethod);
+                    RegisterLibraryMethodResolver(type);
                 }
             }
+        }
+
+        private static void RegisterLibraryMethodResolver(Type libraryType)
+        {
+            TranslationHelper.RegisterFunctionPointerResolver((string funcName) =>
+            {
+                string name = funcName.Split(',')[1];
+
+                // TODO: figure out why GetMethod() is not working directly
+                System.Reflection.MethodInfo methodInfo = libraryType.GetMethods().Where(m => m.Name == "v_" + name).FirstOrDefault();
+                if (methodInfo == null) return null;
+                Func<Interpreter.Structs.Value[], Interpreter.Structs.Value> output = (Interpreter.Structs.Value[] args) =>
+                {
+                    return (Interpreter.Structs.Value)methodInfo.Invoke(null, new object[] { args });
+                };
+                return output;
+            });
         }
 
         public Library GetLibrary(string name)

@@ -302,5 +302,25 @@ namespace Interpreter.Vm
             string value = System.Text.Encoding.UTF8.GetString(utf8Bytes);
             return value;
         }
+
+        private static List<Func<string, object>> functionPointerResolvers = new List<Func<string, object>>();
+
+        public static object GetFunctionPointer(string name)
+        {
+            foreach (Func<string, object> fpResolvers in functionPointerResolvers)
+            {
+                object output = fpResolvers(name);
+                if (output != null)
+                {
+                    return output;
+                }
+            }
+            return null;
+        }
+
+        public static void RegisterFunctionPointerResolver(Func<string, object> resolver)
+        {
+            functionPointerResolvers.Add(resolver);
+        }
     }
 }

@@ -100,6 +100,7 @@ int main() {
         new List<int>(), // class static initialization stack
         null, // globalNameIdToPrimitiveMethodName (set in FINALIZE_INITIALIZATION)
         null, // funcArgs (set in FINALIZE_INITIALIZATION)
+        new Dictionary<int, Func<Value, Array<Value>>>(), // CNI function pointers by ID
 
         -1, // the global name ID for "length"
         new Array<int>(10), // primitive method to function ID fallback lookup

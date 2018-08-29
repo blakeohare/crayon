@@ -107,6 +107,10 @@ namespace Pastel.Nodes
             {
                 return new ConstructorInvocation(this.FirstToken, ((ConstructorReference)this.Root).TypeToConstruct, this.Args);
             }
+            else if (this.Root.ResolvedType.RootValue == "Func")
+            {
+                return new FunctionPointerInvocation(this.FirstToken, this.Root, this.Args);
+            }
             else
             {
                 throw new NotImplementedException();

@@ -178,6 +178,11 @@ namespace Parser
             this.Library = library;
             this.scopeKey = library.CanonicalKey;
             this.Library.LibraryScope = this;
+
+            foreach (string cniFuncName in library.CniFunctions.Keys)
+            {
+                this.RegisterCniFunction(cniFuncName, library.CniFunctions[cniFuncName]);
+            }
         }
 
         public override Locale Locale

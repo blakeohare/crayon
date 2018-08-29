@@ -1,0 +1,22 @@
+﻿/*
+    row[0] -> ID# for the CNI Function
+    row[1] -> number of args
+    row[2] -> output used
+
+    p.cniFunctionPointer[id] -> the function pointer
+
+*/
+nativeFp = p.cniFunctionsById[row[0]];
+len = row[1];
+valueStackSize -= len;
+
+valueArray1 = new Array<Value>(len);
+for (i = 0; i < len; i += 1) {
+    valueArray1[i] = valueStack[valueStackSize + i];
+}
+
+value = nativeFp(valueArray1);
+if (row[2] == 1) {
+    valueStack[valueStackSize] = value;
+    valueStackSize += 1;
+}

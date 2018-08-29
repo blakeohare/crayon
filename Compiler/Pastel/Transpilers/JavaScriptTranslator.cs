@@ -201,6 +201,13 @@ namespace Pastel.Transpilers
             this.TranslateExpression(sb, floatExpr);
         }
 
+        public override void TranslateGetFunction(TranspilerContext sb, Expression name)
+        {
+            sb.Append("C$common$getFunction(");
+            this.TranslateExpression(sb, name);
+            sb.Append(')');
+        }
+
         public override void TranslateGetProgramData(TranspilerContext sb)
         {
             sb.Append("C$common$programData");

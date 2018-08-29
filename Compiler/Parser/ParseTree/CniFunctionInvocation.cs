@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Parser.ParseTree
 {
@@ -10,6 +7,7 @@ namespace Parser.ParseTree
     {
         public Expression[] Args { get; private set; }
         public string Name { get; private set; }
+        public CniFunction CniFunction { get; private set; }
 
         public CniFunctionInvocation(Token firstToken, IList<Expression> args, Node owner)
             : base(firstToken, owner)
@@ -44,10 +42,11 @@ namespace Parser.ParseTree
             {
                 throw new ParserException(this, "This CNI method has not been declared in this compilation scope's manifest.");
             }
+            this.CniFunction = func;
 
-            if (func.ArgCount != this.Args.Length)
+            if (this.CniFunction.ArgCount != this.Args.Length)
             {
-                throw new ParserException(this, "Incorrect number of args. Expected " + func.ArgCount + " but found " + this.Args.Length);
+                throw new ParserException(this, "Incorrect number of args. Expected " + this.CniFunction.ArgCount + " but found " + this.Args.Length);
             }
 
             for (int i = 0; i < this.Args.Length; ++i)

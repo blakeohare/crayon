@@ -212,6 +212,7 @@ InterpreterResult interpretImpl(int executionContextId) {
     int localsStackOffset = stack.localsStackOffset;
     Array<Value> funcArgs = p.funcArgs;
     int pc = stack.pc;
+    Func<Value, Array<Value>> nativeFp = null;
 
     while (true) {
         row = args[pc];
@@ -232,6 +233,8 @@ InterpreterResult interpretImpl(int executionContextId) {
             case OpCodes.CALL_FUNCTION: Core.EmitComment("CALL_FUNCTION"); @import("Ops/call_function.pst"); break;
             case OpCodes.CALL_LIB_FUNCTION_DYNAMIC: Core.EmitComment("CALL_LIB_FUNCTION_DYNAMIC"); @import("Ops/call_lib_function_dynamic.pst"); break;
             case OpCodes.CLASS_DEFINITION: Core.EmitComment("CLASS_DEFINITION"); @import("Ops/class_definition.pst"); break;
+            case OpCodes.CNI_INVOKE: Core.EmitComment("CNI_INVOKE"); @import("Ops/cni_invoke.pst"); break;
+            case OpCodes.CNI_REGISTER: Core.EmitComment("CNI_REGISTER"); @import("Ops/cni_register.pst"); break;
             case OpCodes.COMMAND_LINE_ARGS: Core.EmitComment("COMMAND_LINE_ARGS"); @import("Ops/command_line_args.pst"); break;
             case OpCodes.CONTINUE: Core.EmitComment("CONTINUE"); @import("Ops/continue.pst"); break;
             case OpCodes.CORE_FUNCTION: Core.EmitComment("CORE_FUNCTION"); @import("Ops/core_function.pst"); break;

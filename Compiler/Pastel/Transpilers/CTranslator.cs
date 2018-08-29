@@ -396,6 +396,11 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
+        public override void TranslateGetFunction(TranspilerContext sb, Expression name)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void TranslateGetProgramData(TranspilerContext sb)
         {
             sb.Append("PROGRAM_DATA");

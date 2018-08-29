@@ -31,6 +31,18 @@ namespace Pastel.Transpilers
                 case "Array":
                     return this.TranslateType(type.Generics[0]) + "[]";
 
+                case "Func":
+                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                    sb.Append("Func<");
+                    for (int i = 0; i < type.Generics.Length - 1; ++i)
+                    {
+                        sb.Append(this.TranslateType(type.Generics[i + 1]));
+                        sb.Append(", ");
+                    }
+                    sb.Append(this.TranslateType(type.Generics[0]));
+                    sb.Append('>');
+                    return sb.ToString();
+
                 default:
                     if (type.Generics.Length > 0)
                     {
@@ -271,6 +283,13 @@ namespace Pastel.Transpilers
         public override void TranslateCommandLineArgs(TranspilerContext sb)
         {
             sb.Append("TranslationHelper.CommandLineArgs");
+        }
+
+        public override void TranslateGetFunction(TranspilerContext sb, Expression name)
+        {
+            sb.Append("TranslationHelper.GetFunctionPointer(");
+            this.TranslateExpression(sb, name);
+            sb.Append(')');
         }
 
         public override void TranslateGetProgramData(TranspilerContext sb)

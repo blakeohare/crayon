@@ -114,7 +114,7 @@ namespace Game {
 
             $$lib_game_initialize(fps);
             $$lib_game_initialize_screen(width, height, screenWidth, screenHeight);
-            $$lib_game_set_title(title);
+            $lib_game_set_title(title);
             $$lib_game_setInstance(this);
         }
 
@@ -342,7 +342,7 @@ namespace Game {
         function setTitle(title) {
             title += '';
             if (title.length == 0) throw new Core.InvalidArgumentException("Title cannot be empty.");
-            return $$lib_game_set_title(title);
+            return $lib_game_set_title(title);
         }
     }
 }

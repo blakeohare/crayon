@@ -48,7 +48,19 @@ namespace Parser
             this.SupportedLocales = new HashSet<Locale>(this.Manifest.GetAsLookup("localization.names").Keys.Select(localeName => Locale.Get(localeName)));
             this.SupportedLocales.Add(this.InternalLocale);
             this.OnlyImportableFrom = new HashSet<string>(this.Manifest.GetAsList("onlyAllowImportFrom").Cast<string>());
+            this.CniFunctions = new Dictionary<string, int>();
+            foreach (IDictionary<string, object> cniEntry in this.Manifest.GetAsList("cni").OfType<IDictionary<string, object>>())
+            {
+                if (cniEntry.ContainsKey("name") && cniEntry.ContainsKey("argc"))
+                {
+                    string name = cniEntry["name"].ToString();
+                    int argc = (int)cniEntry["argc"];
+                    this.CniFunctions[name] = argc;
+                }
+            }
         }
+
+        public Dictionary<string, int> CniFunctions { get; private set; }
 
         private Dictionary<string, string> nameByLocale = new Dictionary<string, string>();
         public string GetName(Locale locale)

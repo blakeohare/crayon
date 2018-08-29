@@ -373,14 +373,14 @@ public final class TranslationHelper {
   private static final java.nio.charset.Charset UTF8 = java.nio.charset.Charset.forName("UTF-8");
   public static String base64ToString(String b64Value) {
     int inputLength = b64Value.length();
-	
+
 	if (inputLength == 0) return "";
 	while (inputLength > 0 && b64Value.charAt(inputLength - 1) == '=') {
 		b64Value = b64Value.substring(0, --inputLength);
 	}
 	int bitsOfData = inputLength * 6;
 	int outputLength = bitsOfData / 8;
-	
+
 	byte[] buffer = new byte[outputLength];
 	char c;
 	int charValue;
@@ -427,5 +427,36 @@ public final class TranslationHelper {
 		}
 	}
 	return new String(buffer, UTF8);
+  }
+
+  public static abstract class FunctionFinder {
+    public abstract Object findFunction(String name);
+  }
+
+  private static final ArrayList<FunctionFinder> functionFinders = new ArrayList<>();
+
+  public static Object getFunction(String name) {
+    int comma = name.indexOf(',');
+    if (comma == -1) return null;
+    name = name.substring(comma + 1);
+    for (FunctionFinder fnFinder : functionFinders) {
+      Object fn = fnFinder.findFunction(name);
+      if (fn != null) {
+        return fn;
+      }
+    }
+    return null;
+  }
+
+  public static void registerFunctionFinder(FunctionFinder fnFinder) {
+    functionFinders.add(fnFinder);
+  }
+
+  public static Object invokeFunctionPointer(Method method, Object[] args) {
+    try {
+      return method.invoke(null, args);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
   }
 }

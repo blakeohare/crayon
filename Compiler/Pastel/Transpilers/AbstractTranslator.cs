@@ -79,6 +79,7 @@ namespace Pastel.Transpilers
             {
                 case "CastExpression": this.TranslateCast(sb, ((CastExpression)expression).Type, ((CastExpression)expression).Expression); break;
                 case "FunctionReference": this.TranslateFunctionReference(sb, (FunctionReference)expression); break;
+                case "FunctionPointerInvocation": this.TranslateFunctionPointerInvocation(sb, (FunctionPointerInvocation)expression); break;
                 case "NativeFunctionInvocation": this.TranslateNativeFunctionInvocation(sb, (NativeFunctionInvocation)expression); break;
                 case "OpChain": this.TranslateOpChain(sb, (OpChain)expression); break;
                 case "ExtensibleFunctionInvocation":
@@ -206,6 +207,18 @@ namespace Pastel.Transpilers
             }
         }
 
+        public virtual void TranslateFunctionPointerInvocation(TranspilerContext sb, FunctionPointerInvocation fpi)
+        {
+            this.TranslateExpression(sb, fpi.Root);
+            sb.Append('(');
+            for (int i = 0; i < fpi.Args.Length; ++i)
+            {
+                if (i > 0) sb.Append(", ");
+                this.TranslateExpression(sb, fpi.Args[i]);
+            }
+            sb.Append(')');
+        }
+
         public void TranslateNativeFunctionInvocation(TranspilerContext sb, NativeFunctionInvocation nativeFuncInvocation)
         {
             Expression[] args = nativeFuncInvocation.Args;
@@ -236,6 +249,7 @@ namespace Pastel.Transpilers
                 case Pastel.NativeFunction.FLOAT_BUFFER_16: this.TranslateFloatBuffer16(sb); break;
                 case Pastel.NativeFunction.FLOAT_DIVISION: this.TranslateFloatDivision(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.FLOAT_TO_STRING: this.TranslateFloatToString(sb, args[0]); break;
+                case Pastel.NativeFunction.GET_FUNCTION: this.TranslateGetFunction(sb, args[0]); break;
                 case Pastel.NativeFunction.GET_PROGRAM_DATA: this.TranslateGetProgramData(sb); break;
                 case Pastel.NativeFunction.GET_RESOURCE_MANIFEST: this.TranslateGetResourceManifest(sb); break;
                 case Pastel.NativeFunction.INT: this.TranslateFloatToInt(sb, args[0]); break;
@@ -421,6 +435,7 @@ namespace Pastel.Transpilers
         public abstract void TranslateFunctionInvocationInterpreterScoped(TranspilerContext sb, FunctionReference funcRef, Expression[] args);
         public abstract void TranslateFunctionInvocationLocallyScoped(TranspilerContext sb, FunctionReference funcRef, Expression[] args);
         public abstract void TranslateFunctionReference(TranspilerContext sb, FunctionReference funcRef);
+        public abstract void TranslateGetFunction(TranspilerContext sb, Expression name);
         public abstract void TranslateGetProgramData(TranspilerContext sb);
         public abstract void TranslateGetResourceManifest(TranspilerContext sb);
         public abstract void TranslateGlobalVariable(TranspilerContext sb, Variable variable);

@@ -30,6 +30,7 @@
         FLOAT_DIVISION,
         FLOAT_TO_STRING,
         FORCE_PARENS,
+        GET_FUNCTION,
         GET_PROGRAM_DATA,
         GET_RESOURCE_MANIFEST,
         INT,

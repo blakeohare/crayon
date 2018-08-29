@@ -43,6 +43,7 @@ struct ProgramData {
     List<int> classStaticInitializationStack;
     Array<int> globalNameIdToPrimitiveMethodName;
     Array<Value> funcArgs;
+    Dictionary<int, Func<Value, Array<Value>>> cniFunctionsById;
 
     int lengthId;
     Array<int> primitiveMethodFunctionIdFallbackLookup;

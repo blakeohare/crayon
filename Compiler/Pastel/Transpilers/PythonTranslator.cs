@@ -318,6 +318,13 @@ namespace Pastel.Transpilers
             sb.Append(funcRef.Function.NameToken.Value);
         }
 
+        public override void TranslateGetFunction(TranspilerContext sb, Expression name)
+        {
+            sb.Append("TranslationHelper_getFunction(");
+            this.TranslateExpression(sb, name);
+            sb.Append(')');
+        }
+
         public override void TranslateGetProgramData(TranspilerContext sb)
         {
             sb.Append("TranslationHelper_getProgramData()");

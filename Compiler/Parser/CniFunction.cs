@@ -7,6 +7,8 @@
         public int ArgCount { get; private set; }
         public int ID { get; set; }
 
+        public string ByteCodeLookupKey { get { return this.CompilationUnit.ScopeKey + "," + this.Name; } }
+
         public CniFunction(CompilationScope compilationUnit, string name, int argCount)
         {
             this.CompilationUnit = compilationUnit;

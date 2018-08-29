@@ -11,6 +11,8 @@ class LibraryRegistry:
       canonicalName = name.lower()
       try:
         self.manifestFunctions[canonicalName] = libraries[name].v_lib_manifest_RegisterFunctions
+        fnFinderFn = self.createFnFinderFn(libraries[name])
+        TranslationHelper_registerFunctionFinder(fnFinderFn)
       except:
         print("Invalid library: ", name)
 
@@ -23,3 +25,12 @@ class LibraryRegistry:
 
   def getLibrary(self, name):
     return self.libraries.get(name.lower())
+
+  def createFnFinderFn(self, lib):
+    def fnFinderFn(name):
+      fnName = 'v_' + name.split(',')[-1]
+      for fn in dir(lib):
+        if fn == fnName:
+          return eval('lib.' + fn)
+      return None
+    return fnFinderFn

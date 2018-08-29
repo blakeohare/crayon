@@ -1,13 +1,38 @@
 ﻿package org.crayonlang.interpreter;
 
+import java.lang.reflect.Method;
+
 public final class LibraryLoader {
   public static Class<?> getLibClass(String name, String version) {
     String libraryWrapperFullyQualifiedName = "org.crayonlang.libraries." + name.toLowerCase() + ".LibraryWrapper";
-	try {
-      return Class.forName(libraryWrapperFullyQualifiedName);
+    try {
+      Class<?> library = Class.forName(libraryWrapperFullyQualifiedName);
+      registerMethodLoader(library);
+      return library;
     } catch (Exception e) {
-	  // TODO: is there a way to check for a class' existence without using exceptions?
+      // TODO: is there a way to check for a class' existence without using exceptions?
       return null;
-	}
+    }
+  }
+
+  private static void registerMethodLoader(final Class<?> cls) {
+    TranslationHelper.registerFunctionFinder(new TranslationHelper.FunctionFinder() {
+      @Override
+      public Object findFunction(String name) {
+        // TODO: cache a lookup
+        try {
+          String check = "v_" + name;
+          Method[] methods = cls.getMethods();
+          for(Method m : methods) {
+            if (m.getName().equals(check)) {
+              return m;
+            }
+          }
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+        return null;
+      }
+    });
   }
 }

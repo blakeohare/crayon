@@ -210,6 +210,15 @@ C$common$registerLibraryFunction = function(libName, lro, fnName, argc) {
 	v_registerLibraryFunction(fn, lro, lookupName, argc);
 };
 
+C$common$getFunction = function(name) {
+	var p = name.split(',');
+	var check = 'v_' + p[p.length - 1];
+	if (window[check] !== undefined) {
+		return window[check];
+	}
+	return null;
+};
+
 C$common$base64ToString = function(s) {
 	return decodeURIComponent(Array.prototype.map.call(atob(s), function(c) {
 		return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)

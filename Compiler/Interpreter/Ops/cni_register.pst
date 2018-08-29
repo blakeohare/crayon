@@ -1,0 +1,8 @@
+﻿/*
+    row[0] -> CNI function ID#
+    row[1] -> arg count
+
+    string arg -> CNI function name
+*/
+nativeFp = (Func<Value, Array<Value>>) Core.GetFunction(stringArgs[pc]);
+p.cniFunctionsById[row[0]] = nativeFp;

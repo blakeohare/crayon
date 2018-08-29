@@ -17,6 +17,8 @@
     CALL_LIB_FUNCTION, // 1: lib function ID, 2: num args passed, 3: 1|0 is value used?
     CALL_LIB_FUNCTION_DYNAMIC,
     CLASS_DEFINITION, // It's complicated. See initializeClass method in MetadataInitializer.cry
+    CNI_INVOKE,
+    CNI_REGISTER,
     COMMAND_LINE_ARGS, // pushes a list of the command line args to the stack.
     CONTINUE, // 0: flag if this has been set, 1: PC offset to jump to (generally BREAK gets resolved into JUMP unless a finally block needs to run.)
     CORE_FUNCTION, // 1: function ID

@@ -46,6 +46,9 @@ namespace Pastel.Transpilers
                 case "Dictionary":
                     return "HashMap<" + this.TranslateJavaNestedType(type.Generics[0]) + ", " + this.TranslateJavaNestedType(type.Generics[1]) + ">";
 
+                case "Func":
+                    return "java.lang.reflect.Method";
+
                 case "ClassValue":
                     // java.lang.ClassValue collision
                     return "org.crayonlang.interpreter.structs.ClassValue";
@@ -72,6 +75,17 @@ namespace Pastel.Transpilers
                 default:
                     return this.TranslateJavaType(type);
             }
+        }
+
+        public override void TranslateFunctionPointerInvocation(TranspilerContext sb, FunctionPointerInvocation fpi)
+        {
+            sb.Append("((");
+            sb.Append(this.TranslateType(fpi.ResolvedType));
+            sb.Append(") TranslationHelper.invokeFunctionPointer(");
+            this.TranslateExpression(sb, fpi.Root);
+            sb.Append(", new Object[] {");
+            this.TranslateCommaDelimitedExpressions(sb, fpi.Args);
+            sb.Append("}))");
         }
 
         public override void TranslateCommandLineArgs(TranspilerContext sb)
@@ -442,6 +456,13 @@ namespace Pastel.Transpilers
         {
             sb.Append("Interpreter.");
             base.TranslateFunctionInvocationInterpreterScoped(sb, funcRef, args);
+        }
+
+        public override void TranslateGetFunction(TranspilerContext sb, Expression name)
+        {
+            sb.Append("TranslationHelper.getFunction(");
+            this.TranslateExpression(sb, name);
+            sb.Append(')');
         }
 
         public override void TranslateGetProgramData(TranspilerContext sb)

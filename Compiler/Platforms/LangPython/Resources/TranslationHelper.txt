@@ -126,3 +126,15 @@ def create_sorted_copy_of_list(items):
   items = items[:]
   items.sort()
   return items
+
+_TranslationHelper_fnFinders = []
+
+def TranslationHelper_getFunction(name):
+  for fnFinderFn in _TranslationHelper_fnFinders:
+    output = fnFinderFn(name)
+    if output != None:
+      return output
+  return None
+
+def TranslationHelper_registerFunctionFinder(fnFinderFn):
+  _TranslationHelper_fnFinders.append(fnFinderFn)

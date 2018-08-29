@@ -11,4 +11,8 @@
 			"es": "Juego",
 		}
 	},
+
+	"cni": [
+		{ "name": "lib_game_set_title", "argc": 1 }
+	]
 }

@@ -1,5 +1,12 @@
-﻿// TODO: this is extremely brittle code. Please rewrite.
+﻿/*
+    args[0]: title as a (verified) non-empty string.
+*/
+Value lib_game_set_title(Array<Value> args) {
+    Native._lib_game_set_title(((string) args[0].internalValue));
+    return VALUE_NULL;
+}
 
+// TODO: this is extremely brittle code. Please rewrite.
 int libGamePumpEvents(List<Value> output) {
     List<PlatformRelayObject> eventList = Native._lib_game_get_events_raw_list();
     output.Clear();

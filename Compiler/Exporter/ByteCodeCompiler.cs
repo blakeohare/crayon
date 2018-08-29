@@ -12,6 +12,9 @@ namespace Exporter
     {
         public ByteBuffer GenerateByteCode(ParserContext parser, IList<TopLevelEntity> lines)
         {
+            // This has to go first since it allocates the CNI function ID's
+            ByteBuffer buildCniTable = this.BuildCniTable(parser);
+
             ByteBuffer userCode = new ByteBuffer();
 
             this.CompileTopLevelEntities(parser, userCode, lines);
@@ -34,6 +37,7 @@ namespace Exporter
             header.Concat(fileContent);
             header.Concat(switchStatements);
             header.Concat(buildLibraryDeclarations);
+            header.Concat(buildCniTable);
 
             // These contain data about absolute PC values. Once those are finalized, come back and fill these in.
             header.Add(null, OpCode.ESF_LOOKUP); // offsets to catch and finally blocks
@@ -77,6 +81,21 @@ namespace Exporter
             output.SetArgs(esfPc + 1, valueStackDepthOps);
 
             return output;
+        }
+
+        private ByteBuffer BuildCniTable(ParserContext parser)
+        {
+            int idAlloc = 1;
+            ByteBuffer buffer = new ByteBuffer();
+            foreach (CompilationScope scope in parser.GetAllCompilationScopes())
+            {
+                foreach (CniFunction cniFunction in scope.CniFunctionsByName.Keys.OrderBy(k => k).Select(k => scope.CniFunctionsByName[k]))
+                {
+                    cniFunction.ID = idAlloc++;
+                    buffer.Add(null, OpCode.CNI_REGISTER, cniFunction.ByteCodeLookupKey, cniFunction.ID, cniFunction.ArgCount);
+                }
+            }
+            return buffer;
         }
 
         private ByteBuffer BuildLibraryDeclarations(ParserContext parser)
@@ -1110,7 +1129,18 @@ namespace Exporter
             else if (expr is IsComparison) this.CompileIsComparison(parser, buffer, (IsComparison)expr, outputUsed);
             else if (expr is ClassReferenceLiteral) this.CompileClassReferenceLiteral(parser, buffer, (ClassReferenceLiteral)expr, outputUsed);
             else if (expr is Lambda) this.CompileLambda(parser, buffer, (Lambda)expr, outputUsed);
+            else if (expr is CniFunctionInvocation) this.CompileCniFunctionInvocation(parser, buffer, (CniFunctionInvocation)expr, outputUsed);
             else throw new NotImplementedException();
+        }
+
+        private void CompileCniFunctionInvocation(ParserContext parser, ByteBuffer buffer, CniFunctionInvocation cniFuncInvocation, bool outputUsed)
+        {
+            CniFunction cniFunc = cniFuncInvocation.CniFunction;
+            foreach (Expression arg in cniFuncInvocation.Args)
+            {
+                this.CompileExpression(parser, buffer, arg, true);
+            }
+            buffer.Add(cniFuncInvocation.FirstToken, OpCode.CNI_INVOKE, cniFunc.ID, cniFunc.ArgCount, outputUsed ? 1 : 0);
         }
 
         private void CompileLambda(ParserContext parser, ByteBuffer buffer, Lambda lambda, bool outputUsed)
@@ -1156,6 +1186,12 @@ namespace Exporter
             buffer.Add(classRef.FirstToken, OpCode.LITERAL, parser.GetClassRefConstant(classRef.ClassDefinition));
         }
 
+        private static void EnsureUsed(Node item, bool outputUsed)
+        {
+            EnsureUsed(item.FirstToken, outputUsed);
+        }
+
+        // TODO: delete this function and merge it into the above
         private static void EnsureUsed(Token token, bool outputUsed)
         {
             // TODO: maybe reword the expression to something along the lines of "use an if statement" if it's a ternary
@@ -1567,7 +1603,6 @@ namespace Exporter
             LibraryMetadata library = libFunc.TopLevelEntity.Library;
             int libraryRefId = parser.LibraryManager.GetLibraryReferenceIdFromKey(library.CanonicalKey);
             int functionNameReferenceId = parser.LiteralLookup.GetLibFuncRefId(libFunc.Name);
-
             buffer.Add(token,
                 OpCode.CALL_LIB_FUNCTION_DYNAMIC,
                 functionNameReferenceId,
