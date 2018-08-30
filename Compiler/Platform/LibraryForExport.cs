@@ -12,5 +12,10 @@ namespace Platform
         public Multimap<string, ExportEntity> ExportEntities { get; set; }
         public string[] DotNetLibs { get; set; }
         public Dictionary<string, string> LibProjectNamesAndGuids { get; set; }
+
+        public override string ToString()
+        {
+            return "LibraryForExport: <" + this.Name + ">";
+        }
     }
 }
