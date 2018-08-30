@@ -24,7 +24,7 @@ namespace UserData {
         if (FileIOCommon.FiocHelper.IS_WINDOWS) {
             return FileIOCommon.FiocHelper.USER_DIRECTORY.join('\\') + '\\' + Core.getProjectId();
         } else if ($$$('isJavaScript') || $$$('isAndroid')) {
-            return $$lib_userdata_getProjectSandboxDirectory(Core.getProjectId().lower());
+            return $lib_userdata_getProjectSandboxDirectory(Core.getProjectId().lower());
         } else {
             return '~/.' + Core.getProjectId().lower();
         }

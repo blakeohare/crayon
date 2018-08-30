@@ -1,0 +1,15 @@
+/*
+    args[0] -> (ObjectInstance) parent
+    args[1] -> (List<Value<ObjectInstance>>) children in expected order
+*/
+Value lib_nori_ensureParentLinkOrder(Array<Value> args) {
+    ObjectInstance parentObj = (ObjectInstance) args[0].internalValue;
+    List<Value> children = (List<Value>) args[1].internalValue;
+    int childrenCount = children.Size();
+    Array<object> childrenElements = new Array<object>(childrenCount);
+    for (int i = 0; i < childrenCount; i += 1) {
+        childrenElements[i] = Core.ForceParens((ObjectInstance)children[i].internalValue).nativeData[0];
+    }
+    Native._lib_nori_ensureParentLinkOrder(parentObj.nativeData[0], childrenElements);
+    return VALUE_NULL;
+}

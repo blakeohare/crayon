@@ -1,8 +1,0 @@
-/*
-    args[0] -> (ObjectInstance) window
-*/
-Value lib_nori_function_closeWindow(Array<Value> args) {
-    ObjectInstance window = (ObjectInstance) args[0].internalValue;
-    Native._lib_nori_closeWindow(window.nativeData[0]);
-    return VALUE_NULL;
-}

@@ -1,0 +1,37 @@
+﻿/*
+    args[0] -> matrix
+    args[1] -> column
+    args[2] -> row
+
+*/
+Value lib_matrices_getValue(Array<Value> args) {
+
+    ObjectInstance obj = (ObjectInstance) args[0].internalValue;
+    Array<object> nd = obj.nativeData;
+    if (args[1].type != Types.INTEGER || args[2].type != Types.INTEGER) {
+        nd[5] = "Invalid coordinates";
+        return VALUE_NULL;
+    }
+
+    int x = (int) args[1].internalValue;
+    int y = (int) args[2].internalValue;
+    int width = (int) nd[1];
+    int height = (int) nd[2];
+    if (x < 0 || x >= width || y < 0 || y >= height) {
+        nd[5] = "Coordinates out of range.";
+        return VALUE_NULL;
+    }
+
+    Array<Value> valueArray = (Array<Value>)nd[3];
+    if (!(bool) nd[4]) {
+        Array<double> data = (Array<double>) nd[0];
+        int length = width * height;
+        int i = 0;
+        while (i < length) {
+            valueArray[i] = buildFloat(data[i]);
+            i += 1;
+        }
+    }
+
+    return valueArray[width * y + x];
+}

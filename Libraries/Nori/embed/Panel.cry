@@ -22,15 +22,15 @@ namespace Nori {
             if (!element._isVirtual) {
                 ni = new Core.Object();
                 element._nativeInstance = ni;
-                $$lib_nori_instantiateElement(element._typeId, ni, element._properties);
+                $lib_nori_instantiateElement(element._typeId, ni, element._properties);
                 if (element._handlers != null) {
                     for (type : element._handlers.keys()) {
                         entry = element._handlers[type];
-                        $$lib_nori_registerHandler(ni, element._typeId, type, entry[0]);
+                        $lib_nori_registerHandler(ni, element._typeId, type, entry[0]);
                     }
                 }
                 if (!element._isWindowRoot) {
-                    $$lib_nori_addChildToParent(ni, element._viewParent._nativeInstance);
+                    $lib_nori_addChildToParent(ni, element._viewParent._nativeInstance);
                 }
             }
 

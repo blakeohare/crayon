@@ -2,5 +2,17 @@
 	"name": "Matrices",
 	"author": "Blake O'Hare",
 	"documentation": "http://crayonlang.org/docs/0.2.0/matrices",
-	"description": "Library to perform basic operations on matrices."
+	"description": "Library to perform basic operations on matrices.",
+	
+	"cni": [
+		{ "name": "lib_matrices_addMatrix", "argc": 5 },
+		{ "name": "lib_matrices_copyFrom", "argc": 3 },
+		{ "name": "lib_matrices_getError", "argc": 1 },
+		{ "name": "lib_matrices_getValue", "argc": 3 },
+		{ "name": "lib_matrices_initMatrix", "argc": 3 },
+		{ "name": "lib_matrices_multiplyMatrix", "argc": 5 },
+		{ "name": "lib_matrices_multiplyScalar", "argc": 4 },
+		{ "name": "lib_matrices_setValue", "argc": 4 },
+		{ "name": "lib_matrices_toVector", "argc": 2 }
+	]
 }

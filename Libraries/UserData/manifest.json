@@ -2,5 +2,9 @@
 	"name": "UserData",
 	"author": "Blake O'Hare",
 	"documentation": "http://crayonlang.org/docs/0.2.0/userdata",
-	"description": "Basic File IO with local disk (or virtualized local disk) and persistent user data location."
+	"description": "Basic File IO with local disk (or virtualized local disk) and persistent user data location.",
+	
+	"cni": [
+		{ "name": "lib_userdata_getProjectSandboxDirectory", "argc": 1 }
+	]
 }

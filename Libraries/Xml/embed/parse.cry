@@ -2,7 +2,7 @@
 
     function parse(string, options = 0) {
         output = [];
-        error = $$lib_xml_parse(string, output, XmlElement._DUMMY);
+        error = $lib_xml_parse(string, output, XmlElement._DUMMY);
         if (error != null) {
             if ((options & XmlOption.FAIL_SILENTLY) != 0) return null;
             throw new Exception(error);

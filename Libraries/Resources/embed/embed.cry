@@ -5,7 +5,7 @@
         node = _getNode(filepath);
         if (node == null) throw new Core.Exception("Resource not found: '" + filepath + "'");
         if (node.type != ResourceNodeType.TEXT) throw new Core.Exception("'" + filepath + "' is not a text file.");
-        return $$lib_resources_readText(node.realPath);
+        return $lib_resources_readText(node.realPath);
     }
 
     function fileExists(filepath) {
@@ -56,7 +56,7 @@
                 [3n + 1] -> type (int) value in ResourceNodeType enum
                 [3n + 2] -> internal reference path
         */
-        data = $$lib_resources_getResourceData();
+        data = $lib_resources_getResourceData();
         i = 0;
         while (i < data.length) {
             path = data[i++];

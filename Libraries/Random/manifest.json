@@ -11,4 +11,10 @@
 			"es": "Aleatorio",
 		}
 	},
+	
+	"cni": [
+		{ "name": "lib_random_random_bool", "argc": 0 },
+		{ "name": "lib_random_random_float", "argc": 0 },
+		{ "name": "lib_random_random_int", "argc": 2 }
+	]
 }

@@ -1,0 +1,35 @@
+﻿/*
+    args[0] -> matrix
+    args[1] -> width
+    args[2] -> height
+
+    Native data array already allocated but unpopulated.
+
+*/
+Value lib_matrices_initMatrix(Array<Value> args) {
+
+    ObjectInstance obj = (ObjectInstance) args[0].internalValue;
+    Array<object> nd = obj.nativeData;
+    if (args[1].type != Types.INTEGER || args[2].type != Types.INTEGER) {
+        nd[5] = "Width and height must be integers.";
+        return VALUE_TRUE;
+    }
+
+    int width = (int)args[1].internalValue;
+    int height = (int)args[2].internalValue;
+    int size = width * height;
+    Array<double> data = new Array<double>(size);
+    nd[0] = data;
+    nd[1] = width;
+    nd[2] = height;
+    nd[3] = new Array<Value>(size);
+    nd[4] = false;
+    nd[5] = "";
+    nd[6] = new Array<double>(size);
+
+    for (int i = 0; i < size; i += 1) {
+        data[i] = 0.0;
+    }
+
+    return VALUE_FALSE;
+}

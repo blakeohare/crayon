@@ -1,4 +1,4 @@
-﻿string lib_xml_parse(
+﻿string lib_xml_parseImpl(
     string input,
     Array<int> indexPtr,
     List<Value> output,

@@ -90,7 +90,7 @@ namespace Nori {
         function _setValue(key, value) {
             this._properties[key] = value;
             if (this._nativeInstance != null) {
-                $$lib_nori_invalidateElementProperty(this._typeId, this._nativeInstance, key, value);
+                $lib_nori_invalidateElementProperty(this._typeId, this._nativeInstance, key, value);
             }
             return this;
         }
@@ -112,7 +112,7 @@ namespace Nori {
                 this._window._handlers[id] = [type, this];
             }
             if (this._nativeInstance != null) {
-                $$lib_nori_registerHandler(this._nativeInstance, this._typeId, type, entry[0]);
+                $lib_nori_registerHandler(this._nativeInstance, this._typeId, type, entry[0]);
             }
             return this;
         }

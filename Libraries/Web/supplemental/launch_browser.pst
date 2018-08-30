@@ -1,0 +1,8 @@
+﻿/*
+    Launches a local browser tab pointed at the given URL.
+*/
+Value lib_web_launch_browser(Array<Value> args) {
+    string url = (string) args[0].internalValue;
+    Native._lib_web_launchBrowser(url);
+    return VALUE_NULL;
+}

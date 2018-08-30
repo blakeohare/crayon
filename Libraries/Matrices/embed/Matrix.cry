@@ -18,7 +18,7 @@
             this.width = width;
             this.height = height;
             $$$('allocNativeData', this, 7);
-            if ($$lib_matrices_initMatrix(this, width, height)) this.argError();
+            if ($lib_matrices_initMatrix(this, width, height)) this.argError();
         }
 
         static function newIdentityMatrix(size) {
@@ -31,37 +31,37 @@
         }
 
         function getValue(row, col) {
-            return $$lib_matrices_getValue(this, col, row) ?? this.argError();
+            return $lib_matrices_getValue(this, col, row) ?? this.argError();
         }
 
         function setValue(row, col, value) {
-            return $$lib_matrices_setValue(this, col, row, value) ?? this.argError();
+            return $lib_matrices_setValue(this, col, row, value) ?? this.argError();
         }
 
         function multiplyByScalar(value, output = null) {
-            return $$lib_matrices_multiplyScalar(this, value, output, output is Matrices.Matrix) ?? this.argError();
+            return $lib_matrices_multiplyScalar(this, value, output, output is Matrices.Matrix) ?? this.argError();
         }
 
         function addMatrix(other, output = null) {
-            return $$lib_matrices_addMatrix(this, other, other is Matrices.Matrix, output, output is Matrices.Matrix) ?? this.argError();
+            return $lib_matrices_addMatrix(this, other, other is Matrices.Matrix, output, output is Matrices.Matrix) ?? this.argError();
         }
 
         function multiplyByMatrix(other, output = null) {
-            return $$lib_matrices_multiplyMatrix(this, other, other is Matrices.Matrix, output, output is Matrices.Matrix) ?? this.argError();
+            return $lib_matrices_multiplyMatrix(this, other, other is Matrices.Matrix, output, output is Matrices.Matrix) ?? this.argError();
         }
 
         function toVector(output) {
             while (output.length < this.width * this.height) {
                 output.add(0.0);
             }
-            output[0] = $$lib_matrices_getValue(this, 0, 0);
-            return $$lib_matrices_toVector(this, output) ?? this.argError();
+            output[0] = $lib_matrices_getValue(this, 0, 0);
+            return $lib_matrices_toVector(this, output) ?? this.argError();
         }
 
         function copyFrom(other) {
-            return $$lib_matrices_copyFrom(this, other, other is Matrices.Matrix) ?? this.argError();
+            return $lib_matrices_copyFrom(this, other, other is Matrices.Matrix) ?? this.argError();
         }
 
-        function argError() { throw new Core.InvalidArgumentException($$lib_matrices_getError(this)); }
+        function argError() { throw new Core.InvalidArgumentException($lib_matrices_getError(this)); }
     }
 }

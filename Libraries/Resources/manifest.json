@@ -2,5 +2,10 @@
 	"name": "Resources",
 	"author": "Blake O'Hare",
 	"documentation": "http://crayonlang.org/docs/0.2.0/resources",
-	"description": "Library for reading bundled text resources."
+	"description": "Library for reading bundled text resources.",
+	
+	"cni": [
+		{ "name": "lib_resources_getResourceData", "argc": 0 },
+		{ "name": "lib_resources_readText", "argc": 1 }
+	]
 }

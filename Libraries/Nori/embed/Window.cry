@@ -18,7 +18,7 @@ namespace Nori {
         field _childrenHandlers = {};
 
         static constructor() {
-            $$lib_nori_registerHandlerCallback(Window.invokeHandler, Window.HANDLER_ARGS);
+            $lib_nori_registerHandlerCallback(Window.invokeHandler, Window.HANDLER_ARGS);
         }
 
         constructor() {
@@ -48,13 +48,13 @@ namespace Nori {
 
             if (this._nativeInstance == null) {
                 this._nativeInstance = new Core.Object();
-                $$lib_nori_instantiateWindow(this._nativeInstance, this._properties);
+                $lib_nori_instantiateWindow(this._nativeInstance, this._properties);
             }
 
             Panel.instantiateTree(this._root);
             this._isShown = true;
             this._updateLayout();
-            $$lib_nori_showWindow(this._nativeInstance, this._properties, this._root._nativeInstance);
+            $lib_nori_showWindow(this._nativeInstance, this._properties, this._root._nativeInstance);
             return this;
         }
 
@@ -67,7 +67,7 @@ namespace Nori {
                 }
             }
 
-            $$lib_nori_closeWindow(this._nativeInstance);
+            $lib_nori_closeWindow(this._nativeInstance);
             this._isShown = false;
             return this;
         }
@@ -79,7 +79,7 @@ namespace Nori {
         }
 
         function _invalidate(property) {
-            return $$lib_nori_invalidateWindowProperty(this._nativeInstance, property, this._properties[property]);
+            return $lib_nori_invalidateWindowProperty(this._nativeInstance, property, this._properties[property]);
         }
 
         static field NON_VIRTUALS_REUSABLE = [];
@@ -125,7 +125,7 @@ namespace Nori {
                 types.add(element._typeId);
             }
             nonVirtuals.clear();
-            $$lib_nori_updateLayout(nativeElements, properties, types);
+            $lib_nori_updateLayout(nativeElements, properties, types);
         }
 
         function _updateHierarchy() {
@@ -145,7 +145,7 @@ namespace Nori {
                         renderedChildren.add(child._nativeInstance);
                     }
                 }
-                $$lib_nori_ensureParentLinkOrder(viewRoot._nativeInstance, renderedChildren);
+                $lib_nori_ensureParentLinkOrder(viewRoot._nativeInstance, renderedChildren);
 
                 viewRootMembers.clear();
                 renderedChildren.clear();

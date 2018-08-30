@@ -1,0 +1,10 @@
+/*
+    args[0] -> matrix
+
+    There should be an error message string in nativeData[5]
+
+*/
+Value lib_matrices_getError(Array<Value> args) {
+    ObjectInstance obj = (ObjectInstance) args[0].internalValue;
+    return buildString((string) obj.nativeData[5]);
+}

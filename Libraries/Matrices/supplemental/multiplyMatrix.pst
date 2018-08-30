@@ -1,0 +1,94 @@
+﻿/*
+    args[0] -> matrix 1
+    args[1] -> matrix 2
+    args[2] -> matrix 2 is valid
+    args[3] -> output matrix
+    args[4] -> output matrix is valid
+
+*/
+Value lib_matrices_multiplyMatrix(Array<Value> args) {
+
+    ObjectInstance obj = (ObjectInstance) args[0].internalValue;
+    Array<object> nd1 = obj.nativeData;
+
+    if (!(bool) args[2].internalValue) {
+        nd1[5] = "argument must be a matrix";
+        return VALUE_NULL;
+    }
+    obj = (ObjectInstance) args[1].internalValue;
+    Array<object> nd2 = obj.nativeData;
+
+    bool isInline = false;
+    if (args[3].type == Types.NULL) {
+        isInline = true;
+    } else if (!(bool) args[4].internalValue) {
+        nd1[5] = "output matrix was unrecognized type.";
+        return VALUE_NULL;
+    }
+
+    int m1width = (int) nd1[1];
+    int m1height = (int) nd1[2];
+    int m2width = (int) nd2[1];
+    int m2height = (int) nd2[2];
+    int m3width = m2width;
+    int m3height = m1height;
+
+    if (m1width != m2height) {
+        nd1[5] = "Matrix size mismatch";
+        return VALUE_NULL;
+    }
+
+    Array<double> m1data = (Array<double>) nd1[0];
+    Array<double> m2data = (Array<double>) nd2[0];
+
+    Array<object> nd3 = null;
+
+    if (isInline) {
+        nd3 = nd1;
+        if (m2width != m2height) {
+            nd1[5] = "You can only multiply a matrix inline with a square matrix.";
+            return VALUE_NULL;
+        }
+    } else {
+        obj = (ObjectInstance) args[3].internalValue;
+        nd3 = obj.nativeData;
+        if ((int) nd3[1] != m3width || (int) nd3[2] != m3height) {
+            nd1[5] = "Output matrix is incorrect size.";
+            return VALUE_NULL;
+        }
+    }
+    nd3[4] = true;
+    Array<double> m3data = (Array<double>) nd3[6];
+
+    int x = 0;
+    int y = 0;
+    int i = 0;
+
+    int m1index = 0;
+    int m2index = 0;
+    int m3index = 0;
+
+    double value = 0.0;
+
+    for (y = 0; y < m3height; y += 1) {
+        for (x = 0; x < m3width; x += 1) {
+            value = 0.0;
+            m1index = y * m1height;
+            m2index = x;
+            for (i = 0; i < m1width; i += 1) {
+                value += m1data[m1index] * m2data[m2index];
+                m1index += 1;
+                m2index += m2width;
+            }
+            m3data[m3index] = value;
+            m3index += 1;
+        }
+    }
+
+    // Data is done being written to the back buffer. Swap buffers.
+    object t = nd3[0];
+    nd3[0] = nd3[6];
+    nd3[6] = t;
+
+    return args[0];
+}

@@ -12,23 +12,23 @@
         }
 
         function getInteger(min = null, max = null) {
-            if (min == null) return $$lib_srandom_getInteger(this._activeSeed);
-            if (max == null) return $$lib_srandom_getInteger(this._activeSeed) % min;
-            return ($$lib_srandom_getInteger(this._activeSeed) % (max - min)) + min;
+            if (min == null) return $lib_srandom_getInteger(this._activeSeed);
+            if (max == null) return $lib_srandom_getInteger(this._activeSeed) % min;
+            return ($lib_srandom_getInteger(this._activeSeed) % (max - min)) + min;
         }
 
         function getBoolean() {
-            return $$lib_srandom_getBoolean(this._activeSeed);
+            return $lib_srandom_getBoolean(this._activeSeed);
         }
 
         function getFloat() {
-            return $$lib_srandom_getFloat(this._activeSeed);
+            return $lib_srandom_getFloat(this._activeSeed);
         }
 
         function shuffle(list) {
             length = list.length;
             for (i = 0; i < length; ++i) {
-                index = $$lib_srandom_getInteger(this._activeSeed) % length;
+                index = $lib_srandom_getInteger(this._activeSeed) % length;
                 if (i != index) {
                     t = list[i];
                     list[i] = list[index];
@@ -38,7 +38,7 @@
         }
 
         function choice(list) {
-            return list[$$lib_srandom_getInteger(this._activeSeed) % list.length];
+            return list[$lib_srandom_getInteger(this._activeSeed) % list.length];
         }
     }
 }

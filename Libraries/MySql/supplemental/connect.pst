@@ -1,0 +1,35 @@
+﻿/*
+    args[0] -> Connection object. Apply persistent connection to native_data[0].
+    args[1] -> string: hostname
+    args[2] -> string: username
+    args[3] -> string: password
+    args[4] -> string: database
+
+    Correct types ensured beforehand.
+
+    Error is returned as a string
+*/
+Value lib_mysql_connect(Array<Value> args) {
+
+    Value arg1 = args[0];
+    Value arg2 = args[1];
+    Value arg3 = args[2];
+    Value arg4 = args[3];
+    Value arg5 = args[4];
+
+    object object1 = Native._lib_mysql_connect(
+        Core.StringBuffer16,
+        ((string) arg2.internalValue),
+        ((string) arg3.internalValue),
+        ((string) arg4.internalValue),
+        ((string) arg5.internalValue));
+    string string1 = Core.StringBuffer16[0];
+    if (string1 == null) {
+        ObjectInstance objInstance1 = (ObjectInstance) arg1.internalValue;
+        objInstance1.nativeData = new Array<object>(1);
+        objInstance1.nativeData[0] = object1;
+        return VALUE_NULL;
+    }
+
+    return buildString(string1);
+}

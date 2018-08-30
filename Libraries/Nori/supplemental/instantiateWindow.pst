@@ -1,0 +1,16 @@
+/*
+    args[0] -> (ObjectInstance) window native instance, not populated
+    args[1] -> (List<Value>) properties
+*/
+Value lib_nori_instantiateWindow(Array<Value> args) {
+    ObjectInstance window = (ObjectInstance) args[0].internalValue;
+    List<Value> properties = (List<Value>) args[1].internalValue;
+    List<Value> size = (List<Value>) properties[1].internalValue;
+    WindowProperties unboxed = new WindowProperties(
+        (string) properties[0].internalValue,
+        (int) size[0].internalValue,
+        (int) size[1].internalValue);
+    window.nativeData = new Array<object>(1);
+    window.nativeData[0] = Native._lib_nori_instantiateWindow(unboxed);
+    return VALUE_NULL;
+}

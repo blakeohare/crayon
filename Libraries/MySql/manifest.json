@@ -2,5 +2,12 @@
 	"name": "MySql",
 	"author": "Blake O'Hare",
 	"documentation": "http://crayonlang.org/docs/0.2.0/mysql",
-	"description": "Library for interacting with a MySQL database."
+	"description": "Library for interacting with a MySQL database.",
+	
+	"cni": [
+		{ "name": "lib_mysql_connect", "argc": 5 },
+		{ "name": "lib_mysql_resultGetNext", "argc": 4 },
+		{ "name": "lib_mysql_runQuery", "argc": 5 },
+		{ "name": "lib_mysql_sanitize", "argc": 2 }
+	]
 }

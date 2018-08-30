@@ -1,0 +1,9 @@
+﻿/*
+    Returns a random boolean.
+*/
+Value lib_random_random_bool(Array<Value> args) {
+    if (Core.RandomFloat() < 0.5) {
+        return VALUE_TRUE;
+    }
+    return VALUE_FALSE;
+}
