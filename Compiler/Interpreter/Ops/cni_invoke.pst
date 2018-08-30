@@ -7,29 +7,34 @@
 
 */
 nativeFp = p.cniFunctionsById[row[0]];
-len = row[1];
-valueStackSize -= len;
 
-valueArray1 = new Array<Value>(len);
-for (i = 0; i < len; i += 1) {
-    valueArray1[i] = valueStack[valueStackSize + i];
-}
+if (nativeFp == null) {
+    hasInterrupt = EX_InvalidInvocation(ec, "CNI method could not be found.");
+} else {
+    len = row[1];
+    valueStackSize -= len;
 
-prepareToSuspend(ec, stack, valueStackSize, pc);
-
-value = nativeFp(valueArray1);
-
-if (ec.executionStateChange) {
-    ec.executionStateChange = false;
-    // TODO: declare constants
-    if (ec.executionStateChangeCommand == 1) {
-        // Suspend VM
-        return suspendInterpreter();
+    valueArray1 = new Array<Value>(len);
+    for (i = 0; i < len; i += 1) {
+        valueArray1[i] = valueStack[valueStackSize + i];
     }
-}
 
-if (row[2] == 1) {
-    @import("ValueStackCapacityCheck.pst");
-    valueStack[valueStackSize] = value;
-    valueStackSize += 1;
+    prepareToSuspend(ec, stack, valueStackSize, pc);
+
+    value = nativeFp(valueArray1);
+
+    if (ec.executionStateChange) {
+        ec.executionStateChange = false;
+        // TODO: declare constants
+        if (ec.executionStateChangeCommand == 1) {
+            // Suspend VM
+            return suspendInterpreter();
+        }
+    }
+
+    if (row[2] == 1) {
+        @import("ValueStackCapacityCheck.pst");
+        valueStack[valueStackSize] = value;
+        valueStackSize += 1;
+    }
 }
