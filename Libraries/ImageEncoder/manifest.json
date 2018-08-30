@@ -2,5 +2,9 @@
 	"name": "ImageEncoder",
 	"author": "Blake O'Hare",
 	"documentation": "http://crayonlang.org/docs/0.2.0/imageencoder",
-	"description": "Library for encoding ImageResources to file formats."
+	"description": "Library for encoding ImageResources to file formats.",
+
+	"cni": [
+		{ "name": "lib_imageencoder_encodeToBytes", "argc": 3 }
+	]	
 }

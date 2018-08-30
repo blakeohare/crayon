@@ -2,5 +2,9 @@
 	"name": "Json",
 	"author": "Blake O'Hare",
 	"documentation": "http://crayonlang.org/docs/0.2.0/json",
-	"description": "Library for parsing JSON strings into objects."
+	"description": "Library for parsing JSON strings into objects.",
+	
+	"cni": [
+		{ "name": "lib_json_parse", "argc": 1 }
+	]
 }

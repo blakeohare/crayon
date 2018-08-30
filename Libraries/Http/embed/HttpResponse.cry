@@ -17,7 +17,7 @@
             response = new HttpResponse();
             output = [];
             headersOut = [];
-            $$lib_http_populateResponse(request, response, output, headersOut);
+            $lib_http_populateResponse(request, response, output, headersOut);
             for (i = 0; i < headersOut.length; i += 2) {
                 name = headersOut[i].trim();
                 key = name.lower();
@@ -58,7 +58,7 @@
             if (this._isBinary) {
                 output = [];
                 // just returns output
-                return $$lib_http_getResponseBytes(this, output);
+                return $lib_http_getResponseBytes(this, output);
             }
             return this._content;
         }

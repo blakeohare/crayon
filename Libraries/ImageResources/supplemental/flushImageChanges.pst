@@ -7,7 +7,7 @@
 
     If present, flush the changes in the session to the bitmap and then clear the session instance.
 */
-Value lib_imageresources_function_flushImageChanges(Array<Value> args) {
+Value lib_imageresources_flushImageChanges(Array<Value> args) {
     if (@ext_boolean("IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS")) {
         ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
         Array<object> objArray1 = objInstance1.nativeData;

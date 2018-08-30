@@ -37,7 +37,7 @@ namespace ImageResources {
             }
 
             if (instruction != NativeImageDataConstructionType.BLANK) {
-                $$lib_imageresources_nativeImageDataInit(this, this.width, this.height);
+                $lib_imageresources_nativeImageDataInit(this, this.width, this.height);
                 if (instruction == NativeImageDataConstructionType.CLONE) {
                     this.revisionId--; // since this is the constructor prevent the first revision ID from being 1.
                     this.lock();
@@ -60,7 +60,7 @@ namespace ImageResources {
         }
 
         function unlock() {
-            $$lib_imageresources_flushImageChanges(this);
+            $lib_imageresources_flushImageChanges(this);
             this._locked = false;
         }
 
@@ -107,7 +107,7 @@ namespace ImageResources {
             if (w == 0 || h == 0) return;
 
             // initializes the pixel edit session in nativeData[3] if not present
-            $$lib_imageresources_blit(this, other, targetLeft, targetTop, sourceLeft, sourceTop, w, h);
+            $lib_imageresources_blit(this, other, targetLeft, targetTop, sourceLeft, sourceTop, w, h);
         }
 
         function verifyUnlocked() {

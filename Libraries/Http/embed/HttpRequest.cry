@@ -51,7 +51,7 @@
 
         function setContentBytes(value, contentType = null) {
             obj = new Object();
-            if (!$$lib_http_fastEnsureAllBytes(value, obj)) Core.fail("Input must be a list of byte values");
+            if (!$lib_http_fastEnsureAllBytes(value, obj)) Core.fail("Input must be a list of byte values");
 
             this._content = obj;
             this._contentIsBinary = true;
@@ -103,7 +103,7 @@
                 this._headers.add('Content-Type', this._contentType);
             }
 
-            $$lib_http_sendRequest(
+            $lib_http_sendRequest(
                 this,
                 isAsync,
                 method,
@@ -124,7 +124,7 @@
                 Core.sleep(0.001);
             }
 
-            if ($$lib_http_pollRequest(this)) { // updates the native data
+            if ($lib_http_pollRequest(this)) { // updates the native data
                 this._isReady = true;
             }
 

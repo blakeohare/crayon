@@ -10,7 +10,7 @@
     arg 7: width (int)
     arg 8: height (int)
 */
-Value lib_imageresources_function_blit(Array<Value> args) {
+Value lib_imageresources_blit(Array<Value> args) {
     object object1 = null;
     ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
     ObjectInstance objInstance2 = ((ObjectInstance) args[1].internalValue);

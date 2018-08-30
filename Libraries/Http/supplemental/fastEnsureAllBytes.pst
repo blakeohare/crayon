@@ -9,7 +9,7 @@
     return true upon success.
 */
 
-Value lib_http_function_fastEnsureAllBytes(Array<Value> args) {
+Value lib_http_fastEnsureAllBytes(Array<Value> args) {
 
     if (args[0].type == Types.LIST) {
         List<Value> list1 = ((List<Value>) args[0].internalValue);

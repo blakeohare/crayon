@@ -7,7 +7,7 @@
     args[1]: native image data object instance
     args[2]: single-item list for boolean value output
 */
-Value lib_imageresources_function_checkLoaderIsDone(Array<Value> args) {
+Value lib_imageresources_checkLoaderIsDone(Array<Value> args) {
     ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
     ObjectInstance objInstance2 = (ObjectInstance) args[1].internalValue;
     List<Value> list1 = (List<Value>) args[2].internalValue;

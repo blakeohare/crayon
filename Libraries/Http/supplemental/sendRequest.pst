@@ -13,7 +13,7 @@
         1 -> response should be a byte array
 */
 
-Value lib_http_function_sendRequest(Array<Value> args) {
+Value lib_http_sendRequest(Array<Value> args) {
     Value body = args[5];
     ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
     Array<object> objArray1 = new Array<object>(3);

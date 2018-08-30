@@ -2,5 +2,9 @@
 	"name": "HttpServer",
 	"author": "Blake O'Hare",
 	"documentation": "http://crayonlang.org/docs/0.2.0/httpserver",
-	"description": "Library for running an HTTP Server."
+	"description": "Library for running an HTTP Server.",
+	
+	"cni": [
+		{ "name": "lib_httpserver_getRequest", "argc": 1 }
+	]
 }

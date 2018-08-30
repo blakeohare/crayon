@@ -37,7 +37,7 @@ namespace ImageWebResources {
             this._sent = true;
 
             if ($$$('isJavaScript')) {
-                $$lib_imagewebresources_jsDownload(this._request, this);
+                $lib_imagewebresources_jsDownload(this._request, this);
                 while (!this.isDone()) {
                     Core.sleep(0.001);
                 }
@@ -54,7 +54,7 @@ namespace ImageWebResources {
             this._sent = true;
 
             if ($$$('isJavaScript')) {
-                $$lib_imagewebresources_jsDownload(this._request, this);
+                $lib_imagewebresources_jsDownload(this._request, this);
             } else {
                 this._request.sendAsync();
             }
@@ -70,7 +70,7 @@ namespace ImageWebResources {
                     Core.sleep(0.001);
                     this._jsIsDoneCounter = 0;
                 }
-                this._isDone = $$lib_imagewebresources_jsPoll(this);
+                this._isDone = $lib_imagewebresources_jsPoll(this);
             } else {
                 this._isDone = this._request.isDone();
             }
@@ -93,10 +93,10 @@ namespace ImageWebResources {
             // TODO: throw exceptions once exception support is available.
 
             if ($$$('isJavaScript')) {
-                success = $$lib_imagewebresources_jsGetImage(this, imgdata);
+                success = $lib_imagewebresources_jsGetImage(this, imgdata);
             } else {
                 response = this._request.getResponse();
-                success = $$lib_imagewebresources_bytesToImage(response, imgdata);
+                success = $lib_imagewebresources_bytesToImage(response, imgdata);
             }
 
             Core.assert(success, "Could not download image.");

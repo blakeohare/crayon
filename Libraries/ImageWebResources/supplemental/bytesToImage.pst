@@ -11,7 +11,7 @@
     returns true on success.
 */
 
-Value lib_imagewebresources_function_bytesToImage(Array<Value> args) {
+Value lib_imagewebresources_bytesToImage(Array<Value> args) {
 
     // Get the byte array
     ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;

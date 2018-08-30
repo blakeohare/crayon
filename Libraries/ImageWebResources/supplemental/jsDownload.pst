@@ -13,7 +13,7 @@
     output is not used.
 */
 
-Value lib_imagewebresources_function_jsDownload(Array<Value> args) {
+Value lib_imagewebresources_jsDownload(Array<Value> args) {
 
     if (@ext_boolean("IS_JAVASCRIPT")) {
         string url = (string) args[0].internalValue;

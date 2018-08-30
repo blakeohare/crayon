@@ -10,7 +10,7 @@
     args[1]: Generated filename
     args[2]: Status out. Reverse this list upon success.
 */
-Value lib_imageresources_function_loadSynchronous(Array<Value> args) {
+Value lib_imageresources_loadSynchronous(Array<Value> args) {
     if (!@ext_boolean("IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM")) {
         ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
         string filename = (string) args[1].internalValue;

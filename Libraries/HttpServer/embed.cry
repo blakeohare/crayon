@@ -7,7 +7,7 @@
             vars[2] -> ip
         */
         vars = [];
-        $$lib_httpserver_getRequest(vars);
+        $lib_httpserver_getRequest(vars);
         return new HttpRequest(vars);
     }
 

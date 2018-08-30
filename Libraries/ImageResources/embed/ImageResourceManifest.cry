@@ -52,7 +52,7 @@ namespace ImageResources {
             ImageResourceManifest.resourceInfo = resourceInfo;
             ImageResourceManifest.sheetInfo = sheetInfo;
 
-            manifest = $$lib_imageresources_getManifestString();
+            manifest = $lib_imageresources_getManifestString();
             activeSheetId = null;
             activeChunkId = 0;
             for (line : manifest.split('\n')) {

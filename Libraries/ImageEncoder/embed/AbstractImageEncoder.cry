@@ -26,7 +26,7 @@ namespace ImageEncoder {
         function encode() {
             this._ensureResourceStandalone();
             output = [];
-            status = $$lib_imageencoder_encodeToBytes(this._res._nativeResource, this._format, output);
+            status = $lib_imageencoder_encodeToBytes(this._res._nativeResource, this._format, output);
             switch (status) {
                 case 0: return output;
                 default: throw new Core.InvalidOperationException("An unknown error occurred while encoding the image.");
