@@ -2,5 +2,10 @@
 	"name": "Easing",
 	"author": "Blake O'Hare",
 	"documentation": "http://crayonlang.org/docs/0.2.0/easing",
-	"description": "A variety of useful easing functions."
+	"description": "A variety of useful easing functions.",
+
+	"cni": [
+		{ "name": "lib_easing_apply_pts", "argc": 2 },
+		{ "name": "lib_easing_interpolate", "argc": 7 }
+	]
 }

@@ -1,13 +1,18 @@
-﻿// $$lib_easing_interpolate(this, start, end, current, duration, integers, easingType)
-
-/*
-    Easing types:
-    0 --> ease in (do not modify progress)
-    1 --> ease out (reverse progress)
-    2 --> ease in then out
+﻿/*
+    args[0] -> easing object instance
+    args[1] -> start
+    args[2] -> end
+    args[3] -> current
+    args[4] -> duration
+    args[5] -> integers
+    args[6] -> easingType
+        Easing types:
+        0 --> ease in (do not modify progress)
+        1 --> ease out (reverse progress)
+        2 --> ease in then out
 */
 
-Value lib_easing_function_interpolate(Array<Value> args) {
+Value lib_easing_interpolate(Array<Value> args) {
     Value output = VALUE_NULL;
     Value arg2 = args[1];
     Value arg3 = args[2];

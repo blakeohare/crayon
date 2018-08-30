@@ -1,4 +1,1 @@
-﻿void lib_manifest_RegisterFunctions(object libRegData) {
-    Core.RegisterLibraryFunction(libRegData, "apply_pts", 2);
-    Core.RegisterLibraryFunction(libRegData, "interpolate", 7);
-}
+﻿void lib_manifest_RegisterFunctions(object libRegData) { }

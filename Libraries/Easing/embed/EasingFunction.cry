@@ -1,6 +1,5 @@
 ﻿import Math;
 
-
 @localized('en', 'Easing')
 @localized('es', 'ESEasing')
 @localized('jp', 'JPEasing')
@@ -70,28 +69,28 @@ namespace Easing {
             while (++i <= m) {
                 pts.add(fp(i / m) * 1.0);
             }
-            $$lib_easing_apply_pts(this, pts);
+            $lib_easing_apply_pts(this, pts);
         }
 
         @localized('en', 'easeIn')
         @localized('es', 'ESeaseIn')
         @localized('jp', 'JPeaseIn')
         function easeIn(start, end, current, duration, integers = false) {
-            return $$lib_easing_interpolate(this, start, end, current, duration, integers, 0) ?? EasingFunction._throw();
+            return $lib_easing_interpolate(this, start, end, current, duration, integers, 0) ?? EasingFunction._throw();
         }
 
         @localized('en', 'easeOut')
         @localized('es', 'ESeaseOut')
         @localized('jp', 'JPeaseOut')
         function easeOut(start, end, current, duration, integers = false) {
-            return $$lib_easing_interpolate(this, start, end, current, duration, integers, 1) ?? EasingFunction._throw();
+            return $lib_easing_interpolate(this, start, end, current, duration, integers, 1) ?? EasingFunction._throw();
         }
 
         @localized('en', 'ease')
         @localized('es', 'ESease')
         @localized('jp', 'JPease')
         function ease(start, end, current, duration, integers = false) {
-            return $$lib_easing_interpolate(this, start, end, current, duration, integers, 2) ?? EasingFunction._throw();
+            return $lib_easing_interpolate(this, start, end, current, duration, integers, 2) ?? EasingFunction._throw();
         }
 
         static function _throw() {

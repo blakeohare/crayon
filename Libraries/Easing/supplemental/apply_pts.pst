@@ -1,4 +1,8 @@
-﻿Value lib_easing_function_apply_pts(Array<Value> args) {
+﻿/*
+    args[0] -> Easing object instance
+    args[1] -> values
+*/
+Value lib_easing_apply_pts(Array<Value> args) {
     List<Value> sampleValues = (List<Value>) args[1].internalValue; // guaranteed to be floats
 
     int len = sampleValues.Size();
