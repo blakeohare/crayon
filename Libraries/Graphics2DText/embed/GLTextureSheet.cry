@@ -32,7 +32,7 @@
             // This will apply the properties to the individual tile's metadata
             // It will not load the texture yet.
             // TODO: remove "LoadTexture" from the name.
-            $$lib_graphics2dtext_glGenerateAndLoadTexture(xs, ys, tiles, y);
+            $lib_graphics2dtext_glGenerateAndLoadTexture(xs, ys, tiles, y);
         }
 
         static function makeSheets(tiles) {

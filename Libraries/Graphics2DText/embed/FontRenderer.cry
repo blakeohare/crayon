@@ -87,7 +87,7 @@
                         this.red, this.green, this.blue
                     ].join(':');
 
-                if ($$lib_graphics2dtext_isGlRenderer()) {
+                if ($lib_graphics2dtext_isGlRenderer()) {
                     this._glRenderer = GLRenderer.get(this.font._sourceType, this.font._source, this.size, this.style, this._native);
                 }
             }

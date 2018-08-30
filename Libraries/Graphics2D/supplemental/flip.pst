@@ -1,0 +1,89 @@
+﻿/*
+    arg 1: GraphicsTexture original instance
+    arg 2: GraphicsTexture new instance (no native data yet)
+    arg 3: boolean: flip horizontally
+    arg 4: boolean: flip vertically
+    arg 5: original GrahpicsTextureResource
+    arg 6: new GrahpicsTextureResource (atlas-based platforms only) or null. Need to initialize this.
+
+    one or both flips will be true.
+    For texture atlas platforms, simply swap around the texture bounds.
+    For other platforms, create a mutated copy of the image but maintain the (0, 0, 1, 1) texture bounds.
+*/
+Value lib_graphics2d_flip(Array<Value> args) {
+    bool bool1 = false;
+    bool bool2 = false;
+    int i = 0;
+    Array<object> objArray1 = null;
+    Array<object> objArray2 = null;
+    object object1 = null;
+    ObjectInstance objInstance1 = null;
+    ObjectInstance objInstance2 = null;
+    Value output = VALUE_NULL;
+    Value arg1 = args[0];
+    Value arg2 = args[1];
+    Value arg3 = args[2];
+    Value arg4 = args[3];
+    Value arg5 = args[4];
+    Value arg6 = args[5];
+
+    // The output (arg2) is an uninitialized GraphicsTexture
+    // Create a copy of the original (arg1) GraphicsTexture's nativeData.
+    objInstance1 = ((ObjectInstance) arg1.internalValue);
+    objInstance2 = ((ObjectInstance) arg2.internalValue);
+    objArray1 = objInstance1.nativeData;
+    objArray2 = new Array<object>(7);
+    objInstance2.nativeData = objArray2;
+    bool1 = ((bool) arg3.internalValue);
+    bool2 = ((bool) arg4.internalValue);
+    i = 6;
+    while (i >= 0) {
+        objArray2[i] = objArray1[i];
+        i -= 1;
+    }
+    if (@ext_boolean("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
+
+        // For texture atlas based frameworks, simply swap the left-right and top-bottom bounds.
+
+        /*
+            objArray1[1] -> texture left
+            objArray1[2] -> texture top
+            objArray1[3] -> texture right
+            objArray1[4] -> texture button
+        */
+        if (bool1) {
+            object1 = objArray1[1];
+            objArray2[1] = objArray2[3];
+            objArray2[3] = object1;
+        }
+        if (bool2) {
+            object1 = objArray1[2];
+            objArray2[2] = objArray2[4];
+            objArray2[4] = object1;
+        }
+    } else {
+
+        // For non-texture atlas based frameworks, the GraphicsTextureResource is a copy and can be
+        // freely manipulated. However, the GraphicsTexture.NativeData[0] pointer is to the old
+        // GraphicsTextureResource and must be updated to the new one on arg6.
+
+        // the new GraphicsTextureResource
+        objInstance1 = ((ObjectInstance) arg6.internalValue);
+        objArray1 = objInstance1.nativeData;
+
+        // the new GraphicsTexture (which current points to the old GraphicsTextureResource)
+        objInstance2 = ((ObjectInstance) arg2.internalValue);
+        // update to point to the new one (i.e. objArray1)
+        objInstance2.nativeData[0] = objArray1;
+
+        // Now do the actual flipping. The bitmap is located in nativeData[3]
+        object1 = objArray1[3];
+        // Do the flip.
+        object1 = Native._lib_graphics2d_flipTexture(object1, bool1, bool2);
+        objArray1[3] = object1;
+    }
+
+    // return the new GraphicsTexture so that this system call can return directly from user code and
+    // save one single VM cycle.
+    return arg2;
+}

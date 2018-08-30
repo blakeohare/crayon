@@ -24,8 +24,8 @@ namespace Graphics2D {
 
         static constructor() {
             // essentially no-ops, but runs the queue initializers.
-            $$lib_graphics2d_renderQueueAction(Graphics2D.Draw._queueOld, Graphics2D.Draw._text_queueOld, 0);
-            $$lib_graphics2d_renderQueueAction(Graphics2D.Draw._queue, Graphics2D.Draw._text_queue, 0);
+            $lib_graphics2d_renderQueueAction(Graphics2D.Draw._queueOld, Graphics2D.Draw._text_queueOld, 0);
+            $lib_graphics2d_renderQueueAction(Graphics2D.Draw._queue, Graphics2D.Draw._text_queue, 0);
 
             Game.GameWindow._frameEndHandlers.add(Graphics2D.Draw._renderer);
             Game.GameWindow._frameBeginHandlers.add(Graphics2D.Draw._rendererReset);
@@ -36,10 +36,10 @@ namespace Graphics2D {
             // Doing this here is two-fold:
             // - only one function call. User-facing draw calls are unencumbered with extra logic.
             // - This is done in Pastel code. Platform-specific renders will get canonicalized data.
-            $$lib_graphics2d_renderQueueValidateArgs(Graphics2D.Draw._queue);
+            $lib_graphics2d_renderQueueValidateArgs(Graphics2D.Draw._queue);
 
             // send the render queue to the platform renderer
-            $$lib_graphics2d_renderQueueAction(Graphics2D.Draw._queue, Graphics2D.Draw._text_queue, 1);
+            $lib_graphics2d_renderQueueAction(Graphics2D.Draw._queue, Graphics2D.Draw._text_queue, 1);
 
             // Swap the buffers. The old buffer stays in memory, in tact, while new events get drawn to [text]queue.
             t = Graphics2D.Draw._queue;
@@ -54,7 +54,7 @@ namespace Graphics2D {
         static function _rendererReset() {
             // clear the render queue
             Draw._text_queue = null;
-            return $$lib_graphics2d_renderQueueAction(Graphics2D.Draw._queue, Graphics2D.Draw._text_queue, 2);
+            return $lib_graphics2d_renderQueueAction(Graphics2D.Draw._queue, Graphics2D.Draw._text_queue, 2);
         }
 
         static function ellipse(left, top, width, height, r, g, b, a = 255) {
@@ -113,7 +113,7 @@ namespace Graphics2D {
                 that represents this line and use the platform's polygon drawing method
                 instead.
             */
-            if (strokeWidth < 3 && !$$lib_graphics2d_isOpenGlBased()) {
+            if (strokeWidth < 3 && !$lib_graphics2d_isOpenGlBased()) {
                 return $$$('intQueueWrite16', Graphics2D.Draw._queue,
                     _DrawCommands.LINE,
                     startX, startY, endX, endY, strokeWidth, r, g, b, a);
@@ -124,7 +124,7 @@ namespace Graphics2D {
                 startX, startY, endX, endY, strokeWidth, 0, 0, 0, r, g, b, a);
             // The above command is just a placeholder. Do the rest of the
             // transformation in translated code...
-            return $$lib_graphics2d_lineToQuad(Graphics2D.Draw._queue);
+            return $lib_graphics2d_lineToQuad(Graphics2D.Draw._queue);
         }
 
         static function rectangle(left, top, width, height, r, g, b, a = 255) {
@@ -149,7 +149,7 @@ namespace Graphics2D {
 
         static function fill(r, g, b) {
             t = Game.GameWindow.instance;
-            $$lib_graphics2d_renderQueueAction(Graphics2D.Draw._queue, Graphics2D.Draw._text_queue, 2);
+            $lib_graphics2d_renderQueueAction(Graphics2D.Draw._queue, Graphics2D.Draw._text_queue, 2);
             return Graphics2D.Draw.rectangle(0, 0, t._w, t._h, r, g, b);
         }
     }

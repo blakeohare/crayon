@@ -13,26 +13,12 @@ object lib_fileiocommon_listToBytes(List<Value> listOfMaybeInts) {
             return null;
         }
         byteValue = ((int) intValue.internalValue);
-        if (byteValue >= 256) {
-            return null;
-        }
+        if (byteValue >= 256) return null;
         if (byteValue < 0) {
-            if (byteValue < -128) {
-                return null;
-            }
+            if (byteValue < -128) return null;
             byteValue += 256;
         }
         bytes[i] = ((byte) byteValue);
     }
     return bytes;
-}
-
-int lib_fileiocommon_textToLines(string text, List<Value> output) {
-    List<string> stringList = new List<string>();
-    Native._lib_fileiocommon_textToLines(text, stringList);
-    int len = stringList.Size();
-    for (int i = 0; i < len; i += 1) {
-        output.Add(buildString(stringList[i]));
-    }
-    return 0;
 }

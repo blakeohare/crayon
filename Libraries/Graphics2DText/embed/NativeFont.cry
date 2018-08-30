@@ -35,10 +35,10 @@
             $$$('allocNativeData', this, 1);
             output = [null];
             // assigns native font instance to native data
-            status = $$lib_graphics2dtext_createNativeFont(this, type, id, size, r, g, b, style);
+            status = $lib_graphics2dtext_createNativeFont(this, type, id, size, r, g, b, style);
             if ($$$('isJavaScript') && type == 1) {
                 i = 0;
-                while (!$$lib_graphics2dtext_isDynamicFontLoaded()) {
+                while (!$lib_graphics2dtext_isDynamicFontLoaded()) {
                     if (++i > 10000) throw new FontNotFoundException("Error loading font resource.");
                     Core.sleep(.001);
                 }
@@ -66,7 +66,7 @@
 
         static function getUniqueKey(type, id, size, r, g, b, style) {
             output = [];
-            $$lib_graphics2dtext_getNativeFontUniqueKey(
+            $lib_graphics2dtext_getNativeFontUniqueKey(
                 // convert everything to strings
                 type + '', id + '', size + '', r + '', g + '', b + '', style + '',
                 output);

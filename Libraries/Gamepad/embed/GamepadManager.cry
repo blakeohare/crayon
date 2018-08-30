@@ -7,8 +7,8 @@ namespace Gamepad {
     static class GamepadManager {
 
         static field _devices = null;
-        static field _isGamepadSupported = $$lib_gamepad_is_supported();
-        static field _platformRequiresRefresh = $$lib_gamepad_platform_requires_refresh();
+        static field _isGamepadSupported = $lib_gamepad_is_supported();
+        static field _platformRequiresRefresh = $lib_gamepad_platform_requires_refresh();
         static field _device_count_checked = false;
         static field _device_by_id_ints = null;
         static field _device_by_id_strings = null;
@@ -33,15 +33,15 @@ namespace Gamepad {
                     GamepadManager._devices = devices;
                 }
 
-                $$lib_gamepad_refresh_devices();
-                newCount = $$lib_gamepad_current_device_count();
+                $lib_gamepad_refresh_devices();
+                newCount = $lib_gamepad_current_device_count();
                 while (newCount > devices.length) {
                     devices.add(new GamepadDevice(devices.length));
                 }
             } else if (GamepadManager._devices == null) {
                 // For platforms that don't require a refresh, it's okay to ignore successive calls to this function.
                 devices = [];
-                deviceCount = $$lib_gamepad_current_device_count();
+                deviceCount = $lib_gamepad_current_device_count();
                 for (i = 0; i < deviceCount; ++i) {
                     devices.add(new GamepadDevice(i));
                 }
@@ -121,7 +121,7 @@ namespace Gamepad {
             if (GamepadManager._settingsCacheDeviceOrder == null) {
                 ordering = [];
                 config = {};
-                file = $$lib_gamepad_get_save_file_path();
+                file = $lib_gamepad_get_save_file_path();
                 if (file == null || !UserData.fileExists(file)) return 0;
                 for (line : UserData.fileReadText(file).split('\n')) {
                     cols = line.trim().split(',');
@@ -227,7 +227,7 @@ namespace Gamepad {
             GamepadManager._settingsCacheDeviceOrder = null; // clear the cache
             GamepadManager._settingsCacheDeviceConfig = null;
 
-            file = $$lib_gamepad_get_save_file_path();
+            file = $lib_gamepad_get_save_file_path();
             if (file == null) return;
             exists = UserData.fileExists(file);
             if (exists) return;

@@ -1,0 +1,43 @@
+﻿/*
+    Write data to a file.
+
+    arg 1: disk host object
+    arg 2: well-formed and sandboxed path
+    arg 3: content as either a string or a list of byte integers (unchecked)
+    arg 4: format enum
+
+    Format:
+        0 -> raw bytes
+        1 -> UTF8
+        2 -> UTF8 with BOM
+        3 -> ISO-8859
+
+*/
+Value lib_fileiocommon_fileWrite(Array<Value> args) {
+
+    if (args[3].type != Types.INTEGER) return buildInteger(3);
+
+    int statusCode = 0;
+    string contentString = null;
+    object byteArrayRef = null;
+    int format = (int) args[3].internalValue;
+    if (format == 0) {
+        byteArrayRef = lib_fileiocommon_listToBytes((List<Value>) args[2].internalValue);
+        if (byteArrayRef == null) return buildInteger(6);
+    } else if (args[2].type != Types.STRING) {
+        return buildInteger(6);
+    } else {
+        contentString = (string) args[2].internalValue;
+    }
+
+    if (statusCode == 0) {
+        statusCode = Native._lib_fileiocommon_fileWrite(
+            lib_fileiocommon_getDiskObject(args[0]),
+            (string) args[1].internalValue,
+            format,
+            contentString,
+            byteArrayRef);
+    }
+
+    return buildInteger(statusCode);
+}

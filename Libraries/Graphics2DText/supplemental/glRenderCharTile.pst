@@ -1,0 +1,45 @@
+/*
+    args[0] -> NativeFont
+        nativeData[0] -> native tile renderer object
+    args[1] -> GLTile
+        Populate these values:
+            nativeData[0] -> bitmap instance that can be blitted and consolidated
+            nativeData[1] -> pixel width
+            nativeData[2] -> pixel height
+            nativeData[3] -> effective left (location of left margin)
+            nativeData[4] -> effective width (distance to the right margin from the left margin)
+
+        ... there are more nativeData values, but those are not populated here (they have to do with sheet membership)
+
+    args[2] -> character ID
+    args[3] -> output list for size information
+        output[0] -> the width of the image
+        output[1] -> the height of the image
+
+*/
+Value lib_graphics2dtext_glRenderCharTile(Array<Value> args) {
+    if (@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
+        object nativeFont = Core.ForceParens((ObjectInstance) args[0].internalValue).nativeData[0];
+        Array<object> tileNativeData = Core.ForceParens((ObjectInstance) args[1].internalValue).nativeData;
+        int charId = (int) args[2].internalValue;
+        List<Value> sizeOut = (List<Value>) args[3].internalValue;
+
+        object bmp = Native._lib_graphics2dtext_glRenderBitmapTile(nativeFont, charId, Core.IntBuffer16);
+        if (bmp == null) return VALUE_FALSE;
+        int width = Core.IntBuffer16[0];
+        int height = Core.IntBuffer16[1];
+        int effectiveLeft = Core.IntBuffer16[2];
+        int effectiveWidth = Core.IntBuffer16[3];
+        tileNativeData[0] = bmp;
+        tileNativeData[1] = width;
+        tileNativeData[2] = height;
+        tileNativeData[3] = effectiveLeft;
+        tileNativeData[4] = effectiveWidth;
+
+        sizeOut[0] = buildInteger(width);
+        sizeOut[1] = buildInteger(height);
+        sizeOut[2] = buildInteger(effectiveLeft);
+        sizeOut[3] = buildInteger(effectiveWidth);
+    }
+    return VALUE_TRUE;
+}

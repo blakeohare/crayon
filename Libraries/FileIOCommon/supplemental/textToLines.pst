@@ -1,0 +1,29 @@
+﻿/*
+    Convert a string into a list of strings, split on the newline, but contains the original newline character.
+
+    args[0]: original string
+    args[1]: output list
+
+    output is the output list to save a VM cycle
+*/
+Value lib_fileiocommon_textToLines(Array<Value> args) {
+
+    lib_fileiocommon_textToLinesImpl(
+        (string) args[0].internalValue,
+        (List<Value>) args[1].internalValue);
+    return args[1];
+}
+
+// TODO: merge these. There is no longer a reason to keep them separate.
+int lib_fileiocommon_textToLinesImpl(
+    string text,
+    List<Value> output) {
+
+    List<string> stringList = new List<string>();
+    Native._lib_fileiocommon_textToLines(text, stringList);
+    int len = stringList.Size();
+    for (int i = 0; i < len; i += 1) {
+        output.Add(buildString(stringList[i]));
+    }
+    return 0;
+}

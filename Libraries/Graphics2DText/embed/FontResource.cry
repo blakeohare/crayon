@@ -40,7 +40,7 @@
         @localized('es', 'ESfromResource')
         @localized('jp', 'JPfromResource')
         static function fromResource(path) {
-            if (!$$lib_graphics2dtext_isResourceAvailable(path)) {
+            if (!$lib_graphics2dtext_isResourceAvailable(path)) {
                 throw new FontNotFoundException("Font resource not found: '" + path + "'");
             }
             return FontResource._get(FontSourceType.RESOURCE, path);
@@ -67,7 +67,7 @@
         @localized('es', 'ESisSystemFontPresent')
         @localized('jp', 'JPisSystemFontPresent')
         static function isSystemFontPresent(name) {
-            return $$lib_graphics2dtext_isSystemFontPresent(name);
+            return $lib_graphics2dtext_isSystemFontPresent(name);
         }
 
         // TODO: implement this

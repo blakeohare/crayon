@@ -1,0 +1,7 @@
+﻿Value lib_graphics2d_isOpenGlBased(Array<Value> args) {
+    if (@ext_boolean("IS_OPEN_GL_BASED")) {
+        return VALUE_TRUE;
+    } else {
+        return VALUE_FALSE;
+    }
+}

@@ -1,0 +1,9 @@
+﻿/*
+    Returns the user's home directory.
+    - Windows: "C:\Users\Cthulhu"
+    - Linux: "~"
+    - JavaScript: "/" (this is used for the virtualized disk)
+*/
+Value lib_fileiocommon_getUserDirectory(Array<Value> args) {
+    return buildString(Native._lib_fileiocommon_getUserDirectory());
+}

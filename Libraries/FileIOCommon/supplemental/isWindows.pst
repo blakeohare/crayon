@@ -1,0 +1,6 @@
+﻿Value lib_fileiocommon_isWindows(Array<Value> args) {
+    if (Native._lib_fileiocommon_isWindows()) {
+        return VALUE_TRUE;
+    }
+    return VALUE_FALSE;
+}

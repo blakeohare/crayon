@@ -6,5 +6,22 @@
 	"onlyAllowImportFrom": [
 		"FileIO",
 		"UserData"
+	],
+	
+	"cni": [
+		{ "name": "lib_fileiocommon_directoryCreate", "argc": 3 },
+		{ "name": "lib_fileiocommon_directoryDelete", "argc": 2 },
+		{ "name": "lib_fileiocommon_directoryList", "argc": 4 },
+		{ "name": "lib_fileiocommon_directoryMove", "argc": 3 },
+		{ "name": "lib_fileiocommon_fileDelete", "argc": 2 },
+		{ "name": "lib_fileiocommon_fileInfo", "argc": 4 },
+		{ "name": "lib_fileiocommon_fileMove", "argc": 5 },
+		{ "name": "lib_fileiocommon_fileRead", "argc": 4 },
+		{ "name": "lib_fileiocommon_fileWrite", "argc": 4 },
+		{ "name": "lib_fileiocommon_getCurrentDirectory", "argc": 0 },
+		{ "name": "lib_fileiocommon_getUserDirectory", "argc": 0 },
+		{ "name": "lib_fileiocommon_initializeDisk", "argc": 2 },
+		{ "name": "lib_fileiocommon_isWindows", "argc": 0 },
+		{ "name": "lib_fileiocommon_textToLines", "argc": 2 }
 	]
 }

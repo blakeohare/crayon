@@ -107,9 +107,9 @@ namespace Graphics2DText {
 
             if (width == 0) width = 1;
 
-            $$lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 1, xs);
-            $$lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 2, ys);
-            $$lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 3, charIds);
+            $lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 1, xs);
+            $lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 2, ys);
+            $lib_graphics2dtext_glSetNativeDataIntArray(textSurfaceWithNativeData, 3, charIds);
             $$$('setNativeData', textSurfaceWithNativeData, 4, charIds.length);
 
             sizeOut[0] = width;

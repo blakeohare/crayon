@@ -1,0 +1,62 @@
+/*
+    args[0] -> list of x coordinates
+    args[1] -> list of y coordinates
+    args[2] -> list of GLTile instances. Each has native data
+        // The following native data is already filled in...
+        nativeData[0] -> a bitmap instance
+        nativeData[1] -> bitmap width
+        nativeData[2] -> bitmap height
+
+        // The following native data needs to be filled in by this function
+        nativeData[5] -> GL Texture ID or -1 if not loaded yet
+        nativeData[6] -> bitmap to load into a GL texture or null if already loaded
+        nativeData[7] -> texture left
+        nativeData[8] -> texture top
+        nativeData[9] -> texture right
+        nativeData[10] -> texture bottom
+        nativeData[11] -> full texture width (always 1024)
+        nativeData[12] -> full texture height (some power of 2)
+
+    args[3] -> total height of the rectangle packing result
+        you'll need to generate an image with a height that's a power of 2 above this value
+
+    return value -> GL Texture ID
+*/
+Value lib_graphics2dtext_glGenerateAndLoadTexture(Array<Value> args) {
+    if (@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
+        List<Value> xs = (List<Value>) args[0].internalValue;
+        List<Value> ys = (List<Value>) args[1].internalValue;
+        List<Value> tiles = (List<Value>) args[2].internalValue;
+        int tileCount = xs.Size();
+        Array<Array<object>> tileNativeDatas = new Array<Array<object>>(tileCount);
+        Array<int> coordinates = new Array<int>(tileCount * 4);
+        Array<object> nativeData = null;
+        int i = 0;
+        while (i < tileCount) {
+            nativeData = Core.ForceParens((ObjectInstance) tiles[i].internalValue).nativeData;
+            tileNativeDatas[i] = nativeData;
+            coordinates[i * 4] = (int) xs[i].internalValue;
+            coordinates[i * 4 + 1] = (int) ys[i].internalValue;
+            coordinates[i * 4 + 2] = (int) nativeData[1];
+            coordinates[i * 4 + 3] = (int) nativeData[2];
+            i += 1;
+        }
+
+        // figure out the next power of 2 greater than y
+        int height = (int)args[3].internalValue - 1;
+        int bitWalker = height;
+        while (bitWalker > 0) {
+            bitWalker = bitWalker >> 1;
+            height = height | bitWalker;
+        }
+        height += 1;
+
+        object textureSheetBitmap = Native._lib_graphics2dtext_generateTextureSheetAndAllocateRectangleInformation(tileNativeDatas, coordinates, 1024, height);
+
+        // go back through and re-assign the texture ID to the tile native datas.
+        for (i = 0; i < tileCount; i += 1) {
+            tileNativeDatas[i][6] = textureSheetBitmap;
+        }
+    }
+    return VALUE_NULL;
+}

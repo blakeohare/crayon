@@ -1,0 +1,14 @@
+﻿Value lib_gamepad_get_save_file_path(Array<Value> args) {
+
+    if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
+
+        // returns null on platforms where user data is not supported.
+        string string1 = Native._lib_gamepad_config_file_path();
+
+        if (string1 != null) {
+            return buildString(string1);
+        }
+    }
+
+    return VALUE_NULL;
+}

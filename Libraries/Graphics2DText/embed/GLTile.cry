@@ -37,7 +37,7 @@
             this.renderer = renderer;
             $$$('allocNativeData', this, 13);
             size = [0, 0, 0, 0];
-            if (!$$lib_graphics2dtext_glRenderCharTile(renderer.nativeFont, this, charId, size)) {
+            if (!$lib_graphics2dtext_glRenderCharTile(renderer.nativeFont, this, charId, size)) {
                 throw new InvalidArgumentException("Could not render character (" + charId + ")");
             }
             this.width = size[0];

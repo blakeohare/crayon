@@ -1,6 +1,0 @@
-﻿Value lib_audio_function_music_is_playing(Array<Value> args) {
-    if (Native._lib_audio_musicIsPlaying()) {
-        return VALUE_TRUE;
-    }
-    return VALUE_FALSE;
-}

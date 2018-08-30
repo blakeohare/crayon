@@ -11,7 +11,7 @@ import Math;
 namespace GameGifCap {
 
     function isSupported() {
-        return $$lib_gamegifcap_isSupported();
+        return $lib_gamegifcap_isSupported();
     }
 
     class GifRecorder {
@@ -25,9 +25,9 @@ namespace GameGifCap {
             if (fps > 1000) fps = 1000;
             else if (fps < .01) throw new InvalidArgumentException("Invalid FPS");
 
-            if ($$lib_gamegifcap_isSupported()) {
+            if ($lib_gamegifcap_isSupported()) {
                 $$$('allocNativeData', this, 1);
-                $$lib_gamegifcap_createGifContext(this, 1000 / fps);
+                $lib_gamegifcap_createGifContext(this, 1000 / fps);
             }
         }
 
@@ -39,7 +39,7 @@ namespace GameGifCap {
             if (width < 1 || height < 1 || width >= 3000 || height >= 3000) {
                 throw new InvalidArgumentException("Width and height are not in an acceptable range.");
             }
-            $$lib_gamegifcap_setRecordSize(this, width, height);
+            $lib_gamegifcap_setRecordSize(this, width, height);
             return this;
         }
 
@@ -65,8 +65,8 @@ namespace GameGifCap {
             // TODO: verify path
             path = path + "";
 
-            if ($$lib_gamegifcap_isSupported()) {
-                sc = $$lib_gamegifcap_saveToDisk(this, path);
+            if ($lib_gamegifcap_isSupported()) {
+                sc = $lib_gamegifcap_saveToDisk(this, path);
                 switch (sc) {
                     case 0: return;
                     case 1: throw new InvalidArgumentException("No frames to save.");
@@ -98,8 +98,8 @@ namespace GameGifCap {
             if (Game.GameWindow.instance == null) {
                 throw new Exception("Game Window not open.");
             }
-            if ($$lib_gamegifcap_isSupported()) {
-                sc = $$lib_gamegifcap_screenCap(this._ctx, Game.GameWindow.instance);
+            if ($lib_gamegifcap_isSupported()) {
+                sc = $lib_gamegifcap_screenCap(this._ctx, Game.GameWindow.instance);
                 switch (sc) {
                     case 0: return;
                     default: throw new Exception("Unknown error occurred while capturing the screen.");

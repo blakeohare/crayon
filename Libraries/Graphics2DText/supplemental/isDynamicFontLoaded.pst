@@ -1,0 +1,15 @@
+/*
+    JavaScript only. The native font loader will apply the font to two spans with a monospace and sans-serif fallback containing the letter 'l'.
+    If the width of the characters are different, then the font hasn't been loaded yet.
+
+    no args
+
+    returns boolean
+*/
+Value lib_graphics2dtext_isDynamicFontLoaded(Array<Value> args) {
+    if (@ext_boolean("IS_JAVASCRIPT")) {
+        return buildBoolean(Native._lib_graphics2dtext_isDynamicFontLoaded());
+    } else {
+        return VALUE_TRUE;
+    }
+}

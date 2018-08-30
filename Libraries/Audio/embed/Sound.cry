@@ -36,7 +36,7 @@ namespace Audio {
             // This call will set the native data.
             // Also, it'll just mark the sound as stopped if there's an error.
             // TODO: maybe a better indicator of an error playing the sound.
-            this._isStopped = $$lib_audio_sfx_play(this, resource, volume, pan) == 1;
+            this._isStopped = $lib_audio_sfx_play(this, resource, volume, pan) == 1;
         }
 
         @localized('en', 'getState')
@@ -44,7 +44,7 @@ namespace Audio {
         @localized('jp', 'JPgetState')
         function getState() {
             // ensures that it also returns STOPPED if the channel is playing a different sound.
-            t = $$lib_audio_sfx_get_state(this, this._soundResource, this._id);
+            t = $lib_audio_sfx_get_state(this, this._soundResource, this._id);
             if (t == SoundPlayState.STOPPED) this._isStopped = true;
             return t;
         }
@@ -54,7 +54,7 @@ namespace Audio {
         @localized('jp', 'JPresume')
         function resume() {
             if (this.getState() == SoundPlayState.PAUSED) {
-                $$lib_audio_sfx_resume(this, this._soundResource, this._volume, this._pan);
+                $lib_audio_sfx_resume(this, this._soundResource, this._volume, this._pan);
             }
         }
 
@@ -64,7 +64,7 @@ namespace Audio {
         function stop() {
             t = this.getState();
             if (t != SoundPlayState.STOPPED) {
-                $$lib_audio_sfx_stop(this, this._soundResource, this._id, t, true);
+                $lib_audio_sfx_stop(this, this._soundResource, this._id, t, true);
             }
         }
 
@@ -73,7 +73,7 @@ namespace Audio {
         @localized('jp', 'JPpause')
         function pause() {
             if (this.getState() == SoundPlayState.PLAYING) {
-                $$lib_audio_sfx_stop(this, this._soundResource, this._id, SoundPlayState.PLAYING, false);
+                $lib_audio_sfx_stop(this, this._soundResource, this._id, SoundPlayState.PLAYING, false);
             }
         }
 
@@ -94,7 +94,7 @@ namespace Audio {
         @localized('jp', 'JPsetPan')
         function setPan(value) {
             this._pan = Math.ensureRange(value, -1.0, 1.0) + 0.0;
-            $$lib_audio_sfx_set_pan(this, this._soundResource, this._pan);
+            $lib_audio_sfx_set_pan(this, this._soundResource, this._pan);
         }
 
         @localized('en', 'getPan')
@@ -110,7 +110,7 @@ namespace Audio {
         @localized('jp', 'JPsetVolume')
         function setVolume(ratio) {
             this._volume = Math.ensureRange(ratio, 0.0, 1.0) + 0.0;
-            $$lib_audio_sfx_set_volume(this, this._soundResource, this._volume);
+            $lib_audio_sfx_set_volume(this, this._soundResource, this._volume);
         }
 
         @localized('en', 'getVolume')
