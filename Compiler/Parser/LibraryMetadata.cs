@@ -152,9 +152,7 @@ namespace Parser
             {
                 if (isMoreThanJustEmbedCode == -1)
                 {
-                    bool hasPastelDirectories =
-                        FileUtil.DirectoryExists(FileUtil.JoinPath(this.Directory, "translate")) ||
-                        FileUtil.DirectoryExists(FileUtil.JoinPath(this.Directory, "supplemental"));
+                    bool hasPastelDirectories = FileUtil.DirectoryExists(FileUtil.JoinPath(this.Directory, "supplemental"));
                     isMoreThanJustEmbedCode = hasPastelDirectories ? 1 : 0;
                 }
                 return isMoreThanJustEmbedCode == 1;

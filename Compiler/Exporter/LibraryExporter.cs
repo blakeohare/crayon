@@ -44,51 +44,6 @@ namespace Exporter
             this.Resources = new LibraryResourceDatabase(this, platform);
 
             this.CompileTimeConstants = this.LoadFlagsForPlatform(platform);
-
-            this.filepathsByFunctionName = new Dictionary<string, string>();
-            // Build a lookup dictionary of all file names that are simple function names e.g. "foo.cry"
-            // Then go through and look up all the file names that contain . prefixes with the platform name and
-            // overwrite the lookup value for that entry with the more specific path.
-            // myFunction.cry
-            // android.myFunction.cry
-            // on Python, myFunction will be included for lib_foo_myFunction(), but on Android, android.myFunction.cry will be included instead.
-
-            string[] files = new string[0];
-            if (FileUtil.DirectoryExists(this.Metadata.Directory + "/translate"))
-            {
-                files = FileUtil.DirectoryListFileNames(FileUtil.JoinPath(this.Metadata.Directory, "translate"));
-            }
-            Dictionary<string, string> moreSpecificFiles = new Dictionary<string, string>();
-            foreach (string file in files)
-            {
-                if (file.EndsWith(".pst"))
-                {
-                    string functionName = file.Substring(0, file.Length - ".pst".Length);
-                    if (functionName.Contains('.'))
-                    {
-                        // Add this file to the more specific lookup, but only if it contains the current platform.
-                        if (functionName.StartsWith(platformName + ".") ||
-                            functionName.Contains("." + platformName + "."))
-                        {
-                            string[] parts = functionName.Split('.');
-                            moreSpecificFiles[parts[parts.Length - 1]] = file;
-                        }
-                        else
-                        {
-                            // just let it get filtered away.
-                        }
-                    }
-                    else
-                    {
-                        this.filepathsByFunctionName[functionName] = file;
-                    }
-                }
-            }
-
-            foreach (string functionName in moreSpecificFiles.Keys)
-            {
-                this.filepathsByFunctionName[functionName] = moreSpecificFiles[functionName];
-            }
         }
 
         private Dictionary<string, object> LoadFlagsForPlatform(Platform.AbstractPlatform platform)
