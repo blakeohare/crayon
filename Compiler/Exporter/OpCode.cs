@@ -16,8 +16,6 @@
         BUILD_SWITCH_INT, // 2n args: (1: integer key, 2: offset value) <- repeat, the order that these appear indicates the switch ID
         BUILD_SWITCH_STRING, // 1: switch ID, 2: offset, string arg: value
         CALL_FUNCTION, // 1: type (see FunctionInvoationType enum), 2: num args passed, 3: function ID (if known), 4: output used, 5: class ID (if available)
-        CALL_LIB_FUNCTION, // 1: lib function ID, 2: num args passed, 3: 1|0 is value used?
-        CALL_LIB_FUNCTION_DYNAMIC,
         CLASS_DEFINITION, // It's complicated. See initializeClass method in MetadataInitializer.cry
         CNI_INVOKE,
         CNI_REGISTER,

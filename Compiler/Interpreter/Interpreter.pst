@@ -230,7 +230,6 @@ InterpreterResult interpretImpl(int executionContextId) {
             case OpCodes.BUILD_SWITCH_INT: Core.EmitComment("BUILD_SWITCH_INT"); @import("Ops/build_switch_int.pst"); break;
             case OpCodes.BUILD_SWITCH_STRING: Core.EmitComment("BUILD_SWITCH_STRING"); @import("Ops/build_switch_string.pst"); break;
             case OpCodes.CALL_FUNCTION: Core.EmitComment("CALL_FUNCTION"); @import("Ops/call_function.pst"); break;
-            case OpCodes.CALL_LIB_FUNCTION_DYNAMIC: Core.EmitComment("CALL_LIB_FUNCTION_DYNAMIC"); @import("Ops/call_lib_function_dynamic.pst"); break;
             case OpCodes.CLASS_DEFINITION: Core.EmitComment("CLASS_DEFINITION"); @import("Ops/class_definition.pst"); break;
             case OpCodes.CNI_INVOKE: Core.EmitComment("CNI_INVOKE"); @import("Ops/cni_invoke.pst"); break;
             case OpCodes.CNI_REGISTER: Core.EmitComment("CNI_REGISTER"); @import("Ops/cni_register.pst"); break;
