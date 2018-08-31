@@ -331,14 +331,15 @@ namespace Pastel.Transpilers
             Expression[] args = funcInvocation.Args;
             Token throwToken = funcInvocation.FunctionRef.FirstToken;
             string functionName = funcInvocation.FunctionRef.Name;
+            Dictionary<string, string> extLookup = sb.ExtensibleFunctionLookup;
 
-            if (!sb.ExtensibleFunctionLookup.ContainsKey(functionName))
+            if (!extLookup.ContainsKey(functionName) || extLookup[functionName] == null)
             {
                 string msg = "The extensbile method '" + functionName + "' does not have any registered translation.";
                 throw new ParserException(throwToken, msg);
             }
 
-            string codeSnippet = sb.ExtensibleFunctionLookup[functionName];
+            string codeSnippet = extLookup[functionName];
 
             // Filter down to just the arguments that are used.
             // Put their location and length in this locations lookup. The key
