@@ -4,18 +4,19 @@
     {
         NONE,
 
-        // TODO: These are Crayon-specific functions that need to be removed.
+        // TODO: These are Crayon-specific functions that need to be removed. Notes on each are inline.
+        GET_PROGRAM_DATA, // used by Resources library, otherwise used only in VM. Need to just pass this around.
+        SET_PROGRAM_DATA, // separate out the creation of this into a function and then pass the result into the entry point. Then the reference to this can be managed outside the VM.
+        ENQUEUE_VM_RESUME, // Used by Core.sleep but in JS only. Ideally all Thread sleep implementations should use the hasInterrupt mechanism instead and then this becomes a non-issue.
+        VM_DETERMINE_LIBRARY_AVAILABILITY, // This goes away when library importing is revamped
+        VM_END_PROCESS, // used by the runInterpreter function right before returning and translates to something like System.exit(). This can (probably?) be changed to a specific status code.
+        // The ones below can easily be aggregated into ProgramData
         COMMAND_LINE_ARGS,
-        ENQUEUE_VM_RESUME,
-        GET_PROGRAM_DATA,
         GET_RESOURCE_MANIFEST,
         IS_DEBUG,
+        VM_SHOW_LIB_STACK,
         READ_BYTE_CODE_FILE,
         RESOURCE_READ_TEXT_FILE,
-        SET_PROGRAM_DATA,
-        VM_DETERMINE_LIBRARY_AVAILABILITY,
-        VM_END_PROCESS,
-        VM_SHOW_LIB_STACK,
 
         // TODO: port this to the standalone Pastel
         GET_FUNCTION,
