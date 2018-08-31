@@ -127,7 +127,11 @@ namespace Pastel.Transpilers
 
         public override void TranslateArrayJoin(TranspilerContext sb, Expression array, Expression sep)
         {
-            throw new NotImplementedException();
+            sb.Append("String.join(");
+            this.TranslateExpression(sb, sep);
+            sb.Append(", ");
+            this.TranslateExpression(sb, array);
+            sb.Append(')');
         }
 
         public override void TranslateArrayLength(TranspilerContext sb, Expression array)
@@ -897,7 +901,9 @@ namespace Pastel.Transpilers
 
         public override void TranslateOrd(TranspilerContext sb, Expression charValue)
         {
-            throw new NotImplementedException();
+            sb.Append("((int)(");
+            this.TranslateExpression(sb, charValue);
+            sb.Append("))");
         }
 
         public override void TranslateParseFloatUnsafe(TranspilerContext sb, Expression stringValue)
@@ -1105,7 +1111,13 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringSubstringIsEqualTo(TranspilerContext sb, Expression haystack, Expression startIndex, Expression needle)
         {
-            throw new NotImplementedException();
+            sb.Append("TranslationHelper.checkStringInString(");
+            this.TranslateExpression(sb, haystack);
+            sb.Append(", ");
+            this.TranslateExpression(sb, startIndex);
+            sb.Append(", ");
+            this.TranslateExpression(sb, needle);
+            sb.Append(')');
         }
 
         public override void TranslateStringToLower(TranspilerContext sb, Expression str)
@@ -1185,7 +1197,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateVmDetermineLibraryAvailability(TranspilerContext sb, Expression libraryName, Expression libraryVersion)
         {
-            sb.Append("TranslationHelper.checkLibraryAvaialability(");
+            sb.Append("TranslationHelper.checkLibraryAvailability(");
             this.TranslateExpression(sb, libraryName);
             sb.Append(", ");
             this.TranslateExpression(sb, libraryVersion);

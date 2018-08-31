@@ -283,7 +283,7 @@ public final class TranslationHelper {
 
   private static final HashMap<String, LibraryInstance> libraryByName = new HashMap<String, LibraryInstance>();
 
-  public static int checkLibraryAvaialability(String name, String version) {
+  public static int checkLibraryAvailability(String name, String version) {
     Class<?> c = LibraryLoader.getLibClass(name.toLowerCase(), version);
 	if (c != null) {
       libraryByName.put(name.toLowerCase(), new LibraryInstance(name, c));
@@ -438,5 +438,10 @@ public final class TranslationHelper {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static boolean checkStringInString(String haystack, int startIndex, String needle) {
+    if (startIndex + needle.length() > haystack.length()) return false;
+    return needle.equals(haystack.substring(startIndex, startIndex + needle.length()));
   }
 }

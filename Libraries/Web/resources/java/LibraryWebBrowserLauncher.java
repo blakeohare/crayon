@@ -1,4 +1,4 @@
-package %%%PACKAGE%%%;
+package org.crayonlang.libraries.web;
 
 class LibraryWebBrowserLauncher {
     public static void launchBrowser(String url) {

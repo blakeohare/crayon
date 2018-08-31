@@ -5,12 +5,18 @@ import java.lang.reflect.Method;
 public final class LibraryLoader {
   public static Class<?> getLibClass(String name, String version) {
     String libraryWrapperFullyQualifiedName = "org.crayonlang.libraries." + name.toLowerCase() + ".LibraryWrapper";
-    try {
-      Class<?> library = Class.forName(libraryWrapperFullyQualifiedName);
+    Class<?> library = getClassByName(libraryWrapperFullyQualifiedName);
+    if (library != null) {
       registerMethodLoader(library);
-      return library;
+    }
+    return library;
+  }
+
+  private static Class<?> getClassByName(String fullyQualifiedName) {
+    // If there was a way to check for a class' existence without an exception I'd be soooo happy
+    try {
+      return Class.forName(fullyQualifiedName);
     } catch (Exception e) {
-      // TODO: is there a way to check for a class' existence without using exceptions?
       return null;
     }
   }

@@ -1,10 +1,10 @@
-package crayonlib.imagewebresources;
+package org.crayonlang.libraries.imagewebresources;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import javax.imageio.ImageIO;
 
-import %%%PACKAGE%%%.Value;
+import org.crayonlang.interpreter.structs.*;
 
 public class ImageDownloader {
 	public static boolean bytesToImage(Object byteArrayObj, Object[] output) {
