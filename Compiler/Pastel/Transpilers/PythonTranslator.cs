@@ -37,7 +37,11 @@ namespace Pastel.Transpilers
 
         public override void TranslateArrayJoin(TranspilerContext sb, Expression array, Expression sep)
         {
-            throw new NotImplementedException();
+            sb.Append('(');
+            this.TranslateExpression(sb, sep);
+            sb.Append(").join(");
+            this.TranslateExpression(sb, array);
+            sb.Append(')');
         }
 
         public override void TranslateArrayLength(TranspilerContext sb, Expression array)
@@ -107,7 +111,9 @@ namespace Pastel.Transpilers
 
         public override void TranslateBreak(TranspilerContext sb)
         {
-            throw new NotImplementedException();
+            sb.Append(sb.CurrentTab);
+            sb.Append("break");
+            sb.Append(this.NewLine);
         }
 
         public override void TranslateCast(TranspilerContext sb, PType type, Expression expression)
@@ -630,7 +636,9 @@ namespace Pastel.Transpilers
 
         public override void TranslateOrd(TranspilerContext sb, Expression charValue)
         {
-            throw new NotImplementedException();
+            sb.Append("ord(");
+            this.TranslateExpression(sb, charValue);
+            sb.Append(')');
         }
 
         public override void TranslateOpChain(TranspilerContext sb, OpChain opChain)
@@ -889,7 +897,13 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringSubstringIsEqualTo(TranspilerContext sb, Expression haystack, Expression startIndex, Expression needle)
         {
-            throw new NotImplementedException();
+            sb.Append("string_check_slice(");
+            this.TranslateExpression(sb, haystack);
+            sb.Append(", ");
+            this.TranslateExpression(sb, startIndex);
+            sb.Append(", ");
+            this.TranslateExpression(sb, needle);
+            sb.Append(')');
         }
 
         public override void TranslateStringToLower(TranspilerContext sb, Expression str)
