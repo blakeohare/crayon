@@ -133,7 +133,6 @@ namespace Pastel.Nodes
                 case "IntBuffer16": return NativeFunction.INT_BUFFER_16;
                 case "IntegerDivision": return NativeFunction.INTEGER_DIVISION;
                 case "IntToString": return NativeFunction.INT_TO_STRING;
-                case "InvokeDynamicLibraryFunction": return NativeFunction.INVOKE_DYNAMIC_LIBRARY_FUNCTION;
                 case "IsDebug": return NativeFunction.IS_DEBUG;
                 case "IsValidInteger": return NativeFunction.IS_VALID_INTEGER;
                 case "ListConcat": return NativeFunction.LIST_CONCAT;

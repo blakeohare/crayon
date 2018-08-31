@@ -10,7 +10,7 @@ for (i = argCount - 1; i >= 0; i -= 1) {
 
 prepareToSuspend(ec, stack, valueStackSize, pc);
 
-value = Core.InvokeDynamicLibraryFunction(object1, funcArgs);
+value = VALUE_NULL; //Core.InvokeDynamicLibraryFunction(object1, funcArgs);
 if (ec.executionStateChange) {
     ec.executionStateChange = false;
     // TODO: declare constants

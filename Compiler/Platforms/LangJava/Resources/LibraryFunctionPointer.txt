@@ -1,7 +1,0 @@
-﻿package org.crayonlang.interpreter;
-
-import org.crayonlang.interpreter.structs.Value;
-
-public abstract class LibraryFunctionPointer {
-	public abstract Value invoke(Value[] args);
-}

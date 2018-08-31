@@ -256,7 +256,6 @@ namespace Pastel.Transpilers
                 case Pastel.NativeFunction.INT_BUFFER_16: this.TranslateIntBuffer16(sb); break;
                 case Pastel.NativeFunction.INT_TO_STRING: this.TranslateIntToString(sb, args[0]); break;
                 case Pastel.NativeFunction.INTEGER_DIVISION: this.TranslateIntegerDivision(sb, args[0], args[1]); break;
-                case Pastel.NativeFunction.INVOKE_DYNAMIC_LIBRARY_FUNCTION: this.TranslateInvokeDynamicLibraryFunction(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.IS_VALID_INTEGER: this.TranslateIsValidInteger(sb, args[0]); break;
                 case Pastel.NativeFunction.LIST_ADD: this.TranslateListAdd(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.LIST_CLEAR: this.TranslateListClear(sb, args[0]); break;
@@ -443,7 +442,6 @@ namespace Pastel.Transpilers
         public abstract void TranslateIntegerConstant(TranspilerContext sb, int value);
         public abstract void TranslateIntegerDivision(TranspilerContext sb, Expression integerNumerator, Expression integerDenominator);
         public abstract void TranslateIntToString(TranspilerContext sb, Expression integer);
-        public abstract void TranslateInvokeDynamicLibraryFunction(TranspilerContext sb, Expression functionId, Expression argsArray);
         public abstract void TranslateIsValidInteger(TranspilerContext sb, Expression stringValue);
         public abstract void TranslateListAdd(TranspilerContext sb, Expression list, Expression item);
         public abstract void TranslateListClear(TranspilerContext sb, Expression list);
