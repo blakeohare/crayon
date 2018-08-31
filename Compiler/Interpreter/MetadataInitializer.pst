@@ -424,30 +424,6 @@ int declareLibrary(int refId, string descriptor) {
     return status;
 }
 
-// runs during FINALIZE_INITIALIZATION
-// allocates a library function pointer lookup by PC based on the args of CALL_LIB_FUNCTION_DYNAMIC
-// TODO: DELETE THIS
-Array<object> createLibraryFunctionLookup() {
-    ProgramData p = Core.GetProgramData();
-
-    int length = p.ops.Size();
-    Array<int> row = null;
-    Array<object> functionPointersByPc = new Array<object>(length);
-
-    for (int pc = 0; pc < length; pc += 1) {
-        if (p.ops[pc] == OpCodes.CALL_LIB_FUNCTION_DYNAMIC) {
-            row = p.args[pc];
-            //int functionId = p.libraryFunctionIdByLookupId[((row[0] * 4096) + row[1])];
-            //object fp = p.libraryFunctionPointers[functionId];
-
-            //functionPointersByPc[pc] = fp;
-        }
-    }
-
-    p.libraryFunctionByPc = functionPointersByPc;
-    return functionPointersByPc;
-}
-
 int addLiteralImpl(Array<int> row, string stringArg) {
     ProgramData p = Core.GetProgramData();
     int type = row[0];
@@ -506,7 +482,6 @@ int finalizeInitializationImpl(string projectId, int localeCount) {
     p.integerSwitchLookupsBuilder = null;
     p.stringSwitchLookupsBuilder = null;
     p.sourceCodeBuilder = null;
-    p.libraryFunctionByPc = createLibraryFunctionLookup();
     p.initializationComplete = true;
 
     return 0;

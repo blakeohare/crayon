@@ -1,7 +1,6 @@
 ﻿
 finalizeInitializationImpl(p.stringArgs[pc], row[0]);
 
-libFunctionPointers = p.libraryFunctionByPc;
 identifiers = p.identifiers;
 literalTable = p.literalTable;
 integerSwitches = p.integerSwitchLookups;
