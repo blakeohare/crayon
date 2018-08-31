@@ -420,22 +420,17 @@ int declareLibrary(int refId, string descriptor) {
     string name = descriptorParts[0];
     string ver = descriptorParts[1];
     int status = Core.VmDetermineLibraryAvailability(name, ver);
-
-    if (status == 0) {
-        LibRegObj lro = new LibRegObj(p.libraryFunctionPointers, p.libraryFunctionNames, p.libraryFunctionArgCounts);
-        p.activeLibraryReferenceId = refId;
-        status = Core.VmRunLibraryManifest(name, lro);
-    }
-
+    p.activeLibraryReferenceId = refId;
     return status;
 }
 
+// TODO: DELETE THIS
 int registerLibraryFunction(
         object functionPointer,
         object libRegObjRaw,
         string functionName,
         int argCount) {
-
+    /*
     LibRegObj libRegObj = ((LibRegObj) libRegObjRaw);
     List<object> functionPointersById = libRegObj.functionPointers;
     List<string> functionNamesById = libRegObj.functionNames;
@@ -452,12 +447,13 @@ int registerLibraryFunction(
         int lookupId = p.activeLibraryReferenceId + (4096 * functionNameReferenceId);
         p.libraryFunctionIdByLookupId[lookupId] = index;
     }
-
+    */
     return 0;
 }
 
 // runs during FINALIZE_INITIALIZATION
 // allocates a library function pointer lookup by PC based on the args of CALL_LIB_FUNCTION_DYNAMIC
+// TODO: DELETE THIS
 Array<object> createLibraryFunctionLookup() {
     ProgramData p = Core.GetProgramData();
 
@@ -468,10 +464,10 @@ Array<object> createLibraryFunctionLookup() {
     for (int pc = 0; pc < length; pc += 1) {
         if (p.ops[pc] == OpCodes.CALL_LIB_FUNCTION_DYNAMIC) {
             row = p.args[pc];
-            int functionId = p.libraryFunctionIdByLookupId[((row[0] * 4096) + row[1])];
-            object fp = p.libraryFunctionPointers[functionId];
+            //int functionId = p.libraryFunctionIdByLookupId[((row[0] * 4096) + row[1])];
+            //object fp = p.libraryFunctionPointers[functionId];
 
-            functionPointersByPc[pc] = fp;
+            //functionPointersByPc[pc] = fp;
         }
     }
 

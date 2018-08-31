@@ -90,8 +90,6 @@ namespace Exporter
             return output;
         }
 
-        private Dictionary<string, string> filepathsByFunctionName;
-
         private Dictionary<string, string> translationsLookup = null;
 
         public void ApplyExtensibleFunctionTranslationsToTranspilerContext(Platform.AbstractPlatform platform, TranspilerContext ctx)

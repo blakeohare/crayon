@@ -1223,15 +1223,6 @@ namespace Pastel.Transpilers
             throw new NotImplementedException();
         }
 
-        public override void TranslateVmRunLibraryManifest(TranspilerContext sb, Expression libraryName, Expression libRegObj)
-        {
-            sb.Append("TranslationHelper.runLibraryManifest(");
-            this.TranslateExpression(sb, libraryName);
-            sb.Append(", ");
-            this.TranslateExpression(sb, libRegObj);
-            sb.Append(')');
-        }
-
         public override void TranslateVmShowLibStack(TranspilerContext sb)
         {
             sb.Append("TranslationHelper.alwaysFalse()");

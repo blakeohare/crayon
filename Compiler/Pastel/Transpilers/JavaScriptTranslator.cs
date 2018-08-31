@@ -789,15 +789,6 @@ namespace Pastel.Transpilers
             // Specific app-like JS platforms can override.
         }
 
-        public override void TranslateVmRunLibraryManifest(TranspilerContext sb, Expression libraryName, Expression libRegObj)
-        {
-            sb.Append("C$common$runLibraryManifest(");
-            this.TranslateExpression(sb, libraryName);
-            sb.Append(", ");
-            this.TranslateExpression(sb, libRegObj);
-            sb.Append(')');
-        }
-
         public override void TranslateVmShowLibStack(TranspilerContext sb)
         {
             sb.Append("C$common$alwaysFalse()");

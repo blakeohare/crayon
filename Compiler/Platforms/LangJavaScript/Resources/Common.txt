@@ -199,11 +199,6 @@ C$common$determineLibraryAvailability = function(name, version) {
 	return 2;
 };
 
-C$common$runLibraryManifest = function(name, lro) {
-	var manifestFn = window['v_lib_' + name.toLowerCase() + '_manifest'];
-	manifestFn(lro);
-};
-
 C$common$registerLibraryFunction = function(libName, lro, fnName, argc) {
 	var fn = C$common$libraryFunctionLookups[libName][fnName];
 	var lookupName = 'lib_' + libName + '_' + fnName;

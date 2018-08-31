@@ -52,16 +52,6 @@ def TranslationHelper_registerLibraryFunction(moduleInfo, libRegObj, fnName, fnA
   lookupName = 'lib_' + canonicalName + '_' + fnName
   v_registerLibraryFunction(fn, libRegObj, lookupName, fnArgCount)
 
-def TranslationHelper_runLibraryManifest(name, libRegObj):
-  library = TranslationHelper_globals['libreg'].getLibrary(name.lower())
-  if library == None:
-    return 0
-  try:
-    library.manifestFunction(libRegObj)
-    return 0
-  except:
-    return 3
-
 def TranslationHelper_isValidInteger(value):
   if len(value) == 0: return False
   if value[0] == '-': value = value[1:]
