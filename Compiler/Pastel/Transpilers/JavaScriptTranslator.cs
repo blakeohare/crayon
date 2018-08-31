@@ -488,19 +488,6 @@ namespace Pastel.Transpilers
             sb.Append("C$bytecode");
         }
 
-        public override void TranslateRegisterLibraryFunction(TranspilerContext sb, Expression libRegObj, Expression functionName, Expression functionArgCount)
-        {
-            sb.Append("C$common$registerLibraryFunction('");
-            sb.Append(sb.UniquePrefixForNonCollisions);
-            sb.Append("', ");
-            this.TranslateExpression(sb, libRegObj);
-            sb.Append(", ");
-            this.TranslateExpression(sb, functionName);
-            sb.Append(", ");
-            this.TranslateExpression(sb, functionArgCount);
-            sb.Append(')');
-        }
-
         public override void TranslateResourceReadTextFile(TranspilerContext sb, Expression path)
         {
             sb.Append("C$common$readResourceText(");

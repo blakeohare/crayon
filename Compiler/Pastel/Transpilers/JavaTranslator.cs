@@ -928,23 +928,6 @@ namespace Pastel.Transpilers
             sb.Append("TranslationHelper.random.nextDouble()");
         }
 
-        public override void TranslateRegisterLibraryFunction(TranspilerContext sb, Expression libRegObj, Expression functionName, Expression functionArgCount)
-        {
-            string prefix = sb.UniquePrefixForNonCollisions;
-            string functionNameString = ((InlineConstant)functionName).Value.ToString();
-            string className = "FP_lib_" + prefix + "_function_" + functionNameString;
-
-            sb.Append("TranslationHelper.registerLibraryFunction(LibraryWrapper.class, ");
-            this.TranslateExpression(sb, libRegObj);
-            sb.Append(", new ");
-            sb.Append(className);
-            sb.Append("(), ");
-            this.TranslateExpression(sb, functionName);
-            sb.Append(", ");
-            this.TranslateExpression(sb, functionArgCount);
-            sb.Append(')');
-        }
-
         public override void TranslateResourceReadTextFile(TranspilerContext sb, Expression path)
         {
             sb.Append("ResourceReader.readFileText(\"resources/text/\" + ");

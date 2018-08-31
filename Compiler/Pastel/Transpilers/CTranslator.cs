@@ -721,21 +721,6 @@ namespace Pastel.Transpilers
             sb.Append("BYTE_CODE_FILE");
         }
 
-        public override void TranslateRegisterLibraryFunction(
-            TranspilerContext sb,
-            Expression libRegObj,
-            Expression functionName,
-            Expression functionArgCount)
-        {
-            sb.Append("LibraryHelper_register_function(");
-            this.TranslateExpression(sb, libRegObj);
-            sb.Append(", ");
-            this.TranslateExpression(sb, functionName);
-            sb.Append(", ");
-            this.TranslateExpression(sb, functionArgCount);
-            sb.Append(')');
-        }
-
         public override void TranslateResourceReadTextFile(TranspilerContext sb, Expression path)
         {
             sb.Append("ResourceHelper_read_text_file(");
