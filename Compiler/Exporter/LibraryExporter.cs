@@ -137,18 +137,6 @@ namespace Exporter
 
         private Dictionary<string, string> filepathsByFunctionName;
 
-        public Dictionary<string, string> GetNativeCode()
-        {
-            Dictionary<string, string> output = new Dictionary<string, string>();
-            foreach (string key in this.filepathsByFunctionName.Keys)
-            {
-                string filename = "translate/" + this.filepathsByFunctionName[key].Replace(".cry", ".pst");
-                output[key] = this.Metadata.ReadFile(false, filename, false);
-            }
-
-            return output;
-        }
-
         private Dictionary<string, string> translationsLookup = null;
 
         public void ApplyExtensibleFunctionTranslationsToTranspilerContext(Platform.AbstractPlatform platform, TranspilerContext ctx)

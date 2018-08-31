@@ -268,43 +268,21 @@ namespace Exporter
 
                     libraries[library.Metadata.ID] = context;
 
-                    Dictionary<string, string> supplementalCode = library.Metadata.GetSupplementalTranslatedCode();
-                    Dictionary<string, string> translatedCode = library.GetNativeCode();
                     Dictionary<string, string> structCode = library.Metadata.GetStructFilesCode();
-                    // need to load from the actual Library instance, which could have come from either CRAYON_HOME or source
-
-                    string registryCode = library.Metadata.GetRegistryCode();
-                    if (registryCode == null)
+                    foreach (string structFile in structCode.Keys)
                     {
-                        if (supplementalCode.Count > 0 || translatedCode.Count > 0)
-                        {
-                            throw new InvalidOperationException("The library '" + library.Metadata.ID + "' has translated code but no function_registry.pst file.");
-                        }
+                        string filename = "LIB:" + library.Metadata.ID + "/structs/" + structFile;
+                        context.CompileCode(filename, structCode[structFile]);
                     }
-                    else
+
+                    Dictionary<string, string> supplementalCode = library.Metadata.GetSupplementalTranslatedCode();
+                    foreach (string supplementalFile in supplementalCode.Keys)
                     {
-                        string filename = "LIB:" + library.Metadata.ID + "/function_registry.pst";
-                        context.CompileCode(filename, registryCode);
-
-                        foreach (string structFile in structCode.Keys)
-                        {
-                            filename = "LIB:" + library.Metadata.ID + "/structs/" + structFile;
-                            context.CompileCode(filename, structCode[structFile]);
-                        }
-
-                        foreach (string supplementalFile in supplementalCode.Keys)
-                        {
-                            filename = "LIB:" + library.Metadata.ID + "/supplemental/" + supplementalFile;
-                            context.CompileCode(filename, supplementalCode[supplementalFile]);
-                        }
-                        foreach (string translatedFile in translatedCode.Keys)
-                        {
-                            filename = "LIB:" + library.Metadata.ID + "/translate/" + translatedFile;
-                            context.CompileCode(filename, translatedCode[translatedFile]);
-                        }
-
-                        context.FinalizeCompilation();
+                        string filename = "LIB:" + library.Metadata.ID + "/supplemental/" + supplementalFile;
+                        context.CompileCode(filename, supplementalCode[supplementalFile]);
                     }
+
+                    context.FinalizeCompilation();
                 }
 
                 return libraries;

@@ -103,17 +103,6 @@ namespace Parser
             return output;
         }
 
-        public string GetRegistryCode()
-        {
-            string path = FileUtil.JoinPath(this.Directory, "function_registry.pst");
-            if (!FileUtil.FileExists(path))
-            {
-                return null;
-            }
-
-            return FileUtil.ReadFileText(path);
-        }
-
         private Dictionary<string, string> structFiles = null;
 
         public Dictionary<string, string> GetStructFilesCode()
