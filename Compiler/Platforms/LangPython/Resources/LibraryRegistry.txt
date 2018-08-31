@@ -6,11 +6,9 @@
 class LibraryRegistry:
   def __init__(self, libraries):
     self.libraries = {}
-    self.manifestFunctions = {}
     for name in libraries.keys():
       canonicalName = name.lower()
       try:
-        self.manifestFunctions[canonicalName] = libraries[name].v_lib_manifest_RegisterFunctions
         fnFinderFn = self.createFnFinderFn(libraries[name])
         TranslationHelper_registerFunctionFinder(fnFinderFn)
       except:
