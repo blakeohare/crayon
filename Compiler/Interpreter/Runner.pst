@@ -112,7 +112,6 @@ int main() {
 
         new Dictionary<string, int>(), // inverse function name literal lookup
         -1, // active library reference ID
-        null, // library functions by PC (populated by FINALIZE_INITIALIZATION)
 
         new List<Value>(), // shutdown handlers
         new Dictionary<int, Dictionary<int, int>>() // classMemberLocalizerBuilder

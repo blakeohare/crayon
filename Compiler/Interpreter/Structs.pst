@@ -54,7 +54,6 @@ struct ProgramData {
     Array<int> valueStackDepthByPc;
     Dictionary<string, int> invFunctionNameLiterals;
     int activeLibraryReferenceId;
-    Array<object> libraryFunctionByPc;
 
     List<Value> shutdownHandlers;
 

@@ -123,7 +123,6 @@ InterpreterResult interpretImpl(int executionContextId) {
     Array<int> ops = p.ops;
     Array<Array<int>> args = p.args;
     Array<string> stringArgs = p.stringArgs;
-    Array<object> libFunctionPointers = p.libraryFunctionByPc;
     Array<ClassInfo> classTable = p.classTable;
     Array<FunctionInfo> functionTable = p.functionTable;
     Array<Value> literalTable = p.literalTable;
