@@ -52,10 +52,6 @@ struct ProgramData {
     Array<Array<int>> esfData;
     MagicNumbers magicNumbers;
     Array<int> valueStackDepthByPc;
-    Dictionary<int, int> libraryFunctionIdByLookupId; // lookup ID is library-scoped-function-ID * 4096 + library-reference-ID
-    List<object> libraryFunctionPointers;
-    List<string> libraryFunctionNames;
-    List<int> libraryFunctionArgCounts;
     Dictionary<string, int> invFunctionNameLiterals;
     int activeLibraryReferenceId;
     Array<object> libraryFunctionByPc;

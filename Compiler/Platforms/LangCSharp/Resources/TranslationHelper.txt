@@ -227,27 +227,6 @@ namespace Interpreter.Vm
             return TranslationHelper.LibraryRegistry.LoadLibrary(name, version);
         }
 
-        public static int VmRunLibraryManifest(
-            string name,
-            object libRegObj)
-        {
-            Library library = TranslationHelper.LibraryRegistry.GetLibrary(name);
-            if (library == null)
-            {
-                return 0;
-            }
-
-            try
-            {
-                library.RunManifest(libRegObj);
-                return 0;
-            }
-            catch (Exception)
-            {
-                return 3;
-            }
-        }
-
         public static LibraryRegistry LibraryRegistry { get; set; }
 
         public static void RegisterLibraryFunction(

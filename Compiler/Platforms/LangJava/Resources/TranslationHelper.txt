@@ -318,18 +318,6 @@ public final class TranslationHelper {
     return commandLineArgs;
   }
 
-  public static int runLibraryManifest(String name, Object lro) {
-    LibraryInstance lib = libraryByName.get(name.toLowerCase());
-    if (lib != null) {
-      try {
-        lib.runManifestMethod(lro);
-	  } catch (Exception e) {
-	    throw new RuntimeException("Error while running library manifest.", e);
-	  }
-	}
-	return 0;
-  }
-  
   public static boolean[] listToArrayBool(ArrayList<Boolean> list) {
     int length = list.size();
 	boolean[] output = new boolean[length];

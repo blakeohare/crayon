@@ -1032,18 +1032,6 @@ namespace Pastel.Transpilers
             sb.Append("sys.exit(0)");
         }
 
-        public override void TranslateVmRunLibraryManifest(
-            TranspilerContext sb,
-            Expression libraryName,
-            Expression libRegObj)
-        {
-            sb.Append("TranslationHelper_runLibraryManifest(");
-            this.TranslateExpression(sb, libraryName);
-            sb.Append(", ");
-            this.TranslateExpression(sb, libRegObj);
-            sb.Append(')');
-        }
-
         public override void TranslateVmShowLibStack(TranspilerContext sb)
         {
             sb.Append("always_false()");
