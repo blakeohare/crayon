@@ -120,15 +120,6 @@ namespace Parser.ParseTree
             this.Root = this.Root.ResolveEntityNames(parser);
             this.BatchExpressionEntityNameResolver(parser, this.Args);
 
-            if (this.Root is LibraryFunctionReference)
-            {
-                return new LibraryFunctionCall(
-                    this.FirstToken,
-                    ((LibraryFunctionReference)this.Root).Name,
-                    this.Args,
-                    this.Owner);
-            }
-
             if (this.Root is DotField ||
                 this.Root is Variable ||
                 this.Root is FieldReference ||

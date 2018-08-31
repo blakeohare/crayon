@@ -38,11 +38,6 @@
                 throw new ParserException(this, "Core function invocations cannot stand alone and must be immediately invoked.");
             }
 
-            if (this.Name.StartsWith("$$"))
-            {
-                return new LibraryFunctionReference(this.FirstToken, this.Name.Substring(2), this.Owner);
-            }
-
             if (this.Name.StartsWith("$") && this.Name != "$var")
             {
                 throw new ParserException(this, "CNI functions must be invoked and cannot be used as function pointers.");
