@@ -1122,7 +1122,6 @@ namespace Exporter
             else if (expr is NullCoalescer) this.CompileNullCoalescer(parser, buffer, (NullCoalescer)expr, outputUsed);
             else if (expr is BaseKeyword) this.CompileBaseKeyword(parser, buffer, (BaseKeyword)expr, outputUsed);
             else if (expr is BaseMethodReference) this.CompileBaseMethodReference(parser, buffer, (BaseMethodReference)expr, outputUsed);
-            else if (expr is LibraryFunctionCall) this.CompileLibraryFunctionCall(parser, buffer, (LibraryFunctionCall)expr, null, null, outputUsed);
             else if (expr is FunctionReference) this.CompileFunctionReference(parser, buffer, (FunctionReference)expr, outputUsed);
             else if (expr is FieldReference) this.CompileFieldReference(parser, buffer, (FieldReference)expr, outputUsed);
             else if (expr is CoreFunctionInvocation) this.CompileCoreFunctionInvocation(parser, buffer, (CoreFunctionInvocation)expr, null, null, outputUsed);
@@ -1593,24 +1592,6 @@ namespace Exporter
             buffer.Add(listDef.FirstToken, OpCode.DEF_LIST, listDef.Items.Length);
         }
 
-        private void CompileLibraryFunctionCall(ParserContext parser, ByteBuffer buffer, LibraryFunctionCall libFunc, List<Expression> argsOverrideOrNull, Token parenTokenOverride, bool outputUsed)
-        {
-            List<Expression> args = argsOverrideOrNull ?? new List<Expression>(libFunc.Args);
-            this.CompileExpressionList(parser, buffer, args, true);
-            int argCount = libFunc.Args.Length;
-            Token token = parenTokenOverride ?? libFunc.FirstToken;
-            string libraryName = libFunc.LibraryName;
-            LibraryMetadata library = libFunc.TopLevelEntity.Library;
-            int libraryRefId = parser.LibraryManager.GetLibraryReferenceIdFromKey(library.CanonicalKey);
-            int functionNameReferenceId = parser.LiteralLookup.GetLibFuncRefId(libFunc.Name);
-            buffer.Add(token,
-                OpCode.CALL_LIB_FUNCTION_DYNAMIC,
-                functionNameReferenceId,
-                libraryRefId,
-                argCount,
-                outputUsed ? 1 : 0);
-        }
-
         private void CompileNegativeSign(ParserContext parser, ByteBuffer buffer, NegativeSign negativeSign, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(negativeSign, "This expression does nothing.");
@@ -1867,13 +1848,7 @@ namespace Exporter
 
             if (nativeLibraryFunctionCall != null)
             {
-                this.CompileLibraryFunctionCall(
-                    parser,
-                    buffer,
-                    nativeLibraryFunctionCall,
-                    finalArguments,
-                    userWrittenOuterFunctionCall.ParenToken,
-                    outputUsed);
+                throw new Exception();
             }
             else
             {

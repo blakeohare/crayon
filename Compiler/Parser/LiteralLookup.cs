@@ -68,11 +68,6 @@ namespace Parser
             return this.GetIdForValue("c" + value.ClassID, Types.CLASS, value.ClassID);
         }
 
-        public int GetLibFuncRefId(string funcName)
-        {
-            return this.GetIdForValue("l" + funcName, Types.FUNCTION, funcName);
-        }
-
         public int GetNameId(string value)
         {
             int id;
