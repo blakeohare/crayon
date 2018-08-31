@@ -28,20 +28,20 @@ namespace Parser.Resolver
                         ReturnStatement returnStatement = funcDef.Code[0] as ReturnStatement;
                         if (returnStatement != null)
                         {
-                            Expression[] argsFromLibOrCoreFunction = null;
-                            if (returnStatement.Expression is LibraryFunctionCall)
+                            Expression[] argsFromCniOrCoreFunction = null;
+                            if (returnStatement.Expression is CniFunctionInvocation)
                             {
-                                argsFromLibOrCoreFunction = ((LibraryFunctionCall)returnStatement.Expression).Args;
+                                argsFromCniOrCoreFunction = ((CniFunctionInvocation)returnStatement.Expression).Args;
                             }
                             else if (returnStatement.Expression is CoreFunctionInvocation)
                             {
-                                argsFromLibOrCoreFunction = ((CoreFunctionInvocation)returnStatement.Expression).Args;
+                                argsFromCniOrCoreFunction = ((CoreFunctionInvocation)returnStatement.Expression).Args;
                             }
 
-                            if (argsFromLibOrCoreFunction != null)
+                            if (argsFromCniOrCoreFunction != null)
                             {
                                 bool allSimpleVariables = true;
-                                foreach (Expression expr in argsFromLibOrCoreFunction)
+                                foreach (Expression expr in argsFromCniOrCoreFunction)
                                 {
                                     if (!expr.IsInlineCandidate)
                                     {

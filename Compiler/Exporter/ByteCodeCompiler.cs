@@ -1128,18 +1128,26 @@ namespace Exporter
             else if (expr is IsComparison) this.CompileIsComparison(parser, buffer, (IsComparison)expr, outputUsed);
             else if (expr is ClassReferenceLiteral) this.CompileClassReferenceLiteral(parser, buffer, (ClassReferenceLiteral)expr, outputUsed);
             else if (expr is Lambda) this.CompileLambda(parser, buffer, (Lambda)expr, outputUsed);
-            else if (expr is CniFunctionInvocation) this.CompileCniFunctionInvocation(parser, buffer, (CniFunctionInvocation)expr, outputUsed);
+            else if (expr is CniFunctionInvocation) this.CompileCniFunctionInvocation(parser, buffer, (CniFunctionInvocation)expr, null, null, outputUsed);
             else throw new NotImplementedException();
         }
 
-        private void CompileCniFunctionInvocation(ParserContext parser, ByteBuffer buffer, CniFunctionInvocation cniFuncInvocation, bool outputUsed)
+        private void CompileCniFunctionInvocation(
+            ParserContext parser,
+            ByteBuffer buffer,
+            CniFunctionInvocation cniFuncInvocation,
+            Expression[] argsOverrideOrNull,
+            Token throwTokenOverrideOrNull,
+            bool outputUsed)
         {
             CniFunction cniFunc = cniFuncInvocation.CniFunction;
-            foreach (Expression arg in cniFuncInvocation.Args)
+            Expression[] args = argsOverrideOrNull ?? cniFuncInvocation.Args;
+            foreach (Expression arg in args)
             {
                 this.CompileExpression(parser, buffer, arg, true);
             }
-            buffer.Add(cniFuncInvocation.FirstToken, OpCode.CNI_INVOKE, cniFunc.ID, cniFunc.ArgCount, outputUsed ? 1 : 0);
+            Token throwToken = throwTokenOverrideOrNull ?? cniFuncInvocation.FirstToken;
+            buffer.Add(throwToken, OpCode.CNI_INVOKE, cniFunc.ID, cniFunc.ArgCount, outputUsed ? 1 : 0);
         }
 
         private void CompileLambda(ParserContext parser, ByteBuffer buffer, Lambda lambda, bool outputUsed)
@@ -1813,15 +1821,15 @@ namespace Exporter
                 userProvidedAndImplicitArgumentsByArgName[embedFunctionBeingInlined.ArgNames[i].Value] = argValue;
             }
 
-            LibraryFunctionCall nativeLibraryFunctionCall = coreOrLibFunctionBeingInlined as LibraryFunctionCall;
+            CniFunctionInvocation cniFunctionCall = coreOrLibFunctionBeingInlined as CniFunctionInvocation;
             CoreFunctionInvocation coreFunctionCall = coreOrLibFunctionBeingInlined as CoreFunctionInvocation;
-            if (nativeLibraryFunctionCall == null && coreFunctionCall == null)
+            if (cniFunctionCall == null && coreFunctionCall == null)
             {
                 throw new InvalidOperationException(); // This shouldn't happen. The body of the library function should have been verified by the resolver before getting to this state.
             }
 
-            Expression[] innermostArgList = nativeLibraryFunctionCall != null
-                ? nativeLibraryFunctionCall.Args
+            Expression[] innermostArgList = cniFunctionCall != null
+                ? cniFunctionCall.Args
                 : coreFunctionCall.Args;
 
             // This is the new list of arguments that will be passed to the inner underlying lib/core function.
@@ -1846,9 +1854,15 @@ namespace Exporter
                 }
             }
 
-            if (nativeLibraryFunctionCall != null)
+            if (cniFunctionCall != null)
             {
-                throw new Exception();
+                this.CompileCniFunctionInvocation(
+                    parser,
+                    buffer,
+                    cniFunctionCall,
+                    finalArguments.ToArray(),
+                    userWrittenOuterFunctionCall.ParenToken,
+                    outputUsed);
             }
             else
             {
