@@ -215,13 +215,6 @@ namespace Interpreter.Vm
             return output;
         }
 
-        private static object[] ARGS_PLACEHOLDER = new object[1];
-        public static Value InvokeDynamicLibraryFunction(object functionPointer, Value[] args)
-        {
-            ARGS_PLACEHOLDER[0] = args;
-            return (Value)((System.Reflection.MethodInfo)functionPointer).Invoke(null, ARGS_PLACEHOLDER);
-        }
-
         public static int VmDetermineLibraryAvailability(string name, string version)
         {
             return TranslationHelper.LibraryRegistry.LoadLibrary(name, version);

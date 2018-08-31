@@ -101,45 +101,8 @@ namespace Platform
                 templates.AddPastelTemplate("library:" + libraryName + ":manifestfunc", manifestFunction);
             }
 
-            if (libContext.Language == Language.JAVA)
-            {
-                Dictionary<string, string> lookup = libContext.GetCodeForFunctionsLookup();
-                StringBuilder sb = new StringBuilder();
-                string reflectionCalledPrefix = "lib_" + library.Name.ToLower() + "_function_";
-                libContext.GetTranspilerContext().TabDepth = 1;
-                foreach (string functionName in lookup.Keys.OrderBy(k => k))
-                {
-                    string functionCode = lookup[functionName];
-                    bool isFunctionPointerObject = functionName.StartsWith(reflectionCalledPrefix);
-
-                    if (isFunctionPointerObject)
-                    {
-                        // This is kind of hacky, BUT...
-
-                        // If the generated function needs to be used as a function pointer, (i.e. it's one
-                        // of the library's VM-native bridge methods) change the name to "invoke" and then
-                        // wrap it in a dummy class that extends LibraryFunctionPointer. The manifest
-                        // function will simply instantiate this in lieu of a performant way to do
-                        // function pointers in Java.
-                        functionCode = functionCode.Replace(
-                            "public static Value v_" + functionName + "(Value[] ",
-                            "public Value invoke(Value[] ");
-                        functionCode =
-                            "  public static class FP_" + functionName + " extends LibraryFunctionPointer {\n" +
-                            "  " + functionCode.Replace("\n", "\n  ").TrimEnd() + "\n" +
-                            "  }";
-                    }
-                    sb.Append(functionCode);
-                    sb.Append("\n");
-                }
-                libContext.GetTranspilerContext().TabDepth = 0;
-                templates.AddPastelTemplate("library:" + library.Name + ":functions", sb.ToString().Trim());
-            }
-            else
-            {
-                string allFunctionCode = libContext.GetCodeForFunctions();
-                templates.AddPastelTemplate("library:" + library.Name + ":functions", allFunctionCode);
-            }
+            string allFunctionCode = libContext.GetCodeForFunctions();
+            templates.AddPastelTemplate("library:" + library.Name + ":functions", allFunctionCode);
 
             if (libContext.UsesStructDefinitions)
             {

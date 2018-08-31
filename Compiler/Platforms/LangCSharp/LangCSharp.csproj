@@ -60,7 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Library.txt" />
-    <EmbeddedResource Include="Resources\LibraryFunctionPointer.txt" />
     <EmbeddedResource Include="Resources\LibraryRegistry.txt" />
     <EmbeddedResource Include="Resources\ResourceReader.txt" />
     <EmbeddedResource Include="Resources\TranslationHelper.txt" />

@@ -500,15 +500,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateInvokeDynamicLibraryFunction(TranspilerContext sb, Expression functionId, Expression argsArray)
-        {
-            sb.Append("((LibraryFunctionPointer)");
-            this.TranslateExpression(sb, functionId);
-            sb.Append(").invoke(");
-            this.TranslateExpression(sb, argsArray);
-            sb.Append(')');
-        }
-
         public override void TranslateIsValidInteger(TranspilerContext sb, Expression stringValue)
         {
             sb.Append("TranslationHelper.isValidInteger(");

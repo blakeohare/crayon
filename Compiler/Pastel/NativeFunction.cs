@@ -37,7 +37,6 @@
         INT_BUFFER_16,
         INTEGER_DIVISION,
         INT_TO_STRING,
-        INVOKE_DYNAMIC_LIBRARY_FUNCTION,
         IS_DEBUG,
         IS_VALID_INTEGER,
         LIST_ADD,
