@@ -229,24 +229,6 @@ namespace Interpreter.Vm
 
         public static LibraryRegistry LibraryRegistry { get; set; }
 
-        public static void RegisterLibraryFunction(
-            Type libraryWrapperClass,
-            object libRegObj,
-            string functionName,
-            int argCount)
-        {
-            string libraryName = libraryWrapperClass.Namespace.Split('.')[2];
-            string fullyQualifiedFunctionName = "lib_" + libraryName.ToLower() + "_" + functionName;
-            string compiledName = "v_lib_" + libraryName.ToLower() + "_function_" + functionName;
-            System.Reflection.MethodInfo fp = libraryWrapperClass.GetMethod(compiledName);
-            if (fp == null) throw new Exception("Library function not found: '" + fullyQualifiedFunctionName + "'");
-            CrayonWrapper.v_registerLibraryFunction(
-                fp,
-                libRegObj,
-                fullyQualifiedFunctionName,
-                argCount);
-        }
-
         public static bool SubstringIsEqualTo(string haystack, int index, string needle)
         {
             int needleLength = needle.Length;

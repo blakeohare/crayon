@@ -424,33 +424,6 @@ int declareLibrary(int refId, string descriptor) {
     return status;
 }
 
-// TODO: DELETE THIS
-int registerLibraryFunction(
-        object functionPointer,
-        object libRegObjRaw,
-        string functionName,
-        int argCount) {
-    /*
-    LibRegObj libRegObj = ((LibRegObj) libRegObjRaw);
-    List<object> functionPointersById = libRegObj.functionPointers;
-    List<string> functionNamesById = libRegObj.functionNames;
-    List<int> functionArgCountsById = libRegObj.argCounts;
-    int index = functionPointersById.Size();
-
-    functionPointersById.Add(functionPointer);
-    functionNamesById.Add(functionName);
-    functionArgCountsById.Add(argCount);
-
-    ProgramData p = Core.GetProgramData();
-    if (p.invFunctionNameLiterals.Contains(functionName)) {
-        int functionNameReferenceId = p.invFunctionNameLiterals[functionName];
-        int lookupId = p.activeLibraryReferenceId + (4096 * functionNameReferenceId);
-        p.libraryFunctionIdByLookupId[lookupId] = index;
-    }
-    */
-    return 0;
-}
-
 // runs during FINALIZE_INITIALIZATION
 // allocates a library function pointer lookup by PC based on the args of CALL_LIB_FUNCTION_DYNAMIC
 // TODO: DELETE THIS

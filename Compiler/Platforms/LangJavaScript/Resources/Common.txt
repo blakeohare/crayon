@@ -193,16 +193,8 @@ C$common$scrapeLibFuncNames = function(libname) {
 };
 
 C$common$determineLibraryAvailability = function(name, version) {
-	if (C$common$libraryFunctionLookups[name.toLowerCase()] !== undefined) {
-		return 0;
-	}
-	return 2;
-};
-
-C$common$registerLibraryFunction = function(libName, lro, fnName, argc) {
-	var fn = C$common$libraryFunctionLookups[libName][fnName];
-	var lookupName = 'lib_' + libName + '_' + fnName;
-	v_registerLibraryFunction(fn, lro, lookupName, argc);
+	// TODO: this needs to change now that function registration is no longer used.
+	return 0;
 };
 
 C$common$getFunction = function(name) {
