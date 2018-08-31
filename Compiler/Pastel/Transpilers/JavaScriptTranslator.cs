@@ -22,7 +22,10 @@ namespace Pastel.Transpilers
 
         public override void TranslateArrayJoin(TranspilerContext sb, Expression array, Expression sep)
         {
-            throw new NotImplementedException();
+            this.TranslateExpression(sb, array);
+            sb.Append(".join(");
+            this.TranslateExpression(sb, sep);
+            sb.Append(')');
         }
 
         public override void TranslateArrayLength(TranspilerContext sb, Expression array)
@@ -439,7 +442,9 @@ namespace Pastel.Transpilers
 
         public override void TranslateOrd(TranspilerContext sb, Expression charValue)
         {
-            throw new NotImplementedException();
+            sb.Append('(');
+            this.TranslateExpression(sb, charValue);
+            sb.Append(").charCodeAt(0)");
         }
 
         public override void TranslateParseFloatUnsafe(TranspilerContext sb, Expression stringValue)
@@ -665,7 +670,13 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringSubstringIsEqualTo(TranspilerContext sb, Expression haystack, Expression startIndex, Expression needle)
         {
-            throw new NotImplementedException();
+            sb.Append("C$common$checkStringInString(");
+            this.TranslateExpression(sb, haystack);
+            sb.Append(", ");
+            this.TranslateExpression(sb, startIndex);
+            sb.Append(", ");
+            this.TranslateExpression(sb, needle);
+            sb.Append(')');
         }
 
         public override void TranslateStringToLower(TranspilerContext sb, Expression str)
