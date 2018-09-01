@@ -1,4 +1,4 @@
-﻿int initializeFunction(ProgramData p, Array<int> args, int currentPc, string stringArg) {
+﻿int initializeFunction(VmContext p, Array<int> args, int currentPc, string stringArg) {
     int functionId = args[0];
     int nameId = args[1];
     int minArgCount = args[2];
@@ -50,7 +50,7 @@
     return pcJump;
 }
 
-Array<FunctionInfo> getFunctionTable(ProgramData p, int functionId) {
+Array<FunctionInfo> getFunctionTable(VmContext p, int functionId) {
     Array<FunctionInfo> oldTable = p.functionTable;
     int oldLength = oldTable.Size();
 
@@ -96,7 +96,7 @@ Array<FunctionInfo> getFunctionTable(ProgramData p, int functionId) {
             n + 3 -> function ID
             n + 4 -> not used
 */
-int initializeClass(int pc, ProgramData p, Array<int> args, string className) {
+int initializeClass(int pc, VmContext p, Array<int> args, string className) {
     int i = 0;
     int memberId = 0;
     int globalId = 0;
@@ -222,7 +222,7 @@ int initializeClass(int pc, ProgramData p, Array<int> args, string className) {
     return 0;
 }
 
-Array<ClassInfo> getClassTable(ProgramData p, int classId) {
+Array<ClassInfo> getClassTable(VmContext p, int classId) {
     Array<ClassInfo> oldTable = p.classTable;
     int oldLength = oldTable.Size();
     if (classId < oldLength) {
@@ -297,7 +297,7 @@ int increaseLocalsStackCapacity(ExecutionContext ec, int newScopeSize) {
 }
 
 StackFrame maybeInvokeStaticConstructor(
-        ProgramData p,
+        VmContext p,
         ExecutionContext ec,
         StackFrame stack,
         ClassInfo classInfo,
@@ -400,7 +400,7 @@ Array<Array<int>> generateEsfData(int byteCodeLength, Array<int> esfArgs) {
 }
 
 int markClassAsInitialized(StackFrame stack, int classId) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     ClassInfo classInfo = p.classTable[stack.markClassAsInitialized];
     classInfo.staticInitializationState = 2; // mark class as completely ready to use.
     p.classStaticInitializationStack.Pop();
@@ -415,7 +415,7 @@ int markClassAsInitialized(StackFrame stack, int classId) {
     3 -> Library found, but incompatible version
 */
 int declareLibrary(int refId, string descriptor) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     Array<string> descriptorParts = descriptor.Split(",");
     string name = descriptorParts[0];
     string ver = descriptorParts[1];
@@ -425,7 +425,7 @@ int declareLibrary(int refId, string descriptor) {
 }
 
 int addLiteralImpl(Array<int> row, string stringArg) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     int type = row[0];
     if (type == Types.NULL) {
         p.literalTableBuilder.Add(VALUE_NULL);
@@ -453,7 +453,7 @@ int addLiteralImpl(Array<int> row, string stringArg) {
 }
 
 int addNameImpl(string nameValue) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     int index = p.identifiersBuilder.Size(); // name ID (sequentially allocated so it happens to be the length of the list at the time of declaration)
     p.invIdentifiers[nameValue] = index;
     p.identifiersBuilder.Add(nameValue);
@@ -466,7 +466,7 @@ int addNameImpl(string nameValue) {
 }
 
 int finalizeInitializationImpl(string projectId, int localeCount) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
 
     p.magicNumbers.totalLocaleCount = localeCount;
     p.identifiers = Core.ListToArray(p.identifiersBuilder);
@@ -488,7 +488,7 @@ int finalizeInitializationImpl(string projectId, int localeCount) {
 }
 
 int buildSwitchIntImpl(Array<int> row) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     Dictionary<int, int> integerSwitchLookup = new Dictionary<int, int>();
     for (int i = 0; i < row.Size(); i += 2) {
         integerSwitchLookup[row[i]] = row[i + 1];
@@ -499,7 +499,7 @@ int buildSwitchIntImpl(Array<int> row) {
 }
 
 int buildSwitchStringImpl(Array<int> row, string caseValue) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     List<Dictionary<string, int>> allStringSwitchLookups = p.stringSwitchLookupsBuilder;
     int id = row[0];
     while (allStringSwitchLookups.Size() <= id) {
@@ -513,7 +513,7 @@ int buildSwitchStringImpl(Array<int> row, string caseValue) {
 
 // TODO: eventually this should come from embedded resources instead of byte code (with the option of it being absent)
 int defOriginalCodeImpl(Array<int> row, string fileContents) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     int fileId = row[0]; // file ID
     List<string> codeLookup = p.sourceCodeBuilder;
     while (codeLookup.Size() <= fileId) {
@@ -525,7 +525,7 @@ int defOriginalCodeImpl(Array<int> row, string fileContents) {
 }
 
 int tokenDataImpl(Array<int> row) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     Array<List<Token>> tokensByPc = p.tokenData;
     int pc = row[0] + p.userCodeStart; // PC
     int line = row[1]; // Line
@@ -554,7 +554,7 @@ int tokenDataImpl(Array<int> row) {
 
 */
 int valueStackDepthImpl(Array<int> row) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     int totalPcCount = p.ops.Size(); // total PC count
     Array<int> valueStackDepthByPc = new Array<int>(totalPcCount); // output
     int rowIndex = 0; // row index
@@ -580,7 +580,7 @@ int valueStackDepthImpl(Array<int> row) {
     row[(n + 1) * k + 2] -> locale ID the following n elements apply to
     row[(n + 1) * k + 3 + [0 ... n - 1]] -> the name ID's for the members for that locale
 
-    This runs before class initialization, so the lookup table must be added to ProgramData.
+    This runs before class initialization, so the lookup table must be added to VmContext.
 
     The key is in the form of the nameID * totalLocaleCount + localeId.
     This mathematically namespaces name ID's to prevent collisions across different locales.
@@ -589,7 +589,7 @@ int initLocTable(Array<int> row) {
     int classId = row[0];
     int memberCount = row[1];
     int nameId = 0;
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     int totalLocales = p.magicNumbers.totalLocaleCount;
     Dictionary<int, int> lookup = new Dictionary<int, int>();
     for (int i = 2; i < row.Size(); i += memberCount) {

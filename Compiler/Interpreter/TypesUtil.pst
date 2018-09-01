@@ -18,7 +18,7 @@ bool isClassASubclassOf(int subClassId, int parentClassId) {
         return true;
     }
 
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     Array<ClassInfo> classTable = p.classTable;
     int classIdWalker = subClassId;
     while (classIdWalker != -1) {

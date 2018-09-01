@@ -4,7 +4,7 @@ double* FLOAT_BUFFER_16 = (double*)malloc(sizeof(double) * 16);
 
 int** STRING_TABLE = NULL;
 
-ProgramData* PROGRAM_DATA;
+VmContext* PROGRAM_DATA;
 
 void print_with_conversion(int** str)
 {

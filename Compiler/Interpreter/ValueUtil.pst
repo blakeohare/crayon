@@ -44,7 +44,7 @@ string valueToString(Value wrappedValue) {
         ObjectInstance objInstance = ((ObjectInstance) wrappedValue.internalValue);
         int classId = objInstance.classId;
         int ptr = objInstance.objectId;
-        ProgramData pd = Core.GetProgramData();
+        VmContext pd = Core.GetProgramData();
         ClassInfo classInfo = pd.classTable[classId];
         int nameId = classInfo.nameId;
         string className = pd.identifiers[nameId];

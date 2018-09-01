@@ -4,8 +4,8 @@
         [2n + 1] -> type (int) value shown in ResourceNodeType enum in embed.cry
 */
 Value lib_resources_getResourceData(Array<Value> args) {
-    ProgramData p = Core.GetProgramData();
-    Value output = buildList(p.resourceDatabase.dataList);
-    p.resourceDatabase.dataList = null;
+    VmContext vm = Core.GetProgramData();
+    Value output = buildList(vm.resourceDatabase.dataList);
+    vm.resourceDatabase.dataList = null;
     return output;
 }

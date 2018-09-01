@@ -9,7 +9,7 @@ namespace Interpreter.Vm
     {
         public static readonly Random Random = new Random();
 
-        public static ProgramData ProgramData { get; set; }
+        public static VmContext ProgramData { get; set; }
         public static int[] IntBuffer16 { get; private set; }
         public static double[] FloatBuffer16 { get; private set; }
         public static string[] StringBuffer16 { get; private set; }

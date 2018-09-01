@@ -17,7 +17,7 @@ InterpreterResult suspendInterpreterWithLock() {
 InterpreterResult interpreterFinished(ExecutionContext ec) {
     if (ec != null) {
         int id = ec.id;
-        ProgramData p = Core.GetProgramData();
+        VmContext p = Core.GetProgramData();
         if (p.executionContexts.Contains(id)) {
             p.executionContexts.Remove(id);
         }
@@ -60,7 +60,7 @@ InterpreterResult generateException(
     ec.currentValueStackSize = valueStackSize;
     stack.pc = pc;
     ec.localsStackSetToken = stack.localsStackSetToken + 1;
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     MagicNumbers mn = p.magicNumbers;
     int generateExceptionFunctionId = mn.coreGenerateExceptionFunctionId;
     FunctionInfo functionInfo = p.functionTable[generateExceptionFunctionId];
@@ -100,7 +100,7 @@ InterpreterResult interpret(int executionContextId) {
 }
 
 ExecutionContext interpreterGetExecutionContext(int executionContextId) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     Dictionary<int, ExecutionContext> executionContexts = p.executionContexts;
     if (!executionContexts.Contains(executionContextId)) {
         return null;
@@ -109,7 +109,7 @@ ExecutionContext interpreterGetExecutionContext(int executionContextId) {
 }
 
 InterpreterResult interpretImpl(int executionContextId) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     Dictionary<int, ExecutionContext> executionContexts = p.executionContexts;
     ExecutionContext ec = interpreterGetExecutionContext(executionContextId);
     if (ec == null) {
@@ -353,7 +353,7 @@ int canonicalizeListSliceArgs(
 
 List<Token> generateTokenListFromPcs(List<int> pcs) {
     List<Token> output = new List<Token>();
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     Array<List<Token>> tokensByPc = p.tokenData;
     Token token = null;
     int i = 0;
@@ -404,7 +404,7 @@ bool stackItemIsLibrary(string stackInfo) {
 }
 
 List<string> tokenHelperConvertPcsToStackTraceStrings(List<int> pcs) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     List<Token> tokens = generateTokenListFromPcs(pcs);
     Array<string> files = p.sourceCode;
     List<string> output = new List<string>();
@@ -446,7 +446,7 @@ string tokenHelperGetFormattedPointerToToken(Token token) {
 }
 
 string tokenHelperGetFileLine(int fileId, int lineNum) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     string sourceCode = p.sourceCode[fileId];
     if (sourceCode == null) {
         return null;
@@ -484,7 +484,7 @@ Array<Value> valueStackIncreaseCapacity(ExecutionContext ec) {
 
 string unrollExceptionOutput(Value exceptionInstance) {
     ObjectInstance objInstance = ((ObjectInstance) exceptionInstance.internalValue);
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     ClassInfo classInfo = p.classTable[objInstance.classId];
     List<int> pcs = ((List<int>) objInstance.nativeData[1]);
     string codeFormattedPointer = "";
@@ -516,7 +516,7 @@ string unrollExceptionOutput(Value exceptionInstance) {
 }
 
 bool isPcFromCore(int pc) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     List<Token> tokens = p.tokenData[pc];
     if (tokens == null) {
         return false;
@@ -527,12 +527,12 @@ bool isPcFromCore(int pc) {
 }
 
 int vm_getCurrentExecutionContextId() {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     return p.lastExecutionContextId;
 }
 
 ExecutionContext getExecutionContext(int id) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     if (id == -1) {
         id = p.lastExecutionContextId;
     }

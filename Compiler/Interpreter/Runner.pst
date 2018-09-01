@@ -70,7 +70,7 @@ int main() {
     Dictionary<int, ExecutionContext> executionContexts = new Dictionary<int, ExecutionContext>();
     executionContexts[0] = executionContext;
 
-    Core.SetProgramData(new ProgramData(
+    Core.SetProgramData(new VmContext(
         executionContexts,
         executionContext.id, // last execution context ID
         ops,
@@ -129,7 +129,7 @@ int main() {
     This is why the output of the initial invocation is meaningless.
 */
 int runInterpreter(int executionContextId) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     InterpreterResult result = interpret(executionContextId);
     int status = result.status;
     bool shutdown = false;
@@ -156,7 +156,7 @@ int runInterpreter(int executionContextId) {
 int runShutdownHandlers() {
     // This will recursively invoke the shutdown handlers upon completion,
     // so be sure to pop off the handler as it's used.
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     while (p.shutdownHandlers.Size() > 0) {
         // Pop from the front. An iterating index will not be accurate if state is modified recursively.
         Value handler = p.shutdownHandlers[0];
@@ -167,7 +167,7 @@ int runShutdownHandlers() {
 }
 
 int runInterpreterWithFunctionPointer(Value fpValue, Array<Value> args) {
-    ProgramData p = Core.GetProgramData();
+    VmContext p = Core.GetProgramData();
     int newId = p.lastExecutionContextId + 1;
     p.lastExecutionContextId = newId;
     List<Value> argList = new List<Value>();

@@ -15,7 +15,7 @@ struct DictImpl {
     int keyType;
 }
 
-struct ProgramData {
+struct VmContext {
     Dictionary<int, ExecutionContext> executionContexts;
     int lastExecutionContextId;
     Array<int> ops;

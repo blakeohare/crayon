@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
 
-import org.crayonlang.interpreter.structs.ProgramData;
+import org.crayonlang.interpreter.structs.VmContext;
 import org.crayonlang.interpreter.structs.Value;
 
 public final class TranslationHelper {
@@ -43,9 +43,9 @@ public final class TranslationHelper {
 
     public static Random random = new Random();
 
-    private static ProgramData programData = null;
-    public static void setProgramData(ProgramData pd) { programData = pd; }
-    public static ProgramData getProgramData() { return programData; }
+    private static VmContext programData = null;
+    public static void setProgramData(VmContext pd) { programData = pd; }
+    public static VmContext getProgramData() { return programData; }
 
 	private static String byteCode = null;
 	public static void setByteCode(String byteCode) { TranslationHelper.byteCode = byteCode; }
