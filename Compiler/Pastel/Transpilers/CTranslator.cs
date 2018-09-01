@@ -209,11 +209,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateCommandLineArgs(TranspilerContext sb)
-        {
-            sb.Append("TranslationHelper_get_command_line_args()");
-        }
-
         public override void TranslateConstructorInvocation(TranspilerContext sb, ConstructorInvocation constructorInvocation)
         {
             sb.Append(constructorInvocation.StructType.NameToken.Value);

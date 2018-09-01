@@ -1,3 +1,3 @@
 ﻿@import("ValueStackCapacityCheck.pst");
-valueStack[valueStackSize] = buildStringList(Core.CommandLineArgs());
+valueStack[valueStackSize] = buildListCopy(vm.environment.commandLineArgs);
 valueStackSize += 1;

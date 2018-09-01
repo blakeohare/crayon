@@ -88,11 +88,6 @@ namespace Pastel.Transpilers
             sb.Append("}))");
         }
 
-        public override void TranslateCommandLineArgs(TranspilerContext sb)
-        {
-            sb.Append("TranslationHelper.getCommandLineArgs()");
-        }
-
         public override void TranslatePrintStdErr(TranspilerContext sb, Expression value)
         {
             sb.Append("PlatformTranslationHelper.printStdErr(");

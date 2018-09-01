@@ -116,7 +116,6 @@ namespace Pastel.Nodes
                 case "Base64ToString": return NativeFunction.BASE64_TO_STRING;
                 case "CharToString": return NativeFunction.CHAR_TO_STRING;
                 case "Chr": return NativeFunction.CHR;
-                case "CommandLineArgs": return NativeFunction.COMMAND_LINE_ARGS;
                 case "ConvertRawDictionaryValueCollectionToAReusableValueList": return NativeFunction.CONVERT_RAW_DICTIONARY_VALUE_COLLECTION_TO_A_REUSABLE_VALUE_LIST;
                 case "Cos": return NativeFunction.MATH_COS;
                 case "CurrentTimeSeconds": return NativeFunction.CURRENT_TIME_SECONDS;
@@ -133,7 +132,6 @@ namespace Pastel.Nodes
                 case "IntBuffer16": return NativeFunction.INT_BUFFER_16;
                 case "IntegerDivision": return NativeFunction.INTEGER_DIVISION;
                 case "IntToString": return NativeFunction.INT_TO_STRING;
-                case "IsDebug": return NativeFunction.IS_DEBUG;
                 case "IsValidInteger": return NativeFunction.IS_VALID_INTEGER;
                 case "ListConcat": return NativeFunction.LIST_CONCAT;
                 case "ListToArray": return NativeFunction.LIST_TO_ARRAY;
@@ -202,6 +200,8 @@ namespace Pastel.Nodes
                     switch (field)
                     {
                         case "Join": return NativeFunction.ARRAY_JOIN;
+                        case "Length": return NativeFunction.ARRAY_LENGTH;
+                        // TODO: deprecate this
                         case "Size": return NativeFunction.ARRAY_LENGTH;
                         default: throw new ParserException(this.FieldName, "Unresolved Array method: " + field);
                     }

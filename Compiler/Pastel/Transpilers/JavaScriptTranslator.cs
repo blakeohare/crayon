@@ -79,11 +79,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateCommandLineArgs(TranspilerContext sb)
-        {
-            sb.Append("C$common$commandLineArgs");
-        }
-
         public override void TranslateConstructorInvocation(TranspilerContext sb, ConstructorInvocation constructorInvocation)
         {
             sb.Append('[');

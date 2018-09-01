@@ -29,6 +29,7 @@ namespace Exporter
             "Structs.pst",
             "TypesUtil.pst",
             "ValueUtil.pst",
+            "VmPublicUtil.pst",
         };
 
         private void AddTypeEnumsToConstants(Dictionary<string, object> constantFlags)

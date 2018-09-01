@@ -57,7 +57,13 @@ struct VmContext {
 
     List<Value> shutdownHandlers;
 
+    VmEnvironment environment;
+
     Dictionary<int, Dictionary<int, int>> classMemberLocalizerBuilder;
+}
+
+struct VmEnvironment {
+    Array<Value> commandLineArgs;
 }
 
 struct ExecutionContext {

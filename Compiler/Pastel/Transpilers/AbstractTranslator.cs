@@ -231,7 +231,6 @@ namespace Pastel.Transpilers
                 case Pastel.NativeFunction.BASE64_TO_STRING: this.TranslateBase64ToString(sb, args[0]); break;
                 case Pastel.NativeFunction.CHAR_TO_STRING: this.TranslateCharToString(sb, args[0]); break;
                 case Pastel.NativeFunction.CHR: this.TranslateChr(sb, args[0]); break;
-                case Pastel.NativeFunction.COMMAND_LINE_ARGS: this.TranslateCommandLineArgs(sb); break;
                 case Pastel.NativeFunction.CONVERT_RAW_DICTIONARY_VALUE_COLLECTION_TO_A_REUSABLE_VALUE_LIST: this.TranslateConvertRawDictionaryValueCollectionToAReusableValueList(sb, args[0]); break;
                 case Pastel.NativeFunction.CURRENT_TIME_SECONDS: this.TranslateCurrentTimeSeconds(sb); break;
                 case Pastel.NativeFunction.DICTIONARY_CONTAINS_KEY: this.TranslateDictionaryContainsKey(sb, args[0], args[1]); break;
@@ -408,7 +407,6 @@ namespace Pastel.Transpilers
         public abstract void TranslateCharConstant(TranspilerContext sb, char value);
         public abstract void TranslateCharToString(TranspilerContext sb, Expression charValue);
         public abstract void TranslateChr(TranspilerContext sb, Expression charCode);
-        public abstract void TranslateCommandLineArgs(TranspilerContext sb);
         public abstract void TranslateConstructorInvocation(TranspilerContext sb, ConstructorInvocation constructorInvocation);
         public abstract void TranslateConvertRawDictionaryValueCollectionToAReusableValueList(TranspilerContext sb, Expression dictionary);
         public abstract void TranslateCurrentTimeSeconds(TranspilerContext sb);

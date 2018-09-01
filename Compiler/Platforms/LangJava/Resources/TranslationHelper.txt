@@ -301,15 +301,6 @@ public final class TranslationHelper {
 	}
   }
 
-  private static String[] commandLineArgs;
-  public static void setCommandLineArgs(String[] args) {
-    commandLineArgs = args;
-  }
-  public static String[] getCommandLineArgs() {
-    if (commandLineArgs == null) throw new RuntimeException(); // must be set from Main
-    return commandLineArgs;
-  }
-
   public static boolean[] listToArrayBool(ArrayList<Boolean> list) {
     int length = list.size();
 	boolean[] output = new boolean[length];

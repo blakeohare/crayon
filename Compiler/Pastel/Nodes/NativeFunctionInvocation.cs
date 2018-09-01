@@ -45,14 +45,6 @@ namespace Pastel.Nodes
                     if (this.Args.Length != 1) throw new ParserException(this.FirstToken, "Expected 1 arg.");
 
                     return new ForcedParenthesis(this.FirstToken, this.Args[0]);
-
-                case NativeFunction.IS_DEBUG:
-#if DEBUG
-                    bool value = true;
-#else
-                    bool value = false;
-#endif
-                    return new InlineConstant(PType.BOOL, this.FirstToken, value);
             }
 
             Dictionary<string, PType> templateLookup = new Dictionary<string, PType>();

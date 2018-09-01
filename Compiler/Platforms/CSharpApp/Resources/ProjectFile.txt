@@ -10,9 +10,9 @@
     <RootNamespace>%%%PROJECT_ID%%%</RootNamespace>
     <AssemblyName>%%%PROJECT_ID%%%</AssemblyName>
     <FileAlignment>512</FileAlignment>
-	<OutputType>WinExe</OutputType>
-	<TargetFrameworkProfile>Client</TargetFrameworkProfile>
-	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <PlatformTarget>x86</PlatformTarget>

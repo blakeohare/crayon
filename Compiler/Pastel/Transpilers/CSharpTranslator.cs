@@ -280,11 +280,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateCommandLineArgs(TranspilerContext sb)
-        {
-            sb.Append("TranslationHelper.CommandLineArgs");
-        }
-
         public override void TranslateGetFunction(TranspilerContext sb, Expression name)
         {
             sb.Append("TranslationHelper.GetFunctionPointer(");
