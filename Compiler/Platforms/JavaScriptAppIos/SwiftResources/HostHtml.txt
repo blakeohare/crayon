@@ -15,7 +15,7 @@
 %%%JS_LIB_INCLUSIONS%%%
 %%%JS_EXTRA_HEAD%%%
 	</head>
-	<body onload="v_main()">
+	<body onload="main()">
 		<div id="crayon_host" oncontextmenu="return false;"></div>
 	</body>
 </html>

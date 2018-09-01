@@ -82,7 +82,9 @@ namespace CrayonRuntime
             TranslationHelper.ImageSheetManifest = cbxDecoder.ImageSheetManifest;
             Interpreter.ResourceReader.CbxDirectory = System.IO.Path.GetDirectoryName(cbxPath);
 
-            CrayonWrapper.v_main();
+            Interpreter.Structs.VmContext vm = CrayonWrapper.v_createVm();
+            TranslationHelper.ProgramData = vm;
+            CrayonWrapper.v_startVm(vm);
         }
 
         private static string Base64Decode(string encodedValue)

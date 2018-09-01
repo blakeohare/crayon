@@ -3,6 +3,7 @@
 import org.crayonlang.interpreter.Interpreter;
 import org.crayonlang.interpreter.TranslationHelper;
 import org.crayonlang.interpreter.ResourceReader;
+import org.crayonlang.interpreter.structs.VmContext;
 
 public final class Main {
 
@@ -10,7 +11,10 @@ public final class Main {
     TranslationHelper.setByteCode(ResourceReader.readFileText("resources/bytecode.txt"));
     TranslationHelper.setResourceManifest(ResourceReader.readFileText("resources/manifest.txt"));
     TranslationHelper.setCommandLineArgs(args);
-    Interpreter.v_main();
+
+    VmContext vm = Interpreter.v_createVm();
+    TranslationHelper.setProgramData(vm);
+    Interpreter.v_startVm(vm);
   }
 
 }

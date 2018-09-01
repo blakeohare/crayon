@@ -932,13 +932,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateSetProgramData(TranspilerContext sb, Expression programData)
-        {
-            sb.Append("TranslationHelper.setProgramData(");
-            this.TranslateExpression(sb, programData);
-            sb.Append(')');
-        }
-
         public override void TranslateSortedCopyOfIntArray(TranspilerContext sb, Expression intArray)
         {
             sb.Append("TranslationHelper.sortedCopyOfIntArray(");

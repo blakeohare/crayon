@@ -1,15 +1,4 @@
-﻿/*
-    Simply call this to kick off program execution.
-    This function is always safe to call as it will block or not block appropriately and register
-    appropriate callbacks in the latter case.
-    e.g.
-        <body onload="v_main()">...</body>
-        public static void main(String[] args) { CrayonWrapper.v_main(); }
-        <?php v_main(); ?>
-
-    return value is meaningless.
-*/
-int main() {
+﻿VmContext createVm() {
 
     initialize_constant_values();
     ResourceDB resources = resource_manager_initialize();
@@ -116,9 +105,11 @@ int main() {
         new List<Value>(), // shutdown handlers
         new Dictionary<int, Dictionary<int, int>>() // classMemberLocalizerBuilder
         );
-    Core.SetProgramData(vm);
+    return vm;
+}
 
-    runInterpreter(vm, executionContext.id);
+int startVm(VmContext vm) {
+    runInterpreter(vm, vm.lastExecutionContextId);
     return 0;
 }
 

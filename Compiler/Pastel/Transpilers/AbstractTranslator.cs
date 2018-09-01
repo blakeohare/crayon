@@ -289,7 +289,6 @@ namespace Pastel.Transpilers
                 case Pastel.NativeFunction.RANDOM_FLOAT: this.TranslateRandomFloat(sb); break;
                 case Pastel.NativeFunction.READ_BYTE_CODE_FILE: this.TranslateReadByteCodeFile(sb); break;
                 case Pastel.NativeFunction.RESOURCE_READ_TEXT_FILE: this.TranslateResourceReadTextFile(sb, args[0]); break;
-                case Pastel.NativeFunction.SET_PROGRAM_DATA: this.TranslateSetProgramData(sb, args[0]); break;
                 case Pastel.NativeFunction.SORTED_COPY_OF_INT_ARRAY: this.TranslateSortedCopyOfIntArray(sb, args[0]); break;
                 case Pastel.NativeFunction.SORTED_COPY_OF_STRING_ARRAY: this.TranslateSortedCopyOfStringArray(sb, args[0]); break;
                 case Pastel.NativeFunction.STRING_APPEND: this.TranslateStringAppend(sb, args[0], args[1]); break;
@@ -480,7 +479,6 @@ namespace Pastel.Transpilers
         public abstract void TranslateReadByteCodeFile(TranspilerContext sb);
         public abstract void TranslateResourceReadTextFile(TranspilerContext sb, Expression path);
         public abstract void TranslateReturnStatemnt(TranspilerContext sb, ReturnStatement returnStatement);
-        public abstract void TranslateSetProgramData(TranspilerContext sb, Expression programData);
         public abstract void TranslateSortedCopyOfIntArray(TranspilerContext sb, Expression intArray);
         public abstract void TranslateSortedCopyOfStringArray(TranspilerContext sb, Expression stringArray);
         public abstract void TranslateStringAppend(TranspilerContext sb, Expression str1, Expression str2);

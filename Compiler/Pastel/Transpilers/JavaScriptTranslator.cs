@@ -492,12 +492,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateSetProgramData(TranspilerContext sb, Expression programData)
-        {
-            sb.Append("C$common$programData = ");
-            this.TranslateExpression(sb, programData);
-        }
-
         public override void TranslateSortedCopyOfIntArray(TranspilerContext sb, Expression intArray)
         {
             sb.Append("C$common$sortedCopyOfArray(");

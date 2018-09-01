@@ -713,13 +713,6 @@ namespace Pastel.Transpilers
             sb.Append(this.NewLine);
         }
 
-        public override void TranslateSetProgramData(TranspilerContext sb, Expression programData)
-        {
-            sb.Append("TranslationHelper_setProgramData(");
-            this.TranslateExpression(sb, programData);
-            sb.Append(')');
-        }
-
         public override void TranslateSortedCopyOfIntArray(TranspilerContext sb, Expression intArray)
         {
             sb.Append("TranslationHelper_sortedCopyOfList(");

@@ -148,7 +148,6 @@ namespace Pastel.Nodes
                 case "RandomFloat": return NativeFunction.RANDOM_FLOAT;
                 case "ReadByteCodeFile": return NativeFunction.READ_BYTE_CODE_FILE;
                 case "ReadResourceTextFile": return NativeFunction.RESOURCE_READ_TEXT_FILE;
-                case "SetProgramData": return NativeFunction.SET_PROGRAM_DATA;
                 case "Sin": return NativeFunction.MATH_SIN;
                 case "StringAppend": return NativeFunction.STRING_APPEND;
                 case "StringBuffer16": return NativeFunction.STRING_BUFFER_16;

@@ -9,6 +9,11 @@ C$common$libraryFunctionLookups = {};
 C$common$globalOptions = {};
 C$common$globalOptions['fullscreen'] = false;
 
+function main() {
+	C$common$programData = v_vmCreate();
+	v_vmStart(C$common$programData);
+}
+
 C$common$readResourceText = function (path) {
   var v = C$common$getTextRes(path);
   return !v ? null : v;
