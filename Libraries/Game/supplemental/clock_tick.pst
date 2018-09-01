@@ -2,7 +2,7 @@
     Native._lib_game_clockTick();
 
     // TODO: replace this with an enum.
-    vm_suspend(1);
+    vm_suspend(Core.GetProgramData(), 1);
 
     return VALUE_NULL;
 }

@@ -12,14 +12,15 @@ Value lib_game_initialize_screen(Array<Value> args) {
     // It's possible that the screen will block and re-invoke the VM and destroy the active
     // execution context, in which case, vm_suspend() will not work and fail when trying to find the
     // instance.
-    ExecutionContext ec = getExecutionContext(vm_getCurrentExecutionContextId());
+    VmContext vm = Core.GetProgramData();
+    ExecutionContext ec = getExecutionContext(vm, vm_getCurrentExecutionContextId(vm));
 
     Native._lib_game_initialize_screen(
         (int) args[0].internalValue, // game width
         (int) args[1].internalValue, // game height
         (int) args[2].internalValue, // screen width
         (int) args[3].internalValue, // screen height
-        vm_getCurrentExecutionContextId());
+        vm_getCurrentExecutionContextId(vm));
 
     // Suspend the ExecutionContext that is active when this was called (as that will be the one
     // that will be checked for state changes).

@@ -35,12 +35,12 @@ namespace Interpreter.Vm
 
         public static void RunInterpreter(int executionContextId)
         {
-            CrashIfStatusIsBad(CrayonWrapper.v_runInterpreter(executionContextId));
+            CrashIfStatusIsBad(CrayonWrapper.v_runInterpreter(ProgramData, executionContextId));
         }
 
         public static void RunInterpreter(Value functionPointer, params Value[] args)
         {
-            CrashIfStatusIsBad(CrayonWrapper.v_runInterpreterWithFunctionPointer(functionPointer, args));
+            CrashIfStatusIsBad(CrayonWrapper.v_runInterpreterWithFunctionPointer(ProgramData, functionPointer, args));
         }
 
         private static void CrashIfStatusIsBad(int status)

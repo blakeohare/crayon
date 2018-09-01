@@ -135,7 +135,7 @@ def pygame_initialize_screen(width, height, pixel_dimensions, execId):
     icon = pygame.image.load(iconPath)
     pygame.display.set_icon(icon)
 
-  while v_runInterpreter(execId) == 2:
+  while v_runInterpreter(TranslationHelper_getProgramData(), execId) == 2:
     gfxRender()
     _pygame_end_of_frame()
 

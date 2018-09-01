@@ -51,11 +51,12 @@ Value lib_http_sendRequest(Array<Value> args) {
             bodyRawObject,
             getResponseAsText);
     } else {
+        VmContext vm = Core.GetProgramData();
         // synchronous request
         if (Native._lib_http_sendRequestSynchronous(
-            objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText, vm_getCurrentExecutionContextId())) {
+            objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText, vm_getCurrentExecutionContextId(vm))) {
 
-            vm_suspend(1);
+            vm_suspend(vm, 1);
         }
     }
 

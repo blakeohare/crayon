@@ -320,7 +320,7 @@ namespace Interpreter.Libraries.Game
 
         private void Update()
         {
-            int vmStatus = CrayonWrapper.v_runInterpreter(this.executionContextId);
+            int vmStatus = CrayonWrapper.v_runInterpreter(TranslationHelper.ProgramData, this.executionContextId);
 
             if (vmStatus == 1 || // Finished
                 vmStatus == 3) // Error

@@ -35,7 +35,7 @@ switch (row[0]) {
         @import("FrameworkFunctions/1_arg.pst");
 
         output = VALUE_NULL;
-        Core.PrintStdOut(valueToString(arg1));
+        Core.PrintStdOut(valueToString(vm, arg1));
         break;
 
     case 4: Core.EmitComment("typeof");
@@ -73,7 +73,7 @@ switch (row[0]) {
         } else if ((bool) arg1.internalValue) {
             output = VALUE_NULL;
         } else {
-            string1 = valueToString(arg2);
+            string1 = valueToString(vm, arg2);
             if ((bool) arg3.internalValue) string1 = Core.StringConcatAll("Assertion failed: ", string1);
             hasInterrupt = EX_AssertionFailed(ec, string1);
         }

@@ -2,7 +2,7 @@
 // These are prone to infinite recursion.
 // The problem is that not all platforms have a way to check for reference equality for things
 // like dictionaries or lists.
-string valueToString(Value wrappedValue) {
+string valueToString(VmContext vm, Value wrappedValue) {
 
     int type = wrappedValue.type;
 
@@ -34,7 +34,7 @@ string valueToString(Value wrappedValue) {
             if (i > 0) {
                 Core.StringAppend(output, ", ");
             }
-            Core.StringAppend(output, valueToString(internalList[i]));
+            Core.StringAppend(output, valueToString(vm, internalList[i]));
         }
         Core.StringAppend(output, "]");
         return output;
@@ -44,10 +44,9 @@ string valueToString(Value wrappedValue) {
         ObjectInstance objInstance = ((ObjectInstance) wrappedValue.internalValue);
         int classId = objInstance.classId;
         int ptr = objInstance.objectId;
-        VmContext pd = Core.GetProgramData();
-        ClassInfo classInfo = pd.classTable[classId];
+        ClassInfo classInfo = vm.classTable[classId];
         int nameId = classInfo.nameId;
-        string className = pd.identifiers[nameId];
+        string className = vm.identifiers[nameId];
         return Core.StringConcatAll("Instance<", className, "#", Core.IntToString(ptr), ">");
     }
 
@@ -70,7 +69,7 @@ string valueToString(Value wrappedValue) {
                     Core.StringAppend(output, " ");
                 }
                 intKey = intKeys[i];
-                Core.StringAppend(output, Core.StringConcatAll(Core.IntToString(intKey), ": ", valueToString(internalDict.valueIntLookup[intKey])));
+                Core.StringAppend(output, Core.StringConcatAll(Core.IntToString(intKey), ": ", valueToString(vm, internalDict.valueIntLookup[intKey])));
             }
         } else {
             Array<string> stringKeys = internalDict.keyStringLookup.Keys();
@@ -82,7 +81,7 @@ string valueToString(Value wrappedValue) {
                     Core.StringAppend(output, " ");
                 }
                 stringKey = stringKeys[i];
-                Core.StringAppend(output, Core.StringConcatAll(stringKey, ": ", valueToString(internalDict.valueStringLookup[stringKey])));
+                Core.StringAppend(output, Core.StringConcatAll(stringKey, ": ", valueToString(vm, internalDict.valueStringLookup[stringKey])));
             }
         }
         Core.StringAppend(output, " }");

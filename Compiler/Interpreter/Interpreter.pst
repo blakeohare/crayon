@@ -90,10 +90,10 @@ InterpreterResult generateException(
     return new InterpreterResult(InterpreterResultStatus.REINVOKE, null);
 }
 
-InterpreterResult interpret(int executionContextId) {
-    InterpreterResult output = interpretImpl(executionContextId);
+InterpreterResult interpret(VmContext vm, int executionContextId) {
+    InterpreterResult output = interpretImpl(vm, executionContextId);
     while (output.status == InterpreterResultStatus.REINVOKE) {
-        output = interpretImpl(executionContextId);
+        output = interpretImpl(vm, executionContextId);
     }
     return output;
 }
@@ -106,9 +106,8 @@ ExecutionContext interpreterGetExecutionContext(VmContext vm, int executionConte
     return executionContexts[executionContextId];
 }
 
-InterpreterResult interpretImpl(int executionContextId) {
-    VmContext p = Core.GetProgramData();
-    VmContext vm = p; // This is going to be a long painful rename process.
+InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
+    VmContext p = vm; // This is going to be a long painful rename process.
     Dictionary<int, ExecutionContext> executionContexts = p.executionContexts;
     ExecutionContext ec = interpreterGetExecutionContext(p, executionContextId);
     if (ec == null) {
@@ -485,7 +484,7 @@ string unrollExceptionOutput(VmContext vm, Value exceptionInstance) {
     string codeFormattedPointer = "";
 
     string exceptionName = classInfo.fullyQualifiedName;
-    string message = valueToString(objInstance.members[1]);
+    string message = valueToString(vm, objInstance.members[1]);
     List<string> trace = tokenHelperConvertPcsToStackTraceStrings(vm, pcs);
     trace.Pop();
     trace.Add("Stack Trace:");
@@ -520,29 +519,27 @@ bool isPcFromCore(VmContext vm, int pc) {
     return Core.StringEquals("[Core]", filename);
 }
 
-int vm_getCurrentExecutionContextId() {
-    VmContext p = Core.GetProgramData();
-    return p.lastExecutionContextId;
+int vm_getCurrentExecutionContextId(VmContext vm) {
+    return vm.lastExecutionContextId;
 }
 
-ExecutionContext getExecutionContext(int id) {
-    VmContext p = Core.GetProgramData();
+ExecutionContext getExecutionContext(VmContext vm, int id) {
     if (id == -1) {
-        id = p.lastExecutionContextId;
+        id = vm.lastExecutionContextId;
     }
-    if (p.executionContexts.Contains(id)) {
-        return p.executionContexts[id];
+    if (vm.executionContexts.Contains(id)) {
+        return vm.executionContexts[id];
     }
     return null;
 }
 
-int vm_suspend_with_status(int status) {
-    return vm_suspend_for_context(getExecutionContext(-1), status);
+int vm_suspend_with_status(VmContext vm, int status) {
+    return vm_suspend_for_context(getExecutionContext(vm, -1), status);
 }
 
 // status is an enum value in InterpreterStatus.
-int vm_suspend(int status) {
-    return vm_suspend_for_context(getExecutionContext(-1), 1);
+int vm_suspend(VmContext vm, int status) {
+    return vm_suspend_for_context(getExecutionContext(vm, -1), 1);
 }
 
 int vm_suspend_for_context(ExecutionContext ec, int status) {

@@ -70,7 +70,7 @@ int main() {
     Dictionary<int, ExecutionContext> executionContexts = new Dictionary<int, ExecutionContext>();
     executionContexts[0] = executionContext;
 
-    Core.SetProgramData(new VmContext(
+    VmContext vm = new VmContext(
         executionContexts,
         executionContext.id, // last execution context ID
         ops,
@@ -115,9 +115,10 @@ int main() {
 
         new List<Value>(), // shutdown handlers
         new Dictionary<int, Dictionary<int, int>>() // classMemberLocalizerBuilder
-        ));
+        );
+    Core.SetProgramData(vm);
 
-    runInterpreter(executionContext.id);
+    runInterpreter(vm, executionContext.id);
     return 0;
 }
 
@@ -128,9 +129,8 @@ int main() {
     during the lifetime of the initial invocation. (for example, a blocking window is opened)
     This is why the output of the initial invocation is meaningless.
 */
-int runInterpreter(int executionContextId) {
-    VmContext vm = Core.GetProgramData();
-    InterpreterResult result = interpret(executionContextId);
+int runInterpreter(VmContext vm, int executionContextId) {
+    InterpreterResult result = interpret(vm, executionContextId);
     int status = result.status;
     bool shutdown = false;
     if (status == InterpreterResultStatus.FINISHED) {
@@ -160,15 +160,14 @@ int runShutdownHandlers(VmContext vm) {
         // Pop from the front. An iterating index will not be accurate if state is modified recursively.
         Value handler = vm.shutdownHandlers[0];
         vm.shutdownHandlers.RemoveAt(0);
-        runInterpreterWithFunctionPointer(handler, new Array<Value>(0));
+        runInterpreterWithFunctionPointer(vm, handler, new Array<Value>(0));
     }
     return 0;
 }
 
-int runInterpreterWithFunctionPointer(Value fpValue, Array<Value> args) {
-    VmContext p = Core.GetProgramData();
-    int newId = p.lastExecutionContextId + 1;
-    p.lastExecutionContextId = newId;
+int runInterpreterWithFunctionPointer(VmContext vm, Value fpValue, Array<Value> args) {
+    int newId = vm.lastExecutionContextId + 1;
+    vm.lastExecutionContextId = newId;
     List<Value> argList = new List<Value>();
     for (int i = 0; i < args.Size(); i += 1) {
         argList.Add(args[i]);
@@ -179,7 +178,7 @@ int runInterpreterWithFunctionPointer(Value fpValue, Array<Value> args) {
     valueStack[0] = fpValue;
     valueStack[1] = new Value(Types.LIST, argList);
     StackFrame stack = new StackFrame(
-        p.ops.Size() - 2, // pc
+        vm.ops.Size() - 2, // pc
         1, // localsStackSetToken
         0, // localsStackOffset
         0, // localsStackOffsetEnd
@@ -217,8 +216,8 @@ int runInterpreterWithFunctionPointer(Value fpValue, Array<Value> args) {
 
         null); // active interrupt
 
-    p.executionContexts[newId] = executionContext;
-    return runInterpreter(newId);
+    vm.executionContexts[newId] = executionContext;
+    return runInterpreter(vm, newId);
 }
 
 // TODO: remove this (usages may still exist in some libraries as artifacts of .cry->.pst conversion)

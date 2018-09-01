@@ -191,7 +191,7 @@ public final class GameWindow {
 
     private void timerTick() {
         
-        int vmStatus = Interpreter.v_runInterpreter(this.executionContextId);
+        int vmStatus = Interpreter.v_runInterpreter(TranslationHelper.getProgramData(), this.executionContextId);
         if (vmStatus == 1 || // finished
 			vmStatus == 3) { // uncaught error
             frame.setVisible(false);
