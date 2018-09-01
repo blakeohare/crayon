@@ -1197,11 +1197,6 @@ namespace Pastel.Transpilers
             throw new NotImplementedException();
         }
 
-        public override void TranslateVmShowLibStack(TranspilerContext sb)
-        {
-            sb.Append("TranslationHelper.alwaysFalse()");
-        }
-
         public override void GenerateCodeForFunction(TranspilerContext sb, FunctionDefinition funcDef)
         {
             sb.Append(sb.CurrentTab);

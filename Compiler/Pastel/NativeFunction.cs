@@ -11,7 +11,6 @@
         VM_END_PROCESS, // used by the runInterpreter function right before returning and translates to something like System.exit(). This can (probably?) be changed to a specific status code.
         // The ones below can easily be aggregated into ProgramData
         GET_RESOURCE_MANIFEST,
-        VM_SHOW_LIB_STACK,
         READ_BYTE_CODE_FILE,
         RESOURCE_READ_TEXT_FILE,
 

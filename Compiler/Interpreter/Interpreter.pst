@@ -491,7 +491,7 @@ string unrollExceptionOutput(VmContext vm, Value exceptionInstance) {
     trace.Reverse();
     pcs.Reverse();
 
-    bool showLibStack = Core.VmShowLibStack();
+    bool showLibStack = vm.environment.showLibStack;
 
     if (!showLibStack && !stackItemIsLibrary(trace[0])) {
         while (stackItemIsLibrary(trace[trace.Size() - 1])) {

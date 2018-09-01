@@ -47,10 +47,11 @@ namespace CrayonRuntime
             }
 
             string[] vmFlags = vmFlagsRaw.Split(',');
+            bool showLibStack = false;
             foreach (string vmFlag in vmFlags) {
                 switch (vmFlag) {
                     case "showLibStack":
-                        TranslationHelper.ShowLibStack = true;
+                        showLibStack = true;
                         break;
                 }
             }
@@ -83,6 +84,7 @@ namespace CrayonRuntime
             Interpreter.ResourceReader.CbxDirectory = System.IO.Path.GetDirectoryName(cbxPath);
 
             Interpreter.Structs.VmContext vm = CrayonWrapper.v_createVm();
+            vm.environment.showLibStack = true;
             TranslationHelper.ProgramData = vm;
             CrayonWrapper.v_startVm(vm);
         }

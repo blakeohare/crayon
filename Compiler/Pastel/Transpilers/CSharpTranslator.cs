@@ -833,11 +833,6 @@ namespace Pastel.Transpilers
             // Not needed. C# Finishes cleanly on all current platforms.
         }
 
-        public override void TranslateVmShowLibStack(TranspilerContext sb)
-        {
-            sb.Append("TranslationHelper.ShowLibStack");
-        }
-
         public override void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef)
         {
             PType[] types = structDef.ArgTypes;

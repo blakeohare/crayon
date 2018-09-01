@@ -1015,11 +1015,6 @@ namespace Pastel.Transpilers
             sb.Append("sys.exit(0)");
         }
 
-        public override void TranslateVmShowLibStack(TranspilerContext sb)
-        {
-            sb.Append("always_false()");
-        }
-
         public override void TranslateWhileLoop(TranspilerContext sb, WhileLoop whileLoop)
         {
             sb.Append(sb.CurrentTab);

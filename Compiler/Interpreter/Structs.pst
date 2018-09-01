@@ -64,6 +64,7 @@ struct VmContext {
 
 struct VmEnvironment {
     Array<Value> commandLineArgs;
+    bool showLibStack;
 }
 
 struct ExecutionContext {
