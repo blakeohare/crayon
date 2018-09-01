@@ -1,9 +1,9 @@
-﻿VmContext createVm() {
+﻿VmContext createVm(string rawByteCode) {
 
     initialize_constant_values();
     ResourceDB resources = resource_manager_initialize();
 
-    Code byteCode = loadByteCode();
+    Code byteCode = initializeByteCode(rawByteCode);
     Array<int> ops = byteCode.ops;
     int opsLength = ops.Size();
     Array<Array<int>> opArgs = byteCode.args;

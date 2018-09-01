@@ -52,8 +52,7 @@ string read_string(Array<int> pindex, string raw, int length, string alphaNums) 
     return Core.Base64ToString(b64);
 }
 
-Code loadByteCode() {
-    string raw = Core.ReadByteCodeFile();
+Code initializeByteCode(string raw) {
 
     Array<int> index = new Array<int>(1);
     index[0] = 0;

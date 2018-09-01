@@ -10,12 +10,6 @@ TranslationHelper_StringType = type('')
 def always_true(): return True
 def always_false(): return False
 
-def TranslationHelper_setByteCode(value):
-  TranslationHelper_globals['bytecode'] = value
-
-def TranslationHelper_getByteCode():
-  return TranslationHelper_globals['bytecode']
-
 def TranslationHelper_setResourceManifest(value):
   TranslationHelper_globals['res'] = value
 

@@ -8,11 +8,11 @@ namespace Interpreter
     {
         public static void Main(string[] args)
         {
+            string byteCode = ResourceReader.ReadResourceTextFile("ByteCode.txt");
             TranslationHelper.LibraryRegistry = new LibraryRegistry();
-            TranslationHelper.ByteCode = ResourceReader.ReadResourceTextFile("ByteCode.txt");
             TranslationHelper.ResourceManifest = ResourceReader.ReadResourceTextFile("ResourceManifest.txt");
             TranslationHelper.ImageSheetManifest = ResourceReader.ReadMetadata("ImageSheetManifest.txt", true);
-            Interpreter.Structs.VmContext vm = CrayonWrapper.v_createVm();
+            Interpreter.Structs.VmContext vm = CrayonWrapper.v_createVm(byteCode);
             TranslationHelper.ProgramData = vm;
             CrayonWrapper.v_vmEnvSetCommandLineArgs(vm, args);
             CrayonWrapper.v_startVm(vm);

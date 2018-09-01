@@ -8,13 +8,11 @@ import org.crayonlang.interpreter.structs.VmContext;
 public final class Main {
 
   public static void main(String[] args) {
-    TranslationHelper.setByteCode(ResourceReader.readFileText("resources/bytecode.txt"));
+    string byteCode = ResourceReader.readFileText("resources/bytecode.txt");
     TranslationHelper.setResourceManifest(ResourceReader.readFileText("resources/manifest.txt"));
-
-    VmContext vm = Interpreter.v_createVm();
-	Interpreter.v_vmEnvSetCommandLineArgs(vm, args);
+    VmContext vm = Interpreter.v_createVm(byteCode);
+    Interpreter.v_vmEnvSetCommandLineArgs(vm, args);
     TranslationHelper.setProgramData(vm);
     Interpreter.v_startVm(vm);
   }
-
 }

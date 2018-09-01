@@ -102,11 +102,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateReadByteCodeFile(TranspilerContext sb)
-        {
-            sb.Append("TranslationHelper.getByteCode()");
-        }
-
         public override void TranslateVmEndProcess(TranspilerContext sb)
         {
             sb.Append("System.exit(0)");

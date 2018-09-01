@@ -475,11 +475,6 @@ namespace Pastel.Transpilers
             sb.Append("Math.random()");
         }
 
-        public override void TranslateReadByteCodeFile(TranspilerContext sb)
-        {
-            sb.Append("C$bytecode");
-        }
-
         public override void TranslateResourceReadTextFile(TranspilerContext sb, Expression path)
         {
             sb.Append("C$common$readResourceText(");

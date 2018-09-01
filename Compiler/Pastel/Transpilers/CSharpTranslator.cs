@@ -557,11 +557,6 @@ namespace Pastel.Transpilers
             sb.Append("TranslationHelper.Random.NextDouble()");
         }
 
-        public override void TranslateReadByteCodeFile(TranspilerContext sb)
-        {
-            sb.Append("TranslationHelper.ByteCode");
-        }
-
         public override void TranslateResourceReadTextFile(TranspilerContext sb, Expression path)
         {
             sb.Append("ResourceReader.ReadTextResource(");

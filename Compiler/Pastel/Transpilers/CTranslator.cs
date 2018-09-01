@@ -702,11 +702,6 @@ namespace Pastel.Transpilers
             sb.Append("TranslationHeper_random_float()");
         }
 
-        public override void TranslateReadByteCodeFile(TranspilerContext sb)
-        {
-            sb.Append("BYTE_CODE_FILE");
-        }
-
         public override void TranslateResourceReadTextFile(TranspilerContext sb, Expression path)
         {
             sb.Append("ResourceHelper_read_text_file(");
