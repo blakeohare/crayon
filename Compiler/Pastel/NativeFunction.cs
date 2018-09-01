@@ -12,6 +12,7 @@
         // The ones below can easily be aggregated into ProgramData
         GET_RESOURCE_MANIFEST,
         RESOURCE_READ_TEXT_FILE,
+        THREAD_SLEEP,// Once ENQUEUE_VM_RESUME goes away, then this can go away as well.
 
         // TODO: port this to the standalone Pastel
         GET_FUNCTION,
@@ -101,7 +102,6 @@
         STRING_TRIM_END,
         STRING_TRIM_START,
         STRONG_REFERENCE_EQUALITY,
-        THREAD_SLEEP,
         TRY_PARSE_FLOAT,
     }
 }
