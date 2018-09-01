@@ -1,1 +1,1 @@
-﻿valueStackDepthImpl(row);
+﻿valueStackDepthImpl(vm, row);

@@ -39,7 +39,7 @@ if (value == null || ec.activeExceptionHandled) {
 
             // is this the static constructor returning?
             if (stack.markClassAsInitialized != 0) {
-                markClassAsInitialized(stack, stack.markClassAsInitialized);
+                markClassAsInitialized(vm, stack, stack.markClassAsInitialized);
             }
 
             if (stack.returnValueUsed) {

@@ -106,9 +106,8 @@ int resource_manager_populate_directory_lookup(
     output[0] -> boolean if it's the correct type.
     output[1] -> actual resource path relative to the root of where these sorts of files are stored. (value ommitted if previous boolean is false)
 */
-Value resource_manager_getResourceOfType(string userPath, string type) {
-    VmContext p = Core.GetProgramData();
-    ResourceDB db = p.resourceDatabase;
+Value resource_manager_getResourceOfType(VmContext vm, string userPath, string type) {
+    ResourceDB db = vm.resourceDatabase;
     Dictionary<string, ResourceInfo> lookup = db.fileInfo;
     if (lookup.Contains(userPath)) {
         List<Value> output = new List<Value>();

@@ -129,22 +129,22 @@ int main() {
     This is why the output of the initial invocation is meaningless.
 */
 int runInterpreter(int executionContextId) {
-    VmContext p = Core.GetProgramData();
+    VmContext vm = Core.GetProgramData();
     InterpreterResult result = interpret(executionContextId);
     int status = result.status;
     bool shutdown = false;
     if (status == InterpreterResultStatus.FINISHED) {
-        if (p.executionContexts.Contains(executionContextId)) {
-            p.executionContexts.Remove(executionContextId);
+        if (vm.executionContexts.Contains(executionContextId)) {
+            vm.executionContexts.Remove(executionContextId);
         }
-        runShutdownHandlers();
+        runShutdownHandlers(vm);
         shutdown = true;
     } else if (status == InterpreterResultStatus.FATAL_ERROR) {
         // TODO: don't generate the error in the interpreter. Instead just return the message and
         // the stack trace will be determined from the stack here. Also later add logic to
         // conditionally find symbol information here.
         Core.PrintStdOut(result.errorMessage);
-        runShutdownHandlers();
+        runShutdownHandlers(vm);
         shutdown = true;
     }
     if (shutdown && executionContextId == 0) {
@@ -153,14 +153,13 @@ int runInterpreter(int executionContextId) {
     return status;
 }
 
-int runShutdownHandlers() {
+int runShutdownHandlers(VmContext vm) {
     // This will recursively invoke the shutdown handlers upon completion,
     // so be sure to pop off the handler as it's used.
-    VmContext p = Core.GetProgramData();
-    while (p.shutdownHandlers.Size() > 0) {
+    while (vm.shutdownHandlers.Size() > 0) {
         // Pop from the front. An iterating index will not be accurate if state is modified recursively.
-        Value handler = p.shutdownHandlers[0];
-        p.shutdownHandlers.RemoveAt(0);
+        Value handler = vm.shutdownHandlers[0];
+        vm.shutdownHandlers.RemoveAt(0);
         runInterpreterWithFunctionPointer(handler, new Array<Value>(0));
     }
     return 0;

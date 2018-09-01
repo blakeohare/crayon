@@ -1,1 +1,1 @@
-﻿buildSwitchStringImpl(row, stringArgs[pc]);
+﻿buildSwitchStringImpl(vm, row, stringArgs[pc]);

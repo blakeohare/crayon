@@ -2,8 +2,8 @@
     return new InterpreterResult(InterpreterResultStatus.FATAL_ERROR, error);
 }
 
-InterpreterResult uncaughtExceptionResult(Value exception) {
-    return new InterpreterResult(InterpreterResultStatus.FATAL_ERROR, unrollExceptionOutput(exception));
+InterpreterResult uncaughtExceptionResult(VmContext vm, Value exception) {
+    return new InterpreterResult(InterpreterResultStatus.FATAL_ERROR, unrollExceptionOutput(vm, exception));
 }
 
 InterpreterResult suspendInterpreter() {
@@ -14,12 +14,11 @@ InterpreterResult suspendInterpreterWithLock() {
     return new InterpreterResult(InterpreterResultStatus.SUSPENDED_WITH_LOCK, null);
 }
 
-InterpreterResult interpreterFinished(ExecutionContext ec) {
+InterpreterResult interpreterFinished(VmContext vm, ExecutionContext ec) {
     if (ec != null) {
         int id = ec.id;
-        VmContext p = Core.GetProgramData();
-        if (p.executionContexts.Contains(id)) {
-            p.executionContexts.Remove(id);
+        if (vm.executionContexts.Contains(id)) {
+            vm.executionContexts.Remove(id);
         }
     }
     return new InterpreterResult(InterpreterResultStatus.FINISHED, null);
@@ -50,6 +49,7 @@ bool generateException2(ExecutionContext ec, int exceptionType, string exMsg) {
 // This will push a stack frame onto the stack as though _LIB_CORE_generateExeption(type, message) is being called.
 // But then it will return an REINVOKE status. The idea is this will be called with a return from interpretImpl.
 InterpreterResult generateException(
+        VmContext vm,
         StackFrame stack,
         int pc,
         int valueStackSize,
@@ -60,21 +60,20 @@ InterpreterResult generateException(
     ec.currentValueStackSize = valueStackSize;
     stack.pc = pc;
     ec.localsStackSetToken = stack.localsStackSetToken + 1;
-    VmContext p = Core.GetProgramData();
-    MagicNumbers mn = p.magicNumbers;
+    MagicNumbers mn = vm.magicNumbers;
     int generateExceptionFunctionId = mn.coreGenerateExceptionFunctionId;
-    FunctionInfo functionInfo = p.functionTable[generateExceptionFunctionId];
+    FunctionInfo functionInfo = vm.functionTable[generateExceptionFunctionId];
     pc = functionInfo.pc;
     if (ec.localsStack.Size() <= (functionInfo.localsSize + stack.localsStackOffsetEnd)) {
         increaseLocalsStackCapacity(ec, functionInfo.localsSize);
     }
     int localsIndex = stack.localsStackOffsetEnd;
     ec.localsStack[localsIndex] = buildInteger(type);
-    ec.localsStack[(localsIndex + 1)] = buildString(message);
+    ec.localsStack[localsIndex + 1] = buildString(message);
     ec.localsStackSet[localsIndex] = ec.localsStackSetToken;
-    ec.localsStackSet[(localsIndex + 1)] = ec.localsStackSetToken;
+    ec.localsStackSet[localsIndex + 1] = ec.localsStackSetToken;
     ec.stackTop = new StackFrame(
-        (pc + 1), // won't have the end of the interpreter loop to do the +1 for us.
+        pc + 1, // won't have the end of the interpreter loop to do the +1 for us.
         ec.localsStackSetToken,
         stack.localsStackOffsetEnd,
         stack.localsStackOffsetEnd + functionInfo.localsSize,
@@ -99,9 +98,8 @@ InterpreterResult interpret(int executionContextId) {
     return output;
 }
 
-ExecutionContext interpreterGetExecutionContext(int executionContextId) {
-    VmContext p = Core.GetProgramData();
-    Dictionary<int, ExecutionContext> executionContexts = p.executionContexts;
+ExecutionContext interpreterGetExecutionContext(VmContext vm, int executionContextId) {
+    Dictionary<int, ExecutionContext> executionContexts = vm.executionContexts;
     if (!executionContexts.Contains(executionContextId)) {
         return null;
     }
@@ -110,11 +108,12 @@ ExecutionContext interpreterGetExecutionContext(int executionContextId) {
 
 InterpreterResult interpretImpl(int executionContextId) {
     VmContext p = Core.GetProgramData();
+    VmContext vm = p; // This is going to be a long painful rename process.
     Dictionary<int, ExecutionContext> executionContexts = p.executionContexts;
-    ExecutionContext ec = interpreterGetExecutionContext(executionContextId);
+    ExecutionContext ec = interpreterGetExecutionContext(p, executionContextId);
     if (ec == null) {
         // Stale context ID's may possibly be invoked. Pretend that they run and finish.
-        return interpreterFinished(null);
+        return interpreterFinished(p, null);
     }
 
     ec.executionCounter += 1;
@@ -284,14 +283,14 @@ InterpreterResult interpretImpl(int executionContextId) {
 
             default:
                 Core.EmitComment("THIS SHOULD NEVER HAPPEN");
-                return generateException(stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, Core.StringConcatAll("Bad op code: ", Core.IntToString(ops[pc])));
+                return generateException(p, stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, Core.StringConcatAll("Bad op code: ", Core.IntToString(ops[pc])));
         }
 
         if (hasInterrupt) {
             Interrupt interrupt = ec.activeInterrupt;
             ec.activeInterrupt = null;
             if (interrupt.type == InterruptType.EXCEPTION) {
-                return generateException(stack, pc, valueStackSize, ec, interrupt.exceptionType, interrupt.exceptionMessage);
+                return generateException(p, stack, pc, valueStackSize, ec, interrupt.exceptionType, interrupt.exceptionMessage);
             }
         }
 
@@ -351,10 +350,9 @@ int canonicalizeListSliceArgs(
     return 1;
 }
 
-List<Token> generateTokenListFromPcs(List<int> pcs) {
+List<Token> generateTokenListFromPcs(VmContext vm, List<int> pcs) {
     List<Token> output = new List<Token>();
-    VmContext p = Core.GetProgramData();
-    Array<List<Token>> tokensByPc = p.tokenData;
+    Array<List<Token>> tokensByPc = vm.tokenData;
     Token token = null;
     int i = 0;
     while (i < pcs.Size()) {
@@ -366,7 +364,7 @@ List<Token> generateTokenListFromPcs(List<int> pcs) {
         } else {
             token = localTokens[0];
             if (@ext_boolean("IS_RELEASE")) {
-                if ((output.Size() > 0) || (token != null && !tokenHelplerIsFilePathLibrary(token.fileId, p.sourceCode))) {
+                if ((output.Size() > 0) || (token != null && !tokenHelplerIsFilePathLibrary(vm, token.fileId, vm.sourceCode))) {
                     output.Add(token);
                 }
             } else {
@@ -381,7 +379,7 @@ List<Token> generateTokenListFromPcs(List<int> pcs) {
         int length = output.Size();
         while (length > 0) {
             token = output[(length - 1)]; // top token
-            if ((token != null) && tokenHelplerIsFilePathLibrary(token.fileId, p.sourceCode)) {
+            if ((token != null) && tokenHelplerIsFilePathLibrary(vm, token.fileId, p.sourceCode)) {
                 output.Pop();
                 length -= 1;
             } else {
@@ -403,9 +401,8 @@ bool stackItemIsLibrary(string stackInfo) {
     return cIndex > 0 && cIndex < stackInfo.IndexOf("]");
 }
 
-List<string> tokenHelperConvertPcsToStackTraceStrings(List<int> pcs) {
-    VmContext p = Core.GetProgramData();
-    List<Token> tokens = generateTokenListFromPcs(pcs);
+List<string> tokenHelperConvertPcsToStackTraceStrings(VmContext p, List<int> pcs) {
+    List<Token> tokens = generateTokenListFromPcs(p, pcs);
     Array<string> files = p.sourceCode;
     List<string> output = new List<string>();
     for (int i = 0; i < tokens.Size(); i += 1) {
@@ -425,8 +422,8 @@ List<string> tokenHelperConvertPcsToStackTraceStrings(List<int> pcs) {
     return output;
 }
 
-string tokenHelperGetFormattedPointerToToken(Token token) {
-    string line = tokenHelperGetFileLine(token.fileId, token.lineIndex + 1);
+string tokenHelperGetFormattedPointerToToken(VmContext vm, Token token) {
+    string line = tokenHelperGetFileLine(vm, token.fileId, token.lineIndex + 1);
     if (line == null) {
         return null;
     }
@@ -445,17 +442,16 @@ string tokenHelperGetFormattedPointerToToken(Token token) {
     return Core.StringConcatAll(line, "\n", line2);
 }
 
-string tokenHelperGetFileLine(int fileId, int lineNum) {
-    VmContext p = Core.GetProgramData();
-    string sourceCode = p.sourceCode[fileId];
+string tokenHelperGetFileLine(VmContext vm, int fileId, int lineNum) {
+    string sourceCode = vm.sourceCode[fileId];
     if (sourceCode == null) {
         return null;
     }
     return sourceCode.Split("\n")[lineNum];
 }
 
-bool tokenHelplerIsFilePathLibrary(int fileId, Array<string> allFiles) {
-    string filename = tokenHelperGetFileLine(fileId, 0); // line 0 is the file name
+bool tokenHelplerIsFilePathLibrary(VmContext vm, int fileId, Array<string> allFiles) {
+    string filename = tokenHelperGetFileLine(vm, fileId, 0); // line 0 is the file name
     return !filename.ToLower().EndsWith(".cry");
 }
 
@@ -482,16 +478,15 @@ Array<Value> valueStackIncreaseCapacity(ExecutionContext ec) {
     return newStack;
 }
 
-string unrollExceptionOutput(Value exceptionInstance) {
+string unrollExceptionOutput(VmContext vm, Value exceptionInstance) {
     ObjectInstance objInstance = ((ObjectInstance) exceptionInstance.internalValue);
-    VmContext p = Core.GetProgramData();
-    ClassInfo classInfo = p.classTable[objInstance.classId];
+    ClassInfo classInfo = vm.classTable[objInstance.classId];
     List<int> pcs = ((List<int>) objInstance.nativeData[1]);
     string codeFormattedPointer = "";
 
     string exceptionName = classInfo.fullyQualifiedName;
     string message = valueToString(objInstance.members[1]);
-    List<string> trace = tokenHelperConvertPcsToStackTraceStrings(pcs);
+    List<string> trace = tokenHelperConvertPcsToStackTraceStrings(vm, pcs);
     trace.Pop();
     trace.Add("Stack Trace:");
     trace.Reverse();
@@ -506,23 +501,22 @@ string unrollExceptionOutput(Value exceptionInstance) {
         }
     }
 
-    List<Token> tokensAtPc = p.tokenData[pcs[pcs.Size() - 1]];
+    List<Token> tokensAtPc = vm.tokenData[pcs[pcs.Size() - 1]];
     if (tokensAtPc != null) {
-        codeFormattedPointer = Core.StringConcatAll("\n\n", tokenHelperGetFormattedPointerToToken(tokensAtPc[0]));
+        codeFormattedPointer = Core.StringConcatAll("\n\n", tokenHelperGetFormattedPointerToToken(vm, tokensAtPc[0]));
     }
 
     string stackTrace = trace.Join("\n");
     return Core.StringConcatAll(stackTrace, codeFormattedPointer, "\n", exceptionName, ": ", message);
 }
 
-bool isPcFromCore(int pc) {
-    VmContext p = Core.GetProgramData();
-    List<Token> tokens = p.tokenData[pc];
+bool isPcFromCore(VmContext vm, int pc) {
+    List<Token> tokens = vm.tokenData[pc];
     if (tokens == null) {
         return false;
     }
     Token token = tokens[0];
-    string filename = tokenHelperGetFileLine(token.fileId, 0);
+    string filename = tokenHelperGetFileLine(vm, token.fileId, 0);
     return Core.StringEquals("[Core]", filename);
 }
 

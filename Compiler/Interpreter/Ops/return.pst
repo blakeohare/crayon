@@ -22,18 +22,18 @@ if (esfData[pc] != null) {
 
     // Adjust the value stack to ensure it is the correct size.
     // e.g. avoid stack corruption when returning from a foreach loop within a try block
-    valueStackSize = stack.valueStackPopSize + p.valueStackDepthByPc[pc];
+    valueStackSize = stack.valueStackPopSize + vm.valueStackDepthByPc[pc];
     stack.postFinallyBehavior = PostFinallyBehavior.RETURN;
 } else {
 
     if (stack.previous == null) {
         // returning from the root stack
-        return interpreterFinished(ec);
+        return interpreterFinished(vm, ec);
     }
 
     // is this the static constructor returning?
     if (stack.markClassAsInitialized != 0) {
-        markClassAsInitialized(stack, stack.markClassAsInitialized);
+        markClassAsInitialized(vm, stack, stack.markClassAsInitialized);
     }
 
     if (stack.returnValueUsed) {

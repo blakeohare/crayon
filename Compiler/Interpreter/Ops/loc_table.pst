@@ -1,1 +1,1 @@
-﻿initLocTable(row);
+﻿initLocTable(vm, row);

@@ -13,13 +13,12 @@
     return null;
 }
 
-bool isClassASubclassOf(int subClassId, int parentClassId) {
+bool isClassASubclassOf(VmContext vm, int subClassId, int parentClassId) {
     if (subClassId == parentClassId) {
         return true;
     }
 
-    VmContext p = Core.GetProgramData();
-    Array<ClassInfo> classTable = p.classTable;
+    Array<ClassInfo> classTable = vm.classTable;
     int classIdWalker = subClassId;
     while (classIdWalker != -1) {
         if (classIdWalker == parentClassId) {

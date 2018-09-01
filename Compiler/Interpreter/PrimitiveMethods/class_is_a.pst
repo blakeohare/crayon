@@ -10,7 +10,7 @@
         int2 = classValue.classId;
 
         output = VALUE_FALSE;
-        if (isClassASubclassOf(int1, int2)) {
+        if (isClassASubclassOf(vm, int1, int2)) {
             output = VALUE_TRUE;
         }
     }

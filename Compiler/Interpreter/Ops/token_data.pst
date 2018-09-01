@@ -1,1 +1,1 @@
-﻿tokenDataImpl(row);
+﻿tokenDataImpl(vm, row);

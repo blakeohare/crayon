@@ -1,12 +1,11 @@
 ﻿// File for reflection-related core functions.
 
-Value Reflect_allClasses() {
-    VmContext p = Core.GetProgramData();
+Value Reflect_allClasses(VmContext vm) {
     List<Value> valueList = new List<Value>();
-    for (int i = 1; i < p.classTable.Size(); i += 1) {
-        ClassInfo classInfo = p.classTable[i];
+    for (int i = 1; i < vm.classTable.Size(); i += 1) {
+        ClassInfo classInfo = vm.classTable[i];
         if (classInfo == null) { // ClassInfo table is over-allocated.
-            i = p.classTable.Size();
+            i = vm.classTable.Size();
         } else {
             valueList.Add(new Value(Types.CLASS, new ClassValue(false, classInfo.id)));
         }
@@ -15,12 +14,11 @@ Value Reflect_allClasses() {
 }
 
 // TODO: once the static method reflection is implemented, this doesn't need to take in EC anymore, since there will be no exception.
-Value Reflect_getMethods(ExecutionContext ec, Value methodSource) {
-    VmContext p = Core.GetProgramData();
+Value Reflect_getMethods(VmContext vm, ExecutionContext ec, Value methodSource) {
     List<Value> methodList = new List<Value>();
     if (methodSource.type == Types.INSTANCE) {
         ObjectInstance objInstance1 = (ObjectInstance) methodSource.internalValue;
-        ClassInfo classInfo = p.classTable[objInstance1.classId];
+        ClassInfo classInfo = vm.classTable[objInstance1.classId];
         for (int i = 0; i < classInfo.functionIds.Size(); i += 1) {
             int functionId = classInfo.functionIds[i];
             if (functionId != -1) {
@@ -29,7 +27,7 @@ Value Reflect_getMethods(ExecutionContext ec, Value methodSource) {
         }
     } else {
         ClassValue classValue = (ClassValue) methodSource.internalValue;
-        ClassInfo classInfo = p.classTable[classValue.classId];
+        ClassInfo classInfo = vm.classTable[classValue.classId];
         EX_UnsupportedOperation(ec, "static method reflection not implemented yet.");
     }
     return new Value(Types.LIST, methodList);

@@ -1,5 +1,5 @@
 ﻿
-finalizeInitializationImpl(p.stringArgs[pc], row[0]);
+finalizeInitializationImpl(p, p.stringArgs[pc], row[0]);
 
 identifiers = p.identifiers;
 literalTable = p.literalTable;

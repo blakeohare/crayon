@@ -1,1 +1,1 @@
-﻿addNameImpl(stringArgs[pc]);
+﻿addNameImpl(vm, stringArgs[pc]);

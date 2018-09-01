@@ -11,7 +11,7 @@ value = ec.activeException;
 objInstance1 = ((ObjectInstance) value.internalValue);
 int1 = objInstance1.classId;
 for (i = row.Size() - 1; i >= 2; i -= 1) {
-    if (isClassASubclassOf(int1, row[i])) {
+    if (isClassASubclassOf(vm, int1, row[i])) {
         i = 0;
         pc += row[0];
 

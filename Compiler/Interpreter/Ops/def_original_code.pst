@@ -1,1 +1,1 @@
-﻿defOriginalCodeImpl(row, p.stringArgs[pc]);
+﻿defOriginalCodeImpl(vm, row, vm.stringArgs[pc]);

@@ -399,11 +399,10 @@ Array<Array<int>> generateEsfData(int byteCodeLength, Array<int> esfArgs) {
     return output;
 }
 
-int markClassAsInitialized(StackFrame stack, int classId) {
-    VmContext p = Core.GetProgramData();
-    ClassInfo classInfo = p.classTable[stack.markClassAsInitialized];
+int markClassAsInitialized(VmContext vm, StackFrame stack, int classId) {
+    ClassInfo classInfo = vm.classTable[stack.markClassAsInitialized];
     classInfo.staticInitializationState = 2; // mark class as completely ready to use.
-    p.classStaticInitializationStack.Pop();
+    vm.classStaticInitializationStack.Pop();
     return 0;
 }
 
@@ -414,93 +413,86 @@ int markClassAsInitialized(StackFrame stack, int classId) {
     2 -> Library not found
     3 -> Library found, but incompatible version
 */
-int declareLibrary(int refId, string descriptor) {
-    VmContext p = Core.GetProgramData();
+int declareLibrary(VmContext vm, int refId, string descriptor) {
     Array<string> descriptorParts = descriptor.Split(",");
     string name = descriptorParts[0];
     string ver = descriptorParts[1];
     int status = Core.VmDetermineLibraryAvailability(name, ver);
-    p.activeLibraryReferenceId = refId;
+    vm.activeLibraryReferenceId = refId;
     return status;
 }
 
-int addLiteralImpl(Array<int> row, string stringArg) {
-    VmContext p = Core.GetProgramData();
+int addLiteralImpl(VmContext vm, Array<int> row, string stringArg) {
     int type = row[0];
     if (type == Types.NULL) {
-        p.literalTableBuilder.Add(VALUE_NULL);
+        vm.literalTableBuilder.Add(VALUE_NULL);
     } else if (type == Types.BOOLEAN) {
-        p.literalTableBuilder.Add(buildBoolean(row[1] == 1));
+        vm.literalTableBuilder.Add(buildBoolean(row[1] == 1));
     } else if (type == Types.INTEGER) {
-        p.literalTableBuilder.Add(buildInteger(row[1]));
+        vm.literalTableBuilder.Add(buildInteger(row[1]));
     } else if (type == Types.FLOAT) {
-        p.literalTableBuilder.Add(buildFloat(Core.ParseFloatUnsafe(stringArg)));
+        vm.literalTableBuilder.Add(buildFloat(Core.ParseFloatUnsafe(stringArg)));
     } else if (type == Types.STRING) {
-        p.literalTableBuilder.Add(buildCommonString(stringArg));
+        vm.literalTableBuilder.Add(buildCommonString(stringArg));
     } else if (type == Types.FUNCTION) {
-        int index = p.literalTableBuilder.Size();
-        p.literalTableBuilder.Add(buildCommonString(stringArg));
-        p.invFunctionNameLiterals[stringArg] = index;
+        int index = vm.literalTableBuilder.Size();
+        vm.literalTableBuilder.Add(buildCommonString(stringArg));
+        vm.invFunctionNameLiterals[stringArg] = index;
     } else if (type == Types.CLASS) {
         ClassValue cv = new ClassValue(
             // TODO: going to need to update this for interfaces. Negative numbers too hacky?
             false, // is interface?
             row[1]); // class ID
-        p.literalTableBuilder.Add(new Value(Types.CLASS, cv));
+        vm.literalTableBuilder.Add(new Value(Types.CLASS, cv));
     }
 
     return 0;
 }
 
-int addNameImpl(string nameValue) {
-    VmContext p = Core.GetProgramData();
-    int index = p.identifiersBuilder.Size(); // name ID (sequentially allocated so it happens to be the length of the list at the time of declaration)
-    p.invIdentifiers[nameValue] = index;
-    p.identifiersBuilder.Add(nameValue);
+int addNameImpl(VmContext vm, string nameValue) {
+    int index = vm.identifiersBuilder.Size(); // name ID (sequentially allocated so it happens to be the length of the list at the time of declaration)
+    vm.invIdentifiers[nameValue] = index;
+    vm.identifiersBuilder.Add(nameValue);
 
     if (Core.StringEquals("length", nameValue)) {
-        p.lengthId = index;
+        vm.lengthId = index;
     }
 
     return 0;
 }
 
-int finalizeInitializationImpl(string projectId, int localeCount) {
-    VmContext p = Core.GetProgramData();
-
-    p.magicNumbers.totalLocaleCount = localeCount;
-    p.identifiers = Core.ListToArray(p.identifiersBuilder);
-    p.literalTable = Core.ListToArray(p.literalTableBuilder);
-    p.integerSwitchLookups = Core.ListToArray(p.integerSwitchLookupsBuilder);
-    p.stringSwitchLookups = Core.ListToArray(p.stringSwitchLookupsBuilder);
-    p.sourceCode = Core.ListToArray(p.sourceCodeBuilder);
-    p.globalNameIdToPrimitiveMethodName = primitiveMethodsInitializeLookup(p.invIdentifiers);
-    p.funcArgs = new Array<Value>(p.identifiers.Size()); // WAY over-allocated but that's okay for now, I guess.
-    p.projectId = projectId;
-    p.identifiersBuilder = null;
-    p.literalTableBuilder = null;
-    p.integerSwitchLookupsBuilder = null;
-    p.stringSwitchLookupsBuilder = null;
-    p.sourceCodeBuilder = null;
-    p.initializationComplete = true;
+int finalizeInitializationImpl(VmContext vm, string projectId, int localeCount) {
+    vm.magicNumbers.totalLocaleCount = localeCount;
+    vm.identifiers = Core.ListToArray(vm.identifiersBuilder);
+    vm.literalTable = Core.ListToArray(vm.literalTableBuilder);
+    vm.integerSwitchLookups = Core.ListToArray(vm.integerSwitchLookupsBuilder);
+    vm.stringSwitchLookups = Core.ListToArray(vm.stringSwitchLookupsBuilder);
+    vm.sourceCode = Core.ListToArray(vm.sourceCodeBuilder);
+    vm.globalNameIdToPrimitiveMethodName = primitiveMethodsInitializeLookup(vm.invIdentifiers);
+    vm.funcArgs = new Array<Value>(vm.identifiers.Size()); // WAY over-allocated but that's okay for now, I guess.
+    vm.projectId = projectId;
+    vm.identifiersBuilder = null;
+    vm.literalTableBuilder = null;
+    vm.integerSwitchLookupsBuilder = null;
+    vm.stringSwitchLookupsBuilder = null;
+    vm.sourceCodeBuilder = null;
+    vm.initializationComplete = true;
 
     return 0;
 }
 
-int buildSwitchIntImpl(Array<int> row) {
-    VmContext p = Core.GetProgramData();
+int buildSwitchIntImpl(VmContext vm, Array<int> row) {
     Dictionary<int, int> integerSwitchLookup = new Dictionary<int, int>();
     for (int i = 0; i < row.Size(); i += 2) {
         integerSwitchLookup[row[i]] = row[i + 1];
     }
-    p.integerSwitchLookupsBuilder.Add(integerSwitchLookup);
+    vm.integerSwitchLookupsBuilder.Add(integerSwitchLookup);
 
     return 0;
 }
 
-int buildSwitchStringImpl(Array<int> row, string caseValue) {
-    VmContext p = Core.GetProgramData();
-    List<Dictionary<string, int>> allStringSwitchLookups = p.stringSwitchLookupsBuilder;
+int buildSwitchStringImpl(VmContext vm, Array<int> row, string caseValue) {
+    List<Dictionary<string, int>> allStringSwitchLookups = vm.stringSwitchLookupsBuilder;
     int id = row[0];
     while (allStringSwitchLookups.Size() <= id) {
         allStringSwitchLookups.Add(new Dictionary<string, int>());
@@ -512,10 +504,9 @@ int buildSwitchStringImpl(Array<int> row, string caseValue) {
 }
 
 // TODO: eventually this should come from embedded resources instead of byte code (with the option of it being absent)
-int defOriginalCodeImpl(Array<int> row, string fileContents) {
-    VmContext p = Core.GetProgramData();
+int defOriginalCodeImpl(VmContext vm, Array<int> row, string fileContents) {
     int fileId = row[0]; // file ID
-    List<string> codeLookup = p.sourceCodeBuilder;
+    List<string> codeLookup = vm.sourceCodeBuilder;
     while (codeLookup.Size() <= fileId) {
         codeLookup.Add(null);
     }
@@ -524,10 +515,9 @@ int defOriginalCodeImpl(Array<int> row, string fileContents) {
     return 0;
 }
 
-int tokenDataImpl(Array<int> row) {
-    VmContext p = Core.GetProgramData();
-    Array<List<Token>> tokensByPc = p.tokenData;
-    int pc = row[0] + p.userCodeStart; // PC
+int tokenDataImpl(VmContext vm, Array<int> row) {
+    Array<List<Token>> tokensByPc = vm.tokenData;
+    int pc = row[0] + vm.userCodeStart; // PC
     int line = row[1]; // Line
     int col = row[2]; // Col
     int file = row[3]; // File ID
@@ -553,9 +543,8 @@ int tokenDataImpl(Array<int> row) {
     - in the debugger when the next line to execute is set arbitrarily
 
 */
-int valueStackDepthImpl(Array<int> row) {
-    VmContext p = Core.GetProgramData();
-    int totalPcCount = p.ops.Size(); // total PC count
+int valueStackDepthImpl(VmContext vm, Array<int> row) {
+    int totalPcCount = vm.ops.Size(); // total PC count
     Array<int> valueStackDepthByPc = new Array<int>(totalPcCount); // output
     int rowIndex = 0; // row index
     int rowLength = row.Size(); // row length
@@ -568,7 +557,7 @@ int valueStackDepthImpl(Array<int> row) {
         valueStackDepthByPc[pc] = depth;
     }
 
-    p.valueStackDepthByPc = valueStackDepthByPc;
+    vm.valueStackDepthByPc = valueStackDepthByPc;
 
     return 0;
 }
@@ -585,12 +574,11 @@ int valueStackDepthImpl(Array<int> row) {
     The key is in the form of the nameID * totalLocaleCount + localeId.
     This mathematically namespaces name ID's to prevent collisions across different locales.
 */
-int initLocTable(Array<int> row) {
+int initLocTable(VmContext vm, Array<int> row) {
     int classId = row[0];
     int memberCount = row[1];
     int nameId = 0;
-    VmContext p = Core.GetProgramData();
-    int totalLocales = p.magicNumbers.totalLocaleCount;
+    int totalLocales = vm.magicNumbers.totalLocaleCount;
     Dictionary<int, int> lookup = new Dictionary<int, int>();
     for (int i = 2; i < row.Size(); i += memberCount) {
         int localeId = row[i];
@@ -603,6 +591,6 @@ int initLocTable(Array<int> row) {
             }
         }
     }
-    p.classMemberLocalizerBuilder[classId] = lookup;
+    vm.classMemberLocalizerBuilder[classId] = lookup;
     return 0;
 }

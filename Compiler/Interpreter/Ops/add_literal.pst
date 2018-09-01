@@ -1,1 +1,1 @@
-﻿addLiteralImpl(row, stringArgs[pc]);
+﻿addLiteralImpl(vm, row, stringArgs[pc]);

@@ -7,6 +7,7 @@
 */
 Value lib_audio_getAudioResourcePath(Array<Value> args) {
     return resource_manager_getResourceOfType(
+        Core.GetProgramData(),
         (string) args[0].internalValue,
         "SND");
 }
