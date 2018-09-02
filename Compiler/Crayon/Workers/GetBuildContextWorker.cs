@@ -5,12 +5,10 @@ using System;
 
 namespace Crayon
 {
-    class GetBuildContextWorker : AbstractCrayonWorker
+    class GetBuildContextWorker
     {
-        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
+        public BuildContext DoWorkImpl(ExportCommand command)
         {
-            ExportCommand command = (ExportCommand)args[0].Value;
-
             string buildFile = command.BuildFilePath;
             string target = command.BuildTarget;
 
@@ -57,7 +55,7 @@ namespace Crayon
 
             buildContext.ProjectID = buildContext.ProjectID ?? "Untitled";
 
-            return new CrayonWorkerResult() { Value = buildContext };
+            return buildContext;
         }
     }
 }

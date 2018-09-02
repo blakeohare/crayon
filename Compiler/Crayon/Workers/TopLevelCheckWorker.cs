@@ -1,22 +1,20 @@
-﻿using Common;
-using Exporter;
-using System;
+﻿using Exporter;
 
 namespace Crayon
 {
-    internal class TopLevelCheckWorker : AbstractCrayonWorker
+    public enum ExecutionType
     {
-        private enum ExecutionType
-        {
-            GENERATE_DEFAULT_PROJECT,
-            EXPORT_VM_BUNDLE,
-            EXPORT_VM_STANDALONE,
-            EXPORT_CBX,
-            RUN_CBX,
-            SHOW_USAGE,
-        }
+        GENERATE_DEFAULT_PROJECT,
+        EXPORT_VM_BUNDLE,
+        EXPORT_VM_STANDALONE,
+        EXPORT_CBX,
+        RUN_CBX,
+        SHOW_USAGE,
+    }
 
-        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
+    internal class TopLevelCheckWorker
+    {
+        public ExportCommand DoWorkImpl()
         {
             string[] commandLineArgs = Program.GetCommandLineArgs();
 
@@ -26,30 +24,10 @@ namespace Crayon
             command.PlatformProvider = new PlatformProvider();
             command.InlineImportCodeLoader = new InlineImportCodeLoader();
 
-            CrayonWorkerResult result = new CrayonWorkerResult()
-            {
-                Value = command,
-            };
-
-            ExecutionType action = this.IdentifyUseCase(command);
-            switch (action)
-            {
-                case ExecutionType.SHOW_USAGE: result.SetField("IsDisplayUsage", true); break;
-                case ExecutionType.GENERATE_DEFAULT_PROJECT: result.SetField("IsGenerateDefaultProject", true); break;
-                case ExecutionType.EXPORT_VM_BUNDLE: result.SetField("IsExportCbxVmBundle", true); break;
-                case ExecutionType.EXPORT_VM_STANDALONE: result.SetField("IsExportStandaloneVm", true); break;
-                case ExecutionType.EXPORT_CBX: result.SetField("IsExportStandaloneCbx", true); break;
-                case ExecutionType.RUN_CBX: result.SetField("IsRunCbx", true); break;
-                default: throw new Exception();
-            }
-
-            result.SetField("ShowPerformance", command.ShowPerformanceMarkers);
-            result.SetField("ShowLibraryDeps", command.ShowLibraryDepTree);
-
-            return result;
+            return command;
         }
 
-        private ExecutionType IdentifyUseCase(ExportCommand command)
+        public static ExecutionType IdentifyUseCase(ExportCommand command)
         {
             if (command.IsGenerateDefaultProject) return ExecutionType.GENERATE_DEFAULT_PROJECT;
             if (command.IsEmpty) return ExecutionType.SHOW_USAGE;

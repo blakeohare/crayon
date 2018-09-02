@@ -31,12 +31,9 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pipeline\*.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="*.cs" />
     <Compile Include="Workers\*.cs" />
+    <Compile Include="*.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="LICENSE.txt">

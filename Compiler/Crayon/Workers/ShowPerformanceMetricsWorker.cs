@@ -3,15 +3,14 @@ using System;
 
 namespace Crayon
 {
-    internal class ShowPerformanceMetricsWorker : AbstractCrayonWorker
+    internal class ShowPerformanceMetricsWorker
     {
-        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
+        public void DoWork()
         {
 #if DEBUG
             string summary = PerformanceTimer.GetSummary();
             Console.WriteLine(summary);
 #endif
-            return new CrayonWorkerResult();
         }
     }
 }

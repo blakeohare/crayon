@@ -5,11 +5,10 @@ using System.Collections.Generic;
 
 namespace Crayon
 {
-    public class GenerateDefaultProjectWorker : AbstractCrayonWorker
+    public class GenerateDefaultProjectWorker
     {
-        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
+        public void DoWorkImpl(ExportCommand command)
         {
-            ExportCommand command = (ExportCommand)args[0].Value;
             DefaultProjectGenerator generator = new DefaultProjectGenerator(command.DefaultProjectId, command.DefaultProjectLocale);
             Dictionary<string, FileOutput> project = generator.Validate().Export();
 
@@ -19,7 +18,6 @@ namespace Crayon
             new FileOutputExporter(directory).ExportFiles(project);
 
             Console.WriteLine("Empty project exported to directory '" + generator.ProjectID + "/'");
-            return null;
         }
     }
 }

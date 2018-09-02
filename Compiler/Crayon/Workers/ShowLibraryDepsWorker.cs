@@ -1,17 +1,14 @@
-﻿using Common;
-using Exporter;
+﻿using Exporter;
 using Parser;
 using System;
 using System.Linq;
 
 namespace Crayon
 {
-    internal class ShowLibraryDepsWorker : AbstractCrayonWorker
+    internal class ShowLibraryDepsWorker
     {
-        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
+        public void DoWorkImpl(CompilationBundle compilationResult)
         {
-            CompilationBundle compilationResult = (CompilationBundle)args[0].Value;
-
             LibraryMetadata[] libraryMetadata = compilationResult
                 .UserCodeScope
                 .Dependencies
@@ -22,8 +19,6 @@ namespace Crayon
             Console.WriteLine("<LibraryDependencies>");
             Console.WriteLine(libs.Trim());
             Console.WriteLine("</LibraryDependencies>");
-
-            return new CrayonWorkerResult();
         }
     }
 }

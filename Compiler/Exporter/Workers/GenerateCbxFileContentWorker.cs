@@ -6,20 +6,9 @@ using System.Linq;
 
 namespace Exporter.Workers
 {
-    public class GenerateCbxFileContentWorker : AbstractCrayonWorker
+    public class GenerateCbxFileContentWorker
     {
-        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
-        {
-            // cbxFileBytes = GenerateCbxFileContent(buildContext, resDb, compilationResult, byteCode)
-            BuildContext buildContext = (BuildContext)args[0].Value;
-            ResourceDatabase resDb = (ResourceDatabase)args[1].Value;
-            CompilationBundle compilationResult = (CompilationBundle)args[2].Value;
-            string byteCode = (string)args[3].Value;
-            byte[] cbxData = this.GenerateCbxBinaryData(buildContext, resDb, compilationResult, byteCode);
-            return new CrayonWorkerResult() { Value = cbxData };
-        }
-
-        private byte[] GenerateCbxBinaryData(BuildContext buildContext, ResourceDatabase resDb, CompilationBundle compilationResult, string byteCode)
+        public byte[] GenerateCbxBinaryData(BuildContext buildContext, ResourceDatabase resDb, CompilationBundle compilationResult, string byteCode)
         {
             List<byte> cbxOutput = new List<byte>() { 0 };
             cbxOutput.AddRange("CBX".ToCharArray().Select(c => (byte)c));

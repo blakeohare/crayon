@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Diagnostics;
-using Common;
 
 namespace Crayon
 {
-    public class RunCbxWorker : AbstractCrayonWorker
+    public class RunCbxWorker
     {
         private string CrayonRuntimePath
         {
@@ -17,10 +17,8 @@ namespace Crayon
             }
         }
 
-        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
+        public void DoWorkImpl(string flags)
         {
-            string flags = (string)args[0].Value;
-
             Process appProcess = new Process();
             appProcess.StartInfo = new ProcessStartInfo(this.CrayonRuntimePath, flags)
             {
@@ -35,8 +33,6 @@ namespace Crayon
             appProcess.BeginOutputReadLine();
             appProcess.BeginErrorReadLine();
             appProcess.WaitForExit();
-
-            return new CrayonWorkerResult();
         }
     }
 }

@@ -49,12 +49,7 @@ namespace Crayon
 
         private static void ExecuteProgramUnchecked()
         {
-            new PipelineBuilder()
-                .AddAssembly(typeof(Program).Assembly)
-                .AddAssembly(typeof(Exporter.ExportCommand).Assembly)
-                .AddAssembly(typeof(Parser.ParserContext).Assembly)
-                .GetPipeline()
-                .Interpret("Crayon::Main");
+            Pipeline.MainPipeline.Run();
         }
 
         private static string[] GetEffectiveArgs(string[] actualArgs)

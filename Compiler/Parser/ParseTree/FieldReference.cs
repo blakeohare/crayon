@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Parser.ParseTree
+﻿namespace Parser.ParseTree
 {
     public class FieldReference : Expression
     {

@@ -4,20 +4,9 @@ using System.Collections.Generic;
 
 namespace Exporter.Workers
 {
-    public class PopulateFileOutputContextForCbxWorker : AbstractCrayonWorker
+    public class PopulateFileOutputContextForCbxWorker
     {
-        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
-        {
-            // PopulateFileOutputContext(fileOutputContext, buildContext, resDb, cbxFileBytes)
-            Dictionary<string, FileOutput> fileOutputDescriptor = (Dictionary<string, FileOutput>)args[0].Value;
-            BuildContext buildContext = (BuildContext)args[1].Value;
-            ResourceDatabase resDb = (ResourceDatabase)args[2].Value;
-            byte[] cbxData = (byte[])args[3].Value;
-            this.GenerateFileOutput(fileOutputDescriptor, buildContext, resDb, cbxData);
-            return new CrayonWorkerResult();
-        }
-
-        private Dictionary<string, FileOutput> GenerateFileOutput(
+        public void GenerateFileOutput(
             Dictionary<string, FileOutput> output,
             BuildContext buildContext,
             ResourceDatabase resDb,
@@ -55,8 +44,6 @@ namespace Exporter.Workers
             {
                 output["res/img/" + key] = resDb.ImageSheetFiles[key];
             }
-
-            return output;
         }
     }
 }

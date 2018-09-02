@@ -7,17 +7,9 @@ using System.Linq;
 
 namespace Exporter.Workers
 {
-    public class ExportCbxVmBundleImplWorker : AbstractCrayonWorker
+    public class ExportCbxVmBundleImplWorker
     {
-        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
-        {
-            ExportCommand command = (ExportCommand)args[0].Value;
-            BuildContext buildContext = (BuildContext)args[1].Value;
-            CompilationBundle compilationResult = this.ExportVmBundle(command, buildContext);
-            return new CrayonWorkerResult() { Value = compilationResult };
-        }
-
-        private CompilationBundle ExportVmBundle(ExportCommand command, BuildContext buildContext)
+        public CompilationBundle ExportVmBundle(ExportCommand command, BuildContext buildContext)
         {
             // TODO: Worker: platform = GetPlatform(buildContext, command)
             string platformId = buildContext.Platform.ToLowerInvariant();

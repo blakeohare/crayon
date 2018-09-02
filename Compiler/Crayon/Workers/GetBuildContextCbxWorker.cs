@@ -5,12 +5,10 @@ using System;
 
 namespace Crayon
 {
-    // buildContext = Crayon::GetBuildContextCbx(command)
-    public class GetBuildContextCbxWorker : AbstractCrayonWorker
+    public class GetBuildContextCbxWorker
     {
-        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
+        public BuildContext DoWorkImpl(ExportCommand command)
         {
-            ExportCommand command = (ExportCommand)args[0].Value;
             string buildFilePath = command.BuildFilePath;
 
             if (buildFilePath == null)
@@ -22,7 +20,7 @@ namespace Crayon
             string projectDirectory = FileUtil.GetParentDirectory(buildFile);
             string buildFileContent = FileUtil.ReadFileText(buildFile);
             BuildContext buildContext = BuildContext.Parse(projectDirectory, buildFileContent, null);
-            return new CrayonWorkerResult() { Value = buildContext };
+            return buildContext;
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System;
-using Common;
+﻿using Common;
+using System;
 
 namespace Crayon
 {
-    internal class UsageDisplayWorker : AbstractCrayonWorker
+    internal class UsageDisplayWorker
     {
         private static readonly string USAGE = Util.JoinLines(
             "Usage:",
@@ -27,10 +27,9 @@ namespace Crayon
             "  -genDefaultProjJP  Generates a default project with JP locale.",
             "");
 
-        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
+        public void DoWorkImpl()
         {
             Console.WriteLine(USAGE);
-            return new CrayonWorkerResult();
         }
     }
 }

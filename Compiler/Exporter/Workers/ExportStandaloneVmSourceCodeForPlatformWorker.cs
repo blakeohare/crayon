@@ -12,16 +12,15 @@ namespace Exporter.Workers
             vmTargetDir,
             command)
     */
-    public class ExportStandaloneVmSourceCodeForPlatformWorker : AbstractCrayonWorker
+    public class ExportStandaloneVmSourceCodeForPlatformWorker
     {
-        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
+        public void DoWorkImpl(
+            Dictionary<string, FileOutput> fileOutput,
+            Platform.AbstractPlatform platform,
+            LibraryMetadata[] allLibraries,
+            string vmTargetDir,
+            ExportCommand command)
         {
-            Dictionary<string, FileOutput> fileOutput = (Dictionary<string, FileOutput>)args[0].Value;
-            Platform.AbstractPlatform platform = (Platform.AbstractPlatform)args[1].Value;
-            LibraryMetadata[] allLibraries = (LibraryMetadata[])args[2].Value;
-            string vmTargetDir = (string)args[3].Value;
-            ExportCommand command = (ExportCommand)args[4].Value;
-
             new VmGenerator().GenerateVmSourceCodeForPlatform(
                 fileOutput,
                 platform,
@@ -31,8 +30,6 @@ namespace Exporter.Workers
                 vmTargetDir,
                 command.InlineImportCodeLoader,
                 VmGenerationMode.EXPORT_VM_AND_LIBRARIES);
-
-            return new CrayonWorkerResult();
         }
     }
 }

@@ -4,14 +4,10 @@ using System.Linq;
 
 namespace Crayon
 {
-    // cmdLineFlags = Crayon::RunCbxFlagBuilder(command, buildContext)
-    class RunCbxFlagBuilderWorker : AbstractCrayonWorker
+    class RunCbxFlagBuilderWorker
     {
-        public override CrayonWorkerResult DoWorkImpl(CrayonWorkerResult[] args)
+        public string DoWorkImpl(ExportCommand command, string finalCbxPath)
         {
-            ExportCommand command = (ExportCommand)args[0].Value;
-            string finalCbxPath = (string)args[1].Value;
-
             string cbxFile = FileUtil.GetPlatformPath(finalCbxPath);
             int processId = System.Diagnostics.Process.GetCurrentProcess().Id;
             string runtimeArgs = string.Join(",", command.DirectRunArgs.Select(s => Utf8Base64.ToBase64(s)));
@@ -21,8 +17,7 @@ namespace Crayon
             {
                 flags += " runtimeargs:" + runtimeArgs;
             }
-
-            return new CrayonWorkerResult() { Value = flags };
+            return flags;
         }
     }
 }
