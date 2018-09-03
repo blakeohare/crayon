@@ -1,11 +1,10 @@
-﻿ResourceDB resource_manager_initialize() {
+﻿ResourceDB resource_manager_initialize(string manifest) {
 
     Dictionary<string, List<string>> filesPerDirectoryBuilder = new Dictionary<string, List<string>>();
     Dictionary<string, ResourceInfo> fileInfo = new Dictionary<string, ResourceInfo>();
 
     List<Value> dataList = new List<Value>();
 
-    string manifest = Core.GetResourceManifest();
     Array<string> items = manifest.Split("\n");
     ResourceInfo resourceInfo = null;
     string type = "";

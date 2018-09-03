@@ -10,12 +10,6 @@ TranslationHelper_StringType = type('')
 def always_true(): return True
 def always_false(): return False
 
-def TranslationHelper_setResourceManifest(value):
-  TranslationHelper_globals['res'] = value
-
-def TranslationHelper_getResourceManifest():
-  return TranslationHelper_globals['res']
-
 def TranslationHelper_setProgramData(value):
   TranslationHelper_globals['pd'] = value
 

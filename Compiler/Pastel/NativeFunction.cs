@@ -9,7 +9,6 @@
         VM_DETERMINE_LIBRARY_AVAILABILITY, // This goes away when library importing is revamped
         VM_END_PROCESS, // used by the runInterpreter function right before returning and translates to something like System.exit(). This can (probably?) be changed to a specific status code.
         // The ones below can easily be aggregated into ProgramData
-        GET_RESOURCE_MANIFEST,
         RESOURCE_READ_TEXT_FILE,
         THREAD_SLEEP,// Once ENQUEUE_VM_RESUME goes away, then this can go away as well.
 

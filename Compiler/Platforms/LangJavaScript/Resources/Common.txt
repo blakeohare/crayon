@@ -10,7 +10,7 @@ C$common$globalOptions = {};
 C$common$globalOptions['fullscreen'] = false;
 
 function main() {
-	C$common$programData = v_createVm(C$bytecode);
+	C$common$programData = v_createVm(C$bytecode, C$common$resourceManifest);
 	v_startVm(C$common$programData);
 }
 

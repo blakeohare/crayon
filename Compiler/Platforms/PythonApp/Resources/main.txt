@@ -17,9 +17,9 @@ import code.vm as vm
 
 def main(args, libs):
   bytecode = vm.ResourceReader_readTextFile('res/bytecode.txt')
-  vm.TranslationHelper_setResourceManifest(vm.ResourceReader_readTextFile('res/resource_manifest.txt'))
+  resManifest = vm.ResourceReader_readTextFile('res/resource_manifest.txt')
   vm.TranslationHelper_setLibraries(libs)
-  vmContext = vm.v_createVm(bytecode)
+  vmContext = vm.v_createVm(bytecode, resManifest)
   vm.v_vmEnvSetCommandLineArgs(vm, args)
   vm.TranslationHelper_setProgramData(vmContext)
   vm.v_startVm(vmContext)

@@ -287,11 +287,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateGetResourceManifest(TranspilerContext sb)
-        {
-            sb.Append("TranslationHelper.ResourceManifest");
-        }
-
         public override void TranslateGlobalVariable(TranspilerContext sb, Variable variable)
         {
             sb.Append("Globals.v_");

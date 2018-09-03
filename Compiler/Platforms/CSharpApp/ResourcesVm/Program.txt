@@ -79,10 +79,9 @@ namespace CrayonRuntime
             string byteCode = byteCode;
             TranslationHelper.CommandLineArgs = runtimeArgs;
             TranslationHelper.LibraryRegistry = new LibraryRegistry(cbxDecoder.LibraryVersionsByName);
-            TranslationHelper.ResourceManifest = cbxDecoder.ResourceManifest;
             TranslationHelper.ImageSheetManifest = cbxDecoder.ImageSheetManifest;
             Interpreter.ResourceReader.CbxDirectory = System.IO.Path.GetDirectoryName(cbxPath);
-            Interpreter.Structs.VmContext vm = CrayonWrapper.v_createVm(byteCode);
+            Interpreter.Structs.VmContext vm = CrayonWrapper.v_createVm(byteCode, cbxDecoder.ResourceManifest);
             vm.environment.showLibStack = true;
             TranslationHelper.ProgramData = vm;
             CrayonWrapper.v_startVm(vm);

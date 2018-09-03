@@ -249,7 +249,6 @@ namespace Pastel.Transpilers
                 case Pastel.NativeFunction.FLOAT_DIVISION: this.TranslateFloatDivision(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.FLOAT_TO_STRING: this.TranslateFloatToString(sb, args[0]); break;
                 case Pastel.NativeFunction.GET_FUNCTION: this.TranslateGetFunction(sb, args[0]); break;
-                case Pastel.NativeFunction.GET_RESOURCE_MANIFEST: this.TranslateGetResourceManifest(sb); break;
                 case Pastel.NativeFunction.INT: this.TranslateFloatToInt(sb, args[0]); break;
                 case Pastel.NativeFunction.INT_BUFFER_16: this.TranslateIntBuffer16(sb); break;
                 case Pastel.NativeFunction.INT_TO_STRING: this.TranslateIntToString(sb, args[0]); break;
@@ -428,7 +427,6 @@ namespace Pastel.Transpilers
         public abstract void TranslateFunctionInvocationLocallyScoped(TranspilerContext sb, FunctionReference funcRef, Expression[] args);
         public abstract void TranslateFunctionReference(TranspilerContext sb, FunctionReference funcRef);
         public abstract void TranslateGetFunction(TranspilerContext sb, Expression name);
-        public abstract void TranslateGetResourceManifest(TranspilerContext sb);
         public abstract void TranslateGlobalVariable(TranspilerContext sb, Variable variable);
         public abstract void TranslateIfStatement(TranspilerContext sb, IfStatement ifStatement);
         public abstract void TranslateInlineIncrement(TranspilerContext sb, Expression innerExpression, bool isPrefix, bool isAddition);

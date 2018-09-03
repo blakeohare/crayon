@@ -9,8 +9,8 @@ public final class Main {
 
   public static void main(String[] args) {
     String byteCode = ResourceReader.readFileText("resources/bytecode.txt");
-    TranslationHelper.setResourceManifest(ResourceReader.readFileText("resources/manifest.txt"));
-    VmContext vm = Interpreter.v_createVm(byteCode);
+    String resourceManifest = ResourceReader.readFileText("resources/manifest.txt");
+    VmContext vm = Interpreter.v_createVm(byteCode, resourceManifest);
     Interpreter.v_vmEnvSetCommandLineArgs(vm, args);
     TranslationHelper.setProgramData(vm);
     Interpreter.v_startVm(vm);
