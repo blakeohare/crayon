@@ -32,22 +32,33 @@ namespace Interpreter.Vm
             CommandLineArgs = new string[0];
         }
 
-        public static void RunInterpreter(int executionContextId)
+        public static InterpreterResult StartInterpreter()
         {
-            CrashIfStatusIsBad(CrayonWrapper.v_runInterpreter(ProgramData, executionContextId));
+            return HandleInterpreterStatus(CrayonWrapper.v_startVm(ProgramData));
         }
 
-        public static void RunInterpreter(Value functionPointer, params Value[] args)
+        public static InterpreterResult RunInterpreter(int executionContextId)
         {
-            CrashIfStatusIsBad(CrayonWrapper.v_runInterpreterWithFunctionPointer(ProgramData, functionPointer, args));
+            return HandleInterpreterStatus(CrayonWrapper.v_runInterpreter(ProgramData, executionContextId));
         }
 
-        private static void CrashIfStatusIsBad(int status)
+        public static InterpreterResult RunInterpreter(Value functionPointer, params Value[] args)
         {
-            if (status == 3)
+            return HandleInterpreterStatus(CrayonWrapper.v_runInterpreterWithFunctionPointer(ProgramData, functionPointer, args));
+        }
+
+        private static InterpreterResult HandleInterpreterStatus(InterpreterResult result)
+        {
+            while (result.status == 5)
             {
-                System.Environment.Exit(1);
+                double sleepForSeconds = result.reinvokeDelay;
+                System.Threading.Thread.Sleep((int)(1000 * sleepForSeconds));
+                result = CrayonWrapper.v_runInterpreter(ProgramData, result.executionContextId);
             }
+            if (result.status == 1) System.Environment.Exit(0); // FINISHED
+            if (result.status == 2) return result; // SUSPEND
+            if (result.status == 3) System.Environment.Exit(1); // FATAL
+            throw new Exception(); // invalid status
         }
 
         private static string[] cmdLineArgs = null;

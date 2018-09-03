@@ -109,9 +109,8 @@
     return vm;
 }
 
-int startVm(VmContext vm) {
-    runInterpreter(vm, vm.lastExecutionContextId);
-    return 0;
+InterpreterResult startVm(VmContext vm) {
+    return runInterpreter(vm, vm.lastExecutionContextId);
 }
 
 /*
@@ -121,8 +120,9 @@ int startVm(VmContext vm) {
     during the lifetime of the initial invocation. (for example, a blocking window is opened)
     This is why the output of the initial invocation is meaningless.
 */
-int runInterpreter(VmContext vm, int executionContextId) {
+InterpreterResult runInterpreter(VmContext vm, int executionContextId) {
     InterpreterResult result = interpret(vm, executionContextId);
+    result.executionContextId = executionContextId; // I feel like this should be set internally.
     int status = result.status;
     bool shutdown = false;
     if (status == InterpreterResultStatus.FINISHED) {
@@ -142,7 +142,7 @@ int runInterpreter(VmContext vm, int executionContextId) {
     if (shutdown && executionContextId == 0) {
         Core.VmEndProcess();
     }
-    return status;
+    return result;
 }
 
 int runShutdownHandlers(VmContext vm) {
@@ -157,7 +157,7 @@ int runShutdownHandlers(VmContext vm) {
     return 0;
 }
 
-int runInterpreterWithFunctionPointer(VmContext vm, Value fpValue, Array<Value> args) {
+InterpreterResult runInterpreterWithFunctionPointer(VmContext vm, Value fpValue, Array<Value> args) {
     int newId = vm.lastExecutionContextId + 1;
     vm.lastExecutionContextId = newId;
     List<Value> argList = new List<Value>();

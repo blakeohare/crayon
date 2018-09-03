@@ -504,25 +504,17 @@ switch (row[0]) {
         // type guaranteed
         float1 = getFloat(arg1);
 
-        if (@ext_boolean("IS_THREAD_BLOCKING_ALLOWED")) {
-            Core.ThreadSleep(float1);
-        } else {
-            // Do the output-used check here.
-            if (row[1] == 1) {
-                @import("ValueStackCapacityCheck.pst");
-                valueStack[valueStackSize] = VALUE_NULL;
-                valueStackSize += 1;
-            }
-
-            prepareToSuspend(ec, stack, valueStackSize, pc);
-
-            Core.EnqueueVmResume(float1, ec.id);
-
-            if (ec.id > -1) {
-                Core.EmitComment("If statement to circumvent unreachable code error in translator.");
-                return suspendInterpreterWithLock();
-            }
+        // Do the output-used check here.
+        if (row[1] == 1) {
+            @import("ValueStackCapacityCheck.pst");
+            valueStack[valueStackSize] = VALUE_NULL;
+            valueStackSize += 1;
         }
+
+        prepareToSuspend(ec, stack, valueStackSize, pc);
+        ec.activeInterrupt = new Interrupt(InterruptType.SLEEP, 0, "", float1);
+        hasInterrupt = true;
+
         break;
 
     case 31: Core.EmitComment("projectId");

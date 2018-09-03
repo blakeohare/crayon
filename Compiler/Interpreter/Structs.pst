@@ -88,6 +88,7 @@ struct Interrupt {
     int type;
     int exceptionType;
     string exceptionMessage;
+    double sleepDurationSeconds;
 }
 
 struct StackFrame {
@@ -109,6 +110,8 @@ struct StackFrame {
 struct InterpreterResult {
     int status; // InterpreterResultStatus enum
     string errorMessage;
+    double reinvokeDelay; // a delay (in seconds) before reinvoking (if the status is REINVOKE). Used by Core.sleep()
+    int executionContextId; // the execution context ID that just ran
 }
 
 struct Token {

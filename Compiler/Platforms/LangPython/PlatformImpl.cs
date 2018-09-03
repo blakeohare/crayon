@@ -26,7 +26,6 @@ namespace LangPython
                     { "IS_PYTHON", true },
                     { "IS_CHAR_A_NUMBER", false },
                     { "INT_IS_FLOOR", false },
-                    { "IS_THREAD_BLOCKING_ALLOWED", true },
                 };
         }
 

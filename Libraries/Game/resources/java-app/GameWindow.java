@@ -190,10 +190,10 @@ public final class GameWindow {
     }
 
     private void timerTick() {
-        
-        int vmStatus = Interpreter.v_runInterpreter(TranslationHelper.getProgramData(), this.executionContextId);
-        if (vmStatus == 1 || // finished
-			vmStatus == 3) { // uncaught error
+
+        InterpreterResult vmResult = TranslationHelper.runInterpreter(this.executionContextId, false);
+        if (vmResult.status == 1 || // finished
+			vmResult.status == 3) { // uncaught error
             frame.setVisible(false);
             System.exit(0);
         }

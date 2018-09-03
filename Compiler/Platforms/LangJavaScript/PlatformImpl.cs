@@ -53,7 +53,6 @@ namespace LangJavaScript
                     { "IS_PYTHON", false },
                     { "IS_CHAR_A_NUMBER", false },
                     { "INT_IS_FLOOR", true },
-                    { "IS_THREAD_BLOCKING_ALLOWED", false },
                     { "HAS_INCREMENT", true },
                 };
         }

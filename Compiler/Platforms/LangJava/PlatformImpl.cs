@@ -165,7 +165,6 @@ namespace LangJava
                     { "IS_PYTHON", false },
                     { "IS_CHAR_A_NUMBER", true },
                     { "INT_IS_FLOOR", false },
-                    { "IS_THREAD_BLOCKING_ALLOWED", true },
                     { "HAS_INCREMENT", true },
                 };
         }

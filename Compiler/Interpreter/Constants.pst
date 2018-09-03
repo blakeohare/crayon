@@ -127,11 +127,24 @@ enum Types {
 const int MAX_TYPE = (Types.CLASS + 1);
 
 enum InterpreterResultStatus {
+
+    // Stop the harness. The VM has reached the end of the bytecode.
     FINISHED = 1,
+
+    // stop execution and yield back to the harness. The harness assumes responsibility to resume
+    // the VM. This is for things like game loop yields that yield back to the UI thread breifly
+    // before invoking the VM again for the next frame. Notably used by GameWindow.clockTick().
     SUSPENDED = 2,
+
+    // Stop the harness. Something terrible has happened.
     FATAL_ERROR = 3,
-    SUSPENDED_WITH_LOCK = 4, // An asynchronous process has been started and will resume the execution itself when completed. Treat as a blocking call.
-    REINVOKE = 5, // interpret should immediately re-invoke itself instead of returning result. This is generally done as a clean stop and re-start on a particular function such as the exception invoker in Core.
+
+    // interpreter should immediately re-invoke itself instead of returning result. This is generally
+    // done as a clean stop and re-start on a particular function such as the exception invoker in Core.
+    // Additionally this may be used with a delay value in the InterpreterResult which can be used for
+    // thread sleeps.
+    // TODO: change this to 4 once VmResult is used instead of InterpreterResult.
+    REINVOKE = 5,
 }
 
 enum CoreExceptionTypes {
@@ -155,6 +168,7 @@ enum CoreExceptionTypes {
 enum InterruptType {
     EXCEPTION = 1,
     DEBUG_BREAKPOINT = 2, // TODO: one of these days...
+    SLEEP = 3,
 }
 
 const int INTEGER_POSITIVE_CACHE_SIZE = 2049;
