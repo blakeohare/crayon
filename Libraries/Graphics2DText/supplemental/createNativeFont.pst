@@ -32,7 +32,7 @@
         2 -> font resource not found
 
 */
-Value lib_graphics2dtext_createNativeFont(Array<Value> args) {
+Value lib_graphics2dtext_createNativeFont(VmContext vm, Array<Value> args) {
     ObjectInstance nf = (ObjectInstance) args[0].internalValue;
     Array<object> nfOut = nf.nativeData;
     int fontType = (int) args[1].internalValue;

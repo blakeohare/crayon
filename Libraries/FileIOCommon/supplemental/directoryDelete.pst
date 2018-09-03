@@ -4,7 +4,7 @@
     arg 1: disk host object
     arg 2: well-formed and sandboxed path
 */
-Value lib_fileiocommon_directoryDelete(Array<Value> args) {
+Value lib_fileiocommon_directoryDelete(VmContext vm, Array<Value> args) {
 
     int sc = Native._lib_fileiocommon_directoryDelete(
         lib_fileiocommon_getDiskObject(args[0]),

@@ -1,7 +1,7 @@
 /*
     args[0] -> integer pointer (integer in a list) to the active seed value.
 */
-Value lib_srandom_getFloat(Array<Value> args) {
+Value lib_srandom_getFloat(VmContext vm, Array<Value> args) {
     List<Value> intPtr = (List<Value>)args[0].internalValue;
     int value1 = (((int)intPtr[0].internalValue * 20077) + 12345) & 65535;
     int value2 = ((value1 * 20077) + 12345) & 65535;

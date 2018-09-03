@@ -11,7 +11,7 @@
 
     Output is an error, if one occurs, or null.
 */
-Value lib_mysql_runQuery(Array<Value> args) {
+Value lib_mysql_runQuery(VmContext vm, Array<Value> args) {
     Value arg1 = args[0];
     Value arg2 = args[1];
     Value arg3 = args[2];

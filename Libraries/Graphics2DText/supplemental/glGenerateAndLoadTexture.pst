@@ -22,7 +22,7 @@
 
     return value -> GL Texture ID
 */
-Value lib_graphics2dtext_glGenerateAndLoadTexture(Array<Value> args) {
+Value lib_graphics2dtext_glGenerateAndLoadTexture(VmContext vm, Array<Value> args) {
     if (@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
         List<Value> xs = (List<Value>) args[0].internalValue;
         List<Value> ys = (List<Value>) args[1].internalValue;

@@ -3,7 +3,7 @@
 
     This is only implemented in JavaScript and Android (so far)
 */
-Value lib_userdata_getProjectSandboxDirectory(Array<Value> args) {
+Value lib_userdata_getProjectSandboxDirectory(VmContext vm, Array<Value> args) {
     Value output = VALUE_NULL;
     Value arg1 = args[0];
     if (@ext_boolean("IS_ANDROID") || @ext_boolean("IS_JAVASCRIPT")) {

@@ -14,8 +14,7 @@
 
     output is boolean: true on success
 */
-
-Value lib_imagewebresources_jsGetImage(Array<Value> args) {
+Value lib_imagewebresources_jsGetImage(VmContext vm, Array<Value> args) {
 
     if (@ext_boolean("IS_JAVASCRIPT")) {
         // get the native data from the response

@@ -16,8 +16,7 @@
     arg4: empty list for output (header data)
         this list will have 2n values added to it, alternating between header name and header value
 */
-
-Value lib_http_populateResponse(Array<Value> args) {
+Value lib_http_populateResponse(VmContext vm, Array<Value> args) {
     Value arg2 = args[1];
     Value arg3 = args[2];
     Value arg4 = args[3];

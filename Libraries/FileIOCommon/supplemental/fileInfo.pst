@@ -20,7 +20,7 @@
 
     directory and existence status are always fetched.
 */
-Value lib_fileiocommon_fileInfo(Array<Value> args) {
+Value lib_fileiocommon_fileInfo(VmContext vm, Array<Value> args) {
     int mask = (int) args[2].internalValue;
     Native._lib_fileiocommon_getFileInfo(
         lib_fileiocommon_getDiskObject(args[0]),

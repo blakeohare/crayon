@@ -7,7 +7,7 @@
     args[3]: bool: true for copy, false for move
     args[4]: bool: allow overwrite?
 */
-Value lib_fileiocommon_fileMove(Array<Value> args) {
+Value lib_fileiocommon_fileMove(VmContext vm, Array<Value> args) {
     int statusCode = Native._lib_fileiocommon_fileMove(
         lib_fileiocommon_getDiskObject(args[0]),
         (string) args[1].internalValue,

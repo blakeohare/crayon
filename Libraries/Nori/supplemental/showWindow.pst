@@ -2,7 +2,7 @@
     args[0] -> (ObjectInstance) window native instance
     args[1] -> (List<Value>) properties
 */
-Value lib_nori_showWindow(Array<Value> args) {
+Value lib_nori_showWindow(VmContext vm, Array<Value> args) {
     ObjectInstance window = (ObjectInstance) args[0].internalValue;
     List<Value> properties = (List<Value>) args[1].internalValue;
     ObjectInstance root = (ObjectInstance) args[2].internalValue;

@@ -6,7 +6,7 @@
 
     No output.
 */
-Value lib_mysql_resultGetNext(Array<Value> args) {
+Value lib_mysql_resultGetNext(VmContext vm, Array<Value> args) {
     Value arg1 = args[0];
     Value arg2 = args[1];
     Value arg3 = args[2];

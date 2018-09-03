@@ -12,7 +12,7 @@
         -1 -> unknown error
 
 */
-Value lib_gamegifcap_saveToDisk(Array<Value> args) {
+Value lib_gamegifcap_saveToDisk(VmContext vm, Array<Value> args) {
     ObjectInstance oi = (ObjectInstance) args[0].internalValue;
     object ctx = oi.nativeData[0];
     string path = (string) args[1].internalValue;

@@ -34,7 +34,7 @@
         data[4] -> pixel width
         data[5] -> pixel height
 */
-Value lib_graphics2d_addImageRenderEvent(Array<Value> args) {
+Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
     bool bool1 = false;
     bool bool2 = false;
     double float1 = 0.0;

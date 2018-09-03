@@ -4,7 +4,7 @@
     args[2] -> row
 
 */
-Value lib_matrices_getValue(Array<Value> args) {
+Value lib_matrices_getValue(VmContext vm, Array<Value> args) {
 
     ObjectInstance obj = (ObjectInstance) args[0].internalValue;
     Array<object> nd = obj.nativeData;

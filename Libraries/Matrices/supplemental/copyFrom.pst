@@ -3,7 +3,7 @@
     args[1] -> copy-from matrix
     args[2] -> is copy-from matrix a matrix instance
 */
-Value lib_matrices_copyFrom(Array<Value> args) {
+Value lib_matrices_copyFrom(VmContext vm, Array<Value> args) {
     ObjectInstance obj = (ObjectInstance) args[0].internalValue;
     Array<object> nd1 = obj.nativeData;
     obj = (ObjectInstance) args[1].internalValue;

@@ -6,7 +6,7 @@
 
     output boolean isDone
 */
-Value lib_http_pollRequest(Array<Value> args) {
+Value lib_http_pollRequest(VmContext vm, Array<Value> args) {
 
     ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
     Array<object> objArray1 = objInstance1.nativeData;

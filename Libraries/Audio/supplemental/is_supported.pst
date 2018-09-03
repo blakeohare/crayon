@@ -1,4 +1,4 @@
-﻿Value lib_audio_is_supported(Array<Value> args) {
+﻿Value lib_audio_is_supported(VmContext vm, Array<Value> args) {
     if (Native._lib_audio_isAudioSupported()) {
         return VALUE_TRUE;
     }

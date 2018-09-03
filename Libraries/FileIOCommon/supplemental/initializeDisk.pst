@@ -8,7 +8,7 @@
         not JS? the $_lib_fileiocommon_initializeDisk no-ops, so it doesn't matter.
 
 */
-Value lib_fileiocommon_initializeDisk(Array<Value> args) {
+Value lib_fileiocommon_initializeDisk(VmContext vm, Array<Value> args) {
     ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
     Array<object> objArray1 = new Array<object>(1);
     objInstance1.nativeData = objArray1;

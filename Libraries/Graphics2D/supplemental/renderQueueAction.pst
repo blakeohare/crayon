@@ -10,7 +10,7 @@
         2 -> reset render queues to 0
 
 */
-Value lib_graphics2d_renderQueueAction(Array<Value> args) {
+Value lib_graphics2d_renderQueueAction(VmContext vm, Array<Value> args) {
     int command = (int) args[2].internalValue;
 
     ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;

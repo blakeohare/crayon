@@ -5,7 +5,7 @@
     args[3] -> value
 
 */
-Value lib_matrices_setValue(Array<Value> args) {
+Value lib_matrices_setValue(VmContext vm, Array<Value> args) {
 
     ObjectInstance obj = (ObjectInstance) args[0].internalValue;
     Array<object> nd = obj.nativeData;

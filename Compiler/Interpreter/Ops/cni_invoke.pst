@@ -21,7 +21,7 @@ if (nativeFp == null) {
 
     prepareToSuspend(ec, stack, valueStackSize, pc);
 
-    value = nativeFp(valueArray1);
+    value = nativeFp(vm, valueArray1);
 
     if (ec.executionStateChange) {
         ec.executionStateChange = false;

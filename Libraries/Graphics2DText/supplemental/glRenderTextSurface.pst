@@ -30,7 +30,7 @@
 
     no return value
 */
-Value lib_graphics2dtext_glRenderTextSurface(Array<Value> args) {
+Value lib_graphics2dtext_glRenderTextSurface(VmContext vm, Array<Value> args) {
     if (@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
         Array<object> textureNativeData = Core.ForceParens((ObjectInstance)args[0].internalValue).nativeData;
         Array<int> xs = (Array<int>) textureNativeData[1];

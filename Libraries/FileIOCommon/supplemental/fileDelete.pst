@@ -5,7 +5,7 @@
     args[1]: well-formed and sandboxed path
 
 */
-Value lib_fileiocommon_fileDelete(Array<Value> args) {
+Value lib_fileiocommon_fileDelete(VmContext vm, Array<Value> args) {
 
     int statusCode = Native._lib_fileiocommon_fileDelete(
         lib_fileiocommon_getDiskObject(args[0]),

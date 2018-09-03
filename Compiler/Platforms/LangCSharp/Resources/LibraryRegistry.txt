@@ -34,9 +34,9 @@ namespace Interpreter.Vm
                 // TODO: figure out why GetMethod() is not working directly
                 System.Reflection.MethodInfo methodInfo = libraryType.GetMethods().Where(m => m.Name == "v_" + name).FirstOrDefault();
                 if (methodInfo == null) return null;
-                Func<Interpreter.Structs.Value[], Interpreter.Structs.Value> output = (Interpreter.Structs.Value[] args) =>
+                Func<Interpreter.Structs.VmContext, Interpreter.Structs.Value[], Interpreter.Structs.Value> output = (Interpreter.Structs.VmContext vm, Interpreter.Structs.Value[] args) =>
                 {
-                    return (Interpreter.Structs.Value)methodInfo.Invoke(null, new object[] { args });
+                    return (Interpreter.Structs.Value)methodInfo.Invoke(null, new object[] { vm, args });
                 };
                 return output;
             });

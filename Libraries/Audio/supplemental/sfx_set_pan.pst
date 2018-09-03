@@ -3,7 +3,7 @@
     args[1] -> SoundResource instance
     args[2] -> pan ratio (-1.0 to 1.0)
 */
-Value lib_audio_sfx_set_pan(Array<Value> args) {
+Value lib_audio_sfx_set_pan(VmContext vm, Array<Value> args) {
     ObjectInstance channel = (ObjectInstance) args[0].internalValue;
     object nativeChannel = channel.nativeData[0];
     ObjectInstance resource = (ObjectInstance) args[1].internalValue;

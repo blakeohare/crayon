@@ -1,4 +1,4 @@
-﻿Value lib_graphics2d_isPlatformUsingTextureAtlas(Array<Value> args) {
+﻿Value lib_graphics2d_isPlatformUsingTextureAtlas(VmContext vm, Array<Value> args) {
     if (@ext_boolean("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
         return VALUE_TRUE;
     } else {

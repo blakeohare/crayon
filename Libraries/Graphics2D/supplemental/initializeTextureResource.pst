@@ -16,7 +16,7 @@
         nativeData[1] -> width
         nativeData[2] -> height
 */
-Value lib_graphics2d_initializeTextureResource(Array<Value> args) {
+Value lib_graphics2d_initializeTextureResource(VmContext vm, Array<Value> args) {
     ObjectInstance textureResourceInstance = (ObjectInstance) args[0].internalValue;
     Array<object> textureResourceNativeData = new Array<object>(6);
     textureResourceInstance.nativeData = textureResourceNativeData;

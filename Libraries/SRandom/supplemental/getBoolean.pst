@@ -1,7 +1,7 @@
 /*
     args[0] -> integer pointer (integer in a list) to the active seed value.
 */
-Value lib_srandom_getBoolean(Array<Value> args) {
+Value lib_srandom_getBoolean(VmContext vm, Array<Value> args) {
     List<Value> intPtr = (List<Value>)args[0].internalValue;
     int value = (((int)intPtr[0].internalValue * 20077) + 12345) & 65535;
     intPtr[0] = buildInteger(value);

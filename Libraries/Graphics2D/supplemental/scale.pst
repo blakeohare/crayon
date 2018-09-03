@@ -30,7 +30,7 @@
     Because atlas based texture's sizes are based on the width and height fields
     themselves, this function no-ops for those platforms.
 */
-Value lib_graphics2d_scale(Array<Value> args) {
+Value lib_graphics2d_scale(VmContext vm, Array<Value> args) {
 
     // auto generated variable declarations
     Array<object> objArray1 = null;

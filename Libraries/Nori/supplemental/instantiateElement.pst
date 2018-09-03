@@ -3,7 +3,7 @@
     args[1] -> (ObjectInstance) native element
     args[2] -> (List<various>) property values
 */
-Value lib_nori_instantiateElement(Array<Value> args) {
+Value lib_nori_instantiateElement(VmContext vm, Array<Value> args) {
     int type = (int) args[0].internalValue;
     ObjectInstance o = (ObjectInstance) args[1].internalValue;
     o.nativeData = new Array<object>(1);

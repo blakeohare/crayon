@@ -5,7 +5,7 @@
     args[3] -> current state (1 -> playing, 2 -> paused, 3 -> stopped)
     args[4] -> true if the sound should be stopped completely and freed from the channel.
 */
-Value lib_audio_sfx_stop(Array<Value> args) {
+Value lib_audio_sfx_stop(VmContext vm, Array<Value> args) {
     ObjectInstance channel = (ObjectInstance) args[0].internalValue;
     object nativeChannel = channel.nativeData[0];
     ObjectInstance resource = (ObjectInstance) args[1].internalValue;

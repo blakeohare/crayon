@@ -3,8 +3,7 @@
         [2n + 0] -> full/path/filename/foo.txt (no leading slash)
         [2n + 1] -> type (int) value shown in ResourceNodeType enum in embed.cry
 */
-Value lib_resources_getResourceData(Array<Value> args) {
-    VmContext vm = Core.GetProgramData();
+Value lib_resources_getResourceData(VmContext vm, Array<Value> args) {
     Value output = buildList(vm.resourceDatabase.dataList);
     vm.resourceDatabase.dataList = null;
     return output;

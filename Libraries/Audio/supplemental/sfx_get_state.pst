@@ -8,7 +8,7 @@
     2 -> PAUSED
     3 -> STOPPED
 */
-Value lib_audio_sfx_get_state(Array<Value> args) {
+Value lib_audio_sfx_get_state(VmContext vm, Array<Value> args) {
     ObjectInstance channelInstance = ((ObjectInstance) args[0].internalValue); // channel
     object nativeChannel = channelInstance.nativeData[0];
     ObjectInstance soundInstance = ((ObjectInstance) args[1].internalValue); // sound

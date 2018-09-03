@@ -1,6 +1,6 @@
 ﻿/*
     Get the image resource manifest as a string.
 */
-Value lib_imageresources_getManifestString(Array<Value> args) {
+Value lib_imageresources_getManifestString(VmContext vm, Array<Value> args) {
     return buildString(Native._lib_imageresources_getManifestString());
 }

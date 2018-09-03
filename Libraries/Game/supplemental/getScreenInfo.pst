@@ -6,7 +6,7 @@
         list[2] -> (int) screen height (or 0 if not known)
         starting values are [false, 0, 0]
 */
-Value lib_game_getScreenInfo(Array<Value> args) {
+Value lib_game_getScreenInfo(VmContext vm, Array<Value> args) {
     Value outList = args[0];
     Array<int> o = Core.IntBuffer16;
     if (Native._lib_game_getScreenInfo(o)) {

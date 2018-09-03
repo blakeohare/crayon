@@ -8,7 +8,7 @@
         false -> include just the file name
     arg 4: value list. Add files to this list.
 */
-Value lib_fileiocommon_directoryList(Array<Value> args) {
+Value lib_fileiocommon_directoryList(VmContext vm, Array<Value> args) {
     Value diskhost = args[0];
     string path = (string) args[1].internalValue;
     bool useFullPath = (bool) args[2].internalValue;

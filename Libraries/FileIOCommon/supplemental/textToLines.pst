@@ -6,7 +6,7 @@
 
     output is the output list to save a VM cycle
 */
-Value lib_fileiocommon_textToLines(Array<Value> args) {
+Value lib_fileiocommon_textToLines(VmContext vm, Array<Value> args) {
 
     lib_fileiocommon_textToLinesImpl(
         (string) args[0].internalValue,

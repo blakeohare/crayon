@@ -209,7 +209,7 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     int localsStackOffset = stack.localsStackOffset;
     Array<Value> funcArgs = p.funcArgs;
     int pc = stack.pc;
-    Func<Value, Array<Value>> nativeFp = null;
+    Func<Value, VmContext, Array<Value>> nativeFp = null;
 
     while (true) {
         row = args[pc];

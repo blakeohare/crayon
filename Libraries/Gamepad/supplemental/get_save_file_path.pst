@@ -1,4 +1,4 @@
-﻿Value lib_gamepad_get_save_file_path(Array<Value> args) {
+﻿Value lib_gamepad_get_save_file_path(VmContext vm, Array<Value> args) {
 
     if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
 

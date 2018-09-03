@@ -2,7 +2,7 @@
     arg1: inclusive lower bound
     arg2: exclusive upper bound
 */
-Value lib_random_random_int(Array<Value> args) {
+Value lib_random_random_int(VmContext vm, Array<Value> args) {
 
     if (args[0].type != Types.INTEGER || args[1].type != Types.INTEGER) {
         return VALUE_NULL;

@@ -9,7 +9,7 @@
         params[2] -> digital axis count (int)
         params[3] -> analog axis count (int)
 */
-Value lib_gamepad_initialize_device(Array<Value> args) {
+Value lib_gamepad_initialize_device(VmContext vm, Array<Value> args) {
     int int1 = 0;
     List<Value> list1 = null;
     object object1 = null;

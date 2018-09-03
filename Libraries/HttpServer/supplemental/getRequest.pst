@@ -7,7 +7,7 @@
     list[2] -> User IP
     list[3] -> User Agent
 */
-Value lib_httpserver_getRequest(Array<Value> args) {
+Value lib_httpserver_getRequest(VmContext vm, Array<Value> args) {
 
     Native._lib_httpserver_getRequest(Core.StringBuffer16);
 

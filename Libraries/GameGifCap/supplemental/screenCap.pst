@@ -9,7 +9,7 @@
     1 - no screen is open
     -1 - unknown error
 */
-Value lib_gamegifcap_screenCap(Array<Value> args) {
+Value lib_gamegifcap_screenCap(VmContext vm, Array<Value> args) {
     ObjectInstance oiCtx = (ObjectInstance) args[0].internalValue;
     ObjectInstance oiGw = (ObjectInstance) args[1].internalValue;
 

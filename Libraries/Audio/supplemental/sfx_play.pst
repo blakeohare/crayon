@@ -8,7 +8,7 @@
         1 -> playing on a channel
         0 -> channel allocation failed, not playing
 */
-Value lib_audio_sfx_play(Array<Value> args) {
+Value lib_audio_sfx_play(VmContext vm, Array<Value> args) {
     ObjectInstance channelInstance = (ObjectInstance) args[0].internalValue;
     ObjectInstance resourceInstance = (ObjectInstance) args[1].internalValue;
     channelInstance.nativeData = new Array<object>(1);

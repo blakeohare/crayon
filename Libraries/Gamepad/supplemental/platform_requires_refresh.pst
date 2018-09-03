@@ -1,4 +1,4 @@
-﻿Value lib_gamepad_platform_requires_refresh(Array<Value> args) {
+﻿Value lib_gamepad_platform_requires_refresh(VmContext vm, Array<Value> args) {
     Value output = VALUE_NULL;
     output = VALUE_FALSE;
     if (@ext_boolean("LIB_GAMEPAD_SUPPORTED") && Native._lib_gamepad_platform_requires_refresh()) {

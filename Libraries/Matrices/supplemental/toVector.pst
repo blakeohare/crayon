@@ -3,7 +3,7 @@
     args[1] -> output
 
 */
-Value lib_matrices_toVector(Array<Value> args) {
+Value lib_matrices_toVector(VmContext vm, Array<Value> args) {
 
     ObjectInstance obj = (ObjectInstance) args[0].internalValue;
     Array<object> nd = obj.nativeData;

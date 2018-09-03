@@ -6,7 +6,7 @@
     args[4] -> output matrix is valid
 
 */
-Value lib_matrices_multiplyMatrix(Array<Value> args) {
+Value lib_matrices_multiplyMatrix(VmContext vm, Array<Value> args) {
 
     ObjectInstance obj = (ObjectInstance) args[0].internalValue;
     Array<object> nd1 = obj.nativeData;

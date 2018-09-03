@@ -5,7 +5,7 @@
 
     outputs nothing
 */
-Value lib_gamepad_get_axis_2d_state(Array<Value> args) {
+Value lib_gamepad_get_axis_2d_state(VmContext vm, Array<Value> args) {
     Value arg1 = args[0];
     Value arg2 = args[1];
     Value arg3 = args[2];

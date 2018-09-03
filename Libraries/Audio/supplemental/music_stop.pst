@@ -1,4 +1,4 @@
-﻿Value lib_audio_music_stop(Array<Value> args) {
+﻿Value lib_audio_music_stop(VmContext vm, Array<Value> args) {
     // TODO: implement this.
     return VALUE_NULL;
 }

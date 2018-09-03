@@ -5,9 +5,9 @@
     output[0] -> true if an audio file
     output[1] -> string of the filepath relative to the root of where audio files are kept.
 */
-Value lib_audio_getAudioResourcePath(Array<Value> args) {
+Value lib_audio_getAudioResourcePath(VmContext vm, Array<Value> args) {
     return resource_manager_getResourceOfType(
-        Core.GetProgramData(),
+        vm,
         (string) args[0].internalValue,
         "SND");
 }

@@ -5,7 +5,7 @@
     args[1] -> (List<Value<List<Value>>>) property values
     args[2] -> (List<Value<int>>) object type ID's
 */
-Value lib_nori_updateLayout(Array<Value> args) {
+Value lib_nori_updateLayout(VmContext vm, Array<Value> args) {
     List<Value> objects = (List<Value>) args[0].internalValue;
     List<Value> propertyLists = (List<Value>) args[1].internalValue;
     List<Value> typeIds = (List<Value>) args[2].internalValue;

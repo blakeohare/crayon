@@ -2,6 +2,6 @@
     args[0] -> blank sound object instance
     args[1] -> file path
 */
-Value lib_audio_sfx_load_from_file(Array<Value> args) {
+Value lib_audio_sfx_load_from_file(VmContext vm, Array<Value> args) {
     return VALUE_NULL;
 }

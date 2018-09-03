@@ -1,4 +1,4 @@
-﻿Value lib_gamepad_poll_universe(Array<Value> args) {
+﻿Value lib_gamepad_poll_universe(VmContext vm, Array<Value> args) {
     Value output = VALUE_NULL;
     if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
         Native._lib_gamepad_poll_universe();

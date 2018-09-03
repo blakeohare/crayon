@@ -11,8 +11,7 @@
         1 --> ease out (reverse progress)
         2 --> ease in then out
 */
-
-Value lib_easing_interpolate(Array<Value> args) {
+Value lib_easing_interpolate(VmContext vm, Array<Value> args) {
     Value output = VALUE_NULL;
     Value arg2 = args[1];
     Value arg3 = args[2];

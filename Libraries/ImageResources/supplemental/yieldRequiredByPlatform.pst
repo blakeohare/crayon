@@ -2,7 +2,7 @@
     Does the thread need to yield to the OS/platform in order for images to load?
     So far this is only true for JavaScript.
 */
-Value lib_imageresources_yieldRequiredByPlatform(Array<Value> args) {
+Value lib_imageresources_yieldRequiredByPlatform(VmContext vm, Array<Value> args) {
     Value output = VALUE_FALSE;
     if (@ext_boolean("IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM")) {
         output = VALUE_TRUE;

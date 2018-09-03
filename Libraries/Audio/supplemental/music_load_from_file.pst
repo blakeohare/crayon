@@ -2,7 +2,7 @@
     args[0] -> music instance with unintialized native data
     args[1] -> filepath
 */
-Value lib_audio_music_load_from_file(Array<Value> args) {
+Value lib_audio_music_load_from_file(VmContext vm, Array<Value> args) {
     // TODO: implement this.
     return VALUE_NULL;
 }

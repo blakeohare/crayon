@@ -9,7 +9,7 @@
 
     Error is returned as a string
 */
-Value lib_mysql_connect(Array<Value> args) {
+Value lib_mysql_connect(VmContext vm, Array<Value> args) {
 
     Value arg1 = args[0];
     Value arg2 = args[1];

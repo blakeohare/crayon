@@ -4,6 +4,6 @@
     - Linux: "~"
     - JavaScript: "/" (this is used for the virtualized disk)
 */
-Value lib_fileiocommon_getUserDirectory(Array<Value> args) {
+Value lib_fileiocommon_getUserDirectory(VmContext vm, Array<Value> args) {
     return buildString(Native._lib_fileiocommon_getUserDirectory());
 }

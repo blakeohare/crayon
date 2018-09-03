@@ -6,7 +6,7 @@
     Native data array already allocated but unpopulated.
 
 */
-Value lib_matrices_initMatrix(Array<Value> args) {
+Value lib_matrices_initMatrix(VmContext vm, Array<Value> args) {
 
     ObjectInstance obj = (ObjectInstance) args[0].internalValue;
     Array<object> nd = obj.nativeData;

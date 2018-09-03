@@ -4,7 +4,7 @@
     args[0]: millis per frame
     args[1]: path to a temporary file
 */
-Value lib_gamegifcap_createGifContext(Array<Value> args) {
+Value lib_gamegifcap_createGifContext(VmContext vm, Array<Value> args) {
 
     int ms = (int)args[1].internalValue;
     ObjectInstance oi = (ObjectInstance) args[0].internalValue;

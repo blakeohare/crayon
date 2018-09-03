@@ -17,7 +17,7 @@
 
     no output, but the size must be applied the size out list
 */
-Value lib_graphics2dtext_renderText(Array<Value> args) {
+Value lib_graphics2dtext_renderText(VmContext vm, Array<Value> args) {
     if (!@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
         List<Value> sizeOut = (List<Value>)args[0].internalValue;
         ObjectInstance textSurface = (ObjectInstance)args[1].internalValue;

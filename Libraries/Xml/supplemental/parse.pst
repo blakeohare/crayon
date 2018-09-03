@@ -22,7 +22,7 @@
         (string) value
     ]
 */
-Value lib_xml_parse(Array<Value> args) {
+Value lib_xml_parse(VmContext vm, Array<Value> args) {
     Value output = VALUE_NULL;
     string xml = ((string) args[0].internalValue);
     List<Value> list1 = (List<Value>) args[1].internalValue;

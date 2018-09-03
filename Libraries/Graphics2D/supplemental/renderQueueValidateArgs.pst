@@ -1,4 +1,4 @@
-﻿Value lib_graphics2d_renderQueueValidateArgs(Array<Value> args) {
+﻿Value lib_graphics2d_renderQueueValidateArgs(VmContext vm, Array<Value> args) {
     ObjectInstance o = (ObjectInstance) args[0].internalValue;
     Array<object> drawQueueRawData = o.nativeData;
     Array<int> drawEvents = (Array<int>) drawQueueRawData[0];

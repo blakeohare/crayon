@@ -7,7 +7,7 @@
         true -> create all parent directories if they don't currently exist
         false -> fail if the parent directory does not exist
 */
-Value lib_fileiocommon_directoryCreate(Array<Value> args) {
+Value lib_fileiocommon_directoryCreate(VmContext vm, Array<Value> args) {
     bool bool1 = false;
     int i = 0;
     int int1 = 0;

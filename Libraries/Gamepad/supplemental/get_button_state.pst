@@ -4,7 +4,7 @@
 
     outputs a boolean Value
 */
-Value lib_gamepad_get_button_state(Array<Value> args) {
+Value lib_gamepad_get_button_state(VmContext vm, Array<Value> args) {
     if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
         int int1 = 0;
         ObjectInstance objInstance1 = null;

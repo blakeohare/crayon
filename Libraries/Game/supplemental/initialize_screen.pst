@@ -6,13 +6,12 @@
 
     All arguments are verified to be positive integers.
 */
-Value lib_game_initialize_screen(Array<Value> args) {
+Value lib_game_initialize_screen(VmContext vm, Array<Value> args) {
 
     // Get a reference to the ExecutionContext that the calling code thinks is currently active.
     // It's possible that the screen will block and re-invoke the VM and destroy the active
     // execution context, in which case, vm_suspend() will not work and fail when trying to find the
     // instance.
-    VmContext vm = Core.GetProgramData();
     ExecutionContext ec = getExecutionContext(vm, vm_getCurrentExecutionContextId(vm));
 
     Native._lib_game_initialize_screen(

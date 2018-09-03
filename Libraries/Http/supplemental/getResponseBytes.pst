@@ -6,7 +6,7 @@
 
     output: returns the list. No good reason other than saving an extra op in the byte code.
 */
-Value lib_http_getResponseBytes(Array<Value> args) {
+Value lib_http_getResponseBytes(VmContext vm, Array<Value> args) {
     Value outputListValue = args[1];
 
     ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);

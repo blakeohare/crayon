@@ -10,7 +10,7 @@
     For texture atlas platforms, simply swap around the texture bounds.
     For other platforms, create a mutated copy of the image but maintain the (0, 0, 1, 1) texture bounds.
 */
-Value lib_graphics2d_flip(Array<Value> args) {
+Value lib_graphics2d_flip(VmContext vm, Array<Value> args) {
     bool bool1 = false;
     bool bool2 = false;
     int i = 0;

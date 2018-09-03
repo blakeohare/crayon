@@ -4,7 +4,7 @@
 
     outputs a float Value
 */
-Value lib_gamepad_get_axis_1d_state(Array<Value> args) {
+Value lib_gamepad_get_axis_1d_state(VmContext vm, Array<Value> args) {
     if (!@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
         return buildFloat(0.0);
     } else {

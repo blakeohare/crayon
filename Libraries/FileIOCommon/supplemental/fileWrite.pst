@@ -13,7 +13,7 @@
         3 -> ISO-8859
 
 */
-Value lib_fileiocommon_fileWrite(Array<Value> args) {
+Value lib_fileiocommon_fileWrite(VmContext vm, Array<Value> args) {
 
     if (args[3].type != Types.INTEGER) return buildInteger(3);
 

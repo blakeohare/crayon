@@ -5,6 +5,6 @@
 
     This value is cached outside of this function
 */
-Value lib_graphics2dtext_isSystemFontPresent(Array<Value> args) {
+Value lib_graphics2dtext_isSystemFontPresent(VmContext vm, Array<Value> args) {
     return buildBoolean(Native._lib_graphics2dtext_isSystemFontAvailable((string)args[0].internalValue));
 }

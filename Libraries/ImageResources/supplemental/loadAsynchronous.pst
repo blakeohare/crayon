@@ -17,7 +17,7 @@
         nativeData[3] -> mutex (if necessary)
 
 */
-Value lib_imageresources_loadAsynchronous(Array<Value> args) {
+Value lib_imageresources_loadAsynchronous(VmContext vm, Array<Value> args) {
 
     ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
     string filename = (string) args[1].internalValue;

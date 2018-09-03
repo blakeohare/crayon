@@ -30,7 +30,7 @@
         queue[n + 8] -> DY
 
 */
-Value lib_graphics2d_lineToQuad(Array<Value> args) {
+Value lib_graphics2d_lineToQuad(VmContext vm, Array<Value> args) {
     double float1 = 0.0;
     double float2 = 0.0;
     double float3 = 0.0;

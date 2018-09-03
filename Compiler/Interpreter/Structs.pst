@@ -43,7 +43,7 @@ struct VmContext {
     List<int> classStaticInitializationStack;
     Array<int> globalNameIdToPrimitiveMethodName;
     Array<Value> funcArgs;
-    Dictionary<int, Func<Value, Array<Value>>> cniFunctionsById;
+    Dictionary<int, Func<Value, VmContext, Array<Value>>> cniFunctionsById;
 
     int lengthId;
     Array<int> primitiveMethodFunctionIdFallbackLookup;

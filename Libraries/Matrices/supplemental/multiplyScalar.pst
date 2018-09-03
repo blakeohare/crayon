@@ -5,7 +5,7 @@
     args[3] -> output matrix is a matrix
 
 */
-Value lib_matrices_multiplyScalar(Array<Value> args) {
+Value lib_matrices_multiplyScalar(VmContext vm, Array<Value> args) {
 
     ObjectInstance obj = (ObjectInstance) args[0].internalValue;
     Array<object> nd = obj.nativeData;

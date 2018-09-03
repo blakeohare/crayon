@@ -10,7 +10,7 @@
 
     Output: (int) status code (see FiocStatus enum in embed code)
 */
-Value lib_fileiocommon_fileRead(Array<Value> args) {
+Value lib_fileiocommon_fileRead(VmContext vm, Array<Value> args) {
     Value diskHostObject = args[0];
     string sandboxedPath = (string) args[1].internalValue;
     bool readDataAsBytes = (bool) args[2].internalValue;
