@@ -396,11 +396,6 @@ namespace Pastel.Transpilers
             throw new NotImplementedException();
         }
 
-        public override void TranslateGetProgramData(TranspilerContext sb)
-        {
-            sb.Append("PROGRAM_DATA");
-        }
-
         public override void TranslateGetResourceManifest(TranspilerContext sb)
         {
             sb.Append("TranslationHelper_get_resource_manifest()");

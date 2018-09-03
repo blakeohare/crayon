@@ -43,7 +43,7 @@ Value lib_graphics2dtext_createNativeFont(VmContext vm, Array<Value> args) {
         fontPath = (string)args[2].internalValue;
 
         if (fontType == 1) {
-            Value res = resource_manager_getResourceOfType(Core.GetProgramData(), fontPath, "TTF");
+            Value res = resource_manager_getResourceOfType(vm, fontPath, "TTF");
             if (res.type == Types.NULL) return buildInteger(2); // not found
             List<Value> resList = (List<Value>)res.internalValue;
             if (!(bool) resList[0].internalValue) return buildInteger(2); // path found, but not a font.

@@ -206,11 +206,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateGetProgramData(TranspilerContext sb)
-        {
-            sb.Append("C$common$programData");
-        }
-
         public override void TranslateGetResourceManifest(TranspilerContext sb)
         {
             sb.Append("C$common$resourceManifest");

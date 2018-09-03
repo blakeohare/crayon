@@ -5,7 +5,6 @@
         NONE,
 
         // TODO: These are Crayon-specific functions that need to be removed. Notes on each are inline.
-        GET_PROGRAM_DATA, // used by Resources library, otherwise used only in VM. Need to just pass this around.
         ENQUEUE_VM_RESUME, // Used by Core.sleep but in JS only. Ideally all Thread sleep implementations should use the hasInterrupt mechanism instead and then this becomes a non-issue.
         VM_DETERMINE_LIBRARY_AVAILABILITY, // This goes away when library importing is revamped
         VM_END_PROCESS, // used by the runInterpreter function right before returning and translates to something like System.exit(). This can (probably?) be changed to a specific status code.
