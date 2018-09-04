@@ -220,7 +220,9 @@ namespace Common
                     string lookupName = resource.ToLower()
                         .Replace("_cs.txt", ".cs")
                         .Replace("_csproj.txt", ".csproj")
-                        .Replace("_sln.txt", ".sln");
+                        .Replace("_sln.txt", ".sln")
+                        .Replace("_java.txt", ".java")
+                        .Replace("_xml.txt", ".xml");
 
                     nameLookup[lookupName] = resource;
                 }

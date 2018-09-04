@@ -57,10 +57,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\FastList.txt" />
-    <EmbeddedResource Include="Resources\LibraryInstance.txt" />
-    <EmbeddedResource Include="Resources\LibraryLoader.txt" />
-    <EmbeddedResource Include="Resources\TranslationHelper.txt" />
+    <EmbeddedResource Include="Resources\FastList_java.txt" />
+    <EmbeddedResource Include="Resources\LibraryInstance_java.txt" />
+    <EmbeddedResource Include="Resources\LibraryLoader_java.txt" />
+    <EmbeddedResource Include="Resources\TranslationHelper_java.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
