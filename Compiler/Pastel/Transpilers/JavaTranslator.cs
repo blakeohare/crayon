@@ -905,13 +905,6 @@ namespace Pastel.Transpilers
             sb.Append("TranslationHelper.random.nextDouble()");
         }
 
-        public override void TranslateResourceReadTextFile(TranspilerContext sb, Expression path)
-        {
-            sb.Append("ResourceReader.readFileText(\"resources/text/\" + ");
-            this.TranslateExpression(sb, path);
-            sb.Append(')');
-        }
-
         public override void TranslateSortedCopyOfIntArray(TranspilerContext sb, Expression intArray)
         {
             sb.Append("TranslationHelper.sortedCopyOfIntArray(");

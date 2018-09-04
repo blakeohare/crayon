@@ -283,7 +283,6 @@ namespace Pastel.Transpilers
                 case Pastel.NativeFunction.PRINT_STDERR: this.TranslatePrintStdErr(sb, args[0]); break;
                 case Pastel.NativeFunction.PRINT_STDOUT: this.TranslatePrintStdOut(sb, args[0]); break;
                 case Pastel.NativeFunction.RANDOM_FLOAT: this.TranslateRandomFloat(sb); break;
-                case Pastel.NativeFunction.RESOURCE_READ_TEXT_FILE: this.TranslateResourceReadTextFile(sb, args[0]); break;
                 case Pastel.NativeFunction.SORTED_COPY_OF_INT_ARRAY: this.TranslateSortedCopyOfIntArray(sb, args[0]); break;
                 case Pastel.NativeFunction.SORTED_COPY_OF_STRING_ARRAY: this.TranslateSortedCopyOfStringArray(sb, args[0]); break;
                 case Pastel.NativeFunction.STRING_APPEND: this.TranslateStringAppend(sb, args[0], args[1]); break;
@@ -466,7 +465,6 @@ namespace Pastel.Transpilers
         public abstract void TranslatePrintStdErr(TranspilerContext sb, Expression value);
         public abstract void TranslatePrintStdOut(TranspilerContext sb, Expression value);
         public abstract void TranslateRandomFloat(TranspilerContext sb);
-        public abstract void TranslateResourceReadTextFile(TranspilerContext sb, Expression path);
         public abstract void TranslateReturnStatemnt(TranspilerContext sb, ReturnStatement returnStatement);
         public abstract void TranslateSortedCopyOfIntArray(TranspilerContext sb, Expression intArray);
         public abstract void TranslateSortedCopyOfStringArray(TranspilerContext sb, Expression stringArray);

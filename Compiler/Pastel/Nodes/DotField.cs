@@ -141,7 +141,6 @@ namespace Pastel.Nodes
                 case "PrintStdErr": return NativeFunction.PRINT_STDERR;
                 case "PrintStdOut": return NativeFunction.PRINT_STDOUT;
                 case "RandomFloat": return NativeFunction.RANDOM_FLOAT;
-                case "ReadResourceTextFile": return NativeFunction.RESOURCE_READ_TEXT_FILE;
                 case "Sin": return NativeFunction.MATH_SIN;
                 case "StringAppend": return NativeFunction.STRING_APPEND;
                 case "StringBuffer16": return NativeFunction.STRING_BUFFER_16;

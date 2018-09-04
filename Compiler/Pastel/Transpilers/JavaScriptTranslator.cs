@@ -465,13 +465,6 @@ namespace Pastel.Transpilers
             sb.Append("Math.random()");
         }
 
-        public override void TranslateResourceReadTextFile(TranspilerContext sb, Expression path)
-        {
-            sb.Append("C$common$readResourceText(");
-            this.TranslateExpression(sb, path);
-            sb.Append(')');
-        }
-
         public override void TranslateSortedCopyOfIntArray(TranspilerContext sb, Expression intArray)
         {
             sb.Append("C$common$sortedCopyOfArray(");

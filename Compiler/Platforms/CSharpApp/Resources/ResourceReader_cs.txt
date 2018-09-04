@@ -6,15 +6,9 @@ namespace Interpreter
 {
     internal static class ResourceReader
     {
-        public static string ReadResourceTextFile(string path)
-        {
-            // TODO: Remove one of these
-            return ReadTextResource(path);
-        }
-
         public static string ReadMetadata(string path, bool returnEmptyOnFail)
         {
-            string value = ReadResourceTextFile(path);
+            string value = ReadTextResource(path);
             if (value == null && !returnEmptyOnFail)
             {
                 throw new System.Exception();

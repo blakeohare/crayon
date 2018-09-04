@@ -692,13 +692,6 @@ namespace Pastel.Transpilers
             sb.Append("TranslationHeper_random_float()");
         }
 
-        public override void TranslateResourceReadTextFile(TranspilerContext sb, Expression path)
-        {
-            sb.Append("ResourceHelper_read_text_file(");
-            this.TranslateExpression(sb, path);
-            sb.Append(')');
-        }
-
         public override void TranslateSortedCopyOfIntArray(TranspilerContext sb, Expression intArray)
         {
             sb.Append("TranslationHelper_array_sorted_copy_int(");

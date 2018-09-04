@@ -678,13 +678,6 @@ namespace Pastel.Transpilers
             sb.Append("random.random()");
         }
 
-        public override void TranslateResourceReadTextFile(TranspilerContext sb, Expression path)
-        {
-            sb.Append("ResourceReader_readTextFile('res/text/' + ");
-            this.TranslateExpression(sb, path);
-            sb.Append(')');
-        }
-
         public override void TranslateReturnStatemnt(TranspilerContext sb, ReturnStatement returnStatement)
         {
             sb.Append(sb.CurrentTab);
