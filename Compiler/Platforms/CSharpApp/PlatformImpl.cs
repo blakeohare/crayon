@@ -320,20 +320,20 @@ namespace CSharpApp
             string resourceDir = isStandaloneVm ? "ResourcesVm" : "Resources";
 
             // From LangCSharp
-            this.CopyResourceAsText(output, baseDir + "Vm/TranslationHelper.cs", "Resources/TranslationHelper.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "Vm/Library.cs", "Resources/Library.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "Vm/LibraryRegistry.cs", resourceDir + "/LibraryRegistry.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "Vm/UniversalBitmap.cs", "Resources/UniversalBitmap.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "Vm/UniversalFont.cs", "Resources/UniversalFont.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/TranslationHelper.cs", "Resources/TranslationHelper.cs", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/Library.cs", "Resources/Library.cs", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/LibraryRegistry.cs", resourceDir + "/LibraryRegistry.cs", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/UniversalBitmap.cs", "Resources/UniversalBitmap.cs", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/UniversalFont.cs", "Resources/UniversalFont.cs", replacements);
 
             // Required project files
-            this.CopyResourceAsText(output, baseDir + "Properties/AssemblyInfo.cs", "Resources/AssemblyInfo.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "Program.cs", resourceDir + "/Program.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Properties/AssemblyInfo.cs", "Resources/AssemblyInfo.cs", replacements);
+            this.CopyResourceAsText(output, baseDir + "Program.cs", resourceDir + "/Program.cs", replacements);
 
             // CSharpOpenTK specific stuff
-            this.CopyResourceAsText(output, baseDir + "Vm/PlatformTranslationHelper.cs", "Resources/PlatformTranslationHelper.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "CSharpAppTranslationHelper.cs", "Resources/CSharpAppTranslationHelper.txt", replacements);
-            this.CopyResourceAsText(output, baseDir + "ResourceReader.cs", resourceDir + "/ResourceReader.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "Vm/PlatformTranslationHelper.cs", "Resources/PlatformTranslationHelper.cs", replacements);
+            this.CopyResourceAsText(output, baseDir + "CSharpAppTranslationHelper.cs", "Resources/CSharpAppTranslationHelper.cs", replacements);
+            this.CopyResourceAsText(output, baseDir + "ResourceReader.cs", resourceDir + "/ResourceReader.cs", replacements);
         }
 
         private string WrapStructCode(string structCode)
@@ -454,9 +454,9 @@ namespace CSharpApp
                 replacements["LIBRARY_PROJECT_CONFIG"] = string.Join("\r\n", configs);
             }
 
-            this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.txt", replacements);
-            this.CopyResourceAsText(output, projectId + "OSX.sln", "Resources/SolutionFileOsx.txt", replacements);
-            string projectFileResource = (isStandaloneVm ? "ResourcesVm" : "Resources") + "/ProjectFile.txt";
+            this.CopyResourceAsText(output, projectId + ".sln", "Resources/SolutionFile.sln", replacements);
+            this.CopyResourceAsText(output, projectId + "OSX.sln", "Resources/SolutionFileOsx.sln", replacements);
+            string projectFileResource = (isStandaloneVm ? "ResourcesVm" : "Resources") + "/ProjectFile.csproj";
             this.CopyResourceAsText(output, baseDir + "Interpreter.csproj", projectFileResource, replacements);
         }
     }

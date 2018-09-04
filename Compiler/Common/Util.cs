@@ -209,6 +209,7 @@ namespace Common
             canonicalizedPath = canonicalizedPath.Replace('-', '_');
 #endif
             string assemblyName = assembly.GetName().Name.ToLower();
+
             Dictionary<string, string> nameLookup;
             if (!caseInsensitiveLookup.TryGetValue(assembly, out nameLookup))
             {
@@ -216,7 +217,12 @@ namespace Common
                 caseInsensitiveLookup[assembly] = nameLookup;
                 foreach (string resource in assembly.GetManifestResourceNames())
                 {
-                    nameLookup[resource.ToLower()] = resource;
+                    string lookupName = resource.ToLower()
+                        .Replace("_cs.txt", ".cs")
+                        .Replace("_csproj.txt", ".csproj")
+                        .Replace("_sln.txt", ".sln");
+
+                    nameLookup[lookupName] = resource;
                 }
             }
 
