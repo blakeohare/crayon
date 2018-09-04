@@ -406,20 +406,6 @@ int markClassAsInitialized(VmContext vm, StackFrame stack, int classId) {
     return 0;
 }
 
-/*
-    Status codes:
-    0 -> This is fine.
-    1 -> Unknown error occurred
-    2 -> Library not found
-    3 -> Library found, but incompatible version
-*/
-int declareLibrary(VmContext vm, int refId, string descriptor) {
-    // TODO: get rid of this function? The library stuff has changed and almost
-    // everything has been removed from this function.
-    vm.activeLibraryReferenceId = refId;
-    return 0;
-}
-
 int addLiteralImpl(VmContext vm, Array<int> row, string stringArg) {
     int type = row[0];
     if (type == Types.NULL) {

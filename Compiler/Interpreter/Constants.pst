@@ -145,6 +145,10 @@ enum InterpreterResultStatus {
     // thread sleeps.
     // TODO: change this to 4 once VmResult is used instead of InterpreterResult.
     REINVOKE = 5,
+
+    // The VM would like for the harness to load the given assembly and then re-invoke execution after
+    // loading is complete.
+    LOAD_ASSEMBLY = 6,
 }
 
 enum CoreExceptionTypes {
@@ -169,6 +173,7 @@ enum InterruptType {
     EXCEPTION = 1,
     DEBUG_BREAKPOINT = 2, // TODO: one of these days...
     SLEEP = 3,
+    LOAD_ASSEMBLY = 4,
 }
 
 const int INTEGER_POSITIVE_CACHE_SIZE = 2049;

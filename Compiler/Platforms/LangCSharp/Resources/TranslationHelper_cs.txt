@@ -49,19 +49,31 @@ namespace Interpreter.Vm
 
         private static InterpreterResult HandleInterpreterStatus(InterpreterResult result)
         {
-            while (result.status == 5)
+            while (result.status == 5 || result.status == 6) // REINVOKE || LOAD_ASSEMBLY
             {
-                double sleepForSeconds = result.reinvokeDelay;
-                System.Threading.Thread.Sleep((int)(1000 * sleepForSeconds));
+                if (result.status == 6) // LOAD_ASSEMBLY
+                {
+                    string[] parts = result.loadAssemblyInformation.Split(',');
+                    string name = parts[0];
+                    string version = parts[1];
+                    TranslationHelper.LibraryRegistry.LoadAssembly(name, version);
+                }
+                else
+                {
+                    double sleepForSeconds = result.reinvokeDelay;
+                    System.Threading.Thread.Sleep((int)(1000 * sleepForSeconds));
+                }
                 result = CrayonWrapper.v_runInterpreter(ProgramData, result.executionContextId);
             }
-            if (result.status == 1) { // FINISHED
-                if (result.isRootContext) System.Environment.Exit(0);
+            if (result.status == 1) // FINISHED
+            {
+                if (result.isRootContext) Environment.Exit(0);
                 return result;
             }
             if (result.status == 2) return result; // SUSPEND
-            if (result.status == 3) { // FATAL
-                if (result.isRootContext) System.Environment.Exit(1);
+            if (result.status == 3) // FATAL
+            {
+                if (result.isRootContext) Environment.Exit(1);
                 return result;
             }
             throw new Exception(); // invalid status

@@ -18,6 +18,11 @@ namespace Interpreter.Vm
             }
         }
 
+        public void LoadAssembly(string name, string version)
+        {
+            // TODO: load a DLL once they are split out.
+        }
+
         private static void RegisterLibraryMethodResolver(Type libraryType)
         {
             TranslationHelper.RegisterFunctionPointerResolver((string funcName) =>

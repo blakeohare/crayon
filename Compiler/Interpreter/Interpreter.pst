@@ -1,13 +1,13 @@
 ﻿InterpreterResult errorResult(string error) {
-    return new InterpreterResult(InterpreterResultStatus.FATAL_ERROR, error, 0.0, 0, false);
+    return new InterpreterResult(InterpreterResultStatus.FATAL_ERROR, error, 0.0, 0, false, "");
 }
 
 InterpreterResult uncaughtExceptionResult(VmContext vm, Value exception) {
-    return new InterpreterResult(InterpreterResultStatus.FATAL_ERROR, unrollExceptionOutput(vm, exception), 0.0, 0, false);
+    return new InterpreterResult(InterpreterResultStatus.FATAL_ERROR, unrollExceptionOutput(vm, exception), 0.0, 0, false, "");
 }
 
 InterpreterResult suspendInterpreter() {
-    return new InterpreterResult(InterpreterResultStatus.SUSPENDED, null, 0.0, 0, false);
+    return new InterpreterResult(InterpreterResultStatus.SUSPENDED, null, 0.0, 0, false, "");
 }
 
 InterpreterResult interpreterFinished(VmContext vm, ExecutionContext ec) {
@@ -17,7 +17,7 @@ InterpreterResult interpreterFinished(VmContext vm, ExecutionContext ec) {
             vm.executionContexts.Remove(id);
         }
     }
-    return new InterpreterResult(InterpreterResultStatus.FINISHED, null, 0.0, 0, false);
+    return new InterpreterResult(InterpreterResultStatus.FINISHED, null, 0.0, 0, false, "");
 }
 
 bool EX_AssertionFailed(ExecutionContext ec, string exMsg) { return generateException2(ec, CoreExceptionTypes.ASSERTION_FAILED, exMsg); }
@@ -84,7 +84,7 @@ InterpreterResult generateException(
         null,
         null);
 
-    return new InterpreterResult(InterpreterResultStatus.REINVOKE, null, 0.0, 0, false);
+    return new InterpreterResult(InterpreterResultStatus.REINVOKE, null, 0.0, 0, false, "");
 }
 
 InterpreterResult interpret(VmContext vm, int executionContextId) {
@@ -289,7 +289,10 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
                 return generateException(p, stack, pc, valueStackSize, ec, interrupt.exceptionType, interrupt.exceptionMessage);
             }
             if (interrupt.type == InterruptType.SLEEP) {
-                return new InterpreterResult(InterpreterResultStatus.REINVOKE, "", interrupt.sleepDurationSeconds, 0, false);
+                return new InterpreterResult(InterpreterResultStatus.REINVOKE, "", interrupt.sleepDurationSeconds, 0, false, "");
+            }
+            if (interrupt.type == InterruptType.LOAD_ASSEMBLY) {
+                return new InterpreterResult(InterpreterResultStatus.LOAD_ASSEMBLY, "", 0.0, 0, false, interrupt.exceptionMessage);
             }
         }
 

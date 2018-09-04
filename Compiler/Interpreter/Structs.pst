@@ -86,8 +86,8 @@ struct ExecutionContext {
 
 struct Interrupt {
     int type;
-    int exceptionType;
-    string exceptionMessage;
+    int exceptionType; // TODO: rename this to intArg
+    string exceptionMessage; // TODO: rename this to stringArg
     double sleepDurationSeconds;
 }
 
@@ -113,6 +113,7 @@ struct InterpreterResult {
     double reinvokeDelay; // a delay (in seconds) before reinvoking (if the status is REINVOKE). Used by Core.sleep()
     int executionContextId; // the execution context ID that just ran
     bool isRootContext;
+    string loadAssemblyInformation;
 }
 
 struct Token {
