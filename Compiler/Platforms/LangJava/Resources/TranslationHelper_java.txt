@@ -13,288 +13,288 @@ import org.crayonlang.interpreter.structs.VmContext;
 
 public final class TranslationHelper {
 
-    public static final Object[] EMPTY_ARRAY_OBJECT = new Object[0];
-    public static final boolean[] EMPTY_ARRAY_BOOLEAN = new boolean[0];
-    public static final int[] EMPTY_ARRAY_INT = new int[0];
-    public static final double[] EMPTY_ARRAY_DOUBLE = new double[0];
-    public static final char[] EMPTY_ARRAY_CHAR = new char[0];
-    public static final String[] EMPTY_ARRAY_STRING = new String[0];
-    public static final Value[] EMPTY_ARRAY_VALUE = new Value[0];
-    @SuppressWarnings("rawtypes")
-    public static final ArrayList[] EMPTY_ARRAY_LIST = new ArrayList[0];
-    @SuppressWarnings("rawtypes")
-    public static final HashMap[] EMPTY_ARRAY_MAP = new HashMap[0];
+  public static final Object[] EMPTY_ARRAY_OBJECT = new Object[0];
+  public static final boolean[] EMPTY_ARRAY_BOOLEAN = new boolean[0];
+  public static final int[] EMPTY_ARRAY_INT = new int[0];
+  public static final double[] EMPTY_ARRAY_DOUBLE = new double[0];
+  public static final char[] EMPTY_ARRAY_CHAR = new char[0];
+  public static final String[] EMPTY_ARRAY_STRING = new String[0];
+  public static final Value[] EMPTY_ARRAY_VALUE = new Value[0];
+  @SuppressWarnings("rawtypes")
+  public static final ArrayList[] EMPTY_ARRAY_LIST = new ArrayList[0];
+  @SuppressWarnings("rawtypes")
+  public static final HashMap[] EMPTY_ARRAY_MAP = new HashMap[0];
 
-    public static final int[] INT_BUFFER_16 = new int[16];
-    public static final double[] FLOAT_BUFFER_16 = new double[16];
-    public static final String[] STRING_BUFFER_16 = new String[16];
+  public static final int[] INT_BUFFER_16 = new int[16];
+  public static final double[] FLOAT_BUFFER_16 = new double[16];
+  public static final String[] STRING_BUFFER_16 = new String[16];
 
-    private TranslationHelper() {}
+  private TranslationHelper() {}
 
-    public static int Noop() {
-        return 0;
+  public static int Noop() {
+    return 0;
+  }
+
+  public static Object NoopWithReturnNull() {
+    return null;
+  }
+
+  public static boolean alwaysTrue() { return true; }
+  public static boolean alwaysFalse() { return false; }
+
+  public static Random random = new Random();
+
+  private static VmContext programData = null;
+  public static void setProgramData(VmContext pd) { programData = pd; }
+  public static VmContext getProgramData() { return programData; }
+
+  private static String resourceManifest = null;
+  public static void setResourceManifest(String resourceManifest) { TranslationHelper.resourceManifest = resourceManifest; }
+  public static String getResourceManifest() { return resourceManifest; }
+
+  private static String[] cmdLineArgs = new String[0];
+  public static void setCmdLineArgs(String[] args) { cmdLineArgs = args; }
+  public static String[] getCmdLineArgs() { return cmdLineArgs; }
+
+  public static void startInterpreter(boolean invokeSystemExit) {
+    handleVmResult(Interpreter.v_startVm(programData), invokeSystemExit);
+  }
+
+  public static InterpreterResult runInterpreter(int executionContextId, boolean invokeSystemExit) {
+    return handleVmResult(Interpreter.v_runInterpreter(programData, executionContextId), invokeSystemExit);
+  }
+
+  public static InterpreterResult runInterpreterWithFunctionPointer(Value functionPointer, Value[] args, boolean invokeSystemExit) {
+    return handleVmResult(Interpreter.v_runInterpreterWithFunctionPointer(programData, functionPointer, args), invokeSystemExit);
+  }
+
+  private static InterpreterResult handleVmResult(InterpreterResult result, boolean invokeSystemExit) {
+    while (result.status == 5) {
+      double sleepForSeconds = result.reinvokeDelay;
+      try {
+        Thread.sleep((int)(1000 * sleepForSeconds));
+      } catch (InterruptedException e) {
+      }
+      result = Interpreter.v_runInterpreter(programData, result.executionContextId);
     }
 
-    public static Object NoopWithReturnNull() {
-        return null;
+    if (result.status == 1 || result.status == 3) { // FINISHED || FATAL
+      if (invokeSystemExit) System.exit(result.status == 1 ? 0 : 1);
+        return result;
+      }
+      if (result.status == 2) return result;
+      throw new RuntimeException(); // invalid status
+  }
+
+  public static boolean isValidInteger(String value) {
+    try {
+      Integer.parseInt(value);
+    } catch (NumberFormatException nfe) {
+      return false;
+    }
+    return true;
+  }
+
+  public static <T> void reverseList(ArrayList<T> list) {
+    int length = list.size();
+    if (length < 2) return;
+    int lengthMinusOne = length - 1;
+    for (int i = length / 2 - 1; i >= 0; --i) {
+      T t = list.get(i);
+      int tIndex = lengthMinusOne - i;
+      list.set(i, list.get(tIndex));
+      list.set(tIndex, t);
+    }
+  }
+
+  public static String joinList(String sep, ArrayList<String> items) {
+    int length = items.size();
+    if (length < 2) {
+      if (length == 0) return "";
+      return items.get(0);
     }
 
-    public static boolean alwaysTrue() { return true; }
-    public static boolean alwaysFalse() { return false; }
-
-    public static Random random = new Random();
-
-    private static VmContext programData = null;
-    public static void setProgramData(VmContext pd) { programData = pd; }
-    public static VmContext getProgramData() { return programData; }
-
-    private static String resourceManifest = null;
-    public static void setResourceManifest(String resourceManifest) { TranslationHelper.resourceManifest = resourceManifest; }
-    public static String getResourceManifest() { return resourceManifest; }
-
-    private static String[] cmdLineArgs = new String[0];
-    public static void setCmdLineArgs(String[] args) { cmdLineArgs = args; }
-    public static String[] getCmdLineArgs() { return cmdLineArgs; }
-
-    public static void startInterpreter(boolean invokeSystemExit) {
-        handleVmResult(Interpreter.v_startVm(programData), invokeSystemExit);
+    boolean useSeparator = sep.length() > 0;
+    StringBuilder sb = new StringBuilder(useSeparator ? (length * 2 - 1) : length);
+    sb.append(items.get(0));
+    if (useSeparator) {
+      for (int i = 1; i < length; ++i) {
+        sb.append(sep);
+        sb.append(items.get(i));
+      }
+    } else {
+      for (int i = 1; i < length; ++i) {
+        sb.append(items.get(i));
+      }
     }
 
-    public static InterpreterResult runInterpreter(int executionContextId, boolean invokeSystemExit) {
-        return handleVmResult(Interpreter.v_runInterpreter(programData, executionContextId), invokeSystemExit);
-    }
+    return sb.toString();
+  }
 
-    public static InterpreterResult runInterpreterWithFunctionPointer(Value functionPointer, Value[] args, boolean invokeSystemExit) {
-        return handleVmResult(Interpreter.v_runInterpreterWithFunctionPointer(programData, functionPointer, args), invokeSystemExit);
+  public static String joinChars(ArrayList<Character> chars) {
+    char[] output = new char[chars.size()];
+    for (int i = output.length - 1; i >= 0; --i) {
+      output[i] = chars.get(i);
     }
+    return String.copyValueOf(output);
+  }
 
-    private static InterpreterResult handleVmResult(InterpreterResult result, boolean invokeSystemExit) {
-        while (result.status == 5) {
-            double sleepForSeconds = result.reinvokeDelay;
-            try {
-                Thread.sleep((int)(1000 * sleepForSeconds));
-            } catch (InterruptedException e) {
+  public static String reverseString(String original) {
+    char[] output = original.toCharArray();
+    int length = output.length;
+    int lengthMinusOne = length - 1;
+    char c;
+    for (int i = length / 2 - 1; i >= 0; --i) {
+      c = output[i];
+      output[i] = output[lengthMinusOne - i];
+      output[lengthMinusOne] = c;
+    }
+    return String.copyValueOf(output);
+  }
+
+  public static void shuffleInPlace(FastList list) {
+    int length = list.length;
+    int tIndex;
+    Value t;
+    Value[] items = list.items;
+    for (int i = length - 1; i >= 0; --i) {
+      tIndex = random.nextInt(length);
+      t = items[tIndex];
+      items[tIndex] = items[i];
+      items[i] = t;
+    }
+  }
+
+  public static int[] convertIntegerSetToArray(Set<Integer> original) {
+    int[] output = new int[original.size()];
+    int i = 0;
+    for (int value : original) {
+      output[i++] = value;
+    }
+    return output;
+  }
+
+  public static String[] convertStringSetToArray(Set<String> original) {
+    String[] output = new String[original.size()];
+    int i = 0;
+    for (String value : original) {
+      output[i++] = value;
+    }
+    return output;
+  }
+
+  public static int[] createIntArray(ArrayList<Integer> nums) {
+    int[] output = new int[nums.size()];
+    for (int i = nums.size() - 1; i >= 0; --i) {
+      output[i] = nums.get(i);
+    }
+    return output;
+  }
+
+  public static void assertion(String message) {
+    throw new IllegalStateException(message);
+  }
+
+  public static int[] sortedCopyOfIntArray(int[] nums) {
+    int[] output = Arrays.copyOf(nums, nums.length);
+    Arrays.sort(output);
+    return output;
+  }
+
+  public static String[] sortedCopyOfStringArray(String[] values) {
+    String[] output = Arrays.copyOf(values, values.length);
+    Arrays.sort(output);
+    return output;
+  }
+
+  public static String[] literalStringSplit(String original, String sep) {
+    ArrayList<String> output = new ArrayList<String>();
+    ArrayList<String> currentPiece = new ArrayList<String>();
+    int length = original.length();
+    int sepLength = sep.length();
+    char firstSepChar = sep.charAt(0);
+    char c;
+    int j;
+    boolean match;
+    for (int i = 0; i < length; ++i) {
+      c = original.charAt(i);
+      match = false;
+      if (c == firstSepChar) {
+        match = true;
+        for (j = 1; j < sepLength; ++j) {
+          if (i + j < length ) {
+            if (sep.charAt(j) != original.charAt(i + j)) {
+              match = false;
+              break;
             }
-            result = Interpreter.v_runInterpreter(programData, result.executionContextId);
-        }
-
-        if (result.status == 1 || result.status == 3) { // FINISHED || FATAL
-            if (invokeSystemExit) System.exit(result.status == 1 ? 0 : 1); 
-            return result;
-        }
-        if (result.status == 2) return result;
-        throw new RuntimeException(); // invalid status
-    }
-
-    public static boolean isValidInteger(String value) {
-        try {
-            Integer.parseInt(value);
-        } catch (NumberFormatException nfe) {
-            return false;
-        }
-        return true;
-    }
-
-    public static <T> void reverseList(ArrayList<T> list) {
-        int length = list.size();
-        if (length < 2) return;
-        int lengthMinusOne = length - 1;
-        for (int i = length / 2 - 1; i >= 0; --i) {
-            T t = list.get(i);
-            int tIndex = lengthMinusOne - i;
-            list.set(i, list.get(tIndex));
-            list.set(tIndex, t);
-        }
-    }
-
-    public static String joinList(String sep, ArrayList<String> items) {
-        int length = items.size();
-        if (length < 2) {
-            if (length == 0) return "";
-            return items.get(0);
-        }
-
-        boolean useSeparator = sep.length() > 0;
-        StringBuilder sb = new StringBuilder(useSeparator ? (length * 2 - 1) : length);
-        sb.append(items.get(0));
-        if (useSeparator) {
-            for (int i = 1; i < length; ++i) {
-                sb.append(sep);
-                sb.append(items.get(i));
-            }
-        } else {
-            for (int i = 1; i < length; ++i) {
-                sb.append(items.get(i));
-            }
-        }
-
-        return sb.toString();
-    }
-
-    public static String joinChars(ArrayList<Character> chars) {
-        char[] output = new char[chars.size()];
-        for (int i = output.length - 1; i >= 0; --i) {
-            output[i] = chars.get(i);
-        }
-        return String.copyValueOf(output);
-    }
-
-    public static String reverseString(String original) {
-        char[] output = original.toCharArray();
-        int length = output.length;
-        int lengthMinusOne = length - 1;
-        char c;
-        for (int i = length / 2 - 1; i >= 0; --i) {
-            c = output[i];
-            output[i] = output[lengthMinusOne - i];
-            output[lengthMinusOne] = c;
-        }
-        return String.copyValueOf(output);
-    }
-
-    public static void shuffleInPlace(FastList list) {
-        int length = list.length;
-        int tIndex;
-        Value t;
-        Value[] items = list.items;
-        for (int i = length - 1; i >= 0; --i) {
-            tIndex = random.nextInt(length);
-            t = items[tIndex];
-            items[tIndex] = items[i];
-            items[i] = t;
-        }
-    }
-
-    public static int[] convertIntegerSetToArray(Set<Integer> original) {
-        int[] output = new int[original.size()];
-        int i = 0;
-        for (int value : original) {
-            output[i++] = value;
-        }
-        return output;
-    }
-
-    public static String[] convertStringSetToArray(Set<String> original) {
-        String[] output = new String[original.size()];
-        int i = 0;
-        for (String value : original) {
-            output[i++] = value;
-        }
-        return output;
-    }
-
-    public static int[] createIntArray(ArrayList<Integer> nums) {
-        int[] output = new int[nums.size()];
-        for (int i = nums.size() - 1; i >= 0; --i) {
-            output[i] = nums.get(i);
-        }
-        return output;
-    }
-
-    public static void assertion(String message) {
-        throw new IllegalStateException(message);
-    }
-
-    public static int[] sortedCopyOfIntArray(int[] nums) {
-        int[] output = Arrays.copyOf(nums, nums.length);
-        Arrays.sort(output);
-        return output;
-    }
-
-    public static String[] sortedCopyOfStringArray(String[] values) {
-        String[] output = Arrays.copyOf(values, values.length);
-        Arrays.sort(output);
-        return output;
-    }
-
-    public static String[] literalStringSplit(String original, String sep) {
-        ArrayList<String> output = new ArrayList<String>();
-        ArrayList<String> currentPiece = new ArrayList<String>();
-        int length = original.length();
-        int sepLength = sep.length();
-        char firstSepChar = sep.charAt(0);
-        char c;
-        int j;
-        boolean match;
-        for (int i = 0; i < length; ++i) {
-            c = original.charAt(i);
+          } else {
             match = false;
-            if (c == firstSepChar) {
-                match = true;
-                for (j = 1; j < sepLength; ++j) {
-                    if (i + j < length ) {
-                        if (sep.charAt(j) != original.charAt(i + j)) {
-                            match = false;
-                            break;
-                        }
-                    } else {
-                        match = false;
-                    }
-                }
-            }
-
-            if (match) {
-                output.add(joinList("", currentPiece));
-                currentPiece.clear();
-                i += sepLength - 1;
-            } else {
-                currentPiece.add("" + c);
-            }
+          }
         }
+      }
+
+      if (match) {
         output.add(joinList("", currentPiece));
-        return output.toArray(new String[output.size()]);
+        currentPiece.clear();
+        i += sepLength - 1;
+      } else {
+        currentPiece.add("" + c);
+      }
+    }
+    output.add(joinList("", currentPiece));
+    return output.toArray(new String[output.size()]);
+  }
+
+  public static void parseFloatOrReturnNull(double[] outParam, String rawValue) {
+    try {
+      outParam[1] = Double.parseDouble(rawValue);
+      outParam[0] = 1;
+    } catch (NumberFormatException nfe) {
+      outParam[0] = -1;
+    }
+  }
+
+  public static String substring(String value, int startIndex, int length) {
+    return value.substring(startIndex, startIndex + length);
+  }
+
+  public static boolean checkStringSlice(String haystack, int index, String expectedValue) {
+    int evLength = expectedValue.length();
+    if (evLength + index > haystack.length()) return false;
+    if (evLength == 0) return true;
+    if (expectedValue.charAt(0) != haystack.charAt(index)) return false;
+    if (expectedValue.charAt(evLength - 1) != haystack.charAt(index + evLength - 1)) return false;
+    if (evLength <= 2) return true;
+    for (int i = evLength - 2; i > 1; --i) {
+      if (expectedValue.charAt(i) != haystack.charAt(index + i)) return false;
+    }
+    return true;
+  }
+
+  public static String trimSide(String value, boolean isLeft) {
+
+    int i = isLeft ? 0 : value.length() - 1;
+    int end = isLeft ? value.length() : -1;
+    int step = isLeft ? 1 : -1;
+    char c;
+    boolean trimming = true;
+    while (trimming && i != end) {
+      c = value.charAt(i);
+      switch (c) {
+        case ' ':
+        case '\n':
+        case '\t':
+        case '\r':
+          i += step;
+          break;
+        default:
+          trimming = false;
+          break;
+      }
     }
 
-    public static void parseFloatOrReturnNull(double[] outParam, String rawValue) {
-        try {
-            outParam[1] = Double.parseDouble(rawValue);
-            outParam[0] = 1;
-        } catch (NumberFormatException nfe) {
-            outParam[0] = -1;
-        }
-    }
-
-	public static String substring(String value, int startIndex, int length) {
-		return value.substring(startIndex, startIndex + length);
-	}
-
-	public static boolean checkStringSlice(String haystack, int index, String expectedValue) {
-		int evLength = expectedValue.length();
-		if (evLength + index > haystack.length()) return false;
-		if (evLength == 0) return true;
-		if (expectedValue.charAt(0) != haystack.charAt(index)) return false;
-		if (expectedValue.charAt(evLength - 1) != haystack.charAt(index + evLength - 1)) return false;
-		if (evLength <= 2) return true;
-		for (int i = evLength - 2; i > 1; --i) {
-			if (expectedValue.charAt(i) != haystack.charAt(index + i)) return false;
-		}
-		return true;
-	}
-
-	public static String trimSide(String value, boolean isLeft) {
-		
-		int i = isLeft ? 0 : value.length() - 1;
-		int end = isLeft ? value.length() : -1;
-		int step = isLeft ? 1 : -1;
-		char c;
-		boolean trimming = true;
-		while (trimming && i != end) {
-			c = value.charAt(i);
-			switch (c) {
-				case ' ':
-				case '\n':
-				case '\t':
-				case '\r':
-					i += step;
-					break;
-				default:
-					trimming = false;
-					break;
-			}
-		}
-
-		return isLeft ? value.substring(i) : value.substring(0, i + 1);
-	}
+    return isLeft ? value.substring(i) : value.substring(0, i + 1);
+  }
 
   public static <T> T listPop(ArrayList<T> list) {
     return list.remove(list.size() - 1);
@@ -304,119 +304,119 @@ public final class TranslationHelper {
 
   public static int checkLibraryAvailability(String name, String version) {
     Class<?> c = LibraryLoader.getLibClass(name.toLowerCase(), version);
-	if (c != null) {
+    if (c != null) {
       libraryByName.put(name.toLowerCase(), new LibraryInstance(name, c));
-	}
-	return 0;
+    }
+    return 0;
   }
 
   private static final Object[] ARGS_REUSABLE = new Object[1];
   public static Value invokeLibraryFunction(Object fn, Value[] args) {
     try {
-	  ARGS_REUSABLE[0] = args;
-	  return (Value) ((Method) fn).invoke(null, ARGS_REUSABLE);
-	} catch (Exception e) {
-	  throw new RuntimeException("Error while running library function.", e);
-	}
+      ARGS_REUSABLE[0] = args;
+      return (Value) ((Method) fn).invoke(null, ARGS_REUSABLE);
+    } catch (Exception e) {
+      throw new RuntimeException("Error while running library function.", e);
+    }
   }
 
   public static boolean[] listToArrayBool(ArrayList<Boolean> list) {
     int length = list.size();
-	boolean[] output = new boolean[length];
-	int i = -1;
-	while (++i < length) output[i] = list.get(i);
-	return output;
+    boolean[] output = new boolean[length];
+    int i = -1;
+    while (++i < length) output[i] = list.get(i);
+    return output;
   }
-  
+
   public static byte[] listToArrayByte(ArrayList<Byte> list) {
     int length = list.size();
-	byte[] output = new byte[length];
-	int i = -1;
-	while (++i < length) output[i] = list.get(i);
-	return output;
+    byte[] output = new byte[length];
+    int i = -1;
+    while (++i < length) output[i] = list.get(i);
+    return output;
   }
 
   public static int[] listToArrayInt(ArrayList<Integer> list) {
     int length = list.size();
-	int[] output = new int[length];
-	int i = -1;
-	while (++i < length) output[i] = list.get(i);
-	return output;
+    int[] output = new int[length];
+    int i = -1;
+    while (++i < length) output[i] = list.get(i);
+    return output;
   }
 
   public static double[] listToArrayDouble(ArrayList<Double> list) {
     int length = list.size();
-	double[] output = new double[length];
-	int i = -1;
-	while (++i < length) output[i] = list.get(i);
-	return output;
+    double[] output = new double[length];
+    int i = -1;
+    while (++i < length) output[i] = list.get(i);
+    return output;
   }
 
   public static char[] listToArrayChar(ArrayList<Character> list) {
     int length = list.size();
-	char[] output = new char[length];
-	int i = -1;
-	while (++i < length) output[i] = list.get(i);
-	return output;
+    char[] output = new char[length];
+    int i = -1;
+    while (++i < length) output[i] = list.get(i);
+    return output;
   }
 
   private static final java.nio.charset.Charset UTF8 = java.nio.charset.Charset.forName("UTF-8");
   public static String base64ToString(String b64Value) {
     int inputLength = b64Value.length();
 
-	if (inputLength == 0) return "";
-	while (inputLength > 0 && b64Value.charAt(inputLength - 1) == '=') {
-		b64Value = b64Value.substring(0, --inputLength);
-	}
-	int bitsOfData = inputLength * 6;
-	int outputLength = bitsOfData / 8;
+    if (inputLength == 0) return "";
+    while (inputLength > 0 && b64Value.charAt(inputLength - 1) == '=') {
+      b64Value = b64Value.substring(0, --inputLength);
+    }
+    int bitsOfData = inputLength * 6;
+    int outputLength = bitsOfData / 8;
 
-	byte[] buffer = new byte[outputLength];
-	char c;
-	int charValue;
-	for (int i = 0; i < inputLength; ++i) {
-		c = b64Value.charAt(i);
-		charValue = -1;
-		switch (c) {
-			case '=': break;
-			case '+': charValue = 62;
-			case '/': charValue = 63;
-			default:
-				if (c >= 'A' && c <= 'Z') {
-					charValue = c - 'A';
-				} else if (c >= 'a' && c <= 'z') {
-					charValue = c - 'a' + 26;
-				} else if (c >= '0' && c <= '9') {
-					charValue = c - '0' + 52;
-				}
-				break;
-		}
+    byte[] buffer = new byte[outputLength];
+    char c;
+    int charValue;
+    for (int i = 0; i < inputLength; ++i) {
+      c = b64Value.charAt(i);
+      charValue = -1;
+      switch (c) {
+        case '=': break;
+        case '+': charValue = 62;
+        case '/': charValue = 63;
+        default:
+          if (c >= 'A' && c <= 'Z') {
+            charValue = c - 'A';
+          } else if (c >= 'a' && c <= 'z') {
+            charValue = c - 'a' + 26;
+          } else if (c >= '0' && c <= '9') {
+            charValue = c - '0' + 52;
+          }
+          break;
+      }
 
-		if (charValue != -1) {
-			int bitOffset = i * 6;
-			int targetIndex = bitOffset / 8;
-			int bitWithinByte = bitOffset % 8;
-			switch (bitOffset % 8) {
-				case 0:
-					buffer[targetIndex] |= charValue << 2;
-					break;
-				case 2:
-					buffer[targetIndex] |= charValue;
-					break;
-				case 4:
-					buffer[targetIndex] |= charValue >> 2;
-					if (targetIndex + 1 < outputLength)
-						buffer[targetIndex + 1] |= charValue << 6;
-					break;
-				case 6:
-					buffer[targetIndex] |= charValue >> 4;
-					if (targetIndex + 1 < outputLength)
-						buffer[targetIndex + 1] |= charValue << 4;
-					break;
-			}
-		}
-	}
-	return new String(buffer, UTF8);
+      if (charValue != -1) {
+        int bitOffset = i * 6;
+        int targetIndex = bitOffset / 8;
+        int bitWithinByte = bitOffset % 8;
+        switch (bitOffset % 8) {
+          case 0:
+            buffer[targetIndex] |= charValue << 2;
+            break;
+          case 2:
+            buffer[targetIndex] |= charValue;
+            break;
+          case 4:
+            buffer[targetIndex] |= charValue >> 2;
+            if (targetIndex + 1 < outputLength)
+              buffer[targetIndex + 1] |= charValue << 6;
+            break;
+          case 6:
+            buffer[targetIndex] |= charValue >> 4;
+            if (targetIndex + 1 < outputLength)
+              buffer[targetIndex + 1] |= charValue << 4;
+            break;
+        }
+      }
+    }
+    return new String(buffer, UTF8);
   }
 
   public static abstract class FunctionFinder {

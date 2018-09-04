@@ -6,148 +6,148 @@ import java.util.Collection;
 
 public final class FastList {
 
-	private static Value[] EMPTY_VALUES = new Value[0];
+  private static Value[] EMPTY_VALUES = new Value[0];
 
-	public int length = 0;
-	public int capacity = 0;
-	public Value[] items = EMPTY_VALUES;
-	
-	public FastList initializeValueCollection(Collection<Value> values) {
-		items = new Value[8];
-		capacity = 8;
-		for (Value v : values) {
-			if (length == capacity) {
-				increaseCapacity();
-			}
-			items[length++] = v;
-		}
-		return this;
-	}
+  public int length = 0;
+  public int capacity = 0;
+  public Value[] items = EMPTY_VALUES;
 
-	public int increaseCapacity() {
-		if (this.length == 0) {
-			items = new Value[4];
-			capacity = 4;
-		} else {
-			int newCapacity = this.length * 2;
-			Value[] newItems = new Value[newCapacity];
-			
-			for (int i = 0; i < this.length; ++i) {
-				newItems[i] = this.items[i];
-			}
-			this.items = newItems;
-			this.capacity = newCapacity;
-		}
-		return this.length;
-	}
+  public FastList initializeValueCollection(Collection<Value> values) {
+    items = new Value[8];
+    capacity = 8;
+    for (Value v : values) {
+      if (length == capacity) {
+        increaseCapacity();
+      }
+      items[length++] = v;
+    }
+    return this;
+  }
 
-	public void clear() {
-		if (length > 0) {
-			length = 0;
-			if (capacity > 10) {
-				capacity = 0;
-				items = EMPTY_VALUES;
-			} else {
-				int i = 0;
-				while (i < capacity) {
-					items[i++] = null;
-				}
-			}
-		}
-	}
+  public int increaseCapacity() {
+    if (this.length == 0) {
+      items = new Value[4];
+      capacity = 4;
+    } else {
+      int newCapacity = this.length * 2;
+      Value[] newItems = new Value[newCapacity];
 
-	public void add(Value value) {
-		if (length == capacity) {
-			increaseCapacity();
-		}
-		items[length++] = value;
-	}
+      for (int i = 0; i < this.length; ++i) {
+        newItems[i] = this.items[i];
+      }
+      this.items = newItems;
+      this.capacity = newCapacity;
+    }
+    return this.length;
+  }
 
-	public Value pop() {
-		Value output = items[--length];
-		items[length] = null;
-		return output;
-	}
+  public void clear() {
+    if (length > 0) {
+      length = 0;
+      if (capacity > 10) {
+        capacity = 0;
+        items = EMPTY_VALUES;
+      } else {
+        int i = 0;
+        while (i < capacity) {
+          items[i++] = null;
+        }
+      }
+    }
+  }
 
-	public Value remove(int index) {
-		Value output = items[index];
-		while (++index < length) {
-			items[index - 1] = items[index];
-		}
-		length--;
-		return output;
-	}
+  public void add(Value value) {
+    if (length == capacity) {
+      increaseCapacity();
+    }
+    items[length++] = value;
+  }
 
-	public void reverse() {
-		int end = length - 1;
-		Value t;
-		for (int i = 0; i < end; i++, end--) {
-			t = items[i];
-			items[i] = items[end];
-			items[end] = t;
-		}
-	}
+  public Value pop() {
+    Value output = items[--length];
+    items[length] = null;
+    return output;
+  }
 
-	public void insert(int index, Value item) {
-		if (length == capacity) {
-			increaseCapacity();
-		}
-		for (int i = length; i > index; --i) {
-			items[i] = items[i - 1];
-		}
-		items[index] = item;
-	}
+  public Value remove(int index) {
+    Value output = items[index];
+    while (++index < length) {
+      items[index - 1] = items[index];
+    }
+    length--;
+    return output;
+  }
 
-	public FastList concat(FastList other) {
-		int newLength = this.length + other.length;
-		Value[] items = new Value[newLength];
-		int index = 0;
-		int len = this.length;
-		int i = 0;
-		while (i < len) {
-			items[index++] = this.items[i++];
-		}
-		i = 0;
-		len = other.length;
-		Value[] otherItems = other.items;
-		while (i < len) {
-			items[index++] = otherItems[i++];
-		}
-		FastList output = new FastList();
-		output.length = newLength;
-		output.capacity = newLength;
-		output.items = items;
-		return output;
-	}
+  public void reverse() {
+    int end = length - 1;
+    Value t;
+    for (int i = 0; i < end; i++, end--) {
+      t = items[i];
+      items[i] = items[end];
+      items[end] = t;
+    }
+  }
 
-	public Value[] toArray() {
-		int length = this.length;
-		if (length == 0) return TranslationHelper.EMPTY_ARRAY_VALUE;
-		Value[] output = new Value[length];
-		if (length < 10) {
-			int i = -1;
-			while (++i < length) {
-				output[i] = items[i];
-			}
-		} else {
-			System.arraycopy(items, 0, output, 0, length);
-		}
-		return output;
-	}
+  public void insert(int index, Value item) {
+    if (length == capacity) {
+      increaseCapacity();
+    }
+    for (int i = length; i > index; --i) {
+      items[i] = items[i - 1];
+    }
+    items[index] = item;
+  }
 
-	public FastList multiply(int times) {
-		FastList output = new FastList();
-		if (times == 0 || length == 0) return output;
-		Value[] outputItems = new Value[length * times];
-		int index = 0;
-		for (int i = 0; i < times; ++i) {
-			for (int j = 0; j < length; ++j) {
-				outputItems[index++] = items[j];
-			}
-		}
-		output.items = outputItems;
-		output.length = outputItems.length;
-		output.capacity = output.length;
-		return output;
-	}
+  public FastList concat(FastList other) {
+    int newLength = this.length + other.length;
+    Value[] items = new Value[newLength];
+    int index = 0;
+    int len = this.length;
+    int i = 0;
+    while (i < len) {
+      items[index++] = this.items[i++];
+    }
+    i = 0;
+    len = other.length;
+    Value[] otherItems = other.items;
+    while (i < len) {
+      items[index++] = otherItems[i++];
+    }
+    FastList output = new FastList();
+    output.length = newLength;
+    output.capacity = newLength;
+    output.items = items;
+    return output;
+  }
+
+  public Value[] toArray() {
+    int length = this.length;
+    if (length == 0) return TranslationHelper.EMPTY_ARRAY_VALUE;
+    Value[] output = new Value[length];
+    if (length < 10) {
+      int i = -1;
+      while (++i < length) {
+        output[i] = items[i];
+      }
+    } else {
+      System.arraycopy(items, 0, output, 0, length);
+    }
+    return output;
+  }
+
+  public FastList multiply(int times) {
+    FastList output = new FastList();
+    if (times == 0 || length == 0) return output;
+    Value[] outputItems = new Value[length * times];
+    int index = 0;
+    for (int i = 0; i < times; ++i) {
+      for (int j = 0; j < length; ++j) {
+        outputItems[index++] = items[j];
+      }
+    }
+    output.items = outputItems;
+    output.length = outputItems.length;
+    output.capacity = output.length;
+    return output;
+  }
 }

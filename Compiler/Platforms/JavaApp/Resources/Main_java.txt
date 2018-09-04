@@ -13,6 +13,6 @@ public final class Main {
     VmContext vm = Interpreter.v_createVm(byteCode, resourceManifest);
     Interpreter.v_vmEnvSetCommandLineArgs(vm, args);
     TranslationHelper.setProgramData(vm);
-	TranslationHelper.startInterpreter(true);
+    TranslationHelper.startInterpreter(true);
   }
 }

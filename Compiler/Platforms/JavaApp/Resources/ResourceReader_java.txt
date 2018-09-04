@@ -13,77 +13,77 @@ import javax.imageio.ImageIO;
 
 public final class ResourceReader {
   private ResourceReader() {}
-  
-    private static final char[] BUFFER = new char[500]; 
-    public static String readFileText(String path) {
-        FileReader fileReader;
-        try {
-            fileReader = new FileReader(path);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("File not found: " + path);
-        }
 
-        BufferedReader br = new BufferedReader(fileReader);
-        StringBuilder sb = new StringBuilder();
-        int bytesRead = 0;
-        while (bytesRead != -1) {
-            try {
-                bytesRead = br.read(BUFFER);
-            } catch (IOException e) {
-                bytesRead = -1;
-            }
-
-            if (bytesRead != -1) {
-                sb.append(BUFFER, 0, bytesRead);
-            }
-        }
-
-        try {
-            br.close();
-        } catch (IOException e) {
-        }
-
-        String output = sb.toString();
-		if (output.length() >= 3) {
-        	if (output.charAt(0) == 239 && output.charAt(1) == 187 && output.charAt(2) == 191) {
-				output = output.substring(3);
-			}
-		}
-
-		if (output.length() > 0 && output.charAt(0) == 65279) {
-			output = output.substring(1);
-		}
-		
-		return output;
+  private static final char[] BUFFER = new char[500];
+  public static String readFileText(String path) {
+    FileReader fileReader;
+    try {
+      fileReader = new FileReader(path);
+    } catch (FileNotFoundException e) {
+      throw new RuntimeException("File not found: " + path);
     }
 
-    public static BufferedImage loadImageFromLocalFile(String path) {
-		String resPath = "resources/" + path;
-        try {
-            return ImageIO.read(new File(resPath));
-        } catch (IOException e) {
-            return null;
-        }
+    BufferedReader br = new BufferedReader(fileReader);
+    StringBuilder sb = new StringBuilder();
+    int bytesRead = 0;
+    while (bytesRead != -1) {
+      try {
+        bytesRead = br.read(BUFFER);
+      } catch (IOException e) {
+        bytesRead = -1;
+      }
+
+      if (bytesRead != -1) {
+        sb.append(BUFFER, 0, bytesRead);
+      }
     }
 
-	private static final HashMap<String, Font> FONT_RESOURCES = new HashMap<String, Font>();
+    try {
+      br.close();
+    } catch (IOException e) {
+    }
 
-	public static Font getFontResource(String canonicalPath, int size, int style) {
-		Font font = FONT_RESOURCES.get(canonicalPath);
-		if (font == null) {
-			String fullpath = "resources/ttf/" + canonicalPath;
-			try {
-				font = Font.createFont(Font.TRUETYPE_FONT, new File(fullpath));
-				FONT_RESOURCES.put(canonicalPath, font);
-			} catch (Exception e) {
-				return null;
-			}
-		}
+    String output = sb.toString();
+    if (output.length() >= 3) {
+      if (output.charAt(0) == 239 && output.charAt(1) == 187 && output.charAt(2) == 191) {
+        output = output.substring(3);
+      }
+    }
 
-		if (font == null) {
-			return null;
-		}
+    if (output.length() > 0 && output.charAt(0) == 65279) {
+      output = output.substring(1);
+    }
 
-		return font.deriveFont(style, size);
-	}
+    return output;
+  }
+
+  public static BufferedImage loadImageFromLocalFile(String path) {
+    String resPath = "resources/" + path;
+    try {
+      return ImageIO.read(new File(resPath));
+    } catch (IOException e) {
+      return null;
+    }
+  }
+
+  private static final HashMap<String, Font> FONT_RESOURCES = new HashMap<String, Font>();
+
+  public static Font getFontResource(String canonicalPath, int size, int style) {
+    Font font = FONT_RESOURCES.get(canonicalPath);
+    if (font == null) {
+      String fullpath = "resources/ttf/" + canonicalPath;
+      try {
+        font = Font.createFont(Font.TRUETYPE_FONT, new File(fullpath));
+        FONT_RESOURCES.put(canonicalPath, font);
+      } catch (Exception e) {
+        return null;
+      }
+    }
+
+    if (font == null) {
+      return null;
+    }
+
+    return font.deriveFont(style, size);
+  }
 }

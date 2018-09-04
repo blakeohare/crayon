@@ -92,8 +92,8 @@ MATCHERS = [
   ('Compiler/Platforms/LangCSharp/*_csproj.txt', CSPROJ_STYLE),
 
   # Java
-  ('Compiler/Platforms/JavaApp/*_java.txt', JAVA_STYLE)
-  ('Compiler/Platforms/LangJava/*_java.txt', JAVA_STYLE)
+  ('Compiler/Platforms/JavaApp/*_java.txt', JAVA_STYLE),
+  ('Compiler/Platforms/LangJava/*_java.txt', JAVA_STYLE),
 
   # Pastel
   ('Compiler/Interpreter/*.pst', PASTEL_STYLE),
