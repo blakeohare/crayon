@@ -1,5 +1,6 @@
 ﻿try:
   import pygame
+  TranslationHelper_globals['LIB:GAME:pygame'] = pygame
 except:
   print("PyGame is required to run game-based Crayon projects that have been exported")
   print("to Python. Visit: http://pygame.org or run 'pip install pygame'")

@@ -8,3 +8,8 @@ BEGIN
 APPLICABLE-TO: java-app-android
 COPY_FILES: from=java-app-android, to=%LIBRARY_PATH%/%FILE%
 END
+
+BEGIN
+APPLICABLE-TO: lang-python
+EMBED_FILES: from=python
+END
