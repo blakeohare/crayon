@@ -15,10 +15,5 @@ namespace Interpreter
         {
             System.Console.WriteLine(value);
         }
-
-        public static void ThreadSleep(double seconds)
-        {
-            System.Threading.Thread.Sleep((int)(1000 * seconds));
-        }
     }
 }

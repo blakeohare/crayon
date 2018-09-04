@@ -120,7 +120,6 @@ namespace Pastel.Nodes
                 case "Cos": return NativeFunction.MATH_COS;
                 case "CurrentTimeSeconds": return NativeFunction.CURRENT_TIME_SECONDS;
                 case "EmitComment": return NativeFunction.EMIT_COMMENT;
-                case "EnqueueVmResume": return NativeFunction.ENQUEUE_VM_RESUME;
                 case "FloatBuffer16": return NativeFunction.FLOAT_BUFFER_16;
                 case "FloatDivision": return NativeFunction.FLOAT_DIVISION;
                 case "FloatToString": return NativeFunction.FLOAT_TO_STRING;
@@ -152,7 +151,6 @@ namespace Pastel.Nodes
                 case "StringFromCharCode": return NativeFunction.STRING_FROM_CHAR_CODE;
                 case "StrongReferenceEquality": return NativeFunction.STRONG_REFERENCE_EQUALITY;
                 case "Tan": return NativeFunction.MATH_TAN;
-                case "ThreadSleep": return NativeFunction.THREAD_SLEEP;
                 case "TryParseFloat": return NativeFunction.TRY_PARSE_FLOAT;
                 case "VmDetermineLibraryAvailability": return NativeFunction.VM_DETERMINE_LIBRARY_AVAILABILITY;
                 case "VmEndProcess": return NativeFunction.VM_END_PROCESS;

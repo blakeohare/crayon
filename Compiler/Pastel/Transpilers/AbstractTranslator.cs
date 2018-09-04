@@ -244,7 +244,6 @@ namespace Pastel.Transpilers
                 case Pastel.NativeFunction.DICTIONARY_VALUES: this.TranslateDictionaryValues(sb, args[0]); break;
                 case Pastel.NativeFunction.DICTIONARY_VALUES_TO_VALUE_LIST: this.TranslateDictionaryValues(sb, args[0]); break;
                 case Pastel.NativeFunction.EMIT_COMMENT: this.TranslateEmitComment(sb, ((InlineConstant)args[0]).Value.ToString()); break;
-                case Pastel.NativeFunction.ENQUEUE_VM_RESUME: this.TranslateVmEnqueueResume(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.FLOAT_BUFFER_16: this.TranslateFloatBuffer16(sb); break;
                 case Pastel.NativeFunction.FLOAT_DIVISION: this.TranslateFloatDivision(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.FLOAT_TO_STRING: this.TranslateFloatToString(sb, args[0]); break;
@@ -311,7 +310,6 @@ namespace Pastel.Transpilers
                 case Pastel.NativeFunction.STRING_TRIM_END: this.TranslateStringTrimEnd(sb, args[0]); break;
                 case Pastel.NativeFunction.STRING_TRIM_START: this.TranslateStringTrimStart(sb, args[0]); break;
                 case Pastel.NativeFunction.STRONG_REFERENCE_EQUALITY: this.TranslateStrongReferenceEquality(sb, args[0], args[1]); break;
-                case Pastel.NativeFunction.THREAD_SLEEP: this.TranslateThreadSleep(sb, args[0]); break;
                 case Pastel.NativeFunction.TRY_PARSE_FLOAT: this.TranslateTryParseFloat(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.VM_DETERMINE_LIBRARY_AVAILABILITY: this.TranslateVmDetermineLibraryAvailability(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.VM_END_PROCESS: this.TranslateVmEndProcess(sb); break;
@@ -499,7 +497,6 @@ namespace Pastel.Transpilers
         public abstract void TranslateStringTrimEnd(TranspilerContext sb, Expression str);
         public abstract void TranslateStringTrimStart(TranspilerContext sb, Expression str);
         public abstract void TranslateStrongReferenceEquality(TranspilerContext sb, Expression left, Expression right);
-        public abstract void TranslateThreadSleep(TranspilerContext sb, Expression seconds);
         public abstract void TranslateTryParseFloat(TranspilerContext sb, Expression stringValue, Expression floatOutList);
         public abstract void TranslateStructFieldDereference(TranspilerContext sb, Expression root, StructDefinition structDef, string fieldName, int fieldIndex);
         public abstract void TranslateSwitchStatement(TranspilerContext sb, SwitchStatement switchStatement);
@@ -507,7 +504,6 @@ namespace Pastel.Transpilers
         public abstract void TranslateVariableDeclaration(TranspilerContext sb, VariableDeclaration varDecl);
         public abstract void TranslateVmDetermineLibraryAvailability(TranspilerContext sb, Expression libraryName, Expression libraryVersion);
         public abstract void TranslateVmEndProcess(TranspilerContext sb);
-        public abstract void TranslateVmEnqueueResume(TranspilerContext sb, Expression seconds, Expression executionContextId);
         public abstract void TranslateWhileLoop(TranspilerContext sb, WhileLoop whileLoop);
 
         public abstract void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef);

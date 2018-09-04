@@ -946,13 +946,6 @@ namespace Pastel.Transpilers
             sb.SwitchStatements.Add(fakeSwitchStatement);
         }
 
-        public override void TranslateThreadSleep(TranspilerContext sb, Expression seconds)
-        {
-            sb.Append("time.sleep(");
-            this.TranslateExpression(sb, seconds);
-            sb.Append(')');
-        }
-
         public override void TranslateTryParseFloat(TranspilerContext sb, Expression stringValue, Expression floatOutList)
         {
             sb.Append("TranslationHelper_tryParseFloat(");
@@ -988,11 +981,6 @@ namespace Pastel.Transpilers
             sb.Append(", ");
             this.TranslateExpression(sb, libraryVersion);
             sb.Append(')');
-        }
-
-        public override void TranslateVmEnqueueResume(TranspilerContext sb, Expression seconds, Expression executionContextId)
-        {
-            throw new NotImplementedException();
         }
 
         public override void TranslateVmEndProcess(TranspilerContext sb)
