@@ -78,12 +78,16 @@ public final class TranslationHelper {
       result = Interpreter.v_runInterpreter(programData, result.executionContextId);
     }
 
-    if (result.status == 1 || result.status == 3) { // FINISHED || FATAL
-      if (invokeSystemExit) System.exit(result.status == 1 ? 0 : 1);
-        return result;
-      }
-      if (result.status == 2) return result;
-      throw new RuntimeException(); // invalid status
+    if (result.status == 1 && result.isRootContext) {
+      if (invokeSystemExit) System.exit(0);
+      return result;
+    }
+    if (result.status == 3) { // FINISHED || FATAL
+      if (invokeSystemExit) System.exit(1);
+      return result;
+    }
+    if (result.status == 2) return result;
+    throw new RuntimeException(); // invalid status
   }
 
   public static boolean isValidInteger(String value) {

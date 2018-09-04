@@ -102,11 +102,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateVmEndProcess(TranspilerContext sb)
-        {
-            sb.Append("System.exit(0)");
-        }
-
         public override void TranslateArrayGet(TranspilerContext sb, Expression array, Expression index)
         {
             this.TranslateExpression(sb, array);

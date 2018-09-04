@@ -794,11 +794,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateVmEndProcess(TranspilerContext sb)
-        {
-            // Not needed. C# Finishes cleanly on all current platforms.
-        }
-
         public override void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef)
         {
             PType[] types = structDef.ArgTypes;

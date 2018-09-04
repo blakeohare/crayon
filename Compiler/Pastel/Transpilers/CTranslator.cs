@@ -1016,11 +1016,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateVmEndProcess(TranspilerContext sb)
-        {
-            throw new Exception();
-        }
-
         public override void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef)
         {
             sb.Append("struct ");

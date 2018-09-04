@@ -976,11 +976,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateVmEndProcess(TranspilerContext sb)
-        {
-            sb.Append("sys.exit(0)");
-        }
-
         public override void TranslateWhileLoop(TranspilerContext sb, WhileLoop whileLoop)
         {
             sb.Append(sb.CurrentTab);

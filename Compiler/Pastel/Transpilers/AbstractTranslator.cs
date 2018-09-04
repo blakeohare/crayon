@@ -311,7 +311,6 @@ namespace Pastel.Transpilers
                 case Pastel.NativeFunction.STRONG_REFERENCE_EQUALITY: this.TranslateStrongReferenceEquality(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.TRY_PARSE_FLOAT: this.TranslateTryParseFloat(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.VM_DETERMINE_LIBRARY_AVAILABILITY: this.TranslateVmDetermineLibraryAvailability(sb, args[0], args[1]); break;
-                case Pastel.NativeFunction.VM_END_PROCESS: this.TranslateVmEndProcess(sb); break;
 
                 default: throw new NotImplementedException(nativeFuncInvocation.Function.ToString());
             }
@@ -501,7 +500,6 @@ namespace Pastel.Transpilers
         public abstract void TranslateVariable(TranspilerContext sb, Variable variable);
         public abstract void TranslateVariableDeclaration(TranspilerContext sb, VariableDeclaration varDecl);
         public abstract void TranslateVmDetermineLibraryAvailability(TranspilerContext sb, Expression libraryName, Expression libraryVersion);
-        public abstract void TranslateVmEndProcess(TranspilerContext sb);
         public abstract void TranslateWhileLoop(TranspilerContext sb, WhileLoop whileLoop);
 
         public abstract void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef);

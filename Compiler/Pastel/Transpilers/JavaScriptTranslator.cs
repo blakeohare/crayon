@@ -727,11 +727,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateVmEndProcess(TranspilerContext sb)
-        {
-            // Specific app-like JS platforms can override.
-        }
-
         public override void GenerateCodeForFunction(TranspilerContext sb, FunctionDefinition funcDef)
         {
             sb.Append("var v_");

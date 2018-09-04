@@ -55,9 +55,15 @@ namespace Interpreter.Vm
                 System.Threading.Thread.Sleep((int)(1000 * sleepForSeconds));
                 result = CrayonWrapper.v_runInterpreter(ProgramData, result.executionContextId);
             }
-            if (result.status == 1) System.Environment.Exit(0); // FINISHED
+            if (result.status == 1) { // FINISHED
+                if (result.isRootContext) System.Environment.Exit(0);
+                return result;
+            }
             if (result.status == 2) return result; // SUSPEND
-            if (result.status == 3) System.Environment.Exit(1); // FATAL
+            if (result.status == 3) { // FATAL
+                if (result.isRootContext) System.Environment.Exit(1);
+                return result;
+            }
             throw new Exception(); // invalid status
         }
 
