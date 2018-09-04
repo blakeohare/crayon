@@ -1,8 +1,5 @@
-﻿class Library:
-  def __init__(self, name, manifestFunction):
-    self.name = name
-    self.manifestFunction = manifestFunction
-
+﻿# TODO: since the responsibilities of this class have been trimmed down to just
+# that which is left in the constructor, change this to a function or inline it.
 class LibraryRegistry:
   def __init__(self, libraries):
     self.libraries = {}
@@ -13,16 +10,6 @@ class LibraryRegistry:
         TranslationHelper_registerFunctionFinder(fnFinderFn)
       except:
         print("Invalid library: ", name)
-
-  def loadLibrary(self, name, ver):
-    canonicalName = name.lower()
-    manifestFunction = self.manifestFunctions.get(canonicalName)
-    if manifestFunction != None:
-      self.libraries[canonicalName] = Library(canonicalName, manifestFunction)
-    return 0
-
-  def getLibrary(self, name):
-    return self.libraries.get(name.lower())
 
   def createFnFinderFn(self, lib):
     def fnFinderFn(name):

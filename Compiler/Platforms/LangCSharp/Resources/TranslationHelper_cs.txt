@@ -231,11 +231,6 @@ namespace Interpreter.Vm
             return output;
         }
 
-        public static int VmDetermineLibraryAvailability(string name, string version)
-        {
-            return TranslationHelper.LibraryRegistry.LoadLibrary(name, version);
-        }
-
         public static LibraryRegistry LibraryRegistry { get; set; }
 
         public static bool SubstringIsEqualTo(string haystack, int index, string needle)

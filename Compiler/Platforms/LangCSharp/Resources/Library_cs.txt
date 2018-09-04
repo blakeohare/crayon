@@ -7,18 +7,5 @@ namespace Interpreter.Vm
     {
         public string Name { get; set; }
         public string Verison { get; set; }
-
-        private System.Reflection.MethodInfo manifestMethod;
-
-        public Library(System.Reflection.MethodInfo manifestMethod)
-        {
-            this.manifestMethod = manifestMethod;
-        }
-
-        public int RunManifest(object libRegObj)
-        {
-            this.manifestMethod.Invoke(null, new object[] { libRegObj });
-            return 0;
-        }
     }
 }

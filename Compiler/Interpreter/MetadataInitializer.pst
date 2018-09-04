@@ -414,12 +414,10 @@ int markClassAsInitialized(VmContext vm, StackFrame stack, int classId) {
     3 -> Library found, but incompatible version
 */
 int declareLibrary(VmContext vm, int refId, string descriptor) {
-    Array<string> descriptorParts = descriptor.Split(",");
-    string name = descriptorParts[0];
-    string ver = descriptorParts[1];
-    int status = Core.VmDetermineLibraryAvailability(name, ver);
+    // TODO: get rid of this function? The library stuff has changed and almost
+    // everything has been removed from this function.
     vm.activeLibraryReferenceId = refId;
-    return status;
+    return 0;
 }
 
 int addLiteralImpl(VmContext vm, Array<int> row, string stringArg) {

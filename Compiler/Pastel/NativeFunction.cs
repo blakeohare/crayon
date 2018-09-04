@@ -4,9 +4,6 @@
     {
         NONE,
 
-        // TODO: These are Crayon-specific functions that need to be removed. Notes on each are inline.
-        VM_DETERMINE_LIBRARY_AVAILABILITY, // This goes away when library importing is revamped
-
         // TODO: port this to the standalone Pastel
         GET_FUNCTION,
 

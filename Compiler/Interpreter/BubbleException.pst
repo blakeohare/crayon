@@ -10,7 +10,10 @@ intArray1 = esfData[pc];
 value = ec.activeException;
 objInstance1 = (ObjectInstance) value.internalValue;
 objArray1 = objInstance1.nativeData;
-bool1 = (bool) objArray1[0]; // is fatal exception?
+bool1 = true;
+if (objArray1[0] != null) {
+    bool1 = (bool) objArray1[0]; // is fatal exception?
+}
 intList1 = (List<int>) objArray1[1];
 
 // Bubble the exception until you reach the top of the stack, there is catch/finally (ESF) info, or if this a fatal exception.

@@ -967,15 +967,6 @@ namespace Pastel.Transpilers
             sb.Append(this.NewLine);
         }
 
-        public override void TranslateVmDetermineLibraryAvailability(TranspilerContext sb, Expression libraryName, Expression libraryVersion)
-        {
-            sb.Append("TranslationHelper_determineLibraryAvailability(");
-            this.TranslateExpression(sb, libraryName);
-            sb.Append(", ");
-            this.TranslateExpression(sb, libraryVersion);
-            sb.Append(')');
-        }
-
         public override void TranslateWhileLoop(TranspilerContext sb, WhileLoop whileLoop)
         {
             sb.Append(sb.CurrentTab);

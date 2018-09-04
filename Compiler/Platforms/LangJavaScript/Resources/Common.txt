@@ -197,11 +197,6 @@ C$common$scrapeLibFuncNames = function(libname) {
 	C$common$libraryFunctionLookups[libname] = functions;
 };
 
-C$common$determineLibraryAvailability = function(name, version) {
-	// TODO: this needs to change now that function registration is no longer used.
-	return 0;
-};
-
 C$common$getFunction = function(name) {
 	var p = name.split(',');
 	var check = 'v_' + p[p.length - 1];

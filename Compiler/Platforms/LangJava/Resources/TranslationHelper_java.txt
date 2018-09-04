@@ -304,16 +304,6 @@ public final class TranslationHelper {
     return list.remove(list.size() - 1);
   }
 
-  private static final HashMap<String, LibraryInstance> libraryByName = new HashMap<String, LibraryInstance>();
-
-  public static int checkLibraryAvailability(String name, String version) {
-    Class<?> c = LibraryLoader.getLibClass(name.toLowerCase(), version);
-    if (c != null) {
-      libraryByName.put(name.toLowerCase(), new LibraryInstance(name, c));
-    }
-    return 0;
-  }
-
   private static final Object[] ARGS_REUSABLE = new Object[1];
   public static Value invokeLibraryFunction(Object fn, Value[] args) {
     try {

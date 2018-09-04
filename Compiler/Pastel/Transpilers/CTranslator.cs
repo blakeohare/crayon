@@ -1007,15 +1007,6 @@ namespace Pastel.Transpilers
             sb.Append(this.NewLine);
         }
 
-        public override void TranslateVmDetermineLibraryAvailability(TranspilerContext sb, Expression libraryName, Expression libraryVersion)
-        {
-            sb.Append("LibraryHelper_determine_library_availability(");
-            this.TranslateExpression(sb, libraryName);
-            sb.Append(", ");
-            this.TranslateExpression(sb, libraryVersion);
-            sb.Append(')');
-        }
-
         public override void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef)
         {
             sb.Append("struct ");

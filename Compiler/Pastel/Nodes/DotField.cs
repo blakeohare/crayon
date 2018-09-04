@@ -151,7 +151,6 @@ namespace Pastel.Nodes
                 case "StrongReferenceEquality": return NativeFunction.STRONG_REFERENCE_EQUALITY;
                 case "Tan": return NativeFunction.MATH_TAN;
                 case "TryParseFloat": return NativeFunction.TRY_PARSE_FLOAT;
-                case "VmDetermineLibraryAvailability": return NativeFunction.VM_DETERMINE_LIBRARY_AVAILABILITY;
 
                 // TODO: get this information from the parameter rather than having separate Core function
                 case "SortedCopyOfStringArray": return NativeFunction.SORTED_COPY_OF_STRING_ARRAY;

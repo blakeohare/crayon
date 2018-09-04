@@ -785,15 +785,6 @@ namespace Pastel.Transpilers
             sb.Append(this.NewLine);
         }
 
-        public override void TranslateVmDetermineLibraryAvailability(TranspilerContext sb, Expression libraryName, Expression libraryVersion)
-        {
-            sb.Append("TranslationHelper.VmDetermineLibraryAvailability(");
-            this.TranslateExpression(sb, libraryName);
-            sb.Append(", ");
-            this.TranslateExpression(sb, libraryVersion);
-            sb.Append(')');
-        }
-
         public override void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef)
         {
             PType[] types = structDef.ArgTypes;

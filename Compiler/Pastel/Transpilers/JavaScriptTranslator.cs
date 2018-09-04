@@ -718,15 +718,6 @@ namespace Pastel.Transpilers
             sb.Append(this.NewLine);
         }
 
-        public override void TranslateVmDetermineLibraryAvailability(TranspilerContext sb, Expression libraryName, Expression libraryVersion)
-        {
-            sb.Append("C$common$determineLibraryAvailability(");
-            this.TranslateExpression(sb, libraryName);
-            sb.Append(", ");
-            this.TranslateExpression(sb, libraryVersion);
-            sb.Append(')');
-        }
-
         public override void GenerateCodeForFunction(TranspilerContext sb, FunctionDefinition funcDef)
         {
             sb.Append("var v_");
