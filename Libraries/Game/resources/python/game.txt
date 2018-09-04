@@ -135,7 +135,10 @@ def pygame_initialize_screen(width, height, pixel_dimensions, execId):
     icon = pygame.image.load(iconPath)
     pygame.display.set_icon(icon)
 
-  while v_runInterpreter(TranslationHelper_getProgramData(), execId) == 2:
+  while True:
+    result = TH_runInterpreter(execId)
+    if v_getVmResultStatus(result) != 2:
+      break
     gfxRender()
     _pygame_end_of_frame()
 
@@ -187,5 +190,3 @@ def readLocalSoundResource(path):
 def audio_sound_play(sfx, vol, pan):
   ch = sfx.play()
   ch.set_volume(vol)
-
-program_data = [None]

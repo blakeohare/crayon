@@ -7,3 +7,9 @@ void vmEnvSetCommandLineArgs(VmContext vm, Array<string> args) {
     }
     vm.environment.commandLineArgs = valueArgs;
 }
+
+int getVmResultStatus(InterpreterResult result) { return result.status; }
+string getVmResultAssemblyInfo(InterpreterResult result) { return result.loadAssemblyInformation; }
+double getVmReinvokeDelay(InterpreterResult result) { return result.reinvokeDelay; }
+int getVmResultExecId(InterpreterResult result) { return result.executionContextId; }
+bool isVmResultRootExecContext(InterpreterResult result) { return result.isRootContext; }
