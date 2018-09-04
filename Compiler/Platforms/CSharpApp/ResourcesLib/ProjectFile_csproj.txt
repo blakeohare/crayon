@@ -52,7 +52,7 @@
     %%%EMBEDDED_RESOURCES%%%
   </ItemGroup>
   <ItemGroup>
-	%%%DLLS_COPIED%%%
+    %%%DLLS_COPIED%%%
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
  </Project>

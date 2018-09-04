@@ -251,14 +251,14 @@ namespace Interpreter.Vm
             throw new NotImplementedException(msg);
         }
 
-		private static DateTime UNIX_EPOCH = new DateTime(1970, 1, 1);
-		public static double CurrentTime
-		{
-			get
-			{
-				return System.DateTime.UtcNow.Subtract(UNIX_EPOCH).TotalSeconds;
-			}
-		}
+        private static DateTime UNIX_EPOCH = new DateTime(1970, 1, 1);
+        public static double CurrentTime
+        {
+            get
+            {
+                return System.DateTime.UtcNow.Subtract(UNIX_EPOCH).TotalSeconds;
+            }
+        }
 
         public static string Base64ToString(string b64Value)
         {

@@ -84,7 +84,11 @@ PYTHON_STYLE_4_SPACES = FormatStyle().tabs(' ' * 4).newline('\n')
 MATCHERS = [
   # C#
   ('Compiler/*.cs', CSHARP_STYLE),
+  ('Compiler/Platforms/CSharpApp/*_cs.txt', CSHARP_STYLE),
+  ('Compiler/Platforms/LangCSharp/*_cs.txt', CSHARP_STYLE),
   ('Compiler/*.csproj', CSPROJ_STYLE),
+  ('Compiler/Platforms/CSharpApp/*_csproj.txt', CSPROJ_STYLE),
+  ('Compiler/Platforms/LangCSharp/*_csproj.txt', CSPROJ_STYLE),
 
   # Pastel
   ('Compiler/Interpreter/*.pst', PASTEL_STYLE),

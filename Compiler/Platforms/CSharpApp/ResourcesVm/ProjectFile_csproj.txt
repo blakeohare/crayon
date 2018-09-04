@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -10,9 +10,9 @@
     <RootNamespace>%%%PROJECT_ID%%%</RootNamespace>
     <AssemblyName>%%%PROJECT_ID%%%</AssemblyName>
     <FileAlignment>512</FileAlignment>
-	<OutputType>Exe</OutputType>
-	<TargetFrameworkProfile>Client</TargetFrameworkProfile>
-	<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -41,7 +41,7 @@
   </PropertyGroup>
   <ItemGroup>
     %%%DLL_REFERENCES%%%
-	<Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -54,13 +54,13 @@
     <Compile Include="Libraries\*\*.cs"/>
     <Compile Include="Libraries\*\Structs\*.cs"/>
     <Compile Include="Structs\*.cs"/>
-    <Compile Include="Vm\*.cs"/>  
+    <Compile Include="Vm\*.cs"/>
   </ItemGroup>
   <ItemGroup>
     %%%EMBEDDED_RESOURCES%%%
   </ItemGroup>
   <ItemGroup>
-	%%%DLLS_COPIED%%%
+    %%%DLLS_COPIED%%%
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Choose>

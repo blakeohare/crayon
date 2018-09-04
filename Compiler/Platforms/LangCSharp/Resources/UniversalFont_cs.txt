@@ -7,29 +7,29 @@ namespace Interpreter
 {
     /*
      * WINDOWS:
-     * System.Drawing.Graphics.DrawString requires a System.Drawing.Font instance. 
+     * System.Drawing.Graphics.DrawString requires a System.Drawing.Font instance.
      * It doesn't matter where this font came from.
-     * 
+     *
      * OSX (CAIRO):
      * If the font is a system-installed font, then only a string of the font name is required.
      * If the font is from resources, then it can be loaded using FreeType into a Cairo Font Face after being serialized to a file.
      * This file is in temp.
-     * 
+     *
      * It's also important to note that the Cairo-based fonts are not specific to a certain size or style.
-     * 
+     *
      * Windows:
      * bytes[] -> load into FontFamily (saved) -> load into a System.Drawing.Font
      * system -> load into a System.Drawing.Font
-     * 
+     *
      * Cairo:
      * bytes[] -> load into a Cairo.FontFace -> that's it. that's the only state. size/style are just basic properties which are used at render-time.
      * system -> save the name, size, style as properties and that's it.
-     * 
+     *
      * instances are immutable
      * cache key templates:
      * res:path,size,bold,italic
      * sys:name,size,bold,italic
-     * 
+     *
      * raw byte fonts are not cached
      */
     public class UniversalFont

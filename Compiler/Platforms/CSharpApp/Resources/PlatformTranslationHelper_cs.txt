@@ -6,19 +6,19 @@ namespace Interpreter
 {
     public static class PlatformTranslationHelper
     {
-		public static void PrintStdErr(string value)
-		{
-			System.Console.Error.WriteLine(value);
-		}
+        public static void PrintStdErr(string value)
+        {
+            System.Console.Error.WriteLine(value);
+        }
 
-		public static void PrintStdOut(string value)
-		{
-			System.Console.WriteLine(value);
-		}
+        public static void PrintStdOut(string value)
+        {
+            System.Console.WriteLine(value);
+        }
 
-		public static void ThreadSleep(double seconds)
-		{
-			System.Threading.Thread.Sleep((int)(1000 * seconds));
-		}
-	}
+        public static void ThreadSleep(double seconds)
+        {
+            System.Threading.Thread.Sleep((int)(1000 * seconds));
+        }
+    }
 }

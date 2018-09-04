@@ -143,7 +143,7 @@ namespace Interpreter
 #elif OSX
             // TODO: italic/bold
             double size = font.Size;
-            
+
             UniversalBitmap dummyBitmap = new UniversalBitmap(10, 10);
             DrawingSession session = dummyBitmap.GetActiveDrawingSession();
             Cairo.Context ctx = (Cairo.Context)session.NativeSession;
