@@ -55,9 +55,10 @@
 Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
     int i = 0;
 
+    Core.EmitComment("get the drawing queue data");
     Array<object> drawQueueData = Core.ForceParens((ObjectInstance) args[0].internalValue).nativeData;
 
-    // Get the event queue, expand it
+    Core.EmitComment("expand the draw event queue");
     Array<int> eventQueue = (Array<int>) drawQueueData[0];
     int queueLength = (int) drawQueueData[1];
     if (queueLength >= eventQueue.Size()) {
@@ -66,7 +67,7 @@ Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
     }
     drawQueueData[1] = queueLength + 16;
 
-    // Do the same with the image queue. Image queue is not created by the native data int writer, so it may be null.
+    Core.EmitComment("expand (or create) the image native data queue");
     Array<Array<object>> imageNativeDataQueue = (Array<Array<object>>) drawQueueData[2]; // image queue
     int imageNativeDataQueueSize = 0;
     if (imageNativeDataQueue == null) {
@@ -84,20 +85,21 @@ Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
     }
     drawQueueData[3] = imageNativeDataQueueSize + 1;
 
-    // Add the image object's nativeData array to the image queue
+    Core.EmitComment("Add the image to the image native data queue");
     Array<object> imageNativeData = Core.ForceParens((ObjectInstance) args[1].internalValue).nativeData;
     imageNativeDataQueue[imageNativeDataQueueSize] = imageNativeData;
 
     bool isValid = true;
     bool isNoop = false;
 
-    // This is an image draw event
+    Core.EmitComment("mark event as an Image event (6)");
     eventQueue[queueLength] = 6;
-    // Bit mask
+
+    Core.EmitComment("get/set the draw options mask");
     int flag = (int) args[2].internalValue;
     eventQueue[queueLength | 1] = flag;
 
-    // rotation
+    Core.EmitComment("rotation");
     if ((flag & 4) != 0) {
         Value rotationValue = args[11];
         double theta = 0.0;
@@ -108,8 +110,8 @@ Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
         eventQueue[queueLength | 10] = Core.Int(canonicalizeAngle(theta) * 1048576);
     }
 
-    // alpha
-    if (isValid && (flag & 8) != 0) {
+    Core.EmitComment("alpha");
+    if ((flag & 8) != 0) {
         Value alphaValue = args[12];
         int alpha = 0;
         if (alphaValue.type == Types.INTEGER) alpha = (int) alphaValue.internalValue;
@@ -121,8 +123,8 @@ Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
         else eventQueue[queueLength | 11] = alpha;
     }
 
+    Core.EmitComment("Copy values to event queue");
     Value value = null;
-    // copy all the numbers
     for (i = 3; i < 11; i += 1) {
         // just blindly copy the rest of the numbers rounding floats to ints
         value = args[i];
@@ -131,7 +133,7 @@ Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
         else isValid = false;
     }
 
-    // slicing
+    Core.EmitComment("slicing");
     if ((flag & 1) != 0) {
         int actualWidth = (int) imageNativeData[5]; // image width
         int sourceX = eventQueue[queueLength | 2]; // source x
@@ -152,7 +154,7 @@ Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
         }
     }
 
-    // stretching
+    Core.EmitComment("stretching");
     if ((flag & 2) != 0) {
 
         // validate target width
@@ -168,15 +170,14 @@ Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
         }
     }
 
-    // Revert the operation from the queue if it either
-    // achieves nothing or is invalid.
+    Core.EmitComment("Revert the operation if it is null or a no-op");
     if (isNoop || !isValid) {
         // These variables still have their old values since they're used as offsets.
         drawQueueData[1] = queueLength;
         drawQueueData[3] = imageNativeDataQueueSize;
     }
 
-    if (isValid) {
+    if (isValid || isNoop) {
         return VALUE_TRUE;
     }
     return VALUE_FALSE;

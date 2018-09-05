@@ -50,10 +50,11 @@
                 if (b > 255) drawEvents[i | 11] = 255; else if (b < 0) drawEvents[i | 11] = 0;
                 if (a > 255) drawEvents[i | 12] = 255; else if (a < 0) drawEvents[i | 12] = 0;
                 break;
-            case 6:
-                a = drawEvents[i | 11];
-                if (a > 255) drawEvents[i | 11] = 255; else if (a < 0) drawEvents[i | 11] = 0;
-                break;
+
+            // Since all image events are injected by trusted code, do not bother.
+            // If the events are injected by some other means, then the user is asking for trouble anyway.
+            // case 6: break;
+
             case 8:
                 r = drawEvents[i | 10];
                 g = drawEvents[i | 11];
