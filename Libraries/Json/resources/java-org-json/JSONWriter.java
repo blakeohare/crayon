@@ -299,6 +299,7 @@ public class JSONWriter {
      * @return this
      * @throws JSONException If the number is not finite.
      */
+    @SuppressWarnings("deprecation")
     public JSONWriter value(double d) throws JSONException {
         return this.value(new Double(d));
     }

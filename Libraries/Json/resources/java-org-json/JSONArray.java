@@ -763,6 +763,7 @@ public class JSONArray implements Iterable<Object> {
      *             if the value is not finite.
      * @return this.
      */
+    @SuppressWarnings("deprecation")
     public JSONArray put(double value) throws JSONException {
         Double d = new Double(value);
         JSONObject.testValidity(d);
@@ -777,6 +778,7 @@ public class JSONArray implements Iterable<Object> {
      *            An int value.
      * @return this.
      */
+    @SuppressWarnings("deprecation")
     public JSONArray put(int value) {
         this.put(new Integer(value));
         return this;
@@ -789,6 +791,7 @@ public class JSONArray implements Iterable<Object> {
      *            A long value.
      * @return this.
      */
+    @SuppressWarnings("deprecation")
     public JSONArray put(long value) {
         this.put(new Long(value));
         return this;
@@ -869,6 +872,7 @@ public class JSONArray implements Iterable<Object> {
      * @throws JSONException
      *             If the index is negative or if the value is not finite.
      */
+    @SuppressWarnings("deprecation")
     public JSONArray put(int index, double value) throws JSONException {
         this.put(index, new Double(value));
         return this;
@@ -887,6 +891,7 @@ public class JSONArray implements Iterable<Object> {
      * @throws JSONException
      *             If the index is negative.
      */
+    @SuppressWarnings("deprecation")
     public JSONArray put(int index, int value) throws JSONException {
         this.put(index, new Integer(value));
         return this;
@@ -905,6 +910,7 @@ public class JSONArray implements Iterable<Object> {
      * @throws JSONException
      *             If the index is negative.
      */
+    @SuppressWarnings("deprecation")
     public JSONArray put(int index, long value) throws JSONException {
         this.put(index, new Long(value));
         return this;

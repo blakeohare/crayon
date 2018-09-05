@@ -1216,6 +1216,7 @@ public class JSONObject {
      * @throws JSONException
      *             If the key is null or if the number is invalid.
      */
+    @SuppressWarnings("deprecation")
     public JSONObject put(String key, double value) throws JSONException {
         this.put(key, new Double(value));
         return this;
@@ -1232,6 +1233,7 @@ public class JSONObject {
      * @throws JSONException
      *             If the key is null.
      */
+    @SuppressWarnings("deprecation")
     public JSONObject put(String key, int value) throws JSONException {
         this.put(key, new Integer(value));
         return this;
@@ -1248,6 +1250,7 @@ public class JSONObject {
      * @throws JSONException
      *             If the key is null.
      */
+    @SuppressWarnings("deprecation")
     public JSONObject put(String key, long value) throws JSONException {
         this.put(key, new Long(value));
         return this;
@@ -1519,6 +1522,7 @@ public class JSONObject {
      *            A String.
      * @return A simple JSON value.
      */
+    @SuppressWarnings("deprecation")
     public static Object stringToValue(String string) {
         if (string.equals("")) {
             return string;
