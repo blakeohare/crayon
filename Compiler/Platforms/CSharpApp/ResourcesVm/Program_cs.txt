@@ -48,8 +48,10 @@ namespace CrayonRuntime
 
             string[] vmFlags = vmFlagsRaw.Split(',');
             bool showLibStack = false;
-            foreach (string vmFlag in vmFlags) {
-                switch (vmFlag) {
+            foreach (string vmFlag in vmFlags)
+            {
+                switch (vmFlag)
+                {
                     case "showLibStack":
                         showLibStack = true;
                         break;
@@ -76,15 +78,14 @@ namespace CrayonRuntime
             string byteCode = cbxDecoder.ByteCode;
             if (byteCode == null) throw new Exception("CBX file did not contain byte code.");
 
-            string byteCode = byteCode;
             TranslationHelper.CommandLineArgs = runtimeArgs;
             TranslationHelper.LibraryRegistry = new LibraryRegistry(cbxDecoder.LibraryVersionsByName);
             TranslationHelper.ImageSheetManifest = cbxDecoder.ImageSheetManifest;
             Interpreter.ResourceReader.CbxDirectory = System.IO.Path.GetDirectoryName(cbxPath);
             Interpreter.Structs.VmContext vm = CrayonWrapper.v_createVm(byteCode, cbxDecoder.ResourceManifest);
-            vm.environment.showLibStack = true;
+            vm.environment.showLibStack = showLibStack;
             TranslationHelper.ProgramData = vm;
-            CrayonWrapper.v_startVm(vm);
+            TranslationHelper.StartInterpreter();
         }
 
         private static string Base64Decode(string encodedValue)

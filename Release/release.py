@@ -99,7 +99,10 @@ def main(args):
 	else:
 		BUILD_CMD = MSBUILD
 		SLN_PATH = '..\\Compiler\\CrayonWindows.sln'
-	print(runCommand(' '.join([BUILD_CMD, RELEASE_CONFIG, SLN_PATH])))
+	cmd = ' '.join([BUILD_CMD, RELEASE_CONFIG, SLN_PATH])
+	
+	print("Running: " + cmd)
+	print(runCommand(cmd))
 
 	releaseDir = '../Compiler/Crayon/bin/Release'
 	shutil.copyfile(canonicalize_sep(releaseDir + '/Crayon.exe'), canonicalize_sep(copyToDir + '/crayon.exe'))

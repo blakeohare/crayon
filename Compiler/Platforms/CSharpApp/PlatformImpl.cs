@@ -132,9 +132,9 @@ namespace CSharpApp
                                 "    <Reference Include=\"" + dotNetLib + "\" />")
                         .ToArray());
 
-                    this.CopyResourceAsText(output, libBaseDir + library.Name + ".sln", "ResourcesLib/Solution.txt", replacements);
-                    this.CopyResourceAsText(output, libBaseDir + library.Name + ".csproj", "ResourcesLib/ProjectFile.txt", replacements);
-                    this.CopyResourceAsText(output, libBaseDir + "Properties/AssemblyInfo.cs", "ResourcesLib/AssemblyInfo.txt", replacements);
+                    this.CopyResourceAsText(output, libBaseDir + library.Name + ".sln", "ResourcesLib/Solution.sln", replacements);
+                    this.CopyResourceAsText(output, libBaseDir + library.Name + ".csproj", "ResourcesLib/ProjectFile.csproj", replacements);
+                    this.CopyResourceAsText(output, libBaseDir + "Properties/AssemblyInfo.cs", "ResourcesLib/AssemblyInfo.cs", replacements);
 
                     foreach (LangCSharp.DllFile dll in dlls)
                     {
@@ -154,7 +154,7 @@ namespace CSharpApp
             this.CopyResourceAsBinary(output, baseDir + "icon.ico", "ResourcesVm/icon.ico");
 
             TODO.MoveCbxParserIntoTranslatedPastelCode();
-            this.CopyResourceAsText(output, baseDir + "CbxDecoder.cs", "ResourcesVm/CbxDecoder.txt", replacements);
+            this.CopyResourceAsText(output, baseDir + "CbxDecoder.cs", "ResourcesVm/CbxDecoder.cs", replacements);
         }
 
         // Returns true if any export is necessary i.e. bytecode-only libraries will return false.

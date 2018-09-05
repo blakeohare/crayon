@@ -124,20 +124,17 @@ InterpreterResult runInterpreter(VmContext vm, int executionContextId) {
     InterpreterResult result = interpret(vm, executionContextId);
     result.executionContextId = executionContextId; // I feel like this should be set internally.
     int status = result.status;
-    bool shutdown = false;
     if (status == InterpreterResultStatus.FINISHED) {
         if (vm.executionContexts.Contains(executionContextId)) {
             vm.executionContexts.Remove(executionContextId);
         }
         runShutdownHandlers(vm);
-        shutdown = true;
     } else if (status == InterpreterResultStatus.FATAL_ERROR) {
         // TODO: don't generate the error in the interpreter. Instead just return the message and
         // the stack trace will be determined from the stack here. Also later add logic to
         // conditionally find symbol information here.
         Core.PrintStdOut(result.errorMessage);
         runShutdownHandlers(vm);
-        shutdown = true;
     }
     if (executionContextId == 0) {
         result.isRootContext = true;

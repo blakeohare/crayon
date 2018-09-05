@@ -15,7 +15,7 @@ Value lib_nori_showWindow(VmContext vm, Array<Value> args) {
         unboxedValues[i] = properties[i].internalValue;
     }
 
-    int execId = vm_getCurrentExecutionContextId();
+    int execId = vm_getCurrentExecutionContextId(vm);
 
     Native._lib_nori_showWindow(window.nativeData[0], unboxedValues, root.nativeData[0], execId);
 
@@ -23,7 +23,7 @@ Value lib_nori_showWindow(VmContext vm, Array<Value> args) {
     // must be suspended. The JavaScript implementation of Nori will fire a new Interpreter process once
     // the closed handler is run.
     if (!@ext_boolean("IS_WINDOW_SHOW_BlOCKING")) {
-        vm_suspend_with_status(1);
+        vm_suspend_with_status(vm, 1);
     }
 
     return VALUE_NULL;

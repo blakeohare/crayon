@@ -6,6 +6,11 @@ namespace Interpreter.Vm
 {
     public class LibraryRegistry
     {
+        public void LoadAssembly(string name, string version)
+        {
+            // TODO: load a DLL once they are split out.
+        }
+
         public LibraryRegistry(Dictionary<string, string> libraryVersions)
         {
             foreach (string libraryName in libraryVersions.Keys.OrderBy(n => n))
