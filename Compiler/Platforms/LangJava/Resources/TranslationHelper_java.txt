@@ -69,11 +69,15 @@ public final class TranslationHelper {
   }
 
   private static InterpreterResult handleVmResult(InterpreterResult result, boolean invokeSystemExit) {
-    while (result.status == 5) {
+    while (result.status == 5 || result.status == 6) {
+      if (result.status == 5) {
       double sleepForSeconds = result.reinvokeDelay;
-      try {
-        Thread.sleep((int)(1000 * sleepForSeconds));
-      } catch (InterruptedException e) {
+        try {
+          Thread.sleep((int)(1000 * sleepForSeconds));
+        } catch (InterruptedException e) {
+        }
+      } else {
+        loadAssembly(result.loadAssemblyInformation);
       }
       result = Interpreter.v_runInterpreter(programData, result.executionContextId);
     }
@@ -88,6 +92,13 @@ public final class TranslationHelper {
     }
     if (result.status == 2) return result;
     throw new RuntimeException(); // invalid status
+  }
+
+  private static void loadAssembly(String assemblyInfo) {
+    String[] t = assemblyInfo.split(",");
+    String name = t[0];
+    String version = t[1];
+    new LibraryLoader().getLibClass(name, version);
   }
 
   public static boolean isValidInteger(String value) {
