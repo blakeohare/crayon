@@ -31,8 +31,7 @@ switch (value.type) {
 
     case Types.STRING:
         if (metadata.lengthId == nameId) {
-            int2 = Core.ForceParens(((string) value.internalValue)).Size();
-            output = buildInteger(int2);
+            output = buildInteger(Core.ForceParens(((string) value.internalValue)).Size());
         } else {
             output = null;
         }
@@ -40,13 +39,7 @@ switch (value.type) {
 
     case Types.LIST:
         if (metadata.lengthId == nameId) {
-            if (@ext_boolean("IS_PHP")) {
-                // The harmless force_parens confuses PHP because YOU CAN'T DEREFERENCE A LIST IF IT'S IN PARENTHESIS IN PHP.
-                int2 = ((List<Value>) value.internalValue).Size();
-            } else {
-                int2 = Core.ForceParens(((List<Value>) value.internalValue)).Size();
-            }
-            output = buildInteger(int2);
+            output = buildInteger(Core.ForceParens((List<Value>) value.internalValue).Size());
         } else {
             output = null;
         }
@@ -54,8 +47,7 @@ switch (value.type) {
 
     case Types.DICTIONARY:
         if (metadata.lengthId == nameId) {
-            dictImpl = ((DictImpl) value.internalValue);
-            output = buildInteger(dictImpl.size);
+            output = buildInteger(Core.ForceParens((DictImpl) value.internalValue).size);
         } else {
             output = null;
         }
@@ -80,8 +72,7 @@ if (output == null) {
         } else {
 
             if (value.type == Types.INSTANCE) {
-                objInstance1 = ((ObjectInstance) value.internalValue);
-                classId = objInstance1.classId;
+                classId = Core.ForceParens((ObjectInstance) value.internalValue).classId;
                 classInfo = classTable[classId];
                 string1 = Core.StringConcatAll(classInfo.fullyQualifiedName, " instance");
             } else {
