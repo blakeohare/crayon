@@ -11,18 +11,52 @@ C$common$globalOptions['fullscreen'] = false;
 
 function main() {
 	C$common$programData = v_createVm(C$bytecode, C$common$resourceManifest);
-	v_startVm(C$common$programData);
+	C$handleVmResult(v_startVm(C$common$programData));
+}
+
+function C$runInterpreter(execId) {
+	var vm = C$common$programData;
+	return C$handleVmResult(v_runInterpreter(vm, execId));
+}
+
+function C$runInterpreterWithFunctionPointer(fp, args) {
+	var vm = C$common$programData;
+	return C$handleVmResult(v_runInterpreterWithFunctionPointer(vm, fp, args));
+}
+
+function C$handleVmResult(res) {
+	var vm = C$common$programData;
+	var status = v_getVmResultStatus(res);
+	while (status == 5 || status == 6) { // REINVOKE || LOAD_ASSEMBLY
+		if (status == 5) {
+			var delayMillis = Math.floor(1000 * v_getVmReinvokeDelay(res));
+			var execId = v_getVmResultExecId(result);
+			window.setTimeout(function() { C$runInterpreter(execId); }, delayMillis);
+			return;
+		} else {
+			var parts = v_getVmResultAssemblyInfo(res).split(',');
+			var name = parts[0];
+			var version = parts[1];
+			// TODO: C$loadAssembly(name, version);
+		}
+		res = v_runInterpreter(vm, v_getVmResultExecId(res))
+		status = v_getVmResultStatus(res);
+	}
+
+	if (status == 1 || status == 2 || status == 3) return;
+
+	throw "Unknown status";
 }
 
 C$common$readResourceText = function (path) {
-  var v = C$common$getTextRes(path);
-  return !v ? null : v;
+	var v = C$common$getTextRes(path);
+	return !v ? null : v;
 };
 
 C$common$alwaysTrue = function () { return true; };
 C$common$alwaysFalse = function () { return false; };
 
-C$common$now = function () {
+C$common$now = function() {
     return (Date.now ? Date.now() : new Date().getTime()) / 1000.0;
 };
 
