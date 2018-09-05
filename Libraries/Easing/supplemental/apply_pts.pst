@@ -8,7 +8,6 @@ Value lib_easing_apply_pts(VmContext vm, Array<Value> args) {
     int len = sampleValues.Size();
     Array<double> samples = new Array<double>(len);
 
-    Value value = null;
     for (int i = 0; i < len; i += 1) {
         samples[i] = (double) sampleValues[i].internalValue;
     }
