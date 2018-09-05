@@ -528,7 +528,7 @@ int tokenDataImpl(VmContext vm, Array<int> row) {
 
 */
 int valueStackDepthImpl(VmContext vm, Array<int> row) {
-    int totalPcCount = vm.ops.Size(); // total PC count
+    int totalPcCount = vm.byteCode.ops.Size(); // total PC count
     Array<int> valueStackDepthByPc = new Array<int>(totalPcCount); // output
     int rowIndex = 0; // row index
     int rowLength = row.Size(); // row length

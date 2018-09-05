@@ -2,17 +2,11 @@
 
     initialize_constant_values();
     ResourceDB resources = resource_manager_initialize(resourceManifest);
-
     Code byteCode = initializeByteCode(rawByteCode);
-    Array<int> ops = byteCode.ops;
-    int opsLength = ops.Size();
-    Array<Array<int>> opArgs = byteCode.args;
-    Array<string> stringArgs = byteCode.stringArgs;
-
-    int i = 0;
 
     Array<Value> localsStack = new Array<Value>(10);
     Array<int> localsStackSet = new Array<int>(10);
+    int i = 0;
     for (i = localsStack.Size() - 1; i >= 0; i -= 1) {
         localsStack[i] = null;
         localsStackSet[i] = 0;
@@ -62,9 +56,7 @@
     VmContext vm = new VmContext(
         executionContexts,
         executionContext.id, // last execution context ID
-        ops,
-        opArgs,
-        stringArgs,
+        byteCode,
         new VmMetadata(
             null, // identifiers
             new List<string>(), // identifiers builder
@@ -92,7 +84,7 @@
             new Dictionary<int, Dictionary<int, int>>() // classMemberLocalizerBuilder
 
         ),
-        new Array<List<Token>>(ops.Size()), // token data
+        new Array<List<Token>>(byteCode.ops.Size()), // token data
         null, // original source code data
         new List<string>(), // original source code data builder
         0, // instance counter
@@ -168,7 +160,7 @@ InterpreterResult runInterpreterWithFunctionPointer(VmContext vm, Value fpValue,
     valueStack[0] = fpValue;
     valueStack[1] = new Value(Types.LIST, argList);
     StackFrame stack = new StackFrame(
-        vm.ops.Size() - 2, // pc
+        vm.byteCode.ops.Size() - 2, // pc
         1, // localsStackSetToken
         0, // localsStackOffset
         0, // localsStackOffsetEnd

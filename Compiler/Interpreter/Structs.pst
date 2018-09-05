@@ -44,10 +44,7 @@ struct VmMetadata {
 struct VmContext {
     Dictionary<int, ExecutionContext> executionContexts;
     int lastExecutionContextId;
-    Array<int> ops;
-    Array<Array<int>> args;
-    Array<string> stringArgs;
-
+    Code byteCode;
     VmMetadata metadata;
 
     Array<List<Token>> tokenData;

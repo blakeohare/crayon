@@ -115,9 +115,9 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     ec.executionCounter += 1;
 
     StackFrame stack = ec.stackTop;
-    Array<int> ops = vm.ops;
-    Array<Array<int>> args = vm.args;
-    Array<string> stringArgs = vm.stringArgs;
+    Array<int> ops = vm.byteCode.ops;
+    Array<Array<int>> args = vm.byteCode.args;
+    Array<string> stringArgs = vm.byteCode.stringArgs;
     Array<ClassInfo> classTable = vm.metadata.classTable;
     Array<FunctionInfo> functionTable = vm.metadata.functionTable;
     Array<Value> literalTable = vm.metadata.literalTable;
