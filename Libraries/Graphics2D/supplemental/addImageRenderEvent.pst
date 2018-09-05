@@ -35,24 +35,14 @@
         data[5] -> pixel height
 */
 Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
-    bool bool1 = false;
-    bool bool2 = false;
     double float1 = 0.0;
     int i = 0;
     int int1 = 0;
     int int2 = 0;
     int int3 = 0;
-    Array<int> intArray1 = null;
-    Array<int> intArray2 = null;
-    int len = 0;
-    Array<object> objArray1 = null;
-    Array<Array<object>> objArrayArray1 = null;
     Array<Array<object>> objArrayArray2 = null;
-    ObjectInstance objInstance1 = null;
     ObjectInstance objInstance2 = null;
     Value value = null;
-    Value output = VALUE_NULL;
-    Value arg1 = args[0];
     Value arg2 = args[1];
     Value arg3 = args[2];
     Value arg4 = args[3];
@@ -63,31 +53,25 @@ Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
     Value arg9 = args[8];
     Value arg10 = args[9];
     Value arg11 = args[10];
-    Value arg12 = args[11];
-    Value arg13 = args[12];
-    objInstance1 = ((ObjectInstance) arg1.internalValue);
-    objArray1 = objInstance1.nativeData;
+    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
+    Array<object> objArray1 = objInstance1.nativeData;
 
     // Get the event queue, expand it
-    intArray1 = ((Array<int>) objArray1[0]);
-    len = ((int) objArray1[1]);
-    if (len >= intArray1.Size()) {
-        intArray2 = new Array<int>(((len * 2) + 16));
-        for (i = 0; i < len; i += 1) {
-            intArray2[i] = intArray1[i];
-        }
-        intArray1 = intArray2;
-        objArray1[0] = intArray1;
+    Array<int> eventQueue = (Array<int>) objArray1[0];
+    int len = (int) objArray1[1];
+    if (len >= eventQueue.Size()) {
+        eventQueue = lib_graphics2d_expandEventQueueCapacity(eventQueue);
+        objArray1[0] = eventQueue;
     }
     objArray1[1] = len + 16;
 
     // Do the same with the image queue. Image queue is not created by the native data int writer, so it may be null.
-    objArrayArray1 = ((Array<Array<object>>) objArray1[2]); // image queue
+    Array<Array<object>> objArrayArray1 = (Array<Array<object>>) objArray1[2]; // image queue
     if (objArrayArray1 == null) {
         int1 = 0;
         objArrayArray1 = new Array<Array<object>>(0);
     } else {
-        int1 = ((int) objArray1[3]);
+        int1 = (int) objArray1[3];
     }
     if (int1 >= objArrayArray1.Size()) {
         objArrayArray2 = new Array<Array<object>>(((int1 * 2) + 16));
@@ -97,131 +81,118 @@ Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
         objArrayArray1 = objArrayArray2;
         objArray1[2] = objArrayArray1;
     }
-    objArray1[3] = (int1 + 1);
+    objArray1[3] = int1 + 1;
 
     // Add the image object's nativeData array to the image queue
-    value = arg2; // image instance
-    objInstance2 = ((ObjectInstance) value.internalValue);
+    objInstance2 = (ObjectInstance) args[1].internalValue;
     objArray1 = objInstance2.nativeData;
     objArrayArray1[int1] = objArray1;
 
-    bool1 = true; // is valid operation
-    bool2 = false; // is noop
+    bool isValid = true;
+    bool isNoop = false;
 
     // Bit mask
-    value = arg3;
-    int1 = ((int) value.internalValue);
-    intArray1[len] = 6;
-    intArray1[(len + 1)] = int1;
+    int flag = (int) args[2].internalValue;
+    eventQueue[len] = 6;
+    eventQueue[len + 1] = flag;
 
     // rotation
-    if ((int1 & 4) != 0) {
-        value = arg12;
-        if (value.type == Types.FLOAT) {
-            float1 = ((double) value.internalValue);
-        } else {
-            if (value.type == Types.INTEGER) {
-                float1 = ((int) value.internalValue) + 0.0;
-            } else {
-                bool1 = false;
-            }
-        }
-        int2 = Core.Int((canonicalizeAngle(float1) * 1048576));
-        intArray1[(len | 10)] = int2;
+    if ((flag & 4) != 0) {
+        Value rotationValue = args[11];
+        if (rotationValue.type == Types.FLOAT) float1 = (double) rotationValue.internalValue;
+        else if (rotationValue.type == Types.INTEGER) float1 = 0.0 + (int) rotationValue.internalValue;
+        else isValid = false;
+
+        eventQueue[len | 10] = Core.Int(canonicalizeAngle(float1) * 1048576);
     }
 
     // alpha
-    if (bool1 && ((int1 & 8) != 0)) {
-        value = arg13;
-        if (value.type == Types.INTEGER) {
-            int2 = ((int) value.internalValue);
-        } else {
-            if (value.type == Types.FLOAT) {
-                float1 = ((double) value.internalValue);
-                int2 = Core.Int((float1 + 0.5));
-            } else {
-                bool1 = false;
-            }
-        }
+    if (isValid && (flag & 8) != 0) {
+        Value alphaValue = args[12];
 
-        if (int2 > 254) {
-            // alpha is 255? unset the alpha bit.
-            intArray1[(len | 1)] = (int1 - 8);
-        } else {
-            if (int2 < 0) {
-                bool2 = true;
-            } else {
-                intArray1[(len | 11)] = int2;
-            }
-        }
+        if (alphaValue.type == Types.INTEGER) i = (int) alphaValue.internalValue;
+        else if (alphaValue.type == Types.FLOAT) i = Core.Int(0.5 + (double) alphaValue.internalValue);
+        else isValid = false;
+
+        if (i > 254) eventQueue[len | 1] = flag - 8; // unset the alpha flag if alpha is 255+
+        else if (i < 0) isNoop = true;
+        else eventQueue[len | 11] = i;
     }
 
     // copy all the numbers
     for (i = 0; i < 8; i += 1) {
         // just blindly copy the rest of the numbers rounding floats to ints
-        value = args[(3 + i)];
+        value = args[3 + i];
         if (value.type == Types.INTEGER) {
-            int2 = ((int) value.internalValue);
+            int2 = (int) value.internalValue;
         } else {
             if (value.type == Types.FLOAT) {
                 float1 = ((double) value.internalValue);
                 int2 = Core.Int((float1 + 0.5));
             } else {
-                bool1 = false;
+                isValid = false;
                 i = 9;
             }
         }
 
-        intArray1[((len + 2) + i)] = int2;
+        eventQueue[len + 2 + i] = int2;
     }
 
     // stretching
-    if ((int1 & 2) != 0) {
+    if ((flag & 2) != 0) {
         // target width
-        int2 = intArray1[(len + 6)];
-        if (int2 < 0) bool1 = false;
-        else if (int2 == 0) bool2 = true;
+        int2 = eventQueue[len + 6];
+        if (int2 < 0) isValid = false;
+        else if (int2 == 0) isNoop = true;
 
         // target height
-        int2 = intArray1[(len + 7)];
-        if (int2 < 0) bool1 = false;
-        else if (int2 == 0) bool2 = true;
+        int2 = eventQueue[len + 7];
+        if (int2 < 0) isValid = false;
+        else if (int2 == 0) isNoop = true;
     }
 
     // slicing
-    if ((int1 & 1) != 0) {
-        int1 = ((int) objArray1[5]); // image width
-        int2 = intArray1[(len + 2)]; // source x
-        int3 = intArray1[(len + 4)]; // desired width
-        if ((int2 < 0) || ((int2 + int3) > int1) || (int3 < 0)) {
-            bool1 = false;
+    if ((flag & 1) != 0) {
+        int1 = (int) objArray1[5]; // image width
+        int2 = eventQueue[len + 2]; // source x
+        int3 = eventQueue[len + 4]; // desired width
+        if (int2 < 0 || (int2 + int3) > int1 || int3 < 0) {
+            isValid = false;
         }
-        if (int3 == 0) bool2 = true;
+        if (int3 == 0) isNoop = true;
 
-        if (bool1) {
-            int1 = ((int) objArray1[6]); // image height
-            int2 = intArray1[(len + 3)]; // source y
-            int3 = intArray1[(len + 5)]; // desired height
-            if ((int2 < 0) || ((int2 + int3) > int1) || (int3 < 0)) {
-                bool1 = false;
+        if (isValid) {
+            int1 = (int) objArray1[6]; // image height
+            int2 = eventQueue[len + 3]; // source y
+            int3 = eventQueue[len + 5]; // desired height
+            if (int2 < 0 || (int2 + int3) > int1 || int3 < 0) {
+                isValid = false;
             }
-            if (int3 == 0) bool2 = true;
+            if (int3 == 0) isNoop = true;
         }
     }
 
-    if (bool1) {
-        if (bool2) {
-            // noop (asked for 0 width or height, off-screen, 0 alpha, etc.
+    if (isValid) {
+        if (isNoop) {
+            // Operation doesn't achieve anything. Revert it from the queue.
             objArray1 = objInstance1.nativeData;
-            objArray1[1] = (((int) objArray1[1]) - 16);
-            objArray1[3] = (((int) objArray1[3]) - 1);
+            objArray1[1] = -16 + (int) objArray1[1];
+            objArray1[3] = -1 + (int) objArray1[3];
         }
-        output = VALUE_TRUE;
-    } else {
-        // TODO: this is okay for now since this will cause a crash.
-        // however when exceptions become a thing, both queue lengths must be rolled back
-        // so that if the exception is caught it won't render invalid data.
-        output = VALUE_FALSE;
+
+        return VALUE_TRUE;
+    }
+
+    // TODO: roll back the event queue here as well so that invalid data doesn't
+    // get passed to the renderer.
+    return VALUE_FALSE;
+}
+
+Array<int> lib_graphics2d_expandEventQueueCapacity(Array<int> a) {
+    int len = a.Length();
+    Array<int> output = new Array<int>(len * 2 + 16);
+    for (int i = 0; i < len; i += 1) {
+        output[i] = a[i];
     }
     return output;
 }
