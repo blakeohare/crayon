@@ -1,10 +1,18 @@
-﻿try:
-  import pygame
+﻿
+TranslationHelper_globals['LIB:GAME:pygame'] = None
+oldstdout = sys.stdout
+try:
+  # As of PyGame 1.9.4, import pygame prints spurious output that cannot be disabled.
+  with open(os.devnull, 'w') as f:
+    sys.stdout = f
+    import pygame
   TranslationHelper_globals['LIB:GAME:pygame'] = pygame
 except:
+  sys.stdout = oldstdout
   print("PyGame is required to run game-based Crayon projects that have been exported")
   print("to Python. Visit: http://pygame.org or run 'pip install pygame'")
   exit()
+sys.stdout = oldstdout
 
 _global_vars = {
   'width': 400,
