@@ -8,7 +8,7 @@
         // TODO: consider checking arg length?
 
         primitiveMethodToCoreLibraryFallback = true;
-        functionId = p.primitiveMethodFunctionIdFallbackLookup[1]; // MAGIC NUMBER: 1 (see metadata initializer)
+        functionId = metadata.primitiveMethodFunctionIdFallbackLookup[1]; // MAGIC NUMBER: 1 (see metadata initializer)
         funcArgs[1] = value; // funcArgs is allocated very big.
         argCount = 2;
 

@@ -66,7 +66,7 @@ classId = row[4];
 // Check to see if a static initialization is required.
 if (type == FunctionInvocationType.STATIC_METHOD || type == FunctionInvocationType.CONSTRUCTOR) {
     Core.EmitComment("constructor or static method");
-    classInfo = p.classTable[classId];
+    classInfo = metadata.classTable[classId];
     @import("InvokeStaticConstructor.pst");
 } else {
     staticConstructorNotInvoked = true;
@@ -133,7 +133,7 @@ if (staticConstructorNotInvoked) {
                     int1 = objInstance1.classId; // note that classId has the field name ID and so this is sort of confusing
                     classInfo = classTable[int1];
                     intIntDict1 = classInfo.localeScopedNameIdToMemberId;
-                    int1 = row[4] * p.magicNumbers.totalLocaleCount + row[5];
+                    int1 = row[4] * magicNumbers.totalLocaleCount + row[5];
                     if (intIntDict1.Contains(int1)) {
                         int1 = intIntDict1[int1]; // int1 is now the member ID.
                         // now that we have the member ID, check to see if this is a field or a known method.
@@ -183,7 +183,7 @@ if (staticConstructorNotInvoked) {
                                         // Try removing it and verify there is no stack corruption.
                                         hasInterrupt = EX_UnsupportedOperation(ec, "Cannot create an instance and not use the output.");
                                     } else {
-                                        classInfo = p.classTable[classId];
+                                        classInfo = metadata.classTable[classId];
                                         functionId = classInfo.constructorFunctionId;
                                     }
                                 }
@@ -377,7 +377,7 @@ if (staticConstructorNotInvoked) {
             case FunctionInvocationType.LAMBDA:
                 Core.EmitComment("lambda");
                 pc = functionId;
-                functionInfo = p.lambdaTable[functionId];
+                functionInfo = metadata.lambdaTable[functionId];
                 value = null;
                 classId = 0;
                 break;
@@ -397,7 +397,7 @@ if (staticConstructorNotInvoked) {
                 break;
             case FunctionInvocationType.CONSTRUCTOR:
                 Core.EmitComment("constructor");
-                p.instanceCounter += 1;
+                vm.instanceCounter += 1;
                 classInfo = classTable[classId];
                 valueArray1 = new Array<Value>(classInfo.memberCount);
                 for (i = valueArray1.Size() - 1; i >= 0; i -= 1) {
@@ -421,7 +421,7 @@ if (staticConstructorNotInvoked) {
                 }
                 objInstance1 = new ObjectInstance(
                     classId,
-                    p.instanceCounter,
+                    vm.instanceCounter,
                     valueArray1,
                     null,
                     null);

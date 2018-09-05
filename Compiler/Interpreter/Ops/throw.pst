@@ -17,7 +17,7 @@ if (bool2) {
     objArray1[1] = intList1;
 
     // Do not push token if this is from _LIB_CORE_generateException
-    if (!isPcFromCore(p, pc)) {
+    if (!isPcFromCore(vm, pc)) {
         // This is purely based on TokenData. If there is no token data, then it doesn't matter anyway as this is notably used
         // for printing the human-readable stack trace.
         intList1.Add(pc);

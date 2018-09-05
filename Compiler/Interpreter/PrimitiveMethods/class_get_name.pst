@@ -1,2 +1,2 @@
-﻿classInfo = p.classTable[classValue.classId];
+﻿classInfo = metadata.classTable[classValue.classId];
 output = buildString(classInfo.fullyQualifiedName);

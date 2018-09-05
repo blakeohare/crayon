@@ -9,7 +9,7 @@
         // For now it'll just error in the Core/embed.cry code
 
         primitiveMethodToCoreLibraryFallback = true;
-        functionId = p.primitiveMethodFunctionIdFallbackLookup[0]; // MAGIC NUMBER: 0 (see metadata initializer)
+        functionId = metadata.primitiveMethodFunctionIdFallbackLookup[0]; // MAGIC NUMBER: 0 (see metadata initializer)
         funcArgs[1] = value; // funcArgs is allocated very big.
         argCount = 2;
 

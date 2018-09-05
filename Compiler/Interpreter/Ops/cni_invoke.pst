@@ -1,12 +1,12 @@
 ﻿/*
-    row[0] -> ID# for the CNI Function
+    row[0] -> ID# for the CNI Function.
     row[1] -> number of args
     row[2] -> output used
 
-    p.cniFunctionPointer[id] -> the function pointer
+    metadata.cniFunctionPointer[id] -> the function pointer
 
 */
-nativeFp = p.cniFunctionsById[row[0]];
+nativeFp = metadata.cniFunctionsById[row[0]];
 
 if (nativeFp == null) {
     hasInterrupt = EX_InvalidInvocation(ec, "CNI method could not be found.");

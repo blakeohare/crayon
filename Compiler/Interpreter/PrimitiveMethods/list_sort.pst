@@ -8,7 +8,7 @@
         value2 = funcArgs[0];
         if (value2.type == Types.FUNCTION) {
             primitiveMethodToCoreLibraryFallback = true;
-            functionId = p.primitiveMethodFunctionIdFallbackLookup[2]; // MAGIC NUMBER: 2 (see metadata initializer)
+            functionId = metadata.primitiveMethodFunctionIdFallbackLookup[2]; // MAGIC NUMBER: 2 (see metadata initializer)
             funcArgs[1] = value; // funcArgs is allocated very big.
             argCount = 2;
         } else {

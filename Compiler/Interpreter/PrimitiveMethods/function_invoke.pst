@@ -15,5 +15,5 @@ if (argCount == 1) {
 funcArgs[0] = value;
 argCount = 2;
 primitiveMethodToCoreLibraryFallback = true;
-functionId = p.primitiveMethodFunctionIdFallbackLookup[3]; // MAGIC NUMBER: 3 (see metadata initializer)
+functionId = metadata.primitiveMethodFunctionIdFallbackLookup[3]; // MAGIC NUMBER: 3 (see metadata initializer)
 output = null; // triggers core library fallback

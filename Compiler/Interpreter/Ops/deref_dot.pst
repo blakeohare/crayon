@@ -30,7 +30,7 @@ switch (value.type) {
         break;
 
     case Types.STRING:
-        if (p.lengthId == nameId) {
+        if (metadata.lengthId == nameId) {
             int2 = Core.ForceParens(((string) value.internalValue)).Size();
             output = buildInteger(int2);
         } else {
@@ -39,7 +39,7 @@ switch (value.type) {
         break;
 
     case Types.LIST:
-        if (p.lengthId == nameId) {
+        if (metadata.lengthId == nameId) {
             if (@ext_boolean("IS_PHP")) {
                 // The harmless force_parens confuses PHP because YOU CAN'T DEREFERENCE A LIST IF IT'S IN PARENTHESIS IN PHP.
                 int2 = ((List<Value>) value.internalValue).Size();
@@ -53,7 +53,7 @@ switch (value.type) {
         break;
 
     case Types.DICTIONARY:
-        if (p.lengthId == nameId) {
+        if (metadata.lengthId == nameId) {
             dictImpl = ((DictImpl) value.internalValue);
             output = buildInteger(dictImpl.size);
         } else {

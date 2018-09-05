@@ -5,4 +5,4 @@
     string arg -> CNI function name
 */
 nativeFp = (Func<Value, VmContext, Array<Value>>) Core.GetFunction(stringArgs[pc]);
-p.cniFunctionsById[row[0]] = nativeFp;
+metadata.cniFunctionsById[row[0]] = nativeFp;

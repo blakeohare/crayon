@@ -1,2 +1,2 @@
 ﻿esfData = generateEsfData(args.Size(), row);
-p.esfData = esfData;
+metadata.esfData = esfData;

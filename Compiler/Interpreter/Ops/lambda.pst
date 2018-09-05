@@ -11,7 +11,7 @@
 
 // Initialize the Lambda if it isn't already.
 // TODO: move this into the metadata initializer
-if (!p.lambdaTable.Contains(pc)) {
+if (!metadata.lambdaTable.Contains(pc)) {
     int1 = 4 + row[4] + 1;
     len = row[int1];
     intArray1 = new Array<int>(len);
@@ -23,7 +23,7 @@ if (!p.lambdaTable.Contains(pc)) {
     for (i = 0; i < len; i += 1) {
         intArray2[i] = row[5 + i];
     }
-    p.lambdaTable[pc] = new FunctionInfo(
+    metadata.lambdaTable[pc] = new FunctionInfo(
         pc, // id
         0, // name ID
         pc, // pc
@@ -44,7 +44,7 @@ if (parentClosure == null) {
     stack.closureVariables = parentClosure;
 }
 
-functionInfo = p.lambdaTable[pc];
+functionInfo = metadata.lambdaTable[pc];
 intArray1 = functionInfo.closureIds;
 len = intArray1.Size();
 

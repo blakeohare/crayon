@@ -44,9 +44,9 @@ public final class TranslationHelper {
 
   public static Random random = new Random();
 
-  private static VmContext programData = null;
-  public static void setProgramData(VmContext pd) { programData = pd; }
-  public static VmContext getProgramData() { return programData; }
+  private static VmContext vmContext = null;
+  public static void setProgramData(VmContext vm) { vmContext = vm; }
+  public static VmContext getProgramData() { return vmContext; }
 
   private static String resourceManifest = null;
   public static void setResourceManifest(String resourceManifest) { TranslationHelper.resourceManifest = resourceManifest; }
@@ -57,15 +57,15 @@ public final class TranslationHelper {
   public static String[] getCmdLineArgs() { return cmdLineArgs; }
 
   public static void startInterpreter(boolean invokeSystemExit) {
-    handleVmResult(Interpreter.v_startVm(programData), invokeSystemExit);
+    handleVmResult(Interpreter.v_startVm(vmContext), invokeSystemExit);
   }
 
   public static InterpreterResult runInterpreter(int executionContextId, boolean invokeSystemExit) {
-    return handleVmResult(Interpreter.v_runInterpreter(programData, executionContextId), invokeSystemExit);
+    return handleVmResult(Interpreter.v_runInterpreter(vmContext, executionContextId), invokeSystemExit);
   }
 
   public static InterpreterResult runInterpreterWithFunctionPointer(Value functionPointer, Value[] args, boolean invokeSystemExit) {
-    return handleVmResult(Interpreter.v_runInterpreterWithFunctionPointer(programData, functionPointer, args), invokeSystemExit);
+    return handleVmResult(Interpreter.v_runInterpreterWithFunctionPointer(vmContext, functionPointer, args), invokeSystemExit);
   }
 
   private static InterpreterResult handleVmResult(InterpreterResult result, boolean invokeSystemExit) {
@@ -79,7 +79,7 @@ public final class TranslationHelper {
       } else {
         loadAssembly(result.loadAssemblyInformation);
       }
-      result = Interpreter.v_runInterpreter(programData, result.executionContextId);
+      result = Interpreter.v_runInterpreter(vmContext, result.executionContextId);
     }
 
     if (result.status == 1 && result.isRootContext) {

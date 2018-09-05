@@ -12,10 +12,10 @@ staticConstructorNotInvoked = true;
 if (classInfo.staticInitializationState < 2) {
     stack.pc = pc;
     // maybeInvokeStaticConstructor is null if the static constructor was not invoked.
-    stackFrame2 = maybeInvokeStaticConstructor(p, ec, stack, classInfo, valueStackSize, Core.IntBuffer16);
+    stackFrame2 = maybeInvokeStaticConstructor(vm, ec, stack, classInfo, valueStackSize, Core.IntBuffer16);
 
     if (Core.IntBuffer16[0] == 1) {
-        return generateException(p, stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
+        return generateException(vm, stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
     }
 
     if (stackFrame2 != null) {

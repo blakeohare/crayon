@@ -18,7 +18,7 @@ bool isClassASubclassOf(VmContext vm, int subClassId, int parentClassId) {
         return true;
     }
 
-    Array<ClassInfo> classTable = vm.classTable;
+    Array<ClassInfo> classTable = vm.metadata.classTable;
     int classIdWalker = subClassId;
     while (classIdWalker != -1) {
         if (classIdWalker == parentClassId) {

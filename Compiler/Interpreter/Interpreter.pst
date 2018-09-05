@@ -57,9 +57,9 @@ InterpreterResult generateException(
     ec.currentValueStackSize = valueStackSize;
     stack.pc = pc;
     ec.localsStackSetToken = stack.localsStackSetToken + 1;
-    MagicNumbers mn = vm.magicNumbers;
+    MagicNumbers mn = vm.metadata.magicNumbers;
     int generateExceptionFunctionId = mn.coreGenerateExceptionFunctionId;
-    FunctionInfo functionInfo = vm.functionTable[generateExceptionFunctionId];
+    FunctionInfo functionInfo = vm.metadata.functionTable[generateExceptionFunctionId];
     pc = functionInfo.pc;
     if (ec.localsStack.Size() <= (functionInfo.localsSize + stack.localsStackOffsetEnd)) {
         increaseLocalsStackCapacity(ec, functionInfo.localsSize);
@@ -104,24 +104,24 @@ ExecutionContext interpreterGetExecutionContext(VmContext vm, int executionConte
 }
 
 InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
-    VmContext p = vm; // This is going to be a long painful rename process.
-    Dictionary<int, ExecutionContext> executionContexts = p.executionContexts;
-    ExecutionContext ec = interpreterGetExecutionContext(p, executionContextId);
+    VmMetadata metadata = vm.metadata;
+    Dictionary<int, ExecutionContext> executionContexts = vm.executionContexts;
+    ExecutionContext ec = interpreterGetExecutionContext(vm, executionContextId);
     if (ec == null) {
         // Stale context ID's may possibly be invoked. Pretend that they run and finish.
-        return interpreterFinished(p, null);
+        return interpreterFinished(vm, null);
     }
 
     ec.executionCounter += 1;
 
     StackFrame stack = ec.stackTop;
-    Array<int> ops = p.ops;
-    Array<Array<int>> args = p.args;
-    Array<string> stringArgs = p.stringArgs;
-    Array<ClassInfo> classTable = p.classTable;
-    Array<FunctionInfo> functionTable = p.functionTable;
-    Array<Value> literalTable = p.literalTable;
-    Array<string> identifiers = p.identifiers;
+    Array<int> ops = vm.ops;
+    Array<Array<int>> args = vm.args;
+    Array<string> stringArgs = vm.stringArgs;
+    Array<ClassInfo> classTable = vm.metadata.classTable;
+    Array<FunctionInfo> functionTable = vm.metadata.functionTable;
+    Array<Value> literalTable = vm.metadata.literalTable;
+    Array<string> identifiers = vm.metadata.identifiers;
     Array<Value> valueStack = ec.valueStack;
     int valueStackSize = ec.currentValueStackSize;
     int valueStackCapacity = valueStack.Size();
@@ -188,13 +188,13 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     Value arg1 = null;
     Value arg2 = null;
     Value arg3 = null;
-    Array<int> globalNameIdToPrimitiveMethodName = p.globalNameIdToPrimitiveMethodName;
-    MagicNumbers magicNumbers = p.magicNumbers;
-    Array<Dictionary<int, int>> integerSwitches = p.integerSwitchLookups;
-    Array<Dictionary<string, int>> stringSwitches = p.stringSwitchLookups;
+    Array<int> globalNameIdToPrimitiveMethodName = vm.metadata.globalNameIdToPrimitiveMethodName;
+    MagicNumbers magicNumbers = vm.metadata.magicNumbers;
+    Array<Dictionary<int, int>> integerSwitches = vm.metadata.integerSwitchLookups;
+    Array<Dictionary<string, int>> stringSwitches = vm.metadata.stringSwitchLookups;
     Dictionary<int, int> integerSwitch = null;
     Dictionary<string, int> stringSwitch = null;
-    Array<Array<int>> esfData = p.esfData;
+    Array<Array<int>> esfData = vm.metadata.esfData;
     Dictionary<int, ClosureValuePointer> closure = null;
     Dictionary<int, ClosureValuePointer> parentClosure = null;
 
@@ -203,7 +203,7 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     int localsStackSetToken = stack.localsStackSetToken;
     int localsStackCapacity = localsStack.Size();
     int localsStackOffset = stack.localsStackOffset;
-    Array<Value> funcArgs = p.funcArgs;
+    Array<Value> funcArgs = vm.funcArgs;
     int pc = stack.pc;
     Func<Value, VmContext, Array<Value>> nativeFp = null;
 
@@ -278,14 +278,14 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
 
             default:
                 Core.EmitComment("THIS SHOULD NEVER HAPPEN");
-                return generateException(p, stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, Core.StringConcatAll("Bad op code: ", Core.IntToString(ops[pc])));
+                return generateException(vm, stack, pc, valueStackSize, ec, CoreExceptionTypes.FATAL, Core.StringConcatAll("Bad op code: ", Core.IntToString(ops[pc])));
         }
 
         if (hasInterrupt) {
             Interrupt interrupt = ec.activeInterrupt;
             ec.activeInterrupt = null;
             if (interrupt.type == InterruptType.EXCEPTION) {
-                return generateException(p, stack, pc, valueStackSize, ec, interrupt.exceptionType, interrupt.exceptionMessage);
+                return generateException(vm, stack, pc, valueStackSize, ec, interrupt.exceptionType, interrupt.exceptionMessage);
             }
             if (interrupt.type == InterruptType.SLEEP) {
                 return new InterpreterResult(InterpreterResultStatus.REINVOKE, "", interrupt.sleepDurationSeconds, 0, false, "");
@@ -380,7 +380,7 @@ List<Token> generateTokenListFromPcs(VmContext vm, List<int> pcs) {
         int length = output.Size();
         while (length > 0) {
             token = output[(length - 1)]; // top token
-            if ((token != null) && tokenHelplerIsFilePathLibrary(vm, token.fileId, p.sourceCode)) {
+            if ((token != null) && tokenHelplerIsFilePathLibrary(vm, token.fileId, vm.sourceCode)) {
                 output.Pop();
                 length -= 1;
             } else {
@@ -402,9 +402,9 @@ bool stackItemIsLibrary(string stackInfo) {
     return cIndex > 0 && cIndex < stackInfo.IndexOf("]");
 }
 
-List<string> tokenHelperConvertPcsToStackTraceStrings(VmContext p, List<int> pcs) {
-    List<Token> tokens = generateTokenListFromPcs(p, pcs);
-    Array<string> files = p.sourceCode;
+List<string> tokenHelperConvertPcsToStackTraceStrings(VmContext vm, List<int> pcs) {
+    List<Token> tokens = generateTokenListFromPcs(vm, pcs);
+    Array<string> files = vm.sourceCode;
     List<string> output = new List<string>();
     for (int i = 0; i < tokens.Size(); i += 1) {
         Token token = tokens[i];
@@ -416,8 +416,8 @@ List<string> tokenHelperConvertPcsToStackTraceStrings(VmContext p, List<int> pcs
             string fileData = files[token.fileId];
             Array<string> lines = fileData.Split("\n");
             string filename = lines[0];
-            string linevalue = lines[(line + 1)];
-            output.Add(Core.StringConcatAll(filename, ", Line: ", Core.IntToString((line + 1)), ", Col: ", Core.IntToString((col + 1))));
+            string linevalue = lines[line + 1];
+            output.Add(Core.StringConcatAll(filename, ", Line: ", Core.IntToString(line + 1), ", Col: ", Core.IntToString(col + 1)));
         }
     }
     return output;
@@ -481,7 +481,7 @@ Array<Value> valueStackIncreaseCapacity(ExecutionContext ec) {
 
 string unrollExceptionOutput(VmContext vm, Value exceptionInstance) {
     ObjectInstance objInstance = ((ObjectInstance) exceptionInstance.internalValue);
-    ClassInfo classInfo = vm.classTable[objInstance.classId];
+    ClassInfo classInfo = vm.metadata.classTable[objInstance.classId];
     List<int> pcs = ((List<int>) objInstance.nativeData[1]);
     string codeFormattedPointer = "";
 

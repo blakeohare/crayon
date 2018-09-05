@@ -2,6 +2,6 @@
     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("argCountMax method", 0, argCount));
 } else {
     functionId = functionPointer1.functionId;
-    functionInfo = p.functionTable[functionId];
+    functionInfo = metadata.functionTable[functionId];
     output = buildInteger(functionInfo.maxArgs);
 }

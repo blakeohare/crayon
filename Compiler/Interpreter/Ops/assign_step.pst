@@ -22,7 +22,12 @@ if (value2.type == Types.INSTANCE) {
             hasInterrupt = EX_InvalidArgument(ec, "Cannot override a method with assignment.");
         }
     } else {
-        hasInterrupt = EX_InvalidAssignment(ec, Core.StringConcatAll("'", classInfo.fullyQualifiedName, "' instances do not have a field called '", p.identifiers[nameId], "'"));
+        hasInterrupt = EX_InvalidAssignment(ec, Core.StringConcatAll(
+            "'",
+            classInfo.fullyQualifiedName,
+            "' instances do not have a field called '",
+            metadata.identifiers[nameId],
+            "'"));
     }
 } else {
     hasInterrupt = EX_InvalidAssignment(ec, "Cannot assign to a field on this type.");

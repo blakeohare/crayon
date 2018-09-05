@@ -1,9 +1,9 @@
 ﻿
-finalizeInitializationImpl(p, p.stringArgs[pc], row[0]);
+finalizeInitializationImpl(vm, vm.stringArgs[pc], row[0]);
 
-identifiers = p.identifiers;
-literalTable = p.literalTable;
-integerSwitches = p.integerSwitchLookups;
-stringSwitches = p.stringSwitchLookups;
-globalNameIdToPrimitiveMethodName = p.globalNameIdToPrimitiveMethodName;
-funcArgs = p.funcArgs;
+identifiers = vm.metadata.identifiers;
+literalTable = vm.metadata.literalTable;
+integerSwitches = vm.metadata.integerSwitchLookups;
+stringSwitches = vm.metadata.stringSwitchLookups;
+globalNameIdToPrimitiveMethodName = vm.metadata.globalNameIdToPrimitiveMethodName;
+funcArgs = vm.funcArgs;

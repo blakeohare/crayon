@@ -11,6 +11,6 @@ if (row[0] == 1) {
     // ESF data is present, jump to the finally block
     intArray1 = esfData[pc];
     pc = intArray1[1] - 1;
-    valueStackSize = stack.valueStackPopSize + p.valueStackDepthByPc[pc];
+    valueStackSize = stack.valueStackPopSize + metadata.valueStackDepthByPc[pc];
     stack.postFinallyBehavior = PostFinallyBehavior.BREAK;
 }

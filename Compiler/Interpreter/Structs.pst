@@ -15,51 +15,56 @@ struct DictImpl {
     int keyType;
 }
 
+struct VmMetadata {
+    Array<string> identifiers;
+    List<string> identifiersBuilder;
+    Dictionary<string, int> invIdentifiers;
+    Array<Value> literalTable;
+    List<Value> literalTableBuilder;
+    Array<Dictionary<int, int>> integerSwitchLookups;
+    List<Dictionary<int, int>> integerSwitchLookupsBuilder;
+    Array<Dictionary<string, int>> stringSwitchLookups;
+    List<Dictionary<string, int>> stringSwitchLookupsBuilder;
+    Array<ClassInfo> classTable;
+    Array<FunctionInfo> functionTable;
+    Dictionary<int, FunctionInfo> lambdaTable;
+    Array<int> globalNameIdToPrimitiveMethodName;
+    Dictionary<int, Func<Value, VmContext, Array<Value>>> cniFunctionsById;
+    int lengthId;
+    Array<int> primitiveMethodFunctionIdFallbackLookup;
+    int userCodeStart;
+    string projectId;
+    Array<Array<int>> esfData;
+    MagicNumbers magicNumbers;
+    Array<int> valueStackDepthByPc;
+    Dictionary<string, int> invFunctionNameLiterals;
+    Dictionary<int, Dictionary<int, int>> classMemberLocalizerBuilder;
+}
+
 struct VmContext {
     Dictionary<int, ExecutionContext> executionContexts;
     int lastExecutionContextId;
     Array<int> ops;
     Array<Array<int>> args;
     Array<string> stringArgs;
-    Array<string> identifiers;
-    List<string> identifiersBuilder;
-    Dictionary<string, int> invIdentifiers;
-    Array<Value> literalTable;
-    List<Value> literalTableBuilder;
+
+    VmMetadata metadata;
+
     Array<List<Token>> tokenData;
-    int userCodeStart;
     Array<string> sourceCode;
     List<string> sourceCodeBuilder;
-    Array<Dictionary<int, int>> integerSwitchLookups;
-    List<Dictionary<int, int>> integerSwitchLookupsBuilder;
-    Array<Dictionary<string, int>> stringSwitchLookups;
-    List<Dictionary<string, int>> stringSwitchLookupsBuilder;
     int instanceCounter;
     bool initializationComplete;
 
-    Array<ClassInfo> classTable;
-    Array<FunctionInfo> functionTable;
-    Dictionary<int, FunctionInfo> lambdaTable;
     List<int> classStaticInitializationStack;
-    Array<int> globalNameIdToPrimitiveMethodName;
     Array<Value> funcArgs;
-    Dictionary<int, Func<Value, VmContext, Array<Value>>> cniFunctionsById;
 
-    int lengthId;
-    Array<int> primitiveMethodFunctionIdFallbackLookup;
     ResourceDB resourceDatabase;
-    string projectId;
-    Array<Array<int>> esfData;
-    MagicNumbers magicNumbers;
-    Array<int> valueStackDepthByPc;
-    Dictionary<string, int> invFunctionNameLiterals;
-    int activeLibraryReferenceId;
 
     List<Value> shutdownHandlers;
 
     VmEnvironment environment;
 
-    Dictionary<int, Dictionary<int, int>> classMemberLocalizerBuilder;
 }
 
 struct VmEnvironment {

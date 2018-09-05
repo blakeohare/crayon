@@ -1,4 +1,4 @@
-﻿int initializeFunction(VmContext p, Array<int> args, int currentPc, string stringArg) {
+﻿int initializeFunction(VmContext vm, Array<int> args, int currentPc, string stringArg) {
     int functionId = args[0];
     int nameId = args[1];
     int minArgCount = args[2];
@@ -9,12 +9,12 @@
     int pcJump = args[7];
     int numPcOffsetsForOptionalArgs = args[8];
 
-    Array<int> pcOffsetsForOptionalArgs = new Array<int>((numPcOffsetsForOptionalArgs + 1));
+    Array<int> pcOffsetsForOptionalArgs = new Array<int>(numPcOffsetsForOptionalArgs + 1);
     for (int i = 0; i < numPcOffsetsForOptionalArgs; i += 1) {
-        pcOffsetsForOptionalArgs[(i + 1)] = args[(9 + i)];
+        pcOffsetsForOptionalArgs[i + 1] = args[9 + i];
     }
 
-    Array<FunctionInfo> functionTable = getFunctionTable(p, functionId);
+    Array<FunctionInfo> functionTable = getFunctionTable(vm, functionId);
     functionTable[functionId] = new FunctionInfo(
         functionId,
         nameId,
@@ -32,17 +32,17 @@
     // TODO: Do this name comparison at compile time and then stick that in the arguments which will also eliminate the
     // need for the obfuscation prefix since the namespace can be checked.
     if (nameId >= 0) {
-        string name = p.identifiers[nameId];
+        string name = vm.metadata.identifiers[nameId];
         if (Core.StringEquals("_LIB_CORE_list_filter", name)) {
-            p.primitiveMethodFunctionIdFallbackLookup[0] = functionId;
+            vm.metadata.primitiveMethodFunctionIdFallbackLookup[0] = functionId;
         } else if (Core.StringEquals("_LIB_CORE_list_map", name)) {
-            p.primitiveMethodFunctionIdFallbackLookup[1] = functionId;
+            vm.metadata.primitiveMethodFunctionIdFallbackLookup[1] = functionId;
         } else if (Core.StringEquals("_LIB_CORE_list_sort_by_key", name)) {
-            p.primitiveMethodFunctionIdFallbackLookup[2] = functionId;
+            vm.metadata.primitiveMethodFunctionIdFallbackLookup[2] = functionId;
         } else if (Core.StringEquals("_LIB_CORE_invoke", name)) {
-            p.primitiveMethodFunctionIdFallbackLookup[3] = functionId;
+            vm.metadata.primitiveMethodFunctionIdFallbackLookup[3] = functionId;
         } else if (Core.StringEquals("_LIB_CORE_generateException", name)) {
-            MagicNumbers mn = p.magicNumbers;
+            MagicNumbers mn = vm.metadata.magicNumbers;
             mn.coreGenerateExceptionFunctionId = functionId;
         }
     }
@@ -50,8 +50,8 @@
     return pcJump;
 }
 
-Array<FunctionInfo> getFunctionTable(VmContext p, int functionId) {
-    Array<FunctionInfo> oldTable = p.functionTable;
+Array<FunctionInfo> getFunctionTable(VmContext vm, int functionId) {
+    Array<FunctionInfo> oldTable = vm.metadata.functionTable;
     int oldLength = oldTable.Size();
 
     if (functionId < oldLength) {
@@ -68,7 +68,7 @@ Array<FunctionInfo> getFunctionTable(VmContext p, int functionId) {
         newTable[i] = oldTable[i];
     }
 
-    p.functionTable = newTable;
+    vm.metadata.functionTable = newTable;
     return newTable;
 }
 
@@ -96,7 +96,7 @@ Array<FunctionInfo> getFunctionTable(VmContext p, int functionId) {
             n + 3 -> function ID
             n + 4 -> not used
 */
-int initializeClass(int pc, VmContext p, Array<int> args, string className) {
+int initializeClass(int pc, VmContext vm, Array<int> args, string className) {
     int i = 0;
     int memberId = 0;
     int globalId = 0;
@@ -132,10 +132,10 @@ int initializeClass(int pc, VmContext p, Array<int> args, string className) {
         null, // Field initialization command by member ID
         null, // Literal starting value by member ID
         null, // Global name ID -> member ID
-        p.classMemberLocalizerBuilder[classId], // Locale-scoped name ID -> member ID
+        vm.metadata.classMemberLocalizerBuilder[classId], // Locale-scoped name ID -> member ID
         className); // fully qualified class name
 
-    Array<ClassInfo> classTable = getClassTable(p, classId);
+    Array<ClassInfo> classTable = getClassTable(vm, classId);
 
     classTable[classId] = classInfo;
 
@@ -186,8 +186,8 @@ int initializeClass(int pc, VmContext p, Array<int> args, string className) {
 
     // and now add the overrides and appends
     for (i = 6; i < args.Size(); i += 5) {
-        memberId = args[(i + 1)];
-        globalId = args[(i + 2)];
+        memberId = args[i + 1];
+        globalId = args[i + 2];
         while (memberId >= functionIds.Size()) {
             functionIds.Add(-1);
             fieldInitializationCommand.Add(-1);
@@ -195,15 +195,15 @@ int initializeClass(int pc, VmContext p, Array<int> args, string className) {
         }
         globalNameIdToMemberId[globalId] = memberId; // potentially override previous entries
         if (args[i] == 0) { // field
-            fieldInitializationCommand[memberId] = args[(i + 3)];
-            t = args[(i + 4)]; // literal ID or -1 for NULL
+            fieldInitializationCommand[memberId] = args[i + 3];
+            t = args[i + 4]; // literal ID or -1 for NULL
             if (t == -1) {
                 fieldInitializationLiteral[memberId] = VALUE_NULL;
             } else {
-                fieldInitializationLiteral[memberId] = p.literalTable[t];
+                fieldInitializationLiteral[memberId] = vm.metadata.literalTable[t];
             }
         } else { // method
-            functionId = args[(i + 3)];
+            functionId = args[i + 3];
             functionIds[memberId] = functionId;
         }
     }
@@ -215,15 +215,15 @@ int initializeClass(int pc, VmContext p, Array<int> args, string className) {
     classInfo.globalIdToMemberId = globalNameIdToMemberId;
 
     if (Core.StringEquals("Core.Exception", className)) {
-        MagicNumbers mn = p.magicNumbers;
+        MagicNumbers mn = vm.metadata.magicNumbers;
         mn.coreExceptionClassId = classId;
     }
 
     return 0;
 }
 
-Array<ClassInfo> getClassTable(VmContext p, int classId) {
-    Array<ClassInfo> oldTable = p.classTable;
+Array<ClassInfo> getClassTable(VmContext vm, int classId) {
+    Array<ClassInfo> oldTable = vm.metadata.classTable;
     int oldLength = oldTable.Size();
     if (classId < oldLength) {
         return oldTable;
@@ -238,7 +238,7 @@ Array<ClassInfo> getClassTable(VmContext p, int classId) {
         newTable[i] = oldTable[i];
     }
 
-    p.classTable = newTable;
+    vm.metadata.classTable = newTable;
     return newTable;
 }
 
@@ -297,7 +297,7 @@ int increaseLocalsStackCapacity(ExecutionContext ec, int newScopeSize) {
 }
 
 StackFrame maybeInvokeStaticConstructor(
-        VmContext p,
+        VmContext vm,
         ExecutionContext ec,
         StackFrame stack,
         ClassInfo classInfo,
@@ -308,17 +308,17 @@ StackFrame maybeInvokeStaticConstructor(
     int classId = classInfo.id;
     if (classInfo.staticInitializationState == 1) {
         // check to make sure it's the last item on the static init stack
-        List<int> classIdsBeingInitialized = p.classStaticInitializationStack;
-        if (classIdsBeingInitialized[(classIdsBeingInitialized.Size() - 1)] != classId) {
+        List<int> classIdsBeingInitialized = vm.classStaticInitializationStack;
+        if (classIdsBeingInitialized[classIdsBeingInitialized.Size() - 1] != classId) {
             Core.IntBuffer16[0] = 1;
         }
         return null;
     }
 
     classInfo.staticInitializationState = 1;
-    p.classStaticInitializationStack.Add(classId);
+    vm.classStaticInitializationStack.Add(classId);
 
-    FunctionInfo functionInfo = p.functionTable[classInfo.staticConstructorFunctionId];
+    FunctionInfo functionInfo = vm.metadata.functionTable[classInfo.staticConstructorFunctionId];
 
     stack.pc -= 1; // when static constructor completes, return to this same op.
 
@@ -338,7 +338,7 @@ StackFrame maybeInvokeStaticConstructor(
         functionInfo.pc,
         ec.localsStackSetToken,
         currentFrameLocalsEnd,
-        (currentFrameLocalsEnd + newFrameLocalsSize),
+        currentFrameLocalsEnd + newFrameLocalsSize,
         stack,
         false, // return value used?
         null, // value of 'this' keyword.
@@ -400,7 +400,7 @@ Array<Array<int>> generateEsfData(int byteCodeLength, Array<int> esfArgs) {
 }
 
 int markClassAsInitialized(VmContext vm, StackFrame stack, int classId) {
-    ClassInfo classInfo = vm.classTable[stack.markClassAsInitialized];
+    ClassInfo classInfo = vm.metadata.classTable[stack.markClassAsInitialized];
     classInfo.staticInitializationState = 2; // mark class as completely ready to use.
     vm.classStaticInitializationStack.Pop();
     return 0;
@@ -409,56 +409,56 @@ int markClassAsInitialized(VmContext vm, StackFrame stack, int classId) {
 int addLiteralImpl(VmContext vm, Array<int> row, string stringArg) {
     int type = row[0];
     if (type == Types.NULL) {
-        vm.literalTableBuilder.Add(VALUE_NULL);
+        vm.metadata.literalTableBuilder.Add(VALUE_NULL);
     } else if (type == Types.BOOLEAN) {
-        vm.literalTableBuilder.Add(buildBoolean(row[1] == 1));
+        vm.metadata.literalTableBuilder.Add(buildBoolean(row[1] == 1));
     } else if (type == Types.INTEGER) {
-        vm.literalTableBuilder.Add(buildInteger(row[1]));
+        vm.metadata.literalTableBuilder.Add(buildInteger(row[1]));
     } else if (type == Types.FLOAT) {
-        vm.literalTableBuilder.Add(buildFloat(Core.ParseFloatUnsafe(stringArg)));
+        vm.metadata.literalTableBuilder.Add(buildFloat(Core.ParseFloatUnsafe(stringArg)));
     } else if (type == Types.STRING) {
-        vm.literalTableBuilder.Add(buildCommonString(stringArg));
+        vm.metadata.literalTableBuilder.Add(buildCommonString(stringArg));
     } else if (type == Types.FUNCTION) {
-        int index = vm.literalTableBuilder.Size();
-        vm.literalTableBuilder.Add(buildCommonString(stringArg));
-        vm.invFunctionNameLiterals[stringArg] = index;
+        int index = vm.metadata.literalTableBuilder.Size();
+        vm.metadata.literalTableBuilder.Add(buildCommonString(stringArg));
+        vm.metadata.invFunctionNameLiterals[stringArg] = index;
     } else if (type == Types.CLASS) {
         ClassValue cv = new ClassValue(
             // TODO: going to need to update this for interfaces. Negative numbers too hacky?
             false, // is interface?
             row[1]); // class ID
-        vm.literalTableBuilder.Add(new Value(Types.CLASS, cv));
+        vm.metadata.literalTableBuilder.Add(new Value(Types.CLASS, cv));
     }
 
     return 0;
 }
 
 int addNameImpl(VmContext vm, string nameValue) {
-    int index = vm.identifiersBuilder.Size(); // name ID (sequentially allocated so it happens to be the length of the list at the time of declaration)
-    vm.invIdentifiers[nameValue] = index;
-    vm.identifiersBuilder.Add(nameValue);
+    int index = vm.metadata.identifiersBuilder.Size(); // name ID (sequentially allocated so it happens to be the length of the list at the time of declaration)
+    vm.metadata.invIdentifiers[nameValue] = index;
+    vm.metadata.identifiersBuilder.Add(nameValue);
 
     if (Core.StringEquals("length", nameValue)) {
-        vm.lengthId = index;
+        vm.metadata.lengthId = index;
     }
 
     return 0;
 }
 
 int finalizeInitializationImpl(VmContext vm, string projectId, int localeCount) {
-    vm.magicNumbers.totalLocaleCount = localeCount;
-    vm.identifiers = Core.ListToArray(vm.identifiersBuilder);
-    vm.literalTable = Core.ListToArray(vm.literalTableBuilder);
-    vm.integerSwitchLookups = Core.ListToArray(vm.integerSwitchLookupsBuilder);
-    vm.stringSwitchLookups = Core.ListToArray(vm.stringSwitchLookupsBuilder);
+    vm.metadata.magicNumbers.totalLocaleCount = localeCount;
+    vm.metadata.identifiers = Core.ListToArray(vm.metadata.identifiersBuilder);
+    vm.metadata.literalTable = Core.ListToArray(vm.metadata.literalTableBuilder);
+    vm.metadata.integerSwitchLookups = Core.ListToArray(vm.metadata.integerSwitchLookupsBuilder);
+    vm.metadata.stringSwitchLookups = Core.ListToArray(vm.metadata.stringSwitchLookupsBuilder);
     vm.sourceCode = Core.ListToArray(vm.sourceCodeBuilder);
-    vm.globalNameIdToPrimitiveMethodName = primitiveMethodsInitializeLookup(vm.invIdentifiers);
-    vm.funcArgs = new Array<Value>(vm.identifiers.Size()); // WAY over-allocated but that's okay for now, I guess.
-    vm.projectId = projectId;
-    vm.identifiersBuilder = null;
-    vm.literalTableBuilder = null;
-    vm.integerSwitchLookupsBuilder = null;
-    vm.stringSwitchLookupsBuilder = null;
+    vm.metadata.globalNameIdToPrimitiveMethodName = primitiveMethodsInitializeLookup(vm.metadata.invIdentifiers);
+    vm.funcArgs = new Array<Value>(vm.metadata.identifiers.Size()); // WAY over-allocated but that's okay for now, I guess.
+    vm.metadata.projectId = projectId;
+    vm.metadata.identifiersBuilder = null;
+    vm.metadata.literalTableBuilder = null;
+    vm.metadata.integerSwitchLookupsBuilder = null;
+    vm.metadata.stringSwitchLookupsBuilder = null;
     vm.sourceCodeBuilder = null;
     vm.initializationComplete = true;
 
@@ -470,13 +470,13 @@ int buildSwitchIntImpl(VmContext vm, Array<int> row) {
     for (int i = 0; i < row.Size(); i += 2) {
         integerSwitchLookup[row[i]] = row[i + 1];
     }
-    vm.integerSwitchLookupsBuilder.Add(integerSwitchLookup);
+    vm.metadata.integerSwitchLookupsBuilder.Add(integerSwitchLookup);
 
     return 0;
 }
 
 int buildSwitchStringImpl(VmContext vm, Array<int> row, string caseValue) {
-    List<Dictionary<string, int>> allStringSwitchLookups = vm.stringSwitchLookupsBuilder;
+    List<Dictionary<string, int>> allStringSwitchLookups = vm.metadata.stringSwitchLookupsBuilder;
     int id = row[0];
     while (allStringSwitchLookups.Size() <= id) {
         allStringSwitchLookups.Add(new Dictionary<string, int>());
@@ -501,7 +501,7 @@ int defOriginalCodeImpl(VmContext vm, Array<int> row, string fileContents) {
 
 int tokenDataImpl(VmContext vm, Array<int> row) {
     Array<List<Token>> tokensByPc = vm.tokenData;
-    int pc = row[0] + vm.userCodeStart; // PC
+    int pc = row[0] + vm.metadata.userCodeStart; // PC
     int line = row[1]; // Line
     int col = row[2]; // Col
     int file = row[3]; // File ID
@@ -541,7 +541,7 @@ int valueStackDepthImpl(VmContext vm, Array<int> row) {
         valueStackDepthByPc[pc] = depth;
     }
 
-    vm.valueStackDepthByPc = valueStackDepthByPc;
+    vm.metadata.valueStackDepthByPc = valueStackDepthByPc;
 
     return 0;
 }
@@ -562,7 +562,7 @@ int initLocTable(VmContext vm, Array<int> row) {
     int classId = row[0];
     int memberCount = row[1];
     int nameId = 0;
-    int totalLocales = vm.magicNumbers.totalLocaleCount;
+    int totalLocales = vm.metadata.magicNumbers.totalLocaleCount;
     Dictionary<int, int> lookup = new Dictionary<int, int>();
     for (int i = 2; i < row.Size(); i += memberCount) {
         int localeId = row[i];
@@ -575,6 +575,6 @@ int initLocTable(VmContext vm, Array<int> row) {
             }
         }
     }
-    vm.classMemberLocalizerBuilder[classId] = lookup;
+    vm.metadata.classMemberLocalizerBuilder[classId] = lookup;
     return 0;
 }
