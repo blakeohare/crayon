@@ -11,9 +11,6 @@ namespace Interpreter.Vm
 
         public static VmContext ProgramData { get; set; }
         public static VmGlobals Globals { get { return ProgramData.globals; } }
-        public static int[] IntBuffer16 { get; private set; }
-        public static double[] FloatBuffer16 { get; private set; }
-        public static string[] StringBuffer16 { get; private set; }
         public static string[] CommandLineArgs { get; set; }
         public static string ResourceManifest { get; set; }
         public static string ImageSheetManifest { get; set; }
@@ -24,14 +21,6 @@ namespace Interpreter.Vm
             Environment.OSVersion.Platform == PlatformID.Win32S ||
             Environment.OSVersion.Platform == PlatformID.Win32Windows ||
             Environment.OSVersion.Platform == PlatformID.WinCE;
-
-        static TranslationHelper()
-        {
-            IntBuffer16 = new int[16];
-            FloatBuffer16 = new double[16];
-            StringBuffer16 = new string[16];
-            CommandLineArgs = new string[0];
-        }
 
         public static InterpreterResult StartInterpreter()
         {
@@ -95,109 +84,10 @@ namespace Interpreter.Vm
             }
         }
 
-        public static List<T> ListConcat<T>(List<T> a, List<T> b)
-        {
-            List<T> output = new List<T>(a.Count + b.Count);
-            output.AddRange(a);
-            output.AddRange(b);
-            return output;
-        }
-
-        public static List<Value> MultiplyList(List<Value> items, int times)
-        {
-            List<Value> output = new List<Value>(items.Count * times);
-            while (times-- > 0) output.AddRange(items);
-            return output;
-        }
-
-        public static List<T> NewListOfSize<T>(int size)
-        {
-            List<T> output = new List<T>(size);
-            T item = default(T);
-            while (size-- > 0) output.Add(item);
-            return output;
-        }
-
-        private static readonly string[] SPLIT_SEP = new string[1];
-        public static string[] StringSplit(string value, string sep)
-        {
-            if (sep.Length == 1) return value.Split(sep[0]);
-            if (sep.Length == 0) return value.ToCharArray().Select<char, string>(c => "" + c).ToArray();
-            SPLIT_SEP[0] = sep;
-            return value.Split(SPLIT_SEP, StringSplitOptions.None);
-        }
-
-        public static string StringReverse(string value)
-        {
-            if (value.Length < 2) return value;
-            char[] chars = value.ToCharArray();
-            return new string(chars.Reverse().ToArray());
-        }
-
-        public static bool SubstringIsEqualTo(string haystack, int index, string needle)
-        {
-            int needleLength = needle.Length;
-            if (index + needleLength > haystack.Length) return false;
-            if (needleLength == 0) return true;
-            if (haystack[index] != needle[0]) return false;
-            if (needleLength == 1) return true;
-            for (int i = 1; i < needleLength; ++i)
-            {
-                if (needle[i] != haystack[index + i]) return false;
-            }
-            return true;
-        }
-
         public static bool AlwaysTrue() { return true; }
         public static bool AlwaysFalse() { return false; }
 
-        // TODO: use a model like parse float to avoid double parsing.
-        public static bool IsValidInteger(string value)
-        {
-            if (value.Length == 0) return false;
-            char c = value[0];
-            if (value.Length == 1)
-            {
-                return c >= '0' && c <= '9';
-            }
-            int length = value.Length;
-            for (int i = c == '-' ? 1 : 0; i < length; ++i)
-            {
-                c = value[i];
-                if (c < '0' || c > '9') return false;
-            }
-            return true;
-        }
-
-        public static void ParseFloat(string strValue, double[] output)
-        {
-            double num = 0.0;
-            output[0] = double.TryParse(strValue, out num) ? 1 : -1;
-            output[1] = num;
-        }
-
-        public static string FloatToString(double value)
-        {
-            string output = value.ToString();
-            if (output[0] == '.') output = "0" + output;
-            if (!output.Contains('.')) output += ".0";
-            return output;
-        }
-
         public static LibraryRegistry LibraryRegistry { get; set; }
-
-        private static readonly DateTime UNIX_EPOCH = new DateTime(1970, 1, 1);
-        public static double CurrentTime
-        {
-            get { return DateTime.UtcNow.Subtract(UNIX_EPOCH).TotalSeconds; }
-        }
-
-        public static string Base64ToString(string b64Value)
-        {
-            byte[] utf8Bytes = System.Convert.FromBase64String(b64Value);
-            string value = System.Text.Encoding.UTF8.GetString(utf8Bytes);
-            return value;
-        }
 
         private static List<Func<string, object>> functionPointerResolvers = new List<Func<string, object>>();
 

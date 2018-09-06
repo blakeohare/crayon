@@ -119,7 +119,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateBase64ToString(TranspilerContext sb, Expression base64String)
         {
-            sb.Append("TranslationHelper.Base64ToString(");
+            sb.Append("PST_Base64ToString(");
             this.TranslateExpression(sb, base64String);
             sb.Append(')');
         }
@@ -159,7 +159,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateCurrentTimeSeconds(TranspilerContext sb)
         {
-            sb.Append("TranslationHelper.CurrentTime");
+            sb.Append("PST_CurrentTime");
         }
 
         public override void TranslateConstructorInvocation(TranspilerContext sb, ConstructorInvocation constructorInvocation)
@@ -248,7 +248,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateFloatBuffer16(TranspilerContext sb)
         {
-            sb.Append("TranslationHelper.FloatBuffer16");
+            sb.Append("PST_FloatBuffer16");
         }
 
         public override void TranslateFloatDivision(TranspilerContext sb, Expression floatNumerator, Expression floatDenominator)
@@ -268,7 +268,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateFloatToString(TranspilerContext sb, Expression floatExpr)
         {
-            sb.Append("TranslationHelper.FloatToString(");
+            sb.Append("PST_FloatToString(");
             this.TranslateExpression(sb, floatExpr);
             sb.Append(')');
         }
@@ -282,7 +282,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateIntBuffer16(TranspilerContext sb)
         {
-            sb.Append("TranslationHelper.IntBuffer16");
+            sb.Append("PST_IntBuffer16");
         }
 
         public override void TranslateIntegerDivision(TranspilerContext sb, Expression integerNumerator, Expression integerDenominator)
@@ -309,7 +309,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateIsValidInteger(TranspilerContext sb, Expression stringValue)
         {
-            sb.Append("TranslationHelper.IsValidInteger(");
+            sb.Append("PST_IsValidInteger(");
             this.TranslateExpression(sb, stringValue);
             sb.Append(')');
         }
@@ -324,7 +324,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateListConcat(TranspilerContext sb, Expression list, Expression items)
         {
-            sb.Append("TranslationHelper.ListConcat(");
+            sb.Append("PST_ListConcat(");
             this.TranslateExpression(sb, list);
             sb.Append(", ");
             this.TranslateExpression(sb, items);
@@ -491,7 +491,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateMultiplyList(TranspilerContext sb, Expression list, Expression n)
         {
-            sb.Append("TranslationHelper.MultiplyList(");
+            sb.Append("PST_MultiplyList(");
             this.TranslateExpression(sb, list);
             sb.Append(", ");
             this.TranslateExpression(sb, n);
@@ -555,7 +555,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringBuffer16(TranspilerContext sb)
         {
-            sb.Append("TranslationHelper.StringBuffer16");
+            sb.Append("PST_StringBuffer16");
         }
 
         public override void TranslateStringCharAt(TranspilerContext sb, Expression str, Expression index)
@@ -668,14 +668,14 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringReverse(TranspilerContext sb, Expression str)
         {
-            sb.Append("TranslationHelper.StringReverse(");
+            sb.Append("PST_StringReverse(");
             this.TranslateExpression(sb, str);
             sb.Append(')');
         }
 
         public override void TranslateStringSplit(TranspilerContext sb, Expression haystack, Expression needle)
         {
-            sb.Append("TranslationHelper.StringSplit(");
+            sb.Append("PST_StringSplit(");
             this.TranslateExpression(sb, haystack);
             sb.Append(", ");
             this.TranslateExpression(sb, needle);
@@ -702,7 +702,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringSubstringIsEqualTo(TranspilerContext sb, Expression haystack, Expression startIndex, Expression needle)
         {
-            sb.Append("TranslationHelper.SubstringIsEqualTo(");
+            sb.Append("PST_SubstringIsEqualTo(");
             this.TranslateExpression(sb, haystack);
             sb.Append(", ");
             this.TranslateExpression(sb, startIndex);
@@ -757,7 +757,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateTryParseFloat(TranspilerContext sb, Expression stringValue, Expression floatOutList)
         {
-            sb.Append("TranslationHelper.ParseFloat(");
+            sb.Append("PST_ParseFloat(");
             this.TranslateExpression(sb, stringValue);
             sb.Append(", ");
             this.TranslateExpression(sb, floatOutList);
