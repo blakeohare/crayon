@@ -16,11 +16,11 @@ namespace Interpreter.Libraries.Json
 			public int Value;
 		}
 		
-		public static Value ParseJsonIntoValue(string rawValue)
+		public static Value ParseJsonIntoValue(VmGlobals globals, string rawValue)
 		{
 			try
 			{
-				return ParseJsonIntoValue(rawValue.ToCharArray(), rawValue.Length, new Index() { Value = 0 });
+				return ParseJsonIntoValue(globals, rawValue.ToCharArray(), rawValue.Length, new Index() { Value = 0 });
 			}
 			catch (JsonParserException)
 			{
@@ -28,46 +28,46 @@ namespace Interpreter.Libraries.Json
 			}
 		}
 
-		private static Value ParseJsonIntoValue(char[] rawValue, int length, Index i)
+		private static Value ParseJsonIntoValue(VmGlobals globals, char[] rawValue, int length, Index i)
 		{
-			Value output = ParseJsonThing(rawValue, length, i);
+			Value output = ParseJsonThing(globals, rawValue, length, i);
 			SkipWhitespace(rawValue, length, i);
 			if (i.Value < length) throw new JsonParserException();
 			return output;
 		}
 
-		private static Value ParseJsonThing(char[] rawValue, int length, Index i)
+		private static Value ParseJsonThing(VmGlobals globals, char[] rawValue, int length, Index i)
 		{
 			SkipWhitespace(rawValue, length, i);
 			Value value = null;
 			char c = rawValue[i.Value];
 			if (c == '{')
 			{
-				value = ParseJsonDictionary(rawValue, length, i);
+				value = ParseJsonDictionary(globals, rawValue, length, i);
 			}
 			else if (c == '[')
 			{
-				value = ParseJsonList(rawValue, length, i);
+				value = ParseJsonList(globals, rawValue, length, i);
 			}
 			else if (c == '"')
 			{
-				value = ParseJsonString(rawValue, length, i);
+				value = ParseJsonString(globals, rawValue, length, i);
 			}
 			else if (c == '.' || c == '-' || (c >= '0' && c <= '9'))
 			{
-				value = ParseJsonNumber(rawValue, length, i);
+				value = ParseJsonNumber(globals, rawValue, length, i);
 			}
 			else if (PopIfPresent(rawValue, length, i, "true"))
 			{
-                value = Globals.v_VALUE_TRUE;
+                value = globals.boolTrue;
 			}
 			else if (PopIfPresent(rawValue, length, i, "false"))
 			{
-                value = Globals.v_VALUE_FALSE;
+                value = globals.boolFalse;
 			}
 			else if (PopIfPresent(rawValue, length, i, "null"))
 			{
-                value = Globals.v_VALUE_NULL;
+                value = globals.valueNull;
 			}
 			else
 			{
@@ -76,7 +76,7 @@ namespace Interpreter.Libraries.Json
 			return value;
 		}
 
-		private static Value ParseJsonNumber(char[] rawValue, int length, Index i)
+		private static Value ParseJsonNumber(VmGlobals globals, char[] rawValue, int length, Index i)
 		{
             int sign = 1;
             char c = rawValue[i.Value];
@@ -107,7 +107,7 @@ namespace Interpreter.Libraries.Json
 				double value;
 				if (double.TryParse(stringValue, out value))
 				{
-					return CrayonWrapper.v_buildFloat(value * sign);
+					return CrayonWrapper.v_buildFloat(globals, value * sign);
 				}
 			}
 			else
@@ -115,14 +115,14 @@ namespace Interpreter.Libraries.Json
 				int value;
 				if (int.TryParse(stringValue, out value))
 				{
-					return CrayonWrapper.v_buildInteger(value * sign);
+					return CrayonWrapper.v_buildInteger(globals, value * sign);
 				}
 			}
 
 			throw new JsonParserException();
 		}
 
-		private static Value ParseJsonString(char[] rawValue, int length, Index i)
+		private static Value ParseJsonString(VmGlobals globals, char[] rawValue, int length, Index i)
 		{
 			i.Value++; // opening quote
 			StringBuilder sb = new StringBuilder();
@@ -148,10 +148,10 @@ namespace Interpreter.Libraries.Json
 
 			if (i.Value >= length) throw new JsonParserException();
 			i.Value++; // closing quote
-			return CrayonWrapper.v_buildString(sb.ToString());
+			return CrayonWrapper.v_buildString(globals, sb.ToString());
 		}
 
-		private static Value ParseJsonList(char[] rawValue, int length, Index i)
+		private static Value ParseJsonList(VmGlobals globals, char[] rawValue, int length, Index i)
 		{
 			i.Value++; // '['
 			SkipWhitespace(rawValue, length, i);
@@ -164,7 +164,7 @@ namespace Interpreter.Libraries.Json
 					SkipWhitespace(rawValue, length, i);
 				}
 
-				Value item = ParseJsonThing(rawValue, length, i);
+				Value item = ParseJsonThing(globals, rawValue, length, i);
 				SkipWhitespace(rawValue, length, i);
 				items.Add(item);
 			}
@@ -174,9 +174,9 @@ namespace Interpreter.Libraries.Json
 			return CrayonWrapper.v_buildList(items);
 		}
 
-		private static Value ParseJsonDictionary(char[] rawValue, int length, Index i)
+		private static Value ParseJsonDictionary(VmGlobals globals, char[] rawValue, int length, Index i)
 		{
-            int stringTypeId = Globals.v_VALUE_EMPTY_STRING.type;
+            int stringTypeId = globals.stringEmpty.type;
 
 			i.Value++; // '{'
 			SkipWhitespace(rawValue, length, i);
@@ -190,12 +190,12 @@ namespace Interpreter.Libraries.Json
 					SkipWhitespace(rawValue, length, i);
 				}
 
-				Value key = ParseJsonThing(rawValue, length, i);
+				Value key = ParseJsonThing(globals, rawValue, length, i);
 				if (key.type != stringTypeId) throw new JsonParserException();
 				SkipWhitespace(rawValue, length, i);
 				PopExpected(rawValue, length, i, ":");
 				SkipWhitespace(rawValue, length, i);
-				Value value = ParseJsonThing(rawValue, length, i);
+				Value value = ParseJsonThing(globals, rawValue, length, i);
 				SkipWhitespace(rawValue, length, i);
                 keys.Add((string)key.internalValue);
 				values.Add(value);
