@@ -63,10 +63,6 @@ namespace Pastel
                         output.Add(this.ParseConstDefinition(tokens));
                         break;
 
-                    case "global":
-                        output.Add(this.ParseGlobalDefinition(tokens));
-                        break;
-
                     case "struct":
                         output.Add(this.ParseStructDefinition(tokens));
                         break;
@@ -97,14 +93,6 @@ namespace Pastel
             Token constToken = tokens.PopExpected("const");
             VariableDeclaration assignment = this.ParseAssignmentWithNewFirstToken(constToken, tokens);
             assignment.IsConstant = true;
-            return assignment;
-        }
-
-        public VariableDeclaration ParseGlobalDefinition(TokenStream tokens)
-        {
-            Token globalToken = tokens.PopExpected("global");
-            VariableDeclaration assignment = this.ParseAssignmentWithNewFirstToken(globalToken, tokens);
-            assignment.IsGlobal = true;
             return assignment;
         }
 

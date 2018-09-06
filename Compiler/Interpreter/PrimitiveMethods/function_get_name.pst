@@ -1,2 +1,2 @@
 ﻿functionInfo = metadata.functionTable[functionPointer1.functionId];
-output = buildString(functionInfo.name);
+output = buildString(globals, functionInfo.name);

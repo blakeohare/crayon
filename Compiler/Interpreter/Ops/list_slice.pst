@@ -1,6 +1,6 @@
 ﻿
 ec.currentValueStackSize = valueStackSize;
-value = performListSlice(ec, row);
+value = performListSlice(globals, ec, row);
 valueStackSize = ec.currentValueStackSize;
 valueStack[valueStackSize - 1] = value;
 hasInterrupt = ec.activeInterrupt != null;

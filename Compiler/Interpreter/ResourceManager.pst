@@ -1,4 +1,4 @@
-﻿ResourceDB resource_manager_initialize(string manifest) {
+﻿ResourceDB resourceManagerInitialize(VmGlobals globals, string manifest) {
 
     Dictionary<string, List<string>> filesPerDirectoryBuilder = new Dictionary<string, List<string>>();
     Dictionary<string, ResourceInfo> fileInfo = new Dictionary<string, ResourceInfo>();
@@ -45,12 +45,12 @@
 
             resource_manager_populate_directory_lookup(filesPerDirectoryBuilder, userPath);
 
-            dataList.Add(buildString(userPath)); // file path
-            dataList.Add(buildInteger(intType)); // file type
+            dataList.Add(buildString(globals, userPath)); // file path
+            dataList.Add(buildInteger(globals, intType)); // file type
             if (internalPath != null) {
-                dataList.Add(buildString(internalPath));
+                dataList.Add(buildString(globals, internalPath));
             } else {
-                dataList.Add(VALUE_NULL);
+                dataList.Add(globals.valueNull);
             }
         }
         i += 1;
@@ -112,12 +112,12 @@ Value resource_manager_getResourceOfType(VmContext vm, string userPath, string t
         List<Value> output = new List<Value>();
         ResourceInfo file = lookup[userPath];
         if (Core.StringEquals(file.type, type)) {
-            output.Add(VALUE_TRUE);
-            output.Add(buildString(file.internalPath));
+            output.Add(vm.globals.boolTrue);
+            output.Add(buildString(vm.globals, file.internalPath));
         } else {
-            output.Add(VALUE_FALSE);
+            output.Add(vm.globals.boolFalse);
         }
         return new Value(Types.LIST, output);
     }
-    return VALUE_NULL;
+    return vm.globals.valueNull;
 }

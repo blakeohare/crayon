@@ -116,7 +116,7 @@ int initializeClass(int pc, VmContext vm, Array<int> args, string className) {
 
     Array<Value> staticFields = new Array<Value>(staticFieldCount);
     for (i = 0; i < staticFieldCount; i += 1) {
-        staticFields[i] = VALUE_NULL;
+        staticFields[i] = vm.globals.valueNull;
     }
 
     ClassInfo classInfo = new ClassInfo(
@@ -198,7 +198,7 @@ int initializeClass(int pc, VmContext vm, Array<int> args, string className) {
             fieldInitializationCommand[memberId] = args[i + 3];
             t = args[i + 4]; // literal ID or -1 for NULL
             if (t == -1) {
-                fieldInitializationLiteral[memberId] = VALUE_NULL;
+                fieldInitializationLiteral[memberId] = vm.globals.valueNull;
             } else {
                 fieldInitializationLiteral[memberId] = vm.metadata.literalTable[t];
             }
@@ -407,20 +407,21 @@ int markClassAsInitialized(VmContext vm, StackFrame stack, int classId) {
 }
 
 int addLiteralImpl(VmContext vm, Array<int> row, string stringArg) {
+    VmGlobals g = vm.globals;
     int type = row[0];
     if (type == Types.NULL) {
-        vm.metadata.literalTableBuilder.Add(VALUE_NULL);
+        vm.metadata.literalTableBuilder.Add(g.valueNull);
     } else if (type == Types.BOOLEAN) {
-        vm.metadata.literalTableBuilder.Add(buildBoolean(row[1] == 1));
+        vm.metadata.literalTableBuilder.Add(buildBoolean(g, row[1] == 1));
     } else if (type == Types.INTEGER) {
-        vm.metadata.literalTableBuilder.Add(buildInteger(row[1]));
+        vm.metadata.literalTableBuilder.Add(buildInteger(g, row[1]));
     } else if (type == Types.FLOAT) {
-        vm.metadata.literalTableBuilder.Add(buildFloat(Core.ParseFloatUnsafe(stringArg)));
+        vm.metadata.literalTableBuilder.Add(buildFloat(g, Core.ParseFloatUnsafe(stringArg)));
     } else if (type == Types.STRING) {
-        vm.metadata.literalTableBuilder.Add(buildCommonString(stringArg));
+        vm.metadata.literalTableBuilder.Add(buildCommonString(g, stringArg));
     } else if (type == Types.FUNCTION) {
         int index = vm.metadata.literalTableBuilder.Size();
-        vm.metadata.literalTableBuilder.Add(buildCommonString(stringArg));
+        vm.metadata.literalTableBuilder.Add(buildCommonString(g, stringArg));
         vm.metadata.invFunctionNameLiterals[stringArg] = index;
     } else if (type == Types.CLASS) {
         ClassValue cv = new ClassValue(

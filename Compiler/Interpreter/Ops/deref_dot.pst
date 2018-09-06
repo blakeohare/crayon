@@ -31,7 +31,7 @@ switch (value.type) {
 
     case Types.STRING:
         if (metadata.lengthId == nameId) {
-            output = buildInteger(Core.ForceParens(((string) value.internalValue)).Size());
+            output = buildInteger(globals, Core.ForceParens(((string) value.internalValue)).Size());
         } else {
             output = null;
         }
@@ -39,7 +39,7 @@ switch (value.type) {
 
     case Types.LIST:
         if (metadata.lengthId == nameId) {
-            output = buildInteger(Core.ForceParens((List<Value>) value.internalValue).Size());
+            output = buildInteger(globals, Core.ForceParens((List<Value>) value.internalValue).Size());
         } else {
             output = null;
         }
@@ -47,7 +47,7 @@ switch (value.type) {
 
     case Types.DICTIONARY:
         if (metadata.lengthId == nameId) {
-            output = buildInteger(Core.ForceParens((DictImpl) value.internalValue).size);
+            output = buildInteger(globals, Core.ForceParens((DictImpl) value.internalValue).size);
         } else {
             output = null;
         }

@@ -181,12 +181,9 @@ namespace Pastel
                         break;
 
                     case CompilationEntityType.CONSTANT:
-                    case CompilationEntityType.GLOBAL:
                         VariableDeclaration assignment = (VariableDeclaration)entity;
                         string targetName = assignment.VariableNameToken.Value;
-                        Dictionary<string, VariableDeclaration> lookup = entity.EntityType == CompilationEntityType.CONSTANT
-                            ? this.ConstantDefinitions
-                            : this.Globals;
+                        Dictionary<string, VariableDeclaration> lookup = this.ConstantDefinitions;
                         if (lookup.ContainsKey(targetName))
                         {
                             throw new ParserException(

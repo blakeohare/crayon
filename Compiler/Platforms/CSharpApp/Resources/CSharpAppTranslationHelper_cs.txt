@@ -31,7 +31,7 @@ namespace Interpreter
                 status = (int)imageLoaderNativeData[2];
             }
 
-            output[0] = CrayonWrapper.v_buildInteger(status);
+            output[0] = CrayonWrapper.v_buildInteger(TranslationHelper.Globals, status);
         }
 
         public static void ImageLoadAsync(

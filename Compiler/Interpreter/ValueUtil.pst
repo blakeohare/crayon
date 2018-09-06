@@ -92,50 +92,61 @@ string valueToString(VmContext vm, Value wrappedValue) {
     return "<unknown>";
 }
 
-int initialize_constant_values() {
-    int i = 0;
-    for (i = 2; i < INTEGER_POSITIVE_CACHE_SIZE; i += 1) {
-        INTEGER_POSITIVE_CACHE[i] = new Value(Types.INTEGER, i);
+VmGlobals initializeConstantValues() {
+    Array<Value> pos = new Array<Value>(INTEGER_POSITIVE_CACHE_SIZE);
+    Array<Value> neg = new Array<Value>(INTEGER_NEGATIVE_CACHE_SIZE);
+    for (int i = 0; i < INTEGER_POSITIVE_CACHE_SIZE; i += 1) {
+        pos[i] = new Value(Types.INTEGER, i);
     }
-    for (i = 2; i < INTEGER_NEGATIVE_CACHE_SIZE; i += 1) {
-        INTEGER_NEGATIVE_CACHE[i] = new Value(Types.INTEGER, -i);
+    for (i = 1; i < INTEGER_NEGATIVE_CACHE_SIZE; i += 1) {
+        neg[i] = new Value(Types.INTEGER, -i);
     }
+    neg[0] = pos[0];
 
-    INTEGER_POSITIVE_CACHE[0] = VALUE_INT_ZERO;
-    INTEGER_POSITIVE_CACHE[1] = VALUE_INT_ONE;
-    INTEGER_NEGATIVE_CACHE[0] = VALUE_INT_ZERO;
-    INTEGER_NEGATIVE_CACHE[1] = VALUE_INT_NEG_ONE;
-
-    return 0;
+    VmGlobals globals = new VmGlobals(
+        new Value(Types.NULL, null),
+        new Value(Types.BOOLEAN, true),
+        new Value(Types.BOOLEAN, false),
+        pos[0],
+        pos[1],
+        neg[1],
+        new Value(Types.FLOAT, 0.0),
+        new Value(Types.FLOAT, 1.0),
+        new Value(Types.STRING, ""),
+        pos,
+        neg,
+        new Dictionary<string, Value>());
+    globals.commonStrings[""] = globals.stringEmpty;
+    return globals;
 }
 
-Value buildInteger(int num) {
+Value buildInteger(VmGlobals g, int num) {
     if (num < 0) {
         if (num > -INTEGER_NEGATIVE_CACHE_SIZE) {
-            return INTEGER_NEGATIVE_CACHE[-num];
+            return g.negativeIntegers[-num];
         }
     } else {
         if (num < INTEGER_POSITIVE_CACHE_SIZE) {
-            return INTEGER_POSITIVE_CACHE[num];
+            return g.positiveIntegers[num];
         }
     }
     return new Value(Types.INTEGER, num);
 }
 
-Value buildString(string s) {
-    if (s.Size() == 0) return VALUE_EMPTY_STRING;
+Value buildString(VmGlobals g, string s) {
+    if (s.Size() == 0) return g.stringEmpty;
     return new Value(Types.STRING, s);
 }
 
-Value buildBoolean(bool value) {
-    if (value) return VALUE_TRUE;
-    return VALUE_FALSE;
+Value buildBoolean(VmGlobals g, bool value) {
+    if (value) return g.boolTrue;
+    return g.boolFalse;
 }
 
-Value buildFloat(double value) {
+Value buildFloat(VmGlobals g, double value) {
     // 0 and 1 are safe float comparisons, but in failure, it'll just fall back to default behavior
-    if (value == 0.0) return VALUE_FLOAT_ZERO;
-    if (value == 1.0) return VALUE_FLOAT_ONE;
+    if (value == 0.0) return g.floatZero;
+    if (value == 1.0) return g.floatOne;
     return new Value(Types.FLOAT, value);
 }
 
@@ -310,12 +321,13 @@ PlatformRelayObject buildRelayObj(
     return new PlatformRelayObject(type, iarg1, iarg2, iarg3, farg1, sarg1);
 }
 
-Value buildCommonString(string s) {
-    if (!COMMON_STRINGS.Contains(s)) {
-        Value value = buildString(s);
-        COMMON_STRINGS[s] = value;
+Value buildCommonString(VmGlobals g, string s) {
+    Dictionary<string, Value> lookup = g.commonStrings;
+    if (!lookup.Contains(s)) {
+        Value value = buildString(g, s);
+        lookup[s] = value;
     }
-    return COMMON_STRINGS[s];
+    return lookup[s];
 }
 
 Value buildListCopy(Array<Value> valueList) {
@@ -327,11 +339,11 @@ Value buildListCopy(Array<Value> valueList) {
     return buildList(output);
 }
 
-Value multiplyString(Value strValue, string str, int n) {
+Value multiplyString(VmGlobals globals, Value strValue, string str, int n) {
     if (n <= 2) {
         if (n == 1) return strValue;
-        if (n == 2) return buildString(Core.StringConcatAll(str, str));
-        return VALUE_EMPTY_STRING;
+        if (n == 2) return buildString(globals, Core.StringConcatAll(str, str));
+        return globals.stringEmpty;
     }
 
     List<string> builder = new List<string>();
@@ -341,7 +353,7 @@ Value multiplyString(Value strValue, string str, int n) {
     }
 
     str = builder.Join("");
-    return buildString(str);
+    return buildString(globals, str);
 }
 
 string stringDecode(string encoded) {
@@ -471,7 +483,7 @@ int sortLists(List<Value> keyList, List<Value> parallelList, Array<int> intOutPa
                     Core.IntBuffer16[0] = 1;
                     return 0;
                 }
-                numKeys[i] = ((double) ((int) item.internalValue));
+                numKeys[i] = (double) ((int) item.internalValue);
                 break;
 
             case Types.FLOAT:
@@ -479,7 +491,7 @@ int sortLists(List<Value> keyList, List<Value> parallelList, Array<int> intOutPa
                     Core.IntBuffer16[0] = 1;
                     return 0;
                 }
-                numKeys[i] = ((double) item.internalValue);
+                numKeys[i] = (double) item.internalValue;
                 break;
 
             case Types.STRING:
@@ -487,7 +499,7 @@ int sortLists(List<Value> keyList, List<Value> parallelList, Array<int> intOutPa
                     Core.IntBuffer16[0] = 1;
                     return 0;
                 }
-                stringKeys[i] = ((string) item.internalValue);
+                stringKeys[i] = (string) item.internalValue;
                 break;
 
             default:
@@ -619,24 +631,13 @@ double canonicalizeAngle(double a) {
 }
 
 double getFloat(Value num) {
-    if (num.type == Types.FLOAT) return ((double) num.internalValue);
+    if (num.type == Types.FLOAT) return (double) num.internalValue;
     return ((int) num.internalValue) + 0.0;
 }
 
 object getNativeDataItem(Value objValue, int index) {
-    ObjectInstance obj = ((ObjectInstance) objValue.internalValue);
+    ObjectInstance obj = (ObjectInstance) objValue.internalValue;
     return obj.nativeData[index];
-}
-
-int nextPowerOf2(int value) {
-
-    if (((value - 1) & value) == 0) return value;
-
-    int output = 1;
-    while (output < value) {
-        output *= 2;
-    }
-    return output;
 }
 
 Array<int> reallocIntArray(Array<int> original, int requiredCapacity) {
@@ -652,7 +653,7 @@ Array<int> reallocIntArray(Array<int> original, int requiredCapacity) {
     return output;
 }
 
-Value performListSlice(ExecutionContext ec, Array<int> row) {
+Value performListSlice(VmGlobals globals, ExecutionContext ec, Array<int> row) {
 
     // TODO: go through and rename these appropriately. This was pulled from the main interpreter variable scope.
 
@@ -689,7 +690,7 @@ Value performListSlice(ExecutionContext ec, Array<int> row) {
         valueStackSize -= 1;
         arg3 = valueStack[valueStackSize];
         if (arg3.type == Types.INTEGER) {
-            int3 = ((int) arg3.internalValue);
+            int3 = (int) arg3.internalValue;
             if (int3 == 0) {
                 int5 = 2;
             }
@@ -705,7 +706,7 @@ Value performListSlice(ExecutionContext ec, Array<int> row) {
         valueStackSize -= 1;
         arg2 = valueStack[valueStackSize];
         if (arg2.type == Types.INTEGER) {
-            int2 = ((int) arg2.internalValue);
+            int2 = (int) arg2.internalValue;
         } else {
             int5 = 3;
         }
@@ -716,7 +717,7 @@ Value performListSlice(ExecutionContext ec, Array<int> row) {
         valueStackSize -= 1;
         arg1 = valueStack[valueStackSize];
         if (arg1.type == Types.INTEGER) {
-            int1 = ((int) arg1.internalValue);
+            int1 = (int) arg1.internalValue;
         } else {
             int5 = 3;
         }
@@ -726,16 +727,16 @@ Value performListSlice(ExecutionContext ec, Array<int> row) {
     value = valueStack[(valueStackSize - 1)];
     if (value.type == Types.STRING) {
         bool2 = true;
-        string1 = ((string) value.internalValue);
+        string1 = (string) value.internalValue;
         int4 = string1.Size();
     } else {
         if (value.type == Types.LIST) {
             bool2 = false;
-            list1 = ((List<Value>) value.internalValue);
+            list1 = (List<Value>) value.internalValue;
             int4 = list1.Size();
         } else {
             EX_InvalidArgument(ec, Core.StringConcatAll("Cannot apply slicing to ", getTypeFromId(value.type), ". Must be string or list."));
-            return VALUE_NULL;
+            return globals.valueNull;
         }
     }
 
@@ -750,14 +751,14 @@ Value performListSlice(ExecutionContext ec, Array<int> row) {
         }
         if (int5 == 3) {
             Core.StringAppend(string1, "slice indexes must be integers. Found ");
-            if ((arg1 != null) && (arg1.type != Types.INTEGER)) { EX_InvalidArgument(ec, Core.StringConcatAll(string1, getTypeFromId(arg1.type), " for begin index.")); return VALUE_NULL; }
-            if ((arg2 != null) && (arg2.type != Types.INTEGER)) { EX_InvalidArgument(ec, Core.StringConcatAll(string1, getTypeFromId(arg2.type), " for end index.")); return VALUE_NULL; }
-            if ((arg3 != null) && (arg3.type != Types.INTEGER)) { EX_InvalidArgument(ec, Core.StringConcatAll(string1, getTypeFromId(arg3.type), " for step amount.")); return VALUE_NULL; }
+            if ((arg1 != null) && (arg1.type != Types.INTEGER)) { EX_InvalidArgument(ec, Core.StringConcatAll(string1, getTypeFromId(arg1.type), " for begin index.")); return globals.valueNull; }
+            if ((arg2 != null) && (arg2.type != Types.INTEGER)) { EX_InvalidArgument(ec, Core.StringConcatAll(string1, getTypeFromId(arg2.type), " for end index.")); return globals.valueNull; }
+            if ((arg3 != null) && (arg3.type != Types.INTEGER)) { EX_InvalidArgument(ec, Core.StringConcatAll(string1, getTypeFromId(arg3.type), " for step amount.")); return globals.valueNull; }
             EX_InvalidArgument(ec, "Invalid slice arguments.");
-            return VALUE_NULL;
+            return globals.valueNull;
         } else { // int5 == 2
             EX_InvalidArgument(ec, Core.StringConcatAll(string1, " slice step cannot be 0."));
-            return VALUE_NULL;
+            return globals.valueNull;
         }
     }
 
@@ -783,7 +784,7 @@ Value performListSlice(ExecutionContext ec, Array<int> row) {
                     int1 += int3;
                 }
             }
-            value = buildString(stringList1.Join(""));
+            value = buildString(globals, stringList1.Join(""));
         } else {
             // List slice
             list2 = new List<Value>();
@@ -804,7 +805,7 @@ Value performListSlice(ExecutionContext ec, Array<int> row) {
         }
     } else if (int5 == 0) {
         if (bool2) {
-            value = VALUE_EMPTY_STRING;
+            value = globals.stringEmpty;
         } else {
             value = new Value(Types.LIST, new List<Value>());
         }
@@ -834,7 +835,7 @@ Value performListSlice(ExecutionContext ec, Array<int> row) {
             }
         }
         EX_IndexOutOfRange(ec, string1);
-        return VALUE_NULL;
+        return globals.valueNull;
     }
 
     ec.currentValueStackSize = valueStackSize;

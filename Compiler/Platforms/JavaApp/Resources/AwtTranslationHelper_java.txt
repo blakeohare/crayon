@@ -167,7 +167,7 @@ public final class AwtTranslationHelper {
     int status = (int)imageLoaderNativeData[2];
     // TODO: release mutex
 
-    output.items[0] = Interpreter.v_buildInteger(status);
+    output.items[0] = Interpreter.v_buildInteger(TranslationHelper.getVmGlobals(), status);
   }
 
   private static HashMap<String, java.awt.Font> systemFonts = null;

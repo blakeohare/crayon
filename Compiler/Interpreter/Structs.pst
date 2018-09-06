@@ -41,12 +41,26 @@ struct VmMetadata {
     Dictionary<int, Dictionary<int, int>> classMemberLocalizerBuilder;
 }
 
+struct VmGlobals {
+    Value valueNull;
+    Value boolTrue;
+    Value boolFalse;
+    Value intZero;
+    Value intOne;
+    Value intNegativeOne;
+    Value floatZero;
+    Value floatOne;
+    Value stringEmpty;
+    Array<Value> positiveIntegers;
+    Array<Value> negativeIntegers;
+    Dictionary<string, Value> commonStrings;
+}
+
 struct VmContext {
     Dictionary<int, ExecutionContext> executionContexts;
     int lastExecutionContextId;
     Code byteCode;
     VmMetadata metadata;
-
     Array<List<Token>> tokenData;
     Array<string> sourceCode;
     List<string> sourceCodeBuilder;
@@ -62,6 +76,10 @@ struct VmContext {
 
     VmEnvironment environment;
 
+    VmGlobals globals;
+    Value globalNull;
+    Value globalTrue;
+    Value globalFalse;
 }
 
 struct VmEnvironment {
