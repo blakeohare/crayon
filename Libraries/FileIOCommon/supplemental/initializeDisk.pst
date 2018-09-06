@@ -14,5 +14,5 @@ Value lib_fileiocommon_initializeDisk(VmContext vm, Array<Value> args) {
     objInstance1.nativeData = objArray1;
     object object1 = Native._lib_fileiocommon_initializeDisk(((bool) args[1].internalValue));
     objArray1[0] = object1;
-    return VALUE_NULL;
+    return vm.globals.valueNull;
 }

@@ -11,7 +11,7 @@ Value lib_http_pollRequest(VmContext vm, Array<Value> args) {
     ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
     Array<object> objArray1 = objInstance1.nativeData;
     if (Native._lib_http_pollRequest(objArray1)) {
-        return VALUE_TRUE;
+        return vm.globalTrue;
     }
-    return VALUE_FALSE;
+    return vm.globalFalse;
 }

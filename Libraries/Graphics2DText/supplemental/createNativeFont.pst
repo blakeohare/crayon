@@ -33,6 +33,7 @@
 
 */
 Value lib_graphics2dtext_createNativeFont(VmContext vm, Array<Value> args) {
+    Array<Value> ints = vm.globals.positiveIntegers;
     ObjectInstance nf = (ObjectInstance) args[0].internalValue;
     Array<object> nfOut = nf.nativeData;
     int fontType = (int) args[1].internalValue;
@@ -63,9 +64,9 @@ Value lib_graphics2dtext_createNativeFont(VmContext vm, Array<Value> args) {
     nfOut[0] = Native._lib_graphics2dtext_createNativeFont(fontType, fontClass, fontPath, fontSize, red, green, blue, isBold > 0, isItalic > 0);
 
     if (nfOut[0] == null) {
-        if (fontType == 3) return buildInteger(1);
-        return buildInteger(2);
+        if (fontType == 3) return ints[1];
+        return ints[2];
     }
 
-    return buildInteger(0);
+    return ints[0];
 }

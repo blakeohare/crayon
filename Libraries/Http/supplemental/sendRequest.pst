@@ -15,16 +15,16 @@
 
 Value lib_http_sendRequest(VmContext vm, Array<Value> args) {
     Value body = args[5];
-    ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
     Array<object> objArray1 = new Array<object>(3);
     objInstance1.nativeData = objArray1;
     objArray1[2] = false;
-    string method = ((string) args[2].internalValue);
-    string url = ((string) args[3].internalValue);
+    string method = (string) args[2].internalValue;
+    string url = (string) args[3].internalValue;
     List<string> headers = new List<string>(); // alternating names and values
-    List<Value> list1 = ((List<Value>) args[4].internalValue);
+    List<Value> list1 = (List<Value>) args[4].internalValue;
     for (int i = 0; i < list1.Size(); i += 1) {
-        headers.Add(((string) list1[i].internalValue));
+        headers.Add((string) list1[i].internalValue);
     }
     object bodyRawObject = body.internalValue;
     int bodyState = 0; // body is not defined
@@ -40,7 +40,7 @@ Value lib_http_sendRequest(VmContext vm, Array<Value> args) {
 
     bool getResponseAsText = ((int) args[6].internalValue) == 1; // alternative: bytes
 
-    if (((bool) args[1].internalValue)) { // is synchronous?
+    if ((bool) args[1].internalValue) { // is synchronous?
         // asynchronous request
         Native._lib_http_sendRequestAsynchronous(
             objArray1,
@@ -59,5 +59,5 @@ Value lib_http_sendRequest(VmContext vm, Array<Value> args) {
         }
     }
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

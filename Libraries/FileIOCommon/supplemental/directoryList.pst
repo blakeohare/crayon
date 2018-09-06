@@ -26,5 +26,5 @@ Value lib_fileiocommon_directoryList(VmContext vm, Array<Value> args) {
         }
     }
 
-    return buildInteger(sc);
+    return buildInteger(vm.globals, sc);
 }

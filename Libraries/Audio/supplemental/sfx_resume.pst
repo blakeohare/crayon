@@ -12,5 +12,5 @@ Value lib_audio_sfx_resume(VmContext vm, Array<Value> args) {
     double vol = (double) args[2].internalValue;
     double pan = (double) args[3].internalValue;
     lib_audio_sfx_unpause(nativeSound, nativeResource, vol, pan);
-    return VALUE_NULL;
+    return vm.globals.valueNull;
 }

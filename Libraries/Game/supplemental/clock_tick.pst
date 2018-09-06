@@ -1,8 +1,8 @@
 ﻿Value lib_game_clock_tick(VmContext vm, Array<Value> args) {
     Native._lib_game_clockTick();
 
-    // TODO: replace this with an enum.
+    // TODO: replace this 1 with an enum.
     vm_suspend(vm, 1);
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

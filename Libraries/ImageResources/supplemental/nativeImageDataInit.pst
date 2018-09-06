@@ -23,5 +23,5 @@ Value lib_imageresources_nativeImageDataInit(VmContext vm, Array<Value> args) {
     nd[3] = null;
     objInstance1.nativeData = nd;
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

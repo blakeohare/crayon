@@ -23,7 +23,7 @@ int lib_fileiocommon_textToLinesImpl(
     Native._lib_fileiocommon_textToLines(text, stringList);
     int len = stringList.Size();
     for (int i = 0; i < len; i += 1) {
-        output.Add(buildString(stringList[i]));
+        output.Add(buildString(vm.globals, stringList[i]));
     }
     return 0;
 }

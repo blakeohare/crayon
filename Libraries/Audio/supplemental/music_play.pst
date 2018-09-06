@@ -8,7 +8,7 @@
     return value: true if the file was found, false if not.
 */
 Value lib_audio_music_play(VmContext vm, Array<Value> args) {
-    return buildBoolean(
+    return buildBoolean(vm.globals,
         lib_audio_music_playImpl(
             (ObjectInstance) args[0].internalValue, // uninitialized music object instance
             (bool) args[1].internalValue, // is embeded resource

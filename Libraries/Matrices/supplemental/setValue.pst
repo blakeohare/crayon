@@ -11,7 +11,7 @@ Value lib_matrices_setValue(VmContext vm, Array<Value> args) {
     Array<object> nd = obj.nativeData;
     if (args[1].type != Types.INTEGER || args[2].type != Types.INTEGER) {
         nd[5] = "Invalid coordinates";
-        return VALUE_NULL;
+        return vm.globalNull;
     }
 
     int x = (int) args[1].internalValue;
@@ -20,7 +20,7 @@ Value lib_matrices_setValue(VmContext vm, Array<Value> args) {
     int height = (int) nd[2];
     if (x < 0 || x >= width || y < 0 || y >= height) {
         nd[5] = "Coordinates out of range.";
-        return VALUE_NULL;
+        return vm.globalNull;
     }
 
     double value = 0.0;
@@ -30,13 +30,13 @@ Value lib_matrices_setValue(VmContext vm, Array<Value> args) {
         value = 0.0 + (int) args[3].internalValue;
     } else {
         nd[5] = "Value must be a number.";
-        return VALUE_NULL;
+        return vm.globalNull;
     }
     int index = y * width + x;
     Array<double> data = (Array<double>) nd[0];
     Array<Value> valueArray = (Array<Value>)nd[3];
     data[index] = value;
-    valueArray[index] = buildFloat(value);
+    valueArray[index] = buildFloat(vm.globals, value);
 
     return args[0];
 }

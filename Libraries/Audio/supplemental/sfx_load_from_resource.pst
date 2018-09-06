@@ -7,7 +7,7 @@ Value lib_audio_sfx_load_from_resource(VmContext vm, Array<Value> args) {
     lib_audio_load_sfx_from_resourceImpl(
         soundInstance, // TODO: pass in nativeData instead
         (string) args[1].internalValue);
-    return VALUE_NULL;
+    return vm.globals.valueNull;
 }
 
 int lib_audio_load_sfx_from_resourceImpl(ObjectInstance obj, string path) {

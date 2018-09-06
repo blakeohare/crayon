@@ -13,10 +13,10 @@ Value lib_httpserver_getRequest(VmContext vm, Array<Value> args) {
 
     List<Value> list1 = (List<Value>) args[0].internalValue;
 
-    list1.Add(buildString(Core.StringBuffer16[0]));
-    list1.Add(buildString(Core.StringBuffer16[1]));
-    list1.Add(buildString(Core.StringBuffer16[2]));
-    list1.Add(buildString(Core.StringBuffer16[3]));
+    list1.Add(buildString(vm.globals, Core.StringBuffer16[0]));
+    list1.Add(buildString(vm.globals, Core.StringBuffer16[1]));
+    list1.Add(buildString(vm.globals, Core.StringBuffer16[2]));
+    list1.Add(buildString(vm.globals, Core.StringBuffer16[3]));
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

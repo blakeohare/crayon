@@ -14,5 +14,5 @@ Value lib_fileiocommon_fileMove(VmContext vm, Array<Value> args) {
         (string) args[2].internalValue,
         (bool) args[3].internalValue,
         (bool) args[4].internalValue);
-    return buildInteger(statusCode);
+    return buildInteger(vm.globals, statusCode);
 }

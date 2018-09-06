@@ -12,5 +12,5 @@ Value lib_fileiocommon_directoryMove(VmContext vm, Array<Value> args) {
         (string) args[1].internalValue,
         (string) args[2].internalValue);
 
-    return buildInteger(statusCode);
+    return buildInteger(vm.globals, statusCode);
 }

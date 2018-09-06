@@ -12,5 +12,5 @@ Value lib_imageresources_checkLoaderIsDone(VmContext vm, Array<Value> args) {
     ObjectInstance objInstance2 = (ObjectInstance) args[1].internalValue;
     List<Value> list1 = (List<Value>) args[2].internalValue;
     Native._lib_imageresources_checkLoaderIsDone(objInstance1.nativeData, objInstance2.nativeData, list1);
-    return VALUE_NULL;
+    return vm.globalNull;
 }

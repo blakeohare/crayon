@@ -42,5 +42,5 @@ Value lib_fileiocommon_directoryCreate(VmContext vm, Array<Value> args) {
     } else {
         int1 = Native._lib_fileiocommon_directoryCreate(lib_fileiocommon_getDiskObject(hostObject), path);
     }
-    return buildInteger(int1);
+    return buildInteger(vm.globals, int1);
 }

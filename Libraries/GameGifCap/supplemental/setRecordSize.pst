@@ -10,5 +10,5 @@ Value lib_gamegifcap_setRecordSize(VmContext vm, Array<Value> args) {
     int w = (int)args[1].internalValue;
     int h = (int)args[2].internalValue;
     Native._lib_gamegifcap_setRecordSize(oi.nativeData[0], w, h);
-    return VALUE_NULL;
+    return vm.globalNull;
 }

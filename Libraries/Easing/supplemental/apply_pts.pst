@@ -20,5 +20,5 @@ Value lib_easing_apply_pts(VmContext vm, Array<Value> args) {
     ObjectInstance o = (ObjectInstance) args[0].internalValue;
     o.nativeObject = new EasingSampling(len, samples);
 
-    return VALUE_NULL;
+    return vm.globals.valueNull;
 }

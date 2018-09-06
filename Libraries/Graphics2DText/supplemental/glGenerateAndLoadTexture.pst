@@ -58,5 +58,5 @@ Value lib_graphics2dtext_glGenerateAndLoadTexture(VmContext vm, Array<Value> arg
             tileNativeDatas[i][6] = textureSheetBitmap;
         }
     }
-    return VALUE_NULL;
+    return vm.globalNull;
 }

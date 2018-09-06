@@ -9,22 +9,23 @@ Value lib_game_pump_events(VmContext vm, Array<Value> args) {
 // TODO: this is extremely brittle code. Please rewrite.
 int libGamePumpEvents(List<Value> output) {
     List<PlatformRelayObject> eventList = Native._lib_game_get_events_raw_list();
+    VmGlobals globals = vm.globals;
     output.Clear();
     int len = eventList.Size();
     if (len > 0) {
         int i = 0;
         for (i = 0; i < len; i += 1) {
             PlatformRelayObject ev = eventList[i];
-            output.Add(buildInteger(ev.type));
+            output.Add(buildInteger(globals, ev.type));
             int t = ev.type;
-            output.Add(buildInteger(ev.iarg1));
+            output.Add(buildInteger(globals, ev.iarg1));
             if (t >= 32) {
-                output.Add(buildInteger(ev.iarg2));
+                output.Add(buildInteger(globals, ev.iarg2));
                 if (t == 37) {
-                    output.Add(buildFloat(ev.farg1));
+                    output.Add(buildFloat(globals, ev.farg1));
                 } else if (t >= 64 && t < 80) {
                     // touch events have coordinates and a pointer ID
-                    output.Add(buildInteger(ev.iarg3));
+                    output.Add(buildInteger(globals, ev.iarg3));
                 }
             }
         }

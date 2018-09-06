@@ -9,12 +9,12 @@
 Value lib_http_getResponseBytes(VmContext vm, Array<Value> args) {
     Value outputListValue = args[1];
 
-    ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
 
     Array<object> objArray1 = objInstance1.nativeData;
 
     List<Value> list1 = (List<Value>) outputListValue.internalValue;
-    Native._lib_http_getResponseBytes(objArray1[0], INTEGER_POSITIVE_CACHE, list1);
+    Native._lib_http_getResponseBytes(objArray1[0], vm.globals.positiveIntegers, list1);
 
     return outputListValue;
 }

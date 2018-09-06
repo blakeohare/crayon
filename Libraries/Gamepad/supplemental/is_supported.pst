@@ -1,7 +1,7 @@
 ﻿Value lib_gamepad_is_supported(VmContext vm, Array<Value> args) {
     if (@ext_boolean("LIB_GAMEPAD_SUPPORTED") && Native._lib_gamepad_is_supported()) {
-        return VALUE_TRUE;
+        return vm.globalTrue;
     } else {
-        return VALUE_FALSE;
+        return vm.globalFalse;
     }
 }

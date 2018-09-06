@@ -14,7 +14,7 @@ Value lib_audio_sfx_get_state(VmContext vm, Array<Value> args) {
     ObjectInstance soundInstance = ((ObjectInstance) args[1].internalValue); // sound
     object nativeSound = soundInstance.nativeData[0];
     int resourceId = (int) args[2].internalValue;
-    return buildInteger(lib_audio_sfx_get_stateImpl(nativeChannel, nativeSound, resourceId));
+    return buildInteger(vm.globals, lib_audio_sfx_get_stateImpl(nativeChannel, nativeSound, resourceId));
 }
 
 int lib_audio_sfx_get_stateImpl(object channel, object sfxResource, int resourceId) {

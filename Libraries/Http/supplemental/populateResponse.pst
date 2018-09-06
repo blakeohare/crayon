@@ -21,7 +21,7 @@ Value lib_http_populateResponse(VmContext vm, Array<Value> args) {
     Value arg3 = args[2];
     Value arg4 = args[3];
 
-    ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
     object object1 = objInstance1.nativeData[0];
 
     Array<object> objArray1 = new Array<object>(1);
@@ -53,7 +53,7 @@ Value lib_http_populateResponse(VmContext vm, Array<Value> args) {
         // add the headers here.
         stringList1);
 
-    objInstance1 = ((ObjectInstance) arg2.internalValue);
+    objInstance1 = (ObjectInstance) arg2.internalValue;
     objInstance1.nativeData = objArray1;
 
     List<Value> outputList = (List<Value>) arg3.internalValue;
@@ -63,8 +63,8 @@ Value lib_http_populateResponse(VmContext vm, Array<Value> args) {
     outputList.Add(buildString(Core.StringBuffer16[0]));
 
     // push the text content
-    Value value = VALUE_NULL;
-    Value value2 = VALUE_TRUE;
+    Value value = vm.globalNull;
+    Value value2 = vm.globalTrue;
     if (Core.IntBuffer16[1] == 0) {
         value = buildString(Core.StringBuffer16[1]);
         value2 = VALUE_FALSE;
@@ -73,10 +73,10 @@ Value lib_http_populateResponse(VmContext vm, Array<Value> args) {
     outputList.Add(value2); // boolean
 
     // push the header information
-    List<Value> list1 = ((List<Value>) arg4.internalValue);
+    List<Value> list1 = (List<Value>) arg4.internalValue;
     for (int i = 0; i < stringList1.Size(); i += 1) {
-        list1.Add(buildString(stringList1[i]));
+        list1.Add(buildString(vm.globals, stringList1[i]));
     }
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

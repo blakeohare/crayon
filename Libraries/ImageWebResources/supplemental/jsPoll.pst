@@ -13,8 +13,8 @@ Value lib_imagewebresources_jsPoll(VmContext vm, Array<Value> args) {
     if (@ext_boolean("IS_JAVASCRIPT")) {
         objInstance1 = (ObjectInstance) args[0].internalValue;
         if ((bool) objInstance1.nativeData[0]) {
-            return VALUE_TRUE;
+            return vm.globalTrue;
         }
     }
-    return VALUE_FALSE;
+    return vm.globalFalse;
 }

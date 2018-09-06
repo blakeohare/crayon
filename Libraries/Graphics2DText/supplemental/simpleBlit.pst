@@ -46,5 +46,5 @@ Value lib_graphics2dtext_simpleBlit(VmContext vm, Array<Value> args) {
     imageQueue[imageQueueLength] = nativeBlittableBitmap; // This is actually a mess of object arrays where bmp = nativeBlittableBitmap[0][3];
     drawQueueNativeData[3] = imageQueueLength + 1;
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

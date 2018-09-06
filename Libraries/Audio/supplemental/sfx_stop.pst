@@ -24,7 +24,7 @@ Value lib_audio_sfx_stop(VmContext vm, Array<Value> args) {
             completeStopAndFreeChannel);
     }
 
-    return VALUE_NULL;
+    return vm.globals.valueNull;
 }
 
 int lib_audio_sfx_stopImpl(object channel, object resource, int resourceId, bool isActivelyPlaying, bool hardStop) {

@@ -41,5 +41,5 @@ Value lib_graphics2dtext_glRenderCharTile(VmContext vm, Array<Value> args) {
         sizeOut[2] = buildInteger(effectiveLeft);
         sizeOut[3] = buildInteger(effectiveWidth);
     }
-    return VALUE_TRUE;
+    return vm.globalTrue;
 }

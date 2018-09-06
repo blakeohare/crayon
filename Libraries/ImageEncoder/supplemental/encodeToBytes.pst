@@ -7,11 +7,11 @@
 */
 Value lib_imageencoder_encodeToBytes(VmContext vm, Array<Value> args) {
     object platformBitmap = getNativeDataItem(args[0], 0); // the platform bitmap instance
-    int imageFormat = ((int) args[1].internalValue); // 1: PNG, 2: JPEG
+    int imageFormat = (int) args[1].internalValue; // 1: PNG, 2: JPEG
     List<Value> byteOutputList = (List<Value>) args[2].internalValue;
 
     // TODO: return a Value since it's taking in the INTEGER_POSITIVE_CACHE anyway
     int statusCode = Native._lib_imageencoder_encodeImage(platformBitmap, imageFormat, byteOutputList, INTEGER_POSITIVE_CACHE);
 
-    return buildInteger(statusCode);
+    return buildInteger(vm.globals, statusCode);
 }

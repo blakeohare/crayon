@@ -3,5 +3,5 @@
 */
 Value lib_audio_music_set_volume(VmContext vm, Array<Value> args) {
     Native._lib_audio_musicSetVolume((double) args[0].internalValue);
-    return VALUE_NULL;
+    return vm.globals.valueNull;
 }

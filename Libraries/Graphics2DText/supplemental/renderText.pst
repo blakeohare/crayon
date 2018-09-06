@@ -62,9 +62,9 @@ Value lib_graphics2dtext_renderText(VmContext vm, Array<Value> args) {
         spoofedNativeData2[0] = spoofedNativeData;
         imageOut[0] = spoofedNativeData2;
 
-        sizeOut[0] = buildInteger(Core.IntBuffer16[0]);
-        sizeOut[1] = buildInteger(Core.IntBuffer16[1]);
+        sizeOut[0] = buildInteger(vm.globals, Core.IntBuffer16[0]);
+        sizeOut[1] = buildInteger(vm.globals, Core.IntBuffer16[1]);
     }
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

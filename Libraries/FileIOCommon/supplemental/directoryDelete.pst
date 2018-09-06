@@ -10,5 +10,5 @@ Value lib_fileiocommon_directoryDelete(VmContext vm, Array<Value> args) {
         lib_fileiocommon_getDiskObject(args[0]),
         (string) args[1].internalValue);
 
-    return buildInteger(sc);
+    return buildInteger(vm.globals, sc);
 }

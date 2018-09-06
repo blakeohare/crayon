@@ -3,9 +3,9 @@
     So far this is only true for JavaScript.
 */
 Value lib_imageresources_yieldRequiredByPlatform(VmContext vm, Array<Value> args) {
-    Value output = VALUE_FALSE;
+    Value output = vm.globalFalse;
     if (@ext_boolean("IMAGE_RESOURCES_YIELD_REQUIRED_BY_PLATFORM")) {
-        output = VALUE_TRUE;
+        output = vm.globalTrue;
     }
     return output;
 }

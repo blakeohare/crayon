@@ -6,5 +6,5 @@
 */
 Value lib_matrices_getError(VmContext vm, Array<Value> args) {
     ObjectInstance obj = (ObjectInstance) args[0].internalValue;
-    return buildString((string) obj.nativeData[5]);
+    return buildString(vm.globals, (string) obj.nativeData[5]);
 }

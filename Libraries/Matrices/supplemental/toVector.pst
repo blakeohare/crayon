@@ -13,16 +13,17 @@ Value lib_matrices_toVector(VmContext vm, Array<Value> args) {
     int length = width * height;
     if (args[1].type != Types.LIST) {
         nd[5] = "Output argument must be a list";
-        return VALUE_NULL;
+        return vm.globalNull;
     }
     List<Value> output = (List<Value>) args[1].internalValue;
     while (output.Size() < length) {
-        output.Add(VALUE_NULL);
+        output.Add(vm.globalNull);
     }
     double value = 0.0;
     for (int i = 0; i < length; i += 1) {
         value = data[i];
-        if (value == 0) output[i] = VALUE_FLOAT_ZERO;
+        if (value == 0) output[i] = vm.globals.floatZero;
+        else if (value == 1) output[i] = vm.globals.floatOne;
         else output[i] = new Value(Types.FLOAT, data[i]);
     }
 

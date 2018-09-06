@@ -28,8 +28,8 @@ Value lib_mysql_connect(VmContext vm, Array<Value> args) {
         ObjectInstance objInstance1 = (ObjectInstance) arg1.internalValue;
         objInstance1.nativeData = new Array<object>(1);
         objInstance1.nativeData[0] = object1;
-        return VALUE_NULL;
+        return vm.globalNull;
     }
 
-    return buildString(string1);
+    return buildString(vm.globals, string1);
 }

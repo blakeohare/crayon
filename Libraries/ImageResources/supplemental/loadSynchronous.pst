@@ -19,5 +19,5 @@ Value lib_imageresources_loadSynchronous(VmContext vm, Array<Value> args) {
         objInstance1.nativeData = nd;
         Native._lib_imageresources_loadSync(filename, nd, list1);
     }
-    return VALUE_NULL;
+    return vm.globalNull;
 }

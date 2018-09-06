@@ -5,8 +5,8 @@
 */
 Value lib_gamepad_getPlatform(VmContext vm, Array<Value> args) {
     if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
-        return buildInteger(Native._lib_gamepad_getPlatform());
+        return buildInteger(vm.globals, Native._lib_gamepad_getPlatform());
     } else {
-        return VALUE_NULL;
+        return vm.globalNull;
     }
 }

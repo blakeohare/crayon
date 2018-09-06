@@ -13,7 +13,7 @@ Value lib_audio_sfx_set_pan(VmContext vm, Array<Value> args) {
         nativeResource,
         (double) args[2].internalValue); // pan value
 
-    return VALUE_NULL;
+    return vm.globals.valueNull;
 }
 
 int lib_audio_sfx_set_panImpl(object channel, object sfxResource, double pan) {

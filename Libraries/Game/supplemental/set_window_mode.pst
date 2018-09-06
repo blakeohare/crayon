@@ -5,5 +5,5 @@
 
     Native._lib_game_set_window_mode(mode, width, height);
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

@@ -111,5 +111,5 @@ Value lib_graphics2d_lineToQuad(VmContext vm, Array<Value> args) {
     intArray1[(len + 6)] = i;
     intArray1[(len + 8)] = j;
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

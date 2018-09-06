@@ -16,7 +16,7 @@ Value lib_game_getTouchState(VmContext vm, Array<Value> args) {
     int len = data[0];
     int end = len * 3 + 1;
     for (int i = 1; i < end; i += 1) {
-        output.Add(buildInteger(data[i]));
+        output.Add(buildInteger(vm.globals, data[i]));
     }
-    return VALUE_NULL;
+    return vm.globalNull;
 }

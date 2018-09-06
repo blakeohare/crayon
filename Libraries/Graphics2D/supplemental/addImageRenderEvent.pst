@@ -178,9 +178,9 @@ Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
     }
 
     if (isValid || isNoop) {
-        return VALUE_TRUE;
+        return vm.globalTrue;
     }
-    return VALUE_FALSE;
+    return vm.globalFalse;
 }
 
 Array<int> lib_graphics2d_expandEventQueueCapacity(Array<int> a) {

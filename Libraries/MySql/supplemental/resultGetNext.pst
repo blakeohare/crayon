@@ -11,7 +11,7 @@ Value lib_mysql_resultGetNext(VmContext vm, Array<Value> args) {
     Value arg2 = args[1];
     Value arg3 = args[2];
     Value arg4 = args[3];
-    ObjectInstance objInstance1 = ((ObjectInstance) arg1.internalValue);
+    ObjectInstance objInstance1 = (ObjectInstance) arg1.internalValue;
     object object1 = objInstance1.nativeData[0];
     List<Value> list1 = (List<Value>) arg2.internalValue;
     int len = list1.Size();
@@ -20,16 +20,16 @@ Value lib_mysql_resultGetNext(VmContext vm, Array<Value> args) {
     int i = 0;
     for (i = 0; i < len; i += 1) {
         value = list1[i];
-        stringList1.Add(((string) value.internalValue));
+        stringList1.Add((string) value.internalValue);
     }
-    list1 = ((List<Value>) arg3.internalValue);
+    list1 = (List<Value>) arg3.internalValue;
     List<int> intList1 = new List<int>();
     for (i = 0; i < len; i += 1) {
         value = list1[i];
-        intList1.Add(((int) value.internalValue));
+        intList1.Add((int) value.internalValue);
     }
-    list1 = ((List<Value>) arg4.internalValue);
+    list1 = (List<Value>) arg4.internalValue;
     Native._lib_mysql_getNext(object1, list1, stringList1, intList1);
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }
