@@ -1,6 +1,6 @@
 ﻿
 Value buildNull(VmGlobals globals) {
-	return globals.valueNull;
+    return globals.valueNull;
 }
 
 // These are prone to infinite recursion.
