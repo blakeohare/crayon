@@ -19,7 +19,6 @@ Value lib_graphics2d_flip(VmContext vm, Array<Value> args) {
     object object1 = null;
     ObjectInstance objInstance1 = null;
     ObjectInstance objInstance2 = null;
-    Value output = VALUE_NULL;
     Value arg1 = args[0];
     Value arg2 = args[1];
     Value arg3 = args[2];

@@ -130,13 +130,6 @@ namespace Pastel
             return sb.ToString().Trim();
         }
 
-        public string GetCodeForGlobals()
-        {
-            TranspilerContext ctx = this.GetTranspilerContext();
-            this.Transpiler.GenerateCodeForGlobalsDefinitions(ctx, this.compiler.GetGlobalsDefinitions());
-            return ctx.FlushAndClearBuffer();
-        }
-
         public string GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(string name, string swapOutWithNewNameOrNull)
         {
             TranspilerContext ctx = this.GetTranspilerContext();

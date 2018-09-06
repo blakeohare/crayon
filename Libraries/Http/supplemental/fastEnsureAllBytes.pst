@@ -20,7 +20,7 @@ Value lib_http_fastEnsureAllBytes(VmContext vm, Array<Value> args) {
             i -= 1;
             value = list1[i];
             if (value.type != Types.INTEGER) {
-                return VALUE_FALSE;
+                return vm.globalFalse;
             }
 
             int1 = (int) value.internalValue;

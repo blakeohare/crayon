@@ -71,7 +71,7 @@ namespace JavaScriptApp
             output["vm.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = templates.GetCode("vm:globals") + this.NL + this.NL + templates.GetCode("vm:functions"),
+                TextContent = templates.GetCode("vm:functions"),
             };
 
             List<LibraryForExport> librariesWithCode = new List<LibraryForExport>();

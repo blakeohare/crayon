@@ -23,7 +23,6 @@
     ]
 */
 Value lib_xml_parse(VmContext vm, Array<Value> args) {
-    Value output = VALUE_NULL;
     string xml = ((string) args[0].internalValue);
     List<Value> list1 = (List<Value>) args[1].internalValue;
     ObjectInstance objInstance1 = (ObjectInstance) args[2].internalValue;
@@ -36,6 +35,7 @@ Value lib_xml_parse(VmContext vm, Array<Value> args) {
     }
 
     string errMsg = lib_xml_parseImpl(
+        vm,
         xml,
         Core.IntBuffer16,
         list1,
@@ -43,8 +43,8 @@ Value lib_xml_parse(VmContext vm, Array<Value> args) {
         (Dictionary<int, int>) objArray1[1]);
 
     if (errMsg != null) {
-        return buildString(errMsg);
+        return buildString(vm.globals, errMsg);
     }
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

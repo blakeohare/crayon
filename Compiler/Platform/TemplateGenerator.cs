@@ -15,9 +15,6 @@ namespace Platform
                 vmContext.GetTranspilerContext().StringTableBuilder = new Pastel.Transpilers.StringTableBuilder("VM");
             }
 
-            string vmGlobalsCode = vmContext.GetCodeForGlobals();
-            templates.AddPastelTemplate("vm:globals", vmGlobalsCode);
-
             if (vmContext.UsesFunctionDeclarations)
             {
                 string functionDeclarationCode = vmContext.GetCodeForFunctionDeclarations();

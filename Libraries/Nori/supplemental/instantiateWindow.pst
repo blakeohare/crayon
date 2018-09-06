@@ -12,5 +12,5 @@ Value lib_nori_instantiateWindow(VmContext vm, Array<Value> args) {
         (int) size[1].internalValue);
     window.nativeData = new Array<object>(1);
     window.nativeData[0] = Native._lib_nori_instantiateWindow(unboxed);
-    return VALUE_NULL;
+    return vm.globalNull;
 }

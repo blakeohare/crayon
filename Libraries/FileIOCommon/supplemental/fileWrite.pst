@@ -25,7 +25,7 @@ Value lib_fileiocommon_fileWrite(VmContext vm, Array<Value> args) {
         byteArrayRef = lib_fileiocommon_listToBytes((List<Value>) args[2].internalValue);
         if (byteArrayRef == null) return ints[6];
     } else if (args[2].type != Types.STRING) {
-        return vm.globals.ints[6];
+        return ints[6];
     } else {
         contentString = (string) args[2].internalValue;
     }

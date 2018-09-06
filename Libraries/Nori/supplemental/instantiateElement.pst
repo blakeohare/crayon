@@ -47,5 +47,5 @@ Value lib_nori_instantiateElement(VmContext vm, Array<Value> args) {
 
     o.nativeData[0] = Native._lib_nori_instantiateElement(type, unboxed);
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

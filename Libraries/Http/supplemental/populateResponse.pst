@@ -59,15 +59,15 @@ Value lib_http_populateResponse(VmContext vm, Array<Value> args) {
     List<Value> outputList = (List<Value>) arg3.internalValue;
 
     // push the status code
-    outputList.Add(buildInteger(Core.IntBuffer16[0]));
-    outputList.Add(buildString(Core.StringBuffer16[0]));
+    outputList.Add(buildInteger(vm.globals, Core.IntBuffer16[0]));
+    outputList.Add(buildString(vm.globals, Core.StringBuffer16[0]));
 
     // push the text content
     Value value = vm.globalNull;
     Value value2 = vm.globalTrue;
     if (Core.IntBuffer16[1] == 0) {
-        value = buildString(Core.StringBuffer16[1]);
-        value2 = VALUE_FALSE;
+        value = buildString(vm.globals, Core.StringBuffer16[1]);
+        value2 = vm.globalFalse;
     }
     outputList.Add(value); // content
     outputList.Add(value2); // boolean

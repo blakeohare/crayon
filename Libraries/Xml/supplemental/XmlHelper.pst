@@ -1,4 +1,5 @@
 ﻿string lib_xml_parseImpl(
+    VmContext vm,
     string input,
     Array<int> indexPtr,
     List<Value> output,
@@ -45,7 +46,7 @@
     if (error != null) {
         return error;
     }
-    error = lib_xml_parseElement(input, indexPtr, output, entityLookup, stringEnders);
+    error = lib_xml_parseElement(vm, input, indexPtr, output, entityLookup, stringEnders);
     if (error != null) {
         return error;
     }
@@ -126,6 +127,7 @@ bool lib_xml_popIfPresent(string xml, Array<int> indexPtr, string s) {
 }
 
 string lib_xml_parseElement(
+    VmContext vm,
     string xml,
     Array<int> indexPtr,
     List<Value> output,
@@ -159,13 +161,13 @@ string lib_xml_parseElement(
         if (key.Size() == 0) {
             return lib_xml_error(xml, indexPtr[0], "Expected attribute name.");
         }
-        attributeKeys.Add(buildString(key));
+        attributeKeys.Add(buildString(vm.globals, key));
         lib_xml_skipWhitespace(xml, indexPtr);
         if (!lib_xml_popIfPresent(xml, indexPtr, "=")) {
             return lib_xml_error(xml, indexPtr[0], "Expected: '='");
         }
         lib_xml_skipWhitespace(xml, indexPtr);
-        error = lib_xml_popString(xml, indexPtr, attributeValues, entityLookup, stringEnders);
+        error = lib_xml_popString(vm, xml, indexPtr, attributeValues, entityLookup, stringEnders);
         if (error != null) {
             return error;
         }
@@ -181,9 +183,9 @@ string lib_xml_parseElement(
                     error = lib_xml_skipComment(xml, indexPtr);
                 } else {
                     if (lib_xml_isNext(xml, indexPtr, "<")) {
-                        error = lib_xml_parseElement(xml, indexPtr, children, entityLookup, stringEnders);
+                        error = lib_xml_parseElement(vm, xml, indexPtr, children, entityLookup, stringEnders);
                     } else {
-                        error = lib_xml_parseText(xml, indexPtr, children, entityLookup);
+                        error = lib_xml_parseText(vm, xml, indexPtr, children, entityLookup);
                     }
                 }
             }
@@ -195,8 +197,8 @@ string lib_xml_parseElement(
             }
         }
     }
-    element.Add(VALUE_TRUE);
-    element.Add(buildString(name));
+    element.Add(vm.globalTrue);
+    element.Add(buildString(vm.globals, name));
     element.Add(buildList(attributeKeys));
     element.Add(buildList(attributeValues));
     element.Add(buildList(children));
@@ -204,7 +206,7 @@ string lib_xml_parseElement(
     return null;
 }
 
-string lib_xml_parseText(string xml, Array<int> indexPtr, List<Value> output, Dictionary<string, string> entityLookup) {
+string lib_xml_parseText(VmContext vm, string xml, Array<int> indexPtr, List<Value> output, Dictionary<string, string> entityLookup) {
     int length = xml.Size();
     int start = indexPtr[0];
     int i = start;
@@ -226,8 +228,8 @@ string lib_xml_parseText(string xml, Array<int> indexPtr, List<Value> output, Di
             textValue = lib_xml_ampUnescape(textValue, entityLookup);
         }
         List<Value> textElement = new List<Value>();
-        textElement.Add(VALUE_FALSE);
-        textElement.Add(buildString(textValue));
+        textElement.Add(vm.globalFalse);
+        textElement.Add(buildString(vm.globals, textValue));
         output.Add(buildList(textElement));
     }
     return null;
@@ -260,6 +262,7 @@ string lib_xml_popName(string xml, Array<int> indexPtr) {
 }
 
 string lib_xml_popString(
+    VmContext vm,
     string xml,
     Array<int> indexPtr,
     List<Value> attributeValueOut,
@@ -308,7 +311,7 @@ string lib_xml_popString(
     if (ampFound) {
         output = lib_xml_ampUnescape(output, entityLookup);
     }
-    attributeValueOut.Add(buildString(output));
+    attributeValueOut.Add(buildString(vm.globals, output));
     return null;
 }
 

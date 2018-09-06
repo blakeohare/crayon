@@ -6,9 +6,9 @@ Value lib_srandom_getFloat(VmContext vm, Array<Value> args) {
     int value1 = (((int)intPtr[0].internalValue * 20077) + 12345) & 65535;
     int value2 = ((value1 * 20077) + 12345) & 65535;
     int value3 = ((value2 * 20077) + 12345) & 65535;
-    intPtr[0] = buildInteger(value3);
+    intPtr[0] = buildInteger(vm.globals, value3);
     value1 = (value1 >> 8) & 255; // 8 bits
     value2 = (value2 >> 8) & 255; // 8 bits
     value3 = (value3 >> 8) & 255; // 8 bits
-    return buildFloat(Core.FloatDivision((value1 << 16) | (value2 << 8) | value3, 16777216.0));
+    return buildFloat(vm.globals, Core.FloatDivision((value1 << 16) | (value2 << 8) | value3, 16777216.0));
 }

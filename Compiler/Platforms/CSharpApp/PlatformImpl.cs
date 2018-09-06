@@ -386,23 +386,6 @@ namespace CSharpApp
                     ""
                 }),
             };
-
-            output[baseDir + "Vm/Globals.cs"] = new FileOutput()
-            {
-                Type = FileOutputType.Text,
-                TextContent = string.Join("\r\n", new string[]
-                {
-                    "using System;",
-                    "using System.Collections.Generic;",
-                    "using Interpreter.Structs;",
-                    "",
-                    "namespace Interpreter.Vm",
-                    "{",
-                    templates.GetCode("vm:globals"),
-                    "}",
-                    ""
-                }),
-            };
         }
 
         private void ExportProjectFiles(

@@ -10,6 +10,7 @@ namespace Interpreter.Vm
         public static readonly Random Random = new Random();
 
         public static VmContext ProgramData { get; set; }
+        public static VmGlobals Globals {  get { return ProgramData.globals; } }
         public static int[] IntBuffer16 { get; private set; }
         public static double[] FloatBuffer16 { get; private set; }
         public static string[] StringBuffer16 { get; private set; }

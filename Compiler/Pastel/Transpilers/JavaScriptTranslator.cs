@@ -206,12 +206,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateGlobalVariable(TranspilerContext sb, Variable variable)
-        {
-            sb.Append("v_");
-            sb.Append(variable.Name);
-        }
-
         public override void TranslateIntBuffer16(TranspilerContext sb)
         {
             sb.Append("C$common$intBuffer16");
@@ -740,14 +734,6 @@ namespace Pastel.Transpilers
             sb.Append("};");
             sb.Append(this.NewLine);
             sb.Append(this.NewLine);
-        }
-
-        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, IList<VariableDeclaration> globals)
-        {
-            foreach (VariableDeclaration global in globals)
-            {
-                this.TranslateVariableDeclaration(sb, global);
-            }
         }
 
         public override void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef)

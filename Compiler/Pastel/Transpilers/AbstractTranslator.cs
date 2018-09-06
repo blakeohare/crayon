@@ -118,16 +118,7 @@ namespace Pastel.Transpilers
 
                 case "Variable":
                     Variable v = (Variable)expression;
-                    string name = v.Name;
-                    char firstChar = name[0];
-                    if (firstChar >= 'A' && firstChar <= 'Z' && name.Contains('_') && name.ToUpper() == name)
-                    {
-                        this.TranslateGlobalVariable(sb, v);
-                    }
-                    else
-                    {
-                        this.TranslateVariable(sb, v);
-                    }
+                    this.TranslateVariable(sb, v);
                     break;
 
                 case "ConstructorInvocation":
@@ -422,7 +413,6 @@ namespace Pastel.Transpilers
         public abstract void TranslateFunctionInvocationLocallyScoped(TranspilerContext sb, FunctionReference funcRef, Expression[] args);
         public abstract void TranslateFunctionReference(TranspilerContext sb, FunctionReference funcRef);
         public abstract void TranslateGetFunction(TranspilerContext sb, Expression name);
-        public abstract void TranslateGlobalVariable(TranspilerContext sb, Variable variable);
         public abstract void TranslateIfStatement(TranspilerContext sb, IfStatement ifStatement);
         public abstract void TranslateInlineIncrement(TranspilerContext sb, Expression innerExpression, bool isPrefix, bool isAddition);
         public abstract void TranslateIntBuffer16(TranspilerContext sb);
@@ -502,7 +492,6 @@ namespace Pastel.Transpilers
 
         public abstract void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef);
         public abstract void GenerateCodeForFunction(TranspilerContext sb, FunctionDefinition funcDef);
-        public abstract void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, IList<VariableDeclaration> globals);
 
         public virtual void GenerateCodeForStructDeclaration(TranspilerContext sb, string structName)
         {

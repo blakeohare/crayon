@@ -454,12 +454,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateGlobalVariable(TranspilerContext sb, Variable variable)
-        {
-            sb.Append("VmGlobal.");
-            sb.Append(variable.Name);
-        }
-
         public override void TranslateIntBuffer16(TranspilerContext sb)
         {
             sb.Append("TranslationHelper.INT_BUFFER_16");
@@ -1173,39 +1167,6 @@ namespace Pastel.Transpilers
             sb.TabDepth--;
             sb.Append(sb.CurrentTab);
             sb.Append('}');
-            sb.Append(this.NewLine);
-        }
-
-        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, IList<VariableDeclaration> globals)
-        {
-            foreach (string line in new string[] {
-                "package org.crayonlang.interpreter;",
-                "",
-                "import java.util.HashMap;",
-                "import org.crayonlang.interpreter.structs.Value;",
-                "",
-                "public final class VmGlobal {",
-                "",
-                "  private VmGlobal() {}",
-                "",
-            })
-            {
-                sb.Append(line);
-                sb.Append(this.NewLine);
-            }
-
-            foreach (VariableDeclaration varDecl in globals)
-            {
-                sb.Append("  public static final ");
-                sb.Append(this.TranslateType(varDecl.Type));
-                sb.Append(' ');
-                sb.Append(varDecl.VariableNameToken.Value);
-                sb.Append(" = ");
-                this.TranslateExpression(sb, varDecl.Value);
-                sb.Append(';');
-                sb.Append(this.NewLine);
-            }
-            sb.Append("}");
             sb.Append(this.NewLine);
         }
 

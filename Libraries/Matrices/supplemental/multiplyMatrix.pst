@@ -13,7 +13,7 @@ Value lib_matrices_multiplyMatrix(VmContext vm, Array<Value> args) {
 
     if (!(bool) args[2].internalValue) {
         nd1[5] = "argument must be a matrix";
-        return VALUE_NULL;
+        return vm.globalNull;
     }
     obj = (ObjectInstance) args[1].internalValue;
     Array<object> nd2 = obj.nativeData;

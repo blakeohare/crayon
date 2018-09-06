@@ -35,23 +35,16 @@ Value lib_graphics2d_lineToQuad(VmContext vm, Array<Value> args) {
     double float2 = 0.0;
     double float3 = 0.0;
     int i = 0;
+    int j = 0;
     int int1 = 0;
     int int2 = 0;
     int int3 = 0;
     int int4 = 0;
     int int5 = 0;
-    Array<int> intArray1 = null;
-    int j = 0;
-    int len = 0;
-    Array<object> objArray1 = null;
-    ObjectInstance objInstance1 = null;
-    Value output = VALUE_NULL;
-    Value arg1 = args[0];
-
-    objInstance1 = ((ObjectInstance) arg1.internalValue);
-    objArray1 = objInstance1.nativeData;
-    intArray1 = ((Array<int>) objArray1[0]); // event queue
-    len = ((int) objArray1[1]) - 16;
+    ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+    Array<object> objArray1 = objInstance1.nativeData;
+    Array<int> intArray1 = ((Array<int>) objArray1[0]); // event queue
+    int len = ((int) objArray1[1]) - 16;
 
     int1 = intArray1[(len + 1)]; // start X
     int2 = intArray1[(len + 2)]; // start Y

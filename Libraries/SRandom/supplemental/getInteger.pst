@@ -7,10 +7,10 @@ Value lib_srandom_getInteger(VmContext vm, Array<Value> args) {
     int value2 = ((value1 * 20077) + 12345) & 65535;
     int value3 = ((value2 * 20077) + 12345) & 65535;
     int value4 = ((value3 * 20077) + 12345) & 65535;
-    intPtr[0] = buildInteger(value4);
+    intPtr[0] = buildInteger(vm.globals, value4);
     value1 = (value1 >> 8) & 255; // 8 bits
     value2 = (value2 >> 8) & 255; // 8 bits
     value3 = (value3 >> 8) & 255; // 8 bits
     value4 = (value4 >> 8) & 127; // 7 bits
-    return buildInteger((value4 << 24) | (value3 << 16) | (value2 << 8) | value1);
+    return buildInteger(vm.globals, (value4 << 24) | (value3 << 16) | (value2 << 8) | value1);
 }

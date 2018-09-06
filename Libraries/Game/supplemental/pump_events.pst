@@ -2,12 +2,13 @@
     args[0]: a re-usable value list to push event fields onto
 */
 Value lib_game_pump_events(VmContext vm, Array<Value> args) {
-    libGamePumpEvents((List<Value>) args[0].internalValue);
+    libGamePumpEvents(vm, (List<Value>) args[0].internalValue);
     return args[0];
 }
 
 // TODO: this is extremely brittle code. Please rewrite.
-int libGamePumpEvents(List<Value> output) {
+// TODO: merge this with the above function.
+int libGamePumpEvents(VmContext vm, List<Value> output) {
     List<PlatformRelayObject> eventList = Native._lib_game_get_events_raw_list();
     VmGlobals globals = vm.globals;
     output.Clear();

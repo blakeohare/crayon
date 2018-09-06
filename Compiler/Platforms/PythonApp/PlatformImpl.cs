@@ -46,7 +46,6 @@ namespace PythonApp
                 TextContent = string.Join(this.NL, new string[] {
                     this.LoadTextResource("Resources/header.txt" , replacements),
                     this.LoadTextResource("Resources/TranslationHelper.txt", replacements),
-                    templates.GetCode("vm:globals"),
                     this.LoadTextResource("Resources/LibraryRegistry.txt", replacements),
                     this.LoadTextResource("Resources/ResourceReader.txt", replacements),
                     templates.GetCode("vm:functions"),

@@ -5,14 +5,15 @@
 Value lib_random_random_int(VmContext vm, Array<Value> args) {
 
     if (args[0].type != Types.INTEGER || args[1].type != Types.INTEGER) {
-        return VALUE_NULL;
+        return vm.globalNull;
     }
 
     int lower = (int) args[0].internalValue;
     int upper = (int) args[1].internalValue;
 
-    if (lower >= upper) return VALUE_NULL;
+    if (lower >= upper) return vm.globalNull;
 
     int value = Core.Int(Core.ForceParens((Core.RandomFloat() * (upper - lower))));
-    return buildInteger(lower + value);
+
+    return buildInteger(vm.globals, lower + value);
 }

@@ -23,7 +23,7 @@ Value lib_fileiocommon_fileRead(VmContext vm, Array<Value> args) {
         sandboxedPath,
         readDataAsBytes,
         Core.StringBuffer16,
-        INTEGER_POSITIVE_CACHE,
+        vm.globals.positiveIntegers,
         outputList);
 
     // If successful and this is a text request...

@@ -11,13 +11,9 @@ namespace Pastel
 
         public VariableScope() { }
 
-        public VariableScope(FunctionDefinition functionDef, Dictionary<string, VariableDeclaration> globals)
+        public VariableScope(FunctionDefinition functionDef)
         {
             this.RootFunctionDefinition = functionDef;
-            foreach (string varName in globals.Keys)
-            {
-                this.type[varName] = globals[varName].Type;
-            }
         }
 
         public VariableScope(VariableScope parent)
