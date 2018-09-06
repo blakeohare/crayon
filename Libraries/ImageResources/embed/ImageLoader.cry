@@ -59,7 +59,6 @@ namespace ImageResources {
             return img;
         }
 
-        static field REUSABLE_IS_DONE_OUT = [null];
         function isDone() {
             if (this._isDone) {
                 return true;
@@ -69,9 +68,7 @@ namespace ImageResources {
             // the NativeImageData instance's nativeData:
             // - at the end of the asynchronous loader, using the mutex in nativeData[3]
             // - as a result of this next function. It will never be called twice on a successfully loaded image.
-            $lib_imageresources_checkLoaderIsDone(this, this._nativeImage, ImageLoader.REUSABLE_IS_DONE_OUT);
-
-            status = ImageLoader.REUSABLE_IS_DONE_OUT[0];
+            status = $lib_imageresources_checkLoaderIsDone(this, this._nativeImage);
             if (status > 0) {
                 this._isDone = true;
                 if(status != 1) throw new ImageResources.LoadFailedException("Error encountered while loading image.");

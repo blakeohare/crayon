@@ -50,7 +50,6 @@ namespace LangJava
                 "import org.crayonlang.interpreter.FastList;",
                 "import org.crayonlang.interpreter.Interpreter;",
                 "import org.crayonlang.interpreter.TranslationHelper;",
-                "import org.crayonlang.interpreter.VmGlobal;",
                 "import org.crayonlang.interpreter.structs.*;",
             };
 

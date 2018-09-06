@@ -20,9 +20,9 @@ def libhelper_imageresources_imageLoadSync(filename, nativeImageDataNativeData, 
     return True
   return False
 
-def libhelper_imageresources_checkLoaderIsDone(imageLoaderNativeData, nativeImageDataNativeData, output):
+def libhelper_imageresources_checkLoaderIsDone(imageLoaderNativeData, nativeImageDataNativeData):
   # TODO: this will have to have mutex locking when _imageLoadAsync is implemented for real.
-  output[0] = v_buildInteger(imageLoaderNativeData[2])
+  return imageLoaderNativeData[2]
   
 # These are actually Graphics2D functions, not imageresource functions, so they'll have to move eventually.
 

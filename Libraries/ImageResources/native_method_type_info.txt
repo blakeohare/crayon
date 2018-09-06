@@ -12,10 +12,9 @@ void _lib_imageresources_blit(
 // TODO: document this
 object _lib_imageresources_getPixelEditSession(object obj);
 
-void _lib_imageresources_checkLoaderIsDone(
+int _lib_imageresources_checkLoaderIsDone(
 	Array<object> loaderObjectNativeData,
-	Array<object> nativeImageNativeData,
-	List<Value> singleItemListForOutput);
+	Array<object> nativeImageNativeData);
 
 string _lib_imageresources_getManifestString();
 

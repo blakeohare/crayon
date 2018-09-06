@@ -46,5 +46,5 @@ C$imageresources$imageResourceBlitImage = function (target, source, targetX, tar
 };
 
 C$imageresources$checkLoaderIsDone = function (imageLoaderNativeData, nativeImageDataNativeData, output) {
-    output[0] = v_buildInteger(C$vmGlobals, imageLoaderNativeData[2]);
+    return imageLoaderNativeData[2];
 };

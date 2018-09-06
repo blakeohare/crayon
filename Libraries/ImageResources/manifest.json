@@ -6,7 +6,7 @@
 	
 	"cni": [
 		{ "name": "lib_imageresources_blit", "argc": 8 },
-		{ "name": "lib_imageresources_checkLoaderIsDone", "argc": 3 },
+		{ "name": "lib_imageresources_checkLoaderIsDone", "argc": 2 },
 		{ "name": "lib_imageresources_flushImageChanges", "argc": 1 },
 		{ "name": "lib_imageresources_getManifestString", "argc": 0 },
 		{ "name": "lib_imageresources_loadAsynchronous", "argc": 3 },

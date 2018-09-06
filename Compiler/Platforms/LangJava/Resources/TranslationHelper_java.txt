@@ -10,6 +10,7 @@ import java.util.Set;
 import org.crayonlang.interpreter.structs.InterpreterResult;
 import org.crayonlang.interpreter.structs.Value;
 import org.crayonlang.interpreter.structs.VmContext;
+import org.crayonlang.interpreter.structs.VmGlobals;
 
 public final class TranslationHelper {
 
@@ -45,7 +46,8 @@ public final class TranslationHelper {
   public static Random random = new Random();
 
   private static VmContext vmContext = null;
-  public static void setProgramData(VmContext vm) { vmContext = vm; }
+  public static VmGlobals vmGlobals = null;
+  public static void setProgramData(VmContext vm) { vmContext = vm; vmGlobals = vm.globals; }
   public static VmContext getProgramData() { return vmContext; }
 
   private static String resourceManifest = null;
