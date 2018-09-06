@@ -30,10 +30,10 @@ Value lib_imagewebresources_bytesToImage(VmContext vm, Array<Value> args) {
 
     // Pass the nativeData and the byte array and create an image object and calculate its width.
     if (Native._lib_imagewebresources_bytesToImage(object1, objArray1)) {
-        list1[1] = buildInteger((int) objArray1[1]);
-        list1[2] = buildInteger((int) objArray1[2]);
-        return VALUE_TRUE;
+        list1[1] = buildInteger(vm.globals, (int) objArray1[1]);
+        list1[2] = buildInteger(vm.globals, (int) objArray1[2]);
+        return vm.globalTrue;
     }
 
-    return VALUE_FALSE;
+    return vm.globalFalse;
 }

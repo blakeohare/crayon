@@ -33,5 +33,5 @@ Value lib_nori_invalidateElementProperty(VmContext vm, Array<Value> args) {
     }
 
     Native._lib_nori_invalidateElementProperty(type, nativeElement, key, value);
-    return VALUE_NULL;
+    return vm.globalNull;
 }

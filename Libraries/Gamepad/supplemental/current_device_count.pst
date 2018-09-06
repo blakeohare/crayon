@@ -5,5 +5,5 @@
 
         total = Native._lib_gamepad_get_current_device_count();
     }
-    return buildInteger(total);
+    return buildInteger(vm.globals, total);
 }

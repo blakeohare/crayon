@@ -8,5 +8,5 @@ Value lib_nori_invalidateWindowProperty(VmContext vm, Array<Value> args) {
     int key = (int) args[1].internalValue;
     object value = args[2].internalValue;
     Native._lib_nori_invalidateWindowProperty(o.nativeData[0], key, value);
-    return VALUE_NULL;
+    return vm.globalNull;
 }

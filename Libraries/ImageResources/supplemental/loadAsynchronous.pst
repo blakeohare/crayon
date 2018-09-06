@@ -34,5 +34,5 @@ Value lib_imageresources_loadAsynchronous(VmContext vm, Array<Value> args) {
         objArray1, // native image data nativeData
         objArray2); // image loader nativeData
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

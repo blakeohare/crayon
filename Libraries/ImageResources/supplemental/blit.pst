@@ -12,8 +12,8 @@
 */
 Value lib_imageresources_blit(VmContext vm, Array<Value> args) {
     object object1 = null;
-    ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
-    ObjectInstance objInstance2 = ((ObjectInstance) args[1].internalValue);
+    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
+    ObjectInstance objInstance2 = (ObjectInstance) args[1].internalValue;
 
     // If pixel edit sessions are not used, then the object1 arg is not used in the following blit command
     // and so not setting it will not have any adverse effects.
@@ -36,5 +36,5 @@ Value lib_imageresources_blit(VmContext vm, Array<Value> args) {
         (int) args[7].internalValue, // height
         object1); // pixel edit session
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

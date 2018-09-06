@@ -1,6 +1,6 @@
 ﻿if (argCount != 1) {
     if (argCount == 0) {
-        value2 = VALUE_EMPTY_STRING;
+        value2 = globals.stringEmpty;
     } else {
         hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list join method", 1, argCount));
     }
@@ -19,5 +19,5 @@ if (!hasInterrupt) {
         stringList1.Add(valueToString(vm, list1[i]));
     }
     string1 = stringList1.Join(string1);
-    output = buildString(string1);
+    output = buildString(globals, string1);
 }

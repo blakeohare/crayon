@@ -6,9 +6,9 @@
         string string1 = Native._lib_gamepad_config_file_path();
 
         if (string1 != null) {
-            return buildString(string1);
+            return buildString(vm.globals, string1);
         }
     }
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

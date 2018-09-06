@@ -22,9 +22,9 @@ Value lib_fileiocommon_directoryList(VmContext vm, Array<Value> args) {
         stringList1);
     if (sc == 0) {
         for (int i = 0; i < stringList1.Size(); i += 1) {
-            outputList.Add(buildString(stringList1[i]));
+            outputList.Add(buildString(vm.globals, stringList1[i]));
         }
     }
 
-    return buildInteger(sc);
+    return buildInteger(vm.globals, sc);
 }

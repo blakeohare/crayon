@@ -10,7 +10,6 @@ namespace Pastel.Nodes
             get
             {
                 if (this.IsConstant) return CompilationEntityType.CONSTANT;
-                if (this.IsGlobal) return CompilationEntityType.GLOBAL;
                 throw new Exception(); // this shouldn't have been a top-level thing.
             }
         }
@@ -21,7 +20,6 @@ namespace Pastel.Nodes
         public Expression Value { get; set; }
 
         public bool IsConstant { get; set; }
-        public bool IsGlobal { get; set; }
 
         public VariableDeclaration(
             PType type,

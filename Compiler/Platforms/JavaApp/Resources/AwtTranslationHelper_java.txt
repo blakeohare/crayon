@@ -158,16 +158,15 @@ public final class AwtTranslationHelper {
     return false;
   }
 
-  public static void checkLoaderIsDone(
+  public static int checkLoaderIsDone(
     Object[] imageLoaderNativeData,
-    Object[] nativeImageDataNativeData,
-    FastList output) {
+    Object[] nativeImageDataNativeData) {
 
     // TODO: add mutex checks when imageLoadAsync is implemented
     int status = (int)imageLoaderNativeData[2];
     // TODO: release mutex
 
-    output.items[0] = Interpreter.v_buildInteger(status);
+    return status;
   }
 
   private static HashMap<String, java.awt.Font> systemFonts = null;

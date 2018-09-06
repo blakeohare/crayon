@@ -3,7 +3,7 @@ void vmEnvSetCommandLineArgs(VmContext vm, Array<string> args) {
     Array<Value> valueArgs = new Array<Value>(len);
     for (int i = 0; i < len; i += 1) {
         // use a common string because these values are going to survive the lifetime of the app
-        valueArgs[i] = buildCommonString(args[i]);
+        valueArgs[i] = buildCommonString(vm.globals, args[i]);
     }
     vm.environment.commandLineArgs = valueArgs;
 }

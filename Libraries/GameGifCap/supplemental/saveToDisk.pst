@@ -17,5 +17,5 @@ Value lib_gamegifcap_saveToDisk(VmContext vm, Array<Value> args) {
     object ctx = oi.nativeData[0];
     string path = (string) args[1].internalValue;
     int sc = Native._lib_gamegifcap_saveToDisk(ctx, path);
-    return buildInteger(sc);
+    return buildInteger(vm.globals, sc);
 }

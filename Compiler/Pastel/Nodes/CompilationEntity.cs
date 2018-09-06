@@ -5,7 +5,6 @@
         FUNCTION,
         ENUM,
         CONSTANT,
-        GLOBAL,
         STRUCT,
     }
 

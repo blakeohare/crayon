@@ -23,5 +23,5 @@ Value lib_imagewebresources_jsDownload(VmContext vm, Array<Value> args) {
         Native._lib_imagewebresources_jsDownload(url, objArray1);
     }
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

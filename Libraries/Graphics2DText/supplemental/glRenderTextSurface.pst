@@ -88,5 +88,5 @@ Value lib_graphics2dtext_glRenderTextSurface(VmContext vm, Array<Value> args) {
             index += 16;
         }
     }
-    return VALUE_NULL;
+    return vm.globalNull;
 }

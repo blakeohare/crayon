@@ -11,5 +11,5 @@ Value lib_nori_ensureParentLinkOrder(VmContext vm, Array<Value> args) {
         childrenElements[i] = Core.ForceParens((ObjectInstance)children[i].internalValue).nativeData[0];
     }
     Native._lib_nori_ensureParentLinkOrder(parentObj.nativeData[0], childrenElements);
-    return VALUE_NULL;
+    return vm.globalNull;
 }

@@ -26,5 +26,5 @@ Value lib_nori_showWindow(VmContext vm, Array<Value> args) {
         vm_suspend_with_status(vm, 1);
     }
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

@@ -15,5 +15,5 @@ Value lib_audio_sfx_play(VmContext vm, Array<Value> args) {
     object nativeResource = resourceInstance.nativeData[0];
     double vol = (double) args[2].internalValue;
     double pan = (double) args[3].internalValue;
-    return buildInteger(lib_audio_sfx_launch(nativeResource, channelInstance.nativeData, vol, pan));
+    return buildInteger(vm.globals, lib_audio_sfx_launch(nativeResource, channelInstance.nativeData, vol, pan));
 }

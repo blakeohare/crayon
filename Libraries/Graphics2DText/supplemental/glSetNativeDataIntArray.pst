@@ -19,5 +19,5 @@ Value lib_graphics2dtext_glSetNativeDataIntArray(VmContext vm, Array<Value> args
         }
         nativeData[(int)args[1].internalValue] = intArray;
     }
-    return VALUE_NULL;
+    return vm.globalNull;
 }

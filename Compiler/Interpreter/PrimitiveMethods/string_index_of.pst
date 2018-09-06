@@ -6,6 +6,6 @@
     if (value2.type != Types.STRING) {
         hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires another string as input.");
     } else {
-        output = buildInteger(string1.IndexOf((string) value2.internalValue));
+        output = buildInteger(globals, string1.IndexOf((string) value2.internalValue));
     }
 }

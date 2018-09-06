@@ -1,5 +1,5 @@
 ﻿object lib_fileiocommon_getDiskObject(Value diskObjectArg) {
-    ObjectInstance objInst = ((ObjectInstance) diskObjectArg.internalValue);
+    ObjectInstance objInst = (ObjectInstance) diskObjectArg.internalValue;
     return objInst.nativeData[0];
 }
 
@@ -12,13 +12,13 @@ object lib_fileiocommon_listToBytes(List<Value> listOfMaybeInts) {
         if (intValue.type != Types.INTEGER) {
             return null;
         }
-        byteValue = ((int) intValue.internalValue);
+        byteValue = (int) intValue.internalValue;
         if (byteValue >= 256) return null;
         if (byteValue < 0) {
             if (byteValue < -128) return null;
             byteValue += 256;
         }
-        bytes[i] = ((byte) byteValue);
+        bytes[i] = (byte) byteValue;
     }
     return bytes;
 }

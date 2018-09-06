@@ -1,2 +1,2 @@
 ﻿classInfo = metadata.classTable[classValue.classId];
-output = buildString(classInfo.fullyQualifiedName);
+output = buildString(globals, classInfo.fullyQualifiedName);

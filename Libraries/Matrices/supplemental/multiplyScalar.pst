@@ -16,14 +16,14 @@ Value lib_matrices_multiplyScalar(VmContext vm, Array<Value> args) {
         nd[4] = true;
     } else if (!(bool) args[3].internalValue) {
         nd[5] = "output must be a matrix instance";
-        return VALUE_NULL;
+        return vm.globalNull;
     } else {
 
         obj = (ObjectInstance) args[2].internalValue;
         Array<object> nd2 = obj.nativeData;
         if ((int) nd[1] != (int) nd2[1] || (int) nd[2] != (int) nd2[2]) {
             nd[5] = "output matrix must be the same size.";
-            return VALUE_NULL;
+            return vm.globalNull;
         }
 
         m2data = (Array<double>) nd2[0];
@@ -37,7 +37,7 @@ Value lib_matrices_multiplyScalar(VmContext vm, Array<Value> args) {
         scalar = 0.0 + (int) args[1].internalValue;
     } else {
         nd[5] = "scalar must be a number";
-        return VALUE_NULL;
+        return vm.globalNull;
     }
 
     int i = 0;

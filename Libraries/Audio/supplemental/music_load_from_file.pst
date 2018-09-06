@@ -4,5 +4,5 @@
 */
 Value lib_audio_music_load_from_file(VmContext vm, Array<Value> args) {
     // TODO: implement this.
-    return VALUE_NULL;
+    return vm.globals.valueNull;
 }

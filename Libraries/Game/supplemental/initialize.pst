@@ -3,5 +3,5 @@
 */
 Value lib_game_initialize(VmContext vm, Array<Value> args) {
     Native._lib_game_initialize_game_with_fps(getFloat(args[0]));
-    return VALUE_NULL;
+    return vm.globalNull;
 }

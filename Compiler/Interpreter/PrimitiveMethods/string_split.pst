@@ -10,7 +10,7 @@
         list1 = new List<Value>();
         len = stringList.Size();
         for (i = 0; i < len; i += 1) {
-            list1.Add(buildString(stringList[i]));
+            list1.Add(buildString(globals, stringList[i]));
         }
 
         output = new Value(Types.LIST, list1);

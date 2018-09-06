@@ -5,5 +5,5 @@
     - JavaScript: "/" (this is used for the virtualized disk)
 */
 Value lib_fileiocommon_getUserDirectory(VmContext vm, Array<Value> args) {
-    return buildString(Native._lib_fileiocommon_getUserDirectory());
+    return buildString(vm.globals, Native._lib_fileiocommon_getUserDirectory());
 }

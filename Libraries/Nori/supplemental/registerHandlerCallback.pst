@@ -6,5 +6,5 @@ Value lib_nori_registerHandlerCallback(VmContext vm, Array<Value> args) {
     Value fp = args[0];
     List<Value> argOutList = (List<Value>) args[1].internalValue;
     Native._lib_nori_registerHandlerCallback(fp, argOutList);
-    return VALUE_NULL;
+    return vm.globalNull;
 }

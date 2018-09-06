@@ -11,9 +11,9 @@ Value lib_game_getScreenInfo(VmContext vm, Array<Value> args) {
     Array<int> o = Core.IntBuffer16;
     if (Native._lib_game_getScreenInfo(o)) {
         List<Value> output = (List<Value>) outList.internalValue;
-        output[0] = buildBoolean(o[0] == 1);
-        output[1] = buildInteger(o[1]);
-        output[2] = buildInteger(o[2]);
+        output[0] = buildBoolean(vm.globals, o[0] == 1);
+        output[1] = buildInteger(vm.globals, o[1]);
+        output[2] = buildInteger(vm.globals, o[2]);
     }
     return outList;
 }

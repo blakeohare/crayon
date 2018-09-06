@@ -4,7 +4,7 @@
 Value lib_srandom_getBoolean(VmContext vm, Array<Value> args) {
     List<Value> intPtr = (List<Value>)args[0].internalValue;
     int value = (((int)intPtr[0].internalValue * 20077) + 12345) & 65535;
-    intPtr[0] = buildInteger(value);
-    if ((value & 1) == 0) return VALUE_FALSE;
-    return VALUE_TRUE;
+    intPtr[0] = buildInteger(vm.globals, value);
+    if ((value & 1) == 0) return vm.globalFalse;
+    return vm.globalTrue;
 }

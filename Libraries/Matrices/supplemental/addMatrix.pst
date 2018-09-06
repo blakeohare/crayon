@@ -12,7 +12,7 @@ Value lib_matrices_addMatrix(VmContext vm, Array<Value> args) {
     Array<object> nd1 = obj.nativeData;
     if (!(bool) args[2].internalValue) {
         nd1[5] = "Input must be a matrix";
-        return VALUE_NULL;
+        return vm.globalNull;
     }
     Array<double> left = (Array<double>) nd1[0];
     int width = (int) nd1[1];
@@ -25,7 +25,7 @@ Value lib_matrices_addMatrix(VmContext vm, Array<Value> args) {
     if ((int) nd2[1] != width ||
         (int) nd2[2] != height) {
         nd1[5] = "Matrices must be the same size.";
-        return VALUE_NULL;
+        return vm.globalNull;
     }
     Array<double> output = left;
     bool isInline = args[3].type == Types.NULL;
@@ -33,7 +33,7 @@ Value lib_matrices_addMatrix(VmContext vm, Array<Value> args) {
         nd1[4] = true;
     } else if (!(bool) args[4].internalValue) {
         nd1[5] = "Output value must be a matrix";
-        return VALUE_NULL;
+        return vm.globalNull;
     } else {
         obj = (ObjectInstance) args[3].internalValue;
         Array<object> nd3 = obj.nativeData;
@@ -41,7 +41,7 @@ Value lib_matrices_addMatrix(VmContext vm, Array<Value> args) {
         if ((int) nd3[1] != width ||
             (int) nd3[2] != height) {
             nd1[5] = "Output matrix must have the same size as the inputs.";
-            return VALUE_NULL;
+            return vm.globalNull;
         }
         nd3[4] = true;
     }

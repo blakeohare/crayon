@@ -23,14 +23,14 @@ Value lib_fileiocommon_fileRead(VmContext vm, Array<Value> args) {
         sandboxedPath,
         readDataAsBytes,
         Core.StringBuffer16,
-        INTEGER_POSITIVE_CACHE,
+        vm.globals.positiveIntegers,
         outputList);
 
     // If successful and this is a text request...
     if (statusCode == 0 && !readDataAsBytes) {
         // copy the value from stringOutParam to the list.
-        outputList.Add(buildString(Core.StringBuffer16[0]));
+        outputList.Add(buildString(vm.globals, Core.StringBuffer16[0]));
     }
 
-    return buildInteger(statusCode);
+    return buildInteger(vm.globals, statusCode);
 }

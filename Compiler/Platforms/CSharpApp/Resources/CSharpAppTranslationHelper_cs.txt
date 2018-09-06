@@ -23,7 +23,7 @@ namespace Interpreter
             }
         }
 
-        public static void CheckLoaderIsDone(object[] imageLoaderNativeData, object[] nativeImageDataNativeData, List<Value> output)
+        public static int CheckLoaderIsDone(object[] imageLoaderNativeData, object[] nativeImageDataNativeData)
         {
             int status = 0;
             lock (imageLoaderNativeData[3])
@@ -31,7 +31,7 @@ namespace Interpreter
                 status = (int)imageLoaderNativeData[2];
             }
 
-            output[0] = CrayonWrapper.v_buildInteger(status);
+            return status;
         }
 
         public static void ImageLoadAsync(

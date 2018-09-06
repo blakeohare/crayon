@@ -30,7 +30,6 @@ namespace Pastel
                 : extensibleFunctions.ToDictionary(ef => ef.Name);
             this.StructDefinitions = new Dictionary<string, StructDefinition>();
             this.EnumDefinitions = new Dictionary<string, EnumDefinition>();
-            this.Globals = new Dictionary<string, VariableDeclaration>();
             this.ConstantDefinitions = new Dictionary<string, VariableDeclaration>();
             this.FunctionDefinitions = new Dictionary<string, FunctionDefinition>();
             this.interpreterParser = new PastelParser(constants, inlineImportCodeLoader);
@@ -40,7 +39,6 @@ namespace Pastel
 
         public Dictionary<string, StructDefinition> StructDefinitions { get; set; }
         internal Dictionary<string, EnumDefinition> EnumDefinitions { get; set; }
-        public Dictionary<string, VariableDeclaration> Globals { get; set; }
         internal Dictionary<string, VariableDeclaration> ConstantDefinitions { get; set; }
         public Dictionary<string, FunctionDefinition> FunctionDefinitions { get; set; }
 
@@ -49,14 +47,6 @@ namespace Pastel
             return this.StructDefinitions.Keys
                 .OrderBy(k => k)
                 .Select(key => this.StructDefinitions[key])
-                .ToArray();
-        }
-
-        public VariableDeclaration[] GetGlobalsDefinitions()
-        {
-            return this.Globals.Keys
-                .OrderBy(k => k)
-                .Select(key => this.Globals[key])
                 .ToArray();
         }
 
@@ -181,12 +171,9 @@ namespace Pastel
                         break;
 
                     case CompilationEntityType.CONSTANT:
-                    case CompilationEntityType.GLOBAL:
                         VariableDeclaration assignment = (VariableDeclaration)entity;
                         string targetName = assignment.VariableNameToken.Value;
-                        Dictionary<string, VariableDeclaration> lookup = entity.EntityType == CompilationEntityType.CONSTANT
-                            ? this.ConstantDefinitions
-                            : this.Globals;
+                        Dictionary<string, VariableDeclaration> lookup = this.ConstantDefinitions;
                         if (lookup.ContainsKey(targetName))
                         {
                             throw new ParserException(
@@ -235,13 +222,6 @@ namespace Pastel
 
         private void ResolveNamesAndCullUnusedCode()
         {
-            string[] globalNames = this.Globals.Keys.ToArray();
-            for (int i = 0; i < globalNames.Length; ++i)
-            {
-                string name = globalNames[i];
-                this.Globals[name] = (VariableDeclaration)this.Globals[name].ResolveNamesAndCullUnusedCode(this);
-            }
-
             this.ResolvedFunctions = new HashSet<string>();
             this.ResolutionQueue = new Queue<string>();
 
@@ -279,12 +259,6 @@ namespace Pastel
 
         private void ResolveTypes()
         {
-            foreach (VariableDeclaration global in this.Globals.Values)
-            {
-                VariableScope vs = new VariableScope();
-                global.ResolveTypes(vs, this);
-            }
-
             string[] functionNames = this.FunctionDefinitions.Keys.OrderBy(s => s).ToArray();
             foreach (string functionName in functionNames)
             {
@@ -295,12 +269,6 @@ namespace Pastel
 
         private void ResolveWithTypeContext()
         {
-            string[] globalNames = this.Globals.Keys.OrderBy(s => s).ToArray();
-            foreach (string globalName in globalNames)
-            {
-                this.Globals[globalName] = (VariableDeclaration)this.Globals[globalName].ResolveWithTypeContext(this);
-            }
-
             string[] functionNames = this.FunctionDefinitions.Keys.OrderBy<string, string>(s => s).ToArray();
             foreach (string functionName in functionNames)
             {
@@ -387,12 +355,6 @@ namespace Pastel
             }
 
             this.Transpiler.GenerateCodeForFunction(ctx, fd);
-            return Indent(ctx.FlushAndClearBuffer().Trim(), this.Transpiler.NewLine, indent);
-        }
-
-        internal string GetGlobalsCodeTEMP(Transpilers.TranspilerContext ctx, string indent)
-        {
-            this.Transpiler.GenerateCodeForGlobalsDefinitions(ctx, this.GetGlobalsDefinitions());
             return Indent(ctx.FlushAndClearBuffer().Trim(), this.Transpiler.NewLine, indent);
         }
 

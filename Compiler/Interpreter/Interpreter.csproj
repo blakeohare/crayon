@@ -40,7 +40,22 @@
     <None Include="PrimitiveMethods\_README.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="*.pst" />
+    <EmbeddedResource Include="BinaryOpsUtil.pst" />
+    <EmbeddedResource Include="BubbleException.pst" />
+    <EmbeddedResource Include="ByteCodeLoader.pst" />
+    <EmbeddedResource Include="Constants.pst" />
+    <EmbeddedResource Include="Interpreter.pst" />
+    <EmbeddedResource Include="InvokeStaticConstructor.pst" />
+    <EmbeddedResource Include="MetadataInitializer.pst" />
+    <EmbeddedResource Include="PrimitiveMethods.pst" />
+    <EmbeddedResource Include="Reflection.pst" />
+    <EmbeddedResource Include="ResourceManager.pst" />
+    <EmbeddedResource Include="Runner.pst" />
+    <EmbeddedResource Include="Structs.pst" />
+    <EmbeddedResource Include="TypesUtil.pst" />
+    <EmbeddedResource Include="ValueStackCapacityCheck.pst" />
+    <EmbeddedResource Include="ValueUtil.pst" />
+    <EmbeddedResource Include="VmPublicUtil.pst" />
     <EmbeddedResource Include="FrameworkFunctions\*.pst" />
     <EmbeddedResource Include="Ops\*.pst" />
     <EmbeddedResource Include="PrimitiveMethods\*.pst" />

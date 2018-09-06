@@ -25,5 +25,5 @@ Value lib_game_initialize_screen(VmContext vm, Array<Value> args) {
     // that will be checked for state changes).
     vm_suspend_for_context(ec, 1);
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

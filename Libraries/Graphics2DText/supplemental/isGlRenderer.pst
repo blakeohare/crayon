@@ -5,8 +5,8 @@
 */
 Value lib_graphics2dtext_isGlRenderer(VmContext vm, Array<Value> args) {
     if (@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
-        return VALUE_TRUE;
+        return vm.globalTrue;
     } else {
-        return VALUE_FALSE;
+        return vm.globalFalse;
     }
 }

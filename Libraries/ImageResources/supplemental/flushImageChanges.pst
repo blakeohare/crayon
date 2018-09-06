@@ -19,5 +19,5 @@ Value lib_imageresources_flushImageChanges(VmContext vm, Array<Value> args) {
             }
         }
     }
-    return VALUE_NULL;
+    return vm.globalNull;
 }

@@ -326,12 +326,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateGlobalVariable(TranspilerContext sb, Variable variable)
-        {
-            // no special syntax
-            this.TranslateVariable(sb, variable);
-        }
-
         public override void TranslateIfStatement(TranspilerContext sb, IfStatement ifStatement)
         {
             sb.Append(sb.CurrentTab);
@@ -1014,14 +1008,6 @@ namespace Pastel.Transpilers
         public override void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef)
         {
             throw new InvalidOperationException("This function should not be called. Python uses lists as structs.");
-        }
-
-        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, IList<VariableDeclaration> globals)
-        {
-            foreach (VariableDeclaration global in globals)
-            {
-                this.TranslateVariableDeclaration(sb, global);
-            }
         }
     }
 }

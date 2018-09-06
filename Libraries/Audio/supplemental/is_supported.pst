@@ -1,6 +1,6 @@
 ﻿Value lib_audio_is_supported(VmContext vm, Array<Value> args) {
     if (Native._lib_audio_isAudioSupported()) {
-        return VALUE_TRUE;
+        return vm.globals.boolTrue;
     }
-    return VALUE_FALSE;
+    return vm.globals.boolFalse;
 }

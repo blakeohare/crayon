@@ -65,8 +65,8 @@ InterpreterResult generateException(
         increaseLocalsStackCapacity(ec, functionInfo.localsSize);
     }
     int localsIndex = stack.localsStackOffsetEnd;
-    ec.localsStack[localsIndex] = buildInteger(type);
-    ec.localsStack[localsIndex + 1] = buildString(message);
+    ec.localsStack[localsIndex] = buildInteger(vm.globals, type);
+    ec.localsStack[localsIndex + 1] = buildString(vm.globals, message);
     ec.localsStackSet[localsIndex] = ec.localsStackSetToken;
     ec.localsStackSet[localsIndex + 1] = ec.localsStackSetToken;
     ec.stackTop = new StackFrame(
@@ -105,6 +105,17 @@ ExecutionContext interpreterGetExecutionContext(VmContext vm, int executionConte
 
 InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     VmMetadata metadata = vm.metadata;
+    VmGlobals globals = vm.globals;
+    Value VALUE_NULL = globals.valueNull;
+    Value VALUE_TRUE = globals.boolTrue;
+    Value VALUE_FALSE = globals.boolFalse;
+    Value VALUE_INT_ONE = globals.intOne;
+    Value VALUE_INT_ZERO = globals.intZero;
+    Value VALUE_FLOAT_ZERO = globals.floatZero;
+    Value VALUE_FLOAT_ONE = globals.floatOne;
+    Array<Value> INTEGER_POSITIVE_CACHE = globals.positiveIntegers;
+    Array<Value> INTEGER_NEGATIVE_CACHE = globals.negativeIntegers;
+
     Dictionary<int, ExecutionContext> executionContexts = vm.executionContexts;
     ExecutionContext ec = interpreterGetExecutionContext(vm, executionContextId);
     if (ec == null) {

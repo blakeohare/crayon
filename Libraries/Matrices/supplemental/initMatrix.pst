@@ -12,7 +12,7 @@ Value lib_matrices_initMatrix(VmContext vm, Array<Value> args) {
     Array<object> nd = obj.nativeData;
     if (args[1].type != Types.INTEGER || args[2].type != Types.INTEGER) {
         nd[5] = "Width and height must be integers.";
-        return VALUE_TRUE;
+        return vm.globalTrue;
     }
 
     int width = (int)args[1].internalValue;
@@ -31,5 +31,5 @@ Value lib_matrices_initMatrix(VmContext vm, Array<Value> args) {
         data[i] = 0.0;
     }
 
-    return VALUE_FALSE;
+    return vm.globalFalse;
 }

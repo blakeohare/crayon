@@ -9,6 +9,7 @@
 Value lib_fileiocommon_textToLines(VmContext vm, Array<Value> args) {
 
     lib_fileiocommon_textToLinesImpl(
+        vm.globals,
         (string) args[0].internalValue,
         (List<Value>) args[1].internalValue);
     return args[1];
@@ -16,6 +17,7 @@ Value lib_fileiocommon_textToLines(VmContext vm, Array<Value> args) {
 
 // TODO: merge these. There is no longer a reason to keep them separate.
 int lib_fileiocommon_textToLinesImpl(
+    VmGlobals globals,
     string text,
     List<Value> output) {
 
@@ -23,7 +25,7 @@ int lib_fileiocommon_textToLinesImpl(
     Native._lib_fileiocommon_textToLines(text, stringList);
     int len = stringList.Size();
     for (int i = 0; i < len; i += 1) {
-        output.Add(buildString(stringList[i]));
+        output.Add(buildString(globals, stringList[i]));
     }
     return 0;
 }

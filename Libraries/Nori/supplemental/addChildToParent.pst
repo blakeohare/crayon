@@ -6,5 +6,5 @@ Value lib_nori_addChildToParent(VmContext vm, Array<Value> args) {
     ObjectInstance child = (ObjectInstance) args[0].internalValue;
     ObjectInstance parent = (ObjectInstance) args[1].internalValue;
     Native._lib_nori_addChildToParent(child.nativeData[0], parent.nativeData[0]);
-    return VALUE_NULL;
+    return vm.globalNull;
 }

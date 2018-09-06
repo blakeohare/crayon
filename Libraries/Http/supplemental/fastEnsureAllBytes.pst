@@ -11,7 +11,7 @@
 Value lib_http_fastEnsureAllBytes(VmContext vm, Array<Value> args) {
 
     if (args[0].type == Types.LIST) {
-        List<Value> list1 = ((List<Value>) args[0].internalValue);
+        List<Value> list1 = (List<Value>) args[0].internalValue;
         int i = list1.Size();
         int int1 = 0;
         Array<int> intArray1 = new Array<int>(i);
@@ -20,15 +20,15 @@ Value lib_http_fastEnsureAllBytes(VmContext vm, Array<Value> args) {
             i -= 1;
             value = list1[i];
             if (value.type != Types.INTEGER) {
-                return VALUE_FALSE;
+                return vm.globalFalse;
             }
 
-            int1 = ((int) value.internalValue);
+            int1 = (int) value.internalValue;
             if (int1 < 0) {
-                if (int1 < -128) return VALUE_FALSE;
+                if (int1 < -128) return vm.globalFalse;
                 int1 += 256;
             } else if (int1 >= 256) {
-                return VALUE_FALSE;
+                return vm.globalFalse;
             }
 
             intArray1[i] = int1;
@@ -36,9 +36,9 @@ Value lib_http_fastEnsureAllBytes(VmContext vm, Array<Value> args) {
 
         Array<object> objArray1 = new Array<object>(1);
         objArray1[0] = intArray1;
-        ObjectInstance objInstance1 = ((ObjectInstance) args[1].internalValue);
+        ObjectInstance objInstance1 = (ObjectInstance) args[1].internalValue;
         objInstance1.nativeData = objArray1;
-        return VALUE_TRUE;
+        return vm.globalTrue;
     }
-    return VALUE_FALSE;
+    return vm.globalFalse;
 }

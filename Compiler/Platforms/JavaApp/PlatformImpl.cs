@@ -82,12 +82,6 @@ namespace JavaApp
                 TextContent = sb.ToString(),
             };
 
-            output["src/org/crayonlang/interpreter/VmGlobal.java"] = new FileOutput()
-            {
-                Type = FileOutputType.Text,
-                TextContent = templates.GetCode("vm:globals"),
-            };
-
             // common Java helper files
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/FastList.java", "Resources/FastList.java", replacements);
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/LibraryInstance.java", "Resources/LibraryInstance.java", replacements);

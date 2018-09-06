@@ -89,7 +89,7 @@ if (root.type == Types.LIST) {
             hasInterrupt = EX_IndexOutOfRange(ec, "String index out of range.");
         } else {
             // Single char strings are common.
-            valueStack[valueStackSize - 1] = buildCommonString(Core.CharToString(string1[int1]));
+            valueStack[valueStackSize - 1] = buildCommonString(globals, Core.CharToString(string1[int1]));
         }
     }
 } else {

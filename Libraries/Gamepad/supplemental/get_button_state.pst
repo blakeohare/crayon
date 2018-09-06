@@ -10,13 +10,13 @@ Value lib_gamepad_get_button_state(VmContext vm, Array<Value> args) {
         ObjectInstance objInstance1 = null;
         Value arg1 = args[0];
         Value arg2 = args[1];
-        objInstance1 = ((ObjectInstance) arg1.internalValue);
-        int1 = ((int) arg2.internalValue);
+        objInstance1 = (ObjectInstance) arg1.internalValue;
+        int1 = (int) arg2.internalValue;
         if (Native._lib_gamepad_get_button_state(objInstance1.nativeData[0], int1)) {
-            return VALUE_TRUE;
+            return vm.globalTrue;
         }
-        return VALUE_FALSE;
+        return vm.globalFalse;
     } else {
-        return VALUE_FALSE;
+        return vm.globalTrue;
     }
 }

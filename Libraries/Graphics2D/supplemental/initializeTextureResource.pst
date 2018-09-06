@@ -37,5 +37,5 @@ Value lib_graphics2d_initializeTextureResource(VmContext vm, Array<Value> args) 
         textureResourceNativeData[4] = nativeImageDataNativeData[4];
         textureResourceNativeData[5] = nativeImageDataNativeData[5];
     }
-    return VALUE_NULL;
+    return vm.globalNull;
 }

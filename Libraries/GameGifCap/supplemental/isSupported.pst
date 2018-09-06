@@ -3,7 +3,7 @@
 */
 Value lib_gamegifcap_isSupported(VmContext vm, Array<Value> args) {
     if (Native._lib_gamegifcap_isSupported()) {
-        return VALUE_TRUE;
+        return vm.globalTrue;
     }
-    return VALUE_FALSE;
+    return vm.globalFalse;
 }

@@ -7,6 +7,6 @@
     if (value2.type != Types.STRING || value3.type != Types.STRING) {
         hasInterrupt = EX_InvalidArgument(ec, "string replace method requires 2 strings as input.");
     } else {
-        output = buildString(string1.Replace((string) value2.internalValue, (string) value3.internalValue));
+        output = buildString(globals, string1.Replace((string) value2.internalValue, (string) value3.internalValue));
     }
 }

@@ -9,5 +9,5 @@ Value lib_gamegifcap_createGifContext(VmContext vm, Array<Value> args) {
     int ms = (int)args[1].internalValue;
     ObjectInstance oi = (ObjectInstance) args[0].internalValue;
     oi.nativeData[0] = Native._lib_gamegifcap_createGifContext(ms);
-    return VALUE_NULL;
+    return vm.globalNull;
 }

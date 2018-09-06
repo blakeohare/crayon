@@ -10,5 +10,5 @@ Value lib_nori_registerHandler(VmContext vm, Array<Value> args) {
         (int) args[1].internalValue,
         (string) args[2].internalValue,
         (int) args[3].internalValue);
-    return VALUE_NULL;
+    return vm.globalNull;
 }

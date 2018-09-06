@@ -1,9 +1,9 @@
 ﻿value = valueStack[valueStackSize - 1];
 type = value.type;
 if (type == Types.INTEGER) {
-    valueStack[valueStackSize - 1] = buildInteger(-((int) value.internalValue));
+    valueStack[valueStackSize - 1] = buildInteger(globals, -((int) value.internalValue));
 } else if (type == Types.FLOAT) {
-    valueStack[valueStackSize - 1] = buildFloat(-((double) value.internalValue));
+    valueStack[valueStackSize - 1] = buildFloat(globals, -((double) value.internalValue));
 } else {
     hasInterrupt = EX_InvalidArgument(ec, Core.StringConcatAll("Negative sign can only be applied to numbers. Found ", getTypeFromId(type), " instead."));
 }

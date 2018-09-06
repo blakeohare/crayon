@@ -5,12 +5,15 @@
 
     args[0]: loader object instance
     args[1]: native image data object instance
-    args[2]: single-item list for boolean value output
+
+    returns:
+        0 -> not done
+        1 -> done (successful)
+        2+ -> an error
 */
 Value lib_imageresources_checkLoaderIsDone(VmContext vm, Array<Value> args) {
     ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
     ObjectInstance objInstance2 = (ObjectInstance) args[1].internalValue;
-    List<Value> list1 = (List<Value>) args[2].internalValue;
-    Native._lib_imageresources_checkLoaderIsDone(objInstance1.nativeData, objInstance2.nativeData, list1);
-    return VALUE_NULL;
+    int status = Native._lib_imageresources_checkLoaderIsDone(objInstance1.nativeData, objInstance2.nativeData);
+    return buildInteger(vm.globals, status);
 }

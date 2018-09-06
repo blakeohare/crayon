@@ -2,5 +2,6 @@
     Returns a value between 0.0 (inclusive) and 1.0 (exclusive)
 */
 Value lib_random_random_float(VmContext vm, Array<Value> args) {
-    return buildFloat(Core.RandomFloat());
+    // statistically impossible that 0.0 would be returned, so just bypass buildFloat
+    return new Value(Types.FLOAT, Core.RandomFloat());
 }

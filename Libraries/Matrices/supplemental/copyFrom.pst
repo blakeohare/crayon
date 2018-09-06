@@ -11,14 +11,14 @@ Value lib_matrices_copyFrom(VmContext vm, Array<Value> args) {
 
     if (!(bool)args[2].internalValue) {
         nd1[5] = "value was not a matrix";
-        return VALUE_NULL;
+        return vm.globalNull;
     }
 
     if ((int)nd1[1] != (int)nd2[1] ||
         (int)nd1[2] != (int)nd2[2]) {
 
         nd1[5] = "Matrices were not the same size.";
-        return VALUE_NULL;
+        return vm.globalNull;
     }
 
     Array<double> target = (Array<double>) nd1[0];

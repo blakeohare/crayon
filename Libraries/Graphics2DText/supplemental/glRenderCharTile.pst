@@ -25,7 +25,7 @@ Value lib_graphics2dtext_glRenderCharTile(VmContext vm, Array<Value> args) {
         List<Value> sizeOut = (List<Value>) args[3].internalValue;
 
         object bmp = Native._lib_graphics2dtext_glRenderBitmapTile(nativeFont, charId, Core.IntBuffer16);
-        if (bmp == null) return VALUE_FALSE;
+        if (bmp == null) return vm.globalFalse;
         int width = Core.IntBuffer16[0];
         int height = Core.IntBuffer16[1];
         int effectiveLeft = Core.IntBuffer16[2];
@@ -36,10 +36,10 @@ Value lib_graphics2dtext_glRenderCharTile(VmContext vm, Array<Value> args) {
         tileNativeData[3] = effectiveLeft;
         tileNativeData[4] = effectiveWidth;
 
-        sizeOut[0] = buildInteger(width);
-        sizeOut[1] = buildInteger(height);
-        sizeOut[2] = buildInteger(effectiveLeft);
-        sizeOut[3] = buildInteger(effectiveWidth);
+        sizeOut[0] = buildInteger(vm.globals, width);
+        sizeOut[1] = buildInteger(vm.globals, height);
+        sizeOut[2] = buildInteger(vm.globals, effectiveLeft);
+        sizeOut[3] = buildInteger(vm.globals, effectiveWidth);
     }
-    return VALUE_TRUE;
+    return vm.globalTrue;
 }

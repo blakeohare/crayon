@@ -13,7 +13,7 @@ Value lib_audio_sfx_set_volume(VmContext vm, Array<Value> args) {
         nativeResource,
         (double) args[2].internalValue); // volume ratio
 
-    return VALUE_NULL;
+    return vm.globals.valueNull;
 }
 
 int lib_audio_sfx_set_volumeImpl(object channel, object sfxResource, double volume) {

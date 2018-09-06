@@ -58,5 +58,5 @@ Value lib_graphics2d_renderQueueAction(VmContext vm, Array<Value> args) {
         Core.ForceParens(intList1).Clear();
     }
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

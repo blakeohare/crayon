@@ -20,7 +20,7 @@ if (int1 < len) {
         value = list1[int1];
     } else {
         // Go easy on GC. Single-char strings are going to be common for users that use foreach loops on strings.
-        value = buildCommonString(Core.CharToString(string2[int1]));
+        value = buildCommonString(globals, Core.CharToString(string2[int1]));
     }
 
     // TODO: these two operations can actually be done in the verify_type_is_iterable op, I think.

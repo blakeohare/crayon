@@ -30,5 +30,5 @@ Value lib_nori_updateLayout(VmContext vm, Array<Value> args) {
         Native._lib_nori_updateLayout(nativeObject.nativeData[0], typeId, x, y, width, height);
     }
 
-    return VALUE_NULL;
+    return vm.globalNull;
 }

@@ -12,7 +12,6 @@
         2 --> ease in then out
 */
 Value lib_easing_interpolate(VmContext vm, Array<Value> args) {
-    Value output = VALUE_NULL;
     Value arg2 = args[1];
     Value arg3 = args[2];
     Value arg4 = args[3];
@@ -34,7 +33,7 @@ Value lib_easing_interpolate(VmContext vm, Array<Value> args) {
         if (arg4.type == Types.FLOAT) {
             float1 = (double) arg4.internalValue;
         } else {
-            return VALUE_NULL;
+            return vm.globals.valueNull;
         }
     }
 
@@ -44,7 +43,7 @@ Value lib_easing_interpolate(VmContext vm, Array<Value> args) {
     } else if (arg5.type == Types.FLOAT) {
         float2 = (double) arg5.internalValue;
     } else {
-        return VALUE_NULL;
+        return vm.globals.valueNull;
     }
 
     bool bool1 = false; // should invert ratio value
@@ -104,14 +103,14 @@ Value lib_easing_interpolate(VmContext vm, Array<Value> args) {
     } else if (arg2.type == Types.FLOAT) {
         float2 = (double) arg2.internalValue;
     } else {
-        return VALUE_NULL;
+        return vm.globals.valueNull;
     }
     if (arg3.type == Types.INTEGER) {
         float3 = 0.0 + (int) arg3.internalValue;
     } else if (arg3.type == Types.FLOAT) {
         float3 = (double) arg3.internalValue;
     } else {
-        return VALUE_NULL;
+        return vm.globals.valueNull;
     }
     if (bool1) float1 = 1.0 - float1;
     if (first) float1 *= 0.5;
@@ -122,8 +121,8 @@ Value lib_easing_interpolate(VmContext vm, Array<Value> args) {
 
     // integer output desired?
     if (arg6.type == Types.BOOLEAN && (bool) arg6.internalValue) {
-        return buildInteger(Core.Int(float1 + 0.5));
+        return buildInteger(vm.globals, Core.Int(float1 + 0.5));
     }
 
-    return buildFloat(float1);
+    return buildFloat(vm.globals, float1);
 }

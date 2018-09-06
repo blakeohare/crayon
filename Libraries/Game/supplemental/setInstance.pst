@@ -6,5 +6,5 @@ Value lib_game_setInstance(VmContext vm, Array<Value> args) {
     Array<object> nd = new Array<object>(1);
     nd[0] = Native._lib_game_getNativeWindowHandle();
     o.nativeData = nd;
-    return VALUE_NULL;
+    return vm.globalNull;
 }

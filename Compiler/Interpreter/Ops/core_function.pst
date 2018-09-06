@@ -9,7 +9,7 @@ switch (row[0]) {
         if (arg1.type == Types.STRING) {
             string1 = Core.ForceParens(((string) arg1.internalValue)).Trim();
             if (Core.IsValidInteger(string1)) {
-                output = buildInteger(Core.ParseInt(string1));
+                output = buildInteger(globals, Core.ParseInt(string1));
             }
         } else {
             hasInterrupt = EX_InvalidArgument(ec, "parseInt requires a string argument.");
@@ -24,7 +24,7 @@ switch (row[0]) {
             string1 = Core.ForceParens(((string) arg1.internalValue)).Trim();
             Core.TryParseFloat(string1, floatList1);
             if (floatList1[0] >= 0) {
-                output = buildFloat(floatList1[1]);
+                output = buildFloat(globals, floatList1[1]);
             }
         } else {
             hasInterrupt = EX_InvalidArgument(ec, "parseFloat requires a string argument.");
@@ -42,7 +42,7 @@ switch (row[0]) {
         @import("FrameworkFunctions/1_arg.pst");
 
         // TODO: UNIT TEST!!!! This is fast-but-brittle code.
-        output = buildInteger(arg1.type - 1);
+        output = buildInteger(globals, arg1.type - 1);
         break;
 
     case 5: Core.EmitComment("typeis");
@@ -62,7 +62,7 @@ switch (row[0]) {
         break;
 
     case 6: Core.EmitComment("execId");
-        output = buildInteger(ec.id);
+        output = buildInteger(globals, ec.id);
         break;
 
     case 7: Core.EmitComment("assert");
@@ -86,7 +86,7 @@ switch (row[0]) {
         if (arg1.type == Types.INTEGER) {
             int1 = (int) arg1.internalValue;
             if ((int1 >= 0) && (int1 < 256)) {
-                output = buildCommonString(Core.CharToString(Core.Chr(int1)));
+                output = buildCommonString(globals, Core.CharToString(Core.Chr(int1)));
             }
         }
 
@@ -103,7 +103,7 @@ switch (row[0]) {
         if (arg1.type == Types.STRING) {
             string1 = ((string) arg1.internalValue);
             if (string1.Size() == 1) {
-                output = buildInteger(string1.CharCodeAt(0));
+                output = buildInteger(globals, string1.CharCodeAt(0));
             }
         }
 
@@ -114,7 +114,7 @@ switch (row[0]) {
         break;
 
     case 10: Core.EmitComment("currentTime");
-        output = buildFloat(Core.CurrentTimeSeconds());
+        output = buildFloat(globals, Core.CurrentTimeSeconds());
         break;
 
     case 11: Core.EmitComment("sortList");
@@ -137,11 +137,11 @@ switch (row[0]) {
         output = arg1;
         if (arg1.type == Types.INTEGER) {
             if ((int) arg1.internalValue < 0) {
-                output = buildInteger(-(int) arg1.internalValue);
+                output = buildInteger(globals, -(int) arg1.internalValue);
             }
         } else if (arg1.type == Types.FLOAT) {
             if ((double) arg1.internalValue < 0) {
-                output = buildFloat(-(double) arg1.internalValue);
+                output = buildFloat(globals, -(double) arg1.internalValue);
             }
         } else {
             hasInterrupt = EX_InvalidArgument(ec, "abs requires a number as input.");
@@ -163,7 +163,7 @@ switch (row[0]) {
             if (float1 < -1 || float1 > 1) {
                 hasInterrupt = EX_InvalidArgument(ec, "arccos requires a number in the range of -1 to 1.");
             } else {
-                output = buildFloat(Core.ArcCos(float1));
+                output = buildFloat(globals, Core.ArcCos(float1));
             }
         }
         break;
@@ -183,7 +183,7 @@ switch (row[0]) {
             if (float1 < -1 || float1 > 1) {
                 hasInterrupt = EX_InvalidArgument(ec, "arcsin requires a number in the range of -1 to 1.");
             } else {
-                output = buildFloat(Core.ArcSin(float1));
+                output = buildFloat(globals, Core.ArcSin(float1));
             }
         }
         break;
@@ -211,7 +211,7 @@ switch (row[0]) {
         if (bool1) {
             hasInterrupt = EX_InvalidArgument(ec, "arctan requires numeric arguments.");
         } else {
-            output = buildFloat(Core.ArcTan(float1, float2));
+            output = buildFloat(globals, Core.ArcTan(float1, float2));
         }
         break;
 
@@ -220,10 +220,10 @@ switch (row[0]) {
 
         if (arg1.type == Types.FLOAT) {
             float1 = (double) arg1.internalValue;
-            output = buildFloat(Core.Cos(float1));
+            output = buildFloat(globals, Core.Cos(float1));
         } else if (arg1.type == Types.INTEGER) {
             int1 = (int) arg1.internalValue;
-            output = buildFloat(Core.Cos(int1));
+            output = buildFloat(globals, Core.Cos(int1));
         } else {
             hasInterrupt = EX_InvalidArgument(ec, "cos requires a number argument.");
         }
@@ -353,7 +353,7 @@ switch (row[0]) {
             arg 2: native data index
         */
         @import("FrameworkFunctions/2_arg.pst");
-        output = buildInteger((int) Core.ForceParens((ObjectInstance) arg1.internalValue).nativeData[(int) arg2.internalValue]);
+        output = buildInteger(globals, (int) Core.ForceParens((ObjectInstance) arg1.internalValue).nativeData[(int) arg2.internalValue]);
         break;
 
     case 22: Core.EmitComment("nativeString");
@@ -366,9 +366,9 @@ switch (row[0]) {
 
         string1 = (string) Core.ForceParens((ObjectInstance) arg1.internalValue).nativeData[(int) arg2.internalValue];
         if ((bool) arg3.internalValue) {
-            output = buildCommonString(string1);
+            output = buildCommonString(globals, string1);
         } else {
-            output = buildString(string1);
+            output = buildString(globals, string1);
         }
         break;
 
@@ -382,7 +382,7 @@ switch (row[0]) {
         // These don't hurt even if there's an interrupt
         if (float1 == 0) output = VALUE_INT_ZERO;
         else if (float1 > 0) output = VALUE_INT_ONE;
-        else output = VALUE_INT_NEG_ONE;
+        else output = INTEGER_NEGATIVE_CACHE[1];
 
         break;
 
@@ -396,7 +396,7 @@ switch (row[0]) {
         } else {
             hasInterrupt = EX_InvalidArgument(ec, "sin requires a number argument.");
         }
-        output = buildFloat(Core.Sin(float1));
+        output = buildFloat(globals, Core.Sin(float1));
         break;
 
     case 25: Core.EmitComment("tan");
@@ -419,7 +419,7 @@ switch (row[0]) {
             if (float2 < 0.0000000001) {
                 hasInterrupt = EX_DivisionByZero(ec, "Tangent is undefined.");
             } else {
-                output = buildFloat(Core.Tan(float1));
+                output = buildFloat(globals, Core.Tan(float1));
             }
         }
         break;
@@ -445,7 +445,7 @@ switch (row[0]) {
             if (float1 <= 0) {
                 hasInterrupt = EX_InvalidArgument(ec, "logarithms require positive inputs.");
             } else {
-                output = buildFloat(fixFuzzyFloatPrecision(Core.Log(float1) * (double) arg2.internalValue));
+                output = buildFloat(globals, fixFuzzyFloatPrecision(Core.Log(float1) * (double) arg2.internalValue));
             }
         }
         break;
@@ -495,7 +495,7 @@ switch (row[0]) {
         break;
 
     case 29: Core.EmitComment("execCounter");
-        output = buildInteger(ec.executionCounter);
+        output = buildInteger(globals, ec.executionCounter);
         break;
 
     case 30: Core.EmitComment("sleep");
@@ -518,7 +518,7 @@ switch (row[0]) {
         break;
 
     case 31: Core.EmitComment("projectId");
-        output = buildCommonString(metadata.projectId);
+        output = buildCommonString(globals, metadata.projectId);
         break;
 
     case 32: Core.EmitComment("isJavaScript");
@@ -566,7 +566,7 @@ switch (row[0]) {
         if (intList1 != null) {
             stringList1 = tokenHelperConvertPcsToStackTraceStrings(vm, intList1);
             for (i = 0; i < stringList1.Size(); i += 1) {
-                list1.Add(buildString(stringList1[i]));
+                list1.Add(buildString(globals, stringList1[i]));
             }
             list1.Reverse();
         }
@@ -620,7 +620,7 @@ switch (row[0]) {
                     // super-common case and faster than calling a function.
                     localsStack[i] = INTEGER_POSITIVE_CACHE[int2];
                 } else {
-                    localsStack[i] = buildInteger(int2);
+                    localsStack[i] = buildInteger(globals, int2);
                 }
             }
         }

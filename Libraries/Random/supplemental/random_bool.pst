@@ -3,7 +3,7 @@
 */
 Value lib_random_random_bool(VmContext vm, Array<Value> args) {
     if (Core.RandomFloat() < 0.5) {
-        return VALUE_TRUE;
+        return vm.globalTrue;
     }
-    return VALUE_FALSE;
+    return vm.globalFalse;
 }

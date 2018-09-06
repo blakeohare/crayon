@@ -396,11 +396,6 @@ namespace Pastel.Transpilers
             throw new NotImplementedException();
         }
 
-        public override void TranslateGlobalVariable(TranspilerContext sb, Variable variable)
-        {
-            this.TranslateVariable(sb, variable);
-        }
-
         public override void TranslateIntBuffer16(TranspilerContext sb)
         {
             sb.Append("INT_BUFFER_16");
@@ -1060,11 +1055,6 @@ namespace Pastel.Transpilers
                 sb.Append(funcDef.ArgNames[i].Value);
             }
             sb.Append(");");
-        }
-
-        public override void GenerateCodeForGlobalsDefinitions(TranspilerContext sb, IList<VariableDeclaration> globals)
-        {
-            throw new NotImplementedException();
         }
 
         public override void GenerateCodeForStringTable(TranspilerContext sb, StringTableBuilder stringTable)
