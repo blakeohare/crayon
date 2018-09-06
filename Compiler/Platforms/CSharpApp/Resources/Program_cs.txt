@@ -1,6 +1,5 @@
-﻿using System;
-using Interpreter;
-using Interpreter.Vm;
+﻿using Interpreter.Vm;
+using Interpreter.Structs;
 
 namespace Interpreter
 {
@@ -12,7 +11,7 @@ namespace Interpreter
             string resourceManifest = ResourceReader.ReadTextResource("ResourceManifest.txt");
             TranslationHelper.LibraryRegistry = new LibraryRegistry();
             TranslationHelper.ImageSheetManifest = ResourceReader.ReadMetadata("ImageSheetManifest.txt", true);
-            Interpreter.Structs.VmContext vm = CrayonWrapper.v_createVm(byteCode, resourceManifest);
+            VmContext vm = CrayonWrapper.v_createVm(byteCode, resourceManifest);
             TranslationHelper.ProgramData = vm;
             CrayonWrapper.v_vmEnvSetCommandLineArgs(vm, args);
             TranslationHelper.StartInterpreter();
