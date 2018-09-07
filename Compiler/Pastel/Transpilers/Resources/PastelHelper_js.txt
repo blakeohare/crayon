@@ -1,0 +1,22 @@
+﻿
+PST$sortedCopyOfArray = function(n) {
+	var a = n.concat([]);
+	a.sort();
+	return a;
+};
+
+PST$multiplyList = function(l, n) {
+	var o = [];
+	var s = l.length;
+	var i;
+	while (n-- > 0) {
+		for (i = 0; i < s; ++i) {
+			o.push(l[i]);
+		}
+	}
+	return o;
+};
+
+PST$intBuffer16 = PST$multiplyList([0], 16);
+PST$floatBuffer16 = PST$multiplyList([0.0], 16);
+PST$stringBuffer16 = PST$multiplyList([''], 16);

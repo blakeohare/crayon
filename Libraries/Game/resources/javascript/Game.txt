@@ -10,11 +10,13 @@ C$game$real_canvas = null;
 C$game$virtual_canvas = null;
 C$game$scaled_mode = false;
 C$game$ctx = null;
-C$game$last_frame_began = C$common$now();
 C$game$execId = -1;
 
+C$game$now = function() { return (Date.now ? Date.now() : new Date().getTime()) / 1000.0; };
+C$game$last_frame_began = C$game$now();
+
 C$game$beginFrame = function () {
-    C$game$last_frame_began = C$common$now();
+    C$game$last_frame_began = C$game$now();
 };
 
 C$game$knownSize = null;
@@ -61,7 +63,7 @@ C$game$runFrame = function () {
 
 C$game$computeDelayMillis = function () {
     var ideal = 1.0 / C$game$fps;
-    var diff = C$common$now() - C$game$last_frame_began;
+    var diff = C$game$now() - C$game$last_frame_began;
     var delay = Math.floor((ideal - diff) * 1000);
     if (delay < 1) delay = 1;
     return delay;
@@ -122,7 +124,7 @@ C$game$initializeScreen = function (width, height, pwidth, pheight, execId) {
 		'<div id="crayon_temp_image"></div>' +
 		'<div id="crayon_font_loader"></div>' +
 	'</div>';
-  var canvas = C$common$getElement('crayon_screen');
+  var canvas = document.getElementById('crayon_screen');
 
   C$game$scaled_mode = scaledMode;
   C$game$real_canvas = canvas;
@@ -132,9 +134,9 @@ C$game$initializeScreen = function (width, height, pwidth, pheight, execId) {
   C$game$height = height;
   C$game$execId = execId;
 
-  C$images$image_loader = C$common$getElement('crayon_image_loader');
-  C$images$image_store = C$common$getElement('crayon_image_store');
-  C$images$temp_image = C$common$getElement('crayon_temp_image');
+  C$images$image_loader = document.getElementById('crayon_image_loader');
+  C$images$image_store = document.getElementById('crayon_image_store');
+  C$images$temp_image = document.getElementById('crayon_temp_image');
 
   document.onkeydown = C$input$keydown;
   document.onkeyup = C$input$keyup;
@@ -167,10 +169,10 @@ C$game$doRender = function() {
 };
 
 C$game$getCrayonHostInner = function() {
-  var d = C$common$getElement('crayon_host_inner');
+  var d = document.getElementById('crayon_host_inner');
   if (!d) {
-	C$common$getElement('crayon_host').innerHTML = '<div style="position:relative;" id="crayon_host_inner"></div>';
-	d = C$common$getElement('crayon_host_inner');
+	document.getElementById('crayon_host').innerHTML = '<div style="position:relative;" id="crayon_host_inner"></div>';
+	d = document.getElementById('crayon_host_inner');
   }
   return d;
 };
@@ -178,14 +180,14 @@ C$game$getCrayonHostInner = function() {
 C$game$getFontLoader = function() {
   var host = C$game$getCrayonHostInner();
   var id = 'crayon_font_loader_host';
-  var fl = C$common$getElement(id);
+  var fl = document.getElementById(id);
   if (!fl) {
     host.innerHTML += 
       '<div style="position:absolute;left:0px;top:0px;font-size:8px" id="' + id + '">' + 
 	    '<span id="crayon_font_loader_1"></span>' +
 	    '<span id="crayon_font_loader_2"></span>' +
 	  '</div>';
-	fl = C$common$getElement(id);
+	fl = document.getElementById(id);
   }
   return fl;
 };

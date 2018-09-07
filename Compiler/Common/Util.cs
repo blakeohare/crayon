@@ -226,6 +226,7 @@ namespace Common
                             .Replace("_csproj.txt", ".csproj")
                             .Replace("_sln.txt", ".sln")
                             .Replace("_java.txt", ".java")
+                            .Replace("_js.txt", ".js")
                             .Replace("_py.txt", ".py")
                             .Replace("_xml.txt", ".xml");
                     }

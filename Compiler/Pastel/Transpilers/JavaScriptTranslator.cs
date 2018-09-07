@@ -1,7 +1,6 @@
 ﻿using Common;
 using Pastel.Nodes;
 using System;
-using System.Collections.Generic;
 
 namespace Pastel.Transpilers
 {
@@ -11,6 +10,8 @@ namespace Pastel.Transpilers
         {
             this.UsesStructDefinitions = false;
         }
+
+        public override string HelperCodeResourcePath { get { return "Transpilers/Resources/PastelHelper.js"; } }
 
         public override void TranslateArrayGet(TranspilerContext sb, Expression array, Expression index)
         {
@@ -159,7 +160,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateFloatBuffer16(TranspilerContext sb)
         {
-            sb.Append("C$common$floatBuffer16");
+            sb.Append("PST$floatBuffer16");
         }
 
         public override void TranslateFloatDivision(TranspilerContext sb, Expression floatNumerator, Expression floatDenominator)
@@ -193,7 +194,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateIntBuffer16(TranspilerContext sb)
         {
-            sb.Append("C$common$intBuffer16");
+            sb.Append("PST$intBuffer16");
         }
 
         public override void TranslateIntegerDivision(TranspilerContext sb, Expression integerNumerator, Expression integerDenominator)
@@ -325,7 +326,7 @@ namespace Pastel.Transpilers
         {
             // TODO: go through and figure out which list to array conversions are necessary to copy and which ones are just ensuring that the type is compatible
             // For example, JS and Python can just no-op in situations where a throwaway list builder is being made.
-            sb.Append("C$common$multiplyList(");
+            sb.Append("PST$multiplyList(");
             this.TranslateExpression(sb, list);
             sb.Append(", 1)");
         }
@@ -446,14 +447,14 @@ namespace Pastel.Transpilers
 
         public override void TranslateSortedCopyOfIntArray(TranspilerContext sb, Expression intArray)
         {
-            sb.Append("C$common$sortedCopyOfArray(");
+            sb.Append("PST$sortedCopyOfArray(");
             this.TranslateExpression(sb, intArray);
             sb.Append(')');
         }
 
         public override void TranslateSortedCopyOfStringArray(TranspilerContext sb, Expression stringArray)
         {
-            sb.Append("C$common$sortedCopyOfArray(");
+            sb.Append("PST$sortedCopyOfArray(");
             this.TranslateExpression(sb, stringArray);
             sb.Append(')');
         }
@@ -467,7 +468,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringBuffer16(TranspilerContext sb)
         {
-            sb.Append("C$common$stringBuffer16");
+            sb.Append("PST$stringBuffer16");
         }
 
         public override void TranslateStringCharAt(TranspilerContext sb, Expression str, Expression index)
