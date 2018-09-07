@@ -12,18 +12,6 @@ public final class FastList {
   public int capacity = 0;
   public Value[] items = EMPTY_VALUES;
 
-  public FastList initializeValueCollection(Collection<Value> values) {
-    items = new Value[8];
-    capacity = 8;
-    for (Value v : values) {
-      if (length == capacity) {
-        increaseCapacity();
-      }
-      items[length++] = v;
-    }
-    return this;
-  }
-
   public int increaseCapacity() {
     if (this.length == 0) {
       items = new Value[4];

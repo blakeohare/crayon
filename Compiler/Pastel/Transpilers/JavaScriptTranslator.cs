@@ -91,11 +91,6 @@ namespace Pastel.Transpilers
             sb.Append(']');
         }
 
-        public override void TranslateConvertRawDictionaryValueCollectionToAReusableValueList(TranspilerContext sb, Expression dictionary)
-        {
-            this.TranslateExpression(sb, dictionary);
-        }
-
         public override void TranslateCurrentTimeSeconds(TranspilerContext sb)
         {
             sb.Append("C$common$now()");
@@ -123,11 +118,6 @@ namespace Pastel.Transpilers
             sb.Append("C$common$dictionaryKeys(");
             this.TranslateExpression(sb, dictionary);
             sb.Append(')');
-        }
-
-        public override void TranslateDictionaryKeysToValueList(TranspilerContext sb, Expression dictionary)
-        {
-            throw new NotImplementedException();
         }
 
         public override void TranslateDictionaryNew(TranspilerContext sb, PType keyType, PType valueType)
@@ -165,11 +155,6 @@ namespace Pastel.Transpilers
             sb.Append("C$common$dictionaryValues(");
             this.TranslateExpression(sb, dictionary);
             sb.Append(')');
-        }
-
-        public override void TranslateDictionaryValuesToValueList(TranspilerContext sb, Expression dictionary)
-        {
-            throw new NotImplementedException();
         }
 
         public override void TranslateFloatBuffer16(TranspilerContext sb)
