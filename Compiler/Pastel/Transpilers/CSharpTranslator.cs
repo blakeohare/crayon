@@ -9,6 +9,8 @@ namespace Pastel.Transpilers
         public CSharpTranslator() : base("    ", "\r\n", false)
         { }
 
+        public override string HelperCodeResourcePath { get { return "Transpilers/Resources/PastelHelper.cs"; } }
+
         public override string TranslateType(PType type)
         {
             switch (type.RootValue)

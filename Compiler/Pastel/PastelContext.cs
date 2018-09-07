@@ -122,11 +122,13 @@ namespace Pastel
             Dictionary<string, string> output = this.GetCodeForFunctionsLookup();
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-            string helperCode = Common.Util.ReadAssemblyFileText(
-                typeof(AbstractTranslator).Assembly,
-                "Transpilers/Resources/PastelHelper.cs");
-            sb.Append(helperCode);
-            sb.Append(ctx.Transpiler.NewLine);
+            string resourcePath = ctx.Transpiler.HelperCodeResourcePath;
+            if (resourcePath != null)
+            {
+                string helperCode = Common.Util.ReadAssemblyFileText(typeof(AbstractTranslator).Assembly, resourcePath);
+                sb.Append(helperCode);
+                sb.Append(ctx.Transpiler.NewLine);
+            }
 
             foreach (string fnName in output.Keys.OrderBy(s => s))
             {

@@ -16,6 +16,8 @@ namespace Pastel.Transpilers
         public bool UsesFunctionDeclarations { get; protected set; }
         public bool UsesStructDeclarations { get; protected set; }
 
+        public virtual string HelperCodeResourcePath { get { return null; } }
+
         public AbstractTranslator(string tab, string newLine)
         {
             this.UsesStructDefinitions = true;

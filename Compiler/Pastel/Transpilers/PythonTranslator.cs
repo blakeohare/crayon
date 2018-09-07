@@ -22,6 +22,8 @@ namespace Pastel.Transpilers
             this.UsesStructDefinitions = false;
         }
 
+        public override string HelperCodeResourcePath { get { return "Transpilers/Resources/PastelHelper.py"; } }
+
         public override string TranslateType(PType type)
         {
             throw new InvalidOperationException("Python does not support types.");
@@ -65,7 +67,7 @@ namespace Pastel.Transpilers
                     default: break;
                 }
             }
-            sb.Append("(TranslationHelper_NoneListOfOne * ");
+            sb.Append("(PST_NoneListOfOne * ");
             this.TranslateExpression(sb, lengthExpression);
             sb.Append(")");
         }
@@ -92,7 +94,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateBase64ToString(TranspilerContext sb, Expression base64String)
         {
-            sb.Append("TranslationHelper_base64ToString(");
+            sb.Append("PST_base64ToString(");
             this.TranslateExpression(sb, base64String);
             sb.Append(')');
         }
@@ -249,7 +251,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateFloatBuffer16(TranspilerContext sb)
         {
-            sb.Append("TranslationHelper_FloatBuffer16");
+            sb.Append("PST_FloatBuffer16");
         }
 
         public override void TranslateFloatConstant(TranspilerContext sb, double value)
@@ -365,7 +367,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateIntBuffer16(TranspilerContext sb)
         {
-            sb.Append("TranslationHelper_IntBuffer16");
+            sb.Append("PST_IntBuffer16");
         }
 
         public override void TranslateIntegerConstant(TranspilerContext sb, int value)
@@ -391,7 +393,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateIsValidInteger(TranspilerContext sb, Expression stringValue)
         {
-            sb.Append("TranslationHelper_isValidInteger(");
+            sb.Append("PST_isValidInteger(");
             this.TranslateExpression(sb, stringValue);
             sb.Append(')');
         }
@@ -665,14 +667,14 @@ namespace Pastel.Transpilers
 
         public override void TranslateSortedCopyOfIntArray(TranspilerContext sb, Expression intArray)
         {
-            sb.Append("TranslationHelper_sortedCopyOfList(");
+            sb.Append("PST_sortedCopyOfList(");
             this.TranslateExpression(sb, intArray);
             sb.Append(')');
         }
 
         public override void TranslateSortedCopyOfStringArray(TranspilerContext sb, Expression stringArray)
         {
-            sb.Append("TranslationHelper_sortedCopyOfList(");
+            sb.Append("PST_sortedCopyOfList(");
             this.TranslateExpression(sb, stringArray);
             sb.Append(')');
         }
@@ -686,7 +688,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringBuffer16(TranspilerContext sb)
         {
-            sb.Append("TranslationHelper_StringBuffer16");
+            sb.Append("PST_StringBuffer16");
         }
 
         public override void TranslateStringCharAt(TranspilerContext sb, Expression str, Expression index)
@@ -918,7 +920,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateTryParseFloat(TranspilerContext sb, Expression stringValue, Expression floatOutList)
         {
-            sb.Append("TranslationHelper_tryParseFloat(");
+            sb.Append("PST_tryParseFloat(");
             this.TranslateExpression(sb, stringValue);
             sb.Append(", ");
             this.TranslateExpression(sb, floatOutList);

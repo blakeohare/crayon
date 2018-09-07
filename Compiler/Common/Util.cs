@@ -217,12 +217,18 @@ namespace Common
                 caseInsensitiveLookup[assembly] = nameLookup;
                 foreach (string resource in assembly.GetManifestResourceNames())
                 {
-                    string lookupName = resource.ToLower()
-                        .Replace("_cs.txt", ".cs")
-                        .Replace("_csproj.txt", ".csproj")
-                        .Replace("_sln.txt", ".sln")
-                        .Replace("_java.txt", ".java")
-                        .Replace("_xml.txt", ".xml");
+                    string lookupName = resource.ToLower();
+                    if (resource.Contains('_'))
+                    {
+                        // this is silly, but VS gets confused easily, even when marked as embedded resources.
+                        lookupName = lookupName
+                            .Replace("_cs.txt", ".cs")
+                            .Replace("_csproj.txt", ".csproj")
+                            .Replace("_sln.txt", ".sln")
+                            .Replace("_java.txt", ".java")
+                            .Replace("_py.txt", ".py")
+                            .Replace("_xml.txt", ".xml");
+                    }
 
                     nameLookup[lookupName] = resource;
                 }
