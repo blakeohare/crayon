@@ -81,6 +81,7 @@ PASTEL_STYLE = FormatStyle().tabs(' ' * 4).newline('\n')
 PYTHON_STYLE_2_SPACES = FormatStyle().tabs(' ' * 2).newline('\n')
 PYTHON_STYLE_4_SPACES = FormatStyle().tabs(' ' * 4).newline('\n')
 JAVA_STYLE = FormatStyle().tabs(' ' * 2).newline('\n')
+JAVASCRIPT_STYLE = FormatStyle().tabs('\t').newline('\n')
 
 MATCHERS = [
   # C#
@@ -90,10 +91,18 @@ MATCHERS = [
   ('Compiler/*.csproj', CSPROJ_STYLE),
   ('Compiler/Platforms/CSharpApp/*_csproj.txt', CSPROJ_STYLE),
   ('Compiler/Platforms/LangCSharp/*_csproj.txt', CSPROJ_STYLE),
+  ('Compiler/Pastel/Transpilers/Resources/*_cs.txt', CSHARP_STYLE),
 
   # Java
   ('Compiler/Platforms/JavaApp/*_java.txt', JAVA_STYLE),
   ('Compiler/Platforms/LangJava/*_java.txt', JAVA_STYLE),
+  ('Compiler/Pastel/Transpilers/Resources/*_java.txt', JAVA_STYLE),
+
+  # JavaScript
+  ('Compiler/Pastel/Transpilers/Resources/*_js.txt', JAVASCRIPT_STYLE),
+
+  # Python
+  ('Compiler/Pastel/Transpilers/Resources/*_py.txt', PYTHON_STYLE_2_SPACES),
 
   # Pastel
   ('Compiler/Interpreter/*.pst', PASTEL_STYLE),
