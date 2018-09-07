@@ -56,10 +56,6 @@ C$common$readResourceText = function (path) {
 C$common$alwaysTrue = function () { return true; };
 C$common$alwaysFalse = function () { return false; };
 
-C$common$now = function() {
-    return (Date.now ? Date.now() : new Date().getTime()) / 1000.0;
-};
-
 C$common$addTextRes = function (path, value) {
     C$common$textResources[path] = value;
 };
@@ -160,11 +156,11 @@ C$common$createNewArray = function (size) {
     return output;
 };
 
-C$common$multiplyList = function (list, size) {
+C$common$multiplyList = function (list, n) {
     var output = [];
     var length = list.length;
     var i;
-    while (size-- > 0) {
+    while (n-- > 0) {
         for (i = 0; i < length; ++i) {
             output.push(list[i]);
         }
@@ -182,18 +178,6 @@ C$common$checksubstring = function (s, lookfor, index) {
 
 C$common$clearList = function (list) {
     list.length = 0;
-};
-
-C$common$getElement = function (id) {
-    return document.getElementById(id);
-};
-
-C$common$getBool = function (b) {
-    return b ? v_VALUE_TRUE : v_VALUE_FALSE;
-}
-
-C$common$enqueueVmResume = function (seconds, execId) {
-    window.setTimeout(v_runInterpreter, Math.floor(seconds * 1000), execId);
 };
 
 C$common$stringTrimOneSide = function (value, isLeft) {
@@ -238,12 +222,6 @@ C$common$getFunction = function(name) {
 		return window[check];
 	}
 	return null;
-};
-
-C$common$base64ToString = function(s) {
-	return decodeURIComponent(Array.prototype.map.call(atob(s), function(c) {
-		return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-	}).join(''))
 };
 
 C$common$intBuffer16 = C$common$multiplyList([0], 16);

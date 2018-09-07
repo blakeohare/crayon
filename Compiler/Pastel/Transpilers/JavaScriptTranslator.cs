@@ -52,9 +52,9 @@ namespace Pastel.Transpilers
 
         public override void TranslateBase64ToString(TranspilerContext sb, Expression base64String)
         {
-            sb.Append("C$common$base64ToString(");
+            sb.Append("decodeURIComponent(Array.prototype.map.call(atob(");
             this.TranslateExpression(sb, base64String);
-            sb.Append(')');
+            sb.Append("), function(c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join(''))");
         }
 
         public override void TranslateCast(TranspilerContext sb, PType type, Expression expression)
@@ -93,7 +93,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateCurrentTimeSeconds(TranspilerContext sb)
         {
-            sb.Append("C$common$now()");
+            sb.Append("((Date.now ? Date.now() : new Date().getTime()) / 1000.0)");
         }
 
         public override void TranslateDictionaryContainsKey(TranspilerContext sb, Expression dictionary, Expression key)
