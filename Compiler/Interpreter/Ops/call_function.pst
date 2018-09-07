@@ -301,7 +301,7 @@ if (staticConstructorNotInvoked) {
                 break;
             case Types.DICTIONARY:
                 Core.EmitComment("...on a dictionary");
-                dictImpl = ((DictImpl) value.internalValue);
+                dictImpl = (DictImpl) value.internalValue;
                 switch (functionId) {
                     case PrimitiveMethodName.CLEAR: @import("PrimitiveMethods/dict_clear.pst"); break;
                     case PrimitiveMethodName.CLONE: @import("PrimitiveMethods/dict_clone.pst"); break;
@@ -410,12 +410,12 @@ if (staticConstructorNotInvoked) {
                             break;
                         case 2:
                             valueArray1[i] = new Value(Types.DICTIONARY, new DictImpl(
-                                new Dictionary<int, Value>(),
-                                new Dictionary<int, Value>(),
-                                new Dictionary<string, Value>(),
-                                new Dictionary<string, Value>(),
                                 0,
-                                Types.INTEGER));
+                                Types.INTEGER,
+                                new Dictionary<int, int>(),
+                                new Dictionary<string, int>(),
+                                new List<Value>(),
+                                new List<Value>()));
                             break;
                     }
                 }

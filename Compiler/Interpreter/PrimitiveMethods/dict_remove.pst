@@ -3,48 +3,78 @@
 } else {
 
     value2 = funcArgs[0];
-    bool2 = true;
-    if (dictImpl.size > 0 && dictImpl.keyType == value2.type) {
-        switch (value2.type) {
+    bool2 = false;
+    keyType = dictImpl.keyType;
+    if (dictImpl.size > 0 && keyType == value2.type) {
 
-            case Types.INTEGER:
-                int1 = (int) value2.internalValue;
-                if (dictImpl.keyIntLookup.Contains(int1)) {
-                    bool2 = false;
-                    dictImpl.keyIntLookup.Remove(int1);
-                    dictImpl.valueIntLookup.Remove(int1);
-                    dictImpl.size -= 1;
+        // First figure out the raw key value and determine if it's even in the dictionary.
+        if (keyType == Types.STRING) {
+            stringKey = (string) value2.internalValue;
+            if (dictImpl.stringToIndex.Contains(stringKey)) {
+                i = dictImpl.stringToIndex[stringKey];
+                bool2 = true;
+            }
+        } else {
+            if (keyType == Types.INTEGER) {
+                intKey = (int) value2.internalValue;
+            } else {
+                intKey = Core.ForceParens((ObjectInstance) value2.internalValue).objectId;
+            }
+            if (dictImpl.intToIndex.Contains(intKey)) {
+                i = dictImpl.intToIndex[intKey];
+                bool2 = true;
+            }
+        }
+
+        // If it's in the dictionary...
+        if (bool2) {
+
+            // decrement the size
+            len = dictImpl.size - 1;
+            dictImpl.size = len;
+
+            if (i == len) {
+                // This is the last item in the flat lists, so just pop it from both
+                // the lookup and the lists
+                if (keyType == Types.STRING) {
+                    dictImpl.stringToIndex.Remove(stringKey);
+                } else {
+                    dictImpl.intToIndex.Remove(intKey);
                 }
-                break;
+                dictImpl.keys.RemoveAt(i);
+                dictImpl.values.RemoveAt(i);
+            } else {
+                // This is somewhere else in the flat lists.
 
-            case Types.INSTANCE:
-                objInstance1 = (ObjectInstance) value2.internalValue;
-                int1 = (int) objInstance1.objectId;
-                if (dictImpl.keyIntLookup.Contains(int1)) {
-                    bool2 = false;
-                    dictImpl.keyIntLookup.Remove(int1);
-                    dictImpl.valueIntLookup.Remove(int1);
-                    dictImpl.size -= 1;
+                // Copy the last element of the list to the index of the element you're removing.
+                value = dictImpl.keys[len];
+                dictImpl.keys[i] = value;
+                dictImpl.values[i] = dictImpl.values[len];
+
+                // Pop it from the lists
+                dictImpl.keys.Pop();
+                dictImpl.values.Pop();
+
+                // Remove the old element from the lookup and update the one you moved to point
+                // to the updated index.
+                if (keyType == Types.STRING) {
+                    dictImpl.stringToIndex.Remove(stringKey);
+                    stringKey = (string) value.internalValue;
+                    dictImpl.stringToIndex[stringKey] = i;
+                } else {
+                    dictImpl.intToIndex.Remove(intKey);
+                    if (keyType == Types.INTEGER) {
+                        intKey = (int) value.internalValue;
+                    } else {
+                        intKey = Core.ForceParens((ObjectInstance) value.internalValue).objectId;
+                    }
+                    dictImpl.intToIndex[intKey] = i;
                 }
-                break;
-
-            case Types.STRING:
-                string1 = (string) value2.internalValue;
-                if (dictImpl.keyStringLookup.Contains(string1)) {
-                    bool2 = false;
-                    dictImpl.keyStringLookup.Remove(string1);
-                    dictImpl.valueStringLookup.Remove(string1);
-                    dictImpl.size -= 1;
-                }
-                break;
-
-            default:
-                int1 = 0;
-                break;
+            }
         }
     }
 
-    if (bool2) {
+    if (!bool2) {
         hasInterrupt = EX_KeyNotFound(ec, "dictionary does not contain the given key.");
     }
 }

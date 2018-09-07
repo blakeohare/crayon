@@ -7,7 +7,7 @@
         hasInterrupt = EX_InvalidArgument(ec, "dictionary merge method requires another dictionary as a parameeter.");
     } else {
 
-        dictImpl2 = ((DictImpl) value2.internalValue);
+        dictImpl2 = (DictImpl) value2.internalValue;
 
         if (dictImpl2.size > 0) {
             if (dictImpl.size == 0) {

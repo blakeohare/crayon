@@ -39,8 +39,7 @@ if (root.type == Types.LIST) {
         } else if (keyType == Types.STRING) {
             stringKey = (string) value.internalValue;
         } else if (keyType == Types.INSTANCE) {
-            objInstance1 = (ObjectInstance) value.internalValue;
-            intKey = objInstance1.objectId;
+            intKey = Core.ForceParens((ObjectInstance) value.internalValue).objectId;
         } else {
             if (dictImpl.size == 0) {
                 hasInterrupt = EX_KeyNotFound(ec, "Key not found. Dictionary is empty.");
@@ -51,27 +50,19 @@ if (root.type == Types.LIST) {
 
         if (!hasInterrupt) {
             if (keyType == Types.STRING) {
-                dictStringValueLookup = (Dictionary<string, Value>) dictImpl.valueStringLookup;
-                if (dictStringValueLookup.Contains(stringKey)) {
-                    output = dictStringValueLookup[stringKey];
+                stringIntDict1 = (Dictionary<string, int>) dictImpl.stringToIndex;
+                if (stringIntDict1.Contains(stringKey)) {
+                    valueStack[valueStackSize - 1] = dictImpl.values[stringIntDict1[stringKey]];
                 } else {
                     hasInterrupt = EX_KeyNotFound(ec, Core.StringConcatAll("Key not found: '", stringKey, "'"));
                 }
             } else {
-                dictIntValueLookup = (Dictionary<int, Value>) dictImpl.valueIntLookup;
-                if (dictIntValueLookup.Contains(intKey)) {
-                    output = dictIntValueLookup[intKey];
+                intIntDict1 = (Dictionary<int, int>) dictImpl.intToIndex;
+                if (intIntDict1.Contains(intKey)) {
+                    valueStack[valueStackSize - 1] = dictImpl.values[intIntDict1[intKey]];
                 } else {
+                    // TODO: show key (for objects and ints)
                     hasInterrupt = EX_KeyNotFound(ec, "Key not found.");
-                }
-            }
-
-            if (!hasInterrupt) {
-                if (output == null) {
-                    // TODO: can't this be removed? Aren't the checks above sufficient? Or can the lookups contain null values?
-                    hasInterrupt = EX_KeyNotFound(ec, "Key not found.");
-                } else {
-                    valueStack[valueStackSize - 1] = output;
                 }
             }
         }
