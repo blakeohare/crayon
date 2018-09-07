@@ -1,4 +1,4 @@
-$_lib_audio_isAudioSupported: True
+$_lib_audio_isAudioSupported: always_true()
 $_lib_audio_musicIsPlaying: audio_music_is_playing()
 $_lib_audio_musicLoadFromResource: 1
 $_lib_audio_musicPause: audio_music_pause()

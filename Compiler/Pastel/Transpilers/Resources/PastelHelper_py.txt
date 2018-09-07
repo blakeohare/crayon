@@ -26,3 +26,9 @@ def PST_tryParseFloat(value, floatOut):
     floatOut[0] = 1.0
   except:
     floatOut[0] = -1.0
+
+def PST_stringCheckSlice(haystack, i, needle):
+  return haystack[i:i + len(needle)] == needle
+
+def always_true(): return True
+def always_false(): return False

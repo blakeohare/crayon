@@ -1,8 +1,5 @@
 ﻿TranslationHelper_globals = {}
 
-def always_true(): return True
-def always_false(): return False
-
 def TranslationHelper_setProgramData(value):
   TranslationHelper_globals['pd'] = value
 
@@ -11,13 +8,6 @@ def TranslationHelper_getProgramData():
 
 def TranslationHelper_setLibraries(libraries):
   LibraryRegistry(libraries)
-
-def string_check_slice(haystack, i, needle):
-  return haystack[i:i + len(needle)] == needle
-
-def string_substring(s, start, length = None):
-  if length == None: return s[start:]
-  return s[start:start + length]
 
 _NUM_CHARS = {}
 for c in '0123456789':

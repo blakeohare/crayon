@@ -842,7 +842,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringSubstringIsEqualTo(TranspilerContext sb, Expression haystack, Expression startIndex, Expression needle)
         {
-            sb.Append("string_check_slice(");
+            sb.Append("PST_stringCheckSlice(");
             this.TranslateExpression(sb, haystack);
             sb.Append(", ");
             this.TranslateExpression(sb, startIndex);
