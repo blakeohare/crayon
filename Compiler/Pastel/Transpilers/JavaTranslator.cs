@@ -6,7 +6,7 @@ namespace Pastel.Transpilers
 {
     internal class JavaTranslator : CurlyBraceTranslator
     {
-        private bool isJava6;
+        private readonly bool isJava6;
 
         public JavaTranslator(bool isJava6) : base("  ", "\n", true)
         {
@@ -171,7 +171,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateBase64ToString(TranspilerContext sb, Expression base64String)
         {
-            sb.Append("TranslationHelper.base64ToString(");
+            sb.Append("PST_base64ToString(");
             this.TranslateExpression(sb, base64String);
             sb.Append(')');
         }
@@ -340,7 +340,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateDictionaryKeys(TranspilerContext sb, Expression dictionary)
         {
-            sb.Append("TranslationHelper.convert");
+            sb.Append("PST_convert");
             switch (dictionary.ResolvedType.Generics[0].RootValue)
             {
                 case "int": sb.Append("Integer"); break;
@@ -456,7 +456,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateIsValidInteger(TranspilerContext sb, Expression stringValue)
         {
-            sb.Append("TranslationHelper.isValidInteger(");
+            sb.Append("PST_isValidInteger(");
             this.TranslateExpression(sb, stringValue);
             sb.Append(')');
         }
@@ -486,7 +486,8 @@ namespace Pastel.Transpilers
             }
             else
             {
-                sb.Append("TranslationHelper.concatLists(");
+                // Fun fact: this is actually not implemented. The only place that this is used is by Value.
+                sb.Append("PST_concatLists(");
                 this.TranslateExpression(sb, list);
                 sb.Append(", ");
                 this.TranslateExpression(sb, items);
@@ -537,14 +538,14 @@ namespace Pastel.Transpilers
 
         public override void TranslateListJoinChars(TranspilerContext sb, Expression list)
         {
-            sb.Append("TranslationHelper.joinChars(");
+            sb.Append("PST_joinChars(");
             this.TranslateExpression(sb, list);
             sb.Append(')');
         }
 
         public override void TranslateListJoinStrings(TranspilerContext sb, Expression list, Expression sep)
         {
-            sb.Append("TranslationHelper.joinList(");
+            sb.Append("PST_joinList(");
             this.TranslateExpression(sb, sep);
             sb.Append(", ");
             this.TranslateExpression(sb, list);
@@ -575,8 +576,8 @@ namespace Pastel.Transpilers
             else
             {
                 bool useInlineListPop =
-                (list is Variable) ||
-                (list is DotField && ((DotField)list).Root is Variable);
+                    (list is Variable) ||
+                    (list is DotField && ((DotField)list).Root is Variable);
 
                 if (useInlineListPop)
                 {
@@ -587,7 +588,7 @@ namespace Pastel.Transpilers
                 }
                 else
                 {
-                    sb.Append("TranslationHelper.listPop(");
+                    sb.Append("PST_listPop(");
                     this.TranslateExpression(sb, list);
                     sb.Append(')');
                 }
@@ -611,7 +612,7 @@ namespace Pastel.Transpilers
             }
             else
             {
-                sb.Append("TranslationHelper.reverseList(");
+                sb.Append("PST_reverseList(");
                 this.TranslateExpression(sb, list);
                 sb.Append(')');
             }
@@ -640,9 +641,9 @@ namespace Pastel.Transpilers
 
         public override void TranslateListShuffle(TranspilerContext sb, Expression list)
         {
-            sb.Append("TranslationHelper.shuffleInPlace(");
+            // This is currently only used and implemented by Value lists.
             this.TranslateExpression(sb, list);
-            sb.Append(')');
+            sb.Append(".shuffle()");
         }
 
         public override void TranslateListSize(TranspilerContext sb, Expression list)
@@ -677,7 +678,7 @@ namespace Pastel.Transpilers
                 case "int":
                 case "double":
                 case "char":
-                    sb.Append("TranslationHelper.listToArray");
+                    sb.Append("PST_listToArray");
                     sb.Append((char)(rootType[0] + 'A' - 'a'));
                     sb.Append(rootType.Substring(1));
                     sb.Append('(');
@@ -793,7 +794,8 @@ namespace Pastel.Transpilers
             }
             else
             {
-                sb.Append("TranslationHelper.multiplyList(");
+                // not implemented yet because it's not used yet.
+                sb.Append("PST_multiplyList(");
                 this.TranslateExpression(sb, list);
                 sb.Append(", ");
                 this.TranslateExpression(sb, n);
@@ -872,19 +874,19 @@ namespace Pastel.Transpilers
 
         public override void TranslateRandomFloat(TranspilerContext sb)
         {
-            sb.Append("TranslationHelper.random.nextDouble()");
+            sb.Append("PST_random.nextDouble()");
         }
 
         public override void TranslateSortedCopyOfIntArray(TranspilerContext sb, Expression intArray)
         {
-            sb.Append("TranslationHelper.sortedCopyOfIntArray(");
+            sb.Append("PST_sortedCopyOfIntArray(");
             this.TranslateExpression(sb, intArray);
             sb.Append(')');
         }
 
         public override void TranslateSortedCopyOfStringArray(TranspilerContext sb, Expression stringArray)
         {
-            sb.Append("TranslationHelper.sortedCopyOfStringArray(");
+            sb.Append("PST_sortedCopyOfStringArray(");
             this.TranslateExpression(sb, stringArray);
             sb.Append(')');
         }
@@ -1011,14 +1013,14 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringReverse(TranspilerContext sb, Expression str)
         {
-            sb.Append("TranslationHelper.reverseString(");
+            sb.Append("PST_reverseString(");
             this.TranslateExpression(sb, str);
             sb.Append(')');
         }
 
         public override void TranslateStringSplit(TranspilerContext sb, Expression haystack, Expression needle)
         {
-            sb.Append("TranslationHelper.literalStringSplit(");
+            sb.Append("PST_literalStringSplit(");
             this.TranslateExpression(sb, haystack);
             sb.Append(", ");
             this.TranslateExpression(sb, needle);
@@ -1047,7 +1049,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringSubstringIsEqualTo(TranspilerContext sb, Expression haystack, Expression startIndex, Expression needle)
         {
-            sb.Append("TranslationHelper.checkStringInString(");
+            sb.Append("PST_checkStringInString(");
             this.TranslateExpression(sb, haystack);
             sb.Append(", ");
             this.TranslateExpression(sb, startIndex);
@@ -1076,14 +1078,14 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringTrimEnd(TranspilerContext sb, Expression str)
         {
-            sb.Append("TranslationHelper.trimSide(");
+            sb.Append("PST_trimSide(");
             this.TranslateExpression(sb, str);
             sb.Append(", false)");
         }
 
         public override void TranslateStringTrimStart(TranspilerContext sb, Expression str)
         {
-            sb.Append("TranslationHelper.trimSide(");
+            sb.Append("PST_trimSide(");
             this.TranslateExpression(sb, str);
             sb.Append(", true)");
         }
@@ -1102,7 +1104,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateTryParseFloat(TranspilerContext sb, Expression stringValue, Expression floatOutList)
         {
-            sb.Append("TranslationHelper.parseFloatOrReturnNull(");
+            sb.Append("PST_parseFloatOrReturnNull(");
             this.TranslateExpression(sb, floatOutList);
             sb.Append(", ");
             this.TranslateExpression(sb, stringValue);

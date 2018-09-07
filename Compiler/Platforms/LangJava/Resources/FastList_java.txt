@@ -140,4 +140,17 @@ public final class FastList {
     output.capacity = output.length;
     return output;
   }
+
+  private static java.util.Random random = new java.util.Random();
+
+  public void shuffle() {
+    int tIndex;
+    Value t;
+    for (int i = length - 1; i >= 0; --i) {
+      tIndex = random.nextInt(length);
+      t = items[tIndex];
+      items[tIndex] = items[i];
+      items[i] = t;
+    }
+  }
 }
