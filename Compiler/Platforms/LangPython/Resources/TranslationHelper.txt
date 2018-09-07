@@ -9,11 +9,8 @@ def TranslationHelper_setProgramData(value):
 def TranslationHelper_getProgramData():
   return TranslationHelper_globals['pd']
 
-def TranslationHelper_determineLibraryAvailability(name, ver):
-  return TranslationHelper_globals['libreg'].loadLibrary(name, ver)
-
 def TranslationHelper_setLibraries(libraries):
-  TranslationHelper_globals['libreg'] = LibraryRegistry(libraries)
+  LibraryRegistry(libraries)
 
 def string_check_slice(haystack, i, needle):
   return haystack[i:i + len(needle)] == needle
@@ -22,45 +19,9 @@ def string_substring(s, start, length = None):
   if length == None: return s[start:]
   return s[start:start + length]
 
-def _parse_float_helper(f_out, value):
-  try:
-    output = float(value)
-    f_out[0] = 1
-    f_out[1] = output
-  except:
-    f_out[0] = -1
-
 _NUM_CHARS = {}
 for c in '0123456789':
   _NUM_CHARS[c] = True
-
-def _is_valid_integer(value):
-  first = True
-  if value == '-': return False
-  for c in value:
-    if first:
-      first = False
-      if c == '-':
-        continue
-    if not _NUM_CHARS.get(c, False):
-      return False
-  return True
-
-def wrappedChr(code):
-  if code < 0 or code > 255: return '?'
-  return chr(code)
-
-def create_assertion(message):
-  raise Exception(message)
-
-def _clear_list(list):
-  while len(list) > 0:
-    list.pop()
-
-def create_sorted_copy_of_list(items):
-  items = items[:]
-  items.sort()
-  return items
 
 _TranslationHelper_fnFinders = []
 

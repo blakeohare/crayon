@@ -1,3 +1,0 @@
-$_app_data_root: CsxiTranslationHelper.AppDataRoot
-$_print_stderr: System.Console.WriteLine([ARG:1])
-$_print_stdout: System.Console.WriteLine([ARG:1])
