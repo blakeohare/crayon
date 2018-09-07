@@ -210,7 +210,7 @@ namespace Interpreter.Libraries.Json
 				throw new JsonParserException(); // EOF
 			}
 
-			return CrayonWrapper.v_buildDictionary(keys.ToArray(), values.ToArray());
+			return CrayonWrapper.v_buildStringDictionary(globals, keys.ToArray(), values.ToArray());
 		}
         
 		private static void PopExpected(char[] rawValue, int length, Index index, string value)

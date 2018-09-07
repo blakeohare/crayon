@@ -1,6 +1,6 @@
 ﻿
 valueStackSize -= 3;
-value = valueStack[valueStackSize + 2];
+value = valueStack[valueStackSize + 2]; // value
 value2 = valueStack[valueStackSize + 1]; // index
 root = valueStack[valueStackSize];
 
@@ -44,23 +44,29 @@ if (type == Types.LIST) {
         if (bool2 && dictImpl.keyType != keyType) {
             hasInterrupt = EX_InvalidKey(ec, "Cannot have multiple keys in one dictionary with different types.");
         } else if (keyType == Types.STRING) {
-            if (!dictImpl.keyStringLookup.Contains(stringKey)) {
-                dictImpl.keyStringLookup[stringKey] = value2;
+            if (!dictImpl.stringToIndex.Contains(stringKey)) {
+                dictImpl.stringToIndex[stringKey] = dictImpl.size;
                 dictImpl.size += 1;
+                dictImpl.keys.Add(value2);
+                dictImpl.values.Add(value);
                 if (!bool2) { // is empty?
                     dictImpl.keyType = keyType;
                 }
+            } else {
+                dictImpl.values[dictImpl.stringToIndex[stringKey]] = value;
             }
-            dictImpl.valueStringLookup[stringKey] = value;
         } else {
-            if (!dictImpl.keyIntLookup.Contains(intKey)) {
-                dictImpl.keyIntLookup[intKey] = value2;
+            if (!dictImpl.intToIndex.Contains(intKey)) {
+                dictImpl.intToIndex[intKey] = dictImpl.size;
                 dictImpl.size += 1;
+                dictImpl.keys.Add(value2);
+                dictImpl.values.Add(value);
                 if (!bool2) { // is empty?
                     dictImpl.keyType = keyType;
                 }
+            } else {
+                dictImpl.values[dictImpl.intToIndex[intKey]] = value;
             }
-            dictImpl.valueIntLookup[intKey] = value;
         }
     }
 } else {

@@ -57,36 +57,21 @@ string valueToString(VmContext vm, Value wrappedValue) {
     if (type == Types.DICTIONARY) {
         // This is nasty because not all platforms have a way to check for instance equality for lists and dictionaries.
         // Therefore this is also prone to infinite recursion.
-        DictImpl internalDict = ((DictImpl) wrappedValue.internalValue);
-        int size = internalDict.size;
-        if (size == 0) {
+        DictImpl dict = (DictImpl) wrappedValue.internalValue;
+        if (dict.size == 0) {
             return "{}";
         }
+
+        // TODO: STRING BUILDER! OMG, WHY DID YOU DO THIS
         string output = "{";
-        if (internalDict.keyType == Types.INTEGER) {
-            Array<int> intKeys = internalDict.keyIntLookup.Keys();
-            int intKey = 0;
-            for (int i = 0; i < size; i += 1) {
-                if (i > 0) {
-                    Core.StringAppend(output, ", ");
-                } else {
-                    Core.StringAppend(output, " ");
-                }
-                intKey = intKeys[i];
-                Core.StringAppend(output, Core.StringConcatAll(Core.IntToString(intKey), ": ", valueToString(vm, internalDict.valueIntLookup[intKey])));
-            }
-        } else {
-            Array<string> stringKeys = internalDict.keyStringLookup.Keys();
-            string stringKey = "";
-            for (int i = 0; i < size; i += 1) {
-                if (i > 0) {
-                    Core.StringAppend(output, ", ");
-                } else {
-                    Core.StringAppend(output, " ");
-                }
-                stringKey = stringKeys[i];
-                Core.StringAppend(output, Core.StringConcatAll(stringKey, ": ", valueToString(vm, internalDict.valueStringLookup[stringKey])));
-            }
+        List<Value> keyList = dict.keys;
+        List<Value> valueList = dict.values;
+        for (int i = 0; i < dict.size; i += 1) {
+            if (i > 0) Core.StringAppend(output, ", ");
+            Core.StringAppend(output, Core.StringConcatAll(
+                valueToString(vm, dict.keys[i]),
+                ": ",
+                valueToString(vm, dict.values[i])));
         }
         Core.StringAppend(output, " }");
         return output;
@@ -289,31 +274,6 @@ Value buildList(List<Value> valueList) {
     return new Value(Types.LIST, valueList);
 }
 
-Value buildDictionary(Array<string> keys, Array<Value> values) {
-    Dictionary<string, Value> keyLookup = new Dictionary<string, Value>();
-    Dictionary<string, Value> valueLookup = new Dictionary<string, Value>();
-
-    int i = keys.Size() - 1;
-    string key = null;
-    Value keyValue = null;
-
-    while (i >= 0) {
-        key = keys[i];
-        keyValue = new Value(Types.STRING, key);
-        keyLookup[key] = keyValue;
-        valueLookup[key] = values[i];
-        i -= 1;
-    }
-
-    return new Value(Types.DICTIONARY, new DictImpl(
-        new Dictionary<int, Value>(),
-        new Dictionary<int, Value>(),
-        keyLookup,
-        valueLookup,
-        keyLookup.Size(),
-        Types.STRING));
-}
-
 PlatformRelayObject buildRelayObj(
         int type,
         int iarg1,
@@ -404,52 +364,87 @@ string stringFromHex(string encoded) {
     return output.Join("");
 }
 
+Value buildStringDictionary(VmGlobals globals, Array<string> stringKeys, Array<Value> values) {
+    int size = stringKeys.Length();
+    DictImpl d = new DictImpl(size, Types.STRING, new Dictionary<int, int>(), new Dictionary<string, int>(), new List<Value>(), new List<Value>());
+    string k = null;
+    for (int i = 0; i < size; i += 1) {
+        k = stringKeys[i];
+        if (d.stringToIndex.Contains(k)) {
+            d.values[d.stringToIndex[k]] = values[i];
+        } else {
+            d.stringToIndex[k] = d.values.Size();
+            d.values.Add(values[i]);
+            d.keys.Add(buildString(globals, k));
+        }
+    }
+    d.size = d.values.Size(); // in the event of collisions, the final size won't be the size of the input.
+    return new Value(Types.DICTIONARY, d);
+}
+
+// Copy the contents of the original into the clone.
+// If the clone is null, create a new one.
+// Return the clone.
 DictImpl cloneDictionary(DictImpl original, DictImpl clone) {
 
-    Dictionary<int, Value> keyIntLookup_clone = null;
-    Dictionary<int, Value> valueIntLookup_clone = null;
-    Dictionary<string, Value> keyStringLookup_clone = null;
-    Dictionary<string, Value> valueStringLookup_clone = null;
-
-    if (clone == null) {
-        keyIntLookup_clone = new Dictionary<int, Value>();
-        valueIntLookup_clone = new Dictionary<int, Value>();
-        keyStringLookup_clone = new Dictionary<string, Value>();
-        valueStringLookup_clone = new Dictionary<string, Value>();
-
-        clone = new DictImpl(
-            keyIntLookup_clone,
-            valueIntLookup_clone,
-            keyStringLookup_clone,
-            valueStringLookup_clone,
-            0,
-            original.keyType);
-    } else {
-        keyIntLookup_clone = clone.keyIntLookup;
-        valueIntLookup_clone = clone.valueIntLookup;
-        keyStringLookup_clone = clone.keyStringLookup;
-        valueStringLookup_clone = clone.valueStringLookup;
-    }
-
+    int type = original.keyType;
     int i = 0;
-    int iKey = 0;
-    string sKey = null;
-    Array<int> intKeys = original.keyIntLookup.Keys();
-    Array<string> stringKeys = original.keyStringLookup.Keys();
-
-    for (i = intKeys.Size() - 1; i >= 0; i -= 1) {
-        iKey = intKeys[i];
-        keyIntLookup_clone[iKey] = original.keyIntLookup[iKey];
-        valueIntLookup_clone[iKey] = original.valueIntLookup[iKey];
+    int size = original.size;
+    int kInt = 0;
+    string kString = null;
+    if (clone == null) {
+        clone = new DictImpl(0, type, new Dictionary<int, int>(), new Dictionary<string, int>(), new List<Value>(), new List<Value>());
+        if (type == Types.STRING) {
+            while (i < size) {
+                clone.stringToIndex[(string)original.keys[i].internalValue] = i;
+                i += 1;
+            }
+        } else {
+            while (i < size) {
+                if (type == Types.INSTANCE) {
+                    kInt = Core.ForceParens((ObjectInstance)original.keys[i].internalValue).objectId;
+                } else {
+                    kInt = (int)original.keys[i].internalValue;
+                }
+                clone.intToIndex[kInt] = i;
+                i += 1;
+            }
+        }
+        i = 0;
+        while (i < size) {
+            clone.keys.Add(original.keys[i]);
+            clone.values.Add(original.values[i]);
+            i += 1;
+        }
+    } else {
+        for (i = 0; i < size; i += 1) {
+            if (type == Types.STRING) {
+                kString = (string)original.keys[i].internalValue;
+                if (clone.stringToIndex.Contains(kString)) {
+                    clone.values[clone.stringToIndex[kString]] = original.values[i];
+                } else {
+                    clone.stringToIndex[kString] = clone.values.Size();
+                    clone.values.Add(original.values[i]);
+                    clone.keys.Add(original.keys[i]);
+                }
+            } else {
+                if (type == Types.INTEGER) {
+                    kInt = (int)original.keys[i].internalValue;
+                } else {
+                    kInt = Core.ForceParens((ObjectInstance)original.keys[i].internalValue).objectId;
+                }
+                if (clone.intToIndex.Contains(kInt)) {
+                    clone.values[clone.intToIndex[kInt]] = original.values[i];
+                } else {
+                    clone.intToIndex[kInt] = clone.values.Size();
+                    clone.values.Add(original.values[i]);
+                    clone.keys.Add(original.keys[i]);
+                }
+            }
+        }
     }
 
-    for (i = stringKeys.Size() - 1; i >= 0; i -= 1) {
-        sKey = stringKeys[i];
-        keyStringLookup_clone[sKey] = original.keyStringLookup[sKey];
-        valueStringLookup_clone[sKey] = original.valueStringLookup[sKey];
-    }
-
-    clone.size = keyStringLookup_clone.Size() + keyIntLookup_clone.Size();
+    clone.size = clone.intToIndex.Size() + clone.stringToIndex.Size();
 
     return clone;
 }

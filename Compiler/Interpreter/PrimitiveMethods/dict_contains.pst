@@ -4,11 +4,17 @@
     value = funcArgs[0];
     output = VALUE_FALSE;
     if (value.type == Types.STRING) {
-        if (dictImpl.keyStringLookup.Contains((string) value.internalValue)) {
+        if (dictImpl.stringToIndex.Contains((string) value.internalValue)) {
             output = VALUE_TRUE;
         }
-    } else if (value.type == Types.INTEGER) {
-        if (dictImpl.keyIntLookup.Contains((int) value.internalValue)) {
+    } else {
+        if (value.type == Types.INTEGER) {
+            i = (int) value.internalValue;
+        } else {
+            i = Core.ForceParens((ObjectInstance) value.internalValue).objectId;
+        }
+
+        if (dictImpl.intToIndex.Contains(i)) {
             output = VALUE_TRUE;
         }
     }

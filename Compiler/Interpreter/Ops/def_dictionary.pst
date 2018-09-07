@@ -1,8 +1,8 @@
 ﻿
-dictIntKeyLookup = new Dictionary<int, Value>();
-dictIntValueLookup = new Dictionary<int, Value>();
-dictStringKeyLookup = new Dictionary<string, Value>();
-dictStringValueLookup = new Dictionary<string, Value>();
+intIntDict1 = new Dictionary<int, int>();
+stringIntDict1 = new Dictionary<string, int>();
+list2 = new List<Value>(); // keys
+list1 = new List<Value>(); // values
 
 len = row[0];
 type = Types.INTEGER;  // always ignored when size is 0
@@ -16,7 +16,7 @@ while (i > 0) {
         type = value2.type;
         first = false;
     } else if (type != value2.type) {
-        hasInterrupt = EX_InvalidKey(ec, "Cannot have multiple key types in one dictionary.");
+        hasInterrupt = EX_InvalidKey(ec, "Dictionary keys must be of the same type.");
     }
 
     if (!hasInterrupt) {
@@ -34,38 +34,35 @@ while (i > 0) {
 
     if (!hasInterrupt) {
         if (type == Types.STRING) {
-            dictStringKeyLookup[stringKey] = value2;
-            dictStringValueLookup[stringKey] = value;
+            stringIntDict1[stringKey] = list1.Size();
         } else {
-            dictIntKeyLookup[intKey] = value2;
-            dictIntValueLookup[intKey] = value;
+            intIntDict1[intKey] = list1.Size();
         }
+        list2.Add(value2);
+        list1.Add(value);
         i -= 1;
     }
 }
 
 if (!hasInterrupt) {
     if (type == Types.STRING) {
-        if (dictStringKeyLookup.Size() != len) {
-            hasInterrupt = EX_InvalidKey(ec, "Key collision"); // TODO: do a better job of figuring out where this collision is.
-        }
+        i = stringIntDict1.Size();
     } else {
-        if (dictIntKeyLookup.Size() != len) {
-            hasInterrupt = EX_InvalidKey(ec, "Key collision"); // TODO: do a better job of figuring out where this collision is.
-        }
+        i = intIntDict1.Size();
+    }
+    if (i != len) {
+        hasInterrupt = EX_InvalidKey(ec, "Key collision"); // TODO: do a better job of figuring out where this collision is.
     }
 }
 
 if (!hasInterrupt) {
-    value = new Value(Types.DICTIONARY, new DictImpl(
-        dictIntKeyLookup,
-        dictIntValueLookup,
-        dictStringKeyLookup,
-        dictStringValueLookup,
-        len,
-        type));
-
     @import("ValueStackCapacityCheck.pst");
-    valueStack[valueStackSize] = value;
+    valueStack[valueStackSize] = new Value(Types.DICTIONARY, new DictImpl(
+        len,
+        type,
+        intIntDict1,
+        stringIntDict1,
+        list2,
+        list1));
     valueStackSize += 1;
 }

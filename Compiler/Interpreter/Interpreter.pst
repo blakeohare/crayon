@@ -155,10 +155,6 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     int keyType = 0;
     int intKey = 0;
     string stringKey = null;
-    Dictionary<int, Value> dictIntKeyLookup = null;
-    Dictionary<int, Value> dictIntValueLookup = null;
-    Dictionary<string, Value> dictStringKeyLookup = null;
-    Dictionary<string, Value> dictStringValueLookup = null;
     bool first = false;
     bool primitiveMethodToCoreLibraryFallback = false;
     bool bool1 = false;
@@ -192,6 +188,7 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     Array<object> objArray1 = null;
     FunctionPointer functionPointer1 = null;
     Dictionary<int, int> intIntDict1 = null;
+    Dictionary<string, int> stringIntDict1 = null;
     StackFrame stackFrame2 = null;
     Value leftValue = null;
     Value rightValue = null;
