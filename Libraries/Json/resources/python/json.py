@@ -28,5 +28,5 @@ def lib_json_parse_json_thing(g, item):
     for key in item.keys():
       keys.append(key)
       values.append(lib_json_parse_json_thing(g, item[key]))
-    return v_buildDictionary(keys, values)
+    return v_buildStringDictionary(g, keys, values)
   return v_buildNull(g);

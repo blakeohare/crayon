@@ -1,6 +1,5 @@
 ﻿using Pastel.Nodes;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Pastel.Transpilers
@@ -13,6 +12,8 @@ namespace Pastel.Transpilers
         {
             this.isJava6 = isJava6;
         }
+
+        public override string HelperCodeResourcePath { get { return "Transpilers/Resources/PastelHelper.java"; } }
 
         public override string TranslateType(PType type)
         {
@@ -397,7 +398,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateFloatBuffer16(TranspilerContext sb)
         {
-            sb.Append("TranslationHelper.FLOAT_BUFFER_16");
+            sb.Append("PST_floatBuffer16");
         }
 
         public override void TranslateFloatDivision(TranspilerContext sb, Expression floatNumerator, Expression floatDenominator)
@@ -436,7 +437,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateIntBuffer16(TranspilerContext sb)
         {
-            sb.Append("TranslationHelper.INT_BUFFER_16");
+            sb.Append("PST_intBuffer16");
         }
 
         public override void TranslateIntegerDivision(TranspilerContext sb, Expression integerNumerator, Expression integerDenominator)
@@ -686,7 +687,7 @@ namespace Pastel.Transpilers
 
                 case "string":
                     this.TranslateExpression(sb, list);
-                    sb.Append(".toArray(TranslationHelper.EMPTY_ARRAY_STRING)");
+                    sb.Append(".toArray(PST_emptyArrayString)");
                     break;
                 case "Value":
                     this.TranslateExpression(sb, list);
@@ -694,11 +695,11 @@ namespace Pastel.Transpilers
                     break;
                 case "List":
                     this.TranslateExpression(sb, list);
-                    sb.Append(".toArray(TranslationHelper.EMPTY_ARRAY_LIST)");
+                    sb.Append(".toArray(PST_emptyArrayList)");
                     break;
                 case "Dictionary":
                     this.TranslateExpression(sb, list);
-                    sb.Append(".toArray(TranslationHelper.EMPTY_ARRAY_MAP)");
+                    sb.Append(".toArray(PST_emptyArrayMap)");
                     break;
                 case "Array":
                     throw new NotImplementedException("not implemented: java list of arrays to array");
@@ -710,7 +711,7 @@ namespace Pastel.Transpilers
                         this.TranslateExpression(sb, list);
                         sb.Append(".toArray((");
                         sb.Append(javaType);
-                        sb.Append("[]) TranslationHelper.EMPTY_ARRAY_OBJECT)");
+                        sb.Append("[]) PST_emptyArrayObject)");
                     }
                     else
                     {
@@ -897,7 +898,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringBuffer16(TranspilerContext sb)
         {
-            sb.Append("TranslationHelper.STRING_BUFFER_16");
+            sb.Append("PST_stringBuffer16");
         }
 
         public override void TranslateStringCharAt(TranspilerContext sb, Expression str, Expression index)

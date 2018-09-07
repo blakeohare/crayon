@@ -108,9 +108,11 @@ public final class FastList {
     return output;
   }
 
+  private static final Value[] EMPTY_ARRAY_VALUE = new Value[0];
+
   public Value[] toArray() {
     int length = this.length;
-    if (length == 0) return TranslationHelper.EMPTY_ARRAY_VALUE;
+    if (length == 0) return EMPTY_ARRAY_VALUE;
     Value[] output = new Value[length];
     if (length < 10) {
       int i = -1;

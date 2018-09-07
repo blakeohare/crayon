@@ -14,22 +14,6 @@ import org.crayonlang.interpreter.structs.VmGlobals;
 
 public final class TranslationHelper {
 
-  public static final Object[] EMPTY_ARRAY_OBJECT = new Object[0];
-  public static final boolean[] EMPTY_ARRAY_BOOLEAN = new boolean[0];
-  public static final int[] EMPTY_ARRAY_INT = new int[0];
-  public static final double[] EMPTY_ARRAY_DOUBLE = new double[0];
-  public static final char[] EMPTY_ARRAY_CHAR = new char[0];
-  public static final String[] EMPTY_ARRAY_STRING = new String[0];
-  public static final Value[] EMPTY_ARRAY_VALUE = new Value[0];
-  @SuppressWarnings("rawtypes")
-  public static final ArrayList[] EMPTY_ARRAY_LIST = new ArrayList[0];
-  @SuppressWarnings("rawtypes")
-  public static final HashMap[] EMPTY_ARRAY_MAP = new HashMap[0];
-
-  public static final int[] INT_BUFFER_16 = new int[16];
-  public static final double[] FLOAT_BUFFER_16 = new double[16];
-  public static final String[] STRING_BUFFER_16 = new String[16];
-
   private TranslationHelper() {}
 
   public static int Noop() {

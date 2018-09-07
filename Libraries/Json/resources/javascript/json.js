@@ -26,7 +26,7 @@ LIB$json$convertJsonThing = function(globals, thing) {
                 keys.push(rawKey);
                 values.push(LIB$json$convertJsonThing(globals, thing[rawKey]));
             }
-            return v_buildDictionary(keys, values);
+            return v_buildStringDictionary(globals, keys, values);
         case 'int':
             return v_buildInteger(globals, thing);
         case 'float':

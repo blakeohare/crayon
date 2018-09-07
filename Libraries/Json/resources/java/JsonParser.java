@@ -50,14 +50,14 @@ class JsonParser {
 		for (int i = 0; i < keys.length; ++i) {
 			values[i] = convertJsonThing(globals, obj.get(keys[i]));
 		}
-		return Interpreter.v_buildDictionary(keys, values);
+		return Interpreter.v_buildStringDictionary(globals, keys, values);
 	}
 	
 	private static Value convertJsonToList(VmGlobals globals, org.json.JSONArray list) {
-		ArrayList<Value> items = new ArrayList<>();
+		FastList output = new FastList();
 		for (int i = 0; i < list.length(); ++i) {
-			items.add(convertJsonThing(globals, list.get(i)));
+			output.add(convertJsonThing(globals, list.get(i)));
 		}
-		return Interpreter.v_buildList(new FastList().initializeValueCollection(items));
+		return Interpreter.v_buildList(output);
 	}
 }

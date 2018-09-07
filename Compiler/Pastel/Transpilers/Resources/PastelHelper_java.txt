@@ -1,0 +1,11 @@
+﻿
+private static final Object[] PST_emptyArrayObject = new Object[0];
+private static final String[] PST_emptyArrayString = new String[0];
+@SuppressWarnings("rawtypes")
+private static final ArrayList[] PST_emptyArrayList = new ArrayList[0];
+@SuppressWarnings("rawtypes")
+private static final HashMap[] PST_emptyArrayMap = new HashMap[0];
+
+private static final int[] PST_intBuffer16 = new int[16];
+private static final double[] PST_floatBuffer16 = new double[16];
+private static final String[] PST_stringBuffer16 = new String[16];
