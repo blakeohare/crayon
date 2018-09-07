@@ -12,6 +12,6 @@ $_lib_fileiocommon_getDirParent: FileIOCommonHelper.GetDirParent([ARG:1], [ARG:2
 $_lib_fileiocommon_getDirRoot: FileIOCommonHelper.GetDirRoot([ARG:1])
 $_lib_fileiocommon_getFileInfo: FileIOCommonHelper.GetFileInfo([ARG:2], [ARG:3], [ARG:4], [ARG:5])
 $_lib_fileiocommon_getUserDirectory: FileIOCommonHelper.GetUserDirectory()
-$_lib_fileiocommon_initializeDisk: TranslationHelper.AlwaysFalse()
+$_lib_fileiocommon_initializeDisk: AlwaysFalse()
 $_lib_fileiocommon_isWindows: FileIOCommonHelper.IsWindows()
 $_lib_fileiocommon_textToLines: FileIOCommonHelper.TextToLines([ARG:1], [ARG:2])

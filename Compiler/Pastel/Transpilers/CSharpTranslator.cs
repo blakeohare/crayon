@@ -395,7 +395,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateListShuffle(TranspilerContext sb, Expression list)
         {
-            sb.Append("TranslationHelper.ShuffleInPlace(");
+            sb.Append("PST_ShuffleInPlace(");
             this.TranslateExpression(sb, list);
             sb.Append(')');
         }
@@ -514,7 +514,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateRandomFloat(TranspilerContext sb)
         {
-            sb.Append("TranslationHelper.Random.NextDouble()");
+            sb.Append("PST_Random.NextDouble()");
         }
 
         public override void TranslateSortedCopyOfIntArray(TranspilerContext sb, Expression intArray)
