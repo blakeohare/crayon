@@ -316,14 +316,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        // TODO: rename this function.
-        public override void TranslateConvertRawDictionaryValueCollectionToAReusableValueList(TranspilerContext sb, Expression dictionary)
-        {
-            sb.Append("new FastList().initializeValueCollection(");
-            this.TranslateExpression(sb, dictionary);
-            sb.Append(')');
-        }
-
         public override void TranslateCurrentTimeSeconds(TranspilerContext sb)
         {
             sb.Append("System.currentTimeMillis() / 1000.0");
@@ -364,11 +356,6 @@ namespace Pastel.Transpilers
             // TODO: do a simple .keySet().toArray(TranslationHelper.STATIC_INSTANCE_OF_ZERO_LENGTH_INT_OR_STRING_ARRAY);
         }
 
-        public override void TranslateDictionaryKeysToValueList(TranspilerContext sb, Expression dictionary)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void TranslateDictionaryNew(TranspilerContext sb, PType keyType, PType valueType)
         {
             sb.Append("new HashMap<");
@@ -406,13 +393,6 @@ namespace Pastel.Transpilers
         {
             this.TranslateExpression(sb, dictionary);
             sb.Append(".values()");
-        }
-
-        public override void TranslateDictionaryValuesToValueList(TranspilerContext sb, Expression dictionary)
-        {
-            sb.Append("new FastList().initializeValueCollection(");
-            this.TranslateExpression(sb, dictionary);
-            sb.Append(".values())");
         }
 
         public override void TranslateFloatBuffer16(TranspilerContext sb)

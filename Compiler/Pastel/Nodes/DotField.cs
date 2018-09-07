@@ -116,7 +116,6 @@ namespace Pastel.Nodes
                 case "Base64ToString": return NativeFunction.BASE64_TO_STRING;
                 case "CharToString": return NativeFunction.CHAR_TO_STRING;
                 case "Chr": return NativeFunction.CHR;
-                case "ConvertRawDictionaryValueCollectionToAReusableValueList": return NativeFunction.CONVERT_RAW_DICTIONARY_VALUE_COLLECTION_TO_A_REUSABLE_VALUE_LIST;
                 case "Cos": return NativeFunction.MATH_COS;
                 case "CurrentTimeSeconds": return NativeFunction.CURRENT_TIME_SECONDS;
                 case "EmitComment": return NativeFunction.EMIT_COMMENT;
