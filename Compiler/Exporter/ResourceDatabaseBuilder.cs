@@ -32,13 +32,13 @@ namespace Exporter
                 using (new PerformanceSection("Program.PrepareResources/ImageSheetStuff"))
                 {
                     Common.ImageSheets.ImageSheetBuilder imageSheetBuilder = new Common.ImageSheets.ImageSheetBuilder();
-                    if (buildContext.ImageSheetIds != null)
+                    if (buildContext.TopLevelAssembly.ImageSheetIds != null)
                     {
-                        foreach (string imageSheetId in buildContext.ImageSheetIds)
+                        foreach (string imageSheetId in buildContext.TopLevelAssembly.ImageSheetIds)
                         {
                             imageSheetBuilder.PrefixMatcher.RegisterId(imageSheetId);
 
-                            foreach (string fileMatcher in buildContext.ImageSheetPrefixesById[imageSheetId])
+                            foreach (string fileMatcher in buildContext.TopLevelAssembly.ImageSheetPrefixesById[imageSheetId])
                             {
                                 imageSheetBuilder.PrefixMatcher.RegisterPrefix(imageSheetId, fileMatcher);
                             }
@@ -61,7 +61,7 @@ namespace Exporter
             {
                 ResourceDatabase resDb = new ResourceDatabase();
 
-                foreach (FilePath sourceRoot in buildContext.SourceFolders)
+                foreach (FilePath sourceRoot in buildContext.TopLevelAssembly.SourceFolders)
                 {
                     string[] relativePaths = FileUtil.GetAllFilePathsRelativeToRoot(sourceRoot.AbsolutePath);
 

@@ -7,21 +7,33 @@ using System.Linq;
 
 namespace Build
 {
+    public class AssemblyContext
+    {
+        // The following are things that ought to be on a assembly-specific object
+        public FilePath[] SourceFolders { get; set; }
+        public Dictionary<string, string[]> ImageSheetPrefixesById { get; set; }
+        public Dictionary<string, BuildVarCanonicalized> BuildVariableLookup { get; set; }
+        public string[] ImageSheetIds { get; set; }
+        public string Version { get; set; }
+        public string Description { get; set; }
+    }
+
     public class BuildContext
     {
+        public BuildContext()
+        {
+            this.TopLevelAssembly = new AssemblyContext();
+        }
+
+        public AssemblyContext TopLevelAssembly { get; set; }
         public string ProjectID { get; set; }
         public string ProjectDirectory { get; set; }
         public string OutputFolder { get; set; }
-        public FilePath[] SourceFolders { get; set; }
-        public Dictionary<string, string[]> ImageSheetPrefixesById { get; set; }
-        public Dictionary<string, BuildVarCanonicalized> BuildVariableLookup { get; private set; }
-        public string[] ImageSheetIds { get; set; }
         public string JsFilePrefix { get; set; }
         public string Platform { get; set; }
         public bool Minified { get; set; }
         public bool ReadableByteCode { get; set; }
         public string GuidSeed { get; set; }
-        public string IconFilePath { get; set; }
         public string LaunchScreenPath { get; set; }
         public string DefaultTitle { get; set; }
         public string Orientation { get; set; }
@@ -31,10 +43,9 @@ namespace Build
         public bool JsFullPage { get; set; }
         public int? WindowWidth { get; set; }
         public int? WindowHeight { get; set; }
-        public string Description { get; set; }
-        public string Version { get; set; }
         public Locale CompilerLocale { get; set; }
-
+        public string IconFilePath { get; set; }
+        
         private static Target FindTarget(string targetName, IList<Target> targets)
         {
             foreach (Target target in targets)
@@ -77,7 +88,10 @@ namespace Build
                 desiredTarget = FindTarget(targetName, buildInput.Targets) ?? new Target();
             }
 
-            varLookup = GenerateBuildVars(buildInput, desiredTarget, targetName);
+            Dictionary<string, string> replacements = new Dictionary<string, string>() {
+                { "TARGET_NAME", targetName }
+            };
+            varLookup = BuildVarParser.GenerateBuildVars(buildInput, desiredTarget, replacements);
 
             flattened.Sources = desiredTarget.SourcesNonNull.Union<SourceItem>(flattened.SourcesNonNull).ToArray();
             flattened.Output = FileUtil.GetCanonicalizeUniversalPath(DoReplacement(targetName, desiredTarget.Output ?? flattened.Output));
@@ -103,19 +117,23 @@ namespace Build
 
             return new BuildContext()
             {
+                TopLevelAssembly = new AssemblyContext()
+                {
+                    Description = flattened.Description,
+                    Version = flattened.Version,
+                    SourceFolders = ToFilePaths(projectDir, flattened.Sources ?? new SourceItem[0]),
+                    ImageSheetPrefixesById = imageSheets.ToDictionary<ImageSheet, string, string[]>(s => s.Id, s => s.Prefixes),
+                    ImageSheetIds = imageSheets.Select<ImageSheet, string>(s => s.Id).ToArray(),
+                    BuildVariableLookup = varLookup,
+                },
+
                 ProjectDirectory = projectDir,
                 JsFilePrefix = flattened.JsFilePrefix,
                 OutputFolder = flattened.Output,
                 Platform = platform,
                 ProjectID = flattened.ProjectName,
-                Description = flattened.Description,
-                Version = flattened.Version,
-                SourceFolders = ToFilePaths(projectDir, flattened.Sources ?? new SourceItem[0]),
-                ImageSheetPrefixesById = imageSheets.ToDictionary<ImageSheet, string, string[]>(s => s.Id, s => s.Prefixes),
-                ImageSheetIds = imageSheets.Select<ImageSheet, string>(s => s.Id).ToArray(),
                 Minified = flattened.Minified,
                 ReadableByteCode = flattened.ExportDebugByteCode,
-                BuildVariableLookup = varLookup,
                 GuidSeed = flattened.GuidSeed,
                 IconFilePath = flattened.IconFilePath,
                 LaunchScreenPath = flattened.LaunchScreen,
@@ -149,7 +167,7 @@ namespace Build
             if (this.ProjectID == null) throw new InvalidOperationException("There is no <projectname> for this build target.");
 
 
-            if (this.SourceFolders.Length == 0) throw new InvalidOperationException("There are no <source> paths for this build target.");
+            if (this.TopLevelAssembly.SourceFolders.Length == 0) throw new InvalidOperationException("There are no <source> paths for this build target.");
             if (this.OutputFolder == null) throw new InvalidOperationException("There is no <output> path for this build target.");
 
             foreach (char c in this.ProjectID)
@@ -223,139 +241,7 @@ namespace Build
                 ? value.Replace("%TARGET_NAME%", target)
                 : value;
         }
-
-        private static Dictionary<string, BuildVarCanonicalized> GenerateBuildVars(BuildItem root, BuildItem target, string targetName)
-        {
-            Dictionary<string, BuildVar> firstPass = new Dictionary<string, BuildVar>();
-
-            if (root.Var != null)
-            {
-                foreach (BuildVar rootVar in root.Var)
-                {
-                    if (rootVar.Id == null)
-                    {
-                        throw new InvalidOperationException("Build file contains a <var> without an id attribute.");
-                    }
-                    firstPass.Add(rootVar.Id, rootVar);
-                }
-            }
-
-            if (target.Var != null)
-            {
-                foreach (BuildVar targetVar in target.Var)
-                {
-                    if (targetVar.Id == null)
-                    {
-                        throw new InvalidOperationException("Build file target contains a <var> without an id attribute.");
-                    }
-                    firstPass[targetVar.Id] = targetVar;
-                }
-            }
-
-            Dictionary<string, BuildVarCanonicalized> output = new Dictionary<string, BuildVarCanonicalized>();
-
-            foreach (BuildVar rawElement in firstPass.Values)
-            {
-                string id = rawElement.Id;
-                string value = rawElement.Value;
-                int intValue = 0;
-                double floatValue = 0;
-                bool boolValue = false;
-                VarType type = VarType.BOOLEAN;
-                switch ((rawElement.Type ?? "string").ToLowerInvariant())
-                {
-                    case "int":
-                    case "integer":
-                        type = VarType.INT;
-                        break;
-                    case "float":
-                    case "double":
-                        type = VarType.FLOAT;
-                        break;
-                    case "bool":
-                    case "boolean":
-                        type = VarType.BOOLEAN;
-                        break;
-                    case "string":
-                        type = VarType.STRING;
-                        break;
-                    default:
-                        throw new InvalidOperationException("Build file variable '" + id + "' contains an unrecognized type: '" + rawElement.Type + "'. Types must be 'string', 'integer', 'boolean', or 'float'.");
-                }
-
-                int score = (rawElement.EnvironmentVarValue != null ? 1 : 0)
-                    + (rawElement.Value != null ? 1 : 0);
-
-                if (score != 1)
-                {
-                    throw new InvalidOperationException("Build file variable '" + id + "' must contain either a <value> or a <env> content element but not both.");
-                }
-
-                if (value == null)
-                {
-                    value = System.Environment.GetEnvironmentVariable(rawElement.EnvironmentVarValue);
-                    if (value == null)
-                    {
-                        throw new InvalidOperationException("Build file varaible '" + id + "' references an environment variable that is not set: '" + rawElement.EnvironmentVarValue + "'");
-                    }
-                    value = DoReplacement(targetName, value.Trim());
-                }
-
-                switch (type)
-                {
-                    case VarType.INT:
-                        if (!int.TryParse(value, out intValue))
-                        {
-                            throw new InvalidOperationException("Build file variable: '" + id + "' contains an invalid integer value.");
-                        }
-                        break;
-                    case VarType.FLOAT:
-                        if (!Util.ParseDouble(value, out floatValue))
-                        {
-                            throw new InvalidOperationException("Build file variable: '" + id + "' contains an invalid float value.");
-                        }
-                        break;
-                    case VarType.BOOLEAN:
-                        switch (value.ToLowerInvariant())
-                        {
-                            case "0":
-                            case "no":
-                            case "false":
-                            case "f":
-                            case "n":
-                                boolValue = false;
-                                break;
-                            case "1":
-                            case "true":
-                            case "t":
-                            case "yes":
-                            case "y":
-                                boolValue = true;
-                                break;
-                            default:
-                                throw new InvalidOperationException("Build file variable: '" + id + "' contains an invalid boolean valud.");
-                        }
-                        break;
-                    case VarType.STRING:
-                        break;
-
-                    default:
-                        break;
-                }
-                output[id] = new BuildVarCanonicalized()
-                {
-                    ID = id,
-                    Type = type,
-                    StringValue = value,
-                    IntValue = intValue,
-                    FloatValue = floatValue,
-                    BoolValue = boolValue
-                };
-            }
-
-            return output;
-        }
-
+        
         private static ImageSheet[] MergeImageSheets(ImageSheet[] originalSheets, ImageSheet[] newSheets)
         {
             Dictionary<string, List<string>> prefixDirectLookup = new Dictionary<string, List<string>>();

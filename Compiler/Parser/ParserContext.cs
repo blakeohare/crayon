@@ -330,7 +330,7 @@ namespace Parser
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
 
-            foreach (FilePath sourceDir in this.BuildContext.SourceFolders)
+            foreach (FilePath sourceDir in this.BuildContext.TopLevelAssembly.SourceFolders)
             {
                 string[] files = FileUtil.GetAllAbsoluteFilePathsDescendentsOf(sourceDir.AbsolutePath);
                 foreach (string filepath in files)

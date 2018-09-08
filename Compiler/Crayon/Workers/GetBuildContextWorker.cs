@@ -32,7 +32,7 @@ namespace Crayon
             if (buildContext.Platform == null)
                 throw new InvalidOperationException("No platform specified in build file.");
 
-            if (buildContext.SourceFolders.Length == 0)
+            if (buildContext.TopLevelAssembly.SourceFolders.Length == 0)
                 throw new InvalidOperationException("No source folder specified in build file.");
 
             if (buildContext.OutputFolder == null)
@@ -45,7 +45,7 @@ namespace Crayon
                 buildContext.LaunchScreenPath = FileUtil.JoinAndCanonicalizePath(projectDirectory, buildContext.LaunchScreenPath);
             }
 
-            foreach (FilePath sourceFolder in buildContext.SourceFolders)
+            foreach (FilePath sourceFolder in buildContext.TopLevelAssembly.SourceFolders)
             {
                 if (!FileUtil.DirectoryExists(sourceFolder.AbsolutePath))
                 {
