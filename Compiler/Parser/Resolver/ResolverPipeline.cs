@@ -19,8 +19,8 @@ namespace Parser.Resolver
 
             parser.VerifyNoBadImports();
 
-            CompilationScope[] librariesInDependencyOrder = LibraryDependencyResolver.GetLibraryResolutionOrder(parser);
-            List<CompilationScope> compilationScopes = new List<CompilationScope>(librariesInDependencyOrder);
+            CompilationScope[] assembliesInDependencyOrder = AssemblyDependencyResolver.GetAssemblyResolutionOrder(parser);
+            List<CompilationScope> compilationScopes = new List<CompilationScope>(assembliesInDependencyOrder);
             compilationScopes.Add(parser.UserCodeCompilationScope);
 
             using (new PerformanceSection("ResolveNames for compilation scopes"))

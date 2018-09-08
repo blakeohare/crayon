@@ -5,10 +5,10 @@ using System.Linq;
 
 namespace Parser
 {
-    public class LibraryManager
+    public class AssemblyManager
     {
         private BuildContext buildContext;
-        private LibraryFinder libraryFinder;
+        private AssemblyFinder libraryFinder;
 
         private Dictionary<string, CompilationScope> importedLibrariesById = new Dictionary<string, CompilationScope>();
         private Dictionary<Locale, Dictionary<string, LocalizedLibraryView>> importedLibrariesByLocalizedName = new Dictionary<Locale, Dictionary<string, LocalizedLibraryView>>();
@@ -17,10 +17,10 @@ namespace Parser
         // The index + 1 is the reference ID
         private readonly Dictionary<string, int> librariesAlreadyImportedIndexByKey = new Dictionary<string, int>();
 
-        public LibraryManager(BuildContext buildContext)
+        public AssemblyManager(BuildContext buildContext)
         {
             this.buildContext = buildContext;
-            this.libraryFinder = new LibraryFinder(buildContext.CrayonPath, buildContext.ProjectDirectory);
+            this.libraryFinder = new AssemblyFinder(buildContext.CrayonPath, buildContext.ProjectDirectory);
             this.ImportedLibraries = new List<CompilationScope>();
         }
 

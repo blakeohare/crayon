@@ -35,6 +35,7 @@ namespace Parser
             this.SupportedLocales = new HashSet<Locale>() { locale };
             this.OnlyImportableFrom = new HashSet<string>();
             this.IsUserDefined = true;
+            this.CniFunctions = new Dictionary<string, int>();
         }
 
         public AssemblyMetadata(string directory, string id)

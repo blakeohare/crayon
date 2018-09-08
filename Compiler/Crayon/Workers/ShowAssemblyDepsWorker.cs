@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Crayon
 {
-    internal class ShowLibraryDepsWorker
+    internal class ShowAssemblyDepsWorker
     {
         public void DoWorkImpl(CompilationScope scope)
         {
@@ -13,7 +13,7 @@ namespace Crayon
                 .Select(libLocView => libLocView.LibraryScope.Metadata)
                 .ToArray();
 
-            string libs = LibraryDependencyResolver.GetDependencyTreeLog(libraryMetadata);
+            string libs = AssemblyDependencyResolver.GetDependencyTreeLog(libraryMetadata);
             Console.WriteLine("<LibraryDependencies>");
             Console.WriteLine(libs.Trim());
             Console.WriteLine("</LibraryDependencies>");

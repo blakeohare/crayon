@@ -18,25 +18,18 @@ namespace Parser
         private List<TopLevelEntity> executables = new List<TopLevelEntity>();
 
         private ScopedNamespaceLocaleFlattener namespaceFlattener = new ScopedNamespaceLocaleFlattener();
-        
+
         public CompilationScope(BuildContext buildContext, AssemblyMetadata metadata)
         {
             this.buildContext = buildContext;
             this.CniFunctionsByName = new Dictionary<string, CniFunction>();
             this.Metadata = metadata;
-            if (this.Metadata != null)
-            {
-                this.ScopeKey = this.Metadata.CanonicalKey;
-                this.Metadata.Scope = this;
+            this.Metadata.Scope = this;
+            this.ScopeKey = this.Metadata.CanonicalKey;
 
-                foreach (string cniFuncName in metadata.CniFunctions.Keys)
-                {
-                    this.RegisterCniFunction(cniFuncName, metadata.CniFunctions[cniFuncName]);
-                }
-            }
-            else
+            foreach (string cniFuncName in metadata.CniFunctions.Keys)
             {
-                this.ScopeKey = ".";
+                this.RegisterCniFunction(cniFuncName, metadata.CniFunctions[cniFuncName]);
             }
         }
 
@@ -175,11 +168,11 @@ namespace Parser
 
         public override string ToString()
         {
-            if (this.Metadata != null)
+            if (this.Metadata.IsUserDefined)
             {
-                return "Library Scope [" + this.Metadata.ID + " | " + this.Locale + "]";
+                return "User Code Scope [" + this.Locale + "]";
             }
-            return "User Code Scope [" + this.Locale + "]";
+            return "Library Scope [" + this.Metadata.ID + " | " + this.Locale + "]";
         }
     }
 }

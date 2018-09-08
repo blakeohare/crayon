@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Parser
 {
-    public class LibraryDependencyResolver
+    public class AssemblyDependencyResolver
     {
         // Essentially, just a post-order traversal
-        public static CompilationScope[] GetLibraryResolutionOrder(ParserContext parser)
+        public static CompilationScope[] GetAssemblyResolutionOrder(ParserContext parser)
         {
             // these are alphabetized simply to guarantee consistent behavior.
             CompilationScope[] unorderedLibraries = parser.LibraryManager.ImportedLibraries.OrderBy(scope => scope.Metadata.ID.ToLowerInvariant()).ToArray();

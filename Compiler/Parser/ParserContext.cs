@@ -24,7 +24,7 @@ namespace Parser
         {
             this.BuildContext = buildContext;
             this.PushScope(new CompilationScope(buildContext, new AssemblyMetadata(buildContext.CompilerLocale)));
-            this.LibraryManager = new LibraryManager(buildContext);
+            this.LibraryManager = new AssemblyManager(buildContext);
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelEntity, ConstantResolutionState>();
             this.TopLevelParser = new TopLevelParser(this);
@@ -160,7 +160,7 @@ namespace Parser
 
         public CompilationScope CurrentScope { get; private set; }
 
-        public LibraryManager LibraryManager { get; private set; }
+        public AssemblyManager LibraryManager { get; private set; }
 
         public bool MainFunctionHasArg { get; set; }
 

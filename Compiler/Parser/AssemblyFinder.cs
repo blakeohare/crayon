@@ -5,14 +5,15 @@ using System.Linq;
 
 namespace Parser
 {
-    public class LibraryFinder
+    public class AssemblyFinder
     {
         public AssemblyMetadata[] LibraryFlatList { get; private set; }
         private Dictionary<string, AssemblyMetadata> libraryLookup;
 
-        public LibraryFinder() : this(null, null) { }
+        public AssemblyFinder() : this(null, null) { }
 
-        public LibraryFinder(string nullableBuildFileCrayonPath,
+        public AssemblyFinder(
+            string nullableBuildFileCrayonPath,
             string nullableProjectDirectory)
         {
             this.LibraryFlatList = GetAvailableLibraryPathsByLibraryName(nullableBuildFileCrayonPath, nullableProjectDirectory);
