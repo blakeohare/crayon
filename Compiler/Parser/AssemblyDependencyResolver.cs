@@ -11,19 +11,19 @@ namespace Parser
         public static CompilationScope[] GetAssemblyResolutionOrder(ParserContext parser)
         {
             // these are alphabetized simply to guarantee consistent behavior.
-            CompilationScope[] unorderedLibraries = parser.LibraryManager.ImportedLibraries.OrderBy(scope => scope.Metadata.ID.ToLowerInvariant()).ToArray();
+            CompilationScope[] unorderedScopes = parser.AssemblyManager.ImportedAssemblyScopes.OrderBy(scope => scope.Metadata.ID.ToLowerInvariant()).ToArray();
 
             List<CompilationScope> orderedLibraries = new List<CompilationScope>();
             HashSet<CompilationScope> usedLibraries = new HashSet<CompilationScope>();
 
             HashSet<CompilationScope> cycleCheck = new HashSet<CompilationScope>();
             Stack<CompilationScope> breadcrumbs = new Stack<CompilationScope>();
-            foreach (CompilationScope library in unorderedLibraries)
+            foreach (CompilationScope compilationScope in unorderedScopes)
             {
-                if (!usedLibraries.Contains(library))
+                if (!usedLibraries.Contains(compilationScope))
                 {
                     LibraryUsagePostOrderTraversal(
-                        library, orderedLibraries, usedLibraries, cycleCheck, breadcrumbs);
+                        compilationScope, orderedLibraries, usedLibraries, cycleCheck, breadcrumbs);
                     cycleCheck.Clear();
                     breadcrumbs.Clear();
                 }
@@ -58,9 +58,9 @@ namespace Parser
             }
             cycleCheck.Add(libraryToUse);
 
-            foreach (LocalizedLibraryView dependency in libraryToUse.Dependencies)
+            foreach (LocalizedAssemblyView dependency in libraryToUse.Dependencies)
             {
-                LibraryUsagePostOrderTraversal(dependency.LibraryScope, libraryOrderOut, usedLibraries, cycleCheck, breadcrumbs);
+                LibraryUsagePostOrderTraversal(dependency.Scope, libraryOrderOut, usedLibraries, cycleCheck, breadcrumbs);
             }
             cycleCheck.Remove(libraryToUse);
             breadcrumbs.Pop();
@@ -79,7 +79,7 @@ namespace Parser
 
                 sb.Append(string.Join(" ",
                     new HashSet<string>(library.Scope.Dependencies
-                        .Select(lib => lib.LibraryScope.Metadata.ID))
+                        .Select(lib => lib.Scope.Metadata.ID))
                         .OrderBy(name => name.ToLower())));
 
                 sb.Append("\n");

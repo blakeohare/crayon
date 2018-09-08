@@ -21,7 +21,7 @@ namespace Parser.Resolver
 
             CompilationScope[] assembliesInDependencyOrder = AssemblyDependencyResolver.GetAssemblyResolutionOrder(parser);
             List<CompilationScope> compilationScopes = new List<CompilationScope>(assembliesInDependencyOrder);
-            compilationScopes.Add(parser.UserCodeCompilationScope);
+            compilationScopes.Add(parser.RootScope);
 
             using (new PerformanceSection("ResolveNames for compilation scopes"))
             {

@@ -13,7 +13,7 @@ namespace Parser
         public AssemblyMetadata Metadata { get; private set; }
 
         private BuildContext buildContext;
-        private Dictionary<CompilationScope, LocalizedLibraryView> dependenciesAndViews = new Dictionary<CompilationScope, LocalizedLibraryView>();
+        private Dictionary<CompilationScope, LocalizedAssemblyView> dependenciesAndViews = new Dictionary<CompilationScope, LocalizedAssemblyView>();
 
         private List<TopLevelEntity> executables = new List<TopLevelEntity>();
 
@@ -108,28 +108,26 @@ namespace Parser
             this.CniFunctionsByName.Add(name, func);
         }
 
-        public void AddDependency(Token throwToken, LocalizedLibraryView libraryView)
+        public void AddDependency(Token throwToken, LocalizedAssemblyView view)
         {
-            if (this == libraryView.LibraryScope) throw new System.Exception(); // This should not happen.
-
-            if (this.dependenciesAndViews.ContainsKey(libraryView.LibraryScope))
+            if (this.dependenciesAndViews.ContainsKey(view.Scope))
             {
-                if (this.dependenciesAndViews[libraryView.LibraryScope] != libraryView)
+                if (this.dependenciesAndViews[view.Scope] != view)
                 {
                     throw ParserException.ThrowException(
-                        libraryView.Locale,
+                        view.Locale,
                         ErrorMessages.CANNOT_IMPORT_SAME_LIBRARY_FROM_DIFFERENT_LOCALES,
                         throwToken);
                 }
             }
-            this.dependenciesAndViews[libraryView.LibraryScope] = libraryView;
+            this.dependenciesAndViews[view.Scope] = view;
         }
 
-        public LocalizedLibraryView[] Dependencies
+        public LocalizedAssemblyView[] Dependencies
         {
             get
             {
-                return this.dependenciesAndViews.Values.OrderBy(lib => lib.LibraryScope.Metadata.ID).ToArray();
+                return this.dependenciesAndViews.Values.OrderBy(lib => lib.Scope.Metadata.ID).ToArray();
             }
         }
 

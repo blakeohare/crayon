@@ -7,7 +7,7 @@ namespace Parser
 {
     public class AssemblyFinder
     {
-        public AssemblyMetadata[] LibraryFlatList { get; private set; }
+        public AssemblyMetadata[] AssemblyFlatList { get; private set; }
         private Dictionary<string, AssemblyMetadata> libraryLookup;
 
         public AssemblyFinder() : this(null, null) { }
@@ -16,23 +16,23 @@ namespace Parser
             string nullableBuildFileCrayonPath,
             string nullableProjectDirectory)
         {
-            this.LibraryFlatList = GetAvailableLibraryPathsByLibraryName(nullableBuildFileCrayonPath, nullableProjectDirectory);
+            this.AssemblyFlatList = GetAvailableLibraryPathsByLibraryName(nullableBuildFileCrayonPath, nullableProjectDirectory);
 
-            libraryLookup = this.LibraryFlatList.ToDictionary(metadata => metadata.ID);
-            foreach (AssemblyMetadata libraryMetadata in this.LibraryFlatList)
+            libraryLookup = this.AssemblyFlatList.ToDictionary(metadata => metadata.ID);
+            foreach (AssemblyMetadata assemblyMetadata in this.AssemblyFlatList)
             {
-                foreach (Locale supportedLocale in libraryMetadata.SupportedLocales)
+                foreach (Locale supportedLocale in assemblyMetadata.SupportedLocales)
                 {
-                    libraryLookup[supportedLocale.ID + ":" + libraryMetadata.GetName(supportedLocale)] = libraryMetadata;
+                    libraryLookup[supportedLocale.ID + ":" + assemblyMetadata.GetName(supportedLocale)] = assemblyMetadata;
                 }
             }
         }
 
-        internal AssemblyMetadata GetLibraryMetadataFromAnyPossibleKey(string name)
+        internal AssemblyMetadata GetAssemblyMetadataFromAnyPossibleKey(string name)
         {
-            AssemblyMetadata library;
-            return libraryLookup.TryGetValue(name, out library)
-                ? library
+            AssemblyMetadata assembly;
+            return libraryLookup.TryGetValue(name, out assembly)
+                ? assembly
                 : null;
         }
 
@@ -107,7 +107,7 @@ namespace Parser
             // For example, a custom library referenced by a build file will override a built-in library.
             // An example use case of this would be to define a custom library called "Gamepad" for mobile that puts
             // buttons in the corners of the screen, but without having to change any code to be platform-aware.
-            Dictionary<string, AssemblyMetadata> uniqueLibraries = new Dictionary<string, AssemblyMetadata>();
+            Dictionary<string, AssemblyMetadata> uniqueAssemblies = new Dictionary<string, AssemblyMetadata>();
             foreach (string path in verifiedLibraryPaths)
             {
                 string defaultName = FileUtil.GetFileNameFromPath(path);
@@ -115,10 +115,10 @@ namespace Parser
 
                 // TODO: don't hardcode EN
                 string uniqueKey = "en:" + metadata.ID;
-                uniqueLibraries[uniqueKey] = metadata;
+                uniqueAssemblies[uniqueKey] = metadata;
             }
 
-            return uniqueLibraries.Values
+            return uniqueAssemblies.Values
                 .OrderBy(metadata => metadata.ID.ToLower())
                 .ToArray();
         }

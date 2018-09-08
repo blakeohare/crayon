@@ -4,23 +4,23 @@ using System.Collections.Generic;
 
 namespace Parser
 {
-    public class LocalizedLibraryView
+    public class LocalizedAssemblyView
     {
         public Locale Locale { get; private set; }
-        public CompilationScope LibraryScope { get; private set; }
+        public CompilationScope Scope { get; private set; }
 
         public Dictionary<string, TopLevelEntity> FullyQualifiedEntityLookup { get; private set; }
 
-        public LocalizedLibraryView(Locale locale, CompilationScope libraryScope)
+        public LocalizedAssemblyView(Locale locale, CompilationScope scope)
         {
             this.Locale = locale;
-            this.LibraryScope = libraryScope;
+            this.Scope = scope;
             this.FullyQualifiedEntityLookup = null;
         }
 
         public string Name
         {
-            get { return this.LibraryScope.Metadata.GetName(this.Locale); }
+            get { return this.Scope.Metadata.GetName(this.Locale); }
         }
     }
 }

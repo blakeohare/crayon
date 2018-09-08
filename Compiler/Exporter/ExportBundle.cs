@@ -42,8 +42,8 @@ namespace Exporter
                 return new ExportBundle()
                 {
                     ByteCode = buffer,
-                    UserCodeScope = parserContext.UserCodeCompilationScope,
-                    LibraryScopesUsed = parserContext.LibraryManager.ImportedLibraries.ToArray(),
+                    UserCodeScope = parserContext.RootScope,
+                    LibraryScopesUsed = parserContext.AssemblyManager.ImportedAssemblyScopes.ToArray(),
                     ProjectID = buildContext.ProjectID,
                     Version = buildContext.TopLevelAssembly.Version,
                     Description = buildContext.TopLevelAssembly.Description,

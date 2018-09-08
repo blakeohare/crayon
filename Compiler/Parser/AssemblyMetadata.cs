@@ -86,15 +86,15 @@ namespace Parser
             return nameByLocale[locale.ID];
         }
 
-        public bool IsAllowedImport(AssemblyMetadata currentLibrary)
+        public bool IsAllowedImport(AssemblyMetadata fromAssembly)
         {
             if (this.IsImportRestricted)
             {
                 // Non-empty list means it must be only accessible from a specific library and not top-level user code.
-                if (currentLibrary == null) return false;
+                if (fromAssembly.IsUserDefined) return false;
 
                 // Is the current library on the list?
-                return this.OnlyImportableFrom.Contains(currentLibrary.ID);
+                return this.OnlyImportableFrom.Contains(fromAssembly.ID);
             }
             return true;
         }

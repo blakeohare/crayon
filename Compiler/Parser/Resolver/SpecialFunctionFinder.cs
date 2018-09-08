@@ -24,7 +24,7 @@ namespace Parser.Resolver
         {
             FunctionDefinition[] invokeFunctions = FindFunctionImpl(
                 parserContext,
-                parserContext.LibraryManager.ImportedLibraries.First(lib => lib.Dependencies.Length == 0),
+                parserContext.AssemblyManager.ImportedAssemblyScopes.First(scope => scope.Dependencies.Length == 0),
                 "_LIB_CORE_invoke");
             if (invokeFunctions.Length != 1) throw new Exception();
             parserContext.CoreLibInvokeFunction = invokeFunctions[0];
@@ -32,7 +32,7 @@ namespace Parser.Resolver
 
         private static void FindMainFunction(ParserContext parserContext)
         {
-            FunctionDefinition[] mainFunctions = FindFunctionImpl(parserContext, parserContext.UserCodeCompilationScope, parserContext.Keywords.MAIN_FUNCTION);
+            FunctionDefinition[] mainFunctions = FindFunctionImpl(parserContext, parserContext.RootScope, parserContext.Keywords.MAIN_FUNCTION);
 
             if (mainFunctions.Length == 0) throw new InvalidOperationException("No main(args) function was defined.");
             if (mainFunctions.Length > 1) throw new ParserException(mainFunctions[0], "Multiple main methods found.");

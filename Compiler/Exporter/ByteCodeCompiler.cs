@@ -103,12 +103,12 @@ namespace Exporter
             ByteBuffer output = new ByteBuffer();
 
             int id = 1;
-            foreach (CompilationScope libraryScope in parser.LibraryManager.ImportedLibraries)
+            foreach (CompilationScope scope in parser.AssemblyManager.ImportedAssemblyScopes)
             {
                 List<string> descriptorComponents = new List<string>()
                 {
-                    libraryScope.Metadata.ID,
-                    libraryScope.Metadata.Version,
+                    scope.Metadata.ID,
+                    scope.Metadata.Version,
                 };
                 string libraryDescriptor = string.Join(",", descriptorComponents);
                 output.Add(null, OpCode.LIB_DECLARATION, libraryDescriptor, id++);
@@ -682,7 +682,7 @@ namespace Exporter
 
             args.AddRange(members);
 
-            string fullyQualifiedName = classDefinition.GetFullyQualifiedLocalizedName(parser.UserCodeCompilationScope.Locale);
+            string fullyQualifiedName = classDefinition.GetFullyQualifiedLocalizedName(parser.RootScope.Locale);
 
             buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION, fullyQualifiedName, args.ToArray());
         }

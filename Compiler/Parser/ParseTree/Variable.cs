@@ -68,7 +68,7 @@
                 {
                     string name = this.FirstToken.Value;
 
-                    if (parser.LibraryManager.IsValidLibraryNameFromLocale(this.Locale, name))
+                    if (parser.AssemblyManager.IsValidAssemblyNameFromLocale(this.Locale, name))
                     {
                         throw new ParserException(this, "'" + name + "' is referenced but not imported in this file.");
                     }

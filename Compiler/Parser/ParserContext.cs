@@ -15,7 +15,7 @@ namespace Parser
 
         private Dictionary<string, CompilationScope> compilationScopes = new Dictionary<string, CompilationScope>();
 
-        public CompilationScope UserCodeCompilationScope { get { return this.compilationScopes["."]; } }
+        public CompilationScope RootScope { get { return this.compilationScopes["."]; } }
 
         public FunctionDefinition MainFunction { get; set; }
         public FunctionDefinition CoreLibInvokeFunction { get; set; }
@@ -24,7 +24,7 @@ namespace Parser
         {
             this.BuildContext = buildContext;
             this.PushScope(new CompilationScope(buildContext, new AssemblyMetadata(buildContext.CompilerLocale)));
-            this.LibraryManager = new AssemblyManager(buildContext);
+            this.AssemblyManager = new AssemblyManager(buildContext);
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelEntity, ConstantResolutionState>();
             this.TopLevelParser = new TopLevelParser(this);
@@ -160,7 +160,7 @@ namespace Parser
 
         public CompilationScope CurrentScope { get; private set; }
 
-        public AssemblyManager LibraryManager { get; private set; }
+        public AssemblyManager AssemblyManager { get; private set; }
 
         public bool MainFunctionHasArg { get; set; }
 
@@ -399,7 +399,7 @@ namespace Parser
             List<string> namespaceImportsBuilder = new List<string>();
 
             // Implicitly import the Core library for the current locale.
-            LocalizedLibraryView implicitCoreImport = this.LibraryManager.GetCoreLibrary(this);
+            LocalizedAssemblyView implicitCoreImport = this.AssemblyManager.GetCoreLibrary(this);
             namespaceImportsBuilder.Add(implicitCoreImport.Name);
             fileScope.Imports.Add(new ImportStatement(null, implicitCoreImport.Name, fileScope));
 
@@ -408,8 +408,8 @@ namespace Parser
                 ImportStatement importStatement = this.TopLevelParser.ParseImport(tokens, fileScope);
                 if (importStatement == null) throw new Exception();
                 namespaceImportsBuilder.Add(importStatement.ImportPath);
-                LocalizedLibraryView localizedLibraryView = this.LibraryManager.GetOrImportLibrary(this, importStatement.FirstToken, importStatement.ImportPath);
-                if (localizedLibraryView == null)
+                LocalizedAssemblyView localizedAssemblyView = this.AssemblyManager.GetOrImportAssembly(this, importStatement.FirstToken, importStatement.ImportPath);
+                if (localizedAssemblyView == null)
                 {
                     this.unresolvedImports.Add(importStatement);
                 }

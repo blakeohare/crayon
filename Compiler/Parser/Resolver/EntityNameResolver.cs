@@ -15,11 +15,11 @@ namespace Parser.Resolver
 
             // First create a lookup of JUST the libraries that are available to this library.
             // This is localized to the locales that are used by that library.
-            foreach (LocalizedLibraryView depLocView in scope.Dependencies)
+            foreach (LocalizedAssemblyView depLocView in scope.Dependencies)
             {
-                depLocView.LibraryScope.FlattenFullyQualifiedLookupsIntoGlobalLookup(depsLookup, depLocView.Locale);
+                depLocView.Scope.FlattenFullyQualifiedLookupsIntoGlobalLookup(depsLookup, depLocView.Locale);
                 Util.MergeDictionaryInto(
-                    depLocView.LibraryScope.GetFlattenedNamespaceLookup(depLocView.Locale),
+                    depLocView.Scope.GetFlattenedNamespaceLookup(depLocView.Locale),
                     depsNamespaceLookup);
             }
 
