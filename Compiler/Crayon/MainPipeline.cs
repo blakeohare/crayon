@@ -47,7 +47,7 @@ namespace Crayon.Pipeline
 
                     if (command.ShowPerformanceMarkers)
                     {
-                        new ShowPerformanceMetricsWorker().DoWork();
+                        ShowPerformanceMetrics();
                     }
 
                     new RunCbxWorker().DoWorkImpl(cmdLineFlags);
@@ -57,8 +57,15 @@ namespace Crayon.Pipeline
 
             if (command.ShowPerformanceMarkers)
             {
-                new ShowPerformanceMetricsWorker().DoWork();
+                ShowPerformanceMetrics();
             }
+        }
+
+        private static void ShowPerformanceMetrics()
+        {
+#if DEBUG
+            System.Console.WriteLine(Common.PerformanceTimer.GetSummary());
+#endif
         }
     }
 }
