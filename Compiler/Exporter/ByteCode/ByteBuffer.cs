@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Exporter
+namespace Exporter.ByteCode
 {
     public class ByteBuffer
     {
