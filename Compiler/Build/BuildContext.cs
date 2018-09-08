@@ -45,7 +45,7 @@ namespace Build
         public int? WindowHeight { get; set; }
         public Locale CompilerLocale { get; set; }
         public string IconFilePath { get; set; }
-        
+
         private static Target FindTarget(string targetName, IList<Target> targets)
         {
             foreach (Target target in targets)
@@ -241,7 +241,7 @@ namespace Build
                 ? value.Replace("%TARGET_NAME%", target)
                 : value;
         }
-        
+
         private static ImageSheet[] MergeImageSheets(ImageSheet[] originalSheets, ImageSheet[] newSheets)
         {
             Dictionary<string, List<string>> prefixDirectLookup = new Dictionary<string, List<string>>();

@@ -8,8 +8,8 @@ namespace Build
     class BuildVarParser
     {
         internal static Dictionary<string, BuildVarCanonicalized> GenerateBuildVars(
-            BuildItem root, 
-            BuildItem target, 
+            BuildItem root,
+            BuildItem target,
             Dictionary<string, string> replacements)
         {
             Dictionary<string, BuildVar> firstPass = new Dictionary<string, BuildVar>();

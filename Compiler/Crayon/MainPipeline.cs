@@ -22,10 +22,10 @@ namespace Crayon.Pipeline
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
                     buildContext = new GetBuildContextWorker().DoWorkImpl(command);
-                    CompilationBundle result = Exporter.Pipeline.ExportCbxVmBundlePipeline.Run(command, buildContext);
+                    ExportBundle result = Exporter.Pipeline.ExportCbxVmBundlePipeline.Run(command, buildContext);
                     if (command.ShowLibraryDepTree)
                     {
-                        new ShowLibraryDepsWorker().DoWorkImpl(result);
+                        new ShowLibraryDepsWorker().DoWorkImpl(result.UserCodeScope);
                     }
                     break;
 

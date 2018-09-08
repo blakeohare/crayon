@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Exporter
 {
-    public class CompilationBundle
+    public class ExportBundle
     {
         public ByteBuffer ByteCode { get; set; }
         public string ProjectID { get; set; }
@@ -25,9 +25,9 @@ namespace Exporter
         public string Version { get; set; }
         public string Description { get; set; }
 
-        public static CompilationBundle Compile(BuildContext buildContext)
+        public static ExportBundle Compile(BuildContext buildContext)
         {
-            using (new PerformanceSection("CompilationBundle.Compile"))
+            using (new PerformanceSection("ExportBundle.Compile"))
             {
                 ParserContext parserContext = new ParserContext(buildContext);
                 Parser.ParseTree.TopLevelEntity[] resolvedParseTree = parserContext.ParseAllTheThings();
@@ -39,7 +39,7 @@ namespace Exporter
                     ? ""
                     : ("/" + buildContext.JsFilePrefix.Trim('/') + "/");
 
-                return new CompilationBundle()
+                return new ExportBundle()
                 {
                     ByteCode = buffer,
                     UserCodeScope = parserContext.UserCodeCompilationScope,

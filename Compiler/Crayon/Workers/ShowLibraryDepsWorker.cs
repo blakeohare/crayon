@@ -1,5 +1,4 @@
-﻿using Exporter;
-using Parser;
+﻿using Parser;
 using System;
 using System.Linq;
 
@@ -7,10 +6,9 @@ namespace Crayon
 {
     internal class ShowLibraryDepsWorker
     {
-        public void DoWorkImpl(CompilationBundle compilationResult)
+        public void DoWorkImpl(CompilationScope scope)
         {
-            LibraryMetadata[] libraryMetadata = compilationResult
-                .UserCodeScope
+            LibraryMetadata[] libraryMetadata = scope
                 .Dependencies
                 .Select(libLocView => libLocView.LibraryScope.Library)
                 .ToArray();

@@ -10,7 +10,7 @@ namespace Exporter.Pipeline
         public static string Run(ExportCommand command, BuildContext buildContext)
         {
             string outputDirectory = new GetOutputDirectoryWorker().DoWorkImpl(buildContext);
-            CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
+            ExportBundle compilationResult = ExportBundle.Compile(buildContext);
             ResourceDatabase resDb = ResourceDatabaseBuilder.PrepareResources(buildContext, null);
             string byteCode = ByteCodeEncoder.Encode(compilationResult.ByteCode);
             byte[] cbxFileBytes = new GenerateCbxFileContentWorker().GenerateCbxBinaryData(buildContext, resDb, compilationResult, byteCode);

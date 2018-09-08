@@ -8,7 +8,7 @@ namespace Exporter.Workers
 {
     public class GenerateCbxFileContentWorker
     {
-        public byte[] GenerateCbxBinaryData(BuildContext buildContext, ResourceDatabase resDb, CompilationBundle compilationResult, string byteCode)
+        public byte[] GenerateCbxBinaryData(BuildContext buildContext, ResourceDatabase resDb, ExportBundle compilationResult, string byteCode)
         {
             List<byte> cbxOutput = new List<byte>() { 0 };
             cbxOutput.AddRange("CBX".ToCharArray().Select(c => (byte)c));

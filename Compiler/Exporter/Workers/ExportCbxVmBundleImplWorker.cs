@@ -9,7 +9,7 @@ namespace Exporter.Workers
 {
     public class ExportCbxVmBundleImplWorker
     {
-        public CompilationBundle ExportVmBundle(ExportCommand command, BuildContext buildContext)
+        public ExportBundle ExportVmBundle(ExportCommand command, BuildContext buildContext)
         {
             // TODO: Worker: platform = GetPlatform(buildContext, command)
             string platformId = buildContext.Platform.ToLowerInvariant();
@@ -17,7 +17,7 @@ namespace Exporter.Workers
             if (platform == null) throw new InvalidOperationException("Unrecognized platform. See usage.");
 
             // TODO: Worker: Compile
-            CompilationBundle compilationResult = CompilationBundle.Compile(buildContext);
+            ExportBundle compilationResult = ExportBundle.Compile(buildContext);
             LibraryMetadata[] libraries = compilationResult.LibraryScopesUsed.Select(scope => scope.Library).ToArray();
 
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext, compilationResult.ByteCode);

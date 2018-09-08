@@ -107,7 +107,7 @@ namespace Exporter
         public void GenerateVmSourceCodeForPlatform(
             Dictionary<string, FileOutput> output,
             Platform.AbstractPlatform platform,
-            CompilationBundle nullableCompilationBundle,
+            ExportBundle nullableExportBundle,
             ResourceDatabase resourceDatabase,
             ICollection<LibraryMetadata> relevantLibraries,
             string verifiedAbsoluteOutputPath,
@@ -137,23 +137,23 @@ namespace Exporter
                 if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
                 {
                     options
-                        .SetOption(ExportOptionKey.PROJECT_ID, nullableCompilationBundle.ProjectID)
-                        .SetOption(ExportOptionKey.DESCRIPTION, nullableCompilationBundle.Description)
-                        .SetOption(ExportOptionKey.VERSION, nullableCompilationBundle.Version)
-                        .SetOption(ExportOptionKey.EMBED_BYTE_CODE, nullableCompilationBundle.GuidSeed)
+                        .SetOption(ExportOptionKey.PROJECT_ID, nullableExportBundle.ProjectID)
+                        .SetOption(ExportOptionKey.DESCRIPTION, nullableExportBundle.Description)
+                        .SetOption(ExportOptionKey.VERSION, nullableExportBundle.Version)
+                        .SetOption(ExportOptionKey.EMBED_BYTE_CODE, nullableExportBundle.GuidSeed)
                         .SetOption(ExportOptionKey.EMBED_BYTE_CODE, true)
-                        .SetOption(ExportOptionKey.DEFAULT_TITLE, nullableCompilationBundle.DefaultTitle)
+                        .SetOption(ExportOptionKey.DEFAULT_TITLE, nullableExportBundle.DefaultTitle)
                         .SetOption(ExportOptionKey.LIBRARIES_USED, libraries.Cast<object>().ToArray())
-                        .SetOption(ExportOptionKey.HAS_ICON, nullableCompilationBundle.IconPath != null)
-                        .SetOption(ExportOptionKey.HAS_LAUNCHSCREEN, nullableCompilationBundle.LaunchScreenPath != null)
-                        .SetOption(ExportOptionKey.IOS_BUNDLE_PREFIX, nullableCompilationBundle.IosBundlePrefix)
-                        .SetOption(ExportOptionKey.JAVA_PACKAGE, nullableCompilationBundle.JavaPackage)
-                        .SetOption(ExportOptionKey.JS_FILE_PREFIX, nullableCompilationBundle.JsFilePrefix)
-                        .SetOption(ExportOptionKey.JS_FULL_PAGE, nullableCompilationBundle.JsFullPage)
-                        .SetOption(ExportOptionKey.SUPPORTED_ORIENTATION, nullableCompilationBundle.Orientations);
+                        .SetOption(ExportOptionKey.HAS_ICON, nullableExportBundle.IconPath != null)
+                        .SetOption(ExportOptionKey.HAS_LAUNCHSCREEN, nullableExportBundle.LaunchScreenPath != null)
+                        .SetOption(ExportOptionKey.IOS_BUNDLE_PREFIX, nullableExportBundle.IosBundlePrefix)
+                        .SetOption(ExportOptionKey.JAVA_PACKAGE, nullableExportBundle.JavaPackage)
+                        .SetOption(ExportOptionKey.JS_FILE_PREFIX, nullableExportBundle.JsFilePrefix)
+                        .SetOption(ExportOptionKey.JS_FULL_PAGE, nullableExportBundle.JsFullPage)
+                        .SetOption(ExportOptionKey.SUPPORTED_ORIENTATION, nullableExportBundle.Orientations);
 
-                    if (options.GetBool(ExportOptionKey.HAS_ICON)) options.SetOption(ExportOptionKey.ICON_PATH, nullableCompilationBundle.IconPath);
-                    if (options.GetBool(ExportOptionKey.HAS_LAUNCHSCREEN)) options.SetOption(ExportOptionKey.LAUNCHSCREEN_PATH, nullableCompilationBundle.LaunchScreenPath);
+                    if (options.GetBool(ExportOptionKey.HAS_ICON)) options.SetOption(ExportOptionKey.ICON_PATH, nullableExportBundle.IconPath);
+                    if (options.GetBool(ExportOptionKey.HAS_LAUNCHSCREEN)) options.SetOption(ExportOptionKey.LAUNCHSCREEN_PATH, nullableExportBundle.LaunchScreenPath);
 
                     platform.GleanInformationFromPreviouslyExportedProject(options, verifiedAbsoluteOutputPath);
 
