@@ -1,6 +1,5 @@
 ﻿using Parser;
 using Parser.ParseTree;
-using System;
 
 namespace Exporter.ByteCode.Nodes
 {
