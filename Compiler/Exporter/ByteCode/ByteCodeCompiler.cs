@@ -1,4 +1,5 @@
 ﻿using Common;
+using Exporter.ByteCode.Nodes;
 using Localization;
 using Parser;
 using Parser.ParseTree;
@@ -332,9 +333,9 @@ namespace Exporter.ByteCode
             else if (line is IfStatement) this.CompileIfStatement(parser, buffer, (IfStatement)line);
             else if (line is ReturnStatement) this.CompileReturnStatement(parser, buffer, (ReturnStatement)line);
             else if (line is SwitchStatement) this.CompileSwitchStatement(parser, buffer, (SwitchStatement)line);
-            else if (line is ForEachLoop) this.CompileForEachLoop(parser, buffer, (ForEachLoop)line);
-            else if (line is DoWhileLoop) this.CompileDoWhileLoop(parser, buffer, (DoWhileLoop)line);
-            else if (line is TryStatement) this.CompileTryStatement(parser, buffer, (TryStatement)line);
+            else if (line is ForEachLoop) ForEachEncoder.Compile(this, parser, buffer, (ForEachLoop)line);
+            else if (line is DoWhileLoop) DoWhileEncoder.Compile(this, parser, buffer, (DoWhileLoop)line);
+            else if (line is TryStatement) TryStatementEncoder.Compile(this, parser, buffer, (TryStatement)line);
             else if (line is ThrowStatement) this.CompileThrowStatement(parser, buffer, (ThrowStatement)line);
             else throw new NotImplementedException("Invalid target for byte code compilation");
         }
@@ -343,160 +344,6 @@ namespace Exporter.ByteCode
         {
             this.CompileExpression(parser, buffer, throwStatement.Expression, true);
             buffer.Add(throwStatement.FirstToken, OpCode.THROW);
-        }
-
-        private void CompileTryStatement(ParserContext parser, ByteBuffer buffer, TryStatement tryStatement)
-        {
-            ByteBuffer tryCode = new ByteBuffer();
-            this.Compile(parser, tryCode, tryStatement.TryBlock);
-
-            if (tryStatement.TryBlock.Length > 0 && tryStatement.TryBlock[0] is TryStatement)
-            {
-                // If the try block begins with another try block, that'll mess with the EsfToken metadata
-                // which is declared at the beginning of the try block's PC and is singular.
-                // Get around this limitation by tacking on a noop (JUMP +0) in this reasonably rare edge case.
-                tryCode.AddFrontSlow(null, OpCode.JUMP, 0);
-            }
-
-            List<ByteBuffer> catchBlocks = new List<ByteBuffer>();
-
-            for (int i = 0; i < tryStatement.CatchBlocks.Length; ++i)
-            {
-                TryStatement.CatchBlock catchBlock = tryStatement.CatchBlocks[i];
-                ByteBuffer catchBlockBuffer = new ByteBuffer();
-                this.Compile(parser, catchBlockBuffer, catchBlock.Code);
-                catchBlocks.Add(catchBlockBuffer);
-            }
-
-            ByteBuffer finallyCode = new ByteBuffer();
-            this.Compile(parser, finallyCode, tryStatement.FinallyBlock);
-            finallyCode.ResolveBreaksAndContinuesForFinally(false);
-            finallyCode.Add(null, OpCode.FINALLY_END,
-                new int[] {
-                    // First 2 args are the same as a BREAK op code
-                    // Last 2 args are the same as a CONTINUE op code
-                    // These are all 0 and are resolved into their final values in the same pass as BREAK and CONTINUE
-                    0, // break flag 0|1|2
-                    0, // break offset
-                    0, // continue flag 0|1|2
-                    0 // continue offset
-                });
-
-
-            // All user code is now compiled and offsets are sort of known.
-            // Now build a lookup jump router thingy for all the catch blocks, if any.
-
-            ByteBuffer allCatchBlocks = new ByteBuffer();
-            if (catchBlocks.Count > 0)
-            {
-                /*
-                    It'll look something like this...
-                    0   EXCEPTION_HANDLED_TOGGLE true
-                    1   JUMP_IF_EXCEPTION_IS_TYPE offset varId type1, type2, ...
-                    2   JUMP_IF_EXCEPTION_IS_TYPE offset varId type3
-                    3   EXCEPTION_HANDLED_TOGGLE false
-                    4   JUMP [to finally]
-
-                    5   catch block 1
-                        ...
-                    22  last line in catch block 1
-                    23  JUMP [to finally]
-
-                    24  catch block 2...
-                        ...
-                    72  last line in catch block 2
-
-                    73  finally code begins...
-                */
-
-                // Add jumps to the end of each catch block to jump to the end.
-                // Going in reverse order is easier for this.
-                int totalSize = 0;
-                for (int i = catchBlocks.Count - 1; i >= 0; --i)
-                {
-                    ByteBuffer catchBlockBuffer = catchBlocks[i];
-                    if (totalSize > 0) // omit the last block since a JUMP 0 is pointless.
-                    {
-                        catchBlockBuffer.Add(null, OpCode.JUMP, totalSize);
-                    }
-                    totalSize += catchBlockBuffer.Size;
-                }
-
-                // Now generate the header. This is also done backwards since it's easier.
-                ByteBuffer exceptionSortHeader = new ByteBuffer();
-
-                int offset = 2 // EXCEPTION_HANDLED_TOGGLE + final JUMP
-                    + catchBlocks.Count - 1; // remaining jump instructions to jump over
-
-                // Add all the JUMP_IF_EXCEPTION_OF_TYPE instructions.
-                for (int i = 0; i < catchBlocks.Count; ++i)
-                {
-                    TryStatement.CatchBlock cb = tryStatement.CatchBlocks[i];
-                    ByteBuffer cbByteBuffer = catchBlocks[i];
-                    int variableId = cb.VariableLocalScopeId.ID;
-
-                    // for each catch block insert a type-check-jump
-                    List<int> typeCheckArgs = new List<int>() { offset, variableId }; // first arg is offset, second is variable ID (or -1), successive args are all class ID's
-                    typeCheckArgs.AddRange(cb.TypeClasses.Select<ClassDefinition, int>(cd => cd.ClassID));
-                    exceptionSortHeader.Add(null, OpCode.JUMP_IF_EXCEPTION_OF_TYPE, typeCheckArgs.ToArray());
-
-                    // add the block to the running total
-                    offset += cbByteBuffer.Size;
-
-                    // ...but subtract 1 for the JUMP_IF_EXCEPTION_OF_TYPE you just added.
-                    offset -= 1;
-                }
-                exceptionSortHeader.Add(null, OpCode.EXCEPTION_HANDLED_TOGGLE, 0);
-                exceptionSortHeader.Add(null, OpCode.JUMP, totalSize);
-
-                allCatchBlocks.Add(null, OpCode.EXCEPTION_HANDLED_TOGGLE, 1);
-                allCatchBlocks.Concat(exceptionSortHeader);
-                foreach (ByteBuffer catchBlock in catchBlocks)
-                {
-                    allCatchBlocks.Concat(catchBlock);
-                }
-            }
-
-            int tryBegin = buffer.Size;
-            buffer.Concat(tryCode);
-            buffer.Add(null, OpCode.JUMP, allCatchBlocks.Size);
-            buffer.Concat(allCatchBlocks);
-            buffer.ResolveBreaksAndContinuesForFinally(true);
-
-            buffer.Concat(finallyCode);
-
-            int offsetToCatch = tryCode.Size + 1;
-            int offsetToFinally = offsetToCatch + allCatchBlocks.Size;
-            buffer.SetEsfToken(tryBegin, offsetToCatch, offsetToFinally);
-        }
-
-        private void CompileForEachLoop(ParserContext parser, ByteBuffer buffer, ForEachLoop forEachLoop)
-        {
-            buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(0));
-            buffer.Add(null, OpCode.LITERAL, parser.GetIntConstant(forEachLoop.IterationVariableId.ID));
-            this.CompileExpression(parser, buffer, forEachLoop.IterationExpression, true);
-            buffer.Add(forEachLoop.IterationExpression.FirstToken, OpCode.VERIFY_TYPE_IS_ITERABLE);
-
-            buffer.SetLastValueStackDepthOffset(3);
-
-            ByteBuffer body = new ByteBuffer();
-            ByteBuffer body2 = new ByteBuffer();
-
-            this.Compile(parser, body2, forEachLoop.Code);
-
-            body.Add(forEachLoop.FirstToken, OpCode.ITERATION_STEP, body2.Size + 1);
-
-            body2.Add(null, OpCode.JUMP, -body2.Size - 2);
-            body.Concat(body2);
-
-            body.ResolveBreaks();
-            body.ResolveContinues();
-
-            buffer.Concat(body);
-            buffer.Add(null, OpCode.POP); // list
-            buffer.Add(null, OpCode.POP); // var ID
-            buffer.Add(null, OpCode.POP); // index
-            buffer.SetLastValueStackDepthOffset(-3);
         }
 
         private void CompileSwitchStatement(ParserContext parser, ByteBuffer buffer, SwitchStatement switchStatement)
@@ -849,21 +696,6 @@ namespace Exporter.ByteCode
             buffer.Concat(condition);
         }
 
-        private void CompileDoWhileLoop(ParserContext parser, ByteBuffer buffer, DoWhileLoop doWhileLoop)
-        {
-            ByteBuffer loopBody = new ByteBuffer();
-            this.Compile(parser, loopBody, doWhileLoop.Code);
-            loopBody.ResolveContinues(true); // continues should jump to the condition, hence the true.
-
-            ByteBuffer condition = new ByteBuffer();
-            this.CompileExpression(parser, condition, doWhileLoop.Condition, true);
-            loopBody.Concat(condition);
-            loopBody.Add(doWhileLoop.Condition.FirstToken, OpCode.JUMP_IF_TRUE, -loopBody.Size - 1);
-            loopBody.ResolveBreaks();
-
-            buffer.Concat(loopBody);
-        }
-
         private BinaryOps ConvertOpString(Token token)
         {
             switch (token.Value)
@@ -1096,27 +928,27 @@ namespace Exporter.ByteCode
             this.CompileExpression(parser, buffer, expr.Expression, false);
         }
 
-        private void CompileExpression(ParserContext parser, ByteBuffer buffer, Expression expr, bool outputUsed)
+        internal void CompileExpression(ParserContext parser, ByteBuffer buffer, Expression expr, bool outputUsed)
         {
-            if (expr is FunctionCall) this.CompileFunctionCall(parser, buffer, (FunctionCall)expr, outputUsed);
-            else if (expr is IntegerConstant) this.CompileIntegerConstant(parser, buffer, (IntegerConstant)expr, outputUsed);
+            if (expr is FunctionCall) FunctionCallEncoder.Compile(this, parser, buffer, (FunctionCall)expr, outputUsed);
+            else if (expr is IntegerConstant) ConstantEncoder.CompileInteger(parser, buffer, (IntegerConstant)expr, outputUsed);
             else if (expr is Variable) this.CompileVariable(parser, buffer, (Variable)expr, outputUsed);
-            else if (expr is BooleanConstant) this.CompileBooleanConstant(parser, buffer, (BooleanConstant)expr, outputUsed);
-            else if (expr is DotField) this.CompileDotStep(parser, buffer, (DotField)expr, outputUsed);
+            else if (expr is BooleanConstant) ConstantEncoder.CompileBoolean(parser, buffer, (BooleanConstant)expr, outputUsed);
+            else if (expr is DotField) DotFieldEncoder.Compile(this, parser, buffer, (DotField)expr, outputUsed);
             else if (expr is BracketIndex) this.CompileBracketIndex(parser, buffer, (BracketIndex)expr, outputUsed);
-            else if (expr is OpChain) this.CompileBinaryOpChain(parser, buffer, (OpChain)expr, outputUsed);
-            else if (expr is StringConstant) this.CompileStringConstant(parser, buffer, (StringConstant)expr, outputUsed);
+            else if (expr is OpChain) OpChainEncoder.Compile(this, parser, buffer, (OpChain)expr, outputUsed);
+            else if (expr is StringConstant) ConstantEncoder.CompileString(parser, buffer, (StringConstant)expr, outputUsed);
             else if (expr is NegativeSign) this.CompileNegativeSign(parser, buffer, (NegativeSign)expr, outputUsed);
             else if (expr is ListDefinition) this.CompileListDefinition(parser, buffer, (ListDefinition)expr, outputUsed);
-            else if (expr is Increment) this.CompileIncrement(parser, buffer, (Increment)expr, outputUsed);
-            else if (expr is FloatConstant) this.CompileFloatConstant(parser, buffer, (FloatConstant)expr, outputUsed);
-            else if (expr is NullConstant) this.CompileNullConstant(parser, buffer, (NullConstant)expr, outputUsed);
+            else if (expr is Increment) IncrementEncoder.Compile(this, parser, buffer, (Increment)expr, outputUsed);
+            else if (expr is FloatConstant) ConstantEncoder.CompileFloat(parser, buffer, (FloatConstant)expr, outputUsed);
+            else if (expr is NullConstant) ConstantEncoder.CompileNull(parser, buffer, (NullConstant)expr, outputUsed);
             else if (expr is ThisKeyword) this.CompileThisKeyword(parser, buffer, (ThisKeyword)expr, outputUsed);
             else if (expr is Instantiate) this.CompileInstantiate(parser, buffer, (Instantiate)expr, outputUsed);
             else if (expr is DictionaryDefinition) this.CompileDictionaryDefinition(parser, buffer, (DictionaryDefinition)expr, outputUsed);
             else if (expr is BooleanCombination) this.CompileBooleanCombination(parser, buffer, (BooleanCombination)expr, outputUsed);
             else if (expr is BooleanNot) this.CompileBooleanNot(parser, buffer, (BooleanNot)expr, outputUsed);
-            else if (expr is Ternary) this.CompileTernary(parser, buffer, (Ternary)expr, outputUsed);
+            else if (expr is Ternary) TernaryEncoder.Compile(this, parser, buffer, (Ternary)expr, outputUsed);
             else if (expr is CompileTimeDictionary) this.CompileCompileTimeDictionary((CompileTimeDictionary)expr);
             else if (expr is ListSlice) this.CompileListSlice(parser, buffer, (ListSlice)expr, outputUsed);
             else if (expr is NullCoalescer) this.CompileNullCoalescer(parser, buffer, (NullCoalescer)expr, outputUsed);
@@ -1132,7 +964,7 @@ namespace Exporter.ByteCode
             else throw new NotImplementedException();
         }
 
-        private void CompileCniFunctionInvocation(
+        internal void CompileCniFunctionInvocation(
             ParserContext parser,
             ByteBuffer buffer,
             CniFunctionInvocation cniFuncInvocation,
@@ -1193,7 +1025,7 @@ namespace Exporter.ByteCode
             buffer.Add(classRef.FirstToken, OpCode.LITERAL, parser.GetClassRefConstant(classRef.ClassDefinition));
         }
 
-        private static void EnsureUsed(Node item, bool outputUsed)
+        internal static void EnsureUsed(Node item, bool outputUsed)
         {
             EnsureUsed(item.FirstToken, outputUsed);
         }
@@ -1217,7 +1049,7 @@ namespace Exporter.ByteCode
             buffer.Add(isComp.IsToken, OpCode.IS_COMPARISON, isComp.ClassDefinition.ClassID);
         }
 
-        private void CompileCoreFunctionInvocation(
+        internal void CompileCoreFunctionInvocation(
             ParserContext parser,
             ByteBuffer buffer,
             CoreFunctionInvocation coreFuncInvocation,
@@ -1363,21 +1195,6 @@ namespace Exporter.ByteCode
             buffer.Add(listSlice.BracketToken, OpCode.LIST_SLICE, new int[] { firstIsPresent ? 1 : 0, secondIsPresent ? 1 : 0, isStep1 ? 0 : 1 });
         }
 
-        private void CompileTernary(ParserContext parser, ByteBuffer buffer, Ternary ternary, bool outputUsed)
-        {
-            EnsureUsed(ternary.FirstToken, outputUsed);
-
-            this.CompileExpression(parser, buffer, ternary.Condition, true);
-            ByteBuffer trueBuffer = new ByteBuffer();
-            this.CompileExpression(parser, trueBuffer, ternary.TrueValue, true);
-            ByteBuffer falseBuffer = new ByteBuffer();
-            this.CompileExpression(parser, falseBuffer, ternary.FalseValue, true);
-            trueBuffer.Add(null, OpCode.JUMP, falseBuffer.Size);
-            buffer.Add(ternary.Condition.FirstToken, OpCode.JUMP_IF_FALSE, trueBuffer.Size);
-            buffer.Concat(trueBuffer);
-            buffer.Concat(falseBuffer);
-        }
-
         private void CompileNullCoalescer(ParserContext parser, ByteBuffer buffer, NullCoalescer nullCoalescer, bool outputUsed)
         {
             EnsureUsed(nullCoalescer.FirstToken, outputUsed);
@@ -1463,133 +1280,6 @@ namespace Exporter.ByteCode
             buffer.Add(thisKeyword.FirstToken, OpCode.THIS);
         }
 
-        private void CompileNullConstant(ParserContext parser, ByteBuffer buffer, NullConstant nullConstant, bool outputUsed)
-        {
-            if (!outputUsed) throw new ParserException(nullConstant, "This expression doesn't do anything.");
-
-            buffer.Add(nullConstant.FirstToken, OpCode.LITERAL, parser.GetNullConstant());
-        }
-
-        private void CompileFloatConstant(ParserContext parser, ByteBuffer buffer, FloatConstant floatConstant, bool outputUsed)
-        {
-            if (!outputUsed) throw new ParserException(floatConstant, "This expression doesn't do anything.");
-            buffer.Add(floatConstant.FirstToken, OpCode.LITERAL, parser.GetFloatConstant(floatConstant.Value));
-        }
-
-        private void CompileIncrement(ParserContext parser, ByteBuffer buffer, Increment increment, bool outputUsed)
-        {
-            if (!outputUsed)
-            {
-                throw new Exception("This should have been optimized into a += or -=");
-            }
-
-            if (increment.Root is Variable)
-            {
-                // OpCode re-use be damned. This should be not one, but two top-level op codes.
-                // INCREMENT_INLINE and INCREMENT_POP (depending on whether outputUsed is true)
-                // In fact, the code here in its current form is actually WRONG because someString++ will have
-                // a '1' appended to it when it really should be an error if the variable is not an integer.
-                // Same for the others below. Ideally the DUPLICATE_STACK_TOP op should be removed.
-                Variable variable = (Variable)increment.Root;
-                VariableId varId = variable.LocalScopeId;
-                bool isClosureVar = varId.UsedByClosure;
-                int scopeId = isClosureVar ? varId.ClosureID : varId.ID;
-                this.CompileExpression(parser, buffer, increment.Root, true);
-                if (increment.IsPrefix)
-                {
-                    buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
-                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
-                    buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
-                    buffer.Add(variable.FirstToken, isClosureVar ? OpCode.ASSIGN_CLOSURE : OpCode.ASSIGN_LOCAL, scopeId);
-                }
-                else
-                {
-                    buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
-                    buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
-                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
-                    buffer.Add(variable.FirstToken, isClosureVar ? OpCode.ASSIGN_CLOSURE : OpCode.ASSIGN_LOCAL, scopeId);
-                }
-            }
-            else if (increment.Root is BracketIndex)
-            {
-                BracketIndex bracketIndex = (BracketIndex)increment.Root;
-                this.CompileExpression(parser, buffer, bracketIndex.Root, true);
-                this.CompileExpression(parser, buffer, bracketIndex.Index, true);
-                buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 2);
-                buffer.Add(bracketIndex.BracketToken, OpCode.INDEX);
-                if (increment.IsPrefix)
-                {
-                    buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
-                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
-                    buffer.Add(increment.IncrementToken, OpCode.ASSIGN_INDEX, 1);
-                }
-                else
-                {
-                    buffer.Add(increment.IncrementToken, OpCode.STACK_INSERTION_FOR_INCREMENT);
-                    buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
-                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
-                    buffer.Add(increment.IncrementToken, OpCode.ASSIGN_INDEX, 0);
-                }
-            }
-            else if (increment.Root is DotField)
-            {
-                DotField dotStep = (DotField)increment.Root;
-                this.CompileExpression(parser, buffer, dotStep.Root, true);
-                buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
-                int nameId = parser.GetId(dotStep.StepToken.Value);
-                int localeScopedNameId = nameId * parser.GetLocaleCount() + parser.GetLocaleId(dotStep.Owner.FileScope.CompilationScope.Locale);
-                buffer.Add(dotStep.DotToken, OpCode.DEREF_DOT, nameId, localeScopedNameId);
-                if (increment.IsPrefix)
-                {
-                    buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
-                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
-                    buffer.Add(increment.IncrementToken, OpCode.ASSIGN_STEP, nameId, 1, localeScopedNameId);
-                }
-                else
-                {
-                    buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 2);
-                    buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
-                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
-                    buffer.Add(increment.IncrementToken, OpCode.ASSIGN_STEP, nameId, 0, localeScopedNameId);
-                    buffer.Add(increment.IncrementToken, OpCode.STACK_SWAP_POP);
-                }
-            }
-            else if (increment.Root is FieldReference)
-            {
-                FieldReference fr = (FieldReference)increment.Root;
-                bool isStatic = fr.Field.IsStaticField;
-                ClassDefinition cd = (ClassDefinition)fr.Field.Owner;
-                int memberId = isStatic ? fr.Field.StaticMemberID : fr.Field.MemberID;
-
-                this.CompileExpression(parser, buffer, fr, true);
-                if (increment.IsPrefix)
-                {
-                    buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
-                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
-                    buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
-                }
-                else
-                {
-                    buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
-                    buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
-                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
-                }
-                Token token = increment.IsPrefix ? increment.FirstToken : fr.FirstToken;
-                if (isStatic)
-                {
-                    buffer.Add(token, OpCode.ASSIGN_STATIC_FIELD, ((ClassDefinition)fr.Field.Owner).ClassID, memberId);
-                }
-                else
-                {
-                    buffer.Add(token, OpCode.ASSIGN_THIS_STEP, memberId);
-                }
-            }
-            else
-            {
-                throw new ParserException(increment.IncrementToken, "Cannot apply " + (increment.IsIncrement ? "++" : "--") + " to this sort of expression.");
-            }
-        }
-
         private void CompileListDefinition(ParserContext parser, ByteBuffer buffer, ListDefinition listDef, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(listDef, "List allocation made without storing it. This is likely a mistake.");
@@ -1607,76 +1297,12 @@ namespace Exporter.ByteCode
             buffer.Add(negativeSign.FirstToken, OpCode.NEGATIVE_SIGN);
         }
 
-        private void CompileStringConstant(ParserContext parser, ByteBuffer buffer, StringConstant stringConstant, bool outputUsed)
-        {
-            if (!outputUsed) throw new ParserException(stringConstant, "This expression does nothing.");
-            buffer.Add(stringConstant.FirstToken, OpCode.LITERAL, parser.GetStringConstant(stringConstant.Value));
-        }
-
-        private void CompileBinaryOpChain(ParserContext parser, ByteBuffer buffer, OpChain opChain, bool outputUsed)
-        {
-            if (!outputUsed)
-            {
-                if (opChain.Op.Value == "==")
-                {
-                    throw new ParserException(opChain.Op, "'==' cannot be used like this. Did you mean to use just a single '=' instead?");
-                }
-                throw new ParserException(opChain, "This expression isn't valid here.");
-            }
-
-            this.CompileExpressionList(parser, buffer, new Expression[] { opChain.Left, opChain.Right }, true);
-
-            Token opToken = opChain.Op;
-            switch (opToken.Value)
-            {
-                case "+": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.ADDITION); break;
-                case "<": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.LESS_THAN); break;
-                case "<=": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.LESS_THAN_OR_EQUAL); break;
-                case ">": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.GREATER_THAN); break;
-                case ">=": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.GREATER_THAN_OR_EQUAL); break;
-                case "-": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.SUBTRACTION); break;
-                case "*": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.MULTIPLICATION); break;
-                case "/": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.DIVISION); break;
-                case "%": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.MODULO); break;
-                case "**": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.EXPONENT); break;
-                case "|": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BITWISE_OR); break;
-                case "&": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BITWISE_AND); break;
-                case "^": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BITWISE_XOR); break;
-                case "<<": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BIT_SHIFT_LEFT); break;
-                case ">>": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BIT_SHIFT_RIGHT); break;
-                case "==": buffer.Add(opToken, OpCode.EQUALS, 0); break;
-                case "!=": buffer.Add(opToken, OpCode.EQUALS, 1); break;
-                default: throw new NotImplementedException("Binary op: " + opChain.Op.Value);
-            }
-
-            if (!outputUsed)
-            {
-                buffer.Add(null, OpCode.POP);
-            }
-        }
-
         private void CompileBracketIndex(ParserContext parser, ByteBuffer buffer, BracketIndex bracketIndex, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(bracketIndex, "This expression does nothing.");
             this.CompileExpression(parser, buffer, bracketIndex.Root, true);
             this.CompileExpression(parser, buffer, bracketIndex.Index, true);
             buffer.Add(bracketIndex.BracketToken, OpCode.INDEX);
-        }
-
-        private void CompileDotStep(ParserContext parser, ByteBuffer buffer, DotField dotStep, bool outputUsed)
-        {
-            if (!outputUsed) throw new ParserException(dotStep, "This expression does nothing.");
-            this.CompileExpression(parser, buffer, dotStep.Root, true);
-            int rawNameId = parser.GetId(dotStep.StepToken.Value);
-            int localeId = parser.GetLocaleId(dotStep.Owner.FileScope.CompilationScope.Locale);
-            int localeScopedNameId = rawNameId * parser.GetLocaleCount() + localeId;
-            buffer.Add(dotStep.DotToken, OpCode.DEREF_DOT, rawNameId, localeScopedNameId);
-        }
-
-        private void CompileBooleanConstant(ParserContext parser, ByteBuffer buffer, BooleanConstant boolConstant, bool outputUsed)
-        {
-            if (!outputUsed) throw new ParserException(boolConstant, "This expression does nothing.");
-            buffer.Add(boolConstant.FirstToken, OpCode.LITERAL, parser.GetBoolConstant(boolConstant.Value));
         }
 
         private void CompileVariable(ParserContext parser, ByteBuffer buffer, Variable variable, bool outputUsed)
@@ -1691,12 +1317,6 @@ namespace Exporter.ByteCode
             }
             bool isClosureVar = varId.UsedByClosure;
             buffer.Add(token, isClosureVar ? OpCode.DEREF_CLOSURE : OpCode.LOCAL, isClosureVar ? varId.ClosureID : varId.ID, nameId);
-        }
-
-        private void CompileIntegerConstant(ParserContext parser, ByteBuffer buffer, IntegerConstant intConst, bool outputUsed)
-        {
-            if (!outputUsed) throw new ParserException(intConst, "This expression does nothing.");
-            buffer.Add(intConst.FirstToken, OpCode.LITERAL, parser.GetIntConstant(intConst.Value));
         }
 
         private void CompileLiteralStream(ParserContext parser, ByteBuffer buffer, IList<Expression> expressions, bool outputUsed)
@@ -1781,216 +1401,6 @@ namespace Exporter.ByteCode
             {
                 this.CompileLiteralStream(parser, buffer, literals, true);
                 literals.Clear();
-            }
-        }
-
-        private void CompileInlinedLibraryFunctionCall(
-            ParserContext parser,
-            ByteBuffer buffer,
-            FunctionCall userWrittenOuterFunctionCall,
-            FunctionDefinition embedFunctionBeingInlined,
-            bool outputUsed)
-        {
-            Expression coreOrLibFunctionBeingInlined = ((ReturnStatement)embedFunctionBeingInlined.Code[0]).Expression;
-
-            int embedFuncLength = embedFunctionBeingInlined.ArgNames.Length;
-            int userProvidedArgLength = userWrittenOuterFunctionCall.Args.Length;
-            if (userProvidedArgLength > embedFuncLength)
-            {
-                // TODO: can this be removed? Isn't this caught elsewhere?
-                throw new ParserException(userWrittenOuterFunctionCall.ParenToken, "More arguments were passed to this function than allowed.");
-            }
-
-            // First go through the args provided and map them to the arg names of the embed function that's being inlined.
-            Dictionary<string, Expression> userProvidedAndImplicitArgumentsByArgName = new Dictionary<string, Expression>();
-            for (int i = 0; i < embedFuncLength; ++i)
-            {
-                Expression argValue;
-                if (i < userProvidedArgLength)
-                {
-                    argValue = userWrittenOuterFunctionCall.Args[i];
-                }
-                else
-                {
-                    argValue = embedFunctionBeingInlined.DefaultValues[i];
-                    if (argValue == null)
-                    {
-                        throw new ParserException(userWrittenOuterFunctionCall.ParenToken, "Not enough arguments were supplied to this function.");
-                    }
-                }
-                userProvidedAndImplicitArgumentsByArgName[embedFunctionBeingInlined.ArgNames[i].Value] = argValue;
-            }
-
-            CniFunctionInvocation cniFunctionCall = coreOrLibFunctionBeingInlined as CniFunctionInvocation;
-            CoreFunctionInvocation coreFunctionCall = coreOrLibFunctionBeingInlined as CoreFunctionInvocation;
-            if (cniFunctionCall == null && coreFunctionCall == null)
-            {
-                throw new InvalidOperationException(); // This shouldn't happen. The body of the library function should have been verified by the resolver before getting to this state.
-            }
-
-            Expression[] innermostArgList = cniFunctionCall != null
-                ? cniFunctionCall.Args
-                : coreFunctionCall.Args;
-
-            // This is the new list of arguments that will be passed to the inner underlying lib/core function.
-            List<Expression> finalArguments = new List<Expression>();
-
-            Expression arg;
-            for (int i = 0; i < innermostArgList.Length; ++i)
-            {
-                arg = innermostArgList[i];
-                if (arg is Variable)
-                {
-                    string argName = ((Variable)innermostArgList[i]).Name;
-                    finalArguments.Add(userProvidedAndImplicitArgumentsByArgName[argName]);
-                }
-                else if (arg.IsLiteral || arg is FieldReference)
-                {
-                    finalArguments.Add(arg);
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-            if (cniFunctionCall != null)
-            {
-                this.CompileCniFunctionInvocation(
-                    parser,
-                    buffer,
-                    cniFunctionCall,
-                    finalArguments.ToArray(),
-                    userWrittenOuterFunctionCall.ParenToken,
-                    outputUsed);
-            }
-            else
-            {
-                this.CompileCoreFunctionInvocation(
-                    parser,
-                    buffer,
-                    coreFunctionCall,
-                    finalArguments.ToArray(),
-                    userWrittenOuterFunctionCall.ParenToken,
-                    outputUsed);
-            }
-        }
-
-        private void CompileFunctionCall(ParserContext parser, ByteBuffer buffer, FunctionCall funCall, bool outputUsed)
-        {
-            bool argCountIsNegativeOne = false;
-            FunctionDefinition ownerFunction = funCall.Owner as FunctionDefinition;
-            if (ownerFunction != null &&
-                ownerFunction.NameToken.Value == "_LIB_CORE_invoke" &&
-                ownerFunction.FileScope.CompilationScope.Dependencies.Length == 0)
-            {
-                argCountIsNegativeOne = true;
-            }
-
-            Expression root = funCall.Root;
-            if (root is FunctionReference)
-            {
-                FunctionReference verifiedFunction = (FunctionReference)root;
-                FunctionDefinition fd = verifiedFunction.FunctionDefinition;
-
-                if (parser.InlinableLibraryFunctions.Contains(fd))
-                {
-                    this.CompileInlinedLibraryFunctionCall(parser, buffer, funCall, fd, outputUsed);
-                }
-                else
-                {
-                    this.CompileExpressionList(parser, buffer, funCall.Args, true);
-                    if (fd.Owner is ClassDefinition)
-                    {
-                        ClassDefinition cd = (ClassDefinition)fd.Owner;
-                        if (fd.IsStaticMethod)
-                        {
-                            buffer.Add(
-                                funCall.ParenToken,
-                                OpCode.CALL_FUNCTION,
-                                (int)FunctionInvocationType.STATIC_METHOD,
-                                funCall.Args.Length,
-                                fd.FunctionID,
-                                outputUsed ? 1 : 0,
-                                cd.ClassID);
-                        }
-                        else
-                        {
-                            buffer.Add(
-                                funCall.ParenToken,
-                                OpCode.CALL_FUNCTION,
-                                (int)FunctionInvocationType.LOCAL_METHOD,
-                                funCall.Args.Length,
-                                fd.FunctionID,
-                                outputUsed ? 1 : 0,
-                                cd.ClassID,
-                                verifiedFunction.FunctionDefinition.MemberID);
-                        }
-                    }
-                    else
-                    {
-                        // vanilla function
-                        buffer.Add(
-                            funCall.ParenToken,
-                            OpCode.CALL_FUNCTION,
-                            (int)FunctionInvocationType.NORMAL_FUNCTION,
-                            funCall.Args.Length,
-                            fd.FunctionID,
-                            outputUsed ? 1 : 0,
-                            0);
-                    }
-                }
-            }
-            else if (root is DotField)
-            {
-                DotField ds = (DotField)root;
-                Expression dotRoot = ds.Root;
-                int globalNameId = parser.GetId(ds.StepToken.Value);
-                this.CompileExpression(parser, buffer, dotRoot, true);
-                this.CompileExpressionList(parser, buffer, funCall.Args, true);
-                int localeId = parser.GetLocaleId(ds.Owner.FileScope.CompilationScope.Locale);
-                buffer.Add(
-                    funCall.ParenToken,
-                    OpCode.CALL_FUNCTION,
-                    (int)FunctionInvocationType.FIELD_INVOCATION,
-                    funCall.Args.Length,
-                    0,
-                    outputUsed ? 1 : 0,
-                    globalNameId,
-                    localeId);
-            }
-            else if (root is BaseMethodReference)
-            {
-                BaseMethodReference bmr = (BaseMethodReference)root;
-                FunctionDefinition fd = bmr.ClassToWhichThisMethodRefers.GetMethod(bmr.StepToken.Value, true);
-                if (fd == null)
-                {
-                    throw new ParserException(bmr.DotToken, "This method does not exist on any base class.");
-                }
-
-                this.CompileExpressionList(parser, buffer, funCall.Args, true);
-                buffer.Add(
-                    funCall.ParenToken,
-                    OpCode.CALL_FUNCTION,
-                    (int)FunctionInvocationType.LOCAL_METHOD,
-                    funCall.Args.Length,
-                    fd.FunctionID,
-                    outputUsed ? 1 : 0,
-                    bmr.ClassToWhichThisMethodRefers.ClassID,
-                    -1);
-            }
-            else
-            {
-                this.CompileExpression(parser, buffer, root, true);
-                this.CompileExpressionList(parser, buffer, funCall.Args, true);
-                buffer.Add(
-                    funCall.ParenToken,
-                    OpCode.CALL_FUNCTION,
-                    (int)FunctionInvocationType.POINTER_PROVIDED,
-                    argCountIsNegativeOne ? -1 : funCall.Args.Length,
-                    0,
-                    outputUsed ? 1 : 0,
-                    0);
             }
         }
     }
