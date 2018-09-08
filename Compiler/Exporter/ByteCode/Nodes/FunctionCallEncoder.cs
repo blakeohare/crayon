@@ -198,7 +198,8 @@ namespace Exporter.ByteCode.Nodes
 
             if (cniFunctionCall != null)
             {
-                bcc.CompileCniFunctionInvocation(
+                CniFunctionInvocationEncoder.Compile(
+                    bcc,
                     parser,
                     buffer,
                     cniFunctionCall,
@@ -208,7 +209,8 @@ namespace Exporter.ByteCode.Nodes
             }
             else
             {
-                bcc.CompileCoreFunctionInvocation(
+                CoreFunctionInvocationEncoder.Compile(
+                    bcc,
                     parser,
                     buffer,
                     coreFunctionCall,

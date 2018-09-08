@@ -513,7 +513,7 @@ namespace Exporter.ByteCode
             buffer.Concat(tBuffer);
         }
 
-        private void CompileFunctionArgs(ParserContext parser, ByteBuffer buffer, IList<Token> argNames, IList<Expression> argValues, List<int> offsetsForOptionalArgs)
+        internal void CompileFunctionArgs(ParserContext parser, ByteBuffer buffer, IList<Token> argNames, IList<Expression> argValues, List<int> offsetsForOptionalArgs)
         {
             int bufferStartSize = buffer.Size;
             for (int i = 0; i < argNames.Count; ++i)
@@ -597,82 +597,24 @@ namespace Exporter.ByteCode
             else if (expr is Instantiate) InstantiateEncoder.Compile(this, parser, buffer, (Instantiate)expr, outputUsed);
             else if (expr is DictionaryDefinition) DictionaryDefinitionEncoder.Compile(this, parser, buffer, (DictionaryDefinition)expr, outputUsed);
             else if (expr is BooleanCombination) BooleanCombinationEncoder.Compile(this, parser, buffer, (BooleanCombination)expr, outputUsed);
-            else if (expr is BooleanNot) this.CompileBooleanNot(parser, buffer, (BooleanNot)expr, outputUsed);
+            else if (expr is BooleanNot) BooleanNotEncoder.Compile(this, parser, buffer, (BooleanNot)expr, outputUsed);
             else if (expr is Ternary) TernaryEncoder.Compile(this, parser, buffer, (Ternary)expr, outputUsed);
-            else if (expr is CompileTimeDictionary) this.CompileCompileTimeDictionary((CompileTimeDictionary)expr);
-            else if (expr is ListSlice) this.CompileListSlice(parser, buffer, (ListSlice)expr, outputUsed);
-            else if (expr is NullCoalescer) this.CompileNullCoalescer(parser, buffer, (NullCoalescer)expr, outputUsed);
-            else if (expr is BaseKeyword) this.CompileBaseKeyword(parser, buffer, (BaseKeyword)expr, outputUsed);
-            else if (expr is BaseMethodReference) this.CompileBaseMethodReference(parser, buffer, (BaseMethodReference)expr, outputUsed);
-            else if (expr is FunctionReference) this.CompileFunctionReference(parser, buffer, (FunctionReference)expr, outputUsed);
+            else if (expr is ListSlice) ListSliceEncoder.Compile(this, parser, buffer, (ListSlice)expr, outputUsed);
+            else if (expr is NullCoalescer) NullCoalescerEncoder.Compile(this, parser, buffer, (NullCoalescer)expr, outputUsed);
+            else if (expr is BaseMethodReference) BaseMethodReferenceEncoder.Compile(parser, buffer, (BaseMethodReference)expr, outputUsed);
+            else if (expr is FunctionReference) FunctionReferenceEncoder.Compile(parser, buffer, (FunctionReference)expr, outputUsed);
             else if (expr is FieldReference) FieldReferenceEncoder.Compile(parser, buffer, (FieldReference)expr, outputUsed);
-            else if (expr is CoreFunctionInvocation) this.CompileCoreFunctionInvocation(parser, buffer, (CoreFunctionInvocation)expr, null, null, outputUsed);
-            else if (expr is IsComparison) this.CompileIsComparison(parser, buffer, (IsComparison)expr, outputUsed);
-            else if (expr is ClassReferenceLiteral) this.CompileClassReferenceLiteral(parser, buffer, (ClassReferenceLiteral)expr, outputUsed);
-            else if (expr is Lambda) this.CompileLambda(parser, buffer, (Lambda)expr, outputUsed);
-            else if (expr is CniFunctionInvocation) this.CompileCniFunctionInvocation(parser, buffer, (CniFunctionInvocation)expr, null, null, outputUsed);
+            else if (expr is CoreFunctionInvocation) CoreFunctionInvocationEncoder.Compile(this, parser, buffer, (CoreFunctionInvocation)expr, null, null, outputUsed);
+            else if (expr is IsComparison) IsComparisonEncoder.Compile(this, parser, buffer, (IsComparison)expr, outputUsed);
+            else if (expr is ClassReferenceLiteral) ClassReferenceEncoder.Compile(parser, buffer, (ClassReferenceLiteral)expr, outputUsed);
+            else if (expr is Lambda) LambdaEncoder.Compile(this, parser, buffer, (Lambda)expr, outputUsed);
+            else if (expr is CniFunctionInvocation) CniFunctionInvocationEncoder.Compile(this, parser, buffer, (CniFunctionInvocation)expr, null, null, outputUsed);
+
+            // The following parse tree items must be removed before reaching the byte code encoder.
+            else if (expr is BaseKeyword) this.CompileBaseKeyword(parser, buffer, (BaseKeyword)expr, outputUsed);
+            else if (expr is CompileTimeDictionary) this.CompileCompileTimeDictionary((CompileTimeDictionary)expr);
+
             else throw new NotImplementedException();
-        }
-
-        internal void CompileCniFunctionInvocation(
-            ParserContext parser,
-            ByteBuffer buffer,
-            CniFunctionInvocation cniFuncInvocation,
-            Expression[] argsOverrideOrNull,
-            Token throwTokenOverrideOrNull,
-            bool outputUsed)
-        {
-            CniFunction cniFunc = cniFuncInvocation.CniFunction;
-            Expression[] args = argsOverrideOrNull ?? cniFuncInvocation.Args;
-            foreach (Expression arg in args)
-            {
-                this.CompileExpression(parser, buffer, arg, true);
-            }
-            Token throwToken = throwTokenOverrideOrNull ?? cniFuncInvocation.FirstToken;
-            buffer.Add(throwToken, OpCode.CNI_INVOKE, cniFunc.ID, cniFunc.ArgCount, outputUsed ? 1 : 0);
-        }
-
-        private void CompileLambda(ParserContext parser, ByteBuffer buffer, Lambda lambda, bool outputUsed)
-        {
-            EnsureUsed(lambda.FirstToken, outputUsed);
-
-            ByteBuffer tBuffer = new ByteBuffer();
-
-            List<int> offsetsForOptionalArgs = new List<int>();
-            Expression[] argDefaultValues_allRequired = new Expression[lambda.Args.Length];
-            this.CompileFunctionArgs(parser, tBuffer, lambda.Args, argDefaultValues_allRequired, offsetsForOptionalArgs);
-
-            Compile(parser, tBuffer, lambda.Code);
-
-            List<int> args = new List<int>()
-            {
-                lambda.Args.Length, // min number of args required
-                lambda.Args.Length, // max number of args supplied
-                lambda.LocalScopeSize,
-                tBuffer.Size,
-                offsetsForOptionalArgs.Count
-            };
-            args.AddRange(offsetsForOptionalArgs);
-
-            VariableId[] closureIds = lambda.ClosureIds;
-            args.Add(closureIds.Length);
-            foreach (VariableId closureVarId in closureIds)
-            {
-                args.Add(closureVarId.ClosureID);
-            }
-
-            buffer.Add(
-                lambda.FirstToken,
-                OpCode.LAMBDA,
-                args.ToArray());
-
-            buffer.Concat(tBuffer);
-        }
-
-        private void CompileClassReferenceLiteral(ParserContext parser, ByteBuffer buffer, ClassReferenceLiteral classRef, bool outputUsed)
-        {
-            if (!outputUsed) throw new ParserException(classRef, "This class reference expression does nothing.");
-            buffer.Add(classRef.FirstToken, OpCode.LITERAL, parser.GetClassRefConstant(classRef.ClassDefinition));
         }
 
         internal static void EnsureUsed(Node item, bool outputUsed)
@@ -680,8 +622,7 @@ namespace Exporter.ByteCode
             EnsureUsed(item.FirstToken, outputUsed);
         }
 
-        // TODO: delete this function and merge it into the above
-        private static void EnsureUsed(Token token, bool outputUsed)
+        internal static void EnsureUsed(Token token, bool outputUsed)
         {
             // TODO: maybe reword the expression to something along the lines of "use an if statement" if it's a ternary
             // expression in which case it actually does do something.
@@ -692,105 +633,13 @@ namespace Exporter.ByteCode
             }
         }
 
-        private void CompileIsComparison(ParserContext parser, ByteBuffer buffer, IsComparison isComp, bool outputUsed)
-        {
-            EnsureUsed(isComp.IsToken, outputUsed);
-            this.CompileExpression(parser, buffer, isComp.Expression, true);
-            buffer.Add(isComp.IsToken, OpCode.IS_COMPARISON, isComp.ClassDefinition.ClassID);
-        }
-
-        internal void CompileCoreFunctionInvocation(
-            ParserContext parser,
-            ByteBuffer buffer,
-            CoreFunctionInvocation coreFuncInvocation,
-            Expression[] argsOverrideOrNull,
-            Token tokenOverrideOrNull,
-            bool outputUsed)
-        {
-            Token token = tokenOverrideOrNull ?? coreFuncInvocation.FirstToken;
-            Expression[] args = argsOverrideOrNull ?? coreFuncInvocation.Args;
-
-            if (coreFuncInvocation.FunctionId == (int)CoreFunctionID.TYPE_IS)
-            {
-                EnsureUsed(coreFuncInvocation.FirstToken, outputUsed);
-
-                this.CompileExpression(parser, buffer, args[0], true);
-                int typeCount = args.Length - 1;
-                int[] actualArgs = new int[typeCount + 3];
-                actualArgs[0] = coreFuncInvocation.FunctionId;
-                actualArgs[1] = 1; // output used
-                actualArgs[2] = typeCount;
-                for (int i = typeCount - 1; i >= 0; --i)
-                {
-                    IntegerConstant typeArg = args[args.Length - 1 - i] as IntegerConstant;
-                    if (typeArg == null)
-                    {
-                        throw new ParserException(coreFuncInvocation, "typeis requires type enum values.");
-                    }
-                    actualArgs[3 + i] = typeArg.Value + 1;
-                }
-                buffer.Add(token, OpCode.CORE_FUNCTION, actualArgs);
-                return;
-            }
-
-            foreach (Expression arg in args)
-            {
-                this.CompileExpression(parser, buffer, arg, true);
-            }
-
-            if (coreFuncInvocation.FunctionId == (int)CoreFunctionID.INT_QUEUE_WRITE_16)
-            {
-                buffer.Add(token, OpCode.CORE_FUNCTION, coreFuncInvocation.FunctionId, outputUsed ? 1 : 0, args.Length - 1);
-                return;
-            }
-
-            buffer.Add(token, OpCode.CORE_FUNCTION, coreFuncInvocation.FunctionId, outputUsed ? 1 : 0);
-        }
-
-        // Non-invoked function references.
-        private void CompileFunctionReference(ParserContext parser, ByteBuffer buffer, FunctionReference funcRef, bool outputUsed)
-        {
-            EnsureUsed(funcRef.FirstToken, outputUsed);
-
-            FunctionDefinition funcDef = funcRef.FunctionDefinition;
-
-            int classIdStaticCheck = 0;
-            int type = 0;
-            if (funcDef.Owner is ClassDefinition)
-            {
-                if (funcDef.IsStaticMethod)
-                {
-                    classIdStaticCheck = ((ClassDefinition)funcDef.Owner).ClassID;
-                    type = 2;
-                }
-                else
-                {
-                    type = 1;
-                }
-            }
-            buffer.Add(funcRef.FirstToken, OpCode.PUSH_FUNC_REF,
-                funcDef.FunctionID,
-                type,
-                classIdStaticCheck);
-        }
-
+        // TODO: this needs to go away in the resolver.
         private void CompileBaseKeyword(ParserContext parser, ByteBuffer buffer, BaseKeyword baseKeyword, bool outputUsed)
         {
             throw new ParserException(baseKeyword, "Cannot have a reference to 'base' without invoking a field.");
         }
 
-        private void CompileBaseMethodReference(ParserContext parser, ByteBuffer buffer, BaseMethodReference baseMethodReference, bool outputUsed)
-        {
-            EnsureUsed(baseMethodReference.FirstToken, outputUsed);
-            int baseClassId = baseMethodReference.ClassToWhichThisMethodRefers.ClassID;
-            buffer.Add(
-                baseMethodReference.DotToken,
-                OpCode.PUSH_FUNC_REF,
-                baseMethodReference.FunctionDefinition.FunctionID,
-                1, // instance method
-                0);
-        }
-
+        // TODO: this needs to go away during the resolver phase.
         private void CompileCompileTimeDictionary(CompileTimeDictionary compileTimeDictionary)
         {
             if (compileTimeDictionary.Type == "var")
@@ -798,49 +647,6 @@ namespace Exporter.ByteCode
                 throw new ParserException(compileTimeDictionary, "$var is a compile-time dictionary and must be dereferenced with a hardcoded string constant.");
             }
             throw new Exception(); // should not happen.
-        }
-
-        private void CompileListSlice(ParserContext parser, ByteBuffer buffer, ListSlice listSlice, bool outputUsed)
-        {
-            EnsureUsed(listSlice.FirstToken, outputUsed);
-            this.CompileExpression(parser, buffer, listSlice.Root, true);
-
-            Expression step = listSlice.Items[2];
-            bool isStep1 = step is IntegerConstant && ((IntegerConstant)step).Value == 1;
-
-            int serializeThese = isStep1 ? 2 : 3;
-            for (int i = 0; i < serializeThese; ++i)
-            {
-                Expression item = listSlice.Items[i];
-                if (item != null)
-                {
-                    this.CompileExpression(parser, buffer, item, true);
-                }
-            }
-
-            bool firstIsPresent = listSlice.Items[0] != null;
-            bool secondIsPresent = listSlice.Items[1] != null;
-
-            buffer.Add(listSlice.BracketToken, OpCode.LIST_SLICE, new int[] { firstIsPresent ? 1 : 0, secondIsPresent ? 1 : 0, isStep1 ? 0 : 1 });
-        }
-
-        private void CompileNullCoalescer(ParserContext parser, ByteBuffer buffer, NullCoalescer nullCoalescer, bool outputUsed)
-        {
-            EnsureUsed(nullCoalescer.FirstToken, outputUsed);
-
-            this.CompileExpression(parser, buffer, nullCoalescer.PrimaryExpression, true);
-            ByteBuffer secondaryExpression = new ByteBuffer();
-            this.CompileExpression(parser, secondaryExpression, nullCoalescer.SecondaryExpression, true);
-            buffer.Add(nullCoalescer.FirstToken, OpCode.POP_IF_NULL_OR_JUMP, secondaryExpression.Size);
-            buffer.Concat(secondaryExpression);
-        }
-
-        private void CompileBooleanNot(ParserContext parser, ByteBuffer buffer, BooleanNot boolNot, bool outputUsed)
-        {
-            if (!outputUsed) throw new ParserException(boolNot, "Cannot have this expression here.");
-
-            this.CompileExpression(parser, buffer, boolNot.Root, true);
-            buffer.Add(boolNot.FirstToken, OpCode.BOOLEAN_NOT);
         }
 
         private void CompileLiteralStream(ParserContext parser, ByteBuffer buffer, IList<Expression> expressions, bool outputUsed)
