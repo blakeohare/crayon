@@ -10,36 +10,26 @@ namespace Exporter.ByteCode.Nodes
         {
             if (!outputUsed)
             {
-                if (opChain.Op.Value == "==")
+                if (opChain.OpToken.Value == "==")
                 {
-                    throw new ParserException(opChain.Op, "'==' cannot be used like this. Did you mean to use just a single '=' instead?");
+                    throw new ParserException(opChain.OpToken, "'==' cannot be used like this. Did you mean to use just a single '=' instead?");
                 }
                 throw new ParserException(opChain, "This expression isn't valid here.");
             }
 
             bcc.CompileExpressionList(parser, buffer, new Expression[] { opChain.Left, opChain.Right }, true);
 
-            Token opToken = opChain.Op;
-            switch (opToken.Value)
+
+            switch (opChain.OpTEMP)
             {
-                case "+": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.ADDITION); break;
-                case "<": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.LESS_THAN); break;
-                case "<=": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.LESS_THAN_OR_EQUAL); break;
-                case ">": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.GREATER_THAN); break;
-                case ">=": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.GREATER_THAN_OR_EQUAL); break;
-                case "-": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.SUBTRACTION); break;
-                case "*": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.MULTIPLICATION); break;
-                case "/": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.DIVISION); break;
-                case "%": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.MODULO); break;
-                case "**": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.EXPONENT); break;
-                case "|": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BITWISE_OR); break;
-                case "&": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BITWISE_AND); break;
-                case "^": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BITWISE_XOR); break;
-                case "<<": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BIT_SHIFT_LEFT); break;
-                case ">>": buffer.Add(opToken, OpCode.BINARY_OP, (int)BinaryOps.BIT_SHIFT_RIGHT); break;
-                case "==": buffer.Add(opToken, OpCode.EQUALS, 0); break;
-                case "!=": buffer.Add(opToken, OpCode.EQUALS, 1); break;
-                default: throw new NotImplementedException("Binary op: " + opChain.Op.Value);
+                case Ops.EQUALS:
+                case Ops.NOT_EQUALS:
+                    buffer.Add(opChain.OpToken, OpCode.EQUALS, opChain.OpTEMP == Ops.EQUALS ? 0 : 1);
+                    break;
+
+                default:
+                    buffer.Add(opChain.OpToken, OpCode.BINARY_OP, (int)opChain.OpTEMP);
+                    break;
             }
 
             if (!outputUsed)

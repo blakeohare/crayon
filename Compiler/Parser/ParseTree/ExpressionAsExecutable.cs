@@ -27,7 +27,6 @@ namespace Parser.ParseTree
                 Assignment output = new Assignment(
                     inc.Root,
                     inc.IncrementToken,
-                    inc.IsIncrement ? "+=" : "-=",
                     new IntegerConstant(inc.IncrementToken, 1, this.Owner),
                     this.Owner);
                 return output.Resolve(parser);

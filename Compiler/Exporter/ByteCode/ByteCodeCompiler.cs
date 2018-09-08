@@ -422,7 +422,7 @@ namespace Exporter.ByteCode
                         Executable assignment = new Assignment(
                             new FieldReference(fd.FirstToken, fd, fd),
                             fd.NameToken,
-                            "=",
+                            Ops.EQUALS,
                             fd.DefaultValue, fd);
                         staticFieldInitializers.Add(assignment);
                     }
@@ -696,29 +696,9 @@ namespace Exporter.ByteCode
             buffer.Concat(condition);
         }
 
-        private BinaryOps ConvertOpString(Token token)
-        {
-            switch (token.Value)
-            {
-                case "++": return BinaryOps.ADDITION;
-                case "+=": return BinaryOps.ADDITION;
-                case "--": return BinaryOps.SUBTRACTION;
-                case "-=": return BinaryOps.SUBTRACTION;
-                case "*=": return BinaryOps.MULTIPLICATION;
-                case "/=": return BinaryOps.DIVISION;
-                case "%=": return BinaryOps.MODULO;
-                case "&=": return BinaryOps.BITWISE_AND;
-                case "|=": return BinaryOps.BITWISE_OR;
-                case "^=": return BinaryOps.BITWISE_XOR;
-                case "<<=": return BinaryOps.BIT_SHIFT_LEFT;
-                case ">>=": return BinaryOps.BIT_SHIFT_RIGHT;
-                default: throw new ParserException(token, "Unrecognized op.");
-            }
-        }
-
         private void CompileAssignment(ParserContext parser, ByteBuffer buffer, Assignment assignment)
         {
-            if (assignment.AssignmentOp == "=")
+            if (assignment.Op == Ops.EQUALS)
             {
                 if (assignment.Target is Variable)
                 {
@@ -727,11 +707,11 @@ namespace Exporter.ByteCode
                     VariableId varId = varTarget.LocalScopeId;
                     if (varId.UsedByClosure)
                     {
-                        buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_CLOSURE, varId.ClosureID);
+                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_CLOSURE, varId.ClosureID);
                     }
                     else
                     {
-                        buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_LOCAL, varId.ID);
+                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_LOCAL, varId.ID);
                     }
                 }
                 else if (assignment.Target is BracketIndex)
@@ -740,7 +720,7 @@ namespace Exporter.ByteCode
                     this.CompileExpression(parser, buffer, bi.Root, true);
                     this.CompileExpression(parser, buffer, bi.Index, true);
                     this.CompileExpression(parser, buffer, assignment.Value, true);
-                    buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_INDEX, 0);
+                    buffer.Add(assignment.OpToken, OpCode.ASSIGN_INDEX, 0);
                 }
                 else if (assignment.Target is DotField)
                 {
@@ -748,7 +728,7 @@ namespace Exporter.ByteCode
                     if (dotStep.Root is ThisKeyword)
                     {
                         this.CompileExpression(parser, buffer, assignment.Value, true);
-                        buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_THIS_STEP, parser.GetId(dotStep.StepToken.Value));
+                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_THIS_STEP, parser.GetId(dotStep.StepToken.Value));
                     }
                     else
                     {
@@ -756,7 +736,7 @@ namespace Exporter.ByteCode
                         this.CompileExpression(parser, buffer, assignment.Value, true);
                         int nameId = parser.GetId(dotStep.StepToken.Value);
                         int localeScopedNameId = nameId * parser.GetLocaleCount() + parser.GetLocaleId(dotStep.Owner.FileScope.CompilationScope.Locale);
-                        buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_STEP, nameId, 0, localeScopedNameId);
+                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_STEP, nameId, 0, localeScopedNameId);
                     }
                 }
                 else if (assignment.Target is FieldReference)
@@ -766,7 +746,7 @@ namespace Exporter.ByteCode
                     if (fieldReference.Field.IsStaticField)
                     {
                         buffer.Add(
-                            assignment.AssignmentOpToken,
+                            assignment.OpToken,
                             OpCode.ASSIGN_STATIC_FIELD,
                             ((ClassDefinition)fieldReference.Field.Owner).ClassID,
                             fieldReference.Field.StaticMemberID);
@@ -774,7 +754,7 @@ namespace Exporter.ByteCode
                     else
                     {
                         buffer.Add(
-                            assignment.AssignmentOpToken,
+                            assignment.OpToken,
                             OpCode.ASSIGN_THIS_STEP,
                             fieldReference.Field.MemberID);
                     }
@@ -786,7 +766,7 @@ namespace Exporter.ByteCode
             }
             else
             {
-                BinaryOps op = this.ConvertOpString(assignment.AssignmentOpToken);
+                Ops op = assignment.Op;
                 if (assignment.Target is Variable)
                 {
                     Variable varTarget = (Variable)assignment.Target;
@@ -796,7 +776,7 @@ namespace Exporter.ByteCode
 
                     buffer.Add(varTarget.FirstToken, isClosure ? OpCode.DEREF_CLOSURE : OpCode.LOCAL, scopeId);
                     this.CompileExpression(parser, buffer, assignment.Value, true);
-                    buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
+                    buffer.Add(assignment.OpToken, OpCode.BINARY_OP, (int)op);
                     buffer.Add(assignment.Target.FirstToken, isClosure ? OpCode.ASSIGN_CLOSURE : OpCode.ASSIGN_LOCAL, scopeId);
                 }
                 else if (assignment.Target is DotField)
@@ -811,15 +791,15 @@ namespace Exporter.ByteCode
                     }
                     buffer.Add(dotExpr.DotToken, OpCode.DEREF_DOT, stepId, localeScopedStepId);
                     this.CompileExpression(parser, buffer, assignment.Value, true);
-                    buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
+                    buffer.Add(assignment.OpToken, OpCode.BINARY_OP, (int)op);
                     if (dotExpr.Root is ThisKeyword)
                     {
-                        buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_THIS_STEP, stepId);
+                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_THIS_STEP, stepId);
                     }
                     else
                     {
                         int localeScopedNameId = stepId * parser.GetLocaleCount() + parser.GetLocaleId(dotExpr.Owner.FileScope.CompilationScope.Locale);
-                        buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_STEP, stepId, 0, localeScopedNameId);
+                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_STEP, stepId, 0, localeScopedNameId);
                     }
                 }
                 else if (assignment.Target is BracketIndex)
@@ -830,20 +810,20 @@ namespace Exporter.ByteCode
                     buffer.Add(null, OpCode.DUPLICATE_STACK_TOP, 2);
                     buffer.Add(indexExpr.BracketToken, OpCode.INDEX);
                     this.CompileExpression(parser, buffer, assignment.Value, true);
-                    buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
-                    buffer.Add(assignment.AssignmentOpToken, OpCode.ASSIGN_INDEX, 0);
+                    buffer.Add(assignment.OpToken, OpCode.BINARY_OP, (int)op);
+                    buffer.Add(assignment.OpToken, OpCode.ASSIGN_INDEX, 0);
                 }
                 else if (assignment.Target is FieldReference)
                 {
                     FieldReference fieldRef = (FieldReference)assignment.Target;
                     this.CompileFieldReference(parser, buffer, fieldRef, true);
                     this.CompileExpression(parser, buffer, assignment.Value, true);
-                    buffer.Add(assignment.AssignmentOpToken, OpCode.BINARY_OP, (int)op);
+                    buffer.Add(assignment.OpToken, OpCode.BINARY_OP, (int)op);
 
                     if (fieldRef.Field.IsStaticField)
                     {
                         buffer.Add(
-                            assignment.AssignmentOpToken,
+                            assignment.OpToken,
                             OpCode.ASSIGN_STATIC_FIELD,
                             ((ClassDefinition)fieldRef.Field.Owner).ClassID,
                             fieldRef.Field.StaticMemberID);
@@ -851,14 +831,14 @@ namespace Exporter.ByteCode
                     else
                     {
                         buffer.Add(
-                            assignment.AssignmentOpToken,
+                            assignment.OpToken,
                             OpCode.ASSIGN_THIS_STEP,
                             fieldRef.Field.MemberID);
                     }
                 }
                 else
                 {
-                    throw new ParserException(assignment.AssignmentOpToken, "Assignment is not allowed on this sort of expression.");
+                    throw new ParserException(assignment.OpToken, "Assignment is not allowed on this sort of expression.");
                 }
             }
         }

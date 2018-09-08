@@ -6,17 +6,47 @@ namespace Parser.ParseTree
     {
         public Expression Target { get; private set; }
         public Expression Value { get; private set; }
-        public Token AssignmentOpToken { get; private set; }
-        public string AssignmentOp { get; private set; }
+        public Token OpToken { get; private set; }
+        public Ops Op { get; private set; }
         public Variable TargetAsVariable { get { return this.Target as Variable; } }
 
-        public Assignment(Expression target, Token assignmentOpToken, string assignmentOp, Expression assignedValue, Node owner)
+        public Assignment(Expression target, Token assignmentOpToken, Ops opOverride, Expression assignedValue, Node owner)
+            : this(true, target, assignmentOpToken, opOverride, assignedValue, owner)
+        { }
+
+        public Assignment(Expression target, Token assignmentOpToken, Expression assignedValue, Node owner)
+            : this(true, target, assignmentOpToken, GetOpFromToken(assignmentOpToken), assignedValue, owner)
+        { }
+
+        private Assignment(bool nonAmbiguousIgnored, Expression target, Token assignmentOpToken, Ops op, Expression assignedValue, Node owner)
             : base(target.FirstToken, owner)
         {
             this.Target = target;
-            this.AssignmentOpToken = assignmentOpToken;
-            this.AssignmentOp = assignmentOp;
+            this.OpToken = assignmentOpToken;
+            this.Op = op;
             this.Value = assignedValue;
+        }
+
+        private static Ops GetOpFromToken(Token token)
+        {
+            switch (token.Value)
+            {
+                case "+=": return Ops.ADDITION;
+                case "&=": return Ops.BITWISE_AND;
+                case "|=": return Ops.BITWISE_OR;
+                case "^=": return Ops.BITWISE_XOR;
+                case "<<=": return Ops.BIT_SHIFT_LEFT;
+                case ">>=": return Ops.BIT_SHIFT_RIGHT;
+                case "/=": return Ops.DIVISION;
+                case "=": return Ops.EQUALS;
+                case "**=": return Ops.EXPONENT;
+                case "%=": return Ops.MODULO;
+                case "*=": return Ops.MULTIPLICATION;
+                case "-=": return Ops.SUBTRACTION;
+                case "++": return Ops.ADDITION;
+                case "--": return Ops.SUBTRACTION;
+                default: throw new ParserException(token, "Unrecognized assignment op: '" + token.Value + "'");
+            }
         }
 
         internal override IList<Executable> Resolve(ParserContext parser)
@@ -53,7 +83,7 @@ namespace Parser.ParseTree
                 bool isVariableDeclared =
                     // A variable is considered declared if the target is a variable and = is used instead of something like +=
                     this.Target is Variable &&
-                    this.AssignmentOpToken.Value == "=";
+                    this.Op == Ops.EQUALS;
 
                 if (isVariableDeclared)
                 {

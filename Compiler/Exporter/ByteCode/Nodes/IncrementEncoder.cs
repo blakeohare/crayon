@@ -32,7 +32,7 @@ namespace Exporter.ByteCode.Nodes
                 if (increment.IsPrefix)
                 {
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
-                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
+                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)Ops.ADDITION : (int)Ops.SUBTRACTION);
                     buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
                     buffer.Add(variable.FirstToken, isClosureVar ? OpCode.ASSIGN_CLOSURE : OpCode.ASSIGN_LOCAL, scopeId);
                 }
@@ -40,7 +40,7 @@ namespace Exporter.ByteCode.Nodes
                 {
                     buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
-                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
+                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)Ops.ADDITION : (int)Ops.SUBTRACTION);
                     buffer.Add(variable.FirstToken, isClosureVar ? OpCode.ASSIGN_CLOSURE : OpCode.ASSIGN_LOCAL, scopeId);
                 }
             }
@@ -54,14 +54,14 @@ namespace Exporter.ByteCode.Nodes
                 if (increment.IsPrefix)
                 {
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
-                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
+                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)Ops.ADDITION : (int)Ops.SUBTRACTION);
                     buffer.Add(increment.IncrementToken, OpCode.ASSIGN_INDEX, 1);
                 }
                 else
                 {
                     buffer.Add(increment.IncrementToken, OpCode.STACK_INSERTION_FOR_INCREMENT);
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
-                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
+                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)Ops.ADDITION : (int)Ops.SUBTRACTION);
                     buffer.Add(increment.IncrementToken, OpCode.ASSIGN_INDEX, 0);
                 }
             }
@@ -76,14 +76,14 @@ namespace Exporter.ByteCode.Nodes
                 if (increment.IsPrefix)
                 {
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
-                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
+                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)Ops.ADDITION : (int)Ops.SUBTRACTION);
                     buffer.Add(increment.IncrementToken, OpCode.ASSIGN_STEP, nameId, 1, localeScopedNameId);
                 }
                 else
                 {
                     buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 2);
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
-                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
+                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)Ops.ADDITION : (int)Ops.SUBTRACTION);
                     buffer.Add(increment.IncrementToken, OpCode.ASSIGN_STEP, nameId, 0, localeScopedNameId);
                     buffer.Add(increment.IncrementToken, OpCode.STACK_SWAP_POP);
                 }
@@ -99,14 +99,14 @@ namespace Exporter.ByteCode.Nodes
                 if (increment.IsPrefix)
                 {
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
-                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
+                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)Ops.ADDITION : (int)Ops.SUBTRACTION);
                     buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
                 }
                 else
                 {
                     buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
-                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)BinaryOps.ADDITION : (int)BinaryOps.SUBTRACTION);
+                    buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)Ops.ADDITION : (int)Ops.SUBTRACTION);
                 }
                 Token token = increment.IsPrefix ? increment.FirstToken : fr.FirstToken;
                 if (isStatic)

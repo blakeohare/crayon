@@ -11,14 +11,42 @@ namespace Parser.ParseTree
 
         public Expression Left { get; private set; }
         public Expression Right { get; private set; }
-        public Token Op { get; private set; }
+        public Token OpToken { get; private set; }
+        public Ops OpTEMP { get; private set; }
 
         public OpChain(Expression left, Token op, Expression right, Node owner)
             : base(left.FirstToken, owner)
         {
             this.Left = left;
             this.Right = right;
-            this.Op = op;
+            this.OpToken = op;
+            this.OpTEMP = this.GetOpFromToken(op);
+        }
+
+        private Ops GetOpFromToken(Token token)
+        {
+            switch (token.Value)
+            {
+                case "+": return Ops.ADDITION;
+                case "<": return Ops.LESS_THAN;
+                case "<=": return Ops.LESS_THAN_OR_EQUAL;
+                case ">": return Ops.GREATER_THAN;
+                case ">=": return Ops.GREATER_THAN_OR_EQUAL;
+                case "-": return Ops.SUBTRACTION;
+                case "*": return Ops.MULTIPLICATION;
+                case "/": return Ops.DIVISION;
+                case "%": return Ops.MODULO;
+                case "**": return Ops.EXPONENT;
+                case "|": return Ops.BITWISE_OR;
+                case "&": return Ops.BITWISE_AND;
+                case "^": return Ops.BITWISE_XOR;
+                case "<<": return Ops.BIT_SHIFT_LEFT;
+                case ">>": return Ops.BIT_SHIFT_RIGHT;
+                case "==": return Ops.EQUALS;
+                case "!=": return Ops.NOT_EQUALS;
+                default: throw new ParserException(token, "Unrecognized op: '" + token.Value + "'");
+            }
+
         }
 
         public static OpChain Build(IList<Expression> expressions, IList<Token> ops, Node owner)
@@ -57,7 +85,7 @@ namespace Parser.ParseTree
             this.Right = this.Right.Resolve(parser);
             string leftType = this.GetType(this.Left);
             string rightType = this.GetType(this.Right);
-            return this.TryConsolidate(this.Left.FirstToken, leftType, this.Op, rightType, this.Left, this.Right);
+            return this.TryConsolidate(this.Left.FirstToken, leftType, this.OpToken, rightType, this.Left, this.Right);
         }
 
         private Expression TryConsolidate(Token firstToken, string leftType, Token opToken, string rightType, Expression left, Expression right)

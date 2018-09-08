@@ -1,6 +1,6 @@
-﻿namespace Exporter
+﻿namespace Parser
 {
-    internal enum BinaryOps
+    public enum Ops
     {
         ADDITION = 0,
         SUBTRACTION = 1,
@@ -17,5 +17,7 @@
         LESS_THAN_OR_EQUAL = 12,
         GREATER_THAN = 13,
         GREATER_THAN_OR_EQUAL = 14,
+        EQUALS = 15,
+        NOT_EQUALS = 16,
     }
 }
