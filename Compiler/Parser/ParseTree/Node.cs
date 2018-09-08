@@ -10,16 +10,9 @@ namespace Parser.ParseTree
             this.Owner = owner;
         }
 
-        public LibraryMetadata Library
+        public AssemblyMetadata Assembly
         {
-            get
-            {
-                if (this.CompilationScope is LibraryCompilationScope)
-                {
-                    return ((LibraryCompilationScope)this.CompilationScope).Library;
-                }
-                return null;
-            }
+            get { return this.CompilationScope.Metadata; }
         }
 
         public Token FirstToken { get; private set; }

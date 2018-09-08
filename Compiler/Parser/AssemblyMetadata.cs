@@ -5,11 +5,11 @@ using System.Linq;
 
 namespace Parser
 {
-    public class LibraryMetadata
+    public class AssemblyMetadata
     {
         public override string ToString()
         {
-            return "LibraryMetadata: " + this.ID + " (" + this.Version + ")";
+            return "AssemblyMetadata: " + this.ID + " (" + this.Version + ")";
         }
 
         public string Directory { get; private set; }
@@ -21,14 +21,27 @@ namespace Parser
         public HashSet<Locale> SupportedLocales { get; private set; }
         public bool IsImportRestricted { get { return this.OnlyImportableFrom.Count > 0; } }
         public HashSet<string> OnlyImportableFrom { get; private set; }
+        public bool IsUserDefined { get; private set; }
 
         // Null until library is imported and parsed.
-        public LibraryCompilationScope LibraryScope { get; set; }
+        public CompilationScope Scope { get; set; }
 
-        public LibraryMetadata(string directory, string id)
+        // For user defined scopes
+        public AssemblyMetadata(Locale locale)
+        {
+            this.ID = ".";
+            this.InternalLocale = locale;
+            this.CanonicalKey = ".";
+            this.SupportedLocales = new HashSet<Locale>() { locale };
+            this.OnlyImportableFrom = new HashSet<string>();
+            this.IsUserDefined = true;
+        }
+
+        public AssemblyMetadata(string directory, string id)
         {
             this.Directory = directory;
             this.ID = id;
+            this.IsUserDefined = false;
 
             string manifestText = FileUtil.ReadFileText(FileUtil.JoinPath(directory, "manifest.json"));
             try
@@ -72,7 +85,7 @@ namespace Parser
             return nameByLocale[locale.ID];
         }
 
-        public bool IsAllowedImport(LibraryMetadata currentLibrary)
+        public bool IsAllowedImport(AssemblyMetadata currentLibrary)
         {
             if (this.IsImportRestricted)
             {

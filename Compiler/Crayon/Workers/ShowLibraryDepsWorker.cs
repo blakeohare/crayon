@@ -8,9 +8,9 @@ namespace Crayon
     {
         public void DoWorkImpl(CompilationScope scope)
         {
-            LibraryMetadata[] libraryMetadata = scope
+            AssemblyMetadata[] libraryMetadata = scope
                 .Dependencies
-                .Select(libLocView => libLocView.LibraryScope.Library)
+                .Select(libLocView => libLocView.LibraryScope.Metadata)
                 .ToArray();
 
             string libs = LibraryDependencyResolver.GetDependencyTreeLog(libraryMetadata);

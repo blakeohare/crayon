@@ -22,10 +22,10 @@ namespace Exporter.Workers
             cbxOutput.AddRange(code);
 
             List<string> libraries = new List<string>();
-            foreach (LibraryCompilationScope scopeForLibrary in compilationResult.LibraryScopesUsed.Where(scope => scope.Library.IsMoreThanJustEmbedCode))
+            foreach (CompilationScope scopeForLibrary in compilationResult.LibraryScopesUsed.Where(scope => scope.Metadata.IsMoreThanJustEmbedCode))
             {
-                libraries.Add(scopeForLibrary.Library.ID);
-                libraries.Add(scopeForLibrary.Library.Version);
+                libraries.Add(scopeForLibrary.Metadata.ID);
+                libraries.Add(scopeForLibrary.Metadata.Version);
             }
             string libsData = string.Join(",", libraries);
             byte[] libsDataBytes = StringToBytes(libsData);

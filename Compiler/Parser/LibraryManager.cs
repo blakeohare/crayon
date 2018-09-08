@@ -10,10 +10,10 @@ namespace Parser
         private BuildContext buildContext;
         private LibraryFinder libraryFinder;
 
-        private Dictionary<string, LibraryCompilationScope> importedLibrariesById = new Dictionary<string, LibraryCompilationScope>();
+        private Dictionary<string, CompilationScope> importedLibrariesById = new Dictionary<string, CompilationScope>();
         private Dictionary<Locale, Dictionary<string, LocalizedLibraryView>> importedLibrariesByLocalizedName = new Dictionary<Locale, Dictionary<string, LocalizedLibraryView>>();
 
-        public List<LibraryCompilationScope> ImportedLibraries { get; private set; }
+        public List<CompilationScope> ImportedLibraries { get; private set; }
         // The index + 1 is the reference ID
         private readonly Dictionary<string, int> librariesAlreadyImportedIndexByKey = new Dictionary<string, int>();
 
@@ -21,7 +21,7 @@ namespace Parser
         {
             this.buildContext = buildContext;
             this.libraryFinder = new LibraryFinder(buildContext.CrayonPath, buildContext.ProjectDirectory);
-            this.ImportedLibraries = new List<LibraryCompilationScope>();
+            this.ImportedLibraries = new List<CompilationScope>();
         }
 
         public bool IsValidLibraryNameFromLocale(Locale locale, string name)
@@ -48,7 +48,7 @@ namespace Parser
                     : null;
         }
 
-        public LibraryCompilationScope GetLibraryIfImported(string libraryId)
+        public CompilationScope GetLibraryIfImported(string libraryId)
         {
             return this.importedLibrariesById.ContainsKey(libraryId) ? this.importedLibrariesById[libraryId] : null;
         }
@@ -56,7 +56,7 @@ namespace Parser
         public LocalizedLibraryView GetCoreLibrary(ParserContext parser)
         {
             string anyValidCoreLibId = "en:Core";
-            LibraryMetadata coreLib = this.libraryFinder.GetLibraryMetadataFromAnyPossibleKey(anyValidCoreLibId);
+            AssemblyMetadata coreLib = this.libraryFinder.GetLibraryMetadataFromAnyPossibleKey(anyValidCoreLibId);
             string name = coreLib.GetName(parser.CurrentLocale);
             return this.GetOrImportLibrary(parser, null, name);
         }
@@ -77,7 +77,7 @@ namespace Parser
             string name = fullImportNameWithDots.Contains('.') ? fullImportNameWithDots.Split('.')[0] : fullImportNameWithDots;
 
             string secondAttemptedKey = name;
-            LibraryMetadata libraryMetadata = this.libraryFinder.GetLibraryMetadataFromAnyPossibleKey(fromLocale.ID + ":" + name);
+            AssemblyMetadata libraryMetadata = this.libraryFinder.GetLibraryMetadataFromAnyPossibleKey(fromLocale.ID + ":" + name);
             Locale effectiveLocale = fromLocale;
 
             if (libraryMetadata == null)
@@ -128,7 +128,7 @@ namespace Parser
             // If the library exists but hasn't been imported before, instantiate it and
             // add it to all the lookups. This needs to happen before parsing the embedded
             // code to prevent infinite recursion.
-            LibraryCompilationScope libraryScope = new LibraryCompilationScope(parser.BuildContext, libraryMetadata);
+            CompilationScope libraryScope = new CompilationScope(parser.BuildContext, libraryMetadata);
             this.librariesAlreadyImportedIndexByKey[libraryMetadata.CanonicalKey] = this.ImportedLibraries.Count;
             this.ImportedLibraries.Add(libraryScope);
             this.importedLibrariesById[libraryMetadata.ID] = libraryScope;

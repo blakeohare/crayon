@@ -41,7 +41,7 @@ namespace Exporter
 
         private List<Platform.LibraryForExport> GetLibrariesForExport(
             Platform.AbstractPlatform platform,
-            Dictionary<string, LibraryMetadata> librariesById,
+            Dictionary<string, AssemblyMetadata> librariesById,
             Dictionary<string, object> constantFlags,
             IInlineImportCodeLoader codeLoader,
             PastelContext vm)
@@ -109,7 +109,7 @@ namespace Exporter
             Platform.AbstractPlatform platform,
             ExportBundle nullableExportBundle,
             ResourceDatabase resourceDatabase,
-            ICollection<LibraryMetadata> relevantLibraries,
+            ICollection<AssemblyMetadata> relevantLibraries,
             string verifiedAbsoluteOutputPath,
             IInlineImportCodeLoader codeLoader,
             VmGenerationMode mode)
@@ -123,7 +123,7 @@ namespace Exporter
 
                 PastelContext vmPastelContext = this.GenerateCoreVmParseTree(platform, codeLoader, constantFlags);
 
-                Dictionary<string, LibraryMetadata> librariesByID = relevantLibraries.ToDictionary(lib => lib.ID);
+                Dictionary<string, AssemblyMetadata> librariesByID = relevantLibraries.ToDictionary(lib => lib.ID);
                 List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByID, constantFlags, codeLoader, vmPastelContext);
 
                 Platform.TemplateStorage templates = new Platform.TemplateStorage();
@@ -224,14 +224,14 @@ namespace Exporter
             Platform.AbstractPlatform platform,
             Dictionary<string, object> constantFlags,
             IInlineImportCodeLoader codeLoader,
-            ICollection<LibraryMetadata> relevantLibraries,
+            ICollection<AssemblyMetadata> relevantLibraries,
             PastelContext sharedScope)
         {
             using (new PerformanceSection("VmGenerator.GenerateLibraryParseTree"))
             {
                 Dictionary<string, PastelContext> libraries = new Dictionary<string, PastelContext>();
 
-                foreach (LibraryMetadata libraryMetadata in relevantLibraries)
+                foreach (AssemblyMetadata libraryMetadata in relevantLibraries)
                 {
                     LibraryExporter library = LibraryExporter.Get(libraryMetadata, platform);
 

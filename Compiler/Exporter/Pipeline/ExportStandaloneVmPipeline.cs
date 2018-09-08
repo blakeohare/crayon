@@ -12,7 +12,7 @@ namespace Exporter.Pipeline
         {
             string vmTargetDir = new GetTargetVmExportDirectoryWorker().DoWorkImpl(command);
             AbstractPlatform platform = command.PlatformProvider.GetPlatform(command.VmPlatform);
-            LibraryMetadata[] libraryMetadataList = new LibraryFinder().LibraryFlatList;
+            AssemblyMetadata[] libraryMetadataList = new LibraryFinder().LibraryFlatList;
             Dictionary<string, FileOutput> fileOutputContext = new Dictionary<string, FileOutput>();
             new ExportStandaloneVmSourceCodeForPlatformWorker().DoWorkImpl(fileOutputContext, platform, libraryMetadataList, vmTargetDir, command);
             new EmitFilesToDiskWorker().DoWorkImpl(fileOutputContext, vmTargetDir);

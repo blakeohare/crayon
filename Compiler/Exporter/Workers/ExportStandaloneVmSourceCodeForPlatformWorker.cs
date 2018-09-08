@@ -17,7 +17,7 @@ namespace Exporter.Workers
         public void DoWorkImpl(
             Dictionary<string, FileOutput> fileOutput,
             Platform.AbstractPlatform platform,
-            LibraryMetadata[] allLibraries,
+            AssemblyMetadata[] allLibraries,
             string vmTargetDir,
             ExportCommand command)
         {

@@ -7,8 +7,8 @@ namespace Parser
 {
     public class LibraryFinder
     {
-        public LibraryMetadata[] LibraryFlatList { get; private set; }
-        private Dictionary<string, LibraryMetadata> libraryLookup;
+        public AssemblyMetadata[] LibraryFlatList { get; private set; }
+        private Dictionary<string, AssemblyMetadata> libraryLookup;
 
         public LibraryFinder() : this(null, null) { }
 
@@ -18,7 +18,7 @@ namespace Parser
             this.LibraryFlatList = GetAvailableLibraryPathsByLibraryName(nullableBuildFileCrayonPath, nullableProjectDirectory);
 
             libraryLookup = this.LibraryFlatList.ToDictionary(metadata => metadata.ID);
-            foreach (LibraryMetadata libraryMetadata in this.LibraryFlatList)
+            foreach (AssemblyMetadata libraryMetadata in this.LibraryFlatList)
             {
                 foreach (Locale supportedLocale in libraryMetadata.SupportedLocales)
                 {
@@ -27,15 +27,15 @@ namespace Parser
             }
         }
 
-        internal LibraryMetadata GetLibraryMetadataFromAnyPossibleKey(string name)
+        internal AssemblyMetadata GetLibraryMetadataFromAnyPossibleKey(string name)
         {
-            LibraryMetadata library;
+            AssemblyMetadata library;
             return libraryLookup.TryGetValue(name, out library)
                 ? library
                 : null;
         }
 
-        private static LibraryMetadata[] GetAvailableLibraryPathsByLibraryName(
+        private static AssemblyMetadata[] GetAvailableLibraryPathsByLibraryName(
             string nullableBuildFileCrayonPath,
             string nullableProjectDirectory)
         {
@@ -106,11 +106,11 @@ namespace Parser
             // For example, a custom library referenced by a build file will override a built-in library.
             // An example use case of this would be to define a custom library called "Gamepad" for mobile that puts
             // buttons in the corners of the screen, but without having to change any code to be platform-aware.
-            Dictionary<string, LibraryMetadata> uniqueLibraries = new Dictionary<string, LibraryMetadata>();
+            Dictionary<string, AssemblyMetadata> uniqueLibraries = new Dictionary<string, AssemblyMetadata>();
             foreach (string path in verifiedLibraryPaths)
             {
                 string defaultName = FileUtil.GetFileNameFromPath(path);
-                LibraryMetadata metadata = new LibraryMetadata(path, defaultName);
+                AssemblyMetadata metadata = new AssemblyMetadata(path, defaultName);
 
                 // TODO: don't hardcode EN
                 string uniqueKey = "en:" + metadata.ID;

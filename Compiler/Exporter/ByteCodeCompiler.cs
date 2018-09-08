@@ -103,12 +103,12 @@ namespace Exporter
             ByteBuffer output = new ByteBuffer();
 
             int id = 1;
-            foreach (LibraryCompilationScope libraryScope in parser.LibraryManager.ImportedLibraries)
+            foreach (CompilationScope libraryScope in parser.LibraryManager.ImportedLibraries)
             {
                 List<string> descriptorComponents = new List<string>()
                 {
-                    libraryScope.Library.ID,
-                    libraryScope.Library.Version,
+                    libraryScope.Metadata.ID,
+                    libraryScope.Metadata.Version,
                 };
                 string libraryDescriptor = string.Join(",", descriptorComponents);
                 output.Add(null, OpCode.LIB_DECLARATION, libraryDescriptor, id++);

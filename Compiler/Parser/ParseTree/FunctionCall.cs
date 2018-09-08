@@ -61,7 +61,7 @@ namespace Parser.ParseTree
             double fValue = 0.0;
             bool bValue = false;
             double output = 0.0;
-            string lib = func.Library.CanonicalKey;
+            string lib = func.Assembly.CanonicalKey;
             string name = func.NameToken.Value;
             Expression winner;
             switch (lib)
@@ -253,13 +253,10 @@ namespace Parser.ParseTree
             if (this.Root is FunctionReference)
             {
                 FunctionDefinition funcDef = ((FunctionReference)this.Root).FunctionDefinition;
-                if (funcDef.Library != null)
+                IConstantValue cv = this.SimplifyFunctionCall(funcDef, this.Args);
+                if (cv != null)
                 {
-                    IConstantValue cv = this.SimplifyFunctionCall(funcDef, this.Args);
-                    if (cv != null)
-                    {
-                        return (Expression)cv;
-                    }
+                    return (Expression)cv;
                 }
             }
 

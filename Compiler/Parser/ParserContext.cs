@@ -15,7 +15,7 @@ namespace Parser
 
         private Dictionary<string, CompilationScope> compilationScopes = new Dictionary<string, CompilationScope>();
 
-        public UserCodeCompilationScope UserCodeCompilationScope { get { return (UserCodeCompilationScope)this.compilationScopes["."]; } }
+        public CompilationScope UserCodeCompilationScope { get { return this.compilationScopes["."]; } }
 
         public FunctionDefinition MainFunction { get; set; }
         public FunctionDefinition CoreLibInvokeFunction { get; set; }
@@ -23,7 +23,7 @@ namespace Parser
         public ParserContext(BuildContext buildContext)
         {
             this.BuildContext = buildContext;
-            this.PushScope(new UserCodeCompilationScope(buildContext));
+            this.PushScope(new CompilationScope(buildContext, new AssemblyMetadata(buildContext.CompilerLocale)));
             this.LibraryManager = new LibraryManager(buildContext);
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelEntity, ConstantResolutionState>();
@@ -156,7 +156,7 @@ namespace Parser
 
         public TopLevelEntity CurrentCodeContainer { get; set; }
 
-        public LibraryMetadata CurrentLibrary { get { return this.CurrentScope is LibraryCompilationScope ? ((LibraryCompilationScope)this.CurrentScope).Library : null; } }
+        public AssemblyMetadata CurrentLibrary { get { return this.CurrentScope.Metadata; } }
 
         public CompilationScope CurrentScope { get; private set; }
 

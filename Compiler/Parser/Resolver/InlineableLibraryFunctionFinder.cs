@@ -23,7 +23,7 @@ namespace Parser.Resolver
                 {
                     // Look for function definitions that are in libraries that have one single line of code that's a return statement that
                     // invokes a native code.
-                    if (funcDef.Library != null && funcDef.Code.Length == 1)
+                    if (!funcDef.Assembly.IsUserDefined && funcDef.Code.Length == 1)
                     {
                         ReturnStatement returnStatement = funcDef.Code[0] as ReturnStatement;
                         if (returnStatement != null)

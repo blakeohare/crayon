@@ -9,7 +9,7 @@ namespace Exporter
     // Library is only instantiable in the context of a specific platform, which is not ideal, but not causing any problems at the moment.
     public class LibraryExporter
     {
-        public LibraryMetadata Metadata { get; private set; }
+        public AssemblyMetadata Metadata { get; private set; }
         private string platformName;
 
         public Dictionary<string, object> CompileTimeConstants { get; set; }
@@ -18,13 +18,13 @@ namespace Exporter
 
         private static Dictionary<string, LibraryExporter> libraryCache = new Dictionary<string, LibraryExporter>();
 
-        private static string GetLibKey(LibraryMetadata metadata, Platform.AbstractPlatform platform)
+        private static string GetLibKey(AssemblyMetadata metadata, Platform.AbstractPlatform platform)
         {
             return metadata.CanonicalKey + "#" + platform.Name;
         }
 
         // TODO: this ought to go away and the cache needs to move to some sort of scope whose lifetime is tied to a specific compilation scope.
-        public static LibraryExporter Get(LibraryMetadata metadata, Platform.AbstractPlatform platform)
+        public static LibraryExporter Get(AssemblyMetadata metadata, Platform.AbstractPlatform platform)
         {
             string key = GetLibKey(metadata, platform);
             if (!libraryCache.ContainsKey(key))
@@ -34,7 +34,7 @@ namespace Exporter
             return libraryCache[key];
         }
 
-        private LibraryExporter(LibraryMetadata metadata, Platform.AbstractPlatform platform)
+        private LibraryExporter(AssemblyMetadata metadata, Platform.AbstractPlatform platform)
         {
             TODO.LibrariesNeedVersionNumber();
 

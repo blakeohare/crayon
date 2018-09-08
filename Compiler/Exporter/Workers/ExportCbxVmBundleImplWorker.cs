@@ -18,7 +18,7 @@ namespace Exporter.Workers
 
             // TODO: Worker: Compile
             ExportBundle compilationResult = ExportBundle.Compile(buildContext);
-            LibraryMetadata[] libraries = compilationResult.LibraryScopesUsed.Select(scope => scope.Library).ToArray();
+            AssemblyMetadata[] libraries = compilationResult.LibraryScopesUsed.Select(scope => scope.Metadata).ToArray();
 
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext, compilationResult.ByteCode);
 

@@ -6,18 +6,51 @@ using System.Linq;
 
 namespace Parser
 {
-    public abstract class CompilationScope
+    public class CompilationScope
     {
-        public abstract Locale Locale { get; }
-        public abstract string ScopeKey { get; }
+        public string ScopeKey { get; private set; }
         public Dictionary<string, CniFunction> CniFunctionsByName { get; private set; }
+        public AssemblyMetadata Metadata { get; private set; }
 
-        protected BuildContext buildContext;
-        private Dictionary<LibraryCompilationScope, LocalizedLibraryView> dependenciesAndViews = new Dictionary<LibraryCompilationScope, LocalizedLibraryView>();
+        private BuildContext buildContext;
+        private Dictionary<CompilationScope, LocalizedLibraryView> dependenciesAndViews = new Dictionary<CompilationScope, LocalizedLibraryView>();
 
         private List<TopLevelEntity> executables = new List<TopLevelEntity>();
 
         private ScopedNamespaceLocaleFlattener namespaceFlattener = new ScopedNamespaceLocaleFlattener();
+        
+        public CompilationScope(BuildContext buildContext, AssemblyMetadata metadata)
+        {
+            this.buildContext = buildContext;
+            this.CniFunctionsByName = new Dictionary<string, CniFunction>();
+            this.Metadata = metadata;
+            if (this.Metadata != null)
+            {
+                this.ScopeKey = this.Metadata.CanonicalKey;
+                this.Metadata.Scope = this;
+
+                foreach (string cniFuncName in metadata.CniFunctions.Keys)
+                {
+                    this.RegisterCniFunction(cniFuncName, metadata.CniFunctions[cniFuncName]);
+                }
+            }
+            else
+            {
+                this.ScopeKey = ".";
+            }
+        }
+
+        public Locale Locale
+        {
+            get
+            {
+                if (this.Metadata != null)
+                {
+                    return this.Metadata.InternalLocale;
+                }
+                return this.buildContext.CompilerLocale;
+            }
+        }
 
         public List<TopLevelEntity> GetExecutables_HACK()
         {
@@ -71,12 +104,6 @@ namespace Parser
             return this.executables.ToArray();
         }
 
-        public CompilationScope(BuildContext buildContext)
-        {
-            this.buildContext = buildContext;
-            this.CniFunctionsByName = new Dictionary<string, CniFunction>();
-        }
-
         public void RegisterCniFunction(string name, int args)
         {
             if (this.CniFunctionsByName.ContainsKey(name))
@@ -109,7 +136,7 @@ namespace Parser
         {
             get
             {
-                return this.dependenciesAndViews.Values.OrderBy(lib => lib.LibraryScope.Library.ID).ToArray();
+                return this.dependenciesAndViews.Values.OrderBy(lib => lib.LibraryScope.Metadata.ID).ToArray();
             }
         }
 
@@ -145,56 +172,14 @@ namespace Parser
                 .OrderBy(cd => cd.NameToken.Value)
                 .ToArray();
         }
-    }
-
-    public class UserCodeCompilationScope : CompilationScope
-    {
-        public UserCodeCompilationScope(BuildContext buildContext) : base(buildContext)
-        { }
-
-        public override Locale Locale
-        {
-            get { return this.buildContext.CompilerLocale; }
-        }
-
-        public override string ScopeKey
-        {
-            get { return "."; }
-        }
 
         public override string ToString()
         {
-            return "User Code Scope [" + this.Locale + "]";
-        }
-    }
-
-    public class LibraryCompilationScope : CompilationScope
-    {
-        public LibraryMetadata Library { get; private set; }
-        private string scopeKey;
-
-        public LibraryCompilationScope(BuildContext buildContext, LibraryMetadata library) : base(buildContext)
-        {
-            this.Library = library;
-            this.scopeKey = library.CanonicalKey;
-            this.Library.LibraryScope = this;
-
-            foreach (string cniFuncName in library.CniFunctions.Keys)
+            if (this.Metadata != null)
             {
-                this.RegisterCniFunction(cniFuncName, library.CniFunctions[cniFuncName]);
+                return "Library Scope [" + this.Metadata.ID + " | " + this.Locale + "]";
             }
-        }
-
-        public override Locale Locale
-        {
-            get { return this.Library.InternalLocale; }
-        }
-
-        public override string ScopeKey { get { return this.scopeKey; } }
-
-        public override string ToString()
-        {
-            return "Library Scope [" + this.Library.ID + " | " + this.Locale + "]";
+            return "User Code Scope [" + this.Locale + "]";
         }
     }
 }
