@@ -33,7 +33,7 @@ namespace Parser
 
             return this.assemblyFinder.GetAssemblyMetadataFromAnyPossibleKey(locale + ":" + name) != null;
         }
-        
+
         public LocalizedAssemblyView GetCoreLibrary(ParserContext parser)
         {
             string anyValidCoreLibId = "en:Core";
@@ -125,7 +125,7 @@ namespace Parser
             {
                 string fakeName = "[" + embeddedFile + "]";
                 string code = embeddedCode[embeddedFile];
-                parser.ParseInterpretedCode(fakeName, code);
+                parser.ParseFile(fakeName, code);
             }
             parser.PopScope();
 

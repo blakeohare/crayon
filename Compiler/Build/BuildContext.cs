@@ -9,6 +9,12 @@ namespace Build
 {
     public class AssemblyContext
     {
+        private BuildContext buildContext;
+        public AssemblyContext(BuildContext buildContext)
+        {
+            this.buildContext = buildContext;
+        }
+
         // The following are things that ought to be on a assembly-specific object
         public FilePath[] SourceFolders { get; set; }
         public Dictionary<string, string[]> ImageSheetPrefixesById { get; set; }
@@ -16,13 +22,35 @@ namespace Build
         public string[] ImageSheetIds { get; set; }
         public string Version { get; set; }
         public string Description { get; set; }
+
+        public Dictionary<string, string> GetCodeFiles()
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+
+            foreach (FilePath sourceDir in this.SourceFolders)
+            {
+                string[] files = FileUtil.GetAllAbsoluteFilePathsDescendentsOf(sourceDir.AbsolutePath);
+                foreach (string filepath in files)
+                {
+                    if (filepath.ToLowerInvariant().EndsWith(".cry"))
+                    {
+                        string relativePath = FileUtil.ConvertAbsolutePathToRelativePath(
+                            filepath,
+                            this.buildContext.ProjectDirectory);
+                        output[relativePath] = FileUtil.ReadFileText(filepath);
+                    }
+                }
+            }
+            return output;
+        }
+
     }
 
     public class BuildContext
     {
         public BuildContext()
         {
-            this.TopLevelAssembly = new AssemblyContext();
+            this.TopLevelAssembly = new AssemblyContext(this);
         }
 
         public AssemblyContext TopLevelAssembly { get; set; }
@@ -115,18 +143,8 @@ namespace Build
 
             ImageSheet[] imageSheets = flattened.ImageSheets ?? new ImageSheet[0];
 
-            return new BuildContext()
+            BuildContext buildContext = new BuildContext()
             {
-                TopLevelAssembly = new AssemblyContext()
-                {
-                    Description = flattened.Description,
-                    Version = flattened.Version,
-                    SourceFolders = ToFilePaths(projectDir, flattened.Sources ?? new SourceItem[0]),
-                    ImageSheetPrefixesById = imageSheets.ToDictionary<ImageSheet, string, string[]>(s => s.Id, s => s.Prefixes),
-                    ImageSheetIds = imageSheets.Select<ImageSheet, string>(s => s.Id).ToArray(),
-                    BuildVariableLookup = varLookup,
-                },
-
                 ProjectDirectory = projectDir,
                 JsFilePrefix = flattened.JsFilePrefix,
                 OutputFolder = flattened.Output,
@@ -146,7 +164,19 @@ namespace Build
                 WindowWidth = Util.ParseIntWithErrorNullOkay((flattened.WindowSize ?? new Size()).Width, "Invalid window width in build file."),
                 WindowHeight = Util.ParseIntWithErrorNullOkay((flattened.WindowSize ?? new Size()).Height, "Invalid window height in build file."),
                 CompilerLocale = Locale.Get((flattened.CompilerLocale ?? "en").Trim()),
-            }.ValidateValues();
+            };
+
+            buildContext.TopLevelAssembly = new AssemblyContext(buildContext)
+            {
+                Description = flattened.Description,
+                Version = flattened.Version,
+                SourceFolders = ToFilePaths(projectDir, flattened.Sources ?? new SourceItem[0]),
+                ImageSheetPrefixesById = imageSheets.ToDictionary<ImageSheet, string, string[]>(s => s.Id, s => s.Prefixes),
+                ImageSheetIds = imageSheets.Select<ImageSheet, string>(s => s.Id).ToArray(),
+                BuildVariableLookup = varLookup,
+            };
+
+            return buildContext.ValidateValues();
         }
 
         private static string[] CombineAndFlattenStringArrays(string[] a, string[] b)

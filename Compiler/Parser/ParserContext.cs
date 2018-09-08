@@ -326,30 +326,9 @@ namespace Parser
             return output.ToArray();
         }
 
-        public Dictionary<string, string> GetCodeFiles()
-        {
-            Dictionary<string, string> output = new Dictionary<string, string>();
-
-            foreach (FilePath sourceDir in this.BuildContext.TopLevelAssembly.SourceFolders)
-            {
-                string[] files = FileUtil.GetAllAbsoluteFilePathsDescendentsOf(sourceDir.AbsolutePath);
-                foreach (string filepath in files)
-                {
-                    if (filepath.ToLowerInvariant().EndsWith(".cry"))
-                    {
-                        string relativePath = FileUtil.ConvertAbsolutePathToRelativePath(
-                            filepath,
-                            this.BuildContext.ProjectDirectory);
-                        output[relativePath] = FileUtil.ReadFileText(filepath);
-                    }
-                }
-            }
-            return output;
-        }
-
         public TopLevelEntity[] ParseAllTheThings()
         {
-            Dictionary<string, string> files = this.GetCodeFiles();
+            Dictionary<string, string> files = this.BuildContext.TopLevelAssembly.GetCodeFiles();
 
             // When a syntax error is encountered, add it to this list (RELEASE builds only).
             // Only allow one syntax error per file. Libraries are considered stable and will
@@ -364,11 +343,11 @@ namespace Parser
             {
                 string code = files[fileName];
 #if DEBUG
-                this.ParseInterpretedCode(fileName, code);
+                this.ParseFile(fileName, code);
 #else
                 try
                 {
-                    this.ParseInterpretedCode(fileName, code);
+                    this.ParseFile(fileName, code);
                 }
                 catch (ParserException pe)
                 {
@@ -390,7 +369,7 @@ namespace Parser
             return fileIdCounter++;
         }
 
-        public void ParseInterpretedCode(string filename, string code)
+        public void ParseFile(string filename, string code)
         {
             FileScope fileScope = new FileScope(filename, code, this.CurrentScope, this.GetNextFileId());
             this.RegisterFileUsed(fileScope, code);
