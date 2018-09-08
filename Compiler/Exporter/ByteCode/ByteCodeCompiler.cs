@@ -28,7 +28,7 @@ namespace Exporter.ByteCode
 
             ByteBuffer fileContent = this.BuildFileContent(parser.GetFilesById());
 
-            ByteBuffer switchStatements = this.BuildSwitchStatementTables(parser);
+            ByteBuffer switchStatements = SwitchStatementEncoder.BuildTables(parser);
 
             ByteBuffer buildLibraryDeclarations = this.BuildLibraryDeclarations(parser);
 
@@ -232,37 +232,6 @@ namespace Exporter.ByteCode
             output.Add(null, OpCode.LOC_TABLE, op.ToArray());
         }
 
-        private ByteBuffer BuildSwitchStatementTables(ParserContext parser)
-        {
-            ByteBuffer output = new ByteBuffer();
-            List<Dictionary<int, int>> intSwitches = parser.GetIntegerSwitchStatements();
-            for (int i = 0; i < intSwitches.Count; ++i)
-            {
-                List<int> args = new List<int>();
-                Dictionary<int, int> lookup = intSwitches[i];
-                foreach (int key in lookup.Keys)
-                {
-                    int offset = lookup[key];
-                    args.Add(key);
-                    args.Add(offset);
-                }
-
-                output.Add(null, OpCode.BUILD_SWITCH_INT, args.ToArray());
-            }
-
-            List<Dictionary<string, int>> stringSwitches = parser.GetStringSwitchStatements();
-            for (int i = 0; i < stringSwitches.Count; ++i)
-            {
-                Dictionary<string, int> lookup = stringSwitches[i];
-                foreach (string key in lookup.Keys)
-                {
-                    int offset = lookup[key];
-                    output.Add(null, OpCode.BUILD_SWITCH_STRING, key, i, offset);
-                }
-            }
-            return output;
-        }
-
         private ByteBuffer BuildFileContent(string[] filesById)
         {
             ByteBuffer output = new ByteBuffer();
@@ -325,76 +294,19 @@ namespace Exporter.ByteCode
         public void Compile(ParserContext parser, ByteBuffer buffer, Executable line)
         {
             if (line is ExpressionAsExecutable) this.CompileExpressionAsExecutable(parser, buffer, (ExpressionAsExecutable)line);
-            else if (line is Assignment) this.CompileAssignment(parser, buffer, (Assignment)line);
-            else if (line is WhileLoop) this.CompileWhileLoop(parser, buffer, (WhileLoop)line);
-            else if (line is BreakStatement) this.CompileBreakStatement(parser, buffer, (BreakStatement)line);
-            else if (line is ContinueStatement) this.CompileContinueStatement(parser, buffer, (ContinueStatement)line);
-            else if (line is ForLoop) this.CompileForLoop(parser, buffer, (ForLoop)line);
-            else if (line is IfStatement) this.CompileIfStatement(parser, buffer, (IfStatement)line);
-            else if (line is ReturnStatement) this.CompileReturnStatement(parser, buffer, (ReturnStatement)line);
-            else if (line is SwitchStatement) this.CompileSwitchStatement(parser, buffer, (SwitchStatement)line);
+            else if (line is Assignment) AssignmentEncoder.Compile(this, parser, buffer, (Assignment)line);
+            else if (line is WhileLoop) WhileLoopEncoder.Compile(this, parser, buffer, (WhileLoop)line);
+            else if (line is BreakStatement) BreakEncoder.Compile(parser, buffer, (BreakStatement)line);
+            else if (line is ContinueStatement) ContinueEncoder.Compile(parser, buffer, (ContinueStatement)line);
+            else if (line is ForLoop) ForLoopEncoder.Compile(this, parser, buffer, (ForLoop)line);
+            else if (line is IfStatement) IfStatementEncoder.Compile(this, parser, buffer, (IfStatement)line);
+            else if (line is ReturnStatement) ReturnEncoder.Compile(this, parser, buffer, (ReturnStatement)line);
+            else if (line is SwitchStatement) SwitchStatementEncoder.Compile(this, parser, buffer, (SwitchStatement)line);
             else if (line is ForEachLoop) ForEachEncoder.Compile(this, parser, buffer, (ForEachLoop)line);
             else if (line is DoWhileLoop) DoWhileEncoder.Compile(this, parser, buffer, (DoWhileLoop)line);
             else if (line is TryStatement) TryStatementEncoder.Compile(this, parser, buffer, (TryStatement)line);
-            else if (line is ThrowStatement) this.CompileThrowStatement(parser, buffer, (ThrowStatement)line);
+            else if (line is ThrowStatement) ThrowEncoder.Compile(this, parser, buffer, (ThrowStatement)line);
             else throw new NotImplementedException("Invalid target for byte code compilation");
-        }
-
-        private void CompileThrowStatement(ParserContext parser, ByteBuffer buffer, ThrowStatement throwStatement)
-        {
-            this.CompileExpression(parser, buffer, throwStatement.Expression, true);
-            buffer.Add(throwStatement.FirstToken, OpCode.THROW);
-        }
-
-        private void CompileSwitchStatement(ParserContext parser, ByteBuffer buffer, SwitchStatement switchStatement)
-        {
-            this.CompileExpression(parser, buffer, switchStatement.Condition, true);
-
-            ByteBuffer chunkBuffer = new ByteBuffer();
-
-            Dictionary<int, int> chunkIdsToOffsets = new Dictionary<int, int>();
-            Dictionary<int, int> integersToChunkIds = new Dictionary<int, int>();
-            Dictionary<string, int> stringsToChunkIds = new Dictionary<string, int>();
-
-            int defaultChunkId = -1;
-            foreach (SwitchStatement.Chunk chunk in switchStatement.Chunks)
-            {
-                int chunkId = chunk.ID;
-
-                if (chunk.Cases.Length == 1 && chunk.Cases[0] == null)
-                {
-                    defaultChunkId = chunkId;
-                }
-                else
-                {
-                    foreach (Expression expression in chunk.Cases)
-                    {
-                        if (switchStatement.UsesIntegers)
-                        {
-                            integersToChunkIds[((IntegerConstant)expression).Value] = chunkId;
-                        }
-                        else
-                        {
-                            stringsToChunkIds[((StringConstant)expression).Value] = chunkId;
-                        }
-                    }
-                }
-
-                chunkIdsToOffsets[chunkId] = chunkBuffer.Size;
-
-                this.Compile(parser, chunkBuffer, chunk.Code);
-            }
-
-            chunkBuffer.ResolveBreaks();
-
-            int switchId = parser.RegisterByteCodeSwitch(chunkIdsToOffsets, integersToChunkIds, stringsToChunkIds, switchStatement.UsesIntegers);
-
-            int defaultOffsetLength = defaultChunkId == -1
-                ? chunkBuffer.Size
-                : chunkIdsToOffsets[defaultChunkId];
-
-            buffer.Add(switchStatement.FirstToken, switchStatement.UsesIntegers ? OpCode.SWITCH_INT : OpCode.SWITCH_STRING, switchId, defaultOffsetLength);
-            buffer.Concat(chunkBuffer);
         }
 
         private void CompileClass(ParserContext parser, ByteBuffer buffer, ClassDefinition classDefinition)
@@ -601,248 +513,6 @@ namespace Exporter.ByteCode
             buffer.Concat(tBuffer);
         }
 
-        private void CompileReturnStatement(ParserContext parser, ByteBuffer buffer, ReturnStatement returnStatement)
-        {
-            if (returnStatement.TopLevelEntity is ConstructorDefinition)
-            {
-                if (returnStatement.Expression != null)
-                {
-                    throw new ParserException(returnStatement, "Cannot return a value from a constructor.");
-                }
-            }
-
-            if (returnStatement.Expression == null || returnStatement.Expression is NullConstant)
-            {
-                buffer.Add(returnStatement.FirstToken, OpCode.RETURN, 0);
-            }
-            else
-            {
-                this.CompileExpression(parser, buffer, returnStatement.Expression, true);
-                buffer.Add(returnStatement.FirstToken, OpCode.RETURN, 1);
-            }
-        }
-
-        private void CompileIfStatement(ParserContext parser, ByteBuffer buffer, IfStatement ifStatement)
-        {
-            this.CompileExpression(parser, buffer, ifStatement.Condition, true);
-            ByteBuffer trueCode = new ByteBuffer();
-            this.Compile(parser, trueCode, ifStatement.TrueCode);
-            ByteBuffer falseCode = new ByteBuffer();
-            this.Compile(parser, falseCode, ifStatement.FalseCode);
-
-            if (falseCode.Size == 0)
-            {
-                if (trueCode.Size == 0) buffer.Add(ifStatement.Condition.FirstToken, OpCode.POP);
-                else
-                {
-                    buffer.Add(ifStatement.Condition.FirstToken, OpCode.JUMP_IF_FALSE, trueCode.Size);
-                    buffer.Concat(trueCode);
-                }
-            }
-            else
-            {
-                trueCode.Add(null, OpCode.JUMP, falseCode.Size);
-                buffer.Add(ifStatement.Condition.FirstToken, OpCode.JUMP_IF_FALSE, trueCode.Size);
-                buffer.Concat(trueCode);
-                buffer.Concat(falseCode);
-            }
-        }
-
-        private void CompileBreakStatement(ParserContext parser, ByteBuffer buffer, BreakStatement breakStatement)
-        {
-            buffer.Add(breakStatement.FirstToken, OpCode.BREAK, 0, 0);
-        }
-
-        private void CompileContinueStatement(ParserContext parser, ByteBuffer buffer, ContinueStatement continueStatement)
-        {
-            buffer.Add(continueStatement.FirstToken, OpCode.CONTINUE, 0, 0);
-        }
-
-        private void CompileForLoop(ParserContext parser, ByteBuffer buffer, ForLoop forLoop)
-        {
-            this.Compile(parser, buffer, forLoop.Init);
-
-            ByteBuffer codeBuffer = new ByteBuffer();
-            this.Compile(parser, codeBuffer, forLoop.Code);
-            codeBuffer.ResolveContinues(true); // resolve continues as jump-to-end before you add the step instructions.
-            this.Compile(parser, codeBuffer, forLoop.Step);
-
-            ByteBuffer forBuffer = new ByteBuffer();
-            this.CompileExpression(parser, forBuffer, forLoop.Condition, true);
-            forBuffer.Add(forLoop.Condition.FirstToken, OpCode.JUMP_IF_FALSE, codeBuffer.Size + 1); // +1 to go past the jump I'm about to add.
-
-            forBuffer.Concat(codeBuffer);
-            forBuffer.Add(null, OpCode.JUMP, -forBuffer.Size - 1);
-
-            forBuffer.ResolveBreaks();
-
-            buffer.Concat(forBuffer);
-        }
-
-        private void CompileWhileLoop(ParserContext parser, ByteBuffer buffer, WhileLoop whileLoop)
-        {
-            ByteBuffer loopBody = new ByteBuffer();
-            this.Compile(parser, loopBody, whileLoop.Code);
-            ByteBuffer condition = new ByteBuffer();
-            this.CompileExpression(parser, condition, whileLoop.Condition, true);
-
-            condition.Add(whileLoop.Condition.FirstToken, OpCode.JUMP_IF_FALSE, loopBody.Size + 1);
-            condition.Concat(loopBody);
-            condition.Add(null, OpCode.JUMP, -condition.Size - 1);
-
-            condition.ResolveBreaks();
-            condition.ResolveContinues();
-
-            buffer.Concat(condition);
-        }
-
-        private void CompileAssignment(ParserContext parser, ByteBuffer buffer, Assignment assignment)
-        {
-            if (assignment.Op == Ops.EQUALS)
-            {
-                if (assignment.Target is Variable)
-                {
-                    Variable varTarget = (Variable)assignment.Target;
-                    this.CompileExpression(parser, buffer, assignment.Value, true);
-                    VariableId varId = varTarget.LocalScopeId;
-                    if (varId.UsedByClosure)
-                    {
-                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_CLOSURE, varId.ClosureID);
-                    }
-                    else
-                    {
-                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_LOCAL, varId.ID);
-                    }
-                }
-                else if (assignment.Target is BracketIndex)
-                {
-                    BracketIndex bi = (BracketIndex)assignment.Target;
-                    this.CompileExpression(parser, buffer, bi.Root, true);
-                    this.CompileExpression(parser, buffer, bi.Index, true);
-                    this.CompileExpression(parser, buffer, assignment.Value, true);
-                    buffer.Add(assignment.OpToken, OpCode.ASSIGN_INDEX, 0);
-                }
-                else if (assignment.Target is DotField)
-                {
-                    DotField dotStep = (DotField)assignment.Target;
-                    if (dotStep.Root is ThisKeyword)
-                    {
-                        this.CompileExpression(parser, buffer, assignment.Value, true);
-                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_THIS_STEP, parser.GetId(dotStep.StepToken.Value));
-                    }
-                    else
-                    {
-                        this.CompileExpression(parser, buffer, dotStep.Root, true);
-                        this.CompileExpression(parser, buffer, assignment.Value, true);
-                        int nameId = parser.GetId(dotStep.StepToken.Value);
-                        int localeScopedNameId = nameId * parser.GetLocaleCount() + parser.GetLocaleId(dotStep.Owner.FileScope.CompilationScope.Locale);
-                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_STEP, nameId, 0, localeScopedNameId);
-                    }
-                }
-                else if (assignment.Target is FieldReference)
-                {
-                    this.CompileExpression(parser, buffer, assignment.Value, true);
-                    FieldReference fieldReference = (FieldReference)assignment.Target;
-                    if (fieldReference.Field.IsStaticField)
-                    {
-                        buffer.Add(
-                            assignment.OpToken,
-                            OpCode.ASSIGN_STATIC_FIELD,
-                            ((ClassDefinition)fieldReference.Field.Owner).ClassID,
-                            fieldReference.Field.StaticMemberID);
-                    }
-                    else
-                    {
-                        buffer.Add(
-                            assignment.OpToken,
-                            OpCode.ASSIGN_THIS_STEP,
-                            fieldReference.Field.MemberID);
-                    }
-                }
-                else
-                {
-                    throw new Exception("This shouldn't happen.");
-                }
-            }
-            else
-            {
-                Ops op = assignment.Op;
-                if (assignment.Target is Variable)
-                {
-                    Variable varTarget = (Variable)assignment.Target;
-                    VariableId varId = varTarget.LocalScopeId;
-                    bool isClosure = varId.UsedByClosure;
-                    int scopeId = isClosure ? varId.ClosureID : varId.ID;
-
-                    buffer.Add(varTarget.FirstToken, isClosure ? OpCode.DEREF_CLOSURE : OpCode.LOCAL, scopeId);
-                    this.CompileExpression(parser, buffer, assignment.Value, true);
-                    buffer.Add(assignment.OpToken, OpCode.BINARY_OP, (int)op);
-                    buffer.Add(assignment.Target.FirstToken, isClosure ? OpCode.ASSIGN_CLOSURE : OpCode.ASSIGN_LOCAL, scopeId);
-                }
-                else if (assignment.Target is DotField)
-                {
-                    DotField dotExpr = (DotField)assignment.Target;
-                    int stepId = parser.GetId(dotExpr.StepToken.Value);
-                    int localeScopedStepId = parser.GetLocaleCount() * stepId + parser.GetLocaleId(dotExpr.Owner.FileScope.CompilationScope.Locale);
-                    this.CompileExpression(parser, buffer, dotExpr.Root, true);
-                    if (!(dotExpr.Root is ThisKeyword))
-                    {
-                        buffer.Add(null, OpCode.DUPLICATE_STACK_TOP, 1);
-                    }
-                    buffer.Add(dotExpr.DotToken, OpCode.DEREF_DOT, stepId, localeScopedStepId);
-                    this.CompileExpression(parser, buffer, assignment.Value, true);
-                    buffer.Add(assignment.OpToken, OpCode.BINARY_OP, (int)op);
-                    if (dotExpr.Root is ThisKeyword)
-                    {
-                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_THIS_STEP, stepId);
-                    }
-                    else
-                    {
-                        int localeScopedNameId = stepId * parser.GetLocaleCount() + parser.GetLocaleId(dotExpr.Owner.FileScope.CompilationScope.Locale);
-                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_STEP, stepId, 0, localeScopedNameId);
-                    }
-                }
-                else if (assignment.Target is BracketIndex)
-                {
-                    BracketIndex indexExpr = (BracketIndex)assignment.Target;
-                    this.CompileExpression(parser, buffer, indexExpr.Root, true);
-                    this.CompileExpression(parser, buffer, indexExpr.Index, true);
-                    buffer.Add(null, OpCode.DUPLICATE_STACK_TOP, 2);
-                    buffer.Add(indexExpr.BracketToken, OpCode.INDEX);
-                    this.CompileExpression(parser, buffer, assignment.Value, true);
-                    buffer.Add(assignment.OpToken, OpCode.BINARY_OP, (int)op);
-                    buffer.Add(assignment.OpToken, OpCode.ASSIGN_INDEX, 0);
-                }
-                else if (assignment.Target is FieldReference)
-                {
-                    FieldReference fieldRef = (FieldReference)assignment.Target;
-                    this.CompileFieldReference(parser, buffer, fieldRef, true);
-                    this.CompileExpression(parser, buffer, assignment.Value, true);
-                    buffer.Add(assignment.OpToken, OpCode.BINARY_OP, (int)op);
-
-                    if (fieldRef.Field.IsStaticField)
-                    {
-                        buffer.Add(
-                            assignment.OpToken,
-                            OpCode.ASSIGN_STATIC_FIELD,
-                            ((ClassDefinition)fieldRef.Field.Owner).ClassID,
-                            fieldRef.Field.StaticMemberID);
-                    }
-                    else
-                    {
-                        buffer.Add(
-                            assignment.OpToken,
-                            OpCode.ASSIGN_THIS_STEP,
-                            fieldRef.Field.MemberID);
-                    }
-                }
-                else
-                {
-                    throw new ParserException(assignment.OpToken, "Assignment is not allowed on this sort of expression.");
-                }
-            }
-        }
-
         private void CompileFunctionArgs(ParserContext parser, ByteBuffer buffer, IList<Token> argNames, IList<Expression> argValues, List<int> offsetsForOptionalArgs)
         {
             int bufferStartSize = buffer.Size;
@@ -912,21 +582,21 @@ namespace Exporter.ByteCode
         {
             if (expr is FunctionCall) FunctionCallEncoder.Compile(this, parser, buffer, (FunctionCall)expr, outputUsed);
             else if (expr is IntegerConstant) ConstantEncoder.CompileInteger(parser, buffer, (IntegerConstant)expr, outputUsed);
-            else if (expr is Variable) this.CompileVariable(parser, buffer, (Variable)expr, outputUsed);
+            else if (expr is Variable) VariableEncoder.Compile(parser, buffer, (Variable)expr, outputUsed);
             else if (expr is BooleanConstant) ConstantEncoder.CompileBoolean(parser, buffer, (BooleanConstant)expr, outputUsed);
             else if (expr is DotField) DotFieldEncoder.Compile(this, parser, buffer, (DotField)expr, outputUsed);
-            else if (expr is BracketIndex) this.CompileBracketIndex(parser, buffer, (BracketIndex)expr, outputUsed);
+            else if (expr is BracketIndex) BracketIndexEncoder.Compile(this, parser, buffer, (BracketIndex)expr, outputUsed);
             else if (expr is OpChain) OpChainEncoder.Compile(this, parser, buffer, (OpChain)expr, outputUsed);
             else if (expr is StringConstant) ConstantEncoder.CompileString(parser, buffer, (StringConstant)expr, outputUsed);
-            else if (expr is NegativeSign) this.CompileNegativeSign(parser, buffer, (NegativeSign)expr, outputUsed);
-            else if (expr is ListDefinition) this.CompileListDefinition(parser, buffer, (ListDefinition)expr, outputUsed);
+            else if (expr is NegativeSign) NegativeSignEncoder.Compile(this, parser, buffer, (NegativeSign)expr, outputUsed);
+            else if (expr is ListDefinition) ListDefinitionEncoder.Compile(this, parser, buffer, (ListDefinition)expr, outputUsed);
             else if (expr is Increment) IncrementEncoder.Compile(this, parser, buffer, (Increment)expr, outputUsed);
             else if (expr is FloatConstant) ConstantEncoder.CompileFloat(parser, buffer, (FloatConstant)expr, outputUsed);
             else if (expr is NullConstant) ConstantEncoder.CompileNull(parser, buffer, (NullConstant)expr, outputUsed);
-            else if (expr is ThisKeyword) this.CompileThisKeyword(parser, buffer, (ThisKeyword)expr, outputUsed);
-            else if (expr is Instantiate) this.CompileInstantiate(parser, buffer, (Instantiate)expr, outputUsed);
-            else if (expr is DictionaryDefinition) this.CompileDictionaryDefinition(parser, buffer, (DictionaryDefinition)expr, outputUsed);
-            else if (expr is BooleanCombination) this.CompileBooleanCombination(parser, buffer, (BooleanCombination)expr, outputUsed);
+            else if (expr is ThisKeyword) ThisEncoder.Compile(parser, buffer, (ThisKeyword)expr, outputUsed);
+            else if (expr is Instantiate) InstantiateEncoder.Compile(this, parser, buffer, (Instantiate)expr, outputUsed);
+            else if (expr is DictionaryDefinition) DictionaryDefinitionEncoder.Compile(this, parser, buffer, (DictionaryDefinition)expr, outputUsed);
+            else if (expr is BooleanCombination) BooleanCombinationEncoder.Compile(this, parser, buffer, (BooleanCombination)expr, outputUsed);
             else if (expr is BooleanNot) this.CompileBooleanNot(parser, buffer, (BooleanNot)expr, outputUsed);
             else if (expr is Ternary) TernaryEncoder.Compile(this, parser, buffer, (Ternary)expr, outputUsed);
             else if (expr is CompileTimeDictionary) this.CompileCompileTimeDictionary((CompileTimeDictionary)expr);
@@ -935,7 +605,7 @@ namespace Exporter.ByteCode
             else if (expr is BaseKeyword) this.CompileBaseKeyword(parser, buffer, (BaseKeyword)expr, outputUsed);
             else if (expr is BaseMethodReference) this.CompileBaseMethodReference(parser, buffer, (BaseMethodReference)expr, outputUsed);
             else if (expr is FunctionReference) this.CompileFunctionReference(parser, buffer, (FunctionReference)expr, outputUsed);
-            else if (expr is FieldReference) this.CompileFieldReference(parser, buffer, (FieldReference)expr, outputUsed);
+            else if (expr is FieldReference) FieldReferenceEncoder.Compile(parser, buffer, (FieldReference)expr, outputUsed);
             else if (expr is CoreFunctionInvocation) this.CompileCoreFunctionInvocation(parser, buffer, (CoreFunctionInvocation)expr, null, null, outputUsed);
             else if (expr is IsComparison) this.CompileIsComparison(parser, buffer, (IsComparison)expr, outputUsed);
             else if (expr is ClassReferenceLiteral) this.CompileClassReferenceLiteral(parser, buffer, (ClassReferenceLiteral)expr, outputUsed);
@@ -1077,27 +747,6 @@ namespace Exporter.ByteCode
             buffer.Add(token, OpCode.CORE_FUNCTION, coreFuncInvocation.FunctionId, outputUsed ? 1 : 0);
         }
 
-        private void CompileFieldReference(ParserContext parser, ByteBuffer buffer, FieldReference fieldRef, bool outputUsed)
-        {
-            EnsureUsed(fieldRef.FirstToken, outputUsed);
-
-            if (fieldRef.Field.IsStaticField)
-            {
-                buffer.Add(
-                    fieldRef.FirstToken,
-                    OpCode.DEREF_STATIC_FIELD,
-                    ((ClassDefinition)fieldRef.Field.Owner).ClassID,
-                    fieldRef.Field.StaticMemberID);
-            }
-            else
-            {
-                buffer.Add(
-                    fieldRef.FirstToken,
-                    OpCode.DEREF_INSTANCE_FIELD,
-                    fieldRef.Field.MemberID);
-            }
-        }
-
         // Non-invoked function references.
         private void CompileFunctionReference(ParserContext parser, ByteBuffer buffer, FunctionReference funcRef, bool outputUsed)
         {
@@ -1192,111 +841,6 @@ namespace Exporter.ByteCode
 
             this.CompileExpression(parser, buffer, boolNot.Root, true);
             buffer.Add(boolNot.FirstToken, OpCode.BOOLEAN_NOT);
-        }
-
-        private void CompileBooleanCombination(ParserContext parser, ByteBuffer buffer, BooleanCombination boolComb, bool outputUsed)
-        {
-            if (!outputUsed) throw new ParserException(boolComb, "Cannot have this expression here.");
-
-            ByteBuffer rightBuffer = new ByteBuffer();
-            Expression[] expressions = boolComb.Expressions;
-            this.CompileExpression(parser, rightBuffer, expressions[expressions.Length - 1], true);
-            for (int i = expressions.Length - 2; i >= 0; --i)
-            {
-                ByteBuffer leftBuffer = new ByteBuffer();
-                this.CompileExpression(parser, leftBuffer, expressions[i], true);
-                Token op = boolComb.Ops[i];
-                if (op.Value == "&&")
-                {
-                    leftBuffer.Add(op, OpCode.JUMP_IF_FALSE_NO_POP, rightBuffer.Size);
-                }
-                else
-                {
-                    leftBuffer.Add(op, OpCode.JUMP_IF_TRUE_NO_POP, rightBuffer.Size);
-                }
-                leftBuffer.Concat(rightBuffer);
-                rightBuffer = leftBuffer;
-            }
-
-            buffer.Concat(rightBuffer);
-        }
-
-        private void CompileDictionaryDefinition(ParserContext parser, ByteBuffer buffer, DictionaryDefinition dictDef, bool outputUsed)
-        {
-            if (!outputUsed) throw new ParserException(dictDef, "Cannot have a dictionary all by itself.");
-
-            int itemCount = dictDef.Keys.Length;
-            List<Expression> expressionList = new List<Expression>();
-            for (int i = 0; i < itemCount; ++i)
-            {
-                expressionList.Add(dictDef.Keys[i]);
-                expressionList.Add(dictDef.Values[i]);
-            }
-
-            this.CompileExpressionList(parser, buffer, expressionList, true);
-
-            buffer.Add(dictDef.FirstToken, OpCode.DEF_DICTIONARY, itemCount);
-        }
-
-        private void CompileInstantiate(ParserContext parser, ByteBuffer buffer, Instantiate instantiate, bool outputUsed)
-        {
-            ClassDefinition cd = instantiate.Class;
-            ConstructorDefinition constructor = cd.Constructor;
-
-            this.CompileExpressionList(parser, buffer, instantiate.Args, true);
-            buffer.Add(instantiate.NameToken,
-                OpCode.CALL_FUNCTION,
-                (int)FunctionInvocationType.CONSTRUCTOR,
-                instantiate.Args.Length,
-                constructor.FunctionID,
-                outputUsed ? 1 : 0,
-                cd.ClassID);
-        }
-
-        private void CompileThisKeyword(ParserContext parser, ByteBuffer buffer, ThisKeyword thisKeyword, bool outputUsed)
-        {
-            if (!outputUsed) throw new ParserException(thisKeyword, "This expression doesn't do anything.");
-
-            buffer.Add(thisKeyword.FirstToken, OpCode.THIS);
-        }
-
-        private void CompileListDefinition(ParserContext parser, ByteBuffer buffer, ListDefinition listDef, bool outputUsed)
-        {
-            if (!outputUsed) throw new ParserException(listDef, "List allocation made without storing it. This is likely a mistake.");
-            foreach (Expression item in listDef.Items)
-            {
-                this.CompileExpression(parser, buffer, item, true);
-            }
-            buffer.Add(listDef.FirstToken, OpCode.DEF_LIST, listDef.Items.Length);
-        }
-
-        private void CompileNegativeSign(ParserContext parser, ByteBuffer buffer, NegativeSign negativeSign, bool outputUsed)
-        {
-            if (!outputUsed) throw new ParserException(negativeSign, "This expression does nothing.");
-            this.CompileExpression(parser, buffer, negativeSign.Root, true);
-            buffer.Add(negativeSign.FirstToken, OpCode.NEGATIVE_SIGN);
-        }
-
-        private void CompileBracketIndex(ParserContext parser, ByteBuffer buffer, BracketIndex bracketIndex, bool outputUsed)
-        {
-            if (!outputUsed) throw new ParserException(bracketIndex, "This expression does nothing.");
-            this.CompileExpression(parser, buffer, bracketIndex.Root, true);
-            this.CompileExpression(parser, buffer, bracketIndex.Index, true);
-            buffer.Add(bracketIndex.BracketToken, OpCode.INDEX);
-        }
-
-        private void CompileVariable(ParserContext parser, ByteBuffer buffer, Variable variable, bool outputUsed)
-        {
-            if (!outputUsed) throw new ParserException(variable, "This expression does nothing.");
-            int nameId = parser.GetId(variable.Name);
-            Token token = variable.FirstToken;
-            VariableId varId = variable.LocalScopeId;
-            if (varId == null)
-            {
-                throw new ParserException(token, "Variable used but not declared.");
-            }
-            bool isClosureVar = varId.UsedByClosure;
-            buffer.Add(token, isClosureVar ? OpCode.DEREF_CLOSURE : OpCode.LOCAL, isClosureVar ? varId.ClosureID : varId.ID, nameId);
         }
 
         private void CompileLiteralStream(ParserContext parser, ByteBuffer buffer, IList<Expression> expressions, bool outputUsed)
