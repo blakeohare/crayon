@@ -242,46 +242,6 @@ namespace Parser
             return this.byteCodeSwitchStringToOffsets;
         }
 
-        public int RegisterByteCodeSwitch(Dictionary<int, int> chunkIdsToOffsets, Dictionary<int, int> integersToChunkIds, Dictionary<string, int> stringsToChunkIds, bool isIntegerSwitch)
-        {
-            int switchId;
-            if (isIntegerSwitch)
-            {
-                switchId = byteCodeSwitchIntegerToOffsets.Count;
-                Dictionary<int, int> integersToOffsets = new Dictionary<int, int>();
-                foreach (int key in integersToChunkIds.Keys)
-                {
-                    int chunkId = integersToChunkIds[key];
-                    integersToOffsets[key] = chunkIdsToOffsets[chunkId];
-                }
-                byteCodeSwitchIntegerToOffsets.Add(integersToOffsets);
-            }
-            else
-            {
-                switchId = byteCodeSwitchStringToOffsets.Count;
-                Dictionary<string, int> stringsToOffsets = new Dictionary<string, int>();
-                foreach (string key in stringsToChunkIds.Keys)
-                {
-                    int chunkId = stringsToChunkIds[key];
-                    stringsToOffsets[key] = chunkIdsToOffsets[chunkId];
-                }
-                byteCodeSwitchStringToOffsets.Add(stringsToOffsets);
-            }
-            return switchId;
-        }
-
-        public void RegisterSwitchIntegerListLookup(string name, Dictionary<int, int> lookup, int explicitMax, int defaultCaseId)
-        {
-            this.explicitMaxes[name] = explicitMax;
-            this.defaultCaseIds[name] = defaultCaseId;
-            this.intListLookups[name] = lookup;
-        }
-
-        public void RegisterSwitchStringDictLookup(string name, Dictionary<string, int> lookup)
-        {
-            this.stringSwitchLookups[name] = lookup;
-        }
-
         public int GetClassId(ClassDefinition cls)
         {
             int id;

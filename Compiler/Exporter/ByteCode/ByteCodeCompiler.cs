@@ -28,15 +28,12 @@ namespace Exporter.ByteCode
 
             ByteBuffer fileContent = this.BuildFileContent(parser.GetFilesById());
 
-            ByteBuffer switchStatements = SwitchStatementEncoder.BuildTables(parser);
-
             ByteBuffer buildLibraryDeclarations = this.BuildLibraryDeclarations(parser);
 
             ByteBuffer header = new ByteBuffer();
             header.Concat(literalsTable);
             header.Concat(tokenData);
             header.Concat(fileContent);
-            header.Concat(switchStatements);
             header.Concat(buildLibraryDeclarations);
             header.Concat(buildCniTable);
 

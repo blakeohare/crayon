@@ -1,4 +1,9 @@
-﻿
+﻿/*
+    row[0] -> default jump offset
+    row[2n + 1] -> int value
+    row[2n + 2] -> jump offset
+*/
+
 if (@ext_boolean("HAS_INCREMENT")) {
     value = valueStack[--valueStackSize];
 } else {
@@ -7,12 +12,16 @@ if (@ext_boolean("HAS_INCREMENT")) {
 }
 
 if (value.type == Types.INTEGER) {
-    int1 = (int) value.internalValue; // switch ID
-    integerSwitch = integerSwitches[row[0]];
-    if (integerSwitch.Contains(int1)) {
-        pc += integerSwitch[int1];
+    intKey = (int) value.internalValue;
+    integerSwitch = integerSwitchesByPc[pc];
+    if (integerSwitch == null) {
+        integerSwitch = initializeIntSwitchStatement(vm, pc, row);
+    }
+
+    if (integerSwitch.Contains(intKey)) {
+        pc += integerSwitch[intKey];
     } else {
-        pc += row[1]; // default
+        pc += row[0];
     }
 } else {
     hasInterrupt = EX_InvalidArgument(ec, "Switch statement expects an integer.");

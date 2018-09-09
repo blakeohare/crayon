@@ -1,6 +1,7 @@
 ﻿using Parser;
 using Parser.ParseTree;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Exporter.ByteCode.Nodes
 {
@@ -8,6 +9,8 @@ namespace Exporter.ByteCode.Nodes
     {
         public static void Compile(ByteCodeCompiler bcc, ParserContext parser, ByteBuffer buffer, SwitchStatement switchStatement)
         {
+            bool isInt = switchStatement.UsesIntegers;
+
             bcc.CompileExpression(parser, buffer, switchStatement.Condition, true);
 
             ByteBuffer chunkBuffer = new ByteBuffer();
@@ -29,7 +32,7 @@ namespace Exporter.ByteCode.Nodes
                 {
                     foreach (Expression expression in chunk.Cases)
                     {
-                        if (switchStatement.UsesIntegers)
+                        if (isInt)
                         {
                             integersToChunkIds[((IntegerConstant)expression).Value] = chunkId;
                         }
@@ -47,45 +50,38 @@ namespace Exporter.ByteCode.Nodes
 
             chunkBuffer.ResolveBreaks();
 
-            int switchId = parser.RegisterByteCodeSwitch(chunkIdsToOffsets, integersToChunkIds, stringsToChunkIds, switchStatement.UsesIntegers);
-
             int defaultOffsetLength = defaultChunkId == -1
                 ? chunkBuffer.Size
                 : chunkIdsToOffsets[defaultChunkId];
 
-            buffer.Add(switchStatement.FirstToken, switchStatement.UsesIntegers ? OpCode.SWITCH_INT : OpCode.SWITCH_STRING, switchId, defaultOffsetLength);
-            buffer.Concat(chunkBuffer);
-        }
-
-        internal static ByteBuffer BuildTables(ParserContext parser)
-        {
-            ByteBuffer output = new ByteBuffer();
-            List<Dictionary<int, int>> intSwitches = parser.GetIntegerSwitchStatements();
-            for (int i = 0; i < intSwitches.Count; ++i)
+            List<int> args = new List<int>() { defaultOffsetLength };
+            if (isInt)
             {
-                List<int> args = new List<int>();
-                Dictionary<int, int> lookup = intSwitches[i];
-                foreach (int key in lookup.Keys)
+                foreach (int caseValue in integersToChunkIds.Keys.OrderBy(_ => _))
                 {
-                    int offset = lookup[key];
-                    args.Add(key);
+                    int chunkId = integersToChunkIds[caseValue];
+                    int offset = chunkIdsToOffsets[chunkId];
+                    args.Add(caseValue);
                     args.Add(offset);
                 }
-
-                output.Add(null, OpCode.BUILD_SWITCH_INT, args.ToArray());
             }
-
-            List<Dictionary<string, int>> stringSwitches = parser.GetStringSwitchStatements();
-            for (int i = 0; i < stringSwitches.Count; ++i)
+            else
             {
-                Dictionary<string, int> lookup = stringSwitches[i];
-                foreach (string key in lookup.Keys)
+                foreach (string caseValue in stringsToChunkIds.Keys.OrderBy(_ => _))
                 {
-                    int offset = lookup[key];
-                    output.Add(null, OpCode.BUILD_SWITCH_STRING, key, i, offset);
+                    int chunkId = stringsToChunkIds[caseValue];
+                    int offset = chunkIdsToOffsets[chunkId];
+                    args.Add(parser.GetStringConstant(caseValue));
+                    args.Add(offset);
                 }
             }
-            return output;
+
+            buffer.Add(
+                switchStatement.FirstToken,
+                isInt ? OpCode.SWITCH_INT : OpCode.SWITCH_STRING,
+                args.ToArray());
+
+            buffer.Concat(chunkBuffer);
         }
     }
 }

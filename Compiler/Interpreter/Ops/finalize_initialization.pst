@@ -3,7 +3,5 @@ finalizeInitializationImpl(vm, stringArgs[pc], row[0]);
 
 identifiers = vm.metadata.identifiers;
 literalTable = vm.metadata.literalTable;
-integerSwitches = vm.metadata.integerSwitchLookups;
-stringSwitches = vm.metadata.stringSwitchLookups;
 globalNameIdToPrimitiveMethodName = vm.metadata.globalNameIdToPrimitiveMethodName;
 funcArgs = vm.funcArgs;
