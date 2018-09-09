@@ -38,7 +38,6 @@ struct VmMetadata {
     string projectId;
     Array<Array<int>> esfData;
     MagicNumbers magicNumbers;
-    Array<int> valueStackDepthByPc;
     Dictionary<string, int> invFunctionNameLiterals;
     Dictionary<int, Dictionary<int, int>> classMemberLocalizerBuilder;
 }

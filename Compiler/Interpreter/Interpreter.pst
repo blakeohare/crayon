@@ -279,7 +279,6 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
             case OpCodes.THROW: Core.EmitComment("THROW"); @import("Ops/throw.pst"); break;
             case OpCodes.TOKEN_DATA: Core.EmitComment("TOKEN_DATA"); @import("Ops/token_data.pst"); break;
             case OpCodes.USER_CODE_START: Core.EmitComment("USER_CODE_START"); @import("Ops/user_code_start.pst"); break;
-            case OpCodes.VALUE_STACK_DEPTH: Core.EmitComment("VALUE_STACK_DEPTH"); @import("Ops/value_stack_depth.pst"); break;
             case OpCodes.VERIFY_TYPE_IS_ITERABLE: Core.EmitComment("VERIFY_TYPE_IS_ITERABLE"); @import("Ops/verify_type_is_iterable.pst"); break;
 
             default:

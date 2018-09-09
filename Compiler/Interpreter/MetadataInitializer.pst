@@ -508,37 +508,6 @@ int tokenDataImpl(VmContext vm, Array<int> row) {
 }
 
 /*
-    2n arguments:
-    * 2n + 0 -> PC
-    * 2n + 1 -> delta in value stack depth
-
-    This op creates a single int array of the base value stack depth at any given PC.
-    This will be used whenever a special kind of JUMP occurs.
-    - going from a try block to a finally
-    - going from a finally to basically anywhere else
-    - in the debugger when the next line to execute is set arbitrarily
-
-*/
-int valueStackDepthImpl(VmContext vm, Array<int> row) {
-    int totalPcCount = vm.byteCode.ops.Size(); // total PC count
-    Array<int> valueStackDepthByPc = new Array<int>(totalPcCount); // output
-    int rowIndex = 0; // row index
-    int rowLength = row.Size(); // row length
-    int depth = 0; // depth total
-    for (int pc = 0; pc < totalPcCount; pc += 1) {
-        if (rowIndex < rowLength && pc == row[rowIndex]) {
-            depth += row[rowIndex + 1];
-            rowIndex += 2;
-        }
-        valueStackDepthByPc[pc] = depth;
-    }
-
-    vm.metadata.valueStackDepthByPc = valueStackDepthByPc;
-
-    return 0;
-}
-
-/*
     format of the LOC_TABLE op is as follows
     row[0] -> class ID this is applicable to
     row[1] -> members of this class (n)

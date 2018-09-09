@@ -13,7 +13,6 @@ namespace Exporter.ByteCode
             public Token Token { get; set; }
             public string StringArg { get; set; }
             public ByteCodeEsfToken EsfToken { get; set; }
-            public int ValueStackSizeChange { get; set; }
         }
 
         private List<ByteRow> rows = new List<ByteRow>();
@@ -226,29 +225,7 @@ namespace Exporter.ByteCode
             }
             return esfData.ToArray();
         }
-
-        public int[] GetFinalizedValueStackDepthData()
-        {
-            List<int> vsdData = new List<int>();
-            int size = this.Size;
-            ByteRow row;
-            for (int pc = 0; pc < size; ++pc)
-            {
-                row = this.rows[pc];
-                if (row.ValueStackSizeChange != 0)
-                {
-                    vsdData.Add(pc);
-                    vsdData.Add(row.ValueStackSizeChange);
-                }
-            }
-            return vsdData.ToArray();
-        }
-
-        public void SetLastValueStackDepthOffset(int offset)
-        {
-            this.rows[this.rows.Count - 1].ValueStackSizeChange += offset;
-        }
-
+        
         public int GetEsfPc()
         {
             int size = this.Size;

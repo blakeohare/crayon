@@ -39,8 +39,7 @@ namespace Exporter.ByteCode
 
             // These contain data about absolute PC values. Once those are finalized, come back and fill these in.
             header.Add(null, OpCode.ESF_LOOKUP); // offsets to catch and finally blocks
-            header.Add(null, OpCode.VALUE_STACK_DEPTH); // changes in the depth of the value stack at given PC's
-
+            
             header.Add(null, OpCode.FINALIZE_INITIALIZATION, parser.BuildContext.ProjectID, parser.GetLocaleCount());
 
             // FINALIZE_INITIALIZATION sets the total number of locales and so this needs that information which is
@@ -71,12 +70,10 @@ namespace Exporter.ByteCode
             output.Add(null, OpCode.CALL_FUNCTION, (int)FunctionInvocationType.NORMAL_FUNCTION, 2, parser.CoreLibInvokeFunction.FunctionID, 0, 0);
             output.Add(null, OpCode.RETURN, 0);
 
-            // Now that ops (and PCs) have been finalized, fill in ESF and Value Stack Depth data with absolute PC's
+            // Now that ops (and PCs) have been finalized, fill in ESF data with absolute PC's
             int[] esfOps = output.GetFinalizedEsfData();
-            int[] valueStackDepthOps = output.GetFinalizedValueStackDepthData();
             int esfPc = output.GetEsfPc();
             output.SetArgs(esfPc, esfOps);
-            output.SetArgs(esfPc + 1, valueStackDepthOps);
 
             return output;
         }
