@@ -1,7 +1,16 @@
-﻿value3 = valueStack[valueStackSize - 2]; // iterating index wrapped value
-value = valueStack[valueStackSize - 1]; // list, string (or possibly a new Types.STACK_FRAME in the future if yield is introduced)
-int1 = (int) value3.internalValue; // iterator index
-int2 = row[1]; // iterating variable local scope ID
+﻿/*
+    row[0] -> jump offset when loop is complete
+    row[1] -> local ID of the iterating variable
+    row[2] -> local ID of the iterating index
+    row[3] -> local ID of the collection
+
+    the iterating index and collection are both synthetically generated local ID's and will never
+    collide with user-defined local variables.
+*/
+int1 = localsStackOffset + row[2];
+value3 = localsStack[int1]; // iterating index wrapped value
+i = (int) value3.internalValue; // iterator index
+value = localsStack[localsStackOffset + row[3]]; // list, string
 if (value.type == Types.LIST) {
     list1 = (List<Value>) value.internalValue; // the actual list
     len = list1.Size();
@@ -12,18 +21,17 @@ if (value.type == Types.LIST) {
     bool1 = false;
 }
 
-if (int1 < len) {
+if (i < len) {
     if (bool1) {
-        value = list1[int1];
+        value = list1[i];
     } else {
         // Go easy on GC. Single-char strings are going to be common for users that use foreach loops on strings.
-        value = buildCommonString(globals, Core.CharToString(string2[int1]));
+        value = buildCommonString(globals, Core.CharToString(string2[i]));
     }
 
-    // TODO: these two operations can actually be done in the verify_type_is_iterable op, I think.
-    int3 = localsStackOffset + int2;
+    // set the iterating variable
+    int3 = localsStackOffset + row[1];
     localsStackSet[int3] = localsStackSetToken;
-
     localsStack[int3] = value;
 } else {
     pc += row[0];
@@ -31,10 +39,9 @@ if (int1 < len) {
 
 // Update the current iteration index.
 // The index can never be 0 so this is the inlined version of buildInteger, but with negative checks removed.
-int1 += 1;
-if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
-    value = INTEGER_POSITIVE_CACHE[int1];
+i += 1;
+if (i < INTEGER_POSITIVE_CACHE_SIZE) {
+    localsStack[int1] = INTEGER_POSITIVE_CACHE[i];
 } else {
-    value = new Value(Types.INTEGER, int1);
+    localsStack[int1] = new Value(Types.INTEGER, i);
 }
-valueStack[valueStackSize - 2] = value;

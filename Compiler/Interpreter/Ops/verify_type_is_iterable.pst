@@ -1,8 +1,35 @@
-﻿
-int1 = valueStack[valueStackSize - 1].type;
+﻿/*
+    This sets up the foreach loop state.
+
+    - Pops the value stack to get the user-provided collection.
+    - Verifies that said value is actually an iterable collection (currently only supports strings and lists)
+    - Sets the iterating index local ID to 0
+
+    row[0] -> iterable collection local ID
+    row[1] -> iterator index local ID
+*/
+
+// Pop the list from the values stack and assign it to the given local
+if (@ext_boolean("HAS_INCREMENT")) {
+    value = valueStack[--valueStackSize];
+} else {
+    valueStackSize -= 1;
+    value = valueStack[valueStackSize];
+}
+i = localsStackOffset + row[0];
+localsStack[i] = value;
+localsStackSet[i] = localsStackSetToken;
+
+// Verify the list is an iterable type (could be a string, too)
+int1 = value.type;
 if (int1 != Types.LIST && int1 != Types.STRING) {
     hasInterrupt = EX_InvalidArgument(ec, Core.StringConcatAll(
         "Expected an iterable type, such as a list or string. Found ",
         getTypeFromId(int1),
         " instead."));
 }
+
+// Assign 0 to the locals stack at the given iterating index local ID
+i = localsStackOffset + row[1];
+localsStack[i] = VALUE_INT_ZERO;
+localsStackSet[i] = localsStackSetToken;

@@ -7,6 +7,8 @@ namespace Parser.ParseTree
     {
         public Token IterationVariable { get; private set; }
         public VariableId IterationVariableId { get; private set; }
+        public VariableId IndexLocalId { get; private set; }
+        public VariableId ListLocalId { get; private set; }
         public Expression IterationExpression { get; private set; }
         public Executable[] Code { get; private set; }
 
@@ -34,6 +36,8 @@ namespace Parser.ParseTree
             if ((phase & VariableIdAllocPhase.REGISTER) != 0)
             {
                 varIds.RegisterVariable(this.IterationVariable.Value);
+                this.IndexLocalId = varIds.RegisterSyntheticVariable();
+                this.ListLocalId = varIds.RegisterSyntheticVariable();
             }
 
             if (phase != VariableIdAllocPhase.REGISTER_AND_ALLOC)

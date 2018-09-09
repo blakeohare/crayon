@@ -33,6 +33,7 @@ namespace Parser
         private VariableScope closureScope = null;
         private VariableScope closureRootScope = null;
         private int closureIdAlloc = 1;
+        private int syntheticIdAlloc = 0;
 
         // A lookup of all ID's that have been registered in this scope up until now.
         private readonly Dictionary<string, VariableId> idsByVar = new Dictionary<string, VariableId>();
@@ -112,6 +113,11 @@ namespace Parser
                 fromScope.idsByVar[varId.Name] = varId;
                 fromScope = fromScope.closureScope;
             } while (fromScope != toScope);
+        }
+
+        public VariableId RegisterSyntheticVariable()
+        {
+            return this.RegisterVariable("." + this.rootScope.syntheticIdAlloc++);
         }
 
         public VariableId RegisterVariable(string value)
