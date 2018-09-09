@@ -1,10 +1,7 @@
-﻿// TODO: move the local scope ID into the op args rather than putting it on the stack.
-
-value3 = valueStack[valueStackSize - 3]; // iterating index wrapped value
-value2 = valueStack[valueStackSize - 2]; // local scope ID of iterating variable
+﻿value3 = valueStack[valueStackSize - 2]; // iterating index wrapped value
 value = valueStack[valueStackSize - 1]; // list, string (or possibly a new Types.STACK_FRAME in the future if yield is introduced)
 int1 = (int) value3.internalValue; // iterator index
-int2 = (int) value2.internalValue; // iterating variable local scope ID
+int2 = row[1]; // iterating variable local scope ID
 if (value.type == Types.LIST) {
     list1 = (List<Value>) value.internalValue; // the actual list
     len = list1.Size();
@@ -40,4 +37,4 @@ if (int1 < INTEGER_POSITIVE_CACHE_SIZE) {
 } else {
     value = new Value(Types.INTEGER, int1);
 }
-valueStack[valueStackSize - 3] = value;
+valueStack[valueStackSize - 2] = value;
