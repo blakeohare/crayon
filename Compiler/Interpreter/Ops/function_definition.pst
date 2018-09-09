@@ -1,2 +1,17 @@
-﻿pc += initializeFunction(vm, row, pc, stringArgs[pc]); // returns a PC offset to skip over the actual code body of the function.
+﻿/*
+    row[0] -> function ID
+    row[1] -> function name ID
+    row[2] -> min arg count
+    row[3] -> max arg count
+    row[4] -> function type { }
+    row[5] -> class ID for methods
+    row[6] -> locals count
+    row[7] -> PC jump for skipping the body of the code after declaring metadata
+    row[8] -> number of optional arguments
+    row[9 + n] -> PC offset to skip default value of optional argument when provided
+*/
+initializeFunction(vm, row, pc, stringArgs[pc]);
+pc += row[7];
+
+// The function table may have possibly been expanded
 functionTable = metadata.functionTable;

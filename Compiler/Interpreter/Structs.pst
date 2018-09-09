@@ -2,6 +2,8 @@
     Array<int> ops;
     Array<Array<int>> args;
     Array<string> stringArgs;
+    Array<Dictionary<int, int>> integerSwitchesByPc;
+    Array<Dictionary<string, int>> stringSwitchesByPc;
 }
 
 // Dictionaries in Crayon can only have 3 types of keys: integers, strings, and objects

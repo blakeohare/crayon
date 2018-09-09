@@ -1,4 +1,9 @@
-﻿
+﻿/*
+    row[0] -> default jump offset
+    row[2n + 1] -> literal ID for string
+    row[2n + 2] -> jump offset
+*/
+
 if (@ext_boolean("HAS_INCREMENT")) {
     value = valueStack[--valueStackSize];
 } else {
@@ -7,12 +12,16 @@ if (@ext_boolean("HAS_INCREMENT")) {
 }
 
 if (value.type == Types.STRING) {
-    string1 = (string) value.internalValue;
-    stringSwitch = stringSwitches[row[0]];
-    if (stringSwitch.Contains(string1)) {
-        pc += stringSwitch[string1];
+    stringKey = (string) value.internalValue;
+    stringSwitch = stringSwitchesByPc[pc];
+    if (stringSwitch == null) {
+        stringSwitch = initializeStringSwitchStatement(vm, pc, row);
+    }
+
+    if (stringSwitch.Contains(stringKey)) {
+        pc += stringSwitch[stringKey];
     } else {
-        pc += row[1]; // default
+        pc += row[0];
     }
 } else {
     hasInterrupt = EX_InvalidArgument(ec, "Switch statement expects a string.");

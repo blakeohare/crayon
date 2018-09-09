@@ -6,9 +6,7 @@
     int functionType = args[4];
     int classId = args[5];
     int localsCount = args[6];
-    int pcJump = args[7];
     int numPcOffsetsForOptionalArgs = args[8];
-
     Array<int> pcOffsetsForOptionalArgs = new Array<int>(numPcOffsetsForOptionalArgs + 1);
     for (int i = 0; i < numPcOffsetsForOptionalArgs; i += 1) {
         pcOffsetsForOptionalArgs[i + 1] = args[9 + i];
@@ -47,7 +45,26 @@
         }
     }
 
-    return pcJump;
+    return 0;
+}
+
+Dictionary<string, int> initializeStringSwitchStatement(VmContext vm, int pc, Array<int> args) {
+    Dictionary<string, int> output = new Dictionary<string, int>();
+    for (int i = 1; i < args.Length(); i += 2) {
+        string s = (string)vm.metadata.literalTable[args[i]].internalValue;
+        output[s] = args[i + 1];
+    }
+    vm.byteCode.stringSwitchesByPc[pc] = output;
+    return output;
+}
+
+Dictionary<int, int> initializeIntSwitchStatement(VmContext vm, int pc, Array<int> args) {
+    Dictionary<int, int> output = new Dictionary<int, int>();
+    for (int i = 1; i < args.Length(); i += 2) {
+        output[args[i]] = args[i + 1];
+    }
+    vm.byteCode.integerSwitchesByPc[pc] = output;
+    return output;
 }
 
 Array<FunctionInfo> getFunctionTable(VmContext vm, int functionId) {
@@ -450,40 +467,14 @@ int finalizeInitializationImpl(VmContext vm, string projectId, int localeCount) 
     vm.metadata.magicNumbers.totalLocaleCount = localeCount;
     vm.metadata.identifiers = Core.ListToArray(vm.metadata.identifiersBuilder);
     vm.metadata.literalTable = Core.ListToArray(vm.metadata.literalTableBuilder);
-    vm.metadata.integerSwitchLookups = Core.ListToArray(vm.metadata.integerSwitchLookupsBuilder);
-    vm.metadata.stringSwitchLookups = Core.ListToArray(vm.metadata.stringSwitchLookupsBuilder);
     vm.sourceCode = Core.ListToArray(vm.sourceCodeBuilder);
     vm.metadata.globalNameIdToPrimitiveMethodName = primitiveMethodsInitializeLookup(vm.metadata.invIdentifiers);
     vm.funcArgs = new Array<Value>(vm.metadata.identifiers.Size()); // WAY over-allocated but that's okay for now, I guess.
     vm.metadata.projectId = projectId;
     vm.metadata.identifiersBuilder = null;
     vm.metadata.literalTableBuilder = null;
-    vm.metadata.integerSwitchLookupsBuilder = null;
-    vm.metadata.stringSwitchLookupsBuilder = null;
     vm.sourceCodeBuilder = null;
     vm.initializationComplete = true;
-
-    return 0;
-}
-
-int buildSwitchIntImpl(VmContext vm, Array<int> row) {
-    Dictionary<int, int> integerSwitchLookup = new Dictionary<int, int>();
-    for (int i = 0; i < row.Size(); i += 2) {
-        integerSwitchLookup[row[i]] = row[i + 1];
-    }
-    vm.metadata.integerSwitchLookupsBuilder.Add(integerSwitchLookup);
-
-    return 0;
-}
-
-int buildSwitchStringImpl(VmContext vm, Array<int> row, string caseValue) {
-    List<Dictionary<string, int>> allStringSwitchLookups = vm.metadata.stringSwitchLookupsBuilder;
-    int id = row[0];
-    while (allStringSwitchLookups.Size() <= id) {
-        allStringSwitchLookups.Add(new Dictionary<string, int>());
-    }
-    Dictionary<string, int> stringSwitchLookup = allStringSwitchLookups[id];
-    stringSwitchLookup[caseValue] = row[1];
 
     return 0;
 }

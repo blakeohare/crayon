@@ -198,8 +198,8 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     Value arg3 = null;
     Array<int> globalNameIdToPrimitiveMethodName = vm.metadata.globalNameIdToPrimitiveMethodName;
     MagicNumbers magicNumbers = vm.metadata.magicNumbers;
-    Array<Dictionary<int, int>> integerSwitches = vm.metadata.integerSwitchLookups;
-    Array<Dictionary<string, int>> stringSwitches = vm.metadata.stringSwitchLookups;
+    Array<Dictionary<int, int>> integerSwitchesByPc = vm.byteCode.integerSwitchesByPc;
+    Array<Dictionary<string, int>> stringSwitchesByPc = vm.byteCode.stringSwitchesByPc;
     Dictionary<int, int> integerSwitch = null;
     Dictionary<string, int> stringSwitch = null;
     Array<Array<int>> esfData = vm.metadata.esfData;
@@ -229,8 +229,6 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
             case OpCodes.BINARY_OP: Core.EmitComment("BINARY_OP"); @import("Ops/binary_op.pst"); break;
             case OpCodes.BOOLEAN_NOT: Core.EmitComment("BOOLEAN_NOT"); @import("Ops/boolean_not.pst"); break;
             case OpCodes.BREAK: Core.EmitComment("BREAK"); @import("Ops/break.pst"); break;
-            case OpCodes.BUILD_SWITCH_INT: Core.EmitComment("BUILD_SWITCH_INT"); @import("Ops/build_switch_int.pst"); break;
-            case OpCodes.BUILD_SWITCH_STRING: Core.EmitComment("BUILD_SWITCH_STRING"); @import("Ops/build_switch_string.pst"); break;
             case OpCodes.CALL_FUNCTION: Core.EmitComment("CALL_FUNCTION"); @import("Ops/call_function.pst"); break;
             case OpCodes.CLASS_DEFINITION: Core.EmitComment("CLASS_DEFINITION"); @import("Ops/class_definition.pst"); break;
             case OpCodes.CNI_INVOKE: Core.EmitComment("CNI_INVOKE"); @import("Ops/cni_invoke.pst"); break;

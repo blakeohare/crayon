@@ -13,8 +13,6 @@
         BINARY_OP,
         BOOLEAN_NOT, // no args.
         BREAK, // 0: flag if this has been set, 1: PC offset to jump to (generally BREAK gets resolved into JUMP unless a finally block needs to run.)
-        BUILD_SWITCH_INT, // 2n args: (1: integer key, 2: offset value) <- repeat, the order that these appear indicates the switch ID
-        BUILD_SWITCH_STRING, // 1: switch ID, 2: offset, string arg: value
         CALL_FUNCTION, // 1: type (see FunctionInvoationType enum), 2: num args passed, 3: function ID (if known), 4: output used, 5: class ID (if available)
         CLASS_DEFINITION, // It's complicated. See initializeClass method in MetadataInitializer.cry
         CNI_INVOKE,

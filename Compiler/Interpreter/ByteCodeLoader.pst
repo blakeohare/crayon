@@ -111,5 +111,13 @@ Code initializeByteCode(string raw) {
         sargs[i] = stringarg;
     }
 
-    return new Code(ops, iargs, sargs);
+    return new Code(
+        ops,
+        iargs,
+        sargs,
+
+        // switch statement PC offset lookups. These are initialized when they are encountered.
+        new Array<Dictionary<int, int>>(opCount),
+        new Array<Dictionary<string, int>>(opCount)
+        );
 }
