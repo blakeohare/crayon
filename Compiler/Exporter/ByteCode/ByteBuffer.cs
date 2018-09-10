@@ -225,7 +225,7 @@ namespace Exporter.ByteCode
             }
             return esfData.ToArray();
         }
-        
+
         public int GetEsfPc()
         {
             int size = this.Size;

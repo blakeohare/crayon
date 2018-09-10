@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Exporter
 {
-    public class ResourceDatabaseBuilder
+    public static class ResourceDatabaseBuilder
     {
         private static HashSet<string> IGNORABLE_FILES = new HashSet<string>(new string[] {
             ".ds_store",

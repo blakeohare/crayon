@@ -358,7 +358,7 @@ int canonicalizeListSliceArgs(
 
 List<Token> generateTokenListFromPcs(VmContext vm, List<int> pcs) {
     List<Token> output = new List<Token>();
-    Array<List<Token>> tokensByPc = vm.tokenData;
+    Array<List<Token>> tokensByPc = vm.symbolData.tokenData;
     Token token = null;
     int i = 0;
     while (i < pcs.Size()) {
@@ -409,7 +409,7 @@ bool stackItemIsLibrary(string stackInfo) {
 
 List<string> tokenHelperConvertPcsToStackTraceStrings(VmContext vm, List<int> pcs) {
     List<Token> tokens = generateTokenListFromPcs(vm, pcs);
-    Array<string> files = vm.sourceCode;
+    Array<string> files = vm.symbolData.sourceCode;
     List<string> output = new List<string>();
     for (int i = 0; i < tokens.Size(); i += 1) {
         Token token = tokens[i];
@@ -449,7 +449,7 @@ string tokenHelperGetFormattedPointerToToken(VmContext vm, Token token) {
 }
 
 string tokenHelperGetFileLine(VmContext vm, int fileId, int lineNum) {
-    string sourceCode = vm.sourceCode[fileId];
+    string sourceCode = vm.symbolData.sourceCode[fileId];
     if (sourceCode == null) {
         return null;
     }
@@ -507,7 +507,7 @@ string unrollExceptionOutput(VmContext vm, Value exceptionInstance) {
         }
     }
 
-    List<Token> tokensAtPc = vm.tokenData[pcs[pcs.Size() - 1]];
+    List<Token> tokensAtPc = vm.symbolData.tokenData[pcs[pcs.Size() - 1]];
     if (tokensAtPc != null) {
         codeFormattedPointer = Core.StringConcatAll("\n\n", tokenHelperGetFormattedPointerToToken(vm, tokensAtPc[0]));
     }
@@ -517,7 +517,13 @@ string unrollExceptionOutput(VmContext vm, Value exceptionInstance) {
 }
 
 bool isPcFromCore(VmContext vm, int pc) {
-    List<Token> tokens = vm.tokenData[pc];
+    if (vm.symbolData == null) {
+        // This function is used to pop the _LIB_CORE_generateException function from the stack trace
+        // when producing human-readable stack traces. If there is no symbol data, we just say "no, this isn't core"
+        // and the _LIB_CORE_generateException will appear in the stack trace in an unreadable fashion.
+        return false;
+    }
+    List<Token> tokens = vm.symbolData.tokenData[pc];
     if (tokens == null) {
         return false;
     }

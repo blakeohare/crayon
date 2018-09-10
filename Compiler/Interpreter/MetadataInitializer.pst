@@ -464,16 +464,17 @@ int addNameImpl(VmContext vm, string nameValue) {
 }
 
 int finalizeInitializationImpl(VmContext vm, string projectId, int localeCount) {
+    vm.symbolData.sourceCode = Core.ListToArray(vm.symbolData.sourceCodeBuilder);
+    vm.symbolData.sourceCodeBuilder = null;
+
     vm.metadata.magicNumbers.totalLocaleCount = localeCount;
     vm.metadata.identifiers = Core.ListToArray(vm.metadata.identifiersBuilder);
     vm.metadata.literalTable = Core.ListToArray(vm.metadata.literalTableBuilder);
-    vm.sourceCode = Core.ListToArray(vm.sourceCodeBuilder);
     vm.metadata.globalNameIdToPrimitiveMethodName = primitiveMethodsInitializeLookup(vm.metadata.invIdentifiers);
     vm.funcArgs = new Array<Value>(vm.metadata.identifiers.Size()); // WAY over-allocated but that's okay for now, I guess.
     vm.metadata.projectId = projectId;
     vm.metadata.identifiersBuilder = null;
     vm.metadata.literalTableBuilder = null;
-    vm.sourceCodeBuilder = null;
     vm.initializationComplete = true;
 
     return 0;
@@ -482,7 +483,7 @@ int finalizeInitializationImpl(VmContext vm, string projectId, int localeCount) 
 // TODO: eventually this should come from embedded resources instead of byte code (with the option of it being absent)
 int defOriginalCodeImpl(VmContext vm, Array<int> row, string fileContents) {
     int fileId = row[0]; // file ID
-    List<string> codeLookup = vm.sourceCodeBuilder;
+    List<string> codeLookup = vm.symbolData.sourceCodeBuilder;
     while (codeLookup.Size() <= fileId) {
         codeLookup.Add(null);
     }
@@ -492,7 +493,7 @@ int defOriginalCodeImpl(VmContext vm, Array<int> row, string fileContents) {
 }
 
 int tokenDataImpl(VmContext vm, Array<int> row) {
-    Array<List<Token>> tokensByPc = vm.tokenData;
+    Array<List<Token>> tokensByPc = vm.symbolData.tokenData;
     int pc = row[0] + vm.metadata.userCodeStart; // PC
     int line = row[1]; // Line
     int col = row[2]; // Col
