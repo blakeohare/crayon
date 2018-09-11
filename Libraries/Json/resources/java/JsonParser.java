@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.crayonlang.interpreter.AwtTranslationHelper;
 import org.crayonlang.interpreter.FastList;
 import org.crayonlang.interpreter.Interpreter;
 import org.crayonlang.interpreter.ResourceReader;
