@@ -1,3 +1,3 @@
-$_lib_graphics2d_flipTexture: AwtTranslationHelper.flipImage([ARG:1], [ARG:2], [ARG:3])
+$_lib_graphics2d_flipTexture: Graphics2DHelper.flipImage([ARG:1], [ARG:2], [ARG:3])
 $_lib_graphics2d_render: org.crayonlang.libraries.game.RenderEngine.setRenderQueues([ARG:1], [ARG:2], [ARG:3], [ARG:4])
-$_lib_graphics2d_scale: AwtTranslationHelper.scaleImage([ARG:1], [ARG:2], [ARG:3])
+$_lib_graphics2d_scale: Graphics2DHelper.scaleImage([ARG:1], [ARG:2], [ARG:3])

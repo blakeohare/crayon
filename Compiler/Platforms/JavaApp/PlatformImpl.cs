@@ -41,7 +41,6 @@ namespace JavaApp
             string[] imports = new string[]
             {
                 "import org.crayonlang.interpreter.ResourceReader;",
-                "import org.crayonlang.interpreter.AwtTranslationHelper;",
             };
 
             LangJava.PlatformImpl.ExportJavaLibraries(this, templates, srcPath, libraries, output, imports);
@@ -91,7 +90,6 @@ namespace JavaApp
             // java-app specific files
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/LibraryLoader.java", "Resources/LibraryLoader.java", replacements);
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/ResourceReader.java", "Resources/ResourceReader.java", replacements);
-            this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/AwtTranslationHelper.java", "Resources/AwtTranslationHelper.java", replacements);
 
             this.CopyResourceAsText(output, srcPackagePath + "/Main.java", "Resources/Main.java", replacements);
             this.CopyResourceAsText(output, "build.xml", "Resources/Build.xml", replacements);

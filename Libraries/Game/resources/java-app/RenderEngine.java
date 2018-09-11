@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import org.crayonlang.interpreter.AwtTranslationHelper;
+import java.util.HashMap;
 
 public final class RenderEngine {
 
@@ -207,7 +207,7 @@ public final class RenderEngine {
 					fontSize = events[i | 4] / 1024.0;
 					isBold = events[i | 5] == 1;
 					isItalic = events[i | 6] == 1;
-					font = AwtTranslationHelper.getFont(fontId, fontSize, isBold, isItalic);
+					font = getFont(fontId, fontSize, isBold, isItalic);
 					red = events[i | 7];
 					green = events[i | 8];
 					blue = events[i | 9];
@@ -227,4 +227,21 @@ public final class RenderEngine {
             }
         }
     }
+
+	private static HashMap<String, java.awt.Font> systemFonts = null;
+	private static HashMap<Integer, java.awt.Font> loadedFonts = new HashMap<>();
+	private static HashMap<String, java.awt.Font> loadedFontsWithStyle = new HashMap<>();
+
+	public static java.awt.Font getFont(int fontId, double size, boolean isBold, boolean isItalic) {
+		int sizeKey = (int) (size * 1024 + .5);
+		String key = fontId + "," + sizeKey + "," + (isBold ? "1" : "0") + "," + (isItalic ? "1" : "0");
+		java.awt.Font output = loadedFontsWithStyle.get(key);
+		if (output == null) {
+			output = loadedFonts.get(fontId);
+			int style = (isBold ? java.awt.Font.BOLD : 0) | (isItalic ? java.awt.Font.ITALIC : 0);
+			output = output.deriveFont(style, (float) size);
+			loadedFontsWithStyle.put(key, output);
+		}
+		return output;
+	}
 }

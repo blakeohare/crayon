@@ -5,8 +5,8 @@ LIB_DLL_REF: name=Game, version=v1
 END
 
 BEGIN
-APPLICABLE-TO: java-app-android
-COPY_FILES: from=java-app-android, to=%LIBRARY_PATH%/%FILE%
+APPLICABLE-TO: java-app
+COPY_FILES: from=java, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
