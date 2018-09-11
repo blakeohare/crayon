@@ -38,10 +38,6 @@ namespace Pastel.Transpilers
                     return innerType + "[]";
 
                 case "List":
-                    if (type.Generics[0].RootValue == "Value")
-                    {
-                        return "FastList";
-                    }
                     return "ArrayList<" + this.TranslateJavaNestedType(type.Generics[0]) + ">";
 
                 case "Dictionary":
@@ -196,12 +192,6 @@ namespace Pastel.Transpilers
                     sb.Append(".intValue == 1)");
                     return;
                 }
-                else if (type.RootValue == "List")
-                {
-                    this.TranslateExpression(sb, dotField.Root);
-                    sb.Append(".listValue");
-                    return;
-                }
             }
 
             sb.Append('(');
@@ -291,7 +281,7 @@ namespace Pastel.Transpilers
                 }
 
                 int type = (int)((InlineConstant)firstArg).Value;
-                if (type == 2 || type == 3 || type == 6)
+                if (type == 2 || type == 3)
                 {
                     sb.Append("new Value(");
                     this.TranslateExpression(sb, constructorInvocation.Args[1]);
@@ -477,63 +467,30 @@ namespace Pastel.Transpilers
 
         public override void TranslateListConcat(TranspilerContext sb, Expression list, Expression items)
         {
-            if (list.ResolvedType.Generics[0].RootValue == "Value")
-            {
-                this.TranslateExpression(sb, list);
-                sb.Append(".concat(");
-                this.TranslateExpression(sb, items);
-                sb.Append(')');
-            }
-            else
-            {
-                // Fun fact: this is actually not implemented. The only place that this is used is by Value.
-                sb.Append("PST_concatLists(");
-                this.TranslateExpression(sb, list);
-                sb.Append(", ");
-                this.TranslateExpression(sb, items);
-                sb.Append(')');
-            }
+            // Fun fact: this is actually not implemented. The only place that this is used is by Value.
+            sb.Append("PST_concatLists(");
+            this.TranslateExpression(sb, list);
+            sb.Append(", ");
+            this.TranslateExpression(sb, items);
+            sb.Append(')');
         }
 
         public override void TranslateListGet(TranspilerContext sb, Expression list, Expression index)
         {
-            if (list.ResolvedType.Generics[0].RootValue == "Value")
-            {
-                this.TranslateExpression(sb, list);
-                sb.Append(".items[");
-                this.TranslateExpression(sb, index);
-                sb.Append(']');
-            }
-            else
-            {
-                this.TranslateExpression(sb, list);
-                sb.Append(".get(");
-                this.TranslateExpression(sb, index);
-                sb.Append(')');
-            }
+            this.TranslateExpression(sb, list);
+            sb.Append(".get(");
+            this.TranslateExpression(sb, index);
+            sb.Append(')');
         }
 
         public override void TranslateListInsert(TranspilerContext sb, Expression list, Expression index, Expression item)
         {
-
-            if (list.ResolvedType.Generics[0].RootValue == "Value")
-            {
-                this.TranslateExpression(sb, list);
-                sb.Append(".insert(");
-                this.TranslateExpression(sb, index);
-                sb.Append(", ");
-                this.TranslateExpression(sb, item);
-                sb.Append(')');
-            }
-            else
-            {
-                this.TranslateExpression(sb, list);
-                sb.Append(".add(");
-                this.TranslateExpression(sb, index);
-                sb.Append(", ");
-                this.TranslateExpression(sb, item);
-                sb.Append(')');
-            }
+            this.TranslateExpression(sb, list);
+            sb.Append(".add(");
+            this.TranslateExpression(sb, index);
+            sb.Append(", ");
+            this.TranslateExpression(sb, item);
+            sb.Append(')');
         }
 
         public override void TranslateListJoinChars(TranspilerContext sb, Expression list)
@@ -554,44 +511,29 @@ namespace Pastel.Transpilers
 
         public override void TranslateListNew(TranspilerContext sb, PType type)
         {
-            if (type.RootValue == "Value")
-            {
-                sb.Append("new FastList()");
-            }
-            else
-            {
-                sb.Append("new ArrayList<");
-                sb.Append(this.TranslateJavaNestedType(type));
-                sb.Append(">()");
-            }
+            sb.Append("new ArrayList<");
+            sb.Append(this.TranslateJavaNestedType(type));
+            sb.Append(">()");
         }
 
         public override void TranslateListPop(TranspilerContext sb, Expression list)
         {
-            if (list.ResolvedType.Generics[0].RootValue == "Value")
+            bool useInlineListPop =
+                (list is Variable) ||
+                (list is DotField && ((DotField)list).Root is Variable);
+
+            if (useInlineListPop)
             {
                 this.TranslateExpression(sb, list);
-                sb.Append(".pop()");
+                sb.Append(".remove(");
+                this.TranslateExpression(sb, list);
+                sb.Append(".size() - 1)");
             }
             else
             {
-                bool useInlineListPop =
-                    (list is Variable) ||
-                    (list is DotField && ((DotField)list).Root is Variable);
-
-                if (useInlineListPop)
-                {
-                    this.TranslateExpression(sb, list);
-                    sb.Append(".remove(");
-                    this.TranslateExpression(sb, list);
-                    sb.Append(".size() - 1)");
-                }
-                else
-                {
-                    sb.Append("PST_listPop(");
-                    this.TranslateExpression(sb, list);
-                    sb.Append(')');
-                }
+                sb.Append("PST_listPop(");
+                this.TranslateExpression(sb, list);
+                sb.Append(')');
             }
         }
 
@@ -605,59 +547,33 @@ namespace Pastel.Transpilers
 
         public override void TranslateListReverse(TranspilerContext sb, Expression list)
         {
-            if (list.ResolvedType.Generics[0].RootValue == "Value")
-            {
-                this.TranslateExpression(sb, list);
-                sb.Append(".reverse()");
-            }
-            else
-            {
-                sb.Append("PST_reverseList(");
-                this.TranslateExpression(sb, list);
-                sb.Append(')');
-            }
+            sb.Append("java.util.Collections.reverse(");
+            this.TranslateExpression(sb, list);
+            sb.Append(')');
         }
 
         public override void TranslateListSet(TranspilerContext sb, Expression list, Expression index, Expression value)
         {
-            if (list.ResolvedType.Generics[0].RootValue == "Value")
-            {
-                this.TranslateExpression(sb, list);
-                sb.Append(".items[");
-                this.TranslateExpression(sb, index);
-                sb.Append("] = ");
-                this.TranslateExpression(sb, value);
-            }
-            else
-            {
-                this.TranslateExpression(sb, list);
-                sb.Append(".set(");
-                this.TranslateExpression(sb, index);
-                sb.Append(", ");
-                this.TranslateExpression(sb, value);
-                sb.Append(')');
-            }
+            this.TranslateExpression(sb, list);
+            sb.Append(".set(");
+            this.TranslateExpression(sb, index);
+            sb.Append(", ");
+            this.TranslateExpression(sb, value);
+            sb.Append(')');
         }
 
         public override void TranslateListShuffle(TranspilerContext sb, Expression list)
         {
+            sb.Append("PST_listShuffle(");
             // This is currently only used and implemented by Value lists.
             this.TranslateExpression(sb, list);
-            sb.Append(".shuffle()");
+            sb.Append(')');
         }
 
         public override void TranslateListSize(TranspilerContext sb, Expression list)
         {
             this.TranslateExpression(sb, list);
-
-            if (list.ResolvedType.Generics[0].RootValue == "Value")
-            {
-                sb.Append(".length");
-            }
-            else
-            {
-                sb.Append(".size()");
-            }
+            sb.Append(".size()");
         }
 
         public override void TranslateListToArray(TranspilerContext sb, Expression list)
@@ -690,10 +606,6 @@ namespace Pastel.Transpilers
                     this.TranslateExpression(sb, list);
                     sb.Append(".toArray(PST_emptyArrayString)");
                     break;
-                case "Value":
-                    this.TranslateExpression(sb, list);
-                    sb.Append(".toArray()");
-                    break;
                 case "List":
                     this.TranslateExpression(sb, list);
                     sb.Append(".toArray(PST_emptyArrayList)");
@@ -704,19 +616,25 @@ namespace Pastel.Transpilers
                     break;
                 case "Array":
                     throw new NotImplementedException("not implemented: java list of arrays to array");
+                case "Object":
+                    this.TranslateExpression(sb, list);
+                    sb.Append(".toArray(PST_emptyArrayObject)");
+                    break;
                 default:
                     string javaType = this.TranslateType(itemType);
                     char firstChar = javaType[0];
                     if (firstChar >= 'A' && firstChar <= 'Z')
                     {
                         this.TranslateExpression(sb, list);
-                        sb.Append(".toArray((");
+                        sb.Append(".toArray(");
+                        // TODO: if it's a struct, then perhaps have single empty array instances as a static field on
+                        // each struct type?
                         sb.Append(javaType);
-                        sb.Append("[]) PST_emptyArrayObject)");
+                        sb.Append(".EMPTY_ARRAY)");
                     }
                     else
                     {
-                        // I think I covered all the primitive types that are supported.
+                        // I think I covered all the types that are supported.
                         throw new NotImplementedException();
                     }
                     break;
@@ -785,22 +703,12 @@ namespace Pastel.Transpilers
 
         public override void TranslateMultiplyList(TranspilerContext sb, Expression list, Expression n)
         {
-            if (list.ResolvedType.Generics[0].RootValue == "Value")
-            {
-                this.TranslateExpression(sb, list);
-                sb.Append(".multiply(");
-                this.TranslateExpression(sb, n);
-                sb.Append(')');
-            }
-            else
-            {
-                // not implemented yet because it's not used yet.
-                sb.Append("PST_multiplyList(");
-                this.TranslateExpression(sb, list);
-                sb.Append(", ");
-                this.TranslateExpression(sb, n);
-                sb.Append(')');
-            }
+            // not implemented yet because it's not used yet.
+            sb.Append("PST_multiplyList(");
+            this.TranslateExpression(sb, list);
+            sb.Append(", ");
+            this.TranslateExpression(sb, n);
+            sb.Append(')');
         }
 
         public override void TranslateNullConstant(TranspilerContext sb)
@@ -1155,9 +1063,10 @@ namespace Pastel.Transpilers
 
         public override void GenerateCodeForStruct(TranspilerContext sb, StructDefinition structDef)
         {
-            bool isValue = structDef.NameToken.Value == "Value";
+            string name = structDef.NameToken.Value;
+            bool isValue = name == "Value";
             sb.Append("public final class ");
-            sb.Append(structDef.NameToken.Value);
+            sb.Append(name);
             sb.Append(" {");
             sb.Append(this.NewLine);
             string[] types = structDef.ArgTypes.Select(type => this.TranslateType(type)).ToArray();
@@ -1173,12 +1082,18 @@ namespace Pastel.Transpilers
                 sb.Append(this.NewLine);
             }
 
+            sb.Append("  public static final ");
+            sb.Append(name);
+            sb.Append("[] EMPTY_ARRAY = new ");
+            sb.Append(name);
+            sb.Append("[0];");
+            sb.Append(this.NewLine);
+
             if (isValue)
             {
                 // The overhead of having extra fields on each Value is much less than the overhead
                 // of Java's casting. Particularly on Android.
                 sb.Append("  public int intValue;");
-                sb.Append("  public FastList listValue;");
                 sb.Append(this.NewLine);
             }
 
@@ -1228,17 +1143,6 @@ namespace Pastel.Transpilers
                 sb.Append("    this.intValue = boolValue ? 1 : 0;");
                 sb.Append(this.NewLine);
                 sb.Append("    this.internalValue = boolValue;");
-                sb.Append(this.NewLine);
-                sb.Append("  }");
-                sb.Append(this.NewLine);
-                sb.Append(this.NewLine);
-                sb.Append("  public Value(FastList listValue) {");
-                sb.Append(this.NewLine);
-                sb.Append("    this.type = 6;");
-                sb.Append(this.NewLine);
-                sb.Append("    this.listValue = listValue;");
-                sb.Append(this.NewLine);
-                sb.Append("    this.internalValue = listValue;");
                 sb.Append(this.NewLine);
                 sb.Append("  }");
             }

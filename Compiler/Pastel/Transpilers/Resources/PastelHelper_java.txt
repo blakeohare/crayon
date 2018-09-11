@@ -229,15 +229,40 @@ private static void PST_parseFloatOrReturnNull(double[] outParam, String rawValu
   }
 }
 
-private static <T> void PST_reverseList(ArrayList<T> list) {
-  int length = list.size();
-  if (length < 2) return;
-  int lengthMinusOne = length - 1;
-  for (int i = length / 2 - 1; i >= 0; --i) {
-    T t = list.get(i);
-    int tIndex = lengthMinusOne - i;
-    list.set(i, list.get(tIndex));
-    list.set(tIndex, t);
+private static <T> ArrayList<T> PST_multiplyList(ArrayList<T> list, int n) {
+  int len = list.size();
+  ArrayList<T> output = new ArrayList<T>(len * n);
+  if (len > 0) {
+    if (len == 1) {
+      T t = list.get(0);
+      while (n --> 0) {
+        output.add(t);
+      }
+    } else {
+      while (n --> 0) {
+        output.addAll(list);
+      }
+    }
+  }
+  return output;
+}
+
+private static <T> ArrayList<T> PST_concatLists(ArrayList<T> a, ArrayList<T> b) {
+  ArrayList<T> output = new ArrayList(a.size() + b.size());
+  output.addAll(a);
+  output.addAll(b);
+  return output;
+}
+
+private static <T> void PST_listShuffle(ArrayList<T> list) {
+  int len = list.size();
+  for (int i = len - 1; i >= 0; --i) {
+    int ti = PST_random.nextInt(len);
+    if (ti != i) {
+      T t = list.get(ti);
+      list.set(ti, list.get(i));
+      list.set(i, t);
+    }
   }
 }
 

@@ -47,7 +47,6 @@ namespace LangJava
             {
                 "import java.util.ArrayList;",
                 "import java.util.HashMap;",
-                "import org.crayonlang.interpreter.FastList;",
                 "import org.crayonlang.interpreter.Interpreter;",
                 "import org.crayonlang.interpreter.TranslationHelper;",
                 "import org.crayonlang.interpreter.structs.*;",
@@ -124,10 +123,8 @@ namespace LangJava
             lines.Add("package org.crayonlang.interpreter.structs;");
             lines.Add("");
             bool hasLists = original.Contains("public ArrayList<");
-            bool hasFastLists = original.Contains("FastList");
             bool hasDictionaries = original.Contains("public HashMap<");
             if (hasLists) lines.Add("import java.util.ArrayList;");
-            if (hasFastLists) lines.Add("import org.crayonlang.interpreter.FastList;");
             if (hasDictionaries) lines.Add("import java.util.HashMap;");
             if (hasLists || hasDictionaries) lines.Add("");
 

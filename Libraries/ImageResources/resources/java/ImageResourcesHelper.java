@@ -4,9 +4,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-
-import org.crayonlang.interpreter.FastList;
+import java.util.ArrayList;
 import org.crayonlang.interpreter.ResourceReader;
+import org.crayonlang.interpreter.structs.*;
 
 public final class ImageResourcesHelper {
 
@@ -18,10 +18,12 @@ public final class ImageResourcesHelper {
     imageLoaderNativeData[2] = loaded ? 1 : 2;
   }
 
-  public static boolean imageLoadSync(String genFileName, Object[] nativeImageDataNativeData, FastList outStatusCheesy) {
+  public static boolean imageLoadSync(String genFileName, Object[] nativeImageDataNativeData, ArrayList<Value> outStatusCheesy) {
     BufferedImage image = ResourceReader.loadImageFromLocalFile("images/" + genFileName);
     if (image != null) {
-      if (outStatusCheesy != null) outStatusCheesy.reverse();
+      if (outStatusCheesy != null) {
+        java.util.Collections.reverse(outStatusCheesy);
+      }
       nativeImageDataNativeData[0] = image;
       nativeImageDataNativeData[1] = image.getWidth();
       nativeImageDataNativeData[2] = image.getHeight();

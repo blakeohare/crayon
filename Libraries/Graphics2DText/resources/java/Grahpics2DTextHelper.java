@@ -10,7 +10,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.crayonlang.interpreter.structs.*;
-import org.crayonlang.interpreter.FastList;
 import org.crayonlang.interpreter.ResourceReader;
 
 final class Graphics2DTextHelper {
@@ -40,7 +39,7 @@ final class Graphics2DTextHelper {
 		return font;
 	}
 	
-	public static void addAll(FastList values, Value... toAdd) {
+	public static void addAll(ArrayList<Value> values, Value... toAdd) {
 		for (Value value : toAdd) {
 			values.add(value);
 		}

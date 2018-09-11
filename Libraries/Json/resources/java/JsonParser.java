@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.crayonlang.interpreter.FastList;
 import org.crayonlang.interpreter.Interpreter;
 import org.crayonlang.interpreter.ResourceReader;
 import org.crayonlang.interpreter.structs.*;
@@ -53,7 +52,7 @@ class JsonParser {
 	}
 	
 	private static Value convertJsonToList(VmGlobals globals, org.json.JSONArray list) {
-		FastList output = new FastList();
+		ArrayList<Value> output = new ArrayList<Value>();
 		for (int i = 0; i < list.length(); ++i) {
 			output.add(convertJsonThing(globals, list.get(i)));
 		}

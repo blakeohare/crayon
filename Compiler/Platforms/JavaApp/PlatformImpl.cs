@@ -82,7 +82,6 @@ namespace JavaApp
             };
 
             // common Java helper files
-            this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/FastList.java", "Resources/FastList.java", replacements);
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/LibraryInstance.java", "Resources/LibraryInstance.java", replacements);
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/TranslationHelper.java", "Resources/TranslationHelper.java", replacements);
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/PlatformTranslationHelper.java", "Resources/PlatformTranslationHelper.java", replacements);

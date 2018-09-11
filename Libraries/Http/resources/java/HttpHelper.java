@@ -1,6 +1,5 @@
 package crayonlib.http;
 
-import org.crayonlang.interpreter.FastList;
 import org.crayonlang.interpreter.structs.*;
 
 import java.io.DataOutputStream;
@@ -36,7 +35,7 @@ public class HttpHelper {
 	public static void getResponseBytes(
 		Object byteArrayObj,
 		Value[] integersCache,
-		FastList output) {
+		ArrayList<Value> output) {
 		
 		byte[] bytes = (byte[])byteArrayObj;
 		int length = bytes.length;
