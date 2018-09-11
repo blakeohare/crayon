@@ -332,7 +332,6 @@ namespace CSharpApp
 
             // CSharpOpenTK specific stuff
             this.CopyResourceAsText(output, baseDir + "Vm/PlatformTranslationHelper.cs", "Resources/PlatformTranslationHelper.cs", replacements);
-            this.CopyResourceAsText(output, baseDir + "CSharpAppTranslationHelper.cs", "Resources/CSharpAppTranslationHelper.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "ResourceReader.cs", resourceDir + "/ResourceReader.cs", replacements);
         }
 

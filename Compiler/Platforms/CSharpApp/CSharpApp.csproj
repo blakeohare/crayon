@@ -61,7 +61,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\*.txt" />
+    <EmbeddedResource Include="Resources\AssemblyInfo_cs.txt" />
+    <EmbeddedResource Include="Resources\PlatformTranslationHelper_cs.txt" />
+    <EmbeddedResource Include="Resources\Program_cs.txt" />
+    <EmbeddedResource Include="Resources\ProjectFile_csproj.txt" />
+    <EmbeddedResource Include="Resources\ResourceReader_cs.txt" />
+    <EmbeddedResource Include="Resources\SolutionFileOsx_sln.txt" />
+    <EmbeddedResource Include="Resources\SolutionFile_sln.txt" />
     <EmbeddedResource Include="ResourcesVm\*.txt" />
     <EmbeddedResource Include="ResourcesVm\*.ico" />
     <EmbeddedResource Include="ResourcesLib\*.txt" />
