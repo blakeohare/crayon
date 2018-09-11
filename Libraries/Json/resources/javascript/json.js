@@ -8,7 +8,7 @@ LIB$json$parseJson = function(globals, rawText) {
 };
 
 LIB$json$convertJsonThing = function(globals, thing) {
-    var type = C$common$typeClassify(thing);
+    var type = LIB$Json$typeClassifyHelper(thing);
     switch (type) {
         case 'null': return v_buildNull(globals);
         case 'bool': return v_buildBoolean(globals, thing);
@@ -34,4 +34,22 @@ LIB$json$convertJsonThing = function(globals, thing) {
         default:
             return v_buildNull(globals);
     }
+};
+
+LIB$Json$typeClassifyHelper = function(t) {
+    if (t === null) return 'null';
+    if (t === true || t === false) return 'bool';
+    if (typeof t == "string") return 'string';
+    if (typeof t == "number") {
+        if (t % 1 == 0) return 'int';
+        return 'float';
+    }
+    ts = Object.prototype.toString.call(t);
+    if (ts == '[object Array]') {
+        return 'list';
+    }
+    if (ts == '[object Object]') {
+        return 'dict';
+    }
+    return 'null';
 };

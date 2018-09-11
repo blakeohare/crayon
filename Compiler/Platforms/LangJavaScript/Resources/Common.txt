@@ -57,11 +57,11 @@ C$common$alwaysTrue = function () { return true; };
 C$common$alwaysFalse = function () { return false; };
 
 C$common$addTextRes = function (path, value) {
-    C$common$textResources[path] = value;
+	C$common$textResources[path] = value;
 };
 
 C$common$getTextRes = function (path) {
-    return C$common$textResources[path];
+	return C$common$textResources[path];
 };
 
 C$common$addBinaryRes = function (path, value) {
@@ -73,117 +73,7 @@ C$common$getBinaryResBase64 = function (path) {
 };
 
 C$common$print = function (value) {
-    console.log(value);
-};
-
-C$common$is_valid_integer = function (value) {
-    var test = parseInt(value);
-    // NaN produces a paradocical value that fails the following tests...
-    // TODO: verify this on all browsers
-    return test < 0 || test >= 0;
-};
-
-C$common$floatParseHelper = function(floatOut, text) {
-    var output = parseFloat(text);
-    if (output + '' == 'NaN') {
-        floatOut[0] = -1;
-        return;
-    }
-    floatOut[0] = 1;
-    floatOut[1] = output;
-};
-
-// currently only used by the JSON library but potentially useful elsewhere
-C$common$typeClassify = function(t) {
-    if (t === null) return 'null';
-    if (t === true || t === false) return 'bool';
-    if (typeof t == "string") return 'string';
-    if (typeof t == "number") {
-        if (t % 1 == 0) return 'int';
-        return 'float';
-    }
-    ts = Object.prototype.toString.call(t);
-    if (ts == '[object Array]') {
-        return 'list';
-    }
-    if (ts == '[object Object]') {
-        return 'dict';
-    }
-    return 'null';
-};
-
-C$common$dictionaryKeys = function (dictionary) {
-    var output = [];
-    for (var key in dictionary) {
-        output.push(key);
-    }
-    return output;
-};
-
-C$common$dictionaryValues = function (dictionary) {
-    var output = [];
-    for (var key in dictionary) {
-        output.push(dictionary[key]);
-    }
-    return output;
-};
-
-C$common$stringEndsWith = function (value, findme) {
-    return value.indexOf(findme, value.length - findme.length) !== -1;
-};
-
-C$common$shuffle = function (list) {
-    var t;
-    var length = list.length;
-    var tindex;
-    for (i = length - 1; i >= 0; --i) {
-        tindex = Math.floor(Math.random() * length);
-        t = list[tindex];
-        list[tindex] = list[i];
-        list[i] = t;
-    }
-};
-
-C$common$createNewArray = function (size) {
-    var output = [];
-    while (size-- > 0) output.push(null);
-    return output;
-};
-
-C$common$substring = function (s, start, len) {
-    return len === null ? s.substring(start) : s.substring(start, start + len);
-};
-
-C$common$checksubstring = function (s, lookfor, index) {
-    return s.substring(index, index + lookfor.length) === lookfor;
-};
-
-C$common$clearList = function (list) {
-    list.length = 0;
-};
-
-C$common$stringTrimOneSide = function (value, isLeft) {
-    var i = isLeft ? 0 : value.length - 1;
-    var end = isLeft ? value.length : -1;
-    var step = isLeft ? 1 : -1;
-    var c;
-    var trimming = true;
-    while (trimming && i != end) {
-        c = value.charAt(i);
-        switch (c) {
-            case ' ':
-            case '\n':
-            case '\t':
-            case '\r':
-                i += step;
-                break;
-            default:
-                trimming = false;
-                break;
-        }
-    }
-
-    return isLeft ? value.substring(i) : value.substring(0, i + 1);
+	console.log(value);
 };
 
 C$common$scrapeLibFuncNames = function(libname) {
@@ -191,7 +81,8 @@ C$common$scrapeLibFuncNames = function(libname) {
 	var functions = {};
 	for (var key in window) {
 		if (key.indexOf(prefix) === 0) {
-			functions[C$common$substring(key, prefix.length, key.length)] = window[key];
+			var name = key.substring(prefix.length, key.length + prefix.length);
+			functions[name] = window[key];
 		}
 	}
 	C$common$libraryFunctionLookups[libname] = functions;

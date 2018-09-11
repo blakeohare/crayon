@@ -37,7 +37,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateArrayNew(TranspilerContext sb, PType arrayType, Expression lengthExpression)
         {
-            sb.Append("C$common$createNewArray(");
+            sb.Append("PST$createNewArray(");
             this.TranslateExpression(sb, lengthExpression);
             sb.Append(')');
         }
@@ -116,7 +116,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateDictionaryKeys(TranspilerContext sb, Expression dictionary)
         {
-            sb.Append("C$common$dictionaryKeys(");
+            sb.Append("PST$dictionaryKeys(");
             this.TranslateExpression(sb, dictionary);
             sb.Append(')');
         }
@@ -153,7 +153,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateDictionaryValues(TranspilerContext sb, Expression dictionary)
         {
-            sb.Append("C$common$dictionaryValues(");
+            sb.Append("PST$dictionaryValues(");
             this.TranslateExpression(sb, dictionary);
             sb.Append(')');
         }
@@ -215,7 +215,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateIsValidInteger(TranspilerContext sb, Expression stringValue)
         {
-            sb.Append("C$common$is_valid_integer(");
+            sb.Append("PST$is_valid_integer(");
             this.TranslateExpression(sb, stringValue);
             sb.Append(')');
         }
@@ -230,7 +230,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateListClear(TranspilerContext sb, Expression list)
         {
-            sb.Append("C$common$clearList(");
+            sb.Append("PST$clearList(");
             this.TranslateExpression(sb, list);
             sb.Append(')');
         }
@@ -311,7 +311,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateListShuffle(TranspilerContext sb, Expression list)
         {
-            sb.Append("C$common$shuffle(");
+            sb.Append("PST$shuffle(");
             this.TranslateExpression(sb, list);
             sb.Append(')');
         }
@@ -393,7 +393,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateMultiplyList(TranspilerContext sb, Expression list, Expression n)
         {
-            sb.Append("C$common$multiplyList(");
+            sb.Append("PST$multiplyList(");
             this.TranslateExpression(sb, list);
             sb.Append(", ");
             this.TranslateExpression(sb, n);
@@ -525,7 +525,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringEndsWith(TranspilerContext sb, Expression haystack, Expression needle)
         {
-            sb.Append("C$common$stringEndsWith(");
+            sb.Append("PST$stringEndsWith(");
             this.TranslateExpression(sb, haystack);
             sb.Append(", ");
             this.TranslateExpression(sb, needle);
@@ -617,7 +617,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringSubstringIsEqualTo(TranspilerContext sb, Expression haystack, Expression startIndex, Expression needle)
         {
-            sb.Append("C$common$checkStringInString(");
+            sb.Append("PST$checksubstring(");
             this.TranslateExpression(sb, haystack);
             sb.Append(", ");
             this.TranslateExpression(sb, startIndex);
@@ -646,14 +646,14 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringTrimEnd(TranspilerContext sb, Expression str)
         {
-            sb.Append("C$common$stringTrimOneSide(");
+            sb.Append("PST$stringTrimOneSide(");
             this.TranslateExpression(sb, str);
             sb.Append(", false)");
         }
 
         public override void TranslateStringTrimStart(TranspilerContext sb, Expression str)
         {
-            sb.Append("C$common$stringTrimOneSide(");
+            sb.Append("PST$stringTrimOneSide(");
             this.TranslateExpression(sb, str);
             sb.Append(", true)");
         }
@@ -673,7 +673,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateTryParseFloat(TranspilerContext sb, Expression stringValue, Expression floatOutList)
         {
-            sb.Append("C$common$floatParseHelper(");
+            sb.Append("PST$floatParseHelper(");
             this.TranslateExpression(sb, floatOutList);
             sb.Append(", ");
             this.TranslateExpression(sb, stringValue);
