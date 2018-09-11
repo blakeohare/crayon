@@ -1,5 +1,4 @@
 ﻿using Common;
-using Pastel;
 using System;
 using System.Collections.Generic;
 
@@ -7,14 +6,14 @@ namespace Platform
 {
     public abstract class AbstractPlatform
     {
-        public AbstractPlatform(Language language)
+        public AbstractPlatform(string language)
         {
             this.Language = language;
         }
 
         public IPlatformProvider PlatformProvider { get; set; }
 
-        public Language Language { get; private set; }
+        public string Language { get; private set; }
         public abstract string Name { get; }
         public abstract string InheritsFrom { get; }
 

@@ -1,5 +1,4 @@
 ﻿using Common;
-using Pastel;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -13,7 +12,7 @@ namespace LangPython
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-            : base(Language.PYTHON)
+            : base("PYTHON")
         { }
 
         public override IDictionary<string, object> GetConstantFlags()

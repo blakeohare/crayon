@@ -1,5 +1,4 @@
 ﻿using Common;
-using Pastel;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ namespace JavaApp
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-            : base(Language.JAVA)
+            : base("JAVA")
         { }
 
         public override void ExportStandaloneVm(

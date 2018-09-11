@@ -17,11 +17,22 @@ namespace Pastel
         internal AbstractTranslator Transpiler { get; private set; }
         public IInlineImportCodeLoader CodeLoader { get; private set; }
 
-        public PastelContext(Language language, IInlineImportCodeLoader codeLoader)
+        public PastelContext(string languageId, IInlineImportCodeLoader codeLoader)
         {
+            Language lang;
+            switch (languageId)
+            {
+                case "C": lang = Language.C; break;
+                case "CSHARP": lang = Language.CSHARP; break;
+                case "JAVA": lang = Language.JAVA; break;
+                case "JAVASCRIPT": lang = Language.JAVASCRIPT; break;
+                case "PYTHON": lang = Language.PYTHON; break;
+                default: throw new System.InvalidOperationException();
+            }
+
             this.CodeLoader = codeLoader;
-            this.Language = language;
-            this.Transpiler = LanguageUtil.GetTranspiler(language);
+            this.Language = lang;
+            this.Transpiler = LanguageUtil.GetTranspiler(lang);
         }
 
         // TODO: refactor this all into a platform capabilities object.

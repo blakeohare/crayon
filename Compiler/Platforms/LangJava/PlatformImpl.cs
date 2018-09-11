@@ -1,6 +1,4 @@
 ﻿using Common;
-using Pastel;
-using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -14,7 +12,7 @@ namespace LangJava
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-            : base(Language.JAVA)
+            : base("JAVA")
         { }
 
         public override void ExportStandaloneVm(
@@ -59,7 +57,6 @@ namespace LangJava
             {
                 if (library.HasPastelCode)
                 {
-                    TranspilerContext ctx = library.PastelContext.GetTranspilerContext();
                     List<string> libraryCode = new List<string>()
                     {
                         "package org.crayonlang.libraries." + library.Name.ToLower() + ";",

@@ -1,5 +1,4 @@
 ﻿using Common;
-using Pastel;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -14,7 +13,7 @@ namespace JavaScriptAppAndroid
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-            : base(Language.JAVASCRIPT)
+            : base("JAVASCRIPT")
         { }
 
         public override void ExportProject(

@@ -1,5 +1,4 @@
 ﻿using Common;
-using Pastel;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -13,7 +12,7 @@ namespace LangCSharp
         public override string NL { get { return "\r\n"; } }
 
         public PlatformImpl()
-            : base(Language.CSHARP)
+            : base("CSHARP")
         { }
 
         public override IDictionary<string, object> GetConstantFlags()

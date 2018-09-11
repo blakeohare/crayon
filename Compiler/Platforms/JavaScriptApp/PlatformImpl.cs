@@ -1,5 +1,4 @@
 ﻿using Common;
-using Pastel;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,7 @@ namespace JavaScriptApp
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-            : base(Language.JAVASCRIPT)
+            : base("JAVASCRIPT")
         { }
 
         public override IDictionary<string, object> GetConstantFlags()
@@ -80,7 +79,6 @@ namespace JavaScriptApp
                 if (library.HasPastelCode)
                 {
                     string libraryName = library.Name;
-                    PastelContext libContext = library.PastelContext;
 
                     List<string> libraryLines = new List<string>();
                     libraryLines.Add(templates.GetCode("library:" + libraryName + ":manifestfunc"));

@@ -1,6 +1,4 @@
 ﻿using Common;
-using Pastel;
-using Pastel.Transpilers;
 using Platform;
 using System;
 using System.Collections.Generic;
@@ -15,7 +13,7 @@ namespace PythonApp
         public override string NL { get { return "\n"; } }
 
         public PlatformImpl()
-            : base(Language.PYTHON)
+            : base("PYTHON")
         { }
 
         public override IDictionary<string, object> GetConstantFlags()
@@ -54,7 +52,6 @@ namespace PythonApp
 
             foreach (LibraryForExport library in libraries)
             {
-                TranspilerContext libCtx = library.PastelContext.GetTranspilerContext();
                 string libraryName = library.Name;
                 List<string> libraryLines = new List<string>();
                 if (library.HasPastelCode)
