@@ -12,7 +12,6 @@ namespace Pastel.Transpilers
         public string NewLine { get; private set; }
 
         public bool UsesStructDefinitions { get; protected set; }
-        public bool UsesStringTable { get; protected set; }
         public bool UsesFunctionDeclarations { get; protected set; }
         public bool UsesStructDeclarations { get; protected set; }
 
@@ -23,7 +22,6 @@ namespace Pastel.Transpilers
             this.UsesStructDefinitions = true;
             this.UsesFunctionDeclarations = false;
             this.UsesStructDeclarations = false;
-            this.UsesStringTable = false;
 
             this.NewLine = newLine;
             this.TabChar = tab;
@@ -496,13 +494,6 @@ namespace Pastel.Transpilers
 
         // Overridden in languages that require a function to be declared separately in order for declaration order to not matter, such as C.
         public virtual void GenerateCodeForFunctionDeclaration(TranspilerContext sb, FunctionDefinition funcDef)
-        {
-            throw new NotSupportedException();
-        }
-
-        // Overridden in languages that can't allocate strings in the local scope.
-        // For example, strings allocated in C will be reclaimed once the scope ends.
-        public virtual void GenerateCodeForStringTable(TranspilerContext sb, StringTableBuilder stringTable)
         {
             throw new NotSupportedException();
         }

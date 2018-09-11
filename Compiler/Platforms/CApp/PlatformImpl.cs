@@ -50,8 +50,6 @@ namespace CApp
             }
             cCode.Append(this.NL);
 
-            cCode.Append(templates.GetCode("vm:stringtable"));
-            cCode.Append(this.NL);
             cCode.Append(templates.GetCode("vm:functionsdecl"));
             cCode.Append(this.NL);
             cCode.Append(templates.GetCode("vm:functions"));

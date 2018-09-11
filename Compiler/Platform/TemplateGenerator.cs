@@ -10,11 +10,6 @@ namespace Platform
             TemplateStorage templates,
             PastelContext vmContext)
         {
-            if (vmContext.UsesStringTable)
-            {
-                vmContext.GetTranspilerContext().StringTableBuilder = new Pastel.Transpilers.StringTableBuilder("VM");
-            }
-
             if (vmContext.UsesFunctionDeclarations)
             {
                 string functionDeclarationCode = vmContext.GetCodeForFunctionDeclarations();
@@ -64,13 +59,6 @@ namespace Platform
                     "\t};",
                     "};",
                 }));
-            }
-
-            if (vmContext.UsesStringTable)
-            {
-                templates.AddPastelTemplate(
-                    "vm:stringtable",
-                    vmContext.GetStringConstantTable());
             }
         }
 

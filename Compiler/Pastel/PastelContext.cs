@@ -37,7 +37,6 @@ namespace Pastel
 
         // TODO: refactor this all into a platform capabilities object.
         public bool UsesStructDefinitions { get { return this.Transpiler.UsesStructDefinitions; } }
-        public bool UsesStringTable {  get { return this.Transpiler.UsesStringTable; } }
         public bool UsesFunctionDeclarations { get { return this.Transpiler.UsesFunctionDeclarations; } }
         public bool UsesStructDeclarations { get { return this.Transpiler.UsesStructDeclarations; } }
 
@@ -154,13 +153,6 @@ namespace Pastel
         {
             TranspilerContext ctx = this.GetTranspilerContext();
             return this.compiler.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(name, swapOutWithNewNameOrNull, ctx, "");
-        }
-
-        public string GetStringConstantTable()
-        {
-            TranspilerContext ctx = this.GetTranspilerContext();
-            this.Transpiler.GenerateCodeForStringTable(ctx, ctx.StringTableBuilder);
-            return ctx.FlushAndClearBuffer();
         }
     }
 }

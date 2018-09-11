@@ -6,9 +6,7 @@ namespace Pastel.Transpilers
     public class TranspilerContext
     {
         private System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-
-        public StringTableBuilder StringTableBuilder { get; set; }
-
+        
         internal List<PythonFakeSwitchStatement> SwitchStatements { get; private set; }
 
         public string UniquePrefixForNonCollisions { get; set; }

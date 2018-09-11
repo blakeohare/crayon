@@ -9,7 +9,6 @@ namespace Pastel.Transpilers
         public CTranslator()
             : base("    ", "\n", false)
         {
-            this.UsesStringTable = true;
             this.UsesStructDeclarations = true;
             this.UsesFunctionDeclarations = true;
         }
@@ -752,10 +751,9 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringConstant(TranspilerContext sb, string value)
         {
-            sb.Append(sb.StringTableBuilder.GetId(value));
-            sb.Append("/* ");
-            sb.Append(Common.Util.ConvertStringValueToCode(value).Replace("*/", "* /"));
-            sb.Append(" */");
+            // TODO: append string constants as static references
+            // This used to be done via a string table class, but ideally the definitions should be inline.
+            throw new NotImplementedException();
         }
 
         public override void TranslateStringContains(TranspilerContext sb, Expression haystack, Expression needle)
@@ -1037,39 +1035,7 @@ namespace Pastel.Transpilers
             }
             sb.Append(");");
         }
-
-        public override void GenerateCodeForStringTable(TranspilerContext sb, StringTableBuilder stringTable)
-        {
-            List<string> names = stringTable.Names;
-            List<string> values = stringTable.Values;
-            int total = names.Count;
-            for (int i = 0; i < total; ++i)
-            {
-                sb.Append("int* ");
-                sb.Append(names[i]);
-                sb.Append(';');
-                sb.Append(this.NewLine);
-            }
-            sb.Append("void populate_string_table_for_");
-            sb.Append(stringTable.Prefix);
-            sb.Append("()");
-            sb.Append(this.NewLine);
-            sb.Append('{');
-            sb.Append(this.NewLine);
-            for (int i = 0; i < total; ++i)
-            {
-                sb.Append('\t');
-                sb.Append(names[i]);
-                sb.Append(" = String_from_utf8(");
-                sb.Append(Common.Util.ConvertStringValueToCode(values[i]).Replace("%", "%%"));
-                sb.Append(");");
-                sb.Append(this.NewLine);
-            }
-            sb.Append('}');
-            sb.Append(this.NewLine);
-            sb.Append(this.NewLine);
-        }
-
+        
         public override void GenerateCodeForStructDeclaration(TranspilerContext sb, string structName)
         {
             sb.Append("typedef struct ");
