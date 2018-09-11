@@ -389,23 +389,23 @@ Array<Array<int>> generateEsfData(int byteCodeLength, Array<int> esfArgs) {
 
     for (int pc = 0; pc < byteCodeLength; pc += 1) {
         // Check to see if a new ESF arg needs to be pushed onto the stack.
-        if ((esfArgIterator < esfArgLength) && (pc == esfArgs[esfArgIterator])) {
+        if (esfArgIterator < esfArgLength && pc == esfArgs[esfArgIterator]) {
             // push the next esf arg onto the stack.
             esfTokenStackTop = new Array<int>(2);
             for (j = 1; j < 3; j += 1) {
-                esfTokenStackTop[(j - 1)] = esfArgs[(esfArgIterator + j)];
+                esfTokenStackTop[j - 1] = esfArgs[esfArgIterator + j];
             }
             esfTokenStack.Add(esfTokenStackTop);
             esfArgIterator += 3;
         }
 
         // Check to see if the top of the ESF stack needs to be popped
-        while ((esfTokenStackTop != null) && (esfTokenStackTop[1] <= pc)) {
+        while (esfTokenStackTop != null && esfTokenStackTop[1] <= pc) {
             esfTokenStack.Pop();
             if (esfTokenStack.Size() == 0) {
                 esfTokenStackTop = null;
             } else {
-                esfTokenStackTop = esfTokenStack[(esfTokenStack.Size() - 1)];
+                esfTokenStackTop = esfTokenStack[esfTokenStack.Size() - 1];
             }
         }
 

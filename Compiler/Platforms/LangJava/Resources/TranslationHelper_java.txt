@@ -49,7 +49,7 @@ public final class TranslationHelper {
   private static InterpreterResult handleVmResult(InterpreterResult result, boolean invokeSystemExit) {
     while (result.status == 5 || result.status == 6) {
       if (result.status == 5) {
-      double sleepForSeconds = result.reinvokeDelay;
+        double sleepForSeconds = result.reinvokeDelay;
         try {
           Thread.sleep((int)(1000 * sleepForSeconds));
         } catch (InterruptedException e) {

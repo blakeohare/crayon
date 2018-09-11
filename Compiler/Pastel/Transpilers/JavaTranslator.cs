@@ -1216,6 +1216,8 @@ namespace Pastel.Transpilers
                 sb.Append(this.NewLine);
                 sb.Append("    this.intValue = intValue;");
                 sb.Append(this.NewLine);
+                sb.Append("    this.internalValue = intValue;");
+                sb.Append(this.NewLine);
                 sb.Append("  }");
                 sb.Append(this.NewLine);
                 sb.Append(this.NewLine);
@@ -1225,6 +1227,8 @@ namespace Pastel.Transpilers
                 sb.Append(this.NewLine);
                 sb.Append("    this.intValue = boolValue ? 1 : 0;");
                 sb.Append(this.NewLine);
+                sb.Append("    this.internalValue = boolValue;");
+                sb.Append(this.NewLine);
                 sb.Append("  }");
                 sb.Append(this.NewLine);
                 sb.Append(this.NewLine);
@@ -1233,6 +1237,8 @@ namespace Pastel.Transpilers
                 sb.Append("    this.type = 6;");
                 sb.Append(this.NewLine);
                 sb.Append("    this.listValue = listValue;");
+                sb.Append(this.NewLine);
+                sb.Append("    this.internalValue = listValue;");
                 sb.Append(this.NewLine);
                 sb.Append("  }");
             }
