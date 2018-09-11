@@ -113,13 +113,6 @@ namespace JavaScriptApp
 
             this.CopyResourceAsText(output, "common.js", "Resources/Common.txt", replacements);
 
-            TODO.JavaScriptDeGamification();
-            output["lib_supplemental.js"] = new FileOutput()
-            {
-                Type = FileOutputType.Text,
-                TextContent = this.LoadTextResource("Resources/ImageResource.txt", replacements),
-            };
-
             StringBuilder resourcesJs = new StringBuilder();
 
             foreach (FileOutput textResource in resourceDatabase.TextResources)

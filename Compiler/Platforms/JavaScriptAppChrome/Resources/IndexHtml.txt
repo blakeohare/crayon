@@ -18,7 +18,6 @@
 		<script type="text/javascript" src="vm.js"></script>
 		<script type="text/javascript" src="bytecode.js"></script>
 		<script type="text/javascript" src="resources.js"></script>
-		<script type="text/javascript" src="lib_supplemental.js"></script>
 %%%JS_LIB_INCLUSIONS%%%
 		<script type="text/javascript" src="chrome_web_app.js"></script>
 	</head>
