@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Parser.Crayon
 {
-    internal class ExecutableParser
+    internal class ExecutableParser : IExecutableParser
     {
         private ParserContext parser;
         public ExecutableParser(ParserContext parser)
@@ -84,7 +84,7 @@ namespace Parser.Crayon
             return new ExpressionAsExecutable(expr, owner);
         }
 
-        internal IList<Executable> ParseBlock(TokenStream tokens, bool bracketsRequired, Node owner)
+        public IList<Executable> ParseBlock(TokenStream tokens, bool bracketsRequired, Node owner)
         {
             List<Executable> output = new List<Executable>();
 
