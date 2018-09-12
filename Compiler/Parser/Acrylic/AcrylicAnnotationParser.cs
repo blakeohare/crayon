@@ -1,14 +1,14 @@
 ﻿namespace Parser.Acrylic
 {
-    internal class AnnotationParser : IAnnotationParser
+    internal class AcrylicAnnotationParser : AbstractAnnotationParser
     {
         private ParserContext parser;
-        public AnnotationParser(ParserContext parser)
+        public AcrylicAnnotationParser(ParserContext parser)
         {
             this.parser = parser;
         }
 
-        public AnnotationCollection ParseAnnotations(TokenStream tokens)
+        internal override AnnotationCollection ParseAnnotations(TokenStream tokens)
         {
             throw new System.NotImplementedException();
         }

@@ -4,15 +4,15 @@ using System.Collections.Generic;
 
 namespace Parser.Crayon
 {
-    internal class ExpressionParser : IExpressionParser
+    internal class CrayonExpressionParser : AbstractExpressionParser
     {
         private ParserContext parser;
-        public ExpressionParser(ParserContext parser)
+        public CrayonExpressionParser(ParserContext parser)
         {
             this.parser = parser;
         }
 
-        public Expression Parse(TokenStream tokens, Node owner)
+        internal override Expression Parse(TokenStream tokens, Node owner)
         {
             return ParseTernary(tokens, owner);
         }

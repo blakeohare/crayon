@@ -6,15 +6,15 @@ using System.Linq;
 
 namespace Parser.Crayon
 {
-    internal class TopLevelParser : ITopLevelParser
+    internal class CrayonTopLevelParser : AbstractTopLevelParser
     {
         private ParserContext parser;
-        public TopLevelParser(ParserContext parser)
+        public CrayonTopLevelParser(ParserContext parser)
         {
             this.parser = parser;
         }
 
-        public ImportStatement ParseImport(TokenStream tokens, FileScope fileScope)
+        internal override ImportStatement ParseImport(TokenStream tokens, FileScope fileScope)
         {
             Token importToken = tokens.PopExpected(parser.Keywords.IMPORT);
             List<string> importPathBuilder = new List<string>();
@@ -34,7 +34,7 @@ namespace Parser.Crayon
             return new ImportStatement(importToken, importPath, fileScope);
         }
 
-        public TopLevelEntity Parse(
+        internal override TopLevelEntity Parse(
             TokenStream tokens,
             TopLevelEntity owner,
             FileScope fileScope)

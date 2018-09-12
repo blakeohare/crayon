@@ -2,20 +2,20 @@
 
 namespace Parser.Acrylic
 {
-    internal class TopLevelParser : ITopLevelParser
+    internal class AcrylicTopLevelParser : AbstractTopLevelParser
     {
         private ParserContext parser;
-        public TopLevelParser(ParserContext parser)
+        public AcrylicTopLevelParser(ParserContext parser)
         {
             this.parser = parser;
         }
 
-        public TopLevelEntity Parse(TokenStream tokens, TopLevelEntity owner, FileScope fileScope)
+        internal override TopLevelEntity Parse(TokenStream tokens, TopLevelEntity owner, FileScope fileScope)
         {
             throw new System.NotImplementedException();
         }
 
-        public ImportStatement ParseImport(TokenStream tokens, FileScope fileScope)
+        internal override ImportStatement ParseImport(TokenStream tokens, FileScope fileScope)
         {
             throw new System.NotImplementedException();
         }

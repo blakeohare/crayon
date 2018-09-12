@@ -32,16 +32,16 @@ namespace Parser
             switch (buildContext.TopLevelAssembly.ProgrammingLanguage.ToLowerInvariant())
             {
                 case "crayon":
-                    this.TopLevelParser = new Crayon.TopLevelParser(this);
-                    this.ExpressionParser = new Crayon.ExpressionParser(this);
-                    this.ExecutableParser = new Crayon.ExecutableParser(this);
-                    this.AnnotationParser = new Crayon.AnnotationParser(this);
+                    this.TopLevelParser = new Crayon.CrayonTopLevelParser(this);
+                    this.ExpressionParser = new Crayon.CrayonExpressionParser(this);
+                    this.ExecutableParser = new Crayon.CrayonExecutableParser(this);
+                    this.AnnotationParser = new Crayon.CrayonAnnotationParser(this);
                     break;
                 case "acrylic":
-                    this.TopLevelParser = new Acrylic.TopLevelParser(this);
-                    this.ExpressionParser = new Acrylic.ExpressionParser(this);
-                    this.ExecutableParser = new Acrylic.ExecutableParser(this);
-                    this.AnnotationParser = new Acrylic.AnnotationParser(this);
+                    this.TopLevelParser = new Acrylic.AcrylicTopLevelParser(this);
+                    this.ExpressionParser = new Acrylic.AcrylicExpressionParser(this);
+                    this.ExecutableParser = new Acrylic.AcrylicExecutableParser(this);
+                    this.AnnotationParser = new Acrylic.AcrylicAnnotationParser(this);
                     break;
             }
         }
@@ -123,10 +123,10 @@ namespace Parser
             this.ReservedKeywords = new HashSet<string>(this.CurrentLocale.GetKeywordsList());
         }
 
-        internal ITopLevelParser TopLevelParser { get; private set; }
-        internal IExpressionParser ExpressionParser { get; private set; }
-        internal IExecutableParser ExecutableParser { get; private set; }
-        internal IAnnotationParser AnnotationParser { get; private set; }
+        internal AbstractTopLevelParser TopLevelParser { get; private set; }
+        internal AbstractExpressionParser ExpressionParser { get; private set; }
+        internal AbstractExecutableParser ExecutableParser { get; private set; }
+        internal AbstractAnnotationParser AnnotationParser { get; private set; }
 
         public Locale CurrentLocale { get; private set; }
         public Locale.KeywordsLookup Keywords { get; private set; }

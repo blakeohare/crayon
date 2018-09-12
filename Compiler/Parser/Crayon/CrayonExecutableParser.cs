@@ -5,10 +5,10 @@ using System.Linq;
 
 namespace Parser.Crayon
 {
-    internal class ExecutableParser : IExecutableParser
+    internal class CrayonExecutableParser : AbstractExecutableParser
     {
         private ParserContext parser;
-        public ExecutableParser(ParserContext parser)
+        public CrayonExecutableParser(ParserContext parser)
         {
             this.parser = parser;
         }
@@ -16,7 +16,7 @@ namespace Parser.Crayon
         private static readonly HashSet<string> ASSIGNMENT_OPS = new HashSet<string>(
             "= += -= *= /= %= |= &= ^= <<= >>=".Split(' '));
 
-        public Executable Parse(
+        internal override Executable Parse(
             TokenStream tokens,
             bool simpleOnly,
             bool semicolonPresent,
@@ -84,7 +84,7 @@ namespace Parser.Crayon
             return new ExpressionAsExecutable(expr, owner);
         }
 
-        public IList<Executable> ParseBlock(TokenStream tokens, bool bracketsRequired, Node owner)
+        internal override IList<Executable> ParseBlock(TokenStream tokens, bool bracketsRequired, Node owner)
         {
             List<Executable> output = new List<Executable>();
 
