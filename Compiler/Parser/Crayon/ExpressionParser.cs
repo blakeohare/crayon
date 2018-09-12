@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Parser
+namespace Parser.Crayon
 {
     internal class ExpressionParser
     {
