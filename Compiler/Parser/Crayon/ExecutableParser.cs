@@ -3,7 +3,7 @@ using Parser.ParseTree;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser
+namespace Parser.Crayon
 {
     internal class ExecutableParser
     {
