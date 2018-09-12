@@ -2,11 +2,7 @@
 {
     internal class AcrylicAnnotationParser : AbstractAnnotationParser
     {
-        private ParserContext parser;
-        public AcrylicAnnotationParser(ParserContext parser)
-        {
-            this.parser = parser;
-        }
+        public AcrylicAnnotationParser(ParserContext parser) : base(parser) { }
 
         internal override AnnotationCollection ParseAnnotations(TokenStream tokens)
         {

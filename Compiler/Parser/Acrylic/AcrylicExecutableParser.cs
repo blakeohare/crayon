@@ -5,11 +5,9 @@ namespace Parser.Acrylic
 {
     internal class AcrylicExecutableParser : AbstractExecutableParser
     {
-        private ParserContext parser;
         public AcrylicExecutableParser(ParserContext parser)
-        {
-            this.parser = parser;
-        }
+            : base(parser)
+        { }
 
         internal override Executable Parse(TokenStream tokens, bool simpleOnly, bool semicolonPresent, Node owner)
         {
