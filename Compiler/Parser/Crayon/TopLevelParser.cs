@@ -4,9 +4,9 @@ using Parser.ParseTree;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser
+namespace Parser.Crayon
 {
-    internal class TopLevelParser
+    internal class TopLevelParser : ITopLevelParser
     {
         private ParserContext parser;
         public TopLevelParser(ParserContext parser)
@@ -14,7 +14,7 @@ namespace Parser
             this.parser = parser;
         }
 
-        internal ImportStatement ParseImport(TokenStream tokens, FileScope fileScope)
+        public ImportStatement ParseImport(TokenStream tokens, FileScope fileScope)
         {
             Token importToken = tokens.PopExpected(parser.Keywords.IMPORT);
             List<string> importPathBuilder = new List<string>();
@@ -34,7 +34,7 @@ namespace Parser
             return new ImportStatement(importToken, importPath, fileScope);
         }
 
-        internal TopLevelEntity Parse(
+        public TopLevelEntity Parse(
             TokenStream tokens,
             TopLevelEntity owner,
             FileScope fileScope)

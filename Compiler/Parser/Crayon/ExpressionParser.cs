@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Parser.Crayon
 {
-    internal class ExpressionParser
+    internal class ExpressionParser : IExpressionParser
     {
         private ParserContext parser;
         public ExpressionParser(ParserContext parser)

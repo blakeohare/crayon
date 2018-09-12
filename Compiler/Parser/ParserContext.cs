@@ -28,11 +28,12 @@ namespace Parser
             this.AssemblyManager = new AssemblyManager(buildContext);
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelEntity, ConstantResolutionState>();
+            this.LiteralLookup = new LiteralLookup();
+
             this.TopLevelParser = new TopLevelParser(this);
             this.ExpressionParser = new ExpressionParser(this);
             this.ExecutableParser = new ExecutableParser(this);
             this.AnnotationParser = new AnnotationParser(this);
-            this.LiteralLookup = new LiteralLookup();
         }
 
         private int localeCount = -1;
@@ -112,10 +113,10 @@ namespace Parser
             this.ReservedKeywords = new HashSet<string>(this.CurrentLocale.GetKeywordsList());
         }
 
-        internal TopLevelParser TopLevelParser { get; private set; }
-        internal ExpressionParser ExpressionParser { get; private set; }
-        internal ExecutableParser ExecutableParser { get; private set; }
-        internal AnnotationParser AnnotationParser { get; private set; }
+        internal ITopLevelParser TopLevelParser { get; private set; }
+        internal IExpressionParser ExpressionParser { get; private set; }
+        internal IExecutableParser ExecutableParser { get; private set; }
+        internal IAnnotationParser AnnotationParser { get; private set; }
 
         public Locale CurrentLocale { get; private set; }
         public Locale.KeywordsLookup Keywords { get; private set; }

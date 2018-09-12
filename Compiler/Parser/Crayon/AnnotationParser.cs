@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Parser
 {
-    internal class AnnotationParser
+    internal class AnnotationParser : IAnnotationParser
     {
         private ParserContext parser;
         public AnnotationParser(ParserContext parser)
@@ -11,7 +11,7 @@ namespace Parser
             this.parser = parser;
         }
 
-        internal AnnotationCollection ParseAnnotations(TokenStream tokens)
+        public AnnotationCollection ParseAnnotations(TokenStream tokens)
         {
             AnnotationCollection annotationCollection = new AnnotationCollection(this.parser);
             while (tokens.IsNext("@"))
