@@ -22,17 +22,20 @@ namespace Build
         public string[] ImageSheetIds { get; set; }
         public string Version { get; set; }
         public string Description { get; set; }
+        public string ProgrammingLanguage { get; set; }
 
         public Dictionary<string, string> GetCodeFiles()
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
-
+            string fileExtension = this.ProgrammingLanguage.ToLowerInvariant() == "acrylic"
+                ? ".acr"
+                : ".cry";
             foreach (FilePath sourceDir in this.SourceFolders)
             {
                 string[] files = FileUtil.GetAllAbsoluteFilePathsDescendentsOf(sourceDir.AbsolutePath);
                 foreach (string filepath in files)
                 {
-                    if (filepath.ToLowerInvariant().EndsWith(".cry"))
+                    if (filepath.ToLowerInvariant().EndsWith(fileExtension))
                     {
                         string relativePath = FileUtil.ConvertAbsolutePathToRelativePath(
                             filepath,
@@ -174,6 +177,7 @@ namespace Build
                 ImageSheetPrefixesById = imageSheets.ToDictionary<ImageSheet, string, string[]>(s => s.Id, s => s.Prefixes),
                 ImageSheetIds = imageSheets.Select<ImageSheet, string>(s => s.Id).ToArray(),
                 BuildVariableLookup = varLookup,
+                ProgrammingLanguage = flattened.ProgrammingLanguage,
             };
 
             return buildContext.ValidateValues();
