@@ -35,12 +35,19 @@ namespace Parser
             return new ImportStatement(importToken, importPath, fileScope);
         }
 
+        internal virtual ModifierCollection ParseModifiers(TokenStream tokens)
+        {
+            return ModifierCollection.EMPTY;
+        }
+
         internal virtual TopLevelEntity Parse(
             TokenStream tokens,
             TopLevelEntity owner,
             FileScope fileScope)
         {
             AnnotationCollection annotations = annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
+            
+            ModifierCollection modifiers_IGNORED = this.ParseModifiers(tokens);
 
             string value = tokens.PeekValue();
 
@@ -106,7 +113,7 @@ namespace Parser
                 token.Value);
         }
 
-        private ConstructorDefinition ParseConstructor(
+        protected virtual ConstructorDefinition ParseConstructor(
             TokenStream tokens,
             ClassDefinition owner,
             AnnotationCollection annotations)
@@ -170,7 +177,7 @@ namespace Parser
             return ctor;
         }
 
-        private ConstDefinition ParseConst(TokenStream tokens, Node owner, FileScope fileScope, AnnotationCollection annotations)
+        protected virtual ConstDefinition ParseConst(TokenStream tokens, Node owner, FileScope fileScope, AnnotationCollection annotations)
         {
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             Token nameToken = tokens.Pop();
@@ -183,7 +190,7 @@ namespace Parser
             return constStatement;
         }
 
-        private EnumDefinition ParseEnumDefinition(TokenStream tokens, Node owner, FileScope fileScope, AnnotationCollection annotations)
+        protected virtual EnumDefinition ParseEnumDefinition(TokenStream tokens, Node owner, FileScope fileScope, AnnotationCollection annotations)
         {
             Token enumToken = tokens.PopExpected(this.parser.Keywords.ENUM);
             Token nameToken = tokens.Pop();
@@ -217,7 +224,7 @@ namespace Parser
             return ed;
         }
 
-        private ClassDefinition ParseClassDefinition(TokenStream tokens, Node owner, Token staticToken, Token finalToken, FileScope fileScope, AnnotationCollection classAnnotations)
+        protected virtual ClassDefinition ParseClassDefinition(TokenStream tokens, Node owner, Token staticToken, Token finalToken, FileScope fileScope, AnnotationCollection classAnnotations)
         {
             Token classToken = tokens.PopExpected(this.parser.Keywords.CLASS);
             Token classNameToken = tokens.Pop();
@@ -263,65 +270,26 @@ namespace Parser
             tokens.PopExpected("{");
             List<FunctionDefinition> methods = new List<FunctionDefinition>();
             List<FieldDefinition> fields = new List<FieldDefinition>();
-            ConstructorDefinition constructorDef = null;
-            ConstructorDefinition staticConstructorDef = null;
 
             while (!tokens.PopIfPresent("}"))
             {
-                AnnotationCollection annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
-
-                if (tokens.IsNext(this.parser.Keywords.FUNCTION) ||
-                    tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FUNCTION))
-                {
-                    methods.Add(this.ParseFunction(tokens, cd, fileScope, annotations));
-                }
-                else if (tokens.IsNext(this.parser.Keywords.CONSTRUCTOR))
-                {
-                    if (constructorDef != null)
-                    {
-                        throw this.parser.GenerateParseError(
-                            ErrorMessages.CLASS_CANNOT_HAVE_MULTIPLE_CONSTRUCTORS,
-                            tokens.Pop());
-                    }
-
-                    constructorDef = this.ParseConstructor(tokens, cd, annotations);
-                }
-                else if (tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.CONSTRUCTOR))
-                {
-                    tokens.Pop(); // static token
-                    if (staticConstructorDef != null)
-                    {
-                        throw new ParserException(tokens.Pop(), "Multiple static constructors are not allowed.");
-                    }
-
-                    staticConstructorDef = this.ParseConstructor(tokens, cd, annotations);
-                }
-                else if (tokens.IsNext(this.parser.Keywords.FIELD) ||
-                    tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FIELD))
-                {
-                    fields.Add(this.ParseField(tokens, cd, annotations));
-                }
-                else if (tokens.IsNext(this.parser.Keywords.CLASS))
-                {
-                    throw new ParserException(tokens.Pop(), "Nested classes are not currently supported.");
-                }
-                else
-                {
-                    tokens.PopExpected("}");
-                }
-
-                TODO.CheckForUnusedAnnotations();
+                this.ParseClassMember(tokens, fileScope, cd, methods, fields);
             }
 
             cd.Methods = methods.ToArray();
-            cd.Constructor = constructorDef;
-            cd.StaticConstructor = staticConstructorDef;
             cd.Fields = fields.ToArray();
 
             return cd;
         }
 
-        private FieldDefinition ParseField(TokenStream tokens, ClassDefinition owner, AnnotationCollection annotations)
+        protected abstract void ParseClassMember(
+            TokenStream tokens,
+            FileScope fileScope,
+            ClassDefinition classDef,
+            IList<FunctionDefinition> methodsOut,
+            IList<FieldDefinition> fieldsOut);
+
+        protected virtual FieldDefinition ParseField(TokenStream tokens, ClassDefinition owner, AnnotationCollection annotations)
         {
             bool isStatic = tokens.PopIfPresent(this.parser.Keywords.STATIC);
             Token fieldToken = tokens.PopExpected(this.parser.Keywords.FIELD);
@@ -336,7 +304,7 @@ namespace Parser
             return fd;
         }
 
-        private Namespace ParseNamespace(TokenStream tokens, Node owner, FileScope fileScope, AnnotationCollection annotations)
+        protected virtual Namespace ParseNamespace(TokenStream tokens, Node owner, FileScope fileScope, AnnotationCollection annotations)
         {
             Token namespaceToken = tokens.PopExpected(this.parser.Keywords.NAMESPACE);
             Token first = tokens.Pop();
@@ -381,7 +349,7 @@ namespace Parser
             return namespaceInstance;
         }
 
-        private FunctionDefinition ParseFunction(
+        protected virtual FunctionDefinition ParseFunction(
             TokenStream tokens,
             TopLevelEntity nullableOwner,
             FileScope fileScope,
