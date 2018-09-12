@@ -1,0 +1,49 @@
+import Graphics2D;
+import ImageResources;
+import Math;
+
+public class LoadingScene : AbstractScene {
+    private string phase = "start";
+    private double progress = 0.0;
+    private ImageSheetLoader loader;
+    private int minLoadDuration = FPS * 3 / 4; // show the progress bar for at least three quarters of a seconds.
+
+    public constructor() : base() {
+        this.loader = ImageSheet.loadFromResourcesAsync('everything');
+    }
+
+    public override void processInput(object events) {
+        // can't do anything.
+    }
+
+    public override void update() {
+        // force the progress bar to ease into completion so that it doesn't appear in a flicker
+        double newProgress = this.loader.getProgress();
+        double delta = min(1.0 / this.minLoadDuration, newProgress - this.progress);
+        this.progress += delta;
+
+        if (this.loader.isDone() && this.progress > .999) {
+            ImageLibrary.initializeWithImageSheet(this.loader);
+            this.switchScene(new PlayScene());
+        }
+    }
+
+    public override void render() {
+        int width = 400;
+        int height = 30;
+
+        int left = (SCREEN_WIDTH - width) / 2;
+        int top = (SCREEN_HEIGHT - height) / 2;
+
+        int margin = 10;
+
+        Draw.fill(40, 0, 0);
+        Draw.rectangle(left - margin, top - margin, width + 2 * margin, height + 2 * margin, 80, 80, 80);
+        Draw.rectangle(left, top, width, height, 0, 0, 0);
+
+        int barWidth = Math.floor(width * this.progress);
+        Draw.rectangle(left, top, barWidth, height, 255, 128, 0);
+        Draw.rectangle(left, top, barWidth, height / 5, 255, 255, 0);
+        Draw.rectangle(left, top + height * 4 / 5, barWidth, height / 5, 255, 0, 0);
+    }
+}

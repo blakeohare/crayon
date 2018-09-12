@@ -1,0 +1,146 @@
+import Math;
+
+public class Sprite {
+
+    private double[] position;
+    private double[] targetPosition;
+    private double dx = 0;
+    private double dy = 0;
+    protected double velocity;
+    private bool isDead = false;
+    private bool isMoving = false;
+    private int width;
+    private int height;
+
+    publc constructor(int[] position) {
+        this.position = position;
+        GraphicsTexture img = this.getImage(0);
+        this.width = img.width;
+        this.height = img.height;
+    }
+
+    public void update() {
+        this.isMoving = this.targetPosition != null;
+
+        if (this.isMoving) {
+            // Determine how far the target is
+            double dx = this.targetPosition[0] - this.position[0];
+            double dy = this.targetPosition[1] - this.position[1];
+            double distance = (dx ** 2 + dy ** 2) ** .5;
+
+            if (distance < this.velocity) {
+                // If the distance is so small that it's less than the per-frame velocity, just
+                // set the target as the current position and clear the targetPosition.
+                this.position = this.targetPosition;
+                this.targetPosition = null;
+            } else {
+                // Otherwise, move in that direction according to the sprite's velocity.
+                double ratio = this.velocity / distance;
+                dx *= ratio;
+                dy *= ratio;
+                this.position[0] += dx;
+                this.position[1] += dy;
+            }
+        }
+    }
+
+    public GraphicsTexture getImage(gameCounter) {
+        fail("Overriden");
+    }
+
+    public void render(int gameCounter) {
+        image = this.getImage(gameCounter);
+
+        // The sprite's coordinate is the center of the sprite.
+        // .draw requires the top left corner of the image, so subtract half the width and height.
+        int x = Math.floor(this.position[0] - image.width / 2);
+        int y = Math.floor(this.position[1] - image.height / 2);
+        image.draw(x, y);
+    }
+}
+
+public class Player : Sprite {
+    // Player starts out facing South.
+    private string lastDir = 's';
+
+    private static Dictionary<string, GraphicsTexture[]> playerImagesByDirection = new Dictionary<string, GraphicsTexture[]>();
+    private static GraphicsTexture playerDeadImage = ImageLibrary.get('images/player/dead.png');
+
+    static constructor() {
+        // populate the image lookup for the player.
+        for (string direction : new string[] { 'n', 's', 'e', 'w' }) {
+            GraphicsTexture images = new List<GraphicsTexture>();
+            for (int i = 1; i <= 3; ++i) {
+                images.add(ImageLibrary.get('images/player/' + direction + i + '.png'));
+            }
+            images.add(images[1]);
+            Player.playerImagesByDirection[direction] = images.ToArray();
+        }
+    }
+
+    public constructor(position) : base(position) {
+        this.velocity = 3.0;
+    }
+
+    public override void update() {
+        base.update();
+
+        if (this.targetPosition != null) {
+
+            double angle = -Math.arctan(
+                this.targetPosition[1] - this.position[1],
+                this.targetPosition[0] - this.position[0]);
+
+            this.lastDir = getDirectionFromAngle(angle);
+        }
+    }
+
+    // Return the proper image for the current player's state
+    public GraphicsTexture getImage(gameCounter) {
+        if (this.isDead) {
+            // If the player died, show him collapsed
+            return Player.playerDeadImage;
+        }
+
+        // Get a list of images to cycle through based on the current player's direction
+        GraphicsTexture[] images = Player.playerImagesByDirection[this.lastDir];
+
+        // If the player isn't moving, then show a still image
+        if (!this.isMoving) {
+            return images[1];
+        }
+
+        // If the player is moving, cycle through the images.
+        return images[gameCounter / 6 % images.length];
+    }
+}
+
+public class Fire : Sprite {
+    private static GraphicsTexture[] fireImages;
+
+    static constructor() {
+		this.fireImages = new GraphicsTexture[2];
+        for (int i = 0; i < 2; ++i) {
+            Fire.fireImages[i] = ImageLibrary.get('images/fire/fire' + (i + 1) + '.png');
+        }
+    }
+
+    public constructor(position) : base(position) {
+        this.velocity = 1.6;
+    }
+
+    public override void update() {
+        base.update();
+
+        // If the fire isn't moving anywhere, pick a random point along the edge
+        // to move it towards.
+        if (this.targetPosition == null) {
+            this.targetPosition = randomEdgePoint();
+        }
+    }
+
+    // Cycle through the fire images.
+    public override GraphicsTexture getImage(gameCounter) {
+        return Fire.fireImages[gameCounter / 2 % Fire.fireImages.length];
+    }
+}
