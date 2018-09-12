@@ -2,15 +2,15 @@
 
 namespace Parser.Acrylic
 {
-    internal class ExpressionParser : IExpressionParser
+    internal class AcrylicExpressionParser : AbstractExpressionParser
     {
         private ParserContext parser;
-        public ExpressionParser(ParserContext parser)
+        public AcrylicExpressionParser(ParserContext parser)
         {
             this.parser = parser;
         }
 
-        public Expression Parse(TokenStream tokens, Node owner)
+        internal override Expression Parse(TokenStream tokens, Node owner)
         {
             throw new System.NotImplementedException();
         }

@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace Parser.Crayon
 {
-    internal class AnnotationParser : IAnnotationParser
+    internal class CrayonAnnotationParser : AbstractAnnotationParser
     {
         private ParserContext parser;
-        public AnnotationParser(ParserContext parser)
+        public CrayonAnnotationParser(ParserContext parser)
         {
             this.parser = parser;
         }
 
-        public AnnotationCollection ParseAnnotations(TokenStream tokens)
+        internal override AnnotationCollection ParseAnnotations(TokenStream tokens)
         {
             AnnotationCollection annotationCollection = new AnnotationCollection(this.parser);
             while (tokens.IsNext("@"))

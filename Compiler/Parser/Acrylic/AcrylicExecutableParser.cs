@@ -3,20 +3,20 @@ using Parser.ParseTree;
 
 namespace Parser.Acrylic
 {
-    internal class ExecutableParser : IExecutableParser
+    internal class AcrylicExecutableParser : AbstractExecutableParser
     {
         private ParserContext parser;
-        public ExecutableParser(ParserContext parser)
+        public AcrylicExecutableParser(ParserContext parser)
         {
             this.parser = parser;
         }
 
-        public Executable Parse(TokenStream tokens, bool simpleOnly, bool semicolonPresent, Node owner)
+        internal override Executable Parse(TokenStream tokens, bool simpleOnly, bool semicolonPresent, Node owner)
         {
             throw new System.NotImplementedException();
         }
 
-        public IList<Executable> ParseBlock(TokenStream tokens, bool bracketsRequired, Node owner)
+        internal override IList<Executable> ParseBlock(TokenStream tokens, bool bracketsRequired, Node owner)
         {
             throw new System.NotImplementedException();
         }
