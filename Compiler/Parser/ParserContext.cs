@@ -1,7 +1,6 @@
 ﻿using Build;
 using Common;
 using Localization;
-using Parser.Crayon;
 using Parser.ParseTree;
 using Parser.Resolver;
 using System;
@@ -30,10 +29,21 @@ namespace Parser
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelEntity, ConstantResolutionState>();
             this.LiteralLookup = new LiteralLookup();
 
-            this.TopLevelParser = new TopLevelParser(this);
-            this.ExpressionParser = new ExpressionParser(this);
-            this.ExecutableParser = new ExecutableParser(this);
-            this.AnnotationParser = new AnnotationParser(this);
+            switch (buildContext.TopLevelAssembly.ProgrammingLanguage.ToLowerInvariant())
+            {
+                case "crayon":
+                    this.TopLevelParser = new Crayon.TopLevelParser(this);
+                    this.ExpressionParser = new Crayon.ExpressionParser(this);
+                    this.ExecutableParser = new Crayon.ExecutableParser(this);
+                    this.AnnotationParser = new Crayon.AnnotationParser(this);
+                    break;
+                case "acrylic":
+                    this.TopLevelParser = new Acrylic.TopLevelParser(this);
+                    this.ExpressionParser = new Acrylic.ExpressionParser(this);
+                    this.ExecutableParser = new Acrylic.ExecutableParser(this);
+                    this.AnnotationParser = new Acrylic.AnnotationParser(this);
+                    break;
+            }
         }
 
         private int localeCount = -1;

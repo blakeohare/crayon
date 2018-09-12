@@ -1,7 +1,7 @@
 ﻿using Parser.ParseTree;
 using System.Collections.Generic;
 
-namespace Parser
+namespace Parser.Crayon
 {
     internal class AnnotationParser : IAnnotationParser
     {

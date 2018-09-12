@@ -177,7 +177,7 @@ namespace Build
                 ImageSheetPrefixesById = imageSheets.ToDictionary<ImageSheet, string, string[]>(s => s.Id, s => s.Prefixes),
                 ImageSheetIds = imageSheets.Select<ImageSheet, string>(s => s.Id).ToArray(),
                 BuildVariableLookup = varLookup,
-                ProgrammingLanguage = flattened.ProgrammingLanguage,
+                ProgrammingLanguage = flattened.ProgrammingLanguage ?? "Crayon",
             };
 
             return buildContext.ValidateValues();
