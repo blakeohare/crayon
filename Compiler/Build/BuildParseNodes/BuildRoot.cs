@@ -8,6 +8,9 @@ namespace Build.BuildParseNodes
     {
         [XmlElement("target")]
         public Target[] Targets { get; set; }
+
+        [XmlElement("programminglanguage")]
+        public string ProgrammingLanguage { get; set; }
     }
 
 }
