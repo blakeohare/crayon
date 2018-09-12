@@ -1035,7 +1035,7 @@ namespace Pastel.Transpilers
             }
             sb.Append(");");
         }
-        
+
         public override void GenerateCodeForStructDeclaration(TranspilerContext sb, string structName)
         {
             sb.Append("typedef struct ");
