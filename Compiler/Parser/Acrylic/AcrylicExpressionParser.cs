@@ -7,10 +7,5 @@ namespace Parser.Acrylic
         public AcrylicExpressionParser(ParserContext parser)
             : base(parser)
         { }
-
-        internal override Expression Parse(TokenStream tokens, Node owner)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }
