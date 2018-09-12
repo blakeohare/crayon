@@ -1,0 +1,41 @@
+import Graphics2D;
+import ImageResources;
+
+public class ImageLibrary {
+    private static Dictionary<string, GraphicsTexture> images = {};
+    private static Dictionary<string, GraphicsTexture> text = {};
+    private static ImageSheet sheet = null;
+
+    private static function initializeWithImageSheet(object sheet) {
+        ImageLibrary.sheet = sheet;
+    }
+
+    public static GraphicsTexture getTextChar(char) {
+        image = ImageLibrary.text.get(char);
+        if (image == null) {
+            image = ImageLibrary.get("images/text/" + char + ".png");
+            ImageLibrary.text[char] = image;
+        }
+        return image;
+    }
+
+    public static GraphicsTexture get(string path) {
+        GraphicsTexture img = ImageLibrary.images.get(path);
+        if (img == null) {
+            if (path.startsWith("images/player/w")) {
+                // Instead of saving west-facing images, just get the
+                // east-facing image and flip it.
+                eastImagePath = path.replace("images/player/w", "images/player/e");
+                img = ImageLibrary.get(eastImagePath);
+                img = img.flip(true, false);
+            } else {
+                ImageResource rawResource = ImageLibrary.sheet.getImage(path);
+                img = GraphicsTexture.load(rawResource);
+            }
+
+            // cache the image.
+            ImageLibrary.images[path] = img;
+        }
+        return img;
+    }
+}

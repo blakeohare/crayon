@@ -1,0 +1,44 @@
+<build>
+	<projectname>FireDodge</projectname>
+	<source>source/</source>
+	<output>output/%TARGET_NAME%</output>
+	<icon>assets/icon.png</icon>
+	<launchscreen>assets/launchscreen.png</launchscreen>
+	<programminglanguage>Acrylic</programminglanguage>
+	
+	<imagesheets>
+		<sheet id="everything">
+			<prefix>*</prefix>
+		</sheet>
+	</imagesheets>
+
+	<guidseed>org.crayonlang.demos.firedodge,v0.2.0,%TARGET_NAME%</guidseed>
+	
+	<!-- Targets -->
+	<target name="javascript">
+		<platform>javascript-app</platform>
+		<jsfileprefix>/demos/firedodge/</jsfileprefix>
+	</target>
+	
+	<target name="csharp">
+		<platform>csharp-app</platform>
+	</target>
+	
+	<target name="java">
+		<platform>java-app</platform>
+	</target>
+	
+	<target name="python">
+		<platform>python-app</platform>
+	</target>
+	
+	<target name="android">
+		<orientation>landscapeleft,landscaperight</orientation>
+		<platform>javascript-app-android</platform>
+	</target>
+	
+	<target name="ios">
+		<orientation>landscapeleft,landscaperight</orientation>
+		<platform>javascript-app-ios</platform>
+	</target>
+</build>

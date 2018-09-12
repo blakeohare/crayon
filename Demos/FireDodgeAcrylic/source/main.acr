@@ -1,0 +1,29 @@
+import Game;
+import Graphics2D;
+
+const int FPS = 60;
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
+
+public void main() {
+    GameWindow window = new GameWindow("Fire Dodge", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    AbstractScene activeScene = new LoadingScene();
+
+    while (activeScene != null) {
+
+        Event[] events = window.pumpEvents();
+        for (event : events) {
+            if (event.type == EventType.QUIT)
+                return;
+        }
+
+        activeScene.processInput(events);
+        activeScene.update();
+        activeScene.render();
+
+        activeScene = activeScene.nextScene ?? activeScene;
+
+        window.clockTick();
+    }
+}

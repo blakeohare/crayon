@@ -1,0 +1,22 @@
+public class AbstractScene {
+    
+    private AbstractScene nextScene = null;
+
+    public constructor() { }
+
+    public void switchScene(AbstractScene nextScene) {
+        this.nextScene = nextScene;
+    }
+
+    public void processInput(object events) {
+        fail("Overridden");
+    }
+
+    public void update() {
+        fail("Overridden");
+    }
+
+    public void render() {
+        fail("Overridden");
+    }
+}
