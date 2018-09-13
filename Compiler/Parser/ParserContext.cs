@@ -36,12 +36,14 @@ namespace Parser
                     this.ExpressionParser = new Crayon.CrayonExpressionParser(this);
                     this.ExecutableParser = new Crayon.CrayonExecutableParser(this);
                     this.AnnotationParser = new Crayon.CrayonAnnotationParser(this);
+                    this.TypeParser = new Crayon.CrayonTypeParser();
                     break;
                 case "acrylic":
                     this.TopLevelParser = new Acrylic.AcrylicTopLevelParser(this);
                     this.ExpressionParser = new Acrylic.AcrylicExpressionParser(this);
                     this.ExecutableParser = new Acrylic.AcrylicExecutableParser(this);
                     this.AnnotationParser = new Acrylic.AcrylicAnnotationParser(this);
+                    this.TypeParser = new Acrylic.AcrylicTypeParser();
                     break;
             }
         }
@@ -127,6 +129,7 @@ namespace Parser
         internal AbstractExpressionParser ExpressionParser { get; private set; }
         internal AbstractExecutableParser ExecutableParser { get; private set; }
         internal AbstractAnnotationParser AnnotationParser { get; private set; }
+        internal AbstractTypeParser TypeParser { get; private set; }
 
         public Locale CurrentLocale { get; private set; }
         public Locale.KeywordsLookup Keywords { get; private set; }
