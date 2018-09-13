@@ -1,6 +1,4 @@
-﻿using Parser.ParseTree;
-
-namespace Parser.Acrylic
+﻿namespace Parser.Acrylic
 {
     internal class AcrylicExpressionParser : AbstractExpressionParser
     {

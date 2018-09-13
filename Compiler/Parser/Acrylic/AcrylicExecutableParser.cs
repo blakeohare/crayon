@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Parser.ParseTree;
-
-namespace Parser.Acrylic
+﻿namespace Parser.Acrylic
 {
     internal class AcrylicExecutableParser : AbstractExecutableParser
     {
