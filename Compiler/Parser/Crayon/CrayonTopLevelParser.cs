@@ -20,7 +20,7 @@ namespace Parser.Crayon
             IList<FieldDefinition> fieldsOut)
         {
             AnnotationCollection annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
-            
+
             if (tokens.IsNext(this.parser.Keywords.FUNCTION) ||
                 tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FUNCTION))
             {

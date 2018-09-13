@@ -5,20 +5,7 @@ namespace Parser
 {
     public static class Tokenizer
     {
-        private static readonly HashSet<string> TWO_CHAR_TOKENS = new HashSet<string>() {
-            "==", "!=", "<=", ">=",
-            "&&", "||",
-            "++", "--",
-            "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=",
-            "<<", ">>",
-            "**",
-            "??",
-            "=>",
-        };
         private static readonly HashSet<char> WHITESPACE = new HashSet<char>() { ' ', '\r', '\n', '\t' };
-
-        private static readonly HashSet<char> TWO_CHAR_TOKENS_TRIGGER_FIRST_TOKEN =
-            new HashSet<char>(TWO_CHAR_TOKENS.Select(t => t[0]));
 
         private static Dictionary<char, bool> IDENTIFIER_CHARS_CACHE = new Dictionary<char, bool>();
 
@@ -167,9 +154,7 @@ namespace Parser
 
                             if (mode == TokenMode.NORMAL)
                             {
-                                tokenValue = GetNextTokenValue(code, i);
-                                tokens.Add(new Token(tokenValue, TokenType.PUNCTUATION, file, lineByIndex[i], colByIndex[i]));
-                                i += tokenValue.Length - 1;
+                                tokens.Add(new Token(c.ToString(), TokenType.PUNCTUATION, file, lineByIndex[i], colByIndex[i]));
                             }
                         }
                         break;
@@ -243,20 +228,6 @@ namespace Parser
             }
 
             return tokens.ToArray();
-        }
-
-        private static string GetNextTokenValue(string code, int index)
-        {
-            char c = code[index];
-            if (TWO_CHAR_TOKENS_TRIGGER_FIRST_TOKEN.Contains(c))
-            {
-                string c2 = code.Substring(index, 2);
-                if (TWO_CHAR_TOKENS.Contains(c2))
-                {
-                    return c2;
-                }
-            }
-            return c.ToString();
         }
     }
 }
