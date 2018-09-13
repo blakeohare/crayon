@@ -10,13 +10,16 @@
         public TokenType Type { get; private set; }
         public FileScope File { get; private set; }
 
-        internal Token(string value, TokenType type, FileScope file, int lineIndex, int colIndex)
+        internal int AggregateTokenCount { get; set; }
+
+        internal Token(string value, TokenType type, FileScope file, int lineNum, int colNum)
         {
             this.Value = value;
             this.Type = type;
             this.File = file;
-            this.Line = lineIndex;
-            this.Col = colIndex;
+            this.Line = lineNum;
+            this.Col = colNum;
+            this.AggregateTokenCount = 1;
         }
 
         public override string ToString()

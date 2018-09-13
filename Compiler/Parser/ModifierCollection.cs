@@ -10,7 +10,7 @@ namespace Parser
     {
         public Dictionary<string, Token> modifierTokens;
 
-        public static readonly ModifierCollection EMPTY = new ModifierCollection(new Token[0]); 
+        public static readonly ModifierCollection EMPTY = new ModifierCollection(new Token[0]);
 
         public ModifierCollection(ICollection<Token> modifiers)
         {

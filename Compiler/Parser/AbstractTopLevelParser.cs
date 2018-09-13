@@ -46,7 +46,7 @@ namespace Parser
             FileScope fileScope)
         {
             AnnotationCollection annotations = annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
-            
+
             ModifierCollection modifiers_IGNORED = this.ParseModifiers(tokens);
 
             string value = tokens.PeekValue();
