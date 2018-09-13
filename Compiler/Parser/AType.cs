@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Parser
 {
     public class AType
     {
-        public Token RootTypeToken { get; set; }
+        public Token FirstToken { get; set; }
+        public Token[] RootTypeTokens { get; set; }
         public string RootType { get; set; }
         public AType[] Generics { get; set; }
 
-        public AType(Token rootType, IList<AType> generics)
+        public AType(IList<Token> rootType, IList<AType> generics)
         {
-            this.RootTypeToken = rootType;
-            this.RootType = rootType.Value;
+            this.RootTypeTokens = rootType.ToArray();
+            this.FirstToken = this.RootTypeTokens[0];
+            this.RootType = string.Join(".", this.RootTypeTokens.Select(t => t.Value));
             this.Generics = generics.ToArray();
         }
     }

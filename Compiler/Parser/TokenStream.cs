@@ -5,6 +5,11 @@ namespace Parser
 {
     public class TokenStream
     {
+        public class StreamState
+        {
+            internal int Value { get; set; }
+        }
+
         private readonly FileScope file;
         private readonly InnerTokenStream innerStream;
 
@@ -12,6 +17,16 @@ namespace Parser
         {
             this.file = file;
             this.innerStream = new InnerTokenStream(Tokenizer.Tokenize(file));
+        }
+
+        public StreamState RecordState()
+        {
+            return new StreamState() { Value = this.innerStream.Index };
+        }
+
+        public void RestoreState(StreamState state)
+        {
+            this.innerStream.Index = state.Value;
         }
 
         // This stream consolidates specific sequences of punctuation into a single token.
@@ -137,7 +152,8 @@ namespace Parser
 
         public void EnsureNotEof()
         {
-            if (this.innerStream.Index >= this.innerStream.Length) {
+            if (this.innerStream.Index >= this.innerStream.Length)
+            {
                 this.ThrowEofException();
             }
         }
@@ -221,6 +237,16 @@ namespace Parser
             return false;
         }
 
+        public Token PopIfWord()
+        {
+            Token token = this.innerStream.Peek();
+            if (token != null && token.Type == TokenType.WORD)
+            {
+                return this.innerStream.Pop();
+            }
+            return null;
+        }
+
         public Token PopExpected(string value)
         {
             Token token = this.innerStream.Peek();
@@ -240,6 +266,12 @@ namespace Parser
             return this.innerStream.Pop();
         }
 
-        public bool HasMore { get { return this.innerStream.Index < this.innerStream.Length; } }
+        public bool HasMore
+        {
+            get
+            {
+                return this.innerStream.Index < this.innerStream.Length;
+            }
+        }
     }
 }
