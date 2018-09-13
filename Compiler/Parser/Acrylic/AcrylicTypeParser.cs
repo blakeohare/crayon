@@ -2,13 +2,13 @@
 
 namespace Parser.Acrylic
 {
-    internal class AcrylicTypeParser
+    internal class AcrylicTypeParser : AbstractTypeParser
     {
         private AType[] EMPTY_TYPE_LIST = new AType[0];
         private AType[] SIMPLE_TYPE_LIST = new AType[1];
         private Token[] SIMPLE_TOKEN_LIST = new Token[1];
 
-        public AType TryParse(TokenStream tokens)
+        public override AType TryParse(TokenStream tokens)
         {
             TokenStream.StreamState startIndex = tokens.RecordState();
             AType type = this.ParseImpl(tokens);
@@ -19,7 +19,7 @@ namespace Parser.Acrylic
             return type;
         }
 
-        public AType Parse(TokenStream tokens)
+        public override AType Parse(TokenStream tokens)
         {
             tokens.EnsureNotEof();
             Token throwToken = tokens.Peek();
@@ -48,6 +48,7 @@ namespace Parser.Acrylic
         {
             switch (tokens.PeekValue())
             {
+                // Don't even try to parse generics or namespaces on primitive types.
                 case "int":
                 case "bool":
                 case "double":

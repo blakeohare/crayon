@@ -63,17 +63,30 @@ namespace Parser.Acrylic
             {
                 throw new ParserException(tokens.Pop(), "Nested classes are not currently supported.");
             }
-            else if (tokens.IsNext(this.parser.Keywords.FUNCTION)) // TODO: change this
-            {
-                methodsOut.Add(this.ParseFunction(tokens, classDef, fileScope, annotations));
-            }
-            else if (tokens.IsNext(this.parser.Keywords.FIELD)) // TODO: change this
-            {
-                fieldsOut.Add(this.ParseField(tokens, classDef, annotations));
-            }
             else
             {
-                tokens.PopExpected("}"); // intentional error
+                // Parsing the type and then throwing it away is a little wasteful, but feels less weird than parsing
+                // the type here and passing it into ParseFunction()/ParseField(). ParseX() should ParseX from the start.
+                TokenStream.StreamState fieldOrFunctionStart = tokens.RecordState();
+                AType fieldOrFunctionType = this.parser.TypeParser.TryParse(tokens);
+                Token tokenAfterName = fieldOrFunctionType != null ? tokens.PeekAhead(1) : null;
+                tokens.RestoreState(fieldOrFunctionStart);
+
+                if (tokenAfterName == null) tokens.PopExpected("}"); // intentionally induce error
+
+                switch (tokenAfterName.Value)
+                {
+                    case "=":
+                    case ";":
+                        fieldsOut.Add(this.ParseField(tokens, classDef, annotations));
+                        break;
+                    case "(":
+                        methodsOut.Add(this.ParseFunction(tokens, classDef, fileScope, annotations));
+                        break;
+                    default:
+                        tokens.PopExpected("}"); // intentionally induce error
+                        break;
+                }
             }
 
             TODO.CheckForUnusedAnnotations();
