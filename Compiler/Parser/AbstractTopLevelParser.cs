@@ -289,20 +289,11 @@ namespace Parser
             IList<FunctionDefinition> methodsOut,
             IList<FieldDefinition> fieldsOut);
 
-        protected virtual FieldDefinition ParseField(TokenStream tokens, ClassDefinition owner, AnnotationCollection annotations)
-        {
-            bool isStatic = tokens.PopIfPresent(this.parser.Keywords.STATIC);
-            Token fieldToken = tokens.PopExpected(this.parser.Keywords.FIELD);
-            Token nameToken = tokens.Pop();
-            this.parser.VerifyIdentifier(nameToken);
-            FieldDefinition fd = new FieldDefinition(fieldToken, nameToken, owner, isStatic, annotations);
-            if (tokens.PopIfPresent("="))
-            {
-                fd.DefaultValue = this.parser.ExpressionParser.Parse(tokens, fd);
-            }
-            tokens.PopExpected(";");
-            return fd;
-        }
+        protected abstract FieldDefinition ParseField(
+            TokenStream tokens,
+            ClassDefinition owner,
+            AnnotationCollection annotations,
+            ModifierCollection modifiers);
 
         protected virtual Namespace ParseNamespace(TokenStream tokens, Node owner, FileScope fileScope, AnnotationCollection annotations)
         {

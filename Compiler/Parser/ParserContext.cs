@@ -28,24 +28,6 @@ namespace Parser
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelEntity, ConstantResolutionState>();
             this.LiteralLookup = new LiteralLookup();
-
-            switch (buildContext.TopLevelAssembly.ProgrammingLanguage.ToLowerInvariant())
-            {
-                case "crayon":
-                    this.TopLevelParser = new Crayon.CrayonTopLevelParser(this);
-                    this.ExpressionParser = new Crayon.CrayonExpressionParser(this);
-                    this.ExecutableParser = new Crayon.CrayonExecutableParser(this);
-                    this.AnnotationParser = new Crayon.CrayonAnnotationParser(this);
-                    this.TypeParser = new Crayon.CrayonTypeParser();
-                    break;
-                case "acrylic":
-                    this.TopLevelParser = new Acrylic.AcrylicTopLevelParser(this);
-                    this.ExpressionParser = new Acrylic.AcrylicExpressionParser(this);
-                    this.ExecutableParser = new Acrylic.AcrylicExecutableParser(this);
-                    this.AnnotationParser = new Acrylic.AcrylicAnnotationParser(this);
-                    this.TypeParser = new Acrylic.AcrylicTypeParser();
-                    break;
-            }
         }
 
         private int localeCount = -1;
@@ -112,8 +94,7 @@ namespace Parser
             this.scopeStack.Push(scope);
             this.CurrentScope = scope;
             this.CurrentLocale = scope.Locale;
-            this.Keywords = this.CurrentLocale.Keywords;
-            this.ReservedKeywords = new HashSet<string>(this.CurrentLocale.GetKeywordsList());
+            this.UpdateLanguage(this.CurrentScope);
         }
 
         public void PopScope()
@@ -121,8 +102,31 @@ namespace Parser
             this.scopeStack.Pop();
             this.CurrentScope = this.scopeStack.Peek();
             this.CurrentLocale = this.CurrentScope.Locale;
+            this.UpdateLanguage(this.CurrentScope);
+        }
+
+        private void UpdateLanguage(CompilationScope scope)
+        {
             this.Keywords = this.CurrentLocale.Keywords;
             this.ReservedKeywords = new HashSet<string>(this.CurrentLocale.GetKeywordsList());
+
+            switch (scope.GetProgrammingLanguage().ToLowerInvariant())
+            {
+                case "crayon":
+                    this.TopLevelParser = new Crayon.CrayonTopLevelParser(this);
+                    this.ExpressionParser = new Crayon.CrayonExpressionParser(this);
+                    this.ExecutableParser = new Crayon.CrayonExecutableParser(this);
+                    this.AnnotationParser = new Crayon.CrayonAnnotationParser(this);
+                    this.TypeParser = new Crayon.CrayonTypeParser();
+                    break;
+                case "acrylic":
+                    this.TopLevelParser = new Acrylic.AcrylicTopLevelParser(this);
+                    this.ExpressionParser = new Acrylic.AcrylicExpressionParser(this);
+                    this.ExecutableParser = new Acrylic.AcrylicExecutableParser(this);
+                    this.AnnotationParser = new Acrylic.AcrylicAnnotationParser(this);
+                    this.TypeParser = new Acrylic.AcrylicTypeParser();
+                    break;
+            }
         }
 
         internal AbstractTopLevelParser TopLevelParser { get; private set; }

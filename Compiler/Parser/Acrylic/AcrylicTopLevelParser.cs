@@ -78,7 +78,7 @@ namespace Parser.Acrylic
                 {
                     case "=":
                     case ";":
-                        fieldsOut.Add(this.ParseField(tokens, classDef, annotations));
+                        fieldsOut.Add(this.ParseField(tokens, classDef, annotations, modifiers_IGNORED));
                         break;
                     case "(":
                         methodsOut.Add(this.ParseFunction(tokens, classDef, fileScope, annotations));
@@ -90,6 +90,24 @@ namespace Parser.Acrylic
             }
 
             TODO.CheckForUnusedAnnotations();
+        }
+
+        protected override FieldDefinition ParseField(
+            TokenStream tokens,
+            ClassDefinition owner,
+            AnnotationCollection annotations,
+            ModifierCollection modifiers)
+        {
+            AType fieldType = this.parser.TypeParser.Parse(tokens);
+            Token nameToken = tokens.Pop();
+            this.parser.VerifyIdentifier(nameToken);
+            FieldDefinition fd = new FieldDefinition(modifiers.FirstToken, fieldType, nameToken, owner, modifiers.HasStatic, annotations);
+            if (tokens.PopIfPresent("="))
+            {
+                fd.DefaultValue = this.parser.ExpressionParser.Parse(tokens, fd);
+            }
+            tokens.PopExpected(";");
+            return fd;
         }
     }
 }
