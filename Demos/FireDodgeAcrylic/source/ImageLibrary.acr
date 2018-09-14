@@ -6,11 +6,11 @@ public class ImageLibrary {
     private static Dictionary<string, GraphicsTexture> text = {};
     private static ImageSheet sheet = null;
 
-    private static function initializeWithImageSheet(object sheet) {
+    private static void initializeWithImageSheet(object sheet) {
         ImageLibrary.sheet = sheet;
     }
 
-    public static GraphicsTexture getTextChar(char) {
+    public static GraphicsTexture getTextChar(string char) {
         image = ImageLibrary.text.get(char);
         if (image == null) {
             image = ImageLibrary.get("images/text/" + char + ".png");

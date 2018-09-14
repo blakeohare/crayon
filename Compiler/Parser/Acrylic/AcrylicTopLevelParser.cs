@@ -2,6 +2,7 @@
 using Localization;
 using Parser.ParseTree;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Parser.Acrylic
 {
@@ -81,7 +82,7 @@ namespace Parser.Acrylic
                         fieldsOut.Add(this.ParseField(tokens, classDef, annotations, modifiers_IGNORED));
                         break;
                     case "(":
-                        methodsOut.Add(this.ParseFunction(tokens, classDef, fileScope, annotations));
+                        methodsOut.Add(this.ParseFunction(tokens, classDef, fileScope, annotations, modifiers_IGNORED));
                         break;
                     default:
                         tokens.PopExpected("}"); // intentionally induce error
@@ -107,6 +108,57 @@ namespace Parser.Acrylic
                 fd.DefaultValue = this.parser.ExpressionParser.Parse(tokens, fd);
             }
             tokens.PopExpected(";");
+            return fd;
+        }
+
+        protected override FunctionDefinition ParseFunction(
+            TokenStream tokens,
+            TopLevelEntity nullableOwner,
+            FileScope fileScope,
+            AnnotationCollection annotations,
+            ModifierCollection modifiers)
+        {
+            AType returnType = this.parser.TypeParser.Parse(tokens);
+            Token firstToken = modifiers.FirstToken ?? returnType.FirstToken;
+            Token functionNameToken = tokens.Pop();
+            this.parser.VerifyIdentifier(functionNameToken);
+
+            FunctionDefinition fd = new FunctionDefinition(firstToken, nullableOwner, modifiers.HasStatic, functionNameToken, annotations, fileScope);
+
+            tokens.PopExpected("(");
+            List<AType> argTypes = new List<AType>();
+            List<Token> argNames = new List<Token>();
+            List<Expression> defaultValues = new List<Expression>();
+            bool optionalArgFound = false;
+            while (!tokens.PopIfPresent(")"))
+            {
+                if (argNames.Count > 0) tokens.PopExpected(",");
+
+                AType argType = this.parser.TypeParser.Parse(tokens);
+                Token argName = tokens.Pop();
+                Expression defaultValue = null;
+                this.parser.VerifyIdentifier(argName);
+                if (tokens.PopIfPresent("="))
+                {
+                    optionalArgFound = true;
+                    defaultValue = this.parser.ExpressionParser.Parse(tokens, fd);
+                }
+                else if (optionalArgFound)
+                {
+                    throw new ParserException(argName, "All optional arguments must come at the end of the argument list.");
+                }
+                argTypes.Add(argType);
+                argNames.Add(argName);
+                defaultValues.Add(defaultValue);
+            }
+
+            IList<Executable> code = this.parser.ExecutableParser.ParseBlock(tokens, true, fd);
+
+            fd.ArgTypes = argTypes.ToArray();
+            fd.ArgNames = argNames.ToArray();
+            fd.DefaultValues = defaultValues.ToArray();
+            fd.Code = code.ToArray();
+
             return fd;
         }
     }
