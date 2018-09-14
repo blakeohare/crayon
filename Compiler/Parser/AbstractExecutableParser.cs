@@ -68,6 +68,13 @@ namespace Parser
                 if (value == this.parser.Keywords.THROW) return this.ParseThrow(tokens, owner);
             }
 
+            Assignment assignmentExec = this.MaybeParseTypedVariableDeclaration(tokens, owner);
+            if (assignmentExec != null)
+            {
+                if (semicolonPresent) tokens.PopExpected(";");
+                return assignmentExec;
+            }
+
             Expression expr = this.parser.ExpressionParser.Parse(tokens, owner);
             value = tokens.PeekValue();
             if (ASSIGNMENT_OPS.Contains(value))
@@ -84,6 +91,11 @@ namespace Parser
             }
 
             return new ExpressionAsExecutable(expr, owner);
+        }
+
+        protected virtual Assignment MaybeParseTypedVariableDeclaration(TokenStream tokens, Node owner)
+        {
+            return null;
         }
 
         internal virtual IList<Executable> ParseBlock(TokenStream tokens, bool bracketsRequired, Node owner)
