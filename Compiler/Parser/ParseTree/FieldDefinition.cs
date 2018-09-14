@@ -12,11 +12,13 @@ namespace Parser.ParseTree
         public int StaticMemberID { get; set; }
         public AnnotationCollection Annotations { get; set; }
         public List<Lambda> Lambdas { get; private set; }
+        public AType NullableFieldType { get; private set; }
 
-        public FieldDefinition(Token fieldToken, Token nameToken, ClassDefinition owner, bool isStatic, AnnotationCollection annotations)
+        public FieldDefinition(Token fieldToken, AType fieldType, Token nameToken, ClassDefinition owner, bool isStatic, AnnotationCollection annotations)
             : base(fieldToken, owner, owner.FileScope)
         {
             this.NameToken = nameToken;
+            this.NullableFieldType = fieldType;
             this.DefaultValue = new NullConstant(fieldToken, this);
             this.IsStaticField = isStatic;
             this.MemberID = -1;

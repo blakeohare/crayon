@@ -33,6 +33,27 @@ namespace Parser
             }
         }
 
+        // TODO: write a simple getter for source code.
+        // TODO: or define a ProgrammingLanguage field on non-top-level assemblies.
+        public string GetProgrammingLanguage()
+        {
+            if (this.Metadata.IsUserDefined)
+            {
+                return this.buildContext.TopLevelAssembly.ProgrammingLanguage;
+            }
+
+            string filename = this.Metadata.GetEmbeddedCode().Keys.FirstOrDefault();
+            if (filename != null)
+            {
+                filename = filename.ToLowerInvariant();
+                if (filename.EndsWith(".acr"))
+                {
+                    return "Acrylic";
+                }
+            }
+            return "Crayon";
+        }
+
         public Locale Locale
         {
             get

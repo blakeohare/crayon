@@ -49,7 +49,7 @@ namespace Parser.Crayon
             else if (tokens.IsNext(this.parser.Keywords.FIELD) ||
                 tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FIELD))
             {
-                fieldsOut.Add(this.ParseField(tokens, classDef, annotations));
+                fieldsOut.Add(this.ParseField(tokens, classDef, annotations, ModifierCollection.EMPTY));
             }
             else if (tokens.IsNext(this.parser.Keywords.CLASS))
             {
@@ -61,6 +61,26 @@ namespace Parser.Crayon
             }
 
             TODO.CheckForUnusedAnnotations();
+        }
+
+        // TODO: don't manually parse static here, just get it from modifiers
+        protected override FieldDefinition ParseField(
+            TokenStream tokens,
+            ClassDefinition owner,
+            AnnotationCollection annotations,
+            ModifierCollection modifiers)
+        {
+            bool isStatic = tokens.PopIfPresent(this.parser.Keywords.STATIC);
+            Token fieldToken = tokens.PopExpected(this.parser.Keywords.FIELD);
+            Token nameToken = tokens.Pop();
+            this.parser.VerifyIdentifier(nameToken);
+            FieldDefinition fd = new FieldDefinition(fieldToken, null, nameToken, owner, isStatic, annotations);
+            if (tokens.PopIfPresent("="))
+            {
+                fd.DefaultValue = this.parser.ExpressionParser.Parse(tokens, fd);
+            }
+            tokens.PopExpected(";");
+            return fd;
         }
 
     }
