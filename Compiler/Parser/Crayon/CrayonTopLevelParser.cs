@@ -2,6 +2,7 @@
 using Localization;
 using Parser.ParseTree;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Parser.Crayon
 {
@@ -19,11 +20,12 @@ namespace Parser.Crayon
             IList<FieldDefinition> fieldsOut)
         {
             AnnotationCollection annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
+            ModifierCollection modifiers = ModifierCollection.EMPTY;
 
             if (tokens.IsNext(this.parser.Keywords.FUNCTION) ||
                 tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FUNCTION))
             {
-                methodsOut.Add(this.ParseFunction(tokens, classDef, fileScope, annotations));
+                methodsOut.Add(this.ParseFunction(tokens, classDef, fileScope, annotations, modifiers));
             }
             else if (tokens.IsNext(this.parser.Keywords.CONSTRUCTOR))
             {
@@ -83,5 +85,56 @@ namespace Parser.Crayon
             return fd;
         }
 
+        protected override FunctionDefinition ParseFunction(
+            TokenStream tokens,
+            TopLevelEntity nullableOwner,
+            FileScope fileScope,
+            AnnotationCollection annotations,
+            ModifierCollection modifiers)
+        {
+            bool isStatic =
+                nullableOwner != null &&
+                nullableOwner is ClassDefinition &&
+                tokens.PopIfPresent(this.parser.Keywords.STATIC);
+
+            Token functionToken = tokens.PopExpected(this.parser.Keywords.FUNCTION);
+
+            Token functionNameToken = tokens.Pop();
+            this.parser.VerifyIdentifier(functionNameToken);
+
+            FunctionDefinition fd = new FunctionDefinition(functionToken, nullableOwner, isStatic, functionNameToken, annotations, fileScope);
+
+            tokens.PopExpected("(");
+            List<Token> argNames = new List<Token>();
+            List<Expression> defaultValues = new List<Expression>();
+            bool optionalArgFound = false;
+            while (!tokens.PopIfPresent(")"))
+            {
+                if (argNames.Count > 0) tokens.PopExpected(",");
+
+                Token argName = tokens.Pop();
+                Expression defaultValue = null;
+                this.parser.VerifyIdentifier(argName);
+                if (tokens.PopIfPresent("="))
+                {
+                    optionalArgFound = true;
+                    defaultValue = this.parser.ExpressionParser.Parse(tokens, fd);
+                }
+                else if (optionalArgFound)
+                {
+                    throw new ParserException(argName, "All optional arguments must come at the end of the argument list.");
+                }
+                argNames.Add(argName);
+                defaultValues.Add(defaultValue);
+            }
+
+            IList<Executable> code = this.parser.ExecutableParser.ParseBlock(tokens, true, fd);
+
+            fd.ArgNames = argNames.ToArray();
+            fd.DefaultValues = defaultValues.ToArray();
+            fd.Code = code.ToArray();
+
+            return fd;
+        }
     }
 }

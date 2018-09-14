@@ -100,7 +100,7 @@ namespace Parser
 
             if (value == this.parser.Keywords.NAMESPACE) return this.ParseNamespace(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner, fileScope, annotations);
-            if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner, fileScope, annotations);
+            if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner, fileScope, annotations, modifiers_IGNORED);
             if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, staticToken, finalToken, fileScope, annotations);
             if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.CONSTRUCTOR && owner is ClassDefinition) return this.ParseConstructor(tokens, (ClassDefinition)owner, annotations);
@@ -340,55 +340,11 @@ namespace Parser
             return namespaceInstance;
         }
 
-        protected virtual FunctionDefinition ParseFunction(
+        protected abstract FunctionDefinition ParseFunction(
             TokenStream tokens,
             TopLevelEntity nullableOwner,
             FileScope fileScope,
-            AnnotationCollection annotations)
-        {
-            bool isStatic =
-                nullableOwner != null &&
-                nullableOwner is ClassDefinition &&
-                tokens.PopIfPresent(this.parser.Keywords.STATIC);
-
-            Token functionToken = tokens.PopExpected(this.parser.Keywords.FUNCTION);
-
-            Token functionNameToken = tokens.Pop();
-            this.parser.VerifyIdentifier(functionNameToken);
-
-            FunctionDefinition fd = new FunctionDefinition(functionToken, nullableOwner, isStatic, functionNameToken, annotations, fileScope);
-
-            tokens.PopExpected("(");
-            List<Token> argNames = new List<Token>();
-            List<Expression> defaultValues = new List<Expression>();
-            bool optionalArgFound = false;
-            while (!tokens.PopIfPresent(")"))
-            {
-                if (argNames.Count > 0) tokens.PopExpected(",");
-
-                Token argName = tokens.Pop();
-                Expression defaultValue = null;
-                this.parser.VerifyIdentifier(argName);
-                if (tokens.PopIfPresent("="))
-                {
-                    optionalArgFound = true;
-                    defaultValue = this.parser.ExpressionParser.Parse(tokens, fd);
-                }
-                else if (optionalArgFound)
-                {
-                    throw new ParserException(argName, "All optional arguments must come at the end of the argument list.");
-                }
-                argNames.Add(argName);
-                defaultValues.Add(defaultValue);
-            }
-
-            IList<Executable> code = this.parser.ExecutableParser.ParseBlock(tokens, true, fd);
-
-            fd.ArgNames = argNames.ToArray();
-            fd.DefaultValues = defaultValues.ToArray();
-            fd.Code = code.ToArray();
-
-            return fd;
-        }
+            AnnotationCollection annotations,
+            ModifierCollection modifiers);
     }
 }

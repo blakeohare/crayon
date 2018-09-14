@@ -9,6 +9,7 @@ namespace Parser.ParseTree
         public int FunctionID { get; set; }
         public Token NameToken { get; private set; }
         public bool IsStaticMethod { get; private set; }
+        public AType[] ArgTypes { get; set; }
         public Token[] ArgNames { get; set; }
         public Expression[] DefaultValues { get; set; }
         private int[] argVarIds = null;
