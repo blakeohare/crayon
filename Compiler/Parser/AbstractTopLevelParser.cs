@@ -105,12 +105,28 @@ namespace Parser
             if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.CONSTRUCTOR && owner is ClassDefinition) return this.ParseConstructor(tokens, (ClassDefinition)owner, annotations);
 
+            FunctionDefinition nullableFunctionDef = this.MaybeParseFunctionDefinition(tokens, owner, fileScope, annotations, modifiers_IGNORED);
+            if (nullableFunctionDef != null)
+            {
+                return nullableFunctionDef;
+            }
+
             Token token = tokens.Peek();
             throw ParserException.ThrowException(
                 this.parser.CurrentLocale,
                 ErrorMessages.UNEXPECTED_TOKEN_NO_SPECIFIC_EXPECTATIONS,
                 token,
                 token.Value);
+        }
+
+        protected virtual FunctionDefinition MaybeParseFunctionDefinition(
+            TokenStream tokens,
+            Node owner,
+            FileScope fileScope,
+            AnnotationCollection annotations,
+            ModifierCollection modifiers)
+        {
+            return null;
         }
 
         protected virtual ConstructorDefinition ParseConstructor(
