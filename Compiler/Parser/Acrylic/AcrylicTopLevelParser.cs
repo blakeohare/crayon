@@ -179,5 +179,32 @@ namespace Parser.Acrylic
 
             return constStatement;
         }
+
+        protected override FunctionDefinition MaybeParseFunctionDefinition(
+            TokenStream tokens,
+            Node owner,
+            FileScope fileScope,
+            AnnotationCollection annotations,
+            ModifierCollection modifiers)
+        {
+            TokenStream.StreamState tss = tokens.RecordState();
+            AType returnType = this.parser.TypeParser.TryParse(tokens);
+            if (returnType == null) return null;
+            Token functionName = tokens.PopIfWord();
+            if (functionName == null)
+            {
+                tokens.RestoreState(tss);
+                return null;
+            }
+
+            if (tokens.IsNext("("))
+            {
+                tokens.RestoreState(tss);
+                return this.ParseFunction(tokens, owner as TopLevelEntity, fileScope, annotations, modifiers);
+            }
+
+            tokens.RestoreState(tss);
+            return null;
+        }
     }
 }
