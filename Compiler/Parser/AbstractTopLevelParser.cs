@@ -177,18 +177,11 @@ namespace Parser
             return ctor;
         }
 
-        protected virtual ConstDefinition ParseConst(TokenStream tokens, Node owner, FileScope fileScope, AnnotationCollection annotations)
-        {
-            Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
-            Token nameToken = tokens.Pop();
-            ConstDefinition constStatement = new ConstDefinition(constToken, nameToken, owner, fileScope, annotations);
-            this.parser.VerifyIdentifier(nameToken);
-            tokens.PopExpected("=");
-            constStatement.Expression = this.parser.ExpressionParser.Parse(tokens, constStatement);
-            tokens.PopExpected(";");
-
-            return constStatement;
-        }
+        protected abstract ConstDefinition ParseConst(
+            TokenStream tokens,
+            Node owner,
+            FileScope fileScope,
+            AnnotationCollection annotations);
 
         protected virtual EnumDefinition ParseEnumDefinition(TokenStream tokens, Node owner, FileScope fileScope, AnnotationCollection annotations)
         {

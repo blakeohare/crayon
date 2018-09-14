@@ -161,5 +161,23 @@ namespace Parser.Acrylic
 
             return fd;
         }
+
+        protected override ConstDefinition ParseConst(
+            TokenStream tokens,
+            Node owner,
+            FileScope fileScope,
+            AnnotationCollection annotations)
+        {
+            Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
+            AType type = this.parser.TypeParser.Parse(tokens);
+            Token nameToken = tokens.Pop();
+            ConstDefinition constStatement = new ConstDefinition(constToken, nameToken, owner, fileScope, annotations);
+            this.parser.VerifyIdentifier(nameToken);
+            tokens.PopExpected("=");
+            constStatement.Expression = this.parser.ExpressionParser.Parse(tokens, constStatement);
+            tokens.PopExpected(";");
+
+            return constStatement;
+        }
     }
 }
