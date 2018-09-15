@@ -35,6 +35,21 @@ namespace Parser.Resolver
                 }
             }
 
+            using (new PerformanceSection("Resolve Types"))
+            {
+                foreach (CompilationScope scope in compilationScopes)
+                {
+                    using (new PerformanceSection("Resolve types for: " + scope.ScopeKey))
+                    {
+                        TypeResolver typeResolver = new TypeResolver();
+                        foreach (TopLevelEntity tle in scope.GetTopLevelConstructs())
+                        {
+                            tle.ResolveTypes(parser);
+                        }
+                    }
+                }
+            }
+
             SpecialFunctionFinder.Run(parser);
 
             code = SimpleFirstPass.Run(parser, code);

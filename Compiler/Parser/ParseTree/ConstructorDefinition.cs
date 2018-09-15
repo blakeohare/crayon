@@ -157,5 +157,9 @@ namespace Parser.ParseTree
             this.BatchExecutableEntityNameResolver(parser, this.Code);
             parser.CurrentCodeContainer = null;
         }
+
+        internal override void ResolveTypes(ParserContext parser)
+        {
+        }
     }
 }

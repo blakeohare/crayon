@@ -60,5 +60,6 @@ namespace Parser.ParseTree
 
         internal abstract void Resolve(ParserContext parser);
         internal abstract void ResolveEntityNames(ParserContext parser);
+        internal abstract void ResolveTypes(ParserContext parser);
     }
 }

@@ -67,5 +67,9 @@ namespace Parser.ParseTree
         {
             throw new InvalidOperationException();
         }
+
+        internal override void ResolveTypes(ParserContext parser)
+        {
+        }
     }
 }

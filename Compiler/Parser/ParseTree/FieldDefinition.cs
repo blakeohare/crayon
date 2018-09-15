@@ -48,6 +48,10 @@ namespace Parser.ParseTree
             parser.CurrentCodeContainer = null;
         }
 
+        internal override void ResolveTypes(ParserContext parser)
+        {
+        }
+
         internal void AllocateLocalScopeIds(ParserContext parser)
         {
             VariableScope varScope = VariableScope.NewEmptyScope();
