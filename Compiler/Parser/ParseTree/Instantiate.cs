@@ -83,6 +83,15 @@ namespace Parser.ParseTree
         internal override Expression ResolveEntityNames(ParserContext parser)
         {
             this.BatchExpressionEntityNameResolver(parser, this.Args);
+            // TODO: localize or create a dummy stub in Core
+            if (this.Name == "List")
+            {
+                return new ListDefinition(this.FirstToken, new List<Expression>(), this.Owner);
+            }
+            else if (this.Name == "Dictionary")
+            {
+                return new DictionaryDefinition(this.FirstToken, new List<Expression>(), new List<Expression>(), this.Owner);
+            }
             this.Class = this.FileScope.DoClassLookup(this.Owner, this.NameToken, this.Name);
             return this;
         }

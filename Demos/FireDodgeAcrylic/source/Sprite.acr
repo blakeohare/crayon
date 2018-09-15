@@ -12,7 +12,7 @@ public class Sprite {
     private int width;
     private int height;
 
-    publc constructor(int[] position) {
+    public constructor(int[] position) {
         this.position = position;
         GraphicsTexture img = this.getImage(0);
         this.width = img.width;
@@ -44,7 +44,7 @@ public class Sprite {
         }
     }
 
-    public GraphicsTexture getImage(gameCounter) {
+    public GraphicsTexture getImage(int gameCounter) {
         fail("Overriden");
     }
 
@@ -78,7 +78,7 @@ public class Player : Sprite {
         }
     }
 
-    public constructor(position) : base(position) {
+    public constructor(int[] position) : base(position) {
         this.velocity = 3.0;
     }
 
@@ -96,7 +96,7 @@ public class Player : Sprite {
     }
 
     // Return the proper image for the current player's state
-    public GraphicsTexture getImage(gameCounter) {
+    public GraphicsTexture getImage(int gameCounter) {
         if (this.isDead) {
             // If the player died, show him collapsed
             return Player.playerDeadImage;
@@ -119,13 +119,13 @@ public class Fire : Sprite {
     private static GraphicsTexture[] fireImages;
 
     static constructor() {
-		this.fireImages = new GraphicsTexture[2];
+		Fire.fireImages = new GraphicsTexture[] { null, null }; // TODO: allow construction of un-initialized list of fixed length
         for (int i = 0; i < 2; ++i) {
             Fire.fireImages[i] = ImageLibrary.get('images/fire/fire' + (i + 1) + '.png');
         }
     }
 
-    public constructor(position) : base(position) {
+    public constructor(int[] position) : base(position) {
         this.velocity = 1.6;
     }
 
@@ -140,7 +140,7 @@ public class Fire : Sprite {
     }
 
     // Cycle through the fire images.
-    public override GraphicsTexture getImage(gameCounter) {
+    public override GraphicsTexture getImage(int gameCounter) {
         return Fire.fireImages[gameCounter / 2 % Fire.fireImages.length];
     }
 }

@@ -17,7 +17,7 @@ public int[] randomEdgePoint() {
     }
 }
 
-public string getDirectionFromAngle(theta) {
+public string getDirectionFromAngle(double theta) {
     theta = theta % (2 * Math.PI);
     if (theta < Math.PI / 4 || theta > 7 * Math.PI / 4) return 'e';
     if (theta < 3 * Math.PI / 4) return 'n';
