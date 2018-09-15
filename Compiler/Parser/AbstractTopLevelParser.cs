@@ -188,7 +188,9 @@ namespace Parser
                     tokens.PopExpected(",");
                 }
 
-                AType argType = this.HasTypes ? this.parser.TypeParser.Parse(tokens) : null;
+                AType argType = this.HasTypes
+                    ? this.parser.TypeParser.Parse(tokens)
+                    : AType.Any(tokens.Peek());
 
                 Token argName = tokens.Pop();
                 this.parser.VerifyIdentifier(argName);

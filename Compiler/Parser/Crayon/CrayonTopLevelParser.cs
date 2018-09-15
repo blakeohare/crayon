@@ -107,8 +107,8 @@ namespace Parser.Crayon
             tokens.PopExpected("(");
             List<Token> argNames = new List<Token>();
             List<Expression> defaultValues = new List<Expression>();
-            List<AType> argTypesIgnored = new List<AType>();
-            this.ParseArgumentListDeclaration(tokens, fd, argTypesIgnored, argNames, defaultValues);
+            List<AType> argTypes = new List<AType>();
+            this.ParseArgumentListDeclaration(tokens, fd, argTypes, argNames, defaultValues);
 
             IList<Executable> code = this.parser.ExecutableParser.ParseBlock(tokens, true, fd);
 

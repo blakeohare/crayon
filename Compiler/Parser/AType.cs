@@ -9,13 +9,30 @@ namespace Parser
         public Token[] RootTypeTokens { get; set; }
         public string RootType { get; set; }
         public AType[] Generics { get; set; }
+        public bool IsAnyType { get; set; }
 
+        private static readonly Token[] EMPTY_TOKEN_LIST = new Token[0];
         private static readonly AType[] EMPTY_TYPE_ARGS = new AType[0];
+
+        public static AType Any()
+        {
+            return Any(null);
+        }
+
+        public static AType Any(Token token)
+        {
+            if (token != null)
+            {
+                return new AType(new List<Token>() { token }) { IsAnyType = true };
+            }
+            return new AType(EMPTY_TOKEN_LIST) { IsAnyType = true };
+        }
 
         public AType(IList<Token> rootType) : this(rootType, EMPTY_TYPE_ARGS) { }
 
         public AType(IList<Token> rootType, IList<AType> generics)
         {
+            this.IsAnyType = false;
             this.RootTypeTokens = rootType.ToArray();
             this.FirstToken = this.RootTypeTokens[0];
             this.RootType = string.Join(".", this.RootTypeTokens.Select(t => t.Value));
