@@ -195,12 +195,12 @@ namespace Parser
             return root;
         }
 
-        private Expression ParseInstantiate(TokenStream tokens, Node owner)
-        {
-            Token newToken = tokens.PopExpected(this.parser.Keywords.NEW);
-            Token classNameToken = tokens.Pop();
-            string name = this.parser.PopClassNameWithFirstTokenAlreadyPopped(tokens, classNameToken);
+        protected abstract AType ParseTypeForInstantiation(TokenStream tokens);
 
+        protected abstract Expression ParseInstantiate(TokenStream tokens, Node owner);
+
+        protected IList<Expression> ParseArgumentList(TokenStream tokens, Node owner)
+        {
             List<Expression> args = new List<Expression>();
             tokens.PopExpected("(");
             while (!tokens.PopIfPresent(")"))
@@ -211,8 +211,7 @@ namespace Parser
                 }
                 args.Add(Parse(tokens, owner));
             }
-
-            return new Instantiate(newToken, classNameToken, name, args, owner);
+            return args;
         }
 
         private Expression ParseLambda(TokenStream tokens, Token firstToken, IList<Token> args, Node owner)

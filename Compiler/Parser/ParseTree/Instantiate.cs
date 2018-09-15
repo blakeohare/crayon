@@ -11,11 +11,13 @@ namespace Parser.ParseTree
         public string Name { get; private set; }
         public Expression[] Args { get; private set; }
         public ClassDefinition Class { get; set; }
+        public AType[] Generics { get; set; }
 
         public Instantiate(
             Token firstToken,
             Token firstClassNameToken,
             string name,
+            IList<AType> generics,
             IList<Expression> args,
             Node owner)
             : base(firstToken, owner)
@@ -23,6 +25,7 @@ namespace Parser.ParseTree
             this.NameToken = firstClassNameToken;
             this.Name = name;
             this.Args = args.ToArray();
+            this.Generics = generics.ToArray();
         }
 
         internal override Expression Resolve(ParserContext parser)
