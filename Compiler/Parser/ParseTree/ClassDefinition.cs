@@ -292,6 +292,10 @@ namespace Parser.ParseTree
             this.BatchTopLevelConstructNameResolver(parser, this.Methods);
         }
 
+        internal override void ResolveTypes(ParserContext parser)
+        {
+        }
+
         public void VerifyNoBaseClassLoops()
         {
             if (this.BaseClass == null) return;

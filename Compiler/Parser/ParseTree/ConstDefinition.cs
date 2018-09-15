@@ -61,5 +61,9 @@ namespace Parser.ParseTree
         {
             this.Expression = this.Expression.ResolveEntityNames(parser);
         }
+
+        internal override void ResolveTypes(ParserContext parser)
+        {
+        }
     }
 }

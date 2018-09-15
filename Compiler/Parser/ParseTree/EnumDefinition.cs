@@ -119,5 +119,9 @@ namespace Parser.ParseTree
         {
             this.BatchExpressionEntityNameResolver(parser, this.Values);
         }
+
+        internal override void ResolveTypes(ParserContext parser)
+        {
+        }
     }
 }
