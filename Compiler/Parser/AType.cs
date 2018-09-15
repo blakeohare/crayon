@@ -10,6 +10,10 @@ namespace Parser
         public string RootType { get; set; }
         public AType[] Generics { get; set; }
 
+        private static readonly AType[] EMPTY_TYPE_ARGS = new AType[0];
+
+        public AType(IList<Token> rootType) : this(rootType, EMPTY_TYPE_ARGS) { }
+
         public AType(IList<Token> rootType, IList<AType> generics)
         {
             this.RootTypeTokens = rootType.ToArray();
