@@ -10,9 +10,12 @@ namespace Parser
     {
         protected ParserContext parser;
 
-        public AbstractTopLevelParser(ParserContext parser)
+        public bool HasTypes { get; protected set; }
+
+        public AbstractTopLevelParser(ParserContext parser, bool hasTypes)
         {
             this.parser = parser;
+            this.HasTypes = hasTypes;
         }
 
         internal virtual ImportStatement ParseImport(TokenStream tokens, FileScope fileScope)
@@ -138,34 +141,11 @@ namespace Parser
             ConstructorDefinition ctor = new ConstructorDefinition(constructorToken, annotations, owner);
             tokens.PopExpected("(");
 
+            List<AType> argTypes = new List<AType>();
             List<Token> argNames = new List<Token>();
             List<Expression> argValues = new List<Expression>();
-            bool optionalArgFound = false;
-            while (!tokens.PopIfPresent(")"))
-            {
-                if (argNames.Count > 0)
-                {
-                    tokens.PopExpected(",");
-                }
 
-                Token argName = tokens.Pop();
-                this.parser.VerifyIdentifier(argName);
-                Expression defaultValue = null;
-                if (tokens.PopIfPresent("="))
-                {
-                    defaultValue = this.parser.ExpressionParser.Parse(tokens, ctor);
-                    optionalArgFound = true;
-                }
-                else if (optionalArgFound)
-                {
-                    throw this.parser.GenerateParseError(
-                        ErrorMessages.OPTIONAL_ARGUMENT_WAS_NOT_AT_END_OF_ARGUMENT_LIST,
-                        argName);
-                }
-
-                argNames.Add(argName);
-                argValues.Add(defaultValue);
-            }
+            this.ParseArgumentListDeclaration(tokens, ctor, argTypes, argNames, argValues);
 
             List<Expression> baseArgs = new List<Expression>();
             Token baseToken = null;
@@ -191,6 +171,44 @@ namespace Parser
             ctor.SetCode(code);
             ctor.BaseToken = baseToken;
             return ctor;
+        }
+
+        protected void ParseArgumentListDeclaration(
+            TokenStream tokens,
+            Node owner,
+            IList<AType> argTypesOut,
+            IList<Token> argNamesOut,
+            IList<Expression> argDefaultValuesOut)
+        {
+            bool optionalArgFound = false;
+            while (!tokens.PopIfPresent(")"))
+            {
+                if (argNamesOut.Count > 0)
+                {
+                    tokens.PopExpected(",");
+                }
+
+                AType argType = this.HasTypes ? this.parser.TypeParser.Parse(tokens) : null;
+
+                Token argName = tokens.Pop();
+                this.parser.VerifyIdentifier(argName);
+                Expression defaultValue = null;
+                if (tokens.PopIfPresent("="))
+                {
+                    defaultValue = this.parser.ExpressionParser.Parse(tokens, owner);
+                    optionalArgFound = true;
+                }
+                else if (optionalArgFound)
+                {
+                    throw this.parser.GenerateParseError(
+                        ErrorMessages.OPTIONAL_ARGUMENT_WAS_NOT_AT_END_OF_ARGUMENT_LIST,
+                        argName);
+                }
+
+                argTypesOut.Add(argType);
+                argNamesOut.Add(argName);
+                argDefaultValuesOut.Add(defaultValue);
+            }
         }
 
         protected abstract ConstDefinition ParseConst(

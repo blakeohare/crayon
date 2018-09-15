@@ -26,7 +26,7 @@ public class PlayScene : AbstractScene {
     }
 
     public override void processInput(Game.Event[] events) {
-        for (event : events) {
+        for (Game.Event event : events) {
             // Player clicked
             if (event.type == EventType.MOUSE_LEFT_DOWN) {
 
@@ -79,7 +79,7 @@ public class PlayScene : AbstractScene {
         }
 
         // Update the fire positions
-        for (fire : this.fires) {
+        for (Fire fire : this.fires) {
             fire.update();
         }
     }
@@ -99,7 +99,7 @@ public class PlayScene : AbstractScene {
 
             double distance = (dx ** 2 + dy ** 2) ** .5;
             double deathDistance = (playerWidth + fire.width) / 2;
-            double deathDistance *= .7; // make the game a little easier
+            deathDistance *= .7; // make the game a little easier
 
             if (distance < deathDistance) {
                 return true;

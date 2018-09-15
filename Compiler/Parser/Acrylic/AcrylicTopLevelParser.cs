@@ -9,7 +9,7 @@ namespace Parser.Acrylic
     internal class AcrylicTopLevelParser : AbstractTopLevelParser
     {
         public AcrylicTopLevelParser(ParserContext parser)
-            : base(parser)
+            : base(parser, true)
         { }
 
         private static readonly HashSet<string> MODIFIER_STRING_VALUES = new HashSet<string>()
@@ -129,28 +129,7 @@ namespace Parser.Acrylic
             List<AType> argTypes = new List<AType>();
             List<Token> argNames = new List<Token>();
             List<Expression> defaultValues = new List<Expression>();
-            bool optionalArgFound = false;
-            while (!tokens.PopIfPresent(")"))
-            {
-                if (argNames.Count > 0) tokens.PopExpected(",");
-
-                AType argType = this.parser.TypeParser.Parse(tokens);
-                Token argName = tokens.Pop();
-                Expression defaultValue = null;
-                this.parser.VerifyIdentifier(argName);
-                if (tokens.PopIfPresent("="))
-                {
-                    optionalArgFound = true;
-                    defaultValue = this.parser.ExpressionParser.Parse(tokens, fd);
-                }
-                else if (optionalArgFound)
-                {
-                    throw new ParserException(argName, "All optional arguments must come at the end of the argument list.");
-                }
-                argTypes.Add(argType);
-                argNames.Add(argName);
-                defaultValues.Add(defaultValue);
-            }
+            this.ParseArgumentListDeclaration(tokens, fd, argTypes, argNames, defaultValues);
 
             IList<Executable> code = this.parser.ExecutableParser.ParseBlock(tokens, true, fd);
 

@@ -1,4 +1,5 @@
 ﻿using Parser.ParseTree;
+using System;
 
 namespace Parser.Acrylic
 {
@@ -42,6 +43,31 @@ namespace Parser.Acrylic
 
             tokens.RestoreState(tss);
             return null;
+        }
+
+        protected override bool IsForEachLoopParenthesisContents(TokenStream tokens)
+        {
+            TokenStream.StreamState tss = tokens.RecordState();
+            try
+            {
+                AType type = this.parser.TypeParser.TryParse(tokens);
+                if (type == null) return false;
+                if (tokens.PopIfWord() == null) return false;
+                return tokens.IsNext(":");
+            }
+            finally
+            {
+                tokens.RestoreState(tss);
+            }
+        }
+
+        protected override Tuple<AType, Token> ParseForEachLoopIteratorVariable(TokenStream tokens, Node owner)
+        {
+            AType type = this.parser.TypeParser.Parse(tokens);
+            tokens.EnsureNotEof();
+            Token variable = tokens.PopIfWord();
+            if (variable == null) throw new ParserException(tokens.Peek(), "Expected variable here.");
+            return new Tuple<AType, Token>(type, variable);
         }
     }
 }

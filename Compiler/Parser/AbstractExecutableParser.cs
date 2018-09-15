@@ -134,47 +134,57 @@ namespace Parser
             return new ThrowStatement(throwToken, throwExpression, owner);
         }
 
-        private Executable ParseFor(TokenStream tokens, Node owner)
+        protected Executable ParseFor(TokenStream tokens, Node owner)
         {
             Token forToken = tokens.PopExpected(this.parser.Keywords.FOR);
             tokens.PopExpected("(");
-            if (!tokens.HasMore) tokens.ThrowEofException();
+            tokens.EnsureNotEof();
 
-            if (tokens.Peek().Type == TokenType.WORD && tokens.PeekValue(1) == ":")
+            if (this.IsForEachLoopParenthesisContents(tokens))
             {
-                Token iteratorToken = tokens.Pop();
+                System.Tuple<AType, Token> iteratorVariable = this.ParseForEachLoopIteratorVariable(tokens, owner);
+                AType iteratorVariableType = iteratorVariable.Item1; // ignored for now
+                Token iteratorToken = iteratorVariable.Item2;
                 tokens.PopExpected(":");
                 Expression iterationExpression = this.parser.ExpressionParser.Parse(tokens, owner);
                 tokens.PopExpected(")");
                 IList<Executable> body = this.ParseBlock(tokens, false, owner);
-
-                return new ForEachLoop(forToken, iteratorToken, iterationExpression, body, owner);
+                return new ForEachLoop(forToken, iteratorVariable.Item2, iterationExpression, body, owner);
             }
             else
             {
-                List<Executable> init = new List<Executable>();
-                while (!tokens.PopIfPresent(";"))
-                {
-                    if (init.Count > 0) tokens.PopExpected(",");
-                    init.Add(this.Parse(tokens, true, false, owner));
-                }
-                Expression condition = null;
-                if (!tokens.PopIfPresent(";"))
-                {
-                    condition = this.parser.ExpressionParser.Parse(tokens, owner);
-                    tokens.PopExpected(";");
-                }
-                List<Executable> step = new List<Executable>();
-                while (!tokens.PopIfPresent(")"))
-                {
-                    if (step.Count > 0) tokens.PopExpected(",");
-                    step.Add(this.Parse(tokens, true, false, owner));
-                }
-
+                System.Tuple<IList<Executable>, Expression, IList<Executable>> parts = this.ParseForLoopComponents(tokens, owner);
                 IList<Executable> body = this.ParseBlock(tokens, false, owner);
-
-                return new ForLoop(forToken, init, condition, step, body, owner);
+                return new ForLoop(forToken, parts.Item1, parts.Item2, parts.Item3, body, owner);
             }
+        }
+
+        protected abstract System.Tuple<AType, Token> ParseForEachLoopIteratorVariable(TokenStream tokens, Node owner);
+
+        protected abstract bool IsForEachLoopParenthesisContents(TokenStream tokens);
+
+        protected System.Tuple<IList<Executable>, Expression, IList<Executable>> ParseForLoopComponents(TokenStream tokens, Node owner)
+        {
+            List<Executable> init = new List<Executable>();
+            while (!tokens.PopIfPresent(";"))
+            {
+                if (init.Count > 0) tokens.PopExpected(",");
+                init.Add(this.Parse(tokens, true, false, owner));
+            }
+            Expression condition = null;
+            if (!tokens.PopIfPresent(";"))
+            {
+                condition = this.parser.ExpressionParser.Parse(tokens, owner);
+                tokens.PopExpected(";");
+            }
+            List<Executable> step = new List<Executable>();
+            while (!tokens.PopIfPresent(")"))
+            {
+                if (step.Count > 0) tokens.PopExpected(",");
+                step.Add(this.Parse(tokens, true, false, owner));
+            }
+
+            return new System.Tuple<IList<Executable>, Expression, IList<Executable>>(init, condition, step);
         }
 
         private Executable ParseWhile(TokenStream tokens, Node owner)
