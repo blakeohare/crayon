@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Parser.Resolver;
+using System;
 using System.Collections.Generic;
 
 namespace Parser.ParseTree
@@ -41,9 +42,17 @@ namespace Parser.ParseTree
             throw new NotImplementedException();
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            foreach (Expression arg in this.Args)
+            {
+                arg.ResolveTypes(parser, typeResolver);
+            }
+
+            this.ResolvedType =
+                this.FileScope.CompilationScope.ProgrammingLanguage == "Acrylic"
+                    ? ResolvedType.OBJECT
+                    : ResolvedType.ANY;
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)

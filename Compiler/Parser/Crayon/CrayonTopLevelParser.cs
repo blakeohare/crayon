@@ -76,7 +76,7 @@ namespace Parser.Crayon
             Token fieldToken = tokens.PopExpected(this.parser.Keywords.FIELD);
             Token nameToken = tokens.Pop();
             this.parser.VerifyIdentifier(nameToken);
-            FieldDefinition fd = new FieldDefinition(fieldToken, null, nameToken, owner, isStatic, annotations);
+            FieldDefinition fd = new FieldDefinition(fieldToken, AType.Any(fieldToken), nameToken, owner, isStatic, annotations);
             if (tokens.PopIfPresent("="))
             {
                 fd.DefaultValue = this.parser.ExpressionParser.Parse(tokens, fd);

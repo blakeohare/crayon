@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -28,6 +29,46 @@ namespace Parser.ParseTree
                 this.Expression = this.Expression.ResolveEntityNames(parser);
             }
             return this;
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            ResolvedType returnType;
+            FunctionDefinition fd = this.Owner as FunctionDefinition;
+
+            if (fd != null)
+            {
+                returnType = fd.ResolvedReturnType;
+            }
+            else if (this.Owner is ConstructorDefinition)
+            {
+                returnType = ResolvedType.VOID;
+            }
+            else
+            {
+                throw new System.Exception();
+            }
+
+            if (this.Expression == null)
+            {
+                if (returnType != ResolvedType.VOID)
+                {
+                    throw new ParserException(this, "Must return a value from a function. Empty return statements are not allowed.");
+                }
+                else
+                {
+                    throw new System.NotImplementedException();
+                }
+            }
+            else
+            {
+                this.Expression.ResolveTypes(parser, typeResolver);
+
+                if (!this.Expression.ResolvedType.CanAssignToA(returnType))
+                {
+                    throw new ParserException(this, "Cannot return this type from this function.");
+                }
+            }
         }
 
         public override bool IsTerminator { get { return true; } }

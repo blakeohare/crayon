@@ -1,4 +1,6 @@
 ﻿using Parser.ParseTree;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Parser.Resolver
 {
@@ -9,6 +11,11 @@ namespace Parser.Resolver
         public TypeResolver(Node owner)
         {
             this.owner = owner;
+        }
+
+        public ResolvedType[] ResolveTypes(IList<AType> types)
+        {
+            return types.Select(t => this.ResolveType(t)).ToArray();
         }
 
         public ResolvedType ResolveType(AType type)

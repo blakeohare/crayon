@@ -1,4 +1,6 @@
-﻿namespace Parser.ParseTree
+﻿using Parser.Resolver;
+
+namespace Parser.ParseTree
 {
     public class FieldReference : Expression
     {
@@ -31,7 +33,7 @@
             throw new ParserException(this, "This should not happen.");
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             throw new System.NotImplementedException();
         }

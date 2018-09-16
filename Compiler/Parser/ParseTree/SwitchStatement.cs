@@ -1,4 +1,5 @@
 ﻿using Common;
+using Parser.Resolver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -260,6 +261,11 @@ namespace Parser.ParseTree
                 }
                 return true;
             }
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            throw new System.NotImplementedException();
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
