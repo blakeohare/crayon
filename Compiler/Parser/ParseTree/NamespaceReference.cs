@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Parser.Resolver;
+using System;
 
 namespace Parser.ParseTree
 {
@@ -39,7 +40,7 @@ namespace Parser.ParseTree
             throw new Exception(); // Generated from the ResolveNames phase.
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             throw new System.NotImplementedException();
         }

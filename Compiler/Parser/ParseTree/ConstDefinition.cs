@@ -91,7 +91,7 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            this.Expression.ResolveTypes(parser);
+            this.Expression.ResolveTypes(parser, typeResolver);
 
             this.Expression.ResolvedType.EnsureCanAssignToA(this.Expression.FirstToken, this.ResolvedType);
         }

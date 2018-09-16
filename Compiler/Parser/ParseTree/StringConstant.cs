@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Parser.Resolver;
+using System.Text;
 
 namespace Parser.ParseTree
 {
@@ -61,7 +62,7 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             this.ResolvedType = ResolvedType.STRING;
         }

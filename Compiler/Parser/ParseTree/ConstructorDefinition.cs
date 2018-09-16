@@ -16,6 +16,7 @@ namespace Parser.ParseTree
         public int FunctionID { get; private set; }
         public Executable[] Code { get; set; }
         public AType[] ArgTypes { get; set; }
+        public ResolvedType[] ResolvedArgTypes { get; private set; }
         public Token[] ArgNames { get; private set; }
         public Expression[] DefaultValues { get; private set; }
         public Expression[] BaseArgs { get; private set; }
@@ -164,7 +165,7 @@ namespace Parser.ParseTree
 
         internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            this.ResolvedArgTypes = typeResolver.ResolveTypes(this.ArgTypes);
         }
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)

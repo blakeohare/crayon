@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Parser.Resolver;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Parser.ParseTree
@@ -321,7 +322,7 @@ namespace Parser.ParseTree
             throw new ParserException(this.ParenToken, "This cannot be invoked like a function.");
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             throw new System.NotImplementedException();
         }

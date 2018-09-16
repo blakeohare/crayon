@@ -1,4 +1,6 @@
-﻿namespace Parser.ParseTree
+﻿using Parser.Resolver;
+
+namespace Parser.ParseTree
 {
     public class Ternary : Expression
     {
@@ -39,7 +41,7 @@
             return this;
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             throw new System.NotImplementedException();
         }

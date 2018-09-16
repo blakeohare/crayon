@@ -12,6 +12,7 @@ namespace Parser
         VOID,
         NULL,
         NULLABLE,
+        OBJECT,
 
         BOOLEAN,
         INTEGER,
@@ -52,6 +53,7 @@ namespace Parser
         public static readonly ResolvedType FLOAT = new ResolvedType(ResolvedTypeCategory.FLOAT);
         public static readonly ResolvedType STRING = new ResolvedType(ResolvedTypeCategory.STRING);
         public static readonly ResolvedType NULL = new ResolvedType(ResolvedTypeCategory.NULL);
+        public static readonly ResolvedType OBJECT = new ResolvedType(ResolvedTypeCategory.OBJECT);
 
         private static readonly Dictionary<int, ResolvedType> arrayTypes = new Dictionary<int, ResolvedType>();
         public static ResolvedType ListOrArrayOf(ResolvedType otherType)

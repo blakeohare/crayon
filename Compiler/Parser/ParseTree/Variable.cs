@@ -1,4 +1,6 @@
-﻿namespace Parser.ParseTree
+﻿using Parser.Resolver;
+
+namespace Parser.ParseTree
 {
     public class Variable : Expression
     {
@@ -53,13 +55,13 @@
 
             if (exec != null)
             {
-                return Resolver.ResolverPipeline.ConvertStaticReferenceToExpression(exec, this.FirstToken, this.Owner);
+                return ResolverPipeline.ConvertStaticReferenceToExpression(exec, this.FirstToken, this.Owner);
             }
 
             return this;
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             throw new System.NotImplementedException();
         }

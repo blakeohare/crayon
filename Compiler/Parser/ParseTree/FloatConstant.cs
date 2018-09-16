@@ -1,4 +1,5 @@
 ﻿using Common;
+using Parser.Resolver;
 
 namespace Parser.ParseTree
 {
@@ -38,7 +39,7 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             throw new System.NotImplementedException();
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Parser.Resolver;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Parser.ParseTree
@@ -159,6 +160,11 @@ namespace Parser.ParseTree
             if (this.FinallyBlock != null) this.BatchExecutableEntityNameResolver(parser, this.FinallyBlock);
 
             return this;
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            throw new System.NotImplementedException();
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
