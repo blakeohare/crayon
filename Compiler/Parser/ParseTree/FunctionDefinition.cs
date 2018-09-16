@@ -1,4 +1,5 @@
 ﻿using Localization;
+using Parser.Resolver;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,7 +10,10 @@ namespace Parser.ParseTree
         public int FunctionID { get; set; }
         public Token NameToken { get; private set; }
         public bool IsStaticMethod { get; private set; }
+        public AType ReturnType { get; set; }
+        public ResolvedType ResolvedReturnType { get; set; }
         public AType[] ArgTypes { get; set; }
+        public ResolvedType[] ResolvedArgTypes { get; set; }
         public Token[] ArgNames { get; set; }
         public Expression[] DefaultValues { get; set; }
         private int[] argVarIds = null;
@@ -23,6 +27,7 @@ namespace Parser.ParseTree
 
         public FunctionDefinition(
             Token functionToken,
+            AType returnType,
             TopLevelEntity nullableOwner,
             bool isStaticMethod,
             Token nameToken,
@@ -30,6 +35,7 @@ namespace Parser.ParseTree
             FileScope fileScope)
             : base(functionToken, nullableOwner, fileScope)
         {
+            this.ReturnType = returnType;
             this.IsStaticMethod = isStaticMethod;
             this.NameToken = nameToken;
             this.Annotations = annotations;
@@ -86,8 +92,21 @@ namespace Parser.ParseTree
             parser.CurrentCodeContainer = null;
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            this.ResolvedReturnType = typeResolver.ResolveType(this.ReturnType);
+
+            int argLength = this.ArgNames.Length;
+            this.ResolvedArgTypes = new ResolvedType[argLength];
+            for (int i = 0; i < argLength; ++i)
+            {
+                this.ResolvedArgTypes[i] = typeResolver.ResolveType(this.ArgTypes[i]);
+            }
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            throw new System.NotImplementedException();
         }
 
         internal void AllocateLocalScopeIds(ParserContext parser)

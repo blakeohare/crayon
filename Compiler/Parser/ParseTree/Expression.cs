@@ -12,6 +12,8 @@ namespace Parser.ParseTree
 
         public abstract bool CanAssignTo { get; }
 
+        public ResolvedType ResolvedType { get; set; }
+
         // Override and return true if this expression, when used in an inline function as an argument into a library/core
         // function, shouldn't pose any problems. Generally this would be inline constants, simple variables, or static fields.
         public virtual bool IsInlineCandidate {  get { return false; } }
@@ -19,6 +21,8 @@ namespace Parser.ParseTree
         internal abstract Expression ResolveEntityNames(ParserContext parser);
 
         internal abstract Expression Resolve(ParserContext parser);
+
+        internal abstract void ResolveTypes(ParserContext parser);
 
         internal abstract void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase);
 

@@ -21,11 +21,9 @@ namespace Parser
 
         public static AType Any(Token token)
         {
-            if (token != null)
-            {
-                return new AType(new List<Token>() { token }) { IsAnyType = true };
-            }
-            return new AType(EMPTY_TOKEN_LIST) { IsAnyType = true };
+            AType type = new AType(EMPTY_TOKEN_LIST) { IsAnyType = true };
+            type.FirstToken = token;
+            return type;
         }
 
         public AType(IList<Token> rootType) : this(rootType, EMPTY_TYPE_ARGS) { }
@@ -34,7 +32,7 @@ namespace Parser
         {
             this.IsAnyType = false;
             this.RootTypeTokens = rootType.ToArray();
-            this.FirstToken = this.RootTypeTokens[0];
+            this.FirstToken = this.RootTypeTokens.Length == 0 ? null :  this.RootTypeTokens[0];
             this.RootType = string.Join(".", this.RootTypeTokens.Select(t => t.Value));
             this.Generics = generics.ToArray();
         }

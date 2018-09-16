@@ -38,5 +38,10 @@ namespace Parser.ParseTree
         {
             throw new Exception(); // Generated from the ResolveNames phase.
         }
+
+        internal override void ResolveTypes(ParserContext parser)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

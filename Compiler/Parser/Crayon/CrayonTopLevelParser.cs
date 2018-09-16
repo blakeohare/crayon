@@ -102,7 +102,7 @@ namespace Parser.Crayon
             Token functionNameToken = tokens.Pop();
             this.parser.VerifyIdentifier(functionNameToken);
 
-            FunctionDefinition fd = new FunctionDefinition(functionToken, nullableOwner, isStatic, functionNameToken, annotations, fileScope);
+            FunctionDefinition fd = new FunctionDefinition(functionToken, AType.Any(functionToken), nullableOwner, isStatic, functionNameToken, annotations, fileScope);
 
             tokens.PopExpected("(");
             List<Token> argNames = new List<Token>();
@@ -112,6 +112,7 @@ namespace Parser.Crayon
 
             IList<Executable> code = this.parser.ExecutableParser.ParseBlock(tokens, true, fd);
 
+            fd.ArgTypes = argTypes.ToArray();
             fd.ArgNames = argNames.ToArray();
             fd.DefaultValues = defaultValues.ToArray();
             fd.Code = code.ToArray();
@@ -127,7 +128,7 @@ namespace Parser.Crayon
         {
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             Token nameToken = tokens.Pop();
-            ConstDefinition constStatement = new ConstDefinition(constToken, nameToken, owner, fileScope, annotations);
+            ConstDefinition constStatement = new ConstDefinition(constToken, AType.Any(constToken), nameToken, owner, fileScope, annotations);
             this.parser.VerifyIdentifier(nameToken);
             tokens.PopExpected("=");
             constStatement.Expression = this.parser.ExpressionParser.Parse(tokens, constStatement);

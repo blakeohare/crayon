@@ -272,17 +272,6 @@ namespace Parser
             return id;
         }
 
-        private Dictionary<string, ClassDefinition> classDefinitions = new Dictionary<string, ClassDefinition>();
-
-        public ClassDefinition GetClass(string name)
-        {
-            if (this.classDefinitions.ContainsKey(name))
-            {
-                return this.classDefinitions[name];
-            }
-            return null;
-        }
-
         private readonly Dictionary<int, string> filesUsed = new Dictionary<int, string>();
 
         private void RegisterFileUsed(FileScope file, string code)

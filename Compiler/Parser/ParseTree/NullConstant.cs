@@ -22,6 +22,11 @@
             return this;
         }
 
+        internal override void ResolveTypes(ParserContext parser)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public Expression CloneValue(Token token, Node owner)
         {
             return new NullConstant(token, owner);

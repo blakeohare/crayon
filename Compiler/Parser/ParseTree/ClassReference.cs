@@ -25,6 +25,11 @@ namespace Parser.ParseTree
             throw new InvalidOperationException(); // Created during the resolve names phase.
         }
 
+        internal override void ResolveTypes(ParserContext parser)
+        {
+            throw new NotImplementedException();
+        }
+
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }
     }
 }

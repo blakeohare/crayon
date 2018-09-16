@@ -52,5 +52,10 @@ namespace Parser.ParseTree
             this.BatchExpressionEntityNameResolver(parser, this.Values);
             return this;
         }
+
+        internal override void ResolveTypes(ParserContext parser)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

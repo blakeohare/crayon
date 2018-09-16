@@ -46,6 +46,11 @@ namespace Parser.ParseTree
                 }
                 return max;
             }
+
+            internal override void ResolveTypes(ParserContext parser)
+            {
+                throw new System.NotImplementedException();
+            }
         }
 
         internal class EnumValuesFunction : SpecialEntity
@@ -67,6 +72,11 @@ namespace Parser.ParseTree
             public int[] GetValues()
             {
                 return GetEnumValues(this.enumDef);
+            }
+
+            internal override void ResolveTypes(ParserContext parser)
+            {
+                throw new System.NotImplementedException();
             }
         }
     }

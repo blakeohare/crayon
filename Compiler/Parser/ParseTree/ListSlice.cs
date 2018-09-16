@@ -55,6 +55,11 @@ namespace Parser.ParseTree
             return this;
         }
 
+        internal override void ResolveTypes(ParserContext parser)
+        {
+            throw new System.NotImplementedException();
+        }
+
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             this.Root.PerformLocalIdAllocation(parser, varIds, phase);

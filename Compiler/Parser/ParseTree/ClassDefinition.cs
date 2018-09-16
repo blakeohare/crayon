@@ -1,4 +1,5 @@
 ﻿using Localization;
+using Parser.Resolver;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -292,8 +293,35 @@ namespace Parser.ParseTree
             this.BatchTopLevelConstructNameResolver(parser, this.Methods);
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        private IEnumerable<TopLevelEntity> GetAllMembersAsEnumerable()
         {
+            return new TopLevelEntity[] { this.Constructor, this.StaticConstructor }
+                .Where(tle => tle != null)
+                .Concat(this.Methods)
+                .Concat(this.Fields)
+                .OrderBy(tle =>
+                    // iteration order is declaration order
+                    tle.FirstToken == null
+                        ? 0
+                        : tle.FirstToken.Line * 10000000.0 + tle.FirstToken.Col);
+        }
+
+        internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            foreach (TopLevelEntity tle in this.GetAllMembersAsEnumerable())
+            {
+                TypeResolver memberTypeResolver = new TypeResolver(tle);
+                tle.ResolveSignatureTypes(parser, memberTypeResolver);
+            }
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            foreach (TopLevelEntity tle in this.GetAllMembersAsEnumerable())
+            {
+                TypeResolver memberTypeResolver = new TypeResolver(tle);
+                tle.ResolveTypes(parser, memberTypeResolver);
+            }
         }
 
         public void VerifyNoBaseClassLoops()

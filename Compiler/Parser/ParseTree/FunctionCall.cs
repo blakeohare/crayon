@@ -235,16 +235,6 @@ namespace Parser.ParseTree
                 this.Args[i] = this.Args[i].Resolve(parser);
             }
 
-            if (this.Root is Variable)
-            {
-                string varName = ((Variable)this.Root).Name;
-
-                if (parser.GetClass(varName) != null)
-                {
-                    throw new ParserException(this.ParenToken, "Cannot invoke a class like a function. To construct a new class, the \"new\" keyword must be used.");
-                }
-            }
-
             this.Root = this.Root.Resolve(parser);
 
             // TODO: this is hardcoded just for Math.floor(numeric constant). Eventually, it'd be nice
@@ -281,18 +271,6 @@ namespace Parser.ParseTree
             }
 
             return this;
-        }
-
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
-        {
-            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
-            {
-                this.Root.PerformLocalIdAllocation(parser, varIds, phase);
-                foreach (Expression arg in this.Args)
-                {
-                    arg.PerformLocalIdAllocation(parser, varIds, phase);
-                }
-            }
         }
 
         internal override Expression ResolveEntityNames(ParserContext parser)
@@ -341,6 +319,23 @@ namespace Parser.ParseTree
             }
 
             throw new ParserException(this.ParenToken, "This cannot be invoked like a function.");
+        }
+
+        internal override void ResolveTypes(ParserContext parser)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        {
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
+            {
+                this.Root.PerformLocalIdAllocation(parser, varIds, phase);
+                foreach (Expression arg in this.Args)
+                {
+                    arg.PerformLocalIdAllocation(parser, varIds, phase);
+                }
+            }
         }
     }
 }
