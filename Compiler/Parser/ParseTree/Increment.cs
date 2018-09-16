@@ -46,5 +46,10 @@
             this.Root = this.Root.ResolveEntityNames(parser);
             return this;
         }
+
+        internal override void ResolveTypes(ParserContext parser)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

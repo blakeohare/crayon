@@ -1,5 +1,6 @@
 ﻿using Common;
 using Localization;
+using Parser.Resolver;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,11 +9,13 @@ namespace Parser.ParseTree
     public class ConstructorDefinition : TopLevelEntity, ICodeContainer
     {
         private static readonly Token[] NO_TOKENS = new Token[0];
+        private static readonly AType[] NO_TYPES = new AType[0];
         private static readonly Expression[] NO_EXPRESSIONS = new Expression[0];
         private static readonly Executable[] NO_EXECUTABLES = new Executable[0];
 
         public int FunctionID { get; private set; }
         public Executable[] Code { get; set; }
+        public AType[] ArgTypes { get; set; }
         public Token[] ArgNames { get; private set; }
         public Expression[] DefaultValues { get; private set; }
         public Expression[] BaseArgs { get; private set; }
@@ -38,6 +41,7 @@ namespace Parser.ParseTree
         {
             this.IsDefault = false;
             this.Annotations = annotations;
+            this.ArgTypes = NO_TYPES;
             this.ArgNames = NO_TOKENS;
             this.DefaultValues = NO_EXPRESSIONS;
             this.MaxArgCount = 0;
@@ -158,8 +162,14 @@ namespace Parser.ParseTree
             parser.CurrentCodeContainer = null;
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            throw new System.NotImplementedException();
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

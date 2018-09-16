@@ -1,10 +1,13 @@
 ﻿using Localization;
+using Parser.Resolver;
 using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
     public class ConstDefinition : TopLevelEntity
     {
+        public AType Type { get; set; }
+        public ResolvedType ResolvedType { get; private set; }
         public Expression Expression { get; set; }
         public Token NameToken { get; private set; }
         public string Name { get; private set; }
@@ -12,6 +15,7 @@ namespace Parser.ParseTree
 
         public ConstDefinition(
             Token constToken,
+            AType type,
             Token nameToken,
             Node owner,
             FileScope fileScope,
@@ -20,6 +24,7 @@ namespace Parser.ParseTree
         {
             this.NameToken = nameToken;
             this.Name = nameToken.Value;
+            this.Type = type;
             this.annotations = annotations;
         }
 
@@ -62,8 +67,33 @@ namespace Parser.ParseTree
             this.Expression = this.Expression.ResolveEntityNames(parser);
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            this.ResolvedType = typeResolver.ResolveType(this.Type);
+            switch (this.ResolvedType.Category)
+            {
+                case ResolvedTypeCategory.VOID:
+                    throw new ParserException(this, "Constant expression cannot have a be void type.");
+
+                case ResolvedTypeCategory.ANY:
+                case ResolvedTypeCategory.BOOLEAN:
+                case ResolvedTypeCategory.INTEGER:
+                case ResolvedTypeCategory.FLOAT:
+                case ResolvedTypeCategory.NULL:
+                case ResolvedTypeCategory.STRING:
+                    // This is fine.
+                    break;
+
+                default:
+                    throw new ParserException(this, "This is not a valid constant expression.");
+            }
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            this.Expression.ResolveTypes(parser);
+
+            this.Expression.ResolvedType.EnsureCanAssignToA(this.Expression.FirstToken, this.ResolvedType);
         }
     }
 }

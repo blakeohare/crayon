@@ -31,6 +31,11 @@
             return new BooleanConstant(token, this.Value, owner);
         }
 
+        internal override void ResolveTypes(ParserContext parser)
+        {
+            throw new System.NotImplementedException();
+        }
+
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }
     }
 }

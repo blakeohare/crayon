@@ -61,6 +61,11 @@ namespace Parser.ParseTree
             return this;
         }
 
+        internal override void ResolveTypes(ParserContext parser)
+        {
+            this.ResolvedType = ResolvedType.STRING;
+        }
+
         public Expression CloneValue(Token token, Node owner)
         {
             return new StringConstant(token, this.Value, owner);

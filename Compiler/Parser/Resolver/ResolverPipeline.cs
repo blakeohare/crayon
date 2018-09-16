@@ -41,10 +41,16 @@ namespace Parser.Resolver
                 {
                     using (new PerformanceSection("Resolve types for: " + scope.ScopeKey))
                     {
-                        TypeResolver typeResolver = new TypeResolver();
                         foreach (TopLevelEntity tle in scope.GetTopLevelConstructs())
                         {
-                            tle.ResolveTypes(parser);
+                            TypeResolver typeResolver = new TypeResolver(tle);
+                            tle.ResolveSignatureTypes(parser, typeResolver);
+                        }
+
+                        foreach (TopLevelEntity tle in scope.GetTopLevelConstructs())
+                        {
+                            TypeResolver typeResolver = new TypeResolver(tle);
+                            tle.ResolveTypes(parser, typeResolver);
                         }
                     }
                 }

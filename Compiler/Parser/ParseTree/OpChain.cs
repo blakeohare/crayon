@@ -332,5 +332,10 @@ namespace Parser.ParseTree
             this.Right = this.Right.ResolveEntityNames(parser);
             return this;
         }
+
+        internal override void ResolveTypes(ParserContext parser)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

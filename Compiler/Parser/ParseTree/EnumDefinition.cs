@@ -1,4 +1,5 @@
 ﻿using Localization;
+using Parser.Resolver;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -120,8 +121,24 @@ namespace Parser.ParseTree
             this.BatchExpressionEntityNameResolver(parser, this.Values);
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            // Nothing to do.
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            foreach (Expression value in this.Values)
+            {
+                if (value != null)
+                {
+                    value.ResolveTypes(parser);
+                    if (value.ResolvedType != ResolvedType.INTEGER)
+                    {
+                        throw new ParserException(value, "Enum value must resolve to an integer.");
+                    }
+                }
+            }
         }
     }
 }

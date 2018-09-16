@@ -83,14 +83,6 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
-        {
-            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
-            {
-                this.Root.PerformLocalIdAllocation(parser, varIds, phase);
-            }
-        }
-
         internal override Expression ResolveEntityNames(
             ParserContext parser)
         {
@@ -268,6 +260,19 @@ namespace Parser.ParseTree
             parser.VerifyIdentifier(this.StepToken);
 
             return this;
+        }
+
+        internal override void ResolveTypes(ParserContext parser)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        {
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
+            {
+                this.Root.PerformLocalIdAllocation(parser, varIds, phase);
+            }
         }
     }
 }

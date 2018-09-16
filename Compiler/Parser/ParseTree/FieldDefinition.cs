@@ -1,4 +1,5 @@
 ﻿using Localization;
+using Parser.Resolver;
 using System.Collections.Generic;
 
 namespace Parser.ParseTree
@@ -48,8 +49,14 @@ namespace Parser.ParseTree
             parser.CurrentCodeContainer = null;
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            throw new System.NotImplementedException();
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            throw new System.NotImplementedException();
         }
 
         internal void AllocateLocalScopeIds(ParserContext parser)

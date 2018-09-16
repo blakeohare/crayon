@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Parser.ParseTree;
 
 namespace Parser
@@ -11,6 +10,8 @@ namespace Parser
     {
         ANY,
         VOID,
+        NULL,
+        NULLABLE,
 
         BOOLEAN,
         INTEGER,
@@ -33,6 +34,7 @@ namespace Parser
         public ResolvedType DictionaryValueType { get { return this.Generics[1]; } }
         public ResolvedType FunctionReturnType { get; set; }
         public ResolvedType[] FunctionArgs { get { return this.Generics; } }
+        public ResolvedType NullableType { get { return this.Generics[0]; } }
 
         private int id;
         private static int idAlloc = 0;
@@ -48,6 +50,8 @@ namespace Parser
         public static readonly ResolvedType BOOLEAN = new ResolvedType(ResolvedTypeCategory.BOOLEAN);
         public static readonly ResolvedType INTEGER = new ResolvedType(ResolvedTypeCategory.INTEGER);
         public static readonly ResolvedType FLOAT = new ResolvedType(ResolvedTypeCategory.FLOAT);
+        public static readonly ResolvedType STRING = new ResolvedType(ResolvedTypeCategory.STRING);
+        public static readonly ResolvedType NULL = new ResolvedType(ResolvedTypeCategory.NULL);
 
         private static readonly Dictionary<int, ResolvedType> arrayTypes = new Dictionary<int, ResolvedType>();
         public static ResolvedType ListOrArrayOf(ResolvedType otherType)
@@ -84,6 +88,18 @@ namespace Parser
         public static ResolvedType GetClassRefType(ClassDefinition cd)
         {
             return GetClassTypeImpl(ResolvedTypeCategory.CLASS_DEFINITION, cd);
+        }
+
+        private static readonly Dictionary<int, ResolvedType> nullableTypes = new Dictionary<int, ResolvedType>();
+        public static ResolvedType GetNullableType(ResolvedType type)
+        {
+            ResolvedType output;
+            if (!nullableTypes.TryGetValue(type.id, out output))
+            {
+                output = new ResolvedType(ResolvedTypeCategory.NULLABLE) { Generics = new ResolvedType[] { type } };
+                nullableTypes[type.id] = output;
+            }
+            return output;
         }
 
         private static readonly Dictionary<int, Dictionary<int, ResolvedType>> dictionaryTypes = new Dictionary<int, Dictionary<int, ResolvedType>>();
@@ -128,6 +144,54 @@ namespace Parser
                 funcTypes[key] = output;
             }
             return output;
+        }
+
+        public void EnsureCanAssignToA(Token throwToken, ResolvedType targetType)
+        {
+            if (!CanAssignToA(targetType))
+            {
+                // TODO: implement a ToString() for ResolvedType.
+                throw new ParserException(throwToken, "Cannot assign this type to this other type.");
+            }
+        }
+
+        public bool CanAssignToA(ResolvedType targetType)
+        {
+            if (this.Category == ResolvedTypeCategory.ANY) return true;
+            ResolvedTypeCategory targetCategory = targetType.Category;
+            if (targetCategory == ResolvedTypeCategory.ANY) return true;
+            if (this.Category == ResolvedTypeCategory.NULL)
+            {
+                switch (targetCategory)
+                {
+                    case ResolvedTypeCategory.INSTANCE:
+                    case ResolvedTypeCategory.CLASS_DEFINITION:
+                    case ResolvedTypeCategory.FUNCTION_POINTER:
+                    case ResolvedTypeCategory.STRING:
+                    case ResolvedTypeCategory.LIST:
+                    case ResolvedTypeCategory.DICTIONARY:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            if (this.Category == ResolvedTypeCategory.VOID) return false;
+
+            if (this.Category == ResolvedTypeCategory.INTEGER &&
+                targetCategory == ResolvedTypeCategory.FLOAT)
+            {
+                return true;
+            }
+
+            if (this.Category != targetCategory) return false;
+
+            if (targetCategory == ResolvedTypeCategory.INSTANCE)
+            {
+                throw new NotImplementedException();
+            }
+
+            return true;
         }
     }
 }

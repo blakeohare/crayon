@@ -23,5 +23,10 @@ namespace Parser.ParseTree
             // ClassReferenceLiteral is created in the Resolve pass, so this is never called.
             throw new InvalidOperationException();
         }
+
+        internal override void ResolveTypes(ParserContext parser)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

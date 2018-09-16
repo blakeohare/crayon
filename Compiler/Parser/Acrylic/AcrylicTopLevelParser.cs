@@ -123,7 +123,7 @@ namespace Parser.Acrylic
             Token functionNameToken = tokens.Pop();
             this.parser.VerifyIdentifier(functionNameToken);
 
-            FunctionDefinition fd = new FunctionDefinition(firstToken, nullableOwner, modifiers.HasStatic, functionNameToken, annotations, fileScope);
+            FunctionDefinition fd = new FunctionDefinition(firstToken, returnType, nullableOwner, modifiers.HasStatic, functionNameToken, annotations, fileScope);
 
             tokens.PopExpected("(");
             List<AType> argTypes = new List<AType>();
@@ -150,7 +150,7 @@ namespace Parser.Acrylic
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             AType type = this.parser.TypeParser.Parse(tokens);
             Token nameToken = tokens.Pop();
-            ConstDefinition constStatement = new ConstDefinition(constToken, nameToken, owner, fileScope, annotations);
+            ConstDefinition constStatement = new ConstDefinition(constToken, type, nameToken, owner, fileScope, annotations);
             this.parser.VerifyIdentifier(nameToken);
             tokens.PopExpected("=");
             constStatement.Expression = this.parser.ExpressionParser.Parse(tokens, constStatement);

@@ -80,6 +80,11 @@ namespace Parser.ParseTree
             return this;
         }
 
+        internal override void ResolveTypes(ParserContext parser)
+        {
+            this.ResolvedType = ResolvedType.INTEGER;
+        }
+
         public Expression CloneValue(Token token, Node owner)
         {
             return new IntegerConstant(token, this.Value, owner);
