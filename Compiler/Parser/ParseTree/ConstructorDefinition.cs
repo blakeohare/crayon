@@ -176,7 +176,43 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            foreach (Expression defaultArg in this.DefaultValues)
+            {
+                if (defaultArg != null)
+                {
+                    defaultArg.ResolveTypes(parser, typeResolver);
+                }
+            }
+
+            ClassDefinition cd = (ClassDefinition)this.Owner;
+            if (cd.BaseClass != null)
+            {
+                ConstructorDefinition baseConstructor = cd.BaseClass.Constructor;
+                ResolvedType[] baseConstructorArgTypes = baseConstructor == null
+                    ? new ResolvedType[0]
+                    : baseConstructor.ResolvedArgTypes;
+                Expression[] baseConstructorDefaultValues = baseConstructor == null
+                    ? new Expression[0]
+                    : baseConstructor.DefaultValues;
+                FunctionCall.ResolveAndVerifyArgsForFunctionLikeThing(
+                    parser,
+                    typeResolver,
+                    this.BaseArgs,
+                    baseConstructorArgTypes,
+                    baseConstructorDefaultValues);
+            }
+            else
+            {
+                if (this.BaseArgs != null && this.BaseArgs.Length > 0)
+                {
+                    throw new ParserException(this.BaseToken, "There is no base class for this constructor to invoke.");
+                }
+            }
+
+            foreach (Executable line in this.Code)
+            {
+                throw new System.NotImplementedException();
+            }
         }
     }
 }
