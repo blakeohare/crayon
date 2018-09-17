@@ -27,6 +27,7 @@ namespace Parser.ParseTree
                 Increment inc = (Increment)this.Expression;
                 Assignment output = new Assignment(
                     inc.Root,
+                    null,
                     inc.IncrementToken,
                     new IntegerConstant(inc.IncrementToken, 1, this.Owner),
                     this.Owner);

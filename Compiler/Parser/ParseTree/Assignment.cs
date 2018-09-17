@@ -10,22 +10,25 @@ namespace Parser.ParseTree
         public Token OpToken { get; private set; }
         public Ops Op { get; private set; }
         public Variable TargetAsVariable { get { return this.Target as Variable; } }
+        public AType NullableTypeDeclaration { get; private set; }
+        public ResolvedType ResolvedNullableTypeDeclaration { get; private set; }
 
-        public Assignment(Expression target, Token assignmentOpToken, Ops opOverride, Expression assignedValue, Node owner)
-            : this(true, target, assignmentOpToken, opOverride, assignedValue, owner)
+        public Assignment(Expression target, AType nullableDeclarationType, Token assignmentOpToken, Ops opOverride, Expression assignedValue, Node owner)
+            : this(true, target, nullableDeclarationType, assignmentOpToken, opOverride, assignedValue, owner)
         { }
 
-        public Assignment(Expression target, Token assignmentOpToken, Expression assignedValue, Node owner)
-            : this(true, target, assignmentOpToken, GetOpFromToken(assignmentOpToken), assignedValue, owner)
+        public Assignment(Expression target, AType nullableDeclarationType, Token assignmentOpToken, Expression assignedValue, Node owner)
+            : this(true, target, nullableDeclarationType, assignmentOpToken, GetOpFromToken(assignmentOpToken), assignedValue, owner)
         { }
 
-        private Assignment(bool nonAmbiguousIgnored, Expression target, Token assignmentOpToken, Ops op, Expression assignedValue, Node owner)
+        private Assignment(bool nonAmbiguousIgnored, Expression target, AType nullableTypeDeclaration, Token assignmentOpToken, Ops op, Expression assignedValue, Node owner)
             : base(target.FirstToken, owner)
         {
             this.Target = target;
             this.OpToken = assignmentOpToken;
             this.Op = op;
             this.Value = assignedValue;
+            this.NullableTypeDeclaration = nullableTypeDeclaration;
         }
 
         private static Ops GetOpFromToken(Token token)
@@ -99,14 +102,24 @@ namespace Parser.ParseTree
 
             if ((phase & VariableIdAllocPhase.REGISTER) != 0)
             {
-                bool isVariableDeclared =
+                bool isVariableAssigned =
                     // A variable is considered declared if the target is a variable and = is used instead of something like +=
                     this.Target is Variable &&
                     this.Op == Ops.EQUALS;
 
-                if (isVariableDeclared)
+                if (isVariableAssigned)
                 {
-                    varIds.RegisterVariable(this.TargetAsVariable.Name);
+                    if (parser.RequireExplicitVarDeclarations)
+                    {
+                        if (this.NullableTypeDeclaration != null)
+                        {
+                            varIds.RegisterVariable(this.NullableTypeDeclaration, this.TargetAsVariable.Name, false);
+                        }
+                    }
+                    else
+                    {
+                        varIds.RegisterVariable(AType.Any(this.FirstToken), this.TargetAsVariable.Name);
+                    }
                 }
             }
 

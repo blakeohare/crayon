@@ -26,7 +26,7 @@ namespace Parser.Crayon
             tokens.EnsureNotEof();
             Token variable = tokens.PopIfWord();
             if (variable == null) throw new ParserException(tokens.Peek(), "Expected variable here.");
-            return new Tuple<AType, Token>(null, variable);
+            return new Tuple<AType, Token>(AType.Any(variable), variable);
         }
     }
 }

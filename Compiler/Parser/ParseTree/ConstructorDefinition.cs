@@ -124,10 +124,10 @@ namespace Parser.ParseTree
 
         internal void AllocateLocalScopeIds(ParserContext parser)
         {
-            VariableScope varScope = VariableScope.NewEmptyScope();
+            VariableScope varScope = VariableScope.NewEmptyScope(parser.RequireExplicitVarDeclarations);
             for (int i = 0; i < this.ArgNames.Length; ++i)
             {
-                varScope.RegisterVariable(this.ArgNames[i].Value);
+                varScope.RegisterVariable(this.ArgTypes[i], this.ArgNames[i].Value);
             }
 
             foreach (Expression arg in this.BaseArgs)
@@ -165,7 +165,11 @@ namespace Parser.ParseTree
 
         internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            this.ResolvedArgTypes = typeResolver.ResolveTypes(this.ArgTypes);
+            int argsLength = this.ArgTypes.Length;
+            for (int i = 0; i < argsLength; ++i)
+            {
+                this.ResolvedArgTypes[i] = typeResolver.ResolveType(this.ArgTypes[i]);
+            }
         }
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)

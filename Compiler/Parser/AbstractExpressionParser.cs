@@ -214,11 +214,16 @@ namespace Parser
             return args;
         }
 
-        private Expression ParseLambda(TokenStream tokens, Token firstToken, IList<Token> args, Node owner)
+        private Expression ParseLambda(
+            TokenStream tokens,
+            Token firstToken,
+            IList<AType> argTypes,
+            IList<Token> args,
+            Node owner)
         {
             tokens.PopExpected("=>");
             IList<Executable> lambdaCode = this.parser.ExecutableParser.ParseBlock(tokens, true, owner);
-            return new Lambda(firstToken, owner, args, lambdaCode);
+            return new Lambda(firstToken, owner, args, argTypes, lambdaCode);
         }
 
         private Expression ParseEntity(TokenStream tokens, Node owner)
@@ -229,7 +234,7 @@ namespace Parser
             {
                 if (tokens.PopIfPresent(")"))
                 {
-                    root = this.ParseLambda(tokens, firstToken, new Token[0], owner);
+                    root = this.ParseLambda(tokens, firstToken, new AType[0], new Token[0], owner);
                 }
                 else
                 {
@@ -240,12 +245,14 @@ namespace Parser
                         {
                             if (tokens.IsNext("=>"))
                             {
-                                root = this.ParseLambda(tokens, firstToken, new Token[] { root.FirstToken }, owner);
+
+                                root = this.ParseLambda(tokens, firstToken, new AType[] { AType.Any(root.FirstToken) }, new Token[] { root.FirstToken }, owner);
                             }
                         }
                         else if (tokens.IsNext(","))
                         {
                             List<Token> lambdaArgs = new List<Token>() { root.FirstToken };
+                            List<AType> lambdaArgTypes = new List<AType>() { AType.Any(root.FirstToken) };
                             Token comma = tokens.Peek();
                             while (tokens.PopIfPresent(","))
                             {
@@ -254,11 +261,12 @@ namespace Parser
                                 {
                                     throw new ParserException(comma, "Unexpected comma.");
                                 }
+                                lambdaArgTypes.Add(AType.Any(nextArg));
                                 lambdaArgs.Add(nextArg);
                                 comma = tokens.Peek();
                             }
 
-                            root = this.ParseLambda(tokens, firstToken, lambdaArgs, owner);
+                            root = this.ParseLambda(tokens, firstToken, lambdaArgTypes, lambdaArgs, owner);
                         }
                         else
                         {
