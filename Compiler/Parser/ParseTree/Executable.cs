@@ -23,7 +23,6 @@ namespace Parser.ParseTree
         internal abstract Executable ResolveEntityNames(ParserContext parser);
         internal abstract void ResolveTypes(ParserContext parser, TypeResolver typeResolver);
         internal abstract IList<Executable> Resolve(ParserContext parser);
-        internal abstract void ResolveTypes(ParserContext parser, TypeResolver typeResolver);
         internal abstract void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase);
 
         internal static IList<Executable> Resolve(ParserContext parser, IList<Executable> executables)
