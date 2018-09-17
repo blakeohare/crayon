@@ -338,5 +338,41 @@ namespace Parser.ParseTree
                 }
             }
         }
+
+        internal static void ResolveAndVerifyArgsForFunctionLikeThing(
+            ParserContext parser,
+            TypeResolver typeResolver,
+            Expression[] args,
+            ResolvedType[] calleeTypes,
+            Expression[] nullableDefaultValues)
+        {
+            for (int i = 0; i < args.Length; ++i)
+            {
+                args[i].ResolveTypes(parser, typeResolver);
+            }
+
+            int optionalArgumentCount = calleeTypes.Length;
+            for (int i = 0; i < nullableDefaultValues.Length; ++i)
+            {
+                if (nullableDefaultValues[i] != null) break;
+                optionalArgumentCount--;
+            }
+
+            if (args.Length <= calleeTypes.Length && args.Length >= calleeTypes.Length - optionalArgumentCount)
+            {
+                for (int i = 0; i < args.Length; ++i)
+                {
+                    if (!args[i].ResolvedType.CanAssignToA(calleeTypes[i]))
+                    {
+                        // TODO: be more descriptive here.
+                        throw new ParserException(args[i], "Incorrect type passed as an argument.");
+                    }
+                }
+            }
+            else
+            {
+                throw new ParserException(args[0].FirstToken, "Incorrect number of arguments were passed.");
+            }
+        }
     }
 }
