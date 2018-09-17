@@ -96,9 +96,9 @@ namespace Parser.ParseTree
         {
             this.ResolvedReturnType = typeResolver.ResolveType(this.ReturnType);
 
-            int argLength = this.ArgNames.Length;
-            this.ResolvedArgTypes = new ResolvedType[argLength];
-            for (int i = 0; i < argLength; ++i)
+            int argsLength = this.ArgNames.Length;
+            this.ResolvedArgTypes = new ResolvedType[argsLength];
+            for (int i = 0; i < argsLength; ++i)
             {
                 this.ResolvedArgTypes[i] = typeResolver.ResolveType(this.ArgTypes[i]);
             }
@@ -106,7 +106,13 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            foreach (Expression defaultValue in this.DefaultValues)
+            {
+                if (defaultValue != null)
+                {
+                    defaultValue.ResolveTypes(parser, typeResolver);
+                }
+            }
         }
 
         internal void AllocateLocalScopeIds(ParserContext parser)
