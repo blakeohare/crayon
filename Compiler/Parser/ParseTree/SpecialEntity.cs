@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Parser.Resolver;
+using System;
 using System.Linq;
 
 namespace Parser.ParseTree
@@ -47,7 +48,7 @@ namespace Parser.ParseTree
                 return max;
             }
 
-            internal override void ResolveTypes(ParserContext parser)
+            internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
             {
                 throw new System.NotImplementedException();
             }
@@ -74,7 +75,7 @@ namespace Parser.ParseTree
                 return GetEnumValues(this.enumDef);
             }
 
-            internal override void ResolveTypes(ParserContext parser)
+            internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
             {
                 throw new System.NotImplementedException();
             }

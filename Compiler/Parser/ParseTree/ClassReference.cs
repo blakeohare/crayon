@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Parser.Resolver;
+using System;
 
 namespace Parser.ParseTree
 {
@@ -25,7 +26,7 @@ namespace Parser.ParseTree
             throw new InvalidOperationException(); // Created during the resolve names phase.
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             throw new NotImplementedException();
         }

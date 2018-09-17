@@ -132,7 +132,7 @@ namespace Parser.ParseTree
             {
                 if (value != null)
                 {
-                    value.ResolveTypes(parser);
+                    value.ResolveTypes(parser, typeResolver);
                     if (value.ResolvedType != ResolvedType.INTEGER)
                     {
                         throw new ParserException(value, "Enum value must resolve to an integer.");

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -22,7 +23,7 @@ namespace Parser.ParseTree
 
         internal abstract Expression Resolve(ParserContext parser);
 
-        internal abstract void ResolveTypes(ParserContext parser);
+        internal abstract void ResolveTypes(ParserContext parser, TypeResolver typeResolver);
 
         internal abstract void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase);
 
