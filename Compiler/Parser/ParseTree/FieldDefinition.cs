@@ -57,7 +57,11 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            if (this.DefaultValue != null)
+            {
+                this.DefaultValue.ResolveTypes(parser, typeResolver);
+                this.DefaultValue.ResolvedType.EnsureCanAssignToA(this.DefaultValue.FirstToken, this.ResolvedFieldType);
+            }
         }
 
         internal void AllocateLocalScopeIds(ParserContext parser)
