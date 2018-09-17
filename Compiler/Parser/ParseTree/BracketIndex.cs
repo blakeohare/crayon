@@ -24,6 +24,14 @@ namespace Parser.ParseTree
             this.Root = this.Root.Resolve(parser);
             this.Index = this.Index.Resolve(parser);
 
+            return this;
+        }
+
+        internal override Expression ResolveEntityNames(ParserContext parser)
+        {
+            this.Root = this.Root.ResolveEntityNames(parser);
+            this.Index = this.Index.ResolveEntityNames(parser);
+
             if (this.Root is CompileTimeDictionary)
             {
                 // Swap out this bracketed expression with a fixed constant.
@@ -66,13 +74,6 @@ namespace Parser.ParseTree
                 }
             }
 
-            return this;
-        }
-
-        internal override Expression ResolveEntityNames(ParserContext parser)
-        {
-            this.Root = this.Root.ResolveEntityNames(parser);
-            this.Index = this.Index.ResolveEntityNames(parser);
             return this;
         }
 

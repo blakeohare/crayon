@@ -7,7 +7,7 @@ namespace Parser.Resolver
 {
     internal static class LocalScopeVariableIdAllocator
     {
-        public static void Run(ParserContext parser, IList<TopLevelEntity> code)
+        public static void Run(ParserContext parser, IEnumerable<TopLevelEntity> code)
         {
             using (new PerformanceSection("AllocateLocalScopeIds"))
             {
