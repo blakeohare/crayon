@@ -180,7 +180,11 @@ namespace Parser.ParseTree
                 {
                     if ((phase & VariableIdAllocPhase.REGISTER) != 0)
                     {
-                        varIds.RegisterVariable(cb.ExceptionVariableToken.Value);
+                        // TODO: this is a little flawed. Should find the common base class.
+                        AType exceptionType = cb.Types.Length == 1
+                            ? AType.ProvideRoot(cb.TypeTokens[0], cb.Types[0])
+                            : AType.ProvideRoot(cb.CatchToken, "Core.Exception");
+                        varIds.RegisterVariable(exceptionType, cb.ExceptionVariableToken.Value);
                     }
 
                     if ((phase & VariableIdAllocPhase.ALLOC) != 0)
@@ -202,6 +206,11 @@ namespace Parser.ParseTree
                     ex.PerformLocalIdAllocation(parser, varIds, phase);
                 }
             }
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -83,5 +83,10 @@ namespace Parser.ParseTree
                 }
             }
         }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

@@ -60,5 +60,6 @@ namespace Parser.ParseTree
                 this.Condition.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
             }
         }
+        }
     }
 }

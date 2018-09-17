@@ -7,6 +7,7 @@ namespace Parser.ParseTree
     public class Lambda : Expression, ICodeContainer
     {
         public Token[] Args { get; private set; }
+        public AType[] ArgTypes { get; private set; }
         public Executable[] Code { get; private set; }
         public List<Lambda> Lambdas { get; private set; }
         internal VariableScope VariableScope { get; private set; }
@@ -19,10 +20,12 @@ namespace Parser.ParseTree
             Token firstToken,
             Node owner,
             IList<Token> args,
+            IList<AType> argTypes,
             IList<Executable> code)
             : base(firstToken, owner)
         {
             this.Args = args.ToArray();
+            this.ArgTypes = argTypes.ToArray();
             this.Code = code.ToArray();
             this.Lambdas = new List<Lambda>();
             ((ICodeContainer)owner).Lambdas.Add(this);
@@ -51,7 +54,7 @@ namespace Parser.ParseTree
             this.VariableScope = VariableScope.CreateClosure(scopeFromParent);
             for (int i = 0; i < this.Args.Length; ++i)
             {
-                this.VariableScope.RegisterVariable(this.Args[i].Value);
+                this.VariableScope.RegisterVariable(this.ArgTypes[i], this.Args[i].Value);
             }
 
             foreach (Executable ex in this.Code)

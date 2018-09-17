@@ -52,10 +52,11 @@ namespace Parser.ParseTree
             this.Lambdas = new List<Lambda>();
         }
 
-        internal void SetArgs(IList<Token> argNames, IList<Expression> defaultValues)
+        internal void SetArgs(IList<Token> argNames, IList<Expression> defaultValues, IList<AType> argTypes)
         {
             this.ArgNames = argNames.ToArray();
             this.DefaultValues = defaultValues.ToArray();
+            this.ArgTypes = argTypes.ToArray();
             TODO.VerifyDefaultArgumentsAreAtTheEnd();
 
             this.MaxArgCount = this.ArgNames.Length;
@@ -124,10 +125,10 @@ namespace Parser.ParseTree
 
         internal void AllocateLocalScopeIds(ParserContext parser)
         {
-            VariableScope varScope = VariableScope.NewEmptyScope();
+            VariableScope varScope = VariableScope.NewEmptyScope(parser.RequireExplicitVarDeclarations);
             for (int i = 0; i < this.ArgNames.Length; ++i)
             {
-                varScope.RegisterVariable(this.ArgNames[i].Value);
+                varScope.RegisterVariable(this.ArgTypes[i], this.ArgNames[i].Value);
             }
 
             foreach (Expression arg in this.BaseArgs)
@@ -170,7 +171,43 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            foreach (Expression defaultArg in this.DefaultValues)
+            {
+                if (defaultArg != null)
+                {
+                    defaultArg.ResolveTypes(parser, typeResolver);
+                }
+            }
+
+            ClassDefinition cd = (ClassDefinition)this.Owner;
+            if (cd.BaseClass != null)
+            {
+                ConstructorDefinition baseConstructor = cd.BaseClass.Constructor;
+                ResolvedType[] baseConstructorArgTypes = baseConstructor == null
+                    ? new ResolvedType[0]
+                    : baseConstructor.ResolvedArgTypes;
+                Expression[] baseConstructorDefaultValues = baseConstructor == null
+                    ? new Expression[0]
+                    : baseConstructor.DefaultValues;
+                FunctionCall.ResolveAndVerifyArgsForFunctionLikeThing(
+                    parser,
+                    typeResolver,
+                    this.BaseArgs,
+                    baseConstructorArgTypes,
+                    baseConstructorDefaultValues);
+            }
+            else
+            {
+                if (this.BaseArgs != null && this.BaseArgs.Length > 0)
+                {
+                    throw new ParserException(this.BaseToken, "There is no base class for this constructor to invoke.");
+                }
+            }
+
+            foreach (Executable line in this.Code)
+            {
+                line.ResolveTypes(parser, typeResolver);
+            }
         }
     }
 }

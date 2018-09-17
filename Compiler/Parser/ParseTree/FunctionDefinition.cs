@@ -96,9 +96,9 @@ namespace Parser.ParseTree
         {
             this.ResolvedReturnType = typeResolver.ResolveType(this.ReturnType);
 
-            int argLength = this.ArgNames.Length;
-            this.ResolvedArgTypes = new ResolvedType[argLength];
-            for (int i = 0; i < argLength; ++i)
+            int argsLength = this.ArgNames.Length;
+            this.ResolvedArgTypes = new ResolvedType[argsLength];
+            for (int i = 0; i < argsLength; ++i)
             {
                 this.ResolvedArgTypes[i] = typeResolver.ResolveType(this.ArgTypes[i]);
             }
@@ -122,10 +122,10 @@ namespace Parser.ParseTree
 
         internal void AllocateLocalScopeIds(ParserContext parser)
         {
-            VariableScope varScope = VariableScope.NewEmptyScope();
+            VariableScope varScope = VariableScope.NewEmptyScope(parser.RequireExplicitVarDeclarations);
             for (int i = 0; i < this.ArgNames.Length; ++i)
             {
-                varScope.RegisterVariable(this.ArgNames[i].Value);
+                varScope.RegisterVariable(this.ArgTypes[i], this.ArgNames[i].Value);
             }
 
             foreach (Executable ex in this.Code)
