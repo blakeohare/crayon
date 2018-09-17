@@ -78,6 +78,19 @@ namespace Parser.ParseTree
             return Listify(this);
         }
 
+        internal override Executable ResolveEntityNames(ParserContext parser)
+        {
+            this.Target = this.Target.ResolveEntityNames(parser);
+            this.Value = this.Value.ResolveEntityNames(parser);
+
+            if (!this.Target.CanAssignTo)
+            {
+                throw new ParserException(this.Target, "Cannot use assignment on this.");
+            }
+
+            return this;
+        }
+
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             this.Value.PerformLocalIdAllocation(parser, varIds, phase);
@@ -106,19 +119,6 @@ namespace Parser.ParseTree
             }
 
             this.Target.PerformLocalIdAllocation(parser, varIds, phase);
-        }
-
-        internal override Executable ResolveEntityNames(ParserContext parser)
-        {
-            this.Target = this.Target.ResolveEntityNames(parser);
-            this.Value = this.Value.ResolveEntityNames(parser);
-
-            if (!this.Target.CanAssignTo)
-            {
-                throw new ParserException(this.Target, "Cannot use assignment on this.");
-            }
-
-            return this;
         }
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
