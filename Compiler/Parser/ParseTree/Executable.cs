@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Parser.Resolver;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,6 +21,7 @@ namespace Parser.ParseTree
         public virtual bool IsTerminator { get { return false; } }
 
         internal abstract Executable ResolveEntityNames(ParserContext parser);
+        internal abstract void ResolveTypes(ParserContext parser, TypeResolver typeResolver);
         internal abstract IList<Executable> Resolve(ParserContext parser);
         internal abstract void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase);
 

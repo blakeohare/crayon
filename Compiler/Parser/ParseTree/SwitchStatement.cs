@@ -1,4 +1,5 @@
 ﻿using Common;
+using Parser.Resolver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -303,6 +304,11 @@ namespace Parser.ParseTree
                     }
                 }
             }
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

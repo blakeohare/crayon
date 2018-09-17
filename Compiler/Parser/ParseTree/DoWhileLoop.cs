@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Parser.Resolver;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Parser.ParseTree
@@ -53,6 +54,11 @@ namespace Parser.ParseTree
             this.BatchExecutableEntityNameResolver(parser, this.Code);
             this.Condition = this.Condition.ResolveEntityNames(parser);
             return this;
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
