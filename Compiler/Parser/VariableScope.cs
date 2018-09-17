@@ -28,6 +28,8 @@ namespace Parser
 
     internal class VariableScope
     {
+        private bool requireExplicitDeclarations;
+
         private VariableScope parentScope = null;
         private VariableScope rootScope = null;
         private VariableScope closureScope = null;
@@ -49,10 +51,11 @@ namespace Parser
 
         private VariableScope() { }
 
-        public static VariableScope NewEmptyScope()
+        public static VariableScope NewEmptyScope(bool requireExplicitDeclarations)
         {
             VariableScope scope = new VariableScope()
             {
+                requireExplicitDeclarations = requireExplicitDeclarations,
                 rootScopeOrder = new List<string>(),
                 flattenedIds = new Dictionary<string, VariableId>(),
             };
@@ -65,6 +68,7 @@ namespace Parser
         {
             return new VariableScope()
             {
+                requireExplicitDeclarations = parent.requireExplicitDeclarations,
                 parentScope = parent,
                 rootScope = parent.rootScope,
                 closureRootScope = parent.closureRootScope,
@@ -73,7 +77,7 @@ namespace Parser
 
         public static VariableScope CreateClosure(VariableScope parent)
         {
-            VariableScope scope = NewEmptyScope();
+            VariableScope scope = NewEmptyScope(parent.requireExplicitDeclarations);
             scope.closureScope = parent;
             scope.closureRootScope = parent.closureRootScope;
             return scope;
@@ -115,19 +119,24 @@ namespace Parser
             } while (fromScope != toScope);
         }
 
-        public VariableId RegisterSyntheticVariable()
+        public VariableId RegisterSyntheticVariable(AType type)
         {
-            return this.RegisterVariable("." + this.rootScope.syntheticIdAlloc++);
+            return this.RegisterVariable(type, "." + this.rootScope.syntheticIdAlloc++);
         }
 
-        public VariableId RegisterVariable(string value)
+        public VariableId RegisterVariable(AType type, string name)
+        {
+            return this.RegisterVariable(type, name, true);
+        }
+
+        public VariableId RegisterVariable(AType type, string name, bool allowSameScopeCollisions)
         {
             // Before anything else, check to see if this is coming from the closure.
             VariableScope closureWalker = this.closureScope;
             while (closureWalker != null)
             {
                 VariableId closureVarId;
-                if (closureWalker.idsByVar.TryGetValue(value, out closureVarId))
+                if (closureWalker.idsByVar.TryGetValue(name, out closureVarId))
                 {
                     MarkVarAsClosureVarThroughParentChain(this, closureWalker, closureVarId);
                     return closureVarId;
@@ -138,22 +147,22 @@ namespace Parser
             VariableId varId;
 
             // Check if variable is already declared in this or a parent scope already.
-            if (rootScope.flattenedIds.ContainsKey(value))
+            if (rootScope.flattenedIds.ContainsKey(name))
             {
                 // The above if statement is a quick check to see if variable used before, anywhere,
                 // even if in a parallel branch. This will prevent many unnecessary walks up the parent chain.
 
                 // Variable is already known by this scope. Nothing to do.
-                if (!this.idsByVar.TryGetValue(value, out varId))
+                if (!this.idsByVar.TryGetValue(name, out varId))
                 {
                     // Check to see if this variable was used by this or any parent scope.
                     VariableScope walker = this.parentScope;
                     while (walker != null)
                     {
-                        if (walker.idsByVar.TryGetValue(value, out varId))
+                        if (walker.idsByVar.TryGetValue(name, out varId))
                         {
                             // cache this value in the current scope to make the lookup faster in the future
-                            this.idsByVar[value] = varId;
+                            this.idsByVar[name] = varId;
                             return varId;
                         }
                         walker = walker.parentScope;
@@ -161,17 +170,17 @@ namespace Parser
 
                     // If you got to this point, that means the variable was used somewhere, but not in the direct
                     // scope parent chain. Grab the same VariableId instance and copy it to this scope.
-                    varId = this.rootScope.flattenedIds[value];
-                    this.idsByVar[value] = varId;
+                    varId = this.rootScope.flattenedIds[name];
+                    this.idsByVar[name] = varId;
                 }
             }
             else
             {
                 // Variable has never been used anywhere. Create a new one and put it in the root bookkeeping.
-                varId = new VariableId(value);
-                this.idsByVar[value] = varId;
-                this.rootScope.flattenedIds[value] = varId;
-                this.rootScope.rootScopeOrder.Add(value);
+                varId = new VariableId(name);
+                this.idsByVar[name] = varId;
+                this.rootScope.flattenedIds[name] = varId;
+                this.rootScope.rootScopeOrder.Add(name);
                 return varId;
             }
             return varId;
@@ -220,6 +229,9 @@ namespace Parser
 
         public void MergeToParent()
         {
+            // variable scope closing means anything that was declared in it is gone. That name is now free again.
+            if (this.requireExplicitDeclarations) return;
+
             foreach (VariableId v in this.idsByVar.Values)
             {
                 this.parentScope.idsByVar[v.Name] = v;

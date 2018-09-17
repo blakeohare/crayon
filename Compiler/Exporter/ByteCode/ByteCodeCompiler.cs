@@ -327,9 +327,11 @@ namespace Exporter.ByteCode
                     {
                         Executable assignment = new Assignment(
                             new FieldReference(fd.FirstToken, fd, fd),
+                            null,
                             fd.NameToken,
                             Ops.EQUALS,
-                            fd.DefaultValue, fd);
+                            fd.DefaultValue,
+                            fd);
                         staticFieldInitializers.Add(assignment);
                     }
                 }

@@ -30,6 +30,13 @@ namespace Parser
             this.LiteralLookup = new LiteralLookup();
         }
 
+        public bool IsAcrylic
+        {
+            get { return this.CurrentScope.ProgrammingLanguage == "Acrylic"; }
+        }
+
+        public bool RequireExplicitVarDeclarations { get { return this.IsAcrylic; } }
+
         private int localeCount = -1;
         public int GetLocaleCount()
         {
