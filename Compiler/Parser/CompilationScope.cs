@@ -33,6 +33,20 @@ namespace Parser
             }
         }
 
+        private string programmingLanguage = null;
+
+        public string ProgrammingLanguage
+        {
+            get
+            {
+                if (this.programmingLanguage == null)
+                {
+                    this.programmingLanguage = this.GetProgrammingLanguage();
+                }
+                return this.programmingLanguage;
+            }
+        }
+
         // TODO: write a simple getter for source code.
         // TODO: or define a ProgrammingLanguage field on non-top-level assemblies.
         public string GetProgrammingLanguage()

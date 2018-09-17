@@ -82,7 +82,7 @@ namespace Parser
                 Token assignment = tokens.Pop();
                 Expression assignmentValue = this.parser.ExpressionParser.Parse(tokens, owner);
                 if (semicolonPresent) tokens.PopExpected(";");
-                return new Assignment(expr, assignment, assignmentValue, owner);
+                return new Assignment(expr, null, assignment, assignmentValue, owner);
             }
 
             if (semicolonPresent)
@@ -143,13 +143,13 @@ namespace Parser
             if (this.IsForEachLoopParenthesisContents(tokens))
             {
                 System.Tuple<AType, Token> iteratorVariable = this.ParseForEachLoopIteratorVariable(tokens, owner);
-                AType iteratorVariableType = iteratorVariable.Item1; // ignored for now
+                AType iteratorVariableType = iteratorVariable.Item1;
                 Token iteratorToken = iteratorVariable.Item2;
                 tokens.PopExpected(":");
                 Expression iterationExpression = this.parser.ExpressionParser.Parse(tokens, owner);
                 tokens.PopExpected(")");
                 IList<Executable> body = this.ParseBlock(tokens, false, owner);
-                return new ForEachLoop(forToken, iteratorVariable.Item2, iterationExpression, body, owner);
+                return new ForEachLoop(forToken, iteratorVariableType, iteratorVariable.Item2, iterationExpression, body, owner);
             }
             else
             {
