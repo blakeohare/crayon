@@ -166,7 +166,7 @@ namespace Parser
 
             IList<Executable> code = this.parser.ExecutableParser.ParseBlock(tokens, true, ctor);
 
-            ctor.SetArgs(argNames, argValues);
+            ctor.SetArgs(argNames, argValues, argTypes);
             ctor.SetBaseArgs(baseArgs);
             ctor.SetCode(code);
             ctor.BaseToken = baseToken;

@@ -26,7 +26,7 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            this.ResolvedType = ResolvedType.NULL;
         }
 
         public Expression CloneValue(Token token, Node owner)

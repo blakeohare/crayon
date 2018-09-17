@@ -20,11 +20,6 @@ namespace Parser.ParseTree
 
         internal override Expression Resolve(ParserContext parser)
         {
-            if (this.Name == "$var")
-            {
-                return new CompileTimeDictionary(this.FirstToken, "var", this.Owner);
-            }
-
             if (!parser.Keywords.IsValidVariable(this.Name))
             {
                 throw new ParserException(this, "'" + this.Name + "' is a reserved keyword and cannot be used like this.");
@@ -35,12 +30,17 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveEntityNames(ParserContext parser)
         {
+            if (this.Name == "$var")
+            {
+                return new CompileTimeDictionary(this.FirstToken, "var", this.Owner);
+            }
+
             if (this.Name == "$$$")
             {
                 throw new ParserException(this, "Core function invocations cannot stand alone and must be immediately invoked.");
             }
 
-            if (this.Name.StartsWith("$") && this.Name != "$var")
+            if (this.Name.StartsWith("$"))
             {
                 throw new ParserException(this, "CNI functions must be invoked and cannot be used as function pointers.");
             }
