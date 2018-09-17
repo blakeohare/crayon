@@ -25,18 +25,6 @@ namespace Parser.ParseTree
             return Listify(this);
         }
 
-        internal override Executable ResolveEntityNames(ParserContext parser)
-        {
-            this.BatchExecutableEntityNameResolver(parser, this.Code);
-            this.Condition = this.Condition.ResolveEntityNames(parser);
-            return this;
-        }
-
-        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
-        {
-            throw new System.NotImplementedException();
-        }
-
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             if (phase != VariableIdAllocPhase.REGISTER_AND_ALLOC)
@@ -59,6 +47,18 @@ namespace Parser.ParseTree
                 }
                 this.Condition.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
             }
+        }
+
+        internal override Executable ResolveEntityNames(ParserContext parser)
+        {
+            this.BatchExecutableEntityNameResolver(parser, this.Code);
+            this.Condition = this.Condition.ResolveEntityNames(parser);
+            return this;
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

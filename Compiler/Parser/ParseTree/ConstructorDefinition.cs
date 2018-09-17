@@ -211,7 +211,7 @@ namespace Parser.ParseTree
 
             foreach (Executable line in this.Code)
             {
-                throw new System.NotImplementedException();
+                line.ResolveTypes(parser, typeResolver);
             }
         }
     }

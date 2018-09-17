@@ -80,5 +80,10 @@ namespace Parser.ParseTree
                 this.Expression.PerformLocalIdAllocation(parser, varIds, phase);
             }
         }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
