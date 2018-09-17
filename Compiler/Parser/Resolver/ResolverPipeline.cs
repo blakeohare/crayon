@@ -35,6 +35,8 @@ namespace Parser.Resolver
                 }
             }
 
+            LocalScopeVariableIdAllocator.Run(parser, code.Where(tle => !(tle is ConstDefinition || tle is EnumDefinition)));
+
             using (new PerformanceSection("Resolve Types"))
             {
                 foreach (CompilationScope scope in compilationScopes)
@@ -63,8 +65,6 @@ namespace Parser.Resolver
             parser.InlinableLibraryFunctions = InlineableLibraryFunctionFinder.Find(code);
 
             code = DependencyBasedClassSorter.Run(code);
-
-            LocalScopeVariableIdAllocator.Run(parser, code);
 
             return code;
         }

@@ -52,10 +52,11 @@ namespace Parser.ParseTree
             this.Lambdas = new List<Lambda>();
         }
 
-        internal void SetArgs(IList<Token> argNames, IList<Expression> defaultValues)
+        internal void SetArgs(IList<Token> argNames, IList<Expression> defaultValues, IList<AType> argTypes)
         {
             this.ArgNames = argNames.ToArray();
             this.DefaultValues = defaultValues.ToArray();
+            this.ArgTypes = argTypes.ToArray();
             TODO.VerifyDefaultArgumentsAreAtTheEnd();
 
             this.MaxArgCount = this.ArgNames.Length;
@@ -166,6 +167,7 @@ namespace Parser.ParseTree
         internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
         {
             int argsLength = this.ArgTypes.Length;
+            this.ResolvedArgTypes = new ResolvedType[argsLength];
             for (int i = 0; i < argsLength; ++i)
             {
                 this.ResolvedArgTypes[i] = typeResolver.ResolveType(this.ArgTypes[i]);
