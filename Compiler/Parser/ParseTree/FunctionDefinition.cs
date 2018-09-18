@@ -54,7 +54,7 @@ namespace Parser.ParseTree
             }
             return name;
         }
-        
+
         internal override void Resolve(ParserContext parser)
         {
             parser.ValueStackDepth = 0;
@@ -104,7 +104,7 @@ namespace Parser.ParseTree
                     defaultValue.ResolveTypes(parser, typeResolver);
                 }
             }
-            
+
             foreach (Executable ex in this.Code)
             {
                 ex.ResolveTypes(parser, typeResolver);
