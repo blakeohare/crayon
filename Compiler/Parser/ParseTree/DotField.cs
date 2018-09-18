@@ -24,33 +24,6 @@ namespace Parser.ParseTree
 
             string step = this.StepToken.Value;
 
-            if (this.Root is EnumReference)
-            {
-                EnumDefinition enumDef = ((EnumReference)this.Root).EnumDefinition;
-
-                ConstantResolutionState resolutionState = parser.ConstantAndEnumResolutionState[enumDef];
-                if (resolutionState != ConstantResolutionState.RESOLVED)
-                {
-                    enumDef.Resolve(parser);
-                }
-
-                if (step == parser.Keywords.FIELD_ENUM_LENGTH)
-                    return new IntegerConstant(this.FirstToken, enumDef.IntValue.Count, this.Owner);
-                if (step == parser.Keywords.FIELD_ENUM_MAX)
-                    return new SpecialEntity.EnumMaxFunction(this.FirstToken, enumDef, this.Owner);
-                if (step == parser.Keywords.FIELD_ENUM_VALUES)
-                    return new SpecialEntity.EnumValuesFunction(this.FirstToken, enumDef, this.Owner);
-
-                if (enumDef.IntValue.ContainsKey(step))
-                {
-                    return new IntegerConstant(this.FirstToken, enumDef.IntValue[step], this.Owner);
-                }
-                else
-                {
-                    throw new ParserException(this.StepToken, "The enum '" + enumDef.Name + "' does not contain a definition for '" + step + "'");
-                }
-            }
-
             if (this.Root is BaseKeyword)
             {
                 return new BaseMethodReference(this.Root.FirstToken, this.DotToken, this.StepToken, this.Owner).Resolve(parser);
@@ -247,9 +220,23 @@ namespace Parser.ParseTree
                 throw new ParserException(this.StepToken, "The class '" + cd.NameToken.Value + "' does not have a field named '" + field + "'.");
             }
 
+            if (this.Root is EnumReference)
+            {
+                EnumDefinition enumDef = ((EnumReference)this.Root).EnumDefinition;
+
+                if (field == parser.Keywords.FIELD_ENUM_LENGTH)
+                    return new IntegerConstant(this.FirstToken, enumDef.IntValue.Count, this.Owner);
+                if (field == parser.Keywords.FIELD_ENUM_MAX)
+                    return new SpecialEntity.EnumMaxFunction(this.FirstToken, enumDef, this.Owner);
+                if (field == parser.Keywords.FIELD_ENUM_VALUES)
+                    return new SpecialEntity.EnumValuesFunction(this.FirstToken, enumDef, this.Owner);
+
+                return new EnumFieldReference(this.FirstToken, enumDef, this.StepToken, this.Owner);
+            }
+
             // This is done here in the resolver instead of the parser because some unallowed
             // field names (such as .class) are valid.
-            if (this.StepToken.Value == parser.Keywords.CLASS)
+            if (field == parser.Keywords.CLASS)
             {
                 if (this.Root is Variable)
                 {

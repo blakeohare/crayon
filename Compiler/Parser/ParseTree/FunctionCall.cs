@@ -325,7 +325,7 @@ namespace Parser.ParseTree
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             this.Root.ResolveTypes(parser, typeResolver);
-            
+
             if (this.Root.ResolvedType == ResolvedType.ANY)
             {
                 for (int i = 0; i < this.Args.Length; ++i)
@@ -341,10 +341,10 @@ namespace Parser.ParseTree
             {
                 ResolvedType fpType = this.Root.ResolvedType;
                 ResolveAndVerifyArgsForFunctionLikeThing(
-                    parser, 
-                    typeResolver, 
+                    parser,
+                    typeResolver,
                     this.Args,
-                    fpType.FunctionArgs, 
+                    fpType.FunctionArgs,
                     fpType.FunctionOptionalArgCount);
                 this.ResolvedType = fpType.FunctionReturnType;
                 return;
