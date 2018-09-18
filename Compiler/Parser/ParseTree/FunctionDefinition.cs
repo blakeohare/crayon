@@ -15,6 +15,7 @@ namespace Parser.ParseTree
         public AType[] ArgTypes { get; set; }
         public ResolvedType[] ResolvedArgTypes { get; set; }
         public Token[] ArgNames { get; set; }
+        public VariableId[] ArgLocalIds { get; private set; }
         public Expression[] DefaultValues { get; set; }
         private int[] argVarIds = null;
         public Executable[] Code { get; set; }
@@ -53,19 +54,7 @@ namespace Parser.ParseTree
             }
             return name;
         }
-
-        public int[] ArgVarIDs
-        {
-            get
-            {
-                if (this.argVarIds == null)
-                {
-                    this.argVarIds = new int[this.ArgNames.Length];
-                }
-                return this.argVarIds;
-            }
-        }
-
+        
         internal override void Resolve(ParserContext parser)
         {
             parser.ValueStackDepth = 0;
@@ -100,7 +89,9 @@ namespace Parser.ParseTree
             this.ResolvedArgTypes = new ResolvedType[argsLength];
             for (int i = 0; i < argsLength; ++i)
             {
-                this.ResolvedArgTypes[i] = typeResolver.ResolveType(this.ArgTypes[i]);
+                ResolvedType rType = typeResolver.ResolveType(this.ArgTypes[i]);
+                this.ResolvedArgTypes[i] = rType;
+                this.ArgLocalIds[i].ResolvedType = rType;
             }
         }
 
@@ -113,7 +104,7 @@ namespace Parser.ParseTree
                     defaultValue.ResolveTypes(parser, typeResolver);
                 }
             }
-
+            
             foreach (Executable ex in this.Code)
             {
                 ex.ResolveTypes(parser, typeResolver);
@@ -123,9 +114,10 @@ namespace Parser.ParseTree
         internal void AllocateLocalScopeIds(ParserContext parser)
         {
             VariableScope varScope = VariableScope.NewEmptyScope(parser.RequireExplicitVarDeclarations);
+            this.ArgLocalIds = new VariableId[this.ArgNames.Length];
             for (int i = 0; i < this.ArgNames.Length; ++i)
             {
-                varScope.RegisterVariable(this.ArgTypes[i], this.ArgNames[i].Value);
+                this.ArgLocalIds[i] = varScope.RegisterVariable(this.ArgTypes[i], this.ArgNames[i].Value);
             }
 
             foreach (Executable ex in this.Code)

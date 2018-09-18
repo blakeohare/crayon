@@ -14,8 +14,9 @@ namespace Parser
 
     public class VariableId
     {
-        public VariableId(string name)
+        public VariableId(AType type, string name)
         {
+            this.Type = type;
             this.Name = name;
             this.UsedByClosure = false;
         }
@@ -24,6 +25,8 @@ namespace Parser
         public string Name { get; private set; }
         public bool UsedByClosure { get; set; }
         public int ClosureID { get; set; }
+        public AType Type { get; private set; }
+        public ResolvedType ResolvedType { get; set; }
     }
 
     internal class VariableScope
@@ -177,7 +180,7 @@ namespace Parser
             else
             {
                 // Variable has never been used anywhere. Create a new one and put it in the root bookkeeping.
-                varId = new VariableId(name);
+                varId = new VariableId(type, name);
                 this.idsByVar[name] = varId;
                 this.rootScope.flattenedIds[name] = varId;
                 this.rootScope.rootScopeOrder.Add(name);

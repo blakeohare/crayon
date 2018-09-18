@@ -324,6 +324,32 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            this.Root.ResolveTypes(parser, typeResolver);
+            
+            if (this.Root.ResolvedType == ResolvedType.ANY)
+            {
+                for (int i = 0; i < this.Args.Length; ++i)
+                {
+                    this.Args[i].ResolveTypes(parser, typeResolver);
+                }
+                this.ResolvedType = ResolvedType.ANY;
+
+                return;
+            }
+
+            if (this.Root.ResolvedType.Category == ResolvedTypeCategory.FUNCTION_POINTER)
+            {
+                ResolvedType fpType = this.Root.ResolvedType;
+                ResolveAndVerifyArgsForFunctionLikeThing(
+                    parser, 
+                    typeResolver, 
+                    this.Args,
+                    fpType.FunctionArgs, 
+                    fpType.FunctionOptionalArgCount);
+                this.ResolvedType = fpType.FunctionReturnType;
+                return;
+            }
+            // TODO: the fun part of optional args function pointer expressed as a type
             throw new System.NotImplementedException();
         }
 
@@ -346,16 +372,25 @@ namespace Parser.ParseTree
             ResolvedType[] calleeTypes,
             Expression[] nullableDefaultValues)
         {
-            for (int i = 0; i < args.Length; ++i)
-            {
-                args[i].ResolveTypes(parser, typeResolver);
-            }
-
             int optionalArgumentCount = calleeTypes.Length;
             for (int i = 0; i < nullableDefaultValues.Length; ++i)
             {
                 if (nullableDefaultValues[i] != null) break;
                 optionalArgumentCount--;
+            }
+            ResolveAndVerifyArgsForFunctionLikeThing(parser, typeResolver, args, calleeTypes, optionalArgumentCount);
+        }
+
+        internal static void ResolveAndVerifyArgsForFunctionLikeThing(
+            ParserContext parser,
+            TypeResolver typeResolver,
+            Expression[] args,
+            ResolvedType[] calleeTypes,
+            int optionalArgumentCount)
+        {
+            for (int i = 0; i < args.Length; ++i)
+            {
+                args[i].ResolveTypes(parser, typeResolver);
             }
 
             if (args.Length <= calleeTypes.Length && args.Length >= calleeTypes.Length - optionalArgumentCount)

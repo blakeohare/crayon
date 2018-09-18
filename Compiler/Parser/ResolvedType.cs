@@ -36,6 +36,7 @@ namespace Parser
         public ResolvedType FunctionReturnType { get; set; }
         public ResolvedType[] FunctionArgs { get { return this.Generics; } }
         public ResolvedType NullableType { get { return this.Generics[0]; } }
+        public int FunctionOptionalArgCount { get; private set; }
 
         private int id;
         private static int idAlloc = 0;
@@ -126,10 +127,12 @@ namespace Parser
         }
 
         private static readonly Dictionary<string, ResolvedType> funcTypes = new Dictionary<string, ResolvedType>();
-        public static ResolvedType GetFunctionType(ResolvedType returnType, IList<ResolvedType> args)
+        public static ResolvedType GetFunctionType(ResolvedType returnType, IList<ResolvedType> args, int optionalCount)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append('f');
+            sb.Append(optionalCount);
+            sb.Append(',');
             sb.Append(returnType.id);
             for (int i = 0; i < args.Count; ++i)
             {

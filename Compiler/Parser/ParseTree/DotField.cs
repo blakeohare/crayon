@@ -264,6 +264,16 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            string field = this.StepToken.Value;
+
+            if (this.Root is EnumReference)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            this.Root.ResolveTypes(parser, typeResolver);
+            ResolvedType rootType = this.Root.ResolvedType;
+
             throw new System.NotImplementedException();
         }
 
