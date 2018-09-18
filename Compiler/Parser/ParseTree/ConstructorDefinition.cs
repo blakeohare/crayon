@@ -123,12 +123,15 @@ namespace Parser.ParseTree
             this.Code = code.ToArray();
         }
 
+        public VariableId[] ArgLocalIds { get; private set; }
+
         internal void AllocateLocalScopeIds(ParserContext parser)
         {
             VariableScope varScope = VariableScope.NewEmptyScope(parser.RequireExplicitVarDeclarations);
+            this.ArgLocalIds = new VariableId[this.ArgNames.Length];
             for (int i = 0; i < this.ArgNames.Length; ++i)
             {
-                varScope.RegisterVariable(this.ArgTypes[i], this.ArgNames[i].Value);
+                this.ArgLocalIds[i] = varScope.RegisterVariable(this.ArgTypes[i], this.ArgNames[i].Value);
             }
 
             foreach (Expression arg in this.BaseArgs)
@@ -171,6 +174,11 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            for (int i = 0;i  < this.ArgNames.Length; ++i)
+            {
+                this.ArgLocalIds[i].ResolvedType = typeResolver.ResolveType(this.ArgTypes[i]);
+            }
+
             foreach (Expression defaultArg in this.DefaultValues)
             {
                 if (defaultArg != null)

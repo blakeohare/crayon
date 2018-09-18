@@ -76,7 +76,16 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            foreach (Expression expr in this.Expressions)
+            {
+                expr.ResolveTypes(parser, typeResolver);
+                ResolvedType rType = expr.ResolvedType;
+                if (rType != ResolvedType.BOOLEAN && rType !=   ResolvedType.ANY)
+                {
+                    throw new ParserException(expr, "Only a boolean expression can be used here.");
+                }
+            }
+            this.ResolvedType = ResolvedType.BOOLEAN;
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)

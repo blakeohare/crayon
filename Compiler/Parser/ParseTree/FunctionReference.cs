@@ -1,5 +1,6 @@
 ﻿using Parser.Resolver;
 using System;
+using System.Linq;
 
 namespace Parser.ParseTree
 {
@@ -27,7 +28,12 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new NotImplementedException();
+            ResolvedType returnType = this.FunctionDefinition.ResolvedReturnType;
+            ResolvedType[] argTypes = this.FunctionDefinition.ResolvedArgTypes;
+            int optionalCount = argTypes.Length == 0 || this.FunctionDefinition.DefaultValues[argTypes.Length - 1] == null
+                ? 0
+                : this.FunctionDefinition.DefaultValues.Where(e => e != null).Count();
+            this.ResolvedType = ResolvedType.GetFunctionType(returnType, argTypes, optionalCount);
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }
