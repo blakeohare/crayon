@@ -87,7 +87,7 @@ namespace Parser.ParseTree
             // TODO: localize or create a dummy stub in Core
             if (this.Name == "List")
             {
-                return new ListDefinition(this.FirstToken, new List<Expression>(), this.Owner);
+                return new ListDefinition(this.FirstToken, new List<Expression>(), this.Generics[0], this.Owner);
             }
             else if (this.Name == "Dictionary")
             {
@@ -97,7 +97,7 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             throw new System.NotImplementedException();
         }

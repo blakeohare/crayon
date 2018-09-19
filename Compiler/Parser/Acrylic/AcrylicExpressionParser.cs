@@ -26,7 +26,7 @@ namespace Parser.Acrylic
 
                 // Use normal list for now just to get things working.
                 // TODO: Introducing native array types.
-                return new ListDefinition(newToken, items, owner);
+                return new ListDefinition(newToken, items, className.Generics[0], owner);
             }
             else
             {

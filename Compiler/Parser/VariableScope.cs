@@ -16,6 +16,7 @@ namespace Parser
     {
         public VariableId(AType type, string name)
         {
+            if (type == null) throw new System.Exception(); // no nulls
             this.Type = type;
             this.Name = name;
             this.UsedByClosure = false;

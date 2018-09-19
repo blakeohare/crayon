@@ -249,8 +249,12 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        private static readonly ResolvedType[] EMPTY_TYPE_LIST = new ResolvedType[0];
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            this.Root.ResolveTypes(parser, typeResolver);
+
             string field = this.StepToken.Value;
 
             if (this.Root is EnumReference)
@@ -258,10 +262,124 @@ namespace Parser.ParseTree
                 throw new System.NotImplementedException();
             }
 
-            this.Root.ResolveTypes(parser, typeResolver);
             ResolvedType rootType = this.Root.ResolvedType;
 
-            throw new System.NotImplementedException();
+            // TODO: all of this needs to be localized.
+            switch (rootType.Category)
+            {
+                case ResolvedTypeCategory.NULL:
+                    throw new ParserException(this.DotToken, "Cannot dereference a field from null.");
+
+                case ResolvedTypeCategory.ANY:
+                    // ¯\_(ツ)_/¯
+                    this.ResolvedType = ResolvedType.ANY;
+                    return this;
+
+                case ResolvedTypeCategory.INTEGER:
+                    throw new ParserException(this.DotToken, "Integers do not have any fields.");
+
+                case ResolvedTypeCategory.FLOAT:
+                    throw new ParserException(this.DotToken, "Floating point decimals do not have any fields.");
+
+                case ResolvedTypeCategory.BOOLEAN:
+                    throw new ParserException(this.DotToken, "Booleans do not have any fields.");
+
+                case ResolvedTypeCategory.STRING:
+                    switch (field)
+                    {
+                        case "length":
+                            this.ResolvedType = ResolvedType.INTEGER;
+                            return this;
+
+                        case "contains": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, ResolvedType.STRING);
+                        case "endsWith": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, ResolvedType.STRING);
+                        case "indexOf": return BuildPrimitiveMethod(ResolvedType.INTEGER, ResolvedType.STRING);
+                        case "lower": return BuildPrimitiveMethod(ResolvedType.STRING);
+                        case "ltrim": return BuildPrimitiveMethod(ResolvedType.STRING);
+                        case "replace": return BuildPrimitiveMethod(ResolvedType.STRING, ResolvedType.STRING, ResolvedType.STRING);
+                        case "reverse": return BuildPrimitiveMethod(ResolvedType.STRING);
+                        case "rtrim": return BuildPrimitiveMethod(ResolvedType.STRING);
+                        case "split": return BuildPrimitiveMethod(ResolvedType.ListOrArrayOf(ResolvedType.STRING), ResolvedType.STRING);
+                        case "startsWith": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, ResolvedType.STRING);
+                        case "trim": return BuildPrimitiveMethod(ResolvedType.STRING);
+                        case "upper": return BuildPrimitiveMethod(ResolvedType.STRING);
+
+                        default:
+                            throw new ParserException(this.DotToken, "Strings do not have that method.");
+                    }
+
+                case ResolvedTypeCategory.LIST:
+                    ResolvedType itemType = rootType.ListItemType;
+                    switch (field)
+                    {
+                        case "length":
+                            this.ResolvedType = ResolvedType.INTEGER;
+                            return this;
+
+                        case "add": return BuildPrimitiveMethod(ResolvedType.VOID, itemType);
+                        case "choice": return BuildPrimitiveMethod(ResolvedType.VOID);
+                        case "clear": return BuildPrimitiveMethod(ResolvedType.VOID);
+                        case "clone": return BuildPrimitiveMethod(rootType);
+                        case "concat": return BuildPrimitiveMethod(rootType, rootType);
+                        case "contains": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, itemType);
+                        case "filter": throw new System.NotImplementedException(); // defer resolution to match arg
+                        case "insert": return BuildPrimitiveMethod(ResolvedType.VOID, ResolvedType.INTEGER, itemType);
+                        case "join": return BuildPrimitiveMethodWithOptionalArgs(ResolvedType.STRING, 1, ResolvedType.STRING);
+                        case "map": throw new System.NotImplementedException(); // defer resolution to match arg
+                        case "pop": return BuildPrimitiveMethod(itemType);
+                        case "remove": return BuildPrimitiveMethod(ResolvedType.VOID, ResolvedType.INTEGER);
+                        case "reverse": return BuildPrimitiveMethod(ResolvedType.VOID);
+                        case "shuffle": return BuildPrimitiveMethod(ResolvedType.VOID);
+                        case "sort": return BuildPrimitiveMethod(ResolvedType.VOID);
+
+                        default:
+                            throw new ParserException(this.DotToken, "Lists do not have that method.");
+                    }
+
+                case ResolvedTypeCategory.DICTIONARY:
+                    ResolvedType keyType = rootType.DictionaryKeyType;
+                    ResolvedType valueType = rootType.DictionaryValueType;
+                    switch (field)
+                    {
+                        case "length":
+                            this.ResolvedType = ResolvedType.INTEGER;
+                            return this;
+
+                        case "clear": return BuildPrimitiveMethod(ResolvedType.VOID);
+                        case "clone": return BuildPrimitiveMethod(rootType);
+                        case "contains": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, valueType);
+                        case "get": return BuildPrimitiveMethodWithOptionalArgs(valueType, 1, keyType, valueType);
+                        case "keys": return BuildPrimitiveMethod(ResolvedType.ListOrArrayOf(keyType));
+                        case "merge": return BuildPrimitiveMethod(ResolvedType.VOID, rootType);
+                        case "remove": return BuildPrimitiveMethod(ResolvedType.VOID, keyType);
+                        case "values": return BuildPrimitiveMethod(ResolvedType.ListOrArrayOf(valueType));
+
+                        default:
+                            throw new ParserException(this.DotToken, "Dictionaries do not have that field.");
+                    }
+
+                case ResolvedTypeCategory.CLASS_DEFINITION:
+                    throw new System.NotImplementedException();
+
+                case ResolvedTypeCategory.FUNCTION_POINTER:
+                    throw new System.NotImplementedException();
+
+                case ResolvedTypeCategory.INSTANCE:
+                    throw new System.NotImplementedException();
+
+                default:
+                    throw new System.NotImplementedException();
+            }
+        }
+
+        private Expression BuildPrimitiveMethod(ResolvedType returnType, params ResolvedType[] argTypes)
+        {
+            return BuildPrimitiveMethodWithOptionalArgs(returnType, 0, argTypes);
+        }
+
+        private Expression BuildPrimitiveMethodWithOptionalArgs(ResolvedType returnType, int optionalCount, params ResolvedType[] argTypes)
+        {
+            return new PrimitiveMethodReference(this.Root, this.StepToken, ResolvedType.GetFunctionType(returnType, argTypes, optionalCount), this.Owner);
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)

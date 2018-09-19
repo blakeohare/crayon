@@ -17,7 +17,6 @@ namespace Parser.ParseTree
         public Token[] ArgNames { get; set; }
         public VariableId[] ArgLocalIds { get; private set; }
         public Expression[] DefaultValues { get; set; }
-        private int[] argVarIds = null;
         public Executable[] Code { get; set; }
         public AnnotationCollection Annotations { get; set; }
         public int LocalScopeSize { get; set; }

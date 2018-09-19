@@ -32,9 +32,14 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            this.Root = this.Root.ResolveTypes(parser, typeResolver);
+            if (this.Root.ResolvedType == ResolvedType.ANY || this.Root.ResolvedType == ResolvedType.BOOLEAN)
+            {
+                return this;
+            }
+            throw new ParserException(this.FirstToken, "Cannot apply ! to an expression of this type.");
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)

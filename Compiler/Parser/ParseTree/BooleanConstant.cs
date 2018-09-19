@@ -33,9 +33,10 @@ namespace Parser.ParseTree
             return new BooleanConstant(token, this.Value, owner);
         }
 
-        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             this.ResolvedType = ResolvedType.BOOLEAN;
+            return this;
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }

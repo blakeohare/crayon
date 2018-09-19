@@ -5,6 +5,16 @@ namespace Parser.ParseTree
 {
     public class Assignment : Executable
     {
+        private enum AssignmentType
+        {
+            VARIABLE,
+            TYPED_VARIABLE_DECLARATION,
+            FIELD_ASSIGNMENT,
+            KEYED_ASSIGNMENT,
+        }
+
+        private readonly AssignmentType type;
+
         public Expression Target { get; private set; }
         public Expression Value { get; private set; }
         public Token OpToken { get; private set; }
@@ -29,6 +39,13 @@ namespace Parser.ParseTree
             this.Op = op;
             this.Value = assignedValue;
             this.NullableTypeDeclaration = nullableTypeDeclaration;
+            this.type = this.NullableTypeDeclaration != null
+                ? AssignmentType.TYPED_VARIABLE_DECLARATION
+                : this.Target is Variable
+                    ? AssignmentType.VARIABLE
+                    : this.Target is DotField
+                        ? AssignmentType.FIELD_ASSIGNMENT
+                        : AssignmentType.KEYED_ASSIGNMENT;
         }
 
         private static Ops GetOpFromToken(Token token)
@@ -57,20 +74,26 @@ namespace Parser.ParseTree
         {
             this.Target = this.Target.Resolve(parser);
 
-            if (this.Target is Variable)
+            switch (this.type)
             {
-                this.Target = this.Target.Resolve(parser);
-            }
-            else if (this.Target is BracketIndex)
-            {
-                BracketIndex bi = this.Target as BracketIndex;
-                bi.Root = bi.Root.Resolve(parser);
-                bi.Index = bi.Index.Resolve(parser);
-            }
-            else if (this.Target is DotField)
-            {
-                DotField ds = this.Target as DotField;
-                ds.Root = ds.Root.Resolve(parser);
+                case AssignmentType.VARIABLE:
+                case AssignmentType.TYPED_VARIABLE_DECLARATION:
+                    this.Target = this.Target.Resolve(parser);
+                    break;
+
+                case AssignmentType.KEYED_ASSIGNMENT:
+                    BracketIndex bi = (BracketIndex)this.Target;
+                    bi.Root = bi.Root.Resolve(parser);
+                    bi.Index = bi.Index.Resolve(parser);
+                    break;
+
+                case AssignmentType.FIELD_ASSIGNMENT:
+                    DotField ds = (DotField)this.Target;
+                    ds.Root = ds.Root.Resolve(parser);
+                    break;
+
+                default:
+                    throw new System.Exception();
             }
 
             this.Value = this.Value.Resolve(parser);
@@ -123,7 +146,29 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            this.Value = this.Value.ResolveTypes(parser, typeResolver);
+            if (this.type == AssignmentType.TYPED_VARIABLE_DECLARATION)
+            {
+                VariableId varId = this.TargetAsVariable.LocalScopeId;
+                AType variableType = varId.Type;
+                varId.ResolvedType = typeResolver.ResolveType(varId.Type);
+            }
+            else if (this.type == AssignmentType.VARIABLE && parser.IsCrayon)
+            {
+                VariableId varId = this.TargetAsVariable.LocalScopeId;
+                if (varId.ResolvedType == null)
+                {
+                    varId.ResolvedType = ResolvedType.ANY;
+                }
+            }
+
+            this.Target = this.Target.ResolveTypes(parser, typeResolver);
+            if (!this.Target.CanAssignTo)
+            {
+                throw new ParserException(this.Target, "Cannot assign to this type of expression.");
+            }
+
+            this.Value.ResolvedType.EnsureCanAssignToA(this.Value.FirstToken, this.Target.ResolvedType);
         }
     }
 }

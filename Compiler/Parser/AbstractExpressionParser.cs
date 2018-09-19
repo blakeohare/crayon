@@ -404,7 +404,7 @@ namespace Parser
                 return new Variable(varToken, varToken.Value, owner);
             }
 
-            if (firstChar == '[')
+            if (firstChar == '[' && parser.IsCrayon)
             {
                 Token bracketToken = tokens.PopExpected("[");
                 List<Expression> elements = new List<Expression>();
@@ -415,7 +415,7 @@ namespace Parser
                     elements.Add(Parse(tokens, owner));
                     previousHasCommaOrFirst = tokens.PopIfPresent(",");
                 }
-                return new ListDefinition(bracketToken, elements, owner);
+                return new ListDefinition(bracketToken, elements, AType.Any(), owner);
             }
 
             if (firstChar == '{')

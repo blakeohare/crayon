@@ -42,17 +42,19 @@ namespace Parser.ParseTree
             throw new NotImplementedException();
         }
 
-        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            foreach (Expression arg in this.Args)
+            for (int i = 0; i < this.Args.Length; ++i)
             {
-                arg.ResolveTypes(parser, typeResolver);
+                this.Args[i] = this.Args[i].ResolveTypes(parser, typeResolver);
             }
 
             this.ResolvedType =
                 this.FileScope.CompilationScope.ProgrammingLanguage == "Acrylic"
                     ? ResolvedType.OBJECT
                     : ResolvedType.ANY;
+
+            return this;
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
