@@ -9,10 +9,13 @@ namespace Parser.ParseTree
         public override bool CanAssignTo { get { return false; } }
 
         public Expression[] Items { get; private set; }
-        public ListDefinition(Token openBracket, IList<Expression> items, Node owner)
+        public AType ListType { get; private set; }
+
+        public ListDefinition(Token openBracket, IList<Expression> items, AType listType, Node owner)
             : base(openBracket, owner)
         {
             this.Items = items.ToArray();
+            this.ListType = listType;
         }
 
         internal override Expression Resolve(ParserContext parser)
@@ -31,9 +34,20 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            ResolvedType itemType = typeResolver.ResolveType(this.ListType);
+            this.ResolvedType = ResolvedType.ListOrArrayOf(itemType);
+            for (int i = 0; i < this.Items.Length; ++i)
+            {
+                this.Items[i] = this.Items[i].ResolveTypes(parser, typeResolver);
+                if (!this.Items[i].ResolvedType.CanAssignToA(itemType))
+                {
+                    throw new ParserException(this.Items[i], "This item cannot exist in a list of this type.");
+                }
+            }
+
+            return this;
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)

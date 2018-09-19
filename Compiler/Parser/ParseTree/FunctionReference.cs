@@ -26,7 +26,7 @@ namespace Parser.ParseTree
             throw new InvalidOperationException(); // Generated in the resolve name phase.
         }
 
-        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             ResolvedType returnType = this.FunctionDefinition.ResolvedReturnType;
             ResolvedType[] argTypes = this.FunctionDefinition.ResolvedArgTypes;
@@ -34,6 +34,7 @@ namespace Parser.ParseTree
                 ? 0
                 : this.FunctionDefinition.DefaultValues.Where(e => e != null).Count();
             this.ResolvedType = ResolvedType.GetFunctionType(returnType, argTypes, optionalCount);
+            return this;
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }

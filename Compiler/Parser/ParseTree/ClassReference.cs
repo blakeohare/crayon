@@ -26,7 +26,7 @@ namespace Parser.ParseTree
             throw new InvalidOperationException(); // Created during the resolve names phase.
         }
 
-        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             throw new NotImplementedException();
         }

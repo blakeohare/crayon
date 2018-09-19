@@ -267,7 +267,7 @@ namespace Parser.ParseTree
                     {
                         values.Add(new IntegerConstant(this.Root.FirstToken, rawValue, this.Owner));
                     }
-                    return new ListDefinition(this.FirstToken, values, this.Owner);
+                    return new ListDefinition(this.FirstToken, values, AType.Integer(this.FirstToken), this.Owner);
                 }
             }
 
@@ -322,33 +322,42 @@ namespace Parser.ParseTree
             throw new ParserException(this.ParenToken, "This cannot be invoked like a function.");
         }
 
-        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             this.Root.ResolveTypes(parser, typeResolver);
 
-            if (this.Root.ResolvedType == ResolvedType.ANY)
+            for (int i = 0; i < this.Args.Length; ++i)
             {
+                this.Args[i] = this.Args[i].ResolveTypes(parser, typeResolver);
+            }
+
+            ResolvedType rootType = this.Root.ResolvedType;
+
+            if (rootType == ResolvedType.ANY)
+            {
+                this.ResolvedType = ResolvedType.ANY;
+                return this;
+            }
+
+            if (rootType.Category == ResolvedTypeCategory.FUNCTION_POINTER)
+            {
+                int maxArgCount = rootType.FunctionArgs.Length;
+                int minArgCount = maxArgCount - rootType.FunctionOptionalArgCount;
+                if (this.Args.Length < minArgCount || this.Args.Length > maxArgCount)
+                {
+                    throw new ParserException(this.ParenToken, "This function has the incorrect number of arguments.");
+                }
+
                 for (int i = 0; i < this.Args.Length; ++i)
                 {
-                    this.Args[i].ResolveTypes(parser, typeResolver);
+                    if (!this.Args[i].ResolvedType.CanAssignToA(rootType.FunctionArgs[i]))
+                    {
+                        throw new ParserException(this.Args[i], "Incorrect argument type.");
+                    }
                 }
-                this.ResolvedType = ResolvedType.ANY;
-
-                return;
+                return this;
             }
 
-            if (this.Root.ResolvedType.Category == ResolvedTypeCategory.FUNCTION_POINTER)
-            {
-                ResolvedType fpType = this.Root.ResolvedType;
-                ResolveAndVerifyArgsForFunctionLikeThing(
-                    parser,
-                    typeResolver,
-                    this.Args,
-                    fpType.FunctionArgs,
-                    fpType.FunctionOptionalArgCount);
-                this.ResolvedType = fpType.FunctionReturnType;
-                return;
-            }
             // TODO: the fun part of optional args function pointer expressed as a type
             throw new System.NotImplementedException();
         }
@@ -365,49 +374,17 @@ namespace Parser.ParseTree
             }
         }
 
-        internal static void ResolveAndVerifyArgsForFunctionLikeThing(
-            ParserContext parser,
-            TypeResolver typeResolver,
-            Expression[] args,
-            ResolvedType[] calleeTypes,
-            Expression[] nullableDefaultValues)
+        internal static int CountOptionalArgs(Expression[] nullableDefaultValues)
         {
-            int optionalArgumentCount = calleeTypes.Length;
-            for (int i = 0; i < nullableDefaultValues.Length; ++i)
+            int length = nullableDefaultValues.Length;
+            if (length == 0) return 0;
+            int optionalArgs = 0;
+            for (int i = length - 1; i >= 0; --i)
             {
-                if (nullableDefaultValues[i] != null) break;
-                optionalArgumentCount--;
+                if (nullableDefaultValues[i] != null) return optionalArgs;
+                optionalArgs++;
             }
-            ResolveAndVerifyArgsForFunctionLikeThing(parser, typeResolver, args, calleeTypes, optionalArgumentCount);
-        }
-
-        internal static void ResolveAndVerifyArgsForFunctionLikeThing(
-            ParserContext parser,
-            TypeResolver typeResolver,
-            Expression[] args,
-            ResolvedType[] calleeTypes,
-            int optionalArgumentCount)
-        {
-            for (int i = 0; i < args.Length; ++i)
-            {
-                args[i].ResolveTypes(parser, typeResolver);
-            }
-
-            if (args.Length <= calleeTypes.Length && args.Length >= calleeTypes.Length - optionalArgumentCount)
-            {
-                for (int i = 0; i < args.Length; ++i)
-                {
-                    if (!args[i].ResolvedType.CanAssignToA(calleeTypes[i]))
-                    {
-                        // TODO: be more descriptive here.
-                        throw new ParserException(args[i], "Incorrect type passed as an argument.");
-                    }
-                }
-            }
-            else
-            {
-                throw new ParserException(args[0].FirstToken, "Incorrect number of arguments were passed.");
-            }
+            return optionalArgs;
         }
     }
 }

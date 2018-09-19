@@ -33,7 +33,7 @@ namespace Parser.ParseTree
             throw new ParserException(this, "This should not happen.");
         }
 
-        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             throw new System.NotImplementedException();
         }

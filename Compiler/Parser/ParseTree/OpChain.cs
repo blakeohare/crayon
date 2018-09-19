@@ -233,7 +233,7 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             this.Left.ResolveTypes(parser, typeResolver);
             this.Right.ResolveTypes(parser, typeResolver);
@@ -259,6 +259,7 @@ namespace Parser.ParseTree
 
                 this.ResolvedType = ot.OutputType;
             }
+            return this;
         }
 
         private OperationType GetOperation(

@@ -101,7 +101,17 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            this.Condition.ResolveTypes(parser, typeResolver);
+            ResolvedTypeCategory type = this.Condition.ResolvedType.Category;
+            if (type != ResolvedTypeCategory.BOOLEAN && type != ResolvedTypeCategory.ANY)
+            {
+                throw new ParserException(this.Condition, "Boolean expected.");
+            }
+
+            foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
+            {
+                ex.ResolveTypes(parser, typeResolver);
+            }
         }
     }
 }

@@ -30,6 +30,11 @@ namespace Parser
             this.LiteralLookup = new LiteralLookup();
         }
 
+        public bool IsCrayon
+        {
+            get { return this.CurrentScope.ProgrammingLanguage == "Crayon"; }
+        }
+
         public bool IsAcrylic
         {
             get { return this.CurrentScope.ProgrammingLanguage == "Acrylic"; }

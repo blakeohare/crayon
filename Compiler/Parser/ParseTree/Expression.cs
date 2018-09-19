@@ -17,13 +17,13 @@ namespace Parser.ParseTree
 
         // Override and return true if this expression, when used in an inline function as an argument into a library/core
         // function, shouldn't pose any problems. Generally this would be inline constants, simple variables, or static fields.
-        public virtual bool IsInlineCandidate {  get { return false; } }
+        public virtual bool IsInlineCandidate { get { return false; } }
 
         internal abstract Expression ResolveEntityNames(ParserContext parser);
 
         internal abstract Expression Resolve(ParserContext parser);
 
-        internal abstract void ResolveTypes(ParserContext parser, TypeResolver typeResolver);
+        internal abstract Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver);
 
         internal abstract void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase);
 

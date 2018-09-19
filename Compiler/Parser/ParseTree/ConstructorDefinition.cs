@@ -202,12 +202,21 @@ namespace Parser.ParseTree
                 Expression[] baseConstructorDefaultValues = baseConstructor == null
                     ? new Expression[0]
                     : baseConstructor.DefaultValues;
-                FunctionCall.ResolveAndVerifyArgsForFunctionLikeThing(
-                    parser,
-                    typeResolver,
-                    this.BaseArgs,
-                    baseConstructorArgTypes,
-                    baseConstructorDefaultValues);
+                int optionalArgCount = FunctionCall.CountOptionalArgs(baseConstructorDefaultValues);
+                int maxArgCount = baseConstructorArgTypes.Length;
+                int minArgCount = maxArgCount - optionalArgCount;
+                if (this.BaseArgs.Length < minArgCount || this.BaseArgs.Length > maxArgCount)
+                {
+                    throw new ParserException(this.BaseToken, "Incorrect number of arguments passed to base constructor.");
+                }
+
+                for (int i = 0; i < this.BaseArgs.Length; ++i)
+                {
+                    if (!this.BaseArgs[i].ResolvedType.CanAssignToA(baseConstructorArgTypes[i]))
+                    {
+                        throw new ParserException(this.BaseArgs[i], "Argument is incorrect type.");
+                    }
+                }
             }
             else
             {
