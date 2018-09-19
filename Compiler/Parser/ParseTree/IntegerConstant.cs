@@ -67,6 +67,7 @@ namespace Parser.ParseTree
         public IntegerConstant(Token token, int value, Node owner)
             : base(token, owner)
         {
+            this.ResolvedType = ResolvedType.INTEGER;
             this.Value = value;
         }
 
@@ -83,7 +84,6 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            this.ResolvedType = ResolvedType.INTEGER;
             return this;
         }
 

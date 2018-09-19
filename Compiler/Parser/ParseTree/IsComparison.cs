@@ -41,7 +41,10 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            // TODO: it'd be nice to just inline the result here, if possible.
+            this.Expression = this.Expression.ResolveTypes(parser, typeResolver);
+            this.ResolvedType = ResolvedType.BOOLEAN;
+            return this;
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)

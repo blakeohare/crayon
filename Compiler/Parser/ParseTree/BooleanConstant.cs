@@ -15,6 +15,7 @@ namespace Parser.ParseTree
         public BooleanConstant(Token token, bool value, Node owner)
             : base(token, owner)
         {
+            this.ResolvedType = ResolvedType.BOOLEAN;
             this.Value = value;
         }
 
@@ -35,7 +36,6 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            this.ResolvedType = ResolvedType.BOOLEAN;
             return this;
         }
 

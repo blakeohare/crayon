@@ -381,7 +381,7 @@ namespace Parser.ParseTree
             int optionalArgs = 0;
             for (int i = length - 1; i >= 0; --i)
             {
-                if (nullableDefaultValues[i] != null) return optionalArgs;
+                if (nullableDefaultValues[i] == null) return optionalArgs;
                 optionalArgs++;
             }
             return optionalArgs;

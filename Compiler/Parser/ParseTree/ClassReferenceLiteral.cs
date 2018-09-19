@@ -27,7 +27,8 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            this.ResolvedType = ResolvedType.GetClassRefType(this.ClassDefinition);
+            return this;
         }
     }
 }

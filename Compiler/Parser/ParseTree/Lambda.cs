@@ -8,6 +8,7 @@ namespace Parser.ParseTree
     {
         public Token[] Args { get; private set; }
         public AType[] ArgTypes { get; private set; }
+        public ResolvedType[] ResolvedArgTypes { get; private set; }
         public Executable[] Code { get; private set; }
         public List<Lambda> Lambdas { get; private set; }
         internal VariableScope VariableScope { get; private set; }
@@ -93,7 +94,31 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            int argCount = this.ArgTypes.Length;
+            this.ResolvedArgTypes = new ResolvedType[argCount];
+            for (int i = 0; i < argCount; ++i)
+            {
+                ResolvedType argType = typeResolver.ResolveType(this.ArgTypes[i]);
+                this.ResolvedArgTypes[i] = argType;
+
+                // TODO: this variableId will not always be non-null when the argument in a lambda is used by a
+                // closure of another lambda inside the lambda. I'll have to change my strategy here. Possibly
+                // tracking the VariableId's as another Args field.
+                VariableId variableId = this.VariableScope.GetVarId(this.Args[i]);
+                variableId.ResolvedType = argType;
+            }
+
+            foreach (Executable ex in this.Code)
+            {
+                ex.ResolveTypes(parser, typeResolver);
+            }
+
+            // TODO: how do you define the lambda return type in Acrylic? Snoop the nested returns, maybe?
+            ResolvedType returnType = ResolvedType.ANY;
+
+            this.ResolvedType = ResolvedType.GetFunctionType(returnType, this.ResolvedArgTypes, 0);
+
+            return this;
         }
     }
 }

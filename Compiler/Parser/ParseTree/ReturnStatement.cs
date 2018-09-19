@@ -51,13 +51,13 @@ namespace Parser.ParseTree
 
             if (this.Expression == null)
             {
-                if (returnType != ResolvedType.VOID)
+                if (returnType == ResolvedType.VOID || returnType == ResolvedType.ANY)
                 {
-                    throw new ParserException(this, "Must return a value from a function. Empty return statements are not allowed.");
+                    // This is fine
                 }
                 else
                 {
-                    throw new System.NotImplementedException();
+                    throw new ParserException(this, "Must return a value from a function. Empty return statements are not allowed.");
                 }
             }
             else

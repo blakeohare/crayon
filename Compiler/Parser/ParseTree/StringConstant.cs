@@ -13,6 +13,7 @@ namespace Parser.ParseTree
         public StringConstant(Token token, string value, Node owner)
             : base(token, owner)
         {
+            this.ResolvedType = ResolvedType.STRING;
             this.Value = value;
         }
 
@@ -64,7 +65,6 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            this.ResolvedType = ResolvedType.STRING;
             return this;
         }
 

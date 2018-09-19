@@ -164,7 +164,23 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            foreach (Executable ex in this.TryBlock)
+            {
+                ex.ResolveTypes(parser, typeResolver);
+            }
+
+            foreach (CatchBlock cb in this.CatchBlocks)
+            {
+                foreach (Executable ex in cb.Code)
+                {
+                    ex.ResolveTypes(parser, typeResolver);
+                }
+            }
+
+            foreach (Executable ex in this.FinallyBlock)
+            {
+                ex.ResolveTypes(parser, typeResolver);
+            }
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)

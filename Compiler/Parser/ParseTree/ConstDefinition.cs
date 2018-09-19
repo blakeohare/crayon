@@ -91,9 +91,18 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            this.Expression.ResolveTypes(parser, typeResolver);
+            this.Expression = this.Expression.ResolveTypes(parser, typeResolver);
 
-            this.Expression.ResolvedType.EnsureCanAssignToA(this.Expression.FirstToken, this.ResolvedType);
+            if (!parser.RequireExplicitVarDeclarations)
+            {
+                // In dynamic languages, the const type is defined by the expression.
+                this.ResolvedType = this.Expression.ResolvedType;
+            }
+            else
+            {
+                // In static languages, the expression must comply with the const type.
+                this.Expression.ResolvedType.EnsureCanAssignToA(this.Expression.FirstToken, this.ResolvedType);
+            }
         }
     }
 }

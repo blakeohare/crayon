@@ -32,7 +32,19 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            this.Root = this.Root.ResolveTypes(parser, typeResolver);
+            switch (this.Root.ResolvedType.Category)
+            {
+                case ResolvedTypeCategory.ANY:
+                case ResolvedTypeCategory.FLOAT:
+                case ResolvedTypeCategory.INTEGER:
+                    // this is fine.
+                    break;
+                default:
+                    throw new ParserException(this.FirstToken, "Cannot apply a negative sign to this type.");
+            }
+            this.ResolvedType = this.Root.ResolvedType;
+            return this;
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)

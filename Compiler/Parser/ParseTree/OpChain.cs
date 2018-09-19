@@ -235,31 +235,68 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            this.Left.ResolveTypes(parser, typeResolver);
-            this.Right.ResolveTypes(parser, typeResolver);
+            this.Left = this.Left.ResolveTypes(parser, typeResolver);
+            this.Right = this.Right.ResolveTypes(parser, typeResolver);
 
             if (this.Left.ResolvedType == ResolvedType.ANY || this.Right.ResolvedType == ResolvedType.ANY)
             {
+
                 if (this.Left.ResolvedType == ResolvedType.STRING || this.Right.ResolvedType == ResolvedType.STRING)
                 {
-                    this.ResolvedType = ResolvedType.STRING;
+                    if (this.OpToken.Value == "+")
+                    {
+                        this.ResolvedType = ResolvedType.STRING;
+                        return this;
+                    }
                 }
-                else
+                this.ResolvedType = ResolvedType.ANY;
+                return this;
+            }
+
+            OperationType ot = GetOperation(this.Left.ResolvedType.Category, this.Right.ResolvedType.Category, this.OpToken.Value);
+            ResolvedType resolvedType = null;
+            if (ot == null)
+            {
+                resolvedType = this.GetTrickyOperation(this.Left.ResolvedType, this.Right.ResolvedType, this.OpToken.Value);
+                if (resolvedType == null)
                 {
-                    this.ResolvedType = ResolvedType.ANY;
+                    throw new ParserException(this.OpToken, "This operation is not allowed between these two types.");
                 }
             }
             else
             {
-                OperationType ot = GetOperation(this.Left.ResolvedType.Category, this.Right.ResolvedType.Category, this.OpToken.Value);
-                if (ot == null)
-                {
-                    throw new ParserException(this.OpToken, "This operation is not allowed between these two types.");
-                }
-
-                this.ResolvedType = ot.OutputType;
+                resolvedType = ot.OutputType;
             }
+
+            this.ResolvedType = resolvedType;
+
             return this;
+        }
+
+        private ResolvedType GetTrickyOperation(ResolvedType left, ResolvedType right, string op)
+        {
+            if (op == "*")
+            {
+                if (left.Category == ResolvedTypeCategory.LIST && right.Category == ResolvedTypeCategory.INTEGER)
+                {
+                    return left;
+                }
+                if (right.Category == ResolvedTypeCategory.LIST && left.Category == ResolvedTypeCategory.INTEGER)
+                {
+                    return right;
+                }
+            }
+            if (op == "+")
+            {
+                if (left.Category == ResolvedTypeCategory.LIST && right.Category == ResolvedTypeCategory.LIST)
+                {
+                    if (left.ListItemType == right.ListItemType)
+                    {
+                        return left;
+                    }
+                }
+            }
+            return null;
         }
 
         private OperationType GetOperation(
@@ -377,6 +414,19 @@ namespace Parser.ParseTree
                     new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, (opChain) => { return MakeString(opChain.FirstToken, GetString(this.Left) + GetString(this.Right)); }),
                     new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.STRING, "==", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetString(this.Left) == GetString(this.Right)); }),
                     new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.STRING, "!=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetString(this.Left) != GetString(this.Right)); }),
+
+                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.INSTANCE, "+", ResolvedType.STRING, null),
+                    new OperationType(ResolvedTypeCategory.INSTANCE, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, null),
+                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.CLASS_DEFINITION, "+", ResolvedType.STRING, null),
+                    new OperationType(ResolvedTypeCategory.CLASS_DEFINITION, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, null),
+                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.FUNCTION_POINTER, "+", ResolvedType.STRING, null),
+                    new OperationType(ResolvedTypeCategory.FUNCTION_POINTER, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, null),
+                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.LIST, "+", ResolvedType.STRING, null),
+                    new OperationType(ResolvedTypeCategory.LIST, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, null),
+                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.DICTIONARY, "+", ResolvedType.STRING, null),
+                    new OperationType(ResolvedTypeCategory.DICTIONARY, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, null),
+                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.OBJECT, "+", ResolvedType.STRING, null),
+                    new OperationType(ResolvedTypeCategory.OBJECT, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, null),
 
                     new OperationType(ResolvedTypeCategory.BOOLEAN, ResolvedTypeCategory.BOOLEAN, "&&", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetBool(this.Left) && GetBool(this.Right)); }),
                     new OperationType(ResolvedTypeCategory.BOOLEAN, ResolvedTypeCategory.BOOLEAN, "||", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetBool(this.Left) || GetBool(this.Right)); }),

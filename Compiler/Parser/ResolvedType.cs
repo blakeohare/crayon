@@ -126,6 +126,17 @@ namespace Parser
             return output;
         }
 
+        private static readonly Dictionary<FunctionDefinition, ResolvedType> funcTypesByRef = new Dictionary<FunctionDefinition, ResolvedType>();
+        public static ResolvedType GetFunctionType(FunctionDefinition func)
+        {
+            if (!funcTypesByRef.ContainsKey(func))
+            {
+                ResolvedType type = GetFunctionType(func.ResolvedReturnType, func.ResolvedArgTypes, FunctionCall.CountOptionalArgs(func.DefaultValues));
+                funcTypesByRef[func] = type;
+            }
+            return funcTypesByRef[func];
+        }
+
         private static readonly Dictionary<string, ResolvedType> funcTypes = new Dictionary<string, ResolvedType>();
         public static ResolvedType GetFunctionType(ResolvedType returnType, IList<ResolvedType> args, int optionalCount)
         {
