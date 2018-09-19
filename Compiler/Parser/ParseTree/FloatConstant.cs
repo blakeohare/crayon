@@ -16,6 +16,7 @@ namespace Parser.ParseTree
         public FloatConstant(Token startValue, double value, Node owner)
             : base(startValue, owner)
         {
+            this.ResolvedType = ResolvedType.FLOAT;
             this.Value = value;
         }
 
@@ -41,7 +42,6 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            this.ResolvedType = ResolvedType.FLOAT;
             return this;
         }
 

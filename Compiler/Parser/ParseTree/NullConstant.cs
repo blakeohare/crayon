@@ -10,7 +10,9 @@ namespace Parser.ParseTree
 
         public NullConstant(Token token, Node owner)
             : base(token, owner)
-        { }
+        {
+            this.ResolvedType = ResolvedType.NULL;
+        }
 
         public override bool IsLiteral { get { return true; } }
 
@@ -26,7 +28,6 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            this.ResolvedType = ResolvedType.NULL;
             return this;
         }
 

@@ -101,7 +101,7 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            this.Condition.ResolveTypes(parser, typeResolver);
+            this.Condition = this.Condition.ResolveTypes(parser, typeResolver);
             ResolvedTypeCategory type = this.Condition.ResolvedType.Category;
             if (type != ResolvedTypeCategory.BOOLEAN && type != ResolvedTypeCategory.ANY)
             {

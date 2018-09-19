@@ -365,7 +365,19 @@ namespace Parser.ParseTree
                     throw new System.NotImplementedException();
 
                 case ResolvedTypeCategory.INSTANCE:
-                    throw new System.NotImplementedException();
+                    FieldDefinition fieldDef = rootType.ClassTypeOrReference.GetField(field, true);
+                    if (fieldDef != null)
+                    {
+                        this.ResolvedType = fieldDef.ResolvedFieldType;
+                        return this;
+                    }
+                    FunctionDefinition funcDef = rootType.ClassTypeOrReference.GetMethod(field, true);
+                    if (funcDef != null)
+                    {
+                        this.ResolvedType = ResolvedType.GetFunctionType(funcDef);
+                        return this;
+                    }
+                    throw new ParserException(this.DotToken, "The class '" + rootType.ClassTypeOrReference.NameToken.Value + "' does not have a field called '" + field + "'.");
 
                 default:
                     throw new System.NotImplementedException();
