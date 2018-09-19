@@ -409,5 +409,42 @@ namespace Parser.ParseTree
             }
             return false;
         }
+
+        internal ClassDefinition GetCommonAncestor(ClassDefinition other)
+        {
+            if (other == this) return this;
+            if (other.BaseClass == this) return this;
+            if (other == this.BaseClass) return other;
+            ClassDefinition[] thisChain = this.GetClassAncestryChain();
+            if (thisChain[0] == other) return other;
+            ClassDefinition[] otherChain = other.GetClassAncestryChain();
+            if (thisChain[0] != otherChain[0]) return null;
+            ClassDefinition commonAncestor = thisChain[0];
+            int length = System.Math.Min(thisChain.Length, otherChain.Length);
+            for (int i = 1; i < length; ++i)
+            {
+                if (thisChain[i] == otherChain[i]) commonAncestor = thisChain[i];
+                else break;
+            }
+            return commonAncestor;
+        }
+
+        private ClassDefinition[] ancestryCache = null;
+        private ClassDefinition[] GetClassAncestryChain()
+        {
+            if (ancestryCache == null && this.BaseClass != null)
+            {
+                ClassDefinition walker = this;
+                List<ClassDefinition> output = new List<ClassDefinition>();
+                while (walker != null)
+                {
+                    output.Add(walker);
+                    walker = walker.BaseClass;
+                }
+                output.Reverse();
+                ancestryCache = output.ToArray();
+            }
+            return ancestryCache;
+        }
     }
 }

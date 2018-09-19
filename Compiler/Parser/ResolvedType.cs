@@ -146,6 +146,7 @@ namespace Parser
                 output = new ResolvedType(ResolvedTypeCategory.FUNCTION_POINTER);
                 output.FunctionReturnType = returnType;
                 output.Generics = args.ToArray();
+                output.FunctionOptionalArgCount = optionalCount;
                 funcTypes[key] = output;
             }
             return output;

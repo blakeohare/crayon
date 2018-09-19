@@ -324,7 +324,7 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            this.Root.ResolveTypes(parser, typeResolver);
+            this.Root = this.Root.ResolveTypes(parser, typeResolver);
 
             for (int i = 0; i < this.Args.Length; ++i)
             {
@@ -355,10 +355,10 @@ namespace Parser.ParseTree
                         throw new ParserException(this.Args[i], "Incorrect argument type.");
                     }
                 }
+                this.ResolvedType = rootType.FunctionReturnType;
                 return this;
             }
 
-            // TODO: the fun part of optional args function pointer expressed as a type
             throw new System.NotImplementedException();
         }
 

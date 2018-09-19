@@ -47,7 +47,14 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            this.PrimaryExpression = this.PrimaryExpression.ResolveTypes(parser, typeResolver);
+            this.SecondaryExpression = this.SecondaryExpression.ResolveTypes(parser, typeResolver);
+            if (this.PrimaryExpression.ResolvedType == ResolvedType.NULL)
+            {
+                return this.SecondaryExpression;
+            }
+            this.ResolvedType = typeResolver.FindCommonAncestor(this.PrimaryExpression.ResolvedType, this.SecondaryExpression.ResolvedType);
+            return this;
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)

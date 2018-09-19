@@ -66,7 +66,15 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            Node walker = this.Owner;
+            while (!(walker is ClassDefinition))
+            {
+                walker = walker.Owner;
+                if (walker == null) throw new System.Exception(); // already verified exists in a ClassDefinition in ResolveEntityNames, so this should never happen.
+            }
+
+            this.ResolvedType = ResolvedType.GetInstanceType((ClassDefinition)walker);
+            return this;
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }

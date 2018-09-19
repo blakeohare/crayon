@@ -13,6 +13,7 @@ namespace Parser.ParseTree
         public Expression IterationExpression { get; private set; }
         public Executable[] Code { get; private set; }
         public AType IterationType { get; private set; }
+        public ResolvedType IterationResolvedType { get; private set; }
 
         public ForEachLoop(Token forToken, AType iterationType, Token iterationVariable, Expression iterationExpression, IList<Executable> code, Node owner)
             : base(forToken, owner)
@@ -75,7 +76,37 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            this.IterationExpression = this.IterationExpression.ResolveTypes(parser, typeResolver);
+            this.IterationResolvedType = typeResolver.ResolveType(this.IterationType);
+            this.IterationVariableId.ResolvedType = this.IterationResolvedType;
+            ResolvedType exprType = this.IterationExpression.ResolvedType;
+            if (exprType.Category == ResolvedTypeCategory.ANY)
+            {
+                // This is fine.
+            }
+            else if (exprType.Category == ResolvedTypeCategory.LIST)
+            {
+                if (!exprType.ListItemType.CanAssignToA(this.IterationResolvedType))
+                {
+                    throw new ParserException(this.IterationExpression, "The list item type cannot be applied to the iterator variable's type.");
+                }
+            }
+            else if (exprType.Category == ResolvedTypeCategory.STRING)
+            {
+                if (!ResolvedType.STRING.CanAssignToA(this.IterationResolvedType))
+                {
+                    throw new ParserException(this.IterationExpression, "String characters must be assigned to string types in for loops.");
+                }
+            }
+            else
+            {
+                throw new ParserException(this.IterationExpression, "Cannot iterate on this type.");
+            }
+
+            foreach (Executable ex in this.Code)
+            {
+                ex.ResolveTypes(parser, typeResolver);
+            }
         }
     }
 }

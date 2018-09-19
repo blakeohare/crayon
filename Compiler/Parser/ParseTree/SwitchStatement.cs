@@ -265,7 +265,32 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            this.Condition = this.Condition.ResolveTypes(parser, typeResolver);
+            ResolvedType switchType = this.Condition.ResolvedType;
+            if (switchType != ResolvedType.ANY && switchType != ResolvedType.INTEGER && switchType != ResolvedType.STRING)
+            {
+                throw new ParserException(this.Condition, "This is not a valid expression to switch on.");
+            }
+
+            foreach (Chunk chunk in this.chunks)
+            {
+                for (int i = 0; i < chunk.Cases.Length; ++i)
+                {
+                    if (chunk.Cases[i] != null)
+                    {
+                        chunk.Cases[i] = chunk.Cases[i].ResolveTypes(parser, typeResolver);
+                        if (!chunk.Cases[i].ResolvedType.CanAssignToA(switchType))
+                        {
+                            throw new ParserException(chunk.Cases[i], "Incorrect type for case value.");
+                        }
+                    }
+                }
+
+                for (int i = 0; i < chunk.Code.Length; ++i)
+                {
+                    chunk.Code[i].ResolveTypes(parser, typeResolver);
+                }
+            }
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)

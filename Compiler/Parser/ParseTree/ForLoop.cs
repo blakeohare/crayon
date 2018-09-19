@@ -81,7 +81,25 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            foreach (Executable init in this.Init)
+            {
+                init.ResolveTypes(parser, typeResolver);
+            }
+
+            this.Condition = this.Condition.ResolveTypes(parser, typeResolver);
+            if (!this.Condition.ResolvedType.CanAssignToA(ResolvedType.BOOLEAN))
+            {
+                throw new ParserException(this.Condition, "for loop condition must be a boolean.");
+            }
+
+            foreach (Executable step in this.Step)
+            {
+                step.ResolveTypes(parser, typeResolver);
+            }
+            foreach (Executable line in this.Code)
+            {
+                line.ResolveTypes(parser, typeResolver);
+            }
         }
     }
 }

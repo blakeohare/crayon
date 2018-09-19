@@ -32,7 +32,16 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            this.Condition = this.Condition.ResolveTypes(parser, typeResolver);
+            if (!this.Condition.ResolvedType.CanAssignToA(ResolvedType.BOOLEAN))
+            {
+                throw new ParserException(this.Condition, "Can only use a boolean for while loop conditions.");
+            }
+
+            foreach (Executable ex in this.Code)
+            {
+                ex.ResolveTypes(parser, typeResolver);
+            }
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)

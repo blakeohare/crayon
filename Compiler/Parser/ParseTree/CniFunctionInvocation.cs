@@ -57,7 +57,15 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            for (int i = 0; i < this.Args.Length; ++i)
+            {
+                this.Args[i] = this.Args[i].ResolveTypes(parser, typeResolver);
+                // no type information to verify yet.
+            }
+
+            // you must cast the result (for now, without any type information in metadata)
+            this.ResolvedType = ResolvedType.ANY;
+            return this;
         }
     }
 }

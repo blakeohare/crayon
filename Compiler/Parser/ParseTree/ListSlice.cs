@@ -58,7 +58,36 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            this.Root = this.Root.ResolveTypes(parser, typeResolver);
+            for (int i = 0; i < this.Items.Length; ++i)
+            {
+                if (this.Items[i] != null)
+                {
+                    this.Items[i] = this.Items[i].ResolveTypes(parser, typeResolver);
+                    if (!this.Items[i].ResolvedType.CanAssignToA(ResolvedType.INTEGER))
+                    {
+                        throw new ParserException(this.Items[i], "List/string slice arguments must be integers.");
+                    }
+                }
+            }
+
+            if (this.Root.ResolvedType == ResolvedType.ANY)
+            {
+                this.ResolvedType = ResolvedType.ANY;
+            }
+            else if (this.Root.ResolvedType == ResolvedType.STRING)
+            {
+                this.ResolvedType = ResolvedType.STRING;
+            }
+            else if (this.Root.ResolvedType.Category == ResolvedTypeCategory.LIST)
+            {
+                this.ResolvedType = this.Root.ResolvedType.ListItemType;
+            }
+            else
+            {
+                throw new ParserException(this.BracketToken, "Cannot perform slicing on this type.");
+            }
+            return this;
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)

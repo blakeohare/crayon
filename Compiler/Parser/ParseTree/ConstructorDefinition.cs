@@ -179,7 +179,7 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            for (int i = 0;i  < this.ArgNames.Length; ++i)
+            for (int i = 0; i < this.ArgNames.Length; ++i)
             {
                 this.ArgLocalIds[i].ResolvedType = typeResolver.ResolveType(this.ArgTypes[i]);
             }
@@ -212,6 +212,7 @@ namespace Parser.ParseTree
 
                 for (int i = 0; i < this.BaseArgs.Length; ++i)
                 {
+                    this.BaseArgs[i] = this.BaseArgs[i].ResolveTypes(parser, typeResolver);
                     if (!this.BaseArgs[i].ResolvedType.CanAssignToA(baseConstructorArgTypes[i]))
                     {
                         throw new ParserException(this.BaseArgs[i], "Argument is incorrect type.");
