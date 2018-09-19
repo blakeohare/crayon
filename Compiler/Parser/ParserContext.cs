@@ -40,6 +40,7 @@ namespace Parser
             get { return this.CurrentScope.ProgrammingLanguage == "Acrylic"; }
         }
 
+        // TODO: rename to just IsStaticlyTyped
         public bool RequireExplicitVarDeclarations { get { return this.IsAcrylic; } }
 
         private int localeCount = -1;

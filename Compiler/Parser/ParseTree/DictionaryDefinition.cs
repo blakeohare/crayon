@@ -9,12 +9,18 @@ namespace Parser.ParseTree
     {
         public override bool CanAssignTo { get { return false; } }
 
+        public AType KeyType { get; private set; }
+        public AType ValueType { get; private set; }
+        public ResolvedType ResolvedKeyType { get; private set; }
+        public ResolvedType ResolvedValueType { get; private set; }
         public Expression[] Keys { get; private set; }
         public Expression[] Values { get; private set; }
 
-        public DictionaryDefinition(Token braceToken, IList<Expression> keys, IList<Expression> values, Node owner)
+        public DictionaryDefinition(Token braceToken, AType keyType, AType valueType, IList<Expression> keys, IList<Expression> values, Node owner)
             : base(braceToken, owner)
         {
+            this.KeyType = keyType;
+            this.ValueType = valueType;
             this.Keys = keys.ToArray();
             this.Values = values.ToArray();
         }
@@ -56,7 +62,30 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            int length = this.Keys.Length;
+            this.ResolvedKeyType = typeResolver.ResolveType(this.KeyType);
+            this.ResolvedValueType = typeResolver.ResolveType(this.ValueType);
+            for (int i = 0; i < length; ++i)
+            {
+                this.Keys[i] = this.Keys[i].ResolveTypes(parser, typeResolver);
+                this.Values[i] = this.Values[i].ResolveTypes(parser, typeResolver);
+
+                if (!this.Keys[i].ResolvedType.CanAssignToA(this.ResolvedKeyType))
+                    throw new ParserException(this.Keys[i], "This key is the incorrect type.");
+                if (!this.Values[i].ResolvedType.CanAssignToA(this.ResolvedValueType))
+                    throw new ParserException(this.Values[i], "This value is the incorrect type.");
+            }
+
+            if (this.ResolvedKeyType == ResolvedType.ANY || this.ResolvedValueType == ResolvedType.ANY)
+            {
+                this.ResolvedType = ResolvedType.ANY;
+            }
+            else
+            {
+                this.ResolvedType = ResolvedType.GetDictionaryType(this.ResolvedKeyType, this.ResolvedValueType);
+            }
+
+            return this;
         }
     }
 }

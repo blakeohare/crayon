@@ -58,5 +58,59 @@ namespace Parser.Resolver
                     return ResolvedType.GetInstanceType(classDef);
             }
         }
+
+        public ResolvedType FindCommonAncestor(ResolvedType typeA, ResolvedType typeB)
+        {
+            if (typeA == ResolvedType.ANY || typeB == ResolvedType.ANY) return ResolvedType.ANY;
+            if (typeA == typeB) return typeA;
+
+            if ((typeA == ResolvedType.INTEGER && typeB == ResolvedType.FLOAT) ||
+                (typeA == ResolvedType.FLOAT && typeB == ResolvedType.INTEGER))
+            {
+                return ResolvedType.FLOAT;
+            }
+
+            if (typeA == ResolvedType.NULL || typeB == ResolvedType.NULL)
+            {
+                ResolvedType nonNull = typeA == ResolvedType.NULL ? typeB : typeA;
+                switch (nonNull.Category)
+                {
+                    case ResolvedTypeCategory.STRING:
+                    case ResolvedTypeCategory.LIST:
+                    case ResolvedTypeCategory.DICTIONARY:
+                    case ResolvedTypeCategory.FUNCTION_POINTER:
+                    case ResolvedTypeCategory.INSTANCE:
+                    case ResolvedTypeCategory.CLASS_DEFINITION:
+                        return nonNull;
+                    default:
+                        return ResolvedType.OBJECT;
+                }
+            }
+
+            if (typeA.Category != typeB.Category)
+            {
+                return ResolvedType.OBJECT;
+            }
+
+            switch (typeA.Category)
+            {
+                case ResolvedTypeCategory.LIST:
+                case ResolvedTypeCategory.DICTIONARY:
+                    return ResolvedType.OBJECT;
+
+                case ResolvedTypeCategory.INSTANCE:
+                    ClassDefinition c1 = typeA.ClassTypeOrReference;
+                    ClassDefinition c2 = typeB.ClassTypeOrReference;
+                    ClassDefinition commonParent = c1.GetCommonAncestor(c2);
+                    if (commonParent == null)
+                    {
+                        return ResolvedType.OBJECT;
+                    }
+                    return ResolvedType.GetInstanceType(commonParent);
+
+                default:
+                    throw new System.NotImplementedException();
+            }
+        }
     }
 }

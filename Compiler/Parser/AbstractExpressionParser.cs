@@ -418,7 +418,7 @@ namespace Parser
                 return new ListDefinition(bracketToken, elements, AType.Any(), owner);
             }
 
-            if (firstChar == '{')
+            if (firstChar == '{' && this.parser.IsCrayon)
             {
                 Token braceToken = tokens.PopExpected("{");
                 List<Expression> keys = new List<Expression>();
@@ -432,7 +432,7 @@ namespace Parser
                     values.Add(Parse(tokens, owner));
                     previousHasCommaOrFirst = tokens.PopIfPresent(",");
                 }
-                return new DictionaryDefinition(braceToken, keys, values, owner);
+                return new DictionaryDefinition(braceToken, AType.Any(), AType.Any(), keys, values, owner);
             }
 
             if (nextToken.Type == TokenType.NUMBER)

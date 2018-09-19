@@ -37,6 +37,7 @@ namespace Parser.ParseTree
             this.Root = this.Root.ResolveTypes(parser, typeResolver);
             if (this.Root.ResolvedType == ResolvedType.ANY || this.Root.ResolvedType == ResolvedType.BOOLEAN)
             {
+                this.ResolvedType = ResolvedType.BOOLEAN;
                 return this;
             }
             throw new ParserException(this.FirstToken, "Cannot apply ! to an expression of this type.");

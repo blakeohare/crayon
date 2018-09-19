@@ -35,7 +35,15 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            throw new System.NotImplementedException();
+            this.Expression = this.Expression.ResolveTypes(parser, typeResolver);
+            ResolvedType exceptionType = this.Expression.ResolvedType;
+            if (exceptionType == ResolvedType.ANY)
+                return;
+            if (exceptionType.Category != ResolvedTypeCategory.INSTANCE)
+                throw new ParserException(this.Expression, "Only objects that extend from Core.Exception can be thrown.");
+
+            ClassDefinition objType = exceptionType.ClassTypeOrReference;
+            // TODO: check if objType extends from Core.Exception
         }
     }
 }
