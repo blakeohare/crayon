@@ -605,6 +605,7 @@ namespace Exporter.ByteCode
             else if (expr is ClassReferenceLiteral) ClassReferenceEncoder.Compile(parser, buffer, (ClassReferenceLiteral)expr, outputUsed);
             else if (expr is Lambda) LambdaEncoder.Compile(this, parser, buffer, (Lambda)expr, outputUsed);
             else if (expr is CniFunctionInvocation) CniFunctionInvocationEncoder.Compile(this, parser, buffer, (CniFunctionInvocation)expr, null, null, outputUsed);
+            else if (expr is PrimitiveMethodReference) DotFieldEncoder.Compile(this, parser, buffer, (PrimitiveMethodReference)expr, outputUsed);
 
             // The following parse tree items must be removed before reaching the byte code encoder.
             else if (expr is BaseKeyword) this.CompileBaseKeyword(parser, buffer, (BaseKeyword)expr, outputUsed);

@@ -4,16 +4,19 @@ using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
-    internal class PrimitiveMethodReference : Expression
+    public class PrimitiveMethodReference : Expression
     {
         public override bool CanAssignTo { get { return false; } }
         public Expression Root { get; private set; }
+        public Token DotToken { get; private set; }
         public Token FieldToken { get; private set; }
         public string Field { get; private set; }
-        public PrimitiveMethodReference(Expression root, Token fieldToken, ResolvedType resolvedType, Node owner)
+
+        public PrimitiveMethodReference(Expression root, Token dotToken, Token fieldToken, ResolvedType resolvedType, Node owner)
             : base(root.FirstToken, owner)
         {
             this.Root = root;
+            this.DotToken = dotToken;
             this.FieldToken = fieldToken;
             this.Field = fieldToken.Value;
             this.ResolvedType = resolvedType;
