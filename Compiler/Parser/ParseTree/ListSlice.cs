@@ -35,6 +35,22 @@ namespace Parser.ParseTree
             this.Items = items.ToArray();
         }
 
+        internal override IEnumerable<Expression> Descendants
+        {
+            get
+            {
+                List<Expression> output = new List<Expression>() { this.Root };
+                for (int i = 0; i < 3; ++i)
+                {
+                    if (this.Items[i] != null)
+                    {
+                        output.Add(this.Items[i]);
+                    }
+                }
+                return output;
+            }
+        }
+
         internal override Expression Resolve(ParserContext parser)
         {
             this.Root = this.Root.Resolve(parser);

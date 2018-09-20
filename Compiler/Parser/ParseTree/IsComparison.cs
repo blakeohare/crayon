@@ -1,4 +1,5 @@
 ﻿using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -25,6 +26,8 @@ namespace Parser.ParseTree
             this.ClassToken = firstClassToken;
             this.ClassName = classNameWithNamespace;
         }
+
+        internal override IEnumerable<Expression> Descendants { get { return new Expression[] { this.Expression }; } }
 
         internal override Expression Resolve(ParserContext parser)
         {

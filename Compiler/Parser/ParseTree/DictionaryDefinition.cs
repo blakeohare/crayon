@@ -25,6 +25,22 @@ namespace Parser.ParseTree
             this.Values = values.ToArray();
         }
 
+        internal override IEnumerable<Expression> Descendants
+        {
+            get
+            {
+                int length = this.Keys.Length;
+                if (length == 0) return Expression.NO_DESCENDANTS;
+                List<Expression> output = new List<Expression>();
+                for (int i = 0; i < length; ++i)
+                {
+                    output.Add(this.Keys[i]);
+                    output.Add(this.Values[i]);
+                }
+                return output;
+            }
+        }
+
         internal override Expression Resolve(ParserContext parser)
         {
             // Iterate through KVP in parallel so that errors will get reported in the preferred order.

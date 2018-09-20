@@ -1,5 +1,6 @@
 ﻿using Parser.Resolver;
 using System;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -17,6 +18,8 @@ namespace Parser.ParseTree
             this.Field = fieldToken.Value;
             this.ResolvedType = ResolvedType.INTEGER;
         }
+
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public override bool CanAssignTo { get { return false; } }
 

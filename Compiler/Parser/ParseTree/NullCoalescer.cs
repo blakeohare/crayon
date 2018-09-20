@@ -1,4 +1,5 @@
 ﻿using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -15,6 +16,8 @@ namespace Parser.ParseTree
             this.PrimaryExpression = primaryExpression;
             this.SecondaryExpression = secondaryExpression;
         }
+
+        internal override IEnumerable<Expression> Descendants { get { return new Expression[] { this.PrimaryExpression, this.SecondaryExpression }; } }
 
         internal override Expression Resolve(ParserContext parser)
         {
@@ -52,6 +55,10 @@ namespace Parser.ParseTree
             if (this.PrimaryExpression.ResolvedType == ResolvedType.NULL)
             {
                 return this.SecondaryExpression;
+            }
+            if (this.PrimaryExpression is IConstantValue)
+            {
+                return this.PrimaryExpression;
             }
             this.ResolvedType = typeResolver.FindCommonAncestor(this.PrimaryExpression.ResolvedType, this.SecondaryExpression.ResolvedType);
             return this;

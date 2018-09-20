@@ -1,4 +1,5 @@
 ﻿using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -14,6 +15,8 @@ namespace Parser.ParseTree
         }
 
         public override bool CanAssignTo { get { return true; } }
+
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public FieldDefinition Field { get; set; }
 

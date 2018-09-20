@@ -27,6 +27,11 @@ namespace Parser
 
     public class ResolvedType
     {
+        public override string ToString()
+        {
+            return "Resolved Type: " + this.Category.ToString();
+        }
+
         public ResolvedTypeCategory Category { get; private set; }
         public ClassDefinition ClassTypeOrReference { get; private set; }
         public ResolvedType[] Generics { get; private set; }

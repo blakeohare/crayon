@@ -32,6 +32,9 @@ namespace Parser.ParseTree
             ((ICodeContainer)owner).Lambdas.Add(this);
         }
 
+        // Descendants is currently used by constant resolution, which cannot contain lambdas.
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
+
         internal static void DoVarScopeIdAllocationForLambdaContainer(
             ParserContext parser,
             VariableScope containerScope,

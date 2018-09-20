@@ -1,10 +1,13 @@
 ﻿using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
     public class BaseMethodReference : Expression
     {
         public override bool CanAssignTo { get { return false; } }
+
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public Token DotToken { get; set; }
         public Token StepToken { get; set; }

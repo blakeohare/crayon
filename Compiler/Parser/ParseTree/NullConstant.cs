@@ -1,4 +1,5 @@
 ﻿using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -7,6 +8,8 @@ namespace Parser.ParseTree
         public override bool IsInlineCandidate { get { return true; } }
 
         public override bool CanAssignTo { get { return false; } }
+
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public NullConstant(Token token, Node owner)
             : base(token, owner)

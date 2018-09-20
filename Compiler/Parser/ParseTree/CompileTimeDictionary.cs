@@ -1,10 +1,13 @@
 ﻿using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
     public class CompileTimeDictionary : Expression
     {
         public override bool CanAssignTo { get { return false; } }
+
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public string Type { get; private set; }
 

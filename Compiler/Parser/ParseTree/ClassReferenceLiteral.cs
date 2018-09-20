@@ -1,11 +1,14 @@
 ﻿using Parser.Resolver;
 using System;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
     public class ClassReferenceLiteral : Expression
     {
         public ClassDefinition ClassDefinition { get; set; }
+
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public ClassReferenceLiteral(Token firstToken, ClassDefinition cd, Node owner)
             : base(firstToken, owner)

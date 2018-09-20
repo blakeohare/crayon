@@ -19,6 +19,8 @@ namespace Parser.ParseTree
 
         public override bool CanAssignTo { get { return false; } }
 
+        internal override IEnumerable<Expression> Descendants { get { return this.Args; } }
+
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             foreach (Expression expr in this.Args)

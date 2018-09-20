@@ -1,4 +1,5 @@
 ﻿using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -19,6 +20,8 @@ namespace Parser.ParseTree
             this.IsPrefix = isPrefix;
             this.Root = root;
         }
+
+        internal override IEnumerable<Expression> Descendants { get { return new Expression[] { this.Root }; } }
 
         internal override Expression Resolve(ParserContext parser)
         {

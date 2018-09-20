@@ -1,10 +1,13 @@
 ﻿using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
     public class ThisKeyword : Expression
     {
         public override bool CanAssignTo { get { return false; } }
+
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public ThisKeyword(Token token, Node owner)
             : base(token, owner)

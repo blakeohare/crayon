@@ -24,6 +24,8 @@ namespace Parser.ParseTree
             this.OpTEMP = this.GetOpFromToken(op);
         }
 
+        internal override IEnumerable<Expression> Descendants { get { return new Expression[] { this.Left, this.Right }; } }
+
         private Ops GetOpFromToken(Token token)
         {
             switch (token.Value)
@@ -72,6 +74,14 @@ namespace Parser.ParseTree
 
         internal override Expression Resolve(ParserContext parser)
         {
+            if (this.CompilationScope.Metadata.ID == "Math")
+            {
+                if (this.FirstToken.Line == 73)
+                {
+
+                }
+            }
+
             this.Left = this.Left.Resolve(parser);
             this.Right = this.Right.Resolve(parser);
             return this.TryConsolidate();
@@ -313,107 +323,107 @@ namespace Parser.ParseTree
                     new OperationType(ResolvedTypeCategory.NULL, ResolvedTypeCategory.NULL, "!=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, false); }),
                     new OperationType(ResolvedTypeCategory.BOOLEAN, ResolvedTypeCategory.BOOLEAN, "==", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetBool(opChain.Left) == GetBool(opChain.Right)); }),
                     new OperationType(ResolvedTypeCategory.BOOLEAN, ResolvedTypeCategory.BOOLEAN, "!=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetBool(opChain.Left) != GetBool(opChain.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "&", ResolvedType.INTEGER, (opChain) => { return MakeInt(opChain.FirstToken, GetInt(this.Left) & GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "|", ResolvedType.INTEGER, (opChain) => { return MakeInt(opChain.FirstToken, GetInt(this.Left) | GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER,  "^", ResolvedType.INTEGER, (opChain) => { return MakeInt(opChain.FirstToken, GetInt(this.Left) ^ GetInt(this.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "&", ResolvedType.INTEGER, (opChain) => { return MakeInt(opChain.FirstToken, GetInt(opChain.Left) & GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "|", ResolvedType.INTEGER, (opChain) => { return MakeInt(opChain.FirstToken, GetInt(opChain.Left) | GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER,  "^", ResolvedType.INTEGER, (opChain) => { return MakeInt(opChain.FirstToken, GetInt(opChain.Left) ^ GetInt(opChain.Right)); }),
                     new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "<<", ResolvedType.INTEGER, (opChain) =>
                     {
-                        int right = GetInt(this.Right);
+                        int right = GetInt(opChain.Right);
                         if (right < 0) throw new ParserException(opChain.FirstToken, "Cannot bit shift by a negative number.");
-                        return MakeInt(opChain.FirstToken, GetInt(this.Left) << right);
+                        return MakeInt(opChain.FirstToken, GetInt(opChain.Left) << right);
                     }),
                     new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, ">>", ResolvedType.INTEGER, (opChain) =>
                     {
-                        int right = GetInt(this.Right);
+                        int right = GetInt(opChain.Right);
                         if (right < 0) throw new ParserException(opChain.FirstToken, "Cannot bit shift by a negative number.");
-                        return MakeInt(opChain.FirstToken, GetInt(this.Left) >> right);
+                        return MakeInt(opChain.FirstToken, GetInt(opChain.Left) >> right);
                     }),
 
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "+", ResolvedType.INTEGER, (opChain) => { return MakeInt(opChain.FirstToken, GetInt(this.Left) + GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "-", ResolvedType.INTEGER, (opChain) => { return MakeInt(opChain.FirstToken, GetInt(this.Left) - GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "*", ResolvedType.INTEGER, (opChain) => { return MakeInt(opChain.FirstToken, GetInt(this.Left) * GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "/", ResolvedType.INTEGER, (opChain) => { CheckZero(this.Right); return MakeInt(opChain.FirstToken, GetInt(this.Left) / GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "%", ResolvedType.INTEGER, (opChain) => { return MakeInt(opChain.FirstToken, PositiveModInt(this.Left, this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "<=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(this.Left) <= GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, ">=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(this.Left) >= GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "<", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(this.Left) < GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, ">", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(this.Left) > GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "==", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(this.Left) == GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "!=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(this.Left) != GetInt(this.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "+", ResolvedType.INTEGER, (opChain) => { return MakeInt(opChain.FirstToken, GetInt(opChain.Left) + GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "-", ResolvedType.INTEGER, (opChain) => { return MakeInt(opChain.FirstToken, GetInt(opChain.Left) - GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "*", ResolvedType.INTEGER, (opChain) => { return MakeInt(opChain.FirstToken, GetInt(opChain.Left) * GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "/", ResolvedType.INTEGER, (opChain) => { CheckZero(opChain.Right); return MakeInt(opChain.FirstToken, GetInt(opChain.Left) / GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "%", ResolvedType.INTEGER, (opChain) => { return MakeInt(opChain.FirstToken, PositiveModInt(opChain.Left, opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "<=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(opChain.Left) <= GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, ">=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(opChain.Left) >= GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "<", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(opChain.Left) < GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, ">", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(opChain.Left) > GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "==", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(opChain.Left) == GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "!=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(opChain.Left) != GetInt(opChain.Right)); }),
                     new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.INTEGER, "**", ResolvedType.FLOAT, (opChain) =>
                     {
-                        int right = GetInt(this.Right);
-                        int left = GetInt(this.Left);
+                        int right = GetInt(opChain.Right);
+                        int left = GetInt(opChain.Left);
                         if (right == 0) return MakeInt(opChain.FirstToken, 1);
                         return MakeFloat(opChain.FirstToken, Math.Pow(left, right));
                     }),
 
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "+", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetInt(this.Left) + GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "-", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetInt(this.Left) - GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "*", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetInt(this.Left) * GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "/", ResolvedType.FLOAT, (opChain) => { CheckZero(this.Right); return MakeFloat(opChain.FirstToken, GetInt(this.Left) / GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "%", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, PositiveModFloat(this.Left, this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "<=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(this.Left) <= GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, ">=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(this.Left) >= GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "<", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(this.Left) < GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, ">", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(this.Left) > GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "==", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(this.Left) == GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "!=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(this.Left) != GetFloat(this.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "+", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetInt(opChain.Left) + GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "-", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetInt(opChain.Left) - GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "*", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetInt(opChain.Left) * GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "/", ResolvedType.FLOAT, (opChain) => { CheckZero(opChain.Right); return MakeFloat(opChain.FirstToken, GetInt(opChain.Left) / GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "%", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, PositiveModFloat(opChain.Left, opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "<=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(opChain.Left) <= GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, ">=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(opChain.Left) >= GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "<", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(opChain.Left) < GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, ">", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(opChain.Left) > GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "==", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(opChain.Left) == GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "!=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetInt(opChain.Left) != GetFloat(opChain.Right)); }),
                     new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.FLOAT, "**", ResolvedType.FLOAT, (opChain) =>
                     {
-                        double right = GetFloat(this.Right);
-                        int left = GetInt(this.Left);
+                        double right = GetFloat(opChain.Right);
+                        int left = GetInt(opChain.Left);
                         if (Util.FloatEqualsNoEpislon(right, 0)) return MakeFloat(opChain.FirstToken, 1.0);
                         return MakeFloat(opChain.FirstToken, Math.Pow(left, right));
                     }),
 
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "+", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetFloat(this.Left) + GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "-", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetFloat(this.Left) - GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "*", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetFloat(this.Left) * GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "/", ResolvedType.FLOAT, (opChain) => { CheckZero(this.Right); return MakeFloat(opChain.FirstToken, GetFloat(this.Left) / GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "%", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, PositiveModFloat(this.Left, this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "<=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(this.Left) <= GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, ">=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(this.Left) >= GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "<", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(this.Left) < GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, ">", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(this.Left) > GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "==", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(this.Left) == GetInt(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "!=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(this.Left) != GetInt(this.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "+", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetFloat(opChain.Left) + GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "-", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetFloat(opChain.Left) - GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "*", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetFloat(opChain.Left) * GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "/", ResolvedType.FLOAT, (opChain) => { CheckZero(opChain.Right); return MakeFloat(opChain.FirstToken, GetFloat(opChain.Left) / GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "%", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, PositiveModFloat(opChain.Left, opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "<=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(opChain.Left) <= GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, ">=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(opChain.Left) >= GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "<", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(opChain.Left) < GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, ">", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(opChain.Left) > GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "==", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(opChain.Left) == GetInt(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "!=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(opChain.Left) != GetInt(opChain.Right)); }),
                     new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.INTEGER, "**", ResolvedType.FLOAT, (opChain) =>
                     {
-                        int right = GetInt(this.Right);
-                        double left = GetFloat(this.Left);
+                        int right = GetInt(opChain.Right);
+                        double left = GetFloat(opChain.Left);
                         if (right == 0) return MakeFloat(opChain.FirstToken, 1.0);
                         return MakeFloat(opChain.FirstToken, Math.Pow(left, right));
                     }),
 
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "+", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetFloat(this.Left) + GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "-", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetFloat(this.Left) - GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "*", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetFloat(this.Left) * GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "/", ResolvedType.FLOAT, (opChain) => { CheckZero(this.Right); return MakeFloat(opChain.FirstToken, GetFloat(this.Left) / GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "%", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, PositiveModFloat(this.Left, this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "<=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(this.Left) <= GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, ">=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(this.Left) >= GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "<", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(this.Left) < GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, ">", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(this.Left) > GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "==", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(this.Left) == GetFloat(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "!=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(this.Left) != GetFloat(this.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "+", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetFloat(opChain.Left) + GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "-", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetFloat(opChain.Left) - GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "*", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, GetFloat(opChain.Left) * GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "/", ResolvedType.FLOAT, (opChain) => { CheckZero(opChain.Right); return MakeFloat(opChain.FirstToken, GetFloat(opChain.Left) / GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "%", ResolvedType.FLOAT, (opChain) => { return MakeFloat(opChain.FirstToken, PositiveModFloat(opChain.Left, opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "<=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(opChain.Left) <= GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, ">=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(opChain.Left) >= GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "<", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(opChain.Left) < GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, ">", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(opChain.Left) > GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "==", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(opChain.Left) == GetFloat(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "!=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetFloat(opChain.Left) != GetFloat(opChain.Right)); }),
                     new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.FLOAT, "**", ResolvedType.FLOAT, (opChain) =>
                     {
-                        double right = GetFloat(this.Right);
-                        double left = GetFloat(this.Left);
+                        double right = GetFloat(opChain.Right);
+                        double left = GetFloat(opChain.Left);
                         if (Util.FloatEqualsNoEpislon(right, 0)) return MakeFloat(opChain.FirstToken, 1.0);
                         return MakeFloat(opChain.FirstToken, Math.Pow(left, right));
                     }),
 
-                    new OperationType(ResolvedTypeCategory.BOOLEAN, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, (opChain) => { return MakeString(opChain.FirstToken, GetBool(this.Left).ToString() + GetString(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, (opChain) => { return MakeString(opChain.FirstToken, GetInt(this.Left).ToString() + GetString(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, (opChain) => { return MakeString(opChain.FirstToken, GetFloatAsString(this.Left) + GetString(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.BOOLEAN, "+", ResolvedType.STRING, (opChain) => { return MakeString(opChain.FirstToken, GetString(this.Left) + GetBool(this.Right).ToString()); }),
-                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.INTEGER, "+", ResolvedType.STRING, (opChain) => { return MakeString(opChain.FirstToken, GetString(this.Left) + GetInt(this.Right).ToString()); }),
-                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.FLOAT, "+", ResolvedType.STRING, (opChain) => { return MakeString(opChain.FirstToken, GetString(this.Left) + GetFloatAsString(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, (opChain) => { return MakeString(opChain.FirstToken, GetString(this.Left) + GetString(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.STRING, "==", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetString(this.Left) == GetString(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.STRING, "!=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetString(this.Left) != GetString(this.Right)); }),
+                    new OperationType(ResolvedTypeCategory.BOOLEAN, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, (opChain) => { return MakeString(opChain.FirstToken, GetBool(opChain.Left).ToString() + GetString(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, (opChain) => { return MakeString(opChain.FirstToken, GetInt(opChain.Left).ToString() + GetString(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.FLOAT, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, (opChain) => { return MakeString(opChain.FirstToken, GetFloatAsString(opChain.Left) + GetString(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.BOOLEAN, "+", ResolvedType.STRING, (opChain) => { return MakeString(opChain.FirstToken, GetString(opChain.Left) + GetBool(opChain.Right).ToString()); }),
+                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.INTEGER, "+", ResolvedType.STRING, (opChain) => { return MakeString(opChain.FirstToken, GetString(opChain.Left) + GetInt(opChain.Right).ToString()); }),
+                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.FLOAT, "+", ResolvedType.STRING, (opChain) => { return MakeString(opChain.FirstToken, GetString(opChain.Left) + GetFloatAsString(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, (opChain) => { return MakeString(opChain.FirstToken, GetString(opChain.Left) + GetString(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.STRING, "==", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetString(opChain.Left) == GetString(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.STRING, "!=", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetString(opChain.Left) != GetString(opChain.Right)); }),
 
                     new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.INSTANCE, "+", ResolvedType.STRING, null),
                     new OperationType(ResolvedTypeCategory.INSTANCE, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, null),
@@ -428,8 +438,8 @@ namespace Parser.ParseTree
                     new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.OBJECT, "+", ResolvedType.STRING, null),
                     new OperationType(ResolvedTypeCategory.OBJECT, ResolvedTypeCategory.STRING, "+", ResolvedType.STRING, null),
 
-                    new OperationType(ResolvedTypeCategory.BOOLEAN, ResolvedTypeCategory.BOOLEAN, "&&", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetBool(this.Left) && GetBool(this.Right)); }),
-                    new OperationType(ResolvedTypeCategory.BOOLEAN, ResolvedTypeCategory.BOOLEAN, "||", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetBool(this.Left) || GetBool(this.Right)); }),
+                    new OperationType(ResolvedTypeCategory.BOOLEAN, ResolvedTypeCategory.BOOLEAN, "&&", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetBool(opChain.Left) && GetBool(opChain.Right)); }),
+                    new OperationType(ResolvedTypeCategory.BOOLEAN, ResolvedTypeCategory.BOOLEAN, "||", ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, GetBool(opChain.Left) || GetBool(opChain.Right)); }),
 
                     new OperationType(ResolvedTypeCategory.INTEGER, ResolvedTypeCategory.STRING, "*", ResolvedType.STRING, (opChain) => { return GenerateMultipliedStringIfNotTooLong(opChain, opChain.Left, opChain.Right); }),
                     new OperationType(ResolvedTypeCategory.STRING, ResolvedTypeCategory.INTEGER, "*", ResolvedType.STRING, (opChain) => { return GenerateMultipliedStringIfNotTooLong(opChain, opChain.Left, opChain.Right); }),
