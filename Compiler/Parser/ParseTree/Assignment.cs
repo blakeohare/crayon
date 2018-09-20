@@ -39,13 +39,27 @@ namespace Parser.ParseTree
             this.Op = op;
             this.Value = assignedValue;
             this.NullableTypeDeclaration = nullableTypeDeclaration;
-            this.type = this.NullableTypeDeclaration != null
-                ? AssignmentType.TYPED_VARIABLE_DECLARATION
-                : this.Target is Variable
-                    ? AssignmentType.VARIABLE
-                    : this.Target is DotField
-                        ? AssignmentType.FIELD_ASSIGNMENT
-                        : AssignmentType.KEYED_ASSIGNMENT;
+
+            if (this.NullableTypeDeclaration != null)
+            {
+                this.type = AssignmentType.TYPED_VARIABLE_DECLARATION;
+            }
+            else if (this.Target is Variable)
+            {
+                this.type = AssignmentType.VARIABLE;
+            }
+            else if (this.Target is BracketIndex)
+            {
+                this.type = AssignmentType.KEYED_ASSIGNMENT;
+            }
+            else if (this.Target is DotField || this.Target is FieldReference)
+            {
+                this.type = AssignmentType.FIELD_ASSIGNMENT;
+            }
+            else
+            {
+                throw new ParserException(this, "Cannot assign to this type of expression.");
+            }
         }
 
         private static Ops GetOpFromToken(Token token)

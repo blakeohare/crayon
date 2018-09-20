@@ -74,14 +74,6 @@ namespace Parser.ParseTree
 
         internal override Expression Resolve(ParserContext parser)
         {
-            if (this.CompilationScope.Metadata.ID == "Math")
-            {
-                if (this.FirstToken.Line == 73)
-                {
-
-                }
-            }
-
             this.Left = this.Left.Resolve(parser);
             this.Right = this.Right.Resolve(parser);
             return this.TryConsolidate();

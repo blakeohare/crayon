@@ -394,7 +394,7 @@ namespace Parser.ParseTree
 
         private Expression BuildPrimitiveMethodWithOptionalArgs(ResolvedType returnType, int optionalCount, params ResolvedType[] argTypes)
         {
-            return new PrimitiveMethodReference(this.Root, this.StepToken, ResolvedType.GetFunctionType(returnType, argTypes, optionalCount), this.Owner);
+            return new PrimitiveMethodReference(this.Root, this.DotToken, this.StepToken, ResolvedType.GetFunctionType(returnType, argTypes, optionalCount), this.Owner);
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
