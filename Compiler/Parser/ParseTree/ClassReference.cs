@@ -6,8 +6,6 @@ namespace Parser.ParseTree
 {
     public class ClassReference : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public ClassDefinition ClassDefinition { get; private set; }

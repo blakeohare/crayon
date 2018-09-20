@@ -5,8 +5,6 @@ namespace Parser.ParseTree
 {
     public class Increment : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public bool IsIncrement { get; private set; }
         public bool IsPrefix { get; private set; }
         public Expression Root { get; private set; }

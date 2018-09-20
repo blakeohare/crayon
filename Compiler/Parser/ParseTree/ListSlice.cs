@@ -6,8 +6,6 @@ namespace Parser.ParseTree
 {
     public class ListSlice : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public Token BracketToken { get; set; }
         public Expression[] Items { get; set; } // these can be null
         public Expression Root { get; set; }

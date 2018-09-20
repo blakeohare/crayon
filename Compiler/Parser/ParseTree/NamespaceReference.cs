@@ -29,8 +29,6 @@ namespace Parser.ParseTree
 
         internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
-        public override bool CanAssignTo { get { return false; } }
-
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { throw new Exception(); }
 
         internal override Expression Resolve(ParserContext parser)

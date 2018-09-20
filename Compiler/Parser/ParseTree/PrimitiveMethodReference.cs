@@ -6,7 +6,6 @@ namespace Parser.ParseTree
 {
     public class PrimitiveMethodReference : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
         public Expression Root { get; private set; }
         public Token DotToken { get; private set; }
         public Token FieldToken { get; private set; }

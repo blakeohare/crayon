@@ -5,8 +5,6 @@ namespace Parser.ParseTree
 {
     public class BaseKeyword : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public BaseKeyword(Token token, Node owner)

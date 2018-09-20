@@ -5,8 +5,6 @@ namespace Parser.ParseTree
 {
     public class Ternary : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public Expression Condition { get; private set; }
         public Expression TrueValue { get; private set; }
         public Expression FalseValue { get; private set; }

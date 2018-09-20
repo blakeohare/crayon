@@ -6,8 +6,6 @@ namespace Parser.ParseTree
 {
     public class BooleanCombination : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public Expression[] Expressions { get; private set; }
         public Token[] Ops { get; private set; }
 

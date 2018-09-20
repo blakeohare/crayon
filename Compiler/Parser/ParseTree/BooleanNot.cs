@@ -5,8 +5,6 @@ namespace Parser.ParseTree
 {
     public class BooleanNot : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public Expression Root { get; private set; }
 
         public BooleanNot(Token bang, Expression root, Node owner)

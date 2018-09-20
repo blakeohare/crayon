@@ -5,8 +5,6 @@ namespace Parser.ParseTree
 {
     public class NullCoalescer : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public Expression PrimaryExpression { get; set; }
         public Expression SecondaryExpression { get; set; }
 

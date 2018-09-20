@@ -7,8 +7,6 @@ namespace Parser.ParseTree
 {
     public class DictionaryDefinition : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public AType KeyType { get; private set; }
         public AType ValueType { get; private set; }
         public ResolvedType ResolvedKeyType { get; private set; }

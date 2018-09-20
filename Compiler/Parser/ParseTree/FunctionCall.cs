@@ -6,8 +6,6 @@ namespace Parser.ParseTree
 {
     public class FunctionCall : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public Expression Root { get; private set; }
         public Token ParenToken { get; private set; }
         public Expression[] Args { get; private set; }
