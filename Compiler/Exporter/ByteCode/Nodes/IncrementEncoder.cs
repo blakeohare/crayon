@@ -66,21 +66,21 @@ namespace Exporter.ByteCode.Nodes
                 DotField dotStep = (DotField)increment.Root;
                 bcc.CompileExpression(parser, buffer, dotStep.Root, true);
                 buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
-                int nameId = parser.GetId(dotStep.StepToken.Value);
+                int nameId = parser.GetId(dotStep.FieldToken.Value);
                 int localeScopedNameId = nameId * parser.GetLocaleCount() + parser.GetLocaleId(dotStep.Owner.FileScope.CompilationScope.Locale);
                 buffer.Add(dotStep.DotToken, OpCode.DEREF_DOT, nameId, localeScopedNameId);
                 if (increment.IsPrefix)
                 {
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
                     buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)Ops.ADDITION : (int)Ops.SUBTRACTION);
-                    buffer.Add(increment.IncrementToken, OpCode.ASSIGN_STEP, nameId, 1, localeScopedNameId);
+                    buffer.Add(increment.IncrementToken, OpCode.ASSIGN_FIELD, nameId, 1, localeScopedNameId);
                 }
                 else
                 {
                     buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 2);
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
                     buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)Ops.ADDITION : (int)Ops.SUBTRACTION);
-                    buffer.Add(increment.IncrementToken, OpCode.ASSIGN_STEP, nameId, 0, localeScopedNameId);
+                    buffer.Add(increment.IncrementToken, OpCode.ASSIGN_FIELD, nameId, 0, localeScopedNameId);
                     buffer.Add(increment.IncrementToken, OpCode.STACK_SWAP_POP);
                 }
             }
@@ -111,7 +111,7 @@ namespace Exporter.ByteCode.Nodes
                 }
                 else
                 {
-                    buffer.Add(token, OpCode.ASSIGN_THIS_STEP, memberId);
+                    buffer.Add(token, OpCode.ASSIGN_THIS_FIELD, memberId);
                 }
             }
             else

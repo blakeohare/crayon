@@ -12,7 +12,7 @@ namespace Exporter.ByteCode.Nodes
 
         public static void Compile(ByteCodeCompiler bcc, ParserContext parser, ByteBuffer buffer, DotField dotField, bool outputUsed)
         {
-            CompileImpl(bcc, parser, buffer, dotField.Root, dotField.DotToken, dotField.StepToken, outputUsed);
+            CompileImpl(bcc, parser, buffer, dotField.Root, dotField.DotToken, dotField.FieldToken, outputUsed);
         }
 
         private static void CompileImpl(ByteCodeCompiler bcc, ParserContext parser, ByteBuffer buffer, Expression root, Token dotToken, Token fieldToken, bool outputUsed)

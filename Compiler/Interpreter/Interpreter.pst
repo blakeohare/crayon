@@ -223,8 +223,8 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
             case OpCodes.ASSIGN_CLOSURE: Core.EmitComment("ASSIGN_CLOSURE"); @import("Ops/assign_closure.pst"); break;
             case OpCodes.ASSIGN_INDEX: Core.EmitComment("ASSIGN_INDEX"); @import("Ops/assign_index.pst"); break;
             case OpCodes.ASSIGN_STATIC_FIELD: Core.EmitComment("ASSIGN_STATIC_FIELD"); @import("Ops/assign_static_field.pst"); break;
-            case OpCodes.ASSIGN_STEP: Core.EmitComment("ASSIGN_STEP"); @import("Ops/assign_step.pst"); break;
-            case OpCodes.ASSIGN_THIS_STEP: Core.EmitComment("ASSIGN_THIS_STEP"); @import("Ops/assign_this_step.pst"); break;
+            case OpCodes.ASSIGN_FIELD: Core.EmitComment("ASSIGN_FIELD"); @import("Ops/assign_field.pst"); break;
+            case OpCodes.ASSIGN_THIS_FIELD: Core.EmitComment("ASSIGN_THIS_FIELD"); @import("Ops/assign_this_field.pst"); break;
             case OpCodes.ASSIGN_LOCAL: Core.EmitComment("ASSIGN_LOCAL"); @import("Ops/assign_local.pst"); break;
             case OpCodes.BINARY_OP: Core.EmitComment("BINARY_OP"); @import("Ops/binary_op.pst"); break;
             case OpCodes.BOOLEAN_NOT: Core.EmitComment("BOOLEAN_NOT"); @import("Ops/boolean_not.pst"); break;

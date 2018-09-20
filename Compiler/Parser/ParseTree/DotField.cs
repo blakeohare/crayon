@@ -9,14 +9,14 @@ namespace Parser.ParseTree
 
         public Expression Root { get; set; }
         public Token DotToken { get; private set; }
-        public Token StepToken { get; private set; }
+        public Token FieldToken { get; private set; }
 
-        public DotField(Expression root, Token dotToken, Token stepToken, Node owner)
+        public DotField(Expression root, Token dotToken, Token fieldToken, Node owner)
             : base(root.FirstToken, owner)
         {
             this.Root = root;
             this.DotToken = dotToken;
-            this.StepToken = stepToken;
+            this.FieldToken = fieldToken;
         }
 
         internal override IEnumerable<Expression> Descendants { get { return new Expression[] { this.Root }; } }
@@ -25,16 +25,17 @@ namespace Parser.ParseTree
         {
             this.Root = this.Root.Resolve(parser);
 
-            string step = this.StepToken.Value;
+            string field = this.FieldToken.Value;
 
             if (this.Root is BaseKeyword)
             {
-                return new BaseMethodReference(this.Root.FirstToken, this.DotToken, this.StepToken, this.Owner).Resolve(parser);
+                return new BaseMethodReference(this.Root.FirstToken, this.DotToken, this.FieldToken, this.Owner).Resolve(parser);
             }
 
+            // TODO: move these into PrimitiveMethodReference
             if (this.Root is StringConstant)
             {
-                if (step == "length")
+                if (field == "length")
                 {
                     int length = ((StringConstant)this.Root).Value.Length;
                     return new IntegerConstant(this.FirstToken, length, this.Owner);
@@ -44,14 +45,14 @@ namespace Parser.ParseTree
                 // and do so in a localization friendly way.
                 if (parser.CurrentLocale.ID == "en")
                 {
-                    if (step == "join")
+                    if (field == "join")
                     {
-                        throw new ParserException(this.StepToken,
+                        throw new ParserException(this.FieldToken,
                             "There is no join method on strings. Did you mean to do list.join(string) instead?");
                     }
-                    else if (step == "size")
+                    else if (field == "size")
                     {
-                        throw new ParserException(this.StepToken, "String size is indicated by string.length.");
+                        throw new ParserException(this.FieldToken, "String size is indicated by string.length.");
                     }
                 }
             }
@@ -66,7 +67,7 @@ namespace Parser.ParseTree
             FieldDefinition fieldDec;
             this.Root = this.Root.ResolveEntityNames(parser);
             Expression root = this.Root;
-            string field = this.StepToken.Value;
+            string field = this.FieldToken.Value;
 
             if (root is NamespaceReference)
             {
@@ -128,7 +129,7 @@ namespace Parser.ParseTree
                 // TODO: nested classes, enums, constants
 
                 // TODO: show spelling suggestions.
-                throw new ParserException(this.StepToken, "No static fields or methods named '" + field + "' on the class " + cd.NameToken.Value + ".");
+                throw new ParserException(this.FieldToken, "No static fields or methods named '" + field + "' on the class " + cd.NameToken.Value + ".");
             }
 
             if (root is BaseKeyword)
@@ -168,7 +169,7 @@ namespace Parser.ParseTree
                     throw new ParserException(this.DotToken, "Cannot reference static methods using 'base' keyword.");
                 }
 
-                return new BaseMethodReference(this.FirstToken, this.DotToken, this.StepToken, this.Owner);
+                return new BaseMethodReference(this.FirstToken, this.DotToken, this.FieldToken, this.Owner);
             }
 
             if (root is ThisKeyword)
@@ -220,7 +221,7 @@ namespace Parser.ParseTree
                 }
 
                 // TODO: show suggestions in the error message for anything close to what was typed.
-                throw new ParserException(this.StepToken, "The class '" + cd.NameToken.Value + "' does not have a field named '" + field + "'.");
+                throw new ParserException(this.FieldToken, "The class '" + cd.NameToken.Value + "' does not have a field named '" + field + "'.");
             }
 
             if (this.Root is EnumReference)
@@ -234,7 +235,7 @@ namespace Parser.ParseTree
                 if (field == parser.Keywords.FIELD_ENUM_VALUES)
                     return new SpecialEntity.EnumValuesFunction(this.FirstToken, enumDef, this.Owner);
 
-                return new EnumFieldReference(this.FirstToken, enumDef, this.StepToken, this.Owner);
+                return new EnumFieldReference(this.FirstToken, enumDef, this.FieldToken, this.Owner);
             }
 
             // This is done here in the resolver instead of the parser because some unallowed
@@ -247,7 +248,7 @@ namespace Parser.ParseTree
                 }
                 throw new ParserException(this.DotToken, ".class can only be applied to class names.");
             }
-            parser.VerifyIdentifier(this.StepToken);
+            parser.VerifyIdentifier(this.FieldToken);
 
             return this;
         }
@@ -258,7 +259,7 @@ namespace Parser.ParseTree
         {
             this.Root.ResolveTypes(parser, typeResolver);
 
-            string field = this.StepToken.Value;
+            string field = this.FieldToken.Value;
 
             if (this.Root is EnumReference)
             {
@@ -394,7 +395,7 @@ namespace Parser.ParseTree
 
         private Expression BuildPrimitiveMethodWithOptionalArgs(ResolvedType returnType, int optionalCount, params ResolvedType[] argTypes)
         {
-            return new PrimitiveMethodReference(this.Root, this.DotToken, this.StepToken, ResolvedType.GetFunctionType(returnType, argTypes, optionalCount), this.Owner);
+            return new PrimitiveMethodReference(this.Root, this.DotToken, this.FieldToken, ResolvedType.GetFunctionType(returnType, argTypes, optionalCount), this.Owner);
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
