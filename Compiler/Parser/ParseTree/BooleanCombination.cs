@@ -18,6 +18,8 @@ namespace Parser.ParseTree
             this.Ops = ops.ToArray();
         }
 
+        internal override IEnumerable<Expression> Descendants { get { return this.Expressions; } }
+
         internal override Expression Resolve(ParserContext parser)
         {
             for (int i = 0; i < this.Expressions.Length; ++i)

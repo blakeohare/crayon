@@ -1,11 +1,14 @@
 ﻿using Common;
 using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
     public class FloatConstant : Expression, IConstantValue
     {
         public override bool IsInlineCandidate { get { return true; } }
+
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public override bool CanAssignTo { get { return false; } }
 

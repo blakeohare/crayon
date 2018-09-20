@@ -1,9 +1,6 @@
-﻿using System;
+﻿using Parser.Resolver;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Parser.Resolver;
 
 namespace Parser.ParseTree
 {
@@ -21,6 +18,8 @@ namespace Parser.ParseTree
             this.Field = fieldToken.Value;
             this.ResolvedType = resolvedType;
         }
+
+        internal override IEnumerable<Expression> Descendants { get { return new Expression[] { this.Root }; } }
 
         internal override Expression ResolveEntityNames(ParserContext parser)
         {
@@ -40,8 +39,8 @@ namespace Parser.ParseTree
 
         internal override Expression Resolve(ParserContext parser)
         {
-            throw new NotImplementedException();
+            this.Root = this.Root.Resolve(parser);
+            return this;
         }
-
     }
 }

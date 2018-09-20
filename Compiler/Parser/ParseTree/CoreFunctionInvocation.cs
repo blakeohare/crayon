@@ -27,6 +27,8 @@ namespace Parser.ParseTree
             this.Args = args.ToArray();
         }
 
+        internal override IEnumerable<Expression> Descendants { get { return this.Args; } }
+
         internal override Expression Resolve(ParserContext parser)
         {
             for (int i = 0; i < this.Args.Length; ++i)

@@ -20,6 +20,8 @@ namespace Parser.ParseTree
             this.Args = args.ToArray();
         }
 
+        internal override IEnumerable<Expression> Descendants { get { return new Expression[] { this.Root }.Concat(this.Args); } }
+
         // This will check floating point noise to see if it should be returning a round number.
         private double CalculateLogWithIntegerBase(double input, int b)
         {

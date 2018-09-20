@@ -1,5 +1,6 @@
 ﻿using Build;
 using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -18,6 +19,8 @@ namespace Parser.ParseTree
             this.BracketToken = bracketToken;
             this.Index = index;
         }
+
+        internal override IEnumerable<Expression> Descendants { get { return new Expression[] { this.Root, this.Index }; } }
 
         internal override Expression Resolve(ParserContext parser)
         {

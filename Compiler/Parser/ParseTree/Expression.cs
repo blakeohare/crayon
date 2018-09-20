@@ -5,6 +5,8 @@ namespace Parser.ParseTree
 {
     public abstract class Expression : Node
     {
+        protected static Expression[] NO_DESCENDANTS = new Expression[0];
+
         public Expression(Token firstToken, Node owner)
             : base(firstToken, owner)
         {
@@ -29,6 +31,8 @@ namespace Parser.ParseTree
 
         public virtual bool IsLiteral { get { return false; } }
 
+        internal abstract IEnumerable<Expression> Descendants { get; }
+
         internal Dictionary<string, Annotation> Annotations { get; set; }
 
         internal Annotation GetAnnotation(string type)
@@ -38,6 +42,16 @@ namespace Parser.ParseTree
                 return this.Annotations[type];
             }
             return null;
+        }
+
+        internal IEnumerable<Expression> GetFlattenedDescendants()
+        {
+            List<Expression> output = new List<Expression>() { this };
+            for (int i = 0; i < output.Count; ++i)
+            {
+                output.AddRange(output[i].Descendants);
+            }
+            return output;
         }
     }
 }

@@ -67,9 +67,8 @@ namespace Parser.ParseTree
             this.Expression = this.Expression.ResolveEntityNames(parser);
         }
 
-        internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
+        internal void ValidateConstTypeSignature()
         {
-            this.ResolvedType = typeResolver.ResolveType(this.Type);
             switch (this.ResolvedType.Category)
             {
                 case ResolvedTypeCategory.VOID:
@@ -87,22 +86,35 @@ namespace Parser.ParseTree
                 default:
                     throw new ParserException(this, "This is not a valid constant expression.");
             }
+
+            this.Expression.ResolvedType.EnsureCanAssignToA(this.FirstToken, this.ResolvedType);
         }
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            bool hasExplicitlySetType = parser.RequireExplicitVarDeclarations;
+            if (hasExplicitlySetType)
+            {
+                this.ResolvedType = typeResolver.ResolveType(this.Type);
+            }
+
             this.Expression = this.Expression.ResolveTypes(parser, typeResolver);
 
-            if (!parser.RequireExplicitVarDeclarations)
+            if (this.Expression.ResolvedType == ResolvedType.ANY)
             {
-                // In dynamic languages, the const type is defined by the expression.
+                throw new ParserException(this.Expression, "This expression does not resolve to a constant.");
+            }
+
+            if (!hasExplicitlySetType) {
                 this.ResolvedType = this.Expression.ResolvedType;
             }
-            else
-            {
-                // In static languages, the expression must comply with the const type.
-                this.Expression.ResolvedType.EnsureCanAssignToA(this.Expression.FirstToken, this.ResolvedType);
-            }
+        }
+
+        // Signature types are implicitly declared by the contents for dynamically typed language (Crayon)
+        // or set in the outer loop in the resolver pipeline in statically typed languages (Acrylic)
+        internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

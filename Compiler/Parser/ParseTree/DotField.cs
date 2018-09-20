@@ -1,4 +1,5 @@
 ﻿using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -17,6 +18,8 @@ namespace Parser.ParseTree
             this.DotToken = dotToken;
             this.StepToken = stepToken;
         }
+
+        internal override IEnumerable<Expression> Descendants { get { return new Expression[] { this.Root }; } }
 
         internal override Expression Resolve(ParserContext parser)
         {

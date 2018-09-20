@@ -88,8 +88,19 @@ namespace Parser.ParseTree
                     break;
 
                 case AssignmentType.FIELD_ASSIGNMENT:
-                    DotField ds = (DotField)this.Target;
-                    ds.Root = ds.Root.Resolve(parser);
+                    if (this.Target is DotField)
+                    {
+                        DotField ds = (DotField)this.Target;
+                        ds.Root = ds.Root.Resolve(parser);
+                    }
+                    else if (this.Target is FieldReference)
+                    {
+                        // nothing to do.
+                    }
+                    else
+                    {
+                        throw new ParserException(this, "Unexpected assignment target");
+                    }
                     break;
 
                 default:
