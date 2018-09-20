@@ -291,14 +291,14 @@ namespace Parser
                 if (tokens.IsNext("."))
                 {
                     Token dotToken = tokens.Pop();
-                    Token stepToken = tokens.Pop();
+                    Token fieldToken = tokens.Pop();
                     // HACK alert: "class" is a valid field on a class.
                     // ParserVerifyIdentifier is invoked downstream for non-resolved fields.
-                    if (stepToken.Value != this.parser.Keywords.CLASS)
+                    if (fieldToken.Value != this.parser.Keywords.CLASS)
                     {
-                        this.parser.VerifyIdentifier(stepToken);
+                        this.parser.VerifyIdentifier(fieldToken);
                     }
-                    root = new DotField(root, dotToken, stepToken, owner);
+                    root = new DotField(root, dotToken, fieldToken, owner);
                 }
                 else if (tokens.IsNext("["))
                 {

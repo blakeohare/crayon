@@ -38,15 +38,15 @@ namespace Exporter.ByteCode.Nodes
                     if (dotStep.Root is ThisKeyword)
                     {
                         bcc.CompileExpression(parser, buffer, assignment.Value, true);
-                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_THIS_STEP, parser.GetId(dotStep.StepToken.Value));
+                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_THIS_FIELD, parser.GetId(dotStep.FieldToken.Value));
                     }
                     else
                     {
                         bcc.CompileExpression(parser, buffer, dotStep.Root, true);
                         bcc.CompileExpression(parser, buffer, assignment.Value, true);
-                        int nameId = parser.GetId(dotStep.StepToken.Value);
+                        int nameId = parser.GetId(dotStep.FieldToken.Value);
                         int localeScopedNameId = nameId * parser.GetLocaleCount() + parser.GetLocaleId(dotStep.Owner.FileScope.CompilationScope.Locale);
-                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_STEP, nameId, 0, localeScopedNameId);
+                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_FIELD, nameId, 0, localeScopedNameId);
                     }
                 }
                 else if (assignment.Target is FieldReference)
@@ -65,7 +65,7 @@ namespace Exporter.ByteCode.Nodes
                     {
                         buffer.Add(
                             assignment.OpToken,
-                            OpCode.ASSIGN_THIS_STEP,
+                            OpCode.ASSIGN_THIS_FIELD,
                             fieldReference.Field.MemberID);
                     }
                 }
@@ -92,24 +92,24 @@ namespace Exporter.ByteCode.Nodes
                 else if (assignment.Target is DotField)
                 {
                     DotField dotExpr = (DotField)assignment.Target;
-                    int stepId = parser.GetId(dotExpr.StepToken.Value);
-                    int localeScopedStepId = parser.GetLocaleCount() * stepId + parser.GetLocaleId(dotExpr.Owner.FileScope.CompilationScope.Locale);
+                    int fieldId = parser.GetId(dotExpr.FieldToken.Value);
+                    int localeScopedStepId = parser.GetLocaleCount() * fieldId + parser.GetLocaleId(dotExpr.Owner.FileScope.CompilationScope.Locale);
                     bcc.CompileExpression(parser, buffer, dotExpr.Root, true);
                     if (!(dotExpr.Root is ThisKeyword))
                     {
                         buffer.Add(null, OpCode.DUPLICATE_STACK_TOP, 1);
                     }
-                    buffer.Add(dotExpr.DotToken, OpCode.DEREF_DOT, stepId, localeScopedStepId);
+                    buffer.Add(dotExpr.DotToken, OpCode.DEREF_DOT, fieldId, localeScopedStepId);
                     bcc.CompileExpression(parser, buffer, assignment.Value, true);
                     buffer.Add(assignment.OpToken, OpCode.BINARY_OP, (int)op);
                     if (dotExpr.Root is ThisKeyword)
                     {
-                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_THIS_STEP, stepId);
+                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_THIS_FIELD, fieldId);
                     }
                     else
                     {
-                        int localeScopedNameId = stepId * parser.GetLocaleCount() + parser.GetLocaleId(dotExpr.Owner.FileScope.CompilationScope.Locale);
-                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_STEP, stepId, 0, localeScopedNameId);
+                        int localeScopedNameId = fieldId * parser.GetLocaleCount() + parser.GetLocaleId(dotExpr.Owner.FileScope.CompilationScope.Locale);
+                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_FIELD, fieldId, 0, localeScopedNameId);
                     }
                 }
                 else if (assignment.Target is BracketIndex)
@@ -142,7 +142,7 @@ namespace Exporter.ByteCode.Nodes
                     {
                         buffer.Add(
                             assignment.OpToken,
-                            OpCode.ASSIGN_THIS_STEP,
+                            OpCode.ASSIGN_THIS_FIELD,
                             fieldRef.Field.MemberID);
                     }
                 }

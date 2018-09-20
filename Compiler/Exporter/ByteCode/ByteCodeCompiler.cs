@@ -419,7 +419,7 @@ namespace Exporter.ByteCode
                 foreach (FieldDefinition complexField in fieldsWithComplexValues)
                 {
                     this.CompileExpression(parser, initializer, complexField.DefaultValue, true);
-                    initializer.Add(complexField.FirstToken, OpCode.ASSIGN_THIS_STEP, complexField.MemberID);
+                    initializer.Add(complexField.FirstToken, OpCode.ASSIGN_THIS_FIELD, complexField.MemberID);
                 }
             }
 
