@@ -9,8 +9,6 @@ namespace Parser.ParseTree
 
         internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
-        public override bool CanAssignTo { get { return false; } }
-
         public int Value { get; private set; }
 
         public override bool IsLiteral { get { return true; } }

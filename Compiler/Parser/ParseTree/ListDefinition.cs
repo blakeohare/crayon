@@ -6,8 +6,6 @@ namespace Parser.ParseTree
 {
     public class ListDefinition : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public Expression[] Items { get; private set; }
         public AType ListType { get; private set; }
 

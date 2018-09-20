@@ -15,8 +15,6 @@ namespace Parser.ParseTree
         public int LocalScopeSize { get { return this.VariableScope.Size; } }
         public VariableId[] ClosureIds { get { return this.VariableScope.GetClosureIds(); } }
 
-        public override bool CanAssignTo { get { return false; } }
-
         public Lambda(
             Token firstToken,
             Node owner,

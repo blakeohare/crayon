@@ -6,8 +6,6 @@ namespace Parser.ParseTree
 {
     public class ConstReference : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public ConstDefinition ConstStatement { get; private set; }
 
         public ConstReference(Token token, ConstDefinition con, Node owner)

@@ -16,8 +16,6 @@ namespace Parser.ParseTree
             this.ClassDefinition = cd;
         }
 
-        public override bool CanAssignTo { get { return false; } }
-
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }
 
         internal override Expression Resolve(ParserContext parser) { return this; }

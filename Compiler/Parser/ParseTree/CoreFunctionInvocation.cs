@@ -9,8 +9,6 @@ namespace Parser.ParseTree
         public Expression[] Args { get; set; }
         public int FunctionId { get; set; }
 
-        public override bool CanAssignTo { get { return false; } }
-
         public CoreFunctionInvocation(Token firstToken, Expression[] originalArgs, Node owner) :
             base(firstToken, owner)
         {

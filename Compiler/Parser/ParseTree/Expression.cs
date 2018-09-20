@@ -13,7 +13,7 @@ namespace Parser.ParseTree
             this.Annotations = null;
         }
 
-        public abstract bool CanAssignTo { get; }
+        public virtual bool CanAssignTo { get { return false; } }
 
         public ResolvedType ResolvedType { get; set; }
 

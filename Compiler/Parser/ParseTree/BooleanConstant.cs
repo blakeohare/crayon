@@ -7,8 +7,6 @@ namespace Parser.ParseTree
     {
         public override bool IsInlineCandidate {  get { return true; } }
 
-        public override bool CanAssignTo { get { return false; } }
-
         internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public bool Value { get; private set; }

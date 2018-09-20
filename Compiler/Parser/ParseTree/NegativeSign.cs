@@ -5,8 +5,6 @@ namespace Parser.ParseTree
 {
     public class NegativeSign : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public Expression Root { get; private set; }
 
         public NegativeSign(Token sign, Expression root, Node owner)

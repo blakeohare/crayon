@@ -14,8 +14,6 @@ namespace Parser.ParseTree
             this.EnumDefinition = enumDefinition;
         }
 
-        public override bool CanAssignTo { get { return false; } }
-
         internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         internal override Expression Resolve(ParserContext parser)

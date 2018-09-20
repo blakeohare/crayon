@@ -10,8 +10,6 @@ namespace Parser.ParseTree
         public SpecialEntity(Token firstToken, Node owner) : base(firstToken, owner)
         { }
 
-        public override bool CanAssignTo { get { return false; } }
-
         internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         internal override Expression ResolveEntityNames(ParserContext parser)

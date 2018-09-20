@@ -6,8 +6,6 @@ namespace Parser.ParseTree
 {
     public class Instantiate : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public Token NameToken { get; private set; }
         public string Name { get; private set; }
         public Expression[] Args { get; private set; }

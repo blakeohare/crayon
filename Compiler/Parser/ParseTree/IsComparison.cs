@@ -11,8 +11,6 @@ namespace Parser.ParseTree
         public string ClassName { get; set; }
         public ClassDefinition ClassDefinition { get; set; }
 
-        public override bool CanAssignTo { get { return false; } }
-
         public IsComparison(
             Expression root,
             Token isToken,
