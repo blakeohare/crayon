@@ -325,12 +325,15 @@ namespace Parser.ParseTree
                     branch.MergeToParent();
                 }
 
-                for (int i = 0; i < this.chunks.Length; ++i)
+                if (!this.CompilationScope.IsStaticallyTyped)
                 {
-                    Chunk chunk = this.chunks[i];
-                    foreach (Executable ex in chunk.Code)
+                    for (int i = 0; i < this.chunks.Length; ++i)
                     {
-                        ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
+                        Chunk chunk = this.chunks[i];
+                        foreach (Executable ex in chunk.Code)
+                        {
+                            ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
+                        }
                     }
                 }
             }

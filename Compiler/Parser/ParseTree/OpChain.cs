@@ -275,27 +275,36 @@ namespace Parser.ParseTree
 
         private ResolvedType GetTrickyOperation(ResolvedType left, ResolvedType right, string op)
         {
-            if (op == "*")
+            switch (op)
             {
-                if (left.Category == ResolvedTypeCategory.LIST && right.Category == ResolvedTypeCategory.INTEGER)
-                {
-                    return left;
-                }
-                if (right.Category == ResolvedTypeCategory.LIST && left.Category == ResolvedTypeCategory.INTEGER)
-                {
-                    return right;
-                }
-            }
-            if (op == "+")
-            {
-                if (left.Category == ResolvedTypeCategory.LIST && right.Category == ResolvedTypeCategory.LIST)
-                {
-                    if (left.ListItemType == right.ListItemType)
+                case "==":
+                case "!=":
+                    return ResolvedType.BOOLEAN;
+
+                case "*":
+                    if (left.Category == ResolvedTypeCategory.LIST && right.Category == ResolvedTypeCategory.INTEGER)
                     {
                         return left;
                     }
-                }
+                    if (right.Category == ResolvedTypeCategory.LIST && left.Category == ResolvedTypeCategory.INTEGER)
+                    {
+                        return right;
+                    }
+                    break;
+                case "+":
+                    if (left.Category == ResolvedTypeCategory.LIST && right.Category == ResolvedTypeCategory.LIST)
+                    {
+                        if (left.ListItemType == right.ListItemType)
+                        {
+                            return left;
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
             }
+
             return null;
         }
 

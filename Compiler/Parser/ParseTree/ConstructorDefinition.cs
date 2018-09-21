@@ -127,7 +127,7 @@ namespace Parser.ParseTree
 
         internal void AllocateLocalScopeIds(ParserContext parser)
         {
-            VariableScope varScope = VariableScope.NewEmptyScope(parser.RequireExplicitVarDeclarations);
+            VariableScope varScope = VariableScope.NewEmptyScope(this.CompilationScope.IsStaticallyTyped);
             this.ArgLocalIds = new VariableId[this.ArgNames.Length];
             for (int i = 0; i < this.ArgNames.Length; ++i)
             {

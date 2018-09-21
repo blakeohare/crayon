@@ -14,14 +14,14 @@ public class PlayScene : AbstractScene {
 
     private int gameCounter = 0;
 
-    private GameMode mode = GameMode.PLAYING;
+    private int mode = GameMode.PLAYING;
     private int modeCounter = 0;
 
     public constructor() : base() {
         // Start player out in the center of the screen
         int centerX = SCREEN_WIDTH / 2;
         int centerY = SCREEN_HEIGHT / 2;
-        int[] position = [centerX, centerY];
+        int[] position = new int[] { centerX, centerY };
         this.player = new Player(position);
     }
 
@@ -130,7 +130,7 @@ public class PlayScene : AbstractScene {
         int x = 10; // 10 pixels from the left
         int y = SCREEN_HEIGHT - ImageLibrary.getTextChar('0').height - 10; // 10 pixels from the bottom
         for (string char : text) {
-            img = ImageLibrary.getTextChar(char);
+            GraphicsTexture img = ImageLibrary.getTextChar(char);
             img.draw(x, y);
             x += img.width + 5;
         }

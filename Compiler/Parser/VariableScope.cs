@@ -49,7 +49,7 @@ namespace Parser
         // to see if a variable is declared as it is possible that a variable is declared in another branch.
         private Dictionary<string, VariableId> flattenedIds = null;
         // The order that variables are encountered.
-        private List<string> rootScopeOrder;
+        private List<VariableId> rootScopeOrder;
 
         public int Size { get { return this.flattenedIds.Count; } }
 
@@ -60,7 +60,7 @@ namespace Parser
             VariableScope scope = new VariableScope()
             {
                 requireExplicitDeclarations = requireExplicitDeclarations,
-                rootScopeOrder = new List<string>(),
+                rootScopeOrder = new List<VariableId>(),
                 flattenedIds = new Dictionary<string, VariableId>(),
             };
             scope.rootScope = scope;
@@ -90,9 +90,8 @@ namespace Parser
         public void FinalizeScopeIds()
         {
             int id = 0;
-            foreach (string varName in this.rootScopeOrder)
+            foreach (VariableId varId in this.rootScopeOrder)
             {
-                VariableId varId = this.idsByVar[varName];
                 if (!varId.UsedByClosure)
                 {
                     varId.ID = id++;
@@ -184,7 +183,7 @@ namespace Parser
                 varId = new VariableId(type, name);
                 this.idsByVar[name] = varId;
                 this.rootScope.flattenedIds[name] = varId;
-                this.rootScope.rootScopeOrder.Add(name);
+                this.rootScope.rootScopeOrder.Add(varId);
                 return varId;
             }
             return varId;

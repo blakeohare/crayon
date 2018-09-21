@@ -210,7 +210,14 @@ namespace Parser
 
             if (targetCategory == ResolvedTypeCategory.INSTANCE)
             {
-                throw new NotImplementedException();
+                ClassDefinition targetClass = targetType.ClassTypeOrReference;
+                ClassDefinition baseClassWalker = this.ClassTypeOrReference;
+                while (baseClassWalker != null)
+                {
+                    if (baseClassWalker == targetClass) return true;
+                    baseClassWalker = baseClassWalker.BaseClass;
+                }
+                return false;
             }
 
             return true;

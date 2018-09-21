@@ -91,10 +91,13 @@ namespace Parser.ParseTree
                 trueVars.MergeToParent();
                 falseVars.MergeToParent();
 
-                // Go back through and do another allocation pass and assign the correct variable ID's.
-                foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
+                if (!this.CompilationScope.IsStaticallyTyped)
                 {
-                    ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
+                    // Go back through and do another allocation pass and assign the correct variable ID's.
+                    foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
+                    {
+                        ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
+                    }
                 }
             }
         }

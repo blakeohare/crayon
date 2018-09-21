@@ -404,7 +404,7 @@ namespace Parser
                 return new Variable(varToken, varToken.Value, owner);
             }
 
-            if (firstChar == '[' && parser.IsCrayon)
+            if (firstChar == '[' && nextToken.File.CompilationScope.IsCrayon)
             {
                 Token bracketToken = tokens.PopExpected("[");
                 List<Expression> elements = new List<Expression>();
@@ -418,7 +418,7 @@ namespace Parser
                 return new ListDefinition(bracketToken, elements, AType.Any(), owner);
             }
 
-            if (firstChar == '{' && this.parser.IsCrayon)
+            if (firstChar == '{' && nextToken.File.CompilationScope.IsCrayon)
             {
                 Token braceToken = tokens.PopExpected("{");
                 List<Expression> keys = new List<Expression>();

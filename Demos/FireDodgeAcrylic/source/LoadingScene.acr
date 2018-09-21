@@ -4,8 +4,8 @@ import Math;
 
 public class LoadingScene : AbstractScene {
     private string phase = "start";
-    private double progress = 0.0;
-    private ImageSheetLoader loader;
+    private float progress = 0.0;
+    private ImageSheet loader;
     private int minLoadDuration = FPS * 3 / 4; // show the progress bar for at least three quarters of a seconds.
 
     public constructor() : base() {
@@ -18,8 +18,8 @@ public class LoadingScene : AbstractScene {
 
     public override void update() {
         // force the progress bar to ease into completion so that it doesn't appear in a flicker
-        double newProgress = this.loader.getProgress();
-        double delta = min(1.0 / this.minLoadDuration, newProgress - this.progress);
+        float newProgress = this.loader.getProgress();
+        float delta = min(1.0 / this.minLoadDuration, newProgress - this.progress);
         this.progress += delta;
 
         if (this.loader.isDone() && this.progress > .999) {

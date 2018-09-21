@@ -152,7 +152,7 @@ namespace Parser.ParseTree
 
                 if (isVariableAssigned)
                 {
-                    if (parser.RequireExplicitVarDeclarations)
+                    if (this.CompilationScope.IsStaticallyTyped)
                     {
                         if (this.NullableTypeDeclaration != null)
                         {
@@ -178,7 +178,7 @@ namespace Parser.ParseTree
                 AType variableType = varId.Type;
                 varId.ResolvedType = typeResolver.ResolveType(varId.Type);
             }
-            else if (this.type == AssignmentType.VARIABLE && parser.IsCrayon)
+            else if (this.type == AssignmentType.VARIABLE && this.CompilationScope.IsCrayon)
             {
                 VariableId varId = this.TargetAsVariable.LocalScopeId;
                 if (varId.ResolvedType == null)
