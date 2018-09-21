@@ -37,8 +37,6 @@ namespace Parser
             }
         }
 
-        // TODO: write a simple getter for source code.
-        // TODO: or define a ProgrammingLanguage field on non-top-level assemblies.
         private ProgrammingLanguage? programmingLanguage = null;
 
         public ProgrammingLanguage ProgrammingLanguage

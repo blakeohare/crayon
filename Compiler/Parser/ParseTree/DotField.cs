@@ -32,31 +32,6 @@ namespace Parser.ParseTree
                 return new BaseMethodReference(this.Root.FirstToken, this.DotToken, this.FieldToken, this.Owner).Resolve(parser);
             }
 
-            // TODO: move these into PrimitiveMethodReference
-            if (this.Root is StringConstant)
-            {
-                if (field == "length")
-                {
-                    int length = ((StringConstant)this.Root).Value.Length;
-                    return new IntegerConstant(this.FirstToken, length, this.Owner);
-                }
-
-                // TODO: the field name against the primitive methods. Also against other primitive types
-                // and do so in a localization friendly way.
-                if (parser.CurrentLocale.ID == "en")
-                {
-                    if (field == "join")
-                    {
-                        throw new ParserException(this.FieldToken,
-                            "There is no join method on strings. Did you mean to do list.join(string) instead?");
-                    }
-                    else if (field == "size")
-                    {
-                        throw new ParserException(this.FieldToken, "String size is indicated by string.length.");
-                    }
-                }
-            }
-
             return this;
         }
 
@@ -293,6 +268,10 @@ namespace Parser.ParseTree
                     {
                         case "length":
                             this.ResolvedType = ResolvedType.INTEGER;
+                            if (this.Root is StringConstant)
+                            {
+                                return new IntegerConstant(this.FirstToken, ((StringConstant)this.Root).Value.Length, this.Owner);
+                            }
                             return this;
 
                         case "contains": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, ResolvedType.STRING);
@@ -307,6 +286,12 @@ namespace Parser.ParseTree
                         case "startsWith": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, ResolvedType.STRING);
                         case "trim": return BuildPrimitiveMethod(ResolvedType.STRING);
                         case "upper": return BuildPrimitiveMethod(ResolvedType.STRING);
+
+                        // common mistakes
+                        case "join":
+                            throw new ParserException(this.DotToken, "Strings do not have a .join(list) method. Did you mean to do list.join(string)?");
+                        case "size":
+                            throw new ParserException(this.DotToken, "Strings do not have a .size() method. Did you mean to use .length?");
 
                         default:
                             throw new ParserException(this.DotToken, "Strings do not have that method.");
@@ -335,6 +320,11 @@ namespace Parser.ParseTree
                         case "reverse": return BuildPrimitiveMethod(ResolvedType.VOID);
                         case "shuffle": return BuildPrimitiveMethod(ResolvedType.VOID);
                         case "sort": return BuildPrimitiveMethod(ResolvedType.VOID);
+
+                        // common mistakes
+                        case "count":
+                        case "size":
+                            throw new ParserException(this.DotToken, "Lists do not have a ." + this.FieldToken.Value + "() method. Did you mean to use .length?");
 
                         default:
                             throw new ParserException(this.DotToken, "Lists do not have that method.");
