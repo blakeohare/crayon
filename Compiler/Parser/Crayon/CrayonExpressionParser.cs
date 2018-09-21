@@ -28,5 +28,11 @@ namespace Parser.Crayon
             IList<Expression> args = this.ParseArgumentList(tokens, owner);
             return new Instantiate(newToken, className.FirstToken, className.RootType, className.Generics, args, owner);
         }
+
+        protected override AType MaybeParseCastPrefix(TokenStream tokens)
+        {
+            // Casting not supported in Crayon.
+            return null;
+        }
     }
 }

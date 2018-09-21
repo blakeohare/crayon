@@ -105,7 +105,7 @@ namespace Parser.ParseTree
 
                 case ResolvedTypeCategory.LIST:
                     this.ResolvedType = this.Root.ResolvedType.ListItemType;
-                    if (this.Index.ResolvedType.CanAssignToA(ResolvedType.INTEGER))
+                    if (!this.Index.ResolvedType.CanAssignToA(ResolvedType.INTEGER))
                     {
                         throw new ParserException(this.Index, "Can only index into a list with an integer.");
                     }
