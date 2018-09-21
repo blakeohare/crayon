@@ -33,9 +33,9 @@ namespace Parser.ParseTree
             return Listify(this);
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
-            this.IterationExpression.PerformLocalIdAllocation(parser, varIds, phase);
+            this.IterationExpression.ResolveVariableOrigins(parser, varIds, phase);
 
             if ((phase & VariableIdAllocPhase.REGISTER) != 0)
             {
@@ -48,19 +48,19 @@ namespace Parser.ParseTree
             {
                 foreach (Executable ex in this.Code)
                 {
-                    ex.PerformLocalIdAllocation(parser, varIds, phase);
+                    ex.ResolveVariableOrigins(parser, varIds, phase);
                 }
             }
             else
             {
                 foreach (Executable ex in this.Code)
                 {
-                    ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.REGISTER);
+                    ex.ResolveVariableOrigins(parser, varIds, VariableIdAllocPhase.REGISTER);
                 }
 
                 foreach (Executable ex in this.Code)
                 {
-                    ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
+                    ex.ResolveVariableOrigins(parser, varIds, VariableIdAllocPhase.ALLOC);
                 }
             }
 

@@ -217,12 +217,12 @@ namespace Parser.ParseTree
             return new BooleanConstant(firstToken, value, this.Owner);
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
-                this.Left.PerformLocalIdAllocation(parser, varIds, phase);
-                this.Right.PerformLocalIdAllocation(parser, varIds, phase);
+                this.Left.ResolveVariableOrigins(parser, varIds, phase);
+                this.Right.ResolveVariableOrigins(parser, varIds, phase);
             }
         }
 

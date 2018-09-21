@@ -82,12 +82,12 @@ namespace Parser.ParseTree
             this.DefaultValue.ResolvedType.EnsureCanAssignToA(this.DefaultValue.FirstToken, this.ResolvedFieldType);
         }
 
-        internal void AllocateLocalScopeIds(ParserContext parser)
+        internal void ResolveVariableOrigins(ParserContext parser)
         {
             if (this.DefaultValue != null)
             {
                 VariableScope varScope = VariableScope.NewEmptyScope(this.CompilationScope.IsStaticallyTyped);
-                this.DefaultValue.PerformLocalIdAllocation(parser, varScope, VariableIdAllocPhase.REGISTER_AND_ALLOC);
+                this.DefaultValue.ResolveVariableOrigins(parser, varScope, VariableIdAllocPhase.REGISTER_AND_ALLOC);
 
                 if (varScope.Size > 0)
                 {

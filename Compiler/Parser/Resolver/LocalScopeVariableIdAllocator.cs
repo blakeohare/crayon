@@ -9,17 +9,17 @@ namespace Parser.Resolver
     {
         public static void Run(ParserContext parser, IEnumerable<TopLevelEntity> code)
         {
-            using (new PerformanceSection("AllocateLocalScopeIds"))
+            using (new PerformanceSection("ResolveVariableOrigins"))
             {
                 foreach (TopLevelEntity item in code)
                 {
                     if (item is FunctionDefinition)
                     {
-                        ((FunctionDefinition)item).AllocateLocalScopeIds(parser);
+                        ((FunctionDefinition)item).ResolveVariableOrigins(parser);
                     }
                     else if (item is ClassDefinition)
                     {
-                        ((ClassDefinition)item).AllocateLocalScopeIds(parser);
+                        ((ClassDefinition)item).ResolveVariableOrigins(parser);
                     }
                     else
                     {

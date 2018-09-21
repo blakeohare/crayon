@@ -128,7 +128,7 @@ namespace Parser.ParseTree
 
         public VariableId[] ArgLocalIds { get; private set; }
 
-        internal void AllocateLocalScopeIds(ParserContext parser)
+        internal void ResolveVariableOrigins(ParserContext parser)
         {
             VariableScope varScope = VariableScope.NewEmptyScope(this.CompilationScope.IsStaticallyTyped);
             this.ArgLocalIds = new VariableId[this.ArgNames.Length];
@@ -139,12 +139,12 @@ namespace Parser.ParseTree
 
             foreach (Expression arg in this.BaseArgs)
             {
-                arg.PerformLocalIdAllocation(parser, varScope, VariableIdAllocPhase.ALLOC);
+                arg.ResolveVariableOrigins(parser, varScope, VariableIdAllocPhase.ALLOC);
             }
 
             foreach (Executable ex in this.Code)
             {
-                ex.PerformLocalIdAllocation(parser, varScope, VariableIdAllocPhase.REGISTER_AND_ALLOC);
+                ex.ResolveVariableOrigins(parser, varScope, VariableIdAllocPhase.REGISTER_AND_ALLOC);
             }
 
             Lambda.DoVarScopeIdAllocationForLambdaContainer(parser, varScope, this);

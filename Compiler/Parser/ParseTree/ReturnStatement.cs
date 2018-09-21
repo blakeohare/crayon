@@ -73,11 +73,11 @@ namespace Parser.ParseTree
 
         public override bool IsTerminator { get { return true; } }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             if (this.Expression != null)
             {
-                this.Expression.PerformLocalIdAllocation(parser, varIds, phase);
+                this.Expression.ResolveVariableOrigins(parser, varIds, phase);
             }
         }
     }

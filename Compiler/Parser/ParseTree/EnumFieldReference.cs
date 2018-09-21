@@ -26,7 +26,7 @@ namespace Parser.ParseTree
             throw new NotImplementedException();
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         { }
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)

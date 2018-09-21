@@ -293,9 +293,9 @@ namespace Parser.ParseTree
             }
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
-            this.Condition.PerformLocalIdAllocation(parser, varIds, phase);
+            this.Condition.ResolveVariableOrigins(parser, varIds, phase);
 
             if (phase != VariableIdAllocPhase.REGISTER_AND_ALLOC || this.chunks.Length <= 1)
             {
@@ -303,7 +303,7 @@ namespace Parser.ParseTree
                 {
                     foreach (Executable ex in chunk.Code)
                     {
-                        ex.PerformLocalIdAllocation(parser, varIds, phase);
+                        ex.ResolveVariableOrigins(parser, varIds, phase);
                     }
                 }
             }
@@ -316,7 +316,7 @@ namespace Parser.ParseTree
                     varIdBranches[i] = VariableScope.CreatedNestedBlockScope(varIds);
                     foreach (Executable ex in chunk.Code)
                     {
-                        ex.PerformLocalIdAllocation(parser, varIdBranches[i], phase);
+                        ex.ResolveVariableOrigins(parser, varIdBranches[i], phase);
                     }
                 }
 
@@ -332,7 +332,7 @@ namespace Parser.ParseTree
                         Chunk chunk = this.chunks[i];
                         foreach (Executable ex in chunk.Code)
                         {
-                            ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
+                            ex.ResolveVariableOrigins(parser, varIds, VariableIdAllocPhase.ALLOC);
                         }
                     }
                 }

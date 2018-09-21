@@ -91,13 +91,13 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
                 foreach (Expression ex in this.Expressions)
                 {
-                    ex.PerformLocalIdAllocation(parser, varIds, phase);
+                    ex.ResolveVariableOrigins(parser, varIds, phase);
                 }
             }
         }

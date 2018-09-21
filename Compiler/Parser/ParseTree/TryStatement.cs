@@ -183,11 +183,11 @@ namespace Parser.ParseTree
             }
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             foreach (Executable ex in this.TryBlock)
             {
-                ex.PerformLocalIdAllocation(parser, varIds, phase);
+                ex.ResolveVariableOrigins(parser, varIds, phase);
             }
 
             foreach (CatchBlock cb in this.CatchBlocks)
@@ -211,7 +211,7 @@ namespace Parser.ParseTree
 
                 foreach (Executable ex in cb.Code)
                 {
-                    ex.PerformLocalIdAllocation(parser, varIds, phase);
+                    ex.ResolveVariableOrigins(parser, varIds, phase);
                 }
             }
 
@@ -219,7 +219,7 @@ namespace Parser.ParseTree
             {
                 foreach (Executable ex in this.FinallyBlock)
                 {
-                    ex.PerformLocalIdAllocation(parser, varIds, phase);
+                    ex.ResolveVariableOrigins(parser, varIds, phase);
                 }
             }
         }

@@ -72,24 +72,24 @@ namespace Parser.ParseTree
             return name;
         }
 
-        public void AllocateLocalScopeIds(ParserContext parser)
+        public void ResolveVariableOrigins(ParserContext parser)
         {
             foreach (FieldDefinition fd in this.Fields)
             {
-                fd.AllocateLocalScopeIds(parser);
+                fd.ResolveVariableOrigins(parser);
             }
 
             // null check has occurred before now.
-            this.Constructor.AllocateLocalScopeIds(parser);
+            this.Constructor.ResolveVariableOrigins(parser);
 
             if (this.StaticConstructor != null)
             {
-                this.StaticConstructor.AllocateLocalScopeIds(parser);
+                this.StaticConstructor.ResolveVariableOrigins(parser);
             }
 
             foreach (FunctionDefinition fd in this.Methods)
             {
-                fd.AllocateLocalScopeIds(parser);
+                fd.ResolveVariableOrigins(parser);
             }
         }
 

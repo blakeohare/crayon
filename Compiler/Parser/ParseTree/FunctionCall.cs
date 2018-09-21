@@ -401,14 +401,14 @@ namespace Parser.ParseTree
             throw new System.NotImplementedException();
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
-                this.Root.PerformLocalIdAllocation(parser, varIds, phase);
+                this.Root.ResolveVariableOrigins(parser, varIds, phase);
                 foreach (Expression arg in this.Args)
                 {
-                    arg.PerformLocalIdAllocation(parser, varIds, phase);
+                    arg.ResolveVariableOrigins(parser, varIds, phase);
                 }
             }
         }

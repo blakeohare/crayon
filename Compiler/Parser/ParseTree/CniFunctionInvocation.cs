@@ -19,11 +19,11 @@ namespace Parser.ParseTree
 
         internal override IEnumerable<Expression> Descendants { get { return this.Args; } }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             foreach (Expression expr in this.Args)
             {
-                expr.PerformLocalIdAllocation(parser, varIds, phase);
+                expr.ResolveVariableOrigins(parser, varIds, phase);
             }
         }
 

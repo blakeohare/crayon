@@ -58,14 +58,14 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
-            this.Condition.PerformLocalIdAllocation(parser, varIds, phase);
+            this.Condition.ResolveVariableOrigins(parser, varIds, phase);
             if (phase != VariableIdAllocPhase.REGISTER_AND_ALLOC || this.TrueCode.Length == 0 || this.FalseCode.Length == 0)
             {
                 foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
                 {
-                    ex.PerformLocalIdAllocation(parser, varIds, phase);
+                    ex.ResolveVariableOrigins(parser, varIds, phase);
                 }
             }
             else
@@ -79,11 +79,11 @@ namespace Parser.ParseTree
                 // declared before being used.
                 foreach (Executable ex in this.TrueCode)
                 {
-                    ex.PerformLocalIdAllocation(parser, trueVars, VariableIdAllocPhase.REGISTER_AND_ALLOC);
+                    ex.ResolveVariableOrigins(parser, trueVars, VariableIdAllocPhase.REGISTER_AND_ALLOC);
                 }
                 foreach (Executable ex in this.FalseCode)
                 {
-                    ex.PerformLocalIdAllocation(parser, falseVars, VariableIdAllocPhase.REGISTER_AND_ALLOC);
+                    ex.ResolveVariableOrigins(parser, falseVars, VariableIdAllocPhase.REGISTER_AND_ALLOC);
                 }
 
                 // Now that the code is as correct as we can verify, merge the branches back together
@@ -96,7 +96,7 @@ namespace Parser.ParseTree
                     // Go back through and do another allocation pass and assign the correct variable ID's.
                     foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
                     {
-                        ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
+                        ex.ResolveVariableOrigins(parser, varIds, VariableIdAllocPhase.ALLOC);
                     }
                 }
             }

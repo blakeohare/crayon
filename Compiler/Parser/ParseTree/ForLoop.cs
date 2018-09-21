@@ -45,7 +45,7 @@ namespace Parser.ParseTree
             return this;
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             bool register = (phase & VariableIdAllocPhase.REGISTER) != 0;
             bool alloc = (phase & VariableIdAllocPhase.ALLOC) != 0;
@@ -53,28 +53,28 @@ namespace Parser.ParseTree
 
             foreach (Executable ex in this.Init)
             {
-                ex.PerformLocalIdAllocation(parser, varIds, phase);
+                ex.ResolveVariableOrigins(parser, varIds, phase);
             }
 
-            this.Condition.PerformLocalIdAllocation(parser, varIds, phase);
+            this.Condition.ResolveVariableOrigins(parser, varIds, phase);
 
             if (both)
             {
                 foreach (Executable ex in this.Code.Concat(this.Step))
                 {
-                    ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.REGISTER);
+                    ex.ResolveVariableOrigins(parser, varIds, VariableIdAllocPhase.REGISTER);
                 }
 
                 foreach (Executable ex in this.Code.Concat(this.Step))
                 {
-                    ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
+                    ex.ResolveVariableOrigins(parser, varIds, VariableIdAllocPhase.ALLOC);
                 }
             }
             else
             {
                 foreach (Executable ex in this.Code.Concat(this.Step))
                 {
-                    ex.PerformLocalIdAllocation(parser, varIds, phase);
+                    ex.ResolveVariableOrigins(parser, varIds, phase);
                 }
             }
         }

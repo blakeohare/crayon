@@ -37,6 +37,6 @@ namespace Parser.ParseTree
             return new NullConstant(token, owner);
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }
+        internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }
     }
 }

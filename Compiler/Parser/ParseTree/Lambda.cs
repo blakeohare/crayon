@@ -40,18 +40,18 @@ namespace Parser.ParseTree
         {
             foreach (Lambda lambda in container.Lambdas)
             {
-                lambda.AllocateLocalScopeIds(parser, containerScope);
+                lambda.ResolveVariableOriginsForInnerCode(parser, containerScope);
             }
         }
 
         // This is called when the lambda is being resolved as an expression.
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
         }
 
         // This is called at the end of the TopLevelEntity's allocation phase and allocates
         // ID's to the lambda's code.
-        internal void AllocateLocalScopeIds(ParserContext parser, VariableScope scopeFromParent)
+        internal void ResolveVariableOriginsForInnerCode(ParserContext parser, VariableScope scopeFromParent)
         {
             this.VariableScope = VariableScope.CreateClosure(scopeFromParent);
             for (int i = 0; i < this.Args.Length; ++i)
@@ -61,12 +61,12 @@ namespace Parser.ParseTree
 
             foreach (Executable ex in this.Code)
             {
-                ex.PerformLocalIdAllocation(parser, this.VariableScope, VariableIdAllocPhase.REGISTER_AND_ALLOC);
+                ex.ResolveVariableOrigins(parser, this.VariableScope, VariableIdAllocPhase.REGISTER_AND_ALLOC);
             }
 
             foreach (Lambda lambda in this.Lambdas)
             {
-                lambda.AllocateLocalScopeIds(parser, this.VariableScope);
+                lambda.ResolveVariableOriginsForInnerCode(parser, this.VariableScope);
             }
         }
 

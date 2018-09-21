@@ -388,11 +388,11 @@ namespace Parser.ParseTree
             return new PrimitiveMethodReference(this.Root, this.DotToken, this.FieldToken, ResolvedType.GetFunctionType(returnType, argTypes, optionalCount), this.Owner);
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
-                this.Root.PerformLocalIdAllocation(parser, varIds, phase);
+                this.Root.ResolveVariableOrigins(parser, varIds, phase);
             }
         }
     }

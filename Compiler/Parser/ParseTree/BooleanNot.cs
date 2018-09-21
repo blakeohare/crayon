@@ -44,11 +44,11 @@ namespace Parser.ParseTree
             throw new ParserException(this.FirstToken, "Cannot apply ! to an expression of this type.");
         }
 
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
-                this.Root.PerformLocalIdAllocation(parser, varIds, phase);
+                this.Root.ResolveVariableOrigins(parser, varIds, phase);
             }
         }
     }
