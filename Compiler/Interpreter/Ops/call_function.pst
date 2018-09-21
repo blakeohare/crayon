@@ -134,7 +134,8 @@ if (staticConstructorNotInvoked) {
                     classInfo = classTable[int1];
                     intIntDict1 = classInfo.localeScopedNameIdToMemberId;
                     int1 = row[4] * magicNumbers.totalLocaleCount + row[5];
-                    if (intIntDict1.Contains(int1)) {
+                    i = intIntDict1.TryGet(int1, -1);
+                    if (i != -1) {
                         int1 = intIntDict1[int1]; // int1 is now the member ID.
                         // now that we have the member ID, check to see if this is a field or a known method.
                         functionId = classInfo.functionIds[int1];

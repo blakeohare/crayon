@@ -44,7 +44,8 @@ if (type == Types.LIST) {
         if (bool2 && dictImpl.keyType != keyType) {
             hasInterrupt = EX_InvalidKey(ec, "Cannot have multiple keys in one dictionary with different types.");
         } else if (keyType == Types.STRING) {
-            if (!dictImpl.stringToIndex.Contains(stringKey)) {
+            int1 = dictImpl.stringToIndex.TryGet(stringKey, -1);
+            if (int1 == -1) {
                 dictImpl.stringToIndex[stringKey] = dictImpl.size;
                 dictImpl.size += 1;
                 dictImpl.keys.Add(value2);
@@ -53,10 +54,11 @@ if (type == Types.LIST) {
                     dictImpl.keyType = keyType;
                 }
             } else {
-                dictImpl.values[dictImpl.stringToIndex[stringKey]] = value;
+                dictImpl.values[int1] = value;
             }
         } else {
-            if (!dictImpl.intToIndex.Contains(intKey)) {
+            int1 = dictImpl.intToIndex.TryGet(intKey, -1);
+            if (int1 == -1) {
                 dictImpl.intToIndex[intKey] = dictImpl.size;
                 dictImpl.size += 1;
                 dictImpl.keys.Add(value2);
@@ -65,7 +67,7 @@ if (type == Types.LIST) {
                     dictImpl.keyType = keyType;
                 }
             } else {
-                dictImpl.values[dictImpl.intToIndex[intKey]] = value;
+                dictImpl.values[int1] = value;
             }
         }
     }

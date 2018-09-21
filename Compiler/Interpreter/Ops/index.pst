@@ -51,18 +51,20 @@ if (root.type == Types.LIST) {
         if (!hasInterrupt) {
             if (keyType == Types.STRING) {
                 stringIntDict1 = (Dictionary<string, int>) dictImpl.stringToIndex;
-                if (stringIntDict1.Contains(stringKey)) {
-                    valueStack[valueStackSize - 1] = dictImpl.values[stringIntDict1[stringKey]];
-                } else {
+                int1 = stringIntDict1.TryGet(stringKey, -1);
+                if (int1 == -1) {
                     hasInterrupt = EX_KeyNotFound(ec, Core.StringConcatAll("Key not found: '", stringKey, "'"));
+                } else {
+                    valueStack[valueStackSize - 1] = dictImpl.values[int1];
                 }
             } else {
                 intIntDict1 = (Dictionary<int, int>) dictImpl.intToIndex;
-                if (intIntDict1.Contains(intKey)) {
-                    valueStack[valueStackSize - 1] = dictImpl.values[intIntDict1[intKey]];
-                } else {
+                int1 = intIntDict1.TryGet(intKey, -1);
+                if (int1 == -1) {
                     // TODO: show key (for objects and ints)
                     hasInterrupt = EX_KeyNotFound(ec, "Key not found.");
+                } else {
+                    valueStack[valueStackSize - 1] = dictImpl.values[intIntDict1[intKey]];
                 }
             }
         }

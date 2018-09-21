@@ -4,28 +4,21 @@ if (argCount != 1 && argCount != 2) {
 } else {
 
     value = funcArgs[0]; // key
-    i = -1;
     switch (value.type) {
 
         case Types.INTEGER:
             int1 = (int) value.internalValue;
-            if (dictImpl.intToIndex.Contains(int1)) {
-                i = dictImpl.intToIndex[int1];
-            }
+            i = dictImpl.intToIndex.TryGet(int1, -1);
             break;
 
         case Types.INSTANCE:
             int1 = Core.ForceParens((ObjectInstance) value.internalValue).objectId;
-            if (dictImpl.intToIndex.Contains(int1)) {
-                i = dictImpl.intToIndex[int1];
-            }
+            i = dictImpl.intToIndex.TryGet(int1, -1);
             break;
 
         case Types.STRING:
             string1 = (string) value.internalValue;
-            if (dictImpl.stringToIndex.Contains(string1)) {
-                i = dictImpl.stringToIndex[string1];
-            }
+            i = dictImpl.stringToIndex.TryGet(string1, -1);
             break;
     }
 

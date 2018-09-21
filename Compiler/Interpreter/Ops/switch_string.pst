@@ -18,10 +18,11 @@ if (value.type == Types.STRING) {
         stringSwitch = initializeStringSwitchStatement(vm, pc, row);
     }
 
-    if (stringSwitch.Contains(stringKey)) {
-        pc += stringSwitch[stringKey];
-    } else {
+    i = stringSwitch.TryGet(stringKey, -1); // You'll never jump backwards, so -1 is safe as sentinel value.
+    if (i == -1) {
         pc += row[0];
+    } else {
+        pc += i;
     }
 } else {
     hasInterrupt = EX_InvalidArgument(ec, "Switch statement expects a string.");

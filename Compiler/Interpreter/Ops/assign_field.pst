@@ -13,7 +13,8 @@ if (value2.type == Types.INSTANCE) {
     classId = objInstance1.classId;
     classInfo = classTable[classId];
     intIntDict1 = classInfo.localeScopedNameIdToMemberId;
-    if (intIntDict1.Contains(nameId)) {
+    int1 = intIntDict1.TryGet(nameId, -1);
+    if (int1 != -1) {
         int1 = intIntDict1[nameId]; // member ID
         int2 = classInfo.functionIds[int1];
         if (int2 == -1) {

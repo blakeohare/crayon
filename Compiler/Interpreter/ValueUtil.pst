@@ -286,12 +286,13 @@ PlatformRelayObject buildRelayObj(
 }
 
 Value buildCommonString(VmGlobals g, string s) {
-    Dictionary<string, Value> lookup = g.commonStrings;
-    if (!lookup.Contains(s)) {
-        Value value = buildString(g, s);
-        lookup[s] = value;
+    Value value = null;
+    value = g.commonStrings.TryGet(s, null);
+    if (value == null) {
+        value = buildString(g, s);
+        g.commonStrings[s] = value;
     }
-    return lookup[s];
+    return value;
 }
 
 Value buildListCopy(Array<Value> valueList) {
