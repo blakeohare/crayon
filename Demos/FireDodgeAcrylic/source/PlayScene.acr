@@ -34,8 +34,8 @@ public class PlayScene : AbstractScene {
                 if (this.mode == GameMode.PLAYING) {
 
                     // Ensure the coordinate isn't too close to the edge.
-                    int x = Math.ensureRange(clickEvent.x, 30, SCREEN_WIDTH - 30);
-                    int y = Math.ensureRange(clickEvent.y, 30, SCREEN_HEIGHT - 30);
+                    int x = (int) Math.ensureRange(clickEvent.x, 30, SCREEN_WIDTH - 30);
+                    int y = (int) Math.ensureRange(clickEvent.y, 30, SCREEN_HEIGHT - 30);
 
                     // Tell the player sprite to go there.
                     this.player.targetPosition = new int[] { x, y };
