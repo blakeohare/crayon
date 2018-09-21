@@ -214,6 +214,11 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
+        public override void TranslateDictionaryTryGet(TranspilerContext sb, Expression dictionary, Expression key, Expression fallbackValue, Variable varOut)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void TranslateDictionaryValues(TranspilerContext sb, Expression dictionary)
         {
             sb.Append("list(");
