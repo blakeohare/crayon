@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Parser.Resolver;
+using System;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -25,7 +27,7 @@ namespace Parser.ParseTree
             this.Name = nsRef.Name;
         }
 
-        public override bool CanAssignTo { get { return false; } }
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { throw new Exception(); }
 
@@ -37,6 +39,11 @@ namespace Parser.ParseTree
         internal override Expression ResolveEntityNames(ParserContext parser)
         {
             throw new Exception(); // Generated from the ResolveNames phase.
+        }
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -1,10 +1,13 @@
-﻿namespace Parser.ParseTree
+﻿using Parser.Resolver;
+using System.Collections.Generic;
+
+namespace Parser.ParseTree
 {
     public class BooleanConstant : Expression, IConstantValue
     {
         public override bool IsInlineCandidate {  get { return true; } }
 
-        public override bool CanAssignTo { get { return false; } }
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public bool Value { get; private set; }
 
@@ -13,6 +16,7 @@
         public BooleanConstant(Token token, bool value, Node owner)
             : base(token, owner)
         {
+            this.ResolvedType = ResolvedType.BOOLEAN;
             this.Value = value;
         }
 
@@ -29,6 +33,11 @@
         public Expression CloneValue(Token token, Node owner)
         {
             return new BooleanConstant(token, this.Value, owner);
+        }
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            return this;
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }

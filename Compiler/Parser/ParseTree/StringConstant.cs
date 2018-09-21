@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using Parser.Resolver;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Parser.ParseTree
 {
@@ -6,12 +8,13 @@ namespace Parser.ParseTree
     {
         public override bool IsInlineCandidate { get { return true; } }
 
-        public override bool CanAssignTo { get { return false; } }
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public string Value { get; private set; }
         public StringConstant(Token token, string value, Node owner)
             : base(token, owner)
         {
+            this.ResolvedType = ResolvedType.STRING;
             this.Value = value;
         }
 
@@ -57,6 +60,11 @@ namespace Parser.ParseTree
         }
 
         internal override Expression ResolveEntityNames(ParserContext parser)
+        {
+            return this;
+        }
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             return this;
         }

@@ -1,9 +1,10 @@
-﻿namespace Parser.ParseTree
+﻿using Parser.Resolver;
+using System.Collections.Generic;
+
+namespace Parser.ParseTree
 {
     public class Ternary : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public Expression Condition { get; private set; }
         public Expression TrueValue { get; private set; }
         public Expression FalseValue { get; private set; }
@@ -15,6 +16,8 @@
             this.TrueValue = trueValue;
             this.FalseValue = falseValue;
         }
+
+        internal override IEnumerable<Expression> Descendants { get { return new Expression[] { this.Condition, this.TrueValue, this.FalseValue }; } }
 
         internal override Expression Resolve(ParserContext parser)
         {
@@ -36,6 +39,19 @@
             this.Condition = this.Condition.ResolveEntityNames(parser);
             this.TrueValue = this.TrueValue.ResolveEntityNames(parser);
             this.FalseValue = this.FalseValue.ResolveEntityNames(parser);
+            return this;
+        }
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            this.Condition = this.Condition.ResolveTypes(parser, typeResolver);
+            this.TrueValue = this.TrueValue.ResolveTypes(parser, typeResolver);
+            this.FalseValue = this.FalseValue.ResolveTypes(parser, typeResolver);
+            if (!this.Condition.ResolvedType.CanAssignToA(ResolvedType.BOOLEAN))
+            {
+                throw new ParserException(this.Condition, "Ternary expression must use a boolean condition.");
+            }
+            this.ResolvedType = typeResolver.FindCommonAncestor(this.TrueValue.ResolvedType, this.FalseValue.ResolvedType);
             return this;
         }
 

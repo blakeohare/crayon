@@ -1,8 +1,11 @@
-﻿namespace Parser.ParseTree
+﻿using Parser.Resolver;
+using System.Collections.Generic;
+
+namespace Parser.ParseTree
 {
     public class ThisKeyword : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public ThisKeyword(Token token, Node owner)
             : base(token, owner)
@@ -59,6 +62,19 @@
         internal override Expression ResolveEntityNames(ParserContext parser)
         {
             ThisKeyword.CheckIfThisOrBaseIsValid(this, parser);
+            return this;
+        }
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            Node walker = this.Owner;
+            while (!(walker is ClassDefinition))
+            {
+                walker = walker.Owner;
+                if (walker == null) throw new System.Exception(); // already verified exists in a ClassDefinition in ResolveEntityNames, so this should never happen.
+            }
+
+            this.ResolvedType = ResolvedType.GetInstanceType((ClassDefinition)walker);
             return this;
         }
 

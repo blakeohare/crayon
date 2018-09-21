@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Parser.Resolver;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Parser.ParseTree
@@ -8,7 +10,7 @@ namespace Parser.ParseTree
         public SpecialEntity(Token firstToken, Node owner) : base(firstToken, owner)
         { }
 
-        public override bool CanAssignTo { get { return false; } }
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         internal override Expression ResolveEntityNames(ParserContext parser)
         {
@@ -46,6 +48,11 @@ namespace Parser.ParseTree
                 }
                 return max;
             }
+
+            internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+            {
+                throw new System.NotImplementedException();
+            }
         }
 
         internal class EnumValuesFunction : SpecialEntity
@@ -67,6 +74,11 @@ namespace Parser.ParseTree
             public int[] GetValues()
             {
                 return GetEnumValues(this.enumDef);
+            }
+
+            internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+            {
+                throw new System.NotImplementedException();
             }
         }
     }

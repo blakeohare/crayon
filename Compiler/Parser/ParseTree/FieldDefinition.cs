@@ -1,4 +1,5 @@
 ﻿using Localization;
+using Parser.Resolver;
 using System.Collections.Generic;
 
 namespace Parser.ParseTree
@@ -12,14 +13,15 @@ namespace Parser.ParseTree
         public int StaticMemberID { get; set; }
         public AnnotationCollection Annotations { get; set; }
         public List<Lambda> Lambdas { get; private set; }
-        public AType NullableFieldType { get; private set; }
+        public AType FieldType { get; private set; }
+        public ResolvedType ResolvedFieldType { get; private set; }
 
         public FieldDefinition(Token fieldToken, AType fieldType, Token nameToken, ClassDefinition owner, bool isStatic, AnnotationCollection annotations)
             : base(fieldToken, owner, owner.FileScope)
         {
             this.NameToken = nameToken;
-            this.NullableFieldType = fieldType;
-            this.DefaultValue = new NullConstant(fieldToken, this);
+            this.FieldType = fieldType;
+            this.DefaultValue = null;
             this.IsStaticField = isStatic;
             this.MemberID = -1;
             this.Annotations = annotations;
@@ -43,27 +45,58 @@ namespace Parser.ParseTree
 
         internal override void ResolveEntityNames(ParserContext parser)
         {
-            parser.CurrentCodeContainer = this;
-            this.DefaultValue = this.DefaultValue.ResolveEntityNames(parser);
-            parser.CurrentCodeContainer = null;
+            if (this.DefaultValue != null)
+            {
+                parser.CurrentCodeContainer = this;
+                this.DefaultValue = this.DefaultValue.ResolveEntityNames(parser);
+                parser.CurrentCodeContainer = null;
+            }
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            this.ResolvedFieldType = typeResolver.ResolveType(this.FieldType);
+            if (this.DefaultValue == null)
+            {
+                switch (this.ResolvedFieldType.Category)
+                {
+                    case ResolvedTypeCategory.INTEGER:
+                        this.DefaultValue = new IntegerConstant(this.FirstToken, 0, this);
+                        break;
+                    case ResolvedTypeCategory.FLOAT:
+                        this.DefaultValue = new FloatConstant(this.FirstToken, 0.0, this);
+                        break;
+                    case ResolvedTypeCategory.BOOLEAN:
+                        this.DefaultValue = new BooleanConstant(this.FirstToken, false, this);
+                        break;
+                    default:
+                        this.DefaultValue = new NullConstant(this.FirstToken, this);
+                        break;
+                }
+            }
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            this.DefaultValue.ResolveTypes(parser, typeResolver);
+            this.DefaultValue.ResolvedType.EnsureCanAssignToA(this.DefaultValue.FirstToken, this.ResolvedFieldType);
         }
 
         internal void AllocateLocalScopeIds(ParserContext parser)
         {
-            VariableScope varScope = VariableScope.NewEmptyScope();
-            this.DefaultValue.PerformLocalIdAllocation(parser, varScope, VariableIdAllocPhase.REGISTER_AND_ALLOC);
-
-            if (varScope.Size > 0)
+            if (this.DefaultValue != null)
             {
-                // Although if you manage to trigger this, I'd love to know how.
-                throw new ParserException(this, "Cannot declare a variable this way.");
-            }
+                VariableScope varScope = VariableScope.NewEmptyScope(this.CompilationScope.IsStaticallyTyped);
+                this.DefaultValue.PerformLocalIdAllocation(parser, varScope, VariableIdAllocPhase.REGISTER_AND_ALLOC);
 
-            Lambda.DoVarScopeIdAllocationForLambdaContainer(parser, varScope, this);
+                if (varScope.Size > 0)
+                {
+                    // Although if you manage to trigger this, I'd love to know how.
+                    throw new ParserException(this, "Cannot declare a variable this way.");
+                }
+
+                Lambda.DoVarScopeIdAllocationForLambdaContainer(parser, varScope, this);
+            }
         }
     }
 }

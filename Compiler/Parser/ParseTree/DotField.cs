@@ -1,4 +1,5 @@
 ﻿using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -8,87 +9,30 @@ namespace Parser.ParseTree
 
         public Expression Root { get; set; }
         public Token DotToken { get; private set; }
-        public Token StepToken { get; private set; }
+        public Token FieldToken { get; private set; }
 
-        public DotField(Expression root, Token dotToken, Token stepToken, Node owner)
+        public DotField(Expression root, Token dotToken, Token fieldToken, Node owner)
             : base(root.FirstToken, owner)
         {
             this.Root = root;
             this.DotToken = dotToken;
-            this.StepToken = stepToken;
+            this.FieldToken = fieldToken;
         }
+
+        internal override IEnumerable<Expression> Descendants { get { return new Expression[] { this.Root }; } }
 
         internal override Expression Resolve(ParserContext parser)
         {
             this.Root = this.Root.Resolve(parser);
 
-            string step = this.StepToken.Value;
-
-            if (this.Root is EnumReference)
-            {
-                EnumDefinition enumDef = ((EnumReference)this.Root).EnumDefinition;
-
-                ConstantResolutionState resolutionState = parser.ConstantAndEnumResolutionState[enumDef];
-                if (resolutionState != ConstantResolutionState.RESOLVED)
-                {
-                    enumDef.Resolve(parser);
-                }
-
-                if (step == parser.Keywords.FIELD_ENUM_LENGTH)
-                    return new IntegerConstant(this.FirstToken, enumDef.IntValue.Count, this.Owner);
-                if (step == parser.Keywords.FIELD_ENUM_MAX)
-                    return new SpecialEntity.EnumMaxFunction(this.FirstToken, enumDef, this.Owner);
-                if (step == parser.Keywords.FIELD_ENUM_VALUES)
-                    return new SpecialEntity.EnumValuesFunction(this.FirstToken, enumDef, this.Owner);
-
-                if (enumDef.IntValue.ContainsKey(step))
-                {
-                    return new IntegerConstant(this.FirstToken, enumDef.IntValue[step], this.Owner);
-                }
-                else
-                {
-                    throw new ParserException(this.StepToken, "The enum '" + enumDef.Name + "' does not contain a definition for '" + step + "'");
-                }
-            }
+            string field = this.FieldToken.Value;
 
             if (this.Root is BaseKeyword)
             {
-                return new BaseMethodReference(this.Root.FirstToken, this.DotToken, this.StepToken, this.Owner).Resolve(parser);
-            }
-
-            if (this.Root is StringConstant)
-            {
-                if (step == "length")
-                {
-                    int length = ((StringConstant)this.Root).Value.Length;
-                    return new IntegerConstant(this.FirstToken, length, this.Owner);
-                }
-
-                // TODO: the field name against the primitive methods. Also against other primitive types
-                // and do so in a localization friendly way.
-                if (parser.CurrentLocale.ID == "en")
-                {
-                    if (step == "join")
-                    {
-                        throw new ParserException(this.StepToken,
-                            "There is no join method on strings. Did you mean to do list.join(string) instead?");
-                    }
-                    else if (step == "size")
-                    {
-                        throw new ParserException(this.StepToken, "String size is indicated by string.length.");
-                    }
-                }
+                return new BaseMethodReference(this.Root.FirstToken, this.DotToken, this.FieldToken, this.Owner).Resolve(parser);
             }
 
             return this;
-        }
-
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
-        {
-            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
-            {
-                this.Root.PerformLocalIdAllocation(parser, varIds, phase);
-            }
         }
 
         internal override Expression ResolveEntityNames(
@@ -98,7 +42,7 @@ namespace Parser.ParseTree
             FieldDefinition fieldDec;
             this.Root = this.Root.ResolveEntityNames(parser);
             Expression root = this.Root;
-            string field = this.StepToken.Value;
+            string field = this.FieldToken.Value;
 
             if (root is NamespaceReference)
             {
@@ -160,7 +104,7 @@ namespace Parser.ParseTree
                 // TODO: nested classes, enums, constants
 
                 // TODO: show spelling suggestions.
-                throw new ParserException(this.StepToken, "No static fields or methods named '" + field + "' on the class " + cd.NameToken.Value + ".");
+                throw new ParserException(this.FieldToken, "No static fields or methods named '" + field + "' on the class " + cd.NameToken.Value + ".");
             }
 
             if (root is BaseKeyword)
@@ -200,7 +144,7 @@ namespace Parser.ParseTree
                     throw new ParserException(this.DotToken, "Cannot reference static methods using 'base' keyword.");
                 }
 
-                return new BaseMethodReference(this.FirstToken, this.DotToken, this.StepToken, this.Owner);
+                return new BaseMethodReference(this.FirstToken, this.DotToken, this.FieldToken, this.Owner);
             }
 
             if (root is ThisKeyword)
@@ -252,12 +196,26 @@ namespace Parser.ParseTree
                 }
 
                 // TODO: show suggestions in the error message for anything close to what was typed.
-                throw new ParserException(this.StepToken, "The class '" + cd.NameToken.Value + "' does not have a field named '" + field + "'.");
+                throw new ParserException(this.FieldToken, "The class '" + cd.NameToken.Value + "' does not have a field named '" + field + "'.");
+            }
+
+            if (this.Root is EnumReference)
+            {
+                EnumDefinition enumDef = ((EnumReference)this.Root).EnumDefinition;
+
+                if (field == parser.Keywords.FIELD_ENUM_LENGTH)
+                    return new IntegerConstant(this.FirstToken, enumDef.IntValue.Count, this.Owner);
+                if (field == parser.Keywords.FIELD_ENUM_MAX)
+                    return new SpecialEntity.EnumMaxFunction(this.FirstToken, enumDef, this.Owner);
+                if (field == parser.Keywords.FIELD_ENUM_VALUES)
+                    return new SpecialEntity.EnumValuesFunction(this.FirstToken, enumDef, this.Owner);
+
+                return new EnumFieldReference(this.FirstToken, enumDef, this.FieldToken, this.Owner);
             }
 
             // This is done here in the resolver instead of the parser because some unallowed
             // field names (such as .class) are valid.
-            if (this.StepToken.Value == parser.Keywords.CLASS)
+            if (field == parser.Keywords.CLASS)
             {
                 if (this.Root is Variable)
                 {
@@ -265,9 +223,177 @@ namespace Parser.ParseTree
                 }
                 throw new ParserException(this.DotToken, ".class can only be applied to class names.");
             }
-            parser.VerifyIdentifier(this.StepToken);
+            parser.VerifyIdentifier(this.FieldToken);
 
             return this;
+        }
+
+        private static readonly ResolvedType[] EMPTY_TYPE_LIST = new ResolvedType[0];
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            this.Root.ResolveTypes(parser, typeResolver);
+
+            string field = this.FieldToken.Value;
+
+            if (this.Root is EnumReference)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            ResolvedType rootType = this.Root.ResolvedType;
+
+            // TODO: all of this needs to be localized.
+            switch (rootType.Category)
+            {
+                case ResolvedTypeCategory.NULL:
+                    throw new ParserException(this.DotToken, "Cannot dereference a field from null.");
+
+                case ResolvedTypeCategory.ANY:
+                    // ¯\_(ツ)_/¯
+                    this.ResolvedType = ResolvedType.ANY;
+                    return this;
+
+                case ResolvedTypeCategory.INTEGER:
+                    throw new ParserException(this.DotToken, "Integers do not have any fields.");
+
+                case ResolvedTypeCategory.FLOAT:
+                    throw new ParserException(this.DotToken, "Floating point decimals do not have any fields.");
+
+                case ResolvedTypeCategory.BOOLEAN:
+                    throw new ParserException(this.DotToken, "Booleans do not have any fields.");
+
+                case ResolvedTypeCategory.STRING:
+                    switch (field)
+                    {
+                        case "length":
+                            this.ResolvedType = ResolvedType.INTEGER;
+                            if (this.Root is StringConstant)
+                            {
+                                return new IntegerConstant(this.FirstToken, ((StringConstant)this.Root).Value.Length, this.Owner);
+                            }
+                            return this;
+
+                        case "contains": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, ResolvedType.STRING);
+                        case "endsWith": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, ResolvedType.STRING);
+                        case "indexOf": return BuildPrimitiveMethod(ResolvedType.INTEGER, ResolvedType.STRING);
+                        case "lower": return BuildPrimitiveMethod(ResolvedType.STRING);
+                        case "ltrim": return BuildPrimitiveMethod(ResolvedType.STRING);
+                        case "replace": return BuildPrimitiveMethod(ResolvedType.STRING, ResolvedType.STRING, ResolvedType.STRING);
+                        case "reverse": return BuildPrimitiveMethod(ResolvedType.STRING);
+                        case "rtrim": return BuildPrimitiveMethod(ResolvedType.STRING);
+                        case "split": return BuildPrimitiveMethod(ResolvedType.ListOrArrayOf(ResolvedType.STRING), ResolvedType.STRING);
+                        case "startsWith": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, ResolvedType.STRING);
+                        case "trim": return BuildPrimitiveMethod(ResolvedType.STRING);
+                        case "upper": return BuildPrimitiveMethod(ResolvedType.STRING);
+
+                        // common mistakes
+                        case "join":
+                            throw new ParserException(this.DotToken, "Strings do not have a .join(list) method. Did you mean to do list.join(string)?");
+                        case "size":
+                            throw new ParserException(this.DotToken, "Strings do not have a .size() method. Did you mean to use .length?");
+
+                        default:
+                            throw new ParserException(this.DotToken, "Strings do not have that method.");
+                    }
+
+                case ResolvedTypeCategory.LIST:
+                    ResolvedType itemType = rootType.ListItemType;
+                    switch (field)
+                    {
+                        case "length":
+                            this.ResolvedType = ResolvedType.INTEGER;
+                            return this;
+
+                        case "add": return BuildPrimitiveMethod(ResolvedType.VOID, itemType);
+                        case "choice": return BuildPrimitiveMethod(ResolvedType.VOID);
+                        case "clear": return BuildPrimitiveMethod(ResolvedType.VOID);
+                        case "clone": return BuildPrimitiveMethod(rootType);
+                        case "concat": return BuildPrimitiveMethod(rootType, rootType);
+                        case "contains": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, itemType);
+                        case "filter": throw new System.NotImplementedException(); // defer resolution to match arg
+                        case "insert": return BuildPrimitiveMethod(ResolvedType.VOID, ResolvedType.INTEGER, itemType);
+                        case "join": return BuildPrimitiveMethodWithOptionalArgs(ResolvedType.STRING, 1, ResolvedType.STRING);
+                        case "map": throw new System.NotImplementedException(); // defer resolution to match arg
+                        case "pop": return BuildPrimitiveMethod(itemType);
+                        case "remove": return BuildPrimitiveMethod(ResolvedType.VOID, ResolvedType.INTEGER);
+                        case "reverse": return BuildPrimitiveMethod(ResolvedType.VOID);
+                        case "shuffle": return BuildPrimitiveMethod(ResolvedType.VOID);
+                        case "sort": return BuildPrimitiveMethod(ResolvedType.VOID);
+
+                        // common mistakes
+                        case "count":
+                        case "size":
+                            throw new ParserException(this.DotToken, "Lists do not have a ." + this.FieldToken.Value + "() method. Did you mean to use .length?");
+
+                        default:
+                            throw new ParserException(this.DotToken, "Lists do not have that method.");
+                    }
+
+                case ResolvedTypeCategory.DICTIONARY:
+                    ResolvedType keyType = rootType.DictionaryKeyType;
+                    ResolvedType valueType = rootType.DictionaryValueType;
+                    switch (field)
+                    {
+                        case "length":
+                            this.ResolvedType = ResolvedType.INTEGER;
+                            return this;
+
+                        case "clear": return BuildPrimitiveMethod(ResolvedType.VOID);
+                        case "clone": return BuildPrimitiveMethod(rootType);
+                        case "contains": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, valueType);
+                        case "get": return BuildPrimitiveMethodWithOptionalArgs(valueType, 1, keyType, valueType);
+                        case "keys": return BuildPrimitiveMethod(ResolvedType.ListOrArrayOf(keyType));
+                        case "merge": return BuildPrimitiveMethod(ResolvedType.VOID, rootType);
+                        case "remove": return BuildPrimitiveMethod(ResolvedType.VOID, keyType);
+                        case "values": return BuildPrimitiveMethod(ResolvedType.ListOrArrayOf(valueType));
+
+                        default:
+                            throw new ParserException(this.DotToken, "Dictionaries do not have that field.");
+                    }
+
+                case ResolvedTypeCategory.CLASS_DEFINITION:
+                    throw new System.NotImplementedException();
+
+                case ResolvedTypeCategory.FUNCTION_POINTER:
+                    throw new System.NotImplementedException();
+
+                case ResolvedTypeCategory.INSTANCE:
+                    FieldDefinition fieldDef = rootType.ClassTypeOrReference.GetField(field, true);
+                    if (fieldDef != null)
+                    {
+                        this.ResolvedType = fieldDef.ResolvedFieldType;
+                        return this;
+                    }
+                    FunctionDefinition funcDef = rootType.ClassTypeOrReference.GetMethod(field, true);
+                    if (funcDef != null)
+                    {
+                        this.ResolvedType = ResolvedType.GetFunctionType(funcDef);
+                        return this;
+                    }
+                    throw new ParserException(this.DotToken, "The class '" + rootType.ClassTypeOrReference.NameToken.Value + "' does not have a field called '" + field + "'.");
+
+                default:
+                    throw new System.NotImplementedException();
+            }
+        }
+
+        private Expression BuildPrimitiveMethod(ResolvedType returnType, params ResolvedType[] argTypes)
+        {
+            return BuildPrimitiveMethodWithOptionalArgs(returnType, 0, argTypes);
+        }
+
+        private Expression BuildPrimitiveMethodWithOptionalArgs(ResolvedType returnType, int optionalCount, params ResolvedType[] argTypes)
+        {
+            return new PrimitiveMethodReference(this.Root, this.DotToken, this.FieldToken, ResolvedType.GetFunctionType(returnType, argTypes, optionalCount), this.Owner);
+        }
+
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        {
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
+            {
+                this.Root.PerformLocalIdAllocation(parser, varIds, phase);
+            }
         }
     }
 }

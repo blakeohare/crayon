@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Parser.Resolver;
+using System;
 using System.Collections.Generic;
 
 namespace Parser.ParseTree
@@ -7,8 +8,6 @@ namespace Parser.ParseTree
     {
         public Expression[] Args { get; set; }
         public int FunctionId { get; set; }
-
-        public override bool CanAssignTo { get { return false; } }
 
         public CoreFunctionInvocation(Token firstToken, Expression[] originalArgs, Node owner) :
             base(firstToken, owner)
@@ -26,6 +25,8 @@ namespace Parser.ParseTree
             this.Args = args.ToArray();
         }
 
+        internal override IEnumerable<Expression> Descendants { get { return this.Args; } }
+
         internal override Expression Resolve(ParserContext parser)
         {
             for (int i = 0; i < this.Args.Length; ++i)
@@ -39,6 +40,21 @@ namespace Parser.ParseTree
         {
             // created after the resolve name phase
             throw new NotImplementedException();
+        }
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            for (int i = 0; i < this.Args.Length; ++i)
+            {
+                this.Args[i] = this.Args[i].ResolveTypes(parser, typeResolver);
+            }
+
+            this.ResolvedType =
+                this.FileScope.CompilationScope.ProgrammingLanguage == Build.ProgrammingLanguage.ACRYLIC
+                    ? ResolvedType.OBJECT
+                    : ResolvedType.ANY;
+
+            return this;
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)

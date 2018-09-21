@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Parser.Resolver;
+using System;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
     public class ConstReference : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public ConstDefinition ConstStatement { get; private set; }
 
         public ConstReference(Token token, ConstDefinition con, Node owner)
@@ -13,6 +13,8 @@ namespace Parser.ParseTree
         {
             this.ConstStatement = con;
         }
+
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         internal override Expression Resolve(ParserContext parser)
         {
@@ -32,6 +34,12 @@ namespace Parser.ParseTree
         internal override Expression ResolveEntityNames(ParserContext parser)
         {
             throw new NotImplementedException();
+        }
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            this.ResolvedType = this.ConstStatement.ResolvedType;
+            return this;
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }

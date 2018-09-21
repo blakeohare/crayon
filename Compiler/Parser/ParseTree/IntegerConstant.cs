@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -6,7 +7,7 @@ namespace Parser.ParseTree
     {
         public override bool IsInlineCandidate { get { return true; } }
 
-        public override bool CanAssignTo { get { return false; } }
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public int Value { get; private set; }
 
@@ -66,6 +67,7 @@ namespace Parser.ParseTree
         public IntegerConstant(Token token, int value, Node owner)
             : base(token, owner)
         {
+            this.ResolvedType = ResolvedType.INTEGER;
             this.Value = value;
         }
 
@@ -76,6 +78,11 @@ namespace Parser.ParseTree
         }
 
         internal override Expression ResolveEntityNames(ParserContext parser)
+        {
+            return this;
+        }
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             return this;
         }

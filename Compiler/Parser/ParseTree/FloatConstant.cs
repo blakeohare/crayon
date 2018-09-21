@@ -1,4 +1,6 @@
 ﻿using Common;
+using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -6,7 +8,7 @@ namespace Parser.ParseTree
     {
         public override bool IsInlineCandidate { get { return true; } }
 
-        public override bool CanAssignTo { get { return false; } }
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public double Value { get; private set; }
 
@@ -15,6 +17,7 @@ namespace Parser.ParseTree
         public FloatConstant(Token startValue, double value, Node owner)
             : base(startValue, owner)
         {
+            this.ResolvedType = ResolvedType.FLOAT;
             this.Value = value;
         }
 
@@ -34,6 +37,11 @@ namespace Parser.ParseTree
         }
 
         internal override Expression ResolveEntityNames(ParserContext parser)
+        {
+            return this;
+        }
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             return this;
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Parser.Resolver;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Parser.ParseTree
@@ -90,11 +91,29 @@ namespace Parser.ParseTree
                 trueVars.MergeToParent();
                 falseVars.MergeToParent();
 
-                // Go back through and do another allocation pass and assign the correct variable ID's.
-                foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
+                if (!this.CompilationScope.IsStaticallyTyped)
                 {
-                    ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
+                    // Go back through and do another allocation pass and assign the correct variable ID's.
+                    foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
+                    {
+                        ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
+                    }
                 }
+            }
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            this.Condition = this.Condition.ResolveTypes(parser, typeResolver);
+            ResolvedTypeCategory type = this.Condition.ResolvedType.Category;
+            if (type != ResolvedTypeCategory.BOOLEAN && type != ResolvedTypeCategory.ANY)
+            {
+                throw new ParserException(this.Condition, "Boolean expected.");
+            }
+
+            foreach (Executable ex in this.TrueCode.Concat(this.FalseCode))
+            {
+                ex.ResolveTypes(parser, typeResolver);
             }
         }
     }

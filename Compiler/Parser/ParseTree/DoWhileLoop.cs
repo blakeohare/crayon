@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Parser.Resolver;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Parser.ParseTree
@@ -22,6 +23,13 @@ namespace Parser.ParseTree
             this.Condition = this.Condition.Resolve(parser);
 
             return Listify(this);
+        }
+
+        internal override Executable ResolveEntityNames(ParserContext parser)
+        {
+            this.BatchExecutableEntityNameResolver(parser, this.Code);
+            this.Condition = this.Condition.ResolveEntityNames(parser);
+            return this;
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
@@ -48,11 +56,9 @@ namespace Parser.ParseTree
             }
         }
 
-        internal override Executable ResolveEntityNames(ParserContext parser)
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            this.BatchExecutableEntityNameResolver(parser, this.Code);
-            this.Condition = this.Condition.ResolveEntityNames(parser);
-            return this;
+            throw new System.NotImplementedException();
         }
     }
 }

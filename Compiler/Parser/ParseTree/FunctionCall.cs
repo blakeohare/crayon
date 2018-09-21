@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using Parser.Resolver;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Parser.ParseTree
 {
     public class FunctionCall : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public Expression Root { get; private set; }
         public Token ParenToken { get; private set; }
         public Expression[] Args { get; private set; }
@@ -18,6 +17,8 @@ namespace Parser.ParseTree
             this.ParenToken = parenToken;
             this.Args = args.ToArray();
         }
+
+        internal override IEnumerable<Expression> Descendants { get { return new Expression[] { this.Root }.Concat(this.Args); } }
 
         // This will check floating point noise to see if it should be returning a round number.
         private double CalculateLogWithIntegerBase(double input, int b)
@@ -235,16 +236,6 @@ namespace Parser.ParseTree
                 this.Args[i] = this.Args[i].Resolve(parser);
             }
 
-            if (this.Root is Variable)
-            {
-                string varName = ((Variable)this.Root).Name;
-
-                if (parser.GetClass(varName) != null)
-                {
-                    throw new ParserException(this.ParenToken, "Cannot invoke a class like a function. To construct a new class, the \"new\" keyword must be used.");
-                }
-            }
-
             this.Root = this.Root.Resolve(parser);
 
             // TODO: this is hardcoded just for Math.floor(numeric constant). Eventually, it'd be nice
@@ -276,23 +267,11 @@ namespace Parser.ParseTree
                     {
                         values.Add(new IntegerConstant(this.Root.FirstToken, rawValue, this.Owner));
                     }
-                    return new ListDefinition(this.FirstToken, values, this.Owner);
+                    return new ListDefinition(this.FirstToken, values, AType.Integer(this.FirstToken), this.Owner);
                 }
             }
 
             return this;
-        }
-
-        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
-        {
-            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
-            {
-                this.Root.PerformLocalIdAllocation(parser, varIds, phase);
-                foreach (Expression arg in this.Args)
-                {
-                    arg.PerformLocalIdAllocation(parser, varIds, phase);
-                }
-            }
         }
 
         internal override Expression ResolveEntityNames(ParserContext parser)
@@ -341,6 +320,110 @@ namespace Parser.ParseTree
             }
 
             throw new ParserException(this.ParenToken, "This cannot be invoked like a function.");
+        }
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            this.Root = this.Root.ResolveTypes(parser, typeResolver);
+
+            for (int i = 0; i < this.Args.Length; ++i)
+            {
+                this.Args[i] = this.Args[i].ResolveTypes(parser, typeResolver);
+            }
+
+            ResolvedType rootType = this.Root.ResolvedType;
+
+            if (rootType == ResolvedType.ANY)
+            {
+                this.ResolvedType = ResolvedType.ANY;
+                return this;
+            }
+
+            if (rootType.Category == ResolvedTypeCategory.FUNCTION_POINTER)
+            {
+                int maxArgCount = rootType.FunctionArgs.Length;
+                int minArgCount = maxArgCount - rootType.FunctionOptionalArgCount;
+                if (this.Args.Length < minArgCount || this.Args.Length > maxArgCount)
+                {
+                    throw new ParserException(this.ParenToken, "This function has the incorrect number of arguments.");
+                }
+
+                for (int i = 0; i < this.Args.Length; ++i)
+                {
+                    if (!this.Args[i].ResolvedType.CanAssignToA(rootType.FunctionArgs[i]))
+                    {
+                        throw new ParserException(this.Args[i], "Incorrect argument type.");
+                    }
+                }
+                this.ResolvedType = rootType.FunctionReturnType;
+
+                // TODO: this is temporary until the Math library is converted to Acrylic
+                if (this.ResolvedType == ResolvedType.ANY &&
+                    this.Root is FunctionReference &&
+                    ((FunctionReference)this.Root).FunctionDefinition.CompilationScope.Metadata.ID == "Math")
+                {
+                    FunctionReference func = (FunctionReference)this.Root;
+                    switch (func.FunctionDefinition.NameToken.Value)
+                    {
+                        case "abs":
+                        case "min":
+                        case "max":
+                        case "ensureRange":
+                            if (this.Args.Where(ex => ex.ResolvedType == ResolvedType.FLOAT).FirstOrDefault() != null)
+                            {
+                                this.ResolvedType = ResolvedType.FLOAT;
+                            }
+                            this.ResolvedType = ResolvedType.INTEGER;
+                            break;
+
+                        case "floor":
+                        case "sign":
+                            this.ResolvedType = ResolvedType.INTEGER;
+                            break;
+
+                        default:
+                            this.ResolvedType = ResolvedType.FLOAT;
+                            break;
+                    }
+                }
+
+                if (this.ResolvedType == ResolvedType.ANY &&
+                    this.CompilationScope.IsStaticallyTyped)
+                {
+                    // ANY types are not allowed in statically typed compilation scopes.
+                    // Convert this into an object and require the user to perform any specific casts.
+                    this.ResolvedType = ResolvedType.OBJECT;
+                }
+
+                return this;
+            }
+
+            throw new System.NotImplementedException();
+        }
+
+        internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
+        {
+            if ((phase & VariableIdAllocPhase.ALLOC) != 0)
+            {
+                this.Root.PerformLocalIdAllocation(parser, varIds, phase);
+                foreach (Expression arg in this.Args)
+                {
+                    arg.PerformLocalIdAllocation(parser, varIds, phase);
+                }
+            }
+        }
+
+        internal static int CountOptionalArgs(Expression[] nullableDefaultValues)
+        {
+            int length = nullableDefaultValues.Length;
+            if (length == 0) return 0;
+            int optionalArgs = 0;
+            for (int i = length - 1; i >= 0; --i)
+            {
+                if (nullableDefaultValues[i] == null) return optionalArgs;
+                optionalArgs++;
+            }
+            return optionalArgs;
         }
     }
 }

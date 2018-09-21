@@ -76,7 +76,7 @@ namespace Exporter.ByteCode.Nodes
             {
                 DotField ds = (DotField)root;
                 Expression dotRoot = ds.Root;
-                int globalNameId = parser.GetId(ds.StepToken.Value);
+                int globalNameId = parser.GetId(ds.FieldToken.Value);
                 bcc.CompileExpression(parser, buffer, dotRoot, true);
                 bcc.CompileExpressionList(parser, buffer, funCall.Args, true);
                 int localeId = parser.GetLocaleId(ds.Owner.FileScope.CompilationScope.Locale);
@@ -93,7 +93,7 @@ namespace Exporter.ByteCode.Nodes
             else if (root is BaseMethodReference)
             {
                 BaseMethodReference bmr = (BaseMethodReference)root;
-                FunctionDefinition fd = bmr.ClassToWhichThisMethodRefers.GetMethod(bmr.StepToken.Value, true);
+                FunctionDefinition fd = bmr.ClassToWhichThisMethodRefers.GetMethod(bmr.FieldToken.Value, true);
                 if (fd == null)
                 {
                     throw new ParserException(bmr.DotToken, "This method does not exist on any base class.");

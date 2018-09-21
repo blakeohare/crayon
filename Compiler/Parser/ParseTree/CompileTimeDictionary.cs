@@ -1,8 +1,11 @@
-﻿namespace Parser.ParseTree
+﻿using Parser.Resolver;
+using System.Collections.Generic;
+
+namespace Parser.ParseTree
 {
     public class CompileTimeDictionary : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public string Type { get; private set; }
 
@@ -20,6 +23,11 @@
         internal override Expression ResolveEntityNames(ParserContext parser)
         {
             return this;
+        }
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            throw new System.NotImplementedException();
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }

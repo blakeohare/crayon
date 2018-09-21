@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -26,6 +27,7 @@ namespace Parser.ParseTree
                 Increment inc = (Increment)this.Expression;
                 Assignment output = new Assignment(
                     inc.Root,
+                    null,
                     inc.IncrementToken,
                     new IntegerConstant(inc.IncrementToken, 1, this.Owner),
                     this.Owner);
@@ -47,6 +49,11 @@ namespace Parser.ParseTree
             {
                 this.Expression.PerformLocalIdAllocation(parser, varIds, phase);
             }
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            this.Expression.ResolveTypes(parser, typeResolver);
         }
     }
 }

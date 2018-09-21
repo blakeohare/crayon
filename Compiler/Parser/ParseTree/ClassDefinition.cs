@@ -1,4 +1,5 @@
 ﻿using Localization;
+using Parser.Resolver;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -285,15 +286,42 @@ namespace Parser.ParseTree
             // This should be empty if there is no base class, or just pass along the base class' args if there is.
             if (this.Constructor == null)
             {
-                this.Constructor = new ConstructorDefinition(this, new AnnotationCollection(parser));
+                this.Constructor = new ConstructorDefinition(this, ModifierCollection.EMPTY, new AnnotationCollection(parser));
             }
 
             this.Constructor.ResolveEntityNames(parser);
             this.BatchTopLevelConstructNameResolver(parser, this.Methods);
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        private IEnumerable<TopLevelEntity> GetAllMembersAsEnumerable()
         {
+            return new TopLevelEntity[] { this.Constructor, this.StaticConstructor }
+                .Where(tle => tle != null)
+                .Concat(this.Methods)
+                .Concat(this.Fields)
+                .OrderBy(tle =>
+                    // iteration order is declaration order
+                    tle.FirstToken == null
+                        ? 0
+                        : tle.FirstToken.Line * 10000000.0 + tle.FirstToken.Col);
+        }
+
+        internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            foreach (TopLevelEntity tle in this.GetAllMembersAsEnumerable())
+            {
+                TypeResolver memberTypeResolver = new TypeResolver(tle);
+                tle.ResolveSignatureTypes(parser, memberTypeResolver);
+            }
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            foreach (TopLevelEntity tle in this.GetAllMembersAsEnumerable())
+            {
+                TypeResolver memberTypeResolver = new TypeResolver(tle);
+                tle.ResolveTypes(parser, memberTypeResolver);
+            }
         }
 
         public void VerifyNoBaseClassLoops()
@@ -380,6 +408,43 @@ namespace Parser.ParseTree
                 walker = walker.BaseClass;
             }
             return false;
+        }
+
+        internal ClassDefinition GetCommonAncestor(ClassDefinition other)
+        {
+            if (other == this) return this;
+            if (other.BaseClass == this) return this;
+            if (other == this.BaseClass) return other;
+            ClassDefinition[] thisChain = this.GetClassAncestryChain();
+            if (thisChain[0] == other) return other;
+            ClassDefinition[] otherChain = other.GetClassAncestryChain();
+            if (thisChain[0] != otherChain[0]) return null;
+            ClassDefinition commonAncestor = thisChain[0];
+            int length = System.Math.Min(thisChain.Length, otherChain.Length);
+            for (int i = 1; i < length; ++i)
+            {
+                if (thisChain[i] == otherChain[i]) commonAncestor = thisChain[i];
+                else break;
+            }
+            return commonAncestor;
+        }
+
+        private ClassDefinition[] ancestryCache = null;
+        private ClassDefinition[] GetClassAncestryChain()
+        {
+            if (ancestryCache == null && this.BaseClass != null)
+            {
+                ClassDefinition walker = this;
+                List<ClassDefinition> output = new List<ClassDefinition>();
+                while (walker != null)
+                {
+                    output.Add(walker);
+                    walker = walker.BaseClass;
+                }
+                output.Reverse();
+                ancestryCache = output.ToArray();
+            }
+            return ancestryCache;
         }
     }
 }

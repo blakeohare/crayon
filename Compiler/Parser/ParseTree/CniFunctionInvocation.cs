@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Parser.Resolver;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Parser.ParseTree
@@ -16,7 +17,7 @@ namespace Parser.ParseTree
             this.Args = args.ToArray();
         }
 
-        public override bool CanAssignTo { get { return false; } }
+        internal override IEnumerable<Expression> Descendants { get { return this.Args; } }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
@@ -51,6 +52,19 @@ namespace Parser.ParseTree
 
             // Do not resolve args as they have already been resolved.
 
+            return this;
+        }
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            for (int i = 0; i < this.Args.Length; ++i)
+            {
+                this.Args[i] = this.Args[i].ResolveTypes(parser, typeResolver);
+                // no type information to verify yet.
+            }
+
+            // you must cast the result (for now, without any type information in metadata)
+            this.ResolvedType = ResolvedType.ANY;
             return this;
         }
     }

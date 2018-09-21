@@ -110,16 +110,16 @@ namespace Parser
             this.Keywords = this.CurrentLocale.Keywords;
             this.ReservedKeywords = new HashSet<string>(this.CurrentLocale.GetKeywordsList());
 
-            switch (scope.GetProgrammingLanguage().ToLowerInvariant())
+            switch (scope.ProgrammingLanguage)
             {
-                case "crayon":
+                case ProgrammingLanguage.CRAYON:
                     this.TopLevelParser = new Crayon.CrayonTopLevelParser(this);
                     this.ExpressionParser = new Crayon.CrayonExpressionParser(this);
                     this.ExecutableParser = new Crayon.CrayonExecutableParser(this);
                     this.AnnotationParser = new Crayon.CrayonAnnotationParser(this);
                     this.TypeParser = new Crayon.CrayonTypeParser();
                     break;
-                case "acrylic":
+                case ProgrammingLanguage.ACRYLIC:
                     this.TopLevelParser = new Acrylic.AcrylicTopLevelParser(this);
                     this.ExpressionParser = new Acrylic.AcrylicExpressionParser(this);
                     this.ExecutableParser = new Acrylic.AcrylicExecutableParser(this);
@@ -270,17 +270,6 @@ namespace Parser
                 classIdsByInstance[cls] = id;
             }
             return id;
-        }
-
-        private Dictionary<string, ClassDefinition> classDefinitions = new Dictionary<string, ClassDefinition>();
-
-        public ClassDefinition GetClass(string name)
-        {
-            if (this.classDefinitions.ContainsKey(name))
-            {
-                return this.classDefinitions[name];
-            }
-            return null;
         }
 
         private readonly Dictionary<int, string> filesUsed = new Dictionary<int, string>();

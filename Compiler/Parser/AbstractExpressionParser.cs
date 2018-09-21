@@ -214,22 +214,37 @@ namespace Parser
             return args;
         }
 
-        private Expression ParseLambda(TokenStream tokens, Token firstToken, IList<Token> args, Node owner)
+        private Expression ParseLambda(
+            TokenStream tokens,
+            Token firstToken,
+            IList<AType> argTypes,
+            IList<Token> args,
+            Node owner)
         {
             tokens.PopExpected("=>");
             IList<Executable> lambdaCode = this.parser.ExecutableParser.ParseBlock(tokens, true, owner);
-            return new Lambda(firstToken, owner, args, lambdaCode);
+            return new Lambda(firstToken, owner, args, argTypes, lambdaCode);
         }
+
+        protected abstract AType MaybeParseCastPrefix(TokenStream tokens);
 
         private Expression ParseEntity(TokenStream tokens, Node owner)
         {
             Expression root;
             Token firstToken = tokens.Peek();
+            AType castPrefix = firstToken.Value == "(" ? this.MaybeParseCastPrefix(tokens) : null;
+
+            if (castPrefix != null)
+            {
+                root = this.ParseEntity(tokens, owner);
+                return new Cast(firstToken, castPrefix, root, owner);
+            }
+
             if (tokens.PopIfPresent("("))
             {
                 if (tokens.PopIfPresent(")"))
                 {
-                    root = this.ParseLambda(tokens, firstToken, new Token[0], owner);
+                    root = this.ParseLambda(tokens, firstToken, new AType[0], new Token[0], owner);
                 }
                 else
                 {
@@ -240,12 +255,14 @@ namespace Parser
                         {
                             if (tokens.IsNext("=>"))
                             {
-                                root = this.ParseLambda(tokens, firstToken, new Token[] { root.FirstToken }, owner);
+
+                                root = this.ParseLambda(tokens, firstToken, new AType[] { AType.Any(root.FirstToken) }, new Token[] { root.FirstToken }, owner);
                             }
                         }
                         else if (tokens.IsNext(","))
                         {
                             List<Token> lambdaArgs = new List<Token>() { root.FirstToken };
+                            List<AType> lambdaArgTypes = new List<AType>() { AType.Any(root.FirstToken) };
                             Token comma = tokens.Peek();
                             while (tokens.PopIfPresent(","))
                             {
@@ -254,11 +271,12 @@ namespace Parser
                                 {
                                     throw new ParserException(comma, "Unexpected comma.");
                                 }
+                                lambdaArgTypes.Add(AType.Any(nextArg));
                                 lambdaArgs.Add(nextArg);
                                 comma = tokens.Peek();
                             }
 
-                            root = this.ParseLambda(tokens, firstToken, lambdaArgs, owner);
+                            root = this.ParseLambda(tokens, firstToken, lambdaArgTypes, lambdaArgs, owner);
                         }
                         else
                         {
@@ -283,14 +301,14 @@ namespace Parser
                 if (tokens.IsNext("."))
                 {
                     Token dotToken = tokens.Pop();
-                    Token stepToken = tokens.Pop();
+                    Token fieldToken = tokens.Pop();
                     // HACK alert: "class" is a valid field on a class.
                     // ParserVerifyIdentifier is invoked downstream for non-resolved fields.
-                    if (stepToken.Value != this.parser.Keywords.CLASS)
+                    if (fieldToken.Value != this.parser.Keywords.CLASS)
                     {
-                        this.parser.VerifyIdentifier(stepToken);
+                        this.parser.VerifyIdentifier(fieldToken);
                     }
-                    root = new DotField(root, dotToken, stepToken, owner);
+                    root = new DotField(root, dotToken, fieldToken, owner);
                 }
                 else if (tokens.IsNext("["))
                 {
@@ -396,7 +414,7 @@ namespace Parser
                 return new Variable(varToken, varToken.Value, owner);
             }
 
-            if (firstChar == '[')
+            if (firstChar == '[' && nextToken.File.CompilationScope.IsCrayon)
             {
                 Token bracketToken = tokens.PopExpected("[");
                 List<Expression> elements = new List<Expression>();
@@ -407,10 +425,10 @@ namespace Parser
                     elements.Add(Parse(tokens, owner));
                     previousHasCommaOrFirst = tokens.PopIfPresent(",");
                 }
-                return new ListDefinition(bracketToken, elements, owner);
+                return new ListDefinition(bracketToken, elements, AType.Any(), owner);
             }
 
-            if (firstChar == '{')
+            if (firstChar == '{' && nextToken.File.CompilationScope.IsCrayon)
             {
                 Token braceToken = tokens.PopExpected("{");
                 List<Expression> keys = new List<Expression>();
@@ -424,7 +442,7 @@ namespace Parser
                     values.Add(Parse(tokens, owner));
                     previousHasCommaOrFirst = tokens.PopIfPresent(",");
                 }
-                return new DictionaryDefinition(braceToken, keys, values, owner);
+                return new DictionaryDefinition(braceToken, AType.Any(), AType.Any(), keys, values, owner);
             }
 
             if (nextToken.Type == TokenType.NUMBER)

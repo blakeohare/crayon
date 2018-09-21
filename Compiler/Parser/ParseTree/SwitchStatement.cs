@@ -1,4 +1,5 @@
 ﻿using Common;
+using Parser.Resolver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -146,7 +147,7 @@ namespace Parser.ParseTree
                             if (chunk.Cases[i] is DotField)
                             {
                                 // Since most enums are in all caps, offer a more helpful error message when there's a dot followed by all caps.
-                                string field = ((DotField)chunk.Cases[i]).StepToken.Value;
+                                string field = ((DotField)chunk.Cases[i]).FieldToken.Value;
                                 if (field.ToUpperInvariant() == field)
                                 {
                                     throw new ParserException(chunk.Cases[i],
@@ -262,6 +263,36 @@ namespace Parser.ParseTree
             }
         }
 
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            this.Condition = this.Condition.ResolveTypes(parser, typeResolver);
+            ResolvedType switchType = this.Condition.ResolvedType;
+            if (switchType != ResolvedType.ANY && switchType != ResolvedType.INTEGER && switchType != ResolvedType.STRING)
+            {
+                throw new ParserException(this.Condition, "This is not a valid expression to switch on.");
+            }
+
+            foreach (Chunk chunk in this.chunks)
+            {
+                for (int i = 0; i < chunk.Cases.Length; ++i)
+                {
+                    if (chunk.Cases[i] != null)
+                    {
+                        chunk.Cases[i] = chunk.Cases[i].ResolveTypes(parser, typeResolver);
+                        if (!chunk.Cases[i].ResolvedType.CanAssignToA(switchType))
+                        {
+                            throw new ParserException(chunk.Cases[i], "Incorrect type for case value.");
+                        }
+                    }
+                }
+
+                for (int i = 0; i < chunk.Code.Length; ++i)
+                {
+                    chunk.Code[i].ResolveTypes(parser, typeResolver);
+                }
+            }
+        }
+
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             this.Condition.PerformLocalIdAllocation(parser, varIds, phase);
@@ -294,12 +325,15 @@ namespace Parser.ParseTree
                     branch.MergeToParent();
                 }
 
-                for (int i = 0; i < this.chunks.Length; ++i)
+                if (!this.CompilationScope.IsStaticallyTyped)
                 {
-                    Chunk chunk = this.chunks[i];
-                    foreach (Executable ex in chunk.Code)
+                    for (int i = 0; i < this.chunks.Length; ++i)
                     {
-                        ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
+                        Chunk chunk = this.chunks[i];
+                        foreach (Executable ex in chunk.Code)
+                        {
+                            ex.PerformLocalIdAllocation(parser, varIds, VariableIdAllocPhase.ALLOC);
+                        }
                     }
                 }
             }

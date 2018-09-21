@@ -1,4 +1,5 @@
 ﻿using Localization;
+using Parser.Resolver;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,10 +10,13 @@ namespace Parser.ParseTree
         public int FunctionID { get; set; }
         public Token NameToken { get; private set; }
         public bool IsStaticMethod { get; private set; }
+        public AType ReturnType { get; set; }
+        public ResolvedType ResolvedReturnType { get; set; }
         public AType[] ArgTypes { get; set; }
+        public ResolvedType[] ResolvedArgTypes { get; set; }
         public Token[] ArgNames { get; set; }
+        public VariableId[] ArgLocalIds { get; private set; }
         public Expression[] DefaultValues { get; set; }
-        private int[] argVarIds = null;
         public Executable[] Code { get; set; }
         public AnnotationCollection Annotations { get; set; }
         public int LocalScopeSize { get; set; }
@@ -23,6 +27,7 @@ namespace Parser.ParseTree
 
         public FunctionDefinition(
             Token functionToken,
+            AType returnType,
             TopLevelEntity nullableOwner,
             bool isStaticMethod,
             Token nameToken,
@@ -30,6 +35,7 @@ namespace Parser.ParseTree
             FileScope fileScope)
             : base(functionToken, nullableOwner, fileScope)
         {
+            this.ReturnType = returnType;
             this.IsStaticMethod = isStaticMethod;
             this.NameToken = nameToken;
             this.Annotations = annotations;
@@ -46,18 +52,6 @@ namespace Parser.ParseTree
                 name = this.TopLevelEntity.GetFullyQualifiedLocalizedName(locale) + "." + name;
             }
             return name;
-        }
-
-        public int[] ArgVarIDs
-        {
-            get
-            {
-                if (this.argVarIds == null)
-                {
-                    this.argVarIds = new int[this.ArgNames.Length];
-                }
-                return this.argVarIds;
-            }
         }
 
         internal override void Resolve(ParserContext parser)
@@ -86,16 +80,43 @@ namespace Parser.ParseTree
             parser.CurrentCodeContainer = null;
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            this.ResolvedReturnType = typeResolver.ResolveType(this.ReturnType);
+
+            int argsLength = this.ArgNames.Length;
+            this.ResolvedArgTypes = new ResolvedType[argsLength];
+            for (int i = 0; i < argsLength; ++i)
+            {
+                ResolvedType rType = typeResolver.ResolveType(this.ArgTypes[i]);
+                this.ResolvedArgTypes[i] = rType;
+                this.ArgLocalIds[i].ResolvedType = rType;
+            }
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            foreach (Expression defaultValue in this.DefaultValues)
+            {
+                if (defaultValue != null)
+                {
+                    defaultValue.ResolveTypes(parser, typeResolver);
+                }
+            }
+
+            foreach (Executable ex in this.Code)
+            {
+                ex.ResolveTypes(parser, typeResolver);
+            }
         }
 
         internal void AllocateLocalScopeIds(ParserContext parser)
         {
-            VariableScope varScope = VariableScope.NewEmptyScope();
+            VariableScope varScope = VariableScope.NewEmptyScope(this.CompilationScope.IsStaticallyTyped);
+            this.ArgLocalIds = new VariableId[this.ArgNames.Length];
             for (int i = 0; i < this.ArgNames.Length; ++i)
             {
-                varScope.RegisterVariable(this.ArgNames[i].Value);
+                this.ArgLocalIds[i] = varScope.RegisterVariable(this.ArgTypes[i], this.ArgNames[i].Value);
             }
 
             foreach (Executable ex in this.Code)

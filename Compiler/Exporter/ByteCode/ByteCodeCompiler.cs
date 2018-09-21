@@ -316,7 +316,7 @@ namespace Exporter.ByteCode
             {
                 if (classDefinition.StaticConstructor == null)
                 {
-                    classDefinition.StaticConstructor = new ConstructorDefinition(null, new AnnotationCollection(parser), classDefinition);
+                    classDefinition.StaticConstructor = new ConstructorDefinition(null, ModifierCollection.CreateStaticModifier(classDefinition.FirstToken), new AnnotationCollection(parser), classDefinition);
                     classDefinition.StaticConstructor.ResolvePublic(parser);
                 }
 
@@ -327,9 +327,11 @@ namespace Exporter.ByteCode
                     {
                         Executable assignment = new Assignment(
                             new FieldReference(fd.FirstToken, fd, fd),
+                            null,
                             fd.NameToken,
                             Ops.EQUALS,
-                            fd.DefaultValue, fd);
+                            fd.DefaultValue,
+                            fd);
                         staticFieldInitializers.Add(assignment);
                     }
                 }
@@ -417,7 +419,7 @@ namespace Exporter.ByteCode
                 foreach (FieldDefinition complexField in fieldsWithComplexValues)
                 {
                     this.CompileExpression(parser, initializer, complexField.DefaultValue, true);
-                    initializer.Add(complexField.FirstToken, OpCode.ASSIGN_THIS_STEP, complexField.MemberID);
+                    initializer.Add(complexField.FirstToken, OpCode.ASSIGN_THIS_FIELD, complexField.MemberID);
                 }
             }
 
@@ -603,10 +605,14 @@ namespace Exporter.ByteCode
             else if (expr is ClassReferenceLiteral) ClassReferenceEncoder.Compile(parser, buffer, (ClassReferenceLiteral)expr, outputUsed);
             else if (expr is Lambda) LambdaEncoder.Compile(this, parser, buffer, (Lambda)expr, outputUsed);
             else if (expr is CniFunctionInvocation) CniFunctionInvocationEncoder.Compile(this, parser, buffer, (CniFunctionInvocation)expr, null, null, outputUsed);
+            else if (expr is PrimitiveMethodReference) DotFieldEncoder.Compile(this, parser, buffer, (PrimitiveMethodReference)expr, outputUsed);
 
             // The following parse tree items must be removed before reaching the byte code encoder.
             else if (expr is BaseKeyword) this.CompileBaseKeyword(parser, buffer, (BaseKeyword)expr, outputUsed);
             else if (expr is CompileTimeDictionary) this.CompileCompileTimeDictionary((CompileTimeDictionary)expr);
+
+            // TODO: runtime type verification
+            else if (expr is Cast) this.CompileExpression(parser, buffer, ((Cast)expr).Expression, outputUsed);
 
             else throw new NotImplementedException();
         }

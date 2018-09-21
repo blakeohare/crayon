@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Parser.Resolver;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Parser.ParseTree
@@ -11,11 +12,14 @@ namespace Parser.ParseTree
         public VariableId ListLocalId { get; private set; }
         public Expression IterationExpression { get; private set; }
         public Executable[] Code { get; private set; }
+        public AType IterationType { get; private set; }
+        public ResolvedType IterationResolvedType { get; private set; }
 
-        public ForEachLoop(Token forToken, Token iterationVariable, Expression iterationExpression, IList<Executable> code, Node owner)
+        public ForEachLoop(Token forToken, AType iterationType, Token iterationVariable, Expression iterationExpression, IList<Executable> code, Node owner)
             : base(forToken, owner)
         {
             this.IterationVariable = iterationVariable;
+            this.IterationType = iterationType;
             this.IterationExpression = iterationExpression;
             this.Code = code.ToArray();
         }
@@ -35,9 +39,9 @@ namespace Parser.ParseTree
 
             if ((phase & VariableIdAllocPhase.REGISTER) != 0)
             {
-                varIds.RegisterVariable(this.IterationVariable.Value);
-                this.IndexLocalId = varIds.RegisterSyntheticVariable();
-                this.ListLocalId = varIds.RegisterSyntheticVariable();
+                varIds.RegisterVariable(this.IterationType, this.IterationVariable.Value);
+                this.IndexLocalId = varIds.RegisterSyntheticVariable(AType.Integer(this.FirstToken));
+                this.ListLocalId = varIds.RegisterSyntheticVariable(AType.Any(this.FirstToken));
             }
 
             if (phase != VariableIdAllocPhase.REGISTER_AND_ALLOC)
@@ -68,6 +72,41 @@ namespace Parser.ParseTree
             this.IterationExpression = this.IterationExpression.ResolveEntityNames(parser);
             this.BatchExecutableEntityNameResolver(parser, this.Code);
             return this;
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            this.IterationExpression = this.IterationExpression.ResolveTypes(parser, typeResolver);
+            this.IterationResolvedType = typeResolver.ResolveType(this.IterationType);
+            this.IterationVariableId.ResolvedType = this.IterationResolvedType;
+            ResolvedType exprType = this.IterationExpression.ResolvedType;
+            if (exprType.Category == ResolvedTypeCategory.ANY)
+            {
+                // This is fine.
+            }
+            else if (exprType.Category == ResolvedTypeCategory.LIST)
+            {
+                if (!exprType.ListItemType.CanAssignToA(this.IterationResolvedType))
+                {
+                    throw new ParserException(this.IterationExpression, "The list item type cannot be applied to the iterator variable's type.");
+                }
+            }
+            else if (exprType.Category == ResolvedTypeCategory.STRING)
+            {
+                if (!ResolvedType.STRING.CanAssignToA(this.IterationResolvedType))
+                {
+                    throw new ParserException(this.IterationExpression, "String characters must be assigned to string types in for loops.");
+                }
+            }
+            else
+            {
+                throw new ParserException(this.IterationExpression, "Cannot iterate on this type.");
+            }
+
+            foreach (Executable ex in this.Code)
+            {
+                ex.ResolveTypes(parser, typeResolver);
+            }
         }
     }
 }

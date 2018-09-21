@@ -1,4 +1,7 @@
-﻿namespace Parser.ParseTree
+﻿using Parser.Resolver;
+using System.Collections.Generic;
+
+namespace Parser.ParseTree
 {
     public class Variable : Expression
     {
@@ -16,13 +19,10 @@
             this.Name = name;
         }
 
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
+
         internal override Expression Resolve(ParserContext parser)
         {
-            if (this.Name == "$var")
-            {
-                return new CompileTimeDictionary(this.FirstToken, "var", this.Owner);
-            }
-
             if (!parser.Keywords.IsValidVariable(this.Name))
             {
                 throw new ParserException(this, "'" + this.Name + "' is a reserved keyword and cannot be used like this.");
@@ -33,12 +33,17 @@
 
         internal override Expression ResolveEntityNames(ParserContext parser)
         {
+            if (this.Name == "$var")
+            {
+                return new CompileTimeDictionary(this.FirstToken, "var", this.Owner);
+            }
+
             if (this.Name == "$$$")
             {
                 throw new ParserException(this, "Core function invocations cannot stand alone and must be immediately invoked.");
             }
 
-            if (this.Name.StartsWith("$") && this.Name != "$var")
+            if (this.Name.StartsWith("$"))
             {
                 throw new ParserException(this, "CNI functions must be invoked and cannot be used as function pointers.");
             }
@@ -53,9 +58,19 @@
 
             if (exec != null)
             {
-                return Resolver.ResolverPipeline.ConvertStaticReferenceToExpression(exec, this.FirstToken, this.Owner);
+                return ResolverPipeline.ConvertStaticReferenceToExpression(exec, this.FirstToken, this.Owner);
             }
 
+            return this;
+        }
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            this.ResolvedType = this.LocalScopeId.ResolvedType;
+            if (this.ResolvedType == null)
+            {
+                throw new ParserException(this, "This shouldn't happen");
+            }
             return this;
         }
 

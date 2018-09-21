@@ -1,9 +1,10 @@
-﻿namespace Parser.ParseTree
+﻿using Parser.Resolver;
+using System.Collections.Generic;
+
+namespace Parser.ParseTree
 {
     public class Increment : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public bool IsIncrement { get; private set; }
         public bool IsPrefix { get; private set; }
         public Expression Root { get; private set; }
@@ -17,6 +18,8 @@
             this.IsPrefix = isPrefix;
             this.Root = root;
         }
+
+        internal override IEnumerable<Expression> Descendants { get { return new Expression[] { this.Root }; } }
 
         internal override Expression Resolve(ParserContext parser)
         {
@@ -44,6 +47,18 @@
         internal override Expression ResolveEntityNames(ParserContext parser)
         {
             this.Root = this.Root.ResolveEntityNames(parser);
+            return this;
+        }
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            this.Root = this.Root.ResolveTypes(parser, typeResolver);
+            if (!this.Root.ResolvedType.CanAssignToA(ResolvedType.INTEGER))
+            {
+                throw new ParserException(this.Root, "++ and -- can only be applied to integer values.");
+            }
+
+            this.ResolvedType = ResolvedType.INTEGER;
             return this;
         }
     }

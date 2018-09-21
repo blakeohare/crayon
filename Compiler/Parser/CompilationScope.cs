@@ -12,6 +12,10 @@ namespace Parser
         public Dictionary<string, CniFunction> CniFunctionsByName { get; private set; }
         public AssemblyMetadata Metadata { get; private set; }
 
+        public bool IsCrayon {  get { return this.ProgrammingLanguage == ProgrammingLanguage.CRAYON; } }
+        public bool IsAcrylic {  get { return this.ProgrammingLanguage == ProgrammingLanguage.ACRYLIC; } }
+        public bool IsStaticallyTyped {  get { return this.IsAcrylic; } }
+
         private BuildContext buildContext;
         private Dictionary<CompilationScope, LocalizedAssemblyView> dependenciesAndViews = new Dictionary<CompilationScope, LocalizedAssemblyView>();
 
@@ -33,9 +37,21 @@ namespace Parser
             }
         }
 
-        // TODO: write a simple getter for source code.
-        // TODO: or define a ProgrammingLanguage field on non-top-level assemblies.
-        public string GetProgrammingLanguage()
+        private ProgrammingLanguage? programmingLanguage = null;
+
+        public ProgrammingLanguage ProgrammingLanguage
+        {
+            get
+            {
+                if (this.programmingLanguage == null)
+                {
+                    this.programmingLanguage = this.GetProgrammingLanguage();
+                }
+                return this.programmingLanguage.Value;
+            }
+        }
+
+        public ProgrammingLanguage GetProgrammingLanguage()
         {
             if (this.Metadata.IsUserDefined)
             {
@@ -48,10 +64,10 @@ namespace Parser
                 filename = filename.ToLowerInvariant();
                 if (filename.EndsWith(".acr"))
                 {
-                    return "Acrylic";
+                    return ProgrammingLanguage.ACRYLIC;
                 }
             }
-            return "Crayon";
+            return ProgrammingLanguage.CRAYON;
         }
 
         public Locale Locale

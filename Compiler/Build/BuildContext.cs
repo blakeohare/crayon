@@ -22,12 +22,12 @@ namespace Build
         public string[] ImageSheetIds { get; set; }
         public string Version { get; set; }
         public string Description { get; set; }
-        public string ProgrammingLanguage { get; set; }
+        public ProgrammingLanguage ProgrammingLanguage { get; set; }
 
         public Dictionary<string, string> GetCodeFiles()
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
-            string fileExtension = this.ProgrammingLanguage.ToLowerInvariant() == "acrylic"
+            string fileExtension = this.ProgrammingLanguage == ProgrammingLanguage.ACRYLIC
                 ? ".acr"
                 : ".cry";
             foreach (FilePath sourceDir in this.SourceFolders)
@@ -169,6 +169,12 @@ namespace Build
                 CompilerLocale = Locale.Get((flattened.CompilerLocale ?? "en").Trim()),
             };
 
+            ProgrammingLanguage? nullableLanguage = ProgrammingLanguageParser.Parse(flattened.ProgrammingLanguage ?? "Crayon");
+            if (nullableLanguage == null)
+            {
+                throw new InvalidOperationException("Invalid programming language specified: '" + flattened.ProgrammingLanguage + "'");
+            }
+
             buildContext.TopLevelAssembly = new AssemblyContext(buildContext)
             {
                 Description = flattened.Description,
@@ -177,7 +183,7 @@ namespace Build
                 ImageSheetPrefixesById = imageSheets.ToDictionary<ImageSheet, string, string[]>(s => s.Id, s => s.Prefixes),
                 ImageSheetIds = imageSheets.Select<ImageSheet, string>(s => s.Id).ToArray(),
                 BuildVariableLookup = varLookup,
-                ProgrammingLanguage = flattened.ProgrammingLanguage ?? "Crayon",
+                ProgrammingLanguage = nullableLanguage.Value,
             };
 
             return buildContext.ValidateValues();

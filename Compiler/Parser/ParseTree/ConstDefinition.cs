@@ -1,10 +1,13 @@
 ﻿using Localization;
+using Parser.Resolver;
 using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
     public class ConstDefinition : TopLevelEntity
     {
+        public AType Type { get; set; }
+        public ResolvedType ResolvedType { get; private set; }
         public Expression Expression { get; set; }
         public Token NameToken { get; private set; }
         public string Name { get; private set; }
@@ -12,6 +15,7 @@ namespace Parser.ParseTree
 
         public ConstDefinition(
             Token constToken,
+            AType type,
             Token nameToken,
             Node owner,
             FileScope fileScope,
@@ -20,6 +24,7 @@ namespace Parser.ParseTree
         {
             this.NameToken = nameToken;
             this.Name = nameToken.Value;
+            this.Type = type;
             this.annotations = annotations;
         }
 
@@ -62,8 +67,54 @@ namespace Parser.ParseTree
             this.Expression = this.Expression.ResolveEntityNames(parser);
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal void ValidateConstTypeSignature()
         {
+            switch (this.ResolvedType.Category)
+            {
+                case ResolvedTypeCategory.VOID:
+                    throw new ParserException(this, "Constant expression cannot have a be void type.");
+
+                case ResolvedTypeCategory.ANY:
+                case ResolvedTypeCategory.BOOLEAN:
+                case ResolvedTypeCategory.INTEGER:
+                case ResolvedTypeCategory.FLOAT:
+                case ResolvedTypeCategory.NULL:
+                case ResolvedTypeCategory.STRING:
+                    // This is fine.
+                    break;
+
+                default:
+                    throw new ParserException(this, "This is not a valid constant expression.");
+            }
+
+            this.Expression.ResolvedType.EnsureCanAssignToA(this.FirstToken, this.ResolvedType);
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            bool hasExplicitlySetType = this.CompilationScope.IsStaticallyTyped;
+            if (hasExplicitlySetType)
+            {
+                this.ResolvedType = typeResolver.ResolveType(this.Type);
+            }
+
+            this.Expression = this.Expression.ResolveTypes(parser, typeResolver);
+
+            if (this.Expression.ResolvedType == ResolvedType.ANY)
+            {
+                throw new ParserException(this.Expression, "This expression does not resolve to a constant.");
+            }
+
+            if (!hasExplicitlySetType) {
+                this.ResolvedType = this.Expression.ResolvedType;
+            }
+        }
+
+        // Signature types are implicitly declared by the contents for dynamically typed language (Crayon)
+        // or set in the outer loop in the resolver pipeline in statically typed languages (Acrylic)
+        internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

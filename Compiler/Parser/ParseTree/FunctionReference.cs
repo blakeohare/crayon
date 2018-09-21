@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Parser.Resolver;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Parser.ParseTree
 {
     public class FunctionReference : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
+        internal override IEnumerable<Expression> Descendants { get { return Expression.NO_DESCENDANTS; } }
 
         public FunctionDefinition FunctionDefinition { get; set; }
 
@@ -22,6 +25,17 @@ namespace Parser.ParseTree
         internal override Expression ResolveEntityNames(ParserContext parser)
         {
             throw new InvalidOperationException(); // Generated in the resolve name phase.
+        }
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            ResolvedType returnType = this.FunctionDefinition.ResolvedReturnType;
+            ResolvedType[] argTypes = this.FunctionDefinition.ResolvedArgTypes;
+            int optionalCount = argTypes.Length == 0 || this.FunctionDefinition.DefaultValues[argTypes.Length - 1] == null
+                ? 0
+                : this.FunctionDefinition.DefaultValues.Where(e => e != null).Count();
+            this.ResolvedType = ResolvedType.GetFunctionType(returnType, argTypes, optionalCount);
+            return this;
         }
 
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase) { }

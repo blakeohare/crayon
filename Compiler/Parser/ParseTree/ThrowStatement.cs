@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Parser.Resolver;
+using System.Collections.Generic;
 
 namespace Parser.ParseTree
 {
@@ -30,6 +31,19 @@ namespace Parser.ParseTree
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             this.Expression.PerformLocalIdAllocation(parser, varIds, phase);
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            this.Expression = this.Expression.ResolveTypes(parser, typeResolver);
+            ResolvedType exceptionType = this.Expression.ResolvedType;
+            if (exceptionType == ResolvedType.ANY)
+                return;
+            if (exceptionType.Category != ResolvedTypeCategory.INSTANCE)
+                throw new ParserException(this.Expression, "Only objects that extend from Core.Exception can be thrown.");
+
+            ClassDefinition objType = exceptionType.ClassTypeOrReference;
+            // TODO: check if objType extends from Core.Exception
         }
     }
 }

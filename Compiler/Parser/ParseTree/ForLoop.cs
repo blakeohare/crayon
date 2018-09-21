@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Parser.Resolver;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Parser.ParseTree
@@ -75,6 +76,29 @@ namespace Parser.ParseTree
                 {
                     ex.PerformLocalIdAllocation(parser, varIds, phase);
                 }
+            }
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            foreach (Executable init in this.Init)
+            {
+                init.ResolveTypes(parser, typeResolver);
+            }
+
+            this.Condition = this.Condition.ResolveTypes(parser, typeResolver);
+            if (!this.Condition.ResolvedType.CanAssignToA(ResolvedType.BOOLEAN))
+            {
+                throw new ParserException(this.Condition, "for loop condition must be a boolean.");
+            }
+
+            foreach (Executable step in this.Step)
+            {
+                step.ResolveTypes(parser, typeResolver);
+            }
+            foreach (Executable line in this.Code)
+            {
+                line.ResolveTypes(parser, typeResolver);
             }
         }
     }

@@ -1,9 +1,10 @@
-﻿namespace Parser.ParseTree
+﻿using Parser.Resolver;
+using System.Collections.Generic;
+
+namespace Parser.ParseTree
 {
     public class NullCoalescer : Expression
     {
-        public override bool CanAssignTo { get { return false; } }
-
         public Expression PrimaryExpression { get; set; }
         public Expression SecondaryExpression { get; set; }
 
@@ -13,6 +14,8 @@
             this.PrimaryExpression = primaryExpression;
             this.SecondaryExpression = secondaryExpression;
         }
+
+        internal override IEnumerable<Expression> Descendants { get { return new Expression[] { this.PrimaryExpression, this.SecondaryExpression }; } }
 
         internal override Expression Resolve(ParserContext parser)
         {
@@ -40,6 +43,22 @@
         {
             this.PrimaryExpression = this.PrimaryExpression.ResolveEntityNames(parser);
             this.SecondaryExpression = this.SecondaryExpression.ResolveEntityNames(parser);
+            return this;
+        }
+
+        internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            this.PrimaryExpression = this.PrimaryExpression.ResolveTypes(parser, typeResolver);
+            this.SecondaryExpression = this.SecondaryExpression.ResolveTypes(parser, typeResolver);
+            if (this.PrimaryExpression.ResolvedType == ResolvedType.NULL)
+            {
+                return this.SecondaryExpression;
+            }
+            if (this.PrimaryExpression is IConstantValue)
+            {
+                return this.PrimaryExpression;
+            }
+            this.ResolvedType = typeResolver.FindCommonAncestor(this.PrimaryExpression.ResolvedType, this.SecondaryExpression.ResolvedType);
             return this;
         }
 

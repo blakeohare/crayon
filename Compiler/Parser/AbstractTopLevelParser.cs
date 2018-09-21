@@ -50,7 +50,7 @@ namespace Parser
         {
             AnnotationCollection annotations = annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
 
-            ModifierCollection modifiers_IGNORED = this.ParseModifiers(tokens);
+            ModifierCollection modifiers = this.ParseModifiers(tokens);
 
             string value = tokens.PeekValue();
 
@@ -103,12 +103,12 @@ namespace Parser
 
             if (value == this.parser.Keywords.NAMESPACE) return this.ParseNamespace(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner, fileScope, annotations);
-            if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner, fileScope, annotations, modifiers_IGNORED);
+            if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner, fileScope, annotations, modifiers);
             if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, staticToken, finalToken, fileScope, annotations);
             if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner, fileScope, annotations);
-            if (value == this.parser.Keywords.CONSTRUCTOR && owner is ClassDefinition) return this.ParseConstructor(tokens, (ClassDefinition)owner, annotations);
+            if (value == this.parser.Keywords.CONSTRUCTOR && owner is ClassDefinition) return this.ParseConstructor(tokens, (ClassDefinition)owner, modifiers, annotations);
 
-            FunctionDefinition nullableFunctionDef = this.MaybeParseFunctionDefinition(tokens, owner, fileScope, annotations, modifiers_IGNORED);
+            FunctionDefinition nullableFunctionDef = this.MaybeParseFunctionDefinition(tokens, owner, fileScope, annotations, modifiers);
             if (nullableFunctionDef != null)
             {
                 return nullableFunctionDef;
@@ -135,10 +135,11 @@ namespace Parser
         protected virtual ConstructorDefinition ParseConstructor(
             TokenStream tokens,
             ClassDefinition owner,
+            ModifierCollection modifiers,
             AnnotationCollection annotations)
         {
             Token constructorToken = tokens.PopExpected(this.parser.Keywords.CONSTRUCTOR);
-            ConstructorDefinition ctor = new ConstructorDefinition(constructorToken, annotations, owner);
+            ConstructorDefinition ctor = new ConstructorDefinition(constructorToken, modifiers, annotations, owner);
             tokens.PopExpected("(");
 
             List<AType> argTypes = new List<AType>();
@@ -166,7 +167,7 @@ namespace Parser
 
             IList<Executable> code = this.parser.ExecutableParser.ParseBlock(tokens, true, ctor);
 
-            ctor.SetArgs(argNames, argValues);
+            ctor.SetArgs(argNames, argValues, argTypes);
             ctor.SetBaseArgs(baseArgs);
             ctor.SetCode(code);
             ctor.BaseToken = baseToken;

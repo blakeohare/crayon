@@ -1,4 +1,5 @@
 ﻿using Localization;
+using Parser.Resolver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,8 +69,14 @@ namespace Parser.ParseTree
             throw new InvalidOperationException();
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            throw new NotImplementedException();
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            throw new NotImplementedException();
         }
     }
 }

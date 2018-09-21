@@ -14,6 +14,13 @@ namespace Parser
         private static readonly Token[] EMPTY_TOKEN_LIST = new Token[0];
         private static readonly AType[] EMPTY_TYPE_ARGS = new AType[0];
 
+        private static AType Empty(Token nullableToken)
+        {
+            AType t = new AType(EMPTY_TOKEN_LIST);
+            t.FirstToken = nullableToken;
+            return t;
+        }
+
         public static AType Any()
         {
             return Any(null);
@@ -21,11 +28,23 @@ namespace Parser
 
         public static AType Any(Token token)
         {
-            if (token != null)
-            {
-                return new AType(new List<Token>() { token }) { IsAnyType = true };
-            }
-            return new AType(EMPTY_TOKEN_LIST) { IsAnyType = true };
+            AType type = Empty(token);
+            type.IsAnyType = true;
+            return type;
+        }
+
+        public static AType Integer(Token token)
+        {
+            AType t = Empty(token);
+            t.RootType = "int";
+            return t;
+        }
+
+        public static AType ProvideRoot(Token token, string rootType)
+        {
+            AType type = Empty(token);
+            type.RootType = rootType;
+            return type;
         }
 
         public AType(IList<Token> rootType) : this(rootType, EMPTY_TYPE_ARGS) { }
@@ -34,7 +53,7 @@ namespace Parser
         {
             this.IsAnyType = false;
             this.RootTypeTokens = rootType.ToArray();
-            this.FirstToken = this.RootTypeTokens[0];
+            this.FirstToken = this.RootTypeTokens.Length == 0 ? null : this.RootTypeTokens[0];
             this.RootType = string.Join(".", this.RootTypeTokens.Select(t => t.Value));
             this.Generics = generics.ToArray();
         }

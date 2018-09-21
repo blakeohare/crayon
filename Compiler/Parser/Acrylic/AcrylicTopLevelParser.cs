@@ -37,17 +37,17 @@ namespace Parser.Acrylic
         protected override void ParseClassMember(TokenStream tokens, FileScope fileScope, ClassDefinition classDef, IList<FunctionDefinition> methodsOut, IList<FieldDefinition> fieldsOut)
         {
             AnnotationCollection annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
-            ModifierCollection modifiers_IGNORED = this.ParseModifiers(tokens);
+            ModifierCollection modifiers = this.ParseModifiers(tokens);
 
             if (tokens.IsNext(this.parser.Keywords.CONSTRUCTOR))
             {
-                if (modifiers_IGNORED.HasStatic)
+                if (modifiers.HasStatic)
                 {
                     if (classDef.StaticConstructor != null)
                     {
                         throw new ParserException(tokens.Pop(), "Multiple static constructors are not allowed.");
                     }
-                    classDef.StaticConstructor = this.ParseConstructor(tokens, classDef, annotations);
+                    classDef.StaticConstructor = this.ParseConstructor(tokens, classDef, modifiers, annotations);
                 }
                 else
                 {
@@ -57,7 +57,7 @@ namespace Parser.Acrylic
                             ErrorMessages.CLASS_CANNOT_HAVE_MULTIPLE_CONSTRUCTORS,
                             tokens.Pop());
                     }
-                    classDef.Constructor = this.ParseConstructor(tokens, classDef, annotations);
+                    classDef.Constructor = this.ParseConstructor(tokens, classDef, modifiers, annotations);
                 }
             }
             else if (tokens.IsNext(this.parser.Keywords.CLASS))
@@ -79,10 +79,10 @@ namespace Parser.Acrylic
                 {
                     case "=":
                     case ";":
-                        fieldsOut.Add(this.ParseField(tokens, classDef, annotations, modifiers_IGNORED));
+                        fieldsOut.Add(this.ParseField(tokens, classDef, annotations, modifiers));
                         break;
                     case "(":
-                        methodsOut.Add(this.ParseFunction(tokens, classDef, fileScope, annotations, modifiers_IGNORED));
+                        methodsOut.Add(this.ParseFunction(tokens, classDef, fileScope, annotations, modifiers));
                         break;
                     default:
                         tokens.PopExpected("}"); // intentionally induce error
@@ -123,7 +123,7 @@ namespace Parser.Acrylic
             Token functionNameToken = tokens.Pop();
             this.parser.VerifyIdentifier(functionNameToken);
 
-            FunctionDefinition fd = new FunctionDefinition(firstToken, nullableOwner, modifiers.HasStatic, functionNameToken, annotations, fileScope);
+            FunctionDefinition fd = new FunctionDefinition(firstToken, returnType, nullableOwner, modifiers.HasStatic, functionNameToken, annotations, fileScope);
 
             tokens.PopExpected("(");
             List<AType> argTypes = new List<AType>();
@@ -150,7 +150,7 @@ namespace Parser.Acrylic
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             AType type = this.parser.TypeParser.Parse(tokens);
             Token nameToken = tokens.Pop();
-            ConstDefinition constStatement = new ConstDefinition(constToken, nameToken, owner, fileScope, annotations);
+            ConstDefinition constStatement = new ConstDefinition(constToken, type, nameToken, owner, fileScope, annotations);
             this.parser.VerifyIdentifier(nameToken);
             tokens.PopExpected("=");
             constStatement.Expression = this.parser.ExpressionParser.Parse(tokens, constStatement);

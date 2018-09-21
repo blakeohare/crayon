@@ -36,7 +36,7 @@ namespace Parser.Crayon
                         tokens.Pop());
                 }
 
-                classDef.Constructor = this.ParseConstructor(tokens, classDef, annotations);
+                classDef.Constructor = this.ParseConstructor(tokens, classDef, modifiers, annotations);
             }
             else if (tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.CONSTRUCTOR))
             {
@@ -46,7 +46,7 @@ namespace Parser.Crayon
                     throw new ParserException(tokens.Pop(), "Multiple static constructors are not allowed.");
                 }
 
-                classDef.StaticConstructor = this.ParseConstructor(tokens, classDef, annotations);
+                classDef.StaticConstructor = this.ParseConstructor(tokens, classDef, modifiers, annotations);
             }
             else if (tokens.IsNext(this.parser.Keywords.FIELD) ||
                 tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FIELD))
@@ -76,7 +76,7 @@ namespace Parser.Crayon
             Token fieldToken = tokens.PopExpected(this.parser.Keywords.FIELD);
             Token nameToken = tokens.Pop();
             this.parser.VerifyIdentifier(nameToken);
-            FieldDefinition fd = new FieldDefinition(fieldToken, null, nameToken, owner, isStatic, annotations);
+            FieldDefinition fd = new FieldDefinition(fieldToken, AType.Any(fieldToken), nameToken, owner, isStatic, annotations);
             if (tokens.PopIfPresent("="))
             {
                 fd.DefaultValue = this.parser.ExpressionParser.Parse(tokens, fd);
@@ -102,7 +102,7 @@ namespace Parser.Crayon
             Token functionNameToken = tokens.Pop();
             this.parser.VerifyIdentifier(functionNameToken);
 
-            FunctionDefinition fd = new FunctionDefinition(functionToken, nullableOwner, isStatic, functionNameToken, annotations, fileScope);
+            FunctionDefinition fd = new FunctionDefinition(functionToken, AType.Any(functionToken), nullableOwner, isStatic, functionNameToken, annotations, fileScope);
 
             tokens.PopExpected("(");
             List<Token> argNames = new List<Token>();
@@ -112,6 +112,7 @@ namespace Parser.Crayon
 
             IList<Executable> code = this.parser.ExecutableParser.ParseBlock(tokens, true, fd);
 
+            fd.ArgTypes = argTypes.ToArray();
             fd.ArgNames = argNames.ToArray();
             fd.DefaultValues = defaultValues.ToArray();
             fd.Code = code.ToArray();
@@ -127,7 +128,7 @@ namespace Parser.Crayon
         {
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             Token nameToken = tokens.Pop();
-            ConstDefinition constStatement = new ConstDefinition(constToken, nameToken, owner, fileScope, annotations);
+            ConstDefinition constStatement = new ConstDefinition(constToken, AType.Any(constToken), nameToken, owner, fileScope, annotations);
             this.parser.VerifyIdentifier(nameToken);
             tokens.PopExpected("=");
             constStatement.Expression = this.parser.ExpressionParser.Parse(tokens, constStatement);

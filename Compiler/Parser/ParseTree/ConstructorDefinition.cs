@@ -1,5 +1,6 @@
 ﻿using Common;
 using Localization;
+using Parser.Resolver;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,11 +9,14 @@ namespace Parser.ParseTree
     public class ConstructorDefinition : TopLevelEntity, ICodeContainer
     {
         private static readonly Token[] NO_TOKENS = new Token[0];
+        private static readonly AType[] NO_TYPES = new AType[0];
         private static readonly Expression[] NO_EXPRESSIONS = new Expression[0];
         private static readonly Executable[] NO_EXECUTABLES = new Executable[0];
 
         public int FunctionID { get; private set; }
         public Executable[] Code { get; set; }
+        public AType[] ArgTypes { get; set; }
+        public ResolvedType[] ResolvedArgTypes { get; private set; }
         public Token[] ArgNames { get; private set; }
         public Expression[] DefaultValues { get; private set; }
         public Expression[] BaseArgs { get; private set; }
@@ -21,23 +25,27 @@ namespace Parser.ParseTree
         public int MinArgCount { get; set; }
         public int MaxArgCount { get; set; }
         public bool IsDefault { get; private set; }
+        public bool IsStatic { get; private set; }
         public AnnotationCollection Annotations { get; set; }
         public List<Lambda> Lambdas { get; private set; }
 
-        public ConstructorDefinition(ClassDefinition owner, AnnotationCollection annotations)
-            : this(null, annotations, owner)
+        public ConstructorDefinition(ClassDefinition owner, ModifierCollection modifiers, AnnotationCollection annotations)
+            : this(null, modifiers, annotations, owner)
         {
             this.IsDefault = true;
         }
 
         public ConstructorDefinition(
             Token constructorToken,
+            ModifierCollection modifiers,
             AnnotationCollection annotations,
             ClassDefinition owner)
             : base(constructorToken, owner, owner.FileScope)
         {
             this.IsDefault = false;
+            this.IsStatic = modifiers.HasStatic;
             this.Annotations = annotations;
+            this.ArgTypes = NO_TYPES;
             this.ArgNames = NO_TOKENS;
             this.DefaultValues = NO_EXPRESSIONS;
             this.MaxArgCount = 0;
@@ -47,10 +55,11 @@ namespace Parser.ParseTree
             this.Lambdas = new List<Lambda>();
         }
 
-        internal void SetArgs(IList<Token> argNames, IList<Expression> defaultValues)
+        internal void SetArgs(IList<Token> argNames, IList<Expression> defaultValues, IList<AType> argTypes)
         {
             this.ArgNames = argNames.ToArray();
             this.DefaultValues = defaultValues.ToArray();
+            this.ArgTypes = argTypes.ToArray();
             TODO.VerifyDefaultArgumentsAreAtTheEnd();
 
             this.MaxArgCount = this.ArgNames.Length;
@@ -117,12 +126,15 @@ namespace Parser.ParseTree
             this.Code = code.ToArray();
         }
 
+        public VariableId[] ArgLocalIds { get; private set; }
+
         internal void AllocateLocalScopeIds(ParserContext parser)
         {
-            VariableScope varScope = VariableScope.NewEmptyScope();
+            VariableScope varScope = VariableScope.NewEmptyScope(this.CompilationScope.IsStaticallyTyped);
+            this.ArgLocalIds = new VariableId[this.ArgNames.Length];
             for (int i = 0; i < this.ArgNames.Length; ++i)
             {
-                varScope.RegisterVariable(this.ArgNames[i].Value);
+                this.ArgLocalIds[i] = varScope.RegisterVariable(this.ArgTypes[i], this.ArgNames[i].Value);
             }
 
             foreach (Expression arg in this.BaseArgs)
@@ -158,8 +170,72 @@ namespace Parser.ParseTree
             parser.CurrentCodeContainer = null;
         }
 
-        internal override void ResolveTypes(ParserContext parser)
+        internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
         {
+            this.ResolvedArgTypes = typeResolver.ResolveTypes(this.ArgTypes);
+        }
+
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            for (int i = 0; i < this.ArgNames.Length; ++i)
+            {
+                this.ArgLocalIds[i].ResolvedType = typeResolver.ResolveType(this.ArgTypes[i]);
+            }
+
+            foreach (Expression defaultArg in this.DefaultValues)
+            {
+                if (defaultArg != null)
+                {
+                    defaultArg.ResolveTypes(parser, typeResolver);
+                }
+            }
+
+            ClassDefinition cd = (ClassDefinition)this.Owner;
+            if (this.IsStatic)
+            {
+                if (this.BaseToken != null)
+                {
+                    throw new ParserException(this, "Cannot call the base constructor from a static constructor.");
+                }
+            }
+            else if (cd.BaseClass != null)
+            {
+                ConstructorDefinition baseConstructor = cd.BaseClass.Constructor;
+                ResolvedType[] baseConstructorArgTypes = baseConstructor == null
+                    ? new ResolvedType[0]
+                    : baseConstructor.ResolvedArgTypes;
+                Expression[] baseConstructorDefaultValues = baseConstructor == null
+                    ? new Expression[0]
+                    : baseConstructor.DefaultValues;
+                int optionalArgCount = FunctionCall.CountOptionalArgs(baseConstructorDefaultValues);
+                int maxArgCount = baseConstructorArgTypes.Length;
+                int minArgCount = maxArgCount - optionalArgCount;
+                if (this.BaseArgs.Length < minArgCount || this.BaseArgs.Length > maxArgCount)
+                {
+                    throw new ParserException(this, "Incorrect number of arguments passed to base constructor.");
+                }
+
+                for (int i = 0; i < this.BaseArgs.Length; ++i)
+                {
+                    this.BaseArgs[i] = this.BaseArgs[i].ResolveTypes(parser, typeResolver);
+                    if (!this.BaseArgs[i].ResolvedType.CanAssignToA(baseConstructorArgTypes[i]))
+                    {
+                        throw new ParserException(this.BaseArgs[i], "Argument is incorrect type.");
+                    }
+                }
+            }
+            else
+            {
+                if (this.BaseArgs != null && this.BaseArgs.Length > 0)
+                {
+                    throw new ParserException(this.BaseToken, "There is no base class for this constructor to invoke.");
+                }
+            }
+
+            foreach (Executable line in this.Code)
+            {
+                line.ResolveTypes(parser, typeResolver);
+            }
         }
     }
 }

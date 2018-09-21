@@ -15,6 +15,7 @@ namespace Parser.Acrylic
             AType possiblyAVariableDeclaration = this.parser.TypeParser.TryParse(tokens);
             if (possiblyAVariableDeclaration != null)
             {
+                AType variableDeclarationType = possiblyAVariableDeclaration;
                 Token variableToken = tokens.PopIfWord();
                 if (variableToken != null)
                 {
@@ -34,6 +35,7 @@ namespace Parser.Acrylic
                     {
                         return new Assignment(
                             new Variable(variableToken, variableToken.Value, owner),
+                            variableDeclarationType,
                             assignmentOpToken,
                             assignmentValue,
                             owner);

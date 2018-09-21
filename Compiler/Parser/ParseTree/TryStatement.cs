@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Parser.Resolver;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Parser.ParseTree
@@ -161,6 +162,27 @@ namespace Parser.ParseTree
             return this;
         }
 
+        internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
+        {
+            foreach (Executable ex in this.TryBlock)
+            {
+                ex.ResolveTypes(parser, typeResolver);
+            }
+
+            foreach (CatchBlock cb in this.CatchBlocks)
+            {
+                foreach (Executable ex in cb.Code)
+                {
+                    ex.ResolveTypes(parser, typeResolver);
+                }
+            }
+
+            foreach (Executable ex in this.FinallyBlock)
+            {
+                ex.ResolveTypes(parser, typeResolver);
+            }
+        }
+
         internal override void PerformLocalIdAllocation(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)
         {
             foreach (Executable ex in this.TryBlock)
@@ -174,7 +196,11 @@ namespace Parser.ParseTree
                 {
                     if ((phase & VariableIdAllocPhase.REGISTER) != 0)
                     {
-                        varIds.RegisterVariable(cb.ExceptionVariableToken.Value);
+                        // TODO: this is a little flawed. Should find the common base class.
+                        AType exceptionType = cb.Types.Length == 1
+                            ? AType.ProvideRoot(cb.TypeTokens[0], cb.Types[0])
+                            : AType.ProvideRoot(cb.CatchToken, "Core.Exception");
+                        varIds.RegisterVariable(exceptionType, cb.ExceptionVariableToken.Value);
                     }
 
                     if ((phase & VariableIdAllocPhase.ALLOC) != 0)

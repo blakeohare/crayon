@@ -8,8 +8,8 @@
         ASSIGN_INDEX, // 1: 0 or 1 for whether to push the assigned value back on the stack when done. value stack: [root, index, value]
         ASSIGN_LOCAL, // 1: local scope ID
         ASSIGN_STATIC_FIELD, // 1: class ID, 2: field ID
-        ASSIGN_STEP, // name ID of step. value stack: [root, value]
-        ASSIGN_THIS_STEP, // name ID of step. value stack: [value]
+        ASSIGN_FIELD, // name ID of field. value stack: [root, value]
+        ASSIGN_THIS_FIELD, // name ID of field. value stack: [value]
         BINARY_OP,
         BOOLEAN_NOT, // no args.
         BREAK, // 0: flag if this has been set, 1: PC offset to jump to (generally BREAK gets resolved into JUMP unless a finally block needs to run.)
@@ -24,7 +24,7 @@
         DEF_DICTIONARY, // 1: size
         DEF_LIST, // 1: size
         DEREF_CLOSURE, // 1: var ID
-        DEREF_DOT, // 1: step ID
+        DEREF_DOT, // 1: field ID
         DEREF_INSTANCE_FIELD, // 1: member ID
         DEREF_STATIC_FIELD, // 1: class ID, 2: static member ID
         DUPLICATE_STACK_TOP, // 1: how many stack items should be duplicated?. get the top n of the stack, and just duplicate it
