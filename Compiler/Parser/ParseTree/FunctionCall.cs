@@ -356,6 +356,37 @@ namespace Parser.ParseTree
                     }
                 }
                 this.ResolvedType = rootType.FunctionReturnType;
+
+                // TODO: this is temporary until the Math library is converted to Acrylic
+                if (this.ResolvedType == ResolvedType.ANY &&
+                    this.Root is FunctionReference &&
+                    ((FunctionReference)this.Root).FunctionDefinition.CompilationScope.Metadata.ID == "Math")
+                {
+                    FunctionReference func = (FunctionReference)this.Root;
+                    switch (func.FunctionDefinition.NameToken.Value)
+                    {
+                        case "abs":
+                        case "min":
+                        case "max":
+                        case "ensureRange":
+                            if (this.Args.Where(ex => ex.ResolvedType == ResolvedType.FLOAT).FirstOrDefault() != null)
+                            {
+                                this.ResolvedType = ResolvedType.FLOAT;
+                            }
+                            this.ResolvedType = ResolvedType.INTEGER;
+                            break;
+
+                        case "floor":
+                        case "sign":
+                            this.ResolvedType = ResolvedType.INTEGER;
+                            break;
+
+                        default:
+                            this.ResolvedType = ResolvedType.FLOAT;
+                            break;
+                    }
+                }
+
                 if (this.ResolvedType == ResolvedType.ANY &&
                     this.CompilationScope.IsStaticallyTyped)
                 {
