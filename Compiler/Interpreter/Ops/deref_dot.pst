@@ -10,8 +10,8 @@ switch (value.type) {
         classInfo = classTable[objInstance1.classId];
         intIntDict1 = classInfo.localeScopedNameIdToMemberId;
 
-        // TODO: a better way to do this without double-lookup.
-        if (intIntDict1.Contains(int2)) {
+        int1 = intIntDict1.TryGet(int2, -1);
+        if (int1 != -1) {
             int1 = intIntDict1[int2];
             functionId = classInfo.functionIds[int1];
             if (functionId == -1) {

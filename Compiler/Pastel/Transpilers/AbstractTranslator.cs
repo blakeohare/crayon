@@ -51,7 +51,25 @@ namespace Pastel.Transpilers
             string typeName = executable.GetType().Name;
             switch (typeName)
             {
-                case "Assignment": this.TranslateAssignment(sb, (Assignment)executable); break;
+                case "Assignment":
+                    Assignment asgn = (Assignment)executable;
+                    if (asgn.Value is NativeFunctionInvocation &&
+                        asgn.Target is Variable &&
+                        ((NativeFunctionInvocation)asgn.Value).Function == NativeFunction.DICTIONARY_TRY_GET)
+                    {
+                        Variable variableOut = (Variable)asgn.Target;
+                        Expression[] tryGetArgs = ((NativeFunctionInvocation)asgn.Value).Args;
+                        Expression dictionary = tryGetArgs[0];
+                        Expression key = tryGetArgs[1];
+                        Expression fallbackValue = tryGetArgs[2];
+                        this.TranslateDictionaryTryGet(sb, dictionary, key, fallbackValue, variableOut);
+                    }
+                    else
+                    {
+                        this.TranslateAssignment(sb, asgn);
+                    }
+                    break;
+
                 case "BreakStatement": this.TranslateBreak(sb); break;
                 case "ExpressionAsExecutable": this.TranslateExpressionAsExecutable(sb, ((ExpressionAsExecutable)executable).Expression); break;
                 case "IfStatement": this.TranslateIfStatement(sb, (IfStatement)executable); break;
@@ -299,6 +317,9 @@ namespace Pastel.Transpilers
                 case Pastel.NativeFunction.STRONG_REFERENCE_EQUALITY: this.TranslateStrongReferenceEquality(sb, args[0], args[1]); break;
                 case Pastel.NativeFunction.TRY_PARSE_FLOAT: this.TranslateTryParseFloat(sb, args[0], args[1]); break;
 
+                case NativeFunction.DICTIONARY_TRY_GET:
+                    throw new ParserException(nativeFuncInvocation.FirstToken, "Dictionary's TryGet method cannot be called like this. It must be assigned to a variable directly. This is due to a restriction in how this can get transpiled to certain languages.");
+
                 default: throw new NotImplementedException(nativeFuncInvocation.Function.ToString());
             }
         }
@@ -395,6 +416,7 @@ namespace Pastel.Transpilers
         public abstract void TranslateDictionaryRemove(TranspilerContext sb, Expression dictionary, Expression key);
         public abstract void TranslateDictionarySet(TranspilerContext sb, Expression dictionary, Expression key, Expression value);
         public abstract void TranslateDictionarySize(TranspilerContext sb, Expression dictionary);
+        public abstract void TranslateDictionaryTryGet(TranspilerContext sb, Expression dictionary, Expression key, Expression fallbackValue, Variable varOut);
         public abstract void TranslateDictionaryValues(TranspilerContext sb, Expression dictionary);
         public abstract void TranslateEmitComment(TranspilerContext sb, string value);
         public abstract void TranslateExpressionAsExecutable(TranspilerContext sb, Expression expression);

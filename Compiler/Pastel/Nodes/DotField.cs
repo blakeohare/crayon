@@ -226,6 +226,7 @@ namespace Pastel.Nodes
                         case "Keys": return NativeFunction.DICTIONARY_KEYS;
                         case "Remove": return NativeFunction.DICTIONARY_REMOVE;
                         case "Size": return NativeFunction.DICTIONARY_SIZE;
+                        case "TryGet": return NativeFunction.DICTIONARY_TRY_GET;
                         case "Values": return NativeFunction.DICTIONARY_VALUES;
                         default: throw new ParserException(this.FieldName, "Unresolved Dictionary method: " + field);
                     }

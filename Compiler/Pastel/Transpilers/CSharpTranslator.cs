@@ -225,6 +225,23 @@ namespace Pastel.Transpilers
             sb.Append(".Count");
         }
 
+        public override void TranslateDictionaryTryGet(TranspilerContext sb, Expression dictionary, Expression key, Expression fallbackValue, Variable varOut)
+        {
+            sb.Append(sb.CurrentTab);
+            sb.Append("if (!");
+            this.TranslateExpression(sb, dictionary);
+            sb.Append(".TryGetValue(");
+            this.TranslateExpression(sb, key);
+            sb.Append(", out v_");
+            sb.Append(varOut.Name);
+            sb.Append(")) v_");
+            sb.Append(varOut.Name);
+            sb.Append(" = ");
+            this.TranslateExpression(sb, fallbackValue);
+            sb.Append(";");
+            sb.Append(this.NewLine);
+        }
+
         public override void TranslateDictionaryValues(TranspilerContext sb, Expression dictionary)
         {
             this.TranslateExpression(sb, dictionary);
