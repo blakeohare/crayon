@@ -316,7 +316,7 @@ namespace Exporter.ByteCode
             {
                 if (classDefinition.StaticConstructor == null)
                 {
-                    classDefinition.StaticConstructor = new ConstructorDefinition(null, new AnnotationCollection(parser), classDefinition);
+                    classDefinition.StaticConstructor = new ConstructorDefinition(null, ModifierCollection.CreateStaticModifier(classDefinition.FirstToken), new AnnotationCollection(parser), classDefinition);
                     classDefinition.StaticConstructor.ResolvePublic(parser);
                 }
 
@@ -610,6 +610,9 @@ namespace Exporter.ByteCode
             // The following parse tree items must be removed before reaching the byte code encoder.
             else if (expr is BaseKeyword) this.CompileBaseKeyword(parser, buffer, (BaseKeyword)expr, outputUsed);
             else if (expr is CompileTimeDictionary) this.CompileCompileTimeDictionary((CompileTimeDictionary)expr);
+
+            // TODO: runtime type verification
+            else if (expr is Cast) this.CompileExpression(parser, buffer, ((Cast)expr).Expression, outputUsed);
 
             else throw new NotImplementedException();
         }
