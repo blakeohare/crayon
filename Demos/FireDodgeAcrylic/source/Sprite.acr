@@ -70,7 +70,7 @@ public class Player : Sprite {
     static constructor() {
         // populate the image lookup for the player.
         for (string direction : new string[] { 'n', 's', 'e', 'w' }) {
-            GraphicsTexture images = new List<GraphicsTexture>();
+            List<GraphicsTexture> images = new List<GraphicsTexture>();
             for (int i = 1; i <= 3; ++i) {
                 images.add(ImageLibrary.get('images/player/' + direction + i + '.png'));
             }

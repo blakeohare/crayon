@@ -18,6 +18,14 @@ namespace Parser
             this.modifierTokens = modifiers.ToDictionary(token => token.Value);
         }
 
+        public static ModifierCollection CreateStaticModifier(Token aToken)
+        {
+            ModifierCollection modifiers = new ModifierCollection(new Token[0]);
+            modifiers.FirstToken = aToken;
+            modifiers.modifierTokens["static"] = aToken;
+            return modifiers;
+        }
+
         public bool HasStatic { get { return this.modifierTokens.ContainsKey("static"); } }
     }
 }

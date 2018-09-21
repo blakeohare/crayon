@@ -286,7 +286,7 @@ namespace Parser.ParseTree
             // This should be empty if there is no base class, or just pass along the base class' args if there is.
             if (this.Constructor == null)
             {
-                this.Constructor = new ConstructorDefinition(this, new AnnotationCollection(parser));
+                this.Constructor = new ConstructorDefinition(this, ModifierCollection.EMPTY, new AnnotationCollection(parser));
             }
 
             this.Constructor.ResolveEntityNames(parser);

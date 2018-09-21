@@ -36,7 +36,7 @@ namespace Parser.Crayon
                         tokens.Pop());
                 }
 
-                classDef.Constructor = this.ParseConstructor(tokens, classDef, annotations);
+                classDef.Constructor = this.ParseConstructor(tokens, classDef, modifiers, annotations);
             }
             else if (tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.CONSTRUCTOR))
             {
@@ -46,7 +46,7 @@ namespace Parser.Crayon
                     throw new ParserException(tokens.Pop(), "Multiple static constructors are not allowed.");
                 }
 
-                classDef.StaticConstructor = this.ParseConstructor(tokens, classDef, annotations);
+                classDef.StaticConstructor = this.ParseConstructor(tokens, classDef, modifiers, annotations);
             }
             else if (tokens.IsNext(this.parser.Keywords.FIELD) ||
                 tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FIELD))

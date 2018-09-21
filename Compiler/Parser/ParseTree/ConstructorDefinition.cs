@@ -25,22 +25,25 @@ namespace Parser.ParseTree
         public int MinArgCount { get; set; }
         public int MaxArgCount { get; set; }
         public bool IsDefault { get; private set; }
+        public bool IsStatic { get; private set; }
         public AnnotationCollection Annotations { get; set; }
         public List<Lambda> Lambdas { get; private set; }
 
-        public ConstructorDefinition(ClassDefinition owner, AnnotationCollection annotations)
-            : this(null, annotations, owner)
+        public ConstructorDefinition(ClassDefinition owner, ModifierCollection modifiers, AnnotationCollection annotations)
+            : this(null, modifiers, annotations, owner)
         {
             this.IsDefault = true;
         }
 
         public ConstructorDefinition(
             Token constructorToken,
+            ModifierCollection modifiers,
             AnnotationCollection annotations,
             ClassDefinition owner)
             : base(constructorToken, owner, owner.FileScope)
         {
             this.IsDefault = false;
+            this.IsStatic = modifiers.HasStatic;
             this.Annotations = annotations;
             this.ArgTypes = NO_TYPES;
             this.ArgNames = NO_TOKENS;
@@ -188,7 +191,14 @@ namespace Parser.ParseTree
             }
 
             ClassDefinition cd = (ClassDefinition)this.Owner;
-            if (cd.BaseClass != null)
+            if (this.IsStatic)
+            {
+                if (this.BaseToken != null)
+                {
+                    throw new ParserException(this, "Cannot call the base constructor from a static constructor.");
+                }
+            }
+            else if (cd.BaseClass != null)
             {
                 ConstructorDefinition baseConstructor = cd.BaseClass.Constructor;
                 ResolvedType[] baseConstructorArgTypes = baseConstructor == null
@@ -202,7 +212,7 @@ namespace Parser.ParseTree
                 int minArgCount = maxArgCount - optionalArgCount;
                 if (this.BaseArgs.Length < minArgCount || this.BaseArgs.Length > maxArgCount)
                 {
-                    throw new ParserException(this.BaseToken, "Incorrect number of arguments passed to base constructor.");
+                    throw new ParserException(this, "Incorrect number of arguments passed to base constructor.");
                 }
 
                 for (int i = 0; i < this.BaseArgs.Length; ++i)
