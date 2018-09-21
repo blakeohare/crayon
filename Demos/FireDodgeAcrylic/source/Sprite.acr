@@ -54,8 +54,8 @@ public class Sprite {
 
         // The sprite's coordinate is the center of the sprite.
         // .draw requires the top left corner of the image, so subtract half the width and height.
-        int x = Math.floor(this.position[0] - image.width / 2);
-        int y = Math.floor(this.position[1] - image.height / 2);
+        int x = (int) Math.floor(this.position[0] - image.width / 2);
+        int y = (int) Math.floor(this.position[1] - image.height / 2);
         image.draw(x, y);
     }
 }
@@ -88,7 +88,7 @@ public class Player : Sprite {
 
         if (this.targetPosition != null) {
 
-            float angle = -Math.arctan(
+            float angle = -(float) Math.arctan(
                 this.targetPosition[1] - this.position[1],
                 this.targetPosition[0] - this.position[0]);
 

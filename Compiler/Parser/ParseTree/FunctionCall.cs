@@ -356,6 +356,14 @@ namespace Parser.ParseTree
                     }
                 }
                 this.ResolvedType = rootType.FunctionReturnType;
+                if (this.ResolvedType == ResolvedType.ANY &&
+                    this.CompilationScope.IsStaticallyTyped)
+                {
+                    // ANY types are not allowed in statically typed compilation scopes.
+                    // Convert this into an object and require the user to perform any specific casts.
+                    this.ResolvedType = ResolvedType.OBJECT;
+                }
+
                 return this;
             }
 

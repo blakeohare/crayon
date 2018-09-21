@@ -171,7 +171,7 @@ namespace Parser
         {
             if (!CanAssignToA(targetType))
             {
-                // TODO: implement a ToString() for ResolvedType.
+                // TODO: implement a formatted string method for ResolvedType. (ToString() is debug-centric)
                 throw new ParserException(throwToken, "Cannot assign this type to this other type.");
             }
         }
@@ -181,6 +181,7 @@ namespace Parser
             if (this.Category == ResolvedTypeCategory.ANY) return true;
             ResolvedTypeCategory targetCategory = targetType.Category;
             if (targetCategory == ResolvedTypeCategory.ANY) return true;
+            if (targetCategory == ResolvedTypeCategory.OBJECT) return true;
             if (this.Category == ResolvedTypeCategory.NULL)
             {
                 switch (targetCategory)

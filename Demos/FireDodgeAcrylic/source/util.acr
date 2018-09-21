@@ -2,18 +2,18 @@ import Math;
 import Random;
 
 public int[] randomEdgePoint() {
-    switch (Random.randomInt(4)) {
+    switch ((int) Random.randomInt(4)) {
         case 0: // left
-            return new int[] { 20, Random.randomInt(20, SCREEN_HEIGHT - 20) };
+            return new int[] { 20, (int) Random.randomInt(20, SCREEN_HEIGHT - 20) };
 
         case 1: // right
-            return new int[] { SCREEN_WIDTH - 20, Random.randomInt(20, SCREEN_HEIGHT - 20) };
+            return new int[] { SCREEN_WIDTH - 20, (int) Random.randomInt(20, SCREEN_HEIGHT - 20) };
 
         case 2: // top
-            return new int[] { Random.randomInt(20, SCREEN_WIDTH - 20), 20 };
+            return new int[] { (int) Random.randomInt(20, SCREEN_WIDTH - 20), 20 };
 
         case 3: // bottom
-            return new int[] { Random.randomInt(20, SCREEN_WIDTH - 20), SCREEN_HEIGHT - 20 };
+            return new int[] { (int) Random.randomInt(20, SCREEN_WIDTH - 20), SCREEN_HEIGHT - 20 };
     }
 }
 

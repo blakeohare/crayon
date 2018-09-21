@@ -27,10 +27,10 @@ public class ImageLibrary {
                 // east-facing image and flip it.
                 string eastImagePath = path.replace("images/player/w", "images/player/e");
                 img = ImageLibrary.get(eastImagePath);
-                img = img.flip(true, false);
+                img = (GraphicsTexture) img.flip(true, false);
             } else {
-                ImageResource rawResource = ImageLibrary.sheet.getImage(path);
-                img = GraphicsTexture.load(rawResource);
+                ImageResource rawResource = (ImageResource) ImageLibrary.sheet.getImage(path);
+                img = (GraphicsTexture) GraphicsTexture.load(rawResource);
             }
 
             // cache the image.
