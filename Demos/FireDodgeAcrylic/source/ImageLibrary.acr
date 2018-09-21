@@ -2,16 +2,16 @@ import Graphics2D;
 import ImageResources;
 
 public class ImageLibrary {
-    private static Dictionary<string, GraphicsTexture> images = {};
-    private static Dictionary<string, GraphicsTexture> text = {};
+    private static Dictionary<string, GraphicsTexture> images = new Dictionary<string, GraphicsTexture>();
+    private static Dictionary<string, GraphicsTexture> text = new Dictionary<string, GraphicsTexture>();
     private static ImageSheet sheet = null;
 
-    private static void initializeWithImageSheet(object sheet) {
+    private static void initializeWithImageSheet(ImageSheet sheet) {
         ImageLibrary.sheet = sheet;
     }
 
     public static GraphicsTexture getTextChar(string char) {
-        image = ImageLibrary.text.get(char);
+        GraphicsTexture image = ImageLibrary.text.get(char);
         if (image == null) {
             image = ImageLibrary.get("images/text/" + char + ".png");
             ImageLibrary.text[char] = image;
@@ -25,7 +25,7 @@ public class ImageLibrary {
             if (path.startsWith("images/player/w")) {
                 // Instead of saving west-facing images, just get the
                 // east-facing image and flip it.
-                eastImagePath = path.replace("images/player/w", "images/player/e");
+                string eastImagePath = path.replace("images/player/w", "images/player/e");
                 img = ImageLibrary.get(eastImagePath);
                 img = img.flip(true, false);
             } else {

@@ -66,7 +66,7 @@ namespace Parser.ParseTree
 
         internal void AllocateLocalScopeIds(ParserContext parser)
         {
-            VariableScope varScope = VariableScope.NewEmptyScope(parser.RequireExplicitVarDeclarations);
+            VariableScope varScope = VariableScope.NewEmptyScope(this.CompilationScope.IsStaticallyTyped);
             this.DefaultValue.PerformLocalIdAllocation(parser, varScope, VariableIdAllocPhase.REGISTER_AND_ALLOC);
 
             if (varScope.Size > 0)

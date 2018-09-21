@@ -30,6 +30,7 @@ namespace Parser.Resolver
                 case "bool": return ResolvedType.BOOLEAN;
                 case "float": return ResolvedType.FLOAT;
                 case "string": return ResolvedType.STRING;
+                case "object": return ResolvedType.OBJECT;
 
                 case "[":
                 case "List":

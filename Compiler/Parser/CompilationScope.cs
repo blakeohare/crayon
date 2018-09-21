@@ -12,6 +12,10 @@ namespace Parser
         public Dictionary<string, CniFunction> CniFunctionsByName { get; private set; }
         public AssemblyMetadata Metadata { get; private set; }
 
+        public bool IsCrayon {  get { return this.ProgrammingLanguage == "Crayon"; } }
+        public bool IsAcrylic {  get { return this.ProgrammingLanguage == "Acrylic"; } }
+        public bool IsStaticallyTyped {  get { return this.IsAcrylic; } }
+
         private BuildContext buildContext;
         private Dictionary<CompilationScope, LocalizedAssemblyView> dependenciesAndViews = new Dictionary<CompilationScope, LocalizedAssemblyView>();
 

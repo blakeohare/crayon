@@ -92,7 +92,7 @@ namespace Parser.ParseTree
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            bool hasExplicitlySetType = parser.RequireExplicitVarDeclarations;
+            bool hasExplicitlySetType = this.CompilationScope.IsStaticallyTyped;
             if (hasExplicitlySetType)
             {
                 this.ResolvedType = typeResolver.ResolveType(this.Type);
