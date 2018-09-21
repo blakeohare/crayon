@@ -153,7 +153,24 @@ namespace Pastel.Transpilers
 
         public override void TranslateDictionaryTryGet(TranspilerContext sb, Expression dictionary, Expression key, Expression fallbackValue, Variable varOut)
         {
-            throw new NotImplementedException();
+            sb.Append(sb.CurrentTab);
+            sb.Append("v_");
+            sb.Append(varOut.Name);
+            sb.Append(" = ");
+            this.TranslateExpression(sb, dictionary);
+            sb.Append('[');
+            this.TranslateExpression(sb, key);
+            sb.Append("];");
+            sb.Append(this.NewLine);
+            sb.Append(sb.CurrentTab);
+            sb.Append("if (v_");
+            sb.Append(varOut.Name);
+            sb.Append(" === undefined) v_");
+            sb.Append(varOut.Name);
+            sb.Append(" = ");
+            this.TranslateExpression(sb, fallbackValue);
+            sb.Append(";");
+            sb.Append(this.NewLine);
         }
 
         public override void TranslateDictionaryValues(TranspilerContext sb, Expression dictionary)

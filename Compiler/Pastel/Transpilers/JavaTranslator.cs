@@ -20,6 +20,22 @@ namespace Pastel.Transpilers
             return TranslateJavaType(type);
         }
 
+        private bool IsJavaPrimitiveTypeBoxed(PType type)
+        {
+            switch (type.RootValue)
+            {
+                case "int":
+                case "double":
+                case "bool":
+                case "byte":
+                case "object":
+                case "char":
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         private string TranslateJavaType(PType type)
         {
             switch (type.RootValue)
@@ -382,7 +398,69 @@ namespace Pastel.Transpilers
 
         public override void TranslateDictionaryTryGet(TranspilerContext sb, Expression dictionary, Expression key, Expression fallbackValue, Variable varOut)
         {
-            throw new NotImplementedException();
+            PType[] dictTypes = dictionary.ResolvedType.Generics;
+            PType keyType = dictTypes[0];
+            PType valueType = dictTypes[1];
+            bool keyTypeIsBoxed = this.IsJavaPrimitiveTypeBoxed(keyType);
+            bool keyExpressionIsSimple = key is Variable || key is InlineConstant;
+            string keyVar = null;
+            if (!keyExpressionIsSimple)
+            {
+                keyVar = "dictKey" + sb.SwitchCounter++;
+                sb.Append(sb.CurrentTab);
+                sb.Append(this.TranslateType(keyType));
+                sb.Append(" = ");
+                this.TranslateExpression(sb, key);
+                sb.Append(";");
+                sb.Append(this.NewLine);
+            }
+
+            string lookupSuffix = "" + sb.SwitchCounter++;
+            sb.Append(sb.CurrentTab);
+            sb.Append(this.TranslateJavaNestedType(valueType));
+            sb.Append(" dictLookup");
+            sb.Append(lookupSuffix);
+            sb.Append(" = ");
+            this.TranslateExpression(sb, dictionary);
+            sb.Append(".get(");
+            if (keyExpressionIsSimple)
+            {
+                this.TranslateExpression(sb, key);
+            }
+            else
+            {
+                sb.Append(keyVar);
+            }
+            sb.Append(");");
+            sb.Append(this.NewLine);
+            sb.Append(sb.CurrentTab);
+            sb.Append("v_");
+            sb.Append(varOut.Name);
+            sb.Append(" = dictLookup");
+            sb.Append(lookupSuffix);
+            sb.Append(" == null ? (");
+
+            if (!keyTypeIsBoxed)
+            {
+                // if the key is not a primitive, then we don't know if this null is a lack of a value or
+                // if it's the actual desired value. We must explicitly call .containsKey to be certain.
+                // In this specific case, we must do a double-lookup.
+                this.TranslateExpression(sb, dictionary);
+                sb.Append(".containsKey(");
+                if (keyExpressionIsSimple) this.TranslateExpression(sb, key);
+                else sb.Append(keyVar);
+                sb.Append(") ? null : (");
+                this.TranslateExpression(sb, fallbackValue);
+                sb.Append(")");
+            }
+            else
+            {
+                this.TranslateExpression(sb, fallbackValue);
+            }
+            sb.Append(") : dictLookup");
+            sb.Append(lookupSuffix);
+            sb.Append(';');
+            sb.Append(this.NewLine);
         }
 
         public override void TranslateDictionaryValues(TranspilerContext sb, Expression dictionary)
