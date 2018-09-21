@@ -51,5 +51,51 @@ namespace Parser.Acrylic
             }
             return output;
         }
+
+        protected override AType MaybeParseCastPrefix(TokenStream tokens)
+        {
+            TokenStream.StreamState tss = tokens.RecordState();
+            if (tokens.PopIfPresent("("))
+            {
+                AType output = this.parser.TypeParser.TryParse(tokens);
+                if (output != null)
+                {
+                    if (tokens.PopIfPresent(")"))
+                    {
+                        if (!tokens.HasMore) return output; // let the next thing throw an error
+                        if (output.Generics.Length > 0) return output;
+                        switch (output.RootType)
+                        {
+                            case "int":
+                            case "bool":
+                            case "float":
+                            case "string":
+                            case "object":
+                                return output;
+                        }
+
+                        switch (tokens.Peek().Type)
+                        {
+                            case TokenType.NUMBER:
+                            case TokenType.STRING:
+                            case TokenType.WORD:
+                                return output;
+
+                            case TokenType.KEYWORD:
+                                break;
+
+                            case TokenType.PUNCTUATION:
+                                if (tokens.IsNext("("))
+                                {
+                                    return output;
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
+            tokens.RestoreState(tss);
+            return null;
+        }
     }
 }

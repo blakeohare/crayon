@@ -226,10 +226,20 @@ namespace Parser
             return new Lambda(firstToken, owner, args, argTypes, lambdaCode);
         }
 
+        protected abstract AType MaybeParseCastPrefix(TokenStream tokens);
+
         private Expression ParseEntity(TokenStream tokens, Node owner)
         {
             Expression root;
             Token firstToken = tokens.Peek();
+            AType castPrefix = firstToken.Value == "(" ? this.MaybeParseCastPrefix(tokens) : null;
+
+            if (castPrefix != null)
+            {
+                root = this.ParseEntity(tokens, owner);
+                return new Cast(firstToken, castPrefix, root, owner);
+            }
+
             if (tokens.PopIfPresent("("))
             {
                 if (tokens.PopIfPresent(")"))

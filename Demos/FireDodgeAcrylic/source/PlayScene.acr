@@ -29,13 +29,13 @@ public class PlayScene : AbstractScene {
         for (Game.Event event : events) {
             // Player clicked
             if (event.type == EventType.MOUSE_LEFT_DOWN) {
-
+				MouseClickEvent clickEvent = (MouseClickEvent) event;
                 // And player hasn't died yet
                 if (this.mode == GameMode.PLAYING) {
 
                     // Ensure the coordinate isn't too close to the edge.
-                    int x = Math.ensureRange(event.x, 30, SCREEN_WIDTH - 30);
-                    int y = Math.ensureRange(event.y, 30, SCREEN_HEIGHT - 30);
+                    int x = Math.ensureRange(clickEvent.x, 30, SCREEN_WIDTH - 30);
+                    int y = Math.ensureRange(clickEvent.y, 30, SCREEN_HEIGHT - 30);
 
                     // Tell the player sprite to go there.
                     this.player.targetPosition = new int[] { x, y };
@@ -85,20 +85,20 @@ public class PlayScene : AbstractScene {
     }
 
     public bool isPlayerTouchingFire() {
-        double px = this.player.position[0];
-        double py = this.player.position[1];
+        float px = this.player.position[0];
+        float py = this.player.position[1];
         int playerWidth = this.player.width;
 
         for (Fire fire : this.fires) {
-            double dx = fire.position[0] - px;
-            double dy = fire.position[1] - py;
+            float dx = fire.position[0] - px;
+            float dy = fire.position[1] - py;
             if (dx > 100 || dy > 100) {
                 // fast and easy vicinity check that most sprites will not pass.
                 continue;
             }
 
-            double distance = (dx ** 2 + dy ** 2) ** .5;
-            double deathDistance = (playerWidth + fire.width) / 2;
+            float distance = (dx ** 2 + dy ** 2) ** .5;
+            float deathDistance = (playerWidth + fire.width) / 2;
             deathDistance *= .7; // make the game a little easier
 
             if (distance < deathDistance) {
