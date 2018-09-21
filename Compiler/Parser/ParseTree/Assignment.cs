@@ -1,4 +1,4 @@
-using Parser.Resolver;
+﻿using Parser.Resolver;
 using System.Collections.Generic;
 
 namespace Parser.ParseTree

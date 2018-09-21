@@ -172,12 +172,7 @@ namespace Parser.ParseTree
 
         internal override void ResolveSignatureTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            int argsLength = this.ArgTypes.Length;
-            this.ResolvedArgTypes = new ResolvedType[argsLength];
-            for (int i = 0; i < argsLength; ++i)
-            {
-                this.ResolvedArgTypes[i] = typeResolver.ResolveType(this.ArgTypes[i]);
-            }
+            this.ResolvedArgTypes = typeResolver.ResolveTypes(this.ArgTypes);
         }
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
