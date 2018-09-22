@@ -306,7 +306,7 @@ namespace Exporter.ByteCode
         private void CompileClass(ParserContext parser, ByteBuffer buffer, ClassDefinition classDefinition)
         {
             bool hasStaticFieldsWithStartingValues = classDefinition.Fields
-                .Where<FieldDefinition>(fd =>
+                .Where(fd =>
                     fd.Modifiers.HasStatic &&
                     fd.DefaultValue != null &&
                     !(fd.DefaultValue is NullConstant))
@@ -394,7 +394,9 @@ namespace Exporter.ByteCode
                     memberId,
                     fieldNameId,
                     initInstruction,
-                    literalId});
+                    literalId,
+                    EncodeAccessModifier(fd.Modifiers)
+                });
             }
 
             foreach (FunctionDefinition fd in regularMethods)
@@ -408,7 +410,8 @@ namespace Exporter.ByteCode
                     memberId,
                     methodNameId,
                     functionId,
-                    0, // ignored value. It's just here to keep spacing consistent.
+                    0, // ignored value.
+                    EncodeAccessModifier(fd.Modifiers),
                 });
             }
 
@@ -440,6 +443,19 @@ namespace Exporter.ByteCode
             string fullyQualifiedName = classDefinition.GetFullyQualifiedLocalizedName(parser.RootScope.Locale);
 
             buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION, fullyQualifiedName, args.ToArray());
+        }
+
+        private static int EncodeAccessModifier(ModifierCollection modifiers)
+        {
+            if (modifiers.HasPublic) return 1;
+            if (modifiers.HasPrivate) return 2;
+            if (modifiers.HasInternal || modifiers.HasProtected)
+            {
+                if (!modifiers.HasInternal) return 4;
+                if (!modifiers.HasProtected) return 3;
+                return 5;
+            }
+            return 1; // everything is public if not specified.
         }
 
         private void CompileConstructor(ParserContext parser, ByteBuffer buffer, ConstructorDefinition constructor, ByteBuffer complexFieldInitializers)
