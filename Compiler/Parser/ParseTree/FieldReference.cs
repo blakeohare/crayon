@@ -9,7 +9,7 @@ namespace Parser.ParseTree
         {
             get
             {
-                return this.Field.IsStaticField;
+                return this.Field.Modifiers.HasStatic;
             }
 
         }

@@ -129,7 +129,7 @@ namespace Parser.ParseTree
                 foreach (FieldDefinition fd in this.Fields)
                 {
                     this.fieldDeclarationsByName[fd.NameToken.Value] = fd;
-                    if (fd.IsStaticField)
+                    if (fd.Modifiers.HasStatic)
                     {
                         fd.StaticMemberID = staticMemberId++;
                     }
@@ -157,7 +157,7 @@ namespace Parser.ParseTree
                 FieldDefinition field = this.Fields[i];
                 field.Resolve(parser);
                 this.Fields[i] = field;
-                if (this.StaticToken != null && !field.IsStaticField)
+                if (this.StaticToken != null && !field.Modifiers.HasStatic)
                 {
                     throw new ParserException(field, "Cannot have a non-static field in a static class.");
                 }
@@ -168,7 +168,7 @@ namespace Parser.ParseTree
                 FunctionDefinition funcDef = this.Methods[i];
                 funcDef.Resolve(parser);
                 this.Methods[i] = funcDef;
-                if (this.StaticToken != null && !funcDef.IsStaticMethod)
+                if (this.StaticToken != null && !funcDef.Modifiers.HasStatic)
                 {
                     throw new ParserException(funcDef, "Cannot have a non-static method in a static class.");
                 }
@@ -373,7 +373,7 @@ namespace Parser.ParseTree
 
             foreach (FunctionDefinition fd in this.Methods)
             {
-                if (!fd.IsStaticMethod)
+                if (!fd.Modifiers.HasStatic)
                 {
                     TopLevelEntity existingItem;
                     if (this.flattenedFieldAndMethodDeclarationsByName.TryGetValue(fd.NameToken.Value, out existingItem))

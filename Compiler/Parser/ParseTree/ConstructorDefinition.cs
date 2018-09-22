@@ -25,7 +25,7 @@ namespace Parser.ParseTree
         public int MinArgCount { get; set; }
         public int MaxArgCount { get; set; }
         public bool IsDefault { get; private set; }
-        public bool IsStatic { get; private set; }
+        public ModifierCollection Modifiers { get; private set; }
         public AnnotationCollection Annotations { get; set; }
         public List<Lambda> Lambdas { get; private set; }
 
@@ -43,7 +43,7 @@ namespace Parser.ParseTree
             : base(constructorToken, owner, owner.FileScope)
         {
             this.IsDefault = false;
-            this.IsStatic = modifiers.HasStatic;
+            this.Modifiers = modifiers;
             this.Annotations = annotations;
             this.ArgTypes = NO_TYPES;
             this.ArgNames = NO_TOKENS;
@@ -191,7 +191,7 @@ namespace Parser.ParseTree
             }
 
             ClassDefinition cd = (ClassDefinition)this.Owner;
-            if (this.IsStatic)
+            if (this.Modifiers.HasStatic)
             {
                 if (this.BaseToken != null)
                 {

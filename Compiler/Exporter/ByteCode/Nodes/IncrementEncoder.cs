@@ -87,7 +87,7 @@ namespace Exporter.ByteCode.Nodes
             else if (increment.Root is FieldReference)
             {
                 FieldReference fr = (FieldReference)increment.Root;
-                bool isStatic = fr.Field.IsStaticField;
+                bool isStatic = fr.Field.Modifiers.HasStatic;
                 ClassDefinition cd = (ClassDefinition)fr.Field.Owner;
                 int memberId = isStatic ? fr.Field.StaticMemberID : fr.Field.MemberID;
 

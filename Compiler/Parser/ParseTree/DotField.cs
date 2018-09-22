@@ -70,7 +70,7 @@ namespace Parser.ParseTree
                 funcDef = cd.GetMethod(field, false);
                 if (funcDef != null)
                 {
-                    if (!funcDef.IsStaticMethod)
+                    if (!funcDef.Modifiers.HasStatic)
                     {
                         string className = cd.NameToken.Value;
                         string functionName = funcDef.NameToken.Value;
@@ -84,7 +84,7 @@ namespace Parser.ParseTree
                 fieldDec = cd.GetField(field, false);
                 if (fieldDec != null)
                 {
-                    if (!fieldDec.IsStaticField)
+                    if (!fieldDec.Modifiers.HasStatic)
                     {
                         throw new ParserException(this.DotToken, "Cannot make a static reference to a non-static field.");
                     }
@@ -139,7 +139,7 @@ namespace Parser.ParseTree
                     throw new ParserException(this.DotToken, "Cannot find a method by that name in the base class chain.");
                 }
 
-                if (fd.IsStaticMethod)
+                if (fd.Modifiers.HasStatic)
                 {
                     throw new ParserException(this.DotToken, "Cannot reference static methods using 'base' keyword.");
                 }
@@ -153,21 +153,21 @@ namespace Parser.ParseTree
                 TopLevelEntity owner = this.TopLevelEntity;
                 if (owner is FunctionDefinition)
                 {
-                    if (((FunctionDefinition)owner).IsStaticMethod)
+                    if (((FunctionDefinition)owner).Modifiers.HasStatic)
                         throw new ParserException(this.Root, "'this' keyword cannot be used in static methods.");
                     cd = (ClassDefinition)owner.Owner;
                 }
                 else if (owner is FieldDefinition)
                 {
-                    if (((FieldDefinition)owner).IsStaticField)
+                    if (((FieldDefinition)owner).Modifiers.HasStatic)
                         throw new ParserException(this.Root, "'this' keyword cannot be used in static fields.");
                     cd = (ClassDefinition)owner.Owner;
                 }
                 else if (owner is ConstructorDefinition)
                 {
-                    cd = (ClassDefinition)owner.Owner;
-                    if (cd.StaticConstructor == owner)
+                    if (((ConstructorDefinition)owner).Modifiers.HasStatic)
                         throw new ParserException(this.Root, "'this', keyword cannot be used in static constructors.");
+                    cd = (ClassDefinition)owner.Owner;
                 }
                 else
                 {
@@ -177,7 +177,7 @@ namespace Parser.ParseTree
                 funcDef = cd.GetMethod(field, true);
                 if (funcDef != null)
                 {
-                    if (funcDef.IsStaticMethod)
+                    if (funcDef.Modifiers.HasStatic)
                     {
                         throw new ParserException(this.DotToken, "This method is static and must be referenced by the class name, not 'this'.");
                     }
@@ -187,7 +187,7 @@ namespace Parser.ParseTree
                 FieldDefinition fieldDef = cd.GetField(field, true);
                 if (fieldDef != null)
                 {
-                    if (fieldDef.IsStaticField)
+                    if (fieldDef.Modifiers.HasStatic)
                     {
                         throw new ParserException(this.DotToken, "This field is static and must be referenced by the class name, not 'this'.");
                     }

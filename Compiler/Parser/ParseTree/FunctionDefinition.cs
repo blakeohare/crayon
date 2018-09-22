@@ -9,7 +9,6 @@ namespace Parser.ParseTree
     {
         public int FunctionID { get; set; }
         public Token NameToken { get; private set; }
-        public bool IsStaticMethod { get; private set; }
         public AType ReturnType { get; set; }
         public ResolvedType ResolvedReturnType { get; set; }
         public AType[] ArgTypes { get; set; }
@@ -22,6 +21,7 @@ namespace Parser.ParseTree
         public int LocalScopeSize { get; set; }
         public int FinalizedPC { get; set; }
         public int MemberID { get; set; }
+        public ModifierCollection Modifiers { get; private set; }
         public List<Lambda> Lambdas { get; private set; }
         private Dictionary<Locale, string> namesByLocale = null;
 
@@ -36,11 +36,11 @@ namespace Parser.ParseTree
             : base(functionToken, nullableOwner, fileScope)
         {
             this.ReturnType = returnType;
-            this.IsStaticMethod = modifiers.HasStatic;
             this.NameToken = nameToken;
             this.Annotations = annotations;
             this.MemberID = -1;
             this.Lambdas = new List<Lambda>();
+            this.Modifiers = modifiers;
         }
 
         public override string GetFullyQualifiedLocalizedName(Locale locale)

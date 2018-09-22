@@ -34,7 +34,7 @@ namespace Exporter.ByteCode.Nodes
                     if (fd.Owner is ClassDefinition)
                     {
                         ClassDefinition cd = (ClassDefinition)fd.Owner;
-                        if (fd.IsStaticMethod)
+                        if (fd.Modifiers.HasStatic)
                         {
                             buffer.Add(
                                 funCall.ParenToken,

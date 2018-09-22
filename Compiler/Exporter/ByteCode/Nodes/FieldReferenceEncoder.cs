@@ -9,7 +9,7 @@ namespace Exporter.ByteCode.Nodes
         {
             ByteCodeCompiler.EnsureUsed(fieldRef, outputUsed);
 
-            if (fieldRef.Field.IsStaticField)
+            if (fieldRef.Field.Modifiers.HasStatic)
             {
                 buffer.Add(
                     fieldRef.FirstToken,

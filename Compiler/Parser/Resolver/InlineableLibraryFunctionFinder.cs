@@ -16,7 +16,7 @@ namespace Parser.Resolver
                 List<FunctionDefinition> allFlattenedFunctions = new List<FunctionDefinition>(entities.OfType<FunctionDefinition>());
                 foreach (ClassDefinition cd in entities.OfType<ClassDefinition>())
                 {
-                    allFlattenedFunctions.AddRange(cd.Methods.Where(fd => fd.IsStaticMethod));
+                    allFlattenedFunctions.AddRange(cd.Methods.Where(fd => fd.Modifiers.HasStatic));
                 }
 
                 foreach (FunctionDefinition funcDef in allFlattenedFunctions)

@@ -143,7 +143,7 @@ namespace Exporter.ByteCode
             List<int> memberIds = new List<int>();
             foreach (FieldDefinition field in cd.Fields)
             {
-                if (field.IsStaticField) continue;
+                if (field.Modifiers.HasStatic) continue;
                 topLevelConstructs.Add(field);
                 tlcAnnotations.Add(field.Annotations);
                 tlcDefaultNames.Add(field.NameToken.Value);
@@ -151,7 +151,7 @@ namespace Exporter.ByteCode
             }
             foreach (FunctionDefinition method in cd.Methods)
             {
-                if (method.IsStaticMethod) continue;
+                if (method.Modifiers.HasStatic) continue;
                 topLevelConstructs.Add(method);
                 tlcAnnotations.Add(method.Annotations);
                 tlcDefaultNames.Add(method.NameToken.Value);
@@ -307,7 +307,7 @@ namespace Exporter.ByteCode
         {
             bool hasStaticFieldsWithStartingValues = classDefinition.Fields
                 .Where<FieldDefinition>(fd =>
-                    fd.IsStaticField &&
+                    fd.Modifiers.HasStatic &&
                     fd.DefaultValue != null &&
                     !(fd.DefaultValue is NullConstant))
                 .Count() > 0;
@@ -323,7 +323,7 @@ namespace Exporter.ByteCode
                 List<Executable> staticFieldInitializers = new List<Executable>();
                 foreach (FieldDefinition fd in classDefinition.Fields)
                 {
-                    if (fd.IsStaticField && fd.DefaultValue != null && !(fd.DefaultValue is NullConstant))
+                    if (fd.Modifiers.HasStatic && fd.DefaultValue != null && !(fd.DefaultValue is NullConstant))
                     {
                         Executable assignment = new Assignment(
                             new FieldReference(fd.FirstToken, fd, fd),
@@ -359,9 +359,9 @@ namespace Exporter.ByteCode
             int constructorId = classDefinition.Constructor.FunctionID;
             int staticConstructorId = classDefinition.StaticConstructor != null ? classDefinition.StaticConstructor.FunctionID : -1;
 
-            int staticFieldCount = classDefinition.Fields.Where<FieldDefinition>(fd => fd.IsStaticField).Count();
-            FieldDefinition[] regularFields = classDefinition.Fields.Where<FieldDefinition>(fd => !fd.IsStaticField).ToArray();
-            FunctionDefinition[] regularMethods = classDefinition.Methods.Where<FunctionDefinition>(fd => !fd.IsStaticMethod).ToArray();
+            int staticFieldCount = classDefinition.Fields.Where<FieldDefinition>(fd => fd.Modifiers.HasStatic).Count();
+            FieldDefinition[] regularFields = classDefinition.Fields.Where<FieldDefinition>(fd => !fd.Modifiers.HasStatic).ToArray();
+            FunctionDefinition[] regularMethods = classDefinition.Methods.Where<FunctionDefinition>(fd => !fd.Modifiers.HasStatic).ToArray();
             List<int> members = new List<int>();
             List<FieldDefinition> fieldsWithComplexValues = new List<FieldDefinition>();
             foreach (FieldDefinition fd in regularFields)
@@ -488,15 +488,13 @@ namespace Exporter.ByteCode
             this.Compile(parser, tBuffer, constructor.Code);
             tBuffer.Add(null, OpCode.RETURN, 0);
 
-            bool isStatic = constructor == cd.StaticConstructor;
-
             List<int> args = new List<int>()
             {
                 constructor.FunctionID,
                 -1,
                 minArgs,
                 maxArgs,
-                isStatic ? 4 : 3,
+                constructor.Modifiers.HasStatic ? 4 : 3,
                 cd.ClassID,
                 constructor.LocalScopeSize,
                 tBuffer.Size,
@@ -552,7 +550,7 @@ namespace Exporter.ByteCode
                 parser.GetId(funDef.NameToken.Value), // local var to save in
                 this.GetMinArgCountFromDefaultValuesList(funDef.DefaultValues),
                 funDef.ArgNames.Length, // max number of args supplied
-                isMethod ? (funDef.IsStaticMethod ? 2 : 1) : 0, // type (0 - function, 1 - method, 2 - static method)
+                isMethod ? (funDef.Modifiers.HasStatic ? 2 : 1) : 0, // type (0 - function, 1 - method, 2 - static method)
                 isMethod ? ((ClassDefinition)funDef.Owner).ClassID : 0,
                 funDef.LocalScopeSize,
                 tBuffer.Size,

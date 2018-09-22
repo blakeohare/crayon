@@ -16,7 +16,7 @@ namespace Exporter.ByteCode.Nodes
             int type = 0;
             if (funcDef.Owner is ClassDefinition)
             {
-                if (funcDef.IsStaticMethod)
+                if (funcDef.Modifiers.HasStatic)
                 {
                     classIdStaticCheck = ((ClassDefinition)funcDef.Owner).ClassID;
                     type = 2;

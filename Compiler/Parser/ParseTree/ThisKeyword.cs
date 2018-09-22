@@ -24,7 +24,7 @@ namespace Parser.ParseTree
             FunctionDefinition funcDef = container as FunctionDefinition;
             if (funcDef != null)
             {
-                if (funcDef.IsStaticMethod)
+                if (funcDef.Modifiers.HasStatic)
                 {
                     throw new ParserException(thisOrBase, "Cannot use '" + thisOrBaseString + "' in a static method");
                 }
@@ -39,7 +39,7 @@ namespace Parser.ParseTree
                 FieldDefinition fieldDef = container as FieldDefinition;
                 if (fieldDef != null)
                 {
-                    if (fieldDef.IsStaticField)
+                    if (fieldDef.Modifiers.HasStatic)
                     {
                         throw new ParserException(thisOrBase, "Cannot use '" + thisOrBaseString + "' in a static field value.");
                     }
@@ -47,13 +47,9 @@ namespace Parser.ParseTree
                 else
                 {
                     ConstructorDefinition ctorDef = container as ConstructorDefinition;
-                    if (ctorDef != null)
+                    if (ctorDef != null && ctorDef.Modifiers.HasStatic)
                     {
-                        // TODO: This check is silly. Add an IsStatic field to ConstructorDefinition.
-                        if (ctorDef == ((ClassDefinition)ctorDef.Owner).StaticConstructor)
-                        {
-                            throw new ParserException(thisOrBase, "Cannot use '" + thisOrBaseString + "' in a static constructor.");
-                        }
+                        throw new ParserException(thisOrBase, "Cannot use '" + thisOrBaseString + "' in a static constructor.");
                     }
                 }
             }

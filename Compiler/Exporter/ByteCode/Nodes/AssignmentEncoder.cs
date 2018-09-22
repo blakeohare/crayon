@@ -53,7 +53,7 @@ namespace Exporter.ByteCode.Nodes
                 {
                     bcc.CompileExpression(parser, buffer, assignment.Value, true);
                     FieldReference fieldReference = (FieldReference)assignment.Target;
-                    if (fieldReference.Field.IsStaticField)
+                    if (fieldReference.Field.Modifiers.HasStatic)
                     {
                         buffer.Add(
                             assignment.OpToken,
@@ -130,7 +130,7 @@ namespace Exporter.ByteCode.Nodes
                     bcc.CompileExpression(parser, buffer, assignment.Value, true);
                     buffer.Add(assignment.OpToken, OpCode.BINARY_OP, (int)op);
 
-                    if (fieldRef.Field.IsStaticField)
+                    if (fieldRef.Field.Modifiers.HasStatic)
                     {
                         buffer.Add(
                             assignment.OpToken,
