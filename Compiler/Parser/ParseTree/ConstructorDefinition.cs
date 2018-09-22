@@ -190,6 +190,11 @@ namespace Parser.ParseTree
                 if (isStatic) throw new ParserException(this.BaseToken, "Cannot invoke the base constructor from a static constructor.");
                 if (!hasBaseClass) throw new ParserException(this.BaseToken, "There is no base class for this constructor to invoke.");
             }
+
+            if (hasBaseClass && !Node.IsAccessAllowed(this, baseClass.Constructor))
+            {
+                throw new ParserException(this, "Cannot invoke the base constructor due to its access modifier.");
+            }
         }
 
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)

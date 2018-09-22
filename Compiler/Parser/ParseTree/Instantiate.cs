@@ -68,6 +68,9 @@ namespace Parser.ParseTree
                 throw new ParserException(this, "Cannot instantiate a static class.");
             }
 
+            Node.EnsureAccessIsAllowed(this.FirstToken, this.Owner, this.Class);
+            Node.EnsureAccessIsAllowed(this.FirstToken, this.Owner, this.Class.Constructor);
+
             this.ConstructorReference = this.Class.Constructor;
             int minArgCount = 0;
             int maxArgCount = 0;

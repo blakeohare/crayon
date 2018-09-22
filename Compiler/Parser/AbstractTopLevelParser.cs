@@ -278,6 +278,15 @@ namespace Parser
             cd.Methods = methods.ToArray();
             cd.Fields = fields.ToArray();
 
+            if (cd.Constructor == null)
+            {
+                // This should be empty if there is no base class, or just pass along the base class' args if there is.
+                cd.Constructor = new ConstructorDefinition(
+                    cd,
+                    ModifierCollection.EMPTY,
+                    new AnnotationCollection(parser));
+            }
+
             return cd;
         }
 
