@@ -63,7 +63,7 @@ namespace Parser.ParseTree
                 throw new ParserException(this, "No class named '" + this.Name + "'");
             }
 
-            if (this.Class.StaticToken != null)
+            if (this.Class.Modifiers.HasStatic)
             {
                 throw new ParserException(this, "Cannot instantiate a static class.");
             }

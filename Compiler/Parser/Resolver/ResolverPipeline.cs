@@ -80,6 +80,11 @@ namespace Parser.Resolver
                             tle.ResolveSignatureTypes(parser, typeResolver);
                         }
 
+                        foreach (TopLevelEntity tle in topLevelEntitiesWithoutConstants.Where(t => !(t is EnumDefinition)))
+                        {
+                            tle.EnsureModifierAndTypeSignatureConsistency();
+                        }
+
                         foreach (TopLevelEntity tle in topLevelEntitiesWithoutConstants)
                         {
                             TypeResolver typeResolver = new TypeResolver(tle);

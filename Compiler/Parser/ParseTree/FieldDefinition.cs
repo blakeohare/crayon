@@ -34,6 +34,8 @@ namespace Parser.ParseTree
             this.Lambdas = new List<Lambda>();
 
             if (modifiers.HasAbstract) throw new ParserException(modifiers.AbstractToken, "Fields cannot be abstract.");
+            if (modifiers.HasOverride) throw new ParserException(modifiers.OverrideToken, "Fields cannot be marked as overrides.");
+            if (modifiers.HasFinal) throw new ParserException(modifiers.FinalToken, "Final fields are not supported yet.");
         }
 
         public override string GetFullyQualifiedLocalizedName(Locale locale)
@@ -81,6 +83,23 @@ namespace Parser.ParseTree
                         this.DefaultValue = new NullConstant(this.FirstToken, this);
                         break;
                 }
+            }
+        }
+
+        internal override void EnsureModifierAndTypeSignatureConsistency()
+        {
+            bool isStatic = this.Modifiers.HasStatic;
+            ClassDefinition classDef = (ClassDefinition)this.Owner;
+            ClassDefinition baseClass = classDef.BaseClass;
+            bool hasBaseClass = baseClass != null;
+            if (!isStatic && classDef.Modifiers.HasStatic)
+            {
+                throw new ParserException(this, "Cannot have non-static fields in a static class.");
+            }
+
+            if (hasBaseClass && baseClass.GetMember(this.NameToken.Value, true) != null)
+            {
+                throw new ParserException(this, "This field definition hides a member in a base class.");
             }
         }
 

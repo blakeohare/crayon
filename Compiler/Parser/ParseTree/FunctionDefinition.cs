@@ -43,6 +43,19 @@ namespace Parser.ParseTree
             this.Modifiers = modifiers;
         }
 
+        private int minArgCount = -1;
+        public int MinArgCount
+        {
+            get
+            {
+                if (this.minArgCount == -1)
+                {
+                    this.minArgCount = this.DefaultValues.Count(v => v == null);
+                }
+                return this.minArgCount;
+            }
+        }
+
         public override string GetFullyQualifiedLocalizedName(Locale locale)
         {
             if (this.namesByLocale == null) this.namesByLocale = this.Annotations.GetNamesByLocale(1);
@@ -91,6 +104,123 @@ namespace Parser.ParseTree
                 ResolvedType rType = typeResolver.ResolveType(this.ArgTypes[i]);
                 this.ResolvedArgTypes[i] = rType;
                 this.ArgLocalIds[i].ResolvedType = rType;
+            }
+        }
+
+        internal override void EnsureModifierAndTypeSignatureConsistency()
+        {
+            if (!(this.Owner is ClassDefinition))
+            {
+                this.EnsureModifierAndTypeSignatureConsistencyForNonMethods();
+            }
+            else
+            {
+                this.EnsureModifiersAndTypeSignatureConsistencyForClassMethods();
+            }
+        }
+
+        private void EnsureModifierAndTypeSignatureConsistencyForNonMethods() {
+            Token badToken = null;
+            if (this.Modifiers.HasAbstract) badToken = this.Modifiers.AbstractToken;
+            if (this.Modifiers.HasOverride) badToken = this.Modifiers.OverrideToken;
+            if (this.Modifiers.HasStatic) badToken = this.Modifiers.StaticToken;
+            if (this.Modifiers.HasPrivate) badToken = this.Modifiers.PrivateToken;
+            if (this.Modifiers.HasProtected) badToken = this.Modifiers.ProtectedToken;
+
+            if (badToken != null)
+            {
+                throw new ParserException(badToken, "'" + badToken.Value + "' is not a valid modifier for functions that are defined outside of a class.");
+            }
+        }
+
+        private void EnsureModifiersAndTypeSignatureConsistencyForClassMethods()
+        {
+
+            ClassDefinition classDef = (ClassDefinition)this.Owner;
+            ClassDefinition baseClass = classDef.BaseClass;
+            bool hasBaseClass = baseClass != null;
+
+            if (hasBaseClass)
+            {
+                FieldDefinition hiddenField = baseClass.GetField(this.NameToken.Value, true);
+                if (hiddenField != null) throw new ParserException(this, "This function definition hides a field from a parent class.");
+            }
+
+            if (!hasBaseClass)
+            {
+                if (this.Modifiers.HasOverride)
+                {
+                    throw new ParserException(this, "Cannot mark a method as 'override' if it has no base class.");
+                }
+            }
+            else
+            {
+                FunctionDefinition overriddenFunction = baseClass.GetMethod(this.NameToken.Value, true);
+                if (overriddenFunction != null)
+                {
+                    if (!this.Modifiers.HasOverride)
+                    {
+                        if (this.CompilationScope.IsCrayon)
+                        {
+                            // TODO: just warn if not present
+                        }
+                        else
+                        {
+                            throw new ParserException(this, "This function hides another function from a parent class. If overriding is intentional, use the 'override' keyword.");
+                        }
+                    }
+
+                    if (overriddenFunction.Modifiers.HasStatic)
+                    {
+                        throw new ParserException(this, "Cannot override a static method.");
+                    }
+
+                    if (overriddenFunction.Modifiers.AccessModifierType != this.Modifiers.AccessModifierType)
+                    {
+                        throw new ParserException(this, "This method defines a different access modifier than its overridden parent.");
+                    }
+
+                    if (overriddenFunction.Modifiers.AccessModifierType == AccessModifierType.PRIVATE)
+                    {
+                        throw new ParserException(this, "Cannot override a private method.");
+                    }
+
+                    if (overriddenFunction.Modifiers.HasInternal &&
+                        overriddenFunction.CompilationScope != this.CompilationScope)
+                    {
+                        throw new ParserException(this, "Cannot override this method. It is marked as internal and is located in a different assembly.");
+                    }
+
+                    if (overriddenFunction.ResolvedReturnType != this.ResolvedReturnType)
+                    {
+                        throw new ParserException(this, "This function returns a different type than its overridden parent.");
+                    }
+
+                    if (overriddenFunction.ArgTypes.Length != this.ArgTypes.Length)
+                    {
+                        throw new ParserException(this, "This function has a different number of arguments than its overridden parent.");
+                    }
+
+                    if (overriddenFunction.MinArgCount != this.MinArgCount)
+                    {
+                        throw new ParserException(this, "This function has a different number of optional arguments than its overridden parent.");
+                    }
+
+                    // TODO: if you are overridding a function between a statically and dynamically typed languagte,
+                    // the dynamic language should pick up the types from the statically typed language or the
+                    // statically typed language should require "object" types in its signature for the other direction.
+                    for (int i = 0; i < this.ArgTypes.Length; ++i)
+                    {
+                        if (this.ResolvedArgTypes[i] != overriddenFunction.ResolvedArgTypes[i])
+                        {
+                            throw new ParserException(this, "This function has arguments that are different types than its overridden parent.");
+                        }
+                    }
+                }
+                else
+                {
+                    if (this.Modifiers.HasOverride) throw new ParserException(this, "This function is marked as 'override', but there is no method in a parent class with the same name.");
+                }
             }
         }
 

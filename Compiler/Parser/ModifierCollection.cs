@@ -3,6 +3,15 @@ using System.Linq;
 
 namespace Parser
 {
+    public enum AccessModifierType
+    {
+        PUBLIC,
+        PRIVATE,
+        INTERNAL,
+        PROTECTED,
+        INTERNAL_PROTECTED,
+    }
+
     public class ModifierCollection
     {
         public static readonly ModifierCollection EMPTY = new ModifierCollection(new Token[0]);
@@ -35,6 +44,7 @@ namespace Parser
 
         private Token[] tokens = new Token[(int)ModifierType.MAX];
         public Token FirstToken { get; private set; }
+        public AccessModifierType AccessModifierType { get; private set; }
 
         public static ModifierCollection Parse(TokenStream tokens)
         {
@@ -62,19 +72,31 @@ namespace Parser
                 this.tokens[index] = token;
             }
 
+            if (this.HasPrivate) this.AccessModifierType = AccessModifierType.PRIVATE;
+            else if (this.HasInternal) this.AccessModifierType = AccessModifierType.INTERNAL;
+            else if (this.HasProtected) this.AccessModifierType = AccessModifierType.PROTECTED;
+            else this.AccessModifierType = AccessModifierType.PUBLIC;
+
             if (modifiers.Count > 1)
             {
                 int accessModifierCount =
-                    (this.HasPublic ? 1 : 0) +
+                    (this.HasPublicExplicitly ? 1 : 0) +
                     (this.HasPrivate ? 1 : 0) +
                     (this.HasInternal ? 1 : 0) +
                     (this.HasProtected ? 1 : 0);
 
-                if (accessModifierCount > 1 && (accessModifierCount != 2 || !this.HasProtected || !this.HasInternal))
+                if (accessModifierCount > 1)
                 {
-                    throw new ParserException(
-                        this.PublicToken ?? this.PrivateToken ?? this.InternalToken,
-                        "Multiple access modifiers are not allowed (with the exception of internal + protected");
+                    if (accessModifierCount != 2 || !this.HasProtected || !this.HasInternal)
+                    {
+                        throw new ParserException(
+                            this.PublicToken ?? this.PrivateToken ?? this.InternalToken,
+                            "Multiple access modifiers are not allowed (with the exception of internal + protected");
+                    }
+                    else
+                    {
+                        this.AccessModifierType = AccessModifierType.INTERNAL_PROTECTED;
+                    }
                 }
             }
 
@@ -104,7 +126,7 @@ namespace Parser
         public Token PrivateToken { get { return this.tokens[(int)ModifierType.PRIVATE]; } }
         public bool HasProtected { get { return this.tokens[(int)ModifierType.PROTECTED] != null; } }
         public Token ProtectedToken { get { return this.tokens[(int)ModifierType.PROTECTED]; } }
-        public bool HasPublic { get { return this.tokens[(int)ModifierType.PUBLIC] != null; } }
+        public bool HasPublicExplicitly { get { return this.tokens[(int)ModifierType.PUBLIC] != null; } }
         public Token PublicToken { get { return this.tokens[(int)ModifierType.PUBLIC]; } }
         public bool HasStatic { get { return this.tokens[(int)ModifierType.STATIC] != null; } }
         public Token StaticToken { get { return this.tokens[(int)ModifierType.STATIC]; } }

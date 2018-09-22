@@ -20,9 +20,6 @@ namespace Parser.ParseTree
         public ConstructorDefinition StaticConstructor { get; set; }
         public FieldDefinition[] Fields { get; set; }
 
-        public Token StaticToken { get; set; }
-        public Token FinalToken { get; set; }
-
         private bool memberIdsResolved = false;
         public ModifierCollection Modifiers { get; private set; }
         private AnnotationCollection annotations;
@@ -44,18 +41,15 @@ namespace Parser.ParseTree
             : base(classToken, owner, fileScope)
         {
             this.ClassID = ClassDefinition.classIdAlloc++;
+            this.Modifiers = modifiers;
 
             this.NameToken = nameToken;
             this.BaseClassTokens = subclassTokens.ToArray();
             this.BaseClassDeclarations = subclassNames.ToArray();
-            this.StaticToken = modifiers.StaticToken;
-            this.FinalToken = modifiers.FinalToken;
             this.annotations = annotations;
 
-            if (this.StaticToken != null && this.BaseClassTokens.Length > 0)
-            {
-                throw new ParserException(this.StaticToken, "Class cannot be static and have base classes or interfaces.");
-            }
+            if (this.Modifiers.HasPrivate) throw new ParserException(this.Modifiers.PrivateToken, "Private classes are not supported yet.");
+            if (this.Modifiers.HasProtected) throw new ParserException(this.Modifiers.ProtectedToken, "Protected classes are not supported yet.");
         }
 
         private Dictionary<Locale, string> namesByLocale = null;
@@ -91,6 +85,11 @@ namespace Parser.ParseTree
             {
                 fd.ResolveVariableOrigins(parser);
             }
+        }
+
+        public TopLevelEntity GetMember(string name, bool walkUpBaseClasses)
+        {
+            return this.GetField(name, walkUpBaseClasses) ?? (TopLevelEntity) this.GetMethod(name, walkUpBaseClasses);
         }
 
         public FunctionDefinition GetMethod(string name, bool walkUpBaseClasses)
@@ -157,10 +156,6 @@ namespace Parser.ParseTree
                 FieldDefinition field = this.Fields[i];
                 field.Resolve(parser);
                 this.Fields[i] = field;
-                if (this.StaticToken != null && !field.Modifiers.HasStatic)
-                {
-                    throw new ParserException(field, "Cannot have a non-static field in a static class.");
-                }
             }
 
             for (int i = 0; i < this.Methods.Length; ++i)
@@ -168,17 +163,9 @@ namespace Parser.ParseTree
                 FunctionDefinition funcDef = this.Methods[i];
                 funcDef.Resolve(parser);
                 this.Methods[i] = funcDef;
-                if (this.StaticToken != null && !funcDef.Modifiers.HasStatic)
-                {
-                    throw new ParserException(funcDef, "Cannot have a non-static method in a static class.");
-                }
             }
 
             this.Constructor.Resolve(parser);
-            if (this.StaticToken != null && !this.Constructor.IsDefault)
-            {
-                throw new ParserException(this.Constructor, "Static classes cannot have a non-static constructor.");
-            }
 
             if (this.StaticConstructor != null)
             {
@@ -187,19 +174,6 @@ namespace Parser.ParseTree
 
             bool hasABaseClass = this.BaseClass != null;
             bool callsBaseConstructor = this.Constructor.BaseToken != null;
-
-            if (hasABaseClass)
-            {
-                if (this.BaseClass.FinalToken != null)
-                {
-                    throw new ParserException(this, "This class extends from " + this.BaseClass.NameToken.Value + " which is marked as final.");
-                }
-
-                if (this.BaseClass.StaticToken != null)
-                {
-                    throw new ParserException(this, "This class extends from " + this.BaseClass.NameToken.Value + " which is marked as static.");
-                }
-            }
 
             if (hasABaseClass && callsBaseConstructor)
             {
@@ -312,6 +286,40 @@ namespace Parser.ParseTree
             {
                 TypeResolver memberTypeResolver = new TypeResolver(tle);
                 tle.ResolveSignatureTypes(parser, memberTypeResolver);
+            }
+        }
+
+        internal override void EnsureModifierAndTypeSignatureConsistency()
+        {
+            bool isStatic = this.Modifiers.HasStatic;
+            if (this.BaseClass != null)
+            {
+                if (isStatic) throw new ParserException(this.Modifiers.StaticToken, "Cannot mark a class static and inhereit from another class.");
+                if (this.BaseClass.Modifiers.HasFinal) throw new ParserException(this, "Cannot inherit from a final class");
+                if (this.BaseClass.Modifiers.HasPrivate) throw new ParserException(this, "Cannot inherit from a private class");
+                if (this.BaseClass.Modifiers.AccessModifierType != AccessModifierType.PUBLIC)
+                {
+                    if (this.BaseClass.CompilationScope != this.CompilationScope)
+                    {
+                        throw new ParserException(this, "The base class is in a different compilation scope and is not public.");
+                    }
+                }
+            }
+
+            foreach (FieldDefinition field in this.Fields)
+            {
+                field.EnsureModifierAndTypeSignatureConsistency();
+            }
+
+            foreach (FunctionDefinition func in this.Methods)
+            {
+                func.EnsureModifierAndTypeSignatureConsistency();
+            }
+
+            this.Constructor.EnsureModifierAndTypeSignatureConsistency();
+            if (this.StaticConstructor != null)
+            {
+                this.StaticConstructor.EnsureModifierAndTypeSignatureConsistency();
             }
         }
 

@@ -447,7 +447,7 @@ namespace Exporter.ByteCode
 
         private static int EncodeAccessModifier(ModifierCollection modifiers)
         {
-            if (modifiers.HasPublic) return 1;
+            if (modifiers.AccessModifierType == AccessModifierType.PUBLIC) return 1;
             if (modifiers.HasPrivate) return 2;
             if (modifiers.HasInternal || modifiers.HasProtected)
             {
@@ -455,7 +455,7 @@ namespace Exporter.ByteCode
                 if (!modifiers.HasProtected) return 3;
                 return 5;
             }
-            return 1; // everything is public if not specified.
+            throw new Exception(); // All cases should be covered by the above.
         }
 
         private void CompileConstructor(ParserContext parser, ByteBuffer buffer, ConstructorDefinition constructor, ByteBuffer complexFieldInitializers)

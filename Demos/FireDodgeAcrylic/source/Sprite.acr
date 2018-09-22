@@ -97,7 +97,7 @@ public class Player : Sprite {
     }
 
     // Return the proper image for the current player's state
-    public GraphicsTexture getImage(int gameCounter) {
+    public override GraphicsTexture getImage(int gameCounter) {
         if (this.isDead) {
             // If the player died, show him collapsed
             return Player.playerDeadImage;

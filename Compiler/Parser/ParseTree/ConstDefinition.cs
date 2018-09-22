@@ -116,5 +116,11 @@ namespace Parser.ParseTree
         {
             throw new System.NotImplementedException();
         }
+
+        // Consts are exempt from this check.
+        internal override void EnsureModifierAndTypeSignatureConsistency()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

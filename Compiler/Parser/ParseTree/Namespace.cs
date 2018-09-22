@@ -74,6 +74,11 @@ namespace Parser.ParseTree
             throw new NotImplementedException();
         }
 
+        internal override void EnsureModifierAndTypeSignatureConsistency()
+        {
+            throw new NotImplementedException();
+        }
+
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             throw new NotImplementedException();

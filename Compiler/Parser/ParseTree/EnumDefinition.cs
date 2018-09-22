@@ -126,6 +126,12 @@ namespace Parser.ParseTree
             // Nothing to do.
         }
 
+        // enums are exempt from this check
+        internal override void EnsureModifierAndTypeSignatureConsistency()
+        {
+            throw new System.NotImplementedException();
+        }
+
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             foreach (Expression value in this.Values)

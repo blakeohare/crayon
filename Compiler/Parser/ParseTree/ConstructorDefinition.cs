@@ -175,6 +175,25 @@ namespace Parser.ParseTree
             this.ResolvedArgTypes = typeResolver.ResolveTypes(this.ArgTypes);
         }
 
+        internal override void EnsureModifierAndTypeSignatureConsistency()
+        {
+            bool isStatic = this.Modifiers.HasStatic;
+            ClassDefinition classDef = (ClassDefinition)this.Owner;
+            ClassDefinition baseClass = classDef.BaseClass;
+            bool hasBaseClass = baseClass != null;
+
+            if (!isStatic && classDef.Modifiers.HasStatic && !this.IsDefault)
+            {
+                throw new ParserException(this, "Cannot have a non-static constructor in a static class.");
+            }
+
+            if (this.BaseToken != null)
+            {
+                if (isStatic) throw new ParserException(this.BaseToken, "Cannot invoke the base constructor from a static constructor.");
+                if (!hasBaseClass) throw new ParserException(this.BaseToken, "There is no base class for this constructor to invoke.");
+            }
+        }
+
         internal override void ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
             for (int i = 0; i < this.ArgNames.Length; ++i)
@@ -193,10 +212,7 @@ namespace Parser.ParseTree
             ClassDefinition cd = (ClassDefinition)this.Owner;
             if (this.Modifiers.HasStatic)
             {
-                if (this.BaseToken != null)
-                {
-                    throw new ParserException(this, "Cannot call the base constructor from a static constructor.");
-                }
+                // already verified that there's no base constructor invocation
             }
             else if (cd.BaseClass != null)
             {
@@ -222,13 +238,6 @@ namespace Parser.ParseTree
                     {
                         throw new ParserException(this.BaseArgs[i], "Argument is incorrect type.");
                     }
-                }
-            }
-            else
-            {
-                if (this.BaseArgs != null && this.BaseArgs.Length > 0)
-                {
-                    throw new ParserException(this.BaseToken, "There is no base class for this constructor to invoke.");
                 }
             }
 
