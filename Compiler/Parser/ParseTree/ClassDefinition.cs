@@ -21,7 +21,6 @@ namespace Parser.ParseTree
         public FieldDefinition[] Fields { get; set; }
 
         private bool memberIdsResolved = false;
-        public ModifierCollection Modifiers { get; private set; }
         private AnnotationCollection annotations;
 
         // When a variable in this class is not locally defined, look for a fully qualified name that has one of these prefixes.
@@ -38,10 +37,9 @@ namespace Parser.ParseTree
             FileScope fileScope,
             ModifierCollection modifiers,
             AnnotationCollection annotations)
-            : base(classToken, owner, fileScope)
+            : base(classToken, owner, fileScope, modifiers)
         {
             this.ClassID = ClassDefinition.classIdAlloc++;
-            this.Modifiers = modifiers;
 
             this.NameToken = nameToken;
             this.BaseClassTokens = subclassTokens.ToArray();

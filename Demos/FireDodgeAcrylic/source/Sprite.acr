@@ -3,13 +3,13 @@ import Math;
 
 public class Sprite {
 
-    private float[] position;
-    private float[] targetPosition;
+    protected float[] position;
+    protected float[] targetPosition;
     private float dx = 0;
     private float dy = 0;
     protected float velocity;
-    private bool isDead = false;
-    private bool isMoving = false;
+    protected bool isDead = false;
+    protected bool isMoving = false;
     private int width;
     private int height;
 

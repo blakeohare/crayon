@@ -24,7 +24,7 @@ namespace Parser.Crayon
 
             if (tokens.IsNext(this.parser.Keywords.FUNCTION))
             {
-                methodsOut.Add(this.ParseFunction(tokens, classDef, fileScope, annotations, modifiers));
+                methodsOut.Add(this.ParseFunction(tokens, classDef, fileScope, modifiers, annotations));
             }
             else if (tokens.IsNext(this.parser.Keywords.CONSTRUCTOR))
             {
@@ -51,7 +51,7 @@ namespace Parser.Crayon
             }
             else if (tokens.IsNext(this.parser.Keywords.FIELD))
             {
-                fieldsOut.Add(this.ParseField(tokens, classDef, annotations, modifiers));
+                fieldsOut.Add(this.ParseField(tokens, classDef, modifiers, annotations));
             }
             else if (tokens.IsNext(this.parser.Keywords.CLASS))
             {
@@ -69,8 +69,8 @@ namespace Parser.Crayon
         protected override FieldDefinition ParseField(
             TokenStream tokens,
             ClassDefinition owner,
-            AnnotationCollection annotations,
-            ModifierCollection modifiers)
+            ModifierCollection modifiers,
+            AnnotationCollection annotations)
         {
             Token fieldToken = tokens.PopExpected(this.parser.Keywords.FIELD);
             Token nameToken = tokens.Pop();
@@ -88,8 +88,8 @@ namespace Parser.Crayon
             TokenStream tokens,
             TopLevelEntity nullableOwner,
             FileScope fileScope,
-            AnnotationCollection annotations,
-            ModifierCollection modifiers)
+            ModifierCollection modifiers,
+            AnnotationCollection annotations)
         {
             bool isStatic =
                 nullableOwner != null &&
@@ -123,11 +123,12 @@ namespace Parser.Crayon
             TokenStream tokens,
             Node owner,
             FileScope fileScope,
+            ModifierCollection modifiers,
             AnnotationCollection annotations)
         {
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             Token nameToken = tokens.Pop();
-            ConstDefinition constStatement = new ConstDefinition(constToken, AType.Any(constToken), nameToken, owner, fileScope, annotations);
+            ConstDefinition constStatement = new ConstDefinition(constToken, AType.Any(constToken), nameToken, owner, fileScope, modifiers, annotations);
             this.parser.VerifyIdentifier(nameToken);
             tokens.PopExpected("=");
             constStatement.Expression = this.parser.ExpressionParser.Parse(tokens, constStatement);

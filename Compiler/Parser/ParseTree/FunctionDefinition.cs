@@ -21,7 +21,6 @@ namespace Parser.ParseTree
         public int LocalScopeSize { get; set; }
         public int FinalizedPC { get; set; }
         public int MemberID { get; set; }
-        public ModifierCollection Modifiers { get; private set; }
         public List<Lambda> Lambdas { get; private set; }
         private Dictionary<Locale, string> namesByLocale = null;
 
@@ -33,14 +32,13 @@ namespace Parser.ParseTree
             ModifierCollection modifiers,
             AnnotationCollection annotations,
             FileScope fileScope)
-            : base(functionToken, nullableOwner, fileScope)
+            : base(functionToken, nullableOwner, fileScope, modifiers)
         {
             this.ReturnType = returnType;
             this.NameToken = nameToken;
             this.Annotations = annotations;
             this.MemberID = -1;
             this.Lambdas = new List<Lambda>();
-            this.Modifiers = modifiers;
         }
 
         private int minArgCount = -1;

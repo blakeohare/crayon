@@ -10,7 +10,6 @@ namespace Parser.ParseTree
         public Expression DefaultValue { get; set; }
         public int MemberID { get; set; }
         public int StaticMemberID { get; set; }
-        public ModifierCollection Modifiers { get; private set; }
         public AnnotationCollection Annotations { get; set; }
         public List<Lambda> Lambdas { get; private set; }
         public AType FieldType { get; private set; }
@@ -23,12 +22,11 @@ namespace Parser.ParseTree
             ClassDefinition owner,
             ModifierCollection modifiers,
             AnnotationCollection annotations)
-            : base(fieldToken, owner, owner.FileScope)
+            : base(fieldToken, owner, owner.FileScope, modifiers)
         {
             this.NameToken = nameToken;
             this.FieldType = fieldType;
             this.DefaultValue = null;
-            this.Modifiers = modifiers;
             this.MemberID = -1;
             this.Annotations = annotations;
             this.Lambdas = new List<Lambda>();

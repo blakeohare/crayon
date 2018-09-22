@@ -7,10 +7,13 @@ namespace Parser.ParseTree
 {
     public abstract class TopLevelEntity : Node
     {
-        public TopLevelEntity(Token firstToken, Node owner, FileScope fileScope)
+        public ModifierCollection Modifiers { get; private set; }
+
+        public TopLevelEntity(Token firstToken, Node owner, FileScope fileScope, ModifierCollection modifiers)
             : base(firstToken, owner)
         {
             this.fileScopeOverride = fileScope;
+            this.Modifiers = modifiers;
         }
 
         public abstract string GetFullyQualifiedLocalizedName(Locale locale);

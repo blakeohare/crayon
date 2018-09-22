@@ -61,10 +61,10 @@ namespace Parser
             TODO.CheckForUnusedAnnotations();
 
             if (value == this.parser.Keywords.NAMESPACE) return this.ParseNamespace(tokens, owner, fileScope, annotations);
-            if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner, fileScope, annotations);
-            if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner, fileScope, annotations, modifiers);
+            if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner, fileScope, modifiers, annotations);
+            if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner, fileScope, modifiers, annotations);
             if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, fileScope, modifiers, annotations);
-            if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner, fileScope, annotations);
+            if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner, fileScope, modifiers, annotations);
             if (value == this.parser.Keywords.CONSTRUCTOR && owner is ClassDefinition) return this.ParseConstructor(tokens, (ClassDefinition)owner, modifiers, annotations);
 
             FunctionDefinition nullableFunctionDef = this.MaybeParseFunctionDefinition(tokens, owner, fileScope, annotations, modifiers);
@@ -177,15 +177,21 @@ namespace Parser
             TokenStream tokens,
             Node owner,
             FileScope fileScope,
+            ModifierCollection modifiers,
             AnnotationCollection annotations);
 
-        protected virtual EnumDefinition ParseEnumDefinition(TokenStream tokens, Node owner, FileScope fileScope, AnnotationCollection annotations)
+        protected virtual EnumDefinition ParseEnumDefinition(
+            TokenStream tokens,
+            Node owner,
+            FileScope fileScope,
+            ModifierCollection modifiers,
+            AnnotationCollection annotations)
         {
             Token enumToken = tokens.PopExpected(this.parser.Keywords.ENUM);
             Token nameToken = tokens.Pop();
             this.parser.VerifyIdentifier(nameToken);
             string name = nameToken.Value;
-            EnumDefinition ed = new EnumDefinition(enumToken, nameToken, owner, fileScope, annotations);
+            EnumDefinition ed = new EnumDefinition(enumToken, nameToken, owner, fileScope, modifiers, annotations);
 
             tokens.PopExpected("{");
             bool nextForbidden = false;
@@ -213,7 +219,12 @@ namespace Parser
             return ed;
         }
 
-        protected virtual ClassDefinition ParseClassDefinition(TokenStream tokens, Node owner, FileScope fileScope, ModifierCollection modifiers, AnnotationCollection classAnnotations)
+        protected virtual ClassDefinition ParseClassDefinition(
+            TokenStream tokens,
+            Node owner,
+            FileScope fileScope,
+            ModifierCollection modifiers,
+            AnnotationCollection classAnnotations)
         {
             Token classToken = tokens.PopExpected(this.parser.Keywords.CLASS);
             Token classNameToken = tokens.Pop();
@@ -280,10 +291,14 @@ namespace Parser
         protected abstract FieldDefinition ParseField(
             TokenStream tokens,
             ClassDefinition owner,
-            AnnotationCollection annotations,
-            ModifierCollection modifiers);
+            ModifierCollection modifiers,
+            AnnotationCollection annotations);
 
-        protected virtual Namespace ParseNamespace(TokenStream tokens, Node owner, FileScope fileScope, AnnotationCollection annotations)
+        protected virtual Namespace ParseNamespace(
+            TokenStream tokens,
+            Node owner,
+            FileScope fileScope,
+            AnnotationCollection annotations)
         {
             Token namespaceToken = tokens.PopExpected(this.parser.Keywords.NAMESPACE);
             Token first = tokens.Pop();
@@ -302,7 +317,7 @@ namespace Parser
 
             string name = string.Join(".", namespacePieces.Select<Token, string>(t => t.Value));
 
-            Namespace namespaceInstance = new Namespace(namespaceToken, name, owner, fileScope, annotations);
+            Namespace namespaceInstance = new Namespace(namespaceToken, name, owner, fileScope, ModifierCollection.EMPTY, annotations);
 
             tokens.PopExpected("{");
             List<TopLevelEntity> namespaceMembers = new List<TopLevelEntity>();
@@ -332,7 +347,7 @@ namespace Parser
             TokenStream tokens,
             TopLevelEntity nullableOwner,
             FileScope fileScope,
-            AnnotationCollection annotations,
-            ModifierCollection modifiers);
+            ModifierCollection modifiers,
+            AnnotationCollection annotations);
     }
 }

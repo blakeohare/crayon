@@ -6,7 +6,7 @@ public class ImageLibrary {
     private static Dictionary<string, GraphicsTexture> text = new Dictionary<string, GraphicsTexture>();
     private static ImageSheet sheet = null;
 
-    private static void initializeWithImageSheet(ImageSheet sheet) {
+    internal static void initializeWithImageSheet(ImageSheet sheet) {
         ImageLibrary.sheet = sheet;
     }
 

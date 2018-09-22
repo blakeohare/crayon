@@ -19,8 +19,9 @@ namespace Parser.ParseTree
             Token nameToken,
             Node owner,
             FileScope fileScope,
+            ModifierCollection modifiers,
             AnnotationCollection annotations)
-            : base(enumToken, owner, fileScope)
+            : base(enumToken, owner, fileScope, modifiers)
         {
             this.NameToken = nameToken;
             this.Name = nameToken.Value;

@@ -25,7 +25,6 @@ namespace Parser.ParseTree
         public int MinArgCount { get; set; }
         public int MaxArgCount { get; set; }
         public bool IsDefault { get; private set; }
-        public ModifierCollection Modifiers { get; private set; }
         public AnnotationCollection Annotations { get; set; }
         public List<Lambda> Lambdas { get; private set; }
 
@@ -40,10 +39,9 @@ namespace Parser.ParseTree
             ModifierCollection modifiers,
             AnnotationCollection annotations,
             ClassDefinition owner)
-            : base(constructorToken, owner, owner.FileScope)
+            : base(constructorToken, owner, owner.FileScope, modifiers)
         {
             this.IsDefault = false;
-            this.Modifiers = modifiers;
             this.Annotations = annotations;
             this.ArgTypes = NO_TYPES;
             this.ArgNames = NO_TOKENS;

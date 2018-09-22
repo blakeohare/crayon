@@ -32,8 +32,9 @@ namespace Parser.ParseTree
             string name,
             Node owner,
             FileScope fileScope,
+            ModifierCollection modifiers,
             AnnotationCollection annotations)
-            : base(namespaceToken, owner, fileScope)
+            : base(namespaceToken, owner, fileScope, modifiers)
         {
             this.DefaultName = name;
             this.FullyQualifiedDefaultName = owner == null

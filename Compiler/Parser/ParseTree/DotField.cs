@@ -78,6 +78,8 @@ namespace Parser.ParseTree
                         throw new ParserException(this.DotToken, "'" + className + "." + functionName + "' is not a static method, but it is being used as though it is static.");
                     }
 
+                    Node.EnsureAccessIsAllowed(this.FieldToken, this.Owner, funcDef);
+
                     return new FunctionReference(this.FirstToken, funcDef, this.Owner);
                 }
 
@@ -88,6 +90,8 @@ namespace Parser.ParseTree
                     {
                         throw new ParserException(this.DotToken, "Cannot make a static reference to a non-static field.");
                     }
+
+                    Node.EnsureAccessIsAllowed(this.FieldToken, this.Owner, fieldDec);
 
                     return new FieldReference(this.FirstToken, fieldDec, this.Owner);
                 }
@@ -144,6 +148,8 @@ namespace Parser.ParseTree
                     throw new ParserException(this.DotToken, "Cannot reference static methods using 'base' keyword.");
                 }
 
+                Node.EnsureAccessIsAllowed(this.DotToken, this.Owner, fd);
+
                 return new BaseMethodReference(this.FirstToken, this.DotToken, this.FieldToken, this.Owner);
             }
 
@@ -181,6 +187,7 @@ namespace Parser.ParseTree
                     {
                         throw new ParserException(this.DotToken, "This method is static and must be referenced by the class name, not 'this'.");
                     }
+                    Node.EnsureAccessIsAllowed(this.DotToken, this.Owner, funcDef);
                     return new FunctionReference(this.FirstToken, funcDef, this.Owner);
                 }
 
@@ -191,6 +198,7 @@ namespace Parser.ParseTree
                     {
                         throw new ParserException(this.DotToken, "This field is static and must be referenced by the class name, not 'this'.");
                     }
+                    Node.EnsureAccessIsAllowed(this.DotToken, this.Owner, fieldDef);
 
                     return new FieldReference(this.FirstToken, fieldDef, this.Owner);
                 }

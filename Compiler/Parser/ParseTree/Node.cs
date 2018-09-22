@@ -64,5 +64,64 @@ namespace Parser.ParseTree
                 }
             }
         }
+
+        internal static void EnsureAccessIsAllowed(Token throwToken, Node callerLocation, TopLevelEntity classMember)
+        {
+            if (!IsAccessAllowed(callerLocation, classMember))
+            {
+                // TODO: better wording: "The field/function 'foo' is not visible from the class 'FooClass' due to its access scope."
+                // TODO: even better: "...it is marked as protected but does not inherit from 'AbstractFooClass'" etc.
+                throw new ParserException(throwToken, "This class member is not visible from here due to its access scope.");
+            }
+        }
+
+        private static ClassDefinition GetWrappingClassOfNode(Node node)
+        {
+            while (node != null && !(node is ClassDefinition))
+            {
+                node = node.Owner;
+            }
+            if (node == null) return null;
+            return (ClassDefinition)node;
+        }
+
+        internal static bool IsAccessAllowed(Node callerLocation, TopLevelEntity invokedItem)
+        {
+            AccessModifierType invokedAccessType = invokedItem.Modifiers.AccessModifierType;
+
+            if (invokedAccessType == AccessModifierType.PUBLIC)
+            {
+                return true;
+            }
+
+            bool sameScope = invokedItem.CompilationScope == callerLocation.CompilationScope;
+
+            if (invokedAccessType == AccessModifierType.INTERNAL) return sameScope;
+            if (invokedAccessType == AccessModifierType.INTERNAL_PROTECTED)
+            {
+                if (!sameScope) return false;
+            }
+
+            ClassDefinition memberClass = GetWrappingClassOfNode(invokedItem);
+            ClassDefinition callerClass = GetWrappingClassOfNode(callerLocation);
+            bool sameClass = memberClass == callerClass;
+
+            if (sameClass || invokedAccessType == AccessModifierType.PRIVATE)
+            {
+                return sameClass;
+            }
+
+            // at this point, we are only left with PROTECTED and
+            // INTERNAL_PROTECTED (where the INTERNAL part was already verified) and we
+            // know that the calling site does not occur in the member's class.
+
+            ClassDefinition classWalker = callerClass;
+            while (classWalker != null)
+            {
+                classWalker = classWalker.BaseClass;
+                if (classWalker == memberClass) return true;
+            }
+            return false;
+        }
     }
 }

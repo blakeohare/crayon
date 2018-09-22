@@ -57,10 +57,10 @@ namespace Parser.Acrylic
                 {
                     case "=":
                     case ";":
-                        fieldsOut.Add(this.ParseField(tokens, classDef, annotations, modifiers));
+                        fieldsOut.Add(this.ParseField(tokens, classDef, modifiers, annotations));
                         break;
                     case "(":
-                        methodsOut.Add(this.ParseFunction(tokens, classDef, fileScope, annotations, modifiers));
+                        methodsOut.Add(this.ParseFunction(tokens, classDef, fileScope, modifiers, annotations));
                         break;
                     default:
                         tokens.PopExpected("}"); // intentionally induce error
@@ -74,8 +74,8 @@ namespace Parser.Acrylic
         protected override FieldDefinition ParseField(
             TokenStream tokens,
             ClassDefinition owner,
-            AnnotationCollection annotations,
-            ModifierCollection modifiers)
+            ModifierCollection modifiers,
+            AnnotationCollection annotations)
         {
             AType fieldType = this.parser.TypeParser.Parse(tokens);
             Token nameToken = tokens.Pop();
@@ -93,8 +93,8 @@ namespace Parser.Acrylic
             TokenStream tokens,
             TopLevelEntity nullableOwner,
             FileScope fileScope,
-            AnnotationCollection annotations,
-            ModifierCollection modifiers)
+            ModifierCollection modifiers,
+            AnnotationCollection annotations)
         {
             AType returnType = this.parser.TypeParser.Parse(tokens);
             Token firstToken = modifiers.FirstToken ?? returnType.FirstToken;
@@ -123,12 +123,13 @@ namespace Parser.Acrylic
             TokenStream tokens,
             Node owner,
             FileScope fileScope,
+            ModifierCollection modifiers,
             AnnotationCollection annotations)
         {
             Token constToken = tokens.PopExpected(this.parser.Keywords.CONST);
             AType type = this.parser.TypeParser.Parse(tokens);
             Token nameToken = tokens.Pop();
-            ConstDefinition constStatement = new ConstDefinition(constToken, type, nameToken, owner, fileScope, annotations);
+            ConstDefinition constStatement = new ConstDefinition(constToken, type, nameToken, owner, fileScope, modifiers, annotations);
             this.parser.VerifyIdentifier(nameToken);
             tokens.PopExpected("=");
             constStatement.Expression = this.parser.ExpressionParser.Parse(tokens, constStatement);
@@ -157,7 +158,7 @@ namespace Parser.Acrylic
             if (tokens.IsNext("("))
             {
                 tokens.RestoreState(tss);
-                return this.ParseFunction(tokens, owner as TopLevelEntity, fileScope, annotations, modifiers);
+                return this.ParseFunction(tokens, owner as TopLevelEntity, fileScope, modifiers, annotations);
             }
 
             tokens.RestoreState(tss);
