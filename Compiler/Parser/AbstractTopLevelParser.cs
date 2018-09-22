@@ -38,11 +38,6 @@ namespace Parser
             return new ImportStatement(importToken, importPath, fileScope);
         }
 
-        internal virtual ModifierCollection ParseModifiers(TokenStream tokens)
-        {
-            return ModifierCollection.EMPTY;
-        }
-
         internal virtual TopLevelEntity Parse(
             TokenStream tokens,
             TopLevelEntity owner,
@@ -50,7 +45,7 @@ namespace Parser
         {
             AnnotationCollection annotations = annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
 
-            ModifierCollection modifiers = this.ParseModifiers(tokens);
+            ModifierCollection modifiers = ModifierCollection.Parse(tokens);
 
             string value = tokens.PeekValue();
 
@@ -65,46 +60,10 @@ namespace Parser
             // Or maybe a try/finally.
             TODO.CheckForUnusedAnnotations();
 
-            Token staticToken = null;
-            Token finalToken = null;
-            while (value == this.parser.Keywords.STATIC || value == this.parser.Keywords.FINAL)
-            {
-                if (value == this.parser.Keywords.STATIC && staticToken == null)
-                {
-                    staticToken = tokens.Pop();
-                    value = tokens.PeekValue();
-                }
-                if (value == this.parser.Keywords.FINAL && finalToken == null)
-                {
-                    finalToken = tokens.Pop();
-                    value = tokens.PeekValue();
-                }
-            }
-
-            if (staticToken != null || finalToken != null)
-            {
-                if (value != this.parser.Keywords.CLASS)
-                {
-                    if (staticToken != null)
-                    {
-                        throw ParserException.ThrowException(this.parser.CurrentLocale, ErrorMessages.ONLY_CLASSES_METHODS_FIELDS_MAY_BE_STATIC, staticToken);
-                    }
-                    else
-                    {
-                        throw ParserException.ThrowException(this.parser.CurrentLocale, ErrorMessages.ONLY_CLASSES_MAY_BE_FINAL, finalToken);
-                    }
-                }
-
-                if (staticToken != null && finalToken != null)
-                {
-                    throw ParserException.ThrowException(this.parser.CurrentLocale, ErrorMessages.CLASSES_CANNOT_BE_STATIC_AND_FINAL_SIMULTANEOUSLY, staticToken);
-                }
-            }
-
             if (value == this.parser.Keywords.NAMESPACE) return this.ParseNamespace(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.CONST) return this.ParseConst(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.FUNCTION) return this.ParseFunction(tokens, owner, fileScope, annotations, modifiers);
-            if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, staticToken, finalToken, fileScope, annotations);
+            if (value == this.parser.Keywords.CLASS) return this.ParseClassDefinition(tokens, owner, fileScope, modifiers, annotations);
             if (value == this.parser.Keywords.ENUM) return this.ParseEnumDefinition(tokens, owner, fileScope, annotations);
             if (value == this.parser.Keywords.CONSTRUCTOR && owner is ClassDefinition) return this.ParseConstructor(tokens, (ClassDefinition)owner, modifiers, annotations);
 
@@ -254,7 +213,7 @@ namespace Parser
             return ed;
         }
 
-        protected virtual ClassDefinition ParseClassDefinition(TokenStream tokens, Node owner, Token staticToken, Token finalToken, FileScope fileScope, AnnotationCollection classAnnotations)
+        protected virtual ClassDefinition ParseClassDefinition(TokenStream tokens, Node owner, FileScope fileScope, ModifierCollection modifiers, AnnotationCollection classAnnotations)
         {
             Token classToken = tokens.PopExpected(this.parser.Keywords.CLASS);
             Token classNameToken = tokens.Pop();
@@ -292,9 +251,8 @@ namespace Parser
                 baseClassTokens,
                 baseClassStrings,
                 owner,
-                staticToken,
-                finalToken,
                 fileScope,
+                modifiers,
                 classAnnotations);
 
             tokens.PopExpected("{");

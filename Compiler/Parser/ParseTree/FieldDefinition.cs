@@ -16,16 +16,24 @@ namespace Parser.ParseTree
         public AType FieldType { get; private set; }
         public ResolvedType ResolvedFieldType { get; private set; }
 
-        public FieldDefinition(Token fieldToken, AType fieldType, Token nameToken, ClassDefinition owner, bool isStatic, AnnotationCollection annotations)
+        public FieldDefinition(
+            Token fieldToken,
+            AType fieldType,
+            Token nameToken,
+            ClassDefinition owner,
+            ModifierCollection modifiers,
+            AnnotationCollection annotations)
             : base(fieldToken, owner, owner.FileScope)
         {
             this.NameToken = nameToken;
             this.FieldType = fieldType;
             this.DefaultValue = null;
-            this.IsStaticField = isStatic;
+            this.IsStaticField = modifiers.HasStatic;
             this.MemberID = -1;
             this.Annotations = annotations;
             this.Lambdas = new List<Lambda>();
+
+            if (modifiers.HasAbstract) throw new ParserException(modifiers.AbstractToken, "Fields cannot be abstract.");
         }
 
         public override string GetFullyQualifiedLocalizedName(Locale locale)
