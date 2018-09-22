@@ -29,14 +29,14 @@ namespace Parser.ParseTree
             Token functionToken,
             AType returnType,
             TopLevelEntity nullableOwner,
-            bool isStaticMethod,
             Token nameToken,
+            ModifierCollection modifiers,
             AnnotationCollection annotations,
             FileScope fileScope)
             : base(functionToken, nullableOwner, fileScope)
         {
             this.ReturnType = returnType;
-            this.IsStaticMethod = isStaticMethod;
+            this.IsStaticMethod = modifiers.HasStatic;
             this.NameToken = nameToken;
             this.Annotations = annotations;
             this.MemberID = -1;

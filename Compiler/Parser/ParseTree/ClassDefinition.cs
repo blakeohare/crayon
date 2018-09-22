@@ -24,6 +24,7 @@ namespace Parser.ParseTree
         public Token FinalToken { get; set; }
 
         private bool memberIdsResolved = false;
+        public ModifierCollection Modifiers { get; private set; }
         private AnnotationCollection annotations;
 
         // When a variable in this class is not locally defined, look for a fully qualified name that has one of these prefixes.
@@ -37,9 +38,8 @@ namespace Parser.ParseTree
             IList<Token> subclassTokens,
             IList<string> subclassNames,
             Node owner,
-            Token staticToken,
-            Token finalToken,
             FileScope fileScope,
+            ModifierCollection modifiers,
             AnnotationCollection annotations)
             : base(classToken, owner, fileScope)
         {
@@ -48,13 +48,13 @@ namespace Parser.ParseTree
             this.NameToken = nameToken;
             this.BaseClassTokens = subclassTokens.ToArray();
             this.BaseClassDeclarations = subclassNames.ToArray();
-            this.StaticToken = staticToken;
-            this.FinalToken = finalToken;
+            this.StaticToken = modifiers.StaticToken;
+            this.FinalToken = modifiers.FinalToken;
             this.annotations = annotations;
 
-            if (staticToken != null && this.BaseClassTokens.Length > 0)
+            if (this.StaticToken != null && this.BaseClassTokens.Length > 0)
             {
-                throw new ParserException(staticToken, "Class cannot be static and have base classes or interfaces.");
+                throw new ParserException(this.StaticToken, "Class cannot be static and have base classes or interfaces.");
             }
         }
 

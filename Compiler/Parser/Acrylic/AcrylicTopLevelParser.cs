@@ -12,32 +12,10 @@ namespace Parser.Acrylic
             : base(parser, true)
         { }
 
-        private static readonly HashSet<string> MODIFIER_STRING_VALUES = new HashSet<string>()
-        {
-            "public",
-            "private",
-            "internal",
-            "protected",
-            "abstract",
-            "static",
-            "final",
-            "override",
-        };
-
-        internal override ModifierCollection ParseModifiers(TokenStream tokens)
-        {
-            List<Token> modifierTokens = new List<Token>();
-            while (MODIFIER_STRING_VALUES.Contains(tokens.PeekValue()))
-            {
-                modifierTokens.Add(tokens.Pop());
-            }
-            return new ModifierCollection(modifierTokens);
-        }
-
         protected override void ParseClassMember(TokenStream tokens, FileScope fileScope, ClassDefinition classDef, IList<FunctionDefinition> methodsOut, IList<FieldDefinition> fieldsOut)
         {
             AnnotationCollection annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
-            ModifierCollection modifiers = this.ParseModifiers(tokens);
+            ModifierCollection modifiers = ModifierCollection.Parse(tokens);
 
             if (tokens.IsNext(this.parser.Keywords.CONSTRUCTOR))
             {
@@ -102,7 +80,7 @@ namespace Parser.Acrylic
             AType fieldType = this.parser.TypeParser.Parse(tokens);
             Token nameToken = tokens.Pop();
             this.parser.VerifyIdentifier(nameToken);
-            FieldDefinition fd = new FieldDefinition(modifiers.FirstToken, fieldType, nameToken, owner, modifiers.HasStatic, annotations);
+            FieldDefinition fd = new FieldDefinition(modifiers.FirstToken, fieldType, nameToken, owner, modifiers, annotations);
             if (tokens.PopIfPresent("="))
             {
                 fd.DefaultValue = this.parser.ExpressionParser.Parse(tokens, fd);
@@ -123,7 +101,7 @@ namespace Parser.Acrylic
             Token functionNameToken = tokens.Pop();
             this.parser.VerifyIdentifier(functionNameToken);
 
-            FunctionDefinition fd = new FunctionDefinition(firstToken, returnType, nullableOwner, modifiers.HasStatic, functionNameToken, annotations, fileScope);
+            FunctionDefinition fd = new FunctionDefinition(firstToken, returnType, nullableOwner, functionNameToken, modifiers, annotations, fileScope);
 
             tokens.PopExpected("(");
             List<AType> argTypes = new List<AType>();

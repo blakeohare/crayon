@@ -20,38 +20,38 @@ namespace Parser.Crayon
             IList<FieldDefinition> fieldsOut)
         {
             AnnotationCollection annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
-            ModifierCollection modifiers = ModifierCollection.EMPTY;
+            ModifierCollection modifiers = ModifierCollection.Parse(tokens);
 
-            if (tokens.IsNext(this.parser.Keywords.FUNCTION) ||
-                tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FUNCTION))
+            if (tokens.IsNext(this.parser.Keywords.FUNCTION))
             {
                 methodsOut.Add(this.ParseFunction(tokens, classDef, fileScope, annotations, modifiers));
             }
             else if (tokens.IsNext(this.parser.Keywords.CONSTRUCTOR))
             {
-                if (classDef.Constructor != null)
+                if (modifiers.HasStatic)
                 {
-                    throw this.parser.GenerateParseError(
-                        ErrorMessages.CLASS_CANNOT_HAVE_MULTIPLE_CONSTRUCTORS,
-                        tokens.Pop());
-                }
+                    if (classDef.StaticConstructor != null)
+                    {
+                        throw new ParserException(tokens.Pop(), "Multiple static constructors are not allowed.");
+                    }
 
-                classDef.Constructor = this.ParseConstructor(tokens, classDef, modifiers, annotations);
-            }
-            else if (tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.CONSTRUCTOR))
-            {
-                tokens.Pop(); // static token
-                if (classDef.StaticConstructor != null)
+                    classDef.StaticConstructor = this.ParseConstructor(tokens, classDef, modifiers, annotations);
+                }
+                else
                 {
-                    throw new ParserException(tokens.Pop(), "Multiple static constructors are not allowed.");
-                }
+                    if (classDef.Constructor != null)
+                    {
+                        throw this.parser.GenerateParseError(
+                            ErrorMessages.CLASS_CANNOT_HAVE_MULTIPLE_CONSTRUCTORS,
+                            tokens.Pop());
+                    }
 
-                classDef.StaticConstructor = this.ParseConstructor(tokens, classDef, modifiers, annotations);
+                    classDef.Constructor = this.ParseConstructor(tokens, classDef, modifiers, annotations);
+                }
             }
-            else if (tokens.IsNext(this.parser.Keywords.FIELD) ||
-                tokens.AreNext(this.parser.Keywords.STATIC, this.parser.Keywords.FIELD))
+            else if (tokens.IsNext(this.parser.Keywords.FIELD))
             {
-                fieldsOut.Add(this.ParseField(tokens, classDef, annotations, ModifierCollection.EMPTY));
+                fieldsOut.Add(this.ParseField(tokens, classDef, annotations, modifiers));
             }
             else if (tokens.IsNext(this.parser.Keywords.CLASS))
             {
@@ -72,11 +72,10 @@ namespace Parser.Crayon
             AnnotationCollection annotations,
             ModifierCollection modifiers)
         {
-            bool isStatic = tokens.PopIfPresent(this.parser.Keywords.STATIC);
             Token fieldToken = tokens.PopExpected(this.parser.Keywords.FIELD);
             Token nameToken = tokens.Pop();
             this.parser.VerifyIdentifier(nameToken);
-            FieldDefinition fd = new FieldDefinition(fieldToken, AType.Any(fieldToken), nameToken, owner, isStatic, annotations);
+            FieldDefinition fd = new FieldDefinition(fieldToken, AType.Any(fieldToken), nameToken, owner, modifiers, annotations);
             if (tokens.PopIfPresent("="))
             {
                 fd.DefaultValue = this.parser.ExpressionParser.Parse(tokens, fd);
@@ -102,7 +101,7 @@ namespace Parser.Crayon
             Token functionNameToken = tokens.Pop();
             this.parser.VerifyIdentifier(functionNameToken);
 
-            FunctionDefinition fd = new FunctionDefinition(functionToken, AType.Any(functionToken), nullableOwner, isStatic, functionNameToken, annotations, fileScope);
+            FunctionDefinition fd = new FunctionDefinition(functionToken, AType.Any(functionToken), nullableOwner, functionNameToken, modifiers, annotations, fileScope);
 
             tokens.PopExpected("(");
             List<Token> argNames = new List<Token>();
