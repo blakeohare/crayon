@@ -26,6 +26,13 @@ namespace Parser.ParseTree
             this.NameToken = nameToken;
             this.Name = nameToken.Value;
             this.annotations = annotations;
+
+            if (modifiers.AccessModifierType == AccessModifierType.PRIVATE ||
+                modifiers.AccessModifierType == AccessModifierType.PROTECTED)
+            {
+                // TODO: this will not be true when you can start nesting these into classes.
+                throw new ParserException(modifiers.PrivateToken ?? modifiers.ProtectedToken, "This is not a valid access modifier for enums.");
+            }
         }
 
         private Dictionary<Locale, string> namesByLocale = null;

@@ -65,9 +65,9 @@ namespace Parser.ParseTree
             }
         }
 
-        internal static void EnsureAccessIsAllowed(Token throwToken, Node callerLocation, TopLevelEntity classMember)
+        internal static void EnsureAccessIsAllowed(Token throwToken, Node callerLocation, TopLevelEntity referencedEntity)
         {
-            if (!IsAccessAllowed(callerLocation, classMember))
+            if (!IsAccessAllowed(callerLocation, referencedEntity))
             {
                 // TODO: better wording: "The field/function 'foo' is not visible from the class 'FooClass' due to its access scope."
                 // TODO: even better: "...it is marked as protected but does not inherit from 'AbstractFooClass'" etc.
@@ -75,7 +75,7 @@ namespace Parser.ParseTree
             }
         }
 
-        private static ClassDefinition GetWrappingClassOfNode(Node node)
+        private static ClassDefinition GetWrappingClassOfNodeIfNotAlreadyAClass(Node node)
         {
             while (node != null && !(node is ClassDefinition))
             {
@@ -85,16 +85,16 @@ namespace Parser.ParseTree
             return (ClassDefinition)node;
         }
 
-        internal static bool IsAccessAllowed(Node callerLocation, TopLevelEntity invokedItem)
+        internal static bool IsAccessAllowed(Node callerLocation, TopLevelEntity referencedEntity)
         {
-            AccessModifierType invokedAccessType = invokedItem.Modifiers.AccessModifierType;
+            AccessModifierType invokedAccessType = referencedEntity.Modifiers.AccessModifierType;
 
             if (invokedAccessType == AccessModifierType.PUBLIC)
             {
                 return true;
             }
 
-            bool sameScope = invokedItem.CompilationScope == callerLocation.CompilationScope;
+            bool sameScope = referencedEntity.CompilationScope == callerLocation.CompilationScope;
 
             if (invokedAccessType == AccessModifierType.INTERNAL) return sameScope;
             if (invokedAccessType == AccessModifierType.INTERNAL_PROTECTED)
@@ -102,8 +102,8 @@ namespace Parser.ParseTree
                 if (!sameScope) return false;
             }
 
-            ClassDefinition memberClass = GetWrappingClassOfNode(invokedItem);
-            ClassDefinition callerClass = GetWrappingClassOfNode(callerLocation);
+            ClassDefinition memberClass = GetWrappingClassOfNodeIfNotAlreadyAClass(referencedEntity);
+            ClassDefinition callerClass = GetWrappingClassOfNodeIfNotAlreadyAClass(callerLocation);
             bool sameClass = memberClass == callerClass;
 
             if (sameClass || invokedAccessType == AccessModifierType.PRIVATE)

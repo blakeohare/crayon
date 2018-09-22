@@ -27,6 +27,13 @@ namespace Parser.ParseTree
             this.Name = nameToken.Value;
             this.Type = type;
             this.annotations = annotations;
+
+            if (modifiers.AccessModifierType == AccessModifierType.PRIVATE ||
+                modifiers.AccessModifierType == AccessModifierType.PROTECTED)
+            {
+                // TODO: this will not be true when you can start nesting these into classes.
+                throw new ParserException(modifiers.PrivateToken ?? modifiers.ProtectedToken, "This is not a valid access modifier for consts.");
+            }
         }
 
         private Dictionary<Locale, string> namesByLocale = null;

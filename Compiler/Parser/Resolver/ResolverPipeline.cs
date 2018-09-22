@@ -127,12 +127,40 @@ namespace Parser.Resolver
         // TODO: put this in a method on these classes and implement an interface. The function signatures are all close enough.
         public static Expression ConvertStaticReferenceToExpression(TopLevelEntity item, Token primaryToken, Node owner)
         {
-            if (item is ClassDefinition) return new ClassReference(primaryToken, (ClassDefinition)item, owner);
-            if (item is EnumDefinition) return new EnumReference(primaryToken, (EnumDefinition)item, owner);
-            if (item is ConstDefinition) return new ConstReference(primaryToken, (ConstDefinition)item, owner);
-            if (item is FunctionDefinition) return new FunctionReference(primaryToken, (FunctionDefinition)item, owner);
+            Expression output = null;
+            TopLevelEntity referencedEntity = null;
+            if (item is ClassDefinition)
+            {
+                ClassDefinition classDef = (ClassDefinition)item;
+                output = new ClassReference(primaryToken, classDef, owner);
+                referencedEntity = classDef;
+            }
+            else if (item is EnumDefinition)
+            {
+                EnumDefinition enumDef = (EnumDefinition)item;
+                output = new EnumReference(primaryToken, enumDef, owner);
+                referencedEntity = enumDef;
+            }
+            else if (item is ConstDefinition)
+            {
+                ConstDefinition constDef = (ConstDefinition)item;
+                output = new ConstReference(primaryToken, constDef, owner);
+                referencedEntity = constDef;
+            }
+            else if (item is FunctionDefinition)
+            {
+                FunctionDefinition funcDef = (FunctionDefinition)item;
+                output = new FunctionReference(primaryToken, funcDef, owner);
+                referencedEntity = funcDef;
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
 
-            throw new InvalidOperationException();
+            Node.EnsureAccessIsAllowed(primaryToken, owner, referencedEntity);
+
+            return output;
         }
     }
 }
