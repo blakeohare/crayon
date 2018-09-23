@@ -69,7 +69,11 @@ namespace Parser.ParseTree
             }
 
             Node.EnsureAccessIsAllowed(this.FirstToken, this.Owner, this.Class);
-            Node.EnsureAccessIsAllowed(this.FirstToken, this.Owner, this.Class.Constructor);
+            if (!Node.IsAccessAllowed(this.Owner, this.Class.Constructor))
+            {
+                // TODO: word this better. Maybe just say "this class' constructor is marked as private/protected/etc"
+                throw new ParserException(this.FirstToken, "This class' constructor's access modifier does not allow it to be constructed here.");
+            }
 
             this.ConstructorReference = this.Class.Constructor;
             int minArgCount = 0;
