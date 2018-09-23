@@ -1,80 +1,93 @@
 namespace ImageResources {
-    class ImageSheet {
 
-        field _isLoaded = false;
-        field _info;
-        field _loader;
-        field _name;
-        field _id;
-
-        // List where the chunk ID is the index and the value is an ImageResource instance.
-        field _chunks;
-
+	public class ImageSheet {
+		
         // essentially this amounts to the tile count (as of now)
         // For aggregated image sheets, this represents a relative weight of how much "stuff"
         // this sheet loads so that the overall percentage can be shown as a function of all
         // sheets more accurately.
-        field _weight;
+        internal int _weight = 1;
+		
+		public constructor() { }
+		
+        public static ImageSheet loadFromResources(object name) {
+            return ImageSheet._initImpl(name, false, true);
+        }
 
-        @private
-        constructor(info, isAsync) {
+        static ImageSheet loadFromResourcesAsync(object name) {
+            return ImageSheet._initImpl(name, true, true);
+        }
+
+		// TODO: abstract classes
+        public ImageResource getImage(string resourcePath) { throw new Exception(); }
+		public bool isDone() { throw new Exception(); }
+		public float getProgress() { throw new Exception(); }
+		public List<string> getFiles() { throw new Exception(); }
+		
+        private static ImageSheet _initImpl(object name, bool isAsync, bool allowLists) {
+
+            // If name is actually a LIST of names, then the user actually wants an
+            // aggregated image sheet.
+            if (allowLists && Core.typeof(name) == Core.Type.LIST) {
+                List<BasicImageSheet> sheets = new List<BasicImageSheet>();
+                for (string t : (List<string>) name) {
+                    sheets.add((BasicImageSheet) ImageSheet._initImpl(t, isAsync, false));
+                }
+                return new AggregatedImageSheet(sheets);
+            }
+
+            // asserts on not found, so info is always non-null/valid
+            ManifestSheetInfo info = ImageResourceManifest.getSheetInfo((string) name);
+
+            return new BasicImageSheet(info, isAsync);
+        }
+
+	}
+
+    public class BasicImageSheet : ImageSheet {
+
+        public bool _isLoaded = false;
+        public ManifestSheetInfo _info;
+        public ImageSheetLoaderAsync _loader;
+        public string _name;
+        public string _id;
+
+        // List where the chunk ID is the index and the value is an ImageResource instance.
+        public List<ImageResource> _chunks;
+
+        public constructor(ManifestSheetInfo info, bool isAsync) : base() {
             this._info = info;
             this._name = info.name;
             this._id = info.id;
 
-            chunks = info.chunks;
-            tiles = [];
-            for (chunk : chunks.values()) {
+            Dictionary<int, ManifestChunkInfo> chunks = info.chunks;
+            List<ManifestTileInfo> tiles = new List<ManifestTileInfo>();
+            for (ManifestChunkInfo chunk : chunks.values()) {
                 tiles.concat(chunk.tiles);
             }
 
             this._weight = tiles.length;
 
             if (isAsync) {
-                this._loader = new ImageResources.ImageSheetLoaderAsync(tiles).load();
+                this._loader = new ImageSheetLoaderAsync(tiles).load();
             } else {
-                lookup = {};
-                for (tile : tiles) {
-                    genName = tile.genFileName;
-                    width = tile.width;
-                    height = tile.height;
-                    lookup[genName] = ImageLoader._loadImpl(
+                Dictionary<string, ImageLoader> lookup = new Dictionary<string, ImageLoader>();
+                for (ManifestTileInfo tile : tiles) {
+                    string genName = tile.genFileName;
+                    int width = tile.width;
+                    int height = tile.height;
+                    lookup[genName] = (ImageLoader) ImageLoader._loadImpl(
                         genName,
                         true, // is generated name
                         false, // is asynchronous
-                        width, height);
+                        width, 
+						height);
                 }
                 this._turnTilesIntoSheet(lookup);
             }
         }
 
-        static function loadFromResources(name) {
-            return ImageSheet._initImpl(name, false, true);
-        }
-
-        static function loadFromResourcesAsync(name) {
-            return ImageSheet._initImpl(name, true, true);
-        }
-
-        static function _initImpl(name, isAsync, allowLists) {
-
-            // If name is actually a LIST of names, then the user actually wants an
-            // aggregated image sheet.
-            if (allowLists && Core.typeof(name) == Core.Type.LIST) {
-                sheets = [];
-                for (t : name) {
-                    sheets.add(ImageSheet._initImpl(t, isAsync, false));
-                }
-                return new AggregatedImageSheet(sheets);
-            }
-
-            // asserts on not found, so info is always non-null/valid
-            info = ImageResourceManifest.getSheetInfo(name);
-
-            return new ImageSheet(info, isAsync);
-        }
-
-        function getImage(resourcePath) {
+        public override ImageResource getImage(string resourcePath) {
             if (!this._isLoaded) throw new ImageResources.LoadFailedException("Cannot load image from sheet that is not finished loading.");
 
             // Convert the _loader object into a finalized sheet and GC the loader
@@ -84,52 +97,55 @@ namespace ImageResources {
                 this._loader = null;
             }
 
-            res = ImageResourceManifest.getFileInfo(resourcePath, true);
+            ManifestFileInfo res = ImageResourceManifest.getFileInfo(resourcePath, true);
             if (res.sheetId != this._id) {
                 throw new ImageResources.ImageNotFoundException("Image sheet '" + this._name + "' does not contain resource: '{0}'", resourcePath);
             }
 
-            img = this._chunks[res.chunkId];
+            ImageResource img = this._chunks[res.chunkId];
 
-            output = new ImageResources.ImageResource(res.width, res.height, false);
+            ImageResource output = new ImageResource(res.width, res.height, false);
             output._nativeResource = img._nativeResource;
             output._x = res.x;
             output._y = res.y;
             return output;
         }
 
-        static field _reusableStatusOut = [null, null];
-        function isDone() {
+        public static List<object> _reusableStatusOut = new List<object>();
+		
+        public override bool isDone() {
             if (this._isLoaded) return true;
-            this._loader.getStatus(ImageSheet._reusableStatusOut);
-            if (ImageSheet._reusableStatusOut[0]) {
+			BasicImageSheet._reusableStatusOut.clear();
+            this._loader.getStatus(BasicImageSheet._reusableStatusOut);
+            if ((bool) BasicImageSheet._reusableStatusOut[0]) {
                 this._isLoaded = true;
             }
             return this._isLoaded;
         }
 
-        function getProgress() {
+        public override float getProgress() {
             if (this._isLoaded) return 1.0;
-            this._loader.getStatus(ImageSheet._reusableStatusOut);
-            if (ImageSheet._reusableStatusOut[0]) {
+			BasicImageSheet._reusableStatusOut.clear();
+            this._loader.getStatus(BasicImageSheet._reusableStatusOut);
+            if ((bool) BasicImageSheet._reusableStatusOut[0]) {
                 this._isLoaded = true;
                 return 1.0;
             }
-            return ImageSheet._reusableStatusOut[1];
+            return (float) BasicImageSheet._reusableStatusOut[1];
         }
 
-        function _turnTilesIntoSheet(tilesByName) {
-            chunkMetadata = this._info.chunks;
-            chunks = [];
-            for (chunkId : chunkMetadata.keys()) {
-                chunk = chunkMetadata[chunkId];
-                img = new ImageResources.ImageResource(chunk.width, chunk.height);
-                res = img._nativeResource;
+        private void _turnTilesIntoSheet(Dictionary<string, ImageResource> tilesByName) {
+            Dictionary<int, ManifestChunkInfo> chunkMetadata = this._info.chunks;
+            List<ImageResource> chunks = new List<ImageResource>();
+            for (int chunkId : chunkMetadata.keys()) {
+                ManifestChunkInfo chunk = chunkMetadata[chunkId];
+                ImageResource img = new ImageResource(chunk.width, chunk.height);
+                NativeImageData res = img._nativeResource;
                 res.lock();
-                for (tile : chunk.tiles) {
-                    name = tile.genFileName;
-                    x = tile.x;
-                    y = tile.y;
+                for (ManifestTileInfo tile : chunk.tiles) {
+                    string name = tile.genFileName;
+                    int x = tile.x;
+                    int y = tile.y;
                     res.blit(tilesByName[name], x, y);
                 }
                 res.unlock();
@@ -141,37 +157,38 @@ namespace ImageResources {
             this._info = null; // no longer needed. feed to the GC.
         }
 
-        function getFiles() {
+        public override List<string> getFiles() {
             return ImageResourceManifest.filesBySheetId[this._id].clone();
         }
     }
 
-    class ImageSheetLoaderAsync {
-        field tiles;
-        field completed = {};
-        field inProgress = {};
+    public class ImageSheetLoaderAsync {
+        public List<ManifestTileInfo> tiles;
+        public Dictionary<string, ImageResource> completed = new Dictionary<string, ImageResource>();
+        public Dictionary<string, ImageLoader> inProgress = new Dictionary<string, ImageLoader>();
 
-        constructor(tiles) {
+        constructor(List<ManifestTileInfo> tiles) {
             this.tiles = tiles;
         }
 
-        function load() {
-            for (tile : this.tiles) {
-                genName = tile.genFileName;
-                width = tile.width;
-                height = tile.height;
-                this.inProgress[genName] = ImageLoader._loadImpl(
+        public ImageSheetLoaderAsync load() {
+            for (ManifestTileInfo tile : this.tiles) {
+                string genName = tile.genFileName;
+                int width = tile.width;
+                int height = tile.height;
+                this.inProgress[genName] = (ImageLoader) ImageLoader._loadImpl(
                     genName,
                     true, // is generated filename
                     true, // is asynchronous
-                    width, height);
+                    width,
+					height);
             }
             return this;
         }
 
-        function getStatus(out) {
+        public void getStatus(List<object> statusOut) {
             if (this.inProgress.length > 0) {
-                for (key : this.inProgress.keys()) {
+                for (string key : this.inProgress.keys()) {
                     if (this.inProgress[key].isDone()) {
                         this.completed[key] = this.inProgress[key].getImage();
                         this.inProgress.remove(key);
@@ -180,11 +197,11 @@ namespace ImageResources {
             }
 
             if (this.inProgress.length == 0) {
-                out[0] = true;
-                out[1] = 1.0;
+                statusOut.add(true);
+                statusOut.add(1.0);
             } else {
-                out[0] = false;
-                out[1] = 1.0 * this.completed.length / this.tiles.length;
+                statusOut.add(false);
+                statusOut.add(1.0 * this.completed.length / this.tiles.length);
             }
         }
     }

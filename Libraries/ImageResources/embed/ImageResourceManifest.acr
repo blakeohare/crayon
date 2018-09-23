@@ -8,62 +8,62 @@ namespace ImageResources {
         SHEET,
     }
 
-    class ManifestTileInfo {
+    public class ManifestTileInfo {
 
-        field genFileName = null;
-        field x = 0;
-        field y = 0;
-        field width = 0;
-        field height = 0;
-        field sizeBytes = 0;
+        public string genFileName = null;
+        public int x = 0;
+        public int y = 0;
+        public int width = 0;
+        public int height = 0;
+        public int sizeBytes = 0;
 
         constructor() {}
     }
 
     class ManifestChunkInfo {
 
-        field width = 0;
-        field height = 0;
-        field tiles = [];
+        public int width = 0;
+        public int height = 0;
+        public List<ManifestTileInfo> tiles = new List<ManifestTileInfo>();
 
         constructor() { }
     }
 
     class ManifestSheetInfo {
 
-        field name;
-        field id;
-        field chunks = {};
+        public string name;
+        public string id;
+        public Dictionary<int, ManifestChunkInfo> chunks = new Dictionary<int, ManifestChunkInfo>();
 
         constructor() { }
     }
 
     class ManifestFileInfo {
 
-        field type;
-        field genFileName;
-        field width = 0;
-        field height = 0;
-        field x = 0;
-        field y = 0;
-        field sheetId;
-        field chunkId;
+        public int type;
+        public string genFileName;
+        public int width = 0;
+        public int height = 0;
+        public int x = 0;
+        public int y = 0;
+        public string sheetId;
+        public int chunkId;
 
         constructor() { }
     }
 
-    class ImageResourceManifest {
+    public class ImageResourceManifest {
 
-        static field resourceInfo = null;
-        static field sheetInfo = null;
-        static field sheetIdByName = {};
-        static field filesBySheetId = {};
+        public static Dictionary<string, ManifestFileInfo> resourceInfo = null;
+        public static Dictionary<string, ManifestSheetInfo> sheetInfo = null;
+        public static Dictionary<string, string> sheetIdByName = new Dictionary<string, string>();
+        public static Dictionary<string, List<string>> filesBySheetId = new Dictionary<string, List<string>>();
 
-        static function getFileInfo(filename, sheetOnly = false) {
+        public static ManifestFileInfo getFileInfo(string filename, bool sheetOnly = false) {
             ImageResourceManifest.ensureInitialized();
-            output = ImageResourceManifest.resourceInfo.get(filename);
+            ManifestFileInfo output = ImageResourceManifest.resourceInfo.get(filename);
             if (output == null) {
-                nkey = filename.trim().replace('\\', '/');
+                string nkey = filename.trim().replace('\\', '/');
                 output = ImageResourceManifest.resourceInfo.get(nkey);
                 if (output != null) {
                     ImageResourceManifest.resourceInfo[filename] = output;
@@ -81,92 +81,106 @@ namespace ImageResources {
             return output;
         }
 
-        static function getSheetInfo(name) {
+        public static ManifestSheetInfo getSheetInfo(string name) {
             ImageResourceManifest.ensureInitialized();
             if (Core.typeof(name) != Core.Type.STRING) throw new Core.InvalidArgumentException("Image sheet ID must be a string");
-            id = ImageResourceManifest.sheetIdByName.get(name);
+            string id = ImageResourceManifest.sheetIdByName.get(name);
             if (id == null) throw new ImageResources.SheetNotFoundException("Image sheet with ID of '{0}' not found.", name);
             return ImageResourceManifest.sheetInfo[id];
         }
 
-        static function ensureInitialized() {
+        public static void ensureInitialized() {
             if (ImageResourceManifest.resourceInfo != null) return;
-            resourceInfo = {};
-            sheetInfo = {};
+            Dictionary<string, ManifestFileInfo> resourceInfo = new Dictionary<string, ManifestFileInfo>();
+            Dictionary<string, ManifestSheetInfo> sheetInfo = new Dictionary<string, ManifestSheetInfo>();
             ImageResourceManifest.resourceInfo = resourceInfo;
             ImageResourceManifest.sheetInfo = sheetInfo;
 
-            manifest = $lib_imageresources_getManifestString();
-            activeSheetId = null;
-            activeChunkId = 0;
-            for (line : manifest.split('\n')) {
-                parts = line.split(',');
+            string manifest = (string) $lib_imageresources_getManifestString();
+            string activeSheetId = null;
+            int activeChunkId = 0;
+			
+			string genFileName = null;
+			int w = 0;
+			int h = 0;
+			int width = 0;
+			int height = 0;
+			string filename = null;
+			string name = null;
+			ManifestSheetInfo msi = null;
+			ManifestChunkInfo mci = null;
+			ManifestFileInfo mfi = null;
+			ManifestTileInfo mti = null;
+			List<string> sheetFiles = null;
+			
+            for (string line : manifest.split('\n')) {
+                List<string> parts = line.split(',');
                 switch (parts[0].trim()) {
 
                     case 'A': // A standalone file
                         genFileName = parts[1];
-                        w = Core.parseInt(parts[2]);
-                        h = Core.parseInt(parts[3]);
+                        w = (int) Core.parseInt(parts[2]);
+                        h = (int) Core.parseInt(parts[3]);
                         filename = parts[4:].join(',').trim();
-                        t = new ManifestFileInfo();
-                        t.type = ImgResourceType.STANDALONE;
-                        t.genFileName = genFileName;
-                        t.width = w;
-                        t.height = h;
-                        resourceInfo[filename] = t;
+                        ManifestFileInfo mfi = new ManifestFileInfo();
+                        mfi.type = ImgResourceType.STANDALONE;
+                        mfi.genFileName = genFileName;
+                        mfi.width = w;
+                        mfi.height = h;
+                        resourceInfo[filename] = mfi;
                         break;
 
                     case 'S': // declare a new sheet
                         activeSheetId = parts[1];
                         name = parts[2:].join(',').trim();
-                        t = new ManifestSheetInfo();
-                        t.name = name;
-                        t.id = activeSheetId;
-                        sheetInfo[activeSheetId] = t;
+                        msi = new ManifestSheetInfo();
+                        msi.name = name;
+                        msi.id = activeSheetId;
+                        sheetInfo[activeSheetId] = msi;
                         ImageResourceManifest.sheetIdByName[name] = activeSheetId;
                         break;
 
                     case 'C': // declare a new chunk
                         ++activeChunkId;
-                        width = Core.parseInt(parts[1]);
-                        height = Core.parseInt(parts[2]);
+                        width = (int) Core.parseInt(parts[1]);
+                        height = (int) Core.parseInt(parts[2]);
                         if (width == 0 && height == 0) {
                             width = 1024;
                             height = 1024;
                         }
-                        t = new ManifestChunkInfo();
-                        t.width = width;
-                        t.height = height;
+                        mci = new ManifestChunkInfo();
+                        mci.width = width;
+                        mci.height = height;
 
-                        sheetInfo[activeSheetId].chunks[activeChunkId] = t;
+                        sheetInfo[activeSheetId].chunks[activeChunkId] = mci;
                         break;
 
                     case 'T': // tile in the active chunk
-                        t = new ManifestTileInfo();
-                        t.genFileName = parts[1];
-                        t.x = Core.parseInt(parts[2]);
-                        t.y = Core.parseInt(parts[3]);
-                        t.width = Core.parseInt(parts[4]);
-                        t.height = Core.parseInt(parts[5]);
-                        t.sizeBytes = Core.parseInt(parts[6]);
-                        sheetInfo[activeSheetId].chunks[activeChunkId].tiles.add(t);
+                        mti = new ManifestTileInfo();
+                        mti.genFileName = parts[1];
+                        mti.x = (int) Core.parseInt(parts[2]);
+                        mti.y = (int) Core.parseInt(parts[3]);
+                        mti.width = (int) Core.parseInt(parts[4]);
+                        mti.height = (int) Core.parseInt(parts[5]);
+                        mti.sizeBytes = (int) Core.parseInt(parts[6]);
+                        sheetInfo[activeSheetId].chunks[activeChunkId].tiles.add(mti);
                         break;
 
                     case 'I': // image in the active sheet/chunk
                         filename = parts[5:].join(',').trim();
-                        t = new ManifestFileInfo();
-                        t.type = ImgResourceType.SHEET;
-                        t.sheetId = activeSheetId;
-                        t.chunkId = activeChunkId;
-                        t.x = Core.parseInt(parts[1]);
-                        t.y = Core.parseInt(parts[2]);
-                        t.width = Core.parseInt(parts[3]);
-                        t.height = Core.parseInt(parts[4]);
-                        resourceInfo[filename] = t;
+                        mfi = new ManifestFileInfo();
+                        mfi.type = ImgResourceType.SHEET;
+                        mfi.sheetId = activeSheetId;
+                        mfi.chunkId = activeChunkId;
+                        mfi.x = (int) Core.parseInt(parts[1]);
+                        mfi.y = (int) Core.parseInt(parts[2]);
+                        mfi.width = (int) Core.parseInt(parts[3]);
+                        mfi.height = (int) Core.parseInt(parts[4]);
+                        resourceInfo[filename] = mfi;
 
-                        files = ImageResourceManifest.filesBySheetId.get(activeSheetId) ?? [];
-                        ImageResourceManifest.filesBySheetId[activeSheetId] = files;
-                        files.add(filename);
+                        sheetFiles = ImageResourceManifest.filesBySheetId.get(activeSheetId) ?? new List<string>();
+                        ImageResourceManifest.filesBySheetId[activeSheetId] = sheetFiles;
+                        sheetFiles.add(filename);
                         break;
 
                     case 'J': // A JPEG that is a member of a sheet logically but is its own chunk
@@ -175,29 +189,29 @@ namespace ImageResources {
 
                         filename = parts[5:].join(',').trim();
 
-                        t = new ManifestTileInfo();
-                        t.genFileName = parts[1];
-                        t.width = Core.parseInt(parts[2]);
-                        t.height = Core.parseInt(parts[3]);
-                        t.sizeBytes = Core.parseInt(parts[4]);
+                        mti = new ManifestTileInfo();
+                        mti.genFileName = parts[1];
+                        mti.width = (int) Core.parseInt(parts[2]);
+                        mti.height = (int) Core.parseInt(parts[3]);
+                        mti.sizeBytes = (int) Core.parseInt(parts[4]);
 
-                        t2 = new ManifestChunkInfo();
-                        t2.width = t.width;
-                        t2.height = t.height;
-                        t2.tiles.add(t);
+                        mci = new ManifestChunkInfo();
+                        mci.width = mti.width;
+                        mci.height = mti.height;
+                        mci.tiles.add(mti);
 
-                        sheetInfo[activeSheetId].chunks[activeChunkId] = t2;
-                        files = ImageResourceManifest.filesBySheetId.get(activeSheetId) ?? [];
-                        ImageResourceManifest.filesBySheetId[activeSheetId] = files;
-                        files.add(filename);
+                        sheetInfo[activeSheetId].chunks[activeChunkId] = mci;
+                        sheetFiles = ImageResourceManifest.filesBySheetId.get(activeSheetId) ?? new List<string>();
+                        ImageResourceManifest.filesBySheetId[activeSheetId] = sheetFiles;
+                        sheetFiles.add(filename);
 
-                        t = new ManifestFileInfo();
-                        t.type = ImgResourceType.SHEET;
-                        t.sheetId = activeSheetId;
-                        t.chunkId = activeChunkId;
-                        t.width = t2.width;
-                        t.height = t2.height;
-                        resourceInfo[filename] = t;
+                        mfi = new ManifestFileInfo();
+                        mfi.type = ImgResourceType.SHEET;
+                        mfi.sheetId = activeSheetId;
+                        mfi.chunkId = activeChunkId;
+                        mfi.width = mti.width;
+                        mfi.height = mti.height;
+                        resourceInfo[filename] = mfi;
                         break;
 
                     default:
@@ -206,7 +220,7 @@ namespace ImageResources {
                 }
             }
 
-            for (files : ImageResourceManifest.filesBySheetId.values()) {
+            for (List<string> files : ImageResourceManifest.filesBySheetId.values()) {
                 files.sort();
             }
         }

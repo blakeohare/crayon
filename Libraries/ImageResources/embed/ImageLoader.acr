@@ -6,7 +6,7 @@ namespace ImageResources {
         FILE,
     }
 
-    class ImageLoader {
+    public class ImageLoader {
 
         /*
             nativeData[0] -> asynchronous loader reference
@@ -25,8 +25,7 @@ namespace ImageResources {
             nativeData[3] -> mutex (if the platform needs one)
         */
 
-        @private
-        constructor() { }
+        private constructor() { }
 
         /*
             It's possible the user may not yield execution and check for isDone() in a while loop.
@@ -41,25 +40,25 @@ namespace ImageResources {
             If they do, go ahead and yield the execution if they call isDone() enough times in one
             iteration of the interpreter without waiting for a yield.
         */
-        field _executionIterationCount = 0; // current interpreter execution counter for this execution context ID
-        field _isDoneChecksOnThisFrame = 0; // number of times isDone() has been called during this execution counter.
-        field _isDone = false;
-        field _nativeImage;
-        field _output = null;
+        public int _executionIterationCount = 0; // current interpreter execution counter for this execution context ID
+        public int _isDoneChecksOnThisFrame = 0; // number of times isDone() has been called during this execution counter.
+        public bool _isDone = false;
+        public NativeImageData _nativeImage;
+        public ImageResource _output = null;
 
-        function getImage() {
+        public ImageResource getImage() {
             if (this._output != null) return this._output;
             if (!this._isDone) throw new Core.InvalidOperationException("Loading is not finished.");
             if (this._nativeImage == null) {
                 throw new Core.InvalidOperationException("Image has already been constructed.");
             }
-            img = new ImageResource(this._nativeImage.width, this._nativeImage.height, false);
+            ImageResource img = new ImageResource(this._nativeImage.width, this._nativeImage.height, false);
             img._nativeResource = this._nativeImage;
             this._output = img;
             return img;
         }
 
-        function isDone() {
+        public bool isDone() {
             if (this._isDone) {
                 return true;
             }
@@ -68,17 +67,17 @@ namespace ImageResources {
             // the NativeImageData instance's nativeData:
             // - at the end of the asynchronous loader, using the mutex in nativeData[3]
             // - as a result of this next function. It will never be called twice on a successfully loaded image.
-            status = $lib_imageresources_checkLoaderIsDone(this, this._nativeImage);
+            int status = (int) $lib_imageresources_checkLoaderIsDone(this, this._nativeImage);
             if (status > 0) {
                 this._isDone = true;
-                if(status != 1) throw new ImageResources.LoadFailedException("Error encountered while loading image.");
+                if (status != 1) throw new ImageResources.LoadFailedException("Error encountered while loading image.");
                 return true;
             }
 
             // Keep track of how many times this has been called without a yield.
             // If it's more than a couple times, then it's likely this person is checking
             // inside a blocking loop and the handler hasn't had a chance to fire.
-            c = Core.getExecutionIterationCounter();
+            int c = (int) Core.getExecutionIterationCounter();
             if (c != this._executionIterationCount) {
                 this._isDoneChecksOnThisFrame = 1;
                 this._executionIterationCount = c;
@@ -95,25 +94,34 @@ namespace ImageResources {
             return false;
         }
 
-        static function loadFromResourcesAsync(filename) {
-            return ImageLoader._loadImpl(filename, false, true, null, null);
+        public static ImageLoader loadFromResourcesAsync(string filename) {
+            return (ImageLoader) ImageLoader._loadImpl(filename, false, true, 0, 0);
         }
 
-        static function loadFromResources(filename) {
-            return ImageLoader._loadImpl(filename, false, false, null, null);
+        public static ImageResource loadFromResources(string filename) {
+            return (ImageResource) ImageLoader._loadImpl(filename, false, false, 0, 0);
         }
 
-        static function _loadImpl(filename, isGen, isAsync, width, height) {
+		// TODO: something about this object return type
+        internal static object _loadImpl(
+			string filename, 
+			bool isGen, 
+			bool isAsync, 
+			int width, 
+			int height) {
+			
+			
             if (!isGen) {
-                data = ImageLoader.getGenName(filename);
-                filename = data.genFileName;
-                width = data.width;
-                height = data.height;
+                ManifestFileInfo t = ImageLoader.getGenName(filename);
+                filename = t.genFileName;
+                width = t.width;
+                height = t.height;
             }
-            nativeImage = new NativeImageData(NativeImageDataConstructionType.BLANK, null);
+            NativeImageData nativeImage = new NativeImageData(NativeImageDataConstructionType.BLANK, null);
             nativeImage.width = width;
             nativeImage.height = height;
 
+			ImageLoader loader = null;
             if (isAsync) {
                 loader = new ImageResources.ImageLoader();
                 loader._nativeImage = nativeImage;
@@ -124,14 +132,16 @@ namespace ImageResources {
                 return loader;
             }
 
-            statusOut = [false];
+            List<bool> statusOut = new List<bool>();
+			statusOut.add(false);
+			
             loader = new ImageResources.ImageLoader();
             loader._nativeImage = nativeImage;
             $lib_imageresources_loadAsynchronous(
                 nativeImage,
                 filename,
                 loader);
-            delay = .005;
+            float delay = .005;
             while (!loader.isDone()) {
                 Core.sleep(delay);
                 delay *= 1.2;
@@ -142,13 +152,13 @@ namespace ImageResources {
             // TODO: why aren't errors getting propagated on async load?
             //if (failed) throw new ImageResources.LoadFailedException("Image load failed");
 
-            image = new ImageResources.ImageResource(width, height, false);
+            ImageResource image = new ImageResources.ImageResource(width, height, false);
             image._nativeResource = nativeImage;
             return image;
         }
 
-        static function getGenName(filename) {
-            info = ImageResourceManifest.getFileInfo(filename);
+        public static ManifestFileInfo getGenName(string filename) {
+            ManifestFileInfo info = ImageResourceManifest.getFileInfo(filename);
             if (info == null) throw new ImageResources.ImageNotFoundException("Image resource '{0}' not found.", filename);
             if (info.type == ImgResourceType.SHEET) throw new ImageResources.LoadFailedException("'" + filename + "' must be loaded as an ImageSheet.");
             return info;

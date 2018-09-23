@@ -6,22 +6,22 @@ namespace ImageResources {
         the user by passing in a list of sheet names to the ImageSheet.loadFromResources
         functions instead of a single name.
     */
-    class AggregatedImageSheet {
+    public class AggregatedImageSheet : ImageSheet {
 
-        field _sheetsById = {};
-        field _orderedSheets;
-        field _ids = [];
-        field _weight = 0;
+		// TODO: once this is all building, try setting these to private
+        public Dictionary<string, ImageSheet> _sheetsById = new Dictionary<string, ImageSheet>();
+        public List<ImageSheet> _orderedSheets;
+        public List<string> _ids = new List<string>();
 
-        field _isLoaded = false;
+        public bool _isLoaded = false;
 
-        constructor(sheets) {
+        constructor(List<BasicImageSheet> sheets) : base() {
             this._orderedSheets = sheets.clone();
             if (sheets.length == 0) {
                 this._isLoaded = true;
             } else {
-                for (sheet : sheets) {
-                    id = sheet._id;
+                for (BasicImageSheet sheet : sheets) {
+                    string id = sheet._id;
                     this._sheetsById[id] = sheet;
                     this._ids.add(id);
                     this._weight += sheet._weight;
@@ -29,9 +29,9 @@ namespace ImageResources {
             }
         }
 
-        function getImage(resourcePath) {
-            res = ImageResourceManifest.getFileInfo(resourcePath, true);
-            sheet = this._sheetsById.get(res.sheetId);
+        public override ImageResource getImage(string resourcePath) {
+            ManifestFileInfo res = ImageResourceManifest.getFileInfo(resourcePath, true);
+            ImageSheet sheet = this._sheetsById.get(res.sheetId);
             if (sheet == null) {
                 // TODO: show the ID's of the loaded ones?
                 throw new ImageResources.ImageNotFoundException("Resource '{0}' is not included in this sheet.", resourcePath);
@@ -40,10 +40,10 @@ namespace ImageResources {
             return sheet.getImage(resourcePath);
         }
 
-        function isDone() {
+        public override bool isDone() {
             if (this._isLoaded) return true;
 
-            for (sheet : this._orderedSheets) {
+            for (ImageSheet sheet : this._orderedSheets) {
                 if (!sheet.isDone()) {
                     return false;
                 }
@@ -53,20 +53,20 @@ namespace ImageResources {
             return true;
         }
 
-        function getProgress() {
+        public override float getProgress() {
             if (this._isLoaded) return 1.0;
 
-            progress = 0.0;
-            for (sheet : this._orderedSheets) {
+            float progress = 0.0;
+            for (ImageSheet sheet : this._orderedSheets) {
                 progress += sheet.getProgress() * sheet._weight;
             }
 
             return progress / this._weight;
         }
 
-        function getFiles() {
-            output = [];
-            for (sheet : this._orderedSheets) {
+        public override List<string> getFiles() {
+            List<string> output = new List<string>();
+            for (ImageSheet sheet : this._orderedSheets) {
                 output.concat(sheet.getFiles());
             }
             output.sort();
