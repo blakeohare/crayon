@@ -31,7 +31,7 @@ namespace ImageResources {
 
         function getImage(resourcePath) {
             res = ImageResourceManifest.getFileInfo(resourcePath, true);
-            sheet = this._sheetsById.get(res[1]);
+            sheet = this._sheetsById.get(res.sheetId);
             if (sheet == null) {
                 // TODO: show the ID's of the loaded ones?
                 throw new ImageResources.ImageNotFoundException("Resource '{0}' is not included in this sheet.", resourcePath);

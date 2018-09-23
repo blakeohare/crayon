@@ -8,6 +8,50 @@ namespace ImageResources {
         SHEET,
     }
 
+    class ManifestTileInfo {
+
+        field genFileName = null;
+        field x = 0;
+        field y = 0;
+        field width = 0;
+        field height = 0;
+        field sizeBytes = 0;
+
+        constructor() {}
+    }
+
+    class ManifestChunkInfo {
+
+        field width = 0;
+        field height = 0;
+        field tiles = [];
+
+        constructor() { }
+    }
+
+    class ManifestSheetInfo {
+
+        field name;
+        field id;
+        field chunks = {};
+
+        constructor() { }
+    }
+
+    class ManifestFileInfo {
+
+        field type;
+        field genFileName;
+        field width = 0;
+        field height = 0;
+        field x = 0;
+        field y = 0;
+        field sheetId;
+        field chunkId;
+
+        constructor() { }
+    }
+
     class ImageResourceManifest {
 
         static field resourceInfo = null;
@@ -30,7 +74,7 @@ namespace ImageResources {
                 throw new ImageResources.ImageNotFoundException("Resource '{0}' does not exist.", filename);
             }
 
-            if (sheetOnly && output[0] != ImgResourceType.SHEET) {
+            if (sheetOnly && output.type != ImgResourceType.SHEET) {
                 throw new ImageResources.ImageNotFoundException("Resource '{0}' is standalone and not included in an image sheet.", filename);
             }
 
@@ -60,21 +104,25 @@ namespace ImageResources {
                 switch (parts[0].trim()) {
 
                     case 'A': // A standalone file
-                        genFilename = parts[1];
+                        genFileName = parts[1];
                         w = Core.parseInt(parts[2]);
                         h = Core.parseInt(parts[3]);
                         filename = parts[4:].join(',').trim();
-                        resourceInfo[filename] = [ImgResourceType.STANDALONE, genFilename, w, h];
+                        t = new ManifestFileInfo();
+                        t.type = ImgResourceType.STANDALONE;
+                        t.genFileName = genFileName;
+                        t.width = w;
+                        t.height = h;
+                        resourceInfo[filename] = t;
                         break;
 
                     case 'S': // declare a new sheet
                         activeSheetId = parts[1];
                         name = parts[2:].join(',').trim();
-                        sheetInfo[activeSheetId] = {
-                            'name': name,
-                            'id': activeSheetId,
-                            'chunks': {},
-                        };
+                        t = new ManifestSheetInfo();
+                        t.name = name;
+                        t.id = activeSheetId;
+                        sheetInfo[activeSheetId] = t;
                         ImageResourceManifest.sheetIdByName[name] = activeSheetId;
                         break;
 
@@ -86,63 +134,75 @@ namespace ImageResources {
                             width = 1024;
                             height = 1024;
                         }
-                        sheetInfo[activeSheetId]['chunks'][activeChunkId] = {
-                            'width': width,
-                            'height': height,
-                            'tiles': [],
-                        };
+                        t = new ManifestChunkInfo();
+                        t.width = width;
+                        t.height = height;
+
+                        sheetInfo[activeSheetId].chunks[activeChunkId] = t;
                         break;
 
                     case 'T': // tile in the active chunk
-                        genFilename = parts[1];
-                        x = Core.parseInt(parts[2]);
-                        y = Core.parseInt(parts[3]);
-                        width = Core.parseInt(parts[4]);
-                        height = Core.parseInt(parts[5]);
-                        bytes = Core.parseInt(parts[6]);
-                        sheetInfo[activeSheetId]['chunks'][activeChunkId]['tiles'].add(
-                            [genFilename, x, y, width, height, bytes]);
+                        t = new ManifestTileInfo();
+                        t.genFileName = parts[1];
+                        t.x = Core.parseInt(parts[2]);
+                        t.y = Core.parseInt(parts[3]);
+                        t.width = Core.parseInt(parts[4]);
+                        t.height = Core.parseInt(parts[5]);
+                        t.sizeBytes = Core.parseInt(parts[6]);
+                        sheetInfo[activeSheetId].chunks[activeChunkId].tiles.add(t);
                         break;
+
                     case 'I': // image in the active sheet/chunk
-                        x = Core.parseInt(parts[1]);
-                        y = Core.parseInt(parts[2]);
-                        width = Core.parseInt(parts[3]);
-                        height = Core.parseInt(parts[4]);
                         filename = parts[5:].join(',').trim();
-                        resourceInfo[filename] = [ImgResourceType.SHEET, activeSheetId, activeChunkId, x, y, width, height];
+                        t = new ManifestFileInfo();
+                        t.type = ImgResourceType.SHEET;
+                        t.sheetId = activeSheetId;
+                        t.chunkId = activeChunkId;
+                        t.x = Core.parseInt(parts[1]);
+                        t.y = Core.parseInt(parts[2]);
+                        t.width = Core.parseInt(parts[3]);
+                        t.height = Core.parseInt(parts[4]);
+                        resourceInfo[filename] = t;
+
                         files = ImageResourceManifest.filesBySheetId.get(activeSheetId) ?? [];
                         ImageResourceManifest.filesBySheetId[activeSheetId] = files;
                         files.add(filename);
                         break;
 
                     case 'J': // A JPEG that is a member of a sheet logically but is its own chunk
-                        genFilename = parts[1];
-                        width = Core.parseInt(parts[2]);
-                        height = Core.parseInt(parts[3]);
-                        bytes = Core.parseInt(parts[4]);
-                        filename = parts[5:].join(',').trim();
 
                         ++activeChunkId;
-                        sheetInfo[activeSheetId]['chunks'][activeChunkId] = {
-                            'width': width,
-                            'height': height,
-                            'tiles': [
-                                [genFilename, 0, 0, width, height, bytes],
-                            ],
-                        };
+
+                        filename = parts[5:].join(',').trim();
+
+                        t = new ManifestTileInfo();
+                        t.genFileName = parts[1];
+                        t.width = Core.parseInt(parts[2]);
+                        t.height = Core.parseInt(parts[3]);
+                        t.sizeBytes = Core.parseInt(parts[4]);
+
+                        t2 = new ManifestChunkInfo();
+                        t2.width = t.width;
+                        t2.height = t.height;
+                        t2.tiles.add(t);
+
+                        sheetInfo[activeSheetId].chunks[activeChunkId] = t2;
                         files = ImageResourceManifest.filesBySheetId.get(activeSheetId) ?? [];
                         ImageResourceManifest.filesBySheetId[activeSheetId] = files;
                         files.add(filename);
-                        resourceInfo[filename] = [ImgResourceType.SHEET, activeSheetId, activeChunkId, 0, 0, width, height];
+
+                        t = new ManifestFileInfo();
+                        t.type = ImgResourceType.SHEET;
+                        t.sheetId = activeSheetId;
+                        t.chunkId = activeChunkId;
+                        t.width = t2.width;
+                        t.height = t2.height;
+                        resourceInfo[filename] = t;
                         break;
 
                     default:
-                        // This should not happen.
-                        // If it does, there's a good chance that it's the BOM in the file.
-                        throw new Exception([
-                            parts,
-                            parts[0].trim().length // this value should be 1
-                        ]);
+                        // If this happens, it's the compiler's fault.
+                        throw new Exception();
                 }
             }
 

@@ -106,9 +106,9 @@ namespace ImageResources {
         static function _loadImpl(filename, isGen, isAsync, width, height) {
             if (!isGen) {
                 data = ImageLoader.getGenName(filename);
-                filename = data[1];
-                width = data[2];
-                height = data[3];
+                filename = data.genFileName;
+                width = data.width;
+                height = data.height;
             }
             nativeImage = new NativeImageData(NativeImageDataConstructionType.BLANK, null);
             nativeImage.width = width;
@@ -150,7 +150,7 @@ namespace ImageResources {
         static function getGenName(filename) {
             info = ImageResourceManifest.getFileInfo(filename);
             if (info == null) throw new ImageResources.ImageNotFoundException("Image resource '{0}' not found.", filename);
-            if (info[0] == ImgResourceType.SHEET) throw new ImageResources.LoadFailedException("'" + filename + "' must be loaded as an ImageSheet.");
+            if (info.type == ImgResourceType.SHEET) throw new ImageResources.LoadFailedException("'" + filename + "' must be loaded as an ImageSheet.");
             return info;
         }
     }

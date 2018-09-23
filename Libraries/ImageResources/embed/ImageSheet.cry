@@ -19,13 +19,13 @@ namespace ImageResources {
         @private
         constructor(info, isAsync) {
             this._info = info;
-            this._name = info['name'];
-            this._id = info['id'];
+            this._name = info.name;
+            this._id = info.id;
 
-            chunks = info['chunks'];
+            chunks = info.chunks;
             tiles = [];
             for (chunk : chunks.values()) {
-                tiles.concat(chunk['tiles']);
+                tiles.concat(chunk.tiles);
             }
 
             this._weight = tiles.length;
@@ -35,9 +35,9 @@ namespace ImageResources {
             } else {
                 lookup = {};
                 for (tile : tiles) {
-                    genName = tile[0];
-                    width = tile[3];
-                    height = tile[4];
+                    genName = tile.genFileName;
+                    width = tile.width;
+                    height = tile.height;
                     lookup[genName] = ImageLoader._loadImpl(
                         genName,
                         true, // is generated name
@@ -85,16 +85,16 @@ namespace ImageResources {
             }
 
             res = ImageResourceManifest.getFileInfo(resourcePath, true);
-            if (res[1] != this._id) {
+            if (res.sheetId != this._id) {
                 throw new ImageResources.ImageNotFoundException("Image sheet '" + this._name + "' does not contain resource: '{0}'", resourcePath);
             }
 
-            img = this._chunks[res[2]];
+            img = this._chunks[res.chunkId];
 
-            output = new ImageResources.ImageResource(res[5], res[6], false);
+            output = new ImageResources.ImageResource(res.width, res.height, false);
             output._nativeResource = img._nativeResource;
-            output._x = res[3];
-            output._y = res[4];
+            output._x = res.x;
+            output._y = res.y;
             return output;
         }
 
@@ -119,17 +119,17 @@ namespace ImageResources {
         }
 
         function _turnTilesIntoSheet(tilesByName) {
-            chunkMetadata = this._info['chunks'];
+            chunkMetadata = this._info.chunks;
             chunks = [];
             for (chunkId : chunkMetadata.keys()) {
                 chunk = chunkMetadata[chunkId];
-                img = new ImageResources.ImageResource(chunk['width'], chunk['height']);
+                img = new ImageResources.ImageResource(chunk.width, chunk.height);
                 res = img._nativeResource;
                 res.lock();
-                for (tile : chunk['tiles']) {
-                    name = tile[0];
-                    x = tile[1];
-                    y = tile[2];
+                for (tile : chunk.tiles) {
+                    name = tile.genFileName;
+                    x = tile.x;
+                    y = tile.y;
                     res.blit(tilesByName[name], x, y);
                 }
                 res.unlock();
@@ -157,9 +157,9 @@ namespace ImageResources {
 
         function load() {
             for (tile : this.tiles) {
-                genName = tile[0];
-                width = tile[3];
-                height = tile[4];
+                genName = tile.genFileName;
+                width = tile.width;
+                height = tile.height;
                 this.inProgress[genName] = ImageLoader._loadImpl(
                     genName,
                     true, // is generated filename
