@@ -108,6 +108,7 @@ namespace JavaScriptApp
             replacements["JS_LIB_INCLUSIONS"] = GenerateJsLibInclusionHtml(output.Keys);
 
             this.CopyResourceAsText(output, "index.html", "Resources/HostHtml.txt", replacements);
+            this.CopyResourceAsText(output, "test_server.py", "Resources/TestServerPy.txt", replacements);
 
             this.CopyResourceAsText(output, "common.js", "Resources/Common.txt", replacements);
 
