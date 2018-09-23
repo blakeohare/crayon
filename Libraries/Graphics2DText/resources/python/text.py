@@ -1,7 +1,6 @@
 
-
 def lib_graphics2dtext_createNativeFont(fontType, fontClass, fontPath, fontSize, isBold, isItalic):
-	fontSize = fontSize * 7 / 5 # adjust to match standard sizes
+	fontSize = int(fontSize * 1.4) # adjust to match standard sizes
 	pygame = GetPyGameReferenceWorkaround()
 	if fontType == 0: # default
 		raise Exception("Not implemented: default font by class")
