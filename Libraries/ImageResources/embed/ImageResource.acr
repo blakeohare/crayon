@@ -1,25 +1,26 @@
 namespace ImageResources {
-    class ImageResource {
+    public class ImageResource {
 
-        field _nativeResource;
-        field _width;
-        field _height;
+        public NativeImageData _nativeResource;
+        public int _width;
+        public int _height;
 
         // top-left location within the _nativeResource
-        field _x = 0;
-        field _y = 0;
+        public int _x = 0;
+        public int _y = 0;
 
         // Do not document init. Only used internally.
-        constructor(width, height, init = true) {
+        constructor(int width, int height, bool init = true) {
             this._width = width;
             this._height = height;
             if (init) {
-                this._nativeResource = new NativeImageData(NativeImageDataConstructionType.SIZE, [width, height]);
+				int[] size = new int[] { width, height };
+                this._nativeResource = new NativeImageData(NativeImageDataConstructionType.SIZE, size);
             }
         }
 
-        // TODO: support immutable fields. I'd much rather expose these as .width and .height.
-        function getWidth() { return this._width; }
-        function getHeight() { return this._height; }
+        // TODO: convert these fields to Acrylic properties and so these getters can go away.
+        public int getWidth() { return this._width; }
+        public int getHeight() { return this._height; }
     }
 }
