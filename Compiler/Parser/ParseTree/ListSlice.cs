@@ -91,11 +91,11 @@ namespace Parser.ParseTree
             }
             else if (this.Root.ResolvedType == ResolvedType.STRING)
             {
-                this.ResolvedType = ResolvedType.STRING;
+                this.ResolvedType = ResolvedType.ListOrArrayOf(ResolvedType.STRING);
             }
             else if (this.Root.ResolvedType.Category == ResolvedTypeCategory.LIST)
             {
-                this.ResolvedType = this.Root.ResolvedType.ListItemType;
+                this.ResolvedType = this.Root.ResolvedType;
             }
             else
             {
