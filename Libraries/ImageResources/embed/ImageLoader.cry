@@ -75,23 +75,21 @@ namespace ImageResources {
                 return true;
             }
 
-            if ($lib_imageresources_yieldRequiredByPlatform()) {
-                // Keep track of how many times this has been called without a yield.
-                // If it's more than a couple times, then it's likely this person is checking
-                // inside a blocking loop and the handler hasn't had a chance to fire.
-                c = Core.getExecutionIterationCounter();
-                if (c != this._executionIterationCount) {
-                    this._isDoneChecksOnThisFrame = 1;
-                    this._executionIterationCount = c;
-                } else {
-                    this._isDoneChecksOnThisFrame++;
-                }
+            // Keep track of how many times this has been called without a yield.
+            // If it's more than a couple times, then it's likely this person is checking
+            // inside a blocking loop and the handler hasn't had a chance to fire.
+            c = Core.getExecutionIterationCounter();
+            if (c != this._executionIterationCount) {
+                this._isDoneChecksOnThisFrame = 1;
+                this._executionIterationCount = c;
+            } else {
+                this._isDoneChecksOnThisFrame++;
+            }
 
-                // If they've called this function 10 times without a yield, do a thread sleep
-                // to potentially let the image load handler run.
-                if (this._isDoneChecksOnThisFrame > 10) {
-                    Core.sleep(.01);
-                }
+            // If they've called this function 10 times without a yield, do a thread sleep
+            // to potentially let the image load handler run.
+            if (this._isDoneChecksOnThisFrame > 10) {
+                Core.sleep(.005);
             }
 
             return false;
@@ -126,32 +124,23 @@ namespace ImageResources {
                 return loader;
             }
 
-            statusOut = [false, true];
-            if ($lib_imageresources_yieldRequiredByPlatform()) {
-                loader = new ImageResources.ImageLoader();
-                loader._nativeImage = nativeImage;
-                $lib_imageresources_loadAsynchronous(
-                    nativeImage,
-                    filename,
-                    loader);
-
-                Core.sleep(.005);
-                delay = .01;
-                while (!loader.isDone()) {
-                    Core.sleep(delay);
-                    delay *= 1.2;
-                    if (delay > 1) delay = 1;
-                }
-                statusOut.reverse();
-            } else {
-                $lib_imageresources_loadSynchronous(
-                    nativeImage,
-                    filename,
-                    statusOut);
+            statusOut = [false];
+            loader = new ImageResources.ImageLoader();
+            loader._nativeImage = nativeImage;
+            $lib_imageresources_loadAsynchronous(
+                nativeImage,
+                filename,
+                loader);
+            delay = .005;
+            while (!loader.isDone()) {
+                Core.sleep(delay);
+                delay *= 1.2;
+                if (delay > 1) delay = 1;
             }
 
             // TODO: include filename in LoadFailedException. filename in this function can potentially be a generated name which is not useful.
-            if (!statusOut[0]) throw new ImageResources.LoadFailedException("Image load failed");
+            // TODO: why aren't errors getting propagated on async load?
+            //if (failed) throw new ImageResources.LoadFailedException("Image load failed");
 
             image = new ImageResources.ImageResource(width, height, false);
             image._nativeResource = nativeImage;

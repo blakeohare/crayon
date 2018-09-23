@@ -14,16 +14,13 @@ public final class ImageResourcesHelper {
 
   public static void imageLoadAsync(String genFileName, Object[] nativeImageDataNativeData, Object[] imageLoaderNativeData) {
     // TODO: implement this for real and add mutex checks to checkLoaderIsDone
-    boolean loaded = imageLoadSync(genFileName, nativeImageDataNativeData, null);
+    boolean loaded = imageLoadSync(genFileName, nativeImageDataNativeData);
     imageLoaderNativeData[2] = loaded ? 1 : 2;
   }
 
-  public static boolean imageLoadSync(String genFileName, Object[] nativeImageDataNativeData, ArrayList<Value> outStatusCheesy) {
+  private static boolean imageLoadSync(String genFileName, Object[] nativeImageDataNativeData) {
     BufferedImage image = ResourceReader.loadImageFromLocalFile("images/" + genFileName);
     if (image != null) {
-      if (outStatusCheesy != null) {
-        java.util.Collections.reverse(outStatusCheesy);
-      }
       nativeImageDataNativeData[0] = image;
       nativeImageDataNativeData[1] = image.getWidth();
       nativeImageDataNativeData[2] = image.getHeight();

@@ -1,5 +1,4 @@
 $_lib_imageresources_loadAsync: ImageResourcesHelper.imageLoadAsync([ARG:1], [ARG:2], [ARG:3])
-$_lib_imageresources_loadSync: ImageResourcesHelper.imageLoadSync([ARG:1], [ARG:2], [ARG:3])
 $_lib_imageresources_getManifestString: ImageResourcesHelper.getImageResourceManifestString()
 $_lib_imageresources_generateNativeBitmapOfSize: ImageResourcesHelper.generateNativeBitmapOfSize([ARG:1], [ARG:2])
 $_lib_imageresources_blit: ImageResourcesHelper.blitImage([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])

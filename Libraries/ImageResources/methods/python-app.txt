@@ -1,5 +1,4 @@
 $_lib_imageresources_loadAsync: libhelper_imageresources_imageLoadAsync([ARG:1], [ARG:2], [ARG:3])
-$_lib_imageresources_loadSync: libhelper_imageresources_imageLoadSync([ARG:1], [ARG:2], [ARG:3])
 $_lib_imageresources_getManifestString: libhelper_imageresources_getImageResourceManifestString()
 $_lib_imageresources_generateNativeBitmapOfSize: libhelper_imageresources_generateNativeBitmapOfSize([ARG:1], [ARG:2])
 $_lib_imageresources_blit: libhelper_imageresources_imageResourceBlitImage([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])

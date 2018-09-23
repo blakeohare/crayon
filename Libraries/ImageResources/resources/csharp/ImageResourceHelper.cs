@@ -25,7 +25,7 @@ namespace Interpreter.Libraries.ImageResources
             System.ComponentModel.BackgroundWorker bgw = new System.ComponentModel.BackgroundWorker();
             bgw.DoWork += (sender, args) =>
             {
-                bool loaded = ImageLoadSync(filename, nativeImageDataNativeData, null);
+                bool loaded = ImageLoadSync(filename, nativeImageDataNativeData);
 
                 lock (imageLoaderNativeData[3])
                 {
@@ -36,12 +36,11 @@ namespace Interpreter.Libraries.ImageResources
             bgw.RunWorkerAsync();
         }
 
-        public static bool ImageLoadSync(string filename, object[] nativeImageDataNativeData, List<Value> statusOutCheesy)
+        private static bool ImageLoadSync(string filename, object[] nativeImageDataNativeData)
         {
             UniversalBitmap bmp = ResourceReader.ReadImageResource(filename);
             if (bmp != null)
             {
-                if (statusOutCheesy != null) statusOutCheesy.Reverse();
                 nativeImageDataNativeData[0] = bmp;
                 nativeImageDataNativeData[1] = bmp.Width;
                 nativeImageDataNativeData[2] = bmp.Height;

@@ -23,11 +23,6 @@ void _lib_imageresources_loadAsync(
 	Array<object> nativeImageNativeData,
 	Array<object> imageLoaderNativeData);
 
-void _lib_imageresources_loadSync(
-	string filename,
-	Array<object> nativeImageDataNativeData,
-	List<Value> statusOut);
-
 object _lib_imageresources_generateNativeBitmapOfSize(
 	int width,
 	int height);
