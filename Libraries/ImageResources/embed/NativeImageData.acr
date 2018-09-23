@@ -4,9 +4,11 @@ namespace ImageResources {
         BLANK,
     }
 	
+	// TODO: friend classes/friend assemblies
+	// Alternatively re-architect things so Graphics2D doesn't need to access this.
     public class NativeImageData {
 
-        public static int idAlloc = 0;
+        private static int idAlloc = 0;
 
         // nativeData[0] -> native bitmap resource
         // nativeData[1] -> bitmap width
@@ -15,10 +17,10 @@ namespace ImageResources {
 
         public int width;
         public int height;
-        public int revisionId = 0;
-        public int resourceId = NativeImageData.idAlloc++;
+        private int revisionId = 0;
+        private int resourceId = NativeImageData.idAlloc++;
         public string resourceFingerprint;
-        public bool _locked = false;
+        private bool _locked = false;
 
         public constructor(int instruction, List<object> args) {
 			ImageResource other = null;

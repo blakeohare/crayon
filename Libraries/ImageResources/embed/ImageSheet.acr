@@ -44,16 +44,16 @@ namespace ImageResources {
 
 	}
 
-    public class BasicImageSheet : ImageSheet {
+    internal class BasicImageSheet : ImageSheet {
 
-        public bool _isLoaded = false;
-        public ManifestSheetInfo _info;
-        public ImageSheetLoaderAsync _loader;
-        public string _name;
-        public string _id;
+        private bool _isLoaded = false;
+        private ManifestSheetInfo _info;
+        private ImageSheetLoaderAsync _loader;
+        private string _name;
+        private string _id;
 
         // List where the chunk ID is the index and the value is an ImageResource instance.
-        public List<ImageResource> _chunks;
+        private List<ImageResource> _chunks;
 
         public constructor(ManifestSheetInfo info, bool isAsync) : base() {
             this._info = info;
@@ -111,7 +111,7 @@ namespace ImageResources {
             return output;
         }
 
-        public static List<object> _reusableStatusOut = new List<object>();
+        private static List<object> _reusableStatusOut = new List<object>();
 		
         public override bool isDone() {
             if (this._isLoaded) return true;
@@ -162,10 +162,10 @@ namespace ImageResources {
         }
     }
 
-    public class ImageSheetLoaderAsync {
-        public List<ManifestTileInfo> tiles;
-        public Dictionary<string, ImageResource> completed = new Dictionary<string, ImageResource>();
-        public Dictionary<string, ImageLoader> inProgress = new Dictionary<string, ImageLoader>();
+    internal class ImageSheetLoaderAsync {
+        private List<ManifestTileInfo> tiles;
+        private Dictionary<string, ImageResource> completed = new Dictionary<string, ImageResource>();
+        private Dictionary<string, ImageLoader> inProgress = new Dictionary<string, ImageLoader>();
 
         constructor(List<ManifestTileInfo> tiles) {
             this.tiles = tiles;

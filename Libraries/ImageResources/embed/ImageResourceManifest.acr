@@ -3,12 +3,12 @@
 */
 
 namespace ImageResources {
-    enum ImgResourceType {
+    internal enum ImgResourceType {
         STANDALONE,
         SHEET,
     }
 
-    public class ManifestTileInfo {
+    internal class ManifestTileInfo {
 
         public string genFileName = null;
         public int x = 0;
@@ -20,7 +20,7 @@ namespace ImageResources {
         constructor() {}
     }
 
-    class ManifestChunkInfo {
+    internal class ManifestChunkInfo {
 
         public int width = 0;
         public int height = 0;
@@ -29,7 +29,7 @@ namespace ImageResources {
         constructor() { }
     }
 
-    class ManifestSheetInfo {
+    internal class ManifestSheetInfo {
 
         public string name;
         public string id;
@@ -38,7 +38,7 @@ namespace ImageResources {
         constructor() { }
     }
 
-    class ManifestFileInfo {
+    internal class ManifestFileInfo {
 
         public int type;
         public string genFileName;
@@ -52,7 +52,7 @@ namespace ImageResources {
         constructor() { }
     }
 
-    public class ImageResourceManifest {
+    internal class ImageResourceManifest {
 
         public static Dictionary<string, ManifestFileInfo> resourceInfo = null;
         public static Dictionary<string, ManifestSheetInfo> sheetInfo = null;

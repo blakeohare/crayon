@@ -6,14 +6,13 @@ namespace ImageResources {
         the user by passing in a list of sheet names to the ImageSheet.loadFromResources
         functions instead of a single name.
     */
-    public class AggregatedImageSheet : ImageSheet {
+    internal class AggregatedImageSheet : ImageSheet {
 
-		// TODO: once this is all building, try setting these to private
-        public Dictionary<string, ImageSheet> _sheetsById = new Dictionary<string, ImageSheet>();
-        public List<ImageSheet> _orderedSheets;
-        public List<string> _ids = new List<string>();
+		private Dictionary<string, ImageSheet> _sheetsById = new Dictionary<string, ImageSheet>();
+        private List<ImageSheet> _orderedSheets;
+        private  List<string> _ids = new List<string>();
 
-        public bool _isLoaded = false;
+        private bool _isLoaded = false;
 
         constructor(List<BasicImageSheet> sheets) : base() {
             this._orderedSheets = sheets.clone();

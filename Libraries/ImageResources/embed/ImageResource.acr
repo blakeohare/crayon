@@ -1,16 +1,17 @@
 namespace ImageResources {
     public class ImageResource {
 
-        public NativeImageData _nativeResource;
-        public int _width;
-        public int _height;
+        internal NativeImageData _nativeResource;
+        internal int _width;
+        internal int _height;
 
         // top-left location within the _nativeResource
-        public int _x = 0;
-        public int _y = 0;
+        internal int _x = 0;
+        internal int _y = 0;
 
-        // Do not document init. Only used internally.
-        constructor(int width, int height, bool init = true) {
+        // TODO: create static factory methods and make this private. 
+		// The init parameter really needs to be hidden from access.
+        public constructor(int width, int height, bool init = true) {
             this._width = width;
             this._height = height;
             if (init) {

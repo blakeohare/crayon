@@ -40,11 +40,11 @@ namespace ImageResources {
             If they do, go ahead and yield the execution if they call isDone() enough times in one
             iteration of the interpreter without waiting for a yield.
         */
-        public int _executionIterationCount = 0; // current interpreter execution counter for this execution context ID
-        public int _isDoneChecksOnThisFrame = 0; // number of times isDone() has been called during this execution counter.
-        public bool _isDone = false;
-        public NativeImageData _nativeImage;
-        public ImageResource _output = null;
+        private int _executionIterationCount = 0; // current interpreter execution counter for this execution context ID
+        private int _isDoneChecksOnThisFrame = 0; // number of times isDone() has been called during this execution counter.
+        private bool _isDone = false;
+        private NativeImageData _nativeImage;
+        private ImageResource _output = null;
 
         public ImageResource getImage() {
             if (this._output != null) return this._output;
@@ -110,7 +110,6 @@ namespace ImageResources {
 			int width, 
 			int height) {
 			
-			
             if (!isGen) {
                 ManifestFileInfo t = ImageLoader.getGenName(filename);
                 filename = t.genFileName;
@@ -157,7 +156,7 @@ namespace ImageResources {
             return image;
         }
 
-        public static ManifestFileInfo getGenName(string filename) {
+        private static ManifestFileInfo getGenName(string filename) {
             ManifestFileInfo info = ImageResourceManifest.getFileInfo(filename);
             if (info == null) throw new ImageResources.ImageNotFoundException("Image resource '{0}' not found.", filename);
             if (info.type == ImgResourceType.SHEET) throw new ImageResources.LoadFailedException("'" + filename + "' must be loaded as an ImageSheet.");
