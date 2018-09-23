@@ -1,0 +1,16 @@
+namespace ImageResources {
+    public class ImageNotFoundException : Core.Exception {
+        // TODO: actual string.format support. Till then...
+        constructor(string template, string path) : base(template.replace('{0}', path)) { }
+    }
+
+    public class SheetNotFoundException : Core.Exception {
+
+        // TODO: string.format here as well...
+        constructor(string template, string id) : base(template.replace('{0}', id)) { }
+    }
+
+    public class LoadFailedException : Core.Exception {
+        constructor(string msg) : base(msg) { }
+    }
+}

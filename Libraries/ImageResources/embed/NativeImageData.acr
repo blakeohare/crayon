@@ -2,35 +2,32 @@ namespace ImageResources {
     enum NativeImageDataConstructionType {
         SIZE,
         BLANK,
-        CLONE,
     }
-    class NativeImageData {
+	
+	// TODO: friend classes/friend assemblies
+	// Alternatively re-architect things so Graphics2D doesn't need to access this.
+    public class NativeImageData {
 
-        static field GLOBAL_ID = 0;
+        private static int idAlloc = 0;
 
         // nativeData[0] -> native bitmap resource
         // nativeData[1] -> bitmap width
         // nativeData[2] -> bitmap height
         // nativeData[3] -> pixel edit session
 
-        field width;
-        field height;
-        field revisionId = 0;
-        field resourceId = NativeImageData.GLOBAL_ID++;
-        field resourceFingerprint;
-        field _locked = false;
+        public int width;
+        public int height;
+        private int revisionId = 0;
+        private int resourceId = NativeImageData.idAlloc++;
+        public string resourceFingerprint;
+        private bool _locked = false;
 
-        constructor(instruction, args) {
-
+        public constructor(int instruction, List<object> args) {
+			ImageResource other = null;
             switch (instruction) {
                 case NativeImageDataConstructionType.SIZE:
-                    this.width = args[0];
-                    this.height = args[1];
-                    break;
-                case NativeImageDataConstructionType.CLONE:
-                    other = args[0];
-                    this.width = other.width;
-                    this.height = other.height;
+                    this.width = (int) args[0];
+                    this.height = (int) args[1];
                     break;
                 case NativeImageDataConstructionType.BLANK:
                     break;
@@ -38,83 +35,77 @@ namespace ImageResources {
 
             if (instruction != NativeImageDataConstructionType.BLANK) {
                 $lib_imageresources_nativeImageDataInit(this, this.width, this.height);
-                if (instruction == NativeImageDataConstructionType.CLONE) {
-                    this.revisionId--; // since this is the constructor prevent the first revision ID from being 1.
-                    this.lock();
-                    this.blit(other, 0, 0);
-                    this.unlock();
-                }
             }
 
             this.updateResourceFingerprint();
         }
 
-        function updateResourceFingerprint() {
+        public void updateResourceFingerprint() {
             this.resourceFingerprint = this.resourceId + ',' + this.revisionId;
         }
 
-        function lock() {
+        public void lock() {
             this._locked = true;
             this.revisionId++;
             this.updateResourceFingerprint();
         }
 
-        function unlock() {
+        public void unlock() {
             $lib_imageresources_flushImageChanges(this);
             this._locked = false;
         }
 
-        function blit(image, x, y) {
-            other = image._nativeResource;
+        public void blit(ImageResource image, int x, int y) {
+            NativeImageData other = image._nativeResource;
             other.verifyUnlocked();
             this.verifyLocked();
 
-            targetLeft = x;
-            targetTop = y;
-            targetRight = x + other.width;
-            targetBottom = y + other.height;
-            sourceLeft = 0;
-            sourceTop = 0;
-            sourceRight = other.width;
-            sourceBottom = other.height;
+            int targetLeft = x;
+            int targetTop = y;
+            int targetRight = x + other.width;
+            int targetBottom = y + other.height;
+            int sourceLeft = 0;
+            int sourceTop = 0;
+            int sourceRight = other.width;
+            int sourceBottom = other.height;
             if (targetRight < 0 ||
                 targetBottom < 0 ||
                 targetTop >= this.height ||
                 targetLeft >= this.width) return;
 
             if (targetRight >= this.width) {
-                diff = targetRight - this.width;
+                int diff = targetRight - this.width;
                 targetRight -= diff;
                 sourceRight -= diff;
             }
             if (targetBottom >= this.height) {
-                diff = targetBottom - this.height;
+                int diff = targetBottom - this.height;
                 targetBottom -= diff;
                 sourceBottom -= diff;
             }
             if (targetLeft < 0) {
-                diff = -targetLeft;
+                int diff = -targetLeft;
                 targetLeft = 0;
                 sourceLeft += diff;
             }
             if (targetTop < 0) {
-                diff = -targetTop;
+                int diff = -targetTop;
                 targetTop = 0;
                 sourceTop += diff;
             }
-            w = sourceRight - sourceLeft;
-            h = sourceBottom - sourceTop;
+            int w = sourceRight - sourceLeft;
+            int h = sourceBottom - sourceTop;
             if (w == 0 || h == 0) return;
 
             // initializes the pixel edit session in nativeData[3] if not present
             $lib_imageresources_blit(this, other, targetLeft, targetTop, sourceLeft, sourceTop, w, h);
         }
 
-        function verifyUnlocked() {
+        public void verifyUnlocked() {
             if (this._locked) throw new Core.InvalidOperationException("Image resource is locked and cannot be used.");
         }
 
-        function verifyLocked() {
+        public void verifyLocked() {
             if (!this._locked) throw new Core.InvalidOperationException("Image resource must be locked.");
         }
     }
