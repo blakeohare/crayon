@@ -89,7 +89,7 @@ InterpreterResult generateException(
 
 InterpreterResult interpret(VmContext vm, int executionContextId) {
     InterpreterResult output = interpretImpl(vm, executionContextId);
-    while (output.status == InterpreterResultStatus.REINVOKE) {
+    while (output.status == InterpreterResultStatus.REINVOKE && output.reinvokeDelay == 0) {
         output = interpretImpl(vm, executionContextId);
     }
     return output;

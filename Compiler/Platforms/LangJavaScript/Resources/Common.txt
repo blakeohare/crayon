@@ -30,7 +30,7 @@ function C$handleVmResult(res) {
 	while (status == 5 || status == 6) { // REINVOKE || LOAD_ASSEMBLY
 		if (status == 5) {
 			var delayMillis = Math.floor(1000 * v_getVmReinvokeDelay(res));
-			var execId = v_getVmResultExecId(result);
+			var execId = v_getVmResultExecId(res);
 			window.setTimeout(function() { C$runInterpreter(execId); }, delayMillis);
 			return;
 		} else {
