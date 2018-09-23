@@ -29,6 +29,12 @@ namespace Parser
             this.innerStream.Index = state.Value;
         }
 
+        public bool IsMultiCharTokensEnabled
+        {
+            get { return this.innerStream.UseMulticharTokens; }
+            set { this.innerStream.SetMulticharTokenMode(value); }
+        }
+
         // This stream consolidates specific sequences of punctuation into a single token.
         private class InnerTokenStream
         {
@@ -84,10 +90,15 @@ namespace Parser
                 this.Tokens = tokens;
             }
 
+            public bool UseMulticharTokens { get { return this.useMulticharTokens; } }
+
             public void SetMulticharTokenMode(bool value)
             {
-                this.useMulticharTokens = value;
-                this.nextToken = null;
+                if (this.useMulticharTokens != value)
+                {
+                    this.useMulticharTokens = value;
+                    this.nextToken = null;
+                }
             }
 
             public Token Peek()

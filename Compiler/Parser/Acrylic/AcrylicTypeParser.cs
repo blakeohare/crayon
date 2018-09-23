@@ -11,7 +11,10 @@ namespace Parser.Acrylic
         public override AType TryParse(TokenStream tokens)
         {
             TokenStream.StreamState startIndex = tokens.RecordState();
+            bool useMultichar = tokens.IsMultiCharTokensEnabled;
+            tokens.IsMultiCharTokensEnabled = false;
             AType type = this.ParseImpl(tokens);
+            tokens.IsMultiCharTokensEnabled = useMultichar;
             if (type == null)
             {
                 tokens.RestoreState(startIndex);
@@ -22,8 +25,11 @@ namespace Parser.Acrylic
         public override AType Parse(TokenStream tokens)
         {
             tokens.EnsureNotEof();
+            bool useMultichar = tokens.IsMultiCharTokensEnabled;
+            tokens.IsMultiCharTokensEnabled = false;
             Token throwToken = tokens.Peek();
             AType type = this.ParseImpl(tokens);
+            tokens.IsMultiCharTokensEnabled = useMultichar;
             if (type == null) throw new ParserException(throwToken, "Expected type.");
             return type;
         }
