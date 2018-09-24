@@ -154,6 +154,7 @@ int initializeClass(int pc, VmContext vm, Array<int> args, string className) {
         null, // Array of member ID -> function IDs (with -1 fallback)
         null, // Field initialization command by member ID
         null, // Literal starting value by member ID
+        null, // member ID -> access modifier. 1 - PUBLIC, 2 - PRIVATE, 3 - INTERNAL, 4 - PROTECTED, 5 - INTERNAL_PROTECTED
         null, // Global name ID -> member ID
         vm.metadata.classMemberLocalizerBuilder[classId], // Locale-scoped name ID -> member ID
         className); // fully qualified class name
@@ -184,6 +185,7 @@ int initializeClass(int pc, VmContext vm, Array<int> args, string className) {
     List<int> functionIds = new List<int>();
     List<int> fieldInitializationCommand = new List<int>();
     List<Value> fieldInitializationLiteral = new List<Value>();
+    List<int> fieldAccessModifier = new List<int>();
     Dictionary<int, int> globalNameIdToMemberId = new Dictionary<int, int>();
 
     if (baseClass != null) {
@@ -191,6 +193,7 @@ int initializeClass(int pc, VmContext vm, Array<int> args, string className) {
             functionIds.Add(baseClass.functionIds[i]);
             fieldInitializationCommand.Add(baseClass.fieldInitializationCommand[i]);
             fieldInitializationLiteral.Add(baseClass.fieldInitializationLiteral[i]);
+            fieldAccessModifier.Add(baseClass.fieldAccessModifiers[i]);
         }
 
         Array<int> keys = baseClass.globalIdToMemberId.Keys();
@@ -217,8 +220,10 @@ int initializeClass(int pc, VmContext vm, Array<int> args, string className) {
             functionIds.Add(-1);
             fieldInitializationCommand.Add(-1);
             fieldInitializationLiteral.Add(null);
+            fieldAccessModifier.Add(0);
         }
         globalNameIdToMemberId[globalId] = memberId; // potentially override previous entries
+        fieldAccessModifier[memberId] = accessModifier;
         if (args[i] == 0) { // field
             fieldInitializationCommand[memberId] = args[i + 3];
             t = args[i + 4]; // literal ID or -1 for NULL
@@ -236,6 +241,7 @@ int initializeClass(int pc, VmContext vm, Array<int> args, string className) {
     classInfo.functionIds = Core.ListToArray(functionIds);
     classInfo.fieldInitializationCommand = Core.ListToArray(fieldInitializationCommand);
     classInfo.fieldInitializationLiteral = Core.ListToArray(fieldInitializationLiteral);
+    classInfo.fieldAccessModifiers = Core.ListToArray(fieldAccessModifier);
     classInfo.memberCount = functionIds.Size();
     classInfo.globalIdToMemberId = globalNameIdToMemberId;
 

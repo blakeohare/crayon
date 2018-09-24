@@ -20,6 +20,19 @@ namespace Parser.ParseTree
         // This is a misnomer. This can be any top-level object such as a function, class, const, or enum that can wrap
         // other executables or expressions.
         public Node Owner { get; private set; }
+        public ClassDefinition ClassOwner
+        {
+            get
+            {
+                Node walker = this.Owner;
+                while (walker != null && !(walker is ClassDefinition))
+                {
+                    walker = walker.Owner;
+                }
+                return walker as ClassDefinition;
+            }
+        }
+
         private TopLevelEntity topLevelEntity = null;
         public TopLevelEntity TopLevelEntity
         {

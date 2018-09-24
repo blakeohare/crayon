@@ -191,6 +191,7 @@ struct ClassInfo {
     Array<int> functionIds; // function ID or -1
     Array<int> fieldInitializationCommand; // 0 - USE_LITERAL, 1 - LIST, 2 - DICT, 3 - SYSTEM NULL (reserved for method)
     Array<Value> fieldInitializationLiteral;
+    Array<int> fieldAccessModifiers; // access modifiers by ID. 1 - PUBLIC, 2 - PRIVATE, 3 - INTERNAL, 4 - PROTECTED, 5 - INTERNAL_PROTECTED
 
     // TODO: It might actually be good to create two of these, one that's global ID to all member ID's, and another
     // for global ID to assignable member ID's. This would eliminate a couple of CPU cycles and also partially pave
