@@ -24,6 +24,14 @@ public class Sprite {
     public float getY() { return this.position[1]; }
     public int getWidth() { return this.width; }
 
+    public void setTargetPosition(float[] point) {
+        this.targetPosition = point;
+    }
+
+    public void markAsDead() {
+        this.isDead = true;
+    }
+
     public void update() {
         this.isMoving = this.targetPosition != null;
 

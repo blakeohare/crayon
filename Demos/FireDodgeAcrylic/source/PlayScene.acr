@@ -34,11 +34,11 @@ public class PlayScene : AbstractScene {
                 if (this.mode == GameMode.PLAYING) {
 
                     // Ensure the coordinate isn't too close to the edge.
-                    int x = (int) Math.ensureRange(clickEvent.x, 30, SCREEN_WIDTH - 30);
-                    int y = (int) Math.ensureRange(clickEvent.y, 30, SCREEN_HEIGHT - 30);
+                    float x = (float) Math.ensureRange(clickEvent.x, 30, SCREEN_WIDTH - 30);
+                    float y = (float) Math.ensureRange(clickEvent.y, 30, SCREEN_HEIGHT - 30);
 
                     // Tell the player sprite to go there.
-                    this.player.targetPosition = new int[] { x, y };
+                    this.player.setTargetPosition(new float[] { x, y });
                 }
             }
         }
@@ -54,7 +54,7 @@ public class PlayScene : AbstractScene {
                 // Add a new fire every 2/3 of a second
                 if (this.modeCounter % (FPS * 2 / 3) == 0) {
                     Fire fire = new Fire(randomEdgePoint());
-                    fire.targetPosition = randomEdgePoint();
+                    fire.setTargetPosition(randomEdgePoint());
                     this.fires.add(fire);
                 }
 
@@ -63,7 +63,7 @@ public class PlayScene : AbstractScene {
 
                 // Check for player touching a fire.
                 if (this.isPlayerTouchingFire()) {
-                    this.player.isDead = true;
+                    this.player.markAsDead();
                     this.mode = GameMode.YOU_DIED;
                     this.modeCounter = 0;
                 }
