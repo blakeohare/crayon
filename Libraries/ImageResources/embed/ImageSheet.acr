@@ -1,15 +1,15 @@
 namespace ImageResources {
 
-	public class ImageSheet {
-		
+    public class ImageSheet {
+
         // essentially this amounts to the tile count (as of now)
         // For aggregated image sheets, this represents a relative weight of how much "stuff"
         // this sheet loads so that the overall percentage can be shown as a function of all
         // sheets more accurately.
         internal int _weight = 1;
-		
-		public constructor() { }
-		
+
+        public constructor() { }
+
         public static ImageSheet loadFromResources(object name) {
             return ImageSheet._initImpl(name, false, true);
         }
@@ -18,12 +18,12 @@ namespace ImageResources {
             return ImageSheet._initImpl(name, true, true);
         }
 
-		// TODO: abstract classes
+        // TODO: abstract classes
         public ImageResource getImage(string resourcePath) { throw new Exception(); }
-		public bool isDone() { throw new Exception(); }
-		public float getProgress() { throw new Exception(); }
-		public List<string> getFiles() { throw new Exception(); }
-		
+        public bool isDone() { throw new Exception(); }
+        public float getProgress() { throw new Exception(); }
+        public List<string> getFiles() { throw new Exception(); }
+
         private static ImageSheet _initImpl(object name, bool isAsync, bool allowLists) {
 
             // If name is actually a LIST of names, then the user actually wants an
@@ -42,7 +42,7 @@ namespace ImageResources {
             return new BasicImageSheet(info, isAsync);
         }
 
-	}
+    }
 
     internal class BasicImageSheet : ImageSheet {
 
@@ -80,8 +80,8 @@ namespace ImageResources {
                         genName,
                         true, // is generated name
                         false, // is asynchronous
-                        width, 
-						height);
+                        width,
+                        height);
                 }
                 this._turnTilesIntoSheet(lookup);
             }
@@ -112,10 +112,10 @@ namespace ImageResources {
         }
 
         private static List<object> _reusableStatusOut = new List<object>();
-		
+
         public override bool isDone() {
             if (this._isLoaded) return true;
-			BasicImageSheet._reusableStatusOut.clear();
+            BasicImageSheet._reusableStatusOut.clear();
             this._loader.getStatus(BasicImageSheet._reusableStatusOut);
             if ((bool) BasicImageSheet._reusableStatusOut[0]) {
                 this._isLoaded = true;
@@ -125,7 +125,7 @@ namespace ImageResources {
 
         public override float getProgress() {
             if (this._isLoaded) return 1.0;
-			BasicImageSheet._reusableStatusOut.clear();
+            BasicImageSheet._reusableStatusOut.clear();
             this._loader.getStatus(BasicImageSheet._reusableStatusOut);
             if ((bool) BasicImageSheet._reusableStatusOut[0]) {
                 this._isLoaded = true;
@@ -181,7 +181,7 @@ namespace ImageResources {
                     true, // is generated filename
                     true, // is asynchronous
                     width,
-					height);
+                    height);
             }
             return this;
         }

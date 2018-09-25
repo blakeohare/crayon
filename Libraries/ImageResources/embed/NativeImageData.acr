@@ -3,9 +3,9 @@ namespace ImageResources {
         SIZE,
         BLANK,
     }
-	
-	// TODO: friend classes/friend assemblies
-	// Alternatively re-architect things so Graphics2D doesn't need to access this.
+
+    // TODO: friend classes/friend assemblies
+    // Alternatively re-architect things so Graphics2D doesn't need to access this.
     public class NativeImageData {
 
         private static int idAlloc = 0;
@@ -23,7 +23,7 @@ namespace ImageResources {
         private bool _locked = false;
 
         public constructor(int instruction, List<object> args) {
-			ImageResource other = null;
+            ImageResource other = null;
             switch (instruction) {
                 case NativeImageDataConstructionType.SIZE:
                     this.width = (int) args[0];

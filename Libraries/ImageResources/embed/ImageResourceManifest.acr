@@ -99,20 +99,20 @@ namespace ImageResources {
             string manifest = (string) $lib_imageresources_getManifestString();
             string activeSheetId = null;
             int activeChunkId = 0;
-			
-			string genFileName = null;
-			int w = 0;
-			int h = 0;
-			int width = 0;
-			int height = 0;
-			string filename = null;
-			string name = null;
-			ManifestSheetInfo msi = null;
-			ManifestChunkInfo mci = null;
-			ManifestFileInfo mfi = null;
-			ManifestTileInfo mti = null;
-			List<string> sheetFiles = null;
-			
+
+            string genFileName = null;
+            int w = 0;
+            int h = 0;
+            int width = 0;
+            int height = 0;
+            string filename = null;
+            string name = null;
+            ManifestSheetInfo msi = null;
+            ManifestChunkInfo mci = null;
+            ManifestFileInfo mfi = null;
+            ManifestTileInfo mti = null;
+            List<string> sheetFiles = null;
+
             for (string line : manifest.split('\n')) {
                 List<string> parts = line.split(',');
                 switch (parts[0].trim()) {

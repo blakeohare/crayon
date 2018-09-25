@@ -102,14 +102,14 @@ namespace ImageResources {
             return (ImageResource) ImageLoader._loadImpl(filename, false, false, 0, 0);
         }
 
-		// TODO: something about this object return type
+        // TODO: something about this object return type
         internal static object _loadImpl(
-			string filename, 
-			bool isGen, 
-			bool isAsync, 
-			int width, 
-			int height) {
-			
+            string filename,
+            bool isGen,
+            bool isAsync,
+            int width,
+            int height) {
+
             if (!isGen) {
                 ManifestFileInfo t = ImageLoader.getGenName(filename);
                 filename = t.genFileName;
@@ -120,7 +120,7 @@ namespace ImageResources {
             nativeImage.width = width;
             nativeImage.height = height;
 
-			ImageLoader loader = null;
+            ImageLoader loader = null;
             if (isAsync) {
                 loader = new ImageResources.ImageLoader();
                 loader._nativeImage = nativeImage;
@@ -132,8 +132,8 @@ namespace ImageResources {
             }
 
             List<bool> statusOut = new List<bool>();
-			statusOut.add(false);
-			
+            statusOut.add(false);
+
             loader = new ImageResources.ImageLoader();
             loader._nativeImage = nativeImage;
             $lib_imageresources_loadAsynchronous(

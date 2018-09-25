@@ -74,6 +74,7 @@ class FormatStyle:
 
     return text
 
+ACRYLIC_STYLE = FormatStyle().tabs(' ' * 4).newline('\n')
 CSHARP_STYLE = FormatStyle().tabs(' ' * 4).newline('\r\n')
 CRAYON_STYLE = FormatStyle().tabs(' ' * 4).newline('\n')
 CSPROJ_STYLE = FormatStyle().tabs(' ' * 2).newline('\r\n').disableEndNewline().enableCanonicalizeCsprojToolsVersion()
@@ -109,12 +110,12 @@ MATCHERS = [
 
   # Demos
   ('Demos/*.cry', CRAYON_STYLE),
-  ('Demos/*.acr', CSHARP_STYLE),
+  ('Demos/*.acr', ACRYLIC_STYLE),
 
   # Libraries
   ('Libraries/*.pst', PASTEL_STYLE),
   ('Libraries/*.cry', CRAYON_STYLE),
-  ('Libraries/*.acr', CSHARP_STYLE),
+  ('Libraries/*.acr', ACRYLIC_STYLE),
 
   # Clean Scripts
   ('Scripts/*.py', PYTHON_STYLE_2_SPACES),

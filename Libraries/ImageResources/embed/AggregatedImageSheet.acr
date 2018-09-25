@@ -8,7 +8,7 @@ namespace ImageResources {
     */
     internal class AggregatedImageSheet : ImageSheet {
 
-		private Dictionary<string, ImageSheet> _sheetsById = new Dictionary<string, ImageSheet>();
+        private Dictionary<string, ImageSheet> _sheetsById = new Dictionary<string, ImageSheet>();
         private List<ImageSheet> _orderedSheets;
         private  List<string> _ids = new List<string>();
 
