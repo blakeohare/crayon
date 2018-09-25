@@ -68,7 +68,14 @@ namespace Exporter.ByteCode.Nodes
                 buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
                 int nameId = parser.GetId(dotStep.FieldToken.Value);
                 int localeScopedNameId = nameId * parser.GetLocaleCount() + parser.GetLocaleId(dotStep.Owner.FileScope.CompilationScope.Locale);
-                buffer.Add(dotStep.DotToken, OpCode.DEREF_DOT, nameId, localeScopedNameId);
+                buffer.Add(
+                    dotStep.DotToken,
+                    OpCode.DEREF_DOT,
+                    nameId,
+                    localeScopedNameId,
+                    increment.ClassOwner == null ? -1 : increment.ClassOwner.ClassID,
+                    increment.CompilationScope.ScopeNumId,
+                    -1, 0);
                 if (increment.IsPrefix)
                 {
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));

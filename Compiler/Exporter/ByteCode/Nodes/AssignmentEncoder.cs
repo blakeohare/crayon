@@ -99,7 +99,14 @@ namespace Exporter.ByteCode.Nodes
                     {
                         buffer.Add(null, OpCode.DUPLICATE_STACK_TOP, 1);
                     }
-                    buffer.Add(dotExpr.DotToken, OpCode.DEREF_DOT, fieldId, localeScopedStepId);
+                    buffer.Add(
+                        dotExpr.DotToken,
+                        OpCode.DEREF_DOT,
+                        fieldId,
+                        localeScopedStepId,
+                        assignment.ClassOwner == null ? -1 : assignment.ClassOwner.ClassID,
+                        assignment.CompilationScope.ScopeNumId,
+                        -1, 0);
                     bcc.CompileExpression(parser, buffer, assignment.Value, true);
                     buffer.Add(assignment.OpToken, OpCode.BINARY_OP, (int)op);
                     if (dotExpr.Root is ThisKeyword)
