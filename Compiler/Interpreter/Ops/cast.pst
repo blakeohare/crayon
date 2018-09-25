@@ -1,0 +1,125 @@
+﻿/*
+    Casting
+
+    This ensures that the given value on the top of the value stack is the given type.
+    No changes to the data occurs with the exception of integers and floats, which are converted.
+
+    Generic object casts are dropped at compile-time.
+
+    The first argument is the base type
+
+    Types.INTEGER, Types.FLOAT -> the value is checked to be a number and converted/floor'd if necessary.
+
+    Types.STRING, Types.BOOLEAN -> the value is checked
+
+    Types.LIST:
+        The value is checked to be a list.
+        The next argument is the list type and follows the same rules as the first argument.
+
+    Types.DICTIONARY:
+        The value is checked to be a dictionary.
+        The next argument is the key and follows the same rules as the first argument.
+        After the key (which may be multiple arguments) is the value type, which also follows the same rules.
+
+    Types.INSTANCE:
+        The value is checked to be an instance. The next argument is the class ID.
+
+*/
+
+value = valueStack[valueStackSize - 1];
+
+// bool1 is set to true if there's an error.
+
+switch (value.type) {
+    case Types.NULL:
+        switch (row[0]) {
+            // These types cannot contain null.
+            case Types.BOOLEAN:
+            case Types.INTEGER:
+            case Types.FLOAT:
+                bool1 = true;
+                break;
+
+            default:
+                bool1 = false;
+                break;
+        }
+        break;
+
+    case Types.INTEGER:
+        if (row[0] == Types.INTEGER) {
+            bool1 = false;
+        } else if (row[0] == Types.FLOAT) {
+            int1 = (int)value.internalValue;
+            if (int1 == 0) {
+                value = VALUE_FLOAT_ZERO;
+            } else {
+                value = new Value(Types.FLOAT, 0.0 + int1);
+            }
+            valueStack[valueStackSize - 1] = value;
+            bool1 = false;
+        } else {
+            bool1 = true;
+        }
+        break;
+
+    case Types.FLOAT:
+        if (row[0] == Types.FLOAT) {
+            bool1 = false;
+        } else if (row[0] == Types.INTEGER) {
+            float1 = (double) value.internalValue;
+            if (@ext_boolean("INT_IS_FLOOR")) {
+                i = Core.Int(float1);
+            } else if (float1 < 0 && float1 % 1 != 0) {
+                i = Core.Int(float1) - 1;
+            } else {
+                i = Core.Int(float1);
+            }
+
+            if (i < 0) {
+                if (i > -INTEGER_NEGATIVE_CACHE_SIZE) {
+                    value = globals.negativeIntegers[-i];
+                } else {
+                    value = new Value(Types.INTEGER, i);
+                }
+            } else {
+                if (i < INTEGER_POSITIVE_CACHE_SIZE) {
+                    value = globals.positiveIntegers[i];
+                } else {
+                    value = new Value(Types.INTEGER, i);
+                }
+            }
+
+            valueStack[valueStackSize - 1] = value;
+            bool1 = false;
+        } else {
+            bool1 = true;
+        }
+        break;
+
+    case Types.BOOLEAN: bool1 = row[0] != Types.BOOLEAN; break;
+    case Types.STRING: bool1 = row[0] != Types.STRING; break;
+
+    case Types.LIST: bool1 = row[0] != Types.LIST; break; // TODO: generics verification
+    case Types.DICTIONARY: bool1 = row[0] != Types.DICTIONARY; break; // TODO: generics verification
+
+    case Types.INSTANCE:
+        if (row[0] == Types.INSTANCE) {
+            if (Core.ForceParens((ObjectInstance)value.internalValue).classId == row[1]) {
+                bool1 = false;
+            } else {
+                bool1 = true; // TODO: walk up the base class chain to confirm.
+            }
+        } else {
+            bool1 = true;
+        }
+        break;
+    case Types.FUNCTION:
+        bool1 = true; // TODO: this
+        break;
+}
+
+if (bool1) {
+    // TODO: add a toString method in ValueUtil for types.
+    hasInterrupt = EX_InvalidArgument(ec, "Invalid cast.");
+}

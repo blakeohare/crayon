@@ -609,6 +609,7 @@ namespace Exporter.ByteCode
             else if (expr is DictionaryDefinition) DictionaryDefinitionEncoder.Compile(this, parser, buffer, (DictionaryDefinition)expr, outputUsed);
             else if (expr is BooleanCombination) BooleanCombinationEncoder.Compile(this, parser, buffer, (BooleanCombination)expr, outputUsed);
             else if (expr is BooleanNot) BooleanNotEncoder.Compile(this, parser, buffer, (BooleanNot)expr, outputUsed);
+            else if (expr is Cast) CastEncoder.Compile(this, parser, buffer, (Cast)expr, outputUsed);
             else if (expr is Ternary) TernaryEncoder.Compile(this, parser, buffer, (Ternary)expr, outputUsed);
             else if (expr is ListSlice) ListSliceEncoder.Compile(this, parser, buffer, (ListSlice)expr, outputUsed);
             else if (expr is NullCoalescer) NullCoalescerEncoder.Compile(this, parser, buffer, (NullCoalescer)expr, outputUsed);
@@ -626,8 +627,6 @@ namespace Exporter.ByteCode
             else if (expr is BaseKeyword) this.CompileBaseKeyword(parser, buffer, (BaseKeyword)expr, outputUsed);
             else if (expr is CompileTimeDictionary) this.CompileCompileTimeDictionary((CompileTimeDictionary)expr);
 
-            // TODO: runtime type verification
-            else if (expr is Cast) this.CompileExpression(parser, buffer, ((Cast)expr).Expression, outputUsed);
 
             else throw new NotImplementedException();
         }

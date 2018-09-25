@@ -230,6 +230,7 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
             case OpCodes.BOOLEAN_NOT: Core.EmitComment("BOOLEAN_NOT"); @import("Ops/boolean_not.pst"); break;
             case OpCodes.BREAK: Core.EmitComment("BREAK"); @import("Ops/break.pst"); break;
             case OpCodes.CALL_FUNCTION: Core.EmitComment("CALL_FUNCTION"); @import("Ops/call_function.pst"); break;
+            case OpCodes.CAST: Core.EmitComment("CAST"); @import("Ops/cast.pst"); break;
             case OpCodes.CLASS_DEFINITION: Core.EmitComment("CLASS_DEFINITION"); @import("Ops/class_definition.pst"); break;
             case OpCodes.CNI_INVOKE: Core.EmitComment("CNI_INVOKE"); @import("Ops/cni_invoke.pst"); break;
             case OpCodes.CNI_REGISTER: Core.EmitComment("CNI_REGISTER"); @import("Ops/cni_register.pst"); break;
