@@ -29,7 +29,7 @@ public class PlayScene : AbstractScene {
         for (Game.Event event : events) {
             // Player clicked
             if (event.type == EventType.MOUSE_LEFT_DOWN) {
-				MouseClickEvent clickEvent = (MouseClickEvent) event;
+                MouseClickEvent clickEvent = (MouseClickEvent) event;
                 // And player hasn't died yet
                 if (this.mode == GameMode.PLAYING) {
 
@@ -85,20 +85,20 @@ public class PlayScene : AbstractScene {
     }
 
     public bool isPlayerTouchingFire() {
-        float px = this.player.position[0];
-        float py = this.player.position[1];
-        int playerWidth = this.player.width;
+        float px = this.player.getX();
+        float py = this.player.getY();
+        int playerWidth = this.player.getWidth();
 
         for (Fire fire : this.fires) {
-            float dx = fire.position[0] - px;
-            float dy = fire.position[1] - py;
+            float dx = fire.getX() - px;
+            float dy = fire.getY() - py;
             if (dx > 100 || dy > 100) {
                 // fast and easy vicinity check that most sprites will not pass.
                 continue;
             }
 
             float distance = (dx ** 2 + dy ** 2) ** .5;
-            float deathDistance = (playerWidth + fire.width) / 2;
+            float deathDistance = (playerWidth + fire.getWidth()) / 2;
             deathDistance *= .7; // make the game a little easier
 
             if (distance < deathDistance) {

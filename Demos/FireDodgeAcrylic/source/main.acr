@@ -22,7 +22,7 @@ public void main() {
         activeScene.update();
         activeScene.render();
 
-        activeScene = activeScene.nextScene ?? activeScene;
+        activeScene = activeScene.getNextScene();
 
         window.clockTick();
     }

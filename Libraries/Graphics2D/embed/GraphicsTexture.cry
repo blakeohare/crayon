@@ -22,10 +22,10 @@ namespace Graphics2D {
 
         static field REUSABLE_WIDTH_HEIGHT_OUT = [0, 0];
         static function load(imageResource) {
-            atlasNativeResource = imageResource._nativeResource;
+            atlasNativeResource = ImageResources.getNativeImageData(imageResource);
             atlasNativeResource.verifyUnlocked();
-            width = imageResource._width;
-            height = imageResource._height;
+            width = imageResource.getWidth();
+            height = imageResource.getHeight();
 
             if ($lib_graphics2d_isPlatformUsingTextureAtlas()) { // TODO: compile time constant functions
                 // only create a new texture resource if one doesn't exist that already has the same atlas backing it

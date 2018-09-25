@@ -109,10 +109,12 @@ MATCHERS = [
 
   # Demos
   ('Demos/*.cry', CRAYON_STYLE),
+  ('Demos/*.acr', CSHARP_STYLE),
 
   # Libraries
   ('Libraries/*.pst', PASTEL_STYLE),
   ('Libraries/*.cry', CRAYON_STYLE),
+  ('Libraries/*.acr', CSHARP_STYLE),
 
   # Clean Scripts
   ('Scripts/*.py', PYTHON_STYLE_2_SPACES),

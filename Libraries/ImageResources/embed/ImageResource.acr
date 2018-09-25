@@ -1,13 +1,13 @@
 namespace ImageResources {
     public class ImageResource {
 
-        internal NativeImageData _nativeResource;
-        internal int _width;
-        internal int _height;
-
         // top-left location within the _nativeResource
-        internal int _x = 0;
-        internal int _y = 0;
+        // TODO: friend assemblies. These are used by Graphics2D but I don't want them to be public
+        public NativeImageData _nativeResource;
+        public int _width;
+        public int _height;
+        public int _x = 0;
+        public int _y = 0;
 
         // TODO: create static factory methods and make this private. 
 		// The init parameter really needs to be hidden from access.
@@ -23,5 +23,9 @@ namespace ImageResources {
         // TODO: convert these fields to Acrylic properties and so these getters can go away.
         public int getWidth() { return this._width; }
         public int getHeight() { return this._height; }
+    }
+
+    public NativeImageData getNativeImageData(ImageResource img){
+        return img._nativeResource;
     }
 }

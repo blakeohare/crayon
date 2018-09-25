@@ -20,6 +20,10 @@ public class Sprite {
         this.height = img.height;
     }
 
+    public float getX() { return this.position[0]; }
+    public float getY() { return this.position[1]; }
+    public int getWidth() { return this.width; }
+
     public void update() {
         this.isMoving = this.targetPosition != null;
 
@@ -120,7 +124,7 @@ public class Fire : Sprite {
     private static GraphicsTexture[] fireImages;
 
     static constructor() {
-		Fire.fireImages = new GraphicsTexture[] { null, null }; // TODO: allow construction of un-initialized list of fixed length
+        Fire.fireImages = new GraphicsTexture[] { null, null }; // TODO: allow construction of un-initialized list of fixed length
         for (int i = 0; i < 2; ++i) {
             Fire.fireImages[i] = ImageLibrary.get('images/fire/fire' + (i + 1) + '.png');
         }

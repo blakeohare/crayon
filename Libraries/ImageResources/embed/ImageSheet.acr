@@ -163,9 +163,9 @@ namespace ImageResources {
     }
 
     internal class ImageSheetLoaderAsync {
-        private List<ManifestTileInfo> tiles;
-        private Dictionary<string, ImageResource> completed = new Dictionary<string, ImageResource>();
-        private Dictionary<string, ImageLoader> inProgress = new Dictionary<string, ImageLoader>();
+        internal List<ManifestTileInfo> tiles;
+        internal Dictionary<string, ImageResource> completed = new Dictionary<string, ImageResource>();
+        internal Dictionary<string, ImageLoader> inProgress = new Dictionary<string, ImageLoader>();
 
         constructor(List<ManifestTileInfo> tiles) {
             this.tiles = tiles;

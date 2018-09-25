@@ -1,7 +1,7 @@
 import Game;
 
 public class AbstractScene {
-    
+
     private AbstractScene nextScene = null;
 
     public constructor() { }
@@ -20,5 +20,9 @@ public class AbstractScene {
 
     public void render() {
         fail("Overridden");
+    }
+
+    public AbstractScene getNextScene() {
+        return this.nextScene ?? this;
     }
 }
