@@ -46,7 +46,15 @@ namespace Exporter.ByteCode.Nodes
                         bcc.CompileExpression(parser, buffer, assignment.Value, true);
                         int nameId = parser.GetId(dotStep.FieldToken.Value);
                         int localeScopedNameId = nameId * parser.GetLocaleCount() + parser.GetLocaleId(dotStep.Owner.FileScope.CompilationScope.Locale);
-                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_FIELD, nameId, 0, localeScopedNameId);
+                        buffer.Add(
+                            assignment.OpToken,
+                            OpCode.ASSIGN_FIELD,
+                            nameId,
+                            0,
+                            localeScopedNameId,
+                            assignment.ClassOwner == null ? -1 : assignment.ClassOwner.ClassID,
+                            assignment.CompilationScope.ScopeNumId,
+                            -1, 0);
                     }
                 }
                 else if (assignment.Target is FieldReference)
@@ -116,7 +124,15 @@ namespace Exporter.ByteCode.Nodes
                     else
                     {
                         int localeScopedNameId = fieldId * parser.GetLocaleCount() + parser.GetLocaleId(dotExpr.Owner.FileScope.CompilationScope.Locale);
-                        buffer.Add(assignment.OpToken, OpCode.ASSIGN_FIELD, fieldId, 0, localeScopedNameId);
+                        buffer.Add(
+                            assignment.OpToken,
+                            OpCode.ASSIGN_FIELD,
+                            fieldId,
+                            0,
+                            localeScopedNameId,
+                            assignment.ClassOwner == null ? -1 : assignment.ClassOwner.ClassID,
+                            assignment.CompilationScope.ScopeNumId,
+                            -1, 0);
                     }
                 }
                 else if (assignment.Target is BracketIndex)

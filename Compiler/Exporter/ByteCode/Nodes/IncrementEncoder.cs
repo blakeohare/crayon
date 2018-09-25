@@ -68,26 +68,28 @@ namespace Exporter.ByteCode.Nodes
                 buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 1);
                 int nameId = parser.GetId(dotStep.FieldToken.Value);
                 int localeScopedNameId = nameId * parser.GetLocaleCount() + parser.GetLocaleId(dotStep.Owner.FileScope.CompilationScope.Locale);
+                int originClassId = increment.ClassOwner == null ? -1 : increment.ClassOwner.ClassID;
+                int originAssemblyId = increment.CompilationScope.ScopeNumId;
                 buffer.Add(
                     dotStep.DotToken,
                     OpCode.DEREF_DOT,
                     nameId,
                     localeScopedNameId,
-                    increment.ClassOwner == null ? -1 : increment.ClassOwner.ClassID,
+                    originClassId,
                     increment.CompilationScope.ScopeNumId,
                     -1, 0);
                 if (increment.IsPrefix)
                 {
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
                     buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)Ops.ADDITION : (int)Ops.SUBTRACTION);
-                    buffer.Add(increment.IncrementToken, OpCode.ASSIGN_FIELD, nameId, 1, localeScopedNameId);
+                    buffer.Add(increment.IncrementToken, OpCode.ASSIGN_FIELD, nameId, 1, localeScopedNameId, originClassId, originAssemblyId, -1, 0);
                 }
                 else
                 {
                     buffer.Add(increment.IncrementToken, OpCode.DUPLICATE_STACK_TOP, 2);
                     buffer.Add(increment.IncrementToken, OpCode.LITERAL, parser.GetIntConstant(1));
                     buffer.Add(increment.IncrementToken, OpCode.BINARY_OP, increment.IsIncrement ? (int)Ops.ADDITION : (int)Ops.SUBTRACTION);
-                    buffer.Add(increment.IncrementToken, OpCode.ASSIGN_FIELD, nameId, 0, localeScopedNameId);
+                    buffer.Add(increment.IncrementToken, OpCode.ASSIGN_FIELD, nameId, 0, localeScopedNameId, originClassId, originAssemblyId, -1, 0);
                     buffer.Add(increment.IncrementToken, OpCode.STACK_SWAP_POP);
                 }
             }

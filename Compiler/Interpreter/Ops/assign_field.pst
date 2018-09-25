@@ -2,6 +2,11 @@
 // row[0] -> name ID
 // row[1] -> push the assigned value back to the stack if this is 1.
 // row[2] -> locale-scoped name ID
+// row[3] -> origin class ID
+// row[4] -> original assembly ID
+// row[5] -> [MUTABLE] last successful class ID that was dereferenced here or -1 if none.
+// row[6] -> [MUTABLE] member ID of the last successful class ID that was dereferenced here
+
 
 valueStackSize -= 2;
 value = valueStack[valueStackSize + 1]; // value to assign
@@ -13,9 +18,68 @@ if (value2.type == Types.INSTANCE) {
     classId = objInstance1.classId;
     classInfo = classTable[classId];
     intIntDict1 = classInfo.localeScopedNameIdToMemberId;
-    int1 = intIntDict1.TryGet(nameId, -1);
-    if (int1 != -1) {
-        int1 = intIntDict1[nameId]; // member ID
+    if (row[5] == classId) {
+        int1 = row[6];
+    } else {
+        int1 = intIntDict1.TryGet(nameId, -1);
+        if (int1 != -1) {
+            int3 = classInfo.fieldAccessModifiers[int1];
+
+            // NOTE: this code is duplicated in assign_field.pst
+            // TODO: merge them either in a function or an inline include
+            if (int3 > 1) { // if not public...
+                // Is it private?
+                if (int3 == 2) {
+                    if (classId != row[3]) {
+                        int1 = -2; // Nope. Can't do that. It's private.
+                    }
+                } else {
+                    // Is it internal?
+                    if (int3 == 3 || int3 == 5) {
+                        if (classInfo.assemblyId != row[4]) {
+                            int1 = -3; // Nope. Can't do that. It's internal.
+                        }
+                    }
+
+                    // Is it protected?
+                    if (int3 == 4 || int3 == 5) {
+                        i = row[3]; // class ID walker
+                        if (classId == i) {
+                            // this is fine and likely relatively common, so special case it.
+                        } else {
+                            // which class ID actually defines this method?
+                            // Figure this out by walking up the class metadata until you find a base class that doesn't
+                            // define this member ID. Then that's your target ID.
+                            classInfo = classTable[classInfo.id];
+                            while (classInfo.baseClassId != -1 && int1 < classTable[classInfo.baseClassId].fieldAccessModifiers.Length()) {
+                                classInfo = classTable[classInfo.baseClassId];
+                            }
+                            j = classInfo.id; // this is the target ID that you want to see if the calling class implements from
+                            if (j != i) {
+                                bool1 = false;
+                                while (i != -1 && classTable[i].baseClassId != -1) {
+                                    i = classTable[i].baseClassId;
+                                    if (i == j) {
+                                        bool1 = true;
+                                        i = -1;
+                                    }
+                                }
+
+                                if (!bool1) {
+                                    int1 = -4;
+                                }
+                            }
+                        }
+                        classInfo = classTable[classId];
+                    }
+                }
+            }
+        }
+        row[5] = classId;
+        row[6] = int1;
+    }
+
+    if (int1 > -1) {
         int2 = classInfo.functionIds[int1];
         if (int2 == -1) {
             objInstance1.members[int1] = value;
@@ -23,12 +87,24 @@ if (value2.type == Types.INSTANCE) {
             hasInterrupt = EX_InvalidArgument(ec, "Cannot override a method with assignment.");
         }
     } else {
-        hasInterrupt = EX_InvalidAssignment(ec, Core.StringConcatAll(
-            "'",
-            classInfo.fullyQualifiedName,
-            "' instances do not have a field called '",
-            metadata.identifiers[nameId],
-            "'"));
+        if (int1 < -1) {
+            string1 = identifiers[row[0]];
+            if (int1 == -2) {
+                string2 = "private";
+            } else if (int1 == -3) {
+                string2 = "internal";
+            } else {
+                string2 = "protected";
+            }
+            hasInterrupt = EX_UnknownField(ec, Core.StringConcatAll("The field '", string1, "' is marked as ", string2, " and cannot be accessed from here."));
+        } else {
+            hasInterrupt = EX_InvalidAssignment(ec, Core.StringConcatAll(
+                "'",
+                classInfo.fullyQualifiedName,
+                "' instances do not have a field called '",
+                metadata.identifiers[row[0]],
+                "'"));
+        }
     }
 } else {
     hasInterrupt = EX_InvalidAssignment(ec, "Cannot assign to a field on this type.");

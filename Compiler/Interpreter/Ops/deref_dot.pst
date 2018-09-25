@@ -20,7 +20,8 @@ switch (value.type) {
             int1 = intIntDict1.TryGet(int2, -1);
             int3 = classInfo.fieldAccessModifiers[int1];
             if (int3 > 1) { // if not public...
-
+                // NOTE: this code is duplicated in assign_field.pst
+                // TODO: merge them either in a function or an inline include
                 // Is it private?
                 if (int3 == 2) {
                     if (classId != row[2]) {
