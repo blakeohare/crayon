@@ -436,6 +436,7 @@ namespace Exporter.ByteCode
                 constructorId,
                 staticConstructorId,
                 staticFieldCount,
+                classDefinition.CompilationScope.ScopeNumId,
             };
 
             args.AddRange(members);

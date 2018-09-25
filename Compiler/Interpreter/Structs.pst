@@ -180,6 +180,7 @@ struct ClassInfo {
     int id;
     int nameId;
     int baseClassId; // or -1 if no base class
+    int assemblyId;
     int staticInitializationState; // 0 - not initialized, 1 - in progress, 2 - done
     Array<Value> staticFields;
     int staticConstructorFunctionId;

@@ -99,7 +99,8 @@ Array<FunctionInfo> getFunctionTable(VmContext vm, int functionId) {
     args[3] -> constructor function ID
     args[4] -> static constructor function ID or -1
     args[5] -> number of static fields
-    args[6n ... (6n + 5)] -> fields and methods that are declared in this class.
+    args[6] -> assembly ID
+    args[7 + 6n ... (6n + 5)] -> fields and methods that are declared in this class.
         n + 0 -> 0 if field, 1 if method
         n + 1 -> member ID (numbering starts after base class member ID's
         n + 2 -> global name ID
@@ -136,6 +137,7 @@ int initializeClass(int pc, VmContext vm, Array<int> args, string className) {
         staticInitializationState = 2;
     }
     int staticFieldCount = args[5];
+    int assemblyId = args[6];
 
     Array<Value> staticFields = new Array<Value>(staticFieldCount);
     for (i = 0; i < staticFieldCount; i += 1) {
@@ -146,6 +148,7 @@ int initializeClass(int pc, VmContext vm, Array<int> args, string className) {
         classId,
         globalNameId,
         baseClassId,
+        assemblyId,
         staticInitializationState,
         staticFields,
         staticConstructorFunctionId,
@@ -212,7 +215,7 @@ int initializeClass(int pc, VmContext vm, Array<int> args, string className) {
 
     int accessModifier = 0;
     // and now add the overrides and appends
-    for (i = 6; i < args.Size(); i += 6) {
+    for (i = 7; i < args.Size(); i += 6) {
         memberId = args[i + 1];
         globalId = args[i + 2];
         accessModifier = args[i + 5];

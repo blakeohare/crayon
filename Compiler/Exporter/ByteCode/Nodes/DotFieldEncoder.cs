@@ -24,7 +24,7 @@ namespace Exporter.ByteCode.Nodes
             int localeScopedNameId = rawNameId * parser.GetLocaleCount() + localeId;
             ClassDefinition cd = root.ClassOwner;
             int classId = cd == null ? -1 : cd.ClassID;
-            buffer.Add(dotToken, OpCode.DEREF_DOT, rawNameId, localeScopedNameId, classId, -1, 0);
+            buffer.Add(dotToken, OpCode.DEREF_DOT, rawNameId, localeScopedNameId, classId, root.CompilationScope.ScopeNumId, -1, 0);
         }
     }
 }

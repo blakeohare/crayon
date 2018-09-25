@@ -1,8 +1,9 @@
 ﻿// row[0] -> global name ID
 // row[1] -> locale scoped name ID
 // row[2] -> origin class ID
-// row[3] -> [MUTABLE] last successful class ID that was dereferenced here or -1 if none.
-// row[4] -> [MUTABLE] member ID of the last successful class ID that was dereferenced here
+// row[3] -> original assembly ID
+// row[4] -> [MUTABLE] last successful class ID that was dereferenced here or -1 if none.
+// row[5] -> [MUTABLE] member ID of the last successful class ID that was dereferenced here
 
 value = valueStack[valueStackSize - 1];
 nameId = row[0];
@@ -12,31 +13,63 @@ switch (value.type) {
         objInstance1 = (ObjectInstance) value.internalValue;
         classId = objInstance1.classId;
         classInfo = classTable[classId];
-        if (classId == row[3]) {
-            int1 = row[4];
+        if (classId == row[4]) {
+            int1 = row[5];
         } else {
             intIntDict1 = classInfo.localeScopedNameIdToMemberId;
             int1 = intIntDict1.TryGet(int2, -1);
-
             int3 = classInfo.fieldAccessModifiers[int1];
             if (int3 > 1) { // if not public...
-                if (int3 == 2) { // if private
-                    if (objInstance1.classId != row[2]) {
-                        int1 = -2; // nope. can't do that.
-                    } else {
-                        if (int3 == 3 || int3 == 5) {
-                            // TODO: is internal?
-                        }
 
-                        if (int3 == 4 || int3 == 5) {
-                            // TODO: is protected?
+                // Is it private?
+                if (int3 == 2) {
+                    if (classId != row[2]) {
+                        int1 = -2; // Nope. Can't do that. It's private.
+                    }
+                } else {
+                    // Is it internal?
+                    if (int3 == 3 || int3 == 5) {
+                        if (classInfo.assemblyId != row[3]) {
+                            int1 = -3; // Nope. Can't do that. It's internal.
                         }
+                    }
+
+                    // Is it protected?
+                    if (int3 == 4 || int3 == 5) {
+                        i = row[2]; // class ID walker
+                        if (classId == i) {
+                            // this is fine and likely relatively common, so special case it.
+                        } else {
+                            // which class ID actually defines this method?
+                            // Figure this out by walking up the class metadata until you find a base class that doesn't
+                            // define this member ID. Then that's your target ID.
+                            classInfo = classTable[classInfo.id];
+                            while (classInfo.baseClassId != -1 && int1 < classTable[classInfo.baseClassId].fieldAccessModifiers.Length()) {
+                                classInfo = classTable[classInfo.baseClassId];
+                            }
+                            j = classInfo.id; // this is the target ID that you want to see if the calling class implements from
+                            if (j != i) {
+                                bool1 = false;
+                                while (i != -1 && classTable[i].baseClassId != -1) {
+                                    i = classTable[i].baseClassId;
+                                    if (i == j) {
+                                        bool1 = true;
+                                        i = -1;
+                                    }
+                                }
+
+                                if (!bool1) {
+                                    int1 = -4;
+                                }
+                            }
+                        }
+                        classInfo = classTable[classId];
                     }
                 }
             }
 
-            row[3] = objInstance1.classId;
-            row[4] = int1;
+            row[4] = objInstance1.classId;
+            row[5] = int1;
         }
 
         if (int1 > -1) {
@@ -97,8 +130,16 @@ if (output == null) {
         // TODO: put this all in a helper function.
         if (value.type == Types.NULL) {
             hasInterrupt = EX_NullReference(ec, "Tried to dereference a field on null.");
-        } else if (value.type == Types.INSTANCE && int1 == -2) {
-            hasInterrupt = EX_UnknownField(ec, "This field is marked as private and cannot be accessed from outside its class.");
+        } else if (value.type == Types.INSTANCE && int1 < -1) {
+            string1 = identifiers[row[0]];
+            if (int1 == -2) {
+                string2 = "private";
+            } else if (int1 == -3) {
+                string2 = "internal";
+            } else {
+                string2 = "protected";
+            }
+            hasInterrupt = EX_UnknownField(ec, Core.StringConcatAll("The field '", string1, "' is marked as ", string2, " and cannot be accessed from here."));
         } else {
             if (value.type == Types.INSTANCE) {
                 classId = Core.ForceParens((ObjectInstance) value.internalValue).classId;

@@ -11,6 +11,7 @@ namespace Parser
         public string ScopeKey { get; private set; }
         public Dictionary<string, CniFunction> CniFunctionsByName { get; private set; }
         public AssemblyMetadata Metadata { get; private set; }
+        public int ScopeNumId { get; private set; }
 
         public bool IsCrayon {  get { return this.ProgrammingLanguage == ProgrammingLanguage.CRAYON; } }
         public bool IsAcrylic {  get { return this.ProgrammingLanguage == ProgrammingLanguage.ACRYLIC; } }
@@ -23,8 +24,11 @@ namespace Parser
 
         private ScopedNamespaceLocaleFlattener namespaceFlattener = new ScopedNamespaceLocaleFlattener();
 
+        private static int numIdAlloc = 1;
+
         public CompilationScope(BuildContext buildContext, AssemblyMetadata metadata)
         {
+            this.ScopeNumId = numIdAlloc++;
             this.buildContext = buildContext;
             this.CniFunctionsByName = new Dictionary<string, CniFunction>();
             this.Metadata = metadata;
