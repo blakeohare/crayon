@@ -1,5 +1,4 @@
-﻿using Common;
-using Exporter.ByteCode.Nodes;
+﻿using Exporter.ByteCode.Nodes;
 using Localization;
 using Parser;
 using Parser.ParseTree;
@@ -272,7 +271,7 @@ namespace Exporter.ByteCode
 
         public void CompileTopLevelEntity(ParserContext parser, ByteBuffer buffer, TopLevelEntity entity)
         {
-            if (entity is FunctionDefinition) this.CompileFunctionDefinition(parser, buffer, (FunctionDefinition)entity, false);
+            if (entity is FunctionDefinition) FunctionDefinitionEncoder.Compile(this, parser, buffer, (FunctionDefinition)entity, false);
             else if (entity is ClassDefinition) this.CompileClass(parser, buffer, (ClassDefinition)entity);
             else throw new NotImplementedException("Invalid target for byte code compilation");
         }
@@ -343,14 +342,14 @@ namespace Exporter.ByteCode
             if (classDefinition.StaticConstructor != null)
             {
                 // All static field initializers are added here.
-                this.CompileConstructor(parser, buffer, classDefinition.StaticConstructor, null);
+                ConstructorDefinitionEncoder.Compile(this, parser, buffer, classDefinition.StaticConstructor, null);
             }
 
             foreach (FunctionDefinition fd in classDefinition.Methods)
             {
                 int pc = buffer.Size;
                 fd.FinalizedPC = pc;
-                this.CompileFunctionDefinition(parser, buffer, fd, true);
+                FunctionDefinitionEncoder.Compile(this, parser, buffer, fd, true);
             }
 
             int classId = classDefinition.ClassID;
@@ -426,7 +425,7 @@ namespace Exporter.ByteCode
                 }
             }
 
-            this.CompileConstructor(parser, buffer, classDefinition.Constructor, initializer);
+            ConstructorDefinitionEncoder.Compile(this, parser, buffer, classDefinition.Constructor, initializer);
 
             List<int> args = new List<int>()
             {
@@ -457,131 +456,6 @@ namespace Exporter.ByteCode
                 return 5;
             }
             throw new Exception(); // All cases should be covered by the above.
-        }
-
-        private void CompileConstructor(ParserContext parser, ByteBuffer buffer, ConstructorDefinition constructor, ByteBuffer complexFieldInitializers)
-        {
-            TODO.ThrowErrorIfKeywordThisIsUsedInBaseArgsOrDefaultArgsAnywhereInConstructor();
-
-            ByteBuffer tBuffer = new ByteBuffer();
-
-            ClassDefinition cd = (ClassDefinition)constructor.Owner;
-
-            List<int> offsetsForOptionalArgs = new List<int>();
-            this.CompileFunctionArgs(parser, tBuffer, constructor.ArgNames, constructor.DefaultValues, offsetsForOptionalArgs);
-
-            int minArgs = 0;
-            int maxArgs = constructor.ArgNames.Length;
-            for (int i = 0; i < constructor.ArgNames.Length; ++i)
-            {
-                if (constructor.DefaultValues[i] == null)
-                {
-                    minArgs++;
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            if (constructor.BaseToken != null)
-            {
-                this.CompileExpressionList(parser, tBuffer, constructor.BaseArgs, true);
-                tBuffer.Add(
-                    constructor.BaseToken,
-                    OpCode.CALL_FUNCTION,
-                    (int)FunctionInvocationType.BASE_CONSTRUCTOR,
-                    constructor.BaseArgs.Length,
-                    cd.BaseClass.Constructor.FunctionID,
-                    0,
-                    cd.BaseClass.ClassID);
-            }
-
-            if (complexFieldInitializers != null)
-            {
-                tBuffer.Concat(complexFieldInitializers);
-            }
-
-            this.Compile(parser, tBuffer, constructor.Code);
-            tBuffer.Add(null, OpCode.RETURN, 0);
-
-            List<int> args = new List<int>()
-            {
-                constructor.FunctionID,
-                -1,
-                minArgs,
-                maxArgs,
-                constructor.Modifiers.HasStatic ? 4 : 3,
-                cd.ClassID,
-                constructor.LocalScopeSize,
-                tBuffer.Size,
-                offsetsForOptionalArgs.Count,
-            };
-
-            args.AddRange(offsetsForOptionalArgs);
-
-            buffer.Add(constructor.FirstToken, OpCode.FUNCTION_DEFINITION, "<constructor>", args.ToArray());
-            buffer.Concat(tBuffer);
-        }
-
-        internal void CompileFunctionArgs(ParserContext parser, ByteBuffer buffer, IList<Token> argNames, IList<Expression> argValues, List<int> offsetsForOptionalArgs)
-        {
-            int bufferStartSize = buffer.Size;
-            for (int i = 0; i < argNames.Count; ++i)
-            {
-                if (argValues[i] != null)
-                {
-                    this.CompileExpression(parser, buffer, argValues[i], true);
-                    buffer.Add(argNames[i], OpCode.ASSIGN_LOCAL, i);
-                    offsetsForOptionalArgs.Add(buffer.Size - bufferStartSize);
-                }
-            }
-        }
-
-        private int GetMinArgCountFromDefaultValuesList(Expression[] argDefaultValues)
-        {
-            int minArgCount = 0;
-            for (int i = 0; i < argDefaultValues.Length; ++i)
-            {
-                if (argDefaultValues[i] != null)
-                {
-                    break;
-                }
-                minArgCount++;
-            }
-            return minArgCount;
-        }
-
-        private void CompileFunctionDefinition(ParserContext parser, ByteBuffer buffer, FunctionDefinition funDef, bool isMethod)
-        {
-            ByteBuffer tBuffer = new ByteBuffer();
-
-            List<int> offsetsForOptionalArgs = new List<int>();
-            this.CompileFunctionArgs(parser, tBuffer, funDef.ArgNames, funDef.DefaultValues, offsetsForOptionalArgs);
-
-            Compile(parser, tBuffer, funDef.Code);
-
-            List<int> args = new List<int>()
-            {
-                funDef.FunctionID,
-                parser.GetId(funDef.NameToken.Value), // local var to save in
-                this.GetMinArgCountFromDefaultValuesList(funDef.DefaultValues),
-                funDef.ArgNames.Length, // max number of args supplied
-                isMethod ? (funDef.Modifiers.HasStatic ? 2 : 1) : 0, // type (0 - function, 1 - method, 2 - static method)
-                isMethod ? ((ClassDefinition)funDef.Owner).ClassID : 0,
-                funDef.LocalScopeSize,
-                tBuffer.Size,
-                offsetsForOptionalArgs.Count
-            };
-            args.AddRange(offsetsForOptionalArgs);
-
-            buffer.Add(
-                funDef.FirstToken,
-                OpCode.FUNCTION_DEFINITION,
-                funDef.NameToken.Value,
-                args.ToArray());
-
-            buffer.Concat(tBuffer);
         }
 
         private void CompileExpressionAsExecutable(ParserContext parser, ByteBuffer buffer, ExpressionAsExecutable expr)
