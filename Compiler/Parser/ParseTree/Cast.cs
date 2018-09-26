@@ -8,12 +8,32 @@ namespace Parser.ParseTree
         public AType Type { get; private set; }
         public Expression Expression { get; private set; }
         internal override IEnumerable<Expression> Descendants { get { return new Expression[] { this.Expression }; } }
+        public bool DoIntFloatConversions { get; private set; }
 
-        public Cast(Token firstToken, AType type, Expression expression, Node owner)
+        public Cast(
+            Token firstToken,
+            AType type,
+            Expression expression,
+            Node owner,
+            bool doIntFloatConversions)
             : base(firstToken, owner)
         {
             this.Type = type;
             this.Expression = expression;
+            this.DoIntFloatConversions = doIntFloatConversions;
+        }
+
+        public Cast(
+            Token firstToken,
+            ResolvedType type,
+            Expression expression,
+            Node owner,
+            bool doIntFloatConversions)
+            : base(firstToken, owner)
+        {
+            this.ResolvedType = type;
+            this.Expression = expression;
+            this.DoIntFloatConversions = doIntFloatConversions;
         }
 
         internal override void ResolveVariableOrigins(ParserContext parser, VariableScope varIds, VariableIdAllocPhase phase)

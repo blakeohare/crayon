@@ -237,9 +237,16 @@ namespace Parser.ParseTree
                 for (int i = 0; i < this.BaseArgs.Length; ++i)
                 {
                     this.BaseArgs[i] = this.BaseArgs[i].ResolveTypes(parser, typeResolver);
-                    if (!this.BaseArgs[i].ResolvedType.CanAssignToA(baseConstructorArgTypes[i]))
+
+                    ResolvedType actualType = this.BaseArgs[i].ResolvedType;
+                    ResolvedType expectedType = baseConstructorArgTypes[i];
+                    if (!actualType.CanAssignToA(expectedType))
                     {
                         throw new ParserException(this.BaseArgs[i], "Argument is incorrect type.");
+                    }
+                    if (actualType == ResolvedType.ANY && expectedType != ResolvedType.OBJECT && expectedType != ResolvedType.ANY)
+                    {
+                        this.BaseArgs[i] = new Cast(this.BaseArgs[i].FirstToken, expectedType, this.BaseArgs[i], this, false);
                     }
                 }
             }

@@ -49,7 +49,7 @@ switch (value.type) {
     case Types.INTEGER:
         if (row[0] == Types.INTEGER) {
             bool1 = false;
-        } else if (row[0] == Types.FLOAT) {
+        } else if (row[0] == Types.FLOAT && row[1] == 1) {
             int1 = (int)value.internalValue;
             if (int1 == 0) {
                 value = VALUE_FLOAT_ZERO;
@@ -66,7 +66,7 @@ switch (value.type) {
     case Types.FLOAT:
         if (row[0] == Types.FLOAT) {
             bool1 = false;
-        } else if (row[0] == Types.INTEGER) {
+        } else if (row[0] == Types.INTEGER && row[1] == 1) {
             float1 = (double) value.internalValue;
             if (@ext_boolean("INT_IS_FLOOR")) {
                 i = Core.Int(float1);

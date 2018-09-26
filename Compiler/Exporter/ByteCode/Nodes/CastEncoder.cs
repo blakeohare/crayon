@@ -10,24 +10,24 @@ namespace Exporter.ByteCode.Nodes
 {
     internal static class CastEncoder
     {
-        private static void EncodeTypeInfoToIntBuffer(List<int> buffer, ResolvedType type)
+        private static void EncodeTypeInfoToIntBuffer(List<int> buffer, ResolvedType type, bool convertNumType)
         {
             switch (type.Category)
             {
-                case ResolvedTypeCategory.INTEGER: buffer.Add((int)Types.INTEGER); break;
-                case ResolvedTypeCategory.FLOAT: buffer.Add((int)Types.FLOAT); break;
+                case ResolvedTypeCategory.INTEGER: buffer.Add((int)Types.INTEGER); buffer.Add(convertNumType ? 1 : 0); break;
+                case ResolvedTypeCategory.FLOAT: buffer.Add((int)Types.FLOAT); buffer.Add(convertNumType ? 1 : 0); break;
                 case ResolvedTypeCategory.STRING: buffer.Add((int)Types.STRING); break;
                 case ResolvedTypeCategory.BOOLEAN: buffer.Add((int)Types.BOOLEAN); break;
 
                 case ResolvedTypeCategory.LIST:
                     buffer.Add((int)Types.LIST);
-                    EncodeTypeInfoToIntBuffer(buffer, type.ListItemType);
+                    EncodeTypeInfoToIntBuffer(buffer, type.ListItemType, false);
                     break;
 
                 case ResolvedTypeCategory.DICTIONARY:
                     buffer.Add((int)Types.DICTIONARY);
-                    EncodeTypeInfoToIntBuffer(buffer, type.DictionaryKeyType);
-                    EncodeTypeInfoToIntBuffer(buffer, type.DictionaryValueType);
+                    EncodeTypeInfoToIntBuffer(buffer, type.DictionaryKeyType, false);
+                    EncodeTypeInfoToIntBuffer(buffer, type.DictionaryValueType, false);
                     break;
 
                 case ResolvedTypeCategory.INSTANCE:
@@ -47,7 +47,7 @@ namespace Exporter.ByteCode.Nodes
             }
         }
 
-        public static void  Compile(ByteCodeCompiler bcc, ParserContext parser, ByteBuffer buffer, Cast castExpression, bool outputUsed)
+        public static void Compile(ByteCodeCompiler bcc, ParserContext parser, ByteBuffer buffer, Cast castExpression, bool outputUsed)
         {
             if (!outputUsed) throw new ParserException(castExpression, "The output of a cast must be used.");
 
@@ -57,7 +57,7 @@ namespace Exporter.ByteCode.Nodes
             bcc.CompileExpression(parser, buffer, castExpression.Expression, true);
 
             List<int> args = new List<int>();
-            EncodeTypeInfoToIntBuffer(args, castExpression.ResolvedType);
+            EncodeTypeInfoToIntBuffer(args, castExpression.ResolvedType, castExpression.DoIntFloatConversions);
             buffer.Add(castExpression.FirstToken, OpCode.CAST, args.ToArray());
         }
     }

@@ -237,7 +237,7 @@ namespace Parser
             if (castPrefix != null)
             {
                 root = this.ParseEntity(tokens, owner);
-                return new Cast(firstToken, castPrefix, root, owner);
+                return new Cast(firstToken, castPrefix, root, owner, true);
             }
 
             if (tokens.PopIfPresent("("))

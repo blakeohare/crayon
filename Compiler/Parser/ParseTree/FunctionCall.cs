@@ -357,6 +357,23 @@ namespace Parser.ParseTree
                 }
                 this.ResolvedType = rootType.FunctionReturnType;
 
+                if (!this.CompilationScope.IsStaticallyTyped && this.Root is FunctionReference)
+                {
+                    FunctionDefinition fn = ((FunctionReference)this.Root).FunctionDefinition;
+                    if (fn.CompilationScope.IsStaticallyTyped)
+                    {
+                        for (int i = 0; i < this.Args.Length; ++i)
+                        {
+                            ResolvedType actualType = this.Args[i].ResolvedType;
+                            ResolvedType expectedType = fn.ResolvedArgTypes[i];
+                            if (expectedType != ResolvedType.OBJECT && actualType == ResolvedType.ANY)
+                            {
+                                this.Args[i] = new Cast(this.Args[i].FirstToken, expectedType, this.Args[i], this.Owner, false);
+                            }
+                        }
+                    }
+                }
+
                 // TODO: this is temporary until the Math library is converted to Acrylic
                 if (this.ResolvedType == ResolvedType.ANY &&
                     this.Root is FunctionReference &&
@@ -369,11 +386,14 @@ namespace Parser.ParseTree
                         case "min":
                         case "max":
                         case "ensureRange":
-                            if (this.Args.Where(ex => ex.ResolvedType == ResolvedType.FLOAT).FirstOrDefault() != null)
+                            if (this.Args.Count(ex => ex.ResolvedType == ResolvedType.FLOAT) > 0)
                             {
                                 this.ResolvedType = ResolvedType.FLOAT;
                             }
-                            this.ResolvedType = ResolvedType.INTEGER;
+                            else
+                            {
+                                this.ResolvedType = ResolvedType.INTEGER;
+                            }
                             break;
 
                         case "floor":

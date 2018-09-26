@@ -130,7 +130,13 @@ namespace Parser.ParseTree
                 for (int i = 0; i < this.Args.Length; ++i)
                 {
                     this.Args[i] = this.Args[i].ResolveTypes(parser, typeResolver);
-                    if (!this.Args[i].ResolvedType.CanAssignToA(expectedArgTypes[i]))
+                    ResolvedType expectedType = expectedArgTypes[i];
+                    ResolvedType actualType = this.Args[i].ResolvedType;
+                    if (actualType == ResolvedType.ANY && expectedType != ResolvedType.ANY && expectedType != ResolvedType.OBJECT)
+                    {
+                        this.Args[i] = new Cast(this.Args[i].FirstToken, expectedType, this.Args[i], this.Owner, false);
+                    }
+                    else if (!this.Args[i].ResolvedType.CanAssignToA(expectedArgTypes[i]))
                     {
                         throw new ParserException(this.Args[i], "Cannot pass an argument of this type.");
                     }
