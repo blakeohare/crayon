@@ -63,8 +63,11 @@ namespace Parser.ParseTree
                 // no type information to verify yet.
             }
 
-            // you must cast the result (for now, without any type information in metadata)
-            this.ResolvedType = ResolvedType.ANY;
+            // you must cast the result
+            this.ResolvedType = this.CompilationScope.IsStaticallyTyped
+                ? ResolvedType.OBJECT
+                : ResolvedType.ANY;
+
             return this;
         }
     }
