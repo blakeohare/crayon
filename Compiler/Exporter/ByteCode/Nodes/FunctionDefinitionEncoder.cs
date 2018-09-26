@@ -1,6 +1,7 @@
 ﻿using Parser;
 using Parser.ParseTree;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Exporter.ByteCode.Nodes
 {
@@ -17,6 +18,11 @@ namespace Exporter.ByteCode.Nodes
 
             List<int> offsetsForOptionalArgs = new List<int>();
             CompileFunctionArgs(bcc, parser, tBuffer, funDef.ArgNames, funDef.DefaultValues, offsetsForOptionalArgs);
+
+            if (funDef.CompilationScope.IsStaticallyTyped)
+            {
+                EncodeArgTypeCheck(tBuffer, funDef, funDef.ResolvedArgTypes);
+            }
 
             bcc.Compile(parser, tBuffer, funDef.Code);
 
@@ -75,6 +81,27 @@ namespace Exporter.ByteCode.Nodes
                 minArgCount++;
             }
             return minArgCount;
+        }
+
+        private static void EncodeArgTypeCheck(ByteBuffer byteCode, FunctionDefinition fnDef, ResolvedType[] argTypes)
+        {
+            if (argTypes.Length == 0 ||
+                !fnDef.CompilationScope.IsStaticallyTyped ||
+                argTypes.Count(t => t.Category == ResolvedTypeCategory.OBJECT) < argTypes.Length)
+            {
+                return;
+            }
+
+            List<int> typeVerifyArgs = new List<int>();
+            int argCount = argTypes.Length;
+            typeVerifyArgs.Add(argCount);
+            for (int i = 0; i < argCount; ++i)
+            {
+                ResolvedType argType = argTypes[i];
+                CastEncoder.EncodeTypeInfoToIntBuffer(typeVerifyArgs, argTypes[i], false);
+            }
+
+            byteCode.Add(fnDef.FirstToken, OpCode.ARG_TYPE_VERIFY, typeVerifyArgs.ToArray());
         }
     }
 }

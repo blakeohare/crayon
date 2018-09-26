@@ -7,7 +7,7 @@ namespace Exporter.ByteCode.Nodes
 {
     internal static class CastEncoder
     {
-        private static void EncodeTypeInfoToIntBuffer(List<int> buffer, ResolvedType type, bool convertNumType)
+        internal static void EncodeTypeInfoToIntBuffer(List<int> buffer, ResolvedType type, bool convertNumType)
         {
             switch (type.Category)
             {

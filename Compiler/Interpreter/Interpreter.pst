@@ -220,6 +220,7 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
         switch (ops[pc]) {
             case OpCodes.ADD_LITERAL: Core.EmitComment("ADD_LITERAL"); @import("Ops/add_literal.pst"); break;
             case OpCodes.ADD_NAME: Core.EmitComment("ADD_NAME"); @import("Ops/add_name.pst"); break;
+            case OpCodes.ARG_TYPE_VERIFY: Core.EmitComment("ARG_TYPE_VERIFY"); @import("Ops/arg_type_verify.pst"); break;
             case OpCodes.ASSIGN_CLOSURE: Core.EmitComment("ASSIGN_CLOSURE"); @import("Ops/assign_closure.pst"); break;
             case OpCodes.ASSIGN_INDEX: Core.EmitComment("ASSIGN_INDEX"); @import("Ops/assign_index.pst"); break;
             case OpCodes.ASSIGN_STATIC_FIELD: Core.EmitComment("ASSIGN_STATIC_FIELD"); @import("Ops/assign_static_field.pst"); break;

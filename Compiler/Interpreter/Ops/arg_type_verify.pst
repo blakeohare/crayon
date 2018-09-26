@@ -1,0 +1,16 @@
+﻿/*
+    verifies argument types which have been pushed onto the locals stack
+
+    arg[0] -> number of args
+
+    arg[1+] -> type information
+
+    The type information is described in the comment of cast.pst
+*/
+
+// TODO: implement this
+len = row[0];
+i = 1;
+for (j = 0; j < len; j += 1) {
+
+}

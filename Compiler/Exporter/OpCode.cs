@@ -4,6 +4,7 @@
     {
         ADD_LITERAL, // 1: type, 2: value (0 or 1 for false/true or an integer. String values are in the string arg. Float values are as well, and are parsed.)
         ADD_NAME, // name is string arg. ID is the order in which this was encountered.
+        ARG_TYPE_VERIFY, // see implementation code comment
         ASSIGN_CLOSURE, // 1: closure variable ID
         ASSIGN_INDEX, // 1: 0 or 1 for whether to push the assigned value back on the stack when done. value stack: [root, index, value]
         ASSIGN_LOCAL, // 1: local scope ID
