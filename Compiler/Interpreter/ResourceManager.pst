@@ -117,7 +117,7 @@ Value resource_manager_getResourceOfType(VmContext vm, string userPath, string t
         } else {
             output.Add(vm.globals.boolFalse);
         }
-        return new Value(Types.LIST, output);
+        return new Value(Types.LIST, new ListImpl(output));
     }
     return vm.globals.valueNull;
 }

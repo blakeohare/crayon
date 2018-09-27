@@ -86,10 +86,10 @@ if (staticConstructorNotInvoked) {
         if (value.type == Types.NULL) {
             argCount = 0;
         } else if (value.type == Types.LIST) {
-            list1 = ((List<Value>) value.internalValue);
-            argCount = list1.Size();
+            list1 = (ListImpl) value.internalValue;
+            argCount = list1.items.Size();
             for (i = argCount - 1; i >= 0; i -= 1) {
-                funcArgs[i] = list1[i];
+                funcArgs[i] = list1.items[i];
             }
         } else {
             hasInterrupt = EX_InvalidArgument(ec, "Function pointers' .invoke method requires a list argument.");
@@ -280,7 +280,7 @@ if (staticConstructorNotInvoked) {
                 break;
             case Types.LIST:
                 Core.EmitComment("...on a list");
-                list1 = ((List<Value>) value.internalValue);
+                list1 = ((ListImpl) value.internalValue);
                 switch (functionId) {
                     case PrimitiveMethodName.ADD: @import("PrimitiveMethods/list_add.pst"); break;
                     case PrimitiveMethodName.CHOICE: @import("PrimitiveMethods/list_choice.pst"); break;
@@ -407,7 +407,7 @@ if (staticConstructorNotInvoked) {
                             valueArray1[i] = classInfo.fieldInitializationLiteral[i];
                             break;
                         case 1:
-                            valueArray1[i] = new Value(Types.LIST, new List<Value>());
+                            valueArray1[i] = new Value(Types.LIST, new ListImpl(new List<Value>()));
                             break;
                         case 2:
                             valueArray1[i] = new Value(Types.DICTIONARY, new DictImpl(

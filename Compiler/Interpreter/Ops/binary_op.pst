@@ -97,7 +97,7 @@ switch ((leftValue.type * MAX_OP + row[0]) * MAX_TYPE + rightValue.type) {
 
     case (((Types.LIST * MAX_OP) + BinaryOps.ADDITION) * MAX_TYPE) + Types.LIST:
         Core.EmitComment("list + list");
-        value = new Value(Types.LIST, Core.ListConcat((List<Value>) leftValue.internalValue, (List<Value>) rightValue.internalValue));
+        value = new Value(Types.LIST, valueConcatLists((ListImpl) leftValue.internalValue, (ListImpl) rightValue.internalValue));
         break;
 
     case (((Types.INTEGER * MAX_OP) + BinaryOps.ADDITION) * MAX_TYPE) + Types.INTEGER:
@@ -481,7 +481,7 @@ switch ((leftValue.type * MAX_OP + row[0]) * MAX_TYPE + rightValue.type) {
         if (int1 < 0) {
             hasInterrupt = EX_UnsupportedOperation(ec, "Cannot multiply list by negative number.");
         } else {
-            value = new Value(Types.LIST, Core.MultiplyList((List<Value>) leftValue.internalValue, int1));
+            value = new Value(Types.LIST, valueMultiplyList((ListImpl) leftValue.internalValue, int1));
         }
         break;
 
@@ -491,7 +491,7 @@ switch ((leftValue.type * MAX_OP + row[0]) * MAX_TYPE + rightValue.type) {
         if (int1 < 0) {
             hasInterrupt = EX_UnsupportedOperation(ec, "Cannot multiply list by negative number.");
         } else {
-            value = new Value(Types.LIST, Core.MultiplyList((List<Value>) rightValue.internalValue, int1));
+            value = new Value(Types.LIST, valueMultiplyList((ListImpl) rightValue.internalValue, int1));
         }
         break;
 

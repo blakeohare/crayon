@@ -4,7 +4,7 @@
 */
 Value lib_nori_ensureParentLinkOrder(VmContext vm, Array<Value> args) {
     ObjectInstance parentObj = (ObjectInstance) args[0].internalValue;
-    List<Value> children = (List<Value>) args[1].internalValue;
+    List<Value> children = Core.ForceParens((ListImpl) args[1].internalValue).items;
     int childrenCount = children.Size();
     Array<object> childrenElements = new Array<object>(childrenCount);
     for (int i = 0; i < childrenCount; i += 1) {

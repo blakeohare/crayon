@@ -13,7 +13,7 @@ Value lib_http_getResponseBytes(VmContext vm, Array<Value> args) {
 
     Array<object> objArray1 = objInstance1.nativeData;
 
-    List<Value> list1 = (List<Value>) outputListValue.internalValue;
+    List<Value> list1 = Core.ForceParens((ListImpl) outputListValue.internalValue).items;
     Native._lib_http_getResponseBytes(objArray1[0], vm.globals.positiveIntegers, list1);
 
     return outputListValue;

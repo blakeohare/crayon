@@ -22,7 +22,7 @@ Value lib_http_sendRequest(VmContext vm, Array<Value> args) {
     string method = (string) args[2].internalValue;
     string url = (string) args[3].internalValue;
     List<string> headers = new List<string>(); // alternating names and values
-    List<Value> list1 = (List<Value>) args[4].internalValue;
+    List<Value> list1 = Core.ForceParens((ListImpl) args[4].internalValue).items;
     for (int i = 0; i < list1.Size(); i += 1) {
         headers.Add((string) list1[i].internalValue);
     }

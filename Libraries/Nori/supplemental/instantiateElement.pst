@@ -7,7 +7,7 @@ Value lib_nori_instantiateElement(VmContext vm, Array<Value> args) {
     int type = (int) args[0].internalValue;
     ObjectInstance o = (ObjectInstance) args[1].internalValue;
     o.nativeData = new Array<object>(1);
-    List<Value> properties = (List<Value>) args[2].internalValue;
+    List<Value> properties = Core.ForceParens((ListImpl) args[2].internalValue).items;
     int x = 0;
     int y = 0;
     int width = 0;

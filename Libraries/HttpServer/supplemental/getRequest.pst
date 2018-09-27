@@ -11,7 +11,7 @@ Value lib_httpserver_getRequest(VmContext vm, Array<Value> args) {
 
     Native._lib_httpserver_getRequest(Core.StringBuffer16);
 
-    List<Value> list1 = (List<Value>) args[0].internalValue;
+    List<Value> list1 = Core.ForceParens((ListImpl) args[0].internalValue).items;
 
     list1.Add(buildString(vm.globals, Core.StringBuffer16[0]));
     list1.Add(buildString(vm.globals, Core.StringBuffer16[1]));

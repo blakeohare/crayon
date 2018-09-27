@@ -43,7 +43,7 @@ Value lib_graphics2dtext_glRenderTextSurface(VmContext vm, Array<Value> args) {
         int topOffset = (int) args[4].internalValue;
         int alpha = (int) args[5].internalValue;
 
-        List<Value> tileValues = (List<Value>) args[1].internalValue;
+        List<Value> tileValues = Core.ForceParens((ListImpl) args[1].internalValue).items;
         Array<object> tileNativeData = null;
         Array<object> queueData = Core.ForceParens((ObjectInstance)args[2].internalValue).nativeData;
         Array<int> queue = (Array<int>) queueData[0];

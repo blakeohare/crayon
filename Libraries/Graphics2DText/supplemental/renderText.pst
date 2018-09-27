@@ -19,7 +19,7 @@
 */
 Value lib_graphics2dtext_renderText(VmContext vm, Array<Value> args) {
     if (!@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
-        List<Value> sizeOut = (List<Value>)args[0].internalValue;
+        List<Value> sizeOut = Core.ForceParens((ListImpl) args[0].internalValue).items;
         ObjectInstance textSurface = (ObjectInstance)args[1].internalValue;
         Array<object> imageOut = textSurface.nativeData;
         object nativeFont = Core.ForceParens((ObjectInstance)args[2].internalValue).nativeData[0];

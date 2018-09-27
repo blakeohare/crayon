@@ -1,5 +1,5 @@
 ﻿if (argCount > 0) {
     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list shuffle method", 0, argCount));
 } else {
-    list1.Shuffle();
+    list1.items.Shuffle();
 }

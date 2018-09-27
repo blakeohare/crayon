@@ -1,8 +1,8 @@
 ﻿
 intIntDict1 = new Dictionary<int, int>();
 stringIntDict1 = new Dictionary<string, int>();
-list2 = new List<Value>(); // keys
-list1 = new List<Value>(); // values
+valueList2 = new List<Value>(); // keys
+valueList1 = new List<Value>(); // values
 
 len = row[0];
 type = Types.INTEGER;  // always ignored when size is 0
@@ -34,12 +34,12 @@ while (i > 0) {
 
     if (!hasInterrupt) {
         if (type == Types.STRING) {
-            stringIntDict1[stringKey] = list1.Size();
+            stringIntDict1[stringKey] = valueList1.Size();
         } else {
-            intIntDict1[intKey] = list1.Size();
+            intIntDict1[intKey] = valueList1.Size();
         }
-        list2.Add(value2);
-        list1.Add(value);
+        valueList2.Add(value2);
+        valueList1.Add(value);
         i -= 1;
     }
 }
@@ -62,7 +62,7 @@ if (!hasInterrupt) {
         type,
         intIntDict1,
         stringIntDict1,
-        list2,
-        list1));
+        valueList2,
+        valueList1));
     valueStackSize += 1;
 }

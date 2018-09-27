@@ -101,7 +101,7 @@ switch (value.type) {
 
     case Types.LIST:
         if (metadata.lengthId == nameId) {
-            output = buildInteger(globals, Core.ForceParens((List<Value>) value.internalValue).Size());
+            output = buildInteger(globals, Core.ForceParens((ListImpl) value.internalValue).items.Size());
         } else {
             output = null;
         }

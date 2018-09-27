@@ -11,9 +11,9 @@
 */
 Value lib_gamepad_initialize_device(VmContext vm, Array<Value> args) {
     if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
-        int int1 = ((int) args[0].internalValue);
-        ObjectInstance objInstance1 = ((ObjectInstance) args[1].internalValue);
-        List<Value> list1 = ((List<Value>) args[2].internalValue);
+        int int1 = (int) args[0].internalValue;
+        ObjectInstance objInstance1 = (ObjectInstance) args[1].internalValue;
+        List<Value> list1 = Core.ForceParens((ListImpl) args[2].internalValue).items;
         object object1 = Native._lib_gamepad_get_device_reference(int1);
         objInstance1.nativeData = new Array<object>(1);
         objInstance1.nativeData[0] = object1;

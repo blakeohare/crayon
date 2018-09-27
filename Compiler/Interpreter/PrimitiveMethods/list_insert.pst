@@ -9,17 +9,17 @@
     } else {
 
         int1 = (int) value.internalValue;
-        len = list1.Size();
+        len = list1.items.Size();
 
         if (int1 < 0) int1 += len;
 
         if (int1 == len) {
-            list1.Add(value2);
+            list1.items.Add(value2);
         } else {
             if (int1 < 0 || int1 >= len) {
                 hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.");
             } else {
-                list1.Insert(int1, value2);
+                list1.items.Insert(int1, value2);
             }
         }
     }

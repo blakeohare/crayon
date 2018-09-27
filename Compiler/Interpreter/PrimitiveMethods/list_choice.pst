@@ -1,10 +1,10 @@
 ﻿if (argCount > 0) {
     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list choice method", 0, argCount));
 } else {
-    len = list1.Size();
+    len = list1.items.Size();
     if (len == 0) {
         hasInterrupt = EX_UnsupportedOperation(ec, "Cannot use list.choice() method on an empty list.");
     } else {
-        output = list1[Core.Int(Core.ForceParens(Core.RandomFloat() * len))];
+        output = list1.items[Core.Int(Core.ForceParens(Core.RandomFloat() * len))];
     }
 }

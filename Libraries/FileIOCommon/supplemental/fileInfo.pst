@@ -29,7 +29,7 @@ Value lib_fileiocommon_fileInfo(VmContext vm, Array<Value> args) {
         Core.IntBuffer16,
         Core.FloatBuffer16);
 
-    List<Value> outputList = (List<Value>) args[3].internalValue;
+    List<Value> outputList = Core.ForceParens((ListImpl) args[3].internalValue).items;
     VmGlobals globals = vm.globals;
 
     // exists

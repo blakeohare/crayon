@@ -4,7 +4,7 @@
 */
 Value lib_nori_registerHandlerCallback(VmContext vm, Array<Value> args) {
     Value fp = args[0];
-    List<Value> argOutList = (List<Value>) args[1].internalValue;
+    List<Value> argOutList = Core.ForceParens((ListImpl) args[1].internalValue).items;
     Native._lib_nori_registerHandlerCallback(fp, argOutList);
     return vm.globalNull;
 }

@@ -4,7 +4,7 @@
 */
 Value lib_nori_showWindow(VmContext vm, Array<Value> args) {
     ObjectInstance window = (ObjectInstance) args[0].internalValue;
-    List<Value> properties = (List<Value>) args[1].internalValue;
+    List<Value> properties = Core.ForceParens((ListImpl) args[1].internalValue).items;
     ObjectInstance root = (ObjectInstance) args[2].internalValue;
     // TODO: conditionally execute this code.
     // The only reason the properties are required here is if a platform doesn't allow changing these properties without a window being shown on the screen.

@@ -2,10 +2,10 @@
     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list contains method", 1, argCount));
 } else {
     value2 = funcArgs[0];
-    len = list1.Size();
+    len = list1.items.Size();
     output = VALUE_FALSE;
     for (i = 0; i < len; i += 1) {
-        if (doEqualityComparisonAndReturnCode(value2, list1[i]) == 1) {
+        if (doEqualityComparisonAndReturnCode(value2, list1.items[i]) == 1) {
             output = VALUE_TRUE;
             i = len; // break
         }
