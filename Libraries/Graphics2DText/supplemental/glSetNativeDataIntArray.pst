@@ -11,7 +11,7 @@ Value lib_graphics2dtext_glSetNativeDataIntArray(VmContext vm, Array<Value> args
     if (@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
         ObjectInstance obj = (ObjectInstance) args[0].internalValue;
         Array<object> nativeData = obj.nativeData;
-        List<Value> values = (List<Value>) args[2].internalValue;
+        List<Value> values = Core.ForceParens((ListImpl) args[2].internalValue).items;
         int length = values.Size();
         Array<int> intArray = new Array<int>(length);
         for (int i = 0; i < length; i += 1) {

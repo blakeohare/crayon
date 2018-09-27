@@ -123,9 +123,9 @@ switch (row[0]) {
         // No arg checks because the primitive method resolver already resolved the item list and the key list is from embed.cry code.
         // Identical length is also presumed.
         output = VALUE_NULL;
-        list1 = ((List<Value>) arg1.internalValue); // original items
-        list2 = ((List<Value>) arg2.internalValue); // keys
-        sortLists(list2, list1, Core.IntBuffer16);
+        list1 = (ListImpl) arg1.internalValue; // original items
+        list2 = (ListImpl) arg2.internalValue; // keys
+        sortLists(list2.items, list1.items, Core.IntBuffer16);
         if (Core.IntBuffer16[0] > 0) {
             hasInterrupt = EX_InvalidArgument(ec, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.");
         }
@@ -561,14 +561,14 @@ switch (row[0]) {
         @import("FrameworkFunctions/1_arg.pst");
 
         intList1 = (List<int>) getNativeDataItem(arg1, 1);
-        list1 = new List<Value>();
+        list1 = new ListImpl(new List<Value>());
         output = new Value(Types.LIST, list1);
         if (intList1 != null) {
             stringList1 = tokenHelperConvertPcsToStackTraceStrings(vm, intList1);
             for (i = 0; i < stringList1.Size(); i += 1) {
-                list1.Add(buildString(globals, stringList1[i]));
+                list1.items.Add(buildString(globals, stringList1[i]));
             }
-            list1.Reverse();
+            list1.items.Reverse();
         }
 
         break;

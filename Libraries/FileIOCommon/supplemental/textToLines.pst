@@ -11,7 +11,7 @@ Value lib_fileiocommon_textToLines(VmContext vm, Array<Value> args) {
     lib_fileiocommon_textToLinesImpl(
         vm.globals,
         (string) args[0].internalValue,
-        (List<Value>) args[1].internalValue);
+        Core.ForceParens((ListImpl) args[1].internalValue).items);
     return args[1];
 }
 

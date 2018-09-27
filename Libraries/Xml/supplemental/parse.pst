@@ -24,7 +24,7 @@
 */
 Value lib_xml_parse(VmContext vm, Array<Value> args) {
     string xml = ((string) args[0].internalValue);
-    List<Value> list1 = (List<Value>) args[1].internalValue;
+    List<Value> list1 = Core.ForceParens((ListImpl) args[1].internalValue).items;
     ObjectInstance objInstance1 = (ObjectInstance) args[2].internalValue;
     Array<object> objArray1 = objInstance1.nativeData;
     if (objArray1 == null) {

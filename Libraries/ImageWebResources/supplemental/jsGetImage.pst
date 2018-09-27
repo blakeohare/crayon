@@ -22,7 +22,7 @@ Value lib_imagewebresources_jsGetImage(VmContext vm, Array<Value> args) {
         objArray1 = objInstance1.nativeData;
 
         // get the output vector
-        list1 = (List<Value>) args[1].internalValue;
+        list1 = Core.ForceParens((ListImpl) args[1].internalValue).items;
 
         if (((bool) objArray1[1])) {
             output = VALUE_TRUE;

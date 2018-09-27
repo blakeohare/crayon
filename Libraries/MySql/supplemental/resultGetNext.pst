@@ -13,7 +13,7 @@ Value lib_mysql_resultGetNext(VmContext vm, Array<Value> args) {
     Value arg4 = args[3];
     ObjectInstance objInstance1 = (ObjectInstance) arg1.internalValue;
     object object1 = objInstance1.nativeData[0];
-    List<Value> list1 = (List<Value>) arg2.internalValue;
+    List<Value> list1 = Core.ForceParens((ListImpl) arg2.internalValue).items;
     int len = list1.Size();
     List<string> stringList1 = new List<string>();
     Value value = null;

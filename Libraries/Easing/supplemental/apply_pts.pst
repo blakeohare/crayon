@@ -3,7 +3,7 @@
     args[1] -> values
 */
 Value lib_easing_apply_pts(VmContext vm, Array<Value> args) {
-    List<Value> sampleValues = (List<Value>) args[1].internalValue; // guaranteed to be floats
+    List<Value> sampleValues = Core.ForceParens((ListImpl) args[1].internalValue).items; // guaranteed to be floats
 
     int len = sampleValues.Size();
     Array<double> samples = new Array<double>(len);

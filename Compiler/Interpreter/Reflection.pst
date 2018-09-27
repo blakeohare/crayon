@@ -11,7 +11,7 @@ Value Reflect_allClasses(VmContext vm) {
             valueList.Add(new Value(Types.CLASS, new ClassValue(false, classInfo.id)));
         }
     }
-    return new Value(Types.LIST, valueList);
+    return new Value(Types.LIST, new ListImpl(valueList));
 }
 
 // TODO: once the static method reflection is implemented, this doesn't need to take in EC anymore, since there will be no exception.
@@ -31,5 +31,5 @@ Value Reflect_getMethods(VmContext vm, ExecutionContext ec, Value methodSource) 
         ClassInfo classInfo = vm.metadata.classTable[classValue.classId];
         EX_UnsupportedOperation(ec, "static method reflection not implemented yet.");
     }
-    return new Value(Types.LIST, methodList);
+    return new Value(Types.LIST, new ListImpl(methodList));
 }

@@ -4,8 +4,8 @@
 */
 Value lib_nori_instantiateWindow(VmContext vm, Array<Value> args) {
     ObjectInstance window = (ObjectInstance) args[0].internalValue;
-    List<Value> properties = (List<Value>) args[1].internalValue;
-    List<Value> size = (List<Value>) properties[1].internalValue;
+    List<Value> properties = Core.ForceParens((ListImpl) args[1].internalValue).items;
+    List<Value> size = Core.ForceParens((ListImpl) properties[1].internalValue).items;
     WindowProperties unboxed = new WindowProperties(
         (string) properties[0].internalValue,
         (int) size[0].internalValue,

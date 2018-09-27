@@ -3,9 +3,9 @@ argCount -> number of args set
 funcArgs -> an array of those args
 
 The primitive value is set in the following:
-List<Value> -> list1
+ListImpl -> list1
 string -> string1
-dictImpl -> dictionary
+DictImpl -> dictionary
 value -> the actual value struct, if needed
 
 The following values can be set:

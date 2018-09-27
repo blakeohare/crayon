@@ -17,7 +17,7 @@ Value lib_imagewebresources_bytesToImage(VmContext vm, Array<Value> args) {
     object object1 = objInstance1.nativeData[0];
 
     // Get the output vector.
-    List<Value> list1 = (List<Value>) args[1].internalValue;
+    List<Value> list1 = Core.ForceParens((ListImpl) args[1].internalValue).items;
 
     // Get the ImageNativeData object from the output vector and get its nativeData ready, which will
     // serve as the output vector for $_lib_imagewebresources_byteToImage

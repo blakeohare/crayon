@@ -14,9 +14,9 @@
 if (!hasInterrupt) {
     stringList1 = new List<string>();
     string1 = (string) value2.internalValue;
-    len = list1.Size();
+    len = list1.items.Size();
     for (i = 0; i < len; i += 1) {
-        stringList1.Add(valueToString(vm, list1[i]));
+        stringList1.Add(valueToString(vm, list1.items[i]));
     }
     string1 = stringList1.Join(string1);
     output = buildString(globals, string1);

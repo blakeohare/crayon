@@ -14,7 +14,7 @@ Value lib_fileiocommon_fileRead(VmContext vm, Array<Value> args) {
     Value diskHostObject = args[0];
     string sandboxedPath = (string) args[1].internalValue;
     bool readDataAsBytes = (bool) args[2].internalValue;
-    List<Value> outputList = (List<Value>) args[3].internalValue;
+    List<Value> outputList = Core.ForceParens((ListImpl) args[3].internalValue).items;
 
     // For strings requests, put the file contents into the stringOutParam
     // For raw byte requests, put the bytes directly onto the list and pass in the INTEGERS_CACHE

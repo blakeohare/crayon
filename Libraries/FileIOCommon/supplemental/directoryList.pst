@@ -12,7 +12,7 @@ Value lib_fileiocommon_directoryList(VmContext vm, Array<Value> args) {
     Value diskhost = args[0];
     string path = (string) args[1].internalValue;
     bool useFullPath = (bool) args[2].internalValue;
-    List<Value> outputList = (List<Value>) args[3].internalValue;
+    List<Value> outputList = Core.ForceParens((ListImpl) args[3].internalValue).items;
     List<string> stringList1 = new List<string>();
 
     int sc = Native._lib_fileiocommon_directoryList(

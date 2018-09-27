@@ -6,6 +6,12 @@
     Array<Dictionary<string, int>> stringSwitchesByPc;
 }
 
+// This struct exists rather than using List<Value> directly because more things will
+// be added to it soon, such as type information.
+struct ListImpl {
+    List<Value> items;
+}
+
 // Dictionaries in Crayon can only have 3 types of keys: integers, strings, and objects
 // Dictionaries can hold any of these, but only hold one type at a time
 struct DictImpl {

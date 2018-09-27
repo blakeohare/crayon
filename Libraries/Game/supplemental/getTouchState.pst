@@ -9,7 +9,7 @@
     output[n + 2] -> Y
 */
 Value lib_game_getTouchState(VmContext vm, Array<Value> args) {
-    List<Value> output = (List<Value>) args[0].internalValue;
+    List<Value> output = Core.ForceParens((ListImpl) args[0].internalValue).items;
     Array<int> data = new Array<int>(10 * 3 + 1); // support up to 10 touch points [length, (ID, X, Y) * 10]
     data[0] = 0;
     Native._lib_game_getTouchState(data);

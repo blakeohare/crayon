@@ -8,7 +8,7 @@ Value lib_graphics2dtext_isResourceAvailable(VmContext vm, Array<Value> args) {
     string path = (string) args[0].internalValue;
     Value res = resource_manager_getResourceOfType(vm, path, "TTF");
     if (res.type == Types.NULL) return vm.globalFalse;
-    List<Value> resList = (List<Value>)res.internalValue;
+    List<Value> resList = Core.ForceParens((ListImpl) res.internalValue).items;
     if (!(bool) resList[0].internalValue) return vm.globalFalse;
     return vm.globalTrue;
 }

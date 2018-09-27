@@ -2,7 +2,7 @@
     args[0]: a re-usable value list to push event fields onto
 */
 Value lib_game_pump_events(VmContext vm, Array<Value> args) {
-    libGamePumpEvents(vm, (List<Value>) args[0].internalValue);
+    libGamePumpEvents(vm, Core.ForceParens((ListImpl) args[0].internalValue).items);
     return args[0];
 }
 

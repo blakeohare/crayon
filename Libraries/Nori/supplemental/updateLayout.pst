@@ -6,9 +6,9 @@
     args[2] -> (List<Value<int>>) object type ID's
 */
 Value lib_nori_updateLayout(VmContext vm, Array<Value> args) {
-    List<Value> objects = (List<Value>) args[0].internalValue;
-    List<Value> propertyLists = (List<Value>) args[1].internalValue;
-    List<Value> typeIds = (List<Value>) args[2].internalValue;
+    List<Value> objects = Core.ForceParens((ListImpl) args[0].internalValue).items;
+    List<Value> propertyLists = Core.ForceParens(ListImpl) args[1].internalValue).items;
+    List<Value> typeIds = Core.ForceParens((ListImpl) args[2].internalValue).items;
 
     int length = objects.Size();
     ObjectInstance nativeObject = null;
