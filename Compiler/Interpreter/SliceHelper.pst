@@ -1,5 +1,5 @@
 /*
-	This function potentially sets interrupts, so hasInterrupt must be set from the state of ec.activeInterrupt.
+    This function potentially sets interrupts, so hasInterrupt must be set from the state of ec.activeInterrupt.
 */
 Value performListSlice(VmGlobals globals, ExecutionContext ec, Value value, Value arg1, Value arg2, Value arg3) {
 
@@ -93,10 +93,13 @@ Value performListSlice(VmGlobals globals, ExecutionContext ec, Value value, Valu
             outputString = new List<string>();
             if (isForward) {
                 // forward
-                // TODO: if step is 1, then use a simple substring call
-                while (begin < end) {
-                    outputString.Add(Core.CharToString(originalString[begin]));
-                    begin += step;
+                if (step == 1) {
+                    return buildString(globals, originalString.SubString(begin, end - begin));
+                } else {
+                    while (begin < end) {
+                        outputString.Add(Core.CharToString(originalString[begin]));
+                        begin += step;
+                    }
                 }
             } else {
                 // backward
