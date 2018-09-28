@@ -1,14 +1,12 @@
-Value performListSlice(VmGlobals globals, ExecutionContext ec, Array<int> row) {
+/*
+	This function potentially sets interrupts, so hasInterrupt must be set from the state of ec.activeInterrupt.
+*/
+Value performListSlice(VmGlobals globals, ExecutionContext ec, Value value, Value arg1, Value arg2, Value arg3) {
 
-    Value arg1 = null;
-    Value arg2 = null;
-    Value arg3 = null;
-    Value value = null;
     int begin = 0;
     int end = 0;
     int step = 0;
     int length = 0;
-    int status = 0;
     int i = 0;
     bool isForward = false;
     bool isString = false;
@@ -17,13 +15,8 @@ Value performListSlice(VmGlobals globals, ExecutionContext ec, Array<int> row) {
     List<Value> outputList = null;
     List<string> outputString = null;
 
-    Array<Value> valueStack = ec.valueStack;
-    int valueStackSize = ec.currentValueStackSize;
-
-    status = 0;
-    if (row[2] == 1) {
-        valueStackSize -= 1;
-        arg3 = valueStack[valueStackSize];
+    int status = 0;
+    if (arg3 != null) {
         if (arg3.type == Types.INTEGER) {
             step = (int) arg3.internalValue;
             if (step == 0) {
@@ -37,29 +30,21 @@ Value performListSlice(VmGlobals globals, ExecutionContext ec, Array<int> row) {
         step = 1;
     }
     isForward = step > 0;
-    if (row[1] == 1) {
-        valueStackSize -= 1;
-        arg2 = valueStack[valueStackSize];
+    if (arg2 != null) {
         if (arg2.type == Types.INTEGER) {
             end = (int) arg2.internalValue;
         } else {
             status = 3;
         }
-    } else {
-        arg2 = null;
     }
-    if (row[0] == 1) {
-        valueStackSize -= 1;
-        arg1 = valueStack[valueStackSize];
+    if (arg1 != null) {
         if (arg1.type == Types.INTEGER) {
             begin = (int) arg1.internalValue;
         } else {
             status = 3;
         }
-    } else {
-        arg1 = null;
     }
-    value = valueStack[(valueStackSize - 1)];
+
     if (value.type == Types.STRING) {
         isString = true;
         originalString = (string) value.internalValue;
@@ -175,7 +160,6 @@ Value performListSlice(VmGlobals globals, ExecutionContext ec, Array<int> row) {
         return globals.valueNull;
     }
 
-    ec.currentValueStackSize = valueStackSize;
     return value;
 }
 

@@ -45,7 +45,7 @@
     JUMP_IF_TRUE_NO_POP,
     LAMBDA,
     LIB_DECLARATION, // 1: library reference ID#, string: name of the library
-    LIST_SLICE, // 1: begin slice index is present, 2: end slice index is present, 3: step is present
+    LIST_SLICE,
     LITERAL, // 1: literal ID in the literal table
     LITERAL_STREAM, // repeated version of the LITERAL op. Literals are listed in reverse order.
     LOCAL, // pushes a local value onto the stack. 1: local ID, 2: name ID

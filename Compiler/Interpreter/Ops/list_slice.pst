@@ -1,7 +1,23 @@
-﻿
-ec.currentValueStackSize = valueStackSize;
-value = performListSlice(globals, ec, row);
-valueStackSize = ec.currentValueStackSize;
-valueStack[valueStackSize - 1] = value;
+﻿/*
+    Performs a Python-style list slice.
+
+    There are between 1 and 4 items on the value stack. The bottom most is the list or string that needs
+    to be sliced. The follow 0 to 3 arguments are the slice parameters. The arguments in the byte code
+    indicate which of the 3 are present as a 0 or 1.
+
+    row[0] -> start index is present
+    row[1] -> end index is present
+    row[2] -> step amount is present
+*/
+
+if (row[2] == 1) { valueStackSize -= 1; arg3 = valueStack[valueStackSize]; } else { arg3 = null; }
+if (row[1] == 1) { valueStackSize -= 1; arg2 = valueStack[valueStackSize]; } else { arg2 = null; }
+if (row[0] == 1) { valueStackSize -= 1; arg1 = valueStack[valueStackSize]; } else { arg1 = null; }
+
+value = valueStack[valueStackSize - 1];
+value = performListSlice(globals, ec, value, arg1, arg2, arg3);
+
 hasInterrupt = ec.activeInterrupt != null;
-valueStack[valueStackSize - 1] = value;
+if (!hasInterrupt) {
+    valueStack[valueStackSize - 1] = value;
+}
