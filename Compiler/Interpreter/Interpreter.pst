@@ -312,54 +312,6 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     }
 }
 
-// returns a status code:
-// 0 - list is empty
-// 1 - list has contents
-// 2 - list is a simple clone
-// 3 - start index is out of bounds
-// 4 - start index occurs after begin index (relative to direction)
-int canonicalizeListSliceArgs(
-        Array<int> outParams,
-        Value beginValue,
-        Value endValue,
-        int beginIndex,
-        int endIndex,
-        int stepAmount,
-        int length,
-        bool isForward) {
-
-    if (beginValue == null) {
-        if (isForward) beginIndex = 0;
-        else beginIndex = length - 1;
-    }
-    if (endValue == null) {
-        if (isForward) endIndex = length;
-        else endIndex = -1 - length;  // if it were -1, it'll get canonicalized into length - 1.
-    }
-
-    if (beginIndex < 0) beginIndex += length;
-    if (endIndex < 0) endIndex += length;
-
-    if (beginIndex == 0 && endIndex == length && stepAmount == 1) return 2;
-
-    if (isForward) {
-        if (beginIndex >= length) return 0;
-        if (beginIndex < 0) return 3;
-        if (endIndex < beginIndex) return 4;
-        if (beginIndex == endIndex) return 0;
-        if (endIndex > length) endIndex = length;
-    } else {
-        if (beginIndex < 0) return 0;
-        if (beginIndex >= length) return 3;
-        if (endIndex > beginIndex) return 4;
-        if (beginIndex == endIndex) return 0;
-        if (endIndex < -1) endIndex = -1;
-    }
-    outParams[0] = beginIndex;
-    outParams[1] = endIndex;
-    return 1;
-}
-
 List<Token> generateTokenListFromPcs(VmContext vm, List<int> pcs) {
     List<Token> output = new List<Token>();
     Array<List<Token>> tokensByPc = vm.symbolData.tokenData;

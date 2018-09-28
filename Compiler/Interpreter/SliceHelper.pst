@@ -1,0 +1,228 @@
+Value performListSlice(VmGlobals globals, ExecutionContext ec, Array<int> row) {
+
+    Value arg1 = null;
+    Value arg2 = null;
+    Value arg3 = null;
+    Value value = null;
+    int begin = 0;
+    int end = 0;
+    int step = 0;
+    int length = 0;
+    int status = 0;
+    int i = 0;
+    bool isForward = false;
+    bool isString = false;
+    string originalString = "";
+    List<Value> originalList = null;
+    List<Value> outputList = null;
+    List<string> outputString = null;
+
+    Array<Value> valueStack = ec.valueStack;
+    int valueStackSize = ec.currentValueStackSize;
+
+    status = 0;
+    if (row[2] == 1) {
+        valueStackSize -= 1;
+        arg3 = valueStack[valueStackSize];
+        if (arg3.type == Types.INTEGER) {
+            step = (int) arg3.internalValue;
+            if (step == 0) {
+                status = 2;
+            }
+        } else {
+            status = 3;
+            step = 1;
+        }
+    } else {
+        step = 1;
+    }
+    isForward = step > 0;
+    if (row[1] == 1) {
+        valueStackSize -= 1;
+        arg2 = valueStack[valueStackSize];
+        if (arg2.type == Types.INTEGER) {
+            end = (int) arg2.internalValue;
+        } else {
+            status = 3;
+        }
+    } else {
+        arg2 = null;
+    }
+    if (row[0] == 1) {
+        valueStackSize -= 1;
+        arg1 = valueStack[valueStackSize];
+        if (arg1.type == Types.INTEGER) {
+            begin = (int) arg1.internalValue;
+        } else {
+            status = 3;
+        }
+    } else {
+        arg1 = null;
+    }
+    value = valueStack[(valueStackSize - 1)];
+    if (value.type == Types.STRING) {
+        isString = true;
+        originalString = (string) value.internalValue;
+        length = originalString.Size();
+    } else {
+        if (value.type == Types.LIST) {
+            isString = false;
+            originalList = Core.ForceParens((ListImpl) value.internalValue).items;
+            length = originalList.Size();
+        } else {
+            EX_InvalidArgument(ec, Core.StringConcatAll("Cannot apply slicing to ", getTypeFromId(value.type), ". Must be string or list."));
+            return globals.valueNull;
+        }
+    }
+
+    // Something is wrong. But we want to display an error of the first item that is wrong (stack is backwards) so go through
+    // each argument in order and find it.
+
+    if (status >= 2) {
+        string msg = null;
+        if (isString) {
+            msg = "String";
+        } else {
+            msg = "List";
+        }
+        if (status == 3) {
+            Core.StringAppend(msg, " slice indexes must be integers. Found ");
+            if ((arg1 != null) && (arg1.type != Types.INTEGER)) { EX_InvalidArgument(ec, Core.StringConcatAll(msg, getTypeFromId(arg1.type), " for begin index.")); return globals.valueNull; }
+            if ((arg2 != null) && (arg2.type != Types.INTEGER)) { EX_InvalidArgument(ec, Core.StringConcatAll(msg, getTypeFromId(arg2.type), " for end index.")); return globals.valueNull; }
+            if ((arg3 != null) && (arg3.type != Types.INTEGER)) { EX_InvalidArgument(ec, Core.StringConcatAll(msg, getTypeFromId(arg3.type), " for step amount.")); return globals.valueNull; }
+            EX_InvalidArgument(ec, "Invalid slice arguments.");
+            return globals.valueNull;
+        } else { // status == 2
+            EX_InvalidArgument(ec, Core.StringConcatAll(msg, " slice step cannot be 0."));
+            return globals.valueNull;
+        }
+    }
+
+    // returns a status code.
+    status = canonicalizeListSliceArgs(Core.IntBuffer16, arg1, arg2, begin, end, step, length, isForward);
+    if (status == 1) {
+        begin = Core.IntBuffer16[0];
+        end = Core.IntBuffer16[1];
+        if (isString) {
+            // String slice
+            outputString = new List<string>();
+            if (isForward) {
+                // forward
+                // TODO: if step is 1, then use a simple substring call
+                while (begin < end) {
+                    outputString.Add(Core.CharToString(originalString[begin]));
+                    begin += step;
+                }
+            } else {
+                // backward
+                while (begin > end) {
+                    outputString.Add(Core.CharToString(originalString[begin]));
+                    begin += step;
+                }
+            }
+            value = buildString(globals, outputString.Join(""));
+        } else {
+            // List slice
+            outputList = new List<Value>();
+            if (isForward) {
+                // forward
+                while (begin < end) {
+                    outputList.Add(originalList[begin]);
+                    begin += step;
+                }
+            } else {
+                // backward
+                while (begin > end) {
+                    outputList.Add(originalList[begin]);
+                    begin += step;
+                }
+            }
+            value = new Value(Types.LIST, new ListImpl(outputList));
+        }
+    } else if (status == 0) {
+        if (isString) {
+            value = globals.stringEmpty;
+        } else {
+            value = new Value(Types.LIST, new ListImpl(new List<Value>()));
+        }
+    } else if (status == 2) {
+        // list is a simple clone
+        // for strings, just leave it as-is since the root value is already stored in the return value variable.
+        if (!isString) {
+            outputList = new List<Value>();
+            for (i = 0; i < length; i += 1) {
+                outputList.Add(originalList[i]);
+            }
+            value = new Value(Types.LIST, new ListImpl(outputList));
+        }
+    } else {
+        string msg = null;
+        if (isString) {
+            msg = "String";
+        } else {
+            msg = "List";
+        }
+        if (status == 3) {
+            Core.StringAppend(msg, " slice begin index is out of range.");
+        } else { // status == 4
+            if (isForward) {
+                Core.StringAppend(msg, " slice begin index must occur before the end index when step is positive.");
+            } else {
+                Core.StringAppend(msg, " slice begin index must occur after the end index when the step is negative.");
+            }
+        }
+        EX_IndexOutOfRange(ec, msg);
+        return globals.valueNull;
+    }
+
+    ec.currentValueStackSize = valueStackSize;
+    return value;
+}
+
+// returns a status code:
+// 0 - list is empty
+// 1 - list has contents
+// 2 - list is a simple clone
+// 3 - start index is out of bounds
+// 4 - start index occurs after end index (relative to direction)
+int canonicalizeListSliceArgs(
+        Array<int> outParams,
+        Value beginValue,
+        Value endValue,
+        int beginIndex,
+        int endIndex,
+        int stepAmount,
+        int length,
+        bool isForward) {
+
+    if (beginValue == null) {
+        if (isForward) beginIndex = 0;
+        else beginIndex = length - 1;
+    }
+    if (endValue == null) {
+        if (isForward) endIndex = length;
+        else endIndex = -1 - length;  // if it were -1, it'll get canonicalized into length - 1.
+    }
+
+    if (beginIndex < 0) beginIndex += length;
+    if (endIndex < 0) endIndex += length;
+
+    if (beginIndex == 0 && endIndex == length && stepAmount == 1) return 2;
+
+    if (isForward) {
+        if (beginIndex >= length) return 0;
+        if (beginIndex < 0) return 3;
+        if (endIndex < beginIndex) return 4;
+        if (beginIndex == endIndex) return 0;
+        if (endIndex > length) endIndex = length;
+    } else {
+        if (beginIndex < 0) return 0;
+        if (beginIndex >= length) return 3;
+        if (endIndex > beginIndex) return 4;
+        if (beginIndex == endIndex) return 0;
+        if (endIndex < -1) endIndex = -1;
+    }
+    outParams[0] = beginIndex;
+    outParams[1] = endIndex;
+    return 1;
+}
