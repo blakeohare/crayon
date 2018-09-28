@@ -60,6 +60,7 @@ if (!hasInterrupt) {
     valueStack[valueStackSize] = new Value(Types.DICTIONARY, new DictImpl(
         len,
         type,
+        null,
         intIntDict1,
         stringIntDict1,
         valueList2,

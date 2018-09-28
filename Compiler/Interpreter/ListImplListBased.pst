@@ -1,4 +1,5 @@
 ﻿struct ListImpl {
+    Array<int> type; // see comment in ListImplArrayBased.pst
     int size;
     List<Value> list;
 }
