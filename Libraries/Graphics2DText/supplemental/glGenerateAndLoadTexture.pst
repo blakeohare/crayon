@@ -24,19 +24,19 @@
 */
 Value lib_graphics2dtext_glGenerateAndLoadTexture(VmContext vm, Array<Value> args) {
     if (@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
-        List<Value> xs = Core.ForceParens((ListImpl) args[0].internalValue).items;
-        List<Value> ys = Core.ForceParens((ListImpl) args[1].internalValue).items;
-        List<Value> tiles = Core.ForceParens((ListImpl) args[2].internalValue).items;
-        int tileCount = xs.Size();
+        ListImpl xs = (ListImpl) args[0].internalValue;
+        ListImpl ys = (ListImpl) args[1].internalValue;
+        ListImpl tiles = (ListImpl) args[2].internalValue;
+        int tileCount = xs.size;
         Array<Array<object>> tileNativeDatas = new Array<Array<object>>(tileCount);
         Array<int> coordinates = new Array<int>(tileCount * 4);
         Array<object> nativeData = null;
         int i = 0;
         while (i < tileCount) {
-            nativeData = Core.ForceParens((ObjectInstance) tiles[i].internalValue).nativeData;
+            nativeData = Core.ForceParens((ObjectInstance) getItemFromList(tiles, i).internalValue).nativeData;
             tileNativeDatas[i] = nativeData;
-            coordinates[i * 4] = (int) xs[i].internalValue;
-            coordinates[i * 4 + 1] = (int) ys[i].internalValue;
+            coordinates[i * 4] = (int) getItemFromList(xs, i).internalValue;
+            coordinates[i * 4 + 1] = (int) getItemFromList(ys, i).internalValue;
             coordinates[i * 4 + 2] = (int) nativeData[1];
             coordinates[i * 4 + 3] = (int) nativeData[2];
             i += 1;

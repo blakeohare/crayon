@@ -13,7 +13,7 @@ namespace Pastel.Nodes
 
         public override Expression ResolveNamesAndCullUnusedCode(PastelCompiler compiler)
         {
-            throw new NotImplementedException();
+            throw new ParserException(this.FirstToken, "Compile time functions must be invoked and cannot be used like pointers.");
         }
 
         internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)

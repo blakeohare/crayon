@@ -22,7 +22,7 @@ Value lib_graphics2dtext_glRenderCharTile(VmContext vm, Array<Value> args) {
         object nativeFont = Core.ForceParens((ObjectInstance) args[0].internalValue).nativeData[0];
         Array<object> tileNativeData = Core.ForceParens((ObjectInstance) args[1].internalValue).nativeData;
         int charId = (int) args[2].internalValue;
-        List<Value> sizeOut = Core.ForceParens((ListImpl) args[3].internalValue).items;
+        ListImpl sizeOut = (ListImpl) args[3].internalValue;
 
         object bmp = Native._lib_graphics2dtext_glRenderBitmapTile(nativeFont, charId, Core.IntBuffer16);
         if (bmp == null) return vm.globalFalse;
@@ -36,10 +36,11 @@ Value lib_graphics2dtext_glRenderCharTile(VmContext vm, Array<Value> args) {
         tileNativeData[3] = effectiveLeft;
         tileNativeData[4] = effectiveWidth;
 
-        sizeOut[0] = buildInteger(vm.globals, width);
-        sizeOut[1] = buildInteger(vm.globals, height);
-        sizeOut[2] = buildInteger(vm.globals, effectiveLeft);
-        sizeOut[3] = buildInteger(vm.globals, effectiveWidth);
+        clearList(sizeOut);
+        addToList(sizeOut, buildInteger(vm.globals, width));
+        addToList(sizeOut, buildInteger(vm.globals, height));
+        addToList(sizeOut, buildInteger(vm.globals, effectiveLeft));
+        addToList(sizeOut, buildInteger(vm.globals, effectiveWidth));
     }
     return vm.globalTrue;
 }

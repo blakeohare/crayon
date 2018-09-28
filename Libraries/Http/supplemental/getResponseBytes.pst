@@ -13,8 +13,19 @@ Value lib_http_getResponseBytes(VmContext vm, Array<Value> args) {
 
     Array<object> objArray1 = objInstance1.nativeData;
 
-    List<Value> list1 = Core.ForceParens((ListImpl) outputListValue.internalValue).items;
-    Native._lib_http_getResponseBytes(objArray1[0], vm.globals.positiveIntegers, list1);
+    // TODO: return a list of integers and do the Value conversion here.
+    List<Value> tList = new List<Value>();
+    Native._lib_http_getResponseBytes(objArray1[0], vm.globals.positiveIntegers, tList);
+    ListImpl outputList = (ListImpl) outputListValue.internalValue;
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        outputList.list = tList;
+    } else {
+        Value t = buildList(tList);
+        ListImpl otherList = (ListImpl) t.internalValue;
+        outputList.capacity = otherList.capacity;
+        outputList.array = otherList.array;
+    }
+    outputList.size = tList.Size();
 
     return outputListValue;
 }

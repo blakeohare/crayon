@@ -13,11 +13,20 @@
 
 if (!hasInterrupt) {
     stringList1 = new List<string>();
-    string1 = (string) value2.internalValue;
-    len = list1.items.Size();
+    string1 = (string) value2.internalValue; // separator
+    len = list1.size;
     for (i = 0; i < len; i += 1) {
-        stringList1.Add(valueToString(vm, list1.items[i]));
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            value = list1.list[i];
+        } else {
+            value = list1.array[i];
+        }
+        if (value.type != Types.STRING) {
+            string2 = valueToString(vm, value);
+        } else {
+            string2 = (string) value.internalValue;
+        }
+        stringList1.Add(string2);
     }
-    string1 = stringList1.Join(string1);
-    output = buildString(globals, string1);
+    output = buildString(globals, stringList1.Join(string1));
 }

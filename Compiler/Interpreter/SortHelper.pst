@@ -9,11 +9,16 @@
 */
 int sortLists(ListImpl keyList, ListImpl parallelList, Array<int> intOutParam) {
     Core.IntBuffer16[0] = 0;
-    int length = keyList.items.Size();
+    int length = keyList.size;
     if (length < 2) return 0;
 
     int i = 0;
-    Value item = keyList.items[0];
+    Value item = null;
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        item = keyList.list[0];
+    } else {
+        item = keyList.array[0];
+    }
     bool isString = item.type == Types.STRING;
     Array<string> stringKeys = null;
     Array<double> numKeys = null;
@@ -29,8 +34,13 @@ int sortLists(ListImpl keyList, ListImpl parallelList, Array<int> intOutParam) {
 
     for (i = 0; i < length; i += 1) {
         indices[i] = i;
-        originalOrder[i] = parallelList.items[i];
-        item = keyList.items[i];
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            originalOrder[i] = parallelList.list[i];
+            item = keyList.list[i];
+        } else {
+            originalOrder[i] = parallelList.array[i];
+            item = keyList.array[i];
+        }
         switch (item.type) {
             case Types.INTEGER:
                 if (isString) {
@@ -65,7 +75,11 @@ int sortLists(ListImpl keyList, ListImpl parallelList, Array<int> intOutParam) {
     qsortHelper(stringKeys, numKeys, indices, isString, 0, length - 1);
 
     for (i = 0; i < length; i += 1) {
-        parallelList.items[i] = originalOrder[indices[i]];
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            parallelList.list[i] = originalOrder[indices[i]];
+        } else {
+            parallelList.array[i] = originalOrder[indices[i]];
+        }
     }
 
     return 0;

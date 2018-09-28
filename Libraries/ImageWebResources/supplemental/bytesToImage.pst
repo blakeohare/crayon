@@ -17,11 +17,11 @@ Value lib_imagewebresources_bytesToImage(VmContext vm, Array<Value> args) {
     object object1 = objInstance1.nativeData[0];
 
     // Get the output vector.
-    List<Value> list1 = Core.ForceParens((ListImpl) args[1].internalValue).items;
+    ListImpl list1 = (ListImpl) args[1].internalValue;
 
     // Get the ImageNativeData object from the output vector and get its nativeData ready, which will
     // serve as the output vector for $_lib_imagewebresources_byteToImage
-    Value value = list1[0];
+    Value value = getItemFromList(list1, 0);
 
     // TODO: Use common native data init function
     Array<object> objArray1 = new Array<object>(3);
@@ -30,8 +30,15 @@ Value lib_imagewebresources_bytesToImage(VmContext vm, Array<Value> args) {
 
     // Pass the nativeData and the byte array and create an image object and calculate its width.
     if (Native._lib_imagewebresources_bytesToImage(object1, objArray1)) {
-        list1[1] = buildInteger(vm.globals, (int) objArray1[1]);
-        list1[2] = buildInteger(vm.globals, (int) objArray1[2]);
+        Value width = buildInteger(vm.globals, (int) objArray1[1]);
+        Value height = buildInteger(vm.globals, (int) objArray1[2]);
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            list1.list[1] = width;
+            list1.list[2] = height;
+        } else {
+            list1.array[1] = width;
+            list1.array[2] = height;
+        }
         return vm.globalTrue;
     }
 

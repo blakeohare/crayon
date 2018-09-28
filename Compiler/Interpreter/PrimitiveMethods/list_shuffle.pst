@@ -1,5 +1,16 @@
 ﻿if (argCount > 0) {
     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list shuffle method", 0, argCount));
 } else {
-    list1.items.Shuffle();
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        list1.list.Shuffle();
+    } else {
+        len = list1.size;
+
+        for (i = 0; i < len; i += 1) {
+            j = Core.Int(Core.ForceParens(Core.RandomFloat() * len));
+            value = list1.array[i];
+            list1.array[i] = list1.array[j];
+            list1.array[j] = value;
+        }
+    }
 }

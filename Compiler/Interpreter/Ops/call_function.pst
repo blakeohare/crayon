@@ -87,9 +87,13 @@ if (staticConstructorNotInvoked) {
             argCount = 0;
         } else if (value.type == Types.LIST) {
             list1 = (ListImpl) value.internalValue;
-            argCount = list1.items.Size();
+            argCount = list1.size;
             for (i = argCount - 1; i >= 0; i -= 1) {
-                funcArgs[i] = list1.items[i];
+                if (@ext_boolean("ARRAY_IS_LIST")) {
+                    funcArgs[i] = list1.list[i];
+                } else {
+                    funcArgs[i] = list1.array[i];
+                }
             }
         } else {
             hasInterrupt = EX_InvalidArgument(ec, "Function pointers' .invoke method requires a list argument.");
@@ -407,7 +411,7 @@ if (staticConstructorNotInvoked) {
                             valueArray1[i] = classInfo.fieldInitializationLiteral[i];
                             break;
                         case 1:
-                            valueArray1[i] = new Value(Types.LIST, new ListImpl(new List<Value>()));
+                            valueArray1[i] = new Value(Types.LIST, makeEmptyListWithCapacity(1));
                             break;
                         case 2:
                             valueArray1[i] = new Value(Types.DICTIONARY, new DictImpl(

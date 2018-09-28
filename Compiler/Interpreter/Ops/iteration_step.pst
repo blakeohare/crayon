@@ -13,7 +13,7 @@ i = (int) value3.internalValue; // iterator index
 value = localsStack[localsStackOffset + row[3]]; // list, string
 if (value.type == Types.LIST) {
     list1 = (ListImpl) value.internalValue; // the actual list
-    len = list1.items.Size();
+    len = list1.size;
     bool1 = true;
 } else {
     string2 = (string) value.internalValue; // the actual string
@@ -23,7 +23,11 @@ if (value.type == Types.LIST) {
 
 if (i < len) {
     if (bool1) {
-        value = list1.items[i];
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            value = list1.list[i];
+        } else {
+            value = list1.array[i];
+        }
     } else {
         // Go easy on GC. Single-char strings are going to be common for users that use foreach loops on strings.
         value = buildCommonString(globals, Core.CharToString(string2[i]));

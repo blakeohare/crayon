@@ -14,7 +14,8 @@ Value lib_fileiocommon_fileRead(VmContext vm, Array<Value> args) {
     Value diskHostObject = args[0];
     string sandboxedPath = (string) args[1].internalValue;
     bool readDataAsBytes = (bool) args[2].internalValue;
-    List<Value> outputList = Core.ForceParens((ListImpl) args[3].internalValue).items;
+    ListImpl outputList = (ListImpl) args[3].internalValue;
+    List<Value> tList = new List<Value>();
 
     // For strings requests, put the file contents into the stringOutParam
     // For raw byte requests, put the bytes directly onto the list and pass in the INTEGERS_CACHE
@@ -24,12 +25,27 @@ Value lib_fileiocommon_fileRead(VmContext vm, Array<Value> args) {
         readDataAsBytes,
         Core.StringBuffer16,
         vm.globals.positiveIntegers,
-        outputList);
+        tList);
 
     // If successful and this is a text request...
     if (statusCode == 0 && !readDataAsBytes) {
         // copy the value from stringOutParam to the list.
-        outputList.Add(buildString(vm.globals, Core.StringBuffer16[0]));
+        addToList(outputList, buildString(vm.globals, Core.StringBuffer16[0]));
+    } else {
+
+        // This is kind of hacky
+        // TODO: just return an int array from the native fileRead and return the
+        // status via an out parameter. Native code should NOT have to deal with
+        // the int value cache.
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            outputList.list = tList;
+        } else {
+            Value t = buildList(tList); // do list to array conversion
+            ListImpl tListImpl = (ListImpl) t.internalValue;
+            outputList.array = tListImpl.array;
+            outputList.capacity = tListImpl.capacity;
+        }
+        outputList.size = tList.Size();
     }
 
     return buildInteger(vm.globals, statusCode);

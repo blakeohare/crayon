@@ -22,9 +22,13 @@ Value lib_http_sendRequest(VmContext vm, Array<Value> args) {
     string method = (string) args[2].internalValue;
     string url = (string) args[3].internalValue;
     List<string> headers = new List<string>(); // alternating names and values
-    List<Value> list1 = Core.ForceParens((ListImpl) args[4].internalValue).items;
-    for (int i = 0; i < list1.Size(); i += 1) {
-        headers.Add((string) list1[i].internalValue);
+    ListImpl list1 = (ListImpl) args[4].internalValue;
+    for (int i = 0; i < list1.size; i += 1) {
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            headers.Add((string) list1.list[i].internalValue);
+        } else {
+            headers.Add((string) list1.array[i].internalValue);
+        }
     }
     object bodyRawObject = body.internalValue;
     int bodyState = 0; // body is not defined

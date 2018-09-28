@@ -13,14 +13,15 @@ Value lib_gamepad_initialize_device(VmContext vm, Array<Value> args) {
     if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
         int int1 = (int) args[0].internalValue;
         ObjectInstance objInstance1 = (ObjectInstance) args[1].internalValue;
-        List<Value> list1 = Core.ForceParens((ListImpl) args[2].internalValue).items;
+        ListImpl list1 = (ListImpl) args[2].internalValue;
         object object1 = Native._lib_gamepad_get_device_reference(int1);
         objInstance1.nativeData = new Array<object>(1);
         objInstance1.nativeData[0] = object1;
-        list1[0] = buildString(vm.globals, Native._lib_gamepad_get_name(int1, object1));
-        list1[1] = buildInteger(vm.globals, Native._lib_gamepad_get_button_count(int1, object1));
-        list1[2] = buildInteger(vm.globals, Native._lib_gamepad_get_axis_1d_count(int1, object1));
-        list1[3] = buildInteger(vm.globals, Native._lib_gamepad_get_axis_2d_count(int1, object1));
+        clearList(list1);
+        addToList(list1, buildString(vm.globals, Native._lib_gamepad_get_name(int1, object1)));
+        addToList(list1, buildInteger(vm.globals, Native._lib_gamepad_get_button_count(int1, object1)));
+        addToList(list1, buildInteger(vm.globals, Native._lib_gamepad_get_axis_1d_count(int1, object1)));
+        addToList(list1, buildInteger(vm.globals, Native._lib_gamepad_get_axis_2d_count(int1, object1)));
     }
     return vm.globalNull;
 }

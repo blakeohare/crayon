@@ -43,7 +43,7 @@ Value lib_graphics2dtext_glRenderTextSurface(VmContext vm, Array<Value> args) {
         int topOffset = (int) args[4].internalValue;
         int alpha = (int) args[5].internalValue;
 
-        List<Value> tileValues = Core.ForceParens((ListImpl) args[1].internalValue).items;
+        ListImpl tileValues = (ListImpl) args[1].internalValue;
         Array<object> tileNativeData = null;
         Array<object> queueData = Core.ForceParens((ObjectInstance)args[2].internalValue).nativeData;
         Array<int> queue = (Array<int>) queueData[0];
@@ -60,7 +60,7 @@ Value lib_graphics2dtext_glRenderTextSurface(VmContext vm, Array<Value> args) {
         int y = 0;
         int textureId = 0;
         for (int i = 0; i < charCount; i += 1) {
-            tileNativeData = Core.ForceParens((ObjectInstance)tileValues[i].internalValue).nativeData;
+            tileNativeData = Core.ForceParens((ObjectInstance) getItemFromList(tileValues, i).internalValue).nativeData;
             queue[index] = 8; // draw texture direct
             textureId = (int) tileNativeData[5];
             if (textureId == -1) {

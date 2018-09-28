@@ -1,12 +1,16 @@
 ﻿if (argCount > 0) {
     hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary keys method", 0, argCount));
 } else {
-    // TODO: create a Pastel list.Clone() method
     valueList1 = dictImpl.keys;
-    list1 = new ListImpl(new List<Value>());
     len = valueList1.Size();
+    list1 = makeEmptyListWithCapacity(len);
     for (i = 0; i < len; i += 1) {
-        list1.items.Add(valueList1[i]);
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            list1.list.Add(valueList1[i]);
+        } else {
+            list1.array[i] = valueList1[i];
+        }
     }
+    list1.size = len;
     output = new Value(Types.LIST, list1);
 }

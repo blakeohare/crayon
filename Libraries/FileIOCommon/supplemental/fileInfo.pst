@@ -29,33 +29,42 @@ Value lib_fileiocommon_fileInfo(VmContext vm, Array<Value> args) {
         Core.IntBuffer16,
         Core.FloatBuffer16);
 
-    List<Value> outputList = Core.ForceParens((ListImpl) args[3].internalValue).items;
+    ListImpl outputList = (ListImpl) args[3].internalValue;
+    clearList(outputList);
     VmGlobals globals = vm.globals;
 
     // exists
-    outputList[0] = buildBoolean(globals, Core.IntBuffer16[0] > 0);
+    addToList(outputList, buildBoolean(globals, Core.IntBuffer16[0] > 0));
 
     // is directory?
-    outputList[1] = buildBoolean(globals, Core.IntBuffer16[1] > 0);
+    addToList(outputList, buildBoolean(globals, Core.IntBuffer16[1] > 0));
 
     // size
     if ((mask & 1) != 0) {
-        outputList[2] = buildInteger(globals, Core.IntBuffer16[2]);
+        addToList(outputList, buildInteger(globals, Core.IntBuffer16[2]));
+    } else {
+        addToList(outputList, globals.valueNull);
     }
 
     // readonly?
     if ((mask & 2) != 0) {
-        outputList[3] = buildBoolean(globals, Core.IntBuffer16[3] > 0);
+        addToList(outputList, buildBoolean(globals, Core.IntBuffer16[3] > 0));
+    } else {
+        addToList(outputList, globals.valueNull);
     }
 
     // created timestamp
     if ((mask & 4) != 0) {
-        outputList[4] = buildFloat(globals, Core.FloatBuffer16[0]);
+        addToList(outputList, buildFloat(globals, Core.FloatBuffer16[0]));
+    } else {
+        addToList(outputList, globals.valueNull);
     }
 
     // modified timestamp
     if ((mask & 8) != 0) {
-        outputList[5] = buildFloat(globals, Core.FloatBuffer16[1]);
+        addToList(outputList, buildFloat(globals, Core.FloatBuffer16[1]));
+    } else {
+        addToList(outputList, globals.valueNull);
     }
 
     return args[3];

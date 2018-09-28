@@ -6,10 +6,23 @@
         hasInterrupt = EX_InvalidArgument(ec, "list concat methods requires a list as an argument.");
     } else {
         list2 = (ListImpl) value2.internalValue;
-        len = list2.items.Size();
+        len = list2.size;
         // TODO: use native platform list concatenation if possible e.g. .AddRange()
-        for (i = 0; i < len; i += 1) {
-            list1.items.Add(list2.items[i]);
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            for (i = 0; i < len; i += 1) {
+                list1.list.Add(list2.list[i]);
+            }
+        } else {
+            int1 = list1.size;
+
+            while (int1 + len > list1.capacity) {
+                increaseListCapacity(list1);
+            }
+
+            for (i = 0; i < len; i += 1) {
+                list1.array[int1 + i] = list2.array[i];
+            }
+            list1.size += len;
         }
     }
 }

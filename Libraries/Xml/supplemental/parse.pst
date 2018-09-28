@@ -24,7 +24,7 @@
 */
 Value lib_xml_parse(VmContext vm, Array<Value> args) {
     string xml = ((string) args[0].internalValue);
-    List<Value> list1 = Core.ForceParens((ListImpl) args[1].internalValue).items;
+    ListImpl list1 = (ListImpl) args[1].internalValue;
     ObjectInstance objInstance1 = (ObjectInstance) args[2].internalValue;
     Array<object> objArray1 = objInstance1.nativeData;
     if (objArray1 == null) {
@@ -34,16 +34,26 @@ Value lib_xml_parse(VmContext vm, Array<Value> args) {
         objArray1[1] = new Dictionary<int, int>();
     }
 
+    List<Value> output = new List<Value>();
     string errMsg = lib_xml_parseImpl(
         vm,
         xml,
         Core.IntBuffer16,
-        list1,
+        output,
         (Dictionary<string, string>) objArray1[0],
         (Dictionary<int, int>) objArray1[1]);
 
     if (errMsg != null) {
         return buildString(vm.globals, errMsg);
+    }
+
+    ListImpl list2 = (ListImpl) buildList(output).internalValue;
+    list1.size = list2.size;
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        list1.list = list2.list;
+    } else {
+        list1.capacity = list2.capacity;
+        list1.array = list2.array;
     }
 
     return vm.globalNull;

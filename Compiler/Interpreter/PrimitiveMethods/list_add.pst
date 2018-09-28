@@ -1,8 +1,22 @@
 ﻿if (argCount == 0) {
     hasInterrupt = EX_InvalidArgument(ec, "List add method requires at least one argument.");
 } else {
-    for (i = 0; i < argCount; i += 1) {
-        list1.items.Add(funcArgs[i]);
+
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        for (i = 0; i < argCount; i += 1) {
+            list1.list.Add(funcArgs[i]);
+        }
+    } else {
+
+        while (list1.size + argCount > list1.capacity) {
+            increaseListCapacity(list1);
+        }
+
+        int1 = list1.size;
+        for (i = 0; i < argCount; i += 1) {
+            list1.array[int1 + i] = funcArgs[i];
+        }
+        list1.size += argCount;
     }
 
     output = VALUE_NULL;

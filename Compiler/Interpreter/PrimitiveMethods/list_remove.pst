@@ -6,7 +6,7 @@
         hasInterrupt = EX_InvalidArgument(ec, "Argument of list.remove must be an integer index.");
     } else {
         int1 = (int) value.internalValue;
-        len = list1.items.Size();
+        len = list1.size;
 
         if (int1 < 0) int1 += len;
 
@@ -15,10 +15,23 @@
         } else {
 
             if (returnValueUsed) {
-                output = list1.items[int1];
+                if (@ext_boolean("ARRAY_IS_LIST")) {
+                    output = list1.list[int1];
+                } else {
+                    output = list1.array[int1];
+                }
             }
 
-            list1.items.RemoveAt(int1);
+            len = list1.size - 1;
+            list1.size = len;
+            if (@ext_boolean("ARRAY_IS_LIST")) {
+                list1.list.RemoveAt(int1);
+            } else {
+                for (i = int1; i < len; i += 1) {
+                    list1.array[i] = list1.array[i + 1];
+                }
+                list1.array[len] = null;
+            }
         }
     }
 }

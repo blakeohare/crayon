@@ -16,12 +16,16 @@ if (root.type == Types.LIST) {
         i = (int) value.internalValue;
         list1 = (ListImpl) root.internalValue;
         if (i < 0) {
-            i += list1.items.Size();
+            i += list1.size;
         }
-        if (i < 0 || i >= list1.items.Size()) {
+        if (i < 0 || i >= list1.size) {
             hasInterrupt = EX_IndexOutOfRange(ec, "List index is out of bounds");
         } else {
-            valueStack[valueStackSize - 1] = list1.items[i];
+            if (@ext_boolean("ARRAY_IS_LIST")) {
+                valueStack[valueStackSize - 1] = list1.list[i];
+            } else {
+                valueStack[valueStackSize - 1] = list1.array[i];
+            }
         }
     }
 } else if (root.type == Types.DICTIONARY) {

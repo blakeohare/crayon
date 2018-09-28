@@ -3,10 +3,10 @@
 } else {
     // TODO: create a Pastel list.Clone() method
     valueList1 = dictImpl.values;
-    list1 = new ListImpl(new List<Value>());
     len = valueList1.Size();
+    list1 = makeEmptyListWithCapacity(len);
     for (i = 0; i < len; i += 1) {
-        list1.items.Add(valueList1[i]);
+        addToList(list1, valueList1[i]);
     }
     output = new Value(Types.LIST, list1);
 }

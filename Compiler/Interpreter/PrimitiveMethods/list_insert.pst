@@ -8,18 +8,37 @@
         hasInterrupt = EX_InvalidArgument(ec, "First argument of list.insert must be an integer index.");
     } else {
 
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            if (list1.size == list1.capacity) incraseListCapacity(list1);
+        }
+
         int1 = (int) value.internalValue;
-        len = list1.items.Size();
+        len = list1.size;
 
         if (int1 < 0) int1 += len;
 
         if (int1 == len) {
-            list1.items.Add(value2);
+            if (@ext_boolean("ARRAY_IS_LIST")) {
+                list1.list.Add(value2);
+            } else {
+                list1.array[len] = value2;
+            }
+            list1.size += 1;
         } else {
             if (int1 < 0 || int1 >= len) {
                 hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.");
             } else {
-                list1.items.Insert(int1, value2);
+                if (@ext_boolean("ARRAY_IS_LIST")) {
+                    list1.list.Insert(int1, value2);
+                } else {
+                    for (i = int1; i < len; i += 1) {
+                        value2 = list1.array[i];
+                        list1.array[i] = value;
+                        value = value2;
+                    }
+                    list1.array[len] = value;
+                }
+                list1.size += 1;
             }
         }
     }

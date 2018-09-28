@@ -1,29 +1,29 @@
 ﻿// File for reflection-related core functions.
 
 Value Reflect_allClasses(VmContext vm) {
-    List<Value> valueList = new List<Value>();
+    ListImpl output = makeEmptyListWithCapacity(20);
     Array<ClassInfo> classTable = vm.metadata.classTable;
     for (int i = 1; i < classTable.Size(); i += 1) {
         ClassInfo classInfo = classTable[i];
         if (classInfo == null) { // ClassInfo table is over-allocated.
             i = classTable.Size();
         } else {
-            valueList.Add(new Value(Types.CLASS, new ClassValue(false, classInfo.id)));
+            addToList(output, new Value(Types.CLASS, new ClassValue(false, classInfo.id)));
         }
     }
-    return new Value(Types.LIST, new ListImpl(valueList));
+    return new Value(Types.LIST, output);
 }
 
 // TODO: once the static method reflection is implemented, this doesn't need to take in EC anymore, since there will be no exception.
 Value Reflect_getMethods(VmContext vm, ExecutionContext ec, Value methodSource) {
-    List<Value> methodList = new List<Value>();
+    ListImpl output = makeEmptyListWithCapacity(8);
     if (methodSource.type == Types.INSTANCE) {
         ObjectInstance objInstance1 = (ObjectInstance) methodSource.internalValue;
         ClassInfo classInfo = vm.metadata.classTable[objInstance1.classId];
         for (int i = 0; i < classInfo.functionIds.Size(); i += 1) {
             int functionId = classInfo.functionIds[i];
             if (functionId != -1) {
-                methodList.Add(new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.METHOD, methodSource, objInstance1.classId, functionId, null)));
+                addToList(output, new Value(Types.FUNCTION, new FunctionPointer(FunctionPointerType.METHOD, methodSource, objInstance1.classId, functionId, null)));
             }
         }
     } else {
@@ -31,5 +31,5 @@ Value Reflect_getMethods(VmContext vm, ExecutionContext ec, Value methodSource) 
         ClassInfo classInfo = vm.metadata.classTable[classValue.classId];
         EX_UnsupportedOperation(ec, "static method reflection not implemented yet.");
     }
-    return new Value(Types.LIST, new ListImpl(methodList));
+    return new Value(Types.LIST, output);
 }

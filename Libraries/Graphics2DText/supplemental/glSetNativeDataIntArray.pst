@@ -11,11 +11,11 @@ Value lib_graphics2dtext_glSetNativeDataIntArray(VmContext vm, Array<Value> args
     if (@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
         ObjectInstance obj = (ObjectInstance) args[0].internalValue;
         Array<object> nativeData = obj.nativeData;
-        List<Value> values = Core.ForceParens((ListImpl) args[2].internalValue).items;
-        int length = values.Size();
+        ListImpl values = (ListImpl) args[2].internalValue;
+        int length = values.size;
         Array<int> intArray = new Array<int>(length);
         for (int i = 0; i < length; i += 1) {
-            intArray[i] = (int)values[i].internalValue;
+            intArray[i] = (int) getItemFromList(values, i).internalValue;
         }
         nativeData[(int)args[1].internalValue] = intArray;
     }

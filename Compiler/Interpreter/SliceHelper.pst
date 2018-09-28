@@ -11,8 +11,8 @@ Value performListSlice(VmGlobals globals, ExecutionContext ec, Value value, Valu
     bool isForward = false;
     bool isString = false;
     string originalString = "";
-    List<Value> originalList = null;
-    List<Value> outputList = null;
+    ListImpl originalList = null;
+    ListImpl outputList = null;
     List<string> outputString = null;
 
     int status = 0;
@@ -52,8 +52,8 @@ Value performListSlice(VmGlobals globals, ExecutionContext ec, Value value, Valu
     } else {
         if (value.type == Types.LIST) {
             isString = false;
-            originalList = Core.ForceParens((ListImpl) value.internalValue).items;
-            length = originalList.Size();
+            originalList = (ListImpl) value.internalValue;
+            length = originalList.size;
         } else {
             EX_InvalidArgument(ec, Core.StringConcatAll("Cannot apply slicing to ", getTypeFromId(value.type), ". Must be string or list."));
             return globals.valueNull;
@@ -111,37 +111,45 @@ Value performListSlice(VmGlobals globals, ExecutionContext ec, Value value, Valu
             value = buildString(globals, outputString.Join(""));
         } else {
             // List slice
-            outputList = new List<Value>();
+            outputList = makeEmptyListWithCapacity(10);
             if (isForward) {
                 // forward
                 while (begin < end) {
-                    outputList.Add(originalList[begin]);
+                    if (@ext_boolean("ARRAY_IS_LIST")) {
+                        addToList(outputList, originalList.list[begin]);
+                    } else {
+                        addToList(outputList, originalList.array[begin]);
+                    }
                     begin += step;
                 }
             } else {
                 // backward
                 while (begin > end) {
-                    outputList.Add(originalList[begin]);
+                    if (@ext_boolean("ARRAY_IS_LIST")) {
+                        addToList(outputList, originalList.list[begin]);
+                    } else {
+                        addToList(outputList, originalList.array[begin]);
+                    }
                     begin += step;
                 }
             }
-            value = new Value(Types.LIST, new ListImpl(outputList));
+            value = new Value(Types.LIST, outputList);
         }
     } else if (status == 0) {
         if (isString) {
             value = globals.stringEmpty;
         } else {
-            value = new Value(Types.LIST, new ListImpl(new List<Value>()));
+            value = new Value(Types.LIST, makeEmptyListWithCapacity(0));
         }
     } else if (status == 2) {
         // list is a simple clone
         // for strings, just leave it as-is since the root value is already stored in the return value variable.
         if (!isString) {
-            outputList = new List<Value>();
+            outputList = makeEmptyListWithCapacity(length);
             for (i = 0; i < length; i += 1) {
-                outputList.Add(originalList[i]);
+                addToList(outputList, originalList.list[i]);
             }
-            value = new Value(Types.LIST, new ListImpl(outputList));
+            value = new Value(Types.LIST, outputList);
         }
     } else {
         string msg = null;

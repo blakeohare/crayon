@@ -3,13 +3,17 @@
     args[1] -> values
 */
 Value lib_easing_apply_pts(VmContext vm, Array<Value> args) {
-    List<Value> sampleValues = Core.ForceParens((ListImpl) args[1].internalValue).items; // guaranteed to be floats
+    ListImpl sampleValues = (ListImpl) args[1].internalValue; // guaranteed to be floats
 
-    int len = sampleValues.Size();
+    int len = sampleValues.size;
     Array<double> samples = new Array<double>(len);
 
     for (int i = 0; i < len; i += 1) {
-        samples[i] = (double) sampleValues[i].internalValue;
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            samples[i] = (double) sampleValues.list[i].internalValue;
+        } else {
+            samples[i] = (double) sampleValues.array[i].internalValue;
+        }
     }
 
     // Override just in case a user-defined sampling function begins or ends

@@ -18,6 +18,8 @@
     nativeData[6] -> texture height (pixels)
 */
 Value lib_graphics2d_initializeTexture(VmContext vm, Array<Value> args) {
+
+    // TODO: fix readability.
     Value arg1 = args[0];
     Value arg2 = args[1];
     Value arg3 = args[2];
@@ -28,16 +30,16 @@ Value lib_graphics2d_initializeTexture(VmContext vm, Array<Value> args) {
     objInstance1.nativeData = objArray1;
     objInstance1 = (ObjectInstance) arg2.internalValue;
     objArray1[0] = objInstance1.nativeData;
-    List<Value> list1 = Core.ForceParens((ListImpl) arg3.internalValue).items;
-    Value value = list1[0];
+    ListImpl list1 = (ListImpl) arg3.internalValue;
+    Value value = getItemFromList(list1, 0);
     double float1 = (double) value.internalValue;
-    value = list1[2];
+    value = getItemFromList(list1, 2);
     double float2 = (double) value.internalValue;
     objArray1[1] = float1;
     objArray1[3] = float2;
-    value = list1[1];
+    value = getItemFromList(list1, 1);
     float1 = (double) value.internalValue;
-    value = list1[3];
+    value = getItemFromList(list1, 3);
     float2 = (double) value.internalValue;
     objArray1[2] = float1;
     objArray1[4] = float2;

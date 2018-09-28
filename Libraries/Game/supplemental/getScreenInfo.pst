@@ -10,10 +10,11 @@ Value lib_game_getScreenInfo(VmContext vm, Array<Value> args) {
     Value outList = args[0];
     Array<int> o = Core.IntBuffer16;
     if (Native._lib_game_getScreenInfo(o)) {
-        List<Value> output = Core.ForceParens((ListImpl) outList.internalValue).items;
-        output[0] = buildBoolean(vm.globals, o[0] == 1);
-        output[1] = buildInteger(vm.globals, o[1]);
-        output[2] = buildInteger(vm.globals, o[2]);
+        ListImpl output = (ListImpl) outList.internalValue;
+        clearList(output);
+        addToList(output, buildBoolean(vm.globals, o[0] == 1));
+        addToList(output, buildInteger(vm.globals, o[1]));
+        addToList(output, buildInteger(vm.globals, o[2]));
     }
     return outList;
 }

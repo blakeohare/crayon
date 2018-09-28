@@ -35,11 +35,15 @@ string valueToString(VmContext vm, Value wrappedValue) {
         // TODO: STRING BUILDER!
         ListImpl internalList = (ListImpl) wrappedValue.internalValue;
         string output = "[";
-        for (int i = 0; i < internalList.items.Size(); i += 1) {
+        for (int i = 0; i < internalList.size; i += 1) {
             if (i > 0) {
                 Core.StringAppend(output, ", ");
             }
-            Core.StringAppend(output, valueToString(vm, internalList.items[i]));
+            if (@ext_boolean("ARRAY_IS_LIST")) {
+                Core.StringAppend(output, valueToString(vm, internalList.list[i]));
+            } else {
+                Core.StringAppend(output, valueToString(vm, internalList.array[i]));
+            }
         }
         Core.StringAppend(output, "]");
         return output;
@@ -271,16 +275,108 @@ int doEqualityComparisonAndReturnCode(Value a, Value b) {
     return 0;
 }
 
+void reverseList(ListImpl list) {
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        list.list.Reverse();
+    } else {
+        int len = list.size;
+        Value t = null;
+        int i2 = 0;
+        Array<Value> arr = list.array;
+        for (int i = len >> 1; i < len; i += 1) {
+            i2 = len - i - 1;
+            t = arr[i];
+            arr[i] = arr[i2];
+            arr[i2] = t;
+        }
+    }
+}
+
+int clearList(ListImpl a) {
+    if (!@ext_boolean("ARRAY_IS_LIST")) {
+        for (int i = a.size - 1; i >= 0; i -= 1) {
+            a.array[i] = null;
+        }
+    } else if (@ext_boolean("PLATFORM_SUPPORTS_LIST_CLEAR")) {
+        a.list.Clear();
+    } else {
+        if (a.size == 1) {
+            a.list.Pop();
+        } else {
+            a.list = new List<Value>();
+        }
+    }
+    a.size = 0;
+    return 0;
+}
+
+Value getItemFromList(ListImpl list, int i) {
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        return list.list[i];
+    } else {
+        return list.array[i];
+    }
+
+}
+
 ListImpl makeEmptyList() {
-    return new ListImpl(new List<Value>());
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        return new ListImpl(0, 0, null, new List<Value>());
+    } else {
+        return makeEmptyListWithCapacity(4);
+    }
+}
+
+ListImpl makeEmptyListWithCapacity(int capacity) {
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        return new ListImpl(0, 0, null, new List<Value>());
+    } else {
+        return new ListImpl(0, capacity, new Array<Value>(capacity), null);
+    }
 }
 
 void addToList(ListImpl list, Value item) {
-    list.items.Add(item);
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        list.list.Add(item);
+    } else {
+        if (list.size == list.capacity) {
+            increaseListCapacity(list);
+        }
+        list.array[list.size] = item;
+    }
+    list.size += 1;
+}
+
+void increaseListCapacity(ListImpl list) {
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        // TODO: some sort of assert
+    } else {
+        int oldCapacity = list.capacity;
+        int newCapacity = oldCapacity * 2;
+        if (newCapacity < 8) newCapacity = 8;
+        Array<Value> newArr = new Array<Value>(newCapacity);
+        Array<Value> oldArr = list.array;
+        for (int i = 0; i < oldCapacity; i += 1) {
+            // TODO: add system array copy to Pastel
+            newArr[i] = oldArr[i];
+        }
+        list.capacity = newCapacity;
+        list.array = newArr;
+    }
 }
 
 Value buildList(List<Value> valueList) {
-    return new Value(Types.LIST, new ListImpl(valueList));
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        return new Value(Types.LIST, new ListImpl(valueList.Size(), 0, null, valueList));
+    } else {
+        int len = valueList.Size();
+        ListImpl output = makeEmptyListWithCapacity(len);
+        for (int i = 0; i < len; i += 1) {
+            output.array[i] = valueList[i];
+        }
+        output.size = len;
+        return new Value(Types.LIST, output);
+    }
 }
 
 PlatformRelayObject buildRelayObj(
@@ -517,9 +613,60 @@ Array<int> reallocIntArray(Array<int> original, int requiredCapacity) {
 }
 
 ListImpl valueConcatLists(ListImpl a, ListImpl b) {
-    return new ListImpl(Core.ListConcat(a.items, b.items));
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        return new ListImpl(a.size + b.size, 0, Core.ListConcat(a.list, b.list), null);
+    } else {
+        int aLen = a.size;
+        int bLen = b.size;
+        int size = aLen + bLen;
+        ListImpl c = new ListImpl(size, size, new Array<Value>(size), null);
+        int i = 0;
+        while (i < aLen) {
+            c.array[i] = a.array[i];
+            i += 1;
+        }
+        i = 0;
+        while (i < bLen) {
+            c.array[i + aLen] = b.array[i];
+            i += 1;
+        }
+        c.size = c.capacity;
+        return c;
+    }
 }
 
 ListImpl valueMultiplyList(ListImpl a, int n) {
-    return new ListImpl(Core.MultiplyList(a.items, n));
+    int len = a.size * n;
+    ListImpl output = makeEmptyListWithCapacity(len);
+    if (len == 0) return output;
+    int aLen = a.size;
+    int i = 0;
+    Value value = null;
+    if (aLen == 1) {
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            value = a.list[0];
+        } else {
+            value = a.array[0];
+        }
+        for (i = 0; i < n; i += 1) {
+            if (@ext_boolean("ARRAY_IS_LIST")) {
+                output.list.Add(value);
+            } else {
+                output.array[i] = value;
+            }
+        }
+    } else {
+        int j = 0;
+        for (i = 0; i < n; i += 1) {
+            for (j = 0; j < aLen; j += 1) {
+                if (@ext_boolean("ARRAY_IS_LIST")) {
+                    output.list.Add(a.list[j]);
+                } else {
+                    output.array[i * aLen + j] = a.array[j];
+                }
+            }
+        }
+    }
+    output.size = len;
+    return output;
 }

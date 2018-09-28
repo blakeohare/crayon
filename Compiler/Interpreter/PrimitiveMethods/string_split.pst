@@ -7,11 +7,16 @@
     } else {
         stringList = string1.Split((string) value2.internalValue);
 
-        list1 = new ListImpl(new List<Value>());
         len = stringList.Size();
+        list1 = makeEmptyListWithCapacity(len);
         for (i = 0; i < len; i += 1) {
-            list1.items.Add(buildString(globals, stringList[i]));
+            if (@ext_boolean("ARRAY_IS_LIST")) {
+                list1.list.Add(buildString(globals, stringList[i]));
+            } else {
+                list1.array[i] = buildString(globals, stringList[i]);
+            }
         }
+        list1.size = len;
 
         output = new Value(Types.LIST, list1);
     }

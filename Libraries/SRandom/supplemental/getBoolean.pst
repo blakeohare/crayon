@@ -2,9 +2,16 @@
     args[0] -> integer pointer (integer in a list) to the active seed value.
 */
 Value lib_srandom_getBoolean(VmContext vm, Array<Value> args) {
-    List<Value> intPtr = Core.ForceParens((ListImpl)args[0].internalValue).items;
-    int value = (((int)intPtr[0].internalValue * 20077) + 12345) & 65535;
-    intPtr[0] = buildInteger(vm.globals, value);
+    ListImpl intPtr = (ListImpl)args[0].internalValue;
+    int value = 0;
+
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        value = (((int)intPtr.list[0].internalValue * 20077) + 12345) & 65535;
+        intPtr.list[0] = buildInteger(vm.globals, value);
+    } else {
+        value = (((int)intPtr.array[0].internalValue * 20077) + 12345) & 65535;
+        intPtr.array[0] = buildInteger(vm.globals, value);
+    }
     if ((value & 1) == 0) return vm.globalFalse;
     return vm.globalTrue;
 }

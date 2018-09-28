@@ -561,14 +561,14 @@ switch (row[0]) {
         @import("FrameworkFunctions/1_arg.pst");
 
         intList1 = (List<int>) getNativeDataItem(arg1, 1);
-        list1 = new ListImpl(new List<Value>());
+        list1 = makeEmptyList();
         output = new Value(Types.LIST, list1);
         if (intList1 != null) {
             stringList1 = tokenHelperConvertPcsToStackTraceStrings(vm, intList1);
             for (i = 0; i < stringList1.Size(); i += 1) {
-                list1.items.Add(buildString(globals, stringList1[i]));
+                addToList(list1, buildString(globals, stringList1[i]));
             }
-            list1.items.Reverse();
+            reverseList(list1);
         }
 
         break;

@@ -18,7 +18,17 @@
         This is an empty list. Append all strings from applicable properties to this list.
 */
 Value lib_graphics2dtext_getNativeFontUniqueKey(VmContext vm, Array<Value> args) {
-    List<Value> output = Core.ForceParens((ListImpl) args[7].internalValue).items;
+    ListImpl list1 = (ListImpl) args[7].internalValue;
+    List<Value> output = new List<Value>();
     Native._lib_graphics2dtext_getNativeFontUniqueKey(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+    // TODO: fix this hack
+    ListImpl list2 = (ListImpl) buildList(output).internalValue;
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        list1.list = list2.list;
+    } else {
+        list1.array = list2.array;
+        list1.capacity = list2.capacity;
+    }
+    list1.size = list2.size;
     return vm.globalNull;
 }
