@@ -417,6 +417,7 @@ if (staticConstructorNotInvoked) {
                             valueArray1[i] = new Value(Types.DICTIONARY, new DictImpl(
                                 0,
                                 Types.INTEGER,
+                                null,
                                 new Dictionary<int, int>(),
                                 new Dictionary<string, int>(),
                                 new List<Value>(),

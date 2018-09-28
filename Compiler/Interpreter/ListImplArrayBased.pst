@@ -1,4 +1,24 @@
-﻿struct ListImpl {
+﻿/*
+    Note on list types:
+    - null indicates this is a list of objects
+    - First value is a value from Types enum
+    - INTEGER, FLOAT, BOOLEAN, cannot contain nulls
+    - LIST contains additional elements that follow these same rules indicating the type of the list
+    - DICT is similar, but contains two more entities that follow these rules to indicate key and value type
+    - INSTANCE is followed by the class ID. If the class ID is 0, then it can be any class
+    - STRING and CLASS have no additional parameters but can contain null
+    - FUNCTION is followed by two numbers number n and k.
+        n represents how many followup types there are where the first is the return type and the
+            following n - 1 are the argument types.
+        k represents how many optional parameters there are.
+
+    - NULL is not valid
+
+    Some of these common types are found in VmGlobals
+*/
+
+struct ListImpl {
+    Array<int> type;
     int size;
     int capacity;
     Array<Value> array;
