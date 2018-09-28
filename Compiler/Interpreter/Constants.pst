@@ -17,7 +17,7 @@
     CLASS_DEFINITION, // It's complicated. See initializeClass method in MetadataInitializer.cry
     CNI_INVOKE,
     CNI_REGISTER,
-    COMMAND_LINE_ARGS, // pushes a list of the command line args to the stack.
+    COMMAND_LINE_ARGS,
     CONTINUE, // 0: flag if this has been set, 1: PC offset to jump to (generally BREAK gets resolved into JUMP unless a finally block needs to run.)
     CORE_FUNCTION, // 1: function ID
     DEF_ORIGINAL_CODE, // 1: file ID, string arg: source code of that file with a preceding line for the file name.

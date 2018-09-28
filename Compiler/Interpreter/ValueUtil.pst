@@ -304,15 +304,6 @@ Value buildCommonString(VmGlobals g, string s) {
     return value;
 }
 
-Value buildListCopy(Array<Value> valueList) {
-    List<Value> output = new List<Value>();
-    int size = valueList.Length();
-    for (int i = 0; i < size; i += 1) {
-        output.Add(valueList[i]);
-    }
-    return buildList(output);
-}
-
 Value multiplyString(VmGlobals globals, Value strValue, string str, int n) {
     if (n <= 2) {
         if (n == 1) return strValue;

@@ -1,3 +1,12 @@
-﻿@import("ValueStackCapacityCheck.pst");
-valueStack[valueStackSize] = buildListCopy(vm.environment.commandLineArgs);
+﻿/*
+    Pushes a list of the command line args to the stack.
+*/
+@import("ValueStackCapacityCheck.pst");
+
+list1 = makeEmptyList();
+for (i = 0; i < vm.environment.commandLineArgs.Length(); i += 1) {
+    addToList(list1, buildString(globals, vm.environment.commandLineArgs[i]));
+}
+
+valueStack[valueStackSize] = new Value(Types.LIST, list1);
 valueStackSize += 1;
