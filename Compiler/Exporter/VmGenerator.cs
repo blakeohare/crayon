@@ -25,6 +25,7 @@ namespace Exporter
             "Reflection.pst",
             "ResourceManager.pst",
             "Runner.pst",
+            "SortHelper.pst",
             "SliceHelper.pst",
             "Structs.pst",
             "TypesUtil.pst",

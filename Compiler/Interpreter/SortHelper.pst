@@ -1,0 +1,153 @@
+/*
+    Sorts a list of primitives. (keyList)
+    If the parallel list is not null, apply all swaps in the key list to the parallel list as well.
+
+    intOutParam[0] -> error code:
+        0 -> no error
+        1 -> invalid sort keys
+
+*/
+int sortLists(ListImpl keyList, ListImpl parallelList, Array<int> intOutParam) {
+    Core.IntBuffer16[0] = 0;
+    int length = keyList.items.Size();
+    if (length < 2) return 0;
+
+    int i = 0;
+    Value item = keyList.items[0];
+    bool isString = item.type == Types.STRING;
+    Array<string> stringKeys = null;
+    Array<double> numKeys = null;
+    if (isString) {
+        stringKeys = new Array<string>(length);
+    } else {
+        numKeys = new Array<double>(length);
+    }
+
+    // TODO: allocate these on globals and expand as necessary. Extraneous length doesn't matter.
+    Array<int> indices = new Array<int>(length);
+    Array<Value> originalOrder = new Array<Value>(length);
+
+    for (i = 0; i < length; i += 1) {
+        indices[i] = i;
+        originalOrder[i] = parallelList.items[i];
+        item = keyList.items[i];
+        switch (item.type) {
+            case Types.INTEGER:
+                if (isString) {
+                    Core.IntBuffer16[0] = 1;
+                    return 0;
+                }
+                numKeys[i] = (double) ((int) item.internalValue);
+                break;
+
+            case Types.FLOAT:
+                if (isString) {
+                    Core.IntBuffer16[0] = 1;
+                    return 0;
+                }
+                numKeys[i] = (double) item.internalValue;
+                break;
+
+            case Types.STRING:
+                if (!isString) {
+                    Core.IntBuffer16[0] = 1;
+                    return 0;
+                }
+                stringKeys[i] = (string) item.internalValue;
+                break;
+
+            default:
+                Core.IntBuffer16[0] = 1;
+                return 0;
+        }
+    }
+
+    qsortHelper(stringKeys, numKeys, indices, isString, 0, length - 1);
+
+    for (i = 0; i < length; i += 1) {
+        parallelList.items[i] = originalOrder[indices[i]];
+    }
+
+    return 0;
+}
+
+int qsortHelper(
+        Array<string> keyStringList,
+        Array<double> keyNumList,
+        Array<int> indices,
+        bool isString,
+        int startIndex,
+        int endIndex) {
+
+    if ((endIndex - startIndex) <= 0) return 0;
+    if ((endIndex - startIndex) == 1) {
+        if (sortHelperIsRevOrder(keyStringList, keyNumList, isString, startIndex, endIndex)) {
+            sortHelperSwap(keyStringList, keyNumList, indices, isString, startIndex, endIndex);
+        }
+        return 0;
+    }
+
+    int mid = (endIndex + startIndex) >> 1;
+    sortHelperSwap(keyStringList, keyNumList, indices, isString, mid, startIndex);
+
+    int upperPointer = endIndex + 1;
+    int lowerPointer = startIndex + 1;
+
+    while (upperPointer > lowerPointer) {
+        if (sortHelperIsRevOrder(keyStringList, keyNumList, isString, startIndex, lowerPointer)) {
+            lowerPointer += 1;
+        } else {
+            upperPointer -= 1;
+            sortHelperSwap(keyStringList, keyNumList, indices, isString, lowerPointer, upperPointer);
+        }
+    }
+
+    int midIndex = lowerPointer - 1;
+
+    sortHelperSwap(keyStringList, keyNumList, indices, isString, midIndex, startIndex);
+    qsortHelper(keyStringList, keyNumList, indices, isString, startIndex, midIndex - 1);
+    qsortHelper(keyStringList, keyNumList, indices, isString, midIndex + 1, endIndex);
+
+    return 0;
+}
+
+bool sortHelperIsRevOrder(
+        Array<string> keyStringList,
+        Array<double> keyNumList,
+        bool isString,
+        int indexLeft,
+        int indexRight) {
+
+    if (isString) {
+        return Core.StringCompareIsReverse(keyStringList[indexLeft], keyStringList[indexRight]);
+    }
+
+    return keyNumList[indexLeft] > keyNumList[indexRight];
+}
+
+int sortHelperSwap(
+        Array<string> keyStringList,
+        Array<double> keyNumList,
+        Array<int> indices,
+        bool isString,
+        int index1,
+        int index2) {
+
+    if (index1 == index2) return 0;
+
+    int t = indices[index1];
+    indices[index1] = indices[index2];
+    indices[index2] = t;
+
+    if (isString) {
+        string s = keyStringList[index1];
+        keyStringList[index1] = keyStringList[index2];
+        keyStringList[index2] = s;
+    } else {
+        double n = keyNumList[index1];
+        keyNumList[index1] = keyNumList[index2];
+        keyNumList[index2] = n;
+    }
+
+    return 0;
+}

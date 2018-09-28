@@ -97,7 +97,7 @@
         resources, // resource database
 
         new List<Value>(), // shutdown handlers
-        new VmEnvironment(new Array<Value>(0), false), // VM Environment with default values.
+        new VmEnvironment(new Array<string>(0), false), // VM Environment with default values.
 
         // Globals
         globals,
