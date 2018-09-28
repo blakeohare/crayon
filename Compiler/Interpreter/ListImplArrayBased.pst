@@ -1,0 +1,5 @@
+﻿struct ListImpl {
+    int size;
+    int capacity;
+    Array<Value> array;
+}

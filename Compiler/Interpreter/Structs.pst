@@ -6,16 +6,6 @@
     Array<Dictionary<string, int>> stringSwitchesByPc;
 }
 
-// TODO: based on the value of ARRAY_IS_LIST, conditionally include a struct value that
-// only has the proper available methods. This will catch any accidentally omission
-// of @ext_boolean("ARRAY_IS_LIST") checks.
-struct ListImpl {
-    int size;
-    int capacity;
-    Array<Value> array;
-    List<Value> list;
-}
-
 // Dictionaries in Crayon can only have 3 types of keys: integers, strings, and objects
 // Dictionaries can hold any of these, but only hold one type at a time
 struct DictImpl {

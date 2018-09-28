@@ -212,7 +212,14 @@ namespace Exporter
                 {
                     context.SetConstant(key, constantFlags[key]);
                 }
-                foreach (string file in INTERPRETER_BASE_FILES)
+
+                IEnumerable<string> interpreterFiles = new List<string>() {
+                    (bool) platform.GetFlattenedConstantFlags()["ARRAY_IS_LIST"]
+                        ? "ListImplListBased.pst"
+                        : "ListImplArrayBased.pst"
+                }.Concat(INTERPRETER_BASE_FILES);
+
+                foreach (string file in interpreterFiles)
                 {
                     context.CompileFile(file);
                 }

@@ -321,7 +321,7 @@ Value getItemFromList(ListImpl list, int i) {
 
 ListImpl makeEmptyList() {
     if (@ext_boolean("ARRAY_IS_LIST")) {
-        return new ListImpl(0, 0, null, new List<Value>());
+        return new ListImpl(0, new List<Value>());
     } else {
         return makeEmptyListWithCapacity(4);
     }
@@ -329,9 +329,9 @@ ListImpl makeEmptyList() {
 
 ListImpl makeEmptyListWithCapacity(int capacity) {
     if (@ext_boolean("ARRAY_IS_LIST")) {
-        return new ListImpl(0, 0, null, new List<Value>());
+        return new ListImpl(0, new List<Value>());
     } else {
-        return new ListImpl(0, capacity, new Array<Value>(capacity), null);
+        return new ListImpl(0, capacity, new Array<Value>(capacity));
     }
 }
 
@@ -367,7 +367,7 @@ void increaseListCapacity(ListImpl list) {
 
 Value buildList(List<Value> valueList) {
     if (@ext_boolean("ARRAY_IS_LIST")) {
-        return new Value(Types.LIST, new ListImpl(valueList.Size(), 0, null, valueList));
+        return new Value(Types.LIST, new ListImpl(valueList.Size(), valueList));
     } else {
         int len = valueList.Size();
         ListImpl output = makeEmptyListWithCapacity(len);
@@ -614,12 +614,12 @@ Array<int> reallocIntArray(Array<int> original, int requiredCapacity) {
 
 ListImpl valueConcatLists(ListImpl a, ListImpl b) {
     if (@ext_boolean("ARRAY_IS_LIST")) {
-        return new ListImpl(a.size + b.size, 0, Core.ListConcat(a.list, b.list), null);
+        return new ListImpl(a.size + b.size, Core.ListConcat(a.list, b.list));
     } else {
         int aLen = a.size;
         int bLen = b.size;
         int size = aLen + bLen;
-        ListImpl c = new ListImpl(size, size, new Array<Value>(size), null);
+        ListImpl c = new ListImpl(size, size, new Array<Value>(size));
         int i = 0;
         while (i < aLen) {
             c.array[i] = a.array[i];

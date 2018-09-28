@@ -1,0 +1,4 @@
+﻿struct ListImpl {
+    int size;
+    List<Value> list;
+}

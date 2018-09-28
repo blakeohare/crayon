@@ -147,7 +147,11 @@ Value performListSlice(VmGlobals globals, ExecutionContext ec, Value value, Valu
         if (!isString) {
             outputList = makeEmptyListWithCapacity(length);
             for (i = 0; i < length; i += 1) {
-                addToList(outputList, originalList.list[i]);
+                if (@ext_boolean("ARRAY_IS_INT")) {
+                    addToList(outputList, originalList.list[i]);
+                } else {
+                    addToList(outputList, originalList.array[i]);
+                }
             }
             value = new Value(Types.LIST, outputList);
         }
