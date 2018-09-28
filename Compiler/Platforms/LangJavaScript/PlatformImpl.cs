@@ -47,7 +47,7 @@ namespace LangJavaScript
                     { "IS_ASYNC", true },
                     { "PLATFORM_SUPPORTS_LIST_CLEAR", true },
                     { "STRONGLY_TYPED", false },
-                    { "IS_ARRAY_SAME_AS_LIST", true},
+                    { "ARRAY_IS_LIST", true},
                     { "IS_JAVASCRIPT", true },
                     { "IS_PYTHON", false },
                     { "IS_CHAR_A_NUMBER", false },

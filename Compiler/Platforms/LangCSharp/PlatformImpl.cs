@@ -22,7 +22,7 @@ namespace LangCSharp
                     { "IS_ASYNC", true },
                     { "PLATFORM_SUPPORTS_LIST_CLEAR", true },
                     { "STRONGLY_TYPED", true },
-                    { "IS_ARRAY_SAME_AS_LIST", false },
+                    { "ARRAY_IS_LIST", false },
                     { "IS_PYTHON", false },
                     { "IS_CHAR_A_NUMBER", true },
                     { "INT_IS_FLOOR", false },

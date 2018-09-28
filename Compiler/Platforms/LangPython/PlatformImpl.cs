@@ -21,7 +21,7 @@ namespace LangPython
                 {
                     { "PLATFORM_SUPPORTS_LIST_CLEAR", false },
                     { "STRONGLY_TYPED", false },
-                    { "IS_ARRAY_SAME_AS_LIST", true },
+                    { "ARRAY_IS_LIST", true },
                     { "IS_PYTHON", true },
                     { "IS_CHAR_A_NUMBER", false },
                     { "INT_IS_FLOOR", false },
