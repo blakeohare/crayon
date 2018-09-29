@@ -110,29 +110,29 @@ VmGlobals initializeConstantValues() {
         pos,
         neg,
         new Dictionary<string, Value>(),
-		new Array<int>(1),
-		new Array<int>(1),
-		new Array<int>(1),
-		new Array<int>(1),
-		new Array<int>(1),
-		new Array<int>(2));
+        new Array<int>(1),
+        new Array<int>(1),
+        new Array<int>(1),
+        new Array<int>(1),
+        new Array<int>(1),
+        new Array<int>(2));
     globals.commonStrings[""] = globals.stringEmpty;
-	globals.booleanType[0] = Types.BOOLEAN;
-	globals.intType[0] = Types.INTEGER;
-	globals.floatType[0] = Types.FLOAT;
-	globals.stringType[0] = Types.STRING;
-	globals.classType[0] = Types.CLASS;
-	globals.anyInstanceType[0] = Types.INSTANCE;
-	globals.anyInstanceType[1] = 0;
+    globals.booleanType[0] = Types.BOOLEAN;
+    globals.intType[0] = Types.INTEGER;
+    globals.floatType[0] = Types.FLOAT;
+    globals.stringType[0] = Types.STRING;
+    globals.classType[0] = Types.CLASS;
+    globals.anyInstanceType[0] = Types.INSTANCE;
+    globals.anyInstanceType[1] = 0;
     return globals;
 }
 
 // TODO: #generics: pass in the globals object and cache these, maybe on the class definitions themselves
 Array<int> createInstanceType(int classId) {
-	Array<int> o = new Array<int>(2);
-	o[0] = Types.INSTANCE;
-	o[1] = classId;
-	return o;
+    Array<int> o = new Array<int>(2);
+    o[0] = Types.INSTANCE;
+    o[1] = classId;
+    return o;
 }
 
 Value buildInteger(VmGlobals g, int num) {
@@ -378,7 +378,7 @@ void increaseListCapacity(ListImpl list) {
 }
 
 Value buildList(List<Value> valueList) {
-	return buildListWithType(null, valueList);
+    return buildListWithType(null, valueList);
 }
 
 Value buildListWithType(Array<int> type, List<Value> valueList) {

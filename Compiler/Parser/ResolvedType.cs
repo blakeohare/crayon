@@ -222,5 +222,59 @@ namespace Parser
 
             return true;
         }
+
+        public int[] GetEncoding()
+        {
+            List<int> output = new List<int>();
+            this.BuildEncoding(output);
+            return output.ToArray();
+        }
+
+        public void BuildEncoding(List<int> buffer)
+        {
+            switch (this.Category)
+            {
+                case ResolvedTypeCategory.OBJECT:
+                case ResolvedTypeCategory.ANY:
+                    buffer.Add(0);
+                    break;
+
+                case ResolvedTypeCategory.BOOLEAN: buffer.Add((int)Types.BOOLEAN); break;
+                case ResolvedTypeCategory.INTEGER: buffer.Add((int)Types.INTEGER); break;
+                case ResolvedTypeCategory.FLOAT: buffer.Add((int)Types.FLOAT); break;
+                case ResolvedTypeCategory.CLASS_DEFINITION: buffer.Add((int)Types.CLASS); break;
+                case ResolvedTypeCategory.STRING: buffer.Add((int)Types.STRING); break;
+
+                case ResolvedTypeCategory.LIST:
+                    buffer.Add((int)Types.LIST);
+                    this.ListItemType.BuildEncoding(buffer);
+                    break;
+
+                case ResolvedTypeCategory.DICTIONARY:
+                    buffer.Add((int)Types.DICTIONARY);
+                    this.DictionaryKeyType.BuildEncoding(buffer);
+                    this.DictionaryValueType.BuildEncoding(buffer);
+                    break;
+
+                case ResolvedTypeCategory.INSTANCE:
+                    buffer.Add((int)Types.INSTANCE);
+                    buffer.Add(this.ClassTypeOrReference.ClassID);
+                    break;
+
+                case ResolvedTypeCategory.FUNCTION_POINTER:
+                    buffer.Add((int)Types.FUNCTION);
+                    buffer.Add(this.FunctionArgs.Length + 1);
+                    buffer.Add(this.FunctionOptionalArgCount);
+                    this.FunctionReturnType.BuildEncoding(buffer);
+                    foreach (ResolvedType t in this.FunctionArgs)
+                    {
+                        t.BuildEncoding(buffer);
+                    }
+                    break;
+
+                default:
+                    throw new System.NotImplementedException();
+            }
+        }
     }
 }

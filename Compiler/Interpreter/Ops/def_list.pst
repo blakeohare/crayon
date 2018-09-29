@@ -1,8 +1,19 @@
-﻿
-// TODO: #generics: encode type information into op
+﻿/*
+    args[0] -> list length (number of items to pop from the values stack)
+    args[1...] -> type information encoding
 
+*/
 int1 = row[0];
 list1 = makeEmptyList(null, int1);
+
+// TODO: #generics: cache this!!
+if (row[1] != 0) {
+    list1.type = new Array<int>(row.Length() - 1);
+    for (i = 1; i < row.Length(); i += 1) {
+        list1.type[i - 1] = row[i];
+    }
+}
+
 list1.size = int1;
 if (@ext_boolean("ARRAY_IS_LIST")) {
     while (int1 > 0) {

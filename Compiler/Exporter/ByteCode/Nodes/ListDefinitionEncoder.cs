@@ -1,5 +1,6 @@
 ﻿using Parser;
 using Parser.ParseTree;
+using System.Collections.Generic;
 
 namespace Exporter.ByteCode.Nodes
 {
@@ -12,7 +13,9 @@ namespace Exporter.ByteCode.Nodes
             {
                 bcc.CompileExpression(parser, buffer, item, true);
             }
-            buffer.Add(listDef.FirstToken, OpCode.DEF_LIST, listDef.Items.Length);
+            List<int> args = new List<int>() { listDef.Items.Length };
+            listDef.ResolvedType.ListItemType.BuildEncoding(args);
+            buffer.Add(listDef.FirstToken, OpCode.DEF_LIST, args.ToArray());
         }
     }
 }
