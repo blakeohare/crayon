@@ -13,8 +13,12 @@ public class Sprite {
     private int width;
     private int height;
 
-    public constructor(int[] position) {
-        this.position = position;
+    public constructor(float[] position) {
+        // TODO: #generics: need to be able to instantiate a list of floats with int values that auto convert.
+        this.position = new List<float>();
+        this.position.add(position[0]);
+        this.position.add(position[1]);
+
         GraphicsTexture img = this.getImage(0);
         this.width = img.width;
         this.height = img.height;

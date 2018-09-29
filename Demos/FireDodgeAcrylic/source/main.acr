@@ -12,7 +12,11 @@ public void main() {
 
     while (activeScene != null) {
 
-        Event[] events = (Event[]) window.pumpEvents();
+        List<Event> events = new List<Event>();
+        for (object evObj : (List<object>) window.pumpEvents()) {
+            events.add((Event)evObj);
+        }
+
         for (Event event : events) {
             if (event.type == EventType.QUIT)
                 return;

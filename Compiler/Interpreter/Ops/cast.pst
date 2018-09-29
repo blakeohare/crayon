@@ -28,45 +28,11 @@
 
 value = valueStack[valueStackSize - 1];
 
-// bool1 is set to true if there's an error.
+value2 = canAssignTypeToGeneric(vm, value, row, 0);
+if (value2 == null) {
+    if (value.type == Types.FLOAT && row[0] == Types.INTEGER) {
+        if (row[1] == 1) {
 
-switch (value.type) {
-    case Types.NULL:
-        switch (row[0]) {
-            // These types cannot contain null.
-            case Types.BOOLEAN:
-            case Types.INTEGER:
-            case Types.FLOAT:
-                bool1 = true;
-                break;
-
-            default:
-                bool1 = false;
-                break;
-        }
-        break;
-
-    case Types.INTEGER:
-        if (row[0] == Types.INTEGER) {
-            bool1 = false;
-        } else if (row[0] == Types.FLOAT && row[1] == 1) {
-            int1 = (int)value.internalValue;
-            if (int1 == 0) {
-                value = VALUE_FLOAT_ZERO;
-            } else {
-                value = new Value(Types.FLOAT, 0.0 + int1);
-            }
-            valueStack[valueStackSize - 1] = value;
-            bool1 = false;
-        } else {
-            bool1 = true;
-        }
-        break;
-
-    case Types.FLOAT:
-        if (row[0] == Types.FLOAT) {
-            bool1 = false;
-        } else if (row[0] == Types.INTEGER && row[1] == 1) {
             float1 = (double) value.internalValue;
             if (@ext_boolean("INT_IS_FLOOR")) {
                 i = Core.Int(float1);
@@ -78,48 +44,34 @@ switch (value.type) {
 
             if (i < 0) {
                 if (i > -INTEGER_NEGATIVE_CACHE_SIZE) {
-                    value = globals.negativeIntegers[-i];
+                    value2 = globals.negativeIntegers[-i];
                 } else {
-                    value = new Value(Types.INTEGER, i);
+                    value2 = new Value(Types.INTEGER, i);
                 }
             } else {
                 if (i < INTEGER_POSITIVE_CACHE_SIZE) {
-                    value = globals.positiveIntegers[i];
+                    value2 = globals.positiveIntegers[i];
                 } else {
-                    value = new Value(Types.INTEGER, i);
+                    value2 = new Value(Types.INTEGER, i);
                 }
             }
 
-            valueStack[valueStackSize - 1] = value;
-            bool1 = false;
-        } else {
-            bool1 = true;
         }
-        break;
-
-    case Types.BOOLEAN: bool1 = row[0] != Types.BOOLEAN; break;
-    case Types.STRING: bool1 = row[0] != Types.STRING; break;
-
-    case Types.LIST: bool1 = row[0] != Types.LIST; break; // TODO: generics verification
-    case Types.DICTIONARY: bool1 = row[0] != Types.DICTIONARY; break; // TODO: generics verification
-
-    case Types.INSTANCE:
-        if (row[0] == Types.INSTANCE) {
-            if (Core.ForceParens((ObjectInstance)value.internalValue).classId == row[1]) {
-                bool1 = false;
-            } else {
-                bool1 = true; // TODO: walk up the base class chain to confirm.
-            }
+    } else if (value.type == Types.INTEGER && row[0] == Types.FLOAT) {
+        int1 = (int)value.internalValue;
+        if (int1 == 0) {
+            value2 = VALUE_FLOAT_ZERO;
         } else {
-            bool1 = true;
+            value2 = new Value(Types.FLOAT, 0.0 + int1);
         }
-        break;
-    case Types.FUNCTION:
-        bool1 = true; // TODO: this
-        break;
+    }
+
+    if (value2 != null) {
+        valueStack[valueStackSize - 1] = value2;
+    }
 }
 
-if (bool1) {
+if (value2 == null) {
     // TODO: add a toString method in ValueUtil for types.
-    hasInterrupt = EX_InvalidArgument(ec, "Invalid cast.");
+    hasInterrupt = EX_InvalidArgument(ec, Core.StringConcatAll("Cannot convert a ", typeToStringFromValue(vm, value), " to a ", typeToString(vm, row, 0)));
 }
