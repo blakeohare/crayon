@@ -1,7 +1,9 @@
 ﻿// File for reflection-related core functions.
 
 Value Reflect_allClasses(VmContext vm) {
-    ListImpl output = makeEmptyListWithCapacity(20);
+	Array<int> generics = new Array<int>(1);
+	generics[0] = Types.CLASS;
+    ListImpl output = makeEmptyList(generics, 20);
     Array<ClassInfo> classTable = vm.metadata.classTable;
     for (int i = 1; i < classTable.Size(); i += 1) {
         ClassInfo classInfo = classTable[i];
@@ -16,7 +18,8 @@ Value Reflect_allClasses(VmContext vm) {
 
 // TODO: once the static method reflection is implemented, this doesn't need to take in EC anymore, since there will be no exception.
 Value Reflect_getMethods(VmContext vm, ExecutionContext ec, Value methodSource) {
-    ListImpl output = makeEmptyListWithCapacity(8);
+	// TODO: #generics: need a generic method type. For now, use the ANY type.
+    ListImpl output = makeEmptyList(null, 8);
     if (methodSource.type == Types.INSTANCE) {
         ObjectInstance objInstance1 = (ObjectInstance) methodSource.internalValue;
         ClassInfo classInfo = vm.metadata.classTable[objInstance1.classId];

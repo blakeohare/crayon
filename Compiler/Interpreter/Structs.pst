@@ -56,6 +56,12 @@ struct VmGlobals {
     Array<Value> positiveIntegers;
     Array<Value> negativeIntegers;
     Dictionary<string, Value> commonStrings;
+	Array<int> booleanType;
+	Array<int> intType;
+	Array<int> stringType;
+	Array<int> floatType;
+	Array<int> classType;
+	Array<int> anyInstanceType;
 }
 
 struct SymbolData {

@@ -111,7 +111,7 @@ Value performListSlice(VmGlobals globals, ExecutionContext ec, Value value, Valu
             value = buildString(globals, outputString.Join(""));
         } else {
             // List slice
-            outputList = makeEmptyListWithCapacity(10);
+            outputList = makeEmptyList(originalList.type, 10);
             if (isForward) {
                 // forward
                 while (begin < end) {
@@ -139,13 +139,13 @@ Value performListSlice(VmGlobals globals, ExecutionContext ec, Value value, Valu
         if (isString) {
             value = globals.stringEmpty;
         } else {
-            value = new Value(Types.LIST, makeEmptyListWithCapacity(0));
+            value = new Value(Types.LIST, makeEmptyList(originalList.type, 0));
         }
     } else if (status == 2) {
         // list is a simple clone
         // for strings, just leave it as-is since the root value is already stored in the return value variable.
         if (!isString) {
-            outputList = makeEmptyListWithCapacity(length);
+            outputList = makeEmptyList(originalList.type, length);
             for (i = 0; i < length; i += 1) {
                 if (@ext_boolean("ARRAY_IS_INT")) {
                     addToList(outputList, originalList.list[i]);

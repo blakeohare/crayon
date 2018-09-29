@@ -109,7 +109,7 @@ Value resource_manager_getResourceOfType(VmContext vm, string userPath, string t
     ResourceDB db = vm.resourceDatabase;
     Dictionary<string, ResourceInfo> lookup = db.fileInfo;
     if (lookup.Contains(userPath)) {
-        ListImpl output = makeEmptyListWithCapacity(2);
+        ListImpl output = makeEmptyList(null, 2);
         ResourceInfo file = lookup[userPath];
         if (Core.StringEquals(file.type, type)) {
             addToList(output, vm.globals.boolTrue);

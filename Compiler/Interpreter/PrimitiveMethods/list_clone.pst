@@ -3,7 +3,7 @@
 } else {
 
     len = list1.size;
-    list2 = makeEmptyListWithCapacity(len);
+    list2 = makeEmptyList(list1.type, len);
 
     if (@ext_boolean("ARRAY_IS_LIST")) {
         for (i = 0; i < len; i += 1) {

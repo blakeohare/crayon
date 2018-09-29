@@ -3,7 +3,7 @@
 */
 @import("ValueStackCapacityCheck.pst");
 
-list1 = makeEmptyList();
+list1 = makeEmptyList(globals.stringType, 3);
 for (i = 0; i < vm.environment.commandLineArgs.Length(); i += 1) {
     addToList(list1, buildString(globals, vm.environment.commandLineArgs[i]));
 }

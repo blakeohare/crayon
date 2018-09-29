@@ -411,7 +411,7 @@ if (staticConstructorNotInvoked) {
                             valueArray1[i] = classInfo.fieldInitializationLiteral[i];
                             break;
                         case 1:
-                            valueArray1[i] = new Value(Types.LIST, makeEmptyListWithCapacity(1));
+                            valueArray1[i] = new Value(Types.LIST, makeEmptyList(null, 1));
                             break;
                         case 2:
                             valueArray1[i] = new Value(Types.DICTIONARY, new DictImpl(
