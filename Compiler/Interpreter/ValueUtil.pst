@@ -109,9 +109,30 @@ VmGlobals initializeConstantValues() {
         new Value(Types.STRING, ""),
         pos,
         neg,
-        new Dictionary<string, Value>());
+        new Dictionary<string, Value>(),
+		new Array<int>(1),
+		new Array<int>(1),
+		new Array<int>(1),
+		new Array<int>(1),
+		new Array<int>(1),
+		new Array<int>(2));
     globals.commonStrings[""] = globals.stringEmpty;
+	globals.booleanType[0] = Types.BOOLEAN;
+	globals.intType[0] = Types.INTEGER;
+	globals.floatType[0] = Types.FLOAT;
+	globals.stringType[0] = Types.STRING;
+	globals.classType[0] = Types.CLASS;
+	globals.anyInstanceType[0] = Types.INSTANCE;
+	globals.anyInstanceType[1] = 0;
     return globals;
+}
+
+// TODO: #generics: pass in the globals object and cache these, maybe on the class definitions themselves
+Array<int> createInstanceType(int classId) {
+	Array<int> o = new Array<int>(2);
+	o[0] = Types.INSTANCE;
+	o[1] = classId;
+	return o;
 }
 
 Value buildInteger(VmGlobals g, int num) {
@@ -316,22 +337,13 @@ Value getItemFromList(ListImpl list, int i) {
     } else {
         return list.array[i];
     }
-
 }
 
-ListImpl makeEmptyList() {
+ListImpl makeEmptyList(Array<int> type, int capacity) {
     if (@ext_boolean("ARRAY_IS_LIST")) {
-        return new ListImpl(null, 0, new List<Value>());
+        return new ListImpl(type, 0, new List<Value>());
     } else {
-        return makeEmptyListWithCapacity(4);
-    }
-}
-
-ListImpl makeEmptyListWithCapacity(int capacity) {
-    if (@ext_boolean("ARRAY_IS_LIST")) {
-        return new ListImpl(null, 0, new List<Value>());
-    } else {
-        return new ListImpl(null, 0, capacity, new Array<Value>(capacity));
+        return new ListImpl(type, 0, capacity, new Array<Value>(capacity));
     }
 }
 
@@ -366,11 +378,15 @@ void increaseListCapacity(ListImpl list) {
 }
 
 Value buildList(List<Value> valueList) {
+	return buildListWithType(null, valueList);
+}
+
+Value buildListWithType(Array<int> type, List<Value> valueList) {
     if (@ext_boolean("ARRAY_IS_LIST")) {
-        return new Value(Types.LIST, new ListImpl(null, valueList.Size(), valueList));
+        return new Value(Types.LIST, new ListImpl(type, valueList.Size(), valueList));
     } else {
         int len = valueList.Size();
-        ListImpl output = makeEmptyListWithCapacity(len);
+        ListImpl output = makeEmptyList(type, len);
         for (int i = 0; i < len; i += 1) {
             output.array[i] = valueList[i];
         }
@@ -490,7 +506,7 @@ DictImpl cloneDictionary(DictImpl original, DictImpl clone) {
     int kInt = 0;
     string kString = null;
     if (clone == null) {
-        clone = new DictImpl(0, type, clone.valueType, new Dictionary<int, int>(), new Dictionary<string, int>(), new List<Value>(), new List<Value>());
+        clone = new DictImpl(0, type, original.valueType, new Dictionary<int, int>(), new Dictionary<string, int>(), new List<Value>(), new List<Value>());
         if (type == Types.STRING) {
             while (i < size) {
                 clone.stringToIndex[(string)original.keys[i].internalValue] = i;
@@ -637,7 +653,7 @@ ListImpl valueConcatLists(ListImpl a, ListImpl b) {
 
 ListImpl valueMultiplyList(ListImpl a, int n) {
     int len = a.size * n;
-    ListImpl output = makeEmptyListWithCapacity(len);
+    ListImpl output = makeEmptyList(a.type, len);
     if (len == 0) return output;
     int aLen = a.size;
     int i = 0;

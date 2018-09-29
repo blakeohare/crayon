@@ -4,7 +4,7 @@
     // TODO: create a Pastel list.Clone() method
     valueList1 = dictImpl.values;
     len = valueList1.Size();
-    list1 = makeEmptyListWithCapacity(len);
+    list1 = makeEmptyList(dictImpl.valueType, len);
     for (i = 0; i < len; i += 1) {
         addToList(list1, valueList1[i]);
     }
