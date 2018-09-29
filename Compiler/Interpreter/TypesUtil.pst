@@ -31,3 +31,261 @@ bool isClassASubclassOf(VmContext vm, int subClassId, int parentClassId) {
 
     return false;
 }
+
+string typeToString(VmContext vm, Array<int> typeInfo, int i) {
+    List<string> sb = new List<string>();
+    typeToStringBuilder(vm, sb, typeInfo, i);
+    return sb.Join("");
+}
+
+string typeToStringFromValue(VmContext vm, Value value) {
+    List<string> sb = null;
+    switch (value.type) {
+        case Types.NULL: return "null";
+        case Types.BOOLEAN: return "bool";
+        case Types.INTEGER: return "int";
+        case Types.FLOAT: return "float";
+        case Types.STRING: return "string";
+        case Types.CLASS: return "class";
+
+        case Types.INSTANCE:
+            int classId = Core.ForceParens((ObjectInstance) value.internalValue).classId;
+            ClassInfo classInfo = vm.metadata.classTable[classId];
+            return classInfo.fullyQualifiedName;
+
+        case Types.LIST:
+            sb = new List<string>();
+            sb.Add("List<");
+            ListImpl list = (ListImpl) value.internalValue;
+            if (list.type == null) {
+                sb.Add("object");
+            } else {
+                typeToStringBuilder(vm, sb, list.type, 0);
+            }
+            sb.Add(">");
+            return sb.Join("");
+
+        case Types.DICTIONARY:
+            DictImpl dict = (DictImpl) value.internalValue;
+            sb = new List<string>();
+            sb.Add("Dictionary<");
+            switch (dict.keyType) {
+                case Types.INTEGER:
+                    sb.Add("int");
+                    break;
+                case Types.STRING:
+                    sb.Add("string");
+                    break;
+                case Types.INSTANCE:
+                    sb.Add("object");
+                    break;
+                default:
+                    // This is invalid at the moment
+                    sb.Add("???");
+                    break;
+            }
+
+            sb.Add(", ");
+
+            if (dict.valueType == null) {
+                sb.Add("object");
+            } else {
+                typeToStringBuilder(vm, sb, dict.valueType, 0);
+            }
+            sb.Add(">");
+
+            return sb.Join("");
+
+        case Types.FUNCTION:
+            // TODO: #generics: implement this.
+            return "Function";
+
+        default:
+            return "Unknown";
+    }
+}
+
+int typeToStringBuilder(VmContext vm, List<string> sb, Array<int> typeInfo, int i) {
+    switch (typeInfo[i]) {
+        // This happens with function return types.
+        case -1:
+            sb.Add("void");
+            return i + 1;
+
+        case 0:
+        case Types.NULL:
+            sb.Add("object");
+            return i + 1;
+
+        case Types.INTEGER: sb.Add("int"); return i + 1;
+        case Types.FLOAT: sb.Add("float"); return i + 1;
+        case Types.BOOLEAN: sb.Add("bool"); return i + 1;
+        case Types.STRING: sb.Add("string"); return i + 1;
+
+        case Types.LIST:
+            sb.Add("List<");
+            i = typeToStringBuilder(vm, sb, typeInfo, i + 1);
+            sb.Add(">");
+            return i;
+
+        case Types.DICTIONARY:
+            sb.Add("Dictionary<");
+            i = typeToStringBuilder(vm, sb, typeInfo, i + 1);
+            sb.Add(", ");
+            i = typeToStringBuilder(vm, sb, typeInfo, i);
+            sb.Add(">");
+            return i;
+
+        case Types.INSTANCE:
+            int classId = typeInfo[i + 1];
+            if (classId == 0) {
+                sb.Add("object");
+            } else {
+                ClassInfo classInfo = vm.metadata.classTable[classId];
+                sb.Add(classInfo.fullyQualifiedName);
+            }
+            return i + 2;
+
+        case Types.CLASS:
+            sb.Add("Class");
+            return i + 1;
+
+        case Types.FUNCTION:
+            int n = typeInfo[i + 1];
+            int optCount = typeInfo[i + 2];
+            i += 2;
+            sb.Add("function(");
+            List<string> ret = new List<string>();
+            i = typeToStringBuilder(vm, ret, typeInfo, i);
+            for (int j = 1; j < n; j += 1) {
+                if (j > 1) sb.Add(", ");
+                i = typeToStringBuilder(vm, sb, typeInfo, i);
+            }
+            if (n == 1) {
+                sb.Add("void");
+            }
+            sb.Add(" => ");
+            int optStart = n - optCount - 1;
+            for (j = 0; j < ret.Size(); j += 1) {
+                if (j >= optStart) sb.Add("(opt) ");
+                sb.Add(ret[j]);
+            }
+            sb.Add(")");
+            return i;
+
+        default:
+            sb.Add("UNKNOWN");
+            return i + 1;
+    }
+}
+
+/*
+    Returns the given value or a converted version if it can be successfully converted.
+
+    Returns null if no conversion exists.
+*/
+Value canAssignTypeToGeneric(VmContext vm, Value value, Array<int> generics, int genericIndex) {
+
+    switch (value.type) {
+        case Types.NULL:
+            switch (generics[genericIndex]) {
+                case Types.STRING:
+                case Types.INSTANCE:
+                case Types.CLASS:
+                case Types.FUNCTION:
+                case Types.LIST:
+                case Types.DICTIONARY:
+                    return value;
+            }
+            return null;
+
+        case Types.BOOLEAN:
+        case Types.STRING:
+        case Types.CLASS:
+            if (generics[genericIndex] == value.type) {
+                return value;
+            }
+            return null;
+
+        case Types.INTEGER:
+            if (generics[genericIndex] == Types.INTEGER) {
+                return value;
+            }
+            if (generics[genericIndex] == Types.FLOAT) {
+                return buildFloat(vm.globals, 0.0 + (int) value.internalValue);
+            }
+            return null;
+
+        case Types.FLOAT:
+            if (generics[genericIndex] == Types.FLOAT) {
+                return value;
+            }
+            return null;
+
+        case Types.LIST:
+            ListImpl list = (ListImpl) value.internalValue;
+            Array<int> listType = list.type;
+            genericIndex += 1;
+            if (listType == null) {
+                // TODO: #generics: you're using both 1 (Types.NULL) and 0 as the sentinel value for object. Please get this down to just one.
+                if (generics[genericIndex] == 1 ||
+                    generics[genericIndex] == 0) {
+                    return value;
+                }
+                return null;
+            }
+            for (int i = 0; i < listType.Length(); i += 1) {
+                if (listType[i] != generics[genericIndex + i]) {
+                    return null;
+                }
+            }
+            return value;
+
+        case Types.DICTIONARY:
+            DictImpl dict = (DictImpl) value.internalValue;
+            int j = genericIndex;
+            switch (dict.keyType) {
+                case Types.INTEGER:
+                case Types.STRING:
+                    if (generics[1] == dict.keyType) {
+                        j += 2;
+                    } else {
+                        return null;
+                    }
+                    break;
+                case Types.INSTANCE:
+                    if (generics[1] == Types.INSTANCE) {
+                        j += 3;
+                    } else {
+                        return null;
+                    }
+                    break;
+            }
+            Array<int> valueType = dict.valueType;
+            if (valueType == null) {
+                // TODO: #generics: get these sentinel values down to just one.
+                if (generics[j] == 0 || generics[j] == 1) {
+                    return value;
+                }
+                return null;
+            }
+            for (int k = 0; k < valueType.Length(); k += 1) {
+                if (valueType[k] != generics[j + k]) {
+                    return null;
+                }
+            }
+            return value;
+
+        case Types.INSTANCE:
+            if (generics[genericIndex] == Types.INSTANCE) {
+                int targetClassId = generics[genericIndex + 1];
+                int givenClassId = Core.ForceParens((ObjectInstance) value.internalValue).classId;
+                if (targetClassId == givenClassId) return value;
+                if (isClassASubclassOf(vm, givenClassId, targetClassId)) {
+                    return value;
+                }
+            }
+            return null;
+    }
+    return null;
+}
