@@ -140,7 +140,7 @@ namespace Graphics2D {
         }
 
         static function quad(ax, ay, bx, by, cx, cy, dx, dy, r, g, b, a = 255) {
-            // TODO: if this makes a bowtime, and this is an OpenGL based platform,
+            // TODO: if this makes a bowtie, and this is an OpenGL based platform,
             // decompose this into two triangle draws.
             return $$$('intQueueWrite16', Graphics2D.Draw._queue,
                 _DrawCommands.QUAD,
