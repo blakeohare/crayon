@@ -22,7 +22,7 @@
     CORE_FUNCTION, // 1: function ID
     DEF_ORIGINAL_CODE, // 1: file ID, string arg: source code of that file with a preceding line for the file name.
     DEF_DICTIONARY, // 1: size
-    DEF_LIST, // 1: size
+    DEF_LIST,
     DEREF_CLOSURE, // 1: var ID
     DEREF_DOT, // 1: field ID
     DEREF_INSTANCE_FIELD, // 1: member ID
