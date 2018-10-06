@@ -207,6 +207,7 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     Array<Array<int>> esfData = vm.metadata.esfData;
     Dictionary<int, ClosureValuePointer> closure = null;
     Dictionary<int, ClosureValuePointer> parentClosure = null;
+    Array<int> intBuffer = new Array<int>(16);
 
     Array<Value> localsStack = ec.localsStack;
     Array<int> localsStackSet = ec.localsStackSet;
