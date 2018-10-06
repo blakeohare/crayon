@@ -68,17 +68,31 @@ if (type == Types.LIST) {
     }
 
     if (!hasInterrupt) {
-        bool2 = dictImpl.size > 0; // already contains stuff
-        if (bool2 && dictImpl.keyType != keyType) {
-            hasInterrupt = EX_InvalidKey(ec, "Cannot have multiple keys in one dictionary with different types.");
-        } else if (keyType == Types.STRING) {
+        bool2 = dictImpl.size == 0; // dictionary is empty
+        if (dictImpl.keyType != keyType) {
+            if (dictImpl.valueType != null) {
+                // keys don't match and this is a strongly typed dictionary
+                hasInterrupt = EX_InvalidKey(ec, "Cannot assign a key of this type to this dictionary.");
+            } else if (!bool2) {
+                // keys don't match and this dictionary has stuff in it so you can't change it.
+                hasInterrupt = EX_InvalidKey(ec, "Cannot have multiple keys in one dictionary with different types.");
+            }
+        } else if (keyType == Types.INSTANCE && dictImpl.keyClassId > 0 && objInstance1.classId != dictImpl.keyClassId) {
+            if (isClassASubclassOf(vm, objInstance1.classId, dictImpl.keyClassId)) {
+                hasInterrupt = EX_InvalidKey(ec, "Cannot use this type of object as a key for this dictionary.");
+            }
+        }
+    }
+
+    if (!hasInterrupt) {
+        if (keyType == Types.STRING) {
             int1 = dictImpl.stringToIndex.TryGet(stringKey, -1);
             if (int1 == -1) {
                 dictImpl.stringToIndex[stringKey] = dictImpl.size;
                 dictImpl.size += 1;
                 dictImpl.keys.Add(value2);
                 dictImpl.values.Add(value);
-                if (!bool2) { // is empty?
+                if (bool2) { // is empty?
                     dictImpl.keyType = keyType;
                 }
             } else {
@@ -91,7 +105,7 @@ if (type == Types.LIST) {
                 dictImpl.size += 1;
                 dictImpl.keys.Add(value2);
                 dictImpl.values.Add(value);
-                if (!bool2) { // is empty?
+                if (bool2) { // is empty?
                     dictImpl.keyType = keyType;
                 }
             } else {

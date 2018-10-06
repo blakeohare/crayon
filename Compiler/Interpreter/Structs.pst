@@ -11,6 +11,7 @@
 struct DictImpl {
     int size;
     int keyType;
+    int keyClassId;
     Array<int> valueType;
     Dictionary<int, int> intToIndex;
     Dictionary<string, int> stringToIndex;

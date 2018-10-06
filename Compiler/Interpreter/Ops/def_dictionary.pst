@@ -65,7 +65,12 @@ if (!hasInterrupt) {
 
     // TODO: this needs to be cached
     i = row[1];
+    classId = 0;
     if (i > 0) {
+        type = row[1]; // could already be set by initial values, which would have been type checked at compile time. Overwriting is okay.
+        if (type == Types.INSTANCE) {
+            classId = row[3];
+        }
         int1 = row.Length();
         intArray1 = new Array<int>(int1 - i);
         while (i < int1) {
@@ -80,6 +85,7 @@ if (!hasInterrupt) {
     valueStack[valueStackSize] = new Value(Types.DICTIONARY, new DictImpl(
         len,
         type,
+        classId,
         intArray1,
         intIntDict1,
         stringIntDict1,

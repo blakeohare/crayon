@@ -480,7 +480,7 @@ string stringFromHex(string encoded) {
 // TODO: rename this to buildStringObjectDictionary. It's used by the JSON library.
 Value buildStringDictionary(VmGlobals globals, Array<string> stringKeys, Array<Value> values) {
     int size = stringKeys.Length();
-    DictImpl d = new DictImpl(size, Types.STRING, null, new Dictionary<int, int>(), new Dictionary<string, int>(), new List<Value>(), new List<Value>());
+    DictImpl d = new DictImpl(size, Types.STRING, 0, null, new Dictionary<int, int>(), new Dictionary<string, int>(), new List<Value>(), new List<Value>());
     string k = null;
     for (int i = 0; i < size; i += 1) {
         k = stringKeys[i];
@@ -507,7 +507,7 @@ DictImpl cloneDictionary(DictImpl original, DictImpl clone) {
     int kInt = 0;
     string kString = null;
     if (clone == null) {
-        clone = new DictImpl(0, type, original.valueType, new Dictionary<int, int>(), new Dictionary<string, int>(), new List<Value>(), new List<Value>());
+        clone = new DictImpl(0, type, original.keyClassId, original.valueType, new Dictionary<int, int>(), new Dictionary<string, int>(), new List<Value>(), new List<Value>());
         if (type == Types.STRING) {
             while (i < size) {
                 clone.stringToIndex[(string)original.keys[i].internalValue] = i;
