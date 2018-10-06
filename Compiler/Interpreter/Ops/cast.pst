@@ -74,4 +74,6 @@ if (value2 == null) {
 if (value2 == null) {
     // TODO: add a toString method in ValueUtil for types.
     hasInterrupt = EX_InvalidArgument(ec, Core.StringConcatAll("Cannot convert a ", typeToStringFromValue(vm, value), " to a ", typeToString(vm, row, 0)));
+} else {
+    valueStack[valueStackSize - 1] = value2;
 }

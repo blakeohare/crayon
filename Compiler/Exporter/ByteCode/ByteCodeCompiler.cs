@@ -324,8 +324,10 @@ namespace Exporter.ByteCode
                 {
                     if (fd.Modifiers.HasStatic && fd.DefaultValue != null && !(fd.DefaultValue is NullConstant))
                     {
+                        FieldReference fieldRef = new FieldReference(fd.FirstToken, fd, fd);
+                        fieldRef.ResolvedType = fd.ResolvedFieldType;
                         Executable assignment = new Assignment(
-                            new FieldReference(fd.FirstToken, fd, fd),
+                            fieldRef,
                             null,
                             fd.NameToken,
                             Ops.EQUALS,
