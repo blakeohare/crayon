@@ -20,7 +20,17 @@ namespace Exporter.ByteCode.Nodes
 
             bcc.CompileExpressionList(parser, buffer, expressionList, true);
 
-            buffer.Add(dictDef.FirstToken, OpCode.DEF_DICTIONARY, itemCount);
+            List<int> args = new List<int>();
+            args.Add(itemCount);
+            args.Add(0);
+            if (dictDef.CompilationScope.IsStaticallyTyped)
+            {
+                CastEncoder.EncodeTypeInfoToIntBuffer(args, dictDef.ResolvedKeyType, false);
+                args[1] = args.Count;
+                CastEncoder.EncodeTypeInfoToIntBuffer(args, dictDef.ResolvedValueType, false);
+            }
+
+            buffer.Add(dictDef.FirstToken, OpCode.DEF_DICTIONARY, args.ToArray());
         }
     }
 }

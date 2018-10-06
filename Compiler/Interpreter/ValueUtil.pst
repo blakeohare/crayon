@@ -477,6 +477,7 @@ string stringFromHex(string encoded) {
     return output.Join("");
 }
 
+// TODO: rename this to buildStringObjectDictionary. It's used by the JSON library.
 Value buildStringDictionary(VmGlobals globals, Array<string> stringKeys, Array<Value> values) {
     int size = stringKeys.Length();
     DictImpl d = new DictImpl(size, Types.STRING, null, new Dictionary<int, int>(), new Dictionary<string, int>(), new List<Value>(), new List<Value>());

@@ -1,4 +1,10 @@
-﻿
+﻿/*
+    row[0] -> number of key-value-pairs provided on the value stack
+    row[1] -> 0 if there is no type information. Otherwise, this is the index of the start of the value type.
+    row[2+] -> if there is type information, this is the beginning of the key type info
+    row[row[1]+] -> if there is type information, this is the beginning of the value type info
+*/
+
 intIntDict1 = new Dictionary<int, int>();
 stringIntDict1 = new Dictionary<string, int>();
 valueList2 = new List<Value>(); // keys
@@ -56,11 +62,25 @@ if (!hasInterrupt) {
 }
 
 if (!hasInterrupt) {
+
+    // TODO: this needs to be cached
+    i = row[1];
+    if (i > 0) {
+        int1 = row.Length();
+        intArray1 = new Array<int>(int1 - i);
+        while (i < int1) {
+            intArray1[i - row[1]] = row[i];
+            i += 1;
+        }
+    } else {
+        intArray1 = null;
+    }
+
     @import("ValueStackCapacityCheck.pst");
     valueStack[valueStackSize] = new Value(Types.DICTIONARY, new DictImpl(
         len,
         type,
-        null,
+        intArray1,
         intIntDict1,
         stringIntDict1,
         valueList2,
