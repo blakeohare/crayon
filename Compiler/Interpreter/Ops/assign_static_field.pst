@@ -8,5 +8,14 @@ classInfo = classTable[row[0]];
 
 if (staticConstructorNotInvoked) {
     valueStackSize -= 1;
+
+    // No type check necessary!
+    // dynamicallyTyped.field = dynamicallyTypedAssignment; <-- OK
+    // dynamicallyTyped.field = staticallyTypedAssignment; <-- OK
+    // stronglyTyped.field = staticlyTypedAssignment; <-- OK
+    // stronglyTyped.field = dynamicallyTypedAssignment; <-- NOT OK, BUT this does not happen.
+    //   this last pattern actually gets compiled with a cast...
+    // stronglyTyped.field = (Type) dynamicallyTypedAssignment;
+
     classInfo.staticFields[row[1]] = valueStack[valueStackSize];
 }

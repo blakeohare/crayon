@@ -8,12 +8,24 @@ namespace Exporter.ByteCode.Nodes
     {
         public static void Compile(ByteCodeCompiler bcc, ParserContext parser, ByteBuffer buffer, Assignment assignment)
         {
+            Expression target = assignment.Target;
+            Expression value = assignment.Value;
+
+            ResolvedType targetAssignmentType = target.ResolvedType;
+            if (targetAssignmentType == null) throw new Exception(); // should be ANY if no type is set.
+
+            if (value.ResolvedType == ResolvedType.ANY &&
+                targetAssignmentType != ResolvedType.ANY)
+            {
+                value = new Cast(value.FirstToken, targetAssignmentType, value, value.Owner, false);
+            }
+
             if (assignment.Op == Ops.EQUALS)
             {
                 if (assignment.Target is Variable)
                 {
                     Variable varTarget = (Variable)assignment.Target;
-                    bcc.CompileExpression(parser, buffer, assignment.Value, true);
+                    bcc.CompileExpression(parser, buffer, value, true);
                     VariableId varId = varTarget.LocalScopeId;
                     if (varId.UsedByClosure)
                     {
@@ -29,7 +41,7 @@ namespace Exporter.ByteCode.Nodes
                     BracketIndex bi = (BracketIndex)assignment.Target;
                     bcc.CompileExpression(parser, buffer, bi.Root, true);
                     bcc.CompileExpression(parser, buffer, bi.Index, true);
-                    bcc.CompileExpression(parser, buffer, assignment.Value, true);
+                    bcc.CompileExpression(parser, buffer, value, true);
                     buffer.Add(assignment.OpToken, OpCode.ASSIGN_INDEX, 0);
                 }
                 else if (assignment.Target is DotField)
@@ -37,13 +49,13 @@ namespace Exporter.ByteCode.Nodes
                     DotField dotStep = (DotField)assignment.Target;
                     if (dotStep.Root is ThisKeyword)
                     {
-                        bcc.CompileExpression(parser, buffer, assignment.Value, true);
+                        bcc.CompileExpression(parser, buffer, value, true);
                         buffer.Add(assignment.OpToken, OpCode.ASSIGN_THIS_FIELD, parser.GetId(dotStep.FieldToken.Value));
                     }
                     else
                     {
                         bcc.CompileExpression(parser, buffer, dotStep.Root, true);
-                        bcc.CompileExpression(parser, buffer, assignment.Value, true);
+                        bcc.CompileExpression(parser, buffer, value, true);
                         int nameId = parser.GetId(dotStep.FieldToken.Value);
                         int localeScopedNameId = nameId * parser.GetLocaleCount() + parser.GetLocaleId(dotStep.Owner.FileScope.CompilationScope.Locale);
                         buffer.Add(
@@ -59,7 +71,7 @@ namespace Exporter.ByteCode.Nodes
                 }
                 else if (assignment.Target is FieldReference)
                 {
-                    bcc.CompileExpression(parser, buffer, assignment.Value, true);
+                    bcc.CompileExpression(parser, buffer, value, true);
                     FieldReference fieldReference = (FieldReference)assignment.Target;
                     if (fieldReference.Field.Modifiers.HasStatic)
                     {
@@ -93,7 +105,7 @@ namespace Exporter.ByteCode.Nodes
                     int scopeId = isClosure ? varId.ClosureID : varId.ID;
 
                     buffer.Add(varTarget.FirstToken, isClosure ? OpCode.DEREF_CLOSURE : OpCode.LOCAL, scopeId);
-                    bcc.CompileExpression(parser, buffer, assignment.Value, true);
+                    bcc.CompileExpression(parser, buffer, value, true);
                     buffer.Add(assignment.OpToken, OpCode.BINARY_OP, (int)op);
                     buffer.Add(assignment.Target.FirstToken, isClosure ? OpCode.ASSIGN_CLOSURE : OpCode.ASSIGN_LOCAL, scopeId);
                 }
@@ -115,7 +127,7 @@ namespace Exporter.ByteCode.Nodes
                         assignment.ClassOwner == null ? -1 : assignment.ClassOwner.ClassID,
                         assignment.CompilationScope.ScopeNumId,
                         -1, 0);
-                    bcc.CompileExpression(parser, buffer, assignment.Value, true);
+                    bcc.CompileExpression(parser, buffer, value, true);
                     buffer.Add(assignment.OpToken, OpCode.BINARY_OP, (int)op);
                     if (dotExpr.Root is ThisKeyword)
                     {
@@ -142,7 +154,7 @@ namespace Exporter.ByteCode.Nodes
                     bcc.CompileExpression(parser, buffer, indexExpr.Index, true);
                     buffer.Add(null, OpCode.DUPLICATE_STACK_TOP, 2);
                     buffer.Add(indexExpr.BracketToken, OpCode.INDEX);
-                    bcc.CompileExpression(parser, buffer, assignment.Value, true);
+                    bcc.CompileExpression(parser, buffer, value, true);
                     buffer.Add(assignment.OpToken, OpCode.BINARY_OP, (int)op);
                     buffer.Add(assignment.OpToken, OpCode.ASSIGN_INDEX, 0);
                 }
@@ -150,7 +162,7 @@ namespace Exporter.ByteCode.Nodes
                 {
                     FieldReference fieldRef = (FieldReference)assignment.Target;
                     FieldReferenceEncoder.Compile(parser, buffer, fieldRef, true);
-                    bcc.CompileExpression(parser, buffer, assignment.Value, true);
+                    bcc.CompileExpression(parser, buffer, value, true);
                     buffer.Add(assignment.OpToken, OpCode.BINARY_OP, (int)op);
 
                     if (fieldRef.Field.Modifiers.HasStatic)
