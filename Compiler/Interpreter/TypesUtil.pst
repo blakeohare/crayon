@@ -289,3 +289,66 @@ Value canAssignTypeToGeneric(VmContext vm, Value value, Array<int> generics, int
     }
     return null;
 }
+
+// eg. list2.concat(list1), can it be done?
+// Note that NULL & 0 (object) are included in this list. This is for generics compatibility. The top level
+// generic is identified first with the gen1 == null.
+// For example, a List<Dictionary<int, object>> cannot be concatenated with a List<Dictionary<int, string>> but
+// a List<object> can have a List<string> concatenated to it.
+bool canAssignGenericToGeneric(
+    VmContext vm,
+    Array<int> gen1,
+    int gen1Index,
+    Array<int> gen2,
+    int gen2Index,
+    Array<int> newIndexOut) {
+
+    if (gen2 == null) return true;
+    if (gen1 == null) return false;
+    int t1 = gen1[gen1Index];
+    int t2 = gen2[gen2Index];
+    switch (t1) {
+        // TODO: merge these
+        case 0:
+        case Types.NULL:
+
+        case Types.BOOLEAN:
+        case Types.FLOAT:
+        case Types.STRING:
+        case Types.CLASS:
+            newIndexOut[0] = gen1Index + 1;
+            newIndexOut[1] = gen2Index + 2;
+            return t2 == t1;
+
+        case Types.INTEGER:
+            newIndexOut[0] = gen1Index + 1;
+            newIndexOut[1] = gen2Index + 2;
+            return t2 == Types.INTEGER || t2 == Types.FLOAT;
+
+        case Types.INSTANCE:
+            newIndexOut[0] = gen1Index + 1;
+            newIndexOut[1] = gen2Index + 2;
+            if (t2 != Types.INSTANCE) return false;
+            int c1 = gen1[gen1Index + 1];
+            int c2 = gen2[gen2Index + 1];
+            if (c1 == c2) return true;
+            return isClassASubclassOf(vm, c1, c2);
+
+        case Types.LIST:
+            if (t2 != Types.LIST) return false;
+            return canAssignGenericToGeneric(vm, gen1, gen1Index + 1, gen2, gen2Index + 1, newIndexOut);
+
+        case Types.DICTIONARY:
+            if (t2 != Types.DICTIONARY) return false;
+            if (!canAssignGenericToGeneric(vm, gen1, gen1Index + 1, gen2, gen2Index + 1, newIndexOut)) return false;
+            return canAssignGenericToGeneric(vm, gen1, newIndexOut[0], gen2, newIndexOut[1], newIndexOut);
+
+        case Types.FUNCTION:
+            if (t2 != Types.FUNCTION) return false;
+            // TODO: this.
+            return false;
+
+        default:
+            return false;
+    }
+}
