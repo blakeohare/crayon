@@ -369,23 +369,14 @@ namespace Exporter.ByteCode
                 int fieldNameId = parser.GetId(fd.NameToken.Value);
                 int initInstruction;
                 int literalId = 0;
-                if (fd.DefaultValue is ListDefinition && ((ListDefinition)fd.DefaultValue).Items.Length == 0)
+
+                // TODO: get rid of init instruction since everything is just 0 now.
+                initInstruction = 0;
+                literalId = parser.GetLiteralId(fd.DefaultValue);
+                if (literalId == -1)
                 {
-                    initInstruction = 1;
-                }
-                else if (fd.DefaultValue is DictionaryDefinition && ((DictionaryDefinition)fd.DefaultValue).Keys.Length == 0)
-                {
-                    initInstruction = 2;
-                }
-                else
-                {
-                    initInstruction = 0;
-                    literalId = parser.GetLiteralId(fd.DefaultValue);
-                    if (literalId == -1)
-                    {
-                        literalId = parser.GetNullConstant();
-                        fieldsWithComplexValues.Add(fd);
-                    }
+                    literalId = parser.GetNullConstant();
+                    fieldsWithComplexValues.Add(fd);
                 }
 
                 members.AddRange(new int[] {
