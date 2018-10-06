@@ -1,0 +1,6 @@
+/*
+    row[0] -> class ID
+    row[1] -> member ID
+    row[2+] -> type information
+*/
+initializeClassFieldTypeInfo(vm, row);

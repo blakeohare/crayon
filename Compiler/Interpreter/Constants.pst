@@ -31,6 +31,7 @@
     EQUALS, // 1: 1 to reverse results
     ESF_LOOKUP, // [4n args, n = ESF token count] 4n+0: PC of try, 4n+1: PC of exception-sorter, 4n+2: PC of finally, 4n+3: value stack depth
     EXCEPTION_HANDLED_TOGGLE, // 1: boolean (0|1) indicating if the ExecutionContext's current exception should be marked as handled.
+    FIELD_TYPE_INFO,
     FINALIZE_INITIALIZATION, // no ops. This indicates that builder data (e.g. List<Value> literalTableBuilder) should be converted into final static data (Value[] literalTable).
     FINALLY_END, // indicates the end of a finally block. Responsible for bubbling exceptions or returning from the function if appropriate 1: break JUMP offset, 2: continue JUMP offset, 3: 0|1 bool if break offset has been set, 4: 0|1 bool if continue offset has been set
     FUNCTION_DEFINITION, // 1: function ID, 2: function name ID (or 0 for constructors), 3: min args, 4: max args, 5: type (0 - function, 1 - method, 2 - static method, 3 - constructor, 4 - static constructor), 6: class ID (if applicable), 7: locals count, 8: Jump (skip function body)
