@@ -208,6 +208,8 @@ struct ClassInfo {
 
     Dictionary<int, int> localeScopedNameIdToMemberId;
 
+    Array<Array<int>> typeInfo;
+
     string fullyQualifiedName;
 }
 

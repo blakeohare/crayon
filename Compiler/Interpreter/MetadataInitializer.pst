@@ -160,6 +160,7 @@ int initializeClass(int pc, VmContext vm, Array<int> args, string className) {
         null, // member ID -> access modifier. 1 - PUBLIC, 2 - PRIVATE, 3 - INTERNAL, 4 - PROTECTED, 5 - INTERNAL_PROTECTED
         null, // Global name ID -> member ID
         vm.metadata.classMemberLocalizerBuilder[classId], // Locale-scoped name ID -> member ID
+        null, // field type information
         className); // fully qualified class name
 
     Array<ClassInfo> classTable = getClassTable(vm, classId);
@@ -248,11 +249,34 @@ int initializeClass(int pc, VmContext vm, Array<int> args, string className) {
     classInfo.memberCount = functionIds.Size();
     classInfo.globalIdToMemberId = globalNameIdToMemberId;
 
+    // initialize type info for fields.
+    // copy the parent class information. information for this class is included in
+    // the ops that immediately follow this CLASS_DEFINITION
+    classInfo.typeInfo = new Array<Array<int>>(classInfo.memberCount);
+    if (baseClass != null) {
+        for (i = 0; i < baseClass.typeInfo.Length(); i += 1) {
+            classInfo.typeInfo[i] = baseClass.typeInfo[i];
+        }
+    }
+
     if (Core.StringEquals("Core.Exception", className)) {
         MagicNumbers mn = vm.metadata.magicNumbers;
         mn.coreExceptionClassId = classId;
     }
 
+    return 0;
+}
+
+int initializeClassFieldTypeInfo(VmContext vm, Array<int> opCodeRow) {
+    ClassInfo classInfo = vm.metadata.classTable[opCodeRow[0]];
+
+    int memberId = opCodeRow[1];
+    int len = opCodeRow.Length();
+    Array<int> typeInfo = new Array<int>(len - 2);
+    for (int i = 2; i < len; i += 1) {
+        typeInfo[i - 2] = opCodeRow[i];
+    }
+    classInfo.typeInfo[memberId] = typeInfo;
     return 0;
 }
 
@@ -481,6 +505,7 @@ int addNameImpl(VmContext vm, string nameValue) {
 }
 
 int finalizeInitializationImpl(VmContext vm, string projectId, int localeCount) {
+
     vm.symbolData.sourceCode = Core.ListToArray(vm.symbolData.sourceCodeBuilder);
     vm.symbolData.sourceCodeBuilder = null;
 

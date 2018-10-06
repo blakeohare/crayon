@@ -252,6 +252,7 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
             case OpCodes.EQUALS: Core.EmitComment("EQUALS"); @import("Ops/equals.pst"); break;
             case OpCodes.ESF_LOOKUP: Core.EmitComment("ESF_LOOKUP"); @import("Ops/esf_lookup.pst"); break;
             case OpCodes.EXCEPTION_HANDLED_TOGGLE: Core.EmitComment("EXCEPTION_HANDLED_TOGGLE"); @import("Ops/exception_handled_toggle.pst"); break;
+            case OpCodes.FIELD_TYPE_INFO: Core.EmitComment("FIELD_TYPE_INFO"); @import("Ops/field_type_info.pst"); break;
             case OpCodes.FINALIZE_INITIALIZATION: Core.EmitComment("FINALIZE_INITIALIZATION"); @import("Ops/finalize_initialization.pst"); break;
             case OpCodes.FINALLY_END: Core.EmitComment("FINALLY_END"); @import("Ops/finally_end.pst"); break;
             case OpCodes.FUNCTION_DEFINITION: Core.EmitComment("FUNCTION_DEFINITION"); @import("Ops/function_definition.pst"); break;

@@ -82,7 +82,19 @@ if (value2.type == Types.INSTANCE) {
     if (int1 > -1) {
         int2 = classInfo.functionIds[int1];
         if (int2 == -1) {
-            objInstance1.members[int1] = value;
+            // TODO: skip this type check if the compiler says it is not necessary
+
+            intArray1 = classInfo.typeInfo[int1];
+            if (intArray1 == null) {
+                objInstance1.members[int1] = value;
+            } else {
+                value2 = canAssignTypeToGeneric(vm, value, intArray1, 0);
+                if (value2 != null) {
+                    objInstance1.members[int1] = value2;
+                } else {
+                    hasInterrupt = EX_InvalidArgument(ec, "Cannot assign this type to this field.");
+                }
+            }
         } else {
             hasInterrupt = EX_InvalidArgument(ec, "Cannot override a method with assignment.");
         }

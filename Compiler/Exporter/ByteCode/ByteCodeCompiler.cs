@@ -436,6 +436,18 @@ namespace Exporter.ByteCode
             string fullyQualifiedName = classDefinition.GetFullyQualifiedLocalizedName(parser.RootScope.Locale);
 
             buffer.Add(classDefinition.FirstToken, OpCode.CLASS_DEFINITION, fullyQualifiedName, args.ToArray());
+            foreach (FieldDefinition fd in classDefinition.Fields)
+            {
+                if (fd.ResolvedFieldType != ResolvedType.ANY && !fd.Modifiers.HasStatic)
+                {
+                    List<int> typeArgs = new List<int>();
+                    typeArgs.Add(classDefinition.ClassID);
+                    typeArgs.Add(fd.MemberID);
+                    // TODO: change the last boolean to an enum to include behavior for not including FLOAT/INT conversion info
+                    CastEncoder.EncodeTypeInfoToIntBuffer(typeArgs, fd.ResolvedFieldType, false);
+                    buffer.Add(null, OpCode.FIELD_TYPE_INFO, typeArgs.ToArray());
+                }
+            }
         }
 
         private static int EncodeAccessModifier(ModifierCollection modifiers)
