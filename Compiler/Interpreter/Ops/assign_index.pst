@@ -41,6 +41,20 @@ if (type == Types.LIST) {
         hasInterrupt = EX_InvalidArgument(ec, "List index must be an integer.");
     }
 } else if (type == Types.DICTIONARY) {
+
+    dictImpl = (DictImpl) root.internalValue;
+
+    if (dictImpl.valueType != null) {
+        value3 = canAssignTypeToGeneric(vm, value, dictImpl.valueType, 0);
+        if (value3 == null) {
+            hasInterrupt = EX_InvalidArgument(ec, "Cannot assign a value to this dictionary of this type.");
+        } else {
+            value = value3;
+        }
+    }
+
+    // Note: if the value type check failed, this will overwrite the error, which is okay.
+    // The extra if statement to prevent doing this work in the event of a failure isn't worth it.
     keyType = value2.type;
     if (keyType == Types.INTEGER) {
         intKey = (int) value2.internalValue;
@@ -54,7 +68,6 @@ if (type == Types.LIST) {
     }
 
     if (!hasInterrupt) {
-        dictImpl = (DictImpl) root.internalValue;
         bool2 = dictImpl.size > 0; // already contains stuff
         if (bool2 && dictImpl.keyType != keyType) {
             hasInterrupt = EX_InvalidKey(ec, "Cannot have multiple keys in one dictionary with different types.");
