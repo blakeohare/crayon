@@ -23,7 +23,7 @@
         CONTINUE, // 0: flag if this has been set, 1: PC offset to jump to (generally BREAK gets resolved into JUMP unless a finally block needs to run.)
         CORE_FUNCTION, // 1: function ID
         DEF_ORIGINAL_CODE, // 1: file ID, string arg: source code of that file with a preceding line for the file name.
-        DEF_DICTIONARY, // 1: size
+        DEF_DICTIONARY,
         DEF_LIST,
         DEREF_CLOSURE, // 1: var ID
         DEREF_DOT, // 1: field ID
