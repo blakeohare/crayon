@@ -72,7 +72,13 @@ if (type == Types.LIST) {
         if (dictImpl.keyType != keyType) {
             if (dictImpl.valueType != null) {
                 // keys don't match and this is a strongly typed dictionary
-                hasInterrupt = EX_InvalidKey(ec, "Cannot assign a key of this type to this dictionary.");
+                string1 = Core.StringConcatAll(
+                    "Cannot assign a key of type ",
+                    typeToStringFromValue(vm, value2),
+                    " to a dictionary that requires key types of ",
+                    dictKeyInfoToString(vm, dictImpl),
+                    ".");
+                hasInterrupt = EX_InvalidKey(ec, string1);
             } else if (!bool2) {
                 // keys don't match and this dictionary has stuff in it so you can't change it.
                 hasInterrupt = EX_InvalidKey(ec, "Cannot have multiple keys in one dictionary with different types.");

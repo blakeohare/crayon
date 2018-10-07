@@ -13,9 +13,24 @@
             if (dictImpl.size == 0) {
                 value.internalValue = cloneDictionary(dictImpl2, null);
             } else if (dictImpl2.keyType != dictImpl.keyType) {
-                hasInterrupt = EX_InvalidKey(ec, "dictionaries with different key types cannot be merged.");
+                hasInterrupt = EX_InvalidKey(ec, "Dictionaries with different key types cannot be merged.");
+            } else if (dictImpl2.keyType == Types.INSTANCE &&
+                dictImpl2.keyClassId != dictImpl.keyClassId &&
+                dictImpl.keyClassId != 0 && // this handles cases where the dictionary is created in a dynamically typed scope
+                !isClassASubclassOf(vm, dictImpl2.keyClassId, dictImpl.keyClassId)) {
+                hasInterrupt = EX_InvalidKey(ec, "Dictionary key types are incompatible.");
             } else {
-                cloneDictionary(dictImpl2, dictImpl); // no need to overwrite value.internalValue, changes written directly to dictImpl.
+                if (dictImpl.valueType == null) {
+                    // This is fine.
+                } else if (dictImpl2.valueType == null) {
+                    hasInterrupt = EX_InvalidKey(ec, "Dictionaries with different value types cannot be merged.");
+                } else if (!canAssignGenericToGeneric(vm, dictImpl2.valueType, 0, dictImpl.valueType, 0, intBuffer)) {
+                    hasInterrupt = EX_InvalidKey(ec, "The dictionary value types are incompatible.");
+                }
+
+                if (!hasInterrupt) {
+                    cloneDictionary(dictImpl2, dictImpl); // no need to overwrite value.internalValue, changes written directly to dictImpl.
+                }
             }
         }
 

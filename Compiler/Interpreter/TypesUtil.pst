@@ -105,6 +105,23 @@ string typeToStringFromValue(VmContext vm, Value value) {
     }
 }
 
+string dictKeyInfoToString(VmContext vm, DictImpl dict) {
+    if (dict.keyType == Types.STRING) return "string";
+    if (dict.keyType == Types.INTEGER) return "int";
+    if (dict.keyClassId == 0) return "instance";
+    return classIdToString(vm, dict.keyClassId);
+}
+
+string classIdToString(VmContext vm, int classId) {
+    return vm.metadata.classTable[classId].fullyQualifiedName;
+}
+
+string typeInfoToString(VmContext vm, Array<int> typeInfo, int i) {
+    List<string> output = new List<string>();
+    typeToStringBuilder(vm, output, typeInfo, i);
+    return output.Join("");
+}
+
 int typeToStringBuilder(VmContext vm, List<string> sb, Array<int> typeInfo, int i) {
     switch (typeInfo[i]) {
         // This happens with function return types.

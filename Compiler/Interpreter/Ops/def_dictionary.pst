@@ -67,7 +67,7 @@ if (!hasInterrupt) {
     i = row[1];
     classId = 0;
     if (i > 0) {
-        type = row[1]; // could already be set by initial values, which would have been type checked at compile time. Overwriting is okay.
+        type = row[2]; // could already be set by initial values, which would have been type checked at compile time. Overwriting is okay.
         if (type == Types.INSTANCE) {
             classId = row[3];
         }
