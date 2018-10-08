@@ -349,7 +349,7 @@ namespace Parser.ParseTree
 
                         case "clear": return BuildPrimitiveMethod(ResolvedType.VOID);
                         case "clone": return BuildPrimitiveMethod(rootType);
-                        case "contains": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, valueType);
+                        case "contains": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, keyType);
                         case "get": return BuildPrimitiveMethodWithOptionalArgs(valueType, 1, keyType, valueType);
                         case "keys": return BuildPrimitiveMethod(ResolvedType.ListOrArrayOf(keyType));
                         case "merge": return BuildPrimitiveMethod(ResolvedType.VOID, rootType);
