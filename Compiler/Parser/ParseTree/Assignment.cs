@@ -202,12 +202,36 @@ namespace Parser.ParseTree
 
             this.Target = this.Target.ResolveTypes(parser, typeResolver);
 
+            // These are special cases that are valid:
+            //   list *= num,
+            //   string *= num,
+            //   string += any non-null value
+            ResolvedTypeCategory leftCategory = this.Target.ResolvedType.Category;
+            ResolvedTypeCategory rightCategory = this.Value.ResolvedType.Category;
+            bool specialCase = false;
+            if ((leftCategory == ResolvedTypeCategory.STRING || leftCategory == ResolvedTypeCategory.LIST) &&
+                rightCategory == ResolvedTypeCategory.INTEGER &&
+                this.Op == Ops.MULTIPLICATION)
+            {
+                specialCase = true;
+            }
+            else if (leftCategory == ResolvedTypeCategory.STRING && this.Op == Ops.ADDITION)
+            {
+                if (rightCategory != ResolvedTypeCategory.NULL)
+                {
+                    specialCase = true;
+                }
+            }
+
             if (!this.Target.CanAssignTo)
             {
                 throw new ParserException(this.Target, "Cannot assign to this type of expression.");
             }
 
-            this.Value.ResolvedType.EnsureCanAssignToA(this.Value.FirstToken, this.Target.ResolvedType);
+            if (!specialCase)
+            {
+                this.Value.ResolvedType.EnsureCanAssignToA(this.Value.FirstToken, this.Target.ResolvedType);
+            }
         }
     }
 }
