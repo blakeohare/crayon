@@ -82,7 +82,7 @@ namespace Parser
                 Token assignment = tokens.Pop();
                 Expression assignmentValue = this.parser.ExpressionParser.Parse(tokens, owner);
                 if (semicolonPresent) tokens.PopExpected(";");
-                return new Assignment(expr, null, assignment, assignmentValue, false, owner);
+                return new Assignment(expr, null, assignment, assignmentValue, owner);
             }
 
             if (semicolonPresent)

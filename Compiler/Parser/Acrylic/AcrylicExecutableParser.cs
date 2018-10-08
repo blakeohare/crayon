@@ -28,15 +28,12 @@ namespace Parser.Acrylic
                     }
                     else if (tokens.IsNext(";"))
                     {
-                        assignmentValue = new NullConstant(tokens.Peek(), owner);
-
                         return new Assignment(
                             new Variable(variableToken, variableToken.Value, owner),
                             variableDeclarationType,
                             assignmentOpToken,
                             Ops.EQUALS,
-                            assignmentValue,
-                            true,
+                            null,
                             owner);
                     }
 
@@ -47,7 +44,6 @@ namespace Parser.Acrylic
                             variableDeclarationType,
                             assignmentOpToken,
                             assignmentValue,
-                            false,
                             owner);
                     }
                 }

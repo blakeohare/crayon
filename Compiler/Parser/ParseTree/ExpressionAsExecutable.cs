@@ -30,7 +30,6 @@ namespace Parser.ParseTree
                     null,
                     inc.IncrementToken,
                     new IntegerConstant(inc.IncrementToken, 1, this.Owner),
-                    false,
                     this.Owner);
                 return output.Resolve(parser);
             }

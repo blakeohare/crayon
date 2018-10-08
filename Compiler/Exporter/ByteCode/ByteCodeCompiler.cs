@@ -332,7 +332,6 @@ namespace Exporter.ByteCode
                             fd.NameToken,
                             Ops.EQUALS,
                             fd.DefaultValue,
-                            false,
                             fd);
                         staticFieldInitializers.Add(assignment);
                     }

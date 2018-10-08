@@ -14,18 +14,7 @@ namespace Exporter.ByteCode.Nodes
             ResolvedType targetAssignmentType = target.ResolvedType;
             if (targetAssignmentType == null) throw new Exception(); // should be ANY if no type is set.
 
-            if (assignment.UseDefaultValue)
-            {
-                switch (targetAssignmentType.Category)
-                {
-                    case ResolvedTypeCategory.ANY: break;
-                    case ResolvedTypeCategory.BOOLEAN: value = new BooleanConstant(null, false, assignment.Owner); break;
-                    case ResolvedTypeCategory.INTEGER: value = new IntegerConstant(null, 0, assignment.Owner); break;
-                    case ResolvedTypeCategory.FLOAT: value = new FloatConstant(null, 0.0, assignment.Owner); break;
-                    default: value = new NullConstant(null, assignment.Owner); break;
-                }
-            }
-            else if (value.ResolvedType == ResolvedType.ANY &&
+            if (value.ResolvedType == ResolvedType.ANY &&
                  targetAssignmentType != ResolvedType.ANY)
             {
                 value = new Cast(value.FirstToken, targetAssignmentType, value, value.Owner, false);
