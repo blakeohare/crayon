@@ -117,7 +117,8 @@ namespace Parser.ParseTree
             }
         }
 
-        private void EnsureModifierAndTypeSignatureConsistencyForNonMethods() {
+        private void EnsureModifierAndTypeSignatureConsistencyForNonMethods()
+        {
             Token badToken = null;
             if (this.Modifiers.HasAbstract) badToken = this.Modifiers.AbstractToken;
             if (this.Modifiers.HasOverride) badToken = this.Modifiers.OverrideToken;
@@ -191,7 +192,15 @@ namespace Parser.ParseTree
 
                     if (overriddenFunction.ResolvedReturnType != this.ResolvedReturnType)
                     {
-                        throw new ParserException(this, "This function returns a different type than its overridden parent.");
+                        if (overriddenFunction.ResolvedReturnType == ResolvedType.ANY &&
+                            this.ResolvedReturnType == ResolvedType.OBJECT)
+                        {
+                            // This is fine.
+                        }
+                        else
+                        {
+                            throw new ParserException(this, "This function returns a different type than its overridden parent.");
+                        }
                     }
 
                     if (overriddenFunction.ArgTypes.Length != this.ArgTypes.Length)
@@ -209,7 +218,10 @@ namespace Parser.ParseTree
                     // statically typed language should require "object" types in its signature for the other direction.
                     for (int i = 0; i < this.ArgTypes.Length; ++i)
                     {
-                        if (this.ResolvedArgTypes[i] != overriddenFunction.ResolvedArgTypes[i])
+                        ResolvedType expected = overriddenFunction.ResolvedArgTypes[i];
+                        ResolvedType actual = this.ResolvedArgTypes[i];
+                        if (actual != expected &&
+                            !(actual == ResolvedType.OBJECT && expected == ResolvedType.ANY))
                         {
                             throw new ParserException(this, "This function has arguments that are different types than its overridden parent.");
                         }
