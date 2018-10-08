@@ -456,10 +456,35 @@ namespace Parser.ParseTree
 
             // The op will always have some types registered, so you can dereference the first level of lookups without checking.
             Dictionary<ResolvedTypeCategory, Dictionary<ResolvedTypeCategory, OperationType>> l1 = consolidationLookup[op];
-            if (!l1.ContainsKey(leftType)) return null;
-            Dictionary<ResolvedTypeCategory, OperationType> l2 = l1[leftType];
-            if (!l2.ContainsKey(rightType)) return null;
-            return l2[rightType];
+            if (l1.ContainsKey(leftType))
+            {
+                Dictionary<ResolvedTypeCategory, OperationType> l2 = l1[leftType];
+                if (l2.ContainsKey(rightType))
+                {
+                    return l2[rightType];
+                }
+            }
+
+            if (op == "==")
+            {
+                // == comparisons between different kinds of objects should resolve to false at compile time.
+                // Lazily initialize these operation types as they are encountered.
+                if (leftType != rightType &&
+                    !(leftType == ResolvedTypeCategory.INTEGER && rightType == ResolvedTypeCategory.FLOAT) &&
+                    !(leftType == ResolvedTypeCategory.FLOAT && rightType == ResolvedTypeCategory.INTEGER) &&
+                    leftType != ResolvedTypeCategory.ANY &&
+                    rightType != ResolvedTypeCategory.ANY &&
+                    leftType != ResolvedTypeCategory.OBJECT &&
+                    rightType != ResolvedTypeCategory.OBJECT)
+                {
+                    if (!consolidationLookup[op].ContainsKey(leftType)) consolidationLookup[op][leftType] = new Dictionary<ResolvedTypeCategory, OperationType>();
+                    OperationType ot = new OperationType(leftType, rightType, op, ResolvedType.BOOLEAN, (opChain) => { return MakeBool(opChain.FirstToken, false); });
+                    consolidationLookup[op][leftType][rightType] = ot;
+                    return ot;
+                }
+            }
+
+            return null;
         }
 
         private class OperationType
