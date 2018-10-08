@@ -127,6 +127,9 @@ namespace Parser.ParseTree
                     }
                     break;
 
+                case ResolvedTypeCategory.INSTANCE:
+                    throw new ParserException(this.Index, "Cannot use brackets to index into an instance of " + this.Root.ResolvedType.ClassTypeOrReference.NameToken.Value + ".");
+
                 default:
                     throw new ParserException(this.Root, "Cannot index into this kind of value.");
             }
