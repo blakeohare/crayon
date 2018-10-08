@@ -14,8 +14,8 @@ namespace Parser.ParseTree
         public Expression[] Keys { get; private set; }
         public Expression[] Values { get; private set; }
 
-        public DictionaryDefinition(Token braceToken, AType keyType, AType valueType, IList<Expression> keys, IList<Expression> values, Node owner)
-            : base(braceToken, owner)
+        public DictionaryDefinition(Token firstToken, AType keyType, AType valueType, IList<Expression> keys, IList<Expression> values, Node owner)
+            : base(firstToken, owner)
         {
             this.KeyType = keyType;
             this.ValueType = valueType;

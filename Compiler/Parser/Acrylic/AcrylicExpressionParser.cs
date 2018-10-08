@@ -20,20 +20,48 @@ namespace Parser.Acrylic
 
             AType className = this.ParseTypeForInstantiation(tokens);
 
-            if (className.RootType == "[" && tokens.IsNext("{"))
+            switch (className.RootType)
             {
-                List<Expression> items = this.ParseArrayDeclarationItems(tokens, owner);
+                case "[":
+                    throw new ParserException(newToken, "Arrays are not supported yet.");
 
-                // Use normal list for now just to get things working.
-                // TODO: Introducing native array types.
-                return new ListDefinition(newToken, items, className.Generics[0], owner);
-            }
-            else
-            {
-                IList<Expression> args = this.ParseArgumentList(tokens, owner);
+                case "List":
+                    tokens.PopExpected("(");
+                    tokens.PopExpected(")");
+                    List<Expression> items;
+                    if (tokens.IsNext("{"))
+                    {
+                        items = this.ParseArrayDeclarationItems(tokens, owner);
+                    } else
+                    {
+                        items = new List<Expression>();
+                    }
+                    return new ListDefinition(newToken, items, className.Generics[0], owner);
 
-                return new Instantiate(newToken, className.FirstToken, className.RootType, className.Generics, args, owner);
+                case "Dictionary":
+                    tokens.PopExpected("(");
+                    tokens.PopExpected(")");
+                    List<Expression> dictionaryKeys = new List<Expression>();
+                    List<Expression> dictionaryValues = new List<Expression>();
+                    if (tokens.IsNext("{"))
+                    {
+                        this.ParseDictionaryInlineItems(tokens, dictionaryKeys, dictionaryValues, owner);
+                    }
+                    return new DictionaryDefinition(
+                        newToken,
+                        className.Generics[0],
+                        className.Generics[1],
+                        dictionaryKeys,
+                        dictionaryValues,
+                        owner);
+
+                default:
+                    break;
             }
+
+            IList<Expression> args = this.ParseArgumentList(tokens, owner);
+
+            return new Instantiate(newToken, className.FirstToken, className.RootType, className.Generics, args, owner);
         }
 
         private List<Expression> ParseArrayDeclarationItems(TokenStream tokens, Node owner)
@@ -50,6 +78,22 @@ namespace Parser.Acrylic
                 output.Add(item);
             }
             return output;
+        }
+
+        private void ParseDictionaryInlineItems(TokenStream tokens, List<Expression> keysOut, List<Expression> valuesOut, Node owner)
+        {
+            tokens.PopExpected("{");
+            bool nextAllowed = true;
+            while (!tokens.PopIfPresent("}"))
+            {
+                if (!nextAllowed) tokens.PopExpected("}"); // crashes intentionally
+                Expression key = this.Parse(tokens, owner);
+                tokens.PopExpected(":");
+                Expression value = this.Parse(tokens, owner);
+                nextAllowed = tokens.PopIfPresent(",");
+                keysOut.Add(key);
+                valuesOut.Add(value);
+            }
         }
 
         protected override AType MaybeParseCastPrefix(TokenStream tokens)
