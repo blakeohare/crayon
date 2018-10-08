@@ -117,8 +117,8 @@ namespace Parser.Acrylic
                             case "object":
                                 return output;
                         }
-
-                        switch (tokens.Peek().Type)
+                        Token nextToken = tokens.Peek();
+                        switch (nextToken.Type)
                         {
                             case TokenType.NUMBER:
                             case TokenType.STRING:
@@ -126,6 +126,12 @@ namespace Parser.Acrylic
                                 return output;
 
                             case TokenType.KEYWORD:
+                                switch (nextToken.Value)
+                                {
+                                    case "this":
+                                    case "base":
+                                        return output;
+                                }
                                 break;
 
                             case TokenType.PUNCTUATION:
