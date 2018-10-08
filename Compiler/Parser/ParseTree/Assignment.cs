@@ -22,16 +22,17 @@ namespace Parser.ParseTree
         public Variable TargetAsVariable { get { return this.Target as Variable; } }
         public AType NullableTypeDeclaration { get; private set; }
         public ResolvedType ResolvedNullableTypeDeclaration { get; private set; }
+        public bool UseDefaultValue { get; private set; }
 
-        public Assignment(Expression target, AType nullableDeclarationType, Token assignmentOpToken, Ops opOverride, Expression assignedValue, Node owner)
-            : this(true, target, nullableDeclarationType, assignmentOpToken, opOverride, assignedValue, owner)
+        public Assignment(Expression target, AType nullableDeclarationType, Token assignmentOpToken, Ops opOverride, Expression assignedValue, bool useDefaultValue, Node owner)
+            : this(true, target, nullableDeclarationType, assignmentOpToken, opOverride, assignedValue, useDefaultValue, owner)
         { }
 
-        public Assignment(Expression target, AType nullableDeclarationType, Token assignmentOpToken, Expression assignedValue, Node owner)
-            : this(true, target, nullableDeclarationType, assignmentOpToken, GetOpFromToken(assignmentOpToken), assignedValue, owner)
+        public Assignment(Expression target, AType nullableDeclarationType, Token assignmentOpToken, Expression assignedValue, bool useDefaultValue, Node owner)
+            : this(true, target, nullableDeclarationType, assignmentOpToken, GetOpFromToken(assignmentOpToken), assignedValue, useDefaultValue, owner)
         { }
 
-        private Assignment(bool nonAmbiguousIgnored, Expression target, AType nullableTypeDeclaration, Token assignmentOpToken, Ops op, Expression assignedValue, Node owner)
+        private Assignment(bool nonAmbiguousIgnored, Expression target, AType nullableTypeDeclaration, Token assignmentOpToken, Ops op, Expression assignedValue, bool useDefaultValue, Node owner)
             : base(target.FirstToken, owner)
         {
             this.Target = target;
@@ -39,6 +40,7 @@ namespace Parser.ParseTree
             this.Op = op;
             this.Value = assignedValue;
             this.NullableTypeDeclaration = nullableTypeDeclaration;
+            this.UseDefaultValue = useDefaultValue;
 
             if (this.NullableTypeDeclaration != null)
             {

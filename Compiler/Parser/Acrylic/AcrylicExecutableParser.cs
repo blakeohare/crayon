@@ -26,9 +26,18 @@ namespace Parser.Acrylic
                     {
                         assignmentValue = this.parser.ExpressionParser.Parse(tokens, owner);
                     }
-                    else if (tokens.PopIfPresent(";"))
+                    else if (tokens.IsNext(";"))
                     {
-                        assignmentValue = new NullConstant(tokens.Pop(), owner);
+                        assignmentValue = new NullConstant(tokens.Peek(), owner);
+
+                        return new Assignment(
+                            new Variable(variableToken, variableToken.Value, owner),
+                            variableDeclarationType,
+                            assignmentOpToken,
+                            Ops.EQUALS,
+                            assignmentValue,
+                            true,
+                            owner);
                     }
 
                     if (assignmentValue != null)
@@ -38,6 +47,7 @@ namespace Parser.Acrylic
                             variableDeclarationType,
                             assignmentOpToken,
                             assignmentValue,
+                            false,
                             owner);
                     }
                 }
