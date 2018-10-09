@@ -15,7 +15,9 @@ namespace ImageResources {
         private bool _isLoaded = false;
 
         constructor(List<BasicImageSheet> sheets) : base() {
-            this._orderedSheets = sheets.clone();
+
+            this._orderedSheets = new List<ImageSheet>() + sheets;
+
             if (sheets.length == 0) {
                 this._isLoaded = true;
             } else {

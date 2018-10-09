@@ -71,12 +71,12 @@ namespace ImageResources {
             if (isAsync) {
                 this._loader = new ImageSheetLoaderAsync(tiles).load();
             } else {
-                Dictionary<string, ImageLoader> lookup = new Dictionary<string, ImageLoader>();
+                Dictionary<string, ImageResource> lookup = new Dictionary<string, ImageResource>();
                 for (ManifestTileInfo tile : tiles) {
                     string genName = tile.genFileName;
                     int width = tile.width;
                     int height = tile.height;
-                    lookup[genName] = (ImageLoader) ImageLoader._loadImpl(
+                    lookup[genName] = (ImageResource) ImageLoader._loadImpl(
                         genName,
                         true, // is generated name
                         false, // is asynchronous

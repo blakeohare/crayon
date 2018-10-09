@@ -220,6 +220,17 @@ namespace Parser
                 return false;
             }
 
+            if (this.Category == ResolvedTypeCategory.LIST || this.Category == ResolvedTypeCategory.DICTIONARY)
+            {
+                for (int i = 0; i < this.Generics.Length; ++i)
+                {
+                    if (this.Generics[i] == targetType.Generics[i]) { }
+                    else if (this.Generics[i] == ANY && targetType.Generics[i] == OBJECT) { }
+                    else { return false; }
+                }
+                return true;
+            }
+
             return true;
         }
 

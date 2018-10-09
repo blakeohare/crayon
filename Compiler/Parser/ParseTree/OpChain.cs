@@ -294,9 +294,14 @@ namespace Parser.ParseTree
                 case "+":
                     if (left.Category == ResolvedTypeCategory.LIST && right.Category == ResolvedTypeCategory.LIST)
                     {
-                        if (left.ListItemType == right.ListItemType)
+                        if (left.ListItemType == right.ListItemType ||
+                            right.ListItemType.CanAssignToA(left.ListItemType))
                         {
                             return left;
+                        }
+                        if (left.ListItemType.CanAssignToA(right.ListItemType))
+                        {
+                            return right;
                         }
                     }
                     break;

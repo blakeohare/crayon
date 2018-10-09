@@ -15,7 +15,7 @@ namespace ImageResources {
             this._width = width;
             this._height = height;
             if (init) {
-                List<int> size = new List<int>() { width, height };
+                List<object> size = new List<object>() { width, height };
                 this._nativeResource = new NativeImageData(NativeImageDataConstructionType.SIZE, size);
             }
         }
