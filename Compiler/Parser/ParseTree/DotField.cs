@@ -370,6 +370,12 @@ namespace Parser.ParseTree
                     FieldDefinition fieldDef = rootType.ClassTypeOrReference.GetField(field, true);
                     if (fieldDef != null)
                     {
+                        if (!Node.IsAccessAllowed(this, fieldDef))
+                        {
+                            ClassDefinition cd = fieldDef.ClassOwner;
+                            throw new ParserException(FieldToken, "The field '" + cd.NameToken.Value + "." + this.FieldToken.Value + "' is not accessible from here due to its access scope.");
+                        }
+
                         this.ResolvedType = fieldDef.ResolvedFieldType;
                         return this;
                     }

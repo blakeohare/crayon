@@ -50,7 +50,7 @@ namespace ImageResources {
         private ManifestSheetInfo _info;
         private ImageSheetLoaderAsync _loader;
         private string _name;
-        private string _id;
+        internal string _id;
 
         // List where the chunk ID is the index and the value is an ImageResource instance.
         private List<ImageResource> _chunks;
