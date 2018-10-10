@@ -18,6 +18,7 @@ namespace Crayon
         private static readonly string GEN_DEFAULT_PROJ_ES = "genDefaultProjES";
         private static readonly string GEN_DEFAULT_PROJ_JP = "genDefaultProjJP";
         private static readonly string SHOW_LIB_STACK = "showLibStack";
+        private static readonly string ERROR_CHECK_ONLY = "errorCheckOnly"; // don't compile resources or generate byte code. Simply generate compile errors.
 
         private static readonly HashSet<string> ATOMIC_FLAGS = new HashSet<string>() {
             READABLE_BYTE_CODE,
@@ -25,6 +26,7 @@ namespace Crayon
             SHOW_PERFORMANCE_MARKERS,
             CBX,
             SHOW_LIB_STACK,
+            ERROR_CHECK_ONLY,
         };
 
         private static readonly HashSet<string> ONE_ARG_FLAGS = new HashSet<string>()
@@ -56,10 +58,29 @@ namespace Crayon
             List<string> argsMutable = new List<string>(args);
             for (i = 0; i < argsMutable.Count; ++i)
             {
-                if (argsMutable[i] == "-" + SHOW_LIB_STACK)
+                if (argsMutable[i].StartsWith("-CR:"))
                 {
-                    argsMutable.RemoveAt(i);
-                    output[SHOW_LIB_STACK] = "";
+                    string name = argsMutable[i].Substring("-CR:".Length);
+                    if (ATOMIC_FLAGS.Contains(name))
+                    {
+                        output[name] = "";
+                        argsMutable.RemoveAt(i--);
+                    }
+                    else if (ONE_ARG_FLAGS.Contains(name) && i + 1 < argsMutable.Count)
+                    {
+                        string value;
+                        if (i + 1 == argsMutable.Count || argsMutable[i + 1].StartsWith("-CR:"))
+                        {
+                            value = "";
+                        }
+                        else
+                        {
+                            value = argsMutable[i + 1];
+                            argsMutable.RemoveAt(i + 1);
+                        }
+                        output[name] = value;
+                        argsMutable.RemoveAt(i--);
+                    }
                 }
             }
             args = argsMutable.ToArray();
@@ -176,6 +197,7 @@ namespace Crayon
             if (args.ContainsKey(CBX)) command.CbxExportPath = args[CBX].Trim();
             command.ShowPerformanceMarkers = args.ContainsKey(SHOW_PERFORMANCE_MARKERS);
             command.ShowLibraryDepTree = args.ContainsKey(LIBRARY_DEP_TREE);
+            command.IsErrorCheckOnly = args.ContainsKey(ERROR_CHECK_ONLY);
 
             return command;
         }

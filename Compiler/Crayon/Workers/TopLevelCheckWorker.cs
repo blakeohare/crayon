@@ -10,6 +10,7 @@ namespace Crayon
         EXPORT_CBX,
         RUN_CBX,
         SHOW_USAGE,
+        ERROR_CHECK_ONLY,
     }
 
     internal class TopLevelCheckWorker
@@ -31,6 +32,7 @@ namespace Crayon
         {
             if (command.IsGenerateDefaultProject) return ExecutionType.GENERATE_DEFAULT_PROJECT;
             if (command.IsEmpty) return ExecutionType.SHOW_USAGE;
+            if (command.IsErrorCheckOnly) return ExecutionType.ERROR_CHECK_ONLY;
             if (command.IsVmExportCommand) return ExecutionType.EXPORT_VM_STANDALONE;
             if (command.HasTarget) return ExecutionType.EXPORT_VM_BUNDLE;
             if (command.IsCbxExport) return ExecutionType.EXPORT_CBX;
