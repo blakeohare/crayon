@@ -7,6 +7,29 @@ namespace Crayon.Pipeline
 {
     internal static class MainPipeline
     {
+        private static void NotifyStatusChange(ExportCommand command, string status)
+        {
+            if (command.UseOutputPrefixes)
+            {
+                Console.WriteLine("STATUS: " + status);
+            }
+        }
+
+        private static void WriteCompileInformation(ExportCommand command, string value)
+        {
+            if (command.UseOutputPrefixes)
+            {
+                foreach (string line in value.Split('\n'))
+                {
+                    Console.WriteLine("COMP: " + line.TrimEnd());
+                }
+            }
+            else
+            {
+                Console.WriteLine(value);
+            }
+        }
+
         public static void Run()
         {
             ExportCommand command = new TopLevelCheckWorker().DoWorkImpl();
@@ -36,6 +59,7 @@ namespace Crayon.Pipeline
                     break;
 
                 case ExecutionType.ERROR_CHECK_ONLY:
+                    NotifyStatusChange(command, "COMPILE-START");
                     if (command.IsJsonOutput)
                     {
                         try
@@ -44,17 +68,19 @@ namespace Crayon.Pipeline
                         }
                         catch (Exception e)
                         {
-                            RenderErrorInfoAsJson(e);
+                            RenderErrorInfoAsJson(command, e);
                         }
                     }
                     else
                     {
                         DoExportStandaloneCbxFileAndGetPath(command, true);
-                        RenderErrorInfoAsJson(null); // renders the JSON object with the right schema, but empty.
+                        RenderErrorInfoAsJson(command, null); // renders the JSON object with the right schema, but empty.
                     }
+                    NotifyStatusChange(command, "COMPILE-END");
                     break;
 
                 case ExecutionType.EXPORT_CBX:
+                    NotifyStatusChange(command, "COMPILE-START");
                     if (command.IsJsonOutput)
                     {
                         try
@@ -63,49 +89,57 @@ namespace Crayon.Pipeline
                         }
                         catch (Exception e)
                         {
-                            RenderErrorInfoAsJson(e);
+                            RenderErrorInfoAsJson(command, e);
                         }
                     }
                     else
                     {
                         DoExportStandaloneCbxFileAndGetPath(command, false);
                     }
+                    NotifyStatusChange(command, "COMPILE-END");
                     break;
 
                 case ExecutionType.RUN_CBX:
+                    NotifyStatusChange(command, "COMPILE-START");
                     string cbxFileLocation = null;
                     if (command.IsJsonOutput)
                     {
                         try
                         {
                             cbxFileLocation = DoExportStandaloneCbxFileAndGetPath(command, false);
+                            NotifyStatusChange(command, "COMPILE-END");
                         }
                         catch (Exception e)
                         {
-                            RenderErrorInfoAsJson(e);
+                            RenderErrorInfoAsJson(command, e);
+                            NotifyStatusChange(command, "COMPILE-END");
+                            NotifyStatusChange(command, "RUN-ABORTED");
                             return;
                         }
                     }
                     else
                     {
                         cbxFileLocation = DoExportStandaloneCbxFileAndGetPath(command, false);
+                        NotifyStatusChange(command, "COMPILE-END");
                     }
 
                     string cmdLineFlags = new RunCbxFlagBuilderWorker().DoWorkImpl(command, cbxFileLocation);
 
                     if (command.ShowPerformanceMarkers)
                     {
-                        ShowPerformanceMetrics();
+                        ShowPerformanceMetrics(command);
                     }
 
-                    new RunCbxWorker().DoWorkImpl(cmdLineFlags);
+                    NotifyStatusChange(command, "RUN-START");
 
+                    new RunCbxWorker().DoWorkImpl(cmdLineFlags);
+                    NotifyStatusChange(command, "RUN-COMPLETE");
                     return;
             }
 
             if (command.ShowPerformanceMarkers)
             {
-                ShowPerformanceMetrics();
+                ShowPerformanceMetrics(command);
             }
         }
 
@@ -124,7 +158,7 @@ namespace Crayon.Pipeline
             }
         }
 
-        private static void RenderErrorInfoAsJson(System.Exception exception)
+        private static void RenderErrorInfoAsJson(ExportCommand command, Exception exception)
         {
             List<System.Exception> exceptions = new List<System.Exception>();
             if (exception != null)
@@ -176,13 +210,23 @@ namespace Crayon.Pipeline
             }
             sb.Append(" ] }");
             string output = sb.ToString();
-            System.Console.WriteLine(output);
+            WriteCompileInformation(command, output);
         }
 
-        private static void ShowPerformanceMetrics()
+        private static void ShowPerformanceMetrics(ExportCommand command)
         {
 #if DEBUG
-            System.Console.WriteLine(Common.PerformanceTimer.GetSummary());
+            if (command.UseOutputPrefixes)
+            {
+                foreach (string line in Common.PerformanceTimer.GetSummary().Split('\n'))
+                {
+                    System.Console.WriteLine("PERF: " + line.TrimEnd());
+                }
+            }
+            else
+            {
+                System.Console.WriteLine(Common.PerformanceTimer.GetSummary());
+            }
 #endif
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Common;
 using Exporter;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Crayon
@@ -10,13 +11,24 @@ namespace Crayon
         {
             string cbxFile = FileUtil.GetPlatformPath(finalCbxPath);
             int processId = System.Diagnostics.Process.GetCurrentProcess().Id;
-            string runtimeArgs = string.Join(",", command.DirectRunArgs.Select(s => Utf8Base64.ToBase64(s)));
-            string flags = "\"" + cbxFile + "\" vmpid:" + processId + " " + (command.DirectRunShowLibStack ? "showLibStack" : "ignore");
 
-            if (runtimeArgs.Length > 0)
+            List<string> flagGroups = new List<string>();
+            flagGroups.Add("\"" + cbxFile + "\"");
+            flagGroups.Add("parentProcessId:" + processId);
+            flagGroups.Add("showLibStack:" + (command.DirectRunShowLibStack ? "yes" : "no"));
+            flagGroups.Add("showOutputPrefixes:" + (command.UseOutputPrefixes ? "yes" : "no"));
+
+            int userCmdLineArgCount = command.DirectRunArgs.Length;
+            if (userCmdLineArgCount > 0)
             {
-                flags += " runtimeargs:" + runtimeArgs;
+                flagGroups.Add("runtimeargs:" + userCmdLineArgCount + ":" + string.Join(",", command.DirectRunArgs.Select(s => Utf8Base64.ToBase64(s))));
             }
+            else
+            {
+                flagGroups.Add("runtimeargs:0");
+            }
+
+            string flags = string.Join(" ", flagGroups);
             return flags;
         }
     }

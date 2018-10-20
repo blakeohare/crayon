@@ -27,8 +27,20 @@ namespace Crayon
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
             };
-            appProcess.OutputDataReceived += (sender, e) => { if (e.Data != null) Console.WriteLine(e.Data); };
-            appProcess.ErrorDataReceived += (sender, e) => { if (e.Data != null) Console.Error.WriteLine(e.Data); };
+            appProcess.OutputDataReceived += (sender, e) =>
+            {
+                if (e.Data != null)
+                {
+                    Console.WriteLine(e.Data);
+                }
+            };
+            appProcess.ErrorDataReceived += (sender, e) =>
+            {
+                if (e.Data != null)
+                {
+                    Console.Error.WriteLine(e.Data);
+                }
+            };
             appProcess.Start();
             appProcess.BeginOutputReadLine();
             appProcess.BeginErrorReadLine();

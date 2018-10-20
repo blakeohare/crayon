@@ -19,7 +19,17 @@ namespace Crayon
         private static readonly string GEN_DEFAULT_PROJ_JP = "genDefaultProjJP";
         private static readonly string SHOW_LIB_STACK = "showLibStack";
         private static readonly string ERROR_CHECK_ONLY = "errorCheckOnly"; // don't compile resources or generate byte code. Simply generate compile errors.
+
+        // enable compile time output.
         private static readonly string JSON_OUTPUT = "jsonOutput";
+
+        // Use prefixes for each line of output
+        // COMP: compile time information
+        // STATUS: give some sort of status change. Options: COMPILE-START, COMPILE-END, RUN-START, RUN-ABORTED, RUN-COMPLETED
+        // STDOUT: standard output
+        // STDERR: standard error output
+        // STACKTRACE: stack trace information
+        private static readonly string USE_OUTPUT_PREFIXES = "useOutputPrefixes";
 
         private static readonly HashSet<string> ATOMIC_FLAGS = new HashSet<string>() {
             READABLE_BYTE_CODE,
@@ -29,6 +39,7 @@ namespace Crayon
             SHOW_LIB_STACK,
             ERROR_CHECK_ONLY,
             JSON_OUTPUT,
+            USE_OUTPUT_PREFIXES,
         };
 
         private static readonly HashSet<string> ONE_ARG_FLAGS = new HashSet<string>()
@@ -100,13 +111,17 @@ namespace Crayon
                 {
                     string[] directRunArgs = new string[args.Length - 1];
                     Array.Copy(args, 1, directRunArgs, 0, directRunArgs.Length);
-                    return new ExportCommand()
+                    ExportCommand runCommand = new ExportCommand()
                     {
                         IsDirectCbxRun = true,
                         DirectRunArgs = directRunArgs,
                         BuildFilePath = args[0],
-                        DirectRunShowLibStack = output.ContainsKey(SHOW_LIB_STACK)
+                        DirectRunShowLibStack = output.ContainsKey(SHOW_LIB_STACK),
                     };
+
+                    ParseAdditionalArgs(runCommand, output);
+
+                    return runCommand;
                 }
             }
 
@@ -197,12 +212,19 @@ namespace Crayon
             if (args.ContainsKey(VM_DIR)) command.VmExportDirectory = args[VM_DIR].Trim();
             if (args.ContainsKey(VM)) command.VmPlatform = args[VM].Trim();
             if (args.ContainsKey(CBX)) command.CbxExportPath = args[CBX].Trim();
+
+            ParseAdditionalArgs(command, args);
+
+            return command;
+        }
+
+        private static void ParseAdditionalArgs(ExportCommand command, Dictionary<string, string> args)
+        {
             command.ShowPerformanceMarkers = args.ContainsKey(SHOW_PERFORMANCE_MARKERS);
             command.ShowLibraryDepTree = args.ContainsKey(LIBRARY_DEP_TREE);
             command.IsErrorCheckOnly = args.ContainsKey(ERROR_CHECK_ONLY);
             command.IsJsonOutput = args.ContainsKey(JSON_OUTPUT);
-
-            return command;
+            command.UseOutputPrefixes = args.ContainsKey(USE_OUTPUT_PREFIXES);
         }
     }
 }

@@ -30,43 +30,55 @@ namespace CrayonRuntime
 
         private static void Run(string[] args)
         {
-            if (args.Length < 3) throw new Exception("Incorrect number of args. Requires path to a cbx file and parent process ID.");
+            if (args.Length < 2) throw new Exception("Incorrect number of args. Requires path to a cbx file and parent process ID.");
 
             List<string> argsList = new List<string>(args);
             string cbxPath = argsList[0];
-            string vmpidRaw = argsList[1];
-            string vmFlagsRaw = argsList[2];
-            string[] runtimeArgs = new string[0];
-            if (argsList.Count > 3 && argsList[2].StartsWith("runtimeargs:"))
+            Dictionary<string, string> vmArgs = new Dictionary<string, string>();
+            for (int i = 1; i < args.Length; ++i)
             {
-                runtimeArgs = argsList[3]
-                    .Substring("runtimeargs:".Length)
-                    .Split(',')
-                    .Select(s => Base64Decode(s))
-                    .ToArray();
+                string[] t = args[i].Split(':');
+                string key = t[0];
+                string value = t.Length > 1 ? t[1] : "";
+                for (int j = 2; j < t.Length; ++j)
+                {
+                    value += ":" + t[j];
+                }
+                vmArgs[key] = value.Trim();
             }
 
-            string[] vmFlags = vmFlagsRaw.Split(',');
-            bool showLibStack = false;
-            foreach (string vmFlag in vmFlags)
+            bool usePrefixes = vmArgs.ContainsKey("showOutputPrefixes") && vmArgs["showOutputPrefixes"] == "yes";
+            bool showLibStack = vmArgs.ContainsKey("showLibStack") && vmArgs["showLibStack"] == "yes";
+            int parentProcessId = 0;
+
+            if (!vmArgs.ContainsKey("parentProcessId") || !int.TryParse(vmArgs["parentProcessId"], out parentProcessId))
             {
-                switch (vmFlag)
+                throw new Exception("Invalid or missing parent process ID.");
+            }
+
+            string[] runtimeArgs = new string[0];
+            if (vmArgs.ContainsKey("runtimeargs"))
+            {
+                string[] runtimeArgData = vmArgs["runtimeargs"].Split(':');
+                if (runtimeArgData[0] != "0")
                 {
-                    case "showLibStack":
-                        showLibStack = true;
-                        break;
+                    runtimeArgs = runtimeArgData[2]
+                        .Split(',')
+                        .Select(s => Base64Decode(s))
+                        .ToArray();
                 }
             }
-            int vmPid = 0;
+
             if (!cbxPath.ToLower().EndsWith(".cbx")) throw new Exception("File must be a CBX file.");
             if (!System.IO.File.Exists(cbxPath)) throw new Exception("Given CBX file does not exist.");
-            if (!vmpidRaw.StartsWith("vmpid:") || !int.TryParse(vmpidRaw.Substring("vmpid:".Length), out vmPid)) throw new Exception("Invalid VM Process ID.");
 
-            if (vmPid > 0)
+            if (parentProcessId > 0)
             {
+                // Start a thread that checks for the parent process. If the parent process disappears, then
+                // the program should terminate.
                 System.Threading.Thread thread = new System.Threading.Thread(ParentChecker);
                 thread.IsBackground = true;
-                thread.Start(vmPid);
+                thread.Start(parentProcessId);
             }
 
             byte[] cbxData = System.IO.File.ReadAllBytes(cbxPath);
