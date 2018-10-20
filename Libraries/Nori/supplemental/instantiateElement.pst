@@ -7,17 +7,17 @@ Value lib_nori_instantiateElement(VmContext vm, Array<Value> args) {
     int type = (int) args[0].internalValue;
     ObjectInstance o = (ObjectInstance) args[1].internalValue;
     o.nativeData = new Array<object>(1);
-    List<Value> properties = Core.ForceParens((ListImpl) args[2].internalValue).items;
+    ListImpl properties = (ListImpl) args[2].internalValue;
     int x = 0;
     int y = 0;
     int width = 0;
     int height = 0;
 
-    if (properties[0].type == Types.INTEGER) {
-        x = (int) properties[0].internalValue;
-        y = (int) properties[1].internalValue;
-        width = (int) properties[4].internalValue;
-        height = (int) properties[5].internalValue;
+    if (getItemFromList(properties, 0).type == Types.INTEGER) {
+        x = (int) getItemFromList(properties, 0).internalValue;
+        y = (int) getItemFromList(properties, 1).internalValue;
+        width = (int) getItemFromList(properties, 4).internalValue;
+        height = (int) getItemFromList(properties, 5).internalValue;
     }
 
     // TODO: use a single reusable instance with an update mask
@@ -33,16 +33,16 @@ Value lib_nori_instantiateElement(VmContext vm, Array<Value> args) {
         255, // alpha
         "");
 
-    if (properties[16].type == Types.LIST) {
-        List<Value> bgColor = (List<Value>) properties[16].internalValue;
-        unboxed.bg_red = (int) bgColor[0].internalValue;
-        unboxed.bg_green = (int) bgColor[1].internalValue;
-        unboxed.bg_blue = (int) bgColor[2].internalValue;
-        unboxed.bg_alpha = (int) bgColor[3].internalValue;
+    if (getItemFromList(properties, 16).type == Types.LIST) {
+        ListImpl bgColor = (ListImpl) getItemFromList(properties, 16).internalValue;
+        unboxed.bg_red = (int) getItemFromList(bgColor, 0).internalValue;
+        unboxed.bg_green = (int) getItemFromList(bgColor, 1).internalValue;
+        unboxed.bg_blue = (int) getItemFromList(bgColor, 2).internalValue;
+        unboxed.bg_alpha = (int) getItemFromList(bgColor, 3).internalValue;
     }
 
-    if (properties[21].type == Types.STRING) {
-        unboxed.misc_string_0 = (string) properties[21].internalValue;
+    if (getItemFromList(properties, 21).type == Types.STRING) {
+        unboxed.misc_string_0 = (string) getItemFromList(properties, 21).internalValue;
     }
 
     o.nativeData[0] = Native._lib_nori_instantiateElement(type, unboxed);

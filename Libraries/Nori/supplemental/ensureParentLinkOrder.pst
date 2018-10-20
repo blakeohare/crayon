@@ -4,11 +4,11 @@
 */
 Value lib_nori_ensureParentLinkOrder(VmContext vm, Array<Value> args) {
     ObjectInstance parentObj = (ObjectInstance) args[0].internalValue;
-    List<Value> children = Core.ForceParens((ListImpl) args[1].internalValue).items;
-    int childrenCount = children.Size();
+    ListImpl children = (ListImpl) args[1].internalValue;
+    int childrenCount = children.size;
     Array<object> childrenElements = new Array<object>(childrenCount);
     for (int i = 0; i < childrenCount; i += 1) {
-        childrenElements[i] = Core.ForceParens((ObjectInstance)children[i].internalValue).nativeData[0];
+        childrenElements[i] = Core.ForceParens((ObjectInstance)getItemFromList(children, i).internalValue).nativeData[0];
     }
     Native._lib_nori_ensureParentLinkOrder(parentObj.nativeData[0], childrenElements);
     return vm.globalNull;

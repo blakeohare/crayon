@@ -11,12 +11,12 @@ Value lib_httpserver_getRequest(VmContext vm, Array<Value> args) {
 
     Native._lib_httpserver_getRequest(Core.StringBuffer16);
 
-    List<Value> list1 = Core.ForceParens((ListImpl) args[0].internalValue).items;
+    ListImpl output = (ListImpl) args[0].internalValue;
 
-    list1.Add(buildString(vm.globals, Core.StringBuffer16[0]));
-    list1.Add(buildString(vm.globals, Core.StringBuffer16[1]));
-    list1.Add(buildString(vm.globals, Core.StringBuffer16[2]));
-    list1.Add(buildString(vm.globals, Core.StringBuffer16[3]));
+    addToList(output, buildString(vm.globals, Core.StringBuffer16[0]));
+    addToList(output, buildString(vm.globals, Core.StringBuffer16[1]));
+    addToList(output, buildString(vm.globals, Core.StringBuffer16[2]));
+    addToList(output, buildString(vm.globals, Core.StringBuffer16[3]));
 
     return vm.globalNull;
 }

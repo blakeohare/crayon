@@ -8,10 +8,14 @@
 Value lib_imageencoder_encodeToBytes(VmContext vm, Array<Value> args) {
     object platformBitmap = getNativeDataItem(args[0], 0); // the platform bitmap instance
     int imageFormat = (int) args[1].internalValue; // 1: PNG, 2: JPEG
-    List<Value> byteOutputList = Core.ForceParens((ListImpl) args[2].internalValue).items;
-
+    List<Value> byteOutputList = new List<Value>();
     // TODO: return a Value since it's taking in the INTEGER_POSITIVE_CACHE anyway
-    int statusCode = Native._lib_imageencoder_encodeImage(platformBitmap, imageFormat, byteOutputList, INTEGER_POSITIVE_CACHE);
-
+    int statusCode = Native._lib_imageencoder_encodeImage(platformBitmap, imageFormat, byteOutputList, vm.globals.positiveIntegers);
+    int length = byteOutputList.Size();
+    ListImpl finalOutputList = (ListImpl) args[2].internalValue;
+    for (int i = 0; i < length; i += 1) {
+        // TODO: inline this for speed
+        addToList(finalOutputList, byteOutputList[i]);
+    }
     return buildInteger(vm.globals, statusCode);
 }

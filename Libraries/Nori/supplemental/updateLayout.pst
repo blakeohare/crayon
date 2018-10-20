@@ -6,11 +6,11 @@
     args[2] -> (List<Value<int>>) object type ID's
 */
 Value lib_nori_updateLayout(VmContext vm, Array<Value> args) {
-    List<Value> objects = Core.ForceParens((ListImpl) args[0].internalValue).items;
-    List<Value> propertyLists = Core.ForceParens(ListImpl) args[1].internalValue).items;
-    List<Value> typeIds = Core.ForceParens((ListImpl) args[2].internalValue).items;
+    ListImpl objects = (ListImpl) args[0].internalValue;
+    ListImpl propertyLists = (ListImpl) args[1].internalValue;
+    ListImpl typeIds = (ListImpl) args[2].internalValue;
 
-    int length = objects.Size();
+    int length = objects.size;
     ObjectInstance nativeObject = null;
     List<Value> properties = null;
     int typeId = 0;
@@ -20,9 +20,9 @@ Value lib_nori_updateLayout(VmContext vm, Array<Value> args) {
     int height = 0;
 
     for (int i = 0; i < length; i += 1) {
-        nativeObject = (ObjectInstance) objects[i].internalValue;
-        typeId = (int) typeIds[i].internalValue;
-        properties = (List<Value>) propertyLists[i].internalValue;
+        nativeObject = (ObjectInstance) getItemFromList(objects, i).internalValue;
+        typeId = (int) getItemFromList(typeIds, i).internalValue;
+        properties = (List<Value>) getItemFromList(propertyLists, i).internalValue;
         x = (int) properties[0].internalValue;
         y = (int) properties[1].internalValue;
         width = (int) properties[4].internalValue;

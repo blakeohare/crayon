@@ -4,12 +4,12 @@
 */
 Value lib_nori_instantiateWindow(VmContext vm, Array<Value> args) {
     ObjectInstance window = (ObjectInstance) args[0].internalValue;
-    List<Value> properties = Core.ForceParens((ListImpl) args[1].internalValue).items;
-    List<Value> size = Core.ForceParens((ListImpl) properties[1].internalValue).items;
+    ListImpl properties = (ListImpl) args[1].internalValue;
+    ListImpl size = (ListImpl) getItemFromList(properties, 1).internalValue;
     WindowProperties unboxed = new WindowProperties(
-        (string) properties[0].internalValue,
-        (int) size[0].internalValue,
-        (int) size[1].internalValue);
+        (string) getItemFromList(properties, 0).internalValue,
+        (int) getItemFromList(size, 0).internalValue,
+        (int) getItemFromList(size, 1).internalValue);
     window.nativeData = new Array<object>(1);
     window.nativeData[0] = Native._lib_nori_instantiateWindow(unboxed);
     return vm.globalNull;
