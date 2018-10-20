@@ -78,11 +78,11 @@ namespace CrayonRuntime
             string byteCode = cbxDecoder.ByteCode;
             if (byteCode == null) throw new Exception("CBX file did not contain byte code.");
 
-            TranslationHelper.CommandLineArgs = runtimeArgs;
             TranslationHelper.LibraryRegistry = new LibraryRegistry(cbxDecoder.LibraryVersionsByName);
             TranslationHelper.ImageSheetManifest = cbxDecoder.ImageSheetManifest;
             Interpreter.ResourceReader.CbxDirectory = System.IO.Path.GetDirectoryName(cbxPath);
             Interpreter.Structs.VmContext vm = CrayonWrapper.v_createVm(byteCode, cbxDecoder.ResourceManifest);
+            CrayonWrapper.v_vmEnvSetCommandLineArgs(vm, runtimeArgs);
             vm.environment.showLibStack = showLibStack;
             TranslationHelper.ProgramData = vm;
             TranslationHelper.StartInterpreter();

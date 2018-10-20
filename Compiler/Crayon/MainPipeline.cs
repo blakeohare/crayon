@@ -1,5 +1,7 @@
 ﻿using Build;
 using Exporter;
+using System;
+using System.Collections.Generic;
 
 namespace Crayon.Pipeline
 {
@@ -34,36 +36,60 @@ namespace Crayon.Pipeline
                     break;
 
                 case ExecutionType.ERROR_CHECK_ONLY:
-                    try
+                    if (command.IsJsonOutput)
                     {
-                        buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
-                        Exporter.Pipeline.PerformErrorCheckPipeline.Run(command, buildContext);
-
-                        RenderErrorInfo();
+                        try
+                        {
+                            DoExportStandaloneCbxFileAndGetPath(command, true);
+                        }
+                        catch (Exception e)
+                        {
+                            RenderErrorInfoAsJson(e);
+                        }
                     }
-                    catch (Parser.ParserException pe)
+                    else
                     {
-                        RenderErrorInfo(pe);
-                    }
-                    catch (Parser.MultiParserException mpe)
-                    {
-                        RenderErrorInfo(mpe.ParseExceptions);
-                    }
-                    catch (System.Exception e)
-                    {
-                        RenderErrorInfo(e);
+                        DoExportStandaloneCbxFileAndGetPath(command, true);
+                        RenderErrorInfoAsJson(null); // renders the JSON object with the right schema, but empty.
                     }
                     break;
 
                 case ExecutionType.EXPORT_CBX:
-                    buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
-                    Exporter.Pipeline.ExportStandaloneCbxPipeline.Run(command, buildContext);
+                    if (command.IsJsonOutput)
+                    {
+                        try
+                        {
+                            DoExportStandaloneCbxFileAndGetPath(command, false);
+                        }
+                        catch (Exception e)
+                        {
+                            RenderErrorInfoAsJson(e);
+                        }
+                    }
+                    else
+                    {
+                        DoExportStandaloneCbxFileAndGetPath(command, false);
+                    }
                     break;
 
                 case ExecutionType.RUN_CBX:
-
-                    buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
-                    string cbxFileLocation = Exporter.Pipeline.ExportStandaloneCbxPipeline.Run(command, buildContext);
+                    string cbxFileLocation = null;
+                    if (command.IsJsonOutput)
+                    {
+                        try
+                        {
+                            cbxFileLocation = DoExportStandaloneCbxFileAndGetPath(command, false);
+                        }
+                        catch (Exception e)
+                        {
+                            RenderErrorInfoAsJson(e);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        cbxFileLocation = DoExportStandaloneCbxFileAndGetPath(command, false);
+                    }
 
                     string cmdLineFlags = new RunCbxFlagBuilderWorker().DoWorkImpl(command, cbxFileLocation);
 
@@ -83,11 +109,39 @@ namespace Crayon.Pipeline
             }
         }
 
-        private static void RenderErrorInfo(params System.Exception[] exceptions)
+        private static string DoExportStandaloneCbxFileAndGetPath(ExportCommand command, bool isDryRunErrorCheck)
         {
+            BuildContext buildContext = new GetBuildContextCbxWorker().DoWorkImpl(command);
+
+            if (isDryRunErrorCheck)
+            {
+                Exporter.Pipeline.PerformErrorCheckPipeline.Run(command, buildContext);
+                return null;
+            }
+            else
+            {
+                return Exporter.Pipeline.ExportStandaloneCbxPipeline.Run(command, buildContext);
+            }
+        }
+
+        private static void RenderErrorInfoAsJson(System.Exception exception)
+        {
+            List<System.Exception> exceptions = new List<System.Exception>();
+            if (exception != null)
+            {
+                if (exception is Parser.MultiParserException)
+                {
+                    exceptions.AddRange(((Parser.MultiParserException)exception).ParseExceptions);
+                }
+                else
+                {
+                    exceptions.Add(exception);
+                }
+            }
+
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             sb.Append("{ \"errors\": [");
-            for (int i = 0; i < exceptions.Length; ++i)
+            for (int i = 0; i < exceptions.Count; ++i)
             {
                 if (i > 0) sb.Append(',');
                 Parser.FileScope fileInfo = null;

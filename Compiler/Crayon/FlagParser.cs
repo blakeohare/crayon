@@ -19,6 +19,7 @@ namespace Crayon
         private static readonly string GEN_DEFAULT_PROJ_JP = "genDefaultProjJP";
         private static readonly string SHOW_LIB_STACK = "showLibStack";
         private static readonly string ERROR_CHECK_ONLY = "errorCheckOnly"; // don't compile resources or generate byte code. Simply generate compile errors.
+        private static readonly string JSON_OUTPUT = "jsonOutput";
 
         private static readonly HashSet<string> ATOMIC_FLAGS = new HashSet<string>() {
             READABLE_BYTE_CODE,
@@ -27,6 +28,7 @@ namespace Crayon
             CBX,
             SHOW_LIB_STACK,
             ERROR_CHECK_ONLY,
+            JSON_OUTPUT,
         };
 
         private static readonly HashSet<string> ONE_ARG_FLAGS = new HashSet<string>()
@@ -198,6 +200,7 @@ namespace Crayon
             command.ShowPerformanceMarkers = args.ContainsKey(SHOW_PERFORMANCE_MARKERS);
             command.ShowLibraryDepTree = args.ContainsKey(LIBRARY_DEP_TREE);
             command.IsErrorCheckOnly = args.ContainsKey(ERROR_CHECK_ONLY);
+            command.IsJsonOutput = args.ContainsKey(JSON_OUTPUT);
 
             return command;
         }

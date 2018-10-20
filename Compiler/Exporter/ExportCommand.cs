@@ -14,6 +14,7 @@
         public bool ShowLibraryDepTree { get; set; }
         public bool IsDirectCbxRun { get; set; }
         public bool IsErrorCheckOnly { get; set; }
+        public bool IsJsonOutput { get; set; }
         public string[] DirectRunArgs { get; set; }
         public bool DirectRunShowLibStack { get; set; }
         public Platform.IPlatformProvider PlatformProvider { get; set; }
