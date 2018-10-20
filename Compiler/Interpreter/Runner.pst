@@ -97,7 +97,7 @@
         resources, // resource database
 
         new List<Value>(), // shutdown handlers
-        new VmEnvironment(new Array<string>(0), false), // VM Environment with default values.
+        new VmEnvironment(new Array<string>(0), false, null, null), // VM Environment with default values.
 
         // Globals
         globals,
@@ -132,7 +132,7 @@ InterpreterResult runInterpreter(VmContext vm, int executionContextId) {
         // TODO: don't generate the error in the interpreter. Instead just return the message and
         // the stack trace will be determined from the stack here. Also later add logic to
         // conditionally find symbol information here.
-        Core.PrintStdOut(result.errorMessage);
+        printToStdOut(vm.environment.stacktracePrefix, result.errorMessage);
         runShutdownHandlers(vm);
     }
     if (executionContextId == 0) {

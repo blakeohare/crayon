@@ -518,3 +518,16 @@ int vm_suspend_for_context(ExecutionContext ec, int status) {
     ec.executionStateChangeCommand = status;
     return 0;
 }
+
+int printToStdOut(string prefix, string line) {
+    if (prefix == null) {
+        Core.PrintStdOut(line);
+    } else {
+        string canonical = line.Replace("\r\n", "\n").Replace("\r", "\n");
+        Array<string> lines = canonical.Split("\n");
+        for (int i = 0; i < lines.Length(); i += 1) {
+            Core.PrintStdOut(Core.StringConcatAll(prefix, ": ", lines[i]));
+        }
+    }
+    return 0;
+}

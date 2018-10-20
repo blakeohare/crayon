@@ -35,7 +35,7 @@ switch (row[0]) {
         @import("FrameworkFunctions/1_arg.pst");
 
         output = VALUE_NULL;
-        Core.PrintStdOut(valueToString(vm, arg1));
+        printToStdOut(vm.environment.stdoutPrefix, valueToString(vm, arg1));
         break;
 
     case 4: Core.EmitComment("typeof");

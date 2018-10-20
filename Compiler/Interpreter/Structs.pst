@@ -98,6 +98,8 @@ struct VmContext {
 struct VmEnvironment {
     Array<string> commandLineArgs;
     bool showLibStack;
+    string stdoutPrefix;
+    string stacktracePrefix;
 }
 
 struct ExecutionContext {
