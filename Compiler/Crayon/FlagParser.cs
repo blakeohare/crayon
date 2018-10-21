@@ -18,14 +18,16 @@ namespace Crayon
         private static readonly string GEN_DEFAULT_PROJ_ES = "genDefaultProjES";
         private static readonly string GEN_DEFAULT_PROJ_JP = "genDefaultProjJP";
         private static readonly string SHOW_LIB_STACK = "showLibStack";
-        private static readonly string ERROR_CHECK_ONLY = "errorCheckOnly"; // don't compile resources or generate byte code. Simply generate compile errors.
+
+        // don't compile resources or generate byte code. Simply generate compile errors.
+        private static readonly string ERROR_CHECK_ONLY = "errorCheckOnly"; 
 
         // enable compile time output.
         private static readonly string JSON_OUTPUT = "jsonOutput";
 
         // Use prefixes for each line of output
         // COMP: compile time information
-        // STATUS: give some sort of status change. Options: COMPILE-START, COMPILE-END, RUN-START, RUN-ABORTED, RUN-COMPLETED
+        // STATUS: give some sort of status change. Options: COMPILE-START, COMPILE-END, RUN-START, RUN-ABORTED, RUN-END
         // STDOUT: standard output
         // STDERR: standard error output
         // STACKTRACE: stack trace information

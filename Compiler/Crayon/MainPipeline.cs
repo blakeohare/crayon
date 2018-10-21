@@ -133,7 +133,7 @@ namespace Crayon.Pipeline
                     NotifyStatusChange(command, "RUN-START");
 
                     new RunCbxWorker().DoWorkImpl(cmdLineFlags);
-                    NotifyStatusChange(command, "RUN-COMPLETE");
+                    NotifyStatusChange(command, "RUN-END");
                     return;
             }
 
