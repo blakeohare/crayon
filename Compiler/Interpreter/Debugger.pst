@@ -1,0 +1,28 @@
+string encodeBreakpointData(VmContext vm, BreakpointInfo breakpoint, int pc) {
+    if (@ext_boolean("HAS_DEBUGGER")) {
+        List<Token> tokens = vm.symbolData.tokenData[pc];
+        if (tokens != null && tokens.Size() > 0) {
+            Token token = tokens[0];
+            int fileId = token.fileId;
+            string sourceCode = vm.symbolData.sourceCode[fileId];
+            string filename = "";
+            if (sourceCode != null) {
+                int firstline = sourceCode.IndexOf("\n");
+                if (firstline != -1) {
+                    filename = sourceCode.SubString(0, firstline);
+                }
+            }
+            return Core.StringConcatAll(
+                Core.IntToString(breakpoint.breakpointId),
+                ",",
+                Core.IntToString(pc),
+                ",",
+                Core.IntToString(Core.ForceParens(token.lineIndex + 1)),
+                ",",
+                Core.IntToString(Core.ForceParens(token.colIndex + 1)),
+                ",",
+                filename); // filename goes last as it may contain commas.
+        }
+    }
+    return null;
+}

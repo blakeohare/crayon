@@ -149,6 +149,9 @@ enum InterpreterResultStatus {
     // The VM would like for the harness to load the given assembly and then re-invoke execution after
     // loading is complete.
     LOAD_ASSEMBLY = 6,
+
+    // VM encountered a breakpoint
+    BREAKPOINT = 7,
 }
 
 enum CoreExceptionTypes {

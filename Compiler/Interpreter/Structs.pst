@@ -160,7 +160,7 @@ struct InterpreterResult {
     double reinvokeDelay; // a delay (in seconds) before reinvoking (if the status is REINVOKE). Used by Core.sleep()
     int executionContextId; // the execution context ID that just ran
     bool isRootContext;
-    string loadAssemblyInformation;
+    string loadAssemblyInformation; // This is also used by BREAKPOINT status interrupts for token/breakpoint information.
 }
 
 struct Token {

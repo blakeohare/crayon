@@ -220,11 +220,20 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
 
     VmDebugData debugData = vm.byteCode.debugData;
     Array<bool> isBreakPointPresent = debugData.hasBreakpoint;
+    BreakpointInfo breakpointInfo = null;
 
     while (true) {
 
         if (@ext_boolean("HAS_DEBUGGER") && isBreakPointPresent[pc]) {
             printToStdOut("DBG", "Breakpoint Hit! (and promptly ignored)");
+            breakpointInfo = debugData.breakpointInfo[pc];
+            if (breakpointInfo.isTransient) {
+                debugData.breakpointInfo[pc] = null;
+                debugData.hasBreakpoint[pc] = false;
+            }
+            prepareToSuspend(ec, stack, valueStackSize, pc - 1);
+            string1 = encodeBreakpointData(vm, breakpointInfo, pc);
+            return new InterpreterResult(InterpreterResultStatus.BREAKPOINT, "", 0.0, ec.id, ec.id == 0, string1);
         }
 
         row = args[pc];
