@@ -20,7 +20,7 @@ namespace Crayon
         private static readonly string SHOW_LIB_STACK = "showLibStack";
 
         // don't compile resources or generate byte code. Simply generate compile errors.
-        private static readonly string ERROR_CHECK_ONLY = "errorCheckOnly"; 
+        private static readonly string ERROR_CHECK_ONLY = "errorCheckOnly";
 
         // enable compile time output.
         private static readonly string JSON_OUTPUT = "jsonOutput";

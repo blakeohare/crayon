@@ -19,6 +19,7 @@ namespace Exporter
             "BinaryOpsUtil.pst",
             "ByteCodeLoader.pst",
             "Constants.pst",
+            "Debugger.pst",
             "Interpreter.pst",
             "MetadataInitializer.pst",
             "PrimitiveMethods.pst",
