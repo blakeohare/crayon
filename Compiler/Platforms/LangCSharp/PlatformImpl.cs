@@ -27,6 +27,7 @@ namespace LangCSharp
                     { "IS_CHAR_A_NUMBER", true },
                     { "INT_IS_FLOOR", false },
                     { "HAS_INCREMENT", true },
+                    { "HAS_DEBUGGER", true },
                 };
         }
 

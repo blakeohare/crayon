@@ -218,8 +218,17 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     int pc = stack.pc;
     Func<Value, VmContext, Array<Value>> nativeFp = null;
 
+    VmDebugData debugData = vm.byteCode.debugData;
+    Array<bool> isBreakPointPresent = debugData.hasBreakpoint;
+
     while (true) {
+
+        if (@ext_boolean("HAS_DEBUGGER") && isBreakPointPresent[pc]) {
+            printToStdOut("DBG", "Breakpoint Hit! (and promptly ignored)");
+        }
+
         row = args[pc];
+
         switch (ops[pc]) {
             case OpCodes.ADD_LITERAL: Core.EmitComment("ADD_LITERAL"); @import("Ops/add_literal.pst"); break;
             case OpCodes.ADD_NAME: Core.EmitComment("ADD_NAME"); @import("Ops/add_name.pst"); break;
