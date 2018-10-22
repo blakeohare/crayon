@@ -4,6 +4,18 @@
     Array<string> stringArgs;
     Array<Dictionary<int, int>> integerSwitchesByPc;
     Array<Dictionary<string, int>> stringSwitchesByPc;
+    VmDebugData debugData;
+}
+
+struct VmDebugData {
+    Array<bool> hasBreakpoint;
+    Array<BreakpointInfo> breakpointInfo;
+}
+
+struct BreakpointInfo {
+    int breakpointId;
+    bool isTransient;
+    Token token;
 }
 
 // Dictionaries in Crayon can only have 3 types of keys: integers, strings, and objects
