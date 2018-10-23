@@ -582,3 +582,27 @@ int initLocTable(VmContext vm, Array<int> row) {
     vm.metadata.classMemberLocalizerBuilder[classId] = lookup;
     return 0;
 }
+
+int initFileNameSymbolData(VmContext vm) {
+    SymbolData symbolData = vm.symbolData;
+    if (symbolData == null) return 0;
+    if (symbolData.fileNameById == null) {
+        int i = 0;
+        Array<string> filenames = new Array<string>(symbolData.sourceCode.Length());
+        Dictionary<string, int> fileIdByPath = new Dictionary<string, int>();
+        for (i = 0; i < filenames.Length(); i += 1) {
+            string sourceCode = symbolData.sourceCode[i];
+            if (sourceCode != null) {
+                int colon = sourceCode.IndexOf("\n");
+                if (colon != -1) {
+                    string filename = sourceCode.SubString(0, colon);
+                    filenames[i] = filename;
+                    fileIdByPath[filename] = i;
+                }
+            }
+        }
+        symbolData.fileNameById = filenames;
+        symbolData.fileIdByName = fileIdByPath;
+    }
+    return 0;
+}

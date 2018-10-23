@@ -10,6 +10,7 @@
 struct VmDebugData {
     Array<bool> hasBreakpoint;
     Array<BreakpointInfo> breakpointInfo;
+    int nextBreakpointId;
 }
 
 struct BreakpointInfo {
@@ -81,6 +82,10 @@ struct SymbolData {
     Array<List<Token>> tokenData;
     Array<string> sourceCode;
     List<string> sourceCodeBuilder;
+
+    // The following 2 fields are initialized on demand by MetadataInitializer.pst:initFileNameSymbolData
+    Array<string> fileNameById;
+    Dictionary<string, int> fileIdByName;
 }
 
 struct VmContext {

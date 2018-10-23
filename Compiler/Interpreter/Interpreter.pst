@@ -225,7 +225,7 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     while (true) {
 
         if (@ext_boolean("HAS_DEBUGGER") && isBreakPointPresent[pc]) {
-            printToStdOut("DBG", "Breakpoint Hit! (and promptly ignored)");
+            printToStdOut("DBG", "Breakpoint Hit! (halting VM)");
             breakpointInfo = debugData.breakpointInfo[pc];
             if (breakpointInfo.isTransient) {
                 debugData.breakpointInfo[pc] = null;

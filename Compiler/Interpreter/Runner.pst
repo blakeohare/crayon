@@ -60,7 +60,9 @@
         new SymbolData(
             new Array<List<Token>>(byteCode.ops.Size()), // token data
             null, // original source code data
-            new List<string>()), // original source code data builder
+            new List<string>(), // original source code data builder
+            null, // file names by ID
+            null), // file ID's by name
         new VmMetadata(
             null, // identifiers
             new List<string>(), // identifiers builder

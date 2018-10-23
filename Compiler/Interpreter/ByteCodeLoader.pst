@@ -128,6 +128,6 @@ Code initializeByteCode(string raw) {
         new Array<Dictionary<int, int>>(opCount),
         new Array<Dictionary<string, int>>(opCount),
 
-        new VmDebugData(hasBreakpoint, breakpointInfo)
+        new VmDebugData(hasBreakpoint, breakpointInfo, 1)
         );
 }
