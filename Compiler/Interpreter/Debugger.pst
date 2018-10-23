@@ -1,15 +1,15 @@
 string encodeBreakpointData(VmContext vm, BreakpointInfo breakpoint, int pc) {
     if (@ext_boolean("HAS_DEBUGGER")) {
+        initFileNameSymbolData(vm);
         List<Token> tokens = vm.symbolData.tokenData[pc];
         if (tokens != null && tokens.Size() > 0) {
             Token token = tokens[0];
             int fileId = token.fileId;
-            string sourceCode = vm.symbolData.sourceCode[fileId];
             string filename = "";
-            if (sourceCode != null) {
-                int firstline = sourceCode.IndexOf("\n");
-                if (firstline != -1) {
-                    filename = sourceCode.SubString(0, firstline);
+            if (vm.symbolData != null) {
+                filename = vm.symbolData.fileNameById[fileId];
+                if (filename == null) {
+                    filename = "";
                 }
             }
             return Core.StringConcatAll(
@@ -25,4 +25,47 @@ string encodeBreakpointData(VmContext vm, BreakpointInfo breakpoint, int pc) {
         }
     }
     return null;
+}
+
+int debuggerSetBreakpoint(VmContext vm, string path, int line) {
+    int pc = debuggerFindPcForLine(vm, path, line);
+    if (pc == -1) return -1;
+    VmDebugData debugData = vm.byteCode.debugData;
+    BreakpointInfo breakpoint = debugData.breakpointInfo[pc];
+    if (breakpoint == null) {
+        int breakpointId = debugData.nextBreakpointId;
+        breakpoint = new BreakpointInfo(breakpointId, false, vm.symbolData.tokenData[pc][0]);
+        debugData.nextBreakpointId = breakpointId + 1;
+        debugData.breakpointInfo[pc] = breakpoint;
+        debugData.hasBreakpoint[pc] = true;
+    }
+    return breakpoint.breakpointId;
+}
+
+int debuggerFindPcForLine(VmContext vm, string path, int line) {
+    if (@ext_boolean("HAS_DEBUGGER")) {
+        if (vm.symbolData == null) return -1;
+        initFileNameSymbolData(vm);
+        int fileId = -1;
+        Dictionary<string, int> fileIdLookup = vm.symbolData.fileIdByName;
+        fileId = fileIdLookup.TryGet(path, -1);
+        if (fileId == -1) return -1;
+
+        int opCount = vm.symbolData.tokenData.Length();
+        int lineIndex = line - 1;
+        List<Token> tokens = null;
+        Token token = null;
+        for (int pc = 0; pc < opCount; pc += 1) {
+            tokens = vm.symbolData.tokenData[pc];
+            if (tokens != null && tokens.Size() > 0) {
+                token = tokens[0];
+                if (token.fileId == fileId) {
+                    if (token.lineIndex == lineIndex) {
+                        return pc;
+                    }
+                }
+            }
+        }
+    }
+    return -1;
 }
