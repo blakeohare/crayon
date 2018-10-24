@@ -1,0 +1,425 @@
+using Interpreter.Vm;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+
+namespace Interpreter
+{
+    public class Breakpoint
+    {
+        public int RequestId { get; set; }
+        public int ID { get; set; }
+        public int Line { get; set; }
+        public string Path { get; set; }
+        public int BreakpointId { get; set; }
+    }
+
+    public class Debugger
+    {
+        private static Debugger instance = null;
+        public static Debugger INSTANCE
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Debugger();
+                }
+                return instance;
+            }
+        }
+
+        private Debugger()
+        {
+            lock (awaitingQueueMutex)
+            {
+                AwaitingSet = new List<Breakpoint>();
+                Breakpoints = new Dictionary<int, Breakpoint>();
+                RejectedBreakpoints = new List<Breakpoint>();
+            }
+        }
+
+        public void StartListening()
+        {
+            debuggerNetworkConnection = new DebuggerConnection();
+            debuggerNetworkConnection.StartListeningAsync();
+        }
+
+        private DebuggerConnection debuggerNetworkConnection;
+
+        public List<Breakpoint> AwaitingSet { get; private set; }
+        public Dictionary<int, Breakpoint> Breakpoints { get; private set; }
+        public List<Breakpoint> RejectedBreakpoints { get; private set; }
+
+        private static object awaitingQueueMutex = new object();
+
+        public void FlushMessageQueue()
+        {
+            foreach (string command in debuggerNetworkConnection.FlushData())
+            {
+                DebuggerMessage debuggerMessage = DebuggerMessage.Parse(command);
+                debuggerMessage.Run();
+            }
+
+            lock (awaitingQueueMutex)
+            {
+                if (AwaitingSet.Count > 0)
+                {
+                    foreach (Breakpoint breakpoint in AwaitingSet)
+                    {
+                        int id = CrayonWrapper.v_debuggerSetBreakpoint(TranslationHelper.ProgramData, breakpoint.Path, breakpoint.Line);
+                        if (id != -1)
+                        {
+                            Breakpoints[id] = breakpoint;
+                        }
+                        else
+                        {
+                            RejectedBreakpoints.Add(breakpoint);
+                        }
+                    }
+                    AwaitingSet.Clear();
+                }
+            }
+        }
+    }
+
+    public class DebuggerConnection
+    {
+        private object sessionMutex = new object();
+        List<DebuggerSession> activeSessions = new List<DebuggerSession>();
+
+        public List<string> FlushData()
+        {
+            List<string> messages = new List<string>();
+            lock (sessionMutex)
+            {
+                foreach (DebuggerSession session in activeSessions)
+                {
+                    messages.AddRange(session.PumpMessageQueue());
+                }
+            }
+            return messages;
+        }
+
+        public void StartListeningAsync()
+        {
+            new Thread(new ThreadStart(this.StartListeningImpl)).Start();
+        }
+
+        private class DebuggerSession
+        {
+            private Socket socket;
+
+            private object listenerMutex = new object();
+            private List<string> listenerMessageQueue = new List<string>();
+            public bool IsActive { get; set; }
+
+            public DebuggerSession(Socket socket)
+            {
+                this.socket = socket;
+
+                new Thread(new ThreadStart(this.HandleMessages)).Start();
+            }
+
+            private void Close()
+            {
+                this.socket.Shutdown(SocketShutdown.Both);
+                this.socket.Close();
+            }
+
+            public void SendToClient(string message)
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes(message.ToCharArray());
+                int length = bytes.Length;
+
+                List<byte> buffer = new List<byte>()
+                {
+                    (byte) 'C', (byte) 'D', (byte) 'B', (byte) 'G',
+                    (byte) ((length >> 24) & 255),
+                    (byte) ((length >> 16) & 255),
+                    (byte) ((length >> 8) & 255),
+                    (byte) ((length) & 255),
+                };
+                buffer.AddRange(bytes);
+
+                this.socket.Send(buffer.ToArray());
+            }
+
+            private static readonly string[] emptyStringArray = new string[0];
+            public string[] PumpMessageQueue()
+            {
+                string[] newMessages = emptyStringArray;
+                lock (this.listenerMutex)
+                {
+                    if (this.listenerMessageQueue.Count > 0)
+                    {
+                        newMessages = this.listenerMessageQueue.ToArray();
+                        this.listenerMessageQueue.Clear();
+                    }
+                }
+                return newMessages;
+            }
+
+            private static int Get4ByteInt(IList<byte> bytes, int index)
+            {
+                int output = 0;
+                for (int i = 0; i < 4; ++i)
+                {
+                    int b = bytes[index + i];
+                    if (b < 0) b += 256;
+                    output = (output << 8) | b;
+                }
+                return output;
+            }
+
+            public void HandleMessages()
+            {
+                byte[] buffer = new byte[1024];
+                List<byte> byteQueue = new List<byte>();
+                int messageSignature = Get4ByteInt(new byte[] { (byte)'C', (byte)'D', (byte)'B', (byte)'G' }, 0);
+                while (true)
+                {
+                    int bytesRead = 0;
+                    try
+                    {
+                        bytesRead = this.socket.Receive(buffer);
+                    }
+                    catch (SocketException ex)
+                    {
+                        switch (ex.ErrorCode)
+                        {
+                            case 10054: return;
+                            default:
+                                throw new System.Exception("Code: " + ex.ErrorCode);
+                        }
+                    }
+                    if (bytesRead == buffer.Length)
+                    {
+                        byteQueue.AddRange(buffer);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < bytesRead; ++i)
+                        {
+                            byteQueue.Add(buffer[i]);
+                        }
+                    }
+
+                    if (byteQueue.Count > 4)
+                    {
+                        // be resilient to garbage messages
+                        int offset = 0;
+                        while (offset < byteQueue.Count - 4 && Get4ByteInt(byteQueue, 0) != messageSignature)
+                        {
+                            offset += 1;
+                        }
+                        if (offset != 0)
+                        {
+                            byteQueue.RemoveRange(0, offset);
+                        }
+                    }
+
+                    if (byteQueue.Count > 8 && Get4ByteInt(byteQueue, 0) == messageSignature)
+                    {
+                        int messageLength = Get4ByteInt(byteQueue, 4);
+                        if (byteQueue.Count - 8 >= messageLength)
+                        {
+                            byte[] message = new byte[messageLength];
+                            byteQueue.CopyTo(8, message, 0, messageLength);
+                            byteQueue.RemoveRange(0, 8 + messageLength);
+                            lock (this.listenerMutex)
+                            {
+                                this.listenerMessageQueue.Add(new string(Encoding.UTF8.GetChars(message)));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void StartListeningImpl()
+        {
+            IPHostEntry host = Dns.GetHostEntry("localhost");
+            IPAddress ipAddress = host.AddressList[0];
+            // TODO: make the port configurable
+            // 9003 is the first port that is neither officially nor unofficially allocated according to the
+            // Wikipedia page for list of ports and is also "over 9000".
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 9003);
+
+            try
+            {
+                Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                listener.Bind(localEndPoint);
+                listener.Listen(1);
+
+                Socket handler = listener.Accept();
+                DebuggerSession session = new DebuggerSession(handler);
+                lock (sessionMutex)
+                {
+                    activeSessions.Add(session);
+                }
+
+            }
+            catch (System.Exception e)
+            {
+                System.Console.WriteLine(e.ToString());
+            }
+        }
+    }
+
+    public abstract class DebuggerMessage
+    {
+        public static DebuggerMessage Parse(string message)
+        {
+            string[] parts = message.Split(',');
+            switch (parts[0])
+            {
+                case "SET-BREAKPOINT": return new DebuggerMessageSetBreakpoint(parts);
+                case "CLEAR-BREAKPOINT": return new DebuggerMessageClearBreakpoint(parts);
+                case "GET-LOCALS": return new DebuggerMessageGetLocals(parts);
+                case "QUERY-LOCAL": return new DebuggerMessageQueryLocal(parts);
+                case "CONNECT": return new DebuggerMessageConnect(parts);
+                case "SET-NEXT-EXEC-LINE": return new DebuggerMessageSetNextExecLine(parts);
+                case "GET-CODE-INFO": return new DebuggerMessageGetCodeInfo(parts);
+                default: return new DebuggerMessageNotFound(parts);
+            }
+        }
+
+        internal abstract void Run();
+
+        protected Dictionary<string, string> ParseArgs(string[] items)
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            foreach (string item in items.Skip(1))
+            {
+                int colon = item.IndexOf(':');
+                string key = item.Substring(0, colon);
+                string value = item.Substring(colon + 1);
+                if (key.EndsWith("_hex"))
+                {
+                    key = key.Substring(0, key.Length - "_hex".Length);
+                    byte[] valueBytes = new byte[value.Length / 2];
+                    for (int i = 0; i < value.Length; i += 2)
+                    {
+                        valueBytes[i >> 1] = System.Convert.ToByte(value.Substring(i, 2));
+                    }
+                    value = new string(Encoding.UTF8.GetChars(valueBytes));
+                }
+                output[key] = value;
+            }
+            return output;
+        }
+
+        private class DebuggerMessageSetBreakpoint : DebuggerMessage
+        {
+            public int Line { get; private set; }
+            public string Path { get; private set; }
+
+            public DebuggerMessageSetBreakpoint(string[] args)
+            {
+                Dictionary<string, string> lookup = ParseArgs(args);
+                this.Line = int.Parse(lookup["line"]);
+                this.Path = lookup["path"];
+            }
+
+            internal override void Run()
+            {
+                throw new System.NotImplementedException();
+            }
+        }
+
+        private class DebuggerMessageClearBreakpoint : DebuggerMessage
+        {
+            public DebuggerMessageClearBreakpoint(string[] args)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            internal override void Run()
+            {
+                throw new System.NotImplementedException();
+            }
+        }
+
+        private class DebuggerMessageGetLocals : DebuggerMessage
+        {
+            public DebuggerMessageGetLocals(string[] args)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            internal override void Run()
+            {
+                throw new System.NotImplementedException();
+            }
+        }
+
+        private class DebuggerMessageQueryLocal : DebuggerMessage
+        {
+            public DebuggerMessageQueryLocal(string[] args)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            internal override void Run()
+            {
+                throw new System.NotImplementedException();
+            }
+        }
+
+        private class DebuggerMessageConnect : DebuggerMessage
+        {
+            public DebuggerMessageConnect(string[] args)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            internal override void Run()
+            {
+                throw new System.NotImplementedException();
+            }
+        }
+
+        private class DebuggerMessageSetNextExecLine : DebuggerMessage
+        {
+            public DebuggerMessageSetNextExecLine(string[] args)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            internal override void Run()
+            {
+                throw new System.NotImplementedException();
+            }
+        }
+
+        private class DebuggerMessageGetCodeInfo : DebuggerMessage
+        {
+            public DebuggerMessageGetCodeInfo(string[] args)
+            {
+                throw new System.NotImplementedException();
+            }
+
+            internal override void Run()
+            {
+                throw new System.NotImplementedException();
+            }
+        }
+
+        private class DebuggerMessageNotFound : DebuggerMessage
+        {
+            public DebuggerMessageNotFound(string[] args)
+            {
+                throw new System.InvalidOperationException("Cannot identify debug instruction: " + args[0]);
+            }
+
+            internal override void Run()
+            {
+                throw new System.Exception();
+            }
+        }
+    }
+}
