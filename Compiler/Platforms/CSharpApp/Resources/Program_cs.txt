@@ -14,6 +14,7 @@ namespace Interpreter
             VmContext vm = CrayonWrapper.v_createVm(byteCode, resourceManifest);
             TranslationHelper.ProgramData = vm;
             CrayonWrapper.v_vmEnvSetCommandLineArgs(vm, args);
+            Debugger.INSTANCE.StartListening();
             TranslationHelper.StartInterpreter();
             UniversalBitmap.EnsureAllFreed();
         }

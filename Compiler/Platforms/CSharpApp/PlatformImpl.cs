@@ -332,6 +332,8 @@ namespace CSharpApp
             // CSharpOpenTK specific stuff
             this.CopyResourceAsText(output, baseDir + "Vm/PlatformTranslationHelper.cs", "Resources/PlatformTranslationHelper.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "ResourceReader.cs", resourceDir + "/ResourceReader.cs", replacements);
+
+            this.CopyResourceAsText(output, baseDir + "Debugger.cs", "ResourcesVm/Debugger.cs", replacements);
         }
 
         private string WrapStructCode(string structCode)

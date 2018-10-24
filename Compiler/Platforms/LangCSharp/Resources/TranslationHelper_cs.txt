@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using Interpreter.Structs;
 
@@ -20,16 +19,19 @@ namespace Interpreter.Vm
 
         public static InterpreterResult StartInterpreter()
         {
+            Debugger.INSTANCE.FlushMessageQueue();
             return HandleInterpreterStatus(CrayonWrapper.v_startVm(ProgramData));
         }
 
         public static InterpreterResult RunInterpreter(int executionContextId)
         {
+            Debugger.INSTANCE.FlushMessageQueue();
             return HandleInterpreterStatus(CrayonWrapper.v_runInterpreter(ProgramData, executionContextId));
         }
 
         public static InterpreterResult RunInterpreter(Value functionPointer, params Value[] args)
         {
+            Debugger.INSTANCE.FlushMessageQueue();
             return HandleInterpreterStatus(CrayonWrapper.v_runInterpreterWithFunctionPointer(ProgramData, functionPointer, args));
         }
 
@@ -49,6 +51,7 @@ namespace Interpreter.Vm
                     double sleepForSeconds = result.reinvokeDelay;
                     System.Threading.Thread.Sleep((int)(1000 * sleepForSeconds));
                 }
+                Debugger.INSTANCE.FlushMessageQueue();
                 result = CrayonWrapper.v_runInterpreter(ProgramData, result.executionContextId);
             }
             if (result.status == 1) // FINISHED
@@ -56,7 +59,7 @@ namespace Interpreter.Vm
                 if (result.isRootContext) Environment.Exit(0);
                 return result;
             }
-            if (result.status == 2) return result; // SUSPEND
+            if (result.status == 2 || result.status == 7) return result; // SUSPEND || BREAKPOINT
             if (result.status == 3) // FATAL
             {
                 if (result.isRootContext) Environment.Exit(1);
