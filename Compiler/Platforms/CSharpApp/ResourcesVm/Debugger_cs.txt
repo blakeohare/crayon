@@ -58,10 +58,13 @@ namespace Interpreter
 
         public void FlushMessageQueue()
         {
-            foreach (string command in debuggerNetworkConnection.FlushData())
+            foreach (DebuggerMessage debuggerMessage in debuggerNetworkConnection.FlushData())
             {
-                DebuggerMessage debuggerMessage = DebuggerMessage.Parse(command);
-                debuggerMessage.Run();
+                string[] response = debuggerMessage.Run();
+                if (response != null)
+                {
+                    debuggerNetworkConnection.SendResponseAsync(debuggerMessage.SourceId, response);
+                }
             }
 
             lock (awaitingQueueMutex)
@@ -91,14 +94,17 @@ namespace Interpreter
         private object sessionMutex = new object();
         List<DebuggerSession> activeSessions = new List<DebuggerSession>();
 
-        public List<string> FlushData()
+        public List<DebuggerMessage> FlushData()
         {
-            List<string> messages = new List<string>();
+            List<DebuggerMessage> messages = new List<DebuggerMessage>();
             lock (sessionMutex)
             {
                 foreach (DebuggerSession session in activeSessions)
                 {
-                    messages.AddRange(session.PumpMessageQueue());
+                    foreach (string messageData in session.PumpMessageQueue())
+                    {
+                        messages.Add(DebuggerMessage.Parse(session.SessionId, messageData));
+                    }
                 }
             }
             return messages;
@@ -109,16 +115,47 @@ namespace Interpreter
             new Thread(new ThreadStart(this.StartListeningImpl)).Start();
         }
 
+        public void SendResponseAsync(int sessionId, string[] data)
+        {
+            DebuggerSession targetSocket = null;
+            lock (sessionMutex)
+            {
+                foreach (DebuggerSession session in activeSessions)
+                {
+                    if (session.IsActive && session.SessionId == sessionId)
+                    {
+                        targetSocket = session;
+                        break;
+                    }
+                }
+            }
+
+            if (targetSocket != null)
+            {
+                targetSocket.SendToClientAsync(data);
+            }
+        }
+
         private class DebuggerSession
         {
+            private static int sessionIdAlloc = 1;
+            public int SessionId { get; private set; }
             private Socket socket;
 
             private object listenerMutex = new object();
             private List<string> listenerMessageQueue = new List<string>();
-            public bool IsActive { get; set; }
+
+            private object statusMutex = new object();
+            private bool isActive = true;
+            public bool IsActive
+            {
+                get { lock (statusMutex) { return this.isActive; } }
+                set { lock (statusMutex) { this.isActive = value; } }
+            }
 
             public DebuggerSession(Socket socket)
             {
+                this.SessionId = sessionIdAlloc++;
                 this.socket = socket;
 
                 new Thread(new ThreadStart(this.HandleMessages)).Start();
@@ -126,26 +163,55 @@ namespace Interpreter
 
             private void Close()
             {
+                this.IsActive = false;
                 this.socket.Shutdown(SocketShutdown.Both);
                 this.socket.Close();
             }
 
-            public void SendToClient(string message)
+            private object outgoingQueueMutex = new object();
+            private List<string> outgoingQueue = new List<string>();
+            public void SendToClientAsync(string[] messageParts)
             {
-                byte[] bytes = Encoding.UTF8.GetBytes(message.ToCharArray());
-                int length = bytes.Length;
-
-                List<byte> buffer = new List<byte>()
+                string message = string.Join(",", messageParts);
+                lock(outgoingQueueMutex)
                 {
-                    (byte) 'C', (byte) 'D', (byte) 'B', (byte) 'G',
-                    (byte) ((length >> 24) & 255),
-                    (byte) ((length >> 16) & 255),
-                    (byte) ((length >> 8) & 255),
-                    (byte) ((length) & 255),
-                };
-                buffer.AddRange(bytes);
+                    outgoingQueue.Add(message);
+                }
 
-                this.socket.Send(buffer.ToArray());
+                new Thread(new ThreadStart(this.FlushOutgoingQueue)).Start();
+            }
+
+            private void FlushOutgoingQueue()
+            {
+                while (true)
+                {
+                    string nextMessage = null;
+                    lock (outgoingQueueMutex)
+                    {
+                        if (outgoingQueue.Count == 0) return;
+
+                        nextMessage = outgoingQueue[0];
+                        outgoingQueue.RemoveAt(0);
+                    }
+
+                    byte[] bytes = Encoding.UTF8.GetBytes(nextMessage.ToCharArray());
+                    int length = bytes.Length;
+
+                    List<byte> buffer = new List<byte>()
+                    {
+                        (byte) 'C', (byte) 'D', (byte) 'B', (byte) 'G',
+                        (byte) ((length >> 24) & 255),
+                        (byte) ((length >> 16) & 255),
+                        (byte) ((length >> 8) & 255),
+                        (byte) ((length) & 255),
+                    };
+                    buffer.AddRange(bytes);
+
+                    lock (outgoingQueueMutex)
+                    {
+                        this.socket.Send(buffer.ToArray());
+                    }
+                }
             }
 
             private static readonly string[] emptyStringArray = new string[0];
@@ -272,23 +338,31 @@ namespace Interpreter
 
     public abstract class DebuggerMessage
     {
-        public static DebuggerMessage Parse(string message)
+        public int SourceId { get; private set; }
+
+        protected DebuggerMessage(int sourceId)
+        {
+            this.SourceId = sourceId;
+        }
+
+        public static DebuggerMessage Parse(int sourceId, string message)
         {
             string[] parts = message.Split(',');
             switch (parts[0])
             {
-                case "SET-BREAKPOINT": return new DebuggerMessageSetBreakpoint(parts);
-                case "CLEAR-BREAKPOINT": return new DebuggerMessageClearBreakpoint(parts);
-                case "GET-LOCALS": return new DebuggerMessageGetLocals(parts);
-                case "QUERY-LOCAL": return new DebuggerMessageQueryLocal(parts);
-                case "CONNECT": return new DebuggerMessageConnect(parts);
-                case "SET-NEXT-EXEC-LINE": return new DebuggerMessageSetNextExecLine(parts);
-                case "GET-CODE-INFO": return new DebuggerMessageGetCodeInfo(parts);
-                default: return new DebuggerMessageNotFound(parts);
+                case "SET-BREAKPOINT": return new DebuggerMessageSetBreakpoint(sourceId, parts);
+                case "CLEAR-BREAKPOINT": return new DebuggerMessageClearBreakpoint(sourceId, parts);
+                case "GET-LOCALS": return new DebuggerMessageGetLocals(sourceId, parts);
+                case "QUERY-LOCAL": return new DebuggerMessageQueryLocal(sourceId, parts);
+                case "CONNECT": return new DebuggerMessageConnect(sourceId, parts);
+                case "SET-NEXT-EXEC-LINE": return new DebuggerMessageSetNextExecLine(sourceId, parts);
+                case "GET-CODE-INFO": return new DebuggerMessageGetCodeInfo(sourceId, parts);
+                default: return new DebuggerMessageNotFound(sourceId, parts);
             }
         }
 
-        internal abstract void Run();
+        internal abstract string[] Run();
+        internal Interpreter.Structs.VmContext VM { get { return TranslationHelper.ProgramData; } }
 
         protected Dictionary<string, string> ParseArgs(string[] items)
         {
@@ -317,28 +391,31 @@ namespace Interpreter
         {
             public int Line { get; private set; }
             public string Path { get; private set; }
+            public string RequestToken { get; private set; }
 
-            public DebuggerMessageSetBreakpoint(string[] args)
+            public DebuggerMessageSetBreakpoint(int sourceId, string[] args) : base(sourceId)
             {
                 Dictionary<string, string> lookup = ParseArgs(args);
                 this.Line = int.Parse(lookup["line"]);
                 this.Path = lookup["path"];
+                this.RequestToken = lookup["req-token"];
             }
 
-            internal override void Run()
+            internal override string[] Run()
             {
-                throw new System.NotImplementedException();
+                int breakpointId = CrayonWrapper.v_debuggerSetBreakpoint(VM, this.Path, this.Line);
+                return new string[] { "req-token", "" + breakpointId, };
             }
         }
 
         private class DebuggerMessageClearBreakpoint : DebuggerMessage
         {
-            public DebuggerMessageClearBreakpoint(string[] args)
+            public DebuggerMessageClearBreakpoint(int sourceId, string[] args) : base(sourceId)
             {
                 throw new System.NotImplementedException();
             }
 
-            internal override void Run()
+            internal override string[] Run()
             {
                 throw new System.NotImplementedException();
             }
@@ -346,12 +423,12 @@ namespace Interpreter
 
         private class DebuggerMessageGetLocals : DebuggerMessage
         {
-            public DebuggerMessageGetLocals(string[] args)
+            public DebuggerMessageGetLocals(int sourceId, string[] args) : base(sourceId)
             {
                 throw new System.NotImplementedException();
             }
 
-            internal override void Run()
+            internal override string[] Run()
             {
                 throw new System.NotImplementedException();
             }
@@ -359,12 +436,12 @@ namespace Interpreter
 
         private class DebuggerMessageQueryLocal : DebuggerMessage
         {
-            public DebuggerMessageQueryLocal(string[] args)
+            public DebuggerMessageQueryLocal(int sourceId, string[] args) : base(sourceId)
             {
                 throw new System.NotImplementedException();
             }
 
-            internal override void Run()
+            internal override string[] Run()
             {
                 throw new System.NotImplementedException();
             }
@@ -372,12 +449,12 @@ namespace Interpreter
 
         private class DebuggerMessageConnect : DebuggerMessage
         {
-            public DebuggerMessageConnect(string[] args)
+            public DebuggerMessageConnect(int sourceId, string[] args) : base(sourceId)
             {
                 throw new System.NotImplementedException();
             }
 
-            internal override void Run()
+            internal override string[] Run()
             {
                 throw new System.NotImplementedException();
             }
@@ -385,12 +462,12 @@ namespace Interpreter
 
         private class DebuggerMessageSetNextExecLine : DebuggerMessage
         {
-            public DebuggerMessageSetNextExecLine(string[] args)
+            public DebuggerMessageSetNextExecLine(int sourceId, string[] args) : base(sourceId)
             {
                 throw new System.NotImplementedException();
             }
 
-            internal override void Run()
+            internal override string[] Run()
             {
                 throw new System.NotImplementedException();
             }
@@ -398,12 +475,12 @@ namespace Interpreter
 
         private class DebuggerMessageGetCodeInfo : DebuggerMessage
         {
-            public DebuggerMessageGetCodeInfo(string[] args)
+            public DebuggerMessageGetCodeInfo(int sourceId, string[] args) : base(sourceId)
             {
                 throw new System.NotImplementedException();
             }
 
-            internal override void Run()
+            internal override string[] Run()
             {
                 throw new System.NotImplementedException();
             }
@@ -411,12 +488,12 @@ namespace Interpreter
 
         private class DebuggerMessageNotFound : DebuggerMessage
         {
-            public DebuggerMessageNotFound(string[] args)
+            public DebuggerMessageNotFound(int sourceId, string[] args) : base(sourceId)
             {
                 throw new System.InvalidOperationException("Cannot identify debug instruction: " + args[0]);
             }
 
-            internal override void Run()
+            internal override string[] Run()
             {
                 throw new System.Exception();
             }
