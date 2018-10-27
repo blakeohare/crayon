@@ -404,7 +404,7 @@ namespace Interpreter
             internal override string[] Run()
             {
                 int breakpointId = CrayonWrapper.v_debuggerSetBreakpoint(VM, this.Path, this.Line);
-                return new string[] { "req-token", "" + breakpointId, };
+                return new string[] { this.RequestToken, "" + breakpointId, };
             }
         }
 

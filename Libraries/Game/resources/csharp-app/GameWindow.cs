@@ -318,11 +318,15 @@ namespace Interpreter.Libraries.Game
             this.Title = value;
         }
 
+        private bool isHaltedByDebugger = false;
+
         private void Update()
         {
-			InterpreterResult result = TranslationHelper.RunInterpreter(this.executionContextId);
-			int vmStatus = result.status;
-			
+            if (isHaltedByDebugger) return;
+
+            InterpreterResult result = TranslationHelper.RunInterpreter(this.executionContextId);
+            int vmStatus = result.status;
+
             if (vmStatus == 1 || // Finished
                 vmStatus == 3) // Error
             {
@@ -330,6 +334,13 @@ namespace Interpreter.Libraries.Game
                 this.Close();
                 this.Exit();
                 System.Environment.Exit(0);
+                return;
+            }
+
+            if (vmStatus == 7)
+            {
+                isHaltedByDebugger = true;
+                return;
             }
         }
 
