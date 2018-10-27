@@ -26,6 +26,12 @@
         stringArg, // function name
         null);
 
+    vm.metadata.mostRecentFunctionDef = functionTable[functionId];
+
+    if (@ext_boolean("HAS_DEBUGGER")) {
+        vm.symbolData.localVarNamesById[currentPc] = new List<string>();
+    }
+
     // This is SUPER tacky.
     // TODO: Do this name comparison at compile time and then stick that in the arguments which will also eliminate the
     // need for the obfuscation prefix since the namespace can be checked.

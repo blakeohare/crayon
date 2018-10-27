@@ -20,6 +20,9 @@ namespace Parser
         public FunctionDefinition MainFunction { get; set; }
         public FunctionDefinition CoreLibInvokeFunction { get; set; }
 
+        // TODO: make this configurable.
+        public bool IncludeDebugSymbols { get { return true; } }
+
         public ParserContext(BuildContext buildContext)
         {
             this.BuildContext = buildContext;

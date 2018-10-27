@@ -134,7 +134,6 @@ namespace Parser.ParseTree
 
         private void EnsureModifiersAndTypeSignatureConsistencyForClassMethods()
         {
-
             ClassDefinition classDef = (ClassDefinition)this.Owner;
             ClassDefinition baseClass = classDef.BaseClass;
             bool hasBaseClass = baseClass != null;
@@ -269,6 +268,8 @@ namespace Parser.ParseTree
             varScope.FinalizeScopeIds();
 
             this.LocalScopeSize = varScope.Size;
+
+            this.Locals = varScope.GetAllLocals().ToArray();
         }
     }
 }

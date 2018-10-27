@@ -55,6 +55,7 @@ struct VmMetadata {
     MagicNumbers magicNumbers;
     Dictionary<string, int> invFunctionNameLiterals;
     Dictionary<int, Dictionary<int, int>> classMemberLocalizerBuilder;
+    FunctionInfo mostRecentFunctionDef;
 }
 
 struct VmGlobals {
@@ -86,6 +87,9 @@ struct SymbolData {
     // The following 2 fields are initialized on demand by MetadataInitializer.pst:initFileNameSymbolData
     Array<string> fileNameById;
     Dictionary<string, int> fileIdByName;
+
+    Dictionary<int, List<string>> localVarNamesById; // maps the function's PC to a list of the locals in that function.
+    Dictionary<int, List<string>> closureVarNamesById; // maps the function's PC to a list of closure variables in that function.
 }
 
 struct VmContext {

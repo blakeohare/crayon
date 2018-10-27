@@ -259,6 +259,7 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
             case OpCodes.COMMAND_LINE_ARGS: Core.EmitComment("COMMAND_LINE_ARGS"); @import("Ops/command_line_args.pst"); break;
             case OpCodes.CONTINUE: Core.EmitComment("CONTINUE"); @import("Ops/continue.pst"); break;
             case OpCodes.CORE_FUNCTION: Core.EmitComment("CORE_FUNCTION"); @import("Ops/core_function.pst"); break;
+            case OpCodes.DEBUG_SYMBOLS: Core.EmitComment("DEBUG_SYMBOLS"); @import("Ops/debug_symbols.pst"); break;
             case OpCodes.DEF_DICTIONARY: Core.EmitComment("DEF_DICT"); @import("Ops/def_dictionary.pst"); break;
             case OpCodes.DEF_LIST: Core.EmitComment("DEF_LIST"); @import("Ops/def_list.pst"); break;
             case OpCodes.DEF_ORIGINAL_CODE: Core.EmitComment("DEF_ORIGINAL_CODE"); @import("Ops/def_original_code.pst"); break;

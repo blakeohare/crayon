@@ -322,6 +322,7 @@ namespace Interpreter.Libraries.Game
 
         private void Update()
         {
+            Debugger.INSTANCE.FlushMessageQueue();
             if (isHaltedByDebugger) return;
 
             InterpreterResult result = TranslationHelper.RunInterpreter(this.executionContextId);
