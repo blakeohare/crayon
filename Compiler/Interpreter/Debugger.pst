@@ -69,3 +69,123 @@ int debuggerFindPcForLine(VmContext vm, string path, int line) {
     }
     return -1;
 }
+
+/*
+    Input is an array of strings that work as a stream that descends into a value.
+    keyword items:
+        - this --> queries the current object context
+        - class -> queries the current static class and the next value is a static field name
+        - local -> queries the local context. the next value is the variable name
+        - index -> queries a list item. The next value is an integer
+        - key-int -> queries a dictionary. The next value is an integer key
+        - key-obj -> queries a dictionary. The next value is an object ID
+        - key-str -> queries a dictionary. The next value is a string key
+        - . -> queries a field off an object. The next value is a field name
+
+    Returns null if any of these steps fail.
+
+*/
+Value queryValue(
+    VmContext vm,
+    int execId,
+    int stackFrameOffset, // how many stack frames down to query from?
+    Array<string> steps) { // see above description
+
+    if (execId == -1) execId = vm.lastExecutionContextId;
+    ExecutionContext ec = vm.executionContexts[execId];
+    StackFrame stackFrame = ec.stackTop;
+
+    while (stackFrameOffset > 0) {
+        stackFrameOffset -= 1;
+        stackFrame = stackFrame.previous;
+    }
+
+    Value current = null;
+    int i = 0;
+    int j = 0;
+    int len = steps.Length();
+    for (i = 0; i < steps.Length(); i += 1) {
+        if (current == null && i > 0) return null;
+        string step = steps[i];
+        if (isStringEqual(".", step)) {
+            return null; // not implemented yet
+        } else if (isStringEqual("this", step)) {
+            current = stackFrame.objectContext;
+        } else if (isStringEqual("class", step)) {
+            return null; // not implemented yet
+        } else if (isStringEqual("local", step)) {
+            i += 1;
+            step = steps[i];
+            Dictionary<int, List<string>> localNamesByFuncPc = vm.symbolData.localVarNamesById;
+            List<string> localNames = null;
+            if (localNamesByFuncPc == null || localNamesByFuncPc.Size() == 0) return null;
+            for (j = stackFrame.pc; j >= 0; j -= 1) {
+                // simply walk backwards until you find a PC that is represented in the lookup.
+                // walking the entire bytecode is not catastrophically slow and also not something that will generally happen.
+                if (localNamesByFuncPc.Contains(j)) {
+                    localNames = localNamesByFuncPc[j];
+                    j = -1; // break
+                }
+            }
+            if (localNames == null) return null;
+            int localId = -1;
+            if (localNames != null) {
+                for (j = 0; j < localNames.Size(); j += 1) {
+                    if (isStringEqual(localNames[j], step)) {
+                        localId = j;
+                        j = localNames.Size(); // break
+                    }
+                }
+            }
+
+            if (localId == -1) return null;
+            int localOffset = localId + stackFrame.localsStackOffset;
+            if (ec.localsStackSet[localOffset] != stackFrame.localsStackSetToken) return null;
+            current = ec.localsStack[localOffset];
+        } else if (isStringEqual("index", step)) {
+            return null; // not implemented yet
+        } else if (isStringEqual("key-int", step)) {
+            return null; // not implemented yet
+        } else if (isStringEqual("key-str", step)) {
+            return null; // not implemented yet
+        } else if (isStringEqual("key-obj", step)) {
+            return null; // not implemented yet
+        } else {
+            return null; // unknown command
+        }
+    }
+
+    return current;
+}
+
+/*
+    DEBUG_SYMBOLS
+        args[0] -> type of symbol
+
+        if args[0] == 1 --> local name
+        args[1] -> local ID
+        string arg -> name of the local
+        This applies to the last function that was defined
+
+        if args[0] == 2 --> closure variable
+        args[1] -> closure variable ID
+        string arg -> name of the variable
+        This applies to the last function that was defined
+*/
+int applyDebugSymbolData(VmContext vm, Array<int> opArgs, string stringData, FunctionInfo recentlyDefinedFunction) {
+    if (@ext_boolean("HAS_DEBUGGER")) {
+        int pc = recentlyDefinedFunction.pc;
+        int type = opArgs[0];
+        List<string> varList = null;
+        if (type == 1) {
+            // local ID -> name
+            varList = vm.symbolData.localVarNamesById[pc];
+            int localId = opArgs[1];
+            while (varList.Size() <= localId) {
+                varList.Add(null);
+            }
+            varList[localId] = stringData;
+        }
+    }
+    return 0;
+}

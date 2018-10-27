@@ -47,6 +47,20 @@ namespace Exporter.ByteCode.Nodes
                 args.ToArray());
 
             buffer.Concat(tBuffer);
+            AddDebugSymbolData(buffer, parser, funDef);
+        }
+
+        private static void AddDebugSymbolData(ByteBuffer buffer, ParserContext parser, FunctionDefinition funcDef)
+        {
+            if (parser.IncludeDebugSymbols)
+            {
+                foreach (VariableId id in funcDef.Locals.OrderBy(vid => vid.ID))
+                {
+                    int type = id.UsedByClosure ? 2 : 1;
+                    int idNum = id.UsedByClosure ? id.ClosureID : id.ID;
+                    buffer.Add(null, OpCode.DEBUG_SYMBOLS, id.Name, type, idNum);
+                }
+            }
         }
 
         internal static void CompileFunctionArgs(

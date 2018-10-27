@@ -173,7 +173,7 @@ namespace Interpreter
             public void SendToClientAsync(string[] messageParts)
             {
                 string message = string.Join(",", messageParts);
-                lock(outgoingQueueMutex)
+                lock (outgoingQueueMutex)
                 {
                     outgoingQueue.Add(message);
                 }
@@ -353,7 +353,7 @@ namespace Interpreter
                 case "SET-BREAKPOINT": return new DebuggerMessageSetBreakpoint(sourceId, parts);
                 case "CLEAR-BREAKPOINT": return new DebuggerMessageClearBreakpoint(sourceId, parts);
                 case "GET-LOCALS": return new DebuggerMessageGetLocals(sourceId, parts);
-                case "QUERY-LOCAL": return new DebuggerMessageQueryLocal(sourceId, parts);
+                case "QUERY-VALUE": return new DebuggerMessageQueryValue(sourceId, parts);
                 case "CONNECT": return new DebuggerMessageConnect(sourceId, parts);
                 case "SET-NEXT-EXEC-LINE": return new DebuggerMessageSetNextExecLine(sourceId, parts);
                 case "GET-CODE-INFO": return new DebuggerMessageGetCodeInfo(sourceId, parts);
@@ -378,7 +378,7 @@ namespace Interpreter
                     byte[] valueBytes = new byte[value.Length / 2];
                     for (int i = 0; i < value.Length; i += 2)
                     {
-                        valueBytes[i >> 1] = System.Convert.ToByte(value.Substring(i, 2));
+                        valueBytes[i >> 1] = System.Convert.ToByte(value.Substring(i, 2), 16);
                     }
                     value = new string(Encoding.UTF8.GetChars(valueBytes));
                 }
@@ -434,16 +434,48 @@ namespace Interpreter
             }
         }
 
-        private class DebuggerMessageQueryLocal : DebuggerMessage
+        private class DebuggerMessageQueryValue : DebuggerMessage
         {
-            public DebuggerMessageQueryLocal(int sourceId, string[] args) : base(sourceId)
+            public string[] Values { get; private set; }
+            public string RequestToken { get; private set; }
+            public int StackOffset { get; private set; }
+
+            public DebuggerMessageQueryValue(int sourceId, string[] args) : base(sourceId)
             {
-                throw new System.NotImplementedException();
+                Dictionary<string, string> lookup = ParseArgs(args);
+                this.Values = lookup["path"].Split(',');
+                this.RequestToken = lookup["req-token"];
+                int so;
+                if (!lookup.ContainsKey("stack-offset") || int.TryParse(lookup["stack-offset"], out so))
+                {
+                    so = 0;
+                }
+                this.StackOffset = 0;
             }
 
             internal override string[] Run()
             {
-                throw new System.NotImplementedException();
+                Interpreter.Structs.Value v = CrayonWrapper.v_queryValue(VM, -1, 0, this.Values);
+                string resultType = "none";
+                string resultValue = "";
+                if (v != null)
+                {
+                    switch (v.type)
+                    {
+                        case 1: resultType = "null"; break;
+                        case 2: resultType = "bool"; break;
+                        case 3: resultType = "int"; break;
+                        case 4: resultType = "float"; break;
+                        case 5: resultType = "string"; break;
+                        case 6: resultType = "list"; break;
+                        default:
+                            // TODO: fill this in
+                            resultType = "TYPE:" + v.type;
+                            break;
+                    }
+                    resultValue = CrayonWrapper.v_valueToString(VM, v);
+                }
+                return new string[] { this.RequestToken, resultType, resultValue };
             }
         }
 

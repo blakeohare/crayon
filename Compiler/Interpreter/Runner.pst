@@ -62,7 +62,12 @@
             null, // original source code data
             new List<string>(), // original source code data builder
             null, // file names by ID
-            null), // file ID's by name
+            null, // file ID's by name
+
+            // local variable and closure names
+            new Dictionary<int, List<string>>(),
+            new Dictionary<int, List<string>>()),
+
         new VmMetadata(
             null, // identifiers
             new List<string>(), // identifiers builder
@@ -86,8 +91,9 @@
             new MagicNumbers(0, 0, 0),
 
             new Dictionary<string, int>(), // inverse function name literal lookup
-            new Dictionary<int, Dictionary<int, int>>() // classMemberLocalizerBuilder
+            new Dictionary<int, Dictionary<int, int>>(), // classMemberLocalizerBuilder
 
+            null // most recently defined function
         ),
         0, // instance counter
 

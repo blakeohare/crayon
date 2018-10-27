@@ -55,6 +55,11 @@ namespace Parser
 
         private VariableScope() { }
 
+        public VariableId[] GetAllLocals()
+        {
+            return rootScope.rootScopeOrder.ToArray();
+        }
+
         public static VariableScope NewEmptyScope(bool requireExplicitDeclarations)
         {
             VariableScope scope = new VariableScope()

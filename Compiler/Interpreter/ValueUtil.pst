@@ -687,3 +687,20 @@ ListImpl valueMultiplyList(ListImpl a, int n) {
     output.size = len;
     return output;
 }
+
+bool isStringEqual(string a, string b) {
+    if (@ext_boolean("IS_JAVA")) {
+        if (a == null || b == null) {
+            return a == null && b == null;
+        }
+
+        if (Core.StringEquals(a, b)) {
+            return true;
+        }
+    } else {
+        if ((string) a == (string) b) {
+            return true;
+        }
+    }
+    return false;
+}

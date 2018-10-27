@@ -22,9 +22,10 @@
         COMMAND_LINE_ARGS,
         CONTINUE, // 0: flag if this has been set, 1: PC offset to jump to (generally BREAK gets resolved into JUMP unless a finally block needs to run.)
         CORE_FUNCTION, // 1: function ID
-        DEF_ORIGINAL_CODE, // 1: file ID, string arg: source code of that file with a preceding line for the file name.
+        DEBUG_SYMBOLS,
         DEF_DICTIONARY,
         DEF_LIST,
+        DEF_ORIGINAL_CODE, // 1: file ID, string arg: source code of that file with a preceding line for the file name.
         DEREF_CLOSURE, // 1: var ID
         DEREF_DOT, // 1: field ID
         DEREF_INSTANCE_FIELD, // 1: member ID
