@@ -10,6 +10,7 @@
 struct VmDebugData {
     Array<bool> hasBreakpoint;
     Array<BreakpointInfo> breakpointInfo;
+    Dictionary<int, int> breakpointIdToPc;
     int nextBreakpointId;
 }
 

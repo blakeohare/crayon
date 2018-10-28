@@ -371,7 +371,7 @@ namespace Interpreter
             switch (parts[0])
             {
                 case "SET-BREAKPOINT": return new DebuggerMessageSetBreakpoint(sourceId, parts);
-                case "CLEAR-BREAKPOINT": return new DebuggerMessageClearBreakpoint(sourceId, parts);
+                case "REMOVE-BREAKPOINT": return new DebuggerMessageRemoveBreakpoint(sourceId, parts);
                 case "GET-LOCALS": return new DebuggerMessageGetLocals(sourceId, parts);
                 case "QUERY-VALUE": return new DebuggerMessageQueryValue(sourceId, parts);
                 case "CONNECT": return new DebuggerMessageConnect(sourceId, parts);
@@ -428,16 +428,22 @@ namespace Interpreter
             }
         }
 
-        private class DebuggerMessageClearBreakpoint : DebuggerMessage
+        private class DebuggerMessageRemoveBreakpoint : DebuggerMessage
         {
-            public DebuggerMessageClearBreakpoint(int sourceId, string[] args) : base(sourceId)
+            public int BreakpointId { get; private set; }
+            public string RequestToken { get; private set; }
+
+            public DebuggerMessageRemoveBreakpoint(int sourceId, string[] args) : base(sourceId)
             {
-                throw new NotImplementedException();
+                Dictionary<string, string> lookup = ParseArgs(args);
+                this.BreakpointId = int.Parse(lookup["id"]);
+                this.RequestToken = lookup["req-token"];
             }
 
             internal override string[] Run()
             {
-                throw new NotImplementedException();
+                CrayonWrapper.v_debuggerClearBreakpoint(VM, this.BreakpointId);
+                return new string[] { this.RequestToken, "1" };
             }
         }
 
