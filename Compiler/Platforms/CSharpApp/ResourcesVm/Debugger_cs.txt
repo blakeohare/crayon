@@ -1,4 +1,5 @@
 using Interpreter.Vm;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -56,6 +57,11 @@ namespace Interpreter
 
         private static object awaitingQueueMutex = new object();
 
+        public void BroadcastMessage(string[] value)
+        {
+            this.debuggerNetworkConnection.BroadcastMessageToAllSessions(value);
+        }
+
         public void FlushMessageQueue()
         {
             foreach (DebuggerMessage debuggerMessage in debuggerNetworkConnection.FlushData())
@@ -91,8 +97,22 @@ namespace Interpreter
 
     public class DebuggerConnection
     {
-        private object sessionMutex = new object();
-        List<DebuggerSession> activeSessions = new List<DebuggerSession>();
+        private readonly object sessionMutex = new object();
+        private List<DebuggerSession> activeSessions = new List<DebuggerSession>();
+
+        public void BroadcastMessageToAllSessions(string[] message)
+        {
+            DebuggerSession[] sessions;
+            lock (sessionMutex)
+            {
+                sessions = activeSessions.ToArray();
+            }
+
+            foreach (DebuggerSession session in sessions)
+            {
+                session.SendToClientAsync(message);
+            }
+        }
 
         public List<DebuggerMessage> FlushData()
         {
@@ -120,7 +140,7 @@ namespace Interpreter
             DebuggerSession targetSocket = null;
             lock (sessionMutex)
             {
-                foreach (DebuggerSession session in activeSessions)
+                foreach (DebuggerSession session in this.activeSessions)
                 {
                     if (session.IsActive && session.SessionId == sessionId)
                     {
@@ -168,7 +188,7 @@ namespace Interpreter
                 this.socket.Close();
             }
 
-            private object outgoingQueueMutex = new object();
+            private readonly object outgoingQueueMutex = new object();
             private List<string> outgoingQueue = new List<string>();
             public void SendToClientAsync(string[] messageParts)
             {
@@ -259,7 +279,7 @@ namespace Interpreter
                         {
                             case 10054: return;
                             default:
-                                throw new System.Exception("Code: " + ex.ErrorCode);
+                                throw new Exception("Code: " + ex.ErrorCode);
                         }
                     }
                     if (bytesRead == buffer.Length)
@@ -329,9 +349,9 @@ namespace Interpreter
                 }
 
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
-                System.Console.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
             }
         }
     }
@@ -378,7 +398,7 @@ namespace Interpreter
                     byte[] valueBytes = new byte[value.Length / 2];
                     for (int i = 0; i < value.Length; i += 2)
                     {
-                        valueBytes[i >> 1] = System.Convert.ToByte(value.Substring(i, 2), 16);
+                        valueBytes[i >> 1] = Convert.ToByte(value.Substring(i, 2), 16);
                     }
                     value = new string(Encoding.UTF8.GetChars(valueBytes));
                 }
@@ -412,12 +432,12 @@ namespace Interpreter
         {
             public DebuggerMessageClearBreakpoint(int sourceId, string[] args) : base(sourceId)
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
 
             internal override string[] Run()
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
         }
 
@@ -425,12 +445,12 @@ namespace Interpreter
         {
             public DebuggerMessageGetLocals(int sourceId, string[] args) : base(sourceId)
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
 
             internal override string[] Run()
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
         }
 
@@ -483,12 +503,12 @@ namespace Interpreter
         {
             public DebuggerMessageConnect(int sourceId, string[] args) : base(sourceId)
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
 
             internal override string[] Run()
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
         }
 
@@ -496,12 +516,12 @@ namespace Interpreter
         {
             public DebuggerMessageSetNextExecLine(int sourceId, string[] args) : base(sourceId)
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
 
             internal override string[] Run()
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
         }
 
@@ -509,12 +529,12 @@ namespace Interpreter
         {
             public DebuggerMessageGetCodeInfo(int sourceId, string[] args) : base(sourceId)
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
 
             internal override string[] Run()
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
         }
 
@@ -522,12 +542,12 @@ namespace Interpreter
         {
             public DebuggerMessageNotFound(int sourceId, string[] args) : base(sourceId)
             {
-                throw new System.InvalidOperationException("Cannot identify debug instruction: " + args[0]);
+                throw new InvalidOperationException("Cannot identify debug instruction: " + args[0]);
             }
 
             internal override string[] Run()
             {
-                throw new System.Exception();
+                throw new Exception();
             }
         }
     }
