@@ -38,6 +38,7 @@ int debuggerSetBreakpoint(VmContext vm, string path, int line) {
         debugData.nextBreakpointId = breakpointId + 1;
         debugData.breakpointInfo[pc] = breakpoint;
         debugData.hasBreakpoint[pc] = true;
+        debugData.breakpointIdToPc[breakpointId] = pc;
     }
     return breakpoint.breakpointId;
 }
@@ -185,6 +186,31 @@ int applyDebugSymbolData(VmContext vm, Array<int> opArgs, string stringData, Fun
                 varList.Add(null);
             }
             varList[localId] = stringData;
+        }
+    }
+    return 0;
+}
+
+int debuggerClearBreakpoint(VmContext vm, int id) {
+    if (@ext_boolean("HAS_DEBUGGER")) {
+        VmDebugData dd = vm.byteCode.debugData;
+        Array<int> pcs = dd.breakpointIdToPc.Values();
+        if (id == -1) {
+            dd.breakpointIdToPc = new Dictionary<int, int>();
+            for (int i = 0; i < pcs.Length(); i += 1) {
+                int pc = pcs[i];
+                dd.breakpointInfo[pc] = null;
+                dd.hasBreakpoint[pc] = false;
+            }
+        } else {
+            Dictionary<int, int> lookup = dd.breakpointIdToPc;
+            int pc = -1;
+            pc = lookup.TryGet(id, -1);
+            if (pc != -1) {
+                dd.breakpointInfo[pc] = null;
+                dd.hasBreakpoint[pc] = false;
+                lookup.Remove(id);
+            }
         }
     }
     return 0;
