@@ -341,6 +341,8 @@ namespace Interpreter.Libraries.Game
             if (vmStatus == 7)
             {
                 isHaltedByDebugger = true;
+                string breakpointId = result.loadAssemblyInformation;
+                Debugger.INSTANCE.BroadcastMessage(new string[] { "breakpoint-hit", breakpointId });
                 return;
             }
         }

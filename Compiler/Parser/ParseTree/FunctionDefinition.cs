@@ -23,6 +23,7 @@ namespace Parser.ParseTree
         public int MemberID { get; set; }
         public List<Lambda> Lambdas { get; private set; }
         private Dictionary<Locale, string> namesByLocale = null;
+        public VariableId[] Locals { get; private set; }
 
         public FunctionDefinition(
             Token functionToken,
