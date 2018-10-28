@@ -323,7 +323,19 @@ namespace Interpreter.Libraries.Game
         private void Update()
         {
             Debugger.INSTANCE.FlushMessageQueue();
-            if (isHaltedByDebugger) return;
+
+            if (isHaltedByDebugger)
+            {
+                if (Debugger.INSTANCE.IsResumeWanted)
+                {
+                    Debugger.INSTANCE.IsResumeWanted = false;
+                    isHaltedByDebugger = false;
+                }
+                else
+                {
+                    return;
+                }
+            }
 
             InterpreterResult result = TranslationHelper.RunInterpreter(this.executionContextId);
             int vmStatus = result.status;
