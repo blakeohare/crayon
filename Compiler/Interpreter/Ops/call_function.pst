@@ -465,7 +465,8 @@ if (staticConstructorNotInvoked) {
                 localsStackCapacity = localsStack.Size();
             }
 
-            localsStackSetToken += 1;
+            localsStackSetToken = ec.localsStackSetToken + 1;
+            ec.localsStackSetToken = localsStackSetToken;
             if (localsStackSetToken > 2000000000) {
                 resetLocalsStackTokens(ec, stack);
                 localsStackSetToken = 2;

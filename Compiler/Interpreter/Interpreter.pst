@@ -57,7 +57,6 @@ InterpreterResult generateException(
 
     ec.currentValueStackSize = valueStackSize;
     stack.pc = pc;
-    ec.localsStackSetToken = stack.localsStackSetToken + 1;
     MagicNumbers mn = vm.metadata.magicNumbers;
     int generateExceptionFunctionId = mn.coreGenerateExceptionFunctionId;
     FunctionInfo functionInfo = vm.metadata.functionTable[generateExceptionFunctionId];
@@ -66,13 +65,15 @@ InterpreterResult generateException(
         increaseLocalsStackCapacity(ec, functionInfo.localsSize);
     }
     int localsIndex = stack.localsStackOffsetEnd;
+    int localsStackSetToken = ec.localsStackSetToken + 1;
+    ec.localsStackSetToken = localsStackSetToken;
     ec.localsStack[localsIndex] = buildInteger(vm.globals, type);
     ec.localsStack[localsIndex + 1] = buildString(vm.globals, message);
-    ec.localsStackSet[localsIndex] = ec.localsStackSetToken;
-    ec.localsStackSet[localsIndex + 1] = ec.localsStackSetToken;
+    ec.localsStackSet[localsIndex] = localsStackSetToken;
+    ec.localsStackSet[localsIndex + 1] = localsStackSetToken;
     ec.stackTop = new StackFrame(
         pc + 1, // won't have the end of the interpreter loop to do the +1 for us.
-        ec.localsStackSetToken,
+        localsStackSetToken,
         stack.localsStackOffsetEnd,
         stack.localsStackOffsetEnd + functionInfo.localsSize,
         stack,
