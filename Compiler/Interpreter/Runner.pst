@@ -25,7 +25,8 @@
         1, // stack depth
         PostFinallyBehavior.NOTHING,
         null, // temp return value
-        null); // closure lookup
+        null, // closure lookup
+        null);
 
     ExecutionContext executionContext = new ExecutionContext(
         0, // execution context ID. 0 is always the root process and execution will end entirely if this context ends.
@@ -186,8 +187,8 @@ InterpreterResult runInterpreterWithFunctionPointer(VmContext vm, Value fpValue,
         1, // stack depth
         PostFinallyBehavior.NOTHING,
         null, // temp return value
-        null // closure lookup
-        );
+        null, // closure lookup
+        null); // debug step tracker
 
     ExecutionContext executionContext = new ExecutionContext(
         newId, // execution context ID. 0 is always the root process and execution will end entirely if this context ends.

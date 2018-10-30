@@ -60,4 +60,9 @@ if (esfData[pc] != null) {
     pc = stack.pc;
     localsStackOffset = stack.localsStackOffset;
     localsStackSetToken = stack.localsStackSetToken;
+
+    if (@ext_boolean("HAS_DEBUGGER") && stack.debugStepTracker != null) {
+        hasInterrupt = true;
+        ec.activeInterrupt = new Interrupt(InterruptType.DEBUG_STEP, 0, "", 0.0, stack.debugStepTracker);
+    }
 }

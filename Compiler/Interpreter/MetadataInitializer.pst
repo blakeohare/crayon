@@ -411,7 +411,8 @@ StackFrame maybeInvokeStaticConstructor(
         stack.depth + 1,
         PostFinallyBehavior.NOTHING,
         null, // temp return value
-        null);
+        null,
+        null); // debug step tracker
 }
 
 /*

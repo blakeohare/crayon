@@ -12,6 +12,7 @@ struct VmDebugData {
     Array<BreakpointInfo> breakpointInfo;
     Dictionary<int, int> breakpointIdToPc;
     int nextBreakpointId;
+    int nextStepId;
 }
 
 struct BreakpointInfo {
@@ -146,6 +147,7 @@ struct Interrupt {
     int exceptionType; // TODO: rename this to intArg
     string exceptionMessage; // TODO: rename this to stringArg
     double sleepDurationSeconds;
+    DebugStepTracker debugStepData; // data for tracking a debugger stepping through code.
 }
 
 struct StackFrame {
@@ -162,6 +164,13 @@ struct StackFrame {
     int postFinallyBehavior; // value defined in PostFinallyBehavior enum
     Value returnValueTempStorage; // return value when you return but still need to run a finally block
     Dictionary<int, ClosureValuePointer> closureVariables; // lazily initialized since most functions will not use this.
+    DebugStepTracker debugStepTracker; // set when the user is stepping with a debugger
+}
+
+struct DebugStepTracker {
+    int uniqueId;
+    int originatingFileId;
+    int originatingLineIndex;
 }
 
 struct InterpreterResult {

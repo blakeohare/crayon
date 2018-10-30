@@ -48,3 +48,9 @@ localsStackSetToken = stack.localsStackSetToken;
 ec.stackTop = stack;
 stack.postFinallyBehavior = PostFinallyBehavior.NOTHING;
 ec.currentValueStackSize = valueStackSize;
+
+// now that the stack is different, check for active debugger stepping in the current stack frame
+if (@ext_boolean("HAS_DEBUGGER") && stack.debugStepTracker != null) {
+    hasInterrupt = true;
+    ec.activeInterrupt = new Interrupt(InterruptType.DEBUG_STEP, 0, "", 0.0, stack.debugStepTracker);
+}
