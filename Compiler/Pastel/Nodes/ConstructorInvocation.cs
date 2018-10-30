@@ -41,11 +41,27 @@ namespace Pastel.Nodes
                 case "List":
                 case "Dictionary":
                     break;
+
                 default:
                     StructDefinition sd = compiler.GetStructDefinition(this.Type.RootValue);
                     if (sd != null)
                     {
                         this.StructType = sd;
+                        int fieldCount = this.StructType.ArgTypes.Length;
+                        if (fieldCount != this.Args.Length)
+                        {
+                            throw new ParserException(this.FirstToken, "Incorrect number of args in constructor. Expected " + fieldCount + ", found " + this.Args.Length);
+                        }
+
+                        for (int i = 0; i < fieldCount; ++i)
+                        {
+                            PType actualType = this.Args[i].ResolvedType;
+                            PType expectedType = this.StructType.ArgTypes[i];
+                            if (!PType.CheckAssignment(expectedType, actualType))
+                            {
+                                throw new ParserException(this.Args[i].FirstToken, "Cannot use an arg of this type for this struct field. Expected " + expectedType.ToString() + " but found " + actualType.ToString());
+                            }
+                        }
                     }
                     break;
             }
