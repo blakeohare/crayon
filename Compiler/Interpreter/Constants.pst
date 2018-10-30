@@ -175,9 +175,10 @@ enum CoreExceptionTypes {
 
 enum InterruptType {
     EXCEPTION = 1,
-    DEBUG_BREAKPOINT = 2, // TODO: one of these days...
+    DEBUG_BREAKPOINT = 2, // TODO: remove this. VM yields immediately before the op runs, not during interrupt phase.
     SLEEP = 3,
     LOAD_ASSEMBLY = 4,
+    DEBUG_STEP = 5,
 }
 
 const int INTEGER_POSITIVE_CACHE_SIZE = 2049;

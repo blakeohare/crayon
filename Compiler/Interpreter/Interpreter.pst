@@ -39,7 +39,8 @@ bool generateException2(ExecutionContext ec, int exceptionType, string exMsg) {
         InterruptType.EXCEPTION,
         exceptionType,
         exMsg,
-        0.0); // ignored
+        0.0, // ignored
+        null);
     return true;
 }
 
@@ -81,6 +82,7 @@ InterpreterResult generateException(
         0,
         stack.depth + 1,
         PostFinallyBehavior.NOTHING,
+        null,
         null,
         null);
 
@@ -198,6 +200,7 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     Value arg1 = null;
     Value arg2 = null;
     Value arg3 = null;
+    List<Token> tokenList = null;
     Array<int> globalNameIdToPrimitiveMethodName = vm.metadata.globalNameIdToPrimitiveMethodName;
     MagicNumbers magicNumbers = vm.metadata.magicNumbers;
     Array<Dictionary<int, int>> integerSwitchesByPc = vm.byteCode.integerSwitchesByPc;
@@ -221,19 +224,40 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     VmDebugData debugData = vm.byteCode.debugData;
     Array<bool> isBreakPointPresent = debugData.hasBreakpoint;
     BreakpointInfo breakpointInfo = null;
+    bool debugBreakPointTemporaryDisable = false;
+    if (@ext_boolean("HAS_DEBUGGER")) {
+        if (stack.debugStepTracker != null) {
+            hasInterrupt = true;
+            ec.activeInterrupt = new Interrupt(InterruptType.DEBUG_STEP, 0, "", 0.0, stack.debugStepTracker);
+        }
+
+        // If the first op that will run has a breakpoint on it, you don't want that to get triggered.
+        // You're restarting the VM after it was already hit, afterall.
+        // Set this flag to tell the breakpoint to be ignored.
+        if (isBreakPointPresent[pc]) {
+            debugBreakPointTemporaryDisable = true;
+        }
+    }
 
     while (true) {
 
-        if (@ext_boolean("HAS_DEBUGGER") && isBreakPointPresent[pc]) {
-            printToStdOut("DBG", "Breakpoint Hit! (halting VM)");
-            breakpointInfo = debugData.breakpointInfo[pc];
-            if (breakpointInfo.isTransient) {
-                debugData.breakpointInfo[pc] = null;
-                debugData.hasBreakpoint[pc] = false;
+        if (@ext_boolean("HAS_DEBUGGER")) {
+            if (isBreakPointPresent[pc]) {
+                // Don't trigger the breakpoint if we're resuming the VM just now.
+                if (debugBreakPointTemporaryDisable) {
+                    debugBreakPointTemporaryDisable = false;
+                } else {
+                    printToStdOut("DBG", "Breakpoint Hit! (halting VM)");
+                    breakpointInfo = debugData.breakpointInfo[pc];
+                    if (breakpointInfo.isTransient) {
+                        debugData.breakpointInfo[pc] = null;
+                        debugData.hasBreakpoint[pc] = false;
+                    }
+                    prepareToSuspend(ec, stack, valueStackSize, pc - 1);
+                    string1 = encodeBreakpointData(vm, breakpointInfo, pc);
+                    return new InterpreterResult(InterpreterResultStatus.BREAKPOINT, "", 0.0, ec.id, ec.id == 0, string1);
+                }
             }
-            prepareToSuspend(ec, stack, valueStackSize, pc - 1);
-            string1 = encodeBreakpointData(vm, breakpointInfo, pc);
-            return new InterpreterResult(InterpreterResultStatus.BREAKPOINT, "", 0.0, ec.id, ec.id == 0, string1);
         }
 
         row = args[pc];
@@ -322,6 +346,46 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
             }
             if (interrupt.type == InterruptType.LOAD_ASSEMBLY) {
                 return new InterpreterResult(InterpreterResultStatus.LOAD_ASSEMBLY, "", 0.0, 0, false, interrupt.exceptionMessage);
+            }
+
+            // If the user is stepping with the debugger, the interrupt is always active until it hits the next line.
+            // It's okay if this creates a huge performance hit since it only performs a couple operations for each step.
+            if (interrupt.type == InterruptType.DEBUG_STEP) {
+                // check to see if the current stack frame is the one in the debug step data
+                if (stack.debugStepTracker != null &&
+                    stack.debugStepTracker.uniqueId == interrupt.debugStepData.uniqueId) {
+
+                    // if you're still in the same stack frame, check to see if the following conditions are true:
+                    // - the value stack size is 0. This indicates that you're not in the middle of some expression.
+                    // - there's token information
+                    // - the line number is different than the one you started debugging from.
+                    // - the file is the same as the one you started from (because inlined code will have a different file)
+                    tokenList = vm.symbolData.tokenData[pc + 1];
+                    if (tokenList.Size() > 0) {
+                        Token token = tokenList[0];
+                        if (token.fileId == interrupt.debugStepData.originatingFileId &&
+                            token.lineIndex != interrupt.debugStepData.originatingLineIndex &&
+                            stack.valueStackPopSize == valueStackSize) {
+
+                            prepareToSuspend(ec, stack, valueStackSize, pc);
+                            stack.debugStepTracker = null;
+                            breakpointInfo = new BreakpointInfo(-1, true, token); // dummy breakpoint
+                            string1 = encodeBreakpointData(vm, breakpointInfo, pc);
+                            return new InterpreterResult(InterpreterResultStatus.BREAKPOINT, "", 0.0, ec.id, ec.id == 0, string1);
+                        }
+                    }
+
+                    // The execution context's interrupt gets cleared when hasInterrupt is triggered,
+                    // but we want this one to linger.
+                    ec.activeInterrupt = interrupt;
+                    hasInterrupt = true;
+                } else {
+                    // if the stack frame is different, then get rid of the debug step tracker altogether.
+                    // It will be added back by the RETURN op and exception bubbler, which checks the stack
+                    // for debug step information.
+                    hasInterrupt = false;
+                    ec.activeInterrupt = null;
+                }
             }
         }
 

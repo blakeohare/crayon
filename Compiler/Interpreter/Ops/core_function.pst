@@ -512,7 +512,7 @@ switch (row[0]) {
         }
 
         prepareToSuspend(ec, stack, valueStackSize, pc);
-        ec.activeInterrupt = new Interrupt(InterruptType.SLEEP, 0, "", float1);
+        ec.activeInterrupt = new Interrupt(InterruptType.SLEEP, 0, "", float1, null);
         hasInterrupt = true;
 
         break;

@@ -215,3 +215,21 @@ int debuggerClearBreakpoint(VmContext vm, int id) {
     }
     return 0;
 }
+
+bool debugSetStepOverBreakpoint(VmContext vm) {
+    if (@ext_boolean("HAS_DEBUGGER")) {
+        ExecutionContext ec = vm.executionContexts[vm.lastExecutionContextId];
+        StackFrame stackFrame = ec.stackTop;
+        int stepId = vm.byteCode.debugData.nextStepId;
+        vm.byteCode.debugData.nextStepId = stepId + 1;
+        List<Token> tokenData = vm.symbolData.tokenData[stackFrame.pc];
+        if (tokenData == null || tokenData.Size() == 0) {
+            return false;
+        }
+        Token token = tokenData[0];
+        stackFrame.debugStepTracker = new DebugStepTracker(stepId, token.fileId, token.lineIndex);
+        return true;
+    } else {
+        return false;
+    }
+}

@@ -465,7 +465,9 @@ namespace Interpreter
 
             internal override string[] Run()
             {
-                throw new NotImplementedException();
+                CrayonWrapper.v_debugSetStepOverBreakpoint(VM);
+                Debugger.INSTANCE.IsResumeWanted = true;
+                return null;
             }
         }
 
