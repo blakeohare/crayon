@@ -342,12 +342,18 @@ namespace Interpreter
             // 9003 is the first port that is neither officially nor unofficially allocated according to the
             // Wikipedia page for list of ports and is also "over 9000".
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 9003);
+            bool useCommandLineOutput = TranslationHelper.ProgramData.environment.stdoutPrefix != null;
 
             try
             {
                 Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 listener.Bind(localEndPoint);
                 listener.Listen(1);
+
+                if (useCommandLineOutput)
+                {
+                    Console.WriteLine("DEBUGGER: READY");
+                }
 
                 Socket handler = listener.Accept();
                 DebuggerSession session = new DebuggerSession(handler);
@@ -356,10 +362,20 @@ namespace Interpreter
                     activeSessions.Add(session);
                 }
 
+                if (useCommandLineOutput)
+                {
+                    Console.WriteLine("DEBUGGER: CONNECTED");
+                }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                string message = e.ToString();
+                if (useCommandLineOutput)
+                {
+                    message = "DEBUGGER: HARD-CRASH: " + message.Replace("\n", "\\n");
+                }
+
+                Console.WriteLine(message);
             }
         }
     }

@@ -33,14 +33,18 @@ namespace Crayon
         // STACKTRACE: stack trace information
         private static readonly string USE_OUTPUT_PREFIXES = "useOutputPrefixes";
 
+        // Enable the debugger when running a CBX project.
+        private static readonly string DEBUGGER = "Debugger";
+
         private static readonly HashSet<string> ATOMIC_FLAGS = new HashSet<string>() {
-            READABLE_BYTE_CODE,
-            LIBRARY_DEP_TREE,
-            SHOW_PERFORMANCE_MARKERS,
             CBX,
-            SHOW_LIB_STACK,
+            DEBUGGER,
             ERROR_CHECK_ONLY,
             JSON_OUTPUT,
+            LIBRARY_DEP_TREE,
+            READABLE_BYTE_CODE,
+            SHOW_LIB_STACK,
+            SHOW_PERFORMANCE_MARKERS,
             USE_OUTPUT_PREFIXES,
         };
 
@@ -95,6 +99,10 @@ namespace Crayon
                         }
                         output[name] = value;
                         argsMutable.RemoveAt(i--);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Unrecognized compiler flag: " + name);
                     }
                 }
             }
