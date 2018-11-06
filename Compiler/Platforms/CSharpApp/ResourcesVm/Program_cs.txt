@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Interpreter;
 using Interpreter.Vm;
 
 namespace CrayonRuntime
@@ -62,7 +63,7 @@ namespace CrayonRuntime
                 string[] runtimeArgData = vmArgs["runtimeargs"].Split(':');
                 if (runtimeArgData[0] != "0")
                 {
-                    runtimeArgs = runtimeArgData[2]
+                    runtimeArgs = runtimeArgData[1]
                         .Split(',')
                         .Select(s => Base64Decode(s))
                         .ToArray();
