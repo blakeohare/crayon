@@ -120,7 +120,8 @@ namespace Exporter
             using (new PerformanceSection("VmGenerator.GenerateVmSourceCodeForPlatform"))
             {
                 Options options = new Options();
-                Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags() ?? new Dictionary<string, object>();
+                bool isStandaloneVm = mode == VmGenerationMode.EXPORT_VM_AND_LIBRARIES;
+                Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags(isStandaloneVm) ?? new Dictionary<string, object>();
 
                 this.AddTypeEnumsToConstants(constantFlags);
 
@@ -214,8 +215,13 @@ namespace Exporter
                     context.SetConstant(key, constantFlags[key]);
                 }
 
+                // TODO: pass the correct value to the next function.
+                // Right now this value is only used for HAS_DEBUGGER, so it's safe
+                // to call it with the wrong value but it's unideal.
+                bool isStandaloneVmINCORRECT = false;
+
                 IEnumerable<string> interpreterFiles = new List<string>() {
-                    (bool) platform.GetFlattenedConstantFlags()["ARRAY_IS_LIST"]
+                    (bool) platform.GetFlattenedConstantFlags(isStandaloneVmINCORRECT)["ARRAY_IS_LIST"]
                         ? "ListImplListBased.pst"
                         : "ListImplArrayBased.pst"
                 }.Concat(INTERPRETER_BASE_FILES);
