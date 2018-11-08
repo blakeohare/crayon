@@ -66,6 +66,10 @@ namespace Parser.ParseTree
 
                 if (!this.Expression.ResolvedType.CanAssignToA(returnType))
                 {
+                    if (this.Owner is ConstructorDefinition)
+                    {
+                        throw new ParserException(this, "Cannot return a value from a constructor.");
+                    }
                     throw new ParserException(this, "Cannot return this type from this function.");
                 }
             }
