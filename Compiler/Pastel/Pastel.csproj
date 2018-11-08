@@ -48,12 +48,6 @@
     <EmbeddedResource Include="NativeFunctionSignatures.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{18617a9a-3b1f-4532-bf4d-12bd62a3e5c6}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Transpilers\Resources\*.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

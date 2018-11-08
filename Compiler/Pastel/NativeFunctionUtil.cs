@@ -95,7 +95,7 @@ namespace Pastel
 
         private static string GetNativeFunctionSignatureManifest()
         {
-            return Common.Util.ReadAssemblyFileText(typeof(NativeFunctionUtil).Assembly, "NativeFunctionSignatures.txt");
+            return PastelUtil.ReadAssemblyFileText(typeof(NativeFunctionUtil).Assembly, "NativeFunctionSignatures.txt");
         }
     }
 }

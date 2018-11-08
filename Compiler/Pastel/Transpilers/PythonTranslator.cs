@@ -124,7 +124,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateCharConstant(TranspilerContext sb, char value)
         {
-            sb.Append(Common.Util.ConvertStringValueToCode(value.ToString()));
+            sb.Append(PastelUtil.ConvertStringValueToCode(value.ToString()));
         }
 
         public override void TranslateCharToString(TranspilerContext sb, Expression charValue)
@@ -270,7 +270,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateFloatConstant(TranspilerContext sb, double value)
         {
-            sb.Append(Common.Util.FloatToString(value));
+            sb.Append(PastelUtil.FloatToString(value));
         }
 
         public override void TranslateFloatDivision(TranspilerContext sb, Expression floatNumerator, Expression floatDenominator)
@@ -751,7 +751,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateStringConstant(TranspilerContext sb, string value)
         {
-            sb.Append(Common.Util.ConvertStringValueToCode(value));
+            sb.Append(PastelUtil.ConvertStringValueToCode(value));
         }
 
         public override void TranslateStringContains(TranspilerContext sb, Expression haystack, Expression needle)

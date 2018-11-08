@@ -135,7 +135,7 @@ namespace Pastel
             string resourcePath = ctx.Transpiler.HelperCodeResourcePath;
             if (resourcePath != null)
             {
-                string helperCode = Common.Util.ReadAssemblyFileText(typeof(AbstractTranslator).Assembly, resourcePath);
+                string helperCode = PastelUtil.ReadAssemblyFileText(typeof(AbstractTranslator).Assembly, resourcePath);
                 sb.Append(helperCode);
                 sb.Append(ctx.Transpiler.NewLine);
             }
