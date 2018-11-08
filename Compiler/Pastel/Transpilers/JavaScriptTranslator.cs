@@ -1,5 +1,4 @@
-﻿using Common;
-using Pastel.Nodes;
+﻿using Pastel.Nodes;
 using System;
 
 namespace Pastel.Transpilers
@@ -65,7 +64,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateCharConstant(TranspilerContext sb, char value)
         {
-            sb.Append(Util.ConvertStringValueToCode(value.ToString()));
+            sb.Append(PastelUtil.ConvertStringValueToCode(value.ToString()));
         }
 
         public override void TranslateCharToString(TranspilerContext sb, Expression charValue)

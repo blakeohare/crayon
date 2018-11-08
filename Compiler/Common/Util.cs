@@ -63,35 +63,6 @@ namespace Common
             return output;
         }
 
-        public static string ConvertStringTokenToValue(string tokenValue)
-        {
-            List<string> output = new List<string>();
-            for (int i = 1; i < tokenValue.Length - 1; ++i)
-            {
-                char c = tokenValue[i];
-                if (c == '\\')
-                {
-                    c = tokenValue[++i];
-                    switch (c)
-                    {
-                        case '\\': output.Add("\\"); break;
-                        case 'n': output.Add("\n"); break;
-                        case 'r': output.Add("\r"); break;
-                        case 't': output.Add("\t"); break;
-                        case '\'': output.Add("'"); break;
-                        case '"': output.Add("\""); break;
-                        case '0': output.Add("\0"); break;
-                        default: return null;
-                    }
-                }
-                else
-                {
-                    output.Add("" + c);
-                }
-            }
-            return string.Join("", output);
-        }
-
         public static string ConvertStringValueToCode(string rawValue)
         {
             return ConvertStringValueToCode(rawValue, false);

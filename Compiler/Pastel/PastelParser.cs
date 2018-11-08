@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Pastel.Nodes;
-using Common;
 
 namespace Pastel
 {
@@ -645,9 +644,9 @@ namespace Pastel
             switch (firstChar)
             {
                 case '\'':
-                    return new InlineConstant(PType.CHAR, tokens.Pop(), Util.ConvertStringTokenToValue(next));
+                    return new InlineConstant(PType.CHAR, tokens.Pop(), PastelUtil.ConvertStringTokenToValue(next));
                 case '"':
-                    return new InlineConstant(PType.STRING, tokens.Pop(), Util.ConvertStringTokenToValue(next));
+                    return new InlineConstant(PType.STRING, tokens.Pop(), PastelUtil.ConvertStringTokenToValue(next));
                 case '@':
                     Token atToken = tokens.PopExpected("@");
                     Token compileTimeFunction = EnsureTokenIsValidName(tokens.Pop(), "Expected compile time function name.");
