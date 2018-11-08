@@ -18,7 +18,10 @@ namespace CSharpApp
 
         public override IDictionary<string, object> GetConstantFlags()
         {
-            return new Dictionary<string, object>();
+            return new Dictionary<string, object>()
+            {
+                { "HAS_DEBUGGER", true },
+            };
         }
 
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
@@ -333,7 +336,8 @@ namespace CSharpApp
             this.CopyResourceAsText(output, baseDir + "Vm/PlatformTranslationHelper.cs", "Resources/PlatformTranslationHelper.cs", replacements);
             this.CopyResourceAsText(output, baseDir + "ResourceReader.cs", resourceDir + "/ResourceReader.cs", replacements);
 
-            this.CopyResourceAsText(output, baseDir + "Debugger.cs", "ResourcesVm/Debugger.cs", replacements);
+            string debuggerResource = isStandaloneVm ? "ResourcesVm/Debugger.cs" : "Resources/DummyDebugger.cs";
+            this.CopyResourceAsText(output, baseDir + "Debugger.cs", debuggerResource, replacements);
         }
 
         private string WrapStructCode(string structCode)

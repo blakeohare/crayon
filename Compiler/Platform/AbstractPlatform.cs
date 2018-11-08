@@ -42,12 +42,12 @@ namespace Platform
         }
 
         private Dictionary<string, object> flattenedCached = null;
-        public Dictionary<string, object> GetFlattenedConstantFlags()
+        public Dictionary<string, object> GetFlattenedConstantFlags(bool isStandaloneVm)
         {
             if (this.flattenedCached == null)
             {
                 this.flattenedCached = this.InheritsFrom != null
-                    ? new Dictionary<string, object>(this.PlatformProvider.GetPlatform(this.InheritsFrom).GetFlattenedConstantFlags())
+                    ? new Dictionary<string, object>(this.PlatformProvider.GetPlatform(this.InheritsFrom).GetFlattenedConstantFlags(isStandaloneVm))
                     : new Dictionary<string, object>();
 
                 IDictionary<string, object> thisPlatform = this.GetConstantFlags();
@@ -57,7 +57,15 @@ namespace Platform
                 }
             }
 
-            return new Dictionary<string, object>(this.flattenedCached);
+            Dictionary<string, object> output = new Dictionary<string, object>(this.flattenedCached);
+            if (!isStandaloneVm &&
+                output.ContainsKey("HAS_DEBUGGER") &&
+                (bool)output["HAS_DEBUGGER"])
+            {
+                output["HAS_DEBUGGER"] = false;
+            }
+
+            return output;
         }
 
         public void CopyResourceAsBinary(Dictionary<string, FileOutput> output, string outputPath, string resourcePath)
