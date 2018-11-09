@@ -1,7 +1,7 @@
 ﻿
 if (row[0] == 1) {
     value = valueStack[valueStackSize - 1];
-    @import("ValueStackCapacityCheck.pst");
+    @import("inline/ValueStackCapacityCheck.pst");
 
     if (@ext_boolean("HAS_INCREMENT")) {
         valueStack[valueStackSize++] = value;

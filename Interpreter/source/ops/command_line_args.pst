@@ -1,7 +1,7 @@
 ﻿/*
     Pushes a list of the command line args to the stack.
 */
-@import("ValueStackCapacityCheck.pst");
+@import("inline/ValueStackCapacityCheck.pst");
 
 list1 = makeEmptyList(globals.stringType, 3);
 for (i = 0; i < vm.environment.commandLineArgs.Length(); i += 1) {

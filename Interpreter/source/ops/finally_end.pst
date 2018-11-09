@@ -46,7 +46,7 @@ if (value == null || ec.activeExceptionHandled) {
                 valueStackSize = stack.valueStackPopSize;
                 value = stack.returnValueTempStorage;
                 stack = stack.previous;
-                @import("ValueStackCapacityCheck.pst");
+                @import("inline/ValueStackCapacityCheck.pst");
                 valueStack[valueStackSize] = value;
                 valueStackSize += 1;
             } else {
@@ -62,5 +62,5 @@ if (value == null || ec.activeExceptionHandled) {
             break;
     }
 } else {
-    @import("BubbleException.pst");
+    @import("inline/BubbleException.pst");
 }

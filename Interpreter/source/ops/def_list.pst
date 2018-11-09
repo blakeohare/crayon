@@ -31,6 +31,6 @@ if (@ext_boolean("ARRAY_IS_LIST")) {
 }
 value = new Value(Types.LIST, list1);
 
-@import("ValueStackCapacityCheck.pst");
+@import("inline/ValueStackCapacityCheck.pst");
 valueStack[valueStackSize] = value;
 valueStackSize += 1;

@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crayon", "Crayon\Crayon.csproj", "{6A25BB31-4280-470F-959E-25D6D5A173AD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interpreter", "Interpreter\Interpreter.csproj", "{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platforms", "Platforms", "{E0B05933-80B8-443B-BB91-E378C4F79C37}"
 EndProject
@@ -71,18 +69,6 @@ Global
 		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Release|x86.ActiveCfg = Release|Any CPU
 		{6A25BB31-4280-470F-959E-25D6D5A173AD}.Release|x86.Build.0 = Release|Any CPU
-		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Debug|x86.Build.0 = Debug|Any CPU
-		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Release|x86.ActiveCfg = Release|Any CPU
-		{B7D7C85B-96CE-4FD5-9653-CC9BCE291363}.Release|x86.Build.0 = Release|Any CPU
 		{11FF3292-43A0-4C40-93DE-4F0DD18C4E4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{11FF3292-43A0-4C40-93DE-4F0DD18C4E4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11FF3292-43A0-4C40-93DE-4F0DD18C4E4A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -341,5 +327,8 @@ Global
 		{C1876949-86D6-405E-B717-AFC56C27E1C8} = {E0B05933-80B8-443B-BB91-E378C4F79C37}
 		{F83233E0-FD87-4DB6-9B6B-DB828240F3D3} = {E0B05933-80B8-443B-BB91-E378C4F79C37}
 		{E495CAC5-84B5-481B-A997-F370FE1B40A2} = {E0B05933-80B8-443B-BB91-E378C4F79C37}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {068D0DF5-D0E3-422C-B06A-64F9F12AA2A0}
 	EndGlobalSection
 EndGlobal
