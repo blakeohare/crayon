@@ -1,0 +1,5 @@
+struct Token {
+    int lineIndex;
+    int colIndex;
+    int fileId;
+}

@@ -1,0 +1,20 @@
+struct VmGlobals {
+    Value valueNull;
+    Value boolTrue;
+    Value boolFalse;
+    Value intZero;
+    Value intOne;
+    Value intNegativeOne;
+    Value floatZero;
+    Value floatOne;
+    Value stringEmpty;
+    Array<Value> positiveIntegers;
+    Array<Value> negativeIntegers;
+    Dictionary<string, Value> commonStrings;
+    Array<int> booleanType;
+    Array<int> intType;
+    Array<int> stringType;
+    Array<int> floatType;
+    Array<int> classType;
+    Array<int> anyInstanceType;
+}

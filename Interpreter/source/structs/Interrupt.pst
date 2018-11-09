@@ -1,0 +1,7 @@
+struct Interrupt {
+    int type;
+    int exceptionType; // TODO: rename this to intArg
+    string exceptionMessage; // TODO: rename this to stringArg
+    double sleepDurationSeconds;
+    DebugStepTracker debugStepData; // data for tracking a debugger stepping through code.
+}

@@ -1,0 +1,23 @@
+struct VmContext {
+    Dictionary<int, ExecutionContext> executionContexts;
+    int lastExecutionContextId;
+    Code byteCode;
+    SymbolData symbolData;
+    VmMetadata metadata;
+    int instanceCounter;
+    bool initializationComplete;
+
+    List<int> classStaticInitializationStack;
+    Array<Value> funcArgs;
+
+    ResourceDB resourceDatabase;
+
+    List<Value> shutdownHandlers;
+
+    VmEnvironment environment;
+
+    VmGlobals globals;
+    Value globalNull;
+    Value globalTrue;
+    Value globalFalse;
+}

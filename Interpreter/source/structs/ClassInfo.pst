@@ -1,0 +1,48 @@
+/*
+    When a class is about to be referenced, static initialization state is checked.
+    If it is 0, then check to see if the base class chain has any 0's and initialize the last class
+    up the chain. Class intializations work like function invocations where the return PC points to the
+    exact same spot where the intialization was triggered, so that the code continues to run normally
+    despite the interrupt of the static constructor.
+
+    When a class is initialized, a new Array<Value> is allocated with length of .memberCount.
+    Then a loop runs through all member ID/indexes and checks the fieldInitializationCommand.
+    If it's a literal, it copies the value directly from the fieldInitializationLiteral in the class metadata here.
+    If it's a LIST or DICT, then it creates an empty instance of those.
+    LIST or DICT is only used if the field is initialized to an _empty_ List or Dictionary. Otherwise NULL is used.
+    If it's a SYSTEM_NULL the value of null (not a Value, but an actual native null) is applied to that slot. This
+    indicates that the member is actually referencing a method. This is lazily populated at runtime if a function
+    reference without invocation is ever made.
+
+    All other fields are populated by the constructor by the default field value code which is injected into the
+    constructor's byte code between the base constructor invocation and the body of the constructor.
+*/
+struct ClassInfo {
+    int id;
+    int nameId;
+    int baseClassId; // or -1 if no base class
+    int assemblyId;
+    int staticInitializationState; // 0 - not initialized, 1 - in progress, 2 - done
+    Array<Value> staticFields;
+    int staticConstructorFunctionId;
+    int constructorFunctionId;
+
+    int memberCount; // total number of fields and methods, flattened.
+    // The following lists contain data on all flattened fields and methods indexed by member ID.
+    // These values are replicated in children classes where the child class' members appear at the end of the list.
+    Array<int> functionIds; // function ID or -1
+    Array<int> fieldInitializationCommand; // 0 - USE_LITERAL, 1 - LIST, 2 - DICT, 3 - SYSTEM NULL (reserved for method)
+    Array<Value> fieldInitializationLiteral;
+    Array<int> fieldAccessModifiers; // access modifiers by ID. 1 - PUBLIC, 2 - PRIVATE, 3 - INTERNAL, 4 - PROTECTED, 5 - INTERNAL_PROTECTED
+
+    // TODO: It might actually be good to create two of these, one that's global ID to all member ID's, and another
+    // for global ID to assignable member ID's. This would eliminate a couple of CPU cycles and also partially pave
+    // the road for private/protected/public modifiers.
+    Dictionary<int, int> globalIdToMemberId;
+
+    Dictionary<int, int> localeScopedNameIdToMemberId;
+
+    Array<Array<int>> typeInfo;
+
+    string fullyQualifiedName;
+}

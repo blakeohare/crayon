@@ -1,0 +1,13 @@
+struct FunctionInfo {
+    int id;
+    int nameId;
+    int pc;
+    int minArgs;
+    int maxArgs;
+    int type; // 0 - function, 1 - method, 2 - static method, 3 - constructor, 4 - static constructor, 5 - lambda
+    int associatedClassId;
+    int localsSize;
+    Array<int> pcOffsetsForOptionalArgs;
+    string name;
+    Array<int> closureIds;
+}

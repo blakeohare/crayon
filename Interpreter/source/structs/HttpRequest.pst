@@ -1,0 +1,6 @@
+struct HttpRequest {
+    int statusCode;
+    string status;
+    Dictionary<string, Array<string>> headers;
+    string body;
+}
