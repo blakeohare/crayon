@@ -67,7 +67,7 @@ classId = row[4];
 if (type == FunctionInvocationType.STATIC_METHOD || type == FunctionInvocationType.CONSTRUCTOR) {
     Core.EmitComment("constructor or static method");
     classInfo = metadata.classTable[classId];
-    @import("InvokeStaticConstructor.pst");
+    @import("inline/InvokeStaticConstructor.pst");
 } else {
     staticConstructorNotInvoked = true;
 }
@@ -267,18 +267,18 @@ if (staticConstructorNotInvoked) {
                 Core.EmitComment("...on a string");
                 string1 = ((string) value.internalValue);
                 switch (functionId) {
-                    case PrimitiveMethodName.CONTAINS: @import("PrimitiveMethods/string_contains.pst"); break;
-                    case PrimitiveMethodName.ENDS_WITH: @import("PrimitiveMethods/string_ends_with.pst"); break;
-                    case PrimitiveMethodName.INDEX_OF: @import("PrimitiveMethods/string_index_of.pst"); break;
-                    case PrimitiveMethodName.LOWER: @import("PrimitiveMethods/string_lower.pst"); break;
-                    case PrimitiveMethodName.LTRIM: @import("PrimitiveMethods/string_ltrim.pst"); break;
-                    case PrimitiveMethodName.REPLACE: @import("PrimitiveMethods/string_replace.pst"); break;
-                    case PrimitiveMethodName.REVERSE: @import("PrimitiveMethods/string_reverse.pst"); break;
-                    case PrimitiveMethodName.RTRIM: @import("PrimitiveMethods/string_rtrim.pst"); break;
-                    case PrimitiveMethodName.SPLIT: @import("PrimitiveMethods/string_split.pst"); break;
-                    case PrimitiveMethodName.STARTS_WITH: @import("PrimitiveMethods/string_starts_with.pst"); break;
-                    case PrimitiveMethodName.TRIM: @import("PrimitiveMethods/string_trim.pst"); break;
-                    case PrimitiveMethodName.UPPER: @import("PrimitiveMethods/string_upper.pst"); break;
+                    case PrimitiveMethodName.CONTAINS: @import("primitivemethods/string_contains.pst"); break;
+                    case PrimitiveMethodName.ENDS_WITH: @import("primitivemethods/string_ends_with.pst"); break;
+                    case PrimitiveMethodName.INDEX_OF: @import("primitivemethods/string_index_of.pst"); break;
+                    case PrimitiveMethodName.LOWER: @import("primitivemethods/string_lower.pst"); break;
+                    case PrimitiveMethodName.LTRIM: @import("primitivemethods/string_ltrim.pst"); break;
+                    case PrimitiveMethodName.REPLACE: @import("primitivemethods/string_replace.pst"); break;
+                    case PrimitiveMethodName.REVERSE: @import("primitivemethods/string_reverse.pst"); break;
+                    case PrimitiveMethodName.RTRIM: @import("primitivemethods/string_rtrim.pst"); break;
+                    case PrimitiveMethodName.SPLIT: @import("primitivemethods/string_split.pst"); break;
+                    case PrimitiveMethodName.STARTS_WITH: @import("primitivemethods/string_starts_with.pst"); break;
+                    case PrimitiveMethodName.TRIM: @import("primitivemethods/string_trim.pst"); break;
+                    case PrimitiveMethodName.UPPER: @import("primitivemethods/string_upper.pst"); break;
                     default: output = null; break;
                 }
                 break;
@@ -286,21 +286,21 @@ if (staticConstructorNotInvoked) {
                 Core.EmitComment("...on a list");
                 list1 = ((ListImpl) value.internalValue);
                 switch (functionId) {
-                    case PrimitiveMethodName.ADD: @import("PrimitiveMethods/list_add.pst"); break;
-                    case PrimitiveMethodName.CHOICE: @import("PrimitiveMethods/list_choice.pst"); break;
-                    case PrimitiveMethodName.CLEAR: @import("PrimitiveMethods/list_clear.pst"); break;
-                    case PrimitiveMethodName.CLONE: @import("PrimitiveMethods/list_clone.pst"); break;
-                    case PrimitiveMethodName.CONCAT: @import("PrimitiveMethods/list_concat.pst"); break;
-                    case PrimitiveMethodName.CONTAINS: @import("PrimitiveMethods/list_contains.pst"); break;
-                    case PrimitiveMethodName.FILTER: @import("PrimitiveMethods/list_filter.pst"); break;
-                    case PrimitiveMethodName.INSERT: @import("PrimitiveMethods/list_insert.pst"); break;
-                    case PrimitiveMethodName.JOIN: @import("PrimitiveMethods/list_join.pst"); break;
-                    case PrimitiveMethodName.MAP: @import("PrimitiveMethods/list_map.pst"); break;
-                    case PrimitiveMethodName.POP: @import("PrimitiveMethods/list_pop.pst"); break;
-                    case PrimitiveMethodName.REMOVE: @import("PrimitiveMethods/list_remove.pst"); break;
-                    case PrimitiveMethodName.REVERSE: @import("PrimitiveMethods/list_reverse.pst"); break;
-                    case PrimitiveMethodName.SHUFFLE: @import("PrimitiveMethods/list_shuffle.pst"); break;
-                    case PrimitiveMethodName.SORT: @import("PrimitiveMethods/list_sort.pst"); break;
+                    case PrimitiveMethodName.ADD: @import("primitivemethods/list_add.pst"); break;
+                    case PrimitiveMethodName.CHOICE: @import("primitivemethods/list_choice.pst"); break;
+                    case PrimitiveMethodName.CLEAR: @import("primitivemethods/list_clear.pst"); break;
+                    case PrimitiveMethodName.CLONE: @import("primitivemethods/list_clone.pst"); break;
+                    case PrimitiveMethodName.CONCAT: @import("primitivemethods/list_concat.pst"); break;
+                    case PrimitiveMethodName.CONTAINS: @import("primitivemethods/list_contains.pst"); break;
+                    case PrimitiveMethodName.FILTER: @import("primitivemethods/list_filter.pst"); break;
+                    case PrimitiveMethodName.INSERT: @import("primitivemethods/list_insert.pst"); break;
+                    case PrimitiveMethodName.JOIN: @import("primitivemethods/list_join.pst"); break;
+                    case PrimitiveMethodName.MAP: @import("primitivemethods/list_map.pst"); break;
+                    case PrimitiveMethodName.POP: @import("primitivemethods/list_pop.pst"); break;
+                    case PrimitiveMethodName.REMOVE: @import("primitivemethods/list_remove.pst"); break;
+                    case PrimitiveMethodName.REVERSE: @import("primitivemethods/list_reverse.pst"); break;
+                    case PrimitiveMethodName.SHUFFLE: @import("primitivemethods/list_shuffle.pst"); break;
+                    case PrimitiveMethodName.SORT: @import("primitivemethods/list_sort.pst"); break;
                     default: output = null; break;
                 }
                 break;
@@ -308,14 +308,14 @@ if (staticConstructorNotInvoked) {
                 Core.EmitComment("...on a dictionary");
                 dictImpl = (DictImpl) value.internalValue;
                 switch (functionId) {
-                    case PrimitiveMethodName.CLEAR: @import("PrimitiveMethods/dict_clear.pst"); break;
-                    case PrimitiveMethodName.CLONE: @import("PrimitiveMethods/dict_clone.pst"); break;
-                    case PrimitiveMethodName.CONTAINS: @import("PrimitiveMethods/dict_contains.pst"); break;
-                    case PrimitiveMethodName.GET: @import("PrimitiveMethods/dict_get.pst"); break;
-                    case PrimitiveMethodName.KEYS: @import("PrimitiveMethods/dict_keys.pst"); break;
-                    case PrimitiveMethodName.MERGE: @import("PrimitiveMethods/dict_merge.pst"); break;
-                    case PrimitiveMethodName.REMOVE: @import("PrimitiveMethods/dict_remove.pst"); break;
-                    case PrimitiveMethodName.VALUES: @import("PrimitiveMethods/dict_values.pst"); break;
+                    case PrimitiveMethodName.CLEAR: @import("primitivemethods/dict_clear.pst"); break;
+                    case PrimitiveMethodName.CLONE: @import("primitivemethods/dict_clone.pst"); break;
+                    case PrimitiveMethodName.CONTAINS: @import("primitivemethods/dict_contains.pst"); break;
+                    case PrimitiveMethodName.GET: @import("primitivemethods/dict_get.pst"); break;
+                    case PrimitiveMethodName.KEYS: @import("primitivemethods/dict_keys.pst"); break;
+                    case PrimitiveMethodName.MERGE: @import("primitivemethods/dict_merge.pst"); break;
+                    case PrimitiveMethodName.REMOVE: @import("primitivemethods/dict_remove.pst"); break;
+                    case PrimitiveMethodName.VALUES: @import("primitivemethods/dict_values.pst"); break;
                     default: output = null; break;
                 }
                 break;
@@ -323,10 +323,10 @@ if (staticConstructorNotInvoked) {
                 Core.EmitComment("...on a function pointer");
                 functionPointer1 = ((FunctionPointer) value.internalValue);
                 switch (functionId) {
-                    case PrimitiveMethodName.ARG_COUNT_MAX: @import("PrimitiveMethods/function_arg_count_max.pst"); break;
-                    case PrimitiveMethodName.ARG_COUNT_MIN: @import("PrimitiveMethods/function_arg_count_min.pst"); break;
-                    case PrimitiveMethodName.GET_NAME: @import("PrimitiveMethods/function_get_name.pst"); break;
-                    case PrimitiveMethodName.INVOKE: @import("PrimitiveMethods/function_invoke.pst"); break;
+                    case PrimitiveMethodName.ARG_COUNT_MAX: @import("primitivemethods/function_arg_count_max.pst"); break;
+                    case PrimitiveMethodName.ARG_COUNT_MIN: @import("primitivemethods/function_arg_count_min.pst"); break;
+                    case PrimitiveMethodName.GET_NAME: @import("primitivemethods/function_get_name.pst"); break;
+                    case PrimitiveMethodName.INVOKE: @import("primitivemethods/function_invoke.pst"); break;
                     default: output = null; break;
                 }
                 break;
@@ -334,8 +334,8 @@ if (staticConstructorNotInvoked) {
                 Core.EmitComment("...on a class definition");
                 classValue = ((ClassValue) value.internalValue);
                 switch (functionId) {
-                    case PrimitiveMethodName.GET_NAME: @import("PrimitiveMethods/class_get_name.pst"); break;
-                    case PrimitiveMethodName.IS_A: @import("PrimitiveMethods/class_is_a.pst"); break;
+                    case PrimitiveMethodName.GET_NAME: @import("primitivemethods/class_get_name.pst"); break;
+                    case PrimitiveMethodName.IS_A: @import("primitivemethods/class_is_a.pst"); break;
                     default: output = null; break;
                 }
                 break;
@@ -352,7 +352,7 @@ if (staticConstructorNotInvoked) {
                 }
             } else {
                 if (returnValueUsed) {
-                    @import("ValueStackCapacityCheck.pst");
+                    @import("inline/ValueStackCapacityCheck.pst");
                     valueStack[valueStackSize] = output;
                     valueStackSize += 1;
                 }
@@ -432,7 +432,7 @@ if (staticConstructorNotInvoked) {
                     // if the return value is used, push the new constructed object to the stack NOW and then call the function
                     // as though the return value is not used.
                     returnValueUsed = false;
-                    @import("ValueStackCapacityCheck.pst");
+                    @import("inline/ValueStackCapacityCheck.pst");
                     valueStack[valueStackSize] = value;
                     valueStackSize += 1;
                 }

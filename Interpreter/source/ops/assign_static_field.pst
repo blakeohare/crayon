@@ -4,7 +4,7 @@
 
 classInfo = classTable[row[0]];
 
-@import("InvokeStaticConstructor.pst");
+@import("inline/InvokeStaticConstructor.pst");
 
 if (staticConstructorNotInvoked) {
     valueStackSize -= 1;

@@ -25,7 +25,7 @@ if (bool2) {
 
     ec.activeException = value;
 
-    @import("BubbleException.pst");
+    @import("inline/BubbleException.pst");
 } else {
     hasInterrupt = EX_InvalidArgument(ec, "Thrown value is not an exception.");
 }

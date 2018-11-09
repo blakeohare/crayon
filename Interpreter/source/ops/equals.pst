@@ -39,7 +39,7 @@ if (leftValue.type == rightValue.type) {
 }
 
 // This is relatively harmless even if there is an interrupt
-@import("ValueStackCapacityCheck.pst");
+@import("inline/ValueStackCapacityCheck.pst");
 if (bool1 != Core.ForceParens(row[0] == 1)) {
     valueStack[valueStackSize] = VALUE_TRUE;
 } else {

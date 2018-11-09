@@ -4,11 +4,50 @@ namespace Crayon
 {
     internal class InlineImportCodeLoader : Pastel.IInlineImportCodeLoader
     {
-        private static readonly System.Reflection.Assembly INTERPRETER_ASSEMBLY = typeof(Interpreter.InterpreterAssembly).Assembly;
+        private string interpreterSource;
+
+        public InlineImportCodeLoader()
+        {
+#if DEBUG
+            string currentDirectory = FileUtil.GetCurrentDirectory();
+            while (!string.IsNullOrEmpty(currentDirectory))
+            {
+                string crayonSlnPath = System.IO.Path.Combine(currentDirectory, "CrayonWindows.sln");
+                if (System.IO.File.Exists(crayonSlnPath))
+                {
+                    this.interpreterSource = System.IO.Path.GetFullPath(System.IO.Path.Combine(currentDirectory, "..", "Interpreter", "source"));
+                    break;
+                }
+                else
+                {
+                    currentDirectory = System.IO.Path.GetDirectoryName(currentDirectory);
+                }
+            }
+#endif
+            if (this.interpreterSource == null)
+            {
+                string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
+                if (!string.IsNullOrEmpty(crayonHome))
+                {
+                    string crayonHomeSource = System.IO.Path.GetFullPath(System.IO.Path.Combine(crayonHome, "vmsrc"));
+                    if (System.IO.File.Exists(System.IO.Path.Combine(crayonHomeSource, "main.pst")))
+                    {
+                        this.interpreterSource = crayonHomeSource;
+                    }
+                }
+            }
+
+            if (this.interpreterSource == null)
+            {
+                throw new System.InvalidOperationException("The VM source code was not present.");
+            }
+        }
 
         public string LoadCode(string path)
         {
-            return Util.ReadAssemblyFileText(INTERPRETER_ASSEMBLY, path);
+            string fullPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(this.interpreterSource, path));
+            string code = System.IO.File.ReadAllText(fullPath);
+            return code;
         }
     }
 }

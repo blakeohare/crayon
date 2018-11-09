@@ -11,7 +11,7 @@ if (closure != null && closure.Contains(i)) {
     value = closure[i].value;
     if (value != null) {
         bool1 = false;
-        @import("ValueStackCapacityCheck.pst");
+        @import("inline/ValueStackCapacityCheck.pst");
         if (@ext_boolean("HAS_INCREMENT")) {
             valueStack[valueStackSize++] = value;
         } else {

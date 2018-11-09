@@ -9,7 +9,7 @@ objInstance1 = (ObjectInstance) value.internalValue;
 // Therefore it's safe to not check the functionIds array.
 value = objInstance1.members[row[0]];
 
-@import("ValueStackCapacityCheck.pst");
+@import("inline/ValueStackCapacityCheck.pst");
 
 if (@ext_boolean("HAS_INCREMENT")) {
     valueStack[valueStackSize++] = value;
