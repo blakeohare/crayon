@@ -8,14 +8,13 @@ namespace Crayon
 
         public InlineImportCodeLoader()
         {
-#if DEBUG
             string currentDirectory = FileUtil.GetCurrentDirectory();
             while (!string.IsNullOrEmpty(currentDirectory))
             {
-                string crayonSlnPath = System.IO.Path.Combine(currentDirectory, "CrayonWindows.sln");
+                string crayonSlnPath = System.IO.Path.Combine(currentDirectory, "Compiler", "CrayonWindows.sln");
                 if (System.IO.File.Exists(crayonSlnPath))
                 {
-                    this.interpreterSource = System.IO.Path.GetFullPath(System.IO.Path.Combine(currentDirectory, "..", "Interpreter", "source"));
+                    this.interpreterSource = System.IO.Path.GetFullPath(System.IO.Path.Combine(currentDirectory, "Interpreter", "source"));
                     break;
                 }
                 else
@@ -23,7 +22,7 @@ namespace Crayon
                     currentDirectory = System.IO.Path.GetDirectoryName(currentDirectory);
                 }
             }
-#endif
+
             if (this.interpreterSource == null)
             {
                 string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
