@@ -1,0 +1,17 @@
+@import("Constants.pst");
+@import("Structs.pst");
+
+@import("BinaryOpsUtil.pst");
+@import("ByteCodeLoader.pst");
+@import("Debugger.pst");
+@import("Interpreter.pst");
+@import("MetadataInitializer.pst");
+@import("PrimitiveMethods.pst");
+@import("Reflection.pst");
+@import("ResourceManager.pst");
+@import("Runner.pst");
+@import("SliceHelper.pst");
+@import("SortHelper.pst");
+@import("TypesUtil.pst");
+@import("ValueUtil.pst");
+@import("VmPublicUtil.pst");
