@@ -15,25 +15,6 @@ namespace Exporter
 
     public class VmGenerator
     {
-        private static readonly string[] INTERPRETER_BASE_FILES = {
-            "BinaryOpsUtil.pst",
-            "ByteCodeLoader.pst",
-            "Constants.pst",
-            "Debugger.pst",
-            "Interpreter.pst",
-            "MetadataInitializer.pst",
-            "PrimitiveMethods.pst",
-            "Reflection.pst",
-            "ResourceManager.pst",
-            "Runner.pst",
-            "SortHelper.pst",
-            "SliceHelper.pst",
-            "Structs.pst",
-            "TypesUtil.pst",
-            "ValueUtil.pst",
-            "VmPublicUtil.pst",
-        };
-
         private void AddTypeEnumsToConstants(Dictionary<string, object> constantFlags)
         {
             foreach (Types type in Enum.GetValues(typeof(Types)))
@@ -215,10 +196,7 @@ namespace Exporter
                     context.SetConstant(key, constantFlags[key]);
                 }
 
-                foreach (string file in INTERPRETER_BASE_FILES)
-                {
-                    context.CompileFile(file);
-                }
+                context.CompileFile("main.pst");
                 context.FinalizeCompilation();
 
                 return context;
