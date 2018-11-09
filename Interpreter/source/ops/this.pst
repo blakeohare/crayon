@@ -2,7 +2,7 @@
 // Will never be called outside of a method.
 // Also, this is frequently optimized out with the more direct operation DEREF_INSTANCE_FIELD
 
-@import("ValueStackCapacityCheck.pst");
+@import("inline/ValueStackCapacityCheck.pst");
 
 valueStack[valueStackSize] = stack.objectContext;
 valueStackSize += 1;

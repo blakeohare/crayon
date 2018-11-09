@@ -58,7 +58,7 @@ for (i = 0; i < len; i += 1) {
     }
 }
 
-@import("ValueStackCapacityCheck.pst");
+@import("inline/ValueStackCapacityCheck.pst");
 valueStack[valueStackSize] = new Value(
     Types.FUNCTION,
     new FunctionPointer(FunctionPointerType.LAMBDA, null, 0, pc, closure));

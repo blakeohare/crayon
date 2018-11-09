@@ -106,7 +106,7 @@ MATCHERS = [
   ('Compiler/Pastel/Transpilers/Resources/*_py.txt', PYTHON_STYLE_2_SPACES),
 
   # Pastel
-  ('Compiler/Interpreter/*.pst', PASTEL_STYLE),
+  ('Interpreter/source/*.pst', PASTEL_STYLE),
 
   # Demos
   ('Demos/*.cry', CRAYON_STYLE),

@@ -1,6 +1,6 @@
 ﻿int1 = localsStackOffset + row[0];
 if (localsStackSet[int1] == localsStackSetToken) {
-    @import("ValueStackCapacityCheck.pst");
+    @import("inline/ValueStackCapacityCheck.pst");
 
     if (@ext_boolean("HAS_INCREMENT")) {
         valueStack[valueStackSize++] = localsStack[int1];

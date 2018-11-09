@@ -81,7 +81,7 @@ if (!hasInterrupt) {
         intArray1 = null;
     }
 
-    @import("ValueStackCapacityCheck.pst");
+    @import("inline/ValueStackCapacityCheck.pst");
     valueStack[valueStackSize] = new Value(Types.DICTIONARY, new DictImpl(
         len,
         type,

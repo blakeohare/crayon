@@ -33,7 +33,7 @@ if (nativeFp == null) {
     }
 
     if (row[2] == 1) {
-        @import("ValueStackCapacityCheck.pst");
+        @import("inline/ValueStackCapacityCheck.pst");
         valueStack[valueStackSize] = value;
         valueStackSize += 1;
     }

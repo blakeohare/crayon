@@ -8,6 +8,7 @@ import shutil
 import os
 import io
 import sys
+import time
 
 def canonicalize_sep(path):
 	return path.replace('/', os.sep).replace('\\', os.sep)
@@ -20,15 +21,14 @@ def copyDirectory(source, target, ext_filter = None):
 	if not os.path.exists(target):
 		os.makedirs(target)
 	for file in os.listdir(source):
-		if ext_filter == None or file.endswith(ext_filter):
-			fullpath = os.path.join(source, file)
-			fulltargetpath = os.path.join(target, file)
-			if os.path.isdir(fullpath):
-				copyDirectory(fullpath, fulltargetpath)
-			elif file.lower() in ('.ds_store', 'thumbs.db'):
-				pass
-			else:
-				shutil.copyfile(fullpath, fulltargetpath)
+		fullpath = os.path.join(source, file)
+		fulltargetpath = os.path.join(target, file)
+		if os.path.isdir(fullpath):
+			copyDirectory(fullpath, fulltargetpath, ext_filter)
+		elif file.lower() in ('.ds_store', 'thumbs.db'):
+			pass
+		elif ext_filter == None or file.endswith(ext_filter):
+			shutil.copyfile(fullpath, fulltargetpath)
 
 def readFile(path):
 	c = open(canonicalize_sep(path), 'rt')
@@ -89,6 +89,7 @@ def main(args):
 	copyToDir = 'crayon-' + VERSION + '-' + platform
 	if os.path.exists(copyToDir):
 		shutil.rmtree(copyToDir)
+		time.sleep(0.1)
 	os.makedirs(copyToDir)
 
 	isMono = platform == 'mono'
@@ -139,6 +140,8 @@ def main(args):
 	if platform == 'mono':
 		setupFile = readFile("setup-mono.txt")
 		writeFile(copyToDir + '/Setup Instructions.txt', setupFile, '\n')
+
+	copyDirectory('../Interpreter/source', copyToDir + '/vmsrc', '.pst')
 
 	print("Release directory created: " + copyToDir)
 
