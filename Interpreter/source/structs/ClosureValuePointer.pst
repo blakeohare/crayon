@@ -1,0 +1,3 @@
+struct ClosureValuePointer {
+    Value value; // this value is null when the variable isn't set yet.
+}

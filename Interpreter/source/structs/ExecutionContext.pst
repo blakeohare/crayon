@@ -1,0 +1,16 @@
+struct ExecutionContext {
+    int id;
+    StackFrame stackTop;
+    int currentValueStackSize;
+    int valueStackCapacity;
+    Array<Value> valueStack;
+    Array<Value> localsStack;
+    Array<int> localsStackSet;
+    int localsStackSetToken;
+    int executionCounter;
+    bool activeExceptionHandled;
+    Value activeException;
+    bool executionStateChange;
+    int executionStateChangeCommand;
+    Interrupt activeInterrupt;
+}

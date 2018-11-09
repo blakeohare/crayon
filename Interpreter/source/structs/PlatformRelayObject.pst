@@ -1,0 +1,8 @@
+struct PlatformRelayObject {
+    int type;
+    int iarg1;
+    int iarg2;
+    int iarg3;
+    double farg1;
+    string sarg1;
+}

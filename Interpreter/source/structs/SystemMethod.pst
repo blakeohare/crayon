@@ -1,0 +1,4 @@
+struct SystemMethod {
+    Value context;
+    int id;
+}

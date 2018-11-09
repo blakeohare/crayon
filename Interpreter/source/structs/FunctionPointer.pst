@@ -1,0 +1,7 @@
+struct FunctionPointer {
+    int type; // Enum value: FunctionPointerType
+    Value context;
+    int classId;
+    int functionId; // For lambdas, this is just the PC of the LAMBDA op.
+    Dictionary<int, ClosureValuePointer> closureVariables;
+}

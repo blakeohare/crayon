@@ -1,0 +1,6 @@
+struct VmEnvironment {
+    Array<string> commandLineArgs;
+    bool showLibStack;
+    string stdoutPrefix;
+    string stacktracePrefix;
+}

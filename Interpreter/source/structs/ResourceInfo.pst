@@ -1,0 +1,7 @@
+struct ResourceInfo {
+    string userPath;
+    string internalPath;
+    bool isText;
+    string type; // e.g. SND, IMG, IMGSH, etc. Don't convert this to an enum. Want this to be extensible.
+    string manifestParam; // e.g. the image sheet ID, multiple values here must be encoded if extended.
+}

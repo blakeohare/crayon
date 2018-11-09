@@ -1,0 +1,5 @@
+struct DebugStepTracker {
+    int uniqueId;
+    int originatingFileId;
+    int originatingLineIndex;
+}

@@ -1,0 +1,5 @@
+struct LibRegObj {
+    List<object> functionPointers;
+    List<string> functionNames;
+    List<int> argCounts;
+}
