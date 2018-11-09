@@ -66,12 +66,72 @@ namespace Pastel
                         output.Add(this.ParseStructDefinition(tokens));
                         break;
 
+                    case "@":
+                        Token atToken = tokens.Pop();
+                        ICompilationEntity[] inlinedEntities = this.ParseTopLevelInlineImport(atToken, tokens);
+                        output.AddRange(inlinedEntities);
+                        break;
+
                     default:
                         output.Add(this.ParseFunctionDefinition(tokens));
                         break;
                 }
             }
             return output.ToArray();
+        }
+
+        private ICompilationEntity[] ParseTopLevelInlineImport(Token atToken, TokenStream tokens)
+        {
+            string sourceFile = null;
+            string functionName = tokens.PeekValue();
+            switch (functionName)
+            {
+                case "import":
+                    tokens.PopExpected("import");
+                    tokens.PopExpected("(");
+                    Token stringToken = tokens.Pop();
+                    tokens.PopExpected(")");
+                    tokens.PopExpected(";");
+                    sourceFile = PastelUtil.ConvertStringTokenToValue(stringToken.Value);
+                    break;
+
+                case "importIfTrue":
+                case "importIfFalse":
+                    tokens.Pop();
+                    tokens.PopExpected("(");
+                    Token constantExpression = tokens.Pop();
+                    string constantValue = PastelUtil.ConvertStringTokenToValue(constantExpression.Value);
+                    tokens.PopExpected(",");
+                    Token pathToken = tokens.Pop();
+                    tokens.PopExpected(")");
+                    tokens.PopExpected(";");
+                    object value = this.GetConstant(constantValue, false);
+                    if (!(value is bool)) value = false;
+                    bool valueBool = (bool)value;
+                    if (functionName == "importIfFalse")
+                    {
+                        valueBool = !valueBool;
+                    }
+
+                    if (valueBool)
+                    {
+                        sourceFile = PastelUtil.ConvertStringTokenToValue(pathToken.Value);
+                    }
+                    break;
+
+                default:
+                    // intentional crash...
+                    tokens.PopExpected("import");
+                    break;
+            }
+
+            if (sourceFile != null)
+            {
+                string code = this.importCodeLoader.LoadCode(sourceFile);
+                return this.ParseText(sourceFile, code);
+            }
+
+            return new ICompilationEntity[0];
         }
 
         public Executable[] ParseImportedCode(string path)
