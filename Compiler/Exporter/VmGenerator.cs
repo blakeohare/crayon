@@ -215,18 +215,7 @@ namespace Exporter
                     context.SetConstant(key, constantFlags[key]);
                 }
 
-                // TODO: pass the correct value to the next function.
-                // Right now this value is only used for HAS_DEBUGGER, so it's safe
-                // to call it with the wrong value but it's unideal.
-                bool isStandaloneVmINCORRECT = false;
-
-                IEnumerable<string> interpreterFiles = new List<string>() {
-                    (bool) platform.GetFlattenedConstantFlags(isStandaloneVmINCORRECT)["ARRAY_IS_LIST"]
-                        ? "ListImplListBased.pst"
-                        : "ListImplArrayBased.pst"
-                }.Concat(INTERPRETER_BASE_FILES);
-
-                foreach (string file in interpreterFiles)
+                foreach (string file in INTERPRETER_BASE_FILES)
                 {
                     context.CompileFile(file);
                 }

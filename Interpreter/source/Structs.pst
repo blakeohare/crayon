@@ -1,11 +1,7 @@
-﻿struct Code {
-    Array<int> ops;
-    Array<Array<int>> args;
-    Array<string> stringArgs;
-    Array<Dictionary<int, int>> integerSwitchesByPc;
-    Array<Dictionary<string, int>> stringSwitchesByPc;
-    VmDebugData debugData;
-}
+﻿@importIfTrue('ARRAY_IS_LIST', "structs/ListImplListBased.pst");
+@importIfFalse('ARRAY_IS_LIST', "structs/ListImplArrayBased.pst");
+
+@import("structs/Code.pst");
 
 struct VmDebugData {
     Array<bool> hasBreakpoint;

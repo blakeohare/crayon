@@ -1,0 +1,8 @@
+struct Code {
+    Array<int> ops;
+    Array<Array<int>> args;
+    Array<string> stringArgs;
+    Array<Dictionary<int, int>> integerSwitchesByPc;
+    Array<Dictionary<string, int>> stringSwitchesByPc;
+    VmDebugData debugData;
+}
