@@ -17,15 +17,7 @@ namespace LangPython
 
         public override IDictionary<string, object> GetConstantFlags()
         {
-            return new Dictionary<string, object>()
-                {
-                    { "PLATFORM_SUPPORTS_LIST_CLEAR", false },
-                    { "STRONGLY_TYPED", false },
-                    { "ARRAY_IS_LIST", true },
-                    { "IS_PYTHON", true },
-                    { "IS_CHAR_A_NUMBER", false },
-                    { "INT_IS_FLOOR", false },
-                };
+            return new Dictionary<string, object>();
         }
 
         public override void ExportStandaloneVm(

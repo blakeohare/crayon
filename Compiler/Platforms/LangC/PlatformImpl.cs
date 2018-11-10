@@ -20,14 +20,6 @@ namespace LangC
             return new Dictionary<string, object>()
                 {
                     { "IS_ASYNC", false },
-                    { "PLATFORM_SUPPORTS_LIST_CLEAR", true },
-                    { "STRONGLY_TYPED", true },
-                    { "ARRAY_IS_LIST", false },
-                    { "IS_PYTHON", false },
-                    { "IS_CHAR_A_NUMBER", true },
-                    { "INT_IS_FLOOR", true },
-                    { "HAS_INCREMENT", true },
-                    { "IS_C", true },
                 };
         }
 

@@ -152,13 +152,6 @@ namespace LangJava
             return new Dictionary<string, object>()
                 {
                     { "IS_ASYNC", true },
-                    { "PLATFORM_SUPPORTS_LIST_CLEAR", true },
-                    { "STRONGLY_TYPED", true },
-                    { "ARRAY_IS_LIST", false },
-                    { "IS_PYTHON", false },
-                    { "IS_CHAR_A_NUMBER", true },
-                    { "INT_IS_FLOOR", false },
-                    { "HAS_INCREMENT", true },
                 };
         }
     }
