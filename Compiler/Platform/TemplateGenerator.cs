@@ -39,27 +39,6 @@ namespace Platform
                     templates.AddPastelTemplate("vm:structsdecl", sb.ToString().Trim());
                 }
             }
-
-            if (vmContext.Language == Language.C)
-            {
-                templates.AddPastelTemplate("vm:struct:Value", "Value", string.Join("\n", new string[] {
-                    "struct Value {",
-                    "\tint type;",
-                    "\tunion {",
-                    "\t\tint null_internalValue; // not used",
-                    "\t\tint bool_internalValue;",
-                    "\t\tint int_internalValue;",
-                    "\t\tdouble double_internalValue;",
-                    "\t\tint* str_internalValue;",
-                    "\t\tList* list_internalValue;",
-                    "\t\tDictImpl* dict_internalValue;",
-                    "\t\tObjectInstance* obj_internalValue;",
-                    "\t\tClassValue* class_internalValue;",
-                    "\t\tFunctionPointer* func_internalValue;",
-                    "\t};",
-                    "};",
-                }));
-            }
         }
 
         public static void GenerateTemplatesForLibraryExport(
