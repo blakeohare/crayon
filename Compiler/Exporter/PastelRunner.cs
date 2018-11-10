@@ -6,14 +6,30 @@ namespace Exporter
 {
     public static class PastelRunner
     {
+        private class LibraryPastelCodeLoader : IInlineImportCodeLoader
+        {
+            private string rootDir;
+            public LibraryPastelCodeLoader(Parser.AssemblyMetadata libraryMetadata)
+            {
+                this.rootDir = libraryMetadata.GetPastelCodeDirectory();
+            }
+
+            public string LoadCode(string path)
+            {
+                string fullPath = FileUtil.JoinPath(rootDir, path);
+                string content = FileUtil.ReadFileText(fullPath);
+                return content;
+            }
+        }
+
         public static void CompileLibraryFiles(
             LibraryExporter library,
             Platform.AbstractPlatform platform,
-            IInlineImportCodeLoader codeLoader,
             Dictionary<string, PastelContext> libraries,
             PastelContext sharedScope,
             Dictionary<string, object> constantFlags)
         {
+            LibraryPastelCodeLoader codeLoader = new LibraryPastelCodeLoader(library.Metadata);
             PastelContext context = new PastelContext(platform.Language, codeLoader);
             Dictionary<string, string> exFnTranslations = library.GetExtensibleFunctionTranslations(platform);
             List<ExtensibleFunction> libraryFunctions = library.GetPastelExtensibleFunctions();
@@ -44,16 +60,17 @@ namespace Exporter
             Dictionary<string, string> structCode = library.Metadata.GetStructFilesCode();
             foreach (string structFile in structCode.Keys)
             {
-                string filename = "LIB:" + library.Metadata.ID + "/structs/" + structFile;
-                context.CompileCode(filename, structCode[structFile]);
+                // TODO(pastel-split): remove this, once migrated.
+                throw new System.Exception("Nope. All struct code should just go directly in {library}/pastel, now.");
+                //string filename = "LIB:" + library.Metadata.ID + "/structs/" + structFile;
+                //context.CompileCode(filename, structCode[structFile]);
             }
 
-            Dictionary<string, string> supplementalCode = library.Metadata.GetSupplementalTranslatedCode();
-            foreach (string supplementalFile in supplementalCode.Keys)
-            {
-                string filename = "LIB:" + library.Metadata.ID + "/supplemental/" + supplementalFile;
-                context.CompileCode(filename, supplementalCode[supplementalFile]);
-            }
+            string pastelCodeDir = library.Metadata.GetPastelCodeDirectory();
+            string entryPoint = FileUtil.JoinPath(pastelCodeDir, "main.pst");
+
+            string filename = "LIB:" + library.Metadata.ID + "/pastel/main.pst";
+            context.CompileCode(filename, FileUtil.ReadFileText(entryPoint));
 
             context.FinalizeCompilation();
         }
