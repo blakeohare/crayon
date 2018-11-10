@@ -15,6 +15,8 @@ namespace Pastel
 
         public IInlineImportCodeLoader CodeLoader { get; private set; }
 
+        public PastelContext Context { get; private set; }
+
         public PastelCompiler(
             PastelContext context,
             Language language,
@@ -23,6 +25,7 @@ namespace Pastel
             IInlineImportCodeLoader inlineImportCodeLoader,
             ICollection<ExtensibleFunction> extensibleFunctions)
         {
+            this.Context = context;
             Dictionary<string, object> langConstants = LanguageUtil.GetLanguageConstants(language);
             Dictionary<string, object> flattenedConstants = new Dictionary<string, object>(langConstants);
             foreach (string key in constants.Keys)

@@ -303,12 +303,6 @@ namespace Pastel.Transpilers
             sb.Append(").ToString()");
         }
 
-        public override void TranslateFunctionInvocationInterpreterScoped(TranspilerContext sb, FunctionReference funcRef, Expression[] args)
-        {
-            sb.Append("CrayonWrapper.");
-            base.TranslateFunctionInvocationInterpreterScoped(sb, funcRef, args);
-        }
-
         public override void TranslateIsValidInteger(TranspilerContext sb, Expression stringValue)
         {
             sb.Append("PST_IsValidInteger(");
