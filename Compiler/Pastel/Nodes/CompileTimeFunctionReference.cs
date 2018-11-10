@@ -6,7 +6,7 @@ namespace Pastel.Nodes
     {
         public Token NameToken { get; set; }
 
-        public CompileTimeFunctionReference(Token atToken, Token nameToken) : base(atToken)
+        public CompileTimeFunctionReference(Token atToken, Token nameToken, ICompilationEntity owner) : base(atToken, owner)
         {
             this.NameToken = nameToken;
         }

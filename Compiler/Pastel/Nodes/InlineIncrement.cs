@@ -6,7 +6,7 @@
         public Expression Expression { get; set; }
         public bool IsPrefix { get; set; }
 
-        public InlineIncrement(Token firstToken, Token incrementToken, Expression root, bool isPrefix) : base(firstToken)
+        public InlineIncrement(Token firstToken, Token incrementToken, Expression root, bool isPrefix) : base(firstToken, root.Owner)
         {
             this.IncrementToken = incrementToken;
             this.Expression = root;

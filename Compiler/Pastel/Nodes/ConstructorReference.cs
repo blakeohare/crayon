@@ -6,7 +6,7 @@ namespace Pastel.Nodes
     {
         public PType TypeToConstruct { get; set; }
 
-        public ConstructorReference(Token newToken, PType type) : base(newToken)
+        public ConstructorReference(Token newToken, PType type, ICompilationEntity owner) : base(newToken, owner)
         {
             this.TypeToConstruct = type;
         }

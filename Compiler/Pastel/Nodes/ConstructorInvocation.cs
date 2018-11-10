@@ -10,7 +10,8 @@ namespace Pastel.Nodes
         public Expression[] Args { get; set; }
         public StructDefinition StructType { get; set; }
 
-        public ConstructorInvocation(Token firstToken, PType type, IList<Expression> args) : base(firstToken)
+        public ConstructorInvocation(Token firstToken, PType type, IList<Expression> args, ICompilationEntity owner)
+            : base(firstToken, owner)
         {
             this.Type = type;
             this.Args = args.ToArray();

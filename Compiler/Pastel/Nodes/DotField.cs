@@ -12,7 +12,7 @@ namespace Pastel.Nodes
         public NativeFunction NativeFunctionId { get; set; }
         public StructDefinition StructType { get; set; }
 
-        public DotField(Expression root, Token dotToken, Token fieldName) : base(root.FirstToken)
+        public DotField(Expression root, Token dotToken, Token fieldName) : base(root.FirstToken, root.Owner)
         {
             this.Root = root;
             this.DotToken = dotToken;
@@ -36,10 +36,10 @@ namespace Pastel.Nodes
                         case NativeFunction.FLOAT_BUFFER_16:
                         case NativeFunction.INT_BUFFER_16:
                         case NativeFunction.STRING_BUFFER_16:
-                            return new NativeFunctionInvocation(this.FirstToken, nativeFunction, new Expression[0]);
+                            return new NativeFunctionInvocation(this.FirstToken, nativeFunction, new Expression[0], this.Owner);
 
                         default:
-                            return new NativeFunctionReference(this.FirstToken, nativeFunction);
+                            return new NativeFunctionReference(this.FirstToken, nativeFunction, this.Owner);
                     }
                 }
                 EnumDefinition enumDef = compiler.GetEnumDefinition(rootName);
@@ -78,7 +78,7 @@ namespace Pastel.Nodes
             if (this.Root is Variable && ((Variable)this.Root).Name == "Native")
             {
                 string name = this.FieldName.Value;
-                return new ExtensibleFunctionReference(this.FirstToken, name);
+                return new ExtensibleFunctionReference(this.FirstToken, name, this.Owner);
             }
 
             this.Root = this.Root.ResolveType(varScope, compiler);
@@ -100,7 +100,7 @@ namespace Pastel.Nodes
             this.NativeFunctionId = this.DetermineNativeFunctionId(this.Root.ResolvedType, this.FieldName.Value);
             if (this.NativeFunctionId != NativeFunction.NONE)
             {
-                return new NativeFunctionReference(this.FirstToken, this.NativeFunctionId, this.Root);
+                return new NativeFunctionReference(this.FirstToken, this.NativeFunctionId, this.Root, this.Owner);
             }
 
             throw new NotImplementedException();

@@ -10,8 +10,8 @@ namespace Pastel.Nodes
         public PType[] ArgTypes { get; set; }
         public bool[] ArgTypesIsRepeated { get; set; }
 
-        public NativeFunctionReference(Token firstToken, NativeFunction nativeFunctionId) : this(firstToken, nativeFunctionId, null) { }
-        public NativeFunctionReference(Token firstToken, NativeFunction nativeFunctionId, Expression context) : base(firstToken)
+        public NativeFunctionReference(Token firstToken, NativeFunction nativeFunctionId, ICompilationEntity owner) : this(firstToken, nativeFunctionId, null, owner) { }
+        public NativeFunctionReference(Token firstToken, NativeFunction nativeFunctionId, Expression context, ICompilationEntity owner) : base(firstToken, owner)
         {
             this.NativeFunctionId = nativeFunctionId;
             this.Context = context;

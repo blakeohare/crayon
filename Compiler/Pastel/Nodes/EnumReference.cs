@@ -6,7 +6,7 @@ namespace Pastel.Nodes
     {
         public EnumDefinition EnumDef { get; set; }
 
-        public EnumReference(Token firstToken, EnumDefinition enumDef) : base(firstToken)
+        public EnumReference(Token firstToken, EnumDefinition enumDef, ICompilationEntity owner) : base(firstToken, owner)
         {
             this.EnumDef = enumDef;
         }

@@ -11,5 +11,6 @@
     internal interface ICompilationEntity
     {
         CompilationEntityType EntityType { get; }
+        PastelContext Context { get; }
     }
 }

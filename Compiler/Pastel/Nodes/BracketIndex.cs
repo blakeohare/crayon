@@ -8,7 +8,7 @@ namespace Pastel.Nodes
         public Token BracketToken { get; set; }
         public Expression Index { get; set; }
 
-        public BracketIndex(Expression root, Token bracketToken, Expression index) : base(root.FirstToken)
+        public BracketIndex(Expression root, Token bracketToken, Expression index) : base(root.FirstToken, root.Owner)
         {
             this.Root = root;
             this.BracketToken = bracketToken;
@@ -48,7 +48,7 @@ namespace Pastel.Nodes
                 if (this.Root is InlineConstant && this.Index is InlineConstant)
                 {
                     string c = ((string)((InlineConstant)this.Root).Value)[(int)((InlineConstant)this.Index).Value].ToString();
-                    InlineConstant newValue = new InlineConstant(PType.CHAR, this.FirstToken, c);
+                    InlineConstant newValue = new InlineConstant(PType.CHAR, this.FirstToken, c, this.Owner);
                     newValue.ResolveType(varScope, compiler);
                     return newValue;
                 }
@@ -81,7 +81,7 @@ namespace Pastel.Nodes
                 case "Array": nf = NativeFunction.ARRAY_GET; break;
                 default: throw new InvalidOperationException(); // this should have been caught earlier in ResolveType()
             }
-            return new NativeFunctionInvocation(this.FirstToken, nf, args) { ResolvedType = this.ResolvedType };
+            return new NativeFunctionInvocation(this.FirstToken, nf, args, this.Owner) { ResolvedType = this.ResolvedType };
         }
     }
 }

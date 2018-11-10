@@ -6,7 +6,7 @@ namespace Pastel.Nodes
     {
         public string Name { get; set; }
 
-        public ExtensibleFunctionReference(Token token, string name) : base(token)
+        public ExtensibleFunctionReference(Token token, string name, ICompilationEntity owner) : base(token, owner)
         {
             this.Name = name;
         }

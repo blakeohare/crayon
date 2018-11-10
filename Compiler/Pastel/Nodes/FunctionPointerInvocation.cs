@@ -11,7 +11,7 @@ namespace Pastel.Nodes
 
         // Note that this class is instantiated in the ResolveType phase.
         public FunctionPointerInvocation(Token firstToken, Expression root, IList<Expression> Args)
-            : base(firstToken)
+            : base(firstToken, root.Owner)
         {
             this.Root = root;
             this.Args = Args.ToArray();

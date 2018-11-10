@@ -5,7 +5,7 @@
         public Expression Expression { get; set; }
         public Token OpToken { get; set; }
 
-        public UnaryOp(Token op, Expression root) : base(op)
+        public UnaryOp(Token op, Expression root) : base(op, root.Owner)
         {
             this.Expression = root;
             this.OpToken = op;
@@ -20,17 +20,17 @@
                 InlineConstant ic = (InlineConstant)this.Expression;
                 if (this.FirstToken.Value == "!" && ic.Value is bool)
                 {
-                    return new InlineConstant(PType.BOOL, this.FirstToken, !((bool)ic.Value));
+                    return new InlineConstant(PType.BOOL, this.FirstToken, !((bool)ic.Value), this.Owner);
                 }
                 if (this.FirstToken.Value == "-")
                 {
                     if (ic.Value is int)
                     {
-                        return new InlineConstant(PType.INT, this.FirstToken, -(int)ic.Value);
+                        return new InlineConstant(PType.INT, this.FirstToken, -(int)ic.Value, this.Owner);
                     }
                     if (ic.Value is double)
                     {
-                        return new InlineConstant(PType.DOUBLE, this.FirstToken, -(double)ic.Value);
+                        return new InlineConstant(PType.DOUBLE, this.FirstToken, -(double)ic.Value, this.Owner);
                     }
                 }
                 throw new ParserException(this.OpToken, "The op '" + this.OpToken.Value + "' is not valid on this type of expression.");

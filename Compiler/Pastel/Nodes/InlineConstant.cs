@@ -8,18 +8,18 @@ namespace Pastel.Nodes
         public object Value { get; set; }
         public PType Type { get; set; }
 
-        public static InlineConstant Of(object value)
+        public static InlineConstant Of(object value, ICompilationEntity owner)
         {
             Token dummyToken = Token.CreateDummyToken(value.ToString());
             if (value is int)
             {
-                return (InlineConstant)new InlineConstant(PType.INT, dummyToken, value).ResolveType(null, null);
+                return (InlineConstant)new InlineConstant(PType.INT, dummyToken, value, owner).ResolveType(null, null);
             }
 
             throw new NotImplementedException();
         }
 
-        public InlineConstant(PType type, Token firstToken, object value) : base(firstToken)
+        public InlineConstant(PType type, Token firstToken, object value, ICompilationEntity owner) : base(firstToken, owner)
         {
             this.Type = type;
             this.ResolvedType = type;
@@ -33,7 +33,7 @@ namespace Pastel.Nodes
 
         public InlineConstant CloneWithNewToken(Token token)
         {
-            return new InlineConstant(this.Type, token, this.Value);
+            return new InlineConstant(this.Type, token, this.Value, this.Owner);
         }
 
         internal override InlineConstant DoConstantResolution(HashSet<string> cycleDetection, PastelCompiler compiler)

@@ -6,7 +6,7 @@ namespace Pastel.Nodes
     {
         public Expression Expression { get; set; }
 
-        public ForcedParenthesis(Token token, Expression expression) : base(token)
+        public ForcedParenthesis(Token token, Expression expression) : base(token, expression.Owner)
         {
             this.Expression = expression;
             this.ResolvedType = expression.ResolvedType;
