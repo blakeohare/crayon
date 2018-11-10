@@ -35,6 +35,8 @@ namespace Exporter
             List<ExtensibleFunction> libraryFunctions = library.GetPastelExtensibleFunctions();
             Dictionary<string, object> constantsLookup = Util.MergeDictionaries(constantFlags, library.CompileTimeConstants);
 
+            string functionPrefixOfSharedScope = platform.GetInterpreterFunctionInvocationPrefix();
+
             foreach (ExtensibleFunction exFn in libraryFunctions)
             {
                 string exFnTranslation = null;
@@ -49,7 +51,7 @@ namespace Exporter
 
                 context.AddExtensibleFunction(exFn, exFnTranslation);
             }
-            context.AddDependency(sharedScope);
+            context.AddDependency(sharedScope, functionPrefixOfSharedScope);
             foreach (string constKey in constantsLookup.Keys)
             {
                 context.SetConstant(constKey, constantsLookup[constKey]);

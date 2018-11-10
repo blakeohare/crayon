@@ -11,6 +11,15 @@ namespace Platform
             this.Language = language;
         }
 
+        public virtual string GetInterpreterFunctionInvocationPrefix()
+        {
+            if (this.ParentPlatform != null)
+            {
+                return this.ParentPlatform.GetInterpreterFunctionInvocationPrefix();
+            }
+            return null;
+        }
+
         public IPlatformProvider PlatformProvider { get; set; }
 
         public string Language { get; private set; }

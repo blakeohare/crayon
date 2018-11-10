@@ -495,12 +495,6 @@ namespace Pastel.Transpilers
             sb.Append(')');
         }
 
-        public override void TranslateFunctionInvocationInterpreterScoped(TranspilerContext sb, FunctionReference funcRef, Expression[] args)
-        {
-            sb.Append("Interpreter.");
-            base.TranslateFunctionInvocationInterpreterScoped(sb, funcRef, args);
-        }
-
         public override void TranslateGetFunction(TranspilerContext sb, Expression name)
         {
             sb.Append("TranslationHelper.getFunction(");

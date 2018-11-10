@@ -10,6 +10,7 @@ namespace LangJava
         public override string Name { get { return "lang-java"; } }
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
+        public override string GetInterpreterFunctionInvocationPrefix() { return "Interpreter."; }
 
         public PlatformImpl()
             : base("JAVA")
