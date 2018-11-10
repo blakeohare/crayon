@@ -22,6 +22,13 @@ namespace Pastel
             IInlineImportCodeLoader inlineImportCodeLoader,
             ICollection<ExtensibleFunction> extensibleFunctions)
         {
+            Dictionary<string, object> langConstants = LanguageUtil.GetLanguageConstants(language);
+            Dictionary<string, object> flattenedConstants = new Dictionary<string, object>(langConstants);
+            foreach (string key in constants.Keys)
+            {
+                flattenedConstants[key] = constants[key];
+            }
+
             this.CodeLoader = inlineImportCodeLoader;
             this.Transpiler = LanguageUtil.GetTranspiler(language);
             this.IncludedScopes = includedScopes.ToArray();
@@ -32,7 +39,7 @@ namespace Pastel
             this.EnumDefinitions = new Dictionary<string, EnumDefinition>();
             this.ConstantDefinitions = new Dictionary<string, VariableDeclaration>();
             this.FunctionDefinitions = new Dictionary<string, FunctionDefinition>();
-            this.interpreterParser = new PastelParser(constants, inlineImportCodeLoader);
+            this.interpreterParser = new PastelParser(flattenedConstants, inlineImportCodeLoader);
         }
 
         private PastelParser interpreterParser;

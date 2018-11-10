@@ -45,14 +45,6 @@ namespace LangJavaScript
             return new Dictionary<string, object>()
                 {
                     { "IS_ASYNC", true },
-                    { "PLATFORM_SUPPORTS_LIST_CLEAR", true },
-                    { "STRONGLY_TYPED", false },
-                    { "ARRAY_IS_LIST", true},
-                    { "IS_JAVASCRIPT", true },
-                    { "IS_PYTHON", false },
-                    { "IS_CHAR_A_NUMBER", false },
-                    { "INT_IS_FLOOR", true },
-                    { "HAS_INCREMENT", true },
                 };
         }
     }
