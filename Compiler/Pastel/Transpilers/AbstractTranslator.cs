@@ -113,13 +113,15 @@ namespace Pastel.Transpilers
 
                 case "FunctionInvocation":
                     FunctionInvocation funcInvocation = (FunctionInvocation)expression;
+                    PastelContext callerContext = funcInvocation.Owner.Context;
                     bool specifyInterpreterScope = false;
-                    if (funcInvocation.FirstToken.FileName.StartsWith("LIB:") &&
-                        funcInvocation.Root is FunctionReference)
+                    if (funcInvocation.Root is FunctionReference)
                     {
                         FunctionDefinition funcDef = ((FunctionReference)funcInvocation.Root).Function;
-                        if (!funcDef.NameToken.FileName.StartsWith("LIB:"))
+                        PastelContext targetContext = funcDef.Context;
+                        if (targetContext != callerContext)
                         {
+                            // TODO(pastel-split): This is totally wrong, but will get the output building again.
                             specifyInterpreterScope = true;
                         }
                     }
