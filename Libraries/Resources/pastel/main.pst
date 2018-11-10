@@ -1,0 +1,2 @@
+@import("getResourceData.pst");
+@import("readText.pst");

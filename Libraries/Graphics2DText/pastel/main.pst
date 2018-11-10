@@ -1,0 +1,12 @@
+@import("createNativeFont.pst");
+@import("getNativeFontUniqueKey.pst");
+@import("glGenerateAndLoadTexture.pst");
+@import("glRenderCharTile.pst");
+@import("glRenderTextSurface.pst");
+@import("glSetNativeDataIntArray.pst");
+@import("isDynamicFontLoaded.pst");
+@import("isGlRenderer.pst");
+@import("isResourceAvailable.pst");
+@import("isSystemFontPresent.pst");
+@import("renderText.pst");
+@import("simpleBlit.pst");

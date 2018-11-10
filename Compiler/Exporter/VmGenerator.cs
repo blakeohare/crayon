@@ -27,7 +27,6 @@ namespace Exporter
             Platform.AbstractPlatform platform,
             Dictionary<string, AssemblyMetadata> librariesById,
             Dictionary<string, object> constantFlags,
-            IInlineImportCodeLoader codeLoader,
             PastelContext vm)
         {
             using (new PerformanceSection("VmGenerator.GetLibrariesForExport"))
@@ -35,7 +34,6 @@ namespace Exporter
                 Dictionary<string, PastelContext> libraryCompilation = this.GenerateLibraryParseTree(
                     platform,
                     constantFlags,
-                    codeLoader,
                     librariesById.Values,
                     vm);
 
@@ -109,7 +107,7 @@ namespace Exporter
                 PastelContext vmPastelContext = this.GenerateCoreVmParseTree(platform, codeLoader, constantFlags);
 
                 Dictionary<string, AssemblyMetadata> librariesByID = relevantLibraries.ToDictionary(lib => lib.ID);
-                List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByID, constantFlags, codeLoader, vmPastelContext);
+                List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByID, constantFlags, vmPastelContext);
 
                 Platform.TemplateStorage templates = new Platform.TemplateStorage();
 
@@ -206,7 +204,6 @@ namespace Exporter
         private Dictionary<string, PastelContext> GenerateLibraryParseTree(
             Platform.AbstractPlatform platform,
             Dictionary<string, object> constantFlags,
-            IInlineImportCodeLoader codeLoader,
             ICollection<AssemblyMetadata> relevantLibraries,
             PastelContext sharedScope)
         {
@@ -220,7 +217,7 @@ namespace Exporter
 
                     if (libraryMetadata.IsMoreThanJustEmbedCode)
                     {
-                        PastelRunner.CompileLibraryFiles(library, platform, codeLoader, libraries, sharedScope, constantFlags);
+                        PastelRunner.CompileLibraryFiles(library, platform, libraries, sharedScope, constantFlags);
                     }
                 }
 

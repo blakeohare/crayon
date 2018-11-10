@@ -136,27 +136,9 @@ namespace Parser
             return this.structFiles;
         }
 
-        private Dictionary<string, string> supplementalFiles = null;
-
-        public Dictionary<string, string> GetSupplementalTranslatedCode()
+        public string GetPastelCodeDirectory()
         {
-            if (this.supplementalFiles == null)
-            {
-                this.supplementalFiles = new Dictionary<string, string>();
-                string supplementalFilesDir = FileUtil.JoinPath(this.Directory, "supplemental");
-                if (FileUtil.DirectoryExists(supplementalFilesDir))
-                {
-                    foreach (string name in FileUtil.DirectoryListFileNames(supplementalFilesDir))
-                    {
-                        if (name.EndsWith(".pst"))
-                        {
-                            string key = name.Substring(0, name.Length - ".pst".Length);
-                            this.supplementalFiles[key] = this.ReadFile(false, FileUtil.JoinPath("supplemental", name), false);
-                        }
-                    }
-                }
-            }
-            return this.supplementalFiles;
+            return FileUtil.JoinPath(this.Directory, "pastel");
         }
 
         private int isMoreThanJustEmbedCode = -1;
@@ -166,7 +148,15 @@ namespace Parser
             {
                 if (isMoreThanJustEmbedCode == -1)
                 {
-                    bool hasPastelDirectories = FileUtil.DirectoryExists(FileUtil.JoinPath(this.Directory, "supplemental"));
+                    if (FileUtil.DirectoryExists(FileUtil.JoinPath(this.Directory, "supplemental")))
+                    {
+                        // TODO(pastel-split): Remove this
+                        throw new System.Exception(); // These should all be gone.
+                    }
+                    // TODO(pastel-split): shave this down to just "resources" once Pastel code generation runs out of process
+                    bool hasPastelDirectories = 
+                        FileUtil.DirectoryExists(FileUtil.JoinPath(this.Directory, "resources")) ||
+                        FileUtil.DirectoryExists(FileUtil.JoinPath(this.Directory, "pastel"));
                     isMoreThanJustEmbedCode = hasPastelDirectories ? 1 : 0;
                 }
                 return isMoreThanJustEmbedCode == 1;
