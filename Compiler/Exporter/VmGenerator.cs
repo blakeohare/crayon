@@ -218,54 +218,10 @@ namespace Exporter
                 {
                     LibraryExporter library = LibraryExporter.Get(libraryMetadata, platform);
 
-                    Dictionary<string, object> constantsLookup = Util.MergeDictionaries<string, object>(constantFlags, library.CompileTimeConstants);
-
-                    List<ExtensibleFunction> libraryFunctions = library.GetPastelExtensibleFunctions();
-
-                    if (!libraryMetadata.IsMoreThanJustEmbedCode)
+                    if (libraryMetadata.IsMoreThanJustEmbedCode)
                     {
-                        continue;
+                        PastelRunner.CompileLibraryFiles(library, platform, codeLoader, libraries, sharedScope, constantFlags);
                     }
-
-                    PastelContext context = new PastelContext(platform.Language, codeLoader);
-                    Dictionary<string, string> exFnTranslations = library.GetExtensibleFunctionTranslations(platform);
-                    foreach (ExtensibleFunction exFn in libraryFunctions)
-                    {
-                        string exFnTranslation = null;
-                        if (exFnTranslations.ContainsKey(exFn.Name))
-                        {
-                            exFnTranslation = exFnTranslations[exFn.Name];
-                        }
-                        else if (exFnTranslations.ContainsKey("$" + exFn.Name))
-                        {
-                            exFnTranslation = exFnTranslations["$" + exFn.Name];
-                        }
-
-                        context.AddExtensibleFunction(exFn, exFnTranslation);
-                    }
-                    context.AddDependency(sharedScope);
-                    foreach (string constKey in constantsLookup.Keys)
-                    {
-                        context.SetConstant(constKey, constantsLookup[constKey]);
-                    }
-
-                    libraries[library.Metadata.ID] = context;
-
-                    Dictionary<string, string> structCode = library.Metadata.GetStructFilesCode();
-                    foreach (string structFile in structCode.Keys)
-                    {
-                        string filename = "LIB:" + library.Metadata.ID + "/structs/" + structFile;
-                        context.CompileCode(filename, structCode[structFile]);
-                    }
-
-                    Dictionary<string, string> supplementalCode = library.Metadata.GetSupplementalTranslatedCode();
-                    foreach (string supplementalFile in supplementalCode.Keys)
-                    {
-                        string filename = "LIB:" + library.Metadata.ID + "/supplemental/" + supplementalFile;
-                        context.CompileCode(filename, supplementalCode[supplementalFile]);
-                    }
-
-                    context.FinalizeCompilation();
                 }
 
                 return libraries;
