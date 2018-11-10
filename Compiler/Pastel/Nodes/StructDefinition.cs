@@ -12,11 +12,13 @@ namespace Pastel.Nodes
         public PType[] ArgTypes { get; set; }
         public Token[] ArgNames { get; set; }
         public Dictionary<string, int> ArgIndexByName { get; set; }
+        public PastelContext Context { get; private set; }
 
         private PType Type { get; set; }
 
-        public StructDefinition(Token structToken, Token name, IList<PType> argTypes, IList<Token> argNames)
+        public StructDefinition(Token structToken, Token name, IList<PType> argTypes, IList<Token> argNames, PastelContext context)
         {
+            this.Context = context;
             this.FirstToken = structToken;
             this.NameToken = name;
             this.ArgTypes = argTypes.ToArray();

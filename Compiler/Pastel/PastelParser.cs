@@ -13,10 +13,19 @@ namespace Pastel
 
         private IInlineImportCodeLoader importCodeLoader;
 
+        // TODO: Get rid of this somehow. The parser logic should be relatively stateless.
+        // However, this value is set at the beginning and end of a code owner parsing
+        // and the reference is passed to all instantiations of parse tree objects below.
+        private ICompilationEntity currentCodeOwner = null;
+
+        private PastelContext context;
+
         public PastelParser(
+            PastelContext context,
             IDictionary<string, object> constants,
             IInlineImportCodeLoader importCodeLoader)
         {
+            this.context = context;
             this.constants = constants;
             this.importCodeLoader = importCodeLoader;
         }
@@ -171,6 +180,8 @@ namespace Pastel
         {
             Token enumToken = tokens.PopExpected("enum");
             Token nameToken = EnsureTokenIsValidName(tokens.Pop(), "Invalid name for an enum.");
+            EnumDefinition enumDef = new EnumDefinition(enumToken, nameToken, this.context);
+            this.currentCodeOwner = enumDef;
             List<Token> valueTokens = new List<Token>();
             List<Expression> valueExpressions = new List<Expression>();
             tokens.PopExpected("{");
@@ -204,7 +215,9 @@ namespace Pastel
                 }
             }
 
-            return new EnumDefinition(enumToken, nameToken, valueTokens, valueExpressions);
+            enumDef.InitializeValues(valueTokens, valueExpressions);
+            this.currentCodeOwner = null;
+            return enumDef;
         }
 
         public StructDefinition ParseStructDefinition(TokenStream tokens)
@@ -222,7 +235,7 @@ namespace Pastel
                 structFieldNames.Add(fieldName);
                 tokens.PopExpected(";");
             }
-            return new StructDefinition(structToken, nameToken, structFieldTypes, structFieldNames);
+            return new StructDefinition(structToken, nameToken, structFieldTypes, structFieldNames, this.context);
         }
 
         public FunctionDefinition ParseFunctionDefinition(TokenStream tokens)
@@ -238,9 +251,12 @@ namespace Pastel
                 argTypes.Add(PType.Parse(tokens));
                 argNames.Add(EnsureTokenIsValidName(tokens.Pop(), "Invalid function arg name"));
             }
+            FunctionDefinition funcDef = new FunctionDefinition(nameToken, returnType, argTypes, argNames, this.context);
+            this.currentCodeOwner = funcDef;
             List<Executable> code = this.ParseCodeBlock(tokens, true);
-
-            return new FunctionDefinition(nameToken, returnType, argTypes, argNames, code);
+            this.currentCodeOwner = null;
+            funcDef.Code = code.ToArray();
+            return funcDef;
         }
 
         public List<Executable> ParseCodeBlock(TokenStream tokens, bool curlyBracesRequired)
@@ -327,7 +343,7 @@ namespace Pastel
 
                 if (tokens.PopIfPresent(";"))
                 {
-                    return new VariableDeclaration(type, variableName, null, null);
+                    return new VariableDeclaration(type, variableName, null, null, this.context);
                 }
 
                 Token equalsToken = tokens.PopExpected("=");
@@ -336,7 +352,7 @@ namespace Pastel
                 {
                     tokens.PopExpected(";");
                 }
-                return new VariableDeclaration(type, variableName, equalsToken, assignmentValue);
+                return new VariableDeclaration(type, variableName, equalsToken, assignmentValue, this.context);
             }
 
             Expression expression = ParseExpression(tokens);
@@ -645,7 +661,7 @@ namespace Pastel
                 Token newToken = tokens.Pop();
                 PType typeToConstruct = PType.Parse(tokens);
                 if (!tokens.IsNext("(")) tokens.PopExpected("("); // intentional error if not present.
-                Expression constructorReference = new ConstructorReference(newToken, typeToConstruct);
+                Expression constructorReference = new ConstructorReference(newToken, typeToConstruct, this.currentCodeOwner);
                 return this.ParseEntityChain(constructorReference, tokens);
             }
 
@@ -684,9 +700,9 @@ namespace Pastel
             {
                 case "true":
                 case "false":
-                    return new InlineConstant(PType.BOOL, tokens.Pop(), next == "true");
+                    return new InlineConstant(PType.BOOL, tokens.Pop(), next == "true", this.currentCodeOwner);
                 case "null":
-                    return new InlineConstant(PType.NULL, tokens.Pop(), null);
+                    return new InlineConstant(PType.NULL, tokens.Pop(), null, this.currentCodeOwner);
                 case ".":
                     Token dotToken = tokens.Pop();
                     Token numToken = EnsureInteger(tokens.Pop());
@@ -694,7 +710,7 @@ namespace Pastel
                     double dblValue;
                     if (!numToken.HasWhitespacePrefix && double.TryParse(strValue, out dblValue))
                     {
-                        return new InlineConstant(PType.DOUBLE, dotToken, dblValue);
+                        return new InlineConstant(PType.DOUBLE, dotToken, dblValue, this.currentCodeOwner);
                     }
                     throw new ParserException(dotToken, "Unexpected '.'");
 
@@ -704,14 +720,14 @@ namespace Pastel
             switch (firstChar)
             {
                 case '\'':
-                    return new InlineConstant(PType.CHAR, tokens.Pop(), PastelUtil.ConvertStringTokenToValue(next));
+                    return new InlineConstant(PType.CHAR, tokens.Pop(), PastelUtil.ConvertStringTokenToValue(next), this.currentCodeOwner);
                 case '"':
-                    return new InlineConstant(PType.STRING, tokens.Pop(), PastelUtil.ConvertStringTokenToValue(next));
+                    return new InlineConstant(PType.STRING, tokens.Pop(), PastelUtil.ConvertStringTokenToValue(next), this.currentCodeOwner);
                 case '@':
                     Token atToken = tokens.PopExpected("@");
                     Token compileTimeFunction = EnsureTokenIsValidName(tokens.Pop(), "Expected compile time function name.");
                     if (!tokens.IsNext("(")) tokens.PopExpected("(");
-                    return new CompileTimeFunctionReference(atToken, compileTimeFunction);
+                    return new CompileTimeFunctionReference(atToken, compileTimeFunction, this.currentCodeOwner);
             }
 
             if (firstChar >= '0' && firstChar <= '9')
@@ -726,16 +742,16 @@ namespace Pastel
                     double dblValue;
                     if (double.TryParse(numToken.Value + "." + decimalToken.Value, out dblValue))
                     {
-                        return new InlineConstant(PType.DOUBLE, numToken, dblValue);
+                        return new InlineConstant(PType.DOUBLE, numToken, dblValue, this.currentCodeOwner);
                     }
                     throw new ParserException(decimalToken, "Unexpected token.");
                 }
-                return new InlineConstant(PType.INT, numToken, int.Parse(numToken.Value));
+                return new InlineConstant(PType.INT, numToken, int.Parse(numToken.Value), this.currentCodeOwner);
             }
 
             if (IsValidName(tokens.PeekValue()))
             {
-                return new Variable(tokens.Pop());
+                return new Variable(tokens.Pop(), this.currentCodeOwner);
             }
 
             throw new ParserException(tokens.Peek(), "Unrecognized expression.");

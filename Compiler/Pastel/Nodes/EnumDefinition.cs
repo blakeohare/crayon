@@ -7,6 +7,7 @@ namespace Pastel.Nodes
     {
         public CompilationEntityType EntityType { get { return CompilationEntityType.ENUM; } }
 
+        public PastelContext Context { get; private set; }
         public Token FirstToken { get; set; }
         public Token NameToken { get; set; }
         public Token[] ValueTokens { get; set; }
@@ -14,10 +15,15 @@ namespace Pastel.Nodes
 
         public HashSet<string> UnresolvedValues = new HashSet<string>();
 
-        public EnumDefinition(Token enumToken, Token nameToken, IList<Token> valueTokens, IList<Expression> valueExpressions)
+        public EnumDefinition(Token enumToken, Token nameToken, PastelContext context)
         {
             this.FirstToken = enumToken;
             this.NameToken = nameToken;
+            this.Context = context;
+        }
+
+        internal void InitializeValues(IList<Token> valueTokens, IList<Expression> valueExpressions)
+        {
             this.ValueTokens = valueTokens.ToArray();
             this.ValuesByName = new Dictionary<string, Expression>();
             int length = this.ValueTokens.Length;
@@ -66,7 +72,7 @@ namespace Pastel.Nodes
             // anything that doesn't have a value assigned to it, auto-assign incrementally from the highest value provided.
             foreach (string name in autoAssignMe)
             {
-                this.ValuesByName[name] = new InlineConstant(PType.INT, this.FirstToken, highestValue++);
+                this.ValuesByName[name] = new InlineConstant(PType.INT, this.FirstToken, highestValue++, this);
             }
         }
 

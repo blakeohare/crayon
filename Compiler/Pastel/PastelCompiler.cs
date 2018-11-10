@@ -16,6 +16,7 @@ namespace Pastel
         public IInlineImportCodeLoader CodeLoader { get; private set; }
 
         public PastelCompiler(
+            PastelContext context,
             Language language,
             IList<PastelCompiler> includedScopes,
             IDictionary<string, object> constants,
@@ -39,7 +40,7 @@ namespace Pastel
             this.EnumDefinitions = new Dictionary<string, EnumDefinition>();
             this.ConstantDefinitions = new Dictionary<string, VariableDeclaration>();
             this.FunctionDefinitions = new Dictionary<string, FunctionDefinition>();
-            this.interpreterParser = new PastelParser(flattenedConstants, inlineImportCodeLoader);
+            this.interpreterParser = new PastelParser(context, flattenedConstants, inlineImportCodeLoader);
         }
 
         private PastelParser interpreterParser;

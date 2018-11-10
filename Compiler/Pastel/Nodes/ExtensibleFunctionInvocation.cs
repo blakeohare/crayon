@@ -13,7 +13,7 @@ namespace Pastel.Nodes
             Token firstToken,
             ExtensibleFunctionReference functionRef,
             IList<Expression> args)
-            : base(firstToken)
+            : base(firstToken, functionRef.Owner)
         {
             this.FunctionRef = functionRef;
             this.Args = args.ToArray();

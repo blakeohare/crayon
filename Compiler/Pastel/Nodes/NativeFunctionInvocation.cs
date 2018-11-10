@@ -9,14 +9,14 @@ namespace Pastel.Nodes
         public NativeFunction Function { get; set; }
         public Expression[] Args { get; set; }
 
-        public NativeFunctionInvocation(Token firstToken, NativeFunction function, IList<Expression> args) : base(firstToken)
+        public NativeFunctionInvocation(Token firstToken, NativeFunction function, IList<Expression> args, ICompilationEntity owner) : base(firstToken, owner)
         {
             this.Function = function;
             this.Args = args.ToArray();
         }
 
-        public NativeFunctionInvocation(Token firstToken, NativeFunction function, Expression context, IList<Expression> args)
-           : this(firstToken, function, PushInFront(context, args))
+        public NativeFunctionInvocation(Token firstToken, NativeFunction function, Expression context, IList<Expression> args, ICompilationEntity owner)
+           : this(firstToken, function, PushInFront(context, args), owner)
         { }
 
         private static IList<Expression> PushInFront(Expression ex, IList<Expression> others)

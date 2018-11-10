@@ -13,20 +13,21 @@ namespace Pastel.Nodes
         public PType[] ArgTypes { get; set; }
         public Token[] ArgNames { get; set; }
         public Executable[] Code { get; set; }
+        public PastelContext Context { get; private set; }
 
         public FunctionDefinition(
             Token nameToken,
             PType returnType,
             IList<PType> argTypes,
             IList<Token> argNames,
-            IList<Executable> code)
+            PastelContext context)
         {
+            this.Context = context;
             this.FirstToken = returnType.FirstToken;
             this.NameToken = nameToken;
             this.ReturnType = returnType;
             this.ArgTypes = argTypes.ToArray();
             this.ArgNames = argNames.ToArray();
-            this.Code = code.ToArray();
         }
 
         public void ResolveNamesAndCullUnusedCode(PastelCompiler compiler)

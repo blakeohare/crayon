@@ -18,6 +18,7 @@ namespace Pastel.Nodes
         public Token VariableNameToken { get; set; }
         public Token EqualsToken { get; set; }
         public Expression Value { get; set; }
+        public PastelContext Context { get; private set; }
 
         public bool IsConstant { get; set; }
 
@@ -25,8 +26,10 @@ namespace Pastel.Nodes
             PType type,
             Token variableNameToken,
             Token equalsToken,
-            Expression assignmentValue) : base(type.FirstToken)
+            Expression assignmentValue,
+            PastelContext context) : base(type.FirstToken)
         {
+            this.Context = context;
             this.Type = type;
             this.VariableNameToken = variableNameToken;
             this.EqualsToken = equalsToken;

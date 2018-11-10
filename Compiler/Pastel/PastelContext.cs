@@ -74,6 +74,7 @@ namespace Pastel
             if (this.compiler == null)
             {
                 this.compiler = new PastelCompiler(
+                    this,
                     this.Language,
                     this.dependencies,
                     this.constants,

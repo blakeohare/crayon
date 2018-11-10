@@ -11,7 +11,7 @@ namespace Pastel.Nodes
 
         public OpChain(
             IList<Expression> expressions,
-            IList<Token> ops) : base(expressions[0].FirstToken)
+            IList<Token> ops) : base(expressions[0].FirstToken, expressions[0].Owner)
         {
             this.Expressions = expressions.ToArray();
             this.Ops = ops.ToArray();
@@ -39,13 +39,13 @@ namespace Pastel.Nodes
                 switch (lookup)
                 {
                     case "int+int":
-                        current = new InlineConstant(PType.INT, current.FirstToken, (int)current.Value + (int)next.Value);
+                        current = new InlineConstant(PType.INT, current.FirstToken, (int)current.Value + (int)next.Value, next.Owner);
                         break;
                     case "int-int":
-                        current = new InlineConstant(PType.INT, current.FirstToken, (int)current.Value - (int)next.Value);
+                        current = new InlineConstant(PType.INT, current.FirstToken, (int)current.Value - (int)next.Value, next.Owner);
                         break;
                     case "int*int":
-                        current = new InlineConstant(PType.INT, current.FirstToken, (int)current.Value * (int)next.Value);
+                        current = new InlineConstant(PType.INT, current.FirstToken, (int)current.Value * (int)next.Value, next.Owner);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -215,22 +215,22 @@ namespace Pastel.Nodes
 
         private InlineConstant CreateBoolean(Token originalFirstToken, bool value)
         {
-            return new InlineConstant(PType.BOOL, originalFirstToken, value) { ResolvedType = PType.BOOL };
+            return new InlineConstant(PType.BOOL, originalFirstToken, value, this.Owner) { ResolvedType = PType.BOOL };
         }
 
         private InlineConstant CreateInteger(Token originalFirstToken, int value)
         {
-            return new InlineConstant(PType.INT, originalFirstToken, value) { ResolvedType = PType.INT };
+            return new InlineConstant(PType.INT, originalFirstToken, value, this.Owner) { ResolvedType = PType.INT };
         }
 
         private InlineConstant CreateFloat(Token originalFirstToken, double value)
         {
-            return new InlineConstant(PType.DOUBLE, originalFirstToken, value) { ResolvedType = PType.DOUBLE };
+            return new InlineConstant(PType.DOUBLE, originalFirstToken, value, this.Owner) { ResolvedType = PType.DOUBLE };
         }
 
         private InlineConstant CreateString(Token originalFirstToken, string value)
         {
-            return new InlineConstant(PType.STRING, originalFirstToken, value) { ResolvedType = PType.STRING };
+            return new InlineConstant(PType.STRING, originalFirstToken, value, this.Owner) { ResolvedType = PType.STRING };
         }
     }
 }

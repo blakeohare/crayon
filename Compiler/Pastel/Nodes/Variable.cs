@@ -2,7 +2,7 @@
 {
     internal class Variable : Expression
     {
-        public Variable(Token token) : base(token)
+        public Variable(Token token, ICompilationEntity owner) : base(token, owner)
         {
             this.ApplyPrefix = true;
         }
@@ -27,7 +27,7 @@
             FunctionDefinition functionDefinition = compiler.GetFunctionDefinitionAndMaybeQueueForResolution(name);
             if (functionDefinition != null)
             {
-                return new FunctionReference(this.FirstToken, functionDefinition);
+                return new FunctionReference(this.FirstToken, functionDefinition, this.Owner);
             }
 
             return this;

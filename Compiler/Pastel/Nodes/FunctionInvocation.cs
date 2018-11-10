@@ -13,7 +13,7 @@ namespace Pastel.Nodes
         public FunctionInvocation(
             Expression root,
             Token openParen,
-            IList<Expression> args) : base(root.FirstToken)
+            IList<Expression> args) : base(root.FirstToken, root.Owner)
         {
             this.Root = root;
             this.OpenParenToken = openParen;
@@ -32,13 +32,15 @@ namespace Pastel.Nodes
                         return new InlineConstant(
                             PType.BOOL,
                             this.FirstToken,
-                            parser.GetParseTimeBooleanConstant(argName.Value.ToString()));
+                            parser.GetParseTimeBooleanConstant(argName.Value.ToString()),
+                            this.Owner);
 
                     case "ext_integer":
                         return new InlineConstant(
                             PType.INT,
                             this.FirstToken,
-                            parser.GetParseTimeIntegerConstant(argName.Value.ToString()));
+                            parser.GetParseTimeIntegerConstant(argName.Value.ToString()),
+                            this.Owner);
 
                     default:
                         return this;
@@ -90,11 +92,11 @@ namespace Pastel.Nodes
                 NativeFunctionInvocation nfi;
                 if (nfr.Context == null)
                 {
-                    nfi = new NativeFunctionInvocation(this.FirstToken, nfr.NativeFunctionId, this.Args);
+                    nfi = new NativeFunctionInvocation(this.FirstToken, nfr.NativeFunctionId, this.Args, this.Owner);
                 }
                 else
                 {
-                    nfi = new NativeFunctionInvocation(this.FirstToken, nfr.NativeFunctionId, nfr.Context, this.Args);
+                    nfi = new NativeFunctionInvocation(this.FirstToken, nfr.NativeFunctionId, nfr.Context, this.Args, this.Owner);
                 }
 
                 return nfi.ResolveType(varScope, compiler);
@@ -105,7 +107,7 @@ namespace Pastel.Nodes
             }
             else if (this.Root is ConstructorReference)
             {
-                return new ConstructorInvocation(this.FirstToken, ((ConstructorReference)this.Root).TypeToConstruct, this.Args);
+                return new ConstructorInvocation(this.FirstToken, ((ConstructorReference)this.Root).TypeToConstruct, this.Args, this.Owner);
             }
             else if (this.Root.ResolvedType.RootValue == "Func")
             {

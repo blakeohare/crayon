@@ -28,6 +28,7 @@ namespace Pastel.Transpilers
     {
         private string functionName;
         private int switchId;
+        private ICompilationEntity owner;
         private Dictionary<InlineConstant, int> expressionsToChunkIds;
         private Dictionary<int, Executable[]> chunkIdsToCode;
 
@@ -61,6 +62,7 @@ namespace Pastel.Transpilers
 
         public static PythonFakeSwitchStatement Build(SwitchStatement switchStatement, int switchId, string functionName)
         {
+            ICompilationEntity owner = switchStatement.Condition.Owner;
             Dictionary<InlineConstant, int> expressionToId = new Dictionary<InlineConstant, int>();
             Dictionary<int, Executable[]> codeById = new Dictionary<int, Executable[]>();
             int? nullableDefaultId = null;
@@ -102,7 +104,7 @@ namespace Pastel.Transpilers
                 codeById[defaultId] = new Executable[0];
             }
 
-            return new PythonFakeSwitchStatement(functionName, switchId, defaultId, expressionToId, codeById);
+            return new PythonFakeSwitchStatement(functionName, switchId, defaultId, expressionToId, codeById, owner);
         }
 
         private PythonFakeSwitchStatement(
@@ -110,8 +112,10 @@ namespace Pastel.Transpilers
             int switchId,
             int defaultChunkId,
             Dictionary<InlineConstant, int> expressionsToChunkIds,
-            Dictionary<int, Executable[]> chunkIdsToCode)
+            Dictionary<int, Executable[]> chunkIdsToCode,
+            ICompilationEntity owner)
         {
+            this.owner = owner;
             this.functionName = functionName;
             this.switchId = switchId;
             this.DefaultId = defaultChunkId;
@@ -209,9 +213,9 @@ namespace Pastel.Transpilers
         private IfStatement BuildIfStatement(int id, string op, Executable[] trueCode, Executable[] falseCode)
         {
             Token equalsToken = Token.CreateDummyToken(op);
-            Variable variable = new Variable(Token.CreateDummyToken(this.ConditionVariableName));
+            Variable variable = new Variable(Token.CreateDummyToken(this.ConditionVariableName), this.owner);
             variable.ApplyPrefix = false;
-            Expression condition = new OpChain(new Expression[] { variable, InlineConstant.Of(id) }, new Pastel.Token[] { equalsToken });
+            Expression condition = new OpChain(new Expression[] { variable, InlineConstant.Of(id, this.owner) }, new Token[] { equalsToken });
 
             return new IfStatement(
                 Token.CreateDummyToken("if"),

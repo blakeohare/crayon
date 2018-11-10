@@ -76,7 +76,8 @@
                 return new ExpressionAsExecutable(new NativeFunctionInvocation(
                     this.FirstToken,
                     nf,
-                    args)).ResolveWithTypeContext(compiler);
+                    args,
+                    bi.Owner)).ResolveWithTypeContext(compiler);
             }
 
             this.Target = this.Target.ResolveWithTypeContext(compiler);
