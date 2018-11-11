@@ -68,6 +68,8 @@ namespace Exporter
                         PastelContext pastelContext = compilation.Values.FirstOrDefault();
 
                         Dictionary<string, string> templatesForLibrary = GetGeneratedFiles(pastelContext);
+                        string outputDirectory = System.IO.Path.GetFullPath(System.IO.Path.Combine(metadata.GetPastelCodeDirectory(), "..", "resources", platform.Name));
+                        SaveTemplateFiles(templatesForLibrary, platform.Language, outputDirectory);
                     }
                     catch (ExtensionMethodNotImplementedException emie)
                     {
