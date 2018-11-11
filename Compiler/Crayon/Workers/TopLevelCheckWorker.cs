@@ -21,9 +21,8 @@ namespace Crayon
 
             ExportCommand command = FlagParser.Parse(commandLineArgs);
 
-            // TODO: I don't like these here.
+            // TODO: I don't like this here.
             command.PlatformProvider = new PlatformProvider();
-            command.InlineImportCodeLoader = new InlineImportCodeLoader();
 
             return command;
         }
