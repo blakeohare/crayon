@@ -22,7 +22,7 @@
                 for (i = 0; i < len; i += 1) {
                     value = list2.list[i];
                     if (bool1) {
-                        value = buildFloat(vm, 0.0 + (int)value.internalValue);
+                        value = buildFloat(globals, 0.0 + (int)value.internalValue);
                     }
                     list1.list.Add(value);
                 }
