@@ -8,6 +8,7 @@ namespace Crayon
         EXPORT_VM_BUNDLE,
         EXPORT_VM_STANDALONE,
         EXPORT_CBX,
+        PASTEL_CODE_GENERATION,
         RUN_CBX,
         SHOW_USAGE,
         ERROR_CHECK_ONLY,
@@ -29,6 +30,7 @@ namespace Crayon
 
         public static ExecutionType IdentifyUseCase(ExportCommand command)
         {
+            if (command.IsPastelCodeGeneration) return ExecutionType.PASTEL_CODE_GENERATION;
             if (command.IsGenerateDefaultProject) return ExecutionType.GENERATE_DEFAULT_PROJECT;
             if (command.IsEmpty) return ExecutionType.SHOW_USAGE;
             if (command.IsErrorCheckOnly) return ExecutionType.ERROR_CHECK_ONLY;
