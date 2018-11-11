@@ -39,6 +39,8 @@ namespace Exporter
 
             foreach (Platform.AbstractPlatform platform in platforms)
             {
+                string vmSourceOutput = System.IO.Path.GetFullPath(FileUtil.JoinPath(VmCodeLoader.GetCrayonSourceDirectory(), "..", "gen", platform.Name));
+
                 Dictionary<string, object> constants = platform.GetFlattenedConstantFlags(false);
                 VmGenerator.AddTypeEnumsToConstants(constants);
 
@@ -52,6 +54,8 @@ namespace Exporter
                 vmContext.FinalizeCompilation();
 
                 Dictionary<string, string> vmGeneratedFiles = GetGeneratedFiles(vmContext);
+
+                SaveTemplateFiles(vmGeneratedFiles, platform.Language, vmSourceOutput);
 
                 foreach (AssemblyMetadata metadata in assemblyMetadataList)
                 {
@@ -69,6 +73,44 @@ namespace Exporter
                     {
                         System.Console.WriteLine("Skipping " + metadata.CanonicalKey + " | " + platform.Name + " because: " + emie.Message);
                     }
+                }
+            }
+        }
+
+        private static void SaveTemplateFiles(Dictionary<string, string> templates, string language, string directory)
+        {
+            FileUtil.EnsureFolderExists(directory);
+            string dir = directory + "/";
+            string ext;
+            switch (language)
+            {
+                case "C": ext = ".c"; break;
+                case "CSHARP": ext = ".cs"; break;
+                case "JAVASCRIPT": ext = ".js"; break;
+                case "PYTHON": ext = ".py"; break;
+                case "JAVA": ext = ".java"; break;
+                default: ext = ".txt"; break;
+            }
+
+            foreach (string key in templates.Keys)
+            {
+                string[] parts = key.Split(':');
+                switch (parts[0])
+                {
+                    case "func_decl":
+                        FileUtil.WriteFileText(dir + "FunctionDeclarations" + ext, templates[key]);
+                        break;
+                    case "func_impl":
+                        FileUtil.WriteFileText(dir + "Functions" + ext, templates[key]);
+                        break;
+                    case "struct_decl":
+                        FileUtil.WriteFileText(dir + "StructHeader_" + parts[1] + ext, templates[key]);
+                        break;
+                    case "struct_def":
+                        FileUtil.WriteFileText(dir + "Struct_" + parts[1] + ext, templates[key]);
+                        break;
+                    default:
+                        throw new System.Exception();
                 }
             }
         }
