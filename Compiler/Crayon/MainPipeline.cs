@@ -34,7 +34,7 @@ namespace Crayon.Pipeline
         {
             ExportCommand command = new TopLevelCheckWorker().DoWorkImpl();
             BuildContext buildContext;
-            Pastel.IInlineImportCodeLoader vmCodeLoader = new InlineImportCodeLoader();
+            Pastel.IInlineImportCodeLoader vmCodeLoader = new VmCodeLoader();
 
             switch (TopLevelCheckWorker.IdentifyUseCase(command))
             {

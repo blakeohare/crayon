@@ -1,29 +1,39 @@
 ﻿using Common;
 
-namespace Crayon
+namespace Exporter
 {
-    internal class InlineImportCodeLoader : Pastel.IInlineImportCodeLoader
+    public class VmCodeLoader : Pastel.IInlineImportCodeLoader
     {
+        private static string crayonSourceDirectory = null;
+
         private string interpreterSource;
 
-        public InlineImportCodeLoader() { }
+        public VmCodeLoader() { }
 
-        private void Initialize()
+        public static string GetCrayonSourceDirectory()
         {
+            if (crayonSourceDirectory != null) return crayonSourceDirectory;
+
             string currentDirectory = FileUtil.GetCurrentDirectory();
             while (!string.IsNullOrEmpty(currentDirectory))
             {
                 string crayonSlnPath = System.IO.Path.Combine(currentDirectory, "Compiler", "CrayonWindows.sln");
                 if (System.IO.File.Exists(crayonSlnPath))
                 {
-                    this.interpreterSource = System.IO.Path.GetFullPath(System.IO.Path.Combine(currentDirectory, "Interpreter", "source"));
-                    break;
+                    crayonSourceDirectory = System.IO.Path.GetFullPath(System.IO.Path.Combine(currentDirectory, "Interpreter", "source"));
+                    return crayonSourceDirectory;
                 }
                 else
                 {
                     currentDirectory = System.IO.Path.GetDirectoryName(currentDirectory);
                 }
             }
+            return null;
+        }
+
+        private void Initialize()
+        {
+            this.interpreterSource = GetCrayonSourceDirectory();
 
             if (this.interpreterSource == null)
             {
