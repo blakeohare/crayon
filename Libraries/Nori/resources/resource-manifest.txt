@@ -12,5 +12,5 @@ END
 
 BEGIN
 APPLICABLE-TO: lang-javascript
-EMBED_FILES: from=javascript
+EMBED_FILES: from=lang-javascript
 END

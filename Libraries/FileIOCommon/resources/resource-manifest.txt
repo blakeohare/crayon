@@ -1,30 +1,20 @@
 
 BEGIN
 APPLICABLE-TO: csharp-app
-COPY_FILES: from=csharp, to=%LIBRARY_PATH%/%FILE%
-END
-
-BEGIN
-APPLICABLE-TO: chspar-app-android
-COPY_FILES: from=csharp-android, to=%LIBRARY_PATH%/%FILE%
+COPY_FILES: from=csharp-app, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
 APPLICABLE-TO: java-app
-COPY_FILES: from=java, to=%LIBRARY_PATH%/%FILE%
-END
-
-BEGIN
-APPLICABLE-TO: java-app-android
-COPY_FILES: from=java-android, to=%LIBRARY_PATH%/%FILE%
+COPY_FILES: from=java-app, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
 APPLICABLE-TO: python-app
-EMBED_FILES: from=python
+EMBED_FILES: from=python-app
 END
 
 BEGIN
 APPLICABLE-TO: javascript-app
-EMBED_FILES: from=javascript
+EMBED_FILES: from=javascript-app
 END
