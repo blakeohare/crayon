@@ -28,19 +28,22 @@ string encodeBreakpointData(VmContext vm, BreakpointInfo breakpoint, int pc) {
 }
 
 int debuggerSetBreakpoint(VmContext vm, string path, int line) {
-    int pc = debuggerFindPcForLine(vm, path, line);
-    if (pc == -1) return -1;
-    VmDebugData debugData = vm.byteCode.debugData;
-    BreakpointInfo breakpoint = debugData.breakpointInfo[pc];
-    if (breakpoint == null) {
-        int breakpointId = debugData.nextBreakpointId;
-        breakpoint = new BreakpointInfo(breakpointId, false, vm.symbolData.tokenData[pc][0]);
-        debugData.nextBreakpointId = breakpointId + 1;
-        debugData.breakpointInfo[pc] = breakpoint;
-        debugData.hasBreakpoint[pc] = true;
-        debugData.breakpointIdToPc[breakpointId] = pc;
+    if (@ext_boolean("HAS_DEBUGGER")) {
+		int pc = debuggerFindPcForLine(vm, path, line);
+		if (pc == -1) return -1;
+		VmDebugData debugData = vm.byteCode.debugData;
+		BreakpointInfo breakpoint = debugData.breakpointInfo[pc];
+		if (breakpoint == null) {
+			int breakpointId = debugData.nextBreakpointId;
+			breakpoint = new BreakpointInfo(breakpointId, false, vm.symbolData.tokenData[pc][0]);
+			debugData.nextBreakpointId = breakpointId + 1;
+			debugData.breakpointInfo[pc] = breakpoint;
+			debugData.hasBreakpoint[pc] = true;
+			debugData.breakpointIdToPc[breakpointId] = pc;
+		}
+		return breakpoint.breakpointId;
     }
-    return breakpoint.breakpointId;
+    return -1;
 }
 
 int debuggerFindPcForLine(VmContext vm, string path, int line) {
