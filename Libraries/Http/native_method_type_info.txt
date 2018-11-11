@@ -1,4 +1,3 @@
-bool _lib_graphicstext_loadFont(bool isSystemFont, string fontNameOrPath, int id);
 void _lib_http_getResponseBytes(object obj, Array<Value> intCache, List<Value> list);
 bool _lib_http_pollRequest(Array<object> objArray);
 void _lib_http_readResponseData(object nativeRequestObject, Array<int> intOut, Array<string> stringOut, Array<object> objOut, List<string> headerPairs);
