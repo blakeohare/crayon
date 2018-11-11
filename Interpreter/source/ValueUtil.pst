@@ -347,6 +347,14 @@ ListImpl makeEmptyList(Array<int> type, int capacity) {
     }
 }
 
+void setItemInList(ListImpl list, int i, Value v) {
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        list.list[i] = v;
+    } else {
+        list.array[i] = v;
+    }
+}
+
 void addToList(ListImpl list, Value item) {
     if (@ext_boolean("ARRAY_IS_LIST")) {
         list.list.Add(item);

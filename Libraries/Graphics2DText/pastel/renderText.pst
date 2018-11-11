@@ -19,7 +19,7 @@
 */
 Value lib_graphics2dtext_renderText(VmContext vm, Array<Value> args) {
     if (!@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
-        List<Value> sizeOut = Core.ForceParens((ListImpl) args[0].internalValue).items;
+        ListImpl sizeOut = (ListImpl) args[0].internalValue;
         ObjectInstance textSurface = (ObjectInstance)args[1].internalValue;
         Array<object> imageOut = textSurface.nativeData;
         object nativeFont = Core.ForceParens((ObjectInstance)args[2].internalValue).nativeData[0];
@@ -62,8 +62,8 @@ Value lib_graphics2dtext_renderText(VmContext vm, Array<Value> args) {
         spoofedNativeData2[0] = spoofedNativeData;
         imageOut[0] = spoofedNativeData2;
 
-        sizeOut[0] = buildInteger(vm.globals, Core.IntBuffer16[0]);
-        sizeOut[1] = buildInteger(vm.globals, Core.IntBuffer16[1]);
+        setItemInList(sizeOut, 0, buildInteger(vm.globals, Core.IntBuffer16[0]));
+        setItemInList(sizeOut, 1, buildInteger(vm.globals, Core.IntBuffer16[1]));
     }
 
     return vm.globalNull;
