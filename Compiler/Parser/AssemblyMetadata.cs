@@ -148,11 +148,6 @@ namespace Parser
             {
                 if (isMoreThanJustEmbedCode == -1)
                 {
-                    if (FileUtil.DirectoryExists(FileUtil.JoinPath(this.Directory, "supplemental")))
-                    {
-                        // TODO(pastel-split): Remove this
-                        throw new System.Exception(); // These should all be gone.
-                    }
                     // TODO(pastel-split): shave this down to just "resources" once Pastel code generation runs out of process
                     bool hasPastelDirectories =
                         FileUtil.DirectoryExists(FileUtil.JoinPath(this.Directory, "resources")) ||
