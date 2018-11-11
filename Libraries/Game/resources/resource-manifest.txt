@@ -19,18 +19,11 @@ COPY_FILES: from=java-app, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
-APPLICABLE-TO: java-app-android
-COPY_FILES: from=java-app-android/code, to=%LIBRARY_PATH%/%FILE%
-COPY_FILE: from=java-app-android/webview_index.html, to=app/src/main/assets/webview_index.html
-COPY_FILE: from=java-app-android/webview_render.js, to=app/src/main/assets/webview_render.js
-END
-
-BEGIN
 APPLICABLE-TO: lang-javascript
-EMBED_FILES: from=javascript
+EMBED_FILES: from=lang-javascript
 END
 
 BEGIN
 APPLICABLE-TO: lang-python
-EMBED_FILES: from=python
+EMBED_FILES: from=python-app
 END

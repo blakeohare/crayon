@@ -6,10 +6,10 @@ END
 
 BEGIN
 APPLICABLE-TO: java-app
-COPY_FILES: from=java, to=%LIBRARY_PATH%/%FILE%
+COPY_FILES: from=java-app, to=%LIBRARY_PATH%/%FILE%
 END
 
 BEGIN
-APPLICABLE-TO: lang-python
-EMBED_FILES: from=python
+APPLICABLE-TO: python-app
+EMBED_FILES: from=python-app
 END
