@@ -18,14 +18,13 @@ Value lib_imagewebresources_jsGetImage(VmContext vm, Array<Value> args) {
 
     if (@ext_boolean("IS_JAVASCRIPT")) {
         // get the native data from the response
-        objInstance1 = (ObjectInstance) args[0].internalValue;
-        objArray1 = objInstance1.nativeData;
+        ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
+        Array<object> objArray1 = objInstance1.nativeData;
 
         // get the output vector
-        list1 = (ListImpl) args[1].internalValue;
+        ListImpl list1 = (ListImpl) args[1].internalValue;
 
-        if (((bool) objArray1[1])) {
-            output = VALUE_TRUE;
+        if ((bool) objArray1[1]) {
             object object1 = objArray1[2];
             Value value = getItemFromList(list1, 0);  // imageNativeData
             objInstance1 = (ObjectInstance) value.internalValue;
@@ -39,8 +38,8 @@ Value lib_imagewebresources_jsGetImage(VmContext vm, Array<Value> args) {
 
             clearList(list1);
             addToList(list1, value);
-            addToList(list1, buildInteger(width));
-            addToList(list1, buildInteger(height));
+            addToList(list1, buildInteger(vm.globals, width));
+            addToList(list1, buildInteger(vm.globals, height));
 
             return vm.globalTrue;
         }
