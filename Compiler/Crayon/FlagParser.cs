@@ -36,6 +36,9 @@ namespace Crayon
         // Enable the debugger when running a CBX project.
         private static readonly string DEBUGGER = "Debugger";
 
+        // TODO(pastel-split): remove this flag and replace it with an external script.
+        private static readonly string PASTEL_CODE_GEN = "pastelGen";
+
         private static readonly HashSet<string> ATOMIC_FLAGS = new HashSet<string>() {
             CBX,
             DEBUGGER,
@@ -46,6 +49,7 @@ namespace Crayon
             SHOW_LIB_STACK,
             SHOW_PERFORMANCE_MARKERS,
             USE_OUTPUT_PREFIXES,
+            PASTEL_CODE_GEN,
         };
 
         private static readonly HashSet<string> ONE_ARG_FLAGS = new HashSet<string>()
@@ -235,6 +239,7 @@ namespace Crayon
             command.IsErrorCheckOnly = args.ContainsKey(ERROR_CHECK_ONLY);
             command.IsJsonOutput = args.ContainsKey(JSON_OUTPUT);
             command.UseOutputPrefixes = args.ContainsKey(USE_OUTPUT_PREFIXES);
+            command.IsPastelCodeGeneration = args.ContainsKey(PASTEL_CODE_GEN);
         }
     }
 }

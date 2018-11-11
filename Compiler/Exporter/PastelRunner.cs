@@ -22,6 +22,11 @@ namespace Exporter
             }
         }
 
+        public static void Run(IInlineImportCodeLoader vmCodeLoader)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public static void CompileLibraryFiles(
             LibraryExporter library,
             Platform.AbstractPlatform platform,
@@ -29,8 +34,8 @@ namespace Exporter
             PastelContext sharedScope,
             Dictionary<string, object> constantFlags)
         {
-            LibraryPastelCodeLoader codeLoader = new LibraryPastelCodeLoader(library.Metadata);
-            PastelContext context = new PastelContext(platform.Language, codeLoader);
+            LibraryPastelCodeLoader libCodeLoader = new LibraryPastelCodeLoader(library.Metadata);
+            PastelContext context = new PastelContext(platform.Language, libCodeLoader);
             Dictionary<string, string> exFnTranslations = library.GetExtensibleFunctionTranslations(platform);
             List<ExtensibleFunction> libraryFunctions = library.GetPastelExtensibleFunctions();
             Dictionary<string, object> constantsLookup = Util.MergeDictionaries(constantFlags, library.CompileTimeConstants);
