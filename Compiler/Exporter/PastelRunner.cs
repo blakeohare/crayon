@@ -185,18 +185,8 @@ namespace Exporter
 
             libraries[library.Metadata.ID] = context;
 
-            Dictionary<string, string> structCode = library.Metadata.GetStructFilesCode();
-            foreach (string structFile in structCode.Keys)
-            {
-                // TODO(pastel-split): remove this, once migrated.
-                throw new System.Exception("Nope. All struct code should just go directly in {library}/pastel, now.");
-                //string filename = "LIB:" + library.Metadata.ID + "/structs/" + structFile;
-                //context.CompileCode(filename, structCode[structFile]);
-            }
-
             string pastelCodeDir = library.Metadata.GetPastelCodeDirectory();
             string entryPoint = FileUtil.JoinPath(pastelCodeDir, "main.pst");
-
             string filename = "LIB:" + library.Metadata.ID + "/pastel/main.pst";
             context.CompileCode(filename, FileUtil.ReadFileText(entryPoint));
 
