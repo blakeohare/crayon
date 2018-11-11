@@ -1,6 +1,8 @@
 ﻿using Common;
+using Parser;
 using Pastel;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Exporter
 {
@@ -9,7 +11,7 @@ namespace Exporter
         private class LibraryPastelCodeLoader : IInlineImportCodeLoader
         {
             private string rootDir;
-            public LibraryPastelCodeLoader(Parser.AssemblyMetadata libraryMetadata)
+            public LibraryPastelCodeLoader(AssemblyMetadata libraryMetadata)
             {
                 this.rootDir = libraryMetadata.GetPastelCodeDirectory();
             }
@@ -22,9 +24,84 @@ namespace Exporter
             }
         }
 
-        public static void Run(IInlineImportCodeLoader vmCodeLoader)
+        public static void Run(IInlineImportCodeLoader vmCodeLoader, Platform.IPlatformProvider platformProvider)
         {
-            throw new System.NotImplementedException();
+            AssemblyMetadata[] assemblyMetadataList = new AssemblyFinder().AssemblyFlatList
+                .Where(asm => asm.IsMoreThanJustEmbedCode)
+                .ToArray();
+
+            Platform.AbstractPlatform[] platforms = new string[] {
+                "csharp-app",
+                "java-app",
+                "javascript-app",
+                "python-app",
+            }.Select(name => platformProvider.GetPlatform(name)).ToArray();
+
+            foreach (Platform.AbstractPlatform platform in platforms)
+            {
+                Dictionary<string, object> constants = platform.GetFlattenedConstantFlags(false);
+                VmGenerator.AddTypeEnumsToConstants(constants);
+
+                PastelContext vmContext = new PastelContext(platform.Language, vmCodeLoader);
+                foreach (string key in constants.Keys)
+                {
+                    vmContext.SetConstant(key, constants[key]);
+                }
+
+                vmContext.CompileFile("main.pst");
+                vmContext.FinalizeCompilation();
+
+                Dictionary<string, string> vmGeneratedFiles = GetGeneratedFiles(vmContext);
+
+                foreach (AssemblyMetadata metadata in assemblyMetadataList)
+                {
+                    try
+                    {
+                        Dictionary<string, PastelContext> compilation = new Dictionary<string, PastelContext>();
+
+                        LibraryExporter libExporter = LibraryExporter.Get(metadata, platform);
+                        CompileLibraryFiles(libExporter, platform, compilation, vmContext, constants);
+                        PastelContext pastelContext = compilation.Values.FirstOrDefault();
+
+                        Dictionary<string, string> templatesForLibrary = GetGeneratedFiles(pastelContext);
+                    }
+                    catch (ExtensionMethodNotImplementedException emie)
+                    {
+                        System.Console.WriteLine("Skipping " + metadata.CanonicalKey + " | " + platform.Name + " because: " + emie.Message);
+                    }
+                }
+            }
+        }
+
+        private static Dictionary<string, string> GetGeneratedFiles(PastelContext context)
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            if (context.UsesFunctionDeclarations)
+            {
+                output["func_decl"] = context.GetCodeForFunctionDeclarations();
+            }
+            output["func_impl"] = context.GetCodeForFunctions();
+            if (context.UsesStructDefinitions)
+            {
+                Dictionary<string, string> structDefinitions = context.GetCodeForStructs();
+                string[] structNames = structDefinitions.Keys.OrderBy(k => k.ToLower()).ToArray();
+
+                foreach (string structName in structNames)
+                {
+                    output["struct_def:" + structName] = structDefinitions[structName];
+                }
+
+                if (context.UsesStructDeclarations)
+                {
+                    Dictionary<string, string> structDeclarations = structNames.ToDictionary(k => context.GetCodeForStructDeclaration(k));
+
+                    foreach (string structName in structNames)
+                    {
+                        output["struct_decl:" + structName] = structDeclarations[structName];
+                    }
+                }
+            }
+            return output;
         }
 
         public static void CompileLibraryFiles(

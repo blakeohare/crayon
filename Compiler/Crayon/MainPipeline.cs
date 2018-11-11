@@ -39,7 +39,7 @@ namespace Crayon.Pipeline
             switch (TopLevelCheckWorker.IdentifyUseCase(command))
             {
                 case ExecutionType.PASTEL_CODE_GENERATION:
-                    PastelRunner.Run(vmCodeLoader);
+                    PastelRunner.Run(vmCodeLoader, command.PlatformProvider);
                     break;
 
                 case ExecutionType.SHOW_USAGE:
