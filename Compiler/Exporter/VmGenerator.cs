@@ -15,7 +15,7 @@ namespace Exporter
 
     public class VmGenerator
     {
-        private void AddTypeEnumsToConstants(Dictionary<string, object> constantFlags)
+        internal static void AddTypeEnumsToConstants(Dictionary<string, object> constantFlags)
         {
             foreach (Types type in Enum.GetValues(typeof(Types)))
             {
@@ -98,11 +98,10 @@ namespace Exporter
         {
             using (new PerformanceSection("VmGenerator.GenerateVmSourceCodeForPlatform"))
             {
-                Options options = new Options();
                 bool isStandaloneVm = mode == VmGenerationMode.EXPORT_VM_AND_LIBRARIES;
                 Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags(isStandaloneVm) ?? new Dictionary<string, object>();
 
-                this.AddTypeEnumsToConstants(constantFlags);
+                AddTypeEnumsToConstants(constantFlags);
 
                 PastelContext vmPastelContext = this.GenerateCoreVmParseTree(platform, codeLoader, constantFlags);
 
@@ -119,6 +118,7 @@ namespace Exporter
 
                 if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
                 {
+                    Options options = new Options();
                     options
                         .SetOption(ExportOptionKey.PROJECT_ID, nullableExportBundle.ProjectID)
                         .SetOption(ExportOptionKey.DESCRIPTION, nullableExportBundle.Description)

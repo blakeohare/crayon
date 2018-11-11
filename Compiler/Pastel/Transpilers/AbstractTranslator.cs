@@ -332,7 +332,7 @@ namespace Pastel.Transpilers
             if (!extLookup.ContainsKey(functionName) || extLookup[functionName] == null)
             {
                 string msg = "The extensbile method '" + functionName + "' does not have any registered translation.";
-                throw new ParserException(throwToken, msg);
+                throw new ExtensionMethodNotImplementedException(throwToken, msg);
             }
 
             string codeSnippet = extLookup[functionName];
