@@ -6,7 +6,9 @@ namespace Crayon
     {
         private string interpreterSource;
 
-        public InlineImportCodeLoader()
+        public InlineImportCodeLoader() { }
+
+        private void Initialize()
         {
             string currentDirectory = FileUtil.GetCurrentDirectory();
             while (!string.IsNullOrEmpty(currentDirectory))
@@ -44,6 +46,11 @@ namespace Crayon
 
         public string LoadCode(string path)
         {
+            if (this.interpreterSource == null)
+            {
+                this.Initialize();
+            }
+
             string fullPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(this.interpreterSource, path));
             string code = System.IO.File.ReadAllText(fullPath);
             return code;

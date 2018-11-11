@@ -2,9 +2,9 @@
 {
     public static class ExportCbxVmBundlePipeline
     {
-        public static ExportBundle Run(ExportCommand command, Build.BuildContext buildContext)
+        public static ExportBundle Run(ExportCommand command, Build.BuildContext buildContext, Pastel.IInlineImportCodeLoader codeLoader)
         {
-            return new Workers.ExportCbxVmBundleImplWorker().ExportVmBundle(command, buildContext);
+            return new Workers.ExportCbxVmBundleImplWorker().ExportVmBundle(command, buildContext, codeLoader);
         }
     }
 }

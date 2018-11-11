@@ -19,7 +19,8 @@ namespace Exporter.Workers
             Platform.AbstractPlatform platform,
             AssemblyMetadata[] allLibraries,
             string vmTargetDir,
-            ExportCommand command)
+            ExportCommand command,
+            Pastel.IInlineImportCodeLoader codeLoader)
         {
             new VmGenerator().GenerateVmSourceCodeForPlatform(
                 fileOutput,
@@ -28,7 +29,7 @@ namespace Exporter.Workers
                 null,
                 allLibraries,
                 vmTargetDir,
-                command.InlineImportCodeLoader,
+                codeLoader,
                 VmGenerationMode.EXPORT_VM_AND_LIBRARIES);
         }
     }
