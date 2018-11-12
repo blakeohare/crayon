@@ -54,7 +54,7 @@ namespace Build
 
         public static BuildContext Parse(string projectDir, string buildFile, string nullableTargetName)
         {
-            BuildRoot buildInput = XmlParserForBuild.Parse(buildFile);
+            BuildRoot buildInput = JsonParserForBuild.Parse(buildFile);
             BuildRoot flattened = buildInput;
             string platform = null;
             Dictionary<string, BuildVarCanonicalized> varLookup;
@@ -104,6 +104,9 @@ namespace Build
 
             ImageSheet[] imageSheets = flattened.ImageSheets ?? new ImageSheet[0];
 
+            string[] crayonPath = flattened.CrayonPath ?? new string[0];
+            crayonPath = crayonPath.Select(t => EnvironmentVariableUtil.DoReplacementsInString(t)).ToArray();
+
             BuildContext buildContext = new BuildContext()
             {
                 ProjectDirectory = projectDir,
@@ -118,7 +121,7 @@ namespace Build
                 LaunchScreenPath = flattened.LaunchScreen,
                 DefaultTitle = flattened.DefaultTitle,
                 Orientation = flattened.Orientation,
-                CrayonPath = flattened.CrayonPath == null ? "" : string.Join(";", flattened.CrayonPath),
+                CrayonPath = string.Join(";", crayonPath),
                 IosBundlePrefix = flattened.IosBundlePrefix,
                 JavaPackage = flattened.JavaPackage,
                 JsFullPage = Util.StringToBool(flattened.JsFullPage),
@@ -220,7 +223,8 @@ namespace Build
 
             foreach (SourceItem sourceDir in sourceDirs)
             {
-                string relative = FileUtil.GetCanonicalizeUniversalPath(sourceDir.Value);
+                string sourceDirValue = EnvironmentVariableUtil.DoReplacementsInString(sourceDir.Value);
+                string relative = FileUtil.GetCanonicalizeUniversalPath(sourceDirValue);
                 FilePath filePath = new FilePath(relative, projectDir, sourceDir.Alias);
                 paths[filePath.AbsolutePath] = filePath;
             }
