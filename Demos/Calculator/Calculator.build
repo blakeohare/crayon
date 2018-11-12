@@ -1,26 +1,24 @@
-<build>
-	<projectname>Calculator</projectname>
-	<output>output/%TARGET_NAME%</output>
-	<icon>assets/icon.png</icon>
-
-	<javapackage>org.crayonlang.demos.calculator</javapackage>
-	<iosbundleprefix>org.crayonlang.demos</iosbundleprefix>
-	<guidseed>org.crayonlang.demos.calculator,v0.2.1,%TARGET_NAME%</guidseed>
-
-	<!-- Targets -->
-	<target name="javascript">
-		<source>source</source>
-		<platform>javascript-app</platform>
-		<jsfileprefix>/calculator/</jsfileprefix>
-	</target>
-
-	<target name="csharp">
-		<source>source</source>
-		<platform>csharp-app</platform>
-	</target>
-
-	<target name="java">
-		<source>source</source>
-		<platform>java-app</platform>
-	</target>
-</build>
+{
+	"id": "Calculator",
+	"output": "output/%TARGET_NAME%",
+	"icon": "assets/icon.png",
+	"java-package": "org.crayonlang.demos.calculator",
+	"ios-bundle-prefix": "org.crayonlang.demos",
+	"guid-seed": "org.crayonlang.demos.calculator,v0.2.1,%TARGET_NAME%",
+	
+	"targets": [
+		{
+			"name": "javascript",
+			"platform": "javascript-app",
+			"js-file-prefix": "calculator/"
+		},
+		{
+			"name": "csharp",
+			"platform": "csharp-app"
+		},
+		{
+			"name": "java",
+			"platform": "java-app"
+		}
+	]
+}

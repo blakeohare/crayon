@@ -1,64 +1,61 @@
-<build>
-	<projectname>SquishySquid</projectname>
-	<source>source/</source>
-	<output>output/%TARGET_NAME%</output>
-	<icon>assets/icon.png</icon>
-	<title>Squishy Squid</title>
+{
+	"id": "SquishySquid",
+	"source": "source/",
+	"output": "output/%TARGET_NAME%",
+	"icon": "assets/icon.png",
+	"title": "Squishy Squid",
 	
-	<imagesheets>
-		<sheet id="everything">
-			<prefix>*</prefix>
-		</sheet>
-	</imagesheets>
-
-	<iosbundleprefix>org.crayonlang.demos</iosbundleprefix>
-	<guidseed>org.crayonlang.demos.squishysquid,v0.2.0,%TARGET_NAME%</guidseed>
-
-	<var type="boolean">
-		<id>is_landscape</id>
-		<value>false</value>
-	</var>
+	"ios-bundle-prefix": "org.crayonlang.demos",
+	"guid-seed": "org.crayonlang.demos.squishysquid,v0.2.0,%TARGET_NAME%",
 	
-	<!-- Targets -->
-	<target name="android">
-		<platform>javascript-app-android</platform>
-	</target>
-
-	<target name="ios">
-		<platform>javascript-app-ios</platform>
-	</target>
+	"vars": [
+		{ "id": "is_landscape", "value": false }
+	}
 	
-	<target name="javascript">
-		<platform>javascript-app</platform>
-		<jsfileprefix>/demos/squishysquid/</jsfileprefix>
-	</target>
+	"image-sheets": [
+		{ "id": "everything", "prefix": "*" }
+	],
 	
-	<target name="sitecsharp">
-		<platform>csharp-app</platform>
-		<var type="boolean">
-			<id>is_landscape</id>
-			<value>true</value>
-		</var>
-	</target>
-	
-	<target name="sitejs">
-		<platform>javascript-app</platform>
-		<jsfileprefix>/frontpage/squishysquid/</jsfileprefix>
-		<var type="boolean">
-			<id>is_landscape</id>
-			<value>true</value>
-		</var>
-	</target>
-	
-	<target name="csharp">
-		<platform>csharp-app</platform>
-	</target>
-	
-	<target name="java">
-		<platform>java-app</platform>
-	</target>
-	
-	<target name="python">
-		<platform>python-app</platform>
-	</target>
-</build>
+	"targets": [
+		{
+			"name": "android",
+			"platform": "javascript-app-android"
+		},
+		{
+			"name": "ios",
+			"platform": "javascript-app-ios"
+		},
+		{
+			"name": "javascript",
+			"platform": "javascript-app",
+			"js-file-prefix": "demos/squishysquid"
+		},
+		{
+			"name": "sitecsharp",
+			"platform": "csharp-app",
+			"vars": [
+				{ "id": "is_landscape", "value": true }
+			]
+		},
+		{
+			"name": "sitejs",
+			"platform": "javascript-app",
+			"js-file-prefix": "frontpage/squishysquid",
+			"vars": [
+				{ "id": "is_landscape", "value": true }
+			]
+		},
+		{
+			"name": "csharp",
+			"platform": "csharp-app"
+		},
+		{
+			"name": "java",
+			"platform": "java-app"
+		},
+		{
+			"name": "python",
+			"platform": "python-app"
+		}
+	]
+}

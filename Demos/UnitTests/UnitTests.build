@@ -1,22 +1,24 @@
-<build>
-	<projectname>UnitTests</projectname>
-	<source>source/</source>
-	<output>output/%TARGET_NAME%</output>
+{
+	"id": "UnitTests",
+	"source": "source/",
+	"output": "output/%TARGET_NAME%",
 	
-	<!-- Targets -->
-	<target name="javscript">
-		<platform>javascript-app</platform>
-	</target>
-	
-	<target name="csharp">
-		<platform>csharp-app</platform>
-	</target>
-	
-	<target name="java">
-		<platform>java-app</platform>
-	</target>
-	
-	<target name="python">
-		<platform>python-app</platform>
-	</target>
-</build>
+	"targets": [
+		{
+			"name": "javascript",
+			"platform": "javascript-app"
+		},
+		{
+			"name": "csharp",
+			"platform": "csharp-app"
+		},
+		{
+			"name": "java",
+			"platform": "java-app"
+		},
+		{
+			"name": "python",
+			"platform": "python-app"
+		}
+	]
+}
