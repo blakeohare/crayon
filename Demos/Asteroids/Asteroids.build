@@ -1,42 +1,39 @@
-<build>
-	<projectname>Asteroids</projectname>
-	<title>Asteroids</title>
-	<description>Classic Asteroids clone</description>
-	<source>source/</source>
-	<output>output/%TARGET_NAME%</output>
-	<icon>assets/icon.png</icon>
+{
+	"name": "Asteroids",
+	"id": "Asteroids",
+	"description": "Classic Asteroids clone",
+	"source": "source/",
+	"output": "output/%TARGET_NAME%",
+	"icon": "assets/icon.png",
 	
-	<windowsize width="800" height="600"/>
-	<version>0.1</version>
+	"window-size": {
+		"width": 800,
+		"height": 600
+	},
+	"version": "0.1",
 	
-	<imagesheets>
-		<sheet id="everything">
-			<prefix>*</prefix>
-		</sheet>
-	</imagesheets>
+	"imagesheets": [
+		{ "id": "everything", "prefix": "*" }
+	],
+	"guid-seed": "org.crayonlang.demos.asteroids,v0.2.0,%TARGET_NAME%",
 	
-	
-	<guidseed>org.crayonlang.demos.asteroids,v0.2.0,%TARGET_NAME%</guidseed>
-	
-	<!-- Targets -->
-	<target name="javascript">
-		<platform>javascript-app</platform>
-		<jsfileprefix>/demos/asteroids/</jsfileprefix>
-	</target>
-	
-	<target name="csharp">
-		<platform>csharp-app</platform>
-	</target>
-	
-	<target name="java">
-		<platform>java-app</platform>
-	</target>
-	
-	<target name="python">
-		<platform>python-app</platform>
-	</target>
-	
-	<target name="chrome-web-app">
-		<platform>javascript-app-chrome</platform>
-	</target>
-</build>
+	"targets": [
+		{
+			"name": "javascript",
+			"platform": "javascript-app",
+			"js-file-prefix": "/demos/asteroids"
+		},
+		{
+			"name": "csharp",
+			"platform": "csharp-app"
+		},
+		{
+			"name": "java",
+			"platform": "java-app"
+		},
+		{
+			"name": "python",
+			"platform": "python-app"
+		}
+	]
+}
