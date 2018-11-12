@@ -15,16 +15,23 @@ Value lib_matrices_toVector(VmContext vm, Array<Value> args) {
         nd[5] = "Output argument must be a list";
         return vm.globalNull;
     }
-    List<Value> output = (List<Value>) args[1].internalValue;
-    while (output.Size() < length) {
-        output.Add(vm.globalNull);
+    ListImpl output = (ListImpl) args[1].internalValue;
+    while (output.size < length) {
+        addToList(output, vm.globalNull);
     }
     double value = 0.0;
+    Value toList = null;
     for (int i = 0; i < length; i += 1) {
         value = data[i];
-        if (value == 0) output[i] = vm.globals.floatZero;
-        else if (value == 1) output[i] = vm.globals.floatOne;
-        else output[i] = new Value(Types.FLOAT, data[i]);
+        if (value == 0) toList = vm.globals.floatZero;
+        else if (value == 1) toList = vm.globals.floatOne;
+        else toList = new Value(Types.FLOAT, data[i]);
+
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            output.list[i] = toList;
+        } else {
+            output.array[i] = toList;
+        }
     }
 
     return args[1];
