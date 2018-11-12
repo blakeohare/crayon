@@ -36,8 +36,8 @@
                 list1.array[int1 + i] = value;
             }
         }
-        list1.size += argCount;
     }
+    list1.size += argCount;
 
     output = VALUE_NULL;
 }
