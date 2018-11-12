@@ -1,5 +1,4 @@
 {
-	"name": "Conway",
 	"id": "Conway",
 	"output": "output/%TARGET_NAME%",
 	"icon": "assets/icon.png",

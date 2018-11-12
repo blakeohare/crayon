@@ -1,5 +1,4 @@
 {
-	"name": "Asteroids",
 	"id": "Asteroids",
 	"description": "Classic Asteroids clone",
 	"source": "source/",

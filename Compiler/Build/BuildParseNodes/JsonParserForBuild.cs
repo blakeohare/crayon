@@ -12,6 +12,8 @@ namespace Build.BuildParseNodes
             Common.JsonLookup root = new Common.JsonLookup(rootDict);
 
             BuildRoot rootOut = new BuildRoot();
+            rootOut.ProjectName = root.GetAsString("id");
+
             rootOut.ProgrammingLanguage = root.GetAsString("programming-language");
             ParseBuildItem(rootOut, root);
             List<Target> targets = new List<Target>();
@@ -46,7 +48,6 @@ namespace Build.BuildParseNodes
             item.MinifiedRaw = "" + json.GetAsBoolean("js-min");
             item.Orientation = json.GetAsString("orientation");
             item.Output = json.GetAsString("output");
-            item.ProjectName = json.GetAsString("name");
             item.Version = json.GetAsString("version");
 
             // TODO(json-build): change this to direct dependency references. For now, this will use direct dependencies, but walk up to the previous directory for compatibility.
