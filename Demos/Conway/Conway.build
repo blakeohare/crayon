@@ -1,63 +1,64 @@
-<build>
-	<projectname>Conway</projectname>
-	<output>output/%TARGET_NAME%</output>
-	<icon>assets/icon.png</icon>
+{
+	"name": "Conway",
+	"id": "Conway",
+	"output": "output/%TARGET_NAME%",
+	"icon": "assets/icon.png",
+	"java-package": "org.crayonlang.demos.conway",
+	"ios-bundle-prefix": "org.crayonlang.demos",
+	"guid-seed": "org.crayonlang.demos.conway,v0.2.0,%TARGET_NAME%",
 	
-	<javapackage>org.crayonlang.demos.conway</javapackage>
-	<iosbundleprefix>org.crayonlang.demos</iosbundleprefix>
-	<guidseed>org.crayonlang.demos.conway,v0.2.0,%TARGET_NAME%</guidseed>
-	
-	<!-- Targets -->
-
-	<target name="cbx">
-		<source>source</source>
-	</target>
-	
-	<target name="javascript">
-		<source>source</source>
-		<platform>javascript-app</platform>
-	</target>
-	
-	<target name="csharp">
-		<source>source</source>
-		<platform>csharp-app</platform>
-	</target>
-	
-	<target name="es-demo">
-		<source>source-es</source>
-		<platform>csharp-app</platform>
-		<compilerlocale>es</compilerlocale>
-	</target>
-	
-	<target name="es-demo-java">
-		<source>source-es</source>
-		<platform>java-app</platform>
-		<compilerlocale>es</compilerlocale>
-	</target>
-	
-	<target name="jp-demo">
-		<source>source-jp</source>
-		<platform>csharp-app</platform>
-		<compilerlocale>jp</compilerlocale>
-	</target>
-	
-	<target name="java">
-		<source>source</source>
-		<platform>java-app</platform>
-	</target>
-	
-	<target name="python">
-		<source>source</source>
-		<platform>python-app</platform>
-	</target>
-	
-	<target name="android">
-		<source>source</source>
-		<platform>javascript-app-android</platform>
-	</target>
-
-	<target name="ios">
-		<source>source</source>
-		<platform>javascript-app-ios</platform>
-	</target>
-</build>
+	"targets": [
+		{
+			"name": "cbx",
+			"source": "source"
+		},
+		{
+			"name": "javascript",
+			"platform": "javascript-app",
+			"source": "source"
+		},
+		{
+			"name": "csharp",
+			"platform": "csharp-app",
+			"source": "source"
+		},
+		{
+			"name": "es-demo",
+			"source": "source-es",
+			"platform": "csharp-app",
+			"locale": "es"
+		},
+		{
+			"name": "es-demo-java",
+			"source": "source-es",
+			"platform": "java-app",
+			"locale": "es"
+		},
+		{
+			"name": "jp-demo",
+			"source": "source-jp",
+			"platform": "csharp-app",
+			"locale": "jp"
+		},
+		{
+			"name": "java",
+			"source": "source",
+			"platform": "java-app"
+		},
+		{
+			"name": "python",
+			"source": "source",
+			"platform": "python-app"
+		},
+		{
+			"name": "android",
+			"source": "source",
+			"platform": "javascript-app-android"
+		},
+		{
+			"name": "ios",
+			"source": "source",
+			"platform": "javascript-app-ios"
+		}
+	]
+}
