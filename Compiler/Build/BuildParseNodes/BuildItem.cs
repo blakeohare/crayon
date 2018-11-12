@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using Common;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace Build.BuildParseNodes
@@ -75,21 +76,14 @@ namespace Build.BuildParseNodes
         [XmlElement("compilerlocale")]
         public string CompilerLocale { get; set; }
 
-        private bool TranslateStringToBoolean(string value)
-        {
-            if (value == null) return false;
-            value = value.ToLowerInvariant();
-            return value == "1" || value == "t" || value == "y" || value == "true" || value == "yes";
-        }
-
         public bool Minified
         {
-            get { return this.TranslateStringToBoolean(this.MinifiedRaw); }
+            get { return Util.StringToBool(this.MinifiedRaw); }
         }
 
         public bool ExportDebugByteCode
         {
-            get { return this.TranslateStringToBoolean(this.ExportDebugByteCodeRaw); }
+            get { return Util.StringToBool(this.ExportDebugByteCodeRaw); }
         }
     }
 }

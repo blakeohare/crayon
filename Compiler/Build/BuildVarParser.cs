@@ -109,25 +109,7 @@ namespace Build
                         }
                         break;
                     case VarType.BOOLEAN:
-                        switch (value.ToLowerInvariant())
-                        {
-                            case "0":
-                            case "no":
-                            case "false":
-                            case "f":
-                            case "n":
-                                boolValue = false;
-                                break;
-                            case "1":
-                            case "true":
-                            case "t":
-                            case "yes":
-                            case "y":
-                                boolValue = true;
-                                break;
-                            default:
-                                throw new InvalidOperationException("Build file variable: '" + id + "' contains an invalid boolean valud.");
-                        }
+                        boolValue = Util.StringToBool(value);
                         break;
                     case VarType.STRING:
                         break;
