@@ -1,44 +1,47 @@
-<build>
-	<projectname>FireDodge</projectname>
-	<source>source/</source>
-	<output>output/%TARGET_NAME%</output>
-	<icon>assets/icon.png</icon>
-	<launchscreen>assets/launchscreen.png</launchscreen>
-	<programminglanguage>Acrylic</programminglanguage>
+{
+	"id": "FireDodge",
+	"source": "source/",
+	"output": "output/%TARGET_NAME%",
+	"icon": "assets/icon.png",
+	"launch-screen": "assets/launchscreen.png",
+	"programming-language": "Acrylic",
 	
-	<imagesheets>
-		<sheet id="everything">
-			<prefix>*</prefix>
-		</sheet>
-	</imagesheets>
-
-	<guidseed>org.crayonlang.demos.firedodge,v0.2.0,%TARGET_NAME%</guidseed>
+	"guid-seed": "org.crayonlang.demos.firedodge,acrylic-version,v0.2.0,%TARGET_NAME%",
 	
-	<!-- Targets -->
-	<target name="javascript">
-		<platform>javascript-app</platform>
-		<jsfileprefix>/demos/firedodge/</jsfileprefix>
-	</target>
+	"image-sheets": [
+		{
+			"id": "everything",
+			"prefix": "*"
+		}
+	],
 	
-	<target name="csharp">
-		<platform>csharp-app</platform>
-	</target>
-	
-	<target name="java">
-		<platform>java-app</platform>
-	</target>
-	
-	<target name="python">
-		<platform>python-app</platform>
-	</target>
-	
-	<target name="android">
-		<orientation>landscapeleft,landscaperight</orientation>
-		<platform>javascript-app-android</platform>
-	</target>
-	
-	<target name="ios">
-		<orientation>landscapeleft,landscaperight</orientation>
-		<platform>javascript-app-ios</platform>
-	</target>
-</build>
+	"targets": [
+		{
+			"name": "javascript",
+			"platform": "javascript-app",
+			"js-file-prefix": "demos/firedodge"
+		},
+		{
+			"name": "csharp",
+			"platform": "csharp-app"
+		},
+		{
+			"name": "java",
+			"platform": "java-app"
+		},
+		{
+			"name": "python",
+			"platform": "python-app"
+		},
+		{
+			"name": "android",
+			"platform": "javascript-app-android",
+			"orientation": "landscapeleft,landscaperight"
+		},
+		{
+			"name": "ios",
+			"platform": "javascript-app-ios",
+			"orientation": "landscapeleft,landscaperight"
+		}
+	]
+}

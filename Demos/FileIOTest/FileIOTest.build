@@ -1,24 +1,26 @@
-<build>
-	<projectname>FileIOTest</projectname>
-	<source>source/</source>
-	<output>output/%TARGET_NAME%</output>
+{
+	"id": "FileIOTest",
+	"source": "source/",
+	"output": "output/%TARGET_NAME%",
 	
-	<guidseed>org.crayonlang.demos.filedemo,v0.2.0,%TARGET_NAME%</guidseed>
+	"guid-seed": "org.crayonlang.demos.filedemo,v0.2.0,%TARGET_NAME%",
 	
-	<!-- Targets -->
-	<target name="javascript">
-		<platform>javascript-app</platform>
-	</target>
-	
-	<target name="csharp">
-		<platform>csharp-app</platform>
-	</target>
-	
-	<target name="java">
-		<platform>java-app</platform>
-	</target>
-	
-	<target name="python">
-		<platform>python-app</platform>
-	</target>
-</build>
+	"targets": [
+		{
+			"name": "javascript",
+			"platform": "javascript-app"
+		},
+		{
+			"name": "csharp",
+			"platform": "csharp-app"
+		},
+		{
+			"name": "java",
+			"platform": "java-app"
+		},
+		{
+			"name": "python",
+			"platform": "python-app"
+		}
+	]
+}
