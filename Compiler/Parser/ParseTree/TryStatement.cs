@@ -50,6 +50,11 @@ namespace Parser.ParseTree
                 string[] catchBlockTypes = catchBlockTypeses[i];
                 Executable[] catchBlockExecutables = catchBlockExecutableses[i];
 
+                if (variableName == null)
+                {
+                    variableName = new Token(owner.GetNextAutoGenVarName(), TokenType.WORD, catchToken.File, catchToken.Line, catchToken.Col);
+                }
+
                 this.CatchBlocks[i] = new CatchBlock()
                 {
                     CatchToken = catchToken,
@@ -75,11 +80,11 @@ namespace Parser.ParseTree
             IEnumerable<Executable> output = this.TryBlock;
             foreach (CatchBlock cb in this.CatchBlocks)
             {
-                output = output.Concat<Executable>(cb.Code);
+                output = output.Concat(cb.Code);
             }
             if (this.FinallyBlock != null)
             {
-                output = output.Concat<Executable>(this.FinallyBlock);
+                output = output.Concat(this.FinallyBlock);
             }
             return output;
         }
@@ -171,6 +176,9 @@ namespace Parser.ParseTree
 
             foreach (CatchBlock cb in this.CatchBlocks)
             {
+                // Exception catch blocks have a type declaration, even in Crayon.
+                cb.VariableLocalScopeId.ResolvedType = typeResolver.ResolveType(cb.VariableLocalScopeId.Type);
+
                 foreach (Executable ex in cb.Code)
                 {
                     ex.ResolveTypes(parser, typeResolver);

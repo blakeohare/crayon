@@ -4,6 +4,8 @@ namespace Parser.ParseTree
 {
     public abstract class Node
     {
+        private int autoGenIdCounter = 0;
+
         internal Node(Token firstToken, Node owner)
         {
             this.FirstToken = firstToken;
@@ -135,6 +137,11 @@ namespace Parser.ParseTree
                 if (classWalker == memberClass) return true;
             }
             return false;
+        }
+
+        internal string GetNextAutoGenVarName()
+        {
+            return "$gen_" + this.autoGenIdCounter++;
         }
     }
 }
