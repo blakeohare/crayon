@@ -1,4 +1,4 @@
-package org.json;
+package org.crayonlang.libraries.json;
 
 import java.io.IOException;
 import java.io.Writer;

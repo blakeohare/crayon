@@ -1,6 +1,5 @@
 BEGIN
 APPLICABLE-TO: lang-java
-COPY_FILES: from=java-org-json, to=src/org/json/%FILE%
 COPY_FILES: from=lang-java, to=%LIBRARY_PATH%/%FILE%
 END
 

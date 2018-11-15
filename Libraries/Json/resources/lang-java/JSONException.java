@@ -1,4 +1,4 @@
-package org.json;
+package org.crayonlang.libraries.json;
 
 /**
  * The JSONException is thrown by the JSON.org classes when things are amiss.

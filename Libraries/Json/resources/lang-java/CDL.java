@@ -1,4 +1,4 @@
-package org.json;
+package org.crayonlang.libraries.json;
 
 /*
 Copyright (c) 2002 JSON.org

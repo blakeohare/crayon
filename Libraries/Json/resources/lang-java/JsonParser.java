@@ -17,9 +17,9 @@ class JsonParser {
 
 	public static Value parseJsonIntoValue(VmGlobals globals, String rawValue) {
 		try {
-			org.json.JSONObject jo = new org.json.JSONObject(rawValue);
+			JSONObject jo = new JSONObject(rawValue);
 			return convertJsonThing(globals, jo);
-		} catch (org.json.JSONException je) {
+		} catch JSONException je) {
 			return null;
 		}
 	}
@@ -33,17 +33,17 @@ class JsonParser {
 			return Interpreter.v_buildFloat(globals, (Double) thing);
 		} else if (thing instanceof Boolean) {
 			return ((Boolean) thing) ? globals.boolTrue: globals.boolFalse;
-		} else if (thing instanceof org.json.JSONObject) {
-			return convertJsonToDictionary(globals, (org.json.JSONObject) thing);
-		} else if (thing instanceof org.json.JSONArray) {
-			return convertJsonToList(globals, (org.json.JSONArray) thing);
+		} else if (thing instanceof JSONObject) {
+			return convertJsonToDictionary(globals, (JSONObject) thing);
+		} else if (thing instanceof JSONArray) {
+			return convertJsonToList(globals, (JSONArray) thing);
 		} else {
 			throw new RuntimeException("Unknown JSON value: " + thing);
 		}
 	}
 	
-	private static Value convertJsonToDictionary(VmGlobals globals, org.json.JSONObject obj) {
-		String[] keys = org.json.JSONObject.getNames(obj);
+	private static Value convertJsonToDictionary(VmGlobals globals, JSONObject obj) {
+		String[] keys = JSONObject.getNames(obj);
 		Value[] values = new Value[keys.length];
 		for (int i = 0; i < keys.length; ++i) {
 			values[i] = convertJsonThing(globals, obj.get(keys[i]));
@@ -51,7 +51,7 @@ class JsonParser {
 		return Interpreter.v_buildStringDictionary(globals, keys, values);
 	}
 	
-	private static Value convertJsonToList(VmGlobals globals, org.json.JSONArray list) {
+	private static Value convertJsonToList(VmGlobals globals, JSONArray list) {
 		ArrayList<Value> output = new ArrayList<Value>();
 		for (int i = 0; i < list.length(); ++i) {
 			output.add(convertJsonThing(globals, list.get(i)));
