@@ -42,8 +42,9 @@ int debuggerSetBreakpoint(VmContext vm, string path, int line) {
             debugData.breakpointIdToPc[breakpointId] = pc;
         }
         return breakpoint.breakpointId;
+    } else {
+        return -1;
     }
-    return -1;
 }
 
 int debuggerFindPcForLine(VmContext vm, string path, int line) {
