@@ -129,7 +129,7 @@ namespace CrayonUnit {
                 }
             } else if (Core.typeof(this.actual) == Core.Type.LIST) {
                 for (item : this.actual) {
-                    if (this.isEqualTo(item, expected)) {
+                    if (expected.isEqualTo(item)) {
                         found = true;
                         break;
                     }
