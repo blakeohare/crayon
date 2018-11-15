@@ -7,7 +7,7 @@
 	
 	"guid-seed": "org.crayonlang.demos.firedodge,v0.2.0,%TARGET_NAME%",
 	
-	"imagesheets": [
+	"image-sheets": [
 		{
 			"id": "everything",
 			"prefix": "*"

@@ -3,7 +3,7 @@
 	"source": "source/",
 	"output": "output/%TARGET_NAME%",
 	
-	"imagesheets": [
+	"image-sheets": [
 		{
 			"id": "everything",
 			"prefix": "*"
