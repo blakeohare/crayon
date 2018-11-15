@@ -25,19 +25,19 @@
 			"name": "es-demo",
 			"source": "source-es",
 			"platform": "csharp-app",
-			"locale": "es"
+			"compiler-locale": "es"
 		},
 		{
 			"name": "es-demo-java",
 			"source": "source-es",
 			"platform": "java-app",
-			"locale": "es"
+			"compiler-locale": "es"
 		},
 		{
 			"name": "jp-demo",
 			"source": "source-jp",
 			"platform": "csharp-app",
-			"locale": "jp"
+			"compiler-locale": "jp"
 		},
 		{
 			"name": "java",

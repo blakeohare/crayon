@@ -33,7 +33,7 @@ namespace Build.BuildParseNodes
 
         private static void ParseBuildItem(BuildItem item, Common.JsonLookup json)
         {
-            item.CompilerLocale = json.GetAsString("locale");
+            item.CompilerLocale = json.GetAsString("compiler-locale");
             item.DefaultTitle = json.GetAsString("default-title");
             item.Description = json.GetAsString("description");
             item.GuidSeed = json.GetAsString("guid-seed");
@@ -60,7 +60,7 @@ namespace Build.BuildParseNodes
                 .ToArray();
 
             List<ImageSheet> imageSheets = new List<ImageSheet>();
-            object[] imageSheetsRaw = json.GetAsList("imagesheets");
+            object[] imageSheetsRaw = json.GetAsList("image-sheets");
             if (imageSheetsRaw != null)
             {
                 foreach (Common.JsonLookup imageSheetJson in imageSheetsRaw.OfType<IDictionary<string, object>>().Select(t => new Common.JsonLookup(t)))
