@@ -1,21 +1,21 @@
 import os
 
 BUILD_FILE = '''
-<build>
-	<projectname>TestProject</projectname>
-	<title>TestProject</title>
-	<description>Enter description of TestProject</description>
-
-	<source>source</source>
-	<compilerlocale>en</compilerlocale>
-	<output>output/%TARGET_NAME%</output>
-
-	<target name="csharp">
-		<platform>csharp-app</platform>
-	</target>
-	
-</build>
-'''.strip()
+{
+	"id": "TestProject",
+	"title": "Test Project",
+	"description": "Enter description of TestProject",
+	"source": "source",
+	"compiler-locale": "en",
+	"output": "output/%TARGET_NAME%",
+	"target": [
+		{
+			"name": "csharp",
+			"platform": "csharp-app"
+		}
+	]
+}
+'''
 
 def run_command(cmd):
 	c = os.popen(cmd)
