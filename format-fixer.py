@@ -127,7 +127,12 @@ def get_all_files():
   get_all_files_impl('.', output)
   return output
 
-BAD_PATH_MARKERS = ['/obj/Debug'.replace('/', os.sep), '/obj/Release'.replace('/', os.sep)]
+BAD_PATH_MARKERS = [
+	'/obj/Debug'.replace('/', os.sep),
+	'/obj/Release'.replace('/', os.sep),
+	'/bin/Debug'.replace('/', os.sep),
+	'/bin/Release'.replace('/', os.sep),
+]
 
 def get_all_files_impl(path, output):
   for file in os.listdir(path):
