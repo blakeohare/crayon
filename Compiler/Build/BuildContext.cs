@@ -86,7 +86,7 @@ namespace Build
             flattened.Output = FileUtil.GetCanonicalizeUniversalPath(DoReplacement(targetName, desiredTarget.Output ?? flattened.Output));
             flattened.ProjectName = DoReplacement(targetName, desiredTarget.ProjectName ?? flattened.ProjectName);
             flattened.JsFilePrefix = DoReplacement(targetName, desiredTarget.JsFilePrefix ?? flattened.JsFilePrefix);
-            flattened.JsFullPage = desiredTarget.JsFullPage ?? flattened.JsFullPage;
+            flattened.JsFullPageRaw = desiredTarget.JsFullPageRaw ?? flattened.JsFullPageRaw;
             flattened.ImageSheets = MergeImageSheets(desiredTarget.ImageSheets, flattened.ImageSheets);
             flattened.MinifiedRaw = desiredTarget.MinifiedRaw ?? flattened.MinifiedRaw;
             flattened.ExportDebugByteCodeRaw = desiredTarget.ExportDebugByteCodeRaw ?? flattened.ExportDebugByteCodeRaw;
@@ -124,7 +124,7 @@ namespace Build
                 CrayonPath = string.Join(";", crayonPath),
                 IosBundlePrefix = flattened.IosBundlePrefix,
                 JavaPackage = flattened.JavaPackage,
-                JsFullPage = Util.StringToBool(flattened.JsFullPage),
+                JsFullPage = flattened.JsFullPage,
                 WindowWidth = Util.ParseIntWithErrorNullOkay((flattened.WindowSize ?? new Size()).Width, "Invalid window width in build file."),
                 WindowHeight = Util.ParseIntWithErrorNullOkay((flattened.WindowSize ?? new Size()).Height, "Invalid window height in build file."),
                 CompilerLocale = Locale.Get((flattened.CompilerLocale ?? "en").Trim()),

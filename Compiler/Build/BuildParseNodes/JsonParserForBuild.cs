@@ -41,11 +41,9 @@ namespace Build.BuildParseNodes
             item.IosBundlePrefix = json.GetAsString("ios-bundle-prefix");
             item.JavaPackage = json.GetAsString("java-package");
             item.JsFilePrefix = json.GetAsString("js-file-prefix");
-            // TODO(json-build): use bool directly when XML is removed
-            item.JsFullPage = "" + json.GetAsBoolean("js-full-page");
+            item.JsFullPageRaw = json.Get("js-full-page") == null ? (bool?)null : json.GetAsBoolean("js-full-page");
             item.LaunchScreen = json.GetAsString("launch-screen");
-            // TODO(json-build): make this mutable once XML is removed
-            item.MinifiedRaw = "" + json.GetAsBoolean("js-min");
+            item.MinifiedRaw = json.Get("js-min") == null ? (bool?)null : json.GetAsBoolean("js-min");
             item.Orientation = json.GetAsString("orientation");
             item.Output = json.GetAsString("output");
             item.Version = json.GetAsString("version");
