@@ -22,7 +22,7 @@ class OpsTest : Test {
 		assertThat(5 / 2 + '').isEqualTo('2');
 		assertThat(5 % 2 + '').isEqualTo('1');
 		assertThat(-5 % 2 + '').isEqualTo('1');
-		assertThat(2 ** 5 + '').isEqualTo('32');
+		assertThat(2 ** 5 + '').isEqualTo('32.0');
 		assertThat((2 & 5) + '').isEqualTo('0');
 		assertThat((2 | 5) + '').isEqualTo('7');
 		assertThat((2 ^ 7) + '').isEqualTo('5');
