@@ -155,6 +155,13 @@ namespace Exporter
             PastelContext sharedScope,
             Dictionary<string, object> constantFlags)
         {
+            string pastelProjPath = FileUtil.JoinPath(library.Metadata.Directory, library.Metadata.ID + ".pastelproj");
+            if (FileUtil.FileExists(pastelProjPath))
+            {
+                Pastel.Program.PseudoMain(new string[] { pastelProjPath });
+                return;
+            }
+
             LibraryPastelCodeLoader libCodeLoader = new LibraryPastelCodeLoader(library.Metadata);
             PastelContext context = new PastelContext(platform.Language, libCodeLoader);
             Dictionary<string, string> exFnTranslations = library.GetExtensibleFunctionTranslations(platform);
