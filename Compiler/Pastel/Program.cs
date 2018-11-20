@@ -50,7 +50,7 @@ namespace Pastel
 
             CodeLoader codeLoader = new CodeLoader(System.IO.Path.GetFileName(source));
             PastelContext pastelContext = new PastelContext(language, codeLoader);
-            
+
             // TODO(pastel-split): this
             Dictionary<string, string> extensibleFunctionTranslations = new Dictionary<string, string>();
             List<ExtensibleFunction> extensibleFunctions = new List<ExtensibleFunction>();

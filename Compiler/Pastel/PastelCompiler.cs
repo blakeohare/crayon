@@ -8,6 +8,7 @@ namespace Pastel
     internal class PastelCompiler
     {
         internal PastelCompiler[] IncludedScopes { get; private set; }
+        internal Dictionary<string, int> IncludedScopeNamespacesToIndex { get; private set; }
 
         internal IDictionary<string, ExtensibleFunction> ExtensibleFunctions { get; private set; }
 
@@ -21,6 +22,7 @@ namespace Pastel
             PastelContext context,
             Language language,
             IList<PastelCompiler> includedScopes,
+            Dictionary<string, int> namespaceToScopeIndex,
             IDictionary<string, object> constants,
             IInlineImportCodeLoader inlineImportCodeLoader,
             ICollection<ExtensibleFunction> extensibleFunctions)
@@ -36,6 +38,7 @@ namespace Pastel
             this.CodeLoader = inlineImportCodeLoader;
             this.Transpiler = LanguageUtil.GetTranspiler(language);
             this.IncludedScopes = includedScopes.ToArray();
+            this.IncludedScopeNamespacesToIndex = new Dictionary<string, int>(namespaceToScopeIndex);
             this.ExtensibleFunctions = extensibleFunctions == null
                 ? new Dictionary<string, ExtensibleFunction>()
                 : extensibleFunctions.ToDictionary(ef => ef.Name);
@@ -78,15 +81,6 @@ namespace Pastel
             {
                 return (InlineConstant)this.ConstantDefinitions[name].Value;
             }
-
-            foreach (PastelCompiler includedScope in this.IncludedScopes)
-            {
-                if (includedScope.ConstantDefinitions.ContainsKey(name))
-                {
-                    return (InlineConstant)includedScope.ConstantDefinitions[name].Value;
-                }
-            }
-
             return null;
         }
 
@@ -96,15 +90,6 @@ namespace Pastel
             {
                 return this.EnumDefinitions[name];
             }
-
-            foreach (PastelCompiler includedScope in this.IncludedScopes)
-            {
-                if (includedScope.EnumDefinitions.ContainsKey(name))
-                {
-                    return includedScope.EnumDefinitions[name];
-                }
-            }
-
             return null;
         }
 
@@ -114,33 +99,16 @@ namespace Pastel
             {
                 return this.StructDefinitions[name];
             }
-
-            foreach (PastelCompiler includedScope in this.IncludedScopes)
-            {
-                if (includedScope.StructDefinitions.ContainsKey(name))
-                {
-                    return includedScope.StructDefinitions[name];
-                }
-            }
-
             return null;
         }
 
-        internal FunctionDefinition GetFunctionDefinitionAndMaybeQueueForResolution(string name)
+
+        internal FunctionDefinition GetFunctionDefinition(string name)
         {
             if (this.FunctionDefinitions.ContainsKey(name))
             {
                 return this.FunctionDefinitions[name];
             }
-
-            foreach (PastelCompiler includedScope in this.IncludedScopes)
-            {
-                if (includedScope.FunctionDefinitions.ContainsKey(name))
-                {
-                    return includedScope.FunctionDefinitions[name];
-                }
-            }
-
             return null;
         }
 

@@ -217,7 +217,12 @@ namespace Exporter
 
                     if (libraryMetadata.IsMoreThanJustEmbedCode)
                     {
-                        PastelRunner.CompileLibraryFiles(library, platform, libraries, sharedScope, constantFlags);
+                        Dictionary<string, PastelContext> librarySharedContexts = new Dictionary<string, PastelContext>()
+                        {
+                            { "VM", sharedScope }
+                        };
+
+                        PastelRunner.CompileLibraryFiles(library, platform, libraries, librarySharedContexts, constantFlags);
                     }
                 }
 
