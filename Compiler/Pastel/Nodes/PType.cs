@@ -4,6 +4,22 @@ namespace Pastel.Nodes
 {
     public class PType
     {
+        private enum TypeCategory
+        {
+            PRIMITIVE,
+            STRUCT,
+            LIST,
+            ARRAY,
+            DICTIONARY,
+            NULL,
+            VOID,
+            OBJECT,
+            TEMPLATE,
+            FUNCTION,
+
+            UNKNOWN,
+        }
+
         // THIS MUST GO FIRST
         private static readonly PType[] EMPTY_GENERICS = new PType[0];
 
@@ -26,6 +42,8 @@ namespace Pastel.Nodes
 
         public bool IsNullable { get; set; }
 
+        private TypeCategory Category { get; set; }
+
         public PType(Token firstToken, string namespaceName, string typeName, params PType[] generics) : this(firstToken, namespaceName, typeName, new List<PType>(generics)) { }
         public PType(Token firstToken, string namespaceName, string typeName, List<PType> generics)
         {
@@ -35,17 +53,82 @@ namespace Pastel.Nodes
             this.TypeName = typeName;
             this.Generics = generics == null ? EMPTY_GENERICS : generics.ToArray();
 
-            this.IsNullable =
-                this.RootValue == "string" ||
-                this.RootValue == "object" ||
-                // TODO(pastel-split): this is a terrible terrible hack for struct detection
-                (this.RootValue[0] >= 'A' && this.RootValue[0] <= 'Z');
-
-            if (this.RootValue.Length == 1)
+            if (this.Generics.Length == 1)
             {
-                this.HasTemplates = true;
+                if (this.RootValue == "List") this.Category = TypeCategory.LIST;
+                else if (this.RootValue == "Array") this.Category = TypeCategory.ARRAY;
+                else throw new ParserException(firstToken, "A generic cannot be applied to this type.");
             }
-            else if (this.Generics.Length > 0)
+            else if (this.Generics.Length == 2)
+            {
+                if (this.RootValue == "Dictionary") this.Category = TypeCategory.DICTIONARY;
+                else if (this.RootValue == "Func") this.Category = TypeCategory.FUNCTION;
+                else throw new ParserException(firstToken, "Two generics cannot be applied to this type.");
+            }
+            else if (this.Generics.Length > 2)
+            {
+                if (this.RootValue == "Func") this.Category = TypeCategory.FUNCTION;
+                else throw new ParserException(firstToken, "Invalid number of generics.");
+            }
+            else
+            {
+                switch (this.RootValue)
+                {
+                    case "int":
+                    case "char":
+                    case "double":
+                    case "bool":
+                    case "string":
+                        this.Category = TypeCategory.PRIMITIVE;
+                        break;
+
+                    case "object":
+                        this.Category = TypeCategory.OBJECT;
+                        break;
+
+                    case "void":
+                        this.Category = TypeCategory.VOID;
+                        break;
+
+                    case "List":
+                    case "Array":
+                    case "Dictionary":
+                        throw new ParserException(this.FirstToken, "This type requires generics");
+
+                    default:
+                        if (this.RootValue.Length == 1)
+                        {
+                            this.Category = TypeCategory.TEMPLATE;
+                        }
+                        else
+                        {
+                            this.Category = TypeCategory.STRUCT;
+                        }
+                        break;
+                }
+            }
+
+            switch (this.Category)
+            {
+                case TypeCategory.STRUCT:
+                case TypeCategory.ARRAY:
+                case TypeCategory.LIST:
+                case TypeCategory.DICTIONARY:
+                case TypeCategory.FUNCTION:
+                case TypeCategory.OBJECT:
+                case TypeCategory.NULL:
+                    this.IsNullable = true;
+                    break;
+                case TypeCategory.PRIMITIVE:
+                    this.IsNullable = this.RootValue == "string";
+                    break;
+                default:
+                    this.IsNullable = false;
+                    break;
+            }
+
+            this.HasTemplates = this.Category == TypeCategory.TEMPLATE;
+            if (!this.HasTemplates && this.Generics.Length > 0)
             {
                 for (int i = 0; i < this.Generics.Length; ++i)
                 {
@@ -55,11 +138,6 @@ namespace Pastel.Nodes
                         break;
                     }
                 }
-            }
-
-            if (this.Generics.Length > 0 && this.RootValue.Length == 1)
-            {
-                throw new ParserException(this.FirstToken, "Cannot have a templated root type with generics.");
             }
         }
 
