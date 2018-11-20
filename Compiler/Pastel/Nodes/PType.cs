@@ -7,31 +7,41 @@ namespace Pastel.Nodes
         // THIS MUST GO FIRST
         private static readonly PType[] EMPTY_GENERICS = new PType[0];
 
-        public static readonly PType INT = new PType(null, "int");
-        public static readonly PType CHAR = new PType(null, "char");
-        public static readonly PType BOOL = new PType(null, "bool");
-        public static readonly PType STRING = new PType(null, "string");
-        public static readonly PType DOUBLE = new PType(null, "double");
-        public static readonly PType VOID = new PType(null, "void");
-        public static readonly PType NULL = new PType(null, "null");
+        public static readonly PType INT = new PType(null, null, "int");
+        public static readonly PType CHAR = new PType(null, null, "char");
+        public static readonly PType BOOL = new PType(null, null, "bool");
+        public static readonly PType STRING = new PType(null, null, "string");
+        public static readonly PType DOUBLE = new PType(null, null, "double");
+        public static readonly PType VOID = new PType(null, null, "void");
+        public static readonly PType NULL = new PType(null, null, "null");
 
         public Token FirstToken { get; set; }
         public string RootValue { get; set; }
+        public string Namespace { get; set; }
+        public string TypeName { get; set; }
+        public Token[] RootChain { get; set; }
         public PType[] Generics { get; set; }
 
         public bool HasTemplates { get; set; }
 
         public bool IsNullable { get; set; }
 
-        public PType(Token firstToken, string value, params PType[] generics) : this(firstToken, value, new List<PType>(generics)) { }
-        public PType(Token firstToken, string value, List<PType> generics)
+        public PType(Token firstToken, string namespaceName, string typeName, params PType[] generics) : this(firstToken, namespaceName, typeName, new List<PType>(generics)) { }
+        public PType(Token firstToken, string namespaceName, string typeName, List<PType> generics)
         {
             this.FirstToken = firstToken;
-            this.RootValue = value;
+            this.RootValue = (namespaceName == null) ? typeName : (namespaceName + "." + typeName);
+            this.Namespace = namespaceName;
+            this.TypeName = typeName;
             this.Generics = generics == null ? EMPTY_GENERICS : generics.ToArray();
-            this.IsNullable = value == "string" || value == "object" || (value[0] >= 'A' && value[0] <= 'Z');
 
-            if (value.Length == 1)
+            this.IsNullable =
+                this.RootValue == "string" ||
+                this.RootValue == "object" ||
+                // TODO(pastel-split): this is a terrible terrible hack for struct detection
+                (this.RootValue[0] >= 'A' && this.RootValue[0] <= 'Z');
+
+            if (this.RootValue.Length == 1)
             {
                 this.HasTemplates = true;
             }
@@ -75,7 +85,7 @@ namespace Pastel.Nodes
             {
                 generics.Add(this.Generics[i].ResolveTemplates(templateLookup));
             }
-            return new PType(this.FirstToken, this.RootValue, generics.ToArray());
+            return new PType(this.FirstToken, this.Namespace, this.TypeName, generics.ToArray());
         }
 
         // when a templated type coincides with an actual value, add that template key to the lookup output param.
@@ -239,28 +249,79 @@ namespace Pastel.Nodes
             return type;
         }
 
+        private static Token[] reusableRootNameParserOut = new Token[2];
+
+        // Attempts to pop a Namespaced.TypeName or a TypeName from the token stream.
+        // The values are applied to reusableRootNameParserOut and the number of values
+        // parsed are returned as an integer. Possible values are 0, 1, and 2.
+        // This method will update the token stream through the valid tokens.
+        private static int ParseRootNameImpl(TokenStream tokens)
+        {
+            if (!tokens.HasMore) return 0;
+            int zeroIndex = tokens.SnapshotState();
+            Token firstToken = tokens.Pop();
+            if (!PastelParser.IsValidName(firstToken.Value))
+            {
+                tokens.RevertState(zeroIndex);
+                return 0;
+            }
+            reusableRootNameParserOut[0] = firstToken;
+            int oneIndex = tokens.SnapshotState();
+            if (!tokens.PopIfPresent(".")) return 1;
+
+            if (!tokens.HasMore)
+            {
+                tokens.RevertState(oneIndex);
+                return 1;
+            }
+            Token secondToken = tokens.Pop();
+            if (!PastelParser.IsValidName(secondToken.Value))
+            {
+                tokens.RevertState(oneIndex);
+                return 1;
+            }
+
+            reusableRootNameParserOut[1] = secondToken;
+
+            return 2;
+        }
+
         private static PType ParseImpl(TokenStream tokens)
         {
-            Token token = tokens.Pop();
-            switch (token.Value)
+            int consecutiveTokenCount = ParseRootNameImpl(tokens);
+            if (consecutiveTokenCount == 0) return null;
+            Token namespaceToken = null;
+            string namespaceTokenValue = null;
+            Token typeToken = null;
+            Token firstToken = reusableRootNameParserOut[0];
+            if (consecutiveTokenCount == 1)
             {
-                case "int":
-                case "char":
-                case "double":
-                case "bool":
-                case "void":
-                case "string":
-                case "object":
-                    return new PType(token, token.Value);
-                default:
-                    if (!PastelParser.IsValidName(token.Value))
-                    {
-                        return null;
-                    }
-                    break;
+                typeToken = reusableRootNameParserOut[0];
+            }
+            else
+            {
+                namespaceToken = reusableRootNameParserOut[0];
+                namespaceTokenValue = namespaceToken.Value;
+                typeToken = reusableRootNameParserOut[1];
+            }
+
+            if (namespaceToken == null)
+            {
+                switch (typeToken.Value)
+                {
+                    case "int":
+                    case "char":
+                    case "double":
+                    case "bool":
+                    case "void":
+                    case "string":
+                    case "object":
+                        return new PType(firstToken, null, typeToken.Value);
+                }
             }
 
             int tokenIndex = tokens.SnapshotState();
+
             bool isError = false;
             if (tokens.PopIfPresent("<"))
             {
@@ -283,16 +344,16 @@ namespace Pastel.Nodes
                 }
                 if (!isError)
                 {
-                    return new PType(token, token.Value, generics);
+                    return new PType(firstToken, namespaceTokenValue, typeToken.Value, generics);
                 }
 
                 // If there was an error while parsing generics, then this may still be a valid type.
                 tokens.RevertState(tokenIndex);
-                return new PType(token, token.Value);
+                return new PType(firstToken, namespaceTokenValue, typeToken.Value);
             }
             else
             {
-                return new PType(token, token.Value);
+                return new PType(firstToken, namespaceTokenValue, typeToken.Value);
             }
         }
 
