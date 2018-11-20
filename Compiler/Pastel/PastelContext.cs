@@ -10,7 +10,8 @@ namespace Pastel
         private PastelCompiler compiler = null;
         public Language Language { get; private set; }
         private List<PastelCompiler> dependencies = new List<PastelCompiler>();
-        private List<string> dependencyReferencePrefixes = new List<string>();
+        private List<string> dependencyReferenceExportPrefixes = new List<string>();
+        private Dictionary<string, int> dependencyReferenceNamespacesToDependencyIndex = new Dictionary<string, int>();
         private Dictionary<string, object> constants = new Dictionary<string, object>();
         private List<ExtensibleFunction> extensibleFunctions = new List<ExtensibleFunction>();
         private Dictionary<string, string> extensibleFunctionTranslations = new Dictionary<string, string>();
@@ -51,21 +52,22 @@ namespace Pastel
             return this.tc;
         }
 
-        public PastelContext AddDependency(PastelContext context, string referencePrefix)
+        public PastelContext AddDependency(PastelContext context, string pastelNamespace, string referencePrefix)
         {
+            this.dependencyReferenceNamespacesToDependencyIndex[pastelNamespace] = this.dependencies.Count;
             this.dependencies.Add(context.compiler);
-            this.dependencyReferencePrefixes.Add(referencePrefix);
+            this.dependencyReferenceExportPrefixes.Add(referencePrefix);
             return this;
         }
 
-        public string GetDependencyPrefix(PastelContext context)
+        public string GetDependencyExportPrefix(PastelContext context)
         {
             if (context == this) return null;
             for (int i = 0; i < this.dependencies.Count; ++i)
             {
                 if (this.dependencies[i].Context == context)
                 {
-                    return this.dependencyReferencePrefixes[i];
+                    return this.dependencyReferenceExportPrefixes[i];
                 }
             }
             // This is a hard crash, not a ParserException, as this is currently only accessible when
@@ -95,6 +97,7 @@ namespace Pastel
                     this,
                     this.Language,
                     this.dependencies,
+                    this.dependencyReferenceNamespacesToDependencyIndex,
                     this.constants,
                     this.CodeLoader,
                     this.extensibleFunctions);

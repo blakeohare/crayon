@@ -36,6 +36,11 @@ namespace Pastel.Nodes
             return new InlineConstant(this.Type, token, this.Value, this.Owner);
         }
 
+        public InlineConstant CloneWithNewTokenAndOwner(Token token, ICompilationEntity owner)
+        {
+            return new InlineConstant(this.Type, token, this.Value, owner);
+        }
+
         internal override InlineConstant DoConstantResolution(HashSet<string> cycleDetection, PastelCompiler compiler)
         {
             return this;

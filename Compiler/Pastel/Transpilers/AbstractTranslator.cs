@@ -119,7 +119,7 @@ namespace Pastel.Transpilers
                     PastelContext callerContext = funcInvocation.Owner.Context;
                     if (targetContext != callerContext)
                     {
-                        prefix = callerContext.GetDependencyPrefix(targetContext);
+                        prefix = callerContext.GetDependencyExportPrefix(targetContext);
                     }
 
                     if (prefix != null)

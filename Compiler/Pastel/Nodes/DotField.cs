@@ -24,32 +24,59 @@ namespace Pastel.Nodes
         {
             this.Root = this.Root.ResolveNamesAndCullUnusedCode(compiler);
 
-            Variable varRoot = this.Root as Variable;
-            if (varRoot != null)
+            if (this.Root is EnumReference)
             {
-                string rootName = varRoot.Name;
-                if (rootName == "Core")
-                {
-                    NativeFunction nativeFunction = this.GetNativeCoreFunction(this.FieldName.Value);
-                    switch (nativeFunction)
-                    {
-                        case NativeFunction.FLOAT_BUFFER_16:
-                        case NativeFunction.INT_BUFFER_16:
-                        case NativeFunction.STRING_BUFFER_16:
-                            return new NativeFunctionInvocation(this.FirstToken, nativeFunction, new Expression[0], this.Owner);
+                InlineConstant enumValue = ((EnumReference)this.Root).EnumDef.GetValue(this.FieldName);
+                return enumValue.CloneWithNewToken(this.FirstToken);
+            }
 
-                        default:
-                            return new NativeFunctionReference(this.FirstToken, nativeFunction, this.Owner);
-                    }
+            if (this.Root is DependencyNamespaceReference)
+            {
+                PastelCompiler dependencyScope = ((DependencyNamespaceReference)this.Root).Scope;
+                string field = this.FieldName.Value;
+                FunctionDefinition funcDef = dependencyScope.GetFunctionDefinition(field);
+                if (funcDef != null)
+                {
+                    return new FunctionReference(this.FirstToken, funcDef, this.Owner);
                 }
-                EnumDefinition enumDef = compiler.GetEnumDefinition(rootName);
+
+                EnumDefinition enumDef = dependencyScope.GetEnumDefinition(field);
                 if (enumDef != null)
                 {
-                    InlineConstant enumValue = enumDef.GetValue(this.FieldName);
-                    return enumValue.CloneWithNewToken(this.FirstToken);
+                    return new EnumReference(this.FirstToken, enumDef, this.Owner);
+                }
+
+                InlineConstant constValue = dependencyScope.GetConstantDefinition(field);
+                if (constValue != null)
+                {
+                    return constValue.CloneWithNewTokenAndOwner(this.FirstToken, this.Owner);
+                }
+
+                throw new ParserException(this.FieldName, "The namespace '" + ((DependencyNamespaceReference)this.Root).FirstToken.Value + "' does not have a member called '" + field + "'");
+            }
+
+            if (this.Root is CoreNamespaceReference)
+            {
+                NativeFunction nativeFunction = this.GetNativeCoreFunction(this.FieldName.Value);
+                switch (nativeFunction)
+                {
+                    case NativeFunction.FLOAT_BUFFER_16:
+                    case NativeFunction.INT_BUFFER_16:
+                    case NativeFunction.STRING_BUFFER_16:
+                        return new NativeFunctionInvocation(this.FirstToken, nativeFunction, new Expression[0], this.Owner);
+
+                    default:
+                        return new NativeFunctionReference(this.FirstToken, nativeFunction, this.Owner);
                 }
             }
-            else if (this.Root is EnumReference)
+
+            if (this.Root is NativeNamespaceReference)
+            {
+                string name = this.FieldName.Value;
+                return new ExtensibleFunctionReference(this.FirstToken, name, this.Owner);
+            }
+
+            if (this.Root is EnumReference)
             {
                 EnumDefinition enumDef = ((EnumReference)this.Root).EnumDef;
                 InlineConstant enumValue = enumDef.GetValue(this.FieldName);
@@ -75,12 +102,6 @@ namespace Pastel.Nodes
 
         internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
-            if (this.Root is Variable && ((Variable)this.Root).Name == "Native")
-            {
-                string name = this.FieldName.Value;
-                return new ExtensibleFunctionReference(this.FirstToken, name, this.Owner);
-            }
-
             this.Root = this.Root.ResolveType(varScope, compiler);
 
             string possibleStructName = this.Root.ResolvedType.RootValue;

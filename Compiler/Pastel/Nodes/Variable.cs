@@ -24,10 +24,33 @@
                 return constantValue.CloneWithNewToken(this.FirstToken);
             }
 
-            FunctionDefinition functionDefinition = compiler.GetFunctionDefinitionAndMaybeQueueForResolution(name);
+            if (name == "Core")
+            {
+                return new CoreNamespaceReference(this.FirstToken, this.Owner);
+            }
+
+            if (name == "Native")
+            {
+                return new NativeNamespaceReference(this.FirstToken, this.Owner);
+            }
+
+            FunctionDefinition functionDefinition = compiler.GetFunctionDefinition(name);
             if (functionDefinition != null)
             {
                 return new FunctionReference(this.FirstToken, functionDefinition, this.Owner);
+            }
+
+            EnumDefinition enumDefinition = compiler.GetEnumDefinition(name);
+            if (enumDefinition != null)
+            {
+                return new EnumReference(this.FirstToken, enumDefinition, this.Owner);
+            }
+
+            if (compiler.IncludedScopeNamespacesToIndex.ContainsKey(name))
+            {
+                int index = compiler.IncludedScopeNamespacesToIndex[name];
+                PastelCompiler referencedScope = compiler.IncludedScopes[index];
+                return new DependencyNamespaceReference(this.FirstToken, referencedScope, this.Owner);
             }
 
             return this;

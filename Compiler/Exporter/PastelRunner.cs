@@ -53,6 +53,11 @@ namespace Exporter
                 vmContext.CompileFile("main.pst");
                 vmContext.FinalizeCompilation();
 
+                Dictionary<string, PastelContext> sharedContextsForLibraries = new Dictionary<string, PastelContext>()
+                {
+                    { "VM", vmContext }
+                };
+
                 Dictionary<string, string> vmGeneratedFiles = GetGeneratedFiles(vmContext);
 
                 SaveTemplateFiles(vmGeneratedFiles, platform.Language, vmSourceOutput);
@@ -64,7 +69,7 @@ namespace Exporter
                         Dictionary<string, PastelContext> compilation = new Dictionary<string, PastelContext>();
 
                         LibraryExporter libExporter = LibraryExporter.Get(metadata, platform);
-                        CompileLibraryFiles(libExporter, platform, compilation, vmContext, constants);
+                        CompileLibraryFiles(libExporter, platform, compilation, sharedContextsForLibraries, constants);
                         PastelContext pastelContext = compilation.Values.FirstOrDefault();
 
                         Dictionary<string, string> templatesForLibrary = GetGeneratedFiles(pastelContext);
@@ -152,7 +157,7 @@ namespace Exporter
             LibraryExporter library,
             Platform.AbstractPlatform platform,
             Dictionary<string, PastelContext> libraries,
-            PastelContext sharedScope,
+            Dictionary<string, PastelContext> sharedScopesByNamespace,
             Dictionary<string, object> constantFlags)
         {
             string pastelProjPath = FileUtil.JoinPath(library.Metadata.Directory, library.Metadata.ID + ".pastelproj");
@@ -168,8 +173,6 @@ namespace Exporter
             List<ExtensibleFunction> libraryFunctions = library.GetPastelExtensibleFunctions();
             Dictionary<string, object> constantsLookup = Util.MergeDictionaries(constantFlags, library.CompileTimeConstants);
 
-            string functionPrefixOfSharedScope = platform.GetInterpreterFunctionInvocationPrefix();
-
             foreach (ExtensibleFunction exFn in libraryFunctions)
             {
                 string exFnTranslation = null;
@@ -184,7 +187,14 @@ namespace Exporter
 
                 context.AddExtensibleFunction(exFn, exFnTranslation);
             }
-            context.AddDependency(sharedScope, functionPrefixOfSharedScope);
+            foreach (string sharedScopeNamespace in sharedScopesByNamespace.Keys)
+            {
+                // TODO(pastel-scoping): This is wrong since each scope should be separate in the final output,
+                // but since there's only one scope, this is okay for now.
+                string functionPrefixOfSharedScope = platform.GetInterpreterFunctionInvocationPrefix();
+                PastelContext sharedScope = sharedScopesByNamespace[sharedScopeNamespace];
+                context.AddDependency(sharedScope, sharedScopeNamespace, functionPrefixOfSharedScope);
+            }
             foreach (string constKey in constantsLookup.Keys)
             {
                 context.SetConstant(constKey, constantsLookup[constKey]);

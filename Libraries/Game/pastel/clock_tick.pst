@@ -2,7 +2,7 @@
     Native._lib_game_clockTick();
 
     // TODO: replace this 1 with an enum.
-    vm_suspend(vm, 1);
+    VM.vm_suspend(vm, 1);
 
     return vm.globalNull;
 }
