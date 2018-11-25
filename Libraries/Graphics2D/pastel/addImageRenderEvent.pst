@@ -52,11 +52,11 @@
         data[4] -> pixel width
         data[5] -> pixel height
 */
-Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
+VM.Value lib_graphics2d_addImageRenderEvent(VM.VmContext vm, Array<VM.Value> args) {
     int i = 0;
 
     Core.EmitComment("get the drawing queue data");
-    Array<object> drawQueueData = Core.ForceParens((ObjectInstance) args[0].internalValue).nativeData;
+    Array<object> drawQueueData = Core.ForceParens((VM.ObjectInstance) args[0].internalValue).nativeData;
 
     Core.EmitComment("expand the draw event queue");
     Array<int> eventQueue = (Array<int>) drawQueueData[0];
@@ -86,7 +86,7 @@ Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
     drawQueueData[3] = imageNativeDataQueueSize + 1;
 
     Core.EmitComment("Add the image to the image native data queue");
-    Array<object> imageNativeData = Core.ForceParens((ObjectInstance) args[1].internalValue).nativeData;
+    Array<object> imageNativeData = Core.ForceParens((VM.ObjectInstance) args[1].internalValue).nativeData;
     imageNativeDataQueue[imageNativeDataQueueSize] = imageNativeData;
 
     bool isValid = true;
@@ -101,21 +101,21 @@ Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
 
     Core.EmitComment("rotation");
     if ((flag & 4) != 0) {
-        Value rotationValue = args[11];
+        VM.Value rotationValue = args[11];
         double theta = 0.0;
-        if (rotationValue.type == Types.FLOAT) theta = (double) rotationValue.internalValue;
-        else if (rotationValue.type == Types.INTEGER) theta += (int) rotationValue.internalValue;
+        if (rotationValue.type == VM.Types.FLOAT) theta = (double) rotationValue.internalValue;
+        else if (rotationValue.type == VM.Types.INTEGER) theta += (int) rotationValue.internalValue;
         else isValid = false;
 
-        eventQueue[queueLength | 10] = Core.Int(canonicalizeAngle(theta) * 1048576);
+        eventQueue[queueLength | 10] = Core.Int(VM.canonicalizeAngle(theta) * 1048576);
     }
 
     Core.EmitComment("alpha");
     if ((flag & 8) != 0) {
-        Value alphaValue = args[12];
+        VM.Value alphaValue = args[12];
         int alpha = 0;
-        if (alphaValue.type == Types.INTEGER) alpha = (int) alphaValue.internalValue;
-        else if (alphaValue.type == Types.FLOAT) alpha = Core.Int(0.5 + (double) alphaValue.internalValue);
+        if (alphaValue.type == VM.Types.INTEGER) alpha = (int) alphaValue.internalValue;
+        else if (alphaValue.type == VM.Types.FLOAT) alpha = Core.Int(0.5 + (double) alphaValue.internalValue);
         else isValid = false;
 
         if (i > 254) eventQueue[queueLength | 1] = flag - 8; // unset the alpha flag if alpha is 255+
@@ -124,12 +124,12 @@ Value lib_graphics2d_addImageRenderEvent(VmContext vm, Array<Value> args) {
     }
 
     Core.EmitComment("Copy values to event queue");
-    Value value = null;
+    VM.Value value = null;
     for (i = 3; i < 11; i += 1) {
         // just blindly copy the rest of the numbers rounding floats to ints
         value = args[i];
-        if (value.type == Types.INTEGER) eventQueue[queueLength + i - 1] = (int) value.internalValue;
-        else if (value.type == Types.FLOAT) eventQueue[queueLength + i - 1] = Core.Int(0.5 + (double) value.internalValue);
+        if (value.type == VM.Types.INTEGER) eventQueue[queueLength + i - 1] = (int) value.internalValue;
+        else if (value.type == VM.Types.FLOAT) eventQueue[queueLength + i - 1] = Core.Int(0.5 + (double) value.internalValue);
         else isValid = false;
     }
 

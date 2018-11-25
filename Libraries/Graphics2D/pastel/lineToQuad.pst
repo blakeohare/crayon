@@ -30,7 +30,8 @@
         queue[n + 8] -> DY
 
 */
-Value lib_graphics2d_lineToQuad(VmContext vm, Array<Value> args) {
+VM.Value lib_graphics2d_lineToQuad(VM.VmContext vm, Array<VM.Value> args) {
+    // TODO: fix readability
     double float1 = 0.0;
     double float2 = 0.0;
     double float3 = 0.0;
@@ -41,16 +42,16 @@ Value lib_graphics2d_lineToQuad(VmContext vm, Array<Value> args) {
     int int3 = 0;
     int int4 = 0;
     int int5 = 0;
-    ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+    VM.ObjectInstance objInstance1 = (VM.ObjectInstance) args[0].internalValue;
     Array<object> objArray1 = objInstance1.nativeData;
-    Array<int> intArray1 = ((Array<int>) objArray1[0]); // event queue
+    Array<int> intArray1 = (Array<int>) objArray1[0]; // event queue
     int len = ((int) objArray1[1]) - 16;
 
-    int1 = intArray1[(len + 1)]; // start X
-    int2 = intArray1[(len + 2)]; // start Y
-    int3 = intArray1[(len + 3)]; // end X
-    int4 = intArray1[(len + 4)]; // end Y
-    int5 = intArray1[(len + 5)]; // stroke width
+    int1 = intArray1[len + 1]; // start X
+    int2 = intArray1[len + 2]; // start Y
+    int3 = intArray1[len + 3]; // end X
+    int4 = intArray1[len + 4]; // end Y
+    int5 = intArray1[len + 5]; // stroke width
     float1 = (0.0 + int4) - int2; // rise
     float2 = (0.0 + int3) - int1; // run
     float3 = Core.FloatDivision(float1, float2); // slope

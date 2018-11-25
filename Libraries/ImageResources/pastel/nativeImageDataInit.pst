@@ -11,8 +11,8 @@
     nativeData[2] -> height
     nativeData[3] -> null (pixel editing session, but only when active)
 */
-Value lib_imageresources_nativeImageDataInit(VmContext vm, Array<Value> args) {
-    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
+VM.Value lib_imageresources_nativeImageDataInit(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance objInstance1 = (VM.ObjectInstance) args[0].internalValue;
     Array<object> nd = new Array<object>(4);
     int width = (int) args[1].internalValue;
     int height = (int) args[2].internalValue;

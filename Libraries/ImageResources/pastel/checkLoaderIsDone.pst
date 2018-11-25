@@ -11,9 +11,9 @@
         1 -> done (successful)
         2+ -> an error
 */
-Value lib_imageresources_checkLoaderIsDone(VmContext vm, Array<Value> args) {
-    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
-    ObjectInstance objInstance2 = (ObjectInstance) args[1].internalValue;
+VM.Value lib_imageresources_checkLoaderIsDone(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance objInstance1 = (VM.ObjectInstance) args[0].internalValue;
+    VM.ObjectInstance objInstance2 = (VM.ObjectInstance) args[1].internalValue;
     int status = Native._lib_imageresources_checkLoaderIsDone(objInstance1.nativeData, objInstance2.nativeData);
-    return buildInteger(vm.globals, status);
+    return VM.buildInteger(vm.globals, status);
 }

@@ -6,24 +6,24 @@
 
     All arguments are verified to be positive integers.
 */
-Value lib_game_initialize_screen(VmContext vm, Array<Value> args) {
+VM.Value lib_game_initialize_screen(VM.VmContext vm, Array<VM.Value> args) {
 
     // Get a reference to the ExecutionContext that the calling code thinks is currently active.
     // It's possible that the screen will block and re-invoke the VM and destroy the active
     // execution context, in which case, vm_suspend() will not work and fail when trying to find the
     // instance.
-    ExecutionContext ec = getExecutionContext(vm, vm_getCurrentExecutionContextId(vm));
+    VM.ExecutionContext ec = VM.getExecutionContext(vm, VM.vm_getCurrentExecutionContextId(vm));
 
     Native._lib_game_initialize_screen(
         (int) args[0].internalValue, // game width
         (int) args[1].internalValue, // game height
         (int) args[2].internalValue, // screen width
         (int) args[3].internalValue, // screen height
-        vm_getCurrentExecutionContextId(vm));
+        VM.vm_getCurrentExecutionContextId(vm));
 
     // Suspend the ExecutionContext that is active when this was called (as that will be the one
     // that will be checked for state changes).
-    vm_suspend_for_context(ec, 1);
+    VM.vm_suspend_for_context(ec, 1);
 
     return vm.globalNull;
 }

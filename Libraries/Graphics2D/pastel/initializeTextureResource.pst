@@ -16,13 +16,13 @@
         nativeData[1] -> width
         nativeData[2] -> height
 */
-Value lib_graphics2d_initializeTextureResource(VmContext vm, Array<Value> args) {
-    ObjectInstance textureResourceInstance = (ObjectInstance) args[0].internalValue;
+VM.Value lib_graphics2d_initializeTextureResource(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance textureResourceInstance = (VM.ObjectInstance) args[0].internalValue;
     Array<object> textureResourceNativeData = new Array<object>(6);
     textureResourceInstance.nativeData = textureResourceNativeData;
-    ObjectInstance nativeImageDataInstance = (ObjectInstance) args[2].internalValue;
+    VM.ObjectInstance nativeImageDataInstance = (VM.ObjectInstance) args[2].internalValue;
     Array<object> nativeImageDataNativeData = nativeImageDataInstance.nativeData;
-    if (((bool) args[1].internalValue)) {
+    if ((bool) args[1].internalValue) {
         textureResourceNativeData[0] = @ext_boolean("IS_OPEN_GL_BASED");
         textureResourceNativeData[1] = false;
         textureResourceNativeData[2] = -1;

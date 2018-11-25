@@ -22,4 +22,4 @@ void _lib_game_set_title(string windowTitle);
 
 void _lib_game_set_window_mode(int mode, int width, int height);
 
-List<PlatformRelayObject> _lib_game_get_events_raw_list();
+List<VM.PlatformRelayObject> _lib_game_get_events_raw_list();

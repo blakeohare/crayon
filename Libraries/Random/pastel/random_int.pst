@@ -2,9 +2,9 @@
     arg1: inclusive lower bound
     arg2: exclusive upper bound
 */
-Value lib_random_random_int(VmContext vm, Array<Value> args) {
+VM.Value lib_random_random_int(VM.VmContext vm, Array<VM.Value> args) {
 
-    if (args[0].type != Types.INTEGER || args[1].type != Types.INTEGER) {
+    if (args[0].type != VM.Types.INTEGER || args[1].type != VM.Types.INTEGER) {
         return vm.globalNull;
     }
 
@@ -15,5 +15,5 @@ Value lib_random_random_int(VmContext vm, Array<Value> args) {
 
     int value = Core.Int(Core.ForceParens((Core.RandomFloat() * (upper - lower))));
 
-    return buildInteger(vm.globals, lower + value);
+    return VM.buildInteger(vm.globals, lower + value);
 }
