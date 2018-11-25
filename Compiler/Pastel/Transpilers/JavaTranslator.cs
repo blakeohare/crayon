@@ -67,10 +67,9 @@ namespace Pastel.Transpilers
                     return "org.crayonlang.interpreter.structs.ClassValue";
 
                 default:
-                    char firstChar = type.RootValue[0];
-                    if (firstChar >= 'A' && firstChar <= 'Z')
+                    if (type.IsStruct)
                     {
-                        return type.RootValue;
+                        return type.TypeName;
                     }
                     throw new NotImplementedException();
             }
@@ -213,12 +212,12 @@ namespace Pastel.Transpilers
             sb.Append('(');
             if (this.isJava6) // "(int) object" vs "(Integer) object"
             {
-                string castRootType = type.RootValue;
+                string castRootType = this.TranslateType(type);
                 if (expression is CastExpression)
                 {
                     CastExpression ce = (CastExpression)expression;
                     string outerType = castRootType;
-                    string innerType = expression.ResolvedType.RootValue;
+                    string innerType = this.TranslateType(expression.ResolvedType);
 
                     if ((outerType == "int" || outerType == "double") &&
                         (innerType == "int" || innerType == "double"))
@@ -656,24 +655,17 @@ namespace Pastel.Transpilers
         public override void TranslateListToArray(TranspilerContext sb, Expression list)
         {
             PType itemType = list.ResolvedType.Generics[0];
-            if (itemType.RootValue == "object")
-            {
-                this.TranslateExpression(sb, list);
-                sb.Append(".toArray()");
-                return;
-            }
-
-            string rootType = itemType.RootValue;
-            switch (itemType.RootValue)
+            switch (itemType.TypeName)
             {
                 case "bool":
                 case "byte":
                 case "int":
                 case "double":
                 case "char":
+                    string primitiveName = itemType.TypeName;
                     sb.Append("PST_listToArray");
-                    sb.Append((char)(rootType[0] + 'A' - 'a'));
-                    sb.Append(rootType.Substring(1));
+                    sb.Append((char)(primitiveName[0] + 'A' - 'a'));
+                    sb.Append(primitiveName.Substring(1));
                     sb.Append('(');
                     this.TranslateExpression(sb, list);
                     sb.Append(')');
@@ -683,6 +675,12 @@ namespace Pastel.Transpilers
                     this.TranslateExpression(sb, list);
                     sb.Append(".toArray(PST_emptyArrayString)");
                     break;
+
+                case "object":
+                    this.TranslateExpression(sb, list);
+                    sb.Append(".toArray()");
+                    break;
+
                 case "List":
                     this.TranslateExpression(sb, list);
                     sb.Append(".toArray(PST_emptyArrayList)");
@@ -693,20 +691,12 @@ namespace Pastel.Transpilers
                     break;
                 case "Array":
                     throw new NotImplementedException("not implemented: java list of arrays to array");
-                case "Object":
-                    this.TranslateExpression(sb, list);
-                    sb.Append(".toArray(PST_emptyArrayObject)");
-                    break;
                 default:
-                    string javaType = this.TranslateType(itemType);
-                    char firstChar = javaType[0];
-                    if (firstChar >= 'A' && firstChar <= 'Z')
+                    if (itemType.IsStruct)
                     {
                         this.TranslateExpression(sb, list);
                         sb.Append(".toArray(");
-                        // TODO: if it's a struct, then perhaps have single empty array instances as a static field on
-                        // each struct type?
-                        sb.Append(javaType);
+                        sb.Append(this.TranslateType(itemType));
                         sb.Append(".EMPTY_ARRAY)");
                     }
                     else
