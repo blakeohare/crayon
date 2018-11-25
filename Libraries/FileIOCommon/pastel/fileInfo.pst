@@ -20,7 +20,7 @@
 
     directory and existence status are always fetched.
 */
-Value lib_fileiocommon_fileInfo(VmContext vm, Array<Value> args) {
+VM.Value lib_fileiocommon_fileInfo(VM.VmContext vm, Array<VM.Value> args) {
     int mask = (int) args[2].internalValue;
     Native._lib_fileiocommon_getFileInfo(
         lib_fileiocommon_getDiskObject(args[0]),
@@ -29,42 +29,42 @@ Value lib_fileiocommon_fileInfo(VmContext vm, Array<Value> args) {
         Core.IntBuffer16,
         Core.FloatBuffer16);
 
-    ListImpl outputList = (ListImpl) args[3].internalValue;
-    clearList(outputList);
-    VmGlobals globals = vm.globals;
+    VM.ListImpl outputList = (VM.ListImpl) args[3].internalValue;
+    VM.clearList(outputList);
+    VM.VmGlobals globals = vm.globals;
 
     // exists
-    addToList(outputList, buildBoolean(globals, Core.IntBuffer16[0] > 0));
+    VM.addToList(outputList, VM.buildBoolean(globals, Core.IntBuffer16[0] > 0));
 
     // is directory?
-    addToList(outputList, buildBoolean(globals, Core.IntBuffer16[1] > 0));
+    VM.addToList(outputList, VM.buildBoolean(globals, Core.IntBuffer16[1] > 0));
 
     // size
     if ((mask & 1) != 0) {
-        addToList(outputList, buildInteger(globals, Core.IntBuffer16[2]));
+        VM.addToList(outputList, VM.buildInteger(globals, Core.IntBuffer16[2]));
     } else {
-        addToList(outputList, globals.valueNull);
+        VM.addToList(outputList, globals.valueNull);
     }
 
     // readonly?
     if ((mask & 2) != 0) {
-        addToList(outputList, buildBoolean(globals, Core.IntBuffer16[3] > 0));
+        VM.addToList(outputList, VM.buildBoolean(globals, Core.IntBuffer16[3] > 0));
     } else {
-        addToList(outputList, globals.valueNull);
+        VM.addToList(outputList, globals.valueNull);
     }
 
     // created timestamp
     if ((mask & 4) != 0) {
-        addToList(outputList, buildFloat(globals, Core.FloatBuffer16[0]));
+        VM.addToList(outputList, VM.buildFloat(globals, Core.FloatBuffer16[0]));
     } else {
-        addToList(outputList, globals.valueNull);
+        VM.addToList(outputList, globals.valueNull);
     }
 
     // modified timestamp
     if ((mask & 8) != 0) {
-        addToList(outputList, buildFloat(globals, Core.FloatBuffer16[1]));
+        VM.addToList(outputList, VM.buildFloat(globals, Core.FloatBuffer16[1]));
     } else {
-        addToList(outputList, globals.valueNull);
+        VM.addToList(outputList, globals.valueNull);
     }
 
     return args[3];

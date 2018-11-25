@@ -3,10 +3,10 @@
     args[1] -> SoundResource instance
     args[2] -> volume ratio (0.0 to 1.0)
 */
-Value lib_audio_sfx_set_volume(VmContext vm, Array<Value> args) {
-    ObjectInstance channel = (ObjectInstance) args[0].internalValue;
+VM.Value lib_audio_sfx_set_volume(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance channel = (VM.ObjectInstance) args[0].internalValue;
     object nativeChannel = channel.nativeData[0];
-    ObjectInstance resource = (ObjectInstance) args[1].internalValue;
+    VM.ObjectInstance resource = (VM.ObjectInstance) args[1].internalValue;
     object nativeResource = resource.nativeData[0];
     lib_audio_sfx_set_volumeImpl(
         nativeChannel,

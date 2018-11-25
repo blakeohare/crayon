@@ -1,1 +1,1 @@
-Value _lib_json_parse(VmGlobals globals, string jsonValue);
+VM.Value _lib_json_parse(VM.VmGlobals globals, string jsonValue);

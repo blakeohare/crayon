@@ -1,8 +1,8 @@
 ﻿string lib_xml_parseImpl(
-    VmContext vm,
+    VM.VmContext vm,
     string input,
     Array<int> indexPtr,
-    List<Value> output,
+    List<VM.Value> output,
     Dictionary<string, string> entityLookup,
     Dictionary<int, int> stringEnders) {
 
@@ -127,18 +127,18 @@ bool lib_xml_popIfPresent(string xml, Array<int> indexPtr, string s) {
 }
 
 string lib_xml_parseElement(
-    VmContext vm,
+    VM.VmContext vm,
     string xml,
     Array<int> indexPtr,
-    List<Value> output,
+    List<VM.Value> output,
     Dictionary<string, string> entityLookup,
     Dictionary<int, int> stringEnders) {
 
     int length = xml.Size();
-    List<Value> attributeKeys = new List<Value>();
-    List<Value> attributeValues = new List<Value>();
-    List<Value> children = new List<Value>();
-    List<Value> element = new List<Value>();
+    List<VM.Value> attributeKeys = new List<VM.Value>();
+    List<VM.Value> attributeValues = new List<VM.Value>();
+    List<VM.Value> children = new List<VM.Value>();
+    List<VM.Value> element = new List<VM.Value>();
     string error = null;
     if (!lib_xml_popIfPresent(xml, indexPtr, "<")) {
         return lib_xml_error(xml, indexPtr[0], "Expected: '<'");
@@ -161,7 +161,7 @@ string lib_xml_parseElement(
         if (key.Size() == 0) {
             return lib_xml_error(xml, indexPtr[0], "Expected attribute name.");
         }
-        attributeKeys.Add(buildString(vm.globals, key));
+        attributeKeys.Add(VM.buildString(vm.globals, key));
         lib_xml_skipWhitespace(xml, indexPtr);
         if (!lib_xml_popIfPresent(xml, indexPtr, "=")) {
             return lib_xml_error(xml, indexPtr[0], "Expected: '='");
@@ -198,15 +198,15 @@ string lib_xml_parseElement(
         }
     }
     element.Add(vm.globalTrue);
-    element.Add(buildString(vm.globals, name));
-    element.Add(buildList(attributeKeys));
-    element.Add(buildList(attributeValues));
-    element.Add(buildList(children));
-    output.Add(buildList(element));
+    element.Add(VM.buildString(vm.globals, name));
+    element.Add(VM.buildList(attributeKeys));
+    element.Add(VM.buildList(attributeValues));
+    element.Add(VM.buildList(children));
+    output.Add(VM.buildList(element));
     return null;
 }
 
-string lib_xml_parseText(VmContext vm, string xml, Array<int> indexPtr, List<Value> output, Dictionary<string, string> entityLookup) {
+string lib_xml_parseText(VM.VmContext vm, string xml, Array<int> indexPtr, List<VM.Value> output, Dictionary<string, string> entityLookup) {
     int length = xml.Size();
     int start = indexPtr[0];
     int i = start;
@@ -227,10 +227,10 @@ string lib_xml_parseText(VmContext vm, string xml, Array<int> indexPtr, List<Val
         if (ampFound) {
             textValue = lib_xml_ampUnescape(textValue, entityLookup);
         }
-        List<Value> textElement = new List<Value>();
+        List<VM.Value> textElement = new List<VM.Value>();
         textElement.Add(vm.globalFalse);
-        textElement.Add(buildString(vm.globals, textValue));
-        output.Add(buildList(textElement));
+        textElement.Add(VM.buildString(vm.globals, textValue));
+        output.Add(VM.buildList(textElement));
     }
     return null;
 }
@@ -262,10 +262,10 @@ string lib_xml_popName(string xml, Array<int> indexPtr) {
 }
 
 string lib_xml_popString(
-    VmContext vm,
+    VM.VmContext vm,
     string xml,
     Array<int> indexPtr,
-    List<Value> attributeValueOut,
+    List<VM.Value> attributeValueOut,
     Dictionary<string, string> entityLookup,
     Dictionary<int, int> stringEnders) {
 
@@ -311,7 +311,7 @@ string lib_xml_popString(
     if (ampFound) {
         output = lib_xml_ampUnescape(output, entityLookup);
     }
-    attributeValueOut.Add(buildString(vm.globals, output));
+    attributeValueOut.Add(VM.buildString(vm.globals, output));
     return null;
 }
 
@@ -331,7 +331,7 @@ string lib_xml_ampUnescape(string value, Dictionary<string, string> entityLookup
                 entityValue = "&";
             } else {
                 // strip out the entity code and semicolon
-                component = component.SubString((semicolon + 1), (component.Size() - semicolon));
+                component = component.SubString(semicolon + 1, component.Size() - semicolon);
             }
             ampParts[i] = Core.StringConcatAll(entityValue, component);
         }

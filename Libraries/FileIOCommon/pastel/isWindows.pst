@@ -1,4 +1,4 @@
-﻿Value lib_fileiocommon_isWindows(VmContext vm, Array<Value> args) {
+﻿VM.Value lib_fileiocommon_isWindows(VM.VmContext vm, Array<VM.Value> args) {
     if (Native._lib_fileiocommon_isWindows()) {
         return vm.globals.boolTrue;
     }

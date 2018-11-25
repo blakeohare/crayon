@@ -5,12 +5,12 @@
     args[1]: well-formed and sandboxed path of where the directory currently is
     args[2]: well-formed and sandboxed path of where to move the directory to
 */
-Value lib_fileiocommon_directoryMove(VmContext vm, Array<Value> args) {
+VM.Value lib_fileiocommon_directoryMove(VM.VmContext vm, Array<VM.Value> args) {
 
     int statusCode = Native._lib_fileiocommon_directoryMove(
         lib_fileiocommon_getDiskObject(args[0]),
         (string) args[1].internalValue,
         (string) args[2].internalValue);
 
-    return buildInteger(vm.globals, statusCode);
+    return VM.buildInteger(vm.globals, statusCode);
 }

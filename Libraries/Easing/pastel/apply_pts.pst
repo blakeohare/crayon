@@ -2,8 +2,8 @@
     args[0] -> Easing object instance
     args[1] -> values
 */
-Value lib_easing_apply_pts(VmContext vm, Array<Value> args) {
-    ListImpl sampleValues = (ListImpl) args[1].internalValue; // guaranteed to be floats
+VM.Value lib_easing_apply_pts(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ListImpl sampleValues = (VM.ListImpl) args[1].internalValue; // guaranteed to be floats
 
     int len = sampleValues.size;
     Array<double> samples = new Array<double>(len);
@@ -21,7 +21,7 @@ Value lib_easing_apply_pts(VmContext vm, Array<Value> args) {
     samples[0] = 0.0;
     samples[len - 1] = 1.0;
 
-    ObjectInstance o = (ObjectInstance) args[0].internalValue;
+    VM.ObjectInstance o = (VM.ObjectInstance) args[0].internalValue;
     o.nativeObject = new EasingSampling(len, samples);
 
     return vm.globals.valueNull;

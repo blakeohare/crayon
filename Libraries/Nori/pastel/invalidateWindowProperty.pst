@@ -3,8 +3,8 @@
     args[1] -> (int) property key
     args[2] -> (Value<various>) property value
 */
-Value lib_nori_invalidateWindowProperty(VmContext vm, Array<Value> args) {
-    ObjectInstance o = (ObjectInstance) args[0].internalValue;
+VM.Value lib_nori_invalidateWindowProperty(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance o = (VM.ObjectInstance) args[0].internalValue;
     int key = (int) args[1].internalValue;
     object value = args[2].internalValue;
     Native._lib_nori_invalidateWindowProperty(o.nativeData[0], key, value);

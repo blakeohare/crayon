@@ -1,9 +1,9 @@
-﻿Value lib_gamepad_current_device_count(VmContext vm, Array<Value> args) {
+﻿VM.Value lib_gamepad_current_device_count(VM.VmContext vm, Array<VM.Value> args) {
     int total = 0;
     if (@ext_boolean("LIB_GAMEPAD_SUPPORTED") &&
         Native._lib_gamepad_is_supported()) {
 
         total = Native._lib_gamepad_get_current_device_count();
     }
-    return buildInteger(vm.globals, total);
+    return VM.buildInteger(vm.globals, total);
 }

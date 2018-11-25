@@ -1,15 +1,15 @@
-﻿object lib_fileiocommon_getDiskObject(Value diskObjectArg) {
-    ObjectInstance objInst = (ObjectInstance) diskObjectArg.internalValue;
+﻿object lib_fileiocommon_getDiskObject(VM.Value diskObjectArg) {
+    VM.ObjectInstance objInst = (VM.ObjectInstance) diskObjectArg.internalValue;
     return objInst.nativeData[0];
 }
 
-object lib_fileiocommon_listToBytes(List<Value> listOfMaybeInts) {
+object lib_fileiocommon_listToBytes(List<VM.Value> listOfMaybeInts) {
     Array<byte> bytes = new Array<byte>(listOfMaybeInts.Size());
-    Value intValue = null;
+    VM.Value intValue = null;
     int byteValue = 0;
     for (int i = listOfMaybeInts.Size() - 1; i >= 0; i -= 1) {
         intValue = listOfMaybeInts[i];
-        if (intValue.type != Types.INTEGER) {
+        if (intValue.type != VM.Types.INTEGER) {
             return null;
         }
         byteValue = (int) intValue.internalValue;

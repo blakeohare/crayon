@@ -4,13 +4,13 @@
 
     outputs a float Value
 */
-Value lib_gamepad_get_axis_1d_state(VmContext vm, Array<Value> args) {
+VM.Value lib_gamepad_get_axis_1d_state(VM.VmContext vm, Array<VM.Value> args) {
     if (!@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
         return vm.globals.floatZero;
     } else {
         int index = (int) args[1].internalValue;
-        ObjectInstance dev = (ObjectInstance) args[0].internalValue;
-        return buildFloat(vm.globals,
+        VM.ObjectInstance dev = (VM.ObjectInstance) args[0].internalValue;
+        return VM.buildFloat(vm.globals,
             Native._lib_gamepad_get_axis_1d_state(
                 dev.nativeData[0], index));
     }

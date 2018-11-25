@@ -3,12 +3,11 @@
 
     returns boolean
 */
-Value lib_graphics2dtext_isResourceAvailable(VmContext vm, Array<Value> args) {
-
+VM.Value lib_graphics2dtext_isResourceAvailable(VM.VmContext vm, Array<VM.Value> args) {
     string path = (string) args[0].internalValue;
-    Value res = resource_manager_getResourceOfType(vm, path, "TTF");
-    if (res.type == Types.NULL) return vm.globalFalse;
-    ListImpl resList = (ListImpl) res.internalValue;
-    if (!(bool) getItemFromList(resList, 0).internalValue) return vm.globalFalse;
+    VM.Value res = VM.resource_manager_getResourceOfType(vm, path, "TTF");
+    if (res.type == VM.Types.NULL) return vm.globalFalse;
+    VM.ListImpl resList = (VM.ListImpl) res.internalValue;
+    if (!(bool) VM.getItemFromList(resList, 0).internalValue) return vm.globalFalse;
     return vm.globalTrue;
 }

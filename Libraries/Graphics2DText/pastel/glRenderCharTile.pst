@@ -17,12 +17,12 @@
         output[1] -> the height of the image
 
 */
-Value lib_graphics2dtext_glRenderCharTile(VmContext vm, Array<Value> args) {
+VM.Value lib_graphics2dtext_glRenderCharTile(VM.VmContext vm, Array<VM.Value> args) {
     if (@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
-        object nativeFont = Core.ForceParens((ObjectInstance) args[0].internalValue).nativeData[0];
-        Array<object> tileNativeData = Core.ForceParens((ObjectInstance) args[1].internalValue).nativeData;
+        object nativeFont = Core.ForceParens((VM.ObjectInstance) args[0].internalValue).nativeData[0];
+        Array<object> tileNativeData = Core.ForceParens((VM.ObjectInstance) args[1].internalValue).nativeData;
         int charId = (int) args[2].internalValue;
-        ListImpl sizeOut = (ListImpl) args[3].internalValue;
+        VM.ListImpl sizeOut = (VM.ListImpl) args[3].internalValue;
 
         object bmp = Native._lib_graphics2dtext_glRenderBitmapTile(nativeFont, charId, Core.IntBuffer16);
         if (bmp == null) return vm.globalFalse;
@@ -36,11 +36,11 @@ Value lib_graphics2dtext_glRenderCharTile(VmContext vm, Array<Value> args) {
         tileNativeData[3] = effectiveLeft;
         tileNativeData[4] = effectiveWidth;
 
-        clearList(sizeOut);
-        addToList(sizeOut, buildInteger(vm.globals, width));
-        addToList(sizeOut, buildInteger(vm.globals, height));
-        addToList(sizeOut, buildInteger(vm.globals, effectiveLeft));
-        addToList(sizeOut, buildInteger(vm.globals, effectiveWidth));
+        VM.clearList(sizeOut);
+        VM.addToList(sizeOut, VM.buildInteger(vm.globals, width));
+        VM.addToList(sizeOut, VM.buildInteger(vm.globals, height));
+        VM.addToList(sizeOut, VM.buildInteger(vm.globals, effectiveLeft));
+        VM.addToList(sizeOut, VM.buildInteger(vm.globals, effectiveWidth));
     }
     return vm.globalTrue;
 }

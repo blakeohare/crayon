@@ -4,7 +4,7 @@
     There should be an error message string in nativeData[5]
 
 */
-Value lib_matrices_getError(VmContext vm, Array<Value> args) {
-    ObjectInstance obj = (ObjectInstance) args[0].internalValue;
-    return buildString(vm.globals, (string) obj.nativeData[5]);
+VM.Value lib_matrices_getError(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance obj = (VM.ObjectInstance) args[0].internalValue;
+    return VM.buildString(vm.globals, (string) obj.nativeData[5]);
 }

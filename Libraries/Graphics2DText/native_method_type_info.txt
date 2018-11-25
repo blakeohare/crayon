@@ -1,7 +1,7 @@
 
 object _lib_graphics2dtext_createNativeFont(int fontType, int fontClass, string fontPath, int fontSize, int red, int green, int blue, bool isBold, bool isItalic);
 
-void _lib_graphics2dtext_getNativeFontUniqueKey(List<Value> output, Value type, Value id, Value size, Value red, Value green, Value blue, Value style);
+void _lib_graphics2dtext_getNativeFontUniqueKey(List<VM.Value> output, VM.Value type, VM.Value id, VM.Value size, VM.Value red, VM.Value green, VM.Value blue, VM.Value style);
 
 bool _lib_graphics2dtext_isSystemFontAvailable(string name);
 

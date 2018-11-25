@@ -22,10 +22,10 @@
         (string) value
     ]
 */
-Value lib_xml_parse(VmContext vm, Array<Value> args) {
-    string xml = ((string) args[0].internalValue);
-    ListImpl list1 = (ListImpl) args[1].internalValue;
-    ObjectInstance objInstance1 = (ObjectInstance) args[2].internalValue;
+VM.Value lib_xml_parse(VM.VmContext vm, Array<VM.Value> args) {
+    string xml = (string) args[0].internalValue;
+    VM.ListImpl list1 = (VM.ListImpl) args[1].internalValue;
+    VM.ObjectInstance objInstance1 = (VM.ObjectInstance) args[2].internalValue;
     Array<object> objArray1 = objInstance1.nativeData;
     if (objArray1 == null) {
         objArray1 = new Array<object>(2);
@@ -34,7 +34,7 @@ Value lib_xml_parse(VmContext vm, Array<Value> args) {
         objArray1[1] = new Dictionary<int, int>();
     }
 
-    List<Value> output = new List<Value>();
+    List<VM.Value> output = new List<VM.Value>();
     string errMsg = lib_xml_parseImpl(
         vm,
         xml,
@@ -44,10 +44,10 @@ Value lib_xml_parse(VmContext vm, Array<Value> args) {
         (Dictionary<int, int>) objArray1[1]);
 
     if (errMsg != null) {
-        return buildString(vm.globals, errMsg);
+        return VM.buildString(vm.globals, errMsg);
     }
 
-    ListImpl list2 = (ListImpl) buildList(output).internalValue;
+    VM.ListImpl list2 = (VM.ListImpl) VM.buildList(output).internalValue;
     list1.size = list2.size;
     if (@ext_boolean("ARRAY_IS_LIST")) {
         list1.list = list2.list;

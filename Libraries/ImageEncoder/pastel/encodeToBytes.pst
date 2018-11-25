@@ -5,17 +5,17 @@
         JPEG - 2
     args[2] -> Empty list. Use for outputting byte values.
 */
-Value lib_imageencoder_encodeToBytes(VmContext vm, Array<Value> args) {
-    object platformBitmap = getNativeDataItem(args[0], 0); // the platform bitmap instance
+VM.Value lib_imageencoder_encodeToBytes(VM.VmContext vm, Array<VM.Value> args) {
+    object platformBitmap = VM.getNativeDataItem(args[0], 0); // the platform bitmap instance
     int imageFormat = (int) args[1].internalValue; // 1: PNG, 2: JPEG
-    List<Value> byteOutputList = new List<Value>();
+    List<VM.Value> byteOutputList = new List<VM.Value>();
     // TODO: return a Value since it's taking in the INTEGER_POSITIVE_CACHE anyway
     int statusCode = Native._lib_imageencoder_encodeImage(platformBitmap, imageFormat, byteOutputList, vm.globals.positiveIntegers);
     int length = byteOutputList.Size();
-    ListImpl finalOutputList = (ListImpl) args[2].internalValue;
+    VM.ListImpl finalOutputList = (VM.ListImpl) args[2].internalValue;
     for (int i = 0; i < length; i += 1) {
         // TODO: inline this for speed
-        addToList(finalOutputList, byteOutputList[i]);
+        VM.addToList(finalOutputList, byteOutputList[i]);
     }
-    return buildInteger(vm.globals, statusCode);
+    return VM.buildInteger(vm.globals, statusCode);
 }

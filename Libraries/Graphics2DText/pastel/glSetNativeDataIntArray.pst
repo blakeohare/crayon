@@ -7,17 +7,17 @@
 
     no return value
 */
-Value lib_graphics2dtext_glSetNativeDataIntArray(VmContext vm, Array<Value> args) {
+VM.Value lib_graphics2dtext_glSetNativeDataIntArray(VM.VmContext vm, Array<VM.Value> args) {
     if (@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
-        ObjectInstance obj = (ObjectInstance) args[0].internalValue;
+        VM.ObjectInstance obj = (VM.ObjectInstance) args[0].internalValue;
         Array<object> nativeData = obj.nativeData;
-        ListImpl values = (ListImpl) args[2].internalValue;
+        VM.ListImpl values = (VM.ListImpl) args[2].internalValue;
         int length = values.size;
         Array<int> intArray = new Array<int>(length);
         for (int i = 0; i < length; i += 1) {
-            intArray[i] = (int) getItemFromList(values, i).internalValue;
+            intArray[i] = (int) VM.getItemFromList(values, i).internalValue;
         }
-        nativeData[(int)args[1].internalValue] = intArray;
+        nativeData[(int) args[1].internalValue] = intArray;
     }
     return vm.globalNull;
 }

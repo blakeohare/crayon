@@ -2,15 +2,15 @@
     args[0] -> music instance with unintialized native data
     args[1] -> path
 */
-Value lib_audio_music_load_from_resource(VmContext vm, Array<Value> args) {
-    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
+VM.Value lib_audio_music_load_from_resource(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance objInstance1 = (VM.ObjectInstance) args[0].internalValue;
     if (lib_audio_music_load_from_resourceImpl(objInstance1, (string) args[1].internalValue)) {
         return vm.globals.boolTrue;
     }
     return vm.globals.boolFalse;
 }
 
-bool lib_audio_music_load_from_resourceImpl(ObjectInstance musicObj, string path) {
+bool lib_audio_music_load_from_resourceImpl(VM.ObjectInstance musicObj, string path) {
     object nativeMusicObject = Native._lib_audio_musicLoadFromResource(path);
     if (nativeMusicObject != null) {
         musicObj.nativeData = new Array<object>(1);

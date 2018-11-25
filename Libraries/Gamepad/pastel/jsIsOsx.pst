@@ -7,9 +7,9 @@
 
     Return null constant on platforms that don't support gamepads since this code doesn't get run anyway.
 */
-Value lib_gamepad_jsIsOsx(VmContext vm, Array<Value> args) {
+VM.Value lib_gamepad_jsIsOsx(VM.VmContext vm, Array<VM.Value> args) {
     if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
-        return buildInteger(vm.globals, Native._lib_gamepad_jsIsOsx());
+        return VM.buildInteger(vm.globals, Native._lib_gamepad_jsIsOsx());
     } else {
         return vm.globalNull;
     }

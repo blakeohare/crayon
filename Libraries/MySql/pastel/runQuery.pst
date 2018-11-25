@@ -11,30 +11,30 @@
 
     Output is an error, if one occurs, or null.
 */
-Value lib_mysql_runQuery(VmContext vm, Array<Value> args) {
-    Value arg1 = args[0];
-    Value arg2 = args[1];
-    Value arg3 = args[2];
-    Value arg4 = args[3];
-    Value arg5 = args[4];
-    ObjectInstance objInstance1 = (ObjectInstance) arg1.internalValue;
+VM.Value lib_mysql_runQuery(VM.VmContext vm, Array<VM.Value> args) {
+    VM.Value arg1 = args[0];
+    VM.Value arg2 = args[1];
+    VM.Value arg3 = args[2];
+    VM.Value arg4 = args[3];
+    VM.Value arg5 = args[4];
+    VM.ObjectInstance objInstance1 = (VM.ObjectInstance) arg1.internalValue;
     object object1 = objInstance1.nativeData[0];
     List<int> intList1 = new List<int>();
     List<string> stringList1 = new List<string>();
     object object2 = Native._lib_mysql_query(object1, (string) arg3.internalValue, Core.StringBuffer16, Core.IntBuffer16, stringList1, intList1);
     string errMsg = Core.StringBuffer16[0];
     if (errMsg == null) {
-        List<Value> list1 = (List<Value>) arg4.internalValue;
-        List<Value> list2 = (List<Value>) arg5.internalValue;
+        List<VM.Value> list1 = (List<VM.Value>) arg4.internalValue;
+        List<VM.Value> list2 = (List<VM.Value>) arg5.internalValue;
         int int1 = 0;
         if (object2 != null) {
-            ObjectInstance objInstance2 = (ObjectInstance) arg2.internalValue;
+            VM.ObjectInstance objInstance2 = (VM.ObjectInstance) arg2.internalValue;
             objInstance2.nativeData = new Array<object>(1);
             objInstance2.nativeData[0] = object2;
-            list1[1] = buildInteger(vm.globals, Native._lib_mysql_num_rows(object2));
+            list1[1] = VM.buildInteger(vm.globals, Native._lib_mysql_num_rows(object2));
             for (int1 = 0; int1 < stringList1.Size(); int1 += 1) {
-                list2.Add(buildString(vm.globals, stringList1[int1]));
-                list2.Add(buildInteger(vm.globals, intList1[int1]));
+                list2.Add(VM.buildString(vm.globals, stringList1[int1]));
+                list2.Add(VM.buildInteger(vm.globals, intList1[int1]));
             }
         } else {
             list1[1] = vm.globalNull;
@@ -43,11 +43,11 @@ Value lib_mysql_runQuery(VmContext vm, Array<Value> args) {
         if (Core.IntBuffer16[0] == -1) {
             list1[0] = vm.globalNull;
         } else {
-            list1[0] = buildInteger(vm.globals, int1);
+            list1[0] = VM.buildInteger(vm.globals, int1);
         }
 
         return vm.globalNull;
     }
 
-    return buildString(vm.globals, errMsg);
+    return VM.buildString(vm.globals, errMsg);
 }

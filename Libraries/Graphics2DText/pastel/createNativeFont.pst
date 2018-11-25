@@ -32,23 +32,23 @@
         2 -> font resource not found
 
 */
-Value lib_graphics2dtext_createNativeFont(VmContext vm, Array<Value> args) {
-    Array<Value> ints = vm.globals.positiveIntegers;
-    ObjectInstance nf = (ObjectInstance) args[0].internalValue;
+VM.Value lib_graphics2dtext_createNativeFont(VM.VmContext vm, Array<VM.Value> args) {
+    Array<VM.Value> ints = vm.globals.positiveIntegers;
+    VM.ObjectInstance nf = (VM.ObjectInstance) args[0].internalValue;
     Array<object> nfOut = nf.nativeData;
     int fontType = (int) args[1].internalValue;
     string fontPath = "";
     if (fontType == 0) {
-        fontType = (int)args[2].internalValue;
+        fontType = (int) args[2].internalValue;
     } else {
-        fontPath = (string)args[2].internalValue;
+        fontPath = (string) args[2].internalValue;
 
         if (fontType == 1) {
-            Value res = resource_manager_getResourceOfType(vm, fontPath, "TTF");
-            if (res.type == Types.NULL) return ints[2]; // not found
-            ListImpl resList = (ListImpl) res.internalValue;
-            if (!(bool) getItemFromList(resList, 0).internalValue) return ints[2]; // path found, but not a font.
-            fontPath = (string) getItemFromList(resList, 1).internalValue; // convert to a resource path
+            VM.Value res = VM.resource_manager_getResourceOfType(vm, fontPath, "TTF");
+            if (res.type == VM.Types.NULL) return ints[2]; // not found
+            VM.ListImpl resList = (VM.ListImpl) res.internalValue;
+            if (!(bool) VM.getItemFromList(resList, 0).internalValue) return ints[2]; // path found, but not a font.
+            fontPath = (string) VM.getItemFromList(resList, 1).internalValue; // convert to a resource path
         }
     }
     int fontClass = 0;

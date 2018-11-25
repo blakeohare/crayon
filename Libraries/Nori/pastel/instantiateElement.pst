@@ -3,21 +3,21 @@
     args[1] -> (ObjectInstance) native element
     args[2] -> (List<various>) property values
 */
-Value lib_nori_instantiateElement(VmContext vm, Array<Value> args) {
+VM.Value lib_nori_instantiateElement(VM.VmContext vm, Array<VM.Value> args) {
     int type = (int) args[0].internalValue;
-    ObjectInstance o = (ObjectInstance) args[1].internalValue;
+    VM.ObjectInstance o = (VM.ObjectInstance) args[1].internalValue;
     o.nativeData = new Array<object>(1);
-    ListImpl properties = (ListImpl) args[2].internalValue;
+    VM.ListImpl properties = (VM.ListImpl) args[2].internalValue;
     int x = 0;
     int y = 0;
     int width = 0;
     int height = 0;
 
-    if (getItemFromList(properties, 0).type == Types.INTEGER) {
-        x = (int) getItemFromList(properties, 0).internalValue;
-        y = (int) getItemFromList(properties, 1).internalValue;
-        width = (int) getItemFromList(properties, 4).internalValue;
-        height = (int) getItemFromList(properties, 5).internalValue;
+    if (VM.getItemFromList(properties, 0).type == VM.Types.INTEGER) {
+        x = (int) VM.getItemFromList(properties, 0).internalValue;
+        y = (int) VM.getItemFromList(properties, 1).internalValue;
+        width = (int) VM.getItemFromList(properties, 4).internalValue;
+        height = (int) VM.getItemFromList(properties, 5).internalValue;
     }
 
     // TODO: use a single reusable instance with an update mask
@@ -33,16 +33,16 @@ Value lib_nori_instantiateElement(VmContext vm, Array<Value> args) {
         255, // alpha
         "");
 
-    if (getItemFromList(properties, 16).type == Types.LIST) {
-        ListImpl bgColor = (ListImpl) getItemFromList(properties, 16).internalValue;
-        unboxed.bg_red = (int) getItemFromList(bgColor, 0).internalValue;
-        unboxed.bg_green = (int) getItemFromList(bgColor, 1).internalValue;
-        unboxed.bg_blue = (int) getItemFromList(bgColor, 2).internalValue;
-        unboxed.bg_alpha = (int) getItemFromList(bgColor, 3).internalValue;
+    if (VM.getItemFromList(properties, 16).type == VM.Types.LIST) {
+        VM.ListImpl bgColor = (VM.ListImpl) VM.getItemFromList(properties, 16).internalValue;
+        unboxed.bg_red = (int) VM.getItemFromList(bgColor, 0).internalValue;
+        unboxed.bg_green = (int) VM.getItemFromList(bgColor, 1).internalValue;
+        unboxed.bg_blue = (int) VM.getItemFromList(bgColor, 2).internalValue;
+        unboxed.bg_alpha = (int) VM.getItemFromList(bgColor, 3).internalValue;
     }
 
-    if (getItemFromList(properties, 21).type == Types.STRING) {
-        unboxed.misc_string_0 = (string) getItemFromList(properties, 21).internalValue;
+    if (VM.getItemFromList(properties, 21).type == VM.Types.STRING) {
+        unboxed.misc_string_0 = (string) VM.getItemFromList(properties, 21).internalValue;
     }
 
     o.nativeData[0] = Native._lib_nori_instantiateElement(type, unboxed);

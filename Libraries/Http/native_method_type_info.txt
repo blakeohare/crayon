@@ -1,4 +1,4 @@
-void _lib_http_getResponseBytes(object obj, Array<Value> intCache, List<Value> list);
+void _lib_http_getResponseBytes(object obj, Array<VM.Value> intCache, List<VM.Value> list);
 bool _lib_http_pollRequest(Array<object> objArray);
 void _lib_http_readResponseData(object nativeRequestObject, Array<int> intOut, Array<string> stringOut, Array<object> objOut, List<string> headerPairs);
 void _lib_http_sendRequestAsynchronous(Array<object> objArray, string method, string url, List<string> headers, int objectState, object bodyStringOrBytes, bool getResponseAsText);
