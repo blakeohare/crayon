@@ -44,7 +44,15 @@ namespace Pastel.Nodes
 
         private TypeCategory Category { get; set; }
         public bool IsStruct { get { return this.Category == TypeCategory.STRUCT; } }
-        internal StructDefinition StructDef { get { return this.structReference; } }
+        internal StructDefinition StructDef
+        {
+            get
+            {
+                if (this.IsStruct && this.structReference == null)
+                    throw new System.InvalidOperationException();
+                return this.structReference;
+            }
+        }
 
         public PType(Token firstToken, string namespaceName, string typeName, params PType[] generics) : this(firstToken, namespaceName, typeName, new List<PType>(generics)) { }
         public PType(Token firstToken, string namespaceName, string typeName, List<PType> generics)
