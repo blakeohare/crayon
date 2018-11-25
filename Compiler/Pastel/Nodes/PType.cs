@@ -74,11 +74,16 @@ namespace Pastel.Nodes
             {
                 switch (this.RootValue)
                 {
+                    case "null":
+                        this.Category = TypeCategory.NULL;
+                        break;
+
                     case "int":
                     case "char":
                     case "double":
                     case "bool":
                     case "string":
+                    case "number":
                         this.Category = TypeCategory.PRIMITIVE;
                         break;
 
@@ -169,7 +174,7 @@ namespace Pastel.Nodes
         // when a templated type coincides with an actual value, add that template key to the lookup output param.
         public static bool CheckAssignmentWithTemplateOutput(PType templatedType, PType actualValue, Dictionary<string, PType> output)
         {
-            if (templatedType.RootValue == "object") return true;
+            if (templatedType.Category == TypeCategory.OBJECT) return true;
 
             // Most cases, nothing to do
             if (templatedType.IsIdentical(actualValue))
@@ -189,7 +194,7 @@ namespace Pastel.Nodes
                     }
 
                     // It's also possible that this is null, in which case the type must be nullable.
-                    if (actualValue.RootValue == "null" && requiredType.IsNullable)
+                    if (actualValue.Category == TypeCategory.NULL && requiredType.IsNullable)
                     {
                         return true;
                     }
@@ -248,23 +253,20 @@ namespace Pastel.Nodes
 
         public static bool CheckAssignment(PType targetType, PType value)
         {
-            if (targetType.RootValue == "void") return false;
+            if (targetType.Category == TypeCategory.VOID) return false;
             return CheckReturnType(targetType, value);
         }
 
         public static bool CheckReturnType(PType returnType, PType value)
         {
             if (returnType.IsIdentical(value)) return true;
-            if (returnType.RootValue == "object") return true;
-            if (returnType.RootValue == "void") return false;
-            if (value.RootValue == "null")
+            if (returnType.Category == TypeCategory.OBJECT) return true;
+            if (returnType.Category == TypeCategory.VOID) return false;
+            if (value.Category == TypeCategory.NULL)
             {
-                if (returnType.RootValue == "string") return true;
+                if (returnType.Category == TypeCategory.PRIMITIVE && returnType.TypeName == "string") return true;
                 if (returnType.Generics.Length > 0) return true;
-
-                // is struct?
-                char c = returnType.RootValue[0];
-                if (c >= 'A' && c <= 'Z') return true;
+                if (returnType.Category == TypeCategory.STRUCT) return true;
             }
             return false;
         }
@@ -272,7 +274,7 @@ namespace Pastel.Nodes
         private bool IsParentOf(PType moreSpecificTypeOrSame)
         {
             if (moreSpecificTypeOrSame == this) return true;
-            if (this.RootValue == "object") return true;
+            if (this.Category == TypeCategory.OBJECT) return true;
             if (this.Generics.Length == 0)
             {
                 // why no treatment of int as a subtype of double? because there needs to be an explicit type conversion
