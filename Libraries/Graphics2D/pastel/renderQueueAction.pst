@@ -10,10 +10,10 @@
         2 -> reset render queues to 0
 
 */
-Value lib_graphics2d_renderQueueAction(VmContext vm, Array<Value> args) {
+VM.Value lib_graphics2d_renderQueueAction(VM.VmContext vm, Array<VM.Value> args) {
     int command = (int) args[2].internalValue;
 
-    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
+    VM.ObjectInstance objInstance1 = (VM.ObjectInstance) args[0].internalValue;
     Array<object> objArray1 = objInstance1.nativeData;
     if (objArray1 == null) {
         objArray1 = new Array<object>(5);
@@ -33,16 +33,16 @@ Value lib_graphics2d_renderQueueAction(VmContext vm, Array<Value> args) {
     List<int> intList1 = (List<int>) objArray1[4];
 
     if (command == 1) {
-        Value charList = args[1];
+        VM.Value charList = args[1];
 
-        // Copy the List<Value> of integers into a List<int>
-        if (charList.type == Types.LIST) {
-            Value value = null;
-            List<Value> list1 = ((List<Value>) charList.internalValue);
+        // Copy the List<VM.Value> of integers into a List<int>
+        if (charList.type == VM.Types.LIST) {
+            VM.Value value = null;
+            List<VM.Value> list1 = (List<VM.Value>) charList.internalValue;
             int len = list1.Size();
             for (int i = 0; i < len; i += 1) {
                 value = list1[i];
-                intList1.Add(((int) value.internalValue));
+                intList1.Add((int) value.internalValue);
             }
         }
         // Push the queues to the renderer.

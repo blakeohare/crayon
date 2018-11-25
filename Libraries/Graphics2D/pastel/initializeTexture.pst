@@ -17,29 +17,29 @@
     nativeData[5] -> texture width (pixels)
     nativeData[6] -> texture height (pixels)
 */
-Value lib_graphics2d_initializeTexture(VmContext vm, Array<Value> args) {
+VM.Value lib_graphics2d_initializeTexture(VM.VmContext vm, Array<VM.Value> args) {
 
     // TODO: fix readability.
-    Value arg1 = args[0];
-    Value arg2 = args[1];
-    Value arg3 = args[2];
-    Value arg4 = args[3];
-    Value arg5 = args[4];
-    ObjectInstance objInstance1 = (ObjectInstance) arg1.internalValue;
+    VM.Value arg1 = args[0];
+    VM.Value arg2 = args[1];
+    VM.Value arg3 = args[2];
+    VM.Value arg4 = args[3];
+    VM.Value arg5 = args[4];
+    VM.ObjectInstance objInstance1 = (VM.ObjectInstance) arg1.internalValue;
     Array<object> objArray1 = new Array<object>(7);
     objInstance1.nativeData = objArray1;
-    objInstance1 = (ObjectInstance) arg2.internalValue;
+    objInstance1 = (VM.ObjectInstance) arg2.internalValue;
     objArray1[0] = objInstance1.nativeData;
-    ListImpl list1 = (ListImpl) arg3.internalValue;
-    Value value = getItemFromList(list1, 0);
+    VM.ListImpl list1 = (VM.ListImpl) arg3.internalValue;
+    VM.Value value = VM.getItemFromList(list1, 0);
     double float1 = (double) value.internalValue;
-    value = getItemFromList(list1, 2);
+    value = VM.getItemFromList(list1, 2);
     double float2 = (double) value.internalValue;
     objArray1[1] = float1;
     objArray1[3] = float2;
-    value = getItemFromList(list1, 1);
+    value = VM.getItemFromList(list1, 1);
     float1 = (double) value.internalValue;
-    value = getItemFromList(list1, 3);
+    value = VM.getItemFromList(list1, 3);
     float2 = (double) value.internalValue;
     objArray1[2] = float1;
     objArray1[4] = float2;

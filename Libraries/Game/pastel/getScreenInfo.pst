@@ -6,15 +6,15 @@
         list[2] -> (int) screen height (or 0 if not known)
         starting values are [false, 0, 0]
 */
-Value lib_game_getScreenInfo(VmContext vm, Array<Value> args) {
-    Value outList = args[0];
+VM.Value lib_game_getScreenInfo(VM.VmContext vm, Array<VM.Value> args) {
+    VM.Value outList = args[0];
     Array<int> o = Core.IntBuffer16;
     if (Native._lib_game_getScreenInfo(o)) {
-        ListImpl output = (ListImpl) outList.internalValue;
-        clearList(output);
-        addToList(output, buildBoolean(vm.globals, o[0] == 1));
-        addToList(output, buildInteger(vm.globals, o[1]));
-        addToList(output, buildInteger(vm.globals, o[2]));
+        VM.ListImpl output = (VM.ListImpl) outList.internalValue;
+        VM.clearList(output);
+        VM.addToList(output, VM.buildBoolean(vm.globals, o[0] == 1));
+        VM.addToList(output, VM.buildInteger(vm.globals, o[1]));
+        VM.addToList(output, VM.buildInteger(vm.globals, o[2]));
     }
     return outList;
 }

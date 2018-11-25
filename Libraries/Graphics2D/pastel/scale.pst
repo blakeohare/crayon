@@ -30,18 +30,18 @@
     Because atlas based texture's sizes are based on the width and height fields
     themselves, this function no-ops for those platforms.
 */
-Value lib_graphics2d_scale(VmContext vm, Array<Value> args) {
+VM.Value lib_graphics2d_scale(VM.VmContext vm, Array<VM.Value> args) {
 
-    // auto generated variable declarations
+    // TODO: fix readability
     Array<object> objArray1 = null;
     Array<object> objArray2 = null;
-    ObjectInstance objInstance1 = null;
-    ObjectInstance objInstance2 = null;
-    Value arg2 = args[1];
-    Value arg3 = args[2];
-    Value arg4 = args[3];
-    Value arg5 = args[4];
-    Value arg6 = args[5];
+    VM.ObjectInstance objInstance1 = null;
+    VM.ObjectInstance objInstance2 = null;
+    VM.Value arg2 = args[1];
+    VM.Value arg3 = args[2];
+    VM.Value arg4 = args[3];
+    VM.Value arg5 = args[4];
+    VM.Value arg6 = args[5];
 
     int int1 = (int) arg3.internalValue; // New width
     int int2 = (int) arg4.internalValue; // New height
@@ -49,11 +49,11 @@ Value lib_graphics2d_scale(VmContext vm, Array<Value> args) {
     if (!@ext_boolean("LIB_GRAPHICS_USES_TEXTURE_ATLAS")) {
 
         // Get the native platform image from the original image (GraphicsTextureResource)
-        objInstance1 = (ObjectInstance) arg5.internalValue;
+        objInstance1 = (VM.ObjectInstance) arg5.internalValue;
         object object1 = objInstance1.nativeData[3]; // original image
 
         // New GraphicsTextureResource. Add nativeData.
-        objInstance1 = (ObjectInstance) arg6.internalValue;
+        objInstance1 = (VM.ObjectInstance) arg6.internalValue;
         objArray1 = new Array<object>(6);
         objInstance1.nativeData = objArray1;
         objArray1[0] = false;
@@ -67,10 +67,10 @@ Value lib_graphics2d_scale(VmContext vm, Array<Value> args) {
     // Copy the original GraphicsTexture's native data to the new GraphicsTexture
 
     // The new GraphicsTexture
-    objInstance2 = (ObjectInstance) arg2.internalValue;
+    objInstance2 = (VM.ObjectInstance) arg2.internalValue;
     objArray1 = new Array<object>(7);
     objInstance2.nativeData = objArray1;
-    objInstance2 = (ObjectInstance) args[0].internalValue;
+    objInstance2 = (VM.ObjectInstance) args[0].internalValue;
     objArray2 = objInstance2.nativeData;
     int i = 4;
     while (i >= 1) { // leave off width and height since we overwrite that anyway
@@ -83,7 +83,7 @@ Value lib_graphics2d_scale(VmContext vm, Array<Value> args) {
     objArray1[6] = int2;
 
     // Now add a pointer to the new GraphicsTextureResource's native data
-    objInstance1 = (ObjectInstance) arg6.internalValue;
+    objInstance1 = (VM.ObjectInstance) arg6.internalValue;
     objArray1[0] = objInstance1.nativeData;
     return args[0];
 }

@@ -10,10 +10,10 @@
     arg 7: width (int)
     arg 8: height (int)
 */
-Value lib_imageresources_blit(VmContext vm, Array<Value> args) {
+VM.Value lib_imageresources_blit(VM.VmContext vm, Array<VM.Value> args) {
     object object1 = null;
-    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
-    ObjectInstance objInstance2 = (ObjectInstance) args[1].internalValue;
+    VM.ObjectInstance objInstance1 = (VM.ObjectInstance) args[0].internalValue;
+    VM.ObjectInstance objInstance2 = (VM.ObjectInstance) args[1].internalValue;
 
     // If pixel edit sessions are not used, then the object1 arg is not used in the following blit command
     // and so not setting it will not have any adverse effects.
