@@ -146,6 +146,34 @@ namespace Pastel.Nodes
             }
         }
 
+        private bool isTypeFinalized = false;
+        private StructDefinition structReference = null;
+        internal void FinalizeType(PastelCompiler compilerContext)
+        {
+            if (this.isTypeFinalized) return;
+            this.isTypeFinalized = true;
+            if (this.Category == TypeCategory.STRUCT)
+            {
+                if (this.Namespace == null)
+                {
+                    this.structReference = compilerContext.GetStructDefinition(this.TypeName);
+                }
+                else if (compilerContext.IncludedScopeNamespacesToIndex.ContainsKey(this.Namespace))
+                {
+                    int index = compilerContext.IncludedScopeNamespacesToIndex[this.Namespace];
+                    this.structReference = compilerContext.IncludedScopes[index].GetStructDefinition(this.TypeName);
+                }
+                if (this.structReference == null)
+                {
+                    throw new ParserException(this.FirstToken, "Could not find struct by name of '" + this.RootValue + "'");
+                }
+            }
+            for (int i = 0; i < this.Generics.Length; ++i)
+            {
+                this.Generics[i].FinalizeType(compilerContext);
+            }
+        }
+
         public PType ResolveTemplates(Dictionary<string, PType> templateLookup)
         {
             if (!this.HasTemplates)
@@ -172,12 +200,12 @@ namespace Pastel.Nodes
         }
 
         // when a templated type coincides with an actual value, add that template key to the lookup output param.
-        public static bool CheckAssignmentWithTemplateOutput(PType templatedType, PType actualValue, Dictionary<string, PType> output)
+        internal static bool CheckAssignmentWithTemplateOutput(PastelCompiler compiler, PType templatedType, PType actualValue, Dictionary<string, PType> output)
         {
             if (templatedType.Category == TypeCategory.OBJECT) return true;
 
             // Most cases, nothing to do
-            if (templatedType.IsIdentical(actualValue))
+            if (templatedType.IsIdentical(compiler, actualValue))
             {
                 return true;
             }
@@ -188,7 +216,7 @@ namespace Pastel.Nodes
                 {
                     PType requiredType = output[templatedType.RootValue];
                     // if it's already encountered it better match the existing value
-                    if (actualValue.IsIdentical(requiredType))
+                    if (actualValue.IsIdentical(compiler, requiredType))
                     {
                         return true;
                     }
@@ -218,7 +246,7 @@ namespace Pastel.Nodes
                     if (output.ContainsKey(templatedType.RootValue))
                     {
                         // if it's already encountered it better match the existing value
-                        if (actualValue.IsIdentical(output[templatedType.RootValue]))
+                        if (actualValue.IsIdentical(compiler, output[templatedType.RootValue]))
                         {
                             // yup, that's okay
                         }
@@ -242,7 +270,7 @@ namespace Pastel.Nodes
 
             for (int i = 0; i < templatedType.Generics.Length; ++i)
             {
-                if (!CheckAssignmentWithTemplateOutput(templatedType.Generics[i], actualValue.Generics[i], output))
+                if (!CheckAssignmentWithTemplateOutput(compiler, templatedType.Generics[i], actualValue.Generics[i], output))
                 {
                     return false;
                 }
@@ -251,15 +279,15 @@ namespace Pastel.Nodes
             return true;
         }
 
-        public static bool CheckAssignment(PType targetType, PType value)
+        internal static bool CheckAssignment(PastelCompiler compiler, PType targetType, PType value)
         {
             if (targetType.Category == TypeCategory.VOID) return false;
-            return CheckReturnType(targetType, value);
+            return CheckReturnType(compiler, targetType, value);
         }
 
-        public static bool CheckReturnType(PType returnType, PType value)
+        internal static bool CheckReturnType(PastelCompiler compiler, PType returnType, PType value)
         {
-            if (returnType.IsIdentical(value)) return true;
+            if (returnType.IsIdentical(compiler, value)) return true;
             if (returnType.Category == TypeCategory.OBJECT) return true;
             if (returnType.Category == TypeCategory.VOID) return false;
             if (value.Category == TypeCategory.NULL)
@@ -271,7 +299,7 @@ namespace Pastel.Nodes
             return false;
         }
 
-        private bool IsParentOf(PType moreSpecificTypeOrSame)
+        private bool IsParentOf(PastelCompiler compiler, PType moreSpecificTypeOrSame)
         {
             if (moreSpecificTypeOrSame == this) return true;
             if (this.Category == TypeCategory.OBJECT) return true;
@@ -283,12 +311,23 @@ namespace Pastel.Nodes
             }
 
             // All that's left are Arrays, Lists, and Dictionaries, which must match exactly.
-            return this.IsIdentical(moreSpecificTypeOrSame);
+            return this.IsIdentical(compiler, moreSpecificTypeOrSame);
         }
 
-        public bool IsIdentical(PType other)
+        internal bool IsIdentical(PastelCompiler compiler, PType other)
         {
+            if (!this.isTypeFinalized) this.FinalizeType(compiler);
+            if (!other.isTypeFinalized) other.FinalizeType(compiler);
+
+            if (this.Category != other.Category) return false;
+
             if (this.Generics.Length != other.Generics.Length) return false;
+
+            if (this.Category == TypeCategory.STRUCT)
+            {
+                return this.structReference == other.structReference;
+            }
+
             if (this.RootValue != other.RootValue)
             {
                 string thisRoot = this.RootValue;
@@ -297,9 +336,10 @@ namespace Pastel.Nodes
                 if (thatRoot == "number" && (thisRoot == "double" || thisRoot == "int")) return true;
                 return false;
             }
+
             for (int i = this.Generics.Length - 1; i >= 0; --i)
             {
-                if (!this.Generics[i].IsIdentical(other.Generics[i]))
+                if (!this.Generics[i].IsIdentical(compiler, other.Generics[i]))
                 {
                     return false;
                 }

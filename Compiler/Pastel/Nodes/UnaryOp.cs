@@ -45,14 +45,14 @@
 
             if (this.OpToken.Value == "-")
             {
-                if (!(this.ResolvedType.IsIdentical(PType.INT) || this.ResolvedType.IsIdentical(PType.DOUBLE)))
+                if (!(this.ResolvedType.IsIdentical(compiler, PType.INT) || this.ResolvedType.IsIdentical(compiler, PType.DOUBLE)))
                 {
                     throw new ParserException(this.OpToken, "Cannot apply '-' to type: " + this.ResolvedType.ToString());
                 }
             }
             else // '!'
             {
-                if (!this.ResolvedType.IsIdentical(PType.BOOL))
+                if (!this.ResolvedType.IsIdentical(compiler, PType.BOOL))
                 {
                     throw new ParserException(this.OpToken, "Cannot apply '!' to type: " + this.ResolvedType.ToString());
                 }

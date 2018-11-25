@@ -10,7 +10,7 @@ namespace Pastel.Nodes
         public Expression[] Args { get; private set; }
 
         // Note that this class is instantiated in the ResolveType phase.
-        public FunctionPointerInvocation(Token firstToken, Expression root, IList<Expression> Args)
+        public FunctionPointerInvocation(PastelCompiler compiler, Token firstToken, Expression root, IList<Expression> Args)
             : base(firstToken, root.Owner)
         {
             this.Root = root;
@@ -26,7 +26,7 @@ namespace Pastel.Nodes
             {
                 PType expectedArgType = this.Root.ResolvedType.Generics[i + 1];
                 PType actualArgType = this.Args[i].ResolvedType;
-                if (!actualArgType.IsIdentical(expectedArgType))
+                if (!actualArgType.IsIdentical(compiler, expectedArgType))
                 {
                     throw new ParserException(this.Args[i].FirstToken, "Incorrect argument type. Expected " + expectedArgType + " but found " + actualArgType + ".");
                 }

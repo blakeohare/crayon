@@ -58,7 +58,7 @@ namespace Pastel.Nodes
                         {
                             PType actualType = this.Args[i].ResolvedType;
                             PType expectedType = this.StructType.ArgTypes[i];
-                            if (!PType.CheckAssignment(expectedType, actualType))
+                            if (!PType.CheckAssignment(compiler, expectedType, actualType))
                             {
                                 throw new ParserException(this.Args[i].FirstToken, "Cannot use an arg of this type for this struct field. Expected " + expectedType.ToString() + " but found " + actualType.ToString());
                             }

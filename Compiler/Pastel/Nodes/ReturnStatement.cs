@@ -23,14 +23,14 @@
             if (this.Expression != null)
             {
                 this.Expression = this.Expression.ResolveType(varScope, compiler);
-                if (!PType.CheckReturnType(varScope.RootFunctionDefinition.ReturnType, this.Expression.ResolvedType))
+                if (!PType.CheckReturnType(compiler, varScope.RootFunctionDefinition.ReturnType, this.Expression.ResolvedType))
                 {
                     throw new ParserException(this.Expression.FirstToken, "This expression is not the expected return type of this function.");
                 }
             }
             else
             {
-                if (!this.Expression.ResolvedType.IsIdentical(PType.VOID))
+                if (!this.Expression.ResolvedType.IsIdentical(compiler, PType.VOID))
                 {
                     throw new ParserException(this.FirstToken, "Must return a value in this function.");
                 }

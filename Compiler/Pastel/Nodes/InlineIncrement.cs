@@ -22,7 +22,7 @@
         internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
             this.Expression = this.Expression.ResolveType(varScope, compiler);
-            if (!this.Expression.ResolvedType.IsIdentical(PType.INT))
+            if (!this.Expression.ResolvedType.IsIdentical(compiler, PType.INT))
             {
                 throw new ParserException(this.IncrementToken, "++ and -- can only be applied to integer types.");
             }

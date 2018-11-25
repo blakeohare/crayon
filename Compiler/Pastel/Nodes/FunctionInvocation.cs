@@ -77,7 +77,7 @@ namespace Pastel.Nodes
 
                 for (int i = 0; i < this.Args.Length; ++i)
                 {
-                    if (!PType.CheckAssignment(expectedTypes[i], this.Args[i].ResolvedType))
+                    if (!PType.CheckAssignment(compiler, expectedTypes[i], this.Args[i].ResolvedType))
                     {
                         throw new ParserException(this.Args[i].FirstToken, "Wrong function arg type. Cannot convert a " + this.Args[i].ResolvedType + " to a " + expectedTypes[i]);
                     }
@@ -111,7 +111,7 @@ namespace Pastel.Nodes
             }
             else if (this.Root.ResolvedType.RootValue == "Func")
             {
-                return new FunctionPointerInvocation(this.FirstToken, this.Root, this.Args);
+                return new FunctionPointerInvocation(compiler, this.FirstToken, this.Root, this.Args);
             }
             else
             {

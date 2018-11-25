@@ -56,7 +56,7 @@ namespace Pastel.Nodes
         {
             this.Value = this.Value.ResolveType(varScope, compiler);
 
-            if (!PType.CheckAssignment(this.Type, this.Value.ResolvedType))
+            if (!PType.CheckAssignment(compiler, this.Type, this.Value.ResolvedType))
             {
                 throw new ParserException(this.Value.FirstToken, "Cannot assign this type to a " + this.Type);
             }

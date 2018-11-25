@@ -57,7 +57,7 @@ namespace Pastel.Nodes
 
             for (int i = 0; i < verificationLength; ++i)
             {
-                if (!PType.CheckAssignmentWithTemplateOutput(expectedTypes[i], this.Args[i].ResolvedType, templateLookup))
+                if (!PType.CheckAssignmentWithTemplateOutput(compiler, expectedTypes[i], this.Args[i].ResolvedType, templateLookup))
                 {
                     throw new ParserException(this.Args[i].FirstToken, "Incorrect type. Expected " + expectedTypes[i] + " but found " + this.Args[i].ResolvedType + ".");
                 }
@@ -70,7 +70,7 @@ namespace Pastel.Nodes
                     PType expectedType = expectedTypes[expectedTypes.Length - 1];
                     for (int i = expectedTypes.Length; i < this.Args.Length; ++i)
                     {
-                        if (!PType.CheckAssignment(expectedType, this.Args[i].ResolvedType))
+                        if (!PType.CheckAssignment(compiler, expectedType, this.Args[i].ResolvedType))
                         {
                             throw new ParserException(this.Args[i].FirstToken, "Incorrect type. Expected " + expectedTypes[i] + " but found " + this.Args[i].ResolvedType + ".");
                         }
