@@ -107,7 +107,9 @@ namespace Pastel.Nodes
             }
             else if (this.Root is ConstructorReference)
             {
-                return new ConstructorInvocation(this.FirstToken, ((ConstructorReference)this.Root).TypeToConstruct, this.Args, this.Owner);
+                PType typeToConstruct = ((ConstructorReference)this.Root).TypeToConstruct;
+                typeToConstruct.FinalizeType(compiler);
+                return new ConstructorInvocation(this.FirstToken, typeToConstruct, this.Args, this.Owner);
             }
             else if (this.Root.ResolvedType.RootValue == "Func")
             {
