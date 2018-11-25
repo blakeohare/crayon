@@ -61,7 +61,7 @@ namespace Pastel.Nodes
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
         {
             this.Condition = this.Condition.ResolveType(varScope, compiler);
-            if (!this.Condition.ResolvedType.IsIdentical(PType.INT))
+            if (!this.Condition.ResolvedType.IsIdentical(compiler, PType.INT))
             {
                 throw new ParserException(this.Condition.FirstToken, "Only ints can be used in switch statements.");
             }

@@ -28,11 +28,11 @@
             this.Value = this.Value.ResolveType(varScope, compiler);
             this.Target = this.Target.ResolveType(varScope, compiler);
 
-            if (!PType.CheckAssignment(this.Target.ResolvedType, this.Value.ResolvedType))
+            if (!PType.CheckAssignment(compiler, this.Target.ResolvedType, this.Value.ResolvedType))
             {
                 if (this.OpToken.Value != "=" &&
-                    this.Target.ResolvedType.IsIdentical(PType.DOUBLE) &&
-                    this.Value.ResolvedType.IsIdentical(PType.INT))
+                    this.Target.ResolvedType.IsIdentical(compiler, PType.DOUBLE) &&
+                    this.Value.ResolvedType.IsIdentical(compiler, PType.INT))
                 {
                     // You can apply incremental ops such as += with an int to a float and that is fine without explicit conversion in any platform.
                 }

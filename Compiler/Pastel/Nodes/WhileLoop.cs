@@ -27,7 +27,7 @@ namespace Pastel.Nodes
         internal override void ResolveTypes(VariableScope varScope, PastelCompiler compiler)
         {
             this.Condition = this.Condition.ResolveType(varScope, compiler);
-            if (!this.Condition.ResolvedType.IsIdentical(PType.BOOL))
+            if (!this.Condition.ResolvedType.IsIdentical(compiler, PType.BOOL))
             {
                 throw new ParserException(this.Condition.FirstToken, "While loop must have a boolean condition.");
             }

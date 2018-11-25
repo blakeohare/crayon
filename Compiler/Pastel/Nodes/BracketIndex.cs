@@ -33,17 +33,17 @@ namespace Pastel.Nodes
             bool badIndex = false;
             if (rootType.RootValue == "List" || rootType.RootValue == "Array")
             {
-                badIndex = !indexType.IsIdentical(PType.INT);
+                badIndex = !indexType.IsIdentical(compiler, PType.INT);
                 this.ResolvedType = rootType.Generics[0];
             }
             else if (rootType.RootValue == "Dictionary")
             {
-                badIndex = !indexType.IsIdentical(rootType.Generics[0]);
+                badIndex = !indexType.IsIdentical(compiler, rootType.Generics[0]);
                 this.ResolvedType = rootType.Generics[1];
             }
             else if (rootType.RootValue == "string")
             {
-                badIndex = !indexType.IsIdentical(PType.INT);
+                badIndex = !indexType.IsIdentical(compiler, PType.INT);
                 this.ResolvedType = PType.CHAR;
                 if (this.Root is InlineConstant && this.Index is InlineConstant)
                 {

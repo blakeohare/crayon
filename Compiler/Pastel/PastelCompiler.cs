@@ -172,8 +172,31 @@ namespace Pastel
         {
             this.ResolveConstants();
             this.ResolveNamesAndCullUnusedCode();
+            this.ResolveSignatureTypes();
             this.ResolveTypes();
             this.ResolveWithTypeContext();
+        }
+
+        private void ResolveSignatureTypes()
+        {
+            foreach (string structName in this.StructDefinitions.Keys.OrderBy(t => t))
+            {
+                StructDefinition structDef = this.StructDefinitions[structName];
+                for (int i = 0; i < structDef.ArgTypes.Length; ++i)
+                {
+                    structDef.ArgTypes[i].FinalizeType(this);
+                }
+            }
+
+            foreach (string funcName in this.FunctionDefinitions.Keys.OrderBy(t => t))
+            {
+                FunctionDefinition funcDef = this.FunctionDefinitions[funcName];
+                funcDef.ReturnType.FinalizeType(this);
+                for (int i = 0; i < funcDef.ArgTypes.Length; ++i)
+                {
+                    funcDef.ArgTypes[i].FinalizeType(this);
+                }
+            }
         }
 
         private void ResolveConstants()

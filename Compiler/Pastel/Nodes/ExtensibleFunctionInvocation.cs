@@ -45,7 +45,7 @@ namespace Pastel.Nodes
 
             for (int i = 0; i < this.Args.Length; ++i)
             {
-                if (!PType.CheckAssignment(argTypes[i], this.Args[i].ResolvedType))
+                if (!PType.CheckAssignment(compiler, argTypes[i], this.Args[i].ResolvedType))
                 {
                     throw new ParserException(this.Args[i].FirstToken, "Invalid argument type. Expected '" + argTypes[i] + "' but found '" + this.Args[i].ResolvedType + "'.");
                 }
