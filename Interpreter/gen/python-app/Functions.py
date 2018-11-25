@@ -2089,6 +2089,7 @@ def v_interpretImpl(v_vm, v_executionContextId):
                                 else:
                                   v_list1[2].append(v_value)
                                 v_i += 1
+                              v_list1[1] += v_argCount
                               v_output = v_VALUE_NULL
                           elif (v_argCount > 0):
                             v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list choice method", 0, v_argCount))
