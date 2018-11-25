@@ -50,7 +50,7 @@ namespace Pastel.Transpilers
                     {
                         throw new NotImplementedException();
                     }
-                    return type.RootValue;
+                    return type.TypeName;
             }
         }
 
@@ -160,7 +160,7 @@ namespace Pastel.Transpilers
         public override void TranslateConstructorInvocation(TranspilerContext sb, ConstructorInvocation constructorInvocation)
         {
             sb.Append("new ");
-            sb.Append(constructorInvocation.Type.RootValue);
+            sb.Append(this.TranslateType(constructorInvocation.Type));
             sb.Append('(');
             Expression[] args = constructorInvocation.Args;
             for (int i = 0; i < args.Length; ++i)
