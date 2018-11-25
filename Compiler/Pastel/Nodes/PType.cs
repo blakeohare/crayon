@@ -94,6 +94,7 @@ namespace Pastel.Nodes
                     case "bool":
                     case "string":
                     case "number":
+                    case "byte":
                         this.Category = TypeCategory.PRIMITIVE;
                         break;
 
