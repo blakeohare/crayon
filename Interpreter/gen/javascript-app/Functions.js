@@ -2705,6 +2705,7 @@ var v_interpretImpl = function(v_vm, v_executionContextId) {
 												}
 												v_i += 1;
 											}
+											v_list1[1] += v_argCount;
 											v_output = v_VALUE_NULL;
 										}
 										break;
