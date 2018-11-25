@@ -322,28 +322,15 @@ namespace Pastel
                 }
             }
 
-            string token1 = tokens.PeekAhead(0);
-            string token2 = tokens.PeekAhead(1);
-            string token3 = tokens.PeekAhead(2);
-
-            string DEBUG_HELP = (token1 + " " + (token2 ?? "") + " " + (token3 ?? "")).Trim();
-            if (DEBUG_HELP == "set me to stuff")
+            int currentState = tokens.SnapshotState();
+            PType assignmentType = PType.TryParse(tokens);
+            if (assignmentType != null && tokens.HasMore && IsValidName(tokens.PeekValue()))
             {
-
-            }
-
-            if (
-                (token2 == "<" && IsValidName(token1) && IsValidName(token3)) || // Type<G1, G2> var = ...
-                (token3 == "=" && IsValidName(token1) && IsValidName(token2)) || // Type var = ...
-                (token2 == "[" && token3 == "]" && IsValidName(token1)) || // Type[] ...
-                (token3 == ";" && IsValidName(token1) && IsValidName(token2))) // Type var;
-            {
-                PType type = PType.Parse(tokens);
                 Token variableName = EnsureTokenIsValidName(tokens.Pop(), "Invalid variable name");
 
                 if (tokens.PopIfPresent(";"))
                 {
-                    return new VariableDeclaration(type, variableName, null, null, this.context);
+                    return new VariableDeclaration(assignmentType, variableName, null, null, this.context);
                 }
 
                 Token equalsToken = tokens.PopExpected("=");
@@ -352,8 +339,9 @@ namespace Pastel
                 {
                     tokens.PopExpected(";");
                 }
-                return new VariableDeclaration(type, variableName, equalsToken, assignmentValue, this.context);
+                return new VariableDeclaration(assignmentType, variableName, equalsToken, assignmentValue, this.context);
             }
+            tokens.RevertState(currentState);
 
             Expression expression = ParseExpression(tokens);
 
