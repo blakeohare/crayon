@@ -104,17 +104,17 @@ namespace Pastel.Nodes
         {
             this.Root = this.Root.ResolveType(varScope, compiler);
 
-            string possibleStructName = this.Root.ResolvedType.RootValue;
-            StructDefinition structDef = compiler.GetStructDefinition(possibleStructName);
-            if (structDef != null)
+            PType rootType = this.Root.ResolvedType;
+            if (rootType.IsStruct)
             {
-                this.StructType = structDef;
+                rootType.FinalizeType(compiler);
+                this.StructType = rootType.StructDef;
                 int fieldIndex;
-                if (!structDef.ArgIndexByName.TryGetValue(this.FieldName.Value, out fieldIndex))
+                if (!this.StructType.ArgIndexByName.TryGetValue(this.FieldName.Value, out fieldIndex))
                 {
-                    throw new ParserException(this.FieldName, "The struct '" + structDef.NameToken.Value + "' does not have a field called '" + this.FieldName.Value + "'");
+                    throw new ParserException(this.FieldName, "The struct '" + this.StructType.NameToken.Value + "' does not have a field called '" + this.FieldName.Value + "'");
                 }
-                this.ResolvedType = structDef.ArgTypes[fieldIndex];
+                this.ResolvedType = this.StructType.ArgTypes[fieldIndex];
                 return this;
             }
 
