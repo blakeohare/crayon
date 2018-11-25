@@ -102,7 +102,6 @@ namespace Pastel
             return null;
         }
 
-
         internal FunctionDefinition GetFunctionDefinition(string name)
         {
             if (this.FunctionDefinitions.ContainsKey(name))
@@ -307,20 +306,6 @@ namespace Pastel
             return Indent(ctx.FlushAndClearBuffer().Trim(), ctx.Transpiler.NewLine, indent);
         }
 
-        // Delete once migrated to PastelContext
-        internal string GetFunctionCodeTEMP(Transpilers.TranspilerContext ctx, string indent)
-        {
-            foreach (FunctionDefinition fd in this.GetFunctionDefinitions())
-            {
-                if (!alreadySerializedFunctions.Contains(fd))
-                {
-                    this.Transpiler.GenerateCodeForFunction(ctx, fd);
-                    ctx.Append(this.Transpiler.NewLine);
-                }
-            }
-
-            return Indent(ctx.FlushAndClearBuffer().Trim(), this.Transpiler.NewLine, indent);
-        }
         internal Dictionary<string, string> GetFunctionCodeAsLookupTEMP(Transpilers.TranspilerContext ctx, string indent)
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
