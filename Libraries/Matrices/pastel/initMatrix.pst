@@ -6,23 +6,23 @@
     Native data array already allocated but unpopulated.
 
 */
-Value lib_matrices_initMatrix(VmContext vm, Array<Value> args) {
+VM.Value lib_matrices_initMatrix(VM.VmContext vm, Array<VM.Value> args) {
 
-    ObjectInstance obj = (ObjectInstance) args[0].internalValue;
+    VM.ObjectInstance obj = (VM.ObjectInstance) args[0].internalValue;
     Array<object> nd = obj.nativeData;
-    if (args[1].type != Types.INTEGER || args[2].type != Types.INTEGER) {
+    if (args[1].type != VM.Types.INTEGER || args[2].type != VM.Types.INTEGER) {
         nd[5] = "Width and height must be integers.";
         return vm.globalTrue;
     }
 
-    int width = (int)args[1].internalValue;
-    int height = (int)args[2].internalValue;
+    int width = (int) args[1].internalValue;
+    int height = (int) args[2].internalValue;
     int size = width * height;
     Array<double> data = new Array<double>(size);
     nd[0] = data;
     nd[1] = width;
     nd[2] = height;
-    nd[3] = new Array<Value>(size);
+    nd[3] = new Array<VM.Value>(size);
     nd[4] = false;
     nd[5] = "";
     nd[6] = new Array<double>(size);

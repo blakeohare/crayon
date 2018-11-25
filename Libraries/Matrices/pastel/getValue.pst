@@ -4,11 +4,11 @@
     args[2] -> row
 
 */
-Value lib_matrices_getValue(VmContext vm, Array<Value> args) {
+VM.Value lib_matrices_getValue(VM.VmContext vm, Array<VM.Value> args) {
 
-    ObjectInstance obj = (ObjectInstance) args[0].internalValue;
+    VM.ObjectInstance obj = (VM.ObjectInstance) args[0].internalValue;
     Array<object> nd = obj.nativeData;
-    if (args[1].type != Types.INTEGER || args[2].type != Types.INTEGER) {
+    if (args[1].type != VM.Types.INTEGER || args[2].type != VM.Types.INTEGER) {
         nd[5] = "Invalid coordinates";
         return vm.globalNull;
     }
@@ -22,14 +22,14 @@ Value lib_matrices_getValue(VmContext vm, Array<Value> args) {
         return vm.globalNull;
     }
 
-    Array<Value> valueArray = (Array<Value>)nd[3];
+    Array<VM.Value> valueArray = (Array<VM.Value>) nd[3];
     if (!(bool) nd[4]) {
         Array<double> data = (Array<double>) nd[0];
         int length = width * height;
         int i = 0;
         while (i < length) {
             // TODO: inline this buildFLoat
-            valueArray[i] = buildFloat(vm.globals, data[i]);
+            valueArray[i] = VM.buildFloat(vm.globals, data[i]);
             i += 1;
         }
     }

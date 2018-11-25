@@ -5,11 +5,11 @@
     args[3] -> value
 
 */
-Value lib_matrices_setValue(VmContext vm, Array<Value> args) {
+VM.Value lib_matrices_setValue(VM.VmContext vm, Array<VM.Value> args) {
 
-    ObjectInstance obj = (ObjectInstance) args[0].internalValue;
+    VM.ObjectInstance obj = (VM.ObjectInstance) args[0].internalValue;
     Array<object> nd = obj.nativeData;
-    if (args[1].type != Types.INTEGER || args[2].type != Types.INTEGER) {
+    if (args[1].type != VM.Types.INTEGER || args[2].type != VM.Types.INTEGER) {
         nd[5] = "Invalid coordinates";
         return vm.globalNull;
     }
@@ -24,9 +24,9 @@ Value lib_matrices_setValue(VmContext vm, Array<Value> args) {
     }
 
     double value = 0.0;
-    if (args[3].type == Types.FLOAT) {
+    if (args[3].type == VM.Types.FLOAT) {
         value = (double) args[3].internalValue;
-    } else if (args[3].type == Types.INTEGER) {
+    } else if (args[3].type == VM.Types.INTEGER) {
         value = 0.0 + (int) args[3].internalValue;
     } else {
         nd[5] = "Value must be a number.";
@@ -34,9 +34,9 @@ Value lib_matrices_setValue(VmContext vm, Array<Value> args) {
     }
     int index = y * width + x;
     Array<double> data = (Array<double>) nd[0];
-    Array<Value> valueArray = (Array<Value>)nd[3];
+    Array<VM.Value> valueArray = (Array<VM.Value>)nd[3];
     data[index] = value;
-    valueArray[index] = buildFloat(vm.globals, value);
+    valueArray[index] = VM.buildFloat(vm.globals, value);
 
     return args[0];
 }

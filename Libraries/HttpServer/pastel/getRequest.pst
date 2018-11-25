@@ -7,16 +7,16 @@
     list[2] -> User IP
     list[3] -> User Agent
 */
-Value lib_httpserver_getRequest(VmContext vm, Array<Value> args) {
+VM.Value lib_httpserver_getRequest(VM.VmContext vm, Array<VM.Value> args) {
 
     Native._lib_httpserver_getRequest(Core.StringBuffer16);
 
-    ListImpl output = (ListImpl) args[0].internalValue;
+    VM.ListImpl output = (VM.ListImpl) args[0].internalValue;
 
-    addToList(output, buildString(vm.globals, Core.StringBuffer16[0]));
-    addToList(output, buildString(vm.globals, Core.StringBuffer16[1]));
-    addToList(output, buildString(vm.globals, Core.StringBuffer16[2]));
-    addToList(output, buildString(vm.globals, Core.StringBuffer16[3]));
+    VM.addToList(output, VM.buildString(vm.globals, Core.StringBuffer16[0]));
+    VM.addToList(output, VM.buildString(vm.globals, Core.StringBuffer16[1]));
+    VM.addToList(output, VM.buildString(vm.globals, Core.StringBuffer16[2]));
+    VM.addToList(output, VM.buildString(vm.globals, Core.StringBuffer16[3]));
 
     return vm.globalNull;
 }

@@ -6,6 +6,6 @@
     - Mobile: '/'
     - Everything else: absolute path of where the host platform thinks the current directory is.
 */
-Value lib_fileiocommon_getCurrentDirectory(VmContext vm, Array<Value> args) {
-    return buildString(vm.globals, Native._lib_fileiocommon_getCurrentDirectory());
+VM.Value lib_fileiocommon_getCurrentDirectory(VM.VmContext vm, Array<VM.Value> args) {
+    return VM.buildString(vm.globals, Native._lib_fileiocommon_getCurrentDirectory());
 }

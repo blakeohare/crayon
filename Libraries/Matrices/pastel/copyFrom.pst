@@ -3,19 +3,19 @@
     args[1] -> copy-from matrix
     args[2] -> is copy-from matrix a matrix instance
 */
-Value lib_matrices_copyFrom(VmContext vm, Array<Value> args) {
-    ObjectInstance obj = (ObjectInstance) args[0].internalValue;
+VM.Value lib_matrices_copyFrom(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance obj = (VM.ObjectInstance) args[0].internalValue;
     Array<object> nd1 = obj.nativeData;
-    obj = (ObjectInstance) args[1].internalValue;
+    obj = (VM.ObjectInstance) args[1].internalValue;
     Array<object> nd2 = obj.nativeData;
 
-    if (!(bool)args[2].internalValue) {
+    if (!(bool) args[2].internalValue) {
         nd1[5] = "value was not a matrix";
         return vm.globalNull;
     }
 
-    if ((int)nd1[1] != (int)nd2[1] ||
-        (int)nd1[2] != (int)nd2[2]) {
+    if ((int) nd1[1] != (int) nd2[1] ||
+        (int) nd1[2] != (int) nd2[2]) {
 
         nd1[5] = "Matrices were not the same size.";
         return vm.globalNull;

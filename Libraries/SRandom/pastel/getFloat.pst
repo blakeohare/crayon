@@ -1,8 +1,8 @@
 /*
     args[0] -> integer pointer (integer in a list) to the active seed value.
 */
-Value lib_srandom_getFloat(VmContext vm, Array<Value> args) {
-    ListImpl intPtr = (ListImpl)args[0].internalValue;
+VM.Value lib_srandom_getFloat(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ListImpl intPtr = (VM.ListImpl)args[0].internalValue;
     int value1 = 0;
     if (@ext_boolean("ARRAY_IS_LIST")) {
         value1 = (((int)intPtr.list[0].internalValue * 20077) + 12345) & 65535;
@@ -12,12 +12,12 @@ Value lib_srandom_getFloat(VmContext vm, Array<Value> args) {
     int value2 = ((value1 * 20077) + 12345) & 65535;
     int value3 = ((value2 * 20077) + 12345) & 65535;
     if (@ext_boolean("ARRAY_IS_LIST")) {
-        intPtr.list[0] = buildInteger(vm.globals, value3);
+        intPtr.list[0] = VM.buildInteger(vm.globals, value3);
     } else {
-        intPtr.array[0] = buildInteger(vm.globals, value3);
+        intPtr.array[0] = VM.buildInteger(vm.globals, value3);
     }
     value1 = (value1 >> 8) & 255; // 8 bits
     value2 = (value2 >> 8) & 255; // 8 bits
     value3 = (value3 >> 8) & 255; // 8 bits
-    return buildFloat(vm.globals, Core.FloatDivision((value1 << 16) | (value2 << 8) | value3, 16777216.0));
+    return VM.buildFloat(vm.globals, Core.FloatDivision((value1 << 16) | (value2 << 8) | value3, 16777216.0));
 }

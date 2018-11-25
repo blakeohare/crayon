@@ -5,18 +5,18 @@
 
     outputs nothing
 */
-Value lib_gamepad_get_axis_2d_state(VmContext vm, Array<Value> args) {
-    Value arg1 = args[0];
-    Value arg2 = args[1];
-    Value arg3 = args[2];
+VM.Value lib_gamepad_get_axis_2d_state(VM.VmContext vm, Array<VM.Value> args) {
+    VM.Value arg1 = args[0];
+    VM.Value arg2 = args[1];
+    VM.Value arg3 = args[2];
     if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
-        ObjectInstance objInstance1 = (ObjectInstance) arg1.internalValue;
+        VM.ObjectInstance objInstance1 = (VM.ObjectInstance) arg1.internalValue;
         int int1 = (int) arg2.internalValue;
-        ListImpl list1 = (ListImpl) arg3.internalValue;
+        VM.ListImpl list1 = (VM.ListImpl) arg3.internalValue;
         Native._lib_gamepad_get_axis_2d_state(objInstance1.nativeData[0], int1, Core.IntBuffer16);
-        clearList(list1);
-        addToList(list1, buildInteger(vm.globals, Core.IntBuffer16[0]));
-        addToList(list1, buildInteger(vm.globals, Core.IntBuffer16[1]));
+        VM.clearList(list1);
+        VM.addToList(list1, VM.buildInteger(vm.globals, Core.IntBuffer16[0]));
+        VM.addToList(list1, VM.buildInteger(vm.globals, Core.IntBuffer16[1]));
     }
     return vm.globalNull;
 }

@@ -4,9 +4,9 @@
     args[0] -> a string
     args[1] -> Connection object w/ connection in nativeData. Needed by PHP.
 */
-Value lib_mysql_sanitize(VmContext vm, Array<Value> args) {
+VM.Value lib_mysql_sanitize(VM.VmContext vm, Array<VM.Value> args) {
     string string1 = (string) args[0].internalValue;
-    ObjectInstance objInstance1 = (ObjectInstance) args[1].internalValue;
+    VM.ObjectInstance objInstance1 = (VM.ObjectInstance) args[1].internalValue;
 
-    return buildString(vm.globals, Native._lib_mysql_sanitize(string1, objInstance1.nativeData[0]));
+    return VM.buildString(vm.globals, Native._lib_mysql_sanitize(string1, objInstance1.nativeData[0]));
 }

@@ -9,11 +9,11 @@
     1 - no screen is open
     -1 - unknown error
 */
-Value lib_gamegifcap_screenCap(VmContext vm, Array<Value> args) {
-    ObjectInstance oiCtx = (ObjectInstance) args[0].internalValue;
-    ObjectInstance oiGw = (ObjectInstance) args[1].internalValue;
+VM.Value lib_gamegifcap_screenCap(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance oiCtx = (VM.ObjectInstance) args[0].internalValue;
+    VM.ObjectInstance oiGw = (VM.ObjectInstance) args[1].internalValue;
 
     int sc = Native._lib_gamegifcap_screenCap(oiCtx.nativeData[0], oiGw.nativeData[0]);
 
-    return buildInteger(vm.globals, sc);
+    return VM.buildInteger(vm.globals, sc);
 }

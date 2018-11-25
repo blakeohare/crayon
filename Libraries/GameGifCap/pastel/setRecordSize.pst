@@ -5,8 +5,8 @@
     args[1]: width
     args[2]: height
 */
-Value lib_gamegifcap_setRecordSize(VmContext vm, Array<Value> args) {
-    ObjectInstance oi = (ObjectInstance) args[0].internalValue;
+VM.Value lib_gamegifcap_setRecordSize(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance oi = (VM.ObjectInstance) args[0].internalValue;
     int w = (int)args[1].internalValue;
     int h = (int)args[2].internalValue;
     Native._lib_gamegifcap_setRecordSize(oi.nativeData[0], w, h);

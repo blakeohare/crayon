@@ -11,13 +11,13 @@
         1 --> ease out (reverse progress)
         2 --> ease in then out
 */
-Value lib_easing_interpolate(VmContext vm, Array<Value> args) {
-    Value arg2 = args[1];
-    Value arg3 = args[2];
-    Value arg4 = args[3];
-    Value arg5 = args[4];
-    Value arg6 = args[5];
-    ObjectInstance o = (ObjectInstance) args[0].internalValue;
+VM.Value lib_easing_interpolate(VM.VmContext vm, Array<VM.Value> args) {
+    VM.Value arg2 = args[1];
+    VM.Value arg3 = args[2];
+    VM.Value arg4 = args[3];
+    VM.Value arg5 = args[4];
+    VM.Value arg6 = args[5];
+    VM.ObjectInstance o = (VM.ObjectInstance) args[0].internalValue;
     EasingSampling es = (EasingSampling) o.nativeObject;
     Array<double> samples = es.samples;
     int len = es.sampleCount;
@@ -27,10 +27,10 @@ Value lib_easing_interpolate(VmContext vm, Array<Value> args) {
     double float3 = 0.0;
 
     // current
-    if (arg4.type == Types.INTEGER) {
+    if (arg4.type == VM.Types.INTEGER) {
         float1 = 0.0 + (int) arg4.internalValue;
     } else {
-        if (arg4.type == Types.FLOAT) {
+        if (arg4.type == VM.Types.FLOAT) {
             float1 = (double) arg4.internalValue;
         } else {
             return vm.globals.valueNull;
@@ -38,9 +38,9 @@ Value lib_easing_interpolate(VmContext vm, Array<Value> args) {
     }
 
     // duration
-    if (arg5.type == Types.INTEGER) {
+    if (arg5.type == VM.Types.INTEGER) {
         float2 = 0.0 + (int) arg5.internalValue;
-    } else if (arg5.type == Types.FLOAT) {
+    } else if (arg5.type == VM.Types.FLOAT) {
         float2 = (double) arg5.internalValue;
     } else {
         return vm.globals.valueNull;
@@ -63,11 +63,9 @@ Value lib_easing_interpolate(VmContext vm, Array<Value> args) {
             // do normal ease-in progression twice as fast.
             float1 *= 2.0;
         }
-    } else {
-        if (int1 == 1) {
-            float1 = float2 - float1;
-            bool1 = true;
-        }
+    } else if (int1 == 1) {
+        float1 = float2 - float1;
+        bool1 = true;
     }
 
     if (float2 == 0) {
@@ -98,16 +96,16 @@ Value lib_easing_interpolate(VmContext vm, Array<Value> args) {
             }
         }
     }
-    if (arg2.type == Types.INTEGER) {
+    if (arg2.type == VM.Types.INTEGER) {
         float2 = 0.0 + (int) arg2.internalValue;
-    } else if (arg2.type == Types.FLOAT) {
+    } else if (arg2.type == VM.Types.FLOAT) {
         float2 = (double) arg2.internalValue;
     } else {
         return vm.globals.valueNull;
     }
-    if (arg3.type == Types.INTEGER) {
+    if (arg3.type == VM.Types.INTEGER) {
         float3 = 0.0 + (int) arg3.internalValue;
-    } else if (arg3.type == Types.FLOAT) {
+    } else if (arg3.type == VM.Types.FLOAT) {
         float3 = (double) arg3.internalValue;
     } else {
         return vm.globals.valueNull;
@@ -120,9 +118,9 @@ Value lib_easing_interpolate(VmContext vm, Array<Value> args) {
     float1 = (float1 * float3) + ((1 - float1) * float2);
 
     // integer output desired?
-    if (arg6.type == Types.BOOLEAN && (bool) arg6.internalValue) {
-        return buildInteger(vm.globals, Core.Int(float1 + 0.5));
+    if (arg6.type == VM.Types.BOOLEAN && (bool) arg6.internalValue) {
+        return VM.buildInteger(vm.globals, Core.Int(float1 + 0.5));
     }
 
-    return buildFloat(vm.globals, float1);
+    return VM.buildFloat(vm.globals, float1);
 }

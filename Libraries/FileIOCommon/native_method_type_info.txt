@@ -55,8 +55,8 @@ int _lib_fileiocommon_fileRead(
 	string wellFormedSandboxedPath,
 	bool readDataAsBytes,
 	Array<string> stringOut,
-	Array<Value> integers,
-	List<Value> outputListForBytes);
+	Array<VM.Value> integers,
+	List<VM.Value> outputListForBytes);
 
 // only one of the last two params are set
 int _lib_fileiocommon_fileWrite(

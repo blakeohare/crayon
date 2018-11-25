@@ -2,9 +2,9 @@
     args[0] -> (ObjectInstance) child - already instantiated, but not in UI tree
     args[1] -> (ObjectInstance) parent - already instantiated
 */
-Value lib_nori_addChildToParent(VmContext vm, Array<Value> args) {
-    ObjectInstance child = (ObjectInstance) args[0].internalValue;
-    ObjectInstance parent = (ObjectInstance) args[1].internalValue;
+VM.Value lib_nori_addChildToParent(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance child = (VM.ObjectInstance) args[0].internalValue;
+    VM.ObjectInstance parent = (VM.ObjectInstance) args[1].internalValue;
     Native._lib_nori_addChildToParent(child.nativeData[0], parent.nativeData[0]);
     return vm.globalNull;
 }

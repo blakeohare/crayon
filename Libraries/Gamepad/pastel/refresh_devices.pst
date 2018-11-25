@@ -1,4 +1,4 @@
-﻿Value lib_gamepad_refresh_devices(VmContext vm, Array<Value> args) {
+﻿VM.Value lib_gamepad_refresh_devices(VM.VmContext vm, Array<VM.Value> args) {
     if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
         // No-op on most platforms.
         Native._lib_gamepad_refresh_devices();

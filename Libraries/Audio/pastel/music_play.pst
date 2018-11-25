@@ -7,10 +7,10 @@
 
     return value: true if the file was found, false if not.
 */
-Value lib_audio_music_play(VmContext vm, Array<Value> args) {
-    return buildBoolean(vm.globals,
+VM.Value lib_audio_music_play(VM.VmContext vm, Array<VM.Value> args) {
+    return VM.buildBoolean(vm.globals,
         lib_audio_music_playImpl(
-            (ObjectInstance) args[0].internalValue, // uninitialized music object instance
+            (VM.ObjectInstance) args[0].internalValue, // uninitialized music object instance
             (bool) args[1].internalValue, // is embeded resource
             (string) args[2].internalValue, // path to file
             (double) args[3].internalValue, // volume ratio
@@ -18,7 +18,7 @@ Value lib_audio_music_play(VmContext vm, Array<Value> args) {
             ) != -1);
 }
 
-int lib_audio_music_playImpl(ObjectInstance musicObject, bool isResource, string path, double startingVolume, bool isLoop) {
+int lib_audio_music_playImpl(VM.ObjectInstance musicObject, bool isResource, string path, double startingVolume, bool isLoop) {
     Native._lib_audio_musicSetVolume(startingVolume);
     object nativeObject = null;
     if (musicObject.nativeData != null) {

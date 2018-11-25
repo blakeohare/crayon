@@ -5,11 +5,11 @@
     args[3] -> output matrix is a matrix
 
 */
-Value lib_matrices_multiplyScalar(VmContext vm, Array<Value> args) {
+VM.Value lib_matrices_multiplyScalar(VM.VmContext vm, Array<VM.Value> args) {
 
-    ObjectInstance obj = (ObjectInstance) args[0].internalValue;
+    VM.ObjectInstance obj = (VM.ObjectInstance) args[0].internalValue;
     Array<object> nd = obj.nativeData;
-    bool isInline = args[2].type == Types.NULL;
+    bool isInline = args[2].type == VM.Types.NULL;
     Array<double> m1data = (Array<double>) nd[0];
     Array<double> m2data = m1data;
     if (isInline) {
@@ -19,7 +19,7 @@ Value lib_matrices_multiplyScalar(VmContext vm, Array<Value> args) {
         return vm.globalNull;
     } else {
 
-        obj = (ObjectInstance) args[2].internalValue;
+        obj = (VM.ObjectInstance) args[2].internalValue;
         Array<object> nd2 = obj.nativeData;
         if ((int) nd[1] != (int) nd2[1] || (int) nd[2] != (int) nd2[2]) {
             nd[5] = "output matrix must be the same size.";
@@ -31,9 +31,9 @@ Value lib_matrices_multiplyScalar(VmContext vm, Array<Value> args) {
     }
 
     double scalar = 0.0;
-    if (args[1].type == Types.FLOAT) {
+    if (args[1].type == VM.Types.FLOAT) {
         scalar = (double) args[1].internalValue;
-    } else if (args[1].type == Types.INTEGER) {
+    } else if (args[1].type == VM.Types.INTEGER) {
         scalar = 0.0 + (int) args[1].internalValue;
     } else {
         nd[5] = "scalar must be a number";

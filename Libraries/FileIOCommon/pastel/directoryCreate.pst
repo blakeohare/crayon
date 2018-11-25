@@ -7,14 +7,14 @@
         true -> create all parent directories if they don't currently exist
         false -> fail if the parent directory does not exist
 */
-Value lib_fileiocommon_directoryCreate(VmContext vm, Array<Value> args) {
+VM.Value lib_fileiocommon_directoryCreate(VM.VmContext vm, Array<VM.Value> args) {
     bool bool1 = false;
     int i = 0;
     int int1 = 0;
     List<string> stringList1 = null;
-    Value hostObject = args[0];
-    string path = ((string) args[1].internalValue);
-    if (((bool) args[2].internalValue)) {
+    VM.Value hostObject = args[0];
+    string path = (string) args[1].internalValue;
+    if ((bool) args[2].internalValue) {
         int1 = 0;
         if (!Native._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(hostObject), Native._lib_fileiocommon_getDirRoot(path))) {
             int1 = 4;
@@ -42,5 +42,5 @@ Value lib_fileiocommon_directoryCreate(VmContext vm, Array<Value> args) {
     } else {
         int1 = Native._lib_fileiocommon_directoryCreate(lib_fileiocommon_getDiskObject(hostObject), path);
     }
-    return buildInteger(vm.globals, int1);
+    return VM.buildInteger(vm.globals, int1);
 }

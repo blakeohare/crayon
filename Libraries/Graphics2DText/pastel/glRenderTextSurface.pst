@@ -30,9 +30,9 @@
 
     no return value
 */
-Value lib_graphics2dtext_glRenderTextSurface(VmContext vm, Array<Value> args) {
+VM.Value lib_graphics2dtext_glRenderTextSurface(VM.VmContext vm, Array<VM.Value> args) {
     if (@ext_boolean("LIB_GRAPHICS2DTEXT_IS_OPENGL")) {
-        Array<object> textureNativeData = Core.ForceParens((ObjectInstance)args[0].internalValue).nativeData;
+        Array<object> textureNativeData = Core.ForceParens((VM.ObjectInstance)args[0].internalValue).nativeData;
         Array<int> xs = (Array<int>) textureNativeData[1];
         Array<int> ys = (Array<int>) textureNativeData[2];
         int charCount = (int) textureNativeData[4];
@@ -43,15 +43,15 @@ Value lib_graphics2dtext_glRenderTextSurface(VmContext vm, Array<Value> args) {
         int topOffset = (int) args[4].internalValue;
         int alpha = (int) args[5].internalValue;
 
-        ListImpl tileValues = (ListImpl) args[1].internalValue;
+        VM.ListImpl tileValues = (VM.ListImpl) args[1].internalValue;
         Array<object> tileNativeData = null;
-        Array<object> queueData = Core.ForceParens((ObjectInstance)args[2].internalValue).nativeData;
+        Array<object> queueData = Core.ForceParens((VM.ObjectInstance)args[2].internalValue).nativeData;
         Array<int> queue = (Array<int>) queueData[0];
         int queueLength = (int) queueData[1];
         int queueCapacity = queue.Size();
         int requiredCapacity = queueLength + charCount * 16;
         if (requiredCapacity > queueCapacity) {
-            queue = reallocIntArray(queue, requiredCapacity);
+            queue = VM.reallocIntArray(queue, requiredCapacity);
             queueData[0] = queue;
         }
         queueData[1] = requiredCapacity;
@@ -60,7 +60,7 @@ Value lib_graphics2dtext_glRenderTextSurface(VmContext vm, Array<Value> args) {
         int y = 0;
         int textureId = 0;
         for (int i = 0; i < charCount; i += 1) {
-            tileNativeData = Core.ForceParens((ObjectInstance) getItemFromList(tileValues, i).internalValue).nativeData;
+            tileNativeData = Core.ForceParens((VM.ObjectInstance) VM.getItemFromList(tileValues, i).internalValue).nativeData;
             queue[index] = 8; // draw texture direct
             textureId = (int) tileNativeData[5];
             if (textureId == -1) {

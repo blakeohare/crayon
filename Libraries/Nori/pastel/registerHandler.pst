@@ -3,8 +3,8 @@
     args[1] -> (string) type
     args[2] -> (int) handler ID#
 */
-Value lib_nori_registerHandler(VmContext vm, Array<Value> args) {
-    ObjectInstance element = (ObjectInstance) args[0].internalValue;
+VM.Value lib_nori_registerHandler(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance element = (VM.ObjectInstance) args[0].internalValue;
     Native._lib_nori_registerHandler(
         element.nativeData[0],
         (int) args[1].internalValue,

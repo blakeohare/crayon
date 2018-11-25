@@ -12,17 +12,16 @@
         0 -> response should be text
         1 -> response should be a byte array
 */
-
-Value lib_http_sendRequest(VmContext vm, Array<Value> args) {
-    Value body = args[5];
-    ObjectInstance objInstance1 = (ObjectInstance) args[0].internalValue;
+VM.Value lib_http_sendRequest(VM.VmContext vm, Array<VM.Value> args) {
+    VM.Value body = args[5];
+    VM.ObjectInstance objInstance1 = (VM.ObjectInstance) args[0].internalValue;
     Array<object> objArray1 = new Array<object>(3);
     objInstance1.nativeData = objArray1;
     objArray1[2] = false;
     string method = (string) args[2].internalValue;
     string url = (string) args[3].internalValue;
     List<string> headers = new List<string>(); // alternating names and values
-    ListImpl list1 = (ListImpl) args[4].internalValue;
+    VM.ListImpl list1 = (VM.ListImpl) args[4].internalValue;
     for (int i = 0; i < list1.size; i += 1) {
         if (@ext_boolean("ARRAY_IS_LIST")) {
             headers.Add((string) list1.list[i].internalValue);
@@ -32,10 +31,10 @@ Value lib_http_sendRequest(VmContext vm, Array<Value> args) {
     }
     object bodyRawObject = body.internalValue;
     int bodyState = 0; // body is not defined
-    if (body.type == Types.STRING) {
+    if (body.type == VM.Types.STRING) {
         bodyState = 1; // body is a string
-    } else if (body.type == Types.INSTANCE) {
-        objInstance1 = (ObjectInstance) bodyRawObject;
+    } else if (body.type == VM.Types.INSTANCE) {
+        objInstance1 = (VM.ObjectInstance) bodyRawObject;
         bodyRawObject = objInstance1.nativeData[0];
         bodyState = 2; // body is an array of bytes
     } else {
@@ -57,9 +56,9 @@ Value lib_http_sendRequest(VmContext vm, Array<Value> args) {
     } else {
         // synchronous request
         if (Native._lib_http_sendRequestSynchronous(
-            objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText, vm_getCurrentExecutionContextId(vm))) {
+            objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText, VM.vm_getCurrentExecutionContextId(vm))) {
 
-            vm_suspend(vm, 1);
+            VM.vm_suspend(vm, 1);
         }
     }
 

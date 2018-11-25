@@ -5,9 +5,9 @@
     args[3] -> (object) value
 
 */
-Value lib_nori_invalidateElementProperty(VmContext vm, Array<Value> args) {
+VM.Value lib_nori_invalidateElementProperty(VM.VmContext vm, Array<VM.Value> args) {
     // TODO: define struct
-    ObjectInstance o = (ObjectInstance) args[1].internalValue;
+    VM.ObjectInstance o = (VM.ObjectInstance) args[1].internalValue;
     object nativeElement = o.nativeData[0];
     int type = (int) args[0].internalValue;
     int key = (int) args[2].internalValue;
@@ -15,18 +15,18 @@ Value lib_nori_invalidateElementProperty(VmContext vm, Array<Value> args) {
     // TODO: make this less ugly.
     // this is weird because Java does weird stuff based on how Value.internalValue is being accessed.
     object value = null;
-    Value v = args[3];
-    if (v.type == Types.INTEGER) {
+    VM.Value v = args[3];
+    if (v.type == VM.Types.INTEGER) {
         int iValue = (int) v.internalValue;
         value = iValue;
-    } else if (v.type == Types.BOOLEAN) {
+    } else if (v.type == VM.Types.BOOLEAN) {
         bool bValue = (bool) v.internalValue;
         value = bValue;
-    } else if (v.type == Types.STRING) {
+    } else if (v.type == VM.Types.STRING) {
         string sValue = (string) v.internalValue;
         value = sValue;
-    } else if (v.type == Types.LIST) {
-        List<Value> lValue = (List<Value>) v.internalValue;
+    } else if (v.type == VM.Types.LIST) {
+        List<VM.Value> lValue = (List<VM.Value>) v.internalValue;
         value = lValue;
     } else {
         value = v.internalValue;

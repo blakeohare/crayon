@@ -2,14 +2,14 @@
     args[0] -> (ObjectInstance) window native instance, not populated
     args[1] -> (List<Value>) properties
 */
-Value lib_nori_instantiateWindow(VmContext vm, Array<Value> args) {
-    ObjectInstance window = (ObjectInstance) args[0].internalValue;
-    ListImpl properties = (ListImpl) args[1].internalValue;
-    ListImpl size = (ListImpl) getItemFromList(properties, 1).internalValue;
+VM.Value lib_nori_instantiateWindow(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance window = (VM.ObjectInstance) args[0].internalValue;
+    VM.ListImpl properties = (VM.ListImpl) args[1].internalValue;
+    VM.ListImpl size = (VM.ListImpl) VM.getItemFromList(properties, 1).internalValue;
     WindowProperties unboxed = new WindowProperties(
-        (string) getItemFromList(properties, 0).internalValue,
-        (int) getItemFromList(size, 0).internalValue,
-        (int) getItemFromList(size, 1).internalValue);
+        (string) VM.getItemFromList(properties, 0).internalValue,
+        (int) VM.getItemFromList(size, 0).internalValue,
+        (int) VM.getItemFromList(size, 1).internalValue);
     window.nativeData = new Array<object>(1);
     window.nativeData[0] = Native._lib_nori_instantiateWindow(unboxed);
     return vm.globalNull;
