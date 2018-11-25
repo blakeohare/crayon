@@ -43,6 +43,8 @@ namespace Pastel.Nodes
         public bool IsNullable { get; set; }
 
         private TypeCategory Category { get; set; }
+        public bool IsStruct { get { return this.Category == TypeCategory.STRUCT; } }
+        internal StructDefinition StructDef { get { return this.structReference; } }
 
         public PType(Token firstToken, string namespaceName, string typeName, params PType[] generics) : this(firstToken, namespaceName, typeName, new List<PType>(generics)) { }
         public PType(Token firstToken, string namespaceName, string typeName, List<PType> generics)
@@ -152,6 +154,7 @@ namespace Pastel.Nodes
         {
             if (this.isTypeFinalized) return;
             this.isTypeFinalized = true;
+
             if (this.Category == TypeCategory.STRUCT)
             {
                 if (this.Namespace == null)
