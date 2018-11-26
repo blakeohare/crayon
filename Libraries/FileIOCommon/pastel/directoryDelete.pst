@@ -6,7 +6,7 @@
 */
 VM.Value lib_fileiocommon_directoryDelete(VM.VmContext vm, Array<VM.Value> args) {
 
-    int sc = Native._lib_fileiocommon_directoryDelete(
+    int sc = Extension._lib_fileiocommon_directoryDelete(
         lib_fileiocommon_getDiskObject(args[0]),
         (string) args[1].internalValue);
 

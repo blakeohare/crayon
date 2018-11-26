@@ -13,7 +13,7 @@ VM.Value lib_gamepad_get_axis_2d_state(VM.VmContext vm, Array<VM.Value> args) {
         VM.ObjectInstance objInstance1 = (VM.ObjectInstance) arg1.internalValue;
         int int1 = (int) arg2.internalValue;
         VM.ListImpl list1 = (VM.ListImpl) arg3.internalValue;
-        Native._lib_gamepad_get_axis_2d_state(objInstance1.nativeData[0], int1, Core.IntBuffer16);
+        Extension._lib_gamepad_get_axis_2d_state(objInstance1.nativeData[0], int1, Core.IntBuffer16);
         VM.clearList(list1);
         VM.addToList(list1, VM.buildInteger(vm.globals, Core.IntBuffer16[0]));
         VM.addToList(list1, VM.buildInteger(vm.globals, Core.IntBuffer16[1]));

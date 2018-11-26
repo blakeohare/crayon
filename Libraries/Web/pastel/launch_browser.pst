@@ -3,6 +3,6 @@
 */
 VM.Value lib_web_launch_browser(VM.VmContext vm, Array<VM.Value> args) {
     string url = (string) args[0].internalValue;
-    Native._lib_web_launchBrowser(url);
+    Extension._lib_web_launchBrowser(url);
     return vm.globalNull;
 }

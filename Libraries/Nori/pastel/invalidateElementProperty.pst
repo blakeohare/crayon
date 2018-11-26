@@ -32,6 +32,6 @@ VM.Value lib_nori_invalidateElementProperty(VM.VmContext vm, Array<VM.Value> arg
         value = v.internalValue;
     }
 
-    Native._lib_nori_invalidateElementProperty(type, nativeElement, key, value);
+    Extension._lib_nori_invalidateElementProperty(type, nativeElement, key, value);
     return vm.globalNull;
 }

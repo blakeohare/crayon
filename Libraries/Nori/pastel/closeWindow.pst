@@ -3,6 +3,6 @@
 */
 VM.Value lib_nori_closeWindow(VM.VmContext vm, Array<VM.Value> args) {
     VM.ObjectInstance window = (VM.ObjectInstance) args[0].internalValue;
-    Native._lib_nori_closeWindow(window.nativeData[0]);
+    Extension._lib_nori_closeWindow(window.nativeData[0]);
     return vm.globalNull;
 }

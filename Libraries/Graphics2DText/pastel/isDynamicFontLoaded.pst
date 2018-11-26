@@ -8,7 +8,7 @@
 */
 VM.Value lib_graphics2dtext_isDynamicFontLoaded(VM.VmContext vm, Array<VM.Value> args) {
     if (@ext_boolean("IS_JAVASCRIPT")) {
-        return VM.buildBoolean(vm.globals, Native._lib_graphics2dtext_isDynamicFontLoaded());
+        return VM.buildBoolean(vm.globals, Extension._lib_graphics2dtext_isDynamicFontLoaded());
     } else {
         return vm.globalTrue;
     }

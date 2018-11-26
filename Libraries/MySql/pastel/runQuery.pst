@@ -21,7 +21,7 @@ VM.Value lib_mysql_runQuery(VM.VmContext vm, Array<VM.Value> args) {
     object object1 = objInstance1.nativeData[0];
     List<int> intList1 = new List<int>();
     List<string> stringList1 = new List<string>();
-    object object2 = Native._lib_mysql_query(object1, (string) arg3.internalValue, Core.StringBuffer16, Core.IntBuffer16, stringList1, intList1);
+    object object2 = Extension._lib_mysql_query(object1, (string) arg3.internalValue, Core.StringBuffer16, Core.IntBuffer16, stringList1, intList1);
     string errMsg = Core.StringBuffer16[0];
     if (errMsg == null) {
         List<VM.Value> list1 = (List<VM.Value>) arg4.internalValue;
@@ -31,7 +31,7 @@ VM.Value lib_mysql_runQuery(VM.VmContext vm, Array<VM.Value> args) {
             VM.ObjectInstance objInstance2 = (VM.ObjectInstance) arg2.internalValue;
             objInstance2.nativeData = new Array<object>(1);
             objInstance2.nativeData[0] = object2;
-            list1[1] = VM.buildInteger(vm.globals, Native._lib_mysql_num_rows(object2));
+            list1[1] = VM.buildInteger(vm.globals, Extension._lib_mysql_num_rows(object2));
             for (int1 = 0; int1 < stringList1.Size(); int1 += 1) {
                 list2.Add(VM.buildString(vm.globals, stringList1[int1]));
                 list2.Add(VM.buildInteger(vm.globals, intList1[int1]));

@@ -8,5 +8,5 @@ VM.Value lib_mysql_sanitize(VM.VmContext vm, Array<VM.Value> args) {
     string string1 = (string) args[0].internalValue;
     VM.ObjectInstance objInstance1 = (VM.ObjectInstance) args[1].internalValue;
 
-    return VM.buildString(vm.globals, Native._lib_mysql_sanitize(string1, objInstance1.nativeData[0]));
+    return VM.buildString(vm.globals, Extension._lib_mysql_sanitize(string1, objInstance1.nativeData[0]));
 }

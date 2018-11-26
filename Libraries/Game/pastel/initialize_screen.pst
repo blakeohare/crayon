@@ -14,7 +14,7 @@ VM.Value lib_game_initialize_screen(VM.VmContext vm, Array<VM.Value> args) {
     // instance.
     VM.ExecutionContext ec = VM.getExecutionContext(vm, VM.vm_getCurrentExecutionContextId(vm));
 
-    Native._lib_game_initialize_screen(
+    Extension._lib_game_initialize_screen(
         (int) args[0].internalValue, // game width
         (int) args[1].internalValue, // game height
         (int) args[2].internalValue, // screen width

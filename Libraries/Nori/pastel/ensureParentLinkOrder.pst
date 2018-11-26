@@ -10,6 +10,6 @@ VM.Value lib_nori_ensureParentLinkOrder(VM.VmContext vm, Array<VM.Value> args) {
     for (int i = 0; i < childrenCount; i += 1) {
         childrenElements[i] = Core.ForceParens((VM.ObjectInstance) VM.getItemFromList(children, i).internalValue).nativeData[0];
     }
-    Native._lib_nori_ensureParentLinkOrder(parentObj.nativeData[0], childrenElements);
+    Extension._lib_nori_ensureParentLinkOrder(parentObj.nativeData[0], childrenElements);
     return vm.globalNull;
 }

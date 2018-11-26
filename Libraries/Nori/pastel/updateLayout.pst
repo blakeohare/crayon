@@ -27,7 +27,7 @@ VM.Value lib_nori_updateLayout(VM.VmContext vm, Array<VM.Value> args) {
         y = (int) properties[1].internalValue;
         width = (int) properties[4].internalValue;
         height = (int) properties[5].internalValue;
-        Native._lib_nori_updateLayout(nativeObject.nativeData[0], typeId, x, y, width, height);
+        Extension._lib_nori_updateLayout(nativeObject.nativeData[0], typeId, x, y, width, height);
     }
 
     return vm.globalNull;

@@ -38,7 +38,7 @@ VM.Value lib_graphics2dtext_renderText(VM.VmContext vm, Array<VM.Value> args) {
         string text = (string) args[10].internalValue;
 
         // TODO: inline most of the above into this so that it can be trimmed.
-        object bmp = Native._lib_graphics2dtext_renderTextToSurface(
+        object bmp = Extension._lib_graphics2dtext_renderTextToSurface(
             Core.IntBuffer16,
             nativeFont,
             sourceType,

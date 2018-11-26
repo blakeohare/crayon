@@ -78,7 +78,7 @@ VM.Value lib_graphics2d_flip(VM.VmContext vm, Array<VM.Value> args) {
         // Now do the actual flipping. The bitmap is located in nativeData[3]
         object1 = objArray1[3];
         // Do the flip.
-        object1 = Native._lib_graphics2d_flipTexture(object1, bool1, bool2);
+        object1 = Extension._lib_graphics2d_flipTexture(object1, bool1, bool2);
         objArray1[3] = object1;
     }
 

@@ -5,7 +5,7 @@
 */
 VM.Value lib_nori_registerHandler(VM.VmContext vm, Array<VM.Value> args) {
     VM.ObjectInstance element = (VM.ObjectInstance) args[0].internalValue;
-    Native._lib_nori_registerHandler(
+    Extension._lib_nori_registerHandler(
         element.nativeData[0],
         (int) args[1].internalValue,
         (string) args[2].internalValue,

@@ -18,5 +18,5 @@ VM.Value lib_audio_sfx_get_state(VM.VmContext vm, Array<VM.Value> args) {
 }
 
 int lib_audio_sfx_get_stateImpl(object channel, object sfxResource, int resourceId) {
-    return Native._lib_audio_sfxGetState(channel, sfxResource, resourceId);
+    return Extension._lib_audio_sfxGetState(channel, sfxResource, resourceId);
 }

@@ -7,6 +7,6 @@
 VM.Value lib_gamegifcap_createGifContext(VM.VmContext vm, Array<VM.Value> args) {
     int ms = (int) args[1].internalValue;
     VM.ObjectInstance oi = (VM.ObjectInstance) args[0].internalValue;
-    oi.nativeData[0] = Native._lib_gamegifcap_createGifContext(ms);
+    oi.nativeData[0] = Extension._lib_gamegifcap_createGifContext(ms);
     return vm.globalNull;
 }

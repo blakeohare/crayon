@@ -2,6 +2,6 @@
     args[0]: FPS float or integer, type already verified.
 */
 VM.Value lib_game_initialize(VM.VmContext vm, Array<VM.Value> args) {
-    Native._lib_game_initialize_game_with_fps(VM.getFloat(args[0]));
+    Extension._lib_game_initialize_game_with_fps(VM.getFloat(args[0]));
     return vm.globalNull;
 }

@@ -4,7 +4,7 @@
 VM.Value lib_game_setInstance(VM.VmContext vm, Array<VM.Value> args) {
     VM.ObjectInstance o = (VM.ObjectInstance)args[0].internalValue;
     Array<object> nd = new Array<object>(1);
-    nd[0] = Native._lib_game_getNativeWindowHandle();
+    nd[0] = Extension._lib_game_getNativeWindowHandle();
     o.nativeData = nd;
     return vm.globalNull;
 }

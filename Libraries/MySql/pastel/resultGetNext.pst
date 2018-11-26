@@ -30,7 +30,7 @@ VM.Value lib_mysql_resultGetNext(VM.VmContext vm, Array<VM.Value> args) {
     }
 
     List<VM.Value> outParam = new List<VM.Value>();
-    Native._lib_mysql_getNext(object1, outParam, nameStringList, typeIntList);
+    Extension._lib_mysql_getNext(object1, outParam, nameStringList, typeIntList);
     VM.ListImpl outputList = (VM.ListImpl) arg4.internalValue;
     for (i = 0; i < outParam.Size(); i += 1) {
         VM.addToList(outputList, outParam[i]);

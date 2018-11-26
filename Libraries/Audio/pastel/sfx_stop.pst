@@ -28,6 +28,6 @@ VM.Value lib_audio_sfx_stop(VM.VmContext vm, Array<VM.Value> args) {
 }
 
 int lib_audio_sfx_stopImpl(object channel, object resource, int resourceId, bool isActivelyPlaying, bool hardStop) {
-    Native._lib_audio_sfxStop(channel, resource, resourceId, isActivelyPlaying, hardStop);
+    Extension._lib_audio_sfxStop(channel, resource, resourceId, isActivelyPlaying, hardStop);
     return 0;
 }

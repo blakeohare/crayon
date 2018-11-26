@@ -9,7 +9,7 @@
 VM.Value lib_game_getScreenInfo(VM.VmContext vm, Array<VM.Value> args) {
     VM.Value outList = args[0];
     Array<int> o = Core.IntBuffer16;
-    if (Native._lib_game_getScreenInfo(o)) {
+    if (Extension._lib_game_getScreenInfo(o)) {
         VM.ListImpl output = (VM.ListImpl) outList.internalValue;
         VM.clearList(output);
         VM.addToList(output, VM.buildBoolean(vm.globals, o[0] == 1));

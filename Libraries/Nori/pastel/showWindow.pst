@@ -17,7 +17,7 @@ VM.Value lib_nori_showWindow(VM.VmContext vm, Array<VM.Value> args) {
 
     int execId = VM.vm_getCurrentExecutionContextId(vm);
 
-    Native._lib_nori_showWindow(window.nativeData[0], unboxedValues, root.nativeData[0], execId);
+    Extension._lib_nori_showWindow(window.nativeData[0], unboxedValues, root.nativeData[0], execId);
 
     // If this is JavaScript, this will run immediately after the showWindow call. Therefore the VM
     // must be suspended. The JavaScript implementation of Nori will fire a new Interpreter process once

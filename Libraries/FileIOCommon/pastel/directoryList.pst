@@ -15,7 +15,7 @@ VM.Value lib_fileiocommon_directoryList(VM.VmContext vm, Array<VM.Value> args) {
     VM.ListImpl outputList = (VM.ListImpl) args[3].internalValue;
     List<string> stringList1 = new List<string>();
 
-    int sc = Native._lib_fileiocommon_directoryList(
+    int sc = Extension._lib_fileiocommon_directoryList(
         lib_fileiocommon_getDiskObject(diskhost),
         path,
         useFullPath,

@@ -1,5 +1,4 @@
 ﻿private static java.util.Random PST_random = new java.util.Random();
-private static final Object[] PST_emptyArrayObject = new Object[0];
 private static final String[] PST_emptyArrayString = new String[0];
 @SuppressWarnings("rawtypes")
 private static final ArrayList[] PST_emptyArrayList = new ArrayList[0];

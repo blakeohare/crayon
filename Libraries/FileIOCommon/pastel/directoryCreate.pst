@@ -16,14 +16,14 @@ VM.Value lib_fileiocommon_directoryCreate(VM.VmContext vm, Array<VM.Value> args)
     string path = (string) args[1].internalValue;
     if ((bool) args[2].internalValue) {
         int1 = 0;
-        if (!Native._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(hostObject), Native._lib_fileiocommon_getDirRoot(path))) {
+        if (!Extension._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(hostObject), Extension._lib_fileiocommon_getDirRoot(path))) {
             int1 = 4;
         } else {
             stringList1 = new List<string>();
             bool1 = true;
-            while (bool1 && !Native._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(hostObject), path)) {
+            while (bool1 && !Extension._lib_fileiocommon_directoryExists(lib_fileiocommon_getDiskObject(hostObject), path)) {
                 stringList1.Add(path);
-                int1 = Native._lib_fileiocommon_getDirParent(path, Core.StringBuffer16);
+                int1 = Extension._lib_fileiocommon_getDirParent(path, Core.StringBuffer16);
                 path = Core.StringBuffer16[0];
                 if (int1 != 0) {
                     bool1 = false;
@@ -32,7 +32,7 @@ VM.Value lib_fileiocommon_directoryCreate(VM.VmContext vm, Array<VM.Value> args)
             if (bool1) {
                 for (i = stringList1.Size() - 1; i >= 0; i -= 1) {
                     path = stringList1[i];
-                    int1 = Native._lib_fileiocommon_directoryCreate(lib_fileiocommon_getDiskObject(hostObject), path);
+                    int1 = Extension._lib_fileiocommon_directoryCreate(lib_fileiocommon_getDiskObject(hostObject), path);
                     if (int1 != 0) {
                         i = -1;
                     }
@@ -40,7 +40,7 @@ VM.Value lib_fileiocommon_directoryCreate(VM.VmContext vm, Array<VM.Value> args)
             }
         }
     } else {
-        int1 = Native._lib_fileiocommon_directoryCreate(lib_fileiocommon_getDiskObject(hostObject), path);
+        int1 = Extension._lib_fileiocommon_directoryCreate(lib_fileiocommon_getDiskObject(hostObject), path);
     }
     return VM.buildInteger(vm.globals, int1);
 }

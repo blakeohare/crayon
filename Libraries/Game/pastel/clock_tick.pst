@@ -1,5 +1,5 @@
 ﻿VM.Value lib_game_clock_tick(VM.VmContext vm, Array<VM.Value> args) {
-    Native._lib_game_clockTick();
+    Extension._lib_game_clockTick();
 
     // TODO: replace this 1 with an enum.
     VM.vm_suspend(vm, 1);

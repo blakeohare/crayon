@@ -24,7 +24,7 @@ VM.Value lib_graphics2dtext_glRenderCharTile(VM.VmContext vm, Array<VM.Value> ar
         int charId = (int) args[2].internalValue;
         VM.ListImpl sizeOut = (VM.ListImpl) args[3].internalValue;
 
-        object bmp = Native._lib_graphics2dtext_glRenderBitmapTile(nativeFont, charId, Core.IntBuffer16);
+        object bmp = Extension._lib_graphics2dtext_glRenderBitmapTile(nativeFont, charId, Core.IntBuffer16);
         if (bmp == null) return vm.globalFalse;
         int width = Core.IntBuffer16[0];
         int height = Core.IntBuffer16[1];

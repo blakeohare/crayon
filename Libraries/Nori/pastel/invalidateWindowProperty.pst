@@ -7,6 +7,6 @@ VM.Value lib_nori_invalidateWindowProperty(VM.VmContext vm, Array<VM.Value> args
     VM.ObjectInstance o = (VM.ObjectInstance) args[0].internalValue;
     int key = (int) args[1].internalValue;
     object value = args[2].internalValue;
-    Native._lib_nori_invalidateWindowProperty(o.nativeData[0], key, value);
+    Extension._lib_nori_invalidateWindowProperty(o.nativeData[0], key, value);
     return vm.globalNull;
 }

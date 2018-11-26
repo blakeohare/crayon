@@ -15,7 +15,7 @@ VM.Value lib_http_getResponseBytes(VM.VmContext vm, Array<VM.Value> args) {
 
     // TODO: return a list of integers and do the Value conversion here.
     List<VM.Value> tList = new List<VM.Value>();
-    Native._lib_http_getResponseBytes(objArray1[0], vm.globals.positiveIntegers, tList);
+    Extension._lib_http_getResponseBytes(objArray1[0], vm.globals.positiveIntegers, tList);
     VM.ListImpl outputList = (VM.ListImpl) outputListValue.internalValue;
     if (@ext_boolean("ARRAY_IS_LIST")) {
         outputList.list = tList;

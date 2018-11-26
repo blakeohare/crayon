@@ -22,7 +22,7 @@ int lib_fileiocommon_textToLinesImpl(
     VM.ListImpl output) {
 
     List<string> stringList = new List<string>();
-    Native._lib_fileiocommon_textToLines(text, stringList);
+    Extension._lib_fileiocommon_textToLines(text, stringList);
     int len = stringList.Size();
     for (int i = 0; i < len; i += 1) {
         VM.addToList(output, VM.buildString(globals, stringList[i]));
