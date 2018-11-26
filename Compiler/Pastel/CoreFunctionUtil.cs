@@ -5,36 +5,36 @@ using Pastel.Nodes;
 
 namespace Pastel
 {
-    internal static class NativeFunctionUtil
+    internal static class CoreFunctionUtil
     {
-        private static Dictionary<NativeFunction, PType> returnTypes;
-        private static Dictionary<NativeFunction, PType[]> argTypes;
-        private static Dictionary<NativeFunction, bool[]> argTypesRepeated;
+        private static Dictionary<CoreFunction, PType> returnTypes;
+        private static Dictionary<CoreFunction, PType[]> argTypes;
+        private static Dictionary<CoreFunction, bool[]> argTypesRepeated;
 
-        public static PType[] GetNativeFunctionArgTypes(NativeFunction functionId)
+        public static PType[] GetCoreFunctionArgTypes(CoreFunction functionId)
         {
             if (returnTypes == null)
             {
-                NativeFunctionUtil.Init();
+                CoreFunctionUtil.Init();
             }
             return argTypes[functionId].ToArray();
         }
 
-        public static PType GetNativeFunctionReturnType(NativeFunction functionId)
+        public static PType GetCoreFunctionReturnType(CoreFunction functionId)
         {
             if (returnTypes == null)
             {
-                NativeFunctionUtil.Init();
+                CoreFunctionUtil.Init();
             }
 
             return returnTypes[functionId];
         }
 
-        public static bool[] GetNativeFunctionIsArgTypeRepeated(NativeFunction functionId)
+        public static bool[] GetCoreFunctionIsArgTypeRepeated(CoreFunction functionId)
         {
             if (returnTypes == null)
             {
-                NativeFunctionUtil.Init();
+                CoreFunctionUtil.Init();
             }
 
             return argTypesRepeated[functionId];
@@ -42,23 +42,23 @@ namespace Pastel
 
         private static void Init()
         {
-            Dictionary<string, NativeFunction> lookup = new Dictionary<string, NativeFunction>();
-            foreach (NativeFunction func in typeof(NativeFunction).GetEnumValues().Cast<NativeFunction>())
+            Dictionary<string, CoreFunction> lookup = new Dictionary<string, CoreFunction>();
+            foreach (CoreFunction func in typeof(CoreFunction).GetEnumValues().Cast<CoreFunction>())
             {
                 lookup[func.ToString()] = func;
             }
 
-            returnTypes = new Dictionary<NativeFunction, PType>();
-            argTypes = new Dictionary<NativeFunction, PType[]>();
-            argTypesRepeated = new Dictionary<NativeFunction, bool[]>();
+            returnTypes = new Dictionary<CoreFunction, PType>();
+            argTypes = new Dictionary<CoreFunction, PType[]>();
+            argTypesRepeated = new Dictionary<CoreFunction, bool[]>();
 
-            string[] rows = GetNativeFunctionSignatureManifest().Split('\n');
+            string[] rows = GetCoreFunctionSignatureManifest().Split('\n');
             foreach (string row in rows)
             {
                 string definition = row.Trim();
                 if (definition.Length > 0)
                 {
-                    TokenStream tokens = new TokenStream(Tokenizer.Tokenize("native function manifest", row));
+                    TokenStream tokens = new TokenStream(Tokenizer.Tokenize("core function manifest", row));
                     PType returnType = PType.Parse(tokens);
                     string name = tokens.Pop().Value;
                     tokens.PopExpected("(");
@@ -85,7 +85,7 @@ namespace Pastel
                         throw new Exception("Invalid entry in the manifest. Stuff at the end: " + row);
                     }
 
-                    NativeFunction func = lookup[name];
+                    CoreFunction func = lookup[name];
                     returnTypes[func] = returnType;
                     argTypes[func] = argList.ToArray();
                     argTypesRepeated[func] = argRepeated.ToArray();
@@ -93,9 +93,9 @@ namespace Pastel
             }
         }
 
-        private static string GetNativeFunctionSignatureManifest()
+        private static string GetCoreFunctionSignatureManifest()
         {
-            return PastelUtil.ReadAssemblyFileText(typeof(NativeFunctionUtil).Assembly, "NativeFunctionSignatures.txt");
+            return PastelUtil.ReadAssemblyFileText(typeof(CoreFunctionUtil).Assembly, "CoreFunctionSignatures.txt");
         }
     }
 }

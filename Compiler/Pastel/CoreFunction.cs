@@ -1,6 +1,6 @@
 ﻿namespace Pastel
 {
-    internal enum NativeFunction
+    internal enum CoreFunction
     {
         NONE,
 

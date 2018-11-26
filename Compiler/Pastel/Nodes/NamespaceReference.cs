@@ -25,9 +25,9 @@
         public CoreNamespaceReference(Token firstToken, ICompilationEntity owner) : base(firstToken, owner) { }
     }
 
-    internal class NativeNamespaceReference : NamespaceReference
+    internal class ExtensibleNamespaceReference : NamespaceReference
     {
-        public NativeNamespaceReference(Token firstToken, ICompilationEntity owner) : base(firstToken, owner) { }
+        public ExtensibleNamespaceReference(Token firstToken, ICompilationEntity owner) : base(firstToken, owner) { }
     }
 
     internal class DependencyNamespaceReference : NamespaceReference

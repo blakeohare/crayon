@@ -31,7 +31,7 @@
 
             if (name == "Native")
             {
-                return new NativeNamespaceReference(this.FirstToken, this.Owner);
+                return new ExtensibleNamespaceReference(this.FirstToken, this.Owner);
             }
 
             FunctionDefinition functionDefinition = compiler.GetFunctionDefinition(name);

@@ -72,16 +72,16 @@ namespace Pastel.Nodes
             this.Index = this.Index.ResolveWithTypeContext(compiler);
 
             Expression[] args = new Expression[] { this.Root, this.Index };
-            NativeFunction nf;
+            CoreFunction nf;
             switch (this.Root.ResolvedType.RootValue)
             {
-                case "string": nf = NativeFunction.STRING_CHAR_AT; break;
-                case "List": nf = NativeFunction.LIST_GET; break;
-                case "Dictionary": nf = NativeFunction.DICTIONARY_GET; break;
-                case "Array": nf = NativeFunction.ARRAY_GET; break;
+                case "string": nf = CoreFunction.STRING_CHAR_AT; break;
+                case "List": nf = CoreFunction.LIST_GET; break;
+                case "Dictionary": nf = CoreFunction.DICTIONARY_GET; break;
+                case "Array": nf = CoreFunction.ARRAY_GET; break;
                 default: throw new InvalidOperationException(); // this should have been caught earlier in ResolveType()
             }
-            return new NativeFunctionInvocation(this.FirstToken, nf, args, this.Owner) { ResolvedType = this.ResolvedType };
+            return new CoreFunctionInvocation(this.FirstToken, nf, args, this.Owner) { ResolvedType = this.ResolvedType };
         }
     }
 }

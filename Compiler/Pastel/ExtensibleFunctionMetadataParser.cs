@@ -77,7 +77,7 @@ namespace Pastel
             }
             if (!okay)
             {
-                throw new Pastel.ParserException(token, "Invalid name for a native function or argument.");
+                throw new ParserException(token, "Invalid name for a extensible function or argument.");
             }
             return name;
         }
