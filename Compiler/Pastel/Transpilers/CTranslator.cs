@@ -974,7 +974,7 @@ namespace Pastel.Transpilers
         {
             sb.Append(sb.CurrentTab);
             sb.Append(this.TranslateType(varDecl.Type));
-            sb.Append(" v_");
+            sb.Append(' ');
             sb.Append(varDecl.VariableNameToken.Value);
             if (varDecl.Value != null)
             {
@@ -1007,14 +1007,14 @@ namespace Pastel.Transpilers
         public override void GenerateCodeForFunction(TranspilerContext sb, FunctionDefinition funcDef)
         {
             sb.Append(this.TranslateType(funcDef.ReturnType));
-            sb.Append(" v_");
+            sb.Append(' ');
             sb.Append(funcDef.NameToken.Value);
             sb.Append('(');
             for (int i = 0; i < funcDef.ArgNames.Length; ++i)
             {
                 if (i > 0) sb.Append(", ");
                 sb.Append(this.TranslateType(funcDef.ArgTypes[i]));
-                sb.Append(" v_");
+                sb.Append(' ');
                 sb.Append(funcDef.ArgNames[i].Value);
             }
             sb.Append(")\n{\n");
@@ -1027,14 +1027,14 @@ namespace Pastel.Transpilers
         public override void GenerateCodeForFunctionDeclaration(TranspilerContext sb, FunctionDefinition funcDef)
         {
             sb.Append(this.TranslateType(funcDef.ReturnType));
-            sb.Append(" v_");
+            sb.Append(' ');
             sb.Append(funcDef.NameToken.Value);
             sb.Append('(');
             for (int i = 0; i < funcDef.ArgNames.Length; ++i)
             {
                 if (i > 0) sb.Append(", ");
                 sb.Append(this.TranslateType(funcDef.ArgTypes[i]));
-                sb.Append(" v_");
+                sb.Append(' ');
                 sb.Append(funcDef.ArgNames[i].Value);
             }
             sb.Append(");");

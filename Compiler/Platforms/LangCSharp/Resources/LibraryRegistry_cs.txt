@@ -30,7 +30,7 @@ namespace Interpreter.Vm
                 string name = funcName.Split(',')[1];
 
                 // TODO: figure out why GetMethod() is not working directly
-                System.Reflection.MethodInfo methodInfo = libraryType.GetMethods().Where(m => m.Name == "v_" + name).FirstOrDefault();
+                System.Reflection.MethodInfo methodInfo = libraryType.GetMethods().Where(m => m.Name == name).FirstOrDefault();
                 if (methodInfo == null) return null;
                 Func<Interpreter.Structs.VmContext, Interpreter.Structs.Value[], Interpreter.Structs.Value> output = (Interpreter.Structs.VmContext vm, Interpreter.Structs.Value[] args) =>
                 {

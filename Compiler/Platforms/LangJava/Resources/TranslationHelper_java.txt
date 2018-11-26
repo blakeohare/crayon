@@ -35,15 +35,15 @@ public final class TranslationHelper {
   public static String getResourceManifest() { return resourceManifest; }
 
   public static void startInterpreter(boolean invokeSystemExit) {
-    handleVmResult(Interpreter.v_startVm(vmContext), invokeSystemExit);
+    handleVmResult(Interpreter.startVm(vmContext), invokeSystemExit);
   }
 
   public static InterpreterResult runInterpreter(int executionContextId, boolean invokeSystemExit) {
-    return handleVmResult(Interpreter.v_runInterpreter(vmContext, executionContextId), invokeSystemExit);
+    return handleVmResult(Interpreter.runInterpreter(vmContext, executionContextId), invokeSystemExit);
   }
 
   public static InterpreterResult runInterpreterWithFunctionPointer(Value functionPointer, Value[] args, boolean invokeSystemExit) {
-    return handleVmResult(Interpreter.v_runInterpreterWithFunctionPointer(vmContext, functionPointer, args), invokeSystemExit);
+    return handleVmResult(Interpreter.runInterpreterWithFunctionPointer(vmContext, functionPointer, args), invokeSystemExit);
   }
 
   private static InterpreterResult handleVmResult(InterpreterResult result, boolean invokeSystemExit) {
@@ -57,7 +57,7 @@ public final class TranslationHelper {
       } else {
         loadAssembly(result.loadAssemblyInformation);
       }
-      result = Interpreter.v_runInterpreter(vmContext, result.executionContextId);
+      result = Interpreter.runInterpreter(vmContext, result.executionContextId);
     }
 
     if (result.status == 1 && result.isRootContext) {

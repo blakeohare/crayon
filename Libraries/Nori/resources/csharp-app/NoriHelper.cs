@@ -21,8 +21,8 @@ namespace Interpreter.Libraries.Nori
 
         private static void EventHandlerCallback(int id)
         {
-            ARGS_WRAPPER[0] = Interpreter.Vm.CrayonWrapper.v_buildInteger(id);
-            Interpreter.Vm.CrayonWrapper.v_runInterpreterWithFunctionPointer(EVENT_HANDLER_CALLBACK, ARGS_WRAPPER);
+            ARGS_WRAPPER[0] = Interpreter.Vm.CrayonWrapper.buildInteger(id);
+            Interpreter.Vm.CrayonWrapper.runInterpreterWithFunctionPointer(EVENT_HANDLER_CALLBACK, ARGS_WRAPPER);
         }
 
         private static Value[] ARGS_WRAPPER = new Value[1];

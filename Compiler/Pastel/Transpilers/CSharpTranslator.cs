@@ -232,9 +232,9 @@ namespace Pastel.Transpilers
             this.TranslateExpression(sb, dictionary);
             sb.Append(".TryGetValue(");
             this.TranslateExpression(sb, key);
-            sb.Append(", out v_");
+            sb.Append(", out ");
             sb.Append(varOut.Name);
-            sb.Append(")) v_");
+            sb.Append(")) ");
             sb.Append(varOut.Name);
             sb.Append(" = ");
             this.TranslateExpression(sb, fallbackValue);
@@ -764,7 +764,7 @@ namespace Pastel.Transpilers
         {
             sb.Append(sb.CurrentTab);
             sb.Append(this.TranslateType(varDecl.Type));
-            sb.Append(" v_");
+            sb.Append(' ');
             sb.Append(varDecl.VariableNameToken.Value);
             if (varDecl.Value != null)
             {
@@ -827,14 +827,14 @@ namespace Pastel.Transpilers
 
             output.Append("public static ");
             output.Append(this.TranslateType(returnType));
-            output.Append(" v_");
+            output.Append(' ');
             output.Append(funcName);
             output.Append("(");
             for (int i = 0; i < argTypes.Length; ++i)
             {
                 if (i > 0) output.Append(", ");
                 output.Append(this.TranslateType(argTypes[i]));
-                output.Append(" v_");
+                output.Append(' ');
                 output.Append(argNames[i].Value);
             }
             output.Append(")");

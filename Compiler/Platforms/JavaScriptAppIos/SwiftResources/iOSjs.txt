@@ -12,9 +12,9 @@ C$ios$invokePointer = function(type, x, y) {
   var y = Math.floor(C$game$height * y);
   var typeStr = type == 0 ? 'DOWN' : (type == 1 ? 'UP' : 'MOVE');
   if (type < 2) {
-    C$input$eventRelays.push(v_buildRelayObj(33 + type, x, y, 0, 0, ''));
+    C$input$eventRelays.push(buildRelayObj(33 + type, x, y, 0, 0, ''));
   } else {
-    C$input$eventRelays.push(v_buildRelayObj(32, x, y, 0, 0, ''));
+    C$input$eventRelays.push(buildRelayObj(32, x, y, 0, 0, ''));
   }
 }
 

@@ -153,7 +153,6 @@ namespace Pastel.Transpilers
         public override void TranslateDictionaryTryGet(TranspilerContext sb, Expression dictionary, Expression key, Expression fallbackValue, Variable varOut)
         {
             sb.Append(sb.CurrentTab);
-            sb.Append("v_");
             sb.Append(varOut.Name);
             sb.Append(" = ");
             this.TranslateExpression(sb, dictionary);
@@ -162,9 +161,9 @@ namespace Pastel.Transpilers
             sb.Append("];");
             sb.Append(this.NewLine);
             sb.Append(sb.CurrentTab);
-            sb.Append("if (v_");
+            sb.Append("if (");
             sb.Append(varOut.Name);
-            sb.Append(" === undefined) v_");
+            sb.Append(" === undefined) ");
             sb.Append(varOut.Name);
             sb.Append(" = ");
             this.TranslateExpression(sb, fallbackValue);
@@ -704,7 +703,7 @@ namespace Pastel.Transpilers
         public override void TranslateVariableDeclaration(TranspilerContext sb, VariableDeclaration varDecl)
         {
             sb.Append(sb.CurrentTab);
-            sb.Append("var v_");
+            sb.Append("var ");
             sb.Append(varDecl.VariableNameToken.Value);
             sb.Append(" = ");
             if (varDecl.Value == null)
@@ -721,14 +720,13 @@ namespace Pastel.Transpilers
 
         public override void GenerateCodeForFunction(TranspilerContext sb, FunctionDefinition funcDef)
         {
-            sb.Append("var v_");
+            sb.Append("var ");
             sb.Append(funcDef.NameToken.Value);
             sb.Append(" = function(");
             Token[] args = funcDef.ArgNames;
             for (int i = 0; i < args.Length; ++i)
             {
                 if (i > 0) sb.Append(", ");
-                sb.Append("v_");
                 sb.Append(args[i].Value);
             }
             sb.Append(") {");

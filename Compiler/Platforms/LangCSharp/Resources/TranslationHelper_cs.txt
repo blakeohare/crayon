@@ -20,19 +20,19 @@ namespace Interpreter.Vm
         public static InterpreterResult StartInterpreter()
         {
             Debugger.INSTANCE.FlushMessageQueue();
-            return HandleInterpreterStatus(CrayonWrapper.v_startVm(ProgramData));
+            return HandleInterpreterStatus(CrayonWrapper.startVm(ProgramData));
         }
 
         public static InterpreterResult RunInterpreter(int executionContextId)
         {
             Debugger.INSTANCE.FlushMessageQueue();
-            return HandleInterpreterStatus(CrayonWrapper.v_runInterpreter(ProgramData, executionContextId));
+            return HandleInterpreterStatus(CrayonWrapper.runInterpreter(ProgramData, executionContextId));
         }
 
         public static InterpreterResult RunInterpreter(Value functionPointer, params Value[] args)
         {
             Debugger.INSTANCE.FlushMessageQueue();
-            return HandleInterpreterStatus(CrayonWrapper.v_runInterpreterWithFunctionPointer(ProgramData, functionPointer, args));
+            return HandleInterpreterStatus(CrayonWrapper.runInterpreterWithFunctionPointer(ProgramData, functionPointer, args));
         }
 
         private static InterpreterResult HandleInterpreterStatus(InterpreterResult result)
@@ -52,7 +52,7 @@ namespace Interpreter.Vm
                     System.Threading.Thread.Sleep((int)(1000 * sleepForSeconds));
                 }
                 Debugger.INSTANCE.FlushMessageQueue();
-                result = CrayonWrapper.v_runInterpreter(ProgramData, result.executionContextId);
+                result = CrayonWrapper.runInterpreter(ProgramData, result.executionContextId);
             }
             if (result.status == 1) // FINISHED
             {

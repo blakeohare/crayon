@@ -58,7 +58,7 @@ C$game$endFrame = function() {
 
 C$game$runFrame = function () {
     C$game$beginFrame();
-    C$handleVmResult(v_runInterpreter(C$common$programData, C$game$execId)); // clockTick will induce endFrame()
+    C$handleVmResult(runInterpreter(C$common$programData, C$game$execId)); // clockTick will induce endFrame()
 };
 
 C$game$computeDelayMillis = function () {

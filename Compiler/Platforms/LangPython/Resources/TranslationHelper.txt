@@ -26,37 +26,37 @@ def TranslationHelper_registerFunctionFinder(fnFinderFn):
   _TranslationHelper_fnFinders.append(fnFinderFn)
 
 def TH_startVm(vm):
-  TH_handleInterpreterResult(v_startVm(vm))
+  TH_handleInterpreterResult(startVm(vm))
 
 def TH_runInterpreter(execId):
   vm = TranslationHelper_getProgramData()
-  return TH_handleInterpreterResult(v_runInterpreter(vm, execId))
+  return TH_handleInterpreterResult(runInterpreter(vm, execId))
 
 def TH_runInterpreterWithFunctionPointer(fpValue, args):
   vm = TranslationHelper_getProgramData()
-  return TH_handleInterpreterResult(v_runInterpreterWithFunctionPointer(vm, fpValue, args))
+  return TH_handleInterpreterResult(runInterpreterWithFunctionPointer(vm, fpValue, args))
 
 def TH_handleInterpreterResult(result):
   vm = TranslationHelper_getProgramData()
-  status = v_getVmResultStatus(result)
+  status = getVmResultStatus(result)
   while status == 5 or status == 6: # REINVOKE || LOAD_ASSEMBLY
     if status == 6: # LOAD_ASSEMBLY
-      parts = v_getVmResultAssemblyInfo(result).split(',')
+      parts = getVmResultAssemblyInfo(result).split(',')
       name, version = parts;
       # TODO: LoadAssembly(name, version)
     else:
-      time.sleep(v_getVmReinvokeDelay(result))
+      time.sleep(getVmReinvokeDelay(result))
 
-    result = v_runInterpreter(vm, v_getVmResultExecId(result))
-    status = v_getVmResultStatus(result)
+    result = runInterpreter(vm, getVmResultExecId(result))
+    status = getVmResultStatus(result)
   if status == 1: # FINISHED
-    if v_isVmResultRootExecContext(result):
+    if isVmResultRootExecContext(result):
       sys.exit(0)
     return result
 
   if status == 2: return result # SUSPEND
   if status == 3: # FATAL
-    if v_isVmResultRootExecContext(result): 
+    if isVmResultRootExecContext(result): 
       sys.exit(1)
     return result
 

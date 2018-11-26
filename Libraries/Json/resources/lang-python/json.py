@@ -7,26 +7,26 @@ def lib_json_parse(g, raw):
     return None
 
 def lib_json_parse_json_thing(g, item):
-  if item == None: return v_buildNull(g)
+  if item == None: return buildNull(g)
   t = str(type(item))
   if "'bool'" in t:
-    return v_buildBoolean(g, item)
+    return buildBoolean(g, item)
   if "'int'" in t or "'long'" in t:
-    return v_buildInteger(g, item)
+    return buildInteger(g, item)
   if "'float'" in t:
-    return v_buildFloat(g, item)
+    return buildFloat(g, item)
   if "'string'" in t or "'unicode'" in t:
-    return v_buildString(g, str(item))
+    return buildString(g, str(item))
   if "'list'" in t:
     output = []
     for o in item:
       output.append(lib_json_parse_json_thing(g, o))
-    return v_buildList(output)
+    return buildList(output)
   if "'dict'" in t:
     keys = []
     values = []
     for key in item.keys():
       keys.append(key)
       values.append(lib_json_parse_json_thing(g, item[key]))
-    return v_buildStringDictionary(g, keys, values)
-  return v_buildNull(g);
+    return buildStringDictionary(g, keys, values)
+  return buildNull(g);

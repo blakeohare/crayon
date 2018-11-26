@@ -107,7 +107,7 @@ namespace Interpreter.Libraries.Json
 				double value;
 				if (double.TryParse(stringValue, out value))
 				{
-					return CrayonWrapper.v_buildFloat(globals, value * sign);
+					return CrayonWrapper.buildFloat(globals, value * sign);
 				}
 			}
 			else
@@ -115,7 +115,7 @@ namespace Interpreter.Libraries.Json
 				int value;
 				if (int.TryParse(stringValue, out value))
 				{
-					return CrayonWrapper.v_buildInteger(globals, value * sign);
+					return CrayonWrapper.buildInteger(globals, value * sign);
 				}
 			}
 
@@ -148,7 +148,7 @@ namespace Interpreter.Libraries.Json
 
 			if (i.Value >= length) throw new JsonParserException();
 			i.Value++; // closing quote
-			return CrayonWrapper.v_buildString(globals, sb.ToString());
+			return CrayonWrapper.buildString(globals, sb.ToString());
 		}
 
 		private static Value ParseJsonList(VmGlobals globals, char[] rawValue, int length, Index i)
@@ -171,7 +171,7 @@ namespace Interpreter.Libraries.Json
 
 			if (i.Value < length) PopExpected(rawValue, length, i, "]");
 
-			return CrayonWrapper.v_buildList(items);
+			return CrayonWrapper.buildList(items);
 		}
 
 		private static Value ParseJsonDictionary(VmGlobals globals, char[] rawValue, int length, Index i)
@@ -210,7 +210,7 @@ namespace Interpreter.Libraries.Json
 				throw new JsonParserException(); // EOF
 			}
 
-			return CrayonWrapper.v_buildStringDictionary(globals, keys.ToArray(), values.ToArray());
+			return CrayonWrapper.buildStringDictionary(globals, keys.ToArray(), values.ToArray());
 		}
         
 		private static void PopExpected(char[] rawValue, int length, Index index, string value)

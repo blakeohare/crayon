@@ -87,7 +87,7 @@ namespace Interpreter
                 {
                     foreach (Breakpoint breakpoint in AwaitingSet)
                     {
-                        int id = CrayonWrapper.v_debuggerSetBreakpoint(TranslationHelper.ProgramData, breakpoint.Path, breakpoint.Line);
+                        int id = CrayonWrapper.debuggerSetBreakpoint(TranslationHelper.ProgramData, breakpoint.Path, breakpoint.Line);
                         if (id != -1)
                         {
                             Breakpoints[id] = breakpoint;
@@ -448,7 +448,7 @@ namespace Interpreter
 
             internal override string[] Run()
             {
-                int breakpointId = CrayonWrapper.v_debuggerSetBreakpoint(VM, this.Path, this.Line);
+                int breakpointId = CrayonWrapper.debuggerSetBreakpoint(VM, this.Path, this.Line);
                 return new string[] { this.RequestToken, "" + breakpointId, };
             }
         }
@@ -467,7 +467,7 @@ namespace Interpreter
 
             internal override string[] Run()
             {
-                CrayonWrapper.v_debuggerClearBreakpoint(VM, this.BreakpointId);
+                CrayonWrapper.debuggerClearBreakpoint(VM, this.BreakpointId);
                 return new string[] { this.RequestToken, "1" };
             }
         }
@@ -481,7 +481,7 @@ namespace Interpreter
 
             internal override string[] Run()
             {
-                CrayonWrapper.v_debugSetStepOverBreakpoint(VM);
+                CrayonWrapper.debugSetStepOverBreakpoint(VM);
                 Debugger.INSTANCE.IsResumeWanted = true;
                 return null;
             }
@@ -521,7 +521,7 @@ namespace Interpreter
 
             internal override string[] Run()
             {
-                Interpreter.Structs.Value v = CrayonWrapper.v_queryValue(VM, -1, 0, this.Values);
+                Interpreter.Structs.Value v = CrayonWrapper.queryValue(VM, -1, 0, this.Values);
                 string resultType = "none";
                 string resultValue = "";
                 if (v != null)
@@ -539,7 +539,7 @@ namespace Interpreter
                             resultType = "TYPE:" + v.type;
                             break;
                     }
-                    resultValue = CrayonWrapper.v_valueToString(VM, v);
+                    resultValue = CrayonWrapper.valueToString(VM, v);
                 }
                 return new string[] { this.RequestToken, resultType, resultValue };
             }

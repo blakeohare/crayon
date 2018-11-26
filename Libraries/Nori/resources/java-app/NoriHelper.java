@@ -141,7 +141,7 @@ final class NoriHelper {
 	}
 	
 	private static void invokeEventHandlerCallback(int id) {
-		argsWrapper[0] = Interpreter.v_buildInteger(id);
-		Interpreter.v_runInterpreterWithFunctionPointer(eventHandlerCallbackValue, argsWrapper);
+		argsWrapper[0] = Interpreter.buildInteger(id);
+		Interpreter.runInterpreterWithFunctionPointer(eventHandlerCallbackValue, argsWrapper);
 	}
 }

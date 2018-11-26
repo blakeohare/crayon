@@ -49,8 +49,8 @@ namespace Interpreter.Libraries.Game
 			int oldWidth = bitmap.Width;
 			int oldHeight = bitmap.Height;
 
-			int newWidth = CrayonWrapper.v_nextPowerOf2(oldWidth);
-			int newHeight = CrayonWrapper.v_nextPowerOf2(oldHeight);
+			int newWidth = CrayonWrapper.nextPowerOf2(oldWidth);
+			int newHeight = CrayonWrapper.nextPowerOf2(oldHeight);
 
 			if (newWidth == oldWidth &&
 				newHeight == oldHeight)

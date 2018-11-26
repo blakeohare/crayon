@@ -13,7 +13,7 @@ class LibraryRegistry:
 
   def createFnFinderFn(self, lib):
     def fnFinderFn(name):
-      fnName = 'v_' + name.split(',')[-1]
+      fnName = name.split(',')[-1]
       for fn in dir(lib):
         if fn == fnName:
           return eval('lib.' + fn)
