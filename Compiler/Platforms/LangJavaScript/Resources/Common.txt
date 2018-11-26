@@ -10,37 +10,37 @@ C$common$globalOptions = {};
 C$common$globalOptions['fullscreen'] = false;
 
 function main() {
-	C$common$programData = v_createVm(C$bytecode, C$common$resourceManifest);
-	C$handleVmResult(v_startVm(C$common$programData));
+	C$common$programData = createVm(C$bytecode, C$common$resourceManifest);
+	C$handleVmResult(startVm(C$common$programData));
 }
 
 function C$runInterpreter(execId) {
 	var vm = C$common$programData;
-	return C$handleVmResult(v_runInterpreter(vm, execId));
+	return C$handleVmResult(runInterpreter(vm, execId));
 }
 
 function C$runInterpreterWithFunctionPointer(fp, args) {
 	var vm = C$common$programData;
-	return C$handleVmResult(v_runInterpreterWithFunctionPointer(vm, fp, args));
+	return C$handleVmResult(runInterpreterWithFunctionPointer(vm, fp, args));
 }
 
 function C$handleVmResult(res) {
 	var vm = C$common$programData;
-	var status = v_getVmResultStatus(res);
+	var status = getVmResultStatus(res);
 	while (status == 5 || status == 6) { // REINVOKE || LOAD_ASSEMBLY
 		if (status == 5) {
-			var delayMillis = Math.floor(1000 * v_getVmReinvokeDelay(res));
-			var execId = v_getVmResultExecId(res);
+			var delayMillis = Math.floor(1000 * getVmReinvokeDelay(res));
+			var execId = getVmResultExecId(res);
 			window.setTimeout(function() { C$runInterpreter(execId); }, delayMillis);
 			return;
 		} else {
-			var parts = v_getVmResultAssemblyInfo(res).split(',');
+			var parts = getVmResultAssemblyInfo(res).split(',');
 			var name = parts[0];
 			var version = parts[1];
 			// TODO: C$loadAssembly(name, version);
 		}
-		res = v_runInterpreter(vm, v_getVmResultExecId(res))
-		status = v_getVmResultStatus(res);
+		res = runInterpreter(vm, getVmResultExecId(res))
+		status = getVmResultStatus(res);
 	}
 
 	if (status == 1 || status == 2 || status == 3) return;
@@ -77,7 +77,7 @@ C$common$print = function (value) {
 };
 
 C$common$scrapeLibFuncNames = function(libname) {
-	var prefix = 'v_lib_' + libname + '_function_';
+	var prefix = 'lib_' + libname + '_function_';
 	var functions = {};
 	for (var key in window) {
 		if (key.indexOf(prefix) === 0) {
@@ -90,7 +90,7 @@ C$common$scrapeLibFuncNames = function(libname) {
 
 C$common$getFunction = function(name) {
 	var p = name.split(',');
-	var check = 'v_' + p[p.length - 1];
+	var check = p[p.length - 1];
 	if (window[check] !== undefined) {
 		return window[check];
 	}

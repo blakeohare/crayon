@@ -24,7 +24,7 @@ LIB$http$makeHttpRequest = function (requestNativeData, method, url, contentMode
 			};
 			requestNativeData[2] = true;
 			if (executionContextId !== null) {
-				v_runInterpreter(executionContextId);
+				runInterpreter(executionContextId);
 			}
 		}
 	};
@@ -33,7 +33,7 @@ LIB$http$makeHttpRequest = function (requestNativeData, method, url, contentMode
 		requestNativeData[0] = null;
 		requestNativeData[2] = true;
 		if (executionContextId !== null) {
-			v_runInterpreter(executionContextId);
+			runInterpreter(executionContextId);
 		}
 	};
 

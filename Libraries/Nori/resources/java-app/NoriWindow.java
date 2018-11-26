@@ -37,7 +37,7 @@ public class NoriWindow implements WindowListener {
 	// TODO: figure out why windowClosed isn't getting fired. This ideally should run
 	// after the window is completely closed, rather than when it's about to.
 	public void windowClosing(WindowEvent e) {
-		Interpreter.v_runInterpreter(this.executionContextIdOnClose);
+		Interpreter.runInterpreter(this.executionContextIdOnClose);
 	}
 
 	public void windowClosed(WindowEvent e) { }	

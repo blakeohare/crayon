@@ -15,7 +15,7 @@ namespace Pastel.Transpilers
 
         For every single switch statement that is translated in Python, there is a dictionary
         that is serialized after the function definition. This dictionary has the following name format:
-        "swlookup__{function name without 'v_'}__{number that is allocated starting from 1 on a per function basis}"
+        "swlookup__{function name}__{number that is allocated starting from 1 on a per function basis}"
 
         In the actual code, the switch statement is serialized as a lookup in that dictionary with a .get
         The value that is looked up is the switch condition value and the default fallback value is the code chunk ID of the default.

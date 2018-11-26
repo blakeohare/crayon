@@ -433,7 +433,6 @@ namespace Pastel.Transpilers
             sb.Append(");");
             sb.Append(this.NewLine);
             sb.Append(sb.CurrentTab);
-            sb.Append("v_");
             sb.Append(varOut.Name);
             sb.Append(" = dictLookup");
             sb.Append(lookupSuffix);
@@ -1090,7 +1089,7 @@ namespace Pastel.Transpilers
         {
             sb.Append(sb.CurrentTab);
             sb.Append(this.TranslateType(varDecl.Type));
-            sb.Append(" v_");
+            sb.Append(' ');
             sb.Append(varDecl.VariableNameToken.Value);
             if (varDecl.Value != null)
             {
@@ -1106,7 +1105,7 @@ namespace Pastel.Transpilers
             sb.Append(sb.CurrentTab);
             sb.Append("public static ");
             sb.Append(this.TranslateType(funcDef.ReturnType));
-            sb.Append(" v_");
+            sb.Append(' ');
             sb.Append(funcDef.NameToken.Value);
             sb.Append('(');
             Pastel.Token[] argNames = funcDef.ArgNames;
@@ -1115,7 +1114,7 @@ namespace Pastel.Transpilers
             {
                 if (i > 0) sb.Append(", ");
                 sb.Append(this.TranslateType(argTypes[i]));
-                sb.Append(" v_");
+                sb.Append(' ');
                 sb.Append(argNames[i].Value);
             }
             sb.Append(") {");

@@ -217,7 +217,6 @@ namespace Pastel.Transpilers
         public override void TranslateDictionaryTryGet(TranspilerContext sb, Expression dictionary, Expression key, Expression fallbackValue, Variable varOut)
         {
             sb.Append(sb.CurrentTab);
-            sb.Append("v_");
             sb.Append(varOut.Name);
             sb.Append(" = ");
             this.TranslateExpression(sb, dictionary);
@@ -315,7 +314,6 @@ namespace Pastel.Transpilers
 
         public override void TranslateFunctionReference(TranspilerContext sb, FunctionReference funcRef)
         {
-            sb.Append("v_");
             sb.Append(funcRef.Function.NameToken.Value);
         }
 
@@ -944,17 +942,12 @@ namespace Pastel.Transpilers
 
         public override void TranslateVariable(TranspilerContext sb, Variable variable)
         {
-            if (variable.ApplyPrefix)
-            {
-                sb.Append("v_");
-            }
             sb.Append(variable.Name);
         }
 
         public override void TranslateVariableDeclaration(TranspilerContext sb, VariableDeclaration varDecl)
         {
             sb.Append(sb.CurrentTab);
-            sb.Append("v_");
             sb.Append(varDecl.VariableNameToken.Value);
             sb.Append(" = ");
             this.TranslateExpression(sb, varDecl.Value);
@@ -978,14 +971,13 @@ namespace Pastel.Transpilers
             sb.CurrentFunctionDefinition = funcDef;
 
             sb.Append(sb.CurrentTab);
-            sb.Append("def v_");
+            sb.Append("def ");
             sb.Append(funcDef.NameToken.Value);
             sb.Append('(');
             int argCount = funcDef.ArgNames.Length;
             for (int i = 0; i < argCount; ++i)
             {
                 if (i > 0) sb.Append(", ");
-                sb.Append("v_");
                 sb.Append(funcDef.ArgNames[i].Value);
             }
             sb.Append("):");

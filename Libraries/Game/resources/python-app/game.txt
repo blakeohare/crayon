@@ -89,12 +89,12 @@ def pygame_pump_events():
       if KEY_LOOKUP.get(ev.key) != None:
         keycode = KEY_LOOKUP.get(ev.key)
         down = ev.type == pygame.KEYDOWN
-        evlist.append(v_buildRelayObj(16 if down else 17, keycode, 0, 0, 0, None))
+        evlist.append(buildRelayObj(16 if down else 17, keycode, 0, 0, 0, None))
       if ev.type == pygame.KEYDOWN and ev.key == pygame.K_F4:
         if pressed_keys[pygame.K_LALT] or pressed_keys[pygame.K_RALT]:
-          evlist.append(v_buildRelayObj(1, 0, 0, 0, 0, None))
+          evlist.append(buildRelayObj(1, 0, 0, 0, 0, None))
     elif ev.type == pygame.QUIT:
-      evlist.append(v_buildRelayObj(1, 1, 0, 0, 0, None))
+      evlist.append(buildRelayObj(1, 1, 0, 0, 0, None))
     elif ev.type == pygame.MOUSEBUTTONDOWN or ev.type == pygame.MOUSEBUTTONUP:
       x, y = ev.pos
       x = x * vwidth // rwidth
@@ -104,12 +104,12 @@ def pygame_pump_events():
       type = 33
       if not down: type += 1
       if right: type += 2
-      evlist.append(v_buildRelayObj(type, x, y, 0, 0, None))
+      evlist.append(buildRelayObj(type, x, y, 0, 0, None))
     elif ev.type == pygame.MOUSEMOTION:
       x, y = ev.pos
       x = x * vwidth // rwidth
       y = y * vheight // rheight
-      evlist.append(v_buildRelayObj(32, x, y, 0, 0, None))
+      evlist.append(buildRelayObj(32, x, y, 0, 0, None))
 
   return evlist
 
@@ -146,7 +146,7 @@ def pygame_initialize_screen(width, height, pixel_dimensions, execId):
 
   while True:
     result = TH_runInterpreter(execId)
-    if v_getVmResultStatus(result) != 2:
+    if getVmResultStatus(result) != 2:
       break
     gfxRender()
     _pygame_end_of_frame()

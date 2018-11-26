@@ -156,6 +156,6 @@ LIB$nori$registerHandler = function(element, typeId, handlerType, handlerId) {
 };
 
 LIB$nori$eventHandler = function(id) {
-	LIB$nori$CALLBACK_VALUE_ARRAY[0] = v_buildInteger(id);
-	v_runInterpreterWithFunctionPointer(LIB$nori$CALLBACK_FP, LIB$nori$CALLBACK_VALUE_ARRAY);
+	LIB$nori$CALLBACK_VALUE_ARRAY[0] = buildInteger(id);
+	runInterpreterWithFunctionPointer(LIB$nori$CALLBACK_FP, LIB$nori$CALLBACK_VALUE_ARRAY);
 };

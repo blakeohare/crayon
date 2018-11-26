@@ -10,15 +10,15 @@ LIB$json$parseJson = function(globals, rawText) {
 LIB$json$convertJsonThing = function(globals, thing) {
     var type = LIB$Json$typeClassifyHelper(thing);
     switch (type) {
-        case 'null': return v_buildNull(globals);
-        case 'bool': return v_buildBoolean(globals, thing);
-        case 'string': return v_buildString(globals, thing);
+        case 'null': return buildNull(globals);
+        case 'bool': return buildBoolean(globals, thing);
+        case 'string': return buildString(globals, thing);
         case 'list':
             var list = [];
             for (i = 0; i < thing.length; ++i) {
                 list.push(LIB$json$convertJsonThing(globals, thing[i]));
             }
-            return v_buildList(list);
+            return buildList(list);
         case 'dict':
             var keys = [];
             var values = [];
@@ -26,13 +26,13 @@ LIB$json$convertJsonThing = function(globals, thing) {
                 keys.push(rawKey);
                 values.push(LIB$json$convertJsonThing(globals, thing[rawKey]));
             }
-            return v_buildStringDictionary(globals, keys, values);
+            return buildStringDictionary(globals, keys, values);
         case 'int':
-            return v_buildInteger(globals, thing);
+            return buildInteger(globals, thing);
         case 'float':
-            return v_buildFloat(globals, thing);
+            return buildFloat(globals, thing);
         default:
-            return v_buildNull(globals);
+            return buildNull(globals);
     }
 };
 

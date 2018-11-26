@@ -27,7 +27,7 @@ public final class LibraryLoader {
       public Object findFunction(String name) {
         // TODO: cache a lookup
         try {
-          String check = "v_" + name;
+          String check = name;
           Method[] methods = cls.getMethods();
           for(Method m : methods) {
             if (m.getName().equals(check)) {

@@ -26,11 +26,11 @@ class JsonParser {
 	
 	private static Value convertJsonThing(VmGlobals globals, Object thing) {
 		if (thing instanceof String) {
-			return Interpreter.v_buildString(globals, (String) thing);
+			return Interpreter.buildString(globals, (String) thing);
 		} else if (thing instanceof Integer) {
-			return Interpreter.v_buildInteger(globals, (Integer) thing);
+			return Interpreter.buildInteger(globals, (Integer) thing);
 		} else if (thing instanceof Double) {
-			return Interpreter.v_buildFloat(globals, (Double) thing);
+			return Interpreter.buildFloat(globals, (Double) thing);
 		} else if (thing instanceof Boolean) {
 			return ((Boolean) thing) ? globals.boolTrue: globals.boolFalse;
 		} else if (thing instanceof JSONObject) {
@@ -48,7 +48,7 @@ class JsonParser {
 		for (int i = 0; i < keys.length; ++i) {
 			values[i] = convertJsonThing(globals, obj.get(keys[i]));
 		}
-		return Interpreter.v_buildStringDictionary(globals, keys, values);
+		return Interpreter.buildStringDictionary(globals, keys, values);
 	}
 	
 	private static Value convertJsonToList(VmGlobals globals, JSONArray list) {
@@ -56,6 +56,6 @@ class JsonParser {
 		for (int i = 0; i < list.length(); ++i) {
 			output.add(convertJsonThing(globals, list.get(i)));
 		}
-		return Interpreter.v_buildList(output);
+		return Interpreter.buildList(output);
 	}
 }
