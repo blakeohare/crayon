@@ -64,7 +64,7 @@ VM.Value lib_graphics2dtext_glRenderTextSurface(VM.VmContext vm, Array<VM.Value>
             queue[index] = 8; // draw texture direct
             textureId = (int) tileNativeData[5];
             if (textureId == -1) {
-                textureId = Native._lib_graphics2dtext_glLoadTexture(tileNativeData[6]);
+                textureId = Extension._lib_graphics2dtext_glLoadTexture(tileNativeData[6]);
                 tileNativeData[5] = textureId;
                 tileNativeData[6] = null;
             }

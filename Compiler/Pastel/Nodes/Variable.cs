@@ -29,7 +29,7 @@
                 return new CoreNamespaceReference(this.FirstToken, this.Owner);
             }
 
-            if (name == "Native")
+            if (name == "Extension")
             {
                 return new ExtensibleNamespaceReference(this.FirstToken, this.Owner);
             }

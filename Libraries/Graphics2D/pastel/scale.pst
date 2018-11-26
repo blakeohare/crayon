@@ -59,7 +59,7 @@ VM.Value lib_graphics2d_scale(VM.VmContext vm, Array<VM.Value> args) {
         objArray1[0] = false;
         objArray1[1] = true;
         objArray1[2] = 0;
-        objArray1[3] = Native._lib_graphics2d_scale(object1, int1, int2);
+        objArray1[3] = Extension._lib_graphics2d_scale(object1, int1, int2);
         objArray1[4] = int1;
         objArray1[5] = int2;
     }

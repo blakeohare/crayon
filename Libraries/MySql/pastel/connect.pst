@@ -17,7 +17,7 @@ VM.Value lib_mysql_connect(VM.VmContext vm, Array<VM.Value> args) {
     VM.Value arg4 = args[3];
     VM.Value arg5 = args[4];
 
-    object object1 = Native._lib_mysql_connect(
+    object object1 = Extension._lib_mysql_connect(
         Core.StringBuffer16,
         (string) arg2.internalValue,
         (string) arg3.internalValue,

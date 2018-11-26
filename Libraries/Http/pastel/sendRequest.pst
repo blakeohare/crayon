@@ -45,7 +45,7 @@ VM.Value lib_http_sendRequest(VM.VmContext vm, Array<VM.Value> args) {
 
     if ((bool) args[1].internalValue) { // is synchronous?
         // asynchronous request
-        Native._lib_http_sendRequestAsynchronous(
+        Extension._lib_http_sendRequestAsynchronous(
             objArray1,
             method,
             url,
@@ -55,7 +55,7 @@ VM.Value lib_http_sendRequest(VM.VmContext vm, Array<VM.Value> args) {
             getResponseAsText);
     } else {
         // synchronous request
-        if (Native._lib_http_sendRequestSynchronous(
+        if (Extension._lib_http_sendRequestSynchronous(
             objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText, VM.vm_getCurrentExecutionContextId(vm))) {
 
             VM.vm_suspend(vm, 1);

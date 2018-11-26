@@ -16,6 +16,6 @@ VM.Value lib_gamegifcap_saveToDisk(VM.VmContext vm, Array<VM.Value> args) {
     VM.ObjectInstance oi = (VM.ObjectInstance) args[0].internalValue;
     object ctx = oi.nativeData[0];
     string path = (string) args[1].internalValue;
-    int sc = Native._lib_gamegifcap_saveToDisk(ctx, path);
+    int sc = Extension._lib_gamegifcap_saveToDisk(ctx, path);
     return VM.buildInteger(vm.globals, sc);
 }

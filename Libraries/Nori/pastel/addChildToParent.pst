@@ -5,6 +5,6 @@
 VM.Value lib_nori_addChildToParent(VM.VmContext vm, Array<VM.Value> args) {
     VM.ObjectInstance child = (VM.ObjectInstance) args[0].internalValue;
     VM.ObjectInstance parent = (VM.ObjectInstance) args[1].internalValue;
-    Native._lib_nori_addChildToParent(child.nativeData[0], parent.nativeData[0]);
+    Extension._lib_nori_addChildToParent(child.nativeData[0], parent.nativeData[0]);
     return vm.globalNull;
 }

@@ -13,7 +13,7 @@ VM.Value lib_gamegifcap_screenCap(VM.VmContext vm, Array<VM.Value> args) {
     VM.ObjectInstance oiCtx = (VM.ObjectInstance) args[0].internalValue;
     VM.ObjectInstance oiGw = (VM.ObjectInstance) args[1].internalValue;
 
-    int sc = Native._lib_gamegifcap_screenCap(oiCtx.nativeData[0], oiGw.nativeData[0]);
+    int sc = Extension._lib_gamegifcap_screenCap(oiCtx.nativeData[0], oiGw.nativeData[0]);
 
     return VM.buildInteger(vm.globals, sc);
 }

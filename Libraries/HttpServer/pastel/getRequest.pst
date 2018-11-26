@@ -9,7 +9,7 @@
 */
 VM.Value lib_httpserver_getRequest(VM.VmContext vm, Array<VM.Value> args) {
 
-    Native._lib_httpserver_getRequest(Core.StringBuffer16);
+    Extension._lib_httpserver_getRequest(Core.StringBuffer16);
 
     VM.ListImpl output = (VM.ListImpl) args[0].internalValue;
 

@@ -4,7 +4,7 @@
 VM.Value lib_game_pump_events(VM.VmContext vm, Array<VM.Value> args) {
     // TODO: this is extremely brittle code. Please fix.
     VM.ListImpl output = (VM.ListImpl) args[0].internalValue;
-    List<VM.PlatformRelayObject> eventList = Native._lib_game_get_events_raw_list();
+    List<VM.PlatformRelayObject> eventList = Extension._lib_game_get_events_raw_list();
     VM.VmGlobals globals = vm.globals;
     VM.clearList(output);
     int len = eventList.Size();

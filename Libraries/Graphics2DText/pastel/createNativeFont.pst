@@ -61,7 +61,7 @@ VM.Value lib_graphics2dtext_createNativeFont(VM.VmContext vm, Array<VM.Value> ar
     int isItalic = styleBitmask & 2;
 
     // TODO: just put all these inline so that the method swapper can trim a bunch of code
-    nfOut[0] = Native._lib_graphics2dtext_createNativeFont(fontType, fontClass, fontPath, fontSize, red, green, blue, isBold > 0, isItalic > 0);
+    nfOut[0] = Extension._lib_graphics2dtext_createNativeFont(fontType, fontClass, fontPath, fontSize, red, green, blue, isBold > 0, isItalic > 0);
 
     if (nfOut[0] == null) {
         if (fontType == 3) return ints[1];

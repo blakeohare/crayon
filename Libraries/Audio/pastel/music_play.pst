@@ -19,18 +19,18 @@ VM.Value lib_audio_music_play(VM.VmContext vm, Array<VM.Value> args) {
 }
 
 int lib_audio_music_playImpl(VM.ObjectInstance musicObject, bool isResource, string path, double startingVolume, bool isLoop) {
-    Native._lib_audio_musicSetVolume(startingVolume);
+    Extension._lib_audio_musicSetVolume(startingVolume);
     object nativeObject = null;
     if (musicObject.nativeData != null) {
         nativeObject = musicObject.nativeData[0];
     }
     if (isResource) {
-        Native._lib_audio_musicPlayResource(nativeObject, path, isLoop);
+        Extension._lib_audio_musicPlayResource(nativeObject, path, isLoop);
     } else {
-        if (!Native._lib_audio_musicVerifyFileExists(path)) {
+        if (!Extension._lib_audio_musicVerifyFileExists(path)) {
             return -1;
         }
-        Native._lib_audio_musicPlayFile(nativeObject, path, isLoop);
+        Extension._lib_audio_musicPlayFile(nativeObject, path, isLoop);
     }
     return 0;
 }

@@ -14,6 +14,6 @@
 VM.Value lib_imageresources_checkLoaderIsDone(VM.VmContext vm, Array<VM.Value> args) {
     VM.ObjectInstance objInstance1 = (VM.ObjectInstance) args[0].internalValue;
     VM.ObjectInstance objInstance2 = (VM.ObjectInstance) args[1].internalValue;
-    int status = Native._lib_imageresources_checkLoaderIsDone(objInstance1.nativeData, objInstance2.nativeData);
+    int status = Extension._lib_imageresources_checkLoaderIsDone(objInstance1.nativeData, objInstance2.nativeData);
     return VM.buildInteger(vm.globals, status);
 }

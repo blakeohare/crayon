@@ -20,7 +20,7 @@ VM.Value lib_imagewebresources_jsDownload(VM.VmContext vm, Array<VM.Value> args)
         Array<object> objArray1 = new Array<object>(5);
         objInstance1.nativeData = objArray1;
         objArray1[0] = false;
-        Native._lib_imagewebresources_jsDownload(url, objArray1);
+        Extension._lib_imagewebresources_jsDownload(url, objArray1);
     }
 
     return vm.globalNull;

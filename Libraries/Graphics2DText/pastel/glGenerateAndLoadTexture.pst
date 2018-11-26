@@ -51,7 +51,7 @@ VM.Value lib_graphics2dtext_glGenerateAndLoadTexture(VM.VmContext vm, Array<VM.V
         }
         height += 1;
 
-        object textureSheetBitmap = Native._lib_graphics2dtext_generateTextureSheetAndAllocateRectangleInformation(tileNativeDatas, coordinates, 1024, height);
+        object textureSheetBitmap = Extension._lib_graphics2dtext_generateTextureSheetAndAllocateRectangleInformation(tileNativeDatas, coordinates, 1024, height);
 
         // go back through and re-assign the texture ID to the tile native datas.
         for (i = 0; i < tileCount; i += 1) {

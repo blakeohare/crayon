@@ -10,7 +10,7 @@ VM.Value lib_http_pollRequest(VM.VmContext vm, Array<VM.Value> args) {
 
     VM.ObjectInstance objInstance1 = (VM.ObjectInstance) args[0].internalValue;
     Array<object> objArray1 = objInstance1.nativeData;
-    if (Native._lib_http_pollRequest(objArray1)) {
+    if (Extension._lib_http_pollRequest(objArray1)) {
         return vm.globalTrue;
     }
     return vm.globalFalse;

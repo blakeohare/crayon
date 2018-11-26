@@ -29,7 +29,7 @@ VM.Value lib_imageresources_loadAsynchronous(VM.VmContext vm, Array<VM.Value> ar
     objArray2[2] = 0;
     objInstance2.nativeData = objArray2;
 
-    Native._lib_imageresources_loadAsync(
+    Extension._lib_imageresources_loadAsync(
         filename,
         objArray1, // native image data nativeData
         objArray2); // image loader nativeData

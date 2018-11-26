@@ -45,7 +45,7 @@ VM.Value lib_nori_instantiateElement(VM.VmContext vm, Array<VM.Value> args) {
         unboxed.misc_string_0 = (string) VM.getItemFromList(properties, 21).internalValue;
     }
 
-    o.nativeData[0] = Native._lib_nori_instantiateElement(type, unboxed);
+    o.nativeData[0] = Extension._lib_nori_instantiateElement(type, unboxed);
 
     return vm.globalNull;
 }

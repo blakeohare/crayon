@@ -12,7 +12,7 @@ VM.Value lib_fileiocommon_initializeDisk(VM.VmContext vm, Array<VM.Value> args) 
     VM.ObjectInstance objInstance1 = (VM.ObjectInstance) args[0].internalValue;
     Array<object> objArray1 = new Array<object>(1);
     objInstance1.nativeData = objArray1;
-    object object1 = Native._lib_fileiocommon_initializeDisk((bool) args[1].internalValue);
+    object object1 = Extension._lib_fileiocommon_initializeDisk((bool) args[1].internalValue);
     objArray1[0] = object1;
     return vm.globals.valueNull;
 }

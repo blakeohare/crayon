@@ -11,6 +11,6 @@ VM.Value lib_nori_instantiateWindow(VM.VmContext vm, Array<VM.Value> args) {
         (int) VM.getItemFromList(size, 0).internalValue,
         (int) VM.getItemFromList(size, 1).internalValue);
     window.nativeData = new Array<object>(1);
-    window.nativeData[0] = Native._lib_nori_instantiateWindow(unboxed);
+    window.nativeData[0] = Extension._lib_nori_instantiateWindow(unboxed);
     return vm.globalNull;
 }

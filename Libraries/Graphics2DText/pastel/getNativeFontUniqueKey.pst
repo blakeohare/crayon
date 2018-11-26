@@ -20,7 +20,7 @@
 VM.Value lib_graphics2dtext_getNativeFontUniqueKey(VM.VmContext vm, Array<VM.Value> args) {
     VM.ListImpl list1 = (VM.ListImpl) args[7].internalValue;
     List<VM.Value> output = new List<VM.Value>();
-    Native._lib_graphics2dtext_getNativeFontUniqueKey(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+    Extension._lib_graphics2dtext_getNativeFontUniqueKey(output, args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
     // TODO: fix this hack
     VM.ListImpl list2 = (VM.ListImpl) VM.buildList(output).internalValue;
     if (@ext_boolean("ARRAY_IS_LIST")) {

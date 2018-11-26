@@ -11,7 +11,7 @@ VM.Value lib_gamepad_get_axis_1d_state(VM.VmContext vm, Array<VM.Value> args) {
         int index = (int) args[1].internalValue;
         VM.ObjectInstance dev = (VM.ObjectInstance) args[0].internalValue;
         return VM.buildFloat(vm.globals,
-            Native._lib_gamepad_get_axis_1d_state(
+            Extension._lib_gamepad_get_axis_1d_state(
                 dev.nativeData[0], index));
     }
 }

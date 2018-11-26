@@ -10,7 +10,7 @@ VM.Value lib_imageencoder_encodeToBytes(VM.VmContext vm, Array<VM.Value> args) {
     int imageFormat = (int) args[1].internalValue; // 1: PNG, 2: JPEG
     List<VM.Value> byteOutputList = new List<VM.Value>();
     // TODO: return a Value since it's taking in the INTEGER_POSITIVE_CACHE anyway
-    int statusCode = Native._lib_imageencoder_encodeImage(platformBitmap, imageFormat, byteOutputList, vm.globals.positiveIntegers);
+    int statusCode = Extension._lib_imageencoder_encodeImage(platformBitmap, imageFormat, byteOutputList, vm.globals.positiveIntegers);
     int length = byteOutputList.Size();
     VM.ListImpl finalOutputList = (VM.ListImpl) args[2].internalValue;
     for (int i = 0; i < length; i += 1) {

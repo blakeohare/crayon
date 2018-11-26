@@ -7,5 +7,5 @@
     - Everything else: absolute path of where the host platform thinks the current directory is.
 */
 VM.Value lib_fileiocommon_getCurrentDirectory(VM.VmContext vm, Array<VM.Value> args) {
-    return VM.buildString(vm.globals, Native._lib_fileiocommon_getCurrentDirectory());
+    return VM.buildString(vm.globals, Extension._lib_fileiocommon_getCurrentDirectory());
 }

@@ -14,14 +14,14 @@ VM.Value lib_gamepad_initialize_device(VM.VmContext vm, Array<VM.Value> args) {
         int int1 = (int) args[0].internalValue;
         VM.ObjectInstance objInstance1 = (VM.ObjectInstance) args[1].internalValue;
         VM.ListImpl list1 = (VM.ListImpl) args[2].internalValue;
-        object object1 = Native._lib_gamepad_get_device_reference(int1);
+        object object1 = Extension._lib_gamepad_get_device_reference(int1);
         objInstance1.nativeData = new Array<object>(1);
         objInstance1.nativeData[0] = object1;
         VM.clearList(list1);
-        VM.addToList(list1, VM.buildString(vm.globals, Native._lib_gamepad_get_name(int1, object1)));
-        VM.addToList(list1, VM.buildInteger(vm.globals, Native._lib_gamepad_get_button_count(int1, object1)));
-        VM.addToList(list1, VM.buildInteger(vm.globals, Native._lib_gamepad_get_axis_1d_count(int1, object1)));
-        VM.addToList(list1, VM.buildInteger(vm.globals, Native._lib_gamepad_get_axis_2d_count(int1, object1)));
+        VM.addToList(list1, VM.buildString(vm.globals, Extension._lib_gamepad_get_name(int1, object1)));
+        VM.addToList(list1, VM.buildInteger(vm.globals, Extension._lib_gamepad_get_button_count(int1, object1)));
+        VM.addToList(list1, VM.buildInteger(vm.globals, Extension._lib_gamepad_get_axis_1d_count(int1, object1)));
+        VM.addToList(list1, VM.buildInteger(vm.globals, Extension._lib_gamepad_get_axis_2d_count(int1, object1)));
     }
     return vm.globalNull;
 }

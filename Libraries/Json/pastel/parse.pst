@@ -4,7 +4,7 @@
 VM.Value lib_json_parse(VM.VmContext vm, Array<VM.Value> args) {
     string raw = (string) args[0].internalValue;
     if (raw.Size() > 0) {
-        VM.Value output = Native._lib_json_parse(vm.globals, raw);
+        VM.Value output = Extension._lib_json_parse(vm.globals, raw);
         if (output != null) {
             return output;
         }

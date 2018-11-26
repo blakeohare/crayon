@@ -7,7 +7,7 @@
 */
 VM.Value lib_fileiocommon_fileDelete(VM.VmContext vm, Array<VM.Value> args) {
 
-    int statusCode = Native._lib_fileiocommon_fileDelete(
+    int statusCode = Extension._lib_fileiocommon_fileDelete(
         lib_fileiocommon_getDiskObject(args[0]),
         (string) args[1].internalValue);
 

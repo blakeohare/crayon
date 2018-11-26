@@ -6,7 +6,7 @@ VM.Value lib_nori_registerHandlerCallback(VM.VmContext vm, Array<VM.Value> args)
     VM.Value fp = args[0];
     VM.ListImpl argOutList = (VM.ListImpl) args[1].internalValue;
     List<VM.Value> nativeOut = new List<VM.Value>();
-    Native._lib_nori_registerHandlerCallback(fp, nativeOut);
+    Extension._lib_nori_registerHandlerCallback(fp, nativeOut);
     for (int i = 0; i < nativeOut.Size(); ++i) {
         VM.addToList(argOutList, nativeOut[i]);
     }

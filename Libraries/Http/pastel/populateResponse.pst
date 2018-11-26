@@ -26,7 +26,7 @@ VM.Value lib_http_populateResponse(VM.VmContext vm, Array<VM.Value> args) {
 
     Array<object> objArray1 = new Array<object>(1);
     List<string> stringList1 = new List<string>();
-    Native._lib_http_readResponseData(
+    Extension._lib_http_readResponseData(
         // native http request object
         object1,
 

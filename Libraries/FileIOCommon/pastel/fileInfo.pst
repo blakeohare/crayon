@@ -22,7 +22,7 @@
 */
 VM.Value lib_fileiocommon_fileInfo(VM.VmContext vm, Array<VM.Value> args) {
     int mask = (int) args[2].internalValue;
-    Native._lib_fileiocommon_getFileInfo(
+    Extension._lib_fileiocommon_getFileInfo(
         lib_fileiocommon_getDiskObject(args[0]),
         (string) args[1].internalValue,
         mask,

@@ -12,7 +12,7 @@ VM.Value lib_game_getTouchState(VM.VmContext vm, Array<VM.Value> args) {
     VM.ListImpl output = (VM.ListImpl) args[0].internalValue;
     Array<int> data = new Array<int>(10 * 3 + 1); // support up to 10 touch points [length, (ID, X, Y) * 10]
     data[0] = 0;
-    Native._lib_game_getTouchState(data);
+    Extension._lib_game_getTouchState(data);
     int len = data[0];
     int end = len * 3 + 1;
     for (int i = 1; i < end; i += 1) {
