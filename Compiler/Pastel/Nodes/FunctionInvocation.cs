@@ -86,17 +86,17 @@ namespace Pastel.Nodes
                 this.ResolvedType = functionDefinition.ReturnType;
                 return this;
             }
-            else if (this.Root is NativeFunctionReference)
+            else if (this.Root is CoreFunctionReference)
             {
-                NativeFunctionReference nfr = (NativeFunctionReference)this.Root;
-                NativeFunctionInvocation nfi;
+                CoreFunctionReference nfr = (CoreFunctionReference)this.Root;
+                CoreFunctionInvocation nfi;
                 if (nfr.Context == null)
                 {
-                    nfi = new NativeFunctionInvocation(this.FirstToken, nfr.NativeFunctionId, this.Args, this.Owner);
+                    nfi = new CoreFunctionInvocation(this.FirstToken, nfr.CoreFunctionId, this.Args, this.Owner);
                 }
                 else
                 {
-                    nfi = new NativeFunctionInvocation(this.FirstToken, nfr.NativeFunctionId, nfr.Context, this.Args, this.Owner);
+                    nfi = new CoreFunctionInvocation(this.FirstToken, nfr.CoreFunctionId, nfr.Context, this.Args, this.Owner);
                 }
 
                 return nfi.ResolveType(varScope, compiler);

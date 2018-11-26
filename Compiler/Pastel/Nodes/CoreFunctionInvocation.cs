@@ -4,18 +4,18 @@ using System.Linq;
 
 namespace Pastel.Nodes
 {
-    internal class NativeFunctionInvocation : Expression
+    internal class CoreFunctionInvocation : Expression
     {
-        public NativeFunction Function { get; set; }
+        public CoreFunction Function { get; set; }
         public Expression[] Args { get; set; }
 
-        public NativeFunctionInvocation(Token firstToken, NativeFunction function, IList<Expression> args, ICompilationEntity owner) : base(firstToken, owner)
+        public CoreFunctionInvocation(Token firstToken, CoreFunction function, IList<Expression> args, ICompilationEntity owner) : base(firstToken, owner)
         {
             this.Function = function;
             this.Args = args.ToArray();
         }
 
-        public NativeFunctionInvocation(Token firstToken, NativeFunction function, Expression context, IList<Expression> args, ICompilationEntity owner)
+        public CoreFunctionInvocation(Token firstToken, CoreFunction function, Expression context, IList<Expression> args, ICompilationEntity owner)
            : this(firstToken, function, PushInFront(context, args), owner)
         { }
 
@@ -34,14 +34,14 @@ namespace Pastel.Nodes
         internal override Expression ResolveType(VariableScope varScope, PastelCompiler compiler)
         {
             // The args were already resolved.
-            // This ensures that they match the native function definition
+            // This ensures that they match the core function definition
 
-            PType[] expectedTypes = NativeFunctionUtil.GetNativeFunctionArgTypes(this.Function);
-            bool[] isArgRepeated = NativeFunctionUtil.GetNativeFunctionIsArgTypeRepeated(this.Function);
+            PType[] expectedTypes = CoreFunctionUtil.GetCoreFunctionArgTypes(this.Function);
+            bool[] isArgRepeated = CoreFunctionUtil.GetCoreFunctionIsArgTypeRepeated(this.Function);
 
             switch (this.Function)
             {
-                case NativeFunction.FORCE_PARENS:
+                case CoreFunction.FORCE_PARENS:
                     if (this.Args.Length != 1) throw new ParserException(this.FirstToken, "Expected 1 arg.");
 
                     return new ForcedParenthesis(this.FirstToken, this.Args[0]);
@@ -82,7 +82,7 @@ namespace Pastel.Nodes
                 }
             }
 
-            PType returnType = NativeFunctionUtil.GetNativeFunctionReturnType(this.Function);
+            PType returnType = CoreFunctionUtil.GetCoreFunctionReturnType(this.Function);
 
             if (returnType.HasTemplates)
             {

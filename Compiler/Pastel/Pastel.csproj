@@ -45,7 +45,7 @@
     <Compile Include="*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="NativeFunctionSignatures.txt" />
+    <EmbeddedResource Include="CoreFunctionSignatures.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Transpilers\Resources\*.txt" />

@@ -56,24 +56,24 @@
                 BracketIndex bi = (BracketIndex)this.Target;
                 string rootType = bi.Root.ResolvedType.RootValue;
                 Expression[] args = new Expression[] { bi.Root, bi.Index, this.Value };
-                NativeFunction nf;
+                CoreFunction nf;
                 if (rootType == "Array")
                 {
-                    nf = NativeFunction.ARRAY_SET;
+                    nf = CoreFunction.ARRAY_SET;
                 }
                 else if (rootType == "List")
                 {
-                    nf = NativeFunction.LIST_SET;
+                    nf = CoreFunction.LIST_SET;
                 }
                 else if (rootType == "Dictionary")
                 {
-                    nf = NativeFunction.DICTIONARY_SET;
+                    nf = CoreFunction.DICTIONARY_SET;
                 }
                 else
                 {
                     throw new ParserException(bi.BracketToken, "Can't use brackets here.");
                 }
-                return new ExpressionAsExecutable(new NativeFunctionInvocation(
+                return new ExpressionAsExecutable(new CoreFunctionInvocation(
                     this.FirstToken,
                     nf,
                     args,
