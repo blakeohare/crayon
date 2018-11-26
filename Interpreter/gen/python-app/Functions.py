@@ -33,145 +33,145 @@ def PST_stringCheckSlice(haystack, i, needle):
 def always_true(): return True
 def always_false(): return False
 
-def v_addLiteralImpl(v_vm, v_row, v_stringArg):
-  v_g = v_vm[12]
-  v_type = v_row[0]
-  if (v_type == 1):
-    v_vm[4][4].append(v_g[0])
-  elif (v_type == 2):
-    v_vm[4][4].append(v_buildBoolean(v_g, (v_row[1] == 1)))
-  elif (v_type == 3):
-    v_vm[4][4].append(v_buildInteger(v_g, v_row[1]))
-  elif (v_type == 4):
-    v_vm[4][4].append(v_buildFloat(v_g, float(v_stringArg)))
-  elif (v_type == 5):
-    v_vm[4][4].append(v_buildCommonString(v_g, v_stringArg))
-  elif (v_type == 9):
-    v_index = len(v_vm[4][4])
-    v_vm[4][4].append(v_buildCommonString(v_g, v_stringArg))
-    v_vm[4][20][v_stringArg] = v_index
-  elif (v_type == 10):
-    v_cv = [False, v_row[1]]
-    v_vm[4][4].append([10, v_cv])
+def addLiteralImpl(vm, row, stringArg):
+  g = vm[12]
+  type = row[0]
+  if (type == 1):
+    vm[4][4].append(g[0])
+  elif (type == 2):
+    vm[4][4].append(buildBoolean(g, (row[1] == 1)))
+  elif (type == 3):
+    vm[4][4].append(buildInteger(g, row[1]))
+  elif (type == 4):
+    vm[4][4].append(buildFloat(g, float(stringArg)))
+  elif (type == 5):
+    vm[4][4].append(buildCommonString(g, stringArg))
+  elif (type == 9):
+    index = len(vm[4][4])
+    vm[4][4].append(buildCommonString(g, stringArg))
+    vm[4][20][stringArg] = index
+  elif (type == 10):
+    cv = [False, row[1]]
+    vm[4][4].append([10, cv])
   return 0
 
-def v_addNameImpl(v_vm, v_nameValue):
-  v_index = len(v_vm[4][1])
-  v_vm[4][2][v_nameValue] = v_index
-  v_vm[4][1].append(v_nameValue)
-  if "length" == v_nameValue:
-    v_vm[4][14] = v_index
+def addNameImpl(vm, nameValue):
+  index = len(vm[4][1])
+  vm[4][2][nameValue] = index
+  vm[4][1].append(nameValue)
+  if "length" == nameValue:
+    vm[4][14] = index
   return 0
 
-def v_addToList(v_list, v_item):
-  v_list[2].append(v_item)
-  v_list[1] += 1
+def addToList(list, item):
+  list[2].append(item)
+  list[1] += 1
 
-def v_applyDebugSymbolData(v_vm, v_opArgs, v_stringData, v_recentlyDefinedFunction):
+def applyDebugSymbolData(vm, opArgs, stringData, recentlyDefinedFunction):
   return 0
 
-def v_buildBoolean(v_g, v_value):
-  if v_value:
-    return v_g[1]
-  return v_g[2]
+def buildBoolean(g, value):
+  if value:
+    return g[1]
+  return g[2]
 
-def v_buildCommonString(v_g, v_s):
-  v_value = None
-  v_value = v_g[11].get(v_s, None)
-  if (v_value == None):
-    v_value = v_buildString(v_g, v_s)
-    v_g[11][v_s] = v_value
-  return v_value
+def buildCommonString(g, s):
+  value = None
+  value = g[11].get(s, None)
+  if (value == None):
+    value = buildString(g, s)
+    g[11][s] = value
+  return value
 
-def v_buildFloat(v_g, v_value):
-  if (v_value == 0.0):
-    return v_g[6]
-  if (v_value == 1.0):
-    return v_g[7]
-  return [4, v_value]
+def buildFloat(g, value):
+  if (value == 0.0):
+    return g[6]
+  if (value == 1.0):
+    return g[7]
+  return [4, value]
 
-def v_buildInteger(v_g, v_num):
-  if (v_num < 0):
-    if (v_num > -257):
-      return v_g[10][-v_num]
-  elif (v_num < 2049):
-    return v_g[9][v_num]
-  return [3, v_num]
+def buildInteger(g, num):
+  if (num < 0):
+    if (num > -257):
+      return g[10][-num]
+  elif (num < 2049):
+    return g[9][num]
+  return [3, num]
 
-def v_buildList(v_valueList):
-  return v_buildListWithType(None, v_valueList)
+def buildList(valueList):
+  return buildListWithType(None, valueList)
 
-def v_buildListWithType(v_type, v_valueList):
-  return [6, [v_type, len(v_valueList), v_valueList]]
+def buildListWithType(type, valueList):
+  return [6, [type, len(valueList), valueList]]
 
-def v_buildNull(v_globals):
-  return v_globals[0]
+def buildNull(globals):
+  return globals[0]
 
-def v_buildRelayObj(v_type, v_iarg1, v_iarg2, v_iarg3, v_farg1, v_sarg1):
-  return [v_type, v_iarg1, v_iarg2, v_iarg3, v_farg1, v_sarg1]
+def buildRelayObj(type, iarg1, iarg2, iarg3, farg1, sarg1):
+  return [type, iarg1, iarg2, iarg3, farg1, sarg1]
 
-def v_buildString(v_g, v_s):
-  if (len(v_s) == 0):
-    return v_g[8]
-  return [5, v_s]
+def buildString(g, s):
+  if (len(s) == 0):
+    return g[8]
+  return [5, s]
 
-def v_buildStringDictionary(v_globals, v_stringKeys, v_values):
-  v_size = len(v_stringKeys)
-  v_d = [v_size, 5, 0, None, {}, {}, [], []]
-  v_k = None
-  v_i = 0
-  while (v_i < v_size):
-    v_k = v_stringKeys[v_i]
-    if (v_k in v_d[5]):
-      v_d[7][v_d[5][v_k]] = v_values[v_i]
+def buildStringDictionary(globals, stringKeys, values):
+  size = len(stringKeys)
+  d = [size, 5, 0, None, {}, {}, [], []]
+  k = None
+  i = 0
+  while (i < size):
+    k = stringKeys[i]
+    if (k in d[5]):
+      d[7][d[5][k]] = values[i]
     else:
-      v_d[5][v_k] = len(v_d[7])
-      v_d[7].append(v_values[v_i])
-      v_d[6].append(v_buildString(v_globals, v_k))
-    v_i += 1
-  v_d[0] = len(v_d[7])
-  return [7, v_d]
+      d[5][k] = len(d[7])
+      d[7].append(values[i])
+      d[6].append(buildString(globals, k))
+    i += 1
+  d[0] = len(d[7])
+  return [7, d]
 
-def v_canAssignGenericToGeneric(v_vm, v_gen1, v_gen1Index, v_gen2, v_gen2Index, v_newIndexOut):
-  if (v_gen2 == None):
+def canAssignGenericToGeneric(vm, gen1, gen1Index, gen2, gen2Index, newIndexOut):
+  if (gen2 == None):
     return True
-  if (v_gen1 == None):
+  if (gen1 == None):
     return False
-  v_t1 = v_gen1[v_gen1Index]
-  v_t2 = v_gen2[v_gen2Index]
-  sc_0 = swlookup__canAssignGenericToGeneric__0.get(v_t1, 6)
+  t1 = gen1[gen1Index]
+  t2 = gen2[gen2Index]
+  sc_0 = swlookup__canAssignGenericToGeneric__0.get(t1, 6)
   if (sc_0 < 4):
     if (sc_0 < 2):
       if (sc_0 == 0):
-        v_newIndexOut[0] = (v_gen1Index + 1)
-        v_newIndexOut[1] = (v_gen2Index + 2)
-        return (v_t2 == v_t1)
+        newIndexOut[0] = (gen1Index + 1)
+        newIndexOut[1] = (gen2Index + 2)
+        return (t2 == t1)
       else:
-        v_newIndexOut[0] = (v_gen1Index + 1)
-        v_newIndexOut[1] = (v_gen2Index + 2)
-        return ((v_t2 == 3) or (v_t2 == 4))
+        newIndexOut[0] = (gen1Index + 1)
+        newIndexOut[1] = (gen2Index + 2)
+        return ((t2 == 3) or (t2 == 4))
     elif (sc_0 == 2):
-      v_newIndexOut[0] = (v_gen1Index + 1)
-      v_newIndexOut[1] = (v_gen2Index + 2)
-      if (v_t2 != 8):
+      newIndexOut[0] = (gen1Index + 1)
+      newIndexOut[1] = (gen2Index + 2)
+      if (t2 != 8):
         return False
-      v_c1 = v_gen1[(v_gen1Index + 1)]
-      v_c2 = v_gen2[(v_gen2Index + 1)]
-      if (v_c1 == v_c2):
+      c1 = gen1[(gen1Index + 1)]
+      c2 = gen2[(gen2Index + 1)]
+      if (c1 == c2):
         return True
-      return v_isClassASubclassOf(v_vm, v_c1, v_c2)
+      return isClassASubclassOf(vm, c1, c2)
     else:
-      if (v_t2 != 6):
+      if (t2 != 6):
         return False
-      return v_canAssignGenericToGeneric(v_vm, v_gen1, (v_gen1Index + 1), v_gen2, (v_gen2Index + 1), v_newIndexOut)
+      return canAssignGenericToGeneric(vm, gen1, (gen1Index + 1), gen2, (gen2Index + 1), newIndexOut)
   elif (sc_0 == 4):
-    if (v_t2 != 7):
+    if (t2 != 7):
       return False
-    if not (v_canAssignGenericToGeneric(v_vm, v_gen1, (v_gen1Index + 1), v_gen2, (v_gen2Index + 1), v_newIndexOut)):
+    if not (canAssignGenericToGeneric(vm, gen1, (gen1Index + 1), gen2, (gen2Index + 1), newIndexOut)):
       return False
-    return v_canAssignGenericToGeneric(v_vm, v_gen1, v_newIndexOut[0], v_gen2, v_newIndexOut[1], v_newIndexOut)
+    return canAssignGenericToGeneric(vm, gen1, newIndexOut[0], gen2, newIndexOut[1], newIndexOut)
   elif (sc_0 == 5):
-    if (v_t2 != 9):
+    if (t2 != 9):
       return False
     return False
   else:
@@ -179,77 +179,77 @@ def v_canAssignGenericToGeneric(v_vm, v_gen1, v_gen1Index, v_gen2, v_gen2Index, 
 
 swlookup__canAssignGenericToGeneric__0 = { 0: 0, 1: 0, 2: 0, 4: 0, 5: 0, 10: 0, 3: 1, 8: 2, 6: 3, 7: 4, 9: 5 }
 
-def v_canAssignTypeToGeneric(v_vm, v_value, v_generics, v_genericIndex):
-  sc_0 = swlookup__canAssignTypeToGeneric__0.get(v_value[0], 7)
+def canAssignTypeToGeneric(vm, value, generics, genericIndex):
+  sc_0 = swlookup__canAssignTypeToGeneric__0.get(value[0], 7)
   if (sc_0 < 4):
     if (sc_0 < 2):
       if (sc_0 == 0):
-        sc_1 = swlookup__canAssignTypeToGeneric__1.get(v_generics[v_genericIndex], 1)
+        sc_1 = swlookup__canAssignTypeToGeneric__1.get(generics[genericIndex], 1)
         if (sc_1 == 0):
-          return v_value
+          return value
         return None
       else:
-        if (v_generics[v_genericIndex] == v_value[0]):
-          return v_value
+        if (generics[genericIndex] == value[0]):
+          return value
         return None
     elif (sc_0 == 2):
-      if (v_generics[v_genericIndex] == 3):
-        return v_value
-      if (v_generics[v_genericIndex] == 4):
-        return v_buildFloat(v_vm[12], (0.0 + v_value[1]))
+      if (generics[genericIndex] == 3):
+        return value
+      if (generics[genericIndex] == 4):
+        return buildFloat(vm[12], (0.0 + value[1]))
       return None
     else:
-      if (v_generics[v_genericIndex] == 4):
-        return v_value
+      if (generics[genericIndex] == 4):
+        return value
       return None
   elif (sc_0 < 6):
     if (sc_0 == 4):
-      v_list = v_value[1]
-      v_listType = v_list[0]
-      v_genericIndex += 1
-      if (v_listType == None):
-        if ((v_generics[v_genericIndex] == 1) or (v_generics[v_genericIndex] == 0)):
-          return v_value
+      list = value[1]
+      listType = list[0]
+      genericIndex += 1
+      if (listType == None):
+        if ((generics[genericIndex] == 1) or (generics[genericIndex] == 0)):
+          return value
         return None
-      v_i = 0
-      while (v_i < len(v_listType)):
-        if (v_listType[v_i] != v_generics[(v_genericIndex + v_i)]):
+      i = 0
+      while (i < len(listType)):
+        if (listType[i] != generics[(genericIndex + i)]):
           return None
-        v_i += 1
-      return v_value
+        i += 1
+      return value
     else:
-      v_dict = v_value[1]
-      v_j = v_genericIndex
-      sc_2 = swlookup__canAssignTypeToGeneric__2.get(v_dict[1], 2)
+      dict = value[1]
+      j = genericIndex
+      sc_2 = swlookup__canAssignTypeToGeneric__2.get(dict[1], 2)
       if (sc_2 == 0):
-        if (v_generics[1] == v_dict[1]):
-          v_j += 2
+        if (generics[1] == dict[1]):
+          j += 2
         else:
           return None
       elif (sc_2 == 1):
-        if (v_generics[1] == 8):
-          v_j += 3
+        if (generics[1] == 8):
+          j += 3
         else:
           return None
-      v_valueType = v_dict[3]
-      if (v_valueType == None):
-        if ((v_generics[v_j] == 0) or (v_generics[v_j] == 1)):
-          return v_value
+      valueType = dict[3]
+      if (valueType == None):
+        if ((generics[j] == 0) or (generics[j] == 1)):
+          return value
         return None
-      v_k = 0
-      while (v_k < len(v_valueType)):
-        if (v_valueType[v_k] != v_generics[(v_j + v_k)]):
+      k = 0
+      while (k < len(valueType)):
+        if (valueType[k] != generics[(j + k)]):
           return None
-        v_k += 1
-      return v_value
+        k += 1
+      return value
   elif (sc_0 == 6):
-    if (v_generics[v_genericIndex] == 8):
-      v_targetClassId = v_generics[(v_genericIndex + 1)]
-      v_givenClassId = (v_value[1])[0]
-      if (v_targetClassId == v_givenClassId):
-        return v_value
-      if v_isClassASubclassOf(v_vm, v_givenClassId, v_targetClassId):
-        return v_value
+    if (generics[genericIndex] == 8):
+      targetClassId = generics[(genericIndex + 1)]
+      givenClassId = (value[1])[0]
+      if (targetClassId == givenClassId):
+        return value
+      if isClassASubclassOf(vm, givenClassId, targetClassId):
+        return value
     return None
   return None
 
@@ -257,380 +257,380 @@ swlookup__canAssignTypeToGeneric__1 = { 5: 0, 8: 0, 10: 0, 9: 0, 6: 0, 7: 0 }
 swlookup__canAssignTypeToGeneric__2 = { 3: 0, 5: 0, 8: 1 }
 swlookup__canAssignTypeToGeneric__0 = { 1: 0, 2: 1, 5: 1, 10: 1, 3: 2, 4: 3, 6: 4, 7: 5, 8: 6 }
 
-def v_canonicalizeAngle(v_a):
-  v_twopi = 6.28318530717958
-  v_a = (v_a % v_twopi)
-  if (v_a < 0):
-    v_a += v_twopi
-  return v_a
+def canonicalizeAngle(a):
+  twopi = 6.28318530717958
+  a = (a % twopi)
+  if (a < 0):
+    a += twopi
+  return a
 
-def v_canonicalizeListSliceArgs(v_outParams, v_beginValue, v_endValue, v_beginIndex, v_endIndex, v_stepAmount, v_length, v_isForward):
-  if (v_beginValue == None):
-    if v_isForward:
-      v_beginIndex = 0
+def canonicalizeListSliceArgs(outParams, beginValue, endValue, beginIndex, endIndex, stepAmount, length, isForward):
+  if (beginValue == None):
+    if isForward:
+      beginIndex = 0
     else:
-      v_beginIndex = (v_length - 1)
-  if (v_endValue == None):
-    if v_isForward:
-      v_endIndex = v_length
+      beginIndex = (length - 1)
+  if (endValue == None):
+    if isForward:
+      endIndex = length
     else:
-      v_endIndex = (-1 - v_length)
-  if (v_beginIndex < 0):
-    v_beginIndex += v_length
-  if (v_endIndex < 0):
-    v_endIndex += v_length
-  if ((v_beginIndex == 0) and (v_endIndex == v_length) and (v_stepAmount == 1)):
+      endIndex = (-1 - length)
+  if (beginIndex < 0):
+    beginIndex += length
+  if (endIndex < 0):
+    endIndex += length
+  if ((beginIndex == 0) and (endIndex == length) and (stepAmount == 1)):
     return 2
-  if v_isForward:
-    if (v_beginIndex >= v_length):
+  if isForward:
+    if (beginIndex >= length):
       return 0
-    if (v_beginIndex < 0):
+    if (beginIndex < 0):
       return 3
-    if (v_endIndex < v_beginIndex):
+    if (endIndex < beginIndex):
       return 4
-    if (v_beginIndex == v_endIndex):
+    if (beginIndex == endIndex):
       return 0
-    if (v_endIndex > v_length):
-      v_endIndex = v_length
+    if (endIndex > length):
+      endIndex = length
   else:
-    if (v_beginIndex < 0):
+    if (beginIndex < 0):
       return 0
-    if (v_beginIndex >= v_length):
+    if (beginIndex >= length):
       return 3
-    if (v_endIndex > v_beginIndex):
+    if (endIndex > beginIndex):
       return 4
-    if (v_beginIndex == v_endIndex):
+    if (beginIndex == endIndex):
       return 0
-    if (v_endIndex < -1):
-      v_endIndex = -1
-  v_outParams[0] = v_beginIndex
-  v_outParams[1] = v_endIndex
+    if (endIndex < -1):
+      endIndex = -1
+  outParams[0] = beginIndex
+  outParams[1] = endIndex
   return 1
 
-def v_classIdToString(v_vm, v_classId):
-  return v_vm[4][9][v_classId][16]
+def classIdToString(vm, classId):
+  return vm[4][9][classId][16]
 
-def v_clearList(v_a):
-  if (v_a[1] == 1):
-    v_a[2].pop()
+def clearList(a):
+  if (a[1] == 1):
+    a[2].pop()
   else:
-    v_a[2] = []
-  v_a[1] = 0
+    a[2] = []
+  a[1] = 0
   return 0
 
-def v_cloneDictionary(v_original, v_clone):
-  v_type = v_original[1]
-  v_i = 0
-  v_size = v_original[0]
-  v_kInt = 0
-  v_kString = None
-  if (v_clone == None):
-    v_clone = [0, v_type, v_original[2], v_original[3], {}, {}, [], []]
-    if (v_type == 5):
-      while (v_i < v_size):
-        v_clone[5][v_original[6][v_i][1]] = v_i
-        v_i += 1
+def cloneDictionary(original, clone):
+  type = original[1]
+  i = 0
+  size = original[0]
+  kInt = 0
+  kString = None
+  if (clone == None):
+    clone = [0, type, original[2], original[3], {}, {}, [], []]
+    if (type == 5):
+      while (i < size):
+        clone[5][original[6][i][1]] = i
+        i += 1
     else:
-      while (v_i < v_size):
-        if (v_type == 8):
-          v_kInt = (v_original[6][v_i][1])[1]
+      while (i < size):
+        if (type == 8):
+          kInt = (original[6][i][1])[1]
         else:
-          v_kInt = v_original[6][v_i][1]
-        v_clone[4][v_kInt] = v_i
-        v_i += 1
-    v_i = 0
-    while (v_i < v_size):
-      v_clone[6].append(v_original[6][v_i])
-      v_clone[7].append(v_original[7][v_i])
-      v_i += 1
+          kInt = original[6][i][1]
+        clone[4][kInt] = i
+        i += 1
+    i = 0
+    while (i < size):
+      clone[6].append(original[6][i])
+      clone[7].append(original[7][i])
+      i += 1
   else:
-    v_i = 0
-    while (v_i < v_size):
-      if (v_type == 5):
-        v_kString = v_original[6][v_i][1]
-        if (v_kString in v_clone[5]):
-          v_clone[7][v_clone[5][v_kString]] = v_original[7][v_i]
+    i = 0
+    while (i < size):
+      if (type == 5):
+        kString = original[6][i][1]
+        if (kString in clone[5]):
+          clone[7][clone[5][kString]] = original[7][i]
         else:
-          v_clone[5][v_kString] = len(v_clone[7])
-          v_clone[7].append(v_original[7][v_i])
-          v_clone[6].append(v_original[6][v_i])
+          clone[5][kString] = len(clone[7])
+          clone[7].append(original[7][i])
+          clone[6].append(original[6][i])
       else:
-        if (v_type == 3):
-          v_kInt = v_original[6][v_i][1]
+        if (type == 3):
+          kInt = original[6][i][1]
         else:
-          v_kInt = (v_original[6][v_i][1])[1]
-        if (v_kInt in v_clone[4]):
-          v_clone[7][v_clone[4][v_kInt]] = v_original[7][v_i]
+          kInt = (original[6][i][1])[1]
+        if (kInt in clone[4]):
+          clone[7][clone[4][kInt]] = original[7][i]
         else:
-          v_clone[4][v_kInt] = len(v_clone[7])
-          v_clone[7].append(v_original[7][v_i])
-          v_clone[6].append(v_original[6][v_i])
-      v_i += 1
-  v_clone[0] = (len(v_clone[4]) + len(v_clone[5]))
-  return v_clone
+          clone[4][kInt] = len(clone[7])
+          clone[7].append(original[7][i])
+          clone[6].append(original[6][i])
+      i += 1
+  clone[0] = (len(clone[4]) + len(clone[5]))
+  return clone
 
-def v_createInstanceType(v_classId):
-  v_o = [None, None]
-  v_o[0] = 8
-  v_o[1] = v_classId
-  return v_o
+def createInstanceType(classId):
+  o = [None, None]
+  o[0] = 8
+  o[1] = classId
+  return o
 
-def v_createVm(v_rawByteCode, v_resourceManifest):
-  v_globals = v_initializeConstantValues()
-  v_resources = v_resourceManagerInitialize(v_globals, v_resourceManifest)
-  v_byteCode = v_initializeByteCode(v_rawByteCode)
-  v_localsStack = (PST_NoneListOfOne * 10)
-  v_localsStackSet = (PST_NoneListOfOne * 10)
-  v_i = 0
-  v_i = (len(v_localsStack) - 1)
-  while (v_i >= 0):
-    v_localsStack[v_i] = None
-    v_localsStackSet[v_i] = 0
-    v_i -= 1
-  v_stack = [0, 1, 0, 0, None, False, None, 0, 0, 1, 0, None, None, None]
-  v_executionContext = [0, v_stack, 0, 100, (PST_NoneListOfOne * 100), v_localsStack, v_localsStackSet, 1, 0, False, None, False, 0, None]
-  v_executionContexts = {}
-  v_executionContexts[0] = v_executionContext
-  v_vm = [v_executionContexts, v_executionContext[0], v_byteCode, [(PST_NoneListOfOne * len(v_byteCode[0])), None, [], None, None, {}, {}], [None, [], {}, None, [], None, [], None, [], (PST_NoneListOfOne * 100), (PST_NoneListOfOne * 100), {}, None, {}, -1, (PST_NoneListOfOne * 10), 0, None, None, [0, 0, 0], {}, {}, None], 0, False, [], None, v_resources, [], [[], False, None, None], v_globals, v_globals[0], v_globals[1], v_globals[2]]
-  return v_vm
+def createVm(rawByteCode, resourceManifest):
+  globals = initializeConstantValues()
+  resources = resourceManagerInitialize(globals, resourceManifest)
+  byteCode = initializeByteCode(rawByteCode)
+  localsStack = (PST_NoneListOfOne * 10)
+  localsStackSet = (PST_NoneListOfOne * 10)
+  i = 0
+  i = (len(localsStack) - 1)
+  while (i >= 0):
+    localsStack[i] = None
+    localsStackSet[i] = 0
+    i -= 1
+  stack = [0, 1, 0, 0, None, False, None, 0, 0, 1, 0, None, None, None]
+  executionContext = [0, stack, 0, 100, (PST_NoneListOfOne * 100), localsStack, localsStackSet, 1, 0, False, None, False, 0, None]
+  executionContexts = {}
+  executionContexts[0] = executionContext
+  vm = [executionContexts, executionContext[0], byteCode, [(PST_NoneListOfOne * len(byteCode[0])), None, [], None, None, {}, {}], [None, [], {}, None, [], None, [], None, [], (PST_NoneListOfOne * 100), (PST_NoneListOfOne * 100), {}, None, {}, -1, (PST_NoneListOfOne * 10), 0, None, None, [0, 0, 0], {}, {}, None], 0, False, [], None, resources, [], [[], False, None, None], globals, globals[0], globals[1], globals[2]]
+  return vm
 
-def v_debuggerClearBreakpoint(v_vm, v_id):
+def debuggerClearBreakpoint(vm, id):
   return 0
 
-def v_debuggerFindPcForLine(v_vm, v_path, v_line):
+def debuggerFindPcForLine(vm, path, line):
   return -1
 
-def v_debuggerSetBreakpoint(v_vm, v_path, v_line):
+def debuggerSetBreakpoint(vm, path, line):
   return -1
 
-def v_debugSetStepOverBreakpoint(v_vm):
+def debugSetStepOverBreakpoint(vm):
   return False
 
-def v_defOriginalCodeImpl(v_vm, v_row, v_fileContents):
-  v_fileId = v_row[0]
-  v_codeLookup = v_vm[3][2]
-  while (len(v_codeLookup) <= v_fileId):
-    v_codeLookup.append(None)
-  v_codeLookup[v_fileId] = v_fileContents
+def defOriginalCodeImpl(vm, row, fileContents):
+  fileId = row[0]
+  codeLookup = vm[3][2]
+  while (len(codeLookup) <= fileId):
+    codeLookup.append(None)
+  codeLookup[fileId] = fileContents
   return 0
 
-def v_dictKeyInfoToString(v_vm, v_dict):
-  if (v_dict[1] == 5):
+def dictKeyInfoToString(vm, dict):
+  if (dict[1] == 5):
     return "string"
-  if (v_dict[1] == 3):
+  if (dict[1] == 3):
     return "int"
-  if (v_dict[2] == 0):
+  if (dict[2] == 0):
     return "instance"
-  return v_classIdToString(v_vm, v_dict[2])
+  return classIdToString(vm, dict[2])
 
-def v_doEqualityComparisonAndReturnCode(v_a, v_b):
-  v_leftType = v_a[0]
-  v_rightType = v_b[0]
-  if (v_leftType == v_rightType):
-    if (v_leftType < 6):
-      if (v_a[1] == v_b[1]):
+def doEqualityComparisonAndReturnCode(a, b):
+  leftType = a[0]
+  rightType = b[0]
+  if (leftType == rightType):
+    if (leftType < 6):
+      if (a[1] == b[1]):
         return 1
       return 0
-    v_output = 0
-    sc_0 = swlookup__doEqualityComparisonAndReturnCode__0.get(v_leftType, 8)
+    output = 0
+    sc_0 = swlookup__doEqualityComparisonAndReturnCode__0.get(leftType, 8)
     if (sc_0 < 5):
       if (sc_0 < 3):
         if (sc_0 == 0):
-          v_output = 1
+          output = 1
         elif (sc_0 == 1):
-          if (v_a[1] == v_b[1]):
-            v_output = 1
-        elif (v_a[1] == v_b[1]):
-          v_output = 1
+          if (a[1] == b[1]):
+            output = 1
+        elif (a[1] == b[1]):
+          output = 1
       elif (sc_0 == 3):
-        if (v_a[1] == v_b[1]):
-          v_output = 1
-      elif (v_a[1] == v_b[1]):
-        v_output = 1
+        if (a[1] == b[1]):
+          output = 1
+      elif (a[1] == b[1]):
+        output = 1
     elif (sc_0 < 7):
       if (sc_0 == 5):
-        if v_a[1] is v_b[1]:
-          v_output = 1
+        if a[1] is b[1]:
+          output = 1
       else:
-        v_f1 = v_a[1]
-        v_f2 = v_b[1]
-        if (v_f1[3] == v_f2[3]):
-          if ((v_f1[0] == 2) or (v_f1[0] == 4)):
-            if (v_doEqualityComparisonAndReturnCode(v_f1[1], v_f2[1]) == 1):
-              v_output = 1
+        f1 = a[1]
+        f2 = b[1]
+        if (f1[3] == f2[3]):
+          if ((f1[0] == 2) or (f1[0] == 4)):
+            if (doEqualityComparisonAndReturnCode(f1[1], f2[1]) == 1):
+              output = 1
           else:
-            v_output = 1
+            output = 1
     elif (sc_0 == 7):
-      v_c1 = v_a[1]
-      v_c2 = v_b[1]
-      if (v_c1[1] == v_c2[1]):
-        v_output = 1
+      c1 = a[1]
+      c2 = b[1]
+      if (c1[1] == c2[1]):
+        output = 1
     else:
-      v_output = 2
-    return v_output
-  if (v_rightType == 1):
+      output = 2
+    return output
+  if (rightType == 1):
     return 0
-  if ((v_leftType == 3) and (v_rightType == 4)):
-    if (v_a[1] == v_b[1]):
+  if ((leftType == 3) and (rightType == 4)):
+    if (a[1] == b[1]):
       return 1
-  elif ((v_leftType == 4) and (v_rightType == 3)):
-    if (v_a[1] == v_b[1]):
+  elif ((leftType == 4) and (rightType == 3)):
+    if (a[1] == b[1]):
       return 1
   return 0
 
 swlookup__doEqualityComparisonAndReturnCode__0 = { 1: 0, 3: 1, 4: 2, 2: 3, 5: 4, 6: 5, 7: 5, 8: 5, 9: 6, 10: 7 }
 
-def v_encodeBreakpointData(v_vm, v_breakpoint, v_pc):
+def encodeBreakpointData(vm, breakpoint, pc):
   return None
 
-def v_errorResult(v_error):
-  return [3, v_error, 0.0, 0, False, ""]
+def errorResult(error):
+  return [3, error, 0.0, 0, False, ""]
 
-def v_EX_AssertionFailed(v_ec, v_exMsg):
-  return v_generateException2(v_ec, 2, v_exMsg)
+def EX_AssertionFailed(ec, exMsg):
+  return generateException2(ec, 2, exMsg)
 
-def v_EX_DivisionByZero(v_ec, v_exMsg):
-  return v_generateException2(v_ec, 3, v_exMsg)
+def EX_DivisionByZero(ec, exMsg):
+  return generateException2(ec, 3, exMsg)
 
-def v_EX_Fatal(v_ec, v_exMsg):
-  return v_generateException2(v_ec, 0, v_exMsg)
+def EX_Fatal(ec, exMsg):
+  return generateException2(ec, 0, exMsg)
 
-def v_EX_IndexOutOfRange(v_ec, v_exMsg):
-  return v_generateException2(v_ec, 4, v_exMsg)
+def EX_IndexOutOfRange(ec, exMsg):
+  return generateException2(ec, 4, exMsg)
 
-def v_EX_InvalidArgument(v_ec, v_exMsg):
-  return v_generateException2(v_ec, 5, v_exMsg)
+def EX_InvalidArgument(ec, exMsg):
+  return generateException2(ec, 5, exMsg)
 
-def v_EX_InvalidAssignment(v_ec, v_exMsg):
-  return v_generateException2(v_ec, 6, v_exMsg)
+def EX_InvalidAssignment(ec, exMsg):
+  return generateException2(ec, 6, exMsg)
 
-def v_EX_InvalidInvocation(v_ec, v_exMsg):
-  return v_generateException2(v_ec, 7, v_exMsg)
+def EX_InvalidInvocation(ec, exMsg):
+  return generateException2(ec, 7, exMsg)
 
-def v_EX_InvalidKey(v_ec, v_exMsg):
-  return v_generateException2(v_ec, 8, v_exMsg)
+def EX_InvalidKey(ec, exMsg):
+  return generateException2(ec, 8, exMsg)
 
-def v_EX_KeyNotFound(v_ec, v_exMsg):
-  return v_generateException2(v_ec, 9, v_exMsg)
+def EX_KeyNotFound(ec, exMsg):
+  return generateException2(ec, 9, exMsg)
 
-def v_EX_NullReference(v_ec, v_exMsg):
-  return v_generateException2(v_ec, 10, v_exMsg)
+def EX_NullReference(ec, exMsg):
+  return generateException2(ec, 10, exMsg)
 
-def v_EX_UnassignedVariable(v_ec, v_exMsg):
-  return v_generateException2(v_ec, 11, v_exMsg)
+def EX_UnassignedVariable(ec, exMsg):
+  return generateException2(ec, 11, exMsg)
 
-def v_EX_UnknownField(v_ec, v_exMsg):
-  return v_generateException2(v_ec, 12, v_exMsg)
+def EX_UnknownField(ec, exMsg):
+  return generateException2(ec, 12, exMsg)
 
-def v_EX_UnsupportedOperation(v_ec, v_exMsg):
-  return v_generateException2(v_ec, 13, v_exMsg)
+def EX_UnsupportedOperation(ec, exMsg):
+  return generateException2(ec, 13, exMsg)
 
-def v_finalizeInitializationImpl(v_vm, v_projectId, v_localeCount):
-  v_vm[3][1] = v_vm[3][2][:]
-  v_vm[3][2] = None
-  v_vm[4][19][2] = v_localeCount
-  v_vm[4][0] = v_vm[4][1][:]
-  v_vm[4][3] = v_vm[4][4][:]
-  v_vm[4][12] = v_primitiveMethodsInitializeLookup(v_vm[4][2])
-  v_vm[8] = (PST_NoneListOfOne * len(v_vm[4][0]))
-  v_vm[4][17] = v_projectId
-  v_vm[4][1] = None
-  v_vm[4][4] = None
-  v_vm[6] = True
+def finalizeInitializationImpl(vm, projectId, localeCount):
+  vm[3][1] = vm[3][2][:]
+  vm[3][2] = None
+  vm[4][19][2] = localeCount
+  vm[4][0] = vm[4][1][:]
+  vm[4][3] = vm[4][4][:]
+  vm[4][12] = primitiveMethodsInitializeLookup(vm[4][2])
+  vm[8] = (PST_NoneListOfOne * len(vm[4][0]))
+  vm[4][17] = projectId
+  vm[4][1] = None
+  vm[4][4] = None
+  vm[6] = True
   return 0
 
-def v_fixFuzzyFloatPrecision(v_x):
-  if ((v_x % 1) != 0):
-    v_u = (v_x % 1)
-    if (v_u < 0):
-      v_u += 1.0
-    v_roundDown = False
-    if (v_u > 0.9999999999):
-      v_roundDown = True
-      v_x += 0.1
-    elif (v_u < 0.00000000002250000000):
-      v_roundDown = True
-    if v_roundDown:
-      if (False or (v_x > 0)):
-        v_x = (int(v_x) + 0.0)
+def fixFuzzyFloatPrecision(x):
+  if ((x % 1) != 0):
+    u = (x % 1)
+    if (u < 0):
+      u += 1.0
+    roundDown = False
+    if (u > 0.9999999999):
+      roundDown = True
+      x += 0.1
+    elif (u < 0.00000000002250000000):
+      roundDown = True
+    if roundDown:
+      if (False or (x > 0)):
+        x = (int(x) + 0.0)
       else:
-        v_x = (int(v_x) - 1.0)
-  return v_x
+        x = (int(x) - 1.0)
+  return x
 
-def v_generateEsfData(v_byteCodeLength, v_esfArgs):
-  v_output = (PST_NoneListOfOne * v_byteCodeLength)
-  v_esfTokenStack = []
-  v_esfTokenStackTop = None
-  v_esfArgIterator = 0
-  v_esfArgLength = len(v_esfArgs)
-  v_j = 0
-  v_pc = 0
-  while (v_pc < v_byteCodeLength):
-    if ((v_esfArgIterator < v_esfArgLength) and (v_pc == v_esfArgs[v_esfArgIterator])):
-      v_esfTokenStackTop = [None, None]
-      v_j = 1
-      while (v_j < 3):
-        v_esfTokenStackTop[(v_j - 1)] = v_esfArgs[(v_esfArgIterator + v_j)]
-        v_j += 1
-      v_esfTokenStack.append(v_esfTokenStackTop)
-      v_esfArgIterator += 3
-    while ((v_esfTokenStackTop != None) and (v_esfTokenStackTop[1] <= v_pc)):
-      v_esfTokenStack.pop()
-      if (len(v_esfTokenStack) == 0):
-        v_esfTokenStackTop = None
+def generateEsfData(byteCodeLength, esfArgs):
+  output = (PST_NoneListOfOne * byteCodeLength)
+  esfTokenStack = []
+  esfTokenStackTop = None
+  esfArgIterator = 0
+  esfArgLength = len(esfArgs)
+  j = 0
+  pc = 0
+  while (pc < byteCodeLength):
+    if ((esfArgIterator < esfArgLength) and (pc == esfArgs[esfArgIterator])):
+      esfTokenStackTop = [None, None]
+      j = 1
+      while (j < 3):
+        esfTokenStackTop[(j - 1)] = esfArgs[(esfArgIterator + j)]
+        j += 1
+      esfTokenStack.append(esfTokenStackTop)
+      esfArgIterator += 3
+    while ((esfTokenStackTop != None) and (esfTokenStackTop[1] <= pc)):
+      esfTokenStack.pop()
+      if (len(esfTokenStack) == 0):
+        esfTokenStackTop = None
       else:
-        v_esfTokenStackTop = v_esfTokenStack[(len(v_esfTokenStack) - 1)]
-    v_output[v_pc] = v_esfTokenStackTop
-    v_pc += 1
-  return v_output
+        esfTokenStackTop = esfTokenStack[(len(esfTokenStack) - 1)]
+    output[pc] = esfTokenStackTop
+    pc += 1
+  return output
 
-def v_generateException(v_vm, v_stack, v_pc, v_valueStackSize, v_ec, v_type, v_message):
-  v_ec[2] = v_valueStackSize
-  v_stack[0] = v_pc
-  v_mn = v_vm[4][19]
-  v_generateExceptionFunctionId = v_mn[1]
-  v_functionInfo = v_vm[4][10][v_generateExceptionFunctionId]
-  v_pc = v_functionInfo[2]
-  if (len(v_ec[5]) <= (v_functionInfo[7] + v_stack[3])):
-    v_increaseLocalsStackCapacity(v_ec, v_functionInfo[7])
-  v_localsIndex = v_stack[3]
-  v_localsStackSetToken = (v_ec[7] + 1)
-  v_ec[7] = v_localsStackSetToken
-  v_ec[5][v_localsIndex] = v_buildInteger(v_vm[12], v_type)
-  v_ec[5][(v_localsIndex + 1)] = v_buildString(v_vm[12], v_message)
-  v_ec[6][v_localsIndex] = v_localsStackSetToken
-  v_ec[6][(v_localsIndex + 1)] = v_localsStackSetToken
-  v_ec[1] = [(v_pc + 1), v_localsStackSetToken, v_stack[3], (v_stack[3] + v_functionInfo[7]), v_stack, False, None, v_valueStackSize, 0, (v_stack[9] + 1), 0, None, None, None]
+def generateException(vm, stack, pc, valueStackSize, ec, type, message):
+  ec[2] = valueStackSize
+  stack[0] = pc
+  mn = vm[4][19]
+  generateExceptionFunctionId = mn[1]
+  functionInfo = vm[4][10][generateExceptionFunctionId]
+  pc = functionInfo[2]
+  if (len(ec[5]) <= (functionInfo[7] + stack[3])):
+    increaseLocalsStackCapacity(ec, functionInfo[7])
+  localsIndex = stack[3]
+  localsStackSetToken = (ec[7] + 1)
+  ec[7] = localsStackSetToken
+  ec[5][localsIndex] = buildInteger(vm[12], type)
+  ec[5][(localsIndex + 1)] = buildString(vm[12], message)
+  ec[6][localsIndex] = localsStackSetToken
+  ec[6][(localsIndex + 1)] = localsStackSetToken
+  ec[1] = [(pc + 1), localsStackSetToken, stack[3], (stack[3] + functionInfo[7]), stack, False, None, valueStackSize, 0, (stack[9] + 1), 0, None, None, None]
   return [5, None, 0.0, 0, False, ""]
 
-def v_generateException2(v_ec, v_exceptionType, v_exMsg):
-  v_ec[13] = [1, v_exceptionType, v_exMsg, 0.0, None]
+def generateException2(ec, exceptionType, exMsg):
+  ec[13] = [1, exceptionType, exMsg, 0.0, None]
   return True
 
-def v_generatePrimitiveMethodReference(v_lookup, v_globalNameId, v_context):
-  v_functionId = v_resolvePrimitiveMethodName2(v_lookup, v_context[0], v_globalNameId)
-  if (v_functionId < 0):
+def generatePrimitiveMethodReference(lookup, globalNameId, context):
+  functionId = resolvePrimitiveMethodName2(lookup, context[0], globalNameId)
+  if (functionId < 0):
     return None
-  return [9, [4, v_context, 0, v_functionId, None]]
+  return [9, [4, context, 0, functionId, None]]
 
-def v_generateTokenListFromPcs(v_vm, v_pcs):
-  v_output = []
-  v_tokensByPc = v_vm[3][0]
-  v_token = None
-  v_i = 0
-  while (v_i < len(v_pcs)):
-    v_localTokens = v_tokensByPc[v_pcs[v_i]]
-    if (v_localTokens == None):
-      if (len(v_output) > 0):
-        v_output.append(None)
+def generateTokenListFromPcs(vm, pcs):
+  output = []
+  tokensByPc = vm[3][0]
+  token = None
+  i = 0
+  while (i < len(pcs)):
+    localTokens = tokensByPc[pcs[i]]
+    if (localTokens == None):
+      if (len(output) > 0):
+        output.append(None)
     else:
-      v_token = v_localTokens[0]
-      v_output.append(v_token)
-    v_i += 1
-  return v_output
+      token = localTokens[0]
+      output.append(token)
+    i += 1
+  return output
 
-def v_getBinaryOpFromId(v_id):
-  sc_0 = swlookup__getBinaryOpFromId__0.get(v_id, 15)
+def getBinaryOpFromId(id):
+  sc_0 = swlookup__getBinaryOpFromId__0.get(id, 15)
   if (sc_0 < 8):
     if (sc_0 < 4):
       if (sc_0 < 2):
@@ -673,59 +673,59 @@ def v_getBinaryOpFromId(v_id):
 
 swlookup__getBinaryOpFromId__0 = { 0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, 11: 11, 12: 12, 13: 13, 14: 14 }
 
-def v_getClassTable(v_vm, v_classId):
-  v_oldTable = v_vm[4][9]
-  v_oldLength = len(v_oldTable)
-  if (v_classId < v_oldLength):
-    return v_oldTable
-  v_newLength = (v_oldLength * 2)
-  if (v_classId >= v_newLength):
-    v_newLength = (v_classId + 100)
-  v_newTable = (PST_NoneListOfOne * v_newLength)
-  v_i = (v_oldLength - 1)
-  while (v_i >= 0):
-    v_newTable[v_i] = v_oldTable[v_i]
-    v_i -= 1
-  v_vm[4][9] = v_newTable
-  return v_newTable
+def getClassTable(vm, classId):
+  oldTable = vm[4][9]
+  oldLength = len(oldTable)
+  if (classId < oldLength):
+    return oldTable
+  newLength = (oldLength * 2)
+  if (classId >= newLength):
+    newLength = (classId + 100)
+  newTable = (PST_NoneListOfOne * newLength)
+  i = (oldLength - 1)
+  while (i >= 0):
+    newTable[i] = oldTable[i]
+    i -= 1
+  vm[4][9] = newTable
+  return newTable
 
-def v_getExecutionContext(v_vm, v_id):
-  if (v_id == -1):
-    v_id = v_vm[1]
-  if (v_id in v_vm[0]):
-    return v_vm[0][v_id]
+def getExecutionContext(vm, id):
+  if (id == -1):
+    id = vm[1]
+  if (id in vm[0]):
+    return vm[0][id]
   return None
 
-def v_getFloat(v_num):
-  if (v_num[0] == 4):
-    return v_num[1]
-  return (v_num[1] + 0.0)
+def getFloat(num):
+  if (num[0] == 4):
+    return num[1]
+  return (num[1] + 0.0)
 
-def v_getFunctionTable(v_vm, v_functionId):
-  v_oldTable = v_vm[4][10]
-  v_oldLength = len(v_oldTable)
-  if (v_functionId < v_oldLength):
-    return v_oldTable
-  v_newLength = (v_oldLength * 2)
-  if (v_functionId >= v_newLength):
-    v_newLength = (v_functionId + 100)
-  v_newTable = (PST_NoneListOfOne * v_newLength)
-  v_i = 0
-  while (v_i < v_oldLength):
-    v_newTable[v_i] = v_oldTable[v_i]
-    v_i += 1
-  v_vm[4][10] = v_newTable
-  return v_newTable
+def getFunctionTable(vm, functionId):
+  oldTable = vm[4][10]
+  oldLength = len(oldTable)
+  if (functionId < oldLength):
+    return oldTable
+  newLength = (oldLength * 2)
+  if (functionId >= newLength):
+    newLength = (functionId + 100)
+  newTable = (PST_NoneListOfOne * newLength)
+  i = 0
+  while (i < oldLength):
+    newTable[i] = oldTable[i]
+    i += 1
+  vm[4][10] = newTable
+  return newTable
 
-def v_getItemFromList(v_list, v_i):
-  return v_list[2][v_i]
+def getItemFromList(list, i):
+  return list[2][i]
 
-def v_getNativeDataItem(v_objValue, v_index):
-  v_obj = v_objValue[1]
-  return v_obj[3][v_index]
+def getNativeDataItem(objValue, index):
+  obj = objValue[1]
+  return obj[3][index]
 
-def v_getTypeFromId(v_id):
-  sc_0 = swlookup__getTypeFromId__0.get(v_id, 9)
+def getTypeFromId(id):
+  sc_0 = swlookup__getTypeFromId__0.get(id, 9)
   if (sc_0 < 5):
     if (sc_0 < 3):
       if (sc_0 == 0):
@@ -751,461 +751,461 @@ def v_getTypeFromId(v_id):
 
 swlookup__getTypeFromId__0 = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8 }
 
-def v_getVmReinvokeDelay(v_result):
-  return v_result[2]
+def getVmReinvokeDelay(result):
+  return result[2]
 
-def v_getVmResultAssemblyInfo(v_result):
-  return v_result[5]
+def getVmResultAssemblyInfo(result):
+  return result[5]
 
-def v_getVmResultExecId(v_result):
-  return v_result[3]
+def getVmResultExecId(result):
+  return result[3]
 
-def v_getVmResultStatus(v_result):
-  return v_result[0]
+def getVmResultStatus(result):
+  return result[0]
 
-def v_increaseListCapacity(v_list):
+def increaseListCapacity(list):
   pass
 
-def v_increaseLocalsStackCapacity(v_ec, v_newScopeSize):
-  v_oldLocals = v_ec[5]
-  v_oldSetIndicator = v_ec[6]
-  v_oldCapacity = len(v_oldLocals)
-  v_newCapacity = ((v_oldCapacity * 2) + v_newScopeSize)
-  v_newLocals = (PST_NoneListOfOne * v_newCapacity)
-  v_newSetIndicator = (PST_NoneListOfOne * v_newCapacity)
-  v_i = 0
-  while (v_i < v_oldCapacity):
-    v_newLocals[v_i] = v_oldLocals[v_i]
-    v_newSetIndicator[v_i] = v_oldSetIndicator[v_i]
-    v_i += 1
-  v_ec[5] = v_newLocals
-  v_ec[6] = v_newSetIndicator
+def increaseLocalsStackCapacity(ec, newScopeSize):
+  oldLocals = ec[5]
+  oldSetIndicator = ec[6]
+  oldCapacity = len(oldLocals)
+  newCapacity = ((oldCapacity * 2) + newScopeSize)
+  newLocals = (PST_NoneListOfOne * newCapacity)
+  newSetIndicator = (PST_NoneListOfOne * newCapacity)
+  i = 0
+  while (i < oldCapacity):
+    newLocals[i] = oldLocals[i]
+    newSetIndicator[i] = oldSetIndicator[i]
+    i += 1
+  ec[5] = newLocals
+  ec[6] = newSetIndicator
   return 0
 
-def v_initFileNameSymbolData(v_vm):
-  v_symbolData = v_vm[3]
-  if (v_symbolData == None):
+def initFileNameSymbolData(vm):
+  symbolData = vm[3]
+  if (symbolData == None):
     return 0
-  if (v_symbolData[3] == None):
-    v_i = 0
-    v_filenames = (PST_NoneListOfOne * len(v_symbolData[1]))
-    v_fileIdByPath = {}
-    v_i = 0
-    while (v_i < len(v_filenames)):
-      v_sourceCode = v_symbolData[1][v_i]
-      if (v_sourceCode != None):
-        v_colon = v_sourceCode.find("\n")
-        if (v_colon != -1):
-          v_filename = v_sourceCode[0:0 + v_colon]
-          v_filenames[v_i] = v_filename
-          v_fileIdByPath[v_filename] = v_i
-      v_i += 1
-    v_symbolData[3] = v_filenames
-    v_symbolData[4] = v_fileIdByPath
+  if (symbolData[3] == None):
+    i = 0
+    filenames = (PST_NoneListOfOne * len(symbolData[1]))
+    fileIdByPath = {}
+    i = 0
+    while (i < len(filenames)):
+      sourceCode = symbolData[1][i]
+      if (sourceCode != None):
+        colon = sourceCode.find("\n")
+        if (colon != -1):
+          filename = sourceCode[0:0 + colon]
+          filenames[i] = filename
+          fileIdByPath[filename] = i
+      i += 1
+    symbolData[3] = filenames
+    symbolData[4] = fileIdByPath
   return 0
 
-def v_initializeByteCode(v_raw):
-  v_index = [None]
-  v_index[0] = 0
-  v_length = len(v_raw)
-  v_header = v_read_till(v_index, v_raw, v_length, "@")
-  if (v_header != "CRAYON"):
+def initializeByteCode(raw):
+  index = [None]
+  index[0] = 0
+  length = len(raw)
+  header = read_till(index, raw, length, "@")
+  if (header != "CRAYON"):
     pass
-  v_alphaNums = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-  v_opCount = v_read_integer(v_index, v_raw, v_length, v_alphaNums)
-  v_ops = (PST_NoneListOfOne * v_opCount)
-  v_iargs = (PST_NoneListOfOne * v_opCount)
-  v_sargs = (PST_NoneListOfOne * v_opCount)
-  v_c = " "
-  v_argc = 0
-  v_j = 0
-  v_stringarg = None
-  v_stringPresent = False
-  v_iarg = 0
-  v_iarglist = None
-  v_i = 0
-  v_i = 0
-  while (v_i < v_opCount):
-    v_c = v_raw[v_index[0]]
-    v_index[0] = (v_index[0] + 1)
-    v_argc = 0
-    v_stringPresent = True
-    if (v_c == "!"):
-      v_argc = 1
-    elif (v_c == "&"):
-      v_argc = 2
-    elif (v_c == "*"):
-      v_argc = 3
+  alphaNums = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+  opCount = read_integer(index, raw, length, alphaNums)
+  ops = (PST_NoneListOfOne * opCount)
+  iargs = (PST_NoneListOfOne * opCount)
+  sargs = (PST_NoneListOfOne * opCount)
+  c = " "
+  argc = 0
+  j = 0
+  stringarg = None
+  stringPresent = False
+  iarg = 0
+  iarglist = None
+  i = 0
+  i = 0
+  while (i < opCount):
+    c = raw[index[0]]
+    index[0] = (index[0] + 1)
+    argc = 0
+    stringPresent = True
+    if (c == "!"):
+      argc = 1
+    elif (c == "&"):
+      argc = 2
+    elif (c == "*"):
+      argc = 3
     else:
-      if (v_c != "~"):
-        v_stringPresent = False
-        v_index[0] = (v_index[0] - 1)
-      v_argc = v_read_integer(v_index, v_raw, v_length, v_alphaNums)
-    v_iarglist = (PST_NoneListOfOne * (v_argc - 1))
-    v_j = 0
-    while (v_j < v_argc):
-      v_iarg = v_read_integer(v_index, v_raw, v_length, v_alphaNums)
-      if (v_j == 0):
-        v_ops[v_i] = v_iarg
+      if (c != "~"):
+        stringPresent = False
+        index[0] = (index[0] - 1)
+      argc = read_integer(index, raw, length, alphaNums)
+    iarglist = (PST_NoneListOfOne * (argc - 1))
+    j = 0
+    while (j < argc):
+      iarg = read_integer(index, raw, length, alphaNums)
+      if (j == 0):
+        ops[i] = iarg
       else:
-        v_iarglist[(v_j - 1)] = v_iarg
-      v_j += 1
-    v_iargs[v_i] = v_iarglist
-    if v_stringPresent:
-      v_stringarg = v_read_string(v_index, v_raw, v_length, v_alphaNums)
+        iarglist[(j - 1)] = iarg
+      j += 1
+    iargs[i] = iarglist
+    if stringPresent:
+      stringarg = read_string(index, raw, length, alphaNums)
     else:
-      v_stringarg = None
-    v_sargs[v_i] = v_stringarg
-    v_i += 1
-  v_hasBreakpoint = (PST_NoneListOfOne * v_opCount)
-  v_breakpointInfo = (PST_NoneListOfOne * v_opCount)
-  v_i = 0
-  while (v_i < v_opCount):
-    v_hasBreakpoint[v_i] = False
-    v_breakpointInfo[v_i] = None
-    v_i += 1
-  return [v_ops, v_iargs, v_sargs, (PST_NoneListOfOne * v_opCount), (PST_NoneListOfOne * v_opCount), [v_hasBreakpoint, v_breakpointInfo, {}, 1, 0]]
+      stringarg = None
+    sargs[i] = stringarg
+    i += 1
+  hasBreakpoint = (PST_NoneListOfOne * opCount)
+  breakpointInfo = (PST_NoneListOfOne * opCount)
+  i = 0
+  while (i < opCount):
+    hasBreakpoint[i] = False
+    breakpointInfo[i] = None
+    i += 1
+  return [ops, iargs, sargs, (PST_NoneListOfOne * opCount), (PST_NoneListOfOne * opCount), [hasBreakpoint, breakpointInfo, {}, 1, 0]]
 
-def v_initializeClass(v_pc, v_vm, v_args, v_className):
-  v_i = 0
-  v_memberId = 0
-  v_globalId = 0
-  v_functionId = 0
-  v_t = 0
-  v_classId = v_args[0]
-  v_baseClassId = v_args[1]
-  v_globalNameId = v_args[2]
-  v_constructorFunctionId = v_args[3]
-  v_staticConstructorFunctionId = v_args[4]
-  v_staticInitializationState = 0
-  if (v_staticConstructorFunctionId == -1):
-    v_staticInitializationState = 2
-  v_staticFieldCount = v_args[5]
-  v_assemblyId = v_args[6]
-  v_staticFields = (PST_NoneListOfOne * v_staticFieldCount)
-  v_i = 0
-  while (v_i < v_staticFieldCount):
-    v_staticFields[v_i] = v_vm[12][0]
-    v_i += 1
-  v_classInfo = [v_classId, v_globalNameId, v_baseClassId, v_assemblyId, v_staticInitializationState, v_staticFields, v_staticConstructorFunctionId, v_constructorFunctionId, 0, None, None, None, None, None, v_vm[4][21][v_classId], None, v_className]
-  v_classTable = v_getClassTable(v_vm, v_classId)
-  v_classTable[v_classId] = v_classInfo
-  v_classChain = []
-  v_classChain.append(v_classInfo)
-  v_classIdWalker = v_baseClassId
-  while (v_classIdWalker != -1):
-    v_walkerClass = v_classTable[v_classIdWalker]
-    v_classChain.append(v_walkerClass)
-    v_classIdWalker = v_walkerClass[2]
-  v_baseClass = None
-  if (v_baseClassId != -1):
-    v_baseClass = v_classChain[1]
-  v_functionIds = []
-  v_fieldInitializationCommand = []
-  v_fieldInitializationLiteral = []
-  v_fieldAccessModifier = []
-  v_globalNameIdToMemberId = {}
-  if (v_baseClass != None):
-    v_i = 0
-    while (v_i < v_baseClass[8]):
-      v_functionIds.append(v_baseClass[9][v_i])
-      v_fieldInitializationCommand.append(v_baseClass[10][v_i])
-      v_fieldInitializationLiteral.append(v_baseClass[11][v_i])
-      v_fieldAccessModifier.append(v_baseClass[12][v_i])
-      v_i += 1
-    v_keys = list(v_baseClass[13].keys())
-    v_i = 0
-    while (v_i < len(v_keys)):
-      v_t = v_keys[v_i]
-      v_globalNameIdToMemberId[v_t] = v_baseClass[13][v_t]
-      v_i += 1
-    v_keys = list(v_baseClass[14].keys())
-    v_i = 0
-    while (v_i < len(v_keys)):
-      v_t = v_keys[v_i]
-      v_classInfo[14][v_t] = v_baseClass[14][v_t]
-      v_i += 1
-  v_accessModifier = 0
-  v_i = 7
-  while (v_i < len(v_args)):
-    v_memberId = v_args[(v_i + 1)]
-    v_globalId = v_args[(v_i + 2)]
-    v_accessModifier = v_args[(v_i + 5)]
-    while (v_memberId >= len(v_functionIds)):
-      v_functionIds.append(-1)
-      v_fieldInitializationCommand.append(-1)
-      v_fieldInitializationLiteral.append(None)
-      v_fieldAccessModifier.append(0)
-    v_globalNameIdToMemberId[v_globalId] = v_memberId
-    v_fieldAccessModifier[v_memberId] = v_accessModifier
-    if (v_args[v_i] == 0):
-      v_fieldInitializationCommand[v_memberId] = v_args[(v_i + 3)]
-      v_t = v_args[(v_i + 4)]
-      if (v_t == -1):
-        v_fieldInitializationLiteral[v_memberId] = v_vm[12][0]
+def initializeClass(pc, vm, args, className):
+  i = 0
+  memberId = 0
+  globalId = 0
+  functionId = 0
+  t = 0
+  classId = args[0]
+  baseClassId = args[1]
+  globalNameId = args[2]
+  constructorFunctionId = args[3]
+  staticConstructorFunctionId = args[4]
+  staticInitializationState = 0
+  if (staticConstructorFunctionId == -1):
+    staticInitializationState = 2
+  staticFieldCount = args[5]
+  assemblyId = args[6]
+  staticFields = (PST_NoneListOfOne * staticFieldCount)
+  i = 0
+  while (i < staticFieldCount):
+    staticFields[i] = vm[12][0]
+    i += 1
+  classInfo = [classId, globalNameId, baseClassId, assemblyId, staticInitializationState, staticFields, staticConstructorFunctionId, constructorFunctionId, 0, None, None, None, None, None, vm[4][21][classId], None, className]
+  classTable = getClassTable(vm, classId)
+  classTable[classId] = classInfo
+  classChain = []
+  classChain.append(classInfo)
+  classIdWalker = baseClassId
+  while (classIdWalker != -1):
+    walkerClass = classTable[classIdWalker]
+    classChain.append(walkerClass)
+    classIdWalker = walkerClass[2]
+  baseClass = None
+  if (baseClassId != -1):
+    baseClass = classChain[1]
+  functionIds = []
+  fieldInitializationCommand = []
+  fieldInitializationLiteral = []
+  fieldAccessModifier = []
+  globalNameIdToMemberId = {}
+  if (baseClass != None):
+    i = 0
+    while (i < baseClass[8]):
+      functionIds.append(baseClass[9][i])
+      fieldInitializationCommand.append(baseClass[10][i])
+      fieldInitializationLiteral.append(baseClass[11][i])
+      fieldAccessModifier.append(baseClass[12][i])
+      i += 1
+    keys = list(baseClass[13].keys())
+    i = 0
+    while (i < len(keys)):
+      t = keys[i]
+      globalNameIdToMemberId[t] = baseClass[13][t]
+      i += 1
+    keys = list(baseClass[14].keys())
+    i = 0
+    while (i < len(keys)):
+      t = keys[i]
+      classInfo[14][t] = baseClass[14][t]
+      i += 1
+  accessModifier = 0
+  i = 7
+  while (i < len(args)):
+    memberId = args[(i + 1)]
+    globalId = args[(i + 2)]
+    accessModifier = args[(i + 5)]
+    while (memberId >= len(functionIds)):
+      functionIds.append(-1)
+      fieldInitializationCommand.append(-1)
+      fieldInitializationLiteral.append(None)
+      fieldAccessModifier.append(0)
+    globalNameIdToMemberId[globalId] = memberId
+    fieldAccessModifier[memberId] = accessModifier
+    if (args[i] == 0):
+      fieldInitializationCommand[memberId] = args[(i + 3)]
+      t = args[(i + 4)]
+      if (t == -1):
+        fieldInitializationLiteral[memberId] = vm[12][0]
       else:
-        v_fieldInitializationLiteral[v_memberId] = v_vm[4][3][v_t]
+        fieldInitializationLiteral[memberId] = vm[4][3][t]
     else:
-      v_functionId = v_args[(v_i + 3)]
-      v_functionIds[v_memberId] = v_functionId
-    v_i += 6
-  v_classInfo[9] = v_functionIds[:]
-  v_classInfo[10] = v_fieldInitializationCommand[:]
-  v_classInfo[11] = v_fieldInitializationLiteral[:]
-  v_classInfo[12] = v_fieldAccessModifier[:]
-  v_classInfo[8] = len(v_functionIds)
-  v_classInfo[13] = v_globalNameIdToMemberId
-  v_classInfo[15] = (PST_NoneListOfOne * v_classInfo[8])
-  if (v_baseClass != None):
-    v_i = 0
-    while (v_i < len(v_baseClass[15])):
-      v_classInfo[15][v_i] = v_baseClass[15][v_i]
-      v_i += 1
-  if "Core.Exception" == v_className:
-    v_mn = v_vm[4][19]
-    v_mn[0] = v_classId
+      functionId = args[(i + 3)]
+      functionIds[memberId] = functionId
+    i += 6
+  classInfo[9] = functionIds[:]
+  classInfo[10] = fieldInitializationCommand[:]
+  classInfo[11] = fieldInitializationLiteral[:]
+  classInfo[12] = fieldAccessModifier[:]
+  classInfo[8] = len(functionIds)
+  classInfo[13] = globalNameIdToMemberId
+  classInfo[15] = (PST_NoneListOfOne * classInfo[8])
+  if (baseClass != None):
+    i = 0
+    while (i < len(baseClass[15])):
+      classInfo[15][i] = baseClass[15][i]
+      i += 1
+  if "Core.Exception" == className:
+    mn = vm[4][19]
+    mn[0] = classId
   return 0
 
-def v_initializeClassFieldTypeInfo(v_vm, v_opCodeRow):
-  v_classInfo = v_vm[4][9][v_opCodeRow[0]]
-  v_memberId = v_opCodeRow[1]
-  v_len = len(v_opCodeRow)
-  v_typeInfo = (PST_NoneListOfOne * (v_len - 2))
-  v_i = 2
-  while (v_i < v_len):
-    v_typeInfo[(v_i - 2)] = v_opCodeRow[v_i]
-    v_i += 1
-  v_classInfo[15][v_memberId] = v_typeInfo
+def initializeClassFieldTypeInfo(vm, opCodeRow):
+  classInfo = vm[4][9][opCodeRow[0]]
+  memberId = opCodeRow[1]
+  len = len(opCodeRow)
+  typeInfo = (PST_NoneListOfOne * (len - 2))
+  i = 2
+  while (i < len):
+    typeInfo[(i - 2)] = opCodeRow[i]
+    i += 1
+  classInfo[15][memberId] = typeInfo
   return 0
 
-def v_initializeConstantValues():
-  v_pos = (PST_NoneListOfOne * 2049)
-  v_neg = (PST_NoneListOfOne * 257)
-  v_i = 0
-  while (v_i < 2049):
-    v_pos[v_i] = [3, v_i]
-    v_i += 1
-  v_i = 1
-  while (v_i < 257):
-    v_neg[v_i] = [3, -v_i]
-    v_i += 1
-  v_neg[0] = v_pos[0]
-  v_globals = [[1, None], [2, True], [2, False], v_pos[0], v_pos[1], v_neg[1], [4, 0.0], [4, 1.0], [5, ""], v_pos, v_neg, {}, [None], [None], [None], [None], [None], [None, None]]
-  v_globals[11][""] = v_globals[8]
-  v_globals[12][0] = 2
-  v_globals[13][0] = 3
-  v_globals[15][0] = 4
-  v_globals[14][0] = 5
-  v_globals[16][0] = 10
-  v_globals[17][0] = 8
-  v_globals[17][1] = 0
-  return v_globals
+def initializeConstantValues():
+  pos = (PST_NoneListOfOne * 2049)
+  neg = (PST_NoneListOfOne * 257)
+  i = 0
+  while (i < 2049):
+    pos[i] = [3, i]
+    i += 1
+  i = 1
+  while (i < 257):
+    neg[i] = [3, -i]
+    i += 1
+  neg[0] = pos[0]
+  globals = [[1, None], [2, True], [2, False], pos[0], pos[1], neg[1], [4, 0.0], [4, 1.0], [5, ""], pos, neg, {}, [None], [None], [None], [None], [None], [None, None]]
+  globals[11][""] = globals[8]
+  globals[12][0] = 2
+  globals[13][0] = 3
+  globals[15][0] = 4
+  globals[14][0] = 5
+  globals[16][0] = 10
+  globals[17][0] = 8
+  globals[17][1] = 0
+  return globals
 
-def v_initializeFunction(v_vm, v_args, v_currentPc, v_stringArg):
-  v_functionId = v_args[0]
-  v_nameId = v_args[1]
-  v_minArgCount = v_args[2]
-  v_maxArgCount = v_args[3]
-  v_functionType = v_args[4]
-  v_classId = v_args[5]
-  v_localsCount = v_args[6]
-  v_numPcOffsetsForOptionalArgs = v_args[8]
-  v_pcOffsetsForOptionalArgs = (PST_NoneListOfOne * (v_numPcOffsetsForOptionalArgs + 1))
-  v_i = 0
-  while (v_i < v_numPcOffsetsForOptionalArgs):
-    v_pcOffsetsForOptionalArgs[(v_i + 1)] = v_args[(9 + v_i)]
-    v_i += 1
-  v_functionTable = v_getFunctionTable(v_vm, v_functionId)
-  v_functionTable[v_functionId] = [v_functionId, v_nameId, v_currentPc, v_minArgCount, v_maxArgCount, v_functionType, v_classId, v_localsCount, v_pcOffsetsForOptionalArgs, v_stringArg, None]
-  v_vm[4][22] = v_functionTable[v_functionId]
-  if (v_nameId >= 0):
-    v_name = v_vm[4][0][v_nameId]
-    if "_LIB_CORE_list_filter" == v_name:
-      v_vm[4][15][0] = v_functionId
-    elif "_LIB_CORE_list_map" == v_name:
-      v_vm[4][15][1] = v_functionId
-    elif "_LIB_CORE_list_sort_by_key" == v_name:
-      v_vm[4][15][2] = v_functionId
-    elif "_LIB_CORE_invoke" == v_name:
-      v_vm[4][15][3] = v_functionId
-    elif "_LIB_CORE_generateException" == v_name:
-      v_mn = v_vm[4][19]
-      v_mn[1] = v_functionId
+def initializeFunction(vm, args, currentPc, stringArg):
+  functionId = args[0]
+  nameId = args[1]
+  minArgCount = args[2]
+  maxArgCount = args[3]
+  functionType = args[4]
+  classId = args[5]
+  localsCount = args[6]
+  numPcOffsetsForOptionalArgs = args[8]
+  pcOffsetsForOptionalArgs = (PST_NoneListOfOne * (numPcOffsetsForOptionalArgs + 1))
+  i = 0
+  while (i < numPcOffsetsForOptionalArgs):
+    pcOffsetsForOptionalArgs[(i + 1)] = args[(9 + i)]
+    i += 1
+  functionTable = getFunctionTable(vm, functionId)
+  functionTable[functionId] = [functionId, nameId, currentPc, minArgCount, maxArgCount, functionType, classId, localsCount, pcOffsetsForOptionalArgs, stringArg, None]
+  vm[4][22] = functionTable[functionId]
+  if (nameId >= 0):
+    name = vm[4][0][nameId]
+    if "_LIB_CORE_list_filter" == name:
+      vm[4][15][0] = functionId
+    elif "_LIB_CORE_list_map" == name:
+      vm[4][15][1] = functionId
+    elif "_LIB_CORE_list_sort_by_key" == name:
+      vm[4][15][2] = functionId
+    elif "_LIB_CORE_invoke" == name:
+      vm[4][15][3] = functionId
+    elif "_LIB_CORE_generateException" == name:
+      mn = vm[4][19]
+      mn[1] = functionId
   return 0
 
-def v_initializeIntSwitchStatement(v_vm, v_pc, v_args):
-  v_output = {}
-  v_i = 1
-  while (v_i < len(v_args)):
-    v_output[v_args[v_i]] = v_args[(v_i + 1)]
-    v_i += 2
-  v_vm[2][3][v_pc] = v_output
-  return v_output
+def initializeIntSwitchStatement(vm, pc, args):
+  output = {}
+  i = 1
+  while (i < len(args)):
+    output[args[i]] = args[(i + 1)]
+    i += 2
+  vm[2][3][pc] = output
+  return output
 
-def v_initializeStringSwitchStatement(v_vm, v_pc, v_args):
-  v_output = {}
-  v_i = 1
-  while (v_i < len(v_args)):
-    v_s = v_vm[4][3][v_args[v_i]][1]
-    v_output[v_s] = v_args[(v_i + 1)]
-    v_i += 2
-  v_vm[2][4][v_pc] = v_output
-  return v_output
+def initializeStringSwitchStatement(vm, pc, args):
+  output = {}
+  i = 1
+  while (i < len(args)):
+    s = vm[4][3][args[i]][1]
+    output[s] = args[(i + 1)]
+    i += 2
+  vm[2][4][pc] = output
+  return output
 
-def v_initLocTable(v_vm, v_row):
-  v_classId = v_row[0]
-  v_memberCount = v_row[1]
-  v_nameId = 0
-  v_totalLocales = v_vm[4][19][2]
-  v_lookup = {}
-  v_i = 2
-  while (v_i < len(v_row)):
-    v_localeId = v_row[v_i]
-    v_i += 1
-    v_j = 0
-    while (v_j < v_memberCount):
-      v_nameId = v_row[(v_i + v_j)]
-      if (v_nameId != -1):
-        v_lookup[((v_nameId * v_totalLocales) + v_localeId)] = v_j
-      v_j += 1
-    v_i += v_memberCount
-  v_vm[4][21][v_classId] = v_lookup
+def initLocTable(vm, row):
+  classId = row[0]
+  memberCount = row[1]
+  nameId = 0
+  totalLocales = vm[4][19][2]
+  lookup = {}
+  i = 2
+  while (i < len(row)):
+    localeId = row[i]
+    i += 1
+    j = 0
+    while (j < memberCount):
+      nameId = row[(i + j)]
+      if (nameId != -1):
+        lookup[((nameId * totalLocales) + localeId)] = j
+      j += 1
+    i += memberCount
+  vm[4][21][classId] = lookup
   return 0
 
-def v_interpret(v_vm, v_executionContextId):
-  v_output = v_interpretImpl(v_vm, v_executionContextId)
-  while ((v_output[0] == 5) and (v_output[2] == 0)):
-    v_output = v_interpretImpl(v_vm, v_executionContextId)
-  return v_output
+def interpret(vm, executionContextId):
+  output = interpretImpl(vm, executionContextId)
+  while ((output[0] == 5) and (output[2] == 0)):
+    output = interpretImpl(vm, executionContextId)
+  return output
 
-def v_interpreterFinished(v_vm, v_ec):
-  if (v_ec != None):
-    v_id = v_ec[0]
-    if (v_id in v_vm[0]):
-      v_vm[0].pop(v_id)
+def interpreterFinished(vm, ec):
+  if (ec != None):
+    id = ec[0]
+    if (id in vm[0]):
+      vm[0].pop(id)
   return [1, None, 0.0, 0, False, ""]
 
-def v_interpreterGetExecutionContext(v_vm, v_executionContextId):
-  v_executionContexts = v_vm[0]
-  if not ((v_executionContextId in v_executionContexts)):
+def interpreterGetExecutionContext(vm, executionContextId):
+  executionContexts = vm[0]
+  if not ((executionContextId in executionContexts)):
     return None
-  return v_executionContexts[v_executionContextId]
+  return executionContexts[executionContextId]
 
-def v_interpretImpl(v_vm, v_executionContextId):
-  v_metadata = v_vm[4]
-  v_globals = v_vm[12]
-  v_VALUE_NULL = v_globals[0]
-  v_VALUE_TRUE = v_globals[1]
-  v_VALUE_FALSE = v_globals[2]
-  v_VALUE_INT_ONE = v_globals[4]
-  v_VALUE_INT_ZERO = v_globals[3]
-  v_VALUE_FLOAT_ZERO = v_globals[6]
-  v_VALUE_FLOAT_ONE = v_globals[7]
-  v_INTEGER_POSITIVE_CACHE = v_globals[9]
-  v_INTEGER_NEGATIVE_CACHE = v_globals[10]
-  v_executionContexts = v_vm[0]
-  v_ec = v_interpreterGetExecutionContext(v_vm, v_executionContextId)
-  if (v_ec == None):
-    return v_interpreterFinished(v_vm, None)
-  v_ec[8] += 1
-  v_stack = v_ec[1]
-  v_ops = v_vm[2][0]
-  v_args = v_vm[2][1]
-  v_stringArgs = v_vm[2][2]
-  v_classTable = v_vm[4][9]
-  v_functionTable = v_vm[4][10]
-  v_literalTable = v_vm[4][3]
-  v_identifiers = v_vm[4][0]
-  v_valueStack = v_ec[4]
-  v_valueStackSize = v_ec[2]
-  v_valueStackCapacity = len(v_valueStack)
-  v_hasInterrupt = False
-  v_type = 0
-  v_nameId = 0
-  v_classId = 0
-  v_functionId = 0
-  v_localeId = 0
-  v_classInfo = None
-  v_len = 0
-  v_root = None
-  v_row = None
-  v_argCount = 0
-  v_stringList = None
-  v_returnValueUsed = False
-  v_output = None
-  v_functionInfo = None
-  v_keyType = 0
-  v_intKey = 0
-  v_stringKey = None
-  v_first = False
-  v_primitiveMethodToCoreLibraryFallback = False
-  v_bool1 = False
-  v_bool2 = False
-  v_staticConstructorNotInvoked = True
-  v_int1 = 0
-  v_int2 = 0
-  v_int3 = 0
-  v_i = 0
-  v_j = 0
-  v_float1 = 0.0
-  v_float2 = 0.0
-  v_float3 = 0.0
-  v_floatList1 = [None, None]
-  v_value = None
-  v_value2 = None
-  v_value3 = None
-  v_string1 = None
-  v_string2 = None
-  v_objInstance1 = None
-  v_objInstance2 = None
-  v_list1 = None
-  v_list2 = None
-  v_valueList1 = None
-  v_valueList2 = None
-  v_dictImpl = None
-  v_dictImpl2 = None
-  v_stringList1 = None
-  v_intList1 = None
-  v_valueArray1 = None
-  v_intArray1 = None
-  v_intArray2 = None
-  v_objArray1 = None
-  v_functionPointer1 = None
-  v_intIntDict1 = None
-  v_stringIntDict1 = None
-  v_stackFrame2 = None
-  v_leftValue = None
-  v_rightValue = None
-  v_classValue = None
-  v_arg1 = None
-  v_arg2 = None
-  v_arg3 = None
-  v_tokenList = None
-  v_globalNameIdToPrimitiveMethodName = v_vm[4][12]
-  v_magicNumbers = v_vm[4][19]
-  v_integerSwitchesByPc = v_vm[2][3]
-  v_stringSwitchesByPc = v_vm[2][4]
-  v_integerSwitch = None
-  v_stringSwitch = None
-  v_esfData = v_vm[4][18]
-  v_closure = None
-  v_parentClosure = None
-  v_intBuffer = (PST_NoneListOfOne * 16)
-  v_localsStack = v_ec[5]
-  v_localsStackSet = v_ec[6]
-  v_localsStackSetToken = v_stack[1]
-  v_localsStackCapacity = len(v_localsStack)
-  v_localsStackOffset = v_stack[2]
-  v_funcArgs = v_vm[8]
-  v_pc = v_stack[0]
-  v_nativeFp = None
-  v_debugData = v_vm[2][5]
-  v_isBreakPointPresent = v_debugData[0]
-  v_breakpointInfo = None
-  v_debugBreakPointTemporaryDisable = False
+def interpretImpl(vm, executionContextId):
+  metadata = vm[4]
+  globals = vm[12]
+  VALUE_NULL = globals[0]
+  VALUE_TRUE = globals[1]
+  VALUE_FALSE = globals[2]
+  VALUE_INT_ONE = globals[4]
+  VALUE_INT_ZERO = globals[3]
+  VALUE_FLOAT_ZERO = globals[6]
+  VALUE_FLOAT_ONE = globals[7]
+  INTEGER_POSITIVE_CACHE = globals[9]
+  INTEGER_NEGATIVE_CACHE = globals[10]
+  executionContexts = vm[0]
+  ec = interpreterGetExecutionContext(vm, executionContextId)
+  if (ec == None):
+    return interpreterFinished(vm, None)
+  ec[8] += 1
+  stack = ec[1]
+  ops = vm[2][0]
+  args = vm[2][1]
+  stringArgs = vm[2][2]
+  classTable = vm[4][9]
+  functionTable = vm[4][10]
+  literalTable = vm[4][3]
+  identifiers = vm[4][0]
+  valueStack = ec[4]
+  valueStackSize = ec[2]
+  valueStackCapacity = len(valueStack)
+  hasInterrupt = False
+  type = 0
+  nameId = 0
+  classId = 0
+  functionId = 0
+  localeId = 0
+  classInfo = None
+  len = 0
+  root = None
+  row = None
+  argCount = 0
+  stringList = None
+  returnValueUsed = False
+  output = None
+  functionInfo = None
+  keyType = 0
+  intKey = 0
+  stringKey = None
+  first = False
+  primitiveMethodToCoreLibraryFallback = False
+  bool1 = False
+  bool2 = False
+  staticConstructorNotInvoked = True
+  int1 = 0
+  int2 = 0
+  int3 = 0
+  i = 0
+  j = 0
+  float1 = 0.0
+  float2 = 0.0
+  float3 = 0.0
+  floatList1 = [None, None]
+  value = None
+  value2 = None
+  value3 = None
+  string1 = None
+  string2 = None
+  objInstance1 = None
+  objInstance2 = None
+  list1 = None
+  list2 = None
+  valueList1 = None
+  valueList2 = None
+  dictImpl = None
+  dictImpl2 = None
+  stringList1 = None
+  intList1 = None
+  valueArray1 = None
+  intArray1 = None
+  intArray2 = None
+  objArray1 = None
+  functionPointer1 = None
+  intIntDict1 = None
+  stringIntDict1 = None
+  stackFrame2 = None
+  leftValue = None
+  rightValue = None
+  classValue = None
+  arg1 = None
+  arg2 = None
+  arg3 = None
+  tokenList = None
+  globalNameIdToPrimitiveMethodName = vm[4][12]
+  magicNumbers = vm[4][19]
+  integerSwitchesByPc = vm[2][3]
+  stringSwitchesByPc = vm[2][4]
+  integerSwitch = None
+  stringSwitch = None
+  esfData = vm[4][18]
+  closure = None
+  parentClosure = None
+  intBuffer = (PST_NoneListOfOne * 16)
+  localsStack = ec[5]
+  localsStackSet = ec[6]
+  localsStackSetToken = stack[1]
+  localsStackCapacity = len(localsStack)
+  localsStackOffset = stack[2]
+  funcArgs = vm[8]
+  pc = stack[0]
+  nativeFp = None
+  debugData = vm[2][5]
+  isBreakPointPresent = debugData[0]
+  breakpointInfo = None
+  debugBreakPointTemporaryDisable = False
   while True:
-    v_row = v_args[v_pc]
-    sc_0 = swlookup__interpretImpl__0.get(v_ops[v_pc], 66)
+    row = args[pc]
+    sc_0 = swlookup__interpretImpl__0.get(ops[pc], 66)
     if (sc_0 < 34):
       if (sc_0 < 17):
         if (sc_0 < 9):
@@ -1213,231 +1213,231 @@ def v_interpretImpl(v_vm, v_executionContextId):
             if (sc_0 < 3):
               if (sc_0 == 0):
                 # ADD_LITERAL
-                v_addLiteralImpl(v_vm, v_row, v_stringArgs[v_pc])
+                addLiteralImpl(vm, row, stringArgs[pc])
               elif (sc_0 == 1):
                 # ADD_NAME
-                v_addNameImpl(v_vm, v_stringArgs[v_pc])
+                addNameImpl(vm, stringArgs[pc])
               else:
                 # ARG_TYPE_VERIFY
-                v_len = v_row[0]
-                v_i = 1
-                v_j = 0
-                while (v_j < v_len):
-                  v_j += 1
+                len = row[0]
+                i = 1
+                j = 0
+                while (j < len):
+                  j += 1
             elif (sc_0 == 3):
               # ASSIGN_CLOSURE
-              v_valueStackSize -= 1
-              v_value = v_valueStack[v_valueStackSize]
-              v_i = v_row[0]
-              if (v_stack[12] == None):
-                v_closure = {}
-                v_stack[12] = v_closure
-                v_closure[v_i] = [v_value]
+              valueStackSize -= 1
+              value = valueStack[valueStackSize]
+              i = row[0]
+              if (stack[12] == None):
+                closure = {}
+                stack[12] = closure
+                closure[i] = [value]
               else:
-                v_closure = v_stack[12]
-                if (v_i in v_closure):
-                  v_closure[v_i][0] = v_value
+                closure = stack[12]
+                if (i in closure):
+                  closure[i][0] = value
                 else:
-                  v_closure[v_i] = [v_value]
+                  closure[i] = [value]
             else:
               # ASSIGN_INDEX
-              v_valueStackSize -= 3
-              v_value = v_valueStack[(v_valueStackSize + 2)]
-              v_value2 = v_valueStack[(v_valueStackSize + 1)]
-              v_root = v_valueStack[v_valueStackSize]
-              v_type = v_root[0]
-              v_bool1 = (v_row[0] == 1)
-              if (v_type == 6):
-                if (v_value2[0] == 3):
-                  v_i = v_value2[1]
-                  v_list1 = v_root[1]
-                  if (v_list1[0] != None):
-                    v_value3 = v_canAssignTypeToGeneric(v_vm, v_value, v_list1[0], 0)
-                    if (v_value3 == None):
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, ''.join(["Cannot convert a ", v_typeToStringFromValue(v_vm, v_value), " into a ", v_typeToString(v_vm, v_list1[0], 0)]))
-                    v_value = v_value3
-                  if not (v_hasInterrupt):
-                    if (v_i >= v_list1[1]):
-                      v_hasInterrupt = v_EX_IndexOutOfRange(v_ec, "Index is out of range.")
-                    elif (v_i < 0):
-                      v_i += v_list1[1]
-                      if (v_i < 0):
-                        v_hasInterrupt = v_EX_IndexOutOfRange(v_ec, "Index is out of range.")
-                    if not (v_hasInterrupt):
-                      v_list1[2][v_i] = v_value
+              valueStackSize -= 3
+              value = valueStack[(valueStackSize + 2)]
+              value2 = valueStack[(valueStackSize + 1)]
+              root = valueStack[valueStackSize]
+              type = root[0]
+              bool1 = (row[0] == 1)
+              if (type == 6):
+                if (value2[0] == 3):
+                  i = value2[1]
+                  list1 = root[1]
+                  if (list1[0] != None):
+                    value3 = canAssignTypeToGeneric(vm, value, list1[0], 0)
+                    if (value3 == None):
+                      hasInterrupt = EX_InvalidArgument(ec, ''.join(["Cannot convert a ", typeToStringFromValue(vm, value), " into a ", typeToString(vm, list1[0], 0)]))
+                    value = value3
+                  if not (hasInterrupt):
+                    if (i >= list1[1]):
+                      hasInterrupt = EX_IndexOutOfRange(ec, "Index is out of range.")
+                    elif (i < 0):
+                      i += list1[1]
+                      if (i < 0):
+                        hasInterrupt = EX_IndexOutOfRange(ec, "Index is out of range.")
+                    if not (hasInterrupt):
+                      list1[2][i] = value
                 else:
-                  v_hasInterrupt = v_EX_InvalidArgument(v_ec, "List index must be an integer.")
-              elif (v_type == 7):
-                v_dictImpl = v_root[1]
-                if (v_dictImpl[3] != None):
-                  v_value3 = v_canAssignTypeToGeneric(v_vm, v_value, v_dictImpl[3], 0)
-                  if (v_value3 == None):
-                    v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot assign a value to this dictionary of this type.")
+                  hasInterrupt = EX_InvalidArgument(ec, "List index must be an integer.")
+              elif (type == 7):
+                dictImpl = root[1]
+                if (dictImpl[3] != None):
+                  value3 = canAssignTypeToGeneric(vm, value, dictImpl[3], 0)
+                  if (value3 == None):
+                    hasInterrupt = EX_InvalidArgument(ec, "Cannot assign a value to this dictionary of this type.")
                   else:
-                    v_value = v_value3
-                v_keyType = v_value2[0]
-                if (v_keyType == 3):
-                  v_intKey = v_value2[1]
-                elif (v_keyType == 5):
-                  v_stringKey = v_value2[1]
-                elif (v_keyType == 8):
-                  v_objInstance1 = v_value2[1]
-                  v_intKey = v_objInstance1[1]
+                    value = value3
+                keyType = value2[0]
+                if (keyType == 3):
+                  intKey = value2[1]
+                elif (keyType == 5):
+                  stringKey = value2[1]
+                elif (keyType == 8):
+                  objInstance1 = value2[1]
+                  intKey = objInstance1[1]
                 else:
-                  v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Invalid key for a dictionary.")
-                if not (v_hasInterrupt):
-                  v_bool2 = (v_dictImpl[0] == 0)
-                  if (v_dictImpl[1] != v_keyType):
-                    if (v_dictImpl[3] != None):
-                      v_string1 = ''.join(["Cannot assign a key of type ", v_typeToStringFromValue(v_vm, v_value2), " to a dictionary that requires key types of ", v_dictKeyInfoToString(v_vm, v_dictImpl), "."])
-                      v_hasInterrupt = v_EX_InvalidKey(v_ec, v_string1)
-                    elif not (v_bool2):
-                      v_hasInterrupt = v_EX_InvalidKey(v_ec, "Cannot have multiple keys in one dictionary with different types.")
-                  elif ((v_keyType == 8) and (v_dictImpl[2] > 0) and (v_objInstance1[0] != v_dictImpl[2])):
-                    if v_isClassASubclassOf(v_vm, v_objInstance1[0], v_dictImpl[2]):
-                      v_hasInterrupt = v_EX_InvalidKey(v_ec, "Cannot use this type of object as a key for this dictionary.")
-                if not (v_hasInterrupt):
-                  if (v_keyType == 5):
-                    v_int1 = v_dictImpl[5].get(v_stringKey, -1)
-                    if (v_int1 == -1):
-                      v_dictImpl[5][v_stringKey] = v_dictImpl[0]
-                      v_dictImpl[0] += 1
-                      v_dictImpl[6].append(v_value2)
-                      v_dictImpl[7].append(v_value)
-                      if v_bool2:
-                        v_dictImpl[1] = v_keyType
+                  hasInterrupt = EX_InvalidArgument(ec, "Invalid key for a dictionary.")
+                if not (hasInterrupt):
+                  bool2 = (dictImpl[0] == 0)
+                  if (dictImpl[1] != keyType):
+                    if (dictImpl[3] != None):
+                      string1 = ''.join(["Cannot assign a key of type ", typeToStringFromValue(vm, value2), " to a dictionary that requires key types of ", dictKeyInfoToString(vm, dictImpl), "."])
+                      hasInterrupt = EX_InvalidKey(ec, string1)
+                    elif not (bool2):
+                      hasInterrupt = EX_InvalidKey(ec, "Cannot have multiple keys in one dictionary with different types.")
+                  elif ((keyType == 8) and (dictImpl[2] > 0) and (objInstance1[0] != dictImpl[2])):
+                    if isClassASubclassOf(vm, objInstance1[0], dictImpl[2]):
+                      hasInterrupt = EX_InvalidKey(ec, "Cannot use this type of object as a key for this dictionary.")
+                if not (hasInterrupt):
+                  if (keyType == 5):
+                    int1 = dictImpl[5].get(stringKey, -1)
+                    if (int1 == -1):
+                      dictImpl[5][stringKey] = dictImpl[0]
+                      dictImpl[0] += 1
+                      dictImpl[6].append(value2)
+                      dictImpl[7].append(value)
+                      if bool2:
+                        dictImpl[1] = keyType
                     else:
-                      v_dictImpl[7][v_int1] = v_value
+                      dictImpl[7][int1] = value
                   else:
-                    v_int1 = v_dictImpl[4].get(v_intKey, -1)
-                    if (v_int1 == -1):
-                      v_dictImpl[4][v_intKey] = v_dictImpl[0]
-                      v_dictImpl[0] += 1
-                      v_dictImpl[6].append(v_value2)
-                      v_dictImpl[7].append(v_value)
-                      if v_bool2:
-                        v_dictImpl[1] = v_keyType
+                    int1 = dictImpl[4].get(intKey, -1)
+                    if (int1 == -1):
+                      dictImpl[4][intKey] = dictImpl[0]
+                      dictImpl[0] += 1
+                      dictImpl[6].append(value2)
+                      dictImpl[7].append(value)
+                      if bool2:
+                        dictImpl[1] = keyType
                     else:
-                      v_dictImpl[7][v_int1] = v_value
+                      dictImpl[7][int1] = value
               else:
-                v_hasInterrupt = v_EX_UnsupportedOperation(v_ec, v_getTypeFromId(v_type) + " type does not support assigning to an index.")
-              if v_bool1:
-                v_valueStack[v_valueStackSize] = v_value
-                v_valueStackSize += 1
+                hasInterrupt = EX_UnsupportedOperation(ec, getTypeFromId(type) + " type does not support assigning to an index.")
+              if bool1:
+                valueStack[valueStackSize] = value
+                valueStackSize += 1
           elif (sc_0 < 7):
             if (sc_0 == 5):
               # ASSIGN_STATIC_FIELD
-              v_classInfo = v_classTable[v_row[0]]
-              v_staticConstructorNotInvoked = True
-              if (v_classInfo[4] < 2):
-                v_stack[0] = v_pc
-                v_stackFrame2 = v_maybeInvokeStaticConstructor(v_vm, v_ec, v_stack, v_classInfo, v_valueStackSize, PST_IntBuffer16)
+              classInfo = classTable[row[0]]
+              staticConstructorNotInvoked = True
+              if (classInfo[4] < 2):
+                stack[0] = pc
+                stackFrame2 = maybeInvokeStaticConstructor(vm, ec, stack, classInfo, valueStackSize, PST_IntBuffer16)
                 if (PST_IntBuffer16[0] == 1):
-                  return v_generateException(v_vm, v_stack, v_pc, v_valueStackSize, v_ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.")
-                if (v_stackFrame2 != None):
-                  v_staticConstructorNotInvoked = False
-                  v_stack = v_stackFrame2
-                  v_pc = v_stack[0]
-                  v_localsStackSetToken = v_stack[1]
-                  v_localsStackOffset = v_stack[2]
-              if v_staticConstructorNotInvoked:
-                v_valueStackSize -= 1
-                v_classInfo[5][v_row[1]] = v_valueStack[v_valueStackSize]
+                  return generateException(vm, stack, pc, valueStackSize, ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.")
+                if (stackFrame2 != None):
+                  staticConstructorNotInvoked = False
+                  stack = stackFrame2
+                  pc = stack[0]
+                  localsStackSetToken = stack[1]
+                  localsStackOffset = stack[2]
+              if staticConstructorNotInvoked:
+                valueStackSize -= 1
+                classInfo[5][row[1]] = valueStack[valueStackSize]
             else:
               # ASSIGN_FIELD
-              v_valueStackSize -= 2
-              v_value = v_valueStack[(v_valueStackSize + 1)]
-              v_value2 = v_valueStack[v_valueStackSize]
-              v_nameId = v_row[2]
-              if (v_value2[0] == 8):
-                v_objInstance1 = v_value2[1]
-                v_classId = v_objInstance1[0]
-                v_classInfo = v_classTable[v_classId]
-                v_intIntDict1 = v_classInfo[14]
-                if (v_row[5] == v_classId):
-                  v_int1 = v_row[6]
+              valueStackSize -= 2
+              value = valueStack[(valueStackSize + 1)]
+              value2 = valueStack[valueStackSize]
+              nameId = row[2]
+              if (value2[0] == 8):
+                objInstance1 = value2[1]
+                classId = objInstance1[0]
+                classInfo = classTable[classId]
+                intIntDict1 = classInfo[14]
+                if (row[5] == classId):
+                  int1 = row[6]
                 else:
-                  v_int1 = v_intIntDict1.get(v_nameId, -1)
-                  if (v_int1 != -1):
-                    v_int3 = v_classInfo[12][v_int1]
-                    if (v_int3 > 1):
-                      if (v_int3 == 2):
-                        if (v_classId != v_row[3]):
-                          v_int1 = -2
+                  int1 = intIntDict1.get(nameId, -1)
+                  if (int1 != -1):
+                    int3 = classInfo[12][int1]
+                    if (int3 > 1):
+                      if (int3 == 2):
+                        if (classId != row[3]):
+                          int1 = -2
                       else:
-                        if ((v_int3 == 3) or (v_int3 == 5)):
-                          if (v_classInfo[3] != v_row[4]):
-                            v_int1 = -3
-                        if ((v_int3 == 4) or (v_int3 == 5)):
-                          v_i = v_row[3]
-                          if (v_classId == v_i):
+                        if ((int3 == 3) or (int3 == 5)):
+                          if (classInfo[3] != row[4]):
+                            int1 = -3
+                        if ((int3 == 4) or (int3 == 5)):
+                          i = row[3]
+                          if (classId == i):
                             pass
                           else:
-                            v_classInfo = v_classTable[v_classInfo[0]]
-                            while ((v_classInfo[2] != -1) and (v_int1 < len(v_classTable[v_classInfo[2]][12]))):
-                              v_classInfo = v_classTable[v_classInfo[2]]
-                            v_j = v_classInfo[0]
-                            if (v_j != v_i):
-                              v_bool1 = False
-                              while ((v_i != -1) and (v_classTable[v_i][2] != -1)):
-                                v_i = v_classTable[v_i][2]
-                                if (v_i == v_j):
-                                  v_bool1 = True
-                                  v_i = -1
-                              if not (v_bool1):
-                                v_int1 = -4
-                          v_classInfo = v_classTable[v_classId]
-                  v_row[5] = v_classId
-                  v_row[6] = v_int1
-                if (v_int1 > -1):
-                  v_int2 = v_classInfo[9][v_int1]
-                  if (v_int2 == -1):
-                    v_intArray1 = v_classInfo[15][v_int1]
-                    if (v_intArray1 == None):
-                      v_objInstance1[2][v_int1] = v_value
+                            classInfo = classTable[classInfo[0]]
+                            while ((classInfo[2] != -1) and (int1 < len(classTable[classInfo[2]][12]))):
+                              classInfo = classTable[classInfo[2]]
+                            j = classInfo[0]
+                            if (j != i):
+                              bool1 = False
+                              while ((i != -1) and (classTable[i][2] != -1)):
+                                i = classTable[i][2]
+                                if (i == j):
+                                  bool1 = True
+                                  i = -1
+                              if not (bool1):
+                                int1 = -4
+                          classInfo = classTable[classId]
+                  row[5] = classId
+                  row[6] = int1
+                if (int1 > -1):
+                  int2 = classInfo[9][int1]
+                  if (int2 == -1):
+                    intArray1 = classInfo[15][int1]
+                    if (intArray1 == None):
+                      objInstance1[2][int1] = value
                     else:
-                      v_value2 = v_canAssignTypeToGeneric(v_vm, v_value, v_intArray1, 0)
-                      if (v_value2 != None):
-                        v_objInstance1[2][v_int1] = v_value2
+                      value2 = canAssignTypeToGeneric(vm, value, intArray1, 0)
+                      if (value2 != None):
+                        objInstance1[2][int1] = value2
                       else:
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot assign this type to this field.")
+                        hasInterrupt = EX_InvalidArgument(ec, "Cannot assign this type to this field.")
                   else:
-                    v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot override a method with assignment.")
-                elif (v_int1 < -1):
-                  v_string1 = v_identifiers[v_row[0]]
-                  if (v_int1 == -2):
-                    v_string2 = "private"
-                  elif (v_int1 == -3):
-                    v_string2 = "internal"
+                    hasInterrupt = EX_InvalidArgument(ec, "Cannot override a method with assignment.")
+                elif (int1 < -1):
+                  string1 = identifiers[row[0]]
+                  if (int1 == -2):
+                    string2 = "private"
+                  elif (int1 == -3):
+                    string2 = "internal"
                   else:
-                    v_string2 = "protected"
-                  v_hasInterrupt = v_EX_UnknownField(v_ec, ''.join(["The field '", v_string1, "' is marked as ", v_string2, " and cannot be accessed from here."]))
+                    string2 = "protected"
+                  hasInterrupt = EX_UnknownField(ec, ''.join(["The field '", string1, "' is marked as ", string2, " and cannot be accessed from here."]))
                 else:
-                  v_hasInterrupt = v_EX_InvalidAssignment(v_ec, ''.join(["'", v_classInfo[16], "' instances do not have a field called '", v_metadata[0][v_row[0]], "'"]))
+                  hasInterrupt = EX_InvalidAssignment(ec, ''.join(["'", classInfo[16], "' instances do not have a field called '", metadata[0][row[0]], "'"]))
               else:
-                v_hasInterrupt = v_EX_InvalidAssignment(v_ec, "Cannot assign to a field on this type.")
-              if (v_row[1] == 1):
-                v_valueStack[v_valueStackSize] = v_value
-                v_valueStackSize += 1
+                hasInterrupt = EX_InvalidAssignment(ec, "Cannot assign to a field on this type.")
+              if (row[1] == 1):
+                valueStack[valueStackSize] = value
+                valueStackSize += 1
           elif (sc_0 == 7):
             # ASSIGN_THIS_FIELD
-            v_objInstance2 = v_stack[6][1]
-            v_valueStackSize -= 1
-            v_objInstance2[2][v_row[0]] = v_valueStack[v_valueStackSize]
+            objInstance2 = stack[6][1]
+            valueStackSize -= 1
+            objInstance2[2][row[0]] = valueStack[valueStackSize]
           else:
             # ASSIGN_LOCAL
-            v_i = (v_localsStackOffset + v_row[0])
-            v_valueStackSize -= 1
-            v_localsStack[v_i] = v_valueStack[v_valueStackSize]
-            v_localsStackSet[v_i] = v_localsStackSetToken
+            i = (localsStackOffset + row[0])
+            valueStackSize -= 1
+            localsStack[i] = valueStack[valueStackSize]
+            localsStackSet[i] = localsStackSetToken
         elif (sc_0 < 13):
           if (sc_0 < 11):
             if (sc_0 == 9):
               # BINARY_OP
-              v_valueStackSize -= 1
-              v_rightValue = v_valueStack[v_valueStackSize]
-              v_leftValue = v_valueStack[(v_valueStackSize - 1)]
-              sc_1 = swlookup__interpretImpl__1.get(((((v_leftValue[0] * 15) + v_row[0]) * 11) + v_rightValue[0]), 51)
+              valueStackSize -= 1
+              rightValue = valueStack[valueStackSize]
+              leftValue = valueStack[(valueStackSize - 1)]
+              sc_1 = swlookup__interpretImpl__1.get(((((leftValue[0] * 15) + row[0]) * 11) + rightValue[0]), 51)
               if (sc_1 < 26):
                 if (sc_1 < 13):
                   if (sc_1 < 7):
@@ -1445,2705 +1445,2705 @@ def v_interpretImpl(v_vm, v_executionContextId):
                       if (sc_1 < 2):
                         if (sc_1 == 0):
                           # int ** int
-                          if (v_rightValue[1] == 0):
-                            v_value = v_VALUE_INT_ONE
-                          elif (v_rightValue[1] > 0):
-                            v_value = v_buildInteger(v_globals, int((v_leftValue[1] ** v_rightValue[1])))
+                          if (rightValue[1] == 0):
+                            value = VALUE_INT_ONE
+                          elif (rightValue[1] > 0):
+                            value = buildInteger(globals, int((leftValue[1] ** rightValue[1])))
                           else:
-                            v_value = v_buildFloat(v_globals, (v_leftValue[1] ** v_rightValue[1]))
+                            value = buildFloat(globals, (leftValue[1] ** rightValue[1]))
                         else:
                           # int ** float
-                          v_value = v_buildFloat(v_globals, (0.0 + (v_leftValue[1] ** v_rightValue[1])))
+                          value = buildFloat(globals, (0.0 + (leftValue[1] ** rightValue[1])))
                       elif (sc_1 == 2):
                         # float ** int
-                        v_value = v_buildFloat(v_globals, (0.0 + (v_leftValue[1] ** v_rightValue[1])))
+                        value = buildFloat(globals, (0.0 + (leftValue[1] ** rightValue[1])))
                       else:
                         # float ** float
-                        v_value = v_buildFloat(v_globals, (0.0 + (v_leftValue[1] ** v_rightValue[1])))
+                        value = buildFloat(globals, (0.0 + (leftValue[1] ** rightValue[1])))
                     elif (sc_1 == 4):
                       # float % float
-                      v_float1 = v_rightValue[1]
-                      if (v_float1 == 0):
-                        v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Modulo by 0.")
+                      float1 = rightValue[1]
+                      if (float1 == 0):
+                        hasInterrupt = EX_DivisionByZero(ec, "Modulo by 0.")
                       else:
-                        v_float3 = (v_leftValue[1] % v_float1)
-                        if (v_float3 < 0):
-                          v_float3 += v_float1
-                        v_value = v_buildFloat(v_globals, v_float3)
+                        float3 = (leftValue[1] % float1)
+                        if (float3 < 0):
+                          float3 += float1
+                        value = buildFloat(globals, float3)
                     elif (sc_1 == 5):
                       # float % int
-                      v_int1 = v_rightValue[1]
-                      if (v_int1 == 0):
-                        v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Modulo by 0.")
+                      int1 = rightValue[1]
+                      if (int1 == 0):
+                        hasInterrupt = EX_DivisionByZero(ec, "Modulo by 0.")
                       else:
-                        v_float1 = (v_leftValue[1] % v_int1)
-                        if (v_float1 < 0):
-                          v_float1 += v_int1
-                        v_value = v_buildFloat(v_globals, v_float1)
+                        float1 = (leftValue[1] % int1)
+                        if (float1 < 0):
+                          float1 += int1
+                        value = buildFloat(globals, float1)
                     else:
                       # int % float
-                      v_float3 = v_rightValue[1]
-                      if (v_float3 == 0):
-                        v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Modulo by 0.")
+                      float3 = rightValue[1]
+                      if (float3 == 0):
+                        hasInterrupt = EX_DivisionByZero(ec, "Modulo by 0.")
                       else:
-                        v_float1 = (v_leftValue[1] % v_float3)
-                        if (v_float1 < 0):
-                          v_float1 += v_float3
-                        v_value = v_buildFloat(v_globals, v_float1)
+                        float1 = (leftValue[1] % float3)
+                        if (float1 < 0):
+                          float1 += float3
+                        value = buildFloat(globals, float1)
                   elif (sc_1 < 10):
                     if (sc_1 == 7):
                       # int % int
-                      v_int2 = v_rightValue[1]
-                      if (v_int2 == 0):
-                        v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Modulo by 0.")
+                      int2 = rightValue[1]
+                      if (int2 == 0):
+                        hasInterrupt = EX_DivisionByZero(ec, "Modulo by 0.")
                       else:
-                        v_int1 = (v_leftValue[1] % v_int2)
-                        if (v_int1 < 0):
-                          v_int1 += v_int2
-                        v_value = v_buildInteger(v_globals, v_int1)
+                        int1 = (leftValue[1] % int2)
+                        if (int1 < 0):
+                          int1 += int2
+                        value = buildInteger(globals, int1)
                     elif (sc_1 == 8):
                       # list + list
-                      v_value = [6, v_valueConcatLists(v_leftValue[1], v_rightValue[1])]
+                      value = [6, valueConcatLists(leftValue[1], rightValue[1])]
                     else:
                       # int + int
-                      v_int1 = (v_leftValue[1] + v_rightValue[1])
-                      if (v_int1 < 0):
-                        if (v_int1 > -257):
-                          v_value = v_INTEGER_NEGATIVE_CACHE[-v_int1]
+                      int1 = (leftValue[1] + rightValue[1])
+                      if (int1 < 0):
+                        if (int1 > -257):
+                          value = INTEGER_NEGATIVE_CACHE[-int1]
                         else:
-                          v_value = [3, v_int1]
-                      elif (v_int1 < 2049):
-                        v_value = v_INTEGER_POSITIVE_CACHE[v_int1]
+                          value = [3, int1]
+                      elif (int1 < 2049):
+                        value = INTEGER_POSITIVE_CACHE[int1]
                       else:
-                        v_value = [3, v_int1]
+                        value = [3, int1]
                   elif (sc_1 == 10):
                     # int - int
-                    v_int1 = (v_leftValue[1] - v_rightValue[1])
-                    if (v_int1 < 0):
-                      if (v_int1 > -257):
-                        v_value = v_INTEGER_NEGATIVE_CACHE[-v_int1]
+                    int1 = (leftValue[1] - rightValue[1])
+                    if (int1 < 0):
+                      if (int1 > -257):
+                        value = INTEGER_NEGATIVE_CACHE[-int1]
                       else:
-                        v_value = [3, v_int1]
-                    elif (v_int1 < 2049):
-                      v_value = v_INTEGER_POSITIVE_CACHE[v_int1]
+                        value = [3, int1]
+                    elif (int1 < 2049):
+                      value = INTEGER_POSITIVE_CACHE[int1]
                     else:
-                      v_value = [3, v_int1]
+                      value = [3, int1]
                   elif (sc_1 == 11):
                     # int * int
-                    v_int1 = (v_leftValue[1] * v_rightValue[1])
-                    if (v_int1 < 0):
-                      if (v_int1 > -257):
-                        v_value = v_INTEGER_NEGATIVE_CACHE[-v_int1]
+                    int1 = (leftValue[1] * rightValue[1])
+                    if (int1 < 0):
+                      if (int1 > -257):
+                        value = INTEGER_NEGATIVE_CACHE[-int1]
                       else:
-                        v_value = [3, v_int1]
-                    elif (v_int1 < 2049):
-                      v_value = v_INTEGER_POSITIVE_CACHE[v_int1]
+                        value = [3, int1]
+                    elif (int1 < 2049):
+                      value = INTEGER_POSITIVE_CACHE[int1]
                     else:
-                      v_value = [3, v_int1]
+                      value = [3, int1]
                   else:
                     # int / int
-                    v_int1 = v_leftValue[1]
-                    v_int2 = v_rightValue[1]
-                    if (v_int2 == 0):
-                      v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Division by 0.")
-                    elif (v_int1 == 0):
-                      v_value = v_VALUE_INT_ZERO
+                    int1 = leftValue[1]
+                    int2 = rightValue[1]
+                    if (int2 == 0):
+                      hasInterrupt = EX_DivisionByZero(ec, "Division by 0.")
+                    elif (int1 == 0):
+                      value = VALUE_INT_ZERO
                     else:
-                      if ((v_int1 % v_int2) == 0):
-                        v_int3 = (v_int1) // (v_int2)
-                      elif (((v_int1 < 0)) != ((v_int2 < 0))):
-                        v_float1 = (1 + (1.0 * ((-1.0 * v_int1)) / (v_int2)))
-                        v_float1 -= (v_float1 % 1.0)
-                        v_int3 = int((-v_float1))
+                      if ((int1 % int2) == 0):
+                        int3 = (int1) // (int2)
+                      elif (((int1 < 0)) != ((int2 < 0))):
+                        float1 = (1 + (1.0 * ((-1.0 * int1)) / (int2)))
+                        float1 -= (float1 % 1.0)
+                        int3 = int((-float1))
                       else:
-                        v_int3 = (v_int1) // (v_int2)
-                      if (v_int3 < 0):
-                        if (v_int3 > -257):
-                          v_value = v_INTEGER_NEGATIVE_CACHE[-v_int3]
+                        int3 = (int1) // (int2)
+                      if (int3 < 0):
+                        if (int3 > -257):
+                          value = INTEGER_NEGATIVE_CACHE[-int3]
                         else:
-                          v_value = [3, v_int3]
-                      elif (v_int3 < 2049):
-                        v_value = v_INTEGER_POSITIVE_CACHE[v_int3]
+                          value = [3, int3]
+                      elif (int3 < 2049):
+                        value = INTEGER_POSITIVE_CACHE[int3]
                       else:
-                        v_value = [3, v_int3]
+                        value = [3, int3]
                 elif (sc_1 < 20):
                   if (sc_1 < 17):
                     if (sc_1 < 15):
                       if (sc_1 == 13):
                         # float + int
-                        v_value = v_buildFloat(v_globals, (v_leftValue[1] + v_rightValue[1]))
+                        value = buildFloat(globals, (leftValue[1] + rightValue[1]))
                       else:
                         # int + float
-                        v_value = v_buildFloat(v_globals, (v_leftValue[1] + v_rightValue[1]))
+                        value = buildFloat(globals, (leftValue[1] + rightValue[1]))
                     elif (sc_1 == 15):
                       # float + float
-                      v_float1 = (v_leftValue[1] + v_rightValue[1])
-                      if (v_float1 == 0):
-                        v_value = v_VALUE_FLOAT_ZERO
-                      elif (v_float1 == 1):
-                        v_value = v_VALUE_FLOAT_ONE
+                      float1 = (leftValue[1] + rightValue[1])
+                      if (float1 == 0):
+                        value = VALUE_FLOAT_ZERO
+                      elif (float1 == 1):
+                        value = VALUE_FLOAT_ONE
                       else:
-                        v_value = [4, v_float1]
+                        value = [4, float1]
                     else:
                       # int - float
-                      v_value = v_buildFloat(v_globals, (v_leftValue[1] - v_rightValue[1]))
+                      value = buildFloat(globals, (leftValue[1] - rightValue[1]))
                   elif (sc_1 == 17):
                     # float - int
-                    v_value = v_buildFloat(v_globals, (v_leftValue[1] - v_rightValue[1]))
+                    value = buildFloat(globals, (leftValue[1] - rightValue[1]))
                   elif (sc_1 == 18):
                     # float - float
-                    v_float1 = (v_leftValue[1] - v_rightValue[1])
-                    if (v_float1 == 0):
-                      v_value = v_VALUE_FLOAT_ZERO
-                    elif (v_float1 == 1):
-                      v_value = v_VALUE_FLOAT_ONE
+                    float1 = (leftValue[1] - rightValue[1])
+                    if (float1 == 0):
+                      value = VALUE_FLOAT_ZERO
+                    elif (float1 == 1):
+                      value = VALUE_FLOAT_ONE
                     else:
-                      v_value = [4, v_float1]
+                      value = [4, float1]
                   else:
                     # float * int
-                    v_value = v_buildFloat(v_globals, (v_leftValue[1] * v_rightValue[1]))
+                    value = buildFloat(globals, (leftValue[1] * rightValue[1]))
                 elif (sc_1 < 23):
                   if (sc_1 == 20):
                     # int * float
-                    v_value = v_buildFloat(v_globals, (v_leftValue[1] * v_rightValue[1]))
+                    value = buildFloat(globals, (leftValue[1] * rightValue[1]))
                   elif (sc_1 == 21):
                     # float * float
-                    v_value = v_buildFloat(v_globals, (v_leftValue[1] * v_rightValue[1]))
+                    value = buildFloat(globals, (leftValue[1] * rightValue[1]))
                   else:
                     # int / float
-                    v_float1 = v_rightValue[1]
-                    if (v_float1 == 0):
-                      v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Division by 0.")
+                    float1 = rightValue[1]
+                    if (float1 == 0):
+                      hasInterrupt = EX_DivisionByZero(ec, "Division by 0.")
                     else:
-                      v_value = v_buildFloat(v_globals, (1.0 * (v_leftValue[1]) / (v_float1)))
+                      value = buildFloat(globals, (1.0 * (leftValue[1]) / (float1)))
                 elif (sc_1 == 23):
                   # float / int
-                  v_int1 = v_rightValue[1]
-                  if (v_int1 == 0):
-                    v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Division by 0.")
+                  int1 = rightValue[1]
+                  if (int1 == 0):
+                    hasInterrupt = EX_DivisionByZero(ec, "Division by 0.")
                   else:
-                    v_value = v_buildFloat(v_globals, (1.0 * (v_leftValue[1]) / (v_int1)))
+                    value = buildFloat(globals, (1.0 * (leftValue[1]) / (int1)))
                 elif (sc_1 == 24):
                   # float / float
-                  v_float1 = v_rightValue[1]
-                  if (v_float1 == 0):
-                    v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Division by 0.")
+                  float1 = rightValue[1]
+                  if (float1 == 0):
+                    hasInterrupt = EX_DivisionByZero(ec, "Division by 0.")
                   else:
-                    v_value = v_buildFloat(v_globals, (1.0 * (v_leftValue[1]) / (v_float1)))
+                    value = buildFloat(globals, (1.0 * (leftValue[1]) / (float1)))
                 else:
                   # int & int
-                  v_value = v_buildInteger(v_globals, (v_leftValue[1] & v_rightValue[1]))
+                  value = buildInteger(globals, (leftValue[1] & rightValue[1]))
               elif (sc_1 < 39):
                 if (sc_1 < 33):
                   if (sc_1 < 30):
                     if (sc_1 < 28):
                       if (sc_1 == 26):
                         # int | int
-                        v_value = v_buildInteger(v_globals, (v_leftValue[1] | v_rightValue[1]))
+                        value = buildInteger(globals, (leftValue[1] | rightValue[1]))
                       else:
                         # int ^ int
-                        v_value = v_buildInteger(v_globals, (v_leftValue[1] ^ v_rightValue[1]))
+                        value = buildInteger(globals, (leftValue[1] ^ rightValue[1]))
                     elif (sc_1 == 28):
                       # int << int
-                      v_int1 = v_rightValue[1]
-                      if (v_int1 < 0):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot bit shift by a negative number.")
+                      int1 = rightValue[1]
+                      if (int1 < 0):
+                        hasInterrupt = EX_InvalidArgument(ec, "Cannot bit shift by a negative number.")
                       else:
-                        v_value = v_buildInteger(v_globals, (v_leftValue[1] << v_int1))
+                        value = buildInteger(globals, (leftValue[1] << int1))
                     else:
                       # int >> int
-                      v_int1 = v_rightValue[1]
-                      if (v_int1 < 0):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot bit shift by a negative number.")
+                      int1 = rightValue[1]
+                      if (int1 < 0):
+                        hasInterrupt = EX_InvalidArgument(ec, "Cannot bit shift by a negative number.")
                       else:
-                        v_value = v_buildInteger(v_globals, (v_leftValue[1] >> v_int1))
+                        value = buildInteger(globals, (leftValue[1] >> int1))
                   elif (sc_1 == 30):
                     # int < int
-                    if (v_leftValue[1] < v_rightValue[1]):
-                      v_value = v_VALUE_TRUE
+                    if (leftValue[1] < rightValue[1]):
+                      value = VALUE_TRUE
                     else:
-                      v_value = v_VALUE_FALSE
+                      value = VALUE_FALSE
                   elif (sc_1 == 31):
                     # int <= int
-                    if (v_leftValue[1] <= v_rightValue[1]):
-                      v_value = v_VALUE_TRUE
+                    if (leftValue[1] <= rightValue[1]):
+                      value = VALUE_TRUE
                     else:
-                      v_value = v_VALUE_FALSE
+                      value = VALUE_FALSE
                   else:
                     # float < int
-                    if (v_leftValue[1] < v_rightValue[1]):
-                      v_value = v_VALUE_TRUE
+                    if (leftValue[1] < rightValue[1]):
+                      value = VALUE_TRUE
                     else:
-                      v_value = v_VALUE_FALSE
+                      value = VALUE_FALSE
                 elif (sc_1 < 36):
                   if (sc_1 == 33):
                     # float <= int
-                    if (v_leftValue[1] <= v_rightValue[1]):
-                      v_value = v_VALUE_TRUE
+                    if (leftValue[1] <= rightValue[1]):
+                      value = VALUE_TRUE
                     else:
-                      v_value = v_VALUE_FALSE
+                      value = VALUE_FALSE
                   elif (sc_1 == 34):
                     # int < float
-                    if (v_leftValue[1] < v_rightValue[1]):
-                      v_value = v_VALUE_TRUE
+                    if (leftValue[1] < rightValue[1]):
+                      value = VALUE_TRUE
                     else:
-                      v_value = v_VALUE_FALSE
+                      value = VALUE_FALSE
                   else:
                     # int <= float
-                    if (v_leftValue[1] <= v_rightValue[1]):
-                      v_value = v_VALUE_TRUE
+                    if (leftValue[1] <= rightValue[1]):
+                      value = VALUE_TRUE
                     else:
-                      v_value = v_VALUE_FALSE
+                      value = VALUE_FALSE
                 elif (sc_1 == 36):
                   # float < float
-                  if (v_leftValue[1] < v_rightValue[1]):
-                    v_value = v_VALUE_TRUE
+                  if (leftValue[1] < rightValue[1]):
+                    value = VALUE_TRUE
                   else:
-                    v_value = v_VALUE_FALSE
+                    value = VALUE_FALSE
                 elif (sc_1 == 37):
                   # float <= float
-                  if (v_leftValue[1] <= v_rightValue[1]):
-                    v_value = v_VALUE_TRUE
+                  if (leftValue[1] <= rightValue[1]):
+                    value = VALUE_TRUE
                   else:
-                    v_value = v_VALUE_FALSE
+                    value = VALUE_FALSE
                 else:
                   # int >= int
-                  if (v_leftValue[1] >= v_rightValue[1]):
-                    v_value = v_VALUE_TRUE
+                  if (leftValue[1] >= rightValue[1]):
+                    value = VALUE_TRUE
                   else:
-                    v_value = v_VALUE_FALSE
+                    value = VALUE_FALSE
               elif (sc_1 < 46):
                 if (sc_1 < 43):
                   if (sc_1 < 41):
                     if (sc_1 == 39):
                       # int > int
-                      if (v_leftValue[1] > v_rightValue[1]):
-                        v_value = v_VALUE_TRUE
+                      if (leftValue[1] > rightValue[1]):
+                        value = VALUE_TRUE
                       else:
-                        v_value = v_VALUE_FALSE
+                        value = VALUE_FALSE
                     else:
                       # float >= int
-                      if (v_leftValue[1] >= v_rightValue[1]):
-                        v_value = v_VALUE_TRUE
+                      if (leftValue[1] >= rightValue[1]):
+                        value = VALUE_TRUE
                       else:
-                        v_value = v_VALUE_FALSE
+                        value = VALUE_FALSE
                   elif (sc_1 == 41):
                     # float > int
-                    if (v_leftValue[1] > v_rightValue[1]):
-                      v_value = v_VALUE_TRUE
+                    if (leftValue[1] > rightValue[1]):
+                      value = VALUE_TRUE
                     else:
-                      v_value = v_VALUE_FALSE
+                      value = VALUE_FALSE
                   else:
                     # int >= float
-                    if (v_leftValue[1] >= v_rightValue[1]):
-                      v_value = v_VALUE_TRUE
+                    if (leftValue[1] >= rightValue[1]):
+                      value = VALUE_TRUE
                     else:
-                      v_value = v_VALUE_FALSE
+                      value = VALUE_FALSE
                 elif (sc_1 == 43):
                   # int > float
-                  if (v_leftValue[1] > v_rightValue[1]):
-                    v_value = v_VALUE_TRUE
+                  if (leftValue[1] > rightValue[1]):
+                    value = VALUE_TRUE
                   else:
-                    v_value = v_VALUE_FALSE
+                    value = VALUE_FALSE
                 elif (sc_1 == 44):
                   # float >= float
-                  if (v_leftValue[1] >= v_rightValue[1]):
-                    v_value = v_VALUE_TRUE
+                  if (leftValue[1] >= rightValue[1]):
+                    value = VALUE_TRUE
                   else:
-                    v_value = v_VALUE_FALSE
+                    value = VALUE_FALSE
                 else:
                   # float > float
-                  if (v_leftValue[1] > v_rightValue[1]):
-                    v_value = v_VALUE_TRUE
+                  if (leftValue[1] > rightValue[1]):
+                    value = VALUE_TRUE
                   else:
-                    v_value = v_VALUE_FALSE
+                    value = VALUE_FALSE
               elif (sc_1 < 49):
                 if (sc_1 == 46):
                   # string + string
-                  v_value = [5, v_leftValue[1] + v_rightValue[1]]
+                  value = [5, leftValue[1] + rightValue[1]]
                 elif (sc_1 == 47):
                   # string * int
-                  v_value = v_multiplyString(v_globals, v_leftValue, v_leftValue[1], v_rightValue[1])
+                  value = multiplyString(globals, leftValue, leftValue[1], rightValue[1])
                 else:
                   # int * string
-                  v_value = v_multiplyString(v_globals, v_rightValue, v_rightValue[1], v_leftValue[1])
+                  value = multiplyString(globals, rightValue, rightValue[1], leftValue[1])
               elif (sc_1 == 49):
                 # list * int
-                v_int1 = v_rightValue[1]
-                if (v_int1 < 0):
-                  v_hasInterrupt = v_EX_UnsupportedOperation(v_ec, "Cannot multiply list by negative number.")
+                int1 = rightValue[1]
+                if (int1 < 0):
+                  hasInterrupt = EX_UnsupportedOperation(ec, "Cannot multiply list by negative number.")
                 else:
-                  v_value = [6, v_valueMultiplyList(v_leftValue[1], v_int1)]
+                  value = [6, valueMultiplyList(leftValue[1], int1)]
               elif (sc_1 == 50):
                 # int * list
-                v_int1 = v_leftValue[1]
-                if (v_int1 < 0):
-                  v_hasInterrupt = v_EX_UnsupportedOperation(v_ec, "Cannot multiply list by negative number.")
+                int1 = leftValue[1]
+                if (int1 < 0):
+                  hasInterrupt = EX_UnsupportedOperation(ec, "Cannot multiply list by negative number.")
                 else:
-                  v_value = [6, v_valueMultiplyList(v_rightValue[1], v_int1)]
-              elif ((v_row[0] == 0) and (((v_leftValue[0] == 5) or (v_rightValue[0] == 5)))):
-                v_value = [5, v_valueToString(v_vm, v_leftValue) + v_valueToString(v_vm, v_rightValue)]
+                  value = [6, valueMultiplyList(rightValue[1], int1)]
+              elif ((row[0] == 0) and (((leftValue[0] == 5) or (rightValue[0] == 5)))):
+                value = [5, valueToString(vm, leftValue) + valueToString(vm, rightValue)]
               else:
                 # unrecognized op
-                v_hasInterrupt = v_EX_UnsupportedOperation(v_ec, ''.join(["The '", v_getBinaryOpFromId(v_row[0]), "' operator is not supported for these types: ", v_getTypeFromId(v_leftValue[0]), " and ", v_getTypeFromId(v_rightValue[0])]))
-              v_valueStack[(v_valueStackSize - 1)] = v_value
+                hasInterrupt = EX_UnsupportedOperation(ec, ''.join(["The '", getBinaryOpFromId(row[0]), "' operator is not supported for these types: ", getTypeFromId(leftValue[0]), " and ", getTypeFromId(rightValue[0])]))
+              valueStack[(valueStackSize - 1)] = value
             else:
               # BOOLEAN_NOT
-              v_value = v_valueStack[(v_valueStackSize - 1)]
-              if (v_value[0] != 2):
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Boolean expected.")
-              elif v_value[1]:
-                v_valueStack[(v_valueStackSize - 1)] = v_VALUE_FALSE
+              value = valueStack[(valueStackSize - 1)]
+              if (value[0] != 2):
+                hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.")
+              elif value[1]:
+                valueStack[(valueStackSize - 1)] = VALUE_FALSE
               else:
-                v_valueStack[(v_valueStackSize - 1)] = v_VALUE_TRUE
+                valueStack[(valueStackSize - 1)] = VALUE_TRUE
           elif (sc_0 == 11):
             # BREAK
-            if (v_row[0] == 1):
-              v_pc += v_row[1]
+            if (row[0] == 1):
+              pc += row[1]
             else:
-              v_intArray1 = v_esfData[v_pc]
-              v_pc = (v_intArray1[1] - 1)
-              v_valueStackSize = v_stack[7]
-              v_stack[10] = 1
+              intArray1 = esfData[pc]
+              pc = (intArray1[1] - 1)
+              valueStackSize = stack[7]
+              stack[10] = 1
           else:
             # CALL_FUNCTION
-            v_type = v_row[0]
-            v_argCount = v_row[1]
-            v_functionId = v_row[2]
-            v_returnValueUsed = (v_row[3] == 1)
-            v_classId = v_row[4]
-            if ((v_type == 2) or (v_type == 6)):
+            type = row[0]
+            argCount = row[1]
+            functionId = row[2]
+            returnValueUsed = (row[3] == 1)
+            classId = row[4]
+            if ((type == 2) or (type == 6)):
               # constructor or static method
-              v_classInfo = v_metadata[9][v_classId]
-              v_staticConstructorNotInvoked = True
-              if (v_classInfo[4] < 2):
-                v_stack[0] = v_pc
-                v_stackFrame2 = v_maybeInvokeStaticConstructor(v_vm, v_ec, v_stack, v_classInfo, v_valueStackSize, PST_IntBuffer16)
+              classInfo = metadata[9][classId]
+              staticConstructorNotInvoked = True
+              if (classInfo[4] < 2):
+                stack[0] = pc
+                stackFrame2 = maybeInvokeStaticConstructor(vm, ec, stack, classInfo, valueStackSize, PST_IntBuffer16)
                 if (PST_IntBuffer16[0] == 1):
-                  return v_generateException(v_vm, v_stack, v_pc, v_valueStackSize, v_ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.")
-                if (v_stackFrame2 != None):
-                  v_staticConstructorNotInvoked = False
-                  v_stack = v_stackFrame2
-                  v_pc = v_stack[0]
-                  v_localsStackSetToken = v_stack[1]
-                  v_localsStackOffset = v_stack[2]
+                  return generateException(vm, stack, pc, valueStackSize, ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.")
+                if (stackFrame2 != None):
+                  staticConstructorNotInvoked = False
+                  stack = stackFrame2
+                  pc = stack[0]
+                  localsStackSetToken = stack[1]
+                  localsStackOffset = stack[2]
             else:
-              v_staticConstructorNotInvoked = True
-            if v_staticConstructorNotInvoked:
-              v_bool1 = True
+              staticConstructorNotInvoked = True
+            if staticConstructorNotInvoked:
+              bool1 = True
               # construct args array
-              if (v_argCount == -1):
-                v_valueStackSize -= 1
-                v_value = v_valueStack[v_valueStackSize]
-                if (v_value[0] == 1):
-                  v_argCount = 0
-                elif (v_value[0] == 6):
-                  v_list1 = v_value[1]
-                  v_argCount = v_list1[1]
-                  v_i = (v_argCount - 1)
-                  while (v_i >= 0):
-                    v_funcArgs[v_i] = v_list1[2][v_i]
-                    v_i -= 1
+              if (argCount == -1):
+                valueStackSize -= 1
+                value = valueStack[valueStackSize]
+                if (value[0] == 1):
+                  argCount = 0
+                elif (value[0] == 6):
+                  list1 = value[1]
+                  argCount = list1[1]
+                  i = (argCount - 1)
+                  while (i >= 0):
+                    funcArgs[i] = list1[2][i]
+                    i -= 1
                 else:
-                  v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Function pointers' .invoke method requires a list argument.")
+                  hasInterrupt = EX_InvalidArgument(ec, "Function pointers' .invoke method requires a list argument.")
               else:
-                v_i = (v_argCount - 1)
-                while (v_i >= 0):
-                  v_valueStackSize -= 1
-                  v_funcArgs[v_i] = v_valueStack[v_valueStackSize]
-                  v_i -= 1
-              if not (v_hasInterrupt):
-                if (v_type == 3):
-                  v_value = v_stack[6]
-                  v_objInstance1 = v_value[1]
-                  if (v_objInstance1[0] != v_classId):
-                    v_int2 = v_row[5]
-                    if (v_int2 != -1):
-                      v_classInfo = v_classTable[v_objInstance1[0]]
-                      v_functionId = v_classInfo[9][v_int2]
-                elif (v_type == 5):
+                i = (argCount - 1)
+                while (i >= 0):
+                  valueStackSize -= 1
+                  funcArgs[i] = valueStack[valueStackSize]
+                  i -= 1
+              if not (hasInterrupt):
+                if (type == 3):
+                  value = stack[6]
+                  objInstance1 = value[1]
+                  if (objInstance1[0] != classId):
+                    int2 = row[5]
+                    if (int2 != -1):
+                      classInfo = classTable[objInstance1[0]]
+                      functionId = classInfo[9][int2]
+                elif (type == 5):
                   # field invocation
-                  v_valueStackSize -= 1
-                  v_value = v_valueStack[v_valueStackSize]
-                  v_localeId = v_row[5]
-                  sc_2 = swlookup__interpretImpl__2.get(v_value[0], 3)
+                  valueStackSize -= 1
+                  value = valueStack[valueStackSize]
+                  localeId = row[5]
+                  sc_2 = swlookup__interpretImpl__2.get(value[0], 3)
                   if (sc_2 < 2):
                     if (sc_2 == 0):
-                      v_hasInterrupt = v_EX_NullReference(v_ec, "Invoked method on null.")
+                      hasInterrupt = EX_NullReference(ec, "Invoked method on null.")
                     else:
                       # field invoked on an object instance.
-                      v_objInstance1 = v_value[1]
-                      v_int1 = v_objInstance1[0]
-                      v_classInfo = v_classTable[v_int1]
-                      v_intIntDict1 = v_classInfo[14]
-                      v_int1 = ((v_row[4] * v_magicNumbers[2]) + v_row[5])
-                      v_i = v_intIntDict1.get(v_int1, -1)
-                      if (v_i != -1):
-                        v_int1 = v_intIntDict1[v_int1]
-                        v_functionId = v_classInfo[9][v_int1]
-                        if (v_functionId > 0):
-                          v_type = 3
+                      objInstance1 = value[1]
+                      int1 = objInstance1[0]
+                      classInfo = classTable[int1]
+                      intIntDict1 = classInfo[14]
+                      int1 = ((row[4] * magicNumbers[2]) + row[5])
+                      i = intIntDict1.get(int1, -1)
+                      if (i != -1):
+                        int1 = intIntDict1[int1]
+                        functionId = classInfo[9][int1]
+                        if (functionId > 0):
+                          type = 3
                         else:
-                          v_value = v_objInstance1[2][v_int1]
-                          v_type = 4
-                          v_valueStack[v_valueStackSize] = v_value
-                          v_valueStackSize += 1
+                          value = objInstance1[2][int1]
+                          type = 4
+                          valueStack[valueStackSize] = value
+                          valueStackSize += 1
                       else:
-                        v_hasInterrupt = v_EX_UnknownField(v_ec, "Unknown field.")
+                        hasInterrupt = EX_UnknownField(ec, "Unknown field.")
                   elif (sc_2 == 2):
                     # field invocation on a class object instance.
-                    v_functionId = v_resolvePrimitiveMethodName2(v_globalNameIdToPrimitiveMethodName, v_value[0], v_classId)
-                    if (v_functionId < 0):
-                      v_hasInterrupt = v_EX_InvalidInvocation(v_ec, "Class definitions do not have that method.")
+                    functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value[0], classId)
+                    if (functionId < 0):
+                      hasInterrupt = EX_InvalidInvocation(ec, "Class definitions do not have that method.")
                     else:
-                      v_functionId = v_resolvePrimitiveMethodName2(v_globalNameIdToPrimitiveMethodName, v_value[0], v_classId)
-                      if (v_functionId < 0):
-                        v_hasInterrupt = v_EX_InvalidInvocation(v_ec, v_getTypeFromId(v_value[0]) + " does not have that method.")
-                      elif (v_globalNameIdToPrimitiveMethodName[v_classId] == 8):
-                        v_type = 6
-                        v_classValue = v_value[1]
-                        if v_classValue[0]:
-                          v_hasInterrupt = v_EX_UnsupportedOperation(v_ec, "Cannot create an instance of an interface.")
+                      functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value[0], classId)
+                      if (functionId < 0):
+                        hasInterrupt = EX_InvalidInvocation(ec, getTypeFromId(value[0]) + " does not have that method.")
+                      elif (globalNameIdToPrimitiveMethodName[classId] == 8):
+                        type = 6
+                        classValue = value[1]
+                        if classValue[0]:
+                          hasInterrupt = EX_UnsupportedOperation(ec, "Cannot create an instance of an interface.")
                         else:
-                          v_classId = v_classValue[1]
-                          if not (v_returnValueUsed):
-                            v_hasInterrupt = v_EX_UnsupportedOperation(v_ec, "Cannot create an instance and not use the output.")
+                          classId = classValue[1]
+                          if not (returnValueUsed):
+                            hasInterrupt = EX_UnsupportedOperation(ec, "Cannot create an instance and not use the output.")
                           else:
-                            v_classInfo = v_metadata[9][v_classId]
-                            v_functionId = v_classInfo[7]
+                            classInfo = metadata[9][classId]
+                            functionId = classInfo[7]
                       else:
-                        v_type = 9
+                        type = 9
                   else:
                     # primitive method suspected.
-                    v_functionId = v_resolvePrimitiveMethodName2(v_globalNameIdToPrimitiveMethodName, v_value[0], v_classId)
-                    if (v_functionId < 0):
-                      v_hasInterrupt = v_EX_InvalidInvocation(v_ec, v_getTypeFromId(v_value[0]) + " does not have that method.")
+                    functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value[0], classId)
+                    if (functionId < 0):
+                      hasInterrupt = EX_InvalidInvocation(ec, getTypeFromId(value[0]) + " does not have that method.")
                     else:
-                      v_type = 9
-              if ((v_type == 4) and not (v_hasInterrupt)):
+                      type = 9
+              if ((type == 4) and not (hasInterrupt)):
                 # pointer provided
-                v_valueStackSize -= 1
-                v_value = v_valueStack[v_valueStackSize]
-                if (v_value[0] == 9):
-                  v_functionPointer1 = v_value[1]
-                  sc_3 = swlookup__interpretImpl__3.get(v_functionPointer1[0], 5)
+                valueStackSize -= 1
+                value = valueStack[valueStackSize]
+                if (value[0] == 9):
+                  functionPointer1 = value[1]
+                  sc_3 = swlookup__interpretImpl__3.get(functionPointer1[0], 5)
                   if (sc_3 < 3):
                     if (sc_3 == 0):
                       # pointer to a function
-                      v_functionId = v_functionPointer1[3]
-                      v_type = 1
+                      functionId = functionPointer1[3]
+                      type = 1
                     elif (sc_3 == 1):
                       # pointer to a method
-                      v_functionId = v_functionPointer1[3]
-                      v_value = v_functionPointer1[1]
-                      v_type = 3
+                      functionId = functionPointer1[3]
+                      value = functionPointer1[1]
+                      type = 3
                     else:
                       # pointer to a static method
-                      v_functionId = v_functionPointer1[3]
-                      v_classId = v_functionPointer1[2]
-                      v_type = 2
+                      functionId = functionPointer1[3]
+                      classId = functionPointer1[2]
+                      type = 2
                   elif (sc_3 == 3):
                     # pointer to a primitive method
-                    v_value = v_functionPointer1[1]
-                    v_functionId = v_functionPointer1[3]
-                    v_type = 9
+                    value = functionPointer1[1]
+                    functionId = functionPointer1[3]
+                    type = 9
                   elif (sc_3 == 4):
                     # lambda instance
-                    v_value = v_functionPointer1[1]
-                    v_functionId = v_functionPointer1[3]
-                    v_type = 10
-                    v_closure = v_functionPointer1[4]
+                    value = functionPointer1[1]
+                    functionId = functionPointer1[3]
+                    type = 10
+                    closure = functionPointer1[4]
                 else:
-                  v_hasInterrupt = v_EX_InvalidInvocation(v_ec, "This type cannot be invoked like a function.")
-              if ((v_type == 9) and not (v_hasInterrupt)):
+                  hasInterrupt = EX_InvalidInvocation(ec, "This type cannot be invoked like a function.")
+              if ((type == 9) and not (hasInterrupt)):
                 # primitive method invocation
-                v_output = v_VALUE_NULL
-                v_primitiveMethodToCoreLibraryFallback = False
-                sc_4 = swlookup__interpretImpl__4.get(v_value[0], 5)
+                output = VALUE_NULL
+                primitiveMethodToCoreLibraryFallback = False
+                sc_4 = swlookup__interpretImpl__4.get(value[0], 5)
                 if (sc_4 < 3):
                   if (sc_4 == 0):
                     # ...on a string
-                    v_string1 = v_value[1]
-                    sc_5 = swlookup__interpretImpl__5.get(v_functionId, 12)
+                    string1 = value[1]
+                    sc_5 = swlookup__interpretImpl__5.get(functionId, 12)
                     if (sc_5 < 7):
                       if (sc_5 < 4):
                         if (sc_5 < 2):
                           if (sc_5 == 0):
-                            if (v_argCount != 1):
-                              v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string contains method", 1, v_argCount))
+                            if (argCount != 1):
+                              hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string contains method", 1, argCount))
                             else:
-                              v_value2 = v_funcArgs[0]
-                              if (v_value2[0] != 5):
-                                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "string contains method requires another string as input.")
-                              elif (v_value2[1] in v_string1):
-                                v_output = v_VALUE_TRUE
+                              value2 = funcArgs[0]
+                              if (value2[0] != 5):
+                                hasInterrupt = EX_InvalidArgument(ec, "string contains method requires another string as input.")
+                              elif (value2[1] in string1):
+                                output = VALUE_TRUE
                               else:
-                                v_output = v_VALUE_FALSE
-                          elif (v_argCount != 1):
-                            v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string endsWith method", 1, v_argCount))
+                                output = VALUE_FALSE
+                          elif (argCount != 1):
+                            hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string endsWith method", 1, argCount))
                           else:
-                            v_value2 = v_funcArgs[0]
-                            if (v_value2[0] != 5):
-                              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "string endsWith method requires another string as input.")
-                            elif v_string1.endswith(v_value2[1]):
-                              v_output = v_VALUE_TRUE
+                            value2 = funcArgs[0]
+                            if (value2[0] != 5):
+                              hasInterrupt = EX_InvalidArgument(ec, "string endsWith method requires another string as input.")
+                            elif string1.endswith(value2[1]):
+                              output = VALUE_TRUE
                             else:
-                              v_output = v_VALUE_FALSE
+                              output = VALUE_FALSE
                         elif (sc_5 == 2):
-                          if (v_argCount != 1):
-                            v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string indexOf method", 1, v_argCount))
+                          if (argCount != 1):
+                            hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string indexOf method", 1, argCount))
                           else:
-                            v_value2 = v_funcArgs[0]
-                            if (v_value2[0] != 5):
-                              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "string indexOf method requires another string as input.")
+                            value2 = funcArgs[0]
+                            if (value2[0] != 5):
+                              hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires another string as input.")
                             else:
-                              v_output = v_buildInteger(v_globals, v_string1.find(v_value2[1]))
-                        elif (v_argCount > 0):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string lower method", 0, v_argCount))
+                              output = buildInteger(globals, string1.find(value2[1]))
+                        elif (argCount > 0):
+                          hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string lower method", 0, argCount))
                         else:
-                          v_output = v_buildString(v_globals, v_string1.lower())
+                          output = buildString(globals, string1.lower())
                       elif (sc_5 == 4):
-                        if (v_argCount > 0):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string ltrim method", 0, v_argCount))
+                        if (argCount > 0):
+                          hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string ltrim method", 0, argCount))
                         else:
-                          v_output = v_buildString(v_globals, v_string1.lstrip())
+                          output = buildString(globals, string1.lstrip())
                       elif (sc_5 == 5):
-                        if (v_argCount != 2):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string replace method", 2, v_argCount))
+                        if (argCount != 2):
+                          hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string replace method", 2, argCount))
                         else:
-                          v_value2 = v_funcArgs[0]
-                          v_value3 = v_funcArgs[1]
-                          if ((v_value2[0] != 5) or (v_value3[0] != 5)):
-                            v_hasInterrupt = v_EX_InvalidArgument(v_ec, "string replace method requires 2 strings as input.")
+                          value2 = funcArgs[0]
+                          value3 = funcArgs[1]
+                          if ((value2[0] != 5) or (value3[0] != 5)):
+                            hasInterrupt = EX_InvalidArgument(ec, "string replace method requires 2 strings as input.")
                           else:
-                            v_output = v_buildString(v_globals, v_string1.replace(v_value2[1], v_value3[1]))
-                      elif (v_argCount > 0):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string reverse method", 0, v_argCount))
+                            output = buildString(globals, string1.replace(value2[1], value3[1]))
+                      elif (argCount > 0):
+                        hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string reverse method", 0, argCount))
                       else:
-                        v_output = v_buildString(v_globals, v_string1[::-1])
+                        output = buildString(globals, string1[::-1])
                     elif (sc_5 < 10):
                       if (sc_5 == 7):
-                        if (v_argCount > 0):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string rtrim method", 0, v_argCount))
+                        if (argCount > 0):
+                          hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string rtrim method", 0, argCount))
                         else:
-                          v_output = v_buildString(v_globals, v_string1.rstrip())
+                          output = buildString(globals, string1.rstrip())
                       elif (sc_5 == 8):
-                        if (v_argCount != 1):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string split method", 1, v_argCount))
+                        if (argCount != 1):
+                          hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string split method", 1, argCount))
                         else:
-                          v_value2 = v_funcArgs[0]
-                          if (v_value2[0] != 5):
-                            v_hasInterrupt = v_EX_InvalidArgument(v_ec, "string split method requires another string as input.")
+                          value2 = funcArgs[0]
+                          if (value2[0] != 5):
+                            hasInterrupt = EX_InvalidArgument(ec, "string split method requires another string as input.")
                           else:
-                            v_stringList = v_string1.split(v_value2[1])
-                            v_len = len(v_stringList)
-                            v_list1 = v_makeEmptyList(v_globals[14], v_len)
-                            v_i = 0
-                            while (v_i < v_len):
-                              v_list1[2].append(v_buildString(v_globals, v_stringList[v_i]))
-                              v_i += 1
-                            v_list1[1] = v_len
-                            v_output = [6, v_list1]
-                      elif (v_argCount != 1):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string startsWith method", 1, v_argCount))
+                            stringList = string1.split(value2[1])
+                            len = len(stringList)
+                            list1 = makeEmptyList(globals[14], len)
+                            i = 0
+                            while (i < len):
+                              list1[2].append(buildString(globals, stringList[i]))
+                              i += 1
+                            list1[1] = len
+                            output = [6, list1]
+                      elif (argCount != 1):
+                        hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string startsWith method", 1, argCount))
                       else:
-                        v_value2 = v_funcArgs[0]
-                        if (v_value2[0] != 5):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "string startsWith method requires another string as input.")
-                        elif v_string1.startswith(v_value2[1]):
-                          v_output = v_VALUE_TRUE
+                        value2 = funcArgs[0]
+                        if (value2[0] != 5):
+                          hasInterrupt = EX_InvalidArgument(ec, "string startsWith method requires another string as input.")
+                        elif string1.startswith(value2[1]):
+                          output = VALUE_TRUE
                         else:
-                          v_output = v_VALUE_FALSE
+                          output = VALUE_FALSE
                     elif (sc_5 == 10):
-                      if (v_argCount > 0):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string trim method", 0, v_argCount))
+                      if (argCount > 0):
+                        hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string trim method", 0, argCount))
                       else:
-                        v_output = v_buildString(v_globals, v_string1.strip())
+                        output = buildString(globals, string1.strip())
                     elif (sc_5 == 11):
-                      if (v_argCount > 0):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string upper method", 0, v_argCount))
+                      if (argCount > 0):
+                        hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string upper method", 0, argCount))
                       else:
-                        v_output = v_buildString(v_globals, v_string1.upper())
+                        output = buildString(globals, string1.upper())
                     else:
-                      v_output = None
+                      output = None
                   elif (sc_4 == 1):
                     # ...on a list
-                    v_list1 = v_value[1]
-                    sc_6 = swlookup__interpretImpl__6.get(v_functionId, 15)
+                    list1 = value[1]
+                    sc_6 = swlookup__interpretImpl__6.get(functionId, 15)
                     if (sc_6 < 8):
                       if (sc_6 < 4):
                         if (sc_6 < 2):
                           if (sc_6 == 0):
-                            if (v_argCount == 0):
-                              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "List add method requires at least one argument.")
+                            if (argCount == 0):
+                              hasInterrupt = EX_InvalidArgument(ec, "List add method requires at least one argument.")
                             else:
-                              v_intArray1 = v_list1[0]
-                              v_i = 0
-                              while (v_i < v_argCount):
-                                v_value = v_funcArgs[v_i]
-                                if (v_intArray1 != None):
-                                  v_value2 = v_canAssignTypeToGeneric(v_vm, v_value, v_intArray1, 0)
-                                  if (v_value2 == None):
-                                    v_hasInterrupt = v_EX_InvalidArgument(v_ec, ''.join(["Cannot convert a ", v_typeToStringFromValue(v_vm, v_value), " into a ", v_typeToString(v_vm, v_list1[0], 0)]))
-                                  v_list1[2].append(v_value2)
+                              intArray1 = list1[0]
+                              i = 0
+                              while (i < argCount):
+                                value = funcArgs[i]
+                                if (intArray1 != None):
+                                  value2 = canAssignTypeToGeneric(vm, value, intArray1, 0)
+                                  if (value2 == None):
+                                    hasInterrupt = EX_InvalidArgument(ec, ''.join(["Cannot convert a ", typeToStringFromValue(vm, value), " into a ", typeToString(vm, list1[0], 0)]))
+                                  list1[2].append(value2)
                                 else:
-                                  v_list1[2].append(v_value)
-                                v_i += 1
-                              v_list1[1] += v_argCount
-                              v_output = v_VALUE_NULL
-                          elif (v_argCount > 0):
-                            v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list choice method", 0, v_argCount))
+                                  list1[2].append(value)
+                                i += 1
+                              list1[1] += argCount
+                              output = VALUE_NULL
+                          elif (argCount > 0):
+                            hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list choice method", 0, argCount))
                           else:
-                            v_len = v_list1[1]
-                            if (v_len == 0):
-                              v_hasInterrupt = v_EX_UnsupportedOperation(v_ec, "Cannot use list.choice() method on an empty list.")
+                            len = list1[1]
+                            if (len == 0):
+                              hasInterrupt = EX_UnsupportedOperation(ec, "Cannot use list.choice() method on an empty list.")
                             else:
-                              v_i = int(((random.random() * v_len)))
-                              v_output = v_list1[2][v_i]
+                              i = int(((random.random() * len)))
+                              output = list1[2][i]
                         elif (sc_6 == 2):
-                          if (v_argCount > 0):
-                            v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list clear method", 0, v_argCount))
-                          elif (v_list1[1] > 0):
-                            if (v_list1[1] == 1):
-                              v_list1[2].pop()
+                          if (argCount > 0):
+                            hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list clear method", 0, argCount))
+                          elif (list1[1] > 0):
+                            if (list1[1] == 1):
+                              list1[2].pop()
                             else:
-                              v_list1[2] = []
-                            v_list1[1] = 0
-                        elif (v_argCount > 0):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list clone method", 0, v_argCount))
+                              list1[2] = []
+                            list1[1] = 0
+                        elif (argCount > 0):
+                          hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list clone method", 0, argCount))
                         else:
-                          v_len = v_list1[1]
-                          v_list2 = v_makeEmptyList(v_list1[0], v_len)
-                          v_i = 0
-                          while (v_i < v_len):
-                            v_list2[2].append(v_list1[2][v_i])
-                            v_i += 1
-                          v_list2[1] = v_len
-                          v_output = [6, v_list2]
+                          len = list1[1]
+                          list2 = makeEmptyList(list1[0], len)
+                          i = 0
+                          while (i < len):
+                            list2[2].append(list1[2][i])
+                            i += 1
+                          list2[1] = len
+                          output = [6, list2]
                       elif (sc_6 < 6):
                         if (sc_6 == 4):
-                          if (v_argCount != 1):
-                            v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list concat method", 1, v_argCount))
+                          if (argCount != 1):
+                            hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list concat method", 1, argCount))
                           else:
-                            v_value2 = v_funcArgs[0]
-                            if (v_value2[0] != 6):
-                              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "list concat methods requires a list as an argument.")
+                            value2 = funcArgs[0]
+                            if (value2[0] != 6):
+                              hasInterrupt = EX_InvalidArgument(ec, "list concat methods requires a list as an argument.")
                             else:
-                              v_list2 = v_value2[1]
-                              v_intArray1 = v_list1[0]
-                              if ((v_intArray1 != None) and not (v_canAssignGenericToGeneric(v_vm, v_list2[0], 0, v_intArray1, 0, v_intBuffer))):
-                                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot concat a list: incompatible types.")
+                              list2 = value2[1]
+                              intArray1 = list1[0]
+                              if ((intArray1 != None) and not (canAssignGenericToGeneric(vm, list2[0], 0, intArray1, 0, intBuffer))):
+                                hasInterrupt = EX_InvalidArgument(ec, "Cannot concat a list: incompatible types.")
                               else:
-                                if ((v_intArray1 != None) and (v_intArray1[0] == 4) and (v_list2[0][0] == 3)):
-                                  v_bool1 = True
+                                if ((intArray1 != None) and (intArray1[0] == 4) and (list2[0][0] == 3)):
+                                  bool1 = True
                                 else:
-                                  v_bool1 = False
-                                v_len = v_list2[1]
-                                v_i = 0
-                                while (v_i < v_len):
-                                  v_value = v_list2[2][v_i]
-                                  if v_bool1:
-                                    v_value = v_buildFloat(v_globals, (0.0 + v_value[1]))
-                                  v_list1[2].append(v_value)
-                                  v_i += 1
-                        elif (v_argCount != 1):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list contains method", 1, v_argCount))
+                                  bool1 = False
+                                len = list2[1]
+                                i = 0
+                                while (i < len):
+                                  value = list2[2][i]
+                                  if bool1:
+                                    value = buildFloat(globals, (0.0 + value[1]))
+                                  list1[2].append(value)
+                                  i += 1
+                        elif (argCount != 1):
+                          hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list contains method", 1, argCount))
                         else:
-                          v_value2 = v_funcArgs[0]
-                          v_len = v_list1[1]
-                          v_output = v_VALUE_FALSE
-                          v_i = 0
-                          while (v_i < v_len):
-                            v_value = v_list1[2][v_i]
-                            if (v_doEqualityComparisonAndReturnCode(v_value2, v_value) == 1):
-                              v_output = v_VALUE_TRUE
-                              v_i = v_len
-                            v_i += 1
+                          value2 = funcArgs[0]
+                          len = list1[1]
+                          output = VALUE_FALSE
+                          i = 0
+                          while (i < len):
+                            value = list1[2][i]
+                            if (doEqualityComparisonAndReturnCode(value2, value) == 1):
+                              output = VALUE_TRUE
+                              i = len
+                            i += 1
                       elif (sc_6 == 6):
-                        if (v_argCount != 1):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list filter method", 1, v_argCount))
+                        if (argCount != 1):
+                          hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list filter method", 1, argCount))
                         else:
-                          v_value2 = v_funcArgs[0]
-                          if (v_value2[0] != 9):
-                            v_hasInterrupt = v_EX_InvalidArgument(v_ec, "list filter method requires a function pointer as its argument.")
+                          value2 = funcArgs[0]
+                          if (value2[0] != 9):
+                            hasInterrupt = EX_InvalidArgument(ec, "list filter method requires a function pointer as its argument.")
                           else:
-                            v_primitiveMethodToCoreLibraryFallback = True
-                            v_functionId = v_metadata[15][0]
-                            v_funcArgs[1] = v_value
-                            v_argCount = 2
-                            v_output = None
-                      elif (v_argCount != 2):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list insert method", 1, v_argCount))
+                            primitiveMethodToCoreLibraryFallback = True
+                            functionId = metadata[15][0]
+                            funcArgs[1] = value
+                            argCount = 2
+                            output = None
+                      elif (argCount != 2):
+                        hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list insert method", 1, argCount))
                       else:
-                        v_value = v_funcArgs[0]
-                        v_value2 = v_funcArgs[1]
-                        if (v_value[0] != 3):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "First argument of list.insert must be an integer index.")
+                        value = funcArgs[0]
+                        value2 = funcArgs[1]
+                        if (value[0] != 3):
+                          hasInterrupt = EX_InvalidArgument(ec, "First argument of list.insert must be an integer index.")
                         else:
-                          v_intArray1 = v_list1[0]
-                          if (v_intArray1 != None):
-                            v_value3 = v_canAssignTypeToGeneric(v_vm, v_value2, v_intArray1, 0)
-                            if (v_value3 == None):
-                              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot insert this type into this type of list.")
-                            v_value2 = v_value3
-                          if not (v_hasInterrupt):
-                            v_int1 = v_value[1]
-                            v_len = v_list1[1]
-                            if (v_int1 < 0):
-                              v_int1 += v_len
-                            if (v_int1 == v_len):
-                              v_list1[2].append(v_value2)
-                              v_list1[1] += 1
-                            elif ((v_int1 < 0) or (v_int1 >= v_len)):
-                              v_hasInterrupt = v_EX_IndexOutOfRange(v_ec, "Index out of range.")
+                          intArray1 = list1[0]
+                          if (intArray1 != None):
+                            value3 = canAssignTypeToGeneric(vm, value2, intArray1, 0)
+                            if (value3 == None):
+                              hasInterrupt = EX_InvalidArgument(ec, "Cannot insert this type into this type of list.")
+                            value2 = value3
+                          if not (hasInterrupt):
+                            int1 = value[1]
+                            len = list1[1]
+                            if (int1 < 0):
+                              int1 += len
+                            if (int1 == len):
+                              list1[2].append(value2)
+                              list1[1] += 1
+                            elif ((int1 < 0) or (int1 >= len)):
+                              hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.")
                             else:
-                              v_list1[2].insert(v_int1, v_value2)
-                              v_list1[1] += 1
+                              list1[2].insert(int1, value2)
+                              list1[1] += 1
                     elif (sc_6 < 12):
                       if (sc_6 < 10):
                         if (sc_6 == 8):
-                          if (v_argCount != 1):
-                            if (v_argCount == 0):
-                              v_value2 = v_globals[8]
+                          if (argCount != 1):
+                            if (argCount == 0):
+                              value2 = globals[8]
                             else:
-                              v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list join method", 1, v_argCount))
+                              hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list join method", 1, argCount))
                           else:
-                            v_value2 = v_funcArgs[0]
-                            if (v_value2[0] != 5):
-                              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Argument of list.join needs to be a string.")
-                          if not (v_hasInterrupt):
-                            v_stringList1 = []
-                            v_string1 = v_value2[1]
-                            v_len = v_list1[1]
-                            v_i = 0
-                            while (v_i < v_len):
-                              v_value = v_list1[2][v_i]
-                              if (v_value[0] != 5):
-                                v_string2 = v_valueToString(v_vm, v_value)
+                            value2 = funcArgs[0]
+                            if (value2[0] != 5):
+                              hasInterrupt = EX_InvalidArgument(ec, "Argument of list.join needs to be a string.")
+                          if not (hasInterrupt):
+                            stringList1 = []
+                            string1 = value2[1]
+                            len = list1[1]
+                            i = 0
+                            while (i < len):
+                              value = list1[2][i]
+                              if (value[0] != 5):
+                                string2 = valueToString(vm, value)
                               else:
-                                v_string2 = v_value[1]
-                              v_stringList1.append(v_string2)
-                              v_i += 1
-                            v_output = v_buildString(v_globals, v_string1.join(v_stringList1))
-                        elif (v_argCount != 1):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list map method", 1, v_argCount))
+                                string2 = value[1]
+                              stringList1.append(string2)
+                              i += 1
+                            output = buildString(globals, string1.join(stringList1))
+                        elif (argCount != 1):
+                          hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list map method", 1, argCount))
                         else:
-                          v_value2 = v_funcArgs[0]
-                          if (v_value2[0] != 9):
-                            v_hasInterrupt = v_EX_InvalidArgument(v_ec, "list map method requires a function pointer as its argument.")
+                          value2 = funcArgs[0]
+                          if (value2[0] != 9):
+                            hasInterrupt = EX_InvalidArgument(ec, "list map method requires a function pointer as its argument.")
                           else:
-                            v_primitiveMethodToCoreLibraryFallback = True
-                            v_functionId = v_metadata[15][1]
-                            v_funcArgs[1] = v_value
-                            v_argCount = 2
-                            v_output = None
+                            primitiveMethodToCoreLibraryFallback = True
+                            functionId = metadata[15][1]
+                            funcArgs[1] = value
+                            argCount = 2
+                            output = None
                       elif (sc_6 == 10):
-                        if (v_argCount > 0):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list pop method", 0, v_argCount))
+                        if (argCount > 0):
+                          hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list pop method", 0, argCount))
                         else:
-                          v_len = v_list1[1]
-                          if (v_len < 1):
-                            v_hasInterrupt = v_EX_IndexOutOfRange(v_ec, "Cannot pop from an empty list.")
+                          len = list1[1]
+                          if (len < 1):
+                            hasInterrupt = EX_IndexOutOfRange(ec, "Cannot pop from an empty list.")
                           else:
-                            v_len -= 1
-                            v_value = v_list1[2].pop()
-                            if v_returnValueUsed:
-                              v_output = v_value
-                            v_list1[1] = v_len
-                      elif (v_argCount != 1):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list remove method", 1, v_argCount))
+                            len -= 1
+                            value = list1[2].pop()
+                            if returnValueUsed:
+                              output = value
+                            list1[1] = len
+                      elif (argCount != 1):
+                        hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list remove method", 1, argCount))
                       else:
-                        v_value = v_funcArgs[0]
-                        if (v_value[0] != 3):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Argument of list.remove must be an integer index.")
+                        value = funcArgs[0]
+                        if (value[0] != 3):
+                          hasInterrupt = EX_InvalidArgument(ec, "Argument of list.remove must be an integer index.")
                         else:
-                          v_int1 = v_value[1]
-                          v_len = v_list1[1]
-                          if (v_int1 < 0):
-                            v_int1 += v_len
-                          if ((v_int1 < 0) or (v_int1 >= v_len)):
-                            v_hasInterrupt = v_EX_IndexOutOfRange(v_ec, "Index out of range.")
+                          int1 = value[1]
+                          len = list1[1]
+                          if (int1 < 0):
+                            int1 += len
+                          if ((int1 < 0) or (int1 >= len)):
+                            hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.")
                           else:
-                            if v_returnValueUsed:
-                              v_output = v_list1[2][v_int1]
-                            v_len = (v_list1[1] - 1)
-                            v_list1[1] = v_len
-                            del v_list1[2][v_int1]
+                            if returnValueUsed:
+                              output = list1[2][int1]
+                            len = (list1[1] - 1)
+                            list1[1] = len
+                            del list1[2][int1]
                     elif (sc_6 < 14):
                       if (sc_6 == 12):
-                        if (v_argCount > 0):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list reverse method", 0, v_argCount))
+                        if (argCount > 0):
+                          hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list reverse method", 0, argCount))
                         else:
-                          v_list1[2].reverse()
-                      elif (v_argCount > 0):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list shuffle method", 0, v_argCount))
+                          list1[2].reverse()
+                      elif (argCount > 0):
+                        hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list shuffle method", 0, argCount))
                       else:
-                        random.shuffle(v_list1[2])
+                        random.shuffle(list1[2])
                     elif (sc_6 == 14):
-                      if (v_argCount == 0):
-                        v_sortLists(v_list1, v_list1, PST_IntBuffer16)
+                      if (argCount == 0):
+                        sortLists(list1, list1, PST_IntBuffer16)
                         if (PST_IntBuffer16[0] > 0):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Invalid list to sort. All items must be numbers or all strings, but not mixed.")
-                      elif (v_argCount == 1):
-                        v_value2 = v_funcArgs[0]
-                        if (v_value2[0] == 9):
-                          v_primitiveMethodToCoreLibraryFallback = True
-                          v_functionId = v_metadata[15][2]
-                          v_funcArgs[1] = v_value
-                          v_argCount = 2
+                          hasInterrupt = EX_InvalidArgument(ec, "Invalid list to sort. All items must be numbers or all strings, but not mixed.")
+                      elif (argCount == 1):
+                        value2 = funcArgs[0]
+                        if (value2[0] == 9):
+                          primitiveMethodToCoreLibraryFallback = True
+                          functionId = metadata[15][2]
+                          funcArgs[1] = value
+                          argCount = 2
                         else:
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "list.sort(get_key_function) requires a function pointer as its argument.")
-                        v_output = None
+                          hasInterrupt = EX_InvalidArgument(ec, "list.sort(get_key_function) requires a function pointer as its argument.")
+                        output = None
                     else:
-                      v_output = None
+                      output = None
                   else:
                     # ...on a dictionary
-                    v_dictImpl = v_value[1]
-                    sc_7 = swlookup__interpretImpl__7.get(v_functionId, 8)
+                    dictImpl = value[1]
+                    sc_7 = swlookup__interpretImpl__7.get(functionId, 8)
                     if (sc_7 < 5):
                       if (sc_7 < 3):
                         if (sc_7 == 0):
-                          if (v_argCount > 0):
-                            v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("dictionary clear method", 0, v_argCount))
-                          elif (v_dictImpl[0] > 0):
-                            v_dictImpl[4] = {}
-                            v_dictImpl[5] = {}
-                            del v_dictImpl[6][:]
-                            del v_dictImpl[7][:]
-                            v_dictImpl[0] = 0
+                          if (argCount > 0):
+                            hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary clear method", 0, argCount))
+                          elif (dictImpl[0] > 0):
+                            dictImpl[4] = {}
+                            dictImpl[5] = {}
+                            del dictImpl[6][:]
+                            del dictImpl[7][:]
+                            dictImpl[0] = 0
                         elif (sc_7 == 1):
-                          if (v_argCount > 0):
-                            v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("dictionary clone method", 0, v_argCount))
+                          if (argCount > 0):
+                            hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary clone method", 0, argCount))
                           else:
-                            v_output = [7, v_cloneDictionary(v_dictImpl, None)]
-                        elif (v_argCount != 1):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("dictionary contains method", 1, v_argCount))
+                            output = [7, cloneDictionary(dictImpl, None)]
+                        elif (argCount != 1):
+                          hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary contains method", 1, argCount))
                         else:
-                          v_value = v_funcArgs[0]
-                          v_output = v_VALUE_FALSE
-                          if (v_value[0] == 5):
-                            if (v_value[1] in v_dictImpl[5]):
-                              v_output = v_VALUE_TRUE
+                          value = funcArgs[0]
+                          output = VALUE_FALSE
+                          if (value[0] == 5):
+                            if (value[1] in dictImpl[5]):
+                              output = VALUE_TRUE
                           else:
-                            if (v_value[0] == 3):
-                              v_i = v_value[1]
+                            if (value[0] == 3):
+                              i = value[1]
                             else:
-                              v_i = (v_value[1])[1]
-                            if (v_i in v_dictImpl[4]):
-                              v_output = v_VALUE_TRUE
+                              i = (value[1])[1]
+                            if (i in dictImpl[4]):
+                              output = VALUE_TRUE
                       elif (sc_7 == 3):
-                        if ((v_argCount != 1) and (v_argCount != 2)):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Dictionary get method requires 1 or 2 arguments.")
+                        if ((argCount != 1) and (argCount != 2)):
+                          hasInterrupt = EX_InvalidArgument(ec, "Dictionary get method requires 1 or 2 arguments.")
                         else:
-                          v_value = v_funcArgs[0]
-                          sc_8 = swlookup__interpretImpl__8.get(v_value[0], 3)
+                          value = funcArgs[0]
+                          sc_8 = swlookup__interpretImpl__8.get(value[0], 3)
                           if (sc_8 < 2):
                             if (sc_8 == 0):
-                              v_int1 = v_value[1]
-                              v_i = v_dictImpl[4].get(v_int1, -1)
+                              int1 = value[1]
+                              i = dictImpl[4].get(int1, -1)
                             else:
-                              v_int1 = (v_value[1])[1]
-                              v_i = v_dictImpl[4].get(v_int1, -1)
+                              int1 = (value[1])[1]
+                              i = dictImpl[4].get(int1, -1)
                           elif (sc_8 == 2):
-                            v_string1 = v_value[1]
-                            v_i = v_dictImpl[5].get(v_string1, -1)
-                          if (v_i == -1):
-                            if (v_argCount == 2):
-                              v_output = v_funcArgs[1]
+                            string1 = value[1]
+                            i = dictImpl[5].get(string1, -1)
+                          if (i == -1):
+                            if (argCount == 2):
+                              output = funcArgs[1]
                             else:
-                              v_output = v_VALUE_NULL
+                              output = VALUE_NULL
                           else:
-                            v_output = v_dictImpl[7][v_i]
-                      elif (v_argCount > 0):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("dictionary keys method", 0, v_argCount))
+                            output = dictImpl[7][i]
+                      elif (argCount > 0):
+                        hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary keys method", 0, argCount))
                       else:
-                        v_valueList1 = v_dictImpl[6]
-                        v_len = len(v_valueList1)
-                        if (v_dictImpl[1] == 8):
-                          v_intArray1 = [None, None]
-                          v_intArray1[0] = 8
-                          v_intArray1[0] = v_dictImpl[2]
+                        valueList1 = dictImpl[6]
+                        len = len(valueList1)
+                        if (dictImpl[1] == 8):
+                          intArray1 = [None, None]
+                          intArray1[0] = 8
+                          intArray1[0] = dictImpl[2]
                         else:
-                          v_intArray1 = [None]
-                          v_intArray1[0] = v_dictImpl[1]
-                        v_list1 = v_makeEmptyList(v_intArray1, v_len)
-                        v_i = 0
-                        while (v_i < v_len):
-                          v_list1[2].append(v_valueList1[v_i])
-                          v_i += 1
-                        v_list1[1] = v_len
-                        v_output = [6, v_list1]
+                          intArray1 = [None]
+                          intArray1[0] = dictImpl[1]
+                        list1 = makeEmptyList(intArray1, len)
+                        i = 0
+                        while (i < len):
+                          list1[2].append(valueList1[i])
+                          i += 1
+                        list1[1] = len
+                        output = [6, list1]
                     elif (sc_7 < 7):
                       if (sc_7 == 5):
-                        if (v_argCount != 1):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("dictionary merge method", 1, v_argCount))
+                        if (argCount != 1):
+                          hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary merge method", 1, argCount))
                         else:
-                          v_value2 = v_funcArgs[0]
-                          if (v_value2[0] != 7):
-                            v_hasInterrupt = v_EX_InvalidArgument(v_ec, "dictionary merge method requires another dictionary as a parameeter.")
+                          value2 = funcArgs[0]
+                          if (value2[0] != 7):
+                            hasInterrupt = EX_InvalidArgument(ec, "dictionary merge method requires another dictionary as a parameeter.")
                           else:
-                            v_dictImpl2 = v_value2[1]
-                            if (v_dictImpl2[0] > 0):
-                              if (v_dictImpl[0] == 0):
-                                v_value[1] = v_cloneDictionary(v_dictImpl2, None)
-                              elif (v_dictImpl2[1] != v_dictImpl[1]):
-                                v_hasInterrupt = v_EX_InvalidKey(v_ec, "Dictionaries with different key types cannot be merged.")
-                              elif ((v_dictImpl2[1] == 8) and (v_dictImpl2[2] != v_dictImpl[2]) and (v_dictImpl[2] != 0) and not (v_isClassASubclassOf(v_vm, v_dictImpl2[2], v_dictImpl[2]))):
-                                v_hasInterrupt = v_EX_InvalidKey(v_ec, "Dictionary key types are incompatible.")
+                            dictImpl2 = value2[1]
+                            if (dictImpl2[0] > 0):
+                              if (dictImpl[0] == 0):
+                                value[1] = cloneDictionary(dictImpl2, None)
+                              elif (dictImpl2[1] != dictImpl[1]):
+                                hasInterrupt = EX_InvalidKey(ec, "Dictionaries with different key types cannot be merged.")
+                              elif ((dictImpl2[1] == 8) and (dictImpl2[2] != dictImpl[2]) and (dictImpl[2] != 0) and not (isClassASubclassOf(vm, dictImpl2[2], dictImpl[2]))):
+                                hasInterrupt = EX_InvalidKey(ec, "Dictionary key types are incompatible.")
                               else:
-                                if (v_dictImpl[3] == None):
+                                if (dictImpl[3] == None):
                                   pass
-                                elif (v_dictImpl2[3] == None):
-                                  v_hasInterrupt = v_EX_InvalidKey(v_ec, "Dictionaries with different value types cannot be merged.")
-                                elif not (v_canAssignGenericToGeneric(v_vm, v_dictImpl2[3], 0, v_dictImpl[3], 0, v_intBuffer)):
-                                  v_hasInterrupt = v_EX_InvalidKey(v_ec, "The dictionary value types are incompatible.")
-                                if not (v_hasInterrupt):
-                                  v_cloneDictionary(v_dictImpl2, v_dictImpl)
-                            v_output = v_VALUE_NULL
-                      elif (v_argCount != 1):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("dictionary remove method", 1, v_argCount))
+                                elif (dictImpl2[3] == None):
+                                  hasInterrupt = EX_InvalidKey(ec, "Dictionaries with different value types cannot be merged.")
+                                elif not (canAssignGenericToGeneric(vm, dictImpl2[3], 0, dictImpl[3], 0, intBuffer)):
+                                  hasInterrupt = EX_InvalidKey(ec, "The dictionary value types are incompatible.")
+                                if not (hasInterrupt):
+                                  cloneDictionary(dictImpl2, dictImpl)
+                            output = VALUE_NULL
+                      elif (argCount != 1):
+                        hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary remove method", 1, argCount))
                       else:
-                        v_value2 = v_funcArgs[0]
-                        v_bool2 = False
-                        v_keyType = v_dictImpl[1]
-                        if ((v_dictImpl[0] > 0) and (v_keyType == v_value2[0])):
-                          if (v_keyType == 5):
-                            v_stringKey = v_value2[1]
-                            if (v_stringKey in v_dictImpl[5]):
-                              v_i = v_dictImpl[5][v_stringKey]
-                              v_bool2 = True
+                        value2 = funcArgs[0]
+                        bool2 = False
+                        keyType = dictImpl[1]
+                        if ((dictImpl[0] > 0) and (keyType == value2[0])):
+                          if (keyType == 5):
+                            stringKey = value2[1]
+                            if (stringKey in dictImpl[5]):
+                              i = dictImpl[5][stringKey]
+                              bool2 = True
                           else:
-                            if (v_keyType == 3):
-                              v_intKey = v_value2[1]
+                            if (keyType == 3):
+                              intKey = value2[1]
                             else:
-                              v_intKey = (v_value2[1])[1]
-                            if (v_intKey in v_dictImpl[4]):
-                              v_i = v_dictImpl[4][v_intKey]
-                              v_bool2 = True
-                          if v_bool2:
-                            v_len = (v_dictImpl[0] - 1)
-                            v_dictImpl[0] = v_len
-                            if (v_i == v_len):
-                              if (v_keyType == 5):
-                                v_dictImpl[5].pop(v_stringKey)
+                              intKey = (value2[1])[1]
+                            if (intKey in dictImpl[4]):
+                              i = dictImpl[4][intKey]
+                              bool2 = True
+                          if bool2:
+                            len = (dictImpl[0] - 1)
+                            dictImpl[0] = len
+                            if (i == len):
+                              if (keyType == 5):
+                                dictImpl[5].pop(stringKey)
                               else:
-                                v_dictImpl[4].pop(v_intKey)
-                              del v_dictImpl[6][v_i]
-                              del v_dictImpl[7][v_i]
+                                dictImpl[4].pop(intKey)
+                              del dictImpl[6][i]
+                              del dictImpl[7][i]
                             else:
-                              v_value = v_dictImpl[6][v_len]
-                              v_dictImpl[6][v_i] = v_value
-                              v_dictImpl[7][v_i] = v_dictImpl[7][v_len]
-                              v_dictImpl[6].pop()
-                              v_dictImpl[7].pop()
-                              if (v_keyType == 5):
-                                v_dictImpl[5].pop(v_stringKey)
-                                v_stringKey = v_value[1]
-                                v_dictImpl[5][v_stringKey] = v_i
+                              value = dictImpl[6][len]
+                              dictImpl[6][i] = value
+                              dictImpl[7][i] = dictImpl[7][len]
+                              dictImpl[6].pop()
+                              dictImpl[7].pop()
+                              if (keyType == 5):
+                                dictImpl[5].pop(stringKey)
+                                stringKey = value[1]
+                                dictImpl[5][stringKey] = i
                               else:
-                                v_dictImpl[4].pop(v_intKey)
-                                if (v_keyType == 3):
-                                  v_intKey = v_value[1]
+                                dictImpl[4].pop(intKey)
+                                if (keyType == 3):
+                                  intKey = value[1]
                                 else:
-                                  v_intKey = (v_value[1])[1]
-                                v_dictImpl[4][v_intKey] = v_i
-                        if not (v_bool2):
-                          v_hasInterrupt = v_EX_KeyNotFound(v_ec, "dictionary does not contain the given key.")
+                                  intKey = (value[1])[1]
+                                dictImpl[4][intKey] = i
+                        if not (bool2):
+                          hasInterrupt = EX_KeyNotFound(ec, "dictionary does not contain the given key.")
                     elif (sc_7 == 7):
-                      if (v_argCount > 0):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("dictionary values method", 0, v_argCount))
+                      if (argCount > 0):
+                        hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary values method", 0, argCount))
                       else:
-                        v_valueList1 = v_dictImpl[7]
-                        v_len = len(v_valueList1)
-                        v_list1 = v_makeEmptyList(v_dictImpl[3], v_len)
-                        v_i = 0
-                        while (v_i < v_len):
-                          v_addToList(v_list1, v_valueList1[v_i])
-                          v_i += 1
-                        v_output = [6, v_list1]
+                        valueList1 = dictImpl[7]
+                        len = len(valueList1)
+                        list1 = makeEmptyList(dictImpl[3], len)
+                        i = 0
+                        while (i < len):
+                          addToList(list1, valueList1[i])
+                          i += 1
+                        output = [6, list1]
                     else:
-                      v_output = None
+                      output = None
                 elif (sc_4 == 3):
                   # ...on a function pointer
-                  v_functionPointer1 = v_value[1]
-                  sc_9 = swlookup__interpretImpl__9.get(v_functionId, 4)
+                  functionPointer1 = value[1]
+                  sc_9 = swlookup__interpretImpl__9.get(functionId, 4)
                   if (sc_9 < 3):
                     if (sc_9 == 0):
-                      if (v_argCount > 0):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("argCountMax method", 0, v_argCount))
+                      if (argCount > 0):
+                        hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("argCountMax method", 0, argCount))
                       else:
-                        v_functionId = v_functionPointer1[3]
-                        v_functionInfo = v_metadata[10][v_functionId]
-                        v_output = v_buildInteger(v_globals, v_functionInfo[4])
+                        functionId = functionPointer1[3]
+                        functionInfo = metadata[10][functionId]
+                        output = buildInteger(globals, functionInfo[4])
                     elif (sc_9 == 1):
-                      if (v_argCount > 0):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("argCountMin method", 0, v_argCount))
+                      if (argCount > 0):
+                        hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("argCountMin method", 0, argCount))
                       else:
-                        v_functionId = v_functionPointer1[3]
-                        v_functionInfo = v_metadata[10][v_functionId]
-                        v_output = v_buildInteger(v_globals, v_functionInfo[3])
+                        functionId = functionPointer1[3]
+                        functionInfo = metadata[10][functionId]
+                        output = buildInteger(globals, functionInfo[3])
                     else:
-                      v_functionInfo = v_metadata[10][v_functionPointer1[3]]
-                      v_output = v_buildString(v_globals, v_functionInfo[9])
+                      functionInfo = metadata[10][functionPointer1[3]]
+                      output = buildString(globals, functionInfo[9])
                   elif (sc_9 == 3):
-                    if (v_argCount == 1):
-                      v_funcArgs[1] = v_funcArgs[0]
-                    elif (v_argCount == 0):
-                      v_funcArgs[1] = v_VALUE_NULL
+                    if (argCount == 1):
+                      funcArgs[1] = funcArgs[0]
+                    elif (argCount == 0):
+                      funcArgs[1] = VALUE_NULL
                     else:
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, "invoke requires a list of arguments.")
-                    v_funcArgs[0] = v_value
-                    v_argCount = 2
-                    v_primitiveMethodToCoreLibraryFallback = True
-                    v_functionId = v_metadata[15][3]
-                    v_output = None
+                      hasInterrupt = EX_InvalidArgument(ec, "invoke requires a list of arguments.")
+                    funcArgs[0] = value
+                    argCount = 2
+                    primitiveMethodToCoreLibraryFallback = True
+                    functionId = metadata[15][3]
+                    output = None
                   else:
-                    v_output = None
+                    output = None
                 elif (sc_4 == 4):
                   # ...on a class definition
-                  v_classValue = v_value[1]
-                  sc_10 = swlookup__interpretImpl__10.get(v_functionId, 2)
+                  classValue = value[1]
+                  sc_10 = swlookup__interpretImpl__10.get(functionId, 2)
                   if (sc_10 == 0):
-                    v_classInfo = v_metadata[9][v_classValue[1]]
-                    v_output = v_buildString(v_globals, v_classInfo[16])
+                    classInfo = metadata[9][classValue[1]]
+                    output = buildString(globals, classInfo[16])
                   elif (sc_10 == 1):
-                    if (v_argCount != 1):
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("class isA method", 1, v_argCount))
+                    if (argCount != 1):
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("class isA method", 1, argCount))
                     else:
-                      v_int1 = v_classValue[1]
-                      v_value = v_funcArgs[0]
-                      if (v_value[0] != 10):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "class isA method requires another class reference.")
+                      int1 = classValue[1]
+                      value = funcArgs[0]
+                      if (value[0] != 10):
+                        hasInterrupt = EX_InvalidArgument(ec, "class isA method requires another class reference.")
                       else:
-                        v_classValue = v_value[1]
-                        v_int2 = v_classValue[1]
-                        v_output = v_VALUE_FALSE
-                        if v_isClassASubclassOf(v_vm, v_int1, v_int2):
-                          v_output = v_VALUE_TRUE
+                        classValue = value[1]
+                        int2 = classValue[1]
+                        output = VALUE_FALSE
+                        if isClassASubclassOf(vm, int1, int2):
+                          output = VALUE_TRUE
                   else:
-                    v_output = None
-                if not (v_hasInterrupt):
-                  if (v_output == None):
-                    if v_primitiveMethodToCoreLibraryFallback:
-                      v_type = 1
-                      v_bool1 = True
+                    output = None
+                if not (hasInterrupt):
+                  if (output == None):
+                    if primitiveMethodToCoreLibraryFallback:
+                      type = 1
+                      bool1 = True
                     else:
-                      v_hasInterrupt = v_EX_InvalidInvocation(v_ec, "primitive method not found.")
+                      hasInterrupt = EX_InvalidInvocation(ec, "primitive method not found.")
                   else:
-                    if v_returnValueUsed:
-                      if (v_valueStackSize == v_valueStackCapacity):
-                        v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-                        v_valueStackCapacity = len(v_valueStack)
-                      v_valueStack[v_valueStackSize] = v_output
-                      v_valueStackSize += 1
-                    v_bool1 = False
-              if (v_bool1 and not (v_hasInterrupt)):
+                    if returnValueUsed:
+                      if (valueStackSize == valueStackCapacity):
+                        valueStack = valueStackIncreaseCapacity(ec)
+                        valueStackCapacity = len(valueStack)
+                      valueStack[valueStackSize] = output
+                      valueStackSize += 1
+                    bool1 = False
+              if (bool1 and not (hasInterrupt)):
                 # push a new frame to the stack
-                v_stack[0] = v_pc
-                v_bool1 = False
-                sc_11 = swlookup__interpretImpl__11.get(v_type, 6)
+                stack[0] = pc
+                bool1 = False
+                sc_11 = swlookup__interpretImpl__11.get(type, 6)
                 if (sc_11 < 4):
                   if (sc_11 < 2):
                     if (sc_11 == 0):
                       # function
-                      v_functionInfo = v_functionTable[v_functionId]
-                      v_pc = v_functionInfo[2]
-                      v_value = None
-                      v_classId = 0
+                      functionInfo = functionTable[functionId]
+                      pc = functionInfo[2]
+                      value = None
+                      classId = 0
                     else:
                       # lambda
-                      v_pc = v_functionId
-                      v_functionInfo = v_metadata[11][v_functionId]
-                      v_value = None
-                      v_classId = 0
+                      pc = functionId
+                      functionInfo = metadata[11][functionId]
+                      value = None
+                      classId = 0
                   elif (sc_11 == 2):
                     # static method
-                    v_functionInfo = v_functionTable[v_functionId]
-                    v_pc = v_functionInfo[2]
-                    v_value = None
-                    v_classId = 0
+                    functionInfo = functionTable[functionId]
+                    pc = functionInfo[2]
+                    value = None
+                    classId = 0
                   else:
                     # non-static method
-                    v_functionInfo = v_functionTable[v_functionId]
-                    v_pc = v_functionInfo[2]
-                    v_classId = 0
+                    functionInfo = functionTable[functionId]
+                    pc = functionInfo[2]
+                    classId = 0
                 elif (sc_11 == 4):
                   # constructor
-                  v_vm[5] += 1
-                  v_classInfo = v_classTable[v_classId]
-                  v_valueArray1 = (PST_NoneListOfOne * v_classInfo[8])
-                  v_i = (len(v_valueArray1) - 1)
-                  while (v_i >= 0):
-                    sc_12 = swlookup__interpretImpl__12.get(v_classInfo[10][v_i], 3)
+                  vm[5] += 1
+                  classInfo = classTable[classId]
+                  valueArray1 = (PST_NoneListOfOne * classInfo[8])
+                  i = (len(valueArray1) - 1)
+                  while (i >= 0):
+                    sc_12 = swlookup__interpretImpl__12.get(classInfo[10][i], 3)
                     if (sc_12 < 2):
                       if (sc_12 == 0):
-                        v_valueArray1[v_i] = v_classInfo[11][v_i]
+                        valueArray1[i] = classInfo[11][i]
                     elif (sc_12 == 2):
                       pass
-                    v_i -= 1
-                  v_objInstance1 = [v_classId, v_vm[5], v_valueArray1, None, None]
-                  v_value = [8, v_objInstance1]
-                  v_functionId = v_classInfo[7]
-                  v_functionInfo = v_functionTable[v_functionId]
-                  v_pc = v_functionInfo[2]
-                  v_classId = 0
-                  if v_returnValueUsed:
-                    v_returnValueUsed = False
-                    if (v_valueStackSize == v_valueStackCapacity):
-                      v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-                      v_valueStackCapacity = len(v_valueStack)
-                    v_valueStack[v_valueStackSize] = v_value
-                    v_valueStackSize += 1
+                    i -= 1
+                  objInstance1 = [classId, vm[5], valueArray1, None, None]
+                  value = [8, objInstance1]
+                  functionId = classInfo[7]
+                  functionInfo = functionTable[functionId]
+                  pc = functionInfo[2]
+                  classId = 0
+                  if returnValueUsed:
+                    returnValueUsed = False
+                    if (valueStackSize == valueStackCapacity):
+                      valueStack = valueStackIncreaseCapacity(ec)
+                      valueStackCapacity = len(valueStack)
+                    valueStack[valueStackSize] = value
+                    valueStackSize += 1
                 elif (sc_11 == 5):
                   # base constructor
-                  v_value = v_stack[6]
-                  v_classInfo = v_classTable[v_classId]
-                  v_functionId = v_classInfo[7]
-                  v_functionInfo = v_functionTable[v_functionId]
-                  v_pc = v_functionInfo[2]
-                  v_classId = 0
-                if ((v_argCount < v_functionInfo[3]) or (v_argCount > v_functionInfo[4])):
-                  v_pc = v_stack[0]
-                  v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Incorrect number of args were passed to this function.")
+                  value = stack[6]
+                  classInfo = classTable[classId]
+                  functionId = classInfo[7]
+                  functionInfo = functionTable[functionId]
+                  pc = functionInfo[2]
+                  classId = 0
+                if ((argCount < functionInfo[3]) or (argCount > functionInfo[4])):
+                  pc = stack[0]
+                  hasInterrupt = EX_InvalidArgument(ec, "Incorrect number of args were passed to this function.")
                 else:
-                  v_int1 = v_functionInfo[7]
-                  v_int2 = v_stack[3]
-                  if (v_localsStackCapacity <= (v_int2 + v_int1)):
-                    v_increaseLocalsStackCapacity(v_ec, v_int1)
-                    v_localsStack = v_ec[5]
-                    v_localsStackSet = v_ec[6]
-                    v_localsStackCapacity = len(v_localsStack)
-                  v_localsStackSetToken = (v_ec[7] + 1)
-                  v_ec[7] = v_localsStackSetToken
-                  if (v_localsStackSetToken > 2000000000):
-                    v_resetLocalsStackTokens(v_ec, v_stack)
-                    v_localsStackSetToken = 2
-                  v_localsStackOffset = v_int2
-                  if (v_type != 10):
-                    v_closure = None
+                  int1 = functionInfo[7]
+                  int2 = stack[3]
+                  if (localsStackCapacity <= (int2 + int1)):
+                    increaseLocalsStackCapacity(ec, int1)
+                    localsStack = ec[5]
+                    localsStackSet = ec[6]
+                    localsStackCapacity = len(localsStack)
+                  localsStackSetToken = (ec[7] + 1)
+                  ec[7] = localsStackSetToken
+                  if (localsStackSetToken > 2000000000):
+                    resetLocalsStackTokens(ec, stack)
+                    localsStackSetToken = 2
+                  localsStackOffset = int2
+                  if (type != 10):
+                    closure = None
                   # invoke the function
-                  v_stack = [v_pc, v_localsStackSetToken, v_localsStackOffset, (v_localsStackOffset + v_int1), v_stack, v_returnValueUsed, v_value, v_valueStackSize, 0, (v_stack[9] + 1), 0, None, v_closure, None]
-                  v_i = 0
-                  while (v_i < v_argCount):
-                    v_int1 = (v_localsStackOffset + v_i)
-                    v_localsStack[v_int1] = v_funcArgs[v_i]
-                    v_localsStackSet[v_int1] = v_localsStackSetToken
-                    v_i += 1
-                  if (v_argCount != v_functionInfo[3]):
-                    v_int1 = (v_argCount - v_functionInfo[3])
-                    if (v_int1 > 0):
-                      v_pc += v_functionInfo[8][v_int1]
-                      v_stack[0] = v_pc
-                  if (v_stack[9] > 1000):
-                    v_hasInterrupt = v_EX_Fatal(v_ec, "Stack overflow.")
+                  stack = [pc, localsStackSetToken, localsStackOffset, (localsStackOffset + int1), stack, returnValueUsed, value, valueStackSize, 0, (stack[9] + 1), 0, None, closure, None]
+                  i = 0
+                  while (i < argCount):
+                    int1 = (localsStackOffset + i)
+                    localsStack[int1] = funcArgs[i]
+                    localsStackSet[int1] = localsStackSetToken
+                    i += 1
+                  if (argCount != functionInfo[3]):
+                    int1 = (argCount - functionInfo[3])
+                    if (int1 > 0):
+                      pc += functionInfo[8][int1]
+                      stack[0] = pc
+                  if (stack[9] > 1000):
+                    hasInterrupt = EX_Fatal(ec, "Stack overflow.")
         elif (sc_0 < 15):
           if (sc_0 == 13):
             # CAST
-            v_value = v_valueStack[(v_valueStackSize - 1)]
-            v_value2 = v_canAssignTypeToGeneric(v_vm, v_value, v_row, 0)
-            if (v_value2 == None):
-              if ((v_value[0] == 4) and (v_row[0] == 3)):
-                if (v_row[1] == 1):
-                  v_float1 = v_value[1]
-                  if ((v_float1 < 0) and ((v_float1 % 1) != 0)):
-                    v_i = (int(v_float1) - 1)
+            value = valueStack[(valueStackSize - 1)]
+            value2 = canAssignTypeToGeneric(vm, value, row, 0)
+            if (value2 == None):
+              if ((value[0] == 4) and (row[0] == 3)):
+                if (row[1] == 1):
+                  float1 = value[1]
+                  if ((float1 < 0) and ((float1 % 1) != 0)):
+                    i = (int(float1) - 1)
                   else:
-                    v_i = int(v_float1)
-                  if (v_i < 0):
-                    if (v_i > -257):
-                      v_value2 = v_globals[10][-v_i]
+                    i = int(float1)
+                  if (i < 0):
+                    if (i > -257):
+                      value2 = globals[10][-i]
                     else:
-                      v_value2 = [3, v_i]
-                  elif (v_i < 2049):
-                    v_value2 = v_globals[9][v_i]
+                      value2 = [3, i]
+                  elif (i < 2049):
+                    value2 = globals[9][i]
                   else:
-                    v_value2 = [3, v_i]
-              elif ((v_value[0] == 3) and (v_row[0] == 4)):
-                v_int1 = v_value[1]
-                if (v_int1 == 0):
-                  v_value2 = v_VALUE_FLOAT_ZERO
+                    value2 = [3, i]
+              elif ((value[0] == 3) and (row[0] == 4)):
+                int1 = value[1]
+                if (int1 == 0):
+                  value2 = VALUE_FLOAT_ZERO
                 else:
-                  v_value2 = [4, (0.0 + v_int1)]
-              if (v_value2 != None):
-                v_valueStack[(v_valueStackSize - 1)] = v_value2
-            if (v_value2 == None):
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, ''.join(["Cannot convert a ", v_typeToStringFromValue(v_vm, v_value), " to a ", v_typeToString(v_vm, v_row, 0)]))
+                  value2 = [4, (0.0 + int1)]
+              if (value2 != None):
+                valueStack[(valueStackSize - 1)] = value2
+            if (value2 == None):
+              hasInterrupt = EX_InvalidArgument(ec, ''.join(["Cannot convert a ", typeToStringFromValue(vm, value), " to a ", typeToString(vm, row, 0)]))
             else:
-              v_valueStack[(v_valueStackSize - 1)] = v_value2
+              valueStack[(valueStackSize - 1)] = value2
           else:
             # CLASS_DEFINITION
-            v_initializeClass(v_pc, v_vm, v_row, v_stringArgs[v_pc])
-            v_classTable = v_metadata[9]
+            initializeClass(pc, vm, row, stringArgs[pc])
+            classTable = metadata[9]
         elif (sc_0 == 15):
           # CNI_INVOKE
-          v_nativeFp = v_metadata[13][v_row[0]]
-          if (v_nativeFp == None):
-            v_hasInterrupt = v_EX_InvalidInvocation(v_ec, "CNI method could not be found.")
+          nativeFp = metadata[13][row[0]]
+          if (nativeFp == None):
+            hasInterrupt = EX_InvalidInvocation(ec, "CNI method could not be found.")
           else:
-            v_len = v_row[1]
-            v_valueStackSize -= v_len
-            v_valueArray1 = (PST_NoneListOfOne * v_len)
-            v_i = 0
-            while (v_i < v_len):
-              v_valueArray1[v_i] = v_valueStack[(v_valueStackSize + v_i)]
-              v_i += 1
-            v_prepareToSuspend(v_ec, v_stack, v_valueStackSize, v_pc)
-            v_value = v_nativeFp(v_vm, v_valueArray1)
-            if v_ec[11]:
-              v_ec[11] = False
-              if (v_ec[12] == 1):
-                return v_suspendInterpreter()
-            if (v_row[2] == 1):
-              if (v_valueStackSize == v_valueStackCapacity):
-                v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-                v_valueStackCapacity = len(v_valueStack)
-              v_valueStack[v_valueStackSize] = v_value
-              v_valueStackSize += 1
+            len = row[1]
+            valueStackSize -= len
+            valueArray1 = (PST_NoneListOfOne * len)
+            i = 0
+            while (i < len):
+              valueArray1[i] = valueStack[(valueStackSize + i)]
+              i += 1
+            prepareToSuspend(ec, stack, valueStackSize, pc)
+            value = nativeFp(vm, valueArray1)
+            if ec[11]:
+              ec[11] = False
+              if (ec[12] == 1):
+                return suspendInterpreter()
+            if (row[2] == 1):
+              if (valueStackSize == valueStackCapacity):
+                valueStack = valueStackIncreaseCapacity(ec)
+                valueStackCapacity = len(valueStack)
+              valueStack[valueStackSize] = value
+              valueStackSize += 1
         else:
           # CNI_REGISTER
-          v_nativeFp = TranslationHelper_getFunction(v_stringArgs[v_pc])
-          v_metadata[13][v_row[0]] = v_nativeFp
+          nativeFp = TranslationHelper_getFunction(stringArgs[pc])
+          metadata[13][row[0]] = nativeFp
       elif (sc_0 < 26):
         if (sc_0 < 22):
           if (sc_0 < 20):
             if (sc_0 == 17):
               # COMMAND_LINE_ARGS
-              if (v_valueStackSize == v_valueStackCapacity):
-                v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-                v_valueStackCapacity = len(v_valueStack)
-              v_list1 = v_makeEmptyList(v_globals[14], 3)
-              v_i = 0
-              while (v_i < len(v_vm[11][0])):
-                v_addToList(v_list1, v_buildString(v_globals, v_vm[11][0][v_i]))
-                v_i += 1
-              v_valueStack[v_valueStackSize] = [6, v_list1]
-              v_valueStackSize += 1
+              if (valueStackSize == valueStackCapacity):
+                valueStack = valueStackIncreaseCapacity(ec)
+                valueStackCapacity = len(valueStack)
+              list1 = makeEmptyList(globals[14], 3)
+              i = 0
+              while (i < len(vm[11][0])):
+                addToList(list1, buildString(globals, vm[11][0][i]))
+                i += 1
+              valueStack[valueStackSize] = [6, list1]
+              valueStackSize += 1
             elif (sc_0 == 18):
               # CONTINUE
-              if (v_row[0] == 1):
-                v_pc += v_row[1]
+              if (row[0] == 1):
+                pc += row[1]
               else:
-                v_intArray1 = v_esfData[v_pc]
-                v_pc = (v_intArray1[1] - 1)
-                v_valueStackSize = v_stack[7]
-                v_stack[10] = 2
+                intArray1 = esfData[pc]
+                pc = (intArray1[1] - 1)
+                valueStackSize = stack[7]
+                stack[10] = 2
             else:
               # CORE_FUNCTION
-              sc_13 = swlookup__interpretImpl__13.get(v_row[0], 41)
+              sc_13 = swlookup__interpretImpl__13.get(row[0], 41)
               if (sc_13 < 21):
                 if (sc_13 < 11):
                   if (sc_13 < 6):
                     if (sc_13 < 3):
                       if (sc_13 == 0):
                         # parseInt
-                        v_valueStackSize -= 1
-                        v_arg1 = v_valueStack[v_valueStackSize]
-                        v_output = v_VALUE_NULL
-                        if (v_arg1[0] == 5):
-                          v_string1 = (v_arg1[1]).strip()
-                          if PST_isValidInteger(v_string1):
-                            v_output = v_buildInteger(v_globals, int(v_string1))
+                        valueStackSize -= 1
+                        arg1 = valueStack[valueStackSize]
+                        output = VALUE_NULL
+                        if (arg1[0] == 5):
+                          string1 = (arg1[1]).strip()
+                          if PST_isValidInteger(string1):
+                            output = buildInteger(globals, int(string1))
                         else:
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "parseInt requires a string argument.")
+                          hasInterrupt = EX_InvalidArgument(ec, "parseInt requires a string argument.")
                       elif (sc_13 == 1):
                         # parseFloat
-                        v_valueStackSize -= 1
-                        v_arg1 = v_valueStack[v_valueStackSize]
-                        v_output = v_VALUE_NULL
-                        if (v_arg1[0] == 5):
-                          v_string1 = (v_arg1[1]).strip()
-                          PST_tryParseFloat(v_string1, v_floatList1)
-                          if (v_floatList1[0] >= 0):
-                            v_output = v_buildFloat(v_globals, v_floatList1[1])
+                        valueStackSize -= 1
+                        arg1 = valueStack[valueStackSize]
+                        output = VALUE_NULL
+                        if (arg1[0] == 5):
+                          string1 = (arg1[1]).strip()
+                          PST_tryParseFloat(string1, floatList1)
+                          if (floatList1[0] >= 0):
+                            output = buildFloat(globals, floatList1[1])
                         else:
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "parseFloat requires a string argument.")
+                          hasInterrupt = EX_InvalidArgument(ec, "parseFloat requires a string argument.")
                       else:
                         # print
-                        v_valueStackSize -= 1
-                        v_arg1 = v_valueStack[v_valueStackSize]
-                        v_output = v_VALUE_NULL
-                        v_printToStdOut(v_vm[11][2], v_valueToString(v_vm, v_arg1))
+                        valueStackSize -= 1
+                        arg1 = valueStack[valueStackSize]
+                        output = VALUE_NULL
+                        printToStdOut(vm[11][2], valueToString(vm, arg1))
                     elif (sc_13 == 3):
                       # typeof
-                      v_valueStackSize -= 1
-                      v_arg1 = v_valueStack[v_valueStackSize]
-                      v_output = v_buildInteger(v_globals, (v_arg1[0] - 1))
+                      valueStackSize -= 1
+                      arg1 = valueStack[valueStackSize]
+                      output = buildInteger(globals, (arg1[0] - 1))
                     elif (sc_13 == 4):
                       # typeis
-                      v_valueStackSize -= 1
-                      v_arg1 = v_valueStack[v_valueStackSize]
-                      v_int1 = v_arg1[0]
-                      v_int2 = v_row[2]
-                      v_output = v_VALUE_FALSE
-                      while (v_int2 > 0):
-                        if (v_row[(2 + v_int2)] == v_int1):
-                          v_output = v_VALUE_TRUE
-                          v_int2 = 0
+                      valueStackSize -= 1
+                      arg1 = valueStack[valueStackSize]
+                      int1 = arg1[0]
+                      int2 = row[2]
+                      output = VALUE_FALSE
+                      while (int2 > 0):
+                        if (row[(2 + int2)] == int1):
+                          output = VALUE_TRUE
+                          int2 = 0
                         else:
-                          v_int2 -= 1
+                          int2 -= 1
                     else:
                       # execId
-                      v_output = v_buildInteger(v_globals, v_ec[0])
+                      output = buildInteger(globals, ec[0])
                   elif (sc_13 < 9):
                     if (sc_13 == 6):
                       # assert
-                      v_valueStackSize -= 3
-                      v_arg3 = v_valueStack[(v_valueStackSize + 2)]
-                      v_arg2 = v_valueStack[(v_valueStackSize + 1)]
-                      v_arg1 = v_valueStack[v_valueStackSize]
-                      if (v_arg1[0] != 2):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Assertion expression must be a boolean.")
-                      elif v_arg1[1]:
-                        v_output = v_VALUE_NULL
+                      valueStackSize -= 3
+                      arg3 = valueStack[(valueStackSize + 2)]
+                      arg2 = valueStack[(valueStackSize + 1)]
+                      arg1 = valueStack[valueStackSize]
+                      if (arg1[0] != 2):
+                        hasInterrupt = EX_InvalidArgument(ec, "Assertion expression must be a boolean.")
+                      elif arg1[1]:
+                        output = VALUE_NULL
                       else:
-                        v_string1 = v_valueToString(v_vm, v_arg2)
-                        if v_arg3[1]:
-                          v_string1 = "Assertion failed: " + v_string1
-                        v_hasInterrupt = v_EX_AssertionFailed(v_ec, v_string1)
+                        string1 = valueToString(vm, arg2)
+                        if arg3[1]:
+                          string1 = "Assertion failed: " + string1
+                        hasInterrupt = EX_AssertionFailed(ec, string1)
                     elif (sc_13 == 7):
                       # chr
-                      v_valueStackSize -= 1
-                      v_arg1 = v_valueStack[v_valueStackSize]
-                      v_output = None
-                      if (v_arg1[0] == 3):
-                        v_int1 = v_arg1[1]
-                        if ((v_int1 >= 0) and (v_int1 < 256)):
-                          v_output = v_buildCommonString(v_globals, chr(v_int1))
-                      if (v_output == None):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "chr requires an integer between 0 and 255.")
+                      valueStackSize -= 1
+                      arg1 = valueStack[valueStackSize]
+                      output = None
+                      if (arg1[0] == 3):
+                        int1 = arg1[1]
+                        if ((int1 >= 0) and (int1 < 256)):
+                          output = buildCommonString(globals, chr(int1))
+                      if (output == None):
+                        hasInterrupt = EX_InvalidArgument(ec, "chr requires an integer between 0 and 255.")
                     else:
                       # ord
-                      v_valueStackSize -= 1
-                      v_arg1 = v_valueStack[v_valueStackSize]
-                      v_output = None
-                      if (v_arg1[0] == 5):
-                        v_string1 = v_arg1[1]
-                        if (len(v_string1) == 1):
-                          v_output = v_buildInteger(v_globals, ord(v_string1[0]))
-                      if (v_output == None):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "ord requires a 1 character string.")
+                      valueStackSize -= 1
+                      arg1 = valueStack[valueStackSize]
+                      output = None
+                      if (arg1[0] == 5):
+                        string1 = arg1[1]
+                        if (len(string1) == 1):
+                          output = buildInteger(globals, ord(string1[0]))
+                      if (output == None):
+                        hasInterrupt = EX_InvalidArgument(ec, "ord requires a 1 character string.")
                   elif (sc_13 == 9):
                     # currentTime
-                    v_output = v_buildFloat(v_globals, time.time())
+                    output = buildFloat(globals, time.time())
                   else:
                     # sortList
-                    v_valueStackSize -= 2
-                    v_arg2 = v_valueStack[(v_valueStackSize + 1)]
-                    v_arg1 = v_valueStack[v_valueStackSize]
-                    v_output = v_VALUE_NULL
-                    v_list1 = v_arg1[1]
-                    v_list2 = v_arg2[1]
-                    v_sortLists(v_list2, v_list1, PST_IntBuffer16)
+                    valueStackSize -= 2
+                    arg2 = valueStack[(valueStackSize + 1)]
+                    arg1 = valueStack[valueStackSize]
+                    output = VALUE_NULL
+                    list1 = arg1[1]
+                    list2 = arg2[1]
+                    sortLists(list2, list1, PST_IntBuffer16)
                     if (PST_IntBuffer16[0] > 0):
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.")
+                      hasInterrupt = EX_InvalidArgument(ec, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.")
                 elif (sc_13 < 16):
                   if (sc_13 < 14):
                     if (sc_13 == 11):
                       # abs
-                      v_valueStackSize -= 1
-                      v_arg1 = v_valueStack[v_valueStackSize]
-                      v_output = v_arg1
-                      if (v_arg1[0] == 3):
-                        if (v_arg1[1] < 0):
-                          v_output = v_buildInteger(v_globals, -(v_arg1[1]))
-                      elif (v_arg1[0] == 4):
-                        if (v_arg1[1] < 0):
-                          v_output = v_buildFloat(v_globals, -(v_arg1[1]))
+                      valueStackSize -= 1
+                      arg1 = valueStack[valueStackSize]
+                      output = arg1
+                      if (arg1[0] == 3):
+                        if (arg1[1] < 0):
+                          output = buildInteger(globals, -(arg1[1]))
+                      elif (arg1[0] == 4):
+                        if (arg1[1] < 0):
+                          output = buildFloat(globals, -(arg1[1]))
                       else:
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "abs requires a number as input.")
+                        hasInterrupt = EX_InvalidArgument(ec, "abs requires a number as input.")
                     elif (sc_13 == 12):
                       # arcCos
-                      v_valueStackSize -= 1
-                      v_arg1 = v_valueStack[v_valueStackSize]
-                      if (v_arg1[0] == 4):
-                        v_float1 = v_arg1[1]
-                      elif (v_arg1[0] == 3):
-                        v_float1 = (0.0 + v_arg1[1])
+                      valueStackSize -= 1
+                      arg1 = valueStack[valueStackSize]
+                      if (arg1[0] == 4):
+                        float1 = arg1[1]
+                      elif (arg1[0] == 3):
+                        float1 = (0.0 + arg1[1])
                       else:
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "arccos requires a number as input.")
-                      if not (v_hasInterrupt):
-                        if ((v_float1 < -1) or (v_float1 > 1)):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "arccos requires a number in the range of -1 to 1.")
+                        hasInterrupt = EX_InvalidArgument(ec, "arccos requires a number as input.")
+                      if not (hasInterrupt):
+                        if ((float1 < -1) or (float1 > 1)):
+                          hasInterrupt = EX_InvalidArgument(ec, "arccos requires a number in the range of -1 to 1.")
                         else:
-                          v_output = v_buildFloat(v_globals, math.acos(v_float1))
+                          output = buildFloat(globals, math.acos(float1))
                     else:
                       # arcSin
-                      v_valueStackSize -= 1
-                      v_arg1 = v_valueStack[v_valueStackSize]
-                      if (v_arg1[0] == 4):
-                        v_float1 = v_arg1[1]
-                      elif (v_arg1[0] == 3):
-                        v_float1 = (0.0 + v_arg1[1])
+                      valueStackSize -= 1
+                      arg1 = valueStack[valueStackSize]
+                      if (arg1[0] == 4):
+                        float1 = arg1[1]
+                      elif (arg1[0] == 3):
+                        float1 = (0.0 + arg1[1])
                       else:
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "arcsin requires a number as input.")
-                      if not (v_hasInterrupt):
-                        if ((v_float1 < -1) or (v_float1 > 1)):
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "arcsin requires a number in the range of -1 to 1.")
+                        hasInterrupt = EX_InvalidArgument(ec, "arcsin requires a number as input.")
+                      if not (hasInterrupt):
+                        if ((float1 < -1) or (float1 > 1)):
+                          hasInterrupt = EX_InvalidArgument(ec, "arcsin requires a number in the range of -1 to 1.")
                         else:
-                          v_output = v_buildFloat(v_globals, math.asin(v_float1))
+                          output = buildFloat(globals, math.asin(float1))
                   elif (sc_13 == 14):
                     # arcTan
-                    v_valueStackSize -= 2
-                    v_arg2 = v_valueStack[(v_valueStackSize + 1)]
-                    v_arg1 = v_valueStack[v_valueStackSize]
-                    v_bool1 = False
-                    if (v_arg1[0] == 4):
-                      v_float1 = v_arg1[1]
-                    elif (v_arg1[0] == 3):
-                      v_float1 = (0.0 + v_arg1[1])
+                    valueStackSize -= 2
+                    arg2 = valueStack[(valueStackSize + 1)]
+                    arg1 = valueStack[valueStackSize]
+                    bool1 = False
+                    if (arg1[0] == 4):
+                      float1 = arg1[1]
+                    elif (arg1[0] == 3):
+                      float1 = (0.0 + arg1[1])
                     else:
-                      v_bool1 = True
-                    if (v_arg2[0] == 4):
-                      v_float2 = v_arg2[1]
-                    elif (v_arg2[0] == 3):
-                      v_float2 = (0.0 + v_arg2[1])
+                      bool1 = True
+                    if (arg2[0] == 4):
+                      float2 = arg2[1]
+                    elif (arg2[0] == 3):
+                      float2 = (0.0 + arg2[1])
                     else:
-                      v_bool1 = True
-                    if v_bool1:
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, "arctan requires numeric arguments.")
+                      bool1 = True
+                    if bool1:
+                      hasInterrupt = EX_InvalidArgument(ec, "arctan requires numeric arguments.")
                     else:
-                      v_output = v_buildFloat(v_globals, math.atan2(v_float1, v_float2))
+                      output = buildFloat(globals, math.atan2(float1, float2))
                   else:
                     # cos
-                    v_valueStackSize -= 1
-                    v_arg1 = v_valueStack[v_valueStackSize]
-                    if (v_arg1[0] == 4):
-                      v_float1 = v_arg1[1]
-                      v_output = v_buildFloat(v_globals, math.cos(v_float1))
-                    elif (v_arg1[0] == 3):
-                      v_int1 = v_arg1[1]
-                      v_output = v_buildFloat(v_globals, math.cos(v_int1))
+                    valueStackSize -= 1
+                    arg1 = valueStack[valueStackSize]
+                    if (arg1[0] == 4):
+                      float1 = arg1[1]
+                      output = buildFloat(globals, math.cos(float1))
+                    elif (arg1[0] == 3):
+                      int1 = arg1[1]
+                      output = buildFloat(globals, math.cos(int1))
                     else:
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, "cos requires a number argument.")
+                      hasInterrupt = EX_InvalidArgument(ec, "cos requires a number argument.")
                 elif (sc_13 < 19):
                   if (sc_13 == 16):
                     # ensureRange
-                    v_valueStackSize -= 3
-                    v_arg3 = v_valueStack[(v_valueStackSize + 2)]
-                    v_arg2 = v_valueStack[(v_valueStackSize + 1)]
-                    v_arg1 = v_valueStack[v_valueStackSize]
-                    v_bool1 = False
-                    if (v_arg2[0] == 4):
-                      v_float2 = v_arg2[1]
-                    elif (v_arg2[0] == 3):
-                      v_float2 = (0.0 + v_arg2[1])
+                    valueStackSize -= 3
+                    arg3 = valueStack[(valueStackSize + 2)]
+                    arg2 = valueStack[(valueStackSize + 1)]
+                    arg1 = valueStack[valueStackSize]
+                    bool1 = False
+                    if (arg2[0] == 4):
+                      float2 = arg2[1]
+                    elif (arg2[0] == 3):
+                      float2 = (0.0 + arg2[1])
                     else:
-                      v_bool1 = True
-                    if (v_arg3[0] == 4):
-                      v_float3 = v_arg3[1]
-                    elif (v_arg3[0] == 3):
-                      v_float3 = (0.0 + v_arg3[1])
+                      bool1 = True
+                    if (arg3[0] == 4):
+                      float3 = arg3[1]
+                    elif (arg3[0] == 3):
+                      float3 = (0.0 + arg3[1])
                     else:
-                      v_bool1 = True
-                    if (not (v_bool1) and (v_float3 < v_float2)):
-                      v_float1 = v_float3
-                      v_float3 = v_float2
-                      v_float2 = v_float1
-                      v_value = v_arg2
-                      v_arg2 = v_arg3
-                      v_arg3 = v_value
-                    if (v_arg1[0] == 4):
-                      v_float1 = v_arg1[1]
-                    elif (v_arg1[0] == 3):
-                      v_float1 = (0.0 + v_arg1[1])
+                      bool1 = True
+                    if (not (bool1) and (float3 < float2)):
+                      float1 = float3
+                      float3 = float2
+                      float2 = float1
+                      value = arg2
+                      arg2 = arg3
+                      arg3 = value
+                    if (arg1[0] == 4):
+                      float1 = arg1[1]
+                    elif (arg1[0] == 3):
+                      float1 = (0.0 + arg1[1])
                     else:
-                      v_bool1 = True
-                    if v_bool1:
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, "ensureRange requires numeric arguments.")
-                    elif (v_float1 < v_float2):
-                      v_output = v_arg2
-                    elif (v_float1 > v_float3):
-                      v_output = v_arg3
+                      bool1 = True
+                    if bool1:
+                      hasInterrupt = EX_InvalidArgument(ec, "ensureRange requires numeric arguments.")
+                    elif (float1 < float2):
+                      output = arg2
+                    elif (float1 > float3):
+                      output = arg3
                     else:
-                      v_output = v_arg1
+                      output = arg1
                   elif (sc_13 == 17):
                     # floor
-                    v_valueStackSize -= 1
-                    v_arg1 = v_valueStack[v_valueStackSize]
-                    if (v_arg1[0] == 4):
-                      v_float1 = v_arg1[1]
-                      if ((v_float1 < 0) and ((v_float1 % 1) != 0)):
-                        v_int1 = (int(v_float1) - 1)
+                    valueStackSize -= 1
+                    arg1 = valueStack[valueStackSize]
+                    if (arg1[0] == 4):
+                      float1 = arg1[1]
+                      if ((float1 < 0) and ((float1 % 1) != 0)):
+                        int1 = (int(float1) - 1)
                       else:
-                        v_int1 = int(v_float1)
-                      if (v_int1 < 2049):
-                        if (v_int1 >= 0):
-                          v_output = v_INTEGER_POSITIVE_CACHE[v_int1]
-                        elif (v_int1 > -257):
-                          v_output = v_INTEGER_NEGATIVE_CACHE[-v_int1]
+                        int1 = int(float1)
+                      if (int1 < 2049):
+                        if (int1 >= 0):
+                          output = INTEGER_POSITIVE_CACHE[int1]
+                        elif (int1 > -257):
+                          output = INTEGER_NEGATIVE_CACHE[-int1]
                         else:
-                          v_output = [3, v_int1]
+                          output = [3, int1]
                       else:
-                        v_output = [3, v_int1]
-                    elif (v_arg1[0] == 3):
-                      v_output = v_arg1
+                        output = [3, int1]
+                    elif (arg1[0] == 3):
+                      output = arg1
                     else:
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, "floor expects a numeric argument.")
+                      hasInterrupt = EX_InvalidArgument(ec, "floor expects a numeric argument.")
                   else:
                     # max
-                    v_valueStackSize -= 2
-                    v_arg2 = v_valueStack[(v_valueStackSize + 1)]
-                    v_arg1 = v_valueStack[v_valueStackSize]
-                    v_bool1 = False
-                    if (v_arg1[0] == 4):
-                      v_float1 = v_arg1[1]
-                    elif (v_arg1[0] == 3):
-                      v_float1 = (0.0 + v_arg1[1])
+                    valueStackSize -= 2
+                    arg2 = valueStack[(valueStackSize + 1)]
+                    arg1 = valueStack[valueStackSize]
+                    bool1 = False
+                    if (arg1[0] == 4):
+                      float1 = arg1[1]
+                    elif (arg1[0] == 3):
+                      float1 = (0.0 + arg1[1])
                     else:
-                      v_bool1 = True
-                    if (v_arg2[0] == 4):
-                      v_float2 = v_arg2[1]
-                    elif (v_arg2[0] == 3):
-                      v_float2 = (0.0 + v_arg2[1])
+                      bool1 = True
+                    if (arg2[0] == 4):
+                      float2 = arg2[1]
+                    elif (arg2[0] == 3):
+                      float2 = (0.0 + arg2[1])
                     else:
-                      v_bool1 = True
-                    if v_bool1:
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, "max requires numeric arguments.")
-                    elif (v_float1 >= v_float2):
-                      v_output = v_arg1
+                      bool1 = True
+                    if bool1:
+                      hasInterrupt = EX_InvalidArgument(ec, "max requires numeric arguments.")
+                    elif (float1 >= float2):
+                      output = arg1
                     else:
-                      v_output = v_arg2
+                      output = arg2
                 elif (sc_13 == 19):
                   # min
-                  v_valueStackSize -= 2
-                  v_arg2 = v_valueStack[(v_valueStackSize + 1)]
-                  v_arg1 = v_valueStack[v_valueStackSize]
-                  v_bool1 = False
-                  if (v_arg1[0] == 4):
-                    v_float1 = v_arg1[1]
-                  elif (v_arg1[0] == 3):
-                    v_float1 = (0.0 + v_arg1[1])
+                  valueStackSize -= 2
+                  arg2 = valueStack[(valueStackSize + 1)]
+                  arg1 = valueStack[valueStackSize]
+                  bool1 = False
+                  if (arg1[0] == 4):
+                    float1 = arg1[1]
+                  elif (arg1[0] == 3):
+                    float1 = (0.0 + arg1[1])
                   else:
-                    v_bool1 = True
-                  if (v_arg2[0] == 4):
-                    v_float2 = v_arg2[1]
-                  elif (v_arg2[0] == 3):
-                    v_float2 = (0.0 + v_arg2[1])
+                    bool1 = True
+                  if (arg2[0] == 4):
+                    float2 = arg2[1]
+                  elif (arg2[0] == 3):
+                    float2 = (0.0 + arg2[1])
                   else:
-                    v_bool1 = True
-                  if v_bool1:
-                    v_hasInterrupt = v_EX_InvalidArgument(v_ec, "min requires numeric arguments.")
-                  elif (v_float1 <= v_float2):
-                    v_output = v_arg1
+                    bool1 = True
+                  if bool1:
+                    hasInterrupt = EX_InvalidArgument(ec, "min requires numeric arguments.")
+                  elif (float1 <= float2):
+                    output = arg1
                   else:
-                    v_output = v_arg2
+                    output = arg2
                 else:
                   # nativeInt
-                  v_valueStackSize -= 2
-                  v_arg2 = v_valueStack[(v_valueStackSize + 1)]
-                  v_arg1 = v_valueStack[v_valueStackSize]
-                  v_output = v_buildInteger(v_globals, (v_arg1[1])[3][v_arg2[1]])
+                  valueStackSize -= 2
+                  arg2 = valueStack[(valueStackSize + 1)]
+                  arg1 = valueStack[valueStackSize]
+                  output = buildInteger(globals, (arg1[1])[3][arg2[1]])
               elif (sc_13 < 32):
                 if (sc_13 < 27):
                   if (sc_13 < 24):
                     if (sc_13 == 21):
                       # nativeString
-                      v_valueStackSize -= 3
-                      v_arg3 = v_valueStack[(v_valueStackSize + 2)]
-                      v_arg2 = v_valueStack[(v_valueStackSize + 1)]
-                      v_arg1 = v_valueStack[v_valueStackSize]
-                      v_string1 = (v_arg1[1])[3][v_arg2[1]]
-                      if v_arg3[1]:
-                        v_output = v_buildCommonString(v_globals, v_string1)
+                      valueStackSize -= 3
+                      arg3 = valueStack[(valueStackSize + 2)]
+                      arg2 = valueStack[(valueStackSize + 1)]
+                      arg1 = valueStack[valueStackSize]
+                      string1 = (arg1[1])[3][arg2[1]]
+                      if arg3[1]:
+                        output = buildCommonString(globals, string1)
                       else:
-                        v_output = v_buildString(v_globals, v_string1)
+                        output = buildString(globals, string1)
                     elif (sc_13 == 22):
                       # sign
-                      v_valueStackSize -= 1
-                      v_arg1 = v_valueStack[v_valueStackSize]
-                      if (v_arg1[0] == 3):
-                        v_float1 = (0.0 + (v_arg1[1]))
-                      elif (v_arg1[0] == 4):
-                        v_float1 = v_arg1[1]
+                      valueStackSize -= 1
+                      arg1 = valueStack[valueStackSize]
+                      if (arg1[0] == 3):
+                        float1 = (0.0 + (arg1[1]))
+                      elif (arg1[0] == 4):
+                        float1 = arg1[1]
                       else:
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "sign requires a number as input.")
-                      if (v_float1 == 0):
-                        v_output = v_VALUE_INT_ZERO
-                      elif (v_float1 > 0):
-                        v_output = v_VALUE_INT_ONE
+                        hasInterrupt = EX_InvalidArgument(ec, "sign requires a number as input.")
+                      if (float1 == 0):
+                        output = VALUE_INT_ZERO
+                      elif (float1 > 0):
+                        output = VALUE_INT_ONE
                       else:
-                        v_output = v_INTEGER_NEGATIVE_CACHE[1]
+                        output = INTEGER_NEGATIVE_CACHE[1]
                     else:
                       # sin
-                      v_valueStackSize -= 1
-                      v_arg1 = v_valueStack[v_valueStackSize]
-                      if (v_arg1[0] == 4):
-                        v_float1 = v_arg1[1]
-                      elif (v_arg1[0] == 3):
-                        v_float1 = (0.0 + v_arg1[1])
+                      valueStackSize -= 1
+                      arg1 = valueStack[valueStackSize]
+                      if (arg1[0] == 4):
+                        float1 = arg1[1]
+                      elif (arg1[0] == 3):
+                        float1 = (0.0 + arg1[1])
                       else:
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "sin requires a number argument.")
-                      v_output = v_buildFloat(v_globals, math.sin(v_float1))
+                        hasInterrupt = EX_InvalidArgument(ec, "sin requires a number argument.")
+                      output = buildFloat(globals, math.sin(float1))
                   elif (sc_13 == 24):
                     # tan
-                    v_valueStackSize -= 1
-                    v_arg1 = v_valueStack[v_valueStackSize]
-                    if (v_arg1[0] == 4):
-                      v_float1 = v_arg1[1]
-                    elif (v_arg1[0] == 3):
-                      v_float1 = (0.0 + v_arg1[1])
+                    valueStackSize -= 1
+                    arg1 = valueStack[valueStackSize]
+                    if (arg1[0] == 4):
+                      float1 = arg1[1]
+                    elif (arg1[0] == 3):
+                      float1 = (0.0 + arg1[1])
                     else:
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, "tan requires a number argument.")
-                    if not (v_hasInterrupt):
-                      v_float2 = math.cos(v_float1)
-                      if (v_float2 < 0):
-                        v_float2 = -v_float2
-                      if (v_float2 < 0.00000000015):
-                        v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Tangent is undefined.")
+                      hasInterrupt = EX_InvalidArgument(ec, "tan requires a number argument.")
+                    if not (hasInterrupt):
+                      float2 = math.cos(float1)
+                      if (float2 < 0):
+                        float2 = -float2
+                      if (float2 < 0.00000000015):
+                        hasInterrupt = EX_DivisionByZero(ec, "Tangent is undefined.")
                       else:
-                        v_output = v_buildFloat(v_globals, math.tan(v_float1))
+                        output = buildFloat(globals, math.tan(float1))
                   elif (sc_13 == 25):
                     # log
-                    v_valueStackSize -= 2
-                    v_arg2 = v_valueStack[(v_valueStackSize + 1)]
-                    v_arg1 = v_valueStack[v_valueStackSize]
-                    if (v_arg1[0] == 4):
-                      v_float1 = v_arg1[1]
-                    elif (v_arg1[0] == 3):
-                      v_float1 = (0.0 + v_arg1[1])
+                    valueStackSize -= 2
+                    arg2 = valueStack[(valueStackSize + 1)]
+                    arg1 = valueStack[valueStackSize]
+                    if (arg1[0] == 4):
+                      float1 = arg1[1]
+                    elif (arg1[0] == 3):
+                      float1 = (0.0 + arg1[1])
                     else:
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, "logarithms require a number argument.")
-                    if not (v_hasInterrupt):
-                      if (v_float1 <= 0):
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "logarithms require positive inputs.")
+                      hasInterrupt = EX_InvalidArgument(ec, "logarithms require a number argument.")
+                    if not (hasInterrupt):
+                      if (float1 <= 0):
+                        hasInterrupt = EX_InvalidArgument(ec, "logarithms require positive inputs.")
                       else:
-                        v_output = v_buildFloat(v_globals, v_fixFuzzyFloatPrecision((math.log(v_float1) * v_arg2[1])))
+                        output = buildFloat(globals, fixFuzzyFloatPrecision((math.log(float1) * arg2[1])))
                   else:
                     # intQueueClear
-                    v_valueStackSize -= 1
-                    v_arg1 = v_valueStack[v_valueStackSize]
-                    v_output = v_VALUE_NULL
-                    v_objInstance1 = v_arg1[1]
-                    if (v_objInstance1[3] != None):
-                      v_objInstance1[3][1] = 0
+                    valueStackSize -= 1
+                    arg1 = valueStack[valueStackSize]
+                    output = VALUE_NULL
+                    objInstance1 = arg1[1]
+                    if (objInstance1[3] != None):
+                      objInstance1[3][1] = 0
                 elif (sc_13 < 30):
                   if (sc_13 == 27):
                     # intQueueWrite16
-                    v_output = v_VALUE_NULL
-                    v_int1 = v_row[2]
-                    v_valueStackSize -= (v_int1 + 1)
-                    v_value = v_valueStack[v_valueStackSize]
-                    v_objArray1 = (v_value[1])[3]
-                    v_intArray1 = v_objArray1[0]
-                    v_len = v_objArray1[1]
-                    if (v_len >= len(v_intArray1)):
-                      v_intArray2 = (PST_NoneListOfOne * ((v_len * 2) + 16))
-                      v_j = 0
-                      while (v_j < v_len):
-                        v_intArray2[v_j] = v_intArray1[v_j]
-                        v_j += 1
-                      v_intArray1 = v_intArray2
-                      v_objArray1[0] = v_intArray1
-                    v_objArray1[1] = (v_len + 16)
-                    v_i = (v_int1 - 1)
-                    while (v_i >= 0):
-                      v_value = v_valueStack[((v_valueStackSize + 1) + v_i)]
-                      if (v_value[0] == 3):
-                        v_intArray1[(v_len + v_i)] = v_value[1]
-                      elif (v_value[0] == 4):
-                        v_float1 = (0.5 + v_value[1])
-                        v_intArray1[(v_len + v_i)] = int(v_float1)
+                    output = VALUE_NULL
+                    int1 = row[2]
+                    valueStackSize -= (int1 + 1)
+                    value = valueStack[valueStackSize]
+                    objArray1 = (value[1])[3]
+                    intArray1 = objArray1[0]
+                    len = objArray1[1]
+                    if (len >= len(intArray1)):
+                      intArray2 = (PST_NoneListOfOne * ((len * 2) + 16))
+                      j = 0
+                      while (j < len):
+                        intArray2[j] = intArray1[j]
+                        j += 1
+                      intArray1 = intArray2
+                      objArray1[0] = intArray1
+                    objArray1[1] = (len + 16)
+                    i = (int1 - 1)
+                    while (i >= 0):
+                      value = valueStack[((valueStackSize + 1) + i)]
+                      if (value[0] == 3):
+                        intArray1[(len + i)] = value[1]
+                      elif (value[0] == 4):
+                        float1 = (0.5 + value[1])
+                        intArray1[(len + i)] = int(float1)
                       else:
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Input must be integers.")
-                        v_i = -1
-                      v_i -= 1
+                        hasInterrupt = EX_InvalidArgument(ec, "Input must be integers.")
+                        i = -1
+                      i -= 1
                   elif (sc_13 == 28):
                     # execCounter
-                    v_output = v_buildInteger(v_globals, v_ec[8])
+                    output = buildInteger(globals, ec[8])
                   else:
                     # sleep
-                    v_valueStackSize -= 1
-                    v_arg1 = v_valueStack[v_valueStackSize]
-                    v_float1 = v_getFloat(v_arg1)
-                    if (v_row[1] == 1):
-                      if (v_valueStackSize == v_valueStackCapacity):
-                        v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-                        v_valueStackCapacity = len(v_valueStack)
-                      v_valueStack[v_valueStackSize] = v_VALUE_NULL
-                      v_valueStackSize += 1
-                    v_prepareToSuspend(v_ec, v_stack, v_valueStackSize, v_pc)
-                    v_ec[13] = [3, 0, "", v_float1, None]
-                    v_hasInterrupt = True
+                    valueStackSize -= 1
+                    arg1 = valueStack[valueStackSize]
+                    float1 = getFloat(arg1)
+                    if (row[1] == 1):
+                      if (valueStackSize == valueStackCapacity):
+                        valueStack = valueStackIncreaseCapacity(ec)
+                        valueStackCapacity = len(valueStack)
+                      valueStack[valueStackSize] = VALUE_NULL
+                      valueStackSize += 1
+                    prepareToSuspend(ec, stack, valueStackSize, pc)
+                    ec[13] = [3, 0, "", float1, None]
+                    hasInterrupt = True
                 elif (sc_13 == 30):
                   # projectId
-                  v_output = v_buildCommonString(v_globals, v_metadata[17])
+                  output = buildCommonString(globals, metadata[17])
                 else:
                   # isJavaScript
-                  v_output = v_VALUE_FALSE
+                  output = VALUE_FALSE
               elif (sc_13 < 37):
                 if (sc_13 < 35):
                   if (sc_13 == 32):
                     # isAndroid
-                    v_output = v_VALUE_FALSE
+                    output = VALUE_FALSE
                   elif (sc_13 == 33):
                     # allocNativeData
-                    v_valueStackSize -= 2
-                    v_arg2 = v_valueStack[(v_valueStackSize + 1)]
-                    v_arg1 = v_valueStack[v_valueStackSize]
-                    v_objInstance1 = v_arg1[1]
-                    v_int1 = v_arg2[1]
-                    v_objArray1 = (PST_NoneListOfOne * v_int1)
-                    v_objInstance1[3] = v_objArray1
+                    valueStackSize -= 2
+                    arg2 = valueStack[(valueStackSize + 1)]
+                    arg1 = valueStack[valueStackSize]
+                    objInstance1 = arg1[1]
+                    int1 = arg2[1]
+                    objArray1 = (PST_NoneListOfOne * int1)
+                    objInstance1[3] = objArray1
                   else:
                     # setNativeData
-                    v_valueStackSize -= 3
-                    v_arg3 = v_valueStack[(v_valueStackSize + 2)]
-                    v_arg2 = v_valueStack[(v_valueStackSize + 1)]
-                    v_arg1 = v_valueStack[v_valueStackSize]
-                    (v_arg1[1])[3][v_arg2[1]] = v_arg3[1]
+                    valueStackSize -= 3
+                    arg3 = valueStack[(valueStackSize + 2)]
+                    arg2 = valueStack[(valueStackSize + 1)]
+                    arg1 = valueStack[valueStackSize]
+                    (arg1[1])[3][arg2[1]] = arg3[1]
                 elif (sc_13 == 35):
                   # getExceptionTrace
-                  v_valueStackSize -= 1
-                  v_arg1 = v_valueStack[v_valueStackSize]
-                  v_intList1 = v_getNativeDataItem(v_arg1, 1)
-                  v_list1 = v_makeEmptyList(v_globals[14], 20)
-                  v_output = [6, v_list1]
-                  if (v_intList1 != None):
-                    v_stringList1 = v_tokenHelperConvertPcsToStackTraceStrings(v_vm, v_intList1)
-                    v_i = 0
-                    while (v_i < len(v_stringList1)):
-                      v_addToList(v_list1, v_buildString(v_globals, v_stringList1[v_i]))
-                      v_i += 1
-                    v_reverseList(v_list1)
+                  valueStackSize -= 1
+                  arg1 = valueStack[valueStackSize]
+                  intList1 = getNativeDataItem(arg1, 1)
+                  list1 = makeEmptyList(globals[14], 20)
+                  output = [6, list1]
+                  if (intList1 != None):
+                    stringList1 = tokenHelperConvertPcsToStackTraceStrings(vm, intList1)
+                    i = 0
+                    while (i < len(stringList1)):
+                      addToList(list1, buildString(globals, stringList1[i]))
+                      i += 1
+                    reverseList(list1)
                 else:
                   # reflectAllClasses
-                  v_output = v_Reflect_allClasses(v_vm)
+                  output = Reflect_allClasses(vm)
               elif (sc_13 < 40):
                 if (sc_13 == 37):
                   # reflectGetMethods
-                  v_valueStackSize -= 1
-                  v_arg1 = v_valueStack[v_valueStackSize]
-                  v_output = v_Reflect_getMethods(v_vm, v_ec, v_arg1)
-                  v_hasInterrupt = (v_ec[13] != None)
+                  valueStackSize -= 1
+                  arg1 = valueStack[valueStackSize]
+                  output = Reflect_getMethods(vm, ec, arg1)
+                  hasInterrupt = (ec[13] != None)
                 elif (sc_13 == 38):
                   # reflectGetClass
-                  v_valueStackSize -= 1
-                  v_arg1 = v_valueStack[v_valueStackSize]
-                  if (v_arg1[0] != 8):
-                    v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot get class from non-instance types.")
+                  valueStackSize -= 1
+                  arg1 = valueStack[valueStackSize]
+                  if (arg1[0] != 8):
+                    hasInterrupt = EX_InvalidArgument(ec, "Cannot get class from non-instance types.")
                   else:
-                    v_objInstance1 = v_arg1[1]
-                    v_output = [10, [False, v_objInstance1[0]]]
+                    objInstance1 = arg1[1]
+                    output = [10, [False, objInstance1[0]]]
                 else:
                   # convertFloatArgsToInts
-                  v_int1 = v_stack[3]
-                  v_i = v_localsStackOffset
-                  while (v_i < v_int1):
-                    v_value = v_localsStack[v_i]
-                    if (v_localsStackSet[v_i] != v_localsStackSetToken):
-                      v_i += v_int1
-                    elif (v_value[0] == 4):
-                      v_float1 = v_value[1]
-                      if ((v_float1 < 0) and ((v_float1 % 1) != 0)):
-                        v_int2 = (int(v_float1) - 1)
+                  int1 = stack[3]
+                  i = localsStackOffset
+                  while (i < int1):
+                    value = localsStack[i]
+                    if (localsStackSet[i] != localsStackSetToken):
+                      i += int1
+                    elif (value[0] == 4):
+                      float1 = value[1]
+                      if ((float1 < 0) and ((float1 % 1) != 0)):
+                        int2 = (int(float1) - 1)
                       else:
-                        v_int2 = int(v_float1)
-                      if ((v_int2 >= 0) and (v_int2 < 2049)):
-                        v_localsStack[v_i] = v_INTEGER_POSITIVE_CACHE[v_int2]
+                        int2 = int(float1)
+                      if ((int2 >= 0) and (int2 < 2049)):
+                        localsStack[i] = INTEGER_POSITIVE_CACHE[int2]
                       else:
-                        v_localsStack[v_i] = v_buildInteger(v_globals, v_int2)
-                    v_i += 1
+                        localsStack[i] = buildInteger(globals, int2)
+                    i += 1
               elif (sc_13 == 40):
                 # addShutdownHandler
-                v_valueStackSize -= 1
-                v_arg1 = v_valueStack[v_valueStackSize]
-                v_vm[10].append(v_arg1)
-              if (v_row[1] == 1):
-                if (v_valueStackSize == v_valueStackCapacity):
-                  v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-                  v_valueStackCapacity = len(v_valueStack)
-                v_valueStack[v_valueStackSize] = v_output
-                v_valueStackSize += 1
+                valueStackSize -= 1
+                arg1 = valueStack[valueStackSize]
+                vm[10].append(arg1)
+              if (row[1] == 1):
+                if (valueStackSize == valueStackCapacity):
+                  valueStack = valueStackIncreaseCapacity(ec)
+                  valueStackCapacity = len(valueStack)
+                valueStack[valueStackSize] = output
+                valueStackSize += 1
           elif (sc_0 == 20):
             # DEBUG_SYMBOLS
-            v_applyDebugSymbolData(v_vm, v_row, v_stringArgs[v_pc], v_metadata[22])
+            applyDebugSymbolData(vm, row, stringArgs[pc], metadata[22])
           else:
             # DEF_DICT
-            v_intIntDict1 = {}
-            v_stringIntDict1 = {}
-            v_valueList2 = []
-            v_valueList1 = []
-            v_len = v_row[0]
-            v_type = 3
-            v_first = True
-            v_i = v_len
-            while (v_i > 0):
-              v_valueStackSize -= 2
-              v_value = v_valueStack[(v_valueStackSize + 1)]
-              v_value2 = v_valueStack[v_valueStackSize]
-              if v_first:
-                v_type = v_value2[0]
-                v_first = False
-              elif (v_type != v_value2[0]):
-                v_hasInterrupt = v_EX_InvalidKey(v_ec, "Dictionary keys must be of the same type.")
-              if not (v_hasInterrupt):
-                if (v_type == 3):
-                  v_intKey = v_value2[1]
-                elif (v_type == 5):
-                  v_stringKey = v_value2[1]
-                elif (v_type == 8):
-                  v_objInstance1 = v_value2[1]
-                  v_intKey = v_objInstance1[1]
+            intIntDict1 = {}
+            stringIntDict1 = {}
+            valueList2 = []
+            valueList1 = []
+            len = row[0]
+            type = 3
+            first = True
+            i = len
+            while (i > 0):
+              valueStackSize -= 2
+              value = valueStack[(valueStackSize + 1)]
+              value2 = valueStack[valueStackSize]
+              if first:
+                type = value2[0]
+                first = False
+              elif (type != value2[0]):
+                hasInterrupt = EX_InvalidKey(ec, "Dictionary keys must be of the same type.")
+              if not (hasInterrupt):
+                if (type == 3):
+                  intKey = value2[1]
+                elif (type == 5):
+                  stringKey = value2[1]
+                elif (type == 8):
+                  objInstance1 = value2[1]
+                  intKey = objInstance1[1]
                 else:
-                  v_hasInterrupt = v_EX_InvalidKey(v_ec, "Only integers, strings, and objects can be used as dictionary keys.")
-              if not (v_hasInterrupt):
-                if (v_type == 5):
-                  v_stringIntDict1[v_stringKey] = len(v_valueList1)
+                  hasInterrupt = EX_InvalidKey(ec, "Only integers, strings, and objects can be used as dictionary keys.")
+              if not (hasInterrupt):
+                if (type == 5):
+                  stringIntDict1[stringKey] = len(valueList1)
                 else:
-                  v_intIntDict1[v_intKey] = len(v_valueList1)
-                v_valueList2.append(v_value2)
-                v_valueList1.append(v_value)
-                v_i -= 1
-            if not (v_hasInterrupt):
-              if (v_type == 5):
-                v_i = len(v_stringIntDict1)
+                  intIntDict1[intKey] = len(valueList1)
+                valueList2.append(value2)
+                valueList1.append(value)
+                i -= 1
+            if not (hasInterrupt):
+              if (type == 5):
+                i = len(stringIntDict1)
               else:
-                v_i = len(v_intIntDict1)
-              if (v_i != v_len):
-                v_hasInterrupt = v_EX_InvalidKey(v_ec, "Key collision")
-            if not (v_hasInterrupt):
-              v_i = v_row[1]
-              v_classId = 0
-              if (v_i > 0):
-                v_type = v_row[2]
-                if (v_type == 8):
-                  v_classId = v_row[3]
-                v_int1 = len(v_row)
-                v_intArray1 = (PST_NoneListOfOne * (v_int1 - v_i))
-                while (v_i < v_int1):
-                  v_intArray1[(v_i - v_row[1])] = v_row[v_i]
-                  v_i += 1
+                i = len(intIntDict1)
+              if (i != len):
+                hasInterrupt = EX_InvalidKey(ec, "Key collision")
+            if not (hasInterrupt):
+              i = row[1]
+              classId = 0
+              if (i > 0):
+                type = row[2]
+                if (type == 8):
+                  classId = row[3]
+                int1 = len(row)
+                intArray1 = (PST_NoneListOfOne * (int1 - i))
+                while (i < int1):
+                  intArray1[(i - row[1])] = row[i]
+                  i += 1
               else:
-                v_intArray1 = None
-              if (v_valueStackSize == v_valueStackCapacity):
-                v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-                v_valueStackCapacity = len(v_valueStack)
-              v_valueStack[v_valueStackSize] = [7, [v_len, v_type, v_classId, v_intArray1, v_intIntDict1, v_stringIntDict1, v_valueList2, v_valueList1]]
-              v_valueStackSize += 1
+                intArray1 = None
+              if (valueStackSize == valueStackCapacity):
+                valueStack = valueStackIncreaseCapacity(ec)
+                valueStackCapacity = len(valueStack)
+              valueStack[valueStackSize] = [7, [len, type, classId, intArray1, intIntDict1, stringIntDict1, valueList2, valueList1]]
+              valueStackSize += 1
         elif (sc_0 < 24):
           if (sc_0 == 22):
             # DEF_LIST
-            v_int1 = v_row[0]
-            v_list1 = v_makeEmptyList(None, v_int1)
-            if (v_row[1] != 0):
-              v_list1[0] = (PST_NoneListOfOne * (len(v_row) - 1))
-              v_i = 1
-              while (v_i < len(v_row)):
-                v_list1[0][(v_i - 1)] = v_row[v_i]
-                v_i += 1
-            v_list1[1] = v_int1
-            while (v_int1 > 0):
-              v_valueStackSize -= 1
-              v_list1[2].append(v_valueStack[v_valueStackSize])
-              v_int1 -= 1
-            v_list1[2].reverse()
-            v_value = [6, v_list1]
-            if (v_valueStackSize == v_valueStackCapacity):
-              v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-              v_valueStackCapacity = len(v_valueStack)
-            v_valueStack[v_valueStackSize] = v_value
-            v_valueStackSize += 1
+            int1 = row[0]
+            list1 = makeEmptyList(None, int1)
+            if (row[1] != 0):
+              list1[0] = (PST_NoneListOfOne * (len(row) - 1))
+              i = 1
+              while (i < len(row)):
+                list1[0][(i - 1)] = row[i]
+                i += 1
+            list1[1] = int1
+            while (int1 > 0):
+              valueStackSize -= 1
+              list1[2].append(valueStack[valueStackSize])
+              int1 -= 1
+            list1[2].reverse()
+            value = [6, list1]
+            if (valueStackSize == valueStackCapacity):
+              valueStack = valueStackIncreaseCapacity(ec)
+              valueStackCapacity = len(valueStack)
+            valueStack[valueStackSize] = value
+            valueStackSize += 1
           else:
             # DEF_ORIGINAL_CODE
-            v_defOriginalCodeImpl(v_vm, v_row, v_stringArgs[v_pc])
+            defOriginalCodeImpl(vm, row, stringArgs[pc])
         elif (sc_0 == 24):
           # DEREF_CLOSURE
-          v_bool1 = True
-          v_closure = v_stack[12]
-          v_i = v_row[0]
-          if ((v_closure != None) and (v_i in v_closure)):
-            v_value = v_closure[v_i][0]
-            if (v_value != None):
-              v_bool1 = False
-              if (v_valueStackSize == v_valueStackCapacity):
-                v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-                v_valueStackCapacity = len(v_valueStack)
-              v_valueStack[v_valueStackSize] = v_value
-              v_valueStackSize += 1
-          if v_bool1:
-            v_hasInterrupt = v_EX_UnassignedVariable(v_ec, "Variable used before it was set.")
+          bool1 = True
+          closure = stack[12]
+          i = row[0]
+          if ((closure != None) and (i in closure)):
+            value = closure[i][0]
+            if (value != None):
+              bool1 = False
+              if (valueStackSize == valueStackCapacity):
+                valueStack = valueStackIncreaseCapacity(ec)
+                valueStackCapacity = len(valueStack)
+              valueStack[valueStackSize] = value
+              valueStackSize += 1
+          if bool1:
+            hasInterrupt = EX_UnassignedVariable(ec, "Variable used before it was set.")
         else:
           # DEREF_DOT
-          v_value = v_valueStack[(v_valueStackSize - 1)]
-          v_nameId = v_row[0]
-          v_int2 = v_row[1]
-          sc_14 = swlookup__interpretImpl__14.get(v_value[0], 4)
+          value = valueStack[(valueStackSize - 1)]
+          nameId = row[0]
+          int2 = row[1]
+          sc_14 = swlookup__interpretImpl__14.get(value[0], 4)
           if (sc_14 < 3):
             if (sc_14 == 0):
-              v_objInstance1 = v_value[1]
-              v_classId = v_objInstance1[0]
-              v_classInfo = v_classTable[v_classId]
-              if (v_classId == v_row[4]):
-                v_int1 = v_row[5]
+              objInstance1 = value[1]
+              classId = objInstance1[0]
+              classInfo = classTable[classId]
+              if (classId == row[4]):
+                int1 = row[5]
               else:
-                v_intIntDict1 = v_classInfo[14]
-                v_int1 = v_intIntDict1.get(v_int2, -1)
-                v_int3 = v_classInfo[12][v_int1]
-                if (v_int3 > 1):
-                  if (v_int3 == 2):
-                    if (v_classId != v_row[2]):
-                      v_int1 = -2
+                intIntDict1 = classInfo[14]
+                int1 = intIntDict1.get(int2, -1)
+                int3 = classInfo[12][int1]
+                if (int3 > 1):
+                  if (int3 == 2):
+                    if (classId != row[2]):
+                      int1 = -2
                   else:
-                    if ((v_int3 == 3) or (v_int3 == 5)):
-                      if (v_classInfo[3] != v_row[3]):
-                        v_int1 = -3
-                    if ((v_int3 == 4) or (v_int3 == 5)):
-                      v_i = v_row[2]
-                      if (v_classId == v_i):
+                    if ((int3 == 3) or (int3 == 5)):
+                      if (classInfo[3] != row[3]):
+                        int1 = -3
+                    if ((int3 == 4) or (int3 == 5)):
+                      i = row[2]
+                      if (classId == i):
                         pass
                       else:
-                        v_classInfo = v_classTable[v_classInfo[0]]
-                        while ((v_classInfo[2] != -1) and (v_int1 < len(v_classTable[v_classInfo[2]][12]))):
-                          v_classInfo = v_classTable[v_classInfo[2]]
-                        v_j = v_classInfo[0]
-                        if (v_j != v_i):
-                          v_bool1 = False
-                          while ((v_i != -1) and (v_classTable[v_i][2] != -1)):
-                            v_i = v_classTable[v_i][2]
-                            if (v_i == v_j):
-                              v_bool1 = True
-                              v_i = -1
-                          if not (v_bool1):
-                            v_int1 = -4
-                      v_classInfo = v_classTable[v_classId]
-                v_row[4] = v_objInstance1[0]
-                v_row[5] = v_int1
-              if (v_int1 > -1):
-                v_functionId = v_classInfo[9][v_int1]
-                if (v_functionId == -1):
-                  v_output = v_objInstance1[2][v_int1]
+                        classInfo = classTable[classInfo[0]]
+                        while ((classInfo[2] != -1) and (int1 < len(classTable[classInfo[2]][12]))):
+                          classInfo = classTable[classInfo[2]]
+                        j = classInfo[0]
+                        if (j != i):
+                          bool1 = False
+                          while ((i != -1) and (classTable[i][2] != -1)):
+                            i = classTable[i][2]
+                            if (i == j):
+                              bool1 = True
+                              i = -1
+                          if not (bool1):
+                            int1 = -4
+                      classInfo = classTable[classId]
+                row[4] = objInstance1[0]
+                row[5] = int1
+              if (int1 > -1):
+                functionId = classInfo[9][int1]
+                if (functionId == -1):
+                  output = objInstance1[2][int1]
                 else:
-                  v_output = [9, [2, v_value, v_objInstance1[0], v_functionId, None]]
+                  output = [9, [2, value, objInstance1[0], functionId, None]]
               else:
-                v_output = None
+                output = None
             elif (sc_14 == 1):
-              if (v_metadata[14] == v_nameId):
-                v_output = v_buildInteger(v_globals, len((v_value[1])))
+              if (metadata[14] == nameId):
+                output = buildInteger(globals, len((value[1])))
               else:
-                v_output = None
-            elif (v_metadata[14] == v_nameId):
-              v_output = v_buildInteger(v_globals, (v_value[1])[1])
+                output = None
+            elif (metadata[14] == nameId):
+              output = buildInteger(globals, (value[1])[1])
             else:
-              v_output = None
+              output = None
           elif (sc_14 == 3):
-            if (v_metadata[14] == v_nameId):
-              v_output = v_buildInteger(v_globals, (v_value[1])[0])
+            if (metadata[14] == nameId):
+              output = buildInteger(globals, (value[1])[0])
             else:
-              v_output = None
-          elif (v_value[0] == 1):
-            v_hasInterrupt = v_EX_NullReference(v_ec, "Derferenced a field from null.")
-            v_output = v_VALUE_NULL
+              output = None
+          elif (value[0] == 1):
+            hasInterrupt = EX_NullReference(ec, "Derferenced a field from null.")
+            output = VALUE_NULL
           else:
-            v_output = None
-          if (v_output == None):
-            v_output = v_generatePrimitiveMethodReference(v_globalNameIdToPrimitiveMethodName, v_nameId, v_value)
-            if (v_output == None):
-              if (v_value[0] == 1):
-                v_hasInterrupt = v_EX_NullReference(v_ec, "Tried to dereference a field on null.")
-              elif ((v_value[0] == 8) and (v_int1 < -1)):
-                v_string1 = v_identifiers[v_row[0]]
-                if (v_int1 == -2):
-                  v_string2 = "private"
-                elif (v_int1 == -3):
-                  v_string2 = "internal"
+            output = None
+          if (output == None):
+            output = generatePrimitiveMethodReference(globalNameIdToPrimitiveMethodName, nameId, value)
+            if (output == None):
+              if (value[0] == 1):
+                hasInterrupt = EX_NullReference(ec, "Tried to dereference a field on null.")
+              elif ((value[0] == 8) and (int1 < -1)):
+                string1 = identifiers[row[0]]
+                if (int1 == -2):
+                  string2 = "private"
+                elif (int1 == -3):
+                  string2 = "internal"
                 else:
-                  v_string2 = "protected"
-                v_hasInterrupt = v_EX_UnknownField(v_ec, ''.join(["The field '", v_string1, "' is marked as ", v_string2, " and cannot be accessed from here."]))
+                  string2 = "protected"
+                hasInterrupt = EX_UnknownField(ec, ''.join(["The field '", string1, "' is marked as ", string2, " and cannot be accessed from here."]))
               else:
-                if (v_value[0] == 8):
-                  v_classId = (v_value[1])[0]
-                  v_classInfo = v_classTable[v_classId]
-                  v_string1 = v_classInfo[16] + " instance"
+                if (value[0] == 8):
+                  classId = (value[1])[0]
+                  classInfo = classTable[classId]
+                  string1 = classInfo[16] + " instance"
                 else:
-                  v_string1 = v_getTypeFromId(v_value[0])
-                v_hasInterrupt = v_EX_UnknownField(v_ec, v_string1 + " does not have that field.")
-          v_valueStack[(v_valueStackSize - 1)] = v_output
+                  string1 = getTypeFromId(value[0])
+                hasInterrupt = EX_UnknownField(ec, string1 + " does not have that field.")
+          valueStack[(valueStackSize - 1)] = output
       elif (sc_0 < 30):
         if (sc_0 < 28):
           if (sc_0 == 26):
             # DEREF_INSTANCE_FIELD
-            v_value = v_stack[6]
-            v_objInstance1 = v_value[1]
-            v_value = v_objInstance1[2][v_row[0]]
-            if (v_valueStackSize == v_valueStackCapacity):
-              v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-              v_valueStackCapacity = len(v_valueStack)
-            v_valueStack[v_valueStackSize] = v_value
-            v_valueStackSize += 1
+            value = stack[6]
+            objInstance1 = value[1]
+            value = objInstance1[2][row[0]]
+            if (valueStackSize == valueStackCapacity):
+              valueStack = valueStackIncreaseCapacity(ec)
+              valueStackCapacity = len(valueStack)
+            valueStack[valueStackSize] = value
+            valueStackSize += 1
           else:
             # DEREF_STATIC_FIELD
-            v_classInfo = v_classTable[v_row[0]]
-            v_staticConstructorNotInvoked = True
-            if (v_classInfo[4] < 2):
-              v_stack[0] = v_pc
-              v_stackFrame2 = v_maybeInvokeStaticConstructor(v_vm, v_ec, v_stack, v_classInfo, v_valueStackSize, PST_IntBuffer16)
+            classInfo = classTable[row[0]]
+            staticConstructorNotInvoked = True
+            if (classInfo[4] < 2):
+              stack[0] = pc
+              stackFrame2 = maybeInvokeStaticConstructor(vm, ec, stack, classInfo, valueStackSize, PST_IntBuffer16)
               if (PST_IntBuffer16[0] == 1):
-                return v_generateException(v_vm, v_stack, v_pc, v_valueStackSize, v_ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.")
-              if (v_stackFrame2 != None):
-                v_staticConstructorNotInvoked = False
-                v_stack = v_stackFrame2
-                v_pc = v_stack[0]
-                v_localsStackSetToken = v_stack[1]
-                v_localsStackOffset = v_stack[2]
-            if v_staticConstructorNotInvoked:
-              if (v_valueStackSize == v_valueStackCapacity):
-                v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-                v_valueStackCapacity = len(v_valueStack)
-              v_valueStack[v_valueStackSize] = v_classInfo[5][v_row[1]]
-              v_valueStackSize += 1
+                return generateException(vm, stack, pc, valueStackSize, ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.")
+              if (stackFrame2 != None):
+                staticConstructorNotInvoked = False
+                stack = stackFrame2
+                pc = stack[0]
+                localsStackSetToken = stack[1]
+                localsStackOffset = stack[2]
+            if staticConstructorNotInvoked:
+              if (valueStackSize == valueStackCapacity):
+                valueStack = valueStackIncreaseCapacity(ec)
+                valueStackCapacity = len(valueStack)
+              valueStack[valueStackSize] = classInfo[5][row[1]]
+              valueStackSize += 1
         elif (sc_0 == 28):
           # DUPLICATE_STACK_TOP
-          if (v_row[0] == 1):
-            v_value = v_valueStack[(v_valueStackSize - 1)]
-            if (v_valueStackSize == v_valueStackCapacity):
-              v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-              v_valueStackCapacity = len(v_valueStack)
-            v_valueStack[v_valueStackSize] = v_value
-            v_valueStackSize += 1
-          elif (v_row[0] == 2):
-            if ((v_valueStackSize + 1) > v_valueStackCapacity):
-              v_valueStackIncreaseCapacity(v_ec)
-              v_valueStack = v_ec[4]
-              v_valueStackCapacity = len(v_valueStack)
-            v_valueStack[v_valueStackSize] = v_valueStack[(v_valueStackSize - 2)]
-            v_valueStack[(v_valueStackSize + 1)] = v_valueStack[(v_valueStackSize - 1)]
-            v_valueStackSize += 2
+          if (row[0] == 1):
+            value = valueStack[(valueStackSize - 1)]
+            if (valueStackSize == valueStackCapacity):
+              valueStack = valueStackIncreaseCapacity(ec)
+              valueStackCapacity = len(valueStack)
+            valueStack[valueStackSize] = value
+            valueStackSize += 1
+          elif (row[0] == 2):
+            if ((valueStackSize + 1) > valueStackCapacity):
+              valueStackIncreaseCapacity(ec)
+              valueStack = ec[4]
+              valueStackCapacity = len(valueStack)
+            valueStack[valueStackSize] = valueStack[(valueStackSize - 2)]
+            valueStack[(valueStackSize + 1)] = valueStack[(valueStackSize - 1)]
+            valueStackSize += 2
           else:
-            v_hasInterrupt = v_EX_Fatal(v_ec, "?")
+            hasInterrupt = EX_Fatal(ec, "?")
         else:
           # EQUALS
-          v_valueStackSize -= 2
-          v_rightValue = v_valueStack[(v_valueStackSize + 1)]
-          v_leftValue = v_valueStack[v_valueStackSize]
-          if (v_leftValue[0] == v_rightValue[0]):
-            sc_15 = swlookup__interpretImpl__15.get(v_leftValue[0], 4)
+          valueStackSize -= 2
+          rightValue = valueStack[(valueStackSize + 1)]
+          leftValue = valueStack[valueStackSize]
+          if (leftValue[0] == rightValue[0]):
+            sc_15 = swlookup__interpretImpl__15.get(leftValue[0], 4)
             if (sc_15 < 3):
               if (sc_15 == 0):
-                v_bool1 = True
+                bool1 = True
               elif (sc_15 == 1):
-                v_bool1 = (v_leftValue[1] == v_rightValue[1])
+                bool1 = (leftValue[1] == rightValue[1])
               else:
-                v_bool1 = (v_leftValue[1] == v_rightValue[1])
+                bool1 = (leftValue[1] == rightValue[1])
             elif (sc_15 == 3):
-              v_bool1 = (v_leftValue[1] == v_rightValue[1])
+              bool1 = (leftValue[1] == rightValue[1])
             else:
-              v_bool1 = (v_doEqualityComparisonAndReturnCode(v_leftValue, v_rightValue) == 1)
+              bool1 = (doEqualityComparisonAndReturnCode(leftValue, rightValue) == 1)
           else:
-            v_int1 = v_doEqualityComparisonAndReturnCode(v_leftValue, v_rightValue)
-            if (v_int1 == 0):
-              v_bool1 = False
-            elif (v_int1 == 1):
-              v_bool1 = True
+            int1 = doEqualityComparisonAndReturnCode(leftValue, rightValue)
+            if (int1 == 0):
+              bool1 = False
+            elif (int1 == 1):
+              bool1 = True
             else:
-              v_hasInterrupt = v_EX_UnsupportedOperation(v_ec, "== and != not defined here.")
-          if (v_valueStackSize == v_valueStackCapacity):
-            v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-            v_valueStackCapacity = len(v_valueStack)
-          if (v_bool1 != ((v_row[0] == 1))):
-            v_valueStack[v_valueStackSize] = v_VALUE_TRUE
+              hasInterrupt = EX_UnsupportedOperation(ec, "== and != not defined here.")
+          if (valueStackSize == valueStackCapacity):
+            valueStack = valueStackIncreaseCapacity(ec)
+            valueStackCapacity = len(valueStack)
+          if (bool1 != ((row[0] == 1))):
+            valueStack[valueStackSize] = VALUE_TRUE
           else:
-            v_valueStack[v_valueStackSize] = v_VALUE_FALSE
-          v_valueStackSize += 1
+            valueStack[valueStackSize] = VALUE_FALSE
+          valueStackSize += 1
       elif (sc_0 < 32):
         if (sc_0 == 30):
           # ESF_LOOKUP
-          v_esfData = v_generateEsfData(len(v_args), v_row)
-          v_metadata[18] = v_esfData
+          esfData = generateEsfData(len(args), row)
+          metadata[18] = esfData
         else:
           # EXCEPTION_HANDLED_TOGGLE
-          v_ec[9] = (v_row[0] == 1)
+          ec[9] = (row[0] == 1)
       elif (sc_0 == 32):
         # FIELD_TYPE_INFO
-        v_initializeClassFieldTypeInfo(v_vm, v_row)
+        initializeClassFieldTypeInfo(vm, row)
       else:
         # FINALIZE_INITIALIZATION
-        v_finalizeInitializationImpl(v_vm, v_stringArgs[v_pc], v_row[0])
-        v_identifiers = v_vm[4][0]
-        v_literalTable = v_vm[4][3]
-        v_globalNameIdToPrimitiveMethodName = v_vm[4][12]
-        v_funcArgs = v_vm[8]
+        finalizeInitializationImpl(vm, stringArgs[pc], row[0])
+        identifiers = vm[4][0]
+        literalTable = vm[4][3]
+        globalNameIdToPrimitiveMethodName = vm[4][12]
+        funcArgs = vm[8]
     elif (sc_0 < 51):
       if (sc_0 < 43):
         if (sc_0 < 39):
           if (sc_0 < 37):
             if (sc_0 == 34):
               # FINALLY_END
-              v_value = v_ec[10]
-              if ((v_value == None) or v_ec[9]):
-                sc_16 = swlookup__interpretImpl__16.get(v_stack[10], 4)
+              value = ec[10]
+              if ((value == None) or ec[9]):
+                sc_16 = swlookup__interpretImpl__16.get(stack[10], 4)
                 if (sc_16 < 3):
                   if (sc_16 == 0):
-                    v_ec[10] = None
+                    ec[10] = None
                   elif (sc_16 == 1):
-                    v_ec[10] = None
-                    v_int1 = v_row[0]
-                    if (v_int1 == 1):
-                      v_pc += v_row[1]
-                    elif (v_int1 == 2):
-                      v_intArray1 = v_esfData[v_pc]
-                      v_pc = v_intArray1[1]
+                    ec[10] = None
+                    int1 = row[0]
+                    if (int1 == 1):
+                      pc += row[1]
+                    elif (int1 == 2):
+                      intArray1 = esfData[pc]
+                      pc = intArray1[1]
                     else:
-                      v_hasInterrupt = v_EX_Fatal(v_ec, "break exists without a loop")
+                      hasInterrupt = EX_Fatal(ec, "break exists without a loop")
                   else:
-                    v_ec[10] = None
-                    v_int1 = v_row[2]
-                    if (v_int1 == 1):
-                      v_pc += v_row[3]
-                    elif (v_int1 == 2):
-                      v_intArray1 = v_esfData[v_pc]
-                      v_pc = v_intArray1[1]
+                    ec[10] = None
+                    int1 = row[2]
+                    if (int1 == 1):
+                      pc += row[3]
+                    elif (int1 == 2):
+                      intArray1 = esfData[pc]
+                      pc = intArray1[1]
                     else:
-                      v_hasInterrupt = v_EX_Fatal(v_ec, "continue exists without a loop")
+                      hasInterrupt = EX_Fatal(ec, "continue exists without a loop")
                 elif (sc_16 == 3):
-                  if (v_stack[8] != 0):
-                    v_markClassAsInitialized(v_vm, v_stack, v_stack[8])
-                  if v_stack[5]:
-                    v_valueStackSize = v_stack[7]
-                    v_value = v_stack[11]
-                    v_stack = v_stack[4]
-                    if (v_valueStackSize == v_valueStackCapacity):
-                      v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-                      v_valueStackCapacity = len(v_valueStack)
-                    v_valueStack[v_valueStackSize] = v_value
-                    v_valueStackSize += 1
+                  if (stack[8] != 0):
+                    markClassAsInitialized(vm, stack, stack[8])
+                  if stack[5]:
+                    valueStackSize = stack[7]
+                    value = stack[11]
+                    stack = stack[4]
+                    if (valueStackSize == valueStackCapacity):
+                      valueStack = valueStackIncreaseCapacity(ec)
+                      valueStackCapacity = len(valueStack)
+                    valueStack[valueStackSize] = value
+                    valueStackSize += 1
                   else:
-                    v_valueStackSize = v_stack[7]
-                    v_stack = v_stack[4]
-                  v_pc = v_stack[0]
-                  v_localsStackOffset = v_stack[2]
-                  v_localsStackSetToken = v_stack[1]
+                    valueStackSize = stack[7]
+                    stack = stack[4]
+                  pc = stack[0]
+                  localsStackOffset = stack[2]
+                  localsStackSetToken = stack[1]
               else:
-                v_ec[9] = False
-                v_stack[0] = v_pc
-                v_intArray1 = v_esfData[v_pc]
-                v_value = v_ec[10]
-                v_objInstance1 = v_value[1]
-                v_objArray1 = v_objInstance1[3]
-                v_bool1 = True
-                if (v_objArray1[0] != None):
-                  v_bool1 = v_objArray1[0]
-                v_intList1 = v_objArray1[1]
-                while ((v_stack != None) and ((v_intArray1 == None) or v_bool1)):
-                  v_stack = v_stack[4]
-                  if (v_stack != None):
-                    v_pc = v_stack[0]
-                    v_intList1.append(v_pc)
-                    v_intArray1 = v_esfData[v_pc]
-                if (v_stack == None):
-                  return v_uncaughtExceptionResult(v_vm, v_value)
-                v_int1 = v_intArray1[0]
-                if (v_int1 < v_pc):
-                  v_int1 = v_intArray1[1]
-                v_pc = (v_int1 - 1)
-                v_stack[0] = v_pc
-                v_localsStackOffset = v_stack[2]
-                v_localsStackSetToken = v_stack[1]
-                v_ec[1] = v_stack
-                v_stack[10] = 0
-                v_ec[2] = v_valueStackSize
-                if (False and (v_stack[13] != None)):
-                  v_hasInterrupt = True
-                  v_ec[13] = [5, 0, "", 0.0, v_stack[13]]
+                ec[9] = False
+                stack[0] = pc
+                intArray1 = esfData[pc]
+                value = ec[10]
+                objInstance1 = value[1]
+                objArray1 = objInstance1[3]
+                bool1 = True
+                if (objArray1[0] != None):
+                  bool1 = objArray1[0]
+                intList1 = objArray1[1]
+                while ((stack != None) and ((intArray1 == None) or bool1)):
+                  stack = stack[4]
+                  if (stack != None):
+                    pc = stack[0]
+                    intList1.append(pc)
+                    intArray1 = esfData[pc]
+                if (stack == None):
+                  return uncaughtExceptionResult(vm, value)
+                int1 = intArray1[0]
+                if (int1 < pc):
+                  int1 = intArray1[1]
+                pc = (int1 - 1)
+                stack[0] = pc
+                localsStackOffset = stack[2]
+                localsStackSetToken = stack[1]
+                ec[1] = stack
+                stack[10] = 0
+                ec[2] = valueStackSize
+                if (False and (stack[13] != None)):
+                  hasInterrupt = True
+                  ec[13] = [5, 0, "", 0.0, stack[13]]
             elif (sc_0 == 35):
               # FUNCTION_DEFINITION
-              v_initializeFunction(v_vm, v_row, v_pc, v_stringArgs[v_pc])
-              v_pc += v_row[7]
-              v_functionTable = v_metadata[10]
+              initializeFunction(vm, row, pc, stringArgs[pc])
+              pc += row[7]
+              functionTable = metadata[10]
             else:
               # INDEX
-              v_valueStackSize -= 1
-              v_value = v_valueStack[v_valueStackSize]
-              v_root = v_valueStack[(v_valueStackSize - 1)]
-              if (v_root[0] == 6):
-                if (v_value[0] != 3):
-                  v_hasInterrupt = v_EX_InvalidArgument(v_ec, "List index must be an integer.")
+              valueStackSize -= 1
+              value = valueStack[valueStackSize]
+              root = valueStack[(valueStackSize - 1)]
+              if (root[0] == 6):
+                if (value[0] != 3):
+                  hasInterrupt = EX_InvalidArgument(ec, "List index must be an integer.")
                 else:
-                  v_i = v_value[1]
-                  v_list1 = v_root[1]
-                  if (v_i < 0):
-                    v_i += v_list1[1]
-                  if ((v_i < 0) or (v_i >= v_list1[1])):
-                    v_hasInterrupt = v_EX_IndexOutOfRange(v_ec, "List index is out of bounds")
+                  i = value[1]
+                  list1 = root[1]
+                  if (i < 0):
+                    i += list1[1]
+                  if ((i < 0) or (i >= list1[1])):
+                    hasInterrupt = EX_IndexOutOfRange(ec, "List index is out of bounds")
                   else:
-                    v_valueStack[(v_valueStackSize - 1)] = v_list1[2][v_i]
-              elif (v_root[0] == 7):
-                v_dictImpl = v_root[1]
-                v_keyType = v_value[0]
-                if (v_keyType != v_dictImpl[1]):
-                  if (v_dictImpl[0] == 0):
-                    v_hasInterrupt = v_EX_KeyNotFound(v_ec, "Key not found. Dictionary is empty.")
+                    valueStack[(valueStackSize - 1)] = list1[2][i]
+              elif (root[0] == 7):
+                dictImpl = root[1]
+                keyType = value[0]
+                if (keyType != dictImpl[1]):
+                  if (dictImpl[0] == 0):
+                    hasInterrupt = EX_KeyNotFound(ec, "Key not found. Dictionary is empty.")
                   else:
-                    v_hasInterrupt = v_EX_InvalidKey(v_ec, ''.join(["Incorrect key type. This dictionary contains ", v_getTypeFromId(v_dictImpl[1]), " keys. Provided key is a ", v_getTypeFromId(v_keyType), "."]))
+                    hasInterrupt = EX_InvalidKey(ec, ''.join(["Incorrect key type. This dictionary contains ", getTypeFromId(dictImpl[1]), " keys. Provided key is a ", getTypeFromId(keyType), "."]))
                 else:
-                  if (v_keyType == 3):
-                    v_intKey = v_value[1]
-                  elif (v_keyType == 5):
-                    v_stringKey = v_value[1]
-                  elif (v_keyType == 8):
-                    v_intKey = (v_value[1])[1]
-                  elif (v_dictImpl[0] == 0):
-                    v_hasInterrupt = v_EX_KeyNotFound(v_ec, "Key not found. Dictionary is empty.")
+                  if (keyType == 3):
+                    intKey = value[1]
+                  elif (keyType == 5):
+                    stringKey = value[1]
+                  elif (keyType == 8):
+                    intKey = (value[1])[1]
+                  elif (dictImpl[0] == 0):
+                    hasInterrupt = EX_KeyNotFound(ec, "Key not found. Dictionary is empty.")
                   else:
-                    v_hasInterrupt = v_EX_KeyNotFound(v_ec, "Key not found.")
-                  if not (v_hasInterrupt):
-                    if (v_keyType == 5):
-                      v_stringIntDict1 = v_dictImpl[5]
-                      v_int1 = v_stringIntDict1.get(v_stringKey, -1)
-                      if (v_int1 == -1):
-                        v_hasInterrupt = v_EX_KeyNotFound(v_ec, ''.join(["Key not found: '", v_stringKey, "'"]))
+                    hasInterrupt = EX_KeyNotFound(ec, "Key not found.")
+                  if not (hasInterrupt):
+                    if (keyType == 5):
+                      stringIntDict1 = dictImpl[5]
+                      int1 = stringIntDict1.get(stringKey, -1)
+                      if (int1 == -1):
+                        hasInterrupt = EX_KeyNotFound(ec, ''.join(["Key not found: '", stringKey, "'"]))
                       else:
-                        v_valueStack[(v_valueStackSize - 1)] = v_dictImpl[7][v_int1]
+                        valueStack[(valueStackSize - 1)] = dictImpl[7][int1]
                     else:
-                      v_intIntDict1 = v_dictImpl[4]
-                      v_int1 = v_intIntDict1.get(v_intKey, -1)
-                      if (v_int1 == -1):
-                        v_hasInterrupt = v_EX_KeyNotFound(v_ec, "Key not found.")
+                      intIntDict1 = dictImpl[4]
+                      int1 = intIntDict1.get(intKey, -1)
+                      if (int1 == -1):
+                        hasInterrupt = EX_KeyNotFound(ec, "Key not found.")
                       else:
-                        v_valueStack[(v_valueStackSize - 1)] = v_dictImpl[7][v_intIntDict1[v_intKey]]
-              elif (v_root[0] == 5):
-                v_string1 = v_root[1]
-                if (v_value[0] != 3):
-                  v_hasInterrupt = v_EX_InvalidArgument(v_ec, "String indices must be integers.")
+                        valueStack[(valueStackSize - 1)] = dictImpl[7][intIntDict1[intKey]]
+              elif (root[0] == 5):
+                string1 = root[1]
+                if (value[0] != 3):
+                  hasInterrupt = EX_InvalidArgument(ec, "String indices must be integers.")
                 else:
-                  v_int1 = v_value[1]
-                  if (v_int1 < 0):
-                    v_int1 += len(v_string1)
-                  if ((v_int1 < 0) or (v_int1 >= len(v_string1))):
-                    v_hasInterrupt = v_EX_IndexOutOfRange(v_ec, "String index out of range.")
+                  int1 = value[1]
+                  if (int1 < 0):
+                    int1 += len(string1)
+                  if ((int1 < 0) or (int1 >= len(string1))):
+                    hasInterrupt = EX_IndexOutOfRange(ec, "String index out of range.")
                   else:
-                    v_valueStack[(v_valueStackSize - 1)] = v_buildCommonString(v_globals, v_string1[v_int1])
+                    valueStack[(valueStackSize - 1)] = buildCommonString(globals, string1[int1])
               else:
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot index into this type: " + v_getTypeFromId(v_root[0]))
+                hasInterrupt = EX_InvalidArgument(ec, "Cannot index into this type: " + getTypeFromId(root[0]))
           elif (sc_0 == 37):
             # IS_COMPARISON
-            v_value = v_valueStack[(v_valueStackSize - 1)]
-            v_output = v_VALUE_FALSE
-            if (v_value[0] == 8):
-              v_objInstance1 = v_value[1]
-              if v_isClassASubclassOf(v_vm, v_objInstance1[0], v_row[0]):
-                v_output = v_VALUE_TRUE
-            v_valueStack[(v_valueStackSize - 1)] = v_output
+            value = valueStack[(valueStackSize - 1)]
+            output = VALUE_FALSE
+            if (value[0] == 8):
+              objInstance1 = value[1]
+              if isClassASubclassOf(vm, objInstance1[0], row[0]):
+                output = VALUE_TRUE
+            valueStack[(valueStackSize - 1)] = output
           else:
             # ITERATION_STEP
-            v_int1 = (v_localsStackOffset + v_row[2])
-            v_value3 = v_localsStack[v_int1]
-            v_i = v_value3[1]
-            v_value = v_localsStack[(v_localsStackOffset + v_row[3])]
-            if (v_value[0] == 6):
-              v_list1 = v_value[1]
-              v_len = v_list1[1]
-              v_bool1 = True
+            int1 = (localsStackOffset + row[2])
+            value3 = localsStack[int1]
+            i = value3[1]
+            value = localsStack[(localsStackOffset + row[3])]
+            if (value[0] == 6):
+              list1 = value[1]
+              len = list1[1]
+              bool1 = True
             else:
-              v_string2 = v_value[1]
-              v_len = len(v_string2)
-              v_bool1 = False
-            if (v_i < v_len):
-              if v_bool1:
-                v_value = v_list1[2][v_i]
+              string2 = value[1]
+              len = len(string2)
+              bool1 = False
+            if (i < len):
+              if bool1:
+                value = list1[2][i]
               else:
-                v_value = v_buildCommonString(v_globals, v_string2[v_i])
-              v_int3 = (v_localsStackOffset + v_row[1])
-              v_localsStackSet[v_int3] = v_localsStackSetToken
-              v_localsStack[v_int3] = v_value
+                value = buildCommonString(globals, string2[i])
+              int3 = (localsStackOffset + row[1])
+              localsStackSet[int3] = localsStackSetToken
+              localsStack[int3] = value
             else:
-              v_pc += v_row[0]
-            v_i += 1
-            if (v_i < 2049):
-              v_localsStack[v_int1] = v_INTEGER_POSITIVE_CACHE[v_i]
+              pc += row[0]
+            i += 1
+            if (i < 2049):
+              localsStack[int1] = INTEGER_POSITIVE_CACHE[i]
             else:
-              v_localsStack[v_int1] = [3, v_i]
+              localsStack[int1] = [3, i]
         elif (sc_0 < 41):
           if (sc_0 == 39):
             # JUMP
-            v_pc += v_row[0]
+            pc += row[0]
           else:
             # JUMP_IF_EXCEPTION_OF_TYPE
-            v_value = v_ec[10]
-            v_objInstance1 = v_value[1]
-            v_int1 = v_objInstance1[0]
-            v_i = (len(v_row) - 1)
-            while (v_i >= 2):
-              if v_isClassASubclassOf(v_vm, v_int1, v_row[v_i]):
-                v_i = 0
-                v_pc += v_row[0]
-                v_int2 = v_row[1]
-                if (v_int2 > -1):
-                  v_int1 = (v_localsStackOffset + v_int2)
-                  v_localsStack[v_int1] = v_value
-                  v_localsStackSet[v_int1] = v_localsStackSetToken
-              v_i -= 1
+            value = ec[10]
+            objInstance1 = value[1]
+            int1 = objInstance1[0]
+            i = (len(row) - 1)
+            while (i >= 2):
+              if isClassASubclassOf(vm, int1, row[i]):
+                i = 0
+                pc += row[0]
+                int2 = row[1]
+                if (int2 > -1):
+                  int1 = (localsStackOffset + int2)
+                  localsStack[int1] = value
+                  localsStackSet[int1] = localsStackSetToken
+              i -= 1
         elif (sc_0 == 41):
           # JUMP_IF_FALSE
-          v_valueStackSize -= 1
-          v_value = v_valueStack[v_valueStackSize]
-          if (v_value[0] != 2):
-            v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Boolean expected.")
-          elif not (v_value[1]):
-            v_pc += v_row[0]
+          valueStackSize -= 1
+          value = valueStack[valueStackSize]
+          if (value[0] != 2):
+            hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.")
+          elif not (value[1]):
+            pc += row[0]
         else:
           # JUMP_IF_FALSE_NON_POP
-          v_value = v_valueStack[(v_valueStackSize - 1)]
-          if (v_value[0] != 2):
-            v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Boolean expected.")
-          elif v_value[1]:
-            v_valueStackSize -= 1
+          value = valueStack[(valueStackSize - 1)]
+          if (value[0] != 2):
+            hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.")
+          elif value[1]:
+            valueStackSize -= 1
           else:
-            v_pc += v_row[0]
+            pc += row[0]
       elif (sc_0 < 47):
         if (sc_0 < 45):
           if (sc_0 == 43):
             # JUMP_IF_TRUE
-            v_valueStackSize -= 1
-            v_value = v_valueStack[v_valueStackSize]
-            if (v_value[0] != 2):
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Boolean expected.")
-            elif v_value[1]:
-              v_pc += v_row[0]
+            valueStackSize -= 1
+            value = valueStack[valueStackSize]
+            if (value[0] != 2):
+              hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.")
+            elif value[1]:
+              pc += row[0]
           else:
             # JUMP_IF_TRUE_NO_POP
-            v_value = v_valueStack[(v_valueStackSize - 1)]
-            if (v_value[0] != 2):
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Boolean expected.")
-            elif v_value[1]:
-              v_pc += v_row[0]
+            value = valueStack[(valueStackSize - 1)]
+            if (value[0] != 2):
+              hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.")
+            elif value[1]:
+              pc += row[0]
             else:
-              v_valueStackSize -= 1
+              valueStackSize -= 1
         elif (sc_0 == 45):
           # LAMBDA
-          if not ((v_pc in v_metadata[11])):
-            v_int1 = (4 + v_row[4] + 1)
-            v_len = v_row[v_int1]
-            v_intArray1 = (PST_NoneListOfOne * v_len)
-            v_i = 0
-            while (v_i < v_len):
-              v_intArray1[v_i] = v_row[(v_int1 + v_i + 1)]
-              v_i += 1
-            v_len = v_row[4]
-            v_intArray2 = (PST_NoneListOfOne * v_len)
-            v_i = 0
-            while (v_i < v_len):
-              v_intArray2[v_i] = v_row[(5 + v_i)]
-              v_i += 1
-            v_metadata[11][v_pc] = [v_pc, 0, v_pc, v_row[0], v_row[1], 5, 0, v_row[2], v_intArray2, "lambda", v_intArray1]
-          v_closure = {}
-          v_parentClosure = v_stack[12]
-          if (v_parentClosure == None):
-            v_parentClosure = {}
-            v_stack[12] = v_parentClosure
-          v_functionInfo = v_metadata[11][v_pc]
-          v_intArray1 = v_functionInfo[10]
-          v_len = len(v_intArray1)
-          v_i = 0
-          while (v_i < v_len):
-            v_j = v_intArray1[v_i]
-            if (v_j in v_parentClosure):
-              v_closure[v_j] = v_parentClosure[v_j]
+          if not ((pc in metadata[11])):
+            int1 = (4 + row[4] + 1)
+            len = row[int1]
+            intArray1 = (PST_NoneListOfOne * len)
+            i = 0
+            while (i < len):
+              intArray1[i] = row[(int1 + i + 1)]
+              i += 1
+            len = row[4]
+            intArray2 = (PST_NoneListOfOne * len)
+            i = 0
+            while (i < len):
+              intArray2[i] = row[(5 + i)]
+              i += 1
+            metadata[11][pc] = [pc, 0, pc, row[0], row[1], 5, 0, row[2], intArray2, "lambda", intArray1]
+          closure = {}
+          parentClosure = stack[12]
+          if (parentClosure == None):
+            parentClosure = {}
+            stack[12] = parentClosure
+          functionInfo = metadata[11][pc]
+          intArray1 = functionInfo[10]
+          len = len(intArray1)
+          i = 0
+          while (i < len):
+            j = intArray1[i]
+            if (j in parentClosure):
+              closure[j] = parentClosure[j]
             else:
-              v_closure[v_j] = [None]
-              v_parentClosure[v_j] = v_closure[v_j]
-            v_i += 1
-          if (v_valueStackSize == v_valueStackCapacity):
-            v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-            v_valueStackCapacity = len(v_valueStack)
-          v_valueStack[v_valueStackSize] = [9, [5, None, 0, v_pc, v_closure]]
-          v_valueStackSize += 1
-          v_pc += v_row[3]
+              closure[j] = [None]
+              parentClosure[j] = closure[j]
+            i += 1
+          if (valueStackSize == valueStackCapacity):
+            valueStack = valueStackIncreaseCapacity(ec)
+            valueStackCapacity = len(valueStack)
+          valueStack[valueStackSize] = [9, [5, None, 0, pc, closure]]
+          valueStackSize += 1
+          pc += row[3]
         else:
           # LIB_DECLARATION
-          v_prepareToSuspend(v_ec, v_stack, v_valueStackSize, v_pc)
-          v_ec[13] = [4, v_row[0], v_stringArgs[v_pc], 0.0, None]
-          v_hasInterrupt = True
+          prepareToSuspend(ec, stack, valueStackSize, pc)
+          ec[13] = [4, row[0], stringArgs[pc], 0.0, None]
+          hasInterrupt = True
       elif (sc_0 < 49):
         if (sc_0 == 47):
           # LIST_SLICE
-          if (v_row[2] == 1):
-            v_valueStackSize -= 1
-            v_arg3 = v_valueStack[v_valueStackSize]
+          if (row[2] == 1):
+            valueStackSize -= 1
+            arg3 = valueStack[valueStackSize]
           else:
-            v_arg3 = None
-          if (v_row[1] == 1):
-            v_valueStackSize -= 1
-            v_arg2 = v_valueStack[v_valueStackSize]
+            arg3 = None
+          if (row[1] == 1):
+            valueStackSize -= 1
+            arg2 = valueStack[valueStackSize]
           else:
-            v_arg2 = None
-          if (v_row[0] == 1):
-            v_valueStackSize -= 1
-            v_arg1 = v_valueStack[v_valueStackSize]
+            arg2 = None
+          if (row[0] == 1):
+            valueStackSize -= 1
+            arg1 = valueStack[valueStackSize]
           else:
-            v_arg1 = None
-          v_value = v_valueStack[(v_valueStackSize - 1)]
-          v_value = v_performListSlice(v_globals, v_ec, v_value, v_arg1, v_arg2, v_arg3)
-          v_hasInterrupt = (v_ec[13] != None)
-          if not (v_hasInterrupt):
-            v_valueStack[(v_valueStackSize - 1)] = v_value
+            arg1 = None
+          value = valueStack[(valueStackSize - 1)]
+          value = performListSlice(globals, ec, value, arg1, arg2, arg3)
+          hasInterrupt = (ec[13] != None)
+          if not (hasInterrupt):
+            valueStack[(valueStackSize - 1)] = value
         else:
           # LITERAL
-          if (v_valueStackSize == v_valueStackCapacity):
-            v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-            v_valueStackCapacity = len(v_valueStack)
-          v_valueStack[v_valueStackSize] = v_literalTable[v_row[0]]
-          v_valueStackSize += 1
+          if (valueStackSize == valueStackCapacity):
+            valueStack = valueStackIncreaseCapacity(ec)
+            valueStackCapacity = len(valueStack)
+          valueStack[valueStackSize] = literalTable[row[0]]
+          valueStackSize += 1
       elif (sc_0 == 49):
         # LITERAL_STREAM
-        v_int1 = len(v_row)
-        if ((v_valueStackSize + v_int1) > v_valueStackCapacity):
-          while ((v_valueStackSize + v_int1) > v_valueStackCapacity):
-            v_valueStackIncreaseCapacity(v_ec)
-            v_valueStack = v_ec[4]
-            v_valueStackCapacity = len(v_valueStack)
-        v_i = (v_int1 - 1)
-        while (v_i >= 0):
-          v_valueStack[v_valueStackSize] = v_literalTable[v_row[v_i]]
-          v_valueStackSize += 1
-          v_i -= 1
+        int1 = len(row)
+        if ((valueStackSize + int1) > valueStackCapacity):
+          while ((valueStackSize + int1) > valueStackCapacity):
+            valueStackIncreaseCapacity(ec)
+            valueStack = ec[4]
+            valueStackCapacity = len(valueStack)
+        i = (int1 - 1)
+        while (i >= 0):
+          valueStack[valueStackSize] = literalTable[row[i]]
+          valueStackSize += 1
+          i -= 1
       else:
         # LOCAL
-        v_int1 = (v_localsStackOffset + v_row[0])
-        if (v_localsStackSet[v_int1] == v_localsStackSetToken):
-          if (v_valueStackSize == v_valueStackCapacity):
-            v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-            v_valueStackCapacity = len(v_valueStack)
-          v_valueStack[v_valueStackSize] = v_localsStack[v_int1]
-          v_valueStackSize += 1
+        int1 = (localsStackOffset + row[0])
+        if (localsStackSet[int1] == localsStackSetToken):
+          if (valueStackSize == valueStackCapacity):
+            valueStack = valueStackIncreaseCapacity(ec)
+            valueStackCapacity = len(valueStack)
+          valueStack[valueStackSize] = localsStack[int1]
+          valueStackSize += 1
         else:
-          v_hasInterrupt = v_EX_UnassignedVariable(v_ec, "Variable used before it was set.")
+          hasInterrupt = EX_UnassignedVariable(ec, "Variable used before it was set.")
     elif (sc_0 < 59):
       if (sc_0 < 55):
         if (sc_0 < 53):
           if (sc_0 == 51):
             # LOC_TABLE
-            v_initLocTable(v_vm, v_row)
+            initLocTable(vm, row)
           else:
             # NEGATIVE_SIGN
-            v_value = v_valueStack[(v_valueStackSize - 1)]
-            v_type = v_value[0]
-            if (v_type == 3):
-              v_valueStack[(v_valueStackSize - 1)] = v_buildInteger(v_globals, -(v_value[1]))
-            elif (v_type == 4):
-              v_valueStack[(v_valueStackSize - 1)] = v_buildFloat(v_globals, -(v_value[1]))
+            value = valueStack[(valueStackSize - 1)]
+            type = value[0]
+            if (type == 3):
+              valueStack[(valueStackSize - 1)] = buildInteger(globals, -(value[1]))
+            elif (type == 4):
+              valueStack[(valueStackSize - 1)] = buildFloat(globals, -(value[1]))
             else:
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, ''.join(["Negative sign can only be applied to numbers. Found ", v_getTypeFromId(v_type), " instead."]))
+              hasInterrupt = EX_InvalidArgument(ec, ''.join(["Negative sign can only be applied to numbers. Found ", getTypeFromId(type), " instead."]))
         elif (sc_0 == 53):
           # POP
-          v_valueStackSize -= 1
+          valueStackSize -= 1
         else:
           # POP_IF_NULL_OR_JUMP
-          v_value = v_valueStack[(v_valueStackSize - 1)]
-          if (v_value[0] == 1):
-            v_valueStackSize -= 1
+          value = valueStack[(valueStackSize - 1)]
+          if (value[0] == 1):
+            valueStackSize -= 1
           else:
-            v_pc += v_row[0]
+            pc += row[0]
       elif (sc_0 < 57):
         if (sc_0 == 55):
           # PUSH_FUNC_REF
-          v_value = None
-          sc_17 = swlookup__interpretImpl__17.get(v_row[1], 3)
+          value = None
+          sc_17 = swlookup__interpretImpl__17.get(row[1], 3)
           if (sc_17 < 2):
             if (sc_17 == 0):
-              v_value = [9, [1, None, 0, v_row[0], None]]
+              value = [9, [1, None, 0, row[0], None]]
             else:
-              v_value = [9, [2, v_stack[6], v_row[2], v_row[0], None]]
+              value = [9, [2, stack[6], row[2], row[0], None]]
           elif (sc_17 == 2):
-            v_classId = v_row[2]
-            v_classInfo = v_classTable[v_classId]
-            v_staticConstructorNotInvoked = True
-            if (v_classInfo[4] < 2):
-              v_stack[0] = v_pc
-              v_stackFrame2 = v_maybeInvokeStaticConstructor(v_vm, v_ec, v_stack, v_classInfo, v_valueStackSize, PST_IntBuffer16)
+            classId = row[2]
+            classInfo = classTable[classId]
+            staticConstructorNotInvoked = True
+            if (classInfo[4] < 2):
+              stack[0] = pc
+              stackFrame2 = maybeInvokeStaticConstructor(vm, ec, stack, classInfo, valueStackSize, PST_IntBuffer16)
               if (PST_IntBuffer16[0] == 1):
-                return v_generateException(v_vm, v_stack, v_pc, v_valueStackSize, v_ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.")
-              if (v_stackFrame2 != None):
-                v_staticConstructorNotInvoked = False
-                v_stack = v_stackFrame2
-                v_pc = v_stack[0]
-                v_localsStackSetToken = v_stack[1]
-                v_localsStackOffset = v_stack[2]
-            if v_staticConstructorNotInvoked:
-              v_value = [9, [3, None, v_classId, v_row[0], None]]
+                return generateException(vm, stack, pc, valueStackSize, ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.")
+              if (stackFrame2 != None):
+                staticConstructorNotInvoked = False
+                stack = stackFrame2
+                pc = stack[0]
+                localsStackSetToken = stack[1]
+                localsStackOffset = stack[2]
+            if staticConstructorNotInvoked:
+              value = [9, [3, None, classId, row[0], None]]
             else:
-              v_value = None
-          if (v_value != None):
-            if (v_valueStackSize == v_valueStackCapacity):
-              v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-              v_valueStackCapacity = len(v_valueStack)
-            v_valueStack[v_valueStackSize] = v_value
-            v_valueStackSize += 1
+              value = None
+          if (value != None):
+            if (valueStackSize == valueStackCapacity):
+              valueStack = valueStackIncreaseCapacity(ec)
+              valueStackCapacity = len(valueStack)
+            valueStack[valueStackSize] = value
+            valueStackSize += 1
         else:
           # RETURN
-          if (v_esfData[v_pc] != None):
-            v_intArray1 = v_esfData[v_pc]
-            v_pc = (v_intArray1[1] - 1)
-            if (v_row[0] == 0):
-              v_stack[11] = v_VALUE_NULL
+          if (esfData[pc] != None):
+            intArray1 = esfData[pc]
+            pc = (intArray1[1] - 1)
+            if (row[0] == 0):
+              stack[11] = VALUE_NULL
             else:
-              v_stack[11] = v_valueStack[(v_valueStackSize - 1)]
-            v_valueStackSize = v_stack[7]
-            v_stack[10] = 3
+              stack[11] = valueStack[(valueStackSize - 1)]
+            valueStackSize = stack[7]
+            stack[10] = 3
           else:
-            if (v_stack[4] == None):
-              return v_interpreterFinished(v_vm, v_ec)
-            if (v_stack[8] != 0):
-              v_markClassAsInitialized(v_vm, v_stack, v_stack[8])
-            if v_stack[5]:
-              if (v_row[0] == 0):
-                v_valueStackSize = v_stack[7]
-                v_stack = v_stack[4]
-                if (v_valueStackSize == v_valueStackCapacity):
-                  v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-                  v_valueStackCapacity = len(v_valueStack)
-                v_valueStack[v_valueStackSize] = v_VALUE_NULL
+            if (stack[4] == None):
+              return interpreterFinished(vm, ec)
+            if (stack[8] != 0):
+              markClassAsInitialized(vm, stack, stack[8])
+            if stack[5]:
+              if (row[0] == 0):
+                valueStackSize = stack[7]
+                stack = stack[4]
+                if (valueStackSize == valueStackCapacity):
+                  valueStack = valueStackIncreaseCapacity(ec)
+                  valueStackCapacity = len(valueStack)
+                valueStack[valueStackSize] = VALUE_NULL
               else:
-                v_value = v_valueStack[(v_valueStackSize - 1)]
-                v_valueStackSize = v_stack[7]
-                v_stack = v_stack[4]
-                v_valueStack[v_valueStackSize] = v_value
-              v_valueStackSize += 1
+                value = valueStack[(valueStackSize - 1)]
+                valueStackSize = stack[7]
+                stack = stack[4]
+                valueStack[valueStackSize] = value
+              valueStackSize += 1
             else:
-              v_valueStackSize = v_stack[7]
-              v_stack = v_stack[4]
-            v_pc = v_stack[0]
-            v_localsStackOffset = v_stack[2]
-            v_localsStackSetToken = v_stack[1]
-            if (False and (v_stack[13] != None)):
-              v_hasInterrupt = True
-              v_ec[13] = [5, 0, "", 0.0, v_stack[13]]
+              valueStackSize = stack[7]
+              stack = stack[4]
+            pc = stack[0]
+            localsStackOffset = stack[2]
+            localsStackSetToken = stack[1]
+            if (False and (stack[13] != None)):
+              hasInterrupt = True
+              ec[13] = [5, 0, "", 0.0, stack[13]]
       elif (sc_0 == 57):
         # STACK_INSERTION_FOR_INCREMENT
-        if (v_valueStackSize == v_valueStackCapacity):
-          v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-          v_valueStackCapacity = len(v_valueStack)
-        v_valueStack[v_valueStackSize] = v_valueStack[(v_valueStackSize - 1)]
-        v_valueStack[(v_valueStackSize - 1)] = v_valueStack[(v_valueStackSize - 2)]
-        v_valueStack[(v_valueStackSize - 2)] = v_valueStack[(v_valueStackSize - 3)]
-        v_valueStack[(v_valueStackSize - 3)] = v_valueStack[v_valueStackSize]
-        v_valueStackSize += 1
+        if (valueStackSize == valueStackCapacity):
+          valueStack = valueStackIncreaseCapacity(ec)
+          valueStackCapacity = len(valueStack)
+        valueStack[valueStackSize] = valueStack[(valueStackSize - 1)]
+        valueStack[(valueStackSize - 1)] = valueStack[(valueStackSize - 2)]
+        valueStack[(valueStackSize - 2)] = valueStack[(valueStackSize - 3)]
+        valueStack[(valueStackSize - 3)] = valueStack[valueStackSize]
+        valueStackSize += 1
       else:
         # STACK_SWAP_POP
-        v_valueStackSize -= 1
-        v_valueStack[(v_valueStackSize - 1)] = v_valueStack[v_valueStackSize]
+        valueStackSize -= 1
+        valueStack[(valueStackSize - 1)] = valueStack[valueStackSize]
     elif (sc_0 < 63):
       if (sc_0 < 61):
         if (sc_0 == 59):
           # SWITCH_INT
-          v_valueStackSize -= 1
-          v_value = v_valueStack[v_valueStackSize]
-          if (v_value[0] == 3):
-            v_intKey = v_value[1]
-            v_integerSwitch = v_integerSwitchesByPc[v_pc]
-            if (v_integerSwitch == None):
-              v_integerSwitch = v_initializeIntSwitchStatement(v_vm, v_pc, v_row)
-            v_i = v_integerSwitch.get(v_intKey, -1)
-            if (v_i == -1):
-              v_pc += v_row[0]
+          valueStackSize -= 1
+          value = valueStack[valueStackSize]
+          if (value[0] == 3):
+            intKey = value[1]
+            integerSwitch = integerSwitchesByPc[pc]
+            if (integerSwitch == None):
+              integerSwitch = initializeIntSwitchStatement(vm, pc, row)
+            i = integerSwitch.get(intKey, -1)
+            if (i == -1):
+              pc += row[0]
             else:
-              v_pc += v_i
+              pc += i
           else:
-            v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Switch statement expects an integer.")
+            hasInterrupt = EX_InvalidArgument(ec, "Switch statement expects an integer.")
         else:
           # SWITCH_STRING
-          v_valueStackSize -= 1
-          v_value = v_valueStack[v_valueStackSize]
-          if (v_value[0] == 5):
-            v_stringKey = v_value[1]
-            v_stringSwitch = v_stringSwitchesByPc[v_pc]
-            if (v_stringSwitch == None):
-              v_stringSwitch = v_initializeStringSwitchStatement(v_vm, v_pc, v_row)
-            v_i = v_stringSwitch.get(v_stringKey, -1)
-            if (v_i == -1):
-              v_pc += v_row[0]
+          valueStackSize -= 1
+          value = valueStack[valueStackSize]
+          if (value[0] == 5):
+            stringKey = value[1]
+            stringSwitch = stringSwitchesByPc[pc]
+            if (stringSwitch == None):
+              stringSwitch = initializeStringSwitchStatement(vm, pc, row)
+            i = stringSwitch.get(stringKey, -1)
+            if (i == -1):
+              pc += row[0]
             else:
-              v_pc += v_i
+              pc += i
           else:
-            v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Switch statement expects a string.")
+            hasInterrupt = EX_InvalidArgument(ec, "Switch statement expects a string.")
       elif (sc_0 == 61):
         # THIS
-        if (v_valueStackSize == v_valueStackCapacity):
-          v_valueStack = v_valueStackIncreaseCapacity(v_ec)
-          v_valueStackCapacity = len(v_valueStack)
-        v_valueStack[v_valueStackSize] = v_stack[6]
-        v_valueStackSize += 1
+        if (valueStackSize == valueStackCapacity):
+          valueStack = valueStackIncreaseCapacity(ec)
+          valueStackCapacity = len(valueStack)
+        valueStack[valueStackSize] = stack[6]
+        valueStackSize += 1
       else:
         # THROW
-        v_valueStackSize -= 1
-        v_value = v_valueStack[v_valueStackSize]
-        v_bool2 = (v_value[0] == 8)
-        if v_bool2:
-          v_objInstance1 = v_value[1]
-          if not (v_isClassASubclassOf(v_vm, v_objInstance1[0], v_magicNumbers[0])):
-            v_bool2 = False
-        if v_bool2:
-          v_objArray1 = v_objInstance1[3]
-          v_intList1 = []
-          v_objArray1[1] = v_intList1
-          if not (v_isPcFromCore(v_vm, v_pc)):
-            v_intList1.append(v_pc)
-          v_ec[10] = v_value
-          v_ec[9] = False
-          v_stack[0] = v_pc
-          v_intArray1 = v_esfData[v_pc]
-          v_value = v_ec[10]
-          v_objInstance1 = v_value[1]
-          v_objArray1 = v_objInstance1[3]
-          v_bool1 = True
-          if (v_objArray1[0] != None):
-            v_bool1 = v_objArray1[0]
-          v_intList1 = v_objArray1[1]
-          while ((v_stack != None) and ((v_intArray1 == None) or v_bool1)):
-            v_stack = v_stack[4]
-            if (v_stack != None):
-              v_pc = v_stack[0]
-              v_intList1.append(v_pc)
-              v_intArray1 = v_esfData[v_pc]
-          if (v_stack == None):
-            return v_uncaughtExceptionResult(v_vm, v_value)
-          v_int1 = v_intArray1[0]
-          if (v_int1 < v_pc):
-            v_int1 = v_intArray1[1]
-          v_pc = (v_int1 - 1)
-          v_stack[0] = v_pc
-          v_localsStackOffset = v_stack[2]
-          v_localsStackSetToken = v_stack[1]
-          v_ec[1] = v_stack
-          v_stack[10] = 0
-          v_ec[2] = v_valueStackSize
-          if (False and (v_stack[13] != None)):
-            v_hasInterrupt = True
-            v_ec[13] = [5, 0, "", 0.0, v_stack[13]]
+        valueStackSize -= 1
+        value = valueStack[valueStackSize]
+        bool2 = (value[0] == 8)
+        if bool2:
+          objInstance1 = value[1]
+          if not (isClassASubclassOf(vm, objInstance1[0], magicNumbers[0])):
+            bool2 = False
+        if bool2:
+          objArray1 = objInstance1[3]
+          intList1 = []
+          objArray1[1] = intList1
+          if not (isPcFromCore(vm, pc)):
+            intList1.append(pc)
+          ec[10] = value
+          ec[9] = False
+          stack[0] = pc
+          intArray1 = esfData[pc]
+          value = ec[10]
+          objInstance1 = value[1]
+          objArray1 = objInstance1[3]
+          bool1 = True
+          if (objArray1[0] != None):
+            bool1 = objArray1[0]
+          intList1 = objArray1[1]
+          while ((stack != None) and ((intArray1 == None) or bool1)):
+            stack = stack[4]
+            if (stack != None):
+              pc = stack[0]
+              intList1.append(pc)
+              intArray1 = esfData[pc]
+          if (stack == None):
+            return uncaughtExceptionResult(vm, value)
+          int1 = intArray1[0]
+          if (int1 < pc):
+            int1 = intArray1[1]
+          pc = (int1 - 1)
+          stack[0] = pc
+          localsStackOffset = stack[2]
+          localsStackSetToken = stack[1]
+          ec[1] = stack
+          stack[10] = 0
+          ec[2] = valueStackSize
+          if (False and (stack[13] != None)):
+            hasInterrupt = True
+            ec[13] = [5, 0, "", 0.0, stack[13]]
         else:
-          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Thrown value is not an exception.")
+          hasInterrupt = EX_InvalidArgument(ec, "Thrown value is not an exception.")
     elif (sc_0 < 65):
       if (sc_0 == 63):
         # TOKEN_DATA
-        v_tokenDataImpl(v_vm, v_row)
+        tokenDataImpl(vm, row)
       else:
         # USER_CODE_START
-        v_metadata[16] = v_row[0]
+        metadata[16] = row[0]
     elif (sc_0 == 65):
       # VERIFY_TYPE_IS_ITERABLE
-      v_valueStackSize -= 1
-      v_value = v_valueStack[v_valueStackSize]
-      v_i = (v_localsStackOffset + v_row[0])
-      v_localsStack[v_i] = v_value
-      v_localsStackSet[v_i] = v_localsStackSetToken
-      v_int1 = v_value[0]
-      if ((v_int1 != 6) and (v_int1 != 5)):
-        v_hasInterrupt = v_EX_InvalidArgument(v_ec, ''.join(["Expected an iterable type, such as a list or string. Found ", v_getTypeFromId(v_int1), " instead."]))
-      v_i = (v_localsStackOffset + v_row[1])
-      v_localsStack[v_i] = v_VALUE_INT_ZERO
-      v_localsStackSet[v_i] = v_localsStackSetToken
+      valueStackSize -= 1
+      value = valueStack[valueStackSize]
+      i = (localsStackOffset + row[0])
+      localsStack[i] = value
+      localsStackSet[i] = localsStackSetToken
+      int1 = value[0]
+      if ((int1 != 6) and (int1 != 5)):
+        hasInterrupt = EX_InvalidArgument(ec, ''.join(["Expected an iterable type, such as a list or string. Found ", getTypeFromId(int1), " instead."]))
+      i = (localsStackOffset + row[1])
+      localsStack[i] = VALUE_INT_ZERO
+      localsStackSet[i] = localsStackSetToken
     else:
       # THIS SHOULD NEVER HAPPEN
-      return v_generateException(v_vm, v_stack, v_pc, v_valueStackSize, v_ec, 0, "Bad op code: " + str(v_ops[v_pc]))
-    if v_hasInterrupt:
-      v_interrupt = v_ec[13]
-      v_ec[13] = None
-      if (v_interrupt[0] == 1):
-        return v_generateException(v_vm, v_stack, v_pc, v_valueStackSize, v_ec, v_interrupt[1], v_interrupt[2])
-      if (v_interrupt[0] == 3):
-        return [5, "", v_interrupt[3], 0, False, ""]
-      if (v_interrupt[0] == 4):
-        return [6, "", 0.0, 0, False, v_interrupt[2]]
-    v_pc += 1
+      return generateException(vm, stack, pc, valueStackSize, ec, 0, "Bad op code: " + str(ops[pc]))
+    if hasInterrupt:
+      interrupt = ec[13]
+      ec[13] = None
+      if (interrupt[0] == 1):
+        return generateException(vm, stack, pc, valueStackSize, ec, interrupt[1], interrupt[2])
+      if (interrupt[0] == 3):
+        return [5, "", interrupt[3], 0, False, ""]
+      if (interrupt[0] == 4):
+        return [6, "", 0.0, 0, False, interrupt[2]]
+    pc += 1
 
 swlookup__interpretImpl__1 = { 553: 0, 554: 1, 718: 2, 719: 3, 708: 4, 707: 5, 543: 6, 542: 7, 996: 8, 498: 9, 509: 10, 520: 11, 531: 12, 663: 13, 499: 14, 664: 15, 510: 16, 674: 17, 675: 18, 685: 19, 521: 20, 686: 21, 532: 22, 696: 23, 697: 24, 564: 25, 575: 26, 586: 27, 597: 28, 608: 29, 619: 30, 630: 31, 784: 32, 795: 33, 620: 34, 631: 35, 785: 36, 796: 37, 652: 38, 641: 39, 817: 40, 806: 41, 653: 42, 642: 43, 818: 44, 807: 45, 830: 46, 850: 47, 522: 48, 1015: 49, 523: 50 }
 swlookup__interpretImpl__2 = { 1: 0, 8: 1, 10: 2 }
@@ -4164,944 +4164,944 @@ swlookup__interpretImpl__16 = { 0: 0, 1: 1, 2: 2, 3: 3 }
 swlookup__interpretImpl__17 = { 0: 0, 1: 1, 2: 2 }
 swlookup__interpretImpl__0 = { 0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 6: 5, 7: 6, 8: 7, 5: 8, 9: 9, 10: 10, 11: 11, 12: 12, 13: 13, 14: 14, 15: 15, 16: 16, 17: 17, 18: 18, 19: 19, 20: 20, 21: 21, 22: 22, 23: 23, 24: 24, 25: 25, 26: 26, 27: 27, 28: 28, 29: 29, 30: 30, 31: 31, 32: 32, 33: 33, 34: 34, 35: 35, 36: 36, 37: 37, 38: 38, 39: 39, 40: 40, 41: 41, 42: 42, 43: 43, 44: 44, 45: 45, 46: 46, 47: 47, 48: 48, 49: 49, 50: 50, 51: 51, 52: 52, 53: 53, 54: 54, 55: 55, 56: 56, 57: 57, 58: 58, 59: 59, 60: 60, 61: 61, 62: 62, 63: 63, 64: 64, 65: 65 }
 
-def v_isClassASubclassOf(v_vm, v_subClassId, v_parentClassId):
-  if (v_subClassId == v_parentClassId):
+def isClassASubclassOf(vm, subClassId, parentClassId):
+  if (subClassId == parentClassId):
     return True
-  v_classTable = v_vm[4][9]
-  v_classIdWalker = v_subClassId
-  while (v_classIdWalker != -1):
-    if (v_classIdWalker == v_parentClassId):
+  classTable = vm[4][9]
+  classIdWalker = subClassId
+  while (classIdWalker != -1):
+    if (classIdWalker == parentClassId):
       return True
-    v_classInfo = v_classTable[v_classIdWalker]
-    v_classIdWalker = v_classInfo[2]
+    classInfo = classTable[classIdWalker]
+    classIdWalker = classInfo[2]
   return False
 
-def v_isPcFromCore(v_vm, v_pc):
-  if (v_vm[3] == None):
+def isPcFromCore(vm, pc):
+  if (vm[3] == None):
     return False
-  v_tokens = v_vm[3][0][v_pc]
-  if (v_tokens == None):
+  tokens = vm[3][0][pc]
+  if (tokens == None):
     return False
-  v_token = v_tokens[0]
-  v_filename = v_tokenHelperGetFileLine(v_vm, v_token[2], 0)
-  return "[Core]" == v_filename
+  token = tokens[0]
+  filename = tokenHelperGetFileLine(vm, token[2], 0)
+  return "[Core]" == filename
 
-def v_isStringEqual(v_a, v_b):
-  if (v_a == v_b):
+def isStringEqual(a, b):
+  if (a == b):
     return True
   return False
 
-def v_isVmResultRootExecContext(v_result):
-  return v_result[4]
+def isVmResultRootExecContext(result):
+  return result[4]
 
-def v_makeEmptyList(v_type, v_capacity):
-  return [v_type, 0, []]
+def makeEmptyList(type, capacity):
+  return [type, 0, []]
 
-def v_markClassAsInitialized(v_vm, v_stack, v_classId):
-  v_classInfo = v_vm[4][9][v_stack[8]]
-  v_classInfo[4] = 2
-  v_vm[7].pop()
+def markClassAsInitialized(vm, stack, classId):
+  classInfo = vm[4][9][stack[8]]
+  classInfo[4] = 2
+  vm[7].pop()
   return 0
 
-def v_maybeInvokeStaticConstructor(v_vm, v_ec, v_stack, v_classInfo, v_valueStackSize, v_intOutParam):
+def maybeInvokeStaticConstructor(vm, ec, stack, classInfo, valueStackSize, intOutParam):
   PST_IntBuffer16[0] = 0
-  v_classId = v_classInfo[0]
-  if (v_classInfo[4] == 1):
-    v_classIdsBeingInitialized = v_vm[7]
-    if (v_classIdsBeingInitialized[(len(v_classIdsBeingInitialized) - 1)] != v_classId):
+  classId = classInfo[0]
+  if (classInfo[4] == 1):
+    classIdsBeingInitialized = vm[7]
+    if (classIdsBeingInitialized[(len(classIdsBeingInitialized) - 1)] != classId):
       PST_IntBuffer16[0] = 1
     return None
-  v_classInfo[4] = 1
-  v_vm[7].append(v_classId)
-  v_functionInfo = v_vm[4][10][v_classInfo[6]]
-  v_stack[0] -= 1
-  v_newFrameLocalsSize = v_functionInfo[7]
-  v_currentFrameLocalsEnd = v_stack[3]
-  if (len(v_ec[5]) <= (v_currentFrameLocalsEnd + v_newFrameLocalsSize)):
-    v_increaseLocalsStackCapacity(v_ec, v_newFrameLocalsSize)
-  if (v_ec[7] > 2000000000):
-    v_resetLocalsStackTokens(v_ec, v_stack)
-  v_ec[7] += 1
-  return [v_functionInfo[2], v_ec[7], v_currentFrameLocalsEnd, (v_currentFrameLocalsEnd + v_newFrameLocalsSize), v_stack, False, None, v_valueStackSize, v_classId, (v_stack[9] + 1), 0, None, None, None]
+  classInfo[4] = 1
+  vm[7].append(classId)
+  functionInfo = vm[4][10][classInfo[6]]
+  stack[0] -= 1
+  newFrameLocalsSize = functionInfo[7]
+  currentFrameLocalsEnd = stack[3]
+  if (len(ec[5]) <= (currentFrameLocalsEnd + newFrameLocalsSize)):
+    increaseLocalsStackCapacity(ec, newFrameLocalsSize)
+  if (ec[7] > 2000000000):
+    resetLocalsStackTokens(ec, stack)
+  ec[7] += 1
+  return [functionInfo[2], ec[7], currentFrameLocalsEnd, (currentFrameLocalsEnd + newFrameLocalsSize), stack, False, None, valueStackSize, classId, (stack[9] + 1), 0, None, None, None]
 
-def v_multiplyString(v_globals, v_strValue, v_str, v_n):
-  if (v_n <= 2):
-    if (v_n == 1):
-      return v_strValue
-    if (v_n == 2):
-      return v_buildString(v_globals, v_str + v_str)
-    return v_globals[8]
-  v_builder = []
-  while (v_n > 0):
-    v_n -= 1
-    v_builder.append(v_str)
-  v_str = "".join(v_builder)
-  return v_buildString(v_globals, v_str)
+def multiplyString(globals, strValue, str, n):
+  if (n <= 2):
+    if (n == 1):
+      return strValue
+    if (n == 2):
+      return buildString(globals, str + str)
+    return globals[8]
+  builder = []
+  while (n > 0):
+    n -= 1
+    builder.append(str)
+  str = "".join(builder)
+  return buildString(globals, str)
 
-def v_nextPowerOf2(v_value):
-  if (((v_value - 1) & v_value) == 0):
-    return v_value
-  v_output = 1
-  while (v_output < v_value):
-    v_output *= 2
-  return v_output
+def nextPowerOf2(value):
+  if (((value - 1) & value) == 0):
+    return value
+  output = 1
+  while (output < value):
+    output *= 2
+  return output
 
-def v_noop():
+def noop():
   return 0
 
-def v_performListSlice(v_globals, v_ec, v_value, v_arg1, v_arg2, v_arg3):
-  v_begin = 0
-  v_end = 0
-  v_step = 0
-  v_length = 0
-  v_i = 0
-  v_isForward = False
-  v_isString = False
-  v_originalString = ""
-  v_originalList = None
-  v_outputList = None
-  v_outputString = None
-  v_status = 0
-  if (v_arg3 != None):
-    if (v_arg3[0] == 3):
-      v_step = v_arg3[1]
-      if (v_step == 0):
-        v_status = 2
+def performListSlice(globals, ec, value, arg1, arg2, arg3):
+  begin = 0
+  end = 0
+  step = 0
+  length = 0
+  i = 0
+  isForward = False
+  isString = False
+  originalString = ""
+  originalList = None
+  outputList = None
+  outputString = None
+  status = 0
+  if (arg3 != None):
+    if (arg3[0] == 3):
+      step = arg3[1]
+      if (step == 0):
+        status = 2
     else:
-      v_status = 3
-      v_step = 1
+      status = 3
+      step = 1
   else:
-    v_step = 1
-  v_isForward = (v_step > 0)
-  if (v_arg2 != None):
-    if (v_arg2[0] == 3):
-      v_end = v_arg2[1]
+    step = 1
+  isForward = (step > 0)
+  if (arg2 != None):
+    if (arg2[0] == 3):
+      end = arg2[1]
     else:
-      v_status = 3
-  if (v_arg1 != None):
-    if (v_arg1[0] == 3):
-      v_begin = v_arg1[1]
+      status = 3
+  if (arg1 != None):
+    if (arg1[0] == 3):
+      begin = arg1[1]
     else:
-      v_status = 3
-  if (v_value[0] == 5):
-    v_isString = True
-    v_originalString = v_value[1]
-    v_length = len(v_originalString)
-  elif (v_value[0] == 6):
-    v_isString = False
-    v_originalList = v_value[1]
-    v_length = v_originalList[1]
+      status = 3
+  if (value[0] == 5):
+    isString = True
+    originalString = value[1]
+    length = len(originalString)
+  elif (value[0] == 6):
+    isString = False
+    originalList = value[1]
+    length = originalList[1]
   else:
-    v_EX_InvalidArgument(v_ec, ''.join(["Cannot apply slicing to ", v_getTypeFromId(v_value[0]), ". Must be string or list."]))
-    return v_globals[0]
-  if (v_status >= 2):
-    v_msg = None
-    if v_isString:
-      v_msg = "String"
+    EX_InvalidArgument(ec, ''.join(["Cannot apply slicing to ", getTypeFromId(value[0]), ". Must be string or list."]))
+    return globals[0]
+  if (status >= 2):
+    msg = None
+    if isString:
+      msg = "String"
     else:
-      v_msg = "List"
-    if (v_status == 3):
-      v_msg += " slice indexes must be integers. Found "
-      if ((v_arg1 != None) and (v_arg1[0] != 3)):
-        v_EX_InvalidArgument(v_ec, ''.join([v_msg, v_getTypeFromId(v_arg1[0]), " for begin index."]))
-        return v_globals[0]
-      if ((v_arg2 != None) and (v_arg2[0] != 3)):
-        v_EX_InvalidArgument(v_ec, ''.join([v_msg, v_getTypeFromId(v_arg2[0]), " for end index."]))
-        return v_globals[0]
-      if ((v_arg3 != None) and (v_arg3[0] != 3)):
-        v_EX_InvalidArgument(v_ec, ''.join([v_msg, v_getTypeFromId(v_arg3[0]), " for step amount."]))
-        return v_globals[0]
-      v_EX_InvalidArgument(v_ec, "Invalid slice arguments.")
-      return v_globals[0]
+      msg = "List"
+    if (status == 3):
+      msg += " slice indexes must be integers. Found "
+      if ((arg1 != None) and (arg1[0] != 3)):
+        EX_InvalidArgument(ec, ''.join([msg, getTypeFromId(arg1[0]), " for begin index."]))
+        return globals[0]
+      if ((arg2 != None) and (arg2[0] != 3)):
+        EX_InvalidArgument(ec, ''.join([msg, getTypeFromId(arg2[0]), " for end index."]))
+        return globals[0]
+      if ((arg3 != None) and (arg3[0] != 3)):
+        EX_InvalidArgument(ec, ''.join([msg, getTypeFromId(arg3[0]), " for step amount."]))
+        return globals[0]
+      EX_InvalidArgument(ec, "Invalid slice arguments.")
+      return globals[0]
     else:
-      v_EX_InvalidArgument(v_ec, v_msg + " slice step cannot be 0.")
-      return v_globals[0]
-  v_status = v_canonicalizeListSliceArgs(PST_IntBuffer16, v_arg1, v_arg2, v_begin, v_end, v_step, v_length, v_isForward)
-  if (v_status == 1):
-    v_begin = PST_IntBuffer16[0]
-    v_end = PST_IntBuffer16[1]
-    if v_isString:
-      v_outputString = []
-      if v_isForward:
-        if (v_step == 1):
-          return v_buildString(v_globals, v_originalString[v_begin:v_begin + (v_end - v_begin)])
+      EX_InvalidArgument(ec, msg + " slice step cannot be 0.")
+      return globals[0]
+  status = canonicalizeListSliceArgs(PST_IntBuffer16, arg1, arg2, begin, end, step, length, isForward)
+  if (status == 1):
+    begin = PST_IntBuffer16[0]
+    end = PST_IntBuffer16[1]
+    if isString:
+      outputString = []
+      if isForward:
+        if (step == 1):
+          return buildString(globals, originalString[begin:begin + (end - begin)])
         else:
-          while (v_begin < v_end):
-            v_outputString.append(v_originalString[v_begin])
-            v_begin += v_step
+          while (begin < end):
+            outputString.append(originalString[begin])
+            begin += step
       else:
-        while (v_begin > v_end):
-          v_outputString.append(v_originalString[v_begin])
-          v_begin += v_step
-      v_value = v_buildString(v_globals, "".join(v_outputString))
+        while (begin > end):
+          outputString.append(originalString[begin])
+          begin += step
+      value = buildString(globals, "".join(outputString))
     else:
-      v_outputList = v_makeEmptyList(v_originalList[0], 10)
-      if v_isForward:
-        while (v_begin < v_end):
-          v_addToList(v_outputList, v_originalList[2][v_begin])
-          v_begin += v_step
+      outputList = makeEmptyList(originalList[0], 10)
+      if isForward:
+        while (begin < end):
+          addToList(outputList, originalList[2][begin])
+          begin += step
       else:
-        while (v_begin > v_end):
-          v_addToList(v_outputList, v_originalList[2][v_begin])
-          v_begin += v_step
-      v_value = [6, v_outputList]
-  elif (v_status == 0):
-    if v_isString:
-      v_value = v_globals[8]
+        while (begin > end):
+          addToList(outputList, originalList[2][begin])
+          begin += step
+      value = [6, outputList]
+  elif (status == 0):
+    if isString:
+      value = globals[8]
     else:
-      v_value = [6, v_makeEmptyList(v_originalList[0], 0)]
-  elif (v_status == 2):
-    if not (v_isString):
-      v_outputList = v_makeEmptyList(v_originalList[0], v_length)
-      v_i = 0
-      while (v_i < v_length):
-        v_addToList(v_outputList, v_originalList[2][v_i])
-        v_i += 1
-      v_value = [6, v_outputList]
+      value = [6, makeEmptyList(originalList[0], 0)]
+  elif (status == 2):
+    if not (isString):
+      outputList = makeEmptyList(originalList[0], length)
+      i = 0
+      while (i < length):
+        addToList(outputList, originalList[2][i])
+        i += 1
+      value = [6, outputList]
   else:
-    v_msg = None
-    if v_isString:
-      v_msg = "String"
+    msg = None
+    if isString:
+      msg = "String"
     else:
-      v_msg = "List"
-    if (v_status == 3):
-      v_msg += " slice begin index is out of range."
-    elif v_isForward:
-      v_msg += " slice begin index must occur before the end index when step is positive."
+      msg = "List"
+    if (status == 3):
+      msg += " slice begin index is out of range."
+    elif isForward:
+      msg += " slice begin index must occur before the end index when step is positive."
     else:
-      v_msg += " slice begin index must occur after the end index when the step is negative."
-    v_EX_IndexOutOfRange(v_ec, v_msg)
-    return v_globals[0]
-  return v_value
+      msg += " slice begin index must occur after the end index when the step is negative."
+    EX_IndexOutOfRange(ec, msg)
+    return globals[0]
+  return value
 
-def v_prepareToSuspend(v_ec, v_stack, v_valueStackSize, v_currentPc):
-  v_ec[1] = v_stack
-  v_ec[2] = v_valueStackSize
-  v_stack[0] = (v_currentPc + 1)
+def prepareToSuspend(ec, stack, valueStackSize, currentPc):
+  ec[1] = stack
+  ec[2] = valueStackSize
+  stack[0] = (currentPc + 1)
   return 0
 
-def v_primitiveMethodsInitializeLookup(v_nameLookups):
-  v_length = len(v_nameLookups)
-  v_lookup = (PST_NoneListOfOne * v_length)
-  v_i = 0
-  while (v_i < v_length):
-    v_lookup[v_i] = -1
-    v_i += 1
-  if ("add" in v_nameLookups):
-    v_lookup[v_nameLookups["add"]] = 0
-  if ("argCountMax" in v_nameLookups):
-    v_lookup[v_nameLookups["argCountMax"]] = 1
-  if ("argCountMin" in v_nameLookups):
-    v_lookup[v_nameLookups["argCountMin"]] = 2
-  if ("choice" in v_nameLookups):
-    v_lookup[v_nameLookups["choice"]] = 3
-  if ("clear" in v_nameLookups):
-    v_lookup[v_nameLookups["clear"]] = 4
-  if ("clone" in v_nameLookups):
-    v_lookup[v_nameLookups["clone"]] = 5
-  if ("concat" in v_nameLookups):
-    v_lookup[v_nameLookups["concat"]] = 6
-  if ("contains" in v_nameLookups):
-    v_lookup[v_nameLookups["contains"]] = 7
-  if ("createInstance" in v_nameLookups):
-    v_lookup[v_nameLookups["createInstance"]] = 8
-  if ("endsWith" in v_nameLookups):
-    v_lookup[v_nameLookups["endsWith"]] = 9
-  if ("filter" in v_nameLookups):
-    v_lookup[v_nameLookups["filter"]] = 10
-  if ("get" in v_nameLookups):
-    v_lookup[v_nameLookups["get"]] = 11
-  if ("getName" in v_nameLookups):
-    v_lookup[v_nameLookups["getName"]] = 12
-  if ("indexOf" in v_nameLookups):
-    v_lookup[v_nameLookups["indexOf"]] = 13
-  if ("insert" in v_nameLookups):
-    v_lookup[v_nameLookups["insert"]] = 14
-  if ("invoke" in v_nameLookups):
-    v_lookup[v_nameLookups["invoke"]] = 15
-  if ("isA" in v_nameLookups):
-    v_lookup[v_nameLookups["isA"]] = 16
-  if ("join" in v_nameLookups):
-    v_lookup[v_nameLookups["join"]] = 17
-  if ("keys" in v_nameLookups):
-    v_lookup[v_nameLookups["keys"]] = 18
-  if ("lower" in v_nameLookups):
-    v_lookup[v_nameLookups["lower"]] = 19
-  if ("ltrim" in v_nameLookups):
-    v_lookup[v_nameLookups["ltrim"]] = 20
-  if ("map" in v_nameLookups):
-    v_lookup[v_nameLookups["map"]] = 21
-  if ("merge" in v_nameLookups):
-    v_lookup[v_nameLookups["merge"]] = 22
-  if ("pop" in v_nameLookups):
-    v_lookup[v_nameLookups["pop"]] = 23
-  if ("remove" in v_nameLookups):
-    v_lookup[v_nameLookups["remove"]] = 24
-  if ("replace" in v_nameLookups):
-    v_lookup[v_nameLookups["replace"]] = 25
-  if ("reverse" in v_nameLookups):
-    v_lookup[v_nameLookups["reverse"]] = 26
-  if ("rtrim" in v_nameLookups):
-    v_lookup[v_nameLookups["rtrim"]] = 27
-  if ("shuffle" in v_nameLookups):
-    v_lookup[v_nameLookups["shuffle"]] = 28
-  if ("sort" in v_nameLookups):
-    v_lookup[v_nameLookups["sort"]] = 29
-  if ("split" in v_nameLookups):
-    v_lookup[v_nameLookups["split"]] = 30
-  if ("startsWith" in v_nameLookups):
-    v_lookup[v_nameLookups["startsWith"]] = 31
-  if ("trim" in v_nameLookups):
-    v_lookup[v_nameLookups["trim"]] = 32
-  if ("upper" in v_nameLookups):
-    v_lookup[v_nameLookups["upper"]] = 33
-  if ("values" in v_nameLookups):
-    v_lookup[v_nameLookups["values"]] = 34
-  return v_lookup
+def primitiveMethodsInitializeLookup(nameLookups):
+  length = len(nameLookups)
+  lookup = (PST_NoneListOfOne * length)
+  i = 0
+  while (i < length):
+    lookup[i] = -1
+    i += 1
+  if ("add" in nameLookups):
+    lookup[nameLookups["add"]] = 0
+  if ("argCountMax" in nameLookups):
+    lookup[nameLookups["argCountMax"]] = 1
+  if ("argCountMin" in nameLookups):
+    lookup[nameLookups["argCountMin"]] = 2
+  if ("choice" in nameLookups):
+    lookup[nameLookups["choice"]] = 3
+  if ("clear" in nameLookups):
+    lookup[nameLookups["clear"]] = 4
+  if ("clone" in nameLookups):
+    lookup[nameLookups["clone"]] = 5
+  if ("concat" in nameLookups):
+    lookup[nameLookups["concat"]] = 6
+  if ("contains" in nameLookups):
+    lookup[nameLookups["contains"]] = 7
+  if ("createInstance" in nameLookups):
+    lookup[nameLookups["createInstance"]] = 8
+  if ("endsWith" in nameLookups):
+    lookup[nameLookups["endsWith"]] = 9
+  if ("filter" in nameLookups):
+    lookup[nameLookups["filter"]] = 10
+  if ("get" in nameLookups):
+    lookup[nameLookups["get"]] = 11
+  if ("getName" in nameLookups):
+    lookup[nameLookups["getName"]] = 12
+  if ("indexOf" in nameLookups):
+    lookup[nameLookups["indexOf"]] = 13
+  if ("insert" in nameLookups):
+    lookup[nameLookups["insert"]] = 14
+  if ("invoke" in nameLookups):
+    lookup[nameLookups["invoke"]] = 15
+  if ("isA" in nameLookups):
+    lookup[nameLookups["isA"]] = 16
+  if ("join" in nameLookups):
+    lookup[nameLookups["join"]] = 17
+  if ("keys" in nameLookups):
+    lookup[nameLookups["keys"]] = 18
+  if ("lower" in nameLookups):
+    lookup[nameLookups["lower"]] = 19
+  if ("ltrim" in nameLookups):
+    lookup[nameLookups["ltrim"]] = 20
+  if ("map" in nameLookups):
+    lookup[nameLookups["map"]] = 21
+  if ("merge" in nameLookups):
+    lookup[nameLookups["merge"]] = 22
+  if ("pop" in nameLookups):
+    lookup[nameLookups["pop"]] = 23
+  if ("remove" in nameLookups):
+    lookup[nameLookups["remove"]] = 24
+  if ("replace" in nameLookups):
+    lookup[nameLookups["replace"]] = 25
+  if ("reverse" in nameLookups):
+    lookup[nameLookups["reverse"]] = 26
+  if ("rtrim" in nameLookups):
+    lookup[nameLookups["rtrim"]] = 27
+  if ("shuffle" in nameLookups):
+    lookup[nameLookups["shuffle"]] = 28
+  if ("sort" in nameLookups):
+    lookup[nameLookups["sort"]] = 29
+  if ("split" in nameLookups):
+    lookup[nameLookups["split"]] = 30
+  if ("startsWith" in nameLookups):
+    lookup[nameLookups["startsWith"]] = 31
+  if ("trim" in nameLookups):
+    lookup[nameLookups["trim"]] = 32
+  if ("upper" in nameLookups):
+    lookup[nameLookups["upper"]] = 33
+  if ("values" in nameLookups):
+    lookup[nameLookups["values"]] = 34
+  return lookup
 
-def v_primitiveMethodWrongArgCountError(v_name, v_expected, v_actual):
-  v_output = ""
-  if (v_expected == 0):
-    v_output = v_name + " does not accept any arguments."
-  elif (v_expected == 1):
-    v_output = v_name + " accepts exactly 1 argument."
+def primitiveMethodWrongArgCountError(name, expected, actual):
+  output = ""
+  if (expected == 0):
+    output = name + " does not accept any arguments."
+  elif (expected == 1):
+    output = name + " accepts exactly 1 argument."
   else:
-    v_output = ''.join([v_name, " requires ", str(v_expected), " arguments."])
-  return ''.join([v_output, " Found: ", str(v_actual)])
+    output = ''.join([name, " requires ", str(expected), " arguments."])
+  return ''.join([output, " Found: ", str(actual)])
 
-def v_printToStdOut(v_prefix, v_line):
-  if (v_prefix == None):
-    print(v_line)
+def printToStdOut(prefix, line):
+  if (prefix == None):
+    print(line)
   else:
-    v_canonical = v_line.replace("\r\n", "\n").replace("\r", "\n")
-    v_lines = v_canonical.split("\n")
-    v_i = 0
-    while (v_i < len(v_lines)):
-      print(''.join([v_prefix, ": ", v_lines[v_i]]))
-      v_i += 1
+    canonical = line.replace("\r\n", "\n").replace("\r", "\n")
+    lines = canonical.split("\n")
+    i = 0
+    while (i < len(lines)):
+      print(''.join([prefix, ": ", lines[i]]))
+      i += 1
   return 0
 
-def v_qsortHelper(v_keyStringList, v_keyNumList, v_indices, v_isString, v_startIndex, v_endIndex):
-  if ((v_endIndex - v_startIndex) <= 0):
+def qsortHelper(keyStringList, keyNumList, indices, isString, startIndex, endIndex):
+  if ((endIndex - startIndex) <= 0):
     return 0
-  if ((v_endIndex - v_startIndex) == 1):
-    if v_sortHelperIsRevOrder(v_keyStringList, v_keyNumList, v_isString, v_startIndex, v_endIndex):
-      v_sortHelperSwap(v_keyStringList, v_keyNumList, v_indices, v_isString, v_startIndex, v_endIndex)
+  if ((endIndex - startIndex) == 1):
+    if sortHelperIsRevOrder(keyStringList, keyNumList, isString, startIndex, endIndex):
+      sortHelperSwap(keyStringList, keyNumList, indices, isString, startIndex, endIndex)
     return 0
-  v_mid = ((v_endIndex + v_startIndex) >> 1)
-  v_sortHelperSwap(v_keyStringList, v_keyNumList, v_indices, v_isString, v_mid, v_startIndex)
-  v_upperPointer = (v_endIndex + 1)
-  v_lowerPointer = (v_startIndex + 1)
-  while (v_upperPointer > v_lowerPointer):
-    if v_sortHelperIsRevOrder(v_keyStringList, v_keyNumList, v_isString, v_startIndex, v_lowerPointer):
-      v_lowerPointer += 1
+  mid = ((endIndex + startIndex) >> 1)
+  sortHelperSwap(keyStringList, keyNumList, indices, isString, mid, startIndex)
+  upperPointer = (endIndex + 1)
+  lowerPointer = (startIndex + 1)
+  while (upperPointer > lowerPointer):
+    if sortHelperIsRevOrder(keyStringList, keyNumList, isString, startIndex, lowerPointer):
+      lowerPointer += 1
     else:
-      v_upperPointer -= 1
-      v_sortHelperSwap(v_keyStringList, v_keyNumList, v_indices, v_isString, v_lowerPointer, v_upperPointer)
-  v_midIndex = (v_lowerPointer - 1)
-  v_sortHelperSwap(v_keyStringList, v_keyNumList, v_indices, v_isString, v_midIndex, v_startIndex)
-  v_qsortHelper(v_keyStringList, v_keyNumList, v_indices, v_isString, v_startIndex, (v_midIndex - 1))
-  v_qsortHelper(v_keyStringList, v_keyNumList, v_indices, v_isString, (v_midIndex + 1), v_endIndex)
+      upperPointer -= 1
+      sortHelperSwap(keyStringList, keyNumList, indices, isString, lowerPointer, upperPointer)
+  midIndex = (lowerPointer - 1)
+  sortHelperSwap(keyStringList, keyNumList, indices, isString, midIndex, startIndex)
+  qsortHelper(keyStringList, keyNumList, indices, isString, startIndex, (midIndex - 1))
+  qsortHelper(keyStringList, keyNumList, indices, isString, (midIndex + 1), endIndex)
   return 0
 
-def v_queryValue(v_vm, v_execId, v_stackFrameOffset, v_steps):
-  if (v_execId == -1):
-    v_execId = v_vm[1]
-  v_ec = v_vm[0][v_execId]
-  v_stackFrame = v_ec[1]
-  while (v_stackFrameOffset > 0):
-    v_stackFrameOffset -= 1
-    v_stackFrame = v_stackFrame[4]
-  v_current = None
-  v_i = 0
-  v_j = 0
-  v_len = len(v_steps)
-  v_i = 0
-  while (v_i < len(v_steps)):
-    if ((v_current == None) and (v_i > 0)):
+def queryValue(vm, execId, stackFrameOffset, steps):
+  if (execId == -1):
+    execId = vm[1]
+  ec = vm[0][execId]
+  stackFrame = ec[1]
+  while (stackFrameOffset > 0):
+    stackFrameOffset -= 1
+    stackFrame = stackFrame[4]
+  current = None
+  i = 0
+  j = 0
+  len = len(steps)
+  i = 0
+  while (i < len(steps)):
+    if ((current == None) and (i > 0)):
       return None
-    v_step = v_steps[v_i]
-    if v_isStringEqual(".", v_step):
+    step = steps[i]
+    if isStringEqual(".", step):
       return None
-    elif v_isStringEqual("this", v_step):
-      v_current = v_stackFrame[6]
-    elif v_isStringEqual("class", v_step):
+    elif isStringEqual("this", step):
+      current = stackFrame[6]
+    elif isStringEqual("class", step):
       return None
-    elif v_isStringEqual("local", v_step):
-      v_i += 1
-      v_step = v_steps[v_i]
-      v_localNamesByFuncPc = v_vm[3][5]
-      v_localNames = None
-      if ((v_localNamesByFuncPc == None) or (len(v_localNamesByFuncPc) == 0)):
+    elif isStringEqual("local", step):
+      i += 1
+      step = steps[i]
+      localNamesByFuncPc = vm[3][5]
+      localNames = None
+      if ((localNamesByFuncPc == None) or (len(localNamesByFuncPc) == 0)):
         return None
-      v_j = v_stackFrame[0]
-      while (v_j >= 0):
-        if (v_j in v_localNamesByFuncPc):
-          v_localNames = v_localNamesByFuncPc[v_j]
-          v_j = -1
-        v_j -= 1
-      if (v_localNames == None):
+      j = stackFrame[0]
+      while (j >= 0):
+        if (j in localNamesByFuncPc):
+          localNames = localNamesByFuncPc[j]
+          j = -1
+        j -= 1
+      if (localNames == None):
         return None
-      v_localId = -1
-      if (v_localNames != None):
-        v_j = 0
-        while (v_j < len(v_localNames)):
-          if v_isStringEqual(v_localNames[v_j], v_step):
-            v_localId = v_j
-            v_j = len(v_localNames)
-          v_j += 1
-      if (v_localId == -1):
+      localId = -1
+      if (localNames != None):
+        j = 0
+        while (j < len(localNames)):
+          if isStringEqual(localNames[j], step):
+            localId = j
+            j = len(localNames)
+          j += 1
+      if (localId == -1):
         return None
-      v_localOffset = (v_localId + v_stackFrame[2])
-      if (v_ec[6][v_localOffset] != v_stackFrame[1]):
+      localOffset = (localId + stackFrame[2])
+      if (ec[6][localOffset] != stackFrame[1]):
         return None
-      v_current = v_ec[5][v_localOffset]
-    elif v_isStringEqual("index", v_step):
+      current = ec[5][localOffset]
+    elif isStringEqual("index", step):
       return None
-    elif v_isStringEqual("key-int", v_step):
+    elif isStringEqual("key-int", step):
       return None
-    elif v_isStringEqual("key-str", v_step):
+    elif isStringEqual("key-str", step):
       return None
-    elif v_isStringEqual("key-obj", v_step):
+    elif isStringEqual("key-obj", step):
       return None
     else:
       return None
-    v_i += 1
-  return v_current
+    i += 1
+  return current
 
-def v_read_integer(v_pindex, v_raw, v_length, v_alphaNums):
-  v_num = 0
-  v_c = v_raw[v_pindex[0]]
-  v_pindex[0] = (v_pindex[0] + 1)
-  if (v_c == "%"):
-    v_value = v_read_till(v_pindex, v_raw, v_length, "%")
-    v_num = int(v_value)
-  elif (v_c == "@"):
-    v_num = v_read_integer(v_pindex, v_raw, v_length, v_alphaNums)
-    v_num *= 62
-    v_num += v_read_integer(v_pindex, v_raw, v_length, v_alphaNums)
-  elif (v_c == "#"):
-    v_num = v_read_integer(v_pindex, v_raw, v_length, v_alphaNums)
-    v_num *= 62
-    v_num += v_read_integer(v_pindex, v_raw, v_length, v_alphaNums)
-    v_num *= 62
-    v_num += v_read_integer(v_pindex, v_raw, v_length, v_alphaNums)
-  elif (v_c == "^"):
-    v_num = (-1 * v_read_integer(v_pindex, v_raw, v_length, v_alphaNums))
+def read_integer(pindex, raw, length, alphaNums):
+  num = 0
+  c = raw[pindex[0]]
+  pindex[0] = (pindex[0] + 1)
+  if (c == "%"):
+    value = read_till(pindex, raw, length, "%")
+    num = int(value)
+  elif (c == "@"):
+    num = read_integer(pindex, raw, length, alphaNums)
+    num *= 62
+    num += read_integer(pindex, raw, length, alphaNums)
+  elif (c == "#"):
+    num = read_integer(pindex, raw, length, alphaNums)
+    num *= 62
+    num += read_integer(pindex, raw, length, alphaNums)
+    num *= 62
+    num += read_integer(pindex, raw, length, alphaNums)
+  elif (c == "^"):
+    num = (-1 * read_integer(pindex, raw, length, alphaNums))
   else:
     # TODO: string.IndexOfChar(c)
-    v_num = v_alphaNums.find(v_c)
-    if (v_num == -1):
+    num = alphaNums.find(c)
+    if (num == -1):
       pass
-  return v_num
+  return num
 
-def v_read_string(v_pindex, v_raw, v_length, v_alphaNums):
-  v_b64 = v_read_till(v_pindex, v_raw, v_length, "%")
-  return PST_base64ToString(v_b64)
+def read_string(pindex, raw, length, alphaNums):
+  b64 = read_till(pindex, raw, length, "%")
+  return PST_base64ToString(b64)
 
-def v_read_till(v_index, v_raw, v_length, v_end):
-  v_output = []
-  v_ctn = True
-  v_c = " "
-  while v_ctn:
-    v_c = v_raw[v_index[0]]
-    if (v_c == v_end):
-      v_ctn = False
+def read_till(index, raw, length, end):
+  output = []
+  ctn = True
+  c = " "
+  while ctn:
+    c = raw[index[0]]
+    if (c == end):
+      ctn = False
     else:
-      v_output.append(v_c)
-    v_index[0] = (v_index[0] + 1)
-  return ''.join(v_output)
+      output.append(c)
+    index[0] = (index[0] + 1)
+  return ''.join(output)
 
-def v_reallocIntArray(v_original, v_requiredCapacity):
-  v_oldSize = len(v_original)
-  v_size = v_oldSize
-  while (v_size < v_requiredCapacity):
-    v_size *= 2
-  v_output = (PST_NoneListOfOne * v_size)
-  v_i = 0
-  while (v_i < v_oldSize):
-    v_output[v_i] = v_original[v_i]
-    v_i += 1
-  return v_output
+def reallocIntArray(original, requiredCapacity):
+  oldSize = len(original)
+  size = oldSize
+  while (size < requiredCapacity):
+    size *= 2
+  output = (PST_NoneListOfOne * size)
+  i = 0
+  while (i < oldSize):
+    output[i] = original[i]
+    i += 1
+  return output
 
-def v_Reflect_allClasses(v_vm):
-  v_generics = [None]
-  v_generics[0] = 10
-  v_output = v_makeEmptyList(v_generics, 20)
-  v_classTable = v_vm[4][9]
-  v_i = 1
-  while (v_i < len(v_classTable)):
-    v_classInfo = v_classTable[v_i]
-    if (v_classInfo == None):
-      v_i = len(v_classTable)
+def Reflect_allClasses(vm):
+  generics = [None]
+  generics[0] = 10
+  output = makeEmptyList(generics, 20)
+  classTable = vm[4][9]
+  i = 1
+  while (i < len(classTable)):
+    classInfo = classTable[i]
+    if (classInfo == None):
+      i = len(classTable)
     else:
-      v_addToList(v_output, [10, [False, v_classInfo[0]]])
-    v_i += 1
-  return [6, v_output]
+      addToList(output, [10, [False, classInfo[0]]])
+    i += 1
+  return [6, output]
 
-def v_Reflect_getMethods(v_vm, v_ec, v_methodSource):
-  v_output = v_makeEmptyList(None, 8)
-  if (v_methodSource[0] == 8):
-    v_objInstance1 = v_methodSource[1]
-    v_classInfo = v_vm[4][9][v_objInstance1[0]]
-    v_i = 0
-    while (v_i < len(v_classInfo[9])):
-      v_functionId = v_classInfo[9][v_i]
-      if (v_functionId != -1):
-        v_addToList(v_output, [9, [2, v_methodSource, v_objInstance1[0], v_functionId, None]])
-      v_i += 1
+def Reflect_getMethods(vm, ec, methodSource):
+  output = makeEmptyList(None, 8)
+  if (methodSource[0] == 8):
+    objInstance1 = methodSource[1]
+    classInfo = vm[4][9][objInstance1[0]]
+    i = 0
+    while (i < len(classInfo[9])):
+      functionId = classInfo[9][i]
+      if (functionId != -1):
+        addToList(output, [9, [2, methodSource, objInstance1[0], functionId, None]])
+      i += 1
   else:
-    v_classValue = v_methodSource[1]
-    v_classInfo = v_vm[4][9][v_classValue[1]]
-    v_EX_UnsupportedOperation(v_ec, "static method reflection not implemented yet.")
-  return [6, v_output]
+    classValue = methodSource[1]
+    classInfo = vm[4][9][classValue[1]]
+    EX_UnsupportedOperation(ec, "static method reflection not implemented yet.")
+  return [6, output]
 
-def v_resetLocalsStackTokens(v_ec, v_stack):
-  v_localsStack = v_ec[5]
-  v_localsStackSet = v_ec[6]
-  v_i = v_stack[3]
-  while (v_i < len(v_localsStackSet)):
-    v_localsStackSet[v_i] = 0
-    v_localsStack[v_i] = None
-    v_i += 1
-  v_stackWalker = v_stack
-  while (v_stackWalker != None):
-    v_token = v_stackWalker[1]
-    v_stackWalker[1] = 1
-    v_i = v_stackWalker[2]
-    while (v_i < v_stackWalker[3]):
-      if (v_localsStackSet[v_i] == v_token):
-        v_localsStackSet[v_i] = 1
+def resetLocalsStackTokens(ec, stack):
+  localsStack = ec[5]
+  localsStackSet = ec[6]
+  i = stack[3]
+  while (i < len(localsStackSet)):
+    localsStackSet[i] = 0
+    localsStack[i] = None
+    i += 1
+  stackWalker = stack
+  while (stackWalker != None):
+    token = stackWalker[1]
+    stackWalker[1] = 1
+    i = stackWalker[2]
+    while (i < stackWalker[3]):
+      if (localsStackSet[i] == token):
+        localsStackSet[i] = 1
       else:
-        v_localsStackSet[v_i] = 0
-        v_localsStack[v_i] = None
-      v_i += 1
-    v_stackWalker = v_stackWalker[4]
-  v_ec[7] = 1
+        localsStackSet[i] = 0
+        localsStack[i] = None
+      i += 1
+    stackWalker = stackWalker[4]
+  ec[7] = 1
   return -1
 
-def v_resolvePrimitiveMethodName2(v_lookup, v_type, v_globalNameId):
-  v_output = v_lookup[v_globalNameId]
-  if (v_output != -1):
-    sc_0 = swlookup__resolvePrimitiveMethodName2__0.get((v_type + (11 * v_output)), 1)
+def resolvePrimitiveMethodName2(lookup, type, globalNameId):
+  output = lookup[globalNameId]
+  if (output != -1):
+    sc_0 = swlookup__resolvePrimitiveMethodName2__0.get((type + (11 * output)), 1)
     if (sc_0 == 0):
-      return v_output
+      return output
     else:
       return -1
   return -1
 
 swlookup__resolvePrimitiveMethodName2__0 = { 82: 0, 104: 0, 148: 0, 214: 0, 225: 0, 280: 0, 291: 0, 302: 0, 335: 0, 346: 0, 357: 0, 368: 0, 6: 0, 39: 0, 50: 0, 61: 0, 72: 0, 83: 0, 116: 0, 160: 0, 193: 0, 237: 0, 259: 0, 270: 0, 292: 0, 314: 0, 325: 0, 51: 0, 62: 0, 84: 0, 128: 0, 205: 0, 249: 0, 271: 0, 381: 0, 20: 0, 31: 0, 141: 0, 174: 0, 98: 0, 142: 0, 186: 0 }
 
-def v_resource_manager_getResourceOfType(v_vm, v_userPath, v_type):
-  v_db = v_vm[9]
-  v_lookup = v_db[1]
-  if (v_userPath in v_lookup):
-    v_output = v_makeEmptyList(None, 2)
-    v_file = v_lookup[v_userPath]
-    if v_file[3] == v_type:
-      v_addToList(v_output, v_vm[12][1])
-      v_addToList(v_output, v_buildString(v_vm[12], v_file[1]))
+def resource_manager_getResourceOfType(vm, userPath, type):
+  db = vm[9]
+  lookup = db[1]
+  if (userPath in lookup):
+    output = makeEmptyList(None, 2)
+    file = lookup[userPath]
+    if file[3] == type:
+      addToList(output, vm[12][1])
+      addToList(output, buildString(vm[12], file[1]))
     else:
-      v_addToList(v_output, v_vm[12][2])
-    return [6, v_output]
-  return v_vm[12][0]
+      addToList(output, vm[12][2])
+    return [6, output]
+  return vm[12][0]
 
-def v_resource_manager_populate_directory_lookup(v_dirs, v_path):
-  v_parts = v_path.split("/")
-  v_pathBuilder = ""
-  v_file = ""
-  v_i = 0
-  while (v_i < len(v_parts)):
-    v_file = v_parts[v_i]
-    v_files = None
-    if not ((v_pathBuilder in v_dirs)):
-      v_files = []
-      v_dirs[v_pathBuilder] = v_files
+def resource_manager_populate_directory_lookup(dirs, path):
+  parts = path.split("/")
+  pathBuilder = ""
+  file = ""
+  i = 0
+  while (i < len(parts)):
+    file = parts[i]
+    files = None
+    if not ((pathBuilder in dirs)):
+      files = []
+      dirs[pathBuilder] = files
     else:
-      v_files = v_dirs[v_pathBuilder]
-    v_files.append(v_file)
-    if (v_i > 0):
-      v_pathBuilder = ''.join([v_pathBuilder, "/", v_file])
+      files = dirs[pathBuilder]
+    files.append(file)
+    if (i > 0):
+      pathBuilder = ''.join([pathBuilder, "/", file])
     else:
-      v_pathBuilder = v_file
-    v_i += 1
+      pathBuilder = file
+    i += 1
   return 0
 
-def v_resourceManagerInitialize(v_globals, v_manifest):
-  v_filesPerDirectoryBuilder = {}
-  v_fileInfo = {}
-  v_dataList = []
-  v_items = v_manifest.split("\n")
-  v_resourceInfo = None
-  v_type = ""
-  v_userPath = ""
-  v_internalPath = ""
-  v_argument = ""
-  v_isText = False
-  v_intType = 0
-  v_i = 0
-  while (v_i < len(v_items)):
-    v_itemData = v_items[v_i].split(",")
-    if (len(v_itemData) >= 3):
-      v_type = v_itemData[0]
-      v_isText = "TXT" == v_type
-      if v_isText:
-        v_intType = 1
-      elif ("IMGSH" == v_type or "IMG" == v_type):
-        v_intType = 2
-      elif "SND" == v_type:
-        v_intType = 3
-      elif "TTF" == v_type:
-        v_intType = 4
+def resourceManagerInitialize(globals, manifest):
+  filesPerDirectoryBuilder = {}
+  fileInfo = {}
+  dataList = []
+  items = manifest.split("\n")
+  resourceInfo = None
+  type = ""
+  userPath = ""
+  internalPath = ""
+  argument = ""
+  isText = False
+  intType = 0
+  i = 0
+  while (i < len(items)):
+    itemData = items[i].split(",")
+    if (len(itemData) >= 3):
+      type = itemData[0]
+      isText = "TXT" == type
+      if isText:
+        intType = 1
+      elif ("IMGSH" == type or "IMG" == type):
+        intType = 2
+      elif "SND" == type:
+        intType = 3
+      elif "TTF" == type:
+        intType = 4
       else:
-        v_intType = 5
-      v_userPath = v_stringDecode(v_itemData[1])
-      v_internalPath = v_itemData[2]
-      v_argument = ""
-      if (len(v_itemData) > 3):
-        v_argument = v_stringDecode(v_itemData[3])
-      v_resourceInfo = [v_userPath, v_internalPath, v_isText, v_type, v_argument]
-      v_fileInfo[v_userPath] = v_resourceInfo
-      v_resource_manager_populate_directory_lookup(v_filesPerDirectoryBuilder, v_userPath)
-      v_dataList.append(v_buildString(v_globals, v_userPath))
-      v_dataList.append(v_buildInteger(v_globals, v_intType))
-      if (v_internalPath != None):
-        v_dataList.append(v_buildString(v_globals, v_internalPath))
+        intType = 5
+      userPath = stringDecode(itemData[1])
+      internalPath = itemData[2]
+      argument = ""
+      if (len(itemData) > 3):
+        argument = stringDecode(itemData[3])
+      resourceInfo = [userPath, internalPath, isText, type, argument]
+      fileInfo[userPath] = resourceInfo
+      resource_manager_populate_directory_lookup(filesPerDirectoryBuilder, userPath)
+      dataList.append(buildString(globals, userPath))
+      dataList.append(buildInteger(globals, intType))
+      if (internalPath != None):
+        dataList.append(buildString(globals, internalPath))
       else:
-        v_dataList.append(v_globals[0])
-    v_i += 1
-  v_dirs = list(v_filesPerDirectoryBuilder.keys())
-  v_filesPerDirectorySorted = {}
-  v_i = 0
-  while (v_i < len(v_dirs)):
-    v_dir = v_dirs[v_i]
-    v_unsortedDirs = v_filesPerDirectoryBuilder[v_dir]
-    v_dirsSorted = v_unsortedDirs[:]
-    v_dirsSorted = PST_sortedCopyOfList(v_dirsSorted)
-    v_filesPerDirectorySorted[v_dir] = v_dirsSorted
-    v_i += 1
-  return [v_filesPerDirectorySorted, v_fileInfo, v_dataList]
+        dataList.append(globals[0])
+    i += 1
+  dirs = list(filesPerDirectoryBuilder.keys())
+  filesPerDirectorySorted = {}
+  i = 0
+  while (i < len(dirs)):
+    dir = dirs[i]
+    unsortedDirs = filesPerDirectoryBuilder[dir]
+    dirsSorted = unsortedDirs[:]
+    dirsSorted = PST_sortedCopyOfList(dirsSorted)
+    filesPerDirectorySorted[dir] = dirsSorted
+    i += 1
+  return [filesPerDirectorySorted, fileInfo, dataList]
 
-def v_reverseList(v_list):
-  v_list[2].reverse()
+def reverseList(list):
+  list[2].reverse()
 
-def v_runInterpreter(v_vm, v_executionContextId):
-  v_result = v_interpret(v_vm, v_executionContextId)
-  v_result[3] = v_executionContextId
-  v_status = v_result[0]
-  if (v_status == 1):
-    if (v_executionContextId in v_vm[0]):
-      v_vm[0].pop(v_executionContextId)
-    v_runShutdownHandlers(v_vm)
-  elif (v_status == 3):
-    v_printToStdOut(v_vm[11][3], v_result[1])
-    v_runShutdownHandlers(v_vm)
-  if (v_executionContextId == 0):
-    v_result[4] = True
-  return v_result
+def runInterpreter(vm, executionContextId):
+  result = interpret(vm, executionContextId)
+  result[3] = executionContextId
+  status = result[0]
+  if (status == 1):
+    if (executionContextId in vm[0]):
+      vm[0].pop(executionContextId)
+    runShutdownHandlers(vm)
+  elif (status == 3):
+    printToStdOut(vm[11][3], result[1])
+    runShutdownHandlers(vm)
+  if (executionContextId == 0):
+    result[4] = True
+  return result
 
-def v_runInterpreterWithFunctionPointer(v_vm, v_fpValue, v_args):
-  v_newId = (v_vm[1] + 1)
-  v_vm[1] = v_newId
-  v_argList = []
-  v_i = 0
-  while (v_i < len(v_args)):
-    v_argList.append(v_args[v_i])
-    v_i += 1
-  v_locals = []
-  v_localsSet = []
-  v_valueStack = (PST_NoneListOfOne * 100)
-  v_valueStack[0] = v_fpValue
-  v_valueStack[1] = [6, v_argList]
-  v_stack = [(len(v_vm[2][0]) - 2), 1, 0, 0, None, False, None, 0, 0, 1, 0, None, None, None]
-  v_executionContext = [v_newId, v_stack, 2, 100, v_valueStack, v_locals, v_localsSet, 1, 0, False, None, False, 0, None]
-  v_vm[0][v_newId] = v_executionContext
-  return v_runInterpreter(v_vm, v_newId)
+def runInterpreterWithFunctionPointer(vm, fpValue, args):
+  newId = (vm[1] + 1)
+  vm[1] = newId
+  argList = []
+  i = 0
+  while (i < len(args)):
+    argList.append(args[i])
+    i += 1
+  locals = []
+  localsSet = []
+  valueStack = (PST_NoneListOfOne * 100)
+  valueStack[0] = fpValue
+  valueStack[1] = [6, argList]
+  stack = [(len(vm[2][0]) - 2), 1, 0, 0, None, False, None, 0, 0, 1, 0, None, None, None]
+  executionContext = [newId, stack, 2, 100, valueStack, locals, localsSet, 1, 0, False, None, False, 0, None]
+  vm[0][newId] = executionContext
+  return runInterpreter(vm, newId)
 
-def v_runShutdownHandlers(v_vm):
-  while (len(v_vm[10]) > 0):
-    v_handler = v_vm[10][0]
-    del v_vm[10][0]
-    v_runInterpreterWithFunctionPointer(v_vm, v_handler, [])
+def runShutdownHandlers(vm):
+  while (len(vm[10]) > 0):
+    handler = vm[10][0]
+    del vm[10][0]
+    runInterpreterWithFunctionPointer(vm, handler, [])
   return 0
 
-def v_setItemInList(v_list, v_i, v_v):
-  v_list[2][v_i] = v_v
+def setItemInList(list, i, v):
+  list[2][i] = v
 
-def v_sortHelperIsRevOrder(v_keyStringList, v_keyNumList, v_isString, v_indexLeft, v_indexRight):
-  if v_isString:
-    return (v_keyStringList[v_indexLeft] > v_keyStringList[v_indexRight])
-  return (v_keyNumList[v_indexLeft] > v_keyNumList[v_indexRight])
+def sortHelperIsRevOrder(keyStringList, keyNumList, isString, indexLeft, indexRight):
+  if isString:
+    return (keyStringList[indexLeft] > keyStringList[indexRight])
+  return (keyNumList[indexLeft] > keyNumList[indexRight])
 
-def v_sortHelperSwap(v_keyStringList, v_keyNumList, v_indices, v_isString, v_index1, v_index2):
-  if (v_index1 == v_index2):
+def sortHelperSwap(keyStringList, keyNumList, indices, isString, index1, index2):
+  if (index1 == index2):
     return 0
-  v_t = v_indices[v_index1]
-  v_indices[v_index1] = v_indices[v_index2]
-  v_indices[v_index2] = v_t
-  if v_isString:
-    v_s = v_keyStringList[v_index1]
-    v_keyStringList[v_index1] = v_keyStringList[v_index2]
-    v_keyStringList[v_index2] = v_s
+  t = indices[index1]
+  indices[index1] = indices[index2]
+  indices[index2] = t
+  if isString:
+    s = keyStringList[index1]
+    keyStringList[index1] = keyStringList[index2]
+    keyStringList[index2] = s
   else:
-    v_n = v_keyNumList[v_index1]
-    v_keyNumList[v_index1] = v_keyNumList[v_index2]
-    v_keyNumList[v_index2] = v_n
+    n = keyNumList[index1]
+    keyNumList[index1] = keyNumList[index2]
+    keyNumList[index2] = n
   return 0
 
-def v_sortLists(v_keyList, v_parallelList, v_intOutParam):
+def sortLists(keyList, parallelList, intOutParam):
   PST_IntBuffer16[0] = 0
-  v_length = v_keyList[1]
-  if (v_length < 2):
+  length = keyList[1]
+  if (length < 2):
     return 0
-  v_i = 0
-  v_item = None
-  v_item = v_keyList[2][0]
-  v_isString = (v_item[0] == 5)
-  v_stringKeys = None
-  v_numKeys = None
-  if v_isString:
-    v_stringKeys = (PST_NoneListOfOne * v_length)
+  i = 0
+  item = None
+  item = keyList[2][0]
+  isString = (item[0] == 5)
+  stringKeys = None
+  numKeys = None
+  if isString:
+    stringKeys = (PST_NoneListOfOne * length)
   else:
-    v_numKeys = (PST_NoneListOfOne * v_length)
-  v_indices = (PST_NoneListOfOne * v_length)
-  v_originalOrder = (PST_NoneListOfOne * v_length)
-  v_i = 0
-  while (v_i < v_length):
-    v_indices[v_i] = v_i
-    v_originalOrder[v_i] = v_parallelList[2][v_i]
-    v_item = v_keyList[2][v_i]
-    sc_0 = swlookup__sortLists__0.get(v_item[0], 3)
+    numKeys = (PST_NoneListOfOne * length)
+  indices = (PST_NoneListOfOne * length)
+  originalOrder = (PST_NoneListOfOne * length)
+  i = 0
+  while (i < length):
+    indices[i] = i
+    originalOrder[i] = parallelList[2][i]
+    item = keyList[2][i]
+    sc_0 = swlookup__sortLists__0.get(item[0], 3)
     if (sc_0 < 2):
       if (sc_0 == 0):
-        if v_isString:
+        if isString:
           PST_IntBuffer16[0] = 1
           return 0
-        v_numKeys[v_i] = v_item[1]
+        numKeys[i] = item[1]
       else:
-        if v_isString:
+        if isString:
           PST_IntBuffer16[0] = 1
           return 0
-        v_numKeys[v_i] = v_item[1]
+        numKeys[i] = item[1]
     elif (sc_0 == 2):
-      if not (v_isString):
+      if not (isString):
         PST_IntBuffer16[0] = 1
         return 0
-      v_stringKeys[v_i] = v_item[1]
+      stringKeys[i] = item[1]
     else:
       PST_IntBuffer16[0] = 1
       return 0
-    v_i += 1
-  v_qsortHelper(v_stringKeys, v_numKeys, v_indices, v_isString, 0, (v_length - 1))
-  v_i = 0
-  while (v_i < v_length):
-    v_parallelList[2][v_i] = v_originalOrder[v_indices[v_i]]
-    v_i += 1
+    i += 1
+  qsortHelper(stringKeys, numKeys, indices, isString, 0, (length - 1))
+  i = 0
+  while (i < length):
+    parallelList[2][i] = originalOrder[indices[i]]
+    i += 1
   return 0
 
 swlookup__sortLists__0 = { 3: 0, 4: 1, 5: 2 }
 
-def v_stackItemIsLibrary(v_stackInfo):
-  if (v_stackInfo[0] != "["):
+def stackItemIsLibrary(stackInfo):
+  if (stackInfo[0] != "["):
     return False
-  v_cIndex = v_stackInfo.find(":")
-  return ((v_cIndex > 0) and (v_cIndex < v_stackInfo.find("]")))
+  cIndex = stackInfo.find(":")
+  return ((cIndex > 0) and (cIndex < stackInfo.find("]")))
 
-def v_startVm(v_vm):
-  return v_runInterpreter(v_vm, v_vm[1])
+def startVm(vm):
+  return runInterpreter(vm, vm[1])
 
-def v_stringDecode(v_encoded):
-  if not (("%" in v_encoded)):
-    v_length = len(v_encoded)
-    v_per = "%"
-    v_builder = []
-    v_i = 0
-    while (v_i < v_length):
-      v_c = v_encoded[v_i]
-      if ((v_c == v_per) and ((v_i + 2) < v_length)):
-        v_builder.append(v_stringFromHex(''.join(["", v_encoded[(v_i + 1)], v_encoded[(v_i + 2)]])))
+def stringDecode(encoded):
+  if not (("%" in encoded)):
+    length = len(encoded)
+    per = "%"
+    builder = []
+    i = 0
+    while (i < length):
+      c = encoded[i]
+      if ((c == per) and ((i + 2) < length)):
+        builder.append(stringFromHex(''.join(["", encoded[(i + 1)], encoded[(i + 2)]])))
       else:
-        v_builder.append("" + v_c)
-      v_i += 1
-    return "".join(v_builder)
-  return v_encoded
+        builder.append("" + c)
+      i += 1
+    return "".join(builder)
+  return encoded
 
-def v_stringFromHex(v_encoded):
-  v_encoded = v_encoded.upper()
-  v_hex = "0123456789ABCDEF"
-  v_output = []
-  v_length = len(v_encoded)
-  v_a = 0
-  v_b = 0
-  v_c = None
-  v_i = 0
-  while ((v_i + 1) < v_length):
-    v_c = "" + v_encoded[v_i]
-    v_a = v_hex.find(v_c)
-    if (v_a == -1):
+def stringFromHex(encoded):
+  encoded = encoded.upper()
+  hex = "0123456789ABCDEF"
+  output = []
+  length = len(encoded)
+  a = 0
+  b = 0
+  c = None
+  i = 0
+  while ((i + 1) < length):
+    c = "" + encoded[i]
+    a = hex.find(c)
+    if (a == -1):
       return None
-    v_c = "" + v_encoded[(v_i + 1)]
-    v_b = v_hex.find(v_c)
-    if (v_b == -1):
+    c = "" + encoded[(i + 1)]
+    b = hex.find(c)
+    if (b == -1):
       return None
-    v_a = ((v_a * 16) + v_b)
-    v_output.append(chr(v_a))
-    v_i += 2
-  return "".join(v_output)
+    a = ((a * 16) + b)
+    output.append(chr(a))
+    i += 2
+  return "".join(output)
 
-def v_suspendInterpreter():
+def suspendInterpreter():
   return [2, None, 0.0, 0, False, ""]
 
-def v_tokenDataImpl(v_vm, v_row):
-  v_tokensByPc = v_vm[3][0]
-  v_pc = (v_row[0] + v_vm[4][16])
-  v_line = v_row[1]
-  v_col = v_row[2]
-  v_file = v_row[3]
-  v_tokens = v_tokensByPc[v_pc]
-  if (v_tokens == None):
-    v_tokens = []
-    v_tokensByPc[v_pc] = v_tokens
-  v_tokens.append([v_line, v_col, v_file])
+def tokenDataImpl(vm, row):
+  tokensByPc = vm[3][0]
+  pc = (row[0] + vm[4][16])
+  line = row[1]
+  col = row[2]
+  file = row[3]
+  tokens = tokensByPc[pc]
+  if (tokens == None):
+    tokens = []
+    tokensByPc[pc] = tokens
+  tokens.append([line, col, file])
   return 0
 
-def v_tokenHelperConvertPcsToStackTraceStrings(v_vm, v_pcs):
-  v_tokens = v_generateTokenListFromPcs(v_vm, v_pcs)
-  v_files = v_vm[3][1]
-  v_output = []
-  v_i = 0
-  while (v_i < len(v_tokens)):
-    v_token = v_tokens[v_i]
-    if (v_token == None):
-      v_output.append("[No stack information]")
+def tokenHelperConvertPcsToStackTraceStrings(vm, pcs):
+  tokens = generateTokenListFromPcs(vm, pcs)
+  files = vm[3][1]
+  output = []
+  i = 0
+  while (i < len(tokens)):
+    token = tokens[i]
+    if (token == None):
+      output.append("[No stack information]")
     else:
-      v_line = v_token[0]
-      v_col = v_token[1]
-      v_fileData = v_files[v_token[2]]
-      v_lines = v_fileData.split("\n")
-      v_filename = v_lines[0]
-      v_linevalue = v_lines[(v_line + 1)]
-      v_output.append(''.join([v_filename, ", Line: ", str((v_line + 1)), ", Col: ", str((v_col + 1))]))
-    v_i += 1
-  return v_output
+      line = token[0]
+      col = token[1]
+      fileData = files[token[2]]
+      lines = fileData.split("\n")
+      filename = lines[0]
+      linevalue = lines[(line + 1)]
+      output.append(''.join([filename, ", Line: ", str((line + 1)), ", Col: ", str((col + 1))]))
+    i += 1
+  return output
 
-def v_tokenHelperGetFileLine(v_vm, v_fileId, v_lineNum):
-  v_sourceCode = v_vm[3][1][v_fileId]
-  if (v_sourceCode == None):
+def tokenHelperGetFileLine(vm, fileId, lineNum):
+  sourceCode = vm[3][1][fileId]
+  if (sourceCode == None):
     return None
-  return v_sourceCode.split("\n")[v_lineNum]
+  return sourceCode.split("\n")[lineNum]
 
-def v_tokenHelperGetFormattedPointerToToken(v_vm, v_token):
-  v_line = v_tokenHelperGetFileLine(v_vm, v_token[2], (v_token[0] + 1))
-  if (v_line == None):
+def tokenHelperGetFormattedPointerToToken(vm, token):
+  line = tokenHelperGetFileLine(vm, token[2], (token[0] + 1))
+  if (line == None):
     return None
-  v_columnIndex = v_token[1]
-  v_lineLength = len(v_line)
-  v_line = v_line.lstrip()
-  v_line = v_line.replace("\t", " ")
-  v_offset = (v_lineLength - len(v_line))
-  v_columnIndex -= v_offset
-  v_line2 = ""
-  while (v_columnIndex > 0):
-    v_columnIndex -= 1
-    v_line2 = v_line2 + " "
-  v_line2 = v_line2 + "^"
-  return ''.join([v_line, "\n", v_line2])
+  columnIndex = token[1]
+  lineLength = len(line)
+  line = line.lstrip()
+  line = line.replace("\t", " ")
+  offset = (lineLength - len(line))
+  columnIndex -= offset
+  line2 = ""
+  while (columnIndex > 0):
+    columnIndex -= 1
+    line2 = line2 + " "
+  line2 = line2 + "^"
+  return ''.join([line, "\n", line2])
 
-def v_tokenHelplerIsFilePathLibrary(v_vm, v_fileId, v_allFiles):
-  v_filename = v_tokenHelperGetFileLine(v_vm, v_fileId, 0)
-  return not (v_filename.lower().endswith(".cry"))
+def tokenHelplerIsFilePathLibrary(vm, fileId, allFiles):
+  filename = tokenHelperGetFileLine(vm, fileId, 0)
+  return not (filename.lower().endswith(".cry"))
 
-def v_typeInfoToString(v_vm, v_typeInfo, v_i):
-  v_output = []
-  v_typeToStringBuilder(v_vm, v_output, v_typeInfo, v_i)
-  return "".join(v_output)
+def typeInfoToString(vm, typeInfo, i):
+  output = []
+  typeToStringBuilder(vm, output, typeInfo, i)
+  return "".join(output)
 
-def v_typeToString(v_vm, v_typeInfo, v_i):
-  v_sb = []
-  v_typeToStringBuilder(v_vm, v_sb, v_typeInfo, v_i)
-  return "".join(v_sb)
+def typeToString(vm, typeInfo, i):
+  sb = []
+  typeToStringBuilder(vm, sb, typeInfo, i)
+  return "".join(sb)
 
-def v_typeToStringBuilder(v_vm, v_sb, v_typeInfo, v_i):
-  sc_0 = swlookup__typeToStringBuilder__0.get(v_typeInfo[v_i], 11)
+def typeToStringBuilder(vm, sb, typeInfo, i):
+  sc_0 = swlookup__typeToStringBuilder__0.get(typeInfo[i], 11)
   if (sc_0 < 6):
     if (sc_0 < 3):
       if (sc_0 == 0):
-        v_sb.append("void")
-        return (v_i + 1)
+        sb.append("void")
+        return (i + 1)
       elif (sc_0 == 1):
-        v_sb.append("object")
-        return (v_i + 1)
+        sb.append("object")
+        return (i + 1)
       else:
-        v_sb.append("int")
-        return (v_i + 1)
+        sb.append("int")
+        return (i + 1)
     elif (sc_0 == 3):
-      v_sb.append("float")
-      return (v_i + 1)
+      sb.append("float")
+      return (i + 1)
     elif (sc_0 == 4):
-      v_sb.append("bool")
-      return (v_i + 1)
+      sb.append("bool")
+      return (i + 1)
     else:
-      v_sb.append("string")
-      return (v_i + 1)
+      sb.append("string")
+      return (i + 1)
   elif (sc_0 < 9):
     if (sc_0 == 6):
-      v_sb.append("List<")
-      v_i = v_typeToStringBuilder(v_vm, v_sb, v_typeInfo, (v_i + 1))
-      v_sb.append(">")
-      return v_i
+      sb.append("List<")
+      i = typeToStringBuilder(vm, sb, typeInfo, (i + 1))
+      sb.append(">")
+      return i
     elif (sc_0 == 7):
-      v_sb.append("Dictionary<")
-      v_i = v_typeToStringBuilder(v_vm, v_sb, v_typeInfo, (v_i + 1))
-      v_sb.append(", ")
-      v_i = v_typeToStringBuilder(v_vm, v_sb, v_typeInfo, v_i)
-      v_sb.append(">")
-      return v_i
+      sb.append("Dictionary<")
+      i = typeToStringBuilder(vm, sb, typeInfo, (i + 1))
+      sb.append(", ")
+      i = typeToStringBuilder(vm, sb, typeInfo, i)
+      sb.append(">")
+      return i
     else:
-      v_classId = v_typeInfo[(v_i + 1)]
-      if (v_classId == 0):
-        v_sb.append("object")
+      classId = typeInfo[(i + 1)]
+      if (classId == 0):
+        sb.append("object")
       else:
-        v_classInfo = v_vm[4][9][v_classId]
-        v_sb.append(v_classInfo[16])
-      return (v_i + 2)
+        classInfo = vm[4][9][classId]
+        sb.append(classInfo[16])
+      return (i + 2)
   elif (sc_0 == 9):
-    v_sb.append("Class")
-    return (v_i + 1)
+    sb.append("Class")
+    return (i + 1)
   elif (sc_0 == 10):
-    v_n = v_typeInfo[(v_i + 1)]
-    v_optCount = v_typeInfo[(v_i + 2)]
-    v_i += 2
-    v_sb.append("function(")
-    v_ret = []
-    v_i = v_typeToStringBuilder(v_vm, v_ret, v_typeInfo, v_i)
-    v_j = 1
-    while (v_j < v_n):
-      if (v_j > 1):
-        v_sb.append(", ")
-      v_i = v_typeToStringBuilder(v_vm, v_sb, v_typeInfo, v_i)
-      v_j += 1
-    if (v_n == 1):
-      v_sb.append("void")
-    v_sb.append(" => ")
-    v_optStart = (v_n - v_optCount - 1)
-    v_j = 0
-    while (v_j < len(v_ret)):
-      if (v_j >= v_optStart):
-        v_sb.append("(opt) ")
-      v_sb.append(v_ret[v_j])
-      v_j += 1
-    v_sb.append(")")
-    return v_i
+    n = typeInfo[(i + 1)]
+    optCount = typeInfo[(i + 2)]
+    i += 2
+    sb.append("function(")
+    ret = []
+    i = typeToStringBuilder(vm, ret, typeInfo, i)
+    j = 1
+    while (j < n):
+      if (j > 1):
+        sb.append(", ")
+      i = typeToStringBuilder(vm, sb, typeInfo, i)
+      j += 1
+    if (n == 1):
+      sb.append("void")
+    sb.append(" => ")
+    optStart = (n - optCount - 1)
+    j = 0
+    while (j < len(ret)):
+      if (j >= optStart):
+        sb.append("(opt) ")
+      sb.append(ret[j])
+      j += 1
+    sb.append(")")
+    return i
   else:
-    v_sb.append("UNKNOWN")
-    return (v_i + 1)
+    sb.append("UNKNOWN")
+    return (i + 1)
 
 swlookup__typeToStringBuilder__0 = { -1: 0, 0: 1, 1: 1, 3: 2, 4: 3, 2: 4, 5: 5, 6: 6, 7: 7, 8: 8, 10: 9, 9: 10 }
 
-def v_typeToStringFromValue(v_vm, v_value):
-  v_sb = None
-  sc_0 = swlookup__typeToStringFromValue__0.get(v_value[0], 10)
+def typeToStringFromValue(vm, value):
+  sb = None
+  sc_0 = swlookup__typeToStringFromValue__0.get(value[0], 10)
   if (sc_0 < 6):
     if (sc_0 < 3):
       if (sc_0 == 0):
@@ -5118,40 +5118,40 @@ def v_typeToStringFromValue(v_vm, v_value):
       return "class"
   elif (sc_0 < 9):
     if (sc_0 == 6):
-      v_classId = (v_value[1])[0]
-      v_classInfo = v_vm[4][9][v_classId]
-      return v_classInfo[16]
+      classId = (value[1])[0]
+      classInfo = vm[4][9][classId]
+      return classInfo[16]
     elif (sc_0 == 7):
-      v_sb = []
-      v_sb.append("List<")
-      v_list = v_value[1]
-      if (v_list[0] == None):
-        v_sb.append("object")
+      sb = []
+      sb.append("List<")
+      list = value[1]
+      if (list[0] == None):
+        sb.append("object")
       else:
-        v_typeToStringBuilder(v_vm, v_sb, v_list[0], 0)
-      v_sb.append(">")
-      return "".join(v_sb)
+        typeToStringBuilder(vm, sb, list[0], 0)
+      sb.append(">")
+      return "".join(sb)
     else:
-      v_dict = v_value[1]
-      v_sb = []
-      v_sb.append("Dictionary<")
-      sc_1 = swlookup__typeToStringFromValue__1.get(v_dict[1], 3)
+      dict = value[1]
+      sb = []
+      sb.append("Dictionary<")
+      sc_1 = swlookup__typeToStringFromValue__1.get(dict[1], 3)
       if (sc_1 < 2):
         if (sc_1 == 0):
-          v_sb.append("int")
+          sb.append("int")
         else:
-          v_sb.append("string")
+          sb.append("string")
       elif (sc_1 == 2):
-        v_sb.append("object")
+        sb.append("object")
       else:
-        v_sb.append("???")
-      v_sb.append(", ")
-      if (v_dict[3] == None):
-        v_sb.append("object")
+        sb.append("???")
+      sb.append(", ")
+      if (dict[3] == None):
+        sb.append("object")
       else:
-        v_typeToStringBuilder(v_vm, v_sb, v_dict[3], 0)
-      v_sb.append(">")
-      return "".join(v_sb)
+        typeToStringBuilder(vm, sb, dict[3], 0)
+      sb.append(">")
+      return "".join(sb)
   elif (sc_0 == 9):
     return "Function"
   else:
@@ -5160,139 +5160,139 @@ def v_typeToStringFromValue(v_vm, v_value):
 swlookup__typeToStringFromValue__1 = { 3: 0, 5: 1, 8: 2 }
 swlookup__typeToStringFromValue__0 = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 10: 5, 8: 6, 6: 7, 7: 8, 9: 9 }
 
-def v_uncaughtExceptionResult(v_vm, v_exception):
-  return [3, v_unrollExceptionOutput(v_vm, v_exception), 0.0, 0, False, ""]
+def uncaughtExceptionResult(vm, exception):
+  return [3, unrollExceptionOutput(vm, exception), 0.0, 0, False, ""]
 
-def v_unrollExceptionOutput(v_vm, v_exceptionInstance):
-  v_objInstance = v_exceptionInstance[1]
-  v_classInfo = v_vm[4][9][v_objInstance[0]]
-  v_pcs = v_objInstance[3][1]
-  v_codeFormattedPointer = ""
-  v_exceptionName = v_classInfo[16]
-  v_message = v_valueToString(v_vm, v_objInstance[2][1])
-  v_trace = v_tokenHelperConvertPcsToStackTraceStrings(v_vm, v_pcs)
-  v_trace.pop()
-  v_trace.append("Stack Trace:")
-  v_trace.reverse()
-  v_pcs.reverse()
-  v_showLibStack = v_vm[11][1]
-  if (not (v_showLibStack) and not (v_stackItemIsLibrary(v_trace[0]))):
-    while v_stackItemIsLibrary(v_trace[(len(v_trace) - 1)]):
-      v_trace.pop()
-      v_pcs.pop()
-  v_tokensAtPc = v_vm[3][0][v_pcs[(len(v_pcs) - 1)]]
-  if (v_tokensAtPc != None):
-    v_codeFormattedPointer = "\n\n" + v_tokenHelperGetFormattedPointerToToken(v_vm, v_tokensAtPc[0])
-  v_stackTrace = "\n".join(v_trace)
-  return ''.join([v_stackTrace, v_codeFormattedPointer, "\n", v_exceptionName, ": ", v_message])
+def unrollExceptionOutput(vm, exceptionInstance):
+  objInstance = exceptionInstance[1]
+  classInfo = vm[4][9][objInstance[0]]
+  pcs = objInstance[3][1]
+  codeFormattedPointer = ""
+  exceptionName = classInfo[16]
+  message = valueToString(vm, objInstance[2][1])
+  trace = tokenHelperConvertPcsToStackTraceStrings(vm, pcs)
+  trace.pop()
+  trace.append("Stack Trace:")
+  trace.reverse()
+  pcs.reverse()
+  showLibStack = vm[11][1]
+  if (not (showLibStack) and not (stackItemIsLibrary(trace[0]))):
+    while stackItemIsLibrary(trace[(len(trace) - 1)]):
+      trace.pop()
+      pcs.pop()
+  tokensAtPc = vm[3][0][pcs[(len(pcs) - 1)]]
+  if (tokensAtPc != None):
+    codeFormattedPointer = "\n\n" + tokenHelperGetFormattedPointerToToken(vm, tokensAtPc[0])
+  stackTrace = "\n".join(trace)
+  return ''.join([stackTrace, codeFormattedPointer, "\n", exceptionName, ": ", message])
 
-def v_valueConcatLists(v_a, v_b):
-  return [None, (v_a[1] + v_b[1]), v_a[2] + v_b[2]]
+def valueConcatLists(a, b):
+  return [None, (a[1] + b[1]), a[2] + b[2]]
 
-def v_valueMultiplyList(v_a, v_n):
-  v_len = (v_a[1] * v_n)
-  v_output = v_makeEmptyList(v_a[0], v_len)
-  if (v_len == 0):
-    return v_output
-  v_aLen = v_a[1]
-  v_i = 0
-  v_value = None
-  if (v_aLen == 1):
-    v_value = v_a[2][0]
-    v_i = 0
-    while (v_i < v_n):
-      v_output[2].append(v_value)
-      v_i += 1
+def valueMultiplyList(a, n):
+  len = (a[1] * n)
+  output = makeEmptyList(a[0], len)
+  if (len == 0):
+    return output
+  aLen = a[1]
+  i = 0
+  value = None
+  if (aLen == 1):
+    value = a[2][0]
+    i = 0
+    while (i < n):
+      output[2].append(value)
+      i += 1
   else:
-    v_j = 0
-    v_i = 0
-    while (v_i < v_n):
-      v_j = 0
-      while (v_j < v_aLen):
-        v_output[2].append(v_a[2][v_j])
-        v_j += 1
-      v_i += 1
-  v_output[1] = v_len
-  return v_output
+    j = 0
+    i = 0
+    while (i < n):
+      j = 0
+      while (j < aLen):
+        output[2].append(a[2][j])
+        j += 1
+      i += 1
+  output[1] = len
+  return output
 
-def v_valueStackIncreaseCapacity(v_ec):
-  v_stack = v_ec[4]
-  v_oldCapacity = len(v_stack)
-  v_newCapacity = (v_oldCapacity * 2)
-  v_newStack = (PST_NoneListOfOne * v_newCapacity)
-  v_i = (v_oldCapacity - 1)
-  while (v_i >= 0):
-    v_newStack[v_i] = v_stack[v_i]
-    v_i -= 1
-  v_ec[4] = v_newStack
-  return v_newStack
+def valueStackIncreaseCapacity(ec):
+  stack = ec[4]
+  oldCapacity = len(stack)
+  newCapacity = (oldCapacity * 2)
+  newStack = (PST_NoneListOfOne * newCapacity)
+  i = (oldCapacity - 1)
+  while (i >= 0):
+    newStack[i] = stack[i]
+    i -= 1
+  ec[4] = newStack
+  return newStack
 
-def v_valueToString(v_vm, v_wrappedValue):
-  v_type = v_wrappedValue[0]
-  if (v_type == 1):
+def valueToString(vm, wrappedValue):
+  type = wrappedValue[0]
+  if (type == 1):
     return "null"
-  if (v_type == 2):
-    if v_wrappedValue[1]:
+  if (type == 2):
+    if wrappedValue[1]:
       return "true"
     return "false"
-  if (v_type == 4):
-    v_floatStr = str(v_wrappedValue[1])
-    if not (("." in v_floatStr)):
-      v_floatStr += ".0"
-    return v_floatStr
-  if (v_type == 3):
-    return str(v_wrappedValue[1])
-  if (v_type == 5):
-    return v_wrappedValue[1]
-  if (v_type == 6):
-    v_internalList = v_wrappedValue[1]
-    v_output = "["
-    v_i = 0
-    while (v_i < v_internalList[1]):
-      if (v_i > 0):
-        v_output += ", "
-      v_output += v_valueToString(v_vm, v_internalList[2][v_i])
-      v_i += 1
-    v_output += "]"
-    return v_output
-  if (v_type == 8):
-    v_objInstance = v_wrappedValue[1]
-    v_classId = v_objInstance[0]
-    v_ptr = v_objInstance[1]
-    v_classInfo = v_vm[4][9][v_classId]
-    v_nameId = v_classInfo[1]
-    v_className = v_vm[4][0][v_nameId]
-    return ''.join(["Instance<", v_className, "#", str(v_ptr), ">"])
-  if (v_type == 7):
-    v_dict = v_wrappedValue[1]
-    if (v_dict[0] == 0):
+  if (type == 4):
+    floatStr = str(wrappedValue[1])
+    if not (("." in floatStr)):
+      floatStr += ".0"
+    return floatStr
+  if (type == 3):
+    return str(wrappedValue[1])
+  if (type == 5):
+    return wrappedValue[1]
+  if (type == 6):
+    internalList = wrappedValue[1]
+    output = "["
+    i = 0
+    while (i < internalList[1]):
+      if (i > 0):
+        output += ", "
+      output += valueToString(vm, internalList[2][i])
+      i += 1
+    output += "]"
+    return output
+  if (type == 8):
+    objInstance = wrappedValue[1]
+    classId = objInstance[0]
+    ptr = objInstance[1]
+    classInfo = vm[4][9][classId]
+    nameId = classInfo[1]
+    className = vm[4][0][nameId]
+    return ''.join(["Instance<", className, "#", str(ptr), ">"])
+  if (type == 7):
+    dict = wrappedValue[1]
+    if (dict[0] == 0):
       return "{}"
-    v_output = "{"
-    v_keyList = v_dict[6]
-    v_valueList = v_dict[7]
-    v_i = 0
-    while (v_i < v_dict[0]):
-      if (v_i > 0):
-        v_output += ", "
-      v_output += ''.join([v_valueToString(v_vm, v_dict[6][v_i]), ": ", v_valueToString(v_vm, v_dict[7][v_i])])
-      v_i += 1
-    v_output += " }"
-    return v_output
+    output = "{"
+    keyList = dict[6]
+    valueList = dict[7]
+    i = 0
+    while (i < dict[0]):
+      if (i > 0):
+        output += ", "
+      output += ''.join([valueToString(vm, dict[6][i]), ": ", valueToString(vm, dict[7][i])])
+      i += 1
+    output += " }"
+    return output
   return "<unknown>"
 
-def v_vm_getCurrentExecutionContextId(v_vm):
-  return v_vm[1]
+def vm_getCurrentExecutionContextId(vm):
+  return vm[1]
 
-def v_vm_suspend(v_vm, v_status):
-  return v_vm_suspend_for_context(v_getExecutionContext(v_vm, -1), 1)
+def vm_suspend(vm, status):
+  return vm_suspend_for_context(getExecutionContext(vm, -1), 1)
 
-def v_vm_suspend_for_context(v_ec, v_status):
-  v_ec[11] = True
-  v_ec[12] = v_status
+def vm_suspend_for_context(ec, status):
+  ec[11] = True
+  ec[12] = status
   return 0
 
-def v_vm_suspend_with_status(v_vm, v_status):
-  return v_vm_suspend_for_context(v_getExecutionContext(v_vm, -1), v_status)
+def vm_suspend_with_status(vm, status):
+  return vm_suspend_for_context(getExecutionContext(vm, -1), status)
 
-def v_vmEnvSetCommandLineArgs(v_vm, v_args):
-  v_vm[11][0] = v_args
+def vmEnvSetCommandLineArgs(vm, args):
+  vm[11][0] = args

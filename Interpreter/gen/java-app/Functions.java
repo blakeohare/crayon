@@ -312,32 +312,32 @@ private static String[] PST_sortedCopyOfStringArray(String[] values) {
   return output;
 }
 
-public static int v_addLiteralImpl(VmContext v_vm, int[] v_row, String v_stringArg) {
-  VmGlobals v_g = v_vm.globals;
-  int v_type = v_row[0];
-  if ((v_type == 1)) {
-    v_vm.metadata.literalTableBuilder.add(v_g.valueNull);
+public static int addLiteralImpl(VmContext vm, int[] row, String stringArg) {
+  VmGlobals g = vm.globals;
+  int type = row[0];
+  if ((type == 1)) {
+    vm.metadata.literalTableBuilder.add(g.valueNull);
   } else {
-    if ((v_type == 2)) {
-      v_vm.metadata.literalTableBuilder.add(v_buildBoolean(v_g, (v_row[1] == 1)));
+    if ((type == 2)) {
+      vm.metadata.literalTableBuilder.add(buildBoolean(g, (row[1] == 1)));
     } else {
-      if ((v_type == 3)) {
-        v_vm.metadata.literalTableBuilder.add(v_buildInteger(v_g, v_row[1]));
+      if ((type == 3)) {
+        vm.metadata.literalTableBuilder.add(buildInteger(g, row[1]));
       } else {
-        if ((v_type == 4)) {
-          v_vm.metadata.literalTableBuilder.add(v_buildFloat(v_g, Double.parseDouble(v_stringArg)));
+        if ((type == 4)) {
+          vm.metadata.literalTableBuilder.add(buildFloat(g, Double.parseDouble(stringArg)));
         } else {
-          if ((v_type == 5)) {
-            v_vm.metadata.literalTableBuilder.add(v_buildCommonString(v_g, v_stringArg));
+          if ((type == 5)) {
+            vm.metadata.literalTableBuilder.add(buildCommonString(g, stringArg));
           } else {
-            if ((v_type == 9)) {
-              int v_index = v_vm.metadata.literalTableBuilder.size();
-              v_vm.metadata.literalTableBuilder.add(v_buildCommonString(v_g, v_stringArg));
-              v_vm.metadata.invFunctionNameLiterals.put(v_stringArg, v_index);
+            if ((type == 9)) {
+              int index = vm.metadata.literalTableBuilder.size();
+              vm.metadata.literalTableBuilder.add(buildCommonString(g, stringArg));
+              vm.metadata.invFunctionNameLiterals.put(stringArg, index);
             } else {
-              if ((v_type == 10)) {
-                org.crayonlang.interpreter.structs.ClassValue v_cv = new org.crayonlang.interpreter.structs.ClassValue(false, v_row[1]);
-                v_vm.metadata.literalTableBuilder.add(new Value(10, v_cv));
+              if ((type == 10)) {
+                org.crayonlang.interpreter.structs.ClassValue cv = new org.crayonlang.interpreter.structs.ClassValue(false, row[1]);
+                vm.metadata.literalTableBuilder.add(new Value(10, cv));
               }
             }
           }
@@ -348,185 +348,185 @@ public static int v_addLiteralImpl(VmContext v_vm, int[] v_row, String v_stringA
   return 0;
 }
 
-public static int v_addNameImpl(VmContext v_vm, String v_nameValue) {
-  int v_index = v_vm.metadata.identifiersBuilder.size();
-  v_vm.metadata.invIdentifiers.put(v_nameValue, v_index);
-  v_vm.metadata.identifiersBuilder.add(v_nameValue);
-  if ("length".equals(v_nameValue)) {
-    v_vm.metadata.lengthId = v_index;
+public static int addNameImpl(VmContext vm, String nameValue) {
+  int index = vm.metadata.identifiersBuilder.size();
+  vm.metadata.invIdentifiers.put(nameValue, index);
+  vm.metadata.identifiersBuilder.add(nameValue);
+  if ("length".equals(nameValue)) {
+    vm.metadata.lengthId = index;
   }
   return 0;
 }
 
-public static void v_addToList(ListImpl v_list, Value v_item) {
-  if ((v_list.size == v_list.capacity)) {
-    v_increaseListCapacity(v_list);
+public static void addToList(ListImpl list, Value item) {
+  if ((list.size == list.capacity)) {
+    increaseListCapacity(list);
   }
-  v_list.array[v_list.size] = v_item;
-  v_list.size += 1;
+  list.array[list.size] = item;
+  list.size += 1;
 }
 
-public static int v_applyDebugSymbolData(VmContext v_vm, int[] v_opArgs, String v_stringData, FunctionInfo v_recentlyDefinedFunction) {
+public static int applyDebugSymbolData(VmContext vm, int[] opArgs, String stringData, FunctionInfo recentlyDefinedFunction) {
   return 0;
 }
 
-public static Value v_buildBoolean(VmGlobals v_g, boolean v_value) {
-  if (v_value) {
-    return v_g.boolTrue;
+public static Value buildBoolean(VmGlobals g, boolean value) {
+  if (value) {
+    return g.boolTrue;
   }
-  return v_g.boolFalse;
+  return g.boolFalse;
 }
 
-public static Value v_buildCommonString(VmGlobals v_g, String v_s) {
-  Value v_value = null;
-  Value dictLookup0 = v_g.commonStrings.get(v_s);
-  v_value = dictLookup0 == null ? (v_g.commonStrings.containsKey(v_s) ? null : (null)) : dictLookup0;
-  if ((v_value == null)) {
-    v_value = v_buildString(v_g, v_s);
-    v_g.commonStrings.put(v_s, v_value);
+public static Value buildCommonString(VmGlobals g, String s) {
+  Value value = null;
+  Value dictLookup0 = g.commonStrings.get(s);
+  value = dictLookup0 == null ? (g.commonStrings.containsKey(s) ? null : (null)) : dictLookup0;
+  if ((value == null)) {
+    value = buildString(g, s);
+    g.commonStrings.put(s, value);
   }
-  return v_value;
+  return value;
 }
 
-public static Value v_buildFloat(VmGlobals v_g, double v_value) {
-  if ((v_value == 0.0)) {
-    return v_g.floatZero;
+public static Value buildFloat(VmGlobals g, double value) {
+  if ((value == 0.0)) {
+    return g.floatZero;
   }
-  if ((v_value == 1.0)) {
-    return v_g.floatOne;
+  if ((value == 1.0)) {
+    return g.floatOne;
   }
-  return new Value(4, v_value);
+  return new Value(4, value);
 }
 
-public static Value v_buildInteger(VmGlobals v_g, int v_num) {
-  if ((v_num < 0)) {
-    if ((v_num > -257)) {
-      return v_g.negativeIntegers[-v_num];
+public static Value buildInteger(VmGlobals g, int num) {
+  if ((num < 0)) {
+    if ((num > -257)) {
+      return g.negativeIntegers[-num];
     }
   } else {
-    if ((v_num < 2049)) {
-      return v_g.positiveIntegers[v_num];
+    if ((num < 2049)) {
+      return g.positiveIntegers[num];
     }
   }
-  return new Value(v_num);
+  return new Value(num);
 }
 
-public static Value v_buildList(ArrayList<Value> v_valueList) {
-  return v_buildListWithType(null, v_valueList);
+public static Value buildList(ArrayList<Value> valueList) {
+  return buildListWithType(null, valueList);
 }
 
-public static Value v_buildListWithType(int[] v_type, ArrayList<Value> v_valueList) {
-  int v_len = v_valueList.size();
-  ListImpl v_output = v_makeEmptyList(v_type, v_len);
-  int v_i = 0;
-  while ((v_i < v_len)) {
-    v_output.array[v_i] = v_valueList.get(v_i);
-    v_i += 1;
+public static Value buildListWithType(int[] type, ArrayList<Value> valueList) {
+  int len = valueList.size();
+  ListImpl output = makeEmptyList(type, len);
+  int i = 0;
+  while ((i < len)) {
+    output.array[i] = valueList.get(i);
+    i += 1;
   }
-  v_output.size = v_len;
-  return new Value(6, v_output);
+  output.size = len;
+  return new Value(6, output);
 }
 
-public static Value v_buildNull(VmGlobals v_globals) {
-  return v_globals.valueNull;
+public static Value buildNull(VmGlobals globals) {
+  return globals.valueNull;
 }
 
-public static PlatformRelayObject v_buildRelayObj(int v_type, int v_iarg1, int v_iarg2, int v_iarg3, double v_farg1, String v_sarg1) {
-  return new PlatformRelayObject(v_type, v_iarg1, v_iarg2, v_iarg3, v_farg1, v_sarg1);
+public static PlatformRelayObject buildRelayObj(int type, int iarg1, int iarg2, int iarg3, double farg1, String sarg1) {
+  return new PlatformRelayObject(type, iarg1, iarg2, iarg3, farg1, sarg1);
 }
 
-public static Value v_buildString(VmGlobals v_g, String v_s) {
-  if ((v_s.length() == 0)) {
-    return v_g.stringEmpty;
+public static Value buildString(VmGlobals g, String s) {
+  if ((s.length() == 0)) {
+    return g.stringEmpty;
   }
-  return new Value(5, v_s);
+  return new Value(5, s);
 }
 
-public static Value v_buildStringDictionary(VmGlobals v_globals, String[] v_stringKeys, Value[] v_values) {
-  int v_size = v_stringKeys.length;
-  DictImpl v_d = new DictImpl(v_size, 5, 0, null, new HashMap<Integer, Integer>(), new HashMap<String, Integer>(), new ArrayList<Value>(), new ArrayList<Value>());
-  String v_k = null;
-  int v_i = 0;
-  while ((v_i < v_size)) {
-    v_k = v_stringKeys[v_i];
-    if (v_d.stringToIndex.containsKey(v_k)) {
-      v_d.values.set(v_d.stringToIndex.get(v_k), v_values[v_i]);
+public static Value buildStringDictionary(VmGlobals globals, String[] stringKeys, Value[] values) {
+  int size = stringKeys.length;
+  DictImpl d = new DictImpl(size, 5, 0, null, new HashMap<Integer, Integer>(), new HashMap<String, Integer>(), new ArrayList<Value>(), new ArrayList<Value>());
+  String k = null;
+  int i = 0;
+  while ((i < size)) {
+    k = stringKeys[i];
+    if (d.stringToIndex.containsKey(k)) {
+      d.values.set(d.stringToIndex.get(k), values[i]);
     } else {
-      v_d.stringToIndex.put(v_k, v_d.values.size());
-      v_d.values.add(v_values[v_i]);
-      v_d.keys.add(v_buildString(v_globals, v_k));
+      d.stringToIndex.put(k, d.values.size());
+      d.values.add(values[i]);
+      d.keys.add(buildString(globals, k));
     }
-    v_i += 1;
+    i += 1;
   }
-  v_d.size = v_d.values.size();
-  return new Value(7, v_d);
+  d.size = d.values.size();
+  return new Value(7, d);
 }
 
-public static boolean v_canAssignGenericToGeneric(VmContext v_vm, int[] v_gen1, int v_gen1Index, int[] v_gen2, int v_gen2Index, int[] v_newIndexOut) {
-  if ((v_gen2 == null)) {
+public static boolean canAssignGenericToGeneric(VmContext vm, int[] gen1, int gen1Index, int[] gen2, int gen2Index, int[] newIndexOut) {
+  if ((gen2 == null)) {
     return true;
   }
-  if ((v_gen1 == null)) {
+  if ((gen1 == null)) {
     return false;
   }
-  int v_t1 = v_gen1[v_gen1Index];
-  int v_t2 = v_gen2[v_gen2Index];
-  switch (v_t1) {
+  int t1 = gen1[gen1Index];
+  int t2 = gen2[gen2Index];
+  switch (t1) {
     case 0:
-      v_newIndexOut[0] = (v_gen1Index + 1);
-      v_newIndexOut[1] = (v_gen2Index + 2);
-      return (v_t2 == v_t1);
+      newIndexOut[0] = (gen1Index + 1);
+      newIndexOut[1] = (gen2Index + 2);
+      return (t2 == t1);
     case 1:
-      v_newIndexOut[0] = (v_gen1Index + 1);
-      v_newIndexOut[1] = (v_gen2Index + 2);
-      return (v_t2 == v_t1);
+      newIndexOut[0] = (gen1Index + 1);
+      newIndexOut[1] = (gen2Index + 2);
+      return (t2 == t1);
     case 2:
-      v_newIndexOut[0] = (v_gen1Index + 1);
-      v_newIndexOut[1] = (v_gen2Index + 2);
-      return (v_t2 == v_t1);
+      newIndexOut[0] = (gen1Index + 1);
+      newIndexOut[1] = (gen2Index + 2);
+      return (t2 == t1);
     case 4:
-      v_newIndexOut[0] = (v_gen1Index + 1);
-      v_newIndexOut[1] = (v_gen2Index + 2);
-      return (v_t2 == v_t1);
+      newIndexOut[0] = (gen1Index + 1);
+      newIndexOut[1] = (gen2Index + 2);
+      return (t2 == t1);
     case 5:
-      v_newIndexOut[0] = (v_gen1Index + 1);
-      v_newIndexOut[1] = (v_gen2Index + 2);
-      return (v_t2 == v_t1);
+      newIndexOut[0] = (gen1Index + 1);
+      newIndexOut[1] = (gen2Index + 2);
+      return (t2 == t1);
     case 10:
-      v_newIndexOut[0] = (v_gen1Index + 1);
-      v_newIndexOut[1] = (v_gen2Index + 2);
-      return (v_t2 == v_t1);
+      newIndexOut[0] = (gen1Index + 1);
+      newIndexOut[1] = (gen2Index + 2);
+      return (t2 == t1);
     case 3:
-      v_newIndexOut[0] = (v_gen1Index + 1);
-      v_newIndexOut[1] = (v_gen2Index + 2);
-      return ((v_t2 == 3) || (v_t2 == 4));
+      newIndexOut[0] = (gen1Index + 1);
+      newIndexOut[1] = (gen2Index + 2);
+      return ((t2 == 3) || (t2 == 4));
     case 8:
-      v_newIndexOut[0] = (v_gen1Index + 1);
-      v_newIndexOut[1] = (v_gen2Index + 2);
-      if ((v_t2 != 8)) {
+      newIndexOut[0] = (gen1Index + 1);
+      newIndexOut[1] = (gen2Index + 2);
+      if ((t2 != 8)) {
         return false;
       }
-      int v_c1 = v_gen1[(v_gen1Index + 1)];
-      int v_c2 = v_gen2[(v_gen2Index + 1)];
-      if ((v_c1 == v_c2)) {
+      int c1 = gen1[(gen1Index + 1)];
+      int c2 = gen2[(gen2Index + 1)];
+      if ((c1 == c2)) {
         return true;
       }
-      return v_isClassASubclassOf(v_vm, v_c1, v_c2);
+      return isClassASubclassOf(vm, c1, c2);
     case 6:
-      if ((v_t2 != 6)) {
+      if ((t2 != 6)) {
         return false;
       }
-      return v_canAssignGenericToGeneric(v_vm, v_gen1, (v_gen1Index + 1), v_gen2, (v_gen2Index + 1), v_newIndexOut);
+      return canAssignGenericToGeneric(vm, gen1, (gen1Index + 1), gen2, (gen2Index + 1), newIndexOut);
     case 7:
-      if ((v_t2 != 7)) {
+      if ((t2 != 7)) {
         return false;
       }
-      if (!v_canAssignGenericToGeneric(v_vm, v_gen1, (v_gen1Index + 1), v_gen2, (v_gen2Index + 1), v_newIndexOut)) {
+      if (!canAssignGenericToGeneric(vm, gen1, (gen1Index + 1), gen2, (gen2Index + 1), newIndexOut)) {
         return false;
       }
-      return v_canAssignGenericToGeneric(v_vm, v_gen1, v_newIndexOut[0], v_gen2, v_newIndexOut[1], v_newIndexOut);
+      return canAssignGenericToGeneric(vm, gen1, newIndexOut[0], gen2, newIndexOut[1], newIndexOut);
     case 9:
-      if ((v_t2 != 9)) {
+      if ((t2 != 9)) {
         return false;
       }
       return false;
@@ -535,120 +535,120 @@ public static boolean v_canAssignGenericToGeneric(VmContext v_vm, int[] v_gen1, 
   }
 }
 
-public static Value v_canAssignTypeToGeneric(VmContext v_vm, Value v_value, int[] v_generics, int v_genericIndex) {
-  switch (v_value.type) {
+public static Value canAssignTypeToGeneric(VmContext vm, Value value, int[] generics, int genericIndex) {
+  switch (value.type) {
     case 1:
-      switch (v_generics[v_genericIndex]) {
+      switch (generics[genericIndex]) {
         case 5:
-          return v_value;
+          return value;
         case 8:
-          return v_value;
+          return value;
         case 10:
-          return v_value;
+          return value;
         case 9:
-          return v_value;
+          return value;
         case 6:
-          return v_value;
+          return value;
         case 7:
-          return v_value;
+          return value;
       }
       return null;
     case 2:
-      if ((v_generics[v_genericIndex] == v_value.type)) {
-        return v_value;
+      if ((generics[genericIndex] == value.type)) {
+        return value;
       }
       return null;
     case 5:
-      if ((v_generics[v_genericIndex] == v_value.type)) {
-        return v_value;
+      if ((generics[genericIndex] == value.type)) {
+        return value;
       }
       return null;
     case 10:
-      if ((v_generics[v_genericIndex] == v_value.type)) {
-        return v_value;
+      if ((generics[genericIndex] == value.type)) {
+        return value;
       }
       return null;
     case 3:
-      if ((v_generics[v_genericIndex] == 3)) {
-        return v_value;
+      if ((generics[genericIndex] == 3)) {
+        return value;
       }
-      if ((v_generics[v_genericIndex] == 4)) {
-        return v_buildFloat(v_vm.globals, (0.0 + v_value.intValue));
+      if ((generics[genericIndex] == 4)) {
+        return buildFloat(vm.globals, (0.0 + value.intValue));
       }
       return null;
     case 4:
-      if ((v_generics[v_genericIndex] == 4)) {
-        return v_value;
+      if ((generics[genericIndex] == 4)) {
+        return value;
       }
       return null;
     case 6:
-      ListImpl v_list = ((ListImpl) v_value.internalValue);
-      int[] v_listType = v_list.type;
-      v_genericIndex += 1;
-      if ((v_listType == null)) {
-        if (((v_generics[v_genericIndex] == 1) || (v_generics[v_genericIndex] == 0))) {
-          return v_value;
+      ListImpl list = ((ListImpl) value.internalValue);
+      int[] listType = list.type;
+      genericIndex += 1;
+      if ((listType == null)) {
+        if (((generics[genericIndex] == 1) || (generics[genericIndex] == 0))) {
+          return value;
         }
         return null;
       }
-      int v_i = 0;
-      while ((v_i < v_listType.length)) {
-        if ((v_listType[v_i] != v_generics[(v_genericIndex + v_i)])) {
+      int i = 0;
+      while ((i < listType.length)) {
+        if ((listType[i] != generics[(genericIndex + i)])) {
           return null;
         }
-        v_i += 1;
+        i += 1;
       }
-      return v_value;
+      return value;
     case 7:
-      DictImpl v_dict = ((DictImpl) v_value.internalValue);
-      int v_j = v_genericIndex;
-      switch (v_dict.keyType) {
+      DictImpl dict = ((DictImpl) value.internalValue);
+      int j = genericIndex;
+      switch (dict.keyType) {
         case 3:
-          if ((v_generics[1] == v_dict.keyType)) {
-            v_j += 2;
+          if ((generics[1] == dict.keyType)) {
+            j += 2;
           } else {
             return null;
           }
           break;
         case 5:
-          if ((v_generics[1] == v_dict.keyType)) {
-            v_j += 2;
+          if ((generics[1] == dict.keyType)) {
+            j += 2;
           } else {
             return null;
           }
           break;
         case 8:
-          if ((v_generics[1] == 8)) {
-            v_j += 3;
+          if ((generics[1] == 8)) {
+            j += 3;
           } else {
             return null;
           }
           break;
       }
-      int[] v_valueType = v_dict.valueType;
-      if ((v_valueType == null)) {
-        if (((v_generics[v_j] == 0) || (v_generics[v_j] == 1))) {
-          return v_value;
+      int[] valueType = dict.valueType;
+      if ((valueType == null)) {
+        if (((generics[j] == 0) || (generics[j] == 1))) {
+          return value;
         }
         return null;
       }
-      int v_k = 0;
-      while ((v_k < v_valueType.length)) {
-        if ((v_valueType[v_k] != v_generics[(v_j + v_k)])) {
+      int k = 0;
+      while ((k < valueType.length)) {
+        if ((valueType[k] != generics[(j + k)])) {
           return null;
         }
-        v_k += 1;
+        k += 1;
       }
-      return v_value;
+      return value;
     case 8:
-      if ((v_generics[v_genericIndex] == 8)) {
-        int v_targetClassId = v_generics[(v_genericIndex + 1)];
-        int v_givenClassId = (((ObjectInstance) v_value.internalValue)).classId;
-        if ((v_targetClassId == v_givenClassId)) {
-          return v_value;
+      if ((generics[genericIndex] == 8)) {
+        int targetClassId = generics[(genericIndex + 1)];
+        int givenClassId = (((ObjectInstance) value.internalValue)).classId;
+        if ((targetClassId == givenClassId)) {
+          return value;
         }
-        if (v_isClassASubclassOf(v_vm, v_givenClassId, v_targetClassId)) {
-          return v_value;
+        if (isClassASubclassOf(vm, givenClassId, targetClassId)) {
+          return value;
         }
       }
       return null;
@@ -656,301 +656,301 @@ public static Value v_canAssignTypeToGeneric(VmContext v_vm, Value v_value, int[
   return null;
 }
 
-public static double v_canonicalizeAngle(double v_a) {
-  double v_twopi = 6.28318530717958;
-  v_a = (v_a % v_twopi);
-  if ((v_a < 0)) {
-    v_a += v_twopi;
+public static double canonicalizeAngle(double a) {
+  double twopi = 6.28318530717958;
+  a = (a % twopi);
+  if ((a < 0)) {
+    a += twopi;
   }
-  return v_a;
+  return a;
 }
 
-public static int v_canonicalizeListSliceArgs(int[] v_outParams, Value v_beginValue, Value v_endValue, int v_beginIndex, int v_endIndex, int v_stepAmount, int v_length, boolean v_isForward) {
-  if ((v_beginValue == null)) {
-    if (v_isForward) {
-      v_beginIndex = 0;
+public static int canonicalizeListSliceArgs(int[] outParams, Value beginValue, Value endValue, int beginIndex, int endIndex, int stepAmount, int length, boolean isForward) {
+  if ((beginValue == null)) {
+    if (isForward) {
+      beginIndex = 0;
     } else {
-      v_beginIndex = (v_length - 1);
+      beginIndex = (length - 1);
     }
   }
-  if ((v_endValue == null)) {
-    if (v_isForward) {
-      v_endIndex = v_length;
+  if ((endValue == null)) {
+    if (isForward) {
+      endIndex = length;
     } else {
-      v_endIndex = (-1 - v_length);
+      endIndex = (-1 - length);
     }
   }
-  if ((v_beginIndex < 0)) {
-    v_beginIndex += v_length;
+  if ((beginIndex < 0)) {
+    beginIndex += length;
   }
-  if ((v_endIndex < 0)) {
-    v_endIndex += v_length;
+  if ((endIndex < 0)) {
+    endIndex += length;
   }
-  if (((v_beginIndex == 0) && (v_endIndex == v_length) && (v_stepAmount == 1))) {
+  if (((beginIndex == 0) && (endIndex == length) && (stepAmount == 1))) {
     return 2;
   }
-  if (v_isForward) {
-    if ((v_beginIndex >= v_length)) {
+  if (isForward) {
+    if ((beginIndex >= length)) {
       return 0;
     }
-    if ((v_beginIndex < 0)) {
+    if ((beginIndex < 0)) {
       return 3;
     }
-    if ((v_endIndex < v_beginIndex)) {
+    if ((endIndex < beginIndex)) {
       return 4;
     }
-    if ((v_beginIndex == v_endIndex)) {
+    if ((beginIndex == endIndex)) {
       return 0;
     }
-    if ((v_endIndex > v_length)) {
-      v_endIndex = v_length;
+    if ((endIndex > length)) {
+      endIndex = length;
     }
   } else {
-    if ((v_beginIndex < 0)) {
+    if ((beginIndex < 0)) {
       return 0;
     }
-    if ((v_beginIndex >= v_length)) {
+    if ((beginIndex >= length)) {
       return 3;
     }
-    if ((v_endIndex > v_beginIndex)) {
+    if ((endIndex > beginIndex)) {
       return 4;
     }
-    if ((v_beginIndex == v_endIndex)) {
+    if ((beginIndex == endIndex)) {
       return 0;
     }
-    if ((v_endIndex < -1)) {
-      v_endIndex = -1;
+    if ((endIndex < -1)) {
+      endIndex = -1;
     }
   }
-  v_outParams[0] = v_beginIndex;
-  v_outParams[1] = v_endIndex;
+  outParams[0] = beginIndex;
+  outParams[1] = endIndex;
   return 1;
 }
 
-public static String v_classIdToString(VmContext v_vm, int v_classId) {
-  return v_vm.metadata.classTable[v_classId].fullyQualifiedName;
+public static String classIdToString(VmContext vm, int classId) {
+  return vm.metadata.classTable[classId].fullyQualifiedName;
 }
 
-public static int v_clearList(ListImpl v_a) {
-  int v_i = (v_a.size - 1);
-  while ((v_i >= 0)) {
-    v_a.array[v_i] = null;
-    v_i -= 1;
+public static int clearList(ListImpl a) {
+  int i = (a.size - 1);
+  while ((i >= 0)) {
+    a.array[i] = null;
+    i -= 1;
   }
-  v_a.size = 0;
+  a.size = 0;
   return 0;
 }
 
-public static DictImpl v_cloneDictionary(DictImpl v_original, DictImpl v_clone) {
-  int v_type = v_original.keyType;
-  int v_i = 0;
-  int v_size = v_original.size;
-  int v_kInt = 0;
-  String v_kString = null;
-  if ((v_clone == null)) {
-    v_clone = new DictImpl(0, v_type, v_original.keyClassId, v_original.valueType, new HashMap<Integer, Integer>(), new HashMap<String, Integer>(), new ArrayList<Value>(), new ArrayList<Value>());
-    if ((v_type == 5)) {
-      while ((v_i < v_size)) {
-        v_clone.stringToIndex.put(((String) v_original.keys.get(v_i).internalValue), v_i);
-        v_i += 1;
+public static DictImpl cloneDictionary(DictImpl original, DictImpl clone) {
+  int type = original.keyType;
+  int i = 0;
+  int size = original.size;
+  int kInt = 0;
+  String kString = null;
+  if ((clone == null)) {
+    clone = new DictImpl(0, type, original.keyClassId, original.valueType, new HashMap<Integer, Integer>(), new HashMap<String, Integer>(), new ArrayList<Value>(), new ArrayList<Value>());
+    if ((type == 5)) {
+      while ((i < size)) {
+        clone.stringToIndex.put(((String) original.keys.get(i).internalValue), i);
+        i += 1;
       }
     } else {
-      while ((v_i < v_size)) {
-        if ((v_type == 8)) {
-          v_kInt = (((ObjectInstance) v_original.keys.get(v_i).internalValue)).objectId;
+      while ((i < size)) {
+        if ((type == 8)) {
+          kInt = (((ObjectInstance) original.keys.get(i).internalValue)).objectId;
         } else {
-          v_kInt = v_original.keys.get(v_i).intValue;
+          kInt = original.keys.get(i).intValue;
         }
-        v_clone.intToIndex.put(v_kInt, v_i);
-        v_i += 1;
+        clone.intToIndex.put(kInt, i);
+        i += 1;
       }
     }
-    v_i = 0;
-    while ((v_i < v_size)) {
-      v_clone.keys.add(v_original.keys.get(v_i));
-      v_clone.values.add(v_original.values.get(v_i));
-      v_i += 1;
+    i = 0;
+    while ((i < size)) {
+      clone.keys.add(original.keys.get(i));
+      clone.values.add(original.values.get(i));
+      i += 1;
     }
   } else {
-    v_i = 0;
-    while ((v_i < v_size)) {
-      if ((v_type == 5)) {
-        v_kString = ((String) v_original.keys.get(v_i).internalValue);
-        if (v_clone.stringToIndex.containsKey(v_kString)) {
-          v_clone.values.set(v_clone.stringToIndex.get(v_kString), v_original.values.get(v_i));
+    i = 0;
+    while ((i < size)) {
+      if ((type == 5)) {
+        kString = ((String) original.keys.get(i).internalValue);
+        if (clone.stringToIndex.containsKey(kString)) {
+          clone.values.set(clone.stringToIndex.get(kString), original.values.get(i));
         } else {
-          v_clone.stringToIndex.put(v_kString, v_clone.values.size());
-          v_clone.values.add(v_original.values.get(v_i));
-          v_clone.keys.add(v_original.keys.get(v_i));
+          clone.stringToIndex.put(kString, clone.values.size());
+          clone.values.add(original.values.get(i));
+          clone.keys.add(original.keys.get(i));
         }
       } else {
-        if ((v_type == 3)) {
-          v_kInt = v_original.keys.get(v_i).intValue;
+        if ((type == 3)) {
+          kInt = original.keys.get(i).intValue;
         } else {
-          v_kInt = (((ObjectInstance) v_original.keys.get(v_i).internalValue)).objectId;
+          kInt = (((ObjectInstance) original.keys.get(i).internalValue)).objectId;
         }
-        if (v_clone.intToIndex.containsKey(v_kInt)) {
-          v_clone.values.set(v_clone.intToIndex.get(v_kInt), v_original.values.get(v_i));
+        if (clone.intToIndex.containsKey(kInt)) {
+          clone.values.set(clone.intToIndex.get(kInt), original.values.get(i));
         } else {
-          v_clone.intToIndex.put(v_kInt, v_clone.values.size());
-          v_clone.values.add(v_original.values.get(v_i));
-          v_clone.keys.add(v_original.keys.get(v_i));
+          clone.intToIndex.put(kInt, clone.values.size());
+          clone.values.add(original.values.get(i));
+          clone.keys.add(original.keys.get(i));
         }
       }
-      v_i += 1;
+      i += 1;
     }
   }
-  v_clone.size = (v_clone.intToIndex.size() + v_clone.stringToIndex.size());
-  return v_clone;
+  clone.size = (clone.intToIndex.size() + clone.stringToIndex.size());
+  return clone;
 }
 
-public static int[] v_createInstanceType(int v_classId) {
-  int[] v_o = new int[2];
-  v_o[0] = 8;
-  v_o[1] = v_classId;
-  return v_o;
+public static int[] createInstanceType(int classId) {
+  int[] o = new int[2];
+  o[0] = 8;
+  o[1] = classId;
+  return o;
 }
 
-public static VmContext v_createVm(String v_rawByteCode, String v_resourceManifest) {
-  VmGlobals v_globals = v_initializeConstantValues();
-  ResourceDB v_resources = v_resourceManagerInitialize(v_globals, v_resourceManifest);
-  Code v_byteCode = v_initializeByteCode(v_rawByteCode);
-  Value[] v_localsStack = new Value[10];
-  int[] v_localsStackSet = new int[10];
-  int v_i = 0;
-  v_i = (v_localsStack.length - 1);
-  while ((v_i >= 0)) {
-    v_localsStack[v_i] = null;
-    v_localsStackSet[v_i] = 0;
-    v_i -= 1;
+public static VmContext createVm(String rawByteCode, String resourceManifest) {
+  VmGlobals globals = initializeConstantValues();
+  ResourceDB resources = resourceManagerInitialize(globals, resourceManifest);
+  Code byteCode = initializeByteCode(rawByteCode);
+  Value[] localsStack = new Value[10];
+  int[] localsStackSet = new int[10];
+  int i = 0;
+  i = (localsStack.length - 1);
+  while ((i >= 0)) {
+    localsStack[i] = null;
+    localsStackSet[i] = 0;
+    i -= 1;
   }
-  StackFrame v_stack = new StackFrame(0, 1, 0, 0, null, false, null, 0, 0, 1, 0, null, null, null);
-  ExecutionContext v_executionContext = new ExecutionContext(0, v_stack, 0, 100, new Value[100], v_localsStack, v_localsStackSet, 1, 0, false, null, false, 0, null);
-  HashMap<Integer, ExecutionContext> v_executionContexts = new HashMap<Integer, ExecutionContext>();
-  v_executionContexts.put(0, v_executionContext);
-  VmContext v_vm = new VmContext(v_executionContexts, v_executionContext.id, v_byteCode, new SymbolData(new ArrayList[v_byteCode.ops.length], null, new ArrayList<String>(), null, null, new HashMap<Integer, ArrayList<String>>(), new HashMap<Integer, ArrayList<String>>()), new VmMetadata(null, new ArrayList<String>(), new HashMap<String, Integer>(), null, new ArrayList<Value>(), null, new ArrayList<HashMap<Integer, Integer>>(), null, new ArrayList<HashMap<String, Integer>>(), new ClassInfo[100], new FunctionInfo[100], new HashMap<Integer, FunctionInfo>(), null, new HashMap<Integer, java.lang.reflect.Method>(), -1, new int[10], 0, null, null, new MagicNumbers(0, 0, 0), new HashMap<String, Integer>(), new HashMap<Integer, HashMap<Integer, Integer>>(), null), 0, false, new ArrayList<Integer>(), null, v_resources, new ArrayList<Value>(), new VmEnvironment(new String[0], false, null, null), v_globals, v_globals.valueNull, v_globals.boolTrue, v_globals.boolFalse);
-  return v_vm;
+  StackFrame stack = new StackFrame(0, 1, 0, 0, null, false, null, 0, 0, 1, 0, null, null, null);
+  ExecutionContext executionContext = new ExecutionContext(0, stack, 0, 100, new Value[100], localsStack, localsStackSet, 1, 0, false, null, false, 0, null);
+  HashMap<Integer, ExecutionContext> executionContexts = new HashMap<Integer, ExecutionContext>();
+  executionContexts.put(0, executionContext);
+  VmContext vm = new VmContext(executionContexts, executionContext.id, byteCode, new SymbolData(new ArrayList[byteCode.ops.length], null, new ArrayList<String>(), null, null, new HashMap<Integer, ArrayList<String>>(), new HashMap<Integer, ArrayList<String>>()), new VmMetadata(null, new ArrayList<String>(), new HashMap<String, Integer>(), null, new ArrayList<Value>(), null, new ArrayList<HashMap<Integer, Integer>>(), null, new ArrayList<HashMap<String, Integer>>(), new ClassInfo[100], new FunctionInfo[100], new HashMap<Integer, FunctionInfo>(), null, new HashMap<Integer, java.lang.reflect.Method>(), -1, new int[10], 0, null, null, new MagicNumbers(0, 0, 0), new HashMap<String, Integer>(), new HashMap<Integer, HashMap<Integer, Integer>>(), null), 0, false, new ArrayList<Integer>(), null, resources, new ArrayList<Value>(), new VmEnvironment(new String[0], false, null, null), globals, globals.valueNull, globals.boolTrue, globals.boolFalse);
+  return vm;
 }
 
-public static int v_debuggerClearBreakpoint(VmContext v_vm, int v_id) {
+public static int debuggerClearBreakpoint(VmContext vm, int id) {
   return 0;
 }
 
-public static int v_debuggerFindPcForLine(VmContext v_vm, String v_path, int v_line) {
+public static int debuggerFindPcForLine(VmContext vm, String path, int line) {
   return -1;
 }
 
-public static int v_debuggerSetBreakpoint(VmContext v_vm, String v_path, int v_line) {
+public static int debuggerSetBreakpoint(VmContext vm, String path, int line) {
   return -1;
 }
 
-public static boolean v_debugSetStepOverBreakpoint(VmContext v_vm) {
+public static boolean debugSetStepOverBreakpoint(VmContext vm) {
   return false;
 }
 
-public static int v_defOriginalCodeImpl(VmContext v_vm, int[] v_row, String v_fileContents) {
-  int v_fileId = v_row[0];
-  ArrayList<String> v_codeLookup = v_vm.symbolData.sourceCodeBuilder;
-  while ((v_codeLookup.size() <= v_fileId)) {
-    v_codeLookup.add(null);
+public static int defOriginalCodeImpl(VmContext vm, int[] row, String fileContents) {
+  int fileId = row[0];
+  ArrayList<String> codeLookup = vm.symbolData.sourceCodeBuilder;
+  while ((codeLookup.size() <= fileId)) {
+    codeLookup.add(null);
   }
-  v_codeLookup.set(v_fileId, v_fileContents);
+  codeLookup.set(fileId, fileContents);
   return 0;
 }
 
-public static String v_dictKeyInfoToString(VmContext v_vm, DictImpl v_dict) {
-  if ((v_dict.keyType == 5)) {
+public static String dictKeyInfoToString(VmContext vm, DictImpl dict) {
+  if ((dict.keyType == 5)) {
     return "string";
   }
-  if ((v_dict.keyType == 3)) {
+  if ((dict.keyType == 3)) {
     return "int";
   }
-  if ((v_dict.keyClassId == 0)) {
+  if ((dict.keyClassId == 0)) {
     return "instance";
   }
-  return v_classIdToString(v_vm, v_dict.keyClassId);
+  return classIdToString(vm, dict.keyClassId);
 }
 
-public static int v_doEqualityComparisonAndReturnCode(Value v_a, Value v_b) {
-  int v_leftType = v_a.type;
-  int v_rightType = v_b.type;
-  if ((v_leftType == v_rightType)) {
-    int v_output = 0;
-    switch (v_leftType) {
+public static int doEqualityComparisonAndReturnCode(Value a, Value b) {
+  int leftType = a.type;
+  int rightType = b.type;
+  if ((leftType == rightType)) {
+    int output = 0;
+    switch (leftType) {
       case 1:
-        v_output = 1;
+        output = 1;
         break;
       case 3:
-        if ((v_a.intValue == v_b.intValue)) {
-          v_output = 1;
+        if ((a.intValue == b.intValue)) {
+          output = 1;
         }
         break;
       case 4:
-        if ((((double) v_a.internalValue) == ((double) v_b.internalValue))) {
-          v_output = 1;
+        if ((((double) a.internalValue) == ((double) b.internalValue))) {
+          output = 1;
         }
         break;
       case 2:
-        if (((v_a.intValue == 1) == (v_b.intValue == 1))) {
-          v_output = 1;
+        if (((a.intValue == 1) == (b.intValue == 1))) {
+          output = 1;
         }
         break;
       case 5:
-        if (v_a.internalValue.equals(v_b.internalValue)) {
-          v_output = 1;
+        if (a.internalValue.equals(b.internalValue)) {
+          output = 1;
         }
         break;
       case 6:
-        if ((((Object) v_a.internalValue) == ((Object) v_b.internalValue))) {
-          v_output = 1;
+        if ((((Object) a.internalValue) == ((Object) b.internalValue))) {
+          output = 1;
         }
         break;
       case 7:
-        if ((((Object) v_a.internalValue) == ((Object) v_b.internalValue))) {
-          v_output = 1;
+        if ((((Object) a.internalValue) == ((Object) b.internalValue))) {
+          output = 1;
         }
         break;
       case 8:
-        if ((((Object) v_a.internalValue) == ((Object) v_b.internalValue))) {
-          v_output = 1;
+        if ((((Object) a.internalValue) == ((Object) b.internalValue))) {
+          output = 1;
         }
         break;
       case 9:
-        FunctionPointer v_f1 = ((FunctionPointer) v_a.internalValue);
-        FunctionPointer v_f2 = ((FunctionPointer) v_b.internalValue);
-        if ((v_f1.functionId == v_f2.functionId)) {
-          if (((v_f1.type == 2) || (v_f1.type == 4))) {
-            if ((v_doEqualityComparisonAndReturnCode(v_f1.context, v_f2.context) == 1)) {
-              v_output = 1;
+        FunctionPointer f1 = ((FunctionPointer) a.internalValue);
+        FunctionPointer f2 = ((FunctionPointer) b.internalValue);
+        if ((f1.functionId == f2.functionId)) {
+          if (((f1.type == 2) || (f1.type == 4))) {
+            if ((doEqualityComparisonAndReturnCode(f1.context, f2.context) == 1)) {
+              output = 1;
             }
           } else {
-            v_output = 1;
+            output = 1;
           }
         }
         break;
       case 10:
-        org.crayonlang.interpreter.structs.ClassValue v_c1 = ((org.crayonlang.interpreter.structs.ClassValue) v_a.internalValue);
-        org.crayonlang.interpreter.structs.ClassValue v_c2 = ((org.crayonlang.interpreter.structs.ClassValue) v_b.internalValue);
-        if ((v_c1.classId == v_c2.classId)) {
-          v_output = 1;
+        org.crayonlang.interpreter.structs.ClassValue c1 = ((org.crayonlang.interpreter.structs.ClassValue) a.internalValue);
+        org.crayonlang.interpreter.structs.ClassValue c2 = ((org.crayonlang.interpreter.structs.ClassValue) b.internalValue);
+        if ((c1.classId == c2.classId)) {
+          output = 1;
         }
         break;
       default:
-        v_output = 2;
+        output = 2;
         break;
     }
-    return v_output;
+    return output;
   }
-  if ((v_rightType == 1)) {
+  if ((rightType == 1)) {
     return 0;
   }
-  if (((v_leftType == 3) && (v_rightType == 4))) {
-    if ((v_a.intValue == ((double) v_b.internalValue))) {
+  if (((leftType == 3) && (rightType == 4))) {
+    if ((a.intValue == ((double) b.internalValue))) {
       return 1;
     }
   } else {
-    if (((v_leftType == 4) && (v_rightType == 3))) {
-      if ((((double) v_a.internalValue) == v_b.intValue)) {
+    if (((leftType == 4) && (rightType == 3))) {
+      if ((((double) a.internalValue) == b.intValue)) {
         return 1;
       }
     }
@@ -958,196 +958,196 @@ public static int v_doEqualityComparisonAndReturnCode(Value v_a, Value v_b) {
   return 0;
 }
 
-public static String v_encodeBreakpointData(VmContext v_vm, BreakpointInfo v_breakpoint, int v_pc) {
+public static String encodeBreakpointData(VmContext vm, BreakpointInfo breakpoint, int pc) {
   return null;
 }
 
-public static InterpreterResult v_errorResult(String v_error) {
-  return new InterpreterResult(3, v_error, 0.0, 0, false, "");
+public static InterpreterResult errorResult(String error) {
+  return new InterpreterResult(3, error, 0.0, 0, false, "");
 }
 
-public static boolean v_EX_AssertionFailed(ExecutionContext v_ec, String v_exMsg) {
-  return v_generateException2(v_ec, 2, v_exMsg);
+public static boolean EX_AssertionFailed(ExecutionContext ec, String exMsg) {
+  return generateException2(ec, 2, exMsg);
 }
 
-public static boolean v_EX_DivisionByZero(ExecutionContext v_ec, String v_exMsg) {
-  return v_generateException2(v_ec, 3, v_exMsg);
+public static boolean EX_DivisionByZero(ExecutionContext ec, String exMsg) {
+  return generateException2(ec, 3, exMsg);
 }
 
-public static boolean v_EX_Fatal(ExecutionContext v_ec, String v_exMsg) {
-  return v_generateException2(v_ec, 0, v_exMsg);
+public static boolean EX_Fatal(ExecutionContext ec, String exMsg) {
+  return generateException2(ec, 0, exMsg);
 }
 
-public static boolean v_EX_IndexOutOfRange(ExecutionContext v_ec, String v_exMsg) {
-  return v_generateException2(v_ec, 4, v_exMsg);
+public static boolean EX_IndexOutOfRange(ExecutionContext ec, String exMsg) {
+  return generateException2(ec, 4, exMsg);
 }
 
-public static boolean v_EX_InvalidArgument(ExecutionContext v_ec, String v_exMsg) {
-  return v_generateException2(v_ec, 5, v_exMsg);
+public static boolean EX_InvalidArgument(ExecutionContext ec, String exMsg) {
+  return generateException2(ec, 5, exMsg);
 }
 
-public static boolean v_EX_InvalidAssignment(ExecutionContext v_ec, String v_exMsg) {
-  return v_generateException2(v_ec, 6, v_exMsg);
+public static boolean EX_InvalidAssignment(ExecutionContext ec, String exMsg) {
+  return generateException2(ec, 6, exMsg);
 }
 
-public static boolean v_EX_InvalidInvocation(ExecutionContext v_ec, String v_exMsg) {
-  return v_generateException2(v_ec, 7, v_exMsg);
+public static boolean EX_InvalidInvocation(ExecutionContext ec, String exMsg) {
+  return generateException2(ec, 7, exMsg);
 }
 
-public static boolean v_EX_InvalidKey(ExecutionContext v_ec, String v_exMsg) {
-  return v_generateException2(v_ec, 8, v_exMsg);
+public static boolean EX_InvalidKey(ExecutionContext ec, String exMsg) {
+  return generateException2(ec, 8, exMsg);
 }
 
-public static boolean v_EX_KeyNotFound(ExecutionContext v_ec, String v_exMsg) {
-  return v_generateException2(v_ec, 9, v_exMsg);
+public static boolean EX_KeyNotFound(ExecutionContext ec, String exMsg) {
+  return generateException2(ec, 9, exMsg);
 }
 
-public static boolean v_EX_NullReference(ExecutionContext v_ec, String v_exMsg) {
-  return v_generateException2(v_ec, 10, v_exMsg);
+public static boolean EX_NullReference(ExecutionContext ec, String exMsg) {
+  return generateException2(ec, 10, exMsg);
 }
 
-public static boolean v_EX_UnassignedVariable(ExecutionContext v_ec, String v_exMsg) {
-  return v_generateException2(v_ec, 11, v_exMsg);
+public static boolean EX_UnassignedVariable(ExecutionContext ec, String exMsg) {
+  return generateException2(ec, 11, exMsg);
 }
 
-public static boolean v_EX_UnknownField(ExecutionContext v_ec, String v_exMsg) {
-  return v_generateException2(v_ec, 12, v_exMsg);
+public static boolean EX_UnknownField(ExecutionContext ec, String exMsg) {
+  return generateException2(ec, 12, exMsg);
 }
 
-public static boolean v_EX_UnsupportedOperation(ExecutionContext v_ec, String v_exMsg) {
-  return v_generateException2(v_ec, 13, v_exMsg);
+public static boolean EX_UnsupportedOperation(ExecutionContext ec, String exMsg) {
+  return generateException2(ec, 13, exMsg);
 }
 
-public static int v_finalizeInitializationImpl(VmContext v_vm, String v_projectId, int v_localeCount) {
-  v_vm.symbolData.sourceCode = v_vm.symbolData.sourceCodeBuilder.toArray(PST_emptyArrayString);
-  v_vm.symbolData.sourceCodeBuilder = null;
-  v_vm.metadata.magicNumbers.totalLocaleCount = v_localeCount;
-  v_vm.metadata.identifiers = v_vm.metadata.identifiersBuilder.toArray(PST_emptyArrayString);
-  v_vm.metadata.literalTable = v_vm.metadata.literalTableBuilder.toArray(Value.EMPTY_ARRAY);
-  v_vm.metadata.globalNameIdToPrimitiveMethodName = v_primitiveMethodsInitializeLookup(v_vm.metadata.invIdentifiers);
-  v_vm.funcArgs = new Value[v_vm.metadata.identifiers.length];
-  v_vm.metadata.projectId = v_projectId;
-  v_vm.metadata.identifiersBuilder = null;
-  v_vm.metadata.literalTableBuilder = null;
-  v_vm.initializationComplete = true;
+public static int finalizeInitializationImpl(VmContext vm, String projectId, int localeCount) {
+  vm.symbolData.sourceCode = vm.symbolData.sourceCodeBuilder.toArray(PST_emptyArrayString);
+  vm.symbolData.sourceCodeBuilder = null;
+  vm.metadata.magicNumbers.totalLocaleCount = localeCount;
+  vm.metadata.identifiers = vm.metadata.identifiersBuilder.toArray(PST_emptyArrayString);
+  vm.metadata.literalTable = vm.metadata.literalTableBuilder.toArray(Value.EMPTY_ARRAY);
+  vm.metadata.globalNameIdToPrimitiveMethodName = primitiveMethodsInitializeLookup(vm.metadata.invIdentifiers);
+  vm.funcArgs = new Value[vm.metadata.identifiers.length];
+  vm.metadata.projectId = projectId;
+  vm.metadata.identifiersBuilder = null;
+  vm.metadata.literalTableBuilder = null;
+  vm.initializationComplete = true;
   return 0;
 }
 
-public static double v_fixFuzzyFloatPrecision(double v_x) {
-  if (((v_x % 1) != 0)) {
-    double v_u = (v_x % 1);
-    if ((v_u < 0)) {
-      v_u += 1.0;
+public static double fixFuzzyFloatPrecision(double x) {
+  if (((x % 1) != 0)) {
+    double u = (x % 1);
+    if ((u < 0)) {
+      u += 1.0;
     }
-    boolean v_roundDown = false;
-    if ((v_u > 0.9999999999)) {
-      v_roundDown = true;
-      v_x += 0.1;
+    boolean roundDown = false;
+    if ((u > 0.9999999999)) {
+      roundDown = true;
+      x += 0.1;
     } else {
-      if ((v_u < 0.00000000002250000000)) {
-        v_roundDown = true;
+      if ((u < 0.00000000002250000000)) {
+        roundDown = true;
       }
     }
-    if (v_roundDown) {
-      if ((false || (v_x > 0))) {
-        v_x = (((int) v_x) + 0.0);
+    if (roundDown) {
+      if ((false || (x > 0))) {
+        x = (((int) x) + 0.0);
       } else {
-        v_x = (((int) v_x) - 1.0);
+        x = (((int) x) - 1.0);
       }
     }
   }
-  return v_x;
+  return x;
 }
 
-public static int[][] v_generateEsfData(int v_byteCodeLength, int[] v_esfArgs) {
-  int[][] v_output = new int[v_byteCodeLength][];
-  ArrayList<int[]> v_esfTokenStack = new ArrayList<int[]>();
-  int[] v_esfTokenStackTop = null;
-  int v_esfArgIterator = 0;
-  int v_esfArgLength = v_esfArgs.length;
-  int v_j = 0;
-  int v_pc = 0;
-  while ((v_pc < v_byteCodeLength)) {
-    if (((v_esfArgIterator < v_esfArgLength) && (v_pc == v_esfArgs[v_esfArgIterator]))) {
-      v_esfTokenStackTop = new int[2];
-      v_j = 1;
-      while ((v_j < 3)) {
-        v_esfTokenStackTop[(v_j - 1)] = v_esfArgs[(v_esfArgIterator + v_j)];
-        v_j += 1;
+public static int[][] generateEsfData(int byteCodeLength, int[] esfArgs) {
+  int[][] output = new int[byteCodeLength][];
+  ArrayList<int[]> esfTokenStack = new ArrayList<int[]>();
+  int[] esfTokenStackTop = null;
+  int esfArgIterator = 0;
+  int esfArgLength = esfArgs.length;
+  int j = 0;
+  int pc = 0;
+  while ((pc < byteCodeLength)) {
+    if (((esfArgIterator < esfArgLength) && (pc == esfArgs[esfArgIterator]))) {
+      esfTokenStackTop = new int[2];
+      j = 1;
+      while ((j < 3)) {
+        esfTokenStackTop[(j - 1)] = esfArgs[(esfArgIterator + j)];
+        j += 1;
       }
-      v_esfTokenStack.add(v_esfTokenStackTop);
-      v_esfArgIterator += 3;
+      esfTokenStack.add(esfTokenStackTop);
+      esfArgIterator += 3;
     }
-    while (((v_esfTokenStackTop != null) && (v_esfTokenStackTop[1] <= v_pc))) {
-      v_esfTokenStack.remove(v_esfTokenStack.size() - 1);
-      if ((v_esfTokenStack.size() == 0)) {
-        v_esfTokenStackTop = null;
+    while (((esfTokenStackTop != null) && (esfTokenStackTop[1] <= pc))) {
+      esfTokenStack.remove(esfTokenStack.size() - 1);
+      if ((esfTokenStack.size() == 0)) {
+        esfTokenStackTop = null;
       } else {
-        v_esfTokenStackTop = v_esfTokenStack.get((v_esfTokenStack.size() - 1));
+        esfTokenStackTop = esfTokenStack.get((esfTokenStack.size() - 1));
       }
     }
-    v_output[v_pc] = v_esfTokenStackTop;
-    v_pc += 1;
+    output[pc] = esfTokenStackTop;
+    pc += 1;
   }
-  return v_output;
+  return output;
 }
 
-public static InterpreterResult v_generateException(VmContext v_vm, StackFrame v_stack, int v_pc, int v_valueStackSize, ExecutionContext v_ec, int v_type, String v_message) {
-  v_ec.currentValueStackSize = v_valueStackSize;
-  v_stack.pc = v_pc;
-  MagicNumbers v_mn = v_vm.metadata.magicNumbers;
-  int v_generateExceptionFunctionId = v_mn.coreGenerateExceptionFunctionId;
-  FunctionInfo v_functionInfo = v_vm.metadata.functionTable[v_generateExceptionFunctionId];
-  v_pc = v_functionInfo.pc;
-  if ((v_ec.localsStack.length <= (v_functionInfo.localsSize + v_stack.localsStackOffsetEnd))) {
-    v_increaseLocalsStackCapacity(v_ec, v_functionInfo.localsSize);
+public static InterpreterResult generateException(VmContext vm, StackFrame stack, int pc, int valueStackSize, ExecutionContext ec, int type, String message) {
+  ec.currentValueStackSize = valueStackSize;
+  stack.pc = pc;
+  MagicNumbers mn = vm.metadata.magicNumbers;
+  int generateExceptionFunctionId = mn.coreGenerateExceptionFunctionId;
+  FunctionInfo functionInfo = vm.metadata.functionTable[generateExceptionFunctionId];
+  pc = functionInfo.pc;
+  if ((ec.localsStack.length <= (functionInfo.localsSize + stack.localsStackOffsetEnd))) {
+    increaseLocalsStackCapacity(ec, functionInfo.localsSize);
   }
-  int v_localsIndex = v_stack.localsStackOffsetEnd;
-  int v_localsStackSetToken = (v_ec.localsStackSetToken + 1);
-  v_ec.localsStackSetToken = v_localsStackSetToken;
-  v_ec.localsStack[v_localsIndex] = v_buildInteger(v_vm.globals, v_type);
-  v_ec.localsStack[(v_localsIndex + 1)] = v_buildString(v_vm.globals, v_message);
-  v_ec.localsStackSet[v_localsIndex] = v_localsStackSetToken;
-  v_ec.localsStackSet[(v_localsIndex + 1)] = v_localsStackSetToken;
-  v_ec.stackTop = new StackFrame((v_pc + 1), v_localsStackSetToken, v_stack.localsStackOffsetEnd, (v_stack.localsStackOffsetEnd + v_functionInfo.localsSize), v_stack, false, null, v_valueStackSize, 0, (v_stack.depth + 1), 0, null, null, null);
+  int localsIndex = stack.localsStackOffsetEnd;
+  int localsStackSetToken = (ec.localsStackSetToken + 1);
+  ec.localsStackSetToken = localsStackSetToken;
+  ec.localsStack[localsIndex] = buildInteger(vm.globals, type);
+  ec.localsStack[(localsIndex + 1)] = buildString(vm.globals, message);
+  ec.localsStackSet[localsIndex] = localsStackSetToken;
+  ec.localsStackSet[(localsIndex + 1)] = localsStackSetToken;
+  ec.stackTop = new StackFrame((pc + 1), localsStackSetToken, stack.localsStackOffsetEnd, (stack.localsStackOffsetEnd + functionInfo.localsSize), stack, false, null, valueStackSize, 0, (stack.depth + 1), 0, null, null, null);
   return new InterpreterResult(5, null, 0.0, 0, false, "");
 }
 
-public static boolean v_generateException2(ExecutionContext v_ec, int v_exceptionType, String v_exMsg) {
-  v_ec.activeInterrupt = new Interrupt(1, v_exceptionType, v_exMsg, 0.0, null);
+public static boolean generateException2(ExecutionContext ec, int exceptionType, String exMsg) {
+  ec.activeInterrupt = new Interrupt(1, exceptionType, exMsg, 0.0, null);
   return true;
 }
 
-public static Value v_generatePrimitiveMethodReference(int[] v_lookup, int v_globalNameId, Value v_context) {
-  int v_functionId = v_resolvePrimitiveMethodName2(v_lookup, v_context.type, v_globalNameId);
-  if ((v_functionId < 0)) {
+public static Value generatePrimitiveMethodReference(int[] lookup, int globalNameId, Value context) {
+  int functionId = resolvePrimitiveMethodName2(lookup, context.type, globalNameId);
+  if ((functionId < 0)) {
     return null;
   }
-  return new Value(9, new FunctionPointer(4, v_context, 0, v_functionId, null));
+  return new Value(9, new FunctionPointer(4, context, 0, functionId, null));
 }
 
-public static ArrayList<Token> v_generateTokenListFromPcs(VmContext v_vm, ArrayList<Integer> v_pcs) {
-  ArrayList<Token> v_output = new ArrayList<Token>();
-  ArrayList<Token>[] v_tokensByPc = v_vm.symbolData.tokenData;
-  Token v_token = null;
-  int v_i = 0;
-  while ((v_i < v_pcs.size())) {
-    ArrayList<Token> v_localTokens = v_tokensByPc[v_pcs.get(v_i)];
-    if ((v_localTokens == null)) {
-      if ((v_output.size() > 0)) {
-        v_output.add(null);
+public static ArrayList<Token> generateTokenListFromPcs(VmContext vm, ArrayList<Integer> pcs) {
+  ArrayList<Token> output = new ArrayList<Token>();
+  ArrayList<Token>[] tokensByPc = vm.symbolData.tokenData;
+  Token token = null;
+  int i = 0;
+  while ((i < pcs.size())) {
+    ArrayList<Token> localTokens = tokensByPc[pcs.get(i)];
+    if ((localTokens == null)) {
+      if ((output.size() > 0)) {
+        output.add(null);
       }
     } else {
-      v_token = v_localTokens.get(0);
-      v_output.add(v_token);
+      token = localTokens.get(0);
+      output.add(token);
     }
-    v_i += 1;
+    i += 1;
   }
-  return v_output;
+  return output;
 }
 
-public static String v_getBinaryOpFromId(int v_id) {
-  switch (v_id) {
+public static String getBinaryOpFromId(int id) {
+  switch (id) {
     case 0:
       return "+";
     case 1:
@@ -1183,74 +1183,74 @@ public static String v_getBinaryOpFromId(int v_id) {
   }
 }
 
-public static ClassInfo[] v_getClassTable(VmContext v_vm, int v_classId) {
-  ClassInfo[] v_oldTable = v_vm.metadata.classTable;
-  int v_oldLength = v_oldTable.length;
-  if ((v_classId < v_oldLength)) {
-    return v_oldTable;
+public static ClassInfo[] getClassTable(VmContext vm, int classId) {
+  ClassInfo[] oldTable = vm.metadata.classTable;
+  int oldLength = oldTable.length;
+  if ((classId < oldLength)) {
+    return oldTable;
   }
-  int v_newLength = (v_oldLength * 2);
-  if ((v_classId >= v_newLength)) {
-    v_newLength = (v_classId + 100);
+  int newLength = (oldLength * 2);
+  if ((classId >= newLength)) {
+    newLength = (classId + 100);
   }
-  ClassInfo[] v_newTable = new ClassInfo[v_newLength];
-  int v_i = (v_oldLength - 1);
-  while ((v_i >= 0)) {
-    v_newTable[v_i] = v_oldTable[v_i];
-    v_i -= 1;
+  ClassInfo[] newTable = new ClassInfo[newLength];
+  int i = (oldLength - 1);
+  while ((i >= 0)) {
+    newTable[i] = oldTable[i];
+    i -= 1;
   }
-  v_vm.metadata.classTable = v_newTable;
-  return v_newTable;
+  vm.metadata.classTable = newTable;
+  return newTable;
 }
 
-public static ExecutionContext v_getExecutionContext(VmContext v_vm, int v_id) {
-  if ((v_id == -1)) {
-    v_id = v_vm.lastExecutionContextId;
+public static ExecutionContext getExecutionContext(VmContext vm, int id) {
+  if ((id == -1)) {
+    id = vm.lastExecutionContextId;
   }
-  if (v_vm.executionContexts.containsKey(v_id)) {
-    return v_vm.executionContexts.get(v_id);
+  if (vm.executionContexts.containsKey(id)) {
+    return vm.executionContexts.get(id);
   }
   return null;
 }
 
-public static double v_getFloat(Value v_num) {
-  if ((v_num.type == 4)) {
-    return ((double) v_num.internalValue);
+public static double getFloat(Value num) {
+  if ((num.type == 4)) {
+    return ((double) num.internalValue);
   }
-  return (v_num.intValue + 0.0);
+  return (num.intValue + 0.0);
 }
 
-public static FunctionInfo[] v_getFunctionTable(VmContext v_vm, int v_functionId) {
-  FunctionInfo[] v_oldTable = v_vm.metadata.functionTable;
-  int v_oldLength = v_oldTable.length;
-  if ((v_functionId < v_oldLength)) {
-    return v_oldTable;
+public static FunctionInfo[] getFunctionTable(VmContext vm, int functionId) {
+  FunctionInfo[] oldTable = vm.metadata.functionTable;
+  int oldLength = oldTable.length;
+  if ((functionId < oldLength)) {
+    return oldTable;
   }
-  int v_newLength = (v_oldLength * 2);
-  if ((v_functionId >= v_newLength)) {
-    v_newLength = (v_functionId + 100);
+  int newLength = (oldLength * 2);
+  if ((functionId >= newLength)) {
+    newLength = (functionId + 100);
   }
-  FunctionInfo[] v_newTable = new FunctionInfo[v_newLength];
-  int v_i = 0;
-  while ((v_i < v_oldLength)) {
-    v_newTable[v_i] = v_oldTable[v_i];
-    v_i += 1;
+  FunctionInfo[] newTable = new FunctionInfo[newLength];
+  int i = 0;
+  while ((i < oldLength)) {
+    newTable[i] = oldTable[i];
+    i += 1;
   }
-  v_vm.metadata.functionTable = v_newTable;
-  return v_newTable;
+  vm.metadata.functionTable = newTable;
+  return newTable;
 }
 
-public static Value v_getItemFromList(ListImpl v_list, int v_i) {
-  return v_list.array[v_i];
+public static Value getItemFromList(ListImpl list, int i) {
+  return list.array[i];
 }
 
-public static Object v_getNativeDataItem(Value v_objValue, int v_index) {
-  ObjectInstance v_obj = ((ObjectInstance) v_objValue.internalValue);
-  return v_obj.nativeData[v_index];
+public static Object getNativeDataItem(Value objValue, int index) {
+  ObjectInstance obj = ((ObjectInstance) objValue.internalValue);
+  return obj.nativeData[index];
 }
 
-public static String v_getTypeFromId(int v_id) {
-  switch (v_id) {
+public static String getTypeFromId(int id) {
+  switch (id) {
     case 1:
       return "null";
     case 2:
@@ -1273,350 +1273,350 @@ public static String v_getTypeFromId(int v_id) {
   return null;
 }
 
-public static double v_getVmReinvokeDelay(InterpreterResult v_result) {
-  return v_result.reinvokeDelay;
+public static double getVmReinvokeDelay(InterpreterResult result) {
+  return result.reinvokeDelay;
 }
 
-public static String v_getVmResultAssemblyInfo(InterpreterResult v_result) {
-  return v_result.loadAssemblyInformation;
+public static String getVmResultAssemblyInfo(InterpreterResult result) {
+  return result.loadAssemblyInformation;
 }
 
-public static int v_getVmResultExecId(InterpreterResult v_result) {
-  return v_result.executionContextId;
+public static int getVmResultExecId(InterpreterResult result) {
+  return result.executionContextId;
 }
 
-public static int v_getVmResultStatus(InterpreterResult v_result) {
-  return v_result.status;
+public static int getVmResultStatus(InterpreterResult result) {
+  return result.status;
 }
 
-public static void v_increaseListCapacity(ListImpl v_list) {
-  int v_oldCapacity = v_list.capacity;
-  int v_newCapacity = (v_oldCapacity * 2);
-  if ((v_newCapacity < 8)) {
-    v_newCapacity = 8;
+public static void increaseListCapacity(ListImpl list) {
+  int oldCapacity = list.capacity;
+  int newCapacity = (oldCapacity * 2);
+  if ((newCapacity < 8)) {
+    newCapacity = 8;
   }
-  Value[] v_newArr = new Value[v_newCapacity];
-  Value[] v_oldArr = v_list.array;
-  int v_i = 0;
-  while ((v_i < v_oldCapacity)) {
-    v_newArr[v_i] = v_oldArr[v_i];
-    v_i += 1;
+  Value[] newArr = new Value[newCapacity];
+  Value[] oldArr = list.array;
+  int i = 0;
+  while ((i < oldCapacity)) {
+    newArr[i] = oldArr[i];
+    i += 1;
   }
-  v_list.capacity = v_newCapacity;
-  v_list.array = v_newArr;
+  list.capacity = newCapacity;
+  list.array = newArr;
 }
 
-public static int v_increaseLocalsStackCapacity(ExecutionContext v_ec, int v_newScopeSize) {
-  Value[] v_oldLocals = v_ec.localsStack;
-  int[] v_oldSetIndicator = v_ec.localsStackSet;
-  int v_oldCapacity = v_oldLocals.length;
-  int v_newCapacity = ((v_oldCapacity * 2) + v_newScopeSize);
-  Value[] v_newLocals = new Value[v_newCapacity];
-  int[] v_newSetIndicator = new int[v_newCapacity];
-  int v_i = 0;
-  while ((v_i < v_oldCapacity)) {
-    v_newLocals[v_i] = v_oldLocals[v_i];
-    v_newSetIndicator[v_i] = v_oldSetIndicator[v_i];
-    v_i += 1;
+public static int increaseLocalsStackCapacity(ExecutionContext ec, int newScopeSize) {
+  Value[] oldLocals = ec.localsStack;
+  int[] oldSetIndicator = ec.localsStackSet;
+  int oldCapacity = oldLocals.length;
+  int newCapacity = ((oldCapacity * 2) + newScopeSize);
+  Value[] newLocals = new Value[newCapacity];
+  int[] newSetIndicator = new int[newCapacity];
+  int i = 0;
+  while ((i < oldCapacity)) {
+    newLocals[i] = oldLocals[i];
+    newSetIndicator[i] = oldSetIndicator[i];
+    i += 1;
   }
-  v_ec.localsStack = v_newLocals;
-  v_ec.localsStackSet = v_newSetIndicator;
+  ec.localsStack = newLocals;
+  ec.localsStackSet = newSetIndicator;
   return 0;
 }
 
-public static int v_initFileNameSymbolData(VmContext v_vm) {
-  SymbolData v_symbolData = v_vm.symbolData;
-  if ((v_symbolData == null)) {
+public static int initFileNameSymbolData(VmContext vm) {
+  SymbolData symbolData = vm.symbolData;
+  if ((symbolData == null)) {
     return 0;
   }
-  if ((v_symbolData.fileNameById == null)) {
-    int v_i = 0;
-    String[] v_filenames = new String[v_symbolData.sourceCode.length];
-    HashMap<String, Integer> v_fileIdByPath = new HashMap<String, Integer>();
-    v_i = 0;
-    while ((v_i < v_filenames.length)) {
-      String v_sourceCode = v_symbolData.sourceCode[v_i];
-      if ((v_sourceCode != null)) {
-        int v_colon = v_sourceCode.indexOf("\n");
-        if ((v_colon != -1)) {
-          String v_filename = v_sourceCode.substring(0, 0 + v_colon);
-          v_filenames[v_i] = v_filename;
-          v_fileIdByPath.put(v_filename, v_i);
+  if ((symbolData.fileNameById == null)) {
+    int i = 0;
+    String[] filenames = new String[symbolData.sourceCode.length];
+    HashMap<String, Integer> fileIdByPath = new HashMap<String, Integer>();
+    i = 0;
+    while ((i < filenames.length)) {
+      String sourceCode = symbolData.sourceCode[i];
+      if ((sourceCode != null)) {
+        int colon = sourceCode.indexOf("\n");
+        if ((colon != -1)) {
+          String filename = sourceCode.substring(0, 0 + colon);
+          filenames[i] = filename;
+          fileIdByPath.put(filename, i);
         }
       }
-      v_i += 1;
+      i += 1;
     }
-    v_symbolData.fileNameById = v_filenames;
-    v_symbolData.fileIdByName = v_fileIdByPath;
+    symbolData.fileNameById = filenames;
+    symbolData.fileIdByName = fileIdByPath;
   }
   return 0;
 }
 
-public static Code v_initializeByteCode(String v_raw) {
-  int[] v_index = new int[1];
-  v_index[0] = 0;
-  int v_length = v_raw.length();
-  String v_header = v_read_till(v_index, v_raw, v_length, '@');
-  if ((v_header != "CRAYON")) {
+public static Code initializeByteCode(String raw) {
+  int[] index = new int[1];
+  index[0] = 0;
+  int length = raw.length();
+  String header = read_till(index, raw, length, '@');
+  if ((header != "CRAYON")) {
   }
-  String v_alphaNums = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-  int v_opCount = v_read_integer(v_index, v_raw, v_length, v_alphaNums);
-  int[] v_ops = new int[v_opCount];
-  int[][] v_iargs = new int[v_opCount][];
-  String[] v_sargs = new String[v_opCount];
-  char v_c = ' ';
-  int v_argc = 0;
-  int v_j = 0;
-  String v_stringarg = null;
-  boolean v_stringPresent = false;
-  int v_iarg = 0;
-  int[] v_iarglist = null;
-  int v_i = 0;
-  v_i = 0;
-  while ((v_i < v_opCount)) {
-    v_c = v_raw.charAt(v_index[0]);
-    v_index[0] = (v_index[0] + 1);
-    v_argc = 0;
-    v_stringPresent = true;
-    if ((v_c == '!')) {
-      v_argc = 1;
+  String alphaNums = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  int opCount = read_integer(index, raw, length, alphaNums);
+  int[] ops = new int[opCount];
+  int[][] iargs = new int[opCount][];
+  String[] sargs = new String[opCount];
+  char c = ' ';
+  int argc = 0;
+  int j = 0;
+  String stringarg = null;
+  boolean stringPresent = false;
+  int iarg = 0;
+  int[] iarglist = null;
+  int i = 0;
+  i = 0;
+  while ((i < opCount)) {
+    c = raw.charAt(index[0]);
+    index[0] = (index[0] + 1);
+    argc = 0;
+    stringPresent = true;
+    if ((c == '!')) {
+      argc = 1;
     } else {
-      if ((v_c == '&')) {
-        v_argc = 2;
+      if ((c == '&')) {
+        argc = 2;
       } else {
-        if ((v_c == '*')) {
-          v_argc = 3;
+        if ((c == '*')) {
+          argc = 3;
         } else {
-          if ((v_c != '~')) {
-            v_stringPresent = false;
-            v_index[0] = (v_index[0] - 1);
+          if ((c != '~')) {
+            stringPresent = false;
+            index[0] = (index[0] - 1);
           }
-          v_argc = v_read_integer(v_index, v_raw, v_length, v_alphaNums);
+          argc = read_integer(index, raw, length, alphaNums);
         }
       }
     }
-    v_iarglist = new int[(v_argc - 1)];
-    v_j = 0;
-    while ((v_j < v_argc)) {
-      v_iarg = v_read_integer(v_index, v_raw, v_length, v_alphaNums);
-      if ((v_j == 0)) {
-        v_ops[v_i] = v_iarg;
+    iarglist = new int[(argc - 1)];
+    j = 0;
+    while ((j < argc)) {
+      iarg = read_integer(index, raw, length, alphaNums);
+      if ((j == 0)) {
+        ops[i] = iarg;
       } else {
-        v_iarglist[(v_j - 1)] = v_iarg;
+        iarglist[(j - 1)] = iarg;
       }
-      v_j += 1;
+      j += 1;
     }
-    v_iargs[v_i] = v_iarglist;
-    if (v_stringPresent) {
-      v_stringarg = v_read_string(v_index, v_raw, v_length, v_alphaNums);
+    iargs[i] = iarglist;
+    if (stringPresent) {
+      stringarg = read_string(index, raw, length, alphaNums);
     } else {
-      v_stringarg = null;
+      stringarg = null;
     }
-    v_sargs[v_i] = v_stringarg;
-    v_i += 1;
+    sargs[i] = stringarg;
+    i += 1;
   }
-  boolean[] v_hasBreakpoint = new boolean[v_opCount];
-  BreakpointInfo[] v_breakpointInfo = new BreakpointInfo[v_opCount];
-  v_i = 0;
-  while ((v_i < v_opCount)) {
-    v_hasBreakpoint[v_i] = false;
-    v_breakpointInfo[v_i] = null;
-    v_i += 1;
+  boolean[] hasBreakpoint = new boolean[opCount];
+  BreakpointInfo[] breakpointInfo = new BreakpointInfo[opCount];
+  i = 0;
+  while ((i < opCount)) {
+    hasBreakpoint[i] = false;
+    breakpointInfo[i] = null;
+    i += 1;
   }
-  return new Code(v_ops, v_iargs, v_sargs, new HashMap[v_opCount], new HashMap[v_opCount], new VmDebugData(v_hasBreakpoint, v_breakpointInfo, new HashMap<Integer, Integer>(), 1, 0));
+  return new Code(ops, iargs, sargs, new HashMap[opCount], new HashMap[opCount], new VmDebugData(hasBreakpoint, breakpointInfo, new HashMap<Integer, Integer>(), 1, 0));
 }
 
-public static int v_initializeClass(int v_pc, VmContext v_vm, int[] v_args, String v_className) {
-  int v_i = 0;
-  int v_memberId = 0;
-  int v_globalId = 0;
-  int v_functionId = 0;
-  int v_t = 0;
-  int v_classId = v_args[0];
-  int v_baseClassId = v_args[1];
-  int v_globalNameId = v_args[2];
-  int v_constructorFunctionId = v_args[3];
-  int v_staticConstructorFunctionId = v_args[4];
-  int v_staticInitializationState = 0;
-  if ((v_staticConstructorFunctionId == -1)) {
-    v_staticInitializationState = 2;
+public static int initializeClass(int pc, VmContext vm, int[] args, String className) {
+  int i = 0;
+  int memberId = 0;
+  int globalId = 0;
+  int functionId = 0;
+  int t = 0;
+  int classId = args[0];
+  int baseClassId = args[1];
+  int globalNameId = args[2];
+  int constructorFunctionId = args[3];
+  int staticConstructorFunctionId = args[4];
+  int staticInitializationState = 0;
+  if ((staticConstructorFunctionId == -1)) {
+    staticInitializationState = 2;
   }
-  int v_staticFieldCount = v_args[5];
-  int v_assemblyId = v_args[6];
-  Value[] v_staticFields = new Value[v_staticFieldCount];
-  v_i = 0;
-  while ((v_i < v_staticFieldCount)) {
-    v_staticFields[v_i] = v_vm.globals.valueNull;
-    v_i += 1;
+  int staticFieldCount = args[5];
+  int assemblyId = args[6];
+  Value[] staticFields = new Value[staticFieldCount];
+  i = 0;
+  while ((i < staticFieldCount)) {
+    staticFields[i] = vm.globals.valueNull;
+    i += 1;
   }
-  ClassInfo v_classInfo = new ClassInfo(v_classId, v_globalNameId, v_baseClassId, v_assemblyId, v_staticInitializationState, v_staticFields, v_staticConstructorFunctionId, v_constructorFunctionId, 0, null, null, null, null, null, v_vm.metadata.classMemberLocalizerBuilder.get(v_classId), null, v_className);
-  ClassInfo[] v_classTable = v_getClassTable(v_vm, v_classId);
-  v_classTable[v_classId] = v_classInfo;
-  ArrayList<ClassInfo> v_classChain = new ArrayList<ClassInfo>();
-  v_classChain.add(v_classInfo);
-  int v_classIdWalker = v_baseClassId;
-  while ((v_classIdWalker != -1)) {
-    ClassInfo v_walkerClass = v_classTable[v_classIdWalker];
-    v_classChain.add(v_walkerClass);
-    v_classIdWalker = v_walkerClass.baseClassId;
+  ClassInfo classInfo = new ClassInfo(classId, globalNameId, baseClassId, assemblyId, staticInitializationState, staticFields, staticConstructorFunctionId, constructorFunctionId, 0, null, null, null, null, null, vm.metadata.classMemberLocalizerBuilder.get(classId), null, className);
+  ClassInfo[] classTable = getClassTable(vm, classId);
+  classTable[classId] = classInfo;
+  ArrayList<ClassInfo> classChain = new ArrayList<ClassInfo>();
+  classChain.add(classInfo);
+  int classIdWalker = baseClassId;
+  while ((classIdWalker != -1)) {
+    ClassInfo walkerClass = classTable[classIdWalker];
+    classChain.add(walkerClass);
+    classIdWalker = walkerClass.baseClassId;
   }
-  ClassInfo v_baseClass = null;
-  if ((v_baseClassId != -1)) {
-    v_baseClass = v_classChain.get(1);
+  ClassInfo baseClass = null;
+  if ((baseClassId != -1)) {
+    baseClass = classChain.get(1);
   }
-  ArrayList<Integer> v_functionIds = new ArrayList<Integer>();
-  ArrayList<Integer> v_fieldInitializationCommand = new ArrayList<Integer>();
-  ArrayList<Value> v_fieldInitializationLiteral = new ArrayList<Value>();
-  ArrayList<Integer> v_fieldAccessModifier = new ArrayList<Integer>();
-  HashMap<Integer, Integer> v_globalNameIdToMemberId = new HashMap<Integer, Integer>();
-  if ((v_baseClass != null)) {
-    v_i = 0;
-    while ((v_i < v_baseClass.memberCount)) {
-      v_functionIds.add(v_baseClass.functionIds[v_i]);
-      v_fieldInitializationCommand.add(v_baseClass.fieldInitializationCommand[v_i]);
-      v_fieldInitializationLiteral.add(v_baseClass.fieldInitializationLiteral[v_i]);
-      v_fieldAccessModifier.add(v_baseClass.fieldAccessModifiers[v_i]);
-      v_i += 1;
+  ArrayList<Integer> functionIds = new ArrayList<Integer>();
+  ArrayList<Integer> fieldInitializationCommand = new ArrayList<Integer>();
+  ArrayList<Value> fieldInitializationLiteral = new ArrayList<Value>();
+  ArrayList<Integer> fieldAccessModifier = new ArrayList<Integer>();
+  HashMap<Integer, Integer> globalNameIdToMemberId = new HashMap<Integer, Integer>();
+  if ((baseClass != null)) {
+    i = 0;
+    while ((i < baseClass.memberCount)) {
+      functionIds.add(baseClass.functionIds[i]);
+      fieldInitializationCommand.add(baseClass.fieldInitializationCommand[i]);
+      fieldInitializationLiteral.add(baseClass.fieldInitializationLiteral[i]);
+      fieldAccessModifier.add(baseClass.fieldAccessModifiers[i]);
+      i += 1;
     }
-    int[] v_keys = PST_convertIntegerSetToArray(v_baseClass.globalIdToMemberId.keySet());
-    v_i = 0;
-    while ((v_i < v_keys.length)) {
-      v_t = v_keys[v_i];
-      v_globalNameIdToMemberId.put(v_t, v_baseClass.globalIdToMemberId.get(v_t));
-      v_i += 1;
+    int[] keys = PST_convertIntegerSetToArray(baseClass.globalIdToMemberId.keySet());
+    i = 0;
+    while ((i < keys.length)) {
+      t = keys[i];
+      globalNameIdToMemberId.put(t, baseClass.globalIdToMemberId.get(t));
+      i += 1;
     }
-    v_keys = PST_convertIntegerSetToArray(v_baseClass.localeScopedNameIdToMemberId.keySet());
-    v_i = 0;
-    while ((v_i < v_keys.length)) {
-      v_t = v_keys[v_i];
-      v_classInfo.localeScopedNameIdToMemberId.put(v_t, v_baseClass.localeScopedNameIdToMemberId.get(v_t));
-      v_i += 1;
+    keys = PST_convertIntegerSetToArray(baseClass.localeScopedNameIdToMemberId.keySet());
+    i = 0;
+    while ((i < keys.length)) {
+      t = keys[i];
+      classInfo.localeScopedNameIdToMemberId.put(t, baseClass.localeScopedNameIdToMemberId.get(t));
+      i += 1;
     }
   }
-  int v_accessModifier = 0;
-  v_i = 7;
-  while ((v_i < v_args.length)) {
-    v_memberId = v_args[(v_i + 1)];
-    v_globalId = v_args[(v_i + 2)];
-    v_accessModifier = v_args[(v_i + 5)];
-    while ((v_memberId >= v_functionIds.size())) {
-      v_functionIds.add(-1);
-      v_fieldInitializationCommand.add(-1);
-      v_fieldInitializationLiteral.add(null);
-      v_fieldAccessModifier.add(0);
+  int accessModifier = 0;
+  i = 7;
+  while ((i < args.length)) {
+    memberId = args[(i + 1)];
+    globalId = args[(i + 2)];
+    accessModifier = args[(i + 5)];
+    while ((memberId >= functionIds.size())) {
+      functionIds.add(-1);
+      fieldInitializationCommand.add(-1);
+      fieldInitializationLiteral.add(null);
+      fieldAccessModifier.add(0);
     }
-    v_globalNameIdToMemberId.put(v_globalId, v_memberId);
-    v_fieldAccessModifier.set(v_memberId, v_accessModifier);
-    if ((v_args[v_i] == 0)) {
-      v_fieldInitializationCommand.set(v_memberId, v_args[(v_i + 3)]);
-      v_t = v_args[(v_i + 4)];
-      if ((v_t == -1)) {
-        v_fieldInitializationLiteral.set(v_memberId, v_vm.globals.valueNull);
+    globalNameIdToMemberId.put(globalId, memberId);
+    fieldAccessModifier.set(memberId, accessModifier);
+    if ((args[i] == 0)) {
+      fieldInitializationCommand.set(memberId, args[(i + 3)]);
+      t = args[(i + 4)];
+      if ((t == -1)) {
+        fieldInitializationLiteral.set(memberId, vm.globals.valueNull);
       } else {
-        v_fieldInitializationLiteral.set(v_memberId, v_vm.metadata.literalTable[v_t]);
+        fieldInitializationLiteral.set(memberId, vm.metadata.literalTable[t]);
       }
     } else {
-      v_functionId = v_args[(v_i + 3)];
-      v_functionIds.set(v_memberId, v_functionId);
+      functionId = args[(i + 3)];
+      functionIds.set(memberId, functionId);
     }
-    v_i += 6;
+    i += 6;
   }
-  v_classInfo.functionIds = PST_listToArrayInt(v_functionIds);
-  v_classInfo.fieldInitializationCommand = PST_listToArrayInt(v_fieldInitializationCommand);
-  v_classInfo.fieldInitializationLiteral = v_fieldInitializationLiteral.toArray(Value.EMPTY_ARRAY);
-  v_classInfo.fieldAccessModifiers = PST_listToArrayInt(v_fieldAccessModifier);
-  v_classInfo.memberCount = v_functionIds.size();
-  v_classInfo.globalIdToMemberId = v_globalNameIdToMemberId;
-  v_classInfo.typeInfo = new int[v_classInfo.memberCount][];
-  if ((v_baseClass != null)) {
-    v_i = 0;
-    while ((v_i < v_baseClass.typeInfo.length)) {
-      v_classInfo.typeInfo[v_i] = v_baseClass.typeInfo[v_i];
-      v_i += 1;
+  classInfo.functionIds = PST_listToArrayInt(functionIds);
+  classInfo.fieldInitializationCommand = PST_listToArrayInt(fieldInitializationCommand);
+  classInfo.fieldInitializationLiteral = fieldInitializationLiteral.toArray(Value.EMPTY_ARRAY);
+  classInfo.fieldAccessModifiers = PST_listToArrayInt(fieldAccessModifier);
+  classInfo.memberCount = functionIds.size();
+  classInfo.globalIdToMemberId = globalNameIdToMemberId;
+  classInfo.typeInfo = new int[classInfo.memberCount][];
+  if ((baseClass != null)) {
+    i = 0;
+    while ((i < baseClass.typeInfo.length)) {
+      classInfo.typeInfo[i] = baseClass.typeInfo[i];
+      i += 1;
     }
   }
-  if ("Core.Exception".equals(v_className)) {
-    MagicNumbers v_mn = v_vm.metadata.magicNumbers;
-    v_mn.coreExceptionClassId = v_classId;
+  if ("Core.Exception".equals(className)) {
+    MagicNumbers mn = vm.metadata.magicNumbers;
+    mn.coreExceptionClassId = classId;
   }
   return 0;
 }
 
-public static int v_initializeClassFieldTypeInfo(VmContext v_vm, int[] v_opCodeRow) {
-  ClassInfo v_classInfo = v_vm.metadata.classTable[v_opCodeRow[0]];
-  int v_memberId = v_opCodeRow[1];
-  int v_len = v_opCodeRow.length;
-  int[] v_typeInfo = new int[(v_len - 2)];
-  int v_i = 2;
-  while ((v_i < v_len)) {
-    v_typeInfo[(v_i - 2)] = v_opCodeRow[v_i];
-    v_i += 1;
+public static int initializeClassFieldTypeInfo(VmContext vm, int[] opCodeRow) {
+  ClassInfo classInfo = vm.metadata.classTable[opCodeRow[0]];
+  int memberId = opCodeRow[1];
+  int len = opCodeRow.length;
+  int[] typeInfo = new int[(len - 2)];
+  int i = 2;
+  while ((i < len)) {
+    typeInfo[(i - 2)] = opCodeRow[i];
+    i += 1;
   }
-  v_classInfo.typeInfo[v_memberId] = v_typeInfo;
+  classInfo.typeInfo[memberId] = typeInfo;
   return 0;
 }
 
-public static VmGlobals v_initializeConstantValues() {
-  Value[] v_pos = new Value[2049];
-  Value[] v_neg = new Value[257];
-  int v_i = 0;
-  while ((v_i < 2049)) {
-    v_pos[v_i] = new Value(v_i);
-    v_i += 1;
+public static VmGlobals initializeConstantValues() {
+  Value[] pos = new Value[2049];
+  Value[] neg = new Value[257];
+  int i = 0;
+  while ((i < 2049)) {
+    pos[i] = new Value(i);
+    i += 1;
   }
-  v_i = 1;
-  while ((v_i < 257)) {
-    v_neg[v_i] = new Value(-v_i);
-    v_i += 1;
+  i = 1;
+  while ((i < 257)) {
+    neg[i] = new Value(-i);
+    i += 1;
   }
-  v_neg[0] = v_pos[0];
-  VmGlobals v_globals = new VmGlobals(new Value(1, null), new Value(true), new Value(false), v_pos[0], v_pos[1], v_neg[1], new Value(4, 0.0), new Value(4, 1.0), new Value(5, ""), v_pos, v_neg, new HashMap<String, Value>(), new int[1], new int[1], new int[1], new int[1], new int[1], new int[2]);
-  v_globals.commonStrings.put("", v_globals.stringEmpty);
-  v_globals.booleanType[0] = 2;
-  v_globals.intType[0] = 3;
-  v_globals.floatType[0] = 4;
-  v_globals.stringType[0] = 5;
-  v_globals.classType[0] = 10;
-  v_globals.anyInstanceType[0] = 8;
-  v_globals.anyInstanceType[1] = 0;
-  return v_globals;
+  neg[0] = pos[0];
+  VmGlobals globals = new VmGlobals(new Value(1, null), new Value(true), new Value(false), pos[0], pos[1], neg[1], new Value(4, 0.0), new Value(4, 1.0), new Value(5, ""), pos, neg, new HashMap<String, Value>(), new int[1], new int[1], new int[1], new int[1], new int[1], new int[2]);
+  globals.commonStrings.put("", globals.stringEmpty);
+  globals.booleanType[0] = 2;
+  globals.intType[0] = 3;
+  globals.floatType[0] = 4;
+  globals.stringType[0] = 5;
+  globals.classType[0] = 10;
+  globals.anyInstanceType[0] = 8;
+  globals.anyInstanceType[1] = 0;
+  return globals;
 }
 
-public static int v_initializeFunction(VmContext v_vm, int[] v_args, int v_currentPc, String v_stringArg) {
-  int v_functionId = v_args[0];
-  int v_nameId = v_args[1];
-  int v_minArgCount = v_args[2];
-  int v_maxArgCount = v_args[3];
-  int v_functionType = v_args[4];
-  int v_classId = v_args[5];
-  int v_localsCount = v_args[6];
-  int v_numPcOffsetsForOptionalArgs = v_args[8];
-  int[] v_pcOffsetsForOptionalArgs = new int[(v_numPcOffsetsForOptionalArgs + 1)];
-  int v_i = 0;
-  while ((v_i < v_numPcOffsetsForOptionalArgs)) {
-    v_pcOffsetsForOptionalArgs[(v_i + 1)] = v_args[(9 + v_i)];
-    v_i += 1;
+public static int initializeFunction(VmContext vm, int[] args, int currentPc, String stringArg) {
+  int functionId = args[0];
+  int nameId = args[1];
+  int minArgCount = args[2];
+  int maxArgCount = args[3];
+  int functionType = args[4];
+  int classId = args[5];
+  int localsCount = args[6];
+  int numPcOffsetsForOptionalArgs = args[8];
+  int[] pcOffsetsForOptionalArgs = new int[(numPcOffsetsForOptionalArgs + 1)];
+  int i = 0;
+  while ((i < numPcOffsetsForOptionalArgs)) {
+    pcOffsetsForOptionalArgs[(i + 1)] = args[(9 + i)];
+    i += 1;
   }
-  FunctionInfo[] v_functionTable = v_getFunctionTable(v_vm, v_functionId);
-  v_functionTable[v_functionId] = new FunctionInfo(v_functionId, v_nameId, v_currentPc, v_minArgCount, v_maxArgCount, v_functionType, v_classId, v_localsCount, v_pcOffsetsForOptionalArgs, v_stringArg, null);
-  v_vm.metadata.mostRecentFunctionDef = v_functionTable[v_functionId];
-  if ((v_nameId >= 0)) {
-    String v_name = v_vm.metadata.identifiers[v_nameId];
-    if ("_LIB_CORE_list_filter".equals(v_name)) {
-      v_vm.metadata.primitiveMethodFunctionIdFallbackLookup[0] = v_functionId;
+  FunctionInfo[] functionTable = getFunctionTable(vm, functionId);
+  functionTable[functionId] = new FunctionInfo(functionId, nameId, currentPc, minArgCount, maxArgCount, functionType, classId, localsCount, pcOffsetsForOptionalArgs, stringArg, null);
+  vm.metadata.mostRecentFunctionDef = functionTable[functionId];
+  if ((nameId >= 0)) {
+    String name = vm.metadata.identifiers[nameId];
+    if ("_LIB_CORE_list_filter".equals(name)) {
+      vm.metadata.primitiveMethodFunctionIdFallbackLookup[0] = functionId;
     } else {
-      if ("_LIB_CORE_list_map".equals(v_name)) {
-        v_vm.metadata.primitiveMethodFunctionIdFallbackLookup[1] = v_functionId;
+      if ("_LIB_CORE_list_map".equals(name)) {
+        vm.metadata.primitiveMethodFunctionIdFallbackLookup[1] = functionId;
       } else {
-        if ("_LIB_CORE_list_sort_by_key".equals(v_name)) {
-          v_vm.metadata.primitiveMethodFunctionIdFallbackLookup[2] = v_functionId;
+        if ("_LIB_CORE_list_sort_by_key".equals(name)) {
+          vm.metadata.primitiveMethodFunctionIdFallbackLookup[2] = functionId;
         } else {
-          if ("_LIB_CORE_invoke".equals(v_name)) {
-            v_vm.metadata.primitiveMethodFunctionIdFallbackLookup[3] = v_functionId;
+          if ("_LIB_CORE_invoke".equals(name)) {
+            vm.metadata.primitiveMethodFunctionIdFallbackLookup[3] = functionId;
           } else {
-            if ("_LIB_CORE_generateException".equals(v_name)) {
-              MagicNumbers v_mn = v_vm.metadata.magicNumbers;
-              v_mn.coreGenerateExceptionFunctionId = v_functionId;
+            if ("_LIB_CORE_generateException".equals(name)) {
+              MagicNumbers mn = vm.metadata.magicNumbers;
+              mn.coreGenerateExceptionFunctionId = functionId;
             }
           }
         }
@@ -1626,654 +1626,654 @@ public static int v_initializeFunction(VmContext v_vm, int[] v_args, int v_curre
   return 0;
 }
 
-public static HashMap<Integer, Integer> v_initializeIntSwitchStatement(VmContext v_vm, int v_pc, int[] v_args) {
-  HashMap<Integer, Integer> v_output = new HashMap<Integer, Integer>();
-  int v_i = 1;
-  while ((v_i < v_args.length)) {
-    v_output.put(v_args[v_i], v_args[(v_i + 1)]);
-    v_i += 2;
+public static HashMap<Integer, Integer> initializeIntSwitchStatement(VmContext vm, int pc, int[] args) {
+  HashMap<Integer, Integer> output = new HashMap<Integer, Integer>();
+  int i = 1;
+  while ((i < args.length)) {
+    output.put(args[i], args[(i + 1)]);
+    i += 2;
   }
-  v_vm.byteCode.integerSwitchesByPc[v_pc] = v_output;
-  return v_output;
+  vm.byteCode.integerSwitchesByPc[pc] = output;
+  return output;
 }
 
-public static HashMap<String, Integer> v_initializeStringSwitchStatement(VmContext v_vm, int v_pc, int[] v_args) {
-  HashMap<String, Integer> v_output = new HashMap<String, Integer>();
-  int v_i = 1;
-  while ((v_i < v_args.length)) {
-    String v_s = ((String) v_vm.metadata.literalTable[v_args[v_i]].internalValue);
-    v_output.put(v_s, v_args[(v_i + 1)]);
-    v_i += 2;
+public static HashMap<String, Integer> initializeStringSwitchStatement(VmContext vm, int pc, int[] args) {
+  HashMap<String, Integer> output = new HashMap<String, Integer>();
+  int i = 1;
+  while ((i < args.length)) {
+    String s = ((String) vm.metadata.literalTable[args[i]].internalValue);
+    output.put(s, args[(i + 1)]);
+    i += 2;
   }
-  v_vm.byteCode.stringSwitchesByPc[v_pc] = v_output;
-  return v_output;
+  vm.byteCode.stringSwitchesByPc[pc] = output;
+  return output;
 }
 
-public static int v_initLocTable(VmContext v_vm, int[] v_row) {
-  int v_classId = v_row[0];
-  int v_memberCount = v_row[1];
-  int v_nameId = 0;
-  int v_totalLocales = v_vm.metadata.magicNumbers.totalLocaleCount;
-  HashMap<Integer, Integer> v_lookup = new HashMap<Integer, Integer>();
-  int v_i = 2;
-  while ((v_i < v_row.length)) {
-    int v_localeId = v_row[v_i];
-    v_i += 1;
-    int v_j = 0;
-    while ((v_j < v_memberCount)) {
-      v_nameId = v_row[(v_i + v_j)];
-      if ((v_nameId != -1)) {
-        v_lookup.put(((v_nameId * v_totalLocales) + v_localeId), v_j);
+public static int initLocTable(VmContext vm, int[] row) {
+  int classId = row[0];
+  int memberCount = row[1];
+  int nameId = 0;
+  int totalLocales = vm.metadata.magicNumbers.totalLocaleCount;
+  HashMap<Integer, Integer> lookup = new HashMap<Integer, Integer>();
+  int i = 2;
+  while ((i < row.length)) {
+    int localeId = row[i];
+    i += 1;
+    int j = 0;
+    while ((j < memberCount)) {
+      nameId = row[(i + j)];
+      if ((nameId != -1)) {
+        lookup.put(((nameId * totalLocales) + localeId), j);
       }
-      v_j += 1;
+      j += 1;
     }
-    v_i += v_memberCount;
+    i += memberCount;
   }
-  v_vm.metadata.classMemberLocalizerBuilder.put(v_classId, v_lookup);
+  vm.metadata.classMemberLocalizerBuilder.put(classId, lookup);
   return 0;
 }
 
-public static InterpreterResult v_interpret(VmContext v_vm, int v_executionContextId) {
-  InterpreterResult v_output = v_interpretImpl(v_vm, v_executionContextId);
-  while (((v_output.status == 5) && (v_output.reinvokeDelay == 0))) {
-    v_output = v_interpretImpl(v_vm, v_executionContextId);
+public static InterpreterResult interpret(VmContext vm, int executionContextId) {
+  InterpreterResult output = interpretImpl(vm, executionContextId);
+  while (((output.status == 5) && (output.reinvokeDelay == 0))) {
+    output = interpretImpl(vm, executionContextId);
   }
-  return v_output;
+  return output;
 }
 
-public static InterpreterResult v_interpreterFinished(VmContext v_vm, ExecutionContext v_ec) {
-  if ((v_ec != null)) {
-    int v_id = v_ec.id;
-    if (v_vm.executionContexts.containsKey(v_id)) {
-      v_vm.executionContexts.remove(v_id);
+public static InterpreterResult interpreterFinished(VmContext vm, ExecutionContext ec) {
+  if ((ec != null)) {
+    int id = ec.id;
+    if (vm.executionContexts.containsKey(id)) {
+      vm.executionContexts.remove(id);
     }
   }
   return new InterpreterResult(1, null, 0.0, 0, false, "");
 }
 
-public static ExecutionContext v_interpreterGetExecutionContext(VmContext v_vm, int v_executionContextId) {
-  HashMap<Integer, ExecutionContext> v_executionContexts = v_vm.executionContexts;
-  if (!v_executionContexts.containsKey(v_executionContextId)) {
+public static ExecutionContext interpreterGetExecutionContext(VmContext vm, int executionContextId) {
+  HashMap<Integer, ExecutionContext> executionContexts = vm.executionContexts;
+  if (!executionContexts.containsKey(executionContextId)) {
     return null;
   }
-  return v_executionContexts.get(v_executionContextId);
+  return executionContexts.get(executionContextId);
 }
 
-public static InterpreterResult v_interpretImpl(VmContext v_vm, int v_executionContextId) {
-  VmMetadata v_metadata = v_vm.metadata;
-  VmGlobals v_globals = v_vm.globals;
-  Value v_VALUE_NULL = v_globals.valueNull;
-  Value v_VALUE_TRUE = v_globals.boolTrue;
-  Value v_VALUE_FALSE = v_globals.boolFalse;
-  Value v_VALUE_INT_ONE = v_globals.intOne;
-  Value v_VALUE_INT_ZERO = v_globals.intZero;
-  Value v_VALUE_FLOAT_ZERO = v_globals.floatZero;
-  Value v_VALUE_FLOAT_ONE = v_globals.floatOne;
-  Value[] v_INTEGER_POSITIVE_CACHE = v_globals.positiveIntegers;
-  Value[] v_INTEGER_NEGATIVE_CACHE = v_globals.negativeIntegers;
-  HashMap<Integer, ExecutionContext> v_executionContexts = v_vm.executionContexts;
-  ExecutionContext v_ec = v_interpreterGetExecutionContext(v_vm, v_executionContextId);
-  if ((v_ec == null)) {
-    return v_interpreterFinished(v_vm, null);
+public static InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
+  VmMetadata metadata = vm.metadata;
+  VmGlobals globals = vm.globals;
+  Value VALUE_NULL = globals.valueNull;
+  Value VALUE_TRUE = globals.boolTrue;
+  Value VALUE_FALSE = globals.boolFalse;
+  Value VALUE_INT_ONE = globals.intOne;
+  Value VALUE_INT_ZERO = globals.intZero;
+  Value VALUE_FLOAT_ZERO = globals.floatZero;
+  Value VALUE_FLOAT_ONE = globals.floatOne;
+  Value[] INTEGER_POSITIVE_CACHE = globals.positiveIntegers;
+  Value[] INTEGER_NEGATIVE_CACHE = globals.negativeIntegers;
+  HashMap<Integer, ExecutionContext> executionContexts = vm.executionContexts;
+  ExecutionContext ec = interpreterGetExecutionContext(vm, executionContextId);
+  if ((ec == null)) {
+    return interpreterFinished(vm, null);
   }
-  v_ec.executionCounter += 1;
-  StackFrame v_stack = v_ec.stackTop;
-  int[] v_ops = v_vm.byteCode.ops;
-  int[][] v_args = v_vm.byteCode.args;
-  String[] v_stringArgs = v_vm.byteCode.stringArgs;
-  ClassInfo[] v_classTable = v_vm.metadata.classTable;
-  FunctionInfo[] v_functionTable = v_vm.metadata.functionTable;
-  Value[] v_literalTable = v_vm.metadata.literalTable;
-  String[] v_identifiers = v_vm.metadata.identifiers;
-  Value[] v_valueStack = v_ec.valueStack;
-  int v_valueStackSize = v_ec.currentValueStackSize;
-  int v_valueStackCapacity = v_valueStack.length;
-  boolean v_hasInterrupt = false;
-  int v_type = 0;
-  int v_nameId = 0;
-  int v_classId = 0;
-  int v_functionId = 0;
-  int v_localeId = 0;
-  ClassInfo v_classInfo = null;
-  int v_len = 0;
-  Value v_root = null;
-  int[] v_row = null;
-  int v_argCount = 0;
-  String[] v_stringList = null;
-  boolean v_returnValueUsed = false;
-  Value v_output = null;
-  FunctionInfo v_functionInfo = null;
-  int v_keyType = 0;
-  int v_intKey = 0;
-  String v_stringKey = null;
-  boolean v_first = false;
-  boolean v_primitiveMethodToCoreLibraryFallback = false;
-  boolean v_bool1 = false;
-  boolean v_bool2 = false;
-  boolean v_staticConstructorNotInvoked = true;
-  int v_int1 = 0;
-  int v_int2 = 0;
-  int v_int3 = 0;
-  int v_i = 0;
-  int v_j = 0;
-  double v_float1 = 0.0;
-  double v_float2 = 0.0;
-  double v_float3 = 0.0;
-  double[] v_floatList1 = new double[2];
-  Value v_value = null;
-  Value v_value2 = null;
-  Value v_value3 = null;
-  String v_string1 = null;
-  String v_string2 = null;
-  ObjectInstance v_objInstance1 = null;
-  ObjectInstance v_objInstance2 = null;
-  ListImpl v_list1 = null;
-  ListImpl v_list2 = null;
-  ArrayList<Value> v_valueList1 = null;
-  ArrayList<Value> v_valueList2 = null;
-  DictImpl v_dictImpl = null;
-  DictImpl v_dictImpl2 = null;
-  ArrayList<String> v_stringList1 = null;
-  ArrayList<Integer> v_intList1 = null;
-  Value[] v_valueArray1 = null;
-  int[] v_intArray1 = null;
-  int[] v_intArray2 = null;
-  Object[] v_objArray1 = null;
-  FunctionPointer v_functionPointer1 = null;
-  HashMap<Integer, Integer> v_intIntDict1 = null;
-  HashMap<String, Integer> v_stringIntDict1 = null;
-  StackFrame v_stackFrame2 = null;
-  Value v_leftValue = null;
-  Value v_rightValue = null;
-  org.crayonlang.interpreter.structs.ClassValue v_classValue = null;
-  Value v_arg1 = null;
-  Value v_arg2 = null;
-  Value v_arg3 = null;
-  ArrayList<Token> v_tokenList = null;
-  int[] v_globalNameIdToPrimitiveMethodName = v_vm.metadata.globalNameIdToPrimitiveMethodName;
-  MagicNumbers v_magicNumbers = v_vm.metadata.magicNumbers;
-  HashMap<Integer, Integer>[] v_integerSwitchesByPc = v_vm.byteCode.integerSwitchesByPc;
-  HashMap<String, Integer>[] v_stringSwitchesByPc = v_vm.byteCode.stringSwitchesByPc;
-  HashMap<Integer, Integer> v_integerSwitch = null;
-  HashMap<String, Integer> v_stringSwitch = null;
-  int[][] v_esfData = v_vm.metadata.esfData;
-  HashMap<Integer, ClosureValuePointer> v_closure = null;
-  HashMap<Integer, ClosureValuePointer> v_parentClosure = null;
-  int[] v_intBuffer = new int[16];
-  Value[] v_localsStack = v_ec.localsStack;
-  int[] v_localsStackSet = v_ec.localsStackSet;
-  int v_localsStackSetToken = v_stack.localsStackSetToken;
-  int v_localsStackCapacity = v_localsStack.length;
-  int v_localsStackOffset = v_stack.localsStackOffset;
-  Value[] v_funcArgs = v_vm.funcArgs;
-  int v_pc = v_stack.pc;
-  java.lang.reflect.Method v_nativeFp = null;
-  VmDebugData v_debugData = v_vm.byteCode.debugData;
-  boolean[] v_isBreakPointPresent = v_debugData.hasBreakpoint;
-  BreakpointInfo v_breakpointInfo = null;
-  boolean v_debugBreakPointTemporaryDisable = false;
+  ec.executionCounter += 1;
+  StackFrame stack = ec.stackTop;
+  int[] ops = vm.byteCode.ops;
+  int[][] args = vm.byteCode.args;
+  String[] stringArgs = vm.byteCode.stringArgs;
+  ClassInfo[] classTable = vm.metadata.classTable;
+  FunctionInfo[] functionTable = vm.metadata.functionTable;
+  Value[] literalTable = vm.metadata.literalTable;
+  String[] identifiers = vm.metadata.identifiers;
+  Value[] valueStack = ec.valueStack;
+  int valueStackSize = ec.currentValueStackSize;
+  int valueStackCapacity = valueStack.length;
+  boolean hasInterrupt = false;
+  int type = 0;
+  int nameId = 0;
+  int classId = 0;
+  int functionId = 0;
+  int localeId = 0;
+  ClassInfo classInfo = null;
+  int len = 0;
+  Value root = null;
+  int[] row = null;
+  int argCount = 0;
+  String[] stringList = null;
+  boolean returnValueUsed = false;
+  Value output = null;
+  FunctionInfo functionInfo = null;
+  int keyType = 0;
+  int intKey = 0;
+  String stringKey = null;
+  boolean first = false;
+  boolean primitiveMethodToCoreLibraryFallback = false;
+  boolean bool1 = false;
+  boolean bool2 = false;
+  boolean staticConstructorNotInvoked = true;
+  int int1 = 0;
+  int int2 = 0;
+  int int3 = 0;
+  int i = 0;
+  int j = 0;
+  double float1 = 0.0;
+  double float2 = 0.0;
+  double float3 = 0.0;
+  double[] floatList1 = new double[2];
+  Value value = null;
+  Value value2 = null;
+  Value value3 = null;
+  String string1 = null;
+  String string2 = null;
+  ObjectInstance objInstance1 = null;
+  ObjectInstance objInstance2 = null;
+  ListImpl list1 = null;
+  ListImpl list2 = null;
+  ArrayList<Value> valueList1 = null;
+  ArrayList<Value> valueList2 = null;
+  DictImpl dictImpl = null;
+  DictImpl dictImpl2 = null;
+  ArrayList<String> stringList1 = null;
+  ArrayList<Integer> intList1 = null;
+  Value[] valueArray1 = null;
+  int[] intArray1 = null;
+  int[] intArray2 = null;
+  Object[] objArray1 = null;
+  FunctionPointer functionPointer1 = null;
+  HashMap<Integer, Integer> intIntDict1 = null;
+  HashMap<String, Integer> stringIntDict1 = null;
+  StackFrame stackFrame2 = null;
+  Value leftValue = null;
+  Value rightValue = null;
+  org.crayonlang.interpreter.structs.ClassValue classValue = null;
+  Value arg1 = null;
+  Value arg2 = null;
+  Value arg3 = null;
+  ArrayList<Token> tokenList = null;
+  int[] globalNameIdToPrimitiveMethodName = vm.metadata.globalNameIdToPrimitiveMethodName;
+  MagicNumbers magicNumbers = vm.metadata.magicNumbers;
+  HashMap<Integer, Integer>[] integerSwitchesByPc = vm.byteCode.integerSwitchesByPc;
+  HashMap<String, Integer>[] stringSwitchesByPc = vm.byteCode.stringSwitchesByPc;
+  HashMap<Integer, Integer> integerSwitch = null;
+  HashMap<String, Integer> stringSwitch = null;
+  int[][] esfData = vm.metadata.esfData;
+  HashMap<Integer, ClosureValuePointer> closure = null;
+  HashMap<Integer, ClosureValuePointer> parentClosure = null;
+  int[] intBuffer = new int[16];
+  Value[] localsStack = ec.localsStack;
+  int[] localsStackSet = ec.localsStackSet;
+  int localsStackSetToken = stack.localsStackSetToken;
+  int localsStackCapacity = localsStack.length;
+  int localsStackOffset = stack.localsStackOffset;
+  Value[] funcArgs = vm.funcArgs;
+  int pc = stack.pc;
+  java.lang.reflect.Method nativeFp = null;
+  VmDebugData debugData = vm.byteCode.debugData;
+  boolean[] isBreakPointPresent = debugData.hasBreakpoint;
+  BreakpointInfo breakpointInfo = null;
+  boolean debugBreakPointTemporaryDisable = false;
   while (true) {
-    v_row = v_args[v_pc];
-    switch (v_ops[v_pc]) {
+    row = args[pc];
+    switch (ops[pc]) {
       case 0:
         // ADD_LITERAL;
-        v_addLiteralImpl(v_vm, v_row, v_stringArgs[v_pc]);
+        addLiteralImpl(vm, row, stringArgs[pc]);
         break;
       case 1:
         // ADD_NAME;
-        v_addNameImpl(v_vm, v_stringArgs[v_pc]);
+        addNameImpl(vm, stringArgs[pc]);
         break;
       case 2:
         // ARG_TYPE_VERIFY;
-        v_len = v_row[0];
-        v_i = 1;
-        v_j = 0;
-        while ((v_j < v_len)) {
-          v_j += 1;
+        len = row[0];
+        i = 1;
+        j = 0;
+        while ((j < len)) {
+          j += 1;
         }
         break;
       case 3:
         // ASSIGN_CLOSURE;
-        v_value = v_valueStack[--v_valueStackSize];
-        v_i = v_row[0];
-        if ((v_stack.closureVariables == null)) {
-          v_closure = new HashMap<Integer, ClosureValuePointer>();
-          v_stack.closureVariables = v_closure;
-          v_closure.put(v_i, new ClosureValuePointer(v_value));
+        value = valueStack[--valueStackSize];
+        i = row[0];
+        if ((stack.closureVariables == null)) {
+          closure = new HashMap<Integer, ClosureValuePointer>();
+          stack.closureVariables = closure;
+          closure.put(i, new ClosureValuePointer(value));
         } else {
-          v_closure = v_stack.closureVariables;
-          if (v_closure.containsKey(v_i)) {
-            v_closure.get(v_i).value = v_value;
+          closure = stack.closureVariables;
+          if (closure.containsKey(i)) {
+            closure.get(i).value = value;
           } else {
-            v_closure.put(v_i, new ClosureValuePointer(v_value));
+            closure.put(i, new ClosureValuePointer(value));
           }
         }
         break;
       case 4:
         // ASSIGN_INDEX;
-        v_valueStackSize -= 3;
-        v_value = v_valueStack[(v_valueStackSize + 2)];
-        v_value2 = v_valueStack[(v_valueStackSize + 1)];
-        v_root = v_valueStack[v_valueStackSize];
-        v_type = v_root.type;
-        v_bool1 = (v_row[0] == 1);
-        if ((v_type == 6)) {
-          if ((v_value2.type == 3)) {
-            v_i = v_value2.intValue;
-            v_list1 = ((ListImpl) v_root.internalValue);
-            if ((v_list1.type != null)) {
-              v_value3 = v_canAssignTypeToGeneric(v_vm, v_value, v_list1.type, 0);
-              if ((v_value3 == null)) {
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot convert a " + v_typeToStringFromValue(v_vm, v_value) + " into a " + v_typeToString(v_vm, v_list1.type, 0));
+        valueStackSize -= 3;
+        value = valueStack[(valueStackSize + 2)];
+        value2 = valueStack[(valueStackSize + 1)];
+        root = valueStack[valueStackSize];
+        type = root.type;
+        bool1 = (row[0] == 1);
+        if ((type == 6)) {
+          if ((value2.type == 3)) {
+            i = value2.intValue;
+            list1 = ((ListImpl) root.internalValue);
+            if ((list1.type != null)) {
+              value3 = canAssignTypeToGeneric(vm, value, list1.type, 0);
+              if ((value3 == null)) {
+                hasInterrupt = EX_InvalidArgument(ec, "Cannot convert a " + typeToStringFromValue(vm, value) + " into a " + typeToString(vm, list1.type, 0));
               }
-              v_value = v_value3;
+              value = value3;
             }
-            if (!v_hasInterrupt) {
-              if ((v_i >= v_list1.size)) {
-                v_hasInterrupt = v_EX_IndexOutOfRange(v_ec, "Index is out of range.");
+            if (!hasInterrupt) {
+              if ((i >= list1.size)) {
+                hasInterrupt = EX_IndexOutOfRange(ec, "Index is out of range.");
               } else {
-                if ((v_i < 0)) {
-                  v_i += v_list1.size;
-                  if ((v_i < 0)) {
-                    v_hasInterrupt = v_EX_IndexOutOfRange(v_ec, "Index is out of range.");
+                if ((i < 0)) {
+                  i += list1.size;
+                  if ((i < 0)) {
+                    hasInterrupt = EX_IndexOutOfRange(ec, "Index is out of range.");
                   }
                 }
               }
-              if (!v_hasInterrupt) {
-                v_list1.array[v_i] = v_value;
+              if (!hasInterrupt) {
+                list1.array[i] = value;
               }
             }
           } else {
-            v_hasInterrupt = v_EX_InvalidArgument(v_ec, "List index must be an integer.");
+            hasInterrupt = EX_InvalidArgument(ec, "List index must be an integer.");
           }
         } else {
-          if ((v_type == 7)) {
-            v_dictImpl = ((DictImpl) v_root.internalValue);
-            if ((v_dictImpl.valueType != null)) {
-              v_value3 = v_canAssignTypeToGeneric(v_vm, v_value, v_dictImpl.valueType, 0);
-              if ((v_value3 == null)) {
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot assign a value to this dictionary of this type.");
+          if ((type == 7)) {
+            dictImpl = ((DictImpl) root.internalValue);
+            if ((dictImpl.valueType != null)) {
+              value3 = canAssignTypeToGeneric(vm, value, dictImpl.valueType, 0);
+              if ((value3 == null)) {
+                hasInterrupt = EX_InvalidArgument(ec, "Cannot assign a value to this dictionary of this type.");
               } else {
-                v_value = v_value3;
+                value = value3;
               }
             }
-            v_keyType = v_value2.type;
-            if ((v_keyType == 3)) {
-              v_intKey = v_value2.intValue;
+            keyType = value2.type;
+            if ((keyType == 3)) {
+              intKey = value2.intValue;
             } else {
-              if ((v_keyType == 5)) {
-                v_stringKey = ((String) v_value2.internalValue);
+              if ((keyType == 5)) {
+                stringKey = ((String) value2.internalValue);
               } else {
-                if ((v_keyType == 8)) {
-                  v_objInstance1 = ((ObjectInstance) v_value2.internalValue);
-                  v_intKey = v_objInstance1.objectId;
+                if ((keyType == 8)) {
+                  objInstance1 = ((ObjectInstance) value2.internalValue);
+                  intKey = objInstance1.objectId;
                 } else {
-                  v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Invalid key for a dictionary.");
+                  hasInterrupt = EX_InvalidArgument(ec, "Invalid key for a dictionary.");
                 }
               }
             }
-            if (!v_hasInterrupt) {
-              v_bool2 = (v_dictImpl.size == 0);
-              if ((v_dictImpl.keyType != v_keyType)) {
-                if ((v_dictImpl.valueType != null)) {
-                  v_string1 = "Cannot assign a key of type " + v_typeToStringFromValue(v_vm, v_value2) + " to a dictionary that requires key types of " + v_dictKeyInfoToString(v_vm, v_dictImpl) + ".";
-                  v_hasInterrupt = v_EX_InvalidKey(v_ec, v_string1);
+            if (!hasInterrupt) {
+              bool2 = (dictImpl.size == 0);
+              if ((dictImpl.keyType != keyType)) {
+                if ((dictImpl.valueType != null)) {
+                  string1 = "Cannot assign a key of type " + typeToStringFromValue(vm, value2) + " to a dictionary that requires key types of " + dictKeyInfoToString(vm, dictImpl) + ".";
+                  hasInterrupt = EX_InvalidKey(ec, string1);
                 } else {
-                  if (!v_bool2) {
-                    v_hasInterrupt = v_EX_InvalidKey(v_ec, "Cannot have multiple keys in one dictionary with different types.");
+                  if (!bool2) {
+                    hasInterrupt = EX_InvalidKey(ec, "Cannot have multiple keys in one dictionary with different types.");
                   }
                 }
               } else {
-                if (((v_keyType == 8) && (v_dictImpl.keyClassId > 0) && (v_objInstance1.classId != v_dictImpl.keyClassId))) {
-                  if (v_isClassASubclassOf(v_vm, v_objInstance1.classId, v_dictImpl.keyClassId)) {
-                    v_hasInterrupt = v_EX_InvalidKey(v_ec, "Cannot use this type of object as a key for this dictionary.");
+                if (((keyType == 8) && (dictImpl.keyClassId > 0) && (objInstance1.classId != dictImpl.keyClassId))) {
+                  if (isClassASubclassOf(vm, objInstance1.classId, dictImpl.keyClassId)) {
+                    hasInterrupt = EX_InvalidKey(ec, "Cannot use this type of object as a key for this dictionary.");
                   }
                 }
               }
             }
-            if (!v_hasInterrupt) {
-              if ((v_keyType == 5)) {
-                Integer dictLookup1 = v_dictImpl.stringToIndex.get(v_stringKey);
-                v_int1 = dictLookup1 == null ? (v_dictImpl.stringToIndex.containsKey(v_stringKey) ? null : (-1)) : dictLookup1;
-                if ((v_int1 == -1)) {
-                  v_dictImpl.stringToIndex.put(v_stringKey, v_dictImpl.size);
-                  v_dictImpl.size += 1;
-                  v_dictImpl.keys.add(v_value2);
-                  v_dictImpl.values.add(v_value);
-                  if (v_bool2) {
-                    v_dictImpl.keyType = v_keyType;
+            if (!hasInterrupt) {
+              if ((keyType == 5)) {
+                Integer dictLookup1 = dictImpl.stringToIndex.get(stringKey);
+                int1 = dictLookup1 == null ? (dictImpl.stringToIndex.containsKey(stringKey) ? null : (-1)) : dictLookup1;
+                if ((int1 == -1)) {
+                  dictImpl.stringToIndex.put(stringKey, dictImpl.size);
+                  dictImpl.size += 1;
+                  dictImpl.keys.add(value2);
+                  dictImpl.values.add(value);
+                  if (bool2) {
+                    dictImpl.keyType = keyType;
                   }
                 } else {
-                  v_dictImpl.values.set(v_int1, v_value);
+                  dictImpl.values.set(int1, value);
                 }
               } else {
-                Integer dictLookup2 = v_dictImpl.intToIndex.get(v_intKey);
-                v_int1 = dictLookup2 == null ? (-1) : dictLookup2;
-                if ((v_int1 == -1)) {
-                  v_dictImpl.intToIndex.put(v_intKey, v_dictImpl.size);
-                  v_dictImpl.size += 1;
-                  v_dictImpl.keys.add(v_value2);
-                  v_dictImpl.values.add(v_value);
-                  if (v_bool2) {
-                    v_dictImpl.keyType = v_keyType;
+                Integer dictLookup2 = dictImpl.intToIndex.get(intKey);
+                int1 = dictLookup2 == null ? (-1) : dictLookup2;
+                if ((int1 == -1)) {
+                  dictImpl.intToIndex.put(intKey, dictImpl.size);
+                  dictImpl.size += 1;
+                  dictImpl.keys.add(value2);
+                  dictImpl.values.add(value);
+                  if (bool2) {
+                    dictImpl.keyType = keyType;
                   }
                 } else {
-                  v_dictImpl.values.set(v_int1, v_value);
+                  dictImpl.values.set(int1, value);
                 }
               }
             }
           } else {
-            v_hasInterrupt = v_EX_UnsupportedOperation(v_ec, v_getTypeFromId(v_type) + " type does not support assigning to an index.");
+            hasInterrupt = EX_UnsupportedOperation(ec, getTypeFromId(type) + " type does not support assigning to an index.");
           }
         }
-        if (v_bool1) {
-          v_valueStack[v_valueStackSize] = v_value;
-          v_valueStackSize += 1;
+        if (bool1) {
+          valueStack[valueStackSize] = value;
+          valueStackSize += 1;
         }
         break;
       case 6:
         // ASSIGN_STATIC_FIELD;
-        v_classInfo = v_classTable[v_row[0]];
-        v_staticConstructorNotInvoked = true;
-        if ((v_classInfo.staticInitializationState < 2)) {
-          v_stack.pc = v_pc;
-          v_stackFrame2 = v_maybeInvokeStaticConstructor(v_vm, v_ec, v_stack, v_classInfo, v_valueStackSize, PST_intBuffer16);
+        classInfo = classTable[row[0]];
+        staticConstructorNotInvoked = true;
+        if ((classInfo.staticInitializationState < 2)) {
+          stack.pc = pc;
+          stackFrame2 = maybeInvokeStaticConstructor(vm, ec, stack, classInfo, valueStackSize, PST_intBuffer16);
           if ((PST_intBuffer16[0] == 1)) {
-            return v_generateException(v_vm, v_stack, v_pc, v_valueStackSize, v_ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
+            return generateException(vm, stack, pc, valueStackSize, ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
           }
-          if ((v_stackFrame2 != null)) {
-            v_staticConstructorNotInvoked = false;
-            v_stack = v_stackFrame2;
-            v_pc = v_stack.pc;
-            v_localsStackSetToken = v_stack.localsStackSetToken;
-            v_localsStackOffset = v_stack.localsStackOffset;
+          if ((stackFrame2 != null)) {
+            staticConstructorNotInvoked = false;
+            stack = stackFrame2;
+            pc = stack.pc;
+            localsStackSetToken = stack.localsStackSetToken;
+            localsStackOffset = stack.localsStackOffset;
           }
         }
-        if (v_staticConstructorNotInvoked) {
-          v_valueStackSize -= 1;
-          v_classInfo.staticFields[v_row[1]] = v_valueStack[v_valueStackSize];
+        if (staticConstructorNotInvoked) {
+          valueStackSize -= 1;
+          classInfo.staticFields[row[1]] = valueStack[valueStackSize];
         }
         break;
       case 7:
         // ASSIGN_FIELD;
-        v_valueStackSize -= 2;
-        v_value = v_valueStack[(v_valueStackSize + 1)];
-        v_value2 = v_valueStack[v_valueStackSize];
-        v_nameId = v_row[2];
-        if ((v_value2.type == 8)) {
-          v_objInstance1 = ((ObjectInstance) v_value2.internalValue);
-          v_classId = v_objInstance1.classId;
-          v_classInfo = v_classTable[v_classId];
-          v_intIntDict1 = v_classInfo.localeScopedNameIdToMemberId;
-          if ((v_row[5] == v_classId)) {
-            v_int1 = v_row[6];
+        valueStackSize -= 2;
+        value = valueStack[(valueStackSize + 1)];
+        value2 = valueStack[valueStackSize];
+        nameId = row[2];
+        if ((value2.type == 8)) {
+          objInstance1 = ((ObjectInstance) value2.internalValue);
+          classId = objInstance1.classId;
+          classInfo = classTable[classId];
+          intIntDict1 = classInfo.localeScopedNameIdToMemberId;
+          if ((row[5] == classId)) {
+            int1 = row[6];
           } else {
-            Integer dictLookup3 = v_intIntDict1.get(v_nameId);
-            v_int1 = dictLookup3 == null ? (-1) : dictLookup3;
-            if ((v_int1 != -1)) {
-              v_int3 = v_classInfo.fieldAccessModifiers[v_int1];
-              if ((v_int3 > 1)) {
-                if ((v_int3 == 2)) {
-                  if ((v_classId != v_row[3])) {
-                    v_int1 = -2;
+            Integer dictLookup3 = intIntDict1.get(nameId);
+            int1 = dictLookup3 == null ? (-1) : dictLookup3;
+            if ((int1 != -1)) {
+              int3 = classInfo.fieldAccessModifiers[int1];
+              if ((int3 > 1)) {
+                if ((int3 == 2)) {
+                  if ((classId != row[3])) {
+                    int1 = -2;
                   }
                 } else {
-                  if (((v_int3 == 3) || (v_int3 == 5))) {
-                    if ((v_classInfo.assemblyId != v_row[4])) {
-                      v_int1 = -3;
+                  if (((int3 == 3) || (int3 == 5))) {
+                    if ((classInfo.assemblyId != row[4])) {
+                      int1 = -3;
                     }
                   }
-                  if (((v_int3 == 4) || (v_int3 == 5))) {
-                    v_i = v_row[3];
-                    if ((v_classId == v_i)) {
+                  if (((int3 == 4) || (int3 == 5))) {
+                    i = row[3];
+                    if ((classId == i)) {
                     } else {
-                      v_classInfo = v_classTable[v_classInfo.id];
-                      while (((v_classInfo.baseClassId != -1) && (v_int1 < v_classTable[v_classInfo.baseClassId].fieldAccessModifiers.length))) {
-                        v_classInfo = v_classTable[v_classInfo.baseClassId];
+                      classInfo = classTable[classInfo.id];
+                      while (((classInfo.baseClassId != -1) && (int1 < classTable[classInfo.baseClassId].fieldAccessModifiers.length))) {
+                        classInfo = classTable[classInfo.baseClassId];
                       }
-                      v_j = v_classInfo.id;
-                      if ((v_j != v_i)) {
-                        v_bool1 = false;
-                        while (((v_i != -1) && (v_classTable[v_i].baseClassId != -1))) {
-                          v_i = v_classTable[v_i].baseClassId;
-                          if ((v_i == v_j)) {
-                            v_bool1 = true;
-                            v_i = -1;
+                      j = classInfo.id;
+                      if ((j != i)) {
+                        bool1 = false;
+                        while (((i != -1) && (classTable[i].baseClassId != -1))) {
+                          i = classTable[i].baseClassId;
+                          if ((i == j)) {
+                            bool1 = true;
+                            i = -1;
                           }
                         }
-                        if (!v_bool1) {
-                          v_int1 = -4;
+                        if (!bool1) {
+                          int1 = -4;
                         }
                       }
                     }
-                    v_classInfo = v_classTable[v_classId];
+                    classInfo = classTable[classId];
                   }
                 }
               }
             }
-            v_row[5] = v_classId;
-            v_row[6] = v_int1;
+            row[5] = classId;
+            row[6] = int1;
           }
-          if ((v_int1 > -1)) {
-            v_int2 = v_classInfo.functionIds[v_int1];
-            if ((v_int2 == -1)) {
-              v_intArray1 = v_classInfo.typeInfo[v_int1];
-              if ((v_intArray1 == null)) {
-                v_objInstance1.members[v_int1] = v_value;
+          if ((int1 > -1)) {
+            int2 = classInfo.functionIds[int1];
+            if ((int2 == -1)) {
+              intArray1 = classInfo.typeInfo[int1];
+              if ((intArray1 == null)) {
+                objInstance1.members[int1] = value;
               } else {
-                v_value2 = v_canAssignTypeToGeneric(v_vm, v_value, v_intArray1, 0);
-                if ((v_value2 != null)) {
-                  v_objInstance1.members[v_int1] = v_value2;
+                value2 = canAssignTypeToGeneric(vm, value, intArray1, 0);
+                if ((value2 != null)) {
+                  objInstance1.members[int1] = value2;
                 } else {
-                  v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot assign this type to this field.");
+                  hasInterrupt = EX_InvalidArgument(ec, "Cannot assign this type to this field.");
                 }
               }
             } else {
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot override a method with assignment.");
+              hasInterrupt = EX_InvalidArgument(ec, "Cannot override a method with assignment.");
             }
           } else {
-            if ((v_int1 < -1)) {
-              v_string1 = v_identifiers[v_row[0]];
-              if ((v_int1 == -2)) {
-                v_string2 = "private";
+            if ((int1 < -1)) {
+              string1 = identifiers[row[0]];
+              if ((int1 == -2)) {
+                string2 = "private";
               } else {
-                if ((v_int1 == -3)) {
-                  v_string2 = "internal";
+                if ((int1 == -3)) {
+                  string2 = "internal";
                 } else {
-                  v_string2 = "protected";
+                  string2 = "protected";
                 }
               }
-              v_hasInterrupt = v_EX_UnknownField(v_ec, "The field '" + v_string1 + "' is marked as " + v_string2 + " and cannot be accessed from here.");
+              hasInterrupt = EX_UnknownField(ec, "The field '" + string1 + "' is marked as " + string2 + " and cannot be accessed from here.");
             } else {
-              v_hasInterrupt = v_EX_InvalidAssignment(v_ec, "'" + v_classInfo.fullyQualifiedName + "' instances do not have a field called '" + v_metadata.identifiers[v_row[0]] + "'");
+              hasInterrupt = EX_InvalidAssignment(ec, "'" + classInfo.fullyQualifiedName + "' instances do not have a field called '" + metadata.identifiers[row[0]] + "'");
             }
           }
         } else {
-          v_hasInterrupt = v_EX_InvalidAssignment(v_ec, "Cannot assign to a field on this type.");
+          hasInterrupt = EX_InvalidAssignment(ec, "Cannot assign to a field on this type.");
         }
-        if ((v_row[1] == 1)) {
-          v_valueStack[v_valueStackSize++] = v_value;
+        if ((row[1] == 1)) {
+          valueStack[valueStackSize++] = value;
         }
         break;
       case 8:
         // ASSIGN_THIS_FIELD;
-        v_objInstance2 = ((ObjectInstance) v_stack.objectContext.internalValue);
-        v_objInstance2.members[v_row[0]] = v_valueStack[--v_valueStackSize];
+        objInstance2 = ((ObjectInstance) stack.objectContext.internalValue);
+        objInstance2.members[row[0]] = valueStack[--valueStackSize];
         break;
       case 5:
         // ASSIGN_LOCAL;
-        v_i = (v_localsStackOffset + v_row[0]);
-        v_localsStack[v_i] = v_valueStack[--v_valueStackSize];
-        v_localsStackSet[v_i] = v_localsStackSetToken;
+        i = (localsStackOffset + row[0]);
+        localsStack[i] = valueStack[--valueStackSize];
+        localsStackSet[i] = localsStackSetToken;
         break;
       case 9:
         // BINARY_OP;
-        v_rightValue = v_valueStack[--v_valueStackSize];
-        v_leftValue = v_valueStack[(v_valueStackSize - 1)];
-        switch (((((v_leftValue.type * 15) + v_row[0]) * 11) + v_rightValue.type)) {
+        rightValue = valueStack[--valueStackSize];
+        leftValue = valueStack[(valueStackSize - 1)];
+        switch (((((leftValue.type * 15) + row[0]) * 11) + rightValue.type)) {
           case 553:
             // int ** int;
-            if ((v_rightValue.intValue == 0)) {
-              v_value = v_VALUE_INT_ONE;
+            if ((rightValue.intValue == 0)) {
+              value = VALUE_INT_ONE;
             } else {
-              if ((v_rightValue.intValue > 0)) {
-                v_value = v_buildInteger(v_globals, ((int) Math.pow(v_leftValue.intValue, v_rightValue.intValue)));
+              if ((rightValue.intValue > 0)) {
+                value = buildInteger(globals, ((int) Math.pow(leftValue.intValue, rightValue.intValue)));
               } else {
-                v_value = v_buildFloat(v_globals, Math.pow(v_leftValue.intValue, v_rightValue.intValue));
+                value = buildFloat(globals, Math.pow(leftValue.intValue, rightValue.intValue));
               }
             }
             break;
           case 554:
             // int ** float;
-            v_value = v_buildFloat(v_globals, (0.0 + Math.pow(v_leftValue.intValue, ((double) v_rightValue.internalValue))));
+            value = buildFloat(globals, (0.0 + Math.pow(leftValue.intValue, ((double) rightValue.internalValue))));
             break;
           case 718:
             // float ** int;
-            v_value = v_buildFloat(v_globals, (0.0 + Math.pow(((double) v_leftValue.internalValue), v_rightValue.intValue)));
+            value = buildFloat(globals, (0.0 + Math.pow(((double) leftValue.internalValue), rightValue.intValue)));
             break;
           case 719:
             // float ** float;
-            v_value = v_buildFloat(v_globals, (0.0 + Math.pow(((double) v_leftValue.internalValue), ((double) v_rightValue.internalValue))));
+            value = buildFloat(globals, (0.0 + Math.pow(((double) leftValue.internalValue), ((double) rightValue.internalValue))));
             break;
           case 708:
             // float % float;
-            v_float1 = ((double) v_rightValue.internalValue);
-            if ((v_float1 == 0)) {
-              v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Modulo by 0.");
+            float1 = ((double) rightValue.internalValue);
+            if ((float1 == 0)) {
+              hasInterrupt = EX_DivisionByZero(ec, "Modulo by 0.");
             } else {
-              v_float3 = (((double) v_leftValue.internalValue) % v_float1);
-              if ((v_float3 < 0)) {
-                v_float3 += v_float1;
+              float3 = (((double) leftValue.internalValue) % float1);
+              if ((float3 < 0)) {
+                float3 += float1;
               }
-              v_value = v_buildFloat(v_globals, v_float3);
+              value = buildFloat(globals, float3);
             }
             break;
           case 707:
             // float % int;
-            v_int1 = v_rightValue.intValue;
-            if ((v_int1 == 0)) {
-              v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Modulo by 0.");
+            int1 = rightValue.intValue;
+            if ((int1 == 0)) {
+              hasInterrupt = EX_DivisionByZero(ec, "Modulo by 0.");
             } else {
-              v_float1 = (((double) v_leftValue.internalValue) % v_int1);
-              if ((v_float1 < 0)) {
-                v_float1 += v_int1;
+              float1 = (((double) leftValue.internalValue) % int1);
+              if ((float1 < 0)) {
+                float1 += int1;
               }
-              v_value = v_buildFloat(v_globals, v_float1);
+              value = buildFloat(globals, float1);
             }
             break;
           case 543:
             // int % float;
-            v_float3 = ((double) v_rightValue.internalValue);
-            if ((v_float3 == 0)) {
-              v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Modulo by 0.");
+            float3 = ((double) rightValue.internalValue);
+            if ((float3 == 0)) {
+              hasInterrupt = EX_DivisionByZero(ec, "Modulo by 0.");
             } else {
-              v_float1 = (v_leftValue.intValue % v_float3);
-              if ((v_float1 < 0)) {
-                v_float1 += v_float3;
+              float1 = (leftValue.intValue % float3);
+              if ((float1 < 0)) {
+                float1 += float3;
               }
-              v_value = v_buildFloat(v_globals, v_float1);
+              value = buildFloat(globals, float1);
             }
             break;
           case 542:
             // int % int;
-            v_int2 = v_rightValue.intValue;
-            if ((v_int2 == 0)) {
-              v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Modulo by 0.");
+            int2 = rightValue.intValue;
+            if ((int2 == 0)) {
+              hasInterrupt = EX_DivisionByZero(ec, "Modulo by 0.");
             } else {
-              v_int1 = (v_leftValue.intValue % v_int2);
-              if ((v_int1 < 0)) {
-                v_int1 += v_int2;
+              int1 = (leftValue.intValue % int2);
+              if ((int1 < 0)) {
+                int1 += int2;
               }
-              v_value = v_buildInteger(v_globals, v_int1);
+              value = buildInteger(globals, int1);
             }
             break;
           case 996:
             // list + list;
-            v_value = new Value(6, v_valueConcatLists(((ListImpl) v_leftValue.internalValue), ((ListImpl) v_rightValue.internalValue)));
+            value = new Value(6, valueConcatLists(((ListImpl) leftValue.internalValue), ((ListImpl) rightValue.internalValue)));
             break;
           case 498:
             // int + int;
-            v_int1 = (v_leftValue.intValue + v_rightValue.intValue);
-            if ((v_int1 < 0)) {
-              if ((v_int1 > -257)) {
-                v_value = v_INTEGER_NEGATIVE_CACHE[-v_int1];
+            int1 = (leftValue.intValue + rightValue.intValue);
+            if ((int1 < 0)) {
+              if ((int1 > -257)) {
+                value = INTEGER_NEGATIVE_CACHE[-int1];
               } else {
-                v_value = new Value(v_int1);
+                value = new Value(int1);
               }
             } else {
-              if ((v_int1 < 2049)) {
-                v_value = v_INTEGER_POSITIVE_CACHE[v_int1];
+              if ((int1 < 2049)) {
+                value = INTEGER_POSITIVE_CACHE[int1];
               } else {
-                v_value = new Value(v_int1);
+                value = new Value(int1);
               }
             }
             break;
           case 509:
             // int - int;
-            v_int1 = (v_leftValue.intValue - v_rightValue.intValue);
-            if ((v_int1 < 0)) {
-              if ((v_int1 > -257)) {
-                v_value = v_INTEGER_NEGATIVE_CACHE[-v_int1];
+            int1 = (leftValue.intValue - rightValue.intValue);
+            if ((int1 < 0)) {
+              if ((int1 > -257)) {
+                value = INTEGER_NEGATIVE_CACHE[-int1];
               } else {
-                v_value = new Value(v_int1);
+                value = new Value(int1);
               }
             } else {
-              if ((v_int1 < 2049)) {
-                v_value = v_INTEGER_POSITIVE_CACHE[v_int1];
+              if ((int1 < 2049)) {
+                value = INTEGER_POSITIVE_CACHE[int1];
               } else {
-                v_value = new Value(v_int1);
+                value = new Value(int1);
               }
             }
             break;
           case 520:
             // int * int;
-            v_int1 = (v_leftValue.intValue * v_rightValue.intValue);
-            if ((v_int1 < 0)) {
-              if ((v_int1 > -257)) {
-                v_value = v_INTEGER_NEGATIVE_CACHE[-v_int1];
+            int1 = (leftValue.intValue * rightValue.intValue);
+            if ((int1 < 0)) {
+              if ((int1 > -257)) {
+                value = INTEGER_NEGATIVE_CACHE[-int1];
               } else {
-                v_value = new Value(v_int1);
+                value = new Value(int1);
               }
             } else {
-              if ((v_int1 < 2049)) {
-                v_value = v_INTEGER_POSITIVE_CACHE[v_int1];
+              if ((int1 < 2049)) {
+                value = INTEGER_POSITIVE_CACHE[int1];
               } else {
-                v_value = new Value(v_int1);
+                value = new Value(int1);
               }
             }
             break;
           case 531:
             // int / int;
-            v_int1 = v_leftValue.intValue;
-            v_int2 = v_rightValue.intValue;
-            if ((v_int2 == 0)) {
-              v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Division by 0.");
+            int1 = leftValue.intValue;
+            int2 = rightValue.intValue;
+            if ((int2 == 0)) {
+              hasInterrupt = EX_DivisionByZero(ec, "Division by 0.");
             } else {
-              if ((v_int1 == 0)) {
-                v_value = v_VALUE_INT_ZERO;
+              if ((int1 == 0)) {
+                value = VALUE_INT_ZERO;
               } else {
-                if (((v_int1 % v_int2) == 0)) {
-                  v_int3 = v_int1 / v_int2;
+                if (((int1 % int2) == 0)) {
+                  int3 = int1 / int2;
                 } else {
-                  if ((((v_int1 < 0)) != ((v_int2 < 0)))) {
-                    v_float1 = (1 + (-1.0 * v_int1) / v_int2);
-                    v_float1 -= (v_float1 % 1.0);
-                    v_int3 = ((int) (-v_float1));
+                  if ((((int1 < 0)) != ((int2 < 0)))) {
+                    float1 = (1 + (-1.0 * int1) / int2);
+                    float1 -= (float1 % 1.0);
+                    int3 = ((int) (-float1));
                   } else {
-                    v_int3 = v_int1 / v_int2;
+                    int3 = int1 / int2;
                   }
                 }
-                if ((v_int3 < 0)) {
-                  if ((v_int3 > -257)) {
-                    v_value = v_INTEGER_NEGATIVE_CACHE[-v_int3];
+                if ((int3 < 0)) {
+                  if ((int3 > -257)) {
+                    value = INTEGER_NEGATIVE_CACHE[-int3];
                   } else {
-                    v_value = new Value(v_int3);
+                    value = new Value(int3);
                   }
                 } else {
-                  if ((v_int3 < 2049)) {
-                    v_value = v_INTEGER_POSITIVE_CACHE[v_int3];
+                  if ((int3 < 2049)) {
+                    value = INTEGER_POSITIVE_CACHE[int3];
                   } else {
-                    v_value = new Value(v_int3);
+                    value = new Value(int3);
                   }
                 }
               }
@@ -2281,831 +2281,831 @@ public static InterpreterResult v_interpretImpl(VmContext v_vm, int v_executionC
             break;
           case 663:
             // float + int;
-            v_value = v_buildFloat(v_globals, (((double) v_leftValue.internalValue) + v_rightValue.intValue));
+            value = buildFloat(globals, (((double) leftValue.internalValue) + rightValue.intValue));
             break;
           case 499:
             // int + float;
-            v_value = v_buildFloat(v_globals, (v_leftValue.intValue + ((double) v_rightValue.internalValue)));
+            value = buildFloat(globals, (leftValue.intValue + ((double) rightValue.internalValue)));
             break;
           case 664:
             // float + float;
-            v_float1 = (((double) v_leftValue.internalValue) + ((double) v_rightValue.internalValue));
-            if ((v_float1 == 0)) {
-              v_value = v_VALUE_FLOAT_ZERO;
+            float1 = (((double) leftValue.internalValue) + ((double) rightValue.internalValue));
+            if ((float1 == 0)) {
+              value = VALUE_FLOAT_ZERO;
             } else {
-              if ((v_float1 == 1)) {
-                v_value = v_VALUE_FLOAT_ONE;
+              if ((float1 == 1)) {
+                value = VALUE_FLOAT_ONE;
               } else {
-                v_value = new Value(4, v_float1);
+                value = new Value(4, float1);
               }
             }
             break;
           case 510:
             // int - float;
-            v_value = v_buildFloat(v_globals, (v_leftValue.intValue - ((double) v_rightValue.internalValue)));
+            value = buildFloat(globals, (leftValue.intValue - ((double) rightValue.internalValue)));
             break;
           case 674:
             // float - int;
-            v_value = v_buildFloat(v_globals, (((double) v_leftValue.internalValue) - v_rightValue.intValue));
+            value = buildFloat(globals, (((double) leftValue.internalValue) - rightValue.intValue));
             break;
           case 675:
             // float - float;
-            v_float1 = (((double) v_leftValue.internalValue) - ((double) v_rightValue.internalValue));
-            if ((v_float1 == 0)) {
-              v_value = v_VALUE_FLOAT_ZERO;
+            float1 = (((double) leftValue.internalValue) - ((double) rightValue.internalValue));
+            if ((float1 == 0)) {
+              value = VALUE_FLOAT_ZERO;
             } else {
-              if ((v_float1 == 1)) {
-                v_value = v_VALUE_FLOAT_ONE;
+              if ((float1 == 1)) {
+                value = VALUE_FLOAT_ONE;
               } else {
-                v_value = new Value(4, v_float1);
+                value = new Value(4, float1);
               }
             }
             break;
           case 685:
             // float * int;
-            v_value = v_buildFloat(v_globals, (((double) v_leftValue.internalValue) * v_rightValue.intValue));
+            value = buildFloat(globals, (((double) leftValue.internalValue) * rightValue.intValue));
             break;
           case 521:
             // int * float;
-            v_value = v_buildFloat(v_globals, (v_leftValue.intValue * ((double) v_rightValue.internalValue)));
+            value = buildFloat(globals, (leftValue.intValue * ((double) rightValue.internalValue)));
             break;
           case 686:
             // float * float;
-            v_value = v_buildFloat(v_globals, (((double) v_leftValue.internalValue) * ((double) v_rightValue.internalValue)));
+            value = buildFloat(globals, (((double) leftValue.internalValue) * ((double) rightValue.internalValue)));
             break;
           case 532:
             // int / float;
-            v_float1 = ((double) v_rightValue.internalValue);
-            if ((v_float1 == 0)) {
-              v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Division by 0.");
+            float1 = ((double) rightValue.internalValue);
+            if ((float1 == 0)) {
+              hasInterrupt = EX_DivisionByZero(ec, "Division by 0.");
             } else {
-              v_value = v_buildFloat(v_globals, v_leftValue.intValue / v_float1);
+              value = buildFloat(globals, leftValue.intValue / float1);
             }
             break;
           case 696:
             // float / int;
-            v_int1 = v_rightValue.intValue;
-            if ((v_int1 == 0)) {
-              v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Division by 0.");
+            int1 = rightValue.intValue;
+            if ((int1 == 0)) {
+              hasInterrupt = EX_DivisionByZero(ec, "Division by 0.");
             } else {
-              v_value = v_buildFloat(v_globals, ((double) v_leftValue.internalValue) / v_int1);
+              value = buildFloat(globals, ((double) leftValue.internalValue) / int1);
             }
             break;
           case 697:
             // float / float;
-            v_float1 = ((double) v_rightValue.internalValue);
-            if ((v_float1 == 0)) {
-              v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Division by 0.");
+            float1 = ((double) rightValue.internalValue);
+            if ((float1 == 0)) {
+              hasInterrupt = EX_DivisionByZero(ec, "Division by 0.");
             } else {
-              v_value = v_buildFloat(v_globals, ((double) v_leftValue.internalValue) / v_float1);
+              value = buildFloat(globals, ((double) leftValue.internalValue) / float1);
             }
             break;
           case 564:
             // int & int;
-            v_value = v_buildInteger(v_globals, (v_leftValue.intValue & v_rightValue.intValue));
+            value = buildInteger(globals, (leftValue.intValue & rightValue.intValue));
             break;
           case 575:
             // int | int;
-            v_value = v_buildInteger(v_globals, (v_leftValue.intValue | v_rightValue.intValue));
+            value = buildInteger(globals, (leftValue.intValue | rightValue.intValue));
             break;
           case 586:
             // int ^ int;
-            v_value = v_buildInteger(v_globals, (v_leftValue.intValue ^ v_rightValue.intValue));
+            value = buildInteger(globals, (leftValue.intValue ^ rightValue.intValue));
             break;
           case 597:
             // int << int;
-            v_int1 = v_rightValue.intValue;
-            if ((v_int1 < 0)) {
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot bit shift by a negative number.");
+            int1 = rightValue.intValue;
+            if ((int1 < 0)) {
+              hasInterrupt = EX_InvalidArgument(ec, "Cannot bit shift by a negative number.");
             } else {
-              v_value = v_buildInteger(v_globals, (v_leftValue.intValue << v_int1));
+              value = buildInteger(globals, (leftValue.intValue << int1));
             }
             break;
           case 608:
             // int >> int;
-            v_int1 = v_rightValue.intValue;
-            if ((v_int1 < 0)) {
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot bit shift by a negative number.");
+            int1 = rightValue.intValue;
+            if ((int1 < 0)) {
+              hasInterrupt = EX_InvalidArgument(ec, "Cannot bit shift by a negative number.");
             } else {
-              v_value = v_buildInteger(v_globals, (v_leftValue.intValue >> v_int1));
+              value = buildInteger(globals, (leftValue.intValue >> int1));
             }
             break;
           case 619:
             // int < int;
-            if ((v_leftValue.intValue < v_rightValue.intValue)) {
-              v_value = v_VALUE_TRUE;
+            if ((leftValue.intValue < rightValue.intValue)) {
+              value = VALUE_TRUE;
             } else {
-              v_value = v_VALUE_FALSE;
+              value = VALUE_FALSE;
             }
             break;
           case 630:
             // int <= int;
-            if ((v_leftValue.intValue <= v_rightValue.intValue)) {
-              v_value = v_VALUE_TRUE;
+            if ((leftValue.intValue <= rightValue.intValue)) {
+              value = VALUE_TRUE;
             } else {
-              v_value = v_VALUE_FALSE;
+              value = VALUE_FALSE;
             }
             break;
           case 784:
             // float < int;
-            if ((((double) v_leftValue.internalValue) < v_rightValue.intValue)) {
-              v_value = v_VALUE_TRUE;
+            if ((((double) leftValue.internalValue) < rightValue.intValue)) {
+              value = VALUE_TRUE;
             } else {
-              v_value = v_VALUE_FALSE;
+              value = VALUE_FALSE;
             }
             break;
           case 795:
             // float <= int;
-            if ((((double) v_leftValue.internalValue) <= v_rightValue.intValue)) {
-              v_value = v_VALUE_TRUE;
+            if ((((double) leftValue.internalValue) <= rightValue.intValue)) {
+              value = VALUE_TRUE;
             } else {
-              v_value = v_VALUE_FALSE;
+              value = VALUE_FALSE;
             }
             break;
           case 620:
             // int < float;
-            if ((v_leftValue.intValue < ((double) v_rightValue.internalValue))) {
-              v_value = v_VALUE_TRUE;
+            if ((leftValue.intValue < ((double) rightValue.internalValue))) {
+              value = VALUE_TRUE;
             } else {
-              v_value = v_VALUE_FALSE;
+              value = VALUE_FALSE;
             }
             break;
           case 631:
             // int <= float;
-            if ((v_leftValue.intValue <= ((double) v_rightValue.internalValue))) {
-              v_value = v_VALUE_TRUE;
+            if ((leftValue.intValue <= ((double) rightValue.internalValue))) {
+              value = VALUE_TRUE;
             } else {
-              v_value = v_VALUE_FALSE;
+              value = VALUE_FALSE;
             }
             break;
           case 785:
             // float < float;
-            if ((((double) v_leftValue.internalValue) < ((double) v_rightValue.internalValue))) {
-              v_value = v_VALUE_TRUE;
+            if ((((double) leftValue.internalValue) < ((double) rightValue.internalValue))) {
+              value = VALUE_TRUE;
             } else {
-              v_value = v_VALUE_FALSE;
+              value = VALUE_FALSE;
             }
             break;
           case 796:
             // float <= float;
-            if ((((double) v_leftValue.internalValue) <= ((double) v_rightValue.internalValue))) {
-              v_value = v_VALUE_TRUE;
+            if ((((double) leftValue.internalValue) <= ((double) rightValue.internalValue))) {
+              value = VALUE_TRUE;
             } else {
-              v_value = v_VALUE_FALSE;
+              value = VALUE_FALSE;
             }
             break;
           case 652:
             // int >= int;
-            if ((v_leftValue.intValue >= v_rightValue.intValue)) {
-              v_value = v_VALUE_TRUE;
+            if ((leftValue.intValue >= rightValue.intValue)) {
+              value = VALUE_TRUE;
             } else {
-              v_value = v_VALUE_FALSE;
+              value = VALUE_FALSE;
             }
             break;
           case 641:
             // int > int;
-            if ((v_leftValue.intValue > v_rightValue.intValue)) {
-              v_value = v_VALUE_TRUE;
+            if ((leftValue.intValue > rightValue.intValue)) {
+              value = VALUE_TRUE;
             } else {
-              v_value = v_VALUE_FALSE;
+              value = VALUE_FALSE;
             }
             break;
           case 817:
             // float >= int;
-            if ((((double) v_leftValue.internalValue) >= v_rightValue.intValue)) {
-              v_value = v_VALUE_TRUE;
+            if ((((double) leftValue.internalValue) >= rightValue.intValue)) {
+              value = VALUE_TRUE;
             } else {
-              v_value = v_VALUE_FALSE;
+              value = VALUE_FALSE;
             }
             break;
           case 806:
             // float > int;
-            if ((((double) v_leftValue.internalValue) > v_rightValue.intValue)) {
-              v_value = v_VALUE_TRUE;
+            if ((((double) leftValue.internalValue) > rightValue.intValue)) {
+              value = VALUE_TRUE;
             } else {
-              v_value = v_VALUE_FALSE;
+              value = VALUE_FALSE;
             }
             break;
           case 653:
             // int >= float;
-            if ((v_leftValue.intValue >= ((double) v_rightValue.internalValue))) {
-              v_value = v_VALUE_TRUE;
+            if ((leftValue.intValue >= ((double) rightValue.internalValue))) {
+              value = VALUE_TRUE;
             } else {
-              v_value = v_VALUE_FALSE;
+              value = VALUE_FALSE;
             }
             break;
           case 642:
             // int > float;
-            if ((v_leftValue.intValue > ((double) v_rightValue.internalValue))) {
-              v_value = v_VALUE_TRUE;
+            if ((leftValue.intValue > ((double) rightValue.internalValue))) {
+              value = VALUE_TRUE;
             } else {
-              v_value = v_VALUE_FALSE;
+              value = VALUE_FALSE;
             }
             break;
           case 818:
             // float >= float;
-            if ((((double) v_leftValue.internalValue) >= ((double) v_rightValue.internalValue))) {
-              v_value = v_VALUE_TRUE;
+            if ((((double) leftValue.internalValue) >= ((double) rightValue.internalValue))) {
+              value = VALUE_TRUE;
             } else {
-              v_value = v_VALUE_FALSE;
+              value = VALUE_FALSE;
             }
             break;
           case 807:
             // float > float;
-            if ((((double) v_leftValue.internalValue) > ((double) v_rightValue.internalValue))) {
-              v_value = v_VALUE_TRUE;
+            if ((((double) leftValue.internalValue) > ((double) rightValue.internalValue))) {
+              value = VALUE_TRUE;
             } else {
-              v_value = v_VALUE_FALSE;
+              value = VALUE_FALSE;
             }
             break;
           case 830:
             // string + string;
-            v_value = new Value(5, ((String) v_leftValue.internalValue) + ((String) v_rightValue.internalValue));
+            value = new Value(5, ((String) leftValue.internalValue) + ((String) rightValue.internalValue));
             break;
           case 850:
             // string * int;
-            v_value = v_multiplyString(v_globals, v_leftValue, ((String) v_leftValue.internalValue), v_rightValue.intValue);
+            value = multiplyString(globals, leftValue, ((String) leftValue.internalValue), rightValue.intValue);
             break;
           case 522:
             // int * string;
-            v_value = v_multiplyString(v_globals, v_rightValue, ((String) v_rightValue.internalValue), v_leftValue.intValue);
+            value = multiplyString(globals, rightValue, ((String) rightValue.internalValue), leftValue.intValue);
             break;
           case 1015:
             // list * int;
-            v_int1 = v_rightValue.intValue;
-            if ((v_int1 < 0)) {
-              v_hasInterrupt = v_EX_UnsupportedOperation(v_ec, "Cannot multiply list by negative number.");
+            int1 = rightValue.intValue;
+            if ((int1 < 0)) {
+              hasInterrupt = EX_UnsupportedOperation(ec, "Cannot multiply list by negative number.");
             } else {
-              v_value = new Value(6, v_valueMultiplyList(((ListImpl) v_leftValue.internalValue), v_int1));
+              value = new Value(6, valueMultiplyList(((ListImpl) leftValue.internalValue), int1));
             }
             break;
           case 523:
             // int * list;
-            v_int1 = v_leftValue.intValue;
-            if ((v_int1 < 0)) {
-              v_hasInterrupt = v_EX_UnsupportedOperation(v_ec, "Cannot multiply list by negative number.");
+            int1 = leftValue.intValue;
+            if ((int1 < 0)) {
+              hasInterrupt = EX_UnsupportedOperation(ec, "Cannot multiply list by negative number.");
             } else {
-              v_value = new Value(6, v_valueMultiplyList(((ListImpl) v_rightValue.internalValue), v_int1));
+              value = new Value(6, valueMultiplyList(((ListImpl) rightValue.internalValue), int1));
             }
             break;
           default:
-            if (((v_row[0] == 0) && (((v_leftValue.type == 5) || (v_rightValue.type == 5))))) {
-              v_value = new Value(5, v_valueToString(v_vm, v_leftValue) + v_valueToString(v_vm, v_rightValue));
+            if (((row[0] == 0) && (((leftValue.type == 5) || (rightValue.type == 5))))) {
+              value = new Value(5, valueToString(vm, leftValue) + valueToString(vm, rightValue));
             } else {
               // unrecognized op;
-              v_hasInterrupt = v_EX_UnsupportedOperation(v_ec, "The '" + v_getBinaryOpFromId(v_row[0]) + "' operator is not supported for these types: " + v_getTypeFromId(v_leftValue.type) + " and " + v_getTypeFromId(v_rightValue.type));
+              hasInterrupt = EX_UnsupportedOperation(ec, "The '" + getBinaryOpFromId(row[0]) + "' operator is not supported for these types: " + getTypeFromId(leftValue.type) + " and " + getTypeFromId(rightValue.type));
             }
             break;
         }
-        v_valueStack[(v_valueStackSize - 1)] = v_value;
+        valueStack[(valueStackSize - 1)] = value;
         break;
       case 10:
         // BOOLEAN_NOT;
-        v_value = v_valueStack[(v_valueStackSize - 1)];
-        if ((v_value.type != 2)) {
-          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Boolean expected.");
+        value = valueStack[(valueStackSize - 1)];
+        if ((value.type != 2)) {
+          hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
         } else {
-          if ((v_value.intValue == 1)) {
-            v_valueStack[(v_valueStackSize - 1)] = v_VALUE_FALSE;
+          if ((value.intValue == 1)) {
+            valueStack[(valueStackSize - 1)] = VALUE_FALSE;
           } else {
-            v_valueStack[(v_valueStackSize - 1)] = v_VALUE_TRUE;
+            valueStack[(valueStackSize - 1)] = VALUE_TRUE;
           }
         }
         break;
       case 11:
         // BREAK;
-        if ((v_row[0] == 1)) {
-          v_pc += v_row[1];
+        if ((row[0] == 1)) {
+          pc += row[1];
         } else {
-          v_intArray1 = v_esfData[v_pc];
-          v_pc = (v_intArray1[1] - 1);
-          v_valueStackSize = v_stack.valueStackPopSize;
-          v_stack.postFinallyBehavior = 1;
+          intArray1 = esfData[pc];
+          pc = (intArray1[1] - 1);
+          valueStackSize = stack.valueStackPopSize;
+          stack.postFinallyBehavior = 1;
         }
         break;
       case 12:
         // CALL_FUNCTION;
-        v_type = v_row[0];
-        v_argCount = v_row[1];
-        v_functionId = v_row[2];
-        v_returnValueUsed = (v_row[3] == 1);
-        v_classId = v_row[4];
-        if (((v_type == 2) || (v_type == 6))) {
+        type = row[0];
+        argCount = row[1];
+        functionId = row[2];
+        returnValueUsed = (row[3] == 1);
+        classId = row[4];
+        if (((type == 2) || (type == 6))) {
           // constructor or static method;
-          v_classInfo = v_metadata.classTable[v_classId];
-          v_staticConstructorNotInvoked = true;
-          if ((v_classInfo.staticInitializationState < 2)) {
-            v_stack.pc = v_pc;
-            v_stackFrame2 = v_maybeInvokeStaticConstructor(v_vm, v_ec, v_stack, v_classInfo, v_valueStackSize, PST_intBuffer16);
+          classInfo = metadata.classTable[classId];
+          staticConstructorNotInvoked = true;
+          if ((classInfo.staticInitializationState < 2)) {
+            stack.pc = pc;
+            stackFrame2 = maybeInvokeStaticConstructor(vm, ec, stack, classInfo, valueStackSize, PST_intBuffer16);
             if ((PST_intBuffer16[0] == 1)) {
-              return v_generateException(v_vm, v_stack, v_pc, v_valueStackSize, v_ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
+              return generateException(vm, stack, pc, valueStackSize, ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
             }
-            if ((v_stackFrame2 != null)) {
-              v_staticConstructorNotInvoked = false;
-              v_stack = v_stackFrame2;
-              v_pc = v_stack.pc;
-              v_localsStackSetToken = v_stack.localsStackSetToken;
-              v_localsStackOffset = v_stack.localsStackOffset;
+            if ((stackFrame2 != null)) {
+              staticConstructorNotInvoked = false;
+              stack = stackFrame2;
+              pc = stack.pc;
+              localsStackSetToken = stack.localsStackSetToken;
+              localsStackOffset = stack.localsStackOffset;
             }
           }
         } else {
-          v_staticConstructorNotInvoked = true;
+          staticConstructorNotInvoked = true;
         }
-        if (v_staticConstructorNotInvoked) {
-          v_bool1 = true;
+        if (staticConstructorNotInvoked) {
+          bool1 = true;
           // construct args array;
-          if ((v_argCount == -1)) {
-            v_valueStackSize -= 1;
-            v_value = v_valueStack[v_valueStackSize];
-            if ((v_value.type == 1)) {
-              v_argCount = 0;
+          if ((argCount == -1)) {
+            valueStackSize -= 1;
+            value = valueStack[valueStackSize];
+            if ((value.type == 1)) {
+              argCount = 0;
             } else {
-              if ((v_value.type == 6)) {
-                v_list1 = ((ListImpl) v_value.internalValue);
-                v_argCount = v_list1.size;
-                v_i = (v_argCount - 1);
-                while ((v_i >= 0)) {
-                  v_funcArgs[v_i] = v_list1.array[v_i];
-                  v_i -= 1;
+              if ((value.type == 6)) {
+                list1 = ((ListImpl) value.internalValue);
+                argCount = list1.size;
+                i = (argCount - 1);
+                while ((i >= 0)) {
+                  funcArgs[i] = list1.array[i];
+                  i -= 1;
                 }
               } else {
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Function pointers' .invoke method requires a list argument.");
+                hasInterrupt = EX_InvalidArgument(ec, "Function pointers' .invoke method requires a list argument.");
               }
             }
           } else {
-            v_i = (v_argCount - 1);
-            while ((v_i >= 0)) {
-              v_valueStackSize -= 1;
-              v_funcArgs[v_i] = v_valueStack[v_valueStackSize];
-              v_i -= 1;
+            i = (argCount - 1);
+            while ((i >= 0)) {
+              valueStackSize -= 1;
+              funcArgs[i] = valueStack[valueStackSize];
+              i -= 1;
             }
           }
-          if (!v_hasInterrupt) {
-            if ((v_type == 3)) {
-              v_value = v_stack.objectContext;
-              v_objInstance1 = ((ObjectInstance) v_value.internalValue);
-              if ((v_objInstance1.classId != v_classId)) {
-                v_int2 = v_row[5];
-                if ((v_int2 != -1)) {
-                  v_classInfo = v_classTable[v_objInstance1.classId];
-                  v_functionId = v_classInfo.functionIds[v_int2];
+          if (!hasInterrupt) {
+            if ((type == 3)) {
+              value = stack.objectContext;
+              objInstance1 = ((ObjectInstance) value.internalValue);
+              if ((objInstance1.classId != classId)) {
+                int2 = row[5];
+                if ((int2 != -1)) {
+                  classInfo = classTable[objInstance1.classId];
+                  functionId = classInfo.functionIds[int2];
                 }
               }
             } else {
-              if ((v_type == 5)) {
+              if ((type == 5)) {
                 // field invocation;
-                v_valueStackSize -= 1;
-                v_value = v_valueStack[v_valueStackSize];
-                v_localeId = v_row[5];
-                switch (v_value.type) {
+                valueStackSize -= 1;
+                value = valueStack[valueStackSize];
+                localeId = row[5];
+                switch (value.type) {
                   case 1:
-                    v_hasInterrupt = v_EX_NullReference(v_ec, "Invoked method on null.");
+                    hasInterrupt = EX_NullReference(ec, "Invoked method on null.");
                     break;
                   case 8:
                     // field invoked on an object instance.;
-                    v_objInstance1 = ((ObjectInstance) v_value.internalValue);
-                    v_int1 = v_objInstance1.classId;
-                    v_classInfo = v_classTable[v_int1];
-                    v_intIntDict1 = v_classInfo.localeScopedNameIdToMemberId;
-                    v_int1 = ((v_row[4] * v_magicNumbers.totalLocaleCount) + v_row[5]);
-                    Integer dictLookup4 = v_intIntDict1.get(v_int1);
-                    v_i = dictLookup4 == null ? (-1) : dictLookup4;
-                    if ((v_i != -1)) {
-                      v_int1 = v_intIntDict1.get(v_int1);
-                      v_functionId = v_classInfo.functionIds[v_int1];
-                      if ((v_functionId > 0)) {
-                        v_type = 3;
+                    objInstance1 = ((ObjectInstance) value.internalValue);
+                    int1 = objInstance1.classId;
+                    classInfo = classTable[int1];
+                    intIntDict1 = classInfo.localeScopedNameIdToMemberId;
+                    int1 = ((row[4] * magicNumbers.totalLocaleCount) + row[5]);
+                    Integer dictLookup4 = intIntDict1.get(int1);
+                    i = dictLookup4 == null ? (-1) : dictLookup4;
+                    if ((i != -1)) {
+                      int1 = intIntDict1.get(int1);
+                      functionId = classInfo.functionIds[int1];
+                      if ((functionId > 0)) {
+                        type = 3;
                       } else {
-                        v_value = v_objInstance1.members[v_int1];
-                        v_type = 4;
-                        v_valueStack[v_valueStackSize] = v_value;
-                        v_valueStackSize += 1;
+                        value = objInstance1.members[int1];
+                        type = 4;
+                        valueStack[valueStackSize] = value;
+                        valueStackSize += 1;
                       }
                     } else {
-                      v_hasInterrupt = v_EX_UnknownField(v_ec, "Unknown field.");
+                      hasInterrupt = EX_UnknownField(ec, "Unknown field.");
                     }
                     break;
                   case 10:
                     // field invocation on a class object instance.;
-                    v_functionId = v_resolvePrimitiveMethodName2(v_globalNameIdToPrimitiveMethodName, v_value.type, v_classId);
-                    if ((v_functionId < 0)) {
-                      v_hasInterrupt = v_EX_InvalidInvocation(v_ec, "Class definitions do not have that method.");
+                    functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
+                    if ((functionId < 0)) {
+                      hasInterrupt = EX_InvalidInvocation(ec, "Class definitions do not have that method.");
                     } else {
-                      v_functionId = v_resolvePrimitiveMethodName2(v_globalNameIdToPrimitiveMethodName, v_value.type, v_classId);
-                      if ((v_functionId < 0)) {
-                        v_hasInterrupt = v_EX_InvalidInvocation(v_ec, v_getTypeFromId(v_value.type) + " does not have that method.");
+                      functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
+                      if ((functionId < 0)) {
+                        hasInterrupt = EX_InvalidInvocation(ec, getTypeFromId(value.type) + " does not have that method.");
                       } else {
-                        if ((v_globalNameIdToPrimitiveMethodName[v_classId] == 8)) {
-                          v_type = 6;
-                          v_classValue = ((org.crayonlang.interpreter.structs.ClassValue) v_value.internalValue);
-                          if (v_classValue.isInterface) {
-                            v_hasInterrupt = v_EX_UnsupportedOperation(v_ec, "Cannot create an instance of an interface.");
+                        if ((globalNameIdToPrimitiveMethodName[classId] == 8)) {
+                          type = 6;
+                          classValue = ((org.crayonlang.interpreter.structs.ClassValue) value.internalValue);
+                          if (classValue.isInterface) {
+                            hasInterrupt = EX_UnsupportedOperation(ec, "Cannot create an instance of an interface.");
                           } else {
-                            v_classId = v_classValue.classId;
-                            if (!v_returnValueUsed) {
-                              v_hasInterrupt = v_EX_UnsupportedOperation(v_ec, "Cannot create an instance and not use the output.");
+                            classId = classValue.classId;
+                            if (!returnValueUsed) {
+                              hasInterrupt = EX_UnsupportedOperation(ec, "Cannot create an instance and not use the output.");
                             } else {
-                              v_classInfo = v_metadata.classTable[v_classId];
-                              v_functionId = v_classInfo.constructorFunctionId;
+                              classInfo = metadata.classTable[classId];
+                              functionId = classInfo.constructorFunctionId;
                             }
                           }
                         } else {
-                          v_type = 9;
+                          type = 9;
                         }
                       }
                     }
                     break;
                   default:
                     // primitive method suspected.;
-                    v_functionId = v_resolvePrimitiveMethodName2(v_globalNameIdToPrimitiveMethodName, v_value.type, v_classId);
-                    if ((v_functionId < 0)) {
-                      v_hasInterrupt = v_EX_InvalidInvocation(v_ec, v_getTypeFromId(v_value.type) + " does not have that method.");
+                    functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
+                    if ((functionId < 0)) {
+                      hasInterrupt = EX_InvalidInvocation(ec, getTypeFromId(value.type) + " does not have that method.");
                     } else {
-                      v_type = 9;
+                      type = 9;
                     }
                     break;
                 }
               }
             }
           }
-          if (((v_type == 4) && !v_hasInterrupt)) {
+          if (((type == 4) && !hasInterrupt)) {
             // pointer provided;
-            v_valueStackSize -= 1;
-            v_value = v_valueStack[v_valueStackSize];
-            if ((v_value.type == 9)) {
-              v_functionPointer1 = ((FunctionPointer) v_value.internalValue);
-              switch (v_functionPointer1.type) {
+            valueStackSize -= 1;
+            value = valueStack[valueStackSize];
+            if ((value.type == 9)) {
+              functionPointer1 = ((FunctionPointer) value.internalValue);
+              switch (functionPointer1.type) {
                 case 1:
                   // pointer to a function;
-                  v_functionId = v_functionPointer1.functionId;
-                  v_type = 1;
+                  functionId = functionPointer1.functionId;
+                  type = 1;
                   break;
                 case 2:
                   // pointer to a method;
-                  v_functionId = v_functionPointer1.functionId;
-                  v_value = v_functionPointer1.context;
-                  v_type = 3;
+                  functionId = functionPointer1.functionId;
+                  value = functionPointer1.context;
+                  type = 3;
                   break;
                 case 3:
                   // pointer to a static method;
-                  v_functionId = v_functionPointer1.functionId;
-                  v_classId = v_functionPointer1.classId;
-                  v_type = 2;
+                  functionId = functionPointer1.functionId;
+                  classId = functionPointer1.classId;
+                  type = 2;
                   break;
                 case 4:
                   // pointer to a primitive method;
-                  v_value = v_functionPointer1.context;
-                  v_functionId = v_functionPointer1.functionId;
-                  v_type = 9;
+                  value = functionPointer1.context;
+                  functionId = functionPointer1.functionId;
+                  type = 9;
                   break;
                 case 5:
                   // lambda instance;
-                  v_value = v_functionPointer1.context;
-                  v_functionId = v_functionPointer1.functionId;
-                  v_type = 10;
-                  v_closure = v_functionPointer1.closureVariables;
+                  value = functionPointer1.context;
+                  functionId = functionPointer1.functionId;
+                  type = 10;
+                  closure = functionPointer1.closureVariables;
                   break;
               }
             } else {
-              v_hasInterrupt = v_EX_InvalidInvocation(v_ec, "This type cannot be invoked like a function.");
+              hasInterrupt = EX_InvalidInvocation(ec, "This type cannot be invoked like a function.");
             }
           }
-          if (((v_type == 9) && !v_hasInterrupt)) {
+          if (((type == 9) && !hasInterrupt)) {
             // primitive method invocation;
-            v_output = v_VALUE_NULL;
-            v_primitiveMethodToCoreLibraryFallback = false;
-            switch (v_value.type) {
+            output = VALUE_NULL;
+            primitiveMethodToCoreLibraryFallback = false;
+            switch (value.type) {
               case 5:
                 // ...on a string;
-                v_string1 = ((String) v_value.internalValue);
-                switch (v_functionId) {
+                string1 = ((String) value.internalValue);
+                switch (functionId) {
                   case 7:
-                    if ((v_argCount != 1)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string contains method", 1, v_argCount));
+                    if ((argCount != 1)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string contains method", 1, argCount));
                     } else {
-                      v_value2 = v_funcArgs[0];
-                      if ((v_value2.type != 5)) {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "string contains method requires another string as input.");
+                      value2 = funcArgs[0];
+                      if ((value2.type != 5)) {
+                        hasInterrupt = EX_InvalidArgument(ec, "string contains method requires another string as input.");
                       } else {
-                        if (v_string1.contains(((String) v_value2.internalValue))) {
-                          v_output = v_VALUE_TRUE;
+                        if (string1.contains(((String) value2.internalValue))) {
+                          output = VALUE_TRUE;
                         } else {
-                          v_output = v_VALUE_FALSE;
+                          output = VALUE_FALSE;
                         }
                       }
                     }
                     break;
                   case 9:
-                    if ((v_argCount != 1)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string endsWith method", 1, v_argCount));
+                    if ((argCount != 1)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string endsWith method", 1, argCount));
                     } else {
-                      v_value2 = v_funcArgs[0];
-                      if ((v_value2.type != 5)) {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "string endsWith method requires another string as input.");
+                      value2 = funcArgs[0];
+                      if ((value2.type != 5)) {
+                        hasInterrupt = EX_InvalidArgument(ec, "string endsWith method requires another string as input.");
                       } else {
-                        if (v_string1.endsWith(((String) v_value2.internalValue))) {
-                          v_output = v_VALUE_TRUE;
+                        if (string1.endsWith(((String) value2.internalValue))) {
+                          output = VALUE_TRUE;
                         } else {
-                          v_output = v_VALUE_FALSE;
+                          output = VALUE_FALSE;
                         }
                       }
                     }
                     break;
                   case 13:
-                    if ((v_argCount != 1)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string indexOf method", 1, v_argCount));
+                    if ((argCount != 1)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string indexOf method", 1, argCount));
                     } else {
-                      v_value2 = v_funcArgs[0];
-                      if ((v_value2.type != 5)) {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "string indexOf method requires another string as input.");
+                      value2 = funcArgs[0];
+                      if ((value2.type != 5)) {
+                        hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires another string as input.");
                       } else {
-                        v_output = v_buildInteger(v_globals, v_string1.indexOf(((String) v_value2.internalValue)));
+                        output = buildInteger(globals, string1.indexOf(((String) value2.internalValue)));
                       }
                     }
                     break;
                   case 19:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string lower method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string lower method", 0, argCount));
                     } else {
-                      v_output = v_buildString(v_globals, v_string1.toLowerCase());
+                      output = buildString(globals, string1.toLowerCase());
                     }
                     break;
                   case 20:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string ltrim method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string ltrim method", 0, argCount));
                     } else {
-                      v_output = v_buildString(v_globals, PST_trimSide(v_string1, true));
+                      output = buildString(globals, PST_trimSide(string1, true));
                     }
                     break;
                   case 25:
-                    if ((v_argCount != 2)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string replace method", 2, v_argCount));
+                    if ((argCount != 2)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string replace method", 2, argCount));
                     } else {
-                      v_value2 = v_funcArgs[0];
-                      v_value3 = v_funcArgs[1];
-                      if (((v_value2.type != 5) || (v_value3.type != 5))) {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "string replace method requires 2 strings as input.");
+                      value2 = funcArgs[0];
+                      value3 = funcArgs[1];
+                      if (((value2.type != 5) || (value3.type != 5))) {
+                        hasInterrupt = EX_InvalidArgument(ec, "string replace method requires 2 strings as input.");
                       } else {
-                        v_output = v_buildString(v_globals, v_string1.replace((CharSequence) ((String) v_value2.internalValue), (CharSequence) ((String) v_value3.internalValue)));
+                        output = buildString(globals, string1.replace((CharSequence) ((String) value2.internalValue), (CharSequence) ((String) value3.internalValue)));
                       }
                     }
                     break;
                   case 26:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string reverse method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string reverse method", 0, argCount));
                     } else {
-                      v_output = v_buildString(v_globals, PST_reverseString(v_string1));
+                      output = buildString(globals, PST_reverseString(string1));
                     }
                     break;
                   case 27:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string rtrim method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string rtrim method", 0, argCount));
                     } else {
-                      v_output = v_buildString(v_globals, PST_trimSide(v_string1, false));
+                      output = buildString(globals, PST_trimSide(string1, false));
                     }
                     break;
                   case 30:
-                    if ((v_argCount != 1)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string split method", 1, v_argCount));
+                    if ((argCount != 1)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string split method", 1, argCount));
                     } else {
-                      v_value2 = v_funcArgs[0];
-                      if ((v_value2.type != 5)) {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "string split method requires another string as input.");
+                      value2 = funcArgs[0];
+                      if ((value2.type != 5)) {
+                        hasInterrupt = EX_InvalidArgument(ec, "string split method requires another string as input.");
                       } else {
-                        v_stringList = PST_literalStringSplit(v_string1, ((String) v_value2.internalValue));
-                        v_len = v_stringList.length;
-                        v_list1 = v_makeEmptyList(v_globals.stringType, v_len);
-                        v_i = 0;
-                        while ((v_i < v_len)) {
-                          v_list1.array[v_i] = v_buildString(v_globals, v_stringList[v_i]);
-                          v_i += 1;
+                        stringList = PST_literalStringSplit(string1, ((String) value2.internalValue));
+                        len = stringList.length;
+                        list1 = makeEmptyList(globals.stringType, len);
+                        i = 0;
+                        while ((i < len)) {
+                          list1.array[i] = buildString(globals, stringList[i]);
+                          i += 1;
                         }
-                        v_list1.size = v_len;
-                        v_output = new Value(6, v_list1);
+                        list1.size = len;
+                        output = new Value(6, list1);
                       }
                     }
                     break;
                   case 31:
-                    if ((v_argCount != 1)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string startsWith method", 1, v_argCount));
+                    if ((argCount != 1)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string startsWith method", 1, argCount));
                     } else {
-                      v_value2 = v_funcArgs[0];
-                      if ((v_value2.type != 5)) {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "string startsWith method requires another string as input.");
+                      value2 = funcArgs[0];
+                      if ((value2.type != 5)) {
+                        hasInterrupt = EX_InvalidArgument(ec, "string startsWith method requires another string as input.");
                       } else {
-                        if (v_string1.startsWith(((String) v_value2.internalValue))) {
-                          v_output = v_VALUE_TRUE;
+                        if (string1.startsWith(((String) value2.internalValue))) {
+                          output = VALUE_TRUE;
                         } else {
-                          v_output = v_VALUE_FALSE;
+                          output = VALUE_FALSE;
                         }
                       }
                     }
                     break;
                   case 32:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string trim method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string trim method", 0, argCount));
                     } else {
-                      v_output = v_buildString(v_globals, v_string1.trim());
+                      output = buildString(globals, string1.trim());
                     }
                     break;
                   case 33:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("string upper method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string upper method", 0, argCount));
                     } else {
-                      v_output = v_buildString(v_globals, v_string1.toUpperCase());
+                      output = buildString(globals, string1.toUpperCase());
                     }
                     break;
                   default:
-                    v_output = null;
+                    output = null;
                     break;
                 }
                 break;
               case 6:
                 // ...on a list;
-                v_list1 = ((ListImpl) v_value.internalValue);
-                switch (v_functionId) {
+                list1 = ((ListImpl) value.internalValue);
+                switch (functionId) {
                   case 0:
-                    if ((v_argCount == 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, "List add method requires at least one argument.");
+                    if ((argCount == 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, "List add method requires at least one argument.");
                     } else {
-                      v_intArray1 = v_list1.type;
-                      while (((v_list1.size + v_argCount) > v_list1.capacity)) {
-                        v_increaseListCapacity(v_list1);
+                      intArray1 = list1.type;
+                      while (((list1.size + argCount) > list1.capacity)) {
+                        increaseListCapacity(list1);
                       }
-                      v_int1 = v_list1.size;
-                      v_i = 0;
-                      while ((v_i < v_argCount)) {
-                        v_value = v_funcArgs[v_i];
-                        if ((v_intArray1 != null)) {
-                          v_value2 = v_canAssignTypeToGeneric(v_vm, v_value, v_intArray1, 0);
-                          if ((v_value2 == null)) {
-                            v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot convert a " + v_typeToStringFromValue(v_vm, v_value) + " into a " + v_typeToString(v_vm, v_list1.type, 0));
+                      int1 = list1.size;
+                      i = 0;
+                      while ((i < argCount)) {
+                        value = funcArgs[i];
+                        if ((intArray1 != null)) {
+                          value2 = canAssignTypeToGeneric(vm, value, intArray1, 0);
+                          if ((value2 == null)) {
+                            hasInterrupt = EX_InvalidArgument(ec, "Cannot convert a " + typeToStringFromValue(vm, value) + " into a " + typeToString(vm, list1.type, 0));
                           }
-                          v_list1.array[(v_int1 + v_i)] = v_value2;
+                          list1.array[(int1 + i)] = value2;
                         } else {
-                          v_list1.array[(v_int1 + v_i)] = v_value;
+                          list1.array[(int1 + i)] = value;
                         }
-                        v_i += 1;
+                        i += 1;
                       }
-                      v_list1.size += v_argCount;
-                      v_output = v_VALUE_NULL;
+                      list1.size += argCount;
+                      output = VALUE_NULL;
                     }
                     break;
                   case 3:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list choice method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list choice method", 0, argCount));
                     } else {
-                      v_len = v_list1.size;
-                      if ((v_len == 0)) {
-                        v_hasInterrupt = v_EX_UnsupportedOperation(v_ec, "Cannot use list.choice() method on an empty list.");
+                      len = list1.size;
+                      if ((len == 0)) {
+                        hasInterrupt = EX_UnsupportedOperation(ec, "Cannot use list.choice() method on an empty list.");
                       } else {
-                        v_i = ((int) ((PST_random.nextDouble() * v_len)));
-                        v_output = v_list1.array[v_i];
+                        i = ((int) ((PST_random.nextDouble() * len)));
+                        output = list1.array[i];
                       }
                     }
                     break;
                   case 4:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list clear method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list clear method", 0, argCount));
                     } else {
-                      if ((v_list1.size > 0)) {
-                        v_i = (v_list1.size - 1);
-                        while ((v_i >= 0)) {
-                          v_list1.array[v_i] = null;
-                          v_i -= 1;
+                      if ((list1.size > 0)) {
+                        i = (list1.size - 1);
+                        while ((i >= 0)) {
+                          list1.array[i] = null;
+                          i -= 1;
                         }
-                        v_list1.size = 0;
+                        list1.size = 0;
                       }
                     }
                     break;
                   case 5:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list clone method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list clone method", 0, argCount));
                     } else {
-                      v_len = v_list1.size;
-                      v_list2 = v_makeEmptyList(v_list1.type, v_len);
-                      v_i = 0;
-                      while ((v_i < v_len)) {
-                        v_list2.array[v_i] = v_list1.array[v_i];
-                        v_i += 1;
+                      len = list1.size;
+                      list2 = makeEmptyList(list1.type, len);
+                      i = 0;
+                      while ((i < len)) {
+                        list2.array[i] = list1.array[i];
+                        i += 1;
                       }
-                      v_list2.size = v_len;
-                      v_output = new Value(6, v_list2);
+                      list2.size = len;
+                      output = new Value(6, list2);
                     }
                     break;
                   case 6:
-                    if ((v_argCount != 1)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list concat method", 1, v_argCount));
+                    if ((argCount != 1)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list concat method", 1, argCount));
                     } else {
-                      v_value2 = v_funcArgs[0];
-                      if ((v_value2.type != 6)) {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "list concat methods requires a list as an argument.");
+                      value2 = funcArgs[0];
+                      if ((value2.type != 6)) {
+                        hasInterrupt = EX_InvalidArgument(ec, "list concat methods requires a list as an argument.");
                       } else {
-                        v_list2 = ((ListImpl) v_value2.internalValue);
-                        v_intArray1 = v_list1.type;
-                        if (((v_intArray1 != null) && !v_canAssignGenericToGeneric(v_vm, v_list2.type, 0, v_intArray1, 0, v_intBuffer))) {
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot concat a list: incompatible types.");
+                        list2 = ((ListImpl) value2.internalValue);
+                        intArray1 = list1.type;
+                        if (((intArray1 != null) && !canAssignGenericToGeneric(vm, list2.type, 0, intArray1, 0, intBuffer))) {
+                          hasInterrupt = EX_InvalidArgument(ec, "Cannot concat a list: incompatible types.");
                         } else {
-                          if (((v_intArray1 != null) && (v_intArray1[0] == 4) && (v_list2.type[0] == 3))) {
-                            v_bool1 = true;
+                          if (((intArray1 != null) && (intArray1[0] == 4) && (list2.type[0] == 3))) {
+                            bool1 = true;
                           } else {
-                            v_bool1 = false;
+                            bool1 = false;
                           }
-                          v_len = v_list2.size;
-                          v_int1 = v_list1.size;
-                          while (((v_int1 + v_len) > v_list1.capacity)) {
-                            v_increaseListCapacity(v_list1);
+                          len = list2.size;
+                          int1 = list1.size;
+                          while (((int1 + len) > list1.capacity)) {
+                            increaseListCapacity(list1);
                           }
-                          v_i = 0;
-                          while ((v_i < v_len)) {
-                            v_value = v_list2.array[v_i];
-                            if (v_bool1) {
-                              v_value = v_buildFloat(v_globals, (0.0 + v_value.intValue));
+                          i = 0;
+                          while ((i < len)) {
+                            value = list2.array[i];
+                            if (bool1) {
+                              value = buildFloat(globals, (0.0 + value.intValue));
                             }
-                            v_list1.array[(v_int1 + v_i)] = v_value;
-                            v_i += 1;
+                            list1.array[(int1 + i)] = value;
+                            i += 1;
                           }
-                          v_list1.size += v_len;
+                          list1.size += len;
                         }
                       }
                     }
                     break;
                   case 7:
-                    if ((v_argCount != 1)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list contains method", 1, v_argCount));
+                    if ((argCount != 1)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list contains method", 1, argCount));
                     } else {
-                      v_value2 = v_funcArgs[0];
-                      v_len = v_list1.size;
-                      v_output = v_VALUE_FALSE;
-                      v_i = 0;
-                      while ((v_i < v_len)) {
-                        v_value = v_list1.array[v_i];
-                        if ((v_doEqualityComparisonAndReturnCode(v_value2, v_value) == 1)) {
-                          v_output = v_VALUE_TRUE;
-                          v_i = v_len;
+                      value2 = funcArgs[0];
+                      len = list1.size;
+                      output = VALUE_FALSE;
+                      i = 0;
+                      while ((i < len)) {
+                        value = list1.array[i];
+                        if ((doEqualityComparisonAndReturnCode(value2, value) == 1)) {
+                          output = VALUE_TRUE;
+                          i = len;
                         }
-                        v_i += 1;
+                        i += 1;
                       }
                     }
                     break;
                   case 10:
-                    if ((v_argCount != 1)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list filter method", 1, v_argCount));
+                    if ((argCount != 1)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list filter method", 1, argCount));
                     } else {
-                      v_value2 = v_funcArgs[0];
-                      if ((v_value2.type != 9)) {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "list filter method requires a function pointer as its argument.");
+                      value2 = funcArgs[0];
+                      if ((value2.type != 9)) {
+                        hasInterrupt = EX_InvalidArgument(ec, "list filter method requires a function pointer as its argument.");
                       } else {
-                        v_primitiveMethodToCoreLibraryFallback = true;
-                        v_functionId = v_metadata.primitiveMethodFunctionIdFallbackLookup[0];
-                        v_funcArgs[1] = v_value;
-                        v_argCount = 2;
-                        v_output = null;
+                        primitiveMethodToCoreLibraryFallback = true;
+                        functionId = metadata.primitiveMethodFunctionIdFallbackLookup[0];
+                        funcArgs[1] = value;
+                        argCount = 2;
+                        output = null;
                       }
                     }
                     break;
                   case 14:
-                    if ((v_argCount != 2)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list insert method", 1, v_argCount));
+                    if ((argCount != 2)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list insert method", 1, argCount));
                     } else {
-                      v_value = v_funcArgs[0];
-                      v_value2 = v_funcArgs[1];
-                      if ((v_value.type != 3)) {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "First argument of list.insert must be an integer index.");
+                      value = funcArgs[0];
+                      value2 = funcArgs[1];
+                      if ((value.type != 3)) {
+                        hasInterrupt = EX_InvalidArgument(ec, "First argument of list.insert must be an integer index.");
                       } else {
-                        v_intArray1 = v_list1.type;
-                        if ((v_intArray1 != null)) {
-                          v_value3 = v_canAssignTypeToGeneric(v_vm, v_value2, v_intArray1, 0);
-                          if ((v_value3 == null)) {
-                            v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot insert this type into this type of list.");
+                        intArray1 = list1.type;
+                        if ((intArray1 != null)) {
+                          value3 = canAssignTypeToGeneric(vm, value2, intArray1, 0);
+                          if ((value3 == null)) {
+                            hasInterrupt = EX_InvalidArgument(ec, "Cannot insert this type into this type of list.");
                           }
-                          v_value2 = v_value3;
+                          value2 = value3;
                         }
-                        if (!v_hasInterrupt) {
-                          if ((v_list1.size == v_list1.capacity)) {
-                            v_increaseListCapacity(v_list1);
+                        if (!hasInterrupt) {
+                          if ((list1.size == list1.capacity)) {
+                            increaseListCapacity(list1);
                           }
-                          v_int1 = v_value.intValue;
-                          v_len = v_list1.size;
-                          if ((v_int1 < 0)) {
-                            v_int1 += v_len;
+                          int1 = value.intValue;
+                          len = list1.size;
+                          if ((int1 < 0)) {
+                            int1 += len;
                           }
-                          if ((v_int1 == v_len)) {
-                            v_list1.array[v_len] = v_value2;
-                            v_list1.size += 1;
+                          if ((int1 == len)) {
+                            list1.array[len] = value2;
+                            list1.size += 1;
                           } else {
-                            if (((v_int1 < 0) || (v_int1 >= v_len))) {
-                              v_hasInterrupt = v_EX_IndexOutOfRange(v_ec, "Index out of range.");
+                            if (((int1 < 0) || (int1 >= len))) {
+                              hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.");
                             } else {
-                              v_i = v_int1;
-                              while ((v_i < v_len)) {
-                                v_value3 = v_list1.array[v_i];
-                                v_list1.array[v_i] = v_value2;
-                                v_value2 = v_value3;
-                                v_i += 1;
+                              i = int1;
+                              while ((i < len)) {
+                                value3 = list1.array[i];
+                                list1.array[i] = value2;
+                                value2 = value3;
+                                i += 1;
                               }
-                              v_list1.array[v_len] = v_value2;
-                              v_list1.size += 1;
+                              list1.array[len] = value2;
+                              list1.size += 1;
                             }
                           }
                         }
@@ -3113,591 +3113,591 @@ public static InterpreterResult v_interpretImpl(VmContext v_vm, int v_executionC
                     }
                     break;
                   case 17:
-                    if ((v_argCount != 1)) {
-                      if ((v_argCount == 0)) {
-                        v_value2 = v_globals.stringEmpty;
+                    if ((argCount != 1)) {
+                      if ((argCount == 0)) {
+                        value2 = globals.stringEmpty;
                       } else {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list join method", 1, v_argCount));
+                        hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list join method", 1, argCount));
                       }
                     } else {
-                      v_value2 = v_funcArgs[0];
-                      if ((v_value2.type != 5)) {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Argument of list.join needs to be a string.");
+                      value2 = funcArgs[0];
+                      if ((value2.type != 5)) {
+                        hasInterrupt = EX_InvalidArgument(ec, "Argument of list.join needs to be a string.");
                       }
                     }
-                    if (!v_hasInterrupt) {
-                      v_stringList1 = new ArrayList<String>();
-                      v_string1 = ((String) v_value2.internalValue);
-                      v_len = v_list1.size;
-                      v_i = 0;
-                      while ((v_i < v_len)) {
-                        v_value = v_list1.array[v_i];
-                        if ((v_value.type != 5)) {
-                          v_string2 = v_valueToString(v_vm, v_value);
+                    if (!hasInterrupt) {
+                      stringList1 = new ArrayList<String>();
+                      string1 = ((String) value2.internalValue);
+                      len = list1.size;
+                      i = 0;
+                      while ((i < len)) {
+                        value = list1.array[i];
+                        if ((value.type != 5)) {
+                          string2 = valueToString(vm, value);
                         } else {
-                          v_string2 = ((String) v_value.internalValue);
+                          string2 = ((String) value.internalValue);
                         }
-                        v_stringList1.add(v_string2);
-                        v_i += 1;
+                        stringList1.add(string2);
+                        i += 1;
                       }
-                      v_output = v_buildString(v_globals, PST_joinList(v_string1, v_stringList1));
+                      output = buildString(globals, PST_joinList(string1, stringList1));
                     }
                     break;
                   case 21:
-                    if ((v_argCount != 1)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list map method", 1, v_argCount));
+                    if ((argCount != 1)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list map method", 1, argCount));
                     } else {
-                      v_value2 = v_funcArgs[0];
-                      if ((v_value2.type != 9)) {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "list map method requires a function pointer as its argument.");
+                      value2 = funcArgs[0];
+                      if ((value2.type != 9)) {
+                        hasInterrupt = EX_InvalidArgument(ec, "list map method requires a function pointer as its argument.");
                       } else {
-                        v_primitiveMethodToCoreLibraryFallback = true;
-                        v_functionId = v_metadata.primitiveMethodFunctionIdFallbackLookup[1];
-                        v_funcArgs[1] = v_value;
-                        v_argCount = 2;
-                        v_output = null;
+                        primitiveMethodToCoreLibraryFallback = true;
+                        functionId = metadata.primitiveMethodFunctionIdFallbackLookup[1];
+                        funcArgs[1] = value;
+                        argCount = 2;
+                        output = null;
                       }
                     }
                     break;
                   case 23:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list pop method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list pop method", 0, argCount));
                     } else {
-                      v_len = v_list1.size;
-                      if ((v_len < 1)) {
-                        v_hasInterrupt = v_EX_IndexOutOfRange(v_ec, "Cannot pop from an empty list.");
+                      len = list1.size;
+                      if ((len < 1)) {
+                        hasInterrupt = EX_IndexOutOfRange(ec, "Cannot pop from an empty list.");
                       } else {
-                        v_len -= 1;
-                        v_value = v_list1.array[v_len];
-                        v_list1.array[v_len] = null;
-                        if (v_returnValueUsed) {
-                          v_output = v_value;
+                        len -= 1;
+                        value = list1.array[len];
+                        list1.array[len] = null;
+                        if (returnValueUsed) {
+                          output = value;
                         }
-                        v_list1.size = v_len;
+                        list1.size = len;
                       }
                     }
                     break;
                   case 24:
-                    if ((v_argCount != 1)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list remove method", 1, v_argCount));
+                    if ((argCount != 1)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list remove method", 1, argCount));
                     } else {
-                      v_value = v_funcArgs[0];
-                      if ((v_value.type != 3)) {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Argument of list.remove must be an integer index.");
+                      value = funcArgs[0];
+                      if ((value.type != 3)) {
+                        hasInterrupt = EX_InvalidArgument(ec, "Argument of list.remove must be an integer index.");
                       } else {
-                        v_int1 = v_value.intValue;
-                        v_len = v_list1.size;
-                        if ((v_int1 < 0)) {
-                          v_int1 += v_len;
+                        int1 = value.intValue;
+                        len = list1.size;
+                        if ((int1 < 0)) {
+                          int1 += len;
                         }
-                        if (((v_int1 < 0) || (v_int1 >= v_len))) {
-                          v_hasInterrupt = v_EX_IndexOutOfRange(v_ec, "Index out of range.");
+                        if (((int1 < 0) || (int1 >= len))) {
+                          hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.");
                         } else {
-                          if (v_returnValueUsed) {
-                            v_output = v_list1.array[v_int1];
+                          if (returnValueUsed) {
+                            output = list1.array[int1];
                           }
-                          v_len = (v_list1.size - 1);
-                          v_list1.size = v_len;
-                          v_i = v_int1;
-                          while ((v_i < v_len)) {
-                            v_list1.array[v_i] = v_list1.array[(v_i + 1)];
-                            v_i += 1;
+                          len = (list1.size - 1);
+                          list1.size = len;
+                          i = int1;
+                          while ((i < len)) {
+                            list1.array[i] = list1.array[(i + 1)];
+                            i += 1;
                           }
-                          v_list1.array[v_len] = null;
+                          list1.array[len] = null;
                         }
                       }
                     }
                     break;
                   case 26:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list reverse method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list reverse method", 0, argCount));
                     } else {
-                      v_reverseList(v_list1);
+                      reverseList(list1);
                     }
                     break;
                   case 28:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("list shuffle method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list shuffle method", 0, argCount));
                     } else {
-                      v_len = v_list1.size;
-                      v_i = 0;
-                      while ((v_i < v_len)) {
-                        v_j = ((int) ((PST_random.nextDouble() * v_len)));
-                        v_value = v_list1.array[v_i];
-                        v_list1.array[v_i] = v_list1.array[v_j];
-                        v_list1.array[v_j] = v_value;
-                        v_i += 1;
+                      len = list1.size;
+                      i = 0;
+                      while ((i < len)) {
+                        j = ((int) ((PST_random.nextDouble() * len)));
+                        value = list1.array[i];
+                        list1.array[i] = list1.array[j];
+                        list1.array[j] = value;
+                        i += 1;
                       }
                     }
                     break;
                   case 29:
-                    if ((v_argCount == 0)) {
-                      v_sortLists(v_list1, v_list1, PST_intBuffer16);
+                    if ((argCount == 0)) {
+                      sortLists(list1, list1, PST_intBuffer16);
                       if ((PST_intBuffer16[0] > 0)) {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Invalid list to sort. All items must be numbers or all strings, but not mixed.");
+                        hasInterrupt = EX_InvalidArgument(ec, "Invalid list to sort. All items must be numbers or all strings, but not mixed.");
                       }
                     } else {
-                      if ((v_argCount == 1)) {
-                        v_value2 = v_funcArgs[0];
-                        if ((v_value2.type == 9)) {
-                          v_primitiveMethodToCoreLibraryFallback = true;
-                          v_functionId = v_metadata.primitiveMethodFunctionIdFallbackLookup[2];
-                          v_funcArgs[1] = v_value;
-                          v_argCount = 2;
+                      if ((argCount == 1)) {
+                        value2 = funcArgs[0];
+                        if ((value2.type == 9)) {
+                          primitiveMethodToCoreLibraryFallback = true;
+                          functionId = metadata.primitiveMethodFunctionIdFallbackLookup[2];
+                          funcArgs[1] = value;
+                          argCount = 2;
                         } else {
-                          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "list.sort(get_key_function) requires a function pointer as its argument.");
+                          hasInterrupt = EX_InvalidArgument(ec, "list.sort(get_key_function) requires a function pointer as its argument.");
                         }
-                        v_output = null;
+                        output = null;
                       }
                     }
                     break;
                   default:
-                    v_output = null;
+                    output = null;
                     break;
                 }
                 break;
               case 7:
                 // ...on a dictionary;
-                v_dictImpl = ((DictImpl) v_value.internalValue);
-                switch (v_functionId) {
+                dictImpl = ((DictImpl) value.internalValue);
+                switch (functionId) {
                   case 4:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("dictionary clear method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary clear method", 0, argCount));
                     } else {
-                      if ((v_dictImpl.size > 0)) {
-                        v_dictImpl.intToIndex = new HashMap<Integer, Integer>();
-                        v_dictImpl.stringToIndex = new HashMap<String, Integer>();
-                        v_dictImpl.keys.clear();
-                        v_dictImpl.values.clear();
-                        v_dictImpl.size = 0;
+                      if ((dictImpl.size > 0)) {
+                        dictImpl.intToIndex = new HashMap<Integer, Integer>();
+                        dictImpl.stringToIndex = new HashMap<String, Integer>();
+                        dictImpl.keys.clear();
+                        dictImpl.values.clear();
+                        dictImpl.size = 0;
                       }
                     }
                     break;
                   case 5:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("dictionary clone method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary clone method", 0, argCount));
                     } else {
-                      v_output = new Value(7, v_cloneDictionary(v_dictImpl, null));
+                      output = new Value(7, cloneDictionary(dictImpl, null));
                     }
                     break;
                   case 7:
-                    if ((v_argCount != 1)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("dictionary contains method", 1, v_argCount));
+                    if ((argCount != 1)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary contains method", 1, argCount));
                     } else {
-                      v_value = v_funcArgs[0];
-                      v_output = v_VALUE_FALSE;
-                      if ((v_value.type == 5)) {
-                        if (v_dictImpl.stringToIndex.containsKey(((String) v_value.internalValue))) {
-                          v_output = v_VALUE_TRUE;
+                      value = funcArgs[0];
+                      output = VALUE_FALSE;
+                      if ((value.type == 5)) {
+                        if (dictImpl.stringToIndex.containsKey(((String) value.internalValue))) {
+                          output = VALUE_TRUE;
                         }
                       } else {
-                        if ((v_value.type == 3)) {
-                          v_i = v_value.intValue;
+                        if ((value.type == 3)) {
+                          i = value.intValue;
                         } else {
-                          v_i = (((ObjectInstance) v_value.internalValue)).objectId;
+                          i = (((ObjectInstance) value.internalValue)).objectId;
                         }
-                        if (v_dictImpl.intToIndex.containsKey(v_i)) {
-                          v_output = v_VALUE_TRUE;
+                        if (dictImpl.intToIndex.containsKey(i)) {
+                          output = VALUE_TRUE;
                         }
                       }
                     }
                     break;
                   case 11:
-                    if (((v_argCount != 1) && (v_argCount != 2))) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Dictionary get method requires 1 or 2 arguments.");
+                    if (((argCount != 1) && (argCount != 2))) {
+                      hasInterrupt = EX_InvalidArgument(ec, "Dictionary get method requires 1 or 2 arguments.");
                     } else {
-                      v_value = v_funcArgs[0];
-                      switch (v_value.type) {
+                      value = funcArgs[0];
+                      switch (value.type) {
                         case 3:
-                          v_int1 = v_value.intValue;
-                          Integer dictLookup5 = v_dictImpl.intToIndex.get(v_int1);
-                          v_i = dictLookup5 == null ? (-1) : dictLookup5;
+                          int1 = value.intValue;
+                          Integer dictLookup5 = dictImpl.intToIndex.get(int1);
+                          i = dictLookup5 == null ? (-1) : dictLookup5;
                           break;
                         case 8:
-                          v_int1 = (((ObjectInstance) v_value.internalValue)).objectId;
-                          Integer dictLookup6 = v_dictImpl.intToIndex.get(v_int1);
-                          v_i = dictLookup6 == null ? (-1) : dictLookup6;
+                          int1 = (((ObjectInstance) value.internalValue)).objectId;
+                          Integer dictLookup6 = dictImpl.intToIndex.get(int1);
+                          i = dictLookup6 == null ? (-1) : dictLookup6;
                           break;
                         case 5:
-                          v_string1 = ((String) v_value.internalValue);
-                          Integer dictLookup7 = v_dictImpl.stringToIndex.get(v_string1);
-                          v_i = dictLookup7 == null ? (v_dictImpl.stringToIndex.containsKey(v_string1) ? null : (-1)) : dictLookup7;
+                          string1 = ((String) value.internalValue);
+                          Integer dictLookup7 = dictImpl.stringToIndex.get(string1);
+                          i = dictLookup7 == null ? (dictImpl.stringToIndex.containsKey(string1) ? null : (-1)) : dictLookup7;
                           break;
                       }
-                      if ((v_i == -1)) {
-                        if ((v_argCount == 2)) {
-                          v_output = v_funcArgs[1];
+                      if ((i == -1)) {
+                        if ((argCount == 2)) {
+                          output = funcArgs[1];
                         } else {
-                          v_output = v_VALUE_NULL;
+                          output = VALUE_NULL;
                         }
                       } else {
-                        v_output = v_dictImpl.values.get(v_i);
+                        output = dictImpl.values.get(i);
                       }
                     }
                     break;
                   case 18:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("dictionary keys method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary keys method", 0, argCount));
                     } else {
-                      v_valueList1 = v_dictImpl.keys;
-                      v_len = v_valueList1.size();
-                      if ((v_dictImpl.keyType == 8)) {
-                        v_intArray1 = new int[2];
-                        v_intArray1[0] = 8;
-                        v_intArray1[0] = v_dictImpl.keyClassId;
+                      valueList1 = dictImpl.keys;
+                      len = valueList1.size();
+                      if ((dictImpl.keyType == 8)) {
+                        intArray1 = new int[2];
+                        intArray1[0] = 8;
+                        intArray1[0] = dictImpl.keyClassId;
                       } else {
-                        v_intArray1 = new int[1];
-                        v_intArray1[0] = v_dictImpl.keyType;
+                        intArray1 = new int[1];
+                        intArray1[0] = dictImpl.keyType;
                       }
-                      v_list1 = v_makeEmptyList(v_intArray1, v_len);
-                      v_i = 0;
-                      while ((v_i < v_len)) {
-                        v_list1.array[v_i] = v_valueList1.get(v_i);
-                        v_i += 1;
+                      list1 = makeEmptyList(intArray1, len);
+                      i = 0;
+                      while ((i < len)) {
+                        list1.array[i] = valueList1.get(i);
+                        i += 1;
                       }
-                      v_list1.size = v_len;
-                      v_output = new Value(6, v_list1);
+                      list1.size = len;
+                      output = new Value(6, list1);
                     }
                     break;
                   case 22:
-                    if ((v_argCount != 1)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("dictionary merge method", 1, v_argCount));
+                    if ((argCount != 1)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary merge method", 1, argCount));
                     } else {
-                      v_value2 = v_funcArgs[0];
-                      if ((v_value2.type != 7)) {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "dictionary merge method requires another dictionary as a parameeter.");
+                      value2 = funcArgs[0];
+                      if ((value2.type != 7)) {
+                        hasInterrupt = EX_InvalidArgument(ec, "dictionary merge method requires another dictionary as a parameeter.");
                       } else {
-                        v_dictImpl2 = ((DictImpl) v_value2.internalValue);
-                        if ((v_dictImpl2.size > 0)) {
-                          if ((v_dictImpl.size == 0)) {
-                            v_value.internalValue = v_cloneDictionary(v_dictImpl2, null);
+                        dictImpl2 = ((DictImpl) value2.internalValue);
+                        if ((dictImpl2.size > 0)) {
+                          if ((dictImpl.size == 0)) {
+                            value.internalValue = cloneDictionary(dictImpl2, null);
                           } else {
-                            if ((v_dictImpl2.keyType != v_dictImpl.keyType)) {
-                              v_hasInterrupt = v_EX_InvalidKey(v_ec, "Dictionaries with different key types cannot be merged.");
+                            if ((dictImpl2.keyType != dictImpl.keyType)) {
+                              hasInterrupt = EX_InvalidKey(ec, "Dictionaries with different key types cannot be merged.");
                             } else {
-                              if (((v_dictImpl2.keyType == 8) && (v_dictImpl2.keyClassId != v_dictImpl.keyClassId) && (v_dictImpl.keyClassId != 0) && !v_isClassASubclassOf(v_vm, v_dictImpl2.keyClassId, v_dictImpl.keyClassId))) {
-                                v_hasInterrupt = v_EX_InvalidKey(v_ec, "Dictionary key types are incompatible.");
+                              if (((dictImpl2.keyType == 8) && (dictImpl2.keyClassId != dictImpl.keyClassId) && (dictImpl.keyClassId != 0) && !isClassASubclassOf(vm, dictImpl2.keyClassId, dictImpl.keyClassId))) {
+                                hasInterrupt = EX_InvalidKey(ec, "Dictionary key types are incompatible.");
                               } else {
-                                if ((v_dictImpl.valueType == null)) {
+                                if ((dictImpl.valueType == null)) {
                                 } else {
-                                  if ((v_dictImpl2.valueType == null)) {
-                                    v_hasInterrupt = v_EX_InvalidKey(v_ec, "Dictionaries with different value types cannot be merged.");
+                                  if ((dictImpl2.valueType == null)) {
+                                    hasInterrupt = EX_InvalidKey(ec, "Dictionaries with different value types cannot be merged.");
                                   } else {
-                                    if (!v_canAssignGenericToGeneric(v_vm, v_dictImpl2.valueType, 0, v_dictImpl.valueType, 0, v_intBuffer)) {
-                                      v_hasInterrupt = v_EX_InvalidKey(v_ec, "The dictionary value types are incompatible.");
+                                    if (!canAssignGenericToGeneric(vm, dictImpl2.valueType, 0, dictImpl.valueType, 0, intBuffer)) {
+                                      hasInterrupt = EX_InvalidKey(ec, "The dictionary value types are incompatible.");
                                     }
                                   }
                                 }
-                                if (!v_hasInterrupt) {
-                                  v_cloneDictionary(v_dictImpl2, v_dictImpl);
+                                if (!hasInterrupt) {
+                                  cloneDictionary(dictImpl2, dictImpl);
                                 }
                               }
                             }
                           }
                         }
-                        v_output = v_VALUE_NULL;
+                        output = VALUE_NULL;
                       }
                     }
                     break;
                   case 24:
-                    if ((v_argCount != 1)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("dictionary remove method", 1, v_argCount));
+                    if ((argCount != 1)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary remove method", 1, argCount));
                     } else {
-                      v_value2 = v_funcArgs[0];
-                      v_bool2 = false;
-                      v_keyType = v_dictImpl.keyType;
-                      if (((v_dictImpl.size > 0) && (v_keyType == v_value2.type))) {
-                        if ((v_keyType == 5)) {
-                          v_stringKey = ((String) v_value2.internalValue);
-                          if (v_dictImpl.stringToIndex.containsKey(v_stringKey)) {
-                            v_i = v_dictImpl.stringToIndex.get(v_stringKey);
-                            v_bool2 = true;
+                      value2 = funcArgs[0];
+                      bool2 = false;
+                      keyType = dictImpl.keyType;
+                      if (((dictImpl.size > 0) && (keyType == value2.type))) {
+                        if ((keyType == 5)) {
+                          stringKey = ((String) value2.internalValue);
+                          if (dictImpl.stringToIndex.containsKey(stringKey)) {
+                            i = dictImpl.stringToIndex.get(stringKey);
+                            bool2 = true;
                           }
                         } else {
-                          if ((v_keyType == 3)) {
-                            v_intKey = v_value2.intValue;
+                          if ((keyType == 3)) {
+                            intKey = value2.intValue;
                           } else {
-                            v_intKey = (((ObjectInstance) v_value2.internalValue)).objectId;
+                            intKey = (((ObjectInstance) value2.internalValue)).objectId;
                           }
-                          if (v_dictImpl.intToIndex.containsKey(v_intKey)) {
-                            v_i = v_dictImpl.intToIndex.get(v_intKey);
-                            v_bool2 = true;
+                          if (dictImpl.intToIndex.containsKey(intKey)) {
+                            i = dictImpl.intToIndex.get(intKey);
+                            bool2 = true;
                           }
                         }
-                        if (v_bool2) {
-                          v_len = (v_dictImpl.size - 1);
-                          v_dictImpl.size = v_len;
-                          if ((v_i == v_len)) {
-                            if ((v_keyType == 5)) {
-                              v_dictImpl.stringToIndex.remove(v_stringKey);
+                        if (bool2) {
+                          len = (dictImpl.size - 1);
+                          dictImpl.size = len;
+                          if ((i == len)) {
+                            if ((keyType == 5)) {
+                              dictImpl.stringToIndex.remove(stringKey);
                             } else {
-                              v_dictImpl.intToIndex.remove(v_intKey);
+                              dictImpl.intToIndex.remove(intKey);
                             }
-                            v_dictImpl.keys.remove(v_i);
-                            v_dictImpl.values.remove(v_i);
+                            dictImpl.keys.remove(i);
+                            dictImpl.values.remove(i);
                           } else {
-                            v_value = v_dictImpl.keys.get(v_len);
-                            v_dictImpl.keys.set(v_i, v_value);
-                            v_dictImpl.values.set(v_i, v_dictImpl.values.get(v_len));
-                            v_dictImpl.keys.remove(v_dictImpl.keys.size() - 1);
-                            v_dictImpl.values.remove(v_dictImpl.values.size() - 1);
-                            if ((v_keyType == 5)) {
-                              v_dictImpl.stringToIndex.remove(v_stringKey);
-                              v_stringKey = ((String) v_value.internalValue);
-                              v_dictImpl.stringToIndex.put(v_stringKey, v_i);
+                            value = dictImpl.keys.get(len);
+                            dictImpl.keys.set(i, value);
+                            dictImpl.values.set(i, dictImpl.values.get(len));
+                            dictImpl.keys.remove(dictImpl.keys.size() - 1);
+                            dictImpl.values.remove(dictImpl.values.size() - 1);
+                            if ((keyType == 5)) {
+                              dictImpl.stringToIndex.remove(stringKey);
+                              stringKey = ((String) value.internalValue);
+                              dictImpl.stringToIndex.put(stringKey, i);
                             } else {
-                              v_dictImpl.intToIndex.remove(v_intKey);
-                              if ((v_keyType == 3)) {
-                                v_intKey = v_value.intValue;
+                              dictImpl.intToIndex.remove(intKey);
+                              if ((keyType == 3)) {
+                                intKey = value.intValue;
                               } else {
-                                v_intKey = (((ObjectInstance) v_value.internalValue)).objectId;
+                                intKey = (((ObjectInstance) value.internalValue)).objectId;
                               }
-                              v_dictImpl.intToIndex.put(v_intKey, v_i);
+                              dictImpl.intToIndex.put(intKey, i);
                             }
                           }
                         }
                       }
-                      if (!v_bool2) {
-                        v_hasInterrupt = v_EX_KeyNotFound(v_ec, "dictionary does not contain the given key.");
+                      if (!bool2) {
+                        hasInterrupt = EX_KeyNotFound(ec, "dictionary does not contain the given key.");
                       }
                     }
                     break;
                   case 34:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("dictionary values method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary values method", 0, argCount));
                     } else {
-                      v_valueList1 = v_dictImpl.values;
-                      v_len = v_valueList1.size();
-                      v_list1 = v_makeEmptyList(v_dictImpl.valueType, v_len);
-                      v_i = 0;
-                      while ((v_i < v_len)) {
-                        v_addToList(v_list1, v_valueList1.get(v_i));
-                        v_i += 1;
+                      valueList1 = dictImpl.values;
+                      len = valueList1.size();
+                      list1 = makeEmptyList(dictImpl.valueType, len);
+                      i = 0;
+                      while ((i < len)) {
+                        addToList(list1, valueList1.get(i));
+                        i += 1;
                       }
-                      v_output = new Value(6, v_list1);
+                      output = new Value(6, list1);
                     }
                     break;
                   default:
-                    v_output = null;
+                    output = null;
                     break;
                 }
                 break;
               case 9:
                 // ...on a function pointer;
-                v_functionPointer1 = ((FunctionPointer) v_value.internalValue);
-                switch (v_functionId) {
+                functionPointer1 = ((FunctionPointer) value.internalValue);
+                switch (functionId) {
                   case 1:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("argCountMax method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("argCountMax method", 0, argCount));
                     } else {
-                      v_functionId = v_functionPointer1.functionId;
-                      v_functionInfo = v_metadata.functionTable[v_functionId];
-                      v_output = v_buildInteger(v_globals, v_functionInfo.maxArgs);
+                      functionId = functionPointer1.functionId;
+                      functionInfo = metadata.functionTable[functionId];
+                      output = buildInteger(globals, functionInfo.maxArgs);
                     }
                     break;
                   case 2:
-                    if ((v_argCount > 0)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("argCountMin method", 0, v_argCount));
+                    if ((argCount > 0)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("argCountMin method", 0, argCount));
                     } else {
-                      v_functionId = v_functionPointer1.functionId;
-                      v_functionInfo = v_metadata.functionTable[v_functionId];
-                      v_output = v_buildInteger(v_globals, v_functionInfo.minArgs);
+                      functionId = functionPointer1.functionId;
+                      functionInfo = metadata.functionTable[functionId];
+                      output = buildInteger(globals, functionInfo.minArgs);
                     }
                     break;
                   case 12:
-                    v_functionInfo = v_metadata.functionTable[v_functionPointer1.functionId];
-                    v_output = v_buildString(v_globals, v_functionInfo.name);
+                    functionInfo = metadata.functionTable[functionPointer1.functionId];
+                    output = buildString(globals, functionInfo.name);
                     break;
                   case 15:
-                    if ((v_argCount == 1)) {
-                      v_funcArgs[1] = v_funcArgs[0];
+                    if ((argCount == 1)) {
+                      funcArgs[1] = funcArgs[0];
                     } else {
-                      if ((v_argCount == 0)) {
-                        v_funcArgs[1] = v_VALUE_NULL;
+                      if ((argCount == 0)) {
+                        funcArgs[1] = VALUE_NULL;
                       } else {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "invoke requires a list of arguments.");
+                        hasInterrupt = EX_InvalidArgument(ec, "invoke requires a list of arguments.");
                       }
                     }
-                    v_funcArgs[0] = v_value;
-                    v_argCount = 2;
-                    v_primitiveMethodToCoreLibraryFallback = true;
-                    v_functionId = v_metadata.primitiveMethodFunctionIdFallbackLookup[3];
-                    v_output = null;
+                    funcArgs[0] = value;
+                    argCount = 2;
+                    primitiveMethodToCoreLibraryFallback = true;
+                    functionId = metadata.primitiveMethodFunctionIdFallbackLookup[3];
+                    output = null;
                     break;
                   default:
-                    v_output = null;
+                    output = null;
                     break;
                 }
                 break;
               case 10:
                 // ...on a class definition;
-                v_classValue = ((org.crayonlang.interpreter.structs.ClassValue) v_value.internalValue);
-                switch (v_functionId) {
+                classValue = ((org.crayonlang.interpreter.structs.ClassValue) value.internalValue);
+                switch (functionId) {
                   case 12:
-                    v_classInfo = v_metadata.classTable[v_classValue.classId];
-                    v_output = v_buildString(v_globals, v_classInfo.fullyQualifiedName);
+                    classInfo = metadata.classTable[classValue.classId];
+                    output = buildString(globals, classInfo.fullyQualifiedName);
                     break;
                   case 16:
-                    if ((v_argCount != 1)) {
-                      v_hasInterrupt = v_EX_InvalidArgument(v_ec, v_primitiveMethodWrongArgCountError("class isA method", 1, v_argCount));
+                    if ((argCount != 1)) {
+                      hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("class isA method", 1, argCount));
                     } else {
-                      v_int1 = v_classValue.classId;
-                      v_value = v_funcArgs[0];
-                      if ((v_value.type != 10)) {
-                        v_hasInterrupt = v_EX_InvalidArgument(v_ec, "class isA method requires another class reference.");
+                      int1 = classValue.classId;
+                      value = funcArgs[0];
+                      if ((value.type != 10)) {
+                        hasInterrupt = EX_InvalidArgument(ec, "class isA method requires another class reference.");
                       } else {
-                        v_classValue = ((org.crayonlang.interpreter.structs.ClassValue) v_value.internalValue);
-                        v_int2 = v_classValue.classId;
-                        v_output = v_VALUE_FALSE;
-                        if (v_isClassASubclassOf(v_vm, v_int1, v_int2)) {
-                          v_output = v_VALUE_TRUE;
+                        classValue = ((org.crayonlang.interpreter.structs.ClassValue) value.internalValue);
+                        int2 = classValue.classId;
+                        output = VALUE_FALSE;
+                        if (isClassASubclassOf(vm, int1, int2)) {
+                          output = VALUE_TRUE;
                         }
                       }
                     }
                     break;
                   default:
-                    v_output = null;
+                    output = null;
                     break;
                 }
                 break;
             }
-            if (!v_hasInterrupt) {
-              if ((v_output == null)) {
-                if (v_primitiveMethodToCoreLibraryFallback) {
-                  v_type = 1;
-                  v_bool1 = true;
+            if (!hasInterrupt) {
+              if ((output == null)) {
+                if (primitiveMethodToCoreLibraryFallback) {
+                  type = 1;
+                  bool1 = true;
                 } else {
-                  v_hasInterrupt = v_EX_InvalidInvocation(v_ec, "primitive method not found.");
+                  hasInterrupt = EX_InvalidInvocation(ec, "primitive method not found.");
                 }
               } else {
-                if (v_returnValueUsed) {
-                  if ((v_valueStackSize == v_valueStackCapacity)) {
-                    v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-                    v_valueStackCapacity = v_valueStack.length;
+                if (returnValueUsed) {
+                  if ((valueStackSize == valueStackCapacity)) {
+                    valueStack = valueStackIncreaseCapacity(ec);
+                    valueStackCapacity = valueStack.length;
                   }
-                  v_valueStack[v_valueStackSize] = v_output;
-                  v_valueStackSize += 1;
+                  valueStack[valueStackSize] = output;
+                  valueStackSize += 1;
                 }
-                v_bool1 = false;
+                bool1 = false;
               }
             }
           }
-          if ((v_bool1 && !v_hasInterrupt)) {
+          if ((bool1 && !hasInterrupt)) {
             // push a new frame to the stack;
-            v_stack.pc = v_pc;
-            v_bool1 = false;
-            switch (v_type) {
+            stack.pc = pc;
+            bool1 = false;
+            switch (type) {
               case 1:
                 // function;
-                v_functionInfo = v_functionTable[v_functionId];
-                v_pc = v_functionInfo.pc;
-                v_value = null;
-                v_classId = 0;
+                functionInfo = functionTable[functionId];
+                pc = functionInfo.pc;
+                value = null;
+                classId = 0;
                 break;
               case 10:
                 // lambda;
-                v_pc = v_functionId;
-                v_functionInfo = v_metadata.lambdaTable.get(v_functionId);
-                v_value = null;
-                v_classId = 0;
+                pc = functionId;
+                functionInfo = metadata.lambdaTable.get(functionId);
+                value = null;
+                classId = 0;
                 break;
               case 2:
                 // static method;
-                v_functionInfo = v_functionTable[v_functionId];
-                v_pc = v_functionInfo.pc;
-                v_value = null;
-                v_classId = 0;
+                functionInfo = functionTable[functionId];
+                pc = functionInfo.pc;
+                value = null;
+                classId = 0;
                 break;
               case 3:
                 // non-static method;
-                v_functionInfo = v_functionTable[v_functionId];
-                v_pc = v_functionInfo.pc;
-                v_classId = 0;
+                functionInfo = functionTable[functionId];
+                pc = functionInfo.pc;
+                classId = 0;
                 break;
               case 6:
                 // constructor;
-                v_vm.instanceCounter += 1;
-                v_classInfo = v_classTable[v_classId];
-                v_valueArray1 = new Value[v_classInfo.memberCount];
-                v_i = (v_valueArray1.length - 1);
-                while ((v_i >= 0)) {
-                  switch (v_classInfo.fieldInitializationCommand[v_i]) {
+                vm.instanceCounter += 1;
+                classInfo = classTable[classId];
+                valueArray1 = new Value[classInfo.memberCount];
+                i = (valueArray1.length - 1);
+                while ((i >= 0)) {
+                  switch (classInfo.fieldInitializationCommand[i]) {
                     case 0:
-                      v_valueArray1[v_i] = v_classInfo.fieldInitializationLiteral[v_i];
+                      valueArray1[i] = classInfo.fieldInitializationLiteral[i];
                       break;
                     case 1:
                       break;
                     case 2:
                       break;
                   }
-                  v_i -= 1;
+                  i -= 1;
                 }
-                v_objInstance1 = new ObjectInstance(v_classId, v_vm.instanceCounter, v_valueArray1, null, null);
-                v_value = new Value(8, v_objInstance1);
-                v_functionId = v_classInfo.constructorFunctionId;
-                v_functionInfo = v_functionTable[v_functionId];
-                v_pc = v_functionInfo.pc;
-                v_classId = 0;
-                if (v_returnValueUsed) {
-                  v_returnValueUsed = false;
-                  if ((v_valueStackSize == v_valueStackCapacity)) {
-                    v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-                    v_valueStackCapacity = v_valueStack.length;
+                objInstance1 = new ObjectInstance(classId, vm.instanceCounter, valueArray1, null, null);
+                value = new Value(8, objInstance1);
+                functionId = classInfo.constructorFunctionId;
+                functionInfo = functionTable[functionId];
+                pc = functionInfo.pc;
+                classId = 0;
+                if (returnValueUsed) {
+                  returnValueUsed = false;
+                  if ((valueStackSize == valueStackCapacity)) {
+                    valueStack = valueStackIncreaseCapacity(ec);
+                    valueStackCapacity = valueStack.length;
                   }
-                  v_valueStack[v_valueStackSize] = v_value;
-                  v_valueStackSize += 1;
+                  valueStack[valueStackSize] = value;
+                  valueStackSize += 1;
                 }
                 break;
               case 7:
                 // base constructor;
-                v_value = v_stack.objectContext;
-                v_classInfo = v_classTable[v_classId];
-                v_functionId = v_classInfo.constructorFunctionId;
-                v_functionInfo = v_functionTable[v_functionId];
-                v_pc = v_functionInfo.pc;
-                v_classId = 0;
+                value = stack.objectContext;
+                classInfo = classTable[classId];
+                functionId = classInfo.constructorFunctionId;
+                functionInfo = functionTable[functionId];
+                pc = functionInfo.pc;
+                classId = 0;
                 break;
             }
-            if (((v_argCount < v_functionInfo.minArgs) || (v_argCount > v_functionInfo.maxArgs))) {
-              v_pc = v_stack.pc;
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Incorrect number of args were passed to this function.");
+            if (((argCount < functionInfo.minArgs) || (argCount > functionInfo.maxArgs))) {
+              pc = stack.pc;
+              hasInterrupt = EX_InvalidArgument(ec, "Incorrect number of args were passed to this function.");
             } else {
-              v_int1 = v_functionInfo.localsSize;
-              v_int2 = v_stack.localsStackOffsetEnd;
-              if ((v_localsStackCapacity <= (v_int2 + v_int1))) {
-                v_increaseLocalsStackCapacity(v_ec, v_int1);
-                v_localsStack = v_ec.localsStack;
-                v_localsStackSet = v_ec.localsStackSet;
-                v_localsStackCapacity = v_localsStack.length;
+              int1 = functionInfo.localsSize;
+              int2 = stack.localsStackOffsetEnd;
+              if ((localsStackCapacity <= (int2 + int1))) {
+                increaseLocalsStackCapacity(ec, int1);
+                localsStack = ec.localsStack;
+                localsStackSet = ec.localsStackSet;
+                localsStackCapacity = localsStack.length;
               }
-              v_localsStackSetToken = (v_ec.localsStackSetToken + 1);
-              v_ec.localsStackSetToken = v_localsStackSetToken;
-              if ((v_localsStackSetToken > 2000000000)) {
-                v_resetLocalsStackTokens(v_ec, v_stack);
-                v_localsStackSetToken = 2;
+              localsStackSetToken = (ec.localsStackSetToken + 1);
+              ec.localsStackSetToken = localsStackSetToken;
+              if ((localsStackSetToken > 2000000000)) {
+                resetLocalsStackTokens(ec, stack);
+                localsStackSetToken = 2;
               }
-              v_localsStackOffset = v_int2;
-              if ((v_type != 10)) {
-                v_closure = null;
+              localsStackOffset = int2;
+              if ((type != 10)) {
+                closure = null;
               }
               // invoke the function;
-              v_stack = new StackFrame(v_pc, v_localsStackSetToken, v_localsStackOffset, (v_localsStackOffset + v_int1), v_stack, v_returnValueUsed, v_value, v_valueStackSize, 0, (v_stack.depth + 1), 0, null, v_closure, null);
-              v_i = 0;
-              while ((v_i < v_argCount)) {
-                v_int1 = (v_localsStackOffset + v_i);
-                v_localsStack[v_int1] = v_funcArgs[v_i];
-                v_localsStackSet[v_int1] = v_localsStackSetToken;
-                v_i += 1;
+              stack = new StackFrame(pc, localsStackSetToken, localsStackOffset, (localsStackOffset + int1), stack, returnValueUsed, value, valueStackSize, 0, (stack.depth + 1), 0, null, closure, null);
+              i = 0;
+              while ((i < argCount)) {
+                int1 = (localsStackOffset + i);
+                localsStack[int1] = funcArgs[i];
+                localsStackSet[int1] = localsStackSetToken;
+                i += 1;
               }
-              if ((v_argCount != v_functionInfo.minArgs)) {
-                v_int1 = (v_argCount - v_functionInfo.minArgs);
-                if ((v_int1 > 0)) {
-                  v_pc += v_functionInfo.pcOffsetsForOptionalArgs[v_int1];
-                  v_stack.pc = v_pc;
+              if ((argCount != functionInfo.minArgs)) {
+                int1 = (argCount - functionInfo.minArgs);
+                if ((int1 > 0)) {
+                  pc += functionInfo.pcOffsetsForOptionalArgs[int1];
+                  stack.pc = pc;
                 }
               }
-              if ((v_stack.depth > 1000)) {
-                v_hasInterrupt = v_EX_Fatal(v_ec, "Stack overflow.");
+              if ((stack.depth > 1000)) {
+                hasInterrupt = EX_Fatal(ec, "Stack overflow.");
               }
             }
           }
@@ -3705,2435 +3705,2435 @@ public static InterpreterResult v_interpretImpl(VmContext v_vm, int v_executionC
         break;
       case 13:
         // CAST;
-        v_value = v_valueStack[(v_valueStackSize - 1)];
-        v_value2 = v_canAssignTypeToGeneric(v_vm, v_value, v_row, 0);
-        if ((v_value2 == null)) {
-          if (((v_value.type == 4) && (v_row[0] == 3))) {
-            if ((v_row[1] == 1)) {
-              v_float1 = ((double) v_value.internalValue);
-              if (((v_float1 < 0) && ((v_float1 % 1) != 0))) {
-                v_i = (((int) v_float1) - 1);
+        value = valueStack[(valueStackSize - 1)];
+        value2 = canAssignTypeToGeneric(vm, value, row, 0);
+        if ((value2 == null)) {
+          if (((value.type == 4) && (row[0] == 3))) {
+            if ((row[1] == 1)) {
+              float1 = ((double) value.internalValue);
+              if (((float1 < 0) && ((float1 % 1) != 0))) {
+                i = (((int) float1) - 1);
               } else {
-                v_i = ((int) v_float1);
+                i = ((int) float1);
               }
-              if ((v_i < 0)) {
-                if ((v_i > -257)) {
-                  v_value2 = v_globals.negativeIntegers[-v_i];
+              if ((i < 0)) {
+                if ((i > -257)) {
+                  value2 = globals.negativeIntegers[-i];
                 } else {
-                  v_value2 = new Value(v_i);
+                  value2 = new Value(i);
                 }
               } else {
-                if ((v_i < 2049)) {
-                  v_value2 = v_globals.positiveIntegers[v_i];
+                if ((i < 2049)) {
+                  value2 = globals.positiveIntegers[i];
                 } else {
-                  v_value2 = new Value(v_i);
+                  value2 = new Value(i);
                 }
               }
             }
           } else {
-            if (((v_value.type == 3) && (v_row[0] == 4))) {
-              v_int1 = v_value.intValue;
-              if ((v_int1 == 0)) {
-                v_value2 = v_VALUE_FLOAT_ZERO;
+            if (((value.type == 3) && (row[0] == 4))) {
+              int1 = value.intValue;
+              if ((int1 == 0)) {
+                value2 = VALUE_FLOAT_ZERO;
               } else {
-                v_value2 = new Value(4, (0.0 + v_int1));
+                value2 = new Value(4, (0.0 + int1));
               }
             }
           }
-          if ((v_value2 != null)) {
-            v_valueStack[(v_valueStackSize - 1)] = v_value2;
+          if ((value2 != null)) {
+            valueStack[(valueStackSize - 1)] = value2;
           }
         }
-        if ((v_value2 == null)) {
-          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot convert a " + v_typeToStringFromValue(v_vm, v_value) + " to a " + v_typeToString(v_vm, v_row, 0));
+        if ((value2 == null)) {
+          hasInterrupt = EX_InvalidArgument(ec, "Cannot convert a " + typeToStringFromValue(vm, value) + " to a " + typeToString(vm, row, 0));
         } else {
-          v_valueStack[(v_valueStackSize - 1)] = v_value2;
+          valueStack[(valueStackSize - 1)] = value2;
         }
         break;
       case 14:
         // CLASS_DEFINITION;
-        v_initializeClass(v_pc, v_vm, v_row, v_stringArgs[v_pc]);
-        v_classTable = v_metadata.classTable;
+        initializeClass(pc, vm, row, stringArgs[pc]);
+        classTable = metadata.classTable;
         break;
       case 15:
         // CNI_INVOKE;
-        v_nativeFp = v_metadata.cniFunctionsById.get(v_row[0]);
-        if ((v_nativeFp == null)) {
-          v_hasInterrupt = v_EX_InvalidInvocation(v_ec, "CNI method could not be found.");
+        nativeFp = metadata.cniFunctionsById.get(row[0]);
+        if ((nativeFp == null)) {
+          hasInterrupt = EX_InvalidInvocation(ec, "CNI method could not be found.");
         } else {
-          v_len = v_row[1];
-          v_valueStackSize -= v_len;
-          v_valueArray1 = new Value[v_len];
-          v_i = 0;
-          while ((v_i < v_len)) {
-            v_valueArray1[v_i] = v_valueStack[(v_valueStackSize + v_i)];
-            v_i += 1;
+          len = row[1];
+          valueStackSize -= len;
+          valueArray1 = new Value[len];
+          i = 0;
+          while ((i < len)) {
+            valueArray1[i] = valueStack[(valueStackSize + i)];
+            i += 1;
           }
-          v_prepareToSuspend(v_ec, v_stack, v_valueStackSize, v_pc);
-          v_value = ((Value) TranslationHelper.invokeFunctionPointer(v_nativeFp, new Object[] {v_vm, v_valueArray1}));
-          if (v_ec.executionStateChange) {
-            v_ec.executionStateChange = false;
-            if ((v_ec.executionStateChangeCommand == 1)) {
-              return v_suspendInterpreter();
+          prepareToSuspend(ec, stack, valueStackSize, pc);
+          value = ((Value) TranslationHelper.invokeFunctionPointer(nativeFp, new Object[] {vm, valueArray1}));
+          if (ec.executionStateChange) {
+            ec.executionStateChange = false;
+            if ((ec.executionStateChangeCommand == 1)) {
+              return suspendInterpreter();
             }
           }
-          if ((v_row[2] == 1)) {
-            if ((v_valueStackSize == v_valueStackCapacity)) {
-              v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-              v_valueStackCapacity = v_valueStack.length;
+          if ((row[2] == 1)) {
+            if ((valueStackSize == valueStackCapacity)) {
+              valueStack = valueStackIncreaseCapacity(ec);
+              valueStackCapacity = valueStack.length;
             }
-            v_valueStack[v_valueStackSize] = v_value;
-            v_valueStackSize += 1;
+            valueStack[valueStackSize] = value;
+            valueStackSize += 1;
           }
         }
         break;
       case 16:
         // CNI_REGISTER;
-        v_nativeFp = ((java.lang.reflect.Method) TranslationHelper.getFunction(v_stringArgs[v_pc]));
-        v_metadata.cniFunctionsById.put(v_row[0], v_nativeFp);
+        nativeFp = ((java.lang.reflect.Method) TranslationHelper.getFunction(stringArgs[pc]));
+        metadata.cniFunctionsById.put(row[0], nativeFp);
         break;
       case 17:
         // COMMAND_LINE_ARGS;
-        if ((v_valueStackSize == v_valueStackCapacity)) {
-          v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-          v_valueStackCapacity = v_valueStack.length;
+        if ((valueStackSize == valueStackCapacity)) {
+          valueStack = valueStackIncreaseCapacity(ec);
+          valueStackCapacity = valueStack.length;
         }
-        v_list1 = v_makeEmptyList(v_globals.stringType, 3);
-        v_i = 0;
-        while ((v_i < v_vm.environment.commandLineArgs.length)) {
-          v_addToList(v_list1, v_buildString(v_globals, v_vm.environment.commandLineArgs[v_i]));
-          v_i += 1;
+        list1 = makeEmptyList(globals.stringType, 3);
+        i = 0;
+        while ((i < vm.environment.commandLineArgs.length)) {
+          addToList(list1, buildString(globals, vm.environment.commandLineArgs[i]));
+          i += 1;
         }
-        v_valueStack[v_valueStackSize] = new Value(6, v_list1);
-        v_valueStackSize += 1;
+        valueStack[valueStackSize] = new Value(6, list1);
+        valueStackSize += 1;
         break;
       case 18:
         // CONTINUE;
-        if ((v_row[0] == 1)) {
-          v_pc += v_row[1];
+        if ((row[0] == 1)) {
+          pc += row[1];
         } else {
-          v_intArray1 = v_esfData[v_pc];
-          v_pc = (v_intArray1[1] - 1);
-          v_valueStackSize = v_stack.valueStackPopSize;
-          v_stack.postFinallyBehavior = 2;
+          intArray1 = esfData[pc];
+          pc = (intArray1[1] - 1);
+          valueStackSize = stack.valueStackPopSize;
+          stack.postFinallyBehavior = 2;
         }
         break;
       case 19:
         // CORE_FUNCTION;
-        switch (v_row[0]) {
+        switch (row[0]) {
           case 1:
             // parseInt;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            v_output = v_VALUE_NULL;
-            if ((v_arg1.type == 5)) {
-              v_string1 = (((String) v_arg1.internalValue)).trim();
-              if (PST_isValidInteger(v_string1)) {
-                v_output = v_buildInteger(v_globals, Integer.parseInt(v_string1));
+            arg1 = valueStack[--valueStackSize];
+            output = VALUE_NULL;
+            if ((arg1.type == 5)) {
+              string1 = (((String) arg1.internalValue)).trim();
+              if (PST_isValidInteger(string1)) {
+                output = buildInteger(globals, Integer.parseInt(string1));
               }
             } else {
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "parseInt requires a string argument.");
+              hasInterrupt = EX_InvalidArgument(ec, "parseInt requires a string argument.");
             }
             break;
           case 2:
             // parseFloat;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            v_output = v_VALUE_NULL;
-            if ((v_arg1.type == 5)) {
-              v_string1 = (((String) v_arg1.internalValue)).trim();
-              PST_parseFloatOrReturnNull(v_floatList1, v_string1);
-              if ((v_floatList1[0] >= 0)) {
-                v_output = v_buildFloat(v_globals, v_floatList1[1]);
+            arg1 = valueStack[--valueStackSize];
+            output = VALUE_NULL;
+            if ((arg1.type == 5)) {
+              string1 = (((String) arg1.internalValue)).trim();
+              PST_parseFloatOrReturnNull(floatList1, string1);
+              if ((floatList1[0] >= 0)) {
+                output = buildFloat(globals, floatList1[1]);
               }
             } else {
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "parseFloat requires a string argument.");
+              hasInterrupt = EX_InvalidArgument(ec, "parseFloat requires a string argument.");
             }
             break;
           case 3:
             // print;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            v_output = v_VALUE_NULL;
-            v_printToStdOut(v_vm.environment.stdoutPrefix, v_valueToString(v_vm, v_arg1));
+            arg1 = valueStack[--valueStackSize];
+            output = VALUE_NULL;
+            printToStdOut(vm.environment.stdoutPrefix, valueToString(vm, arg1));
             break;
           case 4:
             // typeof;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            v_output = v_buildInteger(v_globals, (v_arg1.type - 1));
+            arg1 = valueStack[--valueStackSize];
+            output = buildInteger(globals, (arg1.type - 1));
             break;
           case 5:
             // typeis;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            v_int1 = v_arg1.type;
-            v_int2 = v_row[2];
-            v_output = v_VALUE_FALSE;
-            while ((v_int2 > 0)) {
-              if ((v_row[(2 + v_int2)] == v_int1)) {
-                v_output = v_VALUE_TRUE;
-                v_int2 = 0;
+            arg1 = valueStack[--valueStackSize];
+            int1 = arg1.type;
+            int2 = row[2];
+            output = VALUE_FALSE;
+            while ((int2 > 0)) {
+              if ((row[(2 + int2)] == int1)) {
+                output = VALUE_TRUE;
+                int2 = 0;
               } else {
-                v_int2 -= 1;
+                int2 -= 1;
               }
             }
             break;
           case 6:
             // execId;
-            v_output = v_buildInteger(v_globals, v_ec.id);
+            output = buildInteger(globals, ec.id);
             break;
           case 7:
             // assert;
-            v_valueStackSize -= 3;
-            v_arg3 = v_valueStack[(v_valueStackSize + 2)];
-            v_arg2 = v_valueStack[(v_valueStackSize + 1)];
-            v_arg1 = v_valueStack[v_valueStackSize];
-            if ((v_arg1.type != 2)) {
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Assertion expression must be a boolean.");
+            valueStackSize -= 3;
+            arg3 = valueStack[(valueStackSize + 2)];
+            arg2 = valueStack[(valueStackSize + 1)];
+            arg1 = valueStack[valueStackSize];
+            if ((arg1.type != 2)) {
+              hasInterrupt = EX_InvalidArgument(ec, "Assertion expression must be a boolean.");
             } else {
-              if ((v_arg1.intValue == 1)) {
-                v_output = v_VALUE_NULL;
+              if ((arg1.intValue == 1)) {
+                output = VALUE_NULL;
               } else {
-                v_string1 = v_valueToString(v_vm, v_arg2);
-                if ((v_arg3.intValue == 1)) {
-                  v_string1 = "Assertion failed: " + v_string1;
+                string1 = valueToString(vm, arg2);
+                if ((arg3.intValue == 1)) {
+                  string1 = "Assertion failed: " + string1;
                 }
-                v_hasInterrupt = v_EX_AssertionFailed(v_ec, v_string1);
+                hasInterrupt = EX_AssertionFailed(ec, string1);
               }
             }
             break;
           case 8:
             // chr;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            v_output = null;
-            if ((v_arg1.type == 3)) {
-              v_int1 = v_arg1.intValue;
-              if (((v_int1 >= 0) && (v_int1 < 256))) {
-                v_output = v_buildCommonString(v_globals, ("" + Character.toString((char) v_int1)));
+            arg1 = valueStack[--valueStackSize];
+            output = null;
+            if ((arg1.type == 3)) {
+              int1 = arg1.intValue;
+              if (((int1 >= 0) && (int1 < 256))) {
+                output = buildCommonString(globals, ("" + Character.toString((char) int1)));
               }
             }
-            if ((v_output == null)) {
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "chr requires an integer between 0 and 255.");
+            if ((output == null)) {
+              hasInterrupt = EX_InvalidArgument(ec, "chr requires an integer between 0 and 255.");
             }
             break;
           case 9:
             // ord;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            v_output = null;
-            if ((v_arg1.type == 5)) {
-              v_string1 = ((String) v_arg1.internalValue);
-              if ((v_string1.length() == 1)) {
-                v_output = v_buildInteger(v_globals, ((int) v_string1.charAt(0)));
+            arg1 = valueStack[--valueStackSize];
+            output = null;
+            if ((arg1.type == 5)) {
+              string1 = ((String) arg1.internalValue);
+              if ((string1.length() == 1)) {
+                output = buildInteger(globals, ((int) string1.charAt(0)));
               }
             }
-            if ((v_output == null)) {
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "ord requires a 1 character string.");
+            if ((output == null)) {
+              hasInterrupt = EX_InvalidArgument(ec, "ord requires a 1 character string.");
             }
             break;
           case 10:
             // currentTime;
-            v_output = v_buildFloat(v_globals, System.currentTimeMillis() / 1000.0);
+            output = buildFloat(globals, System.currentTimeMillis() / 1000.0);
             break;
           case 11:
             // sortList;
-            v_valueStackSize -= 2;
-            v_arg2 = v_valueStack[(v_valueStackSize + 1)];
-            v_arg1 = v_valueStack[v_valueStackSize];
-            v_output = v_VALUE_NULL;
-            v_list1 = ((ListImpl) v_arg1.internalValue);
-            v_list2 = ((ListImpl) v_arg2.internalValue);
-            v_sortLists(v_list2, v_list1, PST_intBuffer16);
+            valueStackSize -= 2;
+            arg2 = valueStack[(valueStackSize + 1)];
+            arg1 = valueStack[valueStackSize];
+            output = VALUE_NULL;
+            list1 = ((ListImpl) arg1.internalValue);
+            list2 = ((ListImpl) arg2.internalValue);
+            sortLists(list2, list1, PST_intBuffer16);
             if ((PST_intBuffer16[0] > 0)) {
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.");
+              hasInterrupt = EX_InvalidArgument(ec, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.");
             }
             break;
           case 12:
             // abs;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            v_output = v_arg1;
-            if ((v_arg1.type == 3)) {
-              if ((v_arg1.intValue < 0)) {
-                v_output = v_buildInteger(v_globals, -v_arg1.intValue);
+            arg1 = valueStack[--valueStackSize];
+            output = arg1;
+            if ((arg1.type == 3)) {
+              if ((arg1.intValue < 0)) {
+                output = buildInteger(globals, -arg1.intValue);
               }
             } else {
-              if ((v_arg1.type == 4)) {
-                if ((((double) v_arg1.internalValue) < 0)) {
-                  v_output = v_buildFloat(v_globals, -((double) v_arg1.internalValue));
+              if ((arg1.type == 4)) {
+                if ((((double) arg1.internalValue) < 0)) {
+                  output = buildFloat(globals, -((double) arg1.internalValue));
                 }
               } else {
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "abs requires a number as input.");
+                hasInterrupt = EX_InvalidArgument(ec, "abs requires a number as input.");
               }
             }
             break;
           case 13:
             // arcCos;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            if ((v_arg1.type == 4)) {
-              v_float1 = ((double) v_arg1.internalValue);
+            arg1 = valueStack[--valueStackSize];
+            if ((arg1.type == 4)) {
+              float1 = ((double) arg1.internalValue);
             } else {
-              if ((v_arg1.type == 3)) {
-                v_float1 = (0.0 + v_arg1.intValue);
+              if ((arg1.type == 3)) {
+                float1 = (0.0 + arg1.intValue);
               } else {
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "arccos requires a number as input.");
+                hasInterrupt = EX_InvalidArgument(ec, "arccos requires a number as input.");
               }
             }
-            if (!v_hasInterrupt) {
-              if (((v_float1 < -1) || (v_float1 > 1))) {
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "arccos requires a number in the range of -1 to 1.");
+            if (!hasInterrupt) {
+              if (((float1 < -1) || (float1 > 1))) {
+                hasInterrupt = EX_InvalidArgument(ec, "arccos requires a number in the range of -1 to 1.");
               } else {
-                v_output = v_buildFloat(v_globals, Math.acos(v_float1));
+                output = buildFloat(globals, Math.acos(float1));
               }
             }
             break;
           case 14:
             // arcSin;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            if ((v_arg1.type == 4)) {
-              v_float1 = ((double) v_arg1.internalValue);
+            arg1 = valueStack[--valueStackSize];
+            if ((arg1.type == 4)) {
+              float1 = ((double) arg1.internalValue);
             } else {
-              if ((v_arg1.type == 3)) {
-                v_float1 = (0.0 + v_arg1.intValue);
+              if ((arg1.type == 3)) {
+                float1 = (0.0 + arg1.intValue);
               } else {
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "arcsin requires a number as input.");
+                hasInterrupt = EX_InvalidArgument(ec, "arcsin requires a number as input.");
               }
             }
-            if (!v_hasInterrupt) {
-              if (((v_float1 < -1) || (v_float1 > 1))) {
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "arcsin requires a number in the range of -1 to 1.");
+            if (!hasInterrupt) {
+              if (((float1 < -1) || (float1 > 1))) {
+                hasInterrupt = EX_InvalidArgument(ec, "arcsin requires a number in the range of -1 to 1.");
               } else {
-                v_output = v_buildFloat(v_globals, Math.asin(v_float1));
+                output = buildFloat(globals, Math.asin(float1));
               }
             }
             break;
           case 15:
             // arcTan;
-            v_valueStackSize -= 2;
-            v_arg2 = v_valueStack[(v_valueStackSize + 1)];
-            v_arg1 = v_valueStack[v_valueStackSize];
-            v_bool1 = false;
-            if ((v_arg1.type == 4)) {
-              v_float1 = ((double) v_arg1.internalValue);
+            valueStackSize -= 2;
+            arg2 = valueStack[(valueStackSize + 1)];
+            arg1 = valueStack[valueStackSize];
+            bool1 = false;
+            if ((arg1.type == 4)) {
+              float1 = ((double) arg1.internalValue);
             } else {
-              if ((v_arg1.type == 3)) {
-                v_float1 = (0.0 + v_arg1.intValue);
+              if ((arg1.type == 3)) {
+                float1 = (0.0 + arg1.intValue);
               } else {
-                v_bool1 = true;
+                bool1 = true;
               }
             }
-            if ((v_arg2.type == 4)) {
-              v_float2 = ((double) v_arg2.internalValue);
+            if ((arg2.type == 4)) {
+              float2 = ((double) arg2.internalValue);
             } else {
-              if ((v_arg2.type == 3)) {
-                v_float2 = (0.0 + v_arg2.intValue);
+              if ((arg2.type == 3)) {
+                float2 = (0.0 + arg2.intValue);
               } else {
-                v_bool1 = true;
+                bool1 = true;
               }
             }
-            if (v_bool1) {
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "arctan requires numeric arguments.");
+            if (bool1) {
+              hasInterrupt = EX_InvalidArgument(ec, "arctan requires numeric arguments.");
             } else {
-              v_output = v_buildFloat(v_globals, Math.atan2(v_float1, v_float2));
+              output = buildFloat(globals, Math.atan2(float1, float2));
             }
             break;
           case 16:
             // cos;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            if ((v_arg1.type == 4)) {
-              v_float1 = ((double) v_arg1.internalValue);
-              v_output = v_buildFloat(v_globals, Math.cos(v_float1));
+            arg1 = valueStack[--valueStackSize];
+            if ((arg1.type == 4)) {
+              float1 = ((double) arg1.internalValue);
+              output = buildFloat(globals, Math.cos(float1));
             } else {
-              if ((v_arg1.type == 3)) {
-                v_int1 = v_arg1.intValue;
-                v_output = v_buildFloat(v_globals, Math.cos(v_int1));
+              if ((arg1.type == 3)) {
+                int1 = arg1.intValue;
+                output = buildFloat(globals, Math.cos(int1));
               } else {
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "cos requires a number argument.");
+                hasInterrupt = EX_InvalidArgument(ec, "cos requires a number argument.");
               }
             }
             break;
           case 17:
             // ensureRange;
-            v_valueStackSize -= 3;
-            v_arg3 = v_valueStack[(v_valueStackSize + 2)];
-            v_arg2 = v_valueStack[(v_valueStackSize + 1)];
-            v_arg1 = v_valueStack[v_valueStackSize];
-            v_bool1 = false;
-            if ((v_arg2.type == 4)) {
-              v_float2 = ((double) v_arg2.internalValue);
+            valueStackSize -= 3;
+            arg3 = valueStack[(valueStackSize + 2)];
+            arg2 = valueStack[(valueStackSize + 1)];
+            arg1 = valueStack[valueStackSize];
+            bool1 = false;
+            if ((arg2.type == 4)) {
+              float2 = ((double) arg2.internalValue);
             } else {
-              if ((v_arg2.type == 3)) {
-                v_float2 = (0.0 + v_arg2.intValue);
+              if ((arg2.type == 3)) {
+                float2 = (0.0 + arg2.intValue);
               } else {
-                v_bool1 = true;
+                bool1 = true;
               }
             }
-            if ((v_arg3.type == 4)) {
-              v_float3 = ((double) v_arg3.internalValue);
+            if ((arg3.type == 4)) {
+              float3 = ((double) arg3.internalValue);
             } else {
-              if ((v_arg3.type == 3)) {
-                v_float3 = (0.0 + v_arg3.intValue);
+              if ((arg3.type == 3)) {
+                float3 = (0.0 + arg3.intValue);
               } else {
-                v_bool1 = true;
+                bool1 = true;
               }
             }
-            if ((!v_bool1 && (v_float3 < v_float2))) {
-              v_float1 = v_float3;
-              v_float3 = v_float2;
-              v_float2 = v_float1;
-              v_value = v_arg2;
-              v_arg2 = v_arg3;
-              v_arg3 = v_value;
+            if ((!bool1 && (float3 < float2))) {
+              float1 = float3;
+              float3 = float2;
+              float2 = float1;
+              value = arg2;
+              arg2 = arg3;
+              arg3 = value;
             }
-            if ((v_arg1.type == 4)) {
-              v_float1 = ((double) v_arg1.internalValue);
+            if ((arg1.type == 4)) {
+              float1 = ((double) arg1.internalValue);
             } else {
-              if ((v_arg1.type == 3)) {
-                v_float1 = (0.0 + v_arg1.intValue);
+              if ((arg1.type == 3)) {
+                float1 = (0.0 + arg1.intValue);
               } else {
-                v_bool1 = true;
+                bool1 = true;
               }
             }
-            if (v_bool1) {
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "ensureRange requires numeric arguments.");
+            if (bool1) {
+              hasInterrupt = EX_InvalidArgument(ec, "ensureRange requires numeric arguments.");
             } else {
-              if ((v_float1 < v_float2)) {
-                v_output = v_arg2;
+              if ((float1 < float2)) {
+                output = arg2;
               } else {
-                if ((v_float1 > v_float3)) {
-                  v_output = v_arg3;
+                if ((float1 > float3)) {
+                  output = arg3;
                 } else {
-                  v_output = v_arg1;
+                  output = arg1;
                 }
               }
             }
             break;
           case 18:
             // floor;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            if ((v_arg1.type == 4)) {
-              v_float1 = ((double) v_arg1.internalValue);
-              if (((v_float1 < 0) && ((v_float1 % 1) != 0))) {
-                v_int1 = (((int) v_float1) - 1);
+            arg1 = valueStack[--valueStackSize];
+            if ((arg1.type == 4)) {
+              float1 = ((double) arg1.internalValue);
+              if (((float1 < 0) && ((float1 % 1) != 0))) {
+                int1 = (((int) float1) - 1);
               } else {
-                v_int1 = ((int) v_float1);
+                int1 = ((int) float1);
               }
-              if ((v_int1 < 2049)) {
-                if ((v_int1 >= 0)) {
-                  v_output = v_INTEGER_POSITIVE_CACHE[v_int1];
+              if ((int1 < 2049)) {
+                if ((int1 >= 0)) {
+                  output = INTEGER_POSITIVE_CACHE[int1];
                 } else {
-                  if ((v_int1 > -257)) {
-                    v_output = v_INTEGER_NEGATIVE_CACHE[-v_int1];
+                  if ((int1 > -257)) {
+                    output = INTEGER_NEGATIVE_CACHE[-int1];
                   } else {
-                    v_output = new Value(v_int1);
+                    output = new Value(int1);
                   }
                 }
               } else {
-                v_output = new Value(v_int1);
+                output = new Value(int1);
               }
             } else {
-              if ((v_arg1.type == 3)) {
-                v_output = v_arg1;
+              if ((arg1.type == 3)) {
+                output = arg1;
               } else {
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "floor expects a numeric argument.");
+                hasInterrupt = EX_InvalidArgument(ec, "floor expects a numeric argument.");
               }
             }
             break;
           case 19:
             // max;
-            v_valueStackSize -= 2;
-            v_arg2 = v_valueStack[(v_valueStackSize + 1)];
-            v_arg1 = v_valueStack[v_valueStackSize];
-            v_bool1 = false;
-            if ((v_arg1.type == 4)) {
-              v_float1 = ((double) v_arg1.internalValue);
+            valueStackSize -= 2;
+            arg2 = valueStack[(valueStackSize + 1)];
+            arg1 = valueStack[valueStackSize];
+            bool1 = false;
+            if ((arg1.type == 4)) {
+              float1 = ((double) arg1.internalValue);
             } else {
-              if ((v_arg1.type == 3)) {
-                v_float1 = (0.0 + v_arg1.intValue);
+              if ((arg1.type == 3)) {
+                float1 = (0.0 + arg1.intValue);
               } else {
-                v_bool1 = true;
+                bool1 = true;
               }
             }
-            if ((v_arg2.type == 4)) {
-              v_float2 = ((double) v_arg2.internalValue);
+            if ((arg2.type == 4)) {
+              float2 = ((double) arg2.internalValue);
             } else {
-              if ((v_arg2.type == 3)) {
-                v_float2 = (0.0 + v_arg2.intValue);
+              if ((arg2.type == 3)) {
+                float2 = (0.0 + arg2.intValue);
               } else {
-                v_bool1 = true;
+                bool1 = true;
               }
             }
-            if (v_bool1) {
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "max requires numeric arguments.");
+            if (bool1) {
+              hasInterrupt = EX_InvalidArgument(ec, "max requires numeric arguments.");
             } else {
-              if ((v_float1 >= v_float2)) {
-                v_output = v_arg1;
+              if ((float1 >= float2)) {
+                output = arg1;
               } else {
-                v_output = v_arg2;
+                output = arg2;
               }
             }
             break;
           case 20:
             // min;
-            v_valueStackSize -= 2;
-            v_arg2 = v_valueStack[(v_valueStackSize + 1)];
-            v_arg1 = v_valueStack[v_valueStackSize];
-            v_bool1 = false;
-            if ((v_arg1.type == 4)) {
-              v_float1 = ((double) v_arg1.internalValue);
+            valueStackSize -= 2;
+            arg2 = valueStack[(valueStackSize + 1)];
+            arg1 = valueStack[valueStackSize];
+            bool1 = false;
+            if ((arg1.type == 4)) {
+              float1 = ((double) arg1.internalValue);
             } else {
-              if ((v_arg1.type == 3)) {
-                v_float1 = (0.0 + v_arg1.intValue);
+              if ((arg1.type == 3)) {
+                float1 = (0.0 + arg1.intValue);
               } else {
-                v_bool1 = true;
+                bool1 = true;
               }
             }
-            if ((v_arg2.type == 4)) {
-              v_float2 = ((double) v_arg2.internalValue);
+            if ((arg2.type == 4)) {
+              float2 = ((double) arg2.internalValue);
             } else {
-              if ((v_arg2.type == 3)) {
-                v_float2 = (0.0 + v_arg2.intValue);
+              if ((arg2.type == 3)) {
+                float2 = (0.0 + arg2.intValue);
               } else {
-                v_bool1 = true;
+                bool1 = true;
               }
             }
-            if (v_bool1) {
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "min requires numeric arguments.");
+            if (bool1) {
+              hasInterrupt = EX_InvalidArgument(ec, "min requires numeric arguments.");
             } else {
-              if ((v_float1 <= v_float2)) {
-                v_output = v_arg1;
+              if ((float1 <= float2)) {
+                output = arg1;
               } else {
-                v_output = v_arg2;
+                output = arg2;
               }
             }
             break;
           case 21:
             // nativeInt;
-            v_valueStackSize -= 2;
-            v_arg2 = v_valueStack[(v_valueStackSize + 1)];
-            v_arg1 = v_valueStack[v_valueStackSize];
-            v_output = v_buildInteger(v_globals, ((int) (((ObjectInstance) v_arg1.internalValue)).nativeData[v_arg2.intValue]));
+            valueStackSize -= 2;
+            arg2 = valueStack[(valueStackSize + 1)];
+            arg1 = valueStack[valueStackSize];
+            output = buildInteger(globals, ((int) (((ObjectInstance) arg1.internalValue)).nativeData[arg2.intValue]));
             break;
           case 22:
             // nativeString;
-            v_valueStackSize -= 3;
-            v_arg3 = v_valueStack[(v_valueStackSize + 2)];
-            v_arg2 = v_valueStack[(v_valueStackSize + 1)];
-            v_arg1 = v_valueStack[v_valueStackSize];
-            v_string1 = ((String) (((ObjectInstance) v_arg1.internalValue)).nativeData[v_arg2.intValue]);
-            if ((v_arg3.intValue == 1)) {
-              v_output = v_buildCommonString(v_globals, v_string1);
+            valueStackSize -= 3;
+            arg3 = valueStack[(valueStackSize + 2)];
+            arg2 = valueStack[(valueStackSize + 1)];
+            arg1 = valueStack[valueStackSize];
+            string1 = ((String) (((ObjectInstance) arg1.internalValue)).nativeData[arg2.intValue]);
+            if ((arg3.intValue == 1)) {
+              output = buildCommonString(globals, string1);
             } else {
-              v_output = v_buildString(v_globals, v_string1);
+              output = buildString(globals, string1);
             }
             break;
           case 23:
             // sign;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            if ((v_arg1.type == 3)) {
-              v_float1 = (0.0 + (v_arg1.intValue));
+            arg1 = valueStack[--valueStackSize];
+            if ((arg1.type == 3)) {
+              float1 = (0.0 + (arg1.intValue));
             } else {
-              if ((v_arg1.type == 4)) {
-                v_float1 = ((double) v_arg1.internalValue);
+              if ((arg1.type == 4)) {
+                float1 = ((double) arg1.internalValue);
               } else {
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "sign requires a number as input.");
+                hasInterrupt = EX_InvalidArgument(ec, "sign requires a number as input.");
               }
             }
-            if ((v_float1 == 0)) {
-              v_output = v_VALUE_INT_ZERO;
+            if ((float1 == 0)) {
+              output = VALUE_INT_ZERO;
             } else {
-              if ((v_float1 > 0)) {
-                v_output = v_VALUE_INT_ONE;
+              if ((float1 > 0)) {
+                output = VALUE_INT_ONE;
               } else {
-                v_output = v_INTEGER_NEGATIVE_CACHE[1];
+                output = INTEGER_NEGATIVE_CACHE[1];
               }
             }
             break;
           case 24:
             // sin;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            if ((v_arg1.type == 4)) {
-              v_float1 = ((double) v_arg1.internalValue);
+            arg1 = valueStack[--valueStackSize];
+            if ((arg1.type == 4)) {
+              float1 = ((double) arg1.internalValue);
             } else {
-              if ((v_arg1.type == 3)) {
-                v_float1 = (0.0 + v_arg1.intValue);
+              if ((arg1.type == 3)) {
+                float1 = (0.0 + arg1.intValue);
               } else {
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "sin requires a number argument.");
+                hasInterrupt = EX_InvalidArgument(ec, "sin requires a number argument.");
               }
             }
-            v_output = v_buildFloat(v_globals, Math.sin(v_float1));
+            output = buildFloat(globals, Math.sin(float1));
             break;
           case 25:
             // tan;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            if ((v_arg1.type == 4)) {
-              v_float1 = ((double) v_arg1.internalValue);
+            arg1 = valueStack[--valueStackSize];
+            if ((arg1.type == 4)) {
+              float1 = ((double) arg1.internalValue);
             } else {
-              if ((v_arg1.type == 3)) {
-                v_float1 = (0.0 + v_arg1.intValue);
+              if ((arg1.type == 3)) {
+                float1 = (0.0 + arg1.intValue);
               } else {
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "tan requires a number argument.");
+                hasInterrupt = EX_InvalidArgument(ec, "tan requires a number argument.");
               }
             }
-            if (!v_hasInterrupt) {
-              v_float2 = Math.cos(v_float1);
-              if ((v_float2 < 0)) {
-                v_float2 = -v_float2;
+            if (!hasInterrupt) {
+              float2 = Math.cos(float1);
+              if ((float2 < 0)) {
+                float2 = -float2;
               }
-              if ((v_float2 < 0.00000000015)) {
-                v_hasInterrupt = v_EX_DivisionByZero(v_ec, "Tangent is undefined.");
+              if ((float2 < 0.00000000015)) {
+                hasInterrupt = EX_DivisionByZero(ec, "Tangent is undefined.");
               } else {
-                v_output = v_buildFloat(v_globals, Math.tan(v_float1));
+                output = buildFloat(globals, Math.tan(float1));
               }
             }
             break;
           case 26:
             // log;
-            v_valueStackSize -= 2;
-            v_arg2 = v_valueStack[(v_valueStackSize + 1)];
-            v_arg1 = v_valueStack[v_valueStackSize];
-            if ((v_arg1.type == 4)) {
-              v_float1 = ((double) v_arg1.internalValue);
+            valueStackSize -= 2;
+            arg2 = valueStack[(valueStackSize + 1)];
+            arg1 = valueStack[valueStackSize];
+            if ((arg1.type == 4)) {
+              float1 = ((double) arg1.internalValue);
             } else {
-              if ((v_arg1.type == 3)) {
-                v_float1 = (0.0 + v_arg1.intValue);
+              if ((arg1.type == 3)) {
+                float1 = (0.0 + arg1.intValue);
               } else {
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "logarithms require a number argument.");
+                hasInterrupt = EX_InvalidArgument(ec, "logarithms require a number argument.");
               }
             }
-            if (!v_hasInterrupt) {
-              if ((v_float1 <= 0)) {
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "logarithms require positive inputs.");
+            if (!hasInterrupt) {
+              if ((float1 <= 0)) {
+                hasInterrupt = EX_InvalidArgument(ec, "logarithms require positive inputs.");
               } else {
-                v_output = v_buildFloat(v_globals, v_fixFuzzyFloatPrecision((Math.log(v_float1) * ((double) v_arg2.internalValue))));
+                output = buildFloat(globals, fixFuzzyFloatPrecision((Math.log(float1) * ((double) arg2.internalValue))));
               }
             }
             break;
           case 27:
             // intQueueClear;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            v_output = v_VALUE_NULL;
-            v_objInstance1 = ((ObjectInstance) v_arg1.internalValue);
-            if ((v_objInstance1.nativeData != null)) {
-              v_objInstance1.nativeData[1] = 0;
+            arg1 = valueStack[--valueStackSize];
+            output = VALUE_NULL;
+            objInstance1 = ((ObjectInstance) arg1.internalValue);
+            if ((objInstance1.nativeData != null)) {
+              objInstance1.nativeData[1] = 0;
             }
             break;
           case 28:
             // intQueueWrite16;
-            v_output = v_VALUE_NULL;
-            v_int1 = v_row[2];
-            v_valueStackSize -= (v_int1 + 1);
-            v_value = v_valueStack[v_valueStackSize];
-            v_objArray1 = (((ObjectInstance) v_value.internalValue)).nativeData;
-            v_intArray1 = ((int[]) v_objArray1[0]);
-            v_len = ((int) v_objArray1[1]);
-            if ((v_len >= v_intArray1.length)) {
-              v_intArray2 = new int[((v_len * 2) + 16)];
-              v_j = 0;
-              while ((v_j < v_len)) {
-                v_intArray2[v_j] = v_intArray1[v_j];
-                v_j += 1;
+            output = VALUE_NULL;
+            int1 = row[2];
+            valueStackSize -= (int1 + 1);
+            value = valueStack[valueStackSize];
+            objArray1 = (((ObjectInstance) value.internalValue)).nativeData;
+            intArray1 = ((int[]) objArray1[0]);
+            len = ((int) objArray1[1]);
+            if ((len >= intArray1.length)) {
+              intArray2 = new int[((len * 2) + 16)];
+              j = 0;
+              while ((j < len)) {
+                intArray2[j] = intArray1[j];
+                j += 1;
               }
-              v_intArray1 = v_intArray2;
-              v_objArray1[0] = v_intArray1;
+              intArray1 = intArray2;
+              objArray1[0] = intArray1;
             }
-            v_objArray1[1] = (v_len + 16);
-            v_i = (v_int1 - 1);
-            while ((v_i >= 0)) {
-              v_value = v_valueStack[((v_valueStackSize + 1) + v_i)];
-              if ((v_value.type == 3)) {
-                v_intArray1[(v_len + v_i)] = v_value.intValue;
+            objArray1[1] = (len + 16);
+            i = (int1 - 1);
+            while ((i >= 0)) {
+              value = valueStack[((valueStackSize + 1) + i)];
+              if ((value.type == 3)) {
+                intArray1[(len + i)] = value.intValue;
               } else {
-                if ((v_value.type == 4)) {
-                  v_float1 = (0.5 + ((double) v_value.internalValue));
-                  v_intArray1[(v_len + v_i)] = ((int) v_float1);
+                if ((value.type == 4)) {
+                  float1 = (0.5 + ((double) value.internalValue));
+                  intArray1[(len + i)] = ((int) float1);
                 } else {
-                  v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Input must be integers.");
-                  v_i = -1;
+                  hasInterrupt = EX_InvalidArgument(ec, "Input must be integers.");
+                  i = -1;
                 }
               }
-              v_i -= 1;
+              i -= 1;
             }
             break;
           case 29:
             // execCounter;
-            v_output = v_buildInteger(v_globals, v_ec.executionCounter);
+            output = buildInteger(globals, ec.executionCounter);
             break;
           case 30:
             // sleep;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            v_float1 = v_getFloat(v_arg1);
-            if ((v_row[1] == 1)) {
-              if ((v_valueStackSize == v_valueStackCapacity)) {
-                v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-                v_valueStackCapacity = v_valueStack.length;
+            arg1 = valueStack[--valueStackSize];
+            float1 = getFloat(arg1);
+            if ((row[1] == 1)) {
+              if ((valueStackSize == valueStackCapacity)) {
+                valueStack = valueStackIncreaseCapacity(ec);
+                valueStackCapacity = valueStack.length;
               }
-              v_valueStack[v_valueStackSize] = v_VALUE_NULL;
-              v_valueStackSize += 1;
+              valueStack[valueStackSize] = VALUE_NULL;
+              valueStackSize += 1;
             }
-            v_prepareToSuspend(v_ec, v_stack, v_valueStackSize, v_pc);
-            v_ec.activeInterrupt = new Interrupt(3, 0, "", v_float1, null);
-            v_hasInterrupt = true;
+            prepareToSuspend(ec, stack, valueStackSize, pc);
+            ec.activeInterrupt = new Interrupt(3, 0, "", float1, null);
+            hasInterrupt = true;
             break;
           case 31:
             // projectId;
-            v_output = v_buildCommonString(v_globals, v_metadata.projectId);
+            output = buildCommonString(globals, metadata.projectId);
             break;
           case 32:
             // isJavaScript;
-            v_output = v_VALUE_FALSE;
+            output = VALUE_FALSE;
             break;
           case 33:
             // isAndroid;
-            v_output = v_VALUE_FALSE;
+            output = VALUE_FALSE;
             break;
           case 34:
             // allocNativeData;
-            v_valueStackSize -= 2;
-            v_arg2 = v_valueStack[(v_valueStackSize + 1)];
-            v_arg1 = v_valueStack[v_valueStackSize];
-            v_objInstance1 = ((ObjectInstance) v_arg1.internalValue);
-            v_int1 = v_arg2.intValue;
-            v_objArray1 = new Object[v_int1];
-            v_objInstance1.nativeData = v_objArray1;
+            valueStackSize -= 2;
+            arg2 = valueStack[(valueStackSize + 1)];
+            arg1 = valueStack[valueStackSize];
+            objInstance1 = ((ObjectInstance) arg1.internalValue);
+            int1 = arg2.intValue;
+            objArray1 = new Object[int1];
+            objInstance1.nativeData = objArray1;
             break;
           case 35:
             // setNativeData;
-            v_valueStackSize -= 3;
-            v_arg3 = v_valueStack[(v_valueStackSize + 2)];
-            v_arg2 = v_valueStack[(v_valueStackSize + 1)];
-            v_arg1 = v_valueStack[v_valueStackSize];
-            (((ObjectInstance) v_arg1.internalValue)).nativeData[v_arg2.intValue] = v_arg3.internalValue;
+            valueStackSize -= 3;
+            arg3 = valueStack[(valueStackSize + 2)];
+            arg2 = valueStack[(valueStackSize + 1)];
+            arg1 = valueStack[valueStackSize];
+            (((ObjectInstance) arg1.internalValue)).nativeData[arg2.intValue] = arg3.internalValue;
             break;
           case 36:
             // getExceptionTrace;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            v_intList1 = ((ArrayList<Integer>) v_getNativeDataItem(v_arg1, 1));
-            v_list1 = v_makeEmptyList(v_globals.stringType, 20);
-            v_output = new Value(6, v_list1);
-            if ((v_intList1 != null)) {
-              v_stringList1 = v_tokenHelperConvertPcsToStackTraceStrings(v_vm, v_intList1);
-              v_i = 0;
-              while ((v_i < v_stringList1.size())) {
-                v_addToList(v_list1, v_buildString(v_globals, v_stringList1.get(v_i)));
-                v_i += 1;
+            arg1 = valueStack[--valueStackSize];
+            intList1 = ((ArrayList<Integer>) getNativeDataItem(arg1, 1));
+            list1 = makeEmptyList(globals.stringType, 20);
+            output = new Value(6, list1);
+            if ((intList1 != null)) {
+              stringList1 = tokenHelperConvertPcsToStackTraceStrings(vm, intList1);
+              i = 0;
+              while ((i < stringList1.size())) {
+                addToList(list1, buildString(globals, stringList1.get(i)));
+                i += 1;
               }
-              v_reverseList(v_list1);
+              reverseList(list1);
             }
             break;
           case 37:
             // reflectAllClasses;
-            v_output = v_Reflect_allClasses(v_vm);
+            output = Reflect_allClasses(vm);
             break;
           case 38:
             // reflectGetMethods;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            v_output = v_Reflect_getMethods(v_vm, v_ec, v_arg1);
-            v_hasInterrupt = (v_ec.activeInterrupt != null);
+            arg1 = valueStack[--valueStackSize];
+            output = Reflect_getMethods(vm, ec, arg1);
+            hasInterrupt = (ec.activeInterrupt != null);
             break;
           case 39:
             // reflectGetClass;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            if ((v_arg1.type != 8)) {
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot get class from non-instance types.");
+            arg1 = valueStack[--valueStackSize];
+            if ((arg1.type != 8)) {
+              hasInterrupt = EX_InvalidArgument(ec, "Cannot get class from non-instance types.");
             } else {
-              v_objInstance1 = ((ObjectInstance) v_arg1.internalValue);
-              v_output = new Value(10, new org.crayonlang.interpreter.structs.ClassValue(false, v_objInstance1.classId));
+              objInstance1 = ((ObjectInstance) arg1.internalValue);
+              output = new Value(10, new org.crayonlang.interpreter.structs.ClassValue(false, objInstance1.classId));
             }
             break;
           case 40:
             // convertFloatArgsToInts;
-            v_int1 = v_stack.localsStackOffsetEnd;
-            v_i = v_localsStackOffset;
-            while ((v_i < v_int1)) {
-              v_value = v_localsStack[v_i];
-              if ((v_localsStackSet[v_i] != v_localsStackSetToken)) {
-                v_i += v_int1;
+            int1 = stack.localsStackOffsetEnd;
+            i = localsStackOffset;
+            while ((i < int1)) {
+              value = localsStack[i];
+              if ((localsStackSet[i] != localsStackSetToken)) {
+                i += int1;
               } else {
-                if ((v_value.type == 4)) {
-                  v_float1 = ((double) v_value.internalValue);
-                  if (((v_float1 < 0) && ((v_float1 % 1) != 0))) {
-                    v_int2 = (((int) v_float1) - 1);
+                if ((value.type == 4)) {
+                  float1 = ((double) value.internalValue);
+                  if (((float1 < 0) && ((float1 % 1) != 0))) {
+                    int2 = (((int) float1) - 1);
                   } else {
-                    v_int2 = ((int) v_float1);
+                    int2 = ((int) float1);
                   }
-                  if (((v_int2 >= 0) && (v_int2 < 2049))) {
-                    v_localsStack[v_i] = v_INTEGER_POSITIVE_CACHE[v_int2];
+                  if (((int2 >= 0) && (int2 < 2049))) {
+                    localsStack[i] = INTEGER_POSITIVE_CACHE[int2];
                   } else {
-                    v_localsStack[v_i] = v_buildInteger(v_globals, v_int2);
+                    localsStack[i] = buildInteger(globals, int2);
                   }
                 }
               }
-              v_i += 1;
+              i += 1;
             }
             break;
           case 41:
             // addShutdownHandler;
-            v_arg1 = v_valueStack[--v_valueStackSize];
-            v_vm.shutdownHandlers.add(v_arg1);
+            arg1 = valueStack[--valueStackSize];
+            vm.shutdownHandlers.add(arg1);
             break;
         }
-        if ((v_row[1] == 1)) {
-          if ((v_valueStackSize == v_valueStackCapacity)) {
-            v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-            v_valueStackCapacity = v_valueStack.length;
+        if ((row[1] == 1)) {
+          if ((valueStackSize == valueStackCapacity)) {
+            valueStack = valueStackIncreaseCapacity(ec);
+            valueStackCapacity = valueStack.length;
           }
-          v_valueStack[v_valueStackSize] = v_output;
-          v_valueStackSize += 1;
+          valueStack[valueStackSize] = output;
+          valueStackSize += 1;
         }
         break;
       case 20:
         // DEBUG_SYMBOLS;
-        v_applyDebugSymbolData(v_vm, v_row, v_stringArgs[v_pc], v_metadata.mostRecentFunctionDef);
+        applyDebugSymbolData(vm, row, stringArgs[pc], metadata.mostRecentFunctionDef);
         break;
       case 21:
         // DEF_DICT;
-        v_intIntDict1 = new HashMap<Integer, Integer>();
-        v_stringIntDict1 = new HashMap<String, Integer>();
-        v_valueList2 = new ArrayList<Value>();
-        v_valueList1 = new ArrayList<Value>();
-        v_len = v_row[0];
-        v_type = 3;
-        v_first = true;
-        v_i = v_len;
-        while ((v_i > 0)) {
-          v_valueStackSize -= 2;
-          v_value = v_valueStack[(v_valueStackSize + 1)];
-          v_value2 = v_valueStack[v_valueStackSize];
-          if (v_first) {
-            v_type = v_value2.type;
-            v_first = false;
+        intIntDict1 = new HashMap<Integer, Integer>();
+        stringIntDict1 = new HashMap<String, Integer>();
+        valueList2 = new ArrayList<Value>();
+        valueList1 = new ArrayList<Value>();
+        len = row[0];
+        type = 3;
+        first = true;
+        i = len;
+        while ((i > 0)) {
+          valueStackSize -= 2;
+          value = valueStack[(valueStackSize + 1)];
+          value2 = valueStack[valueStackSize];
+          if (first) {
+            type = value2.type;
+            first = false;
           } else {
-            if ((v_type != v_value2.type)) {
-              v_hasInterrupt = v_EX_InvalidKey(v_ec, "Dictionary keys must be of the same type.");
+            if ((type != value2.type)) {
+              hasInterrupt = EX_InvalidKey(ec, "Dictionary keys must be of the same type.");
             }
           }
-          if (!v_hasInterrupt) {
-            if ((v_type == 3)) {
-              v_intKey = v_value2.intValue;
+          if (!hasInterrupt) {
+            if ((type == 3)) {
+              intKey = value2.intValue;
             } else {
-              if ((v_type == 5)) {
-                v_stringKey = ((String) v_value2.internalValue);
+              if ((type == 5)) {
+                stringKey = ((String) value2.internalValue);
               } else {
-                if ((v_type == 8)) {
-                  v_objInstance1 = ((ObjectInstance) v_value2.internalValue);
-                  v_intKey = v_objInstance1.objectId;
+                if ((type == 8)) {
+                  objInstance1 = ((ObjectInstance) value2.internalValue);
+                  intKey = objInstance1.objectId;
                 } else {
-                  v_hasInterrupt = v_EX_InvalidKey(v_ec, "Only integers, strings, and objects can be used as dictionary keys.");
+                  hasInterrupt = EX_InvalidKey(ec, "Only integers, strings, and objects can be used as dictionary keys.");
                 }
               }
             }
           }
-          if (!v_hasInterrupt) {
-            if ((v_type == 5)) {
-              v_stringIntDict1.put(v_stringKey, v_valueList1.size());
+          if (!hasInterrupt) {
+            if ((type == 5)) {
+              stringIntDict1.put(stringKey, valueList1.size());
             } else {
-              v_intIntDict1.put(v_intKey, v_valueList1.size());
+              intIntDict1.put(intKey, valueList1.size());
             }
-            v_valueList2.add(v_value2);
-            v_valueList1.add(v_value);
-            v_i -= 1;
+            valueList2.add(value2);
+            valueList1.add(value);
+            i -= 1;
           }
         }
-        if (!v_hasInterrupt) {
-          if ((v_type == 5)) {
-            v_i = v_stringIntDict1.size();
+        if (!hasInterrupt) {
+          if ((type == 5)) {
+            i = stringIntDict1.size();
           } else {
-            v_i = v_intIntDict1.size();
+            i = intIntDict1.size();
           }
-          if ((v_i != v_len)) {
-            v_hasInterrupt = v_EX_InvalidKey(v_ec, "Key collision");
+          if ((i != len)) {
+            hasInterrupt = EX_InvalidKey(ec, "Key collision");
           }
         }
-        if (!v_hasInterrupt) {
-          v_i = v_row[1];
-          v_classId = 0;
-          if ((v_i > 0)) {
-            v_type = v_row[2];
-            if ((v_type == 8)) {
-              v_classId = v_row[3];
+        if (!hasInterrupt) {
+          i = row[1];
+          classId = 0;
+          if ((i > 0)) {
+            type = row[2];
+            if ((type == 8)) {
+              classId = row[3];
             }
-            v_int1 = v_row.length;
-            v_intArray1 = new int[(v_int1 - v_i)];
-            while ((v_i < v_int1)) {
-              v_intArray1[(v_i - v_row[1])] = v_row[v_i];
-              v_i += 1;
+            int1 = row.length;
+            intArray1 = new int[(int1 - i)];
+            while ((i < int1)) {
+              intArray1[(i - row[1])] = row[i];
+              i += 1;
             }
           } else {
-            v_intArray1 = null;
+            intArray1 = null;
           }
-          if ((v_valueStackSize == v_valueStackCapacity)) {
-            v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-            v_valueStackCapacity = v_valueStack.length;
+          if ((valueStackSize == valueStackCapacity)) {
+            valueStack = valueStackIncreaseCapacity(ec);
+            valueStackCapacity = valueStack.length;
           }
-          v_valueStack[v_valueStackSize] = new Value(7, new DictImpl(v_len, v_type, v_classId, v_intArray1, v_intIntDict1, v_stringIntDict1, v_valueList2, v_valueList1));
-          v_valueStackSize += 1;
+          valueStack[valueStackSize] = new Value(7, new DictImpl(len, type, classId, intArray1, intIntDict1, stringIntDict1, valueList2, valueList1));
+          valueStackSize += 1;
         }
         break;
       case 22:
         // DEF_LIST;
-        v_int1 = v_row[0];
-        v_list1 = v_makeEmptyList(null, v_int1);
-        if ((v_row[1] != 0)) {
-          v_list1.type = new int[(v_row.length - 1)];
-          v_i = 1;
-          while ((v_i < v_row.length)) {
-            v_list1.type[(v_i - 1)] = v_row[v_i];
-            v_i += 1;
+        int1 = row[0];
+        list1 = makeEmptyList(null, int1);
+        if ((row[1] != 0)) {
+          list1.type = new int[(row.length - 1)];
+          i = 1;
+          while ((i < row.length)) {
+            list1.type[(i - 1)] = row[i];
+            i += 1;
           }
         }
-        v_list1.size = v_int1;
-        v_int2 = (v_valueStackSize - v_int1);
-        v_i = 0;
-        while ((v_i < v_int1)) {
-          v_list1.array[v_i] = v_valueStack[(v_int2 + v_i)];
-          v_i += 1;
+        list1.size = int1;
+        int2 = (valueStackSize - int1);
+        i = 0;
+        while ((i < int1)) {
+          list1.array[i] = valueStack[(int2 + i)];
+          i += 1;
         }
-        v_valueStackSize -= v_int1;
-        v_value = new Value(6, v_list1);
-        if ((v_valueStackSize == v_valueStackCapacity)) {
-          v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-          v_valueStackCapacity = v_valueStack.length;
+        valueStackSize -= int1;
+        value = new Value(6, list1);
+        if ((valueStackSize == valueStackCapacity)) {
+          valueStack = valueStackIncreaseCapacity(ec);
+          valueStackCapacity = valueStack.length;
         }
-        v_valueStack[v_valueStackSize] = v_value;
-        v_valueStackSize += 1;
+        valueStack[valueStackSize] = value;
+        valueStackSize += 1;
         break;
       case 23:
         // DEF_ORIGINAL_CODE;
-        v_defOriginalCodeImpl(v_vm, v_row, v_stringArgs[v_pc]);
+        defOriginalCodeImpl(vm, row, stringArgs[pc]);
         break;
       case 24:
         // DEREF_CLOSURE;
-        v_bool1 = true;
-        v_closure = v_stack.closureVariables;
-        v_i = v_row[0];
-        if (((v_closure != null) && v_closure.containsKey(v_i))) {
-          v_value = v_closure.get(v_i).value;
-          if ((v_value != null)) {
-            v_bool1 = false;
-            if ((v_valueStackSize == v_valueStackCapacity)) {
-              v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-              v_valueStackCapacity = v_valueStack.length;
+        bool1 = true;
+        closure = stack.closureVariables;
+        i = row[0];
+        if (((closure != null) && closure.containsKey(i))) {
+          value = closure.get(i).value;
+          if ((value != null)) {
+            bool1 = false;
+            if ((valueStackSize == valueStackCapacity)) {
+              valueStack = valueStackIncreaseCapacity(ec);
+              valueStackCapacity = valueStack.length;
             }
-            v_valueStack[v_valueStackSize++] = v_value;
+            valueStack[valueStackSize++] = value;
           }
         }
-        if (v_bool1) {
-          v_hasInterrupt = v_EX_UnassignedVariable(v_ec, "Variable used before it was set.");
+        if (bool1) {
+          hasInterrupt = EX_UnassignedVariable(ec, "Variable used before it was set.");
         }
         break;
       case 25:
         // DEREF_DOT;
-        v_value = v_valueStack[(v_valueStackSize - 1)];
-        v_nameId = v_row[0];
-        v_int2 = v_row[1];
-        switch (v_value.type) {
+        value = valueStack[(valueStackSize - 1)];
+        nameId = row[0];
+        int2 = row[1];
+        switch (value.type) {
           case 8:
-            v_objInstance1 = ((ObjectInstance) v_value.internalValue);
-            v_classId = v_objInstance1.classId;
-            v_classInfo = v_classTable[v_classId];
-            if ((v_classId == v_row[4])) {
-              v_int1 = v_row[5];
+            objInstance1 = ((ObjectInstance) value.internalValue);
+            classId = objInstance1.classId;
+            classInfo = classTable[classId];
+            if ((classId == row[4])) {
+              int1 = row[5];
             } else {
-              v_intIntDict1 = v_classInfo.localeScopedNameIdToMemberId;
-              Integer dictLookup8 = v_intIntDict1.get(v_int2);
-              v_int1 = dictLookup8 == null ? (-1) : dictLookup8;
-              v_int3 = v_classInfo.fieldAccessModifiers[v_int1];
-              if ((v_int3 > 1)) {
-                if ((v_int3 == 2)) {
-                  if ((v_classId != v_row[2])) {
-                    v_int1 = -2;
+              intIntDict1 = classInfo.localeScopedNameIdToMemberId;
+              Integer dictLookup8 = intIntDict1.get(int2);
+              int1 = dictLookup8 == null ? (-1) : dictLookup8;
+              int3 = classInfo.fieldAccessModifiers[int1];
+              if ((int3 > 1)) {
+                if ((int3 == 2)) {
+                  if ((classId != row[2])) {
+                    int1 = -2;
                   }
                 } else {
-                  if (((v_int3 == 3) || (v_int3 == 5))) {
-                    if ((v_classInfo.assemblyId != v_row[3])) {
-                      v_int1 = -3;
+                  if (((int3 == 3) || (int3 == 5))) {
+                    if ((classInfo.assemblyId != row[3])) {
+                      int1 = -3;
                     }
                   }
-                  if (((v_int3 == 4) || (v_int3 == 5))) {
-                    v_i = v_row[2];
-                    if ((v_classId == v_i)) {
+                  if (((int3 == 4) || (int3 == 5))) {
+                    i = row[2];
+                    if ((classId == i)) {
                     } else {
-                      v_classInfo = v_classTable[v_classInfo.id];
-                      while (((v_classInfo.baseClassId != -1) && (v_int1 < v_classTable[v_classInfo.baseClassId].fieldAccessModifiers.length))) {
-                        v_classInfo = v_classTable[v_classInfo.baseClassId];
+                      classInfo = classTable[classInfo.id];
+                      while (((classInfo.baseClassId != -1) && (int1 < classTable[classInfo.baseClassId].fieldAccessModifiers.length))) {
+                        classInfo = classTable[classInfo.baseClassId];
                       }
-                      v_j = v_classInfo.id;
-                      if ((v_j != v_i)) {
-                        v_bool1 = false;
-                        while (((v_i != -1) && (v_classTable[v_i].baseClassId != -1))) {
-                          v_i = v_classTable[v_i].baseClassId;
-                          if ((v_i == v_j)) {
-                            v_bool1 = true;
-                            v_i = -1;
+                      j = classInfo.id;
+                      if ((j != i)) {
+                        bool1 = false;
+                        while (((i != -1) && (classTable[i].baseClassId != -1))) {
+                          i = classTable[i].baseClassId;
+                          if ((i == j)) {
+                            bool1 = true;
+                            i = -1;
                           }
                         }
-                        if (!v_bool1) {
-                          v_int1 = -4;
+                        if (!bool1) {
+                          int1 = -4;
                         }
                       }
                     }
-                    v_classInfo = v_classTable[v_classId];
+                    classInfo = classTable[classId];
                   }
                 }
               }
-              v_row[4] = v_objInstance1.classId;
-              v_row[5] = v_int1;
+              row[4] = objInstance1.classId;
+              row[5] = int1;
             }
-            if ((v_int1 > -1)) {
-              v_functionId = v_classInfo.functionIds[v_int1];
-              if ((v_functionId == -1)) {
-                v_output = v_objInstance1.members[v_int1];
+            if ((int1 > -1)) {
+              functionId = classInfo.functionIds[int1];
+              if ((functionId == -1)) {
+                output = objInstance1.members[int1];
               } else {
-                v_output = new Value(9, new FunctionPointer(2, v_value, v_objInstance1.classId, v_functionId, null));
+                output = new Value(9, new FunctionPointer(2, value, objInstance1.classId, functionId, null));
               }
             } else {
-              v_output = null;
+              output = null;
             }
             break;
           case 5:
-            if ((v_metadata.lengthId == v_nameId)) {
-              v_output = v_buildInteger(v_globals, (((String) v_value.internalValue)).length());
+            if ((metadata.lengthId == nameId)) {
+              output = buildInteger(globals, (((String) value.internalValue)).length());
             } else {
-              v_output = null;
+              output = null;
             }
             break;
           case 6:
-            if ((v_metadata.lengthId == v_nameId)) {
-              v_output = v_buildInteger(v_globals, (((ListImpl) v_value.internalValue)).size);
+            if ((metadata.lengthId == nameId)) {
+              output = buildInteger(globals, (((ListImpl) value.internalValue)).size);
             } else {
-              v_output = null;
+              output = null;
             }
             break;
           case 7:
-            if ((v_metadata.lengthId == v_nameId)) {
-              v_output = v_buildInteger(v_globals, (((DictImpl) v_value.internalValue)).size);
+            if ((metadata.lengthId == nameId)) {
+              output = buildInteger(globals, (((DictImpl) value.internalValue)).size);
             } else {
-              v_output = null;
+              output = null;
             }
             break;
           default:
-            if ((v_value.type == 1)) {
-              v_hasInterrupt = v_EX_NullReference(v_ec, "Derferenced a field from null.");
-              v_output = v_VALUE_NULL;
+            if ((value.type == 1)) {
+              hasInterrupt = EX_NullReference(ec, "Derferenced a field from null.");
+              output = VALUE_NULL;
             } else {
-              v_output = null;
+              output = null;
             }
             break;
         }
-        if ((v_output == null)) {
-          v_output = v_generatePrimitiveMethodReference(v_globalNameIdToPrimitiveMethodName, v_nameId, v_value);
-          if ((v_output == null)) {
-            if ((v_value.type == 1)) {
-              v_hasInterrupt = v_EX_NullReference(v_ec, "Tried to dereference a field on null.");
+        if ((output == null)) {
+          output = generatePrimitiveMethodReference(globalNameIdToPrimitiveMethodName, nameId, value);
+          if ((output == null)) {
+            if ((value.type == 1)) {
+              hasInterrupt = EX_NullReference(ec, "Tried to dereference a field on null.");
             } else {
-              if (((v_value.type == 8) && (v_int1 < -1))) {
-                v_string1 = v_identifiers[v_row[0]];
-                if ((v_int1 == -2)) {
-                  v_string2 = "private";
+              if (((value.type == 8) && (int1 < -1))) {
+                string1 = identifiers[row[0]];
+                if ((int1 == -2)) {
+                  string2 = "private";
                 } else {
-                  if ((v_int1 == -3)) {
-                    v_string2 = "internal";
+                  if ((int1 == -3)) {
+                    string2 = "internal";
                   } else {
-                    v_string2 = "protected";
+                    string2 = "protected";
                   }
                 }
-                v_hasInterrupt = v_EX_UnknownField(v_ec, "The field '" + v_string1 + "' is marked as " + v_string2 + " and cannot be accessed from here.");
+                hasInterrupt = EX_UnknownField(ec, "The field '" + string1 + "' is marked as " + string2 + " and cannot be accessed from here.");
               } else {
-                if ((v_value.type == 8)) {
-                  v_classId = (((ObjectInstance) v_value.internalValue)).classId;
-                  v_classInfo = v_classTable[v_classId];
-                  v_string1 = v_classInfo.fullyQualifiedName + " instance";
+                if ((value.type == 8)) {
+                  classId = (((ObjectInstance) value.internalValue)).classId;
+                  classInfo = classTable[classId];
+                  string1 = classInfo.fullyQualifiedName + " instance";
                 } else {
-                  v_string1 = v_getTypeFromId(v_value.type);
+                  string1 = getTypeFromId(value.type);
                 }
-                v_hasInterrupt = v_EX_UnknownField(v_ec, v_string1 + " does not have that field.");
+                hasInterrupt = EX_UnknownField(ec, string1 + " does not have that field.");
               }
             }
           }
         }
-        v_valueStack[(v_valueStackSize - 1)] = v_output;
+        valueStack[(valueStackSize - 1)] = output;
         break;
       case 26:
         // DEREF_INSTANCE_FIELD;
-        v_value = v_stack.objectContext;
-        v_objInstance1 = ((ObjectInstance) v_value.internalValue);
-        v_value = v_objInstance1.members[v_row[0]];
-        if ((v_valueStackSize == v_valueStackCapacity)) {
-          v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-          v_valueStackCapacity = v_valueStack.length;
+        value = stack.objectContext;
+        objInstance1 = ((ObjectInstance) value.internalValue);
+        value = objInstance1.members[row[0]];
+        if ((valueStackSize == valueStackCapacity)) {
+          valueStack = valueStackIncreaseCapacity(ec);
+          valueStackCapacity = valueStack.length;
         }
-        v_valueStack[v_valueStackSize++] = v_value;
+        valueStack[valueStackSize++] = value;
         break;
       case 27:
         // DEREF_STATIC_FIELD;
-        v_classInfo = v_classTable[v_row[0]];
-        v_staticConstructorNotInvoked = true;
-        if ((v_classInfo.staticInitializationState < 2)) {
-          v_stack.pc = v_pc;
-          v_stackFrame2 = v_maybeInvokeStaticConstructor(v_vm, v_ec, v_stack, v_classInfo, v_valueStackSize, PST_intBuffer16);
+        classInfo = classTable[row[0]];
+        staticConstructorNotInvoked = true;
+        if ((classInfo.staticInitializationState < 2)) {
+          stack.pc = pc;
+          stackFrame2 = maybeInvokeStaticConstructor(vm, ec, stack, classInfo, valueStackSize, PST_intBuffer16);
           if ((PST_intBuffer16[0] == 1)) {
-            return v_generateException(v_vm, v_stack, v_pc, v_valueStackSize, v_ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
+            return generateException(vm, stack, pc, valueStackSize, ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
           }
-          if ((v_stackFrame2 != null)) {
-            v_staticConstructorNotInvoked = false;
-            v_stack = v_stackFrame2;
-            v_pc = v_stack.pc;
-            v_localsStackSetToken = v_stack.localsStackSetToken;
-            v_localsStackOffset = v_stack.localsStackOffset;
+          if ((stackFrame2 != null)) {
+            staticConstructorNotInvoked = false;
+            stack = stackFrame2;
+            pc = stack.pc;
+            localsStackSetToken = stack.localsStackSetToken;
+            localsStackOffset = stack.localsStackOffset;
           }
         }
-        if (v_staticConstructorNotInvoked) {
-          if ((v_valueStackSize == v_valueStackCapacity)) {
-            v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-            v_valueStackCapacity = v_valueStack.length;
+        if (staticConstructorNotInvoked) {
+          if ((valueStackSize == valueStackCapacity)) {
+            valueStack = valueStackIncreaseCapacity(ec);
+            valueStackCapacity = valueStack.length;
           }
-          v_valueStack[v_valueStackSize++] = v_classInfo.staticFields[v_row[1]];
+          valueStack[valueStackSize++] = classInfo.staticFields[row[1]];
         }
         break;
       case 28:
         // DUPLICATE_STACK_TOP;
-        if ((v_row[0] == 1)) {
-          v_value = v_valueStack[(v_valueStackSize - 1)];
-          if ((v_valueStackSize == v_valueStackCapacity)) {
-            v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-            v_valueStackCapacity = v_valueStack.length;
+        if ((row[0] == 1)) {
+          value = valueStack[(valueStackSize - 1)];
+          if ((valueStackSize == valueStackCapacity)) {
+            valueStack = valueStackIncreaseCapacity(ec);
+            valueStackCapacity = valueStack.length;
           }
-          v_valueStack[v_valueStackSize++] = v_value;
+          valueStack[valueStackSize++] = value;
         } else {
-          if ((v_row[0] == 2)) {
-            if (((v_valueStackSize + 1) > v_valueStackCapacity)) {
-              v_valueStackIncreaseCapacity(v_ec);
-              v_valueStack = v_ec.valueStack;
-              v_valueStackCapacity = v_valueStack.length;
+          if ((row[0] == 2)) {
+            if (((valueStackSize + 1) > valueStackCapacity)) {
+              valueStackIncreaseCapacity(ec);
+              valueStack = ec.valueStack;
+              valueStackCapacity = valueStack.length;
             }
-            v_valueStack[v_valueStackSize] = v_valueStack[(v_valueStackSize - 2)];
-            v_valueStack[(v_valueStackSize + 1)] = v_valueStack[(v_valueStackSize - 1)];
-            v_valueStackSize += 2;
+            valueStack[valueStackSize] = valueStack[(valueStackSize - 2)];
+            valueStack[(valueStackSize + 1)] = valueStack[(valueStackSize - 1)];
+            valueStackSize += 2;
           } else {
-            v_hasInterrupt = v_EX_Fatal(v_ec, "?");
+            hasInterrupt = EX_Fatal(ec, "?");
           }
         }
         break;
       case 29:
         // EQUALS;
-        v_valueStackSize -= 2;
-        v_rightValue = v_valueStack[(v_valueStackSize + 1)];
-        v_leftValue = v_valueStack[v_valueStackSize];
-        if ((v_leftValue.type == v_rightValue.type)) {
-          switch (v_leftValue.type) {
+        valueStackSize -= 2;
+        rightValue = valueStack[(valueStackSize + 1)];
+        leftValue = valueStack[valueStackSize];
+        if ((leftValue.type == rightValue.type)) {
+          switch (leftValue.type) {
             case 1:
-              v_bool1 = true;
+              bool1 = true;
               break;
             case 2:
-              v_bool1 = ((v_leftValue.intValue == 1) == (v_rightValue.intValue == 1));
+              bool1 = ((leftValue.intValue == 1) == (rightValue.intValue == 1));
               break;
             case 3:
-              v_bool1 = (v_leftValue.intValue == v_rightValue.intValue);
+              bool1 = (leftValue.intValue == rightValue.intValue);
               break;
             case 5:
-              v_bool1 = v_leftValue.internalValue.equals(v_rightValue.internalValue);
+              bool1 = leftValue.internalValue.equals(rightValue.internalValue);
               break;
             default:
-              v_bool1 = (v_doEqualityComparisonAndReturnCode(v_leftValue, v_rightValue) == 1);
+              bool1 = (doEqualityComparisonAndReturnCode(leftValue, rightValue) == 1);
               break;
           }
         } else {
-          v_int1 = v_doEqualityComparisonAndReturnCode(v_leftValue, v_rightValue);
-          if ((v_int1 == 0)) {
-            v_bool1 = false;
+          int1 = doEqualityComparisonAndReturnCode(leftValue, rightValue);
+          if ((int1 == 0)) {
+            bool1 = false;
           } else {
-            if ((v_int1 == 1)) {
-              v_bool1 = true;
+            if ((int1 == 1)) {
+              bool1 = true;
             } else {
-              v_hasInterrupt = v_EX_UnsupportedOperation(v_ec, "== and != not defined here.");
+              hasInterrupt = EX_UnsupportedOperation(ec, "== and != not defined here.");
             }
           }
         }
-        if ((v_valueStackSize == v_valueStackCapacity)) {
-          v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-          v_valueStackCapacity = v_valueStack.length;
+        if ((valueStackSize == valueStackCapacity)) {
+          valueStack = valueStackIncreaseCapacity(ec);
+          valueStackCapacity = valueStack.length;
         }
-        if ((v_bool1 != ((v_row[0] == 1)))) {
-          v_valueStack[v_valueStackSize] = v_VALUE_TRUE;
+        if ((bool1 != ((row[0] == 1)))) {
+          valueStack[valueStackSize] = VALUE_TRUE;
         } else {
-          v_valueStack[v_valueStackSize] = v_VALUE_FALSE;
+          valueStack[valueStackSize] = VALUE_FALSE;
         }
-        v_valueStackSize += 1;
+        valueStackSize += 1;
         break;
       case 30:
         // ESF_LOOKUP;
-        v_esfData = v_generateEsfData(v_args.length, v_row);
-        v_metadata.esfData = v_esfData;
+        esfData = generateEsfData(args.length, row);
+        metadata.esfData = esfData;
         break;
       case 31:
         // EXCEPTION_HANDLED_TOGGLE;
-        v_ec.activeExceptionHandled = (v_row[0] == 1);
+        ec.activeExceptionHandled = (row[0] == 1);
         break;
       case 32:
         // FIELD_TYPE_INFO;
-        v_initializeClassFieldTypeInfo(v_vm, v_row);
+        initializeClassFieldTypeInfo(vm, row);
         break;
       case 33:
         // FINALIZE_INITIALIZATION;
-        v_finalizeInitializationImpl(v_vm, v_stringArgs[v_pc], v_row[0]);
-        v_identifiers = v_vm.metadata.identifiers;
-        v_literalTable = v_vm.metadata.literalTable;
-        v_globalNameIdToPrimitiveMethodName = v_vm.metadata.globalNameIdToPrimitiveMethodName;
-        v_funcArgs = v_vm.funcArgs;
+        finalizeInitializationImpl(vm, stringArgs[pc], row[0]);
+        identifiers = vm.metadata.identifiers;
+        literalTable = vm.metadata.literalTable;
+        globalNameIdToPrimitiveMethodName = vm.metadata.globalNameIdToPrimitiveMethodName;
+        funcArgs = vm.funcArgs;
         break;
       case 34:
         // FINALLY_END;
-        v_value = v_ec.activeException;
-        if (((v_value == null) || v_ec.activeExceptionHandled)) {
-          switch (v_stack.postFinallyBehavior) {
+        value = ec.activeException;
+        if (((value == null) || ec.activeExceptionHandled)) {
+          switch (stack.postFinallyBehavior) {
             case 0:
-              v_ec.activeException = null;
+              ec.activeException = null;
               break;
             case 1:
-              v_ec.activeException = null;
-              v_int1 = v_row[0];
-              if ((v_int1 == 1)) {
-                v_pc += v_row[1];
+              ec.activeException = null;
+              int1 = row[0];
+              if ((int1 == 1)) {
+                pc += row[1];
               } else {
-                if ((v_int1 == 2)) {
-                  v_intArray1 = v_esfData[v_pc];
-                  v_pc = v_intArray1[1];
+                if ((int1 == 2)) {
+                  intArray1 = esfData[pc];
+                  pc = intArray1[1];
                 } else {
-                  v_hasInterrupt = v_EX_Fatal(v_ec, "break exists without a loop");
+                  hasInterrupt = EX_Fatal(ec, "break exists without a loop");
                 }
               }
               break;
             case 2:
-              v_ec.activeException = null;
-              v_int1 = v_row[2];
-              if ((v_int1 == 1)) {
-                v_pc += v_row[3];
+              ec.activeException = null;
+              int1 = row[2];
+              if ((int1 == 1)) {
+                pc += row[3];
               } else {
-                if ((v_int1 == 2)) {
-                  v_intArray1 = v_esfData[v_pc];
-                  v_pc = v_intArray1[1];
+                if ((int1 == 2)) {
+                  intArray1 = esfData[pc];
+                  pc = intArray1[1];
                 } else {
-                  v_hasInterrupt = v_EX_Fatal(v_ec, "continue exists without a loop");
+                  hasInterrupt = EX_Fatal(ec, "continue exists without a loop");
                 }
               }
               break;
             case 3:
-              if ((v_stack.markClassAsInitialized != 0)) {
-                v_markClassAsInitialized(v_vm, v_stack, v_stack.markClassAsInitialized);
+              if ((stack.markClassAsInitialized != 0)) {
+                markClassAsInitialized(vm, stack, stack.markClassAsInitialized);
               }
-              if (v_stack.returnValueUsed) {
-                v_valueStackSize = v_stack.valueStackPopSize;
-                v_value = v_stack.returnValueTempStorage;
-                v_stack = v_stack.previous;
-                if ((v_valueStackSize == v_valueStackCapacity)) {
-                  v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-                  v_valueStackCapacity = v_valueStack.length;
+              if (stack.returnValueUsed) {
+                valueStackSize = stack.valueStackPopSize;
+                value = stack.returnValueTempStorage;
+                stack = stack.previous;
+                if ((valueStackSize == valueStackCapacity)) {
+                  valueStack = valueStackIncreaseCapacity(ec);
+                  valueStackCapacity = valueStack.length;
                 }
-                v_valueStack[v_valueStackSize] = v_value;
-                v_valueStackSize += 1;
+                valueStack[valueStackSize] = value;
+                valueStackSize += 1;
               } else {
-                v_valueStackSize = v_stack.valueStackPopSize;
-                v_stack = v_stack.previous;
+                valueStackSize = stack.valueStackPopSize;
+                stack = stack.previous;
               }
-              v_pc = v_stack.pc;
-              v_localsStackOffset = v_stack.localsStackOffset;
-              v_localsStackSetToken = v_stack.localsStackSetToken;
+              pc = stack.pc;
+              localsStackOffset = stack.localsStackOffset;
+              localsStackSetToken = stack.localsStackSetToken;
               break;
           }
         } else {
-          v_ec.activeExceptionHandled = false;
-          v_stack.pc = v_pc;
-          v_intArray1 = v_esfData[v_pc];
-          v_value = v_ec.activeException;
-          v_objInstance1 = ((ObjectInstance) v_value.internalValue);
-          v_objArray1 = v_objInstance1.nativeData;
-          v_bool1 = true;
-          if ((v_objArray1[0] != null)) {
-            v_bool1 = ((boolean) v_objArray1[0]);
+          ec.activeExceptionHandled = false;
+          stack.pc = pc;
+          intArray1 = esfData[pc];
+          value = ec.activeException;
+          objInstance1 = ((ObjectInstance) value.internalValue);
+          objArray1 = objInstance1.nativeData;
+          bool1 = true;
+          if ((objArray1[0] != null)) {
+            bool1 = ((boolean) objArray1[0]);
           }
-          v_intList1 = ((ArrayList<Integer>) v_objArray1[1]);
-          while (((v_stack != null) && ((v_intArray1 == null) || v_bool1))) {
-            v_stack = v_stack.previous;
-            if ((v_stack != null)) {
-              v_pc = v_stack.pc;
-              v_intList1.add(v_pc);
-              v_intArray1 = v_esfData[v_pc];
+          intList1 = ((ArrayList<Integer>) objArray1[1]);
+          while (((stack != null) && ((intArray1 == null) || bool1))) {
+            stack = stack.previous;
+            if ((stack != null)) {
+              pc = stack.pc;
+              intList1.add(pc);
+              intArray1 = esfData[pc];
             }
           }
-          if ((v_stack == null)) {
-            return v_uncaughtExceptionResult(v_vm, v_value);
+          if ((stack == null)) {
+            return uncaughtExceptionResult(vm, value);
           }
-          v_int1 = v_intArray1[0];
-          if ((v_int1 < v_pc)) {
-            v_int1 = v_intArray1[1];
+          int1 = intArray1[0];
+          if ((int1 < pc)) {
+            int1 = intArray1[1];
           }
-          v_pc = (v_int1 - 1);
-          v_stack.pc = v_pc;
-          v_localsStackOffset = v_stack.localsStackOffset;
-          v_localsStackSetToken = v_stack.localsStackSetToken;
-          v_ec.stackTop = v_stack;
-          v_stack.postFinallyBehavior = 0;
-          v_ec.currentValueStackSize = v_valueStackSize;
-          if ((false && (v_stack.debugStepTracker != null))) {
-            v_hasInterrupt = true;
-            v_ec.activeInterrupt = new Interrupt(5, 0, "", 0.0, v_stack.debugStepTracker);
+          pc = (int1 - 1);
+          stack.pc = pc;
+          localsStackOffset = stack.localsStackOffset;
+          localsStackSetToken = stack.localsStackSetToken;
+          ec.stackTop = stack;
+          stack.postFinallyBehavior = 0;
+          ec.currentValueStackSize = valueStackSize;
+          if ((false && (stack.debugStepTracker != null))) {
+            hasInterrupt = true;
+            ec.activeInterrupt = new Interrupt(5, 0, "", 0.0, stack.debugStepTracker);
           }
         }
         break;
       case 35:
         // FUNCTION_DEFINITION;
-        v_initializeFunction(v_vm, v_row, v_pc, v_stringArgs[v_pc]);
-        v_pc += v_row[7];
-        v_functionTable = v_metadata.functionTable;
+        initializeFunction(vm, row, pc, stringArgs[pc]);
+        pc += row[7];
+        functionTable = metadata.functionTable;
         break;
       case 36:
         // INDEX;
-        v_value = v_valueStack[--v_valueStackSize];
-        v_root = v_valueStack[(v_valueStackSize - 1)];
-        if ((v_root.type == 6)) {
-          if ((v_value.type != 3)) {
-            v_hasInterrupt = v_EX_InvalidArgument(v_ec, "List index must be an integer.");
+        value = valueStack[--valueStackSize];
+        root = valueStack[(valueStackSize - 1)];
+        if ((root.type == 6)) {
+          if ((value.type != 3)) {
+            hasInterrupt = EX_InvalidArgument(ec, "List index must be an integer.");
           } else {
-            v_i = v_value.intValue;
-            v_list1 = ((ListImpl) v_root.internalValue);
-            if ((v_i < 0)) {
-              v_i += v_list1.size;
+            i = value.intValue;
+            list1 = ((ListImpl) root.internalValue);
+            if ((i < 0)) {
+              i += list1.size;
             }
-            if (((v_i < 0) || (v_i >= v_list1.size))) {
-              v_hasInterrupt = v_EX_IndexOutOfRange(v_ec, "List index is out of bounds");
+            if (((i < 0) || (i >= list1.size))) {
+              hasInterrupt = EX_IndexOutOfRange(ec, "List index is out of bounds");
             } else {
-              v_valueStack[(v_valueStackSize - 1)] = v_list1.array[v_i];
+              valueStack[(valueStackSize - 1)] = list1.array[i];
             }
           }
         } else {
-          if ((v_root.type == 7)) {
-            v_dictImpl = ((DictImpl) v_root.internalValue);
-            v_keyType = v_value.type;
-            if ((v_keyType != v_dictImpl.keyType)) {
-              if ((v_dictImpl.size == 0)) {
-                v_hasInterrupt = v_EX_KeyNotFound(v_ec, "Key not found. Dictionary is empty.");
+          if ((root.type == 7)) {
+            dictImpl = ((DictImpl) root.internalValue);
+            keyType = value.type;
+            if ((keyType != dictImpl.keyType)) {
+              if ((dictImpl.size == 0)) {
+                hasInterrupt = EX_KeyNotFound(ec, "Key not found. Dictionary is empty.");
               } else {
-                v_hasInterrupt = v_EX_InvalidKey(v_ec, "Incorrect key type. This dictionary contains " + v_getTypeFromId(v_dictImpl.keyType) + " keys. Provided key is a " + v_getTypeFromId(v_keyType) + ".");
+                hasInterrupt = EX_InvalidKey(ec, "Incorrect key type. This dictionary contains " + getTypeFromId(dictImpl.keyType) + " keys. Provided key is a " + getTypeFromId(keyType) + ".");
               }
             } else {
-              if ((v_keyType == 3)) {
-                v_intKey = v_value.intValue;
+              if ((keyType == 3)) {
+                intKey = value.intValue;
               } else {
-                if ((v_keyType == 5)) {
-                  v_stringKey = ((String) v_value.internalValue);
+                if ((keyType == 5)) {
+                  stringKey = ((String) value.internalValue);
                 } else {
-                  if ((v_keyType == 8)) {
-                    v_intKey = (((ObjectInstance) v_value.internalValue)).objectId;
+                  if ((keyType == 8)) {
+                    intKey = (((ObjectInstance) value.internalValue)).objectId;
                   } else {
-                    if ((v_dictImpl.size == 0)) {
-                      v_hasInterrupt = v_EX_KeyNotFound(v_ec, "Key not found. Dictionary is empty.");
+                    if ((dictImpl.size == 0)) {
+                      hasInterrupt = EX_KeyNotFound(ec, "Key not found. Dictionary is empty.");
                     } else {
-                      v_hasInterrupt = v_EX_KeyNotFound(v_ec, "Key not found.");
+                      hasInterrupt = EX_KeyNotFound(ec, "Key not found.");
                     }
                   }
                 }
               }
-              if (!v_hasInterrupt) {
-                if ((v_keyType == 5)) {
-                  v_stringIntDict1 = ((HashMap<String, Integer>) v_dictImpl.stringToIndex);
-                  Integer dictLookup9 = v_stringIntDict1.get(v_stringKey);
-                  v_int1 = dictLookup9 == null ? (v_stringIntDict1.containsKey(v_stringKey) ? null : (-1)) : dictLookup9;
-                  if ((v_int1 == -1)) {
-                    v_hasInterrupt = v_EX_KeyNotFound(v_ec, "Key not found: '" + v_stringKey + "'");
+              if (!hasInterrupt) {
+                if ((keyType == 5)) {
+                  stringIntDict1 = ((HashMap<String, Integer>) dictImpl.stringToIndex);
+                  Integer dictLookup9 = stringIntDict1.get(stringKey);
+                  int1 = dictLookup9 == null ? (stringIntDict1.containsKey(stringKey) ? null : (-1)) : dictLookup9;
+                  if ((int1 == -1)) {
+                    hasInterrupt = EX_KeyNotFound(ec, "Key not found: '" + stringKey + "'");
                   } else {
-                    v_valueStack[(v_valueStackSize - 1)] = v_dictImpl.values.get(v_int1);
+                    valueStack[(valueStackSize - 1)] = dictImpl.values.get(int1);
                   }
                 } else {
-                  v_intIntDict1 = ((HashMap<Integer, Integer>) v_dictImpl.intToIndex);
-                  Integer dictLookup10 = v_intIntDict1.get(v_intKey);
-                  v_int1 = dictLookup10 == null ? (-1) : dictLookup10;
-                  if ((v_int1 == -1)) {
-                    v_hasInterrupt = v_EX_KeyNotFound(v_ec, "Key not found.");
+                  intIntDict1 = ((HashMap<Integer, Integer>) dictImpl.intToIndex);
+                  Integer dictLookup10 = intIntDict1.get(intKey);
+                  int1 = dictLookup10 == null ? (-1) : dictLookup10;
+                  if ((int1 == -1)) {
+                    hasInterrupt = EX_KeyNotFound(ec, "Key not found.");
                   } else {
-                    v_valueStack[(v_valueStackSize - 1)] = v_dictImpl.values.get(v_intIntDict1.get(v_intKey));
+                    valueStack[(valueStackSize - 1)] = dictImpl.values.get(intIntDict1.get(intKey));
                   }
                 }
               }
             }
           } else {
-            if ((v_root.type == 5)) {
-              v_string1 = ((String) v_root.internalValue);
-              if ((v_value.type != 3)) {
-                v_hasInterrupt = v_EX_InvalidArgument(v_ec, "String indices must be integers.");
+            if ((root.type == 5)) {
+              string1 = ((String) root.internalValue);
+              if ((value.type != 3)) {
+                hasInterrupt = EX_InvalidArgument(ec, "String indices must be integers.");
               } else {
-                v_int1 = v_value.intValue;
-                if ((v_int1 < 0)) {
-                  v_int1 += v_string1.length();
+                int1 = value.intValue;
+                if ((int1 < 0)) {
+                  int1 += string1.length();
                 }
-                if (((v_int1 < 0) || (v_int1 >= v_string1.length()))) {
-                  v_hasInterrupt = v_EX_IndexOutOfRange(v_ec, "String index out of range.");
+                if (((int1 < 0) || (int1 >= string1.length()))) {
+                  hasInterrupt = EX_IndexOutOfRange(ec, "String index out of range.");
                 } else {
-                  v_valueStack[(v_valueStackSize - 1)] = v_buildCommonString(v_globals, ("" + v_string1.charAt(v_int1)));
+                  valueStack[(valueStackSize - 1)] = buildCommonString(globals, ("" + string1.charAt(int1)));
                 }
               }
             } else {
-              v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Cannot index into this type: " + v_getTypeFromId(v_root.type));
+              hasInterrupt = EX_InvalidArgument(ec, "Cannot index into this type: " + getTypeFromId(root.type));
             }
           }
         }
         break;
       case 37:
         // IS_COMPARISON;
-        v_value = v_valueStack[(v_valueStackSize - 1)];
-        v_output = v_VALUE_FALSE;
-        if ((v_value.type == 8)) {
-          v_objInstance1 = ((ObjectInstance) v_value.internalValue);
-          if (v_isClassASubclassOf(v_vm, v_objInstance1.classId, v_row[0])) {
-            v_output = v_VALUE_TRUE;
+        value = valueStack[(valueStackSize - 1)];
+        output = VALUE_FALSE;
+        if ((value.type == 8)) {
+          objInstance1 = ((ObjectInstance) value.internalValue);
+          if (isClassASubclassOf(vm, objInstance1.classId, row[0])) {
+            output = VALUE_TRUE;
           }
         }
-        v_valueStack[(v_valueStackSize - 1)] = v_output;
+        valueStack[(valueStackSize - 1)] = output;
         break;
       case 38:
         // ITERATION_STEP;
-        v_int1 = (v_localsStackOffset + v_row[2]);
-        v_value3 = v_localsStack[v_int1];
-        v_i = v_value3.intValue;
-        v_value = v_localsStack[(v_localsStackOffset + v_row[3])];
-        if ((v_value.type == 6)) {
-          v_list1 = ((ListImpl) v_value.internalValue);
-          v_len = v_list1.size;
-          v_bool1 = true;
+        int1 = (localsStackOffset + row[2]);
+        value3 = localsStack[int1];
+        i = value3.intValue;
+        value = localsStack[(localsStackOffset + row[3])];
+        if ((value.type == 6)) {
+          list1 = ((ListImpl) value.internalValue);
+          len = list1.size;
+          bool1 = true;
         } else {
-          v_string2 = ((String) v_value.internalValue);
-          v_len = v_string2.length();
-          v_bool1 = false;
+          string2 = ((String) value.internalValue);
+          len = string2.length();
+          bool1 = false;
         }
-        if ((v_i < v_len)) {
-          if (v_bool1) {
-            v_value = v_list1.array[v_i];
+        if ((i < len)) {
+          if (bool1) {
+            value = list1.array[i];
           } else {
-            v_value = v_buildCommonString(v_globals, ("" + v_string2.charAt(v_i)));
+            value = buildCommonString(globals, ("" + string2.charAt(i)));
           }
-          v_int3 = (v_localsStackOffset + v_row[1]);
-          v_localsStackSet[v_int3] = v_localsStackSetToken;
-          v_localsStack[v_int3] = v_value;
+          int3 = (localsStackOffset + row[1]);
+          localsStackSet[int3] = localsStackSetToken;
+          localsStack[int3] = value;
         } else {
-          v_pc += v_row[0];
+          pc += row[0];
         }
-        v_i += 1;
-        if ((v_i < 2049)) {
-          v_localsStack[v_int1] = v_INTEGER_POSITIVE_CACHE[v_i];
+        i += 1;
+        if ((i < 2049)) {
+          localsStack[int1] = INTEGER_POSITIVE_CACHE[i];
         } else {
-          v_localsStack[v_int1] = new Value(v_i);
+          localsStack[int1] = new Value(i);
         }
         break;
       case 39:
         // JUMP;
-        v_pc += v_row[0];
+        pc += row[0];
         break;
       case 40:
         // JUMP_IF_EXCEPTION_OF_TYPE;
-        v_value = v_ec.activeException;
-        v_objInstance1 = ((ObjectInstance) v_value.internalValue);
-        v_int1 = v_objInstance1.classId;
-        v_i = (v_row.length - 1);
-        while ((v_i >= 2)) {
-          if (v_isClassASubclassOf(v_vm, v_int1, v_row[v_i])) {
-            v_i = 0;
-            v_pc += v_row[0];
-            v_int2 = v_row[1];
-            if ((v_int2 > -1)) {
-              v_int1 = (v_localsStackOffset + v_int2);
-              v_localsStack[v_int1] = v_value;
-              v_localsStackSet[v_int1] = v_localsStackSetToken;
+        value = ec.activeException;
+        objInstance1 = ((ObjectInstance) value.internalValue);
+        int1 = objInstance1.classId;
+        i = (row.length - 1);
+        while ((i >= 2)) {
+          if (isClassASubclassOf(vm, int1, row[i])) {
+            i = 0;
+            pc += row[0];
+            int2 = row[1];
+            if ((int2 > -1)) {
+              int1 = (localsStackOffset + int2);
+              localsStack[int1] = value;
+              localsStackSet[int1] = localsStackSetToken;
             }
           }
-          v_i -= 1;
+          i -= 1;
         }
         break;
       case 41:
         // JUMP_IF_FALSE;
-        v_value = v_valueStack[--v_valueStackSize];
-        if ((v_value.type != 2)) {
-          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Boolean expected.");
+        value = valueStack[--valueStackSize];
+        if ((value.type != 2)) {
+          hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
         } else {
-          if (!(v_value.intValue == 1)) {
-            v_pc += v_row[0];
+          if (!(value.intValue == 1)) {
+            pc += row[0];
           }
         }
         break;
       case 42:
         // JUMP_IF_FALSE_NON_POP;
-        v_value = v_valueStack[(v_valueStackSize - 1)];
-        if ((v_value.type != 2)) {
-          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Boolean expected.");
+        value = valueStack[(valueStackSize - 1)];
+        if ((value.type != 2)) {
+          hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
         } else {
-          if ((v_value.intValue == 1)) {
-            v_valueStackSize -= 1;
+          if ((value.intValue == 1)) {
+            valueStackSize -= 1;
           } else {
-            v_pc += v_row[0];
+            pc += row[0];
           }
         }
         break;
       case 43:
         // JUMP_IF_TRUE;
-        v_value = v_valueStack[--v_valueStackSize];
-        if ((v_value.type != 2)) {
-          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Boolean expected.");
+        value = valueStack[--valueStackSize];
+        if ((value.type != 2)) {
+          hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
         } else {
-          if ((v_value.intValue == 1)) {
-            v_pc += v_row[0];
+          if ((value.intValue == 1)) {
+            pc += row[0];
           }
         }
         break;
       case 44:
         // JUMP_IF_TRUE_NO_POP;
-        v_value = v_valueStack[(v_valueStackSize - 1)];
-        if ((v_value.type != 2)) {
-          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Boolean expected.");
+        value = valueStack[(valueStackSize - 1)];
+        if ((value.type != 2)) {
+          hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
         } else {
-          if ((v_value.intValue == 1)) {
-            v_pc += v_row[0];
+          if ((value.intValue == 1)) {
+            pc += row[0];
           } else {
-            v_valueStackSize -= 1;
+            valueStackSize -= 1;
           }
         }
         break;
       case 45:
         // LAMBDA;
-        if (!v_metadata.lambdaTable.containsKey(v_pc)) {
-          v_int1 = (4 + v_row[4] + 1);
-          v_len = v_row[v_int1];
-          v_intArray1 = new int[v_len];
-          v_i = 0;
-          while ((v_i < v_len)) {
-            v_intArray1[v_i] = v_row[(v_int1 + v_i + 1)];
-            v_i += 1;
+        if (!metadata.lambdaTable.containsKey(pc)) {
+          int1 = (4 + row[4] + 1);
+          len = row[int1];
+          intArray1 = new int[len];
+          i = 0;
+          while ((i < len)) {
+            intArray1[i] = row[(int1 + i + 1)];
+            i += 1;
           }
-          v_len = v_row[4];
-          v_intArray2 = new int[v_len];
-          v_i = 0;
-          while ((v_i < v_len)) {
-            v_intArray2[v_i] = v_row[(5 + v_i)];
-            v_i += 1;
+          len = row[4];
+          intArray2 = new int[len];
+          i = 0;
+          while ((i < len)) {
+            intArray2[i] = row[(5 + i)];
+            i += 1;
           }
-          v_metadata.lambdaTable.put(v_pc, new FunctionInfo(v_pc, 0, v_pc, v_row[0], v_row[1], 5, 0, v_row[2], v_intArray2, "lambda", v_intArray1));
+          metadata.lambdaTable.put(pc, new FunctionInfo(pc, 0, pc, row[0], row[1], 5, 0, row[2], intArray2, "lambda", intArray1));
         }
-        v_closure = new HashMap<Integer, ClosureValuePointer>();
-        v_parentClosure = v_stack.closureVariables;
-        if ((v_parentClosure == null)) {
-          v_parentClosure = new HashMap<Integer, ClosureValuePointer>();
-          v_stack.closureVariables = v_parentClosure;
+        closure = new HashMap<Integer, ClosureValuePointer>();
+        parentClosure = stack.closureVariables;
+        if ((parentClosure == null)) {
+          parentClosure = new HashMap<Integer, ClosureValuePointer>();
+          stack.closureVariables = parentClosure;
         }
-        v_functionInfo = v_metadata.lambdaTable.get(v_pc);
-        v_intArray1 = v_functionInfo.closureIds;
-        v_len = v_intArray1.length;
-        v_i = 0;
-        while ((v_i < v_len)) {
-          v_j = v_intArray1[v_i];
-          if (v_parentClosure.containsKey(v_j)) {
-            v_closure.put(v_j, v_parentClosure.get(v_j));
+        functionInfo = metadata.lambdaTable.get(pc);
+        intArray1 = functionInfo.closureIds;
+        len = intArray1.length;
+        i = 0;
+        while ((i < len)) {
+          j = intArray1[i];
+          if (parentClosure.containsKey(j)) {
+            closure.put(j, parentClosure.get(j));
           } else {
-            v_closure.put(v_j, new ClosureValuePointer(null));
-            v_parentClosure.put(v_j, v_closure.get(v_j));
+            closure.put(j, new ClosureValuePointer(null));
+            parentClosure.put(j, closure.get(j));
           }
-          v_i += 1;
+          i += 1;
         }
-        if ((v_valueStackSize == v_valueStackCapacity)) {
-          v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-          v_valueStackCapacity = v_valueStack.length;
+        if ((valueStackSize == valueStackCapacity)) {
+          valueStack = valueStackIncreaseCapacity(ec);
+          valueStackCapacity = valueStack.length;
         }
-        v_valueStack[v_valueStackSize] = new Value(9, new FunctionPointer(5, null, 0, v_pc, v_closure));
-        v_valueStackSize += 1;
-        v_pc += v_row[3];
+        valueStack[valueStackSize] = new Value(9, new FunctionPointer(5, null, 0, pc, closure));
+        valueStackSize += 1;
+        pc += row[3];
         break;
       case 46:
         // LIB_DECLARATION;
-        v_prepareToSuspend(v_ec, v_stack, v_valueStackSize, v_pc);
-        v_ec.activeInterrupt = new Interrupt(4, v_row[0], v_stringArgs[v_pc], 0.0, null);
-        v_hasInterrupt = true;
+        prepareToSuspend(ec, stack, valueStackSize, pc);
+        ec.activeInterrupt = new Interrupt(4, row[0], stringArgs[pc], 0.0, null);
+        hasInterrupt = true;
         break;
       case 47:
         // LIST_SLICE;
-        if ((v_row[2] == 1)) {
-          v_valueStackSize -= 1;
-          v_arg3 = v_valueStack[v_valueStackSize];
+        if ((row[2] == 1)) {
+          valueStackSize -= 1;
+          arg3 = valueStack[valueStackSize];
         } else {
-          v_arg3 = null;
+          arg3 = null;
         }
-        if ((v_row[1] == 1)) {
-          v_valueStackSize -= 1;
-          v_arg2 = v_valueStack[v_valueStackSize];
+        if ((row[1] == 1)) {
+          valueStackSize -= 1;
+          arg2 = valueStack[valueStackSize];
         } else {
-          v_arg2 = null;
+          arg2 = null;
         }
-        if ((v_row[0] == 1)) {
-          v_valueStackSize -= 1;
-          v_arg1 = v_valueStack[v_valueStackSize];
+        if ((row[0] == 1)) {
+          valueStackSize -= 1;
+          arg1 = valueStack[valueStackSize];
         } else {
-          v_arg1 = null;
+          arg1 = null;
         }
-        v_value = v_valueStack[(v_valueStackSize - 1)];
-        v_value = v_performListSlice(v_globals, v_ec, v_value, v_arg1, v_arg2, v_arg3);
-        v_hasInterrupt = (v_ec.activeInterrupt != null);
-        if (!v_hasInterrupt) {
-          v_valueStack[(v_valueStackSize - 1)] = v_value;
+        value = valueStack[(valueStackSize - 1)];
+        value = performListSlice(globals, ec, value, arg1, arg2, arg3);
+        hasInterrupt = (ec.activeInterrupt != null);
+        if (!hasInterrupt) {
+          valueStack[(valueStackSize - 1)] = value;
         }
         break;
       case 48:
         // LITERAL;
-        if ((v_valueStackSize == v_valueStackCapacity)) {
-          v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-          v_valueStackCapacity = v_valueStack.length;
+        if ((valueStackSize == valueStackCapacity)) {
+          valueStack = valueStackIncreaseCapacity(ec);
+          valueStackCapacity = valueStack.length;
         }
-        v_valueStack[v_valueStackSize++] = v_literalTable[v_row[0]];
+        valueStack[valueStackSize++] = literalTable[row[0]];
         break;
       case 49:
         // LITERAL_STREAM;
-        v_int1 = v_row.length;
-        if (((v_valueStackSize + v_int1) > v_valueStackCapacity)) {
-          while (((v_valueStackSize + v_int1) > v_valueStackCapacity)) {
-            v_valueStackIncreaseCapacity(v_ec);
-            v_valueStack = v_ec.valueStack;
-            v_valueStackCapacity = v_valueStack.length;
+        int1 = row.length;
+        if (((valueStackSize + int1) > valueStackCapacity)) {
+          while (((valueStackSize + int1) > valueStackCapacity)) {
+            valueStackIncreaseCapacity(ec);
+            valueStack = ec.valueStack;
+            valueStackCapacity = valueStack.length;
           }
         }
-        v_i = v_int1;
-        while ((--v_i >= 0)) {
-          v_valueStack[v_valueStackSize++] = v_literalTable[v_row[v_i]];
+        i = int1;
+        while ((--i >= 0)) {
+          valueStack[valueStackSize++] = literalTable[row[i]];
         }
         break;
       case 50:
         // LOCAL;
-        v_int1 = (v_localsStackOffset + v_row[0]);
-        if ((v_localsStackSet[v_int1] == v_localsStackSetToken)) {
-          if ((v_valueStackSize == v_valueStackCapacity)) {
-            v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-            v_valueStackCapacity = v_valueStack.length;
+        int1 = (localsStackOffset + row[0]);
+        if ((localsStackSet[int1] == localsStackSetToken)) {
+          if ((valueStackSize == valueStackCapacity)) {
+            valueStack = valueStackIncreaseCapacity(ec);
+            valueStackCapacity = valueStack.length;
           }
-          v_valueStack[v_valueStackSize++] = v_localsStack[v_int1];
+          valueStack[valueStackSize++] = localsStack[int1];
         } else {
-          v_hasInterrupt = v_EX_UnassignedVariable(v_ec, "Variable used before it was set.");
+          hasInterrupt = EX_UnassignedVariable(ec, "Variable used before it was set.");
         }
         break;
       case 51:
         // LOC_TABLE;
-        v_initLocTable(v_vm, v_row);
+        initLocTable(vm, row);
         break;
       case 52:
         // NEGATIVE_SIGN;
-        v_value = v_valueStack[(v_valueStackSize - 1)];
-        v_type = v_value.type;
-        if ((v_type == 3)) {
-          v_valueStack[(v_valueStackSize - 1)] = v_buildInteger(v_globals, -v_value.intValue);
+        value = valueStack[(valueStackSize - 1)];
+        type = value.type;
+        if ((type == 3)) {
+          valueStack[(valueStackSize - 1)] = buildInteger(globals, -value.intValue);
         } else {
-          if ((v_type == 4)) {
-            v_valueStack[(v_valueStackSize - 1)] = v_buildFloat(v_globals, -((double) v_value.internalValue));
+          if ((type == 4)) {
+            valueStack[(valueStackSize - 1)] = buildFloat(globals, -((double) value.internalValue));
           } else {
-            v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Negative sign can only be applied to numbers. Found " + v_getTypeFromId(v_type) + " instead.");
+            hasInterrupt = EX_InvalidArgument(ec, "Negative sign can only be applied to numbers. Found " + getTypeFromId(type) + " instead.");
           }
         }
         break;
       case 53:
         // POP;
-        v_valueStackSize -= 1;
+        valueStackSize -= 1;
         break;
       case 54:
         // POP_IF_NULL_OR_JUMP;
-        v_value = v_valueStack[(v_valueStackSize - 1)];
-        if ((v_value.type == 1)) {
-          v_valueStackSize -= 1;
+        value = valueStack[(valueStackSize - 1)];
+        if ((value.type == 1)) {
+          valueStackSize -= 1;
         } else {
-          v_pc += v_row[0];
+          pc += row[0];
         }
         break;
       case 55:
         // PUSH_FUNC_REF;
-        v_value = null;
-        switch (v_row[1]) {
+        value = null;
+        switch (row[1]) {
           case 0:
-            v_value = new Value(9, new FunctionPointer(1, null, 0, v_row[0], null));
+            value = new Value(9, new FunctionPointer(1, null, 0, row[0], null));
             break;
           case 1:
-            v_value = new Value(9, new FunctionPointer(2, v_stack.objectContext, v_row[2], v_row[0], null));
+            value = new Value(9, new FunctionPointer(2, stack.objectContext, row[2], row[0], null));
             break;
           case 2:
-            v_classId = v_row[2];
-            v_classInfo = v_classTable[v_classId];
-            v_staticConstructorNotInvoked = true;
-            if ((v_classInfo.staticInitializationState < 2)) {
-              v_stack.pc = v_pc;
-              v_stackFrame2 = v_maybeInvokeStaticConstructor(v_vm, v_ec, v_stack, v_classInfo, v_valueStackSize, PST_intBuffer16);
+            classId = row[2];
+            classInfo = classTable[classId];
+            staticConstructorNotInvoked = true;
+            if ((classInfo.staticInitializationState < 2)) {
+              stack.pc = pc;
+              stackFrame2 = maybeInvokeStaticConstructor(vm, ec, stack, classInfo, valueStackSize, PST_intBuffer16);
               if ((PST_intBuffer16[0] == 1)) {
-                return v_generateException(v_vm, v_stack, v_pc, v_valueStackSize, v_ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
+                return generateException(vm, stack, pc, valueStackSize, ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
               }
-              if ((v_stackFrame2 != null)) {
-                v_staticConstructorNotInvoked = false;
-                v_stack = v_stackFrame2;
-                v_pc = v_stack.pc;
-                v_localsStackSetToken = v_stack.localsStackSetToken;
-                v_localsStackOffset = v_stack.localsStackOffset;
+              if ((stackFrame2 != null)) {
+                staticConstructorNotInvoked = false;
+                stack = stackFrame2;
+                pc = stack.pc;
+                localsStackSetToken = stack.localsStackSetToken;
+                localsStackOffset = stack.localsStackOffset;
               }
             }
-            if (v_staticConstructorNotInvoked) {
-              v_value = new Value(9, new FunctionPointer(3, null, v_classId, v_row[0], null));
+            if (staticConstructorNotInvoked) {
+              value = new Value(9, new FunctionPointer(3, null, classId, row[0], null));
             } else {
-              v_value = null;
+              value = null;
             }
             break;
         }
-        if ((v_value != null)) {
-          if ((v_valueStackSize == v_valueStackCapacity)) {
-            v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-            v_valueStackCapacity = v_valueStack.length;
+        if ((value != null)) {
+          if ((valueStackSize == valueStackCapacity)) {
+            valueStack = valueStackIncreaseCapacity(ec);
+            valueStackCapacity = valueStack.length;
           }
-          v_valueStack[v_valueStackSize] = v_value;
-          v_valueStackSize += 1;
+          valueStack[valueStackSize] = value;
+          valueStackSize += 1;
         }
         break;
       case 56:
         // RETURN;
-        if ((v_esfData[v_pc] != null)) {
-          v_intArray1 = v_esfData[v_pc];
-          v_pc = (v_intArray1[1] - 1);
-          if ((v_row[0] == 0)) {
-            v_stack.returnValueTempStorage = v_VALUE_NULL;
+        if ((esfData[pc] != null)) {
+          intArray1 = esfData[pc];
+          pc = (intArray1[1] - 1);
+          if ((row[0] == 0)) {
+            stack.returnValueTempStorage = VALUE_NULL;
           } else {
-            v_stack.returnValueTempStorage = v_valueStack[(v_valueStackSize - 1)];
+            stack.returnValueTempStorage = valueStack[(valueStackSize - 1)];
           }
-          v_valueStackSize = v_stack.valueStackPopSize;
-          v_stack.postFinallyBehavior = 3;
+          valueStackSize = stack.valueStackPopSize;
+          stack.postFinallyBehavior = 3;
         } else {
-          if ((v_stack.previous == null)) {
-            return v_interpreterFinished(v_vm, v_ec);
+          if ((stack.previous == null)) {
+            return interpreterFinished(vm, ec);
           }
-          if ((v_stack.markClassAsInitialized != 0)) {
-            v_markClassAsInitialized(v_vm, v_stack, v_stack.markClassAsInitialized);
+          if ((stack.markClassAsInitialized != 0)) {
+            markClassAsInitialized(vm, stack, stack.markClassAsInitialized);
           }
-          if (v_stack.returnValueUsed) {
-            if ((v_row[0] == 0)) {
-              v_valueStackSize = v_stack.valueStackPopSize;
-              v_stack = v_stack.previous;
-              if ((v_valueStackSize == v_valueStackCapacity)) {
-                v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-                v_valueStackCapacity = v_valueStack.length;
+          if (stack.returnValueUsed) {
+            if ((row[0] == 0)) {
+              valueStackSize = stack.valueStackPopSize;
+              stack = stack.previous;
+              if ((valueStackSize == valueStackCapacity)) {
+                valueStack = valueStackIncreaseCapacity(ec);
+                valueStackCapacity = valueStack.length;
               }
-              v_valueStack[v_valueStackSize] = v_VALUE_NULL;
+              valueStack[valueStackSize] = VALUE_NULL;
             } else {
-              v_value = v_valueStack[(v_valueStackSize - 1)];
-              v_valueStackSize = v_stack.valueStackPopSize;
-              v_stack = v_stack.previous;
-              v_valueStack[v_valueStackSize] = v_value;
+              value = valueStack[(valueStackSize - 1)];
+              valueStackSize = stack.valueStackPopSize;
+              stack = stack.previous;
+              valueStack[valueStackSize] = value;
             }
-            v_valueStackSize += 1;
+            valueStackSize += 1;
           } else {
-            v_valueStackSize = v_stack.valueStackPopSize;
-            v_stack = v_stack.previous;
+            valueStackSize = stack.valueStackPopSize;
+            stack = stack.previous;
           }
-          v_pc = v_stack.pc;
-          v_localsStackOffset = v_stack.localsStackOffset;
-          v_localsStackSetToken = v_stack.localsStackSetToken;
-          if ((false && (v_stack.debugStepTracker != null))) {
-            v_hasInterrupt = true;
-            v_ec.activeInterrupt = new Interrupt(5, 0, "", 0.0, v_stack.debugStepTracker);
+          pc = stack.pc;
+          localsStackOffset = stack.localsStackOffset;
+          localsStackSetToken = stack.localsStackSetToken;
+          if ((false && (stack.debugStepTracker != null))) {
+            hasInterrupt = true;
+            ec.activeInterrupt = new Interrupt(5, 0, "", 0.0, stack.debugStepTracker);
           }
         }
         break;
       case 57:
         // STACK_INSERTION_FOR_INCREMENT;
-        if ((v_valueStackSize == v_valueStackCapacity)) {
-          v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-          v_valueStackCapacity = v_valueStack.length;
+        if ((valueStackSize == valueStackCapacity)) {
+          valueStack = valueStackIncreaseCapacity(ec);
+          valueStackCapacity = valueStack.length;
         }
-        v_valueStack[v_valueStackSize] = v_valueStack[(v_valueStackSize - 1)];
-        v_valueStack[(v_valueStackSize - 1)] = v_valueStack[(v_valueStackSize - 2)];
-        v_valueStack[(v_valueStackSize - 2)] = v_valueStack[(v_valueStackSize - 3)];
-        v_valueStack[(v_valueStackSize - 3)] = v_valueStack[v_valueStackSize];
-        v_valueStackSize += 1;
+        valueStack[valueStackSize] = valueStack[(valueStackSize - 1)];
+        valueStack[(valueStackSize - 1)] = valueStack[(valueStackSize - 2)];
+        valueStack[(valueStackSize - 2)] = valueStack[(valueStackSize - 3)];
+        valueStack[(valueStackSize - 3)] = valueStack[valueStackSize];
+        valueStackSize += 1;
         break;
       case 58:
         // STACK_SWAP_POP;
-        v_valueStackSize -= 1;
-        v_valueStack[(v_valueStackSize - 1)] = v_valueStack[v_valueStackSize];
+        valueStackSize -= 1;
+        valueStack[(valueStackSize - 1)] = valueStack[valueStackSize];
         break;
       case 59:
         // SWITCH_INT;
-        v_value = v_valueStack[--v_valueStackSize];
-        if ((v_value.type == 3)) {
-          v_intKey = v_value.intValue;
-          v_integerSwitch = v_integerSwitchesByPc[v_pc];
-          if ((v_integerSwitch == null)) {
-            v_integerSwitch = v_initializeIntSwitchStatement(v_vm, v_pc, v_row);
+        value = valueStack[--valueStackSize];
+        if ((value.type == 3)) {
+          intKey = value.intValue;
+          integerSwitch = integerSwitchesByPc[pc];
+          if ((integerSwitch == null)) {
+            integerSwitch = initializeIntSwitchStatement(vm, pc, row);
           }
-          Integer dictLookup11 = v_integerSwitch.get(v_intKey);
-          v_i = dictLookup11 == null ? (-1) : dictLookup11;
-          if ((v_i == -1)) {
-            v_pc += v_row[0];
+          Integer dictLookup11 = integerSwitch.get(intKey);
+          i = dictLookup11 == null ? (-1) : dictLookup11;
+          if ((i == -1)) {
+            pc += row[0];
           } else {
-            v_pc += v_i;
+            pc += i;
           }
         } else {
-          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Switch statement expects an integer.");
+          hasInterrupt = EX_InvalidArgument(ec, "Switch statement expects an integer.");
         }
         break;
       case 60:
         // SWITCH_STRING;
-        v_value = v_valueStack[--v_valueStackSize];
-        if ((v_value.type == 5)) {
-          v_stringKey = ((String) v_value.internalValue);
-          v_stringSwitch = v_stringSwitchesByPc[v_pc];
-          if ((v_stringSwitch == null)) {
-            v_stringSwitch = v_initializeStringSwitchStatement(v_vm, v_pc, v_row);
+        value = valueStack[--valueStackSize];
+        if ((value.type == 5)) {
+          stringKey = ((String) value.internalValue);
+          stringSwitch = stringSwitchesByPc[pc];
+          if ((stringSwitch == null)) {
+            stringSwitch = initializeStringSwitchStatement(vm, pc, row);
           }
-          Integer dictLookup12 = v_stringSwitch.get(v_stringKey);
-          v_i = dictLookup12 == null ? (v_stringSwitch.containsKey(v_stringKey) ? null : (-1)) : dictLookup12;
-          if ((v_i == -1)) {
-            v_pc += v_row[0];
+          Integer dictLookup12 = stringSwitch.get(stringKey);
+          i = dictLookup12 == null ? (stringSwitch.containsKey(stringKey) ? null : (-1)) : dictLookup12;
+          if ((i == -1)) {
+            pc += row[0];
           } else {
-            v_pc += v_i;
+            pc += i;
           }
         } else {
-          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Switch statement expects a string.");
+          hasInterrupt = EX_InvalidArgument(ec, "Switch statement expects a string.");
         }
         break;
       case 61:
         // THIS;
-        if ((v_valueStackSize == v_valueStackCapacity)) {
-          v_valueStack = v_valueStackIncreaseCapacity(v_ec);
-          v_valueStackCapacity = v_valueStack.length;
+        if ((valueStackSize == valueStackCapacity)) {
+          valueStack = valueStackIncreaseCapacity(ec);
+          valueStackCapacity = valueStack.length;
         }
-        v_valueStack[v_valueStackSize] = v_stack.objectContext;
-        v_valueStackSize += 1;
+        valueStack[valueStackSize] = stack.objectContext;
+        valueStackSize += 1;
         break;
       case 62:
         // THROW;
-        v_valueStackSize -= 1;
-        v_value = v_valueStack[v_valueStackSize];
-        v_bool2 = (v_value.type == 8);
-        if (v_bool2) {
-          v_objInstance1 = ((ObjectInstance) v_value.internalValue);
-          if (!v_isClassASubclassOf(v_vm, v_objInstance1.classId, v_magicNumbers.coreExceptionClassId)) {
-            v_bool2 = false;
+        valueStackSize -= 1;
+        value = valueStack[valueStackSize];
+        bool2 = (value.type == 8);
+        if (bool2) {
+          objInstance1 = ((ObjectInstance) value.internalValue);
+          if (!isClassASubclassOf(vm, objInstance1.classId, magicNumbers.coreExceptionClassId)) {
+            bool2 = false;
           }
         }
-        if (v_bool2) {
-          v_objArray1 = v_objInstance1.nativeData;
-          v_intList1 = new ArrayList<Integer>();
-          v_objArray1[1] = v_intList1;
-          if (!v_isPcFromCore(v_vm, v_pc)) {
-            v_intList1.add(v_pc);
+        if (bool2) {
+          objArray1 = objInstance1.nativeData;
+          intList1 = new ArrayList<Integer>();
+          objArray1[1] = intList1;
+          if (!isPcFromCore(vm, pc)) {
+            intList1.add(pc);
           }
-          v_ec.activeException = v_value;
-          v_ec.activeExceptionHandled = false;
-          v_stack.pc = v_pc;
-          v_intArray1 = v_esfData[v_pc];
-          v_value = v_ec.activeException;
-          v_objInstance1 = ((ObjectInstance) v_value.internalValue);
-          v_objArray1 = v_objInstance1.nativeData;
-          v_bool1 = true;
-          if ((v_objArray1[0] != null)) {
-            v_bool1 = ((boolean) v_objArray1[0]);
+          ec.activeException = value;
+          ec.activeExceptionHandled = false;
+          stack.pc = pc;
+          intArray1 = esfData[pc];
+          value = ec.activeException;
+          objInstance1 = ((ObjectInstance) value.internalValue);
+          objArray1 = objInstance1.nativeData;
+          bool1 = true;
+          if ((objArray1[0] != null)) {
+            bool1 = ((boolean) objArray1[0]);
           }
-          v_intList1 = ((ArrayList<Integer>) v_objArray1[1]);
-          while (((v_stack != null) && ((v_intArray1 == null) || v_bool1))) {
-            v_stack = v_stack.previous;
-            if ((v_stack != null)) {
-              v_pc = v_stack.pc;
-              v_intList1.add(v_pc);
-              v_intArray1 = v_esfData[v_pc];
+          intList1 = ((ArrayList<Integer>) objArray1[1]);
+          while (((stack != null) && ((intArray1 == null) || bool1))) {
+            stack = stack.previous;
+            if ((stack != null)) {
+              pc = stack.pc;
+              intList1.add(pc);
+              intArray1 = esfData[pc];
             }
           }
-          if ((v_stack == null)) {
-            return v_uncaughtExceptionResult(v_vm, v_value);
+          if ((stack == null)) {
+            return uncaughtExceptionResult(vm, value);
           }
-          v_int1 = v_intArray1[0];
-          if ((v_int1 < v_pc)) {
-            v_int1 = v_intArray1[1];
+          int1 = intArray1[0];
+          if ((int1 < pc)) {
+            int1 = intArray1[1];
           }
-          v_pc = (v_int1 - 1);
-          v_stack.pc = v_pc;
-          v_localsStackOffset = v_stack.localsStackOffset;
-          v_localsStackSetToken = v_stack.localsStackSetToken;
-          v_ec.stackTop = v_stack;
-          v_stack.postFinallyBehavior = 0;
-          v_ec.currentValueStackSize = v_valueStackSize;
-          if ((false && (v_stack.debugStepTracker != null))) {
-            v_hasInterrupt = true;
-            v_ec.activeInterrupt = new Interrupt(5, 0, "", 0.0, v_stack.debugStepTracker);
+          pc = (int1 - 1);
+          stack.pc = pc;
+          localsStackOffset = stack.localsStackOffset;
+          localsStackSetToken = stack.localsStackSetToken;
+          ec.stackTop = stack;
+          stack.postFinallyBehavior = 0;
+          ec.currentValueStackSize = valueStackSize;
+          if ((false && (stack.debugStepTracker != null))) {
+            hasInterrupt = true;
+            ec.activeInterrupt = new Interrupt(5, 0, "", 0.0, stack.debugStepTracker);
           }
         } else {
-          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Thrown value is not an exception.");
+          hasInterrupt = EX_InvalidArgument(ec, "Thrown value is not an exception.");
         }
         break;
       case 63:
         // TOKEN_DATA;
-        v_tokenDataImpl(v_vm, v_row);
+        tokenDataImpl(vm, row);
         break;
       case 64:
         // USER_CODE_START;
-        v_metadata.userCodeStart = v_row[0];
+        metadata.userCodeStart = row[0];
         break;
       case 65:
         // VERIFY_TYPE_IS_ITERABLE;
-        v_value = v_valueStack[--v_valueStackSize];
-        v_i = (v_localsStackOffset + v_row[0]);
-        v_localsStack[v_i] = v_value;
-        v_localsStackSet[v_i] = v_localsStackSetToken;
-        v_int1 = v_value.type;
-        if (((v_int1 != 6) && (v_int1 != 5))) {
-          v_hasInterrupt = v_EX_InvalidArgument(v_ec, "Expected an iterable type, such as a list or string. Found " + v_getTypeFromId(v_int1) + " instead.");
+        value = valueStack[--valueStackSize];
+        i = (localsStackOffset + row[0]);
+        localsStack[i] = value;
+        localsStackSet[i] = localsStackSetToken;
+        int1 = value.type;
+        if (((int1 != 6) && (int1 != 5))) {
+          hasInterrupt = EX_InvalidArgument(ec, "Expected an iterable type, such as a list or string. Found " + getTypeFromId(int1) + " instead.");
         }
-        v_i = (v_localsStackOffset + v_row[1]);
-        v_localsStack[v_i] = v_VALUE_INT_ZERO;
-        v_localsStackSet[v_i] = v_localsStackSetToken;
+        i = (localsStackOffset + row[1]);
+        localsStack[i] = VALUE_INT_ZERO;
+        localsStackSet[i] = localsStackSetToken;
         break;
       default:
         // THIS SHOULD NEVER HAPPEN;
-        return v_generateException(v_vm, v_stack, v_pc, v_valueStackSize, v_ec, 0, "Bad op code: " + Integer.toString(v_ops[v_pc]));
+        return generateException(vm, stack, pc, valueStackSize, ec, 0, "Bad op code: " + Integer.toString(ops[pc]));
     }
-    if (v_hasInterrupt) {
-      Interrupt v_interrupt = v_ec.activeInterrupt;
-      v_ec.activeInterrupt = null;
-      if ((v_interrupt.type == 1)) {
-        return v_generateException(v_vm, v_stack, v_pc, v_valueStackSize, v_ec, v_interrupt.exceptionType, v_interrupt.exceptionMessage);
+    if (hasInterrupt) {
+      Interrupt interrupt = ec.activeInterrupt;
+      ec.activeInterrupt = null;
+      if ((interrupt.type == 1)) {
+        return generateException(vm, stack, pc, valueStackSize, ec, interrupt.exceptionType, interrupt.exceptionMessage);
       }
-      if ((v_interrupt.type == 3)) {
-        return new InterpreterResult(5, "", v_interrupt.sleepDurationSeconds, 0, false, "");
+      if ((interrupt.type == 3)) {
+        return new InterpreterResult(5, "", interrupt.sleepDurationSeconds, 0, false, "");
       }
-      if ((v_interrupt.type == 4)) {
-        return new InterpreterResult(6, "", 0.0, 0, false, v_interrupt.exceptionMessage);
+      if ((interrupt.type == 4)) {
+        return new InterpreterResult(6, "", 0.0, 0, false, interrupt.exceptionMessage);
       }
     }
-    ++v_pc;
+    ++pc;
   }
 }
 
-public static boolean v_isClassASubclassOf(VmContext v_vm, int v_subClassId, int v_parentClassId) {
-  if ((v_subClassId == v_parentClassId)) {
+public static boolean isClassASubclassOf(VmContext vm, int subClassId, int parentClassId) {
+  if ((subClassId == parentClassId)) {
     return true;
   }
-  ClassInfo[] v_classTable = v_vm.metadata.classTable;
-  int v_classIdWalker = v_subClassId;
-  while ((v_classIdWalker != -1)) {
-    if ((v_classIdWalker == v_parentClassId)) {
+  ClassInfo[] classTable = vm.metadata.classTable;
+  int classIdWalker = subClassId;
+  while ((classIdWalker != -1)) {
+    if ((classIdWalker == parentClassId)) {
       return true;
     }
-    ClassInfo v_classInfo = v_classTable[v_classIdWalker];
-    v_classIdWalker = v_classInfo.baseClassId;
+    ClassInfo classInfo = classTable[classIdWalker];
+    classIdWalker = classInfo.baseClassId;
   }
   return false;
 }
 
-public static boolean v_isPcFromCore(VmContext v_vm, int v_pc) {
-  if ((v_vm.symbolData == null)) {
+public static boolean isPcFromCore(VmContext vm, int pc) {
+  if ((vm.symbolData == null)) {
     return false;
   }
-  ArrayList<Token> v_tokens = v_vm.symbolData.tokenData[v_pc];
-  if ((v_tokens == null)) {
+  ArrayList<Token> tokens = vm.symbolData.tokenData[pc];
+  if ((tokens == null)) {
     return false;
   }
-  Token v_token = v_tokens.get(0);
-  String v_filename = v_tokenHelperGetFileLine(v_vm, v_token.fileId, 0);
-  return "[Core]".equals(v_filename);
+  Token token = tokens.get(0);
+  String filename = tokenHelperGetFileLine(vm, token.fileId, 0);
+  return "[Core]".equals(filename);
 }
 
-public static boolean v_isStringEqual(String v_a, String v_b) {
-  if (((v_a == null) || (v_b == null))) {
-    return ((v_a == null) && (v_b == null));
+public static boolean isStringEqual(String a, String b) {
+  if (((a == null) || (b == null))) {
+    return ((a == null) && (b == null));
   }
-  if (v_a.equals(v_b)) {
+  if (a.equals(b)) {
     return true;
   }
   return false;
 }
 
-public static boolean v_isVmResultRootExecContext(InterpreterResult v_result) {
-  return v_result.isRootContext;
+public static boolean isVmResultRootExecContext(InterpreterResult result) {
+  return result.isRootContext;
 }
 
-public static ListImpl v_makeEmptyList(int[] v_type, int v_capacity) {
-  return new ListImpl(v_type, 0, v_capacity, new Value[v_capacity]);
+public static ListImpl makeEmptyList(int[] type, int capacity) {
+  return new ListImpl(type, 0, capacity, new Value[capacity]);
 }
 
-public static int v_markClassAsInitialized(VmContext v_vm, StackFrame v_stack, int v_classId) {
-  ClassInfo v_classInfo = v_vm.metadata.classTable[v_stack.markClassAsInitialized];
-  v_classInfo.staticInitializationState = 2;
-  v_vm.classStaticInitializationStack.remove(v_vm.classStaticInitializationStack.size() - 1);
+public static int markClassAsInitialized(VmContext vm, StackFrame stack, int classId) {
+  ClassInfo classInfo = vm.metadata.classTable[stack.markClassAsInitialized];
+  classInfo.staticInitializationState = 2;
+  vm.classStaticInitializationStack.remove(vm.classStaticInitializationStack.size() - 1);
   return 0;
 }
 
-public static StackFrame v_maybeInvokeStaticConstructor(VmContext v_vm, ExecutionContext v_ec, StackFrame v_stack, ClassInfo v_classInfo, int v_valueStackSize, int[] v_intOutParam) {
+public static StackFrame maybeInvokeStaticConstructor(VmContext vm, ExecutionContext ec, StackFrame stack, ClassInfo classInfo, int valueStackSize, int[] intOutParam) {
   PST_intBuffer16[0] = 0;
-  int v_classId = v_classInfo.id;
-  if ((v_classInfo.staticInitializationState == 1)) {
-    ArrayList<Integer> v_classIdsBeingInitialized = v_vm.classStaticInitializationStack;
-    if ((v_classIdsBeingInitialized.get((v_classIdsBeingInitialized.size() - 1)) != v_classId)) {
+  int classId = classInfo.id;
+  if ((classInfo.staticInitializationState == 1)) {
+    ArrayList<Integer> classIdsBeingInitialized = vm.classStaticInitializationStack;
+    if ((classIdsBeingInitialized.get((classIdsBeingInitialized.size() - 1)) != classId)) {
       PST_intBuffer16[0] = 1;
     }
     return null;
   }
-  v_classInfo.staticInitializationState = 1;
-  v_vm.classStaticInitializationStack.add(v_classId);
-  FunctionInfo v_functionInfo = v_vm.metadata.functionTable[v_classInfo.staticConstructorFunctionId];
-  v_stack.pc -= 1;
-  int v_newFrameLocalsSize = v_functionInfo.localsSize;
-  int v_currentFrameLocalsEnd = v_stack.localsStackOffsetEnd;
-  if ((v_ec.localsStack.length <= (v_currentFrameLocalsEnd + v_newFrameLocalsSize))) {
-    v_increaseLocalsStackCapacity(v_ec, v_newFrameLocalsSize);
+  classInfo.staticInitializationState = 1;
+  vm.classStaticInitializationStack.add(classId);
+  FunctionInfo functionInfo = vm.metadata.functionTable[classInfo.staticConstructorFunctionId];
+  stack.pc -= 1;
+  int newFrameLocalsSize = functionInfo.localsSize;
+  int currentFrameLocalsEnd = stack.localsStackOffsetEnd;
+  if ((ec.localsStack.length <= (currentFrameLocalsEnd + newFrameLocalsSize))) {
+    increaseLocalsStackCapacity(ec, newFrameLocalsSize);
   }
-  if ((v_ec.localsStackSetToken > 2000000000)) {
-    v_resetLocalsStackTokens(v_ec, v_stack);
+  if ((ec.localsStackSetToken > 2000000000)) {
+    resetLocalsStackTokens(ec, stack);
   }
-  v_ec.localsStackSetToken += 1;
-  return new StackFrame(v_functionInfo.pc, v_ec.localsStackSetToken, v_currentFrameLocalsEnd, (v_currentFrameLocalsEnd + v_newFrameLocalsSize), v_stack, false, null, v_valueStackSize, v_classId, (v_stack.depth + 1), 0, null, null, null);
+  ec.localsStackSetToken += 1;
+  return new StackFrame(functionInfo.pc, ec.localsStackSetToken, currentFrameLocalsEnd, (currentFrameLocalsEnd + newFrameLocalsSize), stack, false, null, valueStackSize, classId, (stack.depth + 1), 0, null, null, null);
 }
 
-public static Value v_multiplyString(VmGlobals v_globals, Value v_strValue, String v_str, int v_n) {
-  if ((v_n <= 2)) {
-    if ((v_n == 1)) {
-      return v_strValue;
+public static Value multiplyString(VmGlobals globals, Value strValue, String str, int n) {
+  if ((n <= 2)) {
+    if ((n == 1)) {
+      return strValue;
     }
-    if ((v_n == 2)) {
-      return v_buildString(v_globals, v_str + v_str);
+    if ((n == 2)) {
+      return buildString(globals, str + str);
     }
-    return v_globals.stringEmpty;
+    return globals.stringEmpty;
   }
-  ArrayList<String> v_builder = new ArrayList<String>();
-  while ((v_n > 0)) {
-    v_n -= 1;
-    v_builder.add(v_str);
+  ArrayList<String> builder = new ArrayList<String>();
+  while ((n > 0)) {
+    n -= 1;
+    builder.add(str);
   }
-  v_str = PST_joinList("", v_builder);
-  return v_buildString(v_globals, v_str);
+  str = PST_joinList("", builder);
+  return buildString(globals, str);
 }
 
-public static int v_nextPowerOf2(int v_value) {
-  if ((((v_value - 1) & v_value) == 0)) {
-    return v_value;
+public static int nextPowerOf2(int value) {
+  if ((((value - 1) & value) == 0)) {
+    return value;
   }
-  int v_output = 1;
-  while ((v_output < v_value)) {
-    v_output *= 2;
+  int output = 1;
+  while ((output < value)) {
+    output *= 2;
   }
-  return v_output;
+  return output;
 }
 
-public static int v_noop() {
+public static int noop() {
   return 0;
 }
 
-public static Value v_performListSlice(VmGlobals v_globals, ExecutionContext v_ec, Value v_value, Value v_arg1, Value v_arg2, Value v_arg3) {
-  int v_begin = 0;
-  int v_end = 0;
-  int v_step = 0;
-  int v_length = 0;
-  int v_i = 0;
-  boolean v_isForward = false;
-  boolean v_isString = false;
-  String v_originalString = "";
-  ListImpl v_originalList = null;
-  ListImpl v_outputList = null;
-  ArrayList<String> v_outputString = null;
-  int v_status = 0;
-  if ((v_arg3 != null)) {
-    if ((v_arg3.type == 3)) {
-      v_step = v_arg3.intValue;
-      if ((v_step == 0)) {
-        v_status = 2;
+public static Value performListSlice(VmGlobals globals, ExecutionContext ec, Value value, Value arg1, Value arg2, Value arg3) {
+  int begin = 0;
+  int end = 0;
+  int step = 0;
+  int length = 0;
+  int i = 0;
+  boolean isForward = false;
+  boolean isString = false;
+  String originalString = "";
+  ListImpl originalList = null;
+  ListImpl outputList = null;
+  ArrayList<String> outputString = null;
+  int status = 0;
+  if ((arg3 != null)) {
+    if ((arg3.type == 3)) {
+      step = arg3.intValue;
+      if ((step == 0)) {
+        status = 2;
       }
     } else {
-      v_status = 3;
-      v_step = 1;
+      status = 3;
+      step = 1;
     }
   } else {
-    v_step = 1;
+    step = 1;
   }
-  v_isForward = (v_step > 0);
-  if ((v_arg2 != null)) {
-    if ((v_arg2.type == 3)) {
-      v_end = v_arg2.intValue;
+  isForward = (step > 0);
+  if ((arg2 != null)) {
+    if ((arg2.type == 3)) {
+      end = arg2.intValue;
     } else {
-      v_status = 3;
+      status = 3;
     }
   }
-  if ((v_arg1 != null)) {
-    if ((v_arg1.type == 3)) {
-      v_begin = v_arg1.intValue;
+  if ((arg1 != null)) {
+    if ((arg1.type == 3)) {
+      begin = arg1.intValue;
     } else {
-      v_status = 3;
+      status = 3;
     }
   }
-  if ((v_value.type == 5)) {
-    v_isString = true;
-    v_originalString = ((String) v_value.internalValue);
-    v_length = v_originalString.length();
+  if ((value.type == 5)) {
+    isString = true;
+    originalString = ((String) value.internalValue);
+    length = originalString.length();
   } else {
-    if ((v_value.type == 6)) {
-      v_isString = false;
-      v_originalList = ((ListImpl) v_value.internalValue);
-      v_length = v_originalList.size;
+    if ((value.type == 6)) {
+      isString = false;
+      originalList = ((ListImpl) value.internalValue);
+      length = originalList.size;
     } else {
-      v_EX_InvalidArgument(v_ec, "Cannot apply slicing to " + v_getTypeFromId(v_value.type) + ". Must be string or list.");
-      return v_globals.valueNull;
+      EX_InvalidArgument(ec, "Cannot apply slicing to " + getTypeFromId(value.type) + ". Must be string or list.");
+      return globals.valueNull;
     }
   }
-  if ((v_status >= 2)) {
-    String v_msg = null;
-    if (v_isString) {
-      v_msg = "String";
+  if ((status >= 2)) {
+    String msg = null;
+    if (isString) {
+      msg = "String";
     } else {
-      v_msg = "List";
+      msg = "List";
     }
-    if ((v_status == 3)) {
-      v_msg += " slice indexes must be integers. Found ";
-      if (((v_arg1 != null) && (v_arg1.type != 3))) {
-        v_EX_InvalidArgument(v_ec, v_msg + v_getTypeFromId(v_arg1.type) + " for begin index.");
-        return v_globals.valueNull;
+    if ((status == 3)) {
+      msg += " slice indexes must be integers. Found ";
+      if (((arg1 != null) && (arg1.type != 3))) {
+        EX_InvalidArgument(ec, msg + getTypeFromId(arg1.type) + " for begin index.");
+        return globals.valueNull;
       }
-      if (((v_arg2 != null) && (v_arg2.type != 3))) {
-        v_EX_InvalidArgument(v_ec, v_msg + v_getTypeFromId(v_arg2.type) + " for end index.");
-        return v_globals.valueNull;
+      if (((arg2 != null) && (arg2.type != 3))) {
+        EX_InvalidArgument(ec, msg + getTypeFromId(arg2.type) + " for end index.");
+        return globals.valueNull;
       }
-      if (((v_arg3 != null) && (v_arg3.type != 3))) {
-        v_EX_InvalidArgument(v_ec, v_msg + v_getTypeFromId(v_arg3.type) + " for step amount.");
-        return v_globals.valueNull;
+      if (((arg3 != null) && (arg3.type != 3))) {
+        EX_InvalidArgument(ec, msg + getTypeFromId(arg3.type) + " for step amount.");
+        return globals.valueNull;
       }
-      v_EX_InvalidArgument(v_ec, "Invalid slice arguments.");
-      return v_globals.valueNull;
+      EX_InvalidArgument(ec, "Invalid slice arguments.");
+      return globals.valueNull;
     } else {
-      v_EX_InvalidArgument(v_ec, v_msg + " slice step cannot be 0.");
-      return v_globals.valueNull;
+      EX_InvalidArgument(ec, msg + " slice step cannot be 0.");
+      return globals.valueNull;
     }
   }
-  v_status = v_canonicalizeListSliceArgs(PST_intBuffer16, v_arg1, v_arg2, v_begin, v_end, v_step, v_length, v_isForward);
-  if ((v_status == 1)) {
-    v_begin = PST_intBuffer16[0];
-    v_end = PST_intBuffer16[1];
-    if (v_isString) {
-      v_outputString = new ArrayList<String>();
-      if (v_isForward) {
-        if ((v_step == 1)) {
-          return v_buildString(v_globals, v_originalString.substring(v_begin, v_begin + (v_end - v_begin)));
+  status = canonicalizeListSliceArgs(PST_intBuffer16, arg1, arg2, begin, end, step, length, isForward);
+  if ((status == 1)) {
+    begin = PST_intBuffer16[0];
+    end = PST_intBuffer16[1];
+    if (isString) {
+      outputString = new ArrayList<String>();
+      if (isForward) {
+        if ((step == 1)) {
+          return buildString(globals, originalString.substring(begin, begin + (end - begin)));
         } else {
-          while ((v_begin < v_end)) {
-            v_outputString.add(("" + v_originalString.charAt(v_begin)));
-            v_begin += v_step;
+          while ((begin < end)) {
+            outputString.add(("" + originalString.charAt(begin)));
+            begin += step;
           }
         }
       } else {
-        while ((v_begin > v_end)) {
-          v_outputString.add(("" + v_originalString.charAt(v_begin)));
-          v_begin += v_step;
+        while ((begin > end)) {
+          outputString.add(("" + originalString.charAt(begin)));
+          begin += step;
         }
       }
-      v_value = v_buildString(v_globals, PST_joinList("", v_outputString));
+      value = buildString(globals, PST_joinList("", outputString));
     } else {
-      v_outputList = v_makeEmptyList(v_originalList.type, 10);
-      if (v_isForward) {
-        while ((v_begin < v_end)) {
-          v_addToList(v_outputList, v_originalList.array[v_begin]);
-          v_begin += v_step;
+      outputList = makeEmptyList(originalList.type, 10);
+      if (isForward) {
+        while ((begin < end)) {
+          addToList(outputList, originalList.array[begin]);
+          begin += step;
         }
       } else {
-        while ((v_begin > v_end)) {
-          v_addToList(v_outputList, v_originalList.array[v_begin]);
-          v_begin += v_step;
+        while ((begin > end)) {
+          addToList(outputList, originalList.array[begin]);
+          begin += step;
         }
       }
-      v_value = new Value(6, v_outputList);
+      value = new Value(6, outputList);
     }
   } else {
-    if ((v_status == 0)) {
-      if (v_isString) {
-        v_value = v_globals.stringEmpty;
+    if ((status == 0)) {
+      if (isString) {
+        value = globals.stringEmpty;
       } else {
-        v_value = new Value(6, v_makeEmptyList(v_originalList.type, 0));
+        value = new Value(6, makeEmptyList(originalList.type, 0));
       }
     } else {
-      if ((v_status == 2)) {
-        if (!v_isString) {
-          v_outputList = v_makeEmptyList(v_originalList.type, v_length);
-          v_i = 0;
-          while ((v_i < v_length)) {
-            v_addToList(v_outputList, v_originalList.array[v_i]);
-            v_i += 1;
+      if ((status == 2)) {
+        if (!isString) {
+          outputList = makeEmptyList(originalList.type, length);
+          i = 0;
+          while ((i < length)) {
+            addToList(outputList, originalList.array[i]);
+            i += 1;
           }
-          v_value = new Value(6, v_outputList);
+          value = new Value(6, outputList);
         }
       } else {
-        String v_msg = null;
-        if (v_isString) {
-          v_msg = "String";
+        String msg = null;
+        if (isString) {
+          msg = "String";
         } else {
-          v_msg = "List";
+          msg = "List";
         }
-        if ((v_status == 3)) {
-          v_msg += " slice begin index is out of range.";
+        if ((status == 3)) {
+          msg += " slice begin index is out of range.";
         } else {
-          if (v_isForward) {
-            v_msg += " slice begin index must occur before the end index when step is positive.";
+          if (isForward) {
+            msg += " slice begin index must occur before the end index when step is positive.";
           } else {
-            v_msg += " slice begin index must occur after the end index when the step is negative.";
+            msg += " slice begin index must occur after the end index when the step is negative.";
           }
         }
-        v_EX_IndexOutOfRange(v_ec, v_msg);
-        return v_globals.valueNull;
+        EX_IndexOutOfRange(ec, msg);
+        return globals.valueNull;
       }
     }
   }
-  return v_value;
+  return value;
 }
 
-public static int v_prepareToSuspend(ExecutionContext v_ec, StackFrame v_stack, int v_valueStackSize, int v_currentPc) {
-  v_ec.stackTop = v_stack;
-  v_ec.currentValueStackSize = v_valueStackSize;
-  v_stack.pc = (v_currentPc + 1);
+public static int prepareToSuspend(ExecutionContext ec, StackFrame stack, int valueStackSize, int currentPc) {
+  ec.stackTop = stack;
+  ec.currentValueStackSize = valueStackSize;
+  stack.pc = (currentPc + 1);
   return 0;
 }
 
-public static int[] v_primitiveMethodsInitializeLookup(HashMap<String, Integer> v_nameLookups) {
-  int v_length = v_nameLookups.size();
-  int[] v_lookup = new int[v_length];
-  int v_i = 0;
-  while ((v_i < v_length)) {
-    v_lookup[v_i] = -1;
-    v_i += 1;
+public static int[] primitiveMethodsInitializeLookup(HashMap<String, Integer> nameLookups) {
+  int length = nameLookups.size();
+  int[] lookup = new int[length];
+  int i = 0;
+  while ((i < length)) {
+    lookup[i] = -1;
+    i += 1;
   }
-  if (v_nameLookups.containsKey("add")) {
-    v_lookup[v_nameLookups.get("add")] = 0;
+  if (nameLookups.containsKey("add")) {
+    lookup[nameLookups.get("add")] = 0;
   }
-  if (v_nameLookups.containsKey("argCountMax")) {
-    v_lookup[v_nameLookups.get("argCountMax")] = 1;
+  if (nameLookups.containsKey("argCountMax")) {
+    lookup[nameLookups.get("argCountMax")] = 1;
   }
-  if (v_nameLookups.containsKey("argCountMin")) {
-    v_lookup[v_nameLookups.get("argCountMin")] = 2;
+  if (nameLookups.containsKey("argCountMin")) {
+    lookup[nameLookups.get("argCountMin")] = 2;
   }
-  if (v_nameLookups.containsKey("choice")) {
-    v_lookup[v_nameLookups.get("choice")] = 3;
+  if (nameLookups.containsKey("choice")) {
+    lookup[nameLookups.get("choice")] = 3;
   }
-  if (v_nameLookups.containsKey("clear")) {
-    v_lookup[v_nameLookups.get("clear")] = 4;
+  if (nameLookups.containsKey("clear")) {
+    lookup[nameLookups.get("clear")] = 4;
   }
-  if (v_nameLookups.containsKey("clone")) {
-    v_lookup[v_nameLookups.get("clone")] = 5;
+  if (nameLookups.containsKey("clone")) {
+    lookup[nameLookups.get("clone")] = 5;
   }
-  if (v_nameLookups.containsKey("concat")) {
-    v_lookup[v_nameLookups.get("concat")] = 6;
+  if (nameLookups.containsKey("concat")) {
+    lookup[nameLookups.get("concat")] = 6;
   }
-  if (v_nameLookups.containsKey("contains")) {
-    v_lookup[v_nameLookups.get("contains")] = 7;
+  if (nameLookups.containsKey("contains")) {
+    lookup[nameLookups.get("contains")] = 7;
   }
-  if (v_nameLookups.containsKey("createInstance")) {
-    v_lookup[v_nameLookups.get("createInstance")] = 8;
+  if (nameLookups.containsKey("createInstance")) {
+    lookup[nameLookups.get("createInstance")] = 8;
   }
-  if (v_nameLookups.containsKey("endsWith")) {
-    v_lookup[v_nameLookups.get("endsWith")] = 9;
+  if (nameLookups.containsKey("endsWith")) {
+    lookup[nameLookups.get("endsWith")] = 9;
   }
-  if (v_nameLookups.containsKey("filter")) {
-    v_lookup[v_nameLookups.get("filter")] = 10;
+  if (nameLookups.containsKey("filter")) {
+    lookup[nameLookups.get("filter")] = 10;
   }
-  if (v_nameLookups.containsKey("get")) {
-    v_lookup[v_nameLookups.get("get")] = 11;
+  if (nameLookups.containsKey("get")) {
+    lookup[nameLookups.get("get")] = 11;
   }
-  if (v_nameLookups.containsKey("getName")) {
-    v_lookup[v_nameLookups.get("getName")] = 12;
+  if (nameLookups.containsKey("getName")) {
+    lookup[nameLookups.get("getName")] = 12;
   }
-  if (v_nameLookups.containsKey("indexOf")) {
-    v_lookup[v_nameLookups.get("indexOf")] = 13;
+  if (nameLookups.containsKey("indexOf")) {
+    lookup[nameLookups.get("indexOf")] = 13;
   }
-  if (v_nameLookups.containsKey("insert")) {
-    v_lookup[v_nameLookups.get("insert")] = 14;
+  if (nameLookups.containsKey("insert")) {
+    lookup[nameLookups.get("insert")] = 14;
   }
-  if (v_nameLookups.containsKey("invoke")) {
-    v_lookup[v_nameLookups.get("invoke")] = 15;
+  if (nameLookups.containsKey("invoke")) {
+    lookup[nameLookups.get("invoke")] = 15;
   }
-  if (v_nameLookups.containsKey("isA")) {
-    v_lookup[v_nameLookups.get("isA")] = 16;
+  if (nameLookups.containsKey("isA")) {
+    lookup[nameLookups.get("isA")] = 16;
   }
-  if (v_nameLookups.containsKey("join")) {
-    v_lookup[v_nameLookups.get("join")] = 17;
+  if (nameLookups.containsKey("join")) {
+    lookup[nameLookups.get("join")] = 17;
   }
-  if (v_nameLookups.containsKey("keys")) {
-    v_lookup[v_nameLookups.get("keys")] = 18;
+  if (nameLookups.containsKey("keys")) {
+    lookup[nameLookups.get("keys")] = 18;
   }
-  if (v_nameLookups.containsKey("lower")) {
-    v_lookup[v_nameLookups.get("lower")] = 19;
+  if (nameLookups.containsKey("lower")) {
+    lookup[nameLookups.get("lower")] = 19;
   }
-  if (v_nameLookups.containsKey("ltrim")) {
-    v_lookup[v_nameLookups.get("ltrim")] = 20;
+  if (nameLookups.containsKey("ltrim")) {
+    lookup[nameLookups.get("ltrim")] = 20;
   }
-  if (v_nameLookups.containsKey("map")) {
-    v_lookup[v_nameLookups.get("map")] = 21;
+  if (nameLookups.containsKey("map")) {
+    lookup[nameLookups.get("map")] = 21;
   }
-  if (v_nameLookups.containsKey("merge")) {
-    v_lookup[v_nameLookups.get("merge")] = 22;
+  if (nameLookups.containsKey("merge")) {
+    lookup[nameLookups.get("merge")] = 22;
   }
-  if (v_nameLookups.containsKey("pop")) {
-    v_lookup[v_nameLookups.get("pop")] = 23;
+  if (nameLookups.containsKey("pop")) {
+    lookup[nameLookups.get("pop")] = 23;
   }
-  if (v_nameLookups.containsKey("remove")) {
-    v_lookup[v_nameLookups.get("remove")] = 24;
+  if (nameLookups.containsKey("remove")) {
+    lookup[nameLookups.get("remove")] = 24;
   }
-  if (v_nameLookups.containsKey("replace")) {
-    v_lookup[v_nameLookups.get("replace")] = 25;
+  if (nameLookups.containsKey("replace")) {
+    lookup[nameLookups.get("replace")] = 25;
   }
-  if (v_nameLookups.containsKey("reverse")) {
-    v_lookup[v_nameLookups.get("reverse")] = 26;
+  if (nameLookups.containsKey("reverse")) {
+    lookup[nameLookups.get("reverse")] = 26;
   }
-  if (v_nameLookups.containsKey("rtrim")) {
-    v_lookup[v_nameLookups.get("rtrim")] = 27;
+  if (nameLookups.containsKey("rtrim")) {
+    lookup[nameLookups.get("rtrim")] = 27;
   }
-  if (v_nameLookups.containsKey("shuffle")) {
-    v_lookup[v_nameLookups.get("shuffle")] = 28;
+  if (nameLookups.containsKey("shuffle")) {
+    lookup[nameLookups.get("shuffle")] = 28;
   }
-  if (v_nameLookups.containsKey("sort")) {
-    v_lookup[v_nameLookups.get("sort")] = 29;
+  if (nameLookups.containsKey("sort")) {
+    lookup[nameLookups.get("sort")] = 29;
   }
-  if (v_nameLookups.containsKey("split")) {
-    v_lookup[v_nameLookups.get("split")] = 30;
+  if (nameLookups.containsKey("split")) {
+    lookup[nameLookups.get("split")] = 30;
   }
-  if (v_nameLookups.containsKey("startsWith")) {
-    v_lookup[v_nameLookups.get("startsWith")] = 31;
+  if (nameLookups.containsKey("startsWith")) {
+    lookup[nameLookups.get("startsWith")] = 31;
   }
-  if (v_nameLookups.containsKey("trim")) {
-    v_lookup[v_nameLookups.get("trim")] = 32;
+  if (nameLookups.containsKey("trim")) {
+    lookup[nameLookups.get("trim")] = 32;
   }
-  if (v_nameLookups.containsKey("upper")) {
-    v_lookup[v_nameLookups.get("upper")] = 33;
+  if (nameLookups.containsKey("upper")) {
+    lookup[nameLookups.get("upper")] = 33;
   }
-  if (v_nameLookups.containsKey("values")) {
-    v_lookup[v_nameLookups.get("values")] = 34;
+  if (nameLookups.containsKey("values")) {
+    lookup[nameLookups.get("values")] = 34;
   }
-  return v_lookup;
+  return lookup;
 }
 
-public static String v_primitiveMethodWrongArgCountError(String v_name, int v_expected, int v_actual) {
-  String v_output = "";
-  if ((v_expected == 0)) {
-    v_output = v_name + " does not accept any arguments.";
+public static String primitiveMethodWrongArgCountError(String name, int expected, int actual) {
+  String output = "";
+  if ((expected == 0)) {
+    output = name + " does not accept any arguments.";
   } else {
-    if ((v_expected == 1)) {
-      v_output = v_name + " accepts exactly 1 argument.";
+    if ((expected == 1)) {
+      output = name + " accepts exactly 1 argument.";
     } else {
-      v_output = v_name + " requires " + Integer.toString(v_expected) + " arguments.";
+      output = name + " requires " + Integer.toString(expected) + " arguments.";
     }
   }
-  return v_output + " Found: " + Integer.toString(v_actual);
+  return output + " Found: " + Integer.toString(actual);
 }
 
-public static int v_printToStdOut(String v_prefix, String v_line) {
-  if ((v_prefix == null)) {
-    PlatformTranslationHelper.printStdOut(v_line);
+public static int printToStdOut(String prefix, String line) {
+  if ((prefix == null)) {
+    PlatformTranslationHelper.printStdOut(line);
   } else {
-    String v_canonical = v_line.replace((CharSequence) "\r\n", (CharSequence) "\n").replace((CharSequence) "\r", (CharSequence) "\n");
-    String[] v_lines = PST_literalStringSplit(v_canonical, "\n");
-    int v_i = 0;
-    while ((v_i < v_lines.length)) {
-      PlatformTranslationHelper.printStdOut(v_prefix + ": " + v_lines[v_i]);
-      v_i += 1;
+    String canonical = line.replace((CharSequence) "\r\n", (CharSequence) "\n").replace((CharSequence) "\r", (CharSequence) "\n");
+    String[] lines = PST_literalStringSplit(canonical, "\n");
+    int i = 0;
+    while ((i < lines.length)) {
+      PlatformTranslationHelper.printStdOut(prefix + ": " + lines[i]);
+      i += 1;
     }
   }
   return 0;
 }
 
-public static int v_qsortHelper(String[] v_keyStringList, double[] v_keyNumList, int[] v_indices, boolean v_isString, int v_startIndex, int v_endIndex) {
-  if (((v_endIndex - v_startIndex) <= 0)) {
+public static int qsortHelper(String[] keyStringList, double[] keyNumList, int[] indices, boolean isString, int startIndex, int endIndex) {
+  if (((endIndex - startIndex) <= 0)) {
     return 0;
   }
-  if (((v_endIndex - v_startIndex) == 1)) {
-    if (v_sortHelperIsRevOrder(v_keyStringList, v_keyNumList, v_isString, v_startIndex, v_endIndex)) {
-      v_sortHelperSwap(v_keyStringList, v_keyNumList, v_indices, v_isString, v_startIndex, v_endIndex);
+  if (((endIndex - startIndex) == 1)) {
+    if (sortHelperIsRevOrder(keyStringList, keyNumList, isString, startIndex, endIndex)) {
+      sortHelperSwap(keyStringList, keyNumList, indices, isString, startIndex, endIndex);
     }
     return 0;
   }
-  int v_mid = ((v_endIndex + v_startIndex) >> 1);
-  v_sortHelperSwap(v_keyStringList, v_keyNumList, v_indices, v_isString, v_mid, v_startIndex);
-  int v_upperPointer = (v_endIndex + 1);
-  int v_lowerPointer = (v_startIndex + 1);
-  while ((v_upperPointer > v_lowerPointer)) {
-    if (v_sortHelperIsRevOrder(v_keyStringList, v_keyNumList, v_isString, v_startIndex, v_lowerPointer)) {
-      v_lowerPointer += 1;
+  int mid = ((endIndex + startIndex) >> 1);
+  sortHelperSwap(keyStringList, keyNumList, indices, isString, mid, startIndex);
+  int upperPointer = (endIndex + 1);
+  int lowerPointer = (startIndex + 1);
+  while ((upperPointer > lowerPointer)) {
+    if (sortHelperIsRevOrder(keyStringList, keyNumList, isString, startIndex, lowerPointer)) {
+      lowerPointer += 1;
     } else {
-      v_upperPointer -= 1;
-      v_sortHelperSwap(v_keyStringList, v_keyNumList, v_indices, v_isString, v_lowerPointer, v_upperPointer);
+      upperPointer -= 1;
+      sortHelperSwap(keyStringList, keyNumList, indices, isString, lowerPointer, upperPointer);
     }
   }
-  int v_midIndex = (v_lowerPointer - 1);
-  v_sortHelperSwap(v_keyStringList, v_keyNumList, v_indices, v_isString, v_midIndex, v_startIndex);
-  v_qsortHelper(v_keyStringList, v_keyNumList, v_indices, v_isString, v_startIndex, (v_midIndex - 1));
-  v_qsortHelper(v_keyStringList, v_keyNumList, v_indices, v_isString, (v_midIndex + 1), v_endIndex);
+  int midIndex = (lowerPointer - 1);
+  sortHelperSwap(keyStringList, keyNumList, indices, isString, midIndex, startIndex);
+  qsortHelper(keyStringList, keyNumList, indices, isString, startIndex, (midIndex - 1));
+  qsortHelper(keyStringList, keyNumList, indices, isString, (midIndex + 1), endIndex);
   return 0;
 }
 
-public static Value v_queryValue(VmContext v_vm, int v_execId, int v_stackFrameOffset, String[] v_steps) {
-  if ((v_execId == -1)) {
-    v_execId = v_vm.lastExecutionContextId;
+public static Value queryValue(VmContext vm, int execId, int stackFrameOffset, String[] steps) {
+  if ((execId == -1)) {
+    execId = vm.lastExecutionContextId;
   }
-  ExecutionContext v_ec = v_vm.executionContexts.get(v_execId);
-  StackFrame v_stackFrame = v_ec.stackTop;
-  while ((v_stackFrameOffset > 0)) {
-    v_stackFrameOffset -= 1;
-    v_stackFrame = v_stackFrame.previous;
+  ExecutionContext ec = vm.executionContexts.get(execId);
+  StackFrame stackFrame = ec.stackTop;
+  while ((stackFrameOffset > 0)) {
+    stackFrameOffset -= 1;
+    stackFrame = stackFrame.previous;
   }
-  Value v_current = null;
-  int v_i = 0;
-  int v_j = 0;
-  int v_len = v_steps.length;
-  v_i = 0;
-  while ((v_i < v_steps.length)) {
-    if (((v_current == null) && (v_i > 0))) {
+  Value current = null;
+  int i = 0;
+  int j = 0;
+  int len = steps.length;
+  i = 0;
+  while ((i < steps.length)) {
+    if (((current == null) && (i > 0))) {
       return null;
     }
-    String v_step = v_steps[v_i];
-    if (v_isStringEqual(".", v_step)) {
+    String step = steps[i];
+    if (isStringEqual(".", step)) {
       return null;
     } else {
-      if (v_isStringEqual("this", v_step)) {
-        v_current = v_stackFrame.objectContext;
+      if (isStringEqual("this", step)) {
+        current = stackFrame.objectContext;
       } else {
-        if (v_isStringEqual("class", v_step)) {
+        if (isStringEqual("class", step)) {
           return null;
         } else {
-          if (v_isStringEqual("local", v_step)) {
-            v_i += 1;
-            v_step = v_steps[v_i];
-            HashMap<Integer, ArrayList<String>> v_localNamesByFuncPc = v_vm.symbolData.localVarNamesById;
-            ArrayList<String> v_localNames = null;
-            if (((v_localNamesByFuncPc == null) || (v_localNamesByFuncPc.size() == 0))) {
+          if (isStringEqual("local", step)) {
+            i += 1;
+            step = steps[i];
+            HashMap<Integer, ArrayList<String>> localNamesByFuncPc = vm.symbolData.localVarNamesById;
+            ArrayList<String> localNames = null;
+            if (((localNamesByFuncPc == null) || (localNamesByFuncPc.size() == 0))) {
               return null;
             }
-            v_j = v_stackFrame.pc;
-            while ((v_j >= 0)) {
-              if (v_localNamesByFuncPc.containsKey(v_j)) {
-                v_localNames = v_localNamesByFuncPc.get(v_j);
-                v_j = -1;
+            j = stackFrame.pc;
+            while ((j >= 0)) {
+              if (localNamesByFuncPc.containsKey(j)) {
+                localNames = localNamesByFuncPc.get(j);
+                j = -1;
               }
-              v_j -= 1;
+              j -= 1;
             }
-            if ((v_localNames == null)) {
+            if ((localNames == null)) {
               return null;
             }
-            int v_localId = -1;
-            if ((v_localNames != null)) {
-              v_j = 0;
-              while ((v_j < v_localNames.size())) {
-                if (v_isStringEqual(v_localNames.get(v_j), v_step)) {
-                  v_localId = v_j;
-                  v_j = v_localNames.size();
+            int localId = -1;
+            if ((localNames != null)) {
+              j = 0;
+              while ((j < localNames.size())) {
+                if (isStringEqual(localNames.get(j), step)) {
+                  localId = j;
+                  j = localNames.size();
                 }
-                v_j += 1;
+                j += 1;
               }
             }
-            if ((v_localId == -1)) {
+            if ((localId == -1)) {
               return null;
             }
-            int v_localOffset = (v_localId + v_stackFrame.localsStackOffset);
-            if ((v_ec.localsStackSet[v_localOffset] != v_stackFrame.localsStackSetToken)) {
+            int localOffset = (localId + stackFrame.localsStackOffset);
+            if ((ec.localsStackSet[localOffset] != stackFrame.localsStackSetToken)) {
               return null;
             }
-            v_current = v_ec.localsStack[v_localOffset];
+            current = ec.localsStack[localOffset];
           } else {
-            if (v_isStringEqual("index", v_step)) {
+            if (isStringEqual("index", step)) {
               return null;
             } else {
-              if (v_isStringEqual("key-int", v_step)) {
+              if (isStringEqual("key-int", step)) {
                 return null;
               } else {
-                if (v_isStringEqual("key-str", v_step)) {
+                if (isStringEqual("key-str", step)) {
                   return null;
                 } else {
-                  if (v_isStringEqual("key-obj", v_step)) {
+                  if (isStringEqual("key-obj", step)) {
                     return null;
                   } else {
                     return null;
@@ -6145,237 +6145,237 @@ public static Value v_queryValue(VmContext v_vm, int v_execId, int v_stackFrameO
         }
       }
     }
-    v_i += 1;
+    i += 1;
   }
-  return v_current;
+  return current;
 }
 
-public static int v_read_integer(int[] v_pindex, String v_raw, int v_length, String v_alphaNums) {
-  int v_num = 0;
-  char v_c = v_raw.charAt(v_pindex[0]);
-  v_pindex[0] = (v_pindex[0] + 1);
-  if ((v_c == '%')) {
-    String v_value = v_read_till(v_pindex, v_raw, v_length, '%');
-    v_num = Integer.parseInt(v_value);
+public static int read_integer(int[] pindex, String raw, int length, String alphaNums) {
+  int num = 0;
+  char c = raw.charAt(pindex[0]);
+  pindex[0] = (pindex[0] + 1);
+  if ((c == '%')) {
+    String value = read_till(pindex, raw, length, '%');
+    num = Integer.parseInt(value);
   } else {
-    if ((v_c == '@')) {
-      v_num = v_read_integer(v_pindex, v_raw, v_length, v_alphaNums);
-      v_num *= 62;
-      v_num += v_read_integer(v_pindex, v_raw, v_length, v_alphaNums);
+    if ((c == '@')) {
+      num = read_integer(pindex, raw, length, alphaNums);
+      num *= 62;
+      num += read_integer(pindex, raw, length, alphaNums);
     } else {
-      if ((v_c == '#')) {
-        v_num = v_read_integer(v_pindex, v_raw, v_length, v_alphaNums);
-        v_num *= 62;
-        v_num += v_read_integer(v_pindex, v_raw, v_length, v_alphaNums);
-        v_num *= 62;
-        v_num += v_read_integer(v_pindex, v_raw, v_length, v_alphaNums);
+      if ((c == '#')) {
+        num = read_integer(pindex, raw, length, alphaNums);
+        num *= 62;
+        num += read_integer(pindex, raw, length, alphaNums);
+        num *= 62;
+        num += read_integer(pindex, raw, length, alphaNums);
       } else {
-        if ((v_c == '^')) {
-          v_num = (-1 * v_read_integer(v_pindex, v_raw, v_length, v_alphaNums));
+        if ((c == '^')) {
+          num = (-1 * read_integer(pindex, raw, length, alphaNums));
         } else {
           // TODO: string.IndexOfChar(c);
-          v_num = v_alphaNums.indexOf(("" + v_c));
-          if ((v_num == -1)) {
+          num = alphaNums.indexOf(("" + c));
+          if ((num == -1)) {
           }
         }
       }
     }
   }
-  return v_num;
+  return num;
 }
 
-public static String v_read_string(int[] v_pindex, String v_raw, int v_length, String v_alphaNums) {
-  String v_b64 = v_read_till(v_pindex, v_raw, v_length, '%');
-  return PST_base64ToString(v_b64);
+public static String read_string(int[] pindex, String raw, int length, String alphaNums) {
+  String b64 = read_till(pindex, raw, length, '%');
+  return PST_base64ToString(b64);
 }
 
-public static String v_read_till(int[] v_index, String v_raw, int v_length, char v_end) {
-  ArrayList<Character> v_output = new ArrayList<Character>();
-  boolean v_ctn = true;
-  char v_c = ' ';
-  while (v_ctn) {
-    v_c = v_raw.charAt(v_index[0]);
-    if ((v_c == v_end)) {
-      v_ctn = false;
+public static String read_till(int[] index, String raw, int length, char end) {
+  ArrayList<Character> output = new ArrayList<Character>();
+  boolean ctn = true;
+  char c = ' ';
+  while (ctn) {
+    c = raw.charAt(index[0]);
+    if ((c == end)) {
+      ctn = false;
     } else {
-      v_output.add(v_c);
+      output.add(c);
     }
-    v_index[0] = (v_index[0] + 1);
+    index[0] = (index[0] + 1);
   }
-  return PST_joinChars(v_output);
+  return PST_joinChars(output);
 }
 
-public static int[] v_reallocIntArray(int[] v_original, int v_requiredCapacity) {
-  int v_oldSize = v_original.length;
-  int v_size = v_oldSize;
-  while ((v_size < v_requiredCapacity)) {
-    v_size *= 2;
+public static int[] reallocIntArray(int[] original, int requiredCapacity) {
+  int oldSize = original.length;
+  int size = oldSize;
+  while ((size < requiredCapacity)) {
+    size *= 2;
   }
-  int[] v_output = new int[v_size];
-  int v_i = 0;
-  while ((v_i < v_oldSize)) {
-    v_output[v_i] = v_original[v_i];
-    v_i += 1;
+  int[] output = new int[size];
+  int i = 0;
+  while ((i < oldSize)) {
+    output[i] = original[i];
+    i += 1;
   }
-  return v_output;
+  return output;
 }
 
-public static Value v_Reflect_allClasses(VmContext v_vm) {
-  int[] v_generics = new int[1];
-  v_generics[0] = 10;
-  ListImpl v_output = v_makeEmptyList(v_generics, 20);
-  ClassInfo[] v_classTable = v_vm.metadata.classTable;
-  int v_i = 1;
-  while ((v_i < v_classTable.length)) {
-    ClassInfo v_classInfo = v_classTable[v_i];
-    if ((v_classInfo == null)) {
-      v_i = v_classTable.length;
+public static Value Reflect_allClasses(VmContext vm) {
+  int[] generics = new int[1];
+  generics[0] = 10;
+  ListImpl output = makeEmptyList(generics, 20);
+  ClassInfo[] classTable = vm.metadata.classTable;
+  int i = 1;
+  while ((i < classTable.length)) {
+    ClassInfo classInfo = classTable[i];
+    if ((classInfo == null)) {
+      i = classTable.length;
     } else {
-      v_addToList(v_output, new Value(10, new org.crayonlang.interpreter.structs.ClassValue(false, v_classInfo.id)));
+      addToList(output, new Value(10, new org.crayonlang.interpreter.structs.ClassValue(false, classInfo.id)));
     }
-    v_i += 1;
+    i += 1;
   }
-  return new Value(6, v_output);
+  return new Value(6, output);
 }
 
-public static Value v_Reflect_getMethods(VmContext v_vm, ExecutionContext v_ec, Value v_methodSource) {
-  ListImpl v_output = v_makeEmptyList(null, 8);
-  if ((v_methodSource.type == 8)) {
-    ObjectInstance v_objInstance1 = ((ObjectInstance) v_methodSource.internalValue);
-    ClassInfo v_classInfo = v_vm.metadata.classTable[v_objInstance1.classId];
-    int v_i = 0;
-    while ((v_i < v_classInfo.functionIds.length)) {
-      int v_functionId = v_classInfo.functionIds[v_i];
-      if ((v_functionId != -1)) {
-        v_addToList(v_output, new Value(9, new FunctionPointer(2, v_methodSource, v_objInstance1.classId, v_functionId, null)));
+public static Value Reflect_getMethods(VmContext vm, ExecutionContext ec, Value methodSource) {
+  ListImpl output = makeEmptyList(null, 8);
+  if ((methodSource.type == 8)) {
+    ObjectInstance objInstance1 = ((ObjectInstance) methodSource.internalValue);
+    ClassInfo classInfo = vm.metadata.classTable[objInstance1.classId];
+    int i = 0;
+    while ((i < classInfo.functionIds.length)) {
+      int functionId = classInfo.functionIds[i];
+      if ((functionId != -1)) {
+        addToList(output, new Value(9, new FunctionPointer(2, methodSource, objInstance1.classId, functionId, null)));
       }
-      v_i += 1;
+      i += 1;
     }
   } else {
-    org.crayonlang.interpreter.structs.ClassValue v_classValue = ((org.crayonlang.interpreter.structs.ClassValue) v_methodSource.internalValue);
-    ClassInfo v_classInfo = v_vm.metadata.classTable[v_classValue.classId];
-    v_EX_UnsupportedOperation(v_ec, "static method reflection not implemented yet.");
+    org.crayonlang.interpreter.structs.ClassValue classValue = ((org.crayonlang.interpreter.structs.ClassValue) methodSource.internalValue);
+    ClassInfo classInfo = vm.metadata.classTable[classValue.classId];
+    EX_UnsupportedOperation(ec, "static method reflection not implemented yet.");
   }
-  return new Value(6, v_output);
+  return new Value(6, output);
 }
 
-public static int v_resetLocalsStackTokens(ExecutionContext v_ec, StackFrame v_stack) {
-  Value[] v_localsStack = v_ec.localsStack;
-  int[] v_localsStackSet = v_ec.localsStackSet;
-  int v_i = v_stack.localsStackOffsetEnd;
-  while ((v_i < v_localsStackSet.length)) {
-    v_localsStackSet[v_i] = 0;
-    v_localsStack[v_i] = null;
-    v_i += 1;
+public static int resetLocalsStackTokens(ExecutionContext ec, StackFrame stack) {
+  Value[] localsStack = ec.localsStack;
+  int[] localsStackSet = ec.localsStackSet;
+  int i = stack.localsStackOffsetEnd;
+  while ((i < localsStackSet.length)) {
+    localsStackSet[i] = 0;
+    localsStack[i] = null;
+    i += 1;
   }
-  StackFrame v_stackWalker = v_stack;
-  while ((v_stackWalker != null)) {
-    int v_token = v_stackWalker.localsStackSetToken;
-    v_stackWalker.localsStackSetToken = 1;
-    v_i = v_stackWalker.localsStackOffset;
-    while ((v_i < v_stackWalker.localsStackOffsetEnd)) {
-      if ((v_localsStackSet[v_i] == v_token)) {
-        v_localsStackSet[v_i] = 1;
+  StackFrame stackWalker = stack;
+  while ((stackWalker != null)) {
+    int token = stackWalker.localsStackSetToken;
+    stackWalker.localsStackSetToken = 1;
+    i = stackWalker.localsStackOffset;
+    while ((i < stackWalker.localsStackOffsetEnd)) {
+      if ((localsStackSet[i] == token)) {
+        localsStackSet[i] = 1;
       } else {
-        v_localsStackSet[v_i] = 0;
-        v_localsStack[v_i] = null;
+        localsStackSet[i] = 0;
+        localsStack[i] = null;
       }
-      v_i += 1;
+      i += 1;
     }
-    v_stackWalker = v_stackWalker.previous;
+    stackWalker = stackWalker.previous;
   }
-  v_ec.localsStackSetToken = 1;
+  ec.localsStackSetToken = 1;
   return -1;
 }
 
-public static int v_resolvePrimitiveMethodName2(int[] v_lookup, int v_type, int v_globalNameId) {
-  int v_output = v_lookup[v_globalNameId];
-  if ((v_output != -1)) {
-    switch ((v_type + (11 * v_output))) {
+public static int resolvePrimitiveMethodName2(int[] lookup, int type, int globalNameId) {
+  int output = lookup[globalNameId];
+  if ((output != -1)) {
+    switch ((type + (11 * output))) {
       case 82:
-        return v_output;
+        return output;
       case 104:
-        return v_output;
+        return output;
       case 148:
-        return v_output;
+        return output;
       case 214:
-        return v_output;
+        return output;
       case 225:
-        return v_output;
+        return output;
       case 280:
-        return v_output;
+        return output;
       case 291:
-        return v_output;
+        return output;
       case 302:
-        return v_output;
+        return output;
       case 335:
-        return v_output;
+        return output;
       case 346:
-        return v_output;
+        return output;
       case 357:
-        return v_output;
+        return output;
       case 368:
-        return v_output;
+        return output;
       case 6:
-        return v_output;
+        return output;
       case 39:
-        return v_output;
+        return output;
       case 50:
-        return v_output;
+        return output;
       case 61:
-        return v_output;
+        return output;
       case 72:
-        return v_output;
+        return output;
       case 83:
-        return v_output;
+        return output;
       case 116:
-        return v_output;
+        return output;
       case 160:
-        return v_output;
+        return output;
       case 193:
-        return v_output;
+        return output;
       case 237:
-        return v_output;
+        return output;
       case 259:
-        return v_output;
+        return output;
       case 270:
-        return v_output;
+        return output;
       case 292:
-        return v_output;
+        return output;
       case 314:
-        return v_output;
+        return output;
       case 325:
-        return v_output;
+        return output;
       case 51:
-        return v_output;
+        return output;
       case 62:
-        return v_output;
+        return output;
       case 84:
-        return v_output;
+        return output;
       case 128:
-        return v_output;
+        return output;
       case 205:
-        return v_output;
+        return output;
       case 249:
-        return v_output;
+        return output;
       case 271:
-        return v_output;
+        return output;
       case 381:
-        return v_output;
+        return output;
       case 20:
-        return v_output;
+        return output;
       case 31:
-        return v_output;
+        return output;
       case 141:
-        return v_output;
+        return output;
       case 174:
-        return v_output;
+        return output;
       case 98:
-        return v_output;
+        return output;
       case 142:
-        return v_output;
+        return output;
       case 186:
-        return v_output;
+        return output;
       default:
         return -1;
     }
@@ -6383,504 +6383,504 @@ public static int v_resolvePrimitiveMethodName2(int[] v_lookup, int v_type, int 
   return -1;
 }
 
-public static Value v_resource_manager_getResourceOfType(VmContext v_vm, String v_userPath, String v_type) {
-  ResourceDB v_db = v_vm.resourceDatabase;
-  HashMap<String, ResourceInfo> v_lookup = v_db.fileInfo;
-  if (v_lookup.containsKey(v_userPath)) {
-    ListImpl v_output = v_makeEmptyList(null, 2);
-    ResourceInfo v_file = v_lookup.get(v_userPath);
-    if (v_file.type.equals(v_type)) {
-      v_addToList(v_output, v_vm.globals.boolTrue);
-      v_addToList(v_output, v_buildString(v_vm.globals, v_file.internalPath));
+public static Value resource_manager_getResourceOfType(VmContext vm, String userPath, String type) {
+  ResourceDB db = vm.resourceDatabase;
+  HashMap<String, ResourceInfo> lookup = db.fileInfo;
+  if (lookup.containsKey(userPath)) {
+    ListImpl output = makeEmptyList(null, 2);
+    ResourceInfo file = lookup.get(userPath);
+    if (file.type.equals(type)) {
+      addToList(output, vm.globals.boolTrue);
+      addToList(output, buildString(vm.globals, file.internalPath));
     } else {
-      v_addToList(v_output, v_vm.globals.boolFalse);
+      addToList(output, vm.globals.boolFalse);
     }
-    return new Value(6, v_output);
+    return new Value(6, output);
   }
-  return v_vm.globals.valueNull;
+  return vm.globals.valueNull;
 }
 
-public static int v_resource_manager_populate_directory_lookup(HashMap<String, ArrayList<String>> v_dirs, String v_path) {
-  String[] v_parts = PST_literalStringSplit(v_path, "/");
-  String v_pathBuilder = "";
-  String v_file = "";
-  int v_i = 0;
-  while ((v_i < v_parts.length)) {
-    v_file = v_parts[v_i];
-    ArrayList<String> v_files = null;
-    if (!v_dirs.containsKey(v_pathBuilder)) {
-      v_files = new ArrayList<String>();
-      v_dirs.put(v_pathBuilder, v_files);
+public static int resource_manager_populate_directory_lookup(HashMap<String, ArrayList<String>> dirs, String path) {
+  String[] parts = PST_literalStringSplit(path, "/");
+  String pathBuilder = "";
+  String file = "";
+  int i = 0;
+  while ((i < parts.length)) {
+    file = parts[i];
+    ArrayList<String> files = null;
+    if (!dirs.containsKey(pathBuilder)) {
+      files = new ArrayList<String>();
+      dirs.put(pathBuilder, files);
     } else {
-      v_files = v_dirs.get(v_pathBuilder);
+      files = dirs.get(pathBuilder);
     }
-    v_files.add(v_file);
-    if ((v_i > 0)) {
-      v_pathBuilder = v_pathBuilder + "/" + v_file;
+    files.add(file);
+    if ((i > 0)) {
+      pathBuilder = pathBuilder + "/" + file;
     } else {
-      v_pathBuilder = v_file;
+      pathBuilder = file;
     }
-    v_i += 1;
+    i += 1;
   }
   return 0;
 }
 
-public static ResourceDB v_resourceManagerInitialize(VmGlobals v_globals, String v_manifest) {
-  HashMap<String, ArrayList<String>> v_filesPerDirectoryBuilder = new HashMap<String, ArrayList<String>>();
-  HashMap<String, ResourceInfo> v_fileInfo = new HashMap<String, ResourceInfo>();
-  ArrayList<Value> v_dataList = new ArrayList<Value>();
-  String[] v_items = PST_literalStringSplit(v_manifest, "\n");
-  ResourceInfo v_resourceInfo = null;
-  String v_type = "";
-  String v_userPath = "";
-  String v_internalPath = "";
-  String v_argument = "";
-  boolean v_isText = false;
-  int v_intType = 0;
-  int v_i = 0;
-  while ((v_i < v_items.length)) {
-    String[] v_itemData = PST_literalStringSplit(v_items[v_i], ",");
-    if ((v_itemData.length >= 3)) {
-      v_type = v_itemData[0];
-      v_isText = "TXT".equals(v_type);
-      if (v_isText) {
-        v_intType = 1;
+public static ResourceDB resourceManagerInitialize(VmGlobals globals, String manifest) {
+  HashMap<String, ArrayList<String>> filesPerDirectoryBuilder = new HashMap<String, ArrayList<String>>();
+  HashMap<String, ResourceInfo> fileInfo = new HashMap<String, ResourceInfo>();
+  ArrayList<Value> dataList = new ArrayList<Value>();
+  String[] items = PST_literalStringSplit(manifest, "\n");
+  ResourceInfo resourceInfo = null;
+  String type = "";
+  String userPath = "";
+  String internalPath = "";
+  String argument = "";
+  boolean isText = false;
+  int intType = 0;
+  int i = 0;
+  while ((i < items.length)) {
+    String[] itemData = PST_literalStringSplit(items[i], ",");
+    if ((itemData.length >= 3)) {
+      type = itemData[0];
+      isText = "TXT".equals(type);
+      if (isText) {
+        intType = 1;
       } else {
-        if (("IMGSH".equals(v_type) || "IMG".equals(v_type))) {
-          v_intType = 2;
+        if (("IMGSH".equals(type) || "IMG".equals(type))) {
+          intType = 2;
         } else {
-          if ("SND".equals(v_type)) {
-            v_intType = 3;
+          if ("SND".equals(type)) {
+            intType = 3;
           } else {
-            if ("TTF".equals(v_type)) {
-              v_intType = 4;
+            if ("TTF".equals(type)) {
+              intType = 4;
             } else {
-              v_intType = 5;
+              intType = 5;
             }
           }
         }
       }
-      v_userPath = v_stringDecode(v_itemData[1]);
-      v_internalPath = v_itemData[2];
-      v_argument = "";
-      if ((v_itemData.length > 3)) {
-        v_argument = v_stringDecode(v_itemData[3]);
+      userPath = stringDecode(itemData[1]);
+      internalPath = itemData[2];
+      argument = "";
+      if ((itemData.length > 3)) {
+        argument = stringDecode(itemData[3]);
       }
-      v_resourceInfo = new ResourceInfo(v_userPath, v_internalPath, v_isText, v_type, v_argument);
-      v_fileInfo.put(v_userPath, v_resourceInfo);
-      v_resource_manager_populate_directory_lookup(v_filesPerDirectoryBuilder, v_userPath);
-      v_dataList.add(v_buildString(v_globals, v_userPath));
-      v_dataList.add(v_buildInteger(v_globals, v_intType));
-      if ((v_internalPath != null)) {
-        v_dataList.add(v_buildString(v_globals, v_internalPath));
+      resourceInfo = new ResourceInfo(userPath, internalPath, isText, type, argument);
+      fileInfo.put(userPath, resourceInfo);
+      resource_manager_populate_directory_lookup(filesPerDirectoryBuilder, userPath);
+      dataList.add(buildString(globals, userPath));
+      dataList.add(buildInteger(globals, intType));
+      if ((internalPath != null)) {
+        dataList.add(buildString(globals, internalPath));
       } else {
-        v_dataList.add(v_globals.valueNull);
+        dataList.add(globals.valueNull);
       }
     }
-    v_i += 1;
+    i += 1;
   }
-  String[] v_dirs = PST_convertStringSetToArray(v_filesPerDirectoryBuilder.keySet());
-  HashMap<String, String[]> v_filesPerDirectorySorted = new HashMap<String, String[]>();
-  v_i = 0;
-  while ((v_i < v_dirs.length)) {
-    String v_dir = v_dirs[v_i];
-    ArrayList<String> v_unsortedDirs = v_filesPerDirectoryBuilder.get(v_dir);
-    String[] v_dirsSorted = v_unsortedDirs.toArray(PST_emptyArrayString);
-    v_dirsSorted = PST_sortedCopyOfStringArray(v_dirsSorted);
-    v_filesPerDirectorySorted.put(v_dir, v_dirsSorted);
-    v_i += 1;
+  String[] dirs = PST_convertStringSetToArray(filesPerDirectoryBuilder.keySet());
+  HashMap<String, String[]> filesPerDirectorySorted = new HashMap<String, String[]>();
+  i = 0;
+  while ((i < dirs.length)) {
+    String dir = dirs[i];
+    ArrayList<String> unsortedDirs = filesPerDirectoryBuilder.get(dir);
+    String[] dirsSorted = unsortedDirs.toArray(PST_emptyArrayString);
+    dirsSorted = PST_sortedCopyOfStringArray(dirsSorted);
+    filesPerDirectorySorted.put(dir, dirsSorted);
+    i += 1;
   }
-  return new ResourceDB(v_filesPerDirectorySorted, v_fileInfo, v_dataList);
+  return new ResourceDB(filesPerDirectorySorted, fileInfo, dataList);
 }
 
-public static void v_reverseList(ListImpl v_list) {
-  int v_len = v_list.size;
-  Value v_t = null;
-  int v_i2 = 0;
-  Value[] v_arr = v_list.array;
-  int v_i = (v_len >> 1);
-  while ((v_i < v_len)) {
-    v_i2 = (v_len - v_i - 1);
-    v_t = v_arr[v_i];
-    v_arr[v_i] = v_arr[v_i2];
-    v_arr[v_i2] = v_t;
-    v_i += 1;
+public static void reverseList(ListImpl list) {
+  int len = list.size;
+  Value t = null;
+  int i2 = 0;
+  Value[] arr = list.array;
+  int i = (len >> 1);
+  while ((i < len)) {
+    i2 = (len - i - 1);
+    t = arr[i];
+    arr[i] = arr[i2];
+    arr[i2] = t;
+    i += 1;
   }
 }
 
-public static InterpreterResult v_runInterpreter(VmContext v_vm, int v_executionContextId) {
-  InterpreterResult v_result = v_interpret(v_vm, v_executionContextId);
-  v_result.executionContextId = v_executionContextId;
-  int v_status = v_result.status;
-  if ((v_status == 1)) {
-    if (v_vm.executionContexts.containsKey(v_executionContextId)) {
-      v_vm.executionContexts.remove(v_executionContextId);
+public static InterpreterResult runInterpreter(VmContext vm, int executionContextId) {
+  InterpreterResult result = interpret(vm, executionContextId);
+  result.executionContextId = executionContextId;
+  int status = result.status;
+  if ((status == 1)) {
+    if (vm.executionContexts.containsKey(executionContextId)) {
+      vm.executionContexts.remove(executionContextId);
     }
-    v_runShutdownHandlers(v_vm);
+    runShutdownHandlers(vm);
   } else {
-    if ((v_status == 3)) {
-      v_printToStdOut(v_vm.environment.stacktracePrefix, v_result.errorMessage);
-      v_runShutdownHandlers(v_vm);
+    if ((status == 3)) {
+      printToStdOut(vm.environment.stacktracePrefix, result.errorMessage);
+      runShutdownHandlers(vm);
     }
   }
-  if ((v_executionContextId == 0)) {
-    v_result.isRootContext = true;
+  if ((executionContextId == 0)) {
+    result.isRootContext = true;
   }
-  return v_result;
+  return result;
 }
 
-public static InterpreterResult v_runInterpreterWithFunctionPointer(VmContext v_vm, Value v_fpValue, Value[] v_args) {
-  int v_newId = (v_vm.lastExecutionContextId + 1);
-  v_vm.lastExecutionContextId = v_newId;
-  ArrayList<Value> v_argList = new ArrayList<Value>();
-  int v_i = 0;
-  while ((v_i < v_args.length)) {
-    v_argList.add(v_args[v_i]);
-    v_i += 1;
+public static InterpreterResult runInterpreterWithFunctionPointer(VmContext vm, Value fpValue, Value[] args) {
+  int newId = (vm.lastExecutionContextId + 1);
+  vm.lastExecutionContextId = newId;
+  ArrayList<Value> argList = new ArrayList<Value>();
+  int i = 0;
+  while ((i < args.length)) {
+    argList.add(args[i]);
+    i += 1;
   }
-  Value[] v_locals = new Value[0];
-  int[] v_localsSet = new int[0];
-  Value[] v_valueStack = new Value[100];
-  v_valueStack[0] = v_fpValue;
-  v_valueStack[1] = new Value(6, v_argList);
-  StackFrame v_stack = new StackFrame((v_vm.byteCode.ops.length - 2), 1, 0, 0, null, false, null, 0, 0, 1, 0, null, null, null);
-  ExecutionContext v_executionContext = new ExecutionContext(v_newId, v_stack, 2, 100, v_valueStack, v_locals, v_localsSet, 1, 0, false, null, false, 0, null);
-  v_vm.executionContexts.put(v_newId, v_executionContext);
-  return v_runInterpreter(v_vm, v_newId);
+  Value[] locals = new Value[0];
+  int[] localsSet = new int[0];
+  Value[] valueStack = new Value[100];
+  valueStack[0] = fpValue;
+  valueStack[1] = new Value(6, argList);
+  StackFrame stack = new StackFrame((vm.byteCode.ops.length - 2), 1, 0, 0, null, false, null, 0, 0, 1, 0, null, null, null);
+  ExecutionContext executionContext = new ExecutionContext(newId, stack, 2, 100, valueStack, locals, localsSet, 1, 0, false, null, false, 0, null);
+  vm.executionContexts.put(newId, executionContext);
+  return runInterpreter(vm, newId);
 }
 
-public static int v_runShutdownHandlers(VmContext v_vm) {
-  while ((v_vm.shutdownHandlers.size() > 0)) {
-    Value v_handler = v_vm.shutdownHandlers.get(0);
-    v_vm.shutdownHandlers.remove(0);
-    v_runInterpreterWithFunctionPointer(v_vm, v_handler, new Value[0]);
+public static int runShutdownHandlers(VmContext vm) {
+  while ((vm.shutdownHandlers.size() > 0)) {
+    Value handler = vm.shutdownHandlers.get(0);
+    vm.shutdownHandlers.remove(0);
+    runInterpreterWithFunctionPointer(vm, handler, new Value[0]);
   }
   return 0;
 }
 
-public static void v_setItemInList(ListImpl v_list, int v_i, Value v_v) {
-  v_list.array[v_i] = v_v;
+public static void setItemInList(ListImpl list, int i, Value v) {
+  list.array[i] = v;
 }
 
-public static boolean v_sortHelperIsRevOrder(String[] v_keyStringList, double[] v_keyNumList, boolean v_isString, int v_indexLeft, int v_indexRight) {
-  if (v_isString) {
-    return (v_keyStringList[v_indexLeft].compareTo(v_keyStringList[v_indexRight]) > 0);
+public static boolean sortHelperIsRevOrder(String[] keyStringList, double[] keyNumList, boolean isString, int indexLeft, int indexRight) {
+  if (isString) {
+    return (keyStringList[indexLeft].compareTo(keyStringList[indexRight]) > 0);
   }
-  return (v_keyNumList[v_indexLeft] > v_keyNumList[v_indexRight]);
+  return (keyNumList[indexLeft] > keyNumList[indexRight]);
 }
 
-public static int v_sortHelperSwap(String[] v_keyStringList, double[] v_keyNumList, int[] v_indices, boolean v_isString, int v_index1, int v_index2) {
-  if ((v_index1 == v_index2)) {
+public static int sortHelperSwap(String[] keyStringList, double[] keyNumList, int[] indices, boolean isString, int index1, int index2) {
+  if ((index1 == index2)) {
     return 0;
   }
-  int v_t = v_indices[v_index1];
-  v_indices[v_index1] = v_indices[v_index2];
-  v_indices[v_index2] = v_t;
-  if (v_isString) {
-    String v_s = v_keyStringList[v_index1];
-    v_keyStringList[v_index1] = v_keyStringList[v_index2];
-    v_keyStringList[v_index2] = v_s;
+  int t = indices[index1];
+  indices[index1] = indices[index2];
+  indices[index2] = t;
+  if (isString) {
+    String s = keyStringList[index1];
+    keyStringList[index1] = keyStringList[index2];
+    keyStringList[index2] = s;
   } else {
-    double v_n = v_keyNumList[v_index1];
-    v_keyNumList[v_index1] = v_keyNumList[v_index2];
-    v_keyNumList[v_index2] = v_n;
+    double n = keyNumList[index1];
+    keyNumList[index1] = keyNumList[index2];
+    keyNumList[index2] = n;
   }
   return 0;
 }
 
-public static int v_sortLists(ListImpl v_keyList, ListImpl v_parallelList, int[] v_intOutParam) {
+public static int sortLists(ListImpl keyList, ListImpl parallelList, int[] intOutParam) {
   PST_intBuffer16[0] = 0;
-  int v_length = v_keyList.size;
-  if ((v_length < 2)) {
+  int length = keyList.size;
+  if ((length < 2)) {
     return 0;
   }
-  int v_i = 0;
-  Value v_item = null;
-  v_item = v_keyList.array[0];
-  boolean v_isString = (v_item.type == 5);
-  String[] v_stringKeys = null;
-  double[] v_numKeys = null;
-  if (v_isString) {
-    v_stringKeys = new String[v_length];
+  int i = 0;
+  Value item = null;
+  item = keyList.array[0];
+  boolean isString = (item.type == 5);
+  String[] stringKeys = null;
+  double[] numKeys = null;
+  if (isString) {
+    stringKeys = new String[length];
   } else {
-    v_numKeys = new double[v_length];
+    numKeys = new double[length];
   }
-  int[] v_indices = new int[v_length];
-  Value[] v_originalOrder = new Value[v_length];
-  v_i = 0;
-  while ((v_i < v_length)) {
-    v_indices[v_i] = v_i;
-    v_originalOrder[v_i] = v_parallelList.array[v_i];
-    v_item = v_keyList.array[v_i];
-    switch (v_item.type) {
+  int[] indices = new int[length];
+  Value[] originalOrder = new Value[length];
+  i = 0;
+  while ((i < length)) {
+    indices[i] = i;
+    originalOrder[i] = parallelList.array[i];
+    item = keyList.array[i];
+    switch (item.type) {
       case 3:
-        if (v_isString) {
+        if (isString) {
           PST_intBuffer16[0] = 1;
           return 0;
         }
-        v_numKeys[v_i] = ((double) v_item.intValue);
+        numKeys[i] = ((double) item.intValue);
         break;
       case 4:
-        if (v_isString) {
+        if (isString) {
           PST_intBuffer16[0] = 1;
           return 0;
         }
-        v_numKeys[v_i] = ((double) v_item.internalValue);
+        numKeys[i] = ((double) item.internalValue);
         break;
       case 5:
-        if (!v_isString) {
+        if (!isString) {
           PST_intBuffer16[0] = 1;
           return 0;
         }
-        v_stringKeys[v_i] = ((String) v_item.internalValue);
+        stringKeys[i] = ((String) item.internalValue);
         break;
       default:
         PST_intBuffer16[0] = 1;
         return 0;
     }
-    v_i += 1;
+    i += 1;
   }
-  v_qsortHelper(v_stringKeys, v_numKeys, v_indices, v_isString, 0, (v_length - 1));
-  v_i = 0;
-  while ((v_i < v_length)) {
-    v_parallelList.array[v_i] = v_originalOrder[v_indices[v_i]];
-    v_i += 1;
+  qsortHelper(stringKeys, numKeys, indices, isString, 0, (length - 1));
+  i = 0;
+  while ((i < length)) {
+    parallelList.array[i] = originalOrder[indices[i]];
+    i += 1;
   }
   return 0;
 }
 
-public static boolean v_stackItemIsLibrary(String v_stackInfo) {
-  if ((v_stackInfo.charAt(0) != '[')) {
+public static boolean stackItemIsLibrary(String stackInfo) {
+  if ((stackInfo.charAt(0) != '[')) {
     return false;
   }
-  int v_cIndex = v_stackInfo.indexOf(":");
-  return ((v_cIndex > 0) && (v_cIndex < v_stackInfo.indexOf("]")));
+  int cIndex = stackInfo.indexOf(":");
+  return ((cIndex > 0) && (cIndex < stackInfo.indexOf("]")));
 }
 
-public static InterpreterResult v_startVm(VmContext v_vm) {
-  return v_runInterpreter(v_vm, v_vm.lastExecutionContextId);
+public static InterpreterResult startVm(VmContext vm) {
+  return runInterpreter(vm, vm.lastExecutionContextId);
 }
 
-public static String v_stringDecode(String v_encoded) {
-  if (!v_encoded.contains("%")) {
-    int v_length = v_encoded.length();
-    char v_per = '%';
-    ArrayList<String> v_builder = new ArrayList<String>();
-    int v_i = 0;
-    while ((v_i < v_length)) {
-      char v_c = v_encoded.charAt(v_i);
-      if (((v_c == v_per) && ((v_i + 2) < v_length))) {
-        v_builder.add(v_stringFromHex("" + ("" + v_encoded.charAt((v_i + 1))) + ("" + v_encoded.charAt((v_i + 2)))));
+public static String stringDecode(String encoded) {
+  if (!encoded.contains("%")) {
+    int length = encoded.length();
+    char per = '%';
+    ArrayList<String> builder = new ArrayList<String>();
+    int i = 0;
+    while ((i < length)) {
+      char c = encoded.charAt(i);
+      if (((c == per) && ((i + 2) < length))) {
+        builder.add(stringFromHex("" + ("" + encoded.charAt((i + 1))) + ("" + encoded.charAt((i + 2)))));
       } else {
-        v_builder.add("" + ("" + v_c));
+        builder.add("" + ("" + c));
       }
-      v_i += 1;
+      i += 1;
     }
-    return PST_joinList("", v_builder);
+    return PST_joinList("", builder);
   }
-  return v_encoded;
+  return encoded;
 }
 
-public static String v_stringFromHex(String v_encoded) {
-  v_encoded = v_encoded.toUpperCase();
-  String v_hex = "0123456789ABCDEF";
-  ArrayList<String> v_output = new ArrayList<String>();
-  int v_length = v_encoded.length();
-  int v_a = 0;
-  int v_b = 0;
-  String v_c = null;
-  int v_i = 0;
-  while (((v_i + 1) < v_length)) {
-    v_c = "" + ("" + v_encoded.charAt(v_i));
-    v_a = v_hex.indexOf(v_c);
-    if ((v_a == -1)) {
+public static String stringFromHex(String encoded) {
+  encoded = encoded.toUpperCase();
+  String hex = "0123456789ABCDEF";
+  ArrayList<String> output = new ArrayList<String>();
+  int length = encoded.length();
+  int a = 0;
+  int b = 0;
+  String c = null;
+  int i = 0;
+  while (((i + 1) < length)) {
+    c = "" + ("" + encoded.charAt(i));
+    a = hex.indexOf(c);
+    if ((a == -1)) {
       return null;
     }
-    v_c = "" + ("" + v_encoded.charAt((v_i + 1)));
-    v_b = v_hex.indexOf(v_c);
-    if ((v_b == -1)) {
+    c = "" + ("" + encoded.charAt((i + 1)));
+    b = hex.indexOf(c);
+    if ((b == -1)) {
       return null;
     }
-    v_a = ((v_a * 16) + v_b);
-    v_output.add(("" + Character.toString((char) v_a)));
-    v_i += 2;
+    a = ((a * 16) + b);
+    output.add(("" + Character.toString((char) a)));
+    i += 2;
   }
-  return PST_joinList("", v_output);
+  return PST_joinList("", output);
 }
 
-public static InterpreterResult v_suspendInterpreter() {
+public static InterpreterResult suspendInterpreter() {
   return new InterpreterResult(2, null, 0.0, 0, false, "");
 }
 
-public static int v_tokenDataImpl(VmContext v_vm, int[] v_row) {
-  ArrayList<Token>[] v_tokensByPc = v_vm.symbolData.tokenData;
-  int v_pc = (v_row[0] + v_vm.metadata.userCodeStart);
-  int v_line = v_row[1];
-  int v_col = v_row[2];
-  int v_file = v_row[3];
-  ArrayList<Token> v_tokens = v_tokensByPc[v_pc];
-  if ((v_tokens == null)) {
-    v_tokens = new ArrayList<Token>();
-    v_tokensByPc[v_pc] = v_tokens;
+public static int tokenDataImpl(VmContext vm, int[] row) {
+  ArrayList<Token>[] tokensByPc = vm.symbolData.tokenData;
+  int pc = (row[0] + vm.metadata.userCodeStart);
+  int line = row[1];
+  int col = row[2];
+  int file = row[3];
+  ArrayList<Token> tokens = tokensByPc[pc];
+  if ((tokens == null)) {
+    tokens = new ArrayList<Token>();
+    tokensByPc[pc] = tokens;
   }
-  v_tokens.add(new Token(v_line, v_col, v_file));
+  tokens.add(new Token(line, col, file));
   return 0;
 }
 
-public static ArrayList<String> v_tokenHelperConvertPcsToStackTraceStrings(VmContext v_vm, ArrayList<Integer> v_pcs) {
-  ArrayList<Token> v_tokens = v_generateTokenListFromPcs(v_vm, v_pcs);
-  String[] v_files = v_vm.symbolData.sourceCode;
-  ArrayList<String> v_output = new ArrayList<String>();
-  int v_i = 0;
-  while ((v_i < v_tokens.size())) {
-    Token v_token = v_tokens.get(v_i);
-    if ((v_token == null)) {
-      v_output.add("[No stack information]");
+public static ArrayList<String> tokenHelperConvertPcsToStackTraceStrings(VmContext vm, ArrayList<Integer> pcs) {
+  ArrayList<Token> tokens = generateTokenListFromPcs(vm, pcs);
+  String[] files = vm.symbolData.sourceCode;
+  ArrayList<String> output = new ArrayList<String>();
+  int i = 0;
+  while ((i < tokens.size())) {
+    Token token = tokens.get(i);
+    if ((token == null)) {
+      output.add("[No stack information]");
     } else {
-      int v_line = v_token.lineIndex;
-      int v_col = v_token.colIndex;
-      String v_fileData = v_files[v_token.fileId];
-      String[] v_lines = PST_literalStringSplit(v_fileData, "\n");
-      String v_filename = v_lines[0];
-      String v_linevalue = v_lines[(v_line + 1)];
-      v_output.add(v_filename + ", Line: " + Integer.toString((v_line + 1)) + ", Col: " + Integer.toString((v_col + 1)));
+      int line = token.lineIndex;
+      int col = token.colIndex;
+      String fileData = files[token.fileId];
+      String[] lines = PST_literalStringSplit(fileData, "\n");
+      String filename = lines[0];
+      String linevalue = lines[(line + 1)];
+      output.add(filename + ", Line: " + Integer.toString((line + 1)) + ", Col: " + Integer.toString((col + 1)));
     }
-    v_i += 1;
+    i += 1;
   }
-  return v_output;
+  return output;
 }
 
-public static String v_tokenHelperGetFileLine(VmContext v_vm, int v_fileId, int v_lineNum) {
-  String v_sourceCode = v_vm.symbolData.sourceCode[v_fileId];
-  if ((v_sourceCode == null)) {
+public static String tokenHelperGetFileLine(VmContext vm, int fileId, int lineNum) {
+  String sourceCode = vm.symbolData.sourceCode[fileId];
+  if ((sourceCode == null)) {
     return null;
   }
-  return PST_literalStringSplit(v_sourceCode, "\n")[v_lineNum];
+  return PST_literalStringSplit(sourceCode, "\n")[lineNum];
 }
 
-public static String v_tokenHelperGetFormattedPointerToToken(VmContext v_vm, Token v_token) {
-  String v_line = v_tokenHelperGetFileLine(v_vm, v_token.fileId, (v_token.lineIndex + 1));
-  if ((v_line == null)) {
+public static String tokenHelperGetFormattedPointerToToken(VmContext vm, Token token) {
+  String line = tokenHelperGetFileLine(vm, token.fileId, (token.lineIndex + 1));
+  if ((line == null)) {
     return null;
   }
-  int v_columnIndex = v_token.colIndex;
-  int v_lineLength = v_line.length();
-  v_line = PST_trimSide(v_line, true);
-  v_line = v_line.replace((CharSequence) "\t", (CharSequence) " ");
-  int v_offset = (v_lineLength - v_line.length());
-  v_columnIndex -= v_offset;
-  String v_line2 = "";
-  while ((v_columnIndex > 0)) {
-    v_columnIndex -= 1;
-    v_line2 = v_line2 + " ";
+  int columnIndex = token.colIndex;
+  int lineLength = line.length();
+  line = PST_trimSide(line, true);
+  line = line.replace((CharSequence) "\t", (CharSequence) " ");
+  int offset = (lineLength - line.length());
+  columnIndex -= offset;
+  String line2 = "";
+  while ((columnIndex > 0)) {
+    columnIndex -= 1;
+    line2 = line2 + " ";
   }
-  v_line2 = v_line2 + "^";
-  return v_line + "\n" + v_line2;
+  line2 = line2 + "^";
+  return line + "\n" + line2;
 }
 
-public static boolean v_tokenHelplerIsFilePathLibrary(VmContext v_vm, int v_fileId, String[] v_allFiles) {
-  String v_filename = v_tokenHelperGetFileLine(v_vm, v_fileId, 0);
-  return !v_filename.toLowerCase().endsWith(".cry");
+public static boolean tokenHelplerIsFilePathLibrary(VmContext vm, int fileId, String[] allFiles) {
+  String filename = tokenHelperGetFileLine(vm, fileId, 0);
+  return !filename.toLowerCase().endsWith(".cry");
 }
 
-public static String v_typeInfoToString(VmContext v_vm, int[] v_typeInfo, int v_i) {
-  ArrayList<String> v_output = new ArrayList<String>();
-  v_typeToStringBuilder(v_vm, v_output, v_typeInfo, v_i);
-  return PST_joinList("", v_output);
+public static String typeInfoToString(VmContext vm, int[] typeInfo, int i) {
+  ArrayList<String> output = new ArrayList<String>();
+  typeToStringBuilder(vm, output, typeInfo, i);
+  return PST_joinList("", output);
 }
 
-public static String v_typeToString(VmContext v_vm, int[] v_typeInfo, int v_i) {
-  ArrayList<String> v_sb = new ArrayList<String>();
-  v_typeToStringBuilder(v_vm, v_sb, v_typeInfo, v_i);
-  return PST_joinList("", v_sb);
+public static String typeToString(VmContext vm, int[] typeInfo, int i) {
+  ArrayList<String> sb = new ArrayList<String>();
+  typeToStringBuilder(vm, sb, typeInfo, i);
+  return PST_joinList("", sb);
 }
 
-public static int v_typeToStringBuilder(VmContext v_vm, ArrayList<String> v_sb, int[] v_typeInfo, int v_i) {
-  switch (v_typeInfo[v_i]) {
+public static int typeToStringBuilder(VmContext vm, ArrayList<String> sb, int[] typeInfo, int i) {
+  switch (typeInfo[i]) {
     case -1:
-      v_sb.add("void");
-      return (v_i + 1);
+      sb.add("void");
+      return (i + 1);
     case 0:
-      v_sb.add("object");
-      return (v_i + 1);
+      sb.add("object");
+      return (i + 1);
     case 1:
-      v_sb.add("object");
-      return (v_i + 1);
+      sb.add("object");
+      return (i + 1);
     case 3:
-      v_sb.add("int");
-      return (v_i + 1);
+      sb.add("int");
+      return (i + 1);
     case 4:
-      v_sb.add("float");
-      return (v_i + 1);
+      sb.add("float");
+      return (i + 1);
     case 2:
-      v_sb.add("bool");
-      return (v_i + 1);
+      sb.add("bool");
+      return (i + 1);
     case 5:
-      v_sb.add("string");
-      return (v_i + 1);
+      sb.add("string");
+      return (i + 1);
     case 6:
-      v_sb.add("List<");
-      v_i = v_typeToStringBuilder(v_vm, v_sb, v_typeInfo, (v_i + 1));
-      v_sb.add(">");
-      return v_i;
+      sb.add("List<");
+      i = typeToStringBuilder(vm, sb, typeInfo, (i + 1));
+      sb.add(">");
+      return i;
     case 7:
-      v_sb.add("Dictionary<");
-      v_i = v_typeToStringBuilder(v_vm, v_sb, v_typeInfo, (v_i + 1));
-      v_sb.add(", ");
-      v_i = v_typeToStringBuilder(v_vm, v_sb, v_typeInfo, v_i);
-      v_sb.add(">");
-      return v_i;
+      sb.add("Dictionary<");
+      i = typeToStringBuilder(vm, sb, typeInfo, (i + 1));
+      sb.add(", ");
+      i = typeToStringBuilder(vm, sb, typeInfo, i);
+      sb.add(">");
+      return i;
     case 8:
-      int v_classId = v_typeInfo[(v_i + 1)];
-      if ((v_classId == 0)) {
-        v_sb.add("object");
+      int classId = typeInfo[(i + 1)];
+      if ((classId == 0)) {
+        sb.add("object");
       } else {
-        ClassInfo v_classInfo = v_vm.metadata.classTable[v_classId];
-        v_sb.add(v_classInfo.fullyQualifiedName);
+        ClassInfo classInfo = vm.metadata.classTable[classId];
+        sb.add(classInfo.fullyQualifiedName);
       }
-      return (v_i + 2);
+      return (i + 2);
     case 10:
-      v_sb.add("Class");
-      return (v_i + 1);
+      sb.add("Class");
+      return (i + 1);
     case 9:
-      int v_n = v_typeInfo[(v_i + 1)];
-      int v_optCount = v_typeInfo[(v_i + 2)];
-      v_i += 2;
-      v_sb.add("function(");
-      ArrayList<String> v_ret = new ArrayList<String>();
-      v_i = v_typeToStringBuilder(v_vm, v_ret, v_typeInfo, v_i);
-      int v_j = 1;
-      while ((v_j < v_n)) {
-        if ((v_j > 1)) {
-          v_sb.add(", ");
+      int n = typeInfo[(i + 1)];
+      int optCount = typeInfo[(i + 2)];
+      i += 2;
+      sb.add("function(");
+      ArrayList<String> ret = new ArrayList<String>();
+      i = typeToStringBuilder(vm, ret, typeInfo, i);
+      int j = 1;
+      while ((j < n)) {
+        if ((j > 1)) {
+          sb.add(", ");
         }
-        v_i = v_typeToStringBuilder(v_vm, v_sb, v_typeInfo, v_i);
-        v_j += 1;
+        i = typeToStringBuilder(vm, sb, typeInfo, i);
+        j += 1;
       }
-      if ((v_n == 1)) {
-        v_sb.add("void");
+      if ((n == 1)) {
+        sb.add("void");
       }
-      v_sb.add(" => ");
-      int v_optStart = (v_n - v_optCount - 1);
-      v_j = 0;
-      while ((v_j < v_ret.size())) {
-        if ((v_j >= v_optStart)) {
-          v_sb.add("(opt) ");
+      sb.add(" => ");
+      int optStart = (n - optCount - 1);
+      j = 0;
+      while ((j < ret.size())) {
+        if ((j >= optStart)) {
+          sb.add("(opt) ");
         }
-        v_sb.add(v_ret.get(v_j));
-        v_j += 1;
+        sb.add(ret.get(j));
+        j += 1;
       }
-      v_sb.add(")");
-      return v_i;
+      sb.add(")");
+      return i;
     default:
-      v_sb.add("UNKNOWN");
-      return (v_i + 1);
+      sb.add("UNKNOWN");
+      return (i + 1);
   }
 }
 
-public static String v_typeToStringFromValue(VmContext v_vm, Value v_value) {
-  ArrayList<String> v_sb = null;
-  switch (v_value.type) {
+public static String typeToStringFromValue(VmContext vm, Value value) {
+  ArrayList<String> sb = null;
+  switch (value.type) {
     case 1:
       return "null";
     case 2:
@@ -6894,46 +6894,46 @@ public static String v_typeToStringFromValue(VmContext v_vm, Value v_value) {
     case 10:
       return "class";
     case 8:
-      int v_classId = (((ObjectInstance) v_value.internalValue)).classId;
-      ClassInfo v_classInfo = v_vm.metadata.classTable[v_classId];
-      return v_classInfo.fullyQualifiedName;
+      int classId = (((ObjectInstance) value.internalValue)).classId;
+      ClassInfo classInfo = vm.metadata.classTable[classId];
+      return classInfo.fullyQualifiedName;
     case 6:
-      v_sb = new ArrayList<String>();
-      v_sb.add("List<");
-      ListImpl v_list = ((ListImpl) v_value.internalValue);
-      if ((v_list.type == null)) {
-        v_sb.add("object");
+      sb = new ArrayList<String>();
+      sb.add("List<");
+      ListImpl list = ((ListImpl) value.internalValue);
+      if ((list.type == null)) {
+        sb.add("object");
       } else {
-        v_typeToStringBuilder(v_vm, v_sb, v_list.type, 0);
+        typeToStringBuilder(vm, sb, list.type, 0);
       }
-      v_sb.add(">");
-      return PST_joinList("", v_sb);
+      sb.add(">");
+      return PST_joinList("", sb);
     case 7:
-      DictImpl v_dict = ((DictImpl) v_value.internalValue);
-      v_sb = new ArrayList<String>();
-      v_sb.add("Dictionary<");
-      switch (v_dict.keyType) {
+      DictImpl dict = ((DictImpl) value.internalValue);
+      sb = new ArrayList<String>();
+      sb.add("Dictionary<");
+      switch (dict.keyType) {
         case 3:
-          v_sb.add("int");
+          sb.add("int");
           break;
         case 5:
-          v_sb.add("string");
+          sb.add("string");
           break;
         case 8:
-          v_sb.add("object");
+          sb.add("object");
           break;
         default:
-          v_sb.add("???");
+          sb.add("???");
           break;
       }
-      v_sb.add(", ");
-      if ((v_dict.valueType == null)) {
-        v_sb.add("object");
+      sb.add(", ");
+      if ((dict.valueType == null)) {
+        sb.add("object");
       } else {
-        v_typeToStringBuilder(v_vm, v_sb, v_dict.valueType, 0);
+        typeToStringBuilder(vm, sb, dict.valueType, 0);
       }
-      v_sb.add(">");
-      return PST_joinList("", v_sb);
+      sb.add(">");
+      return PST_joinList("", sb);
     case 9:
       return "Function";
     default:
@@ -6941,189 +6941,189 @@ public static String v_typeToStringFromValue(VmContext v_vm, Value v_value) {
   }
 }
 
-public static InterpreterResult v_uncaughtExceptionResult(VmContext v_vm, Value v_exception) {
-  return new InterpreterResult(3, v_unrollExceptionOutput(v_vm, v_exception), 0.0, 0, false, "");
+public static InterpreterResult uncaughtExceptionResult(VmContext vm, Value exception) {
+  return new InterpreterResult(3, unrollExceptionOutput(vm, exception), 0.0, 0, false, "");
 }
 
-public static String v_unrollExceptionOutput(VmContext v_vm, Value v_exceptionInstance) {
-  ObjectInstance v_objInstance = ((ObjectInstance) v_exceptionInstance.internalValue);
-  ClassInfo v_classInfo = v_vm.metadata.classTable[v_objInstance.classId];
-  ArrayList<Integer> v_pcs = ((ArrayList<Integer>) v_objInstance.nativeData[1]);
-  String v_codeFormattedPointer = "";
-  String v_exceptionName = v_classInfo.fullyQualifiedName;
-  String v_message = v_valueToString(v_vm, v_objInstance.members[1]);
-  ArrayList<String> v_trace = v_tokenHelperConvertPcsToStackTraceStrings(v_vm, v_pcs);
-  v_trace.remove(v_trace.size() - 1);
-  v_trace.add("Stack Trace:");
-  java.util.Collections.reverse(v_trace);
-  java.util.Collections.reverse(v_pcs);
-  boolean v_showLibStack = v_vm.environment.showLibStack;
-  if ((!v_showLibStack && !v_stackItemIsLibrary(v_trace.get(0)))) {
-    while (v_stackItemIsLibrary(v_trace.get((v_trace.size() - 1)))) {
-      v_trace.remove(v_trace.size() - 1);
-      v_pcs.remove(v_pcs.size() - 1);
+public static String unrollExceptionOutput(VmContext vm, Value exceptionInstance) {
+  ObjectInstance objInstance = ((ObjectInstance) exceptionInstance.internalValue);
+  ClassInfo classInfo = vm.metadata.classTable[objInstance.classId];
+  ArrayList<Integer> pcs = ((ArrayList<Integer>) objInstance.nativeData[1]);
+  String codeFormattedPointer = "";
+  String exceptionName = classInfo.fullyQualifiedName;
+  String message = valueToString(vm, objInstance.members[1]);
+  ArrayList<String> trace = tokenHelperConvertPcsToStackTraceStrings(vm, pcs);
+  trace.remove(trace.size() - 1);
+  trace.add("Stack Trace:");
+  java.util.Collections.reverse(trace);
+  java.util.Collections.reverse(pcs);
+  boolean showLibStack = vm.environment.showLibStack;
+  if ((!showLibStack && !stackItemIsLibrary(trace.get(0)))) {
+    while (stackItemIsLibrary(trace.get((trace.size() - 1)))) {
+      trace.remove(trace.size() - 1);
+      pcs.remove(pcs.size() - 1);
     }
   }
-  ArrayList<Token> v_tokensAtPc = v_vm.symbolData.tokenData[v_pcs.get((v_pcs.size() - 1))];
-  if ((v_tokensAtPc != null)) {
-    v_codeFormattedPointer = "\n\n" + v_tokenHelperGetFormattedPointerToToken(v_vm, v_tokensAtPc.get(0));
+  ArrayList<Token> tokensAtPc = vm.symbolData.tokenData[pcs.get((pcs.size() - 1))];
+  if ((tokensAtPc != null)) {
+    codeFormattedPointer = "\n\n" + tokenHelperGetFormattedPointerToToken(vm, tokensAtPc.get(0));
   }
-  String v_stackTrace = PST_joinList("\n", v_trace);
-  return v_stackTrace + v_codeFormattedPointer + "\n" + v_exceptionName + ": " + v_message;
+  String stackTrace = PST_joinList("\n", trace);
+  return stackTrace + codeFormattedPointer + "\n" + exceptionName + ": " + message;
 }
 
-public static ListImpl v_valueConcatLists(ListImpl v_a, ListImpl v_b) {
-  int v_aLen = v_a.size;
-  int v_bLen = v_b.size;
-  int v_size = (v_aLen + v_bLen);
-  ListImpl v_c = new ListImpl(null, v_size, v_size, new Value[v_size]);
-  int v_i = 0;
-  while ((v_i < v_aLen)) {
-    v_c.array[v_i] = v_a.array[v_i];
-    v_i += 1;
+public static ListImpl valueConcatLists(ListImpl a, ListImpl b) {
+  int aLen = a.size;
+  int bLen = b.size;
+  int size = (aLen + bLen);
+  ListImpl c = new ListImpl(null, size, size, new Value[size]);
+  int i = 0;
+  while ((i < aLen)) {
+    c.array[i] = a.array[i];
+    i += 1;
   }
-  v_i = 0;
-  while ((v_i < v_bLen)) {
-    v_c.array[(v_i + v_aLen)] = v_b.array[v_i];
-    v_i += 1;
+  i = 0;
+  while ((i < bLen)) {
+    c.array[(i + aLen)] = b.array[i];
+    i += 1;
   }
-  v_c.size = v_c.capacity;
-  return v_c;
+  c.size = c.capacity;
+  return c;
 }
 
-public static ListImpl v_valueMultiplyList(ListImpl v_a, int v_n) {
-  int v_len = (v_a.size * v_n);
-  ListImpl v_output = v_makeEmptyList(v_a.type, v_len);
-  if ((v_len == 0)) {
-    return v_output;
+public static ListImpl valueMultiplyList(ListImpl a, int n) {
+  int len = (a.size * n);
+  ListImpl output = makeEmptyList(a.type, len);
+  if ((len == 0)) {
+    return output;
   }
-  int v_aLen = v_a.size;
-  int v_i = 0;
-  Value v_value = null;
-  if ((v_aLen == 1)) {
-    v_value = v_a.array[0];
-    v_i = 0;
-    while ((v_i < v_n)) {
-      v_output.array[v_i] = v_value;
-      v_i += 1;
+  int aLen = a.size;
+  int i = 0;
+  Value value = null;
+  if ((aLen == 1)) {
+    value = a.array[0];
+    i = 0;
+    while ((i < n)) {
+      output.array[i] = value;
+      i += 1;
     }
   } else {
-    int v_j = 0;
-    v_i = 0;
-    while ((v_i < v_n)) {
-      v_j = 0;
-      while ((v_j < v_aLen)) {
-        v_output.array[((v_i * v_aLen) + v_j)] = v_a.array[v_j];
-        v_j += 1;
+    int j = 0;
+    i = 0;
+    while ((i < n)) {
+      j = 0;
+      while ((j < aLen)) {
+        output.array[((i * aLen) + j)] = a.array[j];
+        j += 1;
       }
-      v_i += 1;
+      i += 1;
     }
   }
-  v_output.size = v_len;
-  return v_output;
+  output.size = len;
+  return output;
 }
 
-public static Value[] v_valueStackIncreaseCapacity(ExecutionContext v_ec) {
-  Value[] v_stack = v_ec.valueStack;
-  int v_oldCapacity = v_stack.length;
-  int v_newCapacity = (v_oldCapacity * 2);
-  Value[] v_newStack = new Value[v_newCapacity];
-  int v_i = (v_oldCapacity - 1);
-  while ((v_i >= 0)) {
-    v_newStack[v_i] = v_stack[v_i];
-    v_i -= 1;
+public static Value[] valueStackIncreaseCapacity(ExecutionContext ec) {
+  Value[] stack = ec.valueStack;
+  int oldCapacity = stack.length;
+  int newCapacity = (oldCapacity * 2);
+  Value[] newStack = new Value[newCapacity];
+  int i = (oldCapacity - 1);
+  while ((i >= 0)) {
+    newStack[i] = stack[i];
+    i -= 1;
   }
-  v_ec.valueStack = v_newStack;
-  return v_newStack;
+  ec.valueStack = newStack;
+  return newStack;
 }
 
-public static String v_valueToString(VmContext v_vm, Value v_wrappedValue) {
-  int v_type = v_wrappedValue.type;
-  if ((v_type == 1)) {
+public static String valueToString(VmContext vm, Value wrappedValue) {
+  int type = wrappedValue.type;
+  if ((type == 1)) {
     return "null";
   }
-  if ((v_type == 2)) {
-    if ((v_wrappedValue.intValue == 1)) {
+  if ((type == 2)) {
+    if ((wrappedValue.intValue == 1)) {
       return "true";
     }
     return "false";
   }
-  if ((v_type == 4)) {
-    String v_floatStr = Double.toString(((double) v_wrappedValue.internalValue));
-    if (!v_floatStr.contains(".")) {
-      v_floatStr += ".0";
+  if ((type == 4)) {
+    String floatStr = Double.toString(((double) wrappedValue.internalValue));
+    if (!floatStr.contains(".")) {
+      floatStr += ".0";
     }
-    return v_floatStr;
+    return floatStr;
   }
-  if ((v_type == 3)) {
-    return Integer.toString(v_wrappedValue.intValue);
+  if ((type == 3)) {
+    return Integer.toString(wrappedValue.intValue);
   }
-  if ((v_type == 5)) {
-    return ((String) v_wrappedValue.internalValue);
+  if ((type == 5)) {
+    return ((String) wrappedValue.internalValue);
   }
-  if ((v_type == 6)) {
-    ListImpl v_internalList = ((ListImpl) v_wrappedValue.internalValue);
-    String v_output = "[";
-    int v_i = 0;
-    while ((v_i < v_internalList.size)) {
-      if ((v_i > 0)) {
-        v_output += ", ";
+  if ((type == 6)) {
+    ListImpl internalList = ((ListImpl) wrappedValue.internalValue);
+    String output = "[";
+    int i = 0;
+    while ((i < internalList.size)) {
+      if ((i > 0)) {
+        output += ", ";
       }
-      v_output += v_valueToString(v_vm, v_internalList.array[v_i]);
-      v_i += 1;
+      output += valueToString(vm, internalList.array[i]);
+      i += 1;
     }
-    v_output += "]";
-    return v_output;
+    output += "]";
+    return output;
   }
-  if ((v_type == 8)) {
-    ObjectInstance v_objInstance = ((ObjectInstance) v_wrappedValue.internalValue);
-    int v_classId = v_objInstance.classId;
-    int v_ptr = v_objInstance.objectId;
-    ClassInfo v_classInfo = v_vm.metadata.classTable[v_classId];
-    int v_nameId = v_classInfo.nameId;
-    String v_className = v_vm.metadata.identifiers[v_nameId];
-    return "Instance<" + v_className + "#" + Integer.toString(v_ptr) + ">";
+  if ((type == 8)) {
+    ObjectInstance objInstance = ((ObjectInstance) wrappedValue.internalValue);
+    int classId = objInstance.classId;
+    int ptr = objInstance.objectId;
+    ClassInfo classInfo = vm.metadata.classTable[classId];
+    int nameId = classInfo.nameId;
+    String className = vm.metadata.identifiers[nameId];
+    return "Instance<" + className + "#" + Integer.toString(ptr) + ">";
   }
-  if ((v_type == 7)) {
-    DictImpl v_dict = ((DictImpl) v_wrappedValue.internalValue);
-    if ((v_dict.size == 0)) {
+  if ((type == 7)) {
+    DictImpl dict = ((DictImpl) wrappedValue.internalValue);
+    if ((dict.size == 0)) {
       return "{}";
     }
-    String v_output = "{";
-    ArrayList<Value> v_keyList = v_dict.keys;
-    ArrayList<Value> v_valueList = v_dict.values;
-    int v_i = 0;
-    while ((v_i < v_dict.size)) {
-      if ((v_i > 0)) {
-        v_output += ", ";
+    String output = "{";
+    ArrayList<Value> keyList = dict.keys;
+    ArrayList<Value> valueList = dict.values;
+    int i = 0;
+    while ((i < dict.size)) {
+      if ((i > 0)) {
+        output += ", ";
       }
-      v_output += v_valueToString(v_vm, v_dict.keys.get(v_i)) + ": " + v_valueToString(v_vm, v_dict.values.get(v_i));
-      v_i += 1;
+      output += valueToString(vm, dict.keys.get(i)) + ": " + valueToString(vm, dict.values.get(i));
+      i += 1;
     }
-    v_output += " }";
-    return v_output;
+    output += " }";
+    return output;
   }
   return "<unknown>";
 }
 
-public static int v_vm_getCurrentExecutionContextId(VmContext v_vm) {
-  return v_vm.lastExecutionContextId;
+public static int vm_getCurrentExecutionContextId(VmContext vm) {
+  return vm.lastExecutionContextId;
 }
 
-public static int v_vm_suspend(VmContext v_vm, int v_status) {
-  return v_vm_suspend_for_context(v_getExecutionContext(v_vm, -1), 1);
+public static int vm_suspend(VmContext vm, int status) {
+  return vm_suspend_for_context(getExecutionContext(vm, -1), 1);
 }
 
-public static int v_vm_suspend_for_context(ExecutionContext v_ec, int v_status) {
-  v_ec.executionStateChange = true;
-  v_ec.executionStateChangeCommand = v_status;
+public static int vm_suspend_for_context(ExecutionContext ec, int status) {
+  ec.executionStateChange = true;
+  ec.executionStateChangeCommand = status;
   return 0;
 }
 
-public static int v_vm_suspend_with_status(VmContext v_vm, int v_status) {
-  return v_vm_suspend_for_context(v_getExecutionContext(v_vm, -1), v_status);
+public static int vm_suspend_with_status(VmContext vm, int status) {
+  return vm_suspend_for_context(getExecutionContext(vm, -1), status);
 }
 
-public static void v_vmEnvSetCommandLineArgs(VmContext v_vm, String[] v_args) {
-  v_vm.environment.commandLineArgs = v_args;
+public static void vmEnvSetCommandLineArgs(VmContext vm, String[] args) {
+  vm.environment.commandLineArgs = args;
 }
