@@ -13,15 +13,15 @@ i = (int) value3.internalValue; // iterator index
 value = localsStack[localsStackOffset + row[3]]; // list, string
 if (value.type == Types.LIST) {
     list1 = (ListImpl) value.internalValue; // the actual list
-    len = list1.size;
+    _len = list1.size;
     bool1 = true;
 } else {
     string2 = (string) value.internalValue; // the actual string
-    len = string2.Size();
+    _len = string2.Size();
     bool1 = false;
 }
 
-if (i < len) {
+if (i < _len) {
     if (bool1) {
         if (@ext_boolean("ARRAY_IS_LIST")) {
             value = list1.list[i];

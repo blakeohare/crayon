@@ -184,9 +184,9 @@ VM.Value lib_graphics2d_addImageRenderEvent(VM.VmContext vm, Array<VM.Value> arg
 }
 
 Array<int> lib_graphics2d_expandEventQueueCapacity(Array<int> a) {
-    int len = a.Length();
-    Array<int> output = new Array<int>(len * 2 + 16);
-    for (int i = 0; i < len; i += 1) {
+    int _len = a.Length();
+    Array<int> output = new Array<int>(_len * 2 + 16);
+    for (int i = 0; i < _len; i += 1) {
         output[i] = a[i];
     }
     return output;

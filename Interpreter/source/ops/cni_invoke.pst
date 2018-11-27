@@ -11,11 +11,11 @@ nativeFp = metadata.cniFunctionsById[row[0]];
 if (nativeFp == null) {
     hasInterrupt = EX_InvalidInvocation(ec, "CNI method could not be found.");
 } else {
-    len = row[1];
-    valueStackSize -= len;
+    _len = row[1];
+    valueStackSize -= _len;
 
-    valueArray1 = new Array<Value>(len);
-    for (i = 0; i < len; i += 1) {
+    valueArray1 = new Array<Value>(_len);
+    for (i = 0; i < _len; i += 1) {
         valueArray1[i] = valueStack[valueStackSize + i];
     }
 

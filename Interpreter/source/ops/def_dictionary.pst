@@ -10,10 +10,10 @@ stringIntDict1 = new Dictionary<string, int>();
 valueList2 = new List<Value>(); // keys
 valueList1 = new List<Value>(); // values
 
-len = row[0];
+_len = row[0];
 type = Types.INTEGER;  // always ignored when size is 0
 first = true;
-i = len; // size
+i = _len; // size
 while (i > 0) {
     valueStackSize -= 2;
     value = valueStack[valueStackSize + 1]; // value
@@ -56,7 +56,7 @@ if (!hasInterrupt) {
     } else {
         i = intIntDict1.Size();
     }
-    if (i != len) {
+    if (i != _len) {
         hasInterrupt = EX_InvalidKey(ec, "Key collision"); // TODO: do a better job of figuring out where this collision is.
     }
 }
@@ -83,7 +83,7 @@ if (!hasInterrupt) {
 
     @import("inline/ValueStackCapacityCheck.pst");
     valueStack[valueStackSize] = new Value(Types.DICTIONARY, new DictImpl(
-        len,
+        _len,
         type,
         classId,
         intArray1,

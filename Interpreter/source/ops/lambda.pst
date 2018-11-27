@@ -13,14 +13,14 @@
 // TODO: move this into the metadata initializer
 if (!metadata.lambdaTable.Contains(pc)) {
     int1 = 4 + row[4] + 1;
-    len = row[int1];
-    intArray1 = new Array<int>(len);
-    for (i = 0 ; i < len; i += 1) {
+    _len = row[int1];
+    intArray1 = new Array<int>(_len);
+    for (i = 0 ; i < _len; i += 1) {
         intArray1[i] = row[int1 + i + 1];
     }
-    len = row[4];
-    intArray2 = new Array<int>(len);
-    for (i = 0; i < len; i += 1) {
+    _len = row[4];
+    intArray2 = new Array<int>(_len);
+    for (i = 0; i < _len; i += 1) {
         intArray2[i] = row[5 + i];
     }
     metadata.lambdaTable[pc] = new FunctionInfo(
@@ -46,9 +46,9 @@ if (parentClosure == null) {
 
 functionInfo = metadata.lambdaTable[pc];
 intArray1 = functionInfo.closureIds;
-len = intArray1.Size();
+_len = intArray1.Size();
 
-for (i = 0; i < len; i += 1) {
+for (i = 0; i < _len; i += 1) {
     j = intArray1[i];
     if (parentClosure.Contains(j)) {
         closure[j] = parentClosure[j];

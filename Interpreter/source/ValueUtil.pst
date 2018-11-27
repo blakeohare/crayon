@@ -300,12 +300,12 @@ void reverseList(ListImpl list) {
     if (@ext_boolean("ARRAY_IS_LIST")) {
         list.list.Reverse();
     } else {
-        int len = list.size;
+        int _len = list.size;
         Value t = null;
         int i2 = 0;
         Array<Value> arr = list.array;
-        for (int i = len >> 1; i < len; i += 1) {
-            i2 = len - i - 1;
+        for (int i = _len >> 1; i < _len; i += 1) {
+            i2 = _len - i - 1;
             t = arr[i];
             arr[i] = arr[i2];
             arr[i2] = t;
@@ -393,12 +393,12 @@ Value buildListWithType(Array<int> type, List<Value> valueList) {
     if (@ext_boolean("ARRAY_IS_LIST")) {
         return new Value(Types.LIST, new ListImpl(type, valueList.Size(), valueList));
     } else {
-        int len = valueList.Size();
-        ListImpl output = makeEmptyList(type, len);
-        for (int i = 0; i < len; i += 1) {
+        int _len = valueList.Size();
+        ListImpl output = makeEmptyList(type, _len);
+        for (int i = 0; i < _len; i += 1) {
             output.array[i] = valueList[i];
         }
-        output.size = len;
+        output.size = _len;
         return new Value(Types.LIST, output);
     }
 }
@@ -661,9 +661,9 @@ ListImpl valueConcatLists(ListImpl a, ListImpl b) {
 }
 
 ListImpl valueMultiplyList(ListImpl a, int n) {
-    int len = a.size * n;
-    ListImpl output = makeEmptyList(a.type, len);
-    if (len == 0) return output;
+    int _len = a.size * n;
+    ListImpl output = makeEmptyList(a.type, _len);
+    if (_len == 0) return output;
     int aLen = a.size;
     int i = 0;
     Value value = null;
@@ -692,7 +692,7 @@ ListImpl valueMultiplyList(ListImpl a, int n) {
             }
         }
     }
-    output.size = len;
+    output.size = _len;
     return output;
 }
 

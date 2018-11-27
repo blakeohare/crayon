@@ -39,8 +39,8 @@ VM.Value lib_graphics2d_renderQueueAction(VM.VmContext vm, Array<VM.Value> args)
         if (charList.type == VM.Types.LIST) {
             VM.Value value = null;
             List<VM.Value> list1 = (List<VM.Value>) charList.internalValue;
-            int len = list1.Size();
-            for (int i = 0; i < len; i += 1) {
+            int _len = list1.Size();
+            for (int i = 0; i < _len; i += 1) {
                 value = list1[i];
                 intList1.Add((int) value.internalValue);
             }

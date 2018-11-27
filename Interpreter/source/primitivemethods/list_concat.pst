@@ -16,10 +16,10 @@
             } else {
                 bool1 = false;
             }
-            len = list2.size;
+            _len = list2.size;
 
             if (@ext_boolean("ARRAY_IS_LIST")) {
-                for (i = 0; i < len; i += 1) {
+                for (i = 0; i < _len; i += 1) {
                     value = list2.list[i];
                     if (bool1) {
                         value = buildFloat(globals, 0.0 + (int)value.internalValue);
@@ -29,18 +29,18 @@
             } else {
                 int1 = list1.size;
 
-                while (int1 + len > list1.capacity) {
+                while (int1 + _len > list1.capacity) {
                     increaseListCapacity(list1);
                 }
 
-                for (i = 0; i < len; i += 1) {
+                for (i = 0; i < _len; i += 1) {
                     value = list2.array[i];
                     if (bool1) {
                         value = buildFloat(globals, 0.0 + (int)value.internalValue);
                     }
                     list1.array[int1 + i] = value;
                 }
-                list1.size += len;
+                list1.size += _len;
             }
         }
     }

@@ -147,7 +147,7 @@ InterpreterResult interpretImpl(VmContext vm, int executionContextId) {
     int functionId = 0;
     int localeId = 0;
     ClassInfo classInfo = null;
-    int len = 0;
+    int _len = 0;
     Value root = null;
     Array<int> row = null;
     int argCount = 0;

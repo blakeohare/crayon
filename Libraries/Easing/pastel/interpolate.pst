@@ -20,7 +20,7 @@ VM.Value lib_easing_interpolate(VM.VmContext vm, Array<VM.Value> args) {
     VM.ObjectInstance o = (VM.ObjectInstance) args[0].internalValue;
     EasingSampling es = (EasingSampling) o.nativeObject;
     Array<double> samples = es.samples;
-    int len = es.sampleCount;
+    int _len = es.sampleCount;
     int int1 = (int) args[6].internalValue;
     double float1 = 0.0;
     double float2 = 0.0;
@@ -77,19 +77,19 @@ VM.Value lib_easing_interpolate(VM.VmContext vm, Array<VM.Value> args) {
             float1 = -float1;
         }
         if (float1 >= float2) {
-            float1 = samples[len - 1];
+            float1 = samples[_len - 1];
         } else if (float1 < 0) {
             float1 = samples[0];
         } else {
             float1 = Core.FloatDivision(float1, float2);
 
-            if (len > 2) { // if there's only 2 points, then the result can only be linear
-                float2 = float1 * len; // which index to use?
+            if (_len > 2) { // if there's only 2 points, then the result can only be linear
+                float2 = float1 * _len; // which index to use?
                 int index = Core.Int(float2); // round down
                 float2 -= index; // this is the ratio between this index and the next
 
                 float1 = samples[index]; // get the left value
-                if (index < len - 1 && float2 > 0) { // not at the end of the list? ratio of right value more than 0?
+                if (index < _len - 1 && float2 > 0) { // not at the end of the list? ratio of right value more than 0?
                     float3 = samples[index + 1]; // get the right value
                     float1 = (float1 * (1 - float2)) + (float3 * float2); // linearly interpolate between left and right values.
                 }

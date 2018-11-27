@@ -30,10 +30,10 @@
         if (bool2) {
 
             // decrement the size
-            len = dictImpl.size - 1;
-            dictImpl.size = len;
+            _len = dictImpl.size - 1;
+            dictImpl.size = _len;
 
-            if (i == len) {
+            if (i == _len) {
                 // This is the last item in the flat lists, so just pop it from both
                 // the lookup and the lists
                 if (keyType == Types.STRING) {
@@ -47,9 +47,9 @@
                 // This is somewhere else in the flat lists.
 
                 // Copy the last element of the list to the index of the element you're removing.
-                value = dictImpl.keys[len];
+                value = dictImpl.keys[_len];
                 dictImpl.keys[i] = value;
-                dictImpl.values[i] = dictImpl.values[len];
+                dictImpl.values[i] = dictImpl.values[_len];
 
                 // Pop it from the lists
                 dictImpl.keys.Pop();

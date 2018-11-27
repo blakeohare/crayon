@@ -9,8 +9,8 @@
 */
 
 // TODO: implement this
-len = row[0];
+_len = row[0];
 i = 1;
-for (j = 0; j < len; j += 1) {
+for (j = 0; j < _len; j += 1) {
 
 }

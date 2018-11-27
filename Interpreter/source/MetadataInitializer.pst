@@ -277,9 +277,9 @@ int initializeClassFieldTypeInfo(VmContext vm, Array<int> opCodeRow) {
     ClassInfo classInfo = vm.metadata.classTable[opCodeRow[0]];
 
     int memberId = opCodeRow[1];
-    int len = opCodeRow.Length();
-    Array<int> typeInfo = new Array<int>(len - 2);
-    for (int i = 2; i < len; i += 1) {
+    int _len = opCodeRow.Length();
+    Array<int> typeInfo = new Array<int>(_len - 2);
+    for (int i = 2; i < _len; i += 1) {
         typeInfo[i - 2] = opCodeRow[i];
     }
     classInfo.typeInfo[memberId] = typeInfo;

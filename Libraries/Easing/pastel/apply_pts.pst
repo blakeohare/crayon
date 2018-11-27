@@ -5,10 +5,10 @@
 VM.Value lib_easing_apply_pts(VM.VmContext vm, Array<VM.Value> args) {
     VM.ListImpl sampleValues = (VM.ListImpl) args[1].internalValue; // guaranteed to be floats
 
-    int len = sampleValues.size;
-    Array<double> samples = new Array<double>(len);
+    int _len = sampleValues.size;
+    Array<double> samples = new Array<double>(_len);
 
-    for (int i = 0; i < len; i += 1) {
+    for (int i = 0; i < _len; i += 1) {
         if (@ext_boolean("ARRAY_IS_LIST")) {
             samples[i] = (double) sampleValues.list[i].internalValue;
         } else {
@@ -19,10 +19,10 @@ VM.Value lib_easing_apply_pts(VM.VmContext vm, Array<VM.Value> args) {
     // Override just in case a user-defined sampling function begins or ends
     // in a weird state or has floating point noise.
     samples[0] = 0.0;
-    samples[len - 1] = 1.0;
+    samples[_len - 1] = 1.0;
 
     VM.ObjectInstance o = (VM.ObjectInstance) args[0].internalValue;
-    o.nativeObject = new EasingSampling(len, samples);
+    o.nativeObject = new EasingSampling(_len, samples);
 
     return vm.globals.valueNull;
 }

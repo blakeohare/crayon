@@ -1,10 +1,20 @@
-﻿namespace Pastel.Nodes
+﻿using System.Collections.Generic;
+
+namespace Pastel.Nodes
 {
     internal class Variable : Expression
     {
+        public readonly static HashSet<string> BANNED_NAMES = new HashSet<string>() {
+            "len",
+        };
+
         public Variable(Token token, ICompilationEntity owner) : base(token, owner)
         {
             this.ApplyPrefix = true;
+            if (BANNED_NAMES.Contains(token.Value))
+            {
+                throw new ParserException(token, "The name '" + token.Value + "' is reserved for some platforms and cannot be used.");
+            }
         }
 
         // Some generated code needs to namespace itself different to prevent collision with translated variables.

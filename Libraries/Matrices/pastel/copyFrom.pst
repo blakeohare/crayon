@@ -25,9 +25,9 @@ VM.Value lib_matrices_copyFrom(VM.VmContext vm, Array<VM.Value> args) {
     Array<double> source = (Array<double>) nd2[0];
 
     // TODO: use system array copy if available
-    int len = target.Size();
+    int _len = target.Size();
     int i = 0;
-    while (i < len) {
+    while (i < _len) {
         target[i] = source[i];
         i += 1;
     }
