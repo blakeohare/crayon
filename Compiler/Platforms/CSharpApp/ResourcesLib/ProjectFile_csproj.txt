@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System"/>
     <Reference Include="System.Core"/>
+    <Reference Include="System.Drawing"/>
     <Reference Include="Microsoft.CSharp"/>
   </ItemGroup>
   <ItemGroup>
@@ -46,7 +47,6 @@
       <Name>Interpreter</Name>
     </ProjectReference>
     %%%DLL_REFERENCES%%%
-%%%DOT_NET_LIBS%%%
   </ItemGroup>
   <ItemGroup>
     %%%EMBEDDED_RESOURCES%%%

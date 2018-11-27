@@ -2,7 +2,6 @@
 BEGIN
 APPLICABLE-TO: csharp-app
 COPY_FILES: from=csharp-app, to=%LIBRARY_PATH%/%FILE%
-DOTNET_LIB: name=System.Drawing
 END
 
 BEGIN

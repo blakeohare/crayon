@@ -19,7 +19,6 @@ namespace Exporter
 
         private LibraryExporter library;
         private Multimap<string, ExportEntity> exportEntities;
-        private List<string> dotNetLibs;
 
         public LibraryResourceDatabase(LibraryExporter library, AbstractPlatform platform)
         {
@@ -34,18 +33,6 @@ namespace Exporter
         }
 
         public HashSet<string> ApplicablePlatformNames { get; private set; }
-
-        public List<string> DotNetLibs
-        {
-            get
-            {
-                if (this.dotNetLibs == null)
-                {
-                    this.Init();
-                }
-                return this.dotNetLibs;
-            }
-        }
 
         public Multimap<string, ExportEntity> ExportEntities
         {
@@ -243,7 +230,6 @@ namespace Exporter
         private void Init()
         {
             this.exportEntities = new Multimap<string, ExportEntity>();
-            this.dotNetLibs = new List<string>();
             this.projectReferenceToGuid = new Dictionary<string, string>();
 
             ExportEntity entity;
@@ -275,12 +261,6 @@ namespace Exporter
                             Value = instruction["value"],
                         };
                         this.exportEntities.Add("EMBED_CODE", entity);
-                        break;
-
-                    case "DOTNET_LIB":
-                        this.EnsureInstructionContainsAttribute(command, instruction, "name");
-                        string dotNetLib = instruction["name"];
-                        this.DotNetLibs.Add(dotNetLib);
                         break;
 
                     case "DOTNET_DLL":

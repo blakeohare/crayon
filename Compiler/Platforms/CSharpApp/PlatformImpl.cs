@@ -128,12 +128,6 @@ namespace CSharpApp
 
                     libraryProjectNameToGuid[name] = projectGuid;
 
-                    replacements["DOT_NET_LIBS"] = Util.JoinLines(
-                        library.DotNetLibs.Select(
-                            dotNetLib =>
-                                "    <Reference Include=\"" + dotNetLib + "\" />")
-                        .ToArray());
-
                     this.CopyResourceAsText(output, libBaseDir + library.Name + ".sln", "ResourcesLib/Solution.sln", replacements);
                     this.CopyResourceAsText(output, libBaseDir + library.Name + ".csproj", "ResourcesLib/ProjectFile.csproj", replacements);
                     this.CopyResourceAsText(output, libBaseDir + "Properties/AssemblyInfo.cs", "ResourcesLib/AssemblyInfo.cs", replacements);
@@ -242,10 +236,6 @@ namespace CSharpApp
 
             foreach (LibraryForExport library in libraries)
             {
-                foreach (string dotNetLib in library.DotNetLibs)
-                {
-                    dotNetLibs.Add(dotNetLib);
-                }
                 this.GetLibraryCode(templates, baseDir, library, dlls, output);
             }
 

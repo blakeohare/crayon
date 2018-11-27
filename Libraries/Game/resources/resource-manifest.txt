@@ -10,7 +10,6 @@ DOTNET_DLL: from=csharp-app/SDL_mixer.dll, hintpath=SDL_mixer.dll
 DOTNET_DLL: from=csharp-app/libogg-0.dll, hintpath=libogg-0.dll
 DOTNET_DLL: from=csharp-app/libvorbis-0.dll, hintpath=libvorbis-0.dll
 DOTNET_DLL: from=csharp-app/libvorbisfile-3.dll, hintpath=libvorbisfile-3.dll
-DOTNET_LIB: name=System.Drawing
 END
 
 BEGIN

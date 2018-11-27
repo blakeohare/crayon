@@ -167,15 +167,12 @@ namespace Exporter
             {
                 Multimap<string, Platform.ExportEntity> exportEntities = libResDb.ExportEntities;
 
-                string[] dotNetLibs = libResDb.DotNetLibs.OrderBy(s => s.ToLower()).ToArray();
-
                 return new Platform.LibraryForExport()
                 {
                     Name = libraryName,
                     Version = libraryVersion,
                     PastelContext = nullableLibaryPastelContext,
                     ExportEntities = exportEntities,
-                    DotNetLibs = dotNetLibs,
                     LibProjectNamesAndGuids = libResDb.ProjectReferenceToGuid,
                 };
             }

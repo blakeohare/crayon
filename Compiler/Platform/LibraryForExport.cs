@@ -10,7 +10,6 @@ namespace Platform
         public bool HasPastelCode { get { return this.PastelContext != null; } }
         public Pastel.PastelContext PastelContext { get; set; }
         public Multimap<string, ExportEntity> ExportEntities { get; set; }
-        public string[] DotNetLibs { get; set; }
         public Dictionary<string, string> LibProjectNamesAndGuids { get; set; }
 
         public override string ToString()
