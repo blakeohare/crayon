@@ -1,4 +1,4 @@
-package org.crayonlang.libraries.graphics2d;
+package org.crayonlang.libraries.game;
 
 import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
