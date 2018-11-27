@@ -20,7 +20,7 @@ def main(args, libs):
   resManifest = vm.ResourceReader_readTextFile('res/resource_manifest.txt')
   vm.TranslationHelper_setLibraries(libs)
   vmContext = vm.createVm(bytecode, resManifest)
-  vm._vmEnvSetCommandLineArgs(vmContext, args)
+  vm.vmEnvSetCommandLineArgs(vmContext, args)
   vm.TranslationHelper_setProgramData(vmContext)
   vm.TH_startVm(vmContext)
 
