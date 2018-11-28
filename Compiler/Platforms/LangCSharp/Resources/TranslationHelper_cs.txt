@@ -90,5 +90,25 @@ namespace Interpreter.Vm
         {
             functionPointerResolvers.Add(resolver);
         }
+
+        public static void runAssemblyStartupFunction(String assemblyName, String startupFunction)
+        {
+            // Invoke the startup function, if present
+            if (startupFunction.Length > 0)
+            {
+                Func<VmContext, Value[], Value> fn = GetStartupFunction(assemblyName + "," + startupFunction);
+                if (fn != null)
+                {
+                    fn(TranslationHelper.ProgramData, new Value[0]);
+                }
+            }
+        }
+
+        private static Func<VmContext, Value[], Value> GetStartupFunction(string name)
+        {
+            object fn = TranslationHelper.GetFunctionPointer(name);
+            if (fn == null) return null;
+            return fn as Func<VmContext, Value[], Value>;
+        }
     }
 }

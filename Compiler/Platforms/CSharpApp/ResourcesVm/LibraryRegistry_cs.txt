@@ -6,9 +6,11 @@ namespace Interpreter.Vm
 {
     public class LibraryRegistry
     {
-        public void LoadAssembly(string name, string version)
+        public void LoadAssembly(string name, string version, string startupFunction)
         {
             // TODO: load a DLL once they are split out.
+
+            TranslationHelper.runAssemblyStartupFunction(name, startupFunction);
         }
 
         public LibraryRegistry(Dictionary<string, string> libraryVersions)

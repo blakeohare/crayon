@@ -22,22 +22,7 @@ namespace Interpreter.Vm
         {
             // TODO: load a DLL once they are split out separately.
 
-            // Invoke the startup function, if present
-            if (startupFunction.Length > 0)
-            {
-                Func<VmContext, Value[], Value> fn = GetStartupFunction(name + "," + startupFunction);
-                if (fn != null)
-                {
-                    fn(TranslationHelper.ProgramData, new Value[0]);
-                }
-            }
-        }
-
-        private static Func<VmContext, Value[], Value> GetStartupFunction(string name)
-        {
-            object fn = TranslationHelper.GetFunctionPointer(name);
-            if (fn == null) return null;
-            return fn as Func<VmContext, Value[], Value>;
+            TranslationHelper.runAssemblyStartupFunction(name, startupFunction);
         }
 
         private static void RegisterLibraryMethodResolver(Type libraryType)
