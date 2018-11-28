@@ -44,7 +44,8 @@ namespace Interpreter.Vm
                     string[] parts = result.loadAssemblyInformation.Split(',');
                     string name = parts[0];
                     string version = parts[1];
-                    TranslationHelper.LibraryRegistry.LoadAssembly(name, version);
+                    string startupFunction = parts[2];
+                    TranslationHelper.LibraryRegistry.LoadAssembly(name, version, startupFunction);
                 }
                 else
                 {

@@ -37,7 +37,8 @@ function C$handleVmResult(res) {
 			var parts = getVmResultAssemblyInfo(res).split(',');
 			var name = parts[0];
 			var version = parts[1];
-			// TODO: C$loadAssembly(name, version);
+			var startupFunc = parts[2];
+			C$loadAssembly(name, version);
 		}
 		res = runInterpreter(vm, getVmResultExecId(res))
 		status = getVmResultStatus(res);
@@ -47,6 +48,12 @@ function C$handleVmResult(res) {
 
 	throw "Unknown status";
 }
+
+C$loadAssembly = function(name, ver, startupFn) {
+	if (startupFn.length > 0) {
+		console.log("Error: startup function for " + name + " was not run.");
+	}
+};
 
 C$common$readResourceText = function (path) {
 	var v = C$common$getTextRes(path);

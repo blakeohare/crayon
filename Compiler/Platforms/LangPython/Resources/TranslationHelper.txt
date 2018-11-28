@@ -36,14 +36,20 @@ def TH_runInterpreterWithFunctionPointer(fpValue, args):
   vm = TranslationHelper_getProgramData()
   return TH_handleInterpreterResult(runInterpreterWithFunctionPointer(vm, fpValue, args))
 
+def TH_LoadAssembly(name, version, startupFunc):
+  if len(startupFunc) > 0:
+    fn = TranslationHelper_getFunction(startupFunc)
+    if fn != None:
+      fn(TranslationHelper_getProgramData(), [])
+
 def TH_handleInterpreterResult(result):
   vm = TranslationHelper_getProgramData()
   status = getVmResultStatus(result)
   while status == 5 or status == 6: # REINVOKE || LOAD_ASSEMBLY
     if status == 6: # LOAD_ASSEMBLY
       parts = getVmResultAssemblyInfo(result).split(',')
-      name, version = parts;
-      # TODO: LoadAssembly(name, version)
+      name, version, startupfunc = parts;
+      TH_LoadAssembly(name, version, startupfunc)
     else:
       time.sleep(getVmReinvokeDelay(result))
 

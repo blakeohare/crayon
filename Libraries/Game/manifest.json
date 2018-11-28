@@ -12,6 +12,8 @@
 		}
 	},
 
+	"cni-startup": "lib_game_startup",
+
 	"cni": [
 		{ "name": "lib_game_clock_tick", "argc": 0 },
 		{ "name": "lib_game_getScreenInfo", "argc": 1 },

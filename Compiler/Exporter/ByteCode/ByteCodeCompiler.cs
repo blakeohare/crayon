@@ -103,6 +103,7 @@ namespace Exporter.ByteCode
                 {
                     scope.Metadata.ID,
                     scope.Metadata.Version,
+                    scope.Metadata.CniStartupFunction ?? ""
                 };
                 string libraryDescriptor = string.Join(",", descriptorComponents);
                 output.Add(null, OpCode.LIB_DECLARATION, libraryDescriptor, id++);

@@ -1,3 +1,5 @@
+@import("startup.pst");
+
 @import("clock_tick.pst");
 @import("getScreenInfo.pst");
 @import("getTouchState.pst");

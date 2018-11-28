@@ -1,0 +1,3 @@
+VM.Value lib_game_startup(VM.VmContext vm, Array<VM.Value> args) {
+    return vm.globalNull;
+}

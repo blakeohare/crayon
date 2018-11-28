@@ -72,9 +72,12 @@ namespace Parser
                     this.CniFunctions[name] = argc;
                 }
             }
+            this.CniStartupFunction = this.Manifest.GetAsString("cni-startup");
         }
 
         public Dictionary<string, int> CniFunctions { get; private set; }
+
+        public string CniStartupFunction { get; private set; }
 
         private Dictionary<string, string> nameByLocale = new Dictionary<string, string>();
         public string GetName(Locale locale)

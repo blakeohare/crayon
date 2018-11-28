@@ -73,16 +73,19 @@ public final class TranslationHelper {
   }
 
   private static void loadAssembly(String assemblyInfo) {
-    String[] t = assemblyInfo.split(",");
-    String name = t[0];
-    String version = t[1];
-    new LibraryLoader().getLibClass(name, version);
+    // .split will drop empty elements, so add spaces and then trim them out later.
+    String[] t = (" " + assemblyInfo + " ").split(",");
+    String name = t[0].trim();
+    String version = t[1].trim();
+    String startupFunction = t[2].trim();
+    new LibraryLoader().getLibClass(name, version, startupFunction);
   }
 
-  private static final Object[] ARGS_REUSABLE = new Object[1];
+  private static final Object[] ARGS_REUSABLE = new Object[2];
   public static Value invokeLibraryFunction(Object fn, Value[] args) {
     try {
-      ARGS_REUSABLE[0] = args;
+      ARGS_REUSABLE[0] = vmContext;
+      ARGS_REUSABLE[1] = args;
       return (Value) ((Method) fn).invoke(null, ARGS_REUSABLE);
     } catch (Exception e) {
       throw new RuntimeException("Error while running library function.", e);
