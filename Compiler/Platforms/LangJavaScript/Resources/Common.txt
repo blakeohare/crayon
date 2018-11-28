@@ -38,7 +38,7 @@ function C$handleVmResult(res) {
 			var name = parts[0];
 			var version = parts[1];
 			var startupFunc = parts[2];
-			C$loadAssembly(name, version);
+			C$loadAssembly(name, version, startupFunc);
 		}
 		res = runInterpreter(vm, getVmResultExecId(res))
 		status = getVmResultStatus(res);
@@ -51,7 +51,10 @@ function C$handleVmResult(res) {
 
 C$loadAssembly = function(name, ver, startupFn) {
 	if (startupFn.length > 0) {
-		console.log("Error: startup function for " + name + " was not run.");
+		var fn = window[startupFn];
+		if (fn !== undefined) {
+			fn(C$common$programData, []);
+		}
 	}
 };
 
