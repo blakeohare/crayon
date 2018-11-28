@@ -16,6 +16,8 @@ struct VmContext {
 
     VmEnvironment environment;
 
+    NamedCallbackStore namedCallbacks;
+
     VmGlobals globals;
     Value globalNull;
     Value globalTrue;

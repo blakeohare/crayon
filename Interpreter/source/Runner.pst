@@ -108,6 +108,10 @@
         new List<Value>(), // shutdown handlers
         new VmEnvironment(new Array<string>(0), false, null, null), // VM Environment with default values.
 
+        new NamedCallbackStore(
+            new List<Func<object, Array<object>>>(),
+            new Dictionary<string, Dictionary<string, int>>()),
+
         // Globals
         globals,
         globals.valueNull,

@@ -1,0 +1,43 @@
+int registerNamedCallback(
+    VmContext vm,
+    string scope,
+    string functionName,
+    Func<object, Array<object>> callback) {
+
+    int id = getNamedCallbackIdImpl(vm, scope, functionName, true);
+    vm.namedCallbacks.callbacksById[id] = callback;
+    return id;
+}
+
+object invokeNamedCallback(VmContext vm, int id, Array<object> args) {
+    Func<object, Array<object>> cb = vm.namedCallbacks.callbacksById[id];
+    return cb(args);
+}
+
+int getNamedCallbackId(VmContext vm, string scope, string functionName) {
+    return getNamedCallbackIdImpl(vm, scope, functionName, false);
+}
+
+int getNamedCallbackIdImpl(
+    VmContext vm,
+    string scope,
+    string functionName,
+    bool allocIfMissing) {
+
+    Dictionary<string, Dictionary<string, int>> lookup = vm.namedCallbacks.callbackIdLookup;
+    Dictionary<string, int> idsForScope = null;
+    idsForScope = lookup.TryGet(scope, null);
+    if (idsForScope == null) {
+        idsForScope = new Dictionary<string, int>();
+        lookup[scope] = idsForScope;
+    }
+
+    int id = -1;
+    id = idsForScope.TryGet(functionName, -1);
+    if (id == -1 && allocIfMissing) {
+        id = vm.namedCallbacks.callbacksById.Size();
+        vm.namedCallbacks.callbacksById.Add(null);
+        idsForScope[functionName] = id;
+    }
+    return id;
+}

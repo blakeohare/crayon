@@ -16,6 +16,7 @@
 @importIfFalse('ARRAY_IS_LIST', "structs/ListImplArrayBased.pst");
 @importIfTrue('ARRAY_IS_LIST', "structs/ListImplListBased.pst");
 @import("structs/MagicNumbers.pst");
+@import("structs/NamedCallbackStore.pst");
 @import("structs/ObjectInstance.pst");
 @import("structs/PlatformRelayObject.pst");
 @import("structs/ResourceDB.pst");

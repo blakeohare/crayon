@@ -92,7 +92,7 @@ namespace Graphics2DText {
         @localized('es', 'ESdrawWithAlpha')
         @localized('jp', 'JPdrawWithAlpha')
         function drawWithAlpha(x, y, alpha) {
-            if (this._isGl){
+            if (this._isGl) {
                 return $lib_graphics2dtext_glRenderTextSurface(this, this.tiles, Graphics2D.Draw._queue, x, y, alpha);
             } else {
                 Graphics2D.Draw.rectangle(0, 0, 10, 10, 255, 0, 0); // ensure the Draw._queue has capacity

@@ -6,6 +6,7 @@
 @import("Debugger.pst");
 @import("Interpreter.pst");
 @import("MetadataInitializer.pst");
+@import("NamedCallbacks.pst");
 @import("PrimitiveMethods.pst");
 @import("Reflection.pst");
 @import("ResourceManager.pst");
