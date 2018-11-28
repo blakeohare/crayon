@@ -313,8 +313,32 @@ public final class GameWindow {
         }
     }
     
+    public static Object _setRenderQueueImpl(Object[] args) {
+		org.crayonlang.libraries.game.RenderEngine.setRenderQueues(
+			(int[]) args[0],
+			(int) args[1],
+			(Object[][]) args[2],
+			(ArrayList<Integer>) args[3]);
+		return null;
+    }
+
+    private static java.lang.reflect.Method getMethod(String name) {
+		try {
+			java.lang.reflect.Method[] methods = GameWindow.class.getMethods();
+			for (int i = 0; i < methods.length; ++i) {
+				if (name.equals(methods[i].getName())) {
+					return methods[i];
+				}
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		throw new RuntimeException("Could not find method: " + name);
+    }
+
     public static HashMap<String, java.lang.reflect.Method> getCallbackFunctions() {
 		HashMap<String, java.lang.reflect.Method> lookup = new HashMap<>();
+		lookup.put("set-render-data", getMethod("_setRenderQueueImpl"));
 		return lookup;
     }
 }

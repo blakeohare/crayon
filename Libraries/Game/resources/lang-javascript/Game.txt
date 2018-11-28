@@ -243,5 +243,7 @@ C$game$isMobile = function() {
 };
 
 C$game$getCallbackFunctions = function() {
-	return {};
+	var t = {};
+	t["set-render-data"] = function(o) { return C$drawing$rendererSetData(o[0], o[1], o[2], o[3]); };
+	return t;
 };

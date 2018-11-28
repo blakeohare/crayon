@@ -201,4 +201,6 @@ def audio_sound_play(sfx, vol, pan):
   ch.set_volume(vol)
 
 def pygame_getCallbackFunctions():
-  return {}
+  return {
+    "set-render-data": lambda o: gfxRendererSetData(o[0], o[1], o[2], o[3])
+  }

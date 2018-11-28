@@ -3,10 +3,3 @@ object _lib_graphics2d_flipTexture(object o, bool flipHorizontal, bool flipVerti
 
 // Scales a graphics texture into a new texture
 object _lib_graphics2d_scale(object graphicsTexture, int width, int height);
-
-// TODO: document this
-void _lib_graphics2d_render(
-	Array<int> a1,
-	int i1,
-	Array<Array<object>> a2,
-	List<int> textCharacterCodes);

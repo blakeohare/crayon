@@ -46,11 +46,13 @@ VM.Value lib_graphics2d_renderQueueAction(VM.VmContext vm, Array<VM.Value> args)
             }
         }
         // Push the queues to the renderer.
-        Extension._lib_graphics2d_render(
-            intArray1,
-            (int) objArray1[1],
-            (Array<Array<object>>) objArray1[2],
-            intList1); // text characters
+        Array<object> renderArgs = new Array<object>(4);
+        renderArgs[0] = intArray1;
+        renderArgs[1] = objArray1[1];
+        renderArgs[2] = objArray1[2];
+        renderArgs[3] = intList1; // text characters
+        int callbackId = VM.getNamedCallbackId(vm, "Game", "set-render-data");
+        VM.invokeNamedCallback(vm, callbackId, renderArgs);
     } else if (command == 2) {
         // Reset all render queues to 0.
         objArray1[1] = 0;

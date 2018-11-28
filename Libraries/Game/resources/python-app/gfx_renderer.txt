@@ -22,7 +22,6 @@ def gfxRendererSetData(events, eventsLength, images, textChars):
   _gfxRendererVars['eventsLength'] = eventsLength
   _gfxRendererVars['images'] = images
   _gfxRendererVars['textChars'] = textChars
-TranslationHelper_globals['LIB:GAME:g2dRendererSetData'] = gfxRendererSetData
 
 def gfxRendererGetTempSurface(dim):
   s = _gfxRendererVars['tempSurfacesCurrent'].get(dim)

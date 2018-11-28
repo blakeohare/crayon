@@ -486,9 +486,13 @@ namespace Interpreter.Libraries.Game
         {
             Dictionary<string, System.Func<object[], object>> lookup = new Dictionary<string, System.Func<object[], object>>();
 
-            lookup["force-load-texture"] = new System.Func<object[], object>(args =>
-            {
+            lookup["force-load-texture"] = new System.Func<object[], object>(args => {
                 return GlUtil.ForceLoadTexture((UniversalBitmap)args[0]);
+            });
+
+            lookup["set-render-data"] = new System.Func<object[], object>(args => {
+                SetRenderData((int[])args[0], (int)args[1], (object[][])args[2], (List<int>)args[3]);
+                return null;
             });
 
             return lookup;
