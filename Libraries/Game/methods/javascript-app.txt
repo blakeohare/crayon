@@ -7,3 +7,4 @@ $_lib_game_set_title: C$game$setTitle([ARG:1])
 $_lib_game_clockTick: C$game$endFrame()
 $_lib_game_getNativeWindowHandle: null
 $_lib_game_set_window_mode: C$common$alwaysFalse()
+$_lib_game_GetCallbackFunctions: C$game$getCallbackFunctions()

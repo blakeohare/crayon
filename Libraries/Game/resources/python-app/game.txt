@@ -199,3 +199,6 @@ def readLocalSoundResource(path):
 def audio_sound_play(sfx, vol, pan):
   ch = sfx.play()
   ch.set_volume(vol)
+
+def pygame_getCallbackFunctions():
+  return {}

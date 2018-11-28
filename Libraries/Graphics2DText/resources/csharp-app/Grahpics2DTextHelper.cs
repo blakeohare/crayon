@@ -54,8 +54,8 @@ internal static class Graphics2DTextHelper
             tileHeight = coordinateInfo[i * 4 + 3];
 
             g.Draw((Interpreter.UniversalBitmap)nativeData[0], tileX, tileY, 0, 0, tileWidth, tileHeight);
-			nativeData[5] = -1;
-			nativeData[6] = null;
+            nativeData[5] = -1;
+            nativeData[6] = null;
             nativeData[7] = tileX;
             nativeData[8] = tileY;
             nativeData[9] = tileX + tileWidth;
@@ -68,9 +68,24 @@ internal static class Graphics2DTextHelper
         return output;
     }
 
+    private static int forceLoadTextureCallbackId = -1;
     public static int LoadOpenGlTexture(object bitmapObj)
     {
         Interpreter.UniversalBitmap bitmap = (Interpreter.UniversalBitmap)bitmapObj;
-        return Interpreter.Libraries.Game.GlUtil.ForceLoadTexture(bitmap);
+
+        if (forceLoadTextureCallbackId == -1)
+        {
+            forceLoadTextureCallbackId = Interpreter.Vm.CrayonWrapper.getNamedCallbackId(
+                Interpreter.Vm.TranslationHelper.ProgramData,
+                "Game",
+                "force-load-texture");
+        }
+
+        int textureId = (int)Interpreter.Vm.CrayonWrapper.invokeNamedCallback(
+            Interpreter.Vm.TranslationHelper.ProgramData,
+            forceLoadTextureCallbackId,
+            new object[] { bitmap });
+
+        return textureId;
     }
 }

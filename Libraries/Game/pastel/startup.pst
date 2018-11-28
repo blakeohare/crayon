@@ -1,3 +1,18 @@
 VM.Value lib_game_startup(VM.VmContext vm, Array<VM.Value> args) {
+
+    Dictionary<string, Func<object, Array<object>>> functionLookup = Extension._lib_game_GetCallbackFunctions();
+
+    List<string> names = new List<string>();
+    names.Add("force-load-texture");
+
+    for (int i = 0; i < names.Size(); i += 1) {
+        Func<object, Array<object>> fn = null;
+        string name = names[i];
+        fn = functionLookup.TryGet(name, null);
+        if (fn != null) {
+            VM.registerNamedCallback(vm, "Game", name, fn);
+        }
+    }
+
     return vm.globalNull;
 }

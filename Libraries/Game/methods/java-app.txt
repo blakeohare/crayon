@@ -7,3 +7,4 @@ $_lib_game_set_title: GameWindow.INSTANCE.setTitle([ARG:1])
 $_lib_game_clockTick: TranslationHelper.alwaysTrue()
 $_lib_game_getNativeWindowHandle: GameWindow.INSTANCE
 $_lib_game_set_window_mode: TranslationHelper.alwaysFalse()
+$_lib_game_GetCallbackFunctions: GameWindow.getCallbackFunctions()

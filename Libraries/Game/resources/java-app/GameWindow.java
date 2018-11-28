@@ -312,4 +312,9 @@ public final class GameWindow {
             gw.handleMouseEvent(false, false, false, e.getX(), e.getY());
         }
     }
+    
+    public static HashMap<String, java.lang.reflect.Method> getCallbackFunctions() {
+		HashMap<String, java.lang.reflect.Method> lookup = new HashMap<>();
+		return lookup;
+    }
 }

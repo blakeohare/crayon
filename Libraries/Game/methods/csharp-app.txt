@@ -7,3 +7,4 @@ $_lib_game_set_title: GameWindow.Instance.SetTitle([ARG:1])
 $_lib_game_clockTick: AlwaysTrue()
 $_lib_game_getNativeWindowHandle: GameWindow.Instance
 $_lib_game_set_window_mode: GameWindow.Instance.SetScreenMode([ARG:1], [ARG:2], [ARG:3])
+$_lib_game_GetCallbackFunctions: GameWindow.GetCallbackFunctions()

@@ -481,5 +481,17 @@ namespace Interpreter.Libraries.Game
 
             return bmp;
         }
+
+        public static Dictionary<string, System.Func<object[], object>> GetCallbackFunctions()
+        {
+            Dictionary<string, System.Func<object[], object>> lookup = new Dictionary<string, System.Func<object[], object>>();
+
+            lookup["force-load-texture"] = new System.Func<object[], object>(args =>
+            {
+                return GlUtil.ForceLoadTexture((UniversalBitmap)args[0]);
+            });
+
+            return lookup;
+        }
     }
 }

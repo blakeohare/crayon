@@ -241,3 +241,7 @@ C$game$getTouchState = function(data) {
 C$game$isMobile = function() {
 	return navigator.userAgent.indexOf('Mobile') !== -1;
 };
+
+C$game$getCallbackFunctions = function() {
+	return {};
+};
