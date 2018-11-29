@@ -24,15 +24,16 @@ namespace Exporter
         {
             this.library = library;
             this.exportEntities = null;
-            this.ApplicablePlatformNames = new HashSet<string>();
+            this.ApplicablePlatformNamesMostGeneralFirst = new List<string>();
             while (platform != null)
             {
-                this.ApplicablePlatformNames.Add(platform.Name);
+                this.ApplicablePlatformNamesMostGeneralFirst.Add(platform.Name);
                 platform = platform.ParentPlatform;
             }
+            this.ApplicablePlatformNamesMostGeneralFirst.Reverse();
         }
 
-        public HashSet<string> ApplicablePlatformNames { get; private set; }
+        public List<string> ApplicablePlatformNamesMostGeneralFirst { get; private set; }
 
         public Multimap<string, ExportEntity> ExportEntities
         {
@@ -51,64 +52,26 @@ namespace Exporter
         private List<Dictionary<string, string>> ParseApplicableInstructions()
         {
             List<Dictionary<string, string>> instructions = new List<Dictionary<string, string>>();
-            string resourceManifest = this.library.Metadata.ReadFile(false, "resources/resource-manifest.txt", true).Trim();
-            if (resourceManifest.Length > 0)
+            foreach (string platformName in this.ApplicablePlatformNamesMostGeneralFirst)
             {
-                string mode = "inactive"; // inactive | pending | active
+                string resourceManifest = this.library.Metadata.ReadFile(false, "resources/" + platformName + ".txt", true).Trim();
+                if (resourceManifest.Length == 0) continue;
 
                 foreach (string lineRaw in resourceManifest.Split('\n'))
                 {
-                    string[] parts = lineRaw.Trim().Split(COLON_CHAR, 2);
-                    if (parts[0].StartsWith("#")) continue; // comment
+                    string line = lineRaw.Trim();
+                    if (line.Length == 0 || line[0] == '#') continue; // blank or comment
+                    string[] parts = line.Split(COLON_CHAR, 2);
 
                     string command = parts[0].ToUpper().Trim();
-                    if (command.Length > 0)
+
+                    Dictionary<string, string> values = KeyValuePairParser.Parse(parts[1]);
+                    if (values == null)
                     {
-                        switch (mode)
-                        {
-                            case "active":
-                                switch (command)
-                                {
-                                    case "END":
-                                        mode = "inactive";
-                                        break;
-
-                                    default:
-                                        Dictionary<string, string> values = KeyValuePairParser.Parse(parts[1]);
-                                        if (values == null)
-                                        {
-                                            throw new InvalidOperationException("The library '" + this.library.Metadata.ID + "' has a malformed copy instruction on the following line: " + lineRaw);
-                                        }
-                                        values["TYPE"] = command;
-                                        instructions.Add(values);
-                                        break;
-                                }
-                                break;
-
-                            case "inactive":
-                                if (command == "BEGIN")
-                                {
-                                    mode = "pending";
-                                }
-                                break;
-
-                            case "pending":
-                                switch (command)
-                                {
-                                    case "APPLICABLE-TO":
-                                        if (this.ApplicablePlatformNames.Contains(parts[1].Trim()))
-                                        {
-                                            mode = "active";
-                                        }
-                                        break;
-
-                                    case "END":
-                                        mode = "inactive";
-                                        break;
-                                }
-                                break;
-                        }
+                        throw new InvalidOperationException("The library '" + this.library.Metadata.ID + "' has a malformed copy instruction on the following line: " + lineRaw);
                     }
+                    values["TYPE"] = command;
+                    instructions.Add(values);
                 }
             }
             return instructions;

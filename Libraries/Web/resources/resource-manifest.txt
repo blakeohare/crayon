@@ -1,9 +1,0 @@
-BEGIN
-APPLICABLE-TO: java-app
-COPY_FILES: from=java-app, to=%LIBRARY_PATH%/%FILE%
-END
-
-BEGIN
-APPLICABLE-TO: python-app
-EMBED_FILES: from=python-app
-END

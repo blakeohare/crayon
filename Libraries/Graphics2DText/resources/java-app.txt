@@ -1,0 +1,1 @@
+COPY_FILES: from=java-app, to=%LIBRARY_PATH%/%FILE%

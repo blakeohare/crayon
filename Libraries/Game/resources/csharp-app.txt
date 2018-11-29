@@ -1,6 +1,3 @@
-
-BEGIN
-APPLICABLE-TO: csharp-app
 COPY_FILES: from=csharp-app, to=%LIBRARY_PATH%/%FILE%
 DOTNET_DLL: from=csharp-app/OpenTK.dll, hintpath=OpenTK.dll, name=OpenTK, version=1.0.0.0, culture=neutral, token=bad199fe84eb3df4, architecture=MSIL, specificversion=false
 DOTNET_DLL: from=csharp-app/SdlDotNet.dll, hintpath=SdlDotNet.dll, name=SdlDotNet, version=6.1.0.0, culture=neutral, token=26ad4f7e10c61408, architecture=MSIL, specificversion=false
@@ -10,19 +7,3 @@ DOTNET_DLL: from=csharp-app/SDL_mixer.dll, hintpath=SDL_mixer.dll
 DOTNET_DLL: from=csharp-app/libogg-0.dll, hintpath=libogg-0.dll
 DOTNET_DLL: from=csharp-app/libvorbis-0.dll, hintpath=libvorbis-0.dll
 DOTNET_DLL: from=csharp-app/libvorbisfile-3.dll, hintpath=libvorbisfile-3.dll
-END
-
-BEGIN
-APPLICABLE-TO: java-app
-COPY_FILES: from=java-app, to=%LIBRARY_PATH%/%FILE%
-END
-
-BEGIN
-APPLICABLE-TO: lang-javascript
-EMBED_FILES: from=lang-javascript
-END
-
-BEGIN
-APPLICABLE-TO: lang-python
-EMBED_FILES: from=python-app
-END
