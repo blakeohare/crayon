@@ -67,7 +67,7 @@ namespace Exporter
                                 throw new InvalidOperationException("The library '" + lfe.Name + "' makes reference to another library '" + ee.DeferredFileOutputBytesLibraryName + "' which could not be found.");
                             }
 
-                            string resourcePath = "resources/" + ee.DeferredFileOutputBytesLibraryPath;
+                            string resourcePath = "native/" + ee.DeferredFileOutputBytesLibraryPath;
                             byte[] dllFile = sourceLibrary.Metadata.ReadFileBytes(resourcePath);
                             if (dllFile == null)
                             {

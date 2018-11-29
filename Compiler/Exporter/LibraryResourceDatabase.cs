@@ -54,7 +54,7 @@ namespace Exporter
             List<Dictionary<string, string>> instructions = new List<Dictionary<string, string>>();
             foreach (string platformName in this.ApplicablePlatformNamesMostGeneralFirst)
             {
-                string resourceManifest = this.library.Metadata.ReadFile(false, "resources/" + platformName + ".txt", true).Trim();
+                string resourceManifest = this.library.Metadata.ReadFile(false, "native/" + platformName + "/manifest.txt", true).Trim();
                 if (resourceManifest.Length == 0) continue;
 
                 foreach (string lineRaw in resourceManifest.Split('\n'))
@@ -71,6 +71,21 @@ namespace Exporter
                         throw new InvalidOperationException("The library '" + this.library.Metadata.ID + "' has a malformed copy instruction on the following line: " + lineRaw);
                     }
                     values["TYPE"] = command;
+
+                    // pre-pend the current directory to any attributes that have a path. Currently this is just "from".
+                    switch (command)
+                    {
+                        case "COPY_FILE":
+                        case "COPY_FILES":
+                        case "EMBED_FILE":
+                        case "EMBED_FILES":
+                        case "DOTNET_DLL":
+                            if (values.ContainsKey("from"))
+                            {
+                                values["from"] = platformName + "/" + values["from"];
+                            }
+                            break;
+                    }
                     instructions.Add(values);
                 }
             }
@@ -106,10 +121,10 @@ namespace Exporter
                                 typeFilter = "." + typeFilter.ToLower();
                             }
                         }
-                        foreach (string file in this.library.ListDirectory("resources/" + from)
+                        foreach (string file in this.library.ListDirectory("native/" + from)
                             .Where(path => typeFilter == null || path.ToLower().EndsWith(typeFilter)))
                         {
-                            content = this.library.Metadata.ReadFile(false, "resources/" + from + "/" + file, false);
+                            content = this.library.Metadata.ReadFile(false, "native/" + from + "/" + file, false);
                             output.Add(new Dictionary<string, string>() {
                                 { "TYPE", "COPY_CODE" },
                                 { "target", to.Replace("%FILE%", file) },
@@ -123,7 +138,7 @@ namespace Exporter
                         this.EnsureInstructionContainsAttribute("COPY_FILE", instruction, "to");
                         from = instruction["from"];
                         to = instruction["to"];
-                        content = this.library.Metadata.ReadFile(false, "resources/" + from, false);
+                        content = this.library.Metadata.ReadFile(false, "native/" + from, false);
                         output.Add(new Dictionary<string, string>()
                         {
                             { "TYPE", "COPY_CODE" },
@@ -135,16 +150,16 @@ namespace Exporter
                     case "EMBED_FILE":
                         this.EnsureInstructionContainsAttribute("EMBED_FILES", instruction, "from");
                         from = instruction["from"];
-                        totalEmbed.Append(this.library.Metadata.ReadFile(false, "resources/" + from, false));
+                        totalEmbed.Append(this.library.Metadata.ReadFile(false, "native/" + from, false));
                         totalEmbed.Append("\n\n");
                         break;
 
                     case "EMBED_FILES":
                         this.EnsureInstructionContainsAttribute("EMBED_FILES", instruction, "from");
                         from = instruction["from"];
-                        foreach (string file in this.library.ListDirectory("resources/" + from))
+                        foreach (string file in this.library.ListDirectory("native/" + from))
                         {
-                            totalEmbed.Append(this.library.Metadata.ReadFile(false, "resources/" + from + "/" + file, false));
+                            totalEmbed.Append(this.library.Metadata.ReadFile(false, "native/" + from + "/" + file, false));
                             totalEmbed.Append("\n\n");
                         }
                         break;
@@ -243,7 +258,7 @@ namespace Exporter
                             entity.FileOutput = new FileOutput()
                             {
                                 Type = FileOutputType.Binary,
-                                BinaryContent = this.library.Metadata.ReadFileBytes("resources/" + from)
+                                BinaryContent = this.library.Metadata.ReadFileBytes("native/" + from)
                             };
                         }
 

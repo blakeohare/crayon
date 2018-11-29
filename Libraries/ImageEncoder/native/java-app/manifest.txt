@@ -1,0 +1,1 @@
+COPYFILES: from=source, to=%LIBRARY_PATH%/%FILE%

@@ -1,1 +1,0 @@
-COPY_FILES: from=lang-csharp, to=%LIBRARY_PATH%/%FILE%

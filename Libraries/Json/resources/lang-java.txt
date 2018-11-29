@@ -1,1 +1,0 @@
-COPY_FILES: from=lang-java, to=%LIBRARY_PATH%/%FILE%
