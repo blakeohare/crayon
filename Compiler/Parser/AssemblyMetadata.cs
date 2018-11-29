@@ -102,20 +102,19 @@ namespace Parser
             return true;
         }
 
-        public Dictionary<string, string> GetEmbeddedCode()
+        public Dictionary<string, string> GetSourceCode()
         {
-            Dictionary<string, string> output = new Dictionary<string, string>() {
-                { this.ID, this.ReadFile(false, "embed.cry", true) }
-            };
-            string embedDir = FileUtil.JoinPath(this.Directory, "embed");
-            if (FileUtil.DirectoryExists(embedDir))
+            Dictionary<string, string> output = new Dictionary<string, string>();
+            string srcDir = FileUtil.JoinPath(this.Directory, "src");
+            if (!FileUtil.DirectoryExists(srcDir))
             {
-                string[] additionalFiles = FileUtil.GetAllFilePathsRelativeToRoot(embedDir);
-                foreach (string additionalFile in additionalFiles)
-                {
-                    string embedCode = this.ReadFile(false, "embed/" + additionalFile, false);
-                    output[this.ID + ":" + additionalFile] = embedCode;
-                }
+                throw new System.InvalidOperationException(this.Directory + " is missing a 'src' directory");
+            }
+            string[] srcFiles = FileUtil.GetAllFilePathsRelativeToRoot(srcDir);
+            foreach (string srcFile in srcFiles)
+            {
+                string code = this.ReadFile(false, "src/" + srcFile, false);
+                output[this.ID + ":" + srcFile] = code;
             }
             return output;
         }

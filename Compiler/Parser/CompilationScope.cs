@@ -62,7 +62,7 @@ namespace Parser
                 return this.buildContext.TopLevelAssembly.ProgrammingLanguage;
             }
 
-            Dictionary<string, string> embeddedCode = this.Metadata.GetEmbeddedCode();
+            Dictionary<string, string> embeddedCode = this.Metadata.GetSourceCode();
             string filename = embeddedCode.Keys.Where(name => name.Contains('.')).FirstOrDefault();
             if (filename != null)
             {

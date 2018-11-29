@@ -120,11 +120,11 @@ namespace Parser
 
             // Parse the assembly.
             parser.PushScope(compilationScope);
-            Dictionary<string, string> embeddedCode = assemblyMetadata.GetEmbeddedCode();
-            foreach (string embeddedFile in embeddedCode.Keys.OrderBy(s => s.ToLower()))
+            Dictionary<string, string> sourceCode = assemblyMetadata.GetSourceCode();
+            foreach (string file in sourceCode.Keys.OrderBy(s => s.ToLower()))
             {
-                string fakeName = "[" + embeddedFile + "]";
-                string code = embeddedCode[embeddedFile];
+                string fakeName = "[" + file + "]";
+                string code = sourceCode[file];
                 parser.ParseFile(fakeName, code);
             }
             parser.PopScope();
