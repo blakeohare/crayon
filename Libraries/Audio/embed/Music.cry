@@ -19,7 +19,7 @@ namespace Audio {
     @localized('jp', 'JPMusic')
     class Music {
 
-        static field _isSupported = $lib_audio_is_supported();
+        static field _isSupported = Game.AudioImpl_isSupported();
 
         field _isResource;
         field _path;
@@ -30,7 +30,7 @@ namespace Audio {
         }
 
         static function _convertPath(path) {
-            fileinfo = $lib_audio_getAudioResourcePath(path + '');
+            fileinfo = Game.AudioImpl_getAudioResourcePath(path + '');
             if (fileinfo == null) {
                 throw new MusicNotFoundException("Audio resource '" + path + "' not found.");
             } else if (!fileinfo[0]) {
@@ -49,7 +49,7 @@ namespace Audio {
             music = new Music();
             music._isResource = true;
             music._path = path;
-            if (!$lib_audio_music_load_from_resource(music, path)) {
+            if (!Game.AudioImpl_musicLoadFromResource(music, path)) {
                 throw new MusicNotFoundException("Music resource '" + path + "' not found.");
             }
             return music;
@@ -91,7 +91,7 @@ namespace Audio {
                     break;
 
                 case _MusicState.PLAYING_NORMAL:
-                    if (!$lib_audio_music_is_playing()) {
+                    if (!Game.AudioImpl_musicIsPlaying()) {
                         // Rather than just mark this as no longer playing, pretend that it's a transition out that's already done.
                         // This will either mark it as NOT_PLAYING or will automatically pop the queue and start the next song.
                         // Otherwise enqueuing a song during a non-looping song and if the song just happens to end while it's still fading
@@ -114,15 +114,13 @@ namespace Audio {
                         if (Music.enqueuedMusic == null) {
                             Music.currentState = _MusicState.NOT_PLAYING;
                             Music.currentMusic = null;
-                            $lib_audio_music_stop();
+                            Game.AudioImpl_musicStop();
                         } else {
                             Music.currentMusic = Music.enqueuedMusic;
                             Music.currentIsLoop = Music.enqueuedIsLoop;
                             if (Music.enqueuedInTransitionDuration == null) {
-                                found = $lib_audio_music_play(
+                                found = Game.AudioImpl_musicPlay(
                                     Music.currentMusic,
-                                    Music.currentMusic._isResource,
-                                    Music.currentMusic._path,
                                     Music.mainVolume,
                                     Music.currentIsLoop);
                                 if (!found) throw new Audio.MusicNotFoundException("Music file not found: " + Music.currentMusic._path);
@@ -133,10 +131,8 @@ namespace Audio {
                                 Music.currentInTransitionDuration = null;
                                 Music.fadeVolume = 1.0;
                             } else {
-                                $lib_audio_music_play(
+                                Game.AudioImpl_musicPlay(
                                     Music.currentMusic,
-                                    Music.currentMusic._isResource,
-                                    Music.currentMusic._path,
                                     0.0,
                                     Music.currentIsLoop);
                                 Music.currentState = _MusicState.TRANSITION_IN;
@@ -155,7 +151,7 @@ namespace Audio {
             diff = Math.abs(v - Music.compositeVolume);
             if (diff > 0.00001) {
                 Music.compositeVolume = v;
-                $lib_audio_music_set_volume(v);
+                Game.AudioImpl_musicSetVolume(v);
             }
         }
 
@@ -231,7 +227,7 @@ namespace Audio {
             if (outTransitionDuration == null) {
                 // instantaneous transitions
                 if (music == null) {
-                    $lib_audio_music_stop();
+                    Game.AudioImpl_musicStop();
                     Music.currentMusic = null;
                     Music.currentState = _MusicState.NOT_PLAYING;
                 } else {
@@ -240,13 +236,13 @@ namespace Audio {
                     if (inTransitionDuration == null) {
                         Music.currentState = loop ? _MusicState.PLAYING_LOOPING : _MusicState.PLAYING_NORMAL;
                         Music.fadeVolume = 1.0;
-                        $lib_audio_music_play(music, music._isResource, music._path, Music.mainVolume, loop);
+                        Game.AudioImpl_musicPlay(music, Music.mainVolume, loop);
                     } else {
                         Music.currentState = _MusicState.TRANSITION_IN;
                         Music.fadeVolume = 0.0;
                         Music.currentTransitionStart = Core.currentTime();
                         Music.currentInTransitionDuration = inTransitionDuration;
-                        $lib_audio_music_play(music, music._isResource, music._path, 0.0, loop);
+                        Game.AudioImpl_musicPlay(music, 0.0, loop);
                     }
                 }
             } else {

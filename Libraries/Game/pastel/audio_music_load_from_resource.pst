@@ -11,7 +11,7 @@ VM.Value lib_audio_music_load_from_resource(VM.VmContext vm, Array<VM.Value> arg
 }
 
 bool lib_audio_music_load_from_resourceImpl(VM.ObjectInstance musicObj, string path) {
-    object nativeMusicObject = Extension._lib_audio_musicLoadFromResource(path);
+    object nativeMusicObject = Extension._lib_game_audio_musicLoadFromResource(path);
     if (nativeMusicObject != null) {
         musicObj.nativeData = new Array<object>(1);
         musicObj.nativeData[0] = nativeMusicObject;

@@ -1,4 +1,4 @@
-package org.crayonlang.libraries.audio;
+package org.crayonlang.libraries.game;
 
 class AudioLibHelper {
 

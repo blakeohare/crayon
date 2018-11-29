@@ -1,0 +1,17 @@
+namespace Game {
+    function AudioImpl_isSupported() { return $lib_game_audio_is_supported(); }
+    function AudioImpl_getAudioResourcePath(path) { return $lib_game_audio_getAudioResourcePath(path); }
+    function AudioImpl_musicStop() { return $lib_game_audio_music_stop(); }
+    function AudioImpl_musicPlay(music, vol, loop) { return $lib_game_audio_music_play(music, music._isResource, music._path, vol, loop); }
+    function AudioImpl_musicSetVolume(v) { return $lib_game_audio_music_set_volume(v); }
+    function AudioImpl_musicLoadFromResource(music, path) { return $lib_game_audio_music_load_from_resource(music, path); }
+    function AudioImpl_musicIsPlaying() { return $lib_game_audio_music_is_playing(); }
+    function AudioImpl_sfxPlay(obj, resource, volume, pan) { return $lib_game_audio_sfx_play(obj, resource, volume, pan); }
+    function AudioImpl_sfxGetState(obj) { return $lib_game_audio_sfx_get_state(obj, obj._soundResource, obj._id); }
+    function AudioImpl_sfxResume(obj) { return $lib_game_audio_sfx_resume(obj, obj._soundResource, obj._volume, obj._pan); }
+    function AudioImpl_sfxStop(obj, state, isPause) { return $lib_game_audio_sfx_stop(obj, obj._soundResource, obj._id, state, !isPause); }
+    function AudioImpl_sfxSetPan(obj) { return $lib_game_audio_sfx_set_pan(obj, obj._soundResource, obj._pan); }
+    function AudioImpl_sfxSetVolume(obj) { return $lib_game_audio_sfx_set_volume(obj, obj._soundResource, obj._volume); }
+    function AudioImpl_sfxLoadFromFile(snd, path) { return $lib_game_audio_sfx_load_from_file(snd, path); }
+    function AudioImpl_sfxLoadFromResource(snd, path) { return $lib_game_audio_sfx_load_from_resource(snd, path); }
+}

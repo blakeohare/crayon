@@ -1,15 +1,15 @@
 ﻿int lib_audio_stop(object sound, bool reset) {
-    Extension._lib_audio_audioStop(sound);
+    Extension._lib_game_audio_audioStop(sound);
     return 0;
 }
 
 int lib_audio_sfx_unpause(object channel, object sfxResource, double volume, double pan) {
-    Extension._lib_audio_sfxResume(channel, sfxResource, volume, pan);
+    Extension._lib_game_audio_sfxResume(channel, sfxResource, volume, pan);
     return 0;
 }
 
 int lib_audio_sfx_launch(object sfxResource, Array<object> channelNativeDataOut, double volume, double pan) {
-    object channel = Extension._lib_audio_sfxPlay(sfxResource, volume, pan);
+    object channel = Extension._lib_game_audio_sfxPlay(sfxResource, volume, pan);
     if (channel == null) {
         return 0;
     }

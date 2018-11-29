@@ -2,6 +2,6 @@
     args[0] -> volume ratio
 */
 VM.Value lib_audio_music_set_volume(VM.VmContext vm, Array<VM.Value> args) {
-    Extension._lib_audio_musicSetVolume((double) args[0].internalValue);
+    Extension._lib_game_audio_musicSetVolume((double) args[0].internalValue);
     return vm.globals.valueNull;
 }

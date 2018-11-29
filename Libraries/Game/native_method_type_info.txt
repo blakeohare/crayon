@@ -25,3 +25,30 @@ void _lib_game_set_window_mode(int mode, int width, int height);
 List<VM.PlatformRelayObject> _lib_game_get_events_raw_list();
 
 Dictionary<string, Func<object, Array<object>>> _lib_game_GetCallbackFunctions();
+
+// --- AUDIO ---
+bool _lib_game_audio_isAudioSupported();
+
+void _lib_game_audio_musicSetVolume(double ratio);
+
+bool _lib_game_audio_musicIsPlaying();
+
+object _lib_game_audio_readLocalSoundResource(string resourcePath);
+
+object _lib_game_audio_musicLoadFromResource(string resourcePath);
+
+void _lib_game_audio_musicPlayResource(object musicObj, string path, bool isLoop);
+
+bool _lib_game_audio_musicVerifyFileExists(string path);
+
+void _lib_game_audio_musicPlayFile(object musicObj, string path, bool isLoop);
+
+int _lib_game_audio_sfxGetState(object channel, object sfxResource, int resourceId);
+
+object _lib_game_audio_sfxPlay(object sfxResource, double volumeRatio, double panRatio);
+
+void _lib_game_audio_sfxStop(object channel, object sfxResource, int resourceId, bool isActivelyPlaying, bool hardStop);
+
+void _lib_game_audio_sfxResume(object channel, object sfxResource, double volumeRatio, double panRatio);
+
+void _lib_game_audio_audioStop(object sfxResource);

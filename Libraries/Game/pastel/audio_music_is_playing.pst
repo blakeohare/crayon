@@ -1,5 +1,5 @@
 ﻿VM.Value lib_audio_music_is_playing(VM.VmContext vm, Array<VM.Value> args) {
-    if (Extension._lib_audio_musicIsPlaying()) {
+    if (Extension._lib_game_audio_musicIsPlaying()) {
         return vm.globals.boolTrue;
     }
     return vm.globals.boolFalse;

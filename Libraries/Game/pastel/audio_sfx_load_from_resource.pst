@@ -11,7 +11,7 @@ VM.Value lib_audio_sfx_load_from_resource(VM.VmContext vm, Array<VM.Value> args)
 }
 
 int lib_audio_load_sfx_from_resourceImpl(VM.ObjectInstance obj, string path) {
-    object sfx = Extension._lib_audio_readLocalSoundResource(path);
+    object sfx = Extension._lib_game_audio_readLocalSoundResource(path);
     obj.nativeData = new Array<object>(1);
     obj.nativeData[0] = sfx;
     return 1;
