@@ -1,0 +1,12 @@
+﻿/*
+    Returns an integer uniquely identifying this platform.
+
+    This is used by the auto-configure to make some decisions based on how that platform reports buttons and axes.
+*/
+VM.Value lib_game_gamepad_getPlatform(VM.VmContext vm, Array<VM.Value> args) {
+    if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
+        return VM.buildInteger(vm.globals, Extension._lib_game_gamepad_getPlatform());
+    } else {
+        return vm.globalNull;
+    }
+}

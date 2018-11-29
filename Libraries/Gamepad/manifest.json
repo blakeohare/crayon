@@ -3,19 +3,4 @@
 	"author": "Blake O'Hare",
 	"documentation": "http://crayonlang.org/docs/0.2.0/gamepad",
 	"description": "Library for interacting with gamepads.",
-
-	"cni": [
-		{ "name": "lib_gamepad_current_device_count", "argc": 0 },
-		{ "name": "lib_gamepad_get_axis_1d_state", "argc": 2 },
-		{ "name": "lib_gamepad_get_axis_2d_state", "argc": 3 },
-		{ "name": "lib_gamepad_get_button_state", "argc": 2 },
-		{ "name": "lib_gamepad_get_save_file_path", "argc": 0 },
-		{ "name": "lib_gamepad_getPlatform", "argc": 0 },
-		{ "name": "lib_gamepad_initialize_device", "argc": 3 },
-		{ "name": "lib_gamepad_is_supported", "argc": 0 },
-		{ "name": "lib_gamepad_jsIsOsx", "argc": 0 },
-		{ "name": "lib_gamepad_platform_requires_refresh", "argc": 0 },
-		{ "name": "lib_gamepad_poll_universe", "argc": 0 },
-		{ "name": "lib_gamepad_refresh_devices", "argc": 0 }
-	]
 }

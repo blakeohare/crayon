@@ -1,4 +1,5 @@
-﻿import Math;
+﻿import Game;
+import Math;
 
 namespace Gamepad {
 
@@ -60,7 +61,7 @@ namespace Gamepad {
                 0, // digital axis count
                 0, // analog axis count
             ];
-            $lib_gamepad_initialize_device(index, this, params);
+            Game.GamepadImpl_initDevice(index, this, params);
             this._name = params[0];
             this._button_count = params[1];
             this._axis_1d_count = params[2];
@@ -169,7 +170,7 @@ namespace Gamepad {
             this._quickMashyLookupByStringId.clear();
             this._quickMashyLookupByIntegerId.clear();
 
-            $lib_gamepad_poll_universe();
+            Game.GamepadImpl_pollUniverse();
             counter = this._counter++;
             updated_indices = [];
 
@@ -182,7 +183,7 @@ namespace Gamepad {
                 old_value = mashy[3];
                 switch (mashy[0]) {
                     case 0: // button
-                        new_value = $lib_gamepad_get_button_state(this, mashy[1]);
+                        new_value = Game.GamepadImpl_getButtonState(this, mashy[1]);
                         if (new_value != old_value) {
                             mashy[3] = new_value;
                             mashy[4] = counter;
@@ -195,7 +196,7 @@ namespace Gamepad {
                         break;
 
                     case 1: // 1D analog axis
-                        new_value = $lib_gamepad_get_axis_1d_state(this, mashy[1]);
+                        new_value = Game.GamepadImpl_getAxis1dState(this, mashy[1]);
                         if (Math.abs(new_value - old_value) > 0.000001) {
                             mashy[3] = new_value;
                             mashy[4] = counter;
@@ -208,7 +209,7 @@ namespace Gamepad {
                         // Querying the X axis will return a tuple of X, Y values.
                         // Since the config will always have the X and Y values at adjacent indices with the Y value next,
                         // go ahead and query both values and set them both.
-                        $lib_gamepad_get_axis_2d_state(this, mashy[1], GamepadDevice._hat_check_reusable);
+                        Game.GamepadImpl_getAxis2dState(this, mashy[1], GamepadDevice._hat_check_reusable);
                         if (GamepadDevice._hat_check_reusable[0] != mashy[3]) {
                             old_value = mashy[3];
                             new_value = GamepadDevice._hat_check_reusable[0];
@@ -366,7 +367,7 @@ namespace Gamepad {
             sig = buttons + ':' + axes;
 
             isOpenTk = false;
-            switch ($lib_gamepad_getPlatform()) {
+            switch (Game.GamepadImpl_getPlatform()) {
                 case 1: // OpenTK
                     isOpenTk = true;
                     lookup = {
@@ -489,7 +490,7 @@ namespace Gamepad {
                         },
                     };
 
-                    if ($lib_gamepad_jsIsOsx() == 1) {
+                    if (Game.GamepadImpl_isOsx()) {
                         lookup['16:5'] = {
                             XBoxButtonId.AXIS1: ['analog', 4, 'axes', 1, 2, '-+', '-+'],
                             XBoxButtonId.AXIS2: ['analog', 4, 'axes', 3, 4, '-+', '-+'],
@@ -667,7 +668,7 @@ namespace Gamepad {
             if (floor(index) != index) Core.fail("index must be an integer.");
 
             if (index >= 0 && index < this._button_count) {
-                return $lib_gamepad_get_button_state(this, index);
+                return Game.GamepadImpl_getButtonState(this, index);
             }
             Core.fail("Button index out of range.");
         }
@@ -678,10 +679,10 @@ namespace Gamepad {
 
             if (index >= 0 && index < this._axis_count) {
                 if (index < this._axis_1d_count) {
-                    return $lib_gamepad_get_axis_1d_state(this, index);
+                    return Game.GamepadImpl_getAxis1dState(this, index);
                 }
                 index -= this._axis_1d_count;
-                $lib_gamepad_get_axis_2d_state(this, index / 2, GamepadDevice._hat_check_reusable);
+                Game.GamepadImpl_getAxis2dState(this, index / 2, GamepadDevice._hat_check_reusable);
                 return GamepadDevice._hat_check_reusable[index % 2] * 1.0;
             }
             Core.fail("Digital Axis index out of range.");

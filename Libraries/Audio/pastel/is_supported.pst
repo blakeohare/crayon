@@ -1,6 +1,0 @@
-﻿VM.Value lib_audio_is_supported(VM.VmContext vm, Array<VM.Value> args) {
-    if (Extension._lib_audio_isAudioSupported()) {
-        return vm.globals.boolTrue;
-    }
-    return vm.globals.boolFalse;
-}

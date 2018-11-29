@@ -1,0 +1,18 @@
+﻿/*
+    args[0] -> blank sound object instance
+    args[1] -> resource path
+*/
+VM.Value lib_audio_sfx_load_from_resource(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance soundInstance = (VM.ObjectInstance) args[0].internalValue;
+    lib_audio_load_sfx_from_resourceImpl(
+        soundInstance, // TODO: pass in nativeData instead
+        (string) args[1].internalValue);
+    return vm.globals.valueNull;
+}
+
+int lib_audio_load_sfx_from_resourceImpl(VM.ObjectInstance obj, string path) {
+    object sfx = Extension._lib_game_audio_readLocalSoundResource(path);
+    obj.nativeData = new Array<object>(1);
+    obj.nativeData[0] = sfx;
+    return 1;
+}

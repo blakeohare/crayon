@@ -1,0 +1,7 @@
+﻿VM.Value lib_game_gamepad_is_supported(VM.VmContext vm, Array<VM.Value> args) {
+    if (@ext_boolean("LIB_GAMEPAD_SUPPORTED") && Extension._lib_game_gamepad_is_supported()) {
+        return vm.globalTrue;
+    } else {
+        return vm.globalFalse;
+    }
+}
