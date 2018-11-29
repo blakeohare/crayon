@@ -10,8 +10,7 @@ namespace LangCSharp
     {
         public static void AddDllReferencesToProjectBasedReplacements(
             Dictionary<string, string> replacements,
-            List<DllFile> dlls,
-            Dictionary<string, string> referenceLibraryNamesToGuids)
+            List<DllFile> dlls)
         {
             StringBuilder strongDllReferences = new StringBuilder();
             StringBuilder dllsByHint = new StringBuilder();
@@ -33,17 +32,6 @@ namespace LangCSharp
                     "    <None Include=\"" + dll.HintPath + "\">",
                     "      <CopyToOutputDirectory>Always</CopyToOutputDirectory>",
                     "    </None>"));
-            }
-
-            foreach (string libName in referenceLibraryNamesToGuids.Keys.OrderBy(n => n.ToLower()))
-            {
-                string libGuid = referenceLibraryNamesToGuids[libName];
-                strongDllReferences.Append(Util.JoinLines(
-                    "",
-                    "    <ProjectReference Include=\"..\\" + libName + "\\" + libName + ".csproj\">",
-                    "      <Project>{" + libGuid.ToLower() + "}</Project>",
-                    "      <Name>Game</Name>",
-                    "    </ProjectReference>"));
             }
 
             replacements["DLL_REFERENCES"] = strongDllReferences.ToString().Trim();

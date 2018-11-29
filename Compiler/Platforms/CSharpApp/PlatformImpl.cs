@@ -124,7 +124,7 @@ namespace CSharpApp
                     replacements["ASSEMBLY_GUID"] = IdGenerator.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-assembly");
                     replacements["PROJECT_TITLE"] = library.Name;
                     replacements["LIBRARY_NAME"] = library.Name;
-                    LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls, library.LibProjectNamesAndGuids);
+                    LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls);
 
                     libraryProjectNameToGuid[name] = projectGuid;
 
@@ -239,7 +239,7 @@ namespace CSharpApp
                 this.GetLibraryCode(templates, baseDir, library, dlls, output);
             }
 
-            LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls, new Dictionary<string, string>());
+            LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls);
 
             replacements["DLL_REFERENCES"] += Util.JoinLines(
                 dotNetLibs

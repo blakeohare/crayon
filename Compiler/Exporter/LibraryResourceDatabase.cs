@@ -214,23 +214,9 @@ namespace Exporter
             }
         }
 
-        private Dictionary<string, string> projectReferenceToGuid = null;
-        public Dictionary<string, string> ProjectReferenceToGuid
-        {
-            get
-            {
-                if (this.projectReferenceToGuid == null)
-                {
-                    this.Init();
-                }
-                return this.projectReferenceToGuid;
-            }
-        }
-
         private void Init()
         {
             this.exportEntities = new Multimap<string, ExportEntity>();
-            this.projectReferenceToGuid = new Dictionary<string, string>();
 
             ExportEntity entity;
             foreach (Dictionary<string, string> instruction in this.GetResourceCopyInstructions())
@@ -308,14 +294,6 @@ namespace Exporter
                             }
                         }
                         this.exportEntities.Add("DOTNET_DLL", entity);
-                        break;
-
-                    case "LIB_DLL_REF":
-                        this.EnsureInstructionContainsAttribute(command, instruction, "name");
-                        this.EnsureInstructionContainsAttribute(command, instruction, "version");
-                        string name = instruction["name"];
-                        string version = instruction["version"];
-                        projectReferenceToGuid[name] = IdGenerator.GenerateCSharpGuid(name + "|" + version, "library-project");
                         break;
 
                     default:

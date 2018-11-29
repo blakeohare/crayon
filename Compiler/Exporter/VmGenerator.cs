@@ -173,7 +173,6 @@ namespace Exporter
                     Version = libraryVersion,
                     PastelContext = nullableLibaryPastelContext,
                     ExportEntities = exportEntities,
-                    LibProjectNamesAndGuids = libResDb.ProjectReferenceToGuid,
                 };
             }
         }
