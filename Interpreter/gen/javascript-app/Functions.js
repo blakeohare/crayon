@@ -104,7 +104,7 @@ PST$floatBuffer16 = PST$multiplyList([0.0], 16);
 PST$stringBuffer16 = PST$multiplyList([''], 16);
 
 var addLiteralImpl = function(vm, row, stringArg) {
-	var g = vm[12];
+	var g = vm[13];
 	var type = row[0];
 	if ((type == 1)) {
 		vm[4][4].push(g[0]);
@@ -353,7 +353,7 @@ var canAssignTypeToGeneric = function(vm, value, generics, genericIndex) {
 				return value;
 			}
 			if ((generics[genericIndex] == 4)) {
-				return buildFloat(vm[12], (0.0 + value[1]));
+				return buildFloat(vm[13], (0.0 + value[1]));
 			}
 			return null;
 		case 4:
@@ -604,7 +604,7 @@ var createVm = function(rawByteCode, resourceManifest) {
 	var executionContext = [0, stack, 0, 100, PST$createNewArray(100), localsStack, localsStackSet, 1, 0, false, null, false, 0, null];
 	var executionContexts = {};
 	executionContexts[0] = executionContext;
-	var vm = [executionContexts, executionContext[0], byteCode, [PST$createNewArray(byteCode[0].length), null, [], null, null, {}, {}], [null, [], {}, null, [], null, [], null, [], PST$createNewArray(100), PST$createNewArray(100), {}, null, {}, -1, PST$createNewArray(10), 0, null, null, [0, 0, 0], {}, {}, null], 0, false, [], null, resources, [], [PST$createNewArray(0), false, null, null], globals, globals[0], globals[1], globals[2]];
+	var vm = [executionContexts, executionContext[0], byteCode, [PST$createNewArray(byteCode[0].length), null, [], null, null, {}, {}], [null, [], {}, null, [], null, [], null, [], PST$createNewArray(100), PST$createNewArray(100), {}, null, {}, -1, PST$createNewArray(10), 0, null, null, [0, 0, 0], {}, {}, null], 0, false, [], null, resources, [], [PST$createNewArray(0), false, null, null], [[], {}], globals, globals[0], globals[1], globals[2]];
 	return vm;
 };
 
@@ -881,8 +881,8 @@ var generateException = function(vm, stack, pc, valueStackSize, ec, type, messag
 	var localsIndex = stack[3];
 	var localsStackSetToken = (ec[7] + 1);
 	ec[7] = localsStackSetToken;
-	ec[5][localsIndex] = buildInteger(vm[12], type);
-	ec[5][(localsIndex + 1)] = buildString(vm[12], message);
+	ec[5][localsIndex] = buildInteger(vm[13], type);
+	ec[5][(localsIndex + 1)] = buildString(vm[13], message);
 	ec[6][localsIndex] = localsStackSetToken;
 	ec[6][(localsIndex + 1)] = localsStackSetToken;
 	ec[1] = [(pc + 1), localsStackSetToken, stack[3], (stack[3] + functionInfo[7]), stack, false, null, valueStackSize, 0, (stack[9] + 1), 0, null, null, null];
@@ -1018,6 +1018,30 @@ var getFunctionTable = function(vm, functionId) {
 
 var getItemFromList = function(list, i) {
 	return list[2][i];
+};
+
+var getNamedCallbackId = function(vm, scope, functionName) {
+	return getNamedCallbackIdImpl(vm, scope, functionName, false);
+};
+
+var getNamedCallbackIdImpl = function(vm, scope, functionName, allocIfMissing) {
+	var lookup = vm[12][1];
+	var idsForScope = null;
+	idsForScope = lookup[scope];
+	if (idsForScope === undefined) idsForScope = null;
+	if ((idsForScope == null)) {
+		idsForScope = {};
+		lookup[scope] = idsForScope;
+	}
+	var id = -1;
+	id = idsForScope[functionName];
+	if (id === undefined) id = -1;
+	if (((id == -1) && allocIfMissing)) {
+		id = vm[12][0].length;
+		vm[12][0].push(null);
+		idsForScope[functionName] = id;
+	}
+	return id;
 };
 
 var getNativeDataItem = function(objValue, index) {
@@ -1208,7 +1232,7 @@ var initializeClass = function(pc, vm, args, className) {
 	var staticFields = PST$createNewArray(staticFieldCount);
 	i = 0;
 	while ((i < staticFieldCount)) {
-		staticFields[i] = vm[12][0];
+		staticFields[i] = vm[13][0];
 		i += 1;
 	}
 	var classInfo = [classId, globalNameId, baseClassId, assemblyId, staticInitializationState, staticFields, staticConstructorFunctionId, constructorFunctionId, 0, null, null, null, null, null, vm[4][21][classId], null, className];
@@ -1273,7 +1297,7 @@ var initializeClass = function(pc, vm, args, className) {
 			fieldInitializationCommand[memberId] = args[(i + 3)];
 			t = args[(i + 4)];
 			if ((t == -1)) {
-				fieldInitializationLiteral[memberId] = vm[12][0];
+				fieldInitializationLiteral[memberId] = vm[13][0];
 			} else {
 				fieldInitializationLiteral[memberId] = vm[4][3][t];
 			}
@@ -1307,10 +1331,10 @@ var initializeClass = function(pc, vm, args, className) {
 var initializeClassFieldTypeInfo = function(vm, opCodeRow) {
 	var classInfo = vm[4][9][opCodeRow[0]];
 	var memberId = opCodeRow[1];
-	var len = opCodeRow.length;
-	var typeInfo = PST$createNewArray((len - 2));
+	var _len = opCodeRow.length;
+	var typeInfo = PST$createNewArray((_len - 2));
 	var i = 2;
-	while ((i < len)) {
+	while ((i < _len)) {
 		typeInfo[(i - 2)] = opCodeRow[i];
 		i += 1;
 	}
@@ -1463,7 +1487,7 @@ var interpreterGetExecutionContext = function(vm, executionContextId) {
 
 var interpretImpl = function(vm, executionContextId) {
 	var metadata = vm[4];
-	var globals = vm[12];
+	var globals = vm[13];
 	var VALUE_NULL = globals[0];
 	var VALUE_TRUE = globals[1];
 	var VALUE_FALSE = globals[2];
@@ -1497,7 +1521,7 @@ var interpretImpl = function(vm, executionContextId) {
 	var functionId = 0;
 	var localeId = 0;
 	var classInfo = null;
-	var len = 0;
+	var _len = 0;
 	var root = null;
 	var row = null;
 	var argCount = 0;
@@ -1587,10 +1611,10 @@ var interpretImpl = function(vm, executionContextId) {
 				break;
 			case 2:
 				// ARG_TYPE_VERIFY;
-				len = row[0];
+				_len = row[0];
 				i = 1;
 				j = 0;
-				while ((j < len)) {
+				while ((j < _len)) {
 					j += 1;
 				}
 				break;
@@ -2635,14 +2659,14 @@ var interpretImpl = function(vm, executionContextId) {
 												hasInterrupt = EX_InvalidArgument(ec, "string split method requires another string as input.");
 											} else {
 												stringList = string1.split(value2[1]);
-												len = stringList.length;
-												list1 = makeEmptyList(globals[14], len);
+												_len = stringList.length;
+												list1 = makeEmptyList(globals[14], _len);
 												i = 0;
-												while ((i < len)) {
+												while ((i < _len)) {
 													list1[2].push(buildString(globals, stringList[i]));
 													i += 1;
 												}
-												list1[1] = len;
+												list1[1] = _len;
 												output = [6, list1];
 											}
 										}
@@ -2713,11 +2737,11 @@ var interpretImpl = function(vm, executionContextId) {
 										if ((argCount > 0)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list choice method", 0, argCount));
 										} else {
-											len = list1[1];
-											if ((len == 0)) {
+											_len = list1[1];
+											if ((_len == 0)) {
 												hasInterrupt = EX_UnsupportedOperation(ec, "Cannot use list.choice() method on an empty list.");
 											} else {
-												i = Math.floor(((Math.random() * len)));
+												i = Math.floor(((Math.random() * _len)));
 												output = list1[2][i];
 											}
 										}
@@ -2736,14 +2760,14 @@ var interpretImpl = function(vm, executionContextId) {
 										if ((argCount > 0)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list clone method", 0, argCount));
 										} else {
-											len = list1[1];
-											list2 = makeEmptyList(list1[0], len);
+											_len = list1[1];
+											list2 = makeEmptyList(list1[0], _len);
 											i = 0;
-											while ((i < len)) {
+											while ((i < _len)) {
 												list2[2].push(list1[2][i]);
 												i += 1;
 											}
-											list2[1] = len;
+											list2[1] = _len;
 											output = [6, list2];
 										}
 										break;
@@ -2765,9 +2789,9 @@ var interpretImpl = function(vm, executionContextId) {
 													} else {
 														bool1 = false;
 													}
-													len = list2[1];
+													_len = list2[1];
 													i = 0;
-													while ((i < len)) {
+													while ((i < _len)) {
 														value = list2[2][i];
 														if (bool1) {
 															value = buildFloat(globals, (0.0 + value[1]));
@@ -2784,14 +2808,14 @@ var interpretImpl = function(vm, executionContextId) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list contains method", 1, argCount));
 										} else {
 											value2 = funcArgs[0];
-											len = list1[1];
+											_len = list1[1];
 											output = VALUE_FALSE;
 											i = 0;
-											while ((i < len)) {
+											while ((i < _len)) {
 												value = list1[2][i];
 												if ((doEqualityComparisonAndReturnCode(value2, value) == 1)) {
 													output = VALUE_TRUE;
-													i = len;
+													i = _len;
 												}
 												i += 1;
 											}
@@ -2832,15 +2856,15 @@ var interpretImpl = function(vm, executionContextId) {
 												}
 												if (!hasInterrupt) {
 													int1 = value[1];
-													len = list1[1];
+													_len = list1[1];
 													if ((int1 < 0)) {
-														int1 += len;
+														int1 += _len;
 													}
-													if ((int1 == len)) {
+													if ((int1 == _len)) {
 														list1[2].push(value2);
 														list1[1] += 1;
 													} else {
-														if (((int1 < 0) || (int1 >= len))) {
+														if (((int1 < 0) || (int1 >= _len))) {
 															hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.");
 														} else {
 															list1[2].splice(int1, 0, value2);
@@ -2867,9 +2891,9 @@ var interpretImpl = function(vm, executionContextId) {
 										if (!hasInterrupt) {
 											stringList1 = [];
 											string1 = value2[1];
-											len = list1[1];
+											_len = list1[1];
 											i = 0;
-											while ((i < len)) {
+											while ((i < _len)) {
 												value = list1[2][i];
 												if ((value[0] != 5)) {
 													string2 = valueToString(vm, value);
@@ -2902,16 +2926,16 @@ var interpretImpl = function(vm, executionContextId) {
 										if ((argCount > 0)) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list pop method", 0, argCount));
 										} else {
-											len = list1[1];
-											if ((len < 1)) {
+											_len = list1[1];
+											if ((_len < 1)) {
 												hasInterrupt = EX_IndexOutOfRange(ec, "Cannot pop from an empty list.");
 											} else {
-												len -= 1;
+												_len -= 1;
 												value = list1[2].pop();
 												if (returnValueUsed) {
 													output = value;
 												}
-												list1[1] = len;
+												list1[1] = _len;
 											}
 										}
 										break;
@@ -2924,18 +2948,18 @@ var interpretImpl = function(vm, executionContextId) {
 												hasInterrupt = EX_InvalidArgument(ec, "Argument of list.remove must be an integer index.");
 											} else {
 												int1 = value[1];
-												len = list1[1];
+												_len = list1[1];
 												if ((int1 < 0)) {
-													int1 += len;
+													int1 += _len;
 												}
-												if (((int1 < 0) || (int1 >= len))) {
+												if (((int1 < 0) || (int1 >= _len))) {
 													hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.");
 												} else {
 													if (returnValueUsed) {
 														output = list1[2][int1];
 													}
-													len = (list1[1] - 1);
-													list1[1] = len;
+													_len = (list1[1] - 1);
+													list1[1] = _len;
 													list1[2].splice(int1, 1);
 												}
 											}
@@ -3065,7 +3089,7 @@ var interpretImpl = function(vm, executionContextId) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary keys method", 0, argCount));
 										} else {
 											valueList1 = dictImpl[6];
-											len = valueList1.length;
+											_len = valueList1.length;
 											if ((dictImpl[1] == 8)) {
 												intArray1 = PST$createNewArray(2);
 												intArray1[0] = 8;
@@ -3074,13 +3098,13 @@ var interpretImpl = function(vm, executionContextId) {
 												intArray1 = PST$createNewArray(1);
 												intArray1[0] = dictImpl[1];
 											}
-											list1 = makeEmptyList(intArray1, len);
+											list1 = makeEmptyList(intArray1, _len);
 											i = 0;
-											while ((i < len)) {
+											while ((i < _len)) {
 												list1[2].push(valueList1[i]);
 												i += 1;
 											}
-											list1[1] = len;
+											list1[1] = _len;
 											output = [6, list1];
 										}
 										break;
@@ -3150,9 +3174,9 @@ var interpretImpl = function(vm, executionContextId) {
 													}
 												}
 												if (bool2) {
-													len = (dictImpl[0] - 1);
-													dictImpl[0] = len;
-													if ((i == len)) {
+													_len = (dictImpl[0] - 1);
+													dictImpl[0] = _len;
+													if ((i == _len)) {
 														if ((keyType == 5)) {
 															delete dictImpl[5][stringKey];
 														} else {
@@ -3161,9 +3185,9 @@ var interpretImpl = function(vm, executionContextId) {
 														dictImpl[6].splice(i, 1);
 														dictImpl[7].splice(i, 1);
 													} else {
-														value = dictImpl[6][len];
+														value = dictImpl[6][_len];
 														dictImpl[6][i] = value;
-														dictImpl[7][i] = dictImpl[7][len];
+														dictImpl[7][i] = dictImpl[7][_len];
 														dictImpl[6].pop();
 														dictImpl[7].pop();
 														if ((keyType == 5)) {
@@ -3192,10 +3216,10 @@ var interpretImpl = function(vm, executionContextId) {
 											hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary values method", 0, argCount));
 										} else {
 											valueList1 = dictImpl[7];
-											len = valueList1.length;
-											list1 = makeEmptyList(dictImpl[3], len);
+											_len = valueList1.length;
+											list1 = makeEmptyList(dictImpl[3], _len);
 											i = 0;
-											while ((i < len)) {
+											while ((i < _len)) {
 												addToList(list1, valueList1[i]);
 												i += 1;
 											}
@@ -3482,11 +3506,11 @@ var interpretImpl = function(vm, executionContextId) {
 				if ((nativeFp == null)) {
 					hasInterrupt = EX_InvalidInvocation(ec, "CNI method could not be found.");
 				} else {
-					len = row[1];
-					valueStackSize -= len;
-					valueArray1 = PST$createNewArray(len);
+					_len = row[1];
+					valueStackSize -= _len;
+					valueArray1 = PST$createNewArray(_len);
 					i = 0;
-					while ((i < len)) {
+					while ((i < _len)) {
 						valueArray1[i] = valueStack[(valueStackSize + i)];
 						i += 1;
 					}
@@ -4037,27 +4061,27 @@ var interpretImpl = function(vm, executionContextId) {
 						value = valueStack[valueStackSize];
 						objArray1 = (value[1])[3];
 						intArray1 = objArray1[0];
-						len = objArray1[1];
-						if ((len >= intArray1.length)) {
-							intArray2 = PST$createNewArray(((len * 2) + 16));
+						_len = objArray1[1];
+						if ((_len >= intArray1.length)) {
+							intArray2 = PST$createNewArray(((_len * 2) + 16));
 							j = 0;
-							while ((j < len)) {
+							while ((j < _len)) {
 								intArray2[j] = intArray1[j];
 								j += 1;
 							}
 							intArray1 = intArray2;
 							objArray1[0] = intArray1;
 						}
-						objArray1[1] = (len + 16);
+						objArray1[1] = (_len + 16);
 						i = (int1 - 1);
 						while ((i >= 0)) {
 							value = valueStack[((valueStackSize + 1) + i)];
 							if ((value[0] == 3)) {
-								intArray1[(len + i)] = value[1];
+								intArray1[(_len + i)] = value[1];
 							} else {
 								if ((value[0] == 4)) {
 									float1 = (0.5 + value[1]);
-									intArray1[(len + i)] = Math.floor(float1);
+									intArray1[(_len + i)] = Math.floor(float1);
 								} else {
 									hasInterrupt = EX_InvalidArgument(ec, "Input must be integers.");
 									i = -1;
@@ -4199,10 +4223,10 @@ var interpretImpl = function(vm, executionContextId) {
 				stringIntDict1 = {};
 				valueList2 = [];
 				valueList1 = [];
-				len = row[0];
+				_len = row[0];
 				type = 3;
 				first = true;
-				i = len;
+				i = _len;
 				while ((i > 0)) {
 					valueStackSize -= 2;
 					value = valueStack[(valueStackSize + 1)];
@@ -4248,7 +4272,7 @@ var interpretImpl = function(vm, executionContextId) {
 					} else {
 						i = Object.keys(intIntDict1).length;
 					}
-					if ((i != len)) {
+					if ((i != _len)) {
 						hasInterrupt = EX_InvalidKey(ec, "Key collision");
 					}
 				}
@@ -4273,7 +4297,7 @@ var interpretImpl = function(vm, executionContextId) {
 						valueStack = valueStackIncreaseCapacity(ec);
 						valueStackCapacity = valueStack.length;
 					}
-					valueStack[valueStackSize] = [7, [len, type, classId, intArray1, intIntDict1, stringIntDict1, valueList2, valueList1]];
+					valueStack[valueStackSize] = [7, [_len, type, classId, intArray1, intIntDict1, stringIntDict1, valueList2, valueList1]];
 					valueStackSize += 1;
 				}
 				break;
@@ -4804,14 +4828,14 @@ var interpretImpl = function(vm, executionContextId) {
 				value = localsStack[(localsStackOffset + row[3])];
 				if ((value[0] == 6)) {
 					list1 = value[1];
-					len = list1[1];
+					_len = list1[1];
 					bool1 = true;
 				} else {
 					string2 = value[1];
-					len = string2.length;
+					_len = string2.length;
 					bool1 = false;
 				}
-				if ((i < len)) {
+				if ((i < _len)) {
 					if (bool1) {
 						value = list1[2][i];
 					} else {
@@ -4906,17 +4930,17 @@ var interpretImpl = function(vm, executionContextId) {
 				// LAMBDA;
 				if (!(metadata[11][pc] !== undefined)) {
 					int1 = (4 + row[4] + 1);
-					len = row[int1];
-					intArray1 = PST$createNewArray(len);
+					_len = row[int1];
+					intArray1 = PST$createNewArray(_len);
 					i = 0;
-					while ((i < len)) {
+					while ((i < _len)) {
 						intArray1[i] = row[(int1 + i + 1)];
 						i += 1;
 					}
-					len = row[4];
-					intArray2 = PST$createNewArray(len);
+					_len = row[4];
+					intArray2 = PST$createNewArray(_len);
 					i = 0;
-					while ((i < len)) {
+					while ((i < _len)) {
 						intArray2[i] = row[(5 + i)];
 						i += 1;
 					}
@@ -4930,9 +4954,9 @@ var interpretImpl = function(vm, executionContextId) {
 				}
 				functionInfo = metadata[11][pc];
 				intArray1 = functionInfo[10];
-				len = intArray1.length;
+				_len = intArray1.length;
 				i = 0;
-				while ((i < len)) {
+				while ((i < _len)) {
 					j = intArray1[i];
 					if ((parentClosure[j] !== undefined)) {
 						closure[j] = parentClosure[j];
@@ -5309,6 +5333,11 @@ var interpretImpl = function(vm, executionContextId) {
 		}
 		++pc;
 	}
+};
+
+var invokeNamedCallback = function(vm, id, args) {
+	var cb = vm[12][0][id];
+	return cb(args);
 };
 
 var isClassASubclassOf = function(vm, subClassId, parentClassId) {
@@ -5968,6 +5997,12 @@ var Reflect_getMethods = function(vm, ec, methodSource) {
 	return [6, output];
 };
 
+var registerNamedCallback = function(vm, scope, functionName, callback) {
+	var id = getNamedCallbackIdImpl(vm, scope, functionName, true);
+	vm[12][0][id] = callback;
+	return id;
+};
+
 var resetLocalsStackTokens = function(ec, stack) {
 	var localsStack = ec[5];
 	var localsStackSet = ec[6];
@@ -6099,14 +6134,14 @@ var resource_manager_getResourceOfType = function(vm, userPath, type) {
 		var output = makeEmptyList(null, 2);
 		var file = lookup[userPath];
 		if (file[3] == type) {
-			addToList(output, vm[12][1]);
-			addToList(output, buildString(vm[12], file[1]));
+			addToList(output, vm[13][1]);
+			addToList(output, buildString(vm[13], file[1]));
 		} else {
-			addToList(output, vm[12][2]);
+			addToList(output, vm[13][2]);
 		}
 		return [6, output];
 	}
-	return vm[12][0];
+	return vm[13][0];
 };
 
 var resource_manager_populate_directory_lookup = function(dirs, path) {
@@ -6675,9 +6710,9 @@ var valueConcatLists = function(a, b) {
 };
 
 var valueMultiplyList = function(a, n) {
-	var len = (a[1] * n);
-	var output = makeEmptyList(a[0], len);
-	if ((len == 0)) {
+	var _len = (a[1] * n);
+	var output = makeEmptyList(a[0], _len);
+	if ((_len == 0)) {
 		return output;
 	}
 	var aLen = a[1];
@@ -6702,7 +6737,7 @@ var valueMultiplyList = function(a, n) {
 			i += 1;
 		}
 	}
-	output[1] = len;
+	output[1] = _len;
 	return output;
 };
 

@@ -416,14 +416,14 @@ public static Value buildList(ArrayList<Value> valueList) {
 }
 
 public static Value buildListWithType(int[] type, ArrayList<Value> valueList) {
-  int len = valueList.size();
-  ListImpl output = makeEmptyList(type, len);
+  int _len = valueList.size();
+  ListImpl output = makeEmptyList(type, _len);
   int i = 0;
-  while ((i < len)) {
+  while ((i < _len)) {
     output.array[i] = valueList.get(i);
     i += 1;
   }
-  output.size = len;
+  output.size = _len;
   return new Value(6, output);
 }
 
@@ -828,7 +828,7 @@ public static VmContext createVm(String rawByteCode, String resourceManifest) {
   ExecutionContext executionContext = new ExecutionContext(0, stack, 0, 100, new Value[100], localsStack, localsStackSet, 1, 0, false, null, false, 0, null);
   HashMap<Integer, ExecutionContext> executionContexts = new HashMap<Integer, ExecutionContext>();
   executionContexts.put(0, executionContext);
-  VmContext vm = new VmContext(executionContexts, executionContext.id, byteCode, new SymbolData(new ArrayList[byteCode.ops.length], null, new ArrayList<String>(), null, null, new HashMap<Integer, ArrayList<String>>(), new HashMap<Integer, ArrayList<String>>()), new VmMetadata(null, new ArrayList<String>(), new HashMap<String, Integer>(), null, new ArrayList<Value>(), null, new ArrayList<HashMap<Integer, Integer>>(), null, new ArrayList<HashMap<String, Integer>>(), new ClassInfo[100], new FunctionInfo[100], new HashMap<Integer, FunctionInfo>(), null, new HashMap<Integer, java.lang.reflect.Method>(), -1, new int[10], 0, null, null, new MagicNumbers(0, 0, 0), new HashMap<String, Integer>(), new HashMap<Integer, HashMap<Integer, Integer>>(), null), 0, false, new ArrayList<Integer>(), null, resources, new ArrayList<Value>(), new VmEnvironment(new String[0], false, null, null), globals, globals.valueNull, globals.boolTrue, globals.boolFalse);
+  VmContext vm = new VmContext(executionContexts, executionContext.id, byteCode, new SymbolData(new ArrayList[byteCode.ops.length], null, new ArrayList<String>(), null, null, new HashMap<Integer, ArrayList<String>>(), new HashMap<Integer, ArrayList<String>>()), new VmMetadata(null, new ArrayList<String>(), new HashMap<String, Integer>(), null, new ArrayList<Value>(), null, new ArrayList<HashMap<Integer, Integer>>(), null, new ArrayList<HashMap<String, Integer>>(), new ClassInfo[100], new FunctionInfo[100], new HashMap<Integer, FunctionInfo>(), null, new HashMap<Integer, java.lang.reflect.Method>(), -1, new int[10], 0, null, null, new MagicNumbers(0, 0, 0), new HashMap<String, Integer>(), new HashMap<Integer, HashMap<Integer, Integer>>(), null), 0, false, new ArrayList<Integer>(), null, resources, new ArrayList<Value>(), new VmEnvironment(new String[0], false, null, null), new NamedCallbackStore(new ArrayList<java.lang.reflect.Method>(), new HashMap<String, HashMap<String, Integer>>()), globals, globals.valueNull, globals.boolTrue, globals.boolFalse);
   return vm;
 }
 
@@ -1244,6 +1244,30 @@ public static Value getItemFromList(ListImpl list, int i) {
   return list.array[i];
 }
 
+public static int getNamedCallbackId(VmContext vm, String scope, String functionName) {
+  return getNamedCallbackIdImpl(vm, scope, functionName, false);
+}
+
+public static int getNamedCallbackIdImpl(VmContext vm, String scope, String functionName, boolean allocIfMissing) {
+  HashMap<String, HashMap<String, Integer>> lookup = vm.namedCallbacks.callbackIdLookup;
+  HashMap<String, Integer> idsForScope = null;
+  HashMap<String, Integer> dictLookup1 = lookup.get(scope);
+  idsForScope = dictLookup1 == null ? (lookup.containsKey(scope) ? null : (null)) : dictLookup1;
+  if ((idsForScope == null)) {
+    idsForScope = new HashMap<String, Integer>();
+    lookup.put(scope, idsForScope);
+  }
+  int id = -1;
+  Integer dictLookup2 = idsForScope.get(functionName);
+  id = dictLookup2 == null ? (idsForScope.containsKey(functionName) ? null : (-1)) : dictLookup2;
+  if (((id == -1) && allocIfMissing)) {
+    id = vm.namedCallbacks.callbacksById.size();
+    vm.namedCallbacks.callbacksById.add(null);
+    idsForScope.put(functionName, id);
+  }
+  return id;
+}
+
 public static Object getNativeDataItem(Value objValue, int index) {
   ObjectInstance obj = ((ObjectInstance) objValue.internalValue);
   return obj.nativeData[index];
@@ -1545,10 +1569,10 @@ public static int initializeClass(int pc, VmContext vm, int[] args, String class
 public static int initializeClassFieldTypeInfo(VmContext vm, int[] opCodeRow) {
   ClassInfo classInfo = vm.metadata.classTable[opCodeRow[0]];
   int memberId = opCodeRow[1];
-  int len = opCodeRow.length;
-  int[] typeInfo = new int[(len - 2)];
+  int _len = opCodeRow.length;
+  int[] typeInfo = new int[(_len - 2)];
   int i = 2;
-  while ((i < len)) {
+  while ((i < _len)) {
     typeInfo[(i - 2)] = opCodeRow[i];
     i += 1;
   }
@@ -1735,7 +1759,7 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
   int functionId = 0;
   int localeId = 0;
   ClassInfo classInfo = null;
-  int len = 0;
+  int _len = 0;
   Value root = null;
   int[] row = null;
   int argCount = 0;
@@ -1825,10 +1849,10 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
         break;
       case 2:
         // ARG_TYPE_VERIFY;
-        len = row[0];
+        _len = row[0];
         i = 1;
         j = 0;
-        while ((j < len)) {
+        while ((j < _len)) {
           j += 1;
         }
         break;
@@ -1933,8 +1957,8 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
             }
             if (!hasInterrupt) {
               if ((keyType == 5)) {
-                Integer dictLookup1 = dictImpl.stringToIndex.get(stringKey);
-                int1 = dictLookup1 == null ? (dictImpl.stringToIndex.containsKey(stringKey) ? null : (-1)) : dictLookup1;
+                Integer dictLookup3 = dictImpl.stringToIndex.get(stringKey);
+                int1 = dictLookup3 == null ? (dictImpl.stringToIndex.containsKey(stringKey) ? null : (-1)) : dictLookup3;
                 if ((int1 == -1)) {
                   dictImpl.stringToIndex.put(stringKey, dictImpl.size);
                   dictImpl.size += 1;
@@ -1947,8 +1971,8 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                   dictImpl.values.set(int1, value);
                 }
               } else {
-                Integer dictLookup2 = dictImpl.intToIndex.get(intKey);
-                int1 = dictLookup2 == null ? (-1) : dictLookup2;
+                Integer dictLookup4 = dictImpl.intToIndex.get(intKey);
+                int1 = dictLookup4 == null ? (-1) : dictLookup4;
                 if ((int1 == -1)) {
                   dictImpl.intToIndex.put(intKey, dictImpl.size);
                   dictImpl.size += 1;
@@ -2008,8 +2032,8 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
           if ((row[5] == classId)) {
             int1 = row[6];
           } else {
-            Integer dictLookup3 = intIntDict1.get(nameId);
-            int1 = dictLookup3 == null ? (-1) : dictLookup3;
+            Integer dictLookup5 = intIntDict1.get(nameId);
+            int1 = dictLookup5 == null ? (-1) : dictLookup5;
             if ((int1 != -1)) {
               int3 = classInfo.fieldAccessModifiers[int1];
               if ((int3 > 1)) {
@@ -2668,8 +2692,8 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                     classInfo = classTable[int1];
                     intIntDict1 = classInfo.localeScopedNameIdToMemberId;
                     int1 = ((row[4] * magicNumbers.totalLocaleCount) + row[5]);
-                    Integer dictLookup4 = intIntDict1.get(int1);
-                    i = dictLookup4 == null ? (-1) : dictLookup4;
+                    Integer dictLookup6 = intIntDict1.get(int1);
+                    i = dictLookup6 == null ? (-1) : dictLookup6;
                     if ((i != -1)) {
                       int1 = intIntDict1.get(int1);
                       functionId = classInfo.functionIds[int1];
@@ -2873,14 +2897,14 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                         hasInterrupt = EX_InvalidArgument(ec, "string split method requires another string as input.");
                       } else {
                         stringList = PST_literalStringSplit(string1, ((String) value2.internalValue));
-                        len = stringList.length;
-                        list1 = makeEmptyList(globals.stringType, len);
+                        _len = stringList.length;
+                        list1 = makeEmptyList(globals.stringType, _len);
                         i = 0;
-                        while ((i < len)) {
+                        while ((i < _len)) {
                           list1.array[i] = buildString(globals, stringList[i]);
                           i += 1;
                         }
-                        list1.size = len;
+                        list1.size = _len;
                         output = new Value(6, list1);
                       }
                     }
@@ -2955,11 +2979,11 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                     if ((argCount > 0)) {
                       hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list choice method", 0, argCount));
                     } else {
-                      len = list1.size;
-                      if ((len == 0)) {
+                      _len = list1.size;
+                      if ((_len == 0)) {
                         hasInterrupt = EX_UnsupportedOperation(ec, "Cannot use list.choice() method on an empty list.");
                       } else {
-                        i = ((int) ((PST_random.nextDouble() * len)));
+                        i = ((int) ((PST_random.nextDouble() * _len)));
                         output = list1.array[i];
                       }
                     }
@@ -2982,14 +3006,14 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                     if ((argCount > 0)) {
                       hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list clone method", 0, argCount));
                     } else {
-                      len = list1.size;
-                      list2 = makeEmptyList(list1.type, len);
+                      _len = list1.size;
+                      list2 = makeEmptyList(list1.type, _len);
                       i = 0;
-                      while ((i < len)) {
+                      while ((i < _len)) {
                         list2.array[i] = list1.array[i];
                         i += 1;
                       }
-                      list2.size = len;
+                      list2.size = _len;
                       output = new Value(6, list2);
                     }
                     break;
@@ -3011,13 +3035,13 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                           } else {
                             bool1 = false;
                           }
-                          len = list2.size;
+                          _len = list2.size;
                           int1 = list1.size;
-                          while (((int1 + len) > list1.capacity)) {
+                          while (((int1 + _len) > list1.capacity)) {
                             increaseListCapacity(list1);
                           }
                           i = 0;
-                          while ((i < len)) {
+                          while ((i < _len)) {
                             value = list2.array[i];
                             if (bool1) {
                               value = buildFloat(globals, (0.0 + value.intValue));
@@ -3025,7 +3049,7 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                             list1.array[(int1 + i)] = value;
                             i += 1;
                           }
-                          list1.size += len;
+                          list1.size += _len;
                         }
                       }
                     }
@@ -3035,14 +3059,14 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                       hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list contains method", 1, argCount));
                     } else {
                       value2 = funcArgs[0];
-                      len = list1.size;
+                      _len = list1.size;
                       output = VALUE_FALSE;
                       i = 0;
-                      while ((i < len)) {
+                      while ((i < _len)) {
                         value = list1.array[i];
                         if ((doEqualityComparisonAndReturnCode(value2, value) == 1)) {
                           output = VALUE_TRUE;
-                          i = len;
+                          i = _len;
                         }
                         i += 1;
                       }
@@ -3086,25 +3110,25 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                             increaseListCapacity(list1);
                           }
                           int1 = value.intValue;
-                          len = list1.size;
+                          _len = list1.size;
                           if ((int1 < 0)) {
-                            int1 += len;
+                            int1 += _len;
                           }
-                          if ((int1 == len)) {
-                            list1.array[len] = value2;
+                          if ((int1 == _len)) {
+                            list1.array[_len] = value2;
                             list1.size += 1;
                           } else {
-                            if (((int1 < 0) || (int1 >= len))) {
+                            if (((int1 < 0) || (int1 >= _len))) {
                               hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.");
                             } else {
                               i = int1;
-                              while ((i < len)) {
+                              while ((i < _len)) {
                                 value3 = list1.array[i];
                                 list1.array[i] = value2;
                                 value2 = value3;
                                 i += 1;
                               }
-                              list1.array[len] = value2;
+                              list1.array[_len] = value2;
                               list1.size += 1;
                             }
                           }
@@ -3128,9 +3152,9 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                     if (!hasInterrupt) {
                       stringList1 = new ArrayList<String>();
                       string1 = ((String) value2.internalValue);
-                      len = list1.size;
+                      _len = list1.size;
                       i = 0;
-                      while ((i < len)) {
+                      while ((i < _len)) {
                         value = list1.array[i];
                         if ((value.type != 5)) {
                           string2 = valueToString(vm, value);
@@ -3163,17 +3187,17 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                     if ((argCount > 0)) {
                       hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list pop method", 0, argCount));
                     } else {
-                      len = list1.size;
-                      if ((len < 1)) {
+                      _len = list1.size;
+                      if ((_len < 1)) {
                         hasInterrupt = EX_IndexOutOfRange(ec, "Cannot pop from an empty list.");
                       } else {
-                        len -= 1;
-                        value = list1.array[len];
-                        list1.array[len] = null;
+                        _len -= 1;
+                        value = list1.array[_len];
+                        list1.array[_len] = null;
                         if (returnValueUsed) {
                           output = value;
                         }
-                        list1.size = len;
+                        list1.size = _len;
                       }
                     }
                     break;
@@ -3186,24 +3210,24 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                         hasInterrupt = EX_InvalidArgument(ec, "Argument of list.remove must be an integer index.");
                       } else {
                         int1 = value.intValue;
-                        len = list1.size;
+                        _len = list1.size;
                         if ((int1 < 0)) {
-                          int1 += len;
+                          int1 += _len;
                         }
-                        if (((int1 < 0) || (int1 >= len))) {
+                        if (((int1 < 0) || (int1 >= _len))) {
                           hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.");
                         } else {
                           if (returnValueUsed) {
                             output = list1.array[int1];
                           }
-                          len = (list1.size - 1);
-                          list1.size = len;
+                          _len = (list1.size - 1);
+                          list1.size = _len;
                           i = int1;
-                          while ((i < len)) {
+                          while ((i < _len)) {
                             list1.array[i] = list1.array[(i + 1)];
                             i += 1;
                           }
-                          list1.array[len] = null;
+                          list1.array[_len] = null;
                         }
                       }
                     }
@@ -3219,10 +3243,10 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                     if ((argCount > 0)) {
                       hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list shuffle method", 0, argCount));
                     } else {
-                      len = list1.size;
+                      _len = list1.size;
                       i = 0;
-                      while ((i < len)) {
-                        j = ((int) ((PST_random.nextDouble() * len)));
+                      while ((i < _len)) {
+                        j = ((int) ((PST_random.nextDouble() * _len)));
                         value = list1.array[i];
                         list1.array[i] = list1.array[j];
                         list1.array[j] = value;
@@ -3310,18 +3334,18 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                       switch (value.type) {
                         case 3:
                           int1 = value.intValue;
-                          Integer dictLookup5 = dictImpl.intToIndex.get(int1);
-                          i = dictLookup5 == null ? (-1) : dictLookup5;
+                          Integer dictLookup7 = dictImpl.intToIndex.get(int1);
+                          i = dictLookup7 == null ? (-1) : dictLookup7;
                           break;
                         case 8:
                           int1 = (((ObjectInstance) value.internalValue)).objectId;
-                          Integer dictLookup6 = dictImpl.intToIndex.get(int1);
-                          i = dictLookup6 == null ? (-1) : dictLookup6;
+                          Integer dictLookup8 = dictImpl.intToIndex.get(int1);
+                          i = dictLookup8 == null ? (-1) : dictLookup8;
                           break;
                         case 5:
                           string1 = ((String) value.internalValue);
-                          Integer dictLookup7 = dictImpl.stringToIndex.get(string1);
-                          i = dictLookup7 == null ? (dictImpl.stringToIndex.containsKey(string1) ? null : (-1)) : dictLookup7;
+                          Integer dictLookup9 = dictImpl.stringToIndex.get(string1);
+                          i = dictLookup9 == null ? (dictImpl.stringToIndex.containsKey(string1) ? null : (-1)) : dictLookup9;
                           break;
                       }
                       if ((i == -1)) {
@@ -3340,7 +3364,7 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                       hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary keys method", 0, argCount));
                     } else {
                       valueList1 = dictImpl.keys;
-                      len = valueList1.size();
+                      _len = valueList1.size();
                       if ((dictImpl.keyType == 8)) {
                         intArray1 = new int[2];
                         intArray1[0] = 8;
@@ -3349,13 +3373,13 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                         intArray1 = new int[1];
                         intArray1[0] = dictImpl.keyType;
                       }
-                      list1 = makeEmptyList(intArray1, len);
+                      list1 = makeEmptyList(intArray1, _len);
                       i = 0;
-                      while ((i < len)) {
+                      while ((i < _len)) {
                         list1.array[i] = valueList1.get(i);
                         i += 1;
                       }
-                      list1.size = len;
+                      list1.size = _len;
                       output = new Value(6, list1);
                     }
                     break;
@@ -3425,9 +3449,9 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                           }
                         }
                         if (bool2) {
-                          len = (dictImpl.size - 1);
-                          dictImpl.size = len;
-                          if ((i == len)) {
+                          _len = (dictImpl.size - 1);
+                          dictImpl.size = _len;
+                          if ((i == _len)) {
                             if ((keyType == 5)) {
                               dictImpl.stringToIndex.remove(stringKey);
                             } else {
@@ -3436,9 +3460,9 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                             dictImpl.keys.remove(i);
                             dictImpl.values.remove(i);
                           } else {
-                            value = dictImpl.keys.get(len);
+                            value = dictImpl.keys.get(_len);
                             dictImpl.keys.set(i, value);
-                            dictImpl.values.set(i, dictImpl.values.get(len));
+                            dictImpl.values.set(i, dictImpl.values.get(_len));
                             dictImpl.keys.remove(dictImpl.keys.size() - 1);
                             dictImpl.values.remove(dictImpl.values.size() - 1);
                             if ((keyType == 5)) {
@@ -3467,10 +3491,10 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                       hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary values method", 0, argCount));
                     } else {
                       valueList1 = dictImpl.values;
-                      len = valueList1.size();
-                      list1 = makeEmptyList(dictImpl.valueType, len);
+                      _len = valueList1.size();
+                      list1 = makeEmptyList(dictImpl.valueType, _len);
                       i = 0;
-                      while ((i < len)) {
+                      while ((i < _len)) {
                         addToList(list1, valueList1.get(i));
                         i += 1;
                       }
@@ -3761,11 +3785,11 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
         if ((nativeFp == null)) {
           hasInterrupt = EX_InvalidInvocation(ec, "CNI method could not be found.");
         } else {
-          len = row[1];
-          valueStackSize -= len;
-          valueArray1 = new Value[len];
+          _len = row[1];
+          valueStackSize -= _len;
+          valueArray1 = new Value[_len];
           i = 0;
-          while ((i < len)) {
+          while ((i < _len)) {
             valueArray1[i] = valueStack[(valueStackSize + i)];
             i += 1;
           }
@@ -4320,27 +4344,27 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
             value = valueStack[valueStackSize];
             objArray1 = (((ObjectInstance) value.internalValue)).nativeData;
             intArray1 = ((int[]) objArray1[0]);
-            len = ((int) objArray1[1]);
-            if ((len >= intArray1.length)) {
-              intArray2 = new int[((len * 2) + 16)];
+            _len = ((int) objArray1[1]);
+            if ((_len >= intArray1.length)) {
+              intArray2 = new int[((_len * 2) + 16)];
               j = 0;
-              while ((j < len)) {
+              while ((j < _len)) {
                 intArray2[j] = intArray1[j];
                 j += 1;
               }
               intArray1 = intArray2;
               objArray1[0] = intArray1;
             }
-            objArray1[1] = (len + 16);
+            objArray1[1] = (_len + 16);
             i = (int1 - 1);
             while ((i >= 0)) {
               value = valueStack[((valueStackSize + 1) + i)];
               if ((value.type == 3)) {
-                intArray1[(len + i)] = value.intValue;
+                intArray1[(_len + i)] = value.intValue;
               } else {
                 if ((value.type == 4)) {
                   float1 = (0.5 + ((double) value.internalValue));
-                  intArray1[(len + i)] = ((int) float1);
+                  intArray1[(_len + i)] = ((int) float1);
                 } else {
                   hasInterrupt = EX_InvalidArgument(ec, "Input must be integers.");
                   i = -1;
@@ -4486,10 +4510,10 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
         stringIntDict1 = new HashMap<String, Integer>();
         valueList2 = new ArrayList<Value>();
         valueList1 = new ArrayList<Value>();
-        len = row[0];
+        _len = row[0];
         type = 3;
         first = true;
-        i = len;
+        i = _len;
         while ((i > 0)) {
           valueStackSize -= 2;
           value = valueStack[(valueStackSize + 1)];
@@ -4535,7 +4559,7 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
           } else {
             i = intIntDict1.size();
           }
-          if ((i != len)) {
+          if ((i != _len)) {
             hasInterrupt = EX_InvalidKey(ec, "Key collision");
           }
         }
@@ -4560,7 +4584,7 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
             valueStack = valueStackIncreaseCapacity(ec);
             valueStackCapacity = valueStack.length;
           }
-          valueStack[valueStackSize] = new Value(7, new DictImpl(len, type, classId, intArray1, intIntDict1, stringIntDict1, valueList2, valueList1));
+          valueStack[valueStackSize] = new Value(7, new DictImpl(_len, type, classId, intArray1, intIntDict1, stringIntDict1, valueList2, valueList1));
           valueStackSize += 1;
         }
         break;
@@ -4630,8 +4654,8 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
               int1 = row[5];
             } else {
               intIntDict1 = classInfo.localeScopedNameIdToMemberId;
-              Integer dictLookup8 = intIntDict1.get(int2);
-              int1 = dictLookup8 == null ? (-1) : dictLookup8;
+              Integer dictLookup10 = intIntDict1.get(int2);
+              int1 = dictLookup10 == null ? (-1) : dictLookup10;
               int3 = classInfo.fieldAccessModifiers[int1];
               if ((int3 > 1)) {
                 if ((int3 == 2)) {
@@ -5031,8 +5055,8 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
               if (!hasInterrupt) {
                 if ((keyType == 5)) {
                   stringIntDict1 = ((HashMap<String, Integer>) dictImpl.stringToIndex);
-                  Integer dictLookup9 = stringIntDict1.get(stringKey);
-                  int1 = dictLookup9 == null ? (stringIntDict1.containsKey(stringKey) ? null : (-1)) : dictLookup9;
+                  Integer dictLookup11 = stringIntDict1.get(stringKey);
+                  int1 = dictLookup11 == null ? (stringIntDict1.containsKey(stringKey) ? null : (-1)) : dictLookup11;
                   if ((int1 == -1)) {
                     hasInterrupt = EX_KeyNotFound(ec, "Key not found: '" + stringKey + "'");
                   } else {
@@ -5040,8 +5064,8 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                   }
                 } else {
                   intIntDict1 = ((HashMap<Integer, Integer>) dictImpl.intToIndex);
-                  Integer dictLookup10 = intIntDict1.get(intKey);
-                  int1 = dictLookup10 == null ? (-1) : dictLookup10;
+                  Integer dictLookup12 = intIntDict1.get(intKey);
+                  int1 = dictLookup12 == null ? (-1) : dictLookup12;
                   if ((int1 == -1)) {
                     hasInterrupt = EX_KeyNotFound(ec, "Key not found.");
                   } else {
@@ -5092,14 +5116,14 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
         value = localsStack[(localsStackOffset + row[3])];
         if ((value.type == 6)) {
           list1 = ((ListImpl) value.internalValue);
-          len = list1.size;
+          _len = list1.size;
           bool1 = true;
         } else {
           string2 = ((String) value.internalValue);
-          len = string2.length();
+          _len = string2.length();
           bool1 = false;
         }
-        if ((i < len)) {
+        if ((i < _len)) {
           if (bool1) {
             value = list1.array[i];
           } else {
@@ -5194,17 +5218,17 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
         // LAMBDA;
         if (!metadata.lambdaTable.containsKey(pc)) {
           int1 = (4 + row[4] + 1);
-          len = row[int1];
-          intArray1 = new int[len];
+          _len = row[int1];
+          intArray1 = new int[_len];
           i = 0;
-          while ((i < len)) {
+          while ((i < _len)) {
             intArray1[i] = row[(int1 + i + 1)];
             i += 1;
           }
-          len = row[4];
-          intArray2 = new int[len];
+          _len = row[4];
+          intArray2 = new int[_len];
           i = 0;
-          while ((i < len)) {
+          while ((i < _len)) {
             intArray2[i] = row[(5 + i)];
             i += 1;
           }
@@ -5218,9 +5242,9 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
         }
         functionInfo = metadata.lambdaTable.get(pc);
         intArray1 = functionInfo.closureIds;
-        len = intArray1.length;
+        _len = intArray1.length;
         i = 0;
-        while ((i < len)) {
+        while ((i < _len)) {
           j = intArray1[i];
           if (parentClosure.containsKey(j)) {
             closure.put(j, parentClosure.get(j));
@@ -5456,8 +5480,8 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
           if ((integerSwitch == null)) {
             integerSwitch = initializeIntSwitchStatement(vm, pc, row);
           }
-          Integer dictLookup11 = integerSwitch.get(intKey);
-          i = dictLookup11 == null ? (-1) : dictLookup11;
+          Integer dictLookup13 = integerSwitch.get(intKey);
+          i = dictLookup13 == null ? (-1) : dictLookup13;
           if ((i == -1)) {
             pc += row[0];
           } else {
@@ -5476,8 +5500,8 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
           if ((stringSwitch == null)) {
             stringSwitch = initializeStringSwitchStatement(vm, pc, row);
           }
-          Integer dictLookup12 = stringSwitch.get(stringKey);
-          i = dictLookup12 == null ? (stringSwitch.containsKey(stringKey) ? null : (-1)) : dictLookup12;
+          Integer dictLookup14 = stringSwitch.get(stringKey);
+          i = dictLookup14 == null ? (stringSwitch.containsKey(stringKey) ? null : (-1)) : dictLookup14;
           if ((i == -1)) {
             pc += row[0];
           } else {
@@ -5597,6 +5621,11 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
     }
     ++pc;
   }
+}
+
+public static Object invokeNamedCallback(VmContext vm, int id, Object[] args) {
+  java.lang.reflect.Method cb = vm.namedCallbacks.callbacksById.get(id);
+  return ((Object) TranslationHelper.invokeFunctionPointer(cb, new Object[] {args}));
 }
 
 public static boolean isClassASubclassOf(VmContext vm, int subClassId, int parentClassId) {
@@ -6259,6 +6288,12 @@ public static Value Reflect_getMethods(VmContext vm, ExecutionContext ec, Value 
   return new Value(6, output);
 }
 
+public static int registerNamedCallback(VmContext vm, String scope, String functionName, java.lang.reflect.Method callback) {
+  int id = getNamedCallbackIdImpl(vm, scope, functionName, true);
+  vm.namedCallbacks.callbacksById.set(id, callback);
+  return id;
+}
+
 public static int resetLocalsStackTokens(ExecutionContext ec, StackFrame stack) {
   Value[] localsStack = ec.localsStack;
   int[] localsStackSet = ec.localsStackSet;
@@ -6494,13 +6529,13 @@ public static ResourceDB resourceManagerInitialize(VmGlobals globals, String man
 }
 
 public static void reverseList(ListImpl list) {
-  int len = list.size;
+  int _len = list.size;
   Value t = null;
   int i2 = 0;
   Value[] arr = list.array;
-  int i = (len >> 1);
-  while ((i < len)) {
-    i2 = (len - i - 1);
+  int i = (_len >> 1);
+  while ((i < _len)) {
+    i2 = (_len - i - 1);
     t = arr[i];
     arr[i] = arr[i2];
     arr[i2] = t;
@@ -6992,9 +7027,9 @@ public static ListImpl valueConcatLists(ListImpl a, ListImpl b) {
 }
 
 public static ListImpl valueMultiplyList(ListImpl a, int n) {
-  int len = (a.size * n);
-  ListImpl output = makeEmptyList(a.type, len);
-  if ((len == 0)) {
+  int _len = (a.size * n);
+  ListImpl output = makeEmptyList(a.type, _len);
+  if ((_len == 0)) {
     return output;
   }
   int aLen = a.size;
@@ -7019,7 +7054,7 @@ public static ListImpl valueMultiplyList(ListImpl a, int n) {
       i += 1;
     }
   }
-  output.size = len;
+  output.size = _len;
   return output;
 }
 

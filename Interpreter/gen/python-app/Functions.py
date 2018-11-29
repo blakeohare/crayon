@@ -34,7 +34,7 @@ def always_true(): return True
 def always_false(): return False
 
 def addLiteralImpl(vm, row, stringArg):
-  g = vm[12]
+  g = vm[13]
   type = row[0]
   if (type == 1):
     vm[4][4].append(g[0])
@@ -196,7 +196,7 @@ def canAssignTypeToGeneric(vm, value, generics, genericIndex):
       if (generics[genericIndex] == 3):
         return value
       if (generics[genericIndex] == 4):
-        return buildFloat(vm[12], (0.0 + value[1]))
+        return buildFloat(vm[13], (0.0 + value[1]))
       return None
     else:
       if (generics[genericIndex] == 4):
@@ -391,7 +391,7 @@ def createVm(rawByteCode, resourceManifest):
   executionContext = [0, stack, 0, 100, (PST_NoneListOfOne * 100), localsStack, localsStackSet, 1, 0, False, None, False, 0, None]
   executionContexts = {}
   executionContexts[0] = executionContext
-  vm = [executionContexts, executionContext[0], byteCode, [(PST_NoneListOfOne * len(byteCode[0])), None, [], None, None, {}, {}], [None, [], {}, None, [], None, [], None, [], (PST_NoneListOfOne * 100), (PST_NoneListOfOne * 100), {}, None, {}, -1, (PST_NoneListOfOne * 10), 0, None, None, [0, 0, 0], {}, {}, None], 0, False, [], None, resources, [], [[], False, None, None], globals, globals[0], globals[1], globals[2]]
+  vm = [executionContexts, executionContext[0], byteCode, [(PST_NoneListOfOne * len(byteCode[0])), None, [], None, None, {}, {}], [None, [], {}, None, [], None, [], None, [], (PST_NoneListOfOne * 100), (PST_NoneListOfOne * 100), {}, None, {}, -1, (PST_NoneListOfOne * 10), 0, None, None, [0, 0, 0], {}, {}, None], 0, False, [], None, resources, [], [[], False, None, None], [[], {}], globals, globals[0], globals[1], globals[2]]
   return vm
 
 def debuggerClearBreakpoint(vm, id):
@@ -596,8 +596,8 @@ def generateException(vm, stack, pc, valueStackSize, ec, type, message):
   localsIndex = stack[3]
   localsStackSetToken = (ec[7] + 1)
   ec[7] = localsStackSetToken
-  ec[5][localsIndex] = buildInteger(vm[12], type)
-  ec[5][(localsIndex + 1)] = buildString(vm[12], message)
+  ec[5][localsIndex] = buildInteger(vm[13], type)
+  ec[5][(localsIndex + 1)] = buildString(vm[13], message)
   ec[6][localsIndex] = localsStackSetToken
   ec[6][(localsIndex + 1)] = localsStackSetToken
   ec[1] = [(pc + 1), localsStackSetToken, stack[3], (stack[3] + functionInfo[7]), stack, False, None, valueStackSize, 0, (stack[9] + 1), 0, None, None, None]
@@ -719,6 +719,24 @@ def getFunctionTable(vm, functionId):
 
 def getItemFromList(list, i):
   return list[2][i]
+
+def getNamedCallbackId(vm, scope, functionName):
+  return getNamedCallbackIdImpl(vm, scope, functionName, False)
+
+def getNamedCallbackIdImpl(vm, scope, functionName, allocIfMissing):
+  lookup = vm[12][1]
+  idsForScope = None
+  idsForScope = lookup.get(scope, None)
+  if (idsForScope == None):
+    idsForScope = {}
+    lookup[scope] = idsForScope
+  id = -1
+  id = idsForScope.get(functionName, -1)
+  if ((id == -1) and allocIfMissing):
+    id = len(vm[12][0])
+    vm[12][0].append(None)
+    idsForScope[functionName] = id
+  return id
 
 def getNativeDataItem(objValue, index):
   obj = objValue[1]
@@ -885,7 +903,7 @@ def initializeClass(pc, vm, args, className):
   staticFields = (PST_NoneListOfOne * staticFieldCount)
   i = 0
   while (i < staticFieldCount):
-    staticFields[i] = vm[12][0]
+    staticFields[i] = vm[13][0]
     i += 1
   classInfo = [classId, globalNameId, baseClassId, assemblyId, staticInitializationState, staticFields, staticConstructorFunctionId, constructorFunctionId, 0, None, None, None, None, None, vm[4][21][classId], None, className]
   classTable = getClassTable(vm, classId)
@@ -942,7 +960,7 @@ def initializeClass(pc, vm, args, className):
       fieldInitializationCommand[memberId] = args[(i + 3)]
       t = args[(i + 4)]
       if (t == -1):
-        fieldInitializationLiteral[memberId] = vm[12][0]
+        fieldInitializationLiteral[memberId] = vm[13][0]
       else:
         fieldInitializationLiteral[memberId] = vm[4][3][t]
     else:
@@ -969,10 +987,10 @@ def initializeClass(pc, vm, args, className):
 def initializeClassFieldTypeInfo(vm, opCodeRow):
   classInfo = vm[4][9][opCodeRow[0]]
   memberId = opCodeRow[1]
-  len = len(opCodeRow)
-  typeInfo = (PST_NoneListOfOne * (len - 2))
+  _len = len(opCodeRow)
+  typeInfo = (PST_NoneListOfOne * (_len - 2))
   i = 2
-  while (i < len):
+  while (i < _len):
     typeInfo[(i - 2)] = opCodeRow[i]
     i += 1
   classInfo[15][memberId] = typeInfo
@@ -1093,7 +1111,7 @@ def interpreterGetExecutionContext(vm, executionContextId):
 
 def interpretImpl(vm, executionContextId):
   metadata = vm[4]
-  globals = vm[12]
+  globals = vm[13]
   VALUE_NULL = globals[0]
   VALUE_TRUE = globals[1]
   VALUE_FALSE = globals[2]
@@ -1126,7 +1144,7 @@ def interpretImpl(vm, executionContextId):
   functionId = 0
   localeId = 0
   classInfo = None
-  len = 0
+  _len = 0
   root = None
   row = None
   argCount = 0
@@ -1219,10 +1237,10 @@ def interpretImpl(vm, executionContextId):
                 addNameImpl(vm, stringArgs[pc])
               else:
                 # ARG_TYPE_VERIFY
-                len = row[0]
+                _len = row[0]
                 i = 1
                 j = 0
-                while (j < len):
+                while (j < _len):
                   j += 1
             elif (sc_0 == 3):
               # ASSIGN_CLOSURE
@@ -2036,13 +2054,13 @@ def interpretImpl(vm, executionContextId):
                             hasInterrupt = EX_InvalidArgument(ec, "string split method requires another string as input.")
                           else:
                             stringList = string1.split(value2[1])
-                            len = len(stringList)
-                            list1 = makeEmptyList(globals[14], len)
+                            _len = len(stringList)
+                            list1 = makeEmptyList(globals[14], _len)
                             i = 0
-                            while (i < len):
+                            while (i < _len):
                               list1[2].append(buildString(globals, stringList[i]))
                               i += 1
-                            list1[1] = len
+                            list1[1] = _len
                             output = [6, list1]
                       elif (argCount != 1):
                         hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("string startsWith method", 1, argCount))
@@ -2094,11 +2112,11 @@ def interpretImpl(vm, executionContextId):
                           elif (argCount > 0):
                             hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list choice method", 0, argCount))
                           else:
-                            len = list1[1]
-                            if (len == 0):
+                            _len = list1[1]
+                            if (_len == 0):
                               hasInterrupt = EX_UnsupportedOperation(ec, "Cannot use list.choice() method on an empty list.")
                             else:
-                              i = int(((random.random() * len)))
+                              i = int(((random.random() * _len)))
                               output = list1[2][i]
                         elif (sc_6 == 2):
                           if (argCount > 0):
@@ -2112,13 +2130,13 @@ def interpretImpl(vm, executionContextId):
                         elif (argCount > 0):
                           hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list clone method", 0, argCount))
                         else:
-                          len = list1[1]
-                          list2 = makeEmptyList(list1[0], len)
+                          _len = list1[1]
+                          list2 = makeEmptyList(list1[0], _len)
                           i = 0
-                          while (i < len):
+                          while (i < _len):
                             list2[2].append(list1[2][i])
                             i += 1
-                          list2[1] = len
+                          list2[1] = _len
                           output = [6, list2]
                       elif (sc_6 < 6):
                         if (sc_6 == 4):
@@ -2138,9 +2156,9 @@ def interpretImpl(vm, executionContextId):
                                   bool1 = True
                                 else:
                                   bool1 = False
-                                len = list2[1]
+                                _len = list2[1]
                                 i = 0
-                                while (i < len):
+                                while (i < _len):
                                   value = list2[2][i]
                                   if bool1:
                                     value = buildFloat(globals, (0.0 + value[1]))
@@ -2150,14 +2168,14 @@ def interpretImpl(vm, executionContextId):
                           hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list contains method", 1, argCount))
                         else:
                           value2 = funcArgs[0]
-                          len = list1[1]
+                          _len = list1[1]
                           output = VALUE_FALSE
                           i = 0
-                          while (i < len):
+                          while (i < _len):
                             value = list1[2][i]
                             if (doEqualityComparisonAndReturnCode(value2, value) == 1):
                               output = VALUE_TRUE
-                              i = len
+                              i = _len
                             i += 1
                       elif (sc_6 == 6):
                         if (argCount != 1):
@@ -2188,13 +2206,13 @@ def interpretImpl(vm, executionContextId):
                             value2 = value3
                           if not (hasInterrupt):
                             int1 = value[1]
-                            len = list1[1]
+                            _len = list1[1]
                             if (int1 < 0):
-                              int1 += len
-                            if (int1 == len):
+                              int1 += _len
+                            if (int1 == _len):
                               list1[2].append(value2)
                               list1[1] += 1
-                            elif ((int1 < 0) or (int1 >= len)):
+                            elif ((int1 < 0) or (int1 >= _len)):
                               hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.")
                             else:
                               list1[2].insert(int1, value2)
@@ -2214,9 +2232,9 @@ def interpretImpl(vm, executionContextId):
                           if not (hasInterrupt):
                             stringList1 = []
                             string1 = value2[1]
-                            len = list1[1]
+                            _len = list1[1]
                             i = 0
-                            while (i < len):
+                            while (i < _len):
                               value = list1[2][i]
                               if (value[0] != 5):
                                 string2 = valueToString(vm, value)
@@ -2241,15 +2259,15 @@ def interpretImpl(vm, executionContextId):
                         if (argCount > 0):
                           hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list pop method", 0, argCount))
                         else:
-                          len = list1[1]
-                          if (len < 1):
+                          _len = list1[1]
+                          if (_len < 1):
                             hasInterrupt = EX_IndexOutOfRange(ec, "Cannot pop from an empty list.")
                           else:
-                            len -= 1
+                            _len -= 1
                             value = list1[2].pop()
                             if returnValueUsed:
                               output = value
-                            list1[1] = len
+                            list1[1] = _len
                       elif (argCount != 1):
                         hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list remove method", 1, argCount))
                       else:
@@ -2258,16 +2276,16 @@ def interpretImpl(vm, executionContextId):
                           hasInterrupt = EX_InvalidArgument(ec, "Argument of list.remove must be an integer index.")
                         else:
                           int1 = value[1]
-                          len = list1[1]
+                          _len = list1[1]
                           if (int1 < 0):
-                            int1 += len
-                          if ((int1 < 0) or (int1 >= len)):
+                            int1 += _len
+                          if ((int1 < 0) or (int1 >= _len)):
                             hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.")
                           else:
                             if returnValueUsed:
                               output = list1[2][int1]
-                            len = (list1[1] - 1)
-                            list1[1] = len
+                            _len = (list1[1] - 1)
+                            list1[1] = _len
                             del list1[2][int1]
                     elif (sc_6 < 14):
                       if (sc_6 == 12):
@@ -2358,7 +2376,7 @@ def interpretImpl(vm, executionContextId):
                         hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary keys method", 0, argCount))
                       else:
                         valueList1 = dictImpl[6]
-                        len = len(valueList1)
+                        _len = len(valueList1)
                         if (dictImpl[1] == 8):
                           intArray1 = [None, None]
                           intArray1[0] = 8
@@ -2366,12 +2384,12 @@ def interpretImpl(vm, executionContextId):
                         else:
                           intArray1 = [None]
                           intArray1[0] = dictImpl[1]
-                        list1 = makeEmptyList(intArray1, len)
+                        list1 = makeEmptyList(intArray1, _len)
                         i = 0
-                        while (i < len):
+                        while (i < _len):
                           list1[2].append(valueList1[i])
                           i += 1
-                        list1[1] = len
+                        list1[1] = _len
                         output = [6, list1]
                     elif (sc_7 < 7):
                       if (sc_7 == 5):
@@ -2421,9 +2439,9 @@ def interpretImpl(vm, executionContextId):
                               i = dictImpl[4][intKey]
                               bool2 = True
                           if bool2:
-                            len = (dictImpl[0] - 1)
-                            dictImpl[0] = len
-                            if (i == len):
+                            _len = (dictImpl[0] - 1)
+                            dictImpl[0] = _len
+                            if (i == _len):
                               if (keyType == 5):
                                 dictImpl[5].pop(stringKey)
                               else:
@@ -2431,9 +2449,9 @@ def interpretImpl(vm, executionContextId):
                               del dictImpl[6][i]
                               del dictImpl[7][i]
                             else:
-                              value = dictImpl[6][len]
+                              value = dictImpl[6][_len]
                               dictImpl[6][i] = value
-                              dictImpl[7][i] = dictImpl[7][len]
+                              dictImpl[7][i] = dictImpl[7][_len]
                               dictImpl[6].pop()
                               dictImpl[7].pop()
                               if (keyType == 5):
@@ -2454,10 +2472,10 @@ def interpretImpl(vm, executionContextId):
                         hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("dictionary values method", 0, argCount))
                       else:
                         valueList1 = dictImpl[7]
-                        len = len(valueList1)
-                        list1 = makeEmptyList(dictImpl[3], len)
+                        _len = len(valueList1)
+                        list1 = makeEmptyList(dictImpl[3], _len)
                         i = 0
-                        while (i < len):
+                        while (i < _len):
                           addToList(list1, valueList1[i])
                           i += 1
                         output = [6, list1]
@@ -2680,11 +2698,11 @@ def interpretImpl(vm, executionContextId):
           if (nativeFp == None):
             hasInterrupt = EX_InvalidInvocation(ec, "CNI method could not be found.")
           else:
-            len = row[1]
-            valueStackSize -= len
-            valueArray1 = (PST_NoneListOfOne * len)
+            _len = row[1]
+            valueStackSize -= _len
+            valueArray1 = (PST_NoneListOfOne * _len)
             i = 0
-            while (i < len):
+            while (i < _len):
               valueArray1[i] = valueStack[(valueStackSize + i)]
               i += 1
             prepareToSuspend(ec, stack, valueStackSize, pc)
@@ -3125,24 +3143,24 @@ def interpretImpl(vm, executionContextId):
                     value = valueStack[valueStackSize]
                     objArray1 = (value[1])[3]
                     intArray1 = objArray1[0]
-                    len = objArray1[1]
-                    if (len >= len(intArray1)):
-                      intArray2 = (PST_NoneListOfOne * ((len * 2) + 16))
+                    _len = objArray1[1]
+                    if (_len >= len(intArray1)):
+                      intArray2 = (PST_NoneListOfOne * ((_len * 2) + 16))
                       j = 0
-                      while (j < len):
+                      while (j < _len):
                         intArray2[j] = intArray1[j]
                         j += 1
                       intArray1 = intArray2
                       objArray1[0] = intArray1
-                    objArray1[1] = (len + 16)
+                    objArray1[1] = (_len + 16)
                     i = (int1 - 1)
                     while (i >= 0):
                       value = valueStack[((valueStackSize + 1) + i)]
                       if (value[0] == 3):
-                        intArray1[(len + i)] = value[1]
+                        intArray1[(_len + i)] = value[1]
                       elif (value[0] == 4):
                         float1 = (0.5 + value[1])
-                        intArray1[(len + i)] = int(float1)
+                        intArray1[(_len + i)] = int(float1)
                       else:
                         hasInterrupt = EX_InvalidArgument(ec, "Input must be integers.")
                         i = -1
@@ -3263,10 +3281,10 @@ def interpretImpl(vm, executionContextId):
             stringIntDict1 = {}
             valueList2 = []
             valueList1 = []
-            len = row[0]
+            _len = row[0]
             type = 3
             first = True
-            i = len
+            i = _len
             while (i > 0):
               valueStackSize -= 2
               value = valueStack[(valueStackSize + 1)]
@@ -3299,7 +3317,7 @@ def interpretImpl(vm, executionContextId):
                 i = len(stringIntDict1)
               else:
                 i = len(intIntDict1)
-              if (i != len):
+              if (i != _len):
                 hasInterrupt = EX_InvalidKey(ec, "Key collision")
             if not (hasInterrupt):
               i = row[1]
@@ -3318,7 +3336,7 @@ def interpretImpl(vm, executionContextId):
               if (valueStackSize == valueStackCapacity):
                 valueStack = valueStackIncreaseCapacity(ec)
                 valueStackCapacity = len(valueStack)
-              valueStack[valueStackSize] = [7, [len, type, classId, intArray1, intIntDict1, stringIntDict1, valueList2, valueList1]]
+              valueStack[valueStackSize] = [7, [_len, type, classId, intArray1, intIntDict1, stringIntDict1, valueList2, valueList1]]
               valueStackSize += 1
         elif (sc_0 < 24):
           if (sc_0 == 22):
@@ -3731,13 +3749,13 @@ def interpretImpl(vm, executionContextId):
             value = localsStack[(localsStackOffset + row[3])]
             if (value[0] == 6):
               list1 = value[1]
-              len = list1[1]
+              _len = list1[1]
               bool1 = True
             else:
               string2 = value[1]
-              len = len(string2)
+              _len = len(string2)
               bool1 = False
-            if (i < len):
+            if (i < _len):
               if bool1:
                 value = list1[2][i]
               else:
@@ -3812,16 +3830,16 @@ def interpretImpl(vm, executionContextId):
           # LAMBDA
           if not ((pc in metadata[11])):
             int1 = (4 + row[4] + 1)
-            len = row[int1]
-            intArray1 = (PST_NoneListOfOne * len)
+            _len = row[int1]
+            intArray1 = (PST_NoneListOfOne * _len)
             i = 0
-            while (i < len):
+            while (i < _len):
               intArray1[i] = row[(int1 + i + 1)]
               i += 1
-            len = row[4]
-            intArray2 = (PST_NoneListOfOne * len)
+            _len = row[4]
+            intArray2 = (PST_NoneListOfOne * _len)
             i = 0
-            while (i < len):
+            while (i < _len):
               intArray2[i] = row[(5 + i)]
               i += 1
             metadata[11][pc] = [pc, 0, pc, row[0], row[1], 5, 0, row[2], intArray2, "lambda", intArray1]
@@ -3832,9 +3850,9 @@ def interpretImpl(vm, executionContextId):
             stack[12] = parentClosure
           functionInfo = metadata[11][pc]
           intArray1 = functionInfo[10]
-          len = len(intArray1)
+          _len = len(intArray1)
           i = 0
-          while (i < len):
+          while (i < _len):
             j = intArray1[i]
             if (j in parentClosure):
               closure[j] = parentClosure[j]
@@ -4163,6 +4181,10 @@ swlookup__interpretImpl__15 = { 1: 0, 2: 1, 3: 2, 5: 3 }
 swlookup__interpretImpl__16 = { 0: 0, 1: 1, 2: 2, 3: 3 }
 swlookup__interpretImpl__17 = { 0: 0, 1: 1, 2: 2 }
 swlookup__interpretImpl__0 = { 0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 6: 5, 7: 6, 8: 7, 5: 8, 9: 9, 10: 10, 11: 11, 12: 12, 13: 13, 14: 14, 15: 15, 16: 16, 17: 17, 18: 18, 19: 19, 20: 20, 21: 21, 22: 22, 23: 23, 24: 24, 25: 25, 26: 26, 27: 27, 28: 28, 29: 29, 30: 30, 31: 31, 32: 32, 33: 33, 34: 34, 35: 35, 36: 36, 37: 37, 38: 38, 39: 39, 40: 40, 41: 41, 42: 42, 43: 43, 44: 44, 45: 45, 46: 46, 47: 47, 48: 48, 49: 49, 50: 50, 51: 51, 52: 52, 53: 53, 54: 54, 55: 55, 56: 56, 57: 57, 58: 58, 59: 59, 60: 60, 61: 61, 62: 62, 63: 63, 64: 64, 65: 65 }
+
+def invokeNamedCallback(vm, id, args):
+  cb = vm[12][0][id]
+  return cb(args)
 
 def isClassASubclassOf(vm, subClassId, parentClassId):
   if (subClassId == parentClassId):
@@ -4656,6 +4678,11 @@ def Reflect_getMethods(vm, ec, methodSource):
     EX_UnsupportedOperation(ec, "static method reflection not implemented yet.")
   return [6, output]
 
+def registerNamedCallback(vm, scope, functionName, callback):
+  id = getNamedCallbackIdImpl(vm, scope, functionName, True)
+  vm[12][0][id] = callback
+  return id
+
 def resetLocalsStackTokens(ec, stack):
   localsStack = ec[5]
   localsStackSet = ec[6]
@@ -4699,12 +4726,12 @@ def resource_manager_getResourceOfType(vm, userPath, type):
     output = makeEmptyList(None, 2)
     file = lookup[userPath]
     if file[3] == type:
-      addToList(output, vm[12][1])
-      addToList(output, buildString(vm[12], file[1]))
+      addToList(output, vm[13][1])
+      addToList(output, buildString(vm[13], file[1]))
     else:
-      addToList(output, vm[12][2])
+      addToList(output, vm[13][2])
     return [6, output]
-  return vm[12][0]
+  return vm[13][0]
 
 def resource_manager_populate_directory_lookup(dirs, path):
   parts = path.split("/")
@@ -5190,9 +5217,9 @@ def valueConcatLists(a, b):
   return [None, (a[1] + b[1]), a[2] + b[2]]
 
 def valueMultiplyList(a, n):
-  len = (a[1] * n)
-  output = makeEmptyList(a[0], len)
-  if (len == 0):
+  _len = (a[1] * n)
+  output = makeEmptyList(a[0], _len)
+  if (_len == 0):
     return output
   aLen = a[1]
   i = 0
@@ -5212,7 +5239,7 @@ def valueMultiplyList(a, n):
         output[2].append(a[2][j])
         j += 1
       i += 1
-  output[1] = len
+  output[1] = _len
   return output
 
 def valueStackIncreaseCapacity(ec):

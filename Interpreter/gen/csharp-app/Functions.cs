@@ -252,15 +252,15 @@ public static Value buildList(List<Value> valueList)
 
 public static Value buildListWithType(int[] type, List<Value> valueList)
 {
-    int len = valueList.Count;
-    ListImpl output = makeEmptyList(type, len);
+    int _len = valueList.Count;
+    ListImpl output = makeEmptyList(type, _len);
     int i = 0;
-    while ((i < len))
+    while ((i < _len))
     {
         output.array[i] = valueList[i];
         i += 1;
     }
-    output.size = len;
+    output.size = _len;
     return new Value(6, output);
 }
 
@@ -773,7 +773,7 @@ public static VmContext createVm(string rawByteCode, string resourceManifest)
     ExecutionContext executionContext = new ExecutionContext(0, stack, 0, 100, new Value[100], localsStack, localsStackSet, 1, 0, false, null, false, 0, null);
     Dictionary<int, ExecutionContext> executionContexts = new Dictionary<int, ExecutionContext>();
     executionContexts[0] = executionContext;
-    VmContext vm = new VmContext(executionContexts, executionContext.id, byteCode, new SymbolData(new List<Token>[byteCode.ops.Length], null, new List<string>(), null, null, new Dictionary<int, List<string>>(), new Dictionary<int, List<string>>()), new VmMetadata(null, new List<string>(), new Dictionary<string, int>(), null, new List<Value>(), null, new List<Dictionary<int, int>>(), null, new List<Dictionary<string, int>>(), new ClassInfo[100], new FunctionInfo[100], new Dictionary<int, FunctionInfo>(), null, new Dictionary<int, Func<VmContext, Value[], Value>>(), -1, new int[10], 0, null, null, new MagicNumbers(0, 0, 0), new Dictionary<string, int>(), new Dictionary<int, Dictionary<int, int>>(), null), 0, false, new List<int>(), null, resources, new List<Value>(), new VmEnvironment(new string[0], false, null, null), globals, globals.valueNull, globals.boolTrue, globals.boolFalse);
+    VmContext vm = new VmContext(executionContexts, executionContext.id, byteCode, new SymbolData(new List<Token>[byteCode.ops.Length], null, new List<string>(), null, null, new Dictionary<int, List<string>>(), new Dictionary<int, List<string>>()), new VmMetadata(null, new List<string>(), new Dictionary<string, int>(), null, new List<Value>(), null, new List<Dictionary<int, int>>(), null, new List<Dictionary<string, int>>(), new ClassInfo[100], new FunctionInfo[100], new Dictionary<int, FunctionInfo>(), null, new Dictionary<int, Func<VmContext, Value[], Value>>(), -1, new int[10], 0, null, null, new MagicNumbers(0, 0, 0), new Dictionary<string, int>(), new Dictionary<int, Dictionary<int, int>>(), null), 0, false, new List<int>(), null, resources, new List<Value>(), new VmEnvironment(new string[0], false, null, null), new NamedCallbackStore(new List<Func<object[], object>>(), new Dictionary<string, Dictionary<string, int>>()), globals, globals.valueNull, globals.boolTrue, globals.boolFalse);
     return vm;
 }
 
@@ -1284,6 +1284,32 @@ public static Value getItemFromList(ListImpl list, int i)
     return list.array[i];
 }
 
+public static int getNamedCallbackId(VmContext vm, string scope, string functionName)
+{
+    return getNamedCallbackIdImpl(vm, scope, functionName, false);
+}
+
+public static int getNamedCallbackIdImpl(VmContext vm, string scope, string functionName, bool allocIfMissing)
+{
+    Dictionary<string, Dictionary<string, int>> lookup = vm.namedCallbacks.callbackIdLookup;
+    Dictionary<string, int> idsForScope = null;
+    if (!lookup.TryGetValue(scope, out idsForScope)) idsForScope = null;
+    if ((idsForScope == null))
+    {
+        idsForScope = new Dictionary<string, int>();
+        lookup[scope] = idsForScope;
+    }
+    int id = -1;
+    if (!idsForScope.TryGetValue(functionName, out id)) id = -1;
+    if (((id == -1) && allocIfMissing))
+    {
+        id = vm.namedCallbacks.callbacksById.Count;
+        vm.namedCallbacks.callbacksById.Add(null);
+        idsForScope[functionName] = id;
+    }
+    return id;
+}
+
 public static object getNativeDataItem(Value objValue, int index)
 {
     ObjectInstance obj = (ObjectInstance)objValue.internalValue;
@@ -1645,10 +1671,10 @@ public static int initializeClassFieldTypeInfo(VmContext vm, int[] opCodeRow)
 {
     ClassInfo classInfo = vm.metadata.classTable[opCodeRow[0]];
     int memberId = opCodeRow[1];
-    int len = opCodeRow.Length;
-    int[] typeInfo = new int[(len - 2)];
+    int _len = opCodeRow.Length;
+    int[] typeInfo = new int[(_len - 2)];
     int i = 2;
-    while ((i < len))
+    while ((i < _len))
     {
         typeInfo[(i - 2)] = opCodeRow[i];
         i += 1;
@@ -1872,7 +1898,7 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
     int functionId = 0;
     int localeId = 0;
     ClassInfo classInfo = null;
-    int len = 0;
+    int _len = 0;
     Value root = null;
     int[] row = null;
     int argCount = 0;
@@ -1964,10 +1990,10 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                 break;
             case 2:
                 // ARG_TYPE_VERIFY;
-                len = row[0];
+                _len = row[0];
                 i = 1;
                 j = 0;
-                while ((j < len))
+                while ((j < _len))
                 {
                     j += 1;
                 }
@@ -3388,15 +3414,15 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                             else
                                             {
                                                 stringList = PST_StringSplit(string1, (string)value2.internalValue);
-                                                len = stringList.Length;
-                                                list1 = makeEmptyList(globals.stringType, len);
+                                                _len = stringList.Length;
+                                                list1 = makeEmptyList(globals.stringType, _len);
                                                 i = 0;
-                                                while ((i < len))
+                                                while ((i < _len))
                                                 {
                                                     list1.array[i] = buildString(globals, stringList[i]);
                                                     i += 1;
                                                 }
-                                                list1.size = len;
+                                                list1.size = _len;
                                                 output = new Value(6, list1);
                                             }
                                         }
@@ -3499,14 +3525,14 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                         }
                                         else
                                         {
-                                            len = list1.size;
-                                            if ((len == 0))
+                                            _len = list1.size;
+                                            if ((_len == 0))
                                             {
                                                 hasInterrupt = EX_UnsupportedOperation(ec, "Cannot use list.choice() method on an empty list.");
                                             }
                                             else
                                             {
-                                                i = (int)((PST_Random.NextDouble() * len));
+                                                i = (int)((PST_Random.NextDouble() * _len));
                                                 output = list1.array[i];
                                             }
                                         }
@@ -3537,15 +3563,15 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                         }
                                         else
                                         {
-                                            len = list1.size;
-                                            list2 = makeEmptyList(list1.type, len);
+                                            _len = list1.size;
+                                            list2 = makeEmptyList(list1.type, _len);
                                             i = 0;
-                                            while ((i < len))
+                                            while ((i < _len))
                                             {
                                                 list2.array[i] = list1.array[i];
                                                 i += 1;
                                             }
-                                            list2.size = len;
+                                            list2.size = _len;
                                             output = new Value(6, list2);
                                         }
                                         break;
@@ -3579,14 +3605,14 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                                     {
                                                         bool1 = false;
                                                     }
-                                                    len = list2.size;
+                                                    _len = list2.size;
                                                     int1 = list1.size;
-                                                    while (((int1 + len) > list1.capacity))
+                                                    while (((int1 + _len) > list1.capacity))
                                                     {
                                                         increaseListCapacity(list1);
                                                     }
                                                     i = 0;
-                                                    while ((i < len))
+                                                    while ((i < _len))
                                                     {
                                                         value = list2.array[i];
                                                         if (bool1)
@@ -3596,7 +3622,7 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                                         list1.array[(int1 + i)] = value;
                                                         i += 1;
                                                     }
-                                                    list1.size += len;
+                                                    list1.size += _len;
                                                 }
                                             }
                                         }
@@ -3609,16 +3635,16 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                         else
                                         {
                                             value2 = funcArgs[0];
-                                            len = list1.size;
+                                            _len = list1.size;
                                             output = VALUE_FALSE;
                                             i = 0;
-                                            while ((i < len))
+                                            while ((i < _len))
                                             {
                                                 value = list1.array[i];
                                                 if ((doEqualityComparisonAndReturnCode(value2, value) == 1))
                                                 {
                                                     output = VALUE_TRUE;
-                                                    i = len;
+                                                    i = _len;
                                                 }
                                                 i += 1;
                                             }
@@ -3678,33 +3704,33 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                                         increaseListCapacity(list1);
                                                     }
                                                     int1 = (int)value.internalValue;
-                                                    len = list1.size;
+                                                    _len = list1.size;
                                                     if ((int1 < 0))
                                                     {
-                                                        int1 += len;
+                                                        int1 += _len;
                                                     }
-                                                    if ((int1 == len))
+                                                    if ((int1 == _len))
                                                     {
-                                                        list1.array[len] = value2;
+                                                        list1.array[_len] = value2;
                                                         list1.size += 1;
                                                     }
                                                     else
                                                     {
-                                                        if (((int1 < 0) || (int1 >= len)))
+                                                        if (((int1 < 0) || (int1 >= _len)))
                                                         {
                                                             hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.");
                                                         }
                                                         else
                                                         {
                                                             i = int1;
-                                                            while ((i < len))
+                                                            while ((i < _len))
                                                             {
                                                                 value3 = list1.array[i];
                                                                 list1.array[i] = value2;
                                                                 value2 = value3;
                                                                 i += 1;
                                                             }
-                                                            list1.array[len] = value2;
+                                                            list1.array[_len] = value2;
                                                             list1.size += 1;
                                                         }
                                                     }
@@ -3736,9 +3762,9 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                         {
                                             stringList1 = new List<string>();
                                             string1 = (string)value2.internalValue;
-                                            len = list1.size;
+                                            _len = list1.size;
                                             i = 0;
-                                            while ((i < len))
+                                            while ((i < _len))
                                             {
                                                 value = list1.array[i];
                                                 if ((value.type != 5))
@@ -3784,21 +3810,21 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                         }
                                         else
                                         {
-                                            len = list1.size;
-                                            if ((len < 1))
+                                            _len = list1.size;
+                                            if ((_len < 1))
                                             {
                                                 hasInterrupt = EX_IndexOutOfRange(ec, "Cannot pop from an empty list.");
                                             }
                                             else
                                             {
-                                                len -= 1;
-                                                value = list1.array[len];
-                                                list1.array[len] = null;
+                                                _len -= 1;
+                                                value = list1.array[_len];
+                                                list1.array[_len] = null;
                                                 if (returnValueUsed)
                                                 {
                                                     output = value;
                                                 }
-                                                list1.size = len;
+                                                list1.size = _len;
                                             }
                                         }
                                         break;
@@ -3817,12 +3843,12 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                             else
                                             {
                                                 int1 = (int)value.internalValue;
-                                                len = list1.size;
+                                                _len = list1.size;
                                                 if ((int1 < 0))
                                                 {
-                                                    int1 += len;
+                                                    int1 += _len;
                                                 }
-                                                if (((int1 < 0) || (int1 >= len)))
+                                                if (((int1 < 0) || (int1 >= _len)))
                                                 {
                                                     hasInterrupt = EX_IndexOutOfRange(ec, "Index out of range.");
                                                 }
@@ -3832,15 +3858,15 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                                     {
                                                         output = list1.array[int1];
                                                     }
-                                                    len = (list1.size - 1);
-                                                    list1.size = len;
+                                                    _len = (list1.size - 1);
+                                                    list1.size = _len;
                                                     i = int1;
-                                                    while ((i < len))
+                                                    while ((i < _len))
                                                     {
                                                         list1.array[i] = list1.array[(i + 1)];
                                                         i += 1;
                                                     }
-                                                    list1.array[len] = null;
+                                                    list1.array[_len] = null;
                                                 }
                                             }
                                         }
@@ -3862,11 +3888,11 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                         }
                                         else
                                         {
-                                            len = list1.size;
+                                            _len = list1.size;
                                             i = 0;
-                                            while ((i < len))
+                                            while ((i < _len))
                                             {
-                                                j = (int)((PST_Random.NextDouble() * len));
+                                                j = (int)((PST_Random.NextDouble() * _len));
                                                 value = list1.array[i];
                                                 list1.array[i] = list1.array[j];
                                                 list1.array[j] = value;
@@ -4021,7 +4047,7 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                         else
                                         {
                                             valueList1 = dictImpl.keys;
-                                            len = valueList1.Count;
+                                            _len = valueList1.Count;
                                             if ((dictImpl.keyType == 8))
                                             {
                                                 intArray1 = new int[2];
@@ -4033,14 +4059,14 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                                 intArray1 = new int[1];
                                                 intArray1[0] = dictImpl.keyType;
                                             }
-                                            list1 = makeEmptyList(intArray1, len);
+                                            list1 = makeEmptyList(intArray1, _len);
                                             i = 0;
-                                            while ((i < len))
+                                            while ((i < _len))
                                             {
                                                 list1.array[i] = valueList1[i];
                                                 i += 1;
                                             }
-                                            list1.size = len;
+                                            list1.size = _len;
                                             output = new Value(6, list1);
                                         }
                                         break;
@@ -4147,9 +4173,9 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                                 }
                                                 if (bool2)
                                                 {
-                                                    len = (dictImpl.size - 1);
-                                                    dictImpl.size = len;
-                                                    if ((i == len))
+                                                    _len = (dictImpl.size - 1);
+                                                    dictImpl.size = _len;
+                                                    if ((i == _len))
                                                     {
                                                         if ((keyType == 5))
                                                         {
@@ -4164,9 +4190,9 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                                     }
                                                     else
                                                     {
-                                                        value = dictImpl.keys[len];
+                                                        value = dictImpl.keys[_len];
                                                         dictImpl.keys[i] = value;
-                                                        dictImpl.values[i] = dictImpl.values[len];
+                                                        dictImpl.values[i] = dictImpl.values[_len];
                                                         dictImpl.keys.RemoveAt(dictImpl.keys.Count - 1);
                                                         dictImpl.values.RemoveAt(dictImpl.values.Count - 1);
                                                         if ((keyType == 5))
@@ -4205,10 +4231,10 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                                         else
                                         {
                                             valueList1 = dictImpl.values;
-                                            len = valueList1.Count;
-                                            list1 = makeEmptyList(dictImpl.valueType, len);
+                                            _len = valueList1.Count;
+                                            list1 = makeEmptyList(dictImpl.valueType, _len);
                                             i = 0;
-                                            while ((i < len))
+                                            while ((i < _len))
                                             {
                                                 addToList(list1, valueList1[i]);
                                                 i += 1;
@@ -4574,11 +4600,11 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                 }
                 else
                 {
-                    len = row[1];
-                    valueStackSize -= len;
-                    valueArray1 = new Value[len];
+                    _len = row[1];
+                    valueStackSize -= _len;
+                    valueArray1 = new Value[_len];
                     i = 0;
-                    while ((i < len))
+                    while ((i < _len))
                     {
                         valueArray1[i] = valueStack[(valueStackSize + i)];
                         i += 1;
@@ -5344,12 +5370,12 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                         value = valueStack[valueStackSize];
                         objArray1 = ((ObjectInstance)value.internalValue).nativeData;
                         intArray1 = (int[])objArray1[0];
-                        len = (int)objArray1[1];
-                        if ((len >= intArray1.Length))
+                        _len = (int)objArray1[1];
+                        if ((_len >= intArray1.Length))
                         {
-                            intArray2 = new int[((len * 2) + 16)];
+                            intArray2 = new int[((_len * 2) + 16)];
                             j = 0;
-                            while ((j < len))
+                            while ((j < _len))
                             {
                                 intArray2[j] = intArray1[j];
                                 j += 1;
@@ -5357,21 +5383,21 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                             intArray1 = intArray2;
                             objArray1[0] = intArray1;
                         }
-                        objArray1[1] = (len + 16);
+                        objArray1[1] = (_len + 16);
                         i = (int1 - 1);
                         while ((i >= 0))
                         {
                             value = valueStack[((valueStackSize + 1) + i)];
                             if ((value.type == 3))
                             {
-                                intArray1[(len + i)] = (int)value.internalValue;
+                                intArray1[(_len + i)] = (int)value.internalValue;
                             }
                             else
                             {
                                 if ((value.type == 4))
                                 {
                                     float1 = (0.5 + (double)value.internalValue);
-                                    intArray1[(len + i)] = (int)float1;
+                                    intArray1[(_len + i)] = (int)float1;
                                 }
                                 else
                                 {
@@ -5539,10 +5565,10 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                 stringIntDict1 = new Dictionary<string, int>();
                 valueList2 = new List<Value>();
                 valueList1 = new List<Value>();
-                len = row[0];
+                _len = row[0];
                 type = 3;
                 first = true;
-                i = len;
+                i = _len;
                 while ((i > 0))
                 {
                     valueStackSize -= 2;
@@ -5611,7 +5637,7 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                     {
                         i = intIntDict1.Count;
                     }
-                    if ((i != len))
+                    if ((i != _len))
                     {
                         hasInterrupt = EX_InvalidKey(ec, "Key collision");
                     }
@@ -5644,7 +5670,7 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                         valueStack = valueStackIncreaseCapacity(ec);
                         valueStackCapacity = valueStack.Length;
                     }
-                    valueStack[valueStackSize] = new Value(7, new DictImpl(len, type, classId, intArray1, intIntDict1, stringIntDict1, valueList2, valueList1));
+                    valueStack[valueStackSize] = new Value(7, new DictImpl(_len, type, classId, intArray1, intIntDict1, stringIntDict1, valueList2, valueList1));
                     valueStackSize += 1;
                 }
                 break;
@@ -6345,16 +6371,16 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                 if ((value.type == 6))
                 {
                     list1 = (ListImpl)value.internalValue;
-                    len = list1.size;
+                    _len = list1.size;
                     bool1 = true;
                 }
                 else
                 {
                     string2 = (string)value.internalValue;
-                    len = string2.Length;
+                    _len = string2.Length;
                     bool1 = false;
                 }
-                if ((i < len))
+                if ((i < _len))
                 {
                     if (bool1)
                     {
@@ -6482,18 +6508,18 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                 if (!metadata.lambdaTable.ContainsKey(pc))
                 {
                     int1 = (4 + row[4] + 1);
-                    len = row[int1];
-                    intArray1 = new int[len];
+                    _len = row[int1];
+                    intArray1 = new int[_len];
                     i = 0;
-                    while ((i < len))
+                    while ((i < _len))
                     {
                         intArray1[i] = row[(int1 + i + 1)];
                         i += 1;
                     }
-                    len = row[4];
-                    intArray2 = new int[len];
+                    _len = row[4];
+                    intArray2 = new int[_len];
                     i = 0;
-                    while ((i < len))
+                    while ((i < _len))
                     {
                         intArray2[i] = row[(5 + i)];
                         i += 1;
@@ -6509,9 +6535,9 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
                 }
                 functionInfo = metadata.lambdaTable[pc];
                 intArray1 = functionInfo.closureIds;
-                len = intArray1.Length;
+                _len = intArray1.Length;
                 i = 0;
-                while ((i < len))
+                while ((i < _len))
                 {
                     j = intArray1[i];
                     if (parentClosure.ContainsKey(j))
@@ -6976,6 +7002,12 @@ public static InterpreterResult interpretImpl(VmContext vm, int executionContext
         }
         ++pc;
     }
+}
+
+public static object invokeNamedCallback(VmContext vm, int id, object[] args)
+{
+    Func<object[], object> cb = vm.namedCallbacks.callbacksById[id];
+    return cb(args);
 }
 
 public static bool isClassASubclassOf(VmContext vm, int subClassId, int parentClassId)
@@ -7862,6 +7894,13 @@ public static Value Reflect_getMethods(VmContext vm, ExecutionContext ec, Value 
     return new Value(6, output);
 }
 
+public static int registerNamedCallback(VmContext vm, string scope, string functionName, Func<object[], object> callback)
+{
+    int id = getNamedCallbackIdImpl(vm, scope, functionName, true);
+    vm.namedCallbacks.callbacksById[id] = callback;
+    return id;
+}
+
 public static int resetLocalsStackTokens(ExecutionContext ec, StackFrame stack)
 {
     Value[] localsStack = ec.localsStack;
@@ -8141,14 +8180,14 @@ public static ResourceDB resourceManagerInitialize(VmGlobals globals, string man
 
 public static void reverseList(ListImpl list)
 {
-    int len = list.size;
+    int _len = list.size;
     Value t = null;
     int i2 = 0;
     Value[] arr = list.array;
-    int i = (len >> 1);
-    while ((i < len))
+    int i = (_len >> 1);
+    while ((i < _len))
     {
-        i2 = (len - i - 1);
+        i2 = (_len - i - 1);
         t = arr[i];
         arr[i] = arr[i2];
         arr[i2] = t;
@@ -8727,9 +8766,9 @@ public static ListImpl valueConcatLists(ListImpl a, ListImpl b)
 
 public static ListImpl valueMultiplyList(ListImpl a, int n)
 {
-    int len = (a.size * n);
-    ListImpl output = makeEmptyList(a.type, len);
-    if ((len == 0))
+    int _len = (a.size * n);
+    ListImpl output = makeEmptyList(a.type, _len);
+    if ((_len == 0))
     {
         return output;
     }
@@ -8761,7 +8800,7 @@ public static ListImpl valueMultiplyList(ListImpl a, int n)
             i += 1;
         }
     }
-    output.size = len;
+    output.size = _len;
     return output;
 }
 

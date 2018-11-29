@@ -12,12 +12,13 @@
     public ResourceDB resourceDatabase;
     public List<Value> shutdownHandlers;
     public VmEnvironment environment;
+    public NamedCallbackStore namedCallbacks;
     public VmGlobals globals;
     public Value globalNull;
     public Value globalTrue;
     public Value globalFalse;
 
-    public VmContext(Dictionary<int, ExecutionContext> executionContexts, int lastExecutionContextId, Code byteCode, SymbolData symbolData, VmMetadata metadata, int instanceCounter, bool initializationComplete, List<int> classStaticInitializationStack, Value[] funcArgs, ResourceDB resourceDatabase, List<Value> shutdownHandlers, VmEnvironment environment, VmGlobals globals, Value globalNull, Value globalTrue, Value globalFalse)
+    public VmContext(Dictionary<int, ExecutionContext> executionContexts, int lastExecutionContextId, Code byteCode, SymbolData symbolData, VmMetadata metadata, int instanceCounter, bool initializationComplete, List<int> classStaticInitializationStack, Value[] funcArgs, ResourceDB resourceDatabase, List<Value> shutdownHandlers, VmEnvironment environment, NamedCallbackStore namedCallbacks, VmGlobals globals, Value globalNull, Value globalTrue, Value globalFalse)
     {
         this.executionContexts = executionContexts;
         this.lastExecutionContextId = lastExecutionContextId;
@@ -31,6 +32,7 @@
         this.resourceDatabase = resourceDatabase;
         this.shutdownHandlers = shutdownHandlers;
         this.environment = environment;
+        this.namedCallbacks = namedCallbacks;
         this.globals = globals;
         this.globalNull = globalNull;
         this.globalTrue = globalTrue;
