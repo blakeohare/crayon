@@ -141,7 +141,7 @@ namespace Parser
 
         public string GetPastelCodeDirectory()
         {
-            return FileUtil.JoinPath(this.Directory, "pastel");
+            return FileUtil.JoinPath(this.Directory, "pastel", "src");
         }
 
         private int isMoreThanJustEmbedCode = -1;
@@ -190,7 +190,7 @@ namespace Parser
         // This ONLY gets the translations that are specific only for this platform and does not do any inheritance chain walking.
         public Dictionary<string, string> GetMethodTranslations(string platformName)
         {
-            string methodTranslations = this.ReadFile(false, FileUtil.JoinPath("methods", platformName + ".txt"), true);
+            string methodTranslations = this.ReadFile(false, FileUtil.JoinPath("pastel", "extensions", platformName + ".txt"), true);
             Dictionary<string, string> translationsLookup = new Dictionary<string, string>();
             if (methodTranslations != null)
             {

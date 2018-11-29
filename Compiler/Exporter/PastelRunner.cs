@@ -204,7 +204,7 @@ namespace Exporter
 
             string pastelCodeDir = library.Metadata.GetPastelCodeDirectory();
             string entryPoint = FileUtil.JoinPath(pastelCodeDir, "main.pst");
-            string filename = "LIB:" + library.Metadata.ID + "/pastel/main.pst";
+            string filename = "LIB:" + library.Metadata.ID + "/pastel/src/main.pst";
             context.CompileCode(filename, FileUtil.ReadFileText(entryPoint));
 
             context.FinalizeCompilation();

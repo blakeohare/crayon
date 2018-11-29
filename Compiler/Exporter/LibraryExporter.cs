@@ -65,7 +65,7 @@ namespace Exporter
         private Dictionary<string, object> LoadFlagsFromFile(string platformId)
         {
             Dictionary<string, object> output = new Dictionary<string, object>();
-            string path = FileUtil.JoinAndCanonicalizePath(this.Metadata.Directory, "flags", platformId + ".txt");
+            string path = FileUtil.JoinAndCanonicalizePath(this.Metadata.Directory, "pastel", "flags", platformId + ".txt");
             if (FileUtil.FileExists(path))
             {
                 foreach (string line in FileUtil.ReadFileText(path).Split('\n'))
@@ -139,12 +139,12 @@ namespace Exporter
 
         private void InitTypeInfo()
         {
-            string typeInfoFile = FileUtil.JoinPath(this.Metadata.Directory, "native_method_type_info.txt");
+            string typeInfoFile = FileUtil.JoinPath(this.Metadata.Directory, "pastel", "native_method_type_info.txt");
             if (FileUtil.FileExists(typeInfoFile))
             {
                 string typeInfo = FileUtil.ReadFileText(typeInfoFile);
                 this.extensibleFunctionMetadata = Pastel.ExtensibleFunctionMetadataParser.Parse(
-                    "LIB:" + this.Metadata.ID + "/native_method_type_info.txt",
+                    "LIB:" + this.Metadata.ID + "/pastel/native_method_type_info.txt",
                     typeInfo);
             }
             else
