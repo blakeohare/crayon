@@ -1,9 +1,9 @@
-﻿VM.Value lib_gamepad_get_save_file_path(VM.VmContext vm, Array<VM.Value> args) {
+﻿VM.Value lib_game_gamepad_get_save_file_path(VM.VmContext vm, Array<VM.Value> args) {
 
     if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
 
         // returns null on platforms where user data is not supported.
-        string string1 = Extension._lib_gamepad_config_file_path();
+        string string1 = Extension._lib_game_gamepad_config_file_path();
 
         if (string1 != null) {
             return VM.buildString(vm.globals, string1);

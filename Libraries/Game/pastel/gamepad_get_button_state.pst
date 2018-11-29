@@ -4,7 +4,7 @@
 
     outputs a boolean Value
 */
-VM.Value lib_gamepad_get_button_state(VM.VmContext vm, Array<VM.Value> args) {
+VM.Value lib_game_gamepad_get_button_state(VM.VmContext vm, Array<VM.Value> args) {
     if (@ext_boolean("LIB_GAMEPAD_SUPPORTED")) {
         int int1 = 0;
         VM.ObjectInstance objInstance1 = null;
@@ -12,7 +12,7 @@ VM.Value lib_gamepad_get_button_state(VM.VmContext vm, Array<VM.Value> args) {
         VM.Value arg2 = args[1];
         objInstance1 = (VM.ObjectInstance) arg1.internalValue;
         int1 = (int) arg2.internalValue;
-        if (Extension._lib_gamepad_get_button_state(objInstance1.nativeData[0], int1)) {
+        if (Extension._lib_game_gamepad_get_button_state(objInstance1.nativeData[0], int1)) {
             return vm.globalTrue;
         }
         return vm.globalFalse;

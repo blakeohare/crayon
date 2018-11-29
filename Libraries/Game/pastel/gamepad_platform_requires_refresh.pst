@@ -1,5 +1,5 @@
 ﻿VM.Value lib_gamepad_platform_requires_refresh(VM.VmContext vm, Array<VM.Value> args) {
-    if (@ext_boolean("LIB_GAMEPAD_SUPPORTED") && Extension._lib_gamepad_platform_requires_refresh()) {
+    if (@ext_boolean("LIB_GAMEPAD_SUPPORTED") && Extension._lib_game_gamepad_platform_requires_refresh()) {
         return vm.globalTrue;
     }
     return vm.globalFalse;
