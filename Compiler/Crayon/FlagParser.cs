@@ -51,7 +51,6 @@ namespace Crayon
             SHOW_PERFORMANCE_MARKERS,
             USE_OUTPUT_PREFIXES,
             PASTEL_CODE_GEN,
-            PASTEL_CODE_GEN_WITH_PROJ,
         };
 
         private static readonly HashSet<string> ONE_ARG_FLAGS = new HashSet<string>()
@@ -64,6 +63,8 @@ namespace Crayon
             GEN_DEFAULT_PROJ,
             GEN_DEFAULT_PROJ_ES,
             GEN_DEFAULT_PROJ_JP,
+
+            PASTEL_CODE_GEN_WITH_PROJ,
         };
 
         private static readonly Dictionary<string, string> ALIASES = new Dictionary<string, string>()
@@ -242,7 +243,7 @@ namespace Crayon
             command.IsJsonOutput = args.ContainsKey(JSON_OUTPUT);
             command.UseOutputPrefixes = args.ContainsKey(USE_OUTPUT_PREFIXES);
             command.IsPastelCodeGeneration = args.ContainsKey(PASTEL_CODE_GEN) || args.ContainsKey(PASTEL_CODE_GEN_WITH_PROJ);
-            command.IsPastelCodeGenUsingProjectFiles = args.ContainsKey(PASTEL_CODE_GEN_WITH_PROJ);
+            command.PastelProjectFile = args.ContainsKey(PASTEL_CODE_GEN_WITH_PROJ) ? args[PASTEL_CODE_GEN_WITH_PROJ] : null;
         }
     }
 }

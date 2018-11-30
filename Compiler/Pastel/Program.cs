@@ -11,7 +11,27 @@ namespace Pastel
     {
         public static void PseudoMain(string[] args)
         {
+            if (args.Length != 1)
+            {
+                Console.WriteLine("Incorrect usage. Please provide a path to a Pastel project config file.");
+                return;
+            }
 
+            string projectPath = args[0];
+            if (!System.IO.File.Exists(projectPath))
+            {
+                Console.WriteLine("Project file does not exist: '" + projectPath + "'");
+                return;
+            }
+
+            projectPath = System.IO.Path.GetFullPath(projectPath);
+
+            BuildProject(projectPath);
+        }
+
+        private static void BuildProject(string projectPath)
+        {
+            ProjectConfig config = ProjectConfig.Parse(projectPath);
         }
 
         private class CodeLoader : IInlineImportCodeLoader

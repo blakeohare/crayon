@@ -1,8 +1,9 @@
-BASE: base.txt
+IMPORT: base.txt
+IMPORT: flags-csharp.txt
 
 OUTPUT-STRUCTS: gen/structs
 OUTPUT-FUNCTIONS: gen/CrayonWrapper.cs
 
-CSHARP-NAMESPACE-FUNCTIONS: Interpreter.Vm
-CSHARP-NAMESPACE-STRUCTS: Interpreter.Structs
-CSHARP-FUNCTION-WRAPPER-CLASS: CrayonWrapper
+NAMESPACE-FUNCTIONS: Interpreter.Vm
+NAMESPACE-STRUCTS: Interpreter.Structs
+FUNCTION-WRAPPER-CLASS: CrayonWrapper

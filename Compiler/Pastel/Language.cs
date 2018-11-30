@@ -17,6 +17,19 @@ namespace Pastel
     {
         private static readonly Dictionary<Language, AbstractTranslator> singletons = new Dictionary<Language, AbstractTranslator>();
 
+        internal static Language ParseLanguage(string value)
+        {
+            switch (value.ToLower())
+            {
+                case "c": return Language.C;
+                case "csharp": return Language.CSHARP;
+                case "java": return Language.JAVA;
+                case "javascript": return Language.JAVASCRIPT;
+                case "python": return Language.PYTHON;
+                default: throw new System.Exception();
+            }
+        }
+
         internal static AbstractTranslator GetTranspiler(Language language)
         {
             if (singletons.ContainsKey(language))
