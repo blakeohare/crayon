@@ -1,0 +1,15 @@
+# TODO: A Core function that resolves at compile time needs to be introduced for most of 
+# these aside from ext_boolean since they're really a part of the language.
+
+# TODO: Remove all of the "IS_{language}" flags and replace them with whatever 
+# it is they're really being used for.
+
+FLAG: ARRAY_IS_LIST: false
+FLAG: HAS_INCREMENT: false
+FLAG: INT_IS_FLOOR: false
+FLAG: IS_C: false
+FLAG: IS_CHAR_A_NUMBER: false
+FLAG: IS_JAVASCRIPT: false
+FLAG: IS_PYTHON: false
+FLAG: PLATFORM_SUPPORTS_LIST_CLEAR: false
+FLAG: STRONGLY_TYPED: false

@@ -1,8 +1,6 @@
 SOURCE: src/main.pst
 FLAG: LIB_GAMEPAD_SUPPORTED: false
 
-
-
 # Perform various tasks required by the platform before halting the interpreter
 # This may include enqueuing resumption of the interpreter for platforms that don't
 # do this automatically. 

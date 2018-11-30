@@ -24,11 +24,11 @@ namespace Exporter
             }
         }
 
-        public static void Run(IInlineImportCodeLoader vmCodeLoader, Platform.IPlatformProvider platformProvider, bool useProjectFile)
+        public static void Run(IInlineImportCodeLoader vmCodeLoader, Platform.IPlatformProvider platformProvider, string pastelProjFile)
         {
-            if (useProjectFile)
+            if (pastelProjFile != null)
             {
-                RunWithProjectFile(vmCodeLoader, platformProvider);
+                RunWithProjectFile(vmCodeLoader, platformProvider, pastelProjFile);
             }
             else
             {
@@ -36,9 +36,9 @@ namespace Exporter
             }
         }
 
-        private static void RunWithProjectFile(IInlineImportCodeLoader vmCodeLoader, Platform.IPlatformProvider platformProvider)
+        private static void RunWithProjectFile(IInlineImportCodeLoader vmCodeLoader, Platform.IPlatformProvider platformProvider, string pastelProjFile)
         {
-            throw new System.NotImplementedException();
+            Pastel.Program.PseudoMain(new string[] { pastelProjFile });
         }
 
         private static void RunWithoutProjectFile(IInlineImportCodeLoader vmCodeLoader, Platform.IPlatformProvider platformProvider)

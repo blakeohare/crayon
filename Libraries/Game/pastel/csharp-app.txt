@@ -1,4 +1,6 @@
-BASE: base.txt
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-csharp.txt
+
 LANGUAGE: csharp
 FLAG: LIB_GAMEPAD_SUPPORTED: true
 
@@ -7,9 +9,9 @@ DEPENDENCY: VM: ../../../Interpreter/csharp-app.txt
 OUTPUT-STRUCTS: ../native/csharp-app/gen/structs
 OUTPUT-FUNCTIONS: ../native/csharp-app/gen/LibraryWrapper.cs
 
-CSHARP-NAMESPACE-FUNCTIONS: Interpreter.Libraries.Game
-CSHARP-NAMESPACE-STRUCTS: Interpreter.Libraries.Game
-CSHARP-FUNCTION-WRAPPER-CLASS: LibraryWrapper
+NAMESPACE-FUNCTIONS: Interpreter.Libraries.Game
+NAMESPACE-STRUCTS: Interpreter.Libraries.Game
+FUNCTION-WRAPPER-CLASS: LibraryWrapper
 
 EXT: _lib_game_get_events_raw_list: GameWindow.Instance.GetEvents()
 EXT: _lib_game_getScreenInfo: GameWindow.GetScreenInfo([ARG:1])
