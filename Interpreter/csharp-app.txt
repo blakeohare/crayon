@@ -1,0 +1,8 @@
+BASE: base.txt
+
+OUTPUT-STRUCTS: gen/structs
+OUTPUT-FUNCTIONS: gen/CrayonWrapper.cs
+
+CSHARP-NAMESPACE-FUNCTIONS: Interpreter.Vm
+CSHARP-NAMESPACE-STRUCTS: Interpreter.Structs
+CSHARP-FUNCTION-WRAPPER-CLASS: CrayonWrapper
