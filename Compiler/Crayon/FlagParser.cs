@@ -38,6 +38,7 @@ namespace Crayon
 
         // TODO(pastel-split): remove this flag and replace it with an external script.
         private static readonly string PASTEL_CODE_GEN = "pastelGen";
+        private static readonly string PASTEL_CODE_GEN_WITH_PROJ = "pastelGenWithProj"; // same as above, but use pastel project files.
 
         private static readonly HashSet<string> ATOMIC_FLAGS = new HashSet<string>() {
             CBX,
@@ -50,6 +51,7 @@ namespace Crayon
             SHOW_PERFORMANCE_MARKERS,
             USE_OUTPUT_PREFIXES,
             PASTEL_CODE_GEN,
+            PASTEL_CODE_GEN_WITH_PROJ,
         };
 
         private static readonly HashSet<string> ONE_ARG_FLAGS = new HashSet<string>()
@@ -239,7 +241,8 @@ namespace Crayon
             command.IsErrorCheckOnly = args.ContainsKey(ERROR_CHECK_ONLY);
             command.IsJsonOutput = args.ContainsKey(JSON_OUTPUT);
             command.UseOutputPrefixes = args.ContainsKey(USE_OUTPUT_PREFIXES);
-            command.IsPastelCodeGeneration = args.ContainsKey(PASTEL_CODE_GEN);
+            command.IsPastelCodeGeneration = args.ContainsKey(PASTEL_CODE_GEN) || args.ContainsKey(PASTEL_CODE_GEN_WITH_PROJ);
+            command.IsPastelCodeGenUsingProjectFiles = args.ContainsKey(PASTEL_CODE_GEN_WITH_PROJ);
         }
     }
 }

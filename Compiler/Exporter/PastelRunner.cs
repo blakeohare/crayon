@@ -24,7 +24,24 @@ namespace Exporter
             }
         }
 
-        public static void Run(IInlineImportCodeLoader vmCodeLoader, Platform.IPlatformProvider platformProvider)
+        public static void Run(IInlineImportCodeLoader vmCodeLoader, Platform.IPlatformProvider platformProvider, bool useProjectFile)
+        {
+            if (useProjectFile)
+            {
+                RunWithProjectFile(vmCodeLoader, platformProvider);
+            }
+            else
+            {
+                RunWithoutProjectFile(vmCodeLoader, platformProvider);
+            }
+        }
+
+        private static void RunWithProjectFile(IInlineImportCodeLoader vmCodeLoader, Platform.IPlatformProvider platformProvider)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private static void RunWithoutProjectFile(IInlineImportCodeLoader vmCodeLoader, Platform.IPlatformProvider platformProvider)
         {
             AssemblyMetadata[] assemblyMetadataList = new AssemblyFinder().AssemblyFlatList
                 .Where(asm => asm.IsMoreThanJustEmbedCode)
