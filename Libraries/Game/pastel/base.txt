@@ -1,0 +1,56 @@
+SOURCE: src/main.pst
+FLAG: LIB_GAMEPAD_SUPPORTED: false
+
+
+
+# Perform various tasks required by the platform before halting the interpreter
+# This may include enqueuing resumption of the interpreter for platforms that don't
+# do this automatically. 
+EXT-TYPE: void _lib_game_clockTick();
+
+# TODO: document this
+EXT-TYPE: void _lib_game_event_queue_flush();
+EXT-TYPE: bool _lib_game_getScreenInfo(Array<int> output);
+EXT-TYPE: void _lib_game_getTouchState(Array<int> output);
+EXT-TYPE: void _lib_game_initialize_game_with_fps(double fps);
+EXT-TYPE: object _lib_game_getNativeWindowHandle();
+EXT-TYPE: void _lib_game_initialize_screen(int gameWidth, int gameHeight, int windowWidth, int windowHeight, int executionContextId);
+EXT-TYPE: void _lib_game_set_title(string windowTitle);
+EXT-TYPE: void _lib_game_set_window_mode(int mode, int width, int height);
+EXT-TYPE: List<VM.PlatformRelayObject> _lib_game_get_events_raw_list();
+EXT-TYPE: Dictionary<string, Func<object, Array<object>>> _lib_game_GetCallbackFunctions();
+
+# --- AUDIO ---
+EXT-TYPE: bool _lib_game_audio_isAudioSupported();
+EXT-TYPE: void _lib_game_audio_musicSetVolume(double ratio);
+EXT-TYPE: bool _lib_game_audio_musicIsPlaying();
+EXT-TYPE: object _lib_game_audio_readLocalSoundResource(string resourcePath);
+EXT-TYPE: object _lib_game_audio_musicLoadFromResource(string resourcePath);
+EXT-TYPE: void _lib_game_audio_musicPlayResource(object musicObj, string path, bool isLoop);
+EXT-TYPE: bool _lib_game_audio_musicVerifyFileExists(string path);
+EXT-TYPE: void _lib_game_audio_musicPlayFile(object musicObj, string path, bool isLoop);
+EXT-TYPE: int _lib_game_audio_sfxGetState(object channel, object sfxResource, int resourceId);
+EXT-TYPE: object _lib_game_audio_sfxPlay(object sfxResource, double volumeRatio, double panRatio);
+EXT-TYPE: void _lib_game_audio_sfxStop(object channel, object sfxResource, int resourceId, bool isActivelyPlaying, bool hardStop);
+EXT-TYPE: void _lib_game_audio_sfxResume(object channel, object sfxResource, double volumeRatio, double panRatio);
+EXT-TYPE: void _lib_game_audio_audioStop(object sfxResource);
+
+# --- GAMEPAD ---
+EXT-TYPE: bool _lib_game_gamepad_is_supported();
+EXT-TYPE: int _lib_game_gamepad_getPlatform();
+EXT-TYPE: int _lib_game_gamepad_get_current_device_count();
+EXT-TYPE: bool _lib_game_gamepad_platform_requires_refresh();
+EXT-TYPE: string _lib_game_gamepad_config_file_path();
+EXT-TYPE: object _lib_game_gamepad_get_device_reference(int index);
+EXT-TYPE: int _lib_game_gamepad_jsIsOsx();
+EXT-TYPE: void _lib_game_gamepad_poll_universe();
+EXT-TYPE: void _lib_game_gamepad_refresh_devices();
+
+EXT-TYPE: string _lib_game_gamepad_get_name(int index, object device);
+EXT-TYPE: int _lib_game_gamepad_get_button_count(int index, object device);
+EXT-TYPE: int _lib_game_gamepad_get_axis_1d_count(int index, object device);
+EXT-TYPE: int _lib_game_gamepad_get_axis_2d_count(int index, object device);
+
+EXT-TYPE: double _lib_game_gamepad_get_axis_1d_state(object device, int index);
+EXT-TYPE: void _lib_game_gamepad_get_axis_2d_state(object device, int index, Array<int> outBuffer);
+EXT-TYPE: bool _lib_game_gamepad_get_button_state(object device, int index);
