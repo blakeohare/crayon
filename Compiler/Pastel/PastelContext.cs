@@ -7,7 +7,8 @@ namespace Pastel
 {
     public class PastelContext
     {
-        private PastelCompiler compiler = null;
+        private PastelCompiler lazyInitCompiler = null;
+        private bool dependenciesFinalized = false;
         public Language Language { get; private set; }
         private List<PastelCompiler> dependencies = new List<PastelCompiler>();
         private List<string> dependencyReferenceExportPrefixes = new List<string>();
@@ -19,22 +20,23 @@ namespace Pastel
         internal AbstractTranslator Transpiler { get; private set; }
         public IInlineImportCodeLoader CodeLoader { get; private set; }
 
-        public PastelContext(string languageId, IInlineImportCodeLoader codeLoader)
-        {
-            Language lang;
-            switch (languageId)
-            {
-                case "C": lang = Language.C; break;
-                case "CSHARP": lang = Language.CSHARP; break;
-                case "JAVA": lang = Language.JAVA; break;
-                case "JAVASCRIPT": lang = Language.JAVASCRIPT; break;
-                case "PYTHON": lang = Language.PYTHON; break;
-                default: throw new System.InvalidOperationException();
-            }
+        private string dir;
 
+        public PastelContext(string dir, Language language, IInlineImportCodeLoader codeLoader)
+        {
+            this.dir = dir;
             this.CodeLoader = codeLoader;
-            this.Language = lang;
-            this.Transpiler = LanguageUtil.GetTranspiler(lang);
+            this.Language = language;
+            this.Transpiler = LanguageUtil.GetTranspiler(language);
+        }
+
+        public PastelContext(string dir, string languageId, IInlineImportCodeLoader codeLoader)
+            : this(dir, LanguageUtil.ParseLanguage(languageId), codeLoader)
+        { }
+
+        public override string ToString()
+        {
+            return "Pastel Context: " + dir;
         }
 
         // TODO: refactor this all into a platform capabilities object.
@@ -55,8 +57,14 @@ namespace Pastel
         public PastelContext AddDependency(PastelContext context, string pastelNamespace, string referencePrefix)
         {
             this.dependencyReferenceNamespacesToDependencyIndex[pastelNamespace] = this.dependencies.Count;
-            this.dependencies.Add(context.compiler);
+            this.dependencies.Add(context.GetCompiler());
             this.dependencyReferenceExportPrefixes.Add(referencePrefix);
+            return this;
+        }
+
+        public PastelContext MarkDependenciesAsFinalized()
+        {
+            this.dependenciesFinalized = true;
             return this;
         }
 
@@ -89,11 +97,15 @@ namespace Pastel
             return this;
         }
 
-        public PastelContext CompileCode(string filename, string code)
+        private PastelCompiler GetCompiler()
         {
-            if (this.compiler == null)
+            if (this.lazyInitCompiler == null)
             {
-                this.compiler = new PastelCompiler(
+                if (!this.dependenciesFinalized)
+                {
+                    throw new System.Exception("Cannot get compiler before dependencies are finalized.");
+                }
+                this.lazyInitCompiler = new PastelCompiler(
                     this,
                     this.Language,
                     this.dependencies,
@@ -102,7 +114,12 @@ namespace Pastel
                     this.CodeLoader,
                     this.extensibleFunctions);
             }
-            this.compiler.CompileBlobOfCode(filename, code);
+            return this.lazyInitCompiler;
+        }
+
+        public PastelContext CompileCode(string filename, string code)
+        {
+            this.GetCompiler().CompileBlobOfCode(filename, code);
             return this;
         }
 
@@ -113,7 +130,7 @@ namespace Pastel
 
         public PastelContext FinalizeCompilation()
         {
-            this.compiler.Resolve();
+            this.GetCompiler().Resolve();
             return this;
         }
 
@@ -121,7 +138,7 @@ namespace Pastel
         {
             TranspilerContext ctx = this.GetTranspilerContext();
             Dictionary<string, string> output = new Dictionary<string, string>();
-            foreach (StructDefinition sd in this.compiler.GetStructDefinitions())
+            foreach (StructDefinition sd in this.GetCompiler().GetStructDefinitions())
             {
                 this.Transpiler.GenerateCodeForStruct(ctx, sd);
                 output[sd.NameToken.Value] = ctx.FlushAndClearBuffer();
@@ -139,13 +156,13 @@ namespace Pastel
         public Dictionary<string, string> GetCodeForFunctionsLookup()
         {
             TranspilerContext ctx = this.GetTranspilerContext();
-            return this.compiler.GetFunctionCodeAsLookupTEMP(ctx, "");
+            return this.GetCompiler().GetFunctionCodeAsLookupTEMP(ctx, "");
         }
 
         public string GetCodeForFunctionDeclarations()
         {
             TranspilerContext ctx = this.GetTranspilerContext();
-            return this.compiler.GetFunctionDeclarationsTEMP(ctx, "");
+            return this.GetCompiler().GetFunctionDeclarationsTEMP(ctx, "");
         }
 
         public string GetCodeForFunctions()
@@ -174,7 +191,7 @@ namespace Pastel
         public string GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(string name, string swapOutWithNewNameOrNull)
         {
             TranspilerContext ctx = this.GetTranspilerContext();
-            return this.compiler.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(name, swapOutWithNewNameOrNull, ctx, "");
+            return this.GetCompiler().GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(name, swapOutWithNewNameOrNull, ctx, "");
         }
     }
 }

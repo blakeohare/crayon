@@ -6,8 +6,6 @@ FLAG: LIB_GAMEPAD_SUPPORTED: false
 # do this automatically. 
 EXT-TYPE: void _lib_game_clockTick();
 
-# TODO: document this
-EXT-TYPE: void _lib_game_event_queue_flush();
 EXT-TYPE: bool _lib_game_getScreenInfo(Array<int> output);
 EXT-TYPE: void _lib_game_getTouchState(Array<int> output);
 EXT-TYPE: void _lib_game_initialize_game_with_fps(double fps);

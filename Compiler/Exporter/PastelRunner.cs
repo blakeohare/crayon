@@ -56,12 +56,13 @@ namespace Exporter
 
             foreach (Platform.AbstractPlatform platform in platforms)
             {
-                string vmSourceOutput = System.IO.Path.GetFullPath(FileUtil.JoinPath(VmCodeLoader.GetCrayonSourceDirectory(), "..", "gen", platform.Name));
+                string vmSourceDir = VmCodeLoader.GetCrayonSourceDirectory();
+                string vmSourceOutput = System.IO.Path.GetFullPath(FileUtil.JoinPath(vmSourceDir, "..", "gen", platform.Name));
 
                 Dictionary<string, object> constants = platform.GetFlattenedConstantFlags(false);
                 VmGenerator.AddTypeEnumsToConstants(constants);
 
-                PastelContext vmContext = new PastelContext(platform.Language, vmCodeLoader);
+                PastelContext vmContext = new PastelContext(vmSourceDir, platform.Language, vmCodeLoader);
                 foreach (string key in constants.Keys)
                 {
                     vmContext.SetConstant(key, constants[key]);
@@ -185,7 +186,7 @@ namespace Exporter
             }
 
             LibraryPastelCodeLoader libCodeLoader = new LibraryPastelCodeLoader(library.Metadata);
-            PastelContext context = new PastelContext(platform.Language, libCodeLoader);
+            PastelContext context = new PastelContext(library.Metadata.Directory, platform.Language, libCodeLoader);
             Dictionary<string, string> exFnTranslations = library.GetExtensibleFunctionTranslations(platform);
             List<ExtensibleFunction> libraryFunctions = library.GetPastelExtensibleFunctions();
             Dictionary<string, object> constantsLookup = Util.MergeDictionaries(constantFlags, library.CompileTimeConstants);

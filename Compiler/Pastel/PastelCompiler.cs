@@ -49,6 +49,11 @@ namespace Pastel
             this.interpreterParser = new PastelParser(context, flattenedConstants, inlineImportCodeLoader);
         }
 
+        public override string ToString()
+        {
+            return "Pastel Compiler for " + this.Context.ToString();
+        }
+
         private PastelParser interpreterParser;
 
         public Dictionary<string, StructDefinition> StructDefinitions { get; set; }

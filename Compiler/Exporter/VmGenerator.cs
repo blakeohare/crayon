@@ -184,7 +184,7 @@ namespace Exporter
         {
             using (new PerformanceSection("VmGenerator.GenerateCoreVmParseTree"))
             {
-                PastelContext context = new PastelContext(platform.Language, codeLoader);
+                PastelContext context = new PastelContext("Core VM", platform.Language, codeLoader);
                 foreach (string key in constantFlags.Keys)
                 {
                     context.SetConstant(key, constantFlags[key]);

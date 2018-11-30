@@ -37,6 +37,11 @@
         public DependencyNamespaceReference(Token firstToken, PastelCompiler dep, ICompilationEntity owner)
             : base(firstToken, owner)
         {
+            if (dep == null)
+            {
+                throw new ParserException(firstToken, "Could not resolve namespace: " + this.FirstToken.Value);
+            }
+
             this.Scope = dep;
         }
     }
