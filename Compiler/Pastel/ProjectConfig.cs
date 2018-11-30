@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Pastel
 {
@@ -37,6 +38,20 @@ namespace Pastel
         public string WrappingClassNameForFunctions { get; set; }
         public string NamespaceForStructs { get; set; }
         public string NamespaceForFunctions { get; set; }
+
+        // TODO(pastel-split): change the consumers of flags to just use bools directly.
+        public Dictionary<string, object> FlagsAsObjDictTEMP
+        {
+            get
+            {
+                Dictionary<string, object> d = new Dictionary<string, object>();
+                foreach (string key in this.Flags.Keys)
+                {
+                    d[key] = this.Flags[key];
+                }
+                return d;
+            }
+        }
 
         public static ProjectConfig Parse(string path)
         {
@@ -155,6 +170,31 @@ namespace Pastel
                         throw new InvalidOperationException("Unrecognized project config command '" + type + "' on line " + (i + 1) + " of " + originalPath + ":\n" + line);
                 }
             }
+        }
+
+        public List<ExtensibleFunction> GetExtensibleFunctions()
+        {
+            string typeDefinitionsRawCode = string.Join("\n", this.ExtensionTypeDefinitions);
+            List<ExtensibleFunction> output = new List<ExtensibleFunction>();
+            List<ExtensibleFunction> typeDefinitions = ExtensibleFunctionMetadataParser.Parse(this.Path, typeDefinitionsRawCode);
+            Dictionary<string, ExtensibleFunction> typeDefinitionsLookup = new Dictionary<string, ExtensibleFunction>();
+            foreach (ExtensibleFunction exFn in typeDefinitions)
+            {
+                typeDefinitionsLookup[exFn.Name] = exFn;
+            }
+
+            foreach (string exFunctionName in this.ExtensionPlatformValues.Keys.OrderBy(k => k))
+            {
+                if (!typeDefinitionsLookup.ContainsKey(exFunctionName))
+                {
+                    throw new InvalidOperationException("No type information defined for extensible function '" + exFunctionName + "'");
+                }
+
+                ExtensibleFunction exFn = typeDefinitionsLookup[exFunctionName];
+                exFn.Translation = this.ExtensionPlatformValues[exFunctionName];
+                output.Add(exFn);
+            }
+            return output;
         }
     }
 }
