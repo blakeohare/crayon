@@ -33,17 +33,20 @@ namespace Pastel
         {
             ProjectConfig config = ProjectConfig.Parse(projectPath);
             PastelContext context = CompilePastelContexts(config);
-            Dictionary<string, string> templates = GetGeneratedFiles(context);
+            GenerateFiles(config, context);
         }
 
-        private static Dictionary<string, string> GetGeneratedFiles(PastelContext context)
+        private static Dictionary<string, string> GenerateFiles(ProjectConfig config, PastelContext context)
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
             if (context.UsesFunctionDeclarations)
             {
-                output["func_decl"] = context.GetCodeForFunctionDeclarations();
+                string funcDeclarations = context.GetCodeForFunctionDeclarations();
+                throw new NotImplementedException();
             }
-            output["func_impl"] = context.GetCodeForFunctions();
+
+            GenerateFunctionImplementation(config, context.GetCodeForFunctions());
+
             if (context.UsesStructDefinitions)
             {
                 Dictionary<string, string> structDefinitions = context.GetCodeForStructs();
@@ -65,6 +68,51 @@ namespace Pastel
                 }
             }
             return output;
+        }
+
+        private static void IndentCodeBuffer(string indention, List<string> lines)
+        {
+            // TODO(pastel-split): put this in the transpiler
+            for (int i = 0; i < lines.Count; ++i)
+            {
+                lines[i] = indention + lines[i];
+            }
+        }
+
+        private static void GenerateFunctionImplementation(ProjectConfig config, string funcCode)
+        {
+            Transpilers.AbstractTranslator transpiler = LanguageUtil.GetTranspiler(config.Language);
+            List<string> lines = new List<string>();
+            lines.AddRange(funcCode.Trim().Split('\n'));
+
+            if (config.WrappingClassNameForFunctions != null)
+            {
+                IndentCodeBuffer(transpiler.TabChar, lines);
+                // TODO(pastel-split): put this in the transpiler
+                lines.Insert(0, "public class " + config.WrappingClassNameForFunctions);
+                lines.Insert(1, "{");
+                lines.Add("}");
+            }
+
+            if (config.NamespaceForFunctions != null)
+            {
+                IndentCodeBuffer(transpiler.TabChar, lines);
+                // TODO(pastel-split): put this in the transpiler
+                lines.Insert(0, "namespace " + config.NamespaceForFunctions);
+                lines.Insert(1, "{");
+                lines.Add("}");
+            }
+
+            for (int i = 0; i < lines.Count; ++i)
+            {
+                lines[i] = lines[i].TrimEnd();
+            }
+
+            string code = string.Join(transpiler.NewLine, lines);
+            string filepath = config.OutputFileFunctions;
+
+            // TODO(pastel-split): add usings/imports etc.
+            System.IO.File.WriteAllText(filepath, code);
         }
 
         private static PastelContext CompilePastelContexts(ProjectConfig rootConfig)
