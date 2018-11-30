@@ -1,1 +1,5 @@
 /*/native/*/gen
+!/Game/native/csharp-app/gen
+!/Graphics2D/native/csharp-app/gen
+!/ImageResources/native/csharp-app/gen
+!/Random/native/csharp-app/gen
