@@ -92,7 +92,31 @@ namespace Pastel.Transpilers
 
         protected override void WrapCodeImpl(ProjectConfig config, List<string> lines, bool isForStruct)
         {
-            throw new NotImplementedException();
+            if (!isForStruct && config.WrappingClassNameForFunctions != null)
+            {
+                PastelUtil.IndentLines(this.TabChar, lines);
+                lines.InsertRange(0, new string[] { "public final class " + config.WrappingClassNameForFunctions, "{" });
+                lines.Add("}");
+            }
+
+            List<string> prefixData = new List<string>();
+
+            string nsValue = isForStruct ? config.NamespaceForStructs : config.NamespaceForFunctions;
+            if (nsValue != null)
+            {
+                prefixData.AddRange(new string[] { "package " + nsValue + ";", "" });
+            }
+
+            if (config.JavaImports.Count > 0)
+            {
+                prefixData.AddRange(
+                    config.JavaImports
+                        .OrderBy(t => t)
+                        .Select(t => "import " + t + ";")
+                        .Concat(new string[] { "" }));
+            }
+
+            if (prefixData.Count > 0) lines.InsertRange(0, prefixData);
         }
 
         public override void TranslateFunctionPointerInvocation(TranspilerContext sb, FunctionPointerInvocation fpi)

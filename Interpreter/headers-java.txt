@@ -1,0 +1,3 @@
+JAVA-IMPORT: java.util.ArrayList
+JAVA-IMPORT: java.util.HashMap
+JAVA-IMPORT: org.crayonlang.interpreter.structs.*

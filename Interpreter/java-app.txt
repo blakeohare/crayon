@@ -1,0 +1,12 @@
+IMPORT: base.txt
+IMPORT: flags-java.txt
+IMPORT: headers-java.txt
+
+LANGUAGE: java
+
+OUTPUT-STRUCTS: gen/java-app/structs
+OUTPUT-FUNCTIONS: gen/java-app/CrayonWrapper.java
+
+NAMESPACE-FUNCTIONS: org.crayonlang.interpreter.vm
+NAMESPACE-STRUCTS: org.crayonlang.interpreter.structs
+FUNCTION-WRAPPER-CLASS: CrayonWrapper
