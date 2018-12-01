@@ -42,20 +42,6 @@ namespace Pastel
         public string NamespaceForFunctions { get; set; }
         public HashSet<string> CSharpUsings { get; set; }
 
-        // TODO(pastel-split): change the consumers of flags to just use bools directly.
-        public Dictionary<string, object> FlagsAsObjDictTEMP
-        {
-            get
-            {
-                Dictionary<string, object> d = new Dictionary<string, object>();
-                foreach (string key in this.Flags.Keys)
-                {
-                    d[key] = this.Flags[key];
-                }
-                return d;
-            }
-        }
-
         public static ProjectConfig Parse(string path)
         {
             string configContents = System.IO.File.ReadAllText(path);

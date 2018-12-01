@@ -167,6 +167,11 @@ namespace Pastel
             }
             context.MarkDependenciesAsFinalized();
 
+            foreach (string constantName in config.Flags.Keys)
+            {
+                context.SetConstant(constantName, config.Flags[constantName]);
+            }
+
             foreach (ExtensibleFunction exFn in config.GetExtensibleFunctions())
             {
                 // TODO(pastel-split): Translation is already set on the extensible function in the
