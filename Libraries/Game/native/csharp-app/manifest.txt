@@ -1,5 +1,6 @@
 # Source
 COPY_FILES: from=source, to=%LIBRARY_PATH%/%FILE%
+COPY_FILES: from=gen, to=%LIBRARY_PATH%/%FILE%
 
 # DLL's
 COPY_FILES: from=dlls, to=%LIBRARY_PATH%/%FILE%
