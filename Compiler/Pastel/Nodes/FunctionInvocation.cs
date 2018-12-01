@@ -35,13 +35,6 @@ namespace Pastel.Nodes
                             parser.GetParseTimeBooleanConstant(argName.Value.ToString()),
                             this.Owner);
 
-                    case "ext_integer":
-                        return new InlineConstant(
-                            PType.INT,
-                            this.FirstToken,
-                            parser.GetParseTimeIntegerConstant(argName.Value.ToString()),
-                            this.Owner);
-
                     default:
                         return this;
                 }

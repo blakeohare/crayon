@@ -112,17 +112,19 @@ enum FunctionPointerType {
     LAMBDA = 5,
 }
 
+// These are also defined in Compiler/Parser/Types.cs
+// Please make sure they stay synchronized.
 enum Types {
-    NULL = @ext_integer("TYPE_ID_NULL"),
-    BOOLEAN = @ext_integer("TYPE_ID_BOOLEAN"),
-    INTEGER = @ext_integer("TYPE_ID_INTEGER"),
-    FLOAT = @ext_integer("TYPE_ID_FLOAT"),
-    STRING = @ext_integer("TYPE_ID_STRING"),
-    LIST = @ext_integer("TYPE_ID_LIST"),
-    DICTIONARY = @ext_integer("TYPE_ID_DICTIONARY"),
-    INSTANCE = @ext_integer("TYPE_ID_INSTANCE"),
-    FUNCTION = @ext_integer("TYPE_ID_FUNCTION"),
-    CLASS = @ext_integer("TYPE_ID_CLASS"),
+    NULL = 1,
+    BOOLEAN = 2,
+    INTEGER = 3,
+    FLOAT = 4,
+    STRING = 5,
+    LIST = 6,
+    DICTIONARY = 7,
+    INSTANCE = 8,
+    FUNCTION = 9,
+    CLASS = 10,
 }
 
 const int MAX_TYPE = (Types.CLASS + 1);

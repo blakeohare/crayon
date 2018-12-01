@@ -45,11 +45,6 @@ namespace Pastel
             return (bool)this.GetConstant(name, false);
         }
 
-        internal int GetParseTimeIntegerConstant(string name)
-        {
-            return (int)this.GetConstant(name, 0);
-        }
-
         internal string GetParseTimeStringConstant(string name)
         {
             return (string)this.GetConstant(name, "");
