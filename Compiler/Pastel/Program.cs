@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pastel
 {
@@ -32,6 +30,7 @@ namespace Pastel
         private static void BuildProject(string projectPath)
         {
             ProjectConfig config = ProjectConfig.Parse(projectPath);
+            if (config.Language == Language.NONE) throw new InvalidOperationException("Language not defined in " + projectPath);
             PastelContext context = CompilePastelContexts(config);
             GenerateFiles(config, context);
         }
@@ -101,6 +100,15 @@ namespace Pastel
                 lines.Insert(0, "namespace " + config.NamespaceForFunctions);
                 lines.Insert(1, "{");
                 lines.Add("}");
+            }
+
+            if (config.Language == Language.CSHARP)
+            {
+                // TODO(pastel-split): some of these are required by the transpiler
+                if (config.CSharpUsings.Count > 0)
+                {
+                    lines.InsertRange(0, config.CSharpUsings.OrderBy(t => t).Select(t => "using " + t + ";").Concat(new string[] { "" }));
+                }
             }
 
             for (int i = 0; i < lines.Count; ++i)

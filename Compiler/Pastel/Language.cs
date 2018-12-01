@@ -5,6 +5,8 @@ namespace Pastel
 {
     public enum Language
     {
+        NONE,
+
         C,
         CSHARP,
         JAVA,
@@ -26,7 +28,7 @@ namespace Pastel
                 case "java": return Language.JAVA;
                 case "javascript": return Language.JAVASCRIPT;
                 case "python": return Language.PYTHON;
-                default: throw new System.Exception();
+                default: return Language.NONE;
             }
         }
 

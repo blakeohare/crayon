@@ -19,7 +19,7 @@ private static string[] PST_StringSplit(string value, string sep)
     if (sep.Length == 1) return value.Split(sep[0]);
     if (sep.Length == 0) return value.ToCharArray().Select<char, string>(c => "" + c).ToArray();
     PST_SplitSep[0] = sep;
-    return value.Split(PST_SplitSep, StringSplitOptions.None);
+    return value.Split(PST_SplitSep, System.StringSplitOptions.None);
 }
 
 private static string PST_FloatToString(double value)
@@ -30,7 +30,7 @@ private static string PST_FloatToString(double value)
     return output;
 }
 
-private static readonly DateTime PST_UnixEpoch = new System.DateTime(1970, 1, 1);
+private static readonly System.DateTime PST_UnixEpoch = new System.DateTime(1970, 1, 1);
 private static double PST_CurrentTime
 {
     get { return System.DateTime.UtcNow.Subtract(PST_UnixEpoch).TotalSeconds; }

@@ -1,8 +1,11 @@
 IMPORT: base.txt
 IMPORT: flags-csharp.txt
+IMPORT: headers-csharp.txt
 
-OUTPUT-STRUCTS: gen/structs
-OUTPUT-FUNCTIONS: gen/CrayonWrapper.cs
+LANGUAGE: csharp
+
+OUTPUT-STRUCTS: gen/csharp-app/structs
+OUTPUT-FUNCTIONS: gen/csharp-app/CrayonWrapper.cs
 
 NAMESPACE-FUNCTIONS: Interpreter.Vm
 NAMESPACE-STRUCTS: Interpreter.Structs

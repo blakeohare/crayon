@@ -8,10 +8,12 @@ namespace Pastel
     {
         public ProjectConfig()
         {
+            this.Language = Language.NONE;
             this.Flags = new Dictionary<string, bool>();
             this.DependenciesByPrefix = new Dictionary<string, ProjectConfig>();
             this.ExtensionTypeDefinitions = new List<string>();
             this.ExtensionPlatformValues = new Dictionary<string, string>();
+            this.CSharpUsings = new HashSet<string>();
         }
 
         public override string ToString()
@@ -38,6 +40,7 @@ namespace Pastel
         public string WrappingClassNameForFunctions { get; set; }
         public string NamespaceForStructs { get; set; }
         public string NamespaceForFunctions { get; set; }
+        public HashSet<string> CSharpUsings { get; set; }
 
         // TODO(pastel-split): change the consumers of flags to just use bools directly.
         public Dictionary<string, object> FlagsAsObjDictTEMP
@@ -164,6 +167,10 @@ namespace Pastel
 
                     case "EXT-TYPE":
                         config.ExtensionTypeDefinitions.Add(data);
+                        break;
+
+                    case "CSHARP-USING":
+                        config.CSharpUsings.Add(data);
                         break;
 
                     default:
