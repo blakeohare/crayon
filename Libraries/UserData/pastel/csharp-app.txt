@@ -1,0 +1,16 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-csharp.txt
+IMPORT: ../../../Interpreter/headers-csharp.txt
+
+LANGUAGE: csharp
+
+DEPENDENCY: VM: ../../../Interpreter/csharp-app.txt
+
+OUTPUT-STRUCTS: ../native/csharp-app/gen/structs
+OUTPUT-FUNCTIONS: ../native/csharp-app/gen/LibraryWrapper.cs
+
+NAMESPACE-FUNCTIONS: Interpreter.Libraries.UserData
+NAMESPACE-STRUCTS: Interpreter.Libraries.UserData
+FUNCTION-WRAPPER-CLASS: LibraryWrapper
+
+EXT: _lib_userdata_getProjectSandboxDirectory: CsxaTranslationHelper.GetUserDataDirectory([ARG:1])

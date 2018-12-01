@@ -1,0 +1,15 @@
+SOURCE: src/main.pst
+
+# Returns a gif context object
+EXT-TYPE: object _lib_gamegifcap_createGifContext(int millis);
+
+# Returns true if GIF capture is supported on this platform
+EXT-TYPE: bool _lib_gamegifcap_isSupported();
+
+# Returns a status code
+EXT-TYPE: int _lib_gamegifcap_screenCap(object gifContext, object nativeGameWindow);
+
+EXT-TYPE: void _lib_gamegifcap_setRecordSize(object gifContext, int width, int height);
+
+# Saves the GIF recorder context to a file.
+EXT-TYPE: int _lib_gamegifcap_saveToDisk(object gifContext, string path);

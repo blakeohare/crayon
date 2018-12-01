@@ -1,1 +1,2 @@
 COPY_FILES: from=source, to=%LIBRARY_PATH%/%FILE%
+COPY_FILES: from=gen, to=%LIBRARY_PATH%/%FILE%

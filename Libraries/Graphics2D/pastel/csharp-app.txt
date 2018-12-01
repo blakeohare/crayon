@@ -1,0 +1,20 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-csharp.txt
+IMPORT: ../../../Interpreter/headers-csharp.txt
+
+LANGUAGE: csharp
+
+FLAG: IS_OPEN_GL_BASED: true
+FLAG: LIB_GRAPHICS_USES_TEXTURE_ATLAS: true
+
+
+DEPENDENCY: VM: ../../../Interpreter/csharp-app.txt
+
+OUTPUT-STRUCTS: ../native/csharp-app/gen/structs
+OUTPUT-FUNCTIONS: ../native/csharp-app/gen/LibraryWrapper.cs
+
+NAMESPACE-FUNCTIONS: Interpreter.Libraries.Graphics2D
+NAMESPACE-STRUCTS: Interpreter.Libraries.Graphics2D
+FUNCTION-WRAPPER-CLASS: LibraryWrapper
+
+EXT: _lib_graphics2d_gl_max_texture_size: 1024

@@ -1,0 +1,16 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-csharp.txt
+IMPORT: ../../../Interpreter/headers-csharp.txt
+
+LANGUAGE: csharp
+
+DEPENDENCY: VM: ../../../Interpreter/csharp-app.txt
+
+OUTPUT-STRUCTS: ../native/csharp-app/gen/structs
+OUTPUT-FUNCTIONS: ../native/csharp-app/gen/LibraryWrapper.cs
+
+NAMESPACE-FUNCTIONS: Interpreter.Libraries.Resources
+NAMESPACE-STRUCTS: Interpreter.Libraries.Resources
+FUNCTION-WRAPPER-CLASS: LibraryWrapper
+
+EXT: _lib_resources_read_text: Interpreter.ResourceReader.ReadTextResource([ARG:1])

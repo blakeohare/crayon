@@ -1,0 +1,3 @@
+SOURCE: src/main.pst
+
+EXT-TYPE: string _lib_userdata_getProjectSandboxDirectory(string projectId);

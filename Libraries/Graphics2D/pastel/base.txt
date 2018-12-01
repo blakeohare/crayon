@@ -1,0 +1,12 @@
+SOURCE: src/main.pst
+
+FLAG: IS_OPEN_GL_BASED: false
+FLAG: LIB_GRAPHICS_USES_TEXTURE_ATLAS: false
+
+# Flips a graphics texture into a new texture
+EXT-TYPE: object _lib_graphics2d_flipTexture(object o, bool flipHorizontal, bool flipVertical);
+
+# Scales a graphics texture into a new texture
+EXT-TYPE: object _lib_graphics2d_scale(object graphicsTexture, int width, int height);
+
+EXT-TYPE: int _lib_graphics2d_gl_max_texture_size();
