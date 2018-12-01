@@ -79,10 +79,11 @@ namespace Pastel
         private static void GenerateStructImplementation(ProjectConfig config, string structName, string structCode)
         {
             // TODO(pastel-split): move this to platform specific code.
-            // Java will be very similar, but C will have them all in one file. Python and JS won't hit this codepath.
+            // Currently only C# and Java hit this code path, but C code generation will be very different.
             Transpilers.AbstractTranslator transpiler = LanguageUtil.GetTranspiler(config.Language);
             structCode = transpiler.WrapCodeForStructs(config, structCode);
-            string path = System.IO.Path.Combine(config.OutputDirStructs, structName + ".cs");
+            string fileExtension = config.Language == Language.CSHARP ? ".cs" : ".java";
+            string path = System.IO.Path.Combine(config.OutputDirStructs, structName + fileExtension);
             System.IO.File.WriteAllText(path, structCode);
         }
 
