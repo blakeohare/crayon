@@ -1,5 +1,6 @@
 ﻿using Pastel.Nodes;
 using System;
+using System.Collections.Generic;
 
 namespace Pastel.Transpilers
 {
@@ -26,6 +27,11 @@ namespace Pastel.Transpilers
         public override string TranslateType(PType type)
         {
             throw new InvalidOperationException("Python does not support types.");
+        }
+
+        protected override void WrapCodeImpl(ProjectConfig config, List<string> lines, bool isForStruct)
+        {
+            throw new NotImplementedException();
         }
 
         public override void TranslateArrayGet(TranspilerContext sb, Expression array, Expression index)

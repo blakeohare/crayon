@@ -1,5 +1,6 @@
 ﻿using Pastel.Nodes;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Pastel.Transpilers
@@ -87,6 +88,11 @@ namespace Pastel.Transpilers
                 default:
                     return this.TranslateJavaType(type);
             }
+        }
+
+        protected override void WrapCodeImpl(ProjectConfig config, List<string> lines, bool isForStruct)
+        {
+            throw new NotImplementedException();
         }
 
         public override void TranslateFunctionPointerInvocation(TranspilerContext sb, FunctionPointerInvocation fpi)

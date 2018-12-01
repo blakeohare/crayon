@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Interpreter.Vm
 {
-    public class CrayonWrapper
+    public static class CrayonWrapper
     {
         private static readonly int[] PST_IntBuffer16 = new int[16];
         private static readonly double[] PST_FloatBuffer16 = new double[16];

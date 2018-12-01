@@ -69,58 +69,11 @@ namespace Pastel
             return output;
         }
 
-        private static void IndentCodeBuffer(string indention, List<string> lines)
-        {
-            // TODO(pastel-split): put this in the transpiler
-            for (int i = 0; i < lines.Count; ++i)
-            {
-                lines[i] = indention + lines[i];
-            }
-        }
-
         private static void GenerateFunctionImplementation(ProjectConfig config, string funcCode)
         {
             Transpilers.AbstractTranslator transpiler = LanguageUtil.GetTranspiler(config.Language);
-            List<string> lines = new List<string>();
-            lines.AddRange(funcCode.Trim().Split('\n'));
-
-            if (config.WrappingClassNameForFunctions != null)
-            {
-                IndentCodeBuffer(transpiler.TabChar, lines);
-                // TODO(pastel-split): put this in the transpiler
-                lines.Insert(0, "public class " + config.WrappingClassNameForFunctions);
-                lines.Insert(1, "{");
-                lines.Add("}");
-            }
-
-            if (config.NamespaceForFunctions != null)
-            {
-                IndentCodeBuffer(transpiler.TabChar, lines);
-                // TODO(pastel-split): put this in the transpiler
-                lines.Insert(0, "namespace " + config.NamespaceForFunctions);
-                lines.Insert(1, "{");
-                lines.Add("}");
-            }
-
-            if (config.Language == Language.CSHARP)
-            {
-                // TODO(pastel-split): some of these are required by the transpiler
-                if (config.CSharpUsings.Count > 0)
-                {
-                    lines.InsertRange(0, config.CSharpUsings.OrderBy(t => t).Select(t => "using " + t + ";").Concat(new string[] { "" }));
-                }
-            }
-
-            for (int i = 0; i < lines.Count; ++i)
-            {
-                lines[i] = lines[i].TrimEnd();
-            }
-
-            string code = string.Join(transpiler.NewLine, lines);
-            string filepath = config.OutputFileFunctions;
-
-            // TODO(pastel-split): add usings/imports etc.
-            System.IO.File.WriteAllText(filepath, code);
+            funcCode = transpiler.WrapCodeForFunctions(config, funcCode);
+            System.IO.File.WriteAllText(config.OutputFileFunctions, funcCode);
         }
 
         private static PastelContext CompilePastelContexts(ProjectConfig rootConfig)
