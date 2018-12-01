@@ -53,7 +53,7 @@ namespace Pastel
 
                 foreach (string structName in structNames)
                 {
-                    output["struct_def:" + structName] = structDefinitions[structName];
+                    GenerateStructImplementation(config, structName, structDefinitions[structName]);
                 }
 
                 if (context.UsesStructDeclarations)
@@ -74,6 +74,16 @@ namespace Pastel
             Transpilers.AbstractTranslator transpiler = LanguageUtil.GetTranspiler(config.Language);
             funcCode = transpiler.WrapCodeForFunctions(config, funcCode);
             System.IO.File.WriteAllText(config.OutputFileFunctions, funcCode);
+        }
+
+        private static void GenerateStructImplementation(ProjectConfig config, string structName, string structCode)
+        {
+            // TODO(pastel-split): move this to platform specific code.
+            // Java will be very similar, but C will have them all in one file. Python and JS won't hit this codepath.
+            Transpilers.AbstractTranslator transpiler = LanguageUtil.GetTranspiler(config.Language);
+            structCode = transpiler.WrapCodeForStructs(config, structCode);
+            string path = System.IO.Path.Combine(config.OutputDirStructs, structName + ".cs");
+            System.IO.File.WriteAllText(path, structCode);
         }
 
         private static PastelContext CompilePastelContexts(ProjectConfig rootConfig)
