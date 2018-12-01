@@ -1,0 +1,7 @@
+IMPORT: base.txt
+IMPORT: flags-python.txt
+IMPORT: headers-python.txt
+
+LANGUAGE: python
+
+OUTPUT-FUNCTIONS: gen/python-app/vm.py
