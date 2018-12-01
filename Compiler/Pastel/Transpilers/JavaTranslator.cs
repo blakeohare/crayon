@@ -95,7 +95,7 @@ namespace Pastel.Transpilers
             if (!isForStruct && config.WrappingClassNameForFunctions != null)
             {
                 PastelUtil.IndentLines(this.TabChar, lines);
-                lines.InsertRange(0, new string[] { "public final class " + config.WrappingClassNameForFunctions, "{" });
+                lines.InsertRange(0, new string[] { "public final class " + config.WrappingClassNameForFunctions + " {", "" });
                 lines.Add("}");
             }
 

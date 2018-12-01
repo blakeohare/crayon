@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import org.crayonlang.interpreter.structs.*;
 
-public final class CrayonWrapper
-{
+public final class CrayonWrapper {
+
   private static java.util.Random PST_random = new java.util.Random();
   private static final String[] PST_emptyArrayString = new String[0];
   @SuppressWarnings("rawtypes")
