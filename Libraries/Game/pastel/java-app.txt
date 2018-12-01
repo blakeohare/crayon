@@ -27,7 +27,6 @@ EXT: _lib_game_GetCallbackFunctions: GameWindow.getCallbackFunctions()
 EXT: _lib_game_audio_isAudioSupported: TranslationHelper.alwaysFalse()
 EXT: _lib_game_audio_musicIsPlaying: false
 EXT: _lib_game_audio_musicLoadFromResource: AudioLibHelper.loadMusicFromResource([ARG:1])
-EXT: _lib_game_audio_musicPause: TranslationHelper.Noop()
 EXT: _lib_game_audio_musicPlayFile: TranslationHelper.NoopWithReturnNull()
 EXT: _lib_game_audio_musicPlayResource: TranslationHelper.Noop()
 EXT: _lib_game_audio_musicSetVolume: TranslationHelper.Noop()
