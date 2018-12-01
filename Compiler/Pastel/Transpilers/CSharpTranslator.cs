@@ -35,7 +35,7 @@ namespace Pastel.Transpilers
 
                 case "Func":
                     System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                    sb.Append("Func<");
+                    sb.Append("System.Func<");
                     for (int i = 0; i < type.Generics.Length - 1; ++i)
                     {
                         sb.Append(this.TranslateType(type.Generics[i + 1]));
@@ -353,7 +353,7 @@ namespace Pastel.Transpilers
 
         public override void TranslateListJoinChars(TranspilerContext sb, Expression list)
         {
-            sb.Append("new String(");
+            sb.Append("new string(");
             this.TranslateExpression(sb, list);
             sb.Append(".ToArray())");
         }
@@ -427,21 +427,21 @@ namespace Pastel.Transpilers
 
         public override void TranslateMathArcCos(TranspilerContext sb, Expression ratio)
         {
-            sb.Append("Math.Acos(");
+            sb.Append("System.Math.Acos(");
             this.TranslateExpression(sb, ratio);
             sb.Append(')');
         }
 
         public override void TranslateMathArcSin(TranspilerContext sb, Expression ratio)
         {
-            sb.Append("Math.Asin(");
+            sb.Append("System.Math.Asin(");
             this.TranslateExpression(sb, ratio);
             sb.Append(')');
         }
 
         public override void TranslateMathArcTan(TranspilerContext sb, Expression yComponent, Expression xComponent)
         {
-            sb.Append("Math.Atan2(");
+            sb.Append("System.Math.Atan2(");
             this.TranslateExpression(sb, yComponent);
             sb.Append(", ");
             this.TranslateExpression(sb, xComponent);
@@ -450,21 +450,21 @@ namespace Pastel.Transpilers
 
         public override void TranslateMathCos(TranspilerContext sb, Expression thetaRadians)
         {
-            sb.Append("Math.Cos(");
+            sb.Append("System.Math.Cos(");
             this.TranslateExpression(sb, thetaRadians);
             sb.Append(')');
         }
 
         public override void TranslateMathLog(TranspilerContext sb, Expression value)
         {
-            sb.Append("Math.Log(");
+            sb.Append("System.Math.Log(");
             this.TranslateExpression(sb, value);
             sb.Append(')');
         }
 
         public override void TranslateMathPow(TranspilerContext sb, Expression expBase, Expression exponent)
         {
-            sb.Append("Math.Pow(");
+            sb.Append("System.Math.Pow(");
             this.TranslateExpression(sb, expBase);
             sb.Append(", ");
             this.TranslateExpression(sb, exponent);
@@ -473,14 +473,14 @@ namespace Pastel.Transpilers
 
         public override void TranslateMathSin(TranspilerContext sb, Expression thetaRadians)
         {
-            sb.Append("Math.Sin(");
+            sb.Append("System.Math.Sin(");
             this.TranslateExpression(sb, thetaRadians);
             sb.Append(')');
         }
 
         public override void TranslateMathTan(TranspilerContext sb, Expression thetaRadians)
         {
-            sb.Append("Math.Tan(");
+            sb.Append("System.Math.Tan(");
             this.TranslateExpression(sb, thetaRadians);
             sb.Append(')');
         }
