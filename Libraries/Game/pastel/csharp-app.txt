@@ -1,5 +1,6 @@
 IMPORT: base.txt
 IMPORT: ../../../Interpreter/flags-csharp.txt
+IMPORT: ../../../Interpreter/headers-csharp.txt
 
 LANGUAGE: csharp
 FLAG: LIB_GAMEPAD_SUPPORTED: true
