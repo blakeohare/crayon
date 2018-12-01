@@ -171,19 +171,27 @@ namespace Pastel
             Dictionary<string, string> output = this.GetCodeForFunctionsLookup();
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
+            bool isFirst = true;
             string resourcePath = ctx.Transpiler.HelperCodeResourcePath;
             if (resourcePath != null)
             {
                 string helperCode = PastelUtil.ReadAssemblyFileText(typeof(AbstractTranslator).Assembly, resourcePath);
-                sb.Append(helperCode);
-                sb.Append(ctx.Transpiler.NewLine);
+                sb.Append(helperCode.TrimEnd());
+                isFirst = false;
             }
 
             foreach (string fnName in output.Keys.OrderBy(s => s))
             {
+                if (isFirst)
+                {
+                    isFirst = false;
+                }
+                else
+                {
+                    sb.Append(ctx.Transpiler.NewLine);
+                    sb.Append(ctx.Transpiler.NewLine);
+                }
                 sb.Append(output[fnName]);
-                sb.Append(ctx.Transpiler.NewLine);
-                sb.Append(ctx.Transpiler.NewLine);
             }
             return sb.ToString().Trim();
         }

@@ -212,5 +212,14 @@ namespace Pastel
 
             return output.ToArray();
         }
+
+        public static void IndentLines(string indention, List<string> lines)
+        {
+            int length = lines.Count;
+            for (int i = 0; i < length; ++i)
+            {
+                lines[i] = (indention + lines[i]).TrimEnd();
+            }
+        }
     }
 }

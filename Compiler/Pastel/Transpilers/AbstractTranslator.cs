@@ -517,5 +517,21 @@ namespace Pastel.Transpilers
         {
             throw new NotSupportedException();
         }
+
+        internal string WrapCodeForFunctions(ProjectConfig config, string code)
+        {
+            List<string> lines = new List<string>(code.Split('\n').Select(t => t.TrimEnd()));
+            WrapCodeImpl(config, lines, false);
+            return string.Join(this.NewLine, lines).Trim() + this.NewLine;
+        }
+
+        internal string WrapCodeForStructs(ProjectConfig config, string code)
+        {
+            List<string> lines = new List<string>(code.Split('\n').Select(t => t.TrimEnd()));
+            WrapCodeImpl(config, lines, true);
+            return string.Join(this.NewLine, lines).Trim() + this.NewLine;
+        }
+
+        protected abstract void WrapCodeImpl(ProjectConfig config, List<string> lines, bool isForStruct);
     }
 }

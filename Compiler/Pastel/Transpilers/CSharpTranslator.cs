@@ -1,6 +1,7 @@
 ﻿using Pastel.Nodes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Pastel.Transpilers
 {
@@ -51,6 +52,32 @@ namespace Pastel.Transpilers
                         throw new NotImplementedException();
                     }
                     return type.TypeName;
+            }
+        }
+
+        protected override void WrapCodeImpl(ProjectConfig config, List<string> lines, bool isForStruct)
+        {
+            if (!isForStruct && config.WrappingClassNameForFunctions != null)
+            {
+                PastelUtil.IndentLines(this.TabChar, lines);
+                lines.InsertRange(0, new string[] { "public static class " + config.WrappingClassNameForFunctions, "{" });
+                lines.Add("}");
+            }
+
+            if (config.NamespaceForFunctions != null)
+            {
+                PastelUtil.IndentLines(this.TabChar, lines);
+                lines.InsertRange(0, new string[] { "namespace " + config.NamespaceForFunctions, "{" });
+                lines.Add("}");
+            }
+
+            if (config.CSharpUsings.Count > 0)
+            {
+                lines.InsertRange(0,
+                    config.CSharpUsings
+                        .OrderBy(t => t)
+                        .Select(t => "using " + t + ";")
+                        .Concat(new string[] { "" }));
             }
         }
 

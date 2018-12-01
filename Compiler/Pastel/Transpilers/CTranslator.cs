@@ -1,5 +1,6 @@
 ﻿using Pastel.Nodes;
 using System;
+using System.Collections.Generic;
 
 namespace Pastel.Transpilers
 {
@@ -40,6 +41,11 @@ namespace Pastel.Transpilers
             char firstChar = type.RootValue[0];
             if (firstChar >= 'A' && firstChar <= 'Z') return type.RootValue + "*";
 
+            throw new NotImplementedException();
+        }
+
+        protected override void WrapCodeImpl(ProjectConfig config, List<string> lines, bool isForStruct)
+        {
             throw new NotImplementedException();
         }
 
