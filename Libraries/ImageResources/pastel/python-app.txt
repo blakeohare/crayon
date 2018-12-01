@@ -1,0 +1,16 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-python.txt
+IMPORT: ../../../Interpreter/headers-python.txt
+
+LANGUAGE: python
+
+DEPENDENCY: VM: ../../../Interpreter/python-app.txt
+
+OUTPUT-FUNCTIONS: ../native/python-app/gen/lib_imageresources.py
+CODE-IMPORT: code.vm as VM
+
+EXT: _lib_imageresources_loadAsync: libhelper_imageresources_imageLoadAsync([ARG:1], [ARG:2], [ARG:3])
+EXT: _lib_imageresources_getManifestString: libhelper_imageresources_getImageResourceManifestString()
+EXT: _lib_imageresources_generateNativeBitmapOfSize: libhelper_imageresources_generateNativeBitmapOfSize([ARG:1], [ARG:2])
+EXT: _lib_imageresources_blit: libhelper_imageresources_imageResourceBlitImage([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
+EXT: _lib_imageresources_checkLoaderIsDone: libhelper_imageresources_checkLoaderIsDone([ARG:1], [ARG:2])

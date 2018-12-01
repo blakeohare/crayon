@@ -1,0 +1,12 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-python.txt
+IMPORT: ../../../Interpreter/headers-python.txt
+
+LANGUAGE: python
+
+DEPENDENCY: VM: ../../../Interpreter/python-app.txt
+
+OUTPUT-FUNCTIONS: ../native/python-app/gen/lib_imageencoder.py
+CODE-IMPORT: code.vm as VM
+
+EXT: _lib_imageencoder_encodeImage: lib_imageencoder_encodeImage([ARG:1], [ARG:2], [ARG:3], [ARG:4])

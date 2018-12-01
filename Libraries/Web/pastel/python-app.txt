@@ -1,0 +1,12 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-python.txt
+IMPORT: ../../../Interpreter/headers-python.txt
+
+LANGUAGE: python
+
+DEPENDENCY: VM: ../../../Interpreter/python-app.txt
+
+OUTPUT-FUNCTIONS: ../native/python-app/gen/lib_web.py
+CODE-IMPORT: code.vm as VM
+
+EXT: _lib_web_launchBrowser: library_web_launch_browser([ARG:1])

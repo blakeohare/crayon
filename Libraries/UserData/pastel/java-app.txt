@@ -13,4 +13,4 @@ NAMESPACE-FUNCTIONS: org.crayonlang.libraries.userdata
 NAMESPACE-STRUCTS: org.crayonlang.libraries.userdata
 FUNCTION-WRAPPER-CLASS: LibraryWrapper
 
-EXT: _lib_userdata_getProjectSandboxDirectory: "";
+EXT: _lib_userdata_getProjectSandboxDirectory: ""

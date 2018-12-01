@@ -13,4 +13,4 @@ NAMESPACE-FUNCTIONS: Interpreter.Libraries.UserData
 NAMESPACE-STRUCTS: Interpreter.Libraries.UserData
 FUNCTION-WRAPPER-CLASS: LibraryWrapper
 
-EXT: _lib_userdata_getProjectSandboxDirectory: "";
+EXT: _lib_userdata_getProjectSandboxDirectory: ""
