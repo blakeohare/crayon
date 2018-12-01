@@ -1,5 +1,7 @@
 ﻿namespace Parser
 {
+    // These are also defined in Interpreter/source/Constants.pst
+    // Please make sure they stay synchronized.
     public enum Types
     {
         NULL = 1,

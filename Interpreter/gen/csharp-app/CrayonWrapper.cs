@@ -121,37 +121,37 @@ namespace Interpreter.Vm
         {
             VmGlobals g = vm.globals;
             int type = row[0];
-            if ((type == 0))
+            if ((type == 1))
             {
                 vm.metadata.literalTableBuilder.Add(g.valueNull);
             }
             else
             {
-                if ((type == 0))
+                if ((type == 2))
                 {
                     vm.metadata.literalTableBuilder.Add(buildBoolean(g, (row[1] == 1)));
                 }
                 else
                 {
-                    if ((type == 0))
+                    if ((type == 3))
                     {
                         vm.metadata.literalTableBuilder.Add(buildInteger(g, row[1]));
                     }
                     else
                     {
-                        if ((type == 0))
+                        if ((type == 4))
                         {
                             vm.metadata.literalTableBuilder.Add(buildFloat(g, double.Parse(stringArg)));
                         }
                         else
                         {
-                            if ((type == 0))
+                            if ((type == 5))
                             {
                                 vm.metadata.literalTableBuilder.Add(buildCommonString(g, stringArg));
                             }
                             else
                             {
-                                if ((type == 0))
+                                if ((type == 9))
                                 {
                                     int index = vm.metadata.literalTableBuilder.Count;
                                     vm.metadata.literalTableBuilder.Add(buildCommonString(g, stringArg));
@@ -159,10 +159,10 @@ namespace Interpreter.Vm
                                 }
                                 else
                                 {
-                                    if ((type == 0))
+                                    if ((type == 10))
                                     {
                                         ClassValue cv = new ClassValue(false, row[1]);
-                                        vm.metadata.literalTableBuilder.Add(new Value(0, cv));
+                                        vm.metadata.literalTableBuilder.Add(new Value(10, cv));
                                     }
                                 }
                             }
@@ -231,7 +231,7 @@ namespace Interpreter.Vm
             {
                 return g.floatOne;
             }
-            return new Value(0, value);
+            return new Value(4, value);
         }
 
         public static Value buildInteger(VmGlobals g, int num)
@@ -250,7 +250,7 @@ namespace Interpreter.Vm
                     return g.positiveIntegers[num];
                 }
             }
-            return new Value(0, num);
+            return new Value(3, num);
         }
 
         public static Value buildList(List<Value> valueList)
@@ -269,7 +269,7 @@ namespace Interpreter.Vm
                 i += 1;
             }
             output.size = _len;
-            return new Value(0, output);
+            return new Value(6, output);
         }
 
         public static Value buildNull(VmGlobals globals)
@@ -288,13 +288,13 @@ namespace Interpreter.Vm
             {
                 return g.stringEmpty;
             }
-            return new Value(0, s);
+            return new Value(5, s);
         }
 
         public static Value buildStringDictionary(VmGlobals globals, string[] stringKeys, Value[] values)
         {
             int size = stringKeys.Length;
-            DictImpl d = new DictImpl(size, 0, 0, null, new Dictionary<int, int>(), new Dictionary<string, int>(), new List<Value>(), new List<Value>());
+            DictImpl d = new DictImpl(size, 5, 0, null, new Dictionary<int, int>(), new Dictionary<string, int>(), new List<Value>(), new List<Value>());
             string k = null;
             int i = 0;
             while ((i < size))
@@ -313,7 +313,7 @@ namespace Interpreter.Vm
                 i += 1;
             }
             d.size = d.values.Count;
-            return new Value(0, d);
+            return new Value(7, d);
         }
 
         public static bool canAssignGenericToGeneric(VmContext vm, int[] gen1, int gen1Index, int[] gen2, int gen2Index, int[] newIndexOut)
@@ -334,34 +334,34 @@ namespace Interpreter.Vm
                     newIndexOut[0] = (gen1Index + 1);
                     newIndexOut[1] = (gen2Index + 2);
                     return (t2 == t1);
-                case 0:
+                case 1:
                     newIndexOut[0] = (gen1Index + 1);
                     newIndexOut[1] = (gen2Index + 2);
                     return (t2 == t1);
-                case 0:
+                case 2:
                     newIndexOut[0] = (gen1Index + 1);
                     newIndexOut[1] = (gen2Index + 2);
                     return (t2 == t1);
-                case 0:
+                case 4:
                     newIndexOut[0] = (gen1Index + 1);
                     newIndexOut[1] = (gen2Index + 2);
                     return (t2 == t1);
-                case 0:
+                case 5:
                     newIndexOut[0] = (gen1Index + 1);
                     newIndexOut[1] = (gen2Index + 2);
                     return (t2 == t1);
-                case 0:
+                case 10:
                     newIndexOut[0] = (gen1Index + 1);
                     newIndexOut[1] = (gen2Index + 2);
                     return (t2 == t1);
-                case 0:
+                case 3:
                     newIndexOut[0] = (gen1Index + 1);
                     newIndexOut[1] = (gen2Index + 2);
-                    return ((t2 == 0) || (t2 == 0));
-                case 0:
+                    return ((t2 == 3) || (t2 == 4));
+                case 8:
                     newIndexOut[0] = (gen1Index + 1);
                     newIndexOut[1] = (gen2Index + 2);
-                    if ((t2 != 0))
+                    if ((t2 != 8))
                     {
                         return false;
                     }
@@ -372,14 +372,14 @@ namespace Interpreter.Vm
                         return true;
                     }
                     return isClassASubclassOf(vm, c1, c2);
-                case 0:
-                    if ((t2 != 0))
+                case 6:
+                    if ((t2 != 6))
                     {
                         return false;
                     }
                     return canAssignGenericToGeneric(vm, gen1, (gen1Index + 1), gen2, (gen2Index + 1), newIndexOut);
-                case 0:
-                    if ((t2 != 0))
+                case 7:
+                    if ((t2 != 7))
                     {
                         return false;
                     }
@@ -388,8 +388,8 @@ namespace Interpreter.Vm
                         return false;
                     }
                     return canAssignGenericToGeneric(vm, gen1, newIndexOut[0], gen2, newIndexOut[1], newIndexOut);
-                case 0:
-                    if ((t2 != 0))
+                case 9:
+                    if ((t2 != 9))
                     {
                         return false;
                     }
@@ -403,58 +403,58 @@ namespace Interpreter.Vm
         {
             switch (value.type)
             {
-                case 0:
+                case 1:
                     switch (generics[genericIndex])
                     {
-                        case 0:
+                        case 5:
                             return value;
-                        case 0:
+                        case 8:
                             return value;
-                        case 0:
+                        case 10:
                             return value;
-                        case 0:
+                        case 9:
                             return value;
-                        case 0:
+                        case 6:
                             return value;
-                        case 0:
+                        case 7:
                             return value;
                     }
                     return null;
-                case 0:
+                case 2:
                     if ((generics[genericIndex] == value.type))
                     {
                         return value;
                     }
                     return null;
-                case 0:
+                case 5:
                     if ((generics[genericIndex] == value.type))
                     {
                         return value;
                     }
                     return null;
-                case 0:
+                case 10:
                     if ((generics[genericIndex] == value.type))
                     {
                         return value;
                     }
                     return null;
-                case 0:
-                    if ((generics[genericIndex] == 0))
+                case 3:
+                    if ((generics[genericIndex] == 3))
                     {
                         return value;
                     }
-                    if ((generics[genericIndex] == 0))
+                    if ((generics[genericIndex] == 4))
                     {
                         return buildFloat(vm.globals, (0.0 + (int)value.internalValue));
                     }
                     return null;
-                case 0:
-                    if ((generics[genericIndex] == 0))
+                case 4:
+                    if ((generics[genericIndex] == 4))
                     {
                         return value;
                     }
                     return null;
-                case 0:
+                case 6:
                     ListImpl list = (ListImpl)value.internalValue;
                     int[] listType = list.type;
                     genericIndex += 1;
@@ -476,12 +476,12 @@ namespace Interpreter.Vm
                         i += 1;
                     }
                     return value;
-                case 0:
+                case 7:
                     DictImpl dict = (DictImpl)value.internalValue;
                     int j = genericIndex;
                     switch (dict.keyType)
                     {
-                        case 0:
+                        case 3:
                             if ((generics[1] == dict.keyType))
                             {
                                 j += 2;
@@ -491,7 +491,7 @@ namespace Interpreter.Vm
                                 return null;
                             }
                             break;
-                        case 0:
+                        case 5:
                             if ((generics[1] == dict.keyType))
                             {
                                 j += 2;
@@ -501,8 +501,8 @@ namespace Interpreter.Vm
                                 return null;
                             }
                             break;
-                        case 0:
-                            if ((generics[1] == 0))
+                        case 8:
+                            if ((generics[1] == 8))
                             {
                                 j += 3;
                             }
@@ -531,8 +531,8 @@ namespace Interpreter.Vm
                         k += 1;
                     }
                     return value;
-                case 0:
-                    if ((generics[genericIndex] == 0))
+                case 8:
+                    if ((generics[genericIndex] == 8))
                     {
                         int targetClassId = generics[(genericIndex + 1)];
                         int givenClassId = ((ObjectInstance)value.internalValue).classId;
@@ -675,7 +675,7 @@ namespace Interpreter.Vm
             if ((clone == null))
             {
                 clone = new DictImpl(0, type, original.keyClassId, original.valueType, new Dictionary<int, int>(), new Dictionary<string, int>(), new List<Value>(), new List<Value>());
-                if ((type == 0))
+                if ((type == 5))
                 {
                     while ((i < size))
                     {
@@ -687,7 +687,7 @@ namespace Interpreter.Vm
                 {
                     while ((i < size))
                     {
-                        if ((type == 0))
+                        if ((type == 8))
                         {
                             kInt = ((ObjectInstance)original.keys[i].internalValue).objectId;
                         }
@@ -712,7 +712,7 @@ namespace Interpreter.Vm
                 i = 0;
                 while ((i < size))
                 {
-                    if ((type == 0))
+                    if ((type == 5))
                     {
                         kString = (string)original.keys[i].internalValue;
                         if (clone.stringToIndex.ContainsKey(kString))
@@ -728,7 +728,7 @@ namespace Interpreter.Vm
                     }
                     else
                     {
-                        if ((type == 0))
+                        if ((type == 3))
                         {
                             kInt = (int)original.keys[i].internalValue;
                         }
@@ -757,7 +757,7 @@ namespace Interpreter.Vm
         public static int[] createInstanceType(int classId)
         {
             int[] o = new int[2];
-            o[0] = 0;
+            o[0] = 8;
             o[1] = classId;
             return o;
         }
@@ -819,11 +819,11 @@ namespace Interpreter.Vm
 
         public static string dictKeyInfoToString(VmContext vm, DictImpl dict)
         {
-            if ((dict.keyType == 0))
+            if ((dict.keyType == 5))
             {
                 return "string";
             }
-            if ((dict.keyType == 0))
+            if ((dict.keyType == 3))
             {
                 return "int";
             }
@@ -843,52 +843,52 @@ namespace Interpreter.Vm
                 int output = 0;
                 switch (leftType)
                 {
-                    case 0:
+                    case 1:
                         output = 1;
                         break;
-                    case 0:
+                    case 3:
                         if (((int)a.internalValue == (int)b.internalValue))
                         {
                             output = 1;
                         }
                         break;
-                    case 0:
+                    case 4:
                         if (((double)a.internalValue == (double)b.internalValue))
                         {
                             output = 1;
                         }
                         break;
-                    case 0:
+                    case 2:
                         if (((bool)a.internalValue == (bool)b.internalValue))
                         {
                             output = 1;
                         }
                         break;
-                    case 0:
+                    case 5:
                         if (((string)a.internalValue == (string)b.internalValue))
                         {
                             output = 1;
                         }
                         break;
-                    case 0:
+                    case 6:
                         if (((object)a.internalValue == (object)b.internalValue))
                         {
                             output = 1;
                         }
                         break;
-                    case 0:
+                    case 7:
                         if (((object)a.internalValue == (object)b.internalValue))
                         {
                             output = 1;
                         }
                         break;
-                    case 0:
+                    case 8:
                         if (((object)a.internalValue == (object)b.internalValue))
                         {
                             output = 1;
                         }
                         break;
-                    case 0:
+                    case 9:
                         FunctionPointer f1 = (FunctionPointer)a.internalValue;
                         FunctionPointer f2 = (FunctionPointer)b.internalValue;
                         if ((f1.functionId == f2.functionId))
@@ -906,7 +906,7 @@ namespace Interpreter.Vm
                             }
                         }
                         break;
-                    case 0:
+                    case 10:
                         ClassValue c1 = (ClassValue)a.internalValue;
                         ClassValue c2 = (ClassValue)b.internalValue;
                         if ((c1.classId == c2.classId))
@@ -920,11 +920,11 @@ namespace Interpreter.Vm
                 }
                 return output;
             }
-            if ((rightType == 0))
+            if ((rightType == 1))
             {
                 return 0;
             }
-            if (((leftType == 0) && (rightType == 0)))
+            if (((leftType == 3) && (rightType == 4)))
             {
                 if (((int)a.internalValue == (double)b.internalValue))
                 {
@@ -933,7 +933,7 @@ namespace Interpreter.Vm
             }
             else
             {
-                if (((leftType == 0) && (rightType == 0)))
+                if (((leftType == 4) && (rightType == 3)))
                 {
                     if (((double)a.internalValue == (int)b.internalValue))
                     {
@@ -1149,7 +1149,7 @@ namespace Interpreter.Vm
             {
                 return null;
             }
-            return new Value(0, new FunctionPointer(4, context, 0, functionId, null));
+            return new Value(9, new FunctionPointer(4, context, 0, functionId, null));
         }
 
         public static List<Token> generateTokenListFromPcs(VmContext vm, List<int> pcs)
@@ -1256,7 +1256,7 @@ namespace Interpreter.Vm
 
         public static double getFloat(Value num)
         {
-            if ((num.type == 0))
+            if ((num.type == 4))
             {
                 return (double)num.internalValue;
             }
@@ -1328,23 +1328,23 @@ namespace Interpreter.Vm
         {
             switch (id)
             {
-                case 0:
+                case 1:
                     return "null";
-                case 0:
+                case 2:
                     return "boolean";
-                case 0:
+                case 3:
                     return "integer";
-                case 0:
+                case 4:
                     return "float";
-                case 0:
+                case 5:
                     return "string";
-                case 0:
+                case 6:
                     return "list";
-                case 0:
+                case 7:
                     return "dictionary";
-                case 0:
+                case 8:
                     return "instance";
-                case 0:
+                case 9:
                     return "function";
             }
             return null;
@@ -1698,24 +1698,24 @@ namespace Interpreter.Vm
             int i = 0;
             while ((i < 2049))
             {
-                pos[i] = new Value(0, i);
+                pos[i] = new Value(3, i);
                 i += 1;
             }
             i = 1;
             while ((i < 257))
             {
-                neg[i] = new Value(0, -i);
+                neg[i] = new Value(3, -i);
                 i += 1;
             }
             neg[0] = pos[0];
-            VmGlobals globals = new VmGlobals(new Value(0, null), new Value(0, true), new Value(0, false), pos[0], pos[1], neg[1], new Value(0, 0.0), new Value(0, 1.0), new Value(0, ""), pos, neg, new Dictionary<string, Value>(), new int[1], new int[1], new int[1], new int[1], new int[1], new int[2]);
+            VmGlobals globals = new VmGlobals(new Value(1, null), new Value(2, true), new Value(2, false), pos[0], pos[1], neg[1], new Value(4, 0.0), new Value(4, 1.0), new Value(5, ""), pos, neg, new Dictionary<string, Value>(), new int[1], new int[1], new int[1], new int[1], new int[1], new int[2]);
             globals.commonStrings[""] = globals.stringEmpty;
-            globals.booleanType[0] = 0;
-            globals.intType[0] = 0;
-            globals.floatType[0] = 0;
-            globals.stringType[0] = 0;
-            globals.classType[0] = 0;
-            globals.anyInstanceType[0] = 0;
+            globals.booleanType[0] = 2;
+            globals.intType[0] = 3;
+            globals.floatType[0] = 4;
+            globals.stringType[0] = 5;
+            globals.classType[0] = 10;
+            globals.anyInstanceType[0] = 8;
             globals.anyInstanceType[1] = 0;
             return globals;
         }
@@ -2037,9 +2037,9 @@ namespace Interpreter.Vm
                         root = valueStack[valueStackSize];
                         type = root.type;
                         bool1 = (row[0] == 1);
-                        if ((type == 0))
+                        if ((type == 6))
                         {
-                            if ((value2.type == 0))
+                            if ((value2.type == 3))
                             {
                                 i = (int)value2.internalValue;
                                 list1 = (ListImpl)root.internalValue;
@@ -2082,7 +2082,7 @@ namespace Interpreter.Vm
                         }
                         else
                         {
-                            if ((type == 0))
+                            if ((type == 7))
                             {
                                 dictImpl = (DictImpl)root.internalValue;
                                 if ((dictImpl.valueType != null))
@@ -2098,19 +2098,19 @@ namespace Interpreter.Vm
                                     }
                                 }
                                 keyType = value2.type;
-                                if ((keyType == 0))
+                                if ((keyType == 3))
                                 {
                                     intKey = (int)value2.internalValue;
                                 }
                                 else
                                 {
-                                    if ((keyType == 0))
+                                    if ((keyType == 5))
                                     {
                                         stringKey = (string)value2.internalValue;
                                     }
                                     else
                                     {
-                                        if ((keyType == 0))
+                                        if ((keyType == 8))
                                         {
                                             objInstance1 = (ObjectInstance)value2.internalValue;
                                             intKey = objInstance1.objectId;
@@ -2141,7 +2141,7 @@ namespace Interpreter.Vm
                                     }
                                     else
                                     {
-                                        if (((keyType == 0) && (dictImpl.keyClassId > 0) && (objInstance1.classId != dictImpl.keyClassId)))
+                                        if (((keyType == 8) && (dictImpl.keyClassId > 0) && (objInstance1.classId != dictImpl.keyClassId)))
                                         {
                                             if (isClassASubclassOf(vm, objInstance1.classId, dictImpl.keyClassId))
                                             {
@@ -2152,7 +2152,7 @@ namespace Interpreter.Vm
                                 }
                                 if (!hasInterrupt)
                                 {
-                                    if ((keyType == 0))
+                                    if ((keyType == 5))
                                     {
                                         if (!dictImpl.stringToIndex.TryGetValue(stringKey, out int1)) int1 = -1;
                                         if ((int1 == -1))
@@ -2236,7 +2236,7 @@ namespace Interpreter.Vm
                         value = valueStack[(valueStackSize + 1)];
                         value2 = valueStack[valueStackSize];
                         nameId = row[2];
-                        if ((value2.type == 0))
+                        if ((value2.type == 8))
                         {
                             objInstance1 = (ObjectInstance)value2.internalValue;
                             classId = objInstance1.classId;
@@ -2390,9 +2390,9 @@ namespace Interpreter.Vm
                         // BINARY_OP;
                         rightValue = valueStack[--valueStackSize];
                         leftValue = valueStack[(valueStackSize - 1)];
-                        switch (((((leftValue.type * 15) + row[0]) * 1) + rightValue.type))
+                        switch (((((leftValue.type * 15) + row[0]) * 11) + rightValue.type))
                         {
-                            case 5:
+                            case 553:
                                 // int ** int;
                                 if (((int)rightValue.internalValue == 0))
                                 {
@@ -2410,19 +2410,19 @@ namespace Interpreter.Vm
                                     }
                                 }
                                 break;
-                            case 5:
+                            case 554:
                                 // int ** float;
                                 value = buildFloat(globals, (0.0 + System.Math.Pow((int)leftValue.internalValue, (double)rightValue.internalValue)));
                                 break;
-                            case 5:
+                            case 718:
                                 // float ** int;
                                 value = buildFloat(globals, (0.0 + System.Math.Pow((double)leftValue.internalValue, (int)rightValue.internalValue)));
                                 break;
-                            case 5:
+                            case 719:
                                 // float ** float;
                                 value = buildFloat(globals, (0.0 + System.Math.Pow((double)leftValue.internalValue, (double)rightValue.internalValue)));
                                 break;
-                            case 4:
+                            case 708:
                                 // float % float;
                                 float1 = (double)rightValue.internalValue;
                                 if ((float1 == 0))
@@ -2439,7 +2439,7 @@ namespace Interpreter.Vm
                                     value = buildFloat(globals, float3);
                                 }
                                 break;
-                            case 4:
+                            case 707:
                                 // float % int;
                                 int1 = (int)rightValue.internalValue;
                                 if ((int1 == 0))
@@ -2456,7 +2456,7 @@ namespace Interpreter.Vm
                                     value = buildFloat(globals, float1);
                                 }
                                 break;
-                            case 4:
+                            case 543:
                                 // int % float;
                                 float3 = (double)rightValue.internalValue;
                                 if ((float3 == 0))
@@ -2473,7 +2473,7 @@ namespace Interpreter.Vm
                                     value = buildFloat(globals, float1);
                                 }
                                 break;
-                            case 4:
+                            case 542:
                                 // int % int;
                                 int2 = (int)rightValue.internalValue;
                                 if ((int2 == 0))
@@ -2490,11 +2490,11 @@ namespace Interpreter.Vm
                                     value = buildInteger(globals, int1);
                                 }
                                 break;
-                            case 0:
+                            case 996:
                                 // list + list;
-                                value = new Value(0, valueConcatLists((ListImpl)leftValue.internalValue, (ListImpl)rightValue.internalValue));
+                                value = new Value(6, valueConcatLists((ListImpl)leftValue.internalValue, (ListImpl)rightValue.internalValue));
                                 break;
-                            case 0:
+                            case 498:
                                 // int + int;
                                 int1 = ((int)leftValue.internalValue + (int)rightValue.internalValue);
                                 if ((int1 < 0))
@@ -2505,7 +2505,7 @@ namespace Interpreter.Vm
                                     }
                                     else
                                     {
-                                        value = new Value(0, int1);
+                                        value = new Value(3, int1);
                                     }
                                 }
                                 else
@@ -2516,11 +2516,11 @@ namespace Interpreter.Vm
                                     }
                                     else
                                     {
-                                        value = new Value(0, int1);
+                                        value = new Value(3, int1);
                                     }
                                 }
                                 break;
-                            case 1:
+                            case 509:
                                 // int - int;
                                 int1 = ((int)leftValue.internalValue - (int)rightValue.internalValue);
                                 if ((int1 < 0))
@@ -2531,7 +2531,7 @@ namespace Interpreter.Vm
                                     }
                                     else
                                     {
-                                        value = new Value(0, int1);
+                                        value = new Value(3, int1);
                                     }
                                 }
                                 else
@@ -2542,11 +2542,11 @@ namespace Interpreter.Vm
                                     }
                                     else
                                     {
-                                        value = new Value(0, int1);
+                                        value = new Value(3, int1);
                                     }
                                 }
                                 break;
-                            case 2:
+                            case 520:
                                 // int * int;
                                 int1 = ((int)leftValue.internalValue * (int)rightValue.internalValue);
                                 if ((int1 < 0))
@@ -2557,7 +2557,7 @@ namespace Interpreter.Vm
                                     }
                                     else
                                     {
-                                        value = new Value(0, int1);
+                                        value = new Value(3, int1);
                                     }
                                 }
                                 else
@@ -2568,11 +2568,11 @@ namespace Interpreter.Vm
                                     }
                                     else
                                     {
-                                        value = new Value(0, int1);
+                                        value = new Value(3, int1);
                                     }
                                 }
                                 break;
-                            case 3:
+                            case 531:
                                 // int / int;
                                 int1 = (int)leftValue.internalValue;
                                 int2 = (int)rightValue.internalValue;
@@ -2613,7 +2613,7 @@ namespace Interpreter.Vm
                                             }
                                             else
                                             {
-                                                value = new Value(0, int3);
+                                                value = new Value(3, int3);
                                             }
                                         }
                                         else
@@ -2624,21 +2624,21 @@ namespace Interpreter.Vm
                                             }
                                             else
                                             {
-                                                value = new Value(0, int3);
+                                                value = new Value(3, int3);
                                             }
                                         }
                                     }
                                 }
                                 break;
-                            case 0:
+                            case 663:
                                 // float + int;
                                 value = buildFloat(globals, ((double)leftValue.internalValue + (int)rightValue.internalValue));
                                 break;
-                            case 0:
+                            case 499:
                                 // int + float;
                                 value = buildFloat(globals, ((int)leftValue.internalValue + (double)rightValue.internalValue));
                                 break;
-                            case 0:
+                            case 664:
                                 // float + float;
                                 float1 = ((double)leftValue.internalValue + (double)rightValue.internalValue);
                                 if ((float1 == 0))
@@ -2653,19 +2653,19 @@ namespace Interpreter.Vm
                                     }
                                     else
                                     {
-                                        value = new Value(0, float1);
+                                        value = new Value(4, float1);
                                     }
                                 }
                                 break;
-                            case 1:
+                            case 510:
                                 // int - float;
                                 value = buildFloat(globals, ((int)leftValue.internalValue - (double)rightValue.internalValue));
                                 break;
-                            case 1:
+                            case 674:
                                 // float - int;
                                 value = buildFloat(globals, ((double)leftValue.internalValue - (int)rightValue.internalValue));
                                 break;
-                            case 1:
+                            case 675:
                                 // float - float;
                                 float1 = ((double)leftValue.internalValue - (double)rightValue.internalValue);
                                 if ((float1 == 0))
@@ -2680,23 +2680,23 @@ namespace Interpreter.Vm
                                     }
                                     else
                                     {
-                                        value = new Value(0, float1);
+                                        value = new Value(4, float1);
                                     }
                                 }
                                 break;
-                            case 2:
+                            case 685:
                                 // float * int;
                                 value = buildFloat(globals, ((double)leftValue.internalValue * (int)rightValue.internalValue));
                                 break;
-                            case 2:
+                            case 521:
                                 // int * float;
                                 value = buildFloat(globals, ((int)leftValue.internalValue * (double)rightValue.internalValue));
                                 break;
-                            case 2:
+                            case 686:
                                 // float * float;
                                 value = buildFloat(globals, ((double)leftValue.internalValue * (double)rightValue.internalValue));
                                 break;
-                            case 3:
+                            case 532:
                                 // int / float;
                                 float1 = (double)rightValue.internalValue;
                                 if ((float1 == 0))
@@ -2708,7 +2708,7 @@ namespace Interpreter.Vm
                                     value = buildFloat(globals, ((int)leftValue.internalValue) / (float1));
                                 }
                                 break;
-                            case 3:
+                            case 696:
                                 // float / int;
                                 int1 = (int)rightValue.internalValue;
                                 if ((int1 == 0))
@@ -2720,7 +2720,7 @@ namespace Interpreter.Vm
                                     value = buildFloat(globals, ((double)leftValue.internalValue) / (int1));
                                 }
                                 break;
-                            case 3:
+                            case 697:
                                 // float / float;
                                 float1 = (double)rightValue.internalValue;
                                 if ((float1 == 0))
@@ -2732,19 +2732,19 @@ namespace Interpreter.Vm
                                     value = buildFloat(globals, ((double)leftValue.internalValue) / (float1));
                                 }
                                 break;
-                            case 6:
+                            case 564:
                                 // int & int;
                                 value = buildInteger(globals, ((int)leftValue.internalValue & (int)rightValue.internalValue));
                                 break;
-                            case 7:
+                            case 575:
                                 // int | int;
                                 value = buildInteger(globals, ((int)leftValue.internalValue | (int)rightValue.internalValue));
                                 break;
-                            case 8:
+                            case 586:
                                 // int ^ int;
                                 value = buildInteger(globals, ((int)leftValue.internalValue ^ (int)rightValue.internalValue));
                                 break;
-                            case 9:
+                            case 597:
                                 // int << int;
                                 int1 = (int)rightValue.internalValue;
                                 if ((int1 < 0))
@@ -2756,7 +2756,7 @@ namespace Interpreter.Vm
                                     value = buildInteger(globals, ((int)leftValue.internalValue << int1));
                                 }
                                 break;
-                            case 10:
+                            case 608:
                                 // int >> int;
                                 int1 = (int)rightValue.internalValue;
                                 if ((int1 < 0))
@@ -2768,7 +2768,7 @@ namespace Interpreter.Vm
                                     value = buildInteger(globals, ((int)leftValue.internalValue >> int1));
                                 }
                                 break;
-                            case 11:
+                            case 619:
                                 // int < int;
                                 if (((int)leftValue.internalValue < (int)rightValue.internalValue))
                                 {
@@ -2779,7 +2779,7 @@ namespace Interpreter.Vm
                                     value = VALUE_FALSE;
                                 }
                                 break;
-                            case 12:
+                            case 630:
                                 // int <= int;
                                 if (((int)leftValue.internalValue <= (int)rightValue.internalValue))
                                 {
@@ -2790,7 +2790,7 @@ namespace Interpreter.Vm
                                     value = VALUE_FALSE;
                                 }
                                 break;
-                            case 11:
+                            case 784:
                                 // float < int;
                                 if (((double)leftValue.internalValue < (int)rightValue.internalValue))
                                 {
@@ -2801,7 +2801,7 @@ namespace Interpreter.Vm
                                     value = VALUE_FALSE;
                                 }
                                 break;
-                            case 12:
+                            case 795:
                                 // float <= int;
                                 if (((double)leftValue.internalValue <= (int)rightValue.internalValue))
                                 {
@@ -2812,7 +2812,7 @@ namespace Interpreter.Vm
                                     value = VALUE_FALSE;
                                 }
                                 break;
-                            case 11:
+                            case 620:
                                 // int < float;
                                 if (((int)leftValue.internalValue < (double)rightValue.internalValue))
                                 {
@@ -2823,7 +2823,7 @@ namespace Interpreter.Vm
                                     value = VALUE_FALSE;
                                 }
                                 break;
-                            case 12:
+                            case 631:
                                 // int <= float;
                                 if (((int)leftValue.internalValue <= (double)rightValue.internalValue))
                                 {
@@ -2834,7 +2834,7 @@ namespace Interpreter.Vm
                                     value = VALUE_FALSE;
                                 }
                                 break;
-                            case 11:
+                            case 785:
                                 // float < float;
                                 if (((double)leftValue.internalValue < (double)rightValue.internalValue))
                                 {
@@ -2845,7 +2845,7 @@ namespace Interpreter.Vm
                                     value = VALUE_FALSE;
                                 }
                                 break;
-                            case 12:
+                            case 796:
                                 // float <= float;
                                 if (((double)leftValue.internalValue <= (double)rightValue.internalValue))
                                 {
@@ -2856,7 +2856,7 @@ namespace Interpreter.Vm
                                     value = VALUE_FALSE;
                                 }
                                 break;
-                            case 14:
+                            case 652:
                                 // int >= int;
                                 if (((int)leftValue.internalValue >= (int)rightValue.internalValue))
                                 {
@@ -2867,7 +2867,7 @@ namespace Interpreter.Vm
                                     value = VALUE_FALSE;
                                 }
                                 break;
-                            case 13:
+                            case 641:
                                 // int > int;
                                 if (((int)leftValue.internalValue > (int)rightValue.internalValue))
                                 {
@@ -2878,7 +2878,7 @@ namespace Interpreter.Vm
                                     value = VALUE_FALSE;
                                 }
                                 break;
-                            case 14:
+                            case 817:
                                 // float >= int;
                                 if (((double)leftValue.internalValue >= (int)rightValue.internalValue))
                                 {
@@ -2889,7 +2889,7 @@ namespace Interpreter.Vm
                                     value = VALUE_FALSE;
                                 }
                                 break;
-                            case 13:
+                            case 806:
                                 // float > int;
                                 if (((double)leftValue.internalValue > (int)rightValue.internalValue))
                                 {
@@ -2900,7 +2900,7 @@ namespace Interpreter.Vm
                                     value = VALUE_FALSE;
                                 }
                                 break;
-                            case 14:
+                            case 653:
                                 // int >= float;
                                 if (((int)leftValue.internalValue >= (double)rightValue.internalValue))
                                 {
@@ -2911,7 +2911,7 @@ namespace Interpreter.Vm
                                     value = VALUE_FALSE;
                                 }
                                 break;
-                            case 13:
+                            case 642:
                                 // int > float;
                                 if (((int)leftValue.internalValue > (double)rightValue.internalValue))
                                 {
@@ -2922,7 +2922,7 @@ namespace Interpreter.Vm
                                     value = VALUE_FALSE;
                                 }
                                 break;
-                            case 14:
+                            case 818:
                                 // float >= float;
                                 if (((double)leftValue.internalValue >= (double)rightValue.internalValue))
                                 {
@@ -2933,7 +2933,7 @@ namespace Interpreter.Vm
                                     value = VALUE_FALSE;
                                 }
                                 break;
-                            case 13:
+                            case 807:
                                 // float > float;
                                 if (((double)leftValue.internalValue > (double)rightValue.internalValue))
                                 {
@@ -2944,19 +2944,19 @@ namespace Interpreter.Vm
                                     value = VALUE_FALSE;
                                 }
                                 break;
-                            case 0:
+                            case 830:
                                 // string + string;
-                                value = new Value(0, (string)leftValue.internalValue + (string)rightValue.internalValue);
+                                value = new Value(5, (string)leftValue.internalValue + (string)rightValue.internalValue);
                                 break;
-                            case 2:
+                            case 850:
                                 // string * int;
                                 value = multiplyString(globals, leftValue, (string)leftValue.internalValue, (int)rightValue.internalValue);
                                 break;
-                            case 2:
+                            case 522:
                                 // int * string;
                                 value = multiplyString(globals, rightValue, (string)rightValue.internalValue, (int)leftValue.internalValue);
                                 break;
-                            case 2:
+                            case 1015:
                                 // list * int;
                                 int1 = (int)rightValue.internalValue;
                                 if ((int1 < 0))
@@ -2965,10 +2965,10 @@ namespace Interpreter.Vm
                                 }
                                 else
                                 {
-                                    value = new Value(0, valueMultiplyList((ListImpl)leftValue.internalValue, int1));
+                                    value = new Value(6, valueMultiplyList((ListImpl)leftValue.internalValue, int1));
                                 }
                                 break;
-                            case 2:
+                            case 523:
                                 // int * list;
                                 int1 = (int)leftValue.internalValue;
                                 if ((int1 < 0))
@@ -2977,13 +2977,13 @@ namespace Interpreter.Vm
                                 }
                                 else
                                 {
-                                    value = new Value(0, valueMultiplyList((ListImpl)rightValue.internalValue, int1));
+                                    value = new Value(6, valueMultiplyList((ListImpl)rightValue.internalValue, int1));
                                 }
                                 break;
                             default:
-                                if (((row[0] == 0) && (((leftValue.type == 0) || (rightValue.type == 0)))))
+                                if (((row[0] == 0) && (((leftValue.type == 5) || (rightValue.type == 5)))))
                                 {
-                                    value = new Value(0, valueToString(vm, leftValue) + valueToString(vm, rightValue));
+                                    value = new Value(5, valueToString(vm, leftValue) + valueToString(vm, rightValue));
                                 }
                                 else
                                 {
@@ -2997,7 +2997,7 @@ namespace Interpreter.Vm
                     case 10:
                         // BOOLEAN_NOT;
                         value = valueStack[(valueStackSize - 1)];
-                        if ((value.type != 0))
+                        if ((value.type != 2))
                         {
                             hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
                         }
@@ -3069,13 +3069,13 @@ namespace Interpreter.Vm
                             {
                                 valueStackSize -= 1;
                                 value = valueStack[valueStackSize];
-                                if ((value.type == 0))
+                                if ((value.type == 1))
                                 {
                                     argCount = 0;
                                 }
                                 else
                                 {
-                                    if ((value.type == 0))
+                                    if ((value.type == 6))
                                     {
                                         list1 = (ListImpl)value.internalValue;
                                         argCount = list1.size;
@@ -3128,10 +3128,10 @@ namespace Interpreter.Vm
                                         localeId = row[5];
                                         switch (value.type)
                                         {
-                                            case 0:
+                                            case 1:
                                                 hasInterrupt = EX_NullReference(ec, "Invoked method on null.");
                                                 break;
-                                            case 0:
+                                            case 8:
                                                 // field invoked on an object instance.;
                                                 objInstance1 = (ObjectInstance)value.internalValue;
                                                 int1 = objInstance1.classId;
@@ -3160,7 +3160,7 @@ namespace Interpreter.Vm
                                                     hasInterrupt = EX_UnknownField(ec, "Unknown field.");
                                                 }
                                                 break;
-                                            case 0:
+                                            case 10:
                                                 // field invocation on a class object instance.;
                                                 functionId = resolvePrimitiveMethodName2(globalNameIdToPrimitiveMethodName, value.type, classId);
                                                 if ((functionId < 0))
@@ -3226,7 +3226,7 @@ namespace Interpreter.Vm
                                 // pointer provided;
                                 valueStackSize -= 1;
                                 value = valueStack[valueStackSize];
-                                if ((value.type == 0))
+                                if ((value.type == 9))
                                 {
                                     functionPointer1 = (FunctionPointer)value.internalValue;
                                     switch (functionPointer1.type)
@@ -3275,7 +3275,7 @@ namespace Interpreter.Vm
                                 primitiveMethodToCoreLibraryFallback = false;
                                 switch (value.type)
                                 {
-                                    case 0:
+                                    case 5:
                                         // ...on a string;
                                         string1 = (string)value.internalValue;
                                         switch (functionId)
@@ -3288,7 +3288,7 @@ namespace Interpreter.Vm
                                                 else
                                                 {
                                                     value2 = funcArgs[0];
-                                                    if ((value2.type != 0))
+                                                    if ((value2.type != 5))
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "string contains method requires another string as input.");
                                                     }
@@ -3313,7 +3313,7 @@ namespace Interpreter.Vm
                                                 else
                                                 {
                                                     value2 = funcArgs[0];
-                                                    if ((value2.type != 0))
+                                                    if ((value2.type != 5))
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "string endsWith method requires another string as input.");
                                                     }
@@ -3338,7 +3338,7 @@ namespace Interpreter.Vm
                                                 else
                                                 {
                                                     value2 = funcArgs[0];
-                                                    if ((value2.type != 0))
+                                                    if ((value2.type != 5))
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "string indexOf method requires another string as input.");
                                                     }
@@ -3377,7 +3377,7 @@ namespace Interpreter.Vm
                                                 {
                                                     value2 = funcArgs[0];
                                                     value3 = funcArgs[1];
-                                                    if (((value2.type != 0) || (value3.type != 0)))
+                                                    if (((value2.type != 5) || (value3.type != 5)))
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "string replace method requires 2 strings as input.");
                                                     }
@@ -3415,7 +3415,7 @@ namespace Interpreter.Vm
                                                 else
                                                 {
                                                     value2 = funcArgs[0];
-                                                    if ((value2.type != 0))
+                                                    if ((value2.type != 5))
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "string split method requires another string as input.");
                                                     }
@@ -3431,7 +3431,7 @@ namespace Interpreter.Vm
                                                             i += 1;
                                                         }
                                                         list1.size = _len;
-                                                        output = new Value(0, list1);
+                                                        output = new Value(6, list1);
                                                     }
                                                 }
                                                 break;
@@ -3443,7 +3443,7 @@ namespace Interpreter.Vm
                                                 else
                                                 {
                                                     value2 = funcArgs[0];
-                                                    if ((value2.type != 0))
+                                                    if ((value2.type != 5))
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "string startsWith method requires another string as input.");
                                                     }
@@ -3485,7 +3485,7 @@ namespace Interpreter.Vm
                                                 break;
                                         }
                                         break;
-                                    case 0:
+                                    case 6:
                                         // ...on a list;
                                         list1 = (ListImpl)value.internalValue;
                                         switch (functionId)
@@ -3580,7 +3580,7 @@ namespace Interpreter.Vm
                                                         i += 1;
                                                     }
                                                     list2.size = _len;
-                                                    output = new Value(0, list2);
+                                                    output = new Value(6, list2);
                                                 }
                                                 break;
                                             case 6:
@@ -3591,7 +3591,7 @@ namespace Interpreter.Vm
                                                 else
                                                 {
                                                     value2 = funcArgs[0];
-                                                    if ((value2.type != 0))
+                                                    if ((value2.type != 6))
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "list concat methods requires a list as an argument.");
                                                     }
@@ -3605,7 +3605,7 @@ namespace Interpreter.Vm
                                                         }
                                                         else
                                                         {
-                                                            if (((intArray1 != null) && (intArray1[0] == 0) && (list2.type[0] == 0)))
+                                                            if (((intArray1 != null) && (intArray1[0] == 4) && (list2.type[0] == 3)))
                                                             {
                                                                 bool1 = true;
                                                             }
@@ -3666,7 +3666,7 @@ namespace Interpreter.Vm
                                                 else
                                                 {
                                                     value2 = funcArgs[0];
-                                                    if ((value2.type != 0))
+                                                    if ((value2.type != 9))
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "list filter method requires a function pointer as its argument.");
                                                     }
@@ -3689,7 +3689,7 @@ namespace Interpreter.Vm
                                                 {
                                                     value = funcArgs[0];
                                                     value2 = funcArgs[1];
-                                                    if ((value.type != 0))
+                                                    if ((value.type != 3))
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "First argument of list.insert must be an integer index.");
                                                     }
@@ -3761,7 +3761,7 @@ namespace Interpreter.Vm
                                                 else
                                                 {
                                                     value2 = funcArgs[0];
-                                                    if ((value2.type != 0))
+                                                    if ((value2.type != 5))
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "Argument of list.join needs to be a string.");
                                                     }
@@ -3775,7 +3775,7 @@ namespace Interpreter.Vm
                                                     while ((i < _len))
                                                     {
                                                         value = list1.array[i];
-                                                        if ((value.type != 0))
+                                                        if ((value.type != 5))
                                                         {
                                                             string2 = valueToString(vm, value);
                                                         }
@@ -3797,7 +3797,7 @@ namespace Interpreter.Vm
                                                 else
                                                 {
                                                     value2 = funcArgs[0];
-                                                    if ((value2.type != 0))
+                                                    if ((value2.type != 9))
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "list map method requires a function pointer as its argument.");
                                                     }
@@ -3844,7 +3844,7 @@ namespace Interpreter.Vm
                                                 else
                                                 {
                                                     value = funcArgs[0];
-                                                    if ((value.type != 0))
+                                                    if ((value.type != 3))
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "Argument of list.remove must be an integer index.");
                                                     }
@@ -3922,7 +3922,7 @@ namespace Interpreter.Vm
                                                     if ((argCount == 1))
                                                     {
                                                         value2 = funcArgs[0];
-                                                        if ((value2.type == 0))
+                                                        if ((value2.type == 9))
                                                         {
                                                             primitiveMethodToCoreLibraryFallback = true;
                                                             functionId = metadata.primitiveMethodFunctionIdFallbackLookup[2];
@@ -3942,7 +3942,7 @@ namespace Interpreter.Vm
                                                 break;
                                         }
                                         break;
-                                    case 0:
+                                    case 7:
                                         // ...on a dictionary;
                                         dictImpl = (DictImpl)value.internalValue;
                                         switch (functionId)
@@ -3971,7 +3971,7 @@ namespace Interpreter.Vm
                                                 }
                                                 else
                                                 {
-                                                    output = new Value(0, cloneDictionary(dictImpl, null));
+                                                    output = new Value(7, cloneDictionary(dictImpl, null));
                                                 }
                                                 break;
                                             case 7:
@@ -3983,7 +3983,7 @@ namespace Interpreter.Vm
                                                 {
                                                     value = funcArgs[0];
                                                     output = VALUE_FALSE;
-                                                    if ((value.type == 0))
+                                                    if ((value.type == 5))
                                                     {
                                                         if (dictImpl.stringToIndex.ContainsKey((string)value.internalValue))
                                                         {
@@ -3992,7 +3992,7 @@ namespace Interpreter.Vm
                                                     }
                                                     else
                                                     {
-                                                        if ((value.type == 0))
+                                                        if ((value.type == 3))
                                                         {
                                                             i = (int)value.internalValue;
                                                         }
@@ -4017,15 +4017,15 @@ namespace Interpreter.Vm
                                                     value = funcArgs[0];
                                                     switch (value.type)
                                                     {
-                                                        case 0:
+                                                        case 3:
                                                             int1 = (int)value.internalValue;
                                                             if (!dictImpl.intToIndex.TryGetValue(int1, out i)) i = -1;
                                                             break;
-                                                        case 0:
+                                                        case 8:
                                                             int1 = ((ObjectInstance)value.internalValue).objectId;
                                                             if (!dictImpl.intToIndex.TryGetValue(int1, out i)) i = -1;
                                                             break;
-                                                        case 0:
+                                                        case 5:
                                                             string1 = (string)value.internalValue;
                                                             if (!dictImpl.stringToIndex.TryGetValue(string1, out i)) i = -1;
                                                             break;
@@ -4056,10 +4056,10 @@ namespace Interpreter.Vm
                                                 {
                                                     valueList1 = dictImpl.keys;
                                                     _len = valueList1.Count;
-                                                    if ((dictImpl.keyType == 0))
+                                                    if ((dictImpl.keyType == 8))
                                                     {
                                                         intArray1 = new int[2];
-                                                        intArray1[0] = 0;
+                                                        intArray1[0] = 8;
                                                         intArray1[0] = dictImpl.keyClassId;
                                                     }
                                                     else
@@ -4075,7 +4075,7 @@ namespace Interpreter.Vm
                                                         i += 1;
                                                     }
                                                     list1.size = _len;
-                                                    output = new Value(0, list1);
+                                                    output = new Value(6, list1);
                                                 }
                                                 break;
                                             case 22:
@@ -4086,7 +4086,7 @@ namespace Interpreter.Vm
                                                 else
                                                 {
                                                     value2 = funcArgs[0];
-                                                    if ((value2.type != 0))
+                                                    if ((value2.type != 7))
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "dictionary merge method requires another dictionary as a parameeter.");
                                                     }
@@ -4107,7 +4107,7 @@ namespace Interpreter.Vm
                                                                 }
                                                                 else
                                                                 {
-                                                                    if (((dictImpl2.keyType == 0) && (dictImpl2.keyClassId != dictImpl.keyClassId) && (dictImpl.keyClassId != 0) && !isClassASubclassOf(vm, dictImpl2.keyClassId, dictImpl.keyClassId)))
+                                                                    if (((dictImpl2.keyType == 8) && (dictImpl2.keyClassId != dictImpl.keyClassId) && (dictImpl.keyClassId != 0) && !isClassASubclassOf(vm, dictImpl2.keyClassId, dictImpl.keyClassId)))
                                                                     {
                                                                         hasInterrupt = EX_InvalidKey(ec, "Dictionary key types are incompatible.");
                                                                     }
@@ -4154,7 +4154,7 @@ namespace Interpreter.Vm
                                                     keyType = dictImpl.keyType;
                                                     if (((dictImpl.size > 0) && (keyType == value2.type)))
                                                     {
-                                                        if ((keyType == 0))
+                                                        if ((keyType == 5))
                                                         {
                                                             stringKey = (string)value2.internalValue;
                                                             if (dictImpl.stringToIndex.ContainsKey(stringKey))
@@ -4165,7 +4165,7 @@ namespace Interpreter.Vm
                                                         }
                                                         else
                                                         {
-                                                            if ((keyType == 0))
+                                                            if ((keyType == 3))
                                                             {
                                                                 intKey = (int)value2.internalValue;
                                                             }
@@ -4185,7 +4185,7 @@ namespace Interpreter.Vm
                                                             dictImpl.size = _len;
                                                             if ((i == _len))
                                                             {
-                                                                if ((keyType == 0))
+                                                                if ((keyType == 5))
                                                                 {
                                                                     dictImpl.stringToIndex.Remove(stringKey);
                                                                 }
@@ -4203,7 +4203,7 @@ namespace Interpreter.Vm
                                                                 dictImpl.values[i] = dictImpl.values[_len];
                                                                 dictImpl.keys.RemoveAt(dictImpl.keys.Count - 1);
                                                                 dictImpl.values.RemoveAt(dictImpl.values.Count - 1);
-                                                                if ((keyType == 0))
+                                                                if ((keyType == 5))
                                                                 {
                                                                     dictImpl.stringToIndex.Remove(stringKey);
                                                                     stringKey = (string)value.internalValue;
@@ -4212,7 +4212,7 @@ namespace Interpreter.Vm
                                                                 else
                                                                 {
                                                                     dictImpl.intToIndex.Remove(intKey);
-                                                                    if ((keyType == 0))
+                                                                    if ((keyType == 3))
                                                                     {
                                                                         intKey = (int)value.internalValue;
                                                                     }
@@ -4247,7 +4247,7 @@ namespace Interpreter.Vm
                                                         addToList(list1, valueList1[i]);
                                                         i += 1;
                                                     }
-                                                    output = new Value(0, list1);
+                                                    output = new Value(6, list1);
                                                 }
                                                 break;
                                             default:
@@ -4255,7 +4255,7 @@ namespace Interpreter.Vm
                                                 break;
                                         }
                                         break;
-                                    case 0:
+                                    case 9:
                                         // ...on a function pointer;
                                         functionPointer1 = (FunctionPointer)value.internalValue;
                                         switch (functionId)
@@ -4315,7 +4315,7 @@ namespace Interpreter.Vm
                                                 break;
                                         }
                                         break;
-                                    case 0:
+                                    case 10:
                                         // ...on a class definition;
                                         classValue = (ClassValue)value.internalValue;
                                         switch (functionId)
@@ -4333,7 +4333,7 @@ namespace Interpreter.Vm
                                                 {
                                                     int1 = classValue.classId;
                                                     value = funcArgs[0];
-                                                    if ((value.type != 0))
+                                                    if ((value.type != 10))
                                                     {
                                                         hasInterrupt = EX_InvalidArgument(ec, "class isA method requires another class reference.");
                                                     }
@@ -4440,7 +4440,7 @@ namespace Interpreter.Vm
                                             i -= 1;
                                         }
                                         objInstance1 = new ObjectInstance(classId, vm.instanceCounter, valueArray1, null, null);
-                                        value = new Value(0, objInstance1);
+                                        value = new Value(8, objInstance1);
                                         functionId = classInfo.constructorFunctionId;
                                         functionInfo = functionTable[functionId];
                                         pc = functionInfo.pc;
@@ -4528,7 +4528,7 @@ namespace Interpreter.Vm
                         value2 = canAssignTypeToGeneric(vm, value, row, 0);
                         if ((value2 == null))
                         {
-                            if (((value.type == 0) && (row[0] == 0)))
+                            if (((value.type == 4) && (row[0] == 3)))
                             {
                                 if ((row[1] == 1))
                                 {
@@ -4549,7 +4549,7 @@ namespace Interpreter.Vm
                                         }
                                         else
                                         {
-                                            value2 = new Value(0, i);
+                                            value2 = new Value(3, i);
                                         }
                                     }
                                     else
@@ -4560,14 +4560,14 @@ namespace Interpreter.Vm
                                         }
                                         else
                                         {
-                                            value2 = new Value(0, i);
+                                            value2 = new Value(3, i);
                                         }
                                     }
                                 }
                             }
                             else
                             {
-                                if (((value.type == 0) && (row[0] == 0)))
+                                if (((value.type == 3) && (row[0] == 4)))
                                 {
                                     int1 = (int)value.internalValue;
                                     if ((int1 == 0))
@@ -4576,7 +4576,7 @@ namespace Interpreter.Vm
                                     }
                                     else
                                     {
-                                        value2 = new Value(0, (0.0 + int1));
+                                        value2 = new Value(4, (0.0 + int1));
                                     }
                                 }
                             }
@@ -4658,7 +4658,7 @@ namespace Interpreter.Vm
                             addToList(list1, buildString(globals, vm.environment.commandLineArgs[i]));
                             i += 1;
                         }
-                        valueStack[valueStackSize] = new Value(0, list1);
+                        valueStack[valueStackSize] = new Value(6, list1);
                         valueStackSize += 1;
                         break;
                     case 18:
@@ -4683,7 +4683,7 @@ namespace Interpreter.Vm
                                 // parseInt;
                                 arg1 = valueStack[--valueStackSize];
                                 output = VALUE_NULL;
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 5))
                                 {
                                     string1 = ((string)arg1.internalValue).Trim();
                                     if (PST_IsValidInteger(string1))
@@ -4700,7 +4700,7 @@ namespace Interpreter.Vm
                                 // parseFloat;
                                 arg1 = valueStack[--valueStackSize];
                                 output = VALUE_NULL;
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 5))
                                 {
                                     string1 = ((string)arg1.internalValue).Trim();
                                     PST_ParseFloat(string1, floatList1);
@@ -4754,7 +4754,7 @@ namespace Interpreter.Vm
                                 arg3 = valueStack[(valueStackSize + 2)];
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                if ((arg1.type != 0))
+                                if ((arg1.type != 2))
                                 {
                                     hasInterrupt = EX_InvalidArgument(ec, "Assertion expression must be a boolean.");
                                 }
@@ -4779,7 +4779,7 @@ namespace Interpreter.Vm
                                 // chr;
                                 arg1 = valueStack[--valueStackSize];
                                 output = null;
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 3))
                                 {
                                     int1 = (int)arg1.internalValue;
                                     if (((int1 >= 0) && (int1 < 256)))
@@ -4796,7 +4796,7 @@ namespace Interpreter.Vm
                                 // ord;
                                 arg1 = valueStack[--valueStackSize];
                                 output = null;
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 5))
                                 {
                                     string1 = (string)arg1.internalValue;
                                     if ((string1.Length == 1))
@@ -4831,7 +4831,7 @@ namespace Interpreter.Vm
                                 // abs;
                                 arg1 = valueStack[--valueStackSize];
                                 output = arg1;
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 3))
                                 {
                                     if (((int)arg1.internalValue < 0))
                                     {
@@ -4840,7 +4840,7 @@ namespace Interpreter.Vm
                                 }
                                 else
                                 {
-                                    if ((arg1.type == 0))
+                                    if ((arg1.type == 4))
                                     {
                                         if (((double)arg1.internalValue < 0))
                                         {
@@ -4856,13 +4856,13 @@ namespace Interpreter.Vm
                             case 13:
                                 // arcCos;
                                 arg1 = valueStack[--valueStackSize];
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 4))
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
                                 else
                                 {
-                                    if ((arg1.type == 0))
+                                    if ((arg1.type == 3))
                                     {
                                         float1 = (0.0 + (int)arg1.internalValue);
                                     }
@@ -4886,13 +4886,13 @@ namespace Interpreter.Vm
                             case 14:
                                 // arcSin;
                                 arg1 = valueStack[--valueStackSize];
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 4))
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
                                 else
                                 {
-                                    if ((arg1.type == 0))
+                                    if ((arg1.type == 3))
                                     {
                                         float1 = (0.0 + (int)arg1.internalValue);
                                     }
@@ -4919,13 +4919,13 @@ namespace Interpreter.Vm
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
                                 bool1 = false;
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 4))
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
                                 else
                                 {
-                                    if ((arg1.type == 0))
+                                    if ((arg1.type == 3))
                                     {
                                         float1 = (0.0 + (int)arg1.internalValue);
                                     }
@@ -4934,13 +4934,13 @@ namespace Interpreter.Vm
                                         bool1 = true;
                                     }
                                 }
-                                if ((arg2.type == 0))
+                                if ((arg2.type == 4))
                                 {
                                     float2 = (double)arg2.internalValue;
                                 }
                                 else
                                 {
-                                    if ((arg2.type == 0))
+                                    if ((arg2.type == 3))
                                     {
                                         float2 = (0.0 + (int)arg2.internalValue);
                                     }
@@ -4961,14 +4961,14 @@ namespace Interpreter.Vm
                             case 16:
                                 // cos;
                                 arg1 = valueStack[--valueStackSize];
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 4))
                                 {
                                     float1 = (double)arg1.internalValue;
                                     output = buildFloat(globals, System.Math.Cos(float1));
                                 }
                                 else
                                 {
-                                    if ((arg1.type == 0))
+                                    if ((arg1.type == 3))
                                     {
                                         int1 = (int)arg1.internalValue;
                                         output = buildFloat(globals, System.Math.Cos(int1));
@@ -4986,13 +4986,13 @@ namespace Interpreter.Vm
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
                                 bool1 = false;
-                                if ((arg2.type == 0))
+                                if ((arg2.type == 4))
                                 {
                                     float2 = (double)arg2.internalValue;
                                 }
                                 else
                                 {
-                                    if ((arg2.type == 0))
+                                    if ((arg2.type == 3))
                                     {
                                         float2 = (0.0 + (int)arg2.internalValue);
                                     }
@@ -5001,13 +5001,13 @@ namespace Interpreter.Vm
                                         bool1 = true;
                                     }
                                 }
-                                if ((arg3.type == 0))
+                                if ((arg3.type == 4))
                                 {
                                     float3 = (double)arg3.internalValue;
                                 }
                                 else
                                 {
-                                    if ((arg3.type == 0))
+                                    if ((arg3.type == 3))
                                     {
                                         float3 = (0.0 + (int)arg3.internalValue);
                                     }
@@ -5025,13 +5025,13 @@ namespace Interpreter.Vm
                                     arg2 = arg3;
                                     arg3 = value;
                                 }
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 4))
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
                                 else
                                 {
-                                    if ((arg1.type == 0))
+                                    if ((arg1.type == 3))
                                     {
                                         float1 = (0.0 + (int)arg1.internalValue);
                                     }
@@ -5066,7 +5066,7 @@ namespace Interpreter.Vm
                             case 18:
                                 // floor;
                                 arg1 = valueStack[--valueStackSize];
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 4))
                                 {
                                     float1 = (double)arg1.internalValue;
                                     if (((float1 < 0) && ((float1 % 1) != 0)))
@@ -5091,18 +5091,18 @@ namespace Interpreter.Vm
                                             }
                                             else
                                             {
-                                                output = new Value(0, int1);
+                                                output = new Value(3, int1);
                                             }
                                         }
                                     }
                                     else
                                     {
-                                        output = new Value(0, int1);
+                                        output = new Value(3, int1);
                                     }
                                 }
                                 else
                                 {
-                                    if ((arg1.type == 0))
+                                    if ((arg1.type == 3))
                                     {
                                         output = arg1;
                                     }
@@ -5118,13 +5118,13 @@ namespace Interpreter.Vm
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
                                 bool1 = false;
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 4))
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
                                 else
                                 {
-                                    if ((arg1.type == 0))
+                                    if ((arg1.type == 3))
                                     {
                                         float1 = (0.0 + (int)arg1.internalValue);
                                     }
@@ -5133,13 +5133,13 @@ namespace Interpreter.Vm
                                         bool1 = true;
                                     }
                                 }
-                                if ((arg2.type == 0))
+                                if ((arg2.type == 4))
                                 {
                                     float2 = (double)arg2.internalValue;
                                 }
                                 else
                                 {
-                                    if ((arg2.type == 0))
+                                    if ((arg2.type == 3))
                                     {
                                         float2 = (0.0 + (int)arg2.internalValue);
                                     }
@@ -5170,13 +5170,13 @@ namespace Interpreter.Vm
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
                                 bool1 = false;
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 4))
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
                                 else
                                 {
-                                    if ((arg1.type == 0))
+                                    if ((arg1.type == 3))
                                     {
                                         float1 = (0.0 + (int)arg1.internalValue);
                                     }
@@ -5185,13 +5185,13 @@ namespace Interpreter.Vm
                                         bool1 = true;
                                     }
                                 }
-                                if ((arg2.type == 0))
+                                if ((arg2.type == 4))
                                 {
                                     float2 = (double)arg2.internalValue;
                                 }
                                 else
                                 {
-                                    if ((arg2.type == 0))
+                                    if ((arg2.type == 3))
                                     {
                                         float2 = (0.0 + (int)arg2.internalValue);
                                     }
@@ -5242,13 +5242,13 @@ namespace Interpreter.Vm
                             case 23:
                                 // sign;
                                 arg1 = valueStack[--valueStackSize];
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 3))
                                 {
                                     float1 = (0.0 + ((int)arg1.internalValue));
                                 }
                                 else
                                 {
-                                    if ((arg1.type == 0))
+                                    if ((arg1.type == 4))
                                     {
                                         float1 = (double)arg1.internalValue;
                                     }
@@ -5276,13 +5276,13 @@ namespace Interpreter.Vm
                             case 24:
                                 // sin;
                                 arg1 = valueStack[--valueStackSize];
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 4))
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
                                 else
                                 {
-                                    if ((arg1.type == 0))
+                                    if ((arg1.type == 3))
                                     {
                                         float1 = (0.0 + (int)arg1.internalValue);
                                     }
@@ -5296,13 +5296,13 @@ namespace Interpreter.Vm
                             case 25:
                                 // tan;
                                 arg1 = valueStack[--valueStackSize];
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 4))
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
                                 else
                                 {
-                                    if ((arg1.type == 0))
+                                    if ((arg1.type == 3))
                                     {
                                         float1 = (0.0 + (int)arg1.internalValue);
                                     }
@@ -5333,13 +5333,13 @@ namespace Interpreter.Vm
                                 valueStackSize -= 2;
                                 arg2 = valueStack[(valueStackSize + 1)];
                                 arg1 = valueStack[valueStackSize];
-                                if ((arg1.type == 0))
+                                if ((arg1.type == 4))
                                 {
                                     float1 = (double)arg1.internalValue;
                                 }
                                 else
                                 {
-                                    if ((arg1.type == 0))
+                                    if ((arg1.type == 3))
                                     {
                                         float1 = (0.0 + (int)arg1.internalValue);
                                     }
@@ -5396,13 +5396,13 @@ namespace Interpreter.Vm
                                 while ((i >= 0))
                                 {
                                     value = valueStack[((valueStackSize + 1) + i)];
-                                    if ((value.type == 0))
+                                    if ((value.type == 3))
                                     {
                                         intArray1[(_len + i)] = (int)value.internalValue;
                                     }
                                     else
                                     {
-                                        if ((value.type == 0))
+                                        if ((value.type == 4))
                                         {
                                             float1 = (0.5 + (double)value.internalValue);
                                             intArray1[(_len + i)] = (int)float1;
@@ -5473,7 +5473,7 @@ namespace Interpreter.Vm
                                 arg1 = valueStack[--valueStackSize];
                                 intList1 = (List<int>)getNativeDataItem(arg1, 1);
                                 list1 = makeEmptyList(globals.stringType, 20);
-                                output = new Value(0, list1);
+                                output = new Value(6, list1);
                                 if ((intList1 != null))
                                 {
                                     stringList1 = tokenHelperConvertPcsToStackTraceStrings(vm, intList1);
@@ -5499,14 +5499,14 @@ namespace Interpreter.Vm
                             case 39:
                                 // reflectGetClass;
                                 arg1 = valueStack[--valueStackSize];
-                                if ((arg1.type != 0))
+                                if ((arg1.type != 8))
                                 {
                                     hasInterrupt = EX_InvalidArgument(ec, "Cannot get class from non-instance types.");
                                 }
                                 else
                                 {
                                     objInstance1 = (ObjectInstance)arg1.internalValue;
-                                    output = new Value(0, new ClassValue(false, objInstance1.classId));
+                                    output = new Value(10, new ClassValue(false, objInstance1.classId));
                                 }
                                 break;
                             case 40:
@@ -5522,7 +5522,7 @@ namespace Interpreter.Vm
                                     }
                                     else
                                     {
-                                        if ((value.type == 0))
+                                        if ((value.type == 4))
                                         {
                                             float1 = (double)value.internalValue;
                                             if (((float1 < 0) && ((float1 % 1) != 0)))
@@ -5574,7 +5574,7 @@ namespace Interpreter.Vm
                         valueList2 = new List<Value>();
                         valueList1 = new List<Value>();
                         _len = row[0];
-                        type = 0;
+                        type = 3;
                         first = true;
                         i = _len;
                         while ((i > 0))
@@ -5596,19 +5596,19 @@ namespace Interpreter.Vm
                             }
                             if (!hasInterrupt)
                             {
-                                if ((type == 0))
+                                if ((type == 3))
                                 {
                                     intKey = (int)value2.internalValue;
                                 }
                                 else
                                 {
-                                    if ((type == 0))
+                                    if ((type == 5))
                                     {
                                         stringKey = (string)value2.internalValue;
                                     }
                                     else
                                     {
-                                        if ((type == 0))
+                                        if ((type == 8))
                                         {
                                             objInstance1 = (ObjectInstance)value2.internalValue;
                                             intKey = objInstance1.objectId;
@@ -5622,7 +5622,7 @@ namespace Interpreter.Vm
                             }
                             if (!hasInterrupt)
                             {
-                                if ((type == 0))
+                                if ((type == 5))
                                 {
                                     stringIntDict1[stringKey] = valueList1.Count;
                                 }
@@ -5637,7 +5637,7 @@ namespace Interpreter.Vm
                         }
                         if (!hasInterrupt)
                         {
-                            if ((type == 0))
+                            if ((type == 5))
                             {
                                 i = stringIntDict1.Count;
                             }
@@ -5657,7 +5657,7 @@ namespace Interpreter.Vm
                             if ((i > 0))
                             {
                                 type = row[2];
-                                if ((type == 0))
+                                if ((type == 8))
                                 {
                                     classId = row[3];
                                 }
@@ -5678,7 +5678,7 @@ namespace Interpreter.Vm
                                 valueStack = valueStackIncreaseCapacity(ec);
                                 valueStackCapacity = valueStack.Length;
                             }
-                            valueStack[valueStackSize] = new Value(0, new DictImpl(_len, type, classId, intArray1, intIntDict1, stringIntDict1, valueList2, valueList1));
+                            valueStack[valueStackSize] = new Value(7, new DictImpl(_len, type, classId, intArray1, intIntDict1, stringIntDict1, valueList2, valueList1));
                             valueStackSize += 1;
                         }
                         break;
@@ -5705,7 +5705,7 @@ namespace Interpreter.Vm
                             i += 1;
                         }
                         valueStackSize -= int1;
-                        value = new Value(0, list1);
+                        value = new Value(6, list1);
                         if ((valueStackSize == valueStackCapacity))
                         {
                             valueStack = valueStackIncreaseCapacity(ec);
@@ -5749,7 +5749,7 @@ namespace Interpreter.Vm
                         int2 = row[1];
                         switch (value.type)
                         {
-                            case 0:
+                            case 8:
                                 objInstance1 = (ObjectInstance)value.internalValue;
                                 classId = objInstance1.classId;
                                 classInfo = classTable[classId];
@@ -5828,7 +5828,7 @@ namespace Interpreter.Vm
                                     }
                                     else
                                     {
-                                        output = new Value(0, new FunctionPointer(2, value, objInstance1.classId, functionId, null));
+                                        output = new Value(9, new FunctionPointer(2, value, objInstance1.classId, functionId, null));
                                     }
                                 }
                                 else
@@ -5836,7 +5836,7 @@ namespace Interpreter.Vm
                                     output = null;
                                 }
                                 break;
-                            case 0:
+                            case 5:
                                 if ((metadata.lengthId == nameId))
                                 {
                                     output = buildInteger(globals, ((string)value.internalValue).Length);
@@ -5846,7 +5846,7 @@ namespace Interpreter.Vm
                                     output = null;
                                 }
                                 break;
-                            case 0:
+                            case 6:
                                 if ((metadata.lengthId == nameId))
                                 {
                                     output = buildInteger(globals, ((ListImpl)value.internalValue).size);
@@ -5856,7 +5856,7 @@ namespace Interpreter.Vm
                                     output = null;
                                 }
                                 break;
-                            case 0:
+                            case 7:
                                 if ((metadata.lengthId == nameId))
                                 {
                                     output = buildInteger(globals, ((DictImpl)value.internalValue).size);
@@ -5867,7 +5867,7 @@ namespace Interpreter.Vm
                                 }
                                 break;
                             default:
-                                if ((value.type == 0))
+                                if ((value.type == 1))
                                 {
                                     hasInterrupt = EX_NullReference(ec, "Derferenced a field from null.");
                                     output = VALUE_NULL;
@@ -5883,13 +5883,13 @@ namespace Interpreter.Vm
                             output = generatePrimitiveMethodReference(globalNameIdToPrimitiveMethodName, nameId, value);
                             if ((output == null))
                             {
-                                if ((value.type == 0))
+                                if ((value.type == 1))
                                 {
                                     hasInterrupt = EX_NullReference(ec, "Tried to dereference a field on null.");
                                 }
                                 else
                                 {
-                                    if (((value.type == 0) && (int1 < -1)))
+                                    if (((value.type == 8) && (int1 < -1)))
                                     {
                                         string1 = identifiers[row[0]];
                                         if ((int1 == -2))
@@ -5911,7 +5911,7 @@ namespace Interpreter.Vm
                                     }
                                     else
                                     {
-                                        if ((value.type == 0))
+                                        if ((value.type == 8))
                                         {
                                             classId = ((ObjectInstance)value.internalValue).classId;
                                             classInfo = classTable[classId];
@@ -6220,9 +6220,9 @@ namespace Interpreter.Vm
                         // INDEX;
                         value = valueStack[--valueStackSize];
                         root = valueStack[(valueStackSize - 1)];
-                        if ((root.type == 0))
+                        if ((root.type == 6))
                         {
-                            if ((value.type != 0))
+                            if ((value.type != 3))
                             {
                                 hasInterrupt = EX_InvalidArgument(ec, "List index must be an integer.");
                             }
@@ -6246,7 +6246,7 @@ namespace Interpreter.Vm
                         }
                         else
                         {
-                            if ((root.type == 0))
+                            if ((root.type == 7))
                             {
                                 dictImpl = (DictImpl)root.internalValue;
                                 keyType = value.type;
@@ -6263,19 +6263,19 @@ namespace Interpreter.Vm
                                 }
                                 else
                                 {
-                                    if ((keyType == 0))
+                                    if ((keyType == 3))
                                     {
                                         intKey = (int)value.internalValue;
                                     }
                                     else
                                     {
-                                        if ((keyType == 0))
+                                        if ((keyType == 5))
                                         {
                                             stringKey = (string)value.internalValue;
                                         }
                                         else
                                         {
-                                            if ((keyType == 0))
+                                            if ((keyType == 8))
                                             {
                                                 intKey = ((ObjectInstance)value.internalValue).objectId;
                                             }
@@ -6294,7 +6294,7 @@ namespace Interpreter.Vm
                                     }
                                     if (!hasInterrupt)
                                     {
-                                        if ((keyType == 0))
+                                        if ((keyType == 5))
                                         {
                                             stringIntDict1 = (Dictionary<string, int>)dictImpl.stringToIndex;
                                             if (!stringIntDict1.TryGetValue(stringKey, out int1)) int1 = -1;
@@ -6325,10 +6325,10 @@ namespace Interpreter.Vm
                             }
                             else
                             {
-                                if ((root.type == 0))
+                                if ((root.type == 5))
                                 {
                                     string1 = (string)root.internalValue;
-                                    if ((value.type != 0))
+                                    if ((value.type != 3))
                                     {
                                         hasInterrupt = EX_InvalidArgument(ec, "String indices must be integers.");
                                     }
@@ -6360,7 +6360,7 @@ namespace Interpreter.Vm
                         // IS_COMPARISON;
                         value = valueStack[(valueStackSize - 1)];
                         output = VALUE_FALSE;
-                        if ((value.type == 0))
+                        if ((value.type == 8))
                         {
                             objInstance1 = (ObjectInstance)value.internalValue;
                             if (isClassASubclassOf(vm, objInstance1.classId, row[0]))
@@ -6376,7 +6376,7 @@ namespace Interpreter.Vm
                         value3 = localsStack[int1];
                         i = (int)value3.internalValue;
                         value = localsStack[(localsStackOffset + row[3])];
-                        if ((value.type == 0))
+                        if ((value.type == 6))
                         {
                             list1 = (ListImpl)value.internalValue;
                             _len = list1.size;
@@ -6413,7 +6413,7 @@ namespace Interpreter.Vm
                         }
                         else
                         {
-                            localsStack[int1] = new Value(0, i);
+                            localsStack[int1] = new Value(3, i);
                         }
                         break;
                     case 39:
@@ -6446,7 +6446,7 @@ namespace Interpreter.Vm
                     case 41:
                         // JUMP_IF_FALSE;
                         value = valueStack[--valueStackSize];
-                        if ((value.type != 0))
+                        if ((value.type != 2))
                         {
                             hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
                         }
@@ -6461,7 +6461,7 @@ namespace Interpreter.Vm
                     case 42:
                         // JUMP_IF_FALSE_NON_POP;
                         value = valueStack[(valueStackSize - 1)];
-                        if ((value.type != 0))
+                        if ((value.type != 2))
                         {
                             hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
                         }
@@ -6480,7 +6480,7 @@ namespace Interpreter.Vm
                     case 43:
                         // JUMP_IF_TRUE;
                         value = valueStack[--valueStackSize];
-                        if ((value.type != 0))
+                        if ((value.type != 2))
                         {
                             hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
                         }
@@ -6495,7 +6495,7 @@ namespace Interpreter.Vm
                     case 44:
                         // JUMP_IF_TRUE_NO_POP;
                         value = valueStack[(valueStackSize - 1)];
-                        if ((value.type != 0))
+                        if ((value.type != 2))
                         {
                             hasInterrupt = EX_InvalidArgument(ec, "Boolean expected.");
                         }
@@ -6564,7 +6564,7 @@ namespace Interpreter.Vm
                             valueStack = valueStackIncreaseCapacity(ec);
                             valueStackCapacity = valueStack.Length;
                         }
-                        valueStack[valueStackSize] = new Value(0, new FunctionPointer(5, null, 0, pc, closure));
+                        valueStack[valueStackSize] = new Value(9, new FunctionPointer(5, null, 0, pc, closure));
                         valueStackSize += 1;
                         pc += row[3];
                         break;
@@ -6663,13 +6663,13 @@ namespace Interpreter.Vm
                         // NEGATIVE_SIGN;
                         value = valueStack[(valueStackSize - 1)];
                         type = value.type;
-                        if ((type == 0))
+                        if ((type == 3))
                         {
                             valueStack[(valueStackSize - 1)] = buildInteger(globals, -(int)value.internalValue);
                         }
                         else
                         {
-                            if ((type == 0))
+                            if ((type == 4))
                             {
                                 valueStack[(valueStackSize - 1)] = buildFloat(globals, -(double)value.internalValue);
                             }
@@ -6686,7 +6686,7 @@ namespace Interpreter.Vm
                     case 54:
                         // POP_IF_NULL_OR_JUMP;
                         value = valueStack[(valueStackSize - 1)];
-                        if ((value.type == 0))
+                        if ((value.type == 1))
                         {
                             valueStackSize -= 1;
                         }
@@ -6701,10 +6701,10 @@ namespace Interpreter.Vm
                         switch (row[1])
                         {
                             case 0:
-                                value = new Value(0, new FunctionPointer(1, null, 0, row[0], null));
+                                value = new Value(9, new FunctionPointer(1, null, 0, row[0], null));
                                 break;
                             case 1:
-                                value = new Value(0, new FunctionPointer(2, stack.objectContext, row[2], row[0], null));
+                                value = new Value(9, new FunctionPointer(2, stack.objectContext, row[2], row[0], null));
                                 break;
                             case 2:
                                 classId = row[2];
@@ -6729,7 +6729,7 @@ namespace Interpreter.Vm
                                 }
                                 if (staticConstructorNotInvoked)
                                 {
-                                    value = new Value(0, new FunctionPointer(3, null, classId, row[0], null));
+                                    value = new Value(9, new FunctionPointer(3, null, classId, row[0], null));
                                 }
                                 else
                                 {
@@ -6833,7 +6833,7 @@ namespace Interpreter.Vm
                     case 59:
                         // SWITCH_INT;
                         value = valueStack[--valueStackSize];
-                        if ((value.type == 0))
+                        if ((value.type == 3))
                         {
                             intKey = (int)value.internalValue;
                             integerSwitch = integerSwitchesByPc[pc];
@@ -6859,7 +6859,7 @@ namespace Interpreter.Vm
                     case 60:
                         // SWITCH_STRING;
                         value = valueStack[--valueStackSize];
-                        if ((value.type == 0))
+                        if ((value.type == 5))
                         {
                             stringKey = (string)value.internalValue;
                             stringSwitch = stringSwitchesByPc[pc];
@@ -6896,7 +6896,7 @@ namespace Interpreter.Vm
                         // THROW;
                         valueStackSize -= 1;
                         value = valueStack[valueStackSize];
-                        bool2 = (value.type == 0);
+                        bool2 = (value.type == 8);
                         if (bool2)
                         {
                             objInstance1 = (ObjectInstance)value.internalValue;
@@ -6979,7 +6979,7 @@ namespace Interpreter.Vm
                         localsStack[i] = value;
                         localsStackSet[i] = localsStackSetToken;
                         int1 = value.type;
-                        if (((int1 != 0) && (int1 != 0)))
+                        if (((int1 != 6) && (int1 != 5)))
                         {
                             hasInterrupt = EX_InvalidArgument(ec, string.Join("", new string[] { "Expected an iterable type, such as a list or string. Found ",getTypeFromId(int1)," instead." }));
                         }
@@ -7171,7 +7171,7 @@ namespace Interpreter.Vm
             int status = 0;
             if ((arg3 != null))
             {
-                if ((arg3.type == 0))
+                if ((arg3.type == 3))
                 {
                     step = (int)arg3.internalValue;
                     if ((step == 0))
@@ -7192,7 +7192,7 @@ namespace Interpreter.Vm
             isForward = (step > 0);
             if ((arg2 != null))
             {
-                if ((arg2.type == 0))
+                if ((arg2.type == 3))
                 {
                     end = (int)arg2.internalValue;
                 }
@@ -7203,7 +7203,7 @@ namespace Interpreter.Vm
             }
             if ((arg1 != null))
             {
-                if ((arg1.type == 0))
+                if ((arg1.type == 3))
                 {
                     begin = (int)arg1.internalValue;
                 }
@@ -7212,7 +7212,7 @@ namespace Interpreter.Vm
                     status = 3;
                 }
             }
-            if ((value.type == 0))
+            if ((value.type == 5))
             {
                 isString = true;
                 originalString = (string)value.internalValue;
@@ -7220,7 +7220,7 @@ namespace Interpreter.Vm
             }
             else
             {
-                if ((value.type == 0))
+                if ((value.type == 6))
                 {
                     isString = false;
                     originalList = (ListImpl)value.internalValue;
@@ -7246,17 +7246,17 @@ namespace Interpreter.Vm
                 if ((status == 3))
                 {
                     msg += " slice indexes must be integers. Found ";
-                    if (((arg1 != null) && (arg1.type != 0)))
+                    if (((arg1 != null) && (arg1.type != 3)))
                     {
                         EX_InvalidArgument(ec, string.Join("", new string[] { msg,getTypeFromId(arg1.type)," for begin index." }));
                         return globals.valueNull;
                     }
-                    if (((arg2 != null) && (arg2.type != 0)))
+                    if (((arg2 != null) && (arg2.type != 3)))
                     {
                         EX_InvalidArgument(ec, string.Join("", new string[] { msg,getTypeFromId(arg2.type)," for end index." }));
                         return globals.valueNull;
                     }
-                    if (((arg3 != null) && (arg3.type != 0)))
+                    if (((arg3 != null) && (arg3.type != 3)))
                     {
                         EX_InvalidArgument(ec, string.Join("", new string[] { msg,getTypeFromId(arg3.type)," for step amount." }));
                         return globals.valueNull;
@@ -7322,7 +7322,7 @@ namespace Interpreter.Vm
                             begin += step;
                         }
                     }
-                    value = new Value(0, outputList);
+                    value = new Value(6, outputList);
                 }
             }
             else
@@ -7335,7 +7335,7 @@ namespace Interpreter.Vm
                     }
                     else
                     {
-                        value = new Value(0, makeEmptyList(originalList.type, 0));
+                        value = new Value(6, makeEmptyList(originalList.type, 0));
                     }
                 }
                 else
@@ -7351,7 +7351,7 @@ namespace Interpreter.Vm
                                 addToList(outputList, originalList.array[i]);
                                 i += 1;
                             }
-                            value = new Value(0, outputList);
+                            value = new Value(6, outputList);
                         }
                     }
                     else
@@ -7855,7 +7855,7 @@ namespace Interpreter.Vm
         public static Value Reflect_allClasses(VmContext vm)
         {
             int[] generics = new int[1];
-            generics[0] = 0;
+            generics[0] = 10;
             ListImpl output = makeEmptyList(generics, 20);
             ClassInfo[] classTable = vm.metadata.classTable;
             int i = 1;
@@ -7868,17 +7868,17 @@ namespace Interpreter.Vm
                 }
                 else
                 {
-                    addToList(output, new Value(0, new ClassValue(false, classInfo.id)));
+                    addToList(output, new Value(10, new ClassValue(false, classInfo.id)));
                 }
                 i += 1;
             }
-            return new Value(0, output);
+            return new Value(6, output);
         }
 
         public static Value Reflect_getMethods(VmContext vm, ExecutionContext ec, Value methodSource)
         {
             ListImpl output = makeEmptyList(null, 8);
-            if ((methodSource.type == 0))
+            if ((methodSource.type == 8))
             {
                 ObjectInstance objInstance1 = (ObjectInstance)methodSource.internalValue;
                 ClassInfo classInfo = vm.metadata.classTable[objInstance1.classId];
@@ -7888,7 +7888,7 @@ namespace Interpreter.Vm
                     int functionId = classInfo.functionIds[i];
                     if ((functionId != -1))
                     {
-                        addToList(output, new Value(0, new FunctionPointer(2, methodSource, objInstance1.classId, functionId, null)));
+                        addToList(output, new Value(9, new FunctionPointer(2, methodSource, objInstance1.classId, functionId, null)));
                     }
                     i += 1;
                 }
@@ -7899,7 +7899,7 @@ namespace Interpreter.Vm
                 ClassInfo classInfo = vm.metadata.classTable[classValue.classId];
                 EX_UnsupportedOperation(ec, "static method reflection not implemented yet.");
             }
-            return new Value(0, output);
+            return new Value(6, output);
         }
 
         public static int registerNamedCallback(VmContext vm, string scope, string functionName, System.Func<object[], object> callback)
@@ -7950,91 +7950,91 @@ namespace Interpreter.Vm
             int output = lookup[globalNameId];
             if ((output != -1))
             {
-                switch ((type + (1 * output)))
+                switch ((type + (11 * output)))
                 {
-                    case 7:
+                    case 82:
                         return output;
-                    case 9:
+                    case 104:
                         return output;
-                    case 13:
+                    case 148:
                         return output;
-                    case 19:
+                    case 214:
                         return output;
-                    case 20:
+                    case 225:
                         return output;
-                    case 25:
+                    case 280:
                         return output;
-                    case 26:
+                    case 291:
                         return output;
-                    case 27:
+                    case 302:
                         return output;
-                    case 30:
+                    case 335:
                         return output;
-                    case 31:
+                    case 346:
                         return output;
-                    case 32:
+                    case 357:
                         return output;
-                    case 33:
-                        return output;
-                    case 0:
-                        return output;
-                    case 3:
-                        return output;
-                    case 4:
-                        return output;
-                    case 5:
+                    case 368:
                         return output;
                     case 6:
                         return output;
-                    case 7:
+                    case 39:
                         return output;
-                    case 10:
+                    case 50:
                         return output;
-                    case 14:
+                    case 61:
                         return output;
-                    case 17:
+                    case 72:
                         return output;
-                    case 21:
+                    case 83:
                         return output;
-                    case 23:
+                    case 116:
                         return output;
-                    case 24:
+                    case 160:
                         return output;
-                    case 26:
+                    case 193:
                         return output;
-                    case 28:
+                    case 237:
                         return output;
-                    case 29:
+                    case 259:
                         return output;
-                    case 4:
+                    case 270:
                         return output;
-                    case 5:
+                    case 292:
                         return output;
-                    case 7:
+                    case 314:
                         return output;
-                    case 11:
+                    case 325:
                         return output;
-                    case 18:
+                    case 51:
                         return output;
-                    case 22:
+                    case 62:
                         return output;
-                    case 24:
+                    case 84:
                         return output;
-                    case 34:
+                    case 128:
                         return output;
-                    case 1:
+                    case 205:
                         return output;
-                    case 2:
+                    case 249:
                         return output;
-                    case 12:
+                    case 271:
                         return output;
-                    case 15:
+                    case 381:
                         return output;
-                    case 8:
+                    case 20:
                         return output;
-                    case 12:
+                    case 31:
                         return output;
-                    case 16:
+                    case 141:
+                        return output;
+                    case 174:
+                        return output;
+                    case 98:
+                        return output;
+                    case 142:
+                        return output;
+                    case 186:
                         return output;
                     default:
                         return -1;
@@ -8060,7 +8060,7 @@ namespace Interpreter.Vm
                 {
                     addToList(output, vm.globals.boolFalse);
                 }
-                return new Value(0, output);
+                return new Value(6, output);
             }
             return vm.globals.valueNull;
         }
@@ -8246,7 +8246,7 @@ namespace Interpreter.Vm
             int[] localsSet = new int[0];
             Value[] valueStack = new Value[100];
             valueStack[0] = fpValue;
-            valueStack[1] = new Value(0, argList);
+            valueStack[1] = new Value(6, argList);
             StackFrame stack = new StackFrame((vm.byteCode.ops.Length - 2), 1, 0, 0, null, false, null, 0, 0, 1, 0, null, null, null);
             ExecutionContext executionContext = new ExecutionContext(newId, stack, 2, 100, valueStack, locals, localsSet, 1, 0, false, null, false, 0, null);
             vm.executionContexts[newId] = executionContext;
@@ -8313,7 +8313,7 @@ namespace Interpreter.Vm
             int i = 0;
             Value item = null;
             item = keyList.array[0];
-            bool isString = (item.type == 0);
+            bool isString = (item.type == 5);
             string[] stringKeys = null;
             double[] numKeys = null;
             if (isString)
@@ -8334,7 +8334,7 @@ namespace Interpreter.Vm
                 item = keyList.array[i];
                 switch (item.type)
                 {
-                    case 0:
+                    case 3:
                         if (isString)
                         {
                             PST_IntBuffer16[0] = 1;
@@ -8342,7 +8342,7 @@ namespace Interpreter.Vm
                         }
                         numKeys[i] = (double)(int)item.internalValue;
                         break;
-                    case 0:
+                    case 4:
                         if (isString)
                         {
                             PST_IntBuffer16[0] = 1;
@@ -8350,7 +8350,7 @@ namespace Interpreter.Vm
                         }
                         numKeys[i] = (double)item.internalValue;
                         break;
-                    case 0:
+                    case 5:
                         if (!isString)
                         {
                             PST_IntBuffer16[0] = 1;
@@ -8559,34 +8559,34 @@ namespace Interpreter.Vm
                 case 0:
                     sb.Add("object");
                     return (i + 1);
-                case 0:
+                case 1:
                     sb.Add("object");
                     return (i + 1);
-                case 0:
+                case 3:
                     sb.Add("int");
                     return (i + 1);
-                case 0:
+                case 4:
                     sb.Add("float");
                     return (i + 1);
-                case 0:
+                case 2:
                     sb.Add("bool");
                     return (i + 1);
-                case 0:
+                case 5:
                     sb.Add("string");
                     return (i + 1);
-                case 0:
+                case 6:
                     sb.Add("List<");
                     i = typeToStringBuilder(vm, sb, typeInfo, (i + 1));
                     sb.Add(">");
                     return i;
-                case 0:
+                case 7:
                     sb.Add("Dictionary<");
                     i = typeToStringBuilder(vm, sb, typeInfo, (i + 1));
                     sb.Add(", ");
                     i = typeToStringBuilder(vm, sb, typeInfo, i);
                     sb.Add(">");
                     return i;
-                case 0:
+                case 8:
                     int classId = typeInfo[(i + 1)];
                     if ((classId == 0))
                     {
@@ -8598,10 +8598,10 @@ namespace Interpreter.Vm
                         sb.Add(classInfo.fullyQualifiedName);
                     }
                     return (i + 2);
-                case 0:
+                case 10:
                     sb.Add("Class");
                     return (i + 1);
-                case 0:
+                case 9:
                     int n = typeInfo[(i + 1)];
                     int optCount = typeInfo[(i + 2)];
                     i += 2;
@@ -8647,23 +8647,23 @@ namespace Interpreter.Vm
             List<string> sb = null;
             switch (value.type)
             {
-                case 0:
+                case 1:
                     return "null";
-                case 0:
+                case 2:
                     return "bool";
-                case 0:
+                case 3:
                     return "int";
-                case 0:
+                case 4:
                     return "float";
-                case 0:
+                case 5:
                     return "string";
-                case 0:
+                case 10:
                     return "class";
-                case 0:
+                case 8:
                     int classId = ((ObjectInstance)value.internalValue).classId;
                     ClassInfo classInfo = vm.metadata.classTable[classId];
                     return classInfo.fullyQualifiedName;
-                case 0:
+                case 6:
                     sb = new List<string>();
                     sb.Add("List<");
                     ListImpl list = (ListImpl)value.internalValue;
@@ -8677,19 +8677,19 @@ namespace Interpreter.Vm
                     }
                     sb.Add(">");
                     return string.Join("", sb);
-                case 0:
+                case 7:
                     DictImpl dict = (DictImpl)value.internalValue;
                     sb = new List<string>();
                     sb.Add("Dictionary<");
                     switch (dict.keyType)
                     {
-                        case 0:
+                        case 3:
                             sb.Add("int");
                             break;
-                        case 0:
+                        case 5:
                             sb.Add("string");
                             break;
-                        case 0:
+                        case 8:
                             sb.Add("object");
                             break;
                         default:
@@ -8707,7 +8707,7 @@ namespace Interpreter.Vm
                     }
                     sb.Add(">");
                     return string.Join("", sb);
-                case 0:
+                case 9:
                     return "Function";
                 default:
                     return "Unknown";
@@ -8831,11 +8831,11 @@ namespace Interpreter.Vm
         public static string valueToString(VmContext vm, Value wrappedValue)
         {
             int type = wrappedValue.type;
-            if ((type == 0))
+            if ((type == 1))
             {
                 return "null";
             }
-            if ((type == 0))
+            if ((type == 2))
             {
                 if ((bool)wrappedValue.internalValue)
                 {
@@ -8843,7 +8843,7 @@ namespace Interpreter.Vm
                 }
                 return "false";
             }
-            if ((type == 0))
+            if ((type == 4))
             {
                 string floatStr = PST_FloatToString((double)wrappedValue.internalValue);
                 if (!floatStr.Contains("."))
@@ -8852,15 +8852,15 @@ namespace Interpreter.Vm
                 }
                 return floatStr;
             }
-            if ((type == 0))
+            if ((type == 3))
             {
                 return ((int)wrappedValue.internalValue).ToString();
             }
-            if ((type == 0))
+            if ((type == 5))
             {
                 return (string)wrappedValue.internalValue;
             }
-            if ((type == 0))
+            if ((type == 6))
             {
                 ListImpl internalList = (ListImpl)wrappedValue.internalValue;
                 string output = "[";
@@ -8877,7 +8877,7 @@ namespace Interpreter.Vm
                 output += "]";
                 return output;
             }
-            if ((type == 0))
+            if ((type == 8))
             {
                 ObjectInstance objInstance = (ObjectInstance)wrappedValue.internalValue;
                 int classId = objInstance.classId;
@@ -8887,7 +8887,7 @@ namespace Interpreter.Vm
                 string className = vm.metadata.identifiers[nameId];
                 return string.Join("", new string[] { "Instance<",className,"#",(ptr).ToString(),">" });
             }
-            if ((type == 0))
+            if ((type == 7))
             {
                 DictImpl dict = (DictImpl)wrappedValue.internalValue;
                 if ((dict.size == 0))
