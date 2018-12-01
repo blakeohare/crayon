@@ -1,6 +1,7 @@
 ﻿using Pastel.Nodes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Pastel.Transpilers
 {
@@ -31,7 +32,14 @@ namespace Pastel.Transpilers
 
         protected override void WrapCodeImpl(ProjectConfig config, List<string> lines, bool isForStruct)
         {
-            throw new NotImplementedException();
+            if (config.Imports.Count > 0)
+            {
+                lines.InsertRange(0,
+                    config.Imports
+                        .OrderBy(t => t)
+                        .Select(t => "import " + t)
+                        .Concat(new string[] { "" }));
+            }
         }
 
         public override void TranslateArrayGet(TranspilerContext sb, Expression array, Expression index)

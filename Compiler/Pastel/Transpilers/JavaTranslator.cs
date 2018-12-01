@@ -107,10 +107,10 @@ namespace Pastel.Transpilers
                 prefixData.AddRange(new string[] { "package " + nsValue + ";", "" });
             }
 
-            if (config.JavaImports.Count > 0)
+            if (config.Imports.Count > 0)
             {
                 prefixData.AddRange(
-                    config.JavaImports
+                    config.Imports
                         .OrderBy(t => t)
                         .Select(t => "import " + t + ";")
                         .Concat(new string[] { "" }));

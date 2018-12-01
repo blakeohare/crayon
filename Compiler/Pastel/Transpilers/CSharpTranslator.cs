@@ -72,10 +72,10 @@ namespace Pastel.Transpilers
                 lines.Add("}");
             }
 
-            if (config.CSharpUsings.Count > 0)
+            if (config.Imports.Count > 0)
             {
                 lines.InsertRange(0,
-                    config.CSharpUsings
+                    config.Imports
                         .OrderBy(t => t)
                         .Select(t => "using " + t + ";")
                         .Concat(new string[] { "" }));
