@@ -1,0 +1,3 @@
+SOURCE: src/main.pst
+
+EXT-TYPE: string _lib_resources_read_text(string path);

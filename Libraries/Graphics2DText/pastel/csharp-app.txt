@@ -1,0 +1,23 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-csharp.txt
+IMPORT: ../../../Interpreter/headers-csharp.txt
+
+LANGUAGE: csharp
+FLAG: LIB_GRAPHICS2DTEXT_IS_OPENGL: true
+
+DEPENDENCY: VM: ../../../Interpreter/csharp-app.txt
+
+OUTPUT-STRUCTS: ../native/csharp-app/gen/structs
+OUTPUT-FUNCTIONS: ../native/csharp-app/gen/LibraryWrapper.cs
+
+NAMESPACE-FUNCTIONS: Interpreter.Libraries.Graphics2DText
+NAMESPACE-STRUCTS: Interpreter.Libraries.Graphics2DText
+FUNCTION-WRAPPER-CLASS: LibraryWrapper
+
+EXT: _lib_graphics2dtext_createNativeFont: Graphics2DTextHelper.CreateNativeFont([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:8], [ARG:9])
+EXT: _lib_graphics2dtext_getNativeFontUniqueKey: [ARG:1].AddRange(new Value[] {[ARG:2], [ARG:3], [ARG:4], [ARG:8] })
+EXT: _lib_graphics2dtext_isSystemFontAvailable: Graphics2DTextHelper.IsSystemFontAvailable([ARG:1])
+EXT: _lib_graphics2dtext_renderTextToSurface: Graphics2DTextHelper.RenderTextToSurface([ARG:1], [ARG:2], [ARG:9], [ARG:10], [ARG:11], [ARG:12])
+EXT: _lib_graphics2dtext_glRenderBitmapTile: Graphics2DTextHelper.RenderCharTile([ARG:1], [ARG:2], [ARG:3])
+EXT: _lib_graphics2dtext_generateTextureSheetAndAllocateRectangleInformation: Graphics2DTextHelper.GenerateTextureAndAllocateFloatInfo([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+EXT: _lib_graphics2dtext_glLoadTexture: Graphics2DTextHelper.LoadOpenGlTexture([ARG:1])
