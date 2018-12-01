@@ -1,0 +1,16 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-java.txt
+IMPORT: ../../../Interpreter/headers-java.txt
+
+LANGUAGE: java
+
+DEPENDENCY: VM: ../../../Interpreter/java-app.txt
+
+OUTPUT-STRUCTS: ../native/java-app/gen/structs
+OUTPUT-FUNCTIONS: ../native/java-app/gen/LibraryWrapper.java
+
+NAMESPACE-FUNCTIONS: org.crayonlang.libraries.web
+NAMESPACE-STRUCTS: org.crayonlang.libraries.web
+FUNCTION-WRAPPER-CLASS: LibraryWrapper
+
+EXT: _lib_web_launchBrowser: LibraryWebBrowserLauncher.launchBrowser([ARG:1])

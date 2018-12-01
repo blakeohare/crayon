@@ -1,12 +1,11 @@
-package crayonlib.imageencoder;
-
-import %%%PACKAGE%%%.Value;
+package org.crayonlang.libraries.imageencoder;
 
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.imageio.ImageIO;
+import org.crayonlang.interpreter.structs.*;
 
 public class ImageEncoderUtil {
 
