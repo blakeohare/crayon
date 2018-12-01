@@ -13,8 +13,7 @@ namespace Pastel
             this.DependenciesByPrefix = new Dictionary<string, ProjectConfig>();
             this.ExtensionTypeDefinitions = new List<string>();
             this.ExtensionPlatformValues = new Dictionary<string, string>();
-            this.CSharpUsings = new HashSet<string>();
-            this.JavaImports = new HashSet<string>();
+            this.Imports = new HashSet<string>();
         }
 
         public override string ToString()
@@ -41,10 +40,7 @@ namespace Pastel
         public string WrappingClassNameForFunctions { get; set; }
         public string NamespaceForStructs { get; set; }
         public string NamespaceForFunctions { get; set; }
-
-        // TODO(pastel-split): how about consolidating these into just a platform-aware IMPORT command?
-        public HashSet<string> CSharpUsings { get; set; }
-        public HashSet<string> JavaImports { get; set; }
+        public HashSet<string> Imports { get; set; }
 
         public static ProjectConfig Parse(string path)
         {
@@ -159,12 +155,8 @@ namespace Pastel
                         config.ExtensionTypeDefinitions.Add(data);
                         break;
 
-                    case "CSHARP-USING":
-                        config.CSharpUsings.Add(data);
-                        break;
-
-                    case "JAVA-IMPORT":
-                        config.JavaImports.Add(data);
+                    case "CODE-IMPORT":
+                        config.Imports.Add(data);
                         break;
 
                     default:
