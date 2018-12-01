@@ -1,0 +1,12 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-python.txt
+IMPORT: ../../../Interpreter/headers-python.txt
+
+LANGUAGE: python
+
+DEPENDENCY: VM: ../../../Interpreter/python-app.txt
+
+OUTPUT-FUNCTIONS: ../native/python-app/gen/lib_resources.py
+CODE-IMPORT: code.vm as VM
+
+EXT: _lib_resources_read_text: ResourceReader_readTextFile('res/text/' + [ARG:1])
