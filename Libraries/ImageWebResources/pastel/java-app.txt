@@ -1,0 +1,17 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-java.txt
+IMPORT: ../../../Interpreter/headers-java.txt
+
+LANGUAGE: java
+
+DEPENDENCY: VM: ../../../Interpreter/java-app.txt
+
+OUTPUT-STRUCTS: ../native/java-app/gen/structs
+OUTPUT-FUNCTIONS: ../native/java-app/gen/LibraryWrapper.java
+
+NAMESPACE-FUNCTIONS: org.crayonlang.libraries.imagewebresources
+NAMESPACE-STRUCTS: org.crayonlang.libraries.imagewebresources
+FUNCTION-WRAPPER-CLASS: LibraryWrapper
+
+EXT: _lib_imagewebresources_isJavascript: TranslationHelper.alwaysFalse()
+EXT: _lib_imagewebresources_bytesToImage: ImageDownloader.bytesToImage([ARG:1], [ARG:2])

@@ -13,4 +13,4 @@ NAMESPACE-FUNCTIONS: Interpreter.Libraries.UserData
 NAMESPACE-STRUCTS: Interpreter.Libraries.UserData
 FUNCTION-WRAPPER-CLASS: LibraryWrapper
 
-EXT: _lib_userdata_getProjectSandboxDirectory: CsxaTranslationHelper.GetUserDataDirectory([ARG:1])
+EXT: _lib_userdata_getProjectSandboxDirectory: "";

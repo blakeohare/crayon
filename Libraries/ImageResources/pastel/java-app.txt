@@ -1,0 +1,20 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-java.txt
+IMPORT: ../../../Interpreter/headers-java.txt
+
+LANGUAGE: java
+
+DEPENDENCY: VM: ../../../Interpreter/java-app.txt
+
+OUTPUT-STRUCTS: ../native/java-app/gen/structs
+OUTPUT-FUNCTIONS: ../native/java-app/gen/LibraryWrapper.java
+
+NAMESPACE-FUNCTIONS: org.crayonlang.libraries.imageresources
+NAMESPACE-STRUCTS: org.crayonlang.libraries.imageresources
+FUNCTION-WRAPPER-CLASS: LibraryWrapper
+
+EXT: _lib_imageresources_loadAsync: ImageResourcesHelper.imageLoadAsync([ARG:1], [ARG:2], [ARG:3])
+EXT: _lib_imageresources_getManifestString: ImageResourcesHelper.getImageResourceManifestString()
+EXT: _lib_imageresources_generateNativeBitmapOfSize: ImageResourcesHelper.generateNativeBitmapOfSize([ARG:1], [ARG:2])
+EXT: _lib_imageresources_blit: ImageResourcesHelper.blitImage([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
+EXT: _lib_imageresources_checkLoaderIsDone: ImageResourcesHelper.checkLoaderIsDone([ARG:1], [ARG:2])
