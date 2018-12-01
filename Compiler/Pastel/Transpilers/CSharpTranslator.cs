@@ -64,10 +64,11 @@ namespace Pastel.Transpilers
                 lines.Add("}");
             }
 
-            if (config.NamespaceForFunctions != null)
+            string nsValue = isForStruct ? config.NamespaceForStructs : config.NamespaceForFunctions;
+            if (nsValue != null)
             {
                 PastelUtil.IndentLines(this.TabChar, lines);
-                lines.InsertRange(0, new string[] { "namespace " + config.NamespaceForFunctions, "{" });
+                lines.InsertRange(0, new string[] { "namespace " + nsValue, "{" });
                 lines.Add("}");
             }
 
