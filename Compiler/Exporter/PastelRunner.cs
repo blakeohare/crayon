@@ -60,7 +60,6 @@ namespace Exporter
                 string vmSourceOutput = System.IO.Path.GetFullPath(FileUtil.JoinPath(vmSourceDir, "..", "gen", platform.Name));
 
                 Dictionary<string, object> constants = platform.GetFlattenedConstantFlags(false);
-                VmGenerator.AddTypeEnumsToConstants(constants);
 
                 PastelContext vmContext = new PastelContext(vmSourceDir, platform.Language, vmCodeLoader);
                 foreach (string key in constants.Keys)

@@ -244,28 +244,14 @@ namespace Exporter
                         }
 
                         string from = instruction["from"];
-                        bool isExternalDllSource = from.StartsWith("LIB:");
 
                         entity = new ExportEntity();
 
-                        if (isExternalDllSource)
+                        entity.FileOutput = new FileOutput()
                         {
-                            string[] parts = from.Split(':');
-                            if (parts.Length != 3) throw new InvalidOperationException("DOTNET_DLL from=LIB: references must contain a library name followed by a ':' followed by the resource path in that library.");
-                            string extLibName = parts[1].Trim();
-                            from = parts[2];
-
-                            entity.DeferredFileOutputBytesLibraryName = extLibName;
-                            entity.DeferredFileOutputBytesLibraryPath = from.Trim();
-                        }
-                        else
-                        {
-                            entity.FileOutput = new FileOutput()
-                            {
-                                Type = FileOutputType.Binary,
-                                BinaryContent = this.library.Metadata.ReadFileBytes("native/" + from)
-                            };
-                        }
+                            Type = FileOutputType.Binary,
+                            BinaryContent = this.library.Metadata.ReadFileBytes("native/" + from)
+                        };
 
                         entity.Values["hintpath"] = instruction["hintpath"];
                         foreach (string dllAttr in new string[] {

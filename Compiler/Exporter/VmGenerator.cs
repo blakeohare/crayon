@@ -15,14 +15,6 @@ namespace Exporter
 
     public class VmGenerator
     {
-        internal static void AddTypeEnumsToConstants(Dictionary<string, object> constantFlags)
-        {
-            foreach (Types type in Enum.GetValues(typeof(Types)))
-            {
-                constantFlags["TYPE_ID_" + type.ToString()] = (int)type;
-            }
-        }
-
         private List<Platform.LibraryForExport> GetLibrariesForExportPastelFree(
             Platform.AbstractPlatform platform,
             Dictionary<string, AssemblyMetadata> librariesById)
@@ -42,69 +34,6 @@ namespace Exporter
             return output;
         }
 
-        private List<Platform.LibraryForExport> GetLibrariesForExport(
-            Platform.AbstractPlatform platform,
-            Dictionary<string, AssemblyMetadata> librariesById,
-            Dictionary<string, object> constantFlags,
-            PastelContext vm)
-        {
-            using (new PerformanceSection("VmGenerator.GetLibrariesForExport"))
-            {
-                Dictionary<string, PastelContext> libraryCompilation = this.GenerateLibraryParseTree(
-                    platform,
-                    constantFlags,
-                    librariesById.Values,
-                    vm);
-
-                List<Platform.LibraryForExport> libraries = new List<Platform.LibraryForExport>();
-                Dictionary<string, LibraryExporter> libraryByName = new Dictionary<string, LibraryExporter>();
-                foreach (string libraryId in libraryCompilation.Keys.OrderBy(s => s))
-                {
-                    LibraryExporter library = LibraryExporter.Get(librariesById[libraryId], platform);
-                    libraryByName[library.Metadata.ID] = library;
-                    PastelContext libraryPastelContext = libraryCompilation.ContainsKey(library.Metadata.ID)
-                        ? libraryCompilation[library.Metadata.ID]
-                        : null;
-                    Platform.LibraryForExport libraryForExport = this.CreateLibraryForExport(
-                        library.Metadata.ID,
-                        library.Metadata.Version,
-                        libraryPastelContext,
-                        library.Resources);
-                    libraries.Add(libraryForExport);
-                }
-
-                // Now that all libraries are read and initialized, go through and resolve all deferred DLL's that required all libraries to be loaded.
-                foreach (Platform.LibraryForExport lfe in libraries)
-                {
-                    foreach (Platform.ExportEntity ee in lfe.ExportEntities.GetValueEnumerator())
-                    {
-                        if (ee.DeferredFileOutputBytesLibraryName != null)
-                        {
-                            LibraryExporter sourceLibrary;
-                            if (!libraryByName.TryGetValue(ee.DeferredFileOutputBytesLibraryName, out sourceLibrary))
-                            {
-                                throw new InvalidOperationException("The library '" + lfe.Name + "' makes reference to another library '" + ee.DeferredFileOutputBytesLibraryName + "' which could not be found.");
-                            }
-
-                            string resourcePath = "native/" + ee.DeferredFileOutputBytesLibraryPath;
-                            byte[] dllFile = sourceLibrary.Metadata.ReadFileBytes(resourcePath);
-                            if (dllFile == null)
-                            {
-                                throw new InvalidOperationException("Could not find file: '" + resourcePath + "' in library '" + sourceLibrary.Metadata.ID + "'");
-                            }
-                            ee.FileOutput = new FileOutput()
-                            {
-                                Type = FileOutputType.Binary,
-                                BinaryContent = dllFile
-                            };
-                        }
-                    }
-                }
-
-                return libraries;
-            }
-        }
-
         public void GenerateVmSourceCodeForPlatform(
             Dictionary<string, FileOutput> output,
             Platform.AbstractPlatform platform,
@@ -120,24 +49,10 @@ namespace Exporter
                 bool isStandaloneVm = mode == VmGenerationMode.EXPORT_VM_AND_LIBRARIES;
                 Dictionary<string, object> constantFlags = platform.GetFlattenedConstantFlags(isStandaloneVm) ?? new Dictionary<string, object>();
 
-                AddTypeEnumsToConstants(constantFlags);
-
-                //PastelContext vmPastelContext = this.GenerateCoreVmParseTree(platform, codeLoader, constantFlags);
-
                 Dictionary<string, AssemblyMetadata> librariesByID = relevantLibraries.ToDictionary(lib => lib.ID);
-                List<Platform.LibraryForExport> libraries =
-                    this.GetLibrariesForExportPastelFree(platform, librariesByID);
-                    //this.GetLibrariesForExport(platform, librariesByID, constantFlags, vmPastelContext);
+                List<Platform.LibraryForExport> libraries = this.GetLibrariesForExportPastelFree(platform, librariesByID);
 
                 Platform.TemplateStorage templates = new Platform.TemplateStorage();
-
-                /*
-                Platform.TemplateGenerator.GenerateTemplatesForVmExport(templates, vmPastelContext);
-                foreach (Platform.LibraryForExport library in libraries.Where(lib => lib.HasNativeCode))
-                {
-                    Platform.TemplateGenerator.GenerateTemplatesForLibraryExport(templates, library);
-                }
-                //*/
 
                 if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
                 {
@@ -198,55 +113,6 @@ namespace Exporter
                     PastelContext = nullableLibaryPastelContext,
                     ExportEntities = exportEntities,
                 };
-            }
-        }
-
-        private PastelContext GenerateCoreVmParseTree(
-            Platform.AbstractPlatform platform,
-            IInlineImportCodeLoader codeLoader,
-            Dictionary<string, object> constantFlags)
-        {
-            using (new PerformanceSection("VmGenerator.GenerateCoreVmParseTree"))
-            {
-                PastelContext context = new PastelContext("Core VM", platform.Language, codeLoader);
-                foreach (string key in constantFlags.Keys)
-                {
-                    context.SetConstant(key, constantFlags[key]);
-                }
-
-                context.CompileFile("main.pst");
-                context.FinalizeCompilation();
-
-                return context;
-            }
-        }
-
-        private Dictionary<string, PastelContext> GenerateLibraryParseTree(
-            Platform.AbstractPlatform platform,
-            Dictionary<string, object> constantFlags,
-            ICollection<AssemblyMetadata> relevantLibraries,
-            PastelContext sharedScope)
-        {
-            using (new PerformanceSection("VmGenerator.GenerateLibraryParseTree"))
-            {
-                Dictionary<string, PastelContext> libraries = new Dictionary<string, PastelContext>();
-
-                foreach (AssemblyMetadata libraryMetadata in relevantLibraries)
-                {
-                    LibraryExporter library = LibraryExporter.Get(libraryMetadata, platform);
-
-                    if (libraryMetadata.IsMoreThanJustEmbedCode)
-                    {
-                        Dictionary<string, PastelContext> librarySharedContexts = new Dictionary<string, PastelContext>()
-                        {
-                            { "VM", sharedScope }
-                        };
-
-                        PastelRunner.CompileLibraryFiles(library, platform, libraries, librarySharedContexts, constantFlags);
-                    }
-                }
-
-                return libraries;
             }
         }
     }
