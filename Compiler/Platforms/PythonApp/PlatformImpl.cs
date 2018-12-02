@@ -23,7 +23,7 @@ namespace PythonApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            TemplateStorage templates,
+            TemplateStorage templatesDONOTUSE,
             IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
@@ -31,13 +31,15 @@ namespace PythonApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            TemplateStorage templates,
+            TemplateStorage templatesDONOTUSE,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
+            TemplateReader templates = new TemplateReader(this);
+            Dictionary<string, string> vmTemplates = templates.GetVmTemplates();
             output["code/vm.py"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -46,16 +48,18 @@ namespace PythonApp
                     this.LoadTextResource("Resources/TranslationHelper.txt", replacements),
                     this.LoadTextResource("Resources/LibraryRegistry.txt", replacements),
                     this.LoadTextResource("Resources/ResourceReader.txt", replacements),
-                    templates.GetCode("vm:functions"),
+                    vmTemplates["vm.py"],
                 }),
             };
 
             foreach (LibraryForExport library in libraries)
             {
-                string libraryName = library.Name;
-                List<string> libraryLines = new List<string>();
                 if (library.HasNativeCode)
                 {
+                    Dictionary<string, string> libTemplates = new TemplateReader(this).GetLibraryTemplates(library.Name);
+                    string libraryName = library.Name;
+                    List<string> libraryLines = new List<string>();
+
                     libraryLines.Add("import math");
                     libraryLines.Add("import os");
                     libraryLines.Add("import random");
@@ -64,11 +68,19 @@ namespace PythonApp
                     libraryLines.Add("import inspect");
                     libraryLines.Add("from code.vm import *");
                     libraryLines.Add("");
-                    libraryLines.Add(templates.GetCode("library:" + libraryName + ":functions"));
+                    foreach (string genCodePath in libTemplates.Keys.Where(k => k.StartsWith("gen/")))
+                    {
+                        libraryLines.Add(libTemplates[genCodePath]);
+                        libraryLines.Add("");
+                    }
                     libraryLines.Add("");
                     libraryLines.Add("_moduleInfo = ('" + libraryName + "', dict(inspect.getmembers(sys.modules[__name__])))");
                     libraryLines.Add("");
-                    libraryLines.AddRange(library.ExportEntities["EMBED_CODE"].Select(entity => entity.StringValue));
+                    foreach (string genCodePath in libTemplates.Keys.Where(k => k.StartsWith("source/")))
+                    {
+                        libraryLines.Add(libTemplates[genCodePath]);
+                        libraryLines.Add("");
+                    }
 
                     output["code/lib_" + libraryName.ToLower() + ".py"] = new FileOutput()
                     {
