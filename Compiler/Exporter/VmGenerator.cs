@@ -171,6 +171,7 @@ namespace Exporter
                 {
                     Name = libraryName,
                     Version = libraryVersion,
+                    HasNativeCode = libResDb.HasNativeCode,
                     PastelContext = nullableLibaryPastelContext,
                     ExportEntities = exportEntities,
                 };
