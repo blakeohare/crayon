@@ -15,7 +15,7 @@ namespace Pastel.Transpilers
 
         protected override void WrapCodeImpl(ProjectConfig config, List<string> lines, bool isForStruct)
         {
-            throw new NotImplementedException();
+            // do nothing
         }
 
         public override void TranslateArrayGet(TranspilerContext sb, Expression array, Expression index)
