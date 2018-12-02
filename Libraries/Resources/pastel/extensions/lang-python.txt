@@ -1,1 +1,0 @@
-$_lib_resources_read_text: ResourceReader_readTextFile('res/text/' + [ARG:1])

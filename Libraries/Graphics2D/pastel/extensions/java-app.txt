@@ -1,2 +1,0 @@
-$_lib_graphics2d_flipTexture: org.crayonlang.libraries.game.Graphics2DHelper.flipImage([ARG:1], [ARG:2], [ARG:3])
-$_lib_graphics2d_scale: org.crayonlang.libraries.game.Graphics2DHelper.scaleImage([ARG:1], [ARG:2], [ARG:3])

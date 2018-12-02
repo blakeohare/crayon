@@ -1,5 +1,0 @@
-$_lib_graphics2dtext_createNativeFont: LIB$graphics2dtext$createNativeFont([ARG:1], [ARG:2], [ARG:3])
-$_lib_graphics2dtext_getNativeFontUniqueKey: [ARG:1].splice(0, 0, [ARG:2], [ARG:3])
-$_lib_graphics2dtext_isSystemFontAvailable: LIB$graphics2dtext$isSystemFontAvailable([ARG:1])
-$_lib_graphics2dtext_renderTextToSurface: LIB$graphics2dtext$renderText([ARG:1], [ARG:2], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10], [ARG:11], [ARG:12])
-$_lib_graphics2dtext_isDynamicFontLoaded: LIB$graphics2dtext$isDynamicFontLoaded()
