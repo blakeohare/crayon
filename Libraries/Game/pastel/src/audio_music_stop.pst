@@ -1,4 +1,4 @@
-﻿VM.Value lib_audio_music_stop(VM.VmContext vm, Array<VM.Value> args) {
+﻿VM.Value lib_game_audio_music_stop(VM.VmContext vm, Array<VM.Value> args) {
     // TODO: implement this.
     return vm.globals.valueNull;
 }

@@ -2,7 +2,7 @@
     args[0] -> blank sound object instance
     args[1] -> resource path
 */
-VM.Value lib_audio_sfx_load_from_resource(VM.VmContext vm, Array<VM.Value> args) {
+VM.Value lib_game_audio_sfx_load_from_resource(VM.VmContext vm, Array<VM.Value> args) {
     VM.ObjectInstance soundInstance = (VM.ObjectInstance) args[0].internalValue;
     lib_audio_load_sfx_from_resourceImpl(
         soundInstance, // TODO: pass in nativeData instead

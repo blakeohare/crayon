@@ -2,7 +2,7 @@
     args[0] -> music instance with unintialized native data
     args[1] -> filepath
 */
-VM.Value lib_audio_music_load_from_file(VM.VmContext vm, Array<VM.Value> args) {
+VM.Value lib_game_audio_music_load_from_file(VM.VmContext vm, Array<VM.Value> args) {
     // TODO: implement this.
     return vm.globals.valueNull;
 }
