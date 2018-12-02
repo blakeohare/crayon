@@ -1,5 +1,0 @@
-﻿document.addEventListener('DOMContentLoaded', function () {
-  main();
-});
-
-C$common$globalOptions['fullscreen'] = true;
