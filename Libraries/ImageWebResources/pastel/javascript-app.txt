@@ -1,0 +1,13 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-javascript.txt
+IMPORT: ../../../Interpreter/headers-javascript.txt
+
+LANGUAGE: javascript
+
+DEPENDENCY: VM: ../../../Interpreter/javascript-app.txt
+
+OUTPUT-FUNCTIONS: ../native/javascript-app/gen/lib_imagewebresources.js
+
+EXT: _lib_imagewebresources_isJavascript: true
+EXT: _lib_imagewebresources_bytesToImage: C$common$alwaysTrue()
+EXT: _lib_imagewebresources_jsDownload: LIB$imagewebresources$download([ARG:1], [ARG:2])

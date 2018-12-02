@@ -1,0 +1,11 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-javascript.txt
+IMPORT: ../../../Interpreter/headers-javascript.txt
+
+LANGUAGE: javascript
+
+DEPENDENCY: VM: ../../../Interpreter/javascript-app.txt
+
+OUTPUT-FUNCTIONS: ../native/lang-javascript/gen/lib_json.js
+
+EXT: _lib_json_parse: LIB$json$parseJson([ARG:1], [ARG:2])

@@ -1,0 +1,15 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-javascript.txt
+IMPORT: ../../../Interpreter/headers-javascript.txt
+
+LANGUAGE: javascript
+
+DEPENDENCY: VM: ../../../Interpreter/javascript-app.txt
+
+OUTPUT-FUNCTIONS: ../native/javascript-app/gen/lib_http.js
+
+EXT: _lib_http_readResponseData: LIB$http$readResponseData([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+EXT: _lib_http_getResponseBytes: LIB$http$getResponseBytes([ARG:1], [ARG:2], [ARG:3])
+EXT: _lib_http_sendRequestAsynchronous: LIB$http$sendRequestAsync([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7])
+EXT: _lib_http_sendRequestSynchronous: LIB$http$sendRequestSync([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
+EXT: _lib_http_pollRequest: LIB$http$pollRequest([ARG:1])

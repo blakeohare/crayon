@@ -1,0 +1,15 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-javascript.txt
+IMPORT: ../../../Interpreter/headers-javascript.txt
+
+LANGUAGE: javascript
+
+DEPENDENCY: VM: ../../../Interpreter/javascript-app.txt
+
+OUTPUT-FUNCTIONS: ../native/lang-javascript/gen/lib_gamegifcap.js
+
+EXT: _lib_gamegifcap_createGifContext: {}
+EXT: _lib_gamegifcap_setRecordSize: C$common$alwaysFalse()
+EXT: _lib_gamegifcap_isSupported: C$common$alwaysFalse()
+EXT: _lib_gamegifcap_screenCap: 0
+EXT: _lib_gamegifcap_saveToDisk: 0
