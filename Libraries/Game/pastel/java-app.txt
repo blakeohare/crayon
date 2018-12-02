@@ -10,8 +10,8 @@ DEPENDENCY: VM: ../../../Interpreter/java-app.txt
 OUTPUT-STRUCTS: ../native/java-app/gen/structs
 OUTPUT-FUNCTIONS: ../native/java-app/gen/LibraryWrapper.java
 
-NAMESPACE-FUNCTIONS: org.crayonlang.interpreter.libraries.game
-NAMESPACE-STRUCTS: org.crayonlang.interpreter.libraries.game
+NAMESPACE-FUNCTIONS: org.crayonlang.libraries.game
+NAMESPACE-STRUCTS: org.crayonlang.libraries.game
 FUNCTION-WRAPPER-CLASS: LibraryWrapper
 
 EXT: _lib_game_get_events_raw_list: GameWindow.INSTANCE.pumpEventQueue()

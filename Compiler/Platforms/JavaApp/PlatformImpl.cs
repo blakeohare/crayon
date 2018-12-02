@@ -37,116 +37,59 @@ namespace JavaApp
             string srcPath = "src";
             string srcPackagePath = srcPath + "/" + replacements["JAVA_PACKAGE"].Replace('.', '/') + "/";
 
-            string[] imports = new string[]
-            {
-                "import org.crayonlang.interpreter.ResourceReader;",
-            };
-
-            List<string> defaultImports = new List<string>()
+            List<string> imports = new List<string>()
             {
                 "import java.util.ArrayList;",
                 "import java.util.HashMap;",
                 "import org.crayonlang.interpreter.Interpreter;",
                 "import org.crayonlang.interpreter.TranslationHelper;",
+                "import org.crayonlang.interpreter.ResourceReader;",
                 "import org.crayonlang.interpreter.structs.*;",
             };
 
-            defaultImports.AddRange(imports);
-            defaultImports.Sort();
+            imports.Sort();
+            TemplateReader templateReader = new TemplateReader(this);
 
-            foreach (LibraryForExport library in libraries)
+            foreach (LibraryForExport library in libraries.Where(t => t.HasNativeCode))
             {
-                if (library.HasNativeCode)
+                Dictionary<string, string> libraryTemplates = templateReader.GetLibraryTemplates(library.Name);
+
+                string libraryPath = srcPath + "/org/crayonlang/libraries/" + library.Name.ToLower();
+
+                foreach (string templatePath in libraryTemplates.Keys.Where(t => t.StartsWith("gen/") || t.StartsWith("source/")))
                 {
-                    List<string> libraryCode = new List<string>()
-                    {
-                        "package org.crayonlang.libraries." + library.Name.ToLower() + ";",
-                        "",
-                    };
-                    libraryCode.AddRange(defaultImports);
-                    libraryCode.AddRange(new string[]
-                    {
-                        "",
-                        "public final class LibraryWrapper {",
-                        "  private LibraryWrapper() {}",
-                        "",
-                    });
-
-                    libraryCode.Add(templates.GetCode("library:" + library.Name + ":functions"));
-
-                    libraryCode.Add("}");
-                    libraryCode.Add("");
-
-                    string libraryPath = srcPath + "/org/crayonlang/libraries/" + library.Name.ToLower();
-
-                    output[libraryPath + "/LibraryWrapper.java"] = new FileOutput()
+                    string code = libraryTemplates[templatePath];
+                    string realPath = templatePath.Substring(templatePath.IndexOf('/') + 1);
+                    output[libraryPath + "/" + realPath] = new FileOutput()
                     {
                         Type = FileOutputType.Text,
-                        TextContent = string.Join(this.NL, libraryCode),
+                        TextContent = code,
+                        TrimBomIfPresent = realPath.EndsWith(".java"),
                     };
-
-                    foreach (string structKey in templates.GetTemplateKeysWithPrefix("library:" + library.Name + ":struct:"))
-                    {
-                        string structName = templates.GetName(structKey);
-                        string structCode = templates.GetCode(structKey);
-
-                        structCode = this.WrapStructCodeWithImports(this.NL, structCode);
-
-                        // This is kind of a hack.
-                        // TODO: better.
-                        structCode = structCode.Replace(
-                            "package org.crayonlang.interpreter.structs;",
-                            "package org.crayonlang.libraries." + library.Name.ToLower() + ";");
-
-                        output[libraryPath + "/" + structName + ".java"] = new FileOutput()
-                        {
-                            Type = FileOutputType.Text,
-                            TextContent = structCode,
-                        };
-                    }
-
-                    foreach (ExportEntity supFile in library.ExportEntities["COPY_CODE"])
-                    {
-                        string path = supFile.Values["target"].Replace("%LIBRARY_PATH%", libraryPath);
-                        output[path] = supFile.FileOutput;
-                    }
                 }
             }
-            foreach (string structKey in templates.GetTemplateKeysWithPrefix("vm:struct:"))
+
+            Dictionary<string, string> vmTemplates = templateReader.GetVmTemplates();
+
+            output["src/org/crayonlang/interpreter/vm/CrayonWrapper.java"] = new FileOutput()
             {
-                string structName = templates.GetName(structKey);
-                string structCode = templates.GetCode(structKey);
+                Type = FileOutputType.Text,
+                TextContent = vmTemplates["CrayonWrapper.java"],
+                TrimBomIfPresent = true,
+            };
+
+            foreach (string structKey in vmTemplates.Keys.Where(k => k.StartsWith("structs/")))
+            {
+                string structName = System.IO.Path.GetFileNameWithoutExtension(structKey);
+                string structCode = vmTemplates[structKey];
 
                 output["src/org/crayonlang/interpreter/structs/" + structName + ".java"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = this.WrapStructCodeWithImports(this.NL, structCode),
+                    TextContent = structCode,
+                    TrimBomIfPresent = true,
                 };
             }
-
-            StringBuilder sb = new StringBuilder();
-
-            sb.Append(string.Join(this.NL, new string[] {
-                "package org.crayonlang.interpreter;",
-                "",
-                "import java.util.ArrayList;",
-                "import java.util.HashMap;",
-                "import org.crayonlang.interpreter.structs.*;",
-                "",
-                "public final class Interpreter {",
-                "  private Interpreter() {}",
-                "",
-            }));
-
-            sb.Append(templates.GetCode("vm:functions"));
-            sb.Append("}");
-            sb.Append(this.NL);
-
-            output["src/org/crayonlang/interpreter/Interpreter.java"] = new FileOutput()
-            {
-                Type = FileOutputType.Text,
-                TextContent = sb.ToString(),
-            };
 
             // common Java helper files
             this.CopyResourceAsText(output, "src/org/crayonlang/interpreter/LibraryInstance.java", "Resources/LibraryInstance.java", replacements);

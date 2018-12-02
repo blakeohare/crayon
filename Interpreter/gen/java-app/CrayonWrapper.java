@@ -2,7 +2,9 @@ package org.crayonlang.interpreter.vm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.crayonlang.interpreter.PlatformTranslationHelper;;
 import org.crayonlang.interpreter.structs.*;
+import org.crayonlang.interpreter.TranslationHelper;;
 
 public final class CrayonWrapper {
 
@@ -5001,10 +5003,6 @@ public final class CrayonWrapper {
             ec.stackTop = stack;
             stack.postFinallyBehavior = 0;
             ec.currentValueStackSize = valueStackSize;
-            if ((false && (stack.debugStepTracker != null))) {
-              hasInterrupt = true;
-              ec.activeInterrupt = new Interrupt(5, 0, "", 0.0, stack.debugStepTracker);
-            }
           }
           break;
         case 35:
@@ -5456,10 +5454,6 @@ public final class CrayonWrapper {
             pc = stack.pc;
             localsStackOffset = stack.localsStackOffset;
             localsStackSetToken = stack.localsStackSetToken;
-            if ((false && (stack.debugStepTracker != null))) {
-              hasInterrupt = true;
-              ec.activeInterrupt = new Interrupt(5, 0, "", 0.0, stack.debugStepTracker);
-            }
           }
           break;
         case 57:
@@ -5580,10 +5574,6 @@ public final class CrayonWrapper {
             ec.stackTop = stack;
             stack.postFinallyBehavior = 0;
             ec.currentValueStackSize = valueStackSize;
-            if ((false && (stack.debugStepTracker != null))) {
-              hasInterrupt = true;
-              ec.activeInterrupt = new Interrupt(5, 0, "", 0.0, stack.debugStepTracker);
-            }
           } else {
             hasInterrupt = EX_InvalidArgument(ec, "Thrown value is not an exception.");
           }

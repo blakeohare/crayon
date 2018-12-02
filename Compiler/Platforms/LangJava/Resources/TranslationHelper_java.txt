@@ -8,6 +8,7 @@ import org.crayonlang.interpreter.structs.InterpreterResult;
 import org.crayonlang.interpreter.structs.Value;
 import org.crayonlang.interpreter.structs.VmContext;
 import org.crayonlang.interpreter.structs.VmGlobals;
+import org.crayonlang.interpreter.vm.CrayonWrapper;
 
 public final class TranslationHelper {
 
@@ -35,15 +36,15 @@ public final class TranslationHelper {
   public static String getResourceManifest() { return resourceManifest; }
 
   public static void startInterpreter(boolean invokeSystemExit) {
-    handleVmResult(Interpreter.startVm(vmContext), invokeSystemExit);
+    handleVmResult(CrayonWrapper.startVm(vmContext), invokeSystemExit);
   }
 
   public static InterpreterResult runInterpreter(int executionContextId, boolean invokeSystemExit) {
-    return handleVmResult(Interpreter.runInterpreter(vmContext, executionContextId), invokeSystemExit);
+    return handleVmResult(CrayonWrapper.runInterpreter(vmContext, executionContextId), invokeSystemExit);
   }
 
   public static InterpreterResult runInterpreterWithFunctionPointer(Value functionPointer, Value[] args, boolean invokeSystemExit) {
-    return handleVmResult(Interpreter.runInterpreterWithFunctionPointer(vmContext, functionPointer, args), invokeSystemExit);
+    return handleVmResult(CrayonWrapper.runInterpreterWithFunctionPointer(vmContext, functionPointer, args), invokeSystemExit);
   }
 
   private static InterpreterResult handleVmResult(InterpreterResult result, boolean invokeSystemExit) {
@@ -57,7 +58,7 @@ public final class TranslationHelper {
       } else {
         loadAssembly(result.loadAssemblyInformation);
       }
-      result = Interpreter.runInterpreter(vmContext, result.executionContextId);
+      result = CrayonWrapper.runInterpreter(vmContext, result.executionContextId);
     }
 
     if (result.status == 1 && result.isRootContext) {

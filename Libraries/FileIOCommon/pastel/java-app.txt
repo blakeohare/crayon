@@ -9,8 +9,8 @@ DEPENDENCY: VM: ../../../Interpreter/java-app.txt
 OUTPUT-STRUCTS: ../native/java-app/gen/structs
 OUTPUT-FUNCTIONS: ../native/java-app/gen/LibraryWrapper.java
 
-NAMESPACE-FUNCTIONS: org.crayonlang.interpreter.libraries.fileiocommon
-NAMESPACE-STRUCTS: org.crayonlang.interpreter.libraries.fileiocommon
+NAMESPACE-FUNCTIONS: org.crayonlang.libraries.fileiocommon
+NAMESPACE-STRUCTS: org.crayonlang.libraries.fileiocommon
 FUNCTION-WRAPPER-CLASS: LibraryWrapper
 
 EXT: _lib_fileiocommon_directoryCreate: FileIOHelper.createDirectory([ARG:2])
