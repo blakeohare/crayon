@@ -2,6 +2,8 @@ IMPORT: base.txt
 IMPORT: ../../../Interpreter/flags-csharp.txt
 IMPORT: ../../../Interpreter/headers-csharp.txt
 
+CODE-IMPORT: Interpreter.Vm
+
 LANGUAGE: csharp
 FLAG: IMAGE_RESOURCES_USES_PIXEL_EDIT_SESSIONS: true
 

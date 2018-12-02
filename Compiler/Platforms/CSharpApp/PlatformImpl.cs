@@ -83,10 +83,12 @@ namespace CSharpApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            TemplateStorage templates,
+            TemplateStorage templatesDONOTUSE,
             IList<LibraryForExport> everyLibrary)
         {
             Dictionary<string, string> libraryProjectNameToGuid = new Dictionary<string, string>();
+
+            TemplateReader templateReader = new TemplateReader(this);
 
             string runtimeProjectGuid = IdGenerator.GenerateCSharpGuid("runtime", "runtime-project");
             string runtimeAssemblyGuid = IdGenerator.GenerateCSharpGuid("runtime", "runtime-assembly");
@@ -112,30 +114,29 @@ namespace CSharpApp
             string dllsCopiedOriginal = replacements["DLLS_COPIED"];
             string embeddedResources = replacements["EMBEDDED_RESOURCES"];
             replacements["EMBEDDED_RESOURCES"] = "";
-            foreach (LibraryForExport library in everyLibrary)
+            foreach (LibraryForExport library in everyLibrary.Where(lib => lib.HasNativeCode))
             {
                 string libBaseDir = "Libs/" + library.Name + "/";
                 List<LangCSharp.DllFile> dlls = new List<LangCSharp.DllFile>();
-                if (this.GetLibraryCode(templates, libBaseDir, library, dlls, output))
+                this.GetLibraryCode(templateReader, libBaseDir, library, dlls, output);
+
+                string name = library.Name;
+                string projectGuid = IdGenerator.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-project");
+                replacements["PROJECT_GUID"] = projectGuid;
+                replacements["ASSEMBLY_GUID"] = IdGenerator.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-assembly");
+                replacements["PROJECT_TITLE"] = library.Name;
+                replacements["LIBRARY_NAME"] = library.Name;
+                LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls);
+
+                libraryProjectNameToGuid[name] = projectGuid;
+
+                this.CopyResourceAsText(output, libBaseDir + library.Name + ".sln", "ResourcesLib/Solution.sln", replacements);
+                this.CopyResourceAsText(output, libBaseDir + library.Name + ".csproj", "ResourcesLib/ProjectFile.csproj", replacements);
+                this.CopyResourceAsText(output, libBaseDir + "Properties/AssemblyInfo.cs", "ResourcesLib/AssemblyInfo.cs", replacements);
+
+                foreach (LangCSharp.DllFile dll in dlls)
                 {
-                    string name = library.Name;
-                    string projectGuid = IdGenerator.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-project");
-                    replacements["PROJECT_GUID"] = projectGuid;
-                    replacements["ASSEMBLY_GUID"] = IdGenerator.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-assembly");
-                    replacements["PROJECT_TITLE"] = library.Name;
-                    replacements["LIBRARY_NAME"] = library.Name;
-                    LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls);
-
-                    libraryProjectNameToGuid[name] = projectGuid;
-
-                    this.CopyResourceAsText(output, libBaseDir + library.Name + ".sln", "ResourcesLib/Solution.sln", replacements);
-                    this.CopyResourceAsText(output, libBaseDir + library.Name + ".csproj", "ResourcesLib/ProjectFile.csproj", replacements);
-                    this.CopyResourceAsText(output, libBaseDir + "Properties/AssemblyInfo.cs", "ResourcesLib/AssemblyInfo.cs", replacements);
-
-                    foreach (LangCSharp.DllFile dll in dlls)
-                    {
-                        output[libBaseDir + dll.HintPath] = dll.FileOutput;
-                    }
+                    output[libBaseDir + dll.HintPath] = dll.FileOutput;
                 }
             }
             replacements["DLL_REFERENCES"] = dllReferencesOriginal;
@@ -145,7 +146,7 @@ namespace CSharpApp
             replacements["ASSEMBLY_GUID"] = runtimeAssemblyGuid;
 
             this.CopyTemplatedFiles(baseDir, output, replacements, true);
-            this.ExportInterpreter(templates, baseDir, output);
+            this.ExportInterpreter(templateReader, baseDir, output);
             this.ExportProjectFiles(baseDir, output, replacements, libraryProjectNameToGuid, true);
             this.CopyResourceAsBinary(output, baseDir + "icon.ico", "ResourcesVm/icon.ico");
 
@@ -154,76 +155,74 @@ namespace CSharpApp
         }
 
         // Returns true if any export is necessary i.e. bytecode-only libraries will return false.
-        private bool GetLibraryCode(
-            TemplateStorage templates,
+        private void GetLibraryCode(
+            TemplateReader templateReader,
             string baseDir,
             LibraryForExport library,
             List<LangCSharp.DllFile> dllsOut,
             Dictionary<string, FileOutput> filesOut)
         {
             string libraryName = library.Name;
+            Dictionary<string, string> libTemplates = templateReader.GetLibraryTemplates(libraryName);
             List<string> libraryLines = new List<string>();
-            if (library.HasNativeCode)
+
+            string libraryDir = baseDir + "Libraries/" + libraryName;
+            string allFunctionCode = libTemplates["gen/LibraryWrapper.cs"];
+            libraryLines.Add(allFunctionCode);
+
+            foreach (string structKey in libTemplates.Keys.Where(t => t.StartsWith("gen/structs/")))
             {
-                string libraryDir = baseDir + "Libraries/" + libraryName;
-                string allFunctionCode = templates.GetCode("library:" + libraryName + ":functions");
-                libraryLines.Add(allFunctionCode);
-
-                foreach (string structKey in templates.GetTemplateKeysWithPrefix("library:" + libraryName + ":struct:"))
-                {
-                    string structName = templates.GetName(structKey);
-                    filesOut[libraryDir + "/Structs/" + structName + ".cs"] = new FileOutput()
-                    {
-                        Type = FileOutputType.Text,
-                        TextContent = this.WrapStructCode(templates.GetCode(structKey)),
-                    };
-                }
-
-                filesOut[libraryDir + "/LibraryWrapper.cs"] = new FileOutput()
+                string structFileName = structKey.Substring(structKey.LastIndexOf('/') + 1);
+                string structName = System.IO.Path.GetFileNameWithoutExtension(structFileName);
+                filesOut[libraryDir + "/Structs/" + structName + ".cs"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = string.Join(this.NL,
-                        "using System;",
-                        "using System.Collections.Generic;",
-                        "using System.Linq;",
-                        "using Interpreter;",
-                        "using Interpreter.Structs;",
-                        "using Interpreter.Vm;",
-                        "",
-                        "namespace Interpreter.Libraries." + libraryName,
-                        "{",
-                        "    public static class LibraryWrapper",
-                        "    {",
-                        IndentCodeWithSpaces(string.Join(this.NL, libraryLines), 8),
-                        "    }",
-                        "}",
-                        ""),
+                    TextContent = libTemplates[structKey],
                 };
-
-                foreach (ExportEntity codeFile in library.ExportEntities["COPY_CODE"])
-                {
-                    string targetPath = codeFile.Values["target"].Replace("%LIBRARY_PATH%", libraryDir);
-                    filesOut[targetPath] = codeFile.FileOutput;
-                }
-
-                foreach (ExportEntity dllFile in library.ExportEntities["DOTNET_DLL"])
-                {
-                    dllsOut.Add(new LangCSharp.DllFile(dllFile));
-                }
-
-                return true;
             }
 
-            return false;
+            filesOut[libraryDir + "/LibraryWrapper.cs"] = new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = string.Join(this.NL,
+                    "using System;",
+                    "using System.Collections.Generic;",
+                    "using System.Linq;",
+                    "using Interpreter;",
+                    "using Interpreter.Structs;",
+                    "using Interpreter.Vm;",
+                    "",
+                    "namespace Interpreter.Libraries." + libraryName,
+                    "{",
+                    "    public static class LibraryWrapper",
+                    "    {",
+                    string.Join(this.NL, libraryLines),
+                    "    }",
+                    "}",
+                    ""),
+            };
+
+            foreach (ExportEntity codeFile in library.ExportEntities["COPY_CODE"])
+            {
+                string targetPath = codeFile.Values["target"].Replace("%LIBRARY_PATH%", libraryDir);
+                filesOut[targetPath] = codeFile.FileOutput;
+            }
+
+            foreach (ExportEntity dllFile in library.ExportEntities["DOTNET_DLL"])
+            {
+                dllsOut.Add(new LangCSharp.DllFile(dllFile));
+            }
         }
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            TemplateStorage templates,
+            TemplateStorage templatesDONOTUSE,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
         {
+            TemplateReader templateReader = new TemplateReader(this);
+
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             string projectId = options.GetString(ExportOptionKey.PROJECT_ID);
             string baseDir = projectId + "/";
@@ -234,9 +233,9 @@ namespace CSharpApp
 
             HashSet<string> dotNetLibs = new HashSet<string>();
 
-            foreach (LibraryForExport library in libraries)
+            foreach (LibraryForExport library in libraries.Where(lib => lib.HasNativeCode))
             {
-                this.GetLibraryCode(templates, baseDir, library, dlls, output);
+                this.GetLibraryCode(templateReader, baseDir, library, dlls, output);
             }
 
             LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls);
@@ -249,7 +248,7 @@ namespace CSharpApp
                             "    <Reference Include=\"" + dotNetLib + "\" />")
                     .ToArray());
 
-            this.ExportInterpreter(templates, baseDir, output);
+            this.ExportInterpreter(templateReader, baseDir, output);
 
             output[baseDir + "Resources/ByteCode.txt"] = resourceDatabase.ByteCodeFile;
             output[baseDir + "Resources/ResourceManifest.txt"] = resourceDatabase.ResourceManifestFile;
@@ -330,55 +329,28 @@ namespace CSharpApp
             this.CopyResourceAsText(output, baseDir + "Debugger.cs", debuggerResource, replacements);
         }
 
-        private string WrapStructCode(string structCode)
-        {
-            return string.Join("\r\n", new string[] {
-                "using System;",
-                "using System.Collections.Generic;",
-                "",
-                "namespace Interpreter.Structs",
-                "{",
-                IndentCodeWithSpaces(structCode.Trim(), 4),
-                "}",
-                ""
-            });
-        }
-
         private void ExportInterpreter(
-            TemplateStorage templates,
+            TemplateReader templateReader,
             string baseDir,
             Dictionary<string, FileOutput> output)
         {
-            foreach (string structKey in templates.GetTemplateKeysWithPrefix("vm:struct:"))
+            Dictionary<string, string> vmTemplates = templateReader.GetVmTemplates();
+
+            foreach (string structKey in vmTemplates.Keys.Where(k => k.StartsWith("structs/")))
             {
-                string structName = templates.GetName(structKey);
+                string structFileName = structKey.Substring(structKey.LastIndexOf('/') + 1);
+                string structName = System.IO.Path.GetFileNameWithoutExtension(structFileName);
                 output[baseDir + "Structs/" + structName + ".cs"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = this.WrapStructCode(templates.GetCode(structKey)),
+                    TextContent = vmTemplates[structKey],
                 };
             }
-
-            string functionCode = templates.GetCode("vm:functions");
 
             output[baseDir + "Vm/CrayonWrapper.cs"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = string.Join("\r\n", new string[] {
-                    "using System;",
-                    "using System.Collections.Generic;",
-                    "using System.Linq;",
-                    "using Interpreter.Structs;",
-                    "",
-                    "namespace Interpreter.Vm",
-                    "{",
-                    "    public class CrayonWrapper",
-                    "    {",
-                    IndentCodeWithSpaces(functionCode, 8),
-                    "    }",
-                    "}",
-                    ""
-                }),
+                TextContent = vmTemplates["CrayonWrapper.cs"],
             };
         }
 

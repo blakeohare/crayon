@@ -166,27 +166,6 @@ namespace Platform
             ResourceDatabase resourceDatabase,
             Options options);
 
-        public static string IndentCodeWithTabs(string code, int tabCount)
-        {
-            return IndentCodeImpl(code, Util.MultiplyString("\t", tabCount));
-        }
-
-        public static string IndentCodeWithSpaces(string code, int spaceCount)
-        {
-            return IndentCodeImpl(code, Util.MultiplyString(" ", spaceCount));
-        }
-
-        private static string IndentCodeImpl(string code, string tabSequence)
-        {
-            string newline = code.Contains("\r\n") ? "\r\n" : "\n";
-            string[] lines = code.Split('\n');
-            for (int i = 0; i < lines.Length; ++i)
-            {
-                lines[i] = tabSequence + lines[i].TrimEnd();
-            }
-            return string.Join(newline, lines);
-        }
-
         public abstract Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb);
 
         protected static Dictionary<string, string> GenerateGeneralReplacementsDictionary(Options options)
