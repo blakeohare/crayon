@@ -4,7 +4,7 @@
     args[2] -> volume ratio (0.0 to 1.0)
     args[3] -> pan ratio (-1.0 to 1.0)
 */
-VM.Value lib_audio_sfx_resume(VM.VmContext vm, Array<VM.Value> args) {
+VM.Value lib_game_audio_sfx_resume(VM.VmContext vm, Array<VM.Value> args) {
     VM.ObjectInstance sndInstance = (VM.ObjectInstance) args[0].internalValue; // snd
     object nativeSound = sndInstance.nativeData[0];
     VM.ObjectInstance sndResInstance = (VM.ObjectInstance) args[1].internalValue; // res
