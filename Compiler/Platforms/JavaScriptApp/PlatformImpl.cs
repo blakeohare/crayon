@@ -76,13 +76,11 @@ namespace JavaScriptApp
             List<LibraryForExport> librariesWithCode = new List<LibraryForExport>();
             foreach (LibraryForExport library in libraries)
             {
-                if (library.HasPastelCode)
+                if (library.HasNativeCode)
                 {
                     string libraryName = library.Name;
 
                     List<string> libraryLines = new List<string>();
-                    libraryLines.Add(templates.GetCode("library:" + libraryName + ":manifestfunc"));
-                    libraryLines.Add("");
                     libraryLines.Add(templates.GetCode("library:" + libraryName + ":functions"));
                     libraryLines.Add("");
                     libraryLines.Add("C$common$scrapeLibFuncNames('" + libraryName.ToLower() + "');");
