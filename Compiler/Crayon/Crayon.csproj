@@ -85,10 +85,6 @@
       <Project>{e2558b29-a032-40d0-90b0-1a9de368ec16}</Project>
       <Name>JavaScriptApp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Platforms\JavaScriptAppChrome\JavaScriptAppChrome.csproj">
-      <Project>{f83233e0-fd87-4db6-9b6b-db828240f3d3}</Project>
-      <Name>JavaScriptAppChrome</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Platforms\JavaScriptAppIos\JavaScriptAppIos.csproj">
       <Project>{c1876949-86d6-405e-b717-afc56c27e1c8}</Project>
       <Name>JavaScriptAppIos</Name>
