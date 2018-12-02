@@ -17,10 +17,7 @@ namespace LangC
 
         public override IDictionary<string, object> GetConstantFlags()
         {
-            return new Dictionary<string, object>()
-                {
-                    { "IS_ASYNC", false },
-                };
+            return new Dictionary<string, object>();
         }
 
         public override void ExportStandaloneVm(

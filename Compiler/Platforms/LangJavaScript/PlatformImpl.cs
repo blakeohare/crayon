@@ -42,10 +42,7 @@ namespace LangJavaScript
 
         public override IDictionary<string, object> GetConstantFlags()
         {
-            return new Dictionary<string, object>()
-                {
-                    { "IS_ASYNC", true },
-                };
+            return new Dictionary<string, object>();
         }
     }
 }

@@ -10,7 +10,6 @@ namespace LangCSharp
         public override string Name { get { return "lang-csharp"; } }
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\r\n"; } }
-        public override string GetInterpreterFunctionInvocationPrefix() { return "CrayonWrapper."; }
 
         public PlatformImpl()
             : base("CSHARP")
@@ -18,10 +17,7 @@ namespace LangCSharp
 
         public override IDictionary<string, object> GetConstantFlags()
         {
-            return new Dictionary<string, object>()
-                {
-                    { "IS_ASYNC", true },
-                };
+            return new Dictionary<string, object>();
         }
 
         public override void ExportStandaloneVm(

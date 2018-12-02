@@ -10,7 +10,6 @@ namespace LangJava
         public override string Name { get { return "lang-java"; } }
         public override string InheritsFrom { get { return null; } }
         public override string NL { get { return "\n"; } }
-        public override string GetInterpreterFunctionInvocationPrefix() { return "Interpreter."; }
 
         public PlatformImpl()
             : base("JAVA")
@@ -34,103 +33,6 @@ namespace LangJava
             throw new NotImplementedException();
         }
 
-        public static void ExportJavaLibraries(
-            AbstractPlatform platform,
-            TemplateStorage templates,
-            string srcPath,
-            IList<LibraryForExport> libraries,
-            Dictionary<string, FileOutput> output,
-            string[] extraImports)
-        {
-            List<string> defaultImports = new List<string>()
-            {
-                "import java.util.ArrayList;",
-                "import java.util.HashMap;",
-                "import org.crayonlang.interpreter.Interpreter;",
-                "import org.crayonlang.interpreter.TranslationHelper;",
-                "import org.crayonlang.interpreter.structs.*;",
-            };
-
-            defaultImports.AddRange(extraImports);
-            defaultImports.Sort();
-
-            foreach (LibraryForExport library in libraries)
-            {
-                if (library.HasNativeCode)
-                {
-                    List<string> libraryCode = new List<string>()
-                    {
-                        "package org.crayonlang.libraries." + library.Name.ToLower() + ";",
-                        "",
-                    };
-                    libraryCode.AddRange(defaultImports);
-                    libraryCode.AddRange(new string[]
-                    {
-                        "",
-                        "public final class LibraryWrapper {",
-                        "  private LibraryWrapper() {}",
-                        "",
-                    });
-
-                    libraryCode.Add(templates.GetCode("library:" + library.Name + ":functions"));
-
-                    libraryCode.Add("}");
-                    libraryCode.Add("");
-
-                    string libraryPath = srcPath + "/org/crayonlang/libraries/" + library.Name.ToLower();
-
-                    output[libraryPath + "/LibraryWrapper.java"] = new FileOutput()
-                    {
-                        Type = FileOutputType.Text,
-                        TextContent = string.Join(platform.NL, libraryCode),
-                    };
-
-                    foreach (string structKey in templates.GetTemplateKeysWithPrefix("library:" + library.Name + ":struct:"))
-                    {
-                        string structName = templates.GetName(structKey);
-                        string structCode = templates.GetCode(structKey);
-
-                        structCode = WrapStructCodeWithImports(platform.NL, structCode);
-
-                        // This is kind of a hack.
-                        // TODO: better.
-                        structCode = structCode.Replace(
-                            "package org.crayonlang.interpreter.structs;",
-                            "package org.crayonlang.libraries." + library.Name.ToLower() + ";");
-
-                        output[libraryPath + "/" + structName + ".java"] = new FileOutput()
-                        {
-                            Type = FileOutputType.Text,
-                            TextContent = structCode,
-                        };
-                    }
-
-                    foreach (ExportEntity supFile in library.ExportEntities["COPY_CODE"])
-                    {
-                        string path = supFile.Values["target"].Replace("%LIBRARY_PATH%", libraryPath);
-                        output[path] = supFile.FileOutput;
-                    }
-                }
-            }
-        }
-
-        public static string WrapStructCodeWithImports(string nl, string original)
-        {
-            List<string> lines = new List<string>();
-            lines.Add("package org.crayonlang.interpreter.structs;");
-            lines.Add("");
-            bool hasLists = original.Contains("public ArrayList<");
-            bool hasDictionaries = original.Contains("public HashMap<");
-            if (hasLists) lines.Add("import java.util.ArrayList;");
-            if (hasDictionaries) lines.Add("import java.util.HashMap;");
-            if (hasLists || hasDictionaries) lines.Add("");
-
-            lines.Add(original);
-            lines.Add("");
-
-            return string.Join(nl, lines);
-        }
-
         public override Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb)
         {
             // This is repeated in the JavaScriptAppAndroid platform.
@@ -149,10 +51,7 @@ namespace LangJava
 
         public override IDictionary<string, object> GetConstantFlags()
         {
-            return new Dictionary<string, object>()
-                {
-                    { "IS_ASYNC", true },
-                };
+            return new Dictionary<string, object>();
         }
     }
 }
