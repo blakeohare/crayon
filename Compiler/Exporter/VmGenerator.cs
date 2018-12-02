@@ -23,6 +23,25 @@ namespace Exporter
             }
         }
 
+        private List<Platform.LibraryForExport> GetLibrariesForExportPastelFree(
+            Platform.AbstractPlatform platform,
+            Dictionary<string, AssemblyMetadata> librariesById)
+        {
+            List<Platform.LibraryForExport> output = new List<Platform.LibraryForExport>();
+            foreach (string libraryId in librariesById.Keys.OrderBy(k => k))
+            {
+                AssemblyMetadata libraryMetadata = librariesById[libraryId];
+                LibraryExporter library = LibraryExporter.Get(libraryMetadata, platform);
+                Platform.LibraryForExport libraryForExport = this.CreateLibraryForExport(
+                    libraryMetadata.ID,
+                    libraryMetadata.Version,
+                    null,
+                    library.Resources);
+                output.Add(libraryForExport);
+            }
+            return output;
+        }
+
         private List<Platform.LibraryForExport> GetLibrariesForExport(
             Platform.AbstractPlatform platform,
             Dictionary<string, AssemblyMetadata> librariesById,
@@ -103,18 +122,22 @@ namespace Exporter
 
                 AddTypeEnumsToConstants(constantFlags);
 
-                PastelContext vmPastelContext = this.GenerateCoreVmParseTree(platform, codeLoader, constantFlags);
+                //PastelContext vmPastelContext = this.GenerateCoreVmParseTree(platform, codeLoader, constantFlags);
 
                 Dictionary<string, AssemblyMetadata> librariesByID = relevantLibraries.ToDictionary(lib => lib.ID);
-                List<Platform.LibraryForExport> libraries = this.GetLibrariesForExport(platform, librariesByID, constantFlags, vmPastelContext);
+                List<Platform.LibraryForExport> libraries =
+                    this.GetLibrariesForExportPastelFree(platform, librariesByID);
+                    //this.GetLibrariesForExport(platform, librariesByID, constantFlags, vmPastelContext);
 
                 Platform.TemplateStorage templates = new Platform.TemplateStorage();
 
+                /*
                 Platform.TemplateGenerator.GenerateTemplatesForVmExport(templates, vmPastelContext);
                 foreach (Platform.LibraryForExport library in libraries.Where(lib => lib.HasNativeCode))
                 {
                     Platform.TemplateGenerator.GenerateTemplatesForLibraryExport(templates, library);
                 }
+                //*/
 
                 if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
                 {
