@@ -1,4 +1,4 @@
-﻿PST$sortedCopyOfArray = function(n) {
+PST$sortedCopyOfArray = function(n) {
 	var a = n.concat([]);
 	a.sort();
 	return a;

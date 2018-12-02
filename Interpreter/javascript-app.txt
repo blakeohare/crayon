@@ -1,0 +1,7 @@
+IMPORT: base.txt
+IMPORT: flags-javascript.txt
+IMPORT: headers-javascript.txt
+
+LANGUAGE: javascript
+
+OUTPUT-FUNCTIONS: gen/javascript-app/vm.js
