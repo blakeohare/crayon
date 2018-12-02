@@ -210,6 +210,22 @@ namespace Pastel.Nodes
                 left = this.Expressions[0] as InlineConstant;
                 right = this.Expressions[1] as InlineConstant;
             }
+
+            // TODO(pastel-split): This is just a quick and dirty short-circuit logic for && and ||
+            // Do full logic later. Currently this is causing problems in specific snippets in Crayon libraries.
+            string opValue = this.Ops[0].Value;
+            if (left != null)
+            {
+                if (opValue == "&&" && left.Value is bool)
+                {
+                    return (bool)left.Value ? (Expression)this : left;
+                }
+                if (opValue == "||" && left.Value is bool)
+                {
+                    return (bool)left.Value ? left : (Expression)this;
+                }
+            }
+
             return this;
         }
 
