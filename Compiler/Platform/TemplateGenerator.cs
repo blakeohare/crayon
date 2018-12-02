@@ -49,21 +49,6 @@ namespace Platform
             PastelContext libContext = library.PastelContext;
             libContext.GetTranspilerContext().UniquePrefixForNonCollisions = libraryName.ToLower();
 
-            if (libContext.Language == Language.PYTHON ||
-                libContext.Language == Language.JAVASCRIPT ||
-                libContext.Language == Language.JAVA)
-            {
-                bool changeManifestFuncName = libContext.Language == Language.JAVASCRIPT;
-                string newManifestFunctionNameIfAny = changeManifestFuncName
-                    ? "lib_" + libraryName.ToLower() + "_manifest"
-                    : null;
-
-                string manifestFunction = library.PastelContext.GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(
-                        "lib_manifest_RegisterFunctions",
-                        newManifestFunctionNameIfAny);
-                templates.AddPastelTemplate("library:" + libraryName + ":manifestfunc", manifestFunction);
-            }
-
             string allFunctionCode = libContext.GetCodeForFunctions();
             templates.AddPastelTemplate("library:" + library.Name + ":functions", allFunctionCode);
 

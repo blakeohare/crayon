@@ -195,11 +195,5 @@ namespace Pastel
             }
             return sb.ToString().Trim();
         }
-
-        public string GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerialization(string name, string swapOutWithNewNameOrNull)
-        {
-            TranspilerContext ctx = this.GetTranspilerContext();
-            return this.GetCompiler().GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(name, swapOutWithNewNameOrNull, ctx, "");
-        }
     }
 }
