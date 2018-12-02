@@ -111,7 +111,7 @@ namespace Exporter
                 Platform.TemplateStorage templates = new Platform.TemplateStorage();
 
                 Platform.TemplateGenerator.GenerateTemplatesForVmExport(templates, vmPastelContext);
-                foreach (Platform.LibraryForExport library in libraries.Where(lib => lib.HasPastelCode))
+                foreach (Platform.LibraryForExport library in libraries.Where(lib => lib.HasNativeCode))
                 {
                     Platform.TemplateGenerator.GenerateTemplatesForLibraryExport(templates, library);
                 }

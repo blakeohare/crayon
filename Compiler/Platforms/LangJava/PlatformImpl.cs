@@ -56,7 +56,7 @@ namespace LangJava
 
             foreach (LibraryForExport library in libraries)
             {
-                if (library.HasPastelCode)
+                if (library.HasNativeCode)
                 {
                     List<string> libraryCode = new List<string>()
                     {
@@ -72,7 +72,6 @@ namespace LangJava
                         "",
                     });
 
-                    libraryCode.Add(templates.GetCode("library:" + library.Name + ":manifestfunc"));
                     libraryCode.Add(templates.GetCode("library:" + library.Name + ":functions"));
 
                     libraryCode.Add("}");
