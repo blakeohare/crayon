@@ -301,11 +301,8 @@ namespace Pastel
         {
             foreach (FunctionDefinition fd in this.GetFunctionDefinitions())
             {
-                if (!alreadySerializedFunctions.Contains(fd))
-                {
-                    ctx.Transpiler.GenerateCodeForFunctionDeclaration(ctx, fd);
-                    ctx.Append(ctx.Transpiler.NewLine);
-                }
+                ctx.Transpiler.GenerateCodeForFunctionDeclaration(ctx, fd);
+                ctx.Append(ctx.Transpiler.NewLine);
             }
 
             return Indent(ctx.FlushAndClearBuffer().Trim(), ctx.Transpiler.NewLine, indent);
@@ -316,38 +313,11 @@ namespace Pastel
             Dictionary<string, string> output = new Dictionary<string, string>();
             foreach (FunctionDefinition fd in this.GetFunctionDefinitions())
             {
-                if (!alreadySerializedFunctions.Contains(fd))
-                {
-                    ctx.Transpiler.GenerateCodeForFunction(ctx, fd);
-                    output[fd.NameToken.Value] = Indent(ctx.FlushAndClearBuffer().Trim(), ctx.Transpiler.NewLine, indent);
-                }
+                ctx.Transpiler.GenerateCodeForFunction(ctx, fd);
+                output[fd.NameToken.Value] = Indent(ctx.FlushAndClearBuffer().Trim(), ctx.Transpiler.NewLine, indent);
             }
 
             return output;
-        }
-
-        private HashSet<FunctionDefinition> alreadySerializedFunctions = new HashSet<FunctionDefinition>();
-        internal string GetFunctionCodeForSpecificFunctionAndPopItFromFutureSerializationTEMP(
-            string name,
-            string swapOutWithNewNameOrNull,
-            Transpilers.TranspilerContext ctx,
-            string indent)
-        {
-            FunctionDefinition fd = this.GetFunctionDefinitions().Where(f => f.NameToken.Value == name).FirstOrDefault();
-            if (fd == null || this.alreadySerializedFunctions.Contains(fd))
-            {
-                return null;
-            }
-
-            this.alreadySerializedFunctions.Add(fd);
-
-            if (swapOutWithNewNameOrNull != null)
-            {
-                fd.NameToken = Token.CreateDummyToken(swapOutWithNewNameOrNull);
-            }
-
-            this.Transpiler.GenerateCodeForFunction(ctx, fd);
-            return Indent(ctx.FlushAndClearBuffer().Trim(), this.Transpiler.NewLine, indent);
         }
 
         private static string Indent(string code, string newline, string indent)
