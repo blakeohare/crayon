@@ -1,8 +1,10 @@
-package org.crayonlang.interpreter.libraries.game;
+package org.crayonlang.libraries.game;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.crayonlang.interpreter.PlatformTranslationHelper;;
 import org.crayonlang.interpreter.structs.*;
+import org.crayonlang.interpreter.TranslationHelper;;
 
 public final class LibraryWrapper {
 
@@ -324,37 +326,11 @@ public final class LibraryWrapper {
     return org.crayonlang.interpreter.vm.CrayonWrapper.resource_manager_getResourceOfType(vm, ((String) args[0].internalValue), "SND");
   }
 
-  public static Value lib_audio_is_supported(VmContext vm, Value[] args) {
-    if (TranslationHelper.alwaysFalse()) {
-      return vm.globals.boolTrue;
-    }
-    return vm.globals.boolFalse;
-  }
-
   public static int lib_audio_load_sfx_from_resourceImpl(ObjectInstance obj, String path) {
     Object sfx = TranslationHelper.NoopWithReturnNull();
     obj.nativeData = new Object[1];
     obj.nativeData[0] = sfx;
     return 1;
-  }
-
-  public static Value lib_audio_music_is_playing(VmContext vm, Value[] args) {
-    if (false) {
-      return vm.globals.boolTrue;
-    }
-    return vm.globals.boolFalse;
-  }
-
-  public static Value lib_audio_music_load_from_file(VmContext vm, Value[] args) {
-    return vm.globals.valueNull;
-  }
-
-  public static Value lib_audio_music_load_from_resource(VmContext vm, Value[] args) {
-    ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
-    if (lib_audio_music_load_from_resourceImpl(objInstance1, ((String) args[1].internalValue))) {
-      return vm.globals.boolTrue;
-    }
-    return vm.globals.boolFalse;
   }
 
   public static boolean lib_audio_music_load_from_resourceImpl(ObjectInstance musicObj, String path) {
@@ -365,10 +341,6 @@ public final class LibraryWrapper {
       return true;
     }
     return false;
-  }
-
-  public static Value lib_audio_music_play(VmContext vm, Value[] args) {
-    return org.crayonlang.interpreter.vm.CrayonWrapper.buildBoolean(vm.globals, (lib_audio_music_playImpl(((ObjectInstance) args[0].internalValue), ((boolean) args[1].internalValue), ((String) args[2].internalValue), ((double) args[3].internalValue), ((boolean) args[4].internalValue)) != -1));
   }
 
   public static int lib_audio_music_playImpl(ObjectInstance musicObject, boolean isResource, String path, double startingVolume, boolean isLoop) {
@@ -388,24 +360,6 @@ public final class LibraryWrapper {
     return 0;
   }
 
-  public static Value lib_audio_music_set_volume(VmContext vm, Value[] args) {
-    TranslationHelper.Noop();
-    return vm.globals.valueNull;
-  }
-
-  public static Value lib_audio_music_stop(VmContext vm, Value[] args) {
-    return vm.globals.valueNull;
-  }
-
-  public static Value lib_audio_sfx_get_state(VmContext vm, Value[] args) {
-    ObjectInstance channelInstance = ((ObjectInstance) args[0].internalValue);
-    Object nativeChannel = channelInstance.nativeData[0];
-    ObjectInstance soundInstance = ((ObjectInstance) args[1].internalValue);
-    Object nativeSound = soundInstance.nativeData[0];
-    int resourceId = ((int) args[2].internalValue);
-    return org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(vm.globals, lib_audio_sfx_get_stateImpl(nativeChannel, nativeSound, resourceId));
-  }
-
   public static int lib_audio_sfx_get_stateImpl(Object channel, Object sfxResource, int resourceId) {
     return 3;
   }
@@ -419,76 +373,12 @@ public final class LibraryWrapper {
     return 1;
   }
 
-  public static Value lib_audio_sfx_load_from_file(VmContext vm, Value[] args) {
-    return vm.globals.valueNull;
-  }
-
-  public static Value lib_audio_sfx_load_from_resource(VmContext vm, Value[] args) {
-    ObjectInstance soundInstance = ((ObjectInstance) args[0].internalValue);
-    lib_audio_load_sfx_from_resourceImpl(soundInstance, ((String) args[1].internalValue));
-    return vm.globals.valueNull;
-  }
-
-  public static Value lib_audio_sfx_play(VmContext vm, Value[] args) {
-    ObjectInstance channelInstance = ((ObjectInstance) args[0].internalValue);
-    ObjectInstance resourceInstance = ((ObjectInstance) args[1].internalValue);
-    channelInstance.nativeData = new Object[1];
-    Object nativeResource = resourceInstance.nativeData[0];
-    double vol = ((double) args[2].internalValue);
-    double pan = ((double) args[3].internalValue);
-    return org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(vm.globals, lib_audio_sfx_launch(nativeResource, channelInstance.nativeData, vol, pan));
-  }
-
-  public static Value lib_audio_sfx_resume(VmContext vm, Value[] args) {
-    ObjectInstance sndInstance = ((ObjectInstance) args[0].internalValue);
-    Object nativeSound = sndInstance.nativeData[0];
-    ObjectInstance sndResInstance = ((ObjectInstance) args[1].internalValue);
-    Object nativeResource = sndResInstance.nativeData[0];
-    double vol = ((double) args[2].internalValue);
-    double pan = ((double) args[3].internalValue);
-    lib_audio_sfx_unpause(nativeSound, nativeResource, vol, pan);
-    return vm.globals.valueNull;
-  }
-
-  public static Value lib_audio_sfx_set_pan(VmContext vm, Value[] args) {
-    ObjectInstance channel = ((ObjectInstance) args[0].internalValue);
-    Object nativeChannel = channel.nativeData[0];
-    ObjectInstance resource = ((ObjectInstance) args[1].internalValue);
-    Object nativeResource = resource.nativeData[0];
-    lib_audio_sfx_set_panImpl(nativeChannel, nativeResource, ((double) args[2].internalValue));
-    return vm.globals.valueNull;
-  }
-
   public static int lib_audio_sfx_set_panImpl(Object channel, Object sfxResource, double pan) {
     return 0;
   }
 
-  public static Value lib_audio_sfx_set_volume(VmContext vm, Value[] args) {
-    ObjectInstance channel = ((ObjectInstance) args[0].internalValue);
-    Object nativeChannel = channel.nativeData[0];
-    ObjectInstance resource = ((ObjectInstance) args[1].internalValue);
-    Object nativeResource = resource.nativeData[0];
-    lib_audio_sfx_set_volumeImpl(nativeChannel, nativeResource, ((double) args[2].internalValue));
-    return vm.globals.valueNull;
-  }
-
   public static int lib_audio_sfx_set_volumeImpl(Object channel, Object sfxResource, double volume) {
     return 0;
-  }
-
-  public static Value lib_audio_sfx_stop(VmContext vm, Value[] args) {
-    ObjectInstance channel = ((ObjectInstance) args[0].internalValue);
-    Object nativeChannel = channel.nativeData[0];
-    ObjectInstance resource = ((ObjectInstance) args[1].internalValue);
-    Object nativeResource = resource.nativeData[0];
-    int resourceId = ((int) args[2].internalValue);
-    int currentState = ((int) args[3].internalValue);
-    boolean completeStopAndFreeChannel = ((boolean) args[4].internalValue);
-    boolean isAlreadyPaused = ((currentState == 2) && !completeStopAndFreeChannel);
-    if (((currentState != 3) && !isAlreadyPaused)) {
-      lib_audio_sfx_stopImpl(nativeChannel, nativeResource, resourceId, (currentState == 1), completeStopAndFreeChannel);
-    }
-    return vm.globals.valueNull;
   }
 
   public static int lib_audio_sfx_stopImpl(Object channel, Object resource, int resourceId, boolean isActivelyPlaying, boolean hardStop) {
@@ -506,6 +396,118 @@ public final class LibraryWrapper {
     return 0;
   }
 
+  public static Value lib_game_audio_is_supported(VmContext vm, Value[] args) {
+    if (TranslationHelper.alwaysFalse()) {
+      return vm.globals.boolTrue;
+    }
+    return vm.globals.boolFalse;
+  }
+
+  public static Value lib_game_audio_music_is_playing(VmContext vm, Value[] args) {
+    if (false) {
+      return vm.globals.boolTrue;
+    }
+    return vm.globals.boolFalse;
+  }
+
+  public static Value lib_game_audio_music_load_from_file(VmContext vm, Value[] args) {
+    return vm.globals.valueNull;
+  }
+
+  public static Value lib_game_audio_music_load_from_resource(VmContext vm, Value[] args) {
+    ObjectInstance objInstance1 = ((ObjectInstance) args[0].internalValue);
+    if (lib_audio_music_load_from_resourceImpl(objInstance1, ((String) args[1].internalValue))) {
+      return vm.globals.boolTrue;
+    }
+    return vm.globals.boolFalse;
+  }
+
+  public static Value lib_game_audio_music_play(VmContext vm, Value[] args) {
+    return org.crayonlang.interpreter.vm.CrayonWrapper.buildBoolean(vm.globals, (lib_audio_music_playImpl(((ObjectInstance) args[0].internalValue), ((boolean) args[1].internalValue), ((String) args[2].internalValue), ((double) args[3].internalValue), ((boolean) args[4].internalValue)) != -1));
+  }
+
+  public static Value lib_game_audio_music_set_volume(VmContext vm, Value[] args) {
+    TranslationHelper.Noop();
+    return vm.globals.valueNull;
+  }
+
+  public static Value lib_game_audio_music_stop(VmContext vm, Value[] args) {
+    return vm.globals.valueNull;
+  }
+
+  public static Value lib_game_audio_sfx_get_state(VmContext vm, Value[] args) {
+    ObjectInstance channelInstance = ((ObjectInstance) args[0].internalValue);
+    Object nativeChannel = channelInstance.nativeData[0];
+    ObjectInstance soundInstance = ((ObjectInstance) args[1].internalValue);
+    Object nativeSound = soundInstance.nativeData[0];
+    int resourceId = ((int) args[2].internalValue);
+    return org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(vm.globals, lib_audio_sfx_get_stateImpl(nativeChannel, nativeSound, resourceId));
+  }
+
+  public static Value lib_game_audio_sfx_load_from_file(VmContext vm, Value[] args) {
+    return vm.globals.valueNull;
+  }
+
+  public static Value lib_game_audio_sfx_load_from_resource(VmContext vm, Value[] args) {
+    ObjectInstance soundInstance = ((ObjectInstance) args[0].internalValue);
+    lib_audio_load_sfx_from_resourceImpl(soundInstance, ((String) args[1].internalValue));
+    return vm.globals.valueNull;
+  }
+
+  public static Value lib_game_audio_sfx_play(VmContext vm, Value[] args) {
+    ObjectInstance channelInstance = ((ObjectInstance) args[0].internalValue);
+    ObjectInstance resourceInstance = ((ObjectInstance) args[1].internalValue);
+    channelInstance.nativeData = new Object[1];
+    Object nativeResource = resourceInstance.nativeData[0];
+    double vol = ((double) args[2].internalValue);
+    double pan = ((double) args[3].internalValue);
+    return org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(vm.globals, lib_audio_sfx_launch(nativeResource, channelInstance.nativeData, vol, pan));
+  }
+
+  public static Value lib_game_audio_sfx_resume(VmContext vm, Value[] args) {
+    ObjectInstance sndInstance = ((ObjectInstance) args[0].internalValue);
+    Object nativeSound = sndInstance.nativeData[0];
+    ObjectInstance sndResInstance = ((ObjectInstance) args[1].internalValue);
+    Object nativeResource = sndResInstance.nativeData[0];
+    double vol = ((double) args[2].internalValue);
+    double pan = ((double) args[3].internalValue);
+    lib_audio_sfx_unpause(nativeSound, nativeResource, vol, pan);
+    return vm.globals.valueNull;
+  }
+
+  public static Value lib_game_audio_sfx_set_pan(VmContext vm, Value[] args) {
+    ObjectInstance channel = ((ObjectInstance) args[0].internalValue);
+    Object nativeChannel = channel.nativeData[0];
+    ObjectInstance resource = ((ObjectInstance) args[1].internalValue);
+    Object nativeResource = resource.nativeData[0];
+    lib_audio_sfx_set_panImpl(nativeChannel, nativeResource, ((double) args[2].internalValue));
+    return vm.globals.valueNull;
+  }
+
+  public static Value lib_game_audio_sfx_set_volume(VmContext vm, Value[] args) {
+    ObjectInstance channel = ((ObjectInstance) args[0].internalValue);
+    Object nativeChannel = channel.nativeData[0];
+    ObjectInstance resource = ((ObjectInstance) args[1].internalValue);
+    Object nativeResource = resource.nativeData[0];
+    lib_audio_sfx_set_volumeImpl(nativeChannel, nativeResource, ((double) args[2].internalValue));
+    return vm.globals.valueNull;
+  }
+
+  public static Value lib_game_audio_sfx_stop(VmContext vm, Value[] args) {
+    ObjectInstance channel = ((ObjectInstance) args[0].internalValue);
+    Object nativeChannel = channel.nativeData[0];
+    ObjectInstance resource = ((ObjectInstance) args[1].internalValue);
+    Object nativeResource = resource.nativeData[0];
+    int resourceId = ((int) args[2].internalValue);
+    int currentState = ((int) args[3].internalValue);
+    boolean completeStopAndFreeChannel = ((boolean) args[4].internalValue);
+    boolean isAlreadyPaused = ((currentState == 2) && !completeStopAndFreeChannel);
+    if (((currentState != 3) && !isAlreadyPaused)) {
+      lib_audio_sfx_stopImpl(nativeChannel, nativeResource, resourceId, (currentState == 1), completeStopAndFreeChannel);
+    }
+    return vm.globals.valueNull;
+  }
+
   public static Value lib_game_clock_tick(VmContext vm, Value[] args) {
     TranslationHelper.alwaysTrue();
     org.crayonlang.interpreter.vm.CrayonWrapper.vm_suspend(vm, 1);
@@ -514,9 +516,6 @@ public final class LibraryWrapper {
 
   public static Value lib_game_gamepad_current_device_count(VmContext vm, Value[] args) {
     int total = 0;
-    if ((false && TranslationHelper.alwaysFalse())) {
-      total = 0;
-    }
     return org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(vm.globals, total);
   }
 
@@ -548,11 +547,7 @@ public final class LibraryWrapper {
   }
 
   public static Value lib_game_gamepad_is_supported(VmContext vm, Value[] args) {
-    if ((false && TranslationHelper.alwaysFalse())) {
-      return vm.globalTrue;
-    } else {
-      return vm.globalFalse;
-    }
+    return vm.globalFalse;
   }
 
   public static Value lib_game_gamepad_jsIsOsx(VmContext vm, Value[] args) {
@@ -676,9 +671,6 @@ public final class LibraryWrapper {
   }
 
   public static Value lib_gamepad_platform_requires_refresh(VmContext vm, Value[] args) {
-    if ((false && TranslationHelper.alwaysFalse())) {
-      return vm.globalTrue;
-    }
     return vm.globalFalse;
   }
 }

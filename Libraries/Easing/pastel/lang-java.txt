@@ -6,9 +6,9 @@ LANGUAGE: java
 
 DEPENDENCY: VM: ../../../Interpreter/java-app.txt
 
-OUTPUT-STRUCTS: ../native/lang-java/gen/structs
+OUTPUT-STRUCTS: ../native/lang-java/gen
 OUTPUT-FUNCTIONS: ../native/lang-java/gen/LibraryWrapper.java
 
-NAMESPACE-FUNCTIONS: org.crayonlang.interpreter.libraries.easing
-NAMESPACE-STRUCTS: org.crayonlang.interpreter.libraries.easing
+NAMESPACE-FUNCTIONS: org.crayonlang.libraries.easing
+NAMESPACE-STRUCTS: org.crayonlang.libraries.easing
 FUNCTION-WRAPPER-CLASS: LibraryWrapper

@@ -1,6 +1,6 @@
 ﻿package %%%JAVA_PACKAGE%%%;
 
-import org.crayonlang.interpreter.Interpreter;
+import org.crayonlang.interpreter.vm.CrayonWrapper;
 import org.crayonlang.interpreter.TranslationHelper;
 import org.crayonlang.interpreter.ResourceReader;
 import org.crayonlang.interpreter.structs.VmContext;
@@ -10,8 +10,8 @@ public final class Main {
   public static void main(String[] args) {
     String byteCode = ResourceReader.readFileText("resources/bytecode.txt");
     String resourceManifest = ResourceReader.readFileText("resources/manifest.txt");
-    VmContext vm = Interpreter.createVm(byteCode, resourceManifest);
-    Interpreter.vmEnvSetCommandLineArgs(vm, args);
+    VmContext vm = CrayonWrapper.createVm(byteCode, resourceManifest);
+    CrayonWrapper.vmEnvSetCommandLineArgs(vm, args);
     TranslationHelper.setProgramData(vm);
     TranslationHelper.startInterpreter(true);
   }

@@ -2,7 +2,9 @@ package org.crayonlang.interpreter.structs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.crayonlang.interpreter.PlatformTranslationHelper;;
 import org.crayonlang.interpreter.structs.*;
+import org.crayonlang.interpreter.TranslationHelper;;
 
 public final class HttpRequest {
   public int statusCode;
