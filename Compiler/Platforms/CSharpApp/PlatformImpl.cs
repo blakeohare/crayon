@@ -163,7 +163,7 @@ namespace CSharpApp
         {
             string libraryName = library.Name;
             List<string> libraryLines = new List<string>();
-            if (library.HasPastelCode)
+            if (library.HasNativeCode)
             {
                 string libraryDir = baseDir + "Libraries/" + libraryName;
                 string allFunctionCode = templates.GetCode("library:" + libraryName + ":functions");

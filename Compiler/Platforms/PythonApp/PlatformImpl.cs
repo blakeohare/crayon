@@ -54,7 +54,7 @@ namespace PythonApp
             {
                 string libraryName = library.Name;
                 List<string> libraryLines = new List<string>();
-                if (library.HasPastelCode)
+                if (library.HasNativeCode)
                 {
                     libraryLines.Add("import math");
                     libraryLines.Add("import os");
@@ -64,7 +64,6 @@ namespace PythonApp
                     libraryLines.Add("import inspect");
                     libraryLines.Add("from code.vm import *");
                     libraryLines.Add("");
-                    libraryLines.Add(templates.GetCode("library:" + libraryName + ":manifestfunc"));
                     libraryLines.Add(templates.GetCode("library:" + libraryName + ":functions"));
                     libraryLines.Add("");
                     libraryLines.Add("_moduleInfo = ('" + libraryName + "', dict(inspect.getmembers(sys.modules[__name__])))");
