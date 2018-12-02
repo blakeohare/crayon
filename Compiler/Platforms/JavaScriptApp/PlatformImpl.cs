@@ -164,13 +164,11 @@ namespace JavaScriptApp
             if (libraryPathsIncluded.Length > 0)
             {
                 return
-                    IndentCodeWithTabs(
-                        "<script type=\"text/javascript\" src=\"" +
-                        string.Join(
-                            "\"></script>\n<script type=\"text/javascript\" src=\"",
-                            libraryPathsIncluded) +
-                        "\"></script>",
-                    2);
+                    "<script type=\"text/javascript\" src=\"" +
+                    string.Join(
+                        "\"></script>\n<script type=\"text/javascript\" src=\"",
+                        libraryPathsIncluded) +
+                    "\"></script>";
             }
             return "";
         }

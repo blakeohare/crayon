@@ -6203,11 +6203,6 @@ namespace Interpreter.Vm
                             ec.stackTop = stack;
                             stack.postFinallyBehavior = 0;
                             ec.currentValueStackSize = valueStackSize;
-                            if ((false && (stack.debugStepTracker != null)))
-                            {
-                                hasInterrupt = true;
-                                ec.activeInterrupt = new Interrupt(5, 0, "", 0.0, stack.debugStepTracker);
-                            }
                         }
                         break;
                     case 35:
@@ -6805,11 +6800,6 @@ namespace Interpreter.Vm
                             pc = stack.pc;
                             localsStackOffset = stack.localsStackOffset;
                             localsStackSetToken = stack.localsStackSetToken;
-                            if ((false && (stack.debugStepTracker != null)))
-                            {
-                                hasInterrupt = true;
-                                ec.activeInterrupt = new Interrupt(5, 0, "", 0.0, stack.debugStepTracker);
-                            }
                         }
                         break;
                     case 57:
@@ -6953,11 +6943,6 @@ namespace Interpreter.Vm
                             ec.stackTop = stack;
                             stack.postFinallyBehavior = 0;
                             ec.currentValueStackSize = valueStackSize;
-                            if ((false && (stack.debugStepTracker != null)))
-                            {
-                                hasInterrupt = true;
-                                ec.activeInterrupt = new Interrupt(5, 0, "", 0.0, stack.debugStepTracker);
-                            }
                         }
                         else
                         {

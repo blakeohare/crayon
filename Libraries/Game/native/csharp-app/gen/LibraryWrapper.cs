@@ -1,6 +1,10 @@
+using Interpreter.Structs;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Interpreter.Libraries.Game
 {
-    public class LibraryWrapper
+    public static class LibraryWrapper
     {
         private static readonly int[] PST_IntBuffer16 = new int[16];
         private static readonly double[] PST_FloatBuffer16 = new double[16];
@@ -23,7 +27,7 @@ namespace Interpreter.Libraries.Game
             if (sep.Length == 1) return value.Split(sep[0]);
             if (sep.Length == 0) return value.ToCharArray().Select<char, string>(c => "" + c).ToArray();
             PST_SplitSep[0] = sep;
-            return value.Split(PST_SplitSep, StringSplitOptions.None);
+            return value.Split(PST_SplitSep, System.StringSplitOptions.None);
         }
 
         private static string PST_FloatToString(double value)
@@ -34,7 +38,7 @@ namespace Interpreter.Libraries.Game
             return output;
         }
 
-        private static readonly DateTime PST_UnixEpoch = new System.DateTime(1970, 1, 1);
+        private static readonly System.DateTime PST_UnixEpoch = new System.DateTime(1970, 1, 1);
         private static double PST_CurrentTime
         {
             get { return System.DateTime.UtcNow.Subtract(PST_UnixEpoch).TotalSeconds; }
@@ -118,45 +122,12 @@ namespace Interpreter.Libraries.Game
             return Interpreter.Vm.CrayonWrapper.resource_manager_getResourceOfType(vm, (string)args[0].internalValue, "SND");
         }
 
-        public static Value lib_audio_is_supported(VmContext vm, Value[] args)
-        {
-            if (AlwaysTrue())
-            {
-                return vm.globals.boolTrue;
-            }
-            return vm.globals.boolFalse;
-        }
-
         public static int lib_audio_load_sfx_from_resourceImpl(ObjectInstance obj, string path)
         {
             object sfx = Libraries.Game.AudioHelper.GetSoundInstance(path);
             obj.nativeData = new object[1];
             obj.nativeData[0] = sfx;
             return 1;
-        }
-
-        public static Value lib_audio_music_is_playing(VmContext vm, Value[] args)
-        {
-            if (Libraries.Game.AudioHelper.AudioMusicIsPlaying())
-            {
-                return vm.globals.boolTrue;
-            }
-            return vm.globals.boolFalse;
-        }
-
-        public static Value lib_audio_music_load_from_file(VmContext vm, Value[] args)
-        {
-            return vm.globals.valueNull;
-        }
-
-        public static Value lib_audio_music_load_from_resource(VmContext vm, Value[] args)
-        {
-            ObjectInstance objInstance1 = (ObjectInstance)args[0].internalValue;
-            if (lib_audio_music_load_from_resourceImpl(objInstance1, (string)args[1].internalValue))
-            {
-                return vm.globals.boolTrue;
-            }
-            return vm.globals.boolFalse;
         }
 
         public static bool lib_audio_music_load_from_resourceImpl(ObjectInstance musicObj, string path)
@@ -169,11 +140,6 @@ namespace Interpreter.Libraries.Game
                 return true;
             }
             return false;
-        }
-
-        public static Value lib_audio_music_play(VmContext vm, Value[] args)
-        {
-            return Interpreter.Vm.CrayonWrapper.buildBoolean(vm.globals, (lib_audio_music_playImpl((ObjectInstance)args[0].internalValue, (bool)args[1].internalValue, (string)args[2].internalValue, (double)args[3].internalValue, (bool)args[4].internalValue) != -1));
         }
 
         public static int lib_audio_music_playImpl(ObjectInstance musicObject, bool isResource, string path, double startingVolume, bool isLoop)
@@ -199,27 +165,6 @@ namespace Interpreter.Libraries.Game
             return 0;
         }
 
-        public static Value lib_audio_music_set_volume(VmContext vm, Value[] args)
-        {
-            Libraries.Game.AudioHelper.MusicSetVolume((double)args[0].internalValue);
-            return vm.globals.valueNull;
-        }
-
-        public static Value lib_audio_music_stop(VmContext vm, Value[] args)
-        {
-            return vm.globals.valueNull;
-        }
-
-        public static Value lib_audio_sfx_get_state(VmContext vm, Value[] args)
-        {
-            ObjectInstance channelInstance = (ObjectInstance)args[0].internalValue;
-            object nativeChannel = channelInstance.nativeData[0];
-            ObjectInstance soundInstance = (ObjectInstance)args[1].internalValue;
-            object nativeSound = soundInstance.nativeData[0];
-            int resourceId = (int)args[2].internalValue;
-            return Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, lib_audio_sfx_get_stateImpl(nativeChannel, nativeSound, resourceId));
-        }
-
         public static int lib_audio_sfx_get_stateImpl(object channel, object sfxResource, int resourceId)
         {
             return Libraries.Game.AudioHelper.AudioSoundGetState(channel, sfxResource, resourceId);
@@ -236,86 +181,14 @@ namespace Interpreter.Libraries.Game
             return 1;
         }
 
-        public static Value lib_audio_sfx_load_from_file(VmContext vm, Value[] args)
-        {
-            return vm.globals.valueNull;
-        }
-
-        public static Value lib_audio_sfx_load_from_resource(VmContext vm, Value[] args)
-        {
-            ObjectInstance soundInstance = (ObjectInstance)args[0].internalValue;
-            lib_audio_load_sfx_from_resourceImpl(soundInstance, (string)args[1].internalValue);
-            return vm.globals.valueNull;
-        }
-
-        public static Value lib_audio_sfx_play(VmContext vm, Value[] args)
-        {
-            ObjectInstance channelInstance = (ObjectInstance)args[0].internalValue;
-            ObjectInstance resourceInstance = (ObjectInstance)args[1].internalValue;
-            channelInstance.nativeData = new object[1];
-            object nativeResource = resourceInstance.nativeData[0];
-            double vol = (double)args[2].internalValue;
-            double pan = (double)args[3].internalValue;
-            return Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, lib_audio_sfx_launch(nativeResource, channelInstance.nativeData, vol, pan));
-        }
-
-        public static Value lib_audio_sfx_resume(VmContext vm, Value[] args)
-        {
-            ObjectInstance sndInstance = (ObjectInstance)args[0].internalValue;
-            object nativeSound = sndInstance.nativeData[0];
-            ObjectInstance sndResInstance = (ObjectInstance)args[1].internalValue;
-            object nativeResource = sndResInstance.nativeData[0];
-            double vol = (double)args[2].internalValue;
-            double pan = (double)args[3].internalValue;
-            lib_audio_sfx_unpause(nativeSound, nativeResource, vol, pan);
-            return vm.globals.valueNull;
-        }
-
-        public static Value lib_audio_sfx_set_pan(VmContext vm, Value[] args)
-        {
-            ObjectInstance channel = (ObjectInstance)args[0].internalValue;
-            object nativeChannel = channel.nativeData[0];
-            ObjectInstance resource = (ObjectInstance)args[1].internalValue;
-            object nativeResource = resource.nativeData[0];
-            lib_audio_sfx_set_panImpl(nativeChannel, nativeResource, (double)args[2].internalValue);
-            return vm.globals.valueNull;
-        }
-
         public static int lib_audio_sfx_set_panImpl(object channel, object sfxResource, double pan)
         {
             return 0;
         }
 
-        public static Value lib_audio_sfx_set_volume(VmContext vm, Value[] args)
-        {
-            ObjectInstance channel = (ObjectInstance)args[0].internalValue;
-            object nativeChannel = channel.nativeData[0];
-            ObjectInstance resource = (ObjectInstance)args[1].internalValue;
-            object nativeResource = resource.nativeData[0];
-            lib_audio_sfx_set_volumeImpl(nativeChannel, nativeResource, (double)args[2].internalValue);
-            return vm.globals.valueNull;
-        }
-
         public static int lib_audio_sfx_set_volumeImpl(object channel, object sfxResource, double volume)
         {
             return 0;
-        }
-
-        public static Value lib_audio_sfx_stop(VmContext vm, Value[] args)
-        {
-            ObjectInstance channel = (ObjectInstance)args[0].internalValue;
-            object nativeChannel = channel.nativeData[0];
-            ObjectInstance resource = (ObjectInstance)args[1].internalValue;
-            object nativeResource = resource.nativeData[0];
-            int resourceId = (int)args[2].internalValue;
-            int currentState = (int)args[3].internalValue;
-            bool completeStopAndFreeChannel = (bool)args[4].internalValue;
-            bool isAlreadyPaused = ((currentState == 2) && !completeStopAndFreeChannel);
-            if (((currentState != 3) && !isAlreadyPaused))
-            {
-                lib_audio_sfx_stopImpl(nativeChannel, nativeResource, resourceId, (currentState == 1), completeStopAndFreeChannel);
-            }
-            return vm.globals.valueNull;
         }
 
         public static int lib_audio_sfx_stopImpl(object channel, object resource, int resourceId, bool isActivelyPlaying, bool hardStop)
@@ -336,6 +209,137 @@ namespace Interpreter.Libraries.Game
             return 0;
         }
 
+        public static Value lib_game_audio_is_supported(VmContext vm, Value[] args)
+        {
+            if (AlwaysTrue())
+            {
+                return vm.globals.boolTrue;
+            }
+            return vm.globals.boolFalse;
+        }
+
+        public static Value lib_game_audio_music_is_playing(VmContext vm, Value[] args)
+        {
+            if (Libraries.Game.AudioHelper.AudioMusicIsPlaying())
+            {
+                return vm.globals.boolTrue;
+            }
+            return vm.globals.boolFalse;
+        }
+
+        public static Value lib_game_audio_music_load_from_file(VmContext vm, Value[] args)
+        {
+            return vm.globals.valueNull;
+        }
+
+        public static Value lib_game_audio_music_load_from_resource(VmContext vm, Value[] args)
+        {
+            ObjectInstance objInstance1 = (ObjectInstance)args[0].internalValue;
+            if (lib_audio_music_load_from_resourceImpl(objInstance1, (string)args[1].internalValue))
+            {
+                return vm.globals.boolTrue;
+            }
+            return vm.globals.boolFalse;
+        }
+
+        public static Value lib_game_audio_music_play(VmContext vm, Value[] args)
+        {
+            return Interpreter.Vm.CrayonWrapper.buildBoolean(vm.globals, (lib_audio_music_playImpl((ObjectInstance)args[0].internalValue, (bool)args[1].internalValue, (string)args[2].internalValue, (double)args[3].internalValue, (bool)args[4].internalValue) != -1));
+        }
+
+        public static Value lib_game_audio_music_set_volume(VmContext vm, Value[] args)
+        {
+            Libraries.Game.AudioHelper.MusicSetVolume((double)args[0].internalValue);
+            return vm.globals.valueNull;
+        }
+
+        public static Value lib_game_audio_music_stop(VmContext vm, Value[] args)
+        {
+            return vm.globals.valueNull;
+        }
+
+        public static Value lib_game_audio_sfx_get_state(VmContext vm, Value[] args)
+        {
+            ObjectInstance channelInstance = (ObjectInstance)args[0].internalValue;
+            object nativeChannel = channelInstance.nativeData[0];
+            ObjectInstance soundInstance = (ObjectInstance)args[1].internalValue;
+            object nativeSound = soundInstance.nativeData[0];
+            int resourceId = (int)args[2].internalValue;
+            return Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, lib_audio_sfx_get_stateImpl(nativeChannel, nativeSound, resourceId));
+        }
+
+        public static Value lib_game_audio_sfx_load_from_file(VmContext vm, Value[] args)
+        {
+            return vm.globals.valueNull;
+        }
+
+        public static Value lib_game_audio_sfx_load_from_resource(VmContext vm, Value[] args)
+        {
+            ObjectInstance soundInstance = (ObjectInstance)args[0].internalValue;
+            lib_audio_load_sfx_from_resourceImpl(soundInstance, (string)args[1].internalValue);
+            return vm.globals.valueNull;
+        }
+
+        public static Value lib_game_audio_sfx_play(VmContext vm, Value[] args)
+        {
+            ObjectInstance channelInstance = (ObjectInstance)args[0].internalValue;
+            ObjectInstance resourceInstance = (ObjectInstance)args[1].internalValue;
+            channelInstance.nativeData = new object[1];
+            object nativeResource = resourceInstance.nativeData[0];
+            double vol = (double)args[2].internalValue;
+            double pan = (double)args[3].internalValue;
+            return Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, lib_audio_sfx_launch(nativeResource, channelInstance.nativeData, vol, pan));
+        }
+
+        public static Value lib_game_audio_sfx_resume(VmContext vm, Value[] args)
+        {
+            ObjectInstance sndInstance = (ObjectInstance)args[0].internalValue;
+            object nativeSound = sndInstance.nativeData[0];
+            ObjectInstance sndResInstance = (ObjectInstance)args[1].internalValue;
+            object nativeResource = sndResInstance.nativeData[0];
+            double vol = (double)args[2].internalValue;
+            double pan = (double)args[3].internalValue;
+            lib_audio_sfx_unpause(nativeSound, nativeResource, vol, pan);
+            return vm.globals.valueNull;
+        }
+
+        public static Value lib_game_audio_sfx_set_pan(VmContext vm, Value[] args)
+        {
+            ObjectInstance channel = (ObjectInstance)args[0].internalValue;
+            object nativeChannel = channel.nativeData[0];
+            ObjectInstance resource = (ObjectInstance)args[1].internalValue;
+            object nativeResource = resource.nativeData[0];
+            lib_audio_sfx_set_panImpl(nativeChannel, nativeResource, (double)args[2].internalValue);
+            return vm.globals.valueNull;
+        }
+
+        public static Value lib_game_audio_sfx_set_volume(VmContext vm, Value[] args)
+        {
+            ObjectInstance channel = (ObjectInstance)args[0].internalValue;
+            object nativeChannel = channel.nativeData[0];
+            ObjectInstance resource = (ObjectInstance)args[1].internalValue;
+            object nativeResource = resource.nativeData[0];
+            lib_audio_sfx_set_volumeImpl(nativeChannel, nativeResource, (double)args[2].internalValue);
+            return vm.globals.valueNull;
+        }
+
+        public static Value lib_game_audio_sfx_stop(VmContext vm, Value[] args)
+        {
+            ObjectInstance channel = (ObjectInstance)args[0].internalValue;
+            object nativeChannel = channel.nativeData[0];
+            ObjectInstance resource = (ObjectInstance)args[1].internalValue;
+            object nativeResource = resource.nativeData[0];
+            int resourceId = (int)args[2].internalValue;
+            int currentState = (int)args[3].internalValue;
+            bool completeStopAndFreeChannel = (bool)args[4].internalValue;
+            bool isAlreadyPaused = ((currentState == 2) && !completeStopAndFreeChannel);
+            if (((currentState != 3) && !isAlreadyPaused))
+            {
+                lib_audio_sfx_stopImpl(nativeChannel, nativeResource, resourceId, (currentState == 1), completeStopAndFreeChannel);
+            }
+            return vm.globals.valueNull;
+        }
+
         public static Value lib_game_clock_tick(VmContext vm, Value[] args)
         {
             AlwaysTrue();
@@ -346,7 +350,7 @@ namespace Interpreter.Libraries.Game
         public static Value lib_game_gamepad_current_device_count(VmContext vm, Value[] args)
         {
             int total = 0;
-            if ((false && AlwaysTrue()))
+            if ((true && AlwaysTrue()))
             {
                 total = Libraries.Game.GamepadTranslationHelper.GetCurrentDeviceCount();
             }
@@ -355,7 +359,9 @@ namespace Interpreter.Libraries.Game
 
         public static Value lib_game_gamepad_get_axis_1d_state(VmContext vm, Value[] args)
         {
-            return vm.globals.floatZero;
+            int index = (int)args[1].internalValue;
+            ObjectInstance dev = (ObjectInstance)args[0].internalValue;
+            return Interpreter.Vm.CrayonWrapper.buildFloat(vm.globals, Libraries.Game.GamepadTranslationHelper.GetDeviceAxis1dState(dev.nativeData[0], index));
         }
 
         public static Value lib_game_gamepad_get_axis_2d_state(VmContext vm, Value[] args)
@@ -363,32 +369,65 @@ namespace Interpreter.Libraries.Game
             Value arg1 = args[0];
             Value arg2 = args[1];
             Value arg3 = args[2];
+            ObjectInstance objInstance1 = (ObjectInstance)arg1.internalValue;
+            int int1 = (int)arg2.internalValue;
+            ListImpl list1 = (ListImpl)arg3.internalValue;
+            Libraries.Game.GamepadTranslationHelper.GetDeviceAxis2dState(objInstance1.nativeData[0], int1, PST_IntBuffer16);
+            Interpreter.Vm.CrayonWrapper.clearList(list1);
+            Interpreter.Vm.CrayonWrapper.addToList(list1, Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, PST_IntBuffer16[0]));
+            Interpreter.Vm.CrayonWrapper.addToList(list1, Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, PST_IntBuffer16[1]));
             return vm.globalNull;
         }
 
         public static Value lib_game_gamepad_get_button_state(VmContext vm, Value[] args)
         {
-            return vm.globalTrue;
+            int int1 = 0;
+            ObjectInstance objInstance1 = null;
+            Value arg1 = args[0];
+            Value arg2 = args[1];
+            objInstance1 = (ObjectInstance)arg1.internalValue;
+            int1 = (int)arg2.internalValue;
+            if (Libraries.Game.GamepadTranslationHelper.GetDeviceButtonState(objInstance1.nativeData[0], int1))
+            {
+                return vm.globalTrue;
+            }
+            return vm.globalFalse;
         }
 
         public static Value lib_game_gamepad_get_save_file_path(VmContext vm, Value[] args)
         {
+            string string1 = ".crayon-csotk.gamepad.config";
+            if ((string1 != null))
+            {
+                return Interpreter.Vm.CrayonWrapper.buildString(vm.globals, string1);
+            }
             return vm.globalNull;
         }
 
         public static Value lib_game_gamepad_getPlatform(VmContext vm, Value[] args)
         {
-            return vm.globalNull;
+            return Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, 1);
         }
 
         public static Value lib_game_gamepad_initialize_device(VmContext vm, Value[] args)
         {
+            int int1 = (int)args[0].internalValue;
+            ObjectInstance objInstance1 = (ObjectInstance)args[1].internalValue;
+            ListImpl list1 = (ListImpl)args[2].internalValue;
+            object object1 = Libraries.Game.GamepadTranslationHelper.GetDeviceReference(int1);
+            objInstance1.nativeData = new object[1];
+            objInstance1.nativeData[0] = object1;
+            Interpreter.Vm.CrayonWrapper.clearList(list1);
+            Interpreter.Vm.CrayonWrapper.addToList(list1, Interpreter.Vm.CrayonWrapper.buildString(vm.globals, Libraries.Game.GamepadTranslationHelper.GetDeviceName(object1)));
+            Interpreter.Vm.CrayonWrapper.addToList(list1, Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, Libraries.Game.GamepadTranslationHelper.GetDeviceButtonCount(object1)));
+            Interpreter.Vm.CrayonWrapper.addToList(list1, Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, Libraries.Game.GamepadTranslationHelper.GetDeviceAxis1dCount(object1)));
+            Interpreter.Vm.CrayonWrapper.addToList(list1, Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, Libraries.Game.GamepadTranslationHelper.GetDeviceAxis2dCount(object1)));
             return vm.globalNull;
         }
 
         public static Value lib_game_gamepad_is_supported(VmContext vm, Value[] args)
         {
-            if ((false && AlwaysTrue()))
+            if ((true && AlwaysTrue()))
             {
                 return vm.globalTrue;
             }
@@ -400,16 +439,18 @@ namespace Interpreter.Libraries.Game
 
         public static Value lib_game_gamepad_jsIsOsx(VmContext vm, Value[] args)
         {
-            return vm.globalNull;
+            return Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, 0);
         }
 
         public static Value lib_game_gamepad_poll_universe(VmContext vm, Value[] args)
         {
+            Libraries.Game.GamepadTranslationHelper.Poll();
             return vm.globalNull;
         }
 
         public static Value lib_game_gamepad_refresh_devices(VmContext vm, Value[] args)
         {
+            AlwaysTrue();
             return vm.globalNull;
         }
 
@@ -523,12 +564,12 @@ namespace Interpreter.Libraries.Game
 
         public static Value lib_game_startup(VmContext vm, Value[] args)
         {
-            Dictionary<string, Func<object[], object>> functionLookup = GameWindow.GetCallbackFunctions();
+            Dictionary<string, System.Func<object[], object>> functionLookup = GameWindow.GetCallbackFunctions();
             string[] names = functionLookup.Keys.ToArray();
             int i = 0;
             while ((i < names.Length))
             {
-                Func<object[], object> fn = null;
+                System.Func<object[], object> fn = null;
                 string name = names[i];
                 if (!functionLookup.TryGetValue(name, out fn)) fn = null;
                 if ((fn != null))
@@ -542,7 +583,7 @@ namespace Interpreter.Libraries.Game
 
         public static Value lib_gamepad_platform_requires_refresh(VmContext vm, Value[] args)
         {
-            if ((false && AlwaysFalse()))
+            if ((true && AlwaysFalse()))
             {
                 return vm.globalTrue;
             }
