@@ -825,11 +825,7 @@ var fixFuzzyFloatPrecision = function(x) {
 			}
 		}
 		if (roundDown) {
-			if ((true || (x > 0))) {
-				x = (Math.floor(x) + 0.0);
-			} else {
-				x = (Math.floor(x) - 1.0);
-			}
+			x = (Math.floor(x) + 0.0);
 		}
 	}
 	return x;
@@ -4705,10 +4701,6 @@ var interpretImpl = function(vm, executionContextId) {
 					ec[1] = stack;
 					stack[10] = 0;
 					ec[2] = valueStackSize;
-					if ((false && (stack[13] != null))) {
-						hasInterrupt = true;
-						ec[13] = [5, 0, "", 0.0, stack[13]];
-					}
 				}
 				break;
 			case 35:
@@ -5160,10 +5152,6 @@ var interpretImpl = function(vm, executionContextId) {
 					pc = stack[0];
 					localsStackOffset = stack[2];
 					localsStackSetToken = stack[1];
-					if ((false && (stack[13] != null))) {
-						hasInterrupt = true;
-						ec[13] = [5, 0, "", 0.0, stack[13]];
-					}
 				}
 				break;
 			case 57:
@@ -5284,10 +5272,6 @@ var interpretImpl = function(vm, executionContextId) {
 					ec[1] = stack;
 					stack[10] = 0;
 					ec[2] = valueStackSize;
-					if ((false && (stack[13] != null))) {
-						hasInterrupt = true;
-						ec[13] = [5, 0, "", 0.0, stack[13]];
-					}
 				} else {
 					hasInterrupt = EX_InvalidArgument(ec, "Thrown value is not an exception.");
 				}

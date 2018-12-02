@@ -32,74 +32,59 @@ namespace JavaScriptApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            TemplateStorage templates,
-            IList<LibraryForExport> libraries,
-            ResourceDatabase resourceDatabase,
-            Options options)
-        {
-            this.ExportProjectImpl(
-                output,
-                templates,
-                libraries,
-                resourceDatabase,
-                options);
-        }
-
-        public void ExportProjectImpl(
-            Dictionary<string, FileOutput> output,
-            TemplateStorage templates,
+            TemplateStorage templatesDONOTUSE,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
         {
             List<string> jsExtraHead = new List<string>() { options.GetStringOrEmpty(ExportOptionKey.JS_HEAD_EXTRAS) };
-            bool fullPage = options.GetBool(ExportOptionKey.JS_FULL_PAGE);
 
-            // There's a double-check here so that you can || them together and then have multiple options added here.
-            if (fullPage)
+            if (options.GetBool(ExportOptionKey.JS_FULL_PAGE))
             {
                 jsExtraHead.Add(
                     "<script type=\"text/javascript\">"
-                    + (fullPage ? "C$common$globalOptions['fullscreen'] = true;" : "")
+                    + "C$common$globalOptions['fullscreen'] = true;"
                     + "</script>");
             }
             options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, string.Join("\n", jsExtraHead));
 
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
+            TemplateReader templateReader = new TemplateReader(this);
+            Dictionary<string, string> vmTemplates = templateReader.GetVmTemplates();
+
             output["vm.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = templates.GetCode("vm:functions"),
+                TextContent = vmTemplates["vm.js"],
             };
 
             List<LibraryForExport> librariesWithCode = new List<LibraryForExport>();
-            foreach (LibraryForExport library in libraries)
+            foreach (LibraryForExport library in libraries.Where(lib => lib.HasNativeCode))
             {
-                if (library.HasNativeCode)
+                string libraryName = library.Name;
+                Dictionary<string, string> libTemplates = templateReader.GetLibraryTemplates(libraryName);
+
+                List<string> libraryLines = new List<string>();
+                libraryLines.Add(libTemplates["gen/lib_" + libraryName.ToLower() + ".js"]);
+                libraryLines.Add("");
+                libraryLines.Add("C$common$scrapeLibFuncNames('" + libraryName.ToLower() + "');");
+                libraryLines.Add("");
+
+                // add helper functions after the scrape.
+
+                foreach (string jsHelperFile in libTemplates.Keys.Where(k => k.StartsWith("source/") && k.EndsWith(".js")))
                 {
-                    string libraryName = library.Name;
-
-                    List<string> libraryLines = new List<string>();
-                    libraryLines.Add(templates.GetCode("library:" + libraryName + ":functions"));
+                    libraryLines.Add(libTemplates[jsHelperFile]);
                     libraryLines.Add("");
-                    libraryLines.Add("C$common$scrapeLibFuncNames('" + libraryName.ToLower() + "');");
-                    libraryLines.Add("");
-
-                    // add helper functions after the scrape.
-
-                    foreach (ExportEntity embedCode in library.ExportEntities["EMBED_CODE"])
-                    {
-                        libraryLines.Add(embedCode.StringValue);
-                    }
-
-                    output["libs/lib_" + libraryName.ToLower() + ".js"] = new FileOutput()
-                    {
-                        Type = FileOutputType.Text,
-                        TextContent = string.Join("\n", libraryLines),
-                    };
-                    librariesWithCode.Add(library);
                 }
+
+                output["libs/lib_" + libraryName.ToLower() + ".js"] = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = string.Join(this.NL, libraryLines),
+                };
+                librariesWithCode.Add(library);
             }
 
             Dictionary<string, string> htmlReplacements = new Dictionary<string, string>(replacements);
