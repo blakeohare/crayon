@@ -49,6 +49,11 @@ namespace Exporter
 
         private static readonly char[] COLON_CHAR = { ':' };
 
+        public bool HasNativeCode
+        {
+            get { return this.library.Metadata.Manifest.Get("cni") != null; }
+        }
+
         private List<Dictionary<string, string>> ParseApplicableInstructions()
         {
             List<Dictionary<string, string>> instructions = new List<Dictionary<string, string>>();
