@@ -1,0 +1,27 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-javascript.txt
+IMPORT: ../../../Interpreter/headers-javascript.txt
+
+LANGUAGE: javascript
+
+DEPENDENCY: VM: ../../../Interpreter/javascript-app.txt
+
+OUTPUT-FUNCTIONS: ../native/javascript-app/gen/lib_fileiocommon.js
+
+EXT: _lib_fileiocommon_directoryCreate: LIB$fileiocommon$fakedisk$mkdir([ARG:1], [ARG:2])
+EXT: _lib_fileiocommon_directoryDelete: LIB$fileiocommon$fakedisk$rmdir([ARG:1], [ARG:2])
+EXT: _lib_fileiocommon_directoryExists: LIB$fileiocommon$fakedisk$dirExists([ARG:1], [ARG:2])
+EXT: _lib_fileiocommon_directoryList: LIB$fileiocommon$fakedisk$listdir([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+EXT: _lib_fileiocommon_directoryMove: LIB$fileiocommon$fakedisk$movedir([ARG:1], [ARG:2], [ARG:3])
+EXT: _lib_fileiocommon_fileDelete: LIB$fileiocommon$fakedisk$fileDelete([ARG:1], [ARG:2])
+EXT: _lib_fileiocommon_fileMove: LIB$fileiocommon$fakedisk$fileMove([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+EXT: _lib_fileiocommon_fileRead: LIB$fileiocommon$fakedisk$fileRead([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
+EXT: _lib_fileiocommon_fileWrite: LIB$fileiocommon$fakedisk$fileWrite([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+EXT: _lib_fileiocommon_getCurrentDirectory: '/'
+EXT: _lib_fileiocommon_getDirParent: LIB$fileiocommon$fakedisk$getPathParent([ARG:1], [ARG:2])
+EXT: _lib_fileiocommon_getDirRoot: '/'
+EXT: _lib_fileiocommon_getFileInfo: LIB$fileiocommon$fakedisk$getPathInfoExt([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+EXT: _lib_fileiocommon_getUserDirectory: '/'
+EXT: _lib_fileiocommon_initializeDisk: LIB$fileiocommon$fakedisk$create([ARG:1])
+EXT: _lib_fileiocommon_isWindows: C$common$alwaysFalse()
+EXT: _lib_fileiocommon_textToLines: LIB$fileiocommon$fakedisk$textToLines([ARG:1], [ARG:2])

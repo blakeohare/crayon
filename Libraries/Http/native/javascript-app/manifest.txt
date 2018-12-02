@@ -1,1 +1,2 @@
-EMBED_FILES: from=javascript-app
+EMBED_FILES: from=gen
+EMBED_FILES: from=source
