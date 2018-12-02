@@ -1,1 +1,0 @@
-$_lib_resources_read_text: Interpreter.ResourceReader.ReadTextResource([ARG:1])

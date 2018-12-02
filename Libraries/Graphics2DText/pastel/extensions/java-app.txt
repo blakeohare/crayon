@@ -1,4 +1,0 @@
-$_lib_graphics2dtext_createNativeFont: Graphics2DTextHelper.createNativeFont([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:8], [ARG:9])
-$_lib_graphics2dtext_getNativeFontUniqueKey: Graphics2DTextHelper.addAll([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:8])
-$_lib_graphics2dtext_isSystemFontAvailable: Graphics2DTextHelper.isSystemFontAvailable([ARG:1])
-$_lib_graphics2dtext_renderTextToSurface: Graphics2DTextHelper.renderText([ARG:1], [ARG:2], [ARG:9], [ARG:10], [ARG:11], [ARG:12])

@@ -1,2 +1,0 @@
-bool _lib_imagewebresources_bytesToImage(object imageNativeDataInstance, Array<object> nativeData);
-bool _lib_imagewebresources_jsDownload(string url, Array<object> nativeData);

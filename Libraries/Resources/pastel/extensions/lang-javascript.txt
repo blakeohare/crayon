@@ -1,1 +1,0 @@
-$_lib_resources_read_text: C$common$readResourceText([ARG:1])

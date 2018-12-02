@@ -1,2 +1,0 @@
-$_lib_graphics2d_flipTexture: libhelper_imageresources_flipTexture([ARG:1], [ARG:2], [ARG:3])
-$_lib_graphics2d_scale: TranslationHelper_globals['LIB:GAME:g2dscale']([ARG:1], [ARG:2], [ARG:3])
