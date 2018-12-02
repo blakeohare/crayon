@@ -77,21 +77,14 @@ namespace Parser
             }
 
 #if DEBUG
-            // Presumably running from source. Walk up to the root directory and find the Libraries directory.
-            // From there use the list of folders.
-            string currentDirectory = FileUtil.GetCurrentDirectory();
-            while (!string.IsNullOrEmpty(currentDirectory))
+            string runningFromSourceDirectory = SourceDirectoryFinder.CrayonSourceDirectory;
+            if (runningFromSourceDirectory != null)
             {
-                string path = FileUtil.JoinPath(currentDirectory, "Libraries");
-                if (FileUtil.DirectoryExists(path) &&
-                    FileUtil.FileExists(FileUtil.JoinPath(currentDirectory, "Compiler", "CrayonWindows.sln"))) // quick sanity check
-                {
-                    unverifiedLibraryDirectories.AddRange(FileUtil.DirectoryListDirectoryPaths(path));
-                    break;
-                }
-                currentDirectory = FileUtil.GetParentDirectory(currentDirectory);
+                string libraryPath = FileUtil.JoinPath(runningFromSourceDirectory, "Libraries");
+                unverifiedLibraryDirectories.AddRange(FileUtil.DirectoryListDirectoryPaths(libraryPath));
             }
 #endif
+
             List<string> verifiedLibraryPaths = new List<string>();
 
             foreach (string dir in unverifiedLibraryDirectories)
