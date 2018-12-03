@@ -26,7 +26,6 @@ namespace Exporter
                 Platform.LibraryForExport libraryForExport = this.CreateLibraryForExport(
                     libraryMetadata.ID,
                     libraryMetadata.Version,
-                    null,
                     library.Resources);
                 output.Add(libraryForExport);
             }
@@ -50,7 +49,7 @@ namespace Exporter
 
                 Dictionary<string, AssemblyMetadata> librariesByID = relevantLibraries.ToDictionary(lib => lib.ID);
                 List<Platform.LibraryForExport> libraries = this.GetLibrariesForExportPastelFree(platform, librariesByID);
-                
+
                 if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
                 {
                     Options options = new Options();
@@ -93,7 +92,6 @@ namespace Exporter
         private Platform.LibraryForExport CreateLibraryForExport(
             string libraryName,
             string libraryVersion,
-            PastelContext nullableLibaryPastelContext,
             LibraryResourceDatabase libResDb)
         {
             using (new PerformanceSection("VmGenerator.CreateLibraryForExport"))
@@ -105,7 +103,6 @@ namespace Exporter
                     Name = libraryName,
                     Version = libraryVersion,
                     HasNativeCode = libResDb.HasNativeCode,
-                    PastelContext = nullableLibaryPastelContext,
                     ExportEntities = exportEntities,
                 };
             }
