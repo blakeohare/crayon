@@ -34,7 +34,6 @@ namespace Crayon.Pipeline
         {
             ExportCommand command = new TopLevelCheckWorker().DoWorkImpl();
             BuildContext buildContext;
-            Pastel.IInlineImportCodeLoader vmCodeLoader = new VmCodeLoader();
 
             switch (TopLevelCheckWorker.IdentifyUseCase(command))
             {
@@ -52,7 +51,7 @@ namespace Crayon.Pipeline
 
                 case ExecutionType.EXPORT_VM_BUNDLE:
                     buildContext = new GetBuildContextWorker().DoWorkImpl(command);
-                    ExportBundle result = Exporter.Pipeline.ExportCbxVmBundlePipeline.Run(command, buildContext, vmCodeLoader);
+                    ExportBundle result = Exporter.Pipeline.ExportCbxVmBundlePipeline.Run(command, buildContext);
                     if (command.ShowLibraryDepTree)
                     {
                         new ShowAssemblyDepsWorker().DoWorkImpl(result.UserCodeScope);
@@ -60,7 +59,7 @@ namespace Crayon.Pipeline
                     break;
 
                 case ExecutionType.EXPORT_VM_STANDALONE:
-                    Exporter.Pipeline.ExportStandaloneVmPipeline.Run(command, vmCodeLoader);
+                    Exporter.Pipeline.ExportStandaloneVmPipeline.Run(command);
                     break;
 
                 case ExecutionType.ERROR_CHECK_ONLY:

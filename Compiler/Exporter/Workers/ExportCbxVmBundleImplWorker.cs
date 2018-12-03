@@ -9,7 +9,7 @@ namespace Exporter.Workers
 {
     public class ExportCbxVmBundleImplWorker
     {
-        public ExportBundle ExportVmBundle(ExportCommand command, BuildContext buildContext, Pastel.IInlineImportCodeLoader codeLoader)
+        public ExportBundle ExportVmBundle(ExportCommand command, BuildContext buildContext)
         {
             // TODO: Worker: platform = GetPlatform(buildContext, command)
             string platformId = buildContext.Platform.ToLowerInvariant();
@@ -39,7 +39,6 @@ namespace Exporter.Workers
                 resourceDatabase,
                 libraries,
                 outputDirectory,
-                codeLoader,
                 VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE);
 
             exporter.ExportFiles(result);
