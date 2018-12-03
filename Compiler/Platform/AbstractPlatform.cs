@@ -156,12 +156,10 @@ namespace Platform
 
         public abstract void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            TemplateStorage templates,
             IList<LibraryForExport> everyLibrary);
 
         public abstract void ExportProject(
             Dictionary<string, FileOutput> output,
-            TemplateStorage templates,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options);
