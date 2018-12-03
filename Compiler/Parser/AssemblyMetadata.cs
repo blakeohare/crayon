@@ -143,22 +143,7 @@ namespace Parser
             return FileUtil.JoinPath(this.Directory, "pastel", "src");
         }
 
-        private int isMoreThanJustEmbedCode = -1;
-        public bool IsMoreThanJustEmbedCode
-        {
-            get
-            {
-                if (isMoreThanJustEmbedCode == -1)
-                {
-                    // TODO(pastel-split): shave this down to just "resources" once Pastel code generation runs out of process
-                    bool hasPastelDirectories =
-                        FileUtil.DirectoryExists(FileUtil.JoinPath(this.Directory, "native")) ||
-                        FileUtil.DirectoryExists(FileUtil.JoinPath(this.Directory, "pastel"));
-                    isMoreThanJustEmbedCode = hasPastelDirectories ? 1 : 0;
-                }
-                return isMoreThanJustEmbedCode == 1;
-            }
-        }
+        public bool HasNativeCode { get { return this.CniFunctions.Count > 0; } }
 
         public byte[] ReadFileBytes(string pathRelativeToLibraryRoot)
         {

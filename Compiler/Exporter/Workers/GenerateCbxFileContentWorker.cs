@@ -22,7 +22,7 @@ namespace Exporter.Workers
             cbxOutput.AddRange(code);
 
             List<string> libraries = new List<string>();
-            foreach (CompilationScope scopeForLibrary in compilationResult.LibraryScopesUsed.Where(scope => scope.Metadata.IsMoreThanJustEmbedCode))
+            foreach (CompilationScope scopeForLibrary in compilationResult.LibraryScopesUsed.Where(scope => scope.Metadata.HasNativeCode))
             {
                 libraries.Add(scopeForLibrary.Metadata.ID);
                 libraries.Add(scopeForLibrary.Metadata.Version);
