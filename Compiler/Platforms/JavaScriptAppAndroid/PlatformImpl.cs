@@ -18,7 +18,6 @@ namespace JavaScriptAppAndroid
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            TemplateStorage templatesDONOTUSE,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
@@ -46,7 +45,6 @@ namespace JavaScriptAppAndroid
             Dictionary<string, FileOutput> basicProject = new Dictionary<string, FileOutput>();
             this.ParentPlatform.ExportProject(
                 basicProject,
-                null,
                 libraries,
                 resourceDatabase,
                 options);
@@ -117,7 +115,6 @@ namespace JavaScriptAppAndroid
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            TemplateStorage templates,
             IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();

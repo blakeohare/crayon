@@ -50,9 +50,7 @@ namespace Exporter
 
                 Dictionary<string, AssemblyMetadata> librariesByID = relevantLibraries.ToDictionary(lib => lib.ID);
                 List<Platform.LibraryForExport> libraries = this.GetLibrariesForExportPastelFree(platform, librariesByID);
-
-                Platform.TemplateStorage templates = new Platform.TemplateStorage();
-
+                
                 if (mode == VmGenerationMode.EXPORT_SELF_CONTAINED_PROJECT_SOURCE)
                 {
                     Options options = new Options();
@@ -79,7 +77,6 @@ namespace Exporter
 
                     platform.ExportProject(
                         output,
-                        templates,
                         libraries,
                         resourceDatabase,
                         options);
@@ -88,7 +85,6 @@ namespace Exporter
                 {
                     platform.ExportStandaloneVm(
                         output,
-                        templates,
                         libraries);
                 }
             }

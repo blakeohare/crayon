@@ -83,7 +83,6 @@ namespace CSharpApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            TemplateStorage templatesDONOTUSE,
             IList<LibraryForExport> everyLibrary)
         {
             Dictionary<string, string> libraryProjectNameToGuid = new Dictionary<string, string>();
@@ -216,7 +215,6 @@ namespace CSharpApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            TemplateStorage templatesDONOTUSE,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)

@@ -19,7 +19,6 @@ namespace JavaApp
 
         public override void ExportStandaloneVm(
             Dictionary<string, FileOutput> output,
-            TemplateStorage templtes,
             IList<LibraryForExport> everyLibrary)
         {
             throw new NotImplementedException();
@@ -27,7 +26,6 @@ namespace JavaApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            TemplateStorage templates,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
