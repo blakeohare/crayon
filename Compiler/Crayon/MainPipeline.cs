@@ -37,10 +37,6 @@ namespace Crayon.Pipeline
 
             switch (TopLevelCheckWorker.IdentifyUseCase(command))
             {
-                case ExecutionType.PASTEL_CODE_GENERATION:
-                    Pastel.Program.PseudoMain(new string[] { command.PastelProjectFile });
-                    break;
-
                 case ExecutionType.SHOW_USAGE:
                     new UsageDisplayWorker().DoWorkImpl();
                     break;
