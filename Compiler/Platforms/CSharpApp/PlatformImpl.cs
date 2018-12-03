@@ -153,7 +153,6 @@ namespace CSharpApp
             this.CopyResourceAsText(output, baseDir + "CbxDecoder.cs", "ResourcesVm/CbxDecoder.cs", replacements);
         }
 
-        // Returns true if any export is necessary i.e. bytecode-only libraries will return false.
         private void GetLibraryCode(
             TemplateReader templateReader,
             string baseDir,
@@ -166,46 +165,32 @@ namespace CSharpApp
             List<string> libraryLines = new List<string>();
 
             string libraryDir = baseDir + "Libraries/" + libraryName;
-            string allFunctionCode = libTemplates["gen/LibraryWrapper.cs"];
-            libraryLines.Add(allFunctionCode);
 
             foreach (string structKey in libTemplates.Keys.Where(t => t.StartsWith("gen/structs/")))
             {
                 string structFileName = structKey.Substring(structKey.LastIndexOf('/') + 1);
                 string structName = System.IO.Path.GetFileNameWithoutExtension(structFileName);
-                filesOut[libraryDir + "/Structs/" + structName + ".cs"] = new FileOutput()
+                filesOut[libraryDir + "/" + structName + ".cs"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
                     TextContent = libTemplates[structKey],
                 };
             }
 
+            foreach (string helperFile in libTemplates.Keys.Where(t => t.StartsWith("source/")))
+            {
+                filesOut[libraryDir + "/" + helperFile.Substring("source/".Length)] = new FileOutput()
+                {
+                    Type = FileOutputType.Text,
+                    TextContent = libTemplates[helperFile],
+                };
+            }
+
             filesOut[libraryDir + "/LibraryWrapper.cs"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = string.Join(this.NL,
-                    "using System;",
-                    "using System.Collections.Generic;",
-                    "using System.Linq;",
-                    "using Interpreter;",
-                    "using Interpreter.Structs;",
-                    "using Interpreter.Vm;",
-                    "",
-                    "namespace Interpreter.Libraries." + libraryName,
-                    "{",
-                    "    public static class LibraryWrapper",
-                    "    {",
-                    string.Join(this.NL, libraryLines),
-                    "    }",
-                    "}",
-                    ""),
+                TextContent = libTemplates["gen/LibraryWrapper.cs"],
             };
-
-            foreach (ExportEntity codeFile in library.ExportEntities["COPY_CODE"])
-            {
-                string targetPath = codeFile.Values["target"].Replace("%LIBRARY_PATH%", libraryDir);
-                filesOut[targetPath] = codeFile.FileOutput;
-            }
 
             foreach (ExportEntity dllFile in library.ExportEntities["DOTNET_DLL"])
             {
