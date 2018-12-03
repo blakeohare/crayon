@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangPython", "Platforms\Lan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PythonApp", "Platforms\PythonApp\PythonApp.csproj", "{4E41E38D-3FF9-4C91-9446-5F51024D8BD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pastel", "Pastel\Pastel.csproj", "{6D073BA4-2E71-42AC-8F5A-5C3079D935CD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{18617A9A-3B1F-4532-BF4D-12BD62A3E5C6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LangCSharp", "Platforms\LangCSharp\LangCSharp.csproj", "{BD2AF3E6-4A96-4511-86A5-E414A6CAB81E}"
@@ -91,18 +89,6 @@ Global
 		{4E41E38D-3FF9-4C91-9446-5F51024D8BD9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{4E41E38D-3FF9-4C91-9446-5F51024D8BD9}.Release|x86.ActiveCfg = Release|Any CPU
 		{4E41E38D-3FF9-4C91-9446-5F51024D8BD9}.Release|x86.Build.0 = Release|Any CPU
-		{6D073BA4-2E71-42AC-8F5A-5C3079D935CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6D073BA4-2E71-42AC-8F5A-5C3079D935CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6D073BA4-2E71-42AC-8F5A-5C3079D935CD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{6D073BA4-2E71-42AC-8F5A-5C3079D935CD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{6D073BA4-2E71-42AC-8F5A-5C3079D935CD}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{6D073BA4-2E71-42AC-8F5A-5C3079D935CD}.Debug|x86.Build.0 = Debug|Any CPU
-		{6D073BA4-2E71-42AC-8F5A-5C3079D935CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6D073BA4-2E71-42AC-8F5A-5C3079D935CD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6D073BA4-2E71-42AC-8F5A-5C3079D935CD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{6D073BA4-2E71-42AC-8F5A-5C3079D935CD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{6D073BA4-2E71-42AC-8F5A-5C3079D935CD}.Release|x86.ActiveCfg = Release|Any CPU
-		{6D073BA4-2E71-42AC-8F5A-5C3079D935CD}.Release|x86.Build.0 = Release|Any CPU
 		{18617A9A-3B1F-4532-BF4D-12BD62A3E5C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{18617A9A-3B1F-4532-BF4D-12BD62A3E5C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18617A9A-3B1F-4532-BF4D-12BD62A3E5C6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

@@ -61,10 +61,6 @@
       <Project>{70941077-b058-4a91-ac11-38e22930f01f}</Project>
       <Name>Parser</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pastel\Pastel.csproj">
-      <Project>{6d073ba4-2e71-42ac-8f5a-5c3079d935cd}</Project>
-      <Name>Pastel</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Platforms\CApp\CApp.csproj">
       <Project>{7f8c6292-5e35-4fd2-91c4-98123fd4e7e3}</Project>
       <Name>CApp</Name>

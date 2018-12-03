@@ -7,7 +7,7 @@ namespace Pastel
 {
     public class Program
     {
-        public static void PseudoMain(string[] args)
+        public static void Main(string[] args)
         {
             if (args.Length != 1)
             {
