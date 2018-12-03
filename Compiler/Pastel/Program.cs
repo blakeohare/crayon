@@ -7,8 +7,31 @@ namespace Pastel
 {
     public class Program
     {
+        private static string[] GetEffectiveArgs(string[] actualArgs)
+        {
+#if DEBUG
+            if (actualArgs.Length == 0)
+            {
+                string crayonHome = Environment.GetEnvironmentVariable("CRAYON_HOME");
+                if (crayonHome != null)
+                {
+                    string debugPastelFile = System.IO.Path.Combine(crayonHome, "DEBUG_PASTEL.txt");
+                    if (System.IO.File.Exists(debugPastelFile))
+                    {
+                        string[] lines = System.IO.File.ReadAllText(debugPastelFile).Trim().Split('\n');
+                        string lastLine = lines[lines.Length - 1].Trim();
+                        return lastLine.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    }
+                }
+            }
+#endif
+            return actualArgs;
+        }
+
         public static void Main(string[] args)
         {
+            args = GetEffectiveArgs(args);
+
             if (args.Length != 1)
             {
                 Console.WriteLine("Incorrect usage. Please provide a path to a Pastel project config file.");
