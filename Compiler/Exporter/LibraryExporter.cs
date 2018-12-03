@@ -1,6 +1,5 @@
 ﻿using Common;
 using Parser;
-using Pastel.Transpilers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -90,33 +89,6 @@ namespace Exporter
             return output;
         }
 
-        private Dictionary<string, string> translationsLookup = null;
-
-        public void ApplyExtensibleFunctionTranslationsToTranspilerContext(Platform.AbstractPlatform platform, TranspilerContext ctx)
-        {
-            Dictionary<string, string> translations = this.GetExtensibleFunctionTranslations(platform);
-            foreach (string fnNameRaw in translations.Keys)
-            {
-                // TODO: remove these dollar signs from the actual library code.
-                string fnName = fnNameRaw.StartsWith("$") ? fnNameRaw.Substring(1) : fnNameRaw;
-                ctx.ExtensibleFunctionLookup[fnName] = translations[fnNameRaw];
-            }
-        }
-
-        public Dictionary<string, string> GetExtensibleFunctionTranslations(Platform.AbstractPlatform platform)
-        {
-            if (this.translationsLookup == null)
-            {
-                this.translationsLookup = new Dictionary<string, string>();
-                foreach (string inheritedPlatformName in platform.InheritanceChain.Reverse())
-                {
-                    Dictionary<string, string> translationsForPlatform = this.Metadata.GetMethodTranslations(inheritedPlatformName);
-                    this.translationsLookup = Util.MergeDictionaries(translationsLookup, translationsForPlatform);
-                }
-            }
-            return this.translationsLookup;
-        }
-
         private HashSet<string> IGNORABLE_FILES = new HashSet<string>(new string[] { ".ds_store", "thumbs.db" });
         internal string[] ListDirectory(string pathRelativeToLibraryRoot)
         {
@@ -133,30 +105,6 @@ namespace Exporter
                 }
             }
             return output.ToArray();
-        }
-
-        private List<Pastel.ExtensibleFunction> extensibleFunctionMetadata = null;
-
-        private void InitTypeInfo()
-        {
-            string typeInfoFile = FileUtil.JoinPath(this.Metadata.Directory, "pastel", "native_method_type_info.txt");
-            if (FileUtil.FileExists(typeInfoFile))
-            {
-                string typeInfo = FileUtil.ReadFileText(typeInfoFile);
-                this.extensibleFunctionMetadata = Pastel.ExtensibleFunctionMetadataParser.Parse(
-                    "LIB:" + this.Metadata.ID + "/pastel/native_method_type_info.txt",
-                    typeInfo);
-            }
-            else
-            {
-                this.extensibleFunctionMetadata = new List<Pastel.ExtensibleFunction>();
-            }
-        }
-
-        public List<Pastel.ExtensibleFunction> GetPastelExtensibleFunctions()
-        {
-            if (this.extensibleFunctionMetadata == null) this.InitTypeInfo();
-            return this.extensibleFunctionMetadata;
         }
     }
 }

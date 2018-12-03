@@ -1,6 +1,5 @@
 ﻿using Common;
 using Parser;
-using Pastel;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -39,7 +38,6 @@ namespace Exporter
             ResourceDatabase resourceDatabase,
             ICollection<AssemblyMetadata> relevantLibraries,
             string verifiedAbsoluteOutputPath,
-            IInlineImportCodeLoader codeLoader,
             VmGenerationMode mode)
         {
             using (new PerformanceSection("VmGenerator.GenerateVmSourceCodeForPlatform"))
