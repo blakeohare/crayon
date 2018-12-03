@@ -7,6 +7,7 @@
         public static void ThrowErrorIfKeywordThisIsUsedInBaseArgsOrDefaultArgsAnywhereInConstructor() { }
         public static void VerifyDefaultArgumentsAreAtTheEnd() { }
         public static void VerifyNoDuplicateKeysInDictionaryDefinition() { }
+        public static void VerifyAllDictionaryKeysAreCorrectType() { }
         public static void MakeSwitchStatementFallthroughsErrors() { }
         public static void BuildFileShouldIndicateWhichResourcesAreTextVsBinary() { }
         public static void GetImageDimensionsFromFirstFewBytesInsteadOfLoadingIntoMemory() { }
