@@ -18,7 +18,7 @@ namespace CApp
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            TemplateStorage templates,
+            TemplateStorage templatesDONOTUSE,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
@@ -40,19 +40,21 @@ namespace CApp
             cCode.Append(this.LoadTextResource("Resources/TranslationHelper.txt", replacements));
             cCode.Append(this.NL);
 
-            cCode.Append(templates.GetCode("vm:structsdecl"));
+            //cCode.Append(templates.GetCode("vm:structsdecl"));
             cCode.Append(this.NL);
 
+            /*
             foreach (string structKey in templates.GetTemplateKeysWithPrefix("vm:struct:"))
             {
-                string structName = templates.GetName(structKey);
-                cCode.Append(templates.GetCode(structKey));
+                //string structName = templates.GetName(structKey);
+                //cCode.Append(templates.GetCode(structKey));
             }
+            */
             cCode.Append(this.NL);
 
-            cCode.Append(templates.GetCode("vm:functionsdecl"));
+            //cCode.Append(templates.GetCode("vm:functionsdecl"));
             cCode.Append(this.NL);
-            cCode.Append(templates.GetCode("vm:functions"));
+            //cCode.Append(templates.GetCode("vm:functions"));
             cCode.Append(this.NL);
 
             cCode.Append(this.LoadTextResource("Resources/main.txt", replacements));
