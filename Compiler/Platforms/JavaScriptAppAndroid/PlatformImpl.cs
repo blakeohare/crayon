@@ -18,7 +18,7 @@ namespace JavaScriptAppAndroid
 
         public override void ExportProject(
             Dictionary<string, FileOutput> output,
-            TemplateStorage templates,
+            TemplateStorage templatesDONOTUSE,
             IList<LibraryForExport> libraries,
             ResourceDatabase resourceDatabase,
             Options options)
@@ -46,13 +46,12 @@ namespace JavaScriptAppAndroid
             Dictionary<string, FileOutput> basicProject = new Dictionary<string, FileOutput>();
             this.ParentPlatform.ExportProject(
                 basicProject,
-                templates,
+                null,
                 libraries,
                 resourceDatabase,
                 options);
 
             // TODO: not good. The library inclusions should automatically be populated in LangJavaScript platforms.
-            // This is also done identically in the ChromeApp PlatformImpl.
             replacements["JS_LIB_INCLUSIONS"] = JavaScriptApp.PlatformImpl.GenerateJsLibInclusionHtml(basicProject.Keys);
 
             foreach (string filePath in basicProject.Keys)
@@ -61,8 +60,8 @@ namespace JavaScriptAppAndroid
                 if (filePath.EndsWith("index.html"))
                 {
                     file.TextContent = file.TextContent.Replace(
-                        "<script type=\"text / javascript\" src=\"",
-                        "<script type=\"text / javascript\" src=\"file:///android_asset/");
+                        "<script type=\"text/javascript\" src=\"",
+                        "<script type=\"text/javascript\" src=\"file:///android_asset/");
                 }
                 files["app/src/main/assets/" + filePath] = file;
             }
