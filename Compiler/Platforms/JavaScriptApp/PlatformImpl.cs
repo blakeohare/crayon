@@ -48,32 +48,32 @@ namespace JavaScriptApp
 
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
-            TemplateReader templateReader = new TemplateReader(this);
-            Dictionary<string, string> vmTemplates = templateReader.GetVmTemplates();
+            TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);
+            TemplateSet vmTemplates = templateReader.GetVmTemplates();
 
             output["vm.js"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = vmTemplates["vm.js"],
+                TextContent = vmTemplates.GetText("vm.js"),
             };
 
             List<LibraryForExport> librariesWithCode = new List<LibraryForExport>();
             foreach (LibraryForExport library in libraries.Where(lib => lib.HasNativeCode))
             {
                 string libraryName = library.Name;
-                Dictionary<string, string> libTemplates = templateReader.GetLibraryTemplates(libraryName);
+                TemplateSet libTemplates = templateReader.GetLibraryTemplates(libraryName);
 
                 List<string> libraryLines = new List<string>();
-                libraryLines.Add(libTemplates["gen/lib_" + libraryName.ToLower() + ".js"]);
+                libraryLines.Add(libTemplates.GetText("gen/lib_" + libraryName.ToLower() + ".js"));
                 libraryLines.Add("");
                 libraryLines.Add("C$common$scrapeLibFuncNames('" + libraryName.ToLower() + "');");
                 libraryLines.Add("");
 
                 // add helper functions after the scrape.
 
-                foreach (string jsHelperFile in libTemplates.Keys.Where(k => k.StartsWith("source/") && k.EndsWith(".js")))
+                foreach (string jsHelperFile in libTemplates.GetPaths("source/", ".js"))
                 {
-                    libraryLines.Add(libTemplates[jsHelperFile]);
+                    libraryLines.Add(libTemplates.GetText(jsHelperFile));
                     libraryLines.Add("");
                 }
 

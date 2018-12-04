@@ -9,9 +9,11 @@ namespace Platform
     public class TemplateReader
     {
         private List<string> platformNamesMostGeneralFirst = new List<string>();
+        private Common.PkgAwareFileUtil fileUtil;
 
-        public TemplateReader(AbstractPlatform platform)
+        public TemplateReader(Common.PkgAwareFileUtil fileUtil, AbstractPlatform platform)
         {
+            this.fileUtil = fileUtil;
             AbstractPlatform walker = platform;
             while (walker != null)
             {
@@ -21,25 +23,25 @@ namespace Platform
             platformNamesMostGeneralFirst.Reverse();
         }
 
-        public Dictionary<string, string> GetLibraryTemplates(string libraryName)
+        public TemplateSet GetLibraryTemplates(string libraryName)
         {
-            Dictionary<string, string> output = new Dictionary<string, string>();
+            Dictionary<string, byte[]> output = new Dictionary<string, byte[]>();
             foreach (string platformName in this.platformNamesMostGeneralFirst)
             {
                 string libTemplateDir = System.IO.Path.Combine(
                     Common.SourceDirectoryFinder.CrayonSourceDirectory,
                     "Libraries", libraryName, "native", platformName);
-                if (System.IO.Directory.Exists(libTemplateDir))
+                if (fileUtil.DirectoryExists(libTemplateDir))
                 {
                     ReadAllFiles(output, System.IO.Path.GetFullPath(libTemplateDir).Length + 1, libTemplateDir);
                 }
             }
-            return output;
+            return new TemplateSet(output);
         }
 
-        public Dictionary<string, string> GetVmTemplates()
+        public TemplateSet GetVmTemplates()
         {
-            Dictionary<string, string> output = new Dictionary<string, string>();
+            Dictionary<string, byte[]> output = new Dictionary<string, byte[]>();
             foreach (string platformName in this.platformNamesMostGeneralFirst)
             {
                 string vmTemplateDir = System.IO.Path.Combine(
@@ -50,18 +52,18 @@ namespace Platform
                     ReadAllFiles(output, System.IO.Path.GetFullPath(vmTemplateDir).Length + 1, vmTemplateDir);
                 }
             }
-            return output;
+            return new TemplateSet(output);
         }
 
-        private void ReadAllFiles(Dictionary<string, string> output, int pathTrimLength, string dir)
+        private void ReadAllFiles(Dictionary<string, byte[]> output, int pathTrimLength, string dir)
         {
-            foreach (string path in System.IO.Directory.GetFiles(dir))
+            foreach (string path in fileUtil.ListFiles(dir))
             {
                 string fullPath = System.IO.Path.Combine(dir, path);
-                output[path.Substring(pathTrimLength).Replace('\\', '/')] = System.IO.File.ReadAllText(fullPath);
+                output[fullPath.Substring(pathTrimLength).Replace('\\', '/')] = fileUtil.ReadFileBytes(fullPath);
             }
 
-            foreach (string path in System.IO.Directory.GetDirectories(dir))
+            foreach (string path in fileUtil.ListDirectories(dir))
             {
                 string fullPath = System.IO.Path.Combine(dir, path);
                 ReadAllFiles(output, pathTrimLength, fullPath);

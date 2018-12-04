@@ -46,17 +46,17 @@ namespace JavaApp
             };
 
             imports.Sort();
-            TemplateReader templateReader = new TemplateReader(this);
+            TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);
 
             foreach (LibraryForExport library in libraries.Where(t => t.HasNativeCode))
             {
-                Dictionary<string, string> libraryTemplates = templateReader.GetLibraryTemplates(library.Name);
+                TemplateSet libraryTemplates = templateReader.GetLibraryTemplates(library.Name);
 
                 string libraryPath = srcPath + "/org/crayonlang/libraries/" + library.Name.ToLower();
 
-                foreach (string templatePath in libraryTemplates.Keys.Where(t => t.StartsWith("gen/") || t.StartsWith("source/")))
+                foreach (string templatePath in libraryTemplates.GetPaths("gen/").Concat(libraryTemplates.GetPaths("source/")))
                 {
-                    string code = libraryTemplates[templatePath];
+                    string code = libraryTemplates.GetText(templatePath);
                     string realPath = templatePath.Substring(templatePath.IndexOf('/') + 1);
                     output[libraryPath + "/" + realPath] = new FileOutput()
                     {
@@ -67,19 +67,19 @@ namespace JavaApp
                 }
             }
 
-            Dictionary<string, string> vmTemplates = templateReader.GetVmTemplates();
+            TemplateSet vmTemplates = templateReader.GetVmTemplates();
 
             output["src/org/crayonlang/interpreter/vm/CrayonWrapper.java"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = vmTemplates["CrayonWrapper.java"],
+                TextContent = vmTemplates.GetText("CrayonWrapper.java"),
                 TrimBomIfPresent = true,
             };
 
-            foreach (string structKey in vmTemplates.Keys.Where(k => k.StartsWith("structs/")))
+            foreach (string structKey in vmTemplates.GetPaths("structs/"))
             {
                 string structName = System.IO.Path.GetFileNameWithoutExtension(structKey);
-                string structCode = vmTemplates[structKey];
+                string structCode = vmTemplates.GetText(structKey);
 
                 output["src/org/crayonlang/interpreter/structs/" + structName + ".java"] = new FileOutput()
                 {
