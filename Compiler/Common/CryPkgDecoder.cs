@@ -34,7 +34,7 @@ namespace Common
 
         private byte[] data;
         private int payloadOffset;
-        private Dictionary<string, FileInfo> files = null;
+        private Dictionary<string, FileInfo> files = new Dictionary<string, FileInfo>();
 
         public CryPkgDecoder(byte[] bytes)
         {
@@ -92,11 +92,13 @@ namespace Common
             return MysteryTextDecoder.DecodeArbitraryBytesAsAppropriatelyAsPossible(bytes);
         }
 
-        public string[] ListDirectory(string path)
+        public string[] ListDirectory(string path, bool justFiles)
         {
             if (!this.files.ContainsKey(path) || !this.files[path].IsDirectory) throw new InvalidOperationException();
-            int trimLength = path.Length + 1;
+            int trimLength = path == "." ? 0 : path.Length + 1;
+
             return this.files[path].Children
+                .Where(k => this.files[k].IsDirectory != justFiles)
                 .Select(s => s.Substring(trimLength))
                 .OrderBy(t => t)
                 .ToArray();
@@ -104,14 +106,14 @@ namespace Common
 
         private void PopulateDirectories()
         {
+            string[] fileListSnapshot = this.files.Keys.ToArray();
             this.files["."] = new FileInfo()
             {
                 Children = new HashSet<string>(),
                 IsDirectory = true,
                 Path = ".",
             };
-
-            foreach (string filePath in this.files.Keys)
+            foreach (string filePath in fileListSnapshot)
             {
                 string current = filePath;
                 string dir = this.GetParentDir(filePath);

@@ -36,8 +36,8 @@ namespace PythonApp
         {
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
-            TemplateReader templates = new TemplateReader(this);
-            Dictionary<string, string> vmTemplates = templates.GetVmTemplates();
+            TemplateReader templates = new TemplateReader(new PkgAwareFileUtil(), this);
+            TemplateSet vmTemplates = templates.GetVmTemplates();
             output["code/vm.py"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
@@ -46,7 +46,7 @@ namespace PythonApp
                     this.LoadTextResource("Resources/TranslationHelper.txt", replacements),
                     this.LoadTextResource("Resources/LibraryRegistry.txt", replacements),
                     this.LoadTextResource("Resources/ResourceReader.txt", replacements),
-                    vmTemplates["vm.py"],
+                    vmTemplates.GetText("vm.py"),
                 }),
             };
 
@@ -54,7 +54,7 @@ namespace PythonApp
             {
                 if (library.HasNativeCode)
                 {
-                    Dictionary<string, string> libTemplates = new TemplateReader(this).GetLibraryTemplates(library.Name);
+                    TemplateSet libTemplates = new TemplateReader(new PkgAwareFileUtil(), this).GetLibraryTemplates(library.Name);
                     string libraryName = library.Name;
                     List<string> libraryLines = new List<string>();
 
@@ -66,17 +66,17 @@ namespace PythonApp
                     libraryLines.Add("import inspect");
                     libraryLines.Add("from code.vm import *");
                     libraryLines.Add("");
-                    foreach (string genCodePath in libTemplates.Keys.Where(k => k.StartsWith("gen/")))
+                    foreach (string genCodePath in libTemplates.GetPaths("gen/"))
                     {
-                        libraryLines.Add(libTemplates[genCodePath]);
+                        libraryLines.Add(libTemplates.GetText(genCodePath));
                         libraryLines.Add("");
                     }
                     libraryLines.Add("");
                     libraryLines.Add("_moduleInfo = ('" + libraryName + "', dict(inspect.getmembers(sys.modules[__name__])))");
                     libraryLines.Add("");
-                    foreach (string genCodePath in libTemplates.Keys.Where(k => k.StartsWith("source/")))
+                    foreach (string genCodePath in libTemplates.GetPaths("source/"))
                     {
-                        libraryLines.Add(libTemplates[genCodePath]);
+                        libraryLines.Add(libTemplates.GetText(genCodePath));
                         libraryLines.Add("");
                     }
 

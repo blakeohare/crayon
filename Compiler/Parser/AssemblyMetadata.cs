@@ -121,15 +121,17 @@ namespace Parser
 
         private Dictionary<string, string> structFiles = null;
 
+        private PkgAwareFileUtil fileUtil = new PkgAwareFileUtil();
+
         public Dictionary<string, string> GetStructFilesCode()
         {
             if (this.structFiles == null)
             {
                 this.structFiles = new Dictionary<string, string>();
                 string structFilesDir = FileUtil.JoinPath(this.Directory, "structs");
-                if (FileUtil.DirectoryExists(structFilesDir))
+                if (fileUtil.DirectoryExists(structFilesDir))
                 {
-                    foreach (string name in FileUtil.DirectoryListFileNames(structFilesDir))
+                    foreach (string name in fileUtil.ListFiles(structFilesDir))
                     {
                         this.structFiles[name] = this.ReadFile(false, FileUtil.JoinPath("structs", name), false);
                     }
@@ -148,9 +150,9 @@ namespace Parser
         public byte[] ReadFileBytes(string pathRelativeToLibraryRoot)
         {
             string fullPath = FileUtil.JoinPath(this.Directory, pathRelativeToLibraryRoot);
-            if (FileUtil.FileExists(fullPath))
+            if (fileUtil.FileExists(fullPath))
             {
-                return FileUtil.ReadFileBytes(fullPath);
+                return fileUtil.ReadFileBytes(fullPath);
             }
             throw new ParserException("The '" + this.ID + "' library does not contain the resource '" + pathRelativeToLibraryRoot + "'");
         }
@@ -158,9 +160,9 @@ namespace Parser
         public string ReadFile(bool keepPercents, string pathRelativeToLibraryRoot, bool failSilently)
         {
             string fullPath = FileUtil.JoinPath(this.Directory, pathRelativeToLibraryRoot);
-            if (FileUtil.FileExists(fullPath))
+            if (fileUtil.FileExists(fullPath))
             {
-                return FileUtil.ReadFileText(fullPath);
+                return fileUtil.ReadFileText(fullPath);
             }
 
             if (failSilently)

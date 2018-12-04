@@ -87,7 +87,7 @@ namespace CSharpApp
         {
             Dictionary<string, string> libraryProjectNameToGuid = new Dictionary<string, string>();
 
-            TemplateReader templateReader = new TemplateReader(this);
+            TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);
 
             string runtimeProjectGuid = IdGenerator.GenerateCSharpGuid("runtime", "runtime-project");
             string runtimeAssemblyGuid = IdGenerator.GenerateCSharpGuid("runtime", "runtime-assembly");
@@ -161,35 +161,35 @@ namespace CSharpApp
             Dictionary<string, FileOutput> filesOut)
         {
             string libraryName = library.Name;
-            Dictionary<string, string> libTemplates = templateReader.GetLibraryTemplates(libraryName);
+            TemplateSet libTemplates = templateReader.GetLibraryTemplates(libraryName);
             List<string> libraryLines = new List<string>();
 
             string libraryDir = baseDir + "Libraries/" + libraryName;
 
-            foreach (string structKey in libTemplates.Keys.Where(t => t.StartsWith("gen/structs/")))
+            foreach (string structKey in libTemplates.GetPaths("gen/structs/"))
             {
                 string structFileName = structKey.Substring(structKey.LastIndexOf('/') + 1);
                 string structName = System.IO.Path.GetFileNameWithoutExtension(structFileName);
                 filesOut[libraryDir + "/" + structName + ".cs"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = libTemplates[structKey],
+                    TextContent = libTemplates.GetText(structKey),
                 };
             }
 
-            foreach (string helperFile in libTemplates.Keys.Where(t => t.StartsWith("source/")))
+            foreach (string helperFile in libTemplates.GetPaths("source/"))
             {
                 filesOut[libraryDir + "/" + helperFile.Substring("source/".Length)] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = libTemplates[helperFile],
+                    TextContent = libTemplates.GetText(helperFile),
                 };
             }
 
             filesOut[libraryDir + "/LibraryWrapper.cs"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = libTemplates["gen/LibraryWrapper.cs"],
+                TextContent = libTemplates.GetText("gen/LibraryWrapper.cs"),
             };
 
             foreach (ExportEntity dllFile in library.ExportEntities["DOTNET_DLL"])
@@ -204,7 +204,7 @@ namespace CSharpApp
             ResourceDatabase resourceDatabase,
             Options options)
         {
-            TemplateReader templateReader = new TemplateReader(this);
+            TemplateReader templateReader = new TemplateReader(new PkgAwareFileUtil(), this);
 
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
             string projectId = options.GetString(ExportOptionKey.PROJECT_ID);
@@ -317,23 +317,23 @@ namespace CSharpApp
             string baseDir,
             Dictionary<string, FileOutput> output)
         {
-            Dictionary<string, string> vmTemplates = templateReader.GetVmTemplates();
+            TemplateSet vmTemplates = templateReader.GetVmTemplates();
 
-            foreach (string structKey in vmTemplates.Keys.Where(k => k.StartsWith("structs/")))
+            foreach (string structKey in vmTemplates.GetPaths("structs/"))
             {
                 string structFileName = structKey.Substring(structKey.LastIndexOf('/') + 1);
                 string structName = System.IO.Path.GetFileNameWithoutExtension(structFileName);
                 output[baseDir + "Structs/" + structName + ".cs"] = new FileOutput()
                 {
                     Type = FileOutputType.Text,
-                    TextContent = vmTemplates[structKey],
+                    TextContent = vmTemplates.GetText(structKey),
                 };
             }
 
             output[baseDir + "Vm/CrayonWrapper.cs"] = new FileOutput()
             {
                 Type = FileOutputType.Text,
-                TextContent = vmTemplates["CrayonWrapper.cs"],
+                TextContent = vmTemplates.GetText("CrayonWrapper.cs"),
             };
         }
 
