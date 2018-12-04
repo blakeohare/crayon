@@ -1,0 +1,134 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Common
+{
+    /*
+        An assortment of file util functions that take into consideration that part of the path
+        may possibly be a CryPkg.
+
+        Attempts to read real files from disk first, and then falls back to checking each directory
+        if a CryPkg exists. Caches results.
+
+        If caching is no longer wanted, use Purge()
+
+        A .crypkg file's name will be that of the directory it represents.
+        e.g. "C:\foo\bar\baz.crypkg" will represent "C:\foo\bar\baz\..."
+    */
+    public class PkgAwareFileUtil
+    {
+        private Dictionary<string, CryPkgDecoder> packageStatuses = new Dictionary<string, CryPkgDecoder>();
+
+        public PkgAwareFileUtil()
+        { }
+
+        public void Purge() { this.packageStatuses.Clear(); }
+
+        public bool FileExists(string path)
+        {
+            string fullPath = System.IO.Path.GetFullPath(path);
+            if (System.IO.File.Exists(fullPath)) return true;
+
+            CryPkgPath pkgPath = GetPackagedPath(fullPath);
+            if (pkgPath == null) return false;
+            return pkgPath.Package.FileExists(pkgPath.Path);
+        }
+
+        public bool DirectoryExists(string path)
+        {
+            string fullPath = System.IO.Path.GetFullPath(path);
+            if (System.IO.Directory.Exists(fullPath)) return true;
+
+            CryPkgPath pkgPath = GetPackagedPath(fullPath);
+            if (pkgPath == null) return false;
+            return pkgPath.Package.DirectoryExists(pkgPath.Path);
+        }
+
+        public byte[] ReadFileBytes(string path)
+        {
+            string fullPath = System.IO.Path.GetFullPath(path);
+            if (System.IO.File.Exists(fullPath)) return System.IO.File.ReadAllBytes(fullPath);
+
+            CryPkgPath pkgPath = GetPackagedPath(fullPath);
+            if (pkgPath == null) throw new System.IO.FileNotFoundException(path);
+            return pkgPath.Package.ReadFileBytes(pkgPath.Path);
+        }
+
+        public string ReadFileText(string path)
+        {
+            return MysteryTextDecoder.DecodeArbitraryBytesAsAppropriatelyAsPossible(ReadFileBytes(path));
+        }
+
+        private CryPkgPath GetPackagedPath(string fullPath)
+        {
+            string canonicalPath = fullPath.Replace('\\', '/');
+            this.EnsureCachePopulated(canonicalPath);
+
+            string pkgPath = this.GetPathOfHighestCryPkg(canonicalPath);
+            if (pkgPath == null) return null;
+            string pkgDir = pkgPath.Substring(0, pkgPath.Length - ".crypkg".Length);
+            CryPkgDecoder pkg = this.packageStatuses[pkgPath];
+            string relativeDir = canonicalPath.Substring(pkgDir.Length + 1);
+            return new CryPkgPath(relativeDir, pkg);
+        }
+
+        private class CryPkgPath
+        {
+            public CryPkgPath(string path, CryPkgDecoder package)
+            {
+                this.Package = package;
+                this.Path = path;
+            }
+
+            public CryPkgDecoder Package { get; set; }
+            public string Path { get; set; }
+        }
+
+        private string[] GetAllPossiblePkgPaths(string path)
+        {
+            string[] segments = path.Replace('\\', '/').Split('/');
+            string[] cumulative = new string[segments.Length];
+            cumulative[0] = segments[0];
+            for (int i = 1; i < segments.Length; ++i)
+            {
+                segments[i] = segments[i - 1] + "/" + segments[i];
+            }
+            string[] pkgPaths = new string[segments.Length - 1];
+            for (int i = 0; i < segments.Length - 1; ++i)
+            {
+                pkgPaths[i] = cumulative[i] + "/" + segments[i + 1] + ".crypkg";
+            }
+            return pkgPaths;
+        }
+
+        private void EnsureCachePopulated(string path)
+        {
+            foreach (string pkgPath in GetAllPossiblePkgPaths(path))
+            {
+                if (!this.packageStatuses.ContainsKey(pkgPath))
+                {
+                    string pkgRealPath = pkgPath.Replace('/', System.IO.Path.DirectorySeparatorChar);
+                    if (System.IO.File.Exists(pkgRealPath))
+                    {
+                        CryPkgDecoder pkg = new CryPkgDecoder(System.IO.File.ReadAllBytes(pkgRealPath));
+                        this.packageStatuses[pkgRealPath] = pkg;
+                    }
+                }
+            }
+        }
+
+        private string GetPathOfHighestCryPkg(string path)
+        {
+            foreach (string pkgPath in GetAllPossiblePkgPaths(path).Reverse())
+            {
+                if (!this.packageStatuses.ContainsKey(path)) this.EnsureCachePopulated(path);
+                if (this.packageStatuses[pkgPath] != null)
+                {
+                    return pkgPath;
+                }
+            }
+            return null;
+        }
+    }
+}
