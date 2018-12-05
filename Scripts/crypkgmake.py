@@ -21,22 +21,26 @@ def main(args):
   if len(args) != 1:
     print("Usage: python crypkg-make.py directory")
     return
+  print("Packaging files in " + args[0])
+  make_pkg(args[0])
 
-  path = args[0]
+def make_pkg(path, output_file = None):
+
   if not os.path.isabs(path):
     path = os.path.join(os.getcwd(), path)
 
   path = os.path.abspath(path)
 
   if not os.path.isdir(path):
-    print(path + " is not a directory")
+    raise Exception(path + " is not a directory")
     return
 
   parts = path.split(os.sep)
   last_dir = parts[-1]
   parent_dir = os.sep.join(parts[:-1])
   crypkg_path = path + '.crypkg'
-  print("Packaging files into : " + crypkg_path)
+  if output_file != None:
+    crypkg_path = output_file
 
   files = gather_files(path)
   files.sort(key = lambda x: x[0])
@@ -84,4 +88,5 @@ def int32_to_bytes(n):
     n & 255
   ]
 
-main(sys.argv[1:])
+if __name__ == "__main__":
+  main(sys.argv[1:])
