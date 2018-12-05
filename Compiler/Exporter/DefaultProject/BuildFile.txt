@@ -1,44 +1,42 @@
-﻿<build>
-	<projectname>%%%PROJECT_NAME%%%</projectname>
-	<title>%%%TITLE%%%</title>
-	<description>Enter description of %%%PROJECT_NAME%%%</description>
-	<icon>assets/icon32.png,assets/icon256.png</icon>
+﻿{
+    "id": "%%%PROJECT_NAME%%%",
+    "source": "source/",
+    "output": "output/%TARGET_NAME%",
+    "icon": "assets/icon32.png,assets/icon256.png",
+    "title": "%%%TITLE%%%",
 
-	<source>source</source>
-	<compilerlocale>%%%COMPILER_LOCALE%%%</compilerlocale>
-	<output>output/%TARGET_NAME%</output>
+    "ios-bundle-prefix": "com.yourname.%%%PROJECT_NAME%%%",
+    "guid-seed": "com.yourname.%%%PROJECT_NAME%%%,v1,%TARGET_NAME%",
 
-	<imagesheets>
-		<sheet id="everything">
-			<prefix>*</prefix>
-		</sheet>
-	</imagesheets>
-	
-	<guidseed>com.yourname.%%%PROJECT_NAME%%%,v1,%TARGET_NAME%</guidseed>
-	
-	<!-- Various targets for exporting to different platforms -->
-	<target name="javascript">
-		<platform>javascript-app</platform>
-		<jsfileprefix>/website/relative/path/from/domain/root</jsfileprefix>
-	</target>
-	
-	<target name="csharp">
-		<platform>csharp-app</platform>
-	</target>
-	
-	<target name="java">
-		<platform>java-app</platform>
-	</target>
-	
-	<target name="python">
-		<platform>python-app</platform>
-	</target>
-	
-	<target name="chrome-web-app">
-		<platform>javascript-app-chrome</platform>
-	</target>
-	
-	<target name="ios">
-		<platform>javascript-app-ios</platform>
-	</target>
-</build>
+    "image-sheets": [
+        { "id": "everything", "prefix": "*" }
+    ],
+
+    "targets": [
+        {
+            "name": "android",
+            "platform": "javascript-app-android"
+        },
+        {
+            "name": "ios",
+            "platform": "javascript-app-ios"
+        },
+        {
+            "name": "javascript",
+            "platform": "javascript-app",
+            "js-file-prefix": "/website/relative/path/from/domain/root"
+        },
+        {
+            "name": "csharp",
+            "platform": "csharp-app"
+        },
+        {
+            "name": "java",
+            "platform": "java-app"
+        },
+        {
+            "name": "python",
+            "platform": "python-app"
+        }
+    ]
+}
