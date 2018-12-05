@@ -44,30 +44,11 @@ def always_false(): return False
 def lib_audio_getAudioResourcePath(vm, args):
   return resource_manager_getResourceOfType(vm, args[0][1], "SND")
 
-def lib_audio_is_supported(vm, args):
-  if always_true():
-    return vm[13][1]
-  return vm[13][2]
-
 def lib_audio_load_sfx_from_resourceImpl(obj, path):
   sfx = readLocalSoundResource(path)
   obj[3] = [None]
   obj[3][0] = sfx
   return 1
-
-def lib_audio_music_is_playing(vm, args):
-  if audio_music_is_playing():
-    return vm[13][1]
-  return vm[13][2]
-
-def lib_audio_music_load_from_file(vm, args):
-  return vm[13][0]
-
-def lib_audio_music_load_from_resource(vm, args):
-  objInstance1 = args[0][1]
-  if lib_audio_music_load_from_resourceImpl(objInstance1, args[1][1]):
-    return vm[13][1]
-  return vm[13][2]
 
 def lib_audio_music_load_from_resourceImpl(musicObj, path):
   nativeMusicObject = 1
@@ -76,9 +57,6 @@ def lib_audio_music_load_from_resourceImpl(musicObj, path):
     musicObj[3][0] = nativeMusicObject
     return True
   return False
-
-def lib_audio_music_play(vm, args):
-  return buildBoolean(vm[13], (lib_audio_music_playImpl(args[0][1], args[1][1], args[2][1], args[3][1], args[4][1]) != -1))
 
 def lib_audio_music_playImpl(musicObject, isResource, path, startingVolume, isLoop):
   audio_music_set_volume(startingVolume)
@@ -93,21 +71,6 @@ def lib_audio_music_playImpl(musicObject, isResource, path, startingVolume, isLo
     audio_music_play_file(nativeObject, path, isLoop)
   return 0
 
-def lib_audio_music_set_volume(vm, args):
-  audio_music_set_volume(args[0][1])
-  return vm[13][0]
-
-def lib_audio_music_stop(vm, args):
-  return vm[13][0]
-
-def lib_audio_sfx_get_state(vm, args):
-  channelInstance = args[0][1]
-  nativeChannel = channelInstance[3][0]
-  soundInstance = args[1][1]
-  nativeSound = soundInstance[3][0]
-  resourceId = args[2][1]
-  return buildInteger(vm[13], lib_audio_sfx_get_stateImpl(nativeChannel, nativeSound, resourceId))
-
 def lib_audio_sfx_get_stateImpl(channel, sfxResource, resourceId):
   return audio_sound_get_state(channel, sfxResource, resourceId)
 
@@ -118,67 +81,11 @@ def lib_audio_sfx_launch(sfxResource, channelNativeDataOut, volume, pan):
   channelNativeDataOut[0] = channel
   return 1
 
-def lib_audio_sfx_load_from_file(vm, args):
-  return vm[13][0]
-
-def lib_audio_sfx_load_from_resource(vm, args):
-  soundInstance = args[0][1]
-  lib_audio_load_sfx_from_resourceImpl(soundInstance, args[1][1])
-  return vm[13][0]
-
-def lib_audio_sfx_play(vm, args):
-  channelInstance = args[0][1]
-  resourceInstance = args[1][1]
-  channelInstance[3] = [None]
-  nativeResource = resourceInstance[3][0]
-  vol = args[2][1]
-  pan = args[3][1]
-  return buildInteger(vm[13], lib_audio_sfx_launch(nativeResource, channelInstance[3], vol, pan))
-
-def lib_audio_sfx_resume(vm, args):
-  sndInstance = args[0][1]
-  nativeSound = sndInstance[3][0]
-  sndResInstance = args[1][1]
-  nativeResource = sndResInstance[3][0]
-  vol = args[2][1]
-  pan = args[3][1]
-  lib_audio_sfx_unpause(nativeSound, nativeResource, vol, pan)
-  return vm[13][0]
-
-def lib_audio_sfx_set_pan(vm, args):
-  channel = args[0][1]
-  nativeChannel = channel[3][0]
-  resource = args[1][1]
-  nativeResource = resource[3][0]
-  lib_audio_sfx_set_panImpl(nativeChannel, nativeResource, args[2][1])
-  return vm[13][0]
-
 def lib_audio_sfx_set_panImpl(channel, sfxResource, pan):
   return 0
 
-def lib_audio_sfx_set_volume(vm, args):
-  channel = args[0][1]
-  nativeChannel = channel[3][0]
-  resource = args[1][1]
-  nativeResource = resource[3][0]
-  lib_audio_sfx_set_volumeImpl(nativeChannel, nativeResource, args[2][1])
-  return vm[13][0]
-
 def lib_audio_sfx_set_volumeImpl(channel, sfxResource, volume):
   return 0
-
-def lib_audio_sfx_stop(vm, args):
-  channel = args[0][1]
-  nativeChannel = channel[3][0]
-  resource = args[1][1]
-  nativeResource = resource[3][0]
-  resourceId = args[2][1]
-  currentState = args[3][1]
-  completeStopAndFreeChannel = args[4][1]
-  isAlreadyPaused = ((currentState == 2) and not (completeStopAndFreeChannel))
-  if ((currentState != 3) and not (isAlreadyPaused)):
-    lib_audio_sfx_stopImpl(nativeChannel, nativeResource, resourceId, (currentState == 1), completeStopAndFreeChannel)
-  return vm[13][0]
 
 def lib_audio_sfx_stopImpl(channel, resource, resourceId, isActivelyPlaying, hardStop):
   audio_sound_stop(channel, resource, resourceId, isActivelyPlaying, hardStop)
@@ -191,6 +98,99 @@ def lib_audio_sfx_unpause(channel, sfxResource, volume, pan):
 def lib_audio_stop(sound, reset):
   stopSoundImpl(sound)
   return 0
+
+def lib_game_audio_is_supported(vm, args):
+  if always_true():
+    return vm[13][1]
+  return vm[13][2]
+
+def lib_game_audio_music_is_playing(vm, args):
+  if audio_music_is_playing():
+    return vm[13][1]
+  return vm[13][2]
+
+def lib_game_audio_music_load_from_file(vm, args):
+  return vm[13][0]
+
+def lib_game_audio_music_load_from_resource(vm, args):
+  objInstance1 = args[0][1]
+  if lib_audio_music_load_from_resourceImpl(objInstance1, args[1][1]):
+    return vm[13][1]
+  return vm[13][2]
+
+def lib_game_audio_music_play(vm, args):
+  return buildBoolean(vm[13], (lib_audio_music_playImpl(args[0][1], args[1][1], args[2][1], args[3][1], args[4][1]) != -1))
+
+def lib_game_audio_music_set_volume(vm, args):
+  audio_music_set_volume(args[0][1])
+  return vm[13][0]
+
+def lib_game_audio_music_stop(vm, args):
+  return vm[13][0]
+
+def lib_game_audio_sfx_get_state(vm, args):
+  channelInstance = args[0][1]
+  nativeChannel = channelInstance[3][0]
+  soundInstance = args[1][1]
+  nativeSound = soundInstance[3][0]
+  resourceId = args[2][1]
+  return buildInteger(vm[13], lib_audio_sfx_get_stateImpl(nativeChannel, nativeSound, resourceId))
+
+def lib_game_audio_sfx_load_from_file(vm, args):
+  return vm[13][0]
+
+def lib_game_audio_sfx_load_from_resource(vm, args):
+  soundInstance = args[0][1]
+  lib_audio_load_sfx_from_resourceImpl(soundInstance, args[1][1])
+  return vm[13][0]
+
+def lib_game_audio_sfx_play(vm, args):
+  channelInstance = args[0][1]
+  resourceInstance = args[1][1]
+  channelInstance[3] = [None]
+  nativeResource = resourceInstance[3][0]
+  vol = args[2][1]
+  pan = args[3][1]
+  return buildInteger(vm[13], lib_audio_sfx_launch(nativeResource, channelInstance[3], vol, pan))
+
+def lib_game_audio_sfx_resume(vm, args):
+  sndInstance = args[0][1]
+  nativeSound = sndInstance[3][0]
+  sndResInstance = args[1][1]
+  nativeResource = sndResInstance[3][0]
+  vol = args[2][1]
+  pan = args[3][1]
+  lib_audio_sfx_unpause(nativeSound, nativeResource, vol, pan)
+  return vm[13][0]
+
+def lib_game_audio_sfx_set_pan(vm, args):
+  channel = args[0][1]
+  nativeChannel = channel[3][0]
+  resource = args[1][1]
+  nativeResource = resource[3][0]
+  lib_audio_sfx_set_panImpl(nativeChannel, nativeResource, args[2][1])
+  return vm[13][0]
+
+def lib_game_audio_sfx_set_volume(vm, args):
+  channel = args[0][1]
+  nativeChannel = channel[3][0]
+  resource = args[1][1]
+  nativeResource = resource[3][0]
+  lib_audio_sfx_set_volumeImpl(nativeChannel, nativeResource, args[2][1])
+  return vm[13][0]
+
+def lib_game_audio_sfx_stop(vm, args):
+  channel = args[0][1]
+  nativeChannel = channel[3][0]
+  resource = args[1][1]
+  nativeResource = resource[3][0]
+  resourceId = args[2][1]
+  currentState = args[3][1]
+  completeStopAndFreeChannel = args[4][1]
+  isAlreadyPaused = ((currentState == 2) and not (completeStopAndFreeChannel))
+  if ((currentState != 3) and not (isAlreadyPaused)):
+    lib_audio_sfx_stopImpl(nativeChannel, nativeResource, resourceId, (currentState == 1), completeStopAndFreeChannel)
+  return vm[13][0]
 
 def lib_game_clock_tick(vm, args):
   always_true()
@@ -263,6 +263,11 @@ def lib_game_gamepad_is_supported(vm, args):
 
 def lib_game_gamepad_jsIsOsx(vm, args):
   return buildInteger(vm[13], 0)
+
+def lib_game_gamepad_platform_requires_refresh(vm, args):
+  if (True and always_false()):
+    return vm[15]
+  return vm[16]
 
 def lib_game_gamepad_poll_universe(vm, args):
   always_true()
@@ -359,8 +364,3 @@ def lib_game_startup(vm, args):
       registerNamedCallback(vm, "Game", name, fn)
     i += 1
   return vm[14]
-
-def lib_gamepad_platform_requires_refresh(vm, args):
-  if (True and always_false()):
-    return vm[15]
-  return vm[16]

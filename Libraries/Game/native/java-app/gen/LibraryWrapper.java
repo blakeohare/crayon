@@ -554,6 +554,10 @@ public final class LibraryWrapper {
     return vm.globalNull;
   }
 
+  public static Value lib_game_gamepad_platform_requires_refresh(VmContext vm, Value[] args) {
+    return vm.globalFalse;
+  }
+
   public static Value lib_game_gamepad_poll_universe(VmContext vm, Value[] args) {
     return vm.globalNull;
   }
@@ -668,9 +672,5 @@ public final class LibraryWrapper {
       i += 1;
     }
     return vm.globalNull;
-  }
-
-  public static Value lib_gamepad_platform_requires_refresh(VmContext vm, Value[] args) {
-    return vm.globalFalse;
   }
 }

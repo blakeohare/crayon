@@ -442,6 +442,15 @@ namespace Interpreter.Libraries.Game
             return Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, 0);
         }
 
+        public static Value lib_game_gamepad_platform_requires_refresh(VmContext vm, Value[] args)
+        {
+            if ((true && AlwaysFalse()))
+            {
+                return vm.globalTrue;
+            }
+            return vm.globalFalse;
+        }
+
         public static Value lib_game_gamepad_poll_universe(VmContext vm, Value[] args)
         {
             Libraries.Game.GamepadTranslationHelper.Poll();
@@ -579,15 +588,6 @@ namespace Interpreter.Libraries.Game
                 i += 1;
             }
             return vm.globalNull;
-        }
-
-        public static Value lib_gamepad_platform_requires_refresh(VmContext vm, Value[] args)
-        {
-            if ((true && AlwaysFalse()))
-            {
-                return vm.globalTrue;
-            }
-            return vm.globalFalse;
         }
     }
 }
