@@ -41,14 +41,44 @@ namespace Parser.ParseTree
 
         internal override Expression Resolve(ParserContext parser)
         {
+
+            HashSet<int> intKeyDupeCheck = new HashSet<int>();
+            HashSet<string> stringKeyDupeCheck = new HashSet<string>();
+            bool dictHasStringKeys = false;
+
             // Iterate through KVP in parallel so that errors will get reported in the preferred order.
-
-            TODO.VerifyNoDuplicateKeysInDictionaryDefinition();
-            TODO.VerifyAllDictionaryKeysAreCorrectType(); // amongst the keys that can be resolved into constants, at least.
-
             for (int i = 0; i < this.Keys.Length; ++i)
             {
-                this.Keys[i] = this.Keys[i].Resolve(parser);
+                Expression keyExpr = this.Keys[i].Resolve(parser);
+                IConstantValue keyConst = keyExpr as IConstantValue;
+                bool keyIsString = keyConst is StringConstant;
+                bool keyIsInteger = keyConst is IntegerConstant;
+                if (!keyIsInteger && !keyIsString) throw new ParserException(keyExpr.FirstToken, "Only string and integer constants can be used as dictionary keys in inline definitions.");
+
+                if (i == 0)
+                {
+                    dictHasStringKeys = keyIsString;
+                }
+                else if (dictHasStringKeys != keyIsString)
+                {
+                    throw new ParserException(keyExpr.FirstToken, "Cannot mix types of dictionary keys.");
+                }
+
+                bool collision = false;
+                if (keyIsString)
+                {
+                    string keyValue = ((StringConstant)keyConst).Value;
+                    collision = stringKeyDupeCheck.Contains(keyValue);
+                    stringKeyDupeCheck.Add(keyValue);
+                }
+                else
+                {
+                    int keyValue = ((IntegerConstant)keyConst).Value;
+                    collision = intKeyDupeCheck.Contains(keyValue);
+                    intKeyDupeCheck.Add(keyValue);
+                }
+
+                this.Keys[i] = keyExpr;
                 this.Values[i] = this.Values[i].Resolve(parser);
             }
             return this;
