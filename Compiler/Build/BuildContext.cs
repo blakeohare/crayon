@@ -52,9 +52,21 @@ namespace Build
             return null;
         }
 
+        private static BuildRoot GetBuildRoot(string buildFile)
+        {
+            try
+            {
+                return JsonParserForBuild.Parse(buildFile);
+            }
+            catch (JsonParser.JsonParserException jpe)
+            {
+                throw new InvalidOperationException("Build file JSON syntax error: " + jpe.Message);
+            }
+        }
+
         public static BuildContext Parse(string projectDir, string buildFile, string nullableTargetName)
         {
-            BuildRoot buildInput = JsonParserForBuild.Parse(buildFile);
+            BuildRoot buildInput = GetBuildRoot(buildFile);
             BuildRoot flattened = buildInput;
             string platform = null;
             Dictionary<string, BuildVarCanonicalized> varLookup;
