@@ -6,3 +6,5 @@ obj
 /Docs/sql.txt
 /Compiler/.vs
 /Compiler/Pastel/.vs
+__pycache__
+*.pyc
