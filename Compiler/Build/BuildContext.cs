@@ -137,8 +137,8 @@ namespace Build
                 IosBundlePrefix = flattened.IosBundlePrefix,
                 JavaPackage = flattened.JavaPackage,
                 JsFullPage = flattened.JsFullPage,
-                WindowWidth = Util.ParseIntWithErrorNullOkay((flattened.WindowSize ?? new Size()).Width, "Invalid window width in build file."),
-                WindowHeight = Util.ParseIntWithErrorNullOkay((flattened.WindowSize ?? new Size()).Height, "Invalid window height in build file."),
+                WindowWidth = (flattened.WindowSize ?? new Size()).Width,
+                WindowHeight = (flattened.WindowSize ?? new Size()).Height,
                 CompilerLocale = Locale.Get((flattened.CompilerLocale ?? "en").Trim()),
             };
 

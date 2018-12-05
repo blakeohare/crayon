@@ -4,10 +4,8 @@
     {
         public string Id { get; set; }
 
-        public string Type { get; set; }
+        public VarType Type { get; set; }
 
-        public string Value { get; set; }
-
-        public string EnvironmentVarValue { get; set; }
+        public object Value { get; set; }
     }
 }

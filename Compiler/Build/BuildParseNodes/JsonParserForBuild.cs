@@ -77,9 +77,8 @@ namespace Build.BuildParseNodes
             {
                 item.WindowSize = new Size()
                 {
-                    // TODO(json-build): use ints directly when XML is removed
-                    Width = "" + windowWidth,
-                    Height = "" + windowHeight
+                    Width = windowWidth,
+                    Height = windowHeight
                 };
             }
 
@@ -104,41 +103,26 @@ namespace Build.BuildParseNodes
                 .OfType<IDictionary<string, object>>()
                 .Select(t => new Common.JsonLookup(t)))
             {
-
-                // TODO(json-build): use value directly once XML is removed.
                 BuildVar bv = new BuildVar() { Id = varJson.GetAsString("name") };
-
                 object value = varJson.Get("value");
                 if (value == null && varJson.GetAsString("env") != null)
                 {
-                    value = Common.EnvironmentVariableUtil.GetVariable(varJson.GetAsString("env"));
+                    bv.Value = Common.EnvironmentVariableUtil.GetVariable(varJson.GetAsString("env")) ?? "";
+                    bv.Type = VarType.STRING;
                 }
-
-                if (value is bool)
+                else
                 {
-                    bv.Type = "bool";
-                    bv.Value = value.ToString();
+                    bv.Value = value;
+                    if (bv.Value is bool) bv.Type = VarType.BOOLEAN;
+                    else if (bv.Value is int) bv.Type = VarType.INT;
+                    else if (bv.Value is float || bv.Value is double) bv.Type = VarType.FLOAT;
+                    else if (bv.Value is string) bv.Type = VarType.STRING;
+                    else
+                    {
+                        throw new System.InvalidOperationException("Complex types are not allowed for build variables.");
+                    }
                 }
-                else if (value is int)
-                {
-                    bv.Type = "int";
-                    bv.Value = value.ToString();
-                }
-                else if (value is double || value is float)
-                {
-                    bv.Type = "float";
-                    bv.Value = value.ToString();
-                }
-                else if (value is string)
-                {
-                    bv.Type = "string";
-                    bv.Value = value.ToString();
-                }
-
-                if (bv.Type != null)
-                {
-                    buildVars.Add(bv);
-                }
+                buildVars.Add(bv);
             }
             item.Var = buildVars.ToArray();
         }

@@ -2,9 +2,9 @@
 {
     public class Size
     {
-        public string Width { get; set; }
+        public int? Width { get; set; }
 
-        public string Height { get; set; }
+        public int? Height { get; set; }
 
         public static Size Merge(Size primary, Size secondary)
         {
