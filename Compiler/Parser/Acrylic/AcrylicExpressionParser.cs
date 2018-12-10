@@ -19,11 +19,47 @@ namespace Parser.Acrylic
             Token newToken = tokens.PopExpected(this.parser.Keywords.NEW);
 
             AType className = this.ParseTypeForInstantiation(tokens);
+            Expression arrayAllocationSize = null;
+            List<Expression> arrayMembers = null;
+            if (tokens.IsNext("["))
+            {
+                Token bracketToken = tokens.PopExpected("[");
+                if (!tokens.IsNext("]"))
+                {
+                    arrayAllocationSize = this.Parse(tokens, owner);
+                }
+                tokens.PopExpected("]");
+                className = new AType(new Token[] { bracketToken }, new AType[] { className });
+                while (tokens.IsNext("["))
+                {
+                    bracketToken = tokens.PopExpected("[");
+                    className = new AType(new Token[] { bracketToken }, new AType[] { className });
+                    tokens.PopExpected("]");
+                }
+
+                if (arrayAllocationSize == null)
+                {
+                    arrayMembers = new List<Expression>();
+                    tokens.PopExpected("{");
+                    bool nextAllowed = true;
+                    while (tokens.PopIfPresent("}"))
+                    {
+                        if (!nextAllowed) tokens.PopExpected("}"); // throws
+                        arrayMembers.Add(this.Parse(tokens, owner));
+                        nextAllowed = tokens.PopIfPresent(",");
+                    }
+                }
+                else
+                {
+                    arrayMembers = new List<Expression>();
+                }
+            }
 
             switch (className.RootType)
             {
                 case "[":
-                    throw new ParserException(newToken, "Arrays are not supported yet.");
+                    ListDefinition arrayDefinition = new ListDefinition(newToken, arrayMembers, className.Generics[0], owner, true, arrayAllocationSize);
+                    return arrayDefinition;
 
                 case "List":
                     tokens.PopExpected("(");
@@ -32,11 +68,12 @@ namespace Parser.Acrylic
                     if (tokens.IsNext("{"))
                     {
                         items = this.ParseArrayDeclarationItems(tokens, owner);
-                    } else
+                    }
+                    else
                     {
                         items = new List<Expression>();
                     }
-                    return new ListDefinition(newToken, items, className.Generics[0], owner);
+                    return new ListDefinition(newToken, items, className.Generics[0], owner, false, null);
 
                 case "Dictionary":
                     tokens.PopExpected("(");
