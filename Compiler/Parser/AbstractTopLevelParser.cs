@@ -20,7 +20,10 @@ namespace Parser
 
         internal virtual ImportStatement ParseImport(TokenStream tokens, FileScope fileScope)
         {
-            Token importToken = tokens.PopExpected(parser.Keywords.IMPORT);
+            Token importToken = this.parser.IsCSharpCompat
+                ? tokens.PopExpected(parser.Keywords.IMPORT, "using")
+                : tokens.PopExpected(parser.Keywords.IMPORT);
+
             List<string> importPathBuilder = new List<string>();
             while (!tokens.PopIfPresent(";"))
             {
@@ -269,10 +272,11 @@ namespace Parser
             tokens.PopExpected("{");
             List<FunctionDefinition> methods = new List<FunctionDefinition>();
             List<FieldDefinition> fields = new List<FieldDefinition>();
+            List<PropertyDefinition> properties = new List<PropertyDefinition>();
 
             while (!tokens.PopIfPresent("}"))
             {
-                this.ParseClassMember(tokens, fileScope, cd, methods, fields);
+                this.ParseClassMember(tokens, fileScope, cd, methods, fields, properties);
             }
 
             cd.Methods = methods.ToArray();
@@ -295,7 +299,8 @@ namespace Parser
             FileScope fileScope,
             ClassDefinition classDef,
             IList<FunctionDefinition> methodsOut,
-            IList<FieldDefinition> fieldsOut);
+            IList<FieldDefinition> fieldsOut,
+            IList<PropertyDefinition> propertiesOut);
 
         protected abstract FieldDefinition ParseField(
             TokenStream tokens,
