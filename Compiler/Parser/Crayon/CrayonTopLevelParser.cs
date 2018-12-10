@@ -17,7 +17,8 @@ namespace Parser.Crayon
             FileScope fileScope,
             ClassDefinition classDef,
             IList<FunctionDefinition> methodsOut,
-            IList<FieldDefinition> fieldsOut)
+            IList<FieldDefinition> fieldsOut,
+            IList<PropertyDefinition> propertiesOutIgnored)
         {
             AnnotationCollection annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
             ModifierCollection modifiers = ModifierCollection.Parse(tokens);
