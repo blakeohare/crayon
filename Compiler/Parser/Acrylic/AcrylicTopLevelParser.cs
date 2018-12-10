@@ -12,7 +12,13 @@ namespace Parser.Acrylic
             : base(parser, true)
         { }
 
-        protected override void ParseClassMember(TokenStream tokens, FileScope fileScope, ClassDefinition classDef, IList<FunctionDefinition> methodsOut, IList<FieldDefinition> fieldsOut)
+        protected override void ParseClassMember(
+            TokenStream tokens,
+            FileScope fileScope,
+            ClassDefinition classDef,
+            IList<FunctionDefinition> methodsOut,
+            IList<FieldDefinition> fieldsOut,
+            IList<PropertyDefinition> propertiesOut)
         {
             AnnotationCollection annotations = this.parser.AnnotationParser.ParseAnnotations(tokens);
             ModifierCollection modifiers = ModifierCollection.Parse(tokens);
@@ -61,6 +67,14 @@ namespace Parser.Acrylic
                         break;
                     case "(":
                         methodsOut.Add(this.ParseFunction(tokens, classDef, fileScope, modifiers, annotations));
+                        break;
+                    case "{":
+                        if (!this.parser.IsCSharpCompat)
+                        {
+                            // TODO(acrylic-convert): properties should be implemented in Acrylic, just not yet.
+                            tokens.PopExpected("}"); // intentionally induce error
+                        }
+                        propertiesOut.Add(this.ParseProperty(tokens, classDef, fileScope, modifiers, annotations));
                         break;
                     default:
                         tokens.PopExpected("}"); // intentionally induce error

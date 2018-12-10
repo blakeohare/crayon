@@ -258,6 +258,13 @@ namespace Parser
             return null;
         }
 
+        public Token PopExpected(string valueExpected, string valueAlsoAcceptable)
+        {
+            Token t = this.Peek();
+            if (this.PopIfPresent(valueAlsoAcceptable)) return t;
+            return this.PopExpected(valueExpected);
+        }
+
         public Token PopExpected(string value)
         {
             Token token = this.innerStream.Peek();
