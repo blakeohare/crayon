@@ -267,7 +267,7 @@ namespace Parser.ParseTree
                     {
                         values.Add(new IntegerConstant(this.Root.FirstToken, rawValue, this.Owner));
                     }
-                    return new ListDefinition(this.FirstToken, values, AType.Integer(this.FirstToken), this.Owner);
+                    return new ListDefinition(this.FirstToken, values, AType.Integer(this.FirstToken), this.Owner, false, null);
                 }
             }
 

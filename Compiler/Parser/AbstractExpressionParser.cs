@@ -425,7 +425,7 @@ namespace Parser
                     elements.Add(Parse(tokens, owner));
                     previousHasCommaOrFirst = tokens.PopIfPresent(",");
                 }
-                return new ListDefinition(bracketToken, elements, AType.Any(), owner);
+                return new ListDefinition(bracketToken, elements, AType.Any(), owner, false, null);
             }
 
             if (firstChar == '{' && nextToken.File.CompilationScope.IsCrayon)

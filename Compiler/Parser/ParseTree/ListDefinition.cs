@@ -4,16 +4,27 @@ using System.Linq;
 
 namespace Parser.ParseTree
 {
+    // TODO(acrylic-convert): Rename to ListOrArrayDefinition
     public class ListDefinition : Expression
     {
         public Expression[] Items { get; private set; }
         public AType ListType { get; private set; }
+        public bool IsArray { get; private set; }
+        public Expression ArrayAllocationRuntimeSize { get; private set; }
 
-        public ListDefinition(Token openBracket, IList<Expression> items, AType listType, Node owner)
-            : base(openBracket, owner)
+        public ListDefinition(
+            Token firstToken,
+            IList<Expression> items,
+            AType listType,
+            Node owner,
+            bool isFixedArray,
+            Expression arrayAllocationSize)
+            : base(firstToken, owner)
         {
             this.Items = items.ToArray();
             this.ListType = listType;
+            this.IsArray = isFixedArray;
+            this.ArrayAllocationRuntimeSize = arrayAllocationSize;
         }
 
         internal override IEnumerable<Expression> Descendants { get { return this.Items; } }

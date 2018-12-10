@@ -46,7 +46,7 @@ namespace Parser.ParseTree
             // TODO: localize or create a dummy stub in Core
             if (this.Name == "List")
             {
-                return new ListDefinition(this.FirstToken, new List<Expression>(), this.Generics[0], this.Owner);
+                return new ListDefinition(this.FirstToken, new List<Expression>(), this.Generics[0], this.Owner, false, null);
             }
             else if (this.Name == "Dictionary")
             {
