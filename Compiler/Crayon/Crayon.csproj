@@ -61,6 +61,10 @@
       <Project>{70941077-b058-4a91-ac11-38e22930f01f}</Project>
       <Name>Parser</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Platforms\AcrylicConversion\AcrylicConversion.csproj">
+      <Project>{abf78d3b-fcbc-4d07-95d7-102bd8a93dba}</Project>
+      <Name>AcrylicConversion</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Platforms\CApp\CApp.csproj">
       <Project>{7f8c6292-5e35-4fd2-91c4-98123fd4e7e3}</Project>
       <Name>CApp</Name>

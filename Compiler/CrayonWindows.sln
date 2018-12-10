@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exporter", "Exporter\Export
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JavaScriptAppAndroid", "Platforms\JavaScriptAppAndroid\JavaScriptAppAndroid.csproj", "{E495CAC5-84B5-481B-A997-F370FE1B40A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcrylicConversion", "Platforms\AcrylicConversion\AcrylicConversion.csproj", "{ABF78D3B-FCBC-4D07-95D7-102BD8A93DBA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -281,6 +283,18 @@ Global
 		{E495CAC5-84B5-481B-A997-F370FE1B40A2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E495CAC5-84B5-481B-A997-F370FE1B40A2}.Release|x86.ActiveCfg = Release|Any CPU
 		{E495CAC5-84B5-481B-A997-F370FE1B40A2}.Release|x86.Build.0 = Release|Any CPU
+		{ABF78D3B-FCBC-4D07-95D7-102BD8A93DBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABF78D3B-FCBC-4D07-95D7-102BD8A93DBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABF78D3B-FCBC-4D07-95D7-102BD8A93DBA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{ABF78D3B-FCBC-4D07-95D7-102BD8A93DBA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{ABF78D3B-FCBC-4D07-95D7-102BD8A93DBA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ABF78D3B-FCBC-4D07-95D7-102BD8A93DBA}.Debug|x86.Build.0 = Debug|Any CPU
+		{ABF78D3B-FCBC-4D07-95D7-102BD8A93DBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABF78D3B-FCBC-4D07-95D7-102BD8A93DBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABF78D3B-FCBC-4D07-95D7-102BD8A93DBA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{ABF78D3B-FCBC-4D07-95D7-102BD8A93DBA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{ABF78D3B-FCBC-4D07-95D7-102BD8A93DBA}.Release|x86.ActiveCfg = Release|Any CPU
+		{ABF78D3B-FCBC-4D07-95D7-102BD8A93DBA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -298,6 +312,7 @@ Global
 		{7F8C6292-5E35-4FD2-91C4-98123FD4E7E3} = {E0B05933-80B8-443B-BB91-E378C4F79C37}
 		{C1876949-86D6-405E-B717-AFC56C27E1C8} = {E0B05933-80B8-443B-BB91-E378C4F79C37}
 		{E495CAC5-84B5-481B-A997-F370FE1B40A2} = {E0B05933-80B8-443B-BB91-E378C4F79C37}
+		{ABF78D3B-FCBC-4D07-95D7-102BD8A93DBA} = {E0B05933-80B8-443B-BB91-E378C4F79C37}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {068D0DF5-D0E3-422C-B06A-64F9F12AA2A0}
