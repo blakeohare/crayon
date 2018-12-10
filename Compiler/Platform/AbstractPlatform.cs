@@ -164,6 +164,11 @@ namespace Platform
             ResourceDatabase resourceDatabase,
             Options options);
 
+        public virtual void TranspileCode(Dictionary<string, FileOutput> output, object parserContextObj)
+        {
+            throw new NotImplementedException();
+        }
+
         public abstract Dictionary<string, string> GenerateReplacementDictionary(Options options, ResourceDatabase resDb);
 
         protected static Dictionary<string, string> GenerateGeneralReplacementsDictionary(Options options)

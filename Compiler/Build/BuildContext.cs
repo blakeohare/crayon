@@ -34,6 +34,7 @@ namespace Build
         public int? WindowHeight { get; set; }
         public Locale CompilerLocale { get; set; }
         public string IconFilePath { get; set; }
+        public bool IsCSharpCompatibilityMode { get; set; }
 
         private static Target FindTarget(string targetName, IList<Target> targets)
         {
@@ -113,6 +114,7 @@ namespace Build
             flattened.WindowSize = Size.Merge(desiredTarget.WindowSize, flattened.WindowSize) ?? new Size();
             flattened.CompilerLocale = desiredTarget.CompilerLocale ?? flattened.CompilerLocale;
             flattened.Orientation = desiredTarget.Orientation ?? flattened.Orientation;
+            flattened.IsCSharpCompatMode = desiredTarget.IsCSharpCompatMode || flattened.IsCSharpCompatMode; // TODO(acrylic-convert): should have unset state with ??
 
             ImageSheet[] imageSheets = flattened.ImageSheets ?? new ImageSheet[0];
 
@@ -140,6 +142,7 @@ namespace Build
                 WindowWidth = (flattened.WindowSize ?? new Size()).Width,
                 WindowHeight = (flattened.WindowSize ?? new Size()).Height,
                 CompilerLocale = Locale.Get((flattened.CompilerLocale ?? "en").Trim()),
+                IsCSharpCompatibilityMode = flattened.IsCSharpCompatMode,
             };
 
             ProgrammingLanguage? nullableLanguage = ProgrammingLanguageParser.Parse(flattened.ProgrammingLanguage ?? "Crayon");

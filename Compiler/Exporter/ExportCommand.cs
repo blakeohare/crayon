@@ -19,6 +19,7 @@
         public string[] DirectRunArgs { get; set; }
         public bool DirectRunShowLibStack { get; set; }
         public Platform.IPlatformProvider PlatformProvider { get; set; }
+        public bool IsCSharpToAcrylicTranspiler { get; private set; }
 
         public bool HasBuildFile { get { return this.BuildFilePath != null; } }
         public bool HasTarget { get { return this.BuildTarget != null; } }
