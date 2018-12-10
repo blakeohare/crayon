@@ -1,0 +1,35 @@
+{
+	"id": "CompilerConverter",
+	"description": "Convert compiler from C# to Acrylic",
+	"source": "Compiler/",
+	"output": "bin/%TARGET_NAME%",
+	
+	"programming-language": "Acrylic",
+	
+	"version": "0.3.0",
+	"guid-seed": "org.crayonlang.compilerconverter,v0.3.0,%TARGET_NAME%",
+	
+	"targets": [
+		{
+			"name": "acrylic",
+			"platform": "acrylic-conversion",
+			"csharp-compat-mode": true
+		},
+		{
+			"name": "javascript",
+			"platform": "javascript-app"
+		},
+		{
+			"name": "csharp",
+			"platform": "csharp-app"
+		},
+		{
+			"name": "java",
+			"platform": "java-app"
+		},
+		{
+			"name": "python",
+			"platform": "python-app"
+		}
+	]
+}

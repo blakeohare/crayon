@@ -47,6 +47,7 @@ namespace Build.BuildParseNodes
             item.Orientation = json.GetAsString("orientation");
             item.Output = json.GetAsString("output");
             item.Version = json.GetAsString("version");
+            item.IsCSharpCompatMode = json.GetAsBoolean("csharp-compat-mode");
 
             // TODO(json-build): change this to direct dependency references. For now, this will use direct dependencies, but walk up to the previous directory for compatibility.
             item.CrayonPath = (json.GetAsList("deps") ?? new object[0])

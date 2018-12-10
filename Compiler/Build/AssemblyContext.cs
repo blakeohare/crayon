@@ -24,7 +24,7 @@ namespace Build
         {
             Dictionary<string, string> output = new Dictionary<string, string>();
             string fileExtension = this.ProgrammingLanguage == ProgrammingLanguage.ACRYLIC
-                ? ".acr"
+                ? (this.buildContext.IsCSharpCompatibilityMode  ? ".cs" :  ".acr")
                 : ".cry";
             foreach (FilePath sourceDir in this.SourceFolders)
             {
