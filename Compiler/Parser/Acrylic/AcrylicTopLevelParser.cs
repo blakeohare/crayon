@@ -133,6 +133,58 @@ namespace Parser.Acrylic
             return fd;
         }
 
+        protected PropertyDefinition ParseProperty(
+            TokenStream tokens,
+            ClassDefinition classDef,
+            FileScope fileScope,
+            ModifierCollection modifiers,
+            AnnotationCollection annotations)
+        {
+            AType propertyType = this.parser.TypeParser.Parse(tokens);
+            tokens.EnsureNotEof();
+            Token propertyName = tokens.PopIfWord();
+            if (propertyName == null) throw new ParserException(tokens.Peek(), "Expected property name.");
+            tokens.PopExpected("{");
+            PropertyMember getter = null;
+            PropertyMember setter = null;
+            PropertyDefinition property = new PropertyDefinition(propertyType.FirstToken, classDef, fileScope, modifiers);
+            while (!tokens.PopIfPresent("}"))
+            {
+                PropertyMember member = this.ParsePropertyMember(tokens, property);
+                if (member.IsGetter)
+                {
+                    if (getter != null) throw new ParserException(member.FirstToken, "Property has multiple getters");
+                    getter = member;
+                }
+                else if (member.IsSetter)
+                {
+                    if (setter != null) throw new ParserException(member.FirstToken, "Property has multiple setters");
+                    setter = member;
+                }
+            }
+
+            property.Getter = getter;
+            property.Setter = setter;
+
+            return property;
+        }
+
+        private PropertyMember ParsePropertyMember(TokenStream tokens, PropertyDefinition property)
+        {
+            tokens.EnsureNotEof();
+            ModifierCollection modifiers = ModifierCollection.Parse(tokens);
+            tokens.EnsureNotEof();
+            Token getOrSet = tokens.Peek();
+            if (!tokens.PopIfPresent("get") && !tokens.PopIfPresent("set")) tokens.PopExpected("get");
+            PropertyMember member = new PropertyMember(getOrSet, property, modifiers);
+            if (!tokens.PopIfPresent(";"))
+            {
+                IList<Executable> code = this.parser.ExecutableParser.ParseBlock(tokens, true, member);
+                member.Code = code.ToArray();
+            }
+            return member;
+        }
+
         protected override ConstDefinition ParseConst(
             TokenStream tokens,
             Node owner,
