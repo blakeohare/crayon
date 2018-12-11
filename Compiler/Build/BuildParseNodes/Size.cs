@@ -1,10 +1,12 @@
-﻿namespace Build.BuildParseNodes
+﻿using Common;
+
+namespace Build.BuildParseNodes
 {
     public class Size
     {
-        public int? Width { get; set; }
+        public NullableInteger Width { get; set; }
 
-        public int? Height { get; set; }
+        public NullableInteger Height { get; set; }
 
         public static Size Merge(Size primary, Size secondary)
         {

@@ -30,8 +30,8 @@ namespace Build
         public string IosBundlePrefix { get; set; }
         public string JavaPackage { get; private set; }
         public bool JsFullPage { get; set; }
-        public int? WindowWidth { get; set; }
-        public int? WindowHeight { get; set; }
+        public NullableInteger WindowWidth { get; set; }
+        public NullableInteger WindowHeight { get; set; }
         public Locale CompilerLocale { get; set; }
         public string IconFilePath { get; set; }
         public bool IsCSharpCompatibilityMode { get; set; }

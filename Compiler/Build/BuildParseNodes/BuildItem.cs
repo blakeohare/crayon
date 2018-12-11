@@ -12,10 +12,10 @@ namespace Build.BuildParseNodes
         public string Output { get; set; }
         public ImageSheet[] ImageSheets { get; set; }
         public string JsFilePrefix { get; set; }
-        public bool JsFullPage { get { return this.JsFullPageRaw ?? false; } }
-        internal bool? JsFullPageRaw { get; set; }
-        public bool Minified { get { return this.MinifiedRaw ?? false; } }
-        internal bool? MinifiedRaw { get; set; }
+        public bool JsFullPage { get { return (this.JsFullPageRaw ?? new NullableBoolean(false)).Value; } }
+        internal NullableBoolean JsFullPageRaw { get; set; }
+        public bool Minified { get { return (this.MinifiedRaw ?? new NullableBoolean(false)).Value; } }
+        internal NullableBoolean MinifiedRaw { get; set; }
         public string ExportDebugByteCodeRaw { get; set; }
         public BuildVar[] Var { get; set; }
         public string GuidSeed { get; set; }
