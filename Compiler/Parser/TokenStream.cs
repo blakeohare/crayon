@@ -265,6 +265,18 @@ namespace Parser
             return this.PopExpected(valueExpected);
         }
 
+        public Token PopWord()
+        {
+            Token t = this.PopIfWord();
+            if (t == null)
+            {
+                this.EnsureNotEof();
+                t = this.Pop();
+                throw new ParserException(t, "Expected an identifier. Found '" + t.Value + "'");
+            }
+            return t;
+        }
+
         public Token PopExpected(string value)
         {
             Token token = this.innerStream.Peek();

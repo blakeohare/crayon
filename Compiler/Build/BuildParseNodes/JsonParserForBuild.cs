@@ -20,7 +20,7 @@ namespace Build.BuildParseNodes
             List<Target> targets = new List<Target>();
             foreach (JsonLookup targetRoot in root.GetAsList("targets")
                 .OfType<IDictionary<string, object>>()
-                .Select(t => new Common.JsonLookup(t)))
+                .Select(t => new JsonLookup(t)))
             {
                 Target target = new Target();
                 target.Name = targetRoot.GetAsString("name");
@@ -63,7 +63,9 @@ namespace Build.BuildParseNodes
             object[] imageSheetsRaw = json.GetAsList("image-sheets");
             if (imageSheetsRaw != null)
             {
-                foreach (Common.JsonLookup imageSheetJson in imageSheetsRaw.OfType<IDictionary<string, object>>().Select(t => new Common.JsonLookup(t)))
+                foreach (JsonLookup imageSheetJson in imageSheetsRaw
+                    .OfType<IDictionary<string, object>>()
+                    .Select(t => new JsonLookup(t)))
                 {
                     ImageSheet imgSheet = new ImageSheet();
                     imgSheet.Id = imageSheetJson.GetAsString("id");
@@ -103,13 +105,13 @@ namespace Build.BuildParseNodes
             List<BuildVar> buildVars = new List<BuildVar>();
             foreach (Common.JsonLookup varJson in (json.GetAsList("vars") ?? new object[0])
                 .OfType<IDictionary<string, object>>()
-                .Select(t => new Common.JsonLookup(t)))
+                .Select(t => new JsonLookup(t)))
             {
                 BuildVar bv = new BuildVar() { Id = varJson.GetAsString("name") };
                 object value = varJson.Get("value");
                 if (value == null && varJson.GetAsString("env") != null)
                 {
-                    bv.Value = Common.EnvironmentVariableUtil.GetVariable(varJson.GetAsString("env")) ?? "";
+                    bv.Value = EnvironmentVariableUtil.GetVariable(varJson.GetAsString("env")) ?? "";
                     bv.Type = VarType.STRING;
                 }
                 else
