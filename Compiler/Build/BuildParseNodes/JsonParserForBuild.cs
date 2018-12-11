@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Common;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Build.BuildParseNodes
@@ -7,9 +8,9 @@ namespace Build.BuildParseNodes
     {
         internal static BuildRoot Parse(string file)
         {
-            Common.JsonParser parser = new Common.JsonParser(file);
+            JsonParser parser = new JsonParser(file);
             IDictionary<string, object> rootDict = parser.ParseAsDictionary();
-            Common.JsonLookup root = new Common.JsonLookup(rootDict);
+            JsonLookup root = new JsonLookup(rootDict);
 
             BuildRoot rootOut = new BuildRoot();
             rootOut.ProjectName = root.GetAsString("id");
@@ -17,7 +18,7 @@ namespace Build.BuildParseNodes
             rootOut.ProgrammingLanguage = root.GetAsString("programming-language");
             ParseBuildItem(rootOut, root);
             List<Target> targets = new List<Target>();
-            foreach (Common.JsonLookup targetRoot in root.GetAsList("targets")
+            foreach (JsonLookup targetRoot in root.GetAsList("targets")
                 .OfType<IDictionary<string, object>>()
                 .Select(t => new Common.JsonLookup(t)))
             {
@@ -41,9 +42,9 @@ namespace Build.BuildParseNodes
             item.IosBundlePrefix = json.GetAsString("ios-bundle-prefix");
             item.JavaPackage = json.GetAsString("java-package");
             item.JsFilePrefix = json.GetAsString("js-file-prefix");
-            item.JsFullPageRaw = json.Get("js-full-page") == null ? (bool?)null : json.GetAsBoolean("js-full-page");
+            item.JsFullPageRaw = json.Get("js-full-page") == null ? null : new NullableBoolean(json.GetAsBoolean("js-full-page"));
             item.LaunchScreen = json.GetAsString("launch-screen");
-            item.MinifiedRaw = json.Get("js-min") == null ? (bool?)null : json.GetAsBoolean("js-min");
+            item.MinifiedRaw = json.Get("js-min") == null ? null : new NullableBoolean(json.GetAsBoolean("js-min"));
             item.Orientation = json.GetAsString("orientation");
             item.Output = json.GetAsString("output");
             item.Version = json.GetAsString("version");
@@ -78,8 +79,8 @@ namespace Build.BuildParseNodes
             {
                 item.WindowSize = new Size()
                 {
-                    Width = windowWidth,
-                    Height = windowHeight
+                    Width = new NullableInteger(windowWidth),
+                    Height = new NullableInteger(windowHeight)
                 };
             }
 
