@@ -102,6 +102,11 @@ namespace Parser
 
         internal virtual IList<Executable> ParseBlock(TokenStream tokens, bool bracketsRequired, Node owner)
         {
+            return this.ParseBlock(tokens, bracketsRequired, owner, true);
+        }
+
+        internal virtual IList<Executable> ParseBlock(TokenStream tokens, bool bracketsRequired, Node owner, bool semicolonRequired)
+        {
             List<Executable> output = new List<Executable>();
 
             if (tokens.PopIfPresent("{"))
@@ -123,7 +128,7 @@ namespace Parser
                     return output;
                 }
 
-                output.Add(this.parser.ExecutableParser.Parse(tokens, false, true, owner));
+                output.Add(this.parser.ExecutableParser.Parse(tokens, false, semicolonRequired, owner));
             }
             return output;
         }
