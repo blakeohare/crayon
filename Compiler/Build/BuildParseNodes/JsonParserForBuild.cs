@@ -20,7 +20,7 @@ namespace Build.BuildParseNodes
             List<Target> targets = new List<Target>();
             foreach (JsonLookup targetRoot in root.GetAsList("targets")
                 .OfType<IDictionary<string, object>>()
-                .Select(t => new JsonLookup(t)))
+                .Select((IDictionary<string, object> t) => new JsonLookup(t)))
             {
                 Target target = new Target();
                 target.Name = targetRoot.GetAsString("name");
@@ -53,9 +53,9 @@ namespace Build.BuildParseNodes
             // TODO(json-build): change this to direct dependency references. For now, this will use direct dependencies, but walk up to the previous directory for compatibility.
             item.CrayonPath = (json.GetAsList("deps") ?? new object[0])
                 .OfType<string>()
-                .Select(t => t.Replace('\\', '/'))
-                .Select(t => t.TrimEnd('/'))
-                .Select(t => t.Contains('/') ? t.Substring(0, t.LastIndexOf('/')) : (t + "/.."))
+                .Select((string t) => t.Replace('\\', '/'))
+                .Select((string t) => t.TrimEnd('/'))
+                .Select((string t) => t.Contains('/') ? t.Substring(0, t.LastIndexOf('/')) : (t + "/.."))
                 .Distinct()
                 .ToArray();
 
@@ -65,7 +65,7 @@ namespace Build.BuildParseNodes
             {
                 foreach (JsonLookup imageSheetJson in imageSheetsRaw
                     .OfType<IDictionary<string, object>>()
-                    .Select(t => new JsonLookup(t)))
+                    .Select((IDictionary<string, object> t) => new JsonLookup(t)))
                 {
                     ImageSheet imgSheet = new ImageSheet();
                     imgSheet.Id = imageSheetJson.GetAsString("id");
@@ -105,7 +105,7 @@ namespace Build.BuildParseNodes
             List<BuildVar> buildVars = new List<BuildVar>();
             foreach (Common.JsonLookup varJson in (json.GetAsList("vars") ?? new object[0])
                 .OfType<IDictionary<string, object>>()
-                .Select(t => new JsonLookup(t)))
+                .Select((IDictionary<string, object> t) => new JsonLookup(t)))
             {
                 BuildVar bv = new BuildVar() { Id = varJson.GetAsString("name") };
                 object value = varJson.Get("value");

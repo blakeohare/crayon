@@ -222,7 +222,13 @@ namespace Parser
             Node owner)
         {
             tokens.PopExpected("=>");
-            IList<Executable> lambdaCode = this.parser.ExecutableParser.ParseBlock(tokens, true, owner);
+            IList<Executable> lambdaCode = this.parser.ExecutableParser.ParseBlock(tokens, false, owner, false);
+            if (lambdaCode.Count == 1 && lambdaCode[0] is ExpressionAsExecutable)
+            {
+                // If a lambda contains a single expression as its code body, then this is an implicit return statement.
+                ExpressionAsExecutable eae = (ExpressionAsExecutable)lambdaCode[0];
+                lambdaCode[0] = new ReturnStatement(eae.FirstToken, eae.Expression, owner);
+            }
             return new Lambda(firstToken, owner, args, argTypes, lambdaCode);
         }
 
@@ -240,6 +246,7 @@ namespace Parser
                 return new Cast(firstToken, castPrefix, root, owner, true);
             }
 
+            Token maybeOpenParen = tokens.Peek();
             if (tokens.PopIfPresent("("))
             {
                 if (tokens.PopIfPresent(")"))
@@ -248,6 +255,34 @@ namespace Parser
                 }
                 else
                 {
+                    if (this.parser.CurrentScope.IsStaticallyTyped)
+                    {
+                        TokenStream.StreamState state = tokens.RecordState();
+                        AType lambdaArgType = this.parser.TypeParser.TryParse(tokens);
+                        Token lambdaArg = null;
+                        if (lambdaArgType != null)
+                        {
+                            lambdaArg = tokens.PopIfWord();
+                        }
+
+                        if (lambdaArg != null)
+                        {
+                            List<AType> lambdaArgTypes = new List<AType>() { lambdaArgType };
+                            List<Token> lambdaArgs = new List<Token>() { lambdaArg };
+                            while (tokens.PopIfPresent(","))
+                            {
+                                lambdaArgTypes.Add(this.parser.TypeParser.Parse(tokens));
+                                lambdaArgs.Add(tokens.PopWord());
+                            }
+                            tokens.PopExpected(")");
+                            return this.ParseLambda(tokens, maybeOpenParen, lambdaArgTypes, lambdaArgs, owner);
+                        }
+                        else
+                        {
+                            tokens.RestoreState(state);
+                        }
+                    }
+
                     root = this.Parse(tokens, owner);
                     if (root is Variable)
                     {
