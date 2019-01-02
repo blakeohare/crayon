@@ -161,7 +161,7 @@ namespace CSharpApp
             Dictionary<string, FileOutput> filesOut)
         {
             string libraryName = library.Name;
-            TemplateSet libTemplates = templateReader.GetLibraryTemplates(libraryName);
+            TemplateSet libTemplates = templateReader.GetLibraryTemplates(library);
             List<string> libraryLines = new List<string>();
 
             string libraryDir = baseDir + "Libraries/" + libraryName;

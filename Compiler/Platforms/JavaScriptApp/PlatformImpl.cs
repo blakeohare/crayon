@@ -61,7 +61,7 @@ namespace JavaScriptApp
             foreach (LibraryForExport library in libraries.Where(lib => lib.HasNativeCode))
             {
                 string libraryName = library.Name;
-                TemplateSet libTemplates = templateReader.GetLibraryTemplates(libraryName);
+                TemplateSet libTemplates = templateReader.GetLibraryTemplates(library);
 
                 List<string> libraryLines = new List<string>();
                 libraryLines.Add(libTemplates.GetText("gen/lib_" + libraryName.ToLower() + ".js"));

@@ -19,14 +19,12 @@ namespace Platform
             platformNamesMostGeneralFirst.Reverse();
         }
 
-        public TemplateSet GetLibraryTemplates(string libraryName)
+        public TemplateSet GetLibraryTemplates(LibraryForExport library)
         {
             Dictionary<string, byte[]> output = new Dictionary<string, byte[]>();
             foreach (string platformName in this.platformNamesMostGeneralFirst)
             {
-                string libTemplateDir = System.IO.Path.Combine(
-                    Common.SourceDirectoryFinder.CrayonSourceDirectory,
-                    "Libraries", libraryName, "native", platformName);
+                string libTemplateDir = System.IO.Path.Combine(library.Directory, "native", platformName);
                 if (fileUtil.DirectoryExists(libTemplateDir))
                 {
                     ReadAllFiles(output, System.IO.Path.GetFullPath(libTemplateDir).Length + 1, libTemplateDir);

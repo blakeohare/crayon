@@ -49,7 +49,7 @@ namespace JavaApp
 
             foreach (LibraryForExport library in libraries.Where(t => t.HasNativeCode))
             {
-                TemplateSet libraryTemplates = templateReader.GetLibraryTemplates(library.Name);
+                TemplateSet libraryTemplates = templateReader.GetLibraryTemplates(library);
 
                 string libraryPath = srcPath + "/org/crayonlang/libraries/" + library.Name.ToLower();
 
