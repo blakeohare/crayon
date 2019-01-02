@@ -200,9 +200,9 @@ namespace Interpreter.Libraries.Http
             HttpHelper.ReadResponseData(object1, PST_IntBuffer16, PST_StringBuffer16, objArray1, stringList1);
             objInstance1 = (ObjectInstance)arg2.internalValue;
             objInstance1.nativeData = objArray1;
-            List<Value> outputList = (List<Value>)arg3.internalValue;
-            outputList.Add(Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, PST_IntBuffer16[0]));
-            outputList.Add(Interpreter.Vm.CrayonWrapper.buildString(vm.globals, PST_StringBuffer16[0]));
+            ListImpl outputList = (ListImpl)arg3.internalValue;
+            Interpreter.Vm.CrayonWrapper.addToList(outputList, Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, PST_IntBuffer16[0]));
+            Interpreter.Vm.CrayonWrapper.addToList(outputList, Interpreter.Vm.CrayonWrapper.buildString(vm.globals, PST_StringBuffer16[0]));
             Value value = vm.globalNull;
             Value value2 = vm.globalTrue;
             if ((PST_IntBuffer16[1] == 0))
@@ -210,13 +210,13 @@ namespace Interpreter.Libraries.Http
                 value = Interpreter.Vm.CrayonWrapper.buildString(vm.globals, PST_StringBuffer16[1]);
                 value2 = vm.globalFalse;
             }
-            outputList.Add(value);
-            outputList.Add(value2);
-            List<Value> list1 = (List<Value>)arg4.internalValue;
+            Interpreter.Vm.CrayonWrapper.addToList(outputList, value);
+            Interpreter.Vm.CrayonWrapper.addToList(outputList, value2);
+            ListImpl list1 = (ListImpl)arg4.internalValue;
             int i = 0;
             while ((i < stringList1.Count))
             {
-                list1.Add(Interpreter.Vm.CrayonWrapper.buildString(vm.globals, stringList1[i]));
+                Interpreter.Vm.CrayonWrapper.addToList(list1, Interpreter.Vm.CrayonWrapper.buildString(vm.globals, stringList1[i]));
                 i += 1;
             }
             return vm.globalNull;
