@@ -53,7 +53,7 @@ namespace PythonApp
             {
                 if (library.HasNativeCode)
                 {
-                    TemplateSet libTemplates = new TemplateReader(new PkgAwareFileUtil(), this).GetLibraryTemplates(library.Name);
+                    TemplateSet libTemplates = new TemplateReader(new PkgAwareFileUtil(), this).GetLibraryTemplates(library);
                     string libraryName = library.Name;
                     List<string> libraryLines = new List<string>();
 
