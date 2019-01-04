@@ -177,7 +177,7 @@ InterpreterResult runInterpreterWithFunctionPointer(VmContext vm, Value fpValue,
     Array<int> localsSet = new Array<int>(0);
     Array<Value> valueStack = new Array<Value>(100);
     valueStack[0] = fpValue;
-    valueStack[1] = new Value(Types.LIST, argList);
+    valueStack[1] = buildList(argList);
     StackFrame stack = new StackFrame(
         vm.byteCode.ops.Size() - 2, // pc
         1, // localsStackSetToken

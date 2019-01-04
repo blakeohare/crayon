@@ -6572,7 +6572,7 @@ public final class CrayonWrapper {
     int[] localsSet = new int[0];
     Value[] valueStack = new Value[100];
     valueStack[0] = fpValue;
-    valueStack[1] = new Value(6, argList);
+    valueStack[1] = buildList(argList);
     StackFrame stack = new StackFrame((vm.byteCode.ops.length - 2), 1, 0, 0, null, false, null, 0, 0, 1, 0, null, null, null);
     ExecutionContext executionContext = new ExecutionContext(newId, stack, 2, 100, valueStack, locals, localsSet, 1, 0, false, null, false, 0, null);
     vm.executionContexts.put(newId, executionContext);
