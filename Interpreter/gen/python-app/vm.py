@@ -3666,9 +3666,6 @@ def interpretImpl(vm, executionContextId):
                 ec[1] = stack
                 stack[10] = 0
                 ec[2] = valueStackSize
-                if (False and (stack[13] != None)):
-                  hasInterrupt = True
-                  ec[13] = [5, 0, "", 0.0, stack[13]]
             elif (sc_0 == 35):
               # FUNCTION_DEFINITION
               initializeFunction(vm, row, pc, stringArgs[pc])
@@ -4029,9 +4026,6 @@ def interpretImpl(vm, executionContextId):
             pc = stack[0]
             localsStackOffset = stack[2]
             localsStackSetToken = stack[1]
-            if (False and (stack[13] != None)):
-              hasInterrupt = True
-              ec[13] = [5, 0, "", 0.0, stack[13]]
       elif (sc_0 == 57):
         # STACK_INSERTION_FOR_INCREMENT
         if (valueStackSize == valueStackCapacity):
@@ -4131,9 +4125,6 @@ def interpretImpl(vm, executionContextId):
           ec[1] = stack
           stack[10] = 0
           ec[2] = valueStackSize
-          if (False and (stack[13] != None)):
-            hasInterrupt = True
-            ec[13] = [5, 0, "", 0.0, stack[13]]
         else:
           hasInterrupt = EX_InvalidArgument(ec, "Thrown value is not an exception.")
     elif (sc_0 < 65):
@@ -4846,7 +4837,7 @@ def runInterpreterWithFunctionPointer(vm, fpValue, args):
   localsSet = []
   valueStack = (PST_NoneListOfOne * 100)
   valueStack[0] = fpValue
-  valueStack[1] = [6, argList]
+  valueStack[1] = buildList(argList)
   stack = [(len(vm[2][0]) - 2), 1, 0, 0, None, False, None, 0, 0, 1, 0, None, None, None]
   executionContext = [newId, stack, 2, 100, valueStack, locals, localsSet, 1, 0, False, None, False, 0, None]
   vm[0][newId] = executionContext
