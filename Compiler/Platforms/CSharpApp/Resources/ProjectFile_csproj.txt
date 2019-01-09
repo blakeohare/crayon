@@ -58,6 +58,9 @@
     <Compile Include="Libraries\*\Structs\*.cs"/>
     <Compile Include="Structs\*.cs"/>
     <Compile Include="Vm\*.cs"/>
+    <EmbeddedResource Include="Libraries\*\TextResources\*.txt"/>
+    <EmbeddedResource Include="Libraries\*\TextResources\*.js"/>
+    <EmbeddedResource Include="Libraries\*\TextResources\*.html"/>
   </ItemGroup>
   <ItemGroup>
     %%%EMBEDDED_RESOURCES%%%

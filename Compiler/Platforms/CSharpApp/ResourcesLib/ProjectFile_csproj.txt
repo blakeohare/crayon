@@ -40,6 +40,9 @@
     <Compile Include="Libraries\%%%LIBRARY_NAME%%%\*.cs" />
     <Compile Include="Libraries\%%%LIBRARY_NAME%%%\Structs\*.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Libraries\%%%LIBRARY_NAME%%%\TextResources\*.txt"/>
+    <EmbeddedResource Include="Libraries\%%%LIBRARY_NAME%%%\TextResources\*.js"/>
+    <EmbeddedResource Include="Libraries\%%%LIBRARY_NAME%%%\TextResources\*.html"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CrayonRuntime\Interpreter.csproj">
