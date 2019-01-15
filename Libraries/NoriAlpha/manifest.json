@@ -1,0 +1,10 @@
+{
+	"name": "NoriAlpha",
+	"author": "Blake O'Hare",
+	"documentation": "http://crayonlang.org/docs/0.2.1/norialpha",
+	"description": "Nori Alpha",
+
+	"cni": [
+		{ "name": "lib_norialpha_sample", "argc": 2 }
+	]
+}

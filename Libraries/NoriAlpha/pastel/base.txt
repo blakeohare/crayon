@@ -1,0 +1,4 @@
+SOURCE: src/main.pst
+
+# Returns a boolean
+EXT-TYPE: bool _lib_norialpha_sampleNative(bool echoValue);

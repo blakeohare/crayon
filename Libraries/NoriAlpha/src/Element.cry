@@ -1,0 +1,10 @@
+namespace NoriAlpha {
+	class Element {
+		constructor() { }
+		
+		function doThing() {
+			value = $lib_norialpha_sample(1, 2);
+			return value;
+		}
+	}
+}
