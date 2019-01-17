@@ -1,4 +1,7 @@
 SOURCE: src/main.pst
 
 # Returns a boolean
-EXT-TYPE: bool _lib_norialpha_sampleNative(bool echoValue);
+EXT-TYPE: bool _lib_norialpha_closeFrame(object frameHandle);
+EXT-TYPE: bool _lib_norialpha_flushUpdatesToFrame(object frameHandle, string uiData);
+EXT-TYPE: object _lib_norialpha_showFrame(string uiData);
+EXT-TYPE: string _lib_norialpha_escapeString(string original);

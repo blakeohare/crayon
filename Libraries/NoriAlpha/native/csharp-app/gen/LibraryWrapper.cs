@@ -117,13 +117,96 @@ namespace Interpreter.Libraries.NoriAlpha
             }
         }
 
-        public static Value lib_norialpha_sample(VmContext vm, Value[] args)
+        public static Value lib_norialpha_closeFrame(VmContext vm, Value[] args)
         {
-            if (NoriHelper.SampleNative(true))
+            ObjectInstance frameObj = (ObjectInstance)args[0].internalValue;
+            object nativeFrameHandle = frameObj.nativeData[0];
+            NoriHelper.CloseFrame(nativeFrameHandle);
+            return vm.globalNull;
+        }
+
+        public static string lib_norialpha_encodeListToWireFormat(Value v)
+        {
+            ListImpl args = (ListImpl)v.internalValue;
+            List<string> sb = new List<string>();
+            List<Value> valueList = null;
+            Value[] valueArray = null;
+            int i = 0;
+            int blindCopy = 0;
+            int intValue = 0;
+            int length = args.size;
+            valueArray = args.array;
+            blindCopy = (2 + (int)valueArray[1].internalValue);
+            i = 0;
+            while ((i < blindCopy))
             {
-                return vm.globalTrue;
+                if ((i > 0))
+                {
+                    sb.Add(",");
+                }
+                intValue = (int)valueArray[i].internalValue;
+                sb.Add((intValue).ToString());
+                i += 1;
             }
-            return vm.globalFalse;
+            int childCount = 0;
+            int propertyCount = 0;
+            int j = 0;
+            string key = "";
+            string value = "";
+            while ((i < length))
+            {
+                sb.Add(",");
+                sb.Add((string)valueArray[i].internalValue);
+                sb.Add(",");
+                sb.Add(((int)valueArray[(i + 1)].internalValue).ToString());
+                childCount = (int)valueArray[(i + 2)].internalValue;
+                propertyCount = (int)valueArray[(i + 3)].internalValue;
+                sb.Add(",");
+                sb.Add((childCount).ToString());
+                sb.Add(",");
+                sb.Add((propertyCount).ToString());
+                i += 4;
+                j = 0;
+                while ((j < childCount))
+                {
+                    sb.Add(",");
+                    intValue = (int)valueArray[(i + j)].internalValue;
+                    sb.Add((intValue).ToString());
+                    j += 1;
+                }
+                i += childCount;
+                j = 0;
+                while ((j < propertyCount))
+                {
+                    key = (string)valueArray[i].internalValue;
+                    value = (string)valueArray[(i + 1)].internalValue;
+                    sb.Add(",");
+                    sb.Add(key);
+                    sb.Add(",");
+                    sb.Add(NoriHelper.EscapeStringHex(value));
+                    i += 2;
+                    j += 1;
+                }
+            }
+            return string.Join("", sb);
+        }
+
+        public static Value lib_norialpha_flushUpdatesToFrame(VmContext vm, Value[] args)
+        {
+            ObjectInstance frameObj = (ObjectInstance)args[0].internalValue;
+            object nativeFrameHandle = frameObj.nativeData[0];
+            string data = lib_norialpha_encodeListToWireFormat(args[1]);
+            NoriHelper.FlushUpdatesToFrame(nativeFrameHandle, data);
+            return vm.globalNull;
+        }
+
+        public static Value lib_norialpha_showFrame(VmContext vm, Value[] args)
+        {
+            ObjectInstance frameObj = (ObjectInstance)args[0].internalValue;
+            string data = lib_norialpha_encodeListToWireFormat(args[1]);
+            frameObj.nativeData = new object[1];
+            frameObj.nativeData[0] = NoriHelper.ShowFrame(data);
+            return vm.globalNull;
         }
     }
 }

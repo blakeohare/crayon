@@ -13,4 +13,7 @@ NAMESPACE-FUNCTIONS: Interpreter.Libraries.NoriAlpha
 NAMESPACE-STRUCTS: Interpreter.Libraries.NoriAlpha
 FUNCTION-WRAPPER-CLASS: LibraryWrapper
 
-EXT: _lib_norialpha_sampleNative: NoriHelper.SampleNative([ARG:1])
+EXT: _lib_norialpha_closeFrame: NoriHelper.CloseFrame([ARG:1])
+EXT: _lib_norialpha_flushUpdatesToFrame: NoriHelper.FlushUpdatesToFrame([ARG:1], [ARG:2])
+EXT: _lib_norialpha_showFrame: NoriHelper.ShowFrame([ARG:1])
+EXT: _lib_norialpha_escapeString: NoriHelper.EscapeStringHex([ARG:1])

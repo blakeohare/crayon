@@ -1,0 +1,51 @@
+namespace NoriAlpha {
+
+	class Panel : Element {
+		
+		field _children = [];
+		field _childrenIds = [];
+		
+		constructor(type) : base(type) {
+			this._NORI_isPanel = true;
+		}
+		
+		function addChild(e) {
+			if (e._parent != null) {
+				throw new Exception("Element already added to a parent.");
+			}
+			
+			this._children.add(e);
+			this._children.add(e._NORI_id + '');
+			this._NORI_basic_properties[2] = this._children.length;
+			e._parent = this;
+			
+			if (this._frame != null) {
+				if (e is Panel) {
+					Panel._applyFrameToElementAndChildren(e, this._frame);
+				} else {
+					e._frame = this._frame;
+					eid = e._NORI_id;
+					this._frame._NORI_visibleElementsById[eid] = e;
+					this._frame._NORI_dirtyElementsById[eid] = e;
+					this._frame._NORI_dirtyElementsById[this._NORI_id] = this;
+				}
+			}
+			
+			return this;
+		}
+		
+		static function _applyFrameToElementAndChildren(e, frame) {
+			q = [e];
+			qi = 0;
+			while (qi < q.length) {
+				current = q[qi++];
+				current._frame = frame;
+				frame._NORI_visibleElementsById[current._NORI_id] = current;
+				frame._NORI_dirtyElementsById[current._NORI_id] = current;
+				if (current is Panel) {
+					q.concat(current._children);
+				}
+			}
+		}
+	}
+}

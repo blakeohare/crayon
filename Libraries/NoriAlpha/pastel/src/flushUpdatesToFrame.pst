@@ -1,0 +1,112 @@
+﻿/*
+	args[0] -> Frame object
+	args[1] -> List of UI commands. Elements are either strings or integers
+*/
+VM.Value lib_norialpha_flushUpdatesToFrame(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance frameObj = (VM.ObjectInstance)args[0].internalValue;
+	object nativeFrameHandle = frameObj.nativeData[0];
+	string data = lib_norialpha_encodeListToWireFormat(args[1]);
+	Extension._lib_norialpha_flushUpdatesToFrame(nativeFrameHandle, data);
+    return vm.globalNull;
+}
+
+/*
+	Framework-generated strings will never have a comma.
+	Values for properties may possibly have a comma, but decoding property or type names and other strings
+	into hex is costly, so only convert user values into hex.
+	
+	List format:
+	items[0] -> root element ID (int)
+	items[1] -> element removals (int) -> X
+	items[2 + 2X] -> element ID of removal
+	items[3 + 2X] -> panel ID of removal
+	
+	items[4 + 2x + onward] -> repeated element data
+	
+	elementData[0] -> type (string) DON'T ENCODE
+	elementData[1] -> ID (string) DON'T ENCODE
+	elementData[2] -> children count -> Y
+	elementData[3] -> property count -> Z
+	elementData[4 + Y] -> children ID's
+	elementData[4 + max(Y) + 2 * Z] -> property name (string) DON'T ENCODE 
+	elementData[4 + max(Y) + 2 * Z + 1] -> property value (string or int) <------- ENCODE THESE STRINGS
+*/
+string lib_norialpha_encodeListToWireFormat(VM.Value v) {
+	VM.ListImpl args = (VM.ListImpl) v.internalValue;
+	List<string> sb = new List<string>();
+	List<VM.Value> valueList = null;
+	Array<VM.Value> valueArray = null;
+	int i = 0;
+	int blindCopy = 0;
+	int intValue = 0;
+	int length = args.size;
+	if (@ext_boolean("ARRAY_IS_LIST")) {
+		valueList = args.list;
+		blindCopy = 2 + (int) valueList[1].internalValue;
+	} else {
+		valueArray = args.array;
+		blindCopy = 2 + (int) valueArray[1].internalValue;
+	}
+	
+	for (i = 0; i < blindCopy; i += 1) {
+		if (i > 0) sb.Add(",");
+		if (@ext_boolean("ARRAY_IS_LIST")) {
+			intValue = (int) valueList[i].internalValue;
+		} else {
+			intValue = (int) valueArray[i].internalValue;
+		}
+		sb.Add(Core.IntToString(intValue));
+	}
+	
+	int childCount = 0;
+	int propertyCount = 0;
+	int j = 0;
+	string key = "";
+	string value = "";
+	while (i < length) {
+		sb.Add(",");
+		if (@ext_boolean("ARRAY_IS_LIST")) {
+			sb.Add((string) valueList[i].internalValue);
+			sb.Add(",");
+			sb.Add(Core.IntToString((int) valueList[i + 1].internalValue));
+			childCount = (int) valueList[i + 2].internalValue;
+			propertyCount = (int) valueList[i + 3].internalValue;
+		} else {
+			sb.Add((string) valueArray[i].internalValue);
+			sb.Add(",");
+			sb.Add(Core.IntToString((int) valueArray[i + 1].internalValue));
+			childCount = (int) valueArray[i + 2].internalValue;
+			propertyCount = (int) valueArray[i + 3].internalValue;
+		}
+		sb.Add(",");
+		sb.Add(Core.IntToString(childCount));
+		sb.Add(",");
+		sb.Add(Core.IntToString(propertyCount));
+		i += 4;
+		for (j = 0; j < childCount; j += 1) {
+			sb.Add(",");
+			if (@ext_boolean("ARRAY_IS_LIST")) {
+				intValue = (int) valueList[i + j].internalValue;
+			} else {
+				intValue = (int) valueArray[i + j].internalValue;
+			}
+			sb.Add(Core.IntToString(intValue));
+		}
+		i += childCount;
+		for (j = 0; j < propertyCount; j += 1) {
+			if (@ext_boolean("ARRAY_IS_LIST")) {
+				key = (string) valueList[i].internalValue;
+				value = (string) valueList[i + 1].internalValue;
+			} else {
+				key = (string) valueArray[i].internalValue;
+				value = (string) valueArray[i + 1].internalValue;
+			}
+			sb.Add(",");
+			sb.Add(key);
+			sb.Add(",");
+			sb.Add(Extension._lib_norialpha_escapeString(value));
+			i += 2;
+		}
+	}
+	return sb.Join("");
+}

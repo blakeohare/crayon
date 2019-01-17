@@ -5,6 +5,8 @@
 	"description": "Nori Alpha",
 
 	"cni": [
-		{ "name": "lib_norialpha_sample", "argc": 2 }
+		{ "name": "lib_norialpha_flushUpdatesToFrame", "argc": 2 },
+		{ "name": "lib_norialpha_showFrame", "argc": 2 },
+		{ "name": "lib_norialpha_closeFrame", "argc": 1 },
 	]
 }

@@ -1,9 +1,0 @@
-﻿/*
-    Returns true if GIF capture is supported on this platform.
-*/
-VM.Value lib_norialpha_sample(VM.VmContext vm, Array<VM.Value> args) {
-    if (Extension._lib_norialpha_sampleNative(true)) {
-        return vm.globalTrue;
-    }
-    return vm.globalFalse;
-}

@@ -1,0 +1,11 @@
+namespace NoriAlpha {
+
+	class DockPanel : Panel {
+	
+		constructor() : base('DockPanel') {
+		
+		}
+	
+	}
+	
+}
