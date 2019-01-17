@@ -18,10 +18,10 @@ VM.Value lib_norialpha_flushUpdatesToFrame(VM.VmContext vm, Array<VM.Value> args
 	List format:
 	items[0] -> root element ID (int)
 	items[1] -> element removals (int) -> X
-	items[2 + 2X] -> element ID of removal
-	items[3 + 2X] -> panel ID of removal
+	items[2 + 2X + 0] -> element ID of removal
+	items[2 + 2X + 1] -> panel ID of removal
 	
-	items[4 + 2x + onward] -> repeated element data
+	items[2 + 2x + onward] -> repeated element data
 	
 	elementData[0] -> type (string) DON'T ENCODE
 	elementData[1] -> ID (string) DON'T ENCODE

@@ -15,5 +15,6 @@ FUNCTION-WRAPPER-CLASS: LibraryWrapper
 
 EXT: _lib_norialpha_closeFrame: NoriHelper.CloseFrame([ARG:1])
 EXT: _lib_norialpha_flushUpdatesToFrame: NoriHelper.FlushUpdatesToFrame([ARG:1], [ARG:2])
-EXT: _lib_norialpha_showFrame: NoriHelper.ShowFrame([ARG:1])
+EXT: _lib_norialpha_showFrame: NoriHelper.ShowFrame([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
 EXT: _lib_norialpha_escapeString: NoriHelper.EscapeStringHex([ARG:1])
+EXT: _lib_norialpha_runEventWatcher: NoriHelper.EventWatcher([ARG:1], [ARG:2], [ARG:3]);

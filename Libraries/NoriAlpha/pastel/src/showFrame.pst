@@ -1,11 +1,39 @@
 ﻿/*
 	args[0] -> Frame object
-	args[1] -> String of UI commands, comma separated.
+	args[1] -> window title
+	args[2] -> window width
+	args[3] -> window height
+	args[4] -> List of UI commands
 */
 VM.Value lib_norialpha_showFrame(VM.VmContext vm, Array<VM.Value> args) {
 	VM.ObjectInstance frameObj = (VM.ObjectInstance)args[0].internalValue;
-	string data = lib_norialpha_encodeListToWireFormat(args[1]);
+	string title = (string) args[1].internalValue;
+	int width = (int) args[2].internalValue;
+	int height = (int) args[3].internalValue;
+	string data = lib_norialpha_encodeListToWireFormat(args[4]);
 	frameObj.nativeData = new Array<object>(1);
-	frameObj.nativeData[0] = Extension._lib_norialpha_showFrame(data);
+	frameObj.nativeData[0] = Extension._lib_norialpha_showFrame(args[0], title, width, height, data);
+	return vm.globalNull;
+}
+
+/*
+	Invokes the eventWatcher and suspends the current context.
+	The event watcher itself will resume the execution context when the window is closed.
+	
+	If it is the last frame to close, the suspended flag will be reverted from within the native call.
+	If it is not, the event watcher will invoke the VM itself from within the previously running instance
+	and the native invocation won't block.
+	
+	args[0] -> Frame object
+	args[1] -> execution context ID to resume once the window is no longer shown
+	args[2] -> function pointer of event handler
+*/
+VM.Value lib_norialpha_runEventWatcher(VM.VmContext vm, Array<VM.Value> args) {
+	VM.ObjectInstance frameObj = (VM.ObjectInstance)args[0].internalValue;
+	int execContextIdForResume = (int) args[1].internalValue;
+	VM.Value eventCallback = args[2];
+    VM.ExecutionContext ec = VM.getExecutionContext(vm, execContextIdForResume);
+    VM.vm_suspend_for_context(ec, 1);
+	Extension._lib_norialpha_runEventWatcher(vm, execContextIdForResume, eventCallback);
 	return vm.globalNull;
 }
