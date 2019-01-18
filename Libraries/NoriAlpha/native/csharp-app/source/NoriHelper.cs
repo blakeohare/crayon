@@ -4,9 +4,9 @@ namespace Interpreter.Libraries.NoriAlpha
 {
     public class NoriHelper
     {
-        public static object ShowFrame(Interpreter.Structs.Value crayonObj, string title, int width, int height, string uiData)
+        public static object ShowFrame(Interpreter.Structs.Value crayonObj, string title, int width, int height, string uiData, int execId)
         {
-            NoriFrame frame = NoriFrame.CreateAndShow(crayonObj, title, width, height, uiData);
+            NoriFrame frame = NoriFrame.CreateAndShow(crayonObj, title, width, height, uiData, execId);
             activeFrames.Add(frame);
             return frame;
         }
@@ -45,7 +45,7 @@ namespace Interpreter.Libraries.NoriAlpha
         }
 
         private static HashSet<NoriFrame> activeFrames = new HashSet<NoriFrame>();
-
+        
         /*
             Called by a CNI function after the frame is shown and just blocks and waits for
             events from the queue.
@@ -71,21 +71,21 @@ namespace Interpreter.Libraries.NoriAlpha
 
                 if (events != null)
                 {
-                    for (int i = 0; i < eventQueue.Count; i += 4)
+                    for (int i = 0; i < events.Length; i += 4)
                     {
-                        string type = eventQueue[i].ToString();
-                        NoriFrame sender = (NoriFrame)eventQueue[i + 1];
+                        string type = events[i].ToString();
+                        NoriFrame sender = (NoriFrame)events[i + 1];
                         if (type == "EVENT")
                         {
-                            int elementId = (int)eventQueue[i + 2];
-                            string args = (string)eventQueue[i + 3];
+                            int elementId = (int)events[i + 2];
+                            string args = (string)events[i + 3];
                             Interpreter.Vm.CrayonWrapper.runInterpreterWithFunctionPointer(
                                vmContext,
                                noriHandlerFunctionPointer,
                                new Interpreter.Structs.Value[] {
-                               sender.CrayonObjectRef,
-                               Interpreter.Vm.CrayonWrapper.buildInteger(vmContext.globals, elementId),
-                               Interpreter.Vm.CrayonWrapper.buildString(vmContext.globals, args)
+                                   sender.CrayonObjectRef,
+                                   Interpreter.Vm.CrayonWrapper.buildInteger(vmContext.globals, elementId),
+                                   Interpreter.Vm.CrayonWrapper.buildString(vmContext.globals, args)
                                });
                         }
                         else if (type == "CLOSE")
@@ -93,6 +93,11 @@ namespace Interpreter.Libraries.NoriAlpha
                             if (activeFrames.Contains(sender))
                             {
                                 activeFrames.Remove(sender);
+                            }
+
+                            if (resumingExecutionContextId != sender.ResumeExecId)
+                            {
+                                Interpreter.Vm.CrayonWrapper.runInterpreter(vmContext, sender.ResumeExecId);
                             }
                         }
                     }
@@ -102,11 +107,15 @@ namespace Interpreter.Libraries.NoriAlpha
                     System.Threading.Thread.Sleep(System.TimeSpan.FromMilliseconds(0.1));
                 }
             }
+
+            Structs.ExecutionContext ec = Interpreter.Vm.CrayonWrapper.getExecutionContext(vmContext, resumingExecutionContextId);
+            ec.activeInterrupt = null;
+            ec.executionStateChange = false;
         }
 
         public static bool CloseFrame(object nativeFrameHandle)
         {
-            NoriFrame frame = (NoriFrame) nativeFrameHandle;
+            NoriFrame frame = (NoriFrame)nativeFrameHandle;
             frame.Close();
             return true;
         }

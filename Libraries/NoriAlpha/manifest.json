@@ -7,7 +7,7 @@
 	"cni": [
 		{ "name": "lib_norialpha_flushUpdatesToFrame", "argc": 2 },
 		{ "name": "lib_norialpha_runEventWatcher", "argc": 3 },
-		{ "name": "lib_norialpha_showFrame", "argc": 5 },
+		{ "name": "lib_norialpha_showFrame", "argc": 6 },
 		{ "name": "lib_norialpha_closeFrame", "argc": 1 },
 	]
 }

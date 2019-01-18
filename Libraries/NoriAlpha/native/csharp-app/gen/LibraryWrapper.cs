@@ -207,7 +207,7 @@ namespace Interpreter.Libraries.NoriAlpha
             Value eventCallback = args[2];
             ExecutionContext ec = Interpreter.Vm.CrayonWrapper.getExecutionContext(vm, execContextIdForResume);
             Interpreter.Vm.CrayonWrapper.vm_suspend_for_context(ec, 1);
-            NoriHelper.EventWatcher(vm, execContextIdForResume, eventCallback);;
+            NoriHelper.EventWatcher(vm, execContextIdForResume, eventCallback);
             return vm.globalNull;
         }
 
@@ -218,8 +218,9 @@ namespace Interpreter.Libraries.NoriAlpha
             int width = (int)args[2].internalValue;
             int height = (int)args[3].internalValue;
             string data = lib_norialpha_encodeListToWireFormat(args[4]);
+            int execId = (int)args[5].internalValue;
             frameObj.nativeData = new object[1];
-            frameObj.nativeData[0] = NoriHelper.ShowFrame(args[0], title, width, height, data);
+            frameObj.nativeData[0] = NoriHelper.ShowFrame(args[0], title, width, height, data, execId);
             return vm.globalNull;
         }
     }

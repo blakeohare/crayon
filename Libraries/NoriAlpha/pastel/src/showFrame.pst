@@ -4,6 +4,7 @@
 	args[2] -> window width
 	args[3] -> window height
 	args[4] -> List of UI commands
+	args[5] -> Execution Context ID for resume
 */
 VM.Value lib_norialpha_showFrame(VM.VmContext vm, Array<VM.Value> args) {
 	VM.ObjectInstance frameObj = (VM.ObjectInstance)args[0].internalValue;
@@ -11,8 +12,9 @@ VM.Value lib_norialpha_showFrame(VM.VmContext vm, Array<VM.Value> args) {
 	int width = (int) args[2].internalValue;
 	int height = (int) args[3].internalValue;
 	string data = lib_norialpha_encodeListToWireFormat(args[4]);
+	int execId = (int) args[5].internalValue;
 	frameObj.nativeData = new Array<object>(1);
-	frameObj.nativeData[0] = Extension._lib_norialpha_showFrame(args[0], title, width, height, data);
+	frameObj.nativeData[0] = Extension._lib_norialpha_showFrame(args[0], title, width, height, data, execId);
 	return vm.globalNull;
 }
 
