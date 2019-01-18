@@ -1,14 +1,14 @@
 namespace NoriAlpha {
 
-	const Button_Text = 'btn.text';
-	
-	class Button : Element {
-		
-		constructor() : base('Button') {
-			this.setText('Button');
-		}
-		
-		function getText() { return this._getProperty(Button_Text); }
-		function setText(value) { return this._setProperty(Button_Text, (value ?? 'null') + ''); }
-	}
+    const Button_Text = 'btn.text';
+
+    class Button : Element {
+
+        constructor() : base('Button') {
+            this.setText('Button');
+        }
+
+        function getText() { return this._getProperty(Button_Text); }
+        function setText(value) { return this._setProperty(Button_Text, (value ?? 'null') + ''); }
+    }
 }

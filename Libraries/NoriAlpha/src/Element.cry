@@ -2,110 +2,110 @@ import Math;
 
 namespace NoriAlpha {
 
-	const Element_Id = 'ID';
-	
-	const Element_Width = 'el.width';
-	const Element_Height = 'el.height';
-	const Element_Dock = 'el.dock';
-	
-	class Element {
-		
-		static field ID_ALLOC = 0;
-		
-		field _parent = null;
-		field _frame = null;
-		
-		// This is a list of string keys of property names to the index they occur in the next list.
-		// Note that the index is always a multiple of 2.
-		field _NORI_properties_to_index = {};
-		
-		// List of basic properties
-		// [type, id#, children count, property count] 
-		field _NORI_basic_properties;
-		
-		// This is a list of property names and their values, alternating.
-		// e.g. ['width', 40, 'height', 10]
-		// The location of each key's index is indicated by the _NORI_properties_to_index lookup.
-		// These are stored in a flat list for rapid encoding and transmission to the render process
-		// because the serializer is basically just list.join(',')
-		field _NORI_serializer_list = [];
-		
-		field _NORI_isPanel = false;
-		field _NORI_id;
-		
-		constructor(type) {
-			this._NORI_id = ++Element.ID_ALLOC;
-			this._NORI_basic_properties = [
-				type,
-				this._NORI_id,
-				0, // children count (present but always 0 for non-Panels)
-				0]; // property count
-		}
-		
-		function _setProperty(id, value) {
-			i = this._NORI_properties_to_index.get(id);
-			if (i == null) {
-				i = this._NORI_serializer_list.length;
-				this._NORI_properties_to_index[id] = i;
-				this._NORI_serializer_list.add(id, value);
-				this._NORI_basic_properties[3] = this._NORI_properties_to_index.length;
-			} else {
-				this._NORI_serializer_list[i + 1] = value;
-			}
-			
-			if (this._frame != null) {
-				this._frame._NORI_dirtyElementsById[this._NORI_id] = this;
-			}
-			
-			return this;
-		}
-		
-		function _getProperty(id) {
-			i = this._NORI_properties_to_index.get(id);
-			if (i != null) {
-				return this._NORI_serializer_list[i + 1];
-			}
-			return null;
-		}
-		
-		function _clearProperty(id) {
-			i = this._NORI_properties_to_index.get(id);
-			if (i != null) {
-				len = this._NORI_serializer_list.length;
-				
-				if (i < len - 2) {
-					// move the last property into its place
-					last_i = len - 2;
-					last_id = this._NORI_serializer_list[last_i];
-					this._NORI_serializer_list[i] = last_id;
-					this._NORI_serializer_list[i + 1] = this._NORI_serializer_list[last_i + 1];
-					this._NORI_properties_to_index[last_id] = i;
-				}
-				
-				// remove the last one
-				this._NORI_serializer_list.pop();
-				this._NORI_serializer_list.pop();
-				this._NORI_properties_to_index.remove(id);
-				
-				if (this._frame != null) {
-					this._frame._NORI_dirtyElementsById[this._NORI_id] = this;
-				}
-				this._NORI_basic_properties[3] = this._NORI_properties_to_index.length;
-				return this;
-			}
-			return this;
-		}
-		
-		function getWidth() { return this._getProperty(Element_Width); }
-		function setWidth(value) { return this._setProperty(Element_Width, Math.floor(value)); }
-		function clearWidth() { return this._clearProperty(Element_Width); }
-		
-		function getHeight() { return this._getProperty(Element_Height); }
-		function setHeight(value) { return this._setProperty(Element_Height, Math.floor(value)); }
-		function clearHeight() { return this._clearProperty(Element_Height); }
-		
-		function getDock() { return this._getProperty(Element_Dock); }
-		function setDock(value) { return this._setProperty(Element_Dock, Math.floor(value)); }
-		function clearDock() { return this._clearProperty(Element_Dock); }
-	}
+    const Element_Id = 'ID';
+
+    const Element_Width = 'el.width';
+    const Element_Height = 'el.height';
+    const Element_Dock = 'el.dock';
+
+    class Element {
+
+        static field ID_ALLOC = 0;
+
+        field _parent = null;
+        field _frame = null;
+
+        // This is a list of string keys of property names to the index they occur in the next list.
+        // Note that the index is always a multiple of 2.
+        field _NORI_properties_to_index = {};
+
+        // List of basic properties
+        // [type, id#, children count, property count]
+        field _NORI_basic_properties;
+
+        // This is a list of property names and their values, alternating.
+        // e.g. ['width', 40, 'height', 10]
+        // The location of each key's index is indicated by the _NORI_properties_to_index lookup.
+        // These are stored in a flat list for rapid encoding and transmission to the render process
+        // because the serializer is basically just list.join(',')
+        field _NORI_serializer_list = [];
+
+        field _NORI_isPanel = false;
+        field _NORI_id;
+
+        constructor(type) {
+            this._NORI_id = ++Element.ID_ALLOC;
+            this._NORI_basic_properties = [
+                type,
+                this._NORI_id,
+                0, // children count (present but always 0 for non-Panels)
+                0]; // property count
+        }
+
+        function _setProperty(id, value) {
+            i = this._NORI_properties_to_index.get(id);
+            if (i == null) {
+                i = this._NORI_serializer_list.length;
+                this._NORI_properties_to_index[id] = i;
+                this._NORI_serializer_list.add(id, value);
+                this._NORI_basic_properties[3] = this._NORI_properties_to_index.length;
+            } else {
+                this._NORI_serializer_list[i + 1] = value;
+            }
+
+            if (this._frame != null) {
+                this._frame._NORI_dirtyElementsById[this._NORI_id] = this;
+            }
+
+            return this;
+        }
+
+        function _getProperty(id) {
+            i = this._NORI_properties_to_index.get(id);
+            if (i != null) {
+                return this._NORI_serializer_list[i + 1];
+            }
+            return null;
+        }
+
+        function _clearProperty(id) {
+            i = this._NORI_properties_to_index.get(id);
+            if (i != null) {
+                len = this._NORI_serializer_list.length;
+
+                if (i < len - 2) {
+                    // move the last property into its place
+                    last_i = len - 2;
+                    last_id = this._NORI_serializer_list[last_i];
+                    this._NORI_serializer_list[i] = last_id;
+                    this._NORI_serializer_list[i + 1] = this._NORI_serializer_list[last_i + 1];
+                    this._NORI_properties_to_index[last_id] = i;
+                }
+
+                // remove the last one
+                this._NORI_serializer_list.pop();
+                this._NORI_serializer_list.pop();
+                this._NORI_properties_to_index.remove(id);
+
+                if (this._frame != null) {
+                    this._frame._NORI_dirtyElementsById[this._NORI_id] = this;
+                }
+                this._NORI_basic_properties[3] = this._NORI_properties_to_index.length;
+                return this;
+            }
+            return this;
+        }
+
+        function getWidth() { return this._getProperty(Element_Width); }
+        function setWidth(value) { return this._setProperty(Element_Width, Math.floor(value)); }
+        function clearWidth() { return this._clearProperty(Element_Width); }
+
+        function getHeight() { return this._getProperty(Element_Height); }
+        function setHeight(value) { return this._setProperty(Element_Height, Math.floor(value)); }
+        function clearHeight() { return this._clearProperty(Element_Height); }
+
+        function getDock() { return this._getProperty(Element_Dock); }
+        function setDock(value) { return this._setProperty(Element_Dock, Math.floor(value)); }
+        function clearDock() { return this._clearProperty(Element_Dock); }
+    }
 }

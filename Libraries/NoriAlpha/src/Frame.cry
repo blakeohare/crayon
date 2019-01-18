@@ -1,97 +1,97 @@
 namespace NoriAlpha {
-	
-	/*
-		Represents a window-like UI object.
-		
-		nativeData[0] -> native handle to the window.
-	*/
-	class Frame {
-		
-		field _NORI_dirtyElementsById = {};
-		field _NORI_visibleElementsById = {};
-		field _NORI_isShown = false;
-		field _NORI_content = null;
-		
-		constructor() { }
-		
-		function setContent(e) {
-			if (e._parent != null) {
-				throw new Exception("This element is already added to the UI tree.");
-			}
-			
-			e._parent = this;
-			Panel._applyFrameToElementAndChildren(e, this);
-			return this;
-		}
-		
-		/*
-			This is a list of serialized data for the frame.
-			
-			The first item is the element ID for the root element of the frame.
-			
-			The 2nd element is a count of elements that have been removed from the visible frame.
-			They may still exist but are simply invisible now and should be treated as removed by the renderer.
-			After the count is the actual list of elements which exists as a list of pairs (so the length of this next
-			part is double the number indicated in the count). The first item in each pair is the element removed and
-			the 2nd item in each pair is the panel ID from which it was removed. If the root element was removed, 0 is used
-			as the frame's ID.
-			
-			The remaining data is a list of elements. No count is given as it's just the rest of the list.
-			
-			Each element contains 4 basic properties: type, ID, children count, property count.
-			Following these properties are the children ID's, which are then followed by property data
-			which is double the length of the property count (because it's an alternating list of keys and values.
-		*/
-		function _getRenderData(dirtyOnly) {
-			wireData = [this._NORI_content == null ? 0 : this._NORI_content._NORI_id];
-			
-			wireData.add(0); // TODO: implement element removals from panels. For now just indicate the count of removals is 0.
-			
-			elements = dirtyOnly 
-				? this._NORI_dirtyElementsById.values() 
-				: this._NORI_visibleElementsById.values();
-			for (element : elements) {
-				wireData.concat(element._NORI_basic_properties);
-				if (element._NORI_isPanel) {
-					wireData.concat(element._childrenIds);
-				}
-				wireData.concat(element._NORI_serializer_list);
-			}
-			this._NORI_dirtyElementsById.clear();
-			return wireData;
-		}
-		
-		function flushUpdates() {
-			renderData = this._getRenderData(true);
-			$lib_norialpha_flushUpdatesToFrame(this, renderData);
-		}
-		
-		function show() {
-			if (!this._NORI_isShown) {
-				this._NORI_isShown = true;
-				renderData = this._getRenderData(false);
-				execId = Core.getCurrentExecutionToken();
-				$lib_norialpha_showFrame(this, 'Test Window', 400, 300, renderData, execId);
-				
-				// This will save the VM state for this context and potentially kick off a
-				// while loop that spins and watches for events. Only one instance of this loop
-				// exists and waits for all active frames to disappear before ending.
-				// If it is already running, then this execution context will simply end and yield
-				// back to the existing loop.
-				$lib_norialpha_runEventWatcher(this, execId, handleUiGeneratedEvent);
-			}
-			return this;
-		}
-		
-		function close() {
-			if (this._NORI_isShown) {
-				this._NORI_isShown = false;
-				$lib_norialpha_closeFrame(this);
-			}
-		}
-	}
-	
-	function handleUiGeneratedEvent(frame, id, args) {
-		print("Received message from " + frame + ", Element #" + id + " -> " + args);
-	}
+
+    /*
+        Represents a window-like UI object.
+
+        nativeData[0] -> native handle to the window.
+    */
+    class Frame {
+
+        field _NORI_dirtyElementsById = {};
+        field _NORI_visibleElementsById = {};
+        field _NORI_isShown = false;
+        field _NORI_content = null;
+
+        constructor() { }
+
+        function setContent(e) {
+            if (e._parent != null) {
+                throw new Exception("This element is already added to the UI tree.");
+            }
+
+            e._parent = this;
+            Panel._applyFrameToElementAndChildren(e, this);
+            return this;
+        }
+
+        /*
+            This is a list of serialized data for the frame.
+
+            The first item is the element ID for the root element of the frame.
+
+            The 2nd element is a count of elements that have been removed from the visible frame.
+            They may still exist but are simply invisible now and should be treated as removed by the renderer.
+            After the count is the actual list of elements which exists as a list of pairs (so the length of this next
+            part is double the number indicated in the count). The first item in each pair is the element removed and
+            the 2nd item in each pair is the panel ID from which it was removed. If the root element was removed, 0 is used
+            as the frame's ID.
+
+            The remaining data is a list of elements. No count is given as it's just the rest of the list.
+
+            Each element contains 4 basic properties: type, ID, children count, property count.
+            Following these properties are the children ID's, which are then followed by property data
+            which is double the length of the property count (because it's an alternating list of keys and values.
+        */
+        function _getRenderData(dirtyOnly) {
+            wireData = [this._NORI_content == null ? 0 : this._NORI_content._NORI_id];
+
+            wireData.add(0); // TODO: implement element removals from panels. For now just indicate the count of removals is 0.
+
+            elements = dirtyOnly
+                ? this._NORI_dirtyElementsById.values()
+                : this._NORI_visibleElementsById.values();
+            for (element : elements) {
+                wireData.concat(element._NORI_basic_properties);
+                if (element._NORI_isPanel) {
+                    wireData.concat(element._childrenIds);
+                }
+                wireData.concat(element._NORI_serializer_list);
+            }
+            this._NORI_dirtyElementsById.clear();
+            return wireData;
+        }
+
+        function flushUpdates() {
+            renderData = this._getRenderData(true);
+            $lib_norialpha_flushUpdatesToFrame(this, renderData);
+        }
+
+        function show() {
+            if (!this._NORI_isShown) {
+                this._NORI_isShown = true;
+                renderData = this._getRenderData(false);
+                execId = Core.getCurrentExecutionToken();
+                $lib_norialpha_showFrame(this, 'Test Window', 400, 300, renderData, execId);
+
+                // This will save the VM state for this context and potentially kick off a
+                // while loop that spins and watches for events. Only one instance of this loop
+                // exists and waits for all active frames to disappear before ending.
+                // If it is already running, then this execution context will simply end and yield
+                // back to the existing loop.
+                $lib_norialpha_runEventWatcher(this, execId, handleUiGeneratedEvent);
+            }
+            return this;
+        }
+
+        function close() {
+            if (this._NORI_isShown) {
+                this._NORI_isShown = false;
+                $lib_norialpha_closeFrame(this);
+            }
+        }
+    }
+
+    function handleUiGeneratedEvent(frame, id, args) {
+        print("Received message from " + frame + ", Element #" + id + " -> " + args);
+    }
 }
