@@ -65,6 +65,8 @@ namespace Interpreter.Libraries.NoriAlpha
             this.browser.IsWebBrowserContextMenuEnabled = false;
             this.browser.ScrollBarsEnabled = false;
 
+            this.form.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+
             browser.DocumentText = this.GetHtmlDocument(this.initialUiData);
         }
 

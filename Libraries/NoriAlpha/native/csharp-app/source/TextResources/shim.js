@@ -1,6 +1,6 @@
 function winFormsNoriHandleNewUiData(data) {
 	var output = document.getElementById('msg');
-	Nori.flushData(data);
+	flushData(data);
 }
 
 function winFormsNoriHandleEvent(id, args) {
