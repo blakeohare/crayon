@@ -40,8 +40,8 @@
                     }
                     list1.array[int1 + i] = value;
                 }
-                list1.size += _len;
             }
+            list1.size += _len;
         }
     }
 }

@@ -2795,6 +2795,7 @@ var interpretImpl = function(vm, executionContextId) {
 														list1[2].push(value);
 														i += 1;
 													}
+													list1[1] += _len;
 												}
 											}
 										}
