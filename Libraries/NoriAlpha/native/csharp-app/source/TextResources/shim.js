@@ -3,6 +3,6 @@ function winFormsNoriHandleNewUiData(data) {
 	flushData(data);
 }
 
-function winFormsNoriHandleEvent(id, args) {
+function platformSpecificHandleEvent(id, args) {
 	window.external.SendEventToCSharp(id, args);
 }

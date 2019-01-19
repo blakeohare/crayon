@@ -9,6 +9,7 @@ var ctx = {
 function refreshPage() {
 	var i = 0;
 	var j;
+	var dirtyElementIds = ctx.dirtyElementIds;
 	var length = dirtyElementIds.length;
 	var id;
 	var domElement;
@@ -81,7 +82,7 @@ function clearOutAndSetRootElement() {
 
 function getDomRoot() { 
 	if (ctx.domRoot === null) {
-		ctx.domRoot = document.getElementById('html_root');
+		ctx.domRoot = document.getElementById('nori_root');
 	}
 	return ctx.domRoot;
 }
@@ -93,7 +94,7 @@ function flushData(dataRaw) {
 	var rootElementId = parseInt(data[0]);
 	var elementRemovalCount = parseInt(data[1]);
 	
-	var i = 0;
+	var i = 2;
 	var elementId;
 	var parentId;
 	while (i < elementRemovalCount) {
@@ -188,7 +189,7 @@ function decodeHex(value) {
 	return sb.join('');
 }
 
-function createElement(type) {
+function createEmptyElement(type) {
 	switch (type) {
 		case 'Button':
 			return document.createElement('button');

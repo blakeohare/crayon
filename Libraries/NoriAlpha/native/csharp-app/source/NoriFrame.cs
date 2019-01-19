@@ -44,7 +44,7 @@ namespace Interpreter.Libraries.NoriAlpha
 
         public void SendUiData(string value)
         {
-            this.browser.Document.InvokeScript("handleNewUiData", new object[] { value });
+            this.browser.Document.InvokeScript("winFormsNoriHandleNewUiData", new object[] { value });
         }
 
         private void BuildUi()
