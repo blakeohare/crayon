@@ -6,16 +6,16 @@ namespace NoriAlpha {
         nativeData[0] -> native handle to the window.
     */
     class Frame {
-		
-		field _fullFlushElements = {};
-		field _partialFlushElements = {};
-		field _dirtyPanels = {};
-		
+
+        field _fullFlushElements = {};
+        field _partialFlushElements = {};
+        field _dirtyPanels = {};
+
         field _elementById = {};
         field _isShown = false;
         field _rootElementId = null;
-		field _rootElementChanged = false;
-	
+        field _rootElementChanged = false;
+
         constructor() { }
 
         function setContent(e) {
@@ -25,8 +25,8 @@ namespace NoriAlpha {
 
             e._parent = this;
             Panel._applyFrameToElementAndChildren(e, this);
-			this._rootElementId = e._id;
-			this._rootElementChanged = true;
+            this._rootElementId = e._id;
+            this._rootElementChanged = true;
             return this;
         }
 
@@ -49,47 +49,47 @@ namespace NoriAlpha {
             which is double the length of the property count (because it's an alternating list of keys and values.
         */
         function _getRenderData() {
-			
+
             wireData = [];
 
-			if (this._fullFlushElements.length > 0) {
-				for (id : this._fullFlushElements.keys()) {
-					e = this._fullFlushElements[id];
-					e._flushVisualProperties(wireData, true);
-				}
-				this._fullFlushElements.clear();
-			}
-			
-			if (this._partialFlushElements.length > 0) {
-				for (id : this._partialFlushElements.keys()) {
-					e = this._partialFlushElements[id];
-					e._flushVisualProperties(wireData, false);
-				}
-				this._partialFlushElements.clear();
-			}
-			
-			if (this._dirtyPanels.length > 0) {
-				for (id : this._dirtyPanels.keys()) {
-					panel = this._elementById[id];
-					if (panel._canFlushIncrementally) {
-						wireData.add('CI', id, panel._childRemovalCount, panel._childrenIdsAdded.length);
-						wireData.concat(panel._childrenIdsAdded);
-					} else {
-						panel._canFlushIncrementally = true;
-						
-						throw new NotImplementedException();
-					}
-					panel._childrenIdsAdded.clear();
-					panel._childRemovalCount = 0;
-				}
-				this._dirtyPanels.clear();
-			}
-			
-			if (this._rootElementChanged) {
-				wireData.add('RE', this._rootElementId);
-				this._rootElementChanged = false;
-			}
-			
+            if (this._fullFlushElements.length > 0) {
+                for (id : this._fullFlushElements.keys()) {
+                    e = this._fullFlushElements[id];
+                    e._flushVisualProperties(wireData, true);
+                }
+                this._fullFlushElements.clear();
+            }
+
+            if (this._partialFlushElements.length > 0) {
+                for (id : this._partialFlushElements.keys()) {
+                    e = this._partialFlushElements[id];
+                    e._flushVisualProperties(wireData, false);
+                }
+                this._partialFlushElements.clear();
+            }
+
+            if (this._dirtyPanels.length > 0) {
+                for (id : this._dirtyPanels.keys()) {
+                    panel = this._elementById[id];
+                    if (panel._canFlushIncrementally) {
+                        wireData.add('CI', id, panel._childRemovalCount, panel._childrenIdsAdded.length);
+                        wireData.concat(panel._childrenIdsAdded);
+                    } else {
+                        panel._canFlushIncrementally = true;
+
+                        throw new NotImplementedException();
+                    }
+                    panel._childrenIdsAdded.clear();
+                    panel._childRemovalCount = 0;
+                }
+                this._dirtyPanels.clear();
+            }
+
+            if (this._rootElementChanged) {
+                wireData.add('RE', this._rootElementId);
+                this._rootElementChanged = false;
+            }
+
             return wireData.join(',');
         }
 
@@ -121,28 +121,28 @@ namespace NoriAlpha {
                 $lib_norialpha_closeFrame(this);
             }
         }
-		
-		static function escapeStringToHex(str) {
-			hex = '0123456789abcdef';
-			output = [];
-			for (c : str) {
-				code = Core.ord(c);
-				output.add(hex[(code >> 4) & 15], hex[code & 15]);
-			}
-			return output.join('');
-		}
+
+        static function escapeStringToHex(str) {
+            hex = '0123456789abcdef';
+            output = [];
+            for (c : str) {
+                code = Core.ord(c);
+                output.add(hex[(code >> 4) & 15], hex[code & 15]);
+            }
+            return output.join('');
+        }
     }
 
     function handleUiGeneratedEvent(frame, id, type, argString) {
-		e = frame._elementById.get(id);
-		if (e != null) {
-			handlerAndParser = e._handlers.get(type);
-			if (handlerAndParser != null) {
-				handler = handlerAndParser[0];
-				parser = handlerAndParser[1];
-				args = parser == null ? [] : parser(argString);
-				handler.invoke(args);
-			}
-		}
+        e = frame._elementById.get(id);
+        if (e != null) {
+            handlerAndParser = e._handlers.get(type);
+            if (handlerAndParser != null) {
+                handler = handlerAndParser[0];
+                parser = handlerAndParser[1];
+                args = parser == null ? [] : parser(argString);
+                handler.invoke(args);
+            }
+        }
     }
 }

@@ -4,12 +4,12 @@ namespace NoriAlpha {
 
         field _children = [];
         field _childrenIds = [];
-		
-		field _canFlushIncrementally = true;
-		field _childrenIdsAdded = [];
-		field _childRemovalCount = 0;
-		
-		constructor(type) : base(type) {
+
+        field _canFlushIncrementally = true;
+        field _childrenIdsAdded = [];
+        field _childRemovalCount = 0;
+
+        constructor(type) : base(type) {
             this._isPanel = true;
         }
 
@@ -21,11 +21,11 @@ namespace NoriAlpha {
             e._parent = this;
             this._children.add(e);
             this._childrenIds.add(e._id);
-			
-			if (this._canFlushIncrementally) {
-				this._childrenIdsAdded.add(e._id);
-			}
-			
+
+            if (this._canFlushIncrementally) {
+                this._childrenIdsAdded.add(e._id);
+            }
+
             if (this._frame != null) {
                 Panel._applyFrameToElementAndChildren(e, this._frame);
             }
@@ -39,12 +39,12 @@ namespace NoriAlpha {
             while (i < queue.length) {
                 current = queue[i++];
                 current._frame = frame;
-				id = current._id;
-				frame._fullFlushElements[id] = current;
-				frame._elementById[id] = current;
-				current._isClean = false;
-				if (current._isPanel) {
-					frame._dirtyPanels[id] = true;
+                id = current._id;
+                frame._fullFlushElements[id] = current;
+                frame._elementById[id] = current;
+                current._isClean = false;
+                if (current._isPanel) {
+                    frame._dirtyPanels[id] = true;
                     queue.concat(current._children);
                 }
             }

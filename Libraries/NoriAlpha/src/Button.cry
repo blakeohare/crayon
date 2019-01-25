@@ -1,8 +1,8 @@
 namespace NoriAlpha {
 
     const Button_Text = 'btn.text';
-	const Button_OnClick = 'btn.onclick';
-	
+    const Button_OnClick = 'btn.onclick';
+
     class Button : Element {
 
         constructor() : base('Button') {
@@ -11,13 +11,13 @@ namespace NoriAlpha {
 
         function getText() { return this._getStringProperty(Button_Text); }
         function setText(value) { return this._setStringProperty(Button_Text, (value ?? 'null') + ''); }
-		
-		function setClickHandler(fn) {
-			return this._setEventHandler(Button_OnClick, fn);
-		}
-		
-		function clearClickHandler() {
-			return this._clearEventHandler(Button_OnClick);
-		}
+
+        function setClickHandler(fn) {
+            return this._setEventHandler(Button_OnClick, fn);
+        }
+
+        function clearClickHandler() {
+            return this._clearEventHandler(Button_OnClick);
+        }
     }
 }

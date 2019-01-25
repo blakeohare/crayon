@@ -11,11 +11,11 @@ VM.Value lib_norialpha_flushUpdatesToFrame(VM.VmContext vm, Array<VM.Value> args
 }
 
 /*
-	TODO: this is currently bypassed and handled in Crayon code. This was applicable
-	to the old format, which has now changed. Need to rewrite this for the new bridge
-	protocol and get that code out of the VM layer.
-	
-	
+    TODO: this is currently bypassed and handled in Crayon code. This was applicable
+    to the old format, which has now changed. Need to rewrite this for the new bridge
+    protocol and get that code out of the VM layer.
+
+
     Framework-generated strings will never have a comma.
     Values for properties may possibly have a comma, but decoding property or type names and other strings
     into hex is costly, so only convert user values into hex.
