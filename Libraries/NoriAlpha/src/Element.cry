@@ -48,6 +48,8 @@ namespace NoriAlpha {
 
 		field _properties = {};
 		field _newProperties = {};
+
+		field _handlers = {};
 		
         constructor(type) {
             this._id = ++Element.ID_ALLOC;
@@ -147,6 +149,16 @@ namespace NoriAlpha {
 		function setMarginTop(value) { return this._setIntProperty(Element_MarginTop, value); }
 		function setMarginRight(value) { return this._setIntProperty(Element_MarginRight, value); }
 		function setMarginBottom(value) { return this._setIntProperty(Element_MarginBottom, value); }
+		
+		function _setEventHandler(name, fn, parser = null) {
+			this._handlers[name] = [fn, parser];
+			return this._setBoolProperty(name, true);
+		}
+		
+		function _clearEventHandler(name) {
+			this._handlers[name] = null;
+			return this._setBoolProperty(name, false);
+		}
 		
 		function _flushVisualProperties(q, full) {
 			if (full) {

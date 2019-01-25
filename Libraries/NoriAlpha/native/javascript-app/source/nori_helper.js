@@ -1,15 +1,40 @@
 
-function platformSpecificHandleEvent(id, args) {
-	window.alert("Alert: " + id + " - " + args);
+function platformSpecificHandleEvent(id, type, args) {
+	if (NoriHelper.vm === null) {
+		NoriHelper.eventQueue.push([id, type, args]);
+	} else {
+		var globals = vmGetGlobals(NoriHelper.vm);
+		var vmFunctionPointerArgs = [
+			NoriHelper.frameValueHack,
+			buildInteger(globals, id),
+			buildString(globals, type),
+			buildString(globals, args)
+		];
+		runInterpreterWithFunctionPointer(
+			NoriHelper.vm,
+			NoriHelper.eventHandlerCallback,
+			vmFunctionPointerArgs);
+	}
 }
 
-var NoriHelper = {};
+var NoriHelper = {
+	eventQueue: [],
+	eventHandlerCallback: null,
+	vm: null,
+	
+	// TODO: this needs to be a dictionary and frame values need an ID#.
+	// For JavaScript apps, this will all run in the same process, most likely.
+	// For others, there is no collision.
+	frameValueHack: null,
+	
+};
 
 NoriHelper.getCrayonHost = function() {
 	return document.getElementById('crayon_host');
 };
 
 NoriHelper.ShowFrame = function(crayonFrameValue, title, width, height, data, execId) {
+	NoriHelper.frameValueHack = crayonFrameValue;
 	var ch = NoriHelper.getCrayonHost();
 	
 	while (ch.lastChild) {
@@ -80,5 +105,13 @@ NoriHelper.EscapeStringHex = function(original) {
 };
 
 NoriHelper.EventWatcher = function(vm, execContextIdForResume, eventCallback) {
-	// There is nothing to do here, yet.
+	NoriHelper.vm = vm;
+	NoriHelper.eventHandlerCallback = eventCallback;
+	if (NoriHelper.eventQueue.length > 0) {
+		for (var i = 0; i < NoriHelper.eventQueue.lengt; ++i) {
+			var e = NoriHelper.eventQueue[i];
+			platformSpecificHandleEvent(e[0], e[1], e[2]);
+		}
+		NoriHelper.eventQueue = [];
+	}
 };

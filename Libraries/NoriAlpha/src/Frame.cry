@@ -133,7 +133,16 @@ namespace NoriAlpha {
 		}
     }
 
-    function handleUiGeneratedEvent(frame, id, args) {
-        print("Received message from " + frame + ", Element #" + id + " -> " + args);
+    function handleUiGeneratedEvent(frame, id, type, argString) {
+		e = frame._elementById.get(id);
+		if (e != null) {
+			handlerAndParser = e._handlers.get(type);
+			if (handlerAndParser != null) {
+				handler = handlerAndParser[0];
+				parser = handlerAndParser[1];
+				args = parser == null ? [] : parser(argString);
+				handler.invoke(args);
+			}
+		}
     }
 }

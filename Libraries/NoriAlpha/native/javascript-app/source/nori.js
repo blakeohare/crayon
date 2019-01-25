@@ -88,6 +88,14 @@ function createElement(id, type) {
 	return wrapper;
 }
 
+function buildEventHandler(value, e, eventName, args) {
+	if (value === 0) return undefined;
+	
+	return function() {
+		platformSpecificHandleEvent(e.NORI_id, eventName, args);
+	};
+}
+
 function setProperty(e, key, value) {
 	switch (key) {
 		case 'el.width': e.NORI_size[0] = value; break;
@@ -101,9 +109,8 @@ function setProperty(e, key, value) {
 		case 'el.bottommargin': e.NORI_margin[3] = value; break;
 		case 'el.dock': e.NORI_dock = 'WNES'.charAt(value); break;
 		
-		case 'btn.text':
-			e.firstChild.innerHTML = escapeHtml(value);
-			break;
+		case 'btn.text': e.firstChild.innerHTML = escapeHtml(value); break;
+		case 'btn.onclick': e.firstChild.onclick = buildEventHandler(value, e, key, ''); break;
 		
 		default:
 			throw "property setter not implemented: " + key;
