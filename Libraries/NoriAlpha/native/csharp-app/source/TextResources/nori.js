@@ -9,14 +9,14 @@ var ctx = {
 	
 	// some static data:
 	isTextProperty: {
-		'btn.text': true,
+		'btn.text': true
 	},
 	isPanelType: {
 		'DockPanel': true,
 		'StackPanel': true,
-		'FlowPanel': true,
+		'FlowPanel': true
 	},
-	childrenLayoutFnByType: {},
+	childrenLayoutFnByType: {}
 };
 
 function setFrameRoot(root) {
@@ -98,8 +98,10 @@ function createElement(id, type) {
 	return wrapper;
 }
 
+function noopFn() { }
+
 function buildEventHandler(value, e, eventName, args) {
-	if (value === 0) return undefined;
+	if (value === 0) return noopFn;
 	
 	return function() {
 		platformSpecificHandleEvent(e.NORI_id, eventName, args);
@@ -121,7 +123,7 @@ function setProperty(e, key, value) {
 		
 		case 'btn.text': e.firstChild.innerHTML = escapeHtml(value); break;
 		case 'btn.onclick': e.firstChild.onclick = buildEventHandler(value, e, key, ''); break;
-		
+			
 		default:
 			throw "property setter not implemented: " + key;
 	}
@@ -320,7 +322,7 @@ function flushUpdates(data) {
 					gcElement(ctx.uiRoot.lastChild);
 					ctx.uiRoot.remove(ctx.uiRoot.lastChild);
 				}
-				ctx.uiRoot.append(ctx.rootElement);
+				ctx.uiRoot.appendChild(ctx.rootElement);
 				break;
 			
 			default:

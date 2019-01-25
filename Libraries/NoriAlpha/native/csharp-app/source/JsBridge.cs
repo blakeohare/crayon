@@ -6,16 +6,16 @@ namespace Interpreter.Libraries.NoriAlpha
     {
         private NoriFrame owner;
         private System.Windows.Forms.WebBrowser browserControl;
-        
+
         public JsBridge(NoriFrame owner, System.Windows.Forms.WebBrowser browserControl)
         {
             this.owner = owner;
             this.browserControl = browserControl;
         }
 
-        public void SendEventToCSharp(int elementId, string value)
+        public void SendEventToCSharp(int elementId, string eventName, string value)
         {
-            NoriHelper.QueueEventMessage(this.owner, elementId, value);
+            NoriHelper.QueueEventMessage(this.owner, elementId, eventName, value);
         }
     }
 }

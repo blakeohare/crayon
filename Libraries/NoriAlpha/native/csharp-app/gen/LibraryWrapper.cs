@@ -195,7 +195,7 @@ namespace Interpreter.Libraries.NoriAlpha
         {
             ObjectInstance frameObj = (ObjectInstance)args[0].internalValue;
             object nativeFrameHandle = frameObj.nativeData[0];
-            string data = lib_norialpha_encodeListToWireFormat(args[1]);
+            string data = (string)args[1].internalValue;
             NoriHelper.FlushUpdatesToFrame(nativeFrameHandle, data);
             return vm.globalNull;
         }
@@ -217,7 +217,7 @@ namespace Interpreter.Libraries.NoriAlpha
             string title = (string)args[1].internalValue;
             int width = (int)args[2].internalValue;
             int height = (int)args[3].internalValue;
-            string data = lib_norialpha_encodeListToWireFormat(args[4]);
+            string data = (string)args[4].internalValue;
             int execId = (int)args[5].internalValue;
             frameObj.nativeData = new object[1];
             frameObj.nativeData[0] = NoriHelper.ShowFrame(args[0], title, width, height, data, execId);

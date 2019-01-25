@@ -22,13 +22,14 @@ namespace Interpreter.Libraries.NoriAlpha
         */
         private static List<object> eventQueue = new List<object>();
 
-        public static void QueueEventMessage(NoriFrame sender, int elementId, string value)
+        public static void QueueEventMessage(NoriFrame sender, int elementId, string eventName, string value)
         {
             lock (eventQueue)
             {
                 eventQueue.Add("EVENT");
                 eventQueue.Add(sender);
                 eventQueue.Add(elementId);
+                eventQueue.Add(eventName);
                 eventQueue.Add(value);
             }
         }
@@ -41,11 +42,12 @@ namespace Interpreter.Libraries.NoriAlpha
                 eventQueue.Add(sender);
                 eventQueue.Add(0);
                 eventQueue.Add("");
+                eventQueue.Add("");
             }
         }
 
         private static HashSet<NoriFrame> activeFrames = new HashSet<NoriFrame>();
-        
+
         /*
             Called by a CNI function after the frame is shown and just blocks and waits for
             events from the queue.
@@ -71,20 +73,22 @@ namespace Interpreter.Libraries.NoriAlpha
 
                 if (events != null)
                 {
-                    for (int i = 0; i < events.Length; i += 4)
+                    for (int i = 0; i < events.Length; i += 5)
                     {
                         string type = events[i].ToString();
                         NoriFrame sender = (NoriFrame)events[i + 1];
                         if (type == "EVENT")
                         {
                             int elementId = (int)events[i + 2];
-                            string args = (string)events[i + 3];
+                            string eventName = (string)events[i + 3];
+                            string args = (string)events[i + 4];
                             Interpreter.Vm.CrayonWrapper.runInterpreterWithFunctionPointer(
                                vmContext,
                                noriHandlerFunctionPointer,
                                new Interpreter.Structs.Value[] {
                                    sender.CrayonObjectRef,
                                    Interpreter.Vm.CrayonWrapper.buildInteger(vmContext.globals, elementId),
+                                   Interpreter.Vm.CrayonWrapper.buildString(vmContext.globals, eventName),
                                    Interpreter.Vm.CrayonWrapper.buildString(vmContext.globals, args)
                                });
                         }
