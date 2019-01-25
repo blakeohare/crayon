@@ -16,7 +16,6 @@ NoriHelper.ShowFrame = function(crayonFrameValue, title, width, height, data, ex
 		ch.removeChild(ch.lastChild);
 	}
 	
-	//ch.style.width = '100px';
 	ch.style.height = '100%';
 	ch.style.backgroundColor = '#ff0000';
 	
@@ -33,14 +32,19 @@ NoriHelper.ShowFrame = function(crayonFrameValue, title, width, height, data, ex
 	var nh = document.createElement('div');
 	nh.style.width = '100%';
 	nh.style.height = '100%';
+	nh.style.position = 'relative';
 	nh.crayon_execId = execId;
 	nh.crayon_frameValue = crayonFrameValue;
 	
 	// TODO: wrap all contents of nori.js into a single object instance.
+	ch.appendChild(nh);
 	setFrameRoot(nh);
 	setFrameSize(width, height);
+	
+	// update flushing must occur AFTER the elements are added to the document.
+	// Some of the layout stuff (such as text size calculation) requires the elements
+	// to be in the document.
 	flushUpdates(data);
-	ch.appendChild(nh);
 	
 	return nh;
 };

@@ -4,6 +4,7 @@ var ctx = {
 	rootElement: null,
 	elementById: {},
 	frameSize: [0, 0],
+	textSizer: null,
 	
 	// some static data:
 	isTextProperty: {
@@ -18,7 +19,17 @@ var ctx = {
 };
 
 function setFrameRoot(root) {
-	ctx.uiRoot = root;
+	sizer = document.createElement('div');
+	content = document.createElement('div');
+	ctx.uiRoot = content;
+	ctx.textSizer = sizer;
+	sizer.style.position = 'absolute';
+	sizer.style.width = 'auto';
+	sizer.style.height = 'auto';
+	sizer.style.whiteSpace = 'nowrap';
+	content.style.position = 'absolute';
+	root.appendChild(sizer);
+	root.appendChild(content);
 }
 
 function setFrameSize(width, height) {
@@ -502,15 +513,33 @@ function calculateRequiredSize(e) {
 		e.NORI_requiredSize[0] = (e.NORI_size[0] > xSize) ? e.NORI_size[0] : xSize;
 		e.NORI_requiredSize[1] = (e.NORI_size[1] > ySize) ? e.NORI_size[1] : ySize;
 	} else {
-		var w = e.NORI_size[0] == null ? 0 : e.NORI_size[0];
-		var h = e.NORI_size[1] == null ? 0 : e.NORI_size[1];
-		if (e.NORI_type == 'Button') {
-			if (w < 100) w = 100;
-			if (h < 50) h = 50;
+		var w = e.NORI_size[0];
+		var h = e.NORI_size[1];
+		switch (e.NORI_type) {
+			case 'Button':
+				if (w == null || h == null) {
+					var sz = calculateTextSize(e.firstChild.innerHTML);
+					if (w == null) w = 15 + sz[0];
+					if (h == null) h = 6 + sz[1];
+				}
+				break;
+			default:
+				if (w == null) w = 0;
+				if (h == null) h = 0;
+				break;
 		}
+		
 		e.NORI_requiredSize[0] = w;
 		e.NORI_requiredSize[1] = h;
 	}
+}
+
+function calculateTextSize(html) {
+	var sizer = ctx.textSizer;
+	sizer.innerHTML = html;
+	var sz = [Math.max(1, sizer.clientWidth), Math.max(1, sizer.clientHeight)];
+	sizer.innerHTML = '';
+	return sz;
 }
 
 function escapeHtml(text) {
