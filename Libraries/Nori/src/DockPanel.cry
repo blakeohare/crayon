@@ -1,0 +1,18 @@
+namespace Nori {
+
+    enum DockDirection {
+        WEST = 0,
+        NORTH = 1,
+        EAST = 2,
+        SOUTH = 3,
+    }
+
+    class DockPanel : Panel {
+
+        constructor() : base('DockPanel') {
+
+        }
+
+    }
+
+}

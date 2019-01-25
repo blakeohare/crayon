@@ -2795,6 +2795,7 @@ var interpretImpl = function(vm, executionContextId) {
 														list1[2].push(value);
 														i += 1;
 													}
+													list1[1] += _len;
 												}
 											}
 										}
@@ -6828,4 +6829,8 @@ var vm_suspend_with_status = function(vm, status) {
 
 var vmEnvSetCommandLineArgs = function(vm, args) {
 	vm[11][0] = args;
+};
+
+var vmGetGlobals = function(vm) {
+	return vm[13];
 };

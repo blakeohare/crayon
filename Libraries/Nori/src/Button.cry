@@ -1,0 +1,23 @@
+namespace Nori {
+
+    const Button_Text = 'btn.text';
+    const Button_OnClick = 'btn.onclick';
+
+    class Button : Element {
+
+        constructor() : base('Button') {
+            this.setText('Button');
+        }
+
+        function getText() { return this._getStringProperty(Button_Text); }
+        function setText(value) { return this._setStringProperty(Button_Text, (value ?? 'null') + ''); }
+
+        function setClickHandler(fn) {
+            return this._setEventHandler(Button_OnClick, fn);
+        }
+
+        function clearClickHandler() {
+            return this._clearEventHandler(Button_OnClick);
+        }
+    }
+}

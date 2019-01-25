@@ -1,0 +1,166 @@
+namespace Nori {
+
+    const Frame_OnResize = 'frame.onresize';
+
+    /*
+        Represents a window-like UI object.
+
+        nativeData[0] -> native handle to the window.
+    */
+    class Frame {
+
+        field _fullFlushElements = {};
+        field _partialFlushElements = {};
+        field _dirtyPanels = {};
+
+        field _elementById = {};
+        field _isShown = false;
+        field _rootElementId = null;
+        field _rootElementChanged = false;
+        field _handlers = {};
+
+        constructor() { }
+
+        function setContent(e) {
+            if (e._parent != null) {
+                throw new Exception("This element is already added to the UI tree.");
+            }
+
+            e._parent = this;
+            Panel._applyFrameToElementAndChildren(e, this);
+            this._rootElementId = e._id;
+            this._rootElementChanged = true;
+            return this;
+        }
+
+        static function parseTwoInt(a) {
+            a = a.split(',');
+            return [parseInt(a[0]), parseInt(a[1])];
+        }
+
+        function setResizeHandler(fn) {
+            this._handlers[Frame_OnResize] = [fn, Frame.parseTwoInt];
+            return this;
+        }
+
+        function clearResizeHandler() {
+            this._handlers[Frame_OnResize] = null;
+            return this;
+        }
+
+        /*
+            This is a list of serialized data for the frame.
+
+            The first item is the element ID for the root element of the frame.
+
+            The 2nd element is a count of elements that have been removed from the visible frame.
+            They may still exist but are simply invisible now and should be treated as removed by the renderer.
+            After the count is the actual list of elements which exists as a list of pairs (so the length of this next
+            part is double the number indicated in the count). The first item in each pair is the element removed and
+            the 2nd item in each pair is the panel ID from which it was removed. If the root element was removed, 0 is used
+            as the frame's ID.
+
+            The remaining data is a list of elements. No count is given as it's just the rest of the list.
+
+            Each element contains 4 basic properties: type, ID, children count, property count.
+            Following these properties are the children ID's, which are then followed by property data
+            which is double the length of the property count (because it's an alternating list of keys and values.
+        */
+        function _getRenderData() {
+
+            wireData = [];
+
+            if (this._fullFlushElements.length > 0) {
+                for (id : this._fullFlushElements.keys()) {
+                    e = this._fullFlushElements[id];
+                    e._flushVisualProperties(wireData, true);
+                }
+                this._fullFlushElements.clear();
+            }
+
+            if (this._partialFlushElements.length > 0) {
+                for (id : this._partialFlushElements.keys()) {
+                    e = this._partialFlushElements[id];
+                    e._flushVisualProperties(wireData, false);
+                }
+                this._partialFlushElements.clear();
+            }
+
+            if (this._dirtyPanels.length > 0) {
+                for (id : this._dirtyPanels.keys()) {
+                    panel = this._elementById[id];
+                    if (panel._canFlushIncrementally) {
+                        wireData.add('CI', id, panel._childRemovalCount, panel._childrenIdsAdded.length);
+                        wireData.concat(panel._childrenIdsAdded);
+                    } else {
+                        panel._canFlushIncrementally = true;
+
+                        throw new NotImplementedException();
+                    }
+                    panel._childrenIdsAdded.clear();
+                    panel._childRemovalCount = 0;
+                }
+                this._dirtyPanels.clear();
+            }
+
+            if (this._rootElementChanged) {
+                wireData.add('RE', this._rootElementId);
+                this._rootElementChanged = false;
+            }
+
+            return wireData.join(',');
+        }
+
+        function flushUpdates() {
+            renderData = this._getRenderData();
+            $lib_nori_flushUpdatesToFrame(this, renderData);
+        }
+
+        function show() {
+            if (!this._isShown) {
+                this._isShown = true;
+                renderData = this._getRenderData();
+                execId = Core.getCurrentExecutionToken();
+                $lib_nori_showFrame(this, 'Test Window', 400, 300, renderData, execId);
+
+                // This will save the VM state for this context and potentially kick off a
+                // while loop that spins and watches for events. Only one instance of this loop
+                // exists and waits for all active frames to disappear before ending.
+                // If it is already running, then this execution context will simply end and yield
+                // back to the existing loop.
+                $lib_nori_runEventWatcher(this, execId, handleUiGeneratedEvent);
+            }
+            return this;
+        }
+
+        function close() {
+            if (this._isShown) {
+                this._isShown = false;
+                $lib_nori_closeFrame(this);
+            }
+        }
+
+        static function escapeStringToHex(str) {
+            hex = '0123456789abcdef';
+            output = [];
+            for (c : str) {
+                code = Core.ord(c);
+                output.add(hex[(code >> 4) & 15], hex[code & 15]);
+            }
+            return output.join('');
+        }
+    }
+
+    function handleUiGeneratedEvent(frame, id, type, argString) {
+        elementOrFrame = id == -1 ? frame : frame._elementById.get(id);
+        if (elementOrFrame != null) {
+            handlerAndParser = elementOrFrame._handlers.get(type);
+            if (handlerAndParser != null) {
+                handler = handlerAndParser[0];
+                parser = handlerAndParser[1];
+                args = parser == null ? [] : parser(argString);
+                handler.invoke(args);
+            }
+        }
+    }
+}

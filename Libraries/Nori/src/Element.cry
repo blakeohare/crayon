@@ -1,0 +1,221 @@
+import Math;
+
+namespace Nori {
+
+    // TODO: convert the property set/get/clear and related juggling into Pastel code.
+
+    const Element_Id = 'ID';
+
+    const Element_Width = 'el.width';
+    const Element_Height = 'el.height';
+    const Element_Dock = 'el.dock';
+    const Element_HAlign = 'el.halign';
+    const Element_VAlign = 'el.valign';
+    const Element_MarginLeft = 'el.leftmargin';
+    const Element_MarginRight = 'el.rightmargin';
+    const Element_MarginTop = 'el.topmargin';
+    const Element_MarginBottom = 'el.bottommargin';
+
+    enum HorizontalAlignment {
+        STRETCH = 0,
+        LEFT = 1,
+        CENTER = 2,
+        RIGHT = 3,
+    }
+
+    enum VerticalAlignment {
+        STRETCH = 0,
+        TOP = 1,
+        CENTER = 2,
+        BOTTOM = 3,
+    }
+
+    class Element {
+
+        static field ID_ALLOC = 0;
+
+        static field STRING_PROPERTIES = {
+            Button_Text: true,
+        };
+
+        field _id;
+        field _type;
+
+        field _parent = null;
+        field _frame = null;
+        field _isPanel = false;
+        field _isClean = false;
+
+        field _properties = {};
+        field _newProperties = {};
+
+        field _handlers = {};
+
+        constructor(type) {
+            this._id = ++Element.ID_ALLOC;
+            this._type = type;
+        }
+
+        function _setEnumProperty(id, value, eMin, eMax) {
+            value = Math.floor(value);
+            if (value < eMin || value > eMax) throw new InvalidArgumentException();
+            this._newProperties[id] = value;
+            if (this._frame != null && this._isClean) this._markPropertiesDirty();
+            return this;
+        }
+        function _setStringProperty(id, value) {
+            this._newProperties[id] = value == null ? '' : value;
+            if (this._frame != null && this._isClean) this._markPropertiesDirty();
+            return this;
+        }
+        function _setIntProperty(id, value) {
+            this._newProperties[id] = Math.floor(value);
+            if (this._frame != null && this._isClean) this._markPropertiesDirty();
+            return this;
+        }
+        function _setBoolProperty(id, value) {
+            return this._setIntProperty(id, value ? 1 : 0);
+        }
+
+        function _markPropertiesDirty() {
+            if (!this._frame._fullFlushElements.contains(this._id)) {
+                this._frame._partialFlushElements[this._id] = this;
+            }
+            this._isClean = false;
+        }
+
+        // properties are either ints or strings. The new properties lookup may contain
+        // null values to indicate the property was removed, therefore null cannot be
+        // used as a dictionary miss sentinel value. For that purpose, the boolean false
+        // is used instead.
+        function _getIntProperty(id) {
+            np = this._newProperties.get(id, false);
+            if (np == false) return this._properties.get(id, 0);
+            return np ?? 0;
+        }
+        function _getNullableIntProperty(id) {
+            np = this._newProperties.get(id, false);
+            if (np == false) return this._properties.get(id);
+            return np;
+        }
+        function _getBoolProperty(id) {
+            np = this._newProperties.get(id, false);
+            if (np == false) return this._properties.get(id) == 1;
+            return np == 1;
+        }
+        function _getStringProperty(id) {
+            np = this._newProperties.get(id, false);
+            if (np == false) return this._properties.get(id, '');
+            return np ?? '';
+        }
+
+        function _clearProperty(id) {
+            this._newProperties[id] = null;
+            if (this._frame != null) this._frame._partialFlushElements[this._id] = this;
+            return this;
+        }
+
+        function getWidth() { return this._getNullableIntProperty(Element_Width); }
+        function getHeight() { return this._getNullableIntProperty(Element_Height); }
+
+        function setWidth(value) { return this._setIntProperty(Element_Width, value); }
+        function setHeight(value) { return this._setIntProperty(Element_Height, value); }
+
+        function clearWidth() { return this._clearProperty(Element_Width); }
+        function clearHeight() { return this._clearProperty(Element_Height); }
+
+        function getHorizontalAlignment() { return this._getIntProperty(Element_HAlign); }
+        function getVerticalAlignment() { return this._getIntProperty(Element_VAlign); }
+        function setHorizontalAlignemnt(value) { return this._setEnumProperty(Element_HAlign, value, 0, HorizontalAlignment.length - 1); }
+        function setVerticalAlignment(value) { return this._setEnumProperty(Element_VAlign, value, 0, VerticalAlignment.length - 1); }
+
+        function getDock() { return this._getIntProperty(Element_Dock); }
+        function setDock(value) { return this._setEnumProperty(Element_Dock, value, 0, 3); }
+
+        function setMargin(value) {
+            value = Math.floor(value);
+            this._newProperties[Element_MarginLeft] = value;
+            this._newProperties[Element_MarginTop] = value;
+            this._newProperties[Element_MarginRight] = value;
+            this._setIntProperty(Element_MarginBottom, value); // to set flushing. others are inline for speed.
+            return this;
+        }
+
+        function getMarginLeft() { return this._getIntProperty(Element_MarginLeft); }
+        function getMarginTop() { return this._getIntProperty(Element_MarginTop); }
+        function getMarginRight() { return this._getIntProperty(Element_MarginRight); }
+        function getMarginBottom() { return this._getIntProperty(Element_MarginBottom); }
+        function setMarginLeft(value) { return this._setIntProperty(Element_MarginLeft, value); }
+        function setMarginTop(value) { return this._setIntProperty(Element_MarginTop, value); }
+        function setMarginRight(value) { return this._setIntProperty(Element_MarginRight, value); }
+        function setMarginBottom(value) { return this._setIntProperty(Element_MarginBottom, value); }
+
+        function _setEventHandler(name, fn, parser = null) {
+            this._handlers[name] = [fn, parser];
+            return this._setBoolProperty(name, true);
+        }
+
+        function _clearEventHandler(name) {
+            this._handlers[name] = null;
+            return this._setBoolProperty(name, false);
+        }
+
+        function _flushVisualProperties(q, full) {
+            if (full) {
+                if (this._newProperties.length > 0) this._flattenProperties();
+                q.add('PF', this._id, this._type, this._properties.length);
+                // the iteration order for keys and values are the same, guaranteed by the VM regardless of platform.
+                keys = this._properties.keys();
+                q.concat(keys);
+                for (key : keys) {
+                    value = this._properties[key];
+                    if (Element.STRING_PROPERTIES.get(key, false)) {
+                        value = Frame.escapeStringToHex(value);
+                    }
+                    q.add(value);
+                }
+            } else {
+                keys = this._newProperties.keys();
+                deletions = [];
+                setValues = [];
+                setKeys = [];
+                for (k : keys) {
+                    v = this._newProperties[k];
+                    if (v == null) {
+                        if (this._properties.get(k) != null) {
+                            this._properties.remove(k);
+                            deletions.add(k);
+                        }
+                    } else {
+                        this._properties[k] = v;
+                        setKeys.add(k);
+                        if (Element.STRING_PROPERTIES.get(k, false)) {
+                            v = Frame.escapeStringToHex(v);
+                        }
+                        setValues.add(v);
+                    }
+                }
+                q.add('PI', this._id, deletions.length);
+                q.concat(deletions);
+                q.add(setKeys.length);
+                q.concat(setKeys);
+                q.concat(setValues);
+            }
+            this._isClean = true;
+        }
+
+        function _flattenProperties() {
+            for (k : this._newProperties.keys()) {
+                v = this._newProperties[k];
+                if (v == null) {
+                    if (this._properties.get(k) != null) {
+                        this._properties.remove(k);
+                    }
+                } else {
+                    this._properties[k] = v;
+                }
+            }
+            this._newProperties.clear();
+        }
+    }
+}

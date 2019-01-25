@@ -2171,6 +2171,7 @@ def interpretImpl(vm, executionContextId):
                                     value = buildFloat(globals, (0.0 + value[1]))
                                   list1[2].append(value)
                                   i += 1
+                                list1[1] += _len
                         elif (argCount != 1):
                           hasInterrupt = EX_InvalidArgument(ec, primitiveMethodWrongArgCountError("list contains method", 1, argCount))
                         else:
@@ -5321,3 +5322,6 @@ def vm_suspend_with_status(vm, status):
 
 def vmEnvSetCommandLineArgs(vm, args):
   vm[11][0] = args
+
+def vmGetGlobals(vm):
+  return vm[13]

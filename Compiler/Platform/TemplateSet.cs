@@ -30,7 +30,7 @@ namespace Platform
         public string[] GetPaths(string prefix, string suffix)
         {
             return this.data.Keys
-                .Where(k => k.StartsWith(prefix) && (suffix == null || prefix.EndsWith(suffix)))
+                .Where(k => k.StartsWith(prefix) && (suffix == null || k.EndsWith(suffix)))
                 .OrderBy(k => k)
                 .ToArray();
         }
