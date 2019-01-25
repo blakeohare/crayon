@@ -5322,3 +5322,6 @@ def vm_suspend_with_status(vm, status):
 
 def vmEnvSetCommandLineArgs(vm, args):
   vm[11][0] = args
+
+def vmGetGlobals(vm):
+  return vm[13]

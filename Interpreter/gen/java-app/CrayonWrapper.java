@@ -7157,4 +7157,8 @@ public final class CrayonWrapper {
   public static void vmEnvSetCommandLineArgs(VmContext vm, String[] args) {
     vm.environment.commandLineArgs = args;
   }
+
+  public static VmGlobals vmGetGlobals(VmContext vm) {
+    return vm.globals;
+  }
 }

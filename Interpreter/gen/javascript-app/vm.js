@@ -6830,3 +6830,7 @@ var vm_suspend_with_status = function(vm, status) {
 var vmEnvSetCommandLineArgs = function(vm, args) {
 	vm[11][0] = args;
 };
+
+var vmGetGlobals = function(vm) {
+	return vm[13];
+};

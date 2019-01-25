@@ -8924,5 +8924,10 @@ namespace Interpreter.Vm
         {
             vm.environment.commandLineArgs = args;
         }
+
+        public static VmGlobals vmGetGlobals(VmContext vm)
+        {
+            return vm.globals;
+        }
     }
 }
