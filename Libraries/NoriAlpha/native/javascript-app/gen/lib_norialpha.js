@@ -173,7 +173,7 @@ var lib_norialpha_encodeListToWireFormat = function(v) {
 var lib_norialpha_flushUpdatesToFrame = function(vm, args) {
 	var frameObj = args[0][1];
 	var nativeFrameHandle = frameObj[3][0];
-	var data = lib_norialpha_encodeListToWireFormat(args[1]);
+	var data = args[1][1];
 	NoriHelper.FlushUpdatesToFrame(nativeFrameHandle, data);
 	return vm[14];
 };
@@ -193,7 +193,7 @@ var lib_norialpha_showFrame = function(vm, args) {
 	var title = args[1][1];
 	var width = args[2][1];
 	var height = args[3][1];
-	var data = lib_norialpha_encodeListToWireFormat(args[4]);
+	var data = args[4][1];
 	var execId = args[5][1];
 	frameObj[3] = PST$createNewArray(1);
 	frameObj[3][0] = NoriHelper.ShowFrame(args[0], title, width, height, data, execId);

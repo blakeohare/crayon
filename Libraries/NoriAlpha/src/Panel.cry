@@ -4,9 +4,13 @@ namespace NoriAlpha {
 
         field _children = [];
         field _childrenIds = [];
-
-        constructor(type) : base(type) {
-            this._NORI_isPanel = true;
+		
+		field _canFlushIncrementally = true;
+		field _childrenIdsAdded = [];
+		field _childRemovalCount = 0;
+		
+		constructor(type) : base(type) {
+            this._isPanel = true;
         }
 
         function addChild(e) {
@@ -14,36 +18,34 @@ namespace NoriAlpha {
                 throw new Exception("Element already added to a parent.");
             }
 
-            this._children.add(e);
-            this._children.add(e._NORI_id + '');
-            this._NORI_basic_properties[2] = this._children.length;
             e._parent = this;
-
+            this._children.add(e);
+            this._childrenIds.add(e._id);
+			
+			if (this._canFlushIncrementally) {
+				this._childrenIdsAdded.add(e._id);
+			}
+			
             if (this._frame != null) {
-                if (e is Panel) {
-                    Panel._applyFrameToElementAndChildren(e, this._frame);
-                } else {
-                    e._frame = this._frame;
-                    eid = e._NORI_id;
-                    this._frame._NORI_visibleElementsById[eid] = e;
-                    this._frame._NORI_dirtyElementsById[eid] = e;
-                    this._frame._NORI_dirtyElementsById[this._NORI_id] = this;
-                }
+                Panel._applyFrameToElementAndChildren(e, this._frame);
             }
 
             return this;
         }
 
         static function _applyFrameToElementAndChildren(e, frame) {
-            q = [e];
-            qi = 0;
-            while (qi < q.length) {
-                current = q[qi++];
+            queue = [e];
+            i = 0;
+            while (i < queue.length) {
+                current = queue[i++];
                 current._frame = frame;
-                frame._NORI_visibleElementsById[current._NORI_id] = current;
-                frame._NORI_dirtyElementsById[current._NORI_id] = current;
-                if (current is Panel) {
-                    q.concat(current._children);
+				id = current._id;
+				frame._fullFlushElements[id] = current;
+				frame._elementById[id] = current;
+				current._isClean = false;
+				if (current._isPanel) {
+					frame._dirtyPanels[id] = true;
+                    queue.concat(current._children);
                 }
             }
         }

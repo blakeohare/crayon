@@ -1,16 +1,21 @@
 ﻿/*
     args[0] -> Frame object
-    args[1] -> List of UI commands. Elements are either strings or integers
+    args[1] -> String containing commands
 */
 VM.Value lib_norialpha_flushUpdatesToFrame(VM.VmContext vm, Array<VM.Value> args) {
     VM.ObjectInstance frameObj = (VM.ObjectInstance)args[0].internalValue;
     object nativeFrameHandle = frameObj.nativeData[0];
-    string data = lib_norialpha_encodeListToWireFormat(args[1]);
+    string data = (string) args[1].internalValue;
     Extension._lib_norialpha_flushUpdatesToFrame(nativeFrameHandle, data);
     return vm.globalNull;
 }
 
 /*
+	TODO: this is currently bypassed and handled in Crayon code. This was applicable
+	to the old format, which has now changed. Need to rewrite this for the new bridge
+	protocol and get that code out of the VM layer.
+	
+	
     Framework-generated strings will never have a comma.
     Values for properties may possibly have a comma, but decoding property or type names and other strings
     into hex is costly, so only convert user values into hex.

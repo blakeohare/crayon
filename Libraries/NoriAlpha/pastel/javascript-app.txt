@@ -6,7 +6,7 @@ LANGUAGE: javascript
 
 DEPENDENCY: VM: ../../../Interpreter/javascript-app.txt
 
-OUTPUT-FUNCTIONS: ../native/javascript-app/gen/lib_nori.js
+OUTPUT-FUNCTIONS: ../native/javascript-app/gen/lib_norialpha.js
 
 EXT: _lib_norialpha_closeFrame: NoriHelper.CloseFrame([ARG:1])
 EXT: _lib_norialpha_flushUpdatesToFrame: NoriHelper.FlushUpdatesToFrame([ARG:1], [ARG:2])

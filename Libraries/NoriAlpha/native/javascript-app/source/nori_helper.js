@@ -5,12 +5,30 @@ function platformSpecificHandleEvent(id, args) {
 
 var NoriHelper = {};
 
+NoriHelper.getCrayonHost = function() {
+	return document.getElementById('crayon_host');
+};
+
 NoriHelper.ShowFrame = function(crayonFrameValue, title, width, height, data, execId) {
-	var ch = document.getElementById('crayon_host');
+	var ch = NoriHelper.getCrayonHost();
 	
 	while (ch.lastChild) {
 		ch.removeChild(ch.lastChild);
 	}
+	
+	//ch.style.width = '100px';
+	ch.style.height = '100%';
+	ch.style.backgroundColor = '#ff0000';
+	
+	width = window.innerWidth;
+	height = window.innerHeight;
+	
+	// for browsers, width and height are ignored.
+	ch.style.width = width + 'px';
+	ch.style.height = height + 'px';
+	
+	var body = ch.parentElement;
+	body.style.margin = '0px';
 	
 	var nh = document.createElement('div');
 	nh.style.width = '100%';
@@ -18,14 +36,20 @@ NoriHelper.ShowFrame = function(crayonFrameValue, title, width, height, data, ex
 	nh.crayon_execId = execId;
 	nh.crayon_frameValue = crayonFrameValue;
 	
-	flushData(data);
+	// TODO: wrap all contents of nori.js into a single object instance.
+	setFrameRoot(nh);
+	setFrameSize(width, height);
+	flushUpdates(data);
+	ch.appendChild(nh);
 	
 	return nh;
 };
 
 NoriHelper.CloseFrame = function(frameHandle) {
-	while (frameHandle.lastChild) {
-		frameHandle.removeChild(frameHandle.lastChild);
+	var ch = NoriHelper.getCrayonHost();
+	
+	while (ch.lastChild) {
+		ch.removeChild(ch.lastChild);
 	}
 };
 
