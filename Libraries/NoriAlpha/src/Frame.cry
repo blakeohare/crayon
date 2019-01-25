@@ -1,5 +1,7 @@
 namespace NoriAlpha {
 
+    const Frame_OnResize = 'frame.onresize';
+
     /*
         Represents a window-like UI object.
 
@@ -15,6 +17,7 @@ namespace NoriAlpha {
         field _isShown = false;
         field _rootElementId = null;
         field _rootElementChanged = false;
+        field _handlers = {};
 
         constructor() { }
 
@@ -27,6 +30,21 @@ namespace NoriAlpha {
             Panel._applyFrameToElementAndChildren(e, this);
             this._rootElementId = e._id;
             this._rootElementChanged = true;
+            return this;
+        }
+
+        static function parseTwoInt(a) {
+            a = a.split(',');
+            return [parseInt(a[0]), parseInt(a[1])];
+        }
+
+        function setResizeHandler(fn) {
+            this._handlers[Frame_OnResize] = [fn, Frame.parseTwoInt];
+            return this;
+        }
+
+        function clearResizeHandler() {
+            this._handlers[Frame_OnResize] = null;
             return this;
         }
 
@@ -134,9 +152,9 @@ namespace NoriAlpha {
     }
 
     function handleUiGeneratedEvent(frame, id, type, argString) {
-        e = frame._elementById.get(id);
-        if (e != null) {
-            handlerAndParser = e._handlers.get(type);
+        elementOrFrame = id == -1 ? frame : frame._elementById.get(id);
+        if (elementOrFrame != null) {
+            handlerAndParser = elementOrFrame._handlers.get(type);
             if (handlerAndParser != null) {
                 handler = handlerAndParser[0];
                 parser = handlerAndParser[1];

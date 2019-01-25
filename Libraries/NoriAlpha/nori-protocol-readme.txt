@@ -45,6 +45,10 @@ The protocol is a single string that is a list of items that are either strings 
 Strings can be hex encoded, typically done for user-set property values
 Booleans also exist, but are expressed as just 0's or 1's in the serialized protocol
 
+NO: no-op. Does nothing
+"NO",
+	{int: dummy value}
+
 RE: the root element has changed. This is sent at the end.
 "RE",
 	{int: root element id or 0 if empty}

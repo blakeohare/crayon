@@ -66,10 +66,26 @@ NoriHelper.ShowFrame = function(crayonFrameValue, title, width, height, data, ex
 	setFrameRoot(nh);
 	setFrameSize(width, height);
 	
+	nh.style.overflowX = 'hidden';
+	nh.style.overflowY = 'hidden';
+	
 	// update flushing must occur AFTER the elements are added to the document.
 	// Some of the layout stuff (such as text size calculation) requires the elements
 	// to be in the document.
 	flushUpdates(data);
+	
+	window.onresize = function() {
+		var w = Math.floor(window.innerWidth);
+		var h = Math.floor(window.innerHeight);
+		var arg = w + ',' + h;
+		// TODO: set a timeout and rate-limit the callbacks. Rate limiter should be in nori.js.
+		
+		platformSpecificHandleEvent(-1, 'frame.onresize', arg);
+		setFrameSize(w, h);
+		ch.style.width = w + 'px';
+		ch.style.height = h + 'px';
+		flushUpdates("NO,0"); // no-op. induces a UI refresh.
+	};
 	
 	return nh;
 };
@@ -86,7 +102,7 @@ NoriHelper.FlushUpdatesToFrame = function(frameHandle, uiData) {
 	var ch = document.getElementById('crayon_host');
 	if (ch.firstChild !== frameHandle) throw "Multiple frames not supported";
 	// TODO: open iframes to determine proper frame. For now, assume one frame.
-	flushData(uiData);
+	flushUpdates(uiData);
 };
 
 NoriHelper.HEX = '0123456789ABCDEF';

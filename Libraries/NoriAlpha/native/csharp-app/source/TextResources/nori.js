@@ -1,4 +1,5 @@
 var ctx = {
+	noriHostDiv: null,
 	uiRoot: null,
 	rootElementId: null,
 	rootElement: null,
@@ -19,6 +20,7 @@ var ctx = {
 };
 
 function setFrameRoot(root) {
+	ctx.noriHostDiv = root;
 	sizer = document.createElement('div');
 	content = document.createElement('div');
 	ctx.uiRoot = content;
@@ -28,12 +30,20 @@ function setFrameRoot(root) {
 	sizer.style.height = 'auto';
 	sizer.style.whiteSpace = 'nowrap';
 	content.style.position = 'absolute';
+	content.style.width = '100%';
+	content.style.height = '100%';
 	root.appendChild(sizer);
 	root.appendChild(content);
 }
 
 function setFrameSize(width, height) {
 	ctx.frameSize = [width, height];
+	var s = ctx.uiRoot.style;
+	s.width = width + 'px';
+	s.height = height + 'px';
+	s = ctx.noriHostDiv.style;
+	s.width = width + 'px';
+	s.height = height + 'px';
 }
 
 function createElement(id, type) {
@@ -226,6 +236,10 @@ function flushUpdates(data) {
 		instruction = items[i++];
 		id = parseInt(items[i++]);
 		switch (instruction) {
+
+			// noop
+			case 'NO': break;
+			
 			case 'PF': // property full state
 				type = items[i++];
 				element = elementById[id];
