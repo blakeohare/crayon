@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Interpreter.Libraries.NoriAlpha
+namespace Interpreter.Libraries.Nori
 {
     public class NoriHelper
     {

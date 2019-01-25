@@ -1,4 +1,4 @@
-namespace NoriAlpha {
+namespace Nori {
 
     class Panel : Element {
 

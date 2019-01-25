@@ -2,11 +2,11 @@
     args[0] -> Frame object
     args[1] -> String containing commands
 */
-VM.Value lib_norialpha_flushUpdatesToFrame(VM.VmContext vm, Array<VM.Value> args) {
+VM.Value lib_nori_flushUpdatesToFrame(VM.VmContext vm, Array<VM.Value> args) {
     VM.ObjectInstance frameObj = (VM.ObjectInstance)args[0].internalValue;
     object nativeFrameHandle = frameObj.nativeData[0];
     string data = (string) args[1].internalValue;
-    Extension._lib_norialpha_flushUpdatesToFrame(nativeFrameHandle, data);
+    Extension._lib_nori_flushUpdatesToFrame(nativeFrameHandle, data);
     return vm.globalNull;
 }
 
@@ -36,7 +36,7 @@ VM.Value lib_norialpha_flushUpdatesToFrame(VM.VmContext vm, Array<VM.Value> args
     elementData[4 + max(Y) + 2 * Z] -> property name (string) DON'T ENCODE
     elementData[4 + max(Y) + 2 * Z + 1] -> property value (string or int) <------- ENCODE THESE STRINGS
 */
-string lib_norialpha_encodeListToWireFormat(VM.Value v) {
+string lib_nori_encodeListToWireFormat(VM.Value v) {
     VM.ListImpl args = (VM.ListImpl) v.internalValue;
     List<string> sb = new List<string>();
     List<VM.Value> valueList = null;
@@ -109,7 +109,7 @@ string lib_norialpha_encodeListToWireFormat(VM.Value v) {
             sb.Add(",");
             sb.Add(key);
             sb.Add(",");
-            sb.Add(Extension._lib_norialpha_escapeString(value));
+            sb.Add(Extension._lib_nori_escapeString(value));
             i += 2;
         }
     }

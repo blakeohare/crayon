@@ -2,7 +2,7 @@ using Interpreter.Structs;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Interpreter.Libraries.NoriAlpha
+namespace Interpreter.Libraries.Nori
 {
     public static class LibraryWrapper
     {
@@ -117,7 +117,7 @@ namespace Interpreter.Libraries.NoriAlpha
             }
         }
 
-        public static Value lib_norialpha_closeFrame(VmContext vm, Value[] args)
+        public static Value lib_nori_closeFrame(VmContext vm, Value[] args)
         {
             ObjectInstance frameObj = (ObjectInstance)args[0].internalValue;
             object nativeFrameHandle = frameObj.nativeData[0];
@@ -125,7 +125,7 @@ namespace Interpreter.Libraries.NoriAlpha
             return vm.globalNull;
         }
 
-        public static string lib_norialpha_encodeListToWireFormat(Value v)
+        public static string lib_nori_encodeListToWireFormat(Value v)
         {
             ListImpl args = (ListImpl)v.internalValue;
             List<string> sb = new List<string>();
@@ -191,7 +191,7 @@ namespace Interpreter.Libraries.NoriAlpha
             return string.Join("", sb);
         }
 
-        public static Value lib_norialpha_flushUpdatesToFrame(VmContext vm, Value[] args)
+        public static Value lib_nori_flushUpdatesToFrame(VmContext vm, Value[] args)
         {
             ObjectInstance frameObj = (ObjectInstance)args[0].internalValue;
             object nativeFrameHandle = frameObj.nativeData[0];
@@ -200,7 +200,7 @@ namespace Interpreter.Libraries.NoriAlpha
             return vm.globalNull;
         }
 
-        public static Value lib_norialpha_runEventWatcher(VmContext vm, Value[] args)
+        public static Value lib_nori_runEventWatcher(VmContext vm, Value[] args)
         {
             ObjectInstance frameObj = (ObjectInstance)args[0].internalValue;
             int execContextIdForResume = (int)args[1].internalValue;
@@ -211,7 +211,7 @@ namespace Interpreter.Libraries.NoriAlpha
             return vm.globalNull;
         }
 
-        public static Value lib_norialpha_showFrame(VmContext vm, Value[] args)
+        public static Value lib_nori_showFrame(VmContext vm, Value[] args)
         {
             ObjectInstance frameObj = (ObjectInstance)args[0].internalValue;
             string title = (string)args[1].internalValue;

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Interpreter.Libraries.NoriAlpha
+namespace Interpreter.Libraries.Nori
 {
     public class NoriFrame
     {
@@ -103,7 +103,7 @@ namespace Interpreter.Libraries.NoriAlpha
             Dictionary<string, string> output = new Dictionary<string, string>();
             foreach (string filename in thisAssembly.GetManifestResourceNames())
             {
-                string marker = ".NoriAlpha.TextResources.";
+                string marker = ".Nori.TextResources.";
                 int markerLoc = filename.IndexOf(marker);
 
                 if (markerLoc != -1 && (filename.EndsWith(".js") || filename.EndsWith(".html")))

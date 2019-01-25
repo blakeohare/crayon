@@ -103,14 +103,14 @@ PST$intBuffer16 = PST$multiplyList([0], 16);
 PST$floatBuffer16 = PST$multiplyList([0.0], 16);
 PST$stringBuffer16 = PST$multiplyList([''], 16);
 
-var lib_norialpha_closeFrame = function(vm, args) {
+var lib_nori_closeFrame = function(vm, args) {
 	var frameObj = args[0][1];
 	var nativeFrameHandle = frameObj[3][0];
 	NoriHelper.CloseFrame(nativeFrameHandle);
 	return vm[14];
 };
 
-var lib_norialpha_encodeListToWireFormat = function(v) {
+var lib_nori_encodeListToWireFormat = function(v) {
 	var args = v[1];
 	var sb = [];
 	var valueList = null;
@@ -170,7 +170,7 @@ var lib_norialpha_encodeListToWireFormat = function(v) {
 	return sb.join("");
 };
 
-var lib_norialpha_flushUpdatesToFrame = function(vm, args) {
+var lib_nori_flushUpdatesToFrame = function(vm, args) {
 	var frameObj = args[0][1];
 	var nativeFrameHandle = frameObj[3][0];
 	var data = args[1][1];
@@ -178,7 +178,7 @@ var lib_norialpha_flushUpdatesToFrame = function(vm, args) {
 	return vm[14];
 };
 
-var lib_norialpha_runEventWatcher = function(vm, args) {
+var lib_nori_runEventWatcher = function(vm, args) {
 	var frameObj = args[0][1];
 	var execContextIdForResume = args[1][1];
 	var eventCallback = args[2];
@@ -188,7 +188,7 @@ var lib_norialpha_runEventWatcher = function(vm, args) {
 	return vm[14];
 };
 
-var lib_norialpha_showFrame = function(vm, args) {
+var lib_nori_showFrame = function(vm, args) {
 	var frameObj = args[0][1];
 	var title = args[1][1];
 	var width = args[2][1];

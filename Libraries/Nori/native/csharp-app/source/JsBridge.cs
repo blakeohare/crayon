@@ -1,4 +1,4 @@
-namespace Interpreter.Libraries.NoriAlpha
+namespace Interpreter.Libraries.Nori
 {
     [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
     [System.Runtime.InteropServices.ComVisible(true)]

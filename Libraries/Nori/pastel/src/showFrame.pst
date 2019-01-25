@@ -6,15 +6,15 @@
     args[4] -> List of UI commands
     args[5] -> Execution Context ID for resume
 */
-VM.Value lib_norialpha_showFrame(VM.VmContext vm, Array<VM.Value> args) {
+VM.Value lib_nori_showFrame(VM.VmContext vm, Array<VM.Value> args) {
     VM.ObjectInstance frameObj = (VM.ObjectInstance)args[0].internalValue;
     string title = (string) args[1].internalValue;
     int width = (int) args[2].internalValue;
     int height = (int) args[3].internalValue;
-    string data = (string) args[4].internalValue; // lib_norialpha_encodeListToWireFormat(args[4]);
+    string data = (string) args[4].internalValue; // lib_nori_encodeListToWireFormat(args[4]);
     int execId = (int) args[5].internalValue;
     frameObj.nativeData = new Array<object>(1);
-    frameObj.nativeData[0] = Extension._lib_norialpha_showFrame(args[0], title, width, height, data, execId);
+    frameObj.nativeData[0] = Extension._lib_nori_showFrame(args[0], title, width, height, data, execId);
     return vm.globalNull;
 }
 
@@ -30,12 +30,12 @@ VM.Value lib_norialpha_showFrame(VM.VmContext vm, Array<VM.Value> args) {
     args[1] -> execution context ID to resume once the window is no longer shown
     args[2] -> function pointer of event handler
 */
-VM.Value lib_norialpha_runEventWatcher(VM.VmContext vm, Array<VM.Value> args) {
+VM.Value lib_nori_runEventWatcher(VM.VmContext vm, Array<VM.Value> args) {
     VM.ObjectInstance frameObj = (VM.ObjectInstance)args[0].internalValue;
     int execContextIdForResume = (int) args[1].internalValue;
     VM.Value eventCallback = args[2];
     VM.ExecutionContext ec = VM.getExecutionContext(vm, execContextIdForResume);
     VM.vm_suspend_for_context(ec, 1);
-    Extension._lib_norialpha_runEventWatcher(vm, execContextIdForResume, eventCallback);
+    Extension._lib_nori_runEventWatcher(vm, execContextIdForResume, eventCallback);
     return vm.globalNull;
 }

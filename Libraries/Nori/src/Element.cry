@@ -1,6 +1,6 @@
 import Math;
 
-namespace NoriAlpha {
+namespace Nori {
 
     // TODO: convert the property set/get/clear and related juggling into Pastel code.
 

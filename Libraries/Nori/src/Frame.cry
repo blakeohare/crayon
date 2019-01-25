@@ -1,4 +1,4 @@
-namespace NoriAlpha {
+namespace Nori {
 
     const Frame_OnResize = 'frame.onresize';
 
@@ -113,7 +113,7 @@ namespace NoriAlpha {
 
         function flushUpdates() {
             renderData = this._getRenderData();
-            $lib_norialpha_flushUpdatesToFrame(this, renderData);
+            $lib_nori_flushUpdatesToFrame(this, renderData);
         }
 
         function show() {
@@ -121,14 +121,14 @@ namespace NoriAlpha {
                 this._isShown = true;
                 renderData = this._getRenderData();
                 execId = Core.getCurrentExecutionToken();
-                $lib_norialpha_showFrame(this, 'Test Window', 400, 300, renderData, execId);
+                $lib_nori_showFrame(this, 'Test Window', 400, 300, renderData, execId);
 
                 // This will save the VM state for this context and potentially kick off a
                 // while loop that spins and watches for events. Only one instance of this loop
                 // exists and waits for all active frames to disappear before ending.
                 // If it is already running, then this execution context will simply end and yield
                 // back to the existing loop.
-                $lib_norialpha_runEventWatcher(this, execId, handleUiGeneratedEvent);
+                $lib_nori_runEventWatcher(this, execId, handleUiGeneratedEvent);
             }
             return this;
         }
@@ -136,7 +136,7 @@ namespace NoriAlpha {
         function close() {
             if (this._isShown) {
                 this._isShown = false;
-                $lib_norialpha_closeFrame(this);
+                $lib_nori_closeFrame(this);
             }
         }
 
