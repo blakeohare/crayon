@@ -8,14 +8,20 @@ namespace Nori {
         field _canFlushIncrementally = true;
         field _childrenIdsAdded = [];
         field _childRemovalCount = 0;
+        field _singleChild;
 
-        constructor(type) : base(type) {
+        constructor(type, singleChildPanel) : base(type) {
             this._isPanel = true;
+            this._singleChild = singleChildPanel;
         }
 
         function addChild(e) {
             if (e._parent != null) {
                 throw new Exception("Element already added to a parent.");
+            }
+
+            if (this._singleChild && this._children.length == 1) {
+                throw new Exception("This panel can only support one child element.");
             }
 
             e._parent = this;

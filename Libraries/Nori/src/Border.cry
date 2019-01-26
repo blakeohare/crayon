@@ -12,7 +12,7 @@ namespace Nori {
     const Border_BottomColor = 'border.bottomcolor';
 
     class Border : Panel {
-        constructor() : base('Border') { }
+        constructor() : base('Border', true) { }
 
         function addChild(e) {
             if (this._children.length > 0) throw new InvalidArgumentException("Cannot add multiple elements to a border.");

@@ -1,0 +1,25 @@
+namespace Nori {
+
+    const ScrollPanel_XMode = 'scroll.x';
+    const ScrollPanel_YMode = 'scroll.y';
+
+    enum ScrollMode {
+        NONE = 0,
+        AUTO = 1,
+        SCROLL = 2,
+        CROP = 3,
+    }
+
+    class ScrollPanel : Panel {
+        constructor() : base('ScrollPanel', true) {
+            this.setXScrollMode(ScrollMode.NONE)
+                .setYScrollMode(ScrollMode.AUTO);
+        }
+
+        function getXScrollMode() { return this._getIntProperty(ScrollPanel_XMode); }
+        function setXScrollMode(value) { return this._setEnumProperty(ScrollPanel_XMode, value, 0, 3); }
+
+        function getYScrollMode() { return this._getIntProperty(ScrollPanel_YMode); }
+        function setYScrollMode(value) { return this._setEnumProperty(ScrollPanel_YMode, value, 0, 3); }
+    }
+}

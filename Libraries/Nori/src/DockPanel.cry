@@ -9,7 +9,7 @@ namespace Nori {
 
     class DockPanel : Panel {
 
-        constructor() : base('DockPanel') {
+        constructor() : base('DockPanel', false) {
 
         }
 

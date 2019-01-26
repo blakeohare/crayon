@@ -21,8 +21,16 @@ var ctx = {
 	isPanelType: {
 		'Border': true,
 		'DockPanel': true,
-		'StackPanel': true,
-		'FlowPanel': true
+		'FlowPanel': true,
+		'ScrollPanel': true,
+		'StackPanel': true
+	},
+	scrollEnumLookup: ['none', 'auto', 'scroll', 'crop'],
+	scrollToCss: {
+		none: 'visible',
+		auto: 'auto',
+		scroll: 'scroll',
+		crop: 'hidden'
 	},
 	childrenLayoutFnByType: {}
 };
@@ -108,6 +116,10 @@ function createElement(id, type) {
 			s.fontFamily = 'Arial,sans-serif';
 			break;
 		
+		case 'ScrollPanel':
+			wrapper.NORI_scrollpanel = ['none', 'none'];
+			break;
+			
 		case 'Border':
 		case 'DockPanel':
 		case 'FlowPanel':
@@ -171,6 +183,9 @@ function setProperty(e, key, value) {
 		
 		case 'txtblk.text': e.firstChild.innerHTML = escapeHtml(value); break;
 		case 'txtblk.wrap': e.NORI_wrap = value === 1; break;
+		
+		case 'scroll.x': e.NORI_scrollpanel[0] = ctx.scrollEnumLookup[value]; break;
+		case 'scroll.y': e.NORI_scrollpanel[1] = ctx.scrollEnumLookup[value]; break;
 		
 		default:
 			throw "property setter not implemented: " + key;
@@ -429,20 +444,17 @@ function spaceAllocation(
 			x = xOffset + margin[0];
 			break;
 		case 'L':
-			width = availableWidth - margin[0];
-			if (reqWidth < width) width = reqWidth;
+			width = reqWidth;
 			x = xOffset + margin[0];
 			break;
 		case 'R':
-			width = availableWidth - margin[2];
-			if (reqWidth < width) width = reqWidth;
+			width = reqWidth;
 			x = xOffset + availableWidth - margin[2] - width;
 			break;
 		case 'C':
-			width = availableWidth - margin[0] - margin[2];
-			var cx = xOffset + margin[0] + width / 2;
-			if (reqWidth < width) width = reqWidth;
-			x = Math.floor(cx - width / 2);
+			var centerX = xOffset + margin[0] + (availableWidth - margin[0] - margin[2]) / 2;
+			width = reqWidth;
+			x = Math.floor(centerX - width / 2);
 			break;
 	}
 	
@@ -452,20 +464,17 @@ function spaceAllocation(
 			y = yOffset + margin[1];
 			break;
 		case 'T':
-			height = availableHeight - margin[1];
-			if (reqHeight < height) height = reqHeight;
+			height = reqHeight;
 			y = yOffset + margin[1];
 			break;
 		case 'B':
-			height = availableHeight - margin[3];
-			if (reqHeight < height) height = reqHeight;
+			height = reqHeight;
 			y = yOffset + availableHeight - margin[3] - height;
 			break;
 		case 'C':
-			height = availableHeight - margin[1] - margin[3];
-			var cy = yOffset + margin[1] + width / 2;
-			if (reqHeight < height) height = reqHeight;
-			y = Math.floor(cy - height / 2);
+			var centerY = yOffset + margin[1] + (availableHeight - margin[1] - margin[3]) / 2;
+			height = reqHeight;
+			y = Math.floor(centerY - height / 2);
 			break;
 	}
 	
@@ -486,11 +495,24 @@ function spaceAllocation(
 			height -= b[1] + b[3];
 		}
 		
+		if (e.NORI_scrollpanel) {
+			s.overflowX = ctx.scrollToCss[e.NORI_scrollpanel[0]];
+			s.overflowY = ctx.scrollToCss[e.NORI_scrollpanel[1]];
+		}
+		
 		e.NORI_applyChildrenLayout(e, 0, 0, width, height);
 	}
 }
 
-function doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, availableHeight, overrideChildDock, useTransverseStretch) {
+function doDockPanelChildrenLayout(
+	panel,
+	xOffset,
+	yOffset,
+	availableWidth,
+	availableHeight,
+	overrideChildDock,
+	useTransverseStretch) {
+		
 	var childrenIds = panel.NORI_childrenIdList;
 	var length = childrenIds.length - 1; // the last one just takes what's left, regardless of dock direction.
 	if (length == -1) return;
@@ -554,18 +576,30 @@ function doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, avai
 	t = panel.NORI_type;
 	var ha = useTransverseStretch ? 'S' : t == 'FlowPanel' ? 'L' : null;
 	var va = useTransverseStretch ? 'S' : t == 'StackPanel' ? 'T' : null;
+	
+	if (panel.NORI_scrollpanel) {
+		var xscroll = panel.NORI_scrollpanel[0];
+		var yscroll = panel.NORI_scrollpanel[1];
+		if (xscroll == 'none') ha = 'S';
+		else ha = 'L';
+		if (yscroll == 'none') va = 'S';
+		else va = 'T';
+	}
+	
 	spaceAllocation(
 		child.NORI_id,
 		xOffset + margin[0], yOffset + margin[1],
 		availableWidth - margin[0] - margin[2], availableHeight - margin[1] - margin[3],
 		ha, va);
 }
-ctx.childrenLayoutFnByType['DockPanel'] = function(panel, xOffset, yOffset, availableWidth, availableHeight) {
+
+var docLayoutFn = function(panel, xOffset, yOffset, availableWidth, availableHeight) {
 	doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, availableHeight, null, true);
 };
-ctx.childrenLayoutFnByType['Border'] = function(panel, xOffset, yOffset, availableWidth, availableHeight) {
-	doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, availableHeight, null, true);
-};
+ctx.childrenLayoutFnByType['DockPanel'] = docLayoutFn;
+ctx.childrenLayoutFnByType['Border'] = docLayoutFn;
+ctx.childrenLayoutFnByType['ScrollPanel'] = docLayoutFn;
+
 ctx.childrenLayoutFnByType['StackPanel'] = function(panel, xOffset, yOffset, availableWidth, availableHeight) {
 	doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, availableHeight, 'N', false);
 };
@@ -617,6 +651,11 @@ function calculateRequiredSize(e) {
 								break;
 						}
 					}
+					break;
+				
+				case 'ScrollPanel':
+					xSize = e.NORI_scrollpanel[0] == 'none' ? childWidth : 0;
+					ySize = e.NORI_scrollpanel[1] == 'none' ? childHeight : 0;
 					break;
 				
 				case 'StackPanel':
