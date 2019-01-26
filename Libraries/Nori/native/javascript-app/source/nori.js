@@ -15,7 +15,8 @@ var ctx = {
 		'border.leftcolor': true,
 		'border.topcolor': true,
 		'border.rightcolor': true,
-		'border.bottomcolor': true
+		'border.bottomcolor': true,
+		'el.bgcolor': true
 	},
 	isPanelType: {
 		'Border': true,
@@ -37,6 +38,7 @@ function setFrameRoot(root) {
 	sizer.style.height = 'auto';
 	sizer.style.whiteSpace = 'nowrap';
 	sizer.style.textAlign = 'left';
+	sizer.style.fontFamily = 'Arial,sans-serif';
 	content.style.position = 'absolute';
 	content.style.width = '100%';
 	content.style.height = '100%';
@@ -103,6 +105,7 @@ function createElement(id, type) {
 			s.width = '100%';
 			s.height = '100%';
 			s.textAlign = 'left';
+			s.fontFamily = 'Arial,sans-serif';
 			break;
 		
 		case 'Border':
@@ -142,6 +145,17 @@ function setProperty(e, key, value) {
 		case 'el.rightmargin': e.NORI_margin[2] = value; break;
 		case 'el.bottommargin': e.NORI_margin[3] = value; break;
 		case 'el.dock': e.NORI_dock = 'WNES'.charAt(value); break;
+		
+		case 'el.bgcolor':
+			switch (e.NORI_type) {
+				case 'Button':
+					e.firstChild.style.backgroundColor = value;
+					break;
+				default:
+					e.style.backgroundColor = value;
+					break;
+			}
+			break;
 		
 		case 'border.leftcolor': e.firstChild.style.borderLeftColor = value; break;
 		case 'border.topcolor': e.firstChild.style.borderTopColor = value; break;

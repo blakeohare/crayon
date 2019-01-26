@@ -42,6 +42,7 @@ namespace Nori {
             Border_TopColor: true,
             Border_RightColor: true,
             Border_BottomColor: true,
+            Element_BackgroundColor: true,
         };
 
         field _id;
