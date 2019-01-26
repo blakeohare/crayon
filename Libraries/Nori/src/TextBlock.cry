@@ -1,0 +1,20 @@
+namespace Nori {
+
+    const TextBlock_Text = 'txtblk.text';
+    const TextBlock_Wrap = 'txtblk.wrap';
+
+    class TextBlock : Element {
+
+        constructor() : base('TextBlock') {
+            this.setText('text').setAllowWrap(false);
+        }
+
+        function setText(value) { return this._setStringProperty(TextBlock_Text, value); }
+        function getText() { return this._getStringProperty(TextBlock_Text); }
+
+        function setAllowWrap(value) { return this._setBoolProperty(TextBlock_Wrap, value); }
+        function getAllowWrap(value) { return this._getBoolProperty(TextBlock_Wrap); }
+
+        // TODO: font, size, etc.
+    }
+}

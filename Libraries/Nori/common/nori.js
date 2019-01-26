@@ -9,7 +9,8 @@ var ctx = {
 	
 	// some static data:
 	isTextProperty: {
-		'btn.text': true
+		'btn.text': true,
+		'txtblk.text': true
 	},
 	isPanelType: {
 		'DockPanel': true,
@@ -29,6 +30,7 @@ function setFrameRoot(root) {
 	sizer.style.width = 'auto';
 	sizer.style.height = 'auto';
 	sizer.style.whiteSpace = 'nowrap';
+	sizer.style.textAlign = 'left';
 	content.style.position = 'absolute';
 	content.style.width = '100%';
 	content.style.height = '100%';
@@ -61,7 +63,7 @@ function createElement(id, type) {
 	// The layout engine is the computational bottleneck.
 	wrapper.NORI_size = [null, null]; // width and height, if set
 	wrapper.NORI_margin = [0, 0, 0, 0]; // [left, top, right, bottom] margin properties, if set
-	wrapper.NORI_align = ['S', 'S']; // [{ L | C | R | S }, { T | C | B | S }]
+	wrapper.NORI_align = ['L', 'T']; // [{ L | C | R | S }, { T | C | B | S }]
 	wrapper.NORI_dock = 'N'; // { N | S | E | W }
 	
 	if (wrapper.NORI_isPanel) {
@@ -79,6 +81,14 @@ function createElement(id, type) {
 			s.width = '100%';
 			s.height = '100%';
 			inner.innerHTML = 'Button';
+			break;
+		
+		case 'TextBlock':
+			inner = document.createElement('div');
+			s = inner.style;
+			s.width = '100%';
+			s.height = '100%';
+			s.textAlign = 'left';
 			break;
 		
 		case 'DockPanel':
@@ -125,7 +135,10 @@ function setProperty(e, key, value) {
 		
 		case 'btn.text': e.firstChild.innerHTML = escapeHtml(value); break;
 		case 'btn.onclick': e.firstChild.onclick = buildEventHandler(value, e, key, ''); break;
-			
+		
+		case 'txtblk.text': e.firstChild.innerHTML = escapeHtml(value); break;
+		case 'txtblk.wrap': e.NORI_wrap = value === 1; break;
+		
 		default:
 			throw "property setter not implemented: " + key;
 	}
@@ -365,6 +378,18 @@ function spaceAllocation(
 	var reqHeight = e.NORI_requiredSize[1];
 	var margin = e.NORI_margin;
 	
+	if (e.NORI_flexibleText) {
+		// The element has text that does not have fixed width but needs to wrap.
+		var sz = calculateTextSize(e.firstChild.innerHTML, availableWidth - margin[0] - margin[2]);
+		reqWidth = sz[0];
+		// the available height was based on the dictated height, which could have been 0.
+		availableHeight -= reqHeight;
+		reqHeight = Math.max(reqHeight, sz[1]);
+		
+		// there is a new available height based on the width that was available. Adjust as necessary.
+		availableHeight += reqHeight;
+	}
+	
 	switch (halign) {
 		case 'S':
 			width = availableWidth - margin[0] - margin[2];
@@ -517,6 +542,7 @@ function calculateRequiredSize(e) {
 		var ySize = 0;
 		var childWidth;
 		var childHeight;
+		var t;
 		for (i = length - 1; i >= 0; --i) {
 			id = children[i];
 			child = elementById[id];
@@ -563,14 +589,34 @@ function calculateRequiredSize(e) {
 	} else {
 		var w = e.NORI_size[0];
 		var h = e.NORI_size[1];
+		var sz;
 		switch (e.NORI_type) {
 			case 'Button':
 				if (w == null || h == null) {
-					var sz = calculateTextSize(e.firstChild.innerHTML);
+					sz = calculateTextSize(e.firstChild.innerHTML, null);
 					if (w == null) w = 15 + sz[0];
 					if (h == null) h = 6 + sz[1];
 				}
 				break;
+				
+			case 'TextBlock':
+				t = e.firstChild.innerHTML;
+				e.NORI_flexibleText = false;
+				if (!e.NORI_wrap) {
+					sz = calculateTextSize(t, null);
+				} else if (w != null) {
+					sz = calculateTextSize(t, w);
+				} else {
+					// it is now considered "stretchy" and has no required size.
+					// The spaceAllocation pass will take note that this is text and
+					// then figure it out once it has the available size.
+					sz = [0, h == null ? 0 : h];
+					e.NORI_flexibleText = true;
+				}
+				if (w == null || sz[0] > w) w = sz[0];
+				if (h == null || sz[1] > h) h = sz[1];
+				break;
+				
 			default:
 				if (w == null) w = 0;
 				if (h == null) h = 0;
@@ -582,8 +628,15 @@ function calculateRequiredSize(e) {
 	}
 }
 
-function calculateTextSize(html) {
+function calculateTextSize(html, width) {
 	var sizer = ctx.textSizer;
+	if (width === null) {
+		sizer.style.whiteSpace = 'nowrap';
+		sizer.style.width = 'auto';
+	} else {
+		sizer.style.whiteSpace = 'normal';
+		sizer.style.width = width + 'px';
+	}
 	sizer.innerHTML = html;
 	var sz = [Math.max(1, sizer.clientWidth), Math.max(1, sizer.clientHeight)];
 	sizer.innerHTML = '';

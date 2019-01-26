@@ -36,6 +36,7 @@ namespace Nori {
 
         static field STRING_PROPERTIES = {
             Button_Text: true,
+            TextBlock_Text: true,
         };
 
         field _id;
