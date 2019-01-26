@@ -82,6 +82,8 @@ function createElement(id, type) {
 			break;
 		
 		case 'DockPanel':
+		case 'FlowPanel':
+		case 'StackPanel':
 			inner = document.createElement('div');
 			s = inner.style;
 			s.width = '100%';
@@ -419,11 +421,11 @@ function spaceAllocation(
 	e.NORI_allocatedSize[1] = height;
 	
 	if (e.NORI_isPanel) {
-		e.NORI_applyChildrenLayout(e, x, y, width, height);
+		e.NORI_applyChildrenLayout(e, 0, 0, width, height);
 	}
 }
 
-function doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, availableHeight) {
+function doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, availableHeight, overrideChildDock, useTransverseStretch) {
 	var childrenIds = panel.NORI_childrenIdList;
 	var length = childrenIds.length - 1; // the last one just takes what's left, regardless of dock direction.
 	if (length == -1) return;
@@ -437,13 +439,14 @@ function doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, avai
 		child = ctx.elementById[childrenIds[i]];
 		margin = child.NORI_margin;
 		reqSize = child.NORI_requiredSize;
-		switch (child.NORI_dock) {
+		dock = overrideChildDock == null ? child.NORI_dock : overrideChildDock;
+		switch (dock) {
 			case 'N':
 				spaceAllocation(
 					child.NORI_id, 
 					xOffset + margin[0], yOffset + margin[1],
 					availableWidth - margin[0] - margin[2], reqSize[1],
-					'S', 'T');
+					useTransverseStretch ? 'S' : null, 'T');
 				pixelsConsumed = margin[1] + margin[3] + child.NORI_allocatedSize[1];
 				yOffset += pixelsConsumed;
 				availableHeight -= pixelsConsumed;
@@ -454,7 +457,7 @@ function doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, avai
 					child.NORI_id,
 					xOffset + margin[0], yOffset + availableHeight - reqSize[1] - margin[3],
 					availableWidth - margin[0] - margin[2], reqSize[1],
-					'S', 'B');
+					useTransverseStretch ? 'S' : null, 'B');
 				pixelsConsumed = margin[1] + margin[3] + child.NORI_allocatedSize[1];
 				availableHeight -= pixelsConsumed;
 				break;
@@ -464,7 +467,7 @@ function doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, avai
 					child.NORI_id,
 					xOffset + margin[0], yOffset + margin[1],
 					reqSize[0], availableHeight - margin[1] - margin[3],
-					'L', 'S');
+					'L', useTransverseStretch ? 'S' : null);
 				pixelsConsumed = margin[0] + margin[2] + child.NORI_allocatedSize[0];
 				xOffset += pixelsConsumed;
 				availableWidth -= pixelsConsumed;
@@ -475,7 +478,7 @@ function doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, avai
 					child.NORI_id,
 					xOffset + availableWidth - margin[2] - reqSize[0], yOffset + margin[1],
 					reqSize[0], availableHeight - margin[0] - margin[2],
-					'R', 'S');
+					'R', useTransverseStretch ? 'S' : null);
 				pixelsConsumed = margin[0] + margin[2] + child.NORI_allocatedSize[0];
 				availableWidth -= pixelsConsumed;
 				break;
@@ -483,13 +486,24 @@ function doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, avai
 	}
 	child = ctx.elementById[childrenIds[length]];
 	margin = child.NORI_margin;
+	t = panel.NORI_type;
+	var ha = t == 'DockPanel' ? 'S' : t == 'FlowPanel' ? 'L' : null;
+	var va = t == 'DockPanel' ? 'S' : t == 'StackPanel' ? 'T' : null;
 	spaceAllocation(
 		child.NORI_id,
 		xOffset + margin[0], yOffset + margin[1],
 		availableWidth - margin[0] - margin[2], availableHeight - margin[1] - margin[3],
-		'S', 'S');
+		ha, va);
 }
-ctx.childrenLayoutFnByType['DockPanel'] = doDockPanelChildrenLayout;
+ctx.childrenLayoutFnByType['DockPanel'] = function(panel, xOffset, yOffset, availableWidth, availableHeight) {
+	doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, availableHeight, null, true);
+};
+ctx.childrenLayoutFnByType['StackPanel'] = function(panel, xOffset, yOffset, availableWidth, availableHeight) {
+	doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, availableHeight, 'N', false);
+};
+ctx.childrenLayoutFnByType['FlowPanel'] = function(panel, xOffset, yOffset, availableWidth, availableHeight) {
+	doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, availableHeight, 'W', false);
+};
 
 function calculateRequiredSize(e) {
 	if (e.NORI_isPanel) {
@@ -529,6 +543,17 @@ function calculateRequiredSize(e) {
 						}
 					}
 					break;
+				
+				case 'StackPanel':
+					xSize = Math.max(xSize, childWidth);
+					ySize += childHeight;
+					break;
+				
+				case 'FlowPanel':
+					xSize += childWidth;
+					ySize = Math.max(ySize, childHeight);
+					break;
+					
 				default:
 					throw "calculateRequiredSize not implemented for " + e.NORI_type;
 			}

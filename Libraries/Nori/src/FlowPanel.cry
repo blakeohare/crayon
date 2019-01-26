@@ -1,0 +1,7 @@
+namespace Nori {
+
+    class FlowPanel : Panel {
+        constructor() : base('FlowPanel') { }
+    }
+
+}

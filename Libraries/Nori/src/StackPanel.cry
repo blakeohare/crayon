@@ -1,0 +1,7 @@
+namespace Nori {
+
+    class StackPanel : Panel {
+        constructor() : base('StackPanel') { }
+    }
+
+}

@@ -42,7 +42,7 @@ NoriHelper.ShowFrame = function(crayonFrameValue, title, width, height, data, ex
 	}
 	
 	ch.style.height = '100%';
-	ch.style.backgroundColor = '#ff0000';
+	ch.style.backgroundColor = '#ffffff';
 	
 	width = window.innerWidth;
 	height = window.innerHeight;
