@@ -15,6 +15,7 @@ namespace Nori {
     const Element_MarginRight = 'el.rightmargin';
     const Element_MarginTop = 'el.topmargin';
     const Element_MarginBottom = 'el.bottommargin';
+    const Element_BackgroundColor = 'el.bgcolor';
 
     enum HorizontalAlignment {
         STRETCH = 0,
@@ -37,6 +38,10 @@ namespace Nori {
         static field STRING_PROPERTIES = {
             Button_Text: true,
             TextBlock_Text: true,
+            Border_LeftColor: true,
+            Border_TopColor: true,
+            Border_RightColor: true,
+            Border_BottomColor: true,
         };
 
         field _id;
@@ -51,6 +56,7 @@ namespace Nori {
         field _newProperties = {};
 
         field _handlers = {};
+        field _colors = {};
 
         constructor(type) {
             this._id = ++Element.ID_ALLOC;
@@ -76,6 +82,10 @@ namespace Nori {
         }
         function _setBoolProperty(id, value) {
             return this._setIntProperty(id, value ? 1 : 0);
+        }
+        function _setColorProperty(id, r, g, b, a) {
+            this._colors[id] = [r, g, b, a];
+            return this._setStringProperty(id, NoriUtil.rgbToHex(r, g, b));
         }
 
         function _markPropertiesDirty() {
@@ -109,9 +119,13 @@ namespace Nori {
             if (np == false) return this._properties.get(id, '');
             return np ?? '';
         }
+        function _getColorProperty(id) {
+            return this._colors.get(id);
+        }
 
         function _clearProperty(id) {
             this._newProperties[id] = null;
+            this._colors[id] = null; // TODO: something more clever than this.
             if (this._frame != null) this._frame._partialFlushElements[this._id] = this;
             return this;
         }
@@ -150,6 +164,9 @@ namespace Nori {
         function setMarginTop(value) { return this._setIntProperty(Element_MarginTop, value); }
         function setMarginRight(value) { return this._setIntProperty(Element_MarginRight, value); }
         function setMarginBottom(value) { return this._setIntProperty(Element_MarginBottom, value); }
+
+        function getBackgroundColor() { return this._getColorProperty(Element_BackgroundColor); }
+        function setBackgroundColor(r, g, b, a = 255) { return this._setColorProperty(Element_BackgroundColor, r, g, b, a); }
 
         function _setEventHandler(name, fn, parser = null) {
             this._handlers[name] = [fn, parser];

@@ -1,0 +1,20 @@
+namespace Nori {
+
+
+    static class NoriUtil {
+
+        // TODO: implement a native function for this.
+        static field _HEX = '0 1 2 3 4 5 6 7 8 9 a b c d e f'.split(' ');
+        static field _rgbBuilder = ['#', '0', '0', '0', '0', '0', '0'];
+        static function rgbToHex(r, g, b) {
+            NoriUtil._rgbBuilder[1] = NoriUtil._HEX[(r >> 4) & 15];
+            NoriUtil._rgbBuilder[2] = NoriUtil._HEX[r & 15];
+            NoriUtil._rgbBuilder[3] = NoriUtil._HEX[(g >> 4) & 15];
+            NoriUtil._rgbBuilder[4] = NoriUtil._HEX[g & 15];
+            NoriUtil._rgbBuilder[5] = NoriUtil._HEX[(b >> 4) & 15];
+            NoriUtil._rgbBuilder[6] = NoriUtil._HEX[b & 15];
+            return NoriUtil._rgbBuilder.join('');
+        }
+
+    }
+}

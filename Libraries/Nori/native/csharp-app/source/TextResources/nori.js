@@ -9,10 +9,16 @@ var ctx = {
 	
 	// some static data:
 	isTextProperty: {
+		// Note: color properties count as text properties.
 		'btn.text': true,
-		'txtblk.text': true
+		'txtblk.text': true,
+		'border.leftcolor': true,
+		'border.topcolor': true,
+		'border.rightcolor': true,
+		'border.bottomcolor': true
 	},
 	isPanelType: {
+		'Border': true,
 		'DockPanel': true,
 		'StackPanel': true,
 		'FlowPanel': true
@@ -66,14 +72,22 @@ function createElement(id, type) {
 	wrapper.NORI_align = ['L', 'T']; // [{ L | C | R | S }, { T | C | B | S }]
 	wrapper.NORI_dock = 'N'; // { N | S | E | W }
 	
+	var inner;
+	var s;
 	if (wrapper.NORI_isPanel) {
+		
+		inner = document.createElement('div');
+		s = inner.style;
+		s.width = '100%';
+		s.height = '100%';
+		s.position = 'relative';
+		
+		if (type == 'Border') wrapper.NORI_borders = [0, 0, 0, 0];
 		wrapper.NORI_applyChildrenLayout = ctx.childrenLayoutFnByType[type];
 	}
 	
 	wrapper.style.position = 'absolute';
 	
-	var inner;
-	var s;
 	switch (type) {
 		case 'Button':
 			inner = document.createElement('button');
@@ -91,14 +105,10 @@ function createElement(id, type) {
 			s.textAlign = 'left';
 			break;
 		
+		case 'Border':
 		case 'DockPanel':
 		case 'FlowPanel':
 		case 'StackPanel':
-			inner = document.createElement('div');
-			s = inner.style;
-			s.width = '100%';
-			s.height = '100%';
-			s.position = 'relative';
 			break;
 		
 		default:
@@ -132,6 +142,15 @@ function setProperty(e, key, value) {
 		case 'el.rightmargin': e.NORI_margin[2] = value; break;
 		case 'el.bottommargin': e.NORI_margin[3] = value; break;
 		case 'el.dock': e.NORI_dock = 'WNES'.charAt(value); break;
+		
+		case 'border.leftcolor': e.firstChild.style.borderLeftColor = value; break;
+		case 'border.topcolor': e.firstChild.style.borderTopColor = value; break;
+		case 'border.rightcolor': e.firstChild.style.borderRightColor = value; break;
+		case 'border.bottomcolor': e.firstChild.style.borderBottomColor = value; break;
+		case 'border.leftthickness': e.NORI_borders[0] = value; e.firstChild.style.borderLeftThickness = value + 'px'; e.firstChild.style.borderLeftStyle = value > 0 ? 'solid' : 'none'; break;
+		case 'border.topthickness': e.NORI_borders[1] = value; e.firstChild.style.borderTopThickness = value + 'px'; e.firstChild.style.borderTopStyle = value > 0 ? 'solid' : 'none'; break;
+		case 'border.rightthickness': e.NORI_borders[2] = value; e.firstChild.style.borderRightThickness = value + 'px'; e.firstChild.style.borderRightStyle = value > 0 ? 'solid' : 'none'; break;
+		case 'border.bottomthickness': e.NORI_borders[3] = value; e.firstChild.style.borderBottomThickness = value + 'px'; e.firstChild.style.borderBottomStyle = value > 0 ? 'solid' : 'none'; break;
 		
 		case 'btn.text': e.firstChild.innerHTML = escapeHtml(value); break;
 		case 'btn.onclick': e.firstChild.onclick = buildEventHandler(value, e, key, ''); break;
@@ -446,6 +465,13 @@ function spaceAllocation(
 	e.NORI_allocatedSize[1] = height;
 	
 	if (e.NORI_isPanel) {
+		
+		if (e.NORI_borders) {
+			var b = e.NORI_borders;
+			width -= b[0] + b[2];
+			height -= b[1] + b[3];
+		}
+		
 		e.NORI_applyChildrenLayout(e, 0, 0, width, height);
 	}
 }
@@ -512,8 +538,8 @@ function doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, avai
 	child = ctx.elementById[childrenIds[length]];
 	margin = child.NORI_margin;
 	t = panel.NORI_type;
-	var ha = t == 'DockPanel' ? 'S' : t == 'FlowPanel' ? 'L' : null;
-	var va = t == 'DockPanel' ? 'S' : t == 'StackPanel' ? 'T' : null;
+	var ha = useTransverseStretch ? 'S' : t == 'FlowPanel' ? 'L' : null;
+	var va = useTransverseStretch ? 'S' : t == 'StackPanel' ? 'T' : null;
 	spaceAllocation(
 		child.NORI_id,
 		xOffset + margin[0], yOffset + margin[1],
@@ -521,6 +547,9 @@ function doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, avai
 		ha, va);
 }
 ctx.childrenLayoutFnByType['DockPanel'] = function(panel, xOffset, yOffset, availableWidth, availableHeight) {
+	doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, availableHeight, null, true);
+};
+ctx.childrenLayoutFnByType['Border'] = function(panel, xOffset, yOffset, availableWidth, availableHeight) {
 	doDockPanelChildrenLayout(panel, xOffset, yOffset, availableWidth, availableHeight, null, true);
 };
 ctx.childrenLayoutFnByType['StackPanel'] = function(panel, xOffset, yOffset, availableWidth, availableHeight) {
@@ -551,6 +580,12 @@ function calculateRequiredSize(e) {
 			childWidth = child.NORI_requiredSize[0] + child.NORI_margin[0] + child.NORI_margin[2];
 			childHeight = child.NORI_requiredSize[1] + child.NORI_margin[1] + child.NORI_margin[3];
 			switch (e.NORI_type) {
+				
+				case 'Border':
+					xSize = childWidth + e.NORI_borders[0] + e.NORI_borders[2];
+					ySize = childHeight + e.NORI_borders[1] + e.NORI_borders[3];
+					break;
+				
 				case 'DockPanel':
 					if (i == length - 1) {
 						xSize = childWidth;
