@@ -1,9 +1,54 @@
+import Math;
+
 namespace Nori {
 
+    // TODO: implement native functions for some of the hex color stuff you're doing in here.
 
     static class NoriUtil {
 
-        // TODO: implement a native function for this.
+        static field _hexLookup = {};
+
+        static field enumLookup = {
+            Element_HAlign: {
+                'left': HorizontalAlignment.LEFT,
+                'right': HorizontalAlignment.RIGHT,
+                'center': HorizontalAlignment.CENTER,
+                'stretch': HorizontalAlignment.STRETCH,
+            },
+            Element_VAlign: {
+                'top': VerticalAlignment.TOP,
+                'bottom': VerticalAlignment.BOTTOM,
+                'center': VerticalAlignment.CENTER,
+                'stretch': VerticalAlignment.STRETCH,
+            },
+            Element_Dock: {
+                'north': DockDirection.NORTH,
+                'south': DockDirection.SOUTH,
+                'east': DockDirection.EAST,
+                'west': DockDirection.WEST,
+                'n': DockDirection.NORTH,
+                's': DockDirection.SOUTH,
+                'e': DockDirection.EAST,
+                'w': DockDirection.WEST,
+            },
+        };
+
+        static constructor() {
+            t = {
+                'none': ScrollMode.NONE,
+                'auto': ScrollMode.AUTO,
+                'scroll': ScrollMode.SCROLL,
+                'crop': ScrollMode.CROP,
+            };
+            NoriUtil.enumLookup[ScrollPanel_XMode] = t;
+            NoriUtil.enumLookup[ScrollPanel_YMode] = t;
+
+            for (i = 0; i < 16; ++i) {
+                NoriUtil._hexLookup[NoriUtil._HEX[i]] = i;
+                NoriUtil._hexLookup[NoriUtil._HEX[i].upper()] = i;
+            }
+        }
+
         static field _HEX = '0 1 2 3 4 5 6 7 8 9 a b c d e f'.split(' ');
         static field _rgbBuilder = ['#', '0', '0', '0', '0', '0', '0'];
         static function rgbToHex(r, g, b) {
@@ -16,5 +61,66 @@ namespace Nori {
             return NoriUtil._rgbBuilder.join('');
         }
 
+        static field BLACK = [0, 0, 0, 255];
+
+        // Accepts the following formats:
+        // Hex: RRGGBB
+        // Hex with #: #RRGGBB
+        // Hex alpha: RRGGBBAA
+        // ...or with #: #RRGGBBAA
+        // decimal RGB: RRR, GGG, BBB
+        // decimal RGBA: RRR, GGG, BBB, AAA
+        static function _parseColor(v) {
+            if (v.length == 0) return NoriUtil.BLACK;
+            if (v.contains(',')) {
+                parts = v.split(',');
+                if (parts.length < 3 || parts.length > 4) NoriUtil._parseColorHex('zz', 0, v);
+                c = [Math.floor(parts[0]), Math.floor(parts[1]), Math.floor(parts[2]), 255];
+                if (parts.length == 4) c[3] = Math.floor(parts[3]);
+                return c;
+            }
+            hex = v[0] == '#' ? v[1:] : v;
+            alpha = 255;
+            if (hex.length == 8) {
+                alpha = NoriUtil._parseColorHex(hex, 6, v);
+                hex = hex[:6];
+            }
+            if (v.length != 6) NoriUtil._parseColorHex('zz', 0, v);
+            return [
+                NoriUtil._parseColorHex(hex, 0, v),
+                NoriUtil._parseColorHex(hex, 2, v),
+                NoriUtil._parseColorHex(hex, 4, v),
+                alpha];
+        }
+
+        static function _parseColorHex(value, i, throwValue) {
+            a = NoriUtil._hexLookup.get(value[i]);
+            b = NoriUtil._hexLookup.get(value[i + 1]);
+            if (a == null || b == null) throw new InvalidArgumentException("Invalid color format: " + throwValue);
+            return a * 16 + b;
+        }
+
+        static function parseBoolean(s) {
+            switch (s.lower()) {
+                case '0':
+                case 'no':
+                case 'false':
+                case 'f':
+                case 'nay':
+                case 'nope':
+                    return false;
+
+                case '1':
+                case 'yes':
+                case 'true':
+                case 't':
+                case 'aye':
+                case 'yup':
+                    return true;
+
+                default:
+                    throw new InvalidArgumentException("Invalid boolean: " + s);
+            }
+        }
     }
 }

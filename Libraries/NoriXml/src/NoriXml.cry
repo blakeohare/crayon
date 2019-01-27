@@ -1,0 +1,75 @@
+import Nori;
+import Xml;
+
+namespace NoriXml {
+
+    static class NXUtil {
+
+        static field classesByName = {};
+
+        static constructor() {
+            classes = [
+                Nori.Border.class,
+                Nori.Button.class,
+                Nori.DockPanel.class,
+                Nori.FlowPanel.class,
+                Nori.ScrollPanel.class,
+                Nori.StackPanel.class,
+                Nori.TextBlock.class,
+            ];
+            for (cls : classes) {
+                NXUtil.classesByName[cls.getName().split('.')[-1]] = cls;
+            }
+        }
+
+        static function xmlToElement(element) {
+
+            if (element.type != NodeType.ELEMENT) {
+                throw new InvalidArgumentException("Cannot convert text into element: " + element.value);
+            }
+
+            attr = element.attributes;
+            cls = NXUtil.classesByName.get(element.name);
+            if (cls == null) throw new InvalidArgumentException("Unknown element type: " + element.name);
+            e = cls.createInstance();
+
+            for (k : attr.keys()) {
+                v = attr[k];
+                e.setAttributeWithString(k, attr[k]);
+            }
+
+            if (e is Nori.Panel) {
+                for (child : element.children) {
+                    if (child.type == NodeType.TEXT) {
+                        if (child.value.trim().length > 0) {
+                            throw new InvalidArgumentException(e.getName() + " does not support text content.");
+                        }
+                    } else {
+                        e.addChild(NXUtil.xmlToElement(child));
+                    }
+                }
+            } else {
+                children = element.children;
+                if (children.length > 0) {
+                    child = element.children[0];
+
+                    if (child.type == NodeType.TEXT) {
+                        e.setAttributeWithString('<content>', child.value.trim());
+                        children = children[1:];
+                    }
+
+                    if (children.length > 0) {
+                        throw new InvalidArgumentException("Unexpected element inside " + e.getName() + " element: " + element.children[1].name);
+                    }
+                }
+            }
+
+            return e;
+        }
+    }
+
+    function build(xml) {
+        tree = Xml.parse(xml);
+        return NXUtil.xmlToElement(tree);
+    }
+}

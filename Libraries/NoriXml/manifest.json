@@ -1,0 +1,6 @@
+{
+	"name": "NoriXml",
+	"author": "Blake O'Hare",
+	"documentation": "http://crayonlang.org/docs/0.2.1/norixml",
+	"description": "Construct Nori UIs using XML."
+}

@@ -131,6 +131,50 @@ namespace Nori {
             return this;
         }
 
+        function _setEnumWithString(fieldName, value) {
+            num = NoriUtil.enumLookup[fieldName].get(value.lower());
+            if (num == null) throw new InvalidArgumentException("Invalid enum value: " + value);
+            return this._setIntProperty(fieldName, num);
+        }
+
+        function _setDirectionalIntWithString(left, top, right, bottom, strValue) {
+            if (strValue.contains(',')) {
+                dirs = strValue.split(',');
+                for (i = 0; i < 4; ++i) dirs[i] = parseInt(dirs[i]);
+            } else {
+                dirs = [parseInt(strValue)] * 4;
+            }
+            this._setIntProperty(left, dirs[0]);
+            this._setIntProperty(top, dirs[1]);
+            this._setIntProperty(right, dirs[2]);
+            return this._setIntProperty(bottom, dirs[3]);
+        }
+
+        function _setColorWithString(fieldName, strValue) {
+            c = NoriUtil._parseColor(strValue);
+            return this._setColorProperty(fieldName, c[0], c[1], c[2], c[3]);
+        }
+
+        function _setBooleanAsString(fieldName, strValue) {
+            return this._setBoolProperty(fieldName, NoriUtil.parseBoolean(strValue));
+        }
+
+        function setAttributeWithString(name, strValue) {
+            switch (name) {
+                case 'width': return this.setWidth(parseInt(strValue));
+                case 'height': return this.setHeight(parseInt(strValue));
+                case 'horizontalAlignment': return this._setEnumWithString(Element_HAlign, strValue);
+                case 'verticalAlignment': return this._setEnumWithString(Element_VAlign, strValue);
+                case 'dock': return this._setEnumWithString(Element_Dock, strValue);
+                case 'margin': return this._setDirectionalIntWithString(Element_MarginLeft, Element_MarginTop, Element_MarginRight, Element_MarginBottom, strValue);
+                case 'marginLeft': return this.setMarginLeft(parseInt(strValue));
+                case 'marginTop': return this.setMarginTop(parseInt(strValue));
+                case 'marginRight': return this.setMarginRight(parseInt(strValue));
+                case 'marginBottom': return this.setMarginBottom(parseInt(strValue));
+                case 'backgroundColor': return this._setColorWithString(Element_BackgroundColor, strValue);
+            }
+        }
+
         function getWidth() { return this._getNullableIntProperty(Element_Width); }
         function getHeight() { return this._getNullableIntProperty(Element_Height); }
 

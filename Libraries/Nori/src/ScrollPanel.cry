@@ -21,5 +21,13 @@ namespace Nori {
 
         function getYScrollMode() { return this._getIntProperty(ScrollPanel_YMode); }
         function setYScrollMode(value) { return this._setEnumProperty(ScrollPanel_YMode, value, 0, 3); }
+
+        function setAttributeWithString(name, strValue) {
+            switch (name) {
+                case 'xScroll': return this._setEnumWithString(ScrollPanel_XMode, strValue);
+                case 'yScroll': return this._setEnumWithString(ScrollPanel_YMode, strValue);
+                default: return base.setAttributeWithString(name, strValue);
+            }
+        }
     }
 }

@@ -54,5 +54,25 @@ namespace Nori {
         function setTopThickness(value) { return this._setIntProperty(Border_TopThickness, value); }
         function setRightThickness(value) { return this._setIntProperty(Border_RightThickness, value); }
         function setBottomThickness(value) { return this._setIntProperty(Border_BottomThickness, value); }
+
+        function setAttributeWithString(name, strValue) {
+            switch (name) {
+                case 'color':
+                    c = NoriUtil._parseColor(strValue);
+                    return this.setColor(c[0], c[1], c[2], c[3]);
+                case 'colorLeft': return this._setColorWithString(Border_LeftColor, strValue);
+                case 'colorTop': return this._setColorWithString(Border_TopColor, strValue);
+                case 'colorRight': return this._setColorWithString(Border_RightColor, strValue);
+                case 'colorBottom': return this._setColorWithString(Border_BottomColor, strValue);
+
+                case 'thickness': return this._setDirectionalIntWithString(Border_LeftThickness, Border_TopThickness, Border_RightThickness, Border_BottomThickness, strValue);
+                case 'thicknessLeft': return this.setLeftThickness(parseInt(strValue));
+                case 'thicknessTop': return this.setTopThickness(parseInt(strValue));
+                case 'thicknessRight': return this.setRightThickness(parseInt(strValue));
+                case 'thicknessBottom': return this.setBottomThickness(parseInt(strValue));
+
+                default: return base.setAttributeWithString(name, strValue);
+            }
+        }
     }
 }
