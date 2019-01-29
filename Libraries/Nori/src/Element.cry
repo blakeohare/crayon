@@ -159,10 +159,24 @@ namespace Nori {
             return this._setBoolProperty(fieldName, NoriUtil.parseBoolean(strValue));
         }
 
+        function _setPixelsOrPercentAsString(fieldName, strValue) {
+            isPercent = false;
+            multiplier = 1;
+            if (strValue[-1:] == '%') {
+                isPercent = true;
+                num = parseInt(strValue[:-1]);
+                multiplier = -1000;
+            } else {
+                num = parseInt(strValue);
+            }
+            if (num == null || num < 0) throw new InvalidArgumentException("Invalid pixel or percent value: " + strValue);
+            return this._setIntProperty(fieldName, num * multiplier);
+        }
+
         function setAttributeWithString(name, strValue) {
             switch (name) {
-                case 'width': return this.setWidth(parseInt(strValue));
-                case 'height': return this.setHeight(parseInt(strValue));
+                case 'width': return this._setPixelsOrPercentAsString(Element_Width, strValue);
+                case 'height': return this._setPixelsOrPercentAsString(Element_Height, strValue);
                 case 'horizontalAlignment': return this._setEnumWithString(Element_HAlign, strValue);
                 case 'verticalAlignment': return this._setEnumWithString(Element_VAlign, strValue);
                 case 'dock': return this._setEnumWithString(Element_Dock, strValue);
@@ -172,14 +186,33 @@ namespace Nori {
                 case 'marginRight': return this.setMarginRight(parseInt(strValue));
                 case 'marginBottom': return this.setMarginBottom(parseInt(strValue));
                 case 'backgroundColor': return this._setColorWithString(Element_BackgroundColor, strValue);
+                default: throw new InvalidArgumentException("Unknown Element attribute: '" + name + "'");
             }
         }
 
         function getWidth() { return this._getNullableIntProperty(Element_Width); }
         function getHeight() { return this._getNullableIntProperty(Element_Height); }
 
-        function setWidth(value) { return this._setIntProperty(Element_Width, value); }
-        function setHeight(value) { return this._setIntProperty(Element_Height, value); }
+        function setWidth(value) {
+            if (value < 0) throw new InvalidArgumentException("Width cannot be negative");
+            return this._setIntProperty(Element_Width, value);
+        }
+        function setHeight(value) {
+            if (value < 0) throw new InvalidArgumentException("Height cannot be negative");
+            return this._setIntProperty(Element_Height, value);
+        }
+
+        // Because width and height must always be positive and 0 pixels and 0 percent are the same,
+        // store the percent values as negative numbers. Also multiply by 1000 to allow for floats to
+        // be transmitted as integers.
+        function setWidthPercent(value) {
+            if (value < 0) this.setWidth(-1); // for error
+            return this._setIntProperty(Element_Width, -1000 * value);
+        }
+        function setHeightPercent(value) {
+            if (value < 0) this.setHeight(-1); // for error
+            return this._setIntProperty(Element_Height, -1000 * value);
+        }
 
         function clearWidth() { return this._clearProperty(Element_Width); }
         function clearHeight() { return this._clearProperty(Element_Height); }
