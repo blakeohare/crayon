@@ -110,11 +110,13 @@ namespace Parser.Crayon
             List<AType> argTypes = new List<AType>();
             this.ParseArgumentListDeclaration(tokens, fd, argTypes, argNames, defaultValues);
 
-            IList<Executable> code = this.parser.ExecutableParser.ParseBlock(tokens, true, fd);
-
             fd.ArgTypes = argTypes.ToArray();
             fd.ArgNames = argNames.ToArray();
             fd.DefaultValues = defaultValues.ToArray();
+            fd.FinalizeArguments();
+
+            IList<Executable> code = this.parser.ExecutableParser.ParseBlock(tokens, true, fd);
+
             fd.Code = code.ToArray();
 
             return fd;

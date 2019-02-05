@@ -24,6 +24,7 @@ namespace Parser.ParseTree
         public List<Lambda> Lambdas { get; private set; }
         private Dictionary<Locale, string> namesByLocale = null;
         public VariableId[] Locals { get; private set; }
+        public HashSet<string> ArgumentNameLookup { get; private set; }
 
         public FunctionDefinition(
             Token functionToken,
@@ -40,20 +41,16 @@ namespace Parser.ParseTree
             this.Annotations = annotations;
             this.MemberID = -1;
             this.Lambdas = new List<Lambda>();
+            this.ArgumentNameLookup = new HashSet<string>();
         }
 
-        private int minArgCount = -1;
-        public int MinArgCount
+        public void FinalizeArguments()
         {
-            get
-            {
-                if (this.minArgCount == -1)
-                {
-                    this.minArgCount = this.DefaultValues.Count(v => v == null);
-                }
-                return this.minArgCount;
-            }
+            this.ArgumentNameLookup = new HashSet<string>(this.ArgNames.Select(a => a.Value));
+            this.MinArgCount = this.DefaultValues.Count(v => v == null);
         }
+
+        public int MinArgCount { get; private set; }
 
         public override string GetFullyQualifiedLocalizedName(Locale locale)
         {

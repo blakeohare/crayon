@@ -14,6 +14,7 @@ namespace Parser.ParseTree
         internal VariableScope VariableScope { get; private set; }
         public int LocalScopeSize { get { return this.VariableScope.Size; } }
         public VariableId[] ClosureIds { get { return this.VariableScope.GetClosureIds(); } }
+        public HashSet<string> ArgumentNameLookup { get; private set; }
 
         public Lambda(
             Token firstToken,
@@ -28,6 +29,7 @@ namespace Parser.ParseTree
             this.Code = code.ToArray();
             this.Lambdas = new List<Lambda>();
             ((ICodeContainer)owner).Lambdas.Add(this);
+            this.ArgumentNameLookup = new HashSet<string>(this.Args.Select(a => a.Value));
         }
 
         // Descendants is currently used by constant resolution, which cannot contain lambdas.

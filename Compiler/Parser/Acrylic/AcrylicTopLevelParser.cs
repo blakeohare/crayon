@@ -123,11 +123,13 @@ namespace Parser.Acrylic
             List<Expression> defaultValues = new List<Expression>();
             this.ParseArgumentListDeclaration(tokens, fd, argTypes, argNames, defaultValues);
 
-            IList<Executable> code = this.parser.ExecutableParser.ParseBlock(tokens, true, fd);
-
             fd.ArgTypes = argTypes.ToArray();
             fd.ArgNames = argNames.ToArray();
             fd.DefaultValues = defaultValues.ToArray();
+            fd.FinalizeArguments();
+
+            IList<Executable> code = this.parser.ExecutableParser.ParseBlock(tokens, true, fd);
+
             fd.Code = code.ToArray();
 
             return fd;

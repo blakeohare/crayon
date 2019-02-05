@@ -58,7 +58,10 @@ namespace Parser.ParseTree
 
             if (exec != null)
             {
-                return ResolverPipeline.ConvertStaticReferenceToExpression(exec, this.FirstToken, this.Owner);
+                if (!(this.Owner is ICodeContainer && ((ICodeContainer)this.Owner).ArgumentNameLookup.Contains(this.Name)))
+                {
+                    return ResolverPipeline.ConvertStaticReferenceToExpression(exec, this.FirstToken, this.Owner);
+                }
             }
 
             return this;

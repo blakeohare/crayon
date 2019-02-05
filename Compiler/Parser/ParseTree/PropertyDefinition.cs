@@ -9,11 +9,12 @@ namespace Parser.ParseTree
     {
         public PropertyMember Getter { get; set; }
         public PropertyMember Setter { get; set; }
+        public HashSet<string> ArgumentNameLookup { get; private set; }
 
         public PropertyDefinition(Token firstToken, Node owner, FileScope file, ModifierCollection modifiers)
             : base(firstToken, owner, file, modifiers)
         {
-
+            this.ArgumentNameLookup = new HashSet<string>();
         }
 
         public List<Lambda> Lambdas { get; private set; }

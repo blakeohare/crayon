@@ -14,6 +14,7 @@ namespace Parser.ParseTree
         public List<Lambda> Lambdas { get; private set; }
         public AType FieldType { get; private set; }
         public ResolvedType ResolvedFieldType { get; private set; }
+        public HashSet<string> ArgumentNameLookup { get; private set; }
 
         public FieldDefinition(
             Token fieldToken,
@@ -30,6 +31,7 @@ namespace Parser.ParseTree
             this.MemberID = -1;
             this.Annotations = annotations;
             this.Lambdas = new List<Lambda>();
+            this.ArgumentNameLookup = new HashSet<string>();
 
             if (modifiers.HasAbstract) throw new ParserException(modifiers.AbstractToken, "Fields cannot be abstract.");
             if (modifiers.HasOverride) throw new ParserException(modifiers.OverrideToken, "Fields cannot be marked as overrides.");

@@ -27,6 +27,7 @@ namespace Parser.ParseTree
         public bool IsDefault { get; private set; }
         public AnnotationCollection Annotations { get; set; }
         public List<Lambda> Lambdas { get; private set; }
+        public HashSet<string> ArgumentNameLookup { get; private set; }
 
         public ConstructorDefinition(ClassDefinition owner, ModifierCollection modifiers, AnnotationCollection annotations)
             : this(null, modifiers, annotations, owner)
@@ -74,6 +75,8 @@ namespace Parser.ParseTree
                 }
             }
             this.MinArgCount = minArgCount;
+
+            this.ArgumentNameLookup = new HashSet<string>(this.ArgNames.Select(a => a.Value));
         }
 
         internal void SetBaseArgs(IList<Expression> baseArgs)
