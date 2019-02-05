@@ -16,9 +16,10 @@ namespace ImageEncoder {
             nRes = res._nativeResource;
             if (res._x != 0 || res._y != 0 || res._width != nRes.width || res._height != nRes.height) {
                 newResource = new ImageResources.ImageResource(res._width, res._height);
-                newResource.lock();
-                newResource.blit(res, 0, 0);
-                newResource.unlock();
+                nativeData = newResource._nativeResource;
+                nativeData.lock();
+                nativeData.blit(res, 0, 0);
+                nativeData.unlock();
                 this._res = newResource;
             }
         }
