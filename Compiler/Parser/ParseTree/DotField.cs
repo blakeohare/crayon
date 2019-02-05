@@ -212,7 +212,7 @@ namespace Parser.ParseTree
                 EnumDefinition enumDef = ((EnumReference)this.Root).EnumDefinition;
 
                 if (field == parser.Keywords.FIELD_ENUM_LENGTH)
-                    return new IntegerConstant(this.FirstToken, enumDef.IntValue.Count, this.Owner);
+                    return new IntegerConstant(this.FirstToken, enumDef.Items.Length, this.Owner);
                 if (field == parser.Keywords.FIELD_ENUM_MAX)
                     return new SpecialEntity.EnumMaxFunction(this.FirstToken, enumDef, this.Owner);
                 if (field == parser.Keywords.FIELD_ENUM_VALUES)
