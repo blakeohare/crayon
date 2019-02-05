@@ -406,74 +406,110 @@ function doLayoutPass() {
 
 function spaceAllocation(
 	elementId,
-	xOffset,
-	yOffset,
-	availableWidth,
-	availableHeight,
-	halignOverride,
-	valignOverride) {
+	xOffset, yOffset, // this includes the top-left margin
+	usableWidth, usableHeight, // these already have margins taken out
+	halign, valign) { // these contain either the original element's alignment or are overridden by the panel logic.
 	
 	var e = ctx.elementById[elementId];
-	var halign = halignOverride == null ? e.NORI_align[0] : halignOverride;
-	var valign = valignOverride == null ? e.NORI_align[1] : valignOverride;
-	
+
 	var x;
 	var y;
 	var width;
 	var height;
 	
-	var reqWidth = e.NORI_requiredSize[0];
-	var reqHeight = e.NORI_requiredSize[1];
+	// Raw size value applied from bridge (could be pixels or negative percent notation)
+	var originalWidth = e.NORI_size[0];
+	var originalHeight = e.NORI_size[1];
+	
+	// minimum required explicit size.
+	// Note that requiredSize is always non-0 and so pxWidth/Height gets set to null only in
+	// the event of a percent setting.
+	var pxWidth = e.NORI_requiredSize[0];
+	var pxHeight = e.NORI_requiredSize[1];
+
+	// 0 to 1 ratio of size consumption of available space
+	var ratioX = null;
+	var ratioY = null;
+	
+	// ratio of size consumption converted to final pixels
+	var perWidth = null;
+	var perHeight = null;
+	if (originalWidth !== null && originalWidth < 0) {
+		pxWidth = null;
+		ratioX = originalWidth / -100000.0;
+		perWidth = Math.floor(ratioX * usableWidth);
+	}
+	if (originalHeight !== null && originalHeight < 0) {
+		pxHeight = null;
+		ratioY = originalHeight / -100000.0;
+		perHeight = Math.floor(ratioY * usableHeight);
+	}
 	var margin = e.NORI_margin;
 	
 	if (e.NORI_flexibleText) {
-		// The element has text that does not have fixed width but needs to wrap.
-		var sz = calculateTextSize(e.firstChild.innerHTML, availableWidth - margin[0] - margin[2]);
-		reqWidth = sz[0];
-		// the available height was based on the dictated height, which could have been 0.
-		availableHeight -= reqHeight;
-		reqHeight = Math.max(reqHeight, sz[1]);
+		var sz;
+		var text = e.firstChild.innerHTML;
+		if (e.NORI_flexibleText == '%') {
+			var percentWidth = Math.floor(usableWidth * ratioX);
+			sz = calculateTextSize(text, percentWidth);
+			sz[0] = percentWidth; // even if you don't wrap and don't reach the end, this is the logical width of the element.
+		} else {
+			sz = calculateTextSize(text, usableWidth);
+			// if it doesn't reach the end, don't use the full width.
+		}
 		
-		// there is a new available height based on the width that was available. Adjust as necessary.
-		availableHeight += reqHeight;
+		// regardless of how the width was determined, treat the new measurement as required width.
+		pxWidth = sz[0];
+		if (pxHeight !== null) {
+			pxHeight = sz[1];
+			
+		} else {
+			
+		}
+		ratioX = null;
+		
 	}
+	
+	// calculated width and height if there is no stretch
+	var calcWidth = pxWidth === null ? perWidth : pxWidth;
+	var calcHeight = pxHeight === null ? perHeight : pxHeight;
 	
 	switch (halign) {
 		case 'S':
-			width = availableWidth - margin[0] - margin[2];
+			width = usableWidth;
 			x = xOffset + margin[0];
 			break;
 		case 'L':
-			width = reqWidth;
+			width = calcWidth;
 			x = xOffset + margin[0];
 			break;
 		case 'R':
-			width = reqWidth;
-			x = xOffset + availableWidth - margin[2] - width;
+			width = calcWidth;
+			x = xOffset + margin[0] + usableWidth - width;
 			break;
 		case 'C':
-			var centerX = xOffset + margin[0] + (availableWidth - margin[0] - margin[2]) / 2;
-			width = reqWidth;
+			var centerX = xOffset + margin[0] + calcWidth / 2;
+			width = calcWidth;
 			x = Math.floor(centerX - width / 2);
 			break;
 	}
 	
 	switch (valign) {
 		case 'S':
-			height = availableHeight - margin[1] - margin[3];
+			height = usableHeight;
 			y = yOffset + margin[1];
 			break;
 		case 'T':
-			height = reqHeight;
+			height = calcHeight;
 			y = yOffset + margin[1];
 			break;
 		case 'B':
-			height = reqHeight;
-			y = yOffset + availableHeight - margin[3] - height;
+			height = calcHeight;
+			y = yOffset + margin[1] + usableHeight - height;
 			break;
 		case 'C':
-			var centerY = yOffset + margin[1] + (availableHeight - margin[1] - margin[3]) / 2;
-			height = reqHeight;
+			var centerY = yOffset + margin[1] + calcHeight / 2;
+			height = calcHeight;
 			y = Math.floor(centerY - height / 2);
 			break;
 	}
@@ -522,18 +558,22 @@ function doDockPanelChildrenLayout(
 	var reqSize;
 	var t;
 	var pixelsConsumed;
+	var usableWidth;
+	var usableHeight;
 	for (var i = 0; i < length; ++i) {
 		child = ctx.elementById[childrenIds[i]];
 		margin = child.NORI_margin;
 		reqSize = child.NORI_requiredSize;
 		dock = overrideChildDock == null ? child.NORI_dock : overrideChildDock;
+		usableWidth = availableWidth - margin[0] - margin[2];
+		usableHeight = availableHeight - margin[1] - margin[3];
 		switch (dock) {
 			case 'N':
 				spaceAllocation(
 					child.NORI_id, 
 					xOffset + margin[0], yOffset + margin[1],
-					availableWidth - margin[0] - margin[2], reqSize[1],
-					useTransverseStretch ? 'S' : null, 'T');
+					usableWidth, usableHeight,
+					useTransverseStretch ? 'S' : child.NORI_align[0], 'T');
 				pixelsConsumed = margin[1] + margin[3] + child.NORI_allocatedSize[1];
 				yOffset += pixelsConsumed;
 				availableHeight -= pixelsConsumed;
@@ -542,9 +582,9 @@ function doDockPanelChildrenLayout(
 			case 'S':
 				spaceAllocation(
 					child.NORI_id,
-					xOffset + margin[0], yOffset + availableHeight - reqSize[1] - margin[3],
-					availableWidth - margin[0] - margin[2], reqSize[1],
-					useTransverseStretch ? 'S' : null, 'B');
+					xOffset + margin[0], yOffset + margin[1],
+					usableWidth, usableHeight,
+					useTransverseStretch ? 'S' : child.NORI_align[0], 'B');
 				pixelsConsumed = margin[1] + margin[3] + child.NORI_allocatedSize[1];
 				availableHeight -= pixelsConsumed;
 				break;
@@ -553,8 +593,8 @@ function doDockPanelChildrenLayout(
 				spaceAllocation(
 					child.NORI_id,
 					xOffset + margin[0], yOffset + margin[1],
-					reqSize[0], availableHeight - margin[1] - margin[3],
-					'L', useTransverseStretch ? 'S' : null);
+					usableWidth, usableHeight,
+					'L', useTransverseStretch ? 'S' : child.NORI_align[1]);
 				pixelsConsumed = margin[0] + margin[2] + child.NORI_allocatedSize[0];
 				xOffset += pixelsConsumed;
 				availableWidth -= pixelsConsumed;
@@ -563,9 +603,9 @@ function doDockPanelChildrenLayout(
 			case 'E':
 				spaceAllocation(
 					child.NORI_id,
-					xOffset + availableWidth - margin[2] - reqSize[0], yOffset + margin[1],
-					reqSize[0], availableHeight - margin[0] - margin[2],
-					'R', useTransverseStretch ? 'S' : null);
+					xOffset + margin[0], yOffset + margin[1],
+					usableWidth, usableHeight,
+					'R', useTransverseStretch ? 'S' : child.NORI_align[1]);
 				pixelsConsumed = margin[0] + margin[2] + child.NORI_allocatedSize[0];
 				availableWidth -= pixelsConsumed;
 				break;
@@ -585,11 +625,13 @@ function doDockPanelChildrenLayout(
 		if (yscroll == 'none') va = 'S';
 		else va = 'T';
 	}
+	usableWidth = availableWidth - margin[0] - margin[2];
+	usableHeight = availableHeight - margin[1] - margin[3];
 	
 	spaceAllocation(
 		child.NORI_id,
 		xOffset + margin[0], yOffset + margin[1],
-		availableWidth - margin[0] - margin[2], availableHeight - margin[1] - margin[3],
+		usableWidth, usableHeight,
 		ha, va);
 }
 
@@ -693,13 +735,20 @@ function calculateRequiredSize(e) {
 				if (!e.NORI_wrap) {
 					sz = calculateTextSize(t, null);
 				} else if (w != null) {
-					sz = calculateTextSize(t, w);
+					if (w > 0) {
+						sz = calculateTextSize(t, w);
+					} else {
+						// the element has a fixed width, but this is based on a percent
+						// and can only be determined at spaceAllocation time.
+						sz = [0, h == null ? 0 : h];
+						e.NORI_flexibleText = '%';
+					}
 				} else {
-					// it is now considered "stretchy" and has no required size.
-					// The spaceAllocation pass will take note that this is text and
-					// then figure it out once it has the available size.
+					// The element has no fixed width. The width of the element ought to be
+					// determined during the space allocation phase based on what's available,
+					// but could possibly wrap if there's not enough space.
 					sz = [0, h == null ? 0 : h];
-					e.NORI_flexibleText = true;
+					e.NORI_flexibleText = 'wrap';
 				}
 				if (w == null || sz[0] > w) w = sz[0];
 				if (h == null || sz[1] > h) h = sz[1];
