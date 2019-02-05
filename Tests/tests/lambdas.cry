@@ -13,6 +13,11 @@ function test() {
 	fn2['increment']();
 	print(fn1['get']()); // 43
 	print(fn2['get']()); // 101
+	
+	t = [1, 2, 3, 4, 5, 6]
+		.map((x) => { x * 2; })
+		.filter((x) => { x % 3 != 0; });
+	print(t); // [2, 4, 8, 10]
 }
 
 function closureDemo(startingValue) {
