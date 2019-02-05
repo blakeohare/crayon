@@ -314,7 +314,7 @@ namespace Parser.ParseTree
                             return this;
 
                         case "filter":
-                        case "map": 
+                        case "map":
                             if (this.CompilationScope.IsStaticallyTyped)
                             {
                                 // TODO: for Acrylic, this needs to have a way to indicate that resolution should be attempted
