@@ -8895,6 +8895,25 @@ namespace Interpreter.Vm
                 output += " }";
                 return output;
             }
+            if ((type == 9))
+            {
+                FunctionPointer fp = (FunctionPointer)wrappedValue.internalValue;
+                switch (fp.type)
+                {
+                    case 1:
+                        return "<FunctionPointer>";
+                    case 2:
+                        return "<ClassMethodPointer>";
+                    case 3:
+                        return "<ClassStaticMethodPointer>";
+                    case 4:
+                        return "<PrimitiveMethodPointer>";
+                    case 5:
+                        return "<Lambda>";
+                    default:
+                        return "<UnknownFunctionPointer>";
+                }
+            }
             return "<unknown>";
         }
 

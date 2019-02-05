@@ -6806,6 +6806,23 @@ var valueToString = function(vm, wrappedValue) {
 		output += " }";
 		return output;
 	}
+	if ((type == 9)) {
+		var fp = wrappedValue[1];
+		switch (fp[0]) {
+			case 1:
+				return "<FunctionPointer>";
+			case 2:
+				return "<ClassMethodPointer>";
+			case 3:
+				return "<ClassStaticMethodPointer>";
+			case 4:
+				return "<PrimitiveMethodPointer>";
+			case 5:
+				return "<Lambda>";
+			default:
+				return "<UnknownFunctionPointer>";
+		}
+	}
 	return "<unknown>";
 };
 

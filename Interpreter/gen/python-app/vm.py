@@ -5304,7 +5304,25 @@ def valueToString(vm, wrappedValue):
       i += 1
     output += " }"
     return output
+  if (type == 9):
+    fp = wrappedValue[1]
+    sc_0 = swlookup__valueToString__0.get(fp[0], 5)
+    if (sc_0 < 3):
+      if (sc_0 == 0):
+        return "<FunctionPointer>"
+      elif (sc_0 == 1):
+        return "<ClassMethodPointer>"
+      else:
+        return "<ClassStaticMethodPointer>"
+    elif (sc_0 == 3):
+      return "<PrimitiveMethodPointer>"
+    elif (sc_0 == 4):
+      return "<Lambda>"
+    else:
+      return "<UnknownFunctionPointer>"
   return "<unknown>"
+
+swlookup__valueToString__0 = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 }
 
 def vm_getCurrentExecutionContextId(vm):
   return vm[1]

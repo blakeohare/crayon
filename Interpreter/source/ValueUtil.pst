@@ -82,6 +82,24 @@ string valueToString(VmContext vm, Value wrappedValue) {
         return output;
     }
 
+    if (type == Types.FUNCTION) {
+        FunctionPointer fp = (FunctionPointer) wrappedValue.internalValue;
+        switch (fp.type) {
+            case FunctionPointerType.FUNCTION:
+                return "<FunctionPointer>";
+            case FunctionPointerType.METHOD:
+                return "<ClassMethodPointer>";
+            case FunctionPointerType.STATIC_METHOD:
+                return "<ClassStaticMethodPointer>";
+            case FunctionPointerType.PRIMITIVE_METHOD:
+                return "<PrimitiveMethodPointer>";
+            case FunctionPointerType.LAMBDA:
+                return "<Lambda>";
+            default:
+                return "<UnknownFunctionPointer>";
+        }
+    }
+
     // This should not happen.
     return "<unknown>";
 }
