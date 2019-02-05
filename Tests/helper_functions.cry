@@ -1,0 +1,41 @@
+
+function emit(thing) {
+	print(emitImpl(thing));
+}
+
+function emitImpl(thing, tab = 0) {
+	
+	if (thing == null) return 'null';
+	
+	t = Core.typeof(thing);
+	
+	if (t == Core.typeof(1.0)) return (thing + '')[:12];
+	
+	if (t == Core.typeof([])) {
+		output = ['['];
+		for (i = 0; i < thing.length; ++i) {
+			if (i > 0) output.add(', ');
+			output.add(emitImpl(thing[i]));
+		}
+		output.add(']');
+		return output.join('');
+	}
+	
+	if (t == Core.typeof({})) {
+		if (thing.length == 0) return '{}';
+		keys = thing.keys();
+		if (keys.length == 1) {
+			return '{ ' + keys[0] + ': ' + emitImpl(thing[keys[0]]) + ' }';
+		}
+		output = ['{'];
+		tab++;
+		for (k : keys) {
+			output.add('\n', '  ' * tab, k, ': ', emitImpl(thing[k], tab));
+		}
+		tab--;
+		output.add('\n', '  ' * tab, '}');
+		return output.join('');
+	}
+	
+	return '' + thing;
+}

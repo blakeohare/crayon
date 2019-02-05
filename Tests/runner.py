@@ -1,4 +1,5 @@
 import os
+import sys
 
 BUILD_FILE = '''
 {
@@ -41,32 +42,38 @@ def write_file(path, text):
 	c.write(text)
 	c.close()
 
-def main():
+def main(args):
 	write_file('TestProj/TestProj.build', BUILD_FILE)
 	write_file('TestProj/source/main.cry', '''function main() { test(); }''')
 	passed = 0
 	failed = 0
-	for file in os.listdir('tests'):
-		if file.endswith('.cry'):
-			name = file[:-4]
-			code = read_file('tests/' + name + '.cry')
-			expected = read_file('tests/' + name + '.txt')
-			write_file('TestProj/source/test.cry', code)
-			result = run_command('crayon TestProj/TestProj.build')
-			print(name + '...')
-			if result == expected:
-				print("PASS!")
-				passed += 1
-			else:
-				print("FAIL!")
-				print("Expected:")
-				print(expected)
-				print("Actual:")
-				print(result)
-				failed += 1
+	files = filter(lambda f: f.endswith('cry'), os.listdir('tests'))
+	if len(args) == 1:
+		files = filter(lambda f: args[0] in f, files)
+	
+	helper_functions = read_file('helper_functions.cry')
+	
+	for file in files:
+		name = file[:-4]
+		code = read_file('tests/' + name + '.cry')
+		code += "\n\n" + helper_functions
+		expected = read_file('tests/' + name + '.txt')
+		write_file('TestProj/source/test.cry', code)
+		result = run_command('crayon TestProj/TestProj.build')
+		print(name + '...')
+		if result == expected:
+			print("PASS!")
+			passed += 1
+		else:
+			print("FAIL!")
+			print("Expected:")
+			print(expected)
+			print("Actual:")
+			print(result)
+			failed += 1
 	print("\nDone!")
 	print("Passed: " + str(passed))
 	print("Failed: " + str(failed))
 
 
-main()
+main(sys.argv[1:])
