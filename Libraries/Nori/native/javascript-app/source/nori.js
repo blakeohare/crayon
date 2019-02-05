@@ -627,7 +627,16 @@ function doDockPanelChildrenLayout(
 	}
 	usableWidth = availableWidth - margin[0] - margin[2];
 	usableHeight = availableHeight - margin[1] - margin[3];
-	
+
+	if (ha === null) {
+		ha = child.NORI_align[0];
+		if (ha === null) ha = 'L';
+	}
+	if (va === null) {
+		va = child.NORI_align[1];
+		if (va === null) va = 'T';
+	}
+
 	spaceAllocation(
 		child.NORI_id,
 		xOffset + margin[0], yOffset + margin[1],
