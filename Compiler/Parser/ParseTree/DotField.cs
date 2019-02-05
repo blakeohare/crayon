@@ -313,16 +313,25 @@ namespace Parser.ParseTree
                             this.ResolvedType = ResolvedType.INTEGER;
                             return this;
 
+                        case "filter":
+                        case "map": 
+                            if (this.CompilationScope.IsStaticallyTyped)
+                            {
+                                // TODO: for Acrylic, this needs to have a way to indicate that resolution should be attempted
+                                // again once the function return type is known.
+                                throw new System.NotImplementedException();
+                            }
+                            this.ResolvedType = ResolvedType.ANY;
+                            return this;
+
                         case "add": return BuildPrimitiveMethod(ResolvedType.VOID, itemType);
                         case "choice": return BuildPrimitiveMethod(ResolvedType.VOID);
                         case "clear": return BuildPrimitiveMethod(ResolvedType.VOID);
                         case "clone": return BuildPrimitiveMethod(rootType);
                         case "concat": return BuildPrimitiveMethod(rootType, rootType);
                         case "contains": return BuildPrimitiveMethod(ResolvedType.BOOLEAN, itemType);
-                        case "filter": throw new System.NotImplementedException(); // defer resolution to match arg
                         case "insert": return BuildPrimitiveMethod(ResolvedType.VOID, ResolvedType.INTEGER, itemType);
                         case "join": return BuildPrimitiveMethodWithOptionalArgs(ResolvedType.STRING, 1, ResolvedType.STRING);
-                        case "map": throw new System.NotImplementedException(); // defer resolution to match arg
                         case "pop": return BuildPrimitiveMethod(itemType);
                         case "remove": return BuildPrimitiveMethod(ResolvedType.VOID, ResolvedType.INTEGER);
                         case "reverse": return BuildPrimitiveMethod(ResolvedType.VOID);
