@@ -39,6 +39,20 @@ namespace Nori {
             return this;
         }
 
+        function findElement(id) {
+            if (this._userDefinedId == id) return this;
+            for (child : this._children) {
+                if (child._userDefinedId == id) return child;
+                if (child._isPanel) {
+                    descendant = child.findElement(id);
+                    if (descendant != null) {
+                        return descendant;
+                    }
+                }
+            }
+            return null;
+        }
+
         static function _applyFrameToElementAndChildren(e, frame) {
             queue = [e];
             i = 0;

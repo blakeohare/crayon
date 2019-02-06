@@ -49,6 +49,7 @@ namespace Nori {
         field _id;
         field _type;
 
+        field _userDefinedId = null;
         field _parent = null;
         field _frame = null;
         field _isPanel = false;
@@ -63,6 +64,15 @@ namespace Nori {
         constructor(type) {
             this._id = ++Element.ID_ALLOC;
             this._type = type;
+        }
+
+        function setId(id) {
+            this._userDefinedId = id;
+            return this;
+        }
+
+        function getId() {
+            return this._userDefinedId;
         }
 
         function _setEnumProperty(id, value, eMin, eMax) {
@@ -176,6 +186,7 @@ namespace Nori {
 
         function setAttributeWithString(name, strValue) {
             switch (name) {
+                case 'id': this._userDefinedId = strValue; return this;
                 case 'width': return this._setPixelsOrPercentAsString(Element_Width, strValue);
                 case 'height': return this._setPixelsOrPercentAsString(Element_Height, strValue);
                 case 'horizontalAlignment': return this._setEnumWithString(Element_HAlign, strValue);
@@ -324,5 +335,7 @@ namespace Nori {
         function clearLoadHandler() {
             return this._clearEventHandler(Element_OnLoad, true);
         }
+
+        function findElement(id) { return this._userDefinedId == id ? this : null; }
     }
 }
