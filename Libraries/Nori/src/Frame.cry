@@ -1,3 +1,5 @@
+import Math;
+
 namespace Nori {
 
     const Frame_OnResize = 'frame.onresize';
@@ -18,6 +20,8 @@ namespace Nori {
         field _rootElementId = null;
         field _rootElementChanged = false;
         field _handlers = {};
+
+        field _size = [400, 300];
 
         constructor() { }
 
@@ -116,12 +120,22 @@ namespace Nori {
             $lib_nori_flushUpdatesToFrame(this, renderData);
         }
 
+        function setWidth(w) {
+            this._size[0] = Math.floor(w);
+            return this;
+        }
+
+        function setHeight(h) {
+            this._size[1] = Math.floor(h);
+            return this;
+        }
+
         function show() {
             if (!this._isShown) {
                 this._isShown = true;
                 renderData = this._getRenderData();
                 execId = Core.getCurrentExecutionToken();
-                $lib_nori_showFrame(this, 'Test Window', 400, 300, renderData, execId);
+                $lib_nori_showFrame(this, 'Test Window', this._size[0], this._size[1], renderData, execId);
 
                 // This will save the VM state for this context and potentially kick off a
                 // while loop that spins and watches for events. Only one instance of this loop
