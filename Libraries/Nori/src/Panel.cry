@@ -48,6 +48,7 @@ namespace Nori {
                 id = current._id;
                 frame._fullFlushElements[id] = current;
                 frame._elementById[id] = current;
+                frame._loadQueue.add(current);
                 current._isClean = false;
                 if (current._isPanel) {
                     frame._dirtyPanels[id] = true;

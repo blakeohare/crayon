@@ -394,6 +394,7 @@ function flushUpdates(data) {
 	}
 	
 	doLayoutPass();
+	platformSpecificHandleEvent(-1, 'on-render-pass', '');
 }
 
 function doLayoutPass() {

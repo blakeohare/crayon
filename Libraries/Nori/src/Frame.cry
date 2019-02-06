@@ -20,10 +20,13 @@ namespace Nori {
         field _rootElementId = null;
         field _rootElementChanged = false;
         field _handlers = {};
+        field _loadQueue = [];
 
         field _size = [400, 300];
 
-        constructor() { }
+        constructor() {
+            this._handlers['on-render-pass'] = [this._maybeFireOnLoadHandlers, null];
+        }
 
         function setContent(e) {
             if (e._parent != null) {
@@ -34,6 +37,7 @@ namespace Nori {
             Panel._applyFrameToElementAndChildren(e, this);
             this._rootElementId = e._id;
             this._rootElementChanged = true;
+            this._maybeFireOnLoadHandlers();
             return this;
         }
 
@@ -162,6 +166,18 @@ namespace Nori {
                 output.add(hex[(code >> 4) & 15], hex[code & 15]);
             }
             return output.join('');
+        }
+
+        function _maybeFireOnLoadHandlers() {
+            if (this._isShown) {
+                for (e : this._loadQueue) {
+                    cb = e._handlers.get(Element_OnLoad);
+                    if (cb != null) {
+                        cb[0]();
+                    }
+                }
+                this._loadQueue.clear();
+            }
         }
     }
 

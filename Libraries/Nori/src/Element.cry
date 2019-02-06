@@ -16,6 +16,7 @@ namespace Nori {
     const Element_MarginTop = 'el.topmargin';
     const Element_MarginBottom = 'el.bottommargin';
     const Element_BackgroundColor = 'el.bgcolor';
+    const Element_OnLoad = 'el.onload';
 
     enum HorizontalAlignment {
         STRETCH = 0,
@@ -246,13 +247,15 @@ namespace Nori {
         function getBackgroundColor() { return this._getColorProperty(Element_BackgroundColor); }
         function setBackgroundColor(r, g, b, a = 255) { return this._setColorProperty(Element_BackgroundColor, r, g, b, a); }
 
-        function _setEventHandler(name, fn, parser = null) {
+        function _setEventHandler(name, fn, parser = null, isVmOnly = false) {
             this._handlers[name] = [fn, parser];
+            if (isVmOnly) return this;
             return this._setBoolProperty(name, true);
         }
 
-        function _clearEventHandler(name) {
+        function _clearEventHandler(name, isVmOnly = false) {
             this._handlers[name] = null;
+            if (isVmOnly) return this;
             return this._setBoolProperty(name, false);
         }
 
@@ -312,6 +315,14 @@ namespace Nori {
                 }
             }
             this._newProperties.clear();
+        }
+
+        function setLoadHandler(fn) {
+            return this._setEventHandler(Element_OnLoad, fn, null, true);
+        }
+
+        function clearLoadHandler() {
+            return this._clearEventHandler(Element_OnLoad, true);
         }
     }
 }
