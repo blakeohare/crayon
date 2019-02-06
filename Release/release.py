@@ -93,6 +93,8 @@ def main(args):
 		'Json',
 		'Math',
 		'Matrices',
+		'Nori',
+		'NoriXml',
 		'Random',
 		'Resources',
 		'SRandom',
