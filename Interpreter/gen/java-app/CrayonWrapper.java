@@ -1872,6 +1872,7 @@ public final class CrayonWrapper {
           i = row[0];
           if ((stack.closureVariables == null)) {
             closure = new HashMap<Integer, ClosureValuePointer>();
+            closure.put(-1, new ClosureValuePointer(stack.objectContext));
             stack.closureVariables = closure;
             closure.put(i, new ClosureValuePointer(value));
           } else {

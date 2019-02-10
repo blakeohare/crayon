@@ -1620,6 +1620,7 @@ var interpretImpl = function(vm, executionContextId) {
 				i = row[0];
 				if ((stack[12] == null)) {
 					closure = {};
+					closure[-1] = [stack[6]];
 					stack[12] = closure;
 					closure[i] = [value];
 				} else {

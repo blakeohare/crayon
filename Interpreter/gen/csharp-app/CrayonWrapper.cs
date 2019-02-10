@@ -2013,6 +2013,7 @@ namespace Interpreter.Vm
                         if ((stack.closureVariables == null))
                         {
                             closure = new Dictionary<int, ClosureValuePointer>();
+                            closure[-1] = new ClosureValuePointer(stack.objectContext);
                             stack.closureVariables = closure;
                             closure[i] = new ClosureValuePointer(value);
                         }

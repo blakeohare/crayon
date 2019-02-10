@@ -499,6 +499,8 @@ if (staticConstructorNotInvoked) {
 
             // now that we're in the new stack frame, flush out all the passed args to the local stack since their
             // ID's are allocated with args first.
+            // Arguments that are closure variables instead of locals will be manually assigned by bytecode to
+            // the proper closure variable location.
             for (i = 0; i < argCount; i += 1) {
                 int1 = localsStackOffset + i;
                 localsStack[int1] = funcArgs[i];

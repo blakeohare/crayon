@@ -16,7 +16,7 @@ namespace Exporter.ByteCode.Nodes
             ClassDefinition cd = (ClassDefinition)constructor.Owner;
 
             List<int> offsetsForOptionalArgs = new List<int>();
-            FunctionDefinitionEncoder.CompileFunctionArgs(bcc, parser, tBuffer, constructor.ArgNames, constructor.DefaultValues, offsetsForOptionalArgs);
+            FunctionDefinitionEncoder.CompileFunctionArgs(bcc, parser, tBuffer, constructor.ArgNames, constructor.DefaultValues, offsetsForOptionalArgs, constructor.ArgLocalIds);
 
             int minArgs = 0;
             int maxArgs = constructor.ArgNames.Length;

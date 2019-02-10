@@ -17,7 +17,7 @@ namespace Exporter.ByteCode.Nodes
             ByteBuffer tBuffer = new ByteBuffer();
 
             List<int> offsetsForOptionalArgs = new List<int>();
-            CompileFunctionArgs(bcc, parser, tBuffer, funDef.ArgNames, funDef.DefaultValues, offsetsForOptionalArgs);
+            CompileFunctionArgs(bcc, parser, tBuffer, funDef.ArgNames, funDef.DefaultValues, offsetsForOptionalArgs, funDef.Locals);
 
             if (funDef.CompilationScope.IsStaticallyTyped)
             {
@@ -63,13 +63,15 @@ namespace Exporter.ByteCode.Nodes
             }
         }
 
+        // Shared code for functions/constructors/lambdas
         internal static void CompileFunctionArgs(
             ByteCodeCompiler bcc,
             ParserContext parser,
             ByteBuffer buffer,
             IList<Token> argNames,
             IList<Expression> argValues,
-            List<int> offsetsForOptionalArgs)
+            List<int> offsetsForOptionalArgs,
+            VariableId[] variableIds)
         {
             int bufferStartSize = buffer.Size;
             for (int i = 0; i < argNames.Count; ++i)
@@ -79,6 +81,21 @@ namespace Exporter.ByteCode.Nodes
                     bcc.CompileExpression(parser, buffer, argValues[i], true);
                     buffer.Add(argNames[i], OpCode.ASSIGN_LOCAL, i);
                     offsetsForOptionalArgs.Add(buffer.Size - bufferStartSize);
+                }
+            }
+
+            // Arguments that are actually closure variables and not plain locals need to be converted.
+            for (int i = 0; i < argValues.Count; ++i)
+            {
+                VariableId varId = variableIds[i];
+                if (varId.UsedByClosure)
+                {
+                    // It's simple to copy all passed args at function invocation time to locals, which, on
+                    // its own, is incorrect. Therefore add bytecode that will dereference those local ID's and
+                    // assign them to the proper closure ID. This eliminates the need to make a dinstinction in
+                    // CALL_FUNCTION between local and closure args.
+                    buffer.Add(null, OpCode.LOCAL, i);
+                    buffer.Add(null, OpCode.ASSIGN_CLOSURE, varId.ClosureID);
                 }
             }
         }

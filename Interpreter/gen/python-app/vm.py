@@ -1256,6 +1256,7 @@ def interpretImpl(vm, executionContextId):
               i = row[0]
               if (stack[12] == None):
                 closure = {}
+                closure[-1] = [stack[6]]
                 stack[12] = closure
                 closure[i] = [value]
               else:
