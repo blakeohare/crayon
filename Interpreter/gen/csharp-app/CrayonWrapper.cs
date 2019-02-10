@@ -4491,7 +4491,11 @@ namespace Interpreter.Vm
                                         localsStackSetToken = 2;
                                     }
                                     localsStackOffset = int2;
-                                    if ((type != 10))
+                                    if ((type == 10))
+                                    {
+                                        value = closure[-1].value;
+                                    }
+                                    else
                                     {
                                         closure = null;
                                     }
@@ -5930,8 +5934,7 @@ namespace Interpreter.Vm
                         break;
                     case 26:
                         // DEREF_INSTANCE_FIELD;
-                        value = stack.objectContext;
-                        objInstance1 = (ObjectInstance)value.internalValue;
+                        objInstance1 = (ObjectInstance)stack.objectContext.internalValue;
                         value = objInstance1.members[row[0]];
                         if ((valueStackSize == valueStackCapacity))
                         {
@@ -6535,7 +6538,9 @@ namespace Interpreter.Vm
                         {
                             parentClosure = new Dictionary<int, ClosureValuePointer>();
                             stack.closureVariables = parentClosure;
+                            parentClosure[-1] = new ClosureValuePointer(stack.objectContext);
                         }
+                        closure[-1] = parentClosure[-1];
                         functionInfo = metadata.lambdaTable[pc];
                         intArray1 = functionInfo.closureIds;
                         _len = intArray1.Length;

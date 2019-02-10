@@ -1,9 +1,7 @@
 ﻿// This is an optimization of THIS_REFERENCE + DEREF_DOT since the member ID is known at compile time.
 // row[0] -> member ID
-// stack.objectContext -> this
 
-value = stack.objectContext;
-objInstance1 = (ObjectInstance) value.internalValue;
+objInstance1 = (ObjectInstance) stack.objectContext.internalValue;
 
 // Note: Methods do not go through this codepath. They are compiled into PUSH_FUNC_REF
 // Therefore it's safe to not check the functionIds array.

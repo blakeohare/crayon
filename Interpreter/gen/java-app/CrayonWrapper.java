@@ -3711,7 +3711,9 @@ public final class CrayonWrapper {
                   localsStackSetToken = 2;
                 }
                 localsStackOffset = int2;
-                if ((type != 10)) {
+                if ((type == 10)) {
+                  value = closure.get(-1).value;
+                } else {
                   closure = null;
                 }
                 // invoke the function;
@@ -4784,8 +4786,7 @@ public final class CrayonWrapper {
           break;
         case 26:
           // DEREF_INSTANCE_FIELD;
-          value = stack.objectContext;
-          objInstance1 = ((ObjectInstance) value.internalValue);
+          objInstance1 = ((ObjectInstance) stack.objectContext.internalValue);
           value = objInstance1.members[row[0]];
           if ((valueStackSize == valueStackCapacity)) {
             valueStack = valueStackIncreaseCapacity(ec);
@@ -5245,7 +5246,9 @@ public final class CrayonWrapper {
           if ((parentClosure == null)) {
             parentClosure = new HashMap<Integer, ClosureValuePointer>();
             stack.closureVariables = parentClosure;
+            parentClosure.put(-1, new ClosureValuePointer(stack.objectContext));
           }
+          closure.put(-1, parentClosure.get(-1));
           functionInfo = metadata.lambdaTable.get(pc);
           intArray1 = functionInfo.closureIds;
           _len = intArray1.length;

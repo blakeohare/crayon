@@ -2645,7 +2645,9 @@ def interpretImpl(vm, executionContextId):
                     resetLocalsStackTokens(ec, stack)
                     localsStackSetToken = 2
                   localsStackOffset = int2
-                  if (type != 10):
+                  if (type == 10):
+                    value = closure[-1][0]
+                  else:
                     closure = None
                   # invoke the function
                   stack = [pc, localsStackSetToken, localsStackOffset, (localsStackOffset + int1), stack, returnValueUsed, value, valueStackSize, 0, (stack[9] + 1), 0, None, closure, None]
@@ -3488,8 +3490,7 @@ def interpretImpl(vm, executionContextId):
         if (sc_0 < 28):
           if (sc_0 == 26):
             # DEREF_INSTANCE_FIELD
-            value = stack[6]
-            objInstance1 = value[1]
+            objInstance1 = stack[6][1]
             value = objInstance1[2][row[0]]
             if (valueStackSize == valueStackCapacity):
               valueStack = valueStackIncreaseCapacity(ec)
@@ -3853,6 +3854,8 @@ def interpretImpl(vm, executionContextId):
           if (parentClosure == None):
             parentClosure = {}
             stack[12] = parentClosure
+            parentClosure[-1] = [stack[6]]
+          closure[-1] = parentClosure[-1]
           functionInfo = metadata[11][pc]
           intArray1 = functionInfo[10]
           _len = len(intArray1)

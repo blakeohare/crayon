@@ -108,7 +108,7 @@ if (staticConstructorNotInvoked) {
     if (!hasInterrupt) {
         if (type == FunctionInvocationType.LOCAL_METHOD) {
             value = stack.objectContext;
-            objInstance1 = ((ObjectInstance) value.internalValue);
+            objInstance1 = (ObjectInstance) value.internalValue;
             if (objInstance1.classId != classId) {
                 int2 = row[5];
                 if (int2 != -1) {
@@ -474,7 +474,9 @@ if (staticConstructorNotInvoked) {
 
             localsStackOffset = int2;
 
-            if (type != FunctionInvocationType.LAMBDA) {
+            if (type == FunctionInvocationType.LAMBDA) {
+                value = closure[-1].value;
+            } else {
                 closure = null;
             }
 

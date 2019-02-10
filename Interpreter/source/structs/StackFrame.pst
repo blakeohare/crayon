@@ -5,12 +5,12 @@ struct StackFrame {
     int localsStackOffsetEnd; // ending offset of the locals stack
     StackFrame previous;
     bool returnValueUsed;
-    Value objectContext;
+    Value objectContext; // the value of the 'this' keyword.
     int valueStackPopSize; // size of the value stack when this frame is popped.
     int markClassAsInitialized;
     int depth; // stack depth for infinite recursion detection
     int postFinallyBehavior; // value defined in PostFinallyBehavior enum
     Value returnValueTempStorage; // return value when you return but still need to run a finally block
-    Dictionary<int, ClosureValuePointer> closureVariables; // lazily initialized since most functions will not use this.
+    Dictionary<int, ClosureValuePointer> closureVariables; // lazily initialized since most functions will not use this. The key -1 represents 'this'
     DebugStepTracker debugStepTracker; // set when the user is stepping with a debugger
 }

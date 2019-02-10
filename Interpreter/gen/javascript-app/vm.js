@@ -3423,7 +3423,9 @@ var interpretImpl = function(vm, executionContextId) {
 								localsStackSetToken = 2;
 							}
 							localsStackOffset = int2;
-							if ((type != 10)) {
+							if ((type == 10)) {
+								value = closure[-1][0];
+							} else {
 								closure = null;
 							}
 							// invoke the function;
@@ -4483,8 +4485,7 @@ var interpretImpl = function(vm, executionContextId) {
 				break;
 			case 26:
 				// DEREF_INSTANCE_FIELD;
-				value = stack[6];
-				objInstance1 = value[1];
+				objInstance1 = stack[6][1];
 				value = objInstance1[2][row[0]];
 				if ((valueStackSize == valueStackCapacity)) {
 					valueStack = valueStackIncreaseCapacity(ec);
@@ -4944,7 +4945,9 @@ var interpretImpl = function(vm, executionContextId) {
 				if ((parentClosure == null)) {
 					parentClosure = {};
 					stack[12] = parentClosure;
+					parentClosure[-1] = [stack[6]];
 				}
+				closure[-1] = parentClosure[-1];
 				functionInfo = metadata[11][pc];
 				intArray1 = functionInfo[10];
 				_len = intArray1.length;

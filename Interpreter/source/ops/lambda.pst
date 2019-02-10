@@ -42,7 +42,16 @@ parentClosure = stack.closureVariables;
 if (parentClosure == null) {
     parentClosure = new Dictionary<int, ClosureValuePointer>();
     stack.closureVariables = parentClosure;
+
+    // Propagate 'this' to nested closures using -1 as a magic number.
+    // This value will only be accessed at StackFrame construction time.
+    // It's okay if this value is null. It saves a key check and lets the
+    // stack frame construction just grab -1 and use that as the objectContext
+    // regardless of where it is.
+    parentClosure[-1] = new ClosureValuePointer(stack.objectContext);
 }
+
+closure[-1] = parentClosure[-1];
 
 functionInfo = metadata.lambdaTable[pc];
 intArray1 = functionInfo.closureIds;
