@@ -120,13 +120,13 @@ NoriHelper.EscapeStringHex = function(original) {
 	return t;
 };
 
-NoriHelper.EventWatcher = function(vm, execContextIdForResume, eventCallback, postShowCallback) {
+NoriHelper.EventWatcher = function(vm, execContextIdForResume, frameAsValue, eventCallback, postShowCallback) {
 	NoriHelper.vm = vm;
 	NoriHelper.eventHandlerCallback = eventCallback;
 	runInterpreterWithFunctionPointer(
 		NoriHelper.vm,
 		postShowCallback,
-		[NoriHelper.frameValueHack]);
+		[frameAsValue]);
 	if (NoriHelper.eventQueue.length > 0) {
 		for (var i = 0; i < NoriHelper.eventQueue.lengt; ++i) {
 			var e = NoriHelper.eventQueue[i];

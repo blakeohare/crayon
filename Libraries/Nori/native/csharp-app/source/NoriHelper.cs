@@ -133,7 +133,9 @@ namespace Interpreter.Libraries.Nori
 
         public static bool FlushUpdatesToFrame(object nativeFrameHandle, string uiData)
         {
-            throw new System.NotImplementedException();
+            NoriFrame frame = (NoriFrame)nativeFrameHandle;
+            frame.SendUiData(uiData);
+            return true;
         }
 
         private static char[] HEX = "0123456789ABCDEF".ToCharArray();

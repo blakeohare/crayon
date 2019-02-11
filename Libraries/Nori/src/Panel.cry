@@ -39,6 +39,50 @@ namespace Nori {
             return this;
         }
 
+        function getChildren() { return this._children.clone(); }
+        function firstChild() { return this._children.length == 0 ? null : this._children[0]; }
+        function lastChild() { return this._children.length == 0 ? null : this._children[-1]; }
+
+        function findChildIndex(e) {
+            len = this._children.length;
+            if (len > 0) {
+                if (this._children[-1] == e) return len - 1;
+                for (i = 0; i < len; ++i) {
+                    if (this._children[i] == e) return i;
+                }
+            }
+            return -1;
+        }
+
+        function removeChild(child) {
+            index = this.findChildIndex(child);
+            if (index == -1) throw new Exception("Attempted to remove a non-existent child element.");
+
+            isLast = index == this._children.length - 1;
+            this._children.remove(index);
+            this._childrenIds.remove(index);
+
+            if (this._canFlushIncrementally) {
+                if (isLast) {
+                    if (this._childrenIdsAdded.length > 0) {
+                        this._childrenIdsAdded.pop();
+                    } else {
+                        this._childRemovalCount++;
+                    }
+                } else {
+                    this._canFlushIncrementally = false;
+                    this._childrenIdsAdded.clear();
+                    this._childRemovalCount = 0;
+                }
+            }
+
+            if (this._frame != null) {
+                this._frame._dirtyPanels[this._id] = this;
+            }
+
+            return this;
+        }
+
         function findElement(id) {
             if (this._userDefinedId == id) return this;
             for (child : this._children) {
@@ -65,9 +109,21 @@ namespace Nori {
                 frame._loadQueue.add(current);
                 current._isClean = false;
                 if (current._isPanel) {
-                    frame._dirtyPanels[id] = true;
+                    frame._dirtyPanels[id] = current;
                     queue.concat(current._children);
                 }
+            }
+        }
+
+        static function _applyFrameRemovalToElementAndChildren(e, frame) {
+            queue = [e];
+            i = 0;
+            elementLookup = frame._elementById;
+            while (i < queue.length) {
+                current = queue[i++];
+                current._frame = null;
+                id = current._id;
+                elementLookup.remove(id);
             }
         }
     }

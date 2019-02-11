@@ -96,14 +96,14 @@ namespace Nori {
 
             if (this._dirtyPanels.length > 0) {
                 for (id : this._dirtyPanels.keys()) {
-                    panel = this._elementById[id];
+                    panel = this._dirtyPanels[id];
                     if (panel._canFlushIncrementally) {
                         wireData.add('CI', id, panel._childRemovalCount, panel._childrenIdsAdded.length);
                         wireData.concat(panel._childrenIdsAdded);
                     } else {
                         panel._canFlushIncrementally = true;
-
-                        throw new NotImplementedException();
+                        wireData.add('CF', id, panel._children.length);
+                        wireData.concat(panel._childrenIds);
                     }
                     panel._childrenIdsAdded.clear();
                     panel._childRemovalCount = 0;
@@ -117,6 +117,15 @@ namespace Nori {
             }
 
             return wireData.join(',');
+        }
+
+        function _flushUpdatesIfNeeded() {
+            if (this._partialFlushElements.length != 0 ||
+                this._fullFlushElements.length != 0 ||
+                this._dirtyPanels.length != 0) {
+
+                this.flushUpdates();
+            }
         }
 
         function flushUpdates() {
@@ -177,6 +186,7 @@ namespace Nori {
                     }
                 }
                 this._loadQueue.clear();
+                this._flushUpdatesIfNeeded();
             }
         }
     }
@@ -194,6 +204,7 @@ namespace Nori {
                 parser = handlerAndParser[1];
                 args = parser == null ? [] : parser(argString);
                 handler.invoke(args);
+                frame._flushUpdatesIfNeeded();
             }
         }
     }

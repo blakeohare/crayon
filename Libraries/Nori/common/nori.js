@@ -211,6 +211,7 @@ function syncChildIds(e, childIds, startIndex, endIndex) {
 	var length = host.children.length;
 	var i;
 	var id;
+	var newId;
 	if (length == 0) {
 		for (i = startIndex; i < endIndex; ++i) {
 			id = childIds[i];
@@ -218,38 +219,46 @@ function syncChildIds(e, childIds, startIndex, endIndex) {
 			e.NORI_childrenIdList.push(id);
 		}
 	} else {
-		var existingIds = {};
+		var preExistingIds = {};
 		for (i = 0; i < length; ++i) {
-			existingIds[host.children[i].NORI_id] = true;
+			preExistingIds[host.children[i].NORI_id] = true;
 		}
-		var j = 0;
-		var existingElement;
-		var existingElementId;
+		var j = 0; // walks along the DOM
+		var preExistingElement;
+		var preExistingElementId;
 		e.NORI_childrenIdList = [];
-		for (i = startIndex; i < endIndex; ++i) {
-			id = childIds[i];
-			e.NORI_childrenIdList.push(id);
-			if (j == length) {
-				// run off past of the end of the existing list? then append the element.
-				appendChild(e, childIds[i]);
+		var childIndex = 0;
+		var childrenLength = endIndex - startIndex;
+		for (i = 0; i < childrenLength; ++i) {
+			childIndex = startIndex + i;
+			newId = childIds[childIndex];
+			if (j == host.children.length) {
+				// If you get to the end of the pre-existing DOM elements, then everything
+				// else in the new children list is new. Just append them to the end.
+				appendChild(e, childIds[childIndex]);
+				j++;
+				e.NORI_childrenIdList.push(newId);
 			} else {
-				existingElement = host.children[j];
-				existingElementId = existingElement.NORI_id;
-				if (id == existingElementId) {
+				preExistingElement = host.children[j];
+				preExistingElementId = preExistingElement.NORI_id;
+				if (newId == preExistingElementId) {
 					// element is the same, move on.
 					j++;
+					e.NORI_childrenIdList.push(newId);
+				} else if (preExistingIds[newId]) {
+					// The next element that needs to be here is already in the DOM.
+					// That means the pre-existing element you have here has been removed.
+					// Don't increment j.
+					// Decrement i so that you can try inserting it again without this
+					// removed element in the way.
+					host.removeChild(preExistingElement);
+					gcElement(preExistingElement);
+					i--;
 				} else {
-					if (existingIds[existingElementId]) {
-						// The element ID is already in the list (in the future)
-						// so this means the new child ID needs to be inserted.
-						// Don't increment j.
-						host.insertBefore(ctx.elementById[id], existingElement);
-					} else {
-						// The element ID is not in the list so it needs to be deleted.
-						// Don't increment j.
-						host.remove(existingElement);
-						gcElement(existingElement);
-					}
+					// The new element ID is not in the DOM yet so it needs to be inserted.
+					host.insertBefore(ctx.elementById[newId], preExistingElement);
+					j++;
+					e.NORI_childrenIdList.push(newId);
 				}
 			}
 		}

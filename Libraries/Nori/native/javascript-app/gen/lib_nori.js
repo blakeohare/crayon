@@ -185,7 +185,7 @@ var lib_nori_runEventWatcher = function(vm, args) {
 	var postShowCallback = args[3];
 	var ec = getExecutionContext(vm, execContextIdForResume);
 	vm_suspend_for_context(ec, 1);
-	NoriHelper.EventWatcher(vm, execContextIdForResume, eventCallback, postShowCallback);
+	NoriHelper.EventWatcher(vm, execContextIdForResume, args[0], eventCallback, postShowCallback);
 	return vm[14];
 };
 
