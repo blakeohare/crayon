@@ -159,8 +159,13 @@ namespace Parser.ParseTree
                 TopLevelEntity owner = this.TopLevelEntity;
                 if (owner is FunctionDefinition)
                 {
-                    if (((FunctionDefinition)owner).Modifiers.HasStatic)
+                    FunctionDefinition functionOwner = (FunctionDefinition)owner;
+                    if (functionOwner.Modifiers.HasStatic)
                         throw new ParserException(this.Root, "'this' keyword cannot be used in static methods.");
+
+                    if (!(functionOwner.Owner is ClassDefinition))
+                        throw new ParserException(this.Root, "'this' keyword cannot be used in a function that isn't in a class.");
+
                     cd = (ClassDefinition)owner.Owner;
                 }
                 else if (owner is FieldDefinition)
