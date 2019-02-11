@@ -13,7 +13,11 @@ namespace Interpreter.Libraries.Nori
         private string initialUiData;
 
         private System.Windows.Forms.Form form;
+
+        private object browserMutex = new object();
         private System.Windows.Forms.WebBrowser browser;
+        private List<string> dataQueue = new List<string>();
+
 
         public int ResumeExecId { get; private set; }
 
@@ -44,30 +48,46 @@ namespace Interpreter.Libraries.Nori
 
         public void SendUiData(string value)
         {
-            this.browser.Document.InvokeScript("winFormsNoriHandleNewUiData", new object[] { value });
+            lock (this.browserMutex)
+            {
+                if (this.browser == null)
+                {
+                    dataQueue.Add(value);
+                }
+                else
+                {
+                    this.browser.Document.InvokeScript("winFormsNoriHandleNewUiData", new object[] { value });
+                }
+            }
         }
 
         private void BuildUi()
         {
-            this.form = new System.Windows.Forms.Form();
-            this.browser = new System.Windows.Forms.WebBrowser();
-            this.browser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.form.Controls.Add(this.browser);
-            this.form.Width = this.width;
-            this.form.Height = this.height;
-            this.form.Text = this.title;
-            this.form.FormClosed += (sender, e) => { NoriHelper.QueueCloseWindowNotification(this); };
+            lock (this.browserMutex)
+            {
+                this.form = new System.Windows.Forms.Form();
+                this.browser = new System.Windows.Forms.WebBrowser();
+                this.browser.Dock = System.Windows.Forms.DockStyle.Fill;
+                this.form.Controls.Add(this.browser);
+                this.form.Width = this.width;
+                this.form.Height = this.height;
+                this.form.Text = this.title;
+                this.form.FormClosed += (sender, e) => { NoriHelper.QueueCloseWindowNotification(this); };
 
-            this.browser.ObjectForScripting = new JsBridge(this, this.browser);
+                this.browser.ObjectForScripting = new JsBridge(this, this.browser);
 
-            this.browser.AllowNavigation = false;
-            this.browser.AllowWebBrowserDrop = false;
-            this.browser.IsWebBrowserContextMenuEnabled = false;
-            this.browser.ScrollBarsEnabled = false;
+                this.browser.AllowNavigation = false;
+                this.browser.AllowWebBrowserDrop = false;
+                this.browser.IsWebBrowserContextMenuEnabled = false;
+                this.browser.ScrollBarsEnabled = false;
 
-            this.form.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+                this.form.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 
-            browser.DocumentText = this.GetHtmlDocument(this.initialUiData);
+                this.dataQueue.Insert(0, this.initialUiData);
+
+                this.browser.DocumentText = this.GetHtmlDocument(string.Join(",", this.dataQueue));
+                this.dataQueue.Clear();
+            }
         }
 
         private void Show()
