@@ -328,13 +328,10 @@ namespace Nori {
             this._newProperties.clear();
         }
 
-        function setLoadHandler(fn) {
-            return this._setEventHandler(Element_OnLoad, fn, null, true);
-        }
-
-        function clearLoadHandler() {
-            return this._clearEventHandler(Element_OnLoad, true);
-        }
+        // load handler takes no arguments. Unlike other handlers, it is invoked conditionally when
+        // there's a render pass notification from Nori from Frame.cry in _maybeFireOnLoadHandlers().
+        function setLoadHandler(fn) { return this._setEventHandler(Element_OnLoad, fn, null, true); }
+        function clearLoadHandler() { return this._clearEventHandler(Element_OnLoad, true); }
 
         function findElement(id) { return this._userDefinedId == id ? this : null; }
     }

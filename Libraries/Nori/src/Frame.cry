@@ -146,7 +146,7 @@ namespace Nori {
                 // exists and waits for all active frames to disappear before ending.
                 // If it is already running, then this execution context will simply end and yield
                 // back to the existing loop.
-                $lib_nori_runEventWatcher(this, execId, handleUiGeneratedEvent);
+                $lib_nori_runEventWatcher(this, execId, handleUiGeneratedEvent, postLoadHandler);
             }
             return this;
         }
@@ -179,6 +179,10 @@ namespace Nori {
                 this._loadQueue.clear();
             }
         }
+    }
+
+    function postLoadHandler(frame) {
+        frame._maybeFireOnLoadHandlers();
     }
 
     function handleUiGeneratedEvent(frame, id, type, argString) {

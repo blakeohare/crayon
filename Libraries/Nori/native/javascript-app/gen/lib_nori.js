@@ -182,9 +182,10 @@ var lib_nori_runEventWatcher = function(vm, args) {
 	var frameObj = args[0][1];
 	var execContextIdForResume = args[1][1];
 	var eventCallback = args[2];
+	var postShowCallback = args[3];
 	var ec = getExecutionContext(vm, execContextIdForResume);
 	vm_suspend_for_context(ec, 1);
-	NoriHelper.EventWatcher(vm, execContextIdForResume, eventCallback);
+	NoriHelper.EventWatcher(vm, execContextIdForResume, eventCallback, postShowCallback);
 	return vm[14];
 };
 

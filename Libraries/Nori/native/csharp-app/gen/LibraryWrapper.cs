@@ -205,9 +205,10 @@ namespace Interpreter.Libraries.Nori
             ObjectInstance frameObj = (ObjectInstance)args[0].internalValue;
             int execContextIdForResume = (int)args[1].internalValue;
             Value eventCallback = args[2];
+            Value postShowCallback = args[3];
             ExecutionContext ec = Interpreter.Vm.CrayonWrapper.getExecutionContext(vm, execContextIdForResume);
             Interpreter.Vm.CrayonWrapper.vm_suspend_for_context(ec, 1);
-            NoriHelper.EventWatcher(vm, execContextIdForResume, eventCallback);
+            NoriHelper.EventWatcher(vm, execContextIdForResume, args[0], eventCallback, postShowCallback);
             return vm.globalNull;
         }
 

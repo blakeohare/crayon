@@ -34,8 +34,9 @@ VM.Value lib_nori_runEventWatcher(VM.VmContext vm, Array<VM.Value> args) {
     VM.ObjectInstance frameObj = (VM.ObjectInstance)args[0].internalValue;
     int execContextIdForResume = (int) args[1].internalValue;
     VM.Value eventCallback = args[2];
+    VM.Value postShowCallback = args[3];
     VM.ExecutionContext ec = VM.getExecutionContext(vm, execContextIdForResume);
     VM.vm_suspend_for_context(ec, 1);
-    Extension._lib_nori_runEventWatcher(vm, execContextIdForResume, eventCallback);
+    Extension._lib_nori_runEventWatcher(vm, execContextIdForResume, args[0], eventCallback, postShowCallback);
     return vm.globalNull;
 }

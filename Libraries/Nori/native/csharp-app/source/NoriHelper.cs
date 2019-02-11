@@ -56,8 +56,15 @@ namespace Interpreter.Libraries.Nori
         public static void EventWatcher(
             Interpreter.Structs.VmContext vmContext,
             int resumingExecutionContextId,
-            Interpreter.Structs.Value noriHandlerFunctionPointer)
+            Interpreter.Structs.Value openedFrameAsValue,
+            Interpreter.Structs.Value noriHandlerFunctionPointer,
+            Interpreter.Structs.Value postShowFunctionPointer)
         {
+            Interpreter.Vm.CrayonWrapper.runInterpreterWithFunctionPointer(
+               vmContext,
+               postShowFunctionPointer,
+               new Interpreter.Structs.Value[] { openedFrameAsValue });
+
             // TODO: find a better way.
             while (activeFrames.Count > 0)
             {
