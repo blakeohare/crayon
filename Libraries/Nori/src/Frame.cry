@@ -24,20 +24,23 @@ namespace Nori {
 
         field _size = [400, 300];
 
+        field _internalBorder;
+
         constructor() {
             this._handlers['on-render-pass'] = [this._maybeFireOnLoadHandlers, null];
+            this._internalBorder = this._setContentInternal(new Border());
         }
 
-        function setContent(e) {
-            if (e._parent != null) {
-                throw new Exception("This element is already added to the UI tree.");
-            }
-
+        function _setContentInternal(e) {
             e._parent = this;
             Panel._applyFrameToElementAndChildren(e, this);
             this._rootElementId = e._id;
             this._rootElementChanged = true;
-            this._maybeFireOnLoadHandlers();
+            return e;
+        }
+
+        function setContent(e) {
+            this._internalBorder.setChild(e);
             return this;
         }
 

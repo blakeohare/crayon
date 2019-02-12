@@ -275,7 +275,7 @@ function removeChildrenFromEnd(e, n) {
 	var host = e.firstChild;
 	while (n --> 0) {
 		var removedElement = host.lastChild;
-		host.remove(removedElement);
+		host.removeChild(removedElement);
 		gcElement(removedElement);
 		e.NORI_childrenIdList.pop();
 	}

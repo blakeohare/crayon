@@ -46,17 +46,28 @@ namespace Interpreter.Libraries.Nori
             this.initialUiData = uiData;
         }
 
+        private delegate void BrowserInvoker(string data);
+        private BrowserInvoker browserInvoker;
+
         public void SendUiData(string value)
         {
             lock (this.browserMutex)
             {
+                if (this.browserInvoker == null)
+                {
+                    this.browserInvoker = new BrowserInvoker((string data) =>
+                    {
+                        this.browser.Document.InvokeScript("winFormsNoriHandleNewUiData", new object[] { data });
+                    });
+                }
+
                 if (this.browser == null)
                 {
                     dataQueue.Add(value);
                 }
                 else
                 {
-                    this.browser.Document.InvokeScript("winFormsNoriHandleNewUiData", new object[] { value });
+                    this.browser.Invoke(this.browserInvoker, value);
                 }
             }
         }
