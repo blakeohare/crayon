@@ -365,7 +365,7 @@ function flushUpdates(data) {
 				element = elementById[id];
 				childrenCount = parseInt(items[i++]);
 				for (j = 0; j < childrenCount; ++j) {
-					items[i] = parseInt(items[i]);
+					items[i + j] = parseInt(items[i + j]);
 				}
 				syncChildIds(element, items, i, i + childrenCount);
 				i += childrenCount;
