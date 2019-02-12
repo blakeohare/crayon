@@ -22,6 +22,14 @@ namespace Parser
             this.UsedByClosure = false;
         }
 
+        public override string ToString()
+        {
+            return (this.UsedByClosure
+                ? ("Closure Var #" + this.ClosureID)
+                : ("Local Var #" + this.ID))
+                + ": \"" + this.Name + "\"";
+        }
+
         public int ID { get; set; }
         public string Name { get; private set; }
         public bool UsedByClosure { get; set; }

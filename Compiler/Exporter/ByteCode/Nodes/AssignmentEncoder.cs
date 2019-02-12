@@ -26,7 +26,7 @@ namespace Exporter.ByteCode.Nodes
                 {
                     Variable varTarget = (Variable)assignment.Target;
                     bcc.CompileExpression(parser, buffer, value, true);
-                    VariableId varId = varTarget.LocalScopeId;
+                    VariableId varId = varTarget.VarId;
                     if (varId.UsedByClosure)
                     {
                         buffer.Add(assignment.OpToken, OpCode.ASSIGN_CLOSURE, varId.ClosureID);
@@ -100,7 +100,7 @@ namespace Exporter.ByteCode.Nodes
                 if (assignment.Target is Variable)
                 {
                     Variable varTarget = (Variable)assignment.Target;
-                    VariableId varId = varTarget.LocalScopeId;
+                    VariableId varId = varTarget.VarId;
                     bool isClosure = varId.UsedByClosure;
                     int scopeId = isClosure ? varId.ClosureID : varId.ID;
 

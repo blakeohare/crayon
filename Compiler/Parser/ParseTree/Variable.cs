@@ -11,7 +11,7 @@ namespace Parser.ParseTree
 
         public string Name { get; private set; }
 
-        public VariableId LocalScopeId { get; set; }
+        public VariableId VarId { get; set; }
 
         public Variable(Token token, string name, Node owner)
             : base(token, owner)
@@ -69,7 +69,7 @@ namespace Parser.ParseTree
 
         internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
         {
-            this.ResolvedType = this.LocalScopeId.ResolvedType;
+            this.ResolvedType = this.VarId.ResolvedType;
             if (this.ResolvedType == null)
             {
                 throw new ParserException(this, "This shouldn't happen");
@@ -81,8 +81,8 @@ namespace Parser.ParseTree
         {
             if ((phase & VariableIdAllocPhase.ALLOC) != 0)
             {
-                this.LocalScopeId = varIds.GetVarId(this.FirstToken);
-                if (this.LocalScopeId == null)
+                this.VarId = varIds.GetVarId(this.FirstToken);
+                if (this.VarId == null)
                 {
                     string name = this.FirstToken.Value;
 

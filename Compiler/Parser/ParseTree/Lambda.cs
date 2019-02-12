@@ -8,6 +8,7 @@ namespace Parser.ParseTree
     {
         public Token[] Args { get; private set; }
         public AType[] ArgTypes { get; private set; }
+        public VariableId[] ArgVarIds { get; private set; }
         public ResolvedType[] ResolvedArgTypes { get; private set; }
         public Executable[] Code { get; private set; }
         public List<Lambda> Lambdas { get; private set; }
@@ -56,10 +57,12 @@ namespace Parser.ParseTree
         internal void ResolveVariableOriginsForInnerCode(ParserContext parser, VariableScope scopeFromParent)
         {
             this.VariableScope = VariableScope.CreateClosure(scopeFromParent);
+            List<VariableId> argVarIds = new List<VariableId>();
             for (int i = 0; i < this.Args.Length; ++i)
             {
-                this.VariableScope.RegisterVariable(this.ArgTypes[i], this.Args[i].Value);
+                argVarIds.Add(this.VariableScope.RegisterVariable(this.ArgTypes[i], this.Args[i].Value));
             }
+            this.ArgVarIds = argVarIds.ToArray();
 
             foreach (Executable ex in this.Code)
             {

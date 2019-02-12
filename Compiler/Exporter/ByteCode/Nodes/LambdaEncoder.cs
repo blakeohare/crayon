@@ -14,7 +14,7 @@ namespace Exporter.ByteCode.Nodes
 
             List<int> offsetsForOptionalArgs = new List<int>();
             Expression[] argDefaultValues_allRequired = new Expression[lambda.Args.Length];
-            FunctionDefinitionEncoder.CompileFunctionArgs(bcc, parser, tBuffer, lambda.Args, argDefaultValues_allRequired, offsetsForOptionalArgs, lambda.ClosureIds);
+            FunctionDefinitionEncoder.CompileFunctionArgs(bcc, parser, tBuffer, lambda.Args, argDefaultValues_allRequired, offsetsForOptionalArgs, lambda.ArgVarIds);
 
             bcc.Compile(parser, tBuffer, lambda.Code);
 

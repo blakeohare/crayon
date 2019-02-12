@@ -187,13 +187,13 @@ namespace Parser.ParseTree
             this.Value = this.Value.ResolveTypes(parser, typeResolver);
             if (this.type == AssignmentType.TYPED_VARIABLE_DECLARATION)
             {
-                VariableId varId = this.TargetAsVariable.LocalScopeId;
+                VariableId varId = this.TargetAsVariable.VarId;
                 AType variableType = varId.Type;
                 varId.ResolvedType = typeResolver.ResolveType(varId.Type);
             }
             else if (this.type == AssignmentType.VARIABLE && this.CompilationScope.IsCrayon)
             {
-                VariableId varId = this.TargetAsVariable.LocalScopeId;
+                VariableId varId = this.TargetAsVariable.VarId;
                 if (varId.ResolvedType == null)
                 {
                     varId.ResolvedType = ResolvedType.ANY;

@@ -10,7 +10,7 @@ namespace Exporter.ByteCode.Nodes
             if (!outputUsed) throw new ParserException(variable, "This expression does nothing.");
             int nameId = parser.GetId(variable.Name);
             Token token = variable.FirstToken;
-            VariableId varId = variable.LocalScopeId;
+            VariableId varId = variable.VarId;
             if (varId == null)
             {
                 throw new ParserException(token, "Variable used but not declared.");

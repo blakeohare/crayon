@@ -21,7 +21,7 @@ namespace Exporter.ByteCode.Nodes
                 // a '1' appended to it when it really should be an error if the variable is not an integer.
                 // Same for the others below. Ideally the DUPLICATE_STACK_TOP op should be removed.
                 Variable variable = (Variable)increment.Root;
-                VariableId varId = variable.LocalScopeId;
+                VariableId varId = variable.VarId;
                 bool isClosureVar = varId.UsedByClosure;
                 int scopeId = isClosureVar ? varId.ClosureID : varId.ID;
                 bcc.CompileExpression(parser, buffer, increment.Root, true);
