@@ -10,7 +10,7 @@ namespace Parser.ParseTree
         public AType[] ArgTypes { get; private set; }
         public VariableId[] ArgVarIds { get; private set; }
         public ResolvedType[] ResolvedArgTypes { get; private set; }
-        public Executable[] Code { get; private set; }
+        public Executable[] Code { get; set; }
         public List<Lambda> Lambdas { get; private set; }
         internal VariableScope VariableScope { get; private set; }
         public int LocalScopeSize { get { return this.VariableScope.Size; } }
@@ -21,13 +21,11 @@ namespace Parser.ParseTree
             Token firstToken,
             Node owner,
             IList<Token> args,
-            IList<AType> argTypes,
-            IList<Executable> code)
+            IList<AType> argTypes)
             : base(firstToken, owner)
         {
             this.Args = args.ToArray();
             this.ArgTypes = argTypes.ToArray();
-            this.Code = code.ToArray();
             this.Lambdas = new List<Lambda>();
             ((ICodeContainer)owner).Lambdas.Add(this);
             this.ArgumentNameLookup = new HashSet<string>(this.Args.Select(a => a.Value));

@@ -1,6 +1,7 @@
 ﻿using Parser.ParseTree;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Parser
 {
@@ -222,14 +223,16 @@ namespace Parser
             Node owner)
         {
             tokens.PopExpected("=>");
-            IList<Executable> lambdaCode = this.parser.ExecutableParser.ParseBlock(tokens, false, owner, false);
+            Lambda lambda = new Lambda(firstToken, owner, args, argTypes);
+            IList<Executable> lambdaCode = this.parser.ExecutableParser.ParseBlock(tokens, false, lambda, false);
             if (lambdaCode.Count == 1 && lambdaCode[0] is ExpressionAsExecutable)
             {
                 // If a lambda contains a single expression as its code body, then this is an implicit return statement.
                 ExpressionAsExecutable eae = (ExpressionAsExecutable)lambdaCode[0];
-                lambdaCode[0] = new ReturnStatement(eae.FirstToken, eae.Expression, owner);
+                lambdaCode[0] = new ReturnStatement(eae.FirstToken, eae.Expression, lambda);
             }
-            return new Lambda(firstToken, owner, args, argTypes, lambdaCode);
+            lambda.Code = lambdaCode.ToArray();
+            return lambda;
         }
 
         protected abstract AType MaybeParseCastPrefix(TokenStream tokens);
