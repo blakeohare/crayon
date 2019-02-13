@@ -487,18 +487,18 @@ function spaceAllocation(
 	switch (halign) {
 		case 'S':
 			width = usableWidth;
-			x = xOffset + margin[0];
+			x = xOffset;
 			break;
 		case 'L':
 			width = calcWidth;
-			x = xOffset + margin[0];
+			x = xOffset;
 			break;
 		case 'R':
 			width = calcWidth;
-			x = xOffset + margin[0] + usableWidth - width;
+			x = xOffset + usableWidth - width;
 			break;
 		case 'C':
-			var centerX = xOffset + margin[0] + calcWidth / 2;
+			var centerX = xOffset + calcWidth / 2;
 			width = calcWidth;
 			x = Math.floor(centerX - width / 2);
 			break;
@@ -507,18 +507,18 @@ function spaceAllocation(
 	switch (valign) {
 		case 'S':
 			height = usableHeight;
-			y = yOffset + margin[1];
+			y = yOffset;
 			break;
 		case 'T':
 			height = calcHeight;
-			y = yOffset + margin[1];
+			y = yOffset;
 			break;
 		case 'B':
 			height = calcHeight;
-			y = yOffset + margin[1] + usableHeight - height;
+			y = yOffset + usableHeight - height;
 			break;
 		case 'C':
-			var centerY = yOffset + margin[1] + calcHeight / 2;
+			var centerY = yOffset + calcHeight / 2;
 			height = calcHeight;
 			y = Math.floor(centerY - height / 2);
 			break;
