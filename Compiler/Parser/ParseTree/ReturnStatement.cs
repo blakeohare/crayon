@@ -44,6 +44,12 @@ namespace Parser.ParseTree
             {
                 returnType = ResolvedType.VOID;
             }
+            else if (this.Owner is Lambda)
+            {
+                Lambda lambda = (Lambda)this.Owner;
+                // TODO: this won't fly in Acrylic.
+                returnType = ResolvedType.ANY;
+            }
             else
             {
                 throw new System.Exception();

@@ -7,7 +7,7 @@ namespace Exporter.ByteCode.Nodes
     {
         public static void Compile(ByteCodeCompiler bcc, ParserContext parser, ByteBuffer buffer, ReturnStatement returnStatement)
         {
-            if (returnStatement.TopLevelEntity is ConstructorDefinition)
+            if (returnStatement.Owner is ConstructorDefinition)
             {
                 if (returnStatement.Expression != null)
                 {
