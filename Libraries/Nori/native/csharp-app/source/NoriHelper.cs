@@ -4,6 +4,13 @@ namespace Interpreter.Libraries.Nori
 {
     public class NoriHelper
     {
+        public static void SendImageToRenderer(object frameObj, int id, object nativeImageData, int x, int y, int width, int height)
+        {
+            throw new System.NotImplementedException();
+            //NoriFrame frame = (NoriFrame)frameObj;
+            //UniversalBitmap bitmap = (UniversalBitmap)nativeImageData;
+        }
+
         public static object ShowFrame(Interpreter.Structs.Value crayonObj, string title, int width, int height, string uiData, int execId)
         {
             NoriFrame frame = NoriFrame.CreateAndShow(crayonObj, title, width, height, uiData, execId);

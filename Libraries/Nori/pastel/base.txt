@@ -6,3 +6,4 @@ EXT-TYPE: bool _lib_nori_flushUpdatesToFrame(object frameHandle, string uiData);
 EXT-TYPE: object _lib_nori_showFrame(VM.Value crayonFrameRef, string title, int width, int height, string uiData, int execId);
 EXT-TYPE: string _lib_nori_escapeString(string original);
 EXT-TYPE: bool _lib_nori_runEventWatcher(VM.VmContext vm, int execContextIdForResume, VM.Value frameObject, VM.Value eventCallback, VM.Value postShowCallback);
+EXT-TYPE: void _lib_nori_sendImageToRenderer(object frameHandle, int id, object nativeImageData, int x, int y, int width, int height);

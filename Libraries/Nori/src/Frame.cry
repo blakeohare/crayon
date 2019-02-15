@@ -14,6 +14,7 @@ namespace Nori {
         field _fullFlushElements = {};
         field _partialFlushElements = {};
         field _dirtyPanels = {};
+        field _newImageSources = [];
 
         field _elementById = {};
         field _isShown = false;
@@ -133,6 +134,13 @@ namespace Nori {
 
         function flushUpdates() {
             renderData = this._getRenderData();
+
+            for (img : this._newImageSources) {
+                t = img._vmImageResourceData;
+                $lib_nori_prepImageResource(this, t[0], t[1], t[2], t[3], t[4], t[5]);
+            }
+            this._newImageSources.clear();
+
             $lib_nori_flushUpdatesToFrame(this, renderData);
         }
 

@@ -200,6 +200,21 @@ namespace Interpreter.Libraries.Nori
             return vm.globalNull;
         }
 
+        public static Value lib_nori_prepImageResource(VmContext vm, Value[] args)
+        {
+            ObjectInstance frameWrapped = (ObjectInstance)args[0].internalValue;
+            object frame = frameWrapped.nativeData[0];
+            ObjectInstance obj = (ObjectInstance)args[2].internalValue;
+            object nativeImageData = obj.nativeData[0];
+            int id = (int)args[1].internalValue;
+            int x = (int)args[3].internalValue;
+            int y = (int)args[4].internalValue;
+            int width = (int)args[5].internalValue;
+            int height = (int)args[6].internalValue;
+            NoriHelper.SendImageToRenderer(frame, id, nativeImageData, x, y, width, height);
+            return vm.globalNull;
+        }
+
         public static Value lib_nori_runEventWatcher(VmContext vm, Value[] args)
         {
             ObjectInstance frameObj = (ObjectInstance)args[0].internalValue;

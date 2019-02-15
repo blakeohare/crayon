@@ -16,7 +16,8 @@ var ctx = {
 		'border.topcolor': true,
 		'border.rightcolor': true,
 		'border.bottomcolor': true,
-		'el.bgcolor': true
+		'el.bgcolor': true,
+		'img.src': true
 	},
 	isPanelType: {
 		'Border': true,
@@ -107,6 +108,13 @@ function createElement(id, type) {
 			inner.innerHTML = 'Button';
 			break;
 		
+		case 'Image':
+			inner = document.createElement('canvas');
+			s = inner.style;
+			s.width = '100%';
+			s.height = '100%';
+			break;
+		
 		case 'TextBlock':
 			inner = document.createElement('div');
 			s = inner.style;
@@ -187,6 +195,8 @@ function setProperty(e, key, value) {
 		case 'scroll.x': e.NORI_scrollpanel[0] = ctx.scrollEnumLookup[value]; break;
 		case 'scroll.y': e.NORI_scrollpanel[1] = ctx.scrollEnumLookup[value]; break;
 		
+		case 'img.src': setImageSource(e, value); break;
+		
 		default:
 			throw "property setter not implemented: " + key;
 	}
@@ -204,6 +214,16 @@ function unsetProperty(e, key) {
 		default:
 			throw "property un-setter not implemented: " + key;
 	}
+}
+
+function setImageSource(e, rawValue) {
+	var id = parseInt(rawValue.split(':')[1]);
+	var img = getImageInHoldingArea(id);
+	var domCanvas = e.firstChild;
+	domCanvas.width = img.width;
+	domCanvas.height = img.height;
+	var ctx = domCanvas.getContext('2d');
+	ctx.drawImage(img, 0, 0);
 }
 
 function syncChildIds(e, childIds, startIndex, endIndex) {
