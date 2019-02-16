@@ -256,7 +256,7 @@ namespace JavaScriptAppAndroid
                 {
                     int equalsIndex = sdkDirLine.IndexOf("=");
                     string sdkValue = sdkDirLine.Substring(equalsIndex + 1);
-                    sdkValue = sdkValue.Replace("\\:", ":");
+                    sdkValue = sdkValue.Replace("\\\\", "\\").Replace("\\:", ":");
                     return sdkValue;
                 }
             }
