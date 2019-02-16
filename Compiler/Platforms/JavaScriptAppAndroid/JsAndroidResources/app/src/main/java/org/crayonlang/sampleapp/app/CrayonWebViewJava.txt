@@ -13,6 +13,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CrayonWebView extends WebView {
 
@@ -56,7 +57,13 @@ public class CrayonWebView extends WebView {
             }
         });
     }
-	
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        this.handleMouseEvent(e);
+        return true;
+    }
+
     private void handleMouseEvent(MotionEvent e) {
         int mouseEventTypeId = 0;
         switch (e.getAction()) {

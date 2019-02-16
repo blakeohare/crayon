@@ -120,8 +120,26 @@ namespace JavaScriptAppAndroid
             throw new NotImplementedException();
         }
 
+        private string EscapeAndroidSdkPath(string original)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            foreach (char c in original)
+            {
+                switch (c)
+                {
+                    case ':': sb.Append("\\:"); break;
+                    case '\\': sb.Append('/'); break;
+                    default: sb.Append(c); break;
+                }
+            }
+            return sb.ToString();
+        }
+
         public void OutputAndroidBoilerplate(Dictionary<string, FileOutput> output, Dictionary<string, string> replacements, Options options)
         {
+            string androidSdkLocation = options.GetString(ExportOptionKey.ANDROID_SDK_LOCATION);
+            replacements["ANDROID_SDK_LOCATION"] = this.EscapeAndroidSdkPath(androidSdkLocation);
+
             string packagedDir = replacements["JAVA_PACKAGE"].Replace('.', '/');
             output[".gitignore"] = this.LoadTextFile("JsAndroidResources/gitignore.txt", replacements);
             output["build.gradle"] = this.LoadTextFile("JsAndroidResources/buildGradle.txt", replacements);
@@ -216,7 +234,35 @@ namespace JavaScriptAppAndroid
         public override void GleanInformationFromPreviouslyExportedProject(Options options, string outputDirectory)
         {
             bool skipWorkspaceXml = FileUtil.FileExists(outputDirectory + "/.idea/workspace.xml");
-            options.SetOption(ExportOptionKey.ANDROID_SKIP_WORKSPACE_XML, true);
+            options.SetOption(ExportOptionKey.ANDROID_SKIP_WORKSPACE_XML, skipWorkspaceXml);
+
+            options.SetOption(
+                ExportOptionKey.ANDROID_SDK_LOCATION,
+                this.GetAndroidSdkLocation(outputDirectory));
+        }
+
+        private string GetAndroidSdkLocation(string outputDirectory)
+        {
+            string localPropertiesFile = outputDirectory + "/local.properties";
+            if (FileUtil.FileExists(localPropertiesFile))
+            {
+                string sdkDirLine = FileUtil.ReadFileText(localPropertiesFile)
+                    .Split('\n')
+                    .Where(line => line.StartsWith("sdk.dir="))
+                    .Select(line => line.Trim())
+                    .FirstOrDefault();
+
+                if (sdkDirLine != null)
+                {
+                    int equalsIndex = sdkDirLine.IndexOf("=");
+                    string sdkValue = sdkDirLine.Substring(equalsIndex + 1);
+                    sdkValue = sdkValue.Replace("\\\\", "\\").Replace("\\:", ":");
+                    return sdkValue;
+                }
+            }
+
+            return System.Environment.GetEnvironmentVariable("CRAYON_ANDROID_SDK")
+                ?? @"C:\Program Files (x86)\Android\android-studio\sdk";
         }
     }
 }

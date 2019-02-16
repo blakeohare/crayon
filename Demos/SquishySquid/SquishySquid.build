@@ -9,8 +9,8 @@
 	"guid-seed": "org.crayonlang.demos.squishysquid,v0.2.0,%TARGET_NAME%",
 	
 	"vars": [
-		{ "id": "is_landscape", "value": false }
-	}
+		{ "name": "is_landscape", "value": false }
+	],
 	
 	"image-sheets": [
 		{ "id": "everything", "prefix": "*" }
@@ -34,7 +34,7 @@
 			"name": "sitecsharp",
 			"platform": "csharp-app",
 			"vars": [
-				{ "id": "is_landscape", "value": true }
+				{ "name": "is_landscape", "value": true }
 			]
 		},
 		{
@@ -42,7 +42,7 @@
 			"platform": "javascript-app",
 			"js-file-prefix": "frontpage/squishysquid",
 			"vars": [
-				{ "id": "is_landscape", "value": true }
+				{ "name": "is_landscape", "value": true }
 			]
 		},
 		{

@@ -19,7 +19,7 @@ namespace Build
                 {
                     if (rootVar.Id == null)
                     {
-                        throw new InvalidOperationException("Build file contains a <var> without an id attribute.");
+                        throw new InvalidOperationException("Build file contains a variable without a name attribute.");
                     }
                     firstPass.Add(rootVar.Id, rootVar);
                 }
