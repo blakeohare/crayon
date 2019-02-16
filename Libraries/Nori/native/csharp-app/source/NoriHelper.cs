@@ -4,13 +4,6 @@ namespace Interpreter.Libraries.Nori
 {
     public class NoriHelper
     {
-        public static void SendImageToRenderer(object frameObj, int id, object nativeImageData, int x, int y, int width, int height)
-        {
-            throw new System.NotImplementedException();
-            //NoriFrame frame = (NoriFrame)frameObj;
-            //UniversalBitmap bitmap = (UniversalBitmap)nativeImageData;
-        }
-
         public static object ShowFrame(Interpreter.Structs.Value crayonObj, string title, int width, int height, string uiData, int execId)
         {
             NoriFrame frame = NoriFrame.CreateAndShow(crayonObj, title, width, height, uiData, execId);
@@ -143,6 +136,27 @@ namespace Interpreter.Libraries.Nori
             NoriFrame frame = (NoriFrame)nativeFrameHandle;
             frame.SendUiData(uiData);
             return true;
+        }
+
+        public static void SendImageToRenderer(object frameObj, int id, object nativeImageData, int x, int y, int width, int height)
+        {
+            NoriFrame frame = (NoriFrame)frameObj;
+            UniversalBitmap atlas = (UniversalBitmap)nativeImageData;
+            UniversalBitmap cropped;
+            if (atlas.Width == width && atlas.Height == height)
+            {
+                cropped = atlas;
+            }
+            else
+            {
+                cropped = new UniversalBitmap(width, height);
+                UniversalBitmap.DrawingSession session = cropped.GetActiveDrawingSession();
+                session.Draw(atlas, 0, 0, x, y, width, height);
+                session.Flush();
+            }
+            byte[] pngBytes = cropped.GetBytesAsPng();
+            string base64Image = UniversalBitmap.ToBase64("data:image/png;base64,", pngBytes);
+            frame.SendImageToBrowser(id, width, height, base64Image);
         }
 
         private static char[] HEX = "0123456789ABCDEF".ToCharArray();

@@ -18,7 +18,6 @@ namespace Interpreter.Libraries.Nori
         private System.Windows.Forms.WebBrowser browser;
         private List<string> dataQueue = new List<string>();
 
-
         public int ResumeExecId { get; private set; }
 
         public Interpreter.Structs.Value CrayonObjectRef { get; private set; }
@@ -47,7 +46,9 @@ namespace Interpreter.Libraries.Nori
         }
 
         private delegate void BrowserInvoker(string data);
+        private delegate void ImageDataInvoker(int id, int width, int height, string dataUri);
         private BrowserInvoker browserInvoker;
+        private ImageDataInvoker imageDataInvoker;
 
         public void SendUiData(string value)
         {
@@ -60,15 +61,22 @@ namespace Interpreter.Libraries.Nori
                         this.browser.Document.InvokeScript("winFormsNoriHandleNewUiData", new object[] { data });
                     });
                 }
+                this.browser.Invoke(this.browserInvoker, value);
+            }
+        }
 
-                if (this.browser == null)
+        public void SendImageToBrowser(int id, int width, int height, string dataUri)
+        {
+            lock (this.browserMutex)
+            {
+                if (this.imageDataInvoker == null)
                 {
-                    dataQueue.Add(value);
+                    this.imageDataInvoker = new ImageDataInvoker((int _id, int _width, int _height, string _data) =>
+                    {
+                        this.browser.Document.InvokeScript("winFormsPrepImageData", new object[] { _id, _width, _height, _data });
+                    });
                 }
-                else
-                {
-                    this.browser.Invoke(this.browserInvoker, value);
-                }
+                this.browser.Invoke(this.imageDataInvoker, new object[] { id, width, height, dataUri });
             }
         }
 
@@ -94,9 +102,7 @@ namespace Interpreter.Libraries.Nori
 
                 this.form.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 
-                this.dataQueue.Insert(0, this.initialUiData);
-
-                this.browser.DocumentText = this.GetHtmlDocument(string.Join(",", this.dataQueue));
+                this.browser.DocumentText = this.GetHtmlDocument(this.initialUiData);
                 this.dataQueue.Clear();
             }
         }

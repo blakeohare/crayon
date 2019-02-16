@@ -222,8 +222,17 @@ function setImageSource(e, rawValue) {
 	var domCanvas = e.firstChild;
 	domCanvas.width = img.width;
 	domCanvas.height = img.height;
-	var ctx = domCanvas.getContext('2d');
-	ctx.drawImage(img, 0, 0);
+	// Some platforms cannot transmit the image data synchronously.
+	// However, in those cases, the canvas width and height will be set properly so layout can occur.
+	if (img.NORI_canvas_needs_loading) {
+		img.NORI_canvas_load_callback_here = function () {
+			var ctxA = domCanvas.getContext('2d');
+			ctxA.drawImage(img, 0, 0);
+		};
+	} else {
+		var ctx = domCanvas.getContext('2d');
+		ctx.drawImage(img, 0, 0);
+	}
 }
 
 function syncChildIds(e, childIds, startIndex, endIndex) {
