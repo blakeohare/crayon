@@ -47,6 +47,11 @@ NoriHelper.ShowFrame = function(crayonFrameValue, title, width, height, data, ex
 	width = window.innerWidth;
 	height = window.innerHeight;
 	
+	if (C$common$globalOptions['is_android']) {
+		width = Math.floor(width / 2);
+		height = Math.floor(height / 2);
+	}
+
 	// for browsers, width and height are ignored.
 	ch.style.width = width + 'px';
 	ch.style.height = height + 'px';
