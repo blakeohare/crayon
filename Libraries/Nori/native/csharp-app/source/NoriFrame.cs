@@ -16,7 +16,6 @@ namespace Interpreter.Libraries.Nori
 
         private object browserMutex = new object();
         private System.Windows.Forms.WebBrowser browser;
-        private List<string> dataQueue = new List<string>();
 
         public int ResumeExecId { get; private set; }
 
@@ -103,7 +102,6 @@ namespace Interpreter.Libraries.Nori
                 this.form.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 
                 this.browser.DocumentText = this.GetHtmlDocument(this.initialUiData);
-                this.dataQueue.Clear();
             }
         }
 
