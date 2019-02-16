@@ -1,4 +1,4 @@
-﻿package %%%JAVA_PACKAGE%%%.app;
+﻿package memory.app;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +19,7 @@ public class CrayonWebView extends WebView {
 
     private int executionContextId;
     private boolean readyToReceiveMessages = false;
+    private boolean useNaturalMouseEvents = false;
 
     public CrayonWebView(Context context, int width, int height) {
         super(context);
@@ -44,6 +45,7 @@ public class CrayonWebView extends WebView {
                 return super.onConsoleMessage(consoleMessage);
             }
         });
+        this.setClickable(true);
         this.addJavascriptInterface(new JavaScriptBridge(this), "JavaScriptBridge");
         this.loadUrl("file:///android_asset/index.html");
         final CrayonWebView outerThis = this;
@@ -60,6 +62,9 @@ public class CrayonWebView extends WebView {
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
+        if (this.useNaturalMouseEvents) {
+            return super.onTouchEvent(e);
+        }
         this.handleMouseEvent(e);
         return true;
     }
@@ -195,6 +200,16 @@ public class CrayonWebView extends WebView {
                     this.sendMessage(messageQueue.get(i), messageQueue.get(i + 1), false);
                 }
                 messageQueue.clear();
+                break;
+
+            case "view-type":
+                switch (msg) {
+                    case "natural-web-view":
+                        useNaturalMouseEvents = true;
+                        break;
+                    default:
+                        throw new RuntimeException();
+                }
                 break;
 
             default:

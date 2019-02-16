@@ -33,6 +33,16 @@ NoriHelper.getCrayonHost = function() {
 	return document.getElementById('crayon_host');
 };
 
+NoriHelper.getWindowSize = function() {
+	var width = window.innerWidth;
+	var height = window.innerHeight;
+	if (C$common$globalOptions['is_android']) {
+		width = Math.floor(width / 2);
+		height = Math.floor(height / 2);
+	}
+	return [width, height];
+};
+
 NoriHelper.ShowFrame = function(crayonFrameValue, title, width, height, data, execId) {
 	NoriHelper.frameValueHack = crayonFrameValue;
 	var ch = NoriHelper.getCrayonHost();
@@ -44,12 +54,13 @@ NoriHelper.ShowFrame = function(crayonFrameValue, title, width, height, data, ex
 	ch.style.height = '100%';
 	ch.style.backgroundColor = '#ffffff';
 	
-	width = window.innerWidth;
-	height = window.innerHeight;
+	var widthHeight = NoriHelper.getWindowSize();
+	width = widthHeight[0];
+	height = widthHeight[1];
 	
-	if (C$common$globalOptions['is_android']) {
-		width = Math.floor(width / 2);
-		height = Math.floor(height / 2);
+	
+	if (!!sendMessage) {
+		sendMessage("view-type", "natural-web-view");
 	}
 
 	// for browsers, width and height are ignored.
@@ -80,8 +91,10 @@ NoriHelper.ShowFrame = function(crayonFrameValue, title, width, height, data, ex
 	flushUpdates(data);
 	
 	window.onresize = function() {
-		var w = Math.floor(window.innerWidth);
-		var h = Math.floor(window.innerHeight);
+		var widthHeight = NoriHelper.getWindowSize();
+		var w = widthHeight[0];
+		var h = widthHeight[1];
+		
 		var arg = w + ',' + h;
 		// TODO: set a timeout and rate-limit the callbacks. Rate limiter should be in nori.js.
 		
