@@ -224,6 +224,60 @@ namespace Interpreter
 #endif
         }
 
+        public byte[] GetBytesAsPng()
+        {
+            return this.GetBytesImpl("png");
+        }
+
+        public byte[] GetBytesAsJpeg()
+        {
+            return this.GetBytesImpl("jpeg");
+        }
+
+        private byte[] GetBytesImpl(string formatStr)
+        {
+#if WINDOWS
+            System.Drawing.Imaging.ImageFormat format;
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            switch (formatStr)
+            {
+                case "png": format = System.Drawing.Imaging.ImageFormat.Png; break;
+                case "jpeg": format = System.Drawing.Imaging.ImageFormat.Jpeg; break;
+                default: throw new System.NotImplementedException();
+            }
+            this.internalBitmap.Save(ms, format);
+            return ms.ToArray();
+#elif OSX
+            throw new System.NotImplementedException();
+#endif
+        }
+
+        public static string ToBase64(string prefix, byte[] bytes)
+        {
+            int[] bitPairs = new int[bytes.Length * 4];
+            int length = bytes.Length;
+            char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".ToCharArray();
+            System.Text.StringBuilder output = new System.Text.StringBuilder();
+            output.Append(prefix);
+            int j = 0;
+            for (int i = 0; i < length; ++i)
+            {
+                bitPairs[j] = (bytes[i] >> 6) & 3;
+                bitPairs[j | 1] = (bytes[i] >> 4) & 3;
+                bitPairs[j | 2] = (bytes[i] >> 2) & 3;
+                bitPairs[j | 3] = bytes[i] & 3;
+                j += 4;
+            }
+            length = bitPairs.Length;
+            int t;
+            for (int i = 0; i < length; i += 3)
+            {
+                t = (bitPairs[i] << 4) | (bitPairs[i + 1] << 2) | (bitPairs[i + 2]);
+                output.Append(alphabet[t]);
+            }
+            return output.ToString();
+        }
+
         public class BitLockSession
         {
             private UniversalBitmap bmp;

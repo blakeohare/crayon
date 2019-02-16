@@ -18,3 +18,4 @@ EXT: _lib_nori_flushUpdatesToFrame: NoriHelper.FlushUpdatesToFrame([ARG:1], [ARG
 EXT: _lib_nori_showFrame: NoriHelper.ShowFrame([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
 EXT: _lib_nori_escapeString: NoriHelper.EscapeStringHex([ARG:1])
 EXT: _lib_nori_runEventWatcher: NoriHelper.EventWatcher([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+EXT: _lib_nori_sendImageToRenderer: NoriHelper.SendImageToRenderer([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7])

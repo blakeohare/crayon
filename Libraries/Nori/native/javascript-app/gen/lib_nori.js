@@ -178,6 +178,20 @@ var lib_nori_flushUpdatesToFrame = function(vm, args) {
 	return vm[14];
 };
 
+var lib_nori_prepImageResource = function(vm, args) {
+	var frameWrapped = args[0][1];
+	var frame = frameWrapped[3][0];
+	var obj = args[2][1];
+	var nativeImageData = obj[3][0];
+	var id = args[1][1];
+	var x = args[3][1];
+	var y = args[4][1];
+	var width = args[5][1];
+	var height = args[6][1];
+	NoriHelper.SendImageToRenderer(frame, id, nativeImageData, x, y, width, height);
+	return vm[14];
+};
+
 var lib_nori_runEventWatcher = function(vm, args) {
 	var frameObj = args[0][1];
 	var execContextIdForResume = args[1][1];

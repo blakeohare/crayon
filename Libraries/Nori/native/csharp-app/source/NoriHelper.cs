@@ -138,6 +138,27 @@ namespace Interpreter.Libraries.Nori
             return true;
         }
 
+        public static void SendImageToRenderer(object frameObj, int id, object nativeImageData, int x, int y, int width, int height)
+        {
+            NoriFrame frame = (NoriFrame)frameObj;
+            UniversalBitmap atlas = (UniversalBitmap)nativeImageData;
+            UniversalBitmap cropped;
+            if (atlas.Width == width && atlas.Height == height)
+            {
+                cropped = atlas;
+            }
+            else
+            {
+                cropped = new UniversalBitmap(width, height);
+                UniversalBitmap.DrawingSession session = cropped.GetActiveDrawingSession();
+                session.Draw(atlas, 0, 0, x, y, width, height);
+                session.Flush();
+            }
+            byte[] pngBytes = cropped.GetBytesAsPng();
+            string base64Image = UniversalBitmap.ToBase64("data:image/png;base64,", pngBytes);
+            frame.SendImageToBrowser(id, width, height, base64Image);
+        }
+
         private static char[] HEX = "0123456789ABCDEF".ToCharArray();
         public static string EscapeStringHex(string original)
         {

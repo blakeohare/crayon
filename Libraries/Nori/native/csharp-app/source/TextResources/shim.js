@@ -9,6 +9,32 @@ function winFormsGetWindowSize() {
 	return [width, height];
 }
 
+function getImageInHoldingArea(id) {
+	var img = winFormsImages[id];
+	delete winFormsImages[id];
+	return img;
+}
+
+var winFormsImages = {};
+function winFormsPrepImageData(id, width, height, dataUri) {
+	var canvas = document.createElement('canvas');
+	canvas.NORI_canvas_needs_loading = true;
+	var img = new Image();
+	img.src = dataUri;
+	canvas.width = width;
+	canvas.height = height;
+	canvas.NORI_canvas_load_callback_here = null;
+	img.onload = function () {
+		var ctx = canvas.getContext('2d');
+		ctx.drawImage(img, 0, 0);
+		canvas.NORI_canvas_needs_loading = false;
+		if (canvas.NORI_canvas_load_callback_here !== null) {
+			canvas.NORI_canvas_load_callback_here();
+		}
+	};
+	winFormsImages[id] = canvas;
+}
+
 function shimInit(uiData) {
 	var noriRoot = document.getElementById('nori_root');
 	setFrameRoot(noriRoot);

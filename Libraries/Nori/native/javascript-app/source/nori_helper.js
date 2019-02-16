@@ -135,3 +135,22 @@ NoriHelper.EventWatcher = function(vm, execContextIdForResume, frameAsValue, eve
 		NoriHelper.eventQueue = [];
 	}
 };
+
+NoriHelper.imagesByIdHoldingArea = {};
+
+NoriHelper.SendImageToRenderer = function(frameObj, id, nativeImageData, x, y, width, height) {
+	var newImage = document.createElement('canvas');
+	var c = newImage.getContext('2d');
+	newImage.width = width;
+	newImage.height = height;
+	c.drawImage(nativeImageData, -x, -y);
+	
+	NoriHelper.imagesByIdHoldingArea[id] = newImage;
+};
+
+function getImageInHoldingArea(id) {
+	var lookup = NoriHelper.imagesByIdHoldingArea;
+	var img = lookup[id];
+	delete lookup[id];
+	return img;
+}

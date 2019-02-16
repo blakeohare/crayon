@@ -107,6 +107,10 @@ namespace Nori {
 
         static function _applyFrameToElementAndChildren(e, frame) {
             queue = [e];
+            parent = e._parent;
+            if (parent != frame) {
+                frame._dirtyPanels[parent._id] = parent;
+            }
             i = 0;
             while (i < queue.length) {
                 current = queue[i++];
