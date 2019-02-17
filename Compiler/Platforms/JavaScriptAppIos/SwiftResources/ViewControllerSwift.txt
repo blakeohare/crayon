@@ -9,7 +9,8 @@ class ViewController: UIViewController, WKScriptMessageHandler {
     override func viewDidLoad() {
         super.viewDidLoad()
         let userController:WKUserContentController = WKUserContentController();
-        userController.add(self, name: "interop");
+        userController.add(self, name: "interop"); // TODO: split this out into specific verbs.
+        userController.add(self, name: "viewType");
         let webViewConfig = WKWebViewConfiguration();
         webViewConfig.userContentController = userController;
         let webView = WKWebView(frame: self.view.frame, configuration: webViewConfig);
@@ -32,7 +33,15 @@ class ViewController: UIViewController, WKScriptMessageHandler {
     }
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        print(message.body);
+        let name = message.name;
+        let body = String(describing: message.body);
+        if (name == "interop") {
+            print(body);
+        } else if (name == "viewType") {
+            if (body == "natural-web-view") {
+                self.clickCatcher!.frame = CGRect(x: 0, y: 0, width: 0, height: 0);
+            }
+        }
     }
     
     class ClickCatcher : UIView {

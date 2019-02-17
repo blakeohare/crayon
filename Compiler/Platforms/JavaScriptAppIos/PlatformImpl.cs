@@ -23,19 +23,7 @@ namespace JavaScriptAppIos
         {
             options.SetOption(ExportOptionKey.JS_FILE_PREFIX, null);
             options.SetOption(ExportOptionKey.JS_FULL_PAGE, false); // iOS export has its own enforced fullscreen logic
-            options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, string.Join(
-                "\n",
-                "<script type=\"text/javascript\" src=\"ios.js\"></script>",
-                "<style type=\"text/css\">",
-                "  body { margin:0px; background-color:#000; }",
-                "  #crayon_host {",
-                "    background-color:#000;",
-                "    text-align:left;",
-                "    width:100%;",
-                "    height:100%;",
-                "  }",
-                "</style>"
-            ));
+            options.SetOption(ExportOptionKey.JS_HEAD_EXTRAS, "");
             Dictionary<string, string> replacements = this.GenerateReplacementDictionary(options, resourceDatabase);
 
             Dictionary<string, FileOutput> files = new Dictionary<string, FileOutput>();

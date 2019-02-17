@@ -57,9 +57,8 @@ NoriHelper.ShowFrame = function(crayonFrameValue, title, width, height, data, ex
 	var widthHeight = NoriHelper.getWindowSize();
 	width = widthHeight[0];
 	height = widthHeight[1];
-	
-	
-	if (!!sendMessage) {
+
+	if (!!window.sendMessage) {
 		sendMessage("view-type", "natural-web-view");
 	}
 
