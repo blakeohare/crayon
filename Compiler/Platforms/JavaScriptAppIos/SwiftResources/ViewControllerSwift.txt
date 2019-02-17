@@ -1,7 +1,7 @@
 ﻿import UIKit
 import WebKit
 
-class ViewController: UIViewController, WKScriptMessageHandler {
+class ViewController: UIViewController, WKScriptMessageHandler, UIScrollViewDelegate {
 
     var webView : WKWebView?;
     var clickCatcher : ClickCatcher?;
@@ -24,6 +24,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
         let cc = ClickCatcher(frame: self.view.frame, webView: webView);
         self.view.addSubview(cc);
 
+        webView.scrollView.delegate = self;
         self.webView = webView;
         self.clickCatcher = cc;
     }
@@ -31,7 +32,11 @@ class ViewController: UIViewController, WKScriptMessageHandler {
     override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
         self.clickCatcher!.frame = self.view.frame;
     }
-    
+
+    func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
+        scrollView.pinchGestureRecognizer?.isEnabled = false
+    }
+
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         let name = message.name;
         let body = String(describing: message.body);
