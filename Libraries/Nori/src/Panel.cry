@@ -62,6 +62,13 @@ namespace Nori {
             return -1;
         }
 
+        function clearChildren() {
+            while (this._children.length > 0) {
+                this.removeChild(this._children[-1]);
+            }
+            return this;
+        }
+
         function removeChild(child) {
             index = this.findChildIndex(child);
             if (index == -1) throw new Exception("Attempted to remove a non-existent child element.");

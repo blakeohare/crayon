@@ -232,7 +232,7 @@ namespace Nori {
 
         function getHorizontalAlignment() { return this._getIntProperty(Element_HAlign); }
         function getVerticalAlignment() { return this._getIntProperty(Element_VAlign); }
-        function setHorizontalAlignemnt(value) { return this._setEnumProperty(Element_HAlign, value, 0, HorizontalAlignment.length - 1); }
+        function setHorizontalAlignment(value) { return this._setEnumProperty(Element_HAlign, value, 0, HorizontalAlignment.length - 1); }
         function setVerticalAlignment(value) { return this._setEnumProperty(Element_VAlign, value, 0, VerticalAlignment.length - 1); }
 
         function getDock() { return this._getIntProperty(Element_Dock); }
