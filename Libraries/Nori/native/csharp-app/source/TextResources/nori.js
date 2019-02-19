@@ -125,9 +125,10 @@ function createElement(id, type) {
 			s.fontFamily = 'Arial,sans-serif';
 			break;
 		
+		case 'PasswordBox':
 		case 'TextBox':
 			inner = document.createElement('input');
-			inner.type = 'text';
+			inner.type = type == 'TextBox' ? 'text' : 'password';
 			s = inner.style;
 			s.width = '100%';
 			s.height = '100%';
@@ -208,6 +209,7 @@ function setProperty(e, key, value) {
 		
 		case 'input.value':
 			switch (e.NORI_type) {
+				case 'PasswordBox':
 				case 'TextBox':
 					if (e.firstChild.value != value) {
 						e.firstChild.value = value;
@@ -228,6 +230,7 @@ function setProperty(e, key, value) {
 					var input = e.firstChild;
 					var inputValue;
 					switch (e.NORI_type) {
+						case 'PasswordBox':
 						case 'TextBox':
 							inputValue = input.value;
 							break;
@@ -242,6 +245,7 @@ function setProperty(e, key, value) {
 				};
 			}
 			switch (e.NORI_type) {
+				case 'PasswordBox':
 				case 'TextBox':
 					e.firstChild.onchange = eh;
 					e.firstChild.oninput = eh;

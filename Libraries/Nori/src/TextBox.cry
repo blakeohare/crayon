@@ -1,8 +1,12 @@
 namespace Nori {
 
-    class TextBox : InputElement {
+    class AbstractTextBox : InputElement {
 
-        constructor() : base('TextBox') { }
+        field _isPassword;
+
+        constructor(type) : base(type) {
+            this._isPassword = type == 'PasswordBox';
+        }
 
         function getText() {
             return this._getValue();
@@ -14,5 +18,12 @@ namespace Nori {
 
         function setOnTextChangedHandler(fn) { return this._setValueChangedHandler(fn); }
         function clearOnTextChangedHandler() { return this._setValueChangedHandler(null); }
+    }
+
+    class TextBox : AbstractTextBox {
+        constructor() : base('TextBox') { }
+    }
+    class PasswordBox : AbstractTextBox {
+        constructor() : base('PasswordBox') { }
     }
 }
