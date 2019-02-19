@@ -24,6 +24,11 @@ public class CrayonWebView extends WebView {
     public CrayonWebView(Context context, int width, int height) {
         super(context);
 
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            this.getSettings().setAllowUniversalAccessFromFileURLs(true);
+            this.getSettings().setAllowFileAccessFromFileURLs(true);
+        }
+
         this.setSystemUiVisibility(
             SYSTEM_UI_FLAG_FULLSCREEN |
             SYSTEM_UI_FLAG_HIDE_NAVIGATION |
