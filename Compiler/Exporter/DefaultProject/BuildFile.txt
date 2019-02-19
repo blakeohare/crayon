@@ -3,7 +3,7 @@
     "source": "source/",
     "output": "output/%TARGET_NAME%",
     "icon": "assets/icon32.png,assets/icon256.png",
-    "title": "%%%TITLE%%%",
+    "default-title": "%%%TITLE%%%",
 
     "ios-bundle-prefix": "com.yourname.%%%PROJECT_NAME%%%",
     "guid-seed": "com.yourname.%%%PROJECT_NAME%%%,v1,%TARGET_NAME%",
