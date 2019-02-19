@@ -56,7 +56,15 @@ VM.Value lib_http_sendRequest(VM.VmContext vm, Array<VM.Value> args) {
     } else {
         // synchronous request
         if (Extension._lib_http_sendRequestSynchronous(
-            objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText, VM.vm_getCurrentExecutionContextId(vm))) {
+            objArray1,
+            method,
+            url,
+            headers,
+            bodyState,
+            bodyRawObject,
+            getResponseAsText,
+            VM.vm_getCurrentExecutionContextId(vm),
+            vm)) {
 
             VM.vm_suspend(vm, 1);
         }

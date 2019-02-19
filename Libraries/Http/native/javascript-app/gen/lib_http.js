@@ -171,20 +171,20 @@ var lib_http_populateResponse = function(vm, args) {
 	objInstance1 = arg2[1];
 	objInstance1[3] = objArray1;
 	var outputList = arg3[1];
-	outputList.push(buildInteger(vm[13], PST$intBuffer16[0]));
-	outputList.push(buildString(vm[13], PST$stringBuffer16[0]));
+	addToList(outputList, buildInteger(vm[13], PST$intBuffer16[0]));
+	addToList(outputList, buildString(vm[13], PST$stringBuffer16[0]));
 	var value = vm[14];
 	var value2 = vm[15];
 	if ((PST$intBuffer16[1] == 0)) {
 		value = buildString(vm[13], PST$stringBuffer16[1]);
 		value2 = vm[16];
 	}
-	outputList.push(value);
-	outputList.push(value2);
+	addToList(outputList, value);
+	addToList(outputList, value2);
 	var list1 = arg4[1];
 	var i = 0;
 	while ((i < stringList1.length)) {
-		list1.push(buildString(vm[13], stringList1[i]));
+		addToList(list1, buildString(vm[13], stringList1[i]));
 		i += 1;
 	}
 	return vm[14];
@@ -222,7 +222,7 @@ var lib_http_sendRequest = function(vm, args) {
 	if (args[1][1]) {
 		LIB$http$sendRequestAsync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText);
 	} else {
-		if (LIB$http$sendRequestSync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText, vm_getCurrentExecutionContextId(vm))) {
+		if (LIB$http$sendRequestSync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText, vm_getCurrentExecutionContextId(vm), vm)) {
 			vm_suspend(vm, 1);
 		}
 	}

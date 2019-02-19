@@ -4,4 +4,4 @@ EXT-TYPE: void _lib_http_getResponseBytes(object obj, Array<VM.Value> intCache, 
 EXT-TYPE: bool _lib_http_pollRequest(Array<object> objArray);
 EXT-TYPE: void _lib_http_readResponseData(object nativeRequestObject, Array<int> intOut, Array<string> stringOut, Array<object> objOut, List<string> headerPairs);
 EXT-TYPE: void _lib_http_sendRequestAsynchronous(Array<object> objArray, string method, string url, List<string> headers, int objectState, object bodyStringOrBytes, bool getResponseAsText);
-EXT-TYPE: bool _lib_http_sendRequestSynchronous(Array<object> objArray, string method, string url, List<string> headers, int objectState, object bodyStringOrBytes, bool getResponseAsText, int executionContextId);
+EXT-TYPE: bool _lib_http_sendRequestSynchronous(Array<object> objArray, string method, string url, List<string> headers, int objectState, object bodyStringOrBytes, bool getResponseAsText, int executionContextId, object vm);
