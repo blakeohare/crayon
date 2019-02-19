@@ -17,7 +17,8 @@ var ctx = {
 		'border.rightcolor': true,
 		'border.bottomcolor': true,
 		'el.bgcolor': true,
-		'img.src': true
+		'img.src': true,
+		'input.value': true
 	},
 	isPanelType: {
 		'Border': true,
@@ -124,6 +125,14 @@ function createElement(id, type) {
 			s.fontFamily = 'Arial,sans-serif';
 			break;
 		
+		case 'TextBox':
+			inner = document.createElement('input');
+			inner.type = 'text';
+			s = inner.style;
+			s.width = '100%';
+			s.height = '100%';
+			break;
+		
 		case 'ScrollPanel':
 			wrapper.NORI_scrollpanel = ['none', 'none'];
 			break;
@@ -196,6 +205,52 @@ function setProperty(e, key, value) {
 		case 'scroll.y': e.NORI_scrollpanel[1] = ctx.scrollEnumLookup[value]; break;
 		
 		case 'img.src': setImageSource(e, value); break;
+		
+		case 'input.value':
+			switch (e.NORI_type) {
+				case 'TextBox':
+					if (e.firstChild.value != value) {
+						e.firstChild.value = value;
+					}
+					break;
+					
+				default:
+					throw "value setter not defined: " + e.NORI_type;
+			}
+			break;
+		
+		case 'input.changed':
+		
+			var eh;
+			if (value === 0) eh = noopFn;
+			else {
+				eh = function() {
+					var input = e.firstChild;
+					var inputValue;
+					switch (e.NORI_type) {
+						case 'TextBox':
+							inputValue = input.value;
+							break;
+						default:
+							throw "unknown: " + e.NORI_type;
+					}
+					if (!inputValue) inputValue = '';
+					if (e.NORI_prev_input_value !== inputValue) {
+						e.NORI_prev_input_value = inputValue;
+						platformSpecificHandleEvent(e.NORI_id, 'input.changed', inputValue);
+					}
+				};
+			}
+			switch (e.NORI_type) {
+				case 'TextBox':
+					e.firstChild.onchange = eh;
+					e.firstChild.oninput = eh;
+					break;
+					
+				default:
+					throw e.NORI_type;
+			}
+			break;
 		
 		default:
 			throw "property setter not implemented: " + key;
