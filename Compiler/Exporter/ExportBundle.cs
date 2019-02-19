@@ -36,7 +36,8 @@ namespace Exporter
                 ByteCodeCompiler bcc = new ByteCodeCompiler();
                 ByteBuffer buffer = bcc.GenerateByteCode(parserContext, resolvedParseTree);
 
-                string jsFilePrefix = buildContext.JsFilePrefix == null
+                string jsFilePrefix = buildContext.JsFilePrefix;
+                jsFilePrefix = (jsFilePrefix == null || jsFilePrefix == "" || jsFilePrefix == "/")
                     ? ""
                     : ("/" + buildContext.JsFilePrefix.Trim('/') + "/");
 
