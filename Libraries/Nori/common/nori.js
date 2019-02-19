@@ -134,6 +134,16 @@ function createElement(id, type) {
 			s.height = '100%';
 			break;
 		
+		case 'CheckBox':
+			inner = document.createElement('input');
+			inner.type = 'checkbox';
+			s = inner.style;
+			s.width = '100%';
+			s.height = '100%';
+			s.margin = '0px';
+			s.padding = '0px';
+			break;
+		
 		case 'ScrollPanel':
 			wrapper.NORI_scrollpanel = ['none', 'none'];
 			break;
@@ -211,6 +221,7 @@ function setProperty(e, key, value) {
 			switch (e.NORI_type) {
 				case 'PasswordBox':
 				case 'TextBox':
+				case 'CheckBox':
 					if (e.firstChild.value != value) {
 						e.firstChild.value = value;
 					}
@@ -234,6 +245,9 @@ function setProperty(e, key, value) {
 						case 'TextBox':
 							inputValue = input.value;
 							break;
+						case 'CheckBox':
+							inputValue = input.checked ? '1' : '';
+							break;
 						default:
 							throw "unknown: " + e.NORI_type;
 					}
@@ -249,6 +263,11 @@ function setProperty(e, key, value) {
 				case 'TextBox':
 					e.firstChild.onchange = eh;
 					e.firstChild.oninput = eh;
+					break;
+					
+				case 'CheckBox':
+					e.firstChild.onchange = eh;
+					e.firstChild.onclick = eh;
 					break;
 					
 				default:
