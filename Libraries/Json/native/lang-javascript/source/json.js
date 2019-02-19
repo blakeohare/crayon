@@ -15,7 +15,7 @@ LIB$json$convertJsonThing = function(globals, thing) {
         case 'string': return buildString(globals, thing);
         case 'list':
             var list = [];
-            for (i = 0; i < thing.length; ++i) {
+            for (var i = 0; i < thing.length; ++i) {
                 list.push(LIB$json$convertJsonThing(globals, thing[i]));
             }
             return buildList(list);
