@@ -254,7 +254,7 @@ namespace Interpreter
 
         public static string ToBase64(string prefix, byte[] bytes)
         {
-            int[] bitPairs = new int[bytes.Length * 4];
+            int[] bitPairs = new int[bytes.Length * 4 + 3];
             int length = bytes.Length;
             char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".ToCharArray();
             System.Text.StringBuilder output = new System.Text.StringBuilder();
@@ -268,7 +268,7 @@ namespace Interpreter
                 bitPairs[j | 3] = bytes[i] & 3;
                 j += 4;
             }
-            length = bitPairs.Length;
+            length = bitPairs.Length - 3;
             int t;
             for (int i = 0; i < length; i += 3)
             {
