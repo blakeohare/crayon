@@ -8,19 +8,22 @@ namespace NoriXml {
         static field classesByName = {};
 
         static constructor() {
-            classes = [
-                Nori.Border.class,
-                Nori.Button.class,
-                Nori.DockPanel.class,
-                Nori.FlowPanel.class,
-                Nori.Image.class,
-                Nori.ScrollPanel.class,
-                Nori.StackPanel.class,
-                Nori.TextBlock.class,
-                Nori.TextBox.class,
-            ];
-            for (cls : classes) {
-                NXUtil.classesByName[cls.getName().split('.')[-1]] = cls;
+
+            doNotUse = {};
+            // TODO: use abstract classes.
+            for (cls : [
+                Nori.Element.class,
+                Nori.Panel.class,
+                Nori.AbstractTextBox.class,
+                Nori.InputElement.class,
+            ]) {
+                doNotUse[cls.getName().split('.')[-1]] = true;
+            }
+            for (cls : Core.Reflection.getClasses(Nori.Element.class)) {
+                name = cls.getName().split('.')[-1];
+                if (doNotUse.get(name) != true) {
+                    NXUtil.classesByName[name] = cls;
+                }
             }
         }
 
