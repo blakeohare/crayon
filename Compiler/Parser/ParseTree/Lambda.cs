@@ -67,6 +67,8 @@ namespace Parser.ParseTree
                 ex.ResolveVariableOrigins(parser, this.VariableScope, VariableIdAllocPhase.REGISTER_AND_ALLOC);
             }
 
+            this.VariableScope.FinalizeScopeIds();
+
             foreach (Lambda lambda in this.Lambdas)
             {
                 lambda.ResolveVariableOriginsForInnerCode(parser, this.VariableScope);
