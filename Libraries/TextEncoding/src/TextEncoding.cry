@@ -1,0 +1,49 @@
+﻿namespace TextEncoding {
+    enum TextFormat {
+        UNKNOWN = 0,
+
+        ASCII = 1,
+        UTF8 = 2,
+        UTF16 = 3,
+        UTF32 = 4,
+
+        // be sure to update the range checks if you change this enum.
+        // TODO: figure out what's up with the enum .min and .max fields and why they aren't compiling anymore.
+    }
+
+    function convertBytesToText(value, format) {
+        if (format < 0 || format > 4) {
+            throw new InvalidArgumentException("Unknown format");
+        }
+        output = [];
+        sc = $lib_textencoding_convertBytesToText(value, format, output);
+        err = '';
+        switch (sc) {
+            case 0: return output[0];
+            case 1: err = 'Invalid format requested'; break;
+            case 2: err = 'Input was not a list'; break;
+            case 3: err = 'Input list contained non-byte values'; break;
+            case 4: err = 'Invalid bytes for the given format'; break;
+            default: throw new InvalidOperationException("An unknown error occurred");
+        }
+        throw new InvalidArgumentException(err);
+    }
+
+    function convertTextToBytes(value, format, includeBom = false) {
+        if (format < 0 || format > 4) {
+            throw new InvalidArgumentException("Unknown format");
+        }
+        if (Core.typeof(includeBom) != Core.Type.BOOLEAN) {
+            throw new InvalidArgumentException("includeBom must be a boolean");
+        }
+        if (format == TextFormat.UNKNOWN) throw new InvalidArgumentException("UNKNOWN cannot be used as the encoding format.");
+
+        output = [];
+        sc = $lib_textencoding_convertTextToBytes(value, format, includeBom, output);
+        switch (sc) {
+            case 0: return output[0];
+            case 1: throw new InvalidArgumentException("The given string cannot be represented in the desired format.");
+            default: throw new InvalidOperationException("An unknown error occurred.");
+        }
+    }
+}

@@ -1,0 +1,19 @@
+﻿/*
+    args[0] -> string value
+    args[1] -> format
+        1: UTF8
+        2: UTF16
+        3: UTF32
+    args[2] -> include BOM (bool)
+    args[3] -> output list. The actual byte list will be added to this list as a nested list as opposed to the bytes being added to this list directly.
+*/
+VM.Value lib_textencoding_convertTextToBytes(VM.VmContext vm, Array<VM.Value> args) {
+    string value = (string) args[0].internalValue;
+    int format = (int) args[1].internalValue;
+    bool includeBom = (bool) args[2].internalValue;
+    VM.ListImpl output = (VM.ListImpl) args[3].internalValue;
+    List<VM.Value> byteList = new List<VM.Value>();
+    int sc = Extension._lib_textencoding_convertTextToBytes(value, includeBom, format, byteList, vm.globals.positiveIntegers);
+    if (sc == 0) VM.addToList(output, VM.buildList(byteList));
+    return VM.buildInteger(vm.globals, sc);
+}
