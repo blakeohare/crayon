@@ -156,7 +156,31 @@ namespace Interpreter.Libraries.TextEncoding
             bool includeBom = (bool)args[2].internalValue;
             ListImpl output = (ListImpl)args[3].internalValue;
             List<Value> byteList = new List<Value>();
-            int sc = TextEncodingHelper.TextToBytes(value, includeBom, format, byteList, vm.globals.positiveIntegers);
+            int[] intOut = PST_IntBuffer16;
+            int sc = TextEncodingHelper.TextToBytes(value, includeBom, format, byteList, vm.globals.positiveIntegers, intOut);
+            int swapWordSize = intOut[0];
+            if ((swapWordSize != 0))
+            {
+                int i = 0;
+                int j = 0;
+                int length = byteList.Count;
+                Value swap = null;
+                int half = (swapWordSize >> 1);
+                int k = 0;
+                while ((i < length))
+                {
+                    k = (i + swapWordSize - 1);
+                    j = 0;
+                    while ((j < half))
+                    {
+                        swap = byteList[(i + j)];
+                        byteList[(i + j)] = byteList[(k - j)];
+                        byteList[(k - j)] = swap;
+                        j += 1;
+                    }
+                    i += swapWordSize;
+                }
+            }
             if ((sc == 0))
             {
                 Interpreter.Vm.CrayonWrapper.addToList(output, Interpreter.Vm.CrayonWrapper.buildList(byteList));

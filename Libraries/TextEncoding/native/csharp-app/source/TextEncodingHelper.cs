@@ -101,23 +101,45 @@ namespace Interpreter.Libraries.TextEncoding
             return 0;
         }
 
-        public static int TextToBytes(string value, bool includeBom, int format, List<Value> byteList, Value[] positiveIntegers)
+        public static int TextToBytes(
+            string value,
+            bool includeBom,
+            int format,
+            List<Value> byteList,
+            Value[] positiveIntegers,
+            int[] intOut)
         {
+            intOut[0] = 0;
             byte[] bytes;
             switch (format)
             {
                 case 1:
+                case 2:
                     bytes = System.Text.Encoding.ASCII.GetBytes(value.ToCharArray());
                     break;
-                case 2:
+
+                case 3:
                     bytes = System.Text.Encoding.UTF8.GetBytes(value.ToCharArray());
                     break;
-                case 3:
-                    bytes = System.Text.Encoding.Unicode.GetBytes(value.ToCharArray());
-                    break;
+
                 case 4:
-                    bytes = System.Text.Encoding.UTF32.GetBytes(value.ToCharArray());
+                case 5:
+                    bytes = System.Text.Encoding.Unicode.GetBytes(value.ToCharArray());
+                    if (format == 5)
+                    {
+                        intOut[0] = 2;
+                    }
                     break;
+
+                case 6:
+                case 7:
+                    bytes = System.Text.Encoding.UTF32.GetBytes(value.ToCharArray());
+                    if (format == 7)
+                    {
+                        intOut[0] = 4;
+                    }
+                    break;
+
                 default:
                     throw new InvalidOperationException();
             }
@@ -127,17 +149,23 @@ namespace Interpreter.Libraries.TextEncoding
                 switch (format)
                 {
                     case 1:
-                        break;
                     case 2:
+                        break;
+
+                    case 3:
                         byteList.Add(positiveIntegers[239]);
                         byteList.Add(positiveIntegers[187]);
                         byteList.Add(positiveIntegers[191]);
                         break;
-                    case 3:
+
+                    case 4:
+                    case 5:
                         byteList.Add(positiveIntegers[255]);
                         byteList.Add(positiveIntegers[254]);
                         break;
-                    case 4:
+
+                    case 6:
+                    case 7:
                         byteList.Add(positiveIntegers[255]);
                         byteList.Add(positiveIntegers[254]);
                         byteList.Add(positiveIntegers[0]);

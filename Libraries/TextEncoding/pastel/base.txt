@@ -1,4 +1,4 @@
 SOURCE: src/main.pst
 
 EXT-TYPE: int _lib_textencoding_convertBytesToText(Array<int> byteValues, int format, Array<string> strOut);
-EXT-TYPE: int _lib_textencoding_convertTextToBytes(string value, bool includeBom, int format, List<VM.Value> byteList, Array<VM.Value> positiveIntegers);
+EXT-TYPE: int _lib_textencoding_convertTextToBytes(string value, bool includeBom, int format, List<VM.Value> byteList, Array<VM.Value> positiveIntegers, Array<int> intOut);

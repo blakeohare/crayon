@@ -355,7 +355,28 @@ public final class LibraryWrapper {
     boolean includeBom = ((boolean) args[2].internalValue);
     ListImpl output = ((ListImpl) args[3].internalValue);
     ArrayList<Value> byteList = new ArrayList<Value>();
-    int sc = crayonlib.textencoding.TextEncodingHelper.textToBytes(value, includeBom, format, byteList, vm.globals.positiveIntegers);
+    int[] intOut = PST_intBuffer16;
+    int sc = crayonlib.textencoding.TextEncodingHelper.textToBytes(value, includeBom, format, byteList, vm.globals.positiveIntegers, intOut);
+    int swapWordSize = intOut[0];
+    if ((swapWordSize != 0)) {
+      int i = 0;
+      int j = 0;
+      int length = byteList.size();
+      Value swap = null;
+      int half = (swapWordSize >> 1);
+      int k = 0;
+      while ((i < length)) {
+        k = (i + swapWordSize - 1);
+        j = 0;
+        while ((j < half)) {
+          swap = byteList.get((i + j));
+          byteList.set((i + j), byteList.get((k - j)));
+          byteList.set((k - j), swap);
+          j += 1;
+        }
+        i += swapWordSize;
+      }
+    }
     if ((sc == 0)) {
       org.crayonlang.interpreter.vm.CrayonWrapper.addToList(output, org.crayonlang.interpreter.vm.CrayonWrapper.buildList(byteList));
     }

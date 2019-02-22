@@ -3,20 +3,67 @@
         UNKNOWN = 0,
 
         ASCII = 1,
-        UTF8 = 2,
-        UTF16 = 3,
-        UTF32 = 4,
+        ISO_8859_1 = 2,
+        UTF8 = 3,
+        UTF16_LE = 4,
+        UTF16_BE = 5,
+        UTF32_LE = 6,
+        UTF32_BE = 7,
 
         // be sure to update the range checks if you change this enum.
         // TODO: figure out what's up with the enum .min and .max fields and why they aren't compiling anymore.
     }
 
-    function convertBytesToText(value, format) {
-        if (format < 0 || format > 4) {
+    function convertBytesToText(bytes, format) {
+        if (format < 0 || format > TextFormat.UTF32_BE) {
             throw new InvalidArgumentException("Unknown format");
         }
         output = [];
-        sc = $lib_textencoding_convertBytesToText(value, format, output);
+        bLength = bytes.length;
+        detectedFormat = -1;
+        trimLength = 0;
+        // TODO: maybe put this in the Pastel generated code.
+
+        if (format == TextFormat.ISO_8859_1) {
+            // ignore the format detection if the user explicitly wants ISO-8859-1
+            detectedFormat = TextFormat.ISO_8859_1;
+        } else if (bLength >= 4 && bytes[0] == 255 && bytes[1] == 254 && bytes[2] == 0 && bytes[3] == 0) {
+            detectedFormat = TextFormat.UTF32_LE;
+            trimLength = 4;
+        } else if (bLength >= 4 && bytes[0] == 0 && bytes[1] == 0 && bytes[2] == 254 && bytes[3] == 255) {
+            detectedFormat = TextFormat.UTF32_BE;
+            trimLength = 4;
+        } else if (bLength >= 3 && bytes[0] == 239 && bytes[1] == 187 && bytes[2] == 191) {
+            detectedFormat = TextFormat.UTF8;
+            trimLength = 3;
+        } else if (bLength >= 2 && bytes[0] == 255 && bytes[1] == 254) {
+            detectedFormat = TextFormat.UTF16_LE;
+            trimLength = 2;
+        } else if (bLength >= 2 && bytes[0] == 254 && bytes[1] == 255) {
+            detectedFormat = TextFormat.UTF16_BE;
+            trimLength = 2;
+        }
+
+        if (trimLength != 0) {
+            bytes = bytes[trimLength:];
+            bLength = bytes.length;
+        }
+
+        if (detectedFormat != -1 && format != 0 && format != detectedFormat) {
+            sc = 4;
+        } else {
+            if (detectedFormat != -1) {
+                format = detectedFormat;
+            }
+
+            if ((format == TextFormat.UTF16_LE || format == TextFormat.UTF16_BE) && bLength % 2 != 0) {
+                sc = 4;
+            } else if ((format == TextFormat.UTF32_LE || format == TextFormat.UTF32_BE) && bLength % 4 != 0) {
+                sc = 4;
+            } else {
+                sc = $lib_textencoding_convertBytesToText(bytes, format, output);
+            }
+        }
         err = '';
         switch (sc) {
             case 0: return output[0];
@@ -30,7 +77,7 @@
     }
 
     function convertTextToBytes(value, format, includeBom = false) {
-        if (format < 0 || format > 4) {
+        if (format < 0 || format > TextFormat.UTF32_BE) {
             throw new InvalidArgumentException("Unknown format");
         }
         if (Core.typeof(includeBom) != Core.Type.BOOLEAN) {
