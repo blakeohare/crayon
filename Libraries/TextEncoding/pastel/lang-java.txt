@@ -6,8 +6,8 @@ LANGUAGE: java
 
 DEPENDENCY: VM: ../../../Interpreter/java-app.txt
 
-OUTPUT-STRUCTS: ../native/java-app/gen/structs
-OUTPUT-FUNCTIONS: ../native/java-app/gen/LibraryWrapper.java
+OUTPUT-STRUCTS: ../native/lang-java/gen/structs
+OUTPUT-FUNCTIONS: ../native/lang-java/gen/LibraryWrapper.java
 
 NAMESPACE-FUNCTIONS: org.crayonlang.libraries.textencoding
 NAMESPACE-STRUCTS: org.crayonlang.libraries.textencoding

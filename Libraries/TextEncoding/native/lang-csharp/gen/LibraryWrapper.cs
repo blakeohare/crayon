@@ -131,6 +131,7 @@ namespace Interpreter.Libraries.TextEncoding
             int[] unwrappedBytes = new int[length];
             int i = 0;
             Value value = null;
+            int c = 0;
             while ((i < length))
             {
                 value = byteList.array[i];
@@ -138,7 +139,12 @@ namespace Interpreter.Libraries.TextEncoding
                 {
                     return Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, 3);
                 }
-                unwrappedBytes[i] = (int)value.internalValue;
+                c = (int)value.internalValue;
+                if (((c < 0) || (c > 255)))
+                {
+                    return Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, 3);
+                }
+                unwrappedBytes[i] = c;
                 i += 1;
             }
             int sc = TextEncodingHelper.BytesToText(unwrappedBytes, format, strOut);

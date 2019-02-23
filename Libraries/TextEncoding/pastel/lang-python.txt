@@ -6,7 +6,7 @@ LANGUAGE: python
 
 DEPENDENCY: VM: ../../../Interpreter/python-app.txt
 
-OUTPUT-FUNCTIONS: ../native/python-app/gen/lib_textencoding.py
+OUTPUT-FUNCTIONS: ../native/lang-python/gen/lib_textencoding.py
 CODE-IMPORT: code.vm as VM
 
 EXT: _lib_textencoding_convertBytesToText: lib_textencoding_bytesToText([ARG:1], [ARG:2], [ARG:3])

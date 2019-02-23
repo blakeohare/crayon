@@ -334,12 +334,17 @@ public final class LibraryWrapper {
     int[] unwrappedBytes = new int[length];
     int i = 0;
     Value value = null;
+    int c = 0;
     while ((i < length)) {
       value = byteList.array[i];
       if ((value.type != 3)) {
         return org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(vm.globals, 3);
       }
-      unwrappedBytes[i] = ((int) value.internalValue);
+      c = ((int) value.internalValue);
+      if (((c < 0) || (c > 255))) {
+        return org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(vm.globals, 3);
+      }
+      unwrappedBytes[i] = c;
       i += 1;
     }
     int sc = crayonlib.textencoding.TextEncodingHelper.bytesToText(unwrappedBytes, format, strOut);

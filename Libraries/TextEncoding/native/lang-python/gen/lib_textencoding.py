@@ -52,11 +52,15 @@ def lib_textencoding_convertBytesToText(vm, args):
   unwrappedBytes = (PST_NoneListOfOne * length)
   i = 0
   value = None
+  c = 0
   while (i < length):
     value = byteList[2][i]
     if (value[0] != 3):
       return buildInteger(vm[13], 3)
-    unwrappedBytes[i] = value[1]
+    c = value[1]
+    if ((c < 0) or (c > 255)):
+      return buildInteger(vm[13], 3)
+    unwrappedBytes[i] = c
     i += 1
   sc = lib_textencoding_bytesToText(unwrappedBytes, format, strOut)
   if (sc == 0):
