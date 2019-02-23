@@ -1,0 +1,11 @@
+{
+	"name": "TextEncoding",
+	"author": "Blake O'Hare",
+	"documentation": "http://crayonlang.org/docs/0.2.1/textencoding",
+	"description": "Library for encoding and decoding Text formats.",
+	
+	"cni": [
+		{ "name": "lib_textencoding_convertBytesToText", "argc": 3 },
+		{ "name": "lib_textencoding_convertTextToBytes", "argc": 4 }
+	]
+}

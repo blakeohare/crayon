@@ -1,0 +1,12 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-javascript.txt
+IMPORT: ../../../Interpreter/headers-javascript.txt
+
+LANGUAGE: javascript
+
+DEPENDENCY: VM: ../../../Interpreter/javascript-app.txt
+
+OUTPUT-FUNCTIONS: ../native/javascript-app/gen/lib_textencoding.js
+
+EXT: _lib_textencoding_convertBytesToText: LIB$textencoding$bytesToText([ARG:1], [ARG:2], [ARG:3])
+EXT: _lib_textencoding_convertTextToBytes: LIB$textencoding$textToBytes([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6])
