@@ -115,12 +115,17 @@ var lib_textencoding_convertBytesToText = function(vm, args) {
 	var unwrappedBytes = PST$createNewArray(length);
 	var i = 0;
 	var value = null;
+	var c = 0;
 	while ((i < length)) {
 		value = byteList[2][i];
 		if ((value[0] != 3)) {
 			return buildInteger(vm[13], 3);
 		}
-		unwrappedBytes[i] = value[1];
+		c = value[1];
+		if (((c < 0) || (c > 255))) {
+			return buildInteger(vm[13], 3);
+		}
+		unwrappedBytes[i] = c;
 		i += 1;
 	}
 	var sc = LIB$textencoding$bytesToText(unwrappedBytes, format, strOut);
@@ -136,7 +141,28 @@ var lib_textencoding_convertTextToBytes = function(vm, args) {
 	var includeBom = args[2][1];
 	var output = args[3][1];
 	var byteList = [];
-	var sc = LIB$textencoding$textToBytes(value, includeBom, format, byteList, vm[13][9]);
+	var intOut = PST$intBuffer16;
+	var sc = LIB$textencoding$textToBytes(value, includeBom, format, byteList, vm[13][9], intOut);
+	var swapWordSize = intOut[0];
+	if ((swapWordSize != 0)) {
+		var i = 0;
+		var j = 0;
+		var length = byteList.length;
+		var swap = null;
+		var half = (swapWordSize >> 1);
+		var k = 0;
+		while ((i < length)) {
+			k = (i + swapWordSize - 1);
+			j = 0;
+			while ((j < half)) {
+				swap = byteList[(i + j)];
+				byteList[(i + j)] = byteList[(k - j)];
+				byteList[(k - j)] = swap;
+				j += 1;
+			}
+			i += swapWordSize;
+		}
+	}
 	if ((sc == 0)) {
 		addToList(output, buildList(byteList));
 	}
