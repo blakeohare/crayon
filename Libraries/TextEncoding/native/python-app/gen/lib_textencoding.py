@@ -69,7 +69,25 @@ def lib_textencoding_convertTextToBytes(vm, args):
   includeBom = args[2][1]
   output = args[3][1]
   byteList = []
-  sc = lib_textencoding_textToBytes(value, includeBom, format, byteList, vm[13][9])
+  intOut = PST_IntBuffer16
+  sc = lib_textencoding_textToBytes(value, includeBom, format, byteList, vm[13][9], intOut)
+  swapWordSize = intOut[0]
+  if (swapWordSize != 0):
+    i = 0
+    j = 0
+    length = len(byteList)
+    swap = None
+    half = (swapWordSize >> 1)
+    k = 0
+    while (i < length):
+      k = (i + swapWordSize - 1)
+      j = 0
+      while (j < half):
+        swap = byteList[(i + j)]
+        byteList[(i + j)] = byteList[(k - j)]
+        byteList[(k - j)] = swap
+        j += 1
+      i += swapWordSize
   if (sc == 0):
     addToList(output, buildList(byteList))
   return buildInteger(vm[13], sc)

@@ -21,6 +21,7 @@ VM.Value lib_textencoding_convertBytesToText(VM.VmContext vm, Array<VM.Value> ar
     Array<int> unwrappedBytes = new Array<int>(length);
     int i = 0;
     VM.Value value = null;
+    int c = 0;
     while (i < length) {
         if (@ext_boolean("ARRAY_IS_LIST")) {
             value = byteList.list[i];
@@ -30,7 +31,11 @@ VM.Value lib_textencoding_convertBytesToText(VM.VmContext vm, Array<VM.Value> ar
         if (value.type != VM.Types.INTEGER) {
             return VM.buildInteger(vm.globals, 3); // list contains a non-integer.
         }
-        unwrappedBytes[i] = (int)value.internalValue;
+        c = (int)value.internalValue;
+        if (c < 0 || c > 255) {
+            return VM.buildInteger(vm.globals, 3);
+        }
+        unwrappedBytes[i] = c;
         i += 1;
     }
     int sc = Extension._lib_textencoding_convertBytesToText(unwrappedBytes, format, strOut);

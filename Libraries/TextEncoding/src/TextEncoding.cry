@@ -14,6 +14,10 @@
         // TODO: figure out what's up with the enum .min and .max fields and why they aren't compiling anymore.
     }
 
+    class EncodingException : Core.Exception {
+        constructor(m) : base(m) { }
+    }
+
     function convertBytesToText(bytes, format) {
         if (format < 0 || format > TextFormat.UTF32_BE) {
             throw new InvalidArgumentException("Unknown format");
@@ -70,7 +74,7 @@
             case 1: err = 'Invalid format requested'; break;
             case 2: err = 'Input was not a list'; break;
             case 3: err = 'Input list contained non-byte values'; break;
-            case 4: err = 'Invalid bytes for the given format'; break;
+            case 4: throw new EncodingException("Invalid bytes for the given format");
             default: throw new InvalidOperationException("An unknown error occurred");
         }
         throw new InvalidArgumentException(err);
@@ -89,7 +93,7 @@
         sc = $lib_textencoding_convertTextToBytes(value, format, includeBom, output);
         switch (sc) {
             case 0: return output[0];
-            case 1: throw new InvalidArgumentException("The given string cannot be represented in the desired format.");
+            case 1: throw new EncodingException("The given string cannot be represented in the desired format.");
             default: throw new InvalidOperationException("An unknown error occurred.");
         }
     }
