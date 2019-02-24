@@ -1,0 +1,52 @@
+import TextEncoding;
+
+function test() {
+
+	samples = [
+		"abc", // 3 randomly chosen latin characters
+		"大丈夫", // kanji - daijoubu
+		"💩", // feces emoji
+	];
+	
+	encodings = {
+		'ascii': [TextFormat.ASCII, false],
+		'iso-8859-1': [TextFormat.ISO_8859_1, false],
+		'utf-8': [TextFormat.UTF8, false],
+		'utf-8 + BOM': [TextFormat.UTF8, true],
+		'utf-16 LE': [TextFormat.UTF16_LE, false],
+		'utf-16 LE + BOM': [TextFormat.UTF16_LE, true],
+		'utf-16 BE': [TextFormat.UTF16_BE, false],
+		'utf-16 BE + BOM': [TextFormat.UTF16_BE, true],
+		'utf-32 LE': [TextFormat.UTF32_LE, false],
+		'utf-32 LE + BOM': [TextFormat.UTF32_LE, true],
+		'utf-32 BE': [TextFormat.UTF32_BE, false],
+		'utf-32 BE + BOM': [TextFormat.UTF32_BE, true],
+	};
+	
+	for (sample : samples) {
+		encodingKeys = encodings.keys();
+		encodingKeys.sort();
+		for (k : encodingKeys) {
+			t = encodings[k];
+			encoding = t[0];
+			useBom = t[1];
+			
+			print(sample + " as " + k);
+			bytes = null;
+			exThrown = false;
+			try {
+				bytes = convertTextToBytes(sample, encoding, useBom);
+			} catch (EncodingException) {
+				exThrown = true;
+			}
+			if (exThrown) {
+				print("Exception Thrown");
+			} else {
+				print(bytes);
+				print("Roundtrip:");
+				s = convertBytesToText(bytes, encoding);
+				print(s);
+			}
+		}
+	}
+}
