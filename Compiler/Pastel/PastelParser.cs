@@ -689,7 +689,7 @@ namespace Pastel
                 case ".":
                     Token dotToken = tokens.Pop();
                     Token numToken = tokens.Pop();
-                    EnsureInteger(tokens.Pop(), false);
+                    EnsureInteger(tokens.Pop(), false, false);
                     string strValue = "0." + numToken.Value;
                     double dblValue;
                     if (!numToken.HasWhitespacePrefix && double.TryParse(strValue, out dblValue))
@@ -719,11 +719,11 @@ namespace Pastel
                 Token numToken = tokens.Pop();
                 if (tokens.IsNext("."))
                 {
-                    EnsureInteger(numToken, false);
+                    EnsureInteger(numToken, false, false);
                     Token dotToken = tokens.Pop();
                     if (dotToken.HasWhitespacePrefix) throw new ParserException(dotToken, "Unexpected '.'");
                     Token decimalToken = tokens.Pop();
-                    EnsureInteger(decimalToken, false);
+                    EnsureInteger(decimalToken, false, false);
                     if (decimalToken.HasWhitespacePrefix) throw new ParserException(decimalToken, "Unexpected '" + decimalToken.Value + "'");
                     double dblValue;
                     if (double.TryParse(numToken.Value + "." + decimalToken.Value, out dblValue))
@@ -734,7 +734,7 @@ namespace Pastel
                 }
                 else
                 {
-                    int numValue = EnsureInteger(numToken, true);
+                    int numValue = EnsureInteger(numToken, true, true);
                     return new InlineConstant(PType.INT, numToken, numValue, this.currentCodeOwner);
                 }
             }
@@ -774,16 +774,11 @@ namespace Pastel
             }
         }
 
-        private int EnsureInteger(Token token, bool allowHex)
+        // This function became really weird for legitimate reasons, but deseparately needs to be written (or rather,
+        // the places where this is called need to be rewritten).
+        private int EnsureInteger(Token token, bool allowHex, bool calculateValue)
         {
             string value = token.Value;
-            switch (value)
-            {
-                // This is like 80% of the cases
-                case "0": return 0;
-                case "1": return 1;
-                case "2": return 2;
-            }
             char c;
             if (allowHex && value.StartsWith("0x"))
             {
@@ -791,7 +786,7 @@ namespace Pastel
                 int num = 0;
                 for (int i = 0; i < value.Length; ++i)
                 {
-                    num <<= 4;
+                    num *= 16;
                     c = value[i];
                     if (c >= '0' && c <= '9')
                     {
@@ -802,7 +797,7 @@ namespace Pastel
                         num += c - 'a' + 10;
                     }
                 }
-                return num;
+                return calculateValue ? num : 0;
             }
             for (int i = value.Length - 1; i >= 0; --i)
             {
@@ -812,7 +807,13 @@ namespace Pastel
                     throw new ParserException(token, "Expected number");
                 }
             }
-            return int.Parse(value);
+            if (!calculateValue) return 0;
+            int output;
+            if (!int.TryParse(value, out output))
+            {
+                throw new ParserException(token, "Integer is too big.");
+            }
+            return output;
         }
 
         public static Token EnsureTokenIsValidName(Token token, string errorMessage)
