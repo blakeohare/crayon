@@ -1,0 +1,11 @@
+﻿/*
+    Adds a list of integers to the object's native data.
+
+    args[0] -> hash object instance
+*/
+VM.Value lib_md5_initHash(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance obj = (VM.ObjectInstance) args[0].internalValue;
+    obj.nativeData = new Array<object>(1);
+    obj.nativeData[0] = new List<int>();
+    return vm.globalNull;
+}
