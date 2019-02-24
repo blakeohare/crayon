@@ -3,7 +3,7 @@
     VM.ListImpl output = (VM.ListImpl) args[1].internalValue;
     List<int> byteList = (List<int>) obj.nativeData[0];
     Array<int> resultBytes = lib_md5_digestMd5Impl(byteList);
-    for (int i = 0; i < 16; ++i) {
+    for (int i = 0; i < 16; i += 1) {
         int b = resultBytes[i];
         VM.addToList(output, vm.globals.positiveIntegers[b]);
     }
@@ -81,83 +81,88 @@ Array<int> lib_md5_digestMd5Impl(List<int> inputBytes) {
     s[62] = 15;
     s[63] = 21;
 
-    K[0] = 0xd76aa478;
-    K[1] = 0xe8c7b756;
-    K[2] = 0x242070db;
-    K[3] = 0xc1bdceee;
-    K[4] = 0xf57c0faf;
-    K[5] = 0x4787c62a;
-    K[6] = 0xa8304613;
-    K[7] = 0xfd469501;
-    K[8] = 0x698098d8;
-    K[9] = 0x8b44f7af;
-    K[10] = 0xffff5bb1;
-    K[11] = 0x895cd7be;
-    K[12] = 0x6b901122;
-    K[13] = 0xfd987193;
-    K[14] = 0xa679438e;
-    K[15] = 0x49b40821;
-    K[16] = 0xf61e2562;
-    K[17] = 0xc040b340;
-    K[18] = 0x265e5a51;
-    K[19] = 0xe9b6c7aa;
-    K[20] = 0xd62f105d;
-    K[21] = 0x02441453;
-    K[22] = 0xd8a1e681;
-    K[23] = 0xe7d3fbc8;
-    K[24] = 0x21e1cde6;
-    K[25] = 0xc33707d6;
-    K[26] = 0xf4d50d87;
-    K[27] = 0x455a14ed;
-    K[28] = 0xa9e3e905;
-    K[29] = 0xfcefa3f8;
-    K[30] = 0x676f02d9;
-    K[31] = 0x8d2a4c8a;
-    K[32] = 0xfffa3942;
-    K[33] = 0x8771f681;
-    K[34] = 0x6d9d6122;
-    K[35] = 0xfde5380c;
-    K[36] = 0xa4beea44;
-    K[37] = 0x4bdecfa9;
-    K[38] = 0xf6bb4b60;
-    K[39] = 0xbebfbc70;
-    K[40] = 0x289b7ec6;
-    K[41] = 0xeaa127fa;
-    K[42] = 0xd4ef3085;
-    K[43] = 0x04881d05;
-    K[44] = 0xd9d4d039;
-    K[45] = 0xe6db99e5;
-    K[46] = 0x1fa27cf8;
-    K[47] = 0xc4ac5665;
-    K[48] = 0xf4292244;
-    K[49] = 0x432aff97;
-    K[50] = 0xab9423a7;
-    K[51] = 0xfc93a039;
-    K[52] = 0x655b59c3;
-    K[53] = 0x8f0ccc92;
-    K[54] = 0xffeff47d;
-    K[55] = 0x85845dd1;
-    K[56] = 0x6fa87e4f;
-    K[57] = 0xfe2ce6e0;
-    K[58] = 0xa3014314;
-    K[59] = 0x4e0811a1;
-    K[50] = 0xf7537e82;
-    K[61] = 0xbd3af235;
-    K[62] = 0x2ad7d2bb;
-    K[63] = 0xeb86d391;
+    K[0] = lib_md5_uint32Hack(0xd76a, 0xa478);
+    K[1] = lib_md5_uint32Hack(0xe8c7, 0xb756);
+    K[2] = lib_md5_uint32Hack(0x2420, 0x70db);
+    K[3] = lib_md5_uint32Hack(0xc1bd, 0xceee);
+    K[4] = lib_md5_uint32Hack(0xf57c, 0x0faf);
+    K[5] = lib_md5_uint32Hack(0x4787, 0xc62a);
+    K[6] = lib_md5_uint32Hack(0xa830, 0x4613);
+    K[7] = lib_md5_uint32Hack(0xfd46, 0x9501);
+    K[8] = lib_md5_uint32Hack(0x6980, 0x98d8);
+    K[9] = lib_md5_uint32Hack(0x8b44, 0xf7af);
+    K[10] = lib_md5_uint32Hack(0xffff, 0x5bb1);
+    K[11] = lib_md5_uint32Hack(0x895c, 0xd7be);
+    K[12] = lib_md5_uint32Hack(0x6b90, 0x1122);
+    K[13] = lib_md5_uint32Hack(0xfd98, 0x7193);
+    K[14] = lib_md5_uint32Hack(0xa679, 0x438e);
+    K[15] = lib_md5_uint32Hack(0x49b4, 0x0821);
+    K[16] = lib_md5_uint32Hack(0xf61e, 0x2562);
+    K[17] = lib_md5_uint32Hack(0xc040, 0xb340);
+    K[18] = lib_md5_uint32Hack(0x265e, 0x5a51);
+    K[19] = lib_md5_uint32Hack(0xe9b6, 0xc7aa);
+    K[20] = lib_md5_uint32Hack(0xd62f, 0x105d);
+    K[21] = lib_md5_uint32Hack(0x0244, 0x1453);
+    K[22] = lib_md5_uint32Hack(0xd8a1, 0xe681);
+    K[23] = lib_md5_uint32Hack(0xe7d3, 0xfbc8);
+    K[24] = lib_md5_uint32Hack(0x21e1, 0xcde6);
+    K[25] = lib_md5_uint32Hack(0xc337, 0x07d6);
+    K[26] = lib_md5_uint32Hack(0xf4d5, 0x0d87);
+    K[27] = lib_md5_uint32Hack(0x455a, 0x14ed);
+    K[28] = lib_md5_uint32Hack(0xa9e3, 0xe905);
+    K[29] = lib_md5_uint32Hack(0xfcef, 0xa3f8);
+    K[30] = lib_md5_uint32Hack(0x676f, 0x02d9);
+    K[31] = lib_md5_uint32Hack(0x8d2a, 0x4c8a);
+    K[32] = lib_md5_uint32Hack(0xfffa, 0x3942);
+    K[33] = lib_md5_uint32Hack(0x8771, 0xf681);
+    K[34] = lib_md5_uint32Hack(0x6d9d, 0x6122);
+    K[35] = lib_md5_uint32Hack(0xfde5, 0x380c);
+    K[36] = lib_md5_uint32Hack(0xa4be, 0xea44);
+    K[37] = lib_md5_uint32Hack(0x4bde, 0xcfa9);
+    K[38] = lib_md5_uint32Hack(0xf6bb, 0x4b60);
+    K[39] = lib_md5_uint32Hack(0xbebf, 0xbc70);
+    K[40] = lib_md5_uint32Hack(0x289b, 0x7ec6);
+    K[41] = lib_md5_uint32Hack(0xeaa1, 0x27fa);
+    K[42] = lib_md5_uint32Hack(0xd4ef, 0x3085);
+    K[43] = lib_md5_uint32Hack(0x0488, 0x1d05);
+    K[44] = lib_md5_uint32Hack(0xd9d4, 0xd039);
+    K[45] = lib_md5_uint32Hack(0xe6db, 0x99e5);
+    K[46] = lib_md5_uint32Hack(0x1fa2, 0x7cf8);
+    K[47] = lib_md5_uint32Hack(0xc4ac, 0x5665);
+    K[48] = lib_md5_uint32Hack(0xf429, 0x2244);
+    K[49] = lib_md5_uint32Hack(0x432a, 0xff97);
+    K[50] = lib_md5_uint32Hack(0xab94, 0x23a7);
+    K[51] = lib_md5_uint32Hack(0xfc93, 0xa039);
+    K[52] = lib_md5_uint32Hack(0x655b, 0x59c3);
+    K[53] = lib_md5_uint32Hack(0x8f0c, 0xcc92);
+    K[54] = lib_md5_uint32Hack(0xffef, 0xf47d);
+    K[55] = lib_md5_uint32Hack(0x8584, 0x5dd1);
+    K[56] = lib_md5_uint32Hack(0x6fa8, 0x7e4f);
+    K[57] = lib_md5_uint32Hack(0xfe2c, 0xe6e0);
+    K[58] = lib_md5_uint32Hack(0xa301, 0x4314);
+    K[59] = lib_md5_uint32Hack(0x4e08, 0x11a1);
+    K[60] = lib_md5_uint32Hack(0xf753, 0x7e82);
+    K[61] = lib_md5_uint32Hack(0xbd3a, 0xf235);
+    K[62] = lib_md5_uint32Hack(0x2ad7, 0xd2bb);
+    K[63] = lib_md5_uint32Hack(0xeb86, 0xd391);
 
-    int a0 = 0x67452301;
-    int b0 = 0xefcdab89;
-    int c0 = 0x98badcfe;
-    int d0 = 0x10325476;
+    int a0 = lib_md5_uint32Hack(0x6745, 0x2301);
+    int b0 = lib_md5_uint32Hack(0xefcd, 0xab89);
+    int c0 = lib_md5_uint32Hack(0x98ba, 0xdcfe);
+    int d0 = lib_md5_uint32Hack(0x1032, 0x5476);
 
     int originalLength = inputBytes.Size();
 
     inputBytes.Add(128);
 
-    while (inputBytes.Count % 64 != 60) {
+    while (inputBytes.Size() % 64 != 56) {
         inputBytes.Add(0);
     }
+
+    inputBytes.Add(0);
+    inputBytes.Add(0);
+    inputBytes.Add(0);
+    inputBytes.Add(0);
 
     inputBytes.Add((originalLength >> 24) & 255);
     inputBytes.Add((originalLength >> 16) & 255);
@@ -165,38 +170,40 @@ Array<int> lib_md5_digestMd5Impl(List<int> inputBytes) {
     inputBytes.Add(originalLength & 255);
 
     Array<int> M = new Array<int>(16);
+    int m = 0;
 
-    int mask32 = 0xffffffff;
+    int mask32 = lib_md5_uint32Hack(0xffff, 0xffff);
     int F = 0;
     int g = 0;
     int t = 0;
     int rotAmt = 0;
     for (int chunkIndex = 0; chunkIndex < inputBytes.Size(); chunkIndex += 64) {
 
-        for (int j = 0; j < 16; ++j) {
+        for (int j = 0; j < 16; j += 1) {
             t = chunkIndex + j * 4;
-            M[j] = inputBytes[t] << 24;
-            M[j] += inputBytes[t + 1] << 16;
-            M[j] += inputBytes[t + 2] << 8;
-            M[j] += inputBytes[t + 3];
+            m = inputBytes[t] << 24;
+            m += inputBytes[t + 1] << 16;
+            m += inputBytes[t + 2] << 8;
+            m += inputBytes[t + 3];
+            M[j] = m;
         }
 
         int A = a0;
         int B = b0;
         int C = c0;
         int D = d0;
-        for (int i = 0; i < 64; ++i) {
+        for (int i = 0; i < 64; i += 1) {
             if (i < 16) {
-                F = Core.ForceParens(B & C) | Core.ForceParens(Core.ForceParens(~B) & D);
+                F = Core.ForceParens(B & C) | Core.ForceParens(lib_md5_bitwiseNot(B) & D);
                 g = i;
             } else if (i < 32) {
-                F = Core.ForceParens(D & B) | Core.ForceParens(Core.ForceParens(~D) & C);
+                F = Core.ForceParens(D & B) | Core.ForceParens(lib_md5_bitwiseNot(D) & C);
                 g = Core.ForceParens(5 * i + 1) & 15;
             } else if (i < 48) {
                 F = B ^ C ^ D;
                 g = Core.ForceParens(3 * i + 5) & 15;
             } else {
-                F = C ^ Core.ForceParens(B | Core.ForceParens(~D));
+                F = C ^ Core.ForceParens(B | lib_md5_bitwiseNot(D));
                 g = Core.ForceParens(7 * i) & 15;
             }
             F = Core.ForceParens(F + A + K[i] + M[g]) & mask32;
@@ -205,7 +212,7 @@ Array<int> lib_md5_digestMd5Impl(List<int> inputBytes) {
             C = B;
 
             rotAmt = s[i];
-            B = Core.ForceParens(B << rotAmt) | Core.ForceParens(B >> Core.ForceParens(32 - rotAmt));
+            B = B + Core.ForceParens(Core.ForceParens(F << rotAmt) | lib_md5_bitShiftRight(F, 32 - rotAmt));
         }
         a0 = Core.ForceParens(a0 + A) & mask32;
         b0 = Core.ForceParens(b0 + B) & mask32;
@@ -231,4 +238,23 @@ Array<int> lib_md5_digestMd5Impl(List<int> inputBytes) {
     output[14] = (d0 >> 8) & 255;
     output[15] = d0 & 255;
     return output;
+}
+
+// the lack of the distinction with >>> on some platforms makes this necessary when the result isn't explicitly masked.
+int lib_md5_bitShiftRight(int value, int amount) {
+    if (amount == 0) return value;
+    if (value > 0) return value >> amount;
+    int mask = 0x7fffffff;
+    return Core.ForceParens(value >> 1) & Core.ForceParens(mask >> Core.ForceParens(amount - 1));
+}
+
+// Pastel does not support unsigned int32 and will give range exceptions. However C# and Java will gracefully overflow
+// into negative numbers and this is okay. Python and JavaScript use Big Integer and int64's respectively.
+int lib_md5_uint32Hack(int left, int right) {
+    return Core.ForceParens(left << 16) | right;
+}
+
+// TODO: implement this in Pastel
+int lib_md5_bitwiseNot(int x) {
+    return -x - 1;
 }
