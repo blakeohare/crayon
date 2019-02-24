@@ -688,7 +688,8 @@ namespace Pastel
                     return new InlineConstant(PType.NULL, tokens.Pop(), null, this.currentCodeOwner);
                 case ".":
                     Token dotToken = tokens.Pop();
-                    Token numToken = EnsureInteger(tokens.Pop());
+                    Token numToken = tokens.Pop();
+                    EnsureInteger(tokens.Pop(), false);
                     string strValue = "0." + numToken.Value;
                     double dblValue;
                     if (!numToken.HasWhitespacePrefix && double.TryParse(strValue, out dblValue))
@@ -715,12 +716,14 @@ namespace Pastel
 
             if (firstChar >= '0' && firstChar <= '9')
             {
-                Token numToken = EnsureInteger(tokens.Pop());
+                Token numToken = tokens.Pop();
                 if (tokens.IsNext("."))
                 {
+                    EnsureInteger(numToken, false);
                     Token dotToken = tokens.Pop();
                     if (dotToken.HasWhitespacePrefix) throw new ParserException(dotToken, "Unexpected '.'");
-                    Token decimalToken = EnsureInteger(tokens.Pop());
+                    Token decimalToken = tokens.Pop();
+                    EnsureInteger(decimalToken, false);
                     if (decimalToken.HasWhitespacePrefix) throw new ParserException(decimalToken, "Unexpected '" + decimalToken.Value + "'");
                     double dblValue;
                     if (double.TryParse(numToken.Value + "." + decimalToken.Value, out dblValue))
@@ -729,7 +732,11 @@ namespace Pastel
                     }
                     throw new ParserException(decimalToken, "Unexpected token.");
                 }
-                return new InlineConstant(PType.INT, numToken, int.Parse(numToken.Value), this.currentCodeOwner);
+                else
+                {
+                    int numValue = EnsureInteger(numToken, true);
+                    return new InlineConstant(PType.INT, numToken, numValue, this.currentCodeOwner);
+                }
             }
 
             if (IsValidName(tokens.PeekValue()))
@@ -767,18 +774,36 @@ namespace Pastel
             }
         }
 
-        private Token EnsureInteger(Token token)
+        private int EnsureInteger(Token token, bool allowHex)
         {
             string value = token.Value;
             switch (value)
             {
-                case "0":
-                case "1":
-                case "2":
-                    // this is like 80% of cases.
-                    return token;
+                // This is like 80% of the cases
+                case "0": return 0;
+                case "1": return 1;
+                case "2": return 2;
             }
             char c;
+            if (allowHex && value.StartsWith("0x"))
+            {
+                value = value.Substring(2).ToLower();
+                int num = 0;
+                for (int i = 0; i < value.Length; ++i)
+                {
+                    num <<= 4;
+                    c = value[i];
+                    if (c >= '0' && c <= '9')
+                    {
+                        num += c - '0';
+                    }
+                    else if (c >= 'a' && c <= 'f')
+                    {
+                        num += c - 'a' + 10;
+                    }
+                }
+                return num;
+            }
             for (int i = value.Length - 1; i >= 0; --i)
             {
                 c = value[i];
@@ -787,7 +812,7 @@ namespace Pastel
                     throw new ParserException(token, "Expected number");
                 }
             }
-            return token;
+            return int.Parse(value);
         }
 
         public static Token EnsureTokenIsValidName(Token token, string errorMessage)
