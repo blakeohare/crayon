@@ -1,0 +1,75 @@
+﻿import TextEncoding;
+
+namespace CryptoMd5 {
+
+    class AbstractHash {
+
+        constructor() {
+            $lib_md5_initHash(this);
+        }
+
+        function showWarning(name, userOverride) {
+            if (userOverride != 'unsafe') {
+                print(
+                    name + " is not cryptographically secure and should be avoided " +
+                    "if possible. See http://crayonlang.org/cryptowarning for " +
+                    "more information and how to disable this message.");
+            }
+        }
+
+        function addText(value) {
+            return this.addTextWithEncoding(value, TextEncoding.TextFormat.UTF8);
+        }
+
+        function addTextWithEncoding(value, textEncoding) {
+            bytes = TextEncoding.convertTextToBytes(value, textEncoding);
+            $lib_md5_addBytes(this, bytes);
+            return this;
+        }
+
+        function addInteger(value) {
+            bytes = [
+                value & 255,
+                (value >> 8) & 255,
+                (value >> 16) & 255,
+                (value >> 24) & 255];
+            $lib_md5_addBytes(this, bytes);
+            return this;
+        }
+
+
+        function addByte(value) {
+            $lib_md5_addBytes(this, [value & 255]);
+            return this;
+        }
+
+        function digestImpl() {
+            throw new NotImplementedException();
+        }
+
+        function digestByteList() {
+            return this.digestImpl();
+        }
+
+        function digestHex() {
+            bytes = this.digestImpl();
+            sb = [];
+            h = '0123456789abcdef';
+            for (b : bytes) {
+                sb.add(h[b >> 4], h[b & 15]);
+            }
+            return sb.join('');
+        }
+    }
+
+    class Md5Hash : AbstractHash {
+
+        constructor(disableWarning = null) : base() {
+            this.showWarning('MD5', disableWarning);
+        }
+
+        function digestImpl() {
+            return $lib_md5_digestMd5(this, []);
+        }
+    }
+}
