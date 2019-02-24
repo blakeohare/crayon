@@ -9,95 +9,73 @@ namespace Interpreter.Libraries.TextEncoding
         public static int BytesToText(int[] unwrappedBytes, int format, string[] strOut)
         {
             int length = unwrappedBytes.Length;
-            int start = 0;
-            int detectedFormat = -1;
-            bool endianSwap = false;
-
-            if (length >= 3 && unwrappedBytes[0] == 239 && unwrappedBytes[1] == 187 && unwrappedBytes[2] == 191)
-            {
-                detectedFormat = 2;
-                start = 3;
-            }
-            else if (length >= 4 && unwrappedBytes[0] == 255 && unwrappedBytes[1] == 254 && unwrappedBytes[2] == 0 && unwrappedBytes[3] == 0)
-            {
-                detectedFormat = 4;
-                start = 4;
-            }
-            else if (length >= 4 && unwrappedBytes[0] == 0 && unwrappedBytes[1] == 0 && unwrappedBytes[2] == 254 && unwrappedBytes[3] == 255)
-            {
-                detectedFormat = 4;
-                start = 4;
-                endianSwap = true;
-            }
-            else if (length >= 2 && unwrappedBytes[0] == 255 && unwrappedBytes[1] == 254)
-            {
-                detectedFormat = 3;
-                start = 2;
-            }
-            else if (length >= 2 && unwrappedBytes[0] == 254 && unwrappedBytes[1] == 255)
-            {
-                detectedFormat = 3;
-                start = 2;
-                endianSwap = true;
-            }
-
-            if (detectedFormat != -1)
-            {
-                if (format != 0)
-                {
-                    if (format != detectedFormat)
-                    {
-                        return 4;
-                    }
-                }
-                else
-                {
-                    format = detectedFormat;
-                }
-            }
-
-            byte[] bytes = new byte[length - start];
-            for (int i = start; i < length; ++i)
-            {
-                bytes[i - start] = (byte)unwrappedBytes[i];
-            }
-
-            if (format == 3 && length % 2 != 0) return 4;
-            if (format == 4 && length % 4 != 0) return 4;
-
-            if (endianSwap)
-            {
-                int wordSize = 2;
-                if (detectedFormat == 4) wordSize = 4;
-                byte swap;
-                for (int i = 0; i < bytes.Length; i += wordSize)
-                {
-                    for (int j = 0; j < wordSize / 2; ++j)
-                    {
-                        swap = bytes[i + j];
-                        bytes[i + j] = bytes[i + wordSize - j - 1];
-                        bytes[i + wordSize - j - 1] = swap;
-                    }
-                }
-            }
-
+            byte[] bytes = new byte[length];
+            int t;
             switch (format)
             {
                 case 1:
-                    strOut[0] = System.Text.Encoding.ASCII.GetString(bytes);
+
+                    for (int i = 0; i < length; i += 1)
+                    {
+                        t = unwrappedBytes[i];
+                        if (t >= 128) return 4;
+                        bytes[i] = (byte)t;
+                    }
                     break;
-                case 2:
-                    strOut[0] = System.Text.Encoding.UTF8.GetString(bytes);
+                case 5:
+                    for (int i = 0; i < length; i += 2)
+                    {
+                        bytes[i] = (byte)unwrappedBytes[i | 1];
+                        bytes[i | 1] = (byte)unwrappedBytes[i];
+                    }
                     break;
-                case 3:
-                    strOut[0] = System.Text.Encoding.Unicode.GetString(bytes);
+
+                case 7:
+                    for (int i = 0; i < length; i += 4)
+                    {
+                        bytes[i] = (byte)unwrappedBytes[i | 3];
+                        bytes[i | 1] = (byte)unwrappedBytes[i | 2];
+                        bytes[i | 2] = (byte)unwrappedBytes[i | 1];
+                        bytes[i | 3] = (byte)unwrappedBytes[i];
+                    }
                     break;
-                case 4:
-                    strOut[0] = System.Text.Encoding.UTF32.GetString(bytes);
-                    break;
+
                 default:
-                    throw new NotImplementedException();
+                    for (int i = 0; i < length; ++i)
+                    {
+                        bytes[i] = (byte)unwrappedBytes[i];
+                    }
+                    break;
             }
+
+            try
+            {
+                switch (format)
+                {
+                    case 1:
+                    case 2:
+                        strOut[0] = System.Text.Encoding.ASCII.GetString(bytes);
+                        break;
+                    case 3:
+                        strOut[0] = System.Text.Encoding.UTF8.GetString(bytes);
+                        break;
+                    case 4:
+                    case 5:
+                        strOut[0] = System.Text.Encoding.Unicode.GetString(bytes);
+                        break;
+                    case 6:
+                    case 7:
+                        strOut[0] = System.Text.Encoding.UTF32.GetString(bytes);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+            catch (Exception)
+            {
+                return 4;
+            }
+
             return 0;
         }
 
@@ -115,7 +93,13 @@ namespace Interpreter.Libraries.TextEncoding
             {
                 case 1:
                 case 2:
-                    bytes = System.Text.Encoding.ASCII.GetBytes(value.ToCharArray());
+                    char[] chars = value.ToCharArray();
+                    int limit = format == 1 ? 128 : 256;
+                    for (int i = 0; i < chars.Length; ++i)
+                    {
+                        if (chars[i] >= limit) return 1;
+                    }
+                    bytes = System.Text.Encoding.ASCII.GetBytes(chars);
                     break;
 
                 case 3:
