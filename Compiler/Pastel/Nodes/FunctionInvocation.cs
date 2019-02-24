@@ -110,7 +110,7 @@ namespace Pastel.Nodes
             }
             else
             {
-                throw new NotImplementedException();
+                throw new ParserException(this.OpenParenToken, "This expression cannot be invoked like a function.");
             }
         }
 
