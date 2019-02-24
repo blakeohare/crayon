@@ -98,6 +98,7 @@ def main(args):
 		'Random',
 		'Resources',
 		'SRandom',
+		'TextEncoding',
 		'UserData',
 		'Web',
 		'Xml',
