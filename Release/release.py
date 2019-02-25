@@ -78,6 +78,7 @@ def main(args):
 		'Audio',
 		'Core',
 		'CrayonUnit',
+		'CryptoMd5',
 		'Easing',
 		'FileIO',
 		'FileIOCommon',
