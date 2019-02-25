@@ -66,7 +66,7 @@ def lib_md5_bitwiseNot(x):
 def lib_md5_createWordsForBlock(startIndex, byteList, mWords):
   i = 0
   while (i < 64):
-    mWords[(i >> 2)] = (((byteList[(startIndex + i)] << 24)) | ((byteList[(startIndex + i + 1)] << 16)) | ((byteList[(startIndex + i + 2)] << 8)) | (byteList[(startIndex + i + 3)]))
+    mWords[(i >> 2)] = ((byteList[(startIndex + i)]) | ((byteList[(startIndex + i + 1)] << 8)) | ((byteList[(startIndex + i + 2)] << 16)) | ((byteList[(startIndex + i + 3)] << 24)))
     i += 4
   return 0
 
@@ -83,6 +83,7 @@ def lib_md5_digestMd5(vm, args):
   return args[1]
 
 def lib_md5_digestMd5Impl(inputBytes):
+  originalLength = (len(inputBytes) * 8)
   shiftTable = (PST_NoneListOfOne * 64)
   K = (PST_NoneListOfOne * 64)
   i = 0
@@ -172,18 +173,17 @@ def lib_md5_digestMd5Impl(inputBytes):
   B = lib_md5_uint32Hack(61389, 43913)
   C = lib_md5_uint32Hack(39098, 56574)
   D = lib_md5_uint32Hack(4146, 21622)
-  originalLength = len(inputBytes)
   inputBytes.append(128)
   while ((len(inputBytes) % 64) != 56):
     inputBytes.append(0)
-  inputBytes.append(0)
-  inputBytes.append(0)
-  inputBytes.append(0)
-  inputBytes.append(0)
-  inputBytes.append(((originalLength >> 24) & 255))
-  inputBytes.append(((originalLength >> 16) & 255))
+  inputBytes.append(((originalLength >> 0) & 255))
   inputBytes.append(((originalLength >> 8) & 255))
-  inputBytes.append((originalLength & 255))
+  inputBytes.append(((originalLength >> 16) & 255))
+  inputBytes.append(((originalLength >> 24) & 255))
+  inputBytes.append(0)
+  inputBytes.append(0)
+  inputBytes.append(0)
+  inputBytes.append(0)
   mWords = (PST_NoneListOfOne * 16)
   mask32 = lib_md5_uint32Hack(65535, 65535)
   chunkIndex = 0
@@ -206,22 +206,22 @@ def lib_md5_digestMd5Impl(inputBytes):
     D = (((D_init + D)) & mask32)
     chunkIndex += 64
   output = (PST_NoneListOfOne * 16)
-  output[0] = ((A >> 24) & 255)
-  output[1] = ((A >> 16) & 255)
-  output[2] = ((A >> 8) & 255)
-  output[3] = (A & 255)
-  output[4] = ((B >> 24) & 255)
-  output[5] = ((B >> 16) & 255)
-  output[6] = ((B >> 8) & 255)
-  output[7] = (B & 255)
-  output[8] = ((C >> 24) & 255)
-  output[9] = ((C >> 16) & 255)
-  output[10] = ((C >> 8) & 255)
-  output[11] = (C & 255)
-  output[12] = ((D >> 24) & 255)
-  output[13] = ((D >> 16) & 255)
-  output[14] = ((D >> 8) & 255)
-  output[15] = (D & 255)
+  output[0] = (A & 255)
+  output[1] = ((A >> 8) & 255)
+  output[2] = ((A >> 16) & 255)
+  output[3] = ((A >> 24) & 255)
+  output[4] = (B & 255)
+  output[5] = ((B >> 8) & 255)
+  output[6] = ((B >> 16) & 255)
+  output[7] = ((B >> 24) & 255)
+  output[8] = (C & 255)
+  output[9] = ((C >> 8) & 255)
+  output[10] = ((C >> 16) & 255)
+  output[11] = ((C >> 24) & 255)
+  output[12] = (D & 255)
+  output[13] = ((D >> 8) & 255)
+  output[14] = ((D >> 16) & 255)
+  output[15] = ((D >> 24) & 255)
   return output
 
 def lib_md5_initHash(vm, args):

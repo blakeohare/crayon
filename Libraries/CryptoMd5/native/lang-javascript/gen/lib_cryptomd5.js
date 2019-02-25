@@ -134,7 +134,7 @@ var lib_md5_bitwiseNot = function(x) {
 var lib_md5_createWordsForBlock = function(startIndex, byteList, mWords) {
 	var i = 0;
 	while ((i < 64)) {
-		mWords[(i >> 2)] = (((byteList[(startIndex + i)] << 24)) | ((byteList[(startIndex + i + 1)] << 16)) | ((byteList[(startIndex + i + 2)] << 8)) | (byteList[(startIndex + i + 3)]));
+		mWords[(i >> 2)] = ((byteList[(startIndex + i)]) | ((byteList[(startIndex + i + 1)] << 8)) | ((byteList[(startIndex + i + 2)] << 16)) | ((byteList[(startIndex + i + 3)] << 24)));
 		i += 4;
 	}
 	return 0;
@@ -155,6 +155,7 @@ var lib_md5_digestMd5 = function(vm, args) {
 };
 
 var lib_md5_digestMd5Impl = function(inputBytes) {
+	var originalLength = (inputBytes.length * 8);
 	var shiftTable = PST$createNewArray(64);
 	var K = PST$createNewArray(64);
 	var i = 0;
@@ -245,19 +246,18 @@ var lib_md5_digestMd5Impl = function(inputBytes) {
 	var B = lib_md5_uint32Hack(61389, 43913);
 	var C = lib_md5_uint32Hack(39098, 56574);
 	var D = lib_md5_uint32Hack(4146, 21622);
-	var originalLength = inputBytes.length;
 	inputBytes.push(128);
 	while (((inputBytes.length % 64) != 56)) {
 		inputBytes.push(0);
 	}
-	inputBytes.push(0);
-	inputBytes.push(0);
-	inputBytes.push(0);
-	inputBytes.push(0);
-	inputBytes.push(((originalLength >> 24) & 255));
-	inputBytes.push(((originalLength >> 16) & 255));
+	inputBytes.push(((originalLength >> 0) & 255));
 	inputBytes.push(((originalLength >> 8) & 255));
-	inputBytes.push((originalLength & 255));
+	inputBytes.push(((originalLength >> 16) & 255));
+	inputBytes.push(((originalLength >> 24) & 255));
+	inputBytes.push(0);
+	inputBytes.push(0);
+	inputBytes.push(0);
+	inputBytes.push(0);
 	var mWords = PST$createNewArray(16);
 	var mask32 = lib_md5_uint32Hack(65535, 65535);
 	var chunkIndex = 0;
@@ -282,22 +282,22 @@ var lib_md5_digestMd5Impl = function(inputBytes) {
 		chunkIndex += 64;
 	}
 	var output = PST$createNewArray(16);
-	output[0] = ((A >> 24) & 255);
-	output[1] = ((A >> 16) & 255);
-	output[2] = ((A >> 8) & 255);
-	output[3] = (A & 255);
-	output[4] = ((B >> 24) & 255);
-	output[5] = ((B >> 16) & 255);
-	output[6] = ((B >> 8) & 255);
-	output[7] = (B & 255);
-	output[8] = ((C >> 24) & 255);
-	output[9] = ((C >> 16) & 255);
-	output[10] = ((C >> 8) & 255);
-	output[11] = (C & 255);
-	output[12] = ((D >> 24) & 255);
-	output[13] = ((D >> 16) & 255);
-	output[14] = ((D >> 8) & 255);
-	output[15] = (D & 255);
+	output[0] = (A & 255);
+	output[1] = ((A >> 8) & 255);
+	output[2] = ((A >> 16) & 255);
+	output[3] = ((A >> 24) & 255);
+	output[4] = (B & 255);
+	output[5] = ((B >> 8) & 255);
+	output[6] = ((B >> 16) & 255);
+	output[7] = ((B >> 24) & 255);
+	output[8] = (C & 255);
+	output[9] = ((C >> 8) & 255);
+	output[10] = ((C >> 16) & 255);
+	output[11] = ((C >> 24) & 255);
+	output[12] = (D & 255);
+	output[13] = ((D >> 8) & 255);
+	output[14] = ((D >> 16) & 255);
+	output[15] = ((D >> 24) & 255);
 	return output;
 };
 

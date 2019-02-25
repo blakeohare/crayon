@@ -353,7 +353,7 @@ public final class LibraryWrapper {
   public static int lib_md5_createWordsForBlock(int startIndex, ArrayList<Integer> byteList, int[] mWords) {
     int i = 0;
     while ((i < 64)) {
-      mWords[(i >> 2)] = (((byteList.get((startIndex + i)) << 24)) | ((byteList.get((startIndex + i + 1)) << 16)) | ((byteList.get((startIndex + i + 2)) << 8)) | (byteList.get((startIndex + i + 3))));
+      mWords[(i >> 2)] = ((byteList.get((startIndex + i))) | ((byteList.get((startIndex + i + 1)) << 8)) | ((byteList.get((startIndex + i + 2)) << 16)) | ((byteList.get((startIndex + i + 3)) << 24)));
       i += 4;
     }
     return 0;
@@ -374,6 +374,7 @@ public final class LibraryWrapper {
   }
 
   public static int[] lib_md5_digestMd5Impl(ArrayList<Integer> inputBytes) {
+    int originalLength = (inputBytes.size() * 8);
     int[] shiftTable = new int[64];
     int[] K = new int[64];
     int i = 0;
@@ -464,19 +465,18 @@ public final class LibraryWrapper {
     int B = lib_md5_uint32Hack(61389, 43913);
     int C = lib_md5_uint32Hack(39098, 56574);
     int D = lib_md5_uint32Hack(4146, 21622);
-    int originalLength = inputBytes.size();
     inputBytes.add(128);
     while (((inputBytes.size() % 64) != 56)) {
       inputBytes.add(0);
     }
-    inputBytes.add(0);
-    inputBytes.add(0);
-    inputBytes.add(0);
-    inputBytes.add(0);
-    inputBytes.add(((originalLength >> 24) & 255));
-    inputBytes.add(((originalLength >> 16) & 255));
+    inputBytes.add(((originalLength >> 0) & 255));
     inputBytes.add(((originalLength >> 8) & 255));
-    inputBytes.add((originalLength & 255));
+    inputBytes.add(((originalLength >> 16) & 255));
+    inputBytes.add(((originalLength >> 24) & 255));
+    inputBytes.add(0);
+    inputBytes.add(0);
+    inputBytes.add(0);
+    inputBytes.add(0);
     int[] mWords = new int[16];
     int mask32 = lib_md5_uint32Hack(65535, 65535);
     int chunkIndex = 0;
@@ -501,22 +501,22 @@ public final class LibraryWrapper {
       chunkIndex += 64;
     }
     int[] output = new int[16];
-    output[0] = ((A >> 24) & 255);
-    output[1] = ((A >> 16) & 255);
-    output[2] = ((A >> 8) & 255);
-    output[3] = (A & 255);
-    output[4] = ((B >> 24) & 255);
-    output[5] = ((B >> 16) & 255);
-    output[6] = ((B >> 8) & 255);
-    output[7] = (B & 255);
-    output[8] = ((C >> 24) & 255);
-    output[9] = ((C >> 16) & 255);
-    output[10] = ((C >> 8) & 255);
-    output[11] = (C & 255);
-    output[12] = ((D >> 24) & 255);
-    output[13] = ((D >> 16) & 255);
-    output[14] = ((D >> 8) & 255);
-    output[15] = (D & 255);
+    output[0] = (A & 255);
+    output[1] = ((A >> 8) & 255);
+    output[2] = ((A >> 16) & 255);
+    output[3] = ((A >> 24) & 255);
+    output[4] = (B & 255);
+    output[5] = ((B >> 8) & 255);
+    output[6] = ((B >> 16) & 255);
+    output[7] = ((B >> 24) & 255);
+    output[8] = (C & 255);
+    output[9] = ((C >> 8) & 255);
+    output[10] = ((C >> 16) & 255);
+    output[11] = ((C >> 24) & 255);
+    output[12] = (D & 255);
+    output[13] = ((D >> 8) & 255);
+    output[14] = ((D >> 16) & 255);
+    output[15] = ((D >> 24) & 255);
     return output;
   }
 
