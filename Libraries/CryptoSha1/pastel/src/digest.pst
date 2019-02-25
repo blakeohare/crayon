@@ -1,0 +1,180 @@
+﻿VM.Value lib_cryptosha1_digest(VM.VmContext vm, Array<VM.Value> args) {
+    VM.ObjectInstance obj = (VM.ObjectInstance) args[0].internalValue;
+    VM.ListImpl output = (VM.ListImpl) args[1].internalValue;
+    List<int> byteList = (List<int>) obj.nativeData[0];
+    Array<int> resultBytes = lib_cryptosha1_digestImpl(byteList);
+    for (int i = 0; i < 20; i += 1) {
+        int b = resultBytes[i];
+        VM.addToList(output, vm.globals.positiveIntegers[b]);
+    }
+    return args[1];
+}
+
+// Source:
+// * https://en.wikipedia.org/wiki/SHA-1#SHA-1_pseudocode
+Array<int> lib_cryptosha1_digestImpl(List<int> inputBytes) {
+
+    // Length is measured in bits, not bytes.
+    int originalLength = inputBytes.Size() * 8;
+
+    int h0 = lib_cryptosha1_uint32Hack(0x6745, 0x2301);
+    int h1 = lib_cryptosha1_uint32Hack(0xEFCD, 0xAB89);
+    int h2 = lib_cryptosha1_uint32Hack(0x98BA, 0xDCFE);
+    int h3 = lib_cryptosha1_uint32Hack(0x1032, 0x5476);
+    int h4 = lib_cryptosha1_uint32Hack(0xC3D2, 0xE1F0);
+
+    // Add a single 1 bit to the end of the current message.
+    // Since the message deals with bytes and we'll be rounding this out with 0's, add a full byte of 0's
+    // except the first digit is a 1: 10000000, aka 128
+    inputBytes.Add(128);
+
+    // The idea is to create a series of 64 byte blocks, but there needs to be 8 bytes of space for the
+    // length of the original stream which will be added at the end as a 64 bit (8 byte) integer.
+    while (inputBytes.Size() % 64 != 56) {
+        inputBytes.Add(0);
+    }
+
+    // Add the length as a 64 bit integer indicating how many BITS the original length is.
+    inputBytes.Add(0);
+    inputBytes.Add(0);
+    inputBytes.Add(0);
+    inputBytes.Add(0);
+    inputBytes.Add((originalLength >> 24) & 255);
+    inputBytes.Add((originalLength >> 16) & 255);
+    inputBytes.Add((originalLength >> 8) & 255);
+    inputBytes.Add((originalLength >> 0) & 255);
+
+    Array<int> mWords = new Array<int>(80);
+
+    // TODO: each iteration of this function can happen every time 512 bits of data have been added to the message
+    // and then stored without processing the whole hash. That way more than 4 GB of data can be hashed without
+    // having it all in memory.
+
+    int mask32 = lib_cryptosha1_uint32Hack(0xffff, 0xffff); // Extra cross-platform insurance to make sure values don't grow wildly on Python/JS.
+
+    int f = 0;
+    int temp = 0;
+    int k = 0;
+    Array<int> kValues = new Array<int>(4);
+    kValues[0] = lib_cryptosha1_uint32Hack(0x5A82, 0x7999);
+    kValues[1] = lib_cryptosha1_uint32Hack(0x6ED9, 0xEBA1);
+    kValues[2] = lib_cryptosha1_uint32Hack(0x8F1B, 0xBCDC);
+    kValues[3] = lib_cryptosha1_uint32Hack(0xCA62, 0xC1D6);
+
+    for (int chunkIndex = 0; chunkIndex < inputBytes.Size(); chunkIndex += 64) {
+
+        // Copy the bytes into 16 32-bit words, leaving slots 17 through 80 empty
+        lib_cryptosha1_createWordsForBlock(chunkIndex, inputBytes, mWords);
+
+        // Fill in the remaining words using a xor'd combination of the first 16.
+        for (int i = 16; i < 80; i += 1) {
+            mWords[i] = lib_cryptosha1_leftRotate(mWords[i - 3] ^ mWords[i - 8] ^ mWords[i - 14] ^ mWords[i - 16], 1);
+        }
+
+        // make a copy of the hash as it currently stands
+        int a = h0;
+        int b = h1;
+        int c = h2;
+        int d = h3;
+        int e =	h4;
+
+        for (int j = 0; j < 80; j += 1) {
+            if (j < 20) {
+                f = Core.ForceParens(b & c) | Core.ForceParens(lib_cryptosha1_bitwiseNot(b) & d);
+                k = kValues[0];
+            } else if (j < 40) {
+                f = b ^ c ^ d;
+                k = kValues[1];
+            } else if (j < 60) {
+                f = Core.ForceParens(b & c) | Core.ForceParens(b & d) | Core.ForceParens(c & d);
+                k = kValues[2];
+            } else {
+                f = b ^ c ^ d;
+                k = kValues[3];
+            }
+
+            temp = lib_cryptosha1_leftRotate(a, 5) + f + e + k + mWords[j];
+
+            e = d;
+            d = c;
+            c = lib_cryptosha1_leftRotate(b, 30);
+            b = a;
+            a = temp & mask32;
+        }
+
+        // Add the new hash values to the previous hash values from the previous 64 byte block.
+        // Also ensure they don't overflow into weird values when transpiled to JS/Python.
+        h0 = Core.ForceParens(h0 + a) & mask32;
+        h1 = Core.ForceParens(h1 + b) & mask32;
+        h2 = Core.ForceParens(h2 + c) & mask32;
+        h3 = Core.ForceParens(h3 + d) & mask32;
+        h4 = Core.ForceParens(h4 + e) & mask32;
+    }
+
+    // Convert the 5 32-bit integers into 20 8-bit integers.
+    Array<int> output = new Array<int>(20);
+    output[0] = (h0 >> 24) & 255;
+    output[1] = (h0 >> 16) & 255;
+    output[2] = (h0 >> 8) & 255;
+    output[3] = h0 & 255;
+
+    output[4] = (h1 >> 24) & 255;
+    output[5] = (h1 >> 16) & 255;
+    output[6] = (h1 >> 8) & 255;
+    output[7] = h1 & 255;
+
+    output[8] = (h2 >> 24) & 255;
+    output[9] = (h2 >> 16) & 255;
+    output[10] = (h2 >> 8) & 255;
+    output[11] = h2 & 255;
+
+    output[12] = (h3 >> 24) & 255;
+    output[13] = (h3 >> 16) & 255;
+    output[14] = (h3 >> 8) & 255;
+    output[15] = h3 & 255;
+
+    output[16] = (h4 >> 24) & 255;
+    output[17] = (h4 >> 16) & 255;
+    output[18] = (h4 >> 8) & 255;
+    output[19] = h4 & 255;
+
+    return output;
+}
+
+int lib_cryptosha1_createWordsForBlock(int startIndex, List<int> byteList, Array<int> mWords) {
+    // Convert the chunk into 16 32-bit integer words (Little Endian).
+    for (int i = 0; i < 64; i += 4) {
+        mWords[i >> 2] = Core.ForceParens(byteList[startIndex + i] << 24) |
+            Core.ForceParens(byteList[startIndex + i + 1] << 16) |
+            Core.ForceParens(byteList[startIndex + i + 2] << 8) |
+            Core.ForceParens(byteList[startIndex + i + 3]);
+    }
+    return 0;
+}
+
+int lib_cryptosha1_leftRotate(int value, int amt) {
+    if (amt == 0) return value;
+    int a = value << amt;
+    int b = lib_cryptosha1_bitShiftRight(value, 32 - amt);
+    int result = a | b;
+    return result;
+}
+
+// the lack of the distinction with >>> on some platforms makes this necessary when the result isn't explicitly masked.
+int lib_cryptosha1_bitShiftRight(int value, int amount) {
+    if (amount == 0) return value;
+    if (value > 0) return value >> amount;
+    int mask = 0x7fffffff;
+    return Core.ForceParens(value >> amount) & Core.ForceParens(mask >> Core.ForceParens(amount - 1));
+}
+
+// Pastel does not support unsigned int32 and will give range exceptions. However C# and Java will gracefully overflow
+// into negative numbers and this is okay. Python and JavaScript use Big Integer and int64's respectively.
+int lib_cryptosha1_uint32Hack(int left, int right) {
+    return Core.ForceParens(left << 16) | right;
+}
+
+// TODO: implement this in Pastel
+int lib_cryptosha1_bitwiseNot(int x) {
+    return -x - 1;
+}

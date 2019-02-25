@@ -80,6 +80,7 @@ def main(args):
 		'CrayonUnit',
 		'CryptoCommon',
 		'CryptoMd5',
+		'CryptoSha1',
 		'Easing',
 		'FileIO',
 		'FileIOCommon',

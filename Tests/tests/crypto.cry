@@ -1,4 +1,5 @@
 import CryptoMd5;
+import CryptoSha1;
 
 function md5(text) {
 	m = new Md5Hash('unsafe');
@@ -6,15 +7,35 @@ function md5(text) {
 	return m.digestHex();
 }
 
+function sha1(text) {
+	s = new Sha1Hash('unsafe');
+	s.addText(text);
+	return s.digestHex();
+}
+
 function test() {
 	print('md5');
-	print(md5('')); // d41d8cd98f00b204e9800998ecf8427e
-	print(md5('abc')); // 900150983cd24fb0d6963f7d28e17f72
-	print(md5('cheese')); // fea0f1f6fede90bd0a925b4194deac11
-	print(md5('The quick brown fox jumps over the lazy dog')); // 9e107d9d372bb6826bd81d3542a419d6
-	print(md5('z' * 1000)); // 93f8e2ed34e2c6727cf1ee6f138267e9
+	print(md5(''));
+	print(md5('abc'));
+	print(md5('cheese'));
+	print(md5('The quick brown fox jumped over the lazy dogs'));
+	print(md5('z' * 1000));
 	
 	ignored = new Md5Hash(); // generate warning
 	print(new Md5Hash('unsafe').addText('abc').digestByteList().join(' '));
 	print(new Md5Hash('unsafe').addByte(97).addByte(98).addByte(99).digestHex());
+	
+	print('---');
+	
+	print('sha1');
+	print(sha1(''));
+	print(sha1('abc'));
+	print(sha1('cheese'));
+	print(sha1('The quick brown fox jumped over the lazy dogs'));
+	print(sha1('z' * 1000));
+	
+	ignored = new Sha1Hash(); // generate warning
+	print(new Sha1Hash('unsafe').addText('abc').digestByteList().join(' '));
+	print(new Sha1Hash('unsafe').addByte(97).addByte(98).addByte(99).digestHex());
+	
 }

@@ -1,0 +1,15 @@
+﻿import CryptoCommon;
+
+namespace CryptoSha1 {
+
+    class Sha1Hash : CryptoCommon.AbstractHash {
+
+        constructor(disableWarning = null) : base() {
+            this.showWarning('SHA1', disableWarning);
+        }
+
+        function digestImpl() {
+            return $lib_cryptosha1_digest(this, []);
+        }
+    }
+}

@@ -1,0 +1,10 @@
+{
+	"name": "CryptoSha1",
+	"author": "Blake O'Hare",
+	"documentation": "http://crayonlang.org/docs/0.2.1/cryptosha1",
+	"description": "Library for hashing data using the SHA1 hash function. Should be used with care, as SHA1 is no longer a cryptographically secure hash in certain situations.",
+	
+	"cni": [
+		{ "name": "lib_cryptosha1_digest", "argc": 2 }
+	]
+}
