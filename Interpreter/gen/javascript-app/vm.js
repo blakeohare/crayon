@@ -734,6 +734,42 @@ var doEqualityComparisonAndReturnCode = function(a, b) {
 	return 0;
 };
 
+var doExponentMath = function(globals, b, e, preferInt) {
+	if ((e == 0.0)) {
+		if (preferInt) {
+			return globals[4];
+		}
+		return globals[7];
+	}
+	if ((b == 0.0)) {
+		if (preferInt) {
+			return globals[3];
+		}
+		return globals[6];
+	}
+	var r = 0.0;
+	if ((b < 0)) {
+		if (((e >= 0) && (e < 1))) {
+			return null;
+		}
+		if (((e % 1.0) == 0.0)) {
+			var eInt = Math.floor(e);
+			r = (0.0 + Math.pow(b, eInt));
+		} else {
+			return null;
+		}
+	} else {
+		r = Math.pow(b, e);
+	}
+	if (preferInt) {
+		r = fixFuzzyFloatPrecision(r);
+		if (((r % 1.0) == 0.0)) {
+			return buildInteger(globals, Math.floor(r));
+		}
+	}
+	return buildFloat(globals, r);
+};
+
 var encodeBreakpointData = function(vm, breakpoint, pc) {
 	return null;
 };
@@ -983,6 +1019,10 @@ var getExecutionContext = function(vm, id) {
 		return vm[0][id];
 	}
 	return null;
+};
+
+var getExponentErrorMsg = function(vm, b, e) {
+	return ["Invalid values for exponent computation. Base: ", valueToString(vm, b), ", Power: ", valueToString(vm, e)].join('');
 };
 
 var getFloat = function(num) {
@@ -1896,27 +1936,31 @@ var interpretImpl = function(vm, executionContextId) {
 				switch (((((leftValue[0] * 15) + row[0]) * 11) + rightValue[0])) {
 					case 553:
 						// int ** int;
-						if ((rightValue[1] == 0)) {
-							value = VALUE_INT_ONE;
-						} else {
-							if ((rightValue[1] > 0)) {
-								value = buildInteger(globals, Math.floor(Math.pow(leftValue[1], rightValue[1])));
-							} else {
-								value = buildFloat(globals, Math.pow(leftValue[1], rightValue[1]));
-							}
+						value = doExponentMath(globals, (0.0 + leftValue[1]), (0.0 + rightValue[1]), true);
+						if ((value == null)) {
+							hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue));
 						}
 						break;
 					case 554:
 						// int ** float;
-						value = buildFloat(globals, (0.0 + Math.pow(leftValue[1], rightValue[1])));
+						value = doExponentMath(globals, (0.0 + leftValue[1]), rightValue[1], false);
+						if ((value == null)) {
+							hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue));
+						}
 						break;
 					case 718:
 						// float ** int;
-						value = buildFloat(globals, (0.0 + Math.pow(leftValue[1], rightValue[1])));
+						value = doExponentMath(globals, leftValue[1], (0.0 + rightValue[1]), false);
+						if ((value == null)) {
+							hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue));
+						}
 						break;
 					case 719:
 						// float ** float;
-						value = buildFloat(globals, (0.0 + Math.pow(leftValue[1], rightValue[1])));
+						value = doExponentMath(globals, leftValue[1], rightValue[1], false);
+						if ((value == null)) {
+							hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue));
+						}
 						break;
 					case 708:
 						// float % float;

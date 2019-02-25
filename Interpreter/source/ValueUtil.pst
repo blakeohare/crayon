@@ -616,6 +616,15 @@ double fixFuzzyFloatPrecision(double x) {
     return x;
 }
 
+string getExponentErrorMsg(VmContext vm, Value b, Value e) {
+
+    return Core.StringConcatAll(
+        "Invalid values for exponent computation. Base: ",
+        valueToString(vm, b),
+        ", Power: ",
+        valueToString(vm, e));
+}
+
 double canonicalizeAngle(double a) {
     double twopi = 2 * 3.14159265358979;
     a = a % twopi;
@@ -631,6 +640,39 @@ double getFloat(Value num) {
 object getNativeDataItem(Value objValue, int index) {
     ObjectInstance obj = (ObjectInstance) objValue.internalValue;
     return obj.nativeData[index];
+}
+
+Value doExponentMath(VmGlobals globals, double b, double e, bool preferInt) {
+    if (e == 0.0) {
+        if (preferInt) return globals.intOne;
+        return globals.floatOne;
+    }
+    if (b == 0.0) {
+        if (preferInt) return globals.intZero;
+        return globals.floatZero;
+    }
+
+    double r = 0.0;
+    if (b < 0) {
+        if (e >= 0 && e < 1) {
+            return null;
+        }
+        if (e % 1.0 == 0.0) {
+            int eInt = Core.Int(e);
+            r = 0.0 + Core.Pow(b, eInt);
+        } else {
+            return null;
+        }
+    } else {
+        r = Core.Pow(b, e);
+    }
+    if (preferInt) {
+        r = fixFuzzyFloatPrecision(r);
+        if (r % 1.0 == 0.0) {
+            return buildInteger(globals, Core.Int(r));
+        }
+    }
+    return buildFloat(globals, r);
 }
 
 int nextPowerOf2(int value) {

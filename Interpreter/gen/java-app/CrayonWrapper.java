@@ -968,6 +968,42 @@ public final class CrayonWrapper {
     return 0;
   }
 
+  public static Value doExponentMath(VmGlobals globals, double b, double e, boolean preferInt) {
+    if ((e == 0.0)) {
+      if (preferInt) {
+        return globals.intOne;
+      }
+      return globals.floatOne;
+    }
+    if ((b == 0.0)) {
+      if (preferInt) {
+        return globals.intZero;
+      }
+      return globals.floatZero;
+    }
+    double r = 0.0;
+    if ((b < 0)) {
+      if (((e >= 0) && (e < 1))) {
+        return null;
+      }
+      if (((e % 1.0) == 0.0)) {
+        int eInt = ((int) e);
+        r = (0.0 + Math.pow(b, eInt));
+      } else {
+        return null;
+      }
+    } else {
+      r = Math.pow(b, e);
+    }
+    if (preferInt) {
+      r = fixFuzzyFloatPrecision(r);
+      if (((r % 1.0) == 0.0)) {
+        return buildInteger(globals, ((int) r));
+      }
+    }
+    return buildFloat(globals, r);
+  }
+
   public static String encodeBreakpointData(VmContext vm, BreakpointInfo breakpoint, int pc) {
     return null;
   }
@@ -1221,6 +1257,10 @@ public final class CrayonWrapper {
       return vm.executionContexts.get(id);
     }
     return null;
+  }
+
+  public static String getExponentErrorMsg(VmContext vm, Value b, Value e) {
+    return "Invalid values for exponent computation. Base: " + valueToString(vm, b) + ", Power: " + valueToString(vm, e);
   }
 
   public static double getFloat(Value num) {
@@ -2148,27 +2188,31 @@ public final class CrayonWrapper {
           switch (((((leftValue.type * 15) + row[0]) * 11) + rightValue.type)) {
             case 553:
               // int ** int;
-              if ((rightValue.intValue == 0)) {
-                value = VALUE_INT_ONE;
-              } else {
-                if ((rightValue.intValue > 0)) {
-                  value = buildInteger(globals, ((int) Math.pow(leftValue.intValue, rightValue.intValue)));
-                } else {
-                  value = buildFloat(globals, Math.pow(leftValue.intValue, rightValue.intValue));
-                }
+              value = doExponentMath(globals, (0.0 + leftValue.intValue), (0.0 + rightValue.intValue), true);
+              if ((value == null)) {
+                hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue));
               }
               break;
             case 554:
               // int ** float;
-              value = buildFloat(globals, (0.0 + Math.pow(leftValue.intValue, ((double) rightValue.internalValue))));
+              value = doExponentMath(globals, (0.0 + leftValue.intValue), ((double) rightValue.internalValue), false);
+              if ((value == null)) {
+                hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue));
+              }
               break;
             case 718:
               // float ** int;
-              value = buildFloat(globals, (0.0 + Math.pow(((double) leftValue.internalValue), rightValue.intValue)));
+              value = doExponentMath(globals, ((double) leftValue.internalValue), (0.0 + rightValue.intValue), false);
+              if ((value == null)) {
+                hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue));
+              }
               break;
             case 719:
               // float ** float;
-              value = buildFloat(globals, (0.0 + Math.pow(((double) leftValue.internalValue), ((double) rightValue.internalValue))));
+              value = doExponentMath(globals, ((double) leftValue.internalValue), ((double) rightValue.internalValue), false);
+              if ((value == null)) {
+                hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue));
+              }
               break;
             case 708:
               // float % float;

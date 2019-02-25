@@ -487,6 +487,32 @@ def doEqualityComparisonAndReturnCode(a, b):
 
 swlookup__doEqualityComparisonAndReturnCode__0 = { 1: 0, 3: 1, 4: 2, 2: 3, 5: 4, 6: 5, 7: 5, 8: 5, 9: 6, 10: 7 }
 
+def doExponentMath(globals, b, e, preferInt):
+  if (e == 0.0):
+    if preferInt:
+      return globals[4]
+    return globals[7]
+  if (b == 0.0):
+    if preferInt:
+      return globals[3]
+    return globals[6]
+  r = 0.0
+  if (b < 0):
+    if ((e >= 0) and (e < 1)):
+      return None
+    if ((e % 1.0) == 0.0):
+      eInt = int(e)
+      r = (0.0 + (b ** eInt))
+    else:
+      return None
+  else:
+    r = (b ** e)
+  if preferInt:
+    r = fixFuzzyFloatPrecision(r)
+    if ((r % 1.0) == 0.0):
+      return buildInteger(globals, int(r))
+  return buildFloat(globals, r)
+
 def encodeBreakpointData(vm, breakpoint, pc):
   return None
 
@@ -702,6 +728,9 @@ def getExecutionContext(vm, id):
   if (id in vm[0]):
     return vm[0][id]
   return None
+
+def getExponentErrorMsg(vm, b, e):
+  return ''.join(["Invalid values for exponent computation. Base: ", valueToString(vm, b), ", Power: ", valueToString(vm, e)])
 
 def getFloat(num):
   if (num[0] == 4):
@@ -1471,21 +1500,24 @@ def interpretImpl(vm, executionContextId):
                       if (sc_1 < 2):
                         if (sc_1 == 0):
                           # int ** int
-                          if (rightValue[1] == 0):
-                            value = VALUE_INT_ONE
-                          elif (rightValue[1] > 0):
-                            value = buildInteger(globals, int((leftValue[1] ** rightValue[1])))
-                          else:
-                            value = buildFloat(globals, (leftValue[1] ** rightValue[1]))
+                          value = doExponentMath(globals, (0.0 + leftValue[1]), (0.0 + rightValue[1]), True)
+                          if (value == None):
+                            hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue))
                         else:
                           # int ** float
-                          value = buildFloat(globals, (0.0 + (leftValue[1] ** rightValue[1])))
+                          value = doExponentMath(globals, (0.0 + leftValue[1]), rightValue[1], False)
+                          if (value == None):
+                            hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue))
                       elif (sc_1 == 2):
                         # float ** int
-                        value = buildFloat(globals, (0.0 + (leftValue[1] ** rightValue[1])))
+                        value = doExponentMath(globals, leftValue[1], (0.0 + rightValue[1]), False)
+                        if (value == None):
+                          hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue))
                       else:
                         # float ** float
-                        value = buildFloat(globals, (0.0 + (leftValue[1] ** rightValue[1])))
+                        value = doExponentMath(globals, leftValue[1], rightValue[1], False)
+                        if (value == None):
+                          hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue))
                     elif (sc_1 == 4):
                       # float % float
                       float1 = rightValue[1]

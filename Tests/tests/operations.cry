@@ -32,4 +32,28 @@ function test() {
 	print(x % y);
 	print(x ** y);
 	
+	powerTest();
+}
+
+
+function powHelper(baseNum, powerNum) {
+	try {
+		return [baseNum, powerNum, baseNum ** powerNum];
+	} catch (InvalidArgumentException iae) {
+		return [baseNum, powerNum, iae.message];
+	}
+}
+
+function powerTest() {
+	print('exponents');
+	
+	bases = [-2, 2, 16, 16.0, 1.5, 1, .5, 0, 0.0, -.5, -1, -1.0, -3, -3.0];
+	powers = [5, 2.5, 1, .5, 0, 0.0, -.5, -1, -2];
+	
+	for (b : bases) {
+		for (p : powers) {
+			emit(powHelper(b, p));
+		}
+	}
+	
 }

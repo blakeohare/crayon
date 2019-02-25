@@ -944,6 +944,56 @@ namespace Interpreter.Vm
             return 0;
         }
 
+        public static Value doExponentMath(VmGlobals globals, double b, double e, bool preferInt)
+        {
+            if ((e == 0.0))
+            {
+                if (preferInt)
+                {
+                    return globals.intOne;
+                }
+                return globals.floatOne;
+            }
+            if ((b == 0.0))
+            {
+                if (preferInt)
+                {
+                    return globals.intZero;
+                }
+                return globals.floatZero;
+            }
+            double r = 0.0;
+            if ((b < 0))
+            {
+                if (((e >= 0) && (e < 1)))
+                {
+                    return null;
+                }
+                if (((e % 1.0) == 0.0))
+                {
+                    int eInt = (int)e;
+                    r = (0.0 + System.Math.Pow(b, eInt));
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                r = System.Math.Pow(b, e);
+            }
+            if (preferInt)
+            {
+                r = fixFuzzyFloatPrecision(r);
+                if (((r % 1.0) == 0.0))
+                {
+                    return buildInteger(globals, (int)r);
+                }
+            }
+            return buildFloat(globals, r);
+        }
+
         public static string encodeBreakpointData(VmContext vm, BreakpointInfo breakpoint, int pc)
         {
             return null;
@@ -1252,6 +1302,11 @@ namespace Interpreter.Vm
                 return vm.executionContexts[id];
             }
             return null;
+        }
+
+        public static string getExponentErrorMsg(VmContext vm, Value b, Value e)
+        {
+            return string.Join("", new string[] { "Invalid values for exponent computation. Base: ",valueToString(vm, b),", Power: ",valueToString(vm, e) });
         }
 
         public static double getFloat(Value num)
@@ -2395,33 +2450,35 @@ namespace Interpreter.Vm
                         {
                             case 553:
                                 // int ** int;
-                                if (((int)rightValue.internalValue == 0))
+                                value = doExponentMath(globals, (0.0 + (int)leftValue.internalValue), (0.0 + (int)rightValue.internalValue), true);
+                                if ((value == null))
                                 {
-                                    value = VALUE_INT_ONE;
-                                }
-                                else
-                                {
-                                    if (((int)rightValue.internalValue > 0))
-                                    {
-                                        value = buildInteger(globals, (int)System.Math.Pow((int)leftValue.internalValue, (int)rightValue.internalValue));
-                                    }
-                                    else
-                                    {
-                                        value = buildFloat(globals, System.Math.Pow((int)leftValue.internalValue, (int)rightValue.internalValue));
-                                    }
+                                    hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue));
                                 }
                                 break;
                             case 554:
                                 // int ** float;
-                                value = buildFloat(globals, (0.0 + System.Math.Pow((int)leftValue.internalValue, (double)rightValue.internalValue)));
+                                value = doExponentMath(globals, (0.0 + (int)leftValue.internalValue), (double)rightValue.internalValue, false);
+                                if ((value == null))
+                                {
+                                    hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue));
+                                }
                                 break;
                             case 718:
                                 // float ** int;
-                                value = buildFloat(globals, (0.0 + System.Math.Pow((double)leftValue.internalValue, (int)rightValue.internalValue)));
+                                value = doExponentMath(globals, (double)leftValue.internalValue, (0.0 + (int)rightValue.internalValue), false);
+                                if ((value == null))
+                                {
+                                    hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue));
+                                }
                                 break;
                             case 719:
                                 // float ** float;
-                                value = buildFloat(globals, (0.0 + System.Math.Pow((double)leftValue.internalValue, (double)rightValue.internalValue)));
+                                value = doExponentMath(globals, (double)leftValue.internalValue, (double)rightValue.internalValue, false);
+                                if ((value == null))
+                                {
+                                    hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue));
+                                }
                                 break;
                             case 708:
                                 // float % float;
