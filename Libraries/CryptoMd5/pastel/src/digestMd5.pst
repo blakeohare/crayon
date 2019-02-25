@@ -10,76 +10,35 @@
     return args[1];
 }
 
-// Source: https://en.wikipedia.org/wiki/MD5#Pseudocode
+// Sources:
+// * https://tools.ietf.org/html/rfc1321
+// * https://en.wikipedia.org/wiki/MD5#Pseudocode
 Array<int> lib_md5_digestMd5Impl(List<int> inputBytes) {
 
-    Array<int> s = new Array<int>(64);
+    Array<int> shiftTable = new Array<int>(64);
     Array<int> K = new Array<int>(64);
 
-    s[0] = 7;
-    s[1] = 12;
-    s[2] = 17;
-    s[3] = 22;
-    s[4] =  7;
-    s[5] = 12;
-    s[6] = 17;
-    s[7] = 22;
-    s[8] =  7;
-    s[9] = 12;
-    s[10] = 17;
-    s[11] = 22;
-    s[12] =  7;
-    s[13] = 12;
-    s[14] = 17;
-    s[15] = 22;
-    s[16] = 5;
-    s[17] =  9;
-    s[18] = 14;
-    s[19] = 20;
-    s[20] =  5;
-    s[21] =  9;
-    s[22] = 14;
-    s[23] = 20;
-    s[24] =  5;
-    s[25] =  9;
-    s[26] = 14;
-    s[27] = 20;
-    s[28] =  5;
-    s[29] =  9;
-    s[30] = 14;
-    s[31] = 20;
-    s[32] = 4;
-    s[33] = 11;
-    s[34] = 16;
-    s[35] = 23;
-    s[36] =  4;
-    s[37] = 11;
-    s[38] = 16;
-    s[39] = 23;
-    s[40] =  4;
-    s[41] = 11;
-    s[42] = 16;
-    s[43] = 23;
-    s[44] =  4;
-    s[45] = 11;
-    s[46] = 16;
-    s[47] = 23;
-    s[48] = 6;
-    s[49] = 10;
-    s[50] = 15;
-    s[51] = 21;
-    s[52] =  6;
-    s[53] = 10;
-    s[54] = 15;
-    s[55] = 21;
-    s[56] =  6;
-    s[57] = 10;
-    s[58] = 15;
-    s[59] = 21;
-    s[60] =  6;
-    s[61] = 10;
-    s[62] = 15;
-    s[63] = 21;
+    for (int i = 0; i < 16; i += 4) {
+        shiftTable[i] = 7;
+        shiftTable[i + 1] = 12;
+        shiftTable[i + 2] = 17;
+        shiftTable[i + 3] = 22;
+
+        shiftTable[i + 16] = 5;
+        shiftTable[i + 17] = 9;
+        shiftTable[i + 18] = 14;
+        shiftTable[i + 19] = 20;
+
+        shiftTable[i + 32] = 4;
+        shiftTable[i + 33] = 11;
+        shiftTable[i + 34] = 16;
+        shiftTable[i + 35] = 23;
+
+        shiftTable[i + 48] = 6;
+        shiftTable[i + 49] = 10;
+        shiftTable[i + 50] = 15;
+        shiftTable[i + 51] = 21;
+    }
 
     K[0] = lib_md5_uint32Hack(0xd76a, 0xa478);
     K[1] = lib_md5_uint32Hack(0xe8c7, 0xb756);
@@ -146,98 +105,146 @@ Array<int> lib_md5_digestMd5Impl(List<int> inputBytes) {
     K[62] = lib_md5_uint32Hack(0x2ad7, 0xd2bb);
     K[63] = lib_md5_uint32Hack(0xeb86, 0xd391);
 
-    int a0 = lib_md5_uint32Hack(0x6745, 0x2301);
-    int b0 = lib_md5_uint32Hack(0xefcd, 0xab89);
-    int c0 = lib_md5_uint32Hack(0x98ba, 0xdcfe);
-    int d0 = lib_md5_uint32Hack(0x1032, 0x5476);
+    int A = lib_md5_uint32Hack(0x6745, 0x2301);
+    int B = lib_md5_uint32Hack(0xefcd, 0xab89);
+    int C = lib_md5_uint32Hack(0x98ba, 0xdcfe);
+    int D = lib_md5_uint32Hack(0x1032, 0x5476);
 
     int originalLength = inputBytes.Size();
 
+    // Add a single 1 bit to the end of the current message.
+    // Since the message deals with bytes and we'll be rounding this out with 0's, add a full byte of 0's
+    // except the first digit is a 1: 10000000, aka 128
     inputBytes.Add(128);
 
+    // The idea is to create a series of 64 byte blocks, but there needs to be 8 bytes of space for the
+    // length of the original stream which will be added at the end as a 64 bit (8 byte) integer.
     while (inputBytes.Size() % 64 != 56) {
         inputBytes.Add(0);
     }
 
+    // Add the length as a 64 bit integer.
+    // Only supports up to 4 GB of data for now. (see TODO below about doing hashes on the fly)
+    // Do NOT "optimize" this by changing the 448 in the above loop to 480.
+    // That will create incorrect hashes that have bytes longer than 56 but shorter than 60.
     inputBytes.Add(0);
     inputBytes.Add(0);
     inputBytes.Add(0);
     inputBytes.Add(0);
-
     inputBytes.Add((originalLength >> 24) & 255);
     inputBytes.Add((originalLength >> 16) & 255);
     inputBytes.Add((originalLength >> 8) & 255);
     inputBytes.Add(originalLength & 255);
 
-    Array<int> M = new Array<int>(16);
-    int m = 0;
+    Array<int> mWords = new Array<int>(16);
 
-    int mask32 = lib_md5_uint32Hack(0xffff, 0xffff);
-    int F = 0;
-    int g = 0;
-    int t = 0;
-    int rotAmt = 0;
+    // TODO: each iteration of this function can happen every time 512 bits of data have been added to the message
+    // and then stored without processing the whole hash. That way more than 4 GB of data can be hashed without
+    // having it all in memory.
+
+    int mask32 = lib_md5_uint32Hack(0xffff, 0xffff); // Extra cross-platform insurance to make sure values don't grow wildly on Python/JS.
+
     for (int chunkIndex = 0; chunkIndex < inputBytes.Size(); chunkIndex += 64) {
 
-        for (int j = 0; j < 16; j += 1) {
-            t = chunkIndex + j * 4;
-            m = inputBytes[t] << 24;
-            m += inputBytes[t + 1] << 16;
-            m += inputBytes[t + 2] << 8;
-            m += inputBytes[t + 3];
-            M[j] = m;
+        // Copy the bytes into 16 32-bit words.
+        lib_md5_createWordsForBlock(chunkIndex, inputBytes, mWords);
+
+        // make a copy of the hash as it currently stands
+        int A_init = A;
+        int B_init = B;
+        int C_init = C;
+        int D_init = D;
+
+        // Create new values of A, B, C, and D by performing this magic shuffle 64 times.
+        // The pattern for which numbers from the accumulating hash to use repeats every 4 times
+        // so perform the shuffle in chunks of 4.
+        for (int j = 0; j < 64; j += 4) {
+            A = lib_md5_magicShuffle(mWords, K, shiftTable, mask32, A, B, C, D, j);
+            D = lib_md5_magicShuffle(mWords, K, shiftTable, mask32, D, A, B, C, j | 1);
+            C = lib_md5_magicShuffle(mWords, K, shiftTable, mask32, C, D, A, B, j | 2);
+            B = lib_md5_magicShuffle(mWords, K, shiftTable, mask32, B, C, D, A, j | 3);
         }
 
-        int A = a0;
-        int B = b0;
-        int C = c0;
-        int D = d0;
-        for (int i = 0; i < 64; i += 1) {
-            if (i < 16) {
-                F = Core.ForceParens(B & C) | Core.ForceParens(lib_md5_bitwiseNot(B) & D);
-                g = i;
-            } else if (i < 32) {
-                F = Core.ForceParens(D & B) | Core.ForceParens(lib_md5_bitwiseNot(D) & C);
-                g = Core.ForceParens(5 * i + 1) & 15;
-            } else if (i < 48) {
-                F = B ^ C ^ D;
-                g = Core.ForceParens(3 * i + 5) & 15;
-            } else {
-                F = C ^ Core.ForceParens(B | lib_md5_bitwiseNot(D));
-                g = Core.ForceParens(7 * i) & 15;
-            }
-            F = Core.ForceParens(F + A + K[i] + M[g]) & mask32;
-            A = D;
-            D = C;
-            C = B;
-
-            rotAmt = s[i];
-            B = B + Core.ForceParens(Core.ForceParens(F << rotAmt) | lib_md5_bitShiftRight(F, 32 - rotAmt));
-        }
-        a0 = Core.ForceParens(a0 + A) & mask32;
-        b0 = Core.ForceParens(b0 + B) & mask32;
-        c0 = Core.ForceParens(c0 + C) & mask32;
-        d0 = Core.ForceParens(d0 + D) & mask32;
+        // Add the new hash values to the previous hash values from the previous 64 byte block.
+        // Also ensure they don't overflow into weird values when transpiled to JS/Python.
+        A = Core.ForceParens(A_init + A) & mask32;
+        B = Core.ForceParens(B_init + B) & mask32;
+        C = Core.ForceParens(C_init + C) & mask32;
+        D = Core.ForceParens(D_init + D) & mask32;
     }
 
+    // Convert the 4 32-bit integers into 16 8-bit integers.
     Array<int> output = new Array<int>(16);
-    output[0] = (a0 >> 24) & 255;
-    output[1] = (a0 >> 16) & 255;
-    output[2] = (a0 >> 8) & 255;
-    output[3] = a0 & 255;
-    output[4] = (b0 >> 24) & 255;
-    output[5] = (b0 >> 16) & 255;
-    output[6] = (b0 >> 8) & 255;
-    output[7] = b0 & 255;
-    output[8] = (c0 >> 24) & 255;
-    output[9] = (c0 >> 16) & 255;
-    output[10] = (c0 >> 8) & 255;
-    output[11] = c0 & 255;
-    output[12] = (d0 >> 24) & 255;
-    output[13] = (d0 >> 16) & 255;
-    output[14] = (d0 >> 8) & 255;
-    output[15] = d0 & 255;
+    output[0] = (A >> 24) & 255;
+    output[1] = (A >> 16) & 255;
+    output[2] = (A >> 8) & 255;
+    output[3] = A & 255;
+    output[4] = (B >> 24) & 255;
+    output[5] = (B >> 16) & 255;
+    output[6] = (B >> 8) & 255;
+    output[7] = B & 255;
+    output[8] = (C >> 24) & 255;
+    output[9] = (C >> 16) & 255;
+    output[10] = (C >> 8) & 255;
+    output[11] = C & 255;
+    output[12] = (D >> 24) & 255;
+    output[13] = (D >> 16) & 255;
+    output[14] = (D >> 8) & 255;
+    output[15] = D & 255;
     return output;
+}
+
+int lib_md5_createWordsForBlock(int startIndex, List<int> byteList, Array<int> mWords) {
+    // Convert the chunk into 16 32-bit integer words.
+    for (int i = 0; i < 64; i += 4) {
+        mWords[i >> 2] = Core.ForceParens(byteList[startIndex + i] << 24) |
+            Core.ForceParens(byteList[startIndex + i + 1] << 16) |
+            Core.ForceParens(byteList[startIndex + i + 2] << 8) |
+            Core.ForceParens(byteList[startIndex + i + 3]);
+    }
+    return 0;
+}
+
+int lib_md5_magicShuffle(
+    Array<int> mWords,
+    Array<int> sineValues,
+    Array<int> shiftValues,
+    int mask32,
+    int a,
+    int b,
+    int c,
+    int d,
+    int counter) {
+
+    int roundNumber = counter >> 4;
+    int t = 0;
+    int shiftAmount = shiftValues[counter];
+    int sineValue = sineValues[counter];
+    int mWord = 0;
+    if (roundNumber == 0) {
+        t = Core.ForceParens(b & c) | Core.ForceParens(lib_md5_bitwiseNot(b) & d);
+        mWord = mWords[counter];
+    } else if (roundNumber == 1) {
+        t = Core.ForceParens(b & d) | Core.ForceParens(c & lib_md5_bitwiseNot(d));
+        mWord = mWords[Core.ForceParens(5 * counter + 1) & 15];
+    } else if (roundNumber == 2) {
+        t = b ^ c ^ d;
+        mWord = mWords[Core.ForceParens(3 * counter + 5) & 15];
+    } else {
+        t = c ^ Core.ForceParens(b | lib_md5_bitwiseNot(d));
+        mWord = mWords[Core.ForceParens(7 * counter) & 15];
+    }
+    t = Core.ForceParens(a + t + mWord + sineValue) & mask32;
+    t = b + lib_md5_leftRotate(t, shiftAmount);
+    return t & mask32;
+}
+
+int lib_md5_leftRotate(int value, int amt) {
+    if (amt == 0) return value;
+    int a = value << amt;
+    int b = lib_md5_bitShiftRight(value, 32 - amt);
+    int result = a | b;
+    return result;
 }
 
 // the lack of the distinction with >>> on some platforms makes this necessary when the result isn't explicitly masked.
@@ -245,7 +252,7 @@ int lib_md5_bitShiftRight(int value, int amount) {
     if (amount == 0) return value;
     if (value > 0) return value >> amount;
     int mask = 0x7fffffff;
-    return Core.ForceParens(value >> 1) & Core.ForceParens(mask >> Core.ForceParens(amount - 1));
+    return Core.ForceParens(value >> amount) & Core.ForceParens(mask >> Core.ForceParens(amount - 1));
 }
 
 // Pastel does not support unsigned int32 and will give range exceptions. However C# and Java will gracefully overflow
