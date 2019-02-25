@@ -103,19 +103,6 @@ PST$intBuffer16 = PST$multiplyList([0], 16);
 PST$floatBuffer16 = PST$multiplyList([0.0], 16);
 PST$stringBuffer16 = PST$multiplyList([''], 16);
 
-var lib_md5_addBytes = function(vm, args) {
-	var obj = args[0][1];
-	var fromByteList = args[1][1];
-	var toByteList = obj[3][0];
-	var length = fromByteList[1];
-	var i = 0;
-	while ((i < length)) {
-		toByteList.push(fromByteList[2][i][1]);
-		i += 1;
-	}
-	return vm[16];
-};
-
 var lib_md5_bitShiftRight = function(value, amount) {
 	if ((amount == 0)) {
 		return value;
@@ -299,13 +286,6 @@ var lib_md5_digestMd5Impl = function(inputBytes) {
 	output[14] = ((D >> 16) & 255);
 	output[15] = ((D >> 24) & 255);
 	return output;
-};
-
-var lib_md5_initHash = function(vm, args) {
-	var obj = args[0][1];
-	obj[3] = PST$createNewArray(1);
-	obj[3][0] = [];
-	return vm[14];
 };
 
 var lib_md5_leftRotate = function(value, amt) {

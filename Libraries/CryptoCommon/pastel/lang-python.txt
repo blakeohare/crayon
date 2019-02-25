@@ -1,0 +1,10 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-python.txt
+IMPORT: ../../../Interpreter/headers-python.txt
+
+LANGUAGE: python
+
+DEPENDENCY: VM: ../../../Interpreter/python-app.txt
+
+OUTPUT-FUNCTIONS: ../native/lang-python/gen/lib_cryptocommon.py
+CODE-IMPORT: code.vm as VM

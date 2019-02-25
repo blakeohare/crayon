@@ -1,4 +1,4 @@
-﻿VM.Value lib_md5_addBytes(VM.VmContext vm, Array<VM.Value> args) {
+﻿VM.Value lib_cryptocommon_addBytes(VM.VmContext vm, Array<VM.Value> args) {
     VM.ObjectInstance obj = (VM.ObjectInstance) args[0].internalValue;
     VM.ListImpl fromByteList = (VM.ListImpl) args[1].internalValue;
     List<int> toByteList = (List<int>) obj.nativeData[0];

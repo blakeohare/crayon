@@ -41,17 +41,6 @@ def PST_stringCheckSlice(haystack, i, needle):
 def always_true(): return True
 def always_false(): return False
 
-def lib_md5_addBytes(vm, args):
-  obj = args[0][1]
-  fromByteList = args[1][1]
-  toByteList = obj[3][0]
-  length = fromByteList[1]
-  i = 0
-  while (i < length):
-    toByteList.append(fromByteList[2][i][1])
-    i += 1
-  return vm[16]
-
 def lib_md5_bitShiftRight(value, amount):
   if (amount == 0):
     return value
@@ -223,12 +212,6 @@ def lib_md5_digestMd5Impl(inputBytes):
   output[14] = ((D >> 16) & 255)
   output[15] = ((D >> 24) & 255)
   return output
-
-def lib_md5_initHash(vm, args):
-  obj = args[0][1]
-  obj[3] = [None]
-  obj[3][0] = []
-  return vm[14]
 
 def lib_md5_leftRotate(value, amt):
   if (amt == 0):
