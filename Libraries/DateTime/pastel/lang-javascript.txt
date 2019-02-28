@@ -1,0 +1,16 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-javascript.txt
+IMPORT: ../../../Interpreter/headers-javascript.txt
+
+LANGUAGE: javascript
+
+DEPENDENCY: VM: ../../../Interpreter/javascript-app.txt
+
+OUTPUT-FUNCTIONS: ../native/lang-javascript/gen/lib_datetime.js
+
+EXT: _lib_datetime_parseDate: LIB$datetime$parseDate([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
+EXT: _lib_datetime_unixToStructured: LIB$datetime$unixToStructured([ARG:1], [ARG:2], [ARG:3])
+EXT: _lib_datetime_getDataForLocalTimeZone: LIB$datetime$getDataForLocalTimeZone([ARG:1], [ARG:2])
+EXT: _lib_datetime_getOffsetFromUtcNow: LIB$datetime$getOffsetFromUtcNow([ARG:1])
+EXT: _lib_datetime_isDstOccurringAt: LIB$datetime$isDstOccurringAt([ARG:1], [ARG:2])
+EXT: _lib_datetime_initializeTimeZoneList: LIB$datetime$initializeTimeZoneList()

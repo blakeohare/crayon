@@ -1,0 +1,37 @@
+﻿/*
+    args[0] -> (int) year
+    args[1] -> (int) month
+    args[2] -> (int) day
+    args[3] -> (int) hour of 24
+    args[4] -> (int) minute
+    args[5] -> (int) microseconds
+    args[6] -> (ObjectInstance) time zone
+
+*/
+VM.Value lib_datetime_parseDate(VM.VmContext vm, Array<VM.Value> args) {
+
+    int year = (int) args[0].internalValue;
+    int month = (int) args[1].internalValue;
+    int day = (int) args[2].internalValue;
+    int hour = (int) args[3].internalValue;
+    int minute = (int) args[4].internalValue;
+    int microseconds = (int) args[5].internalValue;
+    object nullableTimeZone = lib_datetime_getNativeTimezone(args[6]);
+
+    if (year >= 1970 && year < 2100 &&
+        month >= 1 && month <= 12 &&
+        day >= 1 && day <= 31 &&
+        hour >= 0 && hour < 24 &&
+        minute >= 0 && minute < 60 &&
+        microseconds >= 0 && microseconds < 60000000) {
+
+        Array<int> intOut = Core.IntBuffer16;
+        Extension._lib_datetime_parseDate(intOut, nullableTimeZone, year, month, day, hour, minute, microseconds);
+
+        if (intOut[0] == 1) {
+            return VM.buildInteger(vm.globals, intOut[1]);
+        }
+    }
+
+    return vm.globalNull;
+}

@@ -1,0 +1,12 @@
+@import("getOffsetFromUtcNow.pst");
+@import("initTimeZone.pst");
+@import("initTimeZoneList.pst");
+@import("isDstOccurringAt.pst");
+@import("parseDate.pst");
+@import("unixToStructured.pst");
+
+object lib_datetime_getNativeTimezone(VM.Value value) {
+    VM.ObjectInstance tzObj = (VM.ObjectInstance) value.internalValue;
+    if (tzObj.nativeData == null) return null;
+    return tzObj.nativeData[0];
+}

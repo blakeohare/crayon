@@ -1,0 +1,21 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-csharp.txt
+IMPORT: ../../../Interpreter/headers-csharp.txt
+
+LANGUAGE: csharp
+
+DEPENDENCY: VM: ../../../Interpreter/csharp-app.txt
+
+OUTPUT-STRUCTS: ../native/lang-csharp/gen/structs
+OUTPUT-FUNCTIONS: ../native/lang-csharp/gen/LibraryWrapper.cs
+
+NAMESPACE-FUNCTIONS: Interpreter.Libraries.DateTime
+NAMESPACE-STRUCTS: Interpreter.Libraries.DateTime
+FUNCTION-WRAPPER-CLASS: LibraryWrapper
+
+EXT: _lib_datetime_parseDate: DateTimeHelper.ParseDate([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
+EXT: _lib_datetime_unixToStructured: DateTimeHelper.UnixToStructured([ARG:1], [ARG:2], [ARG:3])
+EXT: _lib_datetime_getDataForLocalTimeZone: DateTimeHelper.GetDataForLocalTimeZone([ARG:1], [ARG:2])
+EXT: _lib_datetime_getOffsetFromUtcNow: DateTimeHelper.GetOffsetFromUtcNow([ARG:1])
+EXT: _lib_datetime_isDstOccurringAt: DateTimeHelper.IsDstOccurringAt([ARG:1], [ARG:2])
+EXT: _lib_datetime_initializeTimeZoneList: DateTimeHelper.InitializeTimeZoneList()

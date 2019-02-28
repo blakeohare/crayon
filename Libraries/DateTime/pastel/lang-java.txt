@@ -1,0 +1,21 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-java.txt
+IMPORT: ../../../Interpreter/headers-java.txt
+
+LANGUAGE: java
+
+DEPENDENCY: VM: ../../../Interpreter/java-app.txt
+
+OUTPUT-STRUCTS: ../native/lang-java/gen/structs
+OUTPUT-FUNCTIONS: ../native/lang-java/gen/LibraryWrapper.java
+
+NAMESPACE-FUNCTIONS: org.crayonlang.libraries.datetime
+NAMESPACE-STRUCTS: org.crayonlang.libraries.datetime
+FUNCTION-WRAPPER-CLASS: LibraryWrapper
+
+EXT: _lib_datetime_parseDate: DateTimeHelper.parseDate([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
+EXT: _lib_datetime_unixToStructured: DateTimeHelper.unixToStructured([ARG:1], [ARG:2], [ARG:3])
+EXT: _lib_datetime_getDataForLocalTimeZone: DateTimeHelper.getDataForLocalTimeZone([ARG:1], [ARG:2])
+EXT: _lib_datetime_getOffsetFromUtcNow: DateTimeHelper.getOffsetFromUtcNow([ARG:1])
+EXT: _lib_datetime_isDstOccurringAt: DateTimeHelper.isDstOccurringAt([ARG:1], [ARG:2])
+EXT: _lib_datetime_initializeTimeZoneList: DateTimeHelper.initializeTimeZoneList()

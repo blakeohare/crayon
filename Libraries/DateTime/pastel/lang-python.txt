@@ -1,0 +1,17 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-python.txt
+IMPORT: ../../../Interpreter/headers-python.txt
+
+LANGUAGE: python
+
+DEPENDENCY: VM: ../../../Interpreter/python-app.txt
+
+OUTPUT-FUNCTIONS: ../native/lang-python/gen/lib_datetime.py
+CODE-IMPORT: code.vm as VM
+
+EXT: _lib_datetime_parseDate: lib_datetime_parseDate([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8])
+EXT: _lib_datetime_unixToStructured: lib_datetime_unixToStructured([ARG:1], [ARG:2], [ARG:3])
+EXT: _lib_datetime_getDataForLocalTimeZone: LIB$datetime_getDataForLocalTimeZone([ARG:1], [ARG:2])
+EXT: _lib_datetime_getOffsetFromUtcNow: lib_datetime_getOffsetFromUtcNow([ARG:1])
+EXT: _lib_datetime_isDstOccurringAt: lib_datetime_isDstOccurringAt([ARG:1], [ARG:2])
+EXT: _lib_datetime_initializeTimeZoneList: lib_datetime_initializeTimeZoneList()

@@ -1,0 +1,12 @@
+﻿/*
+    args[0] -> TimeZone object
+    args[1] -> unix timestamp
+*/
+VM.Value lib_datetime_isDstOccurringAt(VM.VmContext vm, Array<VM.Value> args) {
+
+    // existence is guaranteed since UTC timezone will shortcircuit around this function
+    object nativeTz = lib_datetime_getNativeTimezone(args[0]);
+    int unixtime = (int) args[1].internalValue;
+
+    return VM.buildBoolean(vm.globals, Extension._lib_datetime_isDstOccurringAt(nativeTz, unixtime));
+}

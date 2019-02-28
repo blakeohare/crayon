@@ -1,0 +1,31 @@
+﻿/*
+    args[0] -> (int) unix timestamp
+    args[1] -> (ObjectInstance) time zone
+
+    returns a list of integers or null if the conversion failed.
+        output[0] -> year (1970-2100)
+        output[1] -> month (1-12)
+        output[2] -> day (1-31)
+        output[3] -> hour (0-23)
+        output[4] -> minute (0-59)
+        output[5] -> second (0-59)
+        output[6] -> millis (0-999)
+        output[7] -> micros (0-999)
+        output[8] -> day of week (1-7)
+
+*/
+VM.Value lib_datetime_unixToStructured(VM.VmContext vm, Array<VM.Value> args) {
+    int unixTime = (int) args[0].internalValue;
+    object nullableTimeZone = lib_datetime_getNativeTimezone(args[1]);
+
+    List<VM.Value> output = new List<VM.Value>();
+    Array<int> intOut = Core.IntBuffer16; // int out parameters match the final output.
+    bool success = Extension._lib_datetime_unixToStructured(intOut, nullableTimeZone, unixTime);
+    if (!success) return vm.globalNull;
+
+    for (int i = 0; i < 9; i += 1) {
+        output.Add(VM.buildInteger(vm.globals, intOut[i]));
+    }
+
+    return VM.buildList(output);
+}

@@ -1,0 +1,209 @@
+﻿import Math;
+
+namespace DateTime {
+
+    class DateTime {
+
+        field _tz;
+        field _ts;
+
+        field year;
+        field month;
+        field day;
+        field hour;
+        field minute;
+        field second;
+        field millis;
+        field micros;
+        field dayOfWeek;
+        field hour12;
+        field ampm;
+
+        @private
+        constructor(tz) {
+            this._tz = tz ?? new TimeZone(true);
+            if (!(this._tz is TimeZone)) throw new InvalidArgumentException("Invalid TimeZone object");
+        }
+
+        static function now(tz = null) {
+            dt = new DateTime(tz);
+            dt._ts = Core.currentTime();
+            return dt._populateFields();
+        }
+
+        static function at(year, month, day, hour24, minute, secondIntOrFloat, tz = null) {
+            dt = new DateTime(tz);
+            dt._ts = $lib_datetime_parseDate(
+                Math.floor(year),
+                Math.floor(month),
+                Math.floor(day),
+                Math.floor(hour24),
+                Math.floor(minute),
+                Math.floor(1000000.0 * secondIntOrFloat),
+                dt._tz);
+            if (dt._ts == null) throw new InvalidArgumentException("Values out of range.");
+            return dt._populateFields();
+        }
+
+        static function fromTimestamp(unixTime, tz = null) {
+            dt = new DateTime();
+            dt._ts = unixTime;
+            return dt._populateFields();
+        }
+
+        function _populateFields() {
+            f = $lib_datetime_unixToStructured(this._ts, this._tz);
+            if (f == null) throw new InvalidArgumentException("Unix time stamp is out of range.");
+            this.year = f[0];
+            this.month = f[1];
+            this.day = f[2];
+            this.hour = f[3];
+            this.minute = f[4];
+            this.second = f[5];
+            this.millis = f[6];
+            this.micros = f[7];
+            this.dayOfWeek = f[8];
+            this.hour12 = (this.hour - 1) % 12 + 1;
+            this.ampm = this.hour < 12 ? 'AM' : 'PM';
+            return this;
+        }
+
+        function isDstOccuring() {
+            return this._tz._hasDst && $lib_datetime_isDstNow(this._tz, this._ts);
+        }
+
+        function format(template) {
+            sections = template.split('%');
+            if (sections.length == 0) return '';
+            valid = true;
+            if (sections[-1] == '%') {
+                valid = false;
+            } else {
+                for (i = 1; i < sections.length; ++i) {
+                    section = sections[i];
+                    if (section.length == 0) {
+                        valid = false;
+                        break;
+                    }
+                    c = section[0];
+                    trimmed = section[1:];
+                    newValue = DateTime.applyStringFormatDirective(c);
+                    if (newValue == null) {
+                        valid = false;
+                        break;
+                    }
+                    sections[i] = newValue + trimmed;
+                }
+            }
+
+            if (valid) {
+                return sections.join('');
+            }
+
+            throw new InvalidArgumentException("Invalid date format: \"" + template + "\"");
+        }
+
+        // TODO: put all this into Pastel code. That way it won't bloat the byte code.
+        static field monthShort = 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' ');
+        static field monthLong = 'January February March April May Jun July August September October November'.split(' ');
+        static field dowShort = 'Sun Mon Tue Wed Thur Fri Sat'.split(' ');
+        static field dowLong = 'Sunday Monday Tuesday Wednesday Thurstay Friday Saturday'.split(' ');
+        static function applyStringFormatDirective(c, dt) {
+            // This uses the directives from PHP's date function, for lack of a better or more comprehensive standard.
+            // See: http://php.net/manual/en/function.date.php
+            switch (c) {
+                // year
+                case 'y': return DateTime.fixedLenNum(dt.year, 2);
+                case 'Y': return dt.year;
+                case 'L': return DateTime.isLeapYear(dt.year) ? 1 : 0;
+
+                // month
+                case 'M': return DateTime.monthShort[dt.month - 1];
+                case 'F': return DateTime.monthLong[dt.month - 1];
+                case 'm': return DateTime.fixedLenNum(dt.month, 2);
+                case 'n': return dt.month;
+                case 't': return DateTime.daysInMonth(dt.month, dt.year);
+
+                // day
+                case 'd': return DateTime.fixedLenNum(dt.day, 2);
+                case 'j': return dt.day;
+                case 'S': // ordinal suffix
+                    n = dt.day % 100;
+                    if (n > 3 && n < 21) return 'th'; // 11, 12, and 13 think they're so special
+                    switch (n % 10) {
+                        case 1: return 'st';
+                        case 2: return 'nd';
+                        case 3: return 'rd';
+                    }
+                    return 'th';
+                case 'z': // nth day of the year (counting from 0, max is 365 on leap year)
+                    total = dt.day - 1;
+                    for (i = 1; i < dt.month; ++i) {
+                        total += DateTime.daysInMonth(i, dt.year);
+                    }
+                    return total;
+
+                // day of the week
+                case 'D': return DateTime.dowShort[dt.dayOfWeek - 1];
+                case 'N': return DateTime.dowLong[dt.dayOfWeek - 1];
+
+                // hour
+                case 'a': return dt.hour24 < 12 ? 'am' : 'pm';
+                case 'A': return dt.hour24 < 12 ? 'AM' : 'PM';
+                case 'g': return dt.hour12;
+                case 'G': return dt.hour24;
+                case 'h': return DateTime.fixedLenNum(dt.hour12, 2);
+                case 'H': return DateTime.fixedLenNum(dt.hour24, 2);
+
+                // minutes
+                case 'i': return DateTime.fixedLenNum(dt.minute, 2);
+
+                // seconds
+                case 's': return DateTime.fixedLenNum(dt.second, 2);
+
+                // millis
+                case 'v': return DateTime.fixedLenNum(dt.millis, 3);
+                case 'u': return DateTime.fixedLenNum(dt.millis * 1000 + dt.micros, 6);
+
+                // other
+                case 'U': return dt._ts;
+
+
+                // standard formats
+                // TODO: 'c' -> ISO 8601 formatted time
+                // TODO: 'r' -> RFC 2822 format
+
+                default: return null;
+            }
+        }
+
+        static function isLeapYear(y) {
+            if (y % 4 == 0) {
+                if (y % 400 == 0) return true;
+                if (y % 100 == 0) return false;
+                return true;
+            }
+            return false;
+        }
+
+        static function daysInMonth(m, y) {
+            switch (m) {
+                case 2:
+                    return DateTime.isLeapYear(y) ? 29 : 28;
+                case 4:
+                case 6:
+                case 9:
+                case 11:
+                    return 30;
+            }
+            return 31;
+        }
+
+        static function fixedLenNum(n, length) {
+            n = n + '';
+            if (n.length > length) n = n[-length:];
+            while (n.length < length) n = '0' + n;
+            return n;
+        }
+    }
+}
