@@ -399,7 +399,8 @@ public final class LibraryWrapper {
       int[] intOut = PST_intBuffer16;
       DateTimeHelper.parseDate(intOut, nullableTimeZone, year, month, day, hour, minute, microseconds);
       if ((intOut[0] == 1)) {
-        return org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(vm.globals, intOut[1]);
+        double unixFloat = (intOut[1] + intOut[2] / 1000000.0);
+        return org.crayonlang.interpreter.vm.CrayonWrapper.buildFloat(vm.globals, unixFloat);
       }
     }
     return vm.globalNull;
