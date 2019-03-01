@@ -180,7 +180,8 @@ var lib_datetime_parseDate = function(vm, args) {
 		var intOut = PST$intBuffer16;
 		LIB$datetime$parseDate(intOut, nullableTimeZone, year, month, day, hour, minute, microseconds);
 		if ((intOut[0] == 1)) {
-			return buildInteger(vm[13], intOut[1]);
+			var unixFloat = (intOut[1] + (intOut[2] / 1000000.0));
+			return buildFloat(vm[13], unixFloat);
 		}
 	}
 	return vm[14];
