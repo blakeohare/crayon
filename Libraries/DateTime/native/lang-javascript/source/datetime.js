@@ -70,9 +70,9 @@ LIB$datetime$parseDate = function(intOut, nullableTimeZone, year, month, day, ho
 	var tz = LIB$datetime$extractTimeZone(nullableTimeZone);
 	intOut[2] = microseconds % 1000000;
 	intOut[0] = 1;
-	var seconds = Math.floor((microseconds - intOut[2]) / 10000000);
+	var seconds = Math.floor((microseconds - intOut[2]) / 1000000);
 	if (tz.isLocal) {
-		var d = new Date(year, month, day, hour, minute, seconds);
+		var d = new Date(year, month - 1, day, hour, minute, seconds);
 		intOut[1] = Math.floor(d.getTime() / 1000);
 	} else {
 		intOut[1] = new Date([
