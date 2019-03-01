@@ -34,7 +34,7 @@ namespace DateTime {
 
         static function at(year, month, day, hour, minute, secondIntOrFloat, tz = null) {
             dt = new Moment(tz);
-            dt.unixTime = 1.0 * $lib_datetime_parseDate(
+            dt.unixTime = $lib_datetime_parseDate(
                 Math.floor(year),
                 Math.floor(month),
                 Math.floor(day),
@@ -164,6 +164,8 @@ namespace DateTime {
 
                 // millis
                 case 'v': return Moment.fixedLenNum(dt.millis, 3);
+
+                // micros (6 digits)
                 case 'u': return Moment.fixedLenNum(dt.millis * 1000 + dt.micros, 6);
 
                 // other

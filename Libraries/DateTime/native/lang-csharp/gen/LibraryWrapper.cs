@@ -207,7 +207,8 @@ namespace Interpreter.Libraries.DateTime
                 DateTimeHelper.ParseDate(intOut, nullableTimeZone, year, month, day, hour, minute, microseconds);
                 if ((intOut[0] == 1))
                 {
-                    return Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, intOut[1]);
+                    double unixFloat = (intOut[1] + (intOut[2]) / (1000000.0));
+                    return Interpreter.Vm.CrayonWrapper.buildFloat(vm.globals, unixFloat);
                 }
             }
             return vm.globalNull;

@@ -19,8 +19,10 @@ namespace Interpreter.Libraries.DateTime
 
         public static bool UnixToStructured(int[] intOut, object nullableTimeZone, double unixTime)
         {
+            int unixTimeInt = (int)unixTime;
+            int micros = (int)((unixTime - unixTimeInt) * 1000000);
             System.TimeZoneInfo tz = GetTimeZone(nullableTimeZone);
-            System.DateTime utcDateTime = epoch.AddSeconds(unixTime);
+            System.DateTime utcDateTime = epoch.AddSeconds(unixTimeInt);
             System.TimeSpan utcOffset = tz.GetUtcOffset(utcDateTime);
             System.DateTime dt = utcDateTime.Add(utcOffset);
 
@@ -30,8 +32,8 @@ namespace Interpreter.Libraries.DateTime
             intOut[3] = dt.Hour;
             intOut[4] = dt.Minute;
             intOut[5] = dt.Second;
-            intOut[6] = dt.Millisecond;
-            intOut[7] = 0;
+            intOut[6] = micros / 1000;
+            intOut[7] = micros;
             intOut[8] = 1 + (int)dt.DayOfWeek;
 
             return true;
@@ -39,15 +41,15 @@ namespace Interpreter.Libraries.DateTime
 
         public static void ParseDate(int[] intOut, object nullableTimeZone, int year, int month, int day, int hour, int minute, int microseconds)
         {
-            // TODO: there is a problem here. millis are dropped.
             intOut[0] = 1;
             int seconds = (int)(microseconds / 1000000);
-            int millis = (microseconds / 1000) % 1000;
+            int micros = microseconds - seconds * 1000000;
             System.TimeZoneInfo tz = GetTimeZone(nullableTimeZone);
-            System.DateTime dt = new System.DateTime(year, month, day, hour, minute, seconds, millis, DateTimeKind.Unspecified);
+            System.DateTime dt = new System.DateTime(year, month, day, hour, minute, seconds, 0, DateTimeKind.Unspecified);
             dt = TimeZoneInfo.ConvertTimeToUtc(dt, tz);
             double unixTime = dt.Subtract(epoch).TotalSeconds;
             intOut[1] = (int)unixTime;
+            intOut[2] = micros;
         }
 
         public static bool IsDstOccurringAt(object nativeTimeZone, int unixtime)

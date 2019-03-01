@@ -29,7 +29,8 @@ VM.Value lib_datetime_parseDate(VM.VmContext vm, Array<VM.Value> args) {
         Extension._lib_datetime_parseDate(intOut, nullableTimeZone, year, month, day, hour, minute, microseconds);
 
         if (intOut[0] == 1) {
-            return VM.buildInteger(vm.globals, intOut[1]);
+            double unixFloat = intOut[1] + Core.FloatDivision(intOut[2], 1000000.0);
+            return VM.buildFloat(vm.globals, unixFloat);
         }
     }
 
