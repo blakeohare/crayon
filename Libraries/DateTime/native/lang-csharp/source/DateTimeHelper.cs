@@ -39,7 +39,15 @@ namespace Interpreter.Libraries.DateTime
 
         public static void ParseDate(int[] intOut, object nullableTimeZone, int year, int month, int day, int hour, int minute, int microseconds)
         {
-            throw new NotImplementedException();
+            // TODO: there is a problem here. millis are dropped.
+            intOut[0] = 1;
+            int seconds = (int)(microseconds / 1000000);
+            int millis = (microseconds / 1000) % 1000;
+            System.TimeZoneInfo tz = GetTimeZone(nullableTimeZone);
+            System.DateTime dt = new System.DateTime(year, month, day, hour, minute, seconds, millis, DateTimeKind.Unspecified);
+            dt = TimeZoneInfo.ConvertTimeToUtc(dt, tz);
+            double unixTime = dt.Subtract(epoch).TotalSeconds;
+            intOut[1] = (int)unixTime;
         }
 
         public static bool IsDstOccurringAt(object nativeTimeZone, int unixtime)

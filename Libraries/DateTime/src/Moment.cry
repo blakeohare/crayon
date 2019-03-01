@@ -5,7 +5,7 @@ namespace DateTime {
     class Moment {
 
         field _tz;
-        field _ts;
+        field unixTime;
 
         field year;
         field month;
@@ -29,14 +29,12 @@ namespace DateTime {
         }
 
         static function now(tz = null) {
-            dt = new Moment(tz);
-            dt._ts = Core.currentTime();
-            return dt._populateFields();
+            return Moment.fromTimestamp(Core.currentTime(), tz);
         }
 
         static function at(year, month, day, hour, minute, secondIntOrFloat, tz = null) {
             dt = new Moment(tz);
-            dt._ts = $lib_datetime_parseDate(
+            dt.unixTime = 1.0 * $lib_datetime_parseDate(
                 Math.floor(year),
                 Math.floor(month),
                 Math.floor(day),
@@ -44,18 +42,18 @@ namespace DateTime {
                 Math.floor(minute),
                 Math.floor(1000000.0 * secondIntOrFloat),
                 dt._tz);
-            if (dt._ts == null) throw new InvalidArgumentException("Values out of range.");
+            if (dt.unixTime == null) throw new InvalidArgumentException("Values out of range.");
             return dt._populateFields();
         }
 
         static function fromTimestamp(unixTime, tz = null) {
             dt = new Moment(tz);
-            dt._ts = unixTime;
+            dt.unixTime = unixTime * 1.0;
             return dt._populateFields();
         }
 
         function _populateFields() {
-            f = $lib_datetime_unixToStructured(this._ts, this._tz);
+            f = $lib_datetime_unixToStructured(this.unixTime, this._tz);
             if (f == null) throw new InvalidArgumentException("Unix time stamp is out of range.");
             this.year = f[0];
             this.month = f[1];
@@ -72,7 +70,7 @@ namespace DateTime {
         }
 
         function isDstOccuring() {
-            return this._tz._hasDst && $lib_datetime_isDstOccurringAt(this._tz, this._ts);
+            return this._tz._hasDst && $lib_datetime_isDstOccurringAt(this._tz, this.unixTime);
         }
 
         function format(template) {
@@ -169,7 +167,7 @@ namespace DateTime {
                 case 'u': return Moment.fixedLenNum(dt.millis * 1000 + dt.micros, 6);
 
                 // other
-                case 'U': return dt._ts;
+                case 'U': return dt.unixTime;
 
 
                 // standard formats
