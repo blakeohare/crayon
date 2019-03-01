@@ -15,7 +15,7 @@
 
 */
 VM.Value lib_datetime_unixToStructured(VM.VmContext vm, Array<VM.Value> args) {
-    int unixTime = (int) args[0].internalValue;
+    double unixTime = (double) args[0].internalValue;
     object nullableTimeZone = lib_datetime_getNativeTimezone(args[1]);
 
     List<VM.Value> output = new List<VM.Value>();

@@ -215,7 +215,7 @@ namespace Interpreter.Libraries.DateTime
 
         public static Value lib_datetime_unixToStructured(VmContext vm, Value[] args)
         {
-            int unixTime = (int)args[0].internalValue;
+            double unixTime = (double)args[0].internalValue;
             object nullableTimeZone = lib_datetime_getNativeTimezone(args[1]);
             List<Value> output = new List<Value>();
             int[] intOut = PST_IntBuffer16;

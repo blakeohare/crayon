@@ -88,7 +88,7 @@ namespace DateTime {
         function getFullDisplayName() { return this.getFormattedOffset() + ' - ' + this.getName(); }
         function getName() { return this._name; }
         function isUtc() { return !this._isLocal; }
-        function isDstHappening() { return this._hasDst && $lib_datetime_isDstNow(this, Core.currentTime()); }
+        function isDstHappening() { return this._hasDst && $lib_datetime_isDstOccurringAt(this, Core.currentTime()); }
         function hasDst() { return this._hasDst; }
     }
 }

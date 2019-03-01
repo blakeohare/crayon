@@ -406,7 +406,7 @@ public final class LibraryWrapper {
   }
 
   public static Value lib_datetime_unixToStructured(VmContext vm, Value[] args) {
-    int unixTime = ((int) args[0].internalValue);
+    double unixTime = ((double) args[0].internalValue);
     Object nullableTimeZone = lib_datetime_getNativeTimezone(args[1]);
     ArrayList<Value> output = new ArrayList<Value>();
     int[] intOut = PST_intBuffer16;
