@@ -51,7 +51,7 @@ def lib_datetime_getOffsetFromUtcNow(vm, args):
   nativeTz = lib_datetime_getNativeTimezone(args[0])
   if (nativeTz == None):
     return vm[13][3]
-  offset = lib_datetime_getOffsetFromUtcNow(nativeTz)
+  offset = lib_datetime_getOffsetFromUtcNowImpl(nativeTz)
   return buildInteger(vm[13], offset)
 
 def lib_datetime_initTimeZone(vm, args):
@@ -65,7 +65,7 @@ def lib_datetime_initTimeZone(vm, args):
   if (args[1][0] == 1):
     strOut = PST_StringBuffer16
     intOut = PST_IntBuffer16
-    nativeTzRef = LIB$datetime_getDataForLocalTimeZone(strOut, intOut)
+    nativeTzRef = lib_datetime_getDataForLocalTimeZone(strOut, intOut)
     readableName = strOut[0]
     fingerprint = strOut[1]
     offsetFromUtc = intOut[0]
@@ -88,7 +88,7 @@ def lib_datetime_initTimeZone(vm, args):
 def lib_datetime_initTimeZoneList(vm, args):
   obj = args[0][1]
   obj[3] = [None]
-  timezones = lib_datetime_initializeTimeZoneList()
+  timezones = lib_datetime_initializeTimeZoneListImpl()
   obj[3][0] = timezones
   length = len(timezones)
   return buildInteger(vm[13], length)
@@ -96,7 +96,7 @@ def lib_datetime_initTimeZoneList(vm, args):
 def lib_datetime_isDstOccurringAt(vm, args):
   nativeTz = lib_datetime_getNativeTimezone(args[0])
   unixtime = args[1][1]
-  return buildBoolean(vm[13], lib_datetime_isDstOccurringAt(nativeTz, unixtime))
+  return buildBoolean(vm[13], lib_datetime_isDstOccurringAtImpl(nativeTz, unixtime))
 
 def lib_datetime_parseDate(vm, args):
   year = args[0][1]
@@ -108,9 +108,10 @@ def lib_datetime_parseDate(vm, args):
   nullableTimeZone = lib_datetime_getNativeTimezone(args[6])
   if ((year >= 1970) and (year < 2100) and (month >= 1) and (month <= 12) and (day >= 1) and (day <= 31) and (hour >= 0) and (hour < 24) and (minute >= 0) and (minute < 60) and (microseconds >= 0) and (microseconds < 60000000)):
     intOut = PST_IntBuffer16
-    lib_datetime_parseDate(intOut, nullableTimeZone, year, month, day, hour, minute, microseconds)
+    lib_datetime_parseDateImpl(intOut, nullableTimeZone, year, month, day, hour, minute, microseconds)
     if (intOut[0] == 1):
-      return buildInteger(vm[13], intOut[1])
+      unixFloat = (intOut[1] + (1.0 * (intOut[2]) / (1000000.0)))
+      return buildFloat(vm[13], unixFloat)
   return vm[14]
 
 def lib_datetime_unixToStructured(vm, args):
@@ -118,7 +119,7 @@ def lib_datetime_unixToStructured(vm, args):
   nullableTimeZone = lib_datetime_getNativeTimezone(args[1])
   output = []
   intOut = PST_IntBuffer16
-  success = lib_datetime_unixToStructured(intOut, nullableTimeZone, unixTime)
+  success = lib_datetime_unixToStructuredImpl(intOut, nullableTimeZone, unixTime)
   if not (success):
     return vm[14]
   i = 0
