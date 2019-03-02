@@ -73,6 +73,20 @@ namespace DateTime {
             return this._tz._isLocal ? $lib_datetime_getUtcOffsetAt(this._tz, Math.floor(this.unixTime)) : 0;
         }
 
+        function getFormattedOffset() {
+            s = this.getUtcOffsetSeconds();
+
+            hours = s / 3600;
+            minutes = (s % 3600) / 60;
+            return [
+                'UTC',
+                hours >= 0 ? '+' : '',
+                hours,
+                ':',
+                minutes == 0 ? '00' : minutes
+            ].join('');
+        }
+
         function isDstOccuring() {
             return this._tz._hasDst && $lib_datetime_isDstOccurringAt(this._tz, this.unixTime);
         }
