@@ -16,6 +16,7 @@ namespace Pastel.Nodes
             OBJECT,
             TEMPLATE,
             FUNCTION,
+            CORE_FUNCTION,
 
             UNKNOWN,
         }
@@ -62,6 +63,12 @@ namespace Pastel.Nodes
             this.Namespace = namespaceName;
             this.TypeName = typeName;
             this.Generics = generics == null ? EMPTY_GENERICS : generics.ToArray();
+
+            // Uses an invalid character to prevent the possibility of creating this type directly in code.
+            if (this.RootValue == "@CoreFunc")
+            {
+                this.Category = TypeCategory.CORE_FUNCTION;
+            }
 
             if (this.Generics.Length == 1)
             {
@@ -110,6 +117,10 @@ namespace Pastel.Nodes
                     case "Array":
                     case "Dictionary":
                         throw new ParserException(this.FirstToken, "This type requires generics");
+
+                    case "@CoreFunc":
+                        this.Category = TypeCategory.CORE_FUNCTION;
+                        break;
 
                     default:
                         if (this.RootValue.Length == 1)

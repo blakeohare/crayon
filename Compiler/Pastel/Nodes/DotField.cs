@@ -121,7 +121,9 @@ namespace Pastel.Nodes
             this.CoreFunctionId = this.DetermineCoreFunctionId(this.Root.ResolvedType, this.FieldName.Value);
             if (this.CoreFunctionId != CoreFunction.NONE)
             {
-                return new CoreFunctionReference(this.FirstToken, this.CoreFunctionId, this.Root, this.Owner);
+                CoreFunctionReference cfr = new CoreFunctionReference(this.FirstToken, this.CoreFunctionId, this.Root, this.Owner);
+                cfr.ResolvedType = new PType(this.Root.FirstToken, null, "@CoreFunc");
+                return cfr;
             }
 
             throw new NotImplementedException();
