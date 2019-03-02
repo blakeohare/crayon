@@ -44,7 +44,7 @@ namespace DateTime {
             }
         }
 
-        static function getCurrentTimeZone() { return new TimeZone(true); }
+        static function getLocal() { return new TimeZone(true); }
         static function getUtc() { return new TimeZone(false); }
 
         // TODO: this is not implemented.
@@ -75,7 +75,7 @@ namespace DateTime {
             return TimeZone._allTz.clone();
         }
 
-        function getFullDisplayName() { return this.getFormattedOffset() + ' - ' + this.getName(); }
+        function getFullDisplayName() { return Moment.now(this).getFormattedOffset() + ' - ' + this.getName(); }
         function getName() { return this._name; }
         function isUtc() { return !this._isLocal; }
         function isDstHappening() { return this._hasDst && $lib_datetime_isDstOccurringAt(this, Core.currentTime()); }

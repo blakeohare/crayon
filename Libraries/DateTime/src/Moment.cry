@@ -23,7 +23,7 @@ namespace DateTime {
 
         @private
         constructor(tz) {
-            if (Moment._tzCache == null) Moment._tzCache = TimeZone.getCurrentTimeZone();
+            if (Moment._tzCache == null) Moment._tzCache = TimeZone.getLocal();
             this._tz = tz ?? Moment._tzCache;
             if (!(this._tz is TimeZone)) throw new InvalidArgumentException("Invalid TimeZone object");
         }
