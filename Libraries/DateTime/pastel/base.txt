@@ -1,0 +1,8 @@
+SOURCE: src/main.pst
+
+EXT-TYPE: void _lib_datetime_parseDate(Array<int> intOut, object nativeTz, int year, int month, int day, int hour, int minute, int microseconds);
+EXT-TYPE: bool _lib_datetime_unixToStructured(Array<int> intOut, object nativeTz, double unixTimestamp);
+EXT-TYPE: object _lib_datetime_getDataForLocalTimeZone(Array<string> strOut, Array<int> intOut);
+EXT-TYPE: int _lib_datetime_getUtcOffsetAt(object nativeTimezone, int unixTime);
+EXT-TYPE: bool _lib_datetime_isDstOccurringAt(object nativeTz, int unixTimestamp);
+EXT-TYPE: Array<object> _lib_datetime_initializeTimeZoneList();

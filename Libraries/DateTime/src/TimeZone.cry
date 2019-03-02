@@ -1,0 +1,84 @@
+import Math;
+
+namespace DateTime {
+
+    /*
+        nativeData for this object contains a reference to a native time zone object
+        but only if this is a non-UTC TimeZone.
+
+        C#: nativeData[0] -> System.TimeZone
+
+    */
+    class TimeZone {
+
+        // Initialize fields with UTC values.
+        // Local values are applied in the constructor, if warranted.
+
+        field _isLocal = false;
+        field _name = 'Coordinated Universal Time (UTC)';
+        field _offsetFromUtcSec = 0;
+        field _hasDst = false;
+
+        // This is a fingerprint defined by the system
+        // If DST suddenly occurs the offset will change, but the system fingerprint will not, and so it will
+        // be clear that the TimeZone is actually the same instance. If the user changes the time zone, this will
+        // change.
+        field _systemTzFingerprint = 'CrayonUTC';
+
+        static field _allTz = null;
+
+        /*
+            if isLocal is true, then this is not a UTC time zone.
+            if tzListOffset is set to an integer, then this is an index into the time zone list
+            in the native data of the passed in tzList object.
+        */
+        @private
+        constructor(isLocal, tzList = null, tzListOffset = null) {
+            if (isLocal) {
+                this._isLocal = true;
+                d = $lib_datetime_initTimeZone(this, tzList, tzListOffset);
+                this._name = d[0];
+                this._offsetFromUtcSec = d[1];
+                this._hasDst = d[2];
+                this._systemTzFingerprint = d[3];
+            }
+        }
+
+        static function getLocal() { return new TimeZone(true); }
+        static function getUtc() { return new TimeZone(false); }
+
+        // TODO: this is not implemented.
+        // A reasonable solution needs to be found for Python and JavaScript.
+        static function getTimeZones() {
+            if (TimeZone._allTz == null) {
+                TimeZone._allTz = [];
+
+                obj = new Core.Object();
+                count = $lib_datetime_initTimeZoneList(obj);
+                for (i = 0; i < count; ++i) {
+                    TimeZone._allTz.add(new TimeZone(true, obj, i));
+                }
+
+                // sort by UTC offset. Mix in the name to break ties somewhat deterministically.
+                // TODO: support secondary sort keys or comparison based sorting
+                TimeZone._allTz.sort((tz) => {
+                    offset = Moment.now(tz).getUtcOffsetSeconds();
+                    return offset * 100 + Core.ord(tz._name[0]);
+                });
+
+                // List UTC first followed by the local time zone.
+                TimeZone._allTz = [
+                    new TimeZone(false),
+                    new TimeZone(true),
+                ] + TimeZone._allTz;
+            }
+            return TimeZone._allTz.clone();
+        }
+
+        function getFullDisplayName() { return Moment.now(this).getFormattedOffset() + ' - ' + this.getName(); }
+        function getName() { return this._name; }
+        function isUtc() { return !this._isLocal; }
+        function isDstHappening() { return this._hasDst && $lib_datetime_isDstOccurringAt(this, Core.currentTime()); }
+        function hasDst() { return this._hasDst; }
+    }
+}

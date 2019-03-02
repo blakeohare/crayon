@@ -1,0 +1,230 @@
+﻿import Math;
+
+namespace DateTime {
+
+    class Moment {
+
+        field _tz;
+        field unixTime;
+
+        field year;
+        field month;
+        field day;
+        field hour;
+        field minute;
+        field second;
+        field millis;
+        field micros;
+        field dayOfWeek;
+        field hour12;
+        field ampm;
+
+        static field _tzCache;
+
+        @private
+        constructor(tz) {
+            if (Moment._tzCache == null) Moment._tzCache = TimeZone.getLocal();
+            this._tz = tz ?? Moment._tzCache;
+            if (!(this._tz is TimeZone)) throw new InvalidArgumentException("Invalid TimeZone object");
+        }
+
+        static function now(tz = null) {
+            return Moment.fromTimestamp(Core.currentTime(), tz);
+        }
+
+        static function at(year, month, day, hour, minute, secondIntOrFloat, tz = null) {
+            dt = new Moment(tz);
+            dt.unixTime = $lib_datetime_parseDate(
+                Math.floor(year),
+                Math.floor(month),
+                Math.floor(day),
+                Math.floor(hour),
+                Math.floor(minute),
+                Math.floor(1000000.0 * secondIntOrFloat),
+                dt._tz);
+            if (dt.unixTime == null) throw new InvalidArgumentException("Values out of range.");
+            return dt._populateFields();
+        }
+
+        static function fromTimestamp(unixTime, tz = null) {
+            dt = new Moment(tz);
+            dt.unixTime = unixTime * 1.0;
+            return dt._populateFields();
+        }
+
+        function _populateFields() {
+            f = $lib_datetime_unixToStructured(this.unixTime, this._tz);
+            if (f == null) throw new InvalidArgumentException("Unix time stamp is out of range.");
+            this.year = f[0];
+            this.month = f[1];
+            this.day = f[2];
+            this.hour = f[3];
+            this.minute = f[4];
+            this.second = f[5];
+            this.millis = f[6];
+            this.micros = f[7];
+            this.dayOfWeek = f[8];
+            this.hour12 = (this.hour - 1) % 12 + 1;
+            this.ampm = this.hour < 12 ? 'AM' : 'PM';
+            return this;
+        }
+
+        function getUtcOffsetSeconds() {
+            return this._tz._isLocal ? $lib_datetime_getUtcOffsetAt(this._tz, Math.floor(this.unixTime)) : 0;
+        }
+
+        function getFormattedOffset() {
+            s = this.getUtcOffsetSeconds();
+
+            hours = s / 3600;
+            minutes = (s % 3600) / 60;
+            return [
+                'UTC',
+                hours >= 0 ? '+' : '',
+                hours,
+                ':',
+                minutes == 0 ? '00' : minutes
+            ].join('');
+        }
+
+        function isDstOccuring() {
+            return this._tz._hasDst && $lib_datetime_isDstOccurringAt(this._tz, this.unixTime);
+        }
+
+        function format(template) {
+            sections = template.split('%');
+            if (sections.length == 0) return '';
+            valid = true;
+            if (sections[-1] == '%') {
+                valid = false;
+            } else {
+                for (i = 1; i < sections.length; ++i) {
+                    section = sections[i];
+                    if (section.length == 0) {
+                        valid = false;
+                        break;
+                    }
+                    c = section[0];
+                    trimmed = section[1:];
+                    newValue = Moment.applyStringFormatDirective(c, this);
+                    if (newValue == null) {
+                        valid = false;
+                        break;
+                    }
+                    sections[i] = newValue + trimmed;
+                }
+            }
+
+            if (valid) {
+                return sections.join('');
+            }
+
+            throw new InvalidArgumentException("Invalid date format: \"" + template + "\"");
+        }
+
+        // TODO: put all this into Pastel code. That way it won't bloat the byte code.
+        static field monthShort = 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' ');
+        static field monthLong = 'January February March April May Jun July August September October November'.split(' ');
+        static field dowShort = 'Sun Mon Tue Wed Thur Fri Sat'.split(' ');
+        static field dowLong = 'Sunday Monday Tuesday Wednesday Thurstay Friday Saturday'.split(' ');
+        static function applyStringFormatDirective(c, dt) {
+            // This uses the directives from PHP's date function, for lack of a better or more comprehensive standard.
+            // See: http://php.net/manual/en/function.date.php
+            switch (c) {
+                // year
+                case 'y': return Moment.fixedLenNum(dt.year, 2);
+                case 'Y': return dt.year;
+                case 'L': return Moment.isLeapYear(dt.year) ? 1 : 0;
+
+                // month
+                case 'M': return Moment.monthShort[dt.month - 1];
+                case 'F': return Moment.monthLong[dt.month - 1];
+                case 'm': return Moment.fixedLenNum(dt.month, 2);
+                case 'n': return dt.month;
+                case 't': return Moment.daysInMonth(dt.month, dt.year);
+
+                // day
+                case 'd': return Moment.fixedLenNum(dt.day, 2);
+                case 'j': return dt.day;
+                case 'S': // ordinal suffix
+                    n = dt.day % 100;
+                    if (n > 3 && n < 21) return 'th'; // 11, 12, and 13 think they're so special
+                    switch (n % 10) {
+                        case 1: return 'st';
+                        case 2: return 'nd';
+                        case 3: return 'rd';
+                    }
+                    return 'th';
+                case 'z': // nth day of the year (counting from 0, max is 365 on leap year)
+                    total = dt.day - 1;
+                    for (i = 1; i < dt.month; ++i) {
+                        total += Moment.daysInMonth(i, dt.year);
+                    }
+                    return total;
+
+                // day of the week
+                case 'D': return Moment.dowShort[dt.dayOfWeek - 1];
+                case 'N': return Moment.dowLong[dt.dayOfWeek - 1];
+
+                // hour
+                case 'a': return dt.hour < 12 ? 'am' : 'pm';
+                case 'A': return dt.hour < 12 ? 'AM' : 'PM';
+                case 'g': return dt.hour12;
+                case 'G': return dt.hour;
+                case 'h': return Moment.fixedLenNum(dt.hour12, 2);
+                case 'H': return Moment.fixedLenNum(dt.hour, 2);
+
+                // minutes
+                case 'i': return Moment.fixedLenNum(dt.minute, 2);
+
+                // seconds
+                case 's': return Moment.fixedLenNum(dt.second, 2);
+
+                // millis
+                case 'v': return Moment.fixedLenNum(dt.millis, 3);
+
+                // micros (6 digits)
+                case 'u': return Moment.fixedLenNum(dt.millis * 1000 + dt.micros, 6);
+
+                // other
+                case 'U': return dt.unixTime;
+
+
+                // standard formats
+                // TODO: 'c' -> ISO 8601 formatted time
+                // TODO: 'r' -> RFC 2822 format
+
+                default: return null;
+            }
+        }
+
+        static function isLeapYear(y) {
+            if (y % 4 == 0) {
+                if (y % 400 == 0) return true;
+                if (y % 100 == 0) return false;
+                return true;
+            }
+            return false;
+        }
+
+        static function daysInMonth(m, y) {
+            switch (m) {
+                case 2:
+                    return Moment.isLeapYear(y) ? 29 : 28;
+                case 4:
+                case 6:
+                case 9:
+                case 11:
+                    return 30;
+            }
+            return 31;
+        }
+
+        static function fixedLenNum(n, length) {
+            n = n + '';
+            if (n.length > length) n = n[-length:];
+            while (n.length < length) n = '0' + n;
+            return n;
+        }
+    }
+}
