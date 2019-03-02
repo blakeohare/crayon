@@ -57,3 +57,19 @@ def lib_datetime_parseDateImpl(intOut, nullableTimeZone, year, month, day, hour,
 	else:
 		tt = (year, month, day, hour, minute, second, -1, -1, -1)
 		intOut[1] = int(calendar.timegm(tt))
+
+def lib_datetime_getUtcOffsetAtImpl(tz, unixtime):
+	dateTimeUtc = datetime.datetime.utcfromtimestamp(unixtime)
+	dateTimeLoc = datetime.datetime.fromtimestamp(unixtime)
+	locMins = (dateTimeLoc.hour * 60 + dateTimeLoc.minute)
+	utcMins = (dateTimeUtc.hour * 60 + dateTimeUtc.minute)
+	if dateTimeUtc.day + 1 == dateTimeLoc.day:
+		utcMins -= 24 * 60
+	elif dateTimeUtc.day - 1 == dateTimeLoc.day:
+		utcMins += 24 * 60
+	elif dateTimeUtc.day < dateTimeLoc.day: # if it's less but not 1-off, then it's actually the next month
+		utcMins += 24 * 60
+	elif dateTimeUtc.day > dateTimeLoc.day:
+		utcMins -= 24 * 60
+	diffMins = locMins - utcMins
+	return int(diffMins * 60)

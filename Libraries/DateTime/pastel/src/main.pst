@@ -1,4 +1,4 @@
-@import("getOffsetFromUtcNow.pst");
+@import("getUtcOffsetAt.pst");
 @import("initTimeZone.pst");
 @import("initTimeZoneList.pst");
 @import("isDstOccurringAt.pst");

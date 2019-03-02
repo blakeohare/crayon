@@ -69,6 +69,10 @@ namespace DateTime {
             return this;
         }
 
+        function getUtcOffsetSeconds() {
+            return this._tz._isLocal ? $lib_datetime_getUtcOffsetAt(this._tz, Math.floor(this.unixTime)) : 0;
+        }
+
         function isDstOccuring() {
             return this._tz._hasDst && $lib_datetime_isDstOccurringAt(this._tz, this.unixTime);
         }

@@ -6,13 +6,13 @@ namespace Interpreter.Libraries.DateTime
 {
     internal static class DateTimeHelper
     {
-        private static System.TimeZoneInfo GetTimeZone(object nullableTimeZoneAsObj)
+        private static TimeZoneInfo GetTimeZone(object nullableTimeZoneAsObj)
         {
             if (nullableTimeZoneAsObj == null)
             {
-                return System.TimeZoneInfo.Utc;
+                return TimeZoneInfo.Utc;
             }
-            return (System.TimeZoneInfo)nullableTimeZoneAsObj;
+            return (TimeZoneInfo)nullableTimeZoneAsObj;
         }
 
         private static readonly System.DateTime epoch = new System.DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -21,9 +21,9 @@ namespace Interpreter.Libraries.DateTime
         {
             int unixTimeInt = (int)unixTime;
             int micros = (int)((unixTime - unixTimeInt) * 1000000);
-            System.TimeZoneInfo tz = GetTimeZone(nullableTimeZone);
+            TimeZoneInfo tz = GetTimeZone(nullableTimeZone);
             System.DateTime utcDateTime = epoch.AddSeconds(unixTimeInt);
-            System.TimeSpan utcOffset = tz.GetUtcOffset(utcDateTime);
+            TimeSpan utcOffset = tz.GetUtcOffset(utcDateTime);
             System.DateTime dt = utcDateTime.Add(utcOffset);
 
             intOut[0] = dt.Year;
@@ -44,7 +44,7 @@ namespace Interpreter.Libraries.DateTime
             intOut[0] = 1;
             int seconds = (int)(microseconds / 1000000);
             int micros = microseconds - seconds * 1000000;
-            System.TimeZoneInfo tz = GetTimeZone(nullableTimeZone);
+            TimeZoneInfo tz = GetTimeZone(nullableTimeZone);
             System.DateTime dt = new System.DateTime(year, month, day, hour, minute, seconds, 0, DateTimeKind.Unspecified);
             dt = TimeZoneInfo.ConvertTimeToUtc(dt, tz);
             double unixTime = dt.Subtract(epoch).TotalSeconds;
@@ -62,14 +62,18 @@ namespace Interpreter.Libraries.DateTime
             throw new NotImplementedException();
         }
 
-        public static int GetOffsetFromUtcNow(object nativeTimeZone)
+        public static int GetUtcOffsetAt(object nativeTimeZone, int unixTime)
         {
-            throw new NotImplementedException();
+            TimeZoneInfo tz = GetTimeZone(nativeTimeZone);
+            System.DateTime dt = new System.DateTime(1L * unixTime * TimeSpan.TicksPerSecond);
+            TimeSpan offset = tz.GetUtcOffset(dt);
+            int offsetSeconds = (int)offset.TotalSeconds;
+            return offsetSeconds;
         }
 
         public static object GetDataForLocalTimeZone(string[] strOut, int[] intOut)
         {
-            System.TimeZoneInfo tzInfo = System.TimeZoneInfo.Local;
+            TimeZoneInfo tzInfo = TimeZoneInfo.Local;
             strOut[0] = tzInfo.DisplayName.Split(')')[1].Trim();
             strOut[1] = tzInfo.Id;
             intOut[0] = -1; // Not used. Remove this.

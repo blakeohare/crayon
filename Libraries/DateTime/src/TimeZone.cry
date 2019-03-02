@@ -57,8 +57,12 @@ namespace DateTime {
                     TimeZone._allTz.add(new TimeZone(true, obj, i));
                 }
 
-                // sort by UTC offset. Mix in the length to help break ties deterministically.
-                TimeZone._allTz.sort((tz) => { return tz.getUtcOffsetSeconds() * 100 + tz._name.length; });
+                // sort by UTC offset. Mix in the name to break ties somewhat deterministically.
+                // TODO: support secondary sort keys or comparison based sorting
+                TimeZone._allTz.sort((tz) => {
+                    offset = Moment.now(tz).getUtcOffsetSeconds();
+                    return offset * 100 + Core.ord(tz._name[0]);
+                });
 
                 // List UTC first followed by the local time zone.
                 TimeZone._allTz = [
@@ -69,9 +73,10 @@ namespace DateTime {
             return TimeZone._allTz.clone();
         }
 
-        function getUtcOffsetSeconds() { return this._isLocal ? $lib_datetime_getOffsetFromUtcNow(this) : 0; }
-
         function getFormattedOffset() {
+            // TODO: move this to Moment
+
+            /*
             s = this.getUtcOffsetSeconds();
 
             hours = s / 3600;
@@ -83,6 +88,7 @@ namespace DateTime {
                 ':',
                 minutes == 0 ? '00' : minutes
             ].join('');
+            */
         }
 
         function getFullDisplayName() { return this.getFormattedOffset() + ' - ' + this.getName(); }

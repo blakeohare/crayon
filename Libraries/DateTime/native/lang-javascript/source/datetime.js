@@ -84,3 +84,8 @@ LIB$datetime$parseDate = function(intOut, nullableTimeZone, year, month, day, ho
 			LIB$datetime$pad(seconds, 2), "Z"].join('')).getTime();
 	}
 };
+
+LIB$datetime$getUtcOffsetAt = function(tz, unixTime) {
+	var d = new Date(Math.floor(unixTime * 1000));
+	return -60 * d.getTimezoneOffset();
+};

@@ -25,8 +25,9 @@ public class DateTimeHelper {
 		return tz;
 	}
 	
-	public static int getOffsetFromUtcNow(Object nativeTz) {
-		throw new RuntimeException("Not implemented.");
+	public static int getUtcOffsetAt(Object nativeTz, int unixTime) {
+		java.util.TimeZone tz = getTimeZone(nativeTz);
+		return tz.getOffset(unixTime * 1000L) / 1000;
 	}
 	
 	public static boolean unixToStructured(int[] intOut, Object nullableTimeZone, double unixTime) {

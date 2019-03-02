@@ -111,13 +111,11 @@ var lib_datetime_getNativeTimezone = function(value) {
 	return tzObj[3][0];
 };
 
-var lib_datetime_getOffsetFromUtcNow = function(vm, args) {
+var lib_datetime_getUtcOffsetAt = function(vm, args) {
 	var nativeTz = lib_datetime_getNativeTimezone(args[0]);
-	if ((nativeTz == null)) {
-		return vm[13][3];
-	}
-	var offset = LIB$datetime$getOffsetFromUtcNow(nativeTz);
-	return buildInteger(vm[13], offset);
+	var unixTime = args[1][1];
+	var offsetSeconds = LIB$datetime$getUtcOffsetAt(nativeTz, unixTime);
+	return buildInteger(vm[13], offsetSeconds);
 };
 
 var lib_datetime_initTimeZone = function(vm, args) {

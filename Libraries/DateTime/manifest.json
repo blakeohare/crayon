@@ -10,6 +10,7 @@
 		{ "name": "lib_datetime_getOffsetFromUtcNow", "argc": 1 },
 		{ "name": "lib_datetime_isDstOccurringAt", "argc": 2 },
 		{ "name": "lib_datetime_parseDate", "argc": 7 },
-		{ "name": "lib_datetime_unixToStructured", "argc": 2 }
+		{ "name": "lib_datetime_unixToStructured", "argc": 2 },
+		{ "name": "lib_datetime_getUtcOffsetAt", "argc": 2 }
 	]
 }

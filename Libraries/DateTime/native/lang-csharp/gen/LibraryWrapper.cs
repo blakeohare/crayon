@@ -127,15 +127,12 @@ namespace Interpreter.Libraries.DateTime
             return tzObj.nativeData[0];
         }
 
-        public static Value lib_datetime_getOffsetFromUtcNow(VmContext vm, Value[] args)
+        public static Value lib_datetime_getUtcOffsetAt(VmContext vm, Value[] args)
         {
             object nativeTz = lib_datetime_getNativeTimezone(args[0]);
-            if ((nativeTz == null))
-            {
-                return vm.globals.intZero;
-            }
-            int offset = DateTimeHelper.GetOffsetFromUtcNow(nativeTz);
-            return Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, offset);
+            int unixTime = (int)args[1].internalValue;
+            int offsetSeconds = DateTimeHelper.GetUtcOffsetAt(nativeTz, unixTime);
+            return Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, offsetSeconds);
         }
 
         public static Value lib_datetime_initTimeZone(VmContext vm, Value[] args)

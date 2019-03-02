@@ -47,12 +47,11 @@ def lib_datetime_getNativeTimezone(value):
     return None
   return tzObj[3][0]
 
-def lib_datetime_getOffsetFromUtcNow(vm, args):
+def lib_datetime_getUtcOffsetAt(vm, args):
   nativeTz = lib_datetime_getNativeTimezone(args[0])
-  if (nativeTz == None):
-    return vm[13][3]
-  offset = lib_datetime_getOffsetFromUtcNowImpl(nativeTz)
-  return buildInteger(vm[13], offset)
+  unixTime = args[1][1]
+  offsetSeconds = lib_datetime_getUtcOffsetAtImpl(nativeTz, unixTime)
+  return buildInteger(vm[13], offsetSeconds)
 
 def lib_datetime_initTimeZone(vm, args):
   timezone = args[0][1]
