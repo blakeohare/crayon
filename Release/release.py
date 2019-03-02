@@ -81,6 +81,7 @@ def main(args):
 		'CryptoCommon',
 		'CryptoMd5',
 		'CryptoSha1',
+		'DateTime',
 		'Easing',
 		'FileIO',
 		'FileIOCommon',
