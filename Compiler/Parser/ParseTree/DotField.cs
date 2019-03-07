@@ -375,10 +375,17 @@ namespace Parser.ParseTree
                     }
 
                 case ResolvedTypeCategory.CLASS_DEFINITION:
-                    throw new System.NotImplementedException();
+                    throw new ParserException(this.DotToken, "Class definitions do not have that field.");
 
                 case ResolvedTypeCategory.FUNCTION_POINTER:
-                    throw new System.NotImplementedException();
+                    switch (field)
+                    {
+                        case "invoke":
+                            return BuildPrimitiveMethod(ResolvedType.ANY, ResolvedType.ListOrArrayOf(ResolvedType.ANY));
+
+                        default:
+                            throw new ParserException(this.DotToken, "Fucntions do not have that field.");
+                    }
 
                 case ResolvedTypeCategory.INSTANCE:
                     FieldDefinition fieldDef = rootType.ClassTypeOrReference.GetField(field, true);
@@ -402,7 +409,7 @@ namespace Parser.ParseTree
                     throw new ParserException(this.DotToken, "The class '" + rootType.ClassTypeOrReference.NameToken.Value + "' does not have a field called '" + field + "'.");
 
                 default:
-                    throw new System.NotImplementedException();
+                    throw new ParserException(this.DotToken, "This field does not exist.");
             }
         }
 
