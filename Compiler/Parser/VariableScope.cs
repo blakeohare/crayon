@@ -109,6 +109,12 @@ namespace Parser
                 {
                     varId.ID = id++;
                 }
+                else
+                {
+                    // You must still skip over the ID# even if the variable is used by a closure
+                    // because arguments are always sequentially allocated ID#'s regardless of their closure status.
+                    id++;
+                }
             }
         }
 
