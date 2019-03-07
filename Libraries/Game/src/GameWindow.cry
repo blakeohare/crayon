@@ -112,6 +112,8 @@ namespace Game {
             Core.assert(screenHeight > 0, "screen " + h + t);
             Core.assert(fps > 0, "FPS" + t);
 
+            Core.Dispatcher.registerDispatcherFramework(this);
+
             $lib_game_initialize(fps);
             $lib_game_initialize_screen(width, height, screenWidth, screenHeight);
             $lib_game_set_title(title);
@@ -134,6 +136,24 @@ namespace Game {
         }
 
 
+        field _timedCallbacks = [];
+        function _setTimedCallback(deadline, cb) {
+            this._timedCallbacks.add([deadline, cb]);
+        }
+
+        function _flushTimedCallbacks() {
+            if (this._timedCallbacks.length > 0) {
+                now = Core.currentTime();
+                for (i = this._timedCallbacks.length - 1; i >= 0; --i) {
+                    if (this._timedCallbacks[i][0] <= now) {
+                        cb = this._timedCallbacks[i][1];
+                        this._timedCallbacks.remove(i);
+                        cb();
+                    }
+                }
+            }
+        }
+
         // returns a list [isAspectRatioForced, screenWidth, screenHeight]
         // can be called before game is created
         // may possibly return 0 x 0 for the screen size if the underlying API can't tell
@@ -150,7 +170,11 @@ namespace Game {
                 t();
             }
 
+            this._flushTimedCallbacks();
+
             $lib_game_clock_tick();
+
+            this._flushTimedCallbacks();
 
             for (t : Game.GameWindow._frameBeginHandlers) {
                 t();
