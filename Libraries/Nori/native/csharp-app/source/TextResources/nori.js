@@ -504,6 +504,10 @@ function flushUpdates(data) {
 				ctx.uiRoot.appendChild(ctx.rootElement);
 				break;
 			
+			case 'TO':
+				queueTimeout(id, items[i++]);
+				break;
+			
 			default:
 				throw "Unknown command";
 		}
@@ -511,6 +515,13 @@ function flushUpdates(data) {
 	
 	doLayoutPass();
 	platformSpecificHandleEvent(-1, 'on-render-pass', '');
+}
+
+function queueTimeout(id, millis) {
+	setTimeout(
+		function() {
+			platformSpecificHandleEvent(-1, 'on-timeout-callback', id);
+		}, millis);
 }
 
 function doLayoutPass() {

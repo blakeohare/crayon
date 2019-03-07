@@ -83,6 +83,11 @@ CI: sends incremental changes of panel children changes, removes are performed f
 	{int: number of children to add}
 	{list of n int IDs}
 
+TO: calls setTimeout and triggers a ui-generated-event to call back with an ID#. TO is shoft for "Time Out"
+"TO",
+	{int: the ID number of the callback to trigger in the VM}
+	{int: the number of milliseconds for the callback}
+	
 Update pass
 Visual changes phase:
 - loop through updates, apply all property changes first, this ensures that the elements with any ID that is mentioned actually exists
