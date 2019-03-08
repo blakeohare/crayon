@@ -1,16 +1,17 @@
 ﻿/*
-    arg1: request object
-    arg2: boolean: true if is asynchronous request
-    arg3: string: method
-    arg4: string: URL
-    arg5: list of strings: alternating header names and values.
-    arg6: one of the following...
+    arg[0] -> request object
+    arg[1] -> boolean: true if is asynchronous request
+    arg[2] -> string: method
+    arg[3] -> string: URL
+    arg[4] -> list of strings: alternating header names and values.
+    arg[5] -> one of the following...
         object with nativeData[0] of a byte array
         a simple string
         null
-    arg7: an integer
+    arg[6] -> an integer
         0 -> response should be text
         1 -> response should be a byte array
+    arg[7] -> int: current execution context ID
 */
 VM.Value lib_http_sendRequest(VM.VmContext vm, Array<VM.Value> args) {
     VM.Value body = args[5];
@@ -43,7 +44,7 @@ VM.Value lib_http_sendRequest(VM.VmContext vm, Array<VM.Value> args) {
 
     bool getResponseAsText = ((int) args[6].internalValue) == 1; // alternative: bytes
 
-    if ((bool) args[1].internalValue) { // is synchronous?
+    if ((bool) args[1].internalValue) { // is asynchronous?
         // asynchronous request
         Extension._lib_http_sendRequestAsynchronous(
             objArray1,
@@ -55,6 +56,7 @@ VM.Value lib_http_sendRequest(VM.VmContext vm, Array<VM.Value> args) {
             getResponseAsText);
     } else {
         // synchronous request
+        int execId = (int) args[7].internalValue;
         if (Extension._lib_http_sendRequestSynchronous(
             objArray1,
             method,
@@ -63,10 +65,10 @@ VM.Value lib_http_sendRequest(VM.VmContext vm, Array<VM.Value> args) {
             bodyState,
             bodyRawObject,
             getResponseAsText,
-            VM.vm_getCurrentExecutionContextId(vm),
+            execId,
             vm)) {
 
-            VM.vm_suspend(vm, 1);
+            VM.vm_suspend_context_by_id(vm, execId, 1);
         }
     }
 

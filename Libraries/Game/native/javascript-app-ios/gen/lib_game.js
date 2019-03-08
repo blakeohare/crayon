@@ -291,7 +291,7 @@ var lib_game_audio_sfx_stop = function(vm, args) {
 
 var lib_game_clock_tick = function(vm, args) {
 	C$game$endFrame();
-	vm_suspend(vm, 1);
+	vm_suspend_context_by_id(vm, args[0][1], 1);
 	return vm[14];
 };
 
@@ -375,6 +375,13 @@ var lib_game_gamepad_jsIsOsx = function(vm, args) {
 	return buildInteger(vm[13], (window.navigator.platform == 'MacIntel' ? 1 : 0));
 };
 
+var lib_game_gamepad_platform_requires_refresh = function(vm, args) {
+	if ((true && C$gamepad$isSupported())) {
+		return vm[15];
+	}
+	return vm[16];
+};
+
 var lib_game_gamepad_poll_universe = function(vm, args) {
 	C$common$alwaysTrue();
 	return vm[14];
@@ -419,8 +426,9 @@ var lib_game_initialize = function(vm, args) {
 };
 
 var lib_game_initialize_screen = function(vm, args) {
-	var ec = getExecutionContext(vm, vm_getCurrentExecutionContextId(vm));
-	C$game$initializeScreen(args[0][1], args[1][1], args[2][1], args[3][1], vm_getCurrentExecutionContextId(vm));
+	var ecId = args[4][1];
+	var ec = getExecutionContext(vm, ecId);
+	C$game$initializeScreen(args[0][1], args[1][1], args[2][1], args[3][1], ecId);
 	vm_suspend_for_context(ec, 1);
 	return vm[14];
 };
@@ -491,11 +499,4 @@ var lib_game_startup = function(vm, args) {
 		i += 1;
 	}
 	return vm[14];
-};
-
-var lib_gamepad_platform_requires_refresh = function(vm, args) {
-	if ((true && C$gamepad$isSupported())) {
-		return vm[15];
-	}
-	return vm[16];
 };

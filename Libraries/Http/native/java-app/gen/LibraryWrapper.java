@@ -2,7 +2,9 @@ package org.crayonlang.libraries.http;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.crayonlang.interpreter.PlatformTranslationHelper;;
 import org.crayonlang.interpreter.structs.*;
+import org.crayonlang.interpreter.TranslationHelper;;
 
 public final class LibraryWrapper {
 
@@ -390,21 +392,21 @@ public final class LibraryWrapper {
     crayonlib.http.HttpHelper.readResponseData(object1, PST_intBuffer16, PST_stringBuffer16, objArray1, stringList1);
     objInstance1 = ((ObjectInstance) arg2.internalValue);
     objInstance1.nativeData = objArray1;
-    ArrayList<Value> outputList = ((ArrayList<Value>) arg3.internalValue);
-    outputList.add(org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(vm.globals, PST_intBuffer16[0]));
-    outputList.add(org.crayonlang.interpreter.vm.CrayonWrapper.buildString(vm.globals, PST_stringBuffer16[0]));
+    ListImpl outputList = ((ListImpl) arg3.internalValue);
+    org.crayonlang.interpreter.vm.CrayonWrapper.addToList(outputList, org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(vm.globals, PST_intBuffer16[0]));
+    org.crayonlang.interpreter.vm.CrayonWrapper.addToList(outputList, org.crayonlang.interpreter.vm.CrayonWrapper.buildString(vm.globals, PST_stringBuffer16[0]));
     Value value = vm.globalNull;
     Value value2 = vm.globalTrue;
     if ((PST_intBuffer16[1] == 0)) {
       value = org.crayonlang.interpreter.vm.CrayonWrapper.buildString(vm.globals, PST_stringBuffer16[1]);
       value2 = vm.globalFalse;
     }
-    outputList.add(value);
-    outputList.add(value2);
-    ArrayList<Value> list1 = ((ArrayList<Value>) arg4.internalValue);
+    org.crayonlang.interpreter.vm.CrayonWrapper.addToList(outputList, value);
+    org.crayonlang.interpreter.vm.CrayonWrapper.addToList(outputList, value2);
+    ListImpl list1 = ((ListImpl) arg4.internalValue);
     int i = 0;
     while ((i < stringList1.size())) {
-      list1.add(org.crayonlang.interpreter.vm.CrayonWrapper.buildString(vm.globals, stringList1.get(i)));
+      org.crayonlang.interpreter.vm.CrayonWrapper.addToList(list1, org.crayonlang.interpreter.vm.CrayonWrapper.buildString(vm.globals, stringList1.get(i)));
       i += 1;
     }
     return vm.globalNull;
@@ -442,8 +444,9 @@ public final class LibraryWrapper {
     if (((boolean) args[1].internalValue)) {
       crayonlib.http.HttpHelper.sendRequestAsync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText);
     } else {
+      int execId = ((int) args[7].internalValue);
       if (crayonlib.http.HttpHelper.sendRequestSync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText)) {
-        org.crayonlang.interpreter.vm.CrayonWrapper.vm_suspend(vm, 1);
+        org.crayonlang.interpreter.vm.CrayonWrapper.vm_suspend_context_by_id(vm, execId, 1);
       }
     }
     return vm.globalNull;

@@ -194,7 +194,7 @@ def lib_game_audio_sfx_stop(vm, args):
 
 def lib_game_clock_tick(vm, args):
   always_true()
-  vm_suspend(vm, 1)
+  vm_suspend_context_by_id(vm, args[0][1], 1)
   return vm[14]
 
 def lib_game_gamepad_current_device_count(vm, args):
@@ -306,8 +306,9 @@ def lib_game_initialize(vm, args):
   return vm[14]
 
 def lib_game_initialize_screen(vm, args):
-  ec = getExecutionContext(vm, vm_getCurrentExecutionContextId(vm))
-  pygame_initialize_screen(args[0][1], args[1][1], (args[2][1], args[3][1]), vm_getCurrentExecutionContextId(vm))
+  ecId = args[4][1]
+  ec = getExecutionContext(vm, ecId)
+  pygame_initialize_screen(args[0][1], args[1][1], (args[2][1], args[3][1]), ecId)
   vm_suspend_for_context(ec, 1)
   return vm[14]
 

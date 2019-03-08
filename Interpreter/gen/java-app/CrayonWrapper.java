@@ -1250,9 +1250,6 @@ public final class CrayonWrapper {
   }
 
   public static ExecutionContext getExecutionContext(VmContext vm, int id) {
-    if ((id == -1)) {
-      id = vm.lastExecutionContextId;
-    }
     if (vm.executionContexts.containsKey(id)) {
       return vm.executionContexts.get(id);
     }
@@ -7205,8 +7202,8 @@ public final class CrayonWrapper {
     return vm.lastExecutionContextId;
   }
 
-  public static int vm_suspend(VmContext vm, int status) {
-    return vm_suspend_for_context(getExecutionContext(vm, -1), 1);
+  public static int vm_suspend_context_by_id(VmContext vm, int execId, int status) {
+    return vm_suspend_for_context(getExecutionContext(vm, execId), 1);
   }
 
   public static int vm_suspend_for_context(ExecutionContext ec, int status) {
@@ -7215,8 +7212,8 @@ public final class CrayonWrapper {
     return 0;
   }
 
-  public static int vm_suspend_with_status(VmContext vm, int status) {
-    return vm_suspend_for_context(getExecutionContext(vm, -1), status);
+  public static int vm_suspend_with_status_by_id(VmContext vm, int execId, int status) {
+    return vm_suspend_for_context(getExecutionContext(vm, execId), status);
   }
 
   public static void vmEnvSetCommandLineArgs(VmContext vm, String[] args) {

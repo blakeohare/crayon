@@ -115,7 +115,7 @@ namespace Game {
             Core.Dispatcher.registerDispatcherFramework(this);
 
             $lib_game_initialize(fps);
-            $lib_game_initialize_screen(width, height, screenWidth, screenHeight);
+            $lib_game_initialize_screen(width, height, screenWidth, screenHeight, Core.getCurrentExecutionToken());
             $lib_game_set_title(title);
             $lib_game_setInstance(this);
         }
@@ -172,7 +172,7 @@ namespace Game {
 
             this._flushTimedCallbacks();
 
-            $lib_game_clock_tick();
+            $lib_game_clock_tick(Core.getCurrentExecutionToken());
 
             this._flushTimedCallbacks();
 

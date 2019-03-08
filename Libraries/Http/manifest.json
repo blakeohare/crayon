@@ -9,6 +9,6 @@
 		{ "name": "lib_http_getResponseBytes", "argc": 2 },
 		{ "name": "lib_http_pollRequest", "argc": 1 },
 		{ "name": "lib_http_populateResponse", "argc": 4 },
-		{ "name": "lib_http_sendRequest", "argc": 7 }
+		{ "name": "lib_http_sendRequest", "argc": 8 }
 	]
 }

@@ -581,22 +581,19 @@ int vm_getCurrentExecutionContextId(VmContext vm) {
 }
 
 ExecutionContext getExecutionContext(VmContext vm, int id) {
-    if (id == -1) {
-        id = vm.lastExecutionContextId;
-    }
     if (vm.executionContexts.Contains(id)) {
         return vm.executionContexts[id];
     }
     return null;
 }
 
-int vm_suspend_with_status(VmContext vm, int status) {
-    return vm_suspend_for_context(getExecutionContext(vm, -1), status);
+int vm_suspend_with_status_by_id(VmContext vm, int execId, int status) {
+    return vm_suspend_for_context(getExecutionContext(vm, execId), status);
 }
 
 // status is an enum value in InterpreterStatus.
-int vm_suspend(VmContext vm, int status) {
-    return vm_suspend_for_context(getExecutionContext(vm, -1), 1);
+int vm_suspend_context_by_id(VmContext vm, int execId, int status) {
+    return vm_suspend_for_context(getExecutionContext(vm, execId), 1);
 }
 
 int vm_suspend_for_context(ExecutionContext ec, int status) {

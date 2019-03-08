@@ -98,19 +98,19 @@ def lib_http_populateResponse(vm, args):
   objInstance1 = arg2[1]
   objInstance1[3] = objArray1
   outputList = arg3[1]
-  outputList.append(buildInteger(vm[13], PST_IntBuffer16[0]))
-  outputList.append(buildString(vm[13], PST_StringBuffer16[0]))
+  addToList(outputList, buildInteger(vm[13], PST_IntBuffer16[0]))
+  addToList(outputList, buildString(vm[13], PST_StringBuffer16[0]))
   value = vm[14]
   value2 = vm[15]
   if (PST_IntBuffer16[1] == 0):
     value = buildString(vm[13], PST_StringBuffer16[1])
     value2 = vm[16]
-  outputList.append(value)
-  outputList.append(value2)
+  addToList(outputList, value)
+  addToList(outputList, value2)
   list1 = arg4[1]
   i = 0
   while (i < len(stringList1)):
-    list1.append(buildString(vm[13], stringList1[i]))
+    addToList(list1, buildString(vm[13], stringList1[i]))
     i += 1
   return vm[14]
 
@@ -141,6 +141,8 @@ def lib_http_sendRequest(vm, args):
   getResponseAsText = (args[6][1] == 1)
   if args[1][1]:
     lib_http_sendRequestAsync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText)
-  elif lib_http_sendRequestSync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText):
-    vm_suspend(vm, 1)
+  else:
+    execId = args[7][1]
+    if lib_http_sendRequestSync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText):
+      vm_suspend_context_by_id(vm, execId, 1)
   return vm[14]

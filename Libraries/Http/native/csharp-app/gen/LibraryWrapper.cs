@@ -265,9 +265,10 @@ namespace Interpreter.Libraries.Http
             }
             else
             {
+                int execId = (int)args[7].internalValue;
                 if (HttpHelper.SendRequestSync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText))
                 {
-                    Interpreter.Vm.CrayonWrapper.vm_suspend(vm, 1);
+                    Interpreter.Vm.CrayonWrapper.vm_suspend_context_by_id(vm, execId, 1);
                 }
             }
             return vm.globalNull;
