@@ -1,3 +1,4 @@
+import Dispatcher;
 import Math;
 
 namespace Nori {
@@ -158,7 +159,7 @@ namespace Nori {
         function show() {
             if (!this._isShown) {
                 this._isShown = true;
-                Core.Dispatcher.registerDispatcherFramework(this);
+                Dispatcher.registerDispatcherFramework(this);
                 renderData = this._getRenderData();
                 execId = Core.getCurrentExecutionToken();
                 $lib_nori_showFrame(this, 'Test Window', this._size[0], this._size[1], renderData, execId);
@@ -176,7 +177,7 @@ namespace Nori {
         function close() {
             if (this._isShown) {
                 this._isShown = false;
-                Core.Dispatcher.registerDispatcherFramework(null);
+                Dispatcher.registerDispatcherFramework(null);
                 $lib_nori_closeFrame(this);
             }
         }

@@ -1,4 +1,5 @@
-﻿import Math;
+﻿import Dispatcher;
+import Math;
 
 namespace Game {
 
@@ -112,7 +113,7 @@ namespace Game {
             Core.assert(screenHeight > 0, "screen " + h + t);
             Core.assert(fps > 0, "FPS" + t);
 
-            Core.Dispatcher.registerDispatcherFramework(this);
+            Dispatcher.registerDispatcherFramework(this);
 
             $lib_game_initialize(fps);
             $lib_game_initialize_screen(width, height, screenWidth, screenHeight, Core.getCurrentExecutionToken());

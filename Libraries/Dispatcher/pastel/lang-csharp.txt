@@ -1,0 +1,16 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-csharp.txt
+IMPORT: ../../../Interpreter/headers-csharp.txt
+
+LANGUAGE: csharp
+
+DEPENDENCY: VM: ../../../Interpreter/csharp-app.txt
+
+OUTPUT-STRUCTS: ../native/lang-csharp/gen/structs
+OUTPUT-FUNCTIONS: ../native/lang-csharp/gen/LibraryWrapper.cs
+
+NAMESPACE-FUNCTIONS: Interpreter.Libraries.Dispatcher
+NAMESPACE-STRUCTS: Interpreter.Libraries.Dispatcher
+FUNCTION-WRAPPER-CLASS: LibraryWrapper
+
+EXT: _lib_dispatcher_flushNativeQueue: DispatcherHelper.FlushNativeQueue([ARG:1], [ARG:2])

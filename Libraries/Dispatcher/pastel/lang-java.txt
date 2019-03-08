@@ -1,0 +1,16 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-java.txt
+IMPORT: ../../../Interpreter/headers-java.txt
+
+LANGUAGE: java
+
+DEPENDENCY: VM: ../../../Interpreter/java-app.txt
+
+OUTPUT-STRUCTS: ../native/lang-java/gen/structs
+OUTPUT-FUNCTIONS: ../native/lang-java/gen/LibraryWrapper.java
+
+NAMESPACE-FUNCTIONS: org.crayonlang.libraries.dispatcher
+NAMESPACE-STRUCTS: org.crayonlang.libraries.dispatcher
+FUNCTION-WRAPPER-CLASS: LibraryWrapper
+
+EXT: _lib_dispatcher_flushNativeQueue: DispatcherHelper.flushNativeQueue([ARG:1], [ARG:2])
