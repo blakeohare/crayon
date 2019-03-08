@@ -510,7 +510,7 @@ public final class LibraryWrapper {
 
   public static Value lib_game_clock_tick(VmContext vm, Value[] args) {
     TranslationHelper.alwaysTrue();
-    org.crayonlang.interpreter.vm.CrayonWrapper.vm_suspend(vm, 1);
+    org.crayonlang.interpreter.vm.CrayonWrapper.vm_suspend_context_by_id(vm, ((int) args[0].internalValue), 1);
     return vm.globalNull;
   }
 
@@ -600,8 +600,9 @@ public final class LibraryWrapper {
   }
 
   public static Value lib_game_initialize_screen(VmContext vm, Value[] args) {
-    ExecutionContext ec = org.crayonlang.interpreter.vm.CrayonWrapper.getExecutionContext(vm, org.crayonlang.interpreter.vm.CrayonWrapper.vm_getCurrentExecutionContextId(vm));
-    GameWindow.initializeScreen(((int) args[0].internalValue), ((int) args[1].internalValue), ((int) args[2].internalValue), ((int) args[3].internalValue), org.crayonlang.interpreter.vm.CrayonWrapper.vm_getCurrentExecutionContextId(vm));
+    int ecId = ((int) args[4].internalValue);
+    ExecutionContext ec = org.crayonlang.interpreter.vm.CrayonWrapper.getExecutionContext(vm, ecId);
+    GameWindow.initializeScreen(((int) args[0].internalValue), ((int) args[1].internalValue), ((int) args[2].internalValue), ((int) args[3].internalValue), ecId);
     org.crayonlang.interpreter.vm.CrayonWrapper.vm_suspend_for_context(ec, 1);
     return vm.globalNull;
   }

@@ -343,7 +343,7 @@ namespace Interpreter.Libraries.Game
         public static Value lib_game_clock_tick(VmContext vm, Value[] args)
         {
             AlwaysTrue();
-            Interpreter.Vm.CrayonWrapper.vm_suspend(vm, 1);
+            Interpreter.Vm.CrayonWrapper.vm_suspend_context_by_id(vm, (int)args[0].internalValue, 1);
             return vm.globalNull;
         }
 
@@ -503,8 +503,9 @@ namespace Interpreter.Libraries.Game
 
         public static Value lib_game_initialize_screen(VmContext vm, Value[] args)
         {
-            ExecutionContext ec = Interpreter.Vm.CrayonWrapper.getExecutionContext(vm, Interpreter.Vm.CrayonWrapper.vm_getCurrentExecutionContextId(vm));
-            GameWindow.InitializeScreen((int)args[0].internalValue, (int)args[1].internalValue, (int)args[2].internalValue, (int)args[3].internalValue, Interpreter.Vm.CrayonWrapper.vm_getCurrentExecutionContextId(vm));
+            int ecId = (int)args[4].internalValue;
+            ExecutionContext ec = Interpreter.Vm.CrayonWrapper.getExecutionContext(vm, ecId);
+            GameWindow.InitializeScreen((int)args[0].internalValue, (int)args[1].internalValue, (int)args[2].internalValue, (int)args[3].internalValue, ecId);
             Interpreter.Vm.CrayonWrapper.vm_suspend_for_context(ec, 1);
             return vm.globalNull;
         }

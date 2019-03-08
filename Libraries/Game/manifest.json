@@ -15,11 +15,11 @@
 	"cni-startup": "lib_game_startup",
 
 	"cni": [
-		{ "name": "lib_game_clock_tick", "argc": 0 },
+		{ "name": "lib_game_clock_tick", "argc": 1 },
 		{ "name": "lib_game_getScreenInfo", "argc": 1 },
 		{ "name": "lib_game_getTouchState", "argc": 1 },
 		{ "name": "lib_game_initialize", "argc": 1 },
-		{ "name": "lib_game_initialize_screen", "argc": 4 },
+		{ "name": "lib_game_initialize_screen", "argc": 5 },
 		{ "name": "lib_game_pump_events", "argc": 1 },
 		{ "name": "lib_game_setInstance", "argc": 1 },
 		{ "name": "lib_game_set_title", "argc": 1 },

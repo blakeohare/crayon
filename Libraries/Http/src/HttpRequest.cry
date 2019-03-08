@@ -110,7 +110,8 @@
                 this._url,
                 this._headers,
                 this._content,
-                this._mode);
+                this._mode,
+                Core.getCurrentExecutionToken());
             return this;
         }
 

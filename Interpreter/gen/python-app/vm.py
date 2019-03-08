@@ -723,8 +723,6 @@ def getClassTable(vm, classId):
   return newTable
 
 def getExecutionContext(vm, id):
-  if (id == -1):
-    id = vm[1]
   if (id in vm[0]):
     return vm[0][id]
   return None
@@ -5363,16 +5361,16 @@ swlookup__valueToString__0 = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 }
 def vm_getCurrentExecutionContextId(vm):
   return vm[1]
 
-def vm_suspend(vm, status):
-  return vm_suspend_for_context(getExecutionContext(vm, -1), 1)
+def vm_suspend_context_by_id(vm, execId, status):
+  return vm_suspend_for_context(getExecutionContext(vm, execId), 1)
 
 def vm_suspend_for_context(ec, status):
   ec[11] = True
   ec[12] = status
   return 0
 
-def vm_suspend_with_status(vm, status):
-  return vm_suspend_for_context(getExecutionContext(vm, -1), status)
+def vm_suspend_with_status_by_id(vm, execId, status):
+  return vm_suspend_for_context(getExecutionContext(vm, execId), status)
 
 def vmEnvSetCommandLineArgs(vm, args):
   vm[11][0] = args

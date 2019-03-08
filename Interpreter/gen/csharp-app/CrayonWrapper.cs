@@ -1293,10 +1293,6 @@ namespace Interpreter.Vm
 
         public static ExecutionContext getExecutionContext(VmContext vm, int id)
         {
-            if ((id == -1))
-            {
-                id = vm.lastExecutionContextId;
-            }
             if (vm.executionContexts.ContainsKey(id))
             {
                 return vm.executionContexts[id];
@@ -8985,9 +8981,9 @@ namespace Interpreter.Vm
             return vm.lastExecutionContextId;
         }
 
-        public static int vm_suspend(VmContext vm, int status)
+        public static int vm_suspend_context_by_id(VmContext vm, int execId, int status)
         {
-            return vm_suspend_for_context(getExecutionContext(vm, -1), 1);
+            return vm_suspend_for_context(getExecutionContext(vm, execId), 1);
         }
 
         public static int vm_suspend_for_context(ExecutionContext ec, int status)
@@ -8997,9 +8993,9 @@ namespace Interpreter.Vm
             return 0;
         }
 
-        public static int vm_suspend_with_status(VmContext vm, int status)
+        public static int vm_suspend_with_status_by_id(VmContext vm, int execId, int status)
         {
-            return vm_suspend_for_context(getExecutionContext(vm, -1), status);
+            return vm_suspend_for_context(getExecutionContext(vm, execId), status);
         }
 
         public static void vmEnvSetCommandLineArgs(VmContext vm, string[] args)

@@ -291,7 +291,7 @@ var lib_game_audio_sfx_stop = function(vm, args) {
 
 var lib_game_clock_tick = function(vm, args) {
 	C$game$endFrame();
-	vm_suspend(vm, 1);
+	vm_suspend_context_by_id(vm, args[0][1], 1);
 	return vm[14];
 };
 
@@ -426,8 +426,9 @@ var lib_game_initialize = function(vm, args) {
 };
 
 var lib_game_initialize_screen = function(vm, args) {
-	var ec = getExecutionContext(vm, vm_getCurrentExecutionContextId(vm));
-	C$game$initializeScreen(args[0][1], args[1][1], args[2][1], args[3][1], vm_getCurrentExecutionContextId(vm));
+	var ecId = args[4][1];
+	var ec = getExecutionContext(vm, ecId);
+	C$game$initializeScreen(args[0][1], args[1][1], args[2][1], args[3][1], ecId);
 	vm_suspend_for_context(ec, 1);
 	return vm[14];
 };

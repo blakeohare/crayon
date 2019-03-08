@@ -222,8 +222,9 @@ var lib_http_sendRequest = function(vm, args) {
 	if (args[1][1]) {
 		LIB$http$sendRequestAsync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText);
 	} else {
-		if (LIB$http$sendRequestSync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText, vm_getCurrentExecutionContextId(vm), vm)) {
-			vm_suspend(vm, 1);
+		var execId = args[7][1];
+		if (LIB$http$sendRequestSync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText, execId, vm)) {
+			vm_suspend_context_by_id(vm, execId, 1);
 		}
 	}
 	return vm[14];

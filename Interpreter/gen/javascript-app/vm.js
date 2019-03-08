@@ -1012,9 +1012,6 @@ var getClassTable = function(vm, classId) {
 };
 
 var getExecutionContext = function(vm, id) {
-	if ((id == -1)) {
-		id = vm[1];
-	}
 	if ((vm[0][id] !== undefined)) {
 		return vm[0][id];
 	}
@@ -6878,8 +6875,8 @@ var vm_getCurrentExecutionContextId = function(vm) {
 	return vm[1];
 };
 
-var vm_suspend = function(vm, status) {
-	return vm_suspend_for_context(getExecutionContext(vm, -1), 1);
+var vm_suspend_context_by_id = function(vm, execId, status) {
+	return vm_suspend_for_context(getExecutionContext(vm, execId), 1);
 };
 
 var vm_suspend_for_context = function(ec, status) {
@@ -6888,8 +6885,8 @@ var vm_suspend_for_context = function(ec, status) {
 	return 0;
 };
 
-var vm_suspend_with_status = function(vm, status) {
-	return vm_suspend_for_context(getExecutionContext(vm, -1), status);
+var vm_suspend_with_status_by_id = function(vm, execId, status) {
+	return vm_suspend_for_context(getExecutionContext(vm, execId), status);
 };
 
 var vmEnvSetCommandLineArgs = function(vm, args) {
