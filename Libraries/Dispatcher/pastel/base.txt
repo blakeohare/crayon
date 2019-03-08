@@ -1,0 +1,3 @@
+SOURCE: src/main.pst
+
+EXT-TYPE: void _lib_dispatcher_flushNativeQueue(Array<object> things, List<VM.Value> callbacksOut);

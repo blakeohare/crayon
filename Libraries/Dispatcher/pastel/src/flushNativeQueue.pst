@@ -1,0 +1,19 @@
+﻿/*
+    Builds a list of function pointer Values from a mutex-protected native data object
+    Returns null when there are no function pointers present.
+
+    args[0] -> ObjectInstance containing some nativeData
+        nativeData[0] -> mutex for the list below
+        nativeData[1] -> a List<VM.Value> of function pointer objects.
+
+*/
+VM.Value lib_dispatcher_flushNativeQueue(VM.VmContext vm, Array<VM.Value> args) {
+
+    Array<object> nd = Core.ForceParens((VM.ObjectInstance) args[0].internalValue).nativeData;
+    List<VM.Value> output = new List<VM.Value>();
+    Extension._lib_dispatcher_flushNativeQueue(nd, output);
+    if (output.Size() == 0) {
+        return vm.globalNull;
+    }
+    return VM.buildList(output);
+}

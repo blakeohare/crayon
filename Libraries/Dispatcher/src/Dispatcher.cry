@@ -1,0 +1,123 @@
+﻿namespace Dispatcher {
+
+    function setTimedCallback(cb, seconds, args = null) {
+        return DispatcherInternal._setCallback(cb, args, Core.currentTime() + seconds, seconds, false);
+    }
+
+    function setRecurringCallback(cb, seconds, args = null) {
+        return DispatcherInternal._setCallback(cb, args, Core.currentTime() + seconds, seconds, true);
+    }
+
+    // call with null to clear the dispatcher framework.
+    function registerDispatcherFramework(f) {
+        DispatcherInternal._dispatcherFramework = f;
+        if (f != null) {
+            for (qcb : DispatcherInternal._queuedCallbacks) {
+                DispatcherInternal._setCallback.invoke(qcb);
+            }
+            DispatcherInternal._queuedCallbacks.clear();
+        }
+    }
+
+    function flush() {
+        DispatcherInternal.flush();
+    }
+
+    static class DispatcherInternal {
+
+        static field _nativeQueue = new Core.Object();
+
+        // When a UI framework is run, it must set this object using registerDispatcherFramework()
+        // This object will then be tasked with registering timed callbacks.
+        static field _dispatcherFramework = null;
+
+        // If a callback is set before a dispatcher framework is registered, hold on to the
+        // callback and then queue them when one is finally registered.
+        static field _queuedCallbacks = [];
+
+        static function _queueNextRecurrence(cb, deadline, interval) {
+            dfw = DispatcherInternal._dispatcherFramework;
+            if (dfw == null) {
+                DispatcherInternal._queuedCallbacks.add([cb, null, deadline, interval, true]);
+            } else {
+                dfw._setTimedCallback(deadline, () => {
+                    cb();
+                    deadline += interval;
+                    t = Core.currentTime();
+                    if (t > deadline) deadline = t;
+
+                    DispatcherInternal._queueNextRecurrence(cb, deadline, interval);
+                });
+            }
+        }
+
+        static field _conditionalCallbacks = {};
+
+        static function queueConditionalCallback(cb) {
+            refKey = new Core.Object();
+            DispatcherInternal._conditionalCallbacks[refKey] = cb;
+            return refKey;
+        }
+
+        static function conditionalCallbackCompleted(refKey) {
+            cb = DispatcherInternal._conditionalCallbacks.get(refKey);
+            if (cb == null) return;
+            cb();
+            DispatcherInternal._conditionalCallbacks.remove(refKey);
+        }
+
+        // If no dispatcher framework is registered, you can flush the callbacks
+        // manually.
+        static function flush() {
+
+            if (DispatcherInternal._queuedCallbacks.length > 0) {
+                now = Core.currentTime();
+                newQueue = [];
+                for (qcb : DispatcherInternal._queuedCallbacks) {
+                    if (now >= qcb[2]) {
+                        qcb[0].invoke(qcb[1] ?? []);
+                        if (qcb[4]) {
+                            deadline = qcb[2] + qcb[3];
+                            if (deadline < now) {
+                                deadline = now + qcb[3];
+                            }
+                            qcb[2] = deadline;
+                            newQueue.add(qcb);
+                        }
+                    } else {
+                        newQueue.add(qcb);
+                    }
+                }
+                DispatcherInternal._queuedCallbacks = newQueue;
+            }
+
+            if (DispatcherInternal._conditionalCallbacks.length > 0) {
+                // gives a chance for async stuff to get a hold of the main thread.
+                Core.sleep(0.001);
+            }
+
+            cbs = $lib_dispatcher_flushNativeQueue(DispatcherInternal._nativeQueue);
+            if (cbs != null) {
+                for (cb : cbs) {
+                    cb();
+                }
+            }
+        }
+
+        static function _setCallback(cb, args, triggerTime, seconds, recurring) {
+            if (args != null && args.length > 0) {
+                fn = () => { cb.invoke(args); };
+            } else {
+                fn = cb;
+            }
+            dfw = DispatcherInternal._dispatcherFramework;
+            if (dfw == null) {
+                DispatcherInternal._queuedCallbacks.add([fn, null, triggerTime, seconds, recurring]);
+            } else if (recurring) {
+                DispatcherInternal._queueNextRecurrence(fn, triggerTime, seconds);
+            } else {
+                dfw._setTimedCallback(triggerTime, fn);
+            }
+        }
+    }
+}
