@@ -358,7 +358,7 @@ namespace Parser.ParseTree
                     {
                         int right = GetInt(opChain.Right);
                         int left = GetInt(opChain.Left);
-                        if (right == 0) return MakeInt(opChain.FirstToken, 1);
+                        if (right == 0) return MakeFloat(opChain.FirstToken, 1.0);
                         return MakeFloat(opChain.FirstToken, Math.Pow(left, right));
                     }),
 

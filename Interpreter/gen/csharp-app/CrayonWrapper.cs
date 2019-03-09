@@ -2446,7 +2446,7 @@ namespace Interpreter.Vm
                         {
                             case 553:
                                 // int ** int;
-                                value = doExponentMath(globals, (0.0 + (int)leftValue.internalValue), (0.0 + (int)rightValue.internalValue), true);
+                                value = doExponentMath(globals, (0.0 + (int)leftValue.internalValue), (0.0 + (int)rightValue.internalValue), false);
                                 if ((value == null))
                                 {
                                     hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue));

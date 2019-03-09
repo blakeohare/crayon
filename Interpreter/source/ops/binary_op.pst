@@ -14,7 +14,7 @@ switch ((leftValue.type * MAX_OP + row[0]) * MAX_TYPE + rightValue.type) {
 
     case (Types.INTEGER * MAX_OP + BinaryOps.EXPONENT) * MAX_TYPE + Types.INTEGER:
         Core.EmitComment("int ** int");
-        value = doExponentMath(globals, 0.0 + (int) leftValue.internalValue, 0.0 + (int) rightValue.internalValue, true);
+        value = doExponentMath(globals, 0.0 + (int) leftValue.internalValue, 0.0 + (int) rightValue.internalValue, false);
         if (value == null) {
             hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue));
         }

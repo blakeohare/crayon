@@ -2185,7 +2185,7 @@ public final class CrayonWrapper {
           switch (((((leftValue.type * 15) + row[0]) * 11) + rightValue.type)) {
             case 553:
               // int ** int;
-              value = doExponentMath(globals, (0.0 + leftValue.intValue), (0.0 + rightValue.intValue), true);
+              value = doExponentMath(globals, (0.0 + leftValue.intValue), (0.0 + rightValue.intValue), false);
               if ((value == null)) {
                 hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue));
               }

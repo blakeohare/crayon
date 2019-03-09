@@ -1498,7 +1498,7 @@ def interpretImpl(vm, executionContextId):
                       if (sc_1 < 2):
                         if (sc_1 == 0):
                           # int ** int
-                          value = doExponentMath(globals, (0.0 + leftValue[1]), (0.0 + rightValue[1]), True)
+                          value = doExponentMath(globals, (0.0 + leftValue[1]), (0.0 + rightValue[1]), False)
                           if (value == None):
                             hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue))
                         else:

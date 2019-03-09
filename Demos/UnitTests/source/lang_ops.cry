@@ -40,8 +40,8 @@ function lang_ops() {
     assert(1.0 + 1.0 + '' == '2.0', 'lang_ops - addition');
     assert(one_f + one_f + '' == '2.0', 'lang_ops - addition');
 
-    assert((4 ** 2) + '' == '16', 'lang_ops - exponent');
-    assert(four ** two + '' == '16', 'lang_ops - exponent');
+    assert((4 ** 2) + '' == '16.0', 'lang_ops - exponent');
+    assert(four ** two + '' == '16.0', 'lang_ops - exponent');
 
     assert((4 ** 2.0) + '' == '16.0', 'lang_ops - exponent');
     assert(four ** two_f + '' == '16.0', 'lang_ops - exponent');

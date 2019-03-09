@@ -1933,7 +1933,7 @@ var interpretImpl = function(vm, executionContextId) {
 				switch (((((leftValue[0] * 15) + row[0]) * 11) + rightValue[0])) {
 					case 553:
 						// int ** int;
-						value = doExponentMath(globals, (0.0 + leftValue[1]), (0.0 + rightValue[1]), true);
+						value = doExponentMath(globals, (0.0 + leftValue[1]), (0.0 + rightValue[1]), false);
 						if ((value == null)) {
 							hasInterrupt = EX_InvalidArgument(ec, getExponentErrorMsg(vm, leftValue, rightValue));
 						}
