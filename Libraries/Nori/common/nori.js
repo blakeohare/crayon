@@ -211,6 +211,7 @@ function setProperty(e, key, value) {
 		
 		case 'txtblk.text': e.firstChild.innerHTML = escapeHtml(value); break;
 		case 'txtblk.wrap': e.NORI_wrap = value === 1; break;
+		case 'txtblk.sz': e.firstChild.style.fontSize = (value / 1000) + 'pt'; break;
 		
 		case 'scroll.x': e.NORI_scrollpanel[0] = ctx.scrollEnumLookup[value]; break;
 		case 'scroll.y': e.NORI_scrollpanel[1] = ctx.scrollEnumLookup[value]; break;

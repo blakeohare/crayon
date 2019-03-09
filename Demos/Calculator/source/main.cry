@@ -6,7 +6,7 @@ function main() {
 
     content = NoriXml.build(
     '<DockPanel>
-        <TextBlock id="display" dock="North" height="20%">0</TextBlock>
+        <TextBlock id="display" dock="North" height="10%" size="36" margin="12" horizontalAlignment="right">0</TextBlock>
         <DockPanel id="button_panel">
             <StackPanel dock="West" width="20%" id="col1">
                 <Button id="num7" width="100%" height="25%">7</Button>
@@ -65,10 +65,8 @@ function main() {
     content.findElement('divide').setClickHandler(() => { logic.pushOperator('/'); });
 
     content.findElement('sqrt').setClickHandler(logic.pushSquareRoot);
-
     content.findElement('equals').setClickHandler(logic.pushEquals);
-
-
+    content.findElement('clear').setClickHandler(logic.pushClear);
 
     frame = new Frame()
         .setContent(content)
@@ -85,6 +83,10 @@ class ScreenUpdater {
     }
 
     function update(value) {
+        value = value + '';
+        if (value.length > 12) {
+            value = value[:12];
+        }
         this.screenElement.setText(value);
     }
 }
@@ -152,6 +154,15 @@ class CalculatorLogic {
         this.operator = null;
         this.previousValue = value;
 
+        this.updateDisplay();
+    }
+
+    function pushClear() {
+        this.previousValue = null;
+        this.currentValue = null;
+        this.operator = null;
+        this.lastOperatorPushed = null;
+        this.autoEqual = null;
         this.updateDisplay();
     }
 
