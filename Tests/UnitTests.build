@@ -1,7 +1,7 @@
 {
 	"id": "UnitTests",
-	"source": "source/",
-	"output": "output/%TARGET_NAME%",
+	"source": "unitTestSource/",
+	"output": "unitTestOutput/%TARGET_NAME%",
 	
 	"targets": [
 		{
