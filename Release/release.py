@@ -82,6 +82,7 @@ def main(args):
 		'CryptoMd5',
 		'CryptoSha1',
 		'DateTime',
+		'Dispatcher',
 		'Easing',
 		'FileIO',
 		'FileIOCommon',
