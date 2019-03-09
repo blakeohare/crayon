@@ -220,7 +220,7 @@ var lib_http_sendRequest = function(vm, args) {
 	}
 	var getResponseAsText = (args[6][1] == 1);
 	if (args[1][1]) {
-		LIB$http$sendRequestAsync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText);
+		LIB$http$sendRequestAsync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText, vm, args[8], (args[9][1])[3]);
 	} else {
 		var execId = args[7][1];
 		if (LIB$http$sendRequestSync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText, execId, vm)) {

@@ -52,17 +52,23 @@ public class HttpHelper {
 		ArrayList<String> headers,
 		int contentMode, // 0 - null, 1 - text, 2 - binary
 		Object content,
-		boolean outputIsBinary) {
+		boolean outputIsBinary,
+		VmContext vmContext,
+		Value callbackFp,
+		Object[] mutexStuff) {
 		
 		requestNativeData[1] = new Object();
 		
 		new Thread(new Runnable() {
 			public void run() {
 				HttpResponseValue response = sendRequestSyncImpl(requestNativeData, method, url, headers, contentMode, content, outputIsBinary);
-				synchronized (requestNativeData[1])
-				{
+				synchronized (requestNativeData[1]) {
 					requestNativeData[0] = response;
 					requestNativeData[2] = true;
+				}
+				
+				synchronized(mutexStuff[0]) {
+					((ArrayList<Value>)mutexStuff[1]).add(callbackFp);
 				}
 			}
 		}).start();

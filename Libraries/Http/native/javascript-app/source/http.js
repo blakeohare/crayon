@@ -1,5 +1,5 @@
 
-LIB$http$makeHttpRequest = function (requestNativeData, method, url, contentMode, content, requestHeaders, outputIsBinary, executionContextId, vm) {
+LIB$http$makeHttpRequest = function(requestNativeData, method, url, contentMode, content, requestHeaders, outputIsBinary, executionContextId, vm, cb) {
 	var xhr = new XMLHttpRequest({ mozSystem: true });
 
 	xhr.open(method, url, true);
@@ -25,6 +25,10 @@ LIB$http$makeHttpRequest = function (requestNativeData, method, url, contentMode
 			requestNativeData[2] = true;
 			if (executionContextId !== null) {
 				runInterpreter(vm, executionContextId);
+			}
+			
+			if (cb != null) {
+				runInterpreterWithFunctionPointer(vm, cb, []);
 			}
 		}
 	};
@@ -70,8 +74,8 @@ LIB$http$getResponseBytes = function (bytes, integers, output) {
 	}
 };
 
-LIB$http$sendRequestAsync = function (requestNativeData, method, url, headers, contentMode, content, outputIsBinary) {
-	LIB$http$makeHttpRequest(requestNativeData, method, url, contentMode, content, headers, outputIsBinary, null);
+LIB$http$sendRequestAsync = function(requestNativeData, method, url, headers, contentMode, content, outputIsBinary, vm, cb, mutexIgnore) {
+	LIB$http$makeHttpRequest(requestNativeData, method, url, contentMode, content, headers, outputIsBinary, null, vm, cb);
 };
 
 LIB$http$sendRequestSync = function (
@@ -84,7 +88,7 @@ LIB$http$sendRequestSync = function (
 	outputIsBinary,
 	executionContextId,
 	vm) {
-	LIB$http$makeHttpRequest(requestNativeData, method, url, contentMode, content, headers, outputIsBinary, executionContextId, vm);
+	LIB$http$makeHttpRequest(requestNativeData, method, url, contentMode, content, headers, outputIsBinary, executionContextId, vm, null);
 	return true;
 };
 

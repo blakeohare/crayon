@@ -112,3 +112,12 @@ var lib_dispatcher_flushNativeQueue = function(vm, args) {
 	}
 	return buildList(output);
 };
+
+var lib_dispatcher_initNativeQueue = function(vm, args) {
+	var obj = args[0][1];
+	var nd = PST$createNewArray(2);
+	nd[0] = null;
+	nd[1] = [];
+	obj[3] = nd;
+	return vm[14];
+};

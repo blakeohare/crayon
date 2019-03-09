@@ -442,7 +442,7 @@ public final class LibraryWrapper {
     }
     boolean getResponseAsText = (((int) args[6].internalValue) == 1);
     if (((boolean) args[1].internalValue)) {
-      crayonlib.http.HttpHelper.sendRequestAsync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText);
+      crayonlib.http.HttpHelper.sendRequestAsync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText, vm, args[8], (((ObjectInstance) args[9].internalValue)).nativeData);
     } else {
       int execId = ((int) args[7].internalValue);
       if (crayonlib.http.HttpHelper.sendRequestSync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText)) {

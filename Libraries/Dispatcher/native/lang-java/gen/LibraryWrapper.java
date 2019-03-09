@@ -331,4 +331,13 @@ public final class LibraryWrapper {
     }
     return org.crayonlang.interpreter.vm.CrayonWrapper.buildList(output);
   }
+
+  public static Value lib_dispatcher_initNativeQueue(VmContext vm, Value[] args) {
+    ObjectInstance obj = ((ObjectInstance) args[0].internalValue);
+    Object[] nd = new Object[2];
+    nd[0] = new Object();
+    nd[1] = new ArrayList<Value>();
+    obj.nativeData = nd;
+    return vm.globalNull;
+  }
 }
