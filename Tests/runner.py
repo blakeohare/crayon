@@ -43,6 +43,17 @@ def write_file(path, text):
 	c.close()
 
 def main(args):
+	run_unit_tests()
+	run_compiler_negative_tests(args)
+
+def run_unit_tests():
+	print("Running unit tests...")
+	unit_test_output = run_command('crayon UnitTests.build')
+	print(unit_test_output)
+
+def run_compiler_negative_tests(args):
+	print("Running compiler negative tests...")
+	
 	write_file('TestProj/TestProj.build', BUILD_FILE)
 	write_file('TestProj/source/main.cry', '''function main() { test(); }''')
 	passed = 0
@@ -71,6 +82,7 @@ def main(args):
 			print("Actual:")
 			print(result)
 			failed += 1
+	
 	print("\nDone!")
 	print("Passed: " + str(passed))
 	print("Failed: " + str(failed))
