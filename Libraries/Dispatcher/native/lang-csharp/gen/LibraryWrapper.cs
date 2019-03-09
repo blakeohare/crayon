@@ -128,5 +128,15 @@ namespace Interpreter.Libraries.Dispatcher
             }
             return Interpreter.Vm.CrayonWrapper.buildList(output);
         }
+
+        public static Value lib_dispatcher_initNativeQueue(VmContext vm, Value[] args)
+        {
+            ObjectInstance obj = (ObjectInstance)args[0].internalValue;
+            object[] nd = new object[2];
+            nd[0] = new object();
+            nd[1] = new List<Value>();
+            obj.nativeData = nd;
+            return vm.globalNull;
+        }
     }
 }

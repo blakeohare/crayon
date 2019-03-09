@@ -4,6 +4,7 @@ import math
 import os
 import random
 import sys
+import threading
 import time
 
 PST_StringBuffer16 = [None] * 16
@@ -44,7 +45,15 @@ def always_false(): return False
 def lib_dispatcher_flushNativeQueue(vm, args):
   nd = (args[0][1])[3]
   output = []
-  lib_dispatcher_flushNativeQueue(nd, output)
+  lib_dispatcher_flushNativeQueueImpl(nd, output)
   if (len(output) == 0):
     return vm[14]
   return buildList(output)
+
+def lib_dispatcher_initNativeQueue(vm, args):
+  obj = args[0][1]
+  nd = [None, None]
+  nd[0] = threading.Lock()
+  nd[1] = []
+  obj[3] = nd
+  return vm[14]

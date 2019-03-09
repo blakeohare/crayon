@@ -142,7 +142,9 @@ namespace Game {
             this._timedCallbacks.add([deadline, cb]);
         }
 
-        function _flushTimedCallbacks() {
+        function _flushCallbacks() {
+            Dispatcher.flush();
+
             if (this._timedCallbacks.length > 0) {
                 now = Core.currentTime();
                 for (i = this._timedCallbacks.length - 1; i >= 0; --i) {
@@ -171,11 +173,11 @@ namespace Game {
                 t();
             }
 
-            this._flushTimedCallbacks();
+            this._flushCallbacks();
 
             $lib_game_clock_tick(Core.getCurrentExecutionToken());
 
-            this._flushTimedCallbacks();
+            this._flushCallbacks();
 
             for (t : Game.GameWindow._frameBeginHandlers) {
                 t();

@@ -36,23 +36,28 @@ def lib_http_getResponseBytes(byteArray, integersCache, output):
 	for b in byteArray:
 		output.append(integersCache[b])
 
-def lib_http_sendRequestAsync(requestNativeData, method, url, headers, contentMode, content, outputIsBinary):
+def lib_http_sendRequestAsync(requestNativeData, method, url, headers, contentMode, content, outputIsBinary, vm, callbackValue, mutexStuff):
 	vars = lib_http_get_methods()
 	requestNativeData[1] = vars['threading'].Lock()
 	requestNativeData[2] = False
 	
 	thread = vars['threading'].Thread(
 		target = lib_http_sendRequestAsyncWorker,
-		args = (requestNativeData, method, url, headers, contentMode, content, outputIsBinary))
+		args = (requestNativeData, method, url, headers, contentMode, content, outputIsBinary, callbackValue, mutexStuff))
 	thread.daemon = True
 	thread.start()
 
-def lib_http_sendRequestAsyncWorker(requestNativeData, method, url, headers, contentMode, content, outputIsBinary):
+def lib_http_sendRequestAsyncWorker(requestNativeData, method, url, headers, contentMode, content, outputIsBinary, callbackValue, mutexStuff):
 	response = lib_http_sendRequestSyncImpl(requestNativeData, method, url, headers, contentMode, content, outputIsBinary)
 	requestNativeData[1].acquire()
 	requestNativeData[0] = response
 	requestNativeData[2] = True
 	requestNativeData[1].release()
+	
+	mtx = mutexStuff[0]
+	mtx.acquire()
+	mutexStuff[1].append(callbackValue)
+	mtx.release()
 
 def lib_http_sendRequestSync(requestNativeData, method, url, headers, contentMode, content, outputIsBinary):
 	response = lib_http_sendRequestSyncImpl(requestNativeData, method, url, headers, contentMode, content, outputIsBinary)

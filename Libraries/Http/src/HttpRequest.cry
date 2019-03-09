@@ -1,4 +1,6 @@
-﻿namespace Http {
+﻿import Dispatcher;
+
+namespace Http {
 
     enum RequestMode {
         TEXT = 0,
@@ -80,16 +82,16 @@
         }
 
         function send() {
-            this._sendImpl(false);
+            this._sendImpl(false, null);
             this._isReady = true;
             return this.getResponse();
         }
 
-        function sendAsync() {
-            return this._sendImpl(true);
+        function sendAsync(cb) {
+            return this._sendImpl(true, cb);
         }
 
-        function _sendImpl(isAsync) {
+        function _sendImpl(isAsync, cb) {
 
             method = {
                 Http.Method.GET: 'GET',
@@ -103,6 +105,12 @@
                 this._headers.add('Content-Type', this._contentType);
             }
 
+            wrappedCb = () => {
+                this._isReady = true;
+                res = this.getResponse();
+                cb(res);
+            };
+
             $lib_http_sendRequest(
                 this,
                 isAsync,
@@ -111,7 +119,9 @@
                 this._headers,
                 this._content,
                 this._mode,
-                Core.getCurrentExecutionToken());
+                Core.getCurrentExecutionToken(),
+                wrappedCb,
+                Dispatcher.DispatcherInternal._nativeQueue);
             return this;
         }
 

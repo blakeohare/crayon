@@ -12,6 +12,8 @@
         0 -> response should be text
         1 -> response should be a byte array
     arg[7] -> int: current execution context ID
+    arg[8] -> Value: function pointer callback
+    arg[9] -> ObjectInstance: Dispatcher's callback nativeQueue object
 */
 VM.Value lib_http_sendRequest(VM.VmContext vm, Array<VM.Value> args) {
     VM.Value body = args[5];
@@ -53,7 +55,10 @@ VM.Value lib_http_sendRequest(VM.VmContext vm, Array<VM.Value> args) {
             headers,
             bodyState,
             bodyRawObject,
-            getResponseAsText);
+            getResponseAsText,
+            vm,
+            args[8],
+            Core.ForceParens((VM.ObjectInstance) args[9].internalValue).nativeData);
     } else {
         // synchronous request
         int execId = (int) args[7].internalValue;

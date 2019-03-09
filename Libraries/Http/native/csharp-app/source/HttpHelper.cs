@@ -40,7 +40,10 @@ namespace Interpreter.Libraries.Http
             List<string> headers,
             int contentMode, // 0 - null, 1 - text, 2 - binary
             object content,
-            bool outputIsBinary)
+            bool outputIsBinary,
+            VmContext vmContext,
+            Value callback,
+            object[] mutexDataIgnored) // 
         {
             requestNativeData[1] = new object();
             System.ComponentModel.BackgroundWorker bgWorker = new System.ComponentModel.BackgroundWorker();
@@ -52,6 +55,10 @@ namespace Interpreter.Libraries.Http
                     requestNativeData[0] = response;
                     requestNativeData[2] = true;
                 }
+            };
+            bgWorker.RunWorkerCompleted += (sender, e) =>
+            {
+                Interpreter.Vm.CrayonWrapper.runInterpreterWithFunctionPointer(vmContext, callback, new Value[0]);
             };
             bgWorker.RunWorkerAsync();
         }
