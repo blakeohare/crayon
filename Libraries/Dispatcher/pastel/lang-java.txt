@@ -14,3 +14,4 @@ NAMESPACE-STRUCTS: org.crayonlang.libraries.dispatcher
 FUNCTION-WRAPPER-CLASS: LibraryWrapper
 
 EXT: _lib_dispatcher_flushNativeQueue: DispatcherHelper.flushNativeQueue([ARG:1], [ARG:2])
+EXT: _lib_dispatcher_newMutex: new Object()

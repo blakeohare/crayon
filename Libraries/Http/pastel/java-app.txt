@@ -15,6 +15,6 @@ FUNCTION-WRAPPER-CLASS: LibraryWrapper
 
 EXT: _lib_http_readResponseData: crayonlib.http.HttpHelper.readResponseData([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
 EXT: _lib_http_getResponseBytes: crayonlib.http.HttpHelper.getResponseBytes([ARG:1], [ARG:2], [ARG:3])
-EXT: _lib_http_sendRequestAsynchronous: crayonlib.http.HttpHelper.sendRequestAsync([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7])
+EXT: _lib_http_sendRequestAsynchronous: crayonlib.http.HttpHelper.sendRequestAsync([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10])
 EXT: _lib_http_sendRequestSynchronous: crayonlib.http.HttpHelper.sendRequestSync([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7])
 EXT: _lib_http_pollRequest: crayonlib.http.HttpHelper.pollRequest([ARG:1])

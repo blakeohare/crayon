@@ -1,1 +1,2 @@
 @import("flushNativeQueue.pst");
+@import("initNativeQueue.pst");

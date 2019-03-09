@@ -15,6 +15,6 @@ FUNCTION-WRAPPER-CLASS: LibraryWrapper
 
 EXT: _lib_http_readResponseData: HttpHelper.ReadResponseData([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
 EXT: _lib_http_getResponseBytes: HttpHelper.GetResponseBytes([ARG:1], [ARG:2], [ARG:3])
-EXT: _lib_http_sendRequestAsynchronous: HttpHelper.SendRequestAsync([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7])
+EXT: _lib_http_sendRequestAsynchronous: HttpHelper.SendRequestAsync([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7], [ARG:8], [ARG:9], [ARG:10])
 EXT: _lib_http_sendRequestSynchronous: HttpHelper.SendRequestSync([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:6], [ARG:7])
 EXT: _lib_http_pollRequest: HttpHelper.PollRequest([ARG:1])

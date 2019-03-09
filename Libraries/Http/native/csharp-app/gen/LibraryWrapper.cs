@@ -261,7 +261,7 @@ namespace Interpreter.Libraries.Http
             bool getResponseAsText = ((int)args[6].internalValue == 1);
             if ((bool)args[1].internalValue)
             {
-                HttpHelper.SendRequestAsync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText);
+                HttpHelper.SendRequestAsync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText, vm, args[8], ((ObjectInstance)args[9].internalValue).nativeData);
             }
             else
             {

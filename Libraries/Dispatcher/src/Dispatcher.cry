@@ -25,6 +25,10 @@
 
     static class DispatcherInternal {
 
+        static constructor() {
+            $lib_dispatcher_initNativeQueue(DispatcherInternal._nativeQueue);
+        }
+
         static field _nativeQueue = new Core.Object();
 
         // When a UI framework is run, it must set this object using registerDispatcherFramework()

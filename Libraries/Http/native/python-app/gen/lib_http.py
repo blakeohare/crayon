@@ -140,7 +140,7 @@ def lib_http_sendRequest(vm, args):
     bodyRawObject = None
   getResponseAsText = (args[6][1] == 1)
   if args[1][1]:
-    lib_http_sendRequestAsync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText)
+    lib_http_sendRequestAsync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText, vm, args[8], (args[9][1])[3])
   else:
     execId = args[7][1]
     if lib_http_sendRequestSync(objArray1, method, url, headers, bodyState, bodyRawObject, getResponseAsText):

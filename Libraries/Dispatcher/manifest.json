@@ -5,6 +5,7 @@
 	"description": "Library for dispatching callbacks.",
 	
 	"cni": [
+		{ "name": "lib_dispatcher_initNativeQueue", "argc": 1 },
 		{ "name": "lib_dispatcher_flushNativeQueue", "argc": 1 }
 	]
 }
