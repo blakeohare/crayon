@@ -1,0 +1,212 @@
+import CrayonUnit;
+import TextEncoding;
+
+class TextEncodingTest : Test {
+    constructor() : base() { }
+
+    function textEncHelper(original, encoding, useBom, expectedBytes) {
+        bytes = convertTextToBytes(original, encoding, useBom);
+        assertThat(bytes).contains(expectedBytes).inOrder();
+        s = convertBytesToText(bytes, encoding);
+        assertThat(s).isEqualTo(original);
+    }
+
+    function textEncExpectError(original, encoding, useBom) {
+        try {
+            bytes = convertTextToBytes(original, encoding, useBom);
+        } catch (EncodingException ee) {
+            CrayonUnit.pass();
+            return;
+        }
+        CrayonUnit.fail();
+    }
+
+    function testEncodingLatinCharacters() {
+
+        // Just to make the inputs easier to read
+        BOM = true;
+        NO_BOM = false;
+
+        asciiAbc = "abc";
+
+        this.textEncHelper(
+            asciiAbc,
+            TextFormat.ASCII, NO_BOM,
+            [97, 98, 99]);
+
+        this.textEncHelper(
+            asciiAbc,
+            TextFormat.ISO_8859_1, NO_BOM,
+            [97, 98, 99]);
+
+        this.textEncHelper(
+            asciiAbc,
+            TextFormat.UTF8, NO_BOM,
+            [97, 98, 99]);
+
+        this.textEncHelper(
+            asciiAbc,
+            TextFormat.UTF8, BOM,
+            [239, 187, 191, 97, 98, 99]);
+
+        this.textEncHelper(
+            asciiAbc,
+            TextFormat.UTF16_LE, NO_BOM,
+            [97, 0, 98, 0, 99, 0]);
+
+        this.textEncHelper(
+            asciiAbc,
+            TextFormat.UTF16_LE, BOM,
+            [255, 254, 97, 0, 98, 0, 99, 0]);
+
+        this.textEncHelper(
+            asciiAbc,
+            TextFormat.UTF16_BE, NO_BOM,
+            [0, 97, 0, 98, 0, 99]);
+
+        this.textEncHelper(
+            asciiAbc,
+            TextFormat.UTF16_BE, BOM,
+            [254, 255, 0, 97, 0, 98, 0, 99]);
+
+        this.textEncHelper(
+            asciiAbc,
+            TextFormat.UTF32_LE, NO_BOM,
+            [97, 0, 0, 0, 98, 0, 0, 0, 99, 0, 0, 0]);
+
+        this.textEncHelper(
+            asciiAbc,
+            TextFormat.UTF32_LE, BOM,
+            [255, 254, 0, 0, 97, 0, 0, 0, 98, 0, 0, 0, 99, 0, 0, 0]);
+
+        this.textEncHelper(
+            asciiAbc,
+            TextFormat.UTF32_BE, NO_BOM,
+            [0, 0, 0, 97, 0, 0, 0, 98, 0, 0, 0, 99]);
+
+        this.textEncHelper(
+            asciiAbc,
+            TextFormat.UTF32_BE, BOM,
+            [0, 0, 254, 255, 0, 0, 0, 97, 0, 0, 0, 98, 0, 0, 0, 99]);
+
+        japaneseKanji = "大丈夫";
+
+        this.textEncExpectError(
+            japaneseKanji,
+            TextFormat.ASCII, NO_BOM);
+
+        this.textEncExpectError(
+            japaneseKanji,
+            TextFormat.ISO_8859_1, NO_BOM);
+
+        this.textEncHelper(
+            japaneseKanji,
+            TextFormat.UTF8, NO_BOM,
+            [229, 164, 167, 228, 184, 136, 229, 164, 171]);
+
+        this.textEncHelper(
+            japaneseKanji,
+            TextFormat.UTF8, BOM,
+            [239, 187, 191, 229, 164, 167, 228, 184, 136, 229, 164, 171]);
+
+        this.textEncHelper(
+            japaneseKanji,
+            TextFormat.UTF16_LE, NO_BOM,
+            [39, 89, 8, 78, 43, 89]);
+
+        this.textEncHelper(
+            japaneseKanji,
+            TextFormat.UTF16_LE, BOM,
+            [255, 254, 39, 89, 8, 78, 43, 89]);
+
+        this.textEncHelper(
+            japaneseKanji,
+            TextFormat.UTF16_BE, NO_BOM,
+            [89, 39, 78, 8, 89, 43]);
+
+        this.textEncHelper(
+            japaneseKanji,
+            TextFormat.UTF16_BE, BOM,
+            [254, 255, 89, 39, 78, 8, 89, 43]);
+
+        this.textEncHelper(
+            japaneseKanji,
+            TextFormat.UTF32_LE, NO_BOM,
+            [39, 89, 0, 0, 8, 78, 0, 0, 43, 89, 0, 0]);
+
+        this.textEncHelper(
+            japaneseKanji,
+            TextFormat.UTF32_LE, BOM,
+            [255, 254, 0, 0, 39, 89, 0, 0, 8, 78, 0, 0, 43, 89, 0, 0]);
+
+        this.textEncHelper(
+            japaneseKanji,
+            TextFormat.UTF32_BE, NO_BOM,
+            [0, 0, 89, 39, 0, 0, 78, 8, 0, 0, 89, 43]);
+
+        this.textEncHelper(
+            japaneseKanji,
+            TextFormat.UTF32_BE, BOM,
+            [0, 0, 254, 255, 0, 0, 89, 39, 0, 0, 78, 8, 0, 0, 89, 43]);
+
+        fecesEmoji = "💩";
+
+        this.textEncExpectError(
+            fecesEmoji,
+            TextFormat.ASCII, NO_BOM);
+
+        this.textEncExpectError(
+            fecesEmoji,
+            TextFormat.ISO_8859_1, NO_BOM);
+
+        this.textEncHelper(
+            fecesEmoji,
+            TextFormat.UTF8, NO_BOM,
+            [240, 159, 146, 169]);
+
+        this.textEncHelper(
+            fecesEmoji,
+            TextFormat.UTF8, BOM,
+            [239, 187, 191, 240, 159, 146, 169]);
+
+        this.textEncHelper(
+            fecesEmoji,
+            TextFormat.UTF16_LE, NO_BOM,
+            [61, 216, 169, 220]);
+
+        this.textEncHelper(
+            fecesEmoji,
+            TextFormat.UTF16_LE, BOM,
+            [255, 254, 61, 216, 169, 220]);
+
+        this.textEncHelper(
+            fecesEmoji,
+            TextFormat.UTF16_BE, NO_BOM,
+            [216, 61, 220, 169]);
+
+        this.textEncHelper(
+            fecesEmoji,
+            TextFormat.UTF16_BE, BOM,
+            [254, 255, 216, 61, 220, 169]);
+
+        this.textEncHelper(
+            fecesEmoji,
+            TextFormat.UTF32_LE, NO_BOM,
+            [169, 244, 1, 0]);
+
+        this.textEncHelper(
+            fecesEmoji,
+            TextFormat.UTF32_LE, BOM,
+            [255, 254, 0, 0, 169, 244, 1, 0]);
+
+        this.textEncHelper(
+            fecesEmoji,
+            TextFormat.UTF32_BE, NO_BOM,
+            [0, 1, 244, 169]);
+
+        this.textEncHelper(
+            fecesEmoji,
+            TextFormat.UTF32_BE, BOM,
+            [0, 0, 254, 255, 0, 1, 244, 169]);
+    }
+}

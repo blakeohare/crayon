@@ -3,4 +3,13 @@ namespace CrayonUnit {
     function assertThat(thing) {
         return new VerificationContextObject(thing);
     }
+
+    function fail(m = null) {
+        VerificationContextObject.incrementAssertCount();
+        throw new UnitTestFailedException(m ?? "Unit test failed");
+    }
+
+    function pass() {
+        VerificationContextObject.incrementAssertCount();
+    }
 }

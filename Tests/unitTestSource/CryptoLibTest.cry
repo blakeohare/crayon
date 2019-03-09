@@ -1,0 +1,68 @@
+import CrayonUnit;
+import CryptoMd5;
+import CryptoSha1;
+
+class CryptoLibTest : Test {
+
+    constructor() : base() { }
+
+    function md5(text) {
+        m = new Md5Hash('unsafe');
+        m.addText(text);
+        return m.digestHex();
+    }
+
+    function sha1(text) {
+        s = new Sha1Hash('unsafe');
+        s.addText(text);
+        return s.digestHex();
+    }
+
+    function testMd5() {
+        assertThat(this.md5(''))
+            .isEqualTo('d41d8cd98f00b204e9800998ecf8427e');
+
+        assertThat(this.md5('abc'))
+            .isEqualTo('900150983cd24fb0d6963f7d28e17f72');
+
+        assertThat(this.md5('cheese'))
+            .isEqualTo('fea0f1f6fede90bd0a925b4194deac11');
+
+        assertThat(this.md5('The quick brown fox jumped over the lazy dogs'))
+            .isEqualTo('8c1788205b6abffb0c6a4a1f4b10395a');
+
+        assertThat(this.md5('z' * 1000))
+            .isEqualTo('93f8e2ed34e2c6727cf1ee6f138267e9');
+
+        assertThat(new Md5Hash('unsafe').addText('abc').digestByteList())
+            .contains([144, 1, 80, 152, 60, 210, 79, 176, 214, 150, 63, 125, 40, 225, 127, 114])
+            .inOrder();
+
+        assertThat(new Md5Hash('unsafe').addByte(97).addByte(98).addByte(99).digestHex())
+            .isEqualTo('900150983cd24fb0d6963f7d28e17f72');
+    }
+
+    function testSha1() {
+        assertThat(this.sha1(''))
+            .isEqualTo('da39a3ee5e6b4b0d3255bfef95601890afd80709');
+
+        assertThat(this.sha1('abc'))
+            .isEqualTo('a9993e364706816aba3e25717850c26c9cd0d89d');
+
+        assertThat(this.sha1('cheese'))
+            .isEqualTo('bcef7a046258082993759bade995b3ae8bee26c7');
+
+        assertThat(this.sha1('The quick brown fox jumped over the lazy dogs'))
+            .isEqualTo('fbada4676477322fb3e2ae6353e8bd32b6d0b49c');
+
+        assertThat(this.sha1('z' * 1000))
+            .isEqualTo('3bbf093cf7107deb323bced4c13c347cc87e482a');
+
+        assertThat(new Sha1Hash('unsafe').addText('abc').digestByteList())
+            .contains([169, 153, 62, 54, 71, 6, 129, 106, 186, 62, 37, 113, 120, 80, 194, 108, 156, 208, 216, 157])
+            .inOrder();
+
+        assertThat(new Sha1Hash('unsafe').addByte(97).addByte(98).addByte(99).digestHex())
+            .isEqualTo('a9993e364706816aba3e25717850c26c9cd0d89d');
+    }
+}

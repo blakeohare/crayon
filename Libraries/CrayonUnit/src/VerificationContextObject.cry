@@ -14,6 +14,10 @@ namespace CrayonUnit {
 
         constructor(actual) {
             this.actual = actual;
+            VerificationContextObject.incrementAssertCount();
+        }
+
+        static function incrementAssertCount() {
             if (TestHarness._activeHarness != null) {
                 TestHarness._activeHarness._assertCount++;
             }

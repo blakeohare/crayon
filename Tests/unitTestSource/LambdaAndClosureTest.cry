@@ -1,0 +1,42 @@
+import CrayonUnit;
+
+class LambdaAndClosureTest : Test {
+
+    constructor() : base() { }
+
+    function testClosureNoInteractions() {
+        fn1 = this.closureNoInteractionsTestHelper(0);
+        fn2 = this.closureNoInteractionsTestHelper(100);
+
+        assertThat(fn1['get']()).isEqualTo(0);
+        assertThat(fn2['get']()).isEqualTo(100);
+
+        fn1['set'](42);
+        assertThat(fn1['get']()).isEqualTo(42);
+        assertThat(fn2['get']()).isEqualTo(100);
+
+        fn1['increment']();
+        fn2['increment']();
+        assertThat(fn1['get']()).isEqualTo(43);
+        assertThat(fn2['get']()).isEqualTo(101);
+    }
+
+    function testMapAndFilter() {
+        t = [1, 2, 3, 4, 5, 6]
+            .map((x) => { x * 2; })
+            .filter((x) => { x % 3 != 0; });
+
+        assertThat(t).contains([2, 4, 8, 10]).inOrder();
+    }
+
+    function closureNoInteractionsTestHelper(startingValue) {
+
+        value = startingValue;
+
+        return {
+            'get': () => { return value; },
+            'set': (newValue) => { value = newValue; },
+            'increment': () => { value++; }
+        };
+    }
+}
