@@ -1,7 +1,15 @@
+import CrayonUnit;
+
 function main() {
     lang();
     library();
     methods();
 
-    print("=== All tests passed! ===");
+    print("=== All legacy tests passed! ===");
+    print("Now running modern tests:");
+
+    harness = new TestHarness()
+        .makePassingTestsSilent()
+        .run()
+        .showSummary();
 }

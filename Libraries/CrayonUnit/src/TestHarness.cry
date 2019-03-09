@@ -1,3 +1,5 @@
+import Math;
+
 namespace CrayonUnit {
 
     // TODO: ability to configure a custom logger rather than just printing things out.
@@ -5,14 +7,47 @@ namespace CrayonUnit {
 
     class TestHarness {
         field _classes;
+
+        field _showPasses = true;
+
+        field _classCount = 0;
+        field _methodCount = 0;
+        field _assertCount = 0;
+        field _failCount = 0;
+        field _unhandledExCount = 0;
+        field _passCount = 0;
+        field _startTime = null;
+        field _endTime = null;
+
+        static field _activeHarness = null;
+
         constructor() {
             this._classes = Core.Reflection.getClasses(CrayonUnit.Test.class);
         }
 
+        function makePassingTestsSilent() {
+            this._showPasses = false;
+            return this;
+        }
+
         function run() {
+            if (TestHarness._activeHarness != null) {
+                throw new InvalidOperationException("Cannot run multiple test harnesses at the same time.");
+            }
+
+            TestHarness._activeHarness = this;
+            this._startTime = Core.currentTime();
             this._classes.sort(CrayonUnit.TestHarness._getName);
             for (c : this._classes) {
-                test = c.createInstance();
+                this._classCount++;
+
+                try {
+                    test = c.createInstance();
+                } catch (Core.Exception e) {
+                    this._logException(true, c, 'constructor', e);
+                    continue;
+                }
+
                 methodsRaw = Core.Reflection.getMethods(test);
                 methodsFiltered = [];
                 for (method : methodsRaw) {
@@ -26,29 +61,88 @@ namespace CrayonUnit {
 
                 methodsFiltered.sort(CrayonUnit.TestHarness._getName);
 
-                test.setup();
+                this._methodCount += methodsFiltered.length;
+
+                try {
+                    test.setup();
+                } catch (Core.Exception e) {
+                    this._logException(true, c, 'setup', e);
+                    continue;
+                }
 
                 for (method : methodsFiltered) {
                     try {
-                        print("Running " + c.getName() + "." + method.getName());
+                        if (this._showPasses) print("Running " + c.getName() + "." + method.getName());
                         method();
-                        print("PASS");
+                        if (this._showPasses) print("PASS");
+                        this._passCount++;
                     } catch (CrayonUnit.UnitTestFailedException e)  {
+                        if (!this._showPasses) {
+                            print("Failure in " + c.getName() + "." + method.getName());
+                        }
                         print("FAIL -> " + e.message);
-                        print(e.getTrace().join('\n'));
+                        print(TestHarness.traceToString(e));
+                        this._failCount++;
                     } catch (Core.Exception e) {
-                        print("FAIL - UNHANDLED EXCEPTION of type: " + Core.Reflection.getClassFromInstance(e).getName());
-                        print(e.message);
-                        print(e.getTrace().join('\n'));
+                        this._logException(!this._showPasses, c, method.getName(), e);
                     }
                 }
 
-                test.teardown();
+                try {
+                    test.teardown();
+                } catch (Core.Exception e) {
+                    this._logException(true, c, 'teardown', e);
+                    continue;
+                }
+
             }
+            this._endTime = Core.currentTime();
+            TestHarness._activeHarness = null;
+            return this;
+        }
+
+        function _logException(showLocation, clazz, methodName, e) {
+            if (showLocation) {
+                print("Unhandled exception in " + clazz.getName() + "." + methodName);
+            }
+            print("UNHANDLED EXCEPTION of type: " + Core.Reflection.getClassFromInstance(e).getName());
+            print(e.message);
+            print(TestHarness.traceToString(e));
+            this._unhandledExCount++;
+        }
+
+        static function traceToString(e) {
+            trace = e.getTrace();
+            while (trace.length > 0 && trace[-1].startsWith('[CrayonUnit:')) {
+                trace.pop();
+            }
+            return trace.join('\n');
         }
 
         static function _getName(c) {
             return c.getName();
+        }
+
+        static function _plural(n, sing, plu) {
+            return n + ' ' + (n == 1 ? sing : plu);
+        }
+
+        function showSummary() {
+            if (this._endTime == null) {
+                throw new InvalidOperationException("Cannot show summary until after tests are run.");
+            }
+            print("Summary:");
+            t = Math.floor(1000000.0 * (this._endTime - this._startTime)) / 1000000.0;
+
+            print("  Tests ran in " + t + " seconds");
+            print('');
+            print('  ' + TestHarness._plural(this._classCount, 'test class', 'test classes'));
+            print('  ' + TestHarness._plural(this._methodCount, 'test method', 'test methods'));
+            print('  ' + TestHarness._plural(this._assertCount, 'assertion', 'assertions'));
+            print('');
+            print('  ' + TestHarness._plural(this._passCount, 'pass', 'passes'));
+            print('  ' + TestHarness._plural(this._failCount, 'failure', 'failures'));
+            print('  ' + TestHarness._plural(this._failCount, 'unhandled exception', 'unhandled exceptions'));
         }
     }
 }

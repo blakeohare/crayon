@@ -14,6 +14,9 @@ namespace CrayonUnit {
 
         constructor(actual) {
             this.actual = actual;
+            if (TestHarness._activeHarness != null) {
+                TestHarness._activeHarness._assertCount++;
+            }
         }
 
         function isTrue() {
@@ -71,7 +74,7 @@ namespace CrayonUnit {
             if (!Core.isNumber(this.actual)) {
                 throw new UnitTestFailedException("Not true that '" + this.getValueAsString(this.actual) + "' is a number.");
             }
-            if (this.actual != value && Math.abs(this.actual - value) > epsilon) {
+            if (Math.abs(this.actual - value) > epsilon) {
                 throw new UnitTestFailedException("'" + this.actual + "' is not within the tolerance of '" + value + "'.");
             }
         }

@@ -1,36 +1,44 @@
-function lang_for() {
-    print('lang_for - basic');
-    x = 0;
-    for (i = 0; i < 5; ++i) {
-        x += i;
-    }
-    assert(x == 10, "for loop - basic");
+import CrayonUnit;
 
-    print('lang_for - empty init and step');
-    x = 0;
-    i = 0;
-    for (; ++i < 5;) {
-        x += i;
-    }
-    assert(x == 10, "for loop - empty init and step");
-    x = 0;
+class TestForLoop : Test {
 
-    print('lang_for - for loop - empty with break');
-    x = 0;
-    i = 0;
-    for (;;) {
-        x += i++;
-        if (i == 5) break;
-    }
-    assert(x == 10, "for loop - empty with break");
+    constructor() : base() { }
 
-    print('lang_for - with continue');
-    x = 0;
-    for (i = 0; i < 10; ++i) {
-        if (i % 2 == 0) {
-            continue;
+    function testBasic() {
+        x = 0;
+        for (i = 0; i < 5; ++i) {
+            x += i;
         }
-        x += i;
+        assertThat(x).isEqualTo(10);
     }
-    assert(x == 25, "for loop - with continue");
+
+    function testEmptyInitAndStep() {
+        x = 0;
+        i = 0;
+        for (; ++i < 5;) {
+            x += i;
+        }
+        assertThat(x).isEqualTo(10);
+    }
+
+    function testEmptyWithBreak() {
+        x = 0;
+        i = 0;
+        for (;;) {
+            x += i++;
+            if (i == 5) break;
+        }
+        assertThat(x).isEqualTo(10);
+    }
+
+    function testContinue() {
+        x = 0;
+        for (i = 0; i < 10; ++i) {
+            if (i % 2 == 0) {
+                continue;
+            }
+            x += i;
+        }
+        assertThat(x).isEqualTo(25);
+    }
 }

@@ -108,8 +108,9 @@ MATCHERS = [
   # Pastel
   ('Interpreter/source/*.pst', PASTEL_STYLE),
 
-  # Demos
+  # Demos & Tests
   ('Demos/*.cry', CRAYON_STYLE),
+  ('Tests/unitTestSource/*.cry', CRAYON_STYLE),
   ('Demos/*.acr', ACRYLIC_STYLE),
 
   # Libraries
