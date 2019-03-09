@@ -85,7 +85,7 @@ namespace Nori {
             return this;
         }
         function _setStringProperty(id, value) {
-            this._newProperties[id] = value == null ? '' : value;
+            this._newProperties[id] = value == null ? '' : ('' + value);
             if (this._frame != null && this._isClean) this._markPropertiesDirty();
             return this;
         }

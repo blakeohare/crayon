@@ -1,76 +1,80 @@
+import Math;
 import Nori;
-
-/*
-    #####
-    789-C
-    456*+
-    123/+
-    0.-s=
-*/
+import NoriXml;
 
 function main() {
 
-    window = new Window()
-        .setTitle("Calculator")
-        .setSize(500, 500);
+    content = NoriXml.build(
+    '<DockPanel>
+        <TextBlock id="display" dock="North" height="20%">0</TextBlock>
+        <DockPanel id="button_panel">
+            <StackPanel dock="West" width="20%" id="col1">
+                <Button id="num7" width="100%" height="25%">7</Button>
+                <Button id="num4" width="100%" height="33%">4</Button>
+                <Button id="num1" width="100%" height="50%">1</Button>
+                <Button id="num0" width="100%" height="100%">0</Button>
+            </StackPanel>
 
-    mainCanvas = new Canvas();
-    window.setContent(mainCanvas);
+            <StackPanel dock="West" width="25%" id="col2">
+                <Button id="num8" width="100%" height="25%">8</Button>
+                <Button id="num5" width="100%" height="33%">5</Button>
+                <Button id="num2" width="100%" height="50%">2</Button>
+                <Button id="dec" width="100%" height="100%">.</Button>
+            </StackPanel>
 
-    display = new Label()
-        .setText('0')
-        .setX(0)
-        .setY(0)
-        .setWidth(500)
-        .setHeight(100);
+            <StackPanel dock="West" width="33%" id="col3">
+                <Button id="num9" width="100%" height="25%">9</Button>
+                <Button id="num6" width="100%" height="33%">6</Button>
+                <Button id="num3" width="100%" height="50%">3</Button>
+                <Button id="sign" width="100%" height="100%">+/-</Button>
+            </StackPanel>
 
-    screenUpdater = new ScreenUpdater(display);
-    calculator = new CalculatorLogic(screenUpdater.update);
+            <StackPanel dock="West" width="50%" id="col4">
+                <Button id="minus" width="100%" height="25%">-</Button>
+                <Button id="times" width="100%" height="33%">*</Button>
+                <Button id="divide" width="100%" height="50%">/</Button>
+                <Button id="equals" width="100%" height="100%">=</Button>
+            </StackPanel>
 
-    buttons = [
-        display,
+            <StackPanel id="col5">
+                <Button id="clear" width="100%" height="25%">C</Button>
+                <Button id="sqrt" width="100%" height="33%">sqrt</Button>
+                <Button id="plus" width="100%" height="100%">+</Button>
+            </StackPanel>
 
-        makeButton(calculator, 0, 1, 1, 1, "7"),
-        makeButton(calculator, 1, 1, 1, 1, "8"),
-        makeButton(calculator, 2, 1, 1, 1, "9"),
+        </DockPanel>
+    </DockPanel>');
 
-        makeButton(calculator, 0, 2, 1, 1, "4"),
-        makeButton(calculator, 1, 2, 1, 1, "5"),
-        makeButton(calculator, 2, 2, 1, 1, "6"),
+    screenUpdater = new ScreenUpdater(content.findElement('display'));
+    logic = new CalculatorLogic(screenUpdater.update);
 
-        makeButton(calculator, 0, 3, 1, 1, "1"),
-        makeButton(calculator, 1, 3, 1, 1, "2"),
-        makeButton(calculator, 2, 3, 1, 1, "3"),
+    content.findElement('num0').setClickHandler(() => { logic.pushNumber(0); });
+    content.findElement('num1').setClickHandler(() => { logic.pushNumber(1); });
+    content.findElement('num2').setClickHandler(() => { logic.pushNumber(2); });
+    content.findElement('num3').setClickHandler(() => { logic.pushNumber(3); });
+    content.findElement('num4').setClickHandler(() => { logic.pushNumber(4); });
+    content.findElement('num5').setClickHandler(() => { logic.pushNumber(5); });
+    content.findElement('num6').setClickHandler(() => { logic.pushNumber(6); });
+    content.findElement('num7').setClickHandler(() => { logic.pushNumber(7); });
+    content.findElement('num8').setClickHandler(() => { logic.pushNumber(8); });
+    content.findElement('num9').setClickHandler(() => { logic.pushNumber(9); });
 
-        makeButton(calculator, 0, 4, 2, 1, "0"),
-        makeButton(calculator, 2, 4, 1, 1, "."),
+    content.findElement('plus').setClickHandler(() => { logic.pushOperator('+'); });
+    content.findElement('minus').setClickHandler(() => { logic.pushOperator('-'); });
+    content.findElement('times').setClickHandler(() => { logic.pushOperator('*'); });
+    content.findElement('divide').setClickHandler(() => { logic.pushOperator('/'); });
 
-        makeButton(calculator, 3, 1, 1, 1, "-"),
-        makeButton(calculator, 3, 2, 1, 1, "*"),
-        makeButton(calculator, 3, 3, 1, 1, "/"),
-        makeButton(calculator, 3, 4, 1, 1, "sqrt"),
-        makeButton(calculator, 4, 1, 1, 1, "C"),
-        makeButton(calculator, 4, 2, 1, 2, "+"),
-        makeButton(calculator, 4, 4, 1, 1, "="),
-    ];
+    content.findElement('sqrt').setClickHandler(logic.pushSquareRoot);
 
-    for (button : buttons) {
-        mainCanvas.addChild(button);
-    }
+    content.findElement('equals').setClickHandler(logic.pushEquals);
 
-    window.show();
 
-    print("And the window is now closed.");
-}
 
-function makeButton(calculator, col, row, colSpan, rowSpan, label) {
-    return new Button()
-        .setText(label)
-        .setX(col * 100)
-        .setY(row * 100)
-        .setWidth(colSpan * 100)
-        .setHeight(rowSpan * 100)
-        .setClickHandler(new ClickHandler(calculator, label).buttonClick);
+    frame = new Frame()
+        .setContent(content)
+        .setWidth(400)
+        .setHeight(600)
+        .show();
 }
 
 class ScreenUpdater {
@@ -101,7 +105,7 @@ class CalculatorLogic {
 
     function pushNumber(num) {
         this.autoEqual = null;
-        this.currentValue = (this.currentValue ?? 0) * 10 + num;
+        this.currentValue = (this.currentValue ?? 0) * 10.0 + num;
         this.updateDisplay();
     }
 
@@ -112,6 +116,17 @@ class CalculatorLogic {
         this.previousValue = this.currentValue;
         this.currentValue = null;
         this.operator = op;
+    }
+
+    function pushSquareRoot() {
+        value = this.currentValue ?? this.previousValue;
+        if (value == null) return;
+
+        if (value > 0) {
+            this.previousValue = null;
+            this.currentValue = value ** .5;
+            this.updateDisplay();
+        }
     }
 
     function pushEquals() {
@@ -141,52 +156,11 @@ class CalculatorLogic {
     }
 
     function updateDisplay() {
-        this.displayUpdaterCallback(this.currentValue ?? this.previousValue ?? 0);
-    }
-}
-
-class ClickHandler {
-    field id;
-    field calculator;
-    constructor(calculator, id) {
-        this.calculator = calculator;
-        this.id = id;
-    }
-
-    function buttonClick(args) {
-        switch (this.id) {
-            case "0":
-            case "1":
-            case "2":
-            case "3":
-            case "4":
-            case "5":
-            case "6":
-            case "7":
-            case "8":
-            case "9":
-                this.calculator.pushNumber(Core.parseInt(this.id));
-                break;
-
-            case "*":
-            case "/":
-            case "+":
-            case "-":
-                this.calculator.pushOperator(this.id);
-                break;
-
-            case "=":
-                this.calculator.pushEquals();
-                break;
-
-            case "C":
-                this.calculator = new CalculatorLogic(this.calculator.displayUpdaterCallback);
-                break;
-
-            default:
-                print("Not implemented: " + this.id);
-                break;
-
+        // Convert float to int if it is a whole number
+        num = this.currentValue ?? this.previousValue ?? 0;
+        if (num % 1 == 0) {
+            num = Math.floor(num);
         }
+        this.displayUpdaterCallback(num);
     }
 }

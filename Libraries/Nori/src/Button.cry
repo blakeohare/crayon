@@ -10,7 +10,7 @@ namespace Nori {
         }
 
         function getText() { return this._getStringProperty(Button_Text); }
-        function setText(value) { return this._setStringProperty(Button_Text, (value ?? 'null') + ''); }
+        function setText(value) { return this._setStringProperty(Button_Text, value); }
 
         function setClickHandler(fn) {
             return this._setEventHandler(Button_OnClick, fn);
