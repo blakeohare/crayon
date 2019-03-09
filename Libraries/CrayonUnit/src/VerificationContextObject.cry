@@ -158,8 +158,54 @@ namespace CrayonUnit {
             }
         }
 
-        function _complexEqualityCheck(a, b) {
-            throw new NotImplementedException("_complexEqualityCheck");
+        static function _complexEqualityCheck(a, b) {
+            if (a == null || b == null) {
+                return a == b;
+            }
+
+            aType = Core.typeof(a);
+            bType = Core.typeof(b);
+
+            if (aType != bType) {
+                return false;
+            }
+
+            switch (aType) {
+                case Type.BOOLEAN:
+                case Type.INTEGER:
+                case Type.STRING:
+                case Type.OBJECT:
+                case Type.FUNCTION:
+                case Type.CLASS:
+                    return a == b;
+
+                case Type.FLOAT:
+                    return Math.abs(a - b) < 0.0000001;
+
+                case Type.LIST:
+                    if (a.length != b.length) return false;
+                    for (i = 0; i < a.length; ++i) {
+                        if (!VerificationContextObject._complexEqualityCheck(a[i], b[i])) return false;
+                    }
+                    return true;
+
+                case Type.DICTIONARY:
+                    if (a.length != b.length) return false;
+                    aKeys = a.keys();
+                    bKeys = b.keys();
+                    aKeys.sort();
+                    bKeys.sort();
+                    for (i = 0; i < aKeys.length; ++i) {
+                        aKey = aKeys[i];
+                        bKey = bKeys[i];
+                        if (aKey != bKey) return false;
+                        if (!VerificationContextObject._complexEqualityCheck(a[aKey], b[bKey])) return false;
+                    }
+                    return true;
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         function _dictionaryContainsContents(expected) {
@@ -171,7 +217,7 @@ namespace CrayonUnit {
                 if (expected.containsKey(key)) {
                     expectedValue = expected[key];
                     expected.remove(key);
-                    if (expectedValue != actualValue && !this._complexEqualityCheck(actualValue, expectedValue)) {
+                    if (expectedValue != actualValue && !VerificationContextObject._complexEqualityCheck(actualValue, expectedValue)) {
                         return false;
                     }
                 } else {
@@ -193,7 +239,7 @@ namespace CrayonUnit {
             if (value.length == 0) return true;
             if (value.length == 1) {
                 return this.actual[0] == value[0] ||
-                    this._complexEqualityCheck(this.actual[0], value[0]);
+                    VerificationContextObject._complexEqualityCheck(this.actual[0], value[0]);
             }
 
             // verify as much as possible that is currently in order.
@@ -203,7 +249,7 @@ namespace CrayonUnit {
 
             while (unverifiedStart <= unverifiedEnd) {
                 if (this.actual[unverifiedStart] == value[unverifiedStart] ||
-                    this._complexEqualityCheck(this.actual[unverifiedStart], value[unverifiedStart])) {
+                    VerificationContextObject._complexEqualityCheck(this.actual[unverifiedStart], value[unverifiedStart])) {
                     unverifiedStart++;
                 } else {
                     break;
@@ -216,7 +262,7 @@ namespace CrayonUnit {
             // If it didn't, check how many elements match starting from the end.
             while (unverifiedEnd > unverifiedStart) {
                 if (this.actual[unverifiedStart] == value[unverifiedStart] ||
-                    this._complexEqualityCheck(this.actual[unverifiedStart], value[unverifiedStart])) {
+                    VerificationContextObject._complexEqualityCheck(this.actual[unverifiedStart], value[unverifiedStart])) {
                     unverifiedEnd--;
                 } else {
                     break;
@@ -259,7 +305,7 @@ namespace CrayonUnit {
             // then something is obviously different. Comparisons not necessary.
             if (expectedComplex.length != actualComplex.length) return false;
 
-            for (key : actualPrimitives) {
+            for (key : actualPrimitives.keys()) {
                 if (expectedPrimitives.get(key) == actualPrimitives[key]) {
                     expectedPrimitives.remove(key);
                 } else {
@@ -273,7 +319,7 @@ namespace CrayonUnit {
                 found = false;
                 for (i = expectedComplex.length - 1; i >= 0; --i) {
                     if (Core.typeof(actualValue) == Core.typeof(expectedComplex[i]) &&
-                        this._complexEqualityCheck(actualValue, expectedComplex[i])) {
+                        VerificationContextObject._complexEqualityCheck(actualValue, expectedComplex[i])) {
                         found = true;
                         expectedComplex.removeAt(i);
                         break;

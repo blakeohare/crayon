@@ -1,0 +1,43 @@
+import CrayonUnit;
+
+class SlicingTest : Test {
+
+    constructor() : base() { }
+
+    function testSlicing() {
+        original = 'abcdefghij';
+
+        assertThat(original[:]).isEqualTo('abcdefghij');
+
+        assertThat(original[0:10]).isEqualTo('abcdefghij');
+        assertThat(original[3:10]).isEqualTo('defghij');
+        assertThat(original[0:7]).isEqualTo('abcdefg');
+        assertThat(original[3:7]).isEqualTo('defg');
+        assertThat(original[-5:]).isEqualTo('fghij');
+        assertThat(original[4:]).isEqualTo('efghij');
+        assertThat(original[:6]).isEqualTo('abcdef');
+        assertThat(original[:-2]).isEqualTo('abcdefgh');
+        assertThat(original[-8:8]).isEqualTo('cdefgh');
+        assertThat(original[7:7]).isEqualTo('');
+        assertThat(original[1:]).isEqualTo('bcdefghij');
+        assertThat(original[original.length:]).isEqualTo('');
+
+        assertThat(original[::2]).isEqualTo('acegi');
+        assertThat(original[1:7:3]).isEqualTo('be');
+        assertThat(original[1:8:3]).isEqualTo('beh');
+
+        assertThat(original[5::-1]).isEqualTo('fedcba');
+        assertThat(original[9:-11:-1]).isEqualTo('jihgfedcba');
+        assertThat(original[3:3:-1]).isEqualTo('');
+        assertThat(original[5:3:-1]).isEqualTo('fe');
+        assertThat(original[5:3:-5]).isEqualTo('f');
+        assertThat(original[::-1]).isEqualTo('jihgfedcba');
+        assertThat(original[:3:-1]).isEqualTo('jihgfe');
+        assertThat(original[8:2:-2]).isEqualTo('ige');
+
+        x = [1, 2, 3];
+        assertThat(x[1:]).contains([2, 3]).inOrder();
+        x = [42];
+        assertThat(x[1:]).isEmpty();
+    }
+}

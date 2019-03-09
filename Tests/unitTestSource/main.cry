@@ -1,12 +1,8 @@
 import CrayonUnit;
 
 function main() {
-    lang();
-    library();
-    methods();
 
-    print("=== All legacy tests passed! ===");
-    print("Now running modern tests:");
+    print("Running Unit Tests...");
 
     harness = new TestHarness()
         .makePassingTestsSilent()

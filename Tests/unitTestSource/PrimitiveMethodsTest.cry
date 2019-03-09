@@ -1,0 +1,19 @@
+import CrayonUnit;
+
+// TODO: a lot
+
+class PrimitiveMethodsTest : Test {
+
+    constructor() : base() { }
+
+    function testListMethods() {
+
+        a = [1, 2, 3];
+        b = [4, 5, 6];
+
+        a.concat(b);
+
+        assertThat(a).contains([1, 2, 3, 4, 5, 6]).inOrder();
+        assertThat(b).contains([4, 5, 6]).inOrder();
+    }
+}

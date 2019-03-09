@@ -1,0 +1,54 @@
+import CrayonUnit;
+
+class LangIncrementTest : Test {
+    field numInstance = 0;
+    static field numStatic = 0;
+
+    constructor() : base() { }
+
+    function testIncrementVariable() {
+        x = 100;
+        x++;
+        assertThat(x).isEqualTo(101);
+        ++x;
+        assertThat(x).isEqualTo(102);
+        y = ++x;
+        assertThat(x).isEqualTo(103);
+        assertThat(y).isEqualTo(103);
+        y = x++;
+        assertThat(x).isEqualTo(104);
+        assertThat(y).isEqualTo(103);
+    }
+
+    function testIncrementListIndex() {
+        x = [100];
+        x[0]++;
+        assertThat(x[0]).isEqualTo(101);
+        ++x[0];
+        assertThat(x[0]).isEqualTo(102);
+        y = ++x[0];
+        assertThat(x[0]).isEqualTo(103);
+        assertThat(y).isEqualTo(103);
+        y = x[0]++;
+        assertThat(x[0]).isEqualTo(104);
+        assertThat(y).isEqualTo(103);
+    }
+
+    function testIncrementObjectField() {
+        this.numInstance = 100;
+        assertThat(++this.numInstance).isEqualTo(101);
+        assertThat(this.numInstance++).isEqualTo(101);
+        assertThat(this.numInstance).isEqualTo(102);
+
+        obj = this;
+        obj.numInstance = 100;
+        assertThat(++obj.numInstance).isEqualTo(101);
+        assertThat(obj.numInstance++).isEqualTo(101);
+        assertThat(obj.numInstance).isEqualTo(102);
+
+        LangIncrementTest.numStatic = 100;
+        assertThat(++LangIncrementTest.numStatic).isEqualTo(101);
+        assertThat(LangIncrementTest.numStatic++).isEqualTo(101);
+        assertThat(LangIncrementTest.numStatic).isEqualTo(102);
+    }
+}

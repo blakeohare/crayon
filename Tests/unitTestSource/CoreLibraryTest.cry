@@ -1,0 +1,19 @@
+import CrayonUnit;
+
+class CoreLibraryTest : Test {
+
+    constructor() : base() { }
+
+    function testParseFloat() {
+        assertThat(parseFloat(' 42.0 \r') + '').isEqualTo('42.0');
+        assertThat(parseFloat('kitties')).isNull();
+    }
+
+    function testParseInt() {
+        assertThat(parseInt('42') + '').isEqualTo('42');
+        assertThat(parseInt(' 42 ')).isEqualTo(42);
+        assertThat(parseInt(' 42 \r\n')).isEqualTo(42);
+        assertThat(parseInt(' 42 \r')).isEqualTo(42);
+        assertThat(parseInt('kitties')).isNull();
+    }
+}

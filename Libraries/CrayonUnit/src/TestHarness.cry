@@ -113,7 +113,7 @@ namespace CrayonUnit {
 
         static function traceToString(e) {
             trace = e.getTrace();
-            while (trace.length > 0 && trace[-1].startsWith('[CrayonUnit:')) {
+            while (trace.length > 0 && (trace[-1].startsWith('[CrayonUnit:') || trace[-1].startsWith('[Core:'))) {
                 trace.pop();
             }
             return trace.join('\n');
@@ -142,7 +142,7 @@ namespace CrayonUnit {
             print('');
             print('  ' + TestHarness._plural(this._passCount, 'pass', 'passes'));
             print('  ' + TestHarness._plural(this._failCount, 'failure', 'failures'));
-            print('  ' + TestHarness._plural(this._failCount, 'unhandled exception', 'unhandled exceptions'));
+            print('  ' + TestHarness._plural(this._unhandledExCount, 'unhandled exception', 'unhandled exceptions'));
         }
     }
 }

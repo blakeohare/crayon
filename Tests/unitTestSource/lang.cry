@@ -1,6 +1,0 @@
-function lang() {
-    lang_increment();
-    lang_obj_ref();
-    lang_ops();
-    lang_string_slicing();
-}
