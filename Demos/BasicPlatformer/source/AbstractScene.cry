@@ -4,10 +4,10 @@ class AbstractScene {
     constructor() { }
 
     function update(pressedKeys, pressedThisFrame) {
-        Core.assert(false, "Override me!");
+        throw new NotImplementedException("Override me!");
     }
 
     function render(rc) {
-        Core.assert(false,  "Override me!");
+        throw new NotImplementedException("Override me!");
     }
 }

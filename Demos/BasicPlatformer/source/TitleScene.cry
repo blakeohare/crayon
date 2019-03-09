@@ -1,4 +1,4 @@
-import GFX;
+import Graphics2D;
 import Game;
 
 /*
@@ -19,7 +19,7 @@ class TitleScene : AbstractScene {
     }
 
     function render(rc) {
-        Draw.fill(0, 80, 180);
+        Graphics2D.Draw.fill(0, 80, 180);
         interval = FPS / 3;
         if ((rc / interval) % 2 == 0) {
 

@@ -1,5 +1,12 @@
-import GFX;
+import Graphics2D;
 import Math;
+
+const SPRITE_X_ACCEL = 0.05;
+const SPRITE_X_DRAG = 0.07;
+const SPRITE_X_MAX_VELOCITY = 0.3;
+const SPRITE_GRAVITY = 0.12;
+const SPRITE_MAX_Y_VELOCITY = 0.9;
+const SPRITE_JUMP_VELOCITY = -0.85;
 
 class Sprite {
 
@@ -22,11 +29,11 @@ class Sprite {
     function accelerateX(isRightDirection) {
         this.xAccelerated = true;
         if (isRightDirection) {
-            this.vx += .05;
-            if (this.vx > .3) this.vx = 0.3;
+            this.vx += SPRITE_X_ACCEL;
+            if (this.vx > SPRITE_X_MAX_VELOCITY) this.vx = SPRITE_X_MAX_VELOCITY;
         } else {
-            this.vx -= .05;
-            if (this.vx < -.3) this.vx = -0.3;
+            this.vx -= SPRITE_X_ACCEL;
+            if (this.vx < -SPRITE_X_MAX_VELOCITY) this.vx = -SPRITE_X_MAX_VELOCITY;
         }
         this.dx += this.vx;
     }
@@ -34,12 +41,12 @@ class Sprite {
     function update(playscene) {
         if (!this.xAccelerated && this.vx != 0) {
             if (this.vx > 0) {
-                this.vx -= .05;
+                this.vx -= SPRITE_X_DRAG;
                 if (this.vx < 0) {
                     this.vx = 0;
                 }
             } else if (this.vx < 0) {
-                this.vx += .05;
+                this.vx += SPRITE_X_DRAG;
                 if (this.vx > 0) {
                     this.vx = 0;
                 }
@@ -130,9 +137,9 @@ class Sprite {
             this.y = this.ground.row * 1.0;
             this.vy = 0;
         } else {
-            this.vy += .05;
-            if (this.vy > .9) this.vy = .9;
-            else if (this.vy < -.9) this.vy = -.9;
+            this.vy += SPRITE_GRAVITY;
+            if (this.vy > SPRITE_MAX_Y_VELOCITY) this.vy = SPRITE_MAX_Y_VELOCITY;
+            else if (this.vy < -SPRITE_MAX_Y_VELOCITY) this.vy = -SPRITE_MAX_Y_VELOCITY;
         }
 
         this.dx = 0;
@@ -143,6 +150,6 @@ class Sprite {
         radius = 16;
         rx = Math.floor(this.x * 32) - cx;
         ry = Math.floor(this.y * 32 - radius) - cy;
-        GFX.Draw.ellipse(rx - radius, ry - radius, radius * 2, radius * 2, 255, 0, 0);
+        Graphics2D.Draw.ellipse(rx - radius, ry - radius, radius * 2, radius * 2, 255, 0, 0);
     }
 }

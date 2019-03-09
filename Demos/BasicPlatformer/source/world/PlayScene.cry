@@ -1,5 +1,5 @@
 import Game;
-import GFX;
+import Graphics2D;
 import Math;
 
 /*
@@ -35,7 +35,7 @@ class PlayScene : AbstractScene {
         isJump = pressedThisFrame.get(KeyboardKey.SPACE, false);
         if (isJump && this.player.ground != null) {
             this.player.ground = null;
-            this.player.vy = -.6;
+            this.player.vy = SPRITE_JUMP_VELOCITY;
         }
 
         if (move) {
@@ -61,7 +61,7 @@ class PlayScene : AbstractScene {
         if (viewX > mapWidth - WIDTH) viewX = mapWidth - WIDTH;
         if (viewY > mapHeight - HEIGHT) viewY = mapHeight - HEIGHT;
 
-        GFX.Draw.fill(255, 0, 0);
+        Graphics2D.Draw.fill(255, 0, 0);
         this.sky.draw(0, 0);
         this.map.render(rc, viewX, viewY);
 

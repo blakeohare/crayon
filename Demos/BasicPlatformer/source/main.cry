@@ -20,6 +20,7 @@ function main() {
             switch (event.type) {
                 case EventType.QUIT:
                     return;
+
                 case EventType.KEY_DOWN:
                     pressedKeys[event.key] = true;
                     pressedKeysThisFrame[event.key] = true;

@@ -1,5 +1,5 @@
 import Math;
-import GFX;
+import Graphics2D;
 
 /*
     Fades a scene to blackness for 1 second.
@@ -40,6 +40,6 @@ class FadeTransitionScene : AbstractScene {
 
     function render(rc) {
         this.bg.render(rc);
-        GFX.Draw.rectangle(0, 0, WIDTH, HEIGHT, 0, 0, 0, this.alpha);
+        Graphics2D.Draw.rectangle(0, 0, WIDTH, HEIGHT, 0, 0, 0, this.alpha);
     }
 }

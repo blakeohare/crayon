@@ -1,4 +1,4 @@
-import GFX;
+import Graphics2D;
 import Math;
 
 /*
@@ -7,7 +7,6 @@ import Math;
 class LoadingScene : AbstractScene {
 
     field progress = 0.0;
-    field loader;
 
     static field BAR_WIDTH = WIDTH * 3 / 4;
     static field BAR_HEIGHT = HEIGHT / 20;
@@ -15,14 +14,14 @@ class LoadingScene : AbstractScene {
     static field BAR_OUTLINE_COLOR = [100, 100, 100]; // gray
 
     constructor() : base() {
-        this.loader = GFX.ImageSheetLoader.fromIds('everything');
+        ImageLibrary.startLoading();
     }
 
     function update(pressedKeys, pressedThisFrame) {
-        if (this.loader.isDone()) {
-                this.next = new FadeTransitionScene(this, new TitleScene());
+        if (ImageLibrary.isDoneLoading()) {
+               this.next = new FadeTransitionScene(this, new TitleScene());
         }
-        this.progress = this.loader.getProgress();
+        this.progress = ImageLibrary.getLoadingProgress();
     }
 
     static function lightenColor(rgb) {
@@ -45,16 +44,16 @@ class LoadingScene : AbstractScene {
     function render(rc) {
 
         // fill with black
-        GFX.Draw.fill(0, 0, 0);
+        Graphics2D.Draw.fill(0, 0, 0);
 
         // Draw a rectangle centered in the screen that has a 2 pixel outline and a black fill.
         left = (WIDTH - LoadingScene.BAR_WIDTH) / 2;
         top = (HEIGHT - LoadingScene.BAR_HEIGHT) / 2;
         rgb = LoadingScene.BAR_OUTLINE_COLOR;
-        GFX.Draw.rectangle(
+        Graphics2D.Draw.rectangle(
             left, top, LoadingScene.BAR_WIDTH, LoadingScene.BAR_HEIGHT,
             rgb[0], rgb[1], rgb[2]);
-        GFX.Draw.rectangle(
+        Graphics2D.Draw.rectangle(
             left + 2, top + 2, LoadingScene.BAR_WIDTH - 4, LoadingScene.BAR_HEIGHT - 4,
             0, 0, 0); // black
 
@@ -69,7 +68,7 @@ class LoadingScene : AbstractScene {
 
         // Draw the progress bar.
         rgb = LoadingScene.BAR_FILL_COLOR;
-        GFX.Draw.rectangle(
+        Graphics2D.Draw.rectangle(
             innerLeft, innerTop, progressWidth, innerHeight,
             rgb[0], rgb[1], rgb[2]);
     }

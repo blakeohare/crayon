@@ -1,17 +1,33 @@
-import GFX;
+import Graphics2D;
+import ImageResources;
 
 /*
     Cache of images that have been loaded.
 */
-class ImageLibrary {
+static class ImageLibrary {
     static field images = {};
+    static field imageSheet = null;
+    static field initialized = false;
 
-    constructor() { Core.assert(false); }
+    static function startLoading() {
+        ImageLibrary.imageSheet = ImageResources.ImageSheet.loadFromResourcesAsync('everything');
+    }
+
+    static function isDoneLoading() {
+        ImageLibrary.initialized = ImageLibrary.imageSheet.isDone();
+        return ImageLibrary.initialized;
+    }
+
+    static function getLoadingProgress() {
+        if (ImageLibrary.imageSheet == null) return 0.0;
+        return ImageLibrary.imageSheet.getProgress();
+    }
 
     static function get(path) {
         img = ImageLibrary.images.get(path, null);
         if (img == null) {
-            img = ImageLoader.fromResource('images/' + path).getImage();
+            rawImgResource = ImageLibrary.imageSheet.getImage('images/' + path);
+            img = Graphics2D.GraphicsTexture.load(rawImgResource);
             ImageLibrary.images[path] = img;
         }
         return img;
