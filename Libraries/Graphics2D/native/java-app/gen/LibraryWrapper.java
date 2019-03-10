@@ -2,7 +2,9 @@ package org.crayonlang.libraries.graphics2d;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.crayonlang.interpreter.PlatformTranslationHelper;
 import org.crayonlang.interpreter.structs.*;
+import org.crayonlang.interpreter.TranslationHelper;
 
 public final class LibraryWrapper {
 

@@ -2,9 +2,9 @@ package org.crayonlang.interpreter.vm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.crayonlang.interpreter.PlatformTranslationHelper;;
+import org.crayonlang.interpreter.PlatformTranslationHelper;
 import org.crayonlang.interpreter.structs.*;
-import org.crayonlang.interpreter.TranslationHelper;;
+import org.crayonlang.interpreter.TranslationHelper;
 
 public final class CrayonWrapper {
 
@@ -906,7 +906,7 @@ public final class CrayonWrapper {
           }
           break;
         case 5:
-          if ((((String) a.internalValue) == ((String) b.internalValue))) {
+          if (a.internalValue.equals(b.internalValue)) {
             output = 1;
           }
           break;
@@ -4903,7 +4903,7 @@ public final class CrayonWrapper {
                 bool1 = (leftValue.intValue == rightValue.intValue);
                 break;
               case 5:
-                bool1 = (((String) leftValue.internalValue) == ((String) rightValue.internalValue));
+                bool1 = leftValue.internalValue.equals(rightValue.internalValue);
                 break;
               default:
                 bool1 = (doEqualityComparisonAndReturnCode(leftValue, rightValue) == 1);
@@ -5701,7 +5701,10 @@ public final class CrayonWrapper {
   }
 
   public static boolean isStringEqual(String a, String b) {
-    if ((((String) a) == ((String) b))) {
+    if (((a == null) || (b == null))) {
+      return ((a == null) && (b == null));
+    }
+    if (a.equals(b)) {
       return true;
     }
     return false;

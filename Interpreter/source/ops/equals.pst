@@ -7,16 +7,16 @@ if (leftValue.type == rightValue.type) {
     // doEqualityComparison does these, but since these are so common, go ahead and inline them here and
     // save the overhead of a function call.
     switch (leftValue.type) {
-        case 1:
+        case Types.NULL:
             bool1 = true;
             break;
-        case 2:
+        case Types.BOOLEAN:
             bool1 = (bool) leftValue.internalValue == (bool) rightValue.internalValue;
             break;
-        case 3:
+        case Types.INTEGER:
             bool1 = (int) leftValue.internalValue == (int) rightValue.internalValue;
             break;
-        case 5:
+        case Types.STRING:
             if (@ext_boolean("IS_JAVA")) {
                 bool1 = Core.StringEquals(leftValue.internalValue, rightValue.internalValue);
             } else {
