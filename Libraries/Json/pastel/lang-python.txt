@@ -9,4 +9,4 @@ DEPENDENCY: VM: ../../../Interpreter/python-app.txt
 OUTPUT-FUNCTIONS: ../native/lang-python/gen/lib_json.py
 CODE-IMPORT: code.vm as VM
 
-EXT: _lib_json_parse: lib_json_parse([ARG:1], [ARG:2])
+EXT: _lib_json_parse: lib_json_parse_impl([ARG:1], [ARG:2])

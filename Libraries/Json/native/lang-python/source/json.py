@@ -1,5 +1,5 @@
 
-def lib_json_parse(g, raw):
+def lib_json_parse_impl(g, raw):
   import json
   try:
     return lib_json_parse_json_thing(g, json.loads(raw))
