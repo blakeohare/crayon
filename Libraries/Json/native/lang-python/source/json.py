@@ -15,7 +15,7 @@ def lib_json_parse_json_thing(g, item):
     return buildInteger(g, item)
   if "'float'" in t:
     return buildFloat(g, item)
-  if "'string'" in t or "'unicode'" in t:
+  if "'str'" in t or "'unicode'" in t:
     return buildString(g, str(item))
   if "'list'" in t:
     output = []
