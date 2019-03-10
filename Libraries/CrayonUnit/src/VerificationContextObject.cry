@@ -45,7 +45,7 @@ namespace CrayonUnit {
                     }
                     break;
                 default:
-                    throw new UnitTestFailedException("Expected a list, dictionary, or string. Found: '" + this.getValueAsString(this.actual) + "'.");
+                    throw new UnitTestFailedException("Expected a list, dictionary, or string. Found: '" + VerificationContextObject.getValueAsString(this.actual) + "'.");
             }
         }
 
@@ -53,21 +53,21 @@ namespace CrayonUnit {
             switch (Core.typeof(this.actual)) {
                 case Core.Type.LIST:
                     if (this.actual.length > 0) {
-                        throw new UnitTestFailedException("Expected empty list. Found: '" + this.getValueAsString(this.actual) + "'.");
+                        throw new UnitTestFailedException("Expected empty list. Found: '" + VerificationContextObject.getValueAsString(this.actual) + "'.");
                     }
                     break;
                 case Core.Type.STRING:
                     if (this.actual.length > 0) {
-                        throw new UnitTestFailedException("Expected empty string. Found: '" + this.getValueAsString(this.actual) + "'.");
+                        throw new UnitTestFailedException("Expected empty string. Found: '" + VerificationContextObject.getValueAsString(this.actual) + "'.");
                     }
                     break;
                 case Core.Type.DICTIONARY:
                     if (this.actual.length > 0) {
-                        throw new UnitTestFailedException("Expected empty dictionary. Found: '" + this.getValueAsString(this.actual) + "'.");
+                        throw new UnitTestFailedException("Expected empty dictionary. Found: '" + VerificationContextObject.getValueAsString(this.actual) + "'.");
                     }
                     break;
                 default:
-                    throw new UnitTestFailedException("Expected a list, dictionary, or string. Found: '" + this.getValueAsString(this.actual) + "'.");
+                    throw new UnitTestFailedException("Expected a list, dictionary, or string. Found: '" + VerificationContextObject.getValueAsString(this.actual) + "'.");
             }
         }
 
@@ -76,7 +76,7 @@ namespace CrayonUnit {
                 throw new Core.InvalidArgumentException("isEqualWithEpsilon requires a numeric argument.");
             }
             if (!Core.isNumber(this.actual)) {
-                throw new UnitTestFailedException("Not true that '" + this.getValueAsString(this.actual) + "' is a number.");
+                throw new UnitTestFailedException("Not true that '" + VerificationContextObject.getValueAsString(this.actual) + "' is a number.");
             }
             if (Math.abs(this.actual - value) > epsilon) {
                 throw new UnitTestFailedException("'" + this.actual + "' is not within the tolerance of '" + value + "'.");
@@ -84,43 +84,24 @@ namespace CrayonUnit {
         }
 
         function isEqualTo(value) {
-            switch (Core.typeof(value)) {
-                case Core.Type.NULL:
-                    if (this.actual != null)
-                        throw new UnitTestFailedException("Not true that " + this.getValueAsString(this.actual) + " is null.");
-                    return this;
-                case Core.Type.BOOLEAN:
-                    if (this.actual != value)
-                        throw new UnitTestFailedException("'" + this.getValueAsString(this.actual) + "' is not " + value + ".");
-                    return this;
-                case Core.Type.LIST:
-                    if (Core.typeof(this.actual) == Core.Type.LIST) {
-                        if (this.contains(value).inOrder()) {
-                            return this;
-                        }
-                    }
-                    throw new UnitTestFailedException("Not true that '" + this.getValueAsString(this.actual) + "' is equal to '" + this.getValueAsString(value) + "'.");
-                case Core.Type.DICTIONARY:
-                    if (Core.typeof(this.actual) == Core.Type.DICTIONARY &&
-                        VerificationContextObject._dictionaryContainsContents(this.actual, value)) {
+            if (VerificationContextObject._complexEqualityCheck(this.actual, value)) return this;
 
-                        return this;
-                    }
-                    throw new UnitTestFailedException("Not true that '" + this.getValueAsString(this.actual) + "' is equal to '" + this.getValueAsString(value) + "'.");
-
-                case Core.Type.INTEGER:
-                case Core.Type.FLOAT:
-                case Core.Type.STRING:
-                case Core.Type.FUNCTION:
-                case Core.Type.CLASS:
-                default:
-                    if (this.actual != value)
-                        throw new UnitTestFailedException("'" + this.getValueAsString(this.actual) + "' is not equal to '" + value + "'.");
-                    return this;
-            }
+            throw new UnitTestFailedException(
+                "'" + VerificationContextObject.getValueAsString(this.actual) +
+                "' is not equal to '" + VerificationContextObject.getValueAsString(value) +
+                "'.");
         }
 
-        function getValueAsString(value) {
+        function isNotEqualTo(value) {
+            if (!VerificationContextObject._complexEqualityCheck(this.actual, value)) return this;
+            throw new UnitTestFailedException(
+                "'" + VerificationContextObject.getValueAsString(this.actual) +
+                "' should not be equal to '" +
+                VerificationContextObject.getValueAsString(value) +
+                "'.");
+        }
+
+        static function getValueAsString(value) {
             return '' + (value ?? 'null');
         }
 
@@ -133,7 +114,7 @@ namespace CrayonUnit {
             if (Core.typeof(expected) == Core.Type.LIST) {
                 if (this._listContainsContents(expected))
                     return this;
-                throw new UnitTestFailedException("Not true that '" + this.getValueAsString(this.actual) + "' contains all the elements: '" + this.getValueAsString(expected) + "'.");
+                throw new UnitTestFailedException("Not true that '" + VerificationContextObject.getValueAsString(this.actual) + "' contains all the elements: '" + VerificationContextObject.getValueAsString(expected) + "'.");
             } else if (Core.typeof(this.actual) == Core.Type.STRING) {
                 if (Core.typeof(expected) == Core.Type.STRING) {
                     found = this.actual.contians(expected);
@@ -148,11 +129,11 @@ namespace CrayonUnit {
                     }
                 }
             } else {
-                throw new UnitTestFailedException("'" + this.getValueAsString(this.actual) + "' does not support the 'contains' verification");
+                throw new UnitTestFailedException("'" + VerificationContextObject.getValueAsString(this.actual) + "' does not support the 'contains' verification");
             }
 
             if (!found) {
-                throw new UnitTestFailedException("Not true that '" + this.getValueAsString(this.actual) + "' contains '" + this.getValueAsString(expected) + "'");
+                throw new UnitTestFailedException("Not true that '" + VerificationContextObject.getValueAsString(this.actual) + "' contains '" + VerificationContextObject.getValueAsString(expected) + "'");
             }
 
             return this;
@@ -164,7 +145,7 @@ namespace CrayonUnit {
             }
 
             if (this.listContainsState == false) {
-                throw new UnitTestFailedException("The collection contained the correct elements but not in the correct order. Found: '" + this.getValueAsString(this.expected) + "'.");
+                throw new UnitTestFailedException("The collection contained the correct elements but not in the correct order. Found: '" + VerificationContextObject.getValueAsString(this.expected) + "'.");
             }
         }
 

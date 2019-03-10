@@ -1,19 +1,82 @@
 import CrayonUnit;
 
-// TODO: a lot
-
 class PrimitiveMethodsTest : Test {
 
     constructor() : base() { }
 
-    function testListMethods() {
+    // TODO: this
+    function testDictionaryPrimitiveMethods() {
+        pass();
+    }
 
-        a = [1, 2, 3];
-        b = [4, 5, 6];
+    // TODO: this
+    function testStringPrimitiveMethods() {
+        pass();
+    }
 
+    function testListPrimitiveMethods() {
+
+        // basics
+        a = [1, 2, 3, 4];
+        a.clear();
+        assertThat(a).isEmpty();
+        a.add(5);
+        assertThat(a).isEqualTo([5]);
+        a.add(6, 7);
+        assertThat(a).isEqualTo([5, 6, 7]);
+        a.reverse();
+        assertThat(a).isEqualTo([7, 6, 5]);
+        a.pop();
+        assertThat(a).isEqualTo([7, 6]);
+
+        // concat
+        b = [5, 4, 3];
+        assertThat(a + b).isEqualTo([7, 6, 5, 4, 3]);
+        assertThat(a).isEqualTo([7, 6]);
+        assertThat(b).isEqualTo([5, 4, 3]);
         a.concat(b);
+        assertThat(a).isEqualTo([7, 6, 5, 4, 3]);
+        assertThat(b).isEqualTo([5, 4, 3]);
+        c = a.clone();
+        c.add(2);
+        assertThat(c).isEqualTo([7, 6, 5, 4, 3, 2]);
+        assertThat(a).isEqualTo([7, 6, 5, 4, 3]);
 
-        assertThat(a).contains([1, 2, 3, 4, 5, 6]).inOrder();
-        assertThat(b).contains([4, 5, 6]).inOrder();
+        // contains
+        assertThat(a.contains(4)).isTrue();
+        assertThat(a.contains(99)).isFalse();
+
+        // inserts
+        a.insert(0, 7);
+        a.insert(0, 8);
+        a.insert(0, 9);
+        a.insert(-1, 10);
+        a.insert(-2, 11);
+        assertThat(a).isEqualTo([9, 8, 7, 7, 6, 5, 4, 11, 10, 3]);
+
+        // join
+        assertThat(a.join(':')).isEqualTo('9:8:7:7:6:5:4:11:10:3');
+
+        // shuffle
+        shuffleTest = [];
+        for (i = 1; i <= 100; ++i) {
+            shuffleTest.add(i);
+        }
+        shuffleTest.shuffle();
+        slice = shuffleTest[:10];
+        sum = 0;
+        for (n : slice) {
+            sum += n;
+        }
+        assertThat(sum).isNotEqualTo(55); // statistical impossibility with 100 numbers choosing the first 10.
+
+        // sort
+        shuffleTest.sort();
+        assertThat(shuffleTest[::10]).isEqualTo([1, 11, 21, 31, 41, 51, 61, 71, 81, 91]);
+
+        // sort with a custom sort-key function
+        shuffleTest.shuffle();
+        shuffleTest.sort((num) => { (num + '').reverse(); });
+        assertThat(shuffleTest[:20]).isEqualTo([100, 10, 20, 30, 40, 50, 60, 70, 80, 90, 1, 11, 21, 31, 41, 51, 61, 71, 81, 91]);
     }
 }
