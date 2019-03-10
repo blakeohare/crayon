@@ -1,0 +1,65 @@
+import CrayonUnit;
+import Json;
+
+class JsonLibTest : Test {
+
+    constructor() : base() { }
+
+    function testJson() {
+        value = Json.parseJson('
+        {
+            "a": "string",
+            "b": true,
+            "c": 100,
+            "d": 3.14159,
+            "e": [1, 2, 3],
+            "f": {},
+            "g": [
+                {"k": "KEY", "v": "VALUE" }
+            ],
+            "h": [1, [2, 3]]
+        }
+        ');
+
+        assertThat(value['a']).isEqualTo("string");
+        assertThat(value['b']).isTrue();
+        assertThat(value['c']).isEqualTo(100);
+        assertThat(value['d']).isEqualTo(3.14159);
+        assertThat(value['e']).contains([1, 2, 3]).inOrder();
+        assertThat(value['f']).isEqualTo({});
+        assertThat(value['g'][0]['k']).isEqualTo("KEY");
+        assertThat(value['g'][0]['v']).isEqualTo("VALUE");
+        assertThat(value['h'][0]).isEqualTo(1);
+        assertThat(value['h'][1]).contains([2, 3]).inOrder();
+
+        assertThat(Json.serialize(value))
+            .isEqualTo('{"a":"string","b":true,"c":100,"d":3.14159,"e":[1,2,3],"f":{},"g":[{"k":"KEY","v":"VALUE"}],"h":[1,[2,3]]}');
+
+        assertThat(Json.serialize(value, JsonSerializerFlag.PRETTY))
+            .isEqualTo('{
+  "a": "string",
+  "b": true,
+  "c": 100,
+  "d": 3.14159,
+  "e": [
+    1,
+    2,
+    3
+  ],
+  "f": {},
+  "g": [
+    {
+      "k": "KEY",
+      "v": "VALUE"
+    }
+  ],
+  "h": [
+    1,
+    [
+      2,
+      3
+    ]
+  ]
+}');
+    }
+}

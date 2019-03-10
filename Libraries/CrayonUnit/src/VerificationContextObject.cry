@@ -88,29 +88,35 @@ namespace CrayonUnit {
                 case Core.Type.NULL:
                     if (this.actual != null)
                         throw new UnitTestFailedException("Not true that " + this.getValueAsString(this.actual) + " is null.");
-                    break;
+                    return this;
                 case Core.Type.BOOLEAN:
                     if (this.actual != value)
                         throw new UnitTestFailedException("'" + this.getValueAsString(this.actual) + "' is not " + value + ".");
-                    break;
+                    return this;
                 case Core.Type.LIST:
                     if (Core.typeof(this.actual) == Core.Type.LIST) {
-                        return this.contains(value).inOrder();
+                        if (this.contains(value).inOrder()) {
+                            return this;
+                        }
                     }
                     throw new UnitTestFailedException("Not true that '" + this.getValueAsString(this.actual) + "' is equal to '" + this.getValueAsString(value) + "'.");
                 case Core.Type.DICTIONARY:
                     if (Core.typeof(this.actual) == Core.Type.DICTIONARY &&
-                        this._dictionaryContainsContents(value)) {
+                        VerificationContextObject._dictionaryContainsContents(this.actual, value)) {
+
+                        return this;
                     }
                     throw new UnitTestFailedException("Not true that '" + this.getValueAsString(this.actual) + "' is equal to '" + this.getValueAsString(value) + "'.");
 
                 case Core.Type.INTEGER:
                 case Core.Type.FLOAT:
                 case Core.Type.STRING:
+                case Core.Type.FUNCTION:
+                case Core.Type.CLASS:
                 default:
                     if (this.actual != value)
                         throw new UnitTestFailedException("'" + this.getValueAsString(this.actual) + "' is not equal to '" + value + "'.");
-                    break;
+                    return this;
             }
         }
 
@@ -212,12 +218,12 @@ namespace CrayonUnit {
             }
         }
 
-        function _dictionaryContainsContents(expected) {
+        static function _dictionaryContainsContents(actual, expected) {
             if (Core.typeof(expected) != Core.Type.DICTIONARY) return false;
-            if (this.actual.length != expected.length) return false;
+            if (actual.length != expected.length) return false;
             expected = expected.clone(); // will mutate the expected, so clone it first.
-            for (key : this.actual.keys()) {
-                actualValue = this.actual[key];
+            for (key : actual.keys()) {
+                actualValue = actual[key];
                 if (expected.containsKey(key)) {
                     expectedValue = expected[key];
                     expected.remove(key);
@@ -228,7 +234,6 @@ namespace CrayonUnit {
                     return false;
                 }
             }
-
             return expected.length == 0;
         }
 

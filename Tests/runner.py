@@ -47,7 +47,6 @@ def main(args):
 	run_compiler_negative_tests(args)
 
 def run_unit_tests():
-	print("Running unit tests...")
 	unit_test_output = run_command('crayon UnitTests.build')
 	print(unit_test_output)
 
