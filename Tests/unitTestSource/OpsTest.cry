@@ -17,6 +17,18 @@ class OpsTest : Test {
         assertThat(exp).isEqualTo(act);
     }
 
+    function assertPowThrows(baseNum, powNum) {
+        n = 0;
+        try {
+            n = baseNum ** powNum;
+        } catch (InvalidArgumentException) {
+            pass();
+            return;
+        }
+        // cheesy but whatever
+        assertThat(baseNum + ' ** ' + powNum + ' --> ' + n).isEqualTo('InvalidArgumentException');
+    }
+
     // convert numerical values to strings to preserve the float-vs-int-ness of it.
     // For floats, trim it to 10 string characters to ensure
     function canonicalizeNum(n) {
@@ -48,6 +60,7 @@ class OpsTest : Test {
         neg_one_f = -1.0;
         neg_four = -4;
         neg_four_f = -4.0;
+        half = 0.5;
 
         this.assertEq(1 + 1, 2);
         this.assertEq(one + one, 2);
@@ -90,5 +103,10 @@ class OpsTest : Test {
 
         this.assertEq((-4) >> 1, -2);
         this.assertEq(neg_four >> one, -2);
+
+        this.assertEq(4 ** 0.5, 2.0);
+        this.assertEq(four ** half, 2.0);
+
+        this.assertPowThrows(-555, 0.5);
     }
 }

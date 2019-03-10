@@ -378,6 +378,10 @@ namespace Parser.ParseTree
                         double right = GetFloat(opChain.Right);
                         int left = GetInt(opChain.Left);
                         if (Util.FloatEqualsNoEpislon(right, 0)) return MakeFloat(opChain.FirstToken, 1.0);
+                        if (!Util.FloatEqualsNoEpislon(right % 1, 0) && left < 0)
+                        {
+                            throw new ParserException(opChain.OpToken, "Exponent creates a complex expression.");
+                        }
                         return MakeFloat(opChain.FirstToken, Math.Pow(left, right));
                     }),
 
@@ -416,6 +420,10 @@ namespace Parser.ParseTree
                         double right = GetFloat(opChain.Right);
                         double left = GetFloat(opChain.Left);
                         if (Util.FloatEqualsNoEpislon(right, 0)) return MakeFloat(opChain.FirstToken, 1.0);
+                        if (!Util.FloatEqualsNoEpislon(right % 1, 0) && left < 0)
+                        {
+                            throw new ParserException(opChain.OpToken, "Exponent creates a complex expression.");
+                        }
                         return MakeFloat(opChain.FirstToken, Math.Pow(left, right));
                     }),
 
