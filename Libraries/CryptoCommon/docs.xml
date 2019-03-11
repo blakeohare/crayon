@@ -1,0 +1,53 @@
+<library name="CryptoCommon">
+	<description>
+		Contains the common base class for cryptographic hash libraries
+	</description>
+	<namespace name="CryptoCommon">
+		<class name="AbstractHash">
+			<description>
+				The abstract base class for the cryptographic hashes in other libraries, such as SHA1.
+				Contains the common methods for adding data to the hash and generating a digest.
+			</description>
+			
+			<function name="addText">
+				<description>
+					Adds the string as text to the current hash.
+				</description>
+				<arg name="value" type="string" description="A text value to add to the hash."/>
+				<arg name="encoding" type="TextEncoding.TextFormat" optional="true" description="Because cryptographic hashes work with bytes, a string must have an encoding to convert to binary data. If not specified, UTF8 is used."/>
+				<returns type="CryptoCommon.AbstractHash" description="A reference to itself to allow chaining syntax."/>
+			</function>
+			
+			<function name="addInteger">
+				<description>
+					Adds an integer to the hash. The integer is converted into 32-bit signed Big Endian bytes.
+				</description>
+				<arg name="value" type="int" description="An integer value"/>
+				<returns type="CryptoCommon.AbstractHash" description="A reference to itself to allow chaining syntax."/>
+			</function>
+			
+			<function name="addByte">
+				<description>
+					Adds a single byte value to the hash.
+				</description>
+				<arg name="value" type="int" description="A byte value from 0 to 255 (signed bytes from -128 to -1 are also allowed)."/>
+				<returns type="CryptoCommon.AbstractHash" description="A reference to itself to allow chaining syntax."/>
+			</function>
+			
+			<function name="digestByteList">
+				<description>
+					Digests the current data into a list of bytes.
+				</description>
+				<returns type="int list" description="A list of bytes from 0 to 255"/>
+			</function>
+			
+			<function name="digestHex">
+				<description>
+					Digests the current data into a (lowercase) hexadecimal string.
+				</description>
+				<returns type="string" description="A hexadecimal hash value"/>
+			</function>
+			
+		</class>
+	</namespace>
+</library>

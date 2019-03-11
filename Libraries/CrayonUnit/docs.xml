@@ -1,0 +1,137 @@
+<library name="CrayonUnit">
+	<description>
+		Unit testing library.
+	</description>
+	<namespace name="CrayonUnit">
+	
+		<function name="assertThat">
+			<arg name="actualValue" type="object" description="The actual value of an assertion construct."/>
+			<returns type="CrayonUnit.VerificationContextObject" description="Returns a VerificationContextObject, which has methods to perform various assertions on in a readable fashion."/>
+			<description>Used to begin an assertion statement. e.g. assertThat(someValue).isTrue(); Can only be used within the context of a running test class.</description>
+		</function>
+		
+		<function name="fail">
+			<arg name="message" type="string" description="Message to display in the failure."/>
+			<description>Makes the current test a failure.</description>
+		</function>
+
+		<function name="pass">
+			<description>Virtually does nothing. Increments the assertion counter and makes it clear in the unit test code that the test has performed admirably.</description>
+		</function>
+
+		<class name="Test">
+			<description>An abstract base class for a test class.</description>
+			<function name="setup">
+				<description>
+					Does nothing by default. Override this to perform any setup necessary for the test methods.
+				</description>
+			</function>
+			<function name="teardown">
+				<description>Does nothing by default. Override this to perform any cleanup necessary for the test methods.</description>
+			</function>
+		</class>
+
+		<class name="UnitTestFailedException">
+			<description>An exception thrown when a unit test has failed. Direct construction should be avoided and fail() or an assertion should be used instead.</description>
+		</class>
+
+		<class name="TestHarness">
+			<description>
+				An instance of a test run. Typical usage looks like this: new TestHarness().makePassingTestsSilent().run().showSummary()
+			</description>
+			<function name="(constructor)">
+				<description>
+					The constructor takes no arguments.
+				</description>
+			</function>
+			
+			<function name="makePassingTestsSilent">
+				<description>
+					When called, this will configure the test harness to not display when a test passes on STDOUT.
+					Failing tests will still show, though.
+				</description>
+			</function>
+			
+			<function name="run">
+				<description>Runs all the tests in your project. Tests are gathered by Reflection which looks for any classes that extend from CrayonUnit.Test.</description>
+			</function>
+			
+			<function name="showSummary">
+				<description>Displays a summary of results of the test run.</description>
+			</function>
+		</class>
+		
+		<class name="VerificationContextObject">
+			<description>
+				An object that contains wraps an actual value that is a result of a test and contains several verification methods
+				that can be used to assert that value.
+				
+				When any of the assertions fail, a UnitTestFailedException is thrown.
+			</description>
+			
+			<function name="isTrue">
+				<description>Checks to see if the actual value is the boolean true.</description>
+				<returns type="CrayonUnit.VerificationContextObject" description="A reference to itself to allow chaining"/>
+			</function>
+			
+			<function name="isFalse">
+				<description>Checks to see if the actual value is the boolean false.</description>
+				<returns type="CrayonUnit.VerificationContextObject" description="A reference to itself to allow chaining"/>
+			</function>
+			
+			<function name="isNull">
+				<description>Checks to see if the actual value is null.</description>
+				<returns type="CrayonUnit.VerificationContextObject" description="A reference to itself to allow chaining"/>
+			</function>
+			
+			<function name="hasLength">
+				<description>Checks to see if the actual value is a string, list, or dictionary and that its size matches the given length.</description>
+				<arg name="length" type="int" description="The expected length"/>
+				<returns type="CrayonUnit.VerificationContextObject" description="A reference to itself to allow chaining"/>
+			</function>
+			
+			<function name="isEmpty">
+				<description>Checks to see if the actual value is a string, list, or dictionary and that it is empty. Identical to .hasLength(0)</description>
+				<returns type="CrayonUnit.VerificationContextObject" description="A reference to itself to allow chaining"/>
+			</function>
+			
+			<function name="isEqualTo">
+				<description>Verifies that the actual value is identical to the given expected value. Does not use strong reference checks.</description>
+				<arg name="expected" type="object" description="The expected value"/>
+				<returns type="CrayonUnit.VerificationContextObject" description="A reference to itself to allow chaining"/>
+			</function>
+			
+			<function name="isNotEqualTo">
+				<description>Verifies that the actual value is different from the given value.</description>
+				<arg name="value" type="object" description="Some value that should not match the actual value."/>
+				<returns type="CrayonUnit.VerificationContextObject" description="A reference to itself to allow chaining"/>
+			</function>
+			
+			<function name="isEqualWithEpsilon">
+				<description>Checks if the given number matches the expected number, but uses an epsilon value to check floats to make sure the value is close, but not necessary exact. Floating point precision isn't always precise.</description>
+				<arg name="expected" type="float" description="The expected numeric value."/>
+				<arg name="epsilon" type="float" optional="true" description="A tiny value to indicate how much tolerance should be given to differences in the actual value. Default value is 0.000001"/>
+				<returns type="CrayonUnit.VerificationContextObject" description="A reference to itself to allow chaining"/>
+			</function>
+			
+			<function name="contains">
+				<description>
+					This method is flexible based on the actual and expected value types. 
+					If the actual value is a string and the given value is a string, then this checks to see if the string contains the given string.
+					If the actual value is a list and the given value is a list, then this checks to see if the list contains all the values in the given list (but not necessarily in order). 
+					To verify that the list matches exactly, you can call .inOrder() after calling contains OR you can use .isEqualTo(expectedValue).
+					If the actual value is a list and the given value is not, it will verify that the expected value is a member of the list.
+				</description>
+				<arg name="value" type="object" description="See function description"/>
+				<returns type="CrayonUnit.VerificationContextObject" description="A reference to itself to allow chaining"/>
+			</function>
+			
+			<function name="inOrder">
+				<description>Once .contains() has been called with a list to verify the contents of the list, this will verify that the contents appear in order.</description>
+				<returns type="CrayonUnit.VerificationContextObject" description="A reference to itself to allow chaining"/>
+			</function>
+			
+		</class>
+		
+	</namespace>
+</library>

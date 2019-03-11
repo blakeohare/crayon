@@ -1,0 +1,20 @@
+<library name="CryptoMd5">
+	<description>
+		Used to generate SHA1 hashes of data.
+		As SHA1 is not 100% secure anymore, please use with caution.
+		This ought to only be used for compatibility with legacy systems and not used in any new system.
+	</description>
+	<namespace name="CryptoMd5">
+		<class name="Md5Hash">
+			<description>
+				Creates a new empty instance of an SHA1 hash.
+				Methods from CryptoCommon.AbstractHash can be used to add data to the hash and to digest it.
+				Typical usage: hash = new Sha1Hash().addText("Hello, World").digestHex();
+			</description>
+			<function name="(constructor)">
+				<description>Creates a new instance of the SHA1 hash and, by default, prints out a warning message about it being unsafe.</description>
+				<arg name="suppressWarning" optional="true" type="string" description="This parameter will suppress the warning if you pass in the string 'unsafe'."/>
+			</function>
+		</class>
+	</namespace>
+</library>
