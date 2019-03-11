@@ -88,6 +88,12 @@ class TextEncodingTest : Test {
             asciiAbc,
             TextFormat.UTF32_BE, BOM,
             [0, 0, 254, 255, 0, 0, 0, 97, 0, 0, 0, 98, 0, 0, 0, 99]);
+    }
+
+    function testEncodingKanjiCharacters() {
+
+        BOM = true;
+        NO_BOM = false;
 
         japaneseKanji = "大丈夫";
 
@@ -148,6 +154,12 @@ class TextEncodingTest : Test {
             japaneseKanji,
             TextFormat.UTF32_BE, BOM,
             [0, 0, 254, 255, 0, 0, 89, 39, 0, 0, 78, 8, 0, 0, 89, 43]);
+    }
+
+    function testEncodingSurrogatePairCharacters() {
+
+        BOM = true;
+        NO_BOM = false;
 
         fecesEmoji = "💩";
 
