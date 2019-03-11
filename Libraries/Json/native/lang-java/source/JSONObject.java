@@ -665,12 +665,12 @@ public class JSONObject {
     /**
      * Get an array of field names from a JSONObject.
      *
-     * @return An array of field names, or null if there are no names.
+     * @return An array of field names.
      */
     public static String[] getNames(JSONObject jo) {
         int length = jo.length();
         if (length == 0) {
-            return null;
+            return new String[0];
         }
         Iterator<String> iterator = jo.keys();
         String[] names = new String[length];
