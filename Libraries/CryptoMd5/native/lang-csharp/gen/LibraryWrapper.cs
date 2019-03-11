@@ -123,11 +123,12 @@ namespace Interpreter.Libraries.CryptoMd5
             {
                 return value;
             }
+            value = (value & lib_md5_uint32Hack(65535, 65535));
+            int mask = 2147483647;
             if ((value > 0))
             {
                 return (value >> amount);
             }
-            int mask = 2147483647;
             return (((value >> amount)) & ((mask >> ((amount - 1)))));
         }
 

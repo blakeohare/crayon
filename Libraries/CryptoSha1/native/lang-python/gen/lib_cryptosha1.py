@@ -44,9 +44,10 @@ def always_false(): return False
 def lib_cryptosha1_bitShiftRight(value, amount):
   if (amount == 0):
     return value
+  mask = 2147483647
+  value = (value & lib_cryptosha1_uint32Hack(65535, 65535))
   if (value > 0):
     return (value >> amount)
-  mask = 2147483647
   return (((value >> amount)) & ((mask >> ((amount - 1)))))
 
 def lib_cryptosha1_bitwiseNot(x):

@@ -123,11 +123,12 @@ namespace Interpreter.Libraries.CryptoSha1
             {
                 return value;
             }
+            int mask = 2147483647;
+            value = (value & lib_cryptosha1_uint32Hack(65535, 65535));
             if ((value > 0))
             {
                 return (value >> amount);
             }
-            int mask = 2147483647;
             return (((value >> amount)) & ((mask >> ((amount - 1)))));
         }
 

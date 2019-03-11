@@ -30,7 +30,7 @@ public final class LibraryWrapper {
     int bitsOfData = inputLength * 6;
     int outputLength = bitsOfData / 8;
 
-    byte[] buffer = new byte[outputLength];
+    int[] buffer = new int[outputLength];
     char c;
     int charValue;
     for (int i = 0; i < inputLength; ++i) {
@@ -75,7 +75,40 @@ public final class LibraryWrapper {
         }
       }
     }
-    return new String(buffer, UTF8);
+    for (int i = 0; i < buffer.length; ++i) buffer[i] &= 255;
+
+    // new String(buffer, UTF8) computes garbage surrogate pair values, so we must do this manually.
+    java.util.ArrayList<Integer> codePoints = new java.util.ArrayList<Integer>();
+    int b, cp;
+    for (int i = 0; i < buffer.length; ++i) {
+      b = buffer[i];
+      if ((b & 0x80) == 0) {
+        cp = b;
+      } else if ((b & 0xe0) == 0xc0) {
+        cp = ((b & 0x1f) << 6) + (buffer[i + 1] & 0x3f);
+        ++i;
+      } else if ((b & 0xf0) == 0xe0) {
+        cp = ((b & 0x0f) << 12) + ((buffer[i + 1] & 0x3f) << 6) + (buffer[i + 2] & 0x3f);
+        i += 2;
+      } else {
+        cp = ((b & 0x07) << 18) + ((buffer[i + 1] & 0x3f) << 12) + ((buffer[i + 2] & 0x3f) << 6) + (buffer[i + 3] & 0x3f);
+        i += 3;
+      }
+      codePoints.add(cp);
+    }
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < codePoints.size(); ++i) {
+      cp = codePoints.get(i);
+      if (cp < 0x10000) {
+        sb.append((char)cp);
+      } else {
+        cp -= 0x10000;
+        int s1 = 0xd800 | ((cp >> 10) & 0x03ff);
+        int s2 = 0xdc00 | (cp & 0x03ff);
+        sb.append(new String(new char[] { (char) s1, (char) s2 }));
+      }
+    }
+    return sb.toString();
   }
 
   private static int[] PST_convertIntegerSetToArray(java.util.Set<Integer> original) {

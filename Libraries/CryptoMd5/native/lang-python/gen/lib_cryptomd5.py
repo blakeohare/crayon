@@ -44,9 +44,10 @@ def always_false(): return False
 def lib_md5_bitShiftRight(value, amount):
   if (amount == 0):
     return value
+  value = (value & lib_md5_uint32Hack(65535, 65535))
+  mask = 2147483647
   if (value > 0):
     return (value >> amount)
-  mask = 2147483647
   return (((value >> amount)) & ((mask >> ((amount - 1)))))
 
 def lib_md5_bitwiseNot(x):

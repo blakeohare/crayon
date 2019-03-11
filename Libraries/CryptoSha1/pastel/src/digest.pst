@@ -163,8 +163,9 @@ int lib_cryptosha1_leftRotate(int value, int amt) {
 // the lack of the distinction with >>> on some platforms makes this necessary when the result isn't explicitly masked.
 int lib_cryptosha1_bitShiftRight(int value, int amount) {
     if (amount == 0) return value;
-    if (value > 0) return value >> amount;
     int mask = 0x7fffffff;
+    value = value & lib_cryptosha1_uint32Hack(65535, 65535);
+    if (value > 0) return value >> amount;
     return Core.ForceParens(value >> amount) & Core.ForceParens(mask >> Core.ForceParens(amount - 1));
 }
 
