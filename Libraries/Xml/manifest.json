@@ -1,7 +1,7 @@
 {
 	"name": "Xml",
 	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/0.2.0/xml",
+	"documentation": "http://crayonlang.org/docs/0.2.1/xml",
 	"description": "Library for parsing simple XML.",
 	
 	"cni": [

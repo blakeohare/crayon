@@ -1,7 +1,7 @@
 {
 	"name": "Web",
 	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/0.2.0/web",
+	"documentation": "http://crayonlang.org/docs/0.2.1/web",
 	"description": "Library for interacting with the user's default browser.",
 	
 	"cni": [

@@ -1,7 +1,7 @@
 {
 	"name": "SRandom",
 	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/0.2.0/srandom",
+	"documentation": "http://crayonlang.org/docs/0.2.1/srandom",
 	"description": "Library for generating seedable random numbers that generates consistent values for the same seed across different platforms.",
 	
 	"cni": [

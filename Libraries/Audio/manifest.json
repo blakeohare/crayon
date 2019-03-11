@@ -1,6 +1,6 @@
 {
 	"name": "Audio",
 	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/0.2.0/audio",
+	"documentation": "http://crayonlang.org/docs/0.2.1/audio",
 	"description": "Audio related functionality.",
 }

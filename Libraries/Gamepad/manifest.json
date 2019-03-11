@@ -1,6 +1,6 @@
 {
 	"name": "Gamepad",
 	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/0.2.0/gamepad",
+	"documentation": "http://crayonlang.org/docs/0.2.1/gamepad",
 	"description": "Library for interacting with gamepads.",
 }
