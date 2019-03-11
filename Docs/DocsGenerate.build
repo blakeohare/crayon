@@ -1,0 +1,15 @@
+﻿{
+    "id": "DocsGenerate",
+    "source": "generatesrc/",
+    "output": "generatebin/%TARGET_NAME%",
+    "default-title": "DocsGenerate",
+
+    "guid-seed": "org.crayonlang.DocsGenerate,v1,%TARGET_NAME%",
+
+    "targets": [
+        {
+            "name": "csharp",
+            "platform": "csharp-app"
+        }
+    ]
+}

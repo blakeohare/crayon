@@ -1,9 +1,0 @@
-<build>
-	<source>generatesrc</source>
-	<output>generatebin</output>
-	<projectname>DocsGenerate</projectname>
-
-	<target name="csharp">
-		<platform>csharp-app</platform>
-	</target>
-</build>
