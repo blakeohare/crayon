@@ -62,12 +62,17 @@ public class TextEncodingHelper {
 		intOut[0] = 0;
 		
 		byte[] bytes;
-		int bytesLength;
+		int bytesLength, t;
 		switch (format) {
 			case 1:
 			case 2:
-				bytes = value.getBytes(java.nio.charset.StandardCharsets.US_ASCII);
+				bytes = new byte[value.length()];
 				bytesLength = bytes.length;
+				for (int i = 0; i < bytesLength; ++i) {
+					t = (int) value.charAt(i);
+					if (t >= 128) return 1;
+					bytes[i] = (byte) t;
+				}
 				break;
 			case 3:
 				bytes = value.getBytes(java.nio.charset.StandardCharsets.UTF_8);
