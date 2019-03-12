@@ -17,11 +17,7 @@ namespace CryptoCommon {
             }
         }
 
-        function addText(value) {
-            return this.addTextWithEncoding(value, TextEncoding.TextFormat.UTF8);
-        }
-
-        function addTextWithEncoding(value, textEncoding) {
+        function addText(value, textEncoding = TextEncoding.TextFormat.UTF8) {
             bytes = TextEncoding.convertTextToBytes(value, textEncoding);
             $lib_cryptocommon_addBytes(this, bytes);
             return this;
