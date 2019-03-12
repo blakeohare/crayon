@@ -1,98 +1,66 @@
 # Project Structure and Build Files
 
-A Crayon project consists of a build file, a source directory, and an output directory.
+A Crayon project consists primarily of a build file, a source directory, and an output directory.
 
-## Source Directory
-
-The source directory contains code files (with the file extension of **.cry**) and other asset files (such as sounds, images, text files, etc). 
-The source code files are all compiled together. 
-The arrangement or names of source code files do not matter. All non-code files are compiled into the final output and are 
-available as resources (although there are some limitations to this that will be outlined later).
-
-Code itself may only contain namespace, class, function, and enum definitions. 
-"Unwrapped" code is not valid.
-
-```
-// This is a valid file...
-namespace MyNamespace {
-  function foo() {
-    print("Hello, World!");
-  }
-}
-```
-
-```
-// This is not valid...
-namespace MyNamspace {
-  function foo() {
-    print("Uh oh.");
-  }
-}
-
-print("This shouldn't be here.");
-```
-
-Class and Namespace names do not have to correlate with directory/file names. 
-Everything is compiled and resolved iteratively without regard to where the code came from.
-
-Execution of a program always begins with a function called `main` which is required in every project. 
-A simple HelloWorld app would look like this...
-
-```
-function main() {
-  print("Hello, World!");
-}
-```
-
-The `main` function can also be nested in a namespace and still be the starting point of execution:
-```
-namespace MyHelloApp {
-  function main() {
-    print("Hello again, World!");
-  }
-}
-```
+Note that a simple default build file can be generated from the command line by running `crayon -genDefaultProj ProjectName` 
+which will create a directory called ProjectName with a build file in it with reasonable starting values and the source code
+for a simple HelloWorld app (where *ProjectName* can be changed to some other name).
 
 ## Build File
 
-A build file is an XML file (with a **.build** file extension) that defines the various metadata properties of the project.
+A build file is a JSON file (with a **.build** file extension) that defines the various metadata properties of the project.
 
-The root element of a build file is **<build>** which contains various **<target>** elements nested in it. 
-Each target has a **name** attribute which represents the command line value to invoke building that target.
+The root JSON object has a key called "id" which is the project ID of your app.
+Additionally, there is a key called "targets" which contains a list of build targets that you can build from the command line
+using `crayon YourBuildFile.build -target targetName`. Building a build target will export the project to the platform defined
+in that target. A build target has a field called "platform" that denotes which platform the target exports to and a field called
+"name" that designates how to invoke the target from the command line. See the [full list of platform targets](#platform-targets).
 
-Both **<build>** and **<target>** elements may contain any build property. 
-The final build instructions are determined by flattening the properties of the target on top of the properties defined directly
-in the build element.
+Other fields can generally exist in either the root object or within a specific target. Fields within a target object override
+the value from the root object.
 
-One of these properties are **<var>** elements can be included
+Consider the following sample build file for an Asteroids game. This build file has two targets for a beta build and a release build.
+The beta build overrides the title, and enables some debug features through the use of build variables. 
 
-```xml
-<build>
-  <title>Asteroids</title>
+```json
+{
+  "id": "Asteroids",
+  "source": "source/",
+  "output": "output/%TARGET_NAME%/",
+  "icon": "assets/icon.png",
+  "default-title": "Asteroids",
+
+  "vars": [
+    { "name": "enable_debug_features", "value": false }
+  ],
   
-  ...
-  
-  <target name="javascript_beta">
-    <title>Asteroids (Beta)</title>
-    ...
-  </target>
-  
-  <target name="javascript_release">
-    ...
-  </target>
-  
-</build>
+  "targets": [
+	{
+	  "name": "javascript_release",
+	  "platform": "javascript-app"
+	},
+    {
+	  "name": "javascript_beta",
+	  "platform": "javascript-app",
+	  "default-title": "Asteroids (Beta)",
+	  
+      "vars": [
+        { "name": "enable_debug_features", "value": true }
+      ]
+	}
+  ]
+}
 ```
 
-These are the various elements that can be included as a sub property of a **<build>** or **<target>**:
+
+These are the various fields that can be included in either the root object or a target object
 
 | Name | Description |
 | --- | --- |
-| title | The default title that could be used by the platform-specific UI library. This is generally settable from code, however, certain platforms need to know the default title at compile time. Mobile apps, for example. <br> `<title>My Neat-o Game</title>` |
-| projectname | An alphanumerics-only name for your project. Unlike the title, this is required and used by things like executable name, file names, metadata, user data directory, etc. <br> `<projectname>myneatogame</projectname>` |
-| source | The relative path to the source directory. <br> `<source>source</source>` |
-| output | The relative path to the output directory. This **MUST** be unique for each target. However, you can use **%TARGET_NAME%** in this value to insert the name of the target so that you can define this once on the build element. <br> `<output>bin/%TARGET_NAME%</output>` |
-| platform | The platform this target is exporting to. See the [full list of platform targets](#platform-targets). <br> `<platform>game-csharp-opentk</platform>` |
+| default-title | The default title that could be used by the platform-specific UI library. This is generally settable from code, however, certain platforms need to know the default title at compile time. Mobile apps, for example, need to know this for the app name. |
+| id | An alphanumerics-only name for your project. Unlike the title, this is required and used by things like executable name, file names, metadata, user data directory, etc. |
+| source | The relative path to the source directory. |
+| output | The relative path to the output directory. This **MUST** be unique for each target. However, you can use **%TARGET_NAME%** in this value to insert the name of the target name so that you can define this once in the root object rather than individual per target. |
 | var | Define a compile-time variable. A compile time variable can be used as a constant in code and defined on a target-by-target basis. The `<var>` element has a type attribute and 2 sub-elements: `<id>` and `<value>`. **id** is the name of the variable and **value** is the value it will have. <br> `<var type="boolean"><id>enable-audio</id><value>true</value></var>` |
 | jsfileprefix | A path to pre-pend to all file references. Since knowledge of the URL pattern of where the project will be uploaded to and whether it has a trailing slash should not be encoded into the actual source code itself, you can define a root-absolute path in the build file. <br> `<jsfileprefix>/uploads/mygame</jsfileprefix> |
 | icon | A path relative to the build file of an image to use as a project icon. Specifically how this is used depends on the target platform. |
@@ -149,6 +117,57 @@ This is the list of available targets that you can export your project to.
 | game-java-awt | A game project using basic Java for using on a Desktop/Laptop. |
 | game-python-pygame | A game project using Python and PyGame. |
 | game-javascript | A game project using JavaScript and the HTML5 Canvas. |
+
+## Source Directory
+
+The source directory contains code files (with the file extension of **.cry**) and other asset files (such as sounds, images, text files, etc). 
+The source code files are all compiled together. 
+The arrangement or names of source code files do not matter. All non-code files are compiled into the final output and are 
+available as resources (although there are some limitations to this that will be outlined later).
+
+Code itself may only contain namespace, class, function, and enum definitions. 
+"Unwrapped" code is not valid.
+
+```
+// This is a valid file...
+namespace MyNamespace {
+  function foo() {
+    print("Hello, World!");
+  }
+}
+```
+
+```
+// This is not valid...
+namespace MyNamspace {
+  function foo() {
+    print("Uh oh.");
+  }
+}
+
+print("This shouldn't be here.");
+```
+
+Class and Namespace names do not have to correlate with directory/file names. 
+Everything is compiled and resolved iteratively without regard to where the code came from.
+
+Execution of a program always begins with a function called `main` which is required in every project. 
+A simple HelloWorld app would look like this...
+
+```
+function main() {
+  print("Hello, World!");
+}
+```
+
+The `main` function can also be nested in a namespace and still be the starting point of execution:
+```
+namespace MyHelloApp {
+  function main() {
+    print("Hello again, World!");
+  }
+}
+```
 
 ## Output Directory
 
