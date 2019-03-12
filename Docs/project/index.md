@@ -62,41 +62,52 @@ These are the various fields that can be included in either the root object or a
 | source | The relative path to the source directory. |
 | output | The relative path to the output directory. This **MUST** be unique for each target. However, you can use **%TARGET_NAME%** in this value to insert the name of the target name so that you can define this once in the root object rather than individual per target. |
 | var | Define a compile-time variable. A compile time variable can be used as a constant in code and defined on a target-by-target basis. The `<var>` element has a type attribute and 2 sub-elements: `<id>` and `<value>`. **id** is the name of the variable and **value** is the value it will have. <br> `<var type="boolean"><id>enable-audio</id><value>true</value></var>` |
-| jsfileprefix | A path to pre-pend to all file references. Since knowledge of the URL pattern of where the project will be uploaded to and whether it has a trailing slash should not be encoded into the actual source code itself, you can define a root-absolute path in the build file. <br> `<jsfileprefix>/uploads/mygame</jsfileprefix> |
-| icon | A path relative to the build file of an image to use as a project icon. Specifically how this is used depends on the target platform. |
+| jsfileprefix | A path to pre-pend to all file resource paths in JavaScript projects. Since knowledge of the URL pattern of where the project will be uploaded to and whether it has a trailing slash should not be encoded into the actual source code itself, you can define a root-absolute path in the build file. <br> e.g. `<jsfileprefix>/uploads/mygame</jsfileprefix> |
+| icon | A path relative to the build file of an image to use as a project icon. Specifically how this icon is used depends on the target platform. This value can be a comma-separated list of file names containing icons of different sizes. Many target platforms (such as Android icons and JavaScript favicons) support having different images for different sizes. |
 | guidseed | An arbitrary string. This is used as the seed for the randomizer for generating a unique project GUID for C# projects. A recommended value is a comma-delimited list of: a reverse domain name (Java package style), a project version number, and **%TARGET%**. This helps prevent project GUID collisions between projects and versions.<br> `<guidseed>org.crayonlang.demos.asteroids,v0.2.0,%TARGET%</guidseed>` |
 | imagesheets | This is used by the ImageResources library for consolidating image resources embedded in the project into larger image sheets for improving performance or optimizing disk/network reads. TODO: add separate page for Image Sheet documentation. |
-| orientation | Used by mobile game platforms. This will fix the orientation of the screen into landscape or portrait mode. Possible values: **landsacpe**, **portrait**, **auto**. The default value is **auto**. |
+| orientation | Used by mobile game platforms. This will fix the orientation of the screen into landscape or portrait mode. Possible values: **portrait**, **landsacpe**, **landscapeleft**, **landscaperight**, **upsidedown**, **all**. The default behavior is **portrait** when this field is not specified. |
+| launch-screen | A path to an image that will appear while the app loads on platforms that require such a concept. Currently only applies to iOS. |
+| vars | A list of compile-time constants. See the full documentation of [compile time variables](#compile-time-variables). |
 
 ### Compile Time Variables
 
-Compile time variables are defined in the build file and are converted into constants in code.
+Compile time variables are defined in the build file and are converted into constants in the source code at compile time.
 
-```xml
-<build>
-  <var type="boolean">
-    <id>show-debug-output</id>
-    <value>true</value>
-  </var>
+
+
+```json
+{
+  "id": "MyProject",
   
   ...
   
-  <target name="debug">
-    ...
-  </target>
+  "vars": [
+    { "name": "version", "value": 1.4 },
+	{ "name": "enable-debug-output", "value": false }
+  ],
   
-  <target name="release">
-    <var type="boolean">
-      <id>show-debug-output</id>
-      <value>false</value>
-    </var>
-    ...
-  </target>
-</build>
+  ...
+  
+  "targets": [
+    {
+	  "name": "release",
+	  ...
+	},
+	{
+	  "name": "test_version",
+	  ...
+	  "vars": [
+	    { "name": "enable-debug-output", "value": true }
+	  ]
+	},
+	...
+  ]
+}
 ```
 
 In code, this would be used with the `$var` dictionary...
-```
+```csharp
   ...
   
   if ($var['show-debug-output']) {
@@ -112,11 +123,12 @@ This is the list of available targets that you can export your project to.
 
 | Name | Description |
 | --- | --- |
-| game-csharp-opentk | A game project using C# and OpenTK designed for using on a Desktop/Laptop on Windows. |
-| game-csharp-android | An Android game project using C# and Xamarin. |
-| game-java-awt | A game project using basic Java for using on a Desktop/Laptop. |
-| game-python-pygame | A game project using Python and PyGame. |
-| game-javascript | A game project using JavaScript and the HTML5 Canvas. |
+| csharp-app | A .NET project appropriate for consumption on a Desktop/Laptop on either Windows or Mac. |
+| javascript-app-android | A JavaScript-based web view Android app + a small Java wrapper. |
+| java-app | A Java program appropriate for consumption on a Desktop/Laptop (not Android). Uses Java 1.8 and ant builds. |
+| python-app | A python program. |
+| javascript-app | A JavaScript program appropriate for the general web consumption. |
+| javascript-app-ios | An iOS app that's based on WebView + a small Swift wrapper |
 
 ## Source Directory
 
