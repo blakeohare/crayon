@@ -37,7 +37,7 @@ Most code is organized into functions. A function is defined by the word `functi
 The code within the function is executed from top to bottom sequentially, barring any conditional statements or loops.
 A function name can consist of any alphanumeric characters or underscores, but must not begin with a number.
 
-```
+```csharp
 function foo(a, b, c) {
   // Code goes here.
 }
@@ -49,13 +49,13 @@ A block of code is indicated by a `{` and `}`.  Once the interpreter reaches the
 
 Values can be stored into a variable and referenced later. This is generally done using an equals sign. The types of values that can be stored into a variable are covered in more depth later. For now, simple numbers will be used in the examples.
 
-```
+```csharp
 myValue = 42;
 ```
 
 The name of this variable is `myValue`. Variable names can contain any combination of letters, numbers, and underscores. However it must not begin with a number (to avoid parser ambiguity).
 
-```
+```csharp
 myValue = 1; // this is okay
 _someValue = 2; // so is this
 _012345 = 3; // and even this
@@ -64,7 +64,7 @@ _012345 = 3; // and even this
 
 If you assign the value of one variable into another variable, you are copying the contents of that variable to the new variable. You are not aliasing one variable to the other. Consider the following code sample:
 
-```
+```csharp
 var1 = 42;
 var2 = var1;
 var1 = 3.14159;
@@ -84,7 +84,7 @@ Integers are whole numbers. These can be positive or negative. The range of the 
 
 Integers are notated in base 10. However, if an integer is prefixed with `0x`, it uses hexadecimal notation. Hexadecimal digits can be upper or lowercase.
 
-```
+```csharp
 a = 42; // fourty-two
 b = 0x2a; // also forty-two (hexadecimal)
 c = 0x2A; // this is valid as well
@@ -97,7 +97,7 @@ f = 3000000000; // valid, but not recommended as it may hit the platform's range
 
 "Float" is short for "floating point decimal". Despite mostly using the underlying platform's implementation, there are a few restrictions to traditional float representation. Primarily the notion of `NaN` and `Infinity` are not supported. Division by 0 results in an error.
 
-```
+```csharp
 // examples of floats
 a = 0.0;
 b = 2.5;
@@ -113,7 +113,7 @@ Note that a float that ends with `.0` is still considered a float, not an intege
 
 Strings are pieces of text. ASCII is considered "safe" however unicode support depends on the underlying platform. Strings are notated in Crayon as text that is enclosed with either single quote or a double quote.
 
-```
+```csharp
 a = "The kittens were plotting to overthrow their opressors.";
 b = 'The squid had a terrible secret.';
 c = "canteloupe";
@@ -123,37 +123,37 @@ e = ""; // This string is empty, which is valid
 
 Special characters can be notated in a string by using escape sequences. Escape sequences adhere to the universal/C standard). An escape sequences is denoted as a backslash `\` followed by a special character. This pair of characters is swapped out at compile-time with a different character that cannot be notated inline in the string.
 
-```
+```csharp
 a = "Quoth the raven, \"Nevermore\"."; // double quotes appearing in a double-quoted string
-tab_character = '\t';
-two_lines = "line 1\nline2";
+tabCharacter = '\t';
+twoLines = "line 1\nline2";
 ```
 
 Here is a list of all the available escape sequence codes:
 
 | Escape Sequence | Compiled Value |
 | --- | --- |
-| \' | Single Quote |
-| \" | Double Quote |
-| \n | New Line |
-| \r | Carriage Return |
-| \t | Tab |
-| \\ | Backslash |
-| \0 | Null terminator |
+| `\'` | Single Quote |
+| `\"` | Double Quote |
+| `\n` | New Line |
+| `\r` | Carriage Return |
+| `\t` | Tab |
+| `\\` | Backslash |
+| `\0` | Null terminator |
 
 If you want to check the length of a string, you can append `.length` to the end of a string or an expression containing a string.
 
-```
-weee_length = "Weeeeeeeeeeeeee".length;
-meow_string = "Meow meow meow meow";
-meow_length = meow_string.length;
+```csharp
+weeeLength = "Weeeeeeeeeeeeee".length;
+meowString = "Meow meow meow meow";
+meowLength = meow_string.length;
 ```
 
 ### Booleans
 
 A boolean value is either true or false. These are notated with the keywords `true` or `false`. These are used in conditions where something must be in one of two states.
 
-```
+```csharp
 bool1 = true;
 bool2 = false;
 // I'd give more examples, but that's the extent of it.
@@ -163,17 +163,26 @@ bool2 = false;
 
 Null is used as a representation of the lack of a value. It is notated with the keyword `null`.
 
-```
-nothing_to_see_here = null;
+```csharp
+nothingToSeeHere = null;
 ```
 
-## Complex Types
+## Collections
+
+So far all the types mentioned so far only store one single piece of data. 
+To store multiple pieces of data in an organized fashion, there a few types that can be used. These include lists and dictionaries.
 
 ### Lists
 
+TODO: finish this section
+
 ### Dictionaries
 
-### Objects
+TODO: finish this section
+
+## Objects
+
+TODO: finish this section
 
 ## Operators
 
@@ -187,17 +196,17 @@ There are a handful of simple arithmetic operators.
 
 | Symbol and usage | Name |   |
 | --- | --- | --- |
-| x + y | Addition / Concatenation | If both values are numbers, they will be added together. If both values are lists, they will concatenated together and form a new list. If one of the values is a string, it will be concatenated to a string representation of the other value and form a new string. |
-| x - y | Subtraction | Subtracts y from x |
-| x * y | Multiplication | Multiplies x and y if they are both numbers. If one of the values is a string and the other is an integer, it will duplicate the string that many times and return a concatenated version of the string. |
-| x / y | Division | Divides one number by another. If the denominator is 0, an error will result. |
-| x % y | Modulo | Mods x by base y. If 0 is used as the base, an error will result. |
-| x ** y | Exponent | Raises x to the power of y. 0 ** 0 results in 1. |
-| -x | Negative sign | Flips the sign of the value. |
+| `x + y` | Addition / Concatenation | If both values are numbers, they will be added together. If both values are lists, they will concatenated together and form a new list. If one of the values is a string, it will be concatenated to a string representation of the other value and form a new string. |
+| `x - y` | Subtraction | Subtracts y from x |
+| `x * y` | Multiplication | Multiplies x and y if they are both numbers. If one of the values is a string and the other is an integer, it will duplicate the string that many times and return a concatenated version of the string. |
+| `x / y` | Division | Divides one number by another. If the denominator is 0, an error will result. |
+| `x % y` | Modulo | Mods x by base y. If 0 is used as the base, an error will result. |
+| `x ** y` | Exponent | Raises x to the power of y. 0 ** 0 results in 1. |
+| `-x` | Negative sign | Flips the sign of the value. |
 
 For most of these operators, if the values are integers, the result will also be an integer, otherwise it will result in a float. The exception is if you raise an integer to a negative exponent value, which will result in a float.
 
-```
+```csharp
 a = 1 + 3; // 4
 b = (a + 1) * 2; // 10
 c = a + 1 * 2; // 6
@@ -214,14 +223,14 @@ Values can be compared with various operators to return a boolean. These are fre
 
 | Symbol and usage | Name |    |
 | --- | --- | --- |
-| x == y | Equals | Returns true if both values are the same. For lists, dictionaries, and objects, it will only return true if the instance is the same. Will not recurisvely check component values. |
-| x != y | Not Equals | Returns the opposite value as `==` |
-| x < y | Less Than | Numbers only. Will return true if the left side is less than the right side. |
-| x > y | Greater Than | Numbers only. Will return true if the left side is greater than the right side. |
-| x <= y | Less Than Or Equal | Numbers only. Will return true if the left side is less than or equal to the right side. |
-| x >= y | Greater Than Or Equal | Numbers only. Will return true if the left side is greater than or equal to the right side. |
+| `x == y` | Equals | Returns true if both values are the same. For lists, dictionaries, and objects, it will only return true if the instance is the same. Will not recurisvely check component values. |
+| `x != y` | Not Equals | Returns the opposite value as `==` |
+| `x < y` | Less Than | Numbers only. Will return true if the left side is less than the right side. |
+| `x > y` | Greater Than | Numbers only. Will return true if the left side is greater than the right side. |
+| `x <= y` | Less Than Or Equal | Numbers only. Will return true if the left side is less than or equal to the right side. |
+| `x >= y` | Greater Than Or Equal | Numbers only. Will return true if the left side is greater than or equal to the right side. |
 
-```
+```csharp
 a = 3 == 3; // true
 b = 3 != 3.0; // false
 c = "string" == 'string'; // true
@@ -239,13 +248,13 @@ There are 3 boolean operators.
 
 | Symbol and usage | Name |    |
 | --- | --- | --- |
-| x && y | And | Returns true if the boolean on the left and right are BOTH true. If the boolean on the left is false, then the expression on the right is not evaluated. This is commonly referred to as "short circuiting". |
-| x \|\| y | Or | Returns true if either the boolean on the left or right are true. If the boolean on the left is true, then the expression on the right short circuits, similar to And. |
-| !x | Not | This is unary operator. It will change true values to false and false values to true. |
+| `x && y` | And | Returns true if the boolean on the left and right are BOTH true. If the boolean on the left is false, then the expression on the right is not evaluated. This is commonly referred to as "short circuiting". |
+| `x \|\| y` | Or | Returns true if either the boolean on the left or right are true. If the boolean on the left is true, then the expression on the right short circuits, similar to And. |
+| `!x` | Not | This is unary operator. It will change true values to false and false values to true. |
 
 All boolean operators only operate on boolean inputs. If another type is used, then that will result in an error.
 
-```
+```csharp
 a = 1 == 1 && 2 == 2; // true
 b = false && something(); // false. something() is not evaluated.
 c = true || something(); // true. something() is not evaluated.
@@ -259,15 +268,15 @@ Bitwise operators operate integers, specifically they perform operations on the 
 
 | Symbol and usage | Name |     |
 | --- | --- | --- |
-| x & y | Bitwise And | Returns a number where the bits are 1 if the corresponding bit in the input numbers are both 1. Otherwise the bit is 0. |
-| x \| y | Bitwise Or | Returns a number where the bits are 1 if the corresponding bit in either of the input numbers is a 1. Otherwise the bit is 0. |
-| x ^ y | Bitwise Xor | Xor stands for "eXclusive Or". Returns a number where the bits are 1 if one of the corresponding bits from one (but not both) of the input numbers is a 1. The bit is 0 if the input bits match. |
-| x << y | Bit Shift Left | Moves all the bits in x to the left by y digits. The rightmost bit is set to 0. |
-| x >> y | Bit Shift Right | Moves all the bits in x to the right by y digits. Supports sign extending (the bit on the left will match the bit that was previously on the left). |
+| `x & y` | Bitwise And | Returns a number where the bits are 1 if the corresponding bit in the input numbers are both 1. Otherwise the bit is 0. |
+| `x \| y` | Bitwise Or | Returns a number where the bits are 1 if the corresponding bit in either of the input numbers is a 1. Otherwise the bit is 0. |
+| `x ^ y` | Bitwise Xor | Xor stands for "eXclusive Or". Returns a number where the bits are 1 if one of the corresponding bits from one (but not both) of the input numbers is a 1. The bit is 0 if the input bits match. |
+| `x << y` | Bit Shift Left | Moves all the bits in x to the left by y digits. The rightmost bit is set to 0. |
+| `x >> y` | Bit Shift Right | Moves all the bits in x to the right by y digits. Supports sign extending (the bit on the left will match the bit that was previously on the left). |
 
 Examples...
 
-```
+```csharp
 a = 7 & 20; // 4 (00111 & 10100 -> 00100)
 b = 65 | 17; // 81 (1000001 | 0010001 -> 1010001);
 c = 8 << 2; // 32 (00100 << 2 -> 10000);
@@ -278,13 +287,13 @@ d = 101 >> 1; // 50 (1101001 >> 1 -> 110100);
 
 There are several tiers of operations that have different priorities. The parser sorts expressions into these tiers and performs the operations within each tier group from left to right. This is known as Order of Operations.
 
-```
+```csharp
 a = 4 * 3 * 2 + 1 * 2; // 26, not 50. 4 * 3 * 2 runs, then 1 * 2, and then they are added together.
 ```
 
 If you want to override the default order of operations, place parenthesis around pieces you want to evaluate first. For example, if you wanted the expression above to evaluate from left to right...
 
-```
+```csharp
 a = (4 * 3 * 2 + 1) * 2; // 50
 ```
 Parenthesis are not required around `4 * 3 * 2` because it already has higher operation priority than `+`.
@@ -293,18 +302,18 @@ This chart illustrates each tier. Entries towards the top run first. Operators i
 
 | Operators | Name | Priority |
 | --- | --- | --- |
-| () | Parenthesis | Highest |
-| -, !, --, ++, [], (), . | Unary operators, including brackets, function invocations, and dot dereferencing (covered later). |  |
-| ** | Exponents |   |
-| *, /, % | Multiplication, Division, Modulo |   |
-| +, - | Addition, Subtraction |   |
-| <<, >> | Bitshifting |   |
-| <, >, <=, >= | Inequality comparisons |   |
-| ==, != | Equality comparisons |   |
-| &, \|, ^ | Bitwise operators |   |
-| &&, \|\| | Boolean operators |   |
-| ?? | Null coalescing operator |   |
-| ? : | Ternary expression (covered later) | Lowest |
+| `()` | Parenthesis | Highest |
+| `-`, `!`, `--`, `++`, `[]`, `()`, `.` | Unary operators, including brackets, function invocations, and dot dereferencing (covered later). |  |
+| `**` | Exponents |   |
+| `*`, `/`, `%` | Multiplication, Division, Modulo |   |
+| `+`, `-` | Addition, Subtraction |   |
+| `<<`, `>>` | Bitshifting |   |
+| `<`, `>`, `<=`, `>=` | Inequality comparisons |   |
+| `==`, `!=` | Equality comparisons |   |
+| `&`, `\|`, `^` | Bitwise operators |   |
+| `&&`, `\|\|` | Boolean operators |   |
+| `??` | Null coalescing operator |   |
+| `? :` | Ternary expression (covered later) | Lowest |
 
 ## Control Flow
 
@@ -314,7 +323,7 @@ Control flow refers to changing the flow of a program from sequentially executin
 
 An if statement checks an expression and executes some code if that expression resolves to true.
 
-```
+```csharp
 a = 4;
 if (a == 4) {
   print("a is four.");
@@ -323,7 +332,7 @@ if (a == 4) {
 
 If statement expressions must always be booleans. Because `==` is an operator that resolves into a boolean, this is valid. Expressions that are not booleans DO NOT have a canonical boolean value. This is different from many languages.
 
-```
+```csharp
 a = 1;
 if (a) { // This will crash at runtime. 1 is not a "true" boolean (pardon the pun).
   print("a is true.");
@@ -332,7 +341,7 @@ if (a) { // This will crash at runtime. 1 is not a "true" boolean (pardon the pu
 
 If an if statement only has 1 executable entity in it, then the curly braces are optional. The following code is completely equivalent to the code above:
 
-```
+```csharp
 a = 4;
 if (a == 4)
   print("a is four.");
@@ -340,7 +349,7 @@ if (a == 4)
 
 Or, because whitespace doesn't matter, you can also do this for brevity...
 
-```
+```csharp
 a = 4;
 if (a == 4) print("a is four.");
 ```
@@ -349,7 +358,7 @@ if (a == 4) print("a is four.");
 
 If the boolean expression in an if statement is false, the code will not run. However, if you want some code to run when the expression is false, then you can add an else statement...
 
-```
+```csharp
 a = 4;
 if (a == 4) {
   print("a is four.");
@@ -364,7 +373,7 @@ Else statements can also omit curly braces if there is only one executable entit
 
 Because an if statement itself counts as 1 executable entity, if the `else` statement contains just an `if` statement, you can abbreviate it like this into an if/else chain (also known as `elif`s in Python).
 
-```
+```csharp
 if (a == 4) {
   print("a is four.");
 } else if (a % 2 == 0) {
@@ -382,7 +391,7 @@ This is a list of mutually exclusive conditions that are evaluated sequentially.
 
 While loops syntactically are similar to if statements, except keep repeating until the boolean condition expression becomes false.
 
-```
+```csharp
 a = 1;
 while (a <= 10) {
   print("Counting: " + a);
@@ -407,7 +416,7 @@ The above code displays the following:
 
 Another example...
 
-```
+```csharp
 msg = "Greetings";
 while (msg.length > 0) {
   print(msg);
@@ -439,7 +448,7 @@ Looping through a series of numbers can be handled by while loops, but using for
 
 Consider the following example from the while loop example:
 
-```
+```csharp
 a = 1;
 while (a <= 10) {
   print("Counting: " + a);
@@ -449,7 +458,7 @@ while (a <= 10) {
 
 This can be written more compactly using a for loop:
 
-```
+```csharp
 for (a = 1; a <= 10; a++) {
   print("Count: " + a);
 }
@@ -462,7 +471,7 @@ A for loop contains components between the parenthesis:
 **Step**: code that runs at the end of each loop BEFORE the condition is evaluated.
 Initialization and Step can contain multiple statements, delimited by commas...
 
-```
+```csharp
 for (a = 1, b = 10; a <= 10; a++, b--) {
   print("Count up: " + a);
   print("Count down: " + b);
@@ -473,7 +482,7 @@ Additionally, any of these components can be eliminated altogether. If the condi
 
 For example, the following for loop...
 
-```
+```csharp
 for (;;) {
   print("Hello.");
 }
@@ -481,7 +490,7 @@ for (;;) {
 
 ...is functionally equivalent to the following while loop...
 
-```
+```csharp
 while (true) {
   print("Hello.");
 }
@@ -489,7 +498,7 @@ while (true) {
 
 As with while loops, be careful of not accidentally creating infinite loops. One common mistake of creating multiple nested loops is accidentally creating loops that modify the same variable names.
 
-```
+```csharp
 for (i = 0; i < width; ++i) {
   ...
   for (i = 0; i < height; ++i) {
@@ -502,19 +511,19 @@ The above code runs forever because the inner loop is always resetting the loopi
 
 The other kind of common looping scenario is iterating through items in a list. This is commonly referred to as a for-each loop. However it also uses the for keyword.
 
-```
-grocery_items = ["apples", "milk", "eggs", "off brand Fruit Loops(TM)"];
-for (item : grocery_items) {
+```csharp
+groceryItems = ["apples", "milk", "eggs", "off-brand Fruit Loops(TM)"];
+for (item : groceryItems) {
   print("Remember to buy " + item);
 }
 ```
 
 This is roughly equivalent to dereferencing the individual items with an index:
 
-```
-grocery_items = ["apples", "milk", "eggs", "off brand Fruit Loops(TM)"];
-for (i = 0; i < grocery_items.length; ++i) {
-  item = grocery_items[i];
+```csharp
+groceryItems = ["apples", "milk", "eggs", "off-brand Fruit Loops(TM)"];
+for (i = 0; i < groceryItems.length; ++i) {
+  item = groceryItems[i];
   print("Remember to buy " + item);
 }
 ```
@@ -527,7 +536,7 @@ Additionally, it is actually okay to modify a collection while it is being used 
 
 The most uncommon type of loop (but still standard enough to include in the language) is the do-while loop. A do-while works much the same way as a while loop, with the exception of the condition going at the end...
 
-```
+```csharp
 // count to 10
 counter = 0
 do {
@@ -543,7 +552,7 @@ A `break` statement will stop a loop and immediately jump to the code afterwards
 
 Consider the following example where numbers are being tallied in the list for the purpose of checking if the sum is greater than 10. If the running total exceeds 10 before the list traversal is complete, there is no need to finish iterating through the list. 
 
-```
+```csharp
 sumIsGreaterThan10 = false;
 total = 0;
 for (number : listOfNumbers) {
@@ -562,7 +571,7 @@ This will work for all loop types. For for loops, it is important to note that t
 
 A `continue` statement can be placed in any loop and will jump to the next iteration of the loop. 
 
-```
+```csharp
 // Do something to the numbers that are even.
 
 for (number : listOfNumbers) {
@@ -582,7 +591,7 @@ The key difference between a switch statement and using lots of if/else statemen
 
 Consider the following inefficient code:
 
-```
+```csharp
 if (a == 1) {
   doSomethingA();
 } else if (a == 2) {
@@ -598,7 +607,7 @@ When this code runs, the value of `a` has to be compared individually to each of
 
 This can be made more efficient with a switch statement.
 
-```
+```csharp
 switch (a) {
   case 1:
     doSomethingA();
@@ -628,7 +637,7 @@ A ternary expression is basically an "inline" if/else statement and can be place
 
 A ternary expression is a boolean followed by a `?`, followed by the expression to use if the boolean is true, followed by a `:`, followed by the expression if the boolean is false. Ternary expressions have the lowest precedence in order of operations. 
 
-```
+```csharp
 print("number is " + (number % 2 == 0 ? "even" : "odd");
 ```
 
@@ -636,19 +645,19 @@ print("number is " + (number % 2 == 0 ? "even" : "odd");
 
 A null coalescer is similar to the ternary expression and is an inline null check. It is denoted by `??`. The expression to the left of the null coalescer is an expression that may possibly be null. If it is not, then the original expression is used, otherwise, the expression to the right of `??` is used. This is commonly used to convert nullable strings into empty strings.
 
-```
+```csharp
 nonNullString = stringValueOrNull ?? ""
 ```
 
 Or simply use a default value.
 
-```
+```csharp
 titleToDisplay = title ?? "(untitled)";
 ```
 
 The above code is equivalent to:
 
-```
+```csharp
 if (title == null) {
   titleToDisplay = "(untitled)";
 } else {
@@ -662,7 +671,7 @@ if (title == null) {
 
 A `return` statement works in much the same way it does in other languages. It takes a value and causes the expression at the function invocation to have that value.
 
-```
+```csharp
 total = countTheNumbers(listOfNumbers);
 
 ...
@@ -678,7 +687,7 @@ function countTheNumbers(list) {
 
 `return` can also be used to simply halt a function's execution without returning anything.
 
-```
+```csharp
 function printNumbersUntil5IsFound(list) {
   for (num : list) {
     print(num);
@@ -691,7 +700,7 @@ function printNumbersUntil5IsFound(list) {
 
 This is equivalent to returning `null`. 
 
-```
+```csharp
 a = printNumbersUntil5IsFound(numbers);
 print(a); // prints null
 ```
@@ -704,7 +713,7 @@ Functions and methods can consume optional parameters. This allows you to pass a
 
 This works by setting a default value for the parameters that are not provided.
 
-```
+```csharp
 function foo(a, b, c = null) {
   ...
 }
@@ -722,7 +731,7 @@ Constants work like variables that have global scope i.e. they are not part of a
 
 One important aspect of constants is that they are resolved at compile-time. This means they do not take up extra space in the compiled byte code if they are not used and are placed inline in the code where they are used. It also means they can be used as cases in a switch statement. 
 
-```
+```csharp
 const PI = 3.14159265358979;
 
 function findArea(radius) {
@@ -736,7 +745,7 @@ Enums are also like integer constants except they are grouped together for a pur
 
 Enums are defined in groups like so...
 
-```
+```csharp
 enum Phase {
   WETTEN,
   LATHER,
@@ -747,7 +756,7 @@ enum Phase {
 
 Integers can be explicitly assigned to enums...
 
-```
+```csharp
 enum Phase {
   WETTEN = 1,
   LATHER = 2,
@@ -769,8 +778,7 @@ switch (phase) {
     ....
     break;
   default:
-    Core.assert("Unknown phase value.");
-    break;
+    throw new Exception("Unknown phase value.");
 }
 ```
 
@@ -778,40 +786,72 @@ If no integers are assigned to enum values (as in the first example) they will b
 
 One caveat is that the name of an enum is lost after compile time and so they may make debugging more difficult...
 
-```
+```csharp
 print(Phase.LATHER); // prints 2
 ```
 
 ## Namespaces
 
+TODO: finish this section
+
 ## Imports
+
+TODO: finish this section
 
 ## Collections Revisited
 
 ### List Slicing
 
+TODO: finish this section
+
 ### List methods
+
+TODO: finish this section
 
 ### Dictionary Methods
 
+TODO: finish this section
+
 ## Object Oriented Programming
+
+TODO: finish this section
 
 ### Declaring a class
 
+TODO: finish this section
+
 ### Constructor
+
+TODO: finish this section
 
 ### Methods
 
+TODO: finish this section
+
 ### Fields
+
+TODO: finish this section
 
 ### Extended a class
 
+TODO: finish this section
+
 ### Static Methods
+
+TODO: finish this section
 
 ### Static Fields
 
+TODO: finish this section
+
 ### Static Constructors
+
+TODO: finish this section
 
 ### Private Constructors
 
+TODO: finish this section
+
 ### is Operator
+
+TODO: finish this section
