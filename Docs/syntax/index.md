@@ -133,13 +133,13 @@ Here is a list of all the available escape sequence codes:
 
 | Escape Sequence | Compiled Value |
 | --- | --- |
-| \' | Single Quote |
-| \" | Double Quote |
-| \n | New Line |
-| \r | Carriage Return |
-| \t | Tab |
-| \\ | Backslash |
-| \0 | Null terminator |
+| `\'` | Single Quote |
+| `\"` | Double Quote |
+| `\n` | New Line |
+| `\r` | Carriage Return |
+| `\t` | Tab |
+| `\\` | Backslash |
+| `\0` | Null terminator |
 
 If you want to check the length of a string, you can append `.length` to the end of a string or an expression containing a string.
 
@@ -187,13 +187,13 @@ There are a handful of simple arithmetic operators.
 
 | Symbol and usage | Name |   |
 | --- | --- | --- |
-| x + y | Addition / Concatenation | If both values are numbers, they will be added together. If both values are lists, they will concatenated together and form a new list. If one of the values is a string, it will be concatenated to a string representation of the other value and form a new string. |
-| x - y | Subtraction | Subtracts y from x |
-| x * y | Multiplication | Multiplies x and y if they are both numbers. If one of the values is a string and the other is an integer, it will duplicate the string that many times and return a concatenated version of the string. |
-| x / y | Division | Divides one number by another. If the denominator is 0, an error will result. |
-| x % y | Modulo | Mods x by base y. If 0 is used as the base, an error will result. |
-| x ** y | Exponent | Raises x to the power of y. 0 ** 0 results in 1. |
-| -x | Negative sign | Flips the sign of the value. |
+| `x + y` | Addition / Concatenation | If both values are numbers, they will be added together. If both values are lists, they will concatenated together and form a new list. If one of the values is a string, it will be concatenated to a string representation of the other value and form a new string. |
+| `x - y` | Subtraction | Subtracts y from x |
+| `x * y` | Multiplication | Multiplies x and y if they are both numbers. If one of the values is a string and the other is an integer, it will duplicate the string that many times and return a concatenated version of the string. |
+| `x / y` | Division | Divides one number by another. If the denominator is 0, an error will result. |
+| `x % y` | Modulo | Mods x by base y. If 0 is used as the base, an error will result. |
+| `x ** y` | Exponent | Raises x to the power of y. 0 ** 0 results in 1. |
+| `-x` | Negative sign | Flips the sign of the value. |
 
 For most of these operators, if the values are integers, the result will also be an integer, otherwise it will result in a float. The exception is if you raise an integer to a negative exponent value, which will result in a float.
 
@@ -214,12 +214,12 @@ Values can be compared with various operators to return a boolean. These are fre
 
 | Symbol and usage | Name |    |
 | --- | --- | --- |
-| x == y | Equals | Returns true if both values are the same. For lists, dictionaries, and objects, it will only return true if the instance is the same. Will not recurisvely check component values. |
-| x != y | Not Equals | Returns the opposite value as `==` |
-| x < y | Less Than | Numbers only. Will return true if the left side is less than the right side. |
-| x > y | Greater Than | Numbers only. Will return true if the left side is greater than the right side. |
-| x <= y | Less Than Or Equal | Numbers only. Will return true if the left side is less than or equal to the right side. |
-| x >= y | Greater Than Or Equal | Numbers only. Will return true if the left side is greater than or equal to the right side. |
+| `x == y` | Equals | Returns true if both values are the same. For lists, dictionaries, and objects, it will only return true if the instance is the same. Will not recurisvely check component values. |
+| `x != y` | Not Equals | Returns the opposite value as `==` |
+| `x < y` | Less Than | Numbers only. Will return true if the left side is less than the right side. |
+| `x > y` | Greater Than | Numbers only. Will return true if the left side is greater than the right side. |
+| `x <= y` | Less Than Or Equal | Numbers only. Will return true if the left side is less than or equal to the right side. |
+| `x >= y` | Greater Than Or Equal | Numbers only. Will return true if the left side is greater than or equal to the right side. |
 
 ```
 a = 3 == 3; // true
@@ -239,9 +239,9 @@ There are 3 boolean operators.
 
 | Symbol and usage | Name |    |
 | --- | --- | --- |
-| x && y | And | Returns true if the boolean on the left and right are BOTH true. If the boolean on the left is false, then the expression on the right is not evaluated. This is commonly referred to as "short circuiting". |
-| x \|\| y | Or | Returns true if either the boolean on the left or right are true. If the boolean on the left is true, then the expression on the right short circuits, similar to And. |
-| !x | Not | This is unary operator. It will change true values to false and false values to true. |
+| `x && y` | And | Returns true if the boolean on the left and right are BOTH true. If the boolean on the left is false, then the expression on the right is not evaluated. This is commonly referred to as "short circuiting". |
+| `x \|\| y` | Or | Returns true if either the boolean on the left or right are true. If the boolean on the left is true, then the expression on the right short circuits, similar to And. |
+| `!x` | Not | This is unary operator. It will change true values to false and false values to true. |
 
 All boolean operators only operate on boolean inputs. If another type is used, then that will result in an error.
 
@@ -259,11 +259,11 @@ Bitwise operators operate integers, specifically they perform operations on the 
 
 | Symbol and usage | Name |     |
 | --- | --- | --- |
-| x & y | Bitwise And | Returns a number where the bits are 1 if the corresponding bit in the input numbers are both 1. Otherwise the bit is 0. |
-| x \| y | Bitwise Or | Returns a number where the bits are 1 if the corresponding bit in either of the input numbers is a 1. Otherwise the bit is 0. |
-| x ^ y | Bitwise Xor | Xor stands for "eXclusive Or". Returns a number where the bits are 1 if one of the corresponding bits from one (but not both) of the input numbers is a 1. The bit is 0 if the input bits match. |
-| x << y | Bit Shift Left | Moves all the bits in x to the left by y digits. The rightmost bit is set to 0. |
-| x >> y | Bit Shift Right | Moves all the bits in x to the right by y digits. Supports sign extending (the bit on the left will match the bit that was previously on the left). |
+| `x & y` | Bitwise And | Returns a number where the bits are 1 if the corresponding bit in the input numbers are both 1. Otherwise the bit is 0. |
+| `x \| y` | Bitwise Or | Returns a number where the bits are 1 if the corresponding bit in either of the input numbers is a 1. Otherwise the bit is 0. |
+| `x ^ y` | Bitwise Xor | Xor stands for "eXclusive Or". Returns a number where the bits are 1 if one of the corresponding bits from one (but not both) of the input numbers is a 1. The bit is 0 if the input bits match. |
+| `x << y` | Bit Shift Left | Moves all the bits in x to the left by y digits. The rightmost bit is set to 0. |
+| `x >> y` | Bit Shift Right | Moves all the bits in x to the right by y digits. Supports sign extending (the bit on the left will match the bit that was previously on the left). |
 
 Examples...
 
@@ -293,18 +293,18 @@ This chart illustrates each tier. Entries towards the top run first. Operators i
 
 | Operators | Name | Priority |
 | --- | --- | --- |
-| () | Parenthesis | Highest |
-| -, !, --, ++, [], (), . | Unary operators, including brackets, function invocations, and dot dereferencing (covered later). |  |
-| ** | Exponents |   |
-| *, /, % | Multiplication, Division, Modulo |   |
-| +, - | Addition, Subtraction |   |
-| <<, >> | Bitshifting |   |
-| <, >, <=, >= | Inequality comparisons |   |
-| ==, != | Equality comparisons |   |
-| &, \|, ^ | Bitwise operators |   |
-| &&, \|\| | Boolean operators |   |
-| ?? | Null coalescing operator |   |
-| ? : | Ternary expression (covered later) | Lowest |
+| `()` | Parenthesis | Highest |
+| `-`, `!`, `--`, `++`, `[]`, `()`, `.` | Unary operators, including brackets, function invocations, and dot dereferencing (covered later). |  |
+| `**` | Exponents |   |
+| `*`, `/`, `%` | Multiplication, Division, Modulo |   |
+| `+`, `-` | Addition, Subtraction |   |
+| `<<`, `>>` | Bitshifting |   |
+| `<`, `>`, `<=`, `>=` | Inequality comparisons |   |
+| `==`, `!=` | Equality comparisons |   |
+| `&`, `\|`, `^` | Bitwise operators |   |
+| `&&`, `\|\|` | Boolean operators |   |
+| `??` | Null coalescing operator |   |
+| `? :` | Ternary expression (covered later) | Lowest |
 
 ## Control Flow
 
