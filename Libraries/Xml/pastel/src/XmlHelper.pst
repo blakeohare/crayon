@@ -331,7 +331,7 @@ string lib_xml_ampUnescape(string value, Dictionary<string, string> entityLookup
                 entityValue = "&";
             } else {
                 // strip out the entity code and semicolon
-                component = component.SubString(semicolon + 1, component.Size() - semicolon);
+                component = component.SubString(semicolon + 1, Core.ForceParens(component.Size() - semicolon - 1));
             }
             ampParts[i] = Core.StringConcatAll(entityValue, component);
         }

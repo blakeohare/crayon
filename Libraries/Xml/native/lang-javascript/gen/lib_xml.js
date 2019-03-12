@@ -115,7 +115,7 @@ var lib_xml_ampUnescape = function(value, entityLookup) {
 			if ((entityValue == null)) {
 				entityValue = "&";
 			} else {
-				component = component.substring((semicolon + 1), (semicolon + 1) + (component.length - semicolon));
+				component = component.substring((semicolon + 1), (semicolon + 1) + ((component.length - semicolon - 1)));
 			}
 			ampParts[i] = entityValue + component;
 		}

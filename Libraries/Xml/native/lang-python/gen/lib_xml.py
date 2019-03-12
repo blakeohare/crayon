@@ -53,7 +53,7 @@ def lib_xml_ampUnescape(value, entityLookup):
       if (entityValue == None):
         entityValue = "&"
       else:
-        component = component[(semicolon + 1):(semicolon + 1) + (len(component) - semicolon)]
+        component = component[(semicolon + 1):(semicolon + 1) + ((len(component) - semicolon - 1))]
       ampParts[i] = entityValue + component
     i += 1
   return ("").join(ampParts)

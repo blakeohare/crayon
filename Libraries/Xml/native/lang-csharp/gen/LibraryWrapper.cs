@@ -135,7 +135,7 @@ namespace Interpreter.Libraries.Xml
                     }
                     else
                     {
-                        component = component.Substring((semicolon + 1), (component.Length - semicolon));
+                        component = component.Substring((semicolon + 1), ((component.Length - semicolon - 1)));
                     }
                     ampParts[i] = entityValue + component;
                 }

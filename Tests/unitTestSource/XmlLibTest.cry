@@ -1,0 +1,65 @@
+import CrayonUnit;
+import Xml;
+
+class XmlLibTest : Test {
+
+    constructor() : base() { }
+
+    // TODO: need to not trim whitespace in areas that have text and elements mixed together when using TRIM_WHITESPACE.
+    // e.g. "   This <i>is</i> italic  " will trim to the equivalent of "This<i>is</i>italic"
+
+    function testParsing() {
+        xml = '
+            <root>
+                <!-- comment -->
+                <child1>
+                    <nested attr="1"/>
+                    <nested attr="2"></nested>
+                </child1>
+
+                <mixed>
+                    This<a/>is<b/>a<c>test</c>!
+                </mixed>
+            </root>';
+
+        root = Xml.parse(xml, XmlOption.TRIM_WHITESPACE);
+
+        assertThat(root.name).isEqualTo('root');
+        assertThat(root.children).hasLength(2);
+        child1 = root.children[0];
+        mixed = root.children[1];
+        assertThat(child1.name).isEqualTo('child1');
+        assertThat(mixed.name).isEqualTo('mixed');
+
+        assertThat(child1.children).hasLength(2);
+        nested1 = child1.children[0];
+        nested2 = child1.children[1];
+        assertThat(nested1.name).isEqualTo('nested');
+        assertThat(nested1.attributes['attr']).isEqualTo('1');
+
+        assertThat(nested2.name).isEqualTo('nested');
+        assertThat(nested2.attributes['attr']).isEqualTo('2');
+
+        assertThat(mixed.children).hasLength(7);
+        c = mixed.children;
+        assertThat(c[0].value).isEqualTo('This');
+        assertThat(c[1].name).isEqualTo('a');
+        assertThat(c[2].value).isEqualTo('is');
+        assertThat(c[3].name).isEqualTo('b');
+        assertThat(c[4].value).isEqualTo('a');
+        assertThat(c[5].name).isEqualTo('c');
+        assertThat(c[5].children).hasLength(1);
+        assertThat(c[5].children[0].value).isEqualTo('test');
+        assertThat(c[6].value).isEqualTo('!');
+    }
+
+    function testEntities() {
+        xml = '<foo attrib="&quot;quotes!&quot;">&quot; &amp; &lt; &gt;</foo>';
+        root = Xml.parse(xml);
+        assertThat(root.children).hasLength(1);
+        assertThat(root.children[0].type).isEqualTo(Xml.NodeType.TEXT);
+        assertThat(root.children[0].value).isEqualTo('" & < >');
+
+        assertThat(root.attributes['attrib']).isEqualTo('"quotes!"');
+    }
+}
