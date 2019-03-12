@@ -60,7 +60,7 @@ These are the various fields that can be included in either the root object or a
 | default-title | The default title that could be used by the platform-specific UI library. This is generally settable from code, however, certain platforms need to know the default title at compile time. Mobile apps, for example, need to know this for the app name. |
 | id | An alphanumerics-only name for your project. Unlike the title, this is required and used by things like executable name, file names, metadata, user data directory, etc. |
 | source | The relative path to the source directory. |
-| output | The relative path to the output directory. This **MUST** be unique for each target. However, you can use **%TARGET_NAME%** in this value to insert the name of the target name so that you can define this once in the root object rather than individual per target. |
+| output | The relative path to the output directory. This **MUST** be unique for each target. However, you can use **%TARGET_NAME%** in this value to insert the name of the target name so that you can define this once in the root object rather than individual per target.  Read more about [output directories](#output-directory). |
 | var | Define a compile-time variable. A compile time variable can be used as a constant in code and defined on a target-by-target basis. The `<var>` element has a type attribute and 2 sub-elements: `<id>` and `<value>`. **id** is the name of the variable and **value** is the value it will have. <br> `<var type="boolean"><id>enable-audio</id><value>true</value></var>` |
 | jsfileprefix | A path to pre-pend to all file resource paths in JavaScript projects. Since knowledge of the URL pattern of where the project will be uploaded to and whether it has a trailing slash should not be encoded into the actual source code itself, you can define a root-absolute path in the build file. <br> e.g. `<jsfileprefix>/uploads/mygame</jsfileprefix> |
 | icon | A path relative to the build file of an image to use as a project icon. Specifically how this icon is used depends on the target platform. This value can be a comma-separated list of file names containing icons of different sizes. Many target platforms (such as Android icons and JavaScript favicons) support having different images for different sizes. |
@@ -132,13 +132,13 @@ This is the list of available targets that you can export your project to.
 
 ## Source Directory
 
-The source directory contains code files (with the file extension of **.cry**) and other asset files (such as sounds, images, text files, etc). 
+The source directory contains code files (with the file extension of **.cry**) and other resource files (such as sounds, images, text files, etc). 
 The source code files are all compiled together. 
 The arrangement or names of source code files do not matter. All non-code files are compiled into the final output and are 
 available as resources (although there are some limitations to this that will be outlined later).
 
-Code itself may only contain namespace, class, function, and enum definitions. 
-"Unwrapped" code is not valid.
+Code itself may only contain namespace, class, function, enum definitions, and constant definitions. 
+"Unwrapped" code is not valid. For example...
 
 ```
 // This is a valid file...
@@ -157,7 +157,7 @@ namespace MyNamspace {
   }
 }
 
-print("This shouldn't be here.");
+print("This print statement can't be here.");
 ```
 
 Class and Namespace names do not have to correlate with directory/file names. 
@@ -183,4 +183,7 @@ namespace MyHelloApp {
 
 ## Output Directory
 
-The output directory is populated with the source code of the final project after it has been exported. The output directory must not be nested under the source directory, but does not necessarily need to be nested in the directory where the build file is. 
+The output directory is populated with the source code of the final project after it has been exported. 
+The output directory must not be nested under the source directory, but does not necessarily need to be nested in the
+directory where the build file is. When defining the output directory in the build file, `%TARGET_NAME%` ought to be
+used to ensure that multiple built targets don't output to the same directory.
