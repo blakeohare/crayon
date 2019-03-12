@@ -167,13 +167,22 @@ Null is used as a representation of the lack of a value. It is notated with the 
 nothing_to_see_here = null;
 ```
 
-## Complex Types
+## Collections
+
+So far all the types mentioned so far only store one single piece of data. 
+To store multiple pieces of data in an organized fashion, there a few types that can be used. These include lists and dictionaries.
 
 ### Lists
 
+TODO: finish this section
+
 ### Dictionaries
 
-### Objects
+TODO: finish this section
+
+## Objects
+
+TODO: finish this section
 
 ## Operators
 
@@ -784,34 +793,66 @@ print(Phase.LATHER); // prints 2
 
 ## Namespaces
 
+TODO: finish this section
+
 ## Imports
+
+TODO: finish this section
 
 ## Collections Revisited
 
 ### List Slicing
 
+TODO: finish this section
+
 ### List methods
+
+TODO: finish this section
 
 ### Dictionary Methods
 
+TODO: finish this section
+
 ## Object Oriented Programming
+
+TODO: finish this section
 
 ### Declaring a class
 
+TODO: finish this section
+
 ### Constructor
+
+TODO: finish this section
 
 ### Methods
 
+TODO: finish this section
+
 ### Fields
+
+TODO: finish this section
 
 ### Extended a class
 
+TODO: finish this section
+
 ### Static Methods
+
+TODO: finish this section
 
 ### Static Fields
 
+TODO: finish this section
+
 ### Static Constructors
+
+TODO: finish this section
 
 ### Private Constructors
 
+TODO: finish this section
+
 ### is Operator
+
+TODO: finish this section
