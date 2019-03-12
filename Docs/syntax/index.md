@@ -512,8 +512,8 @@ The above code runs forever because the inner loop is always resetting the loopi
 The other kind of common looping scenario is iterating through items in a list. This is commonly referred to as a for-each loop. However it also uses the for keyword.
 
 ```csharp
-grocery_items = ["apples", "milk", "eggs", "off brand Fruit Loops(TM)"];
-for (item : grocery_items) {
+groceryItems = ["apples", "milk", "eggs", "off-brand Fruit Loops(TM)"];
+for (item : groceryItems) {
   print("Remember to buy " + item);
 }
 ```
@@ -521,9 +521,9 @@ for (item : grocery_items) {
 This is roughly equivalent to dereferencing the individual items with an index:
 
 ```csharp
-grocery_items = ["apples", "milk", "eggs", "off brand Fruit Loops(TM)"];
-for (i = 0; i < grocery_items.length; ++i) {
-  item = grocery_items[i];
+groceryItems = ["apples", "milk", "eggs", "off-brand Fruit Loops(TM)"];
+for (i = 0; i < groceryItems.length; ++i) {
+  item = groceryItems[i];
   print("Remember to buy " + item);
 }
 ```
