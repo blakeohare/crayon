@@ -75,7 +75,6 @@ These are the various fields that can be included in either the root object or a
 Compile time variables are defined in the build file and are converted into constants in the source code at compile time.
 
 
-
 ```
 {
   "id": "MyProject",
@@ -106,7 +105,8 @@ Compile time variables are defined in the build file and are converted into cons
 }
 ```
 
-In code, this would be used with the `$var` dictionary...
+In the project source code, this would be used with the `$var` dictionary...
+
 ```csharp
   ...
   
@@ -123,12 +123,12 @@ This is the list of available targets that you can export your project to.
 
 | Name | Description |
 | --- | --- |
-| csharp-app | A .NET project appropriate for consumption on a Desktop/Laptop on either Windows or Mac. |
-| javascript-app-android | A JavaScript-based web view Android app + a small Java wrapper. |
-| java-app | A Java program appropriate for consumption on a Desktop/Laptop (not Android). Uses Java 1.8 and ant builds. |
-| python-app | A python program. |
-| javascript-app | A JavaScript program appropriate for the general web consumption. |
-| javascript-app-ios | An iOS app that's based on WebView + a small Swift wrapper |
+| `csharp-app` | A .NET project appropriate for consumption on a Desktop/Laptop on either Windows or Mac. |
+| `javascript-app` | A JavaScript program appropriate for the general web consumption. |
+| `javascript-app-android` | A JavaScript-based web view Android app + a small Java wrapper. |
+| `javascript-app-ios` | An iOS app that's based on WebView + a small Swift wrapper |
+| `java-app` | A Java program appropriate for consumption on a Desktop/Laptop (not Android). Uses Java 1.8 and ant builds. |
+| `python-app` | A Python program. |
 
 ## Source Directory
 
