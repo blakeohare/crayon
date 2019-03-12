@@ -1,0 +1,105 @@
+<library name="DateTime">
+	<description>
+		Converts timestamps to and from structured time.
+		Offers string formatting options for the time.
+	</description>
+	<namespace name="DateTime">
+		<class name="Moment">
+			<description>
+				Represents a single instant in time in a given time zone as a structured value.
+			</description>
+			
+			<function name="fromTimestamp" static="true">
+				<description>
+					Creates a new Moment instance based on the given timestamp and timezone.
+				</description>
+				<arg name="timestamp" type="float" description="The unix timestamp of this moment"/>
+				<arg name="timezone" type="DateTime.TimeZone" optional="true" description="The timezone of the moment. Uses local time if not specified."/>
+				<returns type="DateTime.Moment" description="A new Moment instance for the given time."/>
+			</function>
+			
+			<function name="now" static="true">
+				<description>
+					Creates a new Moment that represents the current time.
+				</description>
+				<arg name="timezone" type="DateTime.TimeZone" optional="true" description="Time zone of the moment. Uses local time if not specified."/>
+				<returns type="DateTime.Moment" description="A new moment instance for the current time."/>
+			</function>
+			
+			<function name="at" static="true">
+				<description>
+					Creates a new Moment based on a human-readable timestamp.
+				</description>
+				<arg name="year" type="int" description="The year in 4-digit format"/>
+				<arg name="month" type="int" description="A month number (1-12)"/>
+				<arg name="day" type="int" description="A day number (1-31)"/>
+				<arg name="hour" type="int" description="An hour number in 24-hour format (0-23)"/>
+				<arg name="minute" type="int" description="A minute number (0-59)"/>
+				<arg name="second" type="float" description="A second number. Unlike the previous parameters, this can be a float to represent fractional seconds. (0-59.999...)"/>
+				<arg name="timezone" type="DateTime.TimeZone" optional="true" description="A time zone for this timestamp. Uses local time if not specified."/>
+				<returns type="DateTime.Moment" description="A new moment instance for the given time."/>
+			</function>
+			
+			<function name="getUtcOffsetSeconds">
+				<description>
+					Gets the number of seconds from the same time in UTC. 
+				</description>
+				<returns type="int" description="Number of seconds from UTC for the Moment's time zone at the given time. Note on sign: Adding this value to UTC will give you this Moment's time. Subtracting this value from the Moment's time will give you UTC time."/>
+			</function>
+			
+			<function name="getFormattedOffset">
+				<description>
+					Returns the UTC offset as a standardized readable string in the format of <i>UTC+HH:MM</i> or <i>UTC-HH:MM</i>.
+				</description>
+				<returns type="string" description="The formatted UTC offset."/>
+			</function>
+			
+			<function name="isDstOccuring">
+				<description>
+					Checks if Daylight Savings Time is curring in the given moment.
+				</description>
+				<returns type="boolean" description="True if DST is happening."/>
+			</function>
+			
+			<function name="format">
+				<description>
+					Creates a formatted string representing this Moment. 
+					The input string is a template containing directives in the form of a percent sign (%) followed by a single letter.
+					For example, a string of <code>"%F %j%S, %Y at %g:%i %A"</code> will produce a string like <i>"January 9th, 2009 at 4:28 PM"</i>.<br />
+					
+					The full list of directives is listed in this table:<br /><br />
+					
+					<table>
+					<tr><td>%y</td><td>The year in 2-digit format</td></tr>
+					<tr><td>%Y</td><td>The year in 4-digit format</td></tr>
+					<tr><td>%L</td><td>1 if this is a leap year, 0 otherwise</td></tr>
+					<tr><td>%M</td><td>The month expressed as a 3-letter abbreviation e.g. Aug</td></tr>
+					<tr><td>%F</td><td>The month fully written out e.g. August</td></tr>
+					<tr><td>%m</td><td>The month as a 2-digit number with leading 0 for single-digit months</td></tr>
+					<tr><td>%n</td><td>The month as an integer with no leading 0's</td></tr>
+					<tr><td>%t</td><td>The number of days in the month</td></tr>
+					<tr><td>%d</td><td>The day as a 2-digit number</td></tr>
+					<tr><td>%j</td><td>The day as an integer with no leading 0's</td></tr>
+					<tr><td>%S</td><td>The ordinal suffix of the day. e.g. "nd" if it's the 22nd of the month</td></tr>
+					<tr><td>%z</td><td>The current day number as a number of days from the beginning of the year. e.g. January 1st is 0 and December 31st is 364 in non-leap years.</td></tr>
+					<tr><td>%D</td><td>The day of the week as a 3-letter abbreviation e.g. Thu</td></tr>
+					<tr><td>%N</td><td>The day of the week fully spelled out e.g. Wednesday</td></tr>
+					<tr><td>%a</td><td>"am" or "pm"</td></tr>
+					<tr><td>%A</td><td>"AM" or "PM"</td></tr>
+					<tr><td>%g</td><td>The current hour in 12-hour format</td></tr>
+					<tr><td>%G</td><td>The current hour in 24-hour format</td></tr>
+					<tr><td>%h</td><td>The current hour in 12-hour format as a 2-digit number with leading 0's if necessary</td></tr>
+					<tr><td>%H</td><td>The current hour in 24-hour format as a 2-digit number with leading 0's if necessary</td></tr>
+					<tr><td>%i</td><td>The current minute as a 2-digit number</td></tr>
+					<tr><td>%s</td><td>The current seconds as a 2-digit number</td></tr>
+					<tr><td>%v</td><td>The current number of milliseconds as a 3-digit number</td></tr>
+					<tr><td>%u</td><td>The current number of microseconds as a 6-digit number. This is redundant with millis.</td></tr>
+					<tr><td>%U</td><td>The current unix timestamp.</td></tr>
+					</table>
+					
+				</description>
+				<arg name="template" type="string" description="A template string containing directives"/>
+			</function>
+		</class>
+	</namespace>
+</library>

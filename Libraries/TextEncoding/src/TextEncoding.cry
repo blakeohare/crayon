@@ -18,7 +18,7 @@
         constructor(m) : base(m) { }
     }
 
-    function convertBytesToText(bytes, format) {
+    function convertBytesToText(bytes, format = TextFormat.UNKNOWN) {
         if (format < 0 || format > TextFormat.UTF32_BE) {
             throw new InvalidArgumentException("Unknown format");
         }
@@ -53,7 +53,7 @@
             bLength = bytes.length;
         }
 
-        if (detectedFormat != -1 && format != 0 && format != detectedFormat) {
+        if (detectedFormat != -1 && format != TextFormat.UNKNOWN && format != detectedFormat) {
             sc = 4;
         } else {
             if (detectedFormat != -1) {

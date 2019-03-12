@@ -8,8 +8,8 @@
 		<class name="Md5Hash">
 			<description>
 				Creates a new empty instance of an SHA1 hash.
-				Methods from CryptoCommon.AbstractHash can be used to add data to the hash and to digest it.
-				Typical usage: hash = new Sha1Hash().addText("Hello, World").digestHex();
+				Methods from <b>CryptoCommon.AbstractHash</b> can be used to add data to the hash and to digest it.<br/><br/>
+				Typical usage: <code>hash = new Sha1Hash().addText("Hello, World").digestHex();</code>
 			</description>
 			<function name="(constructor)">
 				<description>Creates a new instance of the SHA1 hash and, by default, prints out a warning message about it being unsafe.</description>

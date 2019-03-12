@@ -125,7 +125,7 @@ namespace DateTime {
         // TODO: put all this into Pastel code. That way it won't bloat the byte code.
         static field monthShort = 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split(' ');
         static field monthLong = 'January February March April May Jun July August September October November'.split(' ');
-        static field dowShort = 'Sun Mon Tue Wed Thur Fri Sat'.split(' ');
+        static field dowShort = 'Sun Mon Tue Wed Thu Fri Sat'.split(' ');
         static field dowLong = 'Sunday Monday Tuesday Wednesday Thurstay Friday Saturday'.split(' ');
         static function applyStringFormatDirective(c, dt) {
             // This uses the directives from PHP's date function, for lack of a better or more comprehensive standard.

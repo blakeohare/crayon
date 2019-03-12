@@ -169,7 +169,7 @@
 				Static class containing utility functions to draw various shape primitives to the screen.
 			</description>
 
-			<function name="ellipse">
+			<function name="ellipse" static="true">
 				<arg name="left" type="int" description="x coordinate of the left side of the bounding box that the ellipse will fill."/>
 				<arg name="top" type="int" description="y coordinate of the top side of the bounding box that the ellipse will fill."/>
 				<arg name="width" type="int" description="width of the bounding box that the ellipse will fill."/>
@@ -183,7 +183,7 @@
 				</description>
 			</function>
 
-			<function name="line">
+			<function name="line" static="true">
 				<arg name="startX" type="int" description="x coordinate of the start of the line"/>
 				<arg name="startY" type="int" description="y coordinate of the start of the line"/>
 				<arg name="endX" type="int" description="x coordinate of the end of the line"/>
@@ -198,7 +198,7 @@
 				</description>
 			</function>
 
-			<function name="rectangle">
+			<function name="rectangle" static="true">
 				<arg name="left" type="int" description="x coordinate of the left side of the bounding box that the rectangle will fill."/>
 				<arg name="top" type="int" description="y coordinate of the top side of the bounding box that the rectangle will fill."/>
 				<arg name="width" type="int" description="width of the bounding box that the rectangle will fill."/>
@@ -212,7 +212,7 @@
 				</description>
 			</function>
 
-			<function name="triangle">
+			<function name="triangle" static="true">
 				<arg name="ax" type="int" description="x coordinate of the first triangle point."/>
 				<arg name="ay" type="int" description="y coordinate of the first triangle point."/>
 				<arg name="bx" type="int" description="x coordinate of the second triangle point."/>
@@ -228,7 +228,7 @@
 				</description>
 			</function>
 
-			<function name="quad">
+			<function name="quad" static="true">
 				<arg name="ax" type="int" description="x coordinate of the first quadrilateral point."/>
 				<arg name="ay" type="int" description="y coordinate of the first quadrilateral point."/>
 				<arg name="bx" type="int" description="x coordinate of the second quadrilateral point."/>
@@ -247,7 +247,7 @@
 				</description>
 			</function>
 
-			<function name="fill">
+			<function name="fill" static="true">
 				<arg name="red" type="int" description="red color value of the fill (0-255)."/>
 				<arg name="green" type="int" description="green color value of the fill (0-255)."/>
 				<arg name="blue" type="int" description="blue color value of the fill (0-255)."/>

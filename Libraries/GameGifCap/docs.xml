@@ -1,0 +1,70 @@
+<library name="GameGifCap">
+	<description>
+		Records a Game.GameWindow and exports it as an animated GIF.<br/>
+		
+		Compatibility note: this functionality is only available in projects exported to the C#/Windows based platforms (which includes the default VM running on Windows). Be sure to check the <code>isSupported()</code> function.
+	</description>
+	<namespace name="GameGifCap">
+		
+		<function name="isSupported">
+			<description>Checks to see if the GIF recorder is available for the currently running platform.</description>
+			<returns type="boolean" description="True if the GIF recorder is currently supported."/>
+		</function>
+		
+		<class name="GifRecorder">
+			
+			<description>
+				Represents a GIF recording session.
+			</description>
+		
+			<function name="(constructor)">
+				<description>Creates a new GIF recorder instance.</description>
+				<arg name="fps" type="int" description="Frames per second of the game"/>
+			</function>
+			
+			<function name="setTargetSize">
+				<description>
+					Sets the desired size of the final image. <b>MUST be called before recording!</b> 
+					If this is different than the size of the GameWindow, then the image is stretched.
+				</description>
+				
+				<arg name="width" type="int" description="Width of the image"/>
+				<arg name="height" type="int" description="Height of the image"/>
+				<returns type="GameGifCap.GifRecorder" description="reference to itself for chaining syntax"/>
+			</function>
+			
+			<function name="isRecording">
+				<description>
+					Checks if the recorder is actively recording.
+				</description>
+				<returns type="boolean" description="True if the recorder is recording."/>
+			</function>
+			
+			<function name="record">
+				<description>
+					Starts recording the screen.
+				</description>
+			</function>
+			
+			<function name="pause">
+				<description>
+					Pauses the recording.
+				</description>
+			</function>
+			
+			<function name="clear">
+				<description>
+					Removes all recorded data up to this point.
+				</description>
+			</function>
+			
+			<function name="save">
+				<description>
+					Saves the Animated GIF to disk.
+				</description>
+				<arg name="path" type="string" description="Desired file path to save the file to."/>
+			</function>
+		</class>
+		
+	</namespace>
+</library>

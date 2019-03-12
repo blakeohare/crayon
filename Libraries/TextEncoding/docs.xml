@@ -1,0 +1,39 @@
+<library name="TextEncoding">
+	<description>
+		Encodes text into bytes and decodes bytes into text.
+		Supports ASCII, ISO-8859-1, UTF8, UTF16, and UTF32 and endian/BOM variations.
+	</description>
+	<namespace name="TextEncoding">
+		<enum name="TextFormat">
+			<description>Enum list of available encodings. Endian and BOM variations are passed in as separate parameters in places where these are used.</description>
+			<value name="UNKNOWN" description="Encoding is unknown. Used when decoding, but not for encoding."/>
+			<value name="ASCII" description="The ASCII format (single-byte encoding with 7-bit values)"/>
+			<value name="ISO_8859_1" description="The ISO-8859-1 encoding (single-byte encoding with 8-bit values)"/>
+			<value name="UTF-8" description="The UTF-8 format. (variable-length encoding format. Characters are 1-4 bytes. Generally considered standard."/>
+			<value name="UTF-16" description="The UTF-16 format. (2-byte format with surrogate pairs)"/>
+			<value name="UTF-32" description="The UTF-32 format. (4-byte format, each 4-bit integer is the Unicode code point)"/>
+		</enum>
+		
+		<class name="EncodingException" parent="Core.Exception">
+			<description>
+				Thrown when there is a problem performing a conversion.
+			</description>
+		</class>
+		
+		<function name="convertBytesToText">
+			<description>Converts a list of bytes into a string.</description>
+			<arg name="bytes" type="list of integers" description="A list of byte values from 0-255"/>
+			<arg name="encoding" type="TextEncoding.TextFormat" optional="true" description="An encoding to decode the bytes. If not specified, auto-detection will be attempted."/>
+			<returns type="string" description="The string of the decoded bytes."/>
+		</function>
+		
+		<function name="convertTextToBytes">
+			<description>Converts a string into a byte list.</description>
+			<arg name="value" type="string" description="A string to encode into bytes."/>
+			<arg name="encoding" type="TextEncoding.TextFormat" description="The encoding to use for the conversion."/>
+			<arg name="includeBom" type="boolean" optional="true" description="Whether or not to include a BOM at the beginning of the byte list. Ignored if the format does not support a BOM. Default value is false when not specified."/>
+			<returns type="list of integers" description="A list of byte values from 0 to 255."/>
+		</function>
+		
+	</namespace>
+</library>
