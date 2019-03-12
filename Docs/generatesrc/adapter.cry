@@ -212,11 +212,40 @@ function getTextContent(xmlNode, buffer = null) {
 			text.add(child.value);
 		} else if (child.type == Xml.NodeType.ELEMENT) {
 			switch (child.name) {
+				case 'table':
+					text.add('<table border="1" cellspacing="0" cellpadding="3">');
+					getTextContent(child, text);
+					text.add('</table>');
+					break;
+					
+				case 'b':
+					text.add('<span style="font-weight:bold;">');
+					getTextContent(child, text);
+					text.add('</span>');
+					break;
+					
+				case 'i':
+					text.add('<span style="font-style:italic;">');
+					getTextContent(child, text);
+					text.add('</span>');
+					break;
+					
+				case 'code':
+					text.add('<span style="font-family:monospace;color:#008;font-weight:bold;">');
+					getTextContent(child, text);
+					text.add('</span>');
+					break;
+					
 				case 'ul':
 				case 'li':
+				case 'tr':
+				case 'td':
 					text.add('<' + child.name + '>');
 					getTextContent(child, text);
 					text.add('</' + child.name + '>');
+					break;
+				case 'br':
+					text.add('<br />');
 					break;
 				default:
 					throw new Exception("Unknown html element in text content: '" + child.name + "'");

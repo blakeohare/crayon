@@ -248,7 +248,7 @@ function generateLibraryHtml(library, buffer) {
 			if (cls.description == null) {
 				throw new Exception("Class does not have a description: " + cls.name);
 			}
-			buffer.add(htmlSpecialChars(cls.description));
+			buffer.add(cls.description);
 			buffer.add('</p>\n');
 			buffer.add('</div>\n');
 
@@ -275,7 +275,7 @@ function generateLibraryHtml(library, buffer) {
 					buffer.add('</td>\n');
 					buffer.add('<td class="description">');
 					buffer.add('<p class="description">');
-					buffer.add(htmlSpecialChars(fi.description));
+					buffer.add(fi.description);
 					buffer.add('</p>');
 					buffer.add('</td>\n');
 					buffer.add('</tr>\n');
