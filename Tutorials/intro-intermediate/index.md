@@ -27,34 +27,30 @@ your environment](http://crayonlang.org/download/installation), please do so now
 	
 # Creating a Hello World Project
 
-Create a new directory caled HelloWorld for your project somewhere. Create two subdirectories called
-'source' and 'output' in here.
+From the command line, run the following command:
 
-Each Crayon project has a build definition file, which is composed of relatively simple
-XML. This file defines the various platforms you want to target and other options that you can
-configure for these platforms. It also defines where your source code is and where the output should go.
-
-There is a wonderful universe of options and configurations that I could ramble about for a long
-time. But for the sake of actually getting something working, copy and paste this mostly
-one-size-fits-all build definition into your HelloWorld.build file:
-	
-```xml
-<build>
-  <projectname>HelloWorld</projectname>
-  <source>source/</source>
-  <output>output/%TARGET_NAME%</output>
-</build>
+```
+C:\Stuff> crayon -genDefaultProj HelloWorld
 ```
 
-In the `source` directory, create a file called `main.cry`. It doesn't have to be called `main.cry` but the important thing is that it has a `.cry` file extension. Paste the following code in that file:
+This will create a new directory with a simple HelloWorld project in it. 
 
-```crayon
+Each Crayon project has a build definition file, which is a JSON file.
+This file defines the various platforms you want to target and other options that you can
+configure for these platforms. It also defines where your source code is and where the output should go.
+You can read all about it in the [Project Structure and Build File documentation](../../Docs/project/index.md#build-file)
+
+
+In the `source` directory, there is a file called `main.cry`. 
+The contents looks something like this:
+
+```csharp
 function main() {
 	print("Hello, World!");
 }
 ```
 
-To compile, invoke `crayon` from the command line. Pass the .build file path as an argument.
+To run this program, invoke `crayon` from the command line. Pass the .build file path as an argument.
 	
 ```
 C:\Stuff\HelloWorld> crayon HelloWorld.build
@@ -104,7 +100,7 @@ placing a `=` after the variable name followed by the value you want to assign, 
 by a semicolon. Because Crayon is not type safe, the same variable can be reused to store different
 types of values.
 
-```crayon
+```csharp
 cake = 3.14159; // the cake is a pi
 cake = "Y"; // the cake is a Y
 cake = null; // the cake is a lie
@@ -148,7 +144,7 @@ the order of operations can be found in the [documentation](../syntax.md). To ov
 use parenthesis.
 
 Usage:
-```crayon
+```csharp
 function main() {
   a = 1;
   b = 2;
@@ -168,7 +164,7 @@ down to force the result to be an integer. This is consistent with most language
 as JavaScript, which does not make a distinction between integers and floats) and so may be possibly 
 unintuitive depending on your previous programming background. Consider the following examples.
 
-```crayon
+```csharp
 value = 5 / 2; // this is 2
 value = 5.0 / 2.0; // this is 2.5
 value = 5 / 2.0; // this is also 2.5
@@ -179,21 +175,21 @@ value = 3.8 * 10; // this is the float 38.0, not the integer 38.
 
 If you are reading the value from a variable, modifying it with an operator, and then storing it back into that variable, like this...
 
-```crayon
+```csharp
 value = value * 2;
 ```
 
 ...you can shorten this by placing the operator in front of an equals sign after the variable name,
 followed by the value you are modifying it by.
 
-```crayon
+```csharp
 value *= 2; // does the same as: value = value * 2
 ```
 
 Furthermore, if you are adding 1 or subtracting 1, you can use the `++` and `--` operators, which
 are used as either a prefix or postfix to a variable.
 
-```crayon
+```csharp
 value++; // does roughly the same thing as: value = value + 1
 ```
 
@@ -202,7 +198,7 @@ expressions. The caveat is that the when you use the `++` or `--` as a prefix, t
 returned is the value that has been modified. If you use it as a suffix, the value that is returned
 is the value before it has been modified.
 
-```crayon
+```csharp
 function main() {
 
   a = 100;
@@ -233,7 +229,7 @@ statements, `for` loops, `while` loops, `do`-`while` loops, `switch` statements,
 If statements are a way to check a boolean and then execute some code only if that boolean is true.
 The syntax is identical to other curly-brace languages.
 
-```crayon
+```csharp
 function main() {
   a = 3;
   b = 4;
@@ -245,7 +241,7 @@ function main() {
 
 The else condition is also supported...
 
-```crayon
+```csharp
 function main() {
   someValue = 4;
   if (someValue > 10) {
@@ -269,7 +265,7 @@ conditional block.
 While loops are also supported. While loops are composed by putting a boolean condition in
 parenthesis after the word "while". Then it is followed by a block of code.
 
-```crayon
+```csharp
 function main() {
   output = "f";
   while (output.length < 10) {
@@ -283,7 +279,7 @@ function main() {
 
 For loops work the same way as most curly-brace languages:
 
-```crayon
+```csharp
 function main() {
   for (i = 10; i >= 1; i--) {
     print(i);
@@ -302,7 +298,7 @@ the components with commas instead of semicolons.
 For example, the following code has two initialization statements: `i = 0` and `j = 10`. It also has two
 step statements: `i++` and `j--`:
 
-```crayon
+```csharp
 function main() {
   for (i = 0, j = 10; i <= 10; i++, j--) {
     print(i * 'X' + j * '.');
@@ -328,13 +324,13 @@ XXXXXXXXXX
 
 All pieces of the for loop are optional and can be omitted...
 
-```crayon
+```csharp
 for (;;) {}
 ```
 This has no setup, no step, and the conditional is implicitly always true. It is equivalen to the
 following while loop:
 
-```crayon
+```csharp
 while (true) {}
 ```
 
@@ -342,7 +338,7 @@ while (true) {}
 
 A water-landing is unlikely, but just in case...
 
-```crayon
+```csharp
 i = 0;
 do {
   print(++i + " Mississippi");
@@ -366,7 +362,7 @@ denotes the end of the case code.
 In addition to case statements, there is a `default` keyword that runs if none of the provided case
 statements are true. The `default` case is optional.
 
-```crayon
+```csharp
 switch (x) {
   case 1:
     print("x is 1");
@@ -404,7 +400,7 @@ implementation or a graceful fallback no-op behavior for platforms where there i
 `import Math;` at the top of the files that you use it. The Math library contains a variety of 
 predefined functions.
 
-```crayon
+```csharp
 import Math;
 
 function main() {
@@ -418,7 +414,7 @@ namespace can now be used anywhere in this file. The "Math" that appears within 
 is actually the name of a namespace and .floor indicates that you want to invoke the floor function 
 that's in the Math namespace. If you want, you can optionally leave off the namespace like this...
 
-```crayon
+```csharp
 import Math;
 
 function main() {
@@ -432,7 +428,7 @@ there is also a library called "Core". Core is implicitly imported at the top of
 print statement we've been using so far is actually a function defined in the Core library. And so 
 you could potentially also write it like this...
 
-```crayon
+```csharp
 import Core;
 import Math;
 
@@ -453,7 +449,7 @@ loop consumes exactly the same amount of time. This amount of time is called the
 is generally either 60 frames per second or 30 frames per second (where "frame" refers to the
 events that take place in the body of the loop).
 
-```crayon
+```csharp
 import Game;
 import Graphics2D;
 
@@ -534,7 +530,7 @@ You'll see the following...
 
 The box changes color every time you press a key. Let's change it so that it only changes color when the user presses the space bar and it also moves around when the user presses and holds the arrow keys...
 
-```crayon
+```csharp
 import Game;
 import Graphics2D;
 
@@ -631,13 +627,13 @@ I'd totally show a screenshot of the new program, but it looks unremarkably diff
 
 Lists are ordered collections of values. They are denoted with square brackets, [], where the values in the list are delimited by commas.
 
-```crayon
+```csharp
 things = ["a", "b", "c"];
 ```
 
 To extract an item from a list, place brackets after the list with the integer index of the item in the list.
 
-```crayon
+```csharp
 things = ["a", "b", "c"];
 firstItem = things[0];
 lastItem = things[2];
@@ -647,7 +643,7 @@ The index counts from 0 and must always be an integer type. Floats that happen t
 
 To add an item to a list, there is a method called add which will add a new item to the end of the list.
 
-```crayon
+```csharp
 things = ["a", "b", "c"];
 things.add("d");
 ```
@@ -678,7 +674,7 @@ Here is a list of all the methods and fields that can be called on a list, what 
 
 In the game example, I snuck in an example of a dictionary, in hopes that you'd go along with it by context:
 
-```crayon
+```csharp
 keysPressed = {
   "up": false,
   "down": false,
@@ -693,7 +689,7 @@ The keys of a dictionary must be either integers, strings, or object instances b
 
 The following is perfectly valid:
 
-```crayon
+```csharp
 myDictionary = {
   4: false,
   10: "Ponies",
@@ -704,7 +700,7 @@ myDictionary = {
 
 However, this is not valid:
 
-```crayon
+```csharp
 myDictionary = {
   1: true,
   "one": true
@@ -713,7 +709,7 @@ myDictionary = {
 
 Items in the dictionary are access by their keys, using brackets, much like lists.
 
-```crayon
+```csharp
 myDictionary = {
   "a": 1,
   "b": 2,
@@ -725,7 +721,7 @@ print(myDictionary["d"]); // error! D:
 
 Adding an item to a dictionary is also done with brackets...
 
-```crayon
+```csharp
 myDictionary["x"] = 24;
 ```
 
@@ -754,7 +750,7 @@ Just like how the previous version of our game checked for events of type `KEY_D
 
 In the following example, the x and y coordinates of the most recent `MOUSE_LEFT_DOWN` event are stored as target coordinates, which the rectangle eases towards. It does this by storing the current coordinates in a separate set of variables and then moving those current coordinates closer to the target coordinates using a weighted average of the two.
 
-```crayon
+```csharp
 import Game;
 import Graphics2D;
 
@@ -806,7 +802,7 @@ Again, I'd love to post a screenshot, but visually, it really looks no different
 
 In addition to rectangles, you can also draw ellipses and lines.
 
-```crayon
+```csharp
 Graphics2D.Draw.ellipse(left, top, width, height, red, green, blue, alpha);
 ```
 
@@ -814,7 +810,7 @@ Basically the function for drawing an ellipse is completely identical to drawing
 
 Drawing a line is slightly differnt...
 
-```crayon
+```csharp
 Graphics2D.Draw.line(startX, startY, endX, endY, lineWidth, red, green, blue, alpha);
 ```
 
@@ -824,7 +820,7 @@ The following is a simple demo app that draws a clock face of the current time.
 
 I will use this opportunity to randomly mention that you can define variables outside of functions if the value does not change. These are called constants and use the `const` keyword. It's customary to name constant values in ALL_CAPS with underscores delimiting the words.
 
-```crayon
+```csharp
 import Game;
 import Graphics2D;
 import Math;
@@ -914,7 +910,7 @@ To include an image in the program's resources, place it somewhere within the di
 
 To load the image, do the following...
 
-```crayon
+```csharp
 import ImageResources;
 
 ...
@@ -924,7 +920,7 @@ rawImageResource = ImageLoader.loadFromResources("images/foo.png");
 
 `rawImageResource` is now exactly that, a rawImageResource that represents a bitmap. With the resource, you can do various things with it using libraries such as edit the pixels, upload the image somewhere, but in our case, we're interested in getting it to appear on the screen. In order to do this, the image needs to be loaded into the graphics engine...
 
-```crayon
+```csharp
 import Graphics2D;
 import ImageResources;
 
@@ -944,7 +940,7 @@ Here's an end-to-end example. The following image is `images/bad_kitty.jpg` whic
 
 ![Bad Kitty](images/bad_kitty.jpg)
 
-```crayon
+```csharp
 import Game;
 import Graphics2D;
 import ImageResources;
@@ -987,7 +983,7 @@ There are actually quite a handful of drawing methods on the image object that l
 
 For example, you can make the image appear cropped and stretched...
 
-```crayon
+```csharp
 image.drawRegionStretched(
 	0, 0, // screen top-left
 	windowWidth, windowHeight, // size on screen
@@ -1038,7 +1034,7 @@ Here's an example of a series of ImageSheet definitions:
 
 In order to load these, you must use `ImageSheet` instead of `ImageLoader`. Like ImageLoader, image sheets can be loaded either synchronously or asynchronously.
 
-```crayon
+```csharp
 imageSheet = ImageSheet.loadFromResources(sheetId);
 
 ...
