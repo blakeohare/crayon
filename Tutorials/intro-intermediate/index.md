@@ -1007,29 +1007,28 @@ An image sheet is a logical collection of images defined by a series of file pre
 
 Here's an example of a series of ImageSheet definitions:
 
-```xml
-<build>
+```
+{
   
   ...
   
-  <!-- Image sheets -->
-  <imagesheets>
-    <sheet id="sprites">
-      <prefix>images/player/</prefix>
-      <prefix>images/enemies/</prefix>
-      <prefix>images/items/</prefix>
-    </sheet>
-    <sheet id="tiles">
-      <prefix>images/tiles/</prefix>
-    </sheet>
-    <sheet id="everything_else">
-      <prefix>*</prefix>
-    </sheet>
-  </imagesheets>
+  "image-sheets": [
+    {
+	  "id": tiles",
+	  "prefix": "images/tiles/*"
+	},
+    {
+	  "id": "sprites",
+	  "prefix": "images/sprites/*"
+    },
+    {
+      "id": "everything_else",
+	  "prefix": "*"
+	}
+  ]
   
   ...
-
-</build>
+}
 ```
 
 In order to load these, you must use `ImageSheet` instead of `ImageLoader`. Like ImageLoader, image sheets can be loaded either synchronously or asynchronously.
