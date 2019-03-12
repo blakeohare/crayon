@@ -76,7 +76,7 @@ Compile time variables are defined in the build file and are converted into cons
 
 
 
-```json
+```
 {
   "id": "MyProject",
   
