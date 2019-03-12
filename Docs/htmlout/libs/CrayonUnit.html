@@ -1,0 +1,431 @@
+<html><head><title>Documentation</title></head><body><style>body { font-family: "Helvetica", "Arial", sans-serif; }
+h1 { font-size:20pt; font-weight:bold; color:#247; }
+h2 { font-size:16pt; font-weight:bold; color:#247; }
+h3 { font-size:12pt; font-weight:bold; color:#247; }
+.codefont { font-family: "Menlo", "Consolas", "Courier New", monospace; font-size:10pt; }
+table.arguments { border-radius:8px; overflow:hidden; border-spacing:0px; border-collapse: separate; background-color:#eee; }
+table.arguments thead { background-color:#ccc; font-weight:bold; text-align:left; }
+table.arguments td, table.arguments th { padding:8px; padding-right:20px; }
+table.arguments tbody tr { vertical-align:top; }
+td.argname { color:#286; }
+table.arguments td.argtype { color:#666; }
+td.optional { color:#000; font-weight:bold; }
+.codesnippet { background-color:#eee; border-radius:8px; padding:16px; margin-bottom:12px; }
+.itembox { margin-bottom:40px; margin-left:30px;}
+a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
+a.bookmark:hover { color:#08a; }
+p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
+.keyword { font-weight:normal; }</style><h1>CrayonUnit</h1><div class="itembox">
+<p class="description">
+		Unit testing library.
+	</p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> CrayonUnit<ul>
+<li><a href="#func-crayonunit-assertthat"><span class="codefont">function</span> assertThat(actualValue)</a></li>
+<li><a href="#func-crayonunit-fail"><span class="codefont">function</span> fail(message)</a></li>
+<li><a href="#func-crayonunit-pass"><span class="codefont">function</span> pass()</a></li>
+<li><a href="#class-crayonunit-test"><span class="codefont">class</span> Test</a><ul>
+<li><a href="#func-crayonunit-test-setup"><span class="codefont">function</span> setup()</a></li>
+<li><a href="#func-crayonunit-test-teardown"><span class="codefont">function</span> teardown()</a></li>
+</ul>
+</li>
+<li><a href="#class-crayonunit-testharness"><span class="codefont">class</span> TestHarness</a><ul>
+<li><a href="#constructor-crayonunit-testharness"><span class="codefont">constructor</span>()</a></li>
+<li><a href="#func-crayonunit-testharness-makepassingtestssilent"><span class="codefont">function</span> makePassingTestsSilent()</a></li>
+<li><a href="#func-crayonunit-testharness-run"><span class="codefont">function</span> run()</a></li>
+<li><a href="#func-crayonunit-testharness-showsummary"><span class="codefont">function</span> showSummary()</a></li>
+</ul>
+</li>
+<li><a href="#class-crayonunit-unittestfailedexception"><span class="codefont">class</span> UnitTestFailedException</a></li>
+<li><a href="#class-crayonunit-verificationcontextobject"><span class="codefont">class</span> VerificationContextObject</a><ul>
+<li><a href="#func-crayonunit-verificationcontextobject-contains"><span class="codefont">function</span> contains(value)</a></li>
+<li><a href="#func-crayonunit-verificationcontextobject-haslength"><span class="codefont">function</span> hasLength(length)</a></li>
+<li><a href="#func-crayonunit-verificationcontextobject-inorder"><span class="codefont">function</span> inOrder()</a></li>
+<li><a href="#func-crayonunit-verificationcontextobject-isempty"><span class="codefont">function</span> isEmpty()</a></li>
+<li><a href="#func-crayonunit-verificationcontextobject-isequalto"><span class="codefont">function</span> isEqualTo(expected)</a></li>
+<li><a href="#func-crayonunit-verificationcontextobject-isequalwithepsilon"><span class="codefont">function</span> isEqualWithEpsilon(expected, epsilon)</a></li>
+<li><a href="#func-crayonunit-verificationcontextobject-isfalse"><span class="codefont">function</span> isFalse()</a></li>
+<li><a href="#func-crayonunit-verificationcontextobject-isnotequalto"><span class="codefont">function</span> isNotEqualTo(value)</a></li>
+<li><a href="#func-crayonunit-verificationcontextobject-isnull"><span class="codefont">function</span> isNull()</a></li>
+<li><a href="#func-crayonunit-verificationcontextobject-istrue"><span class="codefont">function</span> isTrue()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> assertThat(actualValue)<a class="bookmark" name="func-crayonunit-assertthat" href="#func-crayonunit-assertthat">[link]</a></h2>
+<div class="itembox">
+<p class="description">Used to begin an assertion statement. e.g. assertThat(someValue).isTrue(); Can only be used within the context of a running test class.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">actualValue</td>
+<td class="codefont argtype">object</td>
+<td class="description"><p class="description">The actual value of an assertion construct.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">CrayonUnit.VerificationContextObject</td><td class="description"><p class="description">Returns a VerificationContextObject, which has methods to perform various assertions on in a readable fashion.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fail(message)<a class="bookmark" name="func-crayonunit-fail" href="#func-crayonunit-fail">[link]</a></h2>
+<div class="itembox">
+<p class="description">Makes the current test a failure.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">message</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">Message to display in the failure.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> pass()<a class="bookmark" name="func-crayonunit-pass" href="#func-crayonunit-pass">[link]</a></h2>
+<div class="itembox">
+<p class="description">Virtually does nothing. Increments the assertion counter and makes it clear in the unit test code that the test has performed admirably.</p>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> Test<a class="bookmark" name="class-crayonunit-test" href="#class-crayonunit-test">[link]</a></h1>
+<div class="itembox">
+<p class="description">An abstract base class for a test class.</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> setup()<a class="bookmark" name="func-crayonunit-test-setup" href="#func-crayonunit-test-setup">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Does nothing by default. Override this to perform any setup necessary for the test methods.
+				</p>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> teardown()<a class="bookmark" name="func-crayonunit-test-teardown" href="#func-crayonunit-test-teardown">[link]</a></h2>
+<div class="itembox">
+<p class="description">Does nothing by default. Override this to perform any cleanup necessary for the test methods.</p>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> TestHarness<a class="bookmark" name="class-crayonunit-testharness" href="#class-crayonunit-testharness">[link]</a></h1>
+<div class="itembox">
+<p class="description">
+				An instance of a test run. Typical usage looks like this: new TestHarness().makePassingTestsSilent().run().showSummary()
+			</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">new</span> TestHarness()<a class="bookmark" name="constructor-crayonunit-testharness" href="#constructor-crayonunit-testharness">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					The constructor takes no arguments.
+				</p>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> makePassingTestsSilent()<a class="bookmark" name="func-crayonunit-testharness-makepassingtestssilent" href="#func-crayonunit-testharness-makepassingtestssilent">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					When called, this will configure the test harness to not display when a test passes on STDOUT.
+					Failing tests will still show, though.
+				</p>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> run()<a class="bookmark" name="func-crayonunit-testharness-run" href="#func-crayonunit-testharness-run">[link]</a></h2>
+<div class="itembox">
+<p class="description">Runs all the tests in your project. Tests are gathered by Reflection which looks for any classes that extend from CrayonUnit.Test.</p>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> showSummary()<a class="bookmark" name="func-crayonunit-testharness-showsummary" href="#func-crayonunit-testharness-showsummary">[link]</a></h2>
+<div class="itembox">
+<p class="description">Displays a summary of results of the test run.</p>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> UnitTestFailedException<a class="bookmark" name="class-crayonunit-unittestfailedexception" href="#class-crayonunit-unittestfailedexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">An exception thrown when a unit test has failed. Direct construction should be avoided and fail() or an assertion should be used instead.</p>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> VerificationContextObject<a class="bookmark" name="class-crayonunit-verificationcontextobject" href="#class-crayonunit-verificationcontextobject">[link]</a></h1>
+<div class="itembox">
+<p class="description">
+				An object that contains wraps an actual value that is a result of a test and contains several verification methods
+				that can be used to assert that value.
+				
+				When any of the assertions fail, a UnitTestFailedException is thrown.
+			</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> contains(value)<a class="bookmark" name="func-crayonunit-verificationcontextobject-contains" href="#func-crayonunit-verificationcontextobject-contains">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					This method is flexible based on the actual and expected value types. 
+					If the actual value is a string and the given value is a string, then this checks to see if the string contains the given string.
+					If the actual value is a list and the given value is a list, then this checks to see if the list contains all the values in the given list (but not necessarily in order). 
+					To verify that the list matches exactly, you can call .inOrder() after calling contains OR you can use .isEqualTo(expectedValue).
+					If the actual value is a list and the given value is not, it will verify that the expected value is a member of the list.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">object</td>
+<td class="description"><p class="description">See function description</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">CrayonUnit.VerificationContextObject</td><td class="description"><p class="description">A reference to itself to allow chaining</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> hasLength(length)<a class="bookmark" name="func-crayonunit-verificationcontextobject-haslength" href="#func-crayonunit-verificationcontextobject-haslength">[link]</a></h2>
+<div class="itembox">
+<p class="description">Checks to see if the actual value is a string, list, or dictionary and that its size matches the given length.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">length</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">The expected length</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">CrayonUnit.VerificationContextObject</td><td class="description"><p class="description">A reference to itself to allow chaining</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> inOrder()<a class="bookmark" name="func-crayonunit-verificationcontextobject-inorder" href="#func-crayonunit-verificationcontextobject-inorder">[link]</a></h2>
+<div class="itembox">
+<p class="description">Once .contains() has been called with a list to verify the contents of the list, this will verify that the contents appear in order.</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">CrayonUnit.VerificationContextObject</td><td class="description"><p class="description">A reference to itself to allow chaining</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> isEmpty()<a class="bookmark" name="func-crayonunit-verificationcontextobject-isempty" href="#func-crayonunit-verificationcontextobject-isempty">[link]</a></h2>
+<div class="itembox">
+<p class="description">Checks to see if the actual value is a string, list, or dictionary and that it is empty. Identical to .hasLength(0)</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">CrayonUnit.VerificationContextObject</td><td class="description"><p class="description">A reference to itself to allow chaining</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> isEqualTo(expected)<a class="bookmark" name="func-crayonunit-verificationcontextobject-isequalto" href="#func-crayonunit-verificationcontextobject-isequalto">[link]</a></h2>
+<div class="itembox">
+<p class="description">Verifies that the actual value is identical to the given expected value. Does not use strong reference checks.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">expected</td>
+<td class="codefont argtype">object</td>
+<td class="description"><p class="description">The expected value</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">CrayonUnit.VerificationContextObject</td><td class="description"><p class="description">A reference to itself to allow chaining</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> isEqualWithEpsilon(expected, epsilon)<a class="bookmark" name="func-crayonunit-verificationcontextobject-isequalwithepsilon" href="#func-crayonunit-verificationcontextobject-isequalwithepsilon">[link]</a></h2>
+<div class="itembox">
+<p class="description">Checks if the given number matches the expected number, but uses an epsilon value to check floats to make sure the value is close, but not necessary exact. Floating point precision isn't always precise.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">expected</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">The expected numeric value.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">epsilon</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">A tiny value to indicate how much tolerance should be given to differences in the actual value. Default value is 0.000001</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">CrayonUnit.VerificationContextObject</td><td class="description"><p class="description">A reference to itself to allow chaining</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> isFalse()<a class="bookmark" name="func-crayonunit-verificationcontextobject-isfalse" href="#func-crayonunit-verificationcontextobject-isfalse">[link]</a></h2>
+<div class="itembox">
+<p class="description">Checks to see if the actual value is the boolean false.</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">CrayonUnit.VerificationContextObject</td><td class="description"><p class="description">A reference to itself to allow chaining</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> isNotEqualTo(value)<a class="bookmark" name="func-crayonunit-verificationcontextobject-isnotequalto" href="#func-crayonunit-verificationcontextobject-isnotequalto">[link]</a></h2>
+<div class="itembox">
+<p class="description">Verifies that the actual value is different from the given value.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">object</td>
+<td class="description"><p class="description">Some value that should not match the actual value.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">CrayonUnit.VerificationContextObject</td><td class="description"><p class="description">A reference to itself to allow chaining</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> isNull()<a class="bookmark" name="func-crayonunit-verificationcontextobject-isnull" href="#func-crayonunit-verificationcontextobject-isnull">[link]</a></h2>
+<div class="itembox">
+<p class="description">Checks to see if the actual value is null.</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">CrayonUnit.VerificationContextObject</td><td class="description"><p class="description">A reference to itself to allow chaining</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> isTrue()<a class="bookmark" name="func-crayonunit-verificationcontextobject-istrue" href="#func-crayonunit-verificationcontextobject-istrue">[link]</a></h2>
+<div class="itembox">
+<p class="description">Checks to see if the actual value is the boolean true.</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">CrayonUnit.VerificationContextObject</td><td class="description"><p class="description">A reference to itself to allow chaining</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

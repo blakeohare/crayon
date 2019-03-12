@@ -1,0 +1,115 @@
+<html><head><title>Documentation</title></head><body><style>body { font-family: "Helvetica", "Arial", sans-serif; }
+h1 { font-size:20pt; font-weight:bold; color:#247; }
+h2 { font-size:16pt; font-weight:bold; color:#247; }
+h3 { font-size:12pt; font-weight:bold; color:#247; }
+.codefont { font-family: "Menlo", "Consolas", "Courier New", monospace; font-size:10pt; }
+table.arguments { border-radius:8px; overflow:hidden; border-spacing:0px; border-collapse: separate; background-color:#eee; }
+table.arguments thead { background-color:#ccc; font-weight:bold; text-align:left; }
+table.arguments td, table.arguments th { padding:8px; padding-right:20px; }
+table.arguments tbody tr { vertical-align:top; }
+td.argname { color:#286; }
+table.arguments td.argtype { color:#666; }
+td.optional { color:#000; font-weight:bold; }
+.codesnippet { background-color:#eee; border-radius:8px; padding:16px; margin-bottom:12px; }
+.itembox { margin-bottom:40px; margin-left:30px;}
+a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
+a.bookmark:hover { color:#08a; }
+p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
+.keyword { font-weight:normal; }</style><h1>Dispatcher</h1><div class="itembox">
+<p class="description">
+		Offers functionality to call timed callbacks.
+		Generally this requires a UI framework to be active such as a <span style="font-weight:bold;">Game.GameWindow</span> or <span style="font-weight:bold;">Nori.Frame</span>.
+		However, events can be manually dispatched by calling <span style="font-family:monospace;color:#008;font-weight:bold;">Dispatcher.flush()</span> from synchronous code.
+	</p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> Dispatcher<ul>
+<li><a href="#func-dispatcher-flush"><span class="codefont">function</span> flush()</a></li>
+<li><a href="#func-dispatcher-setrecurringcallback"><span class="codefont">function</span> setRecurringCallback(callback, delay, arguments)</a></li>
+<li><a href="#func-dispatcher-settimedcallback"><span class="codefont">function</span> setTimedCallback(callback, delay, arguments)</a></li>
+</ul>
+</li>
+</ul>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> flush()<a class="bookmark" name="func-dispatcher-flush" href="#func-dispatcher-flush">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+				Causes all the callbacks that are due to run to get invoked.
+				The dispatcher will automatically invoke the callbacks in situations where there is an active UI such as a Game window or Nori frame and so calling this function is unnecessary in those types of programs.
+				However in synchronous programs, such as single-threaded command line programs, the VM is unable to interrupt the current thread to do so,
+				and so this function ought to be called periodically in those situations if setTimedCallback and setRecurringCallback are used.
+			</p>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> setRecurringCallback(callback, delay, arguments)<a class="bookmark" name="func-dispatcher-setrecurringcallback" href="#func-dispatcher-setrecurringcallback">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+				Invokes a given function repeatedly with the given interval duration.
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">callback</td>
+<td class="codefont argtype">function</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">A function pointer to invoke.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">delay</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">Number of seconds to wait before invoking the function pointer since the last time the function was invoked. Note that this is the time since the function was invoked and not since the function previously ended.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">arguments</td>
+<td class="codefont argtype">list</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">A list of arguments to pass to the function. If not specified, the function will be invoked with no arguments.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> setTimedCallback(callback, delay, arguments)<a class="bookmark" name="func-dispatcher-settimedcallback" href="#func-dispatcher-settimedcallback">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+				Invokes a given function after a given amount of time has passed. The function is only invoked once.
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">callback</td>
+<td class="codefont argtype">function</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">A function pointer to invoke.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">delay</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">Number of seconds to wait before invoking the function pointer.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">arguments</td>
+<td class="codefont argtype">list</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">A list of arguments to pass to the function. If not specified, the function will be invoked with no arguments.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</body></html>

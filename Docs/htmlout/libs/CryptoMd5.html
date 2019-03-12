@@ -1,0 +1,65 @@
+<html><head><title>Documentation</title></head><body><style>body { font-family: "Helvetica", "Arial", sans-serif; }
+h1 { font-size:20pt; font-weight:bold; color:#247; }
+h2 { font-size:16pt; font-weight:bold; color:#247; }
+h3 { font-size:12pt; font-weight:bold; color:#247; }
+.codefont { font-family: "Menlo", "Consolas", "Courier New", monospace; font-size:10pt; }
+table.arguments { border-radius:8px; overflow:hidden; border-spacing:0px; border-collapse: separate; background-color:#eee; }
+table.arguments thead { background-color:#ccc; font-weight:bold; text-align:left; }
+table.arguments td, table.arguments th { padding:8px; padding-right:20px; }
+table.arguments tbody tr { vertical-align:top; }
+td.argname { color:#286; }
+table.arguments td.argtype { color:#666; }
+td.optional { color:#000; font-weight:bold; }
+.codesnippet { background-color:#eee; border-radius:8px; padding:16px; margin-bottom:12px; }
+.itembox { margin-bottom:40px; margin-left:30px;}
+a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
+a.bookmark:hover { color:#08a; }
+p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
+.keyword { font-weight:normal; }</style><h1>CryptoMd5</h1><div class="itembox">
+<p class="description">
+		Used to generate MD5 hashes of data.
+		As MD5 is not 100% secure anymore, please use with caution.
+		This ought to only be used for compatibility with legacy systems and not used in any new system.
+	</p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> CryptoMd5<ul>
+<li><a href="#class-cryptomd5-md5hash"><span class="codefont">class</span> Md5Hash</a><ul>
+<li><a href="#constructor-cryptomd5-md5hash"><span class="codefont">constructor</span>(suppressWarning)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div>
+<h1><span class="keyword">class</span> Md5Hash<a class="bookmark" name="class-cryptomd5-md5hash" href="#class-cryptomd5-md5hash">[link]</a></h1>
+<div class="itembox">
+<p class="description">
+				Creates a new empty instance of an MD5 hash.
+				Methods from <span style="font-weight:bold;">CryptoCommon.AbstractHash</span> can be used to add data to the hash and to digest it.<br /><br />
+				Typical usage: <span style="font-family:monospace;color:#008;font-weight:bold;">hash = new Md5Hash().addText("Hello, World").digestHex();</span>
+			</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">new</span> Md5Hash(suppressWarning)<a class="bookmark" name="constructor-cryptomd5-md5hash" href="#constructor-cryptomd5-md5hash">[link]</a></h2>
+<div class="itembox">
+<p class="description">Creates a new instance of the MD5 hash and, by default, prints out a warning message about it being unsafe.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">suppressWarning</td>
+<td class="codefont argtype">string</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">This parameter will suppress the warning if you pass in the string 'unsafe'.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

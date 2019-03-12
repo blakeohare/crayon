@@ -1,0 +1,294 @@
+<html><head><title>Documentation</title></head><body><style>body { font-family: "Helvetica", "Arial", sans-serif; }
+h1 { font-size:20pt; font-weight:bold; color:#247; }
+h2 { font-size:16pt; font-weight:bold; color:#247; }
+h3 { font-size:12pt; font-weight:bold; color:#247; }
+.codefont { font-family: "Menlo", "Consolas", "Courier New", monospace; font-size:10pt; }
+table.arguments { border-radius:8px; overflow:hidden; border-spacing:0px; border-collapse: separate; background-color:#eee; }
+table.arguments thead { background-color:#ccc; font-weight:bold; text-align:left; }
+table.arguments td, table.arguments th { padding:8px; padding-right:20px; }
+table.arguments tbody tr { vertical-align:top; }
+td.argname { color:#286; }
+table.arguments td.argtype { color:#666; }
+td.optional { color:#000; font-weight:bold; }
+.codesnippet { background-color:#eee; border-radius:8px; padding:16px; margin-bottom:12px; }
+.itembox { margin-bottom:40px; margin-left:30px;}
+a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
+a.bookmark:hover { color:#08a; }
+p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
+.keyword { font-weight:normal; }</style><h1>DateTime</h1><div class="itembox">
+<p class="description">
+		Converts timestamps to and from structured time.
+		Offers string formatting options for the time.
+	</p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> DateTime<ul>
+<li><a href="#class-datetime-moment"><span class="codefont">class</span> Moment</a><ul>
+<li><a href="#func-datetime-moment-at"><span class="codefont">static function</span> at(year, month, day, hour, minute, second, timezone)</a></li>
+<li><a href="#func-datetime-moment-format"><span class="codefont">function</span> format(template)</a></li>
+<li><a href="#func-datetime-moment-fromtimestamp"><span class="codefont">static function</span> fromTimestamp(timestamp, timezone)</a></li>
+<li><a href="#func-datetime-moment-getformattedoffset"><span class="codefont">function</span> getFormattedOffset()</a></li>
+<li><a href="#func-datetime-moment-getutcoffsetseconds"><span class="codefont">function</span> getUtcOffsetSeconds()</a></li>
+<li><a href="#func-datetime-moment-isdstoccuring"><span class="codefont">function</span> isDstOccuring()</a></li>
+<li><a href="#func-datetime-moment-now"><span class="codefont">static function</span> now(timezone)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div>
+<h1><span class="keyword">class</span> Moment<a class="bookmark" name="class-datetime-moment" href="#class-datetime-moment">[link]</a></h1>
+<div class="itembox">
+<p class="description">
+				Represents a single instant in time in a given time zone as a structured value.
+			</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> at(year, month, day, hour, minute, second, timezone)<a class="bookmark" name="func-datetime-moment-at" href="#func-datetime-moment-at">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Creates a new Moment based on a human-readable timestamp.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">year</td>
+<td class="codefont argtype">integer</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">The year in 4-digit format</p></td>
+</tr>
+<tr>
+<td class="codefont argname">month</td>
+<td class="codefont argtype">integer</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">A month number (1-12)</p></td>
+</tr>
+<tr>
+<td class="codefont argname">day</td>
+<td class="codefont argtype">integer</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">A day number (1-31)</p></td>
+</tr>
+<tr>
+<td class="codefont argname">hour</td>
+<td class="codefont argtype">integer</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">An hour number in 24-hour format (0-23)</p></td>
+</tr>
+<tr>
+<td class="codefont argname">minute</td>
+<td class="codefont argtype">integer</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">A minute number (0-59)</p></td>
+</tr>
+<tr>
+<td class="codefont argname">second</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">A second number. Unlike the previous parameters, this can be a float to represent fractional seconds. (0-59.999...)</p></td>
+</tr>
+<tr>
+<td class="codefont argname">timezone</td>
+<td class="codefont argtype">DateTime.TimeZone</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">A time zone for this timestamp. Uses local time if not specified.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">DateTime.Moment</td><td class="description"><p class="description">A new moment instance for the given time.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> format(template)<a class="bookmark" name="func-datetime-moment-format" href="#func-datetime-moment-format">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Creates a formatted string representing this Moment. 
+					The input string is a template containing directives in the form of a percent sign (%) followed by a single letter.
+					For example, a string of <span style="font-family:monospace;color:#008;font-weight:bold;">"%F %j%S, %Y at %g:%i %A"</span> will produce a string like <span style="font-style:italic;">"January 9th, 2009 at 4:28 PM"</span>.<br />
+					
+					The full list of directives is listed in this table:<br /><br />
+					
+					<table border="1" cellspacing="0" cellpadding="3">
+					<tr><td>%y</td><td>The year in 2-digit format</td></tr>
+					<tr><td>%Y</td><td>The year in 4-digit format</td></tr>
+					<tr><td>%L</td><td>1 if this is a leap year, 0 otherwise</td></tr>
+					<tr><td>%M</td><td>The month expressed as a 3-letter abbreviation e.g. Aug</td></tr>
+					<tr><td>%F</td><td>The month fully written out e.g. August</td></tr>
+					<tr><td>%m</td><td>The month as a 2-digit number with leading 0 for single-digit months</td></tr>
+					<tr><td>%n</td><td>The month as an integer with no leading 0's</td></tr>
+					<tr><td>%t</td><td>The number of days in the month</td></tr>
+					<tr><td>%d</td><td>The day as a 2-digit number</td></tr>
+					<tr><td>%j</td><td>The day as an integer with no leading 0's</td></tr>
+					<tr><td>%S</td><td>The ordinal suffix of the day. e.g. "nd" if it's the 22nd of the month</td></tr>
+					<tr><td>%z</td><td>The current day number as a number of days from the beginning of the year. e.g. January 1st is 0 and December 31st is 364 in non-leap years.</td></tr>
+					<tr><td>%D</td><td>The day of the week as a 3-letter abbreviation e.g. Thu</td></tr>
+					<tr><td>%N</td><td>The day of the week fully spelled out e.g. Wednesday</td></tr>
+					<tr><td>%a</td><td>"am" or "pm"</td></tr>
+					<tr><td>%A</td><td>"AM" or "PM"</td></tr>
+					<tr><td>%g</td><td>The current hour in 12-hour format</td></tr>
+					<tr><td>%G</td><td>The current hour in 24-hour format</td></tr>
+					<tr><td>%h</td><td>The current hour in 12-hour format as a 2-digit number with leading 0's if necessary</td></tr>
+					<tr><td>%H</td><td>The current hour in 24-hour format as a 2-digit number with leading 0's if necessary</td></tr>
+					<tr><td>%i</td><td>The current minute as a 2-digit number</td></tr>
+					<tr><td>%s</td><td>The current seconds as a 2-digit number</td></tr>
+					<tr><td>%v</td><td>The current number of milliseconds as a 3-digit number</td></tr>
+					<tr><td>%u</td><td>The current number of microseconds as a 6-digit number. This is redundant with millis.</td></tr>
+					<tr><td>%U</td><td>The current unix timestamp.</td></tr>
+					</table>
+					
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">template</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">A template string containing directives</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> fromTimestamp(timestamp, timezone)<a class="bookmark" name="func-datetime-moment-fromtimestamp" href="#func-datetime-moment-fromtimestamp">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Creates a new Moment instance based on the given timestamp and timezone.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">timestamp</td>
+<td class="codefont argtype">float</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">The unix timestamp of this moment</p></td>
+</tr>
+<tr>
+<td class="codefont argname">timezone</td>
+<td class="codefont argtype">DateTime.TimeZone</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">The timezone of the moment. Uses local time if not specified.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">DateTime.Moment</td><td class="description"><p class="description">A new Moment instance for the given time.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getFormattedOffset()<a class="bookmark" name="func-datetime-moment-getformattedoffset" href="#func-datetime-moment-getformattedoffset">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Returns the UTC offset as a standardized readable string in the format of <span style="font-style:italic;">UTC+HH:MM</span> or <span style="font-style:italic;">UTC-HH:MM</span>.
+				</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">string</td><td class="description"><p class="description">The formatted UTC offset.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> getUtcOffsetSeconds()<a class="bookmark" name="func-datetime-moment-getutcoffsetseconds" href="#func-datetime-moment-getutcoffsetseconds">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Gets the number of seconds from the same time in UTC. 
+				</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">integer</td><td class="description"><p class="description">Number of seconds from UTC for the Moment's time zone at the given time. Note on sign: Adding this value to UTC will give you this Moment's time. Subtracting this value from the Moment's time will give you UTC time.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> isDstOccuring()<a class="bookmark" name="func-datetime-moment-isdstoccuring" href="#func-datetime-moment-isdstoccuring">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Checks if Daylight Savings Time is curring in the given moment.
+				</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">True if DST is happening.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> now(timezone)<a class="bookmark" name="func-datetime-moment-now" href="#func-datetime-moment-now">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Creates a new Moment that represents the current time.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">timezone</td>
+<td class="codefont argtype">DateTime.TimeZone</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">Time zone of the moment. Uses local time if not specified.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">DateTime.Moment</td><td class="description"><p class="description">A new moment instance for the current time.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

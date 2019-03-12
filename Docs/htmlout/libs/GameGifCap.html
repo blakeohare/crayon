@@ -1,0 +1,189 @@
+<html><head><title>Documentation</title></head><body><style>body { font-family: "Helvetica", "Arial", sans-serif; }
+h1 { font-size:20pt; font-weight:bold; color:#247; }
+h2 { font-size:16pt; font-weight:bold; color:#247; }
+h3 { font-size:12pt; font-weight:bold; color:#247; }
+.codefont { font-family: "Menlo", "Consolas", "Courier New", monospace; font-size:10pt; }
+table.arguments { border-radius:8px; overflow:hidden; border-spacing:0px; border-collapse: separate; background-color:#eee; }
+table.arguments thead { background-color:#ccc; font-weight:bold; text-align:left; }
+table.arguments td, table.arguments th { padding:8px; padding-right:20px; }
+table.arguments tbody tr { vertical-align:top; }
+td.argname { color:#286; }
+table.arguments td.argtype { color:#666; }
+td.optional { color:#000; font-weight:bold; }
+.codesnippet { background-color:#eee; border-radius:8px; padding:16px; margin-bottom:12px; }
+.itembox { margin-bottom:40px; margin-left:30px;}
+a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
+a.bookmark:hover { color:#08a; }
+p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
+.keyword { font-weight:normal; }</style><h1>GameGifCap</h1><div class="itembox">
+<p class="description">
+		Records a Game.GameWindow and exports it as an animated GIF.<br />
+		
+		Compatibility note: this functionality is only available in projects exported to the C#/Windows based platforms (which includes the default VM running on Windows). Be sure to check the <span style="font-family:monospace;color:#008;font-weight:bold;">isSupported()</span> function.
+	</p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> GameGifCap<ul>
+<li><a href="#func-gamegifcap-issupported"><span class="codefont">function</span> isSupported()</a></li>
+<li><a href="#class-gamegifcap-gifrecorder"><span class="codefont">class</span> GifRecorder</a><ul>
+<li><a href="#constructor-gamegifcap-gifrecorder"><span class="codefont">constructor</span>(fps)</a></li>
+<li><a href="#func-gamegifcap-gifrecorder-clear"><span class="codefont">function</span> clear()</a></li>
+<li><a href="#func-gamegifcap-gifrecorder-isrecording"><span class="codefont">function</span> isRecording()</a></li>
+<li><a href="#func-gamegifcap-gifrecorder-pause"><span class="codefont">function</span> pause()</a></li>
+<li><a href="#func-gamegifcap-gifrecorder-record"><span class="codefont">function</span> record()</a></li>
+<li><a href="#func-gamegifcap-gifrecorder-save"><span class="codefont">function</span> save(path)</a></li>
+<li><a href="#func-gamegifcap-gifrecorder-settargetsize"><span class="codefont">function</span> setTargetSize(width, height)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> isSupported()<a class="bookmark" name="func-gamegifcap-issupported" href="#func-gamegifcap-issupported">[link]</a></h2>
+<div class="itembox">
+<p class="description">Checks to see if the GIF recorder is available for the currently running platform.</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">True if the GIF recorder is currently supported.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> GifRecorder<a class="bookmark" name="class-gamegifcap-gifrecorder" href="#class-gamegifcap-gifrecorder">[link]</a></h1>
+<div class="itembox">
+<p class="description">
+				Represents a GIF recording session.
+			</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">new</span> GifRecorder(fps)<a class="bookmark" name="constructor-gamegifcap-gifrecorder" href="#constructor-gamegifcap-gifrecorder">[link]</a></h2>
+<div class="itembox">
+<p class="description">Creates a new GIF recorder instance.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">fps</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">Frames per second of the game</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> clear()<a class="bookmark" name="func-gamegifcap-gifrecorder-clear" href="#func-gamegifcap-gifrecorder-clear">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Removes all recorded data up to this point.
+				</p>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> isRecording()<a class="bookmark" name="func-gamegifcap-gifrecorder-isrecording" href="#func-gamegifcap-gifrecorder-isrecording">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Checks if the recorder is actively recording.
+				</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">boolean</td><td class="description"><p class="description">True if the recorder is recording.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> pause()<a class="bookmark" name="func-gamegifcap-gifrecorder-pause" href="#func-gamegifcap-gifrecorder-pause">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Pauses the recording.
+				</p>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> record()<a class="bookmark" name="func-gamegifcap-gifrecorder-record" href="#func-gamegifcap-gifrecorder-record">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Starts recording the screen.
+				</p>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> save(path)<a class="bookmark" name="func-gamegifcap-gifrecorder-save" href="#func-gamegifcap-gifrecorder-save">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Saves the Animated GIF to disk.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">path</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">Desired file path to save the file to.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> setTargetSize(width, height)<a class="bookmark" name="func-gamegifcap-gifrecorder-settargetsize" href="#func-gamegifcap-gifrecorder-settargetsize">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Sets the desired size of the final image. <span style="font-weight:bold;">MUST be called before recording!</span> 
+					If this is different than the size of the GameWindow, then the image is stretched.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">width</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">Width of the image</p></td>
+</tr>
+<tr>
+<td class="codefont argname">height</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">Height of the image</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">GameGifCap.GifRecorder</td><td class="description"><p class="description">reference to itself for chaining syntax</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

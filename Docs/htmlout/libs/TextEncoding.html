@@ -1,0 +1,154 @@
+<html><head><title>Documentation</title></head><body><style>body { font-family: "Helvetica", "Arial", sans-serif; }
+h1 { font-size:20pt; font-weight:bold; color:#247; }
+h2 { font-size:16pt; font-weight:bold; color:#247; }
+h3 { font-size:12pt; font-weight:bold; color:#247; }
+.codefont { font-family: "Menlo", "Consolas", "Courier New", monospace; font-size:10pt; }
+table.arguments { border-radius:8px; overflow:hidden; border-spacing:0px; border-collapse: separate; background-color:#eee; }
+table.arguments thead { background-color:#ccc; font-weight:bold; text-align:left; }
+table.arguments td, table.arguments th { padding:8px; padding-right:20px; }
+table.arguments tbody tr { vertical-align:top; }
+td.argname { color:#286; }
+table.arguments td.argtype { color:#666; }
+td.optional { color:#000; font-weight:bold; }
+.codesnippet { background-color:#eee; border-radius:8px; padding:16px; margin-bottom:12px; }
+.itembox { margin-bottom:40px; margin-left:30px;}
+a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
+a.bookmark:hover { color:#08a; }
+p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
+.keyword { font-weight:normal; }</style><h1>TextEncoding</h1><div class="itembox">
+<p class="description">
+		Encodes text into bytes and decodes bytes into text.
+		Supports ASCII, ISO-8859-1, UTF8, UTF16, and UTF32 and endian/BOM variations.
+	</p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> TextEncoding<ul>
+<li><a href="#enum-textencoding-textformat"><span class="codefont">enum</span> TextFormat</a></li>
+<li><a href="#func-textencoding-convertbytestotext"><span class="codefont">function</span> convertBytesToText(bytes, encoding)</a></li>
+<li><a href="#func-textencoding-converttexttobytes"><span class="codefont">function</span> convertTextToBytes(value, encoding, includeBom)</a></li>
+<li><a href="#class-textencoding-encodingexception"><span class="codefont">class</span> EncodingException</a></li>
+</ul>
+</li>
+</ul>
+<div class="itembox">
+<h1><span class="keyword">enum</span> TextFormat<a class="bookmark" name="enum-textencoding-textformat" href="#enum-textencoding-textformat">[link]</a></h1>
+<p class="description">Enum list of available encodings. Endian and BOM variations are passed in as separate parameters in places where these are used.</p>
+<div class="itembox">
+<table class="arguments">
+<thead><tr><th>Name</th><th>Description</th></thead>
+<tbody>
+<tr>
+<td class="codefont argname">UNKNOWN</td>
+<td class="description"><p class="description">Encoding is unknown. Used when decoding, but not for encoding.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">ASCII</td>
+<td class="description"><p class="description">The ASCII format (single-byte encoding with 7-bit values)</p></td>
+</tr>
+<tr>
+<td class="codefont argname">ISO_8859_1</td>
+<td class="description"><p class="description">The ISO-8859-1 encoding (single-byte encoding with 8-bit values)</p></td>
+</tr>
+<tr>
+<td class="codefont argname">UTF-8</td>
+<td class="description"><p class="description">The UTF-8 format. (variable-length encoding format. Characters are 1-4 bytes. Generally considered standard.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">UTF-16</td>
+<td class="description"><p class="description">The UTF-16 format. (2-byte format with surrogate pairs)</p></td>
+</tr>
+<tr>
+<td class="codefont argname">UTF-32</td>
+<td class="description"><p class="description">The UTF-32 format. (4-byte format, each 4-bit integer is the Unicode code point)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> convertBytesToText(bytes, encoding)<a class="bookmark" name="func-textencoding-convertbytestotext" href="#func-textencoding-convertbytestotext">[link]</a></h2>
+<div class="itembox">
+<p class="description">Converts a list of bytes into a string.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">bytes</td>
+<td class="codefont argtype">list of integers</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">A list of byte values from 0-255</p></td>
+</tr>
+<tr>
+<td class="codefont argname">encoding</td>
+<td class="codefont argtype">TextEncoding.TextFormat</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">An encoding to decode the bytes. If not specified, auto-detection will be attempted.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">string</td><td class="description"><p class="description">The string of the decoded bytes.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> convertTextToBytes(value, encoding, includeBom)<a class="bookmark" name="func-textencoding-converttexttobytes" href="#func-textencoding-converttexttobytes">[link]</a></h2>
+<div class="itembox">
+<p class="description">Converts a string into a byte list.</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">string</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">A string to encode into bytes.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">encoding</td>
+<td class="codefont argtype">TextEncoding.TextFormat</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">The encoding to use for the conversion.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">includeBom</td>
+<td class="codefont argtype">boolean</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">Whether or not to include a BOM at the beginning of the byte list. Ignored if the format does not support a BOM. Default value is false when not specified.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">list of integers</td><td class="description"><p class="description">A list of byte values from 0 to 255.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h1><span class="keyword">class</span> EncodingException<a class="bookmark" name="class-textencoding-encodingexception" href="#class-textencoding-encodingexception">[link]</a></h1>
+<div class="itembox">
+<p class="description">
+				Thrown when there is a problem performing a conversion.
+			</p>
+</div>
+</div>
+</body></html>

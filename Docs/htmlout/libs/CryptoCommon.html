@@ -1,0 +1,181 @@
+<html><head><title>Documentation</title></head><body><style>body { font-family: "Helvetica", "Arial", sans-serif; }
+h1 { font-size:20pt; font-weight:bold; color:#247; }
+h2 { font-size:16pt; font-weight:bold; color:#247; }
+h3 { font-size:12pt; font-weight:bold; color:#247; }
+.codefont { font-family: "Menlo", "Consolas", "Courier New", monospace; font-size:10pt; }
+table.arguments { border-radius:8px; overflow:hidden; border-spacing:0px; border-collapse: separate; background-color:#eee; }
+table.arguments thead { background-color:#ccc; font-weight:bold; text-align:left; }
+table.arguments td, table.arguments th { padding:8px; padding-right:20px; }
+table.arguments tbody tr { vertical-align:top; }
+td.argname { color:#286; }
+table.arguments td.argtype { color:#666; }
+td.optional { color:#000; font-weight:bold; }
+.codesnippet { background-color:#eee; border-radius:8px; padding:16px; margin-bottom:12px; }
+.itembox { margin-bottom:40px; margin-left:30px;}
+a.bookmark { margin-left:12px; font-family: "Comic Sans", sans-serif; font-size:9pt; color:#8af; }
+a.bookmark:hover { color:#08a; }
+p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
+.keyword { font-weight:normal; }</style><h1>CryptoCommon</h1><div class="itembox">
+<p class="description">
+		Contains the common base class for cryptographic hash libraries
+	</p>
+</div>
+<ul>
+<li><span class="codefont">namespace</span> CryptoCommon<ul>
+<li><a href="#class-cryptocommon-abstracthash"><span class="codefont">class</span> AbstractHash</a><ul>
+<li><a href="#func-cryptocommon-abstracthash-addbyte"><span class="codefont">function</span> addByte(value)</a></li>
+<li><a href="#func-cryptocommon-abstracthash-addinteger"><span class="codefont">function</span> addInteger(value)</a></li>
+<li><a href="#func-cryptocommon-abstracthash-addtext"><span class="codefont">function</span> addText(value, encoding)</a></li>
+<li><a href="#func-cryptocommon-abstracthash-digestbytelist"><span class="codefont">function</span> digestByteList()</a></li>
+<li><a href="#func-cryptocommon-abstracthash-digesthex"><span class="codefont">function</span> digestHex()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div>
+<h1><span class="keyword">class</span> AbstractHash<a class="bookmark" name="class-cryptocommon-abstracthash" href="#class-cryptocommon-abstracthash">[link]</a></h1>
+<div class="itembox">
+<p class="description">
+				The abstract base class for the cryptographic hashes in other libraries, such as SHA1.
+				Contains the common methods for adding data to the hash and generating a digest.
+			</p>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> addByte(value)<a class="bookmark" name="func-cryptocommon-abstracthash-addbyte" href="#func-cryptocommon-abstracthash-addbyte">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Adds a single byte value to the hash.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">A byte value from 0 to 255 (signed bytes from -128 to -1 are also allowed).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">CryptoCommon.AbstractHash</td><td class="description"><p class="description">A reference to itself to allow chaining syntax.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> addInteger(value)<a class="bookmark" name="func-cryptocommon-abstracthash-addinteger" href="#func-cryptocommon-abstracthash-addinteger">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Adds an integer to the hash. The integer is converted into 32-bit signed Big Endian bytes.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">integer</td>
+<td class="description"><p class="description">An integer value</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">CryptoCommon.AbstractHash</td><td class="description"><p class="description">A reference to itself to allow chaining syntax.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> addText(value, encoding)<a class="bookmark" name="func-cryptocommon-abstracthash-addtext" href="#func-cryptocommon-abstracthash-addtext">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Adds the string as text to the current hash.
+				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Optional</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">string</td>
+<td class="codefont optional"></td>
+<td class="description"><p class="description">A text value to add to the hash.</p></td>
+</tr>
+<tr>
+<td class="codefont argname">encoding</td>
+<td class="codefont argtype">TextEncoding.TextFormat</td>
+<td class="codefont optional">Optional</td>
+<td class="description"><p class="description">Because cryptographic hashes work with bytes, a string must have an encoding to convert to binary data. If not specified, UTF8 is used.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">CryptoCommon.AbstractHash</td><td class="description"><p class="description">A reference to itself to allow chaining syntax.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> digestByteList()<a class="bookmark" name="func-cryptocommon-abstracthash-digestbytelist" href="#func-cryptocommon-abstracthash-digestbytelist">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Digests the current data into a list of bytes.
+				</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">int list</td><td class="description"><p class="description">A list of bytes from 0 to 255</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> digestHex()<a class="bookmark" name="func-cryptocommon-abstracthash-digesthex" href="#func-cryptocommon-abstracthash-digesthex">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+					Digests the current data into a (lowercase) hexadecimal string.
+				</p>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">string</td><td class="description"><p class="description">A hexadecimal hash value</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>
