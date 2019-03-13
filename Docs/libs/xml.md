@@ -24,7 +24,7 @@ There are 3 possible return value types.
 
 # Enum: XmlOption
 
-An enum of option flags for the XML parser. These are bitmasked values and can be combined using the bitwise or operator `|`. 
+An enum of option flags for the XML parser. These are bitmasked values and can be combined using the bitwise or operator `|`.
 
 | Value | Description |
 | --- | --- |
@@ -46,7 +46,7 @@ A class that represents an element in an XML document.
 
 `xmlElement.name`
 
-The name of the element. 
+The name of the element.
 
 ---
 
@@ -79,7 +79,7 @@ A value from the [NodeType](#enum-nodetype) enum indicating what kind of node th
 
 # Class: XmlNamespacedElement
 
-Represents an element in an XML document. Includes namespace information for itself and its attributes. 
+Represents an element in an XML document. Includes namespace information for itself and its attributes.
 
 ## Fields
 

@@ -48,7 +48,7 @@ Returns a random float value in the range 0.0 <= value < 1.0.
 
 `Random.randomInt(max)` or `Random.randomInt(min, max)`
 
-Returns a random integer in the given range. 
+Returns a random integer in the given range.
 If only a maximum upper bound is provided, 0 is automatically used as the lower bound.
 
 | Argument | Type | Description |

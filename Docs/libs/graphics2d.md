@@ -98,9 +98,9 @@ The start and end coordinates do not have to be provided in a specific order.
 
 Draws an arbitrarily shaped quadrilateral on the screen with the given position and color.
 
-As of version 0.2.0, only convex quadrilaterals are officially supported. 
+As of version 0.2.0, only convex quadrilaterals are officially supported.
 The end result of concave quadrilaterals or quads with criss-crossing lines depends on the platform.
-Unintended behavior can be avoided by keeping in mind that some platforms will render this as 2 triangles: `ABC` and `BCD`. 
+Unintended behavior can be avoided by keeping in mind that some platforms will render this as 2 triangles: `ABC` and `BCD`.
 
 | Argument | Type | Description | Default |
 | --- | --- | --- | --- |
@@ -221,7 +221,7 @@ Draws the texture onto the screen at full size with the given transparency.
 
 `texture.drawRegion(x, y, sourceX, sourceY, width, height)`
 
-Draws a portion of the texture onto the screen at the given coordinate. 
+Draws a portion of the texture onto the screen at the given coordinate.
 `sourceX`, `sourceY`, `width`, and `height` represent a rectangle within the image to draw, where `sourceX` and `sourceY` is the top left corner of that rectangle.
 The image is drawn at the same scale.
 
@@ -362,7 +362,7 @@ texture.drawWithOptions(
     alpha)
 ```
 
-Draws the image onto the screen with all available options: stretch/shrink, crop, rotate, alpha. 
+Draws the image onto the screen with all available options: stretch/shrink, crop, rotate, alpha.
 
 | Argument | Type | Description |
 | --- | --- | --- |
@@ -412,4 +412,3 @@ Creates a new instance of the texture that is scaled to a new size.
 **Return value**: GraphicsTexture
 
 While technically redundant with the various draw methods that include scaling the output, scaling the image itself may simplify code or have performance benefits.
-

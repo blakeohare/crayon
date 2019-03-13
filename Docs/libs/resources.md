@@ -17,4 +17,3 @@ Throws an error if the resource is not found or the resource is not a text file.
 | **path** | _string_ | A path to a text file relative to the root of the source. |
 
 **Return type**: string
-

@@ -2,7 +2,7 @@
 
 Sends both text and binary HTTP requests either synchronously or asynchronously.
 
-The default User-Agent is `Crayon/v0.2.0; Have a nice day.` unless the platform does not have a mandated User-Agent value (i.e. JavaScript running in browsers). 
+The default User-Agent is `Crayon/v0.2.0; Have a nice day.` unless the platform does not have a mandated User-Agent value (i.e. JavaScript running in browsers).
 
 # Class: HttpRequest
 
@@ -20,7 +20,7 @@ Creates a new HTTP request object that can be sent to the given URL. No request 
 
 `request.setMethod(method)`
 
-Sets the method to use for the HTTP request. 
+Sets the method to use for the HTTP request.
 
 | Argument | Type | Description |
 | --- | --- | --- |
@@ -93,7 +93,7 @@ Sends the request and waits for a response, which is returned.
 
 `request.sendAsync()`
 
-Sends the request but doesn't wait for a response. 
+Sends the request but doesn't wait for a response.
 
 **Return value**: returns itself (the HttpRequest) as this is intended to be the end of the chain of a builder syntax expression.
 
@@ -139,7 +139,7 @@ Returns a list of HTTP header names in the response.
 
 `response.getHeaders(name)`
 
-Returns all the values for all headers that match this name as a list. 
+Returns all the values for all headers that match this name as a list.
 
 | Argument | Type | Description |
 | --- | --- | --- |

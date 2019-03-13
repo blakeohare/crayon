@@ -45,9 +45,9 @@ Basic functionality for opening a game window and dealing with input.
 
 `new GameWindow(title, fps, width, height, screenWidth = null, screenHeight = null)`
 
-Creates _and_ displays a window with the given width, height, and title. 
+Creates _and_ displays a window with the given width, height, and title.
 The game loop will attempt to run at the given FPS but may potentially be restricted by platform constraints.
-If the screenWidth and screenHeight, the window will appear at that width and height, but all graphical operations will treat the 
+If the screenWidth and screenHeight, the window will appear at that width and height, but all graphical operations will treat the
 window as having a size of the regular `width` and `height` parameters and stretch the display to match the physical width and height.
 
 For mobile platforms, screenWidth and screenHeight are entirely ignored and the system will define its own size.
@@ -69,10 +69,10 @@ For mobile platforms, screenWidth and screenHeight are entirely ignored and the 
 
 `gameWindow.clockTick()`
 
-Indicates the end of one iteration of a game loop. 
-The clockTick method will pause execution long enough such that the target frame rate is maintained. 
-It will also potentially yield the main thread to the platform if necessary and pump the event queue, therefore it is not 
-equivalent to calling `Core.sleep(t)`. If clockTick is not invoked, the window will become unresponsive. 
+Indicates the end of one iteration of a game loop.
+The clockTick method will pause execution long enough such that the target frame rate is maintained.
+It will also potentially yield the main thread to the platform if necessary and pump the event queue, therefore it is not
+equivalent to calling `Core.sleep(t)`. If clockTick is not invoked, the window will become unresponsive.
 
 **Return value**: nothing
 
@@ -82,7 +82,7 @@ equivalent to calling `Core.sleep(t)`. If clockTick is not invoked, the window w
 
 `gameWindow.pumpEvents()`
 
-Returns a list of events that have occurred since the last time this method was invoked. 
+Returns a list of events that have occurred since the last time this method was invoked.
 Events are instances of [EventType](#class-eventtype)
 
 ---
@@ -91,7 +91,7 @@ Events are instances of [EventType](#class-eventtype)
 
 `gameWindow.setTitle(title)`
 
-Sets the title of the window to a new value. 
+Sets the title of the window to a new value.
 
 | Argument | Type | Description |
 | --- | --- | --- |
@@ -149,7 +149,7 @@ This is the key that is pressed. This is an enum value from [KeyboardKey](#enum-
 
 `event.down`
 
-This is a boolean indicating whether the key was pushed down. 
+This is a boolean indicating whether the key was pushed down.
 This is redundant with checking if the .type field is `EventType.KEY_DOWN` and exists as a convenience.
 
 ---
@@ -168,8 +168,8 @@ Abstract base class for other mouse event types. This class only contains cursor
 
 `event.y`
 
-Location on the screen where the mouse event occurred. 
-Note that this uses logical coordinates (the `width` and `height` parameters of [GameWindow](#gamewindow-constructor)) 
+Location on the screen where the mouse event occurred.
+Note that this uses logical coordinates (the `width` and `height` parameters of [GameWindow](#gamewindow-constructor))
 as opposed to the actual physical screen size.
 
 # Class: MouseClickEvent
@@ -191,7 +191,7 @@ Note that this is redundant with checking the event's `.type` value.
 
 `mosueClickEvent.down`
 
-A boolean indicating whether the event was for a pressing a button down (as opposed to releasing a button). 
+A boolean indicating whether the event was for a pressing a button down (as opposed to releasing a button).
 Note that this is redundant with checking the event's `.type` value.
 
 ---
@@ -273,8 +273,8 @@ See also: [MouseClickEvent](#class-mouseclickevent)
 
 Enum defining all possible keyboard keys that will occur in keyboard events.
 
-Note that certain keys ought to be avoided for maximum compatibility. 
-For example, the OS_COMMAND/CONTEXT_MENU keys will not be available on older keyboards and certain keys such as F1-F12 may 
+Note that certain keys ought to be avoided for maximum compatibility.
+For example, the OS_COMMAND/CONTEXT_MENU keys will not be available on older keyboards and certain keys such as F1-F12 may
 have special meaning in browsers and will cause inintended side effects if the project is exported to JavaScript.
 
 | Value | Description |

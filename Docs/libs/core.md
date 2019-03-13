@@ -296,7 +296,7 @@ See also: [Core.Type](#type), [Core.isNumber](#isnumber), [Core.isString](#isstr
 
 ### Type
 
-An enum of all the primitive types. 
+An enum of all the primitive types.
 
 | Value | Description |
 | --- | --- |

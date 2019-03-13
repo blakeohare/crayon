@@ -10,7 +10,7 @@ The ImageEncoder currently supports the following formats:
 
 # Class: PngEncoder
 
-Encodes an ImageResource into the PNG format. 
+Encodes an ImageResource into the PNG format.
 
 ### constructor
 
@@ -38,7 +38,7 @@ Encodes the image into the PNG format and returns a list of byte values.
 
 # Class: JpegEncoder
 
-Encodes an ImageResource into the JPEG format. 
+Encodes an ImageResource into the JPEG format.
 
 ### constructor
 
@@ -74,8 +74,8 @@ Icons, unlike other formats, are actually an aggregation of multiple image files
 
 `new IconEncoder()`
 
-Creates a new instance of an IconEncoder. 
-Unlike other formats, this consumes no ImageResource instance and instead relies on [addImage](#addimage) to be invoked 
+Creates a new instance of an IconEncoder.
+Unlike other formats, this consumes no ImageResource instance and instead relies on [addImage](#addimage) to be invoked
 per file to be included in the icon.
 
 ---
@@ -86,8 +86,8 @@ per file to be included in the icon.
 
 `iconEncoder.addImage(imageResource)`
 
-Adds an ImageResource to the icon file. 
-The ImageResource must be small enough to fit into a 256x256 space. 
+Adds an ImageResource to the icon file.
+The ImageResource must be small enough to fit into a 256x256 space.
 
 The resolutions supported are:
 - 16 x 16
@@ -96,9 +96,9 @@ The resolutions supported are:
 - 128 x 128
 - 256 x 256
 
-However, an image does not have to be one of the above sizes. 
+However, an image does not have to be one of the above sizes.
 Images are automatically padded to fit evenly into the smallest size possible.
-The padded image will have the original image centered in it and will not be stretched or distorted to fit. 
+The padded image will have the original image centered in it and will not be stretched or distorted to fit.
 
 This method returns the encoder instance such that builder chain syntax may be used.
 

@@ -66,7 +66,7 @@ The Arc Sine (or inverse sine) of a ratio. Returns an angle in radians.
 
 `Math.arctan(ratio)` OR `Math.arctan(yComponent, xComponent)`
 
-The Arc Tangent (or inverse tangent) of a ratio. Returns an angle in radians. 
+The Arc Tangent (or inverse tangent) of a ratio. Returns an angle in radians.
 The ratio can be provided as a single scalar value and a value will be returned in the range of `-pi / 2` to `pi / 2`.
 Alternatively, the ratio can be provided as a vector of two values using 2 arguments (y and x components respectively).
 This will return a value in the range of `0` to `2 * pi`.
@@ -260,5 +260,3 @@ Calculates the tangent of an angle.
 | **theta** | _number_ | An angle in radians. |
 
 **Return type**: float
-
-

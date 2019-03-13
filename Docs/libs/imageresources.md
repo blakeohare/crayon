@@ -1,10 +1,10 @@
 # ImageResources Library
 
-The ImageResources library contains functionality to load images from the program's resources both synchronously 
-and asynchronously. It also allows interprets ImageSheet information as defined in the build file. 
+The ImageResources library contains functionality to load images from the program's resources both synchronously
+and asynchronously. It also allows interprets ImageSheet information as defined in the build file.
 
-Ultimately the ImageResources library's various loaders will generate ImageResource instances, which do not do anything directly 
-and only represent an image resource. These resources are generally used by other libraries such as Graphics or ImageEncoder. 
+Ultimately the ImageResources library's various loaders will generate ImageResource instances, which do not do anything directly
+and only represent an image resource. These resources are generally used by other libraries such as Graphics or ImageEncoder.
 
 [ImageResources](#class-imageresource)
 - [getWidth](#getwidth)
@@ -26,8 +26,8 @@ and only represent an image resource. These resources are generally used by othe
 
 # Class: ImageResource
 
-Represents an image resource in memory. An ImageResource is loaded and ready to use and is generally implemented as an in-memory 
-32-bit bitmap. There is very little that can be done with an image directly and is generally passed as input to functionality in 
+Represents an image resource in memory. An ImageResource is loaded and ready to use and is generally implemented as an in-memory
+32-bit bitmap. There is very little that can be done with an image directly and is generally passed as input to functionality in
 other libraries.
 
 ## Methods
@@ -80,7 +80,7 @@ See also: [ImageLoader.isDone](#isdone), [ImageLoader.getImage](#getimage)
 
 `ImageLoader.loadFromResources(path)`
 
-Static method that will load an image from the embedded resources synchronously. 
+Static method that will load an image from the embedded resources synchronously.
 The return value is an ImageResource instance.
 
 | Argument | Type | Description |
@@ -95,7 +95,7 @@ The return value is an ImageResource instance.
 
 `loader.isDone()`
 
-Checks to see if the asynchronous ImageLoader is done loading. 
+Checks to see if the asynchronous ImageLoader is done loading.
 
 **Return type**: boolean.
 
@@ -113,7 +113,7 @@ Will throw an error if called before finished. Be sure to check the status of [.
 
 # Class: ImageSheet
 
-Represents a collection of image resources that can all be loaded simultaneously. 
+Represents a collection of image resources that can all be loaded simultaneously.
 
 ## Methods
 
@@ -166,10 +166,10 @@ See also: [imageSheet.getProgress()](#getprogress)
 
 `imageSheet.getProgress()`
 
-Method to check what ratio of the ImageSheet has been loaded. 
+Method to check what ratio of the ImageSheet has been loaded.
 Ideal for creating progress bars on loading screens.
 
-The return value is a float from 0.0 to 1.0. 
+The return value is a float from 0.0 to 1.0.
 Despite completion coinciding with a return value of 1.0, it is generally better style to check [.isDone()](#isdone-1) directly instead.
 
 **Return Type**: float
@@ -182,7 +182,7 @@ See also: [imageSheet.getProgress()](#isdone-1)
 
 `imageSheet.getImage(path)`
 
-Method to get an ImageResource instance from the image sheet. 
+Method to get an ImageResource instance from the image sheet.
 This method can only be called if the ImageSheet is completely finished loading and will throw an error if called before.
 
 | Argument | Type | Description |
