@@ -78,7 +78,8 @@ namespace Common
 
         public byte[] ReadFileBytes(string path)
         {
-            if (!this.files.ContainsKey(path) || this.files[path].IsDirectory) throw new InvalidOperationException();
+            if (path.StartsWith("./")) path = path.Substring(2);
+            if (!this.files.ContainsKey(path) || this.files[path].IsDirectory) throw new InvalidOperationException(path + " was not present in the CryPkg");
             FileInfo file = this.files[path];
             int offset = file.DataOffset + this.payloadOffset;
             byte[] output = new byte[file.Length];
@@ -92,13 +93,14 @@ namespace Common
             return MysteryTextDecoder.DecodeArbitraryBytesAsAppropriatelyAsPossible(bytes);
         }
 
-        public string[] ListDirectory(string path, bool justFiles)
+        public string[] ListDirectory(string path, bool includeFiles, bool includeDirectories)
         {
-            if (!this.files.ContainsKey(path) || !this.files[path].IsDirectory) throw new InvalidOperationException();
+            if (path.StartsWith("./")) path = path.Substring(2);
+            if (!this.files.ContainsKey(path) || !this.files[path].IsDirectory) throw new InvalidOperationException(path + " was not present in the CryPkg");
             int trimLength = path == "." ? 0 : path.Length + 1;
 
             return this.files[path].Children
-                .Where(k => this.files[k].IsDirectory != justFiles)
+                .Where(k => this.files[k].IsDirectory ? includeDirectories : includeFiles)
                 .Select(s => s.Substring(trimLength))
                 .OrderBy(t => t)
                 .ToArray();

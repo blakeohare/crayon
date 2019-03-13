@@ -73,7 +73,23 @@ def runCommand(cmd):
 	c.close()
 	return output
 
+_logRef = [None]
+	
 def main(args):
+	_logRef[0] = []
+	try:
+		buildRelease(args)
+	except Exception as err:
+		_logRef[0].append('EXCEPTION: ' + str(err))
+		
+	print("Finished performing the following:\n * " + "\n * ".join(_logRef[0]))
+
+def log(value):
+	_logRef[0].append(str(value))
+
+def buildRelease(args):
+	log('begin')
+	
 	librariesForRelease = [
 		'Audio',
 		'Core',
@@ -108,24 +124,35 @@ def main(args):
 		'Web',
 		'Xml',
 	]
+	
+	platformsForInterpreterGen = [
+		'csharp-app',
+		'python-app',
+		'java-app',
+		'javascript-app',
+	]
 
 	if len(args) != 1:
+		log("incorrect usage")
 		print("usage: python release.py windows|mono")
 		return
 
 	platform = args[0]
 
 	if not platform in ('windows', 'mono'):
+		log("incorrect platform")
 		print ("Invalid platform: " + platform)
 		return
 
 
 	# Clean up pre-existing release and ensure output directory exists
 
+	log("cleanup old directory")
 	copyToDir = 'crayon-' + VERSION + '-' + platform
 	if os.path.exists(copyToDir):
 		shutil.rmtree(copyToDir)
 		time.sleep(0.1)
+	log("create new output directory")
 	os.makedirs(copyToDir)
 
 
@@ -141,12 +168,14 @@ def main(args):
 		SLN_PATH = '..\\Compiler\\CrayonWindows.sln'
 	cmd = ' '.join([BUILD_CMD, RELEASE_CONFIG, SLN_PATH])
 	
+	log("Compiling the .sln file with command: " + cmd)
 	print("Running: " + cmd)
 	print(runCommand(cmd))
 
 
 	# Copy the compiler's release bits into the newly created release directory
 	releaseDir = '../Compiler/Crayon/bin/Release'
+	log("Copying crayon.exe, readme, and license to output directory")
 	shutil.copyfile(canonicalize_sep(releaseDir + '/Crayon.exe'), canonicalize_sep(copyToDir + '/crayon.exe'))
 	shutil.copyfile(canonicalize_sep(releaseDir + '/LICENSE.txt'), canonicalize_sep(copyToDir + '/LICENSE.txt'))
 	shutil.copyfile(canonicalize_sep('../README.md'), canonicalize_sep(copyToDir + '/README.md'))
@@ -165,6 +194,7 @@ def main(args):
 		sourceNativeDir = sourcePathRoot + '/native'
 		if path_exists(sourceNativeDir):
 			print("Generating crypkg'es for " + lib + "...")
+			log("Generate crypkg'es for " + lib)
 			for platform in list_directories(sourceNativeDir):
 				print('...' + platform)
 				target_crypkg_path = targetPathRoot + '/native/' + platform + '.crypkg'
@@ -176,18 +206,31 @@ def main(args):
 	# Copy those to the output release directory.
 
 	for file in filter(lambda x:x.endswith('.dll'), os.listdir(releaseDir)):
+		log("Copy " + file + " to the output directory")
 		shutil.copyfile(releaseDir + '/' + file, copyToDir + '/' + file)
 
 
+	print("\nCopying Interpreter/gen to crypkg files in vmsrc...")
+	for platform in platformsForInterpreterGen:
+		log("Copying " + platform + "'s files from Interpreter/gen to vmsrc/" + platform + ".crypkg")
+		print('  ' + platform + '...')
+		target_pkg_path = copyToDir + '/vmsrc/' + platform + '.crypkg'
+		interpreter_generated_code = '../Interpreter/gen/' + platform
+		ensure_directory_exists(get_parent_path(target_pkg_path))
+		crypkgmake.make_pkg(canonicalize_sep(interpreter_generated_code), canonicalize_sep(target_pkg_path))
+		print("Done!\n")
+	
+
 	# Artifically set the CRAYON_HOME environment variable to the target directory with all the libraries
 	os.environ["CRAYON_HOME"] = os.path.abspath(canonicalize_sep(copyToDir))
-	
+	log("Set the CRAYON_HOME to " + os.environ['CRAYON_HOME'])
 	
 	# Use the newly built compiler to generate the VM source code (in VmTemp)
 	print("Generating VM code...")
 	runtimeCompilationCommand = canonicalize_sep(copyToDir + '/crayon.exe') + ' -vm csharp-app -vmdir ' + canonicalize_sep(VM_TEMP_DIR_SOURCE)
 	if isMono:
 		runtimeCompilationCommand = 'mono ' + runtimeCompilationCommand
+	log("Generating the VM C# project in VmTemp/ with the command: " + runtimeCompilationCommand)
 	print('running:')
 	print('  ' + runtimeCompilationCommand)
 	print(runCommand(runtimeCompilationCommand))
@@ -195,15 +238,19 @@ def main(args):
 
 	# Now compile the generated VM source code	
 	print("Compiling VM for distribution...")
-	print(runCommand(' '.join([BUILD_CMD, RELEASE_CONFIG, canonicalize_sep(VM_TEMP_DIR_SOURCE + '/CrayonRuntime' + ('OSX' if isMono else '') + '.sln')])))
+	cmd = ' '.join([BUILD_CMD, RELEASE_CONFIG, canonicalize_sep(VM_TEMP_DIR_SOURCE + '/CrayonRuntime' + ('OSX' if isMono else '') + '.sln')])
+	log("Compiling the VM in VmTemp using the command: " + cmd)
+	print(runCommand(cmd))
 
 
 	# Copy the built bits from VmTemp to the vm/ directory
+	log("Copying all the VmTemp/Libs/Release dll's and exe's to the vm/ directory")
 	copyDirectory(VM_TEMP_DIR + '/Libs/Release', copyToDir + '/vm', '.dll')
 	copyDirectory(VM_TEMP_DIR + '/Libs/Release', copyToDir + '/vm', '.exe')
 
 
 	# Throw in setup instructions according to the platform you're generating
+	log("Throwing in the setup-" + platform + ".txt file")
 	if platform == 'windows':
 		setupFile = readFile("setup-windows.txt")
 		writeFile(copyToDir + '/Setup Instructions.txt', setupFile, '\r\n')
@@ -214,10 +261,11 @@ def main(args):
 
 	# Copy the Interpreter source to vmsrc
 	# TODO: no longer needed! Need to copy the generated bits instead as a crypkg
-	copyDirectory('../Interpreter/source', copyToDir + '/vmsrc', '.pst')
+	#copyDirectory('../Interpreter/source', copyToDir + '/vmsrc', '.pst')
 
-
+		
 	# Hooray, you're done!
+	log("Completed")
 	print("Release directory created: " + copyToDir)
 
 main(sys.argv[1:])

@@ -14,7 +14,12 @@ namespace Platform
 
         public string GetText(string path)
         {
-            return Common.MysteryTextDecoder.DecodeArbitraryBytesAsAppropriatelyAsPossible(this.data[path]);
+            byte[] byteData;
+            if (!this.data.TryGetValue(path, out byteData))
+            {
+                throw new System.InvalidOperationException(path + " was not available in the template set. Files: " + string.Join(", ", this.data.Keys));
+            }
+            return Common.MysteryTextDecoder.DecodeArbitraryBytesAsAppropriatelyAsPossible(byteData);
         }
 
         public byte[] GetBytes(string path)
