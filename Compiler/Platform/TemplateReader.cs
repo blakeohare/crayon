@@ -36,17 +36,67 @@ namespace Platform
         public TemplateSet GetVmTemplates()
         {
             Dictionary<string, byte[]> output = new Dictionary<string, byte[]>();
-            foreach (string platformName in this.platformNamesMostGeneralFirst)
+
+            string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
+            if (crayonHome != null)
             {
-                string vmTemplateDir = System.IO.Path.Combine(
-                    Common.SourceDirectoryFinder.CrayonSourceDirectory,
-                    "Interpreter", "gen", platformName);
-                if (System.IO.Directory.Exists(vmTemplateDir))
+                // Search %CRAYON_HOME%/vmsrc directory for the VM files for the given platforms.
+                // Files associated with more specific platforms will overwrite the less specific ones.
+                foreach (string platformName in this.platformNamesMostGeneralFirst)
                 {
-                    ReadAllFiles(output, System.IO.Path.GetFullPath(vmTemplateDir).Length + 1, vmTemplateDir);
+                    string packagedVmSource = System.IO.Path.Combine(crayonHome, "vmsrc", platformName + ".crypkg");
+                    if (System.IO.File.Exists(packagedVmSource))
+                    {
+                        byte[] pkgBytes = System.IO.File.ReadAllBytes(packagedVmSource);
+                        Common.CryPkgDecoder pkgDecoder = new Common.CryPkgDecoder(pkgBytes);
+                        ReadAllFilesCryPkg(pkgDecoder, output, "");
+                    }
                 }
             }
+
+#if DEBUG
+            // If you're running a debug build and have the source directory present,
+            // then use the Interpreter/gen files instead of the crypkg versions in CRAYON_HOME.
+            string crayonSourceDir = Common.SourceDirectoryFinder.CrayonSourceDirectory;
+
+            if (crayonSourceDir != null)
+            {
+                output.Clear(); // reset.
+
+                foreach (string platformName in this.platformNamesMostGeneralFirst)
+                {
+                    string vmTemplateDir = System.IO.Path.Combine(crayonSourceDir, "Interpreter", "gen", platformName);
+                    if (System.IO.Directory.Exists(vmTemplateDir))
+                    {
+                        ReadAllFiles(output, System.IO.Path.GetFullPath(vmTemplateDir).Length + 1, vmTemplateDir);
+                    }
+                }
+            }
+#endif
+
+            if (output.Count == 0)
+            {
+                throw new System.InvalidOperationException("Could not find VM templates. Is the CRAYON_HOME environment variable set correctly?");
+            }
+
             return new TemplateSet(output);
+        }
+
+        private void ReadAllFilesCryPkg(Common.CryPkgDecoder pkg, Dictionary<string, byte[]> output, string prefix)
+        {
+            string currentDir = prefix.Length == 0 ? "." : prefix;
+
+            foreach (string dir in pkg.ListDirectory(currentDir, false, true))
+            {
+                string path = currentDir == "." ? dir : currentDir + "/" + dir;
+                ReadAllFilesCryPkg(pkg, output, path);
+            }
+
+            foreach (string file in pkg.ListDirectory(currentDir, true, false))
+            {
+                string path = currentDir == "." ? file : currentDir + "/" + file;
+                output[path] = pkg.ReadFileBytes(path);
+            }
         }
 
         private void ReadAllFiles(Dictionary<string, byte[]> output, int pathTrimLength, string dir)

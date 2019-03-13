@@ -63,27 +63,28 @@ namespace Common
 
         public string[] ListFiles(string path)
         {
-            return this.ListDirectoryContents(path, true);
+            return this.ListDirectoryContents(path, true, false);
         }
 
         public string[] ListDirectories(string path)
         {
-            return this.ListDirectoryContents(path, false);
+            return this.ListDirectoryContents(path, false, true);
         }
 
-        private string[] ListDirectoryContents(string path, bool justFiles)
+        private static string[] emptyStringArray = new string[0];
+        private string[] ListDirectoryContents(string path, bool includeFiles, bool includeDirectories)
         {
             string fullPath = System.IO.Path.GetFullPath(path);
             if (System.IO.Directory.Exists(fullPath))
             {
-                return justFiles
-                    ? System.IO.Directory.GetFiles(fullPath)
-                    : System.IO.Directory.GetDirectories(fullPath);
+                IEnumerable<string> files = includeFiles ? System.IO.Directory.GetFiles(fullPath) : emptyStringArray;
+                IEnumerable<string> dirs = includeDirectories ? System.IO.Directory.GetDirectories(fullPath) : emptyStringArray;
+                return dirs.Concat(files).ToArray();
             }
 
             CryPkgPath pkgPath = GetPackagedPath(fullPath, true);
             if (pkgPath == null) throw new System.IO.DirectoryNotFoundException(path);
-            return pkgPath.Package.ListDirectory(pkgPath.Path, justFiles);
+            return pkgPath.Package.ListDirectory(pkgPath.Path, includeFiles, includeDirectories);
         }
 
         private CryPkgPath GetPackagedPath(string fullPath, bool isDir)
