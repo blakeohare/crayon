@@ -6,7 +6,7 @@
 class AnimatedImage {
     field images;
     field framesPerImage = 1;
-    
+
     constructor(images, framesPerImage) {
         this.images = images.clone();
         this.framesPerImage = framesPerImage;
@@ -38,7 +38,7 @@ class TimedStoryboard {
     function update() {
         now = Core.currentTime();
         if (this.startTime == null) {
-            this.startTime = now;    
+            this.startTime = now;
         }
 
         Elapsed = now - this.startTime;
@@ -66,7 +66,7 @@ class FollowPathAnimation {
 
     // The distance the object can walk per frame.
     field perFrameVelocity;
-    
+
     constructor(currentX, currentY, velocity) {
         this.currentX = currentX;
         this.currentY = currentY;

@@ -1,8 +1,8 @@
 # Basic Collision Detection in Games
 
-With the exception of a few types of games that deal with abstract concepts, such as cards or board games, most games generally replicate some sort of physical objects. Whether this is a person running around in a room, or bullets flying through space, being able to detect whether two objects are colliding is a recurring problem. 
+With the exception of a few types of games that deal with abstract concepts, such as cards or board games, most games generally replicate some sort of physical objects. Whether this is a person running around in a room, or bullets flying through space, being able to detect whether two objects are colliding is a recurring problem.
 
-In this tutorial I'll go over a few of the common types of situations that you may encounter, and offer a typical solution for basic collision detection. 
+In this tutorial I'll go over a few of the common types of situations that you may encounter, and offer a typical solution for basic collision detection.
 
 This tutorial is separated into a few sections. Feel free to skip around.
 
@@ -49,7 +49,7 @@ To see if a point is inside a rectangle, simply check each side to see if it's o
 function isPointRectangleCollision(point, rectangle) {
     return
         point.x > rectangle.left &&
-        point.x < rectangle.right && 
+        point.x < rectangle.right &&
         point.y > rectangle.top &&
         point.y < rectangle.bottom;
 }
@@ -93,7 +93,7 @@ And remember, the rectangle can entirely consume the other...
 
 ## Intersection of Two Circles
 
-Like checking if a point is in a circle, you use the distance formula, except this time, it's the distance between the two centers of the circles. Instead of checking if that distance is less than the radius, you check to see if that distance is less than their combined radii. 
+Like checking if a point is in a circle, you use the distance formula, except this time, it's the distance between the two centers of the circles. Instead of checking if that distance is less than the radius, you check to see if that distance is less than their combined radii.
 
 ![Circle intersection](./images/two-circles.png)
 
@@ -109,9 +109,9 @@ Notice that squaring the sum of the radii is used instead of using the square ro
 
 ## Rectangle and a Circle Intersection
 
-This is the most complicated combination of intersection logic for these 3 shapes. 
+This is the most complicated combination of intersection logic for these 3 shapes.
 
-There are 3 possible situations: 
+There are 3 possible situations:
 
 * A circle's right-most point can be entirely located to the left of the left side of the rectangle. Similarly the left-most point can be located to the right of the right side of the rectangle. And the same logic can be applied to the other Y directions. If any of these are true, then it is impossible for the circle to overlap the rectangle. This is similar to the rectangle intersection logic, in that you can think of a square circumscribed around the circle. If this square doesn't intersect the rectangle, then the inner circle definitely does not.
 * If the above situation isn't true and a circle's center is to the left of the left side of a rectangle and it's also above the top of the rectangle, then it's possible that it doesn't overlap. In this situation check to see if the corner is in the circle. If it isn't, then it doesn't overlap. If it is, then it does overlap.
@@ -209,9 +209,9 @@ If this is like a Megaman game where the number of bullets you're allowed to sho
 
 ![bullet hell](./images/bullet-hell.png)
 
-One way to get this to become a O(n) algorithm ("Big O of n" or simply "linear") is to implement a strategy called bucketing. 
+One way to get this to become a O(n) algorithm ("Big O of n" or simply "linear") is to implement a strategy called bucketing.
 
-Imagine, hypothetically, that this game is played on a field that's 1000 x 1000 pixels and the enemy spaceships are about 10 pixels wide. It seems silly to spend time checking if a spaceship in the bottom left corner of the screen is colliding with a bullet in the center of the screen.  
+Imagine, hypothetically, that this game is played on a field that's 1000 x 1000 pixels and the enemy spaceships are about 10 pixels wide. It seems silly to spend time checking if a spaceship in the bottom left corner of the screen is colliding with a bullet in the center of the screen.
 
 The following logic is somewhat complicated, but no longer quadratic in nature. This code starts by looping through all the bullets and assigning them into a bucket. This is a linear operation, because the time it takes scales linearly with the number of bullets.
 
@@ -259,21 +259,21 @@ function applyCollisions(bullets, enemies) {
 }
 ```
 
-Then it loops through the enemies list as is. For each enemy (where each one is relatively small), we check the bucket it is located in, along with the 8 nearby buckets. For the most part, these buckets will be non-existent, since most of the screen will be bullet-free (I assume). If there happens to be a bullet in that bucket (and there will most likely only be 0, 1, or maybe 2), then it checks only those bullets against the enemy's location. Since this will generally result in small number of bullets checked against each enemy (that will rarely exceed a couple and typically be 0) regardless of how many bullets are on the screen, this now behaves like a linear algorithm, which means the amount of time this takes will increase proportionally to the number of items on the screen. Not quadratically. 
+Then it loops through the enemies list as is. For each enemy (where each one is relatively small), we check the bucket it is located in, along with the 8 nearby buckets. For the most part, these buckets will be non-existent, since most of the screen will be bullet-free (I assume). If there happens to be a bullet in that bucket (and there will most likely only be 0, 1, or maybe 2), then it checks only those bullets against the enemy's location. Since this will generally result in small number of bullets checked against each enemy (that will rarely exceed a couple and typically be 0) regardless of how many bullets are on the screen, this now behaves like a linear algorithm, which means the amount of time this takes will increase proportionally to the number of items on the screen. Not quadratically.
 
-Note that the bucket size cannot be much smaller than the sprites themselves. If the sprites were, for example, hundreds of pixels wide, then there would be a problem because you would need to check many buckets for bullets rather than 9. 
+Note that the bucket size cannot be much smaller than the sprites themselves. If the sprites were, for example, hundreds of pixels wide, then there would be a problem because you would need to check many buckets for bullets rather than 9.
 
-Strictly speaking this is still susceptible to certain edge cases where it will perform quadratically. If a thousand bullets and a thousand enemies all move to the same location on the screen, rather than performing thousands of collision checks, it will now perform a million and it will have the same problem as before. 
+Strictly speaking this is still susceptible to certain edge cases where it will perform quadratically. If a thousand bullets and a thousand enemies all move to the same location on the screen, rather than performing thousands of collision checks, it will now perform a million and it will have the same problem as before.
 
-This is only one example of an optimization which is tailored for a specific kind of game. Optimizations frequently require creativity and caution. 
+This is only one example of an optimization which is tailored for a specific kind of game. Optimizations frequently require creativity and caution.
 
 ## Player vs walls and obstacles
 
-With other sprites, you generally allow one sprite to move on top of another sprite, and some sort of event happens, such as the sprite disappearing, or a lose screen appearing. However, when checking a sprite against an obstacle, you don't want the sprite to move over it. For these, you generally calculate where a sprite is about to move, and perform the collision detection against the hypothetical coordinates. 
+With other sprites, you generally allow one sprite to move on top of another sprite, and some sort of event happens, such as the sprite disappearing, or a lose screen appearing. However, when checking a sprite against an obstacle, you don't want the sprite to move over it. For these, you generally calculate where a sprite is about to move, and perform the collision detection against the hypothetical coordinates.
 
-It is also very common for the environment to be represented in some other way other than simple sprite objects that have a rectangular or circular shape. For example, a wall can simply be the edge of the screen. In this case, you would check to see if the sprite moves over the edge, and prevent the movement if it does. 
+It is also very common for the environment to be represented in some other way other than simple sprite objects that have a rectangular or circular shape. For example, a wall can simply be the edge of the screen. In this case, you would check to see if the sprite moves over the edge, and prevent the movement if it does.
 
-But the world usually more complicated. It is very common for game worlds to be constructed on a grid, sometimes referred to as tiles. Usually these tiles are complicated objects that have some sort of image and other qualities, but for the sake of simplicity, let's assume our game only has a grid of booleans, where true represents a tile that the player can walk on, and false is one that is blocking and that our player is a single point. 
+But the world usually more complicated. It is very common for game worlds to be constructed on a grid, sometimes referred to as tiles. Usually these tiles are complicated objects that have some sort of image and other qualities, but for the sake of simplicity, let's assume our game only has a grid of booleans, where true represents a tile that the player can walk on, and false is one that is blocking and that our player is a single point.
 
 TODO: add image
 

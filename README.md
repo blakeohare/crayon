@@ -19,7 +19,7 @@ Please report any issues you may find to the GitHub issue tracker located at htt
 It may be helpful to check the IRC channel first to make sure any issue you find is actually a bug or for workarounds.
 
 # Community
-The official Crayon IRC channel is #crayon on FreeNode.net. Feel free to ask any questions there. 
+The official Crayon IRC channel is #crayon on FreeNode.net. Feel free to ask any questions there.
 Google Mailing list/forum: https://groups.google.com/forum/#!forum/crayon-lang
 Use the stackoverflow tag "crayon" for any issues. This tag is monitored.
 
@@ -34,4 +34,4 @@ page). If you are compiling Crayon from source code directly (power users) run t
 directory to create a release package for your OS, then follow the same instructions as if you downloaded it from the site.
 If you are trying to run Crayon from the debugger, open `Compiler/CrayonWindows.sln` or `Compiler/CrayonOSX.sln`. Create a
 file called `DEBUG_ARGS.txt` in the directory of your `%CRAYON_HOME%` environment variable. The last line of this file will be
-used as the command line arguments. Note: Debug builds will not catch compiler error exceptions. 
+used as the command line arguments. Note: Debug builds will not catch compiler error exceptions.

@@ -169,7 +169,7 @@ nothingToSeeHere = null;
 
 ## Collections
 
-So far all the types mentioned so far only store one single piece of data. 
+So far all the types mentioned so far only store one single piece of data.
 To store multiple pieces of data in an organized fashion, there a few types that can be used. These include lists and dictionaries.
 
 ### Lists
@@ -544,13 +544,13 @@ do {
 } while (counter < 10);
 ```
 
-The key difference is that a do-while loop will ALWAYS execute at least once. 
+The key difference is that a do-while loop will ALWAYS execute at least once.
 
 ### Break
 
-A `break` statement will stop a loop and immediately jump to the code afterwards. 
+A `break` statement will stop a loop and immediately jump to the code afterwards.
 
-Consider the following example where numbers are being tallied in the list for the purpose of checking if the sum is greater than 10. If the running total exceeds 10 before the list traversal is complete, there is no need to finish iterating through the list. 
+Consider the following example where numbers are being tallied in the list for the purpose of checking if the sum is greater than 10. If the running total exceeds 10 before the list traversal is complete, there is no need to finish iterating through the list.
 
 ```csharp
 sumIsGreaterThan10 = false;
@@ -565,11 +565,11 @@ for (number : listOfNumbers) {
 print("The list " + (sumIsGreaterThan10 ? " has more than 10" : " has at most 10") + " items in it.");
 ```
 
-This will work for all loop types. For for loops, it is important to note that the step code will not run after a break. 
+This will work for all loop types. For for loops, it is important to note that the step code will not run after a break.
 
 ### Continue
 
-A `continue` statement can be placed in any loop and will jump to the next iteration of the loop. 
+A `continue` statement can be placed in any loop and will jump to the next iteration of the loop.
 
 ```csharp
 // Do something to the numbers that are even.
@@ -577,7 +577,7 @@ A `continue` statement can be placed in any loop and will jump to the next itera
 for (number : listOfNumbers) {
   if (number % 2 == 1)
     continue;
-  
+
   doSomethingToEvenNumber(number);
 }
 ```
@@ -627,7 +627,7 @@ switch (a) {
 
 A switch statement operates on any expression and contains a list of `case`s. Each case must terminate either with a break (which will jump to the end of the switch statement and continue on with the code after it) or a return statement. `case`s can be combined together. For example, case 3 and 4 are paired together and both execute `doSomethingD()`. If none of the cases match the expression, then the `default` condition is executed, if present. If no `default` is present, then no code will run and the switch statement is skipped.
 
-The values for each `case` must be an integer, string, or enum. Switch statements cannot mix types. 
+The values for each `case` must be an integer, string, or enum. Switch statements cannot mix types.
 
 Note that unlike many languages, cases that do not have a break or return at the end are not allowed. These are generally called "fallthrough" cases and are a sign of either poorly structured code but more commonly a typo, which is why they are not allowed.
 
@@ -635,7 +635,7 @@ Note that unlike many languages, cases that do not have a break or return at the
 
 A ternary expression is basically an "inline" if/else statement and can be placed inside an expression.
 
-A ternary expression is a boolean followed by a `?`, followed by the expression to use if the boolean is true, followed by a `:`, followed by the expression if the boolean is false. Ternary expressions have the lowest precedence in order of operations. 
+A ternary expression is a boolean followed by a `?`, followed by the expression to use if the boolean is true, followed by a `:`, followed by the expression if the boolean is false. Ternary expressions have the lowest precedence in order of operations.
 
 ```csharp
 print("number is " + (number % 2 == 0 ? "even" : "odd");
@@ -698,7 +698,7 @@ function printNumbersUntil5IsFound(list) {
 }
 ```
 
-This is equivalent to returning `null`. 
+This is equivalent to returning `null`.
 
 ```csharp
 a = printNumbersUntil5IsFound(numbers);
@@ -721,7 +721,7 @@ function foo(a, b, c = null) {
 
 The above function can consume either 2 or 3 arguments. If 2 are provided, then `c` will receive a value of `null`.
 
-Optional parameters must go at the end of a function's argument list. 
+Optional parameters must go at the end of a function's argument list.
 
 ## Constants and Enums
 
@@ -729,7 +729,7 @@ Optional parameters must go at the end of a function's argument list.
 
 Constants work like variables that have global scope i.e. they are not part of a function, they are "loose" and can be accessed from anywhere. Constants MUST be a primitive value like a number or string. Mutable values (such as lists, dictionaries, or objects) cannot be used as constants.
 
-One important aspect of constants is that they are resolved at compile-time. This means they do not take up extra space in the compiled byte code if they are not used and are placed inline in the code where they are used. It also means they can be used as cases in a switch statement. 
+One important aspect of constants is that they are resolved at compile-time. This means they do not take up extra space in the compiled byte code if they are not used and are placed inline in the code where they are used. It also means they can be used as cases in a switch statement.
 
 ```csharp
 const PI = 3.14159265358979;
@@ -782,7 +782,7 @@ switch (phase) {
 }
 ```
 
-If no integers are assigned to enum values (as in the first example) they will be incrementally assigned starting from 0. 
+If no integers are assigned to enum values (as in the first example) they will be incrementally assigned starting from 0.
 
 One caveat is that the name of an enum is lost after compile time and so they may make debugging more difficult...
 

@@ -3,13 +3,13 @@
 - [Creating a Hello World Project](#creating-a-hello-world-project)
 - [Code structure and Execution Starting Point](#code-structure-and-execution-starting-point)
 - [Types, Variables, and Math](#types-variables-and-math)
-	- [Incremental Assignment](#incremental-assignment)
+  - [Incremental Assignment](#incremental-assignment)
 - [Control Flow](#control-flow)
-	- [If Statements](#if-statements)
-	- [While Loops](#while-loops)
-	- [For Loops](#for-loops)
-	- [Do-While Loops](#do-while-loops)
-	- [Switch Statements](#switch-statements)
+  - [If Statements](#if-statements)
+  - [While Loops](#while-loops)
+  - [For Loops](#for-loops)
+  - [Do-While Loops](#do-while-loops)
+  - [Switch Statements](#switch-statements)
 - [Built in Libraries](#built-in-libraries)
 - [A Bare Bones "Game"](#a-bare-bones-game)
 
@@ -24,7 +24,7 @@ Crayon is an interpreted programming language. You can also export the VM bundle
 
 If you have not [downloaded](http://crayonlang.org/download) Crayon and [set up
 your environment](http://crayonlang.org/download/installation), please do so now.
-	
+
 # Creating a Hello World Project
 
 From the command line, run the following command:
@@ -33,7 +33,7 @@ From the command line, run the following command:
 C:\Stuff> crayon -genDefaultProj HelloWorld
 ```
 
-This will create a new directory with a simple HelloWorld project in it. 
+This will create a new directory with a simple HelloWorld project in it.
 
 Each Crayon project has a build definition file, which is a JSON file.
 This file defines the various platforms you want to target and other options that you can
@@ -41,17 +41,17 @@ configure for these platforms. It also defines where your source code is and whe
 You can read all about it in the [Project Structure and Build File documentation](../../Docs/project/index.md#build-file)
 
 
-In the `source` directory, there is a file called `main.cry`. 
+In the `source` directory, there is a file called `main.cry`.
 The contents looks something like this:
 
 ```csharp
 function main() {
-	print("Hello, World!");
+  print("Hello, World!");
 }
 ```
 
 To run this program, invoke `crayon` from the command line. Pass the .build file path as an argument.
-	
+
 ```
 C:\Stuff\HelloWorld> crayon HelloWorld.build
 ```
@@ -105,7 +105,7 @@ cake = 3.14159; // the cake is a pi
 cake = "Y"; // the cake is a Y
 cake = null; // the cake is a lie
 ```
-	
+
 Variable names can only contain alphanumeric characters and underscores. However, it cannot
 begin with a number.
 
@@ -158,10 +158,10 @@ function main() {
 
 Note that integers and floats are different types. Math operations performed on integers will always
 result in integers (except for the exponent operator). Math operations performed on floats will always
-result in floats, and operations that mix integers and floats will result in floats. If math operation 
+result in floats, and operations that mix integers and floats will result in floats. If math operation
 involving integers would conventionally result in a decimal (such as division) the result is rounded
-down to force the result to be an integer. This is consistent with most languages, but not all (such 
-as JavaScript, which does not make a distinction between integers and floats) and so may be possibly 
+down to force the result to be an integer. This is consistent with most languages, but not all (such
+as JavaScript, which does not make a distinction between integers and floats) and so may be possibly
 unintuitive depending on your previous programming background. Consider the following examples.
 
 ```csharp
@@ -288,13 +288,13 @@ function main() {
 }
 ```
 
-For loops are mostly just shorthand for while loops that have a some sort of initialization, a loop 
+For loops are mostly just shorthand for while loops that have a some sort of initialization, a loop
 condition, and an incremental step operation. In the example above, `i` starts at 10, gets decremented
-every loop iteration, and continues all the way down to 1. Each of these components are separated by 
+every loop iteration, and continues all the way down to 1. Each of these components are separated by
 semicolons in the parenthesis after the word `for`.
 
 The initialization and the step can also be compounded with multiple statements. In that case, separate
-the components with commas instead of semicolons. 
+the components with commas instead of semicolons.
 For example, the following code has two initialization statements: `i = 0` and `j = 10`. It also has two
 step statements: `i++` and `j--`:
 
@@ -380,7 +380,7 @@ switch (x) {
 }
 ```
 
-Switch statements will switch on either integers or strings, however, they cannot be intermixed. A 
+Switch statements will switch on either integers or strings, however, they cannot be intermixed. A
 switch statement must have entirely integer cases or entirely string cases.
 
 > WARING: If you are familiar with switch statements in other programming languages, note that
@@ -391,13 +391,13 @@ switch statement must have entirely integer cases or entirely string cases.
 
 # Built in Libraries
 
-There are several built-in Libraries. These allow you to do more advanced things other than just 
-print things to the screen, such as opening a graphics window and drawing images to it, playing 
-sounds, interacting with a Gamepad, etc. All built-in libraries either have a platform independent 
+There are several built-in Libraries. These allow you to do more advanced things other than just
+print things to the screen, such as opening a graphics window and drawing images to it, playing
+sounds, interacting with a Gamepad, etc. All built-in libraries either have a platform independent
 implementation or a graceful fallback no-op behavior for platforms where there is no implementation.
 
-`Math` is one of the more commonly used libraries. To import that math library, include 
-`import Math;` at the top of the files that you use it. The Math library contains a variety of 
+`Math` is one of the more commonly used libraries. To import that math library, include
+`import Math;` at the top of the files that you use it. The Math library contains a variety of
 predefined functions.
 
 ```csharp
@@ -410,8 +410,8 @@ function main() {
 
 In the above example, the `import Math;` statement does 2 things. It ensures that the Math function
 definitions are bundled into your project. Additionally, it will also indicate that the `Math`
-namespace can now be used anywhere in this file. The "Math" that appears within the print statement 
-is actually the name of a namespace and .floor indicates that you want to invoke the floor function 
+namespace can now be used anywhere in this file. The "Math" that appears within the print statement
+is actually the name of a namespace and .floor indicates that you want to invoke the floor function
 that's in the Math namespace. If you want, you can optionally leave off the namespace like this...
 
 ```csharp
@@ -422,10 +422,10 @@ function main() {
 }
 ```
 
-This code is equivalent, but runs the risk that the compiler may get confused in the event that 
+This code is equivalent, but runs the risk that the compiler may get confused in the event that
 another function called floor is defined somewhere else. Math.floor is unambiguous. In fact,
 there is also a library called "Core". Core is implicitly imported at the top of all files and the
-print statement we've been using so far is actually a function defined in the Core library. And so 
+print statement we've been using so far is actually a function defined in the Core library. And so
 you could potentially also write it like this...
 
 ```csharp
@@ -743,7 +743,7 @@ Dictionaries, like lists, also have fields and methods. This table lists all of 
 Note that when you use object instances as keys, the pointer value is used as the index like an integer. Similar objects will not create key collisions. They must be the same reference.
 
 # Using the Mouse
- 
+
 Now let's modify the rectangle moving "game" to move to where the user clicks the mouse.
 
 Just like how the previous version of our game checked for events of type `KEY_DOWN` and `KEY_UP`, there is also `MOUSE_LEFT_DOWN`, `MOUSE_LEFT_UP`, `MOUSE_RIGHT_DOWN`, `MOUSE_RIGHT_UP`, and `MOUSE_MOVE`. If the event is any type of mouse event, then there are `x` and `y` fields on the event objects, which return the integer coordinates of where the event took place.
@@ -841,9 +841,9 @@ function main() {
 
   while (true) {
     for (event : window.pumpEvents()) {
-		if (event.type == EventType.QUIT) {
-			return;
-		}
+    if (event.type == EventType.QUIT) {
+      return;
+    }
     }
 
     epochTime = Math.floor(Core.currentTime());
@@ -852,7 +852,7 @@ function main() {
     second = clockTime % 60;
     totalMinutes = clockTime / 60;
     minute = totalMinutes % 60;
-    hour = totalMinutes / 60; 
+    hour = totalMinutes / 60;
 
     // Draw the clock face.
     Graphics2D.Draw.ellipse(
@@ -871,7 +871,7 @@ function main() {
       x = Math.floor(Math.cos(angle) * NOTCH_RADIUS) + CENTER_X;
       y = Math.floor(Math.sin(angle) * NOTCH_RADIUS) + CENTER_Y;
       Graphics2D.Draw.rectangle(
-        x - 10, y - 10, 20, 20, 
+        x - 10, y - 10, 20, 20,
         0, 128, 255); // a nice shade of blue
     }
 
@@ -951,7 +951,7 @@ function main() {
   windowWidth = 640;
   windowHeight = 480;
   window = new Game.GameWindow(title, fps, windowWidth, windowHeight);
-  
+
   rawImage = ImageLoader.loadFromResources('images/bad_kitty.jpg');
   image = GraphicsTexture.load(rawImage);
 
@@ -968,7 +968,7 @@ function main() {
     Graphics2D.Draw.fill(0, 0, 0);
 
     // Display bad_kitty.jpg in the top left corner with a 20 pixel margin
-    image.draw(20, 20); 
+    image.draw(20, 20);
 
     window.clockTick();
   }
@@ -985,10 +985,10 @@ For example, you can make the image appear cropped and stretched...
 
 ```csharp
 image.drawRegionStretched(
-	0, 0, // screen top-left
-	windowWidth, windowHeight, // size on screen
-	151, 108, // original image crop top-left
-	80, 57); // original image crop size
+  0, 0, // screen top-left
+  windowWidth, windowHeight, // size on screen
+  151, 108, // original image crop top-left
+  80, 57); // original image crop size
 ```
 
 ![Bad Kitty Demo Crop/Stretch](images/images_demo_stretch.jpg)
@@ -1001,7 +1001,7 @@ You can load images asynchronously. Instead of invoking `ImageLoader.loadFromRes
 
 Loading individual images is tedious, both from a code perspective and a CPU perspective. If you lots of tiny images and export to JavaScript, that will equate to millions of tiny HTTP requests. With a slight delay for each, your program will load really slowly and likely just get shut down by the browser as an unresponsive page. If those thousands of tiny images (imagine a retro style adventure game with lots of 16x16 tiles) were all stored in one massive image, that image would take a second or two to load. Which is really good, not only for minimizing HTTP chattiness, but also loading from a slow hard drive.
 
-The notion of ImageSheets are built into the ImageResources library and build file. 
+The notion of ImageSheets are built into the ImageResources library and build file.
 
 An image sheet is a logical collection of images defined by a series of file prefixes. At compile time, these image resources will be combined into large sheets of images. ImageResources will load these as single images, but still return individual ImageResource instances that behave exactly like their original non-aggregated counterpart.
 
@@ -1009,24 +1009,24 @@ Here's an example of a series of ImageSheet definitions:
 
 ```
 {
-  
+
   ...
-  
+
   "image-sheets": [
     {
-	  "id": tiles",
-	  "prefix": "images/tiles/*"
-	},
+    "id": tiles",
+    "prefix": "images/tiles/*"
+  },
     {
-	  "id": "sprites",
-	  "prefix": "images/sprites/*"
+    "id": "sprites",
+    "prefix": "images/sprites/*"
     },
     {
       "id": "everything_else",
-	  "prefix": "*"
-	}
+    "prefix": "*"
+  }
   ]
-  
+
   ...
 }
 ```
@@ -1041,10 +1041,8 @@ imageSheet = ImageSheet.loadFromResources(sheetId);
 imageSheet = ImageSheet.loadFromResourcesAsync(sheetId);
 ```
 
-For asynchronous loading image sheets, there are two methods to check the current status: 
+For asynchronous loading image sheets, there are two methods to check the current status:
 * `imageSheet.isDone()` returns a boolean if it is done.
 * `imageSheet.getProgress()` returns a float ratio between 0.0 and 1.0.
 
 After loading is complete, images can be accessed using `imageSheet.getImage(path)` which will synchronously return an ImageResource instance.
-
-

@@ -2,7 +2,7 @@
 
 A Crayon project consists primarily of a build file, a source directory, and an output directory.
 
-Note that a simple default build file can be generated from the command line by running `crayon -genDefaultProj ProjectName` 
+Note that a simple default build file can be generated from the command line by running `crayon -genDefaultProj ProjectName`
 which will create a directory called ProjectName with a build file in it with reasonable starting values and the source code
 for a simple HelloWorld app (where *ProjectName* can be changed to some other name).
 
@@ -20,7 +20,7 @@ Other fields can generally exist in either the root object or within a specific 
 the value from the root object.
 
 Consider the following sample build file for an Asteroids game. This build file has two targets for a beta build and a release build.
-The beta build overrides the title, and enables some debug features through the use of build variables. 
+The beta build overrides the title, and enables some debug features through the use of build variables.
 
 ```json
 {
@@ -33,21 +33,21 @@ The beta build overrides the title, and enables some debug features through the 
   "vars": [
     { "name": "enable_debug_features", "value": false }
   ],
-  
+
   "targets": [
-	{
-	  "name": "javascript_release",
-	  "platform": "javascript-app"
-	},
+  {
+    "name": "javascript_release",
+    "platform": "javascript-app"
+  },
     {
-	  "name": "javascript_beta",
-	  "platform": "javascript-app",
-	  "default-title": "Asteroids (Beta)",
-	  
+    "name": "javascript_beta",
+    "platform": "javascript-app",
+    "default-title": "Asteroids (Beta)",
+
       "vars": [
         { "name": "enable_debug_features", "value": true }
       ]
-	}
+  }
   ]
 }
 ```
@@ -78,29 +78,29 @@ Compile time variables are defined in the build file and are converted into cons
 ```
 {
   "id": "MyProject",
-  
+
   ...
-  
+
   "vars": [
     { "name": "version", "value": 1.4 },
-	{ "name": "enable-debug-output", "value": false }
+  { "name": "enable-debug-output", "value": false }
   ],
-  
+
   ...
-  
+
   "targets": [
     {
-	  "name": "release",
-	  ...
-	},
-	{
-	  "name": "test_version",
-	  ...
-	  "vars": [
-	    { "name": "enable-debug-output", "value": true }
-	  ]
-	},
-	...
+    "name": "release",
+    ...
+  },
+  {
+    "name": "test_version",
+    ...
+    "vars": [
+      { "name": "enable-debug-output", "value": true }
+    ]
+  },
+  ...
   ]
 }
 ```
@@ -109,7 +109,7 @@ In the project source code, this would be used with the `$var` dictionary...
 
 ```csharp
   ...
-  
+
   if ($var['show-debug-output']) {
     print showDebugOutput();
   }
@@ -132,12 +132,12 @@ This is the list of available targets that you can export your project to.
 
 ## Source Directory
 
-The source directory contains code files (with the file extension of **.cry**) and other resource files (such as sounds, images, text files, etc). 
-The source code files are all compiled together. 
-The arrangement or names of source code files do not matter. All non-code files are compiled into the final output and are 
+The source directory contains code files (with the file extension of **.cry**) and other resource files (such as sounds, images, text files, etc).
+The source code files are all compiled together.
+The arrangement or names of source code files do not matter. All non-code files are compiled into the final output and are
 available as resources (although there are some limitations to this that will be outlined later).
 
-Code itself may only contain namespace, class, function, enum definitions, and constant definitions. 
+Code itself may only contain namespace, class, function, enum definitions, and constant definitions.
 "Unwrapped" code is not valid. For example...
 
 ```
@@ -160,10 +160,10 @@ namespace MyNamspace {
 print("This print statement can't be here.");
 ```
 
-Class and Namespace names do not have to correlate with directory/file names. 
+Class and Namespace names do not have to correlate with directory/file names.
 Everything is compiled and resolved iteratively without regard to where the code came from.
 
-Execution of a program always begins with a function called `main` which is required in every project. 
+Execution of a program always begins with a function called `main` which is required in every project.
 A simple HelloWorld app would look like this...
 
 ```
@@ -183,7 +183,7 @@ namespace MyHelloApp {
 
 ## Output Directory
 
-The output directory is populated with the source code of the final project after it has been exported. 
+The output directory is populated with the source code of the final project after it has been exported.
 The output directory must not be nested under the source directory, but does not necessarily need to be nested in the
 directory where the build file is. When defining the output directory in the build file, `%TARGET_NAME%` ought to be
 used to ensure that multiple built targets don't output to the same directory.
