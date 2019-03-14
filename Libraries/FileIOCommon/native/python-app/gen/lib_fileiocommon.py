@@ -187,12 +187,12 @@ def lib_fileiocommon_isWindows(vm, args):
   return vm[13][2]
 
 def lib_fileiocommon_listToBytes(listOfMaybeInts):
-  bytes = (PST_NoneListOfOne * len(listOfMaybeInts))
+  bytes = (PST_NoneListOfOne * listOfMaybeInts[1])
   intValue = None
   byteValue = 0
-  i = (len(listOfMaybeInts) - 1)
+  i = (listOfMaybeInts[1] - 1)
   while (i >= 0):
-    intValue = listOfMaybeInts[i]
+    intValue = listOfMaybeInts[2][i]
     if (intValue[0] != 3):
       return None
     byteValue = intValue[1]

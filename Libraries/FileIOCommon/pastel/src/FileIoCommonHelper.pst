@@ -3,12 +3,17 @@
     return objInst.nativeData[0];
 }
 
-object lib_fileiocommon_listToBytes(List<VM.Value> listOfMaybeInts) {
-    Array<byte> bytes = new Array<byte>(listOfMaybeInts.Size());
+object lib_fileiocommon_listToBytes(VM.ListImpl listOfMaybeInts) {
+    Array<byte> bytes = new Array<byte>(listOfMaybeInts.size);
     VM.Value intValue = null;
     int byteValue = 0;
-    for (int i = listOfMaybeInts.Size() - 1; i >= 0; i -= 1) {
-        intValue = listOfMaybeInts[i];
+    for (int i = listOfMaybeInts.size - 1; i >= 0; i -= 1) {
+        if (@ext_boolean("ARRAY_IS_LIST")) {
+            intValue = listOfMaybeInts.list[i];
+        } else {
+            intValue = listOfMaybeInts.array[i];
+        }
+
         if (intValue.type != VM.Types.INTEGER) {
             return null;
         }

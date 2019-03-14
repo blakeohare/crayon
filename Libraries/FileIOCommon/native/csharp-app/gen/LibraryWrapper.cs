@@ -293,7 +293,7 @@ namespace Interpreter.Libraries.FileIOCommon
             int format = (int)args[3].internalValue;
             if ((format == 0))
             {
-                byteArrayRef = lib_fileiocommon_listToBytes((List<Value>)args[2].internalValue);
+                byteArrayRef = lib_fileiocommon_listToBytes((ListImpl)args[2].internalValue);
                 if ((byteArrayRef == null))
                 {
                     return ints[6];
@@ -352,15 +352,15 @@ namespace Interpreter.Libraries.FileIOCommon
             return vm.globals.boolFalse;
         }
 
-        public static object lib_fileiocommon_listToBytes(List<Value> listOfMaybeInts)
+        public static object lib_fileiocommon_listToBytes(ListImpl listOfMaybeInts)
         {
-            byte[] bytes = new byte[listOfMaybeInts.Count];
+            byte[] bytes = new byte[listOfMaybeInts.size];
             Value intValue = null;
             int byteValue = 0;
-            int i = (listOfMaybeInts.Count - 1);
+            int i = (listOfMaybeInts.size - 1);
             while ((i >= 0))
             {
-                intValue = listOfMaybeInts[i];
+                intValue = listOfMaybeInts.array[i];
                 if ((intValue.type != 3))
                 {
                     return null;

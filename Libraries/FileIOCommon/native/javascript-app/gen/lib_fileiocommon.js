@@ -284,12 +284,12 @@ var lib_fileiocommon_isWindows = function(vm, args) {
 };
 
 var lib_fileiocommon_listToBytes = function(listOfMaybeInts) {
-	var bytes = PST$createNewArray(listOfMaybeInts.length);
+	var bytes = PST$createNewArray(listOfMaybeInts[1]);
 	var intValue = null;
 	var byteValue = 0;
-	var i = (listOfMaybeInts.length - 1);
+	var i = (listOfMaybeInts[1] - 1);
 	while ((i >= 0)) {
-		intValue = listOfMaybeInts[i];
+		intValue = listOfMaybeInts[2][i];
 		if ((intValue[0] != 3)) {
 			return null;
 		}
