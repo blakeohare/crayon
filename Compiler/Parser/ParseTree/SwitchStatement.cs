@@ -301,6 +301,14 @@ namespace Parser.ParseTree
             {
                 foreach (Chunk chunk in this.chunks)
                 {
+                    foreach (Expression ex in chunk.Cases)
+                    {
+                        if (ex != null) // default
+                        {
+                            ex.ResolveVariableOrigins(parser, varIds, phase);
+                        }
+                    }
+
                     foreach (Executable ex in chunk.Code)
                     {
                         ex.ResolveVariableOrigins(parser, varIds, phase);
