@@ -30,7 +30,12 @@ namespace ImageResources {
             // aggregated image sheet.
             if (allowLists && Core.typeof(name) == Core.Type.LIST) {
                 List<BasicImageSheet> sheets = new List<BasicImageSheet>();
-                for (string t : (List<string>) name) {
+
+                // TODO: this is a List<object> when coming from a Crayon scope and a
+                // List<string> when coming from an Acrylic scope. Because Acrylic isn't
+                // released yet, this is set to List<object> for now, but eventually I
+                // really need to fix the generics story in Acrylic.
+                for (object t : (List<object>) name) {
                     sheets.add((BasicImageSheet) ImageSheet._initImpl(t, isAsync, false));
                 }
                 return new AggregatedImageSheet(sheets);
