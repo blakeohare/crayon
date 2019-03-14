@@ -41,9 +41,6 @@ def PST_stringCheckSlice(haystack, i, needle):
 def always_true(): return True
 def always_false(): return False
 
-def lib_audio_getAudioResourcePath(vm, args):
-  return resource_manager_getResourceOfType(vm, args[0][1], "SND")
-
 def lib_audio_load_sfx_from_resourceImpl(obj, path):
   sfx = readLocalSoundResource(path)
   obj[3] = [None]
@@ -98,6 +95,9 @@ def lib_audio_sfx_unpause(channel, sfxResource, volume, pan):
 def lib_audio_stop(sound, reset):
   stopSoundImpl(sound)
   return 0
+
+def lib_game_audio_getAudioResourcePath(vm, args):
+  return resource_manager_getResourceOfType(vm, args[0][1], "SND")
 
 def lib_game_audio_is_supported(vm, args):
   if always_true():

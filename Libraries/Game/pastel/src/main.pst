@@ -11,7 +11,7 @@
 @import("setInstance.pst");
 
 @import("AudioLibHelper.pst");
-@import("getAudioResourcePath.pst");
+@import("audio_getAudioResourcePath.pst");
 @import("audio_is_supported.pst");
 @import("audio_music_is_playing.pst");
 @import("audio_music_load_from_file.pst");

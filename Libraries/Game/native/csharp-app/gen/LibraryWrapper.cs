@@ -117,11 +117,6 @@ namespace Interpreter.Libraries.Game
             }
         }
 
-        public static Value lib_audio_getAudioResourcePath(VmContext vm, Value[] args)
-        {
-            return Interpreter.Vm.CrayonWrapper.resource_manager_getResourceOfType(vm, (string)args[0].internalValue, "SND");
-        }
-
         public static int lib_audio_load_sfx_from_resourceImpl(ObjectInstance obj, string path)
         {
             object sfx = Libraries.Game.AudioHelper.GetSoundInstance(path);
@@ -207,6 +202,11 @@ namespace Interpreter.Libraries.Game
         {
             Libraries.Game.AudioHelper.AudioStop(sound);
             return 0;
+        }
+
+        public static Value lib_game_audio_getAudioResourcePath(VmContext vm, Value[] args)
+        {
+            return Interpreter.Vm.CrayonWrapper.resource_manager_getResourceOfType(vm, (string)args[0].internalValue, "SND");
         }
 
         public static Value lib_game_audio_is_supported(VmContext vm, Value[] args)

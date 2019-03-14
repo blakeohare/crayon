@@ -5,7 +5,7 @@
     output[0] -> true if an audio file
     output[1] -> string of the filepath relative to the root of where audio files are kept.
 */
-VM.Value lib_audio_getAudioResourcePath(VM.VmContext vm, Array<VM.Value> args) {
+VM.Value lib_game_audio_getAudioResourcePath(VM.VmContext vm, Array<VM.Value> args) {
     return VM.resource_manager_getResourceOfType(
         vm,
         (string) args[0].internalValue,

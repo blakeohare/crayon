@@ -103,10 +103,6 @@ PST$intBuffer16 = PST$multiplyList([0], 16);
 PST$floatBuffer16 = PST$multiplyList([0.0], 16);
 PST$stringBuffer16 = PST$multiplyList([''], 16);
 
-var lib_audio_getAudioResourcePath = function(vm, args) {
-	return resource_manager_getResourceOfType(vm, args[0][1], "SND");
-};
-
 var lib_audio_load_sfx_from_resourceImpl = function(obj, path) {
 	var sfx = C$audio$prepSoundForLoading(path);
 	obj[3] = PST$createNewArray(1);
@@ -175,6 +171,10 @@ var lib_audio_sfx_unpause = function(channel, sfxResource, volume, pan) {
 var lib_audio_stop = function(sound, reset) {
 	C$audio$stopSound(sound);
 	return 0;
+};
+
+var lib_game_audio_getAudioResourcePath = function(vm, args) {
+	return resource_manager_getResourceOfType(vm, args[0][1], "SND");
 };
 
 var lib_game_audio_is_supported = function(vm, args) {
