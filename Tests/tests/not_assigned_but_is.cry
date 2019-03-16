@@ -1,0 +1,9 @@
+function test() {
+	for (i = 0; i < 2; ++i) {
+		if (i == 1) {
+			y = x + 1;
+		} else {
+			x = 0;
+		}
+	}
+}

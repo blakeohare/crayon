@@ -72,7 +72,7 @@ namespace Parser.ParseTree
             this.ResolvedType = this.VarId.ResolvedType;
             if (this.ResolvedType == null)
             {
-                throw new ParserException(this, "This shouldn't happen");
+                throw new ParserException(this, "Variable is used, but has not been assigned to before this point in code. Even if this is in a loop, ensure that the variable is assigned a value before the loop starts.");
             }
             return this;
         }
