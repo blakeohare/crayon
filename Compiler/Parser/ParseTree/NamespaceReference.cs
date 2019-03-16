@@ -6,8 +6,41 @@ namespace Parser.ParseTree
 {
     public class NamespaceReferenceTemplate
     {
-        public Namespace OriginalNamespace { get; set; }
         public string Name { get; set; }
+
+        public Namespace OriginalNamespace { get; set; }
+        // If the OriginalNamespace has other things after the Name that this NRT is associated with
+        // (for example, this NRT may be for "MyLibrary" but the namespace reference is for a "MyLibrary.Internal"),
+        // this number ensures which level this namespace reference is associated with. In the given example,
+        // that namespace has 2 levels, but the value here will be 1.
+        public int OriginalNamespaceDepthClipping { get; set; }
+
+        private string fullyQualifiedNameCache = null;
+        public string GetFullyQualifiedName()
+        {
+            if (fullyQualifiedNameCache != null)
+            {
+                return fullyQualifiedNameCache;
+            }
+
+            string value = this.OriginalNamespace.FullyQualifiedDefaultName;
+            if (this.OriginalNamespaceDepthClipping == 1 && !value.Contains("."))
+            {
+                return value;
+            }
+            string[] parts = value.Split('.');
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append(parts[0]);
+            for (int i = 1; i < this.OriginalNamespaceDepthClipping; ++i)
+            {
+                sb.Append('.');
+                sb.Append(parts[i]);
+            }
+
+            fullyQualifiedNameCache = sb.ToString();
+
+            return fullyQualifiedNameCache;
+        }
     }
 
     // This serves as an ephemeral instance of an Expression that relays the NamespaceReferenceTemplate to

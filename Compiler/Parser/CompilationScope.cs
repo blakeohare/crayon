@@ -121,7 +121,7 @@ namespace Parser
                 Dictionary<string, NamespaceReferenceTemplate> lookup = this.namespaceFlattener.GetLookup(locale);
                 foreach (NamespaceReferenceTemplate nrt in lookup.Values)
                 {
-                    string originalName = nrt.OriginalNamespace.FullyQualifiedDefaultName;
+                    string originalName = nrt.GetFullyQualifiedName();
                     string localizedName = nrt.Name;
                     getNamespaceNameForLocaleCache[locale.ID + ":" + originalName] = localizedName;
                 }

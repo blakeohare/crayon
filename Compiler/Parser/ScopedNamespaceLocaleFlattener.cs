@@ -122,6 +122,7 @@ namespace Parser
                 {
                     Name = namespaceBuilder,
                     OriginalNamespace = representative ?? node.OriginalDefinitions[0],
+                    OriginalNamespaceDepthClipping = namespaceBuilder.Split('.').Length,
                 };
             }
 
