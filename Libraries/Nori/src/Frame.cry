@@ -146,6 +146,10 @@ namespace Nori {
             $lib_nori_flushUpdatesToFrame(this, renderData);
         }
 
+        function dispatcherCbComplete() {
+            return this._flushUpdatesIfNeeded();
+        }
+
         function setWidth(w) {
             this._size[0] = Math.floor(w);
             return this;
@@ -220,6 +224,7 @@ namespace Nori {
             if (cb == null) throw new Exception(); // this shouldn't happen
             this._callbacksById.remove(id);
             cb();
+            this._flushUpdatesIfNeeded();
         }
     }
 

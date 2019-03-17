@@ -157,6 +157,8 @@ namespace Game {
             }
         }
 
+        function dispatcherCbComplete() { }
+
         // returns a list [isAspectRatioForced, screenWidth, screenHeight]
         // can be called before game is created
         // may possibly return 0 x 0 for the screen size if the underlying API can't tell

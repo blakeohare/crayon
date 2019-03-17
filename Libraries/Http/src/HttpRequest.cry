@@ -109,6 +109,7 @@ namespace Http {
                 this._isReady = true;
                 res = this.getResponse();
                 cb(res);
+                Dispatcher.DispatcherInternal._notifyCbCompletedToFramework();
             };
 
             $lib_http_sendRequest(

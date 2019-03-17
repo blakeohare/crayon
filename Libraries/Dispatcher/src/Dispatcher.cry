@@ -105,6 +105,13 @@
                 for (cb : cbs) {
                     cb();
                 }
+                DispatcherInternal._notifyCbCompletedToFramework();
+            }
+        }
+
+        static function _notifyCbCompletedToFramework() {
+            if (DispatcherInternal._dispatcherFramework != null) {
+                DispatcherInternal._dispatcherFramework.dispatcherCbComplete();
             }
         }
 
