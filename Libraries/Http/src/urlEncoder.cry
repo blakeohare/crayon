@@ -1,0 +1,85 @@
+import TextEncoding;
+
+namespace Http {
+
+    const INVALID_PERCENT_ENCODED_ERROR = "Invalid percent-encoded format.";
+
+    static class HttpInternal {
+        static field safeChars = null;
+        static field hexToNum = null;
+    }
+
+    function urlEncode(str) {
+        if (HttpInternal.safeChars == null) {
+            lookup = {};
+            lookup[Core.ord(' ')] = '+';
+            for (c : '-_.~') lookup[Core.ord(c)] = c;
+            for (i = 0; i < 26; ++i) {
+                if (i < 10) lookup[i + Core.ord('0')] = i + '';
+                code = i + Core.ord('a');
+                c = Core.chr(code);
+                lookup[code] = c;
+                c = c.upper();
+                lookup[Core.ord(c)] = c;
+            }
+            HttpInternal.safeChars = lookup;
+        }
+
+        sb = [];
+        hex = '0123456789ABCDEF';
+        for (b : convertTextToBytes(str, TextFormat.UTF8)) {
+            c = HttpInternal.safeChars.get(b);
+            if (c != null) {
+                sb.add(c);
+            } else {
+                sb.add('%', hex[b >> 4], hex[b & 15]);
+            }
+        }
+        return sb.join('');
+    }
+
+    function urlDecode(str) {
+        if (HttpInternal.hexToNum == null) {
+            lookup = {};
+            for (i = 0; i < 10; ++i) {
+                lookup['' + i] = i;
+            }
+            for (i = 0; i < 6; ++i) {
+                c = 'abcdef'[i];
+                lookup[c] = i + 10;
+                lookup[c.upper()] = i + 10;
+            }
+            HttpInternal.hexToNum = lookup;
+        }
+
+        utf8Bytes = [];
+        len = str.length;
+        for (i = 0; i < len; ++i) {
+            c = str[i];
+            switch (c) {
+                case '+':
+                    utf8Bytes.add(Core.ord(' '));
+                    break;
+
+                case '%':
+                    if (i + 2 >= len) {
+                        throw new InvalidArgumentException(INVALID_PERCENT_ENCODED_ERROR);
+                    }
+                    a = HttpInternal.hexToNum.get(str[i + 1]);
+                    b = HttpInternal.hexToNum.get(str[i + 2]);
+                    if (a == null || b == null) {
+                        throw new InvalidArgumentException(INVALID_PERCENT_ENCODED_ERROR);
+                    }
+                    i += 2;
+                    utf8Bytes.add(a * 16 + b);
+                    break;
+
+                default:
+                    utf8Bytes.add(Core.ord(c));
+                    break;
+            }
+        }
+
+        return convertBytesToText(utf8Bytes, TextFormat.UTF8);
+    }
+}

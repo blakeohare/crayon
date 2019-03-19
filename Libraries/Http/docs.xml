@@ -1,6 +1,7 @@
 <library name="Http">
 	<description>Library for sending HTTP requests.</description>
 	<namespace name="Http">
+		
 		<enum name="Method">
 			<description>
 				Various common HTTP Methods. Any function that accepts this enum is also capable of accepting a 
@@ -11,6 +12,7 @@
 			<value name="PUT"/>
 			<value name="DELETE"/>
 		</enum>
+		
 		<enum name="StatusCode">
 			<description>
 				Enum for standard status codes. 
@@ -239,6 +241,7 @@
 			</function>
 
 			<function name="sendAsync">
+				<arg name="callback" type="function" description="A function that gets invoked when the HTTP request has completed. This function requires one input that will be an HttpResponse object."/>
 				<description>
 					Sends the HTTP request and returns immediately while the request runs in the background.
 					To check the status of the request, use .isDone() and .getResponse().
@@ -264,5 +267,23 @@
 				</description>
 			</function>
 		</class>
+		
+		<function name="urlEncode">
+			<arg name="value" type="string" description="A string to percent-encode."/>
+			<returns type="string" description="The percent-encoded string."/>
+			<description>
+				Encodes a string using the percent-encoding system to make it URL safe.
+			</description>
+		</function>
+		
+		<function name="urlDecode">
+			<arg name="value" type="string" description="A string that is percent-encoded."/>
+			<returns type="string" description="The original string value"/>
+			<description>
+				Decodes a string that has been percent encoded. 
+				If the string is not a valid percent encoding format, then an InvalidArgumentException is thrown.
+				If the string is in the correct format but the byte values are not valid UTF8, a TextEncoder.TextEncodingException is thrown.
+			</description>
+		</function>
 	</namespace>
 </library>
