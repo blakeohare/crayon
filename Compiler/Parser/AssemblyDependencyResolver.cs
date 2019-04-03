@@ -69,21 +69,100 @@ namespace Parser
             libraryOrderOut.Add(libraryToUse);
         }
 
-        public static string GetDependencyTreeLog(AssemblyMetadata[] libraries)
+        private static void LibraryDepTreeFlattenerRecursive(
+            Dictionary<string, AssemblyMetadata> libsOut,
+            AssemblyMetadata current)
         {
-            StringBuilder sb = new StringBuilder();
-            foreach (AssemblyMetadata library in libraries)
+            string id = current.Scope.Metadata.ID;
+            if (!libsOut.ContainsKey(id))
             {
-                sb.Append(library.ID);
-                sb.Append(": ");
+                libsOut[id] = current;
+                foreach (LocalizedAssemblyView dep in current.Scope.Dependencies)
+                {
+                    LibraryDepTreeFlattenerRecursive(libsOut, dep.Scope.Metadata);
+                }
+            }
+        }
 
-                sb.Append(string.Join(" ",
-                    new HashSet<string>(library.Scope.Dependencies
-                        .Select(lib => lib.Scope.Metadata.ID))
-                        .OrderBy(name => name.ToLower())));
+        private static AssemblyMetadata[] LibraryDepTreeFlattener(AssemblyMetadata[] topLevelDeps)
+        {
+            Dictionary<string, AssemblyMetadata> flattened = new Dictionary<string, AssemblyMetadata>();
+            foreach (AssemblyMetadata dep in topLevelDeps)
+            {
+                LibraryDepTreeFlattenerRecursive(flattened, dep);
+            }
+            List<AssemblyMetadata> output = new List<AssemblyMetadata>();
+            foreach (string flattenedKey in flattened.Keys.OrderBy(n => n.ToLower()))
+            {
+                output.Add(flattened[flattenedKey]);
+            }
+            return output.ToArray();
+        }
 
+        /*
+            returns a JSON string like this:
+            {
+                "rootDeps": [ "Math", "Core", "Game", "Graphics2D", "UserData" ],
+                "allLibScopes": [
+                  { "name": "Graphics2D", "deps": [ "Core", "Math", "Game" ] },
+                  { "name": "UserData", "deps": [ "Core", "FileIOCommon" ] },
+                  { "name": "FileIOCommon", "deps": [ "Core" ] },
+                  etc...
+                ]
+            }
+
+            The "allLibScopes" field contains a list of ALL library dependencies, including
+            deep dependencies. "rootDeps" is the "name" value of just the library dependencies
+            used by the root user-defined scope.
+        */
+        public static string GetDependencyTreeJson(AssemblyMetadata[] libraries)
+        {
+            Dictionary<string, string[]> depsById = new Dictionary<string, string[]>();
+            string[] rootDeps = libraries.Select(am => am.Scope.Metadata.ID).OrderBy(n => n.ToLower()).ToArray();
+
+            Dictionary<string, AssemblyMetadata> allLibraries = new Dictionary<string, AssemblyMetadata>();
+
+            foreach (AssemblyMetadata lib in LibraryDepTreeFlattener(libraries))
+            {
+                string[] deps = new HashSet<string>(lib.Scope.Dependencies
+                    .Select(v => v.Scope.Metadata.ID))
+                    .OrderBy(name => name.ToLower()).ToArray();
+
+                depsById[lib.Scope.Metadata.ID] = deps;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("{\n  \"rootDeps\": [");
+            for (int i = 0; i < rootDeps.Length; ++i)
+            {
+                if (i > 0) sb.Append(", ");
+                sb.Append('"');
+                sb.Append(rootDeps[i]);
+                sb.Append('"');
+            }
+            sb.Append("],\n  \"allLibScopes\": [\n");
+            string[] ids = depsById.Keys.OrderBy(v => v.ToLower()).ToArray();
+            for (int i = 0; i < ids.Length; ++i)
+            {
+                sb.Append("    { \"name\": \"");
+                sb.Append(ids[i]);
+                sb.Append("\", \"deps\": [");
+                string[] depDeps = depsById[ids[i]];
+                for (int j = 0; j < depDeps.Length; ++j)
+                {
+                    if (j > 0) sb.Append(", ");
+                    sb.Append('"');
+                    sb.Append(depDeps[j]);
+                    sb.Append('"');
+                }
+                sb.Append("] }");
+                if (i < ids.Length - 1)
+                {
+                    sb.Append(',');
+                }
                 sb.Append("\n");
             }
+            sb.Append("  ]\n}");
             return sb.ToString();
         }
     }
