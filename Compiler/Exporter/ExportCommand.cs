@@ -16,6 +16,7 @@
         public bool IsErrorCheckOnly { get; set; }
         public bool IsJsonOutput { get; set; }
         public bool UseOutputPrefixes { get; set; }
+        public string OutputDirectoryOverride { get; set; }
         public string[] DirectRunArgs { get; set; }
         public bool DirectRunShowLibStack { get; set; }
         public Platform.IPlatformProvider PlatformProvider { get; set; }
@@ -23,6 +24,7 @@
 
         public bool HasBuildFile { get { return this.BuildFilePath != null; } }
         public bool HasTarget { get { return this.BuildTarget != null; } }
+        public bool HasOutputDirectoryOverride { get { return this.OutputDirectoryOverride != null; } }
         public bool IsGenerateDefaultProject { get { return this.DefaultProjectId != null; } }
         public bool IsVmExportCommand { get { return this.VmExportDirectory != null || this.VmPlatform != null; } } // The actual VM exporter will throw the error if one is not specified.
         public bool IsCbxExport { get { return this.CbxExportPath != null; } }

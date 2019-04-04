@@ -22,7 +22,9 @@ namespace Exporter.Workers
 
             ResourceDatabase resourceDatabase = ResourceDatabaseBuilder.PrepareResources(buildContext, compilationResult.ByteCode);
 
-            string outputDirectory = buildContext.OutputFolder;
+            string outputDirectory = command.HasOutputDirectoryOverride
+                ? command.OutputDirectoryOverride
+                : buildContext.OutputFolder;
             if (!FileUtil.IsAbsolutePath(outputDirectory))
             {
                 outputDirectory = FileUtil.JoinPath(buildContext.ProjectDirectory, outputDirectory);

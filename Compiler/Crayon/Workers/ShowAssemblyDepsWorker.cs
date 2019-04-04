@@ -6,14 +6,25 @@ namespace Crayon
 {
     internal class ShowAssemblyDepsWorker
     {
-        public void DoWorkImpl(CompilationScope scope)
+        public void DoWorkImpl(bool useOutputPrefix, CompilationScope scope)
         {
             AssemblyMetadata[] libraryMetadata = scope
                 .Dependencies
                 .Select(assemblyView => assemblyView.Scope.Metadata)
                 .ToArray();
 
-            Console.WriteLine(AssemblyDependencyResolver.GetDependencyTreeJson(libraryMetadata));
+            string depTree = AssemblyDependencyResolver.GetDependencyTreeJson(libraryMetadata).Trim();
+            if (!useOutputPrefix)
+            {
+                Console.WriteLine(depTree);
+            }
+            else
+            {
+                foreach (string line in depTree.Split('\n'))
+                {
+                    Console.WriteLine("LIBS: " + line.TrimEnd());
+                }
+            }
         }
     }
 }

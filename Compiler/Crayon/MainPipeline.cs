@@ -50,7 +50,7 @@ namespace Crayon.Pipeline
                     ExportBundle result = Exporter.Pipeline.ExportCbxVmBundlePipeline.Run(command, buildContext);
                     if (command.ShowLibraryDepTree)
                     {
-                        new ShowAssemblyDepsWorker().DoWorkImpl(result.UserCodeScope);
+                        new ShowAssemblyDepsWorker().DoWorkImpl(command.UseOutputPrefixes, result.UserCodeScope);
                     }
                     break;
 
