@@ -26,7 +26,7 @@ namespace Build
         public string LaunchScreenPath { get; set; }
         public string DefaultTitle { get; set; }
         public string Orientation { get; set; }
-        public string CrayonPath { get; set; }
+        public string[] LocalDeps { get; set; }
         public string IosBundlePrefix { get; set; }
         public string JavaPackage { get; private set; }
         public bool JsFullPage { get; set; }
@@ -108,7 +108,7 @@ namespace Build
             flattened.LaunchScreen = DoReplacement(targetName, desiredTarget.LaunchScreen ?? flattened.LaunchScreen);
             flattened.DefaultTitle = DoReplacement(targetName, desiredTarget.DefaultTitle ?? flattened.DefaultTitle);
             flattened.Orientation = DoReplacement(targetName, desiredTarget.Orientation ?? flattened.Orientation);
-            flattened.CrayonPath = CombineAndFlattenStringArrays(desiredTarget.CrayonPath, flattened.CrayonPath).Select(s => DoReplacement(targetName, s)).ToArray();
+            flattened.LocalDeps = CombineAndFlattenStringArrays(desiredTarget.LocalDeps, flattened.LocalDeps).Select(s => DoReplacement(targetName, s)).ToArray();
             flattened.Description = DoReplacement(targetName, desiredTarget.Description ?? flattened.Description);
             flattened.Version = DoReplacement(targetName, desiredTarget.Version ?? flattened.Version);
             flattened.WindowSize = Size.Merge(desiredTarget.WindowSize, flattened.WindowSize) ?? new Size();
@@ -118,8 +118,8 @@ namespace Build
 
             ImageSheet[] imageSheets = flattened.ImageSheets ?? new ImageSheet[0];
 
-            string[] crayonPath = flattened.CrayonPath ?? new string[0];
-            crayonPath = crayonPath.Select(t => EnvironmentVariableUtil.DoReplacementsInString(t)).ToArray();
+            string[] localDeps = flattened.LocalDeps ?? new string[0];
+            localDeps = localDeps.Select(t => EnvironmentVariableUtil.DoReplacementsInString(t)).ToArray();
 
             BuildContext buildContext = new BuildContext()
             {
@@ -135,7 +135,7 @@ namespace Build
                 LaunchScreenPath = flattened.LaunchScreen,
                 DefaultTitle = flattened.DefaultTitle,
                 Orientation = flattened.Orientation,
-                CrayonPath = string.Join(";", crayonPath),
+                LocalDeps = localDeps,
                 IosBundlePrefix = flattened.IosBundlePrefix,
                 JavaPackage = flattened.JavaPackage,
                 JsFullPage = flattened.JsFullPage,
