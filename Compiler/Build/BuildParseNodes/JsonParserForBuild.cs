@@ -63,11 +63,9 @@ namespace Build.BuildParseNodes
                 }
             }
 
-            // TODO(json-build): change this to direct dependency references. For now, this will use direct dependencies, but walk up to the previous directory for compatibility.
-            item.CrayonPath = fileDeps
+            item.LocalDeps = fileDeps
                 .Select((string t) => t.Replace('\\', '/'))
                 .Select((string t) => t.TrimEnd('/'))
-                .Select((string t) => t.Contains('/') ? t.Substring(0, t.LastIndexOf('/')) : (t + "/.."))
                 .Distinct()
                 .ToArray();
 

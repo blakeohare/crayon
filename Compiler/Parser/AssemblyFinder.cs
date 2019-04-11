@@ -13,10 +13,10 @@ namespace Parser
         public AssemblyFinder() : this(null, null) { }
 
         public AssemblyFinder(
-            string nullableBuildFileCrayonPath,
+            string[] nullableBuildFileLocalDepsList,
             string nullableProjectDirectory)
         {
-            this.AssemblyFlatList = GetAvailableLibraryPathsByLibraryName(nullableBuildFileCrayonPath, nullableProjectDirectory);
+            this.AssemblyFlatList = GetAvailableLibraryPathsByLibraryName(nullableBuildFileLocalDepsList, nullableProjectDirectory);
 
             libraryLookup = this.AssemblyFlatList.ToDictionary(metadata => metadata.ID);
             foreach (AssemblyMetadata assemblyMetadata in this.AssemblyFlatList)
@@ -37,7 +37,7 @@ namespace Parser
         }
 
         private static AssemblyMetadata[] GetAvailableLibraryPathsByLibraryName(
-            string nullableBuildFileCrayonPath,
+            string[] nullableBuildFileLocalDepsList,
             string nullableProjectDirectory)
         {
             string crayonHome = System.Environment.GetEnvironmentVariable("CRAYON_HOME");
@@ -55,17 +55,23 @@ namespace Parser
             {
                 placesWhereLibraryDirectoriesCanExist += ";" + FileUtil.JoinPath(crayonHome, "libs");
             }
-            if (nullableBuildFileCrayonPath != null)
-            {
-                placesWhereLibraryDirectoriesCanExist += ";" + nullableBuildFileCrayonPath;
-            }
             placesWhereLibraryDirectoriesCanExist += ";" + (System.Environment.GetEnvironmentVariable("CRAYON_PATH") ?? "");
 
 #if OSX
             placesWhereLibraryDirectoriesCanExist = placesWhereLibraryDirectoriesCanExist.Replace(':', ';');
 #endif
-            string[] paths = placesWhereLibraryDirectoriesCanExist.Split(new char[] { ';' }, System.StringSplitOptions.RemoveEmptyEntries);
             List<string> unverifiedLibraryDirectories = new List<string>();
+
+            if (nullableBuildFileLocalDepsList != null)
+            {
+                foreach (string localDep in nullableBuildFileLocalDepsList)
+                {
+                    string localDepAbsolute = FileUtil.GetAbsolutePathFromRelativeOrAbsolutePath(nullableProjectDirectory, localDep);
+                    unverifiedLibraryDirectories.Add(localDepAbsolute);
+                }
+            }
+
+            string[] paths = placesWhereLibraryDirectoriesCanExist.Split(new char[] { ';' }, System.StringSplitOptions.RemoveEmptyEntries);
             foreach (string path in paths)
             {
                 // TODO: figure out why this says nullable yet is being used directly.

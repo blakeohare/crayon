@@ -20,7 +20,7 @@ namespace Parser
         public AssemblyManager(BuildContext buildContext)
         {
             this.buildContext = buildContext;
-            this.assemblyFinder = new AssemblyFinder(buildContext.CrayonPath, buildContext.ProjectDirectory);
+            this.assemblyFinder = new AssemblyFinder(buildContext.LocalDeps, buildContext.ProjectDirectory);
             this.ImportedAssemblyScopes = new List<CompilationScope>();
         }
 
