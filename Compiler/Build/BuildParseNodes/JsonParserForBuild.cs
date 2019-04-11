@@ -50,14 +50,28 @@ namespace Build.BuildParseNodes
             item.Version = json.GetAsString("version");
             item.IsCSharpCompatMode = json.GetAsBoolean("csharp-compat-mode");
 
+            List<string> remoteDeps = new List<string>();
+            List<string> fileDeps = new List<string>();
+            foreach (string depPath in (json.GetAsList("deps") ?? new object[0]).OfType<string>())
+            {
+                if (depPath.StartsWith("http://") || depPath.StartsWith("https://"))
+                {
+                    remoteDeps.Add(depPath);
+                } else
+                {
+                    fileDeps.Add(depPath);
+                }
+            }
+
             // TODO(json-build): change this to direct dependency references. For now, this will use direct dependencies, but walk up to the previous directory for compatibility.
-            item.CrayonPath = (json.GetAsList("deps") ?? new object[0])
-                .OfType<string>()
+            item.CrayonPath = fileDeps
                 .Select((string t) => t.Replace('\\', '/'))
                 .Select((string t) => t.TrimEnd('/'))
                 .Select((string t) => t.Contains('/') ? t.Substring(0, t.LastIndexOf('/')) : (t + "/.."))
                 .Distinct()
                 .ToArray();
+
+            item.RemoteDeps = remoteDeps.ToArray();
 
             List<ImageSheet> imageSheets = new List<ImageSheet>();
             object[] imageSheetsRaw = json.GetAsList("image-sheets");

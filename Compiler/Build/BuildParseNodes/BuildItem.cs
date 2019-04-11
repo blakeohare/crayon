@@ -29,6 +29,7 @@ namespace Build.BuildParseNodes
         // see Common/OrientationParser.cs
         public string Orientation { get; set; }
         public string[] CrayonPath { get; set; }
+        public string[] RemoteDeps { get; set; }
         public string IosBundlePrefix { get; set; }
         public string JavaPackage { get; set; }
         public Size WindowSize { get; set; }
