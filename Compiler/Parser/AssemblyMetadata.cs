@@ -72,16 +72,12 @@ namespace Parser
             this.CniStartupFunction = this.Manifest.GetAsString("cni-startup");
         }
 
-        private Dictionary<string, AssemblyMetadata> directDependencies = null;
+        private Dictionary<string, AssemblyMetadata> directDependencies = new Dictionary<string, AssemblyMetadata>();
 
         public AssemblyMetadata[] DirectDependencies
         {
             get
             {
-                if (this.directDependencies == null)
-                {
-                    throw new System.InvalidOperationException(); // cannot call this property until dependencies are resolved.
-                }
                 return this.directDependencies.Keys
                     .OrderBy(k => k.ToLower())
                     .Select(k => this.directDependencies[k])
