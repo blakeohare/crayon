@@ -32,7 +32,6 @@ namespace Parser
             this.buildContext = buildContext;
             this.CniFunctionsByName = new Dictionary<string, CniFunction>();
             this.Metadata = metadata;
-            this.Metadata.Scope = this;
             this.ScopeKey = this.Metadata.CanonicalKey;
 
             foreach (string cniFuncName in metadata.CniFunctions.Keys)
@@ -163,6 +162,7 @@ namespace Parser
                 }
             }
             this.dependenciesAndViews[view.Scope] = view;
+            this.Metadata.RegisterDependencies(view.Scope.Metadata);
         }
 
         public LocalizedAssemblyView[] Dependencies

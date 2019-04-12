@@ -73,13 +73,13 @@ namespace Parser
             Dictionary<string, AssemblyMetadata> libsOut,
             AssemblyMetadata current)
         {
-            string id = current.Scope.Metadata.ID;
+            string id = current.ID;
             if (!libsOut.ContainsKey(id))
             {
                 libsOut[id] = current;
-                foreach (LocalizedAssemblyView dep in current.Scope.Dependencies)
+                foreach (AssemblyMetadata dep in current.DirectDependencies)
                 {
-                    LibraryDepTreeFlattenerRecursive(libsOut, dep.Scope.Metadata);
+                    LibraryDepTreeFlattenerRecursive(libsOut, dep);
                 }
             }
         }
@@ -118,17 +118,17 @@ namespace Parser
         public static string GetDependencyTreeJson(AssemblyMetadata[] libraries)
         {
             Dictionary<string, string[]> depsById = new Dictionary<string, string[]>();
-            string[] rootDeps = libraries.Select(am => am.Scope.Metadata.ID).OrderBy(n => n.ToLower()).ToArray();
+            string[] rootDeps = libraries.Select(am => am.ID).OrderBy(n => n.ToLower()).ToArray();
 
             Dictionary<string, AssemblyMetadata> allLibraries = new Dictionary<string, AssemblyMetadata>();
 
             foreach (AssemblyMetadata lib in LibraryDepTreeFlattener(libraries))
             {
-                string[] deps = new HashSet<string>(lib.Scope.Dependencies
-                    .Select(v => v.Scope.Metadata.ID))
+                string[] deps = new HashSet<string>(lib.DirectDependencies
+                    .Select(assembly => assembly.ID))
                     .OrderBy(name => name.ToLower()).ToArray();
 
-                depsById[lib.Scope.Metadata.ID] = deps;
+                depsById[lib.ID] = deps;
             }
 
             StringBuilder sb = new StringBuilder();

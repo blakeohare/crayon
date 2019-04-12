@@ -23,9 +23,6 @@ namespace Parser
         public HashSet<string> OnlyImportableFrom { get; private set; }
         public bool IsUserDefined { get; private set; }
 
-        // Null until library is imported and parsed.
-        public CompilationScope Scope { get; set; }
-
         // For user defined scopes
         public AssemblyMetadata(Locale locale)
         {
@@ -73,6 +70,32 @@ namespace Parser
                 }
             }
             this.CniStartupFunction = this.Manifest.GetAsString("cni-startup");
+        }
+
+        private Dictionary<string, AssemblyMetadata> directDependencies = null;
+
+        public AssemblyMetadata[] DirectDependencies
+        {
+            get
+            {
+                if (this.directDependencies == null)
+                {
+                    throw new System.InvalidOperationException(); // cannot call this property until dependencies are resolved.
+                }
+                return this.directDependencies.Keys
+                    .OrderBy(k => k.ToLower())
+                    .Select(k => this.directDependencies[k])
+                    .ToArray();
+            }
+        }
+
+        public void RegisterDependencies(AssemblyMetadata assembly)
+        {
+            if (this.directDependencies == null)
+            {
+                this.directDependencies = new Dictionary<string, AssemblyMetadata>();
+            }
+            this.directDependencies[assembly.ID] = assembly;
         }
 
         public Dictionary<string, int> CniFunctions { get; private set; }
