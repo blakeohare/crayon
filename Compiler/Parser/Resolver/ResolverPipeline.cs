@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using AssemblyResolver;
+using Common;
 using Parser.ParseTree;
 using System;
 using System.Collections.Generic;
@@ -11,16 +12,19 @@ namespace Parser.Resolver
         public static TopLevelEntity[] Resolve(ParserContext parser, ICollection<CompilationScope> compilationScopesRaw)
         {
             List<TopLevelEntity> originalCode = new List<TopLevelEntity>();
+            Dictionary<string, CompilationScope> compilationScopeLookup = new Dictionary<string, CompilationScope>();
             foreach (CompilationScope scope in compilationScopesRaw.OrderBy(scope => scope.ScopeKey))
             {
                 originalCode.AddRange(scope.GetExecutables_HACK());
+                compilationScopeLookup[scope.Metadata.ID] = scope;
             }
             TopLevelEntity[] code = originalCode.ToArray();
 
             parser.VerifyNoBadImports();
 
-            CompilationScope[] assembliesInDependencyOrder = AssemblyDependencyResolver.GetAssemblyResolutionOrder(parser);
-            List<CompilationScope> compilationScopes = new List<CompilationScope>(assembliesInDependencyOrder);
+            AssemblyMetadata[] assembliesInDependencyOrder = AssemblyDependencyResolver.GetAssemblyResolutionOrder(parser.ScopeManager.ImportedAssemblyScopes.Select(scope => scope.Metadata));
+            List<CompilationScope> compilationScopes = new List<CompilationScope>(
+                assembliesInDependencyOrder.Select(asm => compilationScopeLookup[asm.ID]));
             compilationScopes.Add(parser.RootScope);
 
             using (new PerformanceSection("ResolveNames for compilation scopes"))

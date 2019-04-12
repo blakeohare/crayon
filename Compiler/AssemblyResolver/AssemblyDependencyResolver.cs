@@ -3,27 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Parser
+namespace AssemblyResolver
 {
     public class AssemblyDependencyResolver
     {
         // Essentially, just a post-order traversal
-        public static CompilationScope[] GetAssemblyResolutionOrder(ParserContext parser)
+        public static AssemblyMetadata[] GetAssemblyResolutionOrder(IEnumerable<AssemblyMetadata> usedAssemblies)
         {
             // these are alphabetized simply to guarantee consistent behavior.
-            CompilationScope[] unorderedScopes = parser.AssemblyManager.ImportedAssemblyScopes.OrderBy(scope => scope.Metadata.ID.ToLowerInvariant()).ToArray();
+            AssemblyMetadata[] unorderedAssemblies = usedAssemblies.OrderBy(md => md.ID.ToLowerInvariant()).ToArray();
 
-            List<CompilationScope> orderedLibraries = new List<CompilationScope>();
-            HashSet<CompilationScope> usedLibraries = new HashSet<CompilationScope>();
+            List<AssemblyMetadata> orderedLibraries = new List<AssemblyMetadata>();
+            HashSet<AssemblyMetadata> usedLibraries = new HashSet<AssemblyMetadata>();
 
-            HashSet<CompilationScope> cycleCheck = new HashSet<CompilationScope>();
-            Stack<CompilationScope> breadcrumbs = new Stack<CompilationScope>();
-            foreach (CompilationScope compilationScope in unorderedScopes)
+            HashSet<AssemblyMetadata> cycleCheck = new HashSet<AssemblyMetadata>();
+            Stack<AssemblyMetadata> breadcrumbs = new Stack<AssemblyMetadata>();
+            foreach (AssemblyMetadata assembly in unorderedAssemblies)
             {
-                if (!usedLibraries.Contains(compilationScope))
+                if (!usedLibraries.Contains(assembly))
                 {
                     LibraryUsagePostOrderTraversal(
-                        compilationScope, orderedLibraries, usedLibraries, cycleCheck, breadcrumbs);
+                        assembly, orderedLibraries, usedLibraries, cycleCheck, breadcrumbs);
                     cycleCheck.Clear();
                     breadcrumbs.Clear();
                 }
@@ -33,11 +33,11 @@ namespace Parser
         }
 
         private static void LibraryUsagePostOrderTraversal(
-            CompilationScope libraryToUse,
-            List<CompilationScope> libraryOrderOut,
-            HashSet<CompilationScope> usedLibraries,
-            HashSet<CompilationScope> cycleCheck,
-            Stack<CompilationScope> breadcrumbs)
+            AssemblyMetadata libraryToUse,
+            List<AssemblyMetadata> libraryOrderOut,
+            HashSet<AssemblyMetadata> usedLibraries,
+            HashSet<AssemblyMetadata> cycleCheck,
+            Stack<AssemblyMetadata> breadcrumbs)
         {
             if (usedLibraries.Contains(libraryToUse)) return;
 
@@ -48,19 +48,19 @@ namespace Parser
                 StringBuilder message = new StringBuilder();
                 message.Append("There is a dependency cycle in your libraries: ");
                 bool first = true;
-                foreach (CompilationScope breadcrumb in breadcrumbs)
+                foreach (AssemblyMetadata breadcrumb in breadcrumbs)
                 {
                     if (first) first = false;
                     else message.Append(" -> ");
-                    message.Append(breadcrumb.Metadata.ID);
+                    message.Append(breadcrumb.ID);
                 }
                 throw new InvalidOperationException(message.ToString());
             }
             cycleCheck.Add(libraryToUse);
 
-            foreach (LocalizedAssemblyView dependency in libraryToUse.Dependencies)
+            foreach (AssemblyMetadata dependency in libraryToUse.DirectDependencies)
             {
-                LibraryUsagePostOrderTraversal(dependency.Scope, libraryOrderOut, usedLibraries, cycleCheck, breadcrumbs);
+                LibraryUsagePostOrderTraversal(dependency, libraryOrderOut, usedLibraries, cycleCheck, breadcrumbs);
             }
             cycleCheck.Remove(libraryToUse);
             breadcrumbs.Pop();
@@ -73,13 +73,13 @@ namespace Parser
             Dictionary<string, AssemblyMetadata> libsOut,
             AssemblyMetadata current)
         {
-            string id = current.Scope.Metadata.ID;
+            string id = current.ID;
             if (!libsOut.ContainsKey(id))
             {
                 libsOut[id] = current;
-                foreach (LocalizedAssemblyView dep in current.Scope.Dependencies)
+                foreach (AssemblyMetadata dep in current.DirectDependencies)
                 {
-                    LibraryDepTreeFlattenerRecursive(libsOut, dep.Scope.Metadata);
+                    LibraryDepTreeFlattenerRecursive(libsOut, dep);
                 }
             }
         }
@@ -118,17 +118,17 @@ namespace Parser
         public static string GetDependencyTreeJson(AssemblyMetadata[] libraries)
         {
             Dictionary<string, string[]> depsById = new Dictionary<string, string[]>();
-            string[] rootDeps = libraries.Select(am => am.Scope.Metadata.ID).OrderBy(n => n.ToLower()).ToArray();
+            string[] rootDeps = libraries.Select(am => am.ID).OrderBy(n => n.ToLower()).ToArray();
 
             Dictionary<string, AssemblyMetadata> allLibraries = new Dictionary<string, AssemblyMetadata>();
 
             foreach (AssemblyMetadata lib in LibraryDepTreeFlattener(libraries))
             {
-                string[] deps = new HashSet<string>(lib.Scope.Dependencies
-                    .Select(v => v.Scope.Metadata.ID))
+                string[] deps = new HashSet<string>(lib.DirectDependencies
+                    .Select(assembly => assembly.ID))
                     .OrderBy(name => name.ToLower()).ToArray();
 
-                depsById[lib.Scope.Metadata.ID] = deps;
+                depsById[lib.ID] = deps;
             }
 
             StringBuilder sb = new StringBuilder();

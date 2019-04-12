@@ -3,7 +3,7 @@ using Localization;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser
+namespace AssemblyResolver
 {
     public class AssemblyMetadata
     {
@@ -22,9 +22,6 @@ namespace Parser
         public bool IsImportRestricted { get { return this.OnlyImportableFrom.Count > 0; } }
         public HashSet<string> OnlyImportableFrom { get; private set; }
         public bool IsUserDefined { get; private set; }
-
-        // Null until library is imported and parsed.
-        public CompilationScope Scope { get; set; }
 
         // For user defined scopes
         public AssemblyMetadata(Locale locale)
@@ -73,6 +70,28 @@ namespace Parser
                 }
             }
             this.CniStartupFunction = this.Manifest.GetAsString("cni-startup");
+        }
+
+        private Dictionary<string, AssemblyMetadata> directDependencies = new Dictionary<string, AssemblyMetadata>();
+
+        public AssemblyMetadata[] DirectDependencies
+        {
+            get
+            {
+                return this.directDependencies.Keys
+                    .OrderBy(k => k.ToLower())
+                    .Select(k => this.directDependencies[k])
+                    .ToArray();
+            }
+        }
+
+        public void RegisterDependencies(AssemblyMetadata assembly)
+        {
+            if (this.directDependencies == null)
+            {
+                this.directDependencies = new Dictionary<string, AssemblyMetadata>();
+            }
+            this.directDependencies[assembly.ID] = assembly;
         }
 
         public Dictionary<string, int> CniFunctions { get; private set; }
@@ -154,7 +173,7 @@ namespace Parser
             {
                 return fileUtil.ReadFileBytes(fullPath);
             }
-            throw new ParserException("The '" + this.ID + "' library does not contain the resource '" + pathRelativeToLibraryRoot + "'");
+            throw new System.InvalidOperationException("The '" + this.ID + "' library does not contain the resource '" + pathRelativeToLibraryRoot + "'");
         }
 
         public string ReadFile(bool keepPercents, string pathRelativeToLibraryRoot, bool failSilently)

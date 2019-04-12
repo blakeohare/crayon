@@ -1,4 +1,5 @@
-﻿using Parser;
+﻿using AssemblyResolver;
+using Parser;
 using System;
 using System.Linq;
 
@@ -10,7 +11,7 @@ namespace Crayon
         {
             AssemblyMetadata[] libraryMetadata = scope
                 .Dependencies
-                .Select(assemblyView => assemblyView.Scope.Metadata)
+                .Select(localizedLibView => localizedLibView.Scope.Metadata)
                 .ToArray();
 
             string depTree = AssemblyDependencyResolver.GetDependencyTreeJson(libraryMetadata).Trim();

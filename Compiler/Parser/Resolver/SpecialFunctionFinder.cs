@@ -24,7 +24,7 @@ namespace Parser.Resolver
         {
             FunctionDefinition[] invokeFunctions = FindFunctionImpl(
                 parserContext,
-                parserContext.AssemblyManager.ImportedAssemblyScopes.First(scope => scope.Dependencies.Length == 0),
+                parserContext.ScopeManager.ImportedAssemblyScopes.First(scope => scope.Dependencies.Length == 0),
                 "_LIB_CORE_invoke");
             if (invokeFunctions.Length != 1) throw new Exception();
             parserContext.CoreLibInvokeFunction = invokeFunctions[0];

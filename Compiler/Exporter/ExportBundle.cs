@@ -45,7 +45,7 @@ namespace Exporter
                 {
                     ByteCode = buffer,
                     UserCodeScope = parserContext.RootScope,
-                    LibraryScopesUsed = parserContext.AssemblyManager.ImportedAssemblyScopes.ToArray(),
+                    LibraryScopesUsed = parserContext.ScopeManager.ImportedAssemblyScopes.ToArray(),
                     ProjectID = buildContext.ProjectID,
                     Version = buildContext.TopLevelAssembly.Version,
                     Description = buildContext.TopLevelAssembly.Description,

@@ -41,6 +41,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AssemblyResolver\AssemblyResolver.csproj">
+      <Project>{d32d3f5e-09f8-4edc-8930-a12c25a10bc7}</Project>
+      <Name>AssemblyResolver</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Build\Build.csproj">
       <Project>{5bee19d9-117d-4c0e-bf60-45da72c9d355}</Project>
       <Name>Build</Name>

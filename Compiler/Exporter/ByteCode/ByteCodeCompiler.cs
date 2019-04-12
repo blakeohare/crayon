@@ -97,7 +97,7 @@ namespace Exporter.ByteCode
             ByteBuffer output = new ByteBuffer();
 
             int id = 1;
-            foreach (CompilationScope scope in parser.AssemblyManager.ImportedAssemblyScopes)
+            foreach (CompilationScope scope in parser.ScopeManager.ImportedAssemblyScopes)
             {
                 List<string> descriptorComponents = new List<string>()
                 {

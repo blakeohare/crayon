@@ -1,6 +1,6 @@
-﻿using Build;
+﻿using AssemblyResolver;
+using Build;
 using Common;
-using Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
