@@ -1,4 +1,5 @@
-﻿using Build;
+﻿using AssemblyResolver;
+using Build;
 using Common;
 using Localization;
 using Parser.ParseTree;

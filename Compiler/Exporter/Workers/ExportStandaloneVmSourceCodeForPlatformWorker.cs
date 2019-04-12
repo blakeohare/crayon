@@ -1,5 +1,5 @@
-﻿using Common;
-using Parser;
+﻿using AssemblyResolver;
+using Common;
 using System.Collections.Generic;
 
 namespace Exporter.Workers

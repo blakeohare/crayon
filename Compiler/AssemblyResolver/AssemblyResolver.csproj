@@ -44,6 +44,10 @@
       <Project>{18617a9a-3b1f-4532-bf4d-12bd62a3e5c6}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Localization\Localization.csproj">
+      <Project>{d64b5413-739c-4bbd-b70b-264cfae4b720}</Project>
+      <Name>Localization</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Choose>

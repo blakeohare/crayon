@@ -1,4 +1,5 @@
-﻿using Build;
+﻿using AssemblyResolver;
+using Build;
 using Localization;
 using System.Collections.Generic;
 using System.Linq;

@@ -3,7 +3,7 @@ using Localization;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser
+namespace AssemblyResolver
 {
     public class AssemblyMetadata
     {
@@ -173,7 +173,7 @@ namespace Parser
             {
                 return fileUtil.ReadFileBytes(fullPath);
             }
-            throw new ParserException("The '" + this.ID + "' library does not contain the resource '" + pathRelativeToLibraryRoot + "'");
+            throw new System.InvalidOperationException("The '" + this.ID + "' library does not contain the resource '" + pathRelativeToLibraryRoot + "'");
         }
 
         public string ReadFile(bool keepPercents, string pathRelativeToLibraryRoot, bool failSilently)

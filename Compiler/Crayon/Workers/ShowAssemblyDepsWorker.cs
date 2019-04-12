@@ -1,4 +1,5 @@
-﻿using Parser;
+﻿using AssemblyResolver;
+using Parser;
 using System;
 using System.Linq;
 

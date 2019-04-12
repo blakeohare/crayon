@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using AssemblyResolver;
+using Common;
 using Localization;
 using System.Collections.Generic;
 using System.Linq;
