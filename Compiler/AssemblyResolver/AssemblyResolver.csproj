@@ -46,4 +46,16 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Choose>
+    <When Condition=" '$(SolutionFileName)' == 'CrayonWindows.sln' ">
+      <PropertyGroup>
+        <DefineConstants>WINDOWS</DefineConstants>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DefineConstants>OSX</DefineConstants>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
 </Project>
