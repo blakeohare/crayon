@@ -41,36 +41,7 @@
     <Compile Include="Crayon\*.cs" />
     <Compile Include="ParseTree\*.cs" />
     <Compile Include="Resolver\*.cs" />
-    <Compile Include="AbstractAnnotationParser.cs" />
-    <Compile Include="AbstractExecutableParser.cs" />
-    <Compile Include="AbstractExpressionParser.cs" />
-    <Compile Include="AbstractTopLevelParser.cs" />
-    <Compile Include="AbstractTypeParser.cs" />
-    <Compile Include="AnnotationCollection.cs" />
-    <Compile Include="AssemblyDependencyResolver.cs" />
-    <Compile Include="AssemblyFinder.cs" />
-    <Compile Include="AssemblyManager.cs" />
-    <Compile Include="AType.cs" />
-    <Compile Include="CniFunction.cs" />
-    <Compile Include="CompilationScope.cs" />
-    <Compile Include="ConstantResolutionState.cs" />
-    <Compile Include="CoreFunctionID.cs" />
-    <Compile Include="FileScope.cs" />
-    <Compile Include="FileScopedEntityLookup.cs" />
-    <Compile Include="LiteralLookup.cs" />
-    <Compile Include="LocalizedAssemblyView.cs" />
-    <Compile Include="ModifierCollection.cs" />
-    <Compile Include="Ops.cs" />
-    <Compile Include="ParserContext.cs" />
-    <Compile Include="ParserException.cs" />
-    <Compile Include="ResolvedType.cs" />
-    <Compile Include="ScopedNamespaceLocaleFlattener.cs" />
-    <Compile Include="Token.cs" />
-    <Compile Include="Tokenizer.cs" />
-    <Compile Include="TokenStream.cs" />
-    <Compile Include="TokenType.cs" />
-    <Compile Include="Types.cs" />
-    <Compile Include="VariableScope.cs" />
+    <Compile Include="*.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AssemblyResolver\AssemblyResolver.csproj">

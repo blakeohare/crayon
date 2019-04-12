@@ -30,7 +30,7 @@ namespace Parser
             this.BuildContext = buildContext;
             this.IsCSharpCompat = buildContext.IsCSharpCompatibilityMode;
             this.PushScope(new CompilationScope(buildContext, new AssemblyMetadata(buildContext.CompilerLocale)));
-            this.AssemblyManager = new AssemblyManager(buildContext);
+            this.ScopeManager = new ScopeManager(buildContext);
             this.NamespacePrefixLookupForCurrentFile = new List<string>();
             this.ConstantAndEnumResolutionState = new Dictionary<TopLevelEntity, ConstantResolutionState>();
             this.LiteralLookup = new LiteralLookup();
@@ -185,7 +185,7 @@ namespace Parser
 
         public CompilationScope CurrentScope { get; private set; }
 
-        public AssemblyManager AssemblyManager { get; private set; }
+        public ScopeManager ScopeManager { get; private set; }
 
         public bool MainFunctionHasArg { get; set; }
 
@@ -352,7 +352,7 @@ namespace Parser
             List<string> namespaceImportsBuilder = new List<string>();
 
             // Implicitly import the Core library for the current locale.
-            LocalizedAssemblyView implicitCoreImport = this.AssemblyManager.GetCoreLibrary(this);
+            LocalizedAssemblyView implicitCoreImport = this.ScopeManager.GetCoreLibrary(this);
             namespaceImportsBuilder.Add(implicitCoreImport.Name);
             fileScope.Imports.Add(new ImportStatement(null, implicitCoreImport.Name, fileScope));
 
@@ -363,7 +363,7 @@ namespace Parser
                 ImportStatement importStatement = this.TopLevelParser.ParseImport(tokens, fileScope);
                 if (importStatement == null) throw new Exception();
                 namespaceImportsBuilder.Add(importStatement.ImportPath);
-                LocalizedAssemblyView localizedAssemblyView = this.AssemblyManager.GetOrImportAssembly(this, importStatement.FirstToken, importStatement.ImportPath);
+                LocalizedAssemblyView localizedAssemblyView = this.ScopeManager.GetOrImportAssembly(this, importStatement.FirstToken, importStatement.ImportPath);
                 if (localizedAssemblyView == null)
                 {
                     this.unresolvedImports.Add(importStatement);

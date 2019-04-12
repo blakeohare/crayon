@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Parser
 {
-    public class AssemblyManager
+    public class ScopeManager
     {
         private readonly BuildContext buildContext;
         private readonly AssemblyFinder assemblyFinder;
@@ -18,7 +18,7 @@ namespace Parser
         // The index + 1 is the reference ID
         private readonly Dictionary<string, int> assembliesAlreadyImportedIndexByKey = new Dictionary<string, int>();
 
-        public AssemblyManager(BuildContext buildContext)
+        public ScopeManager(BuildContext buildContext)
         {
             this.buildContext = buildContext;
             this.assemblyFinder = new AssemblyFinder(buildContext.LocalDeps, buildContext.ProjectDirectory);

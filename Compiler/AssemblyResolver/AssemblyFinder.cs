@@ -4,7 +4,7 @@ using Localization;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Parser
+namespace AssemblyResolver
 {
     public class AssemblyFinder
     {
@@ -29,7 +29,7 @@ namespace Parser
             }
         }
 
-        internal AssemblyMetadata GetAssemblyMetadataFromAnyPossibleKey(string name)
+        public AssemblyMetadata GetAssemblyMetadataFromAnyPossibleKey(string name)
         {
             AssemblyMetadata assembly;
             return libraryLookup.TryGetValue(name, out assembly)

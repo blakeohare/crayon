@@ -1,10 +1,9 @@
-﻿using AssemblyResolver;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Parser
+namespace AssemblyResolver
 {
     public class AssemblyDependencyResolver
     {
