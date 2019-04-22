@@ -61,6 +61,7 @@ namespace AssemblyResolver
 #if OSX
             placesWhereLibraryDirectoriesCanExist = placesWhereLibraryDirectoriesCanExist.Replace(':', ';');
 #endif
+
             List<string> unverifiedLibraryDirectories = new List<string>();
 
             if (nullableBuildFileLocalDepsList != null)

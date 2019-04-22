@@ -22,6 +22,7 @@ namespace AssemblyResolver
         {
             RemoteAssemblyUrl structuredUrl = RemoteAssemblyUrl.FromUrl(url);
             if (!structuredUrl.IsValid) return FetchAssemblyStatus.INVALID_URL;
+            
             throw new NotImplementedException();
         }
         
