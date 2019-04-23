@@ -6,8 +6,13 @@ namespace Crayon
     internal class UsageDisplayWorker
     {
         private static readonly string USAGE = Util.JoinLines(
-            "Usage:",
+            "Crayon version " + VersionInfo.VersionString,
+            "",
+            "To export:",
             "  crayon BUILD-FILE -target BUILD-TARGET-NAME [OPTIONS...]",
+            "",
+            "To run:",
+            "  crayon BUILD-FILE [args...]",
             "",
             "Flags:",
             "",
@@ -25,6 +30,12 @@ namespace Crayon
             "  -genDefaultProjES  Generates a default project with ES locale.",
             "",
             "  -genDefaultProjJP  Generates a default project with JP locale.",
+            "",
+            "  -showLibDepTree    Shows a dependency tree of the build.",
+            "",
+            "  -showLibStack      Stack traces will include libraries. By",
+            "                     default, stack traces are truncated to only",
+            "                     show user code.",
             "");
 
         public void DoWorkImpl()
