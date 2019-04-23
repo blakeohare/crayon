@@ -5,7 +5,8 @@
 	"icon": "assets/icon.png",
 	"launch-screen": "assets/launchscreen.png",
 	
-	"guid-seed": "org.crayonlang.demos.firedodge,v0.2.0,%TARGET_NAME%",
+	"version": "2.1.0",
+	"guid-seed": "org.crayonlang.demos.firedodge,v2.1.0,%TARGET_NAME%",
 	
 	"image-sheets": [
 		{

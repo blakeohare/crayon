@@ -1,7 +1,7 @@
 {
 	"name": "Http",
 	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/0.2.1/http",
+	"documentation": "http://crayonlang.org/docs/2.1.0/http",
 	"description": "Library for sending HTTP requests.",
 	
 	"cni": [

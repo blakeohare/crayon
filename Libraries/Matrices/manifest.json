@@ -1,7 +1,7 @@
 {
 	"name": "Matrices",
 	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/0.2.1/matrices",
+	"documentation": "http://crayonlang.org/docs/2.1.0/matrices",
 	"description": "Library to perform basic operations on matrices.",
 	
 	"cni": [

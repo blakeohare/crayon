@@ -1,7 +1,7 @@
 {
 	"name": "Resources",
 	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/0.2.1/resources",
+	"documentation": "http://crayonlang.org/docs/2.1.0/resources",
 	"description": "Library for reading bundled text resources.",
 	
 	"cni": [

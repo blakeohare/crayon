@@ -1,7 +1,7 @@
 {
 	"name": "TextEncoding",
 	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/0.2.1/textencoding",
+	"documentation": "http://crayonlang.org/docs/2.1.0/textencoding",
 	"description": "Library for encoding and decoding Text formats.",
 	
 	"cni": [

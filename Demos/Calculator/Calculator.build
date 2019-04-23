@@ -1,11 +1,13 @@
 {
 	"id": "Calculator",
+	"source": "source",
 	"output": "output/%TARGET_NAME%",
 	"icon": "assets/icon.png",
 	"java-package": "org.crayonlang.demos.calculator",
 	"ios-bundle-prefix": "org.crayonlang.demos",
-	"guid-seed": "org.crayonlang.demos.calculator,v0.2.1,%TARGET_NAME%",
-	"source": "source",
+	
+	"version": "2.1.0",
+	"guid-seed": "org.crayonlang.demos.calculator,v2.1.0,%TARGET_NAME%",
 
 	"targets": [
 		{

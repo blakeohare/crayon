@@ -3,7 +3,8 @@
 	"source": "source/",
 	"output": "output/%TARGET_NAME%",
 	
-	"guid-seed": "org.crayonlang.demos.gamepadboxes,v0.2.0,%TARGET_NAME%",
+	"version": "2.1.0",
+	"guid-seed": "org.crayonlang.demos.gamepadboxes,v2.1.0,%TARGET_NAME%",
 	
 	"targets": [
 		{

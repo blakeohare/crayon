@@ -1,7 +1,7 @@
 {
 	"name": "GameGifCap",
 	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/0.2.1/gamegifcap",
+	"documentation": "http://crayonlang.org/docs/2.1.0/gamegifcap",
 	"description": "In combination with the Game library, can record the GameWindow as an animated GIF.",
 
 	"cni": [
