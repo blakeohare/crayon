@@ -1,7 +1,6 @@
 ﻿using AssemblyResolver;
 using Common;
 using Exporter.Workers;
-using Parser;
 using Platform;
 using System.Collections.Generic;
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace AssemblyResolver
 {
@@ -27,7 +23,7 @@ namespace AssemblyResolver
                 case "https": isSecure = true; break;
                 default: return new RemoteAssemblyUrl() { IsValid = false };
             }
-            
+
             // TODO: allow a port number?
 
             string versionInfo = null;

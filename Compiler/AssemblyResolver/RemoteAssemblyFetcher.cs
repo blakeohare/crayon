@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AssemblyResolver
 {
@@ -22,9 +18,9 @@ namespace AssemblyResolver
         {
             RemoteAssemblyUrl structuredUrl = RemoteAssemblyUrl.FromUrl(url);
             if (!structuredUrl.IsValid) return FetchAssemblyStatus.INVALID_URL;
-            
+
             throw new NotImplementedException();
         }
-        
+
     }
 }

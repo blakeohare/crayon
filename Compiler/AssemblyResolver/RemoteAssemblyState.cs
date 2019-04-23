@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AssemblyResolver
+﻿namespace AssemblyResolver
 {
     internal class RemoteAssemblyState
     {
@@ -14,7 +8,7 @@ namespace AssemblyResolver
         public int LastFetched { get; set; }
         public string LocalDirectory { get; set; }
         public string Id { get; set; }
-        
+
         public AssemblyMetadata CreateNewAssemblyMetadataInstance()
         {
             return new AssemblyMetadata(this.LocalDirectory, this.Id);
