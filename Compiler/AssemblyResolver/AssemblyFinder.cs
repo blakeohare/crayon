@@ -1,5 +1,4 @@
-﻿using AssemblyResolver;
-using Common;
+﻿using Common;
 using Localization;
 using System.Collections.Generic;
 using System.Linq;
@@ -129,6 +128,9 @@ namespace AssemblyResolver
 
         public IList<AssemblyMetadata> GetRemoteAssemblies(string[] urlsAndVersionInfo)
         {
+            // TODO: finish this function.
+            return new AssemblyMetadata[0];
+            /*
             Dictionary<string, AssemblyMetadata> assemblies = new Dictionary<string, AssemblyMetadata>();
 
             RemoteAssemblyManifest manifest = new RemoteAssemblyManifest();
@@ -148,13 +150,15 @@ namespace AssemblyResolver
                 if (currentState == null)
                 {
                     syncNeeded.Add(new string[] { url, version });
-                } else if (version == "LATEST" )
+                }
+                else if (version == "LATEST")
                 {
 
                 }
             }
 
             return assemblies.Values.ToArray();
+            */
         }
     }
 }
