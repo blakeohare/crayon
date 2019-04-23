@@ -100,5 +100,33 @@ namespace AssemblyResolver
 
             return remoteAssemblies;
         }
+
+        public RemoteAssemblyState GetAssemblyState(string url, string version)
+        {
+            List<RemoteAssemblyState> candidates = new List<RemoteAssemblyState>();
+            foreach (RemoteAssemblyState state in this.RemoteAssemblies)
+            {
+                if (state.Url == url)
+                {
+                    if (version == "LATEST")
+                    {
+                        candidates.Add(state);
+                    }
+                    else if (state.Version == version)
+                    {
+                        candidates.Add(state);
+                    }
+                }
+            }
+
+            if (candidates.Count == 0) return null;
+            if (candidates.Count == 1) return candidates[0];
+
+            // TODO: sort candidates by version
+            // TODO: determine if a version was downloaded because it's the latest or because that's the version that was asked for.
+            // If the latter, then you need to sync a later version and if it's the latest, mark it as the former situation.
+
+            throw new System.NotImplementedException();
+        }
     }
 }

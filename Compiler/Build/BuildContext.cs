@@ -27,6 +27,7 @@ namespace Build
         public string DefaultTitle { get; set; }
         public string Orientation { get; set; }
         public string[] LocalDeps { get; set; }
+        public string[] RemoteDeps { get; set; }
         public string IosBundlePrefix { get; set; }
         public string JavaPackage { get; private set; }
         public bool JsFullPage { get; set; }
@@ -109,6 +110,7 @@ namespace Build
             flattened.DefaultTitle = DoReplacement(targetName, desiredTarget.DefaultTitle ?? flattened.DefaultTitle);
             flattened.Orientation = DoReplacement(targetName, desiredTarget.Orientation ?? flattened.Orientation);
             flattened.LocalDeps = CombineAndFlattenStringArrays(desiredTarget.LocalDeps, flattened.LocalDeps).Select(s => DoReplacement(targetName, s)).ToArray();
+            flattened.RemoteDeps = CombineAndFlattenStringArrays(desiredTarget.RemoteDeps, flattened.RemoteDeps);
             flattened.Description = DoReplacement(targetName, desiredTarget.Description ?? flattened.Description);
             flattened.Version = DoReplacement(targetName, desiredTarget.Version ?? flattened.Version);
             flattened.WindowSize = Size.Merge(desiredTarget.WindowSize, flattened.WindowSize) ?? new Size();
@@ -136,6 +138,7 @@ namespace Build
                 DefaultTitle = flattened.DefaultTitle,
                 Orientation = flattened.Orientation,
                 LocalDeps = localDeps,
+                RemoteDeps = flattened.RemoteDeps,
                 IosBundlePrefix = flattened.IosBundlePrefix,
                 JavaPackage = flattened.JavaPackage,
                 JsFullPage = flattened.JsFullPage,

@@ -21,7 +21,7 @@ namespace Parser
         public ScopeManager(BuildContext buildContext)
         {
             this.buildContext = buildContext;
-            this.assemblyFinder = new AssemblyFinder(buildContext.LocalDeps, buildContext.ProjectDirectory);
+            this.assemblyFinder = new AssemblyFinder(buildContext.LocalDeps, buildContext.RemoteDeps, buildContext.ProjectDirectory);
             this.ImportedAssemblyScopes = new List<CompilationScope>();
         }
 

@@ -11,13 +11,16 @@ namespace AssemblyResolver
         public AssemblyMetadata[] AssemblyFlatList { get; private set; }
         private Dictionary<string, AssemblyMetadata> libraryLookup;
 
-        public AssemblyFinder() : this(null, null) { }
+        public AssemblyFinder() : this(null, null, null) { }
 
         public AssemblyFinder(
             string[] nullableBuildFileLocalDepsList,
+            string[] nullableBuildFileRemoteDepsList,
             string nullableProjectDirectory)
         {
-            this.AssemblyFlatList = GetAvailableLibraryPathsByLibraryName(nullableBuildFileLocalDepsList, nullableProjectDirectory);
+            IList<AssemblyMetadata> localAssemblies = GetAvailableLibraryPathsByLibraryName(nullableBuildFileLocalDepsList, nullableProjectDirectory);
+            IList<AssemblyMetadata> remoteAssemblies = GetRemoteAssemblies(nullableBuildFileRemoteDepsList);
+            this.AssemblyFlatList = localAssemblies.Concat(remoteAssemblies).ToArray();
 
             libraryLookup = this.AssemblyFlatList.ToDictionary(metadata => metadata.ID);
             foreach (AssemblyMetadata assemblyMetadata in this.AssemblyFlatList)
@@ -122,6 +125,36 @@ namespace AssemblyResolver
             return uniqueAssemblies.Values
                 .OrderBy(metadata => metadata.ID.ToLower())
                 .ToArray();
+        }
+
+        public IList<AssemblyMetadata> GetRemoteAssemblies(string[] urlsAndVersionInfo)
+        {
+            Dictionary<string, AssemblyMetadata> assemblies = new Dictionary<string, AssemblyMetadata>();
+
+            RemoteAssemblyManifest manifest = new RemoteAssemblyManifest();
+            List<string[]> syncNeeded = new List<string[]>();
+            List<string[]> syncWanted = new List<string[]>();
+            foreach (string info in urlsAndVersionInfo)
+            {
+                string[] parts = info.Split(new char[] { ',' }, 2);
+                string url = parts[0];
+                string version = "LATEST";
+                if (parts.Length == 2)
+                {
+                    version = parts[1];
+                }
+
+                RemoteAssemblyState currentState = manifest.GetAssemblyState(url, version);
+                if (currentState == null)
+                {
+                    syncNeeded.Add(new string[] { url, version });
+                } else if (version == "LATEST" )
+                {
+
+                }
+            }
+
+            return assemblies.Values.ToArray();
         }
     }
 }
