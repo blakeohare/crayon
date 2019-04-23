@@ -1,5 +1,0 @@
-import CrayonUnit;
-
-function main() { 
-	new TestHarness().run();
-}

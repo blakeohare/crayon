@@ -1,0 +1,99 @@
+import CrayonUnit;
+
+// Class definitions are in OOTestSampleClasses.cry
+import OOTestSampleClasses;
+
+class OoTest : Test {
+
+    constructor() : base() { }
+
+    function testInheritanceBaseCall() {
+        parent = new OoSkipGenerationBaseCall1();
+        middle = new OoSkipGenerationBaseCall2();
+        child = new OoSkipGenerationBaseCall3();
+
+        assertThat(parent.myMethod()).isEqualTo('A');
+        assertThat(middle.myMethod()).isEqualTo('A');
+        assertThat(child.myMethod()).isEqualTo('BA');
+
+        assertThat(parent.anotherMethod()).isEqualTo('A');
+        assertThat(middle.anotherMethod()).isEqualTo('A');
+        assertThat(child.anotherMethod()).isEqualTo('BA');
+    }
+
+    function testInheritanceFieldsAndMethods() {
+        parent1 = new OoInheritanceParent('arg1');
+        parent2 = new OoInheritanceParent('arg1', 'arg2');
+        child1 = new OoInheritanceChild1();
+        child2 = new OoInheritanceChild2('c2-arg1');
+        grandchild = new OoInheritanceGrandChild();
+
+        assertThat(parent1.field1).isNull();
+        assertThat(parent1.field2).isNull();
+        assertThat(parent1.field3).isEqualTo(3);
+        assertThat(parent1.field4 + '').isEqualTo('4.0');
+        assertThat(parent1.field5 + '').isEqualTo('[]');
+        assertThat(parent1.field7 + '').isEqualTo('[7, 8, 9]');
+        // TODO: field6 and field8 assertion (need dictionary assertions)
+        assertThat(parent1.field9).isEqualTo('9');
+        assertThat(parent1.field10).isEqualTo('10');
+        assertThat(parent1.field11).isEqualTo('arg1');
+        assertThat(parent1.field12).isEqualTo('optional');
+
+        assertThat(parent2.field12).isEqualTo('arg2');
+
+        assertThat(child1.field1).isNull();
+        assertThat(child1.field2).isNull();
+        assertThat(child1.field3).isEqualTo(4); // note this is different than its parent
+        assertThat(child1.field4 + '').isEqualTo('4.0');
+        assertThat(child1.field5 + '').isEqualTo('[]');
+        assertThat(child1.field7 + '').isEqualTo('[7, 8, 9]');
+        // TODO: field6 and field8 assertion (need dictionary assertions)
+        assertThat(child1.field9).isEqualTo('9');
+        assertThat(child1.field10).isEqualTo('10');
+        assertThat(child1.field11).isEqualTo('from-child1');
+        assertThat(child1.field12).isEqualTo('optional');
+        assertThat(child1.field13).isEqualTo('child1');
+        assertThat(child1.field14).isEqualTo('child1-constructor');
+
+        assertThat(child2.field13).isEqualTo('child2');
+        assertThat(child2.field14).isEqualTo('child2-constructor');
+
+        assertThat(grandchild.field13).isEqualTo('child2');
+        assertThat(grandchild.field14).isEqualTo('child2-constructor');
+        assertThat(grandchild.field10).isEqualTo('10');
+        assertThat(grandchild.field11).isEqualTo('from-child2');
+        assertThat(grandchild.field12).isEqualTo('grand-child');
+
+        assertThat(parent1.notOverridden()).isEqualTo('notOverridden-super');
+        assertThat(parent1.overridden()).isEqualTo('overridden-super');
+
+        assertThat(child1.notOverridden()).isEqualTo('notOverridden-super');
+        assertThat(child1.overridden()).isEqualTo('overridden-child1');
+        assertThat(child1.child1Function()).isEqualTo('child1');
+
+        assertThat(child2.notOverridden()).isEqualTo('notOverridden-super');
+        assertThat(child2.overridden()).isEqualTo('[child2]overridden-super');
+        assertThat(child2.child2Function()).isEqualTo('overridden-super');
+
+        assertThat(grandchild.notOverridden()).isEqualTo('notOverridden-super');
+        assertThat(grandchild.overridden()).isEqualTo('[grandchild][child2]overridden-super');
+        assertThat(grandchild.child2Function()).isEqualTo('overridden-super');
+    }
+
+    function testClassComparison() {
+        foo1 = new OoSimple1();
+        foo2 = new OoSimple1();
+        foo3 = new OoSimple2();
+
+        // Compare a class against itself.
+        assertThat(foo1 == foo2).isFalse();
+        assertThat(Core.Reflection.getClassFromInstance(foo1) == Core.Reflection.getClassFromInstance(foo2)).isTrue();
+        assertThat(OoSimple1.class == OoSimple1.class).isTrue();
+
+        // Compare a class against an identical-looking but different one.
+        assertThat(foo1 == foo3).isFalse();
+        assertThat(Core.Reflection.getClassFromInstance(foo1) == Core.Reflection.getClassFromInstance(foo3)).isFalse();
+        assertThat(OoSimple1.class == OoSimple2.class).isFalse();
+    }
+}

@@ -8,6 +8,9 @@ class SlicingTest : Test {
         original = 'abcdefghij';
 
         assertThat(original[:]).isEqualTo('abcdefghij');
+        assertThat(original[::]).isEqualTo('abcdefghij');
+        assertThat(original[::1]).isEqualTo('abcdefghij');
+        assertThat(original[:0:]).isEqualTo('');
 
         assertThat(original[0:10]).isEqualTo('abcdefghij');
         assertThat(original[3:10]).isEqualTo('defghij');
@@ -19,6 +22,7 @@ class SlicingTest : Test {
         assertThat(original[:-2]).isEqualTo('abcdefgh');
         assertThat(original[-8:8]).isEqualTo('cdefgh');
         assertThat(original[7:7]).isEqualTo('');
+        assertThat(original[1:-1]).isEqualTo('bcdefghi');
         assertThat(original[1:]).isEqualTo('bcdefghij');
         assertThat(original[original.length:]).isEqualTo('');
 
@@ -27,6 +31,7 @@ class SlicingTest : Test {
         assertThat(original[1:8:3]).isEqualTo('beh');
 
         assertThat(original[5::-1]).isEqualTo('fedcba');
+        assertThat(original[1:-1:2]).isEqualTo('bdfh');
         assertThat(original[9:-11:-1]).isEqualTo('jihgfedcba');
         assertThat(original[3:3:-1]).isEqualTo('');
         assertThat(original[5:3:-1]).isEqualTo('fe');
@@ -39,5 +44,44 @@ class SlicingTest : Test {
         assertThat(x[1:]).contains([2, 3]).inOrder();
         x = [42];
         assertThat(x[1:]).isEmpty();
+
+        this.errSplice(original, -11, -8);
+    }
+
+    function errSplice(str, a = null, b = null, c = null) {
+        try {
+            if (a == null) {
+                if (b == null) {
+                    if (c == null) {
+                        x = str[::];
+                    } else {
+                        x = str[::c];
+                    }
+                } else {
+                    if (c == null) {
+                        x = str[:b:];
+                    } else {
+                        x = str[:b:c];
+                    }
+                }
+            } else if (b == null) {
+                if (c == null) {
+                    x = str[a::];
+                } else {
+                    x = str[a::c];
+                }
+            } else if (c == null) {
+                x = str[a:b:];
+            } else {
+                x = str[a:b:c];
+            }
+
+            fail(
+                "Expected failure for invalid slice range: " +
+                str + "[" + (a ?? '') + ':' + (b ?? '') + ':' + (c ?? '') + ']' +
+                " but instead got " + x + " as a result.");
+        } catch (Core.IndexOutOfRangeException ioore) {
+            // expected
+        }
     }
 }
