@@ -4,7 +4,9 @@
 	"icon": "assets/icon.png",
 	"java-package": "org.crayonlang.demos.conway",
 	"ios-bundle-prefix": "org.crayonlang.demos",
-	"guid-seed": "org.crayonlang.demos.conway,v0.2.0,%TARGET_NAME%",
+	
+	"version": "2.1.0",
+	"guid-seed": "org.crayonlang.demos.conway,v2.1.0,%TARGET_NAME%",
 	
 	"targets": [
 		{

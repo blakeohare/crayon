@@ -119,7 +119,7 @@ namespace Crayon
             // that the second argument is not "-target".
             // Current idea is to have -export Foo.build instead of just Foo.build
             // However, this will make all currently written documentation and tutorials
-            // incorrect, at least for 0.2.1.
+            // incorrect, at least for 2.1.0
             if (args.Length > 0 && args[0].ToLower().EndsWith(".build") && !output.ContainsKey(BUILD_TARGET))
             {
                 if (args.Length == 1 || (args[1] != "-target" && args[1] != "-CR:target"))

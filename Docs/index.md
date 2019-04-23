@@ -1,4 +1,4 @@
-# Crayon 0.2.0 Documentation
+# Crayon 2.1.0 Documentation
 
 ## Basics
 

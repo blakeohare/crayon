@@ -1,7 +1,7 @@
 {
 	"name": "Dispatcher",
 	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/0.2.1/dispatcher",
+	"documentation": "http://crayonlang.org/docs/2.1.0/dispatcher",
 	"description": "Library for dispatching callbacks.",
 	
 	"cni": [

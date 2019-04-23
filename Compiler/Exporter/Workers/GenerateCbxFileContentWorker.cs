@@ -12,9 +12,9 @@ namespace Exporter.Workers
         {
             List<byte> cbxOutput = new List<byte>() { 0 };
             cbxOutput.AddRange("CBX".ToCharArray().Select(c => (byte)c));
-            cbxOutput.AddRange(GetBigEndian4Byte(0));
-            cbxOutput.AddRange(GetBigEndian4Byte(2));
-            cbxOutput.AddRange(GetBigEndian4Byte(0));
+            cbxOutput.AddRange(GetBigEndian4Byte(VersionInfo.VersionMajor));
+            cbxOutput.AddRange(GetBigEndian4Byte(VersionInfo.VersionMinor));
+            cbxOutput.AddRange(GetBigEndian4Byte(VersionInfo.VersionBuild));
 
             byte[] code = StringToBytes(byteCode);
             cbxOutput.AddRange("CODE".ToCharArray().Select(c => (byte)c));
