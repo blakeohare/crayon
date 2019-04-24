@@ -69,7 +69,6 @@ namespace Build
         public static BuildContext Parse(string projectDir, string buildFile, string nullableTargetName)
         {
             BuildRoot buildInput = GetBuildRoot(buildFile);
-            BuildRoot flattened = buildInput;
             string platform = null;
             Dictionary<string, BuildVarCanonicalized> varLookup;
             string targetName = nullableTargetName;
@@ -96,69 +95,104 @@ namespace Build
             };
             varLookup = BuildVarParser.GenerateBuildVars(buildInput, desiredTarget, replacements);
 
-            flattened.Sources = desiredTarget.SourcesNonNull.Union<SourceItem>(flattened.SourcesNonNull).ToArray();
-            flattened.Output = FileUtil.GetCanonicalizeUniversalPath(DoReplacement(targetName, desiredTarget.Output ?? flattened.Output));
-            flattened.ProjectName = DoReplacement(targetName, desiredTarget.ProjectName ?? flattened.ProjectName);
-            flattened.JsFilePrefix = DoReplacement(targetName, desiredTarget.JsFilePrefix ?? flattened.JsFilePrefix);
-            flattened.JsFullPageRaw = desiredTarget.JsFullPageRaw ?? flattened.JsFullPageRaw;
-            flattened.ImageSheets = MergeImageSheets(desiredTarget.ImageSheets, flattened.ImageSheets);
-            flattened.MinifiedRaw = desiredTarget.MinifiedRaw ?? flattened.MinifiedRaw;
-            flattened.ExportDebugByteCodeRaw = desiredTarget.ExportDebugByteCodeRaw ?? flattened.ExportDebugByteCodeRaw;
-            flattened.GuidSeed = DoReplacement(targetName, desiredTarget.GuidSeed ?? flattened.GuidSeed);
-            flattened.IconFilePath = DoReplacement(targetName, desiredTarget.IconFilePath ?? flattened.IconFilePath);
-            flattened.LaunchScreen = DoReplacement(targetName, desiredTarget.LaunchScreen ?? flattened.LaunchScreen);
-            flattened.DefaultTitle = DoReplacement(targetName, desiredTarget.DefaultTitle ?? flattened.DefaultTitle);
-            flattened.Orientation = DoReplacement(targetName, desiredTarget.Orientation ?? flattened.Orientation);
-            flattened.LocalDeps = CombineAndFlattenStringArrays(desiredTarget.LocalDeps, flattened.LocalDeps).Select(s => DoReplacement(targetName, s)).ToArray();
-            flattened.RemoteDeps = CombineAndFlattenStringArrays(desiredTarget.RemoteDeps, flattened.RemoteDeps);
-            flattened.Description = DoReplacement(targetName, desiredTarget.Description ?? flattened.Description);
-            flattened.Version = DoReplacement(targetName, desiredTarget.Version ?? flattened.Version);
-            flattened.WindowSize = Size.Merge(desiredTarget.WindowSize, flattened.WindowSize) ?? new Size();
-            flattened.CompilerLocale = desiredTarget.CompilerLocale ?? flattened.CompilerLocale;
-            flattened.Orientation = desiredTarget.Orientation ?? flattened.Orientation;
-            flattened.IsCSharpCompatMode = desiredTarget.IsCSharpCompatMode || flattened.IsCSharpCompatMode; // TODO(acrylic-convert): should have unset state with ??
+            SourceItem[] sources = desiredTarget.SourcesNonNull.Union(buildInput.SourcesNonNull).ToArray();
+            string output = desiredTarget.Output ?? buildInput.Output;
+            string projectName = desiredTarget.ProjectName ?? buildInput.ProjectName;
+            string version = desiredTarget.Version ?? buildInput.Version ?? "1.0";
+            string jsFilePrefix = desiredTarget.JsFilePrefix ?? buildInput.JsFilePrefix;
+            bool jsFullPage = NullableBoolean.ToBoolean(desiredTarget.JsFullPageRaw ?? buildInput.JsFullPageRaw, false);
+            ImageSheet[] imageSheets = MergeImageSheets(desiredTarget.ImageSheets, buildInput.ImageSheets);
+            // TODO: maybe set this default value to true, although this does nothing as of now.
+            bool minified = NullableBoolean.ToBoolean(desiredTarget.MinifiedRaw ?? buildInput.MinifiedRaw, false);
+            bool exportDebugByteCode = Util.StringToBool(desiredTarget.ExportDebugByteCodeRaw ?? buildInput.ExportDebugByteCodeRaw);
+            string guidSeed = desiredTarget.GuidSeed ?? buildInput.GuidSeed ?? "";
+            // TODO: make this a string array.
+            string iconFilePath = desiredTarget.IconFilePath ?? buildInput.IconFilePath;
+            string launchScreen = desiredTarget.LaunchScreen ?? buildInput.LaunchScreen;
+            string defaultTitle = desiredTarget.DefaultTitle ?? buildInput.DefaultTitle;
+            string orientation = desiredTarget.Orientation ?? buildInput.Orientation;
+            string iosBundlePrefix = desiredTarget.IosBundlePrefix ?? buildInput.IosBundlePrefix;
+            string javaPackage = desiredTarget.JavaPackage ?? buildInput.JavaPackage;
+            string[] localDeps = CombineAndFlattenStringArrays(desiredTarget.LocalDeps, buildInput.LocalDeps);
+            string[] remoteDeps = CombineAndFlattenStringArrays(desiredTarget.RemoteDeps, buildInput.RemoteDeps);
+            string description = desiredTarget.Description ?? buildInput.Description ?? "";
+            Size windowSize = Size.Merge(desiredTarget.WindowSize, buildInput.WindowSize) ?? new Size();
+            string compilerLocale = desiredTarget.CompilerLocale ?? buildInput.CompilerLocale ?? "en";
+            bool isCSharpCompatMode = desiredTarget.IsCSharpCompatMode || buildInput.IsCSharpCompatMode; // TODO(acrylic-convert): should have unset state with ??
+            string programmingLanguage = buildInput.ProgrammingLanguage ?? "Crayon";
 
-            ImageSheet[] imageSheets = flattened.ImageSheets ?? new ImageSheet[0];
+            if (output == null)
+            {
+                throw new InvalidOperationException("No output directory defined.");
+            }
 
-            string[] localDeps = flattened.LocalDeps ?? new string[0];
-            localDeps = localDeps.Select(t => EnvironmentVariableUtil.DoReplacementsInString(t)).ToArray();
+            PercentReplacer pr = new PercentReplacer()
+                .AddReplacement("COMPILER_VERSION", VersionInfo.VersionString)
+                .AddReplacement("COMPILER_LANGUAGE", programmingLanguage)
+                .AddReplacement("TARGET_NAME", targetName);
+
+            version = pr.Replace(version);
+            pr.AddReplacement("VERSION", version);
+
+            compilerLocale = pr.Replace(compilerLocale);
+            pr.AddReplacement("COMPILER_LOCALE", compilerLocale);
+
+            output = FileUtil.GetCanonicalizeUniversalPath(pr.Replace(output));
+            projectName = pr.Replace(projectName);
+            jsFilePrefix = pr.Replace(jsFilePrefix);
+            guidSeed = pr.Replace(guidSeed);
+            iconFilePath = pr.Replace(iconFilePath);
+            launchScreen = pr.Replace(launchScreen);
+            defaultTitle = pr.Replace(defaultTitle);
+            orientation = pr.Replace(orientation);
+            iosBundlePrefix = pr.Replace(iosBundlePrefix);
+            javaPackage = pr.Replace(javaPackage);
+            programmingLanguage = pr.Replace(programmingLanguage);
+            localDeps = localDeps
+                .Select(t => EnvironmentVariableUtil.DoReplacementsInString(t))
+                .Select(t => pr.Replace(t))
+                .ToArray();
+            remoteDeps = remoteDeps
+                .Select(t => pr.Replace(t))
+                .ToArray();
+            description = pr.Replace(description);
 
             BuildContext buildContext = new BuildContext()
             {
                 ProjectDirectory = projectDir,
-                JsFilePrefix = flattened.JsFilePrefix,
-                OutputFolder = flattened.Output,
+                JsFilePrefix = jsFilePrefix,
+                OutputFolder = output,
                 Platform = platform,
-                ProjectID = flattened.ProjectName,
-                Minified = flattened.Minified,
-                ReadableByteCode = flattened.ExportDebugByteCode,
-                GuidSeed = flattened.GuidSeed,
-                IconFilePath = flattened.IconFilePath,
-                LaunchScreenPath = flattened.LaunchScreen,
-                DefaultTitle = flattened.DefaultTitle,
-                Orientation = flattened.Orientation,
+                ProjectID = projectName,
+                Minified = minified,
+                ReadableByteCode = exportDebugByteCode,
+                GuidSeed = guidSeed,
+                IconFilePath = iconFilePath,
+                LaunchScreenPath = launchScreen,
+                DefaultTitle = defaultTitle,
+                Orientation = orientation,
                 LocalDeps = localDeps,
-                RemoteDeps = flattened.RemoteDeps,
-                IosBundlePrefix = flattened.IosBundlePrefix,
-                JavaPackage = flattened.JavaPackage,
-                JsFullPage = flattened.JsFullPage,
-                WindowWidth = (flattened.WindowSize ?? new Size()).Width,
-                WindowHeight = (flattened.WindowSize ?? new Size()).Height,
-                CompilerLocale = Locale.Get((flattened.CompilerLocale ?? "en").Trim()),
-                IsCSharpCompatibilityMode = flattened.IsCSharpCompatMode,
+                RemoteDeps = remoteDeps,
+                IosBundlePrefix = iosBundlePrefix,
+                JavaPackage = javaPackage,
+                JsFullPage = jsFullPage,
+                WindowWidth = windowSize.Width,
+                WindowHeight = windowSize.Height,
+                CompilerLocale = Locale.Get(compilerLocale),
+                IsCSharpCompatibilityMode = isCSharpCompatMode,
             };
 
-            ProgrammingLanguage? nullableLanguage = ProgrammingLanguageParser.Parse(flattened.ProgrammingLanguage ?? "Crayon");
+            ProgrammingLanguage? nullableLanguage = ProgrammingLanguageParser.Parse(programmingLanguage);
             if (nullableLanguage == null)
             {
-                throw new InvalidOperationException("Invalid programming language specified: '" + flattened.ProgrammingLanguage + "'");
+                throw new InvalidOperationException("Invalid programming language specified: '" + programmingLanguage + "'");
             }
 
             buildContext.TopLevelAssembly = new AssemblyContext(buildContext)
             {
-                Description = flattened.Description,
-                Version = flattened.Version,
-                SourceFolders = ToFilePaths(projectDir, flattened.Sources ?? new SourceItem[0]),
+                Description = description,
+                Version = version,
+                SourceFolders = ToFilePaths(projectDir, sources),
                 ImageSheetPrefixesById = imageSheets.ToDictionary<ImageSheet, string, string[]>(s => s.Id, s => s.Prefixes),
                 ImageSheetIds = imageSheets.Select<ImageSheet, string>(s => s.Id).ToArray(),
                 BuildVariableLookup = varLookup,
@@ -255,11 +289,43 @@ namespace Build
             return output.ToArray();
         }
 
-        private static string DoReplacement(string target, string value)
+        private class PercentReplacer
         {
-            return value != null && value.Contains("%TARGET_NAME%")
-                ? value.Replace("%TARGET_NAME%", target)
-                : value;
+            private Dictionary<string, string> replacements = new Dictionary<string, string>();
+            public PercentReplacer() { }
+            public PercentReplacer AddReplacement(string oldValue, string newValue)
+            {
+                this.replacements[oldValue] = newValue;
+                return this;
+            }
+
+            public string Replace(string value)
+            {
+                if (value == null || !value.Contains('%'))
+                {
+                    return value;
+                }
+
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                string[] parts = value.Split('%');
+                sb.Append(parts[0]);
+                string replacement;
+                for (int i = 1; i < parts.Length - 1; ++i)
+                {
+                    if (this.replacements.TryGetValue(parts[i], out replacement))
+                    {
+                        sb.Append(replacement);
+                        sb.Append(parts[++i]);
+                    }
+                    else
+                    {
+                        sb.Append('%');
+                        sb.Append(parts[i]);
+                    }
+                }
+                return sb.ToString();
+            }
+
         }
 
         private static ImageSheet[] MergeImageSheets(ImageSheet[] originalSheets, ImageSheet[] newSheets)
