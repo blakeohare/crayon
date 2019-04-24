@@ -97,7 +97,7 @@ namespace Build
 
             SourceItem[] sources = desiredTarget.SourcesNonNull.Union(buildInput.SourcesNonNull).ToArray();
             string output = desiredTarget.Output ?? buildInput.Output;
-            string projectName = desiredTarget.ProjectName ?? buildInput.ProjectName;
+            string projectId = desiredTarget.ProjectId ?? buildInput.ProjectId;
             string version = desiredTarget.Version ?? buildInput.Version ?? "1.0";
             string jsFilePrefix = desiredTarget.JsFilePrefix ?? buildInput.JsFilePrefix;
             bool jsFullPage = NullableBoolean.ToBoolean(desiredTarget.JsFullPageRaw ?? buildInput.JsFullPageRaw, false);
@@ -138,7 +138,7 @@ namespace Build
             pr.AddReplacement("COMPILER_LOCALE", compilerLocale);
 
             output = FileUtil.GetCanonicalizeUniversalPath(pr.Replace(output));
-            projectName = pr.Replace(projectName);
+            projectId = pr.Replace(projectId);
             jsFilePrefix = pr.Replace(jsFilePrefix);
             guidSeed = pr.Replace(guidSeed);
             iconFilePath = pr.Replace(iconFilePath);
@@ -163,7 +163,7 @@ namespace Build
                 JsFilePrefix = jsFilePrefix,
                 OutputFolder = output,
                 Platform = platform,
-                ProjectID = projectName,
+                ProjectID = projectId,
                 Minified = minified,
                 ReadableByteCode = exportDebugByteCode,
                 GuidSeed = guidSeed,

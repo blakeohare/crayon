@@ -13,7 +13,7 @@ namespace Build.BuildParseNodes
             JsonLookup root = new JsonLookup(rootDict);
 
             BuildRoot rootOut = new BuildRoot();
-            rootOut.ProjectName = root.GetAsString("id");
+            rootOut.ProjectId = root.GetAsString("id");
 
             rootOut.ProgrammingLanguage = root.GetAsString("programming-language");
             ParseBuildItem(rootOut, root);
@@ -57,7 +57,8 @@ namespace Build.BuildParseNodes
                 if (depPath.StartsWith("http://") || depPath.StartsWith("https://"))
                 {
                     remoteDeps.Add(depPath);
-                } else
+                }
+                else
                 {
                     fileDeps.Add(depPath);
                 }

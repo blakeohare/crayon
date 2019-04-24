@@ -4,7 +4,7 @@ namespace Build.BuildParseNodes
 {
     public abstract class BuildItem
     {
-        public string ProjectName { get; set; }
+        public string ProjectId { get; set; }
         public string Version { get; set; }
         public string Description { get; set; }
         public SourceItem[] Sources { get; set; }
