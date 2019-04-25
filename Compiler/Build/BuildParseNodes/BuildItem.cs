@@ -19,7 +19,8 @@ namespace Build.BuildParseNodes
         public string ExportDebugByteCodeRaw { get; set; }
         public BuildVar[] Var { get; set; }
         public string GuidSeed { get; set; }
-        public string IconFilePath { get; set; }
+        public string[] IconFilePaths { get; set; }
+        public bool HasLegacyIcon { get; set; }
         public string LaunchScreen { get; set; }
         public string DefaultTitle { get; set; }
 

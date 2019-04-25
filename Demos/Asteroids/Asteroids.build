@@ -3,7 +3,7 @@
 	"description": "Classic Asteroids clone",
 	"source": "source/",
 	"output": "output/%TARGET_NAME%",
-	"icon": "assets/icon.png",
+	"icons": ["assets/icon.png"],
 	
 	"window-size": {
 		"width": 800,

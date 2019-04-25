@@ -34,7 +34,7 @@ namespace Build
         public NullableInteger WindowWidth { get; set; }
         public NullableInteger WindowHeight { get; set; }
         public Locale CompilerLocale { get; set; }
-        public string IconFilePath { get; set; }
+        public string[] IconFilePaths { get; set; }
         public bool IsCSharpCompatibilityMode { get; set; }
 
         private static Target FindTarget(string targetName, IList<Target> targets)
@@ -95,6 +95,15 @@ namespace Build
             };
             varLookup = BuildVarParser.GenerateBuildVars(buildInput, desiredTarget, replacements);
 
+            if (desiredTarget.HasLegacyIcon || buildInput.HasLegacyIcon)
+            {
+                // TODO: remove this in 2.2.0 or something
+                ThrowError(
+                    "This build file has a string property for an icon path. " +
+                    "This has been changed to a JSON array of strings for icon paths with a key called \"icons\" instead of \"icon\". " +
+                    "Please update your build file accordingly.");
+            }
+
             SourceItem[] sources = desiredTarget.SourcesNonNull.Union(buildInput.SourcesNonNull).ToArray();
             string output = desiredTarget.Output ?? buildInput.Output;
             string projectId = desiredTarget.ProjectId ?? buildInput.ProjectId;
@@ -107,7 +116,7 @@ namespace Build
             bool exportDebugByteCode = Util.StringToBool(desiredTarget.ExportDebugByteCodeRaw ?? buildInput.ExportDebugByteCodeRaw);
             string guidSeed = desiredTarget.GuidSeed ?? buildInput.GuidSeed ?? "";
             // TODO: make this a string array.
-            string iconFilePath = desiredTarget.IconFilePath ?? buildInput.IconFilePath;
+            string[] iconFilePaths = CombineAndFlattenStringArrays(desiredTarget.IconFilePaths, buildInput.IconFilePaths);
             string launchScreen = desiredTarget.LaunchScreen ?? buildInput.LaunchScreen;
             string defaultTitle = desiredTarget.DefaultTitle ?? buildInput.DefaultTitle;
             string orientation = desiredTarget.Orientation ?? buildInput.Orientation;
@@ -141,7 +150,11 @@ namespace Build
             projectId = pr.Replace(projectId);
             jsFilePrefix = pr.Replace(jsFilePrefix);
             guidSeed = pr.Replace(guidSeed);
-            iconFilePath = pr.Replace(iconFilePath);
+            iconFilePaths = iconFilePaths
+                .Select(t => pr.Replace(t))
+                .Select(t => FileUtil.GetAbsolutePathFromRelativeOrAbsolutePath(projectDir, t))
+                .Select(t => FileUtil.GetCanonicalizeUniversalPath(t))
+                .ToArray();
             launchScreen = pr.Replace(launchScreen);
             defaultTitle = pr.Replace(defaultTitle);
             orientation = pr.Replace(orientation);
@@ -168,7 +181,7 @@ namespace Build
                 Minified = minified,
                 ReadableByteCode = exportDebugByteCode,
                 GuidSeed = guidSeed,
-                IconFilePath = iconFilePath,
+                IconFilePaths = iconFilePaths,
                 LaunchScreenPath = launchScreen,
                 DefaultTitle = defaultTitle,
                 Orientation = orientation,
@@ -232,24 +245,12 @@ namespace Build
                 }
             }
 
-            string iconPathRaw = this.IconFilePath;
-            if (iconPathRaw != null)
+            string[] invalidIconPaths = this.IconFilePaths
+                .Where(t => !FileUtil.FileExists(t))
+                .ToArray();
+            if (invalidIconPaths.Length > 0)
             {
-                List<string> absoluteIconPaths = new List<string>();
-                foreach (string iconFile in iconPathRaw.Split(','))
-                {
-                    string trimmedIconFile = iconFile.Trim();
-                    if (!FileUtil.IsAbsolutePath(trimmedIconFile))
-                    {
-                        trimmedIconFile = FileUtil.JoinPath(this.ProjectDirectory, trimmedIconFile);
-                    }
-                    if (!FileUtil.FileExists(trimmedIconFile))
-                    {
-                        throw new InvalidOperationException("Icon file path does not exist: " + this.IconFilePath);
-                    }
-                    absoluteIconPaths.Add(trimmedIconFile);
-                }
-                this.IconFilePath = string.Join(",", absoluteIconPaths);
+                throw new InvalidOperationException("The following icon file paths do not exist: " + string.Join(",", invalidIconPaths));
             }
 
             string launchScreenPath = this.LaunchScreenPath;

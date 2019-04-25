@@ -2,7 +2,7 @@
 	"id": "FireDodge",
 	"source": "source/",
 	"output": "output/%TARGET_NAME%",
-	"icon": "assets/icon.png",
+	"icons": ["assets/icon.png"],
 	"launch-screen": "assets/launchscreen.png",
 	"programming-language": "Acrylic",
 

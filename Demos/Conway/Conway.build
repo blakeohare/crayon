@@ -1,7 +1,7 @@
 {
 	"id": "Conway",
 	"output": "output/%TARGET_NAME%",
-	"icon": "assets/icon.png",
+	"icons": ["assets/icon.png"],
 	"java-package": "org.crayonlang.demos.conway",
 	"ios-bundle-prefix": "org.crayonlang.demos",
 	

@@ -272,9 +272,9 @@ namespace CSharpApp
 
             if (options.GetBool(ExportOptionKey.HAS_ICON))
             {
-                string iconPath = options.GetString(ExportOptionKey.ICON_PATH);
+                string[] iconPaths = options.GetStringArray(ExportOptionKey.ICON_PATH);
                 IconGenerator iconGen = new IconGenerator();
-                foreach (string path in iconPath.Split(','))
+                foreach (string path in iconPaths)
                 {
                     iconGen.AddImage(new SystemBitmap(path.Trim()));
                 }

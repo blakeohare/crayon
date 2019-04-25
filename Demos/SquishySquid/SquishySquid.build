@@ -2,7 +2,7 @@
 	"id": "SquishySquid",
 	"source": "source/",
 	"output": "output/%TARGET_NAME%",
-	"icon": "assets/icon.png",
+	"icons": ["assets/icon.png"],
 	"title": "Squishy Squid",
 	
 	"ios-bundle-prefix": "org.crayonlang.demos",

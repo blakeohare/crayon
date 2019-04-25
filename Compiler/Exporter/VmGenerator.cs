@@ -60,7 +60,7 @@ namespace Exporter
                         .SetOption(ExportOptionKey.EMBED_BYTE_CODE, true)
                         .SetOption(ExportOptionKey.DEFAULT_TITLE, nullableExportBundle.DefaultTitle)
                         .SetOption(ExportOptionKey.LIBRARIES_USED, libraries.Cast<object>().ToArray())
-                        .SetOption(ExportOptionKey.HAS_ICON, nullableExportBundle.IconPath != null)
+                        .SetOption(ExportOptionKey.HAS_ICON, nullableExportBundle.IconPaths.Length > 0)
                         .SetOption(ExportOptionKey.HAS_LAUNCHSCREEN, nullableExportBundle.LaunchScreenPath != null)
                         .SetOption(ExportOptionKey.IOS_BUNDLE_PREFIX, nullableExportBundle.IosBundlePrefix)
                         .SetOption(ExportOptionKey.JAVA_PACKAGE, nullableExportBundle.JavaPackage)
@@ -68,7 +68,7 @@ namespace Exporter
                         .SetOption(ExportOptionKey.JS_FULL_PAGE, nullableExportBundle.JsFullPage)
                         .SetOption(ExportOptionKey.SUPPORTED_ORIENTATION, nullableExportBundle.Orientations);
 
-                    if (options.GetBool(ExportOptionKey.HAS_ICON)) options.SetOption(ExportOptionKey.ICON_PATH, nullableExportBundle.IconPath);
+                    if (options.GetBool(ExportOptionKey.HAS_ICON)) options.SetOption(ExportOptionKey.ICON_PATH, nullableExportBundle.IconPaths);
                     if (options.GetBool(ExportOptionKey.HAS_LAUNCHSCREEN)) options.SetOption(ExportOptionKey.LAUNCHSCREEN_PATH, nullableExportBundle.LaunchScreenPath);
 
                     platform.GleanInformationFromPreviouslyExportedProject(options, verifiedAbsoluteOutputPath);

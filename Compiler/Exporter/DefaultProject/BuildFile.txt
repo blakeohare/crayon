@@ -2,8 +2,11 @@
     "id": "%%%PROJECT_NAME%%%",
     "source": "source/",
     "output": "output/%TARGET_NAME%",
-    "icon": "assets/icon32.png,assets/icon256.png",
     "default-title": "%%%TITLE%%%",
+    "icons": [
+        "assets/icon32.png",
+        "assets/icon256.png"
+    ],
 
     "ios-bundle-prefix": "com.yourname.%%%PROJECT_NAME%%%",
     "guid-seed": "com.yourname.%%%PROJECT_NAME%%%,v1,%TARGET_NAME%",

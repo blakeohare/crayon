@@ -38,7 +38,6 @@ namespace Build.BuildParseNodes
             item.DefaultTitle = json.GetAsString("default-title");
             item.Description = json.GetAsString("description");
             item.GuidSeed = json.GetAsString("guid-seed");
-            item.IconFilePath = json.GetAsString("icon");
             item.IosBundlePrefix = json.GetAsString("ios-bundle-prefix");
             item.JavaPackage = json.GetAsString("java-package");
             item.JsFilePrefix = json.GetAsString("js-file-prefix");
@@ -49,6 +48,8 @@ namespace Build.BuildParseNodes
             item.Output = json.GetAsString("output");
             item.Version = json.GetAsString("version");
             item.IsCSharpCompatMode = json.GetAsBoolean("csharp-compat-mode");
+            item.IconFilePaths = (json.GetAsList("icons") ?? new object[0]).OfType<string>().ToArray();
+            item.HasLegacyIcon = json.GetAsString("icon") != null;
 
             List<string> remoteDeps = new List<string>();
             List<string> fileDeps = new List<string>();

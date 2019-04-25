@@ -55,6 +55,11 @@ namespace Common
             return this.options[key].ToString();
         }
 
+        public string[] GetStringArray(ExportOptionKey key)
+        {
+            return (string[])this.options[key];
+        }
+
         public string GetString(ExportOptionKey key, string defaultValue)
         {
             return GetStringOrNull(key) ?? defaultValue;

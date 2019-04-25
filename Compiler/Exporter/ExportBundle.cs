@@ -13,7 +13,7 @@ namespace Exporter
         public string GuidSeed { get; set; }
         public ICollection<CompilationScope> LibraryScopesUsed { get; set; }
         public CompilationScope UserCodeScope { get; set; }
-        public string IconPath { get; set; }
+        public string[] IconPaths { get; set; }
         public string LaunchScreenPath { get; set; }
         public string DefaultTitle { get; set; }
         public string JsFilePrefix { get; set; }
@@ -55,7 +55,7 @@ namespace Exporter
                     JsFullPage = buildContext.JsFullPage,
                     IosBundlePrefix = buildContext.IosBundlePrefix,
                     JavaPackage = buildContext.JavaPackage,
-                    IconPath = buildContext.IconFilePath,
+                    IconPaths = buildContext.IconFilePaths,
                     LaunchScreenPath = buildContext.LaunchScreenPath,
                     WindowWidth = buildContext.WindowWidth,
                     WindowHeight = buildContext.WindowHeight,
