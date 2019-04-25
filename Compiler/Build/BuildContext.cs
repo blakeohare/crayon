@@ -151,6 +151,7 @@ namespace Build
             localDeps = localDeps
                 .Select(t => EnvironmentVariableUtil.DoReplacementsInString(t))
                 .Select(t => pr.Replace(t))
+                .Select(t => FileUtil.GetCanonicalizeUniversalPath(t))
                 .ToArray();
             remoteDeps = remoteDeps
                 .Select(t => pr.Replace(t))
@@ -217,11 +218,9 @@ namespace Build
 
         public BuildContext ValidateValues()
         {
-            if (this.ProjectID == null) throw new InvalidOperationException("There is no <projectname> for this build target.");
-
-
-            if (this.TopLevelAssembly.SourceFolders.Length == 0) throw new InvalidOperationException("There are no <source> paths for this build target.");
-            if (this.OutputFolder == null) throw new InvalidOperationException("There is no <output> path for this build target.");
+            if (this.ProjectID == null) throw new InvalidOperationException("There is no project-id for this build target.");
+            if (this.TopLevelAssembly.SourceFolders.Length == 0) throw new InvalidOperationException("There are no source paths for this build target.");
+            if (this.OutputFolder == null) throw new InvalidOperationException("There is no output path for this build target.");
 
             foreach (char c in this.ProjectID)
             {
@@ -265,6 +264,27 @@ namespace Build
                     throw new InvalidOperationException("Launch screen file path does not exist: " + this.LaunchScreenPath);
                 }
             }
+
+            List<string> newLocalDeps = new List<string>();
+            foreach (string localDep in this.LocalDeps)
+            {
+                string manifestPath = localDep.EndsWith("/manifest.json")
+                    ? localDep
+                    : FileUtil.JoinAndCanonicalizePath(localDep, "manifest.json");
+
+                string fullManifestPath = FileUtil.GetAbsolutePathFromRelativeOrAbsolutePath(this.ProjectDirectory, manifestPath);
+
+                if (FileUtil.FileExists(fullManifestPath))
+                {
+                    newLocalDeps.Add(fullManifestPath.Substring(0, fullManifestPath.Length - "/manifest.json".Length));
+                }
+                else
+                {
+                    ThrowError("The path '" + localDep + "' does not point to a valid library with a manifest.json file. '" + fullManifestPath + "' does not exist.");
+                }
+            }
+
+            this.LocalDeps = newLocalDeps.ToArray();
 
             return this;
         }
