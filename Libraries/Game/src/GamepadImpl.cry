@@ -1,4 +1,4 @@
-namespace Game {
+﻿namespace Game {
     function GamepadImpl_isSupported() { return $lib_game_gamepad_is_supported(); }
     function GamepadImpl_getPlatform() { return $lib_game_gamepad_getPlatform(); }
     function GamepadImpl_isOsx() { return $lib_game_gamepad_jsIsOsx() == 1; }

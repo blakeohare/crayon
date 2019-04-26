@@ -1,4 +1,4 @@
-import ImageResources;
+﻿import ImageResources;
 
 namespace ImageEncoder {
 

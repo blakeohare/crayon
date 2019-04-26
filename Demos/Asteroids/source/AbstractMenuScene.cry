@@ -1,4 +1,4 @@
-import Game;
+﻿import Game;
 import Graphics2D;
 
 class AbstractMenuScene : AbstractScene {

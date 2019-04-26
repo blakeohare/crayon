@@ -1,4 +1,4 @@
-import Http;
+﻿import Http;
 import ImageResources;
 
 namespace ImageWebResources {

@@ -1,4 +1,4 @@
-class AbstractScene {
+﻿class AbstractScene {
     field nextScene = null;
 
     constructor() { }

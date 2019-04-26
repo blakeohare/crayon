@@ -1,4 +1,4 @@
-@import("closeFrame.pst");
+﻿@import("closeFrame.pst");
 @import("flushUpdatesToFrame.pst");
 @import("showFrame.pst");
 @import("prepImageResource.pst");

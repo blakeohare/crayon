@@ -1,4 +1,4 @@
-VM.Value lib_game_startup(VM.VmContext vm, Array<VM.Value> args) {
+﻿VM.Value lib_game_startup(VM.VmContext vm, Array<VM.Value> args) {
 
     Dictionary<string, Func<object, Array<object>>> functionLookup = Extension._lib_game_GetCallbackFunctions();
 

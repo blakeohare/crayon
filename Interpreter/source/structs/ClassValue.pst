@@ -1,4 +1,4 @@
-// Used as the internalValue of a Value instance for Class definition types.
+﻿// Used as the internalValue of a Value instance for Class definition types.
 struct ClassValue {
     bool isInterface;
     int classId; // or interface ID (when that is eventually implemented)

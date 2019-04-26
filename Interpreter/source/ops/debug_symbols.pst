@@ -1,2 +1,2 @@
-// See comment for this function for op code information
+﻿// See comment for this function for op code information
 applyDebugSymbolData(vm, row, stringArgs[pc], metadata.mostRecentFunctionDef);

@@ -1,5 +1,4 @@
-﻿
-// TODO: the literal table can be flattened into a lookup by PC at startup to eliminate this extra index dereference.
+﻿// TODO: the literal table can be flattened into a lookup by PC at startup to eliminate this extra index dereference.
 
 @import("inline/ValueStackCapacityCheck.pst");
 if (@ext_boolean("HAS_INCREMENT")) {

@@ -1,4 +1,4 @@
-/*
+﻿/*
     Gets the value of the closure variable with the given ID and pushes it to the value stack.
 
     row[0] -> variable ID

@@ -1,4 +1,4 @@
-@localized('en', 'Core')
+﻿@localized('en', 'Core')
 @localized('es', 'Esencia')
 @localized('jp', 'JPCore')
 namespace Core {

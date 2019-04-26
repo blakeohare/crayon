@@ -1,4 +1,4 @@
-import CrayonUnit;
+﻿import CrayonUnit;
 import TextEncoding;
 
 class TextEncodingTest : Test {

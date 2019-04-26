@@ -1,4 +1,4 @@
-struct PlatformRelayObject {
+﻿struct PlatformRelayObject {
     int type;
     int iarg1;
     int iarg2;

@@ -1,4 +1,4 @@
-import Nori;
+﻿import Nori;
 import Xml;
 
 namespace NoriXml {

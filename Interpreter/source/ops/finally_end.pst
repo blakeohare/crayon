@@ -1,5 +1,4 @@
-﻿
-value = ec.activeException;
+﻿value = ec.activeException;
 if (value == null || ec.activeExceptionHandled) {
     switch (stack.postFinallyBehavior) {
         case PostFinallyBehavior.NOTHING:

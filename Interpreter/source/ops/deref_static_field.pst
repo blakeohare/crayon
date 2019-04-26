@@ -1,5 +1,4 @@
-﻿
-classInfo = classTable[row[0]];
+﻿classInfo = classTable[row[0]];
 
 // reads value in classInfo and sets bool1 to true if op should continue.
 @import("inline/InvokeStaticConstructor.pst");

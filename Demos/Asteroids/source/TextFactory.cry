@@ -1,4 +1,4 @@
-import Graphics2DText;
+﻿import Graphics2DText;
 
 class TextFactory {
 

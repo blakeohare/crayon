@@ -1,4 +1,4 @@
-class PlayScene : AbstractScene {
+﻿class PlayScene : AbstractScene {
     field ocean;
 
     constructor(ocean) : base() {

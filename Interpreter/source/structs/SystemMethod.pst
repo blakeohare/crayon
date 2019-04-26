@@ -1,4 +1,4 @@
-struct SystemMethod {
+﻿struct SystemMethod {
     Value context;
     int id;
 }

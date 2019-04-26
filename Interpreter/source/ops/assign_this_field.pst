@@ -1,5 +1,4 @@
-﻿
-// row[0] -> member ID
+﻿// row[0] -> member ID
 
 // Assignments that override methods are blocked at compile-time.
 // use of 'this' is blocked at compile time outside of non-static methods, so referencing the objectContext is always safe here.

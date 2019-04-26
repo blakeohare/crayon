@@ -1,4 +1,4 @@
-int registerNamedCallback(
+﻿int registerNamedCallback(
     VmContext vm,
     string scope,
     string functionName,

@@ -1,4 +1,4 @@
-/*
+﻿/*
     An object that contains all the qualities properties of a tile type.
     These are unique per type of tile and a common reference to each type
     is shared between all tile objects of that type.

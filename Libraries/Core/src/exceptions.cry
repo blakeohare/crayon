@@ -1,4 +1,4 @@
-namespace Core {
+﻿namespace Core {
 
     enum _LIB_CORE_ExType {
         // These must be kept in sync with CoreExceptionTypes in Constants.cry in the interpreter.

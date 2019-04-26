@@ -1,4 +1,4 @@
-import Math;
+﻿import Math;
 
 class Sprite {
 

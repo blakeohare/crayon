@@ -1,4 +1,4 @@
-entablar Juego;
+﻿entablar Juego;
 entablar Graficos2D;
 entablar Mates;
 entablar Aleatorio;
@@ -24,7 +24,7 @@ funcion primero() {
 
     // TODO: Remove this...eventually. This is here just for localization testing.
     publicar(Esencia.Espejo.ESgetClassFromInstance(window));
-    Esencia.publicar("�Hola, Mundo!");
+    Esencia.publicar("¡Hola, Mundo!");
     Esencia.publicar("Pi = " + Mates.PI);
 
     totalCells = WIDTH * HEIGHT;

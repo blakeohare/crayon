@@ -1,4 +1,4 @@
-struct StackFrame {
+﻿struct StackFrame {
     int pc;
     int localsStackSetToken; // if localsStackSet[i + offset] has this value, then that means localsStack[i + offset] is valid.
     int localsStackOffset; // offset local ID by this to get the value in localsStack

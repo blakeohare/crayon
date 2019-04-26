@@ -1,4 +1,4 @@
-namespace CrayonUnit {
+﻿namespace CrayonUnit {
 
     function assertThat(thing) {
         return new VerificationContextObject(thing);

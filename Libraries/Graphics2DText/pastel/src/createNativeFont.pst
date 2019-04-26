@@ -1,4 +1,4 @@
-/*
+﻿/*
     args[0] -> NativeFont (nativeData array already allocated)
         nativeData[0] -> fill this in with the native font object
     args[1] -> type

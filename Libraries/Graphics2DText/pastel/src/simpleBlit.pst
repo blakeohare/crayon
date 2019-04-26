@@ -1,4 +1,4 @@
-/*
+﻿/*
     Adds a blit to the Graphics2D.Draw._queue
     This is ONLY used from non-GL platforms.
     Spoof the Image resource native data structure by

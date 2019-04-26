@@ -1,4 +1,4 @@
-import Math;
+﻿import Math;
 
 const GRAVITY = .5;
 const JUMP_VELOCITY = IS_LANDSCAPE_MODE ? -8 : -10;

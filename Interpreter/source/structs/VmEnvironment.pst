@@ -1,4 +1,4 @@
-struct VmEnvironment {
+﻿struct VmEnvironment {
     Array<string> commandLineArgs;
     bool showLibStack;
     string stdoutPrefix;

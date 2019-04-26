@@ -1,4 +1,4 @@
-@localized('en', 'Audio')
+﻿@localized('en', 'Audio')
 @localized('es', 'ESAudio')
 @localized('jp', 'JPAudio')
 namespace Audio {

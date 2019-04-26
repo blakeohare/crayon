@@ -1,4 +1,4 @@
-struct HttpRequest {
+﻿struct HttpRequest {
     int statusCode;
     string status;
     Dictionary<string, Array<string>> headers;

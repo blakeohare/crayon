@@ -1,4 +1,4 @@
-@import("createNativeFont.pst");
+﻿@import("createNativeFont.pst");
 @import("getNativeFontUniqueKey.pst");
 @import("glGenerateAndLoadTexture.pst");
 @import("glRenderCharTile.pst");

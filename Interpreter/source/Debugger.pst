@@ -1,4 +1,4 @@
-string encodeBreakpointData(VmContext vm, BreakpointInfo breakpoint, int pc) {
+﻿string encodeBreakpointData(VmContext vm, BreakpointInfo breakpoint, int pc) {
     if (@ext_boolean("HAS_DEBUGGER")) {
         initFileNameSymbolData(vm);
         List<Token> tokens = vm.symbolData.tokenData[pc];

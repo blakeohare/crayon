@@ -1,4 +1,4 @@
-namespace Nori {
+﻿namespace Nori {
 
     const Button_Text = 'btn.text';
     const Button_OnClick = 'btn.onclick';

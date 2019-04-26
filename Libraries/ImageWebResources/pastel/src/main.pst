@@ -1,4 +1,4 @@
-@import("bytesToImage.pst");
+﻿@import("bytesToImage.pst");
 @import("jsDownload.pst");
 @import("jsGetImage.pst");
 @import("jsPoll.pst");

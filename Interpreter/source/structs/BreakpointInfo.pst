@@ -1,4 +1,4 @@
-struct BreakpointInfo {
+﻿struct BreakpointInfo {
     int breakpointId;
     bool isTransient;
     Token token;

@@ -1,4 +1,4 @@
-/*
+﻿/*
     When a class is about to be referenced, static initialization state is checked.
     If it is 0, then check to see if the base class chain has any 0's and initialize the last class
     up the chain. Class intializations work like function invocations where the return PC points to the

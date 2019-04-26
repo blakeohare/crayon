@@ -1,4 +1,4 @@
-@import("createGifContext.pst");
+﻿@import("createGifContext.pst");
 @import("isSupported.pst");
 @import("saveToDisk.pst");
 @import("screenCap.pst");

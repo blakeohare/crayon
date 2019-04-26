@@ -1,4 +1,4 @@
-/*
+﻿/*
     This function potentially sets interrupts, so hasInterrupt must be set from the state of ec.activeInterrupt.
 */
 Value performListSlice(VmGlobals globals, ExecutionContext ec, Value value, Value arg1, Value arg2, Value arg3) {

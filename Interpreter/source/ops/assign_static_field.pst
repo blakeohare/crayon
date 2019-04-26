@@ -1,5 +1,4 @@
-﻿
-// row[0] -> class ID
+﻿// row[0] -> class ID
 // row[1] -> static member ID
 
 classInfo = classTable[row[0]];

@@ -1,4 +1,4 @@
-struct ResourceInfo {
+﻿struct ResourceInfo {
     string userPath;
     string internalPath;
     bool isText;

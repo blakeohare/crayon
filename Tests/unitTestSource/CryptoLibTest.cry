@@ -1,4 +1,4 @@
-import CrayonUnit;
+﻿import CrayonUnit;
 import CryptoMd5;
 import CryptoSha1;
 

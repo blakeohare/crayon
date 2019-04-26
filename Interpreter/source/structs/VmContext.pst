@@ -1,4 +1,4 @@
-struct VmContext {
+﻿struct VmContext {
     Dictionary<int, ExecutionContext> executionContexts;
     int lastExecutionContextId;
     Code byteCode;

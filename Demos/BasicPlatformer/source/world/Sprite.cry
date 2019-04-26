@@ -1,4 +1,4 @@
-import Graphics2D;
+﻿import Graphics2D;
 import Math;
 
 const SPRITE_X_ACCEL = 0.05;
