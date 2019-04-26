@@ -118,6 +118,8 @@ if (value2.type == Types.INSTANCE) {
                 "'"));
         }
     }
+} else if (value2.type == Types.NULL) {
+    hasInterrupt = EX_NullReference(ec, "Cannot assign to a field on null.");
 } else {
     hasInterrupt = EX_InvalidAssignment(ec, "Cannot assign to a field on this type.");
 }

@@ -2420,7 +2420,14 @@ namespace Interpreter.Vm
                         }
                         else
                         {
-                            hasInterrupt = EX_InvalidAssignment(ec, "Cannot assign to a field on this type.");
+                            if ((value2.type == 1))
+                            {
+                                hasInterrupt = EX_NullReference(ec, "Cannot assign to a field on null.");
+                            }
+                            else
+                            {
+                                hasInterrupt = EX_InvalidAssignment(ec, "Cannot assign to a field on this type.");
+                            }
                         }
                         if ((row[1] == 1))
                         {

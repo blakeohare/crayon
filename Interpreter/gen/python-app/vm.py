@@ -1467,6 +1467,8 @@ def interpretImpl(vm, executionContextId):
                   hasInterrupt = EX_UnknownField(ec, ''.join(["The field '", string1, "' is marked as ", string2, " and cannot be accessed from here."]))
                 else:
                   hasInterrupt = EX_InvalidAssignment(ec, ''.join(["'", classInfo[16], "' instances do not have a field called '", metadata[0][row[0]], "'"]))
+              elif (value2[0] == 1):
+                hasInterrupt = EX_NullReference(ec, "Cannot assign to a field on null.")
               else:
                 hasInterrupt = EX_InvalidAssignment(ec, "Cannot assign to a field on this type.")
               if (row[1] == 1):
