@@ -1,28 +1,30 @@
-<build>
-	<projectname>UserDataTutorial</projectname>
-	<source>source/</source>
-	<output>output/%TARGET_NAME%</output>
+{
+	"id": "UserDataTutorial",
+	"source": "source/",
+	"output": "output/%TARGET_NAME%",
 	
-	<guidseed>org.crayonlang.tutorials.userdata,v0.2.0,%TARGET_NAME%</guidseed>
+	"guidseed": "org.crayonlang.tutorials.userdata,v2.1.0,%TARGET_NAME%",
 	
-	<!-- Targets -->
-	<target name="android">
-		<platform>game-csharp-android</platform>
-	</target>
-
-	<target name="javascript">
-		<platform>game-javascript</platform>
-	</target>
-	
-	<target name="csharp">
-		<platform>game-csharp-opentk</platform>
-	</target>
-	
-	<target name="java">
-		<platform>game-java-awt</platform>
-	</target>
-	
-	<target name="python">
-		<platform>game-python-pygame</platform>
-	</target>
-</build>
+	"targets": [
+		{
+			"name": "android",
+			"platform": "javascript-app-android"
+		},
+		{
+			"name": "javascript",
+			"platform": "javascript-app"
+		},
+		{
+			"name": "csharp",
+			"platform": "csharp-app"
+		},
+		{
+			"name": "java",
+			"platform": "java-app"
+		},
+		{
+			"name": "python",
+			"platform": "python-app"
+		}
+	]
+}
