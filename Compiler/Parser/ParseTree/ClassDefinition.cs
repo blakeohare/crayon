@@ -150,7 +150,6 @@ namespace Parser.ParseTree
         {
             for (int i = 0; i < this.Fields.Length; ++i)
             {
-
                 FieldDefinition field = this.Fields[i];
                 field.Resolve(parser);
                 this.Fields[i] = field;
@@ -193,7 +192,10 @@ namespace Parser.ParseTree
             {
                 if (this.BaseClass.Constructor != null)
                 {
-                    throw new ParserException(this, "The base class of this class has a constructor which must be called.");
+                    if (this.BaseClass.Constructor.MinArgCount > 0)
+                    {
+                        throw new ParserException(this, "The base class of this class has a constructor which must be called.");
+                    }
                 }
             }
             else if (!hasABaseClass && callsBaseConstructor)

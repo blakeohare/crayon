@@ -1,6 +1,22 @@
 // These are used by OOTest.cry
 namespace OOTestSampleClasses {
 
+    class OoHasConstructorButParentDoesnt : OoNoExplicitConstructorButHasParent {
+
+        constructor() : base() { }
+
+        function hello() { return "C"; }
+    }
+
+    class OoNoExplicitConstructorButHasParent : Core.Object {
+
+        function hello() { return "B"; }
+    }
+
+    class OoHasNoConstructorAndNoParent {
+        function hello() { return "D"; }
+    }
+
     class OoSimple1 { }
     class OoSimple2 { }
 

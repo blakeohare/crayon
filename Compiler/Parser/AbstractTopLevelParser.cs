@@ -289,6 +289,11 @@ namespace Parser
                     cd,
                     ModifierCollection.EMPTY,
                     new AnnotationCollection(parser));
+                if (cd.BaseClassTokens.Length > 0)
+                {
+                    cd.Constructor.BaseToken = cd.FirstToken;
+                    cd.Constructor.SetBaseArgs(new Expression[0]);
+                }
             }
 
             return cd;

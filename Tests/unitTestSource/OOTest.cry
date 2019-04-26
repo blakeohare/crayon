@@ -7,6 +7,15 @@ class OoTest : Test {
 
     constructor() : base() { }
 
+    function testImplicitConstructor() {
+        child = new OoNoExplicitConstructorButHasParent();
+        grandchild = new OoHasConstructorButParentDoesnt();
+        noConstructor = new OoHasNoConstructorAndNoParent();
+        assertThat(child.hello()).isEqualTo('B');
+        assertThat(grandchild.hello()).isEqualTo('C');
+        assertThat(noConstructor.hello()).isEqualTo('D');
+    }
+
     function testInheritanceBaseCall() {
         parent = new OoSkipGenerationBaseCall1();
         middle = new OoSkipGenerationBaseCall2();
