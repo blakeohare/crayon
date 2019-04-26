@@ -50,6 +50,7 @@ namespace Build.BuildParseNodes
             item.IsCSharpCompatMode = json.GetAsBoolean("csharp-compat-mode");
             item.IconFilePaths = (json.GetAsList("icons") ?? new object[0]).OfType<string>().ToArray();
             item.HasLegacyIcon = json.GetAsString("icon") != null;
+            item.DelegateMainTo = json.GetAsString("delegate-main-to");
 
             List<string> remoteDeps = new List<string>();
             List<string> fileDeps = new List<string>();

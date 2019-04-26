@@ -32,7 +32,28 @@ namespace Parser.Resolver
 
         private static void FindMainFunction(ParserContext parserContext)
         {
-            FunctionDefinition[] mainFunctions = FindFunctionImpl(parserContext, parserContext.RootScope, parserContext.Keywords.MAIN_FUNCTION);
+            string delegateMainTo = parserContext.BuildContext.DelegateMainTo;
+
+            CompilationScope scope = parserContext.RootScope;
+
+            if (delegateMainTo != null)
+            {
+                scope = scope.Dependencies
+                    .Where(d => d.Name == delegateMainTo)
+                    .Select(lav => lav.Scope)
+                    .FirstOrDefault();
+                if (scope == null)
+                {
+                    throw new InvalidOperationException("delegate-main-to value is not a valid dependency of the main scope.");
+                }
+            }
+
+            // TODO(localization): this will pose problems when the included scope is not the same locale.
+            // The main function needs to be tagged as part of the scope's data when it's parsed.
+            FunctionDefinition[] mainFunctions = FindFunctionImpl(
+                parserContext,
+                scope,
+                parserContext.Keywords.MAIN_FUNCTION);
 
             if (mainFunctions.Length == 0) throw new InvalidOperationException("No main(args) function was defined.");
             if (mainFunctions.Length > 1) throw new ParserException(mainFunctions[0], "Multiple main methods found.");

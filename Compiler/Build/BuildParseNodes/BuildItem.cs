@@ -23,6 +23,7 @@ namespace Build.BuildParseNodes
         public bool HasLegacyIcon { get; set; }
         public string LaunchScreen { get; set; }
         public string DefaultTitle { get; set; }
+        public string DelegateMainTo { get; set; }
 
         // comma-delimited list of values
         // { portrait | upsidedown | landscape | landscapeleft | landscaperight | all }
