@@ -75,7 +75,7 @@ class FormatStyle:
 
     if self.should_end_with_newline:
       new_lines.append('')
-    
+
     text = '\n'.join(new_lines)
 
     return text
@@ -130,7 +130,7 @@ MATCHERS = [
 
   # Clean Scripts
   ('Scripts/*.py', PYTHON_STYLE_2_SPACES),
-  ('style-fixer.py', PYTHON_STYLE_2_SPACES),
+  ('format-fixer.py', PYTHON_STYLE_2_SPACES),
 ]
 
 def get_all_files():
@@ -139,10 +139,10 @@ def get_all_files():
   return output
 
 BAD_PATH_MARKERS = [
-	'/obj/Debug'.replace('/', os.sep),
-	'/obj/Release'.replace('/', os.sep),
-	'/bin/Debug'.replace('/', os.sep),
-	'/bin/Release'.replace('/', os.sep),
+  '/obj/Debug'.replace('/', os.sep),
+  '/obj/Release'.replace('/', os.sep),
+  '/bin/Debug'.replace('/', os.sep),
+  '/bin/Release'.replace('/', os.sep),
 ]
 
 def get_all_files_impl(path, output):
