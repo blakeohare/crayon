@@ -2,7 +2,6 @@
 	"id": "Calculator",
 	"source": "source",
 	"output": "output/%TARGET_NAME%",
-	"icons": ["assets/icon.png"],
 	"java-package": "org.crayonlang.demos.calculator",
 	"ios-bundle-prefix": "org.crayonlang.demos",
 	
