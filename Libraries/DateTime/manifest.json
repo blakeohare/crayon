@@ -1,16 +1,16 @@
 {
-	"name": "DateTime",
-	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/2.1.0/datetime",
-	"description": "Library for doing things with the Date and Time.",
-	
-	"cni": [
-		{ "name": "lib_datetime_initTimeZone", "argc": 3 },
-		{ "name": "lib_datetime_initTimeZoneList", "argc": 1 },
-		{ "name": "lib_datetime_getOffsetFromUtcNow", "argc": 1 },
-		{ "name": "lib_datetime_isDstOccurringAt", "argc": 2 },
-		{ "name": "lib_datetime_parseDate", "argc": 7 },
-		{ "name": "lib_datetime_unixToStructured", "argc": 2 },
-		{ "name": "lib_datetime_getUtcOffsetAt", "argc": 2 }
-	]
+    "name": "DateTime",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.1.0/datetime",
+    "description": "Library for doing things with the Date and Time.",
+
+    "cni": [
+        { "name": "lib_datetime_initTimeZone", "argc": 3 },
+        { "name": "lib_datetime_initTimeZoneList", "argc": 1 },
+        { "name": "lib_datetime_getOffsetFromUtcNow", "argc": 1 },
+        { "name": "lib_datetime_isDstOccurringAt", "argc": 2 },
+        { "name": "lib_datetime_parseDate", "argc": 7 },
+        { "name": "lib_datetime_unixToStructured", "argc": 2 },
+        { "name": "lib_datetime_getUtcOffsetAt", "argc": 2 }
+    ]
 }

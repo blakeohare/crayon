@@ -1,39 +1,39 @@
 {
-	"id": "Platformer",
-	"source": "source/",
-	"output": "output/%TARGET_NAME%",
-	
-	"version": "2.1.0",
-	"guid-seed": "org.crayonlang.demos.basicplatformer,v2.1.0,%TARGET_NAME%",
-	
-	"image-sheets": [
-		{
-			"id": "everything",
-			"prefix": "*"
-		}
-	],
-	
-	"targets": [
-		{
-			"name": "js_local",
-			"platform": "javascript-app"
-		},
-		{
-			"name": "js_remote",
-			"platform": "javascript-app",
-			"js-file-prefix": "demos/platformer/"
-		},
-		{
-			"name": "csharp",
-			"platform": "csharp-app"
-		},
-		{
-			"name": "java",
-			"platform": "java-app"
-		},
-		{
-			"name": "python",
-			"platform": "python-app"
-		}
-	]
+    "id": "Platformer",
+    "source": "source/",
+    "output": "output/%TARGET_NAME%",
+
+    "version": "2.1.0",
+    "guid-seed": "org.crayonlang.demos.basicplatformer,v2.1.0,%TARGET_NAME%",
+
+    "image-sheets": [
+        {
+            "id": "everything",
+            "prefix": "*"
+        }
+    ],
+
+    "targets": [
+        {
+            "name": "js_local",
+            "platform": "javascript-app"
+        },
+        {
+            "name": "js_remote",
+            "platform": "javascript-app",
+            "js-file-prefix": "demos/platformer/"
+        },
+        {
+            "name": "csharp",
+            "platform": "csharp-app"
+        },
+        {
+            "name": "java",
+            "platform": "java-app"
+        },
+        {
+            "name": "python",
+            "platform": "python-app"
+        }
+    ]
 }

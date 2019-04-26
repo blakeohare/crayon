@@ -1,6 +1,6 @@
 {
-	"name": "FileIO",
-	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/2.1.0/fileio",
-	"description": "Basic File IO with local disk (or virtualized local disk) and persistent user data location."
+    "name": "FileIO",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.1.0/fileio",
+    "description": "Basic File IO with local disk (or virtualized local disk) and persistent user data location."
 }

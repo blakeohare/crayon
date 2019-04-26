@@ -1,14 +1,14 @@
 {
-	"name": "Nori",
-	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/2.1.0/nori",
-	"description": "Nori",
+    "name": "Nori",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.1.0/nori",
+    "description": "Nori",
 
-	"cni": [
-		{ "name": "lib_nori_flushUpdatesToFrame", "argc": 2 },
-		{ "name": "lib_nori_runEventWatcher", "argc": 4 },
-		{ "name": "lib_nori_showFrame", "argc": 6 },
-		{ "name": "lib_nori_closeFrame", "argc": 1 },
-		{ "name": "lib_nori_prepImageResource", "argc": 7 }
-	]
+    "cni": [
+        { "name": "lib_nori_flushUpdatesToFrame", "argc": 2 },
+        { "name": "lib_nori_runEventWatcher", "argc": 4 },
+        { "name": "lib_nori_showFrame", "argc": 6 },
+        { "name": "lib_nori_closeFrame", "argc": 1 },
+        { "name": "lib_nori_prepImageResource", "argc": 7 }
+    ]
 }

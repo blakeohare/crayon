@@ -1,14 +1,14 @@
 {
-	"name": "Http",
-	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/2.1.0/http",
-	"description": "Library for sending HTTP requests.",
-	
-	"cni": [
-		{ "name": "lib_http_fastEnsureAllBytes", "argc": 2 },
-		{ "name": "lib_http_getResponseBytes", "argc": 2 },
-		{ "name": "lib_http_pollRequest", "argc": 1 },
-		{ "name": "lib_http_populateResponse", "argc": 4 },
-		{ "name": "lib_http_sendRequest", "argc": 10 }
-	]
+    "name": "Http",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.1.0/http",
+    "description": "Library for sending HTTP requests.",
+
+    "cni": [
+        { "name": "lib_http_fastEnsureAllBytes", "argc": 2 },
+        { "name": "lib_http_getResponseBytes", "argc": 2 },
+        { "name": "lib_http_pollRequest", "argc": 1 },
+        { "name": "lib_http_populateResponse", "argc": 4 },
+        { "name": "lib_http_sendRequest", "argc": 10 }
+    ]
 }

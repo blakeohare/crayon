@@ -1,15 +1,15 @@
 {
-	"name": "ImageResources",
-	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/2.1.0/imageresources",
-	"description": "Synchronous and asynchronous image and image sheet loaders.",
-	
-	"cni": [
-		{ "name": "lib_imageresources_blit", "argc": 8 },
-		{ "name": "lib_imageresources_checkLoaderIsDone", "argc": 2 },
-		{ "name": "lib_imageresources_flushImageChanges", "argc": 1 },
-		{ "name": "lib_imageresources_getManifestString", "argc": 0 },
-		{ "name": "lib_imageresources_loadAsynchronous", "argc": 3 },
-		{ "name": "lib_imageresources_nativeImageDataInit", "argc": 3 },
-	]
+    "name": "ImageResources",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.1.0/imageresources",
+    "description": "Synchronous and asynchronous image and image sheet loaders.",
+
+    "cni": [
+        { "name": "lib_imageresources_blit", "argc": 8 },
+        { "name": "lib_imageresources_checkLoaderIsDone", "argc": 2 },
+        { "name": "lib_imageresources_flushImageChanges", "argc": 1 },
+        { "name": "lib_imageresources_getManifestString", "argc": 0 },
+        { "name": "lib_imageresources_loadAsynchronous", "argc": 3 },
+        { "name": "lib_imageresources_nativeImageDataInit", "argc": 3 },
+    ]
 }

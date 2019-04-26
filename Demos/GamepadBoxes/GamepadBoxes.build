@@ -1,28 +1,28 @@
 {
-	"id": "GamepadBoxes",
-	"source": "source/",
-	"output": "output/%TARGET_NAME%",
-	
-	"version": "2.1.0",
-	"guid-seed": "org.crayonlang.demos.gamepadboxes,v2.1.0,%TARGET_NAME%",
-	
-	"targets": [
-		{
-			"name": "javascript",
-			"platform": "javascript-app",
-			"js-file-prefix": "demos/gamepadboxes"
-		},
-		{
-			"name": "csharp",
-			"platform": "csharp-app"
-		},
-		{
-			"name": "java",
-			"platform": "java-app"
-		},
-		{
-			"name": "python",
-			"platform": "python-app"
-		}
-	]
+    "id": "GamepadBoxes",
+    "source": "source/",
+    "output": "output/%TARGET_NAME%",
+
+    "version": "2.1.0",
+    "guid-seed": "org.crayonlang.demos.gamepadboxes,v2.1.0,%TARGET_NAME%",
+
+    "targets": [
+        {
+            "name": "javascript",
+            "platform": "javascript-app",
+            "js-file-prefix": "demos/gamepadboxes"
+        },
+        {
+            "name": "csharp",
+            "platform": "csharp-app"
+        },
+        {
+            "name": "java",
+            "platform": "java-app"
+        },
+        {
+            "name": "python",
+            "platform": "python-app"
+        }
+    ]
 }

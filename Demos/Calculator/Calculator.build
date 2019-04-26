@@ -1,26 +1,26 @@
 {
-	"id": "Calculator",
-	"source": "source",
-	"output": "output/%TARGET_NAME%",
-	"java-package": "org.crayonlang.demos.calculator",
-	"ios-bundle-prefix": "org.crayonlang.demos",
-	
-	"version": "2.1.0",
-	"guid-seed": "org.crayonlang.demos.calculator,v2.1.0,%TARGET_NAME%",
+    "id": "Calculator",
+    "source": "source",
+    "output": "output/%TARGET_NAME%",
+    "java-package": "org.crayonlang.demos.calculator",
+    "ios-bundle-prefix": "org.crayonlang.demos",
 
-	"targets": [
-		{
-			"name": "javascript",
-			"platform": "javascript-app",
-			"js-file-prefix": "calculator/"
-		},
-		{
-			"name": "csharp",
-			"platform": "csharp-app"
-		},
-		{
-			"name": "java",
-			"platform": "java-app"
-		}
-	]
+    "version": "2.1.0",
+    "guid-seed": "org.crayonlang.demos.calculator,v2.1.0,%TARGET_NAME%",
+
+    "targets": [
+        {
+            "name": "javascript",
+            "platform": "javascript-app",
+            "js-file-prefix": "calculator/"
+        },
+        {
+            "name": "csharp",
+            "platform": "csharp-app"
+        },
+        {
+            "name": "java",
+            "platform": "java-app"
+        }
+    ]
 }

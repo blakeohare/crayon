@@ -1,65 +1,65 @@
 {
-	"id": "Conway",
-	"output": "output/%TARGET_NAME%",
-	"icons": ["assets/icon.png"],
-	"java-package": "org.crayonlang.demos.conway",
-	"ios-bundle-prefix": "org.crayonlang.demos",
-	
-	"version": "2.1.0",
-	"guid-seed": "org.crayonlang.demos.conway,v2.1.0,%TARGET_NAME%",
-	
-	"targets": [
-		{
-			"name": "cbx",
-			"source": "source"
-		},
-		{
-			"name": "javascript",
-			"platform": "javascript-app",
-			"source": "source"
-		},
-		{
-			"name": "csharp",
-			"platform": "csharp-app",
-			"source": "source"
-		},
-		{
-			"name": "es-demo",
-			"source": "source-es",
-			"platform": "csharp-app",
-			"compiler-locale": "es"
-		},
-		{
-			"name": "es-demo-java",
-			"source": "source-es",
-			"platform": "java-app",
-			"compiler-locale": "es"
-		},
-		{
-			"name": "jp-demo",
-			"source": "source-jp",
-			"platform": "csharp-app",
-			"compiler-locale": "jp"
-		},
-		{
-			"name": "java",
-			"source": "source",
-			"platform": "java-app"
-		},
-		{
-			"name": "python",
-			"source": "source",
-			"platform": "python-app"
-		},
-		{
-			"name": "android",
-			"source": "source",
-			"platform": "javascript-app-android"
-		},
-		{
-			"name": "ios",
-			"source": "source",
-			"platform": "javascript-app-ios"
-		}
-	]
+    "id": "Conway",
+    "output": "output/%TARGET_NAME%",
+    "icons": ["assets/icon.png"],
+    "java-package": "org.crayonlang.demos.conway",
+    "ios-bundle-prefix": "org.crayonlang.demos",
+
+    "version": "2.1.0",
+    "guid-seed": "org.crayonlang.demos.conway,v2.1.0,%TARGET_NAME%",
+
+    "targets": [
+        {
+            "name": "cbx",
+            "source": "source"
+        },
+        {
+            "name": "javascript",
+            "platform": "javascript-app",
+            "source": "source"
+        },
+        {
+            "name": "csharp",
+            "platform": "csharp-app",
+            "source": "source"
+        },
+        {
+            "name": "es-demo",
+            "source": "source-es",
+            "platform": "csharp-app",
+            "compiler-locale": "es"
+        },
+        {
+            "name": "es-demo-java",
+            "source": "source-es",
+            "platform": "java-app",
+            "compiler-locale": "es"
+        },
+        {
+            "name": "jp-demo",
+            "source": "source-jp",
+            "platform": "csharp-app",
+            "compiler-locale": "jp"
+        },
+        {
+            "name": "java",
+            "source": "source",
+            "platform": "java-app"
+        },
+        {
+            "name": "python",
+            "source": "source",
+            "platform": "python-app"
+        },
+        {
+            "name": "android",
+            "source": "source",
+            "platform": "javascript-app-android"
+        },
+        {
+            "name": "ios",
+            "source": "source",
+            "platform": "javascript-app-ios"
+        }
+    ]
 }

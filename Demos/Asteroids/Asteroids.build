@@ -1,38 +1,38 @@
 {
-	"id": "Asteroids",
-	"description": "Classic Asteroids clone",
-	"source": "source/",
-	"output": "output/%TARGET_NAME%",
-	"icons": ["assets/icon.png"],
-	
-	"window-size": {
-		"width": 800,
-		"height": 600
-	},
-	"version": "2.1.0",
-	
-	"image-sheets": [
-		{ "id": "everything", "prefix": "*" }
-	],
-	"guid-seed": "org.crayonlang.demos.asteroids,v2.1.0,%TARGET_NAME%",
-	
-	"targets": [
-		{
-			"name": "javascript",
-			"platform": "javascript-app",
-			"js-file-prefix": "/demos/asteroids"
-		},
-		{
-			"name": "csharp",
-			"platform": "csharp-app"
-		},
-		{
-			"name": "java",
-			"platform": "java-app"
-		},
-		{
-			"name": "python",
-			"platform": "python-app"
-		}
-	]
+    "id": "Asteroids",
+    "description": "Classic Asteroids clone",
+    "source": "source/",
+    "output": "output/%TARGET_NAME%",
+    "icons": ["assets/icon.png"],
+
+    "window-size": {
+        "width": 800,
+        "height": 600
+    },
+    "version": "2.1.0",
+
+    "image-sheets": [
+        { "id": "everything", "prefix": "*" }
+    ],
+    "guid-seed": "org.crayonlang.demos.asteroids,v2.1.0,%TARGET_NAME%",
+
+    "targets": [
+        {
+            "name": "javascript",
+            "platform": "javascript-app",
+            "js-file-prefix": "/demos/asteroids"
+        },
+        {
+            "name": "csharp",
+            "platform": "csharp-app"
+        },
+        {
+            "name": "java",
+            "platform": "java-app"
+        },
+        {
+            "name": "python",
+            "platform": "python-app"
+        }
+    ]
 }

@@ -89,6 +89,7 @@ PYTHON_STYLE_2_SPACES = FormatStyle().tabs(' ' * 2).newline('\n').noBom()
 PYTHON_STYLE_4_SPACES = FormatStyle().tabs(' ' * 4).newline('\n').noBom()
 JAVA_STYLE = FormatStyle().tabs(' ' * 2).newline('\n')
 JAVASCRIPT_STYLE = FormatStyle().tabs('\t').newline('\n')
+JSON_STYLE = FormatStyle().tabs(' ' * 4).newline('\n').noBom()
 MARKDOWN_STYLE = FormatStyle().tabs(' ' * 2).newline('\n').noBom()
 
 MATCHERS = [
@@ -119,11 +120,13 @@ MATCHERS = [
   ('Demos/*.cry', CRAYON_STYLE),
   ('Tests/unitTestSource/*.cry', CRAYON_STYLE),
   ('Demos/*.acr', ACRYLIC_STYLE),
+  ('Demos/*.build', JSON_STYLE),
 
   # Libraries
   ('Libraries/*.pst', PASTEL_STYLE),
   ('Libraries/*.cry', CRAYON_STYLE),
   ('Libraries/*.acr', ACRYLIC_STYLE),
+  ('Libraries/*/manifest.json', JSON_STYLE),
 
   # Docs
   ('*.md', MARKDOWN_STYLE),

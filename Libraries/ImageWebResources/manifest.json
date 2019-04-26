@@ -1,13 +1,13 @@
 {
-	"name": "ImageWebResources",
-	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/2.1.0/imagewebresources",
-	"description": "Downloads images using HTTP and makes them available as an ImageResource.",
-	
-	"cni": [
-		{ "name": "lib_imagewebresources_bytesToImage", "argc": 2 },
-		{ "name": "lib_imagewebresources_jsDownload", "argc": 2 },
-		{ "name": "lib_imagewebresources_jsGetImage", "argc": 2 },
-		{ "name": "lib_imagewebresources_jsPoll", "argc": 1 }
-	]
+    "name": "ImageWebResources",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.1.0/imagewebresources",
+    "description": "Downloads images using HTTP and makes them available as an ImageResource.",
+
+    "cni": [
+        { "name": "lib_imagewebresources_bytesToImage", "argc": 2 },
+        { "name": "lib_imagewebresources_jsDownload", "argc": 2 },
+        { "name": "lib_imagewebresources_jsGetImage", "argc": 2 },
+        { "name": "lib_imagewebresources_jsPoll", "argc": 1 }
+    ]
 }

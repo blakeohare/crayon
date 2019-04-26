@@ -1,10 +1,10 @@
 {
-	"name": "Web",
-	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/2.1.0/web",
-	"description": "Library for interacting with the user's default browser.",
-	
-	"cni": [
-		{ "name": "lib_web_launch_browser", "argc": 1 }
-	]
+    "name": "Web",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.1.0/web",
+    "description": "Library for interacting with the user's default browser.",
+
+    "cni": [
+        { "name": "lib_web_launch_browser", "argc": 1 }
+    ]
 }

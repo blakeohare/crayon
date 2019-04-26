@@ -1,63 +1,63 @@
 {
-	"id": "SquishySquid",
-	"source": "source/",
-	"output": "output/%TARGET_NAME%",
-	"icons": ["assets/icon.png"],
-	"title": "Squishy Squid",
-	
-	"ios-bundle-prefix": "org.crayonlang.demos",
-	
-	"version": "2.1.0",
-	"guid-seed": "org.crayonlang.demos.squishysquid,v2.1.0,%TARGET_NAME%",
-	
-	"vars": [
-		{ "name": "is_landscape", "value": false }
-	],
-	
-	"image-sheets": [
-		{ "id": "everything", "prefix": "*" }
-	],
-	
-	"targets": [
-		{
-			"name": "android",
-			"platform": "javascript-app-android"
-		},
-		{
-			"name": "ios",
-			"platform": "javascript-app-ios"
-		},
-		{
-			"name": "javascript",
-			"platform": "javascript-app",
-			"js-file-prefix": "demos/squishysquid"
-		},
-		{
-			"name": "sitecsharp",
-			"platform": "csharp-app",
-			"vars": [
-				{ "name": "is_landscape", "value": true }
-			]
-		},
-		{
-			"name": "sitejs",
-			"platform": "javascript-app",
-			"js-file-prefix": "frontpage/squishysquid",
-			"vars": [
-				{ "name": "is_landscape", "value": true }
-			]
-		},
-		{
-			"name": "csharp",
-			"platform": "csharp-app"
-		},
-		{
-			"name": "java",
-			"platform": "java-app"
-		},
-		{
-			"name": "python",
-			"platform": "python-app"
-		}
-	]
+    "id": "SquishySquid",
+    "source": "source/",
+    "output": "output/%TARGET_NAME%",
+    "icons": ["assets/icon.png"],
+    "title": "Squishy Squid",
+
+    "ios-bundle-prefix": "org.crayonlang.demos",
+
+    "version": "2.1.0",
+    "guid-seed": "org.crayonlang.demos.squishysquid,v2.1.0,%TARGET_NAME%",
+
+    "vars": [
+        { "name": "is_landscape", "value": false }
+    ],
+
+    "image-sheets": [
+        { "id": "everything", "prefix": "*" }
+    ],
+
+    "targets": [
+        {
+            "name": "android",
+            "platform": "javascript-app-android"
+        },
+        {
+            "name": "ios",
+            "platform": "javascript-app-ios"
+        },
+        {
+            "name": "javascript",
+            "platform": "javascript-app",
+            "js-file-prefix": "demos/squishysquid"
+        },
+        {
+            "name": "sitecsharp",
+            "platform": "csharp-app",
+            "vars": [
+                { "name": "is_landscape", "value": true }
+            ]
+        },
+        {
+            "name": "sitejs",
+            "platform": "javascript-app",
+            "js-file-prefix": "frontpage/squishysquid",
+            "vars": [
+                { "name": "is_landscape", "value": true }
+            ]
+        },
+        {
+            "name": "csharp",
+            "platform": "csharp-app"
+        },
+        {
+            "name": "java",
+            "platform": "java-app"
+        },
+        {
+            "name": "python",
+            "platform": "python-app"
+        }
+    ]
 }

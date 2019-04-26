@@ -1,27 +1,27 @@
 {
-	"name": "Graphics2D",
-	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/2.1.0/graphics2d",
-	"description": "Graphics and 2D drawing built-in library.",
+    "name": "Graphics2D",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.1.0/graphics2d",
+    "description": "Graphics and 2D drawing built-in library.",
 
-	"localization": {
-		"default": "en",
-		"names": {
-			"en": "Graphics2D",
-			"es": "Graficos2D",
-		}
-	},
-	
-	"cni": [
-		{ "name": "lib_graphics2d_addImageRenderEvent", "argc": 13 },
-		{ "name": "lib_graphics2d_flip", "argc": 6 },
-		{ "name": "lib_graphics2d_initializeTexture", "argc": 5 },
-		{ "name": "lib_graphics2d_initializeTextureResource", "argc": 3 },
-		{ "name": "lib_graphics2d_isOpenGlBased", "argc": 0 },
-		{ "name": "lib_graphics2d_isPlatformUsingTextureAtlas", "argc": 0 },
-		{ "name": "lib_graphics2d_lineToQuad", "argc": 1 },
-		{ "name": "lib_graphics2d_renderQueueAction", "argc": 3 },
-		{ "name": "lib_graphics2d_renderQueueValidateArgs", "argc": 1 },
-		{ "name": "lib_graphics2d_scale", "argc": 6 }
-	]
+    "localization": {
+        "default": "en",
+        "names": {
+            "en": "Graphics2D",
+            "es": "Graficos2D",
+        }
+    },
+
+    "cni": [
+        { "name": "lib_graphics2d_addImageRenderEvent", "argc": 13 },
+        { "name": "lib_graphics2d_flip", "argc": 6 },
+        { "name": "lib_graphics2d_initializeTexture", "argc": 5 },
+        { "name": "lib_graphics2d_initializeTextureResource", "argc": 3 },
+        { "name": "lib_graphics2d_isOpenGlBased", "argc": 0 },
+        { "name": "lib_graphics2d_isPlatformUsingTextureAtlas", "argc": 0 },
+        { "name": "lib_graphics2d_lineToQuad", "argc": 1 },
+        { "name": "lib_graphics2d_renderQueueAction", "argc": 3 },
+        { "name": "lib_graphics2d_renderQueueValidateArgs", "argc": 1 },
+        { "name": "lib_graphics2d_scale", "argc": 6 }
+    ]
 }

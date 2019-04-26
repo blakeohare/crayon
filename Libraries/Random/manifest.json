@@ -1,20 +1,20 @@
 {
-	"name": "Random",
-	"author": "Blake O'Hare",
-	"documentation": "http://crayonlang.org/docs/2.1.0/random",
-	"description": "Library for generating random numbers and behavior.",
+    "name": "Random",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.1.0/random",
+    "description": "Library for generating random numbers and behavior.",
 
-	"localization": {
-		"default": "en",
-		"names": {
-			"en": "Random",
-			"es": "Aleatorio",
-		}
-	},
-	
-	"cni": [
-		{ "name": "lib_random_random_bool", "argc": 0 },
-		{ "name": "lib_random_random_float", "argc": 0 },
-		{ "name": "lib_random_random_int", "argc": 2 }
-	]
+    "localization": {
+        "default": "en",
+        "names": {
+            "en": "Random",
+            "es": "Aleatorio",
+        }
+    },
+
+    "cni": [
+        { "name": "lib_random_random_bool", "argc": 0 },
+        { "name": "lib_random_random_float", "argc": 0 },
+        { "name": "lib_random_random_int", "argc": 2 }
+    ]
 }
