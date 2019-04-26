@@ -1,4 +1,4 @@
-using Interpreter.Vm;
+﻿using Interpreter.Vm;
 using System;
 using System.Collections.Generic;
 using System.Linq;

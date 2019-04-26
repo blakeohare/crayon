@@ -1,4 +1,4 @@
-/*
+﻿/*
     args[0] -> target matrix
     args[1] -> copy-from matrix
     args[2] -> is copy-from matrix a matrix instance

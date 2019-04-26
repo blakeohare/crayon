@@ -1,5 +1,4 @@
-﻿
-valueStackSize -= 3;
+﻿valueStackSize -= 3;
 value = valueStack[valueStackSize + 2]; // value
 value2 = valueStack[valueStackSize + 1]; // index
 root = valueStack[valueStackSize];

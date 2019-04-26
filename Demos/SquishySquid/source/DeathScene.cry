@@ -1,4 +1,4 @@
-class DeathScene : AbstractScene {
+﻿class DeathScene : AbstractScene {
 
     field ocean;
     field counter = 0;

@@ -1,4 +1,4 @@
-/*
+﻿/*
     This is only called for non-GL platforms
 
     args[0] -> size out list (list of size two that the final size should be applied to

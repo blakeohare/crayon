@@ -1,4 +1,4 @@
-/*
+﻿/*
     Creates a 2D grid of the given width and height.
     The X coordinate is the 1st dimension.
 */

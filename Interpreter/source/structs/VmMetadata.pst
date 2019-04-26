@@ -1,4 +1,4 @@
-struct VmMetadata {
+﻿struct VmMetadata {
     Array<string> identifiers;
     List<string> identifiersBuilder;
     Dictionary<string, int> invIdentifiers;

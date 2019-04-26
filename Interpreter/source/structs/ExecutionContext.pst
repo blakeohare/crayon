@@ -1,4 +1,4 @@
-struct ExecutionContext {
+﻿struct ExecutionContext {
     int id;
     StackFrame stackTop;
     int currentValueStackSize;

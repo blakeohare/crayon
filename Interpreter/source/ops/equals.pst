@@ -1,5 +1,4 @@
-﻿
-valueStackSize -= 2;
+﻿valueStackSize -= 2;
 rightValue = valueStack[valueStackSize + 1];
 leftValue = valueStack[valueStackSize];
 

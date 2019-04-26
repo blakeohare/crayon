@@ -1,4 +1,4 @@
-namespace FileIOCommon {
+﻿namespace FileIOCommon {
 
     enum FiocFileFormat {
         BINARY = 0,

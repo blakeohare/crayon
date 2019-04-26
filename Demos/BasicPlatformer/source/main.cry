@@ -1,4 +1,4 @@
-import Game;
+﻿import Game;
 
 const FPS = 30;
 const WIDTH = 640;

@@ -1,4 +1,4 @@
-/*
+﻿/*
     args[0] -> matrix
 
     There should be an error message string in nativeData[5]

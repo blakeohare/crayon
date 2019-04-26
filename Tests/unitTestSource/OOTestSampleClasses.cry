@@ -1,4 +1,4 @@
-// These are used by OOTest.cry
+﻿// These are used by OOTest.cry
 namespace OOTestSampleClasses {
 
     class OoHasConstructorButParentDoesnt : OoNoExplicitConstructorButHasParent {

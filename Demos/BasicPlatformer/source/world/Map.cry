@@ -1,4 +1,4 @@
-import Resources;
+﻿import Resources;
 
 /*
     Map object. Contains the tile grid.

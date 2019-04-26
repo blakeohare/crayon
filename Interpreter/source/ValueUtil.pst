@@ -1,5 +1,4 @@
-﻿
-Value buildNull(VmGlobals globals) {
+﻿Value buildNull(VmGlobals globals) {
     return globals.valueNull;
 }
 

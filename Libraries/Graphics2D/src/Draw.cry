@@ -1,4 +1,4 @@
-import Game;
+﻿import Game;
 
 @localized('en', 'Graphics2D')
 @localized('es', 'Graficos2D')

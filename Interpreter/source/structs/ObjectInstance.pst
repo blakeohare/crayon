@@ -1,4 +1,4 @@
-struct ObjectInstance {
+﻿struct ObjectInstance {
     int classId;
     int objectId;
     Array<Value> members;

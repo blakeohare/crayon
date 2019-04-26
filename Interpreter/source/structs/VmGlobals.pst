@@ -1,4 +1,4 @@
-struct VmGlobals {
+﻿struct VmGlobals {
     Value valueNull;
     Value boolTrue;
     Value boolFalse;

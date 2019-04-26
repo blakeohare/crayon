@@ -1,5 +1,4 @@
-﻿
-ec.activeExceptionHandled = false;
+﻿ec.activeExceptionHandled = false;
 
 // save PC to the stack frame object. If the bubble process doesn't unwind any frames, this will be re-read.
 stack.pc = pc;

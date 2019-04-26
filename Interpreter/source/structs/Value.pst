@@ -1,4 +1,4 @@
-struct Value {
+﻿struct Value {
     int type;
     object internalValue;
 }

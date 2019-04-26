@@ -1,4 +1,4 @@
-struct SymbolData {
+﻿struct SymbolData {
     Array<List<Token>> tokenData;
     Array<string> sourceCode;
     List<string> sourceCodeBuilder;

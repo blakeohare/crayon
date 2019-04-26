@@ -1,4 +1,4 @@
-struct ResourceDB {
+﻿struct ResourceDB {
     Dictionary<string, Array<string>> filesPerDirectory;
     Dictionary<string, ResourceInfo> fileInfo;
 

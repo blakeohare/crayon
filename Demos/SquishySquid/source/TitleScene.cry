@@ -1,4 +1,4 @@
-class TitleScene : AbstractScene {
+﻿class TitleScene : AbstractScene {
 
     field ocean;
 

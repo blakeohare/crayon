@@ -1,4 +1,4 @@
-import Dispatcher;
+﻿import Dispatcher;
 import Math;
 
 namespace Nori {

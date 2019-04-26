@@ -1,4 +1,4 @@
-/*
+﻿/*
     Generates a unique key identifying this native font instance
     All possible attributes that encompass a native font are passed in.
     It is up to native code to filter out the ones it doesn't need.

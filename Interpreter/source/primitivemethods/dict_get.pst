@@ -1,5 +1,4 @@
-﻿
-if (argCount != 1 && argCount != 2) {
+﻿if (argCount != 1 && argCount != 2) {
     hasInterrupt = EX_InvalidArgument(ec, "Dictionary get method requires 1 or 2 arguments.");
 } else {
 

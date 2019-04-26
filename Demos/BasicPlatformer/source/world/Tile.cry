@@ -1,4 +1,4 @@
-/*
+﻿/*
     Tiles contain a location and a template object but no other properties
     inherent to the tile instance. All properties of the tile are stored on
     the template object which are unique per tile type.

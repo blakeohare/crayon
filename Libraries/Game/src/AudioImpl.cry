@@ -1,4 +1,4 @@
-namespace Game {
+﻿namespace Game {
     function AudioImpl_isSupported() { return $lib_game_audio_is_supported(); }
     function AudioImpl_getAudioResourcePath(path) { return $lib_game_audio_getAudioResourcePath(path); }
     function AudioImpl_musicStop() { return $lib_game_audio_music_stop(); }

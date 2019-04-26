@@ -1,5 +1,4 @@
-﻿
-finalizeInitializationImpl(vm, stringArgs[pc], row[0]);
+﻿finalizeInitializationImpl(vm, stringArgs[pc], row[0]);
 
 identifiers = vm.metadata.identifiers;
 literalTable = vm.metadata.literalTable;

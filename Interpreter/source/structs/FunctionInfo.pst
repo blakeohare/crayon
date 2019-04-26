@@ -1,4 +1,4 @@
-struct FunctionInfo {
+﻿struct FunctionInfo {
     int id;
     int nameId;
     int pc;

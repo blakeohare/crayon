@@ -1,4 +1,4 @@
-struct NamedCallbackStore {
+﻿struct NamedCallbackStore {
     List<Func<object, Array<object>>> callbacksById;
     Dictionary<string, Dictionary<string, int>> callbackIdLookup;
 }

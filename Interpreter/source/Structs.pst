@@ -1,5 +1,4 @@
-﻿
-@import("structs/BreakpointInfo.pst");
+﻿@import("structs/BreakpointInfo.pst");
 @import("structs/ClassInfo.pst");
 @import("structs/ClassValue.pst");
 @import("structs/ClosureValuePointer.pst");

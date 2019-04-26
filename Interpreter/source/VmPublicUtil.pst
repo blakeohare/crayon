@@ -1,4 +1,4 @@
-void vmEnvSetCommandLineArgs(VmContext vm, Array<string> args) {
+﻿void vmEnvSetCommandLineArgs(VmContext vm, Array<string> args) {
     vm.environment.commandLineArgs = args;
 }
 

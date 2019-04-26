@@ -1,5 +1,4 @@
-﻿
-if (row[0] == 1) {
+﻿if (row[0] == 1) {
     value = valueStack[valueStackSize - 1];
     @import("inline/ValueStackCapacityCheck.pst");
 

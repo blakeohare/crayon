@@ -1,4 +1,4 @@
-/*
+﻿/*
     JavaScript only. The native font loader will apply the font to two spans with a monospace and sans-serif fallback containing the letter 'l'.
     If the width of the characters are different, then the font hasn't been loaded yet.
 

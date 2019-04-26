@@ -1,4 +1,4 @@
-struct FunctionPointer {
+﻿struct FunctionPointer {
     int type; // Enum value: FunctionPointerType
     Value context;
     int classId;

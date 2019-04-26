@@ -1,4 +1,4 @@
-import Math;
+﻿import Math;
 
 const KELP_WIDTH = 80;
 const KELP_OPENING_HEIGHT = IS_LANDSCAPE_MODE ? 130 : 180;

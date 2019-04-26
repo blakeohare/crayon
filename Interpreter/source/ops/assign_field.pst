@@ -1,5 +1,4 @@
-﻿
-// row[0] -> name ID
+﻿// row[0] -> name ID
 // row[1] -> push the assigned value back to the stack if this is 1.
 // row[2] -> locale-scoped name ID
 // row[3] -> origin class ID

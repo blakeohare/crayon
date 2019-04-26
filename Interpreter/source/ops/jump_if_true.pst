@@ -1,5 +1,4 @@
-﻿
-if (@ext_boolean("HAS_INCREMENT")) {
+﻿if (@ext_boolean("HAS_INCREMENT")) {
     value = valueStack[--valueStackSize];
 } else {
     valueStackSize -= 1;

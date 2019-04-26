@@ -1,4 +1,4 @@
-struct MagicNumbers {
+﻿struct MagicNumbers {
     int coreExceptionClassId;
     int coreGenerateExceptionFunctionId;
     int totalLocaleCount;

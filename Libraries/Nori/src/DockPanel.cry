@@ -1,4 +1,4 @@
-namespace Nori {
+﻿namespace Nori {
 
     enum DockDirection {
         WEST = 0,

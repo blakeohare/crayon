@@ -1,4 +1,4 @@
-struct DebugStepTracker {
+﻿struct DebugStepTracker {
     int uniqueId;
     int originatingFileId;
     int originatingLineIndex;

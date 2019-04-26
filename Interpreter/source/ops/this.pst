@@ -1,5 +1,4 @@
-﻿
-// Will never be called outside of a method.
+﻿// Will never be called outside of a method.
 // Also, this is frequently optimized out with the more direct operation DEREF_INSTANCE_FIELD
 
 @import("inline/ValueStackCapacityCheck.pst");

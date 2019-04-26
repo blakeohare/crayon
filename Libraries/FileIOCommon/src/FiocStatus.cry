@@ -1,4 +1,4 @@
-namespace FileIOCommon {
+﻿namespace FileIOCommon {
 
     enum FiocStatus {
         OK = 0,

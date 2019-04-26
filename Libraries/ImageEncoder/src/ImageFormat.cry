@@ -1,4 +1,4 @@
-namespace ImageEncoder {
+﻿namespace ImageEncoder {
 
     enum ImageFormat {
         PNG = 1,

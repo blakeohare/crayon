@@ -1,4 +1,4 @@
-struct EasingSampling {
+﻿struct EasingSampling {
     int sampleCount;
     Array<double> samples;
 }

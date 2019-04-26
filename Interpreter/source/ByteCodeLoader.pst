@@ -1,5 +1,4 @@
-﻿
-// Many of these read functions take in an integer _pointer_ as an index. This is accomplished
+﻿// Many of these read functions take in an integer _pointer_ as an index. This is accomplished
 // by passing in a reference to an integer array of length 1.
 
 string read_till(Array<int> index, string raw, int length, char end) {

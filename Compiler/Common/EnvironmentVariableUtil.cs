@@ -1,5 +1,4 @@
-﻿
-namespace Common
+﻿namespace Common
 {
     public static class EnvironmentVariableUtil
     {
