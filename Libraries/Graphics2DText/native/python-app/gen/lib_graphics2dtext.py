@@ -67,7 +67,7 @@ def lib_graphics2dtext_createNativeFont(vm, args):
   styleBitmask = args[7][1]
   isBold = (styleBitmask & 1)
   isItalic = (styleBitmask & 2)
-  nfOut[0] = lib_graphics2dtext_createNativeFont(fontType, fontClass, fontPath, fontSize, (isBold > 0), (isItalic > 0))
+  nfOut[0] = lib_graphics2dtext_createNativeFont_impl(fontType, fontClass, fontPath, fontSize, (isBold > 0), (isItalic > 0))
   if (nfOut[0] == None):
     if (fontType == 3):
       return ints[1]
@@ -112,7 +112,7 @@ def lib_graphics2dtext_isResourceAvailable(vm, args):
   return vm[15]
 
 def lib_graphics2dtext_isSystemFontPresent(vm, args):
-  return buildBoolean(vm[13], lib_graphics2dtext_isSystemFontAvailable(args[0][1]))
+  return buildBoolean(vm[13], lib_graphics2dtext_isSystemFontAvailable_impl(args[0][1]))
 
 def lib_graphics2dtext_renderText(vm, args):
   sizeOut = args[0][1]
@@ -134,7 +134,7 @@ def lib_graphics2dtext_renderText(vm, args):
   green = args[8][1]
   blue = args[9][1]
   text = args[10][1]
-  bmp = lib_graphics2dtext_renderText(PST_IntBuffer16, nativeFont, red, green, blue, text)
+  bmp = lib_graphics2dtext_renderText_impl(PST_IntBuffer16, nativeFont, red, green, blue, text)
   spoofedNativeData = (PST_NoneListOfOne * 4)
   spoofedNativeData[3] = bmp
   spoofedNativeData2 = [None]

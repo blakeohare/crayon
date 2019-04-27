@@ -1,5 +1,5 @@
 
-def lib_graphics2dtext_createNativeFont(fontType, fontClass, fontPath, fontSize, isBold, isItalic):
+def lib_graphics2dtext_createNativeFont_impl(fontType, fontClass, fontPath, fontSize, isBold, isItalic):
 	fontSize = int(fontSize * 1.4) # adjust to match standard sizes
 	pygame = GetPyGameReferenceWorkaround()
 	if fontType == 0: # default
@@ -23,11 +23,11 @@ def lib_graphics2dtext_name_canonicalizer(name):
 			output.append(char)
 	return ''.join(output)
 
-def lib_graphics2dtext_isSystemFontAvailable(name):
+def lib_graphics2dtext_isSystemFontAvailable_impl(name):
 	pygame = GetPyGameReferenceWorkaround()
 	return lib_graphics2dtext_name_canonicalizer(name) in pygame.font.get_fonts()
 
-def lib_graphics2dtext_renderText(sizeOut, nativeFont, red, green, blue, text):
+def lib_graphics2dtext_renderText_impl(sizeOut, nativeFont, red, green, blue, text):
 	surface = nativeFont.render(text, False, (red, green, blue))
 	width, height = surface.get_size()
 	side_margin = height // 32
