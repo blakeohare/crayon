@@ -51,7 +51,13 @@ namespace Parser.ParseTree
 
             internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
             {
-                throw new System.NotImplementedException();
+                this.ResolvedType = ResolvedType.INTEGER;
+                return this;
+            }
+
+            internal override Expression Resolve(ParserContext parser)
+            {
+                return new IntegerConstant(this.FirstToken, this.GetMax(), this.Owner);
             }
         }
 
