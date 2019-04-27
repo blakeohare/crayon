@@ -9,5 +9,5 @@ DEPENDENCY: VM: ../../../Interpreter/python-app.txt
 OUTPUT-FUNCTIONS: ../native/python-app/gen/lib_graphics2d.py
 CODE-IMPORT: code.vm as VM
 
-EXT: _lib_graphics2d_flipTexture: libhelper_imageresources_flipTexture([ARG:1], [ARG:2], [ARG:3])
+EXT: _lib_graphics2d_flipTexture: TranslationHelper_globals['LIB:GAME:g2dflip']([ARG:1], [ARG:2], [ARG:3])
 EXT: _lib_graphics2d_scale: TranslationHelper_globals['LIB:GAME:g2dscale']([ARG:1], [ARG:2], [ARG:3])

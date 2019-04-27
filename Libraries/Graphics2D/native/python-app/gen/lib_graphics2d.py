@@ -193,7 +193,7 @@ def lib_graphics2d_flip(vm, args):
   objInstance2 = arg2[1]
   objInstance2[3][0] = objArray1
   object1 = objArray1[3]
-  object1 = libhelper_imageresources_flipTexture(object1, bool1, bool2)
+  object1 = TranslationHelper_globals['LIB:GAME:g2dflip'](object1, bool1, bool2)
   objArray1[3] = object1
   return arg2
 
