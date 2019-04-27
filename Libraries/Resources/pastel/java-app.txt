@@ -13,4 +13,4 @@ NAMESPACE-FUNCTIONS: org.crayonlang.libraries.resources
 NAMESPACE-STRUCTS: org.crayonlang.libraries.resources
 FUNCTION-WRAPPER-CLASS: LibraryWrapper
 
-EXT: _lib_resources_read_text: ResourceReader.readFileText("resources/text/" + [ARG:1])
+EXT: _lib_resources_read_text: org.crayonlang.interpreter.ResourceReader.readFileText("resources/text/" + [ARG:1])
