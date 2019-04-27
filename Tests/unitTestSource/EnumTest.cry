@@ -1,0 +1,19 @@
+﻿import CrayonUnit;
+
+enum EnumTestEnum {
+    NIENTE,
+    UN,
+    NI,
+    THREE,
+    IV,
+    CINCO
+}
+
+class EnumTest : Test {
+
+    function testEnumFunctions() {
+        assertThat(EnumTestEnum.length).isEqualTo(6);
+        assertThat(EnumTestEnum.max).isEqualTo(5);
+        assertThat(EnumTestEnum.values).isEqualTo([0, 1, 2, 3, 4, 5]);
+    }
+}

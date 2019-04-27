@@ -84,7 +84,21 @@ namespace Parser.ParseTree
 
             internal override Expression ResolveTypes(ParserContext parser, TypeResolver typeResolver)
             {
-                throw new System.NotImplementedException();
+                this.ResolvedType = ResolvedType.ListOrArrayOf(ResolvedType.ANY);
+                return this;
+            }
+
+            internal override Expression Resolve(ParserContext parser)
+            {
+                ListDefinition ld = new ListDefinition(
+                       this.FirstToken,
+                       this.GetValues().Select(i => new IntegerConstant(this.FirstToken, i, this.Owner)).ToArray(),
+                       AType.Any(),
+                       this.Owner,
+                       true,
+                       null);
+                ld.ResolvedType = this.ResolvedType;
+                return ld;
             }
         }
     }
