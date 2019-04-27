@@ -27,7 +27,7 @@
 関数 開始起点() {
     window = 生成 GameWindow("Conway's Game of Life", FPS, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    print("Length: " + LocalizationTest.長さ + " Max: " + LocalizationTest.最大() + " Values: " + LocalizationTest.値());
+    print("Length: " + LocalizationTest.長さ + " Max: " + LocalizationTest.最大 + " Values: " + LocalizationTest.値);
 
     totalCells = WIDTH * HEIGHT;
 
