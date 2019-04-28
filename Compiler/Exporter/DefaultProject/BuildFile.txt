@@ -1,15 +1,15 @@
 ﻿{
-    "id": "%%%PROJECT_NAME%%%",
+    "id": "%%%PROJECT_ID%%%",
     "source": "source/",
     "output": "output/%TARGET_NAME%",
-    "default-title": "%%%TITLE%%%",
+    "title": "%%%TITLE%%%",
     "icons": [
         "assets/icon32.png",
         "assets/icon256.png"
     ],
-
-    "ios-bundle-prefix": "com.yourname.%%%PROJECT_NAME%%%",
-    "guid-seed": "com.yourname.%%%PROJECT_NAME%%%,v1,%TARGET_NAME%",
+    "version": "1.0",
+    "ios-bundle-prefix": "com.yourname.%%%PROJECT_ID%%%,%VERSION%",
+    "guid-seed": "com.yourname.%%%PROJECT_ID%%%,v1,%TARGET_NAME%",
 
     "image-sheets": [
         { "id": "everything", "prefix": "*" }

@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>%%%DEFAULT_TITLE%%%</title>
+		<title>%%%PROJECT_TITLE%%%</title>
 		%%%FAVICON%%%
 		<style type="text/css">
 			body { background-color:#000; text-align:center; }

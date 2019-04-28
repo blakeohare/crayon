@@ -27,27 +27,29 @@ The beta build overrides the title, and enables some debug features through the 
   "id": "Asteroids",
   "source": "source/",
   "output": "output/%TARGET_NAME%/",
-  "icon": "assets/icon.png",
-  "default-title": "Asteroids",
+  "icons": [
+    "assets/icon.png"
+  ],
+  "title": "Asteroids",
 
   "vars": [
     { "name": "enable_debug_features", "value": false }
   ],
 
   "targets": [
-  {
-    "name": "javascript_release",
-    "platform": "javascript-app"
-  },
     {
-    "name": "javascript_beta",
-    "platform": "javascript-app",
-    "default-title": "Asteroids (Beta)",
+      "name": "javascript_release",
+      "platform": "javascript-app"
+    },
+    {
+      "name": "javascript_beta",
+      "platform": "javascript-app",
+      "title": "Asteroids (Beta)",
 
       "vars": [
         { "name": "enable_debug_features", "value": true }
       ]
-  }
+    }
   ]
 }
 ```
@@ -57,18 +59,19 @@ These are the various fields that can be included in either the root object or a
 
 | Name | Description |
 | --- | --- |
-| default-title | The default title that could be used by the platform-specific UI library. This is generally settable from code, however, certain platforms need to know the default title at compile time. Mobile apps, for example, need to know this for the app name. |
+| title | The default title that could be used by the platform-specific UI library. This is generally settable from code, however, certain platforms need to know the default title at compile time. Mobile apps, for example, need to know this for the app name. |
 | id | An alphanumerics-only name for your project. Unlike the title, this is required and used by things like executable name, file names, metadata, user data directory, etc. |
 | source | The relative path to the source directory. |
 | output | The relative path to the output directory. This **MUST** be unique for each target. However, you can use **%TARGET_NAME%** in this value to insert the name of the target name so that you can define this once in the root object rather than individual per target.  Read more about [output directories](#output-directory). |
 | var | Define a compile-time variable. A compile time variable can be used as a constant in code and defined on a target-by-target basis. The `<var>` element has a type attribute and 2 sub-elements: `<id>` and `<value>`. **id** is the name of the variable and **value** is the value it will have. <br> `<var type="boolean"><id>enable-audio</id><value>true</value></var>` |
 | jsfileprefix | A path to pre-pend to all file resource paths in JavaScript projects. Since knowledge of the URL pattern of where the project will be uploaded to and whether it has a trailing slash should not be encoded into the actual source code itself, you can define a root-absolute path in the build file. <br> e.g. `<jsfileprefix>/uploads/mygame</jsfileprefix> |
-| icon | A path relative to the build file of an image to use as a project icon. Specifically how this icon is used depends on the target platform. This value can be a comma-separated list of file names containing icons of different sizes. Many target platforms (such as Android icons and JavaScript favicons) support having different images for different sizes. |
+| icons | A list of paths relative to the build file of an image to use as a project icon. Specifically how these icon are used depends on the target platform. Multiple icons of different sizes can be used and the platform will choose the most appropriate version, or in some cases, such as .ico files, composite assets will be created with multiple sizes. |
 | guidseed | An arbitrary string. This is used as the seed for the randomizer for generating a unique project GUID for C# projects. A recommended value is a comma-delimited list of: a reverse domain name (Java package style), a project version number, and **%TARGET%**. This helps prevent project GUID collisions between projects and versions.<br> `<guidseed>org.crayonlang.demos.asteroids,v2.1.0,%TARGET%</guidseed>` |
-| imagesheets | This is used by the ImageResources library for consolidating image resources embedded in the project into larger image sheets for improving performance or optimizing disk/network reads. TODO: add separate page for Image Sheet documentation. |
+| image-sheets | This is used by the ImageResources library for consolidating image resources embedded in the project into larger image sheets for improving performance or optimizing disk/network reads. TODO: add separate page for Image Sheet documentation. |
 | orientation | Used by mobile game platforms. This will fix the orientation of the screen into landscape or portrait mode. Possible values: **portrait**, **landsacpe**, **landscapeleft**, **landscaperight**, **upsidedown**, **all**. The default behavior is **portrait** when this field is not specified. |
 | launch-screen | A path to an image that will appear while the app loads on platforms that require such a concept. Currently only applies to iOS. |
 | vars | A list of compile-time constants. See the full documentation of [compile time variables](#compile-time-variables). |
+| delegate-main-to | The name of a library that the `main(args)` function is located in. Generally you should leave this property off, unless a specific library instructs you to use it. |
 
 ### Compile Time Variables
 

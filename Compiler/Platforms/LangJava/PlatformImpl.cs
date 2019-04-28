@@ -37,7 +37,7 @@ namespace LangJava
             Dictionary<string, string> replacements = new Dictionary<string, string>();
             replacements["PROJECT_ID"] = options.GetString(ExportOptionKey.PROJECT_ID);
             replacements["JAVA_PACKAGE"] = (options.GetStringOrNull(ExportOptionKey.JAVA_PACKAGE) ?? options.GetString(ExportOptionKey.PROJECT_ID)).ToLower();
-            replacements["DEFAULT_TITLE"] = options.GetStringOrNull(ExportOptionKey.DEFAULT_TITLE) ?? options.GetString(ExportOptionKey.PROJECT_ID);
+            replacements["PROJECT_TITLE"] = options.GetStringOrNull(ExportOptionKey.PROJECT_TITLE) ?? options.GetString(ExportOptionKey.PROJECT_ID);
 
             if (replacements["JAVA_PACKAGE"].StartsWith("org.crayonlang.interpreter"))
             {

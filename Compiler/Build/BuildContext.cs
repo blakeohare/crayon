@@ -24,7 +24,7 @@ namespace Build
         public bool ReadableByteCode { get; set; }
         public string GuidSeed { get; set; }
         public string LaunchScreenPath { get; set; }
-        public string DefaultTitle { get; set; }
+        public string ProjectTitle { get; set; }
         public string Orientation { get; set; }
         public string[] LocalDeps { get; set; }
         public string[] RemoteDeps { get; set; }
@@ -105,6 +105,11 @@ namespace Build
                     "Please update your build file accordingly.");
             }
 
+            if (desiredTarget.HasLegacyTitle || buildInput.HasLegacyTitle)
+            {
+                ThrowError("This build file has a \"default-title\" property, which was changed to just \"title\" in 2.1.0. Please update your build file accordingly.");
+            }
+
             SourceItem[] sources = desiredTarget.SourcesNonNull.Union(buildInput.SourcesNonNull).ToArray();
             string output = desiredTarget.Output ?? buildInput.Output;
             string projectId = desiredTarget.ProjectId ?? buildInput.ProjectId;
@@ -119,7 +124,7 @@ namespace Build
             // TODO: make this a string array.
             string[] iconFilePaths = CombineAndFlattenStringArrays(desiredTarget.IconFilePaths, buildInput.IconFilePaths);
             string launchScreen = desiredTarget.LaunchScreen ?? buildInput.LaunchScreen;
-            string defaultTitle = desiredTarget.DefaultTitle ?? buildInput.DefaultTitle;
+            string projectTitle = desiredTarget.ProjectTitle ?? buildInput.ProjectTitle;
             string orientation = desiredTarget.Orientation ?? buildInput.Orientation;
             string iosBundlePrefix = desiredTarget.IosBundlePrefix ?? buildInput.IosBundlePrefix;
             string javaPackage = desiredTarget.JavaPackage ?? buildInput.JavaPackage;
@@ -158,7 +163,7 @@ namespace Build
                 .Select(t => FileUtil.GetCanonicalizeUniversalPath(t))
                 .ToArray();
             launchScreen = pr.Replace(launchScreen);
-            defaultTitle = pr.Replace(defaultTitle);
+            projectTitle = pr.Replace(projectTitle);
             orientation = pr.Replace(orientation);
             iosBundlePrefix = pr.Replace(iosBundlePrefix);
             javaPackage = pr.Replace(javaPackage);
@@ -185,7 +190,7 @@ namespace Build
                 GuidSeed = guidSeed,
                 IconFilePaths = iconFilePaths,
                 LaunchScreenPath = launchScreen,
-                DefaultTitle = defaultTitle,
+                ProjectTitle = projectTitle,
                 Orientation = orientation,
                 LocalDeps = localDeps,
                 RemoteDeps = remoteDeps,

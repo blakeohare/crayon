@@ -36,7 +36,7 @@ namespace Exporter
         {
             this.replacements = new Dictionary<string, string>()
             {
-                { "PROJECT_NAME", this.projectId },
+                { "PROJECT_ID", this.projectId },
                 { "TITLE", this.originalProjectId },
                 { "COMPILER_LOCALE", this.projectLocale.ID.ToLower() }
             };
@@ -52,7 +52,7 @@ namespace Exporter
             System.Reflection.Assembly thisAsm = typeof(DefaultProjectGenerator).Assembly;
             foreach (string file in new string[]
                 {
-                    "DefaultProject/BuildFile.txt|%%%PROJECT_NAME%%%.build",
+                    "DefaultProject/BuildFile.txt|%%%PROJECT_ID%%%.build",
                     "DefaultProject/main" + this.projectLocale.ID.ToUpper() + ".txt|source/main.cry",
                     "DefaultProject/dotGitIgnore.txt|output/.gitignore",
                 })

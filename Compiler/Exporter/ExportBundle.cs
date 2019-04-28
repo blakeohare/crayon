@@ -15,7 +15,7 @@ namespace Exporter
         public CompilationScope UserCodeScope { get; set; }
         public string[] IconPaths { get; set; }
         public string LaunchScreenPath { get; set; }
-        public string DefaultTitle { get; set; }
+        public string ProjectTitle { get; set; }
         public string JsFilePrefix { get; set; }
         public bool JsFullPage { get; set; }
         public string IosBundlePrefix { get; set; }
@@ -50,7 +50,7 @@ namespace Exporter
                     Version = buildContext.TopLevelAssembly.Version,
                     Description = buildContext.TopLevelAssembly.Description,
                     GuidSeed = buildContext.GuidSeed,
-                    DefaultTitle = buildContext.DefaultTitle,
+                    ProjectTitle = buildContext.ProjectTitle,
                     JsFilePrefix = jsFilePrefix,
                     JsFullPage = buildContext.JsFullPage,
                     IosBundlePrefix = buildContext.IosBundlePrefix,

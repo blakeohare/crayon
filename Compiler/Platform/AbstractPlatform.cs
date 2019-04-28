@@ -176,8 +176,7 @@ namespace Platform
             return new Dictionary<string, string>()
             {
                 { "PROJECT_ID", options.GetString(ExportOptionKey.PROJECT_ID) },
-                { "PROJECT_NAME", options.GetString(ExportOptionKey.DEFAULT_TITLE, "Untitled App") },
-                { "DEFAULT_TITLE", options.GetString(ExportOptionKey.DEFAULT_TITLE, "Untitled App") },
+                { "PROJECT_TITLE", options.GetString(ExportOptionKey.PROJECT_TITLE, "Untitled Project") },
                 { "PROJECT_DESCRIPTION", options.GetStringOrEmpty(ExportOptionKey.DESCRIPTION) },
                 { "PROJECT_VERSION", options.GetStringOrEmpty(ExportOptionKey.VERSION) },
                 { "DEFAULT_WINDOW_WIDTH", options.GetInteger(ExportOptionKey.WINDOW_WIDTH, 800).ToString() },

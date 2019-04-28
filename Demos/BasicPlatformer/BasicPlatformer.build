@@ -1,5 +1,6 @@
 {
     "id": "Platformer",
+    "title": "Platformer of sorts",
     "source": "source/",
     "output": "output/%TARGET_NAME%",
 

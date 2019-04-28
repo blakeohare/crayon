@@ -1,5 +1,6 @@
 {
     "id": "Asteroids",
+    "title": "Asteroids",
     "description": "Classic Asteroids clone",
     "source": "source/",
     "output": "output/%TARGET_NAME%",

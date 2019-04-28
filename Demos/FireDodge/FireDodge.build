@@ -1,5 +1,6 @@
 {
     "id": "FireDodge",
+    "title": "Fire Dodge",
     "source": "source/",
     "output": "output/%TARGET_NAME%",
     "icons": ["assets/icon.png"],

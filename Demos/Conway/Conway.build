@@ -1,5 +1,6 @@
 {
     "id": "Conway",
+    "title": "Conway's Game of Life",
     "output": "output/%TARGET_NAME%",
     "icons": ["assets/icon.png"],
     "java-package": "org.crayonlang.demos.conway",

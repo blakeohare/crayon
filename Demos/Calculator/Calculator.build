@@ -1,5 +1,6 @@
 {
     "id": "Calculator",
+    "title": "Calculator",
     "source": "source",
     "output": "output/%TARGET_NAME%",
     "java-package": "org.crayonlang.demos.calculator",

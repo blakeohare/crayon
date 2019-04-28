@@ -179,7 +179,7 @@ namespace JavaScriptApp
                 this.ParentPlatform.GenerateReplacementDictionary(options, resDb),
                 new Dictionary<string, string>()
                 {
-                    { "DEFAULT_TITLE", options.GetString(ExportOptionKey.DEFAULT_TITLE, "Untitled") },
+                    { "PROJECT_TITLE", options.GetString(ExportOptionKey.PROJECT_TITLE, "Untitled") },
                     {
                         "FAVICON",
                         options.GetBool(ExportOptionKey.HAS_ICON)

@@ -58,7 +58,7 @@ namespace Exporter
                         .SetOption(ExportOptionKey.VERSION, nullableExportBundle.Version)
                         .SetOption(ExportOptionKey.EMBED_BYTE_CODE, nullableExportBundle.GuidSeed)
                         .SetOption(ExportOptionKey.EMBED_BYTE_CODE, true)
-                        .SetOption(ExportOptionKey.DEFAULT_TITLE, nullableExportBundle.DefaultTitle)
+                        .SetOption(ExportOptionKey.PROJECT_TITLE, nullableExportBundle.ProjectTitle)
                         .SetOption(ExportOptionKey.LIBRARIES_USED, libraries.Cast<object>().ToArray())
                         .SetOption(ExportOptionKey.HAS_ICON, nullableExportBundle.IconPaths.Length > 0)
                         .SetOption(ExportOptionKey.HAS_LAUNCHSCREEN, nullableExportBundle.LaunchScreenPath != null)

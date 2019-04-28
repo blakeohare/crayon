@@ -1,9 +1,11 @@
 {
 	"id": "UserDataTutorial",
+	"title": "User Data Tutorial",
 	"source": "source/",
 	"output": "output/%TARGET_NAME%",
 	
-	"guidseed": "org.crayonlang.tutorials.userdata,v2.1.0,%TARGET_NAME%",
+	"version": "2.1.0",
+	"guidseed": "org.crayonlang.tutorials.userdata,%VERSION%,%TARGET_NAME%",
 	
 	"targets": [
 		{

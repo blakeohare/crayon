@@ -22,7 +22,8 @@ namespace Build.BuildParseNodes
         public string[] IconFilePaths { get; set; }
         public bool HasLegacyIcon { get; set; }
         public string LaunchScreen { get; set; }
-        public string DefaultTitle { get; set; }
+        public string ProjectTitle { get; set; }
+        public bool HasLegacyTitle { get; set; }
         public string DelegateMainTo { get; set; }
 
         // comma-delimited list of values

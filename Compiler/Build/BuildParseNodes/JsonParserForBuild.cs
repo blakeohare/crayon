@@ -35,7 +35,8 @@ namespace Build.BuildParseNodes
         private static void ParseBuildItem(BuildItem item, Common.JsonLookup json)
         {
             item.CompilerLocale = json.GetAsString("compiler-locale");
-            item.DefaultTitle = json.GetAsString("default-title");
+            item.ProjectTitle = json.GetAsString("title");
+            item.HasLegacyTitle = json.GetAsString("default-title") != null;
             item.Description = json.GetAsString("description");
             item.GuidSeed = json.GetAsString("guid-seed");
             item.IosBundlePrefix = json.GetAsString("ios-bundle-prefix");

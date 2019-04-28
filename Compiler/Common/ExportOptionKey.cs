@@ -4,7 +4,7 @@
     {
         ANDROID_SDK_LOCATION,
         ANDROID_SKIP_WORKSPACE_XML,
-        DEFAULT_TITLE,
+        PROJECT_TITLE,
         DESCRIPTION,
         EMBED_BYTE_CODE,
         GUID_SEED,

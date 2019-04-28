@@ -1,10 +1,11 @@
 {
     "id": "GamepadBoxes",
+    "title": "Gamepad Boxes",
     "source": "source/",
     "output": "output/%TARGET_NAME%",
 
     "version": "2.1.0",
-    "guid-seed": "org.crayonlang.demos.gamepadboxes,v2.1.0,%TARGET_NAME%",
+    "guid-seed": "org.crayonlang.demos.gamepadboxes,%VERSION%,%TARGET_NAME%",
 
     "targets": [
         {
