@@ -23,12 +23,14 @@ p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
 <li><a href="#enum-http-method"><span class="codefont">enum</span> Method</a></li>
 <li><a href="#enum-http-requestmode"><span class="codefont">enum</span> RequestMode</a></li>
 <li><a href="#enum-http-statuscode"><span class="codefont">enum</span> StatusCode</a></li>
+<li><a href="#func-http-urldecode"><span class="codefont">function</span> urlDecode(value)</a></li>
+<li><a href="#func-http-urlencode"><span class="codefont">function</span> urlEncode(value)</a></li>
 <li><a href="#class-http-httprequest"><span class="codefont">class</span> HttpRequest</a><ul>
 <li><a href="#constructor-http-httprequest"><span class="codefont">constructor</span>(url)</a></li>
 <li><a href="#func-http-httprequest-getresponse"><span class="codefont">function</span> getResponse()</a></li>
 <li><a href="#func-http-httprequest-isdone"><span class="codefont">function</span> isDone()</a></li>
 <li><a href="#func-http-httprequest-send"><span class="codefont">function</span> send()</a></li>
-<li><a href="#func-http-httprequest-sendasync"><span class="codefont">function</span> sendAsync()</a></li>
+<li><a href="#func-http-httprequest-sendasync"><span class="codefont">function</span> sendAsync(callback)</a></li>
 <li><a href="#func-http-httprequest-setcontent"><span class="codefont">function</span> setContent(value, contentType)</a></li>
 <li><a href="#func-http-httprequest-setcontentbytes"><span class="codefont">function</span> setContentBytes(value, contentType)</a></li>
 <li><a href="#func-http-httprequest-setheader"><span class="codefont">function</span> setHeader(name, value)</a></li>
@@ -381,6 +383,70 @@ p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
 </table>
 </div>
 </div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> urlDecode(value)<a class="bookmark" name="func-http-urldecode" href="#func-http-urldecode">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+				Decodes a string that has been percent encoded. 
+				If the string is not a valid percent encoding format, then an InvalidArgumentException is thrown.
+				If the string is in the correct format but the byte values are not valid UTF8, a TextEncoder.TextEncodingException is thrown.
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">A string that is percent-encoded.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">string</td><td class="description"><p class="description">The original string value</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="itembox"><div>
+<h2><span class="keyword">function</span> urlEncode(value)<a class="bookmark" name="func-http-urlencode" href="#func-http-urlencode">[link]</a></h2>
+<div class="itembox">
+<p class="description">
+				Encodes a string using the percent-encoding system to make it URL safe.
+			</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">value</td>
+<td class="codefont argtype">string</td>
+<td class="description"><p class="description">A string to percent-encode.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>Return Value</h3>
+<table class="arguments">
+<thead><tr><th>Type</th><th>Description</th></thead>
+<tbody>
+<tr><td class="codefont argtype">string</td><td class="description"><p class="description">The percent-encoded string.</p></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
 <div>
 <h1><span class="keyword">class</span> HttpRequest<a class="bookmark" name="class-http-httprequest" href="#class-http-httprequest">[link]</a></h1>
 <div class="itembox">
@@ -472,13 +538,26 @@ p.description { font-size: 10pt; line-height:24pt; margin-top:-6pt;}
 </div>
 </div>
 <div class="itembox"><div>
-<h2><span class="keyword">function</span> sendAsync()<a class="bookmark" name="func-http-httprequest-sendasync" href="#func-http-httprequest-sendasync">[link]</a></h2>
+<h2><span class="keyword">function</span> sendAsync(callback)<a class="bookmark" name="func-http-httprequest-sendasync" href="#func-http-httprequest-sendasync">[link]</a></h2>
 <div class="itembox">
 <p class="description">
 					Sends the HTTP request and returns immediately while the request runs in the background.
 					To check the status of the request, use .isDone() and .getResponse().
 					If blocking execution of code is okay, use .send().
 				</p>
+<div>
+<h3>Arguments</h3>
+<table class="arguments">
+<thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+<tbody>
+<tr>
+<td class="codefont argname">callback</td>
+<td class="codefont argtype">function</td>
+<td class="description"><p class="description">A function that gets invoked when the HTTP request has completed. This function requires one input that will be an HttpResponse object.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>

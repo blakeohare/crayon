@@ -1,10 +1,10 @@
 ﻿{
     "id": "DocsGenerate",
+    "title": "Documentation Generator",
     "source": "generatesrc/",
     "output": "generatebin/%TARGET_NAME%",
-    "default-title": "DocsGenerate",
-
-    "guid-seed": "org.crayonlang.DocsGenerate,v1,%TARGET_NAME%",
+    "version": "1",
+    "guid-seed": "org.crayonlang.DocsGenerate,%VERSION%,%TARGET_NAME%",
 
     "targets": [
         {
