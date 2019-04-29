@@ -1,7 +1,7 @@
 {
     "name": "Graphics2D",
     "author": "Blake O'Hare",
-    "documentation": "http://crayonlang.org/docs/2.1.0/graphics2d",
+    "documentation": "http://crayonlang.org/docs/2.1.1/graphics2d",
     "description": "Graphics and 2D drawing built-in library.",
 
     "localization": {

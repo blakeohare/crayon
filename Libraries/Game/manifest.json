@@ -1,7 +1,7 @@
 {
     "name": "Game",
     "author": "Blake O'Hare",
-    "documentation": "http://crayonlang.org/docs/2.1.0/game",
+    "documentation": "http://crayonlang.org/docs/2.1.1/game",
     "description": "Basic game infrastructure API.",
 
     "localization": {

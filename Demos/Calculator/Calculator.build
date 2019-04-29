@@ -6,8 +6,8 @@
     "java-package": "org.crayonlang.demos.calculator",
     "ios-bundle-prefix": "org.crayonlang.demos",
 
-    "version": "2.1.0",
-    "guid-seed": "org.crayonlang.demos.calculator,v2.1.0,%TARGET_NAME%",
+    "version": "2.1.1",
+    "guid-seed": "org.crayonlang.demos.calculator,%VERSION%,%TARGET_NAME%",
 
     "targets": [
         {

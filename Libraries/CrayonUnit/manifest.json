@@ -1,6 +1,6 @@
 {
     "name": "CrayonUnit",
     "author": "Blake O'Hare",
-    "documentation": "http://crayonlang.org/docs/2.1.0/crayonunit",
+    "documentation": "http://crayonlang.org/docs/2.1.1/crayonunit",
     "description": "Unit testing framework."
 }

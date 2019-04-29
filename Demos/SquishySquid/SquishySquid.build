@@ -7,8 +7,8 @@
 
     "ios-bundle-prefix": "org.crayonlang.demos",
 
-    "version": "2.1.0",
-    "guid-seed": "org.crayonlang.demos.squishysquid,v2.1.0,%TARGET_NAME%",
+    "version": "2.1.1",
+    "guid-seed": "org.crayonlang.demos.squishysquid,%VERSION%,%TARGET_NAME%",
 
     "vars": [
         { "name": "is_landscape", "value": false }

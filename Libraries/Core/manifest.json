@@ -1,7 +1,7 @@
 {
     "name": "Core",
     "author": "Blake O'Hare",
-    "documentation": "http://crayonlang.org/docs/2.1.0/core",
+    "documentation": "http://crayonlang.org/docs/2.1.1/core",
     "description": "Basic system functions. Automatically imported.",
 
     "localization": {

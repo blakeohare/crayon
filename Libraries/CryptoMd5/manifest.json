@@ -1,7 +1,7 @@
 {
     "name": "CryptoMd5",
     "author": "Blake O'Hare",
-    "documentation": "http://crayonlang.org/docs/2.1.0/cryptomd5",
+    "documentation": "http://crayonlang.org/docs/2.1.1/cryptomd5",
     "description": "Library for hashing data using the MD5. Should be used with care, as MD5 is no longer a cryptographically secure hash.",
 
     "cni": [

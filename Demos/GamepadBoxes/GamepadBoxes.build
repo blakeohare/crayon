@@ -4,7 +4,7 @@
     "source": "source/",
     "output": "output/%TARGET_NAME%",
 
-    "version": "2.1.0",
+    "version": "2.1.1",
     "guid-seed": "org.crayonlang.demos.gamepadboxes,%VERSION%,%TARGET_NAME%",
 
     "targets": [

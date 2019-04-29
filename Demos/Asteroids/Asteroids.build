@@ -10,12 +10,12 @@
         "width": 800,
         "height": 600
     },
-    "version": "2.1.0",
+    "version": "2.1.1",
 
     "image-sheets": [
         { "id": "everything", "prefix": "*" }
     ],
-    "guid-seed": "org.crayonlang.demos.asteroids,v2.1.0,%TARGET_NAME%",
+    "guid-seed": "org.crayonlang.demos.asteroids,%VERSION%,%TARGET_NAME%",
 
     "targets": [
         {

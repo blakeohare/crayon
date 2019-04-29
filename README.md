@@ -1,4 +1,4 @@
-# Crayon version 2.1.0
+# Crayon version 2.1.1
 ==============================================
 
 Please go to http://crayonlang.org for documentation, tutorials, demos, and other resources.
@@ -23,19 +23,10 @@ The official Crayon IRC channel is #crayon on FreeNode.net. Feel free to ask any
 Google Mailing list/forum: https://groups.google.com/forum/#!forum/crayon-lang
 Use the stackoverflow tag "crayon" for any issues. This tag is monitored.
 
-# New in 2.1.0
-The following have been added since 0.2.0
+# New in 2.1.1
+The following have been added since 2.1.0
 
-* Android project support
-* iOS project support
-* Lambdas and closures
-* JSON based build file format
-* More streamlined Crayon-Native interface (CNI) for libraries
-* Better static analysis for type-related errors
-* More libraries
-* Bug fixes
-* Performance fixes
-* New version numbering. The "0" major version was dropped. The minor "2" is now the major. Basically it just shifted, to allow for more frequent releases but also have continuity (you can still call the previous versions 2.0, 1.7, etc. whereas if I simply jumped to "1.0.0" it would have been confusing).
+* The branch was just created so there's not actually anything to list here yet.
 
 # Setting up and Running Crayon
 If you have downloaded Crayon from crayonlang.org/download (recommended) please read the instructions on the site (linked from download
