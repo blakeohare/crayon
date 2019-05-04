@@ -42,9 +42,11 @@ def readFile(path):
 
 def writeFile(path, content, lineEnding):
 	content = canonicalize_newline(content, lineEnding)
-	ucontent = unicode(content, 'utf-8')
-	with io.open(canonicalize_sep(path), 'w', newline=lineEnding) as f:
-		f.write(ucontent)
+	bytes = bytearray(content, 'utf-8')
+	path = canonicalize_sep(path)
+	c = open(path, 'wb')
+	c.write(bytes)
+	c.close()
 
 def ensure_directory_exists(path):
 	path = canonicalize_sep(path)
@@ -137,28 +139,27 @@ def buildRelease(args):
 		print("usage: python release.py windows|mono")
 		return
 
-	platform = args[0]
+	os_platform = args[0]
 
-	if not platform in ('windows', 'mono'):
+	isMono = os_platform == 'mono'
+	isWindows = os_platform == 'windows'
+
+	if not isWindows and not isMono:
 		log("incorrect platform")
-		print ("Invalid platform: " + platform)
+		print ("Invalid platform: " + os_platform)
 		return
-
 
 	# Clean up pre-existing release and ensure output directory exists
 
 	log("cleanup old directory")
-	copyToDir = 'crayon-' + VERSION + '-' + platform
+	copyToDir = 'crayon-' + VERSION + '-' + os_platform
 	if os.path.exists(copyToDir):
 		shutil.rmtree(copyToDir)
 		time.sleep(0.1)
 	log("create new output directory")
 	os.makedirs(copyToDir)
 
-
 	# Compile the compiler bits in the source tree to their usual bin directory
-
-	isMono = platform == 'mono'
 
 	if isMono:
 		BUILD_CMD = XBUILD
@@ -250,11 +251,14 @@ def buildRelease(args):
 
 
 	# Throw in setup instructions according to the platform you're generating
-	log("Throwing in the setup-" + platform + ".txt file")
-	if platform == 'windows':
+	log("Throwing in the setup-" + os_platform + ".txt file and syntax highlighter definition file.")
+	if isWindows:
 		setupFile = readFile("setup-windows.txt")
 		writeFile(copyToDir + '/Setup Instructions.txt', setupFile, '\r\n')
-	if platform == 'mono':
+		syntaxHighlighter = readFile("notepadplusplus_crayon_syntax.xml")
+		writeFile(copyToDir + '/notepadplusplus_crayon_syntax.xml', syntaxHighlighter, '\n')
+
+	if isMono:
 		setupFile = readFile("setup-mono.txt")
 		writeFile(copyToDir + '/Setup Instructions.txt', setupFile, '\n')
 
@@ -263,7 +267,7 @@ def buildRelease(args):
 	# TODO: no longer needed! Need to copy the generated bits instead as a crypkg
 	#copyDirectory('../Interpreter/source', copyToDir + '/vmsrc', '.pst')
 
-		
+
 	# Hooray, you're done!
 	log("Completed")
 	print("Release directory created: " + copyToDir)
