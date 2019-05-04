@@ -24,7 +24,7 @@
             <Keywords name="Folders in comment, open"></Keywords>
             <Keywords name="Folders in comment, middle"></Keywords>
             <Keywords name="Folders in comment, close"></Keywords>
-            <Keywords name="Keywords1">this function constructor base class for while do if else switch case break return break default new continue enum static field namespace const try catch finally</Keywords>
+            <Keywords name="Keywords1">this function constructor base class for while do if else switch case break return break default new continue enum static field namespace const try catch finally throw</Keywords>
             <Keywords name="Keywords2">import</Keywords>
             <Keywords name="Keywords3">$var</Keywords>
             <Keywords name="Keywords4">true false null</Keywords>
