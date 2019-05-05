@@ -1,0 +1,37 @@
+﻿import Base64;
+import CrayonUnit;
+import TextEncoding;
+
+class Base64Test : Test {
+
+    function testBasics() {
+
+        msg = "Hello, World!";
+        msgBytes = TextEncoding.convertTextToBytes(msg, TextFormat.UTF8);
+        msgB64 = Base64.bytesToBase64(msgBytes);
+        assertThat(msgB64).isEqualTo("SGVsbG8sIFdvcmxkIQ==");
+        roundtrip = TextEncoding.convertBytesToText(Base64.base64ToBytes(msgB64), TextFormat.UTF8);
+        assertThat(roundtrip).isEqualTo(msg);
+
+        msgB64 = Base64.bytesToBase64(msgBytes, Base64Alphabet.standard(), false); // same thing but without = padding
+        assertThat(msgB64).isEqualTo("SGVsbG8sIFdvcmxkIQ");
+        roundtrip = TextEncoding.convertBytesToText(Base64.base64ToBytes(msgB64), TextFormat.UTF8);
+        assertThat(roundtrip).isEqualTo(msg);
+
+        // generates a list with a bunch of 1-heavy bytes with 0's sprinkled in various positions
+        highBytes = [];
+        for (i = 1; i <= 128; i *= 2) {
+            highBytes.add(255, 255 - i, 255 - i - i / 2);
+        }
+
+        msgB64 = Base64.bytesToBase64(highBytes);
+        assertThat(msgB64).isEqualTo("//7+//38//v5//fz/+/n/9/P/7+f/38/");
+        roundtrip = Base64.base64ToBytes(msgB64);
+        assertThat(roundtrip).isEqualTo(highBytes);
+
+        msgB64 = Base64.bytesToBase64(highBytes, Base64Alphabet.webSafe());
+        assertThat(msgB64).isEqualTo("__7-__38__v5__fz_-_n_9_P_7-f_38_");
+        roundtrip = Base64.base64ToBytes(msgB64, Base64Alphabet.webSafe());
+        assertThat(roundtrip).isEqualTo(highBytes);
+    }
+}

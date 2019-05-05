@@ -1,0 +1,145 @@
+﻿/*
+    This library was needed quickly and was hastily thrown together as a pure VM library.
+    A proper library would use CNI and be a million times faster.
+    TODO: that ^
+*/
+
+namespace Base64 {
+
+    const ALPHABET = 'abcdefghijklmnopqrstuvwxyz';
+    const NUMS = '0123456789';
+
+    function bytesToBase64(bytes, alphabet = null, usePadding = true) {
+        alphabet = _ensureAlphabet(alphabet);
+        usePadding = usePadding == true;
+
+        pairs = [];
+        for (b : bytes) {
+            pairs.add((b >> 6) & 3, (b >> 4) & 3, (b >> 2) & 3, b & 3);
+        }
+
+        while (pairs.length % 3 != 0) {
+            pairs.add(0);
+        }
+
+        chars = [];
+        lookup = alphabet._numToChar;
+
+        for (i = 0; i < pairs.length; i += 3) {
+            chars.add(lookup[
+                (pairs[i] << 4) |
+                (pairs[i + 1] << 2) |
+                (pairs[i + 2])]);
+        }
+
+        p = alphabet._padding;
+        while (p.length == 1 && usePadding && chars.length % 4 != 0) {
+            chars.add(p);
+        }
+
+        return chars.join('');
+    }
+
+    function base64ToBytes(str, alphabet = null) {
+        alphabet = _ensureAlphabet(alphabet);
+        if (!Core.isString(str)) {
+            err = 'Input value is not a string.';
+        } else {
+            // TODO: Make a native implementation as a string primitive method.
+            pairs = [];
+            lookup = alphabet._charToNum;
+            bad = 0;
+            trim = 0;
+
+            if (str.length == 0) return [];
+            if (str[-2:] == alphabet._padding * 2) str = str[:-2];
+            if (str[-1] == alphabet._padding) str = str[:-1];
+
+            invalidChars = [];
+            for (c : str) {
+                t = lookup.get(c) ?? (invalidChars.add(c) ?? 0);
+                pairs.add(
+                    (t >> 4) & 3,
+                    (t >> 2) & 3,
+                    t & 3
+                );
+            }
+
+            if (invalidChars.length > 0) {
+                err = "Input string contains an invalid character: '" + invalidChars[0] + "'";
+            } else {
+                loopLimit = pairs.length - 3;
+                output = [];
+                for (i = 0; i < loopLimit; i += 4) {
+                    output.add((pairs[i] << 6) |
+                        (pairs[i + 1] << 4) |
+                        (pairs[i + 2] << 2) |
+                        (pairs[i + 3]));
+                }
+
+                return output;
+            }
+        }
+
+        throw new InvalidArgumentException(err);
+    }
+
+    function _ensureAlphabet(a) {
+        if (a is Base64Alphabet) return a;
+        if (a == null) return Base64Alphabet.standard();
+        throw new InvalidArgumentException("Argument must be a Base64Alphabet instance");
+    }
+
+    const B64_ALPHA_ERR = "Base 64 Alphabet must be 64 single-digit characters";
+
+    class Base64Alphabet {
+
+        field _numToChar = {};
+        field _charToNum = {};
+        field _padding = '=';
+
+        constructor(charsOrString, padding = '=') {
+            if (!Core.isString(padding) || padding.length > 1) {
+                throw new InvalidArgumentException("Padding character must be a single-character string.");
+            }
+
+            this._padding = padding;
+
+            if (Core.isString(charsOrString)) {
+                chars = [];
+                for (c : charsOrString) {
+                    chars.add(c);
+                }
+            } else if (Core.typeof(charsOrString) == Core.Type.LIST) {
+                for (item : charsOrString) {
+                    if (!Core.isString(item) || item.length != 1) {
+                        throw new InvalidArgumentException(B64_ALPHA_ERR);
+                    }
+                }
+            }
+            if (chars.length != 64) throw new InvalidArgumentException(B64_ALPHA_ERR);
+
+            for (i = 0; i < 64; ++i) {
+                this._numToChar[i] = chars[i];
+                this._charToNum[chars[i]] = i;
+            }
+        }
+
+        static field _standard;
+
+        static function standard() {
+            if (Base64Alphabet._standard == null) {
+                a = ALPHABET;
+                n = NUMS;
+                Base64Alphabet._standard = new Base64Alphabet(a.upper() + a + (n + '+/'));
+            }
+            return Base64Alphabet._standard;
+        }
+
+        static function webSafe() {
+            a = ALPHABET;
+            n = NUMS;
+            return new Base64Alphabet(a.upper() + a + (n + '-_'));
+        }
+    }
+}
