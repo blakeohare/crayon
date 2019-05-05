@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <InheritedConstants>DEBUG;$(GlobalConstants)</InheritedConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -28,7 +28,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <InheritedConstants>RELEASE;$(GlobalConstants)</InheritedConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -53,12 +53,12 @@
   <Choose>
     <When Condition=" '$(SolutionFileName)' == 'CrayonWindows.sln' ">
       <PropertyGroup>
-        <DefineConstants>WINDOWS</DefineConstants>
+        <DefineConstants>WINDOWS;$(InheritedConstants)</DefineConstants>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <DefineConstants>OSX</DefineConstants>
+        <DefineConstants>OSX;$(InheritedConstants)</DefineConstants>
       </PropertyGroup>
       <ItemGroup>
         <Reference Include="Mono.Cairo" />

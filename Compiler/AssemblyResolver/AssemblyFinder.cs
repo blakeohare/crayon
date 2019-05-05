@@ -86,14 +86,12 @@ namespace AssemblyResolver
                 }
             }
 
-#if DEBUG
             string runningFromSourceDirectory = SourceDirectoryFinder.CrayonSourceDirectory;
-            if (runningFromSourceDirectory != null)
+            if (runningFromSourceDirectory != null) // returns null on release builds.
             {
                 string libraryPath = FileUtil.JoinPath(runningFromSourceDirectory, "Libraries");
                 unverifiedLibraryDirectories.AddRange(FileUtil.DirectoryListDirectoryPaths(libraryPath));
             }
-#endif
 
             List<string> verifiedLibraryPaths = new List<string>();
 

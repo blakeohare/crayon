@@ -10,6 +10,7 @@
             // TODO: mark this as DEBUG only
             get
             {
+#if DEBUG
                 if (crayonSourceDirectoryCached == null)
                 {
                     string currentDirectory = FileUtil.GetCurrentDirectory();
@@ -26,6 +27,9 @@
                     }
                 }
                 return crayonSourceDirectoryCached;
+#else
+                return null;
+#endif
             }
         }
     }
