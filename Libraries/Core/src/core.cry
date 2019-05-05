@@ -3,7 +3,7 @@
     @localized('en', 'CRAYON_VERSION')
     @localized('es', 'ESCRAYON_VERSION')
     @localized('jp', 'JPCRAYON_VERSION')
-    const CRAYON_VERSION = "0.2.1";
+    const CRAYON_VERSION = "2.1.1";
 
     @localized('en', 'Type')
     @localized('es', 'ESType')
