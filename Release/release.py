@@ -4,6 +4,43 @@ XBUILD = 'xbuild'
 RELEASE_CONFIG = '/p:Configuration=Release'
 VM_TEMP_DIR = 'VmTemp'
 VM_TEMP_DIR_SOURCE = VM_TEMP_DIR + '/Source'
+
+LIBRARIES = [
+	'Audio',
+	'Base64',
+	'Core',
+	'CrayonUnit',
+	'CryptoCommon',
+	'CryptoMd5',
+	'CryptoSha1',
+	'DateTime',
+	'Dispatcher',
+	'Easing',
+	'FileIO',
+	'FileIOCommon',
+	'Game',
+	'GameGifCap',
+	'Gamepad',
+	'Graphics2D',
+	'Graphics2DText',
+	'Http',
+	'ImageEncoder',
+	'ImageResources',
+	'ImageWebResources',
+	'Json',
+	'Math',
+	'Matrices',
+	'Nori',
+	'NoriXml',
+	'Random',
+	'Resources',
+	'SRandom',
+	'TextEncoding',
+	'UserData',
+	'Web',
+	'Xml',
+]
+
 import shutil
 import os
 import io
@@ -92,41 +129,6 @@ def log(value):
 def buildRelease(args):
 	log('begin')
 	
-	librariesForRelease = [
-		'Audio',
-		'Core',
-		'CrayonUnit',
-		'CryptoCommon',
-		'CryptoMd5',
-		'CryptoSha1',
-		'DateTime',
-		'Dispatcher',
-		'Easing',
-		'FileIO',
-		'FileIOCommon',
-		'Game',
-		'GameGifCap',
-		'Gamepad',
-		'Graphics2D',
-		'Graphics2DText',
-		'Http',
-		'ImageEncoder',
-		'ImageResources',
-		'ImageWebResources',
-		'Json',
-		'Math',
-		'Matrices',
-		'Nori',
-		'NoriXml',
-		'Random',
-		'Resources',
-		'SRandom',
-		'TextEncoding',
-		'UserData',
-		'Web',
-		'Xml',
-	]
-	
 	platformsForInterpreterGen = [
 		'csharp-app',
 		'python-app',
@@ -187,7 +189,7 @@ def buildRelease(args):
 	# Generate .crypkg files for the native files.
 
 	# TODO: also crypkg the src files, possibly
-	for lib in librariesForRelease:
+	for lib in LIBRARIES:
 		sourcePathRoot = '../Libraries/' + lib
 		targetPathRoot = copyToDir + '/libs/' + lib
 		copyDirectory(sourcePathRoot, targetPathRoot, recursive = False)

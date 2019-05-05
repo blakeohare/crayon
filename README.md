@@ -26,7 +26,7 @@ Use the stackoverflow tag "crayon" for any issues. This tag is monitored.
 # New in 2.1.1
 The following have been added since 2.1.0
 
-* The branch was just created so there's not actually anything to list here yet.
+* Added a Base64 library
 
 # Setting up and Running Crayon
 If you have downloaded Crayon from crayonlang.org/download (recommended) please read the instructions on the site (linked from download
