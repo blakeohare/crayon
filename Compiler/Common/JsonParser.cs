@@ -192,6 +192,16 @@ namespace Common
             throw token.Throw("Unrecognized float value: '" + token.Value + "'");
         }
 
+        private char GetUnicodeChar(string fourDigitHex)
+        {
+            int value;
+            if (int.TryParse(fourDigitHex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out value))
+            {
+                return (char)value;
+            }
+            throw new JsonParserException("Could not parse unicode escape sequence: \"\\u" + fourDigitHex + "\"");
+        }
+
         private string ParseString(Token token, bool allowUnquoted)
         {
             string text = token.Value;
@@ -217,7 +227,13 @@ namespace Common
                                 case 't': sb.Append('\t'); break;
                                 case '\'': sb.Append('\''); break;
                                 case '"': sb.Append('"'); break;
-                                case 'u': throw new NotImplementedException(); // TODO: implement unicode.
+
+                                case 'u':
+                                    if (i + 5 >= length) throw token.Throw("Unicode escape sequence is invalid.");
+                                    sb.Append(GetUnicodeChar(text.Substring(i + 2, 4)));
+                                    i += 4;
+                                    break;
+
                                 default:
                                     throw token.Throw("Unrecognized escape sequence: '\\" + text[i + 1] + "'.");
                             }
@@ -623,13 +639,15 @@ namespace Common
         public string GetAsString(string path, string defaultValue) { return GetAsString(path) ?? defaultValue; }
         public string GetAsString(string path) { return this.Get(path) as string; }
         public int GetAsInteger(string path, int defaultValue) { object value = this.Get(path); return value == null ? defaultValue : (int)value; }
-        public double GetAsInteger(string path) { return GetAsInteger(path, 0); }
+        public int GetAsInteger(string path) { return GetAsInteger(path, 0); }
         public double GetAsDouble(string path, double defaultValue) { object value = this.Get(path); return value == null ? defaultValue : (double)value; }
         public double GetAsDouble(string path) { return GetAsDouble(path, 0); }
         public bool GetAsBoolean(string path, bool defaultValue) { object value = this.Get(path); return value == null ? defaultValue : (bool)value; }
         public bool GetAsBoolean(string path) { return GetAsBoolean(path, false); }
         public object[] GetAsList(string path) { return (Get(path) as object[]) ?? new object[0]; }
-        public IDictionary<string, object> GetAsLookup(string path) { return (Get(path) as IDictionary<string, object>) ?? new Dictionary<string, object>(); }
+        public IDictionary<string, object> GetAsDictionary(string path) { return (Get(path) as IDictionary<string, object>) ?? new Dictionary<string, object>(); }
+        public JsonLookup GetAsLookup(string path) { return new JsonLookup(GetAsDictionary(path)); }
+        public JsonLookup[] GetAsListOfLookups(string path) { return GetAsList(path).OfType<IDictionary<string, object>>().Select(d => new JsonLookup(d)).ToArray(); }
 
         public object Get(string path)
         {
