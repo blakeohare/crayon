@@ -216,11 +216,12 @@ public final class LibraryWrapper {
     char[] output = original.toCharArray();
     int length = output.length;
     int lengthMinusOne = length - 1;
+    int half = length / 2;
     char c;
-    for (int i = length / 2 - 1; i >= 0; --i) {
+    for (int i = 0; i < half; ++i) {
       c = output[i];
       output[i] = output[lengthMinusOne - i];
-      output[lengthMinusOne] = c;
+      output[lengthMinusOne - i] = c;
     }
     return String.copyValueOf(output);
   }
