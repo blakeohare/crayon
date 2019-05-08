@@ -56,7 +56,7 @@ namespace AssemblyResolver
 
             this.InternalLocale = Locale.Get(this.Manifest.GetAsString("localization.default", "en"));
             this.CanonicalKey = this.InternalLocale.ID + ":" + this.ID;
-            this.SupportedLocales = new HashSet<Locale>(this.Manifest.GetAsLookup("localization.names").Keys.Select(localeName => Locale.Get(localeName)));
+            this.SupportedLocales = new HashSet<Locale>(this.Manifest.GetAsDictionary("localization.names").Keys.Select(localeName => Locale.Get(localeName)));
             this.SupportedLocales.Add(this.InternalLocale);
             this.OnlyImportableFrom = new HashSet<string>(this.Manifest.GetAsList("onlyAllowImportFrom").Cast<string>());
             this.CniFunctions = new Dictionary<string, int>();
