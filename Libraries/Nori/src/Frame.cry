@@ -163,10 +163,13 @@ namespace Nori {
         function show() {
             if (!this._isShown) {
                 this._isShown = true;
-                Dispatcher.registerDispatcherFramework(this);
                 renderData = this._getRenderData();
                 execId = Core.getCurrentExecutionToken();
                 $lib_nori_showFrame(this, 'Test Window', this._size[0], this._size[1], renderData, execId);
+
+                // don't register the dispatcher framework until the native frame is ready to go, otherwise a dispatcher
+                // callback that attempts to change the UI tree will cause a crash.
+                Dispatcher.registerDispatcherFramework(this);
 
                 // This will save the VM state for this context and potentially kick off a
                 // while loop that spins and watches for events. Only one instance of this loop
