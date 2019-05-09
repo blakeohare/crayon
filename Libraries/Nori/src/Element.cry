@@ -260,8 +260,15 @@ namespace Nori {
         function getBackgroundColor() { return this._getColorProperty(Element_BackgroundColor); }
         function setBackgroundColor(r, g, b, a = 255) { return this._setColorProperty(Element_BackgroundColor, r, g, b, a); }
 
+        static function _ensureCallback(fn) {
+            oops = "Did you accidentally call the function when you passed it as a callback?";
+            if (fn == null) throw new InvalidArgumentException("Event handler was null. " + oops);
+            if (Core.typeof(fn) != Core.Type.FUNCTION) throw new InvalidArgumentException("Event handler must be a function. " + oops);
+            return fn;
+        }
+
         function _setEventHandler(name, fn, parser = null, isVmOnly = false) {
-            this._handlers[name] = [fn, parser];
+            this._handlers[name] = [Element._ensureCallback(fn), parser];
             if (isVmOnly) return this;
             return this._setBoolProperty(name, true);
         }
