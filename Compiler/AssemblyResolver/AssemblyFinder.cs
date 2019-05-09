@@ -7,6 +7,8 @@ namespace AssemblyResolver
 {
     public class AssemblyFinder
     {
+        private const int AGE_TO_UPDATE_REQUESTED_LATEST_ASSEMBLY = 7 * 24 * 3600; // if a build file asks for the latest version of an assembly and you haven't checked in a week, check it.
+
         public AssemblyMetadata[] AssemblyFlatList { get; private set; }
         private Dictionary<string, AssemblyMetadata> libraryLookup;
 
@@ -126,37 +128,127 @@ namespace AssemblyResolver
 
         public IList<AssemblyMetadata> GetRemoteAssemblies(string[] urlsAndVersionInfo)
         {
-            // TODO: finish this function.
-            return new AssemblyMetadata[0];
-            /*
             Dictionary<string, AssemblyMetadata> assemblies = new Dictionary<string, AssemblyMetadata>();
+            if (urlsAndVersionInfo.Length == 0) return new AssemblyMetadata[0];
 
             RemoteAssemblyManifest manifest = new RemoteAssemblyManifest();
-            List<string[]> syncNeeded = new List<string[]>();
-            List<string[]> syncWanted = new List<string[]>();
+            List<string[]> librariesMissing = new List<string[]>();
+            List<RemoteAssemblyState> librariesThatMightNeedRefresh = new List<RemoteAssemblyState>();
+            bool anyLibrariesWereMissing = false;
+            List<RemoteAssemblyState> usedAssemblies = new List<RemoteAssemblyState>();
             foreach (string info in urlsAndVersionInfo)
             {
                 string[] parts = info.Split(new char[] { ',' }, 2);
                 string url = parts[0];
-                string version = "LATEST";
+                string version = null;
                 if (parts.Length == 2)
                 {
-                    version = parts[1];
+                    version = parts[1] == "LATEST" ? null : parts[1]; ;
                 }
+                bool isLatestStableRequested = version == null;
 
                 RemoteAssemblyState currentState = manifest.GetAssemblyState(url, version);
                 if (currentState == null)
                 {
-                    syncNeeded.Add(new string[] { url, version });
+                    currentState = PerformSyncForMissingAssembly(manifest, url, version);
+                    if (currentState == null) throw new System.Exception(); // all code paths that return null from the above function should have thrown a proper error message exception.
+                    anyLibrariesWereMissing = true;
+                    usedAssemblies.Add(currentState);
                 }
-                else if (version == "LATEST")
+                else if (isLatestStableRequested)
                 {
-
+                    librariesThatMightNeedRefresh.Add(currentState);
+                }
+                else
+                {
+                    usedAssemblies.Add(currentState);
                 }
             }
 
+            int now = Util.UnixTime;
+            int ageToDefinitelySync = 7 * 24 * 3600;
+            int expiration = now - ageToDefinitelySync;
+            bool refreshNeeded = anyLibrariesWereMissing || librariesThatMightNeedRefresh.Where(lib => lib.LastLatestCheck < expiration).FirstOrDefault() != null;
+            if (refreshNeeded)
+            {
+                foreach (RemoteAssemblyState lib in librariesThatMightNeedRefresh)
+                {
+                    RemoteAssemblyState nullableNewLib = PerformSyncForOptionalRefresh(manifest, lib.Url);
+                    usedAssemblies.Add(nullableNewLib ?? lib);
+                }
+            }
+            else
+            {
+                usedAssemblies.AddRange(librariesThatMightNeedRefresh);
+            }
+
+            foreach (RemoteAssemblyState ras in usedAssemblies)
+            {
+                ras.LastUsed = now;
+            }
+
+            manifest.ReserializeFile();
+
+            foreach (RemoteAssemblyState ras in usedAssemblies)
+            {
+                assemblies.Add(ras.Id, new AssemblyMetadata(ras.AbsolutePathToLibrary, ras.Id));
+            }
+
             return assemblies.Values.ToArray();
-            */
+        }
+
+        private RemoteAssemblyState PerformSyncForMissingAssembly(RemoteAssemblyManifest manifest, string libraryUrl, string libraryVersionOrNullForLatest)
+        {
+            return PerformSyncImpl(manifest, libraryUrl, libraryVersionOrNullForLatest, true);
+        }
+
+        private RemoteAssemblyState PerformSyncForOptionalRefresh(RemoteAssemblyManifest manifest, string libraryUrl)
+        {
+            return PerformSyncImpl(manifest, libraryUrl, null, false);
+        }
+
+        private RemoteAssemblyState PerformSyncImpl(RemoteAssemblyManifest manifest, string libraryUrl, string libraryVersionOrNullForLatest, bool isRequired)
+        {
+            string fullStructuredUrl = libraryVersionOrNullForLatest == null
+                ? libraryUrl
+                : (libraryUrl + ":" + libraryVersionOrNullForLatest);
+            Pair<FetchAssemblyStatus, RemoteAssemblyState> t = new RemoteAssemblyFetcher().FetchNewAssembly(manifest, fullStructuredUrl);
+
+            switch (t.First)
+            {
+                case FetchAssemblyStatus.NO_CONNECTION:
+                case FetchAssemblyStatus.SERVER_NOT_RESPONDING:
+                case FetchAssemblyStatus.UNKNOWN_RESPONSE:
+                    if (isRequired)
+                    {
+                        throw new System.InvalidOperationException("Could not sync required dependency: " + libraryUrl);
+                    }
+                    return null;
+
+                case FetchAssemblyStatus.INVALID_URL:
+                    throw new System.InvalidOperationException("Invalid remote library URL: " + libraryUrl);
+
+                case FetchAssemblyStatus.LIBRARY_NOT_FOUND:
+                    throw new System.InvalidOperationException("Remote Library not found: " + libraryUrl);
+
+                case FetchAssemblyStatus.VERSION_NOT_FOUND:
+                    if (isRequired)
+                    {
+                        throw new System.InvalidOperationException("Remote Library version not found: " + libraryUrl);
+                    }
+                    else
+                    {
+                        // This could happen if the library was taken down by the provider
+                    }
+                    return null;
+
+                case FetchAssemblyStatus.SUCCESS:
+                    manifest.AddOrReplaceAssemblyState(t.Second);
+                    return t.Second;
+
+                default:
+                    throw new System.NotImplementedException(); // this should not happen.
+            }
         }
     }
 }
