@@ -213,7 +213,7 @@ namespace Nori {
         field _callbacksById = {};
 
         function _setTimedCallback(deadline, cb) {
-            t = Math.max(0, 1000 * Math.floor(deadline - Core.currentTime() + .5));
+            t = Math.max(0, Math.floor(1000 * (deadline - Core.currentTime()) + .5));
             id = ++this._callbackIdAlloc;
             this._callbacksById[id] = cb;
             $lib_nori_flushUpdatesToFrame(this, 'TO,' + id + ',' + t);

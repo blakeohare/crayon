@@ -49,19 +49,33 @@ namespace Interpreter.Libraries.Nori
         private BrowserInvoker browserInvoker;
         private ImageDataInvoker imageDataInvoker;
 
+        private List<string> sendUiDataQueue = new List<string>();
+
         public void SendUiData(string value)
         {
             lock (this.browserMutex)
             {
-                if (this.browserInvoker == null)
+                if (this.browser == null)
                 {
-                    this.browserInvoker = new BrowserInvoker((string data) =>
-                    {
-                        this.browser.Document.InvokeScript("winFormsNoriHandleNewUiData", new object[] { data });
-                    });
+                    this.sendUiDataQueue.Add(value);
                 }
-                this.browser.Invoke(this.browserInvoker, value);
+                else
+                {
+                    this.SendUiDataImplNoMutex(value);
+                }
             }
+        }
+
+        private void SendUiDataImplNoMutex(string value)
+        {
+            if (this.browserInvoker == null)
+            {
+                this.browserInvoker = new BrowserInvoker((string data) =>
+                {
+                    this.browser.Document.InvokeScript("winFormsNoriHandleNewUiData", new object[] { data });
+                });
+            }
+            this.browser.Invoke(this.browserInvoker, value);
         }
 
         public void SendImageToBrowser(int id, int width, int height, string dataUri)
@@ -102,6 +116,12 @@ namespace Interpreter.Libraries.Nori
                 this.form.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 
                 this.browser.DocumentText = this.GetHtmlDocument(this.initialUiData);
+
+                foreach (string value in this.sendUiDataQueue)
+                {
+                    this.SendUiDataImplNoMutex(value);
+                }
+                this.sendUiDataQueue.Clear();
             }
         }
 
