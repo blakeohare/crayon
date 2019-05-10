@@ -7,8 +7,6 @@ namespace AssemblyResolver
 {
     public class AssemblyFinder
     {
-        private const int AGE_TO_UPDATE_REQUESTED_LATEST_ASSEMBLY = 7 * 24 * 3600; // if a build file asks for the latest version of an assembly and you haven't checked in a week, check it.
-
         public AssemblyMetadata[] AssemblyFlatList { get; private set; }
         private Dictionary<string, AssemblyMetadata> libraryLookup;
 
@@ -129,7 +127,7 @@ namespace AssemblyResolver
         public IList<AssemblyMetadata> GetRemoteAssemblies(string[] urlsAndVersionInfo)
         {
             Dictionary<string, AssemblyMetadata> assemblies = new Dictionary<string, AssemblyMetadata>();
-            if (urlsAndVersionInfo.Length == 0) return new AssemblyMetadata[0];
+            if (urlsAndVersionInfo == null || urlsAndVersionInfo.Length == 0) return new AssemblyMetadata[0];
 
             RemoteAssemblyManifest manifest = new RemoteAssemblyManifest();
             List<string[]> librariesMissing = new List<string[]>();
