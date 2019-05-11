@@ -9,9 +9,11 @@
 			<value name="UNKNOWN" description="Encoding is unknown. Used when decoding, but not for encoding."/>
 			<value name="ASCII" description="The ASCII format (single-byte encoding with 7-bit values)"/>
 			<value name="ISO_8859_1" description="The ISO-8859-1 encoding (single-byte encoding with 8-bit values)"/>
-			<value name="UTF-8" description="The UTF-8 format. (variable-length encoding format. Characters are 1-4 bytes. Generally considered standard."/>
-			<value name="UTF-16" description="The UTF-16 format. (2-byte format with surrogate pairs)"/>
-			<value name="UTF-32" description="The UTF-32 format. (4-byte format, each 4-bit integer is the Unicode code point)"/>
+			<value name="UTF8" description="The UTF-8 format. (variable-length encoding format. Characters are 1-4 bytes. Generally considered standard."/>
+			<value name="UTF16_LE" description="The UTF-16 format in Little Endian order. (2-byte format with surrogate pairs)"/>
+			<value name="UTF16_BE" description="The UTF-16 format in Big Endian order. (2-byte format with surrogate pairs)"/>
+			<value name="UTF32_LE" description="The UTF-32 format in Little Endian order. (4-byte format, each 4-bit integer is the Unicode code point)"/>
+			<value name="UTF32_BE" description="The UTF-32 format in Big Endian order. (4-byte format, each 4-bit integer is the Unicode code point)"/>
 		</enum>
 		
 		<class name="EncodingException" parent="Core.Exception">
