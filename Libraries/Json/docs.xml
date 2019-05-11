@@ -23,7 +23,7 @@
 			<returns type="dictionary" description="A structured JSON object in the form of a dictionary."/>
 		</function>
 
-		<function name="serialize">
+		<function name="serializeJson">
 			<description>
 				Serializes a dictionary object into a JSON string.
 			</description>

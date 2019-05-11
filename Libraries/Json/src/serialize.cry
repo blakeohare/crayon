@@ -1,6 +1,11 @@
 ﻿namespace Json {
 
+    // This is deprecated. Please update your references to serializeJson.
     function serialize(object, flags = Json.JsonSerializerFlag.DEFAULT, depth = 64) {
+        return serializeJson(object, flags, depth);
+    }
+
+    function serializeJson(object, flags = Json.JsonSerializerFlag.DEFAULT, depth = 64) {
         builder = [];
         Json._serializeImpl(object, flags, depth, builder, (flags & Json.JsonSerializerFlag.PRETTY) != 0, 0);
         return builder.join('');
