@@ -46,15 +46,39 @@ def lib_processutil_isSupported(vm, args):
   return buildBoolean(vm[13], t)
 
 def lib_processutil_launchProcess(vm, args):
+  bridge = args[0][1]
+  bridge[3] = (PST_NoneListOfOne * 5)
+  bridge[3][0] = True
+  bridge[3][1] = 0
+  bridge[3][2] = []
+  bridge[3][3] = []
+  bridge[3][4] = TODO("this")
+  execName = args[1][1]
+  argsRaw = args[2][1]
+  isAsync = args[3][1]
+  cb = args[4]
+  argStrings = []
+  i = 0
+  while (i < argsRaw[1]):
+    a = getItemFromList(argsRaw, i)
+    argStrings.append(a[1])
+    i += 1
   TODO("this")
   return vm[14]
 
 def lib_processutil_readBridge(vm, args):
+  bridge = args[0][1]
+  outputList = args[1][1]
   type = args[2][1]
-  outputValues = []
+  mtx = bridge[3][4]
   if (type == 1):
     outputInt = TODO("this")
+    addToList(outputList, buildInteger(vm[13], outputInt))
   else:
     output = []
     TODO("this")
+    i = 0
+    while (i < len(output)):
+      addToList(outputList, buildString(vm[13], output[i]))
+      i += 1
   return vm[14]

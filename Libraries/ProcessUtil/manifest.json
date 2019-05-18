@@ -5,7 +5,7 @@
     "description": "Library for launching system processes.",
 
     "cni": [
-        { "name": "lib_processutil_launch", "argc": 4 },
+        { "name": "lib_processutil_launchProcess", "argc": 5 },
         { "name": "lib_processutil_readBridge", "argc": 3 },
         { "name": "lib_processutil_isSupported", "argc": 0 }
     ]

@@ -12,3 +12,4 @@ EXT: _lib_processutil_isSupported: C$common$alwaysFalse()
 EXT: _lib_processutil_launchProcess: C$common$alwaysFalse()
 EXT: _lib_processutil_readBridgeInt: C$common$alwaysFalse()
 EXT: _lib_processutil_readBridgeStrings: C$common$alwaysFalse()
+EXT: _lib_processutil_generateMutex: null

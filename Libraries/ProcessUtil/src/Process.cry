@@ -15,9 +15,9 @@
         }
 
         function isRunning() { return this.getReturnCode() == null; }
-        function getReturnCode() { return this._procReadBridge(0)[0]; }
-        function getStdOutLines() { return this._procReadBridge(1); }
-        function getStdErrLines() { return this._procReadBridge(2); }
+        function getReturnCode() { return this._procReadBridge(1)[0]; }
+        function getStdOutLines() { return this._procReadBridge(2); }
+        function getStdErrLines() { return this._procReadBridge(3); }
 
         function _procReadBridge(id) {
             lines = [];
@@ -54,11 +54,15 @@
 
             innerProc = new Core.Object();
 
-            wrappedCb = () => {
-                response = new ProcessResult(innerProc);
-                cb(response);
-            };
-            $lib_processutil_launch(innerProc, this._executable, this._args, wrappedCb);
+            isAsync = cb != null;
+            wrappedCb = null;
+            if (isAsync) {
+                wrappedCb = () => {
+                    response = new ProcessResult(innerProc);
+                    cb(response);
+                };
+            }
+            $lib_processutil_launchProcess(innerProc, this._executable, this._args, isAsync, wrappedCb);
 
             if (cb == null) {
                 return new ProcessResult(innerProc);
