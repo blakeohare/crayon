@@ -1,0 +1,6 @@
+SOURCE: src/main.pst
+
+EXT-TYPE: bool _lib_processutil_isSupported();
+EXT-TYPE: void _lib_processutil_launchProcess();
+EXT-TYPE: int _lib_processutil_readBridgeInt();
+EXT-TYPE: void _lib_processutil_readBridgeStrings();

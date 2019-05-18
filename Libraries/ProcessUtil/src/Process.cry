@@ -1,0 +1,73 @@
+﻿namespace ProcessUtil {
+
+    /*
+        Process bridge native data:
+            nativeData[0] -> finished
+            nativeData[1] -> STDOUT lines
+            nativeData[2] -> STDERR lines
+    */
+    class ProcessResult {
+
+        field _processBridge;
+
+        constructor(obj) {
+            this._processBridge = obj;
+        }
+
+        function isRunning() { return this.getReturnCode() == null; }
+        function getReturnCode() { return this._procReadBridge(0)[0]; }
+        function getStdOutLines() { return this._procReadBridge(1); }
+        function getStdErrLines() { return this._procReadBridge(2); }
+
+        function _procReadBridge(id) {
+            lines = [];
+            $lib_processutil_readBridge(this._processBridge, lines, id);
+            return lines;
+        }
+    }
+
+    class Process {
+
+        field _executable = null;
+        field _args = null;
+
+        constructor() { }
+
+        static function isSupported() {
+            return $lib_processutil_isSupported();
+        }
+
+        function setExecutable(e) {
+            this._executable = e + '';
+            return this;
+        }
+
+        function setArgs(args) {
+            this._args = args;
+            return this;
+        }
+
+        function _launchImpl(cb) {
+            if (!Process.isSupported()) {
+                throw new NotImplementedException("This platform does not support launching processes.");
+            }
+
+            innerProc = new Core.Object();
+
+            wrappedCb = () => {
+                response = new ProcessResult(innerProc);
+                cb(response);
+            };
+            $lib_processutil_launch(innerProc, this._executable, this._args, wrappedCb);
+
+            if (cb == null) {
+                return new ProcessResult(innerProc);
+            }
+
+            return null;
+        }
+
+        function launch() { return this._launchImpl(null); }
+        function launchAsync(cb) { return this._launchImpl(cb); }
+    }
+}
