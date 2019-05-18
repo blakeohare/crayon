@@ -60,6 +60,11 @@ def get_interpreter():
   }
 
 def main(args):
+  if len(args) > 1: print("Too many args!")
+  lib_filter = None
+  if len(args) == 1:
+    lib_filter = args[0]
+
   cmd = MSBUILD + ' ' + os.path.abspath(PASTEL_SLN) + ' ' + RELEASE_CONFIG
   pastel_exe = os.path.abspath(PASTEL_EXE)
   print(run_command(cmd))
@@ -67,9 +72,10 @@ def main(args):
   things = get_libraries()
   things.append(get_interpreter())
   for lib in things:
-    for manifest, path in lib['manifests']:
-      print("Exporting: " + lib['name'] + ' --> ' + manifest)
-      cmd = pastel_exe + ' ' + path
-      print(run_command(cmd))
+    if lib_filter == None or lib_filter.strip().lower() in lib['name'].lower():
+      for manifest, path in lib['manifests']:
+        print("Exporting: " + lib['name'] + ' --> ' + manifest)
+        cmd = pastel_exe + ' ' + path
+        print(run_command(cmd))
 
 main(sys.argv[1:])
