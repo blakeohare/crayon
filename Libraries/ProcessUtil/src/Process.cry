@@ -1,27 +1,31 @@
-﻿namespace ProcessUtil {
+﻿import Dispatcher;
+
+namespace ProcessUtil {
 
     /*
         Process bridge native data:
-            nativeData[0] -> finished
-            nativeData[1] -> STDOUT lines
-            nativeData[2] -> STDERR lines
+            nativeData[0] -> is finished?
+            nativeData[1] -> exit code
+            nativeData[2] -> STDOUT lines
+            nativeData[3] -> STDERR lines
+            nativeData[4] -> mutex for above items (used by native code, if necessary)
     */
     class ProcessResult {
 
         field _processBridge;
 
-        constructor(obj) {
-            this._processBridge = obj;
+        constructor(bridge) {
+            this._processBridge = bridge;
         }
 
         function isRunning() { return this.getReturnCode() == null; }
-        function getReturnCode() { return this._procReadBridge(1)[0]; }
-        function getStdOutLines() { return this._procReadBridge(2); }
-        function getStdErrLines() { return this._procReadBridge(3); }
+        function getReturnCode() { return ProcessResult._procReadBridge(this, 1)[0]; }
+        function getStdOutLines() { return ProcessResult._procReadBridge(this, 2); }
+        function getStdErrLines() { return ProcessResult._procReadBridge(this, 3); }
 
-        function _procReadBridge(id) {
+        static function _procReadBridge(r, id) {
             lines = [];
-            $lib_processutil_readBridge(this._processBridge, lines, id);
+            $lib_processutil_readBridge(r._processBridge, lines, id);
             return lines;
         }
     }
@@ -47,6 +51,9 @@
             return this;
         }
 
+        function launch() { return this._launchImpl(null); }
+        function launchAsync(cb) { return this._launchImpl(cb); }
+
         function _launchImpl(cb) {
             if (!Process.isSupported()) {
                 throw new NotImplementedException("This platform does not support launching processes.");
@@ -55,14 +62,21 @@
             innerProc = new Core.Object();
 
             isAsync = cb != null;
-            wrappedCb = null;
+            cbStandIn = null;
             if (isAsync) {
                 wrappedCb = () => {
                     response = new ProcessResult(innerProc);
                     cb(response);
                 };
+
+                // Let the dispatcher know that something is in the pipes so that Dispatcher.flush() knows
+                // to yield the main thread briefly if Dispatcher.flush() is called synchronously.
+                cbRefKey = DispatcherInternal.queueConditionalCallback(wrappedCb);
+                cbStandIn = () => {
+                    DispatcherInternal.conditionalCallbackCompleted(cbRefKey);
+                };
             }
-            $lib_processutil_launchProcess(innerProc, this._executable, this._args, isAsync, wrappedCb);
+            $lib_processutil_launchProcess(innerProc, this._executable, this._args, isAsync, cbStandIn);
 
             if (cb == null) {
                 return new ProcessResult(innerProc);
@@ -70,8 +84,5 @@
 
             return null;
         }
-
-        function launch() { return this._launchImpl(null); }
-        function launchAsync(cb) { return this._launchImpl(cb); }
     }
 }

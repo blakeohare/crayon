@@ -23,14 +23,15 @@ namespace Interpreter.Libraries.ProcessUtil
             startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             p.OutputDataReceived += (sender, e) => { AddStringToBuffer(bridge[4], bridge, 2, e.Data); };
             p.ErrorDataReceived += (sender, e) => { AddStringToBuffer(bridge[4], bridge, 3, e.Data); };
+            p.EnableRaisingEvents = true;
             p.StartInfo = startInfo;
 
             if (isAsync)
             {
                 p.Exited += (sender, e) =>
                 {
-                    // TODO: invoke the callback with the VM Context
-                    throw new NotImplementedException();
+                    AddStringToBuffer(bridge[4], bridge, 2, p.StandardOutput.ReadToEnd());
+                    Vm.TranslationHelper.RunInterpreter(callbackFp, new Value[0]);
                 };
                 p.Start();
             }
