@@ -104,12 +104,12 @@ PST$floatBuffer16 = PST$multiplyList([0.0], 16);
 PST$stringBuffer16 = PST$multiplyList([''], 16);
 
 var lib_processutil_isSupported = function(vm, args) {
-	var t = alwaysFalse();
+	var t = C$common$alwaysFalse();
 	return buildBoolean(vm[13], t);
 };
 
 var lib_processutil_launchProcess = function(vm, args) {
-	TODO("this");
+	C$common$alwaysFalse();
 	return vm[14];
 };
 
@@ -117,10 +117,10 @@ var lib_processutil_readBridge = function(vm, args) {
 	var type = args[2][1];
 	var outputValues = [];
 	if ((type == 1)) {
-		var outputInt = TODO("this");
+		var outputInt = C$common$alwaysFalse();
 	} else {
 		var output = [];
-		TODO("this");
+		C$common$alwaysFalse();
 	}
 	return vm[14];
 };

@@ -8,7 +8,7 @@ DEPENDENCY: VM: ../../../Interpreter/javascript-app.txt
 
 OUTPUT-FUNCTIONS: ../native/javascript-app/gen/lib_processutil.js
 
-EXT: _lib_processutil_isSupported: alwaysFalse()
-EXT: _lib_processutil_launchProcess: TODO("this")
-EXT: _lib_processutil_readBridgeInt: TODO("this")
-EXT: _lib_processutil_readBridgeStrings: TODO("this")
+EXT: _lib_processutil_isSupported: C$common$alwaysFalse()
+EXT: _lib_processutil_launchProcess: C$common$alwaysFalse()
+EXT: _lib_processutil_readBridgeInt: C$common$alwaysFalse()
+EXT: _lib_processutil_readBridgeStrings: C$common$alwaysFalse()
