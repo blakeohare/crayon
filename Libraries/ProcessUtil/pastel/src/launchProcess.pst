@@ -2,9 +2,27 @@
     args[0] -> (ObjectInstance) process bridge
     args[1] -> (string) executable name
     args[2] -> (List<string>) arguments
-    args[3] -> (0-arg function) callback (this is actually a wrapped callback that already has a reference to the bridge object.
+    args[3] -> (bool) is asynchronous
+    args[4] -> (function) a callback, takes 0 args, only set if the asynchronous arg is true
 */
 VM.Value lib_processutil_launchProcess(VM.VmContext vm, Array<VM.Value> args) {
-    Extension._lib_processutil_launchProcess();
+    VM.ObjectInstance bridge = (VM.ObjectInstance) args[0].internalValue;
+    bridge.nativeData = new Array<object>(5);
+    bridge.nativeData[0] = true;
+    bridge.nativeData[1] = 0;
+    bridge.nativeData[2] = new List<string>();
+    bridge.nativeData[3] = new List<string>();
+    bridge.nativeData[4] = Extension._lib_processutil_generateMutex();
+
+    string execName = (string) args[1].internalValue;
+    VM.ListImpl argsRaw = (VM.ListImpl) args[2].internalValue;
+    bool isAsync = (bool) args[3].internalValue;
+    VM.Value cb = args[4];
+    List<string> argStrings = new List<string>();
+    for (int i = 0; i < argsRaw.size; i += 1) {
+        VM.Value a = VM.getItemFromList(argsRaw, i);
+        argStrings.Add((string)a.internalValue);
+    }
+    Extension._lib_processutil_launchProcess(bridge.nativeData, execName, argStrings, isAsync, cb, vm);
     return vm.globalNull;
 }
