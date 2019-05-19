@@ -3,8 +3,6 @@ import sys
 
 MSBUILD = r'C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe'
 RELEASE_CONFIG = '/p:Configuration=Release'
-PASTEL_SLN = r'..\Compiler\Pastel\Pastel.sln'
-PASTEL_EXE = r'..\Compiler\Pastel\bin\Release\Pastel.exe'
 LIBRARIES_DIR = r'..\Libraries'
 INTERPRE_DIR = r'..\Interpreter' # lol, "interpre-dir"
 
@@ -60,13 +58,25 @@ def get_interpreter():
   }
 
 def main(args):
-  if len(args) > 1: print("Too many args!")
+
+  pastelSource = os.environ['PASTEL_SOURCE']
+
+  if pastelSource == None:
+    print("PASTEL_SOURCE enironment variable must be set. This should be the root of the https://github.com/blakeohare/pastel repository")
+    return
+
+  if len(args) > 1:
+    print("Too many args!")
+    return
+
   lib_filter = None
   if len(args) == 1:
     lib_filter = args[0]
 
-  cmd = MSBUILD + ' ' + os.path.abspath(PASTEL_SLN) + ' ' + RELEASE_CONFIG
-  pastel_exe = os.path.abspath(PASTEL_EXE)
+  pastel_sln = os.path.join(pastelSource, 'Source', 'Pastel.sln')
+  pastel_exe = os.path.join(pastelSource, 'Source', 'bin', 'Release', 'Pastel.exe')
+  cmd = MSBUILD + ' ' + os.path.abspath(pastel_sln) + ' ' + RELEASE_CONFIG
+  pastel_exe = os.path.abspath(pastel_exe)
   print(run_command(cmd))
   print(cmd)
   things = get_libraries()
