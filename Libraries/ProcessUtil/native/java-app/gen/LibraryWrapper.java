@@ -357,7 +357,7 @@ public final class LibraryWrapper {
   }
 
   public static Value lib_processutil_isSupported(VmContext vm, Value[] args) {
-    boolean t = TODO("this");
+    boolean t = TranslationHelper.alwaysFalse();
     return org.crayonlang.interpreter.vm.CrayonWrapper.buildBoolean(vm.globals, t);
   }
 
@@ -368,7 +368,7 @@ public final class LibraryWrapper {
     bridge.nativeData[1] = 0;
     bridge.nativeData[2] = new ArrayList<String>();
     bridge.nativeData[3] = new ArrayList<String>();
-    bridge.nativeData[4] = TODO("this");
+    bridge.nativeData[4] = new Object();
     String execName = ((String) args[1].internalValue);
     ListImpl argsRaw = ((ListImpl) args[2].internalValue);
     boolean isAsync = ((boolean) args[3].internalValue);
@@ -381,7 +381,7 @@ public final class LibraryWrapper {
       argStrings.add(((String) a.internalValue));
       i += 1;
     }
-    TODO("this");
+    TranslationHelper.alwaysFalse();
     return vm.globalNull;
   }
 
@@ -391,11 +391,11 @@ public final class LibraryWrapper {
     int type = ((int) args[2].internalValue);
     Object mtx = bridge.nativeData[4];
     if ((type == 1)) {
-      int outputInt = TODO("this");
+      int outputInt = 0;;
       org.crayonlang.interpreter.vm.CrayonWrapper.addToList(outputList, org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(vm.globals, outputInt));
     } else {
       ArrayList<String> output = new ArrayList<String>();
-      TODO("this");
+      TranslationHelper.alwaysFalse();
       int i = 0;
       while ((i < output.size())) {
         org.crayonlang.interpreter.vm.CrayonWrapper.addToList(outputList, org.crayonlang.interpreter.vm.CrayonWrapper.buildString(vm.globals, output.get(i)));

@@ -13,8 +13,8 @@ NAMESPACE-FUNCTIONS: org.crayonlang.libraries.processutil
 NAMESPACE-STRUCTS: org.crayonlang.libraries.processutil
 FUNCTION-WRAPPER-CLASS: LibraryWrapper
 
-EXT: _lib_processutil_isSupported: TODO("this")
-EXT: _lib_processutil_launchProcess: TODO("this")
-EXT: _lib_processutil_readBridgeInt: TODO("this")
-EXT: _lib_processutil_readBridgeStrings: TODO("this")
-EXT: _lib_processutil_generateMutex: TODO("this")
+EXT: _lib_processutil_isSupported: TranslationHelper.alwaysFalse()
+EXT: _lib_processutil_launchProcess: TranslationHelper.alwaysFalse()
+EXT: _lib_processutil_readBridgeInt: 0;
+EXT: _lib_processutil_readBridgeStrings: TranslationHelper.alwaysFalse()
+EXT: _lib_processutil_generateMutex: new Object()
