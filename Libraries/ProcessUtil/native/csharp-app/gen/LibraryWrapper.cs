@@ -136,6 +136,7 @@ namespace Interpreter.Libraries.ProcessUtil
             ListImpl argsRaw = (ListImpl)args[2].internalValue;
             bool isAsync = (bool)args[3].internalValue;
             Value cb = args[4];
+            ObjectInstance dispatcherQueue = (ObjectInstance)args[5].internalValue;
             List<string> argStrings = new List<string>();
             int i = 0;
             while ((i < argsRaw.size))

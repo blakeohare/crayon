@@ -120,6 +120,7 @@ var lib_processutil_launchProcess = function(vm, args) {
 	var argsRaw = args[2][1];
 	var isAsync = args[3][1];
 	var cb = args[4];
+	var dispatcherQueue = args[5][1];
 	var argStrings = [];
 	var i = 0;
 	while ((i < argsRaw[1])) {

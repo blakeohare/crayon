@@ -373,6 +373,7 @@ public final class LibraryWrapper {
     ListImpl argsRaw = ((ListImpl) args[2].internalValue);
     boolean isAsync = ((boolean) args[3].internalValue);
     Value cb = args[4];
+    ObjectInstance dispatcherQueue = ((ObjectInstance) args[5].internalValue);
     ArrayList<String> argStrings = new ArrayList<String>();
     int i = 0;
     while ((i < argsRaw.size)) {

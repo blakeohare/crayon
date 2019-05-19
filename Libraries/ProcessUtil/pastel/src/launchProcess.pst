@@ -18,11 +18,13 @@ VM.Value lib_processutil_launchProcess(VM.VmContext vm, Array<VM.Value> args) {
     VM.ListImpl argsRaw = (VM.ListImpl) args[2].internalValue;
     bool isAsync = (bool) args[3].internalValue;
     VM.Value cb = args[4];
+    VM.ObjectInstance dispatcherQueue = (VM.ObjectInstance) args[5].internalValue;
+
     List<string> argStrings = new List<string>();
     for (int i = 0; i < argsRaw.size; i += 1) {
         VM.Value a = VM.getItemFromList(argsRaw, i);
         argStrings.Add((string)a.internalValue);
     }
-    Extension._lib_processutil_launchProcess(bridge.nativeData, execName, argStrings, isAsync, cb, vm);
+    Extension._lib_processutil_launchProcess(bridge.nativeData, execName, argStrings, isAsync, cb, vm, dispatcherQueue.nativeData);
     return vm.globalNull;
 }

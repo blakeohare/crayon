@@ -76,7 +76,7 @@ namespace ProcessUtil {
                     DispatcherInternal.conditionalCallbackCompleted(cbRefKey);
                 };
             }
-            $lib_processutil_launchProcess(innerProc, this._executable, this._args, isAsync, cbStandIn);
+            $lib_processutil_launchProcess(innerProc, this._executable, this._args, isAsync, cbStandIn, DispatcherInternal._nativeQueue);
 
             if (cb == null) {
                 return new ProcessResult(innerProc);

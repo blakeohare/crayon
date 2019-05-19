@@ -3,7 +3,9 @@ import code.vm as VM
 import math
 import os
 import random
+import subprocess
 import sys
+import threading
 import time
 
 PST_StringBuffer16 = [None] * 16
@@ -42,7 +44,7 @@ def always_true(): return True
 def always_false(): return False
 
 def lib_processutil_isSupported(vm, args):
-  t = TODO("this")
+  t = always_true()
   return buildBoolean(vm[13], t)
 
 def lib_processutil_launchProcess(vm, args):
@@ -52,18 +54,19 @@ def lib_processutil_launchProcess(vm, args):
   bridge[3][1] = 0
   bridge[3][2] = []
   bridge[3][3] = []
-  bridge[3][4] = TODO("this")
+  bridge[3][4] = threading.Lock()
   execName = args[1][1]
   argsRaw = args[2][1]
   isAsync = args[3][1]
   cb = args[4]
+  dispatcherQueue = args[5][1]
   argStrings = []
   i = 0
   while (i < argsRaw[1]):
     a = getItemFromList(argsRaw, i)
     argStrings.append(a[1])
     i += 1
-  TODO("this")
+  _ProcessUtilHelper_launch_process_impl(bridge[3], execName, argStrings, isAsync, cb, dispatcherQueue[3])
   return vm[14]
 
 def lib_processutil_readBridge(vm, args):
@@ -72,11 +75,11 @@ def lib_processutil_readBridge(vm, args):
   type = args[2][1]
   mtx = bridge[3][4]
   if (type == 1):
-    outputInt = TODO("this")
+    outputInt = _ProcessUtilHelper_read_bridge_int(mtx, bridge[3], type)
     addToList(outputList, buildInteger(vm[13], outputInt))
   else:
     output = []
-    TODO("this")
+    _ProcessUtilHelper_read_bridge_strings(mtx, bridge[3], type, output)
     i = 0
     while (i < len(output)):
       addToList(outputList, buildString(vm[13], output[i]))

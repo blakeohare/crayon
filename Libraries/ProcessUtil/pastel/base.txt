@@ -2,6 +2,6 @@ SOURCE: src/main.pst
 
 EXT-TYPE: bool _lib_processutil_isSupported();
 EXT-TYPE: object _lib_processutil_generateMutex();
-EXT-TYPE: void _lib_processutil_launchProcess(Array<object> bridgeNativeData, string execName, List<string> args, bool isAsync, VM.Value callback, VM.VmContext vm);
+EXT-TYPE: void _lib_processutil_launchProcess(Array<object> bridgeNativeData, string execName, List<string> args, bool isAsync, VM.Value callback, VM.VmContext vm, Array<object> dispatcherNativeQueue);
 EXT-TYPE: int _lib_processutil_readBridgeInt(object mutex, Array<object> bridgeNativeData, int ndReadIndex);
 EXT-TYPE: void _lib_processutil_readBridgeStrings(object mutex, Array<object> bridgeNativeData, int ndReadIndex, List<string> output);

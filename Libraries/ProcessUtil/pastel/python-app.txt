@@ -8,9 +8,11 @@ DEPENDENCY: VM: ../../../Interpreter/python-app.txt
 
 OUTPUT-FUNCTIONS: ../native/python-app/gen/lib_processutil.py
 CODE-IMPORT: code.vm as VM
+CODE-IMPORT: threading
+CODE-IMPORT: subprocess
 
-EXT: _lib_processutil_isSupported: TODO("this")
-EXT: _lib_processutil_launchProcess: TODO("this")
-EXT: _lib_processutil_readBridgeInt: TODO("this")
-EXT: _lib_processutil_readBridgeStrings: TODO("this")
-EXT: _lib_processutil_generateMutex: TODO("this")
+EXT: _lib_processutil_isSupported: always_true()
+EXT: _lib_processutil_launchProcess: _ProcessUtilHelper_launch_process_impl([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5], [ARG:7])
+EXT: _lib_processutil_readBridgeInt: _ProcessUtilHelper_read_bridge_int([ARG:1], [ARG:2], [ARG:3])
+EXT: _lib_processutil_readBridgeStrings: _ProcessUtilHelper_read_bridge_strings([ARG:1], [ARG:2], [ARG:3], [ARG:4])
+EXT: _lib_processutil_generateMutex: threading.Lock()
