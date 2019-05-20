@@ -32,6 +32,7 @@ LIBRARIES = [
 	'Matrices',
 	'Nori',
 	'NoriXml',
+	'ProcessUtil',
 	'Random',
 	'Resources',
 	'SRandom',
