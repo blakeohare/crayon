@@ -110,66 +110,6 @@ var lib_nori_closeFrame = function(vm, args) {
 	return vm[14];
 };
 
-var lib_nori_encodeListToWireFormat = function(v) {
-	var args = v[1];
-	var sb = [];
-	var valueList = null;
-	var valueArray = null;
-	var i = 0;
-	var blindCopy = 0;
-	var intValue = 0;
-	var length = args[1];
-	valueList = args[2];
-	blindCopy = (2 + valueList[1][1]);
-	i = 0;
-	while ((i < blindCopy)) {
-		if ((i > 0)) {
-			sb.push(",");
-		}
-		intValue = valueList[i][1];
-		sb.push(('' + intValue));
-		i += 1;
-	}
-	var childCount = 0;
-	var propertyCount = 0;
-	var j = 0;
-	var key = "";
-	var value = "";
-	while ((i < length)) {
-		sb.push(",");
-		sb.push(valueList[i][1]);
-		sb.push(",");
-		sb.push(('' + valueList[(i + 1)][1]));
-		childCount = valueList[(i + 2)][1];
-		propertyCount = valueList[(i + 3)][1];
-		sb.push(",");
-		sb.push(('' + childCount));
-		sb.push(",");
-		sb.push(('' + propertyCount));
-		i += 4;
-		j = 0;
-		while ((j < childCount)) {
-			sb.push(",");
-			intValue = valueList[(i + j)][1];
-			sb.push(('' + intValue));
-			j += 1;
-		}
-		i += childCount;
-		j = 0;
-		while ((j < propertyCount)) {
-			key = valueList[i][1];
-			value = valueList[(i + 1)][1];
-			sb.push(",");
-			sb.push(key);
-			sb.push(",");
-			sb.push(NoriHelper.EscapeStringHex(value));
-			i += 2;
-			j += 1;
-		}
-	}
-	return sb.join("");
-};
-
 var lib_nori_flushUpdatesToFrame = function(vm, args) {
 	var frameObj = args[0][1];
 	var nativeFrameHandle = frameObj[3][0];

@@ -36,6 +36,8 @@ VM.Value lib_nori_flushUpdatesToFrame(VM.VmContext vm, Array<VM.Value> args) {
     elementData[4 + max(Y) + 2 * Z] -> property name (string) DON'T ENCODE
     elementData[4 + max(Y) + 2 * Z + 1] -> property value (string or int) <------- ENCODE THESE STRINGS
 */
+
+/*
 string lib_nori_encodeListToWireFormat(VM.Value v) {
     VM.ListImpl args = (VM.ListImpl) v.internalValue;
     List<string> sb = new List<string>();
@@ -115,3 +117,4 @@ string lib_nori_encodeListToWireFormat(VM.Value v) {
     }
     return sb.Join("");
 }
+*/
