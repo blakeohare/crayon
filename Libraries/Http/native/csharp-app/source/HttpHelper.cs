@@ -199,6 +199,16 @@ namespace Interpreter.Libraries.Http
                 }
             }
 
+            if (outputIsBinary && statusCode >= 400)
+            {
+                try
+                {
+                    responseString = System.Text.Encoding.UTF8.GetString(responseBytes);
+                }
+                catch (Exception)
+                { }
+            }
+
             return new HttpResponseValue()
             {
                 StatusCode = statusCode,
