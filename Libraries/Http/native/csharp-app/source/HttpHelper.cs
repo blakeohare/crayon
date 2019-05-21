@@ -115,7 +115,13 @@ namespace Interpreter.Libraries.Http
                 byte[] contentBytes;
                 if (contentMode == 2)
                 {
-                    contentBytes = (byte[])content;
+                    int[] intContent = (int[])content;
+                    int length = intContent.Length;
+                    contentBytes = new byte[length];
+                    for (int i = 0; i < length; ++i)
+                    {
+                        contentBytes[i] = (byte)intContent[i];
+                    }
                 }
                 else
                 {
