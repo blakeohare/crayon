@@ -404,6 +404,8 @@ function flushUpdates(data) {
 	var instruction;
 	var id;
 	var type;
+	var amount;
+	var direction;
 	var propertyCount;
 	var propertyDeletionCount;
 	var propertyKey;
@@ -505,8 +507,39 @@ function flushUpdates(data) {
 				ctx.uiRoot.appendChild(ctx.rootElement);
 				break;
 			
-			case 'TO':
+			case 'TO': // Queue a TimeOut
 				queueTimeout(id, items[i++]);
+				break;
+			
+			case 'SC': // Scroll an element
+				element = elementById[id];
+				type = items[i++];
+				direction = items[i++]; // { W, N, E, S }
+				amount = parseInt(items[i++]);
+				if (element) {
+					switch (type) {
+						case 'E': // Scroll all the way to the 'E'nd in this direction
+							switch (direction) {
+								case 'W': element.scrollLeft = 0; break;
+								case 'N': element.scrollTop = 0; break;
+								case 'E': element.scrollLeft = element.scrollWidth; break;
+								case 'S': element.scrollTop = element.scrollHeight; break;
+							}
+							break;
+							
+						case 'I': // 'I'ncremental. Scroll this amount in this direction
+							
+							break;
+							
+						case 'A': // 'A'bsolute. Scroll to this location.
+							
+							break;
+							
+						default:
+							
+					}
+				}
+				
 				break;
 			
 			default:

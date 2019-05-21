@@ -29,5 +29,17 @@
                 default: return base.setAttributeWithString(name, strValue);
             }
         }
+
+        function scrollToTop() { return this._scrollImpl('E', 'N', 0); }
+        function scrollToBottom() { return this._scrollImpl('E', 'S', 0); }
+        function scrollToLeft() { return this._scrollImpl('E', 'W', 0); }
+        function scrollToRight() { return this._scrollImpl('E', 'E', 0); }
+
+        function _scrollImpl(type, dir, amt) {
+            if (this._frame != null) {
+                this._frame._queuedCommandsWireData.add('SC', this._id, type, dir, amt);
+            }
+            return this;
+        }
     }
 }

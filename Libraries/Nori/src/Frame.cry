@@ -16,6 +16,7 @@ namespace Nori {
         field _partialFlushElements = {};
         field _dirtyPanels = {};
         field _newImageSources = [];
+        field _queuedCommandsWireData = [];
 
         field _elementById = {};
         field _isShown = false;
@@ -115,6 +116,11 @@ namespace Nori {
                     panel._childRemovalCount = 0;
                 }
                 this._dirtyPanels.clear();
+            }
+
+            if (this._queuedCommandsWireData.length > 0) {
+                wireData.concat(this._queuedCommandsWireData);
+                this._queuedCommandsWireData.clear();
             }
 
             if (this._rootElementChanged) {
