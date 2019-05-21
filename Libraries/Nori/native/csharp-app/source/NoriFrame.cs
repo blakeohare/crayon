@@ -127,14 +127,37 @@ namespace Interpreter.Libraries.Nori
 
         private void Show()
         {
+            // Do NOT let this function return until after the UI has been built. 
+            object mtx = new object();
+            bool active = false;
+
             System.Threading.ThreadStart ts = new System.Threading.ThreadStart(() =>
             {
                 this.BuildUi();
+
+                lock (mtx)
+                {
+                    active = true;
+                }
+
                 this.form.ShowDialog();
             });
+
             System.Threading.Thread thread = new System.Threading.Thread(ts);
             thread.SetApartmentState(System.Threading.ApartmentState.STA);
             thread.Start();
+
+            while (true)
+            {
+                lock (mtx)
+                {
+                    if (active)
+                    {
+                        break;
+                    }
+                    System.Threading.Thread.Sleep(1);
+                }
+            }
         }
 
         internal void Close()
