@@ -68,6 +68,10 @@ namespace Nori {
             this._type = type;
         }
 
+        function getParent() {
+            return this._parent;
+        }
+
         function setId(id) {
             this._userDefinedId = id;
             return this;
