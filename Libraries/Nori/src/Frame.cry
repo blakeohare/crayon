@@ -201,13 +201,14 @@ namespace Nori {
 
         function _maybeFireOnLoadHandlers() {
             if (this._isShown) {
-                for (e : this._loadQueue) {
+                lq = this._loadQueue.clone();
+                this._loadQueue.clear();
+                for (e : lq) {
                     cb = e._handlers.get(Element_OnLoad);
                     if (cb != null) {
                         cb[0]();
                     }
                 }
-                this._loadQueue.clear();
                 this._flushUpdatesIfNeeded();
             }
         }
