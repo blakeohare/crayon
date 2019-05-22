@@ -16,6 +16,7 @@ LIBRARIES = [
 	'DateTime',
 	'Dispatcher',
 	'Easing',
+	'Environment',
 	'FileIO',
 	'FileIOCommon',
 	'Game',

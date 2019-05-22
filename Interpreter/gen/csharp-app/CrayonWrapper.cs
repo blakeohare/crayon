@@ -8230,7 +8230,7 @@ namespace Interpreter.Vm
                 string dir = dirs[i];
                 List<string> unsortedDirs = filesPerDirectoryBuilder[dir];
                 string[] dirsSorted = unsortedDirs.ToArray();
-                dirsSorted = dirsSorted.OrderBy<string, string>(s => s).ToArray();
+                dirsSorted = dirsSorted.OrderBy<string, string>(_PST_GEN_arg => _PST_GEN_arg).ToArray();
                 filesPerDirectorySorted[dir] = dirsSorted;
                 i += 1;
             }

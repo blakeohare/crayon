@@ -1,0 +1,12 @@
+﻿/*
+    Gets an environment variable.
+
+    args[0] -> (string) variable name
+
+    returns a string or null
+*/
+VM.Value lib_environment_get(VM.VmContext vm, Array<VM.Value> args) {
+    string value = Extension._lib_environment_get((string) args[0].internalValue);
+    if (value == null) return vm.globalNull;
+    return VM.buildString(vm.globals, value);
+}

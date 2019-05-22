@@ -1,0 +1,16 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-java.txt
+IMPORT: ../../../Interpreter/headers-java.txt
+
+LANGUAGE: java
+
+DEPENDENCY: VM: ../../../Interpreter/java-app.txt
+
+OUTPUT-STRUCTS: ../native/lang-java/gen/structs
+OUTPUT-FUNCTIONS: ../native/lang-java/gen/LibraryWrapper.java
+
+NAMESPACE-FUNCTIONS: org.crayonlang.libraries.environment
+NAMESPACE-STRUCTS: org.crayonlang.libraries.environment
+FUNCTION-WRAPPER-CLASS: LibraryWrapper
+
+EXT: _lib_environment_get: System.getenv([ARG:1])

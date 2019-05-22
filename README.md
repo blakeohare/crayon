@@ -26,7 +26,10 @@ Use the stackoverflow tag "crayon" for any issues. This tag is monitored.
 # New in 2.1.1
 The following have been added since 2.1.0
 
-* Added a Base64 library
+* Added a library for encoding and decoding Base64
+* Added a library for accessing environment variables
+* Added a library for launching processes
+* Bug fixes
 
 # Setting up and Running Crayon
 If you have downloaded Crayon from crayonlang.org/download (recommended) please read the instructions on the site (linked from download
