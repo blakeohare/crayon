@@ -1,0 +1,65 @@
+﻿/*
+    arg[0] -> ObjectInstance ZipArchiveReader
+        nativeData[0] -> native zip archive instance
+        nativeData[1] -> int n - the number of entries that have been read. Increment this.
+    arg[1] -> List of size 4 to use as output arguments
+        output[0] -> bool - true if there was another entry in this archive
+        output[1] -> string - the entry name
+        output[2] -> bool - true if this entry is just an empty directory placeholder
+        output[3] -> List - list of bytes of the content of the entry.
+
+    returns false if something terrible has happened.
+*/
+VM.Value lib_zip_readerPeekNextEntry(VM.VmContext vm, Array<VM.Value> args) {
+
+    VM.ObjectInstance obj = (VM.ObjectInstance) args[0].internalValue;
+    Array<object> nd = obj.nativeData;
+
+    VM.ListImpl output = (VM.ListImpl) args[1].internalValue;
+
+    Array<bool> boolOut = new Array<bool>(3); // bool[] { problems?, found anything?, is this a directory? }
+    Array<string> nameOut = new Array<string>(1);
+    List<int> integers = new List<int>();
+
+    Extension._lib_zip_readNextEntry(nd[0], (int) nd[1], boolOut, nameOut, integers);
+
+    bool problemsEncountered = !boolOut[0];
+    bool foundAnything = boolOut[1];
+    bool isDirectory = boolOut[2];
+
+    if (problemsEncountered) return vm.globalFalse;
+
+    nd[1] = 1 + (int)nd[1];
+
+    VM.setItemInList(output, 0, VM.buildBoolean(vm.globals, foundAnything));
+    if (!foundAnything) return vm.globalTrue;
+
+    VM.setItemInList(output, 1, VM.buildString(vm.globals, nameOut[0]));
+
+    if (isDirectory) {
+        VM.setItemInList(output, 2, VM.buildBoolean(vm.globals, isDirectory));
+        return vm.globalTrue;
+    }
+
+    VM.ListImpl byteValues = (VM.ListImpl) VM.getItemFromList(output, 3).internalValue;
+    int length = integers.Size();
+    int i = 0;
+    Array<VM.Value> positiveNumbers = vm.globals.positiveIntegers;
+    if (@ext_boolean("ARRAY_IS_LIST")) {
+        List<VM.Value> valuesOut = byteValues.list;
+        for (i = 0; i < length; i += 1) {
+            valuesOut.Add(positiveNumbers[integers[i]]);
+        }
+        byteValues.size = length;
+    } else {
+        Array<VM.Value> valuesOut = new Array<VM.Value>(length);
+        for (i = 0; i < length; i += 1) {
+            valuesOut[i] = positiveNumbers[integers[i]];
+        }
+        byteValues.array = valuesOut;
+        byteValues.capacity = length;
+        byteValues.size = length;
+    }
+
+    return vm.globalTrue;
+}

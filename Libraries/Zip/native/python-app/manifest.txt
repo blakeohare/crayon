@@ -1,0 +1,2 @@
+EMBED_FILES: from=source
+EMBED_FILES: from=gen

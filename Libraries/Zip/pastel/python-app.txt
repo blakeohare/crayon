@@ -1,0 +1,14 @@
+IMPORT: base.txt
+IMPORT: ../../../Interpreter/flags-python.txt
+IMPORT: ../../../Interpreter/headers-python.txt
+
+LANGUAGE: python
+
+DEPENDENCY: VM: ../../../Interpreter/python-app.txt
+
+OUTPUT-FUNCTIONS: ../native/python-app/gen/lib_zip.py
+CODE-IMPORT: code.vm as VM
+CODE-IMPORT: zipfile
+
+EXT: _lib_zip_createZipReader: lib_zip_createZipReaderImpl([ARG:1])
+EXT: _lib_zip_readNextEntry: lib_zip_readNextZipEntryImpl([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])

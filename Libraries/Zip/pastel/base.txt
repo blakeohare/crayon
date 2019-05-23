@@ -1,0 +1,4 @@
+SOURCE: src/main.pst
+
+EXT-TYPE: object _lib_zip_createZipReader(Array<int> byteArray);
+EXT-TYPE: void _lib_zip_readNextEntry(object nativeZipArchive, int fileReadCount, Array<bool> boolOut, Array<string> stringOut, List<int> bytesOut);
