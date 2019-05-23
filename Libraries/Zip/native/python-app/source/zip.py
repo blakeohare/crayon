@@ -24,5 +24,9 @@ def lib_zip_readNextZipEntryImpl(nativeZipArchive, fileReadCount, boolsOut, name
 	boolsOut[2] = False # TODO: how to check this?
 	nameOut[0] = name
 
-	for b in entryByteArray:
-		bytesOut.append(b)
+	if sys.version_info[0] == 2:
+		for b in entryByteArray:
+			bytesOut.append(ord(b))
+	else:
+		for b in entryByteArray:
+			bytesOut.append(b)
