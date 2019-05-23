@@ -29,6 +29,7 @@ The following have been added since 2.1.0
 * Added a library for encoding and decoding Base64
 * Added a library for accessing environment variables
 * Added a library for launching processes
+* Added a library for reading zip files
 * Bug fixes
 
 # Setting up and Running Crayon
