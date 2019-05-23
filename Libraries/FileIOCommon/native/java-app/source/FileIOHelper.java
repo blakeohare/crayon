@@ -120,8 +120,10 @@ public class FileIOHelper {
 		}
 		
 		if (isBytes) {
+			int b;
 			for (int i = 0; i < length; ++i) {
-				byteOutput.add(integers[(int) bytes[i]]);
+				b = bytes[i];
+				byteOutput.add(integers[b & 255]);
 			}
 		} else {
 			
