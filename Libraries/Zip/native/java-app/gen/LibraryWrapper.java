@@ -374,7 +374,7 @@ public final class LibraryWrapper {
       sc = 1;
     } else {
       ObjectInstance obj = ((ObjectInstance) args[0].internalValue);
-      obj.nativeData = new Object[1];
+      obj.nativeData = new Object[2];
       obj.nativeData[0] = ZipHelper.createZipReader(byteArray);
       obj.nativeData[1] = 0;
       if ((obj.nativeData[0] == null)) {
