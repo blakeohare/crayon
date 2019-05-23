@@ -121,7 +121,7 @@ var lib_zip_initializeZipReader = function(vm, args) {
 		sc = 1;
 	} else {
 		var obj = args[0][1];
-		obj[3] = PST$createNewArray(1);
+		obj[3] = PST$createNewArray(2);
 		obj[3][0] = lib_zip_createZipReaderImpl(byteArray);
 		obj[3][1] = 0;
 		if ((obj[3][0] == null)) {
