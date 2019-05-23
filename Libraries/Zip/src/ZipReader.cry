@@ -1,10 +1,8 @@
-﻿import ZipCommonImpl;
+﻿namespace Zip {
 
-namespace Zip {
+    const RANDOM_ACCESS_ERR = "This archive does not allow random access of entries.";
 
-    const RANDOM_ACCESS_ERR = "This archive does not allow random access of entries."
-
-    class ZipArchiveReader {
+    class ZipReader {
 
         field _entriesReadSoFar = [];
         field _nextEntry = null;
@@ -17,7 +15,7 @@ namespace Zip {
             sc = $lib_zip_initializeZipReader(this, bytes);
             switch (sc) {
                 case 0: break;
-                case 1: throw new InvalidArgumentException("Invalid byte list used to create ZipArchiveReader");
+                case 1: throw new InvalidArgumentException("Invalid byte list used to create ZipReader");
                 case 2: throw new InvalidArgumentException("These bytes are not a valid zip archive.");
                 default: throw new Exception(); // unknown error
             }
@@ -70,7 +68,7 @@ namespace Zip {
                 throw new Exception("Reading zip archive has encountered an error.");
             }
 
-            if (z[0]) {
+            if (!z[0]) { // not found
                 this._endReached = true;
                 return;
             }

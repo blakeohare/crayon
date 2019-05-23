@@ -142,7 +142,7 @@ namespace Interpreter.Libraries.Zip
             else
             {
                 ObjectInstance obj = (ObjectInstance)args[0].internalValue;
-                obj.nativeData = new object[1];
+                obj.nativeData = new object[2];
                 obj.nativeData[0] = ZipHelper.CreateZipReader(byteArray);
                 obj.nativeData[1] = 0;
                 if ((obj.nativeData[0] == null))

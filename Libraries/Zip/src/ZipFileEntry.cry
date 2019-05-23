@@ -1,6 +1,6 @@
 ﻿import TextEncoding;
 
-namespace ZipReader {
+namespace Zip {
 
     class ZipEntry {
 
@@ -56,6 +56,14 @@ namespace ZipReader {
 
         function getString(format = TextEncoding.TextFormat.UNKNOWN) {
             return TextEncoding.convertBytesToText(this._bytes, format);
+        }
+
+        function tryGetString(format = TextEncoding.TextFormat.UNKNOWN) {
+            try {
+                return this.getString(format);
+            } catch (Exception) {
+                return null;
+            }
         }
 
         static function _ensureValidArchiveInfo(name, bytes) {
