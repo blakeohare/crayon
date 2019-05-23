@@ -232,6 +232,16 @@ namespace Exporter
                         this.exportEntities.Add("EMBED_CODE", entity);
                         break;
 
+                    case "DOTNET_REF":
+                        this.EnsureInstructionContainsAttribute(command, instruction, "name");
+                        entity = new ExportEntity()
+                        {
+                            Type = "DOTNET_REF",
+                            Value = instruction["name"],
+                        };
+                        this.exportEntities.Add("DOTNET_REF", entity);
+                        break;
+
                     case "DOTNET_DLL":
                         this.EnsureInstructionContainsAttribute(command, instruction, "from");
                         this.EnsureInstructionContainsAttribute(command, instruction, "hintpath");

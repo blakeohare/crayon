@@ -117,7 +117,8 @@ namespace CSharpApp
             {
                 string libBaseDir = "Libs/" + library.Name + "/";
                 List<LangCSharp.DllFile> dlls = new List<LangCSharp.DllFile>();
-                this.GetLibraryCode(templateReader, libBaseDir, library, dlls, output);
+                HashSet<string> dotNetRefs = new HashSet<string>();
+                this.GetLibraryCode(templateReader, libBaseDir, library, dlls, dotNetRefs, output);
 
                 string name = library.Name;
                 string projectGuid = IdGenerator.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-project");
@@ -125,6 +126,8 @@ namespace CSharpApp
                 replacements["ASSEMBLY_GUID"] = IdGenerator.GenerateCSharpGuid(library.Name + "|" + library.Version, "library-assembly");
                 replacements["PROJECT_TITLE"] = library.Name;
                 replacements["LIBRARY_NAME"] = library.Name;
+                replacements["DLL_REFERENCES"] = GetFrameworkReferencesCsProjCode(dotNetRefs);
+
                 LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls);
 
                 libraryProjectNameToGuid[name] = projectGuid;
@@ -158,6 +161,7 @@ namespace CSharpApp
             string baseDir,
             LibraryForExport library,
             List<LangCSharp.DllFile> dllsOut,
+            HashSet<string> dotNetRefs,
             Dictionary<string, FileOutput> filesOut)
         {
             string libraryName = library.Name;
@@ -196,6 +200,20 @@ namespace CSharpApp
             {
                 dllsOut.Add(new LangCSharp.DllFile(dllFile));
             }
+
+            foreach (ExportEntity dotNetRef in library.ExportEntities["DOTNET_REF"])
+            {
+                dotNetRefs.Add(dotNetRef.StringValue);
+            }
+        }
+
+        private static string GetFrameworkReferencesCsProjCode(ICollection<string> dotNetReferences)
+        {
+            return Util.JoinLines(
+                dotNetReferences
+                    .OrderBy(v => v.ToLower())
+                    .Select(dotNetLib => "    <Reference Include=\"" + dotNetLib + "\" />")
+                    .ToArray());
         }
 
         public override void ExportProject(
@@ -214,22 +232,16 @@ namespace CSharpApp
 
             List<LangCSharp.DllFile> dlls = new List<LangCSharp.DllFile>();
 
-            HashSet<string> dotNetLibs = new HashSet<string>();
+            HashSet<string> dotNetRefs = new HashSet<string>();
 
             foreach (LibraryForExport library in libraries.Where(lib => lib.HasNativeCode))
             {
-                this.GetLibraryCode(templateReader, baseDir, library, dlls, output);
+                this.GetLibraryCode(templateReader, baseDir, library, dlls, dotNetRefs, output);
             }
 
             LangCSharp.DllReferenceHelper.AddDllReferencesToProjectBasedReplacements(replacements, dlls);
 
-            replacements["DLL_REFERENCES"] += Util.JoinLines(
-                dotNetLibs
-                    .OrderBy(v => v.ToLower())
-                    .Select(
-                        dotNetLib =>
-                            "    <Reference Include=\"" + dotNetLib + "\" />")
-                    .ToArray());
+            replacements["DLL_REFERENCES"] += GetFrameworkReferencesCsProjCode(dotNetRefs);
 
             this.ExportInterpreter(templateReader, baseDir, output);
 
