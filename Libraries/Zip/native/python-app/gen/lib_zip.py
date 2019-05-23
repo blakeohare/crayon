@@ -1,5 +1,7 @@
+import array
 import base64
 import code.vm as VM
+import io
 import math
 import os
 import random
@@ -57,7 +59,7 @@ def lib_zip_initializeZipReader(vm, args):
     sc = 1
   else:
     obj = args[0][1]
-    obj[3] = [None]
+    obj[3] = [None, None]
     obj[3][0] = lib_zip_createZipReaderImpl(byteArray)
     obj[3][1] = 0
     if (obj[3][0] == None):
