@@ -57,7 +57,7 @@ def lib_fileiocommon_directoryCreate(vm, args):
       bool1 = True
       while (bool1 and not (lib_fileiocommon_directoryExists(path))):
         stringList1.append(path)
-        int1 = lib_fileiocommon_getDirParent(path, PST_StringBuffer16)
+        int1 = lib_fileiocommon_getDirParentImpl(path, PST_StringBuffer16)
         path = PST_StringBuffer16[0]
         if (int1 != 0):
           bool1 = False
@@ -65,16 +65,16 @@ def lib_fileiocommon_directoryCreate(vm, args):
         i = (len(stringList1) - 1)
         while (i >= 0):
           path = stringList1[i]
-          int1 = lib_fileiocommon_createDirectory(path)
+          int1 = lib_fileiocommon_createDirectoryImpl(path)
           if (int1 != 0):
             i = -1
           i -= 1
   else:
-    int1 = lib_fileiocommon_createDirectory(path)
+    int1 = lib_fileiocommon_createDirectoryImpl(path)
   return buildInteger(vm[13], int1)
 
 def lib_fileiocommon_directoryDelete(vm, args):
-  sc = lib_fileiocommon_deleteDirectory(args[1][1])
+  sc = lib_fileiocommon_deleteDirectoryImpl(args[1][1])
   return buildInteger(vm[13], sc)
 
 def lib_fileiocommon_directoryList(vm, args):
@@ -83,7 +83,7 @@ def lib_fileiocommon_directoryList(vm, args):
   useFullPath = args[2][1]
   outputList = args[3][1]
   stringList1 = []
-  sc = lib_fileiocommon_getDirectoryList(path, useFullPath, stringList1)
+  sc = lib_fileiocommon_getDirectoryListImpl(path, useFullPath, stringList1)
   if (sc == 0):
     i = 0
     while (i < len(stringList1)):
@@ -92,16 +92,16 @@ def lib_fileiocommon_directoryList(vm, args):
   return buildInteger(vm[13], sc)
 
 def lib_fileiocommon_directoryMove(vm, args):
-  statusCode = lib_fileiocommon_moveDirectory(args[1][1], args[2][1])
+  statusCode = lib_fileiocommon_moveDirectoryImpl(args[1][1], args[2][1])
   return buildInteger(vm[13], statusCode)
 
 def lib_fileiocommon_fileDelete(vm, args):
-  statusCode = lib_fileiocommon_fileDelete(args[1][1])
+  statusCode = lib_fileiocommon_fileDeleteImpl(args[1][1])
   return buildInteger(vm[13], statusCode)
 
 def lib_fileiocommon_fileInfo(vm, args):
   mask = args[2][1]
-  lib_fileiocommon_getFileInfo(args[1][1], mask, PST_IntBuffer16, PST_FloatBuffer16)
+  lib_fileiocommon_getFileInfoImpl(args[1][1], mask, PST_IntBuffer16, PST_FloatBuffer16)
   outputList = args[3][1]
   clearList(outputList)
   globals = vm[13]
@@ -135,7 +135,7 @@ def lib_fileiocommon_fileRead(vm, args):
   readDataAsBytes = args[2][1]
   outputList = args[3][1]
   tList = []
-  statusCode = lib_fileiocommon_fileRead(sandboxedPath, readDataAsBytes, PST_StringBuffer16, vm[13][9], tList)
+  statusCode = lib_fileiocommon_fileReadImpl(sandboxedPath, readDataAsBytes, PST_StringBuffer16, vm[13][9], tList)
   if ((statusCode == 0) and not (readDataAsBytes)):
     addToList(outputList, buildString(vm[13], PST_StringBuffer16[0]))
   else:
@@ -160,18 +160,18 @@ def lib_fileiocommon_fileWrite(vm, args):
   else:
     contentString = args[2][1]
   if (statusCode == 0):
-    statusCode = lib_fileiocommon_fileWrite(args[1][1], format, contentString, byteArrayRef)
+    statusCode = lib_fileiocommon_fileWriteImpl(args[1][1], format, contentString, byteArrayRef)
   return buildInteger(vm[13], statusCode)
 
 def lib_fileiocommon_getCurrentDirectory(vm, args):
-  return buildString(vm[13], lib_fileiocommon_getCurrentDirectory())
+  return buildString(vm[13], lib_fileiocommon_getCurrentDirectoryImpl())
 
 def lib_fileiocommon_getDiskObject(diskObjectArg):
   objInst = diskObjectArg[1]
   return objInst[3][0]
 
 def lib_fileiocommon_getUserDirectory(vm, args):
-  return buildString(vm[13], lib_fileiocommon_getUserDirectory())
+  return buildString(vm[13], lib_fileiocommon_getUserDirectoryImpl())
 
 def lib_fileiocommon_initializeDisk(vm, args):
   objInstance1 = args[0][1]
@@ -182,7 +182,7 @@ def lib_fileiocommon_initializeDisk(vm, args):
   return vm[13][0]
 
 def lib_fileiocommon_isWindows(vm, args):
-  if lib_fileiocommon_isWindows():
+  if lib_fileiocommon_isWindowsImpl():
     return vm[13][1]
   return vm[13][2]
 
@@ -212,7 +212,7 @@ def lib_fileiocommon_textToLines(vm, args):
 
 def lib_fileiocommon_textToLinesImpl(globals, text, output):
   stringList = []
-  lib_fileiocommon_textToLines(text, stringList)
+  lib_fileiocommon_textToLinesImpl2(text, stringList)
   _len = len(stringList)
   i = 0
   while (i < _len):

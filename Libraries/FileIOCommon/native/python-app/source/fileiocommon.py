@@ -1,18 +1,17 @@
-def lib_fileiocommon_isWindows():
+def lib_fileiocommon_isWindowsImpl():
 	return os.name == 'nt'
 
-def lib_fileiocommon_getUserDirectory():
-	if lib_fileiocommon_isWindows():
+def lib_fileiocommon_getUserDirectoryImpl():
+	if lib_fileiocommon_isWindowsImpl():
 		return os.environ.get('USERPROFILE')
 	return '~'
 
-def lib_fileiocommon_getCurrentDirectory():
+def lib_fileiocommon_getCurrentDirectoryImpl():
 	return os.getcwd()
 
-def lib_fileiocommon_getDirectoryList(path, includeFullPath, output):
+def lib_fileiocommon_getDirectoryListImpl(path, includeFullPath, output):
 	path = path.replace('/', os.sep)
 	prefix = (path + os.sep) if includeFullPath else ''
-
 	try:
 		files = os.listdir(path)
 	except:
@@ -24,13 +23,16 @@ def lib_fileiocommon_getDirectoryList(path, includeFullPath, output):
 	
 	return 0
 
-def lib_fileiocommon_fileRead(path, isBytes, stringOut, integers, byteOutput):
+def lib_fileiocommon_fileReadImpl(path, isBytes, stringOut, integers, byteOutput):
 	c = None
 	try:
-		
 		if isBytes:
 			c = open(path, 'rb')
-			bytes = map(ord, list(c.read()))
+			data = c.read()
+			if sys.version_info[0] == 2:
+				bytes = map(ord, list(data))
+			else:
+				bytes = data
 			for byte in bytes:
 				byteOutput.append(integers[byte])
 		else:
@@ -48,7 +50,7 @@ def lib_fileiocommon_fileRead(path, isBytes, stringOut, integers, byteOutput):
 			c.close()
 	return 0
 
-def lib_fileiocommon_fileWrite(path, format, content, byteIntList):
+def lib_fileiocommon_fileWriteImpl(path, format, content, byteIntList):
 
 	c = None
 	try:
@@ -68,7 +70,7 @@ def lib_fileiocommon_fileWrite(path, format, content, byteIntList):
 			c.close()
 	return 0
 
-def lib_fileiocommon_fileDelete(path):
+def lib_fileiocommon_fileDeleteImpl(path):
 
 	if not os.path.exists(path):
 		return 4
@@ -78,7 +80,7 @@ def lib_fileiocommon_fileDelete(path):
 		return 1
 	return 0
 
-def lib_fileiocommon_getFileInfo(path, mask, intOut, floatOut):
+def lib_fileiocommon_getFileInfoImpl(path, mask, intOut, floatOut):
 	exists = os.path.exists(path)
 	dirExists = os.path.isdir(path)
 	fileExists = exists and not dirExists
@@ -112,9 +114,9 @@ def lib_fileiocommon_getFileInfo(path, mask, intOut, floatOut):
 	intOut[0] = 1 if exists else 0
 	intOut[1] = 1 if dirExists else 0
 
-def lib_fileiocommon_createDirectory(path):
+def lib_fileiocommon_createDirectoryImpl(path):
 	out = [0]
-	status = lib_fileiocommon_getDirParent(path, out)
+	status = lib_fileiocommon_getDirParentImpl(path, out)
 	if status != 0: return status
 	parent = out[0]
 	parentExists = os.path.isdir(parent)
@@ -126,7 +128,7 @@ def lib_fileiocommon_createDirectory(path):
 	except:
 		return 1
 
-def lib_fileiocommon_moveDirectory(pathFrom, pathTo):
+def lib_fileiocommon_moveDirectoryImpl(pathFrom, pathTo):
 	import shutil
 	
 	if not os.path.exists(pathFrom):
@@ -142,7 +144,7 @@ def lib_fileiocommon_moveDirectory(pathFrom, pathTo):
 	
 	return 0
 
-def lib_fileiocommon_deleteDirectory(path):
+def lib_fileiocommon_deleteDirectoryImpl(path):
 	
 	if not os.path.isdir(path):
 		return 4
@@ -154,21 +156,23 @@ def lib_fileiocommon_deleteDirectory(path):
 		return 1
 	return 0
 
-def lib_fileiocommon_getDirParent(path, stringOut):
-	if lib_fileiocommon_isWindows() and len(path) > 259:
+def lib_fileiocommon_getDirParentImpl(path, stringOut):
+	if lib_fileiocommon_isWindowsImpl() and len(path) > 259:
 		return 5
 	stringOut[0] = '/'.join(path.replace('\\', '/').split('/')[:-1]).replace('/', os.sep)
 	return 0
 
 def lib_fileiocommon_getDirRoot(path):
-	if lib_fileiocommon_isWindows():
+	if lib_fileiocommon_isWindowsImpl():
 		return path.split(':')[0] + ':\\'
 	return '/'
 
 def lib_fileiocommon_directoryExists(path):
 	return os.path.isdir(path)
 
-def lib_fileiocommon_textToLines(text, output):
+# No! bad name! 
+# TODO: fix this. This had to be hastily renamed to this to fix a name collision after a refactor.
+def lib_fileiocommon_textToLinesImpl2(text, output):
 	startIndex = 0
 	i = 0
 	length = len(text)
