@@ -1,7 +1,11 @@
-PST$sortedCopyOfArray = function(n) {
-	var a = n.concat([]);
-	a.sort();
-	return a;
+PST$clearList = function(v) {
+	v.length = 0;
+};
+
+PST$createNewArray = function(s) {
+	var o = [];
+	while (s-- > 0) o.push(null);
+	return o;
 };
 
 PST$multiplyList = function(l, n) {
@@ -16,7 +20,19 @@ PST$multiplyList = function(l, n) {
 	return o;
 };
 
-PST$checksubstring = function(s, index, lookfor) { return s.substring(index, index + lookfor.length) === lookfor; };
+PST$dictionaryKeys = function(d) {
+	var o = [];
+	for (var k in d) {
+		o.push(k);
+	}
+	return o;
+};
+
+PST$intBuffer16 = PST$multiplyList([0], 16);
+
+PST$stringEndsWith = function(s, v) {
+	return s.indexOf(v, s.length - v.length) !== -1;
+};
 
 PST$stringTrimOneSide = function(s, isLeft) {
 	var i = isLeft ? 0 : s.length - 1;
@@ -42,47 +58,6 @@ PST$stringTrimOneSide = function(s, isLeft) {
 	return isLeft ? s.substring(i) : s.substring(0, i + 1);
 };
 
-PST$floatParseHelper = function(o, s) {
-	var t = parseFloat(s);
-	if (t + '' == 'NaN') {
-		o[0] = -1;
-	} else {
-		o[0] = 1;
-		o[1] = t;
-	}
-};
-
-PST$createNewArray = function(s) {
-	var o = [];
-	while (s-- > 0) o.push(null);
-	return o;
-};
-
-PST$dictionaryKeys = function(d) {
-	var o = [];
-	for (var k in d) {
-		o.push(k);
-	}
-	return o;
-};
-
-PST$dictionaryValues = function(d) {
-	var o = [];
-	for (var k in d) {
-		o.push(d[k]);
-	}
-	return o;
-};
-
-PST$is_valid_integer = function(n) {
-	var t = parseInt(n);
-	return t < 0 || t >= 0;
-};
-
-PST$clearList = function(v) {
-	v.length = 0;
-};
-
 PST$shuffle = function(v) {
 	var t;
 	var len = v.length;
@@ -95,13 +70,26 @@ PST$shuffle = function(v) {
 	}
 };
 
-PST$stringEndsWith = function(s, v) {
-	return s.indexOf(v, s.length - v.length) !== -1;
+PST$is_valid_integer = function(n) {
+	var t = parseInt(n);
+	return t < 0 || t >= 0;
 };
 
-PST$intBuffer16 = PST$multiplyList([0], 16);
-PST$floatBuffer16 = PST$multiplyList([0.0], 16);
-PST$stringBuffer16 = PST$multiplyList([''], 16);
+PST$floatParseHelper = function(o, s) {
+	var t = parseFloat(s);
+	if (t + '' == 'NaN') {
+		o[0] = -1;
+	} else {
+		o[0] = 1;
+		o[1] = t;
+	}
+};
+
+PST$sortedCopyOfArray = function(n) {
+	var a = n.concat([]);
+	a.sort();
+	return a;
+};
 
 var addLiteralImpl = function(vm, row, stringArg) {
 	var g = vm[13];
