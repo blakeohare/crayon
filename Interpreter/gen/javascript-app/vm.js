@@ -5071,7 +5071,8 @@ var interpretImpl = function(vm, executionContextId) {
 					}
 					valueStack[valueStackSize++] = localsStack[int1];
 				} else {
-					hasInterrupt = EX_UnassignedVariable(ec, "Variable used before it was set.");
+					string1 = ["Variable used before it was set: '", vm[4][0][row[1]], "'"].join('');
+					hasInterrupt = EX_UnassignedVariable(ec, string1);
 				}
 				break;
 			case 51:

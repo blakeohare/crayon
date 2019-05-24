@@ -3960,7 +3960,8 @@ def interpretImpl(vm, executionContextId):
           valueStack[valueStackSize] = localsStack[int1]
           valueStackSize += 1
         else:
-          hasInterrupt = EX_UnassignedVariable(ec, "Variable used before it was set.")
+          string1 = ''.join(["Variable used before it was set: '", vm[4][0][row[1]], "'"])
+          hasInterrupt = EX_UnassignedVariable(ec, string1)
     elif (sc_0 < 59):
       if (sc_0 < 55):
         if (sc_0 < 53):

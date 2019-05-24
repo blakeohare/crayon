@@ -6668,7 +6668,8 @@ namespace Interpreter.Vm
                         }
                         else
                         {
-                            hasInterrupt = EX_UnassignedVariable(ec, "Variable used before it was set.");
+                            string1 = string.Join("", new string[] { "Variable used before it was set: '",vm.metadata.identifiers[row[1]],"'" });
+                            hasInterrupt = EX_UnassignedVariable(ec, string1);
                         }
                         break;
                     case 51:
