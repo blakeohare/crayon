@@ -3,8 +3,10 @@
         nativeData[0] -> populate this with the native pointer to the zip archive
         nativeData[1] -> int n - the number of entries that have been read
     arg[1] -> bytes as integer list
+    arg[2] -> status code out as a ListImpl containing a single integer
+    arg[3] -> execution context ID (int)
 
-    returns a status code:
+    Status code value:
         0 - everything is okay
         1 - the byte list contained invalid values.
         2 - the byte array is not a valid zip archive.
@@ -12,19 +14,40 @@
 VM.Value lib_zip_initializeZipReader(VM.VmContext vm, Array<VM.Value> args) {
 
     int sc = 0;
-
+    VM.ListImpl scOut = (VM.ListImpl)args[2].internalValue;
+    int execId = (int) args[3].internalValue;
     Array<int> byteArray = lib_zip_validateByteList(args[1], true);
     if (byteArray == null) {
         sc = 1;
     } else {
+
         VM.ObjectInstance obj = (VM.ObjectInstance) args[0].internalValue;
         obj.nativeData = new Array<object>(2);
-        obj.nativeData[0] = Extension._lib_zip_createZipReader(byteArray);
+        obj.nativeData[0] = Extension._lib_zip_createZipReader(byteArray, vm, execId, obj.nativeData, scOut);
         obj.nativeData[1] = 0;
         if (obj.nativeData[0] == null) {
             sc = 2;
+        } else {
+            sc = 0;
+        }
+
+        if (Extension._lib_zip_isAsync()) {
+            sc = 3;
+            VM.vm_suspend_context_by_id(vm, execId, 1);
         }
     }
 
-    return VM.buildInteger(vm.globals, sc);
+    VM.setItemInList(scOut, 0, VM.buildInteger(vm.globals, sc));
+
+    return vm.globalNull;
+}
+
+void lib_zip_initAsyncCallback(VM.ListImpl scOut, Array<object> nativeData, object nativeZipArchive, VM.VmContext vm, int execContext) {
+    int sc = 0;
+    if (nativeZipArchive == null) {
+        sc = 2;
+    }
+    VM.setItemInList(scOut, 0, VM.buildInteger(vm.globals, sc));
+    nativeData[0] = nativeZipArchive;
+    VM.runInterpreter(vm, execContext);
 }

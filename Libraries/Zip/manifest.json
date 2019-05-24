@@ -5,8 +5,8 @@
     "description": "Library for reading and generatinng zip archives.",
 
     "cni": [
-        { "name": "lib_zip_readerPeekNextEntry", "argc": 2 },
-        { "name": "lib_zip_initializeZipReader", "argc": 2 },
+        { "name": "lib_zip_readerPeekNextEntry", "argc": 3 },
+        { "name": "lib_zip_initializeZipReader", "argc": 4 },
         { "name": "lib_zip_ensureValidArchiveInfo", "argc": 2 }
     ]
 }

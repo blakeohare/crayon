@@ -367,8 +367,20 @@ public final class LibraryWrapper {
     return org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(vm.globals, sc);
   }
 
+  public static void lib_zip_initAsyncCallback(ListImpl scOut, Object[] nativeData, Object nativeZipArchive, VmContext vm, int execContext) {
+    int sc = 0;
+    if ((nativeZipArchive == null)) {
+      sc = 2;
+    }
+    org.crayonlang.interpreter.vm.CrayonWrapper.setItemInList(scOut, 0, org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(vm.globals, sc));
+    nativeData[0] = nativeZipArchive;
+    org.crayonlang.interpreter.vm.CrayonWrapper.runInterpreter(vm, execContext);
+  }
+
   public static Value lib_zip_initializeZipReader(VmContext vm, Value[] args) {
     int sc = 0;
+    ListImpl scOut = ((ListImpl) args[2].internalValue);
+    int execId = ((int) args[3].internalValue);
     int[] byteArray = lib_zip_validateByteList(args[1], true);
     if ((byteArray == null)) {
       sc = 1;
@@ -379,43 +391,56 @@ public final class LibraryWrapper {
       obj.nativeData[1] = 0;
       if ((obj.nativeData[0] == null)) {
         sc = 2;
+      } else {
+        sc = 0;
+      }
+      if (TranslationHelper.alwaysFalse()) {
+        sc = 3;
+        org.crayonlang.interpreter.vm.CrayonWrapper.vm_suspend_context_by_id(vm, execId, 1);
       }
     }
-    return org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(vm.globals, sc);
+    org.crayonlang.interpreter.vm.CrayonWrapper.setItemInList(scOut, 0, org.crayonlang.interpreter.vm.CrayonWrapper.buildInteger(vm.globals, sc));
+    return vm.globalNull;
   }
 
   public static Value lib_zip_readerPeekNextEntry(VmContext vm, Value[] args) {
     ObjectInstance obj = ((ObjectInstance) args[0].internalValue);
     Object[] nd = obj.nativeData;
     ListImpl output = ((ListImpl) args[1].internalValue);
+    int execId = ((int) args[2].internalValue);
     boolean[] boolOut = new boolean[3];
     String[] nameOut = new String[1];
     ArrayList<Integer> integers = new ArrayList<Integer>();
     ZipHelper.readNextZipEntry(nd[0], ((int) nd[1]), boolOut, nameOut, integers);
-    boolean problemsEncountered = !boolOut[0];
-    boolean foundAnything = boolOut[1];
-    boolean isDirectory = boolOut[2];
+    if (TranslationHelper.alwaysFalse()) {
+      org.crayonlang.interpreter.vm.CrayonWrapper.vm_suspend_context_by_id(vm, execId, 1);
+      return vm.globalTrue;
+    }
+    return lib_zip_readerPeekNextEntryCallback(!boolOut[0], boolOut[1], boolOut[2], nameOut[0], integers, nd, output, vm);
+  }
+
+  public static Value lib_zip_readerPeekNextEntryCallback(boolean problemsEncountered, boolean foundAnything, boolean isDirectory, String name, ArrayList<Integer> bytesAsIntList, Object[] nativeData, ListImpl output, VmContext vm) {
     if (problemsEncountered) {
       return vm.globalFalse;
     }
-    nd[1] = (1 + ((int) nd[1]));
+    nativeData[1] = (1 + ((int) nativeData[1]));
     org.crayonlang.interpreter.vm.CrayonWrapper.setItemInList(output, 0, org.crayonlang.interpreter.vm.CrayonWrapper.buildBoolean(vm.globals, foundAnything));
     if (!foundAnything) {
       return vm.globalTrue;
     }
-    org.crayonlang.interpreter.vm.CrayonWrapper.setItemInList(output, 1, org.crayonlang.interpreter.vm.CrayonWrapper.buildString(vm.globals, nameOut[0]));
+    org.crayonlang.interpreter.vm.CrayonWrapper.setItemInList(output, 1, org.crayonlang.interpreter.vm.CrayonWrapper.buildString(vm.globals, name));
     if (isDirectory) {
       org.crayonlang.interpreter.vm.CrayonWrapper.setItemInList(output, 2, org.crayonlang.interpreter.vm.CrayonWrapper.buildBoolean(vm.globals, isDirectory));
       return vm.globalTrue;
     }
     ListImpl byteValues = ((ListImpl) org.crayonlang.interpreter.vm.CrayonWrapper.getItemFromList(output, 3).internalValue);
-    int length = integers.size();
+    int length = bytesAsIntList.size();
     int i = 0;
     Value[] positiveNumbers = vm.globals.positiveIntegers;
     Value[] valuesOut = new Value[length];
     i = 0;
     while ((i < length)) {
-      valuesOut[i] = positiveNumbers[integers.get(i)];
+      valuesOut[i] = positiveNumbers[bytesAsIntList.get(i)];
       i += 1;
     }
     byteValues.array = valuesOut;

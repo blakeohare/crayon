@@ -114,55 +114,80 @@ var lib_zip_ensureValidArchiveInfo = function(vm, args) {
 	return buildInteger(vm[13], sc);
 };
 
+var lib_zip_initAsyncCallback = function(scOut, nativeData, nativeZipArchive, vm, execContext) {
+	var sc = 0;
+	if ((nativeZipArchive == null)) {
+		sc = 2;
+	}
+	setItemInList(scOut, 0, buildInteger(vm[13], sc));
+	nativeData[0] = nativeZipArchive;
+	runInterpreter(vm, execContext);
+};
+
 var lib_zip_initializeZipReader = function(vm, args) {
 	var sc = 0;
+	var scOut = args[2][1];
+	var execId = args[3][1];
 	var byteArray = lib_zip_validateByteList(args[1], true);
 	if ((byteArray == null)) {
 		sc = 1;
 	} else {
 		var obj = args[0][1];
 		obj[3] = PST$createNewArray(2);
-		obj[3][0] = lib_zip_createZipReaderImpl(byteArray);
+		obj[3][0] = lib_zip_createZipReaderImpl(byteArray, vm, execId, obj[3], scOut);
 		obj[3][1] = 0;
 		if ((obj[3][0] == null)) {
 			sc = 2;
+		} else {
+			sc = 0;
+		}
+		if (C$common$alwaysTrue()) {
+			sc = 3;
+			vm_suspend_context_by_id(vm, execId, 1);
 		}
 	}
-	return buildInteger(vm[13], sc);
+	setItemInList(scOut, 0, buildInteger(vm[13], sc));
+	return vm[14];
 };
 
 var lib_zip_readerPeekNextEntry = function(vm, args) {
 	var obj = args[0][1];
 	var nd = obj[3];
 	var output = args[1][1];
+	var execId = args[2][1];
 	var boolOut = PST$createNewArray(3);
 	var nameOut = PST$createNewArray(1);
 	var integers = [];
-	lib_zip_readNextZipEntryImpl(nd[0], nd[1], boolOut, nameOut, integers);
-	var problemsEncountered = !boolOut[0];
-	var foundAnything = boolOut[1];
-	var isDirectory = boolOut[2];
+	lib_zip_readNextZipEntryImpl(nd[0], nd[1], boolOut, nameOut, integers, vm, execId, nd, output);
+	if (C$common$alwaysTrue()) {
+		vm_suspend_context_by_id(vm, execId, 1);
+		return vm[15];
+	}
+	return lib_zip_readerPeekNextEntryCallback(!boolOut[0], boolOut[1], boolOut[2], nameOut[0], integers, nd, output, vm);
+};
+
+var lib_zip_readerPeekNextEntryCallback = function(problemsEncountered, foundAnything, isDirectory, name, bytesAsIntList, nativeData, output, vm) {
 	if (problemsEncountered) {
 		return vm[16];
 	}
-	nd[1] = (1 + nd[1]);
+	nativeData[1] = (1 + nativeData[1]);
 	setItemInList(output, 0, buildBoolean(vm[13], foundAnything));
 	if (!foundAnything) {
 		return vm[15];
 	}
-	setItemInList(output, 1, buildString(vm[13], nameOut[0]));
+	setItemInList(output, 1, buildString(vm[13], name));
 	if (isDirectory) {
 		setItemInList(output, 2, buildBoolean(vm[13], isDirectory));
 		return vm[15];
 	}
 	var byteValues = getItemFromList(output, 3)[1];
-	var length = integers.length;
+	var length = bytesAsIntList.length;
 	var i = 0;
 	var positiveNumbers = vm[13][9];
 	var valuesOut = byteValues[2];
 	i = 0;
 	while ((i < length)) {
-		valuesOut.push(positiveNumbers[integers[i]]);
+		valuesOut.push(positiveNumbers[bytesAsIntList[i]]);
 		i += 1;
 	}
 	byteValues[1] = length;

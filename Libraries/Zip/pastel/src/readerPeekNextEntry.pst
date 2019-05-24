@@ -7,6 +7,7 @@
         output[1] -> string - the entry name
         output[2] -> bool - true if this entry is just an empty directory placeholder
         output[3] -> List - list of bytes of the content of the entry.
+    arg[2] -> int execution ID
 
     returns false if something terrible has happened.
 */
@@ -16,25 +17,40 @@ VM.Value lib_zip_readerPeekNextEntry(VM.VmContext vm, Array<VM.Value> args) {
     Array<object> nd = obj.nativeData;
 
     VM.ListImpl output = (VM.ListImpl) args[1].internalValue;
+    int execId = (int) args[2].internalValue;
 
     Array<bool> boolOut = new Array<bool>(3); // bool[] { problems?, found anything?, is this a directory? }
     Array<string> nameOut = new Array<string>(1);
     List<int> integers = new List<int>();
 
-    Extension._lib_zip_readNextEntry(nd[0], (int) nd[1], boolOut, nameOut, integers);
+    Extension._lib_zip_readNextEntry(nd[0], (int) nd[1], boolOut, nameOut, integers, vm, execId, nd, output);
 
-    bool problemsEncountered = !boolOut[0];
-    bool foundAnything = boolOut[1];
-    bool isDirectory = boolOut[2];
+    if (Extension._lib_zip_isAsync()) {
+        VM.vm_suspend_context_by_id(vm, execId, 1);
+        return vm.globalTrue;
+    }
+
+    return lib_zip_readerPeekNextEntryCallback(!boolOut[0], boolOut[1], boolOut[2], nameOut[0], integers, nd, output, vm);
+}
+
+VM.Value lib_zip_readerPeekNextEntryCallback(
+    bool problemsEncountered,
+    bool foundAnything,
+    bool isDirectory,
+    string name,
+    List<int> bytesAsIntList,
+    Array<object> nativeData,
+    VM.ListImpl output,
+    VM.VmContext vm) {
 
     if (problemsEncountered) return vm.globalFalse;
 
-    nd[1] = 1 + (int)nd[1];
+    nativeData[1] = 1 + (int)nativeData[1];
 
     VM.setItemInList(output, 0, VM.buildBoolean(vm.globals, foundAnything));
     if (!foundAnything) return vm.globalTrue;
 
-    VM.setItemInList(output, 1, VM.buildString(vm.globals, nameOut[0]));
+    VM.setItemInList(output, 1, VM.buildString(vm.globals, name));
 
     if (isDirectory) {
         VM.setItemInList(output, 2, VM.buildBoolean(vm.globals, isDirectory));
@@ -42,19 +58,19 @@ VM.Value lib_zip_readerPeekNextEntry(VM.VmContext vm, Array<VM.Value> args) {
     }
 
     VM.ListImpl byteValues = (VM.ListImpl) VM.getItemFromList(output, 3).internalValue;
-    int length = integers.Size();
+    int length = bytesAsIntList.Size();
     int i = 0;
     Array<VM.Value> positiveNumbers = vm.globals.positiveIntegers;
     if (@ext_boolean("ARRAY_IS_LIST")) {
         List<VM.Value> valuesOut = byteValues.list;
         for (i = 0; i < length; i += 1) {
-            valuesOut.Add(positiveNumbers[integers[i]]);
+            valuesOut.Add(positiveNumbers[bytesAsIntList[i]]);
         }
         byteValues.size = length;
     } else {
         Array<VM.Value> valuesOut = new Array<VM.Value>(length);
         for (i = 0; i < length; i += 1) {
-            valuesOut[i] = positiveNumbers[integers[i]];
+            valuesOut[i] = positiveNumbers[bytesAsIntList[i]];
         }
         byteValues.array = valuesOut;
         byteValues.capacity = length;

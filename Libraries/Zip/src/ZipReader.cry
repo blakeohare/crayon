@@ -12,11 +12,13 @@
 
         constructor(bytes, allowRandomAccess = true) {
             this._cacheModeEnabled = allowRandomAccess;
-            sc = $lib_zip_initializeZipReader(this, bytes);
-            switch (sc) {
+            scOut = [0];
+            $lib_zip_initializeZipReader(this, bytes, scOut, Core.getCurrentExecutionToken());
+            switch (scOut[0]) {
                 case 0: break;
                 case 1: throw new InvalidArgumentException("Invalid byte list used to create ZipReader");
                 case 2: throw new InvalidArgumentException("These bytes are not a valid zip archive.");
+                case 3: throw new Exception(); // async callback was fired but did not set the status code properly.
                 default: throw new Exception(); // unknown error
             }
         }
@@ -64,7 +66,7 @@
                 [], // bytes out
             ];
 
-            if (!$lib_zip_readerPeekNextEntry(this, z)) {
+            if (!$lib_zip_readerPeekNextEntry(this, z, Core.getCurrentExecutionToken())) {
                 throw new Exception("Reading zip archive has encountered an error.");
             }
 

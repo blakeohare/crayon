@@ -131,9 +131,23 @@ namespace Interpreter.Libraries.Zip
             return Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, sc);
         }
 
+        public static void lib_zip_initAsyncCallback(ListImpl scOut, object[] nativeData, object nativeZipArchive, VmContext vm, int execContext)
+        {
+            int sc = 0;
+            if ((nativeZipArchive == null))
+            {
+                sc = 2;
+            }
+            Interpreter.Vm.CrayonWrapper.setItemInList(scOut, 0, Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, sc));
+            nativeData[0] = nativeZipArchive;
+            Interpreter.Vm.CrayonWrapper.runInterpreter(vm, execContext);
+        }
+
         public static Value lib_zip_initializeZipReader(VmContext vm, Value[] args)
         {
             int sc = 0;
+            ListImpl scOut = (ListImpl)args[2].internalValue;
+            int execId = (int)args[3].internalValue;
             int[] byteArray = lib_zip_validateByteList(args[1], true);
             if ((byteArray == null))
             {
@@ -149,8 +163,18 @@ namespace Interpreter.Libraries.Zip
                 {
                     sc = 2;
                 }
+                else
+                {
+                    sc = 0;
+                }
+                if (AlwaysFalse())
+                {
+                    sc = 3;
+                    Interpreter.Vm.CrayonWrapper.vm_suspend_context_by_id(vm, execId, 1);
+                }
             }
-            return Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, sc);
+            Interpreter.Vm.CrayonWrapper.setItemInList(scOut, 0, Interpreter.Vm.CrayonWrapper.buildInteger(vm.globals, sc));
+            return vm.globalNull;
         }
 
         public static Value lib_zip_readerPeekNextEntry(VmContext vm, Value[] args)
@@ -158,38 +182,46 @@ namespace Interpreter.Libraries.Zip
             ObjectInstance obj = (ObjectInstance)args[0].internalValue;
             object[] nd = obj.nativeData;
             ListImpl output = (ListImpl)args[1].internalValue;
+            int execId = (int)args[2].internalValue;
             bool[] boolOut = new bool[3];
             string[] nameOut = new string[1];
             List<int> integers = new List<int>();
             ZipHelper.ReadNextZipEntry(nd[0], (int)nd[1], boolOut, nameOut, integers);
-            bool problemsEncountered = !boolOut[0];
-            bool foundAnything = boolOut[1];
-            bool isDirectory = boolOut[2];
+            if (AlwaysFalse())
+            {
+                Interpreter.Vm.CrayonWrapper.vm_suspend_context_by_id(vm, execId, 1);
+                return vm.globalTrue;
+            }
+            return lib_zip_readerPeekNextEntryCallback(!boolOut[0], boolOut[1], boolOut[2], nameOut[0], integers, nd, output, vm);
+        }
+
+        public static Value lib_zip_readerPeekNextEntryCallback(bool problemsEncountered, bool foundAnything, bool isDirectory, string name, List<int> bytesAsIntList, object[] nativeData, ListImpl output, VmContext vm)
+        {
             if (problemsEncountered)
             {
                 return vm.globalFalse;
             }
-            nd[1] = (1 + (int)nd[1]);
+            nativeData[1] = (1 + (int)nativeData[1]);
             Interpreter.Vm.CrayonWrapper.setItemInList(output, 0, Interpreter.Vm.CrayonWrapper.buildBoolean(vm.globals, foundAnything));
             if (!foundAnything)
             {
                 return vm.globalTrue;
             }
-            Interpreter.Vm.CrayonWrapper.setItemInList(output, 1, Interpreter.Vm.CrayonWrapper.buildString(vm.globals, nameOut[0]));
+            Interpreter.Vm.CrayonWrapper.setItemInList(output, 1, Interpreter.Vm.CrayonWrapper.buildString(vm.globals, name));
             if (isDirectory)
             {
                 Interpreter.Vm.CrayonWrapper.setItemInList(output, 2, Interpreter.Vm.CrayonWrapper.buildBoolean(vm.globals, isDirectory));
                 return vm.globalTrue;
             }
             ListImpl byteValues = (ListImpl)Interpreter.Vm.CrayonWrapper.getItemFromList(output, 3).internalValue;
-            int length = integers.Count;
+            int length = bytesAsIntList.Count;
             int i = 0;
             Value[] positiveNumbers = vm.globals.positiveIntegers;
             Value[] valuesOut = new Value[length];
             i = 0;
             while ((i < length))
             {
-                valuesOut[i] = positiveNumbers[integers[i]];
+                valuesOut[i] = positiveNumbers[bytesAsIntList[i]];
                 i += 1;
             }
             byteValues.array = valuesOut;

@@ -52,8 +52,18 @@ def lib_zip_ensureValidArchiveInfo(vm, args):
     sc = 2
   return buildInteger(vm[13], sc)
 
+def lib_zip_initAsyncCallback(scOut, nativeData, nativeZipArchive, vm, execContext):
+  sc = 0
+  if (nativeZipArchive == None):
+    sc = 2
+  setItemInList(scOut, 0, buildInteger(vm[13], sc))
+  nativeData[0] = nativeZipArchive
+  runInterpreter(vm, execContext)
+
 def lib_zip_initializeZipReader(vm, args):
   sc = 0
+  scOut = args[2][1]
+  execId = args[3][1]
   byteArray = lib_zip_validateByteList(args[1], True)
   if (byteArray == None):
     sc = 1
@@ -64,37 +74,47 @@ def lib_zip_initializeZipReader(vm, args):
     obj[3][1] = 0
     if (obj[3][0] == None):
       sc = 2
-  return buildInteger(vm[13], sc)
+    else:
+      sc = 0
+    if always_false():
+      sc = 3
+      vm_suspend_context_by_id(vm, execId, 1)
+  setItemInList(scOut, 0, buildInteger(vm[13], sc))
+  return vm[14]
 
 def lib_zip_readerPeekNextEntry(vm, args):
   obj = args[0][1]
   nd = obj[3]
   output = args[1][1]
+  execId = args[2][1]
   boolOut = (PST_NoneListOfOne * 3)
   nameOut = [None]
   integers = []
   lib_zip_readNextZipEntryImpl(nd[0], nd[1], boolOut, nameOut, integers)
-  problemsEncountered = not (boolOut[0])
-  foundAnything = boolOut[1]
-  isDirectory = boolOut[2]
+  if always_false():
+    vm_suspend_context_by_id(vm, execId, 1)
+    return vm[15]
+  return lib_zip_readerPeekNextEntryCallback(not (boolOut[0]), boolOut[1], boolOut[2], nameOut[0], integers, nd, output, vm)
+
+def lib_zip_readerPeekNextEntryCallback(problemsEncountered, foundAnything, isDirectory, name, bytesAsIntList, nativeData, output, vm):
   if problemsEncountered:
     return vm[16]
-  nd[1] = (1 + nd[1])
+  nativeData[1] = (1 + nativeData[1])
   setItemInList(output, 0, buildBoolean(vm[13], foundAnything))
   if not (foundAnything):
     return vm[15]
-  setItemInList(output, 1, buildString(vm[13], nameOut[0]))
+  setItemInList(output, 1, buildString(vm[13], name))
   if isDirectory:
     setItemInList(output, 2, buildBoolean(vm[13], isDirectory))
     return vm[15]
   byteValues = getItemFromList(output, 3)[1]
-  length = len(integers)
+  length = len(bytesAsIntList)
   i = 0
   positiveNumbers = vm[13][9]
   valuesOut = byteValues[2]
   i = 0
   while (i < length):
-    valuesOut.append(positiveNumbers[integers[i]])
+    valuesOut.append(positiveNumbers[bytesAsIntList[i]])
     i += 1
   byteValues[1] = length
   return vm[15]

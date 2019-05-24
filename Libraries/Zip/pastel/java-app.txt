@@ -15,3 +15,4 @@ FUNCTION-WRAPPER-CLASS: LibraryWrapper
 
 EXT: _lib_zip_createZipReader: ZipHelper.createZipReader([ARG:1])
 EXT: _lib_zip_readNextEntry: ZipHelper.readNextZipEntry([ARG:1], [ARG:2], [ARG:3], [ARG:4], [ARG:5])
+EXT: _lib_zip_isAsync: TranslationHelper.alwaysFalse()
