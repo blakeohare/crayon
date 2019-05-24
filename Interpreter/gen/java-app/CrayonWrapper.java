@@ -3887,12 +3887,6 @@ public final class CrayonWrapper {
             }
             prepareToSuspend(ec, stack, valueStackSize, pc);
             value = ((Value) TranslationHelper.invokeFunctionPointer(nativeFp, new Object[] {vm, valueArray1}));
-            if (ec.executionStateChange) {
-              ec.executionStateChange = false;
-              if ((ec.executionStateChangeCommand == 1)) {
-                return suspendInterpreter();
-              }
-            }
             if ((row[2] == 1)) {
               if ((valueStackSize == valueStackCapacity)) {
                 valueStack = valueStackIncreaseCapacity(ec);
@@ -3900,6 +3894,13 @@ public final class CrayonWrapper {
               }
               valueStack[valueStackSize] = value;
               valueStackSize += 1;
+            }
+            if (ec.executionStateChange) {
+              prepareToSuspend(ec, stack, valueStackSize, pc);
+              ec.executionStateChange = false;
+              if ((ec.executionStateChangeCommand == 1)) {
+                return suspendInterpreter();
+              }
             }
           }
           break;

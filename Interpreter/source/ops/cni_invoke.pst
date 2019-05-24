@@ -23,7 +23,14 @@ if (nativeFp == null) {
 
     value = nativeFp(vm, valueArray1);
 
+    if (row[2] == 1) {
+        @import("inline/ValueStackCapacityCheck.pst");
+        valueStack[valueStackSize] = value;
+        valueStackSize += 1;
+    }
+
     if (ec.executionStateChange) {
+        prepareToSuspend(ec, stack, valueStackSize, pc); // value stack size changed, possibly
         ec.executionStateChange = false;
         // TODO: declare constants
         if (ec.executionStateChangeCommand == 1) {
@@ -32,9 +39,4 @@ if (nativeFp == null) {
         }
     }
 
-    if (row[2] == 1) {
-        @import("inline/ValueStackCapacityCheck.pst");
-        valueStack[valueStackSize] = value;
-        valueStackSize += 1;
-    }
 }

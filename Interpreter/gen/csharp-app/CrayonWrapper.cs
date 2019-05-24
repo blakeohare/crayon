@@ -4684,14 +4684,6 @@ namespace Interpreter.Vm
                             }
                             prepareToSuspend(ec, stack, valueStackSize, pc);
                             value = nativeFp(vm, valueArray1);
-                            if (ec.executionStateChange)
-                            {
-                                ec.executionStateChange = false;
-                                if ((ec.executionStateChangeCommand == 1))
-                                {
-                                    return suspendInterpreter();
-                                }
-                            }
                             if ((row[2] == 1))
                             {
                                 if ((valueStackSize == valueStackCapacity))
@@ -4701,6 +4693,15 @@ namespace Interpreter.Vm
                                 }
                                 valueStack[valueStackSize] = value;
                                 valueStackSize += 1;
+                            }
+                            if (ec.executionStateChange)
+                            {
+                                prepareToSuspend(ec, stack, valueStackSize, pc);
+                                ec.executionStateChange = false;
+                                if ((ec.executionStateChangeCommand == 1))
+                                {
+                                    return suspendInterpreter();
+                                }
                             }
                         }
                         break;

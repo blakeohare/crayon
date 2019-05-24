@@ -3561,12 +3561,6 @@ var interpretImpl = function(vm, executionContextId) {
 					}
 					prepareToSuspend(ec, stack, valueStackSize, pc);
 					value = nativeFp(vm, valueArray1);
-					if (ec[11]) {
-						ec[11] = false;
-						if ((ec[12] == 1)) {
-							return suspendInterpreter();
-						}
-					}
 					if ((row[2] == 1)) {
 						if ((valueStackSize == valueStackCapacity)) {
 							valueStack = valueStackIncreaseCapacity(ec);
@@ -3574,6 +3568,13 @@ var interpretImpl = function(vm, executionContextId) {
 						}
 						valueStack[valueStackSize] = value;
 						valueStackSize += 1;
+					}
+					if (ec[11]) {
+						prepareToSuspend(ec, stack, valueStackSize, pc);
+						ec[11] = false;
+						if ((ec[12] == 1)) {
+							return suspendInterpreter();
+						}
 					}
 				}
 				break;

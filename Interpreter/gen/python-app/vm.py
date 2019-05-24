@@ -2750,16 +2750,17 @@ def interpretImpl(vm, executionContextId):
               i += 1
             prepareToSuspend(ec, stack, valueStackSize, pc)
             value = nativeFp(vm, valueArray1)
-            if ec[11]:
-              ec[11] = False
-              if (ec[12] == 1):
-                return suspendInterpreter()
             if (row[2] == 1):
               if (valueStackSize == valueStackCapacity):
                 valueStack = valueStackIncreaseCapacity(ec)
                 valueStackCapacity = len(valueStack)
               valueStack[valueStackSize] = value
               valueStackSize += 1
+            if ec[11]:
+              prepareToSuspend(ec, stack, valueStackSize, pc)
+              ec[11] = False
+              if (ec[12] == 1):
+                return suspendInterpreter()
         else:
           # CNI_REGISTER
           nativeFp = TranslationHelper_getFunction(stringArgs[pc])
