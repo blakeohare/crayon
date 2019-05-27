@@ -9,6 +9,6 @@ if (localsStackSet[int1] == localsStackSetToken) {
         valueStackSize += 1;
     }
 } else {
-	string1 = Core.StringConcatAll("Variable used before it was set: '", vm.metadata.identifiers[row[1]], "'");
+    string1 = Core.StringConcatAll("Variable used before it was set: '", vm.metadata.identifiers[row[1]], "'");
     hasInterrupt = EX_UnassignedVariable(ec, string1);
 }

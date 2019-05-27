@@ -109,9 +109,17 @@
       <Project>{56f7043f-a270-4900-b6d3-1701af619a1b}</Project>
       <Name>LangJavaScript</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Platforms\LangPhp\LangPhp.csproj">
+      <Project>{52ed3304-00b4-46e5-9dc5-7aaac81b752f}</Project>
+      <Name>LangPhp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Platforms\LangPython\LangPython.csproj">
       <Project>{11ff3292-43a0-4c40-93de-4f0dd18c4e4a}</Project>
       <Name>LangPython</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Platforms\PhpServer\PhpServer.csproj">
+      <Project>{42c8d2eb-df8a-4967-91df-8608ac2d8d8a}</Project>
+      <Name>PhpServer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Platform\Platform.csproj">
       <Project>{e9aeed59-8c51-4e56-8b8a-7a527b64e85e}</Project>
