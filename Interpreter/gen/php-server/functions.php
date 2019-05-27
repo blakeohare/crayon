@@ -10,21 +10,25 @@
 	function pastelWrapDictionary($arr) { return _pastelWrapValue($arr); }
 
 	class PastelGeneratedCode {
+		private static function PST_assignIndexHack($list, $index, $value) {
+			$list->arr[$index] = $value;
+		}
+
 		private static function PST_stringIndexOf($haystack, $needle) {
-			$o = strpos($haystack, $needle)
+			$o = strpos($haystack, $needle);
 			if ($o === false) return -1;
 			return $o;
 		}
 
-		private static function PST_dictGetKeys($d) {
+		private static function PST_dictGetKeys($d, $isIntDict) {
 			$keys = new PastelPtrArray();
-			foreach ($d as $k => $ignore) {
-				array_push($keys->arr, $k);
+			foreach ($d->arr as $k => $ignore) {
+				array_push($keys->arr, $isIntDict ? intval(substr($k, 1)) : $k);
 			}
 			return $keys;
 		}
 
-		private static var PST_intBuffer16 = array_fill(0, 16, 0);
+		public static $PST_intBuffer16 = null;
 
 		private static function PST_stringEndsWith($haystack, $needle) {
 			$nLen = strlen($needle);
@@ -152,7 +156,7 @@
 
 		public static function buildCommonString($g, $s) {
 			$value = null;
-			$value = isset($g->commonStrings[$s]) ? $g->commonStrings[$s] : (null);
+			$value = isset($g->commonStrings->arr[$s]) ? $g->commonStrings->arr[$s] : (null);
 			if (($value == null)) {
 				$value = self::buildString($g, $s);
 				$g->commonStrings->arr[$s] = $value;
@@ -214,7 +218,7 @@
 			while (($i < $size)) {
 				$k = $stringKeys->arr[$i];
 				if (isset($d->stringToIndex->arr[$k])) {
-					$d->values->arr[$d->stringToIndex->arr[$k]] = $values->arr[$i];
+					self::PST_assignIndexHack($d->values, $d->stringToIndex->arr[$k], $values->arr[$i]);
 				} else {
 					$d->stringToIndex->arr[$k] = count($d->values->arr);
 					array_push($d->values->arr, $values->arr[$i]);
@@ -521,7 +525,7 @@
 						} else {
 							$kInt = $original->keys->arr[$i]->internalValue;
 						}
-						$clone->intToIndex->arr[$kInt] = $i;
+						$clone->intToIndex->arr['i'.$kInt] = $i;
 						$i += 1;
 					}
 				}
@@ -537,7 +541,7 @@
 					if (($type == 5)) {
 						$kString = $original->keys->arr[$i]->internalValue;
 						if (isset($clone->stringToIndex->arr[$kString])) {
-							$clone->values->arr[$clone->stringToIndex->arr[$kString]] = $original->values->arr[$i];
+							self::PST_assignIndexHack($clone->values, $clone->stringToIndex->arr[$kString], $original->values->arr[$i]);
 						} else {
 							$clone->stringToIndex->arr[$kString] = count($clone->values->arr);
 							array_push($clone->values->arr, $original->values->arr[$i]);
@@ -549,10 +553,10 @@
 						} else {
 							$kInt = ($original->keys->arr[$i]->internalValue)->objectId;
 						}
-						if (isset($clone->intToIndex->arr[$kInt])) {
-							$clone->values->arr[$clone->intToIndex->arr[$kInt]] = $original->values->arr[$i];
+						if (isset($clone->intToIndex->arr['i'.$kInt])) {
+							self::PST_assignIndexHack($clone->values, $clone->intToIndex->arr['i'.$kInt], $original->values->arr[$i]);
 						} else {
-							$clone->intToIndex->arr[$kInt] = count($clone->values->arr);
+							$clone->intToIndex->arr['i'.$kInt] = count($clone->values->arr);
 							array_push($clone->values->arr, $original->values->arr[$i]);
 							array_push($clone->keys->arr, $original->keys->arr[$i]);
 						}
@@ -565,7 +569,7 @@
 		}
 
 		public static function createInstanceType($classId) {
-			$o = new PastelPtrArray();
+			$o = pastelWrapList(array_fill(0, 2, 0));
 			$o->arr[0] = 8;
 			$o->arr[1] = $classId;
 			return $o;
@@ -575,8 +579,8 @@
 			$globals = self::initializeConstantValues();
 			$resources = self::resourceManagerInitialize($globals, $resourceManifest);
 			$byteCode = self::initializeByteCode($rawByteCode);
-			$localsStack = new PastelPtrArray();
-			$localsStackSet = new PastelPtrArray();
+			$localsStack = pastelWrapList(array_fill(0, 10, null));
+			$localsStackSet = pastelWrapList(array_fill(0, 10, 0));
 			$i = 0;
 			$i = (count($localsStack->arr) - 1);
 			while (($i >= 0)) {
@@ -585,10 +589,10 @@
 				$i -= 1;
 			}
 			$stack = new StackFrame(0, 1, 0, 0, null, false, null, 0, 0, 1, 0, null, null, null);
-			$executionContext = new ExecutionContext(0, $stack, 0, 100, new PastelPtrArray(), $localsStack, $localsStackSet, 1, 0, false, null, false, 0, null);
+			$executionContext = new ExecutionContext(0, $stack, 0, 100, pastelWrapList(array_fill(0, 100, null)), $localsStack, $localsStackSet, 1, 0, false, null, false, 0, null);
 			$executionContexts = new PastelPtrArray();
-			$executionContexts->arr[0] = $executionContext;
-			$vm = new VmContext($executionContexts, $executionContext->id, $byteCode, new SymbolData(new PastelPtrArray(), null, new PastelPtrArray(), null, null, new PastelPtrArray(), new PastelPtrArray()), new VmMetadata(null, new PastelPtrArray(), new PastelPtrArray(), null, new PastelPtrArray(), null, new PastelPtrArray(), null, new PastelPtrArray(), new PastelPtrArray(), new PastelPtrArray(), new PastelPtrArray(), null, new PastelPtrArray(), -1, new PastelPtrArray(), 0, null, null, new MagicNumbers(0, 0, 0), new PastelPtrArray(), new PastelPtrArray(), null), 0, false, new PastelPtrArray(), null, $resources, new PastelPtrArray(), new VmEnvironment(new PastelPtrArray(), false, null, null), new NamedCallbackStore(new PastelPtrArray(), new PastelPtrArray()), $globals, $globals->valueNull, $globals->boolTrue, $globals->boolFalse);
+			$executionContexts->arr['i0'] = $executionContext;
+			$vm = new VmContext($executionContexts, $executionContext->id, $byteCode, new SymbolData(pastelWrapList(array_fill(0, count($byteCode->ops->arr), null)), null, new PastelPtrArray(), null, null, new PastelPtrArray(), new PastelPtrArray()), new VmMetadata(null, new PastelPtrArray(), new PastelPtrArray(), null, new PastelPtrArray(), null, new PastelPtrArray(), null, new PastelPtrArray(), pastelWrapList(array_fill(0, 100, null)), pastelWrapList(array_fill(0, 100, null)), new PastelPtrArray(), null, new PastelPtrArray(), -1, pastelWrapList(array_fill(0, 10, 0)), 0, null, null, new MagicNumbers(0, 0, 0), new PastelPtrArray(), new PastelPtrArray(), null), 0, false, new PastelPtrArray(), null, $resources, new PastelPtrArray(), new VmEnvironment(pastelWrapList(array_fill(0, 0, null)), false, null, null), new NamedCallbackStore(new PastelPtrArray(), new PastelPtrArray()), $globals, $globals->valueNull, $globals->boolTrue, $globals->boolFalse);
 			return $vm;
 		}
 
@@ -821,7 +825,7 @@
 			$vm->metadata->identifiers = pastelWrapList($vm->metadata->identifiersBuilder->arr);
 			$vm->metadata->literalTable = pastelWrapList($vm->metadata->literalTableBuilder->arr);
 			$vm->metadata->globalNameIdToPrimitiveMethodName = self::primitiveMethodsInitializeLookup($vm->metadata->invIdentifiers);
-			$vm->funcArgs = new PastelPtrArray();
+			$vm->funcArgs = pastelWrapList(array_fill(0, count($vm->metadata->identifiers->arr), null));
 			$vm->metadata->projectId = $projectId;
 			$vm->metadata->identifiersBuilder = null;
 			$vm->metadata->literalTableBuilder = null;
@@ -856,7 +860,7 @@
 		}
 
 		public static function generateEsfData($byteCodeLength, $esfArgs) {
-			$output = new PastelPtrArray();
+			$output = pastelWrapList(array_fill(0, $byteCodeLength, null));
 			$esfTokenStack = new PastelPtrArray();
 			$esfTokenStackTop = null;
 			$esfArgIterator = 0;
@@ -865,7 +869,7 @@
 			$pc = 0;
 			while (($pc < $byteCodeLength)) {
 				if ((($esfArgIterator < $esfArgLength) && ($pc == $esfArgs->arr[$esfArgIterator]))) {
-					$esfTokenStackTop = new PastelPtrArray();
+					$esfTokenStackTop = pastelWrapList(array_fill(0, 2, 0));
 					$j = 1;
 					while (($j < 3)) {
 						$esfTokenStackTop->arr[($j - 1)] = $esfArgs->arr[($esfArgIterator + $j)];
@@ -901,10 +905,10 @@
 			$localsIndex = $stack->localsStackOffsetEnd;
 			$localsStackSetToken = ($ec->localsStackSetToken + 1);
 			$ec->localsStackSetToken = $localsStackSetToken;
-			$ec->localsStack->arr[$localsIndex] = self::buildInteger($vm->globals, $type);
-			$ec->localsStack->arr[($localsIndex + 1)] = self::buildString($vm->globals, $message);
-			$ec->localsStackSet->arr[$localsIndex] = $localsStackSetToken;
-			$ec->localsStackSet->arr[($localsIndex + 1)] = $localsStackSetToken;
+			self::PST_assignIndexHack($ec->localsStack, $localsIndex, self::buildInteger($vm->globals, $type));
+			self::PST_assignIndexHack($ec->localsStack, ($localsIndex + 1), self::buildString($vm->globals, $message));
+			self::PST_assignIndexHack($ec->localsStackSet, $localsIndex, $localsStackSetToken);
+			self::PST_assignIndexHack($ec->localsStackSet, ($localsIndex + 1), $localsStackSetToken);
 			$ec->stackTop = new StackFrame(($pc + 1), $localsStackSetToken, $stack->localsStackOffsetEnd, ($stack->localsStackOffsetEnd + $functionInfo->localsSize), $stack, false, null, $valueStackSize, 0, ($stack->depth + 1), 0, null, null, null);
 			return new InterpreterResult(5, null, 0.0, 0, false, "");
 		}
@@ -989,7 +993,7 @@
 			if (($classId >= $newLength)) {
 				$newLength = ($classId + 100);
 			}
-			$newTable = new PastelPtrArray();
+			$newTable = pastelWrapList(array_fill(0, $newLength, null));
 			$i = ($oldLength - 1);
 			while (($i >= 0)) {
 				$newTable->arr[$i] = $oldTable->arr[$i];
@@ -1000,8 +1004,8 @@
 		}
 
 		public static function getExecutionContext($vm, $id) {
-			if (isset($vm->executionContexts->arr[$id])) {
-				return $vm->executionContexts->arr[$id];
+			if (isset($vm->executionContexts->arr['i'.$id])) {
+				return $vm->executionContexts->arr['i'.$id];
 			}
 			return null;
 		}
@@ -1027,7 +1031,7 @@
 			if (($functionId >= $newLength)) {
 				$newLength = ($functionId + 100);
 			}
-			$newTable = new PastelPtrArray();
+			$newTable = pastelWrapList(array_fill(0, $newLength, null));
 			$i = 0;
 			while (($i < $oldLength)) {
 				$newTable->arr[$i] = $oldTable->arr[$i];
@@ -1048,13 +1052,13 @@
 		public static function getNamedCallbackIdImpl($vm, $scope, $functionName, $allocIfMissing) {
 			$lookup = $vm->namedCallbacks->callbackIdLookup;
 			$idsForScope = null;
-			$idsForScope = isset($lookup[$scope]) ? $lookup[$scope] : (null);
+			$idsForScope = isset($lookup->arr[$scope]) ? $lookup->arr[$scope] : (null);
 			if (($idsForScope == null)) {
 				$idsForScope = new PastelPtrArray();
 				$lookup->arr[$scope] = $idsForScope;
 			}
 			$id = -1;
-			$id = isset($idsForScope[$functionName]) ? $idsForScope[$functionName] : (-1);
+			$id = isset($idsForScope->arr[$functionName]) ? $idsForScope->arr[$functionName] : (-1);
 			if ((($id == -1) && $allocIfMissing)) {
 				$id = count($vm->namedCallbacks->callbacksById->arr);
 				array_push($vm->namedCallbacks->callbacksById->arr, null);
@@ -1116,8 +1120,8 @@
 			$oldSetIndicator = $ec->localsStackSet;
 			$oldCapacity = count($oldLocals->arr);
 			$newCapacity = (($oldCapacity * 2) + $newScopeSize);
-			$newLocals = new PastelPtrArray();
-			$newSetIndicator = new PastelPtrArray();
+			$newLocals = pastelWrapList(array_fill(0, $newCapacity, null));
+			$newSetIndicator = pastelWrapList(array_fill(0, $newCapacity, 0));
 			$i = 0;
 			while (($i < $oldCapacity)) {
 				$newLocals->arr[$i] = $oldLocals->arr[$i];
@@ -1136,7 +1140,7 @@
 			}
 			if (($symbolData->fileNameById == null)) {
 				$i = 0;
-				$filenames = new PastelPtrArray();
+				$filenames = pastelWrapList(array_fill(0, count($symbolData->sourceCode->arr), null));
 				$fileIdByPath = new PastelPtrArray();
 				$i = 0;
 				while (($i < count($filenames->arr))) {
@@ -1158,7 +1162,7 @@
 		}
 
 		public static function initializeByteCode($raw) {
-			$index = new PastelPtrArray();
+			$index = pastelWrapList(array_fill(0, 1, 0));
 			$index->arr[0] = 0;
 			$length = strlen($raw);
 			$header = self::read_till($index, $raw, $length, "@");
@@ -1166,9 +1170,9 @@
 			}
 			$alphaNums = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 			$opCount = self::read_integer($index, $raw, $length, $alphaNums);
-			$ops = new PastelPtrArray();
-			$iargs = new PastelPtrArray();
-			$sargs = new PastelPtrArray();
+			$ops = pastelWrapList(array_fill(0, $opCount, 0));
+			$iargs = pastelWrapList(array_fill(0, $opCount, null));
+			$sargs = pastelWrapList(array_fill(0, $opCount, null));
 			$c = " ";
 			$argc = 0;
 			$j = 0;
@@ -1200,7 +1204,7 @@
 						}
 					}
 				}
-				$iarglist = new PastelPtrArray();
+				$iarglist = pastelWrapList(array_fill(0, ($argc - 1), 0));
 				$j = 0;
 				while (($j < $argc)) {
 					$iarg = self::read_integer($index, $raw, $length, $alphaNums);
@@ -1220,15 +1224,15 @@
 				$sargs->arr[$i] = $stringarg;
 				$i += 1;
 			}
-			$hasBreakpoint = new PastelPtrArray();
-			$breakpointInfo = new PastelPtrArray();
+			$hasBreakpoint = pastelWrapList(array_fill(0, $opCount, false));
+			$breakpointInfo = pastelWrapList(array_fill(0, $opCount, null));
 			$i = 0;
 			while (($i < $opCount)) {
 				$hasBreakpoint->arr[$i] = false;
 				$breakpointInfo->arr[$i] = null;
 				$i += 1;
 			}
-			return new Code($ops, $iargs, $sargs, new PastelPtrArray(), new PastelPtrArray(), new VmDebugData($hasBreakpoint, $breakpointInfo, new PastelPtrArray(), 1, 0));
+			return new Code($ops, $iargs, $sargs, pastelWrapList(array_fill(0, $opCount, null)), pastelWrapList(array_fill(0, $opCount, null)), new VmDebugData($hasBreakpoint, $breakpointInfo, new PastelPtrArray(), 1, 0));
 		}
 
 		public static function initializeClass($pc, $vm, $args, $className) {
@@ -1248,13 +1252,13 @@
 			}
 			$staticFieldCount = $args->arr[5];
 			$assemblyId = $args->arr[6];
-			$staticFields = new PastelPtrArray();
+			$staticFields = pastelWrapList(array_fill(0, $staticFieldCount, null));
 			$i = 0;
 			while (($i < $staticFieldCount)) {
 				$staticFields->arr[$i] = $vm->globals->valueNull;
 				$i += 1;
 			}
-			$classInfo = new ClassInfo($classId, $globalNameId, $baseClassId, $assemblyId, $staticInitializationState, $staticFields, $staticConstructorFunctionId, $constructorFunctionId, 0, null, null, null, null, null, $vm->metadata->classMemberLocalizerBuilder->arr[$classId], null, $className);
+			$classInfo = new ClassInfo($classId, $globalNameId, $baseClassId, $assemblyId, $staticInitializationState, $staticFields, $staticConstructorFunctionId, $constructorFunctionId, 0, null, null, null, null, null, $vm->metadata->classMemberLocalizerBuilder->arr['i'.$classId], null, $className);
 			$classTable = self::getClassTable($vm, $classId);
 			$classTable->arr[$classId] = $classInfo;
 			$classChain = new PastelPtrArray();
@@ -1283,18 +1287,18 @@
 					array_push($fieldAccessModifier->arr, $baseClass->fieldAccessModifiers->arr[$i]);
 					$i += 1;
 				}
-				$keys = self::PST_dictGetKeys($baseClass->globalIdToMemberId);
+				$keys = self::PST_dictGetKeys($baseClass->globalIdToMemberId, true);
 				$i = 0;
 				while (($i < count($keys->arr))) {
 					$t = $keys->arr[$i];
-					$globalNameIdToMemberId->arr[$t] = $baseClass->globalIdToMemberId->arr[$t];
+					$globalNameIdToMemberId->arr['i'.$t] = $baseClass->globalIdToMemberId->arr['i'.$t];
 					$i += 1;
 				}
-				$keys = self::PST_dictGetKeys($baseClass->localeScopedNameIdToMemberId);
+				$keys = self::PST_dictGetKeys($baseClass->localeScopedNameIdToMemberId, true);
 				$i = 0;
 				while (($i < count($keys->arr))) {
 					$t = $keys->arr[$i];
-					$classInfo->localeScopedNameIdToMemberId->arr[$t] = $baseClass->localeScopedNameIdToMemberId->arr[$t];
+					$classInfo->localeScopedNameIdToMemberId->arr['i'.$t] = $baseClass->localeScopedNameIdToMemberId->arr['i'.$t];
 					$i += 1;
 				}
 			}
@@ -1310,7 +1314,7 @@
 					array_push($fieldInitializationLiteral->arr, null);
 					array_push($fieldAccessModifier->arr, 0);
 				}
-				$globalNameIdToMemberId->arr[$globalId] = $memberId;
+				$globalNameIdToMemberId->arr['i'.$globalId] = $memberId;
 				$fieldAccessModifier->arr[$memberId] = $accessModifier;
 				if (($args->arr[$i] == 0)) {
 					$fieldInitializationCommand->arr[$memberId] = $args->arr[($i + 3)];
@@ -1332,11 +1336,11 @@
 			$classInfo->fieldAccessModifiers = pastelWrapList($fieldAccessModifier->arr);
 			$classInfo->memberCount = count($functionIds->arr);
 			$classInfo->globalIdToMemberId = $globalNameIdToMemberId;
-			$classInfo->typeInfo = new PastelPtrArray();
+			$classInfo->typeInfo = pastelWrapList(array_fill(0, $classInfo->memberCount, null));
 			if (($baseClass != null)) {
 				$i = 0;
 				while (($i < count($baseClass->typeInfo->arr))) {
-					$classInfo->typeInfo->arr[$i] = $baseClass->typeInfo->arr[$i];
+					self::PST_assignIndexHack($classInfo->typeInfo, $i, $baseClass->typeInfo->arr[$i]);
 					$i += 1;
 				}
 			}
@@ -1351,19 +1355,19 @@
 			$classInfo = $vm->metadata->classTable->arr[$opCodeRow->arr[0]];
 			$memberId = $opCodeRow->arr[1];
 			$_len = count($opCodeRow->arr);
-			$typeInfo = new PastelPtrArray();
+			$typeInfo = pastelWrapList(array_fill(0, ($_len - 2), 0));
 			$i = 2;
 			while (($i < $_len)) {
 				$typeInfo->arr[($i - 2)] = $opCodeRow->arr[$i];
 				$i += 1;
 			}
-			$classInfo->typeInfo->arr[$memberId] = $typeInfo;
+			self::PST_assignIndexHack($classInfo->typeInfo, $memberId, $typeInfo);
 			return 0;
 		}
 
 		public static function initializeConstantValues() {
-			$pos = new PastelPtrArray();
-			$neg = new PastelPtrArray();
+			$pos = pastelWrapList(array_fill(0, 2049, null));
+			$neg = pastelWrapList(array_fill(0, 257, null));
 			$i = 0;
 			while (($i < 2049)) {
 				$pos->arr[$i] = new Value(3, $i);
@@ -1375,15 +1379,15 @@
 				$i += 1;
 			}
 			$neg->arr[0] = $pos->arr[0];
-			$globals = new VmGlobals(new Value(1, null), new Value(2, true), new Value(2, false), $pos->arr[0], $pos->arr[1], $neg->arr[1], new Value(4, 0.0), new Value(4, 1.0), new Value(5, ""), $pos, $neg, new PastelPtrArray(), new PastelPtrArray(), new PastelPtrArray(), new PastelPtrArray(), new PastelPtrArray(), new PastelPtrArray(), new PastelPtrArray());
+			$globals = new VmGlobals(new Value(1, null), new Value(2, true), new Value(2, false), $pos->arr[0], $pos->arr[1], $neg->arr[1], new Value(4, 0.0), new Value(4, 1.0), new Value(5, ""), $pos, $neg, new PastelPtrArray(), pastelWrapList(array_fill(0, 1, 0)), pastelWrapList(array_fill(0, 1, 0)), pastelWrapList(array_fill(0, 1, 0)), pastelWrapList(array_fill(0, 1, 0)), pastelWrapList(array_fill(0, 1, 0)), pastelWrapList(array_fill(0, 2, 0)));
 			$globals->commonStrings->arr[""] = $globals->stringEmpty;
-			$globals->booleanType->arr[0] = 2;
-			$globals->intType->arr[0] = 3;
-			$globals->floatType->arr[0] = 4;
-			$globals->stringType->arr[0] = 5;
-			$globals->classType->arr[0] = 10;
-			$globals->anyInstanceType->arr[0] = 8;
-			$globals->anyInstanceType->arr[1] = 0;
+			self::PST_assignIndexHack($globals->booleanType, 0, 2);
+			self::PST_assignIndexHack($globals->intType, 0, 3);
+			self::PST_assignIndexHack($globals->floatType, 0, 4);
+			self::PST_assignIndexHack($globals->stringType, 0, 5);
+			self::PST_assignIndexHack($globals->classType, 0, 10);
+			self::PST_assignIndexHack($globals->anyInstanceType, 0, 8);
+			self::PST_assignIndexHack($globals->anyInstanceType, 1, 0);
 			return $globals;
 		}
 
@@ -1396,7 +1400,7 @@
 			$classId = $args->arr[5];
 			$localsCount = $args->arr[6];
 			$numPcOffsetsForOptionalArgs = $args->arr[8];
-			$pcOffsetsForOptionalArgs = new PastelPtrArray();
+			$pcOffsetsForOptionalArgs = pastelWrapList(array_fill(0, ($numPcOffsetsForOptionalArgs + 1), 0));
 			$i = 0;
 			while (($i < $numPcOffsetsForOptionalArgs)) {
 				$pcOffsetsForOptionalArgs->arr[($i + 1)] = $args->arr[(9 + $i)];
@@ -1408,16 +1412,16 @@
 			if (($nameId >= 0)) {
 				$name = $vm->metadata->identifiers->arr[$nameId];
 				if ("_LIB_CORE_list_filter" === $name) {
-					$vm->metadata->primitiveMethodFunctionIdFallbackLookup->arr[0] = $functionId;
+					self::PST_assignIndexHack($vm->metadata->primitiveMethodFunctionIdFallbackLookup, 0, $functionId);
 				} else {
 					if ("_LIB_CORE_list_map" === $name) {
-						$vm->metadata->primitiveMethodFunctionIdFallbackLookup->arr[1] = $functionId;
+						self::PST_assignIndexHack($vm->metadata->primitiveMethodFunctionIdFallbackLookup, 1, $functionId);
 					} else {
 						if ("_LIB_CORE_list_sort_by_key" === $name) {
-							$vm->metadata->primitiveMethodFunctionIdFallbackLookup->arr[2] = $functionId;
+							self::PST_assignIndexHack($vm->metadata->primitiveMethodFunctionIdFallbackLookup, 2, $functionId);
 						} else {
 							if ("_LIB_CORE_invoke" === $name) {
-								$vm->metadata->primitiveMethodFunctionIdFallbackLookup->arr[3] = $functionId;
+								self::PST_assignIndexHack($vm->metadata->primitiveMethodFunctionIdFallbackLookup, 3, $functionId);
 							} else {
 								if ("_LIB_CORE_generateException" === $name) {
 									$mn = $vm->metadata->magicNumbers;
@@ -1435,10 +1439,10 @@
 			$output = new PastelPtrArray();
 			$i = 1;
 			while (($i < count($args->arr))) {
-				$output->arr[$args->arr[$i]] = $args->arr[($i + 1)];
+				$output->arr['i'.$args->arr[$i]] = $args->arr[($i + 1)];
 				$i += 2;
 			}
-			$vm->byteCode->integerSwitchesByPc->arr[$pc] = $output;
+			self::PST_assignIndexHack($vm->byteCode->integerSwitchesByPc, $pc, $output);
 			return $output;
 		}
 
@@ -1450,7 +1454,7 @@
 				$output->arr[$s] = $args->arr[($i + 1)];
 				$i += 2;
 			}
-			$vm->byteCode->stringSwitchesByPc->arr[$pc] = $output;
+			self::PST_assignIndexHack($vm->byteCode->stringSwitchesByPc, $pc, $output);
 			return $output;
 		}
 
@@ -1468,13 +1472,13 @@
 				while (($j < $memberCount)) {
 					$nameId = $row->arr[($i + $j)];
 					if (($nameId != -1)) {
-						$lookup->arr[(($nameId * $totalLocales) + $localeId)] = $j;
+						$lookup->arr['i'.(($nameId * $totalLocales) + $localeId)] = $j;
 					}
 					$j += 1;
 				}
 				$i += $memberCount;
 			}
-			$vm->metadata->classMemberLocalizerBuilder->arr[$classId] = $lookup;
+			$vm->metadata->classMemberLocalizerBuilder->arr['i'.$classId] = $lookup;
 			return 0;
 		}
 
@@ -1489,8 +1493,8 @@
 		public static function interpreterFinished($vm, $ec) {
 			if (($ec != null)) {
 				$id = $ec->id;
-				if (isset($vm->executionContexts->arr[$id])) {
-					unset($vm->executionContexts->arr[$id]);
+				if (isset($vm->executionContexts->arr['i'.$id])) {
+					unset($vm->executionContexts->arr['i'.$id]);
 				}
 			}
 			return new InterpreterResult(1, null, 0.0, 0, false, "");
@@ -1498,10 +1502,10 @@
 
 		public static function interpreterGetExecutionContext($vm, $executionContextId) {
 			$executionContexts = $vm->executionContexts;
-			if (!isset($executionContexts->arr[$executionContextId])) {
+			if (!isset($executionContexts->arr['i'.$executionContextId])) {
 				return null;
 			}
-			return $executionContexts->arr[$executionContextId];
+			return $executionContexts->arr['i'.$executionContextId];
 		}
 
 		public static function interpretImpl($vm, $executionContextId) {
@@ -1564,7 +1568,7 @@
 			$float1 = 0.0;
 			$float2 = 0.0;
 			$float3 = 0.0;
-			$floatList1 = new PastelPtrArray();
+			$floatList1 = pastelWrapList(array_fill(0, 2, 0.0));
 			$value = null;
 			$value2 = null;
 			$value3 = null;
@@ -1604,7 +1608,7 @@
 			$esfData = $vm->metadata->esfData;
 			$closure = null;
 			$parentClosure = null;
-			$intBuffer = new PastelPtrArray();
+			$intBuffer = pastelWrapList(array_fill(0, 16, 0));
 			$localsStack = $ec->localsStack;
 			$localsStackSet = $ec->localsStackSet;
 			$localsStackSetToken = $stack->localsStackSetToken;
@@ -1643,15 +1647,15 @@
 						$i = $row->arr[0];
 						if (($stack->closureVariables == null)) {
 							$closure = new PastelPtrArray();
-							$closure->arr[-1] = new ClosureValuePointer($stack->objectContext);
+							$closure->arr['i-1'] = new ClosureValuePointer($stack->objectContext);
 							$stack->closureVariables = $closure;
-							$closure->arr[$i] = new ClosureValuePointer($value);
+							$closure->arr['i'.$i] = new ClosureValuePointer($value);
 						} else {
 							$closure = $stack->closureVariables;
-							if (isset($closure->arr[$i])) {
-								$closure->arr[$i]->value = $value;
+							if (isset($closure->arr['i'.$i])) {
+								$closure->arr['i'.$i]->value = $value;
 							} else {
-								$closure->arr[$i] = new ClosureValuePointer($value);
+								$closure->arr['i'.$i] = new ClosureValuePointer($value);
 							}
 						}
 						break;
@@ -1686,7 +1690,7 @@
 										}
 									}
 									if (!$hasInterrupt) {
-										$list1->list->arr[$i] = $value;
+										self::PST_assignIndexHack($list1->list, $i, $value);
 									}
 								}
 							} else {
@@ -1739,7 +1743,7 @@
 								}
 								if (!$hasInterrupt) {
 									if (($keyType == 5)) {
-										$int1 = isset($dictImpl->stringToIndex[$stringKey]) ? $dictImpl->stringToIndex[$stringKey] : (-1);
+										$int1 = isset($dictImpl->stringToIndex->arr[$stringKey]) ? $dictImpl->stringToIndex->arr[$stringKey] : (-1);
 										if (($int1 == -1)) {
 											$dictImpl->stringToIndex->arr[$stringKey] = $dictImpl->size;
 											$dictImpl->size += 1;
@@ -1749,12 +1753,12 @@
 												$dictImpl->keyType = $keyType;
 											}
 										} else {
-											$dictImpl->values->arr[$int1] = $value;
+											self::PST_assignIndexHack($dictImpl->values, $int1, $value);
 										}
 									} else {
-										$int1 = isset($dictImpl->intToIndex[$intKey]) ? $dictImpl->intToIndex[$intKey] : (-1);
+										$int1 = isset($dictImpl->intToIndex->arr['i'.$intKey]) ? $dictImpl->intToIndex->arr['i'.$intKey] : (-1);
 										if (($int1 == -1)) {
-											$dictImpl->intToIndex->arr[$intKey] = $dictImpl->size;
+											$dictImpl->intToIndex->arr['i'.$intKey] = $dictImpl->size;
 											$dictImpl->size += 1;
 											array_push($dictImpl->keys->arr, $value2);
 											array_push($dictImpl->values->arr, $value);
@@ -1762,7 +1766,7 @@
 												$dictImpl->keyType = $keyType;
 											}
 										} else {
-											$dictImpl->values->arr[$int1] = $value;
+											self::PST_assignIndexHack($dictImpl->values, $int1, $value);
 										}
 									}
 								}
@@ -1781,8 +1785,8 @@
 						$staticConstructorNotInvoked = true;
 						if (($classInfo->staticInitializationState < 2)) {
 							$stack->pc = $pc;
-							$stackFrame2 = self::maybeInvokeStaticConstructor($vm, $ec, $stack, $classInfo, $valueStackSize, self::PST_intBuffer16);
-							if ((self::PST_intBuffer16->arr[0] == 1)) {
+							$stackFrame2 = self::maybeInvokeStaticConstructor($vm, $ec, $stack, $classInfo, $valueStackSize, (self::PST_intBuffer16));
+							if (((self::PST_intBuffer16)->arr[0] == 1)) {
 								return self::generateException($vm, $stack, $pc, $valueStackSize, $ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
 							}
 							if (($stackFrame2 != null)) {
@@ -1795,7 +1799,7 @@
 						}
 						if ($staticConstructorNotInvoked) {
 							$valueStackSize -= 1;
-							$classInfo->staticFields->arr[$row->arr[1]] = $valueStack->arr[$valueStackSize];
+							self::PST_assignIndexHack($classInfo->staticFields, $row->arr[1], $valueStack->arr[$valueStackSize]);
 						}
 						break;
 					case 7:
@@ -1812,7 +1816,7 @@
 							if (($row->arr[5] == $classId)) {
 								$int1 = $row->arr[6];
 							} else {
-								$int1 = isset($intIntDict1[$nameId]) ? $intIntDict1[$nameId] : (-1);
+								$int1 = isset($intIntDict1->arr['i'.$nameId]) ? $intIntDict1->arr['i'.$nameId] : (-1);
 								if (($int1 != -1)) {
 									$int3 = $classInfo->fieldAccessModifiers->arr[$int1];
 									if (($int3 > 1)) {
@@ -1862,11 +1866,11 @@
 								if (($int2 == -1)) {
 									$intArray1 = $classInfo->typeInfo->arr[$int1];
 									if (($intArray1 == null)) {
-										$objInstance1->members->arr[$int1] = $value;
+										self::PST_assignIndexHack($objInstance1->members, $int1, $value);
 									} else {
 										$value2 = self::canAssignTypeToGeneric($vm, $value, $intArray1, 0);
 										if (($value2 != null)) {
-											$objInstance1->members->arr[$int1] = $value2;
+											self::PST_assignIndexHack($objInstance1->members, $int1, $value2);
 										} else {
 											$hasInterrupt = self::EX_InvalidArgument($ec, "Cannot assign this type to this field.");
 										}
@@ -1905,7 +1909,7 @@
 					case 8:
 						// ASSIGN_THIS_FIELD;
 						$objInstance2 = $stack->objectContext->internalValue;
-						$objInstance2->members->arr[$row->arr[0]] = $valueStack->arr[--$valueStackSize];
+						self::PST_assignIndexHack($objInstance2->members, $row->arr[0], $valueStack->arr[--$valueStackSize]);
 						break;
 					case 5:
 						// ASSIGN_LOCAL;
@@ -2407,8 +2411,8 @@
 							$staticConstructorNotInvoked = true;
 							if (($classInfo->staticInitializationState < 2)) {
 								$stack->pc = $pc;
-								$stackFrame2 = self::maybeInvokeStaticConstructor($vm, $ec, $stack, $classInfo, $valueStackSize, self::PST_intBuffer16);
-								if ((self::PST_intBuffer16->arr[0] == 1)) {
+								$stackFrame2 = self::maybeInvokeStaticConstructor($vm, $ec, $stack, $classInfo, $valueStackSize, (self::PST_intBuffer16));
+								if (((self::PST_intBuffer16)->arr[0] == 1)) {
 									return self::generateException($vm, $stack, $pc, $valueStackSize, $ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
 								}
 								if (($stackFrame2 != null)) {
@@ -2479,9 +2483,9 @@
 												$classInfo = $classTable->arr[$int1];
 												$intIntDict1 = $classInfo->localeScopedNameIdToMemberId;
 												$int1 = (($row->arr[4] * $magicNumbers->totalLocaleCount) + $row->arr[5]);
-												$i = isset($intIntDict1[$int1]) ? $intIntDict1[$int1] : (-1);
+												$i = isset($intIntDict1->arr['i'.$int1]) ? $intIntDict1->arr['i'.$int1] : (-1);
 												if (($i != -1)) {
-													$int1 = $intIntDict1->arr[$int1];
+													$int1 = $intIntDict1->arr['i'.$int1];
 													$functionId = $classInfo->functionIds->arr[$int1];
 													if (($functionId > 0)) {
 														$type = 3;
@@ -2682,7 +2686,7 @@
 													if (($value2->type != 5)) {
 														$hasInterrupt = self::EX_InvalidArgument($ec, "string split method requires another string as input.");
 													} else {
-														$stringList = explode($value2->internalValue, $string1);
+														$stringList = pastelWrapList(explode($value2->internalValue, $string1));
 														$_len = count($stringList->arr);
 														$list1 = self::makeEmptyList($globals->stringType, $_len);
 														$i = 0;
@@ -3006,8 +3010,8 @@
 												break;
 											case 29:
 												if (($argCount == 0)) {
-													self::sortLists($list1, $list1, self::PST_intBuffer16);
-													if ((self::PST_intBuffer16->arr[0] > 0)) {
+													self::sortLists($list1, $list1, (self::PST_intBuffer16));
+													if (((self::PST_intBuffer16)->arr[0] > 0)) {
 														$hasInterrupt = self::EX_InvalidArgument($ec, "Invalid list to sort. All items must be numbers or all strings, but not mixed.");
 													}
 												} else {
@@ -3070,7 +3074,7 @@
 														} else {
 															$i = ($value->internalValue)->objectId;
 														}
-														if (isset($dictImpl->intToIndex->arr[$i])) {
+														if (isset($dictImpl->intToIndex->arr['i'.$i])) {
 															$output = $VALUE_TRUE;
 														}
 													}
@@ -3084,15 +3088,15 @@
 													switch ($value->type) {
 														case 3:
 															$int1 = $value->internalValue;
-															$i = isset($dictImpl->intToIndex[$int1]) ? $dictImpl->intToIndex[$int1] : (-1);
+															$i = isset($dictImpl->intToIndex->arr['i'.$int1]) ? $dictImpl->intToIndex->arr['i'.$int1] : (-1);
 															break;
 														case 8:
 															$int1 = ($value->internalValue)->objectId;
-															$i = isset($dictImpl->intToIndex[$int1]) ? $dictImpl->intToIndex[$int1] : (-1);
+															$i = isset($dictImpl->intToIndex->arr['i'.$int1]) ? $dictImpl->intToIndex->arr['i'.$int1] : (-1);
 															break;
 														case 5:
 															$string1 = $value->internalValue;
-															$i = isset($dictImpl->stringToIndex[$string1]) ? $dictImpl->stringToIndex[$string1] : (-1);
+															$i = isset($dictImpl->stringToIndex->arr[$string1]) ? $dictImpl->stringToIndex->arr[$string1] : (-1);
 															break;
 													}
 													if (($i == -1)) {
@@ -3113,11 +3117,11 @@
 													$valueList1 = $dictImpl->keys;
 													$_len = count($valueList1->arr);
 													if (($dictImpl->keyType == 8)) {
-														$intArray1 = new PastelPtrArray();
+														$intArray1 = pastelWrapList(array_fill(0, 2, 0));
 														$intArray1->arr[0] = 8;
 														$intArray1->arr[0] = $dictImpl->keyClassId;
 													} else {
-														$intArray1 = new PastelPtrArray();
+														$intArray1 = pastelWrapList(array_fill(0, 1, 0));
 														$intArray1->arr[0] = $dictImpl->keyType;
 													}
 													$list1 = self::makeEmptyList($intArray1, $_len);
@@ -3190,8 +3194,8 @@
 															} else {
 																$intKey = ($value2->internalValue)->objectId;
 															}
-															if (isset($dictImpl->intToIndex->arr[$intKey])) {
-																$i = $dictImpl->intToIndex->arr[$intKey];
+															if (isset($dictImpl->intToIndex->arr['i'.$intKey])) {
+																$i = $dictImpl->intToIndex->arr['i'.$intKey];
 																$bool2 = true;
 															}
 														}
@@ -3202,14 +3206,14 @@
 																if (($keyType == 5)) {
 																	unset($dictImpl->stringToIndex->arr[$stringKey]);
 																} else {
-																	unset($dictImpl->intToIndex->arr[$intKey]);
+																	unset($dictImpl->intToIndex->arr['i'.$intKey]);
 																}
 																array_splice($dictImpl->keys->arr, $i, 1);
 																array_splice($dictImpl->values->arr, $i, 1);
 															} else {
 																$value = $dictImpl->keys->arr[$_len];
-																$dictImpl->keys->arr[$i] = $value;
-																$dictImpl->values->arr[$i] = $dictImpl->values->arr[$_len];
+																self::PST_assignIndexHack($dictImpl->keys, $i, $value);
+																self::PST_assignIndexHack($dictImpl->values, $i, $dictImpl->values->arr[$_len]);
 																array_pop($dictImpl->keys->arr);
 																array_pop($dictImpl->values->arr);
 																if (($keyType == 5)) {
@@ -3217,13 +3221,13 @@
 																	$stringKey = $value->internalValue;
 																	$dictImpl->stringToIndex->arr[$stringKey] = $i;
 																} else {
-																	unset($dictImpl->intToIndex->arr[$intKey]);
+																	unset($dictImpl->intToIndex->arr['i'.$intKey]);
 																	if (($keyType == 3)) {
 																		$intKey = $value->internalValue;
 																	} else {
 																		$intKey = ($value->internalValue)->objectId;
 																	}
-																	$dictImpl->intToIndex->arr[$intKey] = $i;
+																	$dictImpl->intToIndex->arr['i'.$intKey] = $i;
 																}
 															}
 														}
@@ -3368,7 +3372,7 @@
 									case 10:
 										// lambda;
 										$pc = $functionId;
-										$functionInfo = $metadata->lambdaTable->arr[$functionId];
+										$functionInfo = $metadata->lambdaTable->arr['i'.$functionId];
 										$value = null;
 										$classId = 0;
 										break;
@@ -3389,7 +3393,7 @@
 										// constructor;
 										$vm->instanceCounter += 1;
 										$classInfo = $classTable->arr[$classId];
-										$valueArray1 = new PastelPtrArray();
+										$valueArray1 = pastelWrapList(array_fill(0, $classInfo->memberCount, null));
 										$i = (count($valueArray1->arr) - 1);
 										while (($i >= 0)) {
 											switch ($classInfo->fieldInitializationCommand->arr[$i]) {
@@ -3449,7 +3453,7 @@
 									}
 									$localsStackOffset = $int2;
 									if (($type == 10)) {
-										$value = $closure->arr[-1]->value;
+										$value = $closure->arr['i-1']->value;
 									} else {
 										$closure = null;
 									}
@@ -3530,13 +3534,13 @@
 						break;
 					case 15:
 						// CNI_INVOKE;
-						$nativeFp = $metadata->cniFunctionsById->arr[$row->arr[0]];
+						$nativeFp = $metadata->cniFunctionsById->arr['i'.$row->arr[0]];
 						if (($nativeFp == null)) {
 							$hasInterrupt = self::EX_InvalidInvocation($ec, "CNI method could not be found.");
 						} else {
 							$_len = $row->arr[1];
 							$valueStackSize -= $_len;
-							$valueArray1 = new PastelPtrArray();
+							$valueArray1 = pastelWrapList(array_fill(0, $_len, null));
 							$i = 0;
 							while (($i < $_len)) {
 								$valueArray1->arr[$i] = $valueStack->arr[($valueStackSize + $i)];
@@ -3564,7 +3568,7 @@
 					case 16:
 						// CNI_REGISTER;
 						$nativeFp = self::PST_createFunctionPointer($stringArgs->arr[$pc]);
-						$metadata->cniFunctionsById->arr[$row->arr[0]] = $nativeFp;
+						$metadata->cniFunctionsById->arr['i'.$row->arr[0]] = $nativeFp;
 						break;
 					case 17:
 						// COMMAND_LINE_ARGS;
@@ -3712,8 +3716,8 @@
 								$output = $VALUE_NULL;
 								$list1 = $arg1->internalValue;
 								$list2 = $arg2->internalValue;
-								self::sortLists($list2, $list1, self::PST_intBuffer16);
-								if ((self::PST_intBuffer16->arr[0] > 0)) {
+								self::sortLists($list2, $list1, (self::PST_intBuffer16));
+								if (((self::PST_intBuffer16)->arr[0] > 0)) {
 									$hasInterrupt = self::EX_InvalidArgument($ec, "Invalid sort keys. Keys must be all numbers or all strings, but not mixed.");
 								}
 								break;
@@ -4083,7 +4087,7 @@
 								$output = $VALUE_NULL;
 								$objInstance1 = $arg1->internalValue;
 								if (($objInstance1->nativeData != null)) {
-									$objInstance1->nativeData->arr[1] = 0;
+									self::PST_assignIndexHack($objInstance1->nativeData, 1, 0);
 								}
 								break;
 							case 28:
@@ -4096,7 +4100,7 @@
 								$intArray1 = $objArray1->arr[0];
 								$_len = $objArray1->arr[1];
 								if (($_len >= count($intArray1->arr))) {
-									$intArray2 = new PastelPtrArray();
+									$intArray2 = pastelWrapList(array_fill(0, (($_len * 2) + 16), 0));
 									$j = 0;
 									while (($j < $_len)) {
 										$intArray2->arr[$j] = $intArray1->arr[$j];
@@ -4162,7 +4166,7 @@
 								$arg1 = $valueStack->arr[$valueStackSize];
 								$objInstance1 = $arg1->internalValue;
 								$int1 = $arg2->internalValue;
-								$objArray1 = new PastelPtrArray();
+								$objArray1 = pastelWrapList(array_fill(0, $int1, null));
 								$objInstance1->nativeData = $objArray1;
 								break;
 							case 35:
@@ -4171,7 +4175,7 @@
 								$arg3 = $valueStack->arr[($valueStackSize + 2)];
 								$arg2 = $valueStack->arr[($valueStackSize + 1)];
 								$arg1 = $valueStack->arr[$valueStackSize];
-								($arg1->internalValue)->nativeData->arr[$arg2->internalValue] = $arg3->internalValue;
+								self::PST_assignIndexHack(($arg1->internalValue)->nativeData, $arg2->internalValue, $arg3->internalValue);
 								break;
 							case 36:
 								// getExceptionTrace;
@@ -4296,7 +4300,7 @@
 								if (($type == 5)) {
 									$stringIntDict1->arr[$stringKey] = count($valueList1->arr);
 								} else {
-									$intIntDict1->arr[$intKey] = count($valueList1->arr);
+									$intIntDict1->arr['i'.$intKey] = count($valueList1->arr);
 								}
 								array_push($valueList2->arr, $value2);
 								array_push($valueList1->arr, $value);
@@ -4322,7 +4326,7 @@
 									$classId = $row->arr[3];
 								}
 								$int1 = count($row->arr);
-								$intArray1 = new PastelPtrArray();
+								$intArray1 = pastelWrapList(array_fill(0, ($int1 - $i), 0));
 								while (($i < $int1)) {
 									$intArray1->arr[($i - $row->arr[1])] = $row->arr[$i];
 									$i += 1;
@@ -4343,10 +4347,10 @@
 						$int1 = $row->arr[0];
 						$list1 = self::makeEmptyList(null, $int1);
 						if (($row->arr[1] != 0)) {
-							$list1->type = new PastelPtrArray();
+							$list1->type = pastelWrapList(array_fill(0, (count($row->arr) - 1), 0));
 							$i = 1;
 							while (($i < count($row->arr))) {
-								$list1->type->arr[($i - 1)] = $row->arr[$i];
+								self::PST_assignIndexHack($list1->type, ($i - 1), $row->arr[$i]);
 								$i += 1;
 							}
 						}
@@ -4374,8 +4378,8 @@
 						$bool1 = true;
 						$closure = $stack->closureVariables;
 						$i = $row->arr[0];
-						if ((($closure != null) && isset($closure->arr[$i]))) {
-							$value = $closure->arr[$i]->value;
+						if ((($closure != null) && isset($closure->arr['i'.$i]))) {
+							$value = $closure->arr['i'.$i]->value;
 							if (($value != null)) {
 								$bool1 = false;
 								if (($valueStackSize == $valueStackCapacity)) {
@@ -4403,7 +4407,7 @@
 									$int1 = $row->arr[5];
 								} else {
 									$intIntDict1 = $classInfo->localeScopedNameIdToMemberId;
-									$int1 = isset($intIntDict1[$int2]) ? $intIntDict1[$int2] : (-1);
+									$int1 = isset($intIntDict1->arr['i'.$int2]) ? $intIntDict1->arr['i'.$int2] : (-1);
 									$int3 = $classInfo->fieldAccessModifiers->arr[$int1];
 									if (($int3 > 1)) {
 										if (($int3 == 2)) {
@@ -4536,8 +4540,8 @@
 						$staticConstructorNotInvoked = true;
 						if (($classInfo->staticInitializationState < 2)) {
 							$stack->pc = $pc;
-							$stackFrame2 = self::maybeInvokeStaticConstructor($vm, $ec, $stack, $classInfo, $valueStackSize, self::PST_intBuffer16);
-							if ((self::PST_intBuffer16->arr[0] == 1)) {
+							$stackFrame2 = self::maybeInvokeStaticConstructor($vm, $ec, $stack, $classInfo, $valueStackSize, (self::PST_intBuffer16));
+							if (((self::PST_intBuffer16)->arr[0] == 1)) {
 								return self::generateException($vm, $stack, $pc, $valueStackSize, $ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
 							}
 							if (($stackFrame2 != null)) {
@@ -4798,7 +4802,7 @@
 									if (!$hasInterrupt) {
 										if (($keyType == 5)) {
 											$stringIntDict1 = $dictImpl->stringToIndex;
-											$int1 = isset($stringIntDict1[$stringKey]) ? $stringIntDict1[$stringKey] : (-1);
+											$int1 = isset($stringIntDict1->arr[$stringKey]) ? $stringIntDict1->arr[$stringKey] : (-1);
 											if (($int1 == -1)) {
 												$hasInterrupt = self::EX_KeyNotFound($ec, implode(array("Key not found: '", $stringKey, "'")));
 											} else {
@@ -4806,11 +4810,11 @@
 											}
 										} else {
 											$intIntDict1 = $dictImpl->intToIndex;
-											$int1 = isset($intIntDict1[$intKey]) ? $intIntDict1[$intKey] : (-1);
+											$int1 = isset($intIntDict1->arr['i'.$intKey]) ? $intIntDict1->arr['i'.$intKey] : (-1);
 											if (($int1 == -1)) {
 												$hasInterrupt = self::EX_KeyNotFound($ec, "Key not found.");
 											} else {
-												$valueStack->arr[($valueStackSize - 1)] = $dictImpl->values->arr[$intIntDict1->arr[$intKey]];
+												$valueStack->arr[($valueStackSize - 1)] = $dictImpl->values->arr[$intIntDict1->arr['i'.$intKey]];
 											}
 										}
 									}
@@ -4957,43 +4961,43 @@
 						break;
 					case 45:
 						// LAMBDA;
-						if (!isset($metadata->lambdaTable->arr[$pc])) {
+						if (!isset($metadata->lambdaTable->arr['i'.$pc])) {
 							$int1 = (4 + $row->arr[4] + 1);
 							$_len = $row->arr[$int1];
-							$intArray1 = new PastelPtrArray();
+							$intArray1 = pastelWrapList(array_fill(0, $_len, 0));
 							$i = 0;
 							while (($i < $_len)) {
 								$intArray1->arr[$i] = $row->arr[($int1 + $i + 1)];
 								$i += 1;
 							}
 							$_len = $row->arr[4];
-							$intArray2 = new PastelPtrArray();
+							$intArray2 = pastelWrapList(array_fill(0, $_len, 0));
 							$i = 0;
 							while (($i < $_len)) {
 								$intArray2->arr[$i] = $row->arr[(5 + $i)];
 								$i += 1;
 							}
-							$metadata->lambdaTable->arr[$pc] = new FunctionInfo($pc, 0, $pc, $row->arr[0], $row->arr[1], 5, 0, $row->arr[2], $intArray2, "lambda", $intArray1);
+							$metadata->lambdaTable->arr['i'.$pc] = new FunctionInfo($pc, 0, $pc, $row->arr[0], $row->arr[1], 5, 0, $row->arr[2], $intArray2, "lambda", $intArray1);
 						}
 						$closure = new PastelPtrArray();
 						$parentClosure = $stack->closureVariables;
 						if (($parentClosure == null)) {
 							$parentClosure = new PastelPtrArray();
 							$stack->closureVariables = $parentClosure;
-							$parentClosure->arr[-1] = new ClosureValuePointer($stack->objectContext);
+							$parentClosure->arr['i-1'] = new ClosureValuePointer($stack->objectContext);
 						}
-						$closure->arr[-1] = $parentClosure->arr[-1];
-						$functionInfo = $metadata->lambdaTable->arr[$pc];
+						$closure->arr['i-1'] = $parentClosure->arr['i-1'];
+						$functionInfo = $metadata->lambdaTable->arr['i'.$pc];
 						$intArray1 = $functionInfo->closureIds;
 						$_len = count($intArray1->arr);
 						$i = 0;
 						while (($i < $_len)) {
 							$j = $intArray1->arr[$i];
-							if (isset($parentClosure->arr[$j])) {
-								$closure->arr[$j] = $parentClosure->arr[$j];
+							if (isset($parentClosure->arr['i'.$j])) {
+								$closure->arr['i'.$j] = $parentClosure->arr['i'.$j];
 							} else {
-								$closure->arr[$j] = new ClosureValuePointer(null);
-								$parentClosure->arr[$j] = $closure->arr[$j];
+								$closure->arr['i'.$j] = new ClosureValuePointer(null);
+								$parentClosure->arr['i'.$j] = $closure->arr['i'.$j];
 							}
 							$i += 1;
 						}
@@ -5122,8 +5126,8 @@
 								$staticConstructorNotInvoked = true;
 								if (($classInfo->staticInitializationState < 2)) {
 									$stack->pc = $pc;
-									$stackFrame2 = self::maybeInvokeStaticConstructor($vm, $ec, $stack, $classInfo, $valueStackSize, self::PST_intBuffer16);
-									if ((self::PST_intBuffer16->arr[0] == 1)) {
+									$stackFrame2 = self::maybeInvokeStaticConstructor($vm, $ec, $stack, $classInfo, $valueStackSize, (self::PST_intBuffer16));
+									if (((self::PST_intBuffer16)->arr[0] == 1)) {
 										return self::generateException($vm, $stack, $pc, $valueStackSize, $ec, 0, "Static initialization loop detected. The class this field is a member of is not done being initialized.");
 									}
 									if (($stackFrame2 != null)) {
@@ -5220,7 +5224,7 @@
 							if (($integerSwitch == null)) {
 								$integerSwitch = self::initializeIntSwitchStatement($vm, $pc, $row);
 							}
-							$i = isset($integerSwitch[$intKey]) ? $integerSwitch[$intKey] : (-1);
+							$i = isset($integerSwitch->arr['i'.$intKey]) ? $integerSwitch->arr['i'.$intKey] : (-1);
 							if (($i == -1)) {
 								$pc += $row->arr[0];
 							} else {
@@ -5239,7 +5243,7 @@
 							if (($stringSwitch == null)) {
 								$stringSwitch = self::initializeStringSwitchStatement($vm, $pc, $row);
 							}
-							$i = isset($stringSwitch[$stringKey]) ? $stringSwitch[$stringKey] : (-1);
+							$i = isset($stringSwitch->arr[$stringKey]) ? $stringSwitch->arr[$stringKey] : (-1);
 							if (($i == -1)) {
 								$pc += $row->arr[0];
 							} else {
@@ -5338,7 +5342,7 @@
 						break;
 					default:
 						// THIS SHOULD NEVER HAPPEN;
-						return self::generateException($vm, $stack, $pc, $valueStackSize, $ec, 0, (("Bad op code: ") . (('' . ($ops->arr[$pc]))));
+						return self::generateException($vm, $stack, $pc, $valueStackSize, $ec, 0, (("Bad op code: ") . (('' . ($ops->arr[$pc])))));
 				}
 				if ($hasInterrupt) {
 					$interrupt = $ec->activeInterrupt;
@@ -5414,12 +5418,12 @@
 		}
 
 		public static function maybeInvokeStaticConstructor($vm, $ec, $stack, $classInfo, $valueStackSize, $intOutParam) {
-			self::PST_intBuffer16->arr[0] = 0;
+			self::PST_assignIndexHack((self::PST_intBuffer16), 0, 0);
 			$classId = $classInfo->id;
 			if (($classInfo->staticInitializationState == 1)) {
 				$classIdsBeingInitialized = $vm->classStaticInitializationStack;
 				if (($classIdsBeingInitialized->arr[(count($classIdsBeingInitialized->arr) - 1)] != $classId)) {
-					self::PST_intBuffer16->arr[0] = 1;
+					self::PST_assignIndexHack((self::PST_intBuffer16), 0, 1);
 				}
 				return null;
 			}
@@ -5556,10 +5560,10 @@
 					return $globals->valueNull;
 				}
 			}
-			$status = self::canonicalizeListSliceArgs(self::PST_intBuffer16, $arg1, $arg2, $begin, $end, $step, $length, $isForward);
+			$status = self::canonicalizeListSliceArgs((self::PST_intBuffer16), $arg1, $arg2, $begin, $end, $step, $length, $isForward);
 			if (($status == 1)) {
-				$begin = self::PST_intBuffer16->arr[0];
-				$end = self::PST_intBuffer16->arr[1];
+				$begin = (self::PST_intBuffer16)->arr[0];
+				$end = (self::PST_intBuffer16)->arr[1];
 				if ($isString) {
 					$outputString = new PastelPtrArray();
 					if ($isForward) {
@@ -5644,7 +5648,7 @@
 
 		public static function primitiveMethodsInitializeLookup($nameLookups) {
 			$length = count($nameLookups->arr);
-			$lookup = new PastelPtrArray();
+			$lookup = pastelWrapList(array_fill(0, $length, 0));
 			$i = 0;
 			while (($i < $length)) {
 				$lookup->arr[$i] = -1;
@@ -5766,10 +5770,10 @@
 				if (($expected == 1)) {
 					$output = (($name) . (" accepts exactly 1 argument."));
 				} else {
-					$output = implode(array($name, " requires ", ('' . ($expected), " arguments."));
+					$output = implode(array($name, " requires ", ('' . ($expected)), " arguments."));
 				}
 			}
-			return implode(array($output, " Found: ", ('' . ($actual)));
+			return implode(array($output, " Found: ", ('' . ($actual))));
 		}
 
 		public static function printToStdOut($prefix, $line) {
@@ -5777,7 +5781,7 @@
 				echo $line;
 			} else {
 				$canonical = str_replace("\r", "\n", str_replace("\r\n", "\n", $line));
-				$lines = explode("\n", $canonical);
+				$lines = pastelWrapList(explode("\n", $canonical));
 				$i = 0;
 				while (($i < count($lines->arr))) {
 					echo implode(array($prefix, ": ", $lines->arr[$i]));
@@ -5820,7 +5824,7 @@
 			if (($execId == -1)) {
 				$execId = $vm->lastExecutionContextId;
 			}
-			$ec = $vm->executionContexts->arr[$execId];
+			$ec = $vm->executionContexts->arr['i'.$execId];
 			$stackFrame = $ec->stackTop;
 			while (($stackFrameOffset > 0)) {
 				$stackFrameOffset -= 1;
@@ -5855,8 +5859,8 @@
 								}
 								$j = $stackFrame->pc;
 								while (($j >= 0)) {
-									if (isset($localNamesByFuncPc->arr[$j])) {
-										$localNames = $localNamesByFuncPc->arr[$j];
+									if (isset($localNamesByFuncPc->arr['i'.$j])) {
+										$localNames = $localNamesByFuncPc->arr['i'.$j];
 										$j = -1;
 									}
 									$j -= 1;
@@ -5971,7 +5975,7 @@
 			while (($size < $requiredCapacity)) {
 				$size *= 2;
 			}
-			$output = new PastelPtrArray();
+			$output = pastelWrapList(array_fill(0, $size, 0));
 			$i = 0;
 			while (($i < $oldSize)) {
 				$output->arr[$i] = $original->arr[$i];
@@ -5981,7 +5985,7 @@
 		}
 
 		public static function Reflect_allClasses($vm) {
-			$generics = new PastelPtrArray();
+			$generics = pastelWrapList(array_fill(0, 1, 0));
 			$generics->arr[0] = 10;
 			$output = self::makeEmptyList($generics, 20);
 			$classTable = $vm->metadata->classTable;
@@ -6021,7 +6025,7 @@
 
 		public static function registerNamedCallback($vm, $scope, $functionName, $callback) {
 			$id = self::getNamedCallbackIdImpl($vm, $scope, $functionName, true);
-			$vm->namedCallbacks->callbacksById->arr[$id] = $callback;
+			self::PST_assignIndexHack($vm->namedCallbacks->callbacksById, $id, $callback);
 			return $id;
 		}
 
@@ -6167,7 +6171,7 @@
 		}
 
 		public static function resource_manager_populate_directory_lookup($dirs, $path) {
-			$parts = explode("/", $path);
+			$parts = pastelWrapList(explode("/", $path));
 			$pathBuilder = "";
 			$file = "";
 			$i = 0;
@@ -6195,7 +6199,7 @@
 			$filesPerDirectoryBuilder = new PastelPtrArray();
 			$fileInfo = new PastelPtrArray();
 			$dataList = new PastelPtrArray();
-			$items = explode("\n", $manifest);
+			$items = pastelWrapList(explode("\n", $manifest));
 			$resourceInfo = null;
 			$type = "";
 			$userPath = "";
@@ -6205,7 +6209,7 @@
 			$intType = 0;
 			$i = 0;
 			while (($i < count($items->arr))) {
-				$itemData = explode(",", $items->arr[$i]);
+				$itemData = pastelWrapList(explode(",", $items->arr[$i]));
 				if ((count($itemData->arr) >= 3)) {
 					$type = $itemData->arr[0];
 					$isText = "TXT" === $type;
@@ -6245,7 +6249,7 @@
 				}
 				$i += 1;
 			}
-			$dirs = self::PST_dictGetKeys($filesPerDirectoryBuilder);
+			$dirs = self::PST_dictGetKeys($filesPerDirectoryBuilder, false);
 			$filesPerDirectorySorted = new PastelPtrArray();
 			$i = 0;
 			while (($i < count($dirs->arr))) {
@@ -6268,8 +6272,8 @@
 			$result->executionContextId = $executionContextId;
 			$status = $result->status;
 			if (($status == 1)) {
-				if (isset($vm->executionContexts->arr[$executionContextId])) {
-					unset($vm->executionContexts->arr[$executionContextId]);
+				if (isset($vm->executionContexts->arr['i'.$executionContextId])) {
+					unset($vm->executionContexts->arr['i'.$executionContextId]);
 				}
 				self::runShutdownHandlers($vm);
 			} else {
@@ -6293,14 +6297,14 @@
 				array_push($argList->arr, $args->arr[$i]);
 				$i += 1;
 			}
-			$locals = new PastelPtrArray();
-			$localsSet = new PastelPtrArray();
-			$valueStack = new PastelPtrArray();
+			$locals = pastelWrapList(array_fill(0, 0, null));
+			$localsSet = pastelWrapList(array_fill(0, 0, 0));
+			$valueStack = pastelWrapList(array_fill(0, 100, null));
 			$valueStack->arr[0] = $fpValue;
 			$valueStack->arr[1] = self::buildList($argList);
 			$stack = new StackFrame((count($vm->byteCode->ops->arr) - 2), 1, 0, 0, null, false, null, 0, 0, 1, 0, null, null, null);
 			$executionContext = new ExecutionContext($newId, $stack, 2, 100, $valueStack, $locals, $localsSet, 1, 0, false, null, false, 0, null);
-			$vm->executionContexts->arr[$newId] = $executionContext;
+			$vm->executionContexts->arr['i'.$newId] = $executionContext;
 			return self::runInterpreter($vm, $newId);
 		}
 
@@ -6308,13 +6312,13 @@
 			while ((count($vm->shutdownHandlers->arr) > 0)) {
 				$handler = $vm->shutdownHandlers->arr[0];
 				array_splice($vm->shutdownHandlers->arr, 0, 1);
-				self::runInterpreterWithFunctionPointer($vm, $handler, new PastelPtrArray());
+				self::runInterpreterWithFunctionPointer($vm, $handler, pastelWrapList(array_fill(0, 0, null)));
 			}
 			return 0;
 		}
 
 		public static function setItemInList($list, $i, $v) {
-			$list->list->arr[$i] = $v;
+			self::PST_assignIndexHack($list->list, $i, $v);
 		}
 
 		public static function sortHelperIsRevOrder($keyStringList, $keyNumList, $isString, $indexLeft, $indexRight) {
@@ -6344,7 +6348,7 @@
 		}
 
 		public static function sortLists($keyList, $parallelList, $intOutParam) {
-			self::PST_intBuffer16->arr[0] = 0;
+			self::PST_assignIndexHack((self::PST_intBuffer16), 0, 0);
 			$length = $keyList->size;
 			if (($length < 2)) {
 				return 0;
@@ -6356,12 +6360,12 @@
 			$stringKeys = null;
 			$numKeys = null;
 			if ($isString) {
-				$stringKeys = new PastelPtrArray();
+				$stringKeys = pastelWrapList(array_fill(0, $length, null));
 			} else {
-				$numKeys = new PastelPtrArray();
+				$numKeys = pastelWrapList(array_fill(0, $length, 0.0));
 			}
-			$indices = new PastelPtrArray();
-			$originalOrder = new PastelPtrArray();
+			$indices = pastelWrapList(array_fill(0, $length, 0));
+			$originalOrder = pastelWrapList(array_fill(0, $length, null));
 			$i = 0;
 			while (($i < $length)) {
 				$indices->arr[$i] = $i;
@@ -6370,27 +6374,27 @@
 				switch ($item->type) {
 					case 3:
 						if ($isString) {
-							self::PST_intBuffer16->arr[0] = 1;
+							self::PST_assignIndexHack((self::PST_intBuffer16), 0, 1);
 							return 0;
 						}
 						$numKeys->arr[$i] = $item->internalValue;
 						break;
 					case 4:
 						if ($isString) {
-							self::PST_intBuffer16->arr[0] = 1;
+							self::PST_assignIndexHack((self::PST_intBuffer16), 0, 1);
 							return 0;
 						}
 						$numKeys->arr[$i] = $item->internalValue;
 						break;
 					case 5:
 						if (!$isString) {
-							self::PST_intBuffer16->arr[0] = 1;
+							self::PST_assignIndexHack((self::PST_intBuffer16), 0, 1);
 							return 0;
 						}
 						$stringKeys->arr[$i] = $item->internalValue;
 						break;
 					default:
-						self::PST_intBuffer16->arr[0] = 1;
+						self::PST_assignIndexHack((self::PST_intBuffer16), 0, 1);
 						return 0;
 				}
 				$i += 1;
@@ -6398,7 +6402,7 @@
 			self::qsortHelper($stringKeys, $numKeys, $indices, $isString, 0, ($length - 1));
 			$i = 0;
 			while (($i < $length)) {
-				$parallelList->list->arr[$i] = $originalOrder->arr[$indices->arr[$i]];
+				self::PST_assignIndexHack($parallelList->list, $i, $originalOrder->arr[$indices->arr[$i]]);
 				$i += 1;
 			}
 			return 0;
@@ -6495,10 +6499,10 @@
 					$line = $token->lineIndex;
 					$col = $token->colIndex;
 					$fileData = $files->arr[$token->fileId];
-					$lines = explode("\n", $fileData);
+					$lines = pastelWrapList(explode("\n", $fileData));
 					$filename = $lines->arr[0];
 					$linevalue = $lines->arr[($line + 1)];
-					array_push($output->arr, implode(array($filename, ", Line: ", ('' . (($line + 1)), ", Col: ", ('' . (($col + 1)))));
+					array_push($output->arr, implode(array($filename, ", Line: ", ('' . (($line + 1))), ", Col: ", ('' . (($col + 1))))));
 				}
 				$i += 1;
 			}
@@ -6510,7 +6514,7 @@
 			if (($sourceCode == null)) {
 				return null;
 			}
-			return explode("\n", $sourceCode)->arr[$lineNum];
+			return pastelWrapList(explode("\n", $sourceCode))->arr[$lineNum];
 		}
 
 		public static function tokenHelperGetFormattedPointerToToken($vm, $token) {
@@ -6728,7 +6732,7 @@
 		}
 
 		public static function valueConcatLists($a, $b) {
-			return new ListImpl(null, ($a->size + $b->size), pastelWrapList(array_merge($a->list->arr, $b->list->arr));
+			return new ListImpl(null, ($a->size + $b->size), pastelWrapList(array_merge($a->list->arr, $b->list->arr)));
 		}
 
 		public static function valueMultiplyList($a, $n) {
@@ -6767,7 +6771,7 @@
 			$stack = $ec->valueStack;
 			$oldCapacity = count($stack->arr);
 			$newCapacity = ($oldCapacity * 2);
-			$newStack = new PastelPtrArray();
+			$newStack = pastelWrapList(array_fill(0, $newCapacity, null));
 			$i = ($oldCapacity - 1);
 			while (($i >= 0)) {
 				$newStack->arr[$i] = $stack->arr[$i];
@@ -6796,7 +6800,7 @@
 				return $floatStr;
 			}
 			if (($type == 3)) {
-				return ('' . ($wrappedValue->internalValue);
+				return ('' . ($wrappedValue->internalValue));
 			}
 			if (($type == 5)) {
 				return $wrappedValue->internalValue;
@@ -6822,7 +6826,7 @@
 				$classInfo = $vm->metadata->classTable->arr[$classId];
 				$nameId = $classInfo->nameId;
 				$className = $vm->metadata->identifiers->arr[$nameId];
-				return implode(array("Instance<", $className, "#", ('' . ($ptr), ">"));
+				return implode(array("Instance<", $className, "#", ('' . ($ptr)), ">"));
 			}
 			if (($type == 7)) {
 				$dict = $wrappedValue->internalValue;
@@ -6889,5 +6893,6 @@
 			return $vm->globals;
 		}
 	}
+	PastelGeneratedCode::$PST_intBuffer16 = pastelWrapList(array_fill(0, 16, 0));
 
 ?>

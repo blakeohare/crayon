@@ -198,6 +198,7 @@ namespace Common
                             .Replace("_sln.txt", ".sln")
                             .Replace("_java.txt", ".java")
                             .Replace("_js.txt", ".js")
+                            .Replace("_php.txt", ".php")
                             .Replace("_py.txt", ".py")
                             .Replace("_xml.txt", ".xml");
                     }

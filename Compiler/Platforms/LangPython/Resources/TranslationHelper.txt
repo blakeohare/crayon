@@ -48,7 +48,7 @@ def TH_handleInterpreterResult(result):
   while status == 5 or status == 6: # REINVOKE || LOAD_ASSEMBLY
     if status == 6: # LOAD_ASSEMBLY
       parts = getVmResultAssemblyInfo(result).split(',')
-      name, version, startupfunc = parts;
+      name, version, startupfunc = parts
       TH_LoadAssembly(name, version, startupfunc)
     else:
       time.sleep(getVmReinvokeDelay(result))

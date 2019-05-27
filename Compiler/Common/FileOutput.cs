@@ -56,5 +56,14 @@
                 default: throw new System.NotImplementedException();
             }
         }
+
+        public static FileOutput OfString(string value)
+        {
+            return new FileOutput()
+            {
+                Type = FileOutputType.Text,
+                TextContent = value,
+            };
+        }
     }
 }
