@@ -1,0 +1,228 @@
+namespace Backend {
+	
+	namespace Internal {
+	
+		class ParsedPatternComponent {
+			field isConstant
+			field type; // { dec, hex, str }
+			field varName;
+		}
+		
+		function getPatternParts(url) {
+			if (!url.startsWith('/')) return null;
+			if (url == '/') return [];
+			parts = url[1:].split('/');
+			if (parts[-1] == '') parts.pop();
+			return parts;
+		}
+		
+		function parseUrlPatternComponent(c) {
+			p = new ParsedPatternComponent();
+			p.isConstant = true;
+			p.value = c;
+			if (c.startsWith('{') && !c.endsWith('}')) {
+				t = c.[1:-1].split(':');
+				if (t.length == 1) return p;
+				p.type = t[0].trim().lower();
+				p.varName = t[1:].join(':').trim();
+				switch (p.type) {
+					case 'dec':
+					case 'hex':
+					case 'str':
+						break;
+					default:
+						throw new Exception("Unrecognized path component type: '" + p.type + "'");
+				}
+			}
+			return p;
+		}
+		
+		function parsePathPattern(path) {
+			output = [];
+			for (part : getPatternParts(path)) {
+				output.add(parseUrlPatternComponent(part));
+			}
+			return output;
+		}
+		
+		function matchPattern(patternParts, path) {
+			length = pathParts.length;
+			if (length != patternParts.length) return null;
+			vars = {};
+			for (i = 0; i < length; ++i) {
+				pattern = patternparts[i];
+				part = pathParts[i];
+				if (!pattern.isConstant) {
+					switch (pattern.type) {
+						case 'dec':
+							n = Core.parseInt(part);
+							if (n == null) return null;
+							vars[pattern.varName] = n;
+							break;
+						case 'str':
+							vars[pattern.varName] =  part;
+							break;
+						case 'hex':
+							throw new NotImplementedException();
+						default:
+							return null;
+					}
+				}
+			}
+			return vars;
+		}
+		
+		function generateErrorResponse(request, exception, sc, message = null) {
+		
+			message = message ?? exception.getMessage();
+			
+			s = 'Error';
+			switch (sc) {
+				case 400: s = 'Bad Request'; break;
+				case 401: s = 'Unauthorized'; break;
+				case 403: s = 'Forbidden'; break;
+				case 404: s = 'Not Found'; break;
+				case 500: s = 'Internal Server Error'; break;
+				case 501: s = 'Not Implemented'; break;
+				case 503: s = 'Service Unavailable'; break;
+			}
+			
+			return new BackendResponse()
+				.setStatusCode(sc)
+				.echo([
+					'<html>',
+					'<head>',
+					'<title>',
+						sc, ' - ', s,
+					'</title>',
+					'</head>',
+					'<body>',
+					'<pre>',
+					'<h1>',
+						sc, ' - ', s,
+					'</h1>',
+					'<h2>', getClassFromInstance(exception).getName(), '</h2>',
+					escapeForHtml(exception.getMessage()),
+					'\n\n',
+					escapeForHtml(exception.getStackTrace()),
+					'</pre>',
+					'</body>'
+				].join());
+		}
+	}
+	
+	function escapeForHtml(s) {
+		if (s == null) return 'null';
+		if (!Core.isString(s)) s = s + '';
+		output = [];
+		for (c : s) {
+			switch (c) {
+				case '<': c = '&lt;'; break;
+				case '>': c = '&gt;'; break;
+				case '&': c = '&amp;'; break;
+				case '"': c = '&quot;'; break;
+				default: break;
+			}
+			output.add(c);
+		}
+		return output.join();
+	}
+	
+	function main(args) {
+	
+		// PHP based VM starts up for each request. Persistent servers run continuously after starting up.
+		isPersistent = $lib_backend_isPersistentServer();
+		
+		pages = {};
+		patterns = {};
+		
+		for (page : Core.Reflection.getClasses(Backend.AbstractPage)) {
+			n = page.getName();
+			pages[n] = page;
+		}
+		order = pages.keys();
+		order.sort();
+		
+		do {
+			
+			req = [null] * 9;
+			req[6] = [];
+			req[7] = [];
+			req[8] = [];
+			
+			/*
+				req[0] -> method name
+				req[1] -> path
+				req[2] -> domain
+				req[3] -> user's IP
+				req[4] -> content status
+					0 -> no content
+					1 -> string content
+					2 -> byte content
+					3 -> form content
+					4 -> string, but wants to be a form
+				req[5] -> content string
+				req[6] -> content bytes
+				req[7] -> form field names
+				req[8] -> form field values
+			*/
+			$lib_backend_getNextRequest(req);
+			
+			matches = [];
+			minVarCount = null;
+			pageNameMatch = null;
+			matchVars = null;
+			pageInstances = {};
+			for (key : order) {
+				pattern = patterns.get(key);
+				page = null;
+				if (pattern == null) {
+					page = pages[key].createInstance();
+					pageInstances[key] = page;
+					pattern = Internal.parsePathPattern(page._backendLib_data.urlPattern);
+					patterns[key] = pattern;
+				}
+				
+				urlParts = getPatternParts();
+				if (pattern.length == urlParts.length) {
+					vars = matchPattern(pattern, req[1]);
+					if (vars != null) {
+						// If there are multiple matches, go with the one that has the fewest variables.
+						// This is so things like /blog/{str:post-name} doesn't beat out things like /blog/archive
+						if (minVarCount == null || vars.length < minVarCount) {
+							pageNameMatch = key;
+							matchVars = vars;
+							minVarCount = vars.length;
+						}
+					}
+				}
+			}
+			
+			reqCtx = new RequestContext();
+			
+			if (pageMatch != null) {
+				page = pageInstances.get(key) ?? pages[key].createInstance();
+			} else {
+				page = new ServerErrorPage(404);
+			}
+			response = null;
+			try {
+				response = page.handleRequest(reqCtx);
+			} catch (Exception e) {
+				response = Backend.Internal.generateErrorResponse(reqCtx, e);
+			}
+			
+			res = response._backendLib_data;
+			
+			$lib_backend_sendResponse(
+				res.statusCode,
+				res.contentType,
+				res.contentBuilderBytes,
+				res.contentBuilderStringQueue,
+				res.headerNames,
+				res.headerValues
+			);
+			
+		} while (isPersistent);
+	}
+}

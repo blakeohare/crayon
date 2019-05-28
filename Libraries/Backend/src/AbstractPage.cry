@@ -1,0 +1,19 @@
+namespace Backend {
+
+	namespace Internal {
+	
+		class PageInternalData {
+			field urlPattern;
+			field urlPatternParts;
+			field methods;
+		}
+		
+	}
+	class AbstractPage {
+		field _backendLib_data = new PageInternalData();
+		
+		constructor(urlPattern, methods = 'GET|POST') {
+			this._backendLib_data.urlPattern = urlPattern;
+		}
+	}
+}

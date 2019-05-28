@@ -1,0 +1,39 @@
+namespace Backend {
+
+	class BackendRequest {
+		field method;
+		field path;
+		field pattern;
+		field headerNames;
+		field headerValues;
+		field vars;
+		
+		constructor(method, path, headerNames, headerValues, page, vars) {
+			this._internal = [
+				method,
+				path,
+				pattern,
+				headerNames,
+				headerValues,
+				null, // page
+				null, // vars
+			];
+		}
+		
+		function getMethod() { return this._internal[0]; }
+		function getPath() { return this._internal[1]; }
+		function getVars() {
+			vars = this._internal[6];
+			if (vars == null) {
+				page = this._internal[5];
+				vars = {};
+				if (page == null) return vars;
+				this._internal[6] = vars;
+				patternParts = page._backendLib_data.urlPatternParts;
+				pathParts = this.getPath().split('/');
+				if (pathParts[-1] == '') pathParts.pop();
+				
+			}
+		}
+	}
+}

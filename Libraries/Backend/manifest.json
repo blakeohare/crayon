@@ -1,0 +1,6 @@
+{
+    "name": "Backend",
+    "author": "Blake O'Hare",
+    "documentation": "http://crayonlang.org/docs/2.1.1/backend",
+    "description": "Default server-side scripting framework."
+}

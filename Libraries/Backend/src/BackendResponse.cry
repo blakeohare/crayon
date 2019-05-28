@@ -1,0 +1,77 @@
+namespace Backend {
+	
+	class BackendResponseInternal {
+		field contentType = 'text/html';
+		field contentBuilderBytes = [];
+		field contentBuilderStringQueue = [];
+		field headerNames = [];
+		field headerNamesCanonical = [];
+		field headerValues = [];
+		field statusCode = 200;
+	}
+	
+	class BackendResponse {
+		
+		field _backendLib_data = new BackendResponseInternal();
+		
+		constructor() { }
+		
+		function echo(str) {
+			this._backendLib_data.contentBuilderStringQueue.add(str);
+			this._backendLib_data.lastContentWasText = true;
+			return this;
+		}
+		
+		function echoBytes(bytes) {
+			d = this._backendLib_data;
+			if (d.contentBuilderStringQueue.length > 0) {
+				tBytes = TextEncoding.convertTextToBytes(d.contentBuilderStringQueue.join(), TextEncoding.TextFormat.UTF8);
+				d.contentBuilderBytes.concat(tBytes);
+				d.contentBuilderStringQueue.clear();
+			}
+			d.contentBuidlerBytes.concat(bytes);
+			return this;
+		}
+		
+		function setContentType(value) {
+			this._backendLib_data.contentType = value;
+			return this;
+		}
+		
+		function setHeader(name, value) {
+			return this
+				.clearHeader(name)
+				.addHeader(name, value);
+		}
+		
+		function clearHeader(name) {
+			d = this._backendLib_data;
+			cName = name.trim().lower();
+			for (i = d.headerNames.length - 1; i >= 0; --i) {
+				if (d.headerNamesCanonical[i] == cName) {
+					d.headerNamesCanonical.remove(i);
+					d.headerNames.remove(i);
+					d.headerValues.remove(i);
+				}
+			}
+			return this;
+		}
+		
+		function addHeader(name, value) {
+			d = this._backendLib_data;
+			d.headerNamesCanonical.add(name.trim().lower());
+			d.headerNames.add(name);
+			d.headerValues.add((value ?? '') + '');
+			return this;
+		}
+		
+		function addCookie(name, value) {
+			throw new NotImplementedException();
+		}
+		
+		function setStatusCode(sc) {
+			this._backendLib_data.statusCode = sc;
+			return this;
+		}
+	}
+}
