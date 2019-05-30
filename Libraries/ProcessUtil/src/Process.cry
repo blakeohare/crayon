@@ -47,7 +47,13 @@ namespace ProcessUtil {
         }
 
         function setArgs(args) {
-            this._args = args;
+            if (typeof(args) != Type.LIST) args = [args];
+            for (arg : args) {
+                if (typeof(arg) != Type.STRING) {
+                    throw new InvalidArgumentException("Invalid argument for process arg: " + (arg ?? 'null'));
+                }
+            }
+            this._args = args.clone();
             return this;
         }
 
