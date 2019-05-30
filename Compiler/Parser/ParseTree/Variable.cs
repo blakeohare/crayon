@@ -109,6 +109,16 @@ namespace Parser.ParseTree
                                 throw new ParserException(this, message);
                             }
                         }
+
+                        foreach (FunctionDefinition fd in cd.Methods)
+                        {
+                            if (fd.NameToken.Value == name)
+                            {
+                                string message = "'" + name + "' is used like a standalone function but it is " + (fd.Modifiers.HasStatic ? "a static" : "an instance") + " method.";
+                                message += " Did you mean '" + (fd.Modifiers.HasStatic ? cd.NameToken.Value : "this") + "." + name + "' instead of '" + name + "'?";
+                                throw new ParserException(this, message);
+                            }
+                        }
                     }
 
                     // TODO: But if it's being called like a function then...
