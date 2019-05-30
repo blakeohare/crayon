@@ -7,15 +7,15 @@ namespace Interpreter.Libraries.FileIOCommon
     internal static class FileIOCommonHelper
     {
         private static readonly bool _IsOSX =
-            Environment.OSVersion.Platform == PlatformID.MacOSX ||
-            Environment.OSVersion.Platform == PlatformID.Unix;
+            System.Environment.OSVersion.Platform == PlatformID.MacOSX ||
+            System.Environment.OSVersion.Platform == PlatformID.Unix;
 
-        private static readonly bool _IsWindows = 
-            Environment.OSVersion.Platform == PlatformID.Win32NT ||
-            Environment.OSVersion.Platform == PlatformID.Win32S ||
-            Environment.OSVersion.Platform == PlatformID.Win32Windows ||
-            Environment.OSVersion.Platform == PlatformID.WinCE ||
-            Environment.OSVersion.Platform == PlatformID.Xbox;
+        private static readonly bool _IsWindows =
+            System.Environment.OSVersion.Platform == PlatformID.Win32NT ||
+            System.Environment.OSVersion.Platform == PlatformID.Win32S ||
+            System.Environment.OSVersion.Platform == PlatformID.Win32Windows ||
+            System.Environment.OSVersion.Platform == PlatformID.WinCE ||
+            System.Environment.OSVersion.Platform == PlatformID.Xbox;
 
         public static bool IsWindows()
         {
@@ -26,11 +26,11 @@ namespace Interpreter.Libraries.FileIOCommon
         {
             if (_IsWindows)
             {
-                return Environment.GetEnvironmentVariable("APPDATA");
+                return System.Environment.GetEnvironmentVariable("APPDATA");
             }
             if (_IsOSX)
             {
-                return "/Users/" + Environment.UserName;
+                return "/Users/" + System.Environment.UserName;
             }
             return "~";
         }
@@ -54,7 +54,7 @@ namespace Interpreter.Libraries.FileIOCommon
             return path;
         }
 
-        private static readonly DateTime epoch = new DateTime(1970, 1, 1);
+        private static readonly System.DateTime EPOCH = new System.DateTime(1970, 1, 1);
 
         public static void GetFileInfo(string path, int mask, int[] intOut, double[] floatOut)
         {
@@ -64,23 +64,21 @@ namespace Interpreter.Libraries.FileIOCommon
 
             if (mask != 0)
             {
-                DateTime epoch = new DateTime(1970, 1, 1);
                 // Since all information is readily available in FileInfo/DirectoryInfo, ignore mask and just set everything.
                 if (fileExists)
                 {
                     System.IO.FileInfo fileInfo = new System.IO.FileInfo(path);
                     intOut[2] = fileInfo.Length > Int32.MaxValue ? Int32.MaxValue : (int) fileInfo.Length; // blarg.
                     intOut[3] = fileInfo.IsReadOnly ? 1 : 0;
-                    long now = DateTime.Now.Ticks;
-                    floatOut[0] = fileInfo.CreationTimeUtc.Subtract(epoch).TotalSeconds;
-                    floatOut[1] = fileInfo.LastWriteTimeUtc.Subtract(epoch).TotalSeconds;
+                    floatOut[0] = fileInfo.CreationTimeUtc.Subtract(EPOCH).TotalSeconds;
+                    floatOut[1] = fileInfo.LastWriteTimeUtc.Subtract(EPOCH).TotalSeconds;
                 }
                 else if (directoryExists)
                 {
                     System.IO.DirectoryInfo dirInfo = new System.IO.DirectoryInfo(path);
                     intOut[3] = 0; // TODO
-                    floatOut[0] = dirInfo.CreationTimeUtc.Subtract(epoch).TotalSeconds;
-                    floatOut[1] = dirInfo.LastWriteTimeUtc.Subtract(epoch).TotalSeconds;
+                    floatOut[0] = dirInfo.CreationTimeUtc.Subtract(EPOCH).TotalSeconds;
+                    floatOut[1] = dirInfo.LastWriteTimeUtc.Subtract(EPOCH).TotalSeconds;
                 }
             }
 
