@@ -67,7 +67,7 @@ namespace Build
             }
         }
 
-        public static BuildContext Parse(string projectDir, string buildFile, string nullableTargetName)
+        public static BuildContext Parse(string projectDir, string buildFile, string nullableTargetName, bool useRelativePathsInErrors)
         {
             BuildRoot buildInput = GetBuildRoot(buildFile);
             string platform = null;
@@ -99,7 +99,7 @@ namespace Build
             if (desiredTarget.HasLegacyIcon || buildInput.HasLegacyIcon)
             {
                 // TODO: remove this in 2.2.0 or something
-                ThrowError(
+                throw new InvalidOperationException(
                     "This build file has a string property for an icon path. " +
                     "This has been changed to a JSON array of strings for icon paths with a key called \"icons\" instead of \"icon\". " +
                     "Please update your build file accordingly.");
@@ -107,7 +107,7 @@ namespace Build
 
             if (desiredTarget.HasLegacyTitle || buildInput.HasLegacyTitle)
             {
-                ThrowError("This build file has a \"default-title\" property, which was changed to just \"title\" in 2.1.0. Please update your build file accordingly.");
+                throw new InvalidOperationException("This build file has a \"default-title\" property, which was changed to just \"title\" in 2.1.0. Please update your build file accordingly.");
             }
 
             SourceItem[] sources = desiredTarget.SourcesNonNull.Union(buildInput.SourcesNonNull).ToArray();
@@ -221,7 +221,7 @@ namespace Build
                 ProgrammingLanguage = nullableLanguage.Value,
             };
 
-            return buildContext.ValidateValues();
+            return buildContext.ValidateValues(useRelativePathsInErrors);
         }
 
         private static string[] CombineAndFlattenStringArrays(string[] a, string[] b)
@@ -232,12 +232,32 @@ namespace Build
             return output.ToArray();
         }
 
-        private static string ThrowError(string message)
+        private static string AbsoluteToRelativePath(string absolutePath, string relativeTo)
         {
-            throw new InvalidOperationException(message);
+            string[] absParts = absolutePath.Replace('\\', '/').TrimEnd('/').Split('/');
+            string[] relativeToParts = relativeTo.Replace('\\', '/').TrimEnd('/').Split('/');
+            int indexDiverge = 0;
+            while (indexDiverge < absParts.Length && indexDiverge < relativeToParts.Length && absParts[indexDiverge] == relativeToParts[indexDiverge])
+            {
+                indexDiverge++;
+            }
+
+            int dotDots = relativeToParts.Length - indexDiverge;
+            List<string> output = new List<string>();
+            for (int i = 0; i < dotDots; ++i)
+            {
+                output.Add("..");
+            }
+
+            for (int i = indexDiverge; i < absParts.Length; ++i)
+            {
+                output.Add(absParts[i]);
+            }
+
+            return string.Join("/", output);
         }
 
-        public BuildContext ValidateValues()
+        public BuildContext ValidateValues(bool useRelativePathsInErrors)
         {
             if (this.ProjectID == null) throw new InvalidOperationException("There is no project-id for this build target.");
             if (this.TopLevelAssembly.SourceFolders.Length == 0) throw new InvalidOperationException("There are no source paths for this build target.");
@@ -255,6 +275,7 @@ namespace Build
 
             string[] invalidIconPaths = this.IconFilePaths
                 .Where(t => !FileUtil.FileExists(t))
+                .Select(absPath => useRelativePathsInErrors ? AbsoluteToRelativePath(absPath, this.ProjectDirectory) : absPath)
                 .ToArray();
             if (invalidIconPaths.Length > 0)
             {
@@ -289,7 +310,7 @@ namespace Build
                 }
                 else
                 {
-                    ThrowError("The path '" + localDep + "' does not point to a valid library with a manifest.json file. '" + fullManifestPath + "' does not exist.");
+                    throw new InvalidOperationException("The path '" + localDep + "' does not point to a valid library with a manifest.json file. '" + fullManifestPath + "' does not exist.");
                 }
             }
 

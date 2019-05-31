@@ -19,7 +19,7 @@ namespace Crayon
             string buildFile = BuildContext.GetValidatedCanonicalBuildFilePath(buildFilePath);
             string projectDirectory = FileUtil.GetParentDirectory(buildFile);
             string buildFileContent = FileUtil.ReadFileText(buildFile);
-            BuildContext buildContext = BuildContext.Parse(projectDirectory, buildFileContent, null);
+            BuildContext buildContext = BuildContext.Parse(projectDirectory, buildFileContent, null, command.ResourceErrorsShowRelativeDir);
             return buildContext;
         }
     }

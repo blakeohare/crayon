@@ -19,6 +19,8 @@ namespace Crayon
         private static readonly string GEN_DEFAULT_PROJ_JP = "genDefaultProjJP";
         private static readonly string SHOW_LIB_STACK = "showLibStack";
 
+        private static readonly string RESOURCE_ERRORS_SHOW_RELATIVE_DIR = "resourceErrorsShowRelativeDir";
+
         // don't use the output directory specified by the build file. Use this arg instead.
         private static readonly string OVERRIDE_OUTPUT_DIR = "overrideOutputDir";
 
@@ -50,6 +52,7 @@ namespace Crayon
             SHOW_LIB_STACK,
             SHOW_PERFORMANCE_MARKERS,
             USE_OUTPUT_PREFIXES,
+            RESOURCE_ERRORS_SHOW_RELATIVE_DIR,
         };
 
         private static readonly HashSet<string> ONE_ARG_FLAGS = new HashSet<string>()
@@ -241,6 +244,7 @@ namespace Crayon
             command.IsJsonOutput = args.ContainsKey(JSON_OUTPUT);
             command.UseOutputPrefixes = args.ContainsKey(USE_OUTPUT_PREFIXES);
             command.OutputDirectoryOverride = args.ContainsKey(OVERRIDE_OUTPUT_DIR) ? args[OVERRIDE_OUTPUT_DIR] : null;
+            command.ResourceErrorsShowRelativeDir = args.ContainsKey(RESOURCE_ERRORS_SHOW_RELATIVE_DIR);
         }
     }
 }

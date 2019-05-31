@@ -16,6 +16,7 @@
         public bool IsErrorCheckOnly { get; set; }
         public bool IsJsonOutput { get; set; }
         public bool UseOutputPrefixes { get; set; }
+        public bool ResourceErrorsShowRelativeDir { get; set; }
         public string OutputDirectoryOverride { get; set; }
         public string[] DirectRunArgs { get; set; }
         public bool DirectRunShowLibStack { get; set; }

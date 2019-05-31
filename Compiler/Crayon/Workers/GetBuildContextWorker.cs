@@ -23,7 +23,7 @@ namespace Crayon
 
             BuildContext buildContext = null;
 
-            buildContext = BuildContext.Parse(projectDirectory, FileUtil.ReadFileText(buildFile), target);
+            buildContext = BuildContext.Parse(projectDirectory, FileUtil.ReadFileText(buildFile), target, command.ResourceErrorsShowRelativeDir);
 
             buildContext = buildContext ?? new BuildContext();
 
